@@ -141,7 +141,7 @@ public class CharacterManager : MonoBehaviour {
     /*
      Create a new character, given a role, class and race.
          */
-    public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race, GENDER gender, Faction faction = null) {
+    public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race, GENDER gender, CHARACTER_JOB job = CHARACTER_JOB.NONE, Faction faction = null) {
 		if(className == "None"){
             className = "Classless";
 		}
@@ -161,12 +161,17 @@ public class CharacterManager : MonoBehaviour {
         } else {
             newCharacter.AssignRole(setup.optionalRole);
         }
+
+        if (job != CHARACTER_JOB.NONE && newCharacter.role != null) {
+            newCharacter.role.AssignJob(job);
+        }
+
         _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
     }
 
-	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, GENDER gender, ECS.CharacterSetup setup) {
+	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, GENDER gender, CHARACTER_JOB job, ECS.CharacterSetup setup) {
 		if (setup == null) {
 			return null;
 		}
@@ -178,6 +183,15 @@ public class CharacterManager : MonoBehaviour {
         } else {
             newCharacter.AssignRole(setup.optionalRole);
         }
+
+        if (job != CHARACTER_JOB.NONE && newCharacter.role != null) {
+            newCharacter.role.AssignJob(job);
+        }
+
+#if WORLD_CREATION_TOOL
+        CharacterParty party = newCharacter.CreateNewParty();
+#endif
+
         _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
@@ -186,7 +200,7 @@ public class CharacterManager : MonoBehaviour {
     /*
      Create a new character, given filename.
          */
-    public ECS.Character CreateNewCharacter(string fileName, GENDER gender, Faction faction = null) {
+    public ECS.Character CreateNewCharacter(string fileName, GENDER gender, CHARACTER_JOB job = CHARACTER_JOB.NONE, Faction faction = null) {
         ECS.CharacterSetup setup = ECS.CombatManager.Instance.GetBaseCharacterSetup(fileName);
         if (setup == null) {
             Debug.LogError("THERE IS NO CLASS WITH THE NAME: " + fileName + "!");
@@ -200,6 +214,10 @@ public class CharacterManager : MonoBehaviour {
         if (setup.optionalRole != CHARACTER_ROLE.NONE) {
             newCharacter.AssignRole(setup.optionalRole);
         }
+
+        if (job != CHARACTER_JOB.NONE && newCharacter.role != null) {
+            newCharacter.role.AssignJob(job);
+        }
         _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
@@ -207,16 +225,17 @@ public class CharacterManager : MonoBehaviour {
     public ECS.Character CreateNewCharacter(CharacterSaveData data) {
         ECS.Character newCharacter = new ECS.Character(data);        
         newCharacter.AssignRole(data.role);
-
+        if (newCharacter.role != null && data.job != CHARACTER_JOB.NONE) {
+            newCharacter.role.AssignJob(data.job);
+        }
         if (data.homeID != -1) {
             Area homeLocation = LandmarkManager.Instance.GetAreaByID(data.homeID);
             newCharacter.SetHome(homeLocation);
             //homeLocation.AddCharacterHomeOnLandmark(newCharacter);
         }
-
+        CharacterParty party = newCharacter.CreateNewParty();
         if (data.locationID != -1) {
             ILocation currentLocation = LandmarkManager.Instance.GetLocationBasedOnID(data.locationType, data.locationID);
-            CharacterParty party = newCharacter.CreateNewParty();
 #if !WORLD_CREATION_TOOL
             party.CreateIcon();
             party.icon.SetPosition(currentLocation.tileLocation.transform.position);            

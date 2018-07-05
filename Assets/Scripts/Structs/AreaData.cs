@@ -6,5 +6,5 @@ using UnityEngine;
 public struct AreaData {
     public AREA_TYPE areaType;
     public List<LANDMARK_TYPE> allowedLandmarkTypes;
-    public List<TextAsset> possibleMonsterSpawns;
+    public List<MonsterPartyComponent> possibleMonsterSpawns;
 }

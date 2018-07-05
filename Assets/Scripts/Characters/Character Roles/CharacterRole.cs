@@ -32,6 +32,9 @@ public class CharacterRole {
 	public Character character{
 		get { return _character; }
 	}
+    public Job job {
+        get { return _job; }
+    }
     //public List<ACTION_ALIGNMENT> allowedQuestAlignments {
     //    get { return _allowedQuestAlignments; }
     //}
@@ -154,6 +157,50 @@ public class CharacterRole {
     //#endregion
 
     #region Needs
+    public void SetNeedValue(NEEDS need, float newValue) {
+        switch (need) {
+            case NEEDS.FULLNESS:
+                SetFullness(newValue);
+                break;
+            case NEEDS.ENERGY:
+                SetEnergy(newValue);
+                break;
+            case NEEDS.FUN:
+                SetFun(newValue);
+                break;
+            case NEEDS.PRESTIGE:
+                SetPrestige(newValue);
+                break;
+            case NEEDS.SANITY:
+                SetSanity(newValue);
+                break;
+            case NEEDS.SAFETY:
+                SetSafety(newValue);
+                break;
+            default:
+                break;
+        }
+        UpdateHappiness();
+    }
+    public float GetNeedValue(NEEDS need) {
+        switch (need) {
+            case NEEDS.FULLNESS:
+                return _fullness;
+            case NEEDS.ENERGY:
+                return _energy;
+            case NEEDS.FUN:
+                return _fun;
+            case NEEDS.PRESTIGE:
+                return _prestige;
+            case NEEDS.SANITY:
+                return _sanity;
+            case NEEDS.SAFETY:
+                return _safety;
+            default:
+                return 0;
+        }
+    }
+
     public void DepleteFullness() {
         AdjustFullness(-0.5f);
     }

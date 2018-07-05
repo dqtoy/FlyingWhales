@@ -9,6 +9,7 @@ public class CharacterSaveData {
     public RACE race;
     public GENDER gender;
     public CHARACTER_ROLE role;
+    public CHARACTER_JOB job;
     public string className;
     public LOCATION_IDENTIFIER locationType;
     public int locationID;
@@ -26,6 +27,12 @@ public class CharacterSaveData {
         race = character.raceSetting.race;
         gender = character.gender;
         role = character.role.roleType;
+        if (character.role != null) {
+            job = character.role.job.jobType;
+        } else {
+            job = CHARACTER_JOB.NONE;
+        }
+        
         className = character.characterClass.className;
 
         if (character.party.specificLocation != null) {

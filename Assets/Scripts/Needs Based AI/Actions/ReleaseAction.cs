@@ -30,12 +30,13 @@ public class ReleaseAction : CharacterAction {
         GiveAllReward(party);
         ReleaseCharacter();
     }
-    //public override bool CanBeDone() {
-    //    if (!_characterObj.character.isPrisoner) {
-    //        return false;
-    //    }
-    //    return base.CanBeDone();
-    //}
+    public override bool CanBeDone() {
+        return false; //Change this to something more elegant, this is to prevent other characters that don't have the release character quest from releasing this character.
+        //if (!_characterObj.character.isPrisoner) {
+        //    return false;
+        //}
+        //return base.CanBeDone();
+    }
     #endregion
 
     public void ReleaseCharacter() {

@@ -42,6 +42,7 @@ public class ConsoleMenu : UIMenu {
             {"/spawn_obj", SpawnNewObject },
             {"/toggle_road", ToggleRoads },
             {"/set_icon_target", SetIconTarget },
+            {"/set_need", SetCharacterNeedsValue},
         };
     }
 
@@ -447,6 +448,38 @@ public class ConsoleMenu : UIMenu {
         string fileLocation = Utilities.dataPath + "Logs/" + character.name + "'s_Location_History.txt";
         System.IO.File.WriteAllText(fileLocation, text);
         AddSuccessMessage("Logged " + character.name + "'s location history in console. And created text file of log at " + fileLocation);
+    }
+    private void SetCharacterNeedsValue(string[] parameters) {
+        if (parameters.Length < 4) {//command, need type, need value, character name/id
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /kill");
+            return;
+        }
+        string characterParameterString = string.Empty;
+        int characterID;
+        for (int i = 3; i < parameters.Length; i++) {
+            characterParameterString += parameters[i] + " ";
+        }
+        characterParameterString = characterParameterString.Trim();
+
+        bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
+        ECS.Character character;
+        if (isCharacterParameterNumeric) {
+            character = CharacterManager.Instance.GetCharacterByID(characterID);
+        } else {
+            character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+        }
+
+        NEEDS need = (NEEDS)Enum.Parse(typeof(NEEDS), parameters[1]);
+        float needValue = float.Parse(parameters[2]);
+
+        if (character == null) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+        }
+
+        character.role.SetNeedValue(need, needValue);
+        AddSuccessMessage("Set " + character.name + "'s " + need.ToString() + " to " + character.role.GetNeedValue(need).ToString());
     }
     #endregion
 

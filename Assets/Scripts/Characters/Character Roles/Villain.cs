@@ -42,7 +42,9 @@ public class Villain : CharacterRole {
     }
     public override void ChangedRole() {
         base.ChangedRole();
+#if !WORLD_CREATION_TOOL
         Messenger.RemoveListener(Signals.HOUR_ENDED, StartDepletion);
+#endif
     }
     #endregion
 

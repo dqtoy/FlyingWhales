@@ -17,6 +17,7 @@ public class CharacterIcon : MonoBehaviour {
     [SerializeField] private LineRenderer lineRenderer;
     [SerializeField] private Seeker seeker;
     [SerializeField] private EdgeCollider2D edgeCollider;
+    [SerializeField] private CharacterPathfinder _pathfinder;
 
     public CharacterPortrait characterPortrait { get; private set; }
 
@@ -42,6 +43,9 @@ public class CharacterIcon : MonoBehaviour {
     }
     public AIDestinationSetter destinationSetter {
         get { return _destinationSetter; }
+    }
+    public CharacterPathfinder pathfinder {
+        get { return _pathfinder; }
     }
     #endregion
 
@@ -148,6 +152,9 @@ public class CharacterIcon : MonoBehaviour {
     #endregion
 
     #region Utilities
+    public void GetVectorPath(HexTile target, Action<List<Vector3>> onPathCalculated) {
+        pathfinder.CalculatePath(target, onPathCalculated);
+    }
     public List<HexTile> ConvertToTilePath(List<Vector3> vectorPath) {
         Vector2[] colliderPoints = new Vector2[vectorPath.Count];
         for (int i = 0; i < vectorPath.Count; i++) {
@@ -169,6 +176,10 @@ public class CharacterIcon : MonoBehaviour {
             }
         }
         return tilePath;
+    }
+    public void SetVisualState(bool state) {
+        _characterVisualGO.SetActive(state);
+        _aiPath.gameObject.SetActive(state);
     }
     #endregion
 

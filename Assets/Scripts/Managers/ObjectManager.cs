@@ -157,6 +157,8 @@ public class ObjectManager : MonoBehaviour {
                 return CreateRoleFilter(data);
             case ACTION_FILTER_TYPE.LOCATION:
                 return CreateLandmarkFilter(data);
+            case ACTION_FILTER_TYPE.JOB:
+                return CreateJobFilter(data);
             default:
                 return null;
         }
@@ -168,6 +170,16 @@ public class ObjectManager : MonoBehaviour {
                 return new MustBeRole(data.objects);
             case ACTION_FILTER_CONDITION.IS_NOT:
                 return new MustNotBeRole(data.objects);
+            default:
+                return null;
+        }
+    }
+    private ActionFilter CreateJobFilter(ActionFilterData data) {
+        switch (data.condition) {
+            case ACTION_FILTER_CONDITION.IS:
+                return new MustBeJob(data.objects);
+            case ACTION_FILTER_CONDITION.IS_NOT:
+                return new MustNotBeJob(data.objects);
             default:
                 return null;
         }

@@ -33,7 +33,6 @@ public class BaseLandmark : ILocation {
     protected List<LANDMARK_TAG> _landmarkTags;
     protected StructureObj _landmarkObj;
     //protected List<IObject> _objects;
-    private bool _hasScheduledCombatCheck = false;
     private Dictionary<RESOURCE, int> _resourceInventory;
     private List<HexTile> _nextCorruptedTilesToCheck;
     private bool _hasBeenCorrupted;
@@ -361,7 +360,7 @@ public class BaseLandmark : ILocation {
          */
     public Character CreateNewCharacter(RACE raceOfChar, CHARACTER_ROLE charRole, string className, bool determineAction = true) {
         //RACE raceOfChar = GetRaceBasedOnProportion();
-        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar, Utilities.GetRandomGender(), _owner);
+        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar, Utilities.GetRandomGender(), CHARACTER_JOB.NONE, _owner);
         newCharacter.SetHome(this.tileLocation.areaOfTile);
         //if (reduceCivilians) {
         //    AdjustCivilians(raceOfChar, -1);
@@ -410,7 +409,7 @@ public class BaseLandmark : ILocation {
      Create a new character, given a character setup name.
          */
     public Character CreateNewCharacter(RACE raceOfChar, string setupName, bool reduceCivilians = true, bool determineAction = true) {
-        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(setupName, Utilities.GetRandomGender(), _owner);
+        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(setupName, Utilities.GetRandomGender(), CHARACTER_JOB.NONE, _owner);
         //newCharacter.AssignRole(charRole);
         //newCharacter.SetFaction(_owner);
         newCharacter.SetHome(this.tileLocation.areaOfTile);
@@ -513,252 +512,35 @@ public class BaseLandmark : ILocation {
             //}
         }
     }
-   // public int CharactersCount(bool includeHostile = false) {
-   //     int count = 0;
-   //     for (int i = 0; i < _charactersAtLocation.Count; i++) {
-			//if (includeHostile && this._owner != null) {
-			//	if(_charactersAtLocation[i].faction == null){
-			//		continue;
-			//	}else{
-			//		FactionRelationship fr = this._owner.GetRelationshipWith (_charactersAtLocation [i].faction);
-			//		if(fr != null && fr.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
-			//			continue;
-			//		}
-			//	}
-			//}
-   //         if (_charactersAtLocation[i] is Party) {
-   //             count += ((Party)_charactersAtLocation[i]).partyMembers.Count;
-   //         } else {
-   //             count += 1;
-   //         }
-   //     }
-   //     return count;
-   // }
+    // public int CharactersCount(bool includeHostile = false) {
+    //     int count = 0;
+    //     for (int i = 0; i < _charactersAtLocation.Count; i++) {
+    //if (includeHostile && this._owner != null) {
+    //	if(_charactersAtLocation[i].faction == null){
+    //		continue;
+    //	}else{
+    //		FactionRelationship fr = this._owner.GetRelationshipWith (_charactersAtLocation [i].faction);
+    //		if(fr != null && fr.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
+    //			continue;
+    //		}
+    //	}
+    //}
+    //         if (_charactersAtLocation[i] is Party) {
+    //             count += ((Party)_charactersAtLocation[i]).partyMembers.Count;
+    //         } else {
+    //             count += 1;
+    //         }
+    //     }
+    //     return count;
+    // }
     #endregion
 
     #region Combat
-    public void ScheduleCombatCheck() {
-        _hasScheduledCombatCheck = true;
-        Messenger.AddListener(Signals.HOUR_STARTED, CheckForCombat);
-    }
-    public void UnScheduleCombatCheck() {
-        _hasScheduledCombatCheck = false;
-        Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForCombat);
-    }
-    /*
-     Check this location for encounters, start if any.
-     Mechanics can be found at https://trello.com/c/PgK25YvC/837-encounter-mechanics.
-         */
-    public void CheckForCombat() {
-        //At the start of each day:
-        if (HasHostilities() && HasCombatInitializers()) {
-            ////1. Attacking characters will attempt to initiate combat:
-            //CheckAttackingGroupsCombat();
-            ////2. Patrolling characters will attempt to initiate combat:
-            //CheckPatrollingGroupsCombat();
-            PairUpCombats();
-        }
-        //3. Pillaging and Hunting characters will perform their daily action if they havent been engaged in combat
-        //4. Exploring and Stealing characters will perform their daily action if they havent been engaged in combat
-        //5. Resting and Hibernating characters will recover HP if they havent been engaged in combat
-        ContinueDailyActions();
-    }
-    public void PairUpCombats() {
-        List<Character> combatInitializers = GetCharactersByCombatPriority();
-        if (combatInitializers != null) {
-            for (int i = 0; i < combatInitializers.Count; i++) {
-                Character currInitializer = combatInitializers[i];
-                Debug.Log("Finding combat pair for " + currInitializer.name);
-                if (currInitializer.isInCombat) {
-                    continue; //this current group is already in combat, skip it
-                }
-                //- If there are hostile parties in combat stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
-                List<Character> combatGroups = new List<Character>(GetGroupsBasedOnStance(STANCE.COMBAT, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
-                if (combatGroups.Count > 0) {
-                    Character chosenEnemy = combatGroups[Random.Range(0, combatGroups.Count)];
-                    StartCombatBetween(currInitializer, chosenEnemy);
-                    continue; //the attacking group has found an enemy! skip to the next group
-                }
-
-                //Otherwise, if there are hostile parties in neutral stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
-                List<Character> neutralGroups = new List<Character>(GetGroupsBasedOnStance(STANCE.NEUTRAL, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
-                if (neutralGroups.Count > 0) {
-                    Character chosenEnemy = neutralGroups[Random.Range(0, neutralGroups.Count)];
-                    StartCombatBetween(currInitializer, chosenEnemy);
-                    continue; //the attacking group has found an enemy! skip to the next group
-                }
-
-                //- Otherwise, if there are hostile parties in stealthy stance who are not engaged in combat, the attacking character will attempt to initiate combat with one of them at random.
-                List<Character> stealthGroups = new List<Character>(GetGroupsBasedOnStance(STANCE.STEALTHY, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
-                if (stealthGroups.Count > 0) {
-                    //The chance of initiating combat is 35%
-                    if (Random.Range(0, 100) < 35) {
-                        Character chosenEnemy = stealthGroups[Random.Range(0, stealthGroups.Count)];
-                        StartCombatBetween(currInitializer, chosenEnemy);
-                        continue; //the attacking group has found an enemy! skip to the next group
-                    }
-                }
-            }
-        }
-    }
-    public List<Character> GetCharactersByCombatPriority() {
-        //if (_charactersAtLocation.Count <= 0) {
-        //    return null;
-        //}
-        //return _charactersAtLocation.Where(x => x.currentAction.combatPriority > 0).OrderByDescending(x => x.currentAction.combatPriority).ToList();
-        return null;
-    }
-    public bool HasCombatInitializers() {
-        //for (int i = 0; i < _charactersAtLocation.Count; i++) {
-        //    IParty currChar = _charactersAtLocation[i];
-            //if (currChar.currentAction != null && currChar.currentAction.combatPriority > 0) {
-            //    return true;
-            //}
-        //}
-        return false;
-    }
-    public bool HasHostilities() {
-        //for (int i = 0; i < _charactersAtLocation.Count; i++) {
-        //    ICharacter currItem = _charactersAtLocation[i];
-        //    for (int j = 0; j < _charactersAtLocation.Count; j++) {
-        //        ICharacter otherItem = _charactersAtLocation[j];
-        //        if (currItem != otherItem) {
-        //            if (currItem.IsHostileWith(otherItem)) {
-        //                return true; //there are characters with hostilities
-        //            }
-        //        }
-        //    }
-        //}
-        return false;
-    }
     public bool HasHostileCharactersWith(Character character) {
-        //for (int i = 0; i < _charactersAtLocation.Count; i++) {
-        //    Character currItem = _charactersAtLocation[i];
-        //    if (currItem == character) {
-        //        continue; //skip
-        //    }
-        //    Faction factionOfItem = currItem.faction;
-        //    //if (currItem.icharacterType == ICHARACTER_TYPE.CHARACTER) {
-        //    //    factionOfItem = (currItem as Character).faction;
-        //    //} else if (currItem is Party) {
-        //    //    factionOfItem = (currItem as Party).faction;
-        //    //}
-        //    if (factionOfItem == null || character.faction == null) {
-        //        return true;
-        //    } else {
-        //        if (factionOfItem.id == character.faction.id) {
-        //            continue; //skip this item, since it has the same faction as the other faction
-        //        }
-        //        FactionRelationship rel = character.faction.GetRelationshipWith(factionOfItem);
-        //        if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
-        //            return true;
-        //        }
-        //    }
-        //}
-        return false;
-    }
-    public bool HasHostilitiesWith(Faction faction, bool withFactionOnly = false) {
-        if (faction == null) {
-            if(this.owner != null) {
-                return true; //the passed faction is null (factionless), if this landmark is owned, the factionless are considered as hostile
-            }
-        } else {
-            //the passed faction is not null, check if this landmark is owned
-            if(this.owner != null) {
-                //if this is owned, check if the 2 factions are not the same
-                if(faction.id != this.owner.id) {
-                    //if they are not the same, check if the relationship of the factions are hostile
-                    FactionRelationship rel = faction.GetRelationshipWith(this.owner);
-                    if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
-                        return true; //the passed faction is hostile with the owner of this landmark
-                    }
-                }
-            }
-        }
-        if (!withFactionOnly) {
-            //for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            //    Character currItem = _charactersAtLocation[i];
-            //    Faction factionOfItem = currItem.faction;
-            //    //if (currItem.icharacterType == ICHARACTER_TYPE.CHARACTER) {
-            //    //    factionOfItem = (currItem as Character).faction;
-            //    //} else if (currItem is Party) {
-            //    //    factionOfItem = (currItem as Party).faction;
-            //    //}
-            //    if (factionOfItem == null || faction == null) {
-            //        return true;
-            //    } else {
-            //        if (factionOfItem.id == faction.id) {
-            //            continue; //skip this item, since it has the same faction as the other faction
-            //        }
-            //        FactionRelationship rel = faction.GetRelationshipWith(factionOfItem);
-            //        if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
-            //            return true;
-            //        }
-            //    }
-            //}
+        if (_charactersAtLocation.Where(x => x is MonsterParty).Any()) {
+            return true;
         }
         return false;
-    }
-    public List<Character> GetGroupsBasedOnStance(STANCE stance, bool notInCombatOnly, Character except = null) {
-        List<Character> groups = new List<Character>();
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            //Character currGroup = _charactersAtLocation[i];
-            //if (notInCombatOnly) {
-            //    if (currGroup.isInCombat) {
-            //        continue; //skip
-            //    }
-            //}
-            //if (currGroup.GetCurrentStance() == stance) {
-            //    if (except != null && currGroup == except) {
-            //        continue; //skip
-            //    }
-            //    groups.Add(currGroup);
-            //}
-        }
-        return groups;
-    }
-    public void StartCombatBetween(Character combatant1, Character combatant2) {
-        Combat combat = new Combat();
-        combatant1.SetIsInCombat(true);
-        combatant2.SetIsInCombat(true);
-        string combatant1Name = combatant1.name;
-        string combatant2Name = combatant2.name;
-        combat.AddCharacter(SIDES.A, combatant1);
-        combat.AddCharacter(SIDES.B, combatant2);
-
-        //if (combatant1 is Party) {
-        //    combatant1Name = (combatant1 as Party).name;
-        //    combat.AddCharacters(SIDES.A, (combatant1 as Party).partyMembers);
-        //} else {
-        //    combatant1Name = (combatant1 as Character).name;
-        //    combat.AddCharacter(SIDES.A, combatant1 as Character);
-        //}
-        //if (combatant2 is Party) {
-        //    combatant2Name = (combatant2 as Party).name;
-        //    combat.AddCharacters(SIDES.B, (combatant2 as Party).partyMembers);
-        //} else {
-        //    combatant2Name = (combatant2 as Character).name;
-        //    combat.AddCharacter(SIDES.B, combatant2 as Character);
-        //}
-        Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "start_combat");
-        combatLog.AddToFillers(combatant1, combatant1Name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        combatLog.AddToFillers(combat, " fought with ", LOG_IDENTIFIER.COMBAT);
-        combatLog.AddToFillers(combatant2, combatant2Name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        AddHistory(combatLog);
-        combatant1.AddHistory(combatLog);
-        combatant2.AddHistory(combatLog);
-        Debug.Log("Starting combat between " + combatant1Name + " and  " + combatant2Name);
-
-        //this.specificLocation.SetCurrentCombat(combat);
-        MultiThreadPool.Instance.AddToThreadPool(combat);
-    }
-    public void ContinueDailyActions() {
-        //for (int i = 0; i < _charactersAtLocation.Count; i++) {
-        //    Character currItem = _charactersAtLocation[i];
-        //    if (!currItem.isInCombat) {
-        //        currItem.ContinueDailyAction();
-        //    }
-        //}
     }
     #endregion
 

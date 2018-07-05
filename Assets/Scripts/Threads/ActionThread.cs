@@ -39,17 +39,22 @@ public class ActionThread : Multithread {
     }
     #endregion
     private void LookForAction() {
-        if (!LookForActionFromQuests()) {
+        //if (!LookForActionFromQuests()) {
             LookForActionFromAdvertisements();
-        }
+        //}
     }
     private bool LookForActionFromQuests() {
-        if (_party.questData.Count > 0 && _party.mainCharacter.role != null && _party.mainCharacter.role.happiness >= 100) {
+        if (_party.questData.Count > 0 && _party.mainCharacter.role != null && _party.mainCharacter.role.happiness >= 1) {
             //when a character's happiness is 100 or above, he chooses randomly between his active quests and calls a function from it which should return an instruction of which next action to execute
-            CharacterQuestData chosenQuest = _party.questData[UnityEngine.Random.Range(0, _party.questData.Count)];
-            if (chosenQuest is ReleaseCharacterQuestData) {
-                (chosenQuest as ReleaseCharacterQuestData).UpdateVectorPath();
-            }
+            int randomIndex = Utilities.rng.Next(0, _party.questData.Count);
+            CharacterQuestData chosenQuest = _party.questData[randomIndex];
+            //if (chosenQuest is ReleaseCharacterQuestData) {
+            //    ReleaseCharacterQuestData data = chosenQuest as ReleaseCharacterQuestData;
+            //    data.UpdateVectorPath();
+            //    while (data.isWaitingForPath) {
+            //        //wait until path has completed computation
+            //    }
+            //}
             chosenAction = chosenQuest.GetNextQuestAction();
             if (chosenAction != null) {
                 return true;
@@ -81,14 +86,14 @@ public class ActionThread : Multithread {
         if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _party.id) {
             Debug.Log(actionLog);
         }
-#if UNITY_EDITOR
-        _party.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + " " + actionLog);
-#endif
+//#if UNITY_EDITOR
+//        _party.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + " " + actionLog);
+//#endif
         chosenAction = PickAction();
-#if UNITY_EDITOR
-        _party.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + 
-            " Chosen action: " + chosenAction.actionType.ToString() + " at " + chosenAction.state.obj.objectLocation.landmarkName + "(" + chosenAction.state.obj.objectLocation.tileLocation.tileName + ")");
-#endif
+        //#if UNITY_EDITOR
+        //_party.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + 
+        //    " Chosen action: " + chosenAction.actionType.ToString() + " at " + chosenAction.state.obj.objectLocation.landmarkName + "(" + chosenAction.state.obj.objectLocation.tileLocation.tileName + ")");
+        //#endif
 
         //Check Prerequisites, currently for resource prerequisites only
         //CheckPrerequisites(chosenAction);

@@ -59,12 +59,14 @@ public class LandmarkObject : MonoBehaviour {
         (portrait.transform as RectTransform).sizeDelta = new Vector2(65, 65);
         portrait.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
         portrait.gameObject.SetActive(true);
-        iparty.icon.gameObject.SetActive(false);
+        //iparty.icon.gameObject.SetActive(false);
+        iparty.icon.SetVisualState(false);
     }
     public void OnCharacterExitedLandmark(IParty iparty) {
         //remove character portrait from grid
         iparty.icon.ReclaimPortrait();
-        iparty.icon.gameObject.SetActive(true);
+        //iparty.icon.gameObject.SetActive(true);
+        iparty.icon.SetVisualState(true);
     }
     public void DrawPathTo(BaseLandmark otherLandmark) {
         if (destinationSetter.target != otherLandmark.tileLocation.transform) {

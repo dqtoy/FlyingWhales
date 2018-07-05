@@ -15,4 +15,8 @@ public class CharacterQuestData {
     public CharacterAction GetNextQuestAction() {
         return _parentQuest.GetQuestAction(_owner, this);
     }
+
+    #region virtuals
+    public virtual IEnumerator SetupValuesCoroutine() { yield return null; }
+    #endregion
 }

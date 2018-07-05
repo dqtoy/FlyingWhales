@@ -35,9 +35,6 @@ public class MustBeRole : ActionFilter {
             if (_allowedRoles.Contains(character.role.roleType)) {
                 return true;
             }
-            if (character.role is Civilian && _allowedRoles.Contains(CHARACTER_ROLE.CIVILIAN)) {
-                return true;
-            }
         }
         return false;
     }
@@ -59,6 +56,48 @@ public class MustNotBeRole : ActionFilter {
             return true;
         }
         return false;
+    }
+}
+public class MustBeJob : ActionFilter {
+
+    private List<CHARACTER_JOB> _allowedJobs;
+
+    public MustBeJob(List<ACTION_FILTER> allowedJobs) {
+        _allowedJobs = new List<CHARACTER_JOB>();
+        for (int i = 0; i < allowedJobs.Count; i++) {
+            ACTION_FILTER currFilter = allowedJobs[i];
+            CHARACTER_JOB job = (CHARACTER_JOB)Enum.Parse(typeof(CHARACTER_JOB), currFilter.ToString());
+            _allowedJobs.Add(job);
+        }
+    }
+    public override bool MeetsRequirements(ECS.Character character, BaseLandmark landmark) {
+        if (character.role != null && character.role.job != null) {
+            if (_allowedJobs.Contains(character.role.job.jobType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+public class MustNotBeJob : ActionFilter {
+
+    private List<CHARACTER_JOB> _unallowedJobs;
+
+    public MustNotBeJob(List<ACTION_FILTER> unallowedJobs) {
+        _unallowedJobs = new List<CHARACTER_JOB>();
+        for (int i = 0; i < unallowedJobs.Count; i++) {
+            ACTION_FILTER currFilter = unallowedJobs[i];
+            CHARACTER_JOB job = (CHARACTER_JOB)Enum.Parse(typeof(CHARACTER_JOB), currFilter.ToString());
+            _unallowedJobs.Add(job);
+        }
+    }
+    public override bool MeetsRequirements(ECS.Character character, BaseLandmark landmark) {
+        if (character.role != null && character.role.job != null) {
+            if (_unallowedJobs.Contains(character.role.job.jobType)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 #endregion

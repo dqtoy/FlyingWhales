@@ -871,6 +871,7 @@ public enum CHARACTER_CLASS {
     WARRIOR,
 }
 public enum CHARACTER_JOB {
+    NONE,
     SHOPKEEPER,
     MINER,
     WOODCUTTER,
@@ -1305,6 +1306,7 @@ public enum NEEDS {
 public enum ACTION_FILTER_TYPE {
     ROLE,
     LOCATION,
+    JOB,
 }
 public enum ACTION_FILTER_CONDITION {
     IS,
