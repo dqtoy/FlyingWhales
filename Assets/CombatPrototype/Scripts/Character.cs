@@ -165,6 +165,9 @@ namespace ECS {
         public HexTile currLocation {
             get { return (_party.specificLocation != null ? _party.specificLocation.tileLocation : null); }
         }
+        public ILocation specificLocation {
+            get { return (_party.specificLocation != null ? _party.specificLocation : null); }
+        }
         //public Region currentRegion {
         //    get { return _party.currentRegion; }
         //}
@@ -2531,12 +2534,12 @@ namespace ECS {
         private void TriggerBargain(ECS.Character bargainingFor) {
             List<CharacterDialogChoice> dialogChoices = new List<CharacterDialogChoice>();
             CharacterDialogChoice killYourselfChoice = new CharacterDialogChoice("Kill yourself!", () => this.Death());
-            List<Character> otherCharacters = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => x.characterObject.currentState.stateName != "Imprisoned"));
+            List<Character> otherCharacters = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => x.party.characterObject.currentState.stateName != "Imprisoned"));
             otherCharacters.Remove(this);
             dialogChoices.Add(killYourselfChoice);
             if (otherCharacters.Count > 0) {
                 ECS.Character characterToAttack = otherCharacters[UnityEngine.Random.Range(0, otherCharacters.Count)];
-                CharacterDialogChoice attackCharacterChoice = new CharacterDialogChoice("Attack " + characterToAttack.name, () => actionData.AssignAction(characterToAttack.characterObject.currentState.GetAction(ACTION_TYPE.ATTACK)));
+                CharacterDialogChoice attackCharacterChoice = new CharacterDialogChoice("Attack " + characterToAttack.name, () => party.actionData.AssignAction(party.characterObject.currentState.GetAction(ACTION_TYPE.ATTACK)));
                 dialogChoices.Add(attackCharacterChoice);
             }
 

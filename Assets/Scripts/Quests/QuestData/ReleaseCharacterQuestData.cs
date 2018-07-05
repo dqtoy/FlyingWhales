@@ -21,7 +21,7 @@ public class ReleaseCharacterQuestData : CharacterQuestData {
     }
 
     public void UpdateVectorPath() { //TODO: Change this to somehow get the path of immediately
-        PathfindingManager.Instance.GetPath(_owner.specificLocation.tileLocation, targetCharacter.specificLocation.tileLocation, OnVectorPathComputed);
+        PathfindingManager.Instance.GetPath(_owner.currLocation, targetCharacter.currLocation, OnVectorPathComputed);
     }
     private void OnVectorPathComputed(List<Vector3> path) {
         vectorPathToTarget = path;

@@ -58,11 +58,17 @@ public class NewParty : IParty {
     public StructureObj homeStructure {
         get { return _icharacters[0].homeStructure; }
     }
+    public ICharacter mainCharacter {
+        get { return _icharacters[0]; }
+    }
     public ICharacterObject icharacterObject {
         get { return _icharacterObject; }
     }
     public ILocation specificLocation {
         get { return GetSpecificLocation(); }
+    }
+    public List<CharacterQuestData> questData {
+        get { return GetQuestData(); }
     }
     #endregion
 
@@ -133,6 +139,15 @@ public class NewParty : IParty {
     }
     public void GoHome() {
         GoToLocation(_icharacters[0].homeStructure.objectLocation, PATHFINDING_MODE.USE_ROADS);
+    }
+    #endregion
+
+    #region Quests
+    private List<CharacterQuestData> GetQuestData() {
+        if (_icharacters.Count > 0 && _icharacters[0] is ECS.Character) {
+            return (_icharacters[0] as ECS.Character).questData;
+        }
+        return null;
     }
     #endregion
 

@@ -44,9 +44,9 @@ public class ActionThread : Multithread {
         }
     }
     private bool LookForActionFromQuests() {
-        if (_character.questData.Count > 0 && _character.role != null && _character.role.happiness >= 100) {
+        if (_party.questData.Count > 0 && _party.mainCharacter.role != null && _party.mainCharacter.role.happiness >= 100) {
             //when a character's happiness is 100 or above, he chooses randomly between his active quests and calls a function from it which should return an instruction of which next action to execute
-            CharacterQuestData chosenQuest = _character.questData[UnityEngine.Random.Range(0, _character.questData.Count)];
+            CharacterQuestData chosenQuest = _party.questData[UnityEngine.Random.Range(0, _party.questData.Count)];
             if (chosenQuest is ReleaseCharacterQuestData) {
                 (chosenQuest as ReleaseCharacterQuestData).UpdateVectorPath();
             }
