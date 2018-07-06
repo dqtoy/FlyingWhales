@@ -16,7 +16,7 @@ public class CharacterIcon : MonoBehaviour {
     [SerializeField] private AIDestinationSetter _destinationSetter;
     [SerializeField] private LineRenderer lineRenderer;
     [SerializeField] private Seeker seeker;
-    [SerializeField] private EdgeCollider2D edgeCollider;
+    //[SerializeField] private EdgeCollider2D edgeCollider;
     [SerializeField] private CharacterPathfinder _pathfinder;
 
     public CharacterPortrait characterPortrait { get; private set; }
@@ -54,6 +54,8 @@ public class CharacterIcon : MonoBehaviour {
         normalScale = _avatarGO.transform.localScale;
         //UpdateColor();
         this.name = _iparty.icharacters[0].name + "'s Icon";
+        //edgeCollider.gameObject.name =  _iparty.icharacters[0].name + "'s Edge Collider";
+        pathfinder.gameObject.name = _iparty.icharacters[0].name + "'s Pathfinder";
         _isIdle = true;
         //if (_character.role != null) {
         //    _avatarSprite.sprite = CharacterManager.Instance.GetSpriteByRole(_character.role.roleType);
@@ -153,25 +155,16 @@ public class CharacterIcon : MonoBehaviour {
 
     #region Utilities
     public void GetVectorPath(HexTile target, Action<List<Vector3>> onPathCalculated) {
+        pathfinder.transform.position = aiPath.transform.position;
+        //edgeCollider.transform.position = aiPath.transform.position;
         pathfinder.CalculatePath(target, onPathCalculated);
     }
     public List<HexTile> ConvertToTilePath(List<Vector3> vectorPath) {
-        Vector2[] colliderPoints = new Vector2[vectorPath.Count];
-        for (int i = 0; i < vectorPath.Count; i++) {
-            colliderPoints[i] = vectorPath[i];
-        }
-        edgeCollider.offset = new Vector2(vectorPath[0].x * -1f, vectorPath[0].y * -1f);
-        edgeCollider.points = colliderPoints;
-
-        Collider2D[] collisions = new Collider2D[50];
-        ContactFilter2D contactFilter = new ContactFilter2D();
-        contactFilter.SetLayerMask(LayerMask.GetMask("Hextiles"));
-        int numOfCollisions = edgeCollider.OverlapCollider(contactFilter, collisions);
         List<HexTile> tilePath = new List<HexTile>();
-        for (int i = 0; i < numOfCollisions; i++) {
-            Debug.Log(collisions[i].gameObject.name);
-            HexTile tile = collisions[i].gameObject.GetComponent<HexTile>();
-            if (tile != null) {
+        for (int i = 0; i < vectorPath.Count; i++) {
+            Collider2D collide = Physics2D.OverlapCircle(vectorPath[i], 0.1f, LayerMask.GetMask("Hextiles"));
+            HexTile tile = collide.transform.gameObject.GetComponent<HexTile>();
+            if (tile != null && !tilePath.Contains(tile)) {
                 tilePath.Add(tile);
             }
         }

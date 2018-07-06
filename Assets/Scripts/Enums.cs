@@ -876,6 +876,7 @@ public enum CHARACTER_JOB {
     MINER,
     WOODCUTTER,
     FARMER,
+    RETIRED_HERO
 }
 public enum CHARACTER_PRODUCTION_CAP {
     CITY_COUNT,
@@ -1279,6 +1280,8 @@ public enum ACTION_TYPE {
     GO_HOME,
     RELEASE,
     CLEANSE,
+    ENROLL,
+    TRAIN,
 }
 
 public enum OBJECT_TYPE {

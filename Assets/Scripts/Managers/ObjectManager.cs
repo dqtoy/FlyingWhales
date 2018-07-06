@@ -275,6 +275,10 @@ public class ObjectManager : MonoBehaviour {
                 return new ReleaseAction(state);
             case ACTION_TYPE.CLEANSE:
                 return new CleanseAction(state);
+            case ACTION_TYPE.ENROLL:
+                return new EnrollAction(state);
+            case ACTION_TYPE.TRAIN:
+                return new TrainAction(state);
 
         }
         return null;

@@ -61,6 +61,7 @@ public class CharacterInfoUI : UIMenu {
         Messenger.AddListener(Signals.UPDATE_UI, UpdateCharacterInfo);
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         Messenger.AddListener<BaseLandmark>(Signals.PLAYER_LANDMARK_CREATED, OnPlayerLandmarkCreated);
+        Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         logHistoryItems = new LogHistoryItem[MAX_HISTORY_LOGS];
         //populate history logs table
         for (int i = 0; i < MAX_HISTORY_LOGS; i++) {
@@ -91,10 +92,14 @@ public class CharacterInfoUI : UIMenu {
     }
     #endregion
 
-    public override void SetData(object data) {
-        if (_data != null) {
-            Character previousCharacter = _data as Character;
+    private void OnCharacterDied(ECS.Character deadCharacter) {
+        if (isShowing && currentlyShowingCharacter != null && currentlyShowingCharacter.id == deadCharacter.id) {
+            SetData(null);
+            CloseMenu();
         }
+    }
+
+    public override void SetData(object data) {
         base.SetData(data);
         if (isShowing) {
             UpdateCharacterInfo();
@@ -126,6 +131,9 @@ public class CharacterInfoUI : UIMenu {
         }
         if (currentlyShowingCharacter.role != null) {
             text += "\n<b>Role: </b>" + currentlyShowingCharacter.role.roleType.ToString();
+            if (currentlyShowingCharacter.role.job != null) {
+                text += "\n<b>Job: </b>" + currentlyShowingCharacter.role.job.jobType.ToString();
+            }
         }
 
         text += "\n<b>Faction: </b>" + (currentlyShowingCharacter.faction != null ? currentlyShowingCharacter.faction.urlName : "NONE");

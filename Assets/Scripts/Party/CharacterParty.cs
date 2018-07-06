@@ -29,17 +29,26 @@ public class CharacterParty : NewParty {
         _isIdle = false;
         _actionData = new ActionData(this);
 #if !WORLD_CREATION_TOOL
-        _characterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.CHARACTER, "CharacterObject") as CharacterObj;
-        _characterObj.SetCharacter(this);
-        _icharacterObject = _characterObj;
         Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
         //ConstructResourceInventory();
 #endif
     }
 
+    public void CreateCharacterObject() {
+#if !WORLD_CREATION_TOOL
+        if (mainCharacter.role.job != null && mainCharacter.role.job.jobType == CHARACTER_JOB.RETIRED_HERO) {
+            _characterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.CHARACTER, "RetiredHeroObject") as CharacterObj;
+        } else {
+            _characterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.CHARACTER, "CharacterObject") as CharacterObj;
+        }
+        _characterObj.SetCharacter(this);
+        _icharacterObject = _characterObj;
+#endif
+    }
+
    
 
-    #region Utilities
+#region Utilities
     private void EverydayAction() {
         if (!_isIdle) {
             if (onDailyAction != null) {
@@ -66,10 +75,10 @@ public class CharacterParty : NewParty {
         }
         return true;
     }
-    #endregion
+#endregion
 
 
-    #region Overrides
+#region Overrides
     public override void PartyDeath() {
         base.PartyDeath();
         Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
@@ -86,6 +95,8 @@ public class CharacterParty : NewParty {
         _icon = characterIconGO.GetComponent<CharacterIcon>();
         _icon.SetCharacter(this);
         PathfindingManager.Instance.AddAgent(_icon.aiPath);
+        PathfindingManager.Instance.AddAgent(_icon.pathfinder);
+
     }
-    #endregion
+#endregion
 }

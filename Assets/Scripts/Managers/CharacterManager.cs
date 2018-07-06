@@ -296,42 +296,6 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Traits
-    // internal Trait CreateNewTraitForCitizen(TRAIT traitType, Citizen citizen) {
-    //     Trait createdTrait = null;
-    //     switch (traitType) {
-    //         case TRAIT.OPPORTUNIST:
-    //             createdTrait = JsonUtility.FromJson<Opportunist>(traitDictionary[traitType]);
-    //             break; 
-    //         case TRAIT.DECEITFUL:
-    //             createdTrait = JsonUtility.FromJson<Deceitful>(traitDictionary[traitType]);
-    //             break; 
-    //         case TRAIT.IMPERIALIST:
-    //             createdTrait = JsonUtility.FromJson<Imperialist>(traitDictionary[traitType]);
-    //             break; 
-    //         case TRAIT.HOSTILE:
-    //             createdTrait = JsonUtility.FromJson<Hostile>(traitDictionary[traitType]);
-    //             break;
-    //         case TRAIT.PACIFIST:
-    //             createdTrait = JsonUtility.FromJson<Pacifist>(traitDictionary[traitType]);
-    //             break;
-    //         case TRAIT.SCHEMING:
-    //             createdTrait = JsonUtility.FromJson<Scheming>(traitDictionary[traitType]);
-    //             break;
-    //         case TRAIT.DIPLOMATIC:
-    //             createdTrait = JsonUtility.FromJson<Diplomatic>(traitDictionary[traitType]);
-    //             break;
-    //         case TRAIT.BENEVOLENT:
-    //             createdTrait = JsonUtility.FromJson<Benevolent>(traitDictionary[traitType]);
-    //             break;
-    //case TRAIT.RUTHLESS:
-    //	createdTrait = JsonUtility.FromJson<Ruthless>(traitDictionary[traitType]);
-    //	break;
-    //     }
-    //     if(citizen != null && createdTrait != null) {
-    //         createdTrait.AssignCitizen(citizen);
-    //     }
-    //     return createdTrait;
-    // }
     internal Trait CreateNewTraitForCharacter(TRAIT traitType, ECS.Character character) {
         if(traitDictionary == null) {
             ConstructTraitDictionary();
@@ -430,7 +394,6 @@ public class CharacterManager : MonoBehaviour {
         }
         return null;
     }
-
     public void ResetTraitSetup() {
         traitSetup.Clear();
         TRAIT[] allTraits = Utilities.GetEnumValues<TRAIT>();
@@ -545,40 +508,6 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Utilities
-    //public void EquipCharacterWithBestGear(Settlement village, ECS.Character character) {
-    //    //MATERIAL matForArmor = village.GetMaterialFor(PRODUCTION_TYPE.ARMOR);
-    //    //MATERIAL matForWeapon = village.GetMaterialFor(PRODUCTION_TYPE.WEAPON);
-    //    //EquipCharacterWithBestAvailableArmor(character, matForArmor, village);
-    //    //EquipCharacterWithBestAvailableWeapon(character, matForWeapon, village);
-    //}
-    //private void EquipCharacterWithBestAvailableArmor(ECS.Character character, MATERIAL material, Settlement village) {
-    //    foreach (ARMOR_TYPE armorType in ItemManager.Instance.armorTypeData.Keys) {
-    //        TECHNOLOGY neededTech = Utilities.GetTechnologyForEquipment((EQUIPMENT_TYPE)armorType);
-    //        if (village.HasTechnology(neededTech)) {
-    //            string armorName = Utilities.NormalizeString(material.ToString()) + " " + Utilities.NormalizeString(armorType.ToString());
-    //            int armorQuantityToCreate = 1;
-    //            if (armorType == ARMOR_TYPE.BOOT || armorType == ARMOR_TYPE.BRACER) {
-    //                armorQuantityToCreate = 2; //Create a pair of boots or bracer
-    //            }
-    //            for (int i = 0; i < armorQuantityToCreate; i++) {
-    //                ECS.Item item = ItemManager.Instance.CreateNewItemInstance(armorName);
-    //                character.EquipItem(item);
-    //            }
-    //        }
-    //    }
-    //}
-    //private void EquipCharacterWithBestAvailableWeapon(ECS.Character character, MATERIAL material, Settlement village) {
-    //    for (int i = 0; i < character.characterClass.allowedWeaponTypes.Count; i++) {
-    //        WEAPON_TYPE weaponType = character.characterClass.allowedWeaponTypes[i];
-    //        TECHNOLOGY neededTech = Utilities.GetTechnologyForEquipment((EQUIPMENT_TYPE)weaponType);
-    //        if (village.HasTechnology(neededTech)) {
-    //            string weaponName = Utilities.NormalizeString(material.ToString()) + " " + Utilities.NormalizeString(weaponType.ToString());
-    //            ECS.Item item = ItemManager.Instance.CreateNewItemInstance(weaponName);
-    //            character.EquipItem(item);
-    //            break;
-    //        }
-    //    }
-    //}
     public Character GetCharacterByID(int id) {
         for (int i = 0; i < _allCharacters.Count; i++) {
             Character currChar = _allCharacters[i];
@@ -618,10 +547,32 @@ public class CharacterManager : MonoBehaviour {
             //CharacterManager.Instance.EquipCharacterWithBestGear(chosenSettlement, newChar);
         }
     }
+    public List<string> GetNonCivilianClasses() {
+        return classesDictionary.Keys.Where(x => x != "Civilian").ToList();
+    }
+    public List<Character> GetCharactersWithJob(CHARACTER_JOB job) {
+        List<Character> characters = new List<Character>();
+        for (int i = 0; i < allCharacters.Count; i++) {
+            Character currChar = allCharacters[i];
+            if (currChar.role.job != null && currChar.role.job.jobType == job) {
+                characters.Add(currChar);
+            }
+        }
+        return characters;
+    }
+    public bool HasCharacterWithJob(CHARACTER_JOB job) {
+        for (int i = 0; i < allCharacters.Count; i++) {
+            Character currChar = allCharacters[i];
+            if (currChar.role.job != null && currChar.role.job.jobType == job) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
-	#region Avatars
-	public Sprite GetSpriteByRole(CHARACTER_ROLE role){
+    #region Avatars
+    public Sprite GetSpriteByRole(CHARACTER_ROLE role){
 		switch(role){
 		case CHARACTER_ROLE.HERO:
 			return heroSprite;

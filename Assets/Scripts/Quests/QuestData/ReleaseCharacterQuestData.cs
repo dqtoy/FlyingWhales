@@ -15,7 +15,7 @@ public class ReleaseCharacterQuestData : CharacterQuestData {
     public float requiredPower { get; private set; }
     public Gain_Power_Type gainPowerType { get; private set; }
     public List<Vector3> vectorPathToTarget { get; private set; }
-    public List<HexTile> tilePathToTarget { get { return _owner.party.icon.ConvertToTilePath(vectorPathToTarget); } }
+    public List<HexTile> tilePathToTarget { get; private set; }
 
     public bool isWaitingForPath { get { return _owner.party.icon.pathfinder.isWaitingForPathCalculation; } }
 
@@ -29,12 +29,17 @@ public class ReleaseCharacterQuestData : CharacterQuestData {
 
     #region overrides
     public override IEnumerator SetupValuesCoroutine() {
-        Debug.Log(_owner.name + " setting up values for release character quest");
+        //Debug.Log(_owner.name + " setting up values for release character quest");
         UpdateVectorPath();
         while (isWaitingForPath) {
             yield return null;
         }
-        Debug.Log(_owner.name + " done setting up values for release character quest");
+        tilePathToTarget =  _owner.party.icon.ConvertToTilePath(vectorPathToTarget);
+        //for (int i = 0; i < tilePathToTarget.Count; i++) {
+        //    tilePathToTarget[i].HighlightTile(Color.gray, 128f/255f);
+        //    yield return null;
+        //}
+        //Debug.Log(_owner.name + " done setting up values for release character quest");
     }
     #endregion
 

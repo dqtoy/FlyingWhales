@@ -1547,33 +1547,9 @@ namespace ECS {
                 wasRoleChanged = true;
             }
 			switch (role) {
-		        //case CHARACTER_ROLE.CHIEFTAIN:
-			       // _role = new Chieftain(this);
-			       // break;
-		        //case CHARACTER_ROLE.VILLAGE_HEAD:
-			       // _role = new VillageHead(this);
-			       // break;
-		        //case CHARACTER_ROLE.WARLORD:
-			       // _role = new Warlord(this);
-			       // break;
 		        case CHARACTER_ROLE.HERO:
 			        _role = new Hero(this);
 			        break;
-          //      case CHARACTER_ROLE.WORKER:
-          //          _role = new Worker(this);
-          //          break;
-		        //case CHARACTER_ROLE.TAMED_BEAST:
-			       // _role = new TamedBeast(this);
-			       // break;
-          //      case CHARACTER_ROLE.ANCIENT_VAMPIRE:
-          //          _role = new AncientVampire(this);
-          //          break;
-		        //case CHARACTER_ROLE.CRATER_BEAST:
-			       // _role = new CraterBeast(this);
-			       // break;
-		        //case CHARACTER_ROLE.SLYX:
-			       // _role = new Slyx(this);
-			       // break;
 		        case CHARACTER_ROLE.VILLAIN:
 			        _role = new Villain(this);
 			        break;
@@ -1583,30 +1559,6 @@ namespace ECS {
                 case CHARACTER_ROLE.KING:
                     _role = new King(this);
                     break;
-                //case CHARACTER_ROLE.SHOPKEEPER:
-                //    _role = new Shopkeeper(this);
-                //    break;
-                //case CHARACTER_ROLE.MINER:
-                //    _role = new Miner(this);
-                //    break;
-                //case CHARACTER_ROLE.WOODCUTTER:
-                //    _role = new Woodcutter(this);
-                //    break;
-                //case CHARACTER_ROLE.FARMER:
-                //    _role = new Farmer(this);
-                //    break;
-                //case CHARACTER_ROLE.FOLLOWER:
-                //    _role = new Follower(this);
-                //    break;
-                //case CHARACTER_ROLE.HERMIT:
-                //    _role = new Hermit(this);
-                //    break;
-                //case CHARACTER_ROLE.BANDIT:
-                //    _role = new Bandit(this);
-                //    break;
-                //case CHARACTER_ROLE.BEAST:
-                //    _role = new Beast(this);
-                //    break;
                 default:
 		            break;
 			}
@@ -2014,6 +1966,7 @@ namespace ECS {
             }
             CharacterParty newParty = new CharacterParty();
             newParty.AddCharacter(this);
+            newParty.CreateCharacterObject();
             return newParty;
         }
 		public void SetParty(IParty party) {
@@ -2479,19 +2432,19 @@ namespace ECS {
          Other character reaction would depend on their relationship, happiness and traits.
              */
         private void OnCharacterSnatched(ECS.Character otherCharacter) {
-            if (otherCharacter.id != this.id) {
+            if (otherCharacter.id != this.id && this.party.characterObject.currentState.stateName != "Imprisoned") {
                 if (relationships.ContainsKey(otherCharacter)) { //if this character has a relationship with the one that was snatched
                     Debug.Log(this.name + " will react to " + otherCharacter.name + " being snatched!");
                     //For now make all characters that have relationship with the snatched character, react.
-                    //if (UnityEngine.Random.Range(0, 2) == 0) {
+                    if (UnityEngine.Random.Range(0, 2) == 0) {
                         //obtain release character questline
                         Debug.Log(this.name + " decided to release " + otherCharacter.name + " by himself");
                         QuestManager.Instance.TakeQuest(QUEST_TYPE.RELEASE_CHARACTER, this, otherCharacter);
-                    //} else {
-                    //    //bargain with player
-                    //    Debug.Log(this.name + " will bargain for " + otherCharacter.name + "'s freedom!");
-                    //    TriggerBargain(otherCharacter);
-                    //}
+                    } else {
+                        //bargain with player
+                        Debug.Log(this.name + " will bargain for " + otherCharacter.name + "'s freedom!");
+                        TriggerBargain(otherCharacter);
+                    }
                 }
             }
         }

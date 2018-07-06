@@ -193,12 +193,12 @@ public class ActionData {
 
     private void LookForAction() {
         isWaiting = true;
-        //GameManager.Instance.StartCoroutine(LookForActionCoroutine());
+        GameManager.Instance.StartCoroutine(LookForActionCoroutine());
         //for (int i = 0; i < _party.questData.Count; i++) {
         //    CharacterQuestData questData = _party.questData[i];
         //    GameManager.Instance.StartCoroutine(questData.SetupValuesCoroutine());
         //}
-        MultiThreadPool.Instance.AddToThreadPool(actionThread);
+        //MultiThreadPool.Instance.AddToThreadPool(actionThread);
     }
 
     private IEnumerator LookForActionCoroutine() {
@@ -207,7 +207,7 @@ public class ActionData {
             yield return GameManager.Instance.StartCoroutine(questData.SetupValuesCoroutine());
         }
         MultiThreadPool.Instance.AddToThreadPool(actionThread);
-        Debug.Log(_party.mainCharacter.name + " Look For action coroutine done!");
+        //Debug.Log(_party.mainCharacter.name + " Look For action coroutine done!");
     }
 
     //Checks if the character has already done an action in his home settlement

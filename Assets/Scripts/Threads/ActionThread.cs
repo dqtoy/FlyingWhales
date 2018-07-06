@@ -39,12 +39,12 @@ public class ActionThread : Multithread {
     }
     #endregion
     private void LookForAction() {
-        //if (!LookForActionFromQuests()) {
+        if (!LookForActionFromQuests()) {
             LookForActionFromAdvertisements();
-        //}
+        }
     }
     private bool LookForActionFromQuests() {
-        if (_party.questData.Count > 0 && _party.mainCharacter.role != null && _party.mainCharacter.role.happiness >= 1) {
+        if (_party.questData.Count > 0 && _party.mainCharacter.role != null && _party.mainCharacter.role.happiness >= 100) {
             //when a character's happiness is 100 or above, he chooses randomly between his active quests and calls a function from it which should return an instruction of which next action to execute
             int randomIndex = Utilities.rng.Next(0, _party.questData.Count);
             CharacterQuestData chosenQuest = _party.questData[randomIndex];

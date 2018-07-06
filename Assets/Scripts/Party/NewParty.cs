@@ -90,6 +90,7 @@ public class NewParty : IParty {
     #region Virtuals
     public virtual void CreateIcon() { }
     public virtual void PartyDeath() {
+        this.specificLocation.RemoveCharacterFromLocation(this);
         Messenger.RemoveListener<ActionThread>("LookForAction", AdvertiseSelf);
         ObjectState deadState = _icharacterObject.GetState("Dead");
         _icharacterObject.ChangeState(deadState);

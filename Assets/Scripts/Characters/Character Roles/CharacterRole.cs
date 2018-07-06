@@ -589,6 +589,9 @@ public class CharacterRole {
             case CHARACTER_JOB.FARMER:
                 _job = new Farmer(this);
                 break;
+            case CHARACTER_JOB.RETIRED_HERO:
+                _job = new RetiredHero(this);
+                break;
             default:
                 _job = null;
                 break;

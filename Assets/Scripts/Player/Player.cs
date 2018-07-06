@@ -50,6 +50,7 @@ public class Player : ILeader{
         Area playerArea = LandmarkManager.Instance.CreateNewArea(chosenCoreTile, AREA_TYPE.DEMONIC_INTRUSION);
         BaseLandmark demonicPortal = LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenCoreTile, LANDMARK_TYPE.DEMONIC_PORTAL);
         SetPlayerArea(playerArea);
+        OnTileAddedToPlayerArea(playerArea, chosenCoreTile);
     }
     private void SetPlayerArea(Area area) {
         playerArea = area;

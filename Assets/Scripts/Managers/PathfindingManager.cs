@@ -42,11 +42,16 @@ public class PathfindingManager : MonoBehaviour {
     }
     public void LoadSettings(byte[] bytes) {
         AstarPath.active.data.DeserializeGraphs(bytes);
-        //mainGraph = AstarPath.active.graphs[0] as GridGraph;
+        if (AstarPath.active.graphs.Length > 0) {
+            mainGraph = AstarPath.active.graphs[0] as GridGraph;
+        }
+        
         //RescanGrid();
     }
     public void ClearGraphs() {
-        aStarPath.data.RemoveGraph(mainGraph);
+        if (mainGraph != null) {
+            aStarPath.data.RemoveGraph(mainGraph);
+        }
     }
     public void RescanGrid() {
         AstarPath.active.Scan(mainGraph);

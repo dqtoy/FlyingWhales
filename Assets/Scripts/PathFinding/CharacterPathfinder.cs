@@ -18,12 +18,14 @@ public class CharacterPathfinder : AIPath {
         isWaitingForPathCalculation = true;
 
         destinationSetter.target = destination.transform;
-        SearchPath();
+        //Debug.Log("Calculating path to " + destination.name);
+        UpdateMe();
         this.maxSpeed = 0f;
     }
 
     #region overrides
     protected override void OnPathComplete(Path newPath) {
+        //Debug.Log("Done computing path. Result is " + newPath.vectorPath.Count.ToString());
         base.OnPathComplete(newPath);
         if (onPathCalculated != null) {
             computedPath = newPath.vectorPath;
@@ -32,25 +34,25 @@ public class CharacterPathfinder : AIPath {
         }
         isWaitingForPathCalculation = false;
     }
-    public override void SearchPath() {
-        if (float.IsPositiveInfinity(destination.x)) return;
-        if (onSearchPath != null) onSearchPath();
+    //public override void SearchPath() {
+    //    if (float.IsPositiveInfinity(destination.x)) return;
+    //    if (onSearchPath != null) onSearchPath();
 
-        lastRepath = Time.time;
-        waitingForPathCalculation = true;
+    //    lastRepath = Time.time;
+    //    waitingForPathCalculation = true;
 
-        seeker.CancelCurrentPathRequest();
+    //    seeker.CancelCurrentPathRequest();
 
-        Vector3 start, end;
-        CalculatePathRequestEndpoints(out start, out end);
+    //    Vector3 start, end;
+    //    CalculatePathRequestEndpoints(out start, out end);
 
-        // Alternative way of requesting the path
-        //ABPath p = ABPath.Construct(start, end, null);
-        //seeker.StartPath(p);
+    //    // Alternative way of requesting the path
+    //    //ABPath p = ABPath.Construct(start, end, null);
+    //    //seeker.StartPath(p);
 
-        // This is where we should search to
-        // Request a path to be calculated from our current position to the destination
-        seeker.StartPath(start, end);
-    }
+    //    // This is where we should search to
+    //    // Request a path to be calculated from our current position to the destination
+    //    seeker.StartPath(start, end);
+    //}
     #endregion
 }

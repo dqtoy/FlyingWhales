@@ -23,7 +23,33 @@ public class ReleaseCharacterQuest : Quest {
                 return questData.targetCharacter.party.characterObject.currentState.GetAction(ACTION_TYPE.RELEASE);
             }
         }
+
+        //if (character.role == null || character.role.roleType == CHARACTER_ROLE.CIVILIAN) { //if character is a Civilian, Change Role to Hero, randomize class
+        //    character.AssignRole(CHARACTER_ROLE.HERO);
+        //    List<string> choices = CharacterManager.Instance.GetNonCivilianClasses();
+        //    string chosenClass = choices[Random.Range(0, choices.Count)];
+        //    character.AssignClass(CharacterManager.Instance.classesDictionary[chosenClass].CreateNewCopy());
+        //}
+
+        ////if character is a Hero, and Gain Power Type is None, check which Gain Power Type options are available
+        //if (character.role.roleType == CHARACTER_ROLE.HERO && questData.gainPowerType == ReleaseCharacterQuestData.Gain_Power_Type.None) {
+        //    List<ReleaseCharacterQuestData.Gain_Power_Type> availablePowerSources = new List<ReleaseCharacterQuestData.Gain_Power_Type>();
+        //    //- if there is a Retired Hero from non-hostile Factions with no negative relationship to the character, Mentor is available
+        //    if (CharacterManager.Instance.HasCharacterWithJob(CHARACTER_JOB.RETIRED_HERO)) { //TODO: Add faction relationship checking
+
+        //    }
+        //    //- if there is a Shop from non-hostile settlements, Equipment is available
+
+        //    // - if there is at least one Dungeon type area in the region, Hunt is available
+        //    //- randomize between available options and set it as Gain Power Type
+        //}
         return base.GetQuestAction(character,data);
     }
     #endregion
+
+    private List<Character> GetElligibleMentors() {
+        List<Character> elligibleMentors = new List<Character>();
+
+        return elligibleMentors;
+    }
 }
