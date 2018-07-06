@@ -47,7 +47,7 @@ public class Monster : ICharacter {
 
     #region getters/setters
     public string name {
-        get { return _name; }
+        get { return "[" + _id + "]" + _name; }
     }
     public string urlName {
         get { return "<link=" + '"' + this._id.ToString() + "_monster" + '"' + ">" + this._name + "</link>"; }

@@ -38,7 +38,7 @@ public class PartyInfoUI : UIMenu {
             return;
         }
         string text = string.Empty;
-		if(currentlyShowingParty.icharacters.Count > 0){
+		if(!currentlyShowingParty.isDead){
             text += "<b>Name:</b> " + currentlyShowingParty.name;
             text += "\n<b>Characters:</b>";
             for (int i = 0; i < currentlyShowingParty.icharacters.Count; i++) {

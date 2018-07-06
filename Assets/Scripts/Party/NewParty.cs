@@ -8,6 +8,7 @@ using ECS;
 public class NewParty : IParty {
     protected int _id;
     protected int _numOfAttackers;
+    protected bool _isDead;
     protected List<ICharacter> _icharacters;
     protected Region _currentRegion;
     protected CharacterIcon _icon;
@@ -41,6 +42,9 @@ public class NewParty : IParty {
     }
     public float computedPower {
         get { return _icharacters.Sum(x => x.computedPower); }
+    }
+    public bool isDead {
+        get { return _isDead; }
     }
     public List<ICharacter> icharacters {
         get { return _icharacters; }
@@ -80,6 +84,7 @@ public class NewParty : IParty {
 
     public NewParty() {
         _id = Utilities.SetID(this);
+        _isDead = false;
         _icharacters = new List<ICharacter>();
 #if !WORLD_CREATION_TOOL
         Messenger.AddListener<ActionThread>("LookForAction", AdvertiseSelf);
@@ -90,6 +95,7 @@ public class NewParty : IParty {
     #region Virtuals
     public virtual void CreateIcon() { }
     public virtual void PartyDeath() {
+        _isDead = true;
         this.specificLocation.RemoveCharacterFromLocation(this);
         Messenger.RemoveListener<ActionThread>("LookForAction", AdvertiseSelf);
         ObjectState deadState = _icharacterObject.GetState("Dead");

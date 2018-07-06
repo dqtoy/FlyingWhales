@@ -75,9 +75,6 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
                     return;
                 }
             }
-            if (_character.isDead) {
-                return;
-            }
             IParty iparty = _character.iparty;
             if(iparty.icharacters.Count > 1) {
                 UIManager.Instance.ShowPartyInfo(iparty as NewParty);
