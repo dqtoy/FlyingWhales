@@ -12,4 +12,12 @@ public class DaydreamAction : CharacterAction {
 
         _actionData.duration = 48;
     }
+
+    #region Overrides
+    public override void PerformAction(CharacterParty party, IObject targetObject) {
+        base.PerformAction(party, targetObject);
+        ActionSuccess(targetObject);
+        GiveAllReward(party);
+    }
+    #endregion
 }

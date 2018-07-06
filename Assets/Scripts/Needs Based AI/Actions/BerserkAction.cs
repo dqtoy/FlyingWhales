@@ -12,4 +12,19 @@ public class BerserkAction : CharacterAction {
 
         _actionData.duration = 48;
     }
+
+    #region Overrides
+    public override void PerformAction(CharacterParty party, IObject targetObject) {
+        base.PerformAction(party, targetObject);
+        ActionSuccess(targetObject);
+        GiveAllReward(party);
+        if(party.icharacters[0].currentCombat != null) {
+
+        }
+    }
+    #endregion
+
+    private void FindCombat() {
+
+    }
 }
