@@ -98,6 +98,15 @@ public class Monster : ICharacter {
     public int experienceDrop {
         get { return _experienceDrop; }
     }
+    public int pFinalAttack {
+        get { return attackPower; }
+    }
+    public int mFinalAttack {
+        get { return attackPower; }
+    }
+    public int speed {
+        get { return agility + level; }
+    }
     public float critChance {
         get { return _critChance; }
     }
