@@ -165,6 +165,8 @@ public class CharacterInfoUI : UIMenu {
             text += "\n<b>Happiness: </b>" + currentlyShowingCharacter.role.happiness;
         }
         text += "\n<b>Computed Power: </b>" + currentlyShowingCharacter.computedPower;
+        text += "\n<b>P Final Attack: </b>" + currentlyShowingCharacter.pFinalAttack;
+        text += "\n<b>M Final Attack: </b>" + currentlyShowingCharacter.mFinalAttack;
         generalInfoLbl.text = text;
 
     }
