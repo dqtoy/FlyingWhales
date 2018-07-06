@@ -210,7 +210,7 @@ public class UIManager : MonoBehaviour {
             onPauseEventExpiration(true);
         }
     }
-    private void Unpause() {
+    public void Unpause() {
         GameManager.Instance.SetPausedState(false);
         if (onPauseEventExpiration != null) {
             onPauseEventExpiration(false);

@@ -213,4 +213,11 @@ public class Relationship {
     //	}
     //	return null;
     //}
+
+    public bool IsNegative() {
+        if (HasStatus(CHARACTER_RELATIONSHIP.ENEMY) || HasStatus(CHARACTER_RELATIONSHIP.RIVAL)) {
+            return true;
+        }
+        return false;
+    }
 }

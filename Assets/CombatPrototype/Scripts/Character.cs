@@ -2467,7 +2467,9 @@ namespace ECS {
             dialogChoices.Add(killYourselfChoice);
             if (otherCharacters.Count > 0) {
                 ECS.Character characterToAttack = otherCharacters[UnityEngine.Random.Range(0, otherCharacters.Count)];
-                CharacterDialogChoice attackCharacterChoice = new CharacterDialogChoice("Attack " + characterToAttack.name, () => party.actionData.AssignAction(party.characterObject.currentState.GetAction(ACTION_TYPE.ATTACK), party.characterObject));
+                CharacterDialogChoice attackCharacterChoice = new CharacterDialogChoice("Attack " + characterToAttack.name, 
+                    () => party.actionData.ForceDoAction(characterToAttack.party.characterObject.currentState.GetAction(ACTION_TYPE.ATTACK)
+                    , characterToAttack.party.characterObject));
                 dialogChoices.Add(attackCharacterChoice);
             }
 

@@ -15,6 +15,8 @@ public class Civilian : CharacterRole {
         SetSanity(100);
         UpdateSafety();
         UpdateHappiness();
+
+        _character.onDailyAction += StartDepletion;
     }
 
     #region Overrides
@@ -36,5 +38,13 @@ public class Civilian : CharacterRole {
         if(structure == _character.homeStructure && state.stateName == "Ruined") {
             _character.LookForNewHomeStructure();
         }
+    }
+
+    private void StartDepletion() {
+        DepleteFullness();
+        DepleteEnergy();
+        DepleteFun();
+        DepleteSanity();
+        DepletePrestige();
     }
 }
