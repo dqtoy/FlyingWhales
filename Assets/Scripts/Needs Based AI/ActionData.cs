@@ -67,6 +67,9 @@ public class ActionData {
         AssignAction(characterAction, targetObject, chainAction);
     }
     public void AssignAction(CharacterAction action, IObject targetObject, ChainAction chainAction = null) {
+        if (_party.isDead) {
+            return;
+        }
         Reset();
         if (chainAction != null) {
             action = chainAction.action;
