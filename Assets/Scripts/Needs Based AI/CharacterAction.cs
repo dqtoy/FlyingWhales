@@ -5,7 +5,7 @@ using ECS;
 
 [System.Serializable]
 public class CharacterAction {
-    protected ObjectState _state;
+    //protected ObjectState _state;
     protected ActionFilter[] _filters;
     protected bool _needsSpecificTarget;
     [SerializeField] protected CharacterActionData _actionData;
@@ -17,9 +17,9 @@ public class CharacterAction {
     public ActionFilter[] filters {
         get { return _filters; }
     }
-    public ObjectState state {
-        get { return _state; }
-    }
+    //public ObjectState state {
+    //    get { return _state; }
+    //}
     public CharacterActionData actionData {
         get { return _actionData; }
     }
@@ -28,8 +28,8 @@ public class CharacterAction {
     }
     #endregion
 
-    public CharacterAction(ObjectState state, ACTION_TYPE actionType) {
-        _state = state;
+    public CharacterAction(ACTION_TYPE actionType) {
+        //_state = state;
         _needsSpecificTarget = false;
         _actionData.actionType = actionType;
         _actionData.actionName = Utilities.NormalizeStringUpperCaseFirstLetters(actionType.ToString());
@@ -37,12 +37,12 @@ public class CharacterAction {
 
     #region Virtuals
     public virtual void Initialize() {}
-    public virtual void OnChooseAction(IParty iparty) {}
-    public virtual void OnFirstEncounter(CharacterParty party) {
-        if(state.obj.objectLocation != null) {
+    public virtual void OnChooseAction(IParty iparty, IObject targetObject) {}
+    public virtual void OnFirstEncounter(CharacterParty party, IObject targetObject) {
+        if(targetObject.objectLocation != null) {
             Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
             arriveLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            arriveLog.AddToFillers(state.obj.objectLocation, state.obj.objectLocation.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+            arriveLog.AddToFillers(targetObject.objectLocation, targetObject.objectLocation.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
             arriveLog.AddToFillers(null, GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
             for (int i = 0; i < party.icharacters.Count; i++) {
                 party.icharacters[i].AddHistory(arriveLog);
@@ -50,7 +50,7 @@ public class CharacterAction {
         } else {
             Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
             arriveLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            arriveLog.AddToFillers(state.obj.specificLocation.tileLocation, state.obj.specificLocation.tileLocation.tileName, LOG_IDENTIFIER.LANDMARK_1);
+            arriveLog.AddToFillers(targetObject.specificLocation.tileLocation, targetObject.specificLocation.tileLocation.tileName, LOG_IDENTIFIER.LANDMARK_1);
             arriveLog.AddToFillers(null, GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
             for (int i = 0; i < party.icharacters.Count; i++) {
                 party.icharacters[i].AddHistory(arriveLog);
@@ -58,33 +58,33 @@ public class CharacterAction {
         }
 
     }
-    public virtual void PerformAction(CharacterParty party) {}
-    public virtual void ActionSuccess() {
+    public virtual void PerformAction(CharacterParty party, IObject targetObject) {}
+    public virtual void ActionSuccess(IObject targetObject) {
         if (_actionData.successFunction != null) {
-            _actionData.successFunction.Invoke(_state.obj);
+            _actionData.successFunction.Invoke(targetObject);
         }
     }
-    public virtual void ActionFail() {
+    public virtual void ActionFail(IObject targetObject) {
         if (_actionData.failFunction != null) {
-            _actionData.failFunction.Invoke(_state.obj);
+            _actionData.failFunction.Invoke(targetObject);
         }
     }
-    public virtual CharacterAction Clone(ObjectState state) {
-        CharacterAction clone = new CharacterAction(state, actionType);
+    public virtual CharacterAction Clone() {
+        CharacterAction clone = new CharacterAction(actionType);
         SetCommonData(clone);
         clone.Initialize();
         return clone;
     }
-    public virtual bool CanBeDone() {
+    public virtual bool CanBeDone(IObject targetObject) {
         return true;
     }
-    public virtual bool CanBeDoneBy(CharacterParty party) {
+    public virtual bool CanBeDoneBy(CharacterParty party, IObject targetObject) {
         return true;
     }
-    public virtual void EndAction(CharacterParty party) {
+    public virtual void EndAction(CharacterParty party, IObject targetObject) {
         party.actionData.EndAction();
     }
-    public virtual void DoneDuration(CharacterParty party) { }
+    public virtual void DoneDuration(CharacterParty party, IObject targetObject) { }
     public virtual void SuccessEndAction(CharacterParty party) { }
     #endregion
 
@@ -110,9 +110,9 @@ public class CharacterAction {
     public void SetActionData(CharacterActionData data) {
         _actionData = data;
     }
-    public void SetObjectState(ObjectState state) {
-        _state = state;
-    }
+    //public void SetObjectState(ObjectState state) {
+    //    _state = state;
+    //}
     public void GenerateName() {
         _actionData.actionName = Utilities.NormalizeStringUpperCaseFirstLetters(actionType.ToString());
     }

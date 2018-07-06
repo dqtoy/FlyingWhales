@@ -37,8 +37,6 @@ public class CharacterParty : NewParty {
 #endif
     }
 
-   
-
     #region Utilities
     private void EverydayAction() {
         if (!_isIdle) {
@@ -54,8 +52,8 @@ public class CharacterParty : NewParty {
     public void SetIsIdle(bool state) {
         _isIdle = state;
     }
-    public float TotalHappinessIncrease(CharacterAction action) {
-        return _icharacters.Sum(x => x.role.GetTotalHappinessIncrease(action));
+    public float TotalHappinessIncrease(CharacterAction action, IObject targetObject) {
+        return _icharacters.Sum(x => x.role.GetTotalHappinessIncrease(action, targetObject));
     }
     public bool IsFull(NEEDS need) {
         for (int i = 0; i < _icharacters.Count; i++) {
@@ -65,6 +63,14 @@ public class CharacterParty : NewParty {
             }
         }
         return true;
+    }
+    public void AssignRandomDesperateAction() {
+        CharacterAction action = _icharacters[0].GetRandomDesperateAction();
+        actionData.AssignAction(action, characterObject);
+    }
+    public void AssignRandomIdleAction() {
+        CharacterAction action = _icharacters[0].GetRandomIdleAction();
+        actionData.AssignAction(action, characterObject);
     }
     #endregion
 

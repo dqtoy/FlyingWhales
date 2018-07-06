@@ -38,6 +38,8 @@ public interface ICharacter {
     Dictionary<ELEMENT, float> elementalResistances { get; }
     List<Skill> skills { get; }
     List<BodyPart> bodyParts { get; }
+    List<CharacterAction> desperateActions { get; }
+    List<CharacterAction> idleActions { get; }
     PortraitSettings portraitSettings { get; }
     IParty iparty { get; }
 
@@ -60,4 +62,6 @@ public interface ICharacter {
     int GetPDef(ICharacter enemy);
     int GetMDef(ICharacter enemy);
     CharacterTag AssignTag(CHARACTER_TAG tag); //Character only
+    CharacterAction GetRandomDesperateAction();
+    CharacterAction GetRandomIdleAction();
 }

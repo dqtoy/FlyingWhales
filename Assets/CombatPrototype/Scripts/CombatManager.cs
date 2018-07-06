@@ -399,7 +399,7 @@ namespace ECS {
                         if (isActionSucess) {
                             party.actionData.currentAction.SuccessEndAction(party);
                         }
-                        party.actionData.currentAction.EndAction(party);
+                        party.actionData.currentAction.EndAction(party, party.actionData.currentTargetObject);
                     }
                 }
             }

@@ -4,58 +4,71 @@ using UnityEngine;
 using ECS;
 
 public class RepairAction : CharacterAction {
-    private int _amountToIncrease;
-    private int _resourceAmountToDecrease;
-    private StructureObj _structure;
+    //private int _amountToIncrease;
+    //private int _resourceAmountToDecrease;
+    //private StructureObj _structure;
 
-    #region getters/setters
-    private RESOURCE _resourceNeeded {
-        get {
-            if(_actionData.resourceNeeded == RESOURCE.NONE) {
-                return _structure.madeOf;
-            }
-            return _actionData.resourceNeeded;
-        }
-    }
-    #endregion
+    //#region getters/setters
+    //private RESOURCE _resourceNeeded {
+    //    get {
+    //        if(_actionData.resourceNeeded == RESOURCE.NONE) {
+    //            return _structure.madeOf;
+    //        }
+    //        return _actionData.resourceNeeded;
+    //    }
+    //}
+    //#endregion
 
-    public RepairAction(ObjectState state) : base(state, ACTION_TYPE.REPAIR) {
+    public RepairAction() : base(ACTION_TYPE.REPAIR) {
     }
 
     #region Overrides
-    public override void Initialize() {
-        base.Initialize();
-        if (state.obj is StructureObj) {
-            _structure = state.obj as StructureObj;
-        }
-        if (_amountToIncrease == 0) {
-            _amountToIncrease = Mathf.RoundToInt((float) _structure.maxHP / (float) _actionData.duration);
-        }
-        if (_resourceAmountToDecrease == 0) {
-            _resourceAmountToDecrease = Mathf.RoundToInt((float) _actionData.resourceAmountNeeded / (float) _actionData.duration);
-        }
-    }
-    public override void PerformAction(CharacterParty party) {
-        base.PerformAction(party);
-        GiveAllReward(party);
+    //public override void Initialize() {
+    //    base.Initialize();
+    //    if (state.obj is StructureObj) {
+    //        _structure = state.obj as StructureObj;
+    //    }
+    //    if (_amountToIncrease == 0) {
+    //        _amountToIncrease = Mathf.RoundToInt((float) _structure.maxHP / (float) _actionData.duration);
+    //    }
+    //    if (_resourceAmountToDecrease == 0) {
+    //        _resourceAmountToDecrease = Mathf.RoundToInt((float) _actionData.resourceAmountNeeded / (float) _actionData.duration);
+    //    }
+    //}
+    public override void PerformAction(CharacterParty party, IObject targetObject) {
+        base.PerformAction(party, targetObject);
+        if(targetObject is StructureObj) {
+            StructureObj structure = targetObject as StructureObj;
+            int resourceAmountToDecrease = Mathf.RoundToInt((float) _actionData.resourceAmountNeeded / (float) _actionData.duration);
+            int amountToIncrease = Mathf.RoundToInt((float) structure.maxHP / (float) _actionData.duration);
+            RESOURCE resourceNeeded = structure.madeOf;
+            if(_actionData.resourceNeeded != RESOURCE.NONE) {
+                resourceNeeded = _actionData.resourceNeeded;
+            }
+            GiveAllReward(party);
 
-        (party.characterObject as CharacterObj).AdjustResource(_resourceNeeded, _resourceAmountToDecrease);
-        _structure.AdjustHP(_amountToIncrease);
-        if (_structure.isHPFull || (party.characterObject as CharacterObj).resourceInventory[_resourceNeeded] < _resourceAmountToDecrease) {
-            EndAction(party);
+            (party.characterObject as CharacterObj).AdjustResource(resourceNeeded, resourceAmountToDecrease);
+            structure.AdjustHP(amountToIncrease);
+            if (structure.isHPFull || (party.characterObject as CharacterObj).resourceInventory[resourceNeeded] < resourceAmountToDecrease) {
+                EndAction(party, structure);
+            }
         }
+        
     }
-    public override CharacterAction Clone(ObjectState state) {
-        RepairAction repairAction = new RepairAction(state);
+    public override CharacterAction Clone() {
+        RepairAction repairAction = new RepairAction();
         SetCommonData(repairAction);
         repairAction.Initialize();
         return repairAction;
     }
-    public override bool CanBeDone() {
-        if (_structure.isHPFull) {
-            return false;
+    public override bool CanBeDone(IObject targetObject) {
+        if(targetObject is StructureObj) {
+            StructureObj structure = targetObject as StructureObj;
+            if (structure.isHPFull) {
+                return false;
+            }
         }
-        return base.CanBeDone();
+        return base.CanBeDone(targetObject);
     }
     #endregion
 }

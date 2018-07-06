@@ -21,15 +21,15 @@ public class CharacterClick : MonoBehaviour {
         if (UIManager.Instance.characterInfoUI.isWaitingForAttackTarget) {
             CharacterAction action = icon.iparty.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
             AttackAction attackAction = action as AttackAction;
-            if (attackAction.CanBeDoneByTesting(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party)) { //TODO: Change this checker to relationship status checking instead of just faction
-                UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party.actionData.AssignAction(attackAction);
+            if (attackAction.CanBeDoneByTesting(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party, icon.iparty.icharacterObject)) { //TODO: Change this checker to relationship status checking instead of just faction
+                UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party.actionData.AssignAction(attackAction, icon.iparty.icharacterObject);
                 UIManager.Instance.characterInfoUI.SetAttackButtonState(false);
                 return;
             }
         }else if (UIManager.Instance.characterInfoUI.isWaitingForJoinBattleTarget) {
             CharacterAction joinBattleAction = icon.iparty.icharacterObject.currentState.GetAction(ACTION_TYPE.JOIN_BATTLE);
-            if (joinBattleAction.CanBeDone() && joinBattleAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party)) { //TODO: Change this checker to relationship status checking instead of just faction
-                UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party.actionData.AssignAction(joinBattleAction);
+            if (joinBattleAction.CanBeDone(icon.iparty.icharacterObject) && joinBattleAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party, icon.iparty.icharacterObject)) { //TODO: Change this checker to relationship status checking instead of just faction
+                UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party.actionData.AssignAction(joinBattleAction, icon.iparty.icharacterObject);
                 UIManager.Instance.characterInfoUI.SetJoinBattleButtonState(false);
                 return;
             }
@@ -48,10 +48,10 @@ public class CharacterClick : MonoBehaviour {
         if (icon.iparty is CharacterParty) {
             CharacterParty thisParty = icon.iparty as CharacterParty;
             if (thisParty.actionData.currentAction != null) {
-                if (other.tag == "Character" && thisParty.actionData.currentAction.actionType == ACTION_TYPE.ATTACK) {
-                    AttackAction attackAction = thisParty.actionData.currentAction as AttackAction;
+                if (other.tag == "Character" && thisParty.actionData.currentAction.actionType == ACTION_TYPE.ATTACK && thisParty.actionData.currentTargetObject is ICharacterObject) {
+                    ICharacterObject icharacterObject = thisParty.actionData.currentTargetObject as ICharacterObject;
                     CharacterIcon enemy = other.GetComponent<CharacterClick>().icon;
-                    if (attackAction.icharacterObj.iparty.id == enemy.iparty.id) {//attackAction.icharacterObj.iparty == enemy.iparty.icharacterType && 
+                    if (icharacterObject.iparty.id == enemy.iparty.id) {//attackAction.icharacterObj.iparty == enemy.iparty.icharacterType && 
                         thisParty.actionData.DoAction();
                     }
                 }

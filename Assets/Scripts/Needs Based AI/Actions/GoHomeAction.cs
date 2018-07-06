@@ -4,26 +4,26 @@ using UnityEngine;
 using ECS;
 
 public class GoHomeAction : CharacterAction {
-    public GoHomeAction(ObjectState state) : base(state, ACTION_TYPE.GO_HOME) {
+    public GoHomeAction() : base(ACTION_TYPE.GO_HOME) {
 
     }
     #region Overrides
-    public override void PerformAction(CharacterParty party) {
-        base.PerformAction(party);
-        ActionSuccess();
+    public override void PerformAction(CharacterParty party, IObject targetObject) {
+        base.PerformAction(party, targetObject);
+        ActionSuccess(targetObject);
         GiveAllReward(party);
     }
-    public override CharacterAction Clone(ObjectState state) {
-        GoHomeAction goHomeAction = new GoHomeAction(state);
+    public override CharacterAction Clone() {
+        GoHomeAction goHomeAction = new GoHomeAction();
         SetCommonData(goHomeAction);
         goHomeAction.Initialize();
         return goHomeAction;
     }
-    public override bool CanBeDoneBy(CharacterParty party) {
-        if (party.home == null || _state.obj.objectLocation.tileLocation.areaOfTile.id != party.home.id) {
+    public override bool CanBeDoneBy(CharacterParty party, IObject targetObject) {
+        if (party.home == null || targetObject.objectLocation.tileLocation.areaOfTile.id != party.home.id) {
             return false;
         }
-        return base.CanBeDoneBy(party);
+        return base.CanBeDoneBy(party, targetObject);
     }
     #endregion
 }

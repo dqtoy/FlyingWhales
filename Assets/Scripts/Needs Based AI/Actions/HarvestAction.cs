@@ -4,28 +4,28 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class HarvestAction : CharacterAction {
-    private StructureObj _structure;
+    //private StructureObj _structure;
 
-    public HarvestAction(ObjectState state) : base(state, ACTION_TYPE.HARVEST) {
+    public HarvestAction() : base(ACTION_TYPE.HARVEST) {
        
     }
 
     #region Overrides
-    public override void Initialize() {
-        base.Initialize();
-        if (state.obj is StructureObj) {
-            _structure = state.obj as StructureObj;
-        }
-    }
-    public override void PerformAction(CharacterParty party) {
-        base.PerformAction(party);
+    //public override void Initialize() {
+    //    base.Initialize();
+    //    if (state.obj is StructureObj) {
+    //        _structure = state.obj as StructureObj;
+    //    }
+    //}
+    public override void PerformAction(CharacterParty party, IObject targetObject) {
+        base.PerformAction(party, targetObject);
 
         //give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige
         GiveAllReward(party);
 
         int resourceGiven = Random.Range(this.actionData.minResourceGiven, this.actionData.maxResourceGiven);
         party.characterObject.AdjustResource(this.actionData.resourceGiven, resourceGiven);
-        ActionSuccess();
+        ActionSuccess(targetObject);
         //int objectResourceAmount = _structure.resourceInventory[this.actionData.resourceGiven];
         //if (objectResourceAmount > 0 && !character.DoesSatisfiesPrerequisite(character.actionData.currentChainAction.prerequisite)) { //if object's resource count is still greater than 0 and character doesn't have the required resource amount yet
         //    int minResource = this.actionData.minResourceGiven;
@@ -47,8 +47,8 @@ public class HarvestAction : CharacterAction {
         //}
 
     }
-    public override CharacterAction Clone(ObjectState state) {
-        HarvestAction harvestAction = new HarvestAction(state);
+    public override CharacterAction Clone() {
+        HarvestAction harvestAction = new HarvestAction();
         SetCommonData(harvestAction);
         harvestAction.Initialize();
         return harvestAction;

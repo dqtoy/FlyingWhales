@@ -4,20 +4,20 @@ using UnityEngine;
 using ECS;
 
 public class EatAction : CharacterAction {
-    public EatAction(ObjectState state) : base(state, ACTION_TYPE.EAT) {
+    public EatAction() : base(ACTION_TYPE.EAT) {
 
     }
     #region Overrides
-    public override void PerformAction(CharacterParty party) {
-        base.PerformAction(party);
-        ActionSuccess();
+    public override void PerformAction(CharacterParty party, IObject targetObject) {
+        base.PerformAction(party, targetObject);
+        ActionSuccess(targetObject);
         GiveAllReward(party);
         if (party.IsFull(NEEDS.FULLNESS)) {
-            EndAction(party);
+            EndAction(party, targetObject);
         }
     }
-    public override CharacterAction Clone(ObjectState state) {
-        EatAction eatAction = new EatAction(state);
+    public override CharacterAction Clone() {
+        EatAction eatAction = new EatAction();
         SetCommonData(eatAction);
         eatAction.Initialize();
         return eatAction;

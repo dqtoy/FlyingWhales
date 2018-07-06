@@ -4,22 +4,22 @@ using UnityEngine;
 using ECS;
 
 public class DispelAction : CharacterAction {
-    public DispelAction(ObjectState state) : base(state, ACTION_TYPE.DISPEL) {
+    public DispelAction() : base(ACTION_TYPE.DISPEL) {
 
     }
     #region Overrides
-    public override void PerformAction(CharacterParty party) {
-        base.PerformAction(party);
-        ActionSuccess();
+    public override void PerformAction(CharacterParty party, IObject targetObject) {
+        base.PerformAction(party, targetObject);
+        ActionSuccess(targetObject);
         GiveAllReward(party);
         if (party.IsFull(NEEDS.FULLNESS)) {
-            EndAction(party);
+            EndAction(party, targetObject);
         }
     }
-    public override CharacterAction Clone(ObjectState state) {
-        EatAction eatAction = new EatAction(state);
-        SetCommonData(eatAction);
-        return eatAction;
+    public override CharacterAction Clone() {
+        DispelAction dispelAction = new DispelAction();
+        SetCommonData(dispelAction);
+        return dispelAction;
     }
     #endregion
 }

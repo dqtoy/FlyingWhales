@@ -6,6 +6,7 @@ using ECS;
 public class ActionData {
     private CharacterParty _party;
     public CharacterAction currentAction;
+    public IObject currentTargetObject;
     //public ChainAction currentChainAction;
     public object specificTarget;
     public int currentDay;
@@ -42,7 +43,6 @@ public class ActionData {
         _hasDoneActionAtHome = false;
         _isHalted = false;
 #if !WORLD_CREATION_TOOL
-        //Messenger.AddListener(Signals.HOUR_ENDED, PerformCurrentAction);
         SchedulingManager.Instance.AddEntry(GameManager.Instance.EndOfTheMonth(), () => CheckDoneActionHome());
 #endif
 #if UNITY_EDITOR
@@ -63,21 +63,22 @@ public class ActionData {
         specificTarget = target;
     }
 
-    public void ReturnActionFromThread(CharacterAction characterAction, ChainAction chainAction) {
-        AssignAction(characterAction, chainAction);
+    public void ReturnActionFromThread(CharacterAction characterAction, IObject targetObject, ChainAction chainAction) {
+        AssignAction(characterAction, targetObject, chainAction);
     }
-    public void AssignAction(CharacterAction action, ChainAction chainAction = null) {
+    public void AssignAction(CharacterAction action, IObject targetObject, ChainAction chainAction = null) {
         Reset();
         if (chainAction != null) {
             action = chainAction.action;
         }
         //this.currentChainAction = chainAction;
         SetCurrentAction(action);
+        SetCurrentTargetObject(targetObject);
         if (action == null) {
             throw new System.Exception("Action of " + _party.name + " is null!");
         }
-        action.OnChooseAction(_party);
-        _party.GoToLocation(action.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
+        action.OnChooseAction(_party, targetObject);
+        _party.GoToLocation(targetObject.specificLocation, PATHFINDING_MODE.USE_ROADS);
         //if (action.state.obj.icharacterType == ICHARACTER_TYPE.CHARACTERObj) {
         //    CharacterObj characterObj = action.state.obj as CharacterObj;
         //    _party.GoToLocation(characterObj.character.icon.gameObject, PATHFINDING_MODE.USE_ROADS);
@@ -85,8 +86,8 @@ public class ActionData {
         //    _party.GoToLocation(action.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
         //}
 
-        if (action.state.obj.objectType == OBJECT_TYPE.STRUCTURE) {
-            Area areaOfStructure = action.state.obj.objectLocation.tileLocation.areaOfTile;
+        if (targetObject.objectType == OBJECT_TYPE.STRUCTURE) {
+            Area areaOfStructure = targetObject.objectLocation.tileLocation.areaOfTile;
             if (areaOfStructure != null && _party.home != null && areaOfStructure.id == _party.home.id) {
                 _homeMultiplier = 1f;
                 _hasDoneActionAtHome = true;
@@ -106,6 +107,9 @@ public class ActionData {
     public void SetCurrentAction(CharacterAction action) {
         this.currentAction = action;
     }
+    public void SetCurrentTargetObject(IObject targetObject) {
+        this.currentTargetObject = targetObject;
+    }
     public void SetCurrentDay(int day) {
         this.currentDay = day;
     }
@@ -120,8 +124,8 @@ public class ActionData {
     private void AdjustCurrentDay(int amount) {
         this.currentDay += amount;
         if(this.currentDay >= currentAction.actionData.duration) {
-            currentAction.DoneDuration(_party);
-            currentAction.EndAction(_party);
+            currentAction.DoneDuration(_party, currentTargetObject);
+            currentAction.EndAction(_party, currentTargetObject);
         }
     }
     public void SetIsDone(bool state) {
@@ -135,26 +139,28 @@ public class ActionData {
                     return;
                 }
                 ILocation characterLocation = _party.specificLocation;
-                if (characterLocation != null && currentAction.state.obj.specificLocation != null && characterLocation.tileLocation.id == currentAction.state.obj.specificLocation.tileLocation.id) {
+                if (characterLocation != null && currentTargetObject.specificLocation != null && characterLocation.tileLocation.id == currentTargetObject.specificLocation.tileLocation.id) {
                     //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action
-                    if (currentAction.state.stateName != currentAction.state.obj.currentState.stateName) {
-                        CharacterAction newAction = currentAction.state.obj.currentState.GetActionInState(currentAction);
-                        if (newAction != null) {
-                            AssignAction(newAction);
-                        } else {
-                            currentAction.EndAction(_party);
-                            return;
-                        }
-                    }
-                    DoAction();
-                } else {
-                    if (currentAction.state.obj.specificLocation != null) {
-                        if (currentAction.actionType == ACTION_TYPE.ATTACK) {
-                            _party.GoToLocation(currentAction.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
+                    //if (currentAction.state.stateName != currentAction.state.obj.currentState.stateName) {
+                    CharacterAction newAction = currentTargetObject.currentState.GetActionInState(currentAction);
+                    if (newAction != null) {
+                        if(newAction != currentAction) {
+                            AssignAction(newAction, currentTargetObject);
                         }
                     } else {
-                        if(currentAction.state.obj.currentState.stateName == "Dead") { //if object is dead
-                            currentAction.EndAction(_party);
+                        currentAction.EndAction(_party, currentTargetObject);
+                        return;
+                    }
+                    //}
+                    DoAction();
+                } else {
+                    if (currentTargetObject.specificLocation != null) {
+                        if (currentAction.actionType == ACTION_TYPE.ATTACK) {
+                            _party.GoToLocation(currentTargetObject.specificLocation, PATHFINDING_MODE.USE_ROADS);
+                        }
+                    } else {
+                        if(currentTargetObject.currentState.stateName == "Dead") { //if object is dead
+                            currentAction.EndAction(_party, currentTargetObject);
                         }
                     }
                     
@@ -182,10 +188,10 @@ public class ActionData {
     }
     public void DoAction() {
         if (!_isNotFirstEncounter) {
-            currentAction.OnFirstEncounter(_party);
+            currentAction.OnFirstEncounter(_party, currentTargetObject);
             _isNotFirstEncounter = true;
         }
-        currentAction.PerformAction(_party);
+        currentAction.PerformAction(_party, currentTargetObject);
         if (currentAction.actionData.duration > 0) {
             AdjustCurrentDay(1);
         }
@@ -227,10 +233,10 @@ public class ActionData {
      NOTE: This is only for testing purposes!
      This will end the character's current action and assign the new action.
          */
-    public void ForceDoAction(CharacterAction newAction) {
+    public void ForceDoAction(CharacterAction newAction, IObject targetObject) {
         if (currentAction != null) {
             EndAction();
         }
-        AssignAction(newAction);
+        AssignAction(newAction, targetObject);
     }
 }

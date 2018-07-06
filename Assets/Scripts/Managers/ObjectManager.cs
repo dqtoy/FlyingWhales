@@ -113,11 +113,11 @@ public class ObjectManager : MonoBehaviour {
                 CharacterAction originalAction = state.actions[j];
                 ConstructActionFilters(originalAction);
                 originalAction.GenerateName();
-                CharacterAction action = CreateNewCharacterAction(originalAction.actionType, state);
+                CharacterAction action = CreateNewCharacterAction(originalAction.actionType);
                 originalAction.SetCommonData(action);
                 action.Initialize();
                 //action.SetFilters(originalAction.filters);
-                ConstructPrerequisites(action);
+                ConstructPrerequisites(action, iobject);
                 newActions.Add(action);
                 //originalAction = action;
             }
@@ -126,16 +126,16 @@ public class ObjectManager : MonoBehaviour {
         iobject.SetStates(objComp.states, false);
     }
 
-    private void ConstructPrerequisites(CharacterAction action) {
+    private void ConstructPrerequisites(CharacterAction action, IObject iobject) {
         if (action.actionData.resourceAmountNeeded > 0) {
             CharacterActionData copy = action.actionData;
             RESOURCE resourceType = action.actionData.resourceNeeded;
             if(resourceType == RESOURCE.NONE) {
-                if (action.state.obj.objectType == OBJECT_TYPE.STRUCTURE) {
-                    resourceType = (action.state.obj as StructureObj).madeOf;
+                if (iobject.objectType == OBJECT_TYPE.STRUCTURE) {
+                    resourceType = (iobject as StructureObj).madeOf;
                 }
             }
-            ResourcePrerequisite resourcePrerequisite = new ResourcePrerequisite(resourceType, action.actionData.resourceAmountNeeded, action);
+            ResourcePrerequisite resourcePrerequisite = new ResourcePrerequisite(resourceType, action.actionData.resourceAmountNeeded, action, iobject);
             copy.prerequisites = new List<IPrerequisite>() { resourcePrerequisite };
             action.SetActionData(copy);
         }
@@ -235,46 +235,50 @@ public class ObjectManager : MonoBehaviour {
         throw new System.Exception("Object with the name " + objectName + " does not exist!");
     }
 
-    public CharacterAction CreateNewCharacterAction(ACTION_TYPE actionType, ObjectState state) {
+    public CharacterAction CreateNewCharacterAction(ACTION_TYPE actionType) {
         switch (actionType) {
             //case ACTION_TYPE.BUILD:
             //return new BuildAction(state);
             case ACTION_TYPE.DESTROY:
-                return new DestroyAction(state);
+                return new DestroyAction();
             case ACTION_TYPE.REST:
-                return new RestAction(state);
+                return new RestAction();
             case ACTION_TYPE.HUNT:
-                return new HuntAction(state);
+                return new HuntAction();
             case ACTION_TYPE.EAT:
-                return new EatAction(state);
+                return new EatAction();
             case ACTION_TYPE.DRINK:
-                return new DrinkAction(state);
+                return new DrinkAction();
             case ACTION_TYPE.IDLE:
-                return new IdleAction(state);
+                return new IdleAction();
             case ACTION_TYPE.POPULATE:
-                return new PopulateAction(state);
+                return new PopulateAction();
             case ACTION_TYPE.HARVEST:
-                return new HarvestAction(state);
+                return new HarvestAction();
             case ACTION_TYPE.TORTURE:
-                return new TortureAction(state);
+                return new TortureAction();
             case ACTION_TYPE.PATROL:
-                return new PatrolAction(state);
+                return new PatrolAction();
             case ACTION_TYPE.REPAIR:
-                return new RepairAction(state);
+                return new RepairAction();
             case ACTION_TYPE.ABDUCT:
-                return new AbductAction(state);
+                return new AbductAction();
             case ACTION_TYPE.PRAY:
-                return new PrayAction(state);
+                return new PrayAction();
             case ACTION_TYPE.ATTACK:
-                return new AttackAction(state);
+                return new AttackAction();
             case ACTION_TYPE.JOIN_BATTLE:
-                return new JoinBattleAction(state);
+                return new JoinBattleAction();
             case ACTION_TYPE.GO_HOME:
-                return new GoHomeAction(state);
+                return new GoHomeAction();
             case ACTION_TYPE.RELEASE:
-                return new ReleaseAction(state);
+                return new ReleaseAction();
             case ACTION_TYPE.CLEANSE:
-                return new CleanseAction(state);
+                return new CleanseAction();
+            case ACTION_TYPE.DAYDREAM:
+                return new DaydreamAction();
+            case ACTION_TYPE.BERSERK:
+                return new BerserkAction();
 
         }
         return null;

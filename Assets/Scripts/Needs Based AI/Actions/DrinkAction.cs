@@ -4,27 +4,27 @@ using UnityEngine;
 using ECS;
 
 public class DrinkAction : CharacterAction {
-    public DrinkAction(ObjectState state) : base(state, ACTION_TYPE.DRINK) {
+    public DrinkAction() : base(ACTION_TYPE.DRINK) {
 
     }
     #region Overrides
-    public override void OnFirstEncounter(CharacterParty party) {
-        base.OnFirstEncounter(party);
+    public override void OnFirstEncounter(CharacterParty party, IObject targetObject) {
+        base.OnFirstEncounter(party, targetObject);
         //Add history log
         for (int i = 0; i < party.icharacters.Count; i++) {
             party.icharacters[i].AssignTag(CHARACTER_TAG.DRUNK);
         }
     }
-    public override void PerformAction(CharacterParty party) {
-        base.PerformAction(party);
-        ActionSuccess();
+    public override void PerformAction(CharacterParty party, IObject targetObject) {
+        base.PerformAction(party, targetObject);
+        ActionSuccess(targetObject);
         GiveAllReward(party);
         if (party.IsFull(NEEDS.FUN)) {
-            EndAction(party);
+            EndAction(party, targetObject);
         }
     }
-    public override CharacterAction Clone(ObjectState state) {
-        DrinkAction drinkAction = new DrinkAction(state);
+    public override CharacterAction Clone() {
+        DrinkAction drinkAction = new DrinkAction();
         SetCommonData(drinkAction);
         drinkAction.Initialize();
         return drinkAction;

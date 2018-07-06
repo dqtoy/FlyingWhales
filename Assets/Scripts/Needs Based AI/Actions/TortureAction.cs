@@ -5,36 +5,36 @@ using UnityEngine;
 
 public class TortureAction : CharacterAction {
     private StructureObj _structure;
-    public TortureAction(ObjectState state) : base(state, ACTION_TYPE.TORTURE) {
+    public TortureAction() : base(ACTION_TYPE.TORTURE) {
        
     }
 
     #region Overrides
-    public override void Initialize() {
-        base.Initialize();
-        if (_state.obj is StructureObj) {
-            _structure = _state.obj as StructureObj;
-        }
-    }
-    public override void PerformAction(CharacterParty party) {
-        base.PerformAction(party);
+    //public override void Initialize() {
+    //    base.Initialize();
+    //    if (_state.obj is StructureObj) {
+    //        _structure = _state.obj as StructureObj;
+    //    }
+    //}
+    public override void PerformAction(CharacterParty party, IObject targetObject) {
+        base.PerformAction(party, targetObject);
         //if (obj.GetTotalCivilians() > 0) {//check if there are civilians in the object
         //    //if yes, 
         //}
 
         if(_structure.objectLocation.civilianCount > 0) {
             GiveAllReward(party);
-            ActionSuccess();
+            ActionSuccess(targetObject);
             if (party.IsFull(NEEDS.FUN)) {
-                EndAction(party);
+                EndAction(party, targetObject);
             }
         } 
         //else {
         //    EndAction(character);
         //}
     }
-    public override CharacterAction Clone(ObjectState state) {
-        TortureAction tortureAction = new TortureAction(state);
+    public override CharacterAction Clone() {
+        TortureAction tortureAction = new TortureAction();
         SetCommonData(tortureAction);
         tortureAction.Initialize();
         return tortureAction;

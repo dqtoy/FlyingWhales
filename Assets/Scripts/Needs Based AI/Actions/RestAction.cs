@@ -4,21 +4,21 @@ using UnityEngine;
 using ECS;
 
 public class RestAction : CharacterAction {
-    public RestAction(ObjectState state) : base(state, ACTION_TYPE.REST) {
+    public RestAction() : base(ACTION_TYPE.REST) {
 
     }
 
     #region Overrides
-    public override void PerformAction(CharacterParty party) {
-        base.PerformAction(party);
-        ActionSuccess();
+    public override void PerformAction(CharacterParty party, IObject targetObject) {
+        base.PerformAction(party, targetObject);
+        ActionSuccess(targetObject);
         GiveAllReward(party);
         if (party.IsFull(NEEDS.ENERGY)) {
-            EndAction(party);
+            EndAction(party, targetObject);
         }
     }
-    public override CharacterAction Clone(ObjectState state) {
-        RestAction restAction = new RestAction(state);
+    public override CharacterAction Clone() {
+        RestAction restAction = new RestAction();
         SetCommonData(restAction);
         restAction.Initialize();
         return restAction;

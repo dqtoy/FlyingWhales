@@ -14,14 +14,49 @@ namespace ECS {
         public DailyAction onDailyAction;
 
         private string _name;
+        private string _characterColorCode;
         private int _id;
+        private int _gold;
+        private int _actRate;
+        private float _equippedWeaponPower;
+        private bool _isDead;
+        private bool _isFainted;
+        private bool _isInCombat;
         private GENDER _gender;
-        [System.NonSerialized] private List<Trait> _traits;
-        private List<TRAIT> _allTraits;
+        private CharacterClass _characterClass;
+        private RaceSetting _raceSetting;
+        private CharacterRole _role;
+        private Faction _faction;
+        private CharacterParty _party;
+        private Area _home;
+        private BaseLandmark _homeLandmark;
+        private StructureObj _homeStructure;
+        private Region _currentRegion;
+        //private CharacterAvatar _avatar;
+        private Combat _currentCombat;
+        private Weapon _equippedWeapon;
+        private CharacterBattleTracker _battleTracker;
+        private CharacterBattleOnlyTracker _battleOnlyTracker;
+        private PortraitSettings _portraitSettings;
+        private Color _characterColor;
+        //[System.NonSerialized] private List<Trait> _traits;
+        //private List<TRAIT> _allTraits;
+        private List<STATUS_EFFECT> _statusEffects;
+        private List<BodyPart> _bodyParts;
+        private List<Item> _equippedItems;
+        private List<Item> _inventory;
+        private List<Skill> _skills;
         private List<CharacterTag> _tags;
-        internal List<STATUS_EFFECT> statusEffects;
+        private List<Log> _history;
+        private List<CharacterQuestData> _questData;
+        private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
+        private List<CharacterAction> _desperateActions;
+        private List<CharacterAction> _idleActions;
         private Dictionary<Character, Relationship> _relationships;
-        private const int MAX_FOLLOWERS = 4;
+        private Dictionary<ELEMENT, float> _elementalWeaknesses;
+        private Dictionary<ELEMENT, float> _elementalResistances;
+        private Dictionary<Character, List<string>> _traceInfo;
+        public Dictionary<int, Combat> combatHistory;
 
         //Stats
         private SIDES _currentSide;
@@ -53,59 +88,16 @@ namespace ECS {
         private float _bonusMDefPercent;
         private float _critChance;
         private float _critDamage;
-        private Dictionary<ELEMENT, float> _elementalWeaknesses;
-        private Dictionary<ELEMENT, float> _elementalResistances;
-        private Weapon _equippedWeapon;
-        private CharacterBattleTracker _battleTracker;
-        private CharacterBattleOnlyTracker _battleOnlyTracker;
 
-        //Skills
-        private List<Skill> _skills;
-
-        private CharacterClass _characterClass;
-        private RaceSetting _raceSetting;
-        private CharacterRole _role;
-        private Faction _faction;
-        private CharacterParty _party;
-        private List<CharacterQuestData> _questData;
         //private CharacterActionQueue<CharacterAction> _actionQueue;
         //private CharacterAction _currentAction;
         //private ILocation _specificLocation;
-        private Region _currentRegion;
-        //private CharacterAvatar _avatar;
-        private Combat _currentCombat;
 
-        private List<BodyPart> _bodyParts;
-        private List<Item> _equippedItems;
-        private List<Item> _inventory;
-
-        //Character Portrait
-        private PortraitSettings _portraitSettings;
-
-        private Color _characterColor;
-        private string _characterColorCode;
-        private bool _isDead;
-        private bool _isFainted;
         //private bool _isDefeated;
         //private bool _isIdle; //can't do action, needs will not deplete
-        private Area _home;
-        private BaseLandmark _homeLandmark;
-        private StructureObj _homeStructure;
-        private List<Log> _history;
-
-        private int _actRate;
-        internal Dictionary<int, Combat> combatHistory;
-
-        private float _equippedWeaponPower;
-        private int _gold;
 
         //private Action _currentFunction;
-        private bool _isInCombat;
-        private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
-        private Dictionary<Character, List<string>> _traceInfo;
-
         //private ActionData _actionData;
-
 
         #region getters / setters
         public string firstName {
@@ -129,9 +121,9 @@ namespace ECS {
         public GENDER gender {
             get { return _gender; }
         }
-        public List<Trait> traits {
-            get { return _traits; }
-        }
+        //public List<Trait> traits {
+        //    get { return _traits; }
+        //}
         public List<CharacterTag> tags {
             get { return _tags; }
         }
@@ -337,6 +329,12 @@ namespace ECS {
         public ICHARACTER_TYPE icharacterType {
             get { return ICHARACTER_TYPE.CHARACTER; }
         }
+        public List<CharacterAction> desperateActions {
+            get { return _desperateActions; }
+        }
+        public List<CharacterAction> idleActions {
+            get { return _idleActions; }
+        }
         #endregion
 
         public Character(CharacterSetup baseSetup, GENDER gender) : this() {
@@ -380,11 +378,9 @@ namespace ECS {
             SubscribeToSignals();
         }
         public Character() {
-            _traits = new List<Trait>();
             _tags = new List<CharacterTag>();
             _exploredLandmarks = new List<BaseLandmark>();
-            statusEffects = new List<STATUS_EFFECT>();
-            _traits = new List<Trait>();
+            _statusEffects = new List<STATUS_EFFECT>();
             _tags = new List<CharacterTag>();
             _isDead = false;
             _isFainted = false;
@@ -412,10 +408,11 @@ namespace ECS {
             _battleOnlyTracker = new CharacterBattleOnlyTracker();
             _equippedItems = new List<Item>();
             _inventory = new List<Item>();
+            combatHistory = new Dictionary<int, Combat>();
 
             GetRandomCharacterColor();
-
-			combatHistory = new Dictionary<int, Combat> ();
+            ConstructDesperateActions();
+            ConstructIdleActions();
             //_combatHistoryID = 0;
 
             Messenger.AddListener<Region>("RegionDeath", RegionDeath);
@@ -1460,14 +1457,14 @@ namespace ECS {
 
         #region Status Effects
         internal void AddStatusEffect(STATUS_EFFECT statusEffect){
-			this.statusEffects.Add (statusEffect);
+			this._statusEffects.Add (statusEffect);
 		}
 		internal void RemoveStatusEffect(STATUS_EFFECT statusEffect){
-			this.statusEffects.Remove (statusEffect);
+			this._statusEffects.Remove (statusEffect);
 		}
         internal void CureStatusEffects(){
-			for (int i = 0; i < statusEffects.Count; i++) {
-				STATUS_EFFECT statusEffect = statusEffects [i];
+			for (int i = 0; i < _statusEffects.Count; i++) {
+				STATUS_EFFECT statusEffect = _statusEffects[i];
 				int chance = Utilities.rng.Next (0, 100);
 				if (chance < 15) {
 					_currentCombat.AddCombatLog(this.name + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
@@ -1494,7 +1491,7 @@ namespace ECS {
 			}
 		}
         internal bool HasStatusEffect(STATUS_EFFECT statusEffect) {
-			if (statusEffects.Contains(statusEffect)) {
+			if (_statusEffects.Contains(statusEffect)) {
 				return true;
 			}
             for (int i = 0; i < this._bodyParts.Count; i++) {
@@ -1642,88 +1639,88 @@ namespace ECS {
 		#endregion
 
 		#region Traits
-        private void GenerateTraits() {
-            CharacterType baseCharacterType = CharacterManager.Instance.GetRandomCharacterType();
-            //_characterType = baseCharacterType;
-            _allTraits = new List<TRAIT>(baseCharacterType.otherTraits);
-            //Charisma
-            if (baseCharacterType.charismaTrait == CHARISMA.NONE) {
-                TRAIT charismaTrait = GenerateCharismaTrait();
-                if(charismaTrait != TRAIT.NONE) {
-                    _allTraits.Add(charismaTrait);
-                }
-            } else {
-                _allTraits.Add((TRAIT)baseCharacterType.charismaTrait);
-            }
-            //Intelligence
-            if (baseCharacterType.intelligenceTrait == INTELLIGENCE.NONE) {
-                TRAIT intTrait = GenerateIntelligenceTrait();
-                if(intTrait != TRAIT.NONE) {
-                    _allTraits.Add(intTrait);
-                }
-            } else {
-                _allTraits.Add((TRAIT)baseCharacterType.intelligenceTrait);
-            }
-            //Efficiency
-            if (baseCharacterType.efficiencyTrait == EFFICIENCY.NONE) {
-                TRAIT efficiencyTrait = GenerateEfficiencyTrait();
-                if (efficiencyTrait != TRAIT.NONE) {
-                    _allTraits.Add(efficiencyTrait);
-                }
-            } else {
-                _allTraits.Add((TRAIT)baseCharacterType.efficiencyTrait);
-            }
-            //Military
-            if (baseCharacterType.militaryTrait == MILITARY.NONE) {
-                TRAIT militaryTrait = GenerateMilitaryTrait();
-                _allTraits.Add(militaryTrait);
-            } else {
-                _allTraits.Add((TRAIT)baseCharacterType.militaryTrait);
-            }
-            //Health
-            if (baseCharacterType.healthTrait == HEALTH.NONE) {
-                TRAIT healthTrait = GenerateHealthTrait();
-                if(healthTrait != TRAIT.NONE) {
-                    _allTraits.Add(healthTrait);
-                }
-            } else {
-                _allTraits.Add((TRAIT)baseCharacterType.healthTrait);
-            }
-            //Strength
-            if (baseCharacterType.strengthTrait == STRENGTH.NONE) {
-                TRAIT strengthTrait = GenerateStrengthTrait();
-                if (strengthTrait != TRAIT.NONE) {
-                    _allTraits.Add(strengthTrait);
-                }
-            } else {
-                _allTraits.Add((TRAIT)baseCharacterType.strengthTrait);
-            }
-            //Agility
-            if (baseCharacterType.agilityTrait == AGILITY.NONE) {
-                TRAIT agilityTrait = GenerateAgilityTrait();
-                if (agilityTrait != TRAIT.NONE) {
-                    _allTraits.Add(agilityTrait);
-                }
-            } else {
-                _allTraits.Add((TRAIT)baseCharacterType.agilityTrait);
-            }
-            _traits = new List<Trait>();
-            for (int i = 0; i < _allTraits.Count; i++) {
-                TRAIT currTrait = _allTraits[i];
-                Trait trait = CharacterManager.Instance.CreateNewTraitForCharacter(currTrait, this);
-                if (trait != null) {
-					AddTrait (trait);
-                }
-            }
-        }
-		public void AddTrait(Trait trait){
-			trait.AssignCharacter(this);
-			_traits.Add(trait);
-		}
-		public void RemoveTrait(Trait trait){
-			trait.AssignCharacter(null);
-			_traits.Remove(trait);
-		}
+  //      private void GenerateTraits() {
+  //          CharacterType baseCharacterType = CharacterManager.Instance.GetRandomCharacterType();
+  //          //_characterType = baseCharacterType;
+  //          _allTraits = new List<TRAIT>(baseCharacterType.otherTraits);
+  //          //Charisma
+  //          if (baseCharacterType.charismaTrait == CHARISMA.NONE) {
+  //              TRAIT charismaTrait = GenerateCharismaTrait();
+  //              if(charismaTrait != TRAIT.NONE) {
+  //                  _allTraits.Add(charismaTrait);
+  //              }
+  //          } else {
+  //              _allTraits.Add((TRAIT)baseCharacterType.charismaTrait);
+  //          }
+  //          //Intelligence
+  //          if (baseCharacterType.intelligenceTrait == INTELLIGENCE.NONE) {
+  //              TRAIT intTrait = GenerateIntelligenceTrait();
+  //              if(intTrait != TRAIT.NONE) {
+  //                  _allTraits.Add(intTrait);
+  //              }
+  //          } else {
+  //              _allTraits.Add((TRAIT)baseCharacterType.intelligenceTrait);
+  //          }
+  //          //Efficiency
+  //          if (baseCharacterType.efficiencyTrait == EFFICIENCY.NONE) {
+  //              TRAIT efficiencyTrait = GenerateEfficiencyTrait();
+  //              if (efficiencyTrait != TRAIT.NONE) {
+  //                  _allTraits.Add(efficiencyTrait);
+  //              }
+  //          } else {
+  //              _allTraits.Add((TRAIT)baseCharacterType.efficiencyTrait);
+  //          }
+  //          //Military
+  //          if (baseCharacterType.militaryTrait == MILITARY.NONE) {
+  //              TRAIT militaryTrait = GenerateMilitaryTrait();
+  //              _allTraits.Add(militaryTrait);
+  //          } else {
+  //              _allTraits.Add((TRAIT)baseCharacterType.militaryTrait);
+  //          }
+  //          //Health
+  //          if (baseCharacterType.healthTrait == HEALTH.NONE) {
+  //              TRAIT healthTrait = GenerateHealthTrait();
+  //              if(healthTrait != TRAIT.NONE) {
+  //                  _allTraits.Add(healthTrait);
+  //              }
+  //          } else {
+  //              _allTraits.Add((TRAIT)baseCharacterType.healthTrait);
+  //          }
+  //          //Strength
+  //          if (baseCharacterType.strengthTrait == STRENGTH.NONE) {
+  //              TRAIT strengthTrait = GenerateStrengthTrait();
+  //              if (strengthTrait != TRAIT.NONE) {
+  //                  _allTraits.Add(strengthTrait);
+  //              }
+  //          } else {
+  //              _allTraits.Add((TRAIT)baseCharacterType.strengthTrait);
+  //          }
+  //          //Agility
+  //          if (baseCharacterType.agilityTrait == AGILITY.NONE) {
+  //              TRAIT agilityTrait = GenerateAgilityTrait();
+  //              if (agilityTrait != TRAIT.NONE) {
+  //                  _allTraits.Add(agilityTrait);
+  //              }
+  //          } else {
+  //              _allTraits.Add((TRAIT)baseCharacterType.agilityTrait);
+  //          }
+  //          _traits = new List<Trait>();
+  //          for (int i = 0; i < _allTraits.Count; i++) {
+  //              TRAIT currTrait = _allTraits[i];
+  //              Trait trait = CharacterManager.Instance.CreateNewTraitForCharacter(currTrait, this);
+  //              if (trait != null) {
+		//			AddTrait (trait);
+  //              }
+  //          }
+  //      }
+		//public void AddTrait(Trait trait){
+		//	trait.AssignCharacter(this);
+		//	_traits.Add(trait);
+		//}
+		//public void RemoveTrait(Trait trait){
+		//	trait.AssignCharacter(null);
+		//	_traits.Remove(trait);
+		//}
         private TRAIT GenerateCharismaTrait() {
             int chance = UnityEngine.Random.Range(0, 100);
             if (chance < 20) {
@@ -1794,14 +1791,14 @@ namespace ECS {
                 return TRAIT.NONE;
             }
         }
-        public bool HasTrait(TRAIT trait) {
-			for (int i = 0; i < _traits.Count; i++) {
-				if(_traits[i].trait == trait) {
-					return true;
-				}
-			}
-			return false;
-		}
+  //      public bool HasTrait(TRAIT trait) {
+		//	for (int i = 0; i < _traits.Count; i++) {
+		//		if(_traits[i].trait == trait) {
+		//			return true;
+		//		}
+		//	}
+		//	return false;
+		//}
         #endregion
 
 		#region Character Tags
@@ -2456,7 +2453,7 @@ namespace ECS {
         }
         #endregion
 
-        #region Player Actions
+        #region Player/Character Actions
         public void OnThisCharacterSnatched() {
             BaseLandmark snatcherLair = PlayerManager.Instance.player.GetAvailableSnatcherLair();
             if (snatcherLair == null) {
@@ -2470,8 +2467,22 @@ namespace ECS {
                 snatcherLair.AddCharacterToLocation(_party);
             }
         }
+        private void ConstructDesperateActions() {
+            _desperateActions = new List<CharacterAction>();
+            _desperateActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.BERSERK));
+        }
+        private void ConstructIdleActions() {
+            _idleActions = new List<CharacterAction>();
+            _idleActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DAYDREAM));
+        }
+        public CharacterAction GetRandomDesperateAction() {
+            return _desperateActions[Utilities.rng.Next(0, _desperateActions.Count)];
+        }
+        public CharacterAction GetRandomIdleAction() {
+            return _idleActions[Utilities.rng.Next(0, _idleActions.Count)];
+        }
         #endregion
-        
+
         #region Snatch
         /*
          When the player successfully snatches a character, other characters with relation to 
@@ -2503,7 +2514,7 @@ namespace ECS {
             dialogChoices.Add(killYourselfChoice);
             if (otherCharacters.Count > 0) {
                 ECS.Character characterToAttack = otherCharacters[UnityEngine.Random.Range(0, otherCharacters.Count)];
-                CharacterDialogChoice attackCharacterChoice = new CharacterDialogChoice("Attack " + characterToAttack.name, () => party.actionData.AssignAction(party.characterObject.currentState.GetAction(ACTION_TYPE.ATTACK)));
+                CharacterDialogChoice attackCharacterChoice = new CharacterDialogChoice("Attack " + characterToAttack.name, () => party.actionData.AssignAction(party.characterObject.currentState.GetAction(ACTION_TYPE.ATTACK), party.characterObject));
                 dialogChoices.Add(attackCharacterChoice);
             }
 
@@ -2515,7 +2526,6 @@ namespace ECS {
                 onClickAction);
         }
         #endregion
-
 
         #region Home
         public void LookForNewHomeStructure() {

@@ -1279,6 +1279,8 @@ public enum ACTION_TYPE {
     GO_HOME,
     RELEASE,
     CLEANSE,
+    DAYDREAM,
+    BERSERK,
 }
 
 public enum OBJECT_TYPE {
