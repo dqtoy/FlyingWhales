@@ -107,7 +107,7 @@ public class CharacterInfoUI : UIMenu {
     }
 
     public void UpdateCharacterInfo() {
-        if (currentlyShowingCharacter == null) {
+        if (currentlyShowingCharacter == null || (currentlyShowingCharacter != null && currentlyShowingCharacter.isDead)) {
             return;
         }
         UpdatePortrait();

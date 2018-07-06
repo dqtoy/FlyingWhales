@@ -47,7 +47,7 @@ public class MonsterParty : NewParty {
     }
     public override void PartyDeath() {
         base.PartyDeath();
-        MonsterManager.Instance.RemoveMonster(this);
+        MonsterManager.Instance.allMonsterParties.Remove(this);
         Messenger.Broadcast(Signals.MONSTER_PARTY_DIED, this);
     }
     #endregion

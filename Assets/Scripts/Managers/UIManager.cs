@@ -529,6 +529,7 @@ public class UIManager : MonoBehaviour {
     [Header("Party Info")]
     [SerializeField] internal PartyInfoUI partyinfoUI;
     public void ShowPartyInfo(NewParty party) {
+        HideMainUI();
         if (landmarkInfoUI.isShowing) {
             landmarkInfoUI.HideMenu();
         }
