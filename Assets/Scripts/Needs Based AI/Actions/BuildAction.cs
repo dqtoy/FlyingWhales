@@ -9,7 +9,7 @@ public class BuildAction : CharacterAction {
     private StructureObj _structureObject;
     private bool _isStructureInLandmark;
 
-    public BuildAction(ObjectState state, string structureName) : base(state, ACTION_TYPE.BUILD) {
+    public BuildAction(string structureName) : base(ACTION_TYPE.BUILD) {
         _structureName = structureName;
         _needsSpecificTarget = true;
         _isStructureInLandmark = false;
@@ -21,29 +21,29 @@ public class BuildAction : CharacterAction {
         _structureObject = ObjectManager.Instance.GetNewStructureObject(_structureName);
         _amountToIncrease = Mathf.RoundToInt((float) _structureObject.maxHP / (float) _actionData.duration);
     }
-    public override void PerformAction(CharacterParty party) {
-        base.PerformAction(party);
+    public override void PerformAction(CharacterParty party, IObject targetObject) {
+        base.PerformAction(party, targetObject);
         //if (!_isStructureInLandmark) {
         //    _isStructureInLandmark = _state.obj.objectLocation.AddObject(_structureObject);
         //}
 
-        ActionSuccess();
+        ActionSuccess(targetObject);
         GiveAllReward(party);
 
         //TODO: Resources
 
         _structureObject.AdjustHP(_amountToIncrease);
         if (_structureObject.isHPFull) {
-            EndAction(party);
+            EndAction(party, targetObject);
         }
     }
-    public override CharacterAction Clone(ObjectState state) {
-        BuildAction buildAction = new BuildAction(state, _structureName);
+    public override CharacterAction Clone() {
+        BuildAction buildAction = new BuildAction(_structureName);
         SetCommonData(buildAction);
         buildAction.Initialize();
         return buildAction;
     }
-    public override bool CanBeDone() {
+    public override bool CanBeDone(IObject targetObject) {
         if(_structureObject.currentState.stateName == "Under Construction") {
             return true;
         }

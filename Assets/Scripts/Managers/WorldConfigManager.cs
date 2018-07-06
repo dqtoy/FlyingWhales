@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WorldConfigManager : MonoBehaviour {
 
-    public static WorldConfigManager Instance = null;
+    public static WorldConfigManager Instance;
 
     public WorldSaveData loadedData = null;
 

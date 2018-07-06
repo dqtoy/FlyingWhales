@@ -41,6 +41,8 @@ public class Monster : ICharacter {
     private Combat _currentCombat;
     private SIDES _currentSide;
     private List<BodyPart> _bodyParts;
+    private List<CharacterAction> _desperateActions;
+    private List<CharacterAction> _idleActions;
     private PortraitSettings _portraitSettings;
 
     #region getters/setters
@@ -51,7 +53,7 @@ public class Monster : ICharacter {
         get { return "<link=" + '"' + this._id.ToString() + "_monster" + '"' + ">" + this._name + "</link>"; }
     }
     public string coloredUrlName {
-        get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + "<color=#" + this._characterColorCode + ">" + this._name + "</color></link>"; }
+        get { return "<link=" + '"' + this._id.ToString() + "_monster" + '"' + ">" + "<color=#" + this._characterColorCode + ">" + this._name + "</color></link>"; }
     }
     public int id {
         get { return _id; }
@@ -159,6 +161,12 @@ public class Monster : ICharacter {
     }
     public IParty iparty {
         get { return _party; }
+    }
+    public List<CharacterAction> desperateActions {
+        get { return _desperateActions; }
+    }
+    public List<CharacterAction> idleActions {
+        get { return _idleActions; }
     }
     #endregion
 
@@ -349,6 +357,12 @@ public class Monster : ICharacter {
     }
     public void AddHistory(Log log) {
         //No history
+    }
+    public CharacterAction GetRandomDesperateAction() {
+        return _desperateActions[Utilities.rng.Next(0, _desperateActions.Count)];
+    }
+    public CharacterAction GetRandomIdleAction() {
+        return _idleActions[Utilities.rng.Next(0, _idleActions.Count)];
     }
     public void EnableDisableSkills(Combat combat) {
         bool isAllAttacksInRange = true;

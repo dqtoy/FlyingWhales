@@ -1282,6 +1282,8 @@ public enum ACTION_TYPE {
     CLEANSE,
     ENROLL,
     TRAIN,
+    DAYDREAM,
+    BERSERK,
 }
 
 public enum OBJECT_TYPE {

@@ -425,19 +425,19 @@ public class CharacterRole {
             + CalculatePrestigeImpact(_prestige) + CalculateSanityImpact(_sanity) + CalculateSafetyImpact(_safety);
     }
 
-    public float GetTotalHappinessIncrease(CharacterAction characterAction) {
+    public float GetTotalHappinessIncrease(CharacterAction characterAction, IObject targetObject) {
         float result = (GetHappinessIncrease(NEEDS.FULLNESS, characterAction) + GetHappinessIncrease(NEEDS.ENERGY, characterAction) + GetHappinessIncrease(NEEDS.FUN, characterAction)
             + GetHappinessIncrease(NEEDS.PRESTIGE, characterAction) + GetHappinessIncrease(NEEDS.SANITY, characterAction) + GetHappinessIncrease(NEEDS.SAFETY, characterAction)); // GetDistanceModifier(_character.specificLocation.tileLocation, characterAction.state.obj.specificLocation.tileLocation);
 
-        if (characterAction.state.obj.objectType == OBJECT_TYPE.STRUCTURE) {
-            Area areaOfStructure = characterAction.state.obj.objectLocation.tileLocation.areaOfTile;
+        if (targetObject.objectType == OBJECT_TYPE.STRUCTURE) {
+            Area areaOfStructure = targetObject.objectLocation.tileLocation.areaOfTile;
             if (areaOfStructure != null && _character.home != null && areaOfStructure.id == _character.home.id) {
                 result *= _character.party.actionData.homeMultiplier;
             }
-        }else if (characterAction.actionType == ACTION_TYPE.ATTACK) {
-            AttackAction attackAction = characterAction as AttackAction;
+        }else if (characterAction.actionType == ACTION_TYPE.ATTACK && targetObject is ICharacterObject) {
+            ICharacterObject icharacterObject = targetObject as ICharacterObject;
             float myPower = _character.party.computedPower;
-            float enemyPower = attackAction.icharacterObj.iparty.computedPower;
+            float enemyPower = icharacterObject.iparty.computedPower;
             float powerDiff = enemyPower - myPower;
             float powerDivisor = myPower;
             if(powerDiff < 0f) {

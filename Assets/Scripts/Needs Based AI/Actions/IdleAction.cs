@@ -4,28 +4,28 @@ using UnityEngine;
 using ECS;
 
 public class IdleAction : CharacterAction {
-    public IdleAction(ObjectState state) : base(state, ACTION_TYPE.IDLE) {
+    public IdleAction() : base(ACTION_TYPE.IDLE) {
 
     }
     #region Overrides
-    public override void PerformAction(CharacterParty party) {
-        base.PerformAction(party);
-        ActionSuccess();
+    public override void PerformAction(CharacterParty party, IObject targetObject) {
+        base.PerformAction(party, targetObject);
+        ActionSuccess(targetObject);
         GiveAllReward(party);
     }
-    public override CharacterAction Clone(ObjectState state) {
-        IdleAction idleAction = new IdleAction(state);
+    public override CharacterAction Clone() {
+        IdleAction idleAction = new IdleAction();
         SetCommonData(idleAction);
         idleAction.Initialize();
         return idleAction;
     }
-    public override bool CanBeDoneBy(CharacterParty party) {
+    public override bool CanBeDoneBy(CharacterParty party, IObject targetObject) {
         //if (character.characterObject.objectLocation == null || character.characterObject.objectLocation.id != _state.obj.objectLocation.id || character.homeStructure.objectLocation.id != _state.obj.objectLocation.id) {
-        if (party.characterObject.objectLocation == null || party.homeStructure.objectLocation.id != _state.obj.objectLocation.id) {
+        if (party.characterObject.objectLocation == null || party.homeStructure.objectLocation.id != targetObject.objectLocation.id) {
             //the characters location is null or the object that this action belongs to is not the home of the character
             return false;
         }
-        return base.CanBeDoneBy(party);
+        return base.CanBeDoneBy(party, targetObject);
     }
     #endregion
 }

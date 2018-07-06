@@ -36,7 +36,7 @@ public class ObjectState {
         clonedState._actions = new List<CharacterAction>();
         for (int i = 0; i < this.actions.Count; i++) {
             CharacterAction ogAction = this.actions[i];
-            clonedState._actions.Add(ogAction.Clone(clonedState));
+            clonedState._actions.Add(ogAction.Clone());
         }
         return clonedState;
     }
@@ -66,7 +66,7 @@ public class ObjectState {
     public CharacterAction GetActionInState(CharacterAction action) {
         for (int i = 0; i < _actions.Count; i++) {
             CharacterAction currentAction = _actions[i];
-            if (currentAction.actionType == action.actionType && currentAction.state.obj == action.state.obj) {
+            if (currentAction.actionType == action.actionType) {
                 return currentAction;
             }
         }

@@ -4,33 +4,33 @@ using UnityEngine;
 using ECS;
 
 public class ReleaseAction : CharacterAction {
-    private CharacterObj _characterObj;
-    public ReleaseAction(ObjectState state) : base(state, ACTION_TYPE.RELEASE) {
+    //private CharacterObj _characterObj;
+    public ReleaseAction() : base(ACTION_TYPE.RELEASE) {
 
     }
     #region Overrides
-    public override void Initialize() {
-        base.Initialize();
-        if (_state.obj.objectType == OBJECT_TYPE.CHARACTER) {
-            _characterObj = _state.obj as CharacterObj;
-        }
+    //public override void Initialize() {
+    //    base.Initialize();
+    //    if (_state.obj.objectType == OBJECT_TYPE.CHARACTER) {
+    //        _characterObj = _state.obj as CharacterObj;
+    //    }
+    //}
+    public override void PerformAction(CharacterParty party, IObject targetObject) {
+        base.PerformAction(party, targetObject);
+        ActionSuccess(targetObject);
     }
-    public override void PerformAction(CharacterParty party) {
-        base.PerformAction(party);
-        ActionSuccess();
-    }
-    public override CharacterAction Clone(ObjectState state) {
-        ReleaseAction releaseAction = new ReleaseAction(state);
+    public override CharacterAction Clone() {
+        ReleaseAction releaseAction = new ReleaseAction();
         SetCommonData(releaseAction);
         releaseAction.Initialize();
         return releaseAction;
     }
-    public override void DoneDuration(CharacterParty party) {
-        base.DoneDuration(party);
+    public override void DoneDuration(CharacterParty party, IObject targetObject) {
+        base.DoneDuration(party, targetObject);
         GiveAllReward(party);
-        ReleaseCharacter();
+        ReleaseCharacter(targetObject);
     }
-    public override bool CanBeDone() {
+    public override bool CanBeDone(IObject targetObject) {
         return false; //Change this to something more elegant, this is to prevent other characters that don't have the release character quest from releasing this character.
         //if (!_characterObj.character.isPrisoner) {
         //    return false;
@@ -39,11 +39,14 @@ public class ReleaseAction : CharacterAction {
     }
     #endregion
 
-    public void ReleaseCharacter() {
-        if (_characterObj.currentState.stateName == "Imprisoned") {
-            ObjectState aliveState = _characterObj.GetState("Alive");
-            _characterObj.ChangeState(aliveState);
+    public void ReleaseCharacter(IObject targetObject) {
+        if (targetObject.currentState.stateName == "Imprisoned") {
+            ObjectState aliveState = targetObject.GetState("Alive");
+            targetObject.ChangeState(aliveState);
         }
-        _characterObj.iparty.GoHome();
+        if(targetObject is ICharacterObject) {
+            ICharacterObject icharacterObject = targetObject as ICharacterObject;
+            icharacterObject.iparty.GoHome();
+        }
     }
 }

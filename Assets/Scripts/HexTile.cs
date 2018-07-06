@@ -1541,10 +1541,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                 forceActionMain.SetSubMenu(forceActionSub);
                 for (int i = 0; i < landmarkOnTile.landmarkObj.currentState.actions.Count; i++) {
                     CharacterAction action = landmarkOnTile.landmarkObj.currentState.actions[i];
-                    if (action.MeetsRequirements(character.party, this._landmarkOnTile) && action.CanBeDone() && action.CanBeDoneBy(character.party)) {
+                    if (action.MeetsRequirements(character.party, this._landmarkOnTile) && action.CanBeDone(landmarkOnTile.landmarkObj) && action.CanBeDoneBy(character.party, landmarkOnTile.landmarkObj)) {
                         hasDoableAction = true;
                         ContextMenuItemSettings doableAction = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(action.actionType.ToString()));
-                        doableAction.onClickAction = () => character.party.actionData.ForceDoAction(action);
+                        doableAction.onClickAction = () => character.party.actionData.ForceDoAction(action, landmarkOnTile.landmarkObj);
                         forceActionSub.AddMenuItem(doableAction);
                     }
                 }

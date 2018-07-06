@@ -5,20 +5,20 @@ using ECS;
 
 public class PrayAction : CharacterAction {
 
-    public PrayAction(ObjectState state) : base(state, ACTION_TYPE.PRAY) {
+    public PrayAction() : base(ACTION_TYPE.PRAY) {
 
     }
     #region Overrides
-    public override void PerformAction(CharacterParty party) {
-        base.PerformAction(party);
-        ActionSuccess();
+    public override void PerformAction(CharacterParty party, IObject targetObject) {
+        base.PerformAction(party, targetObject);
+        ActionSuccess(targetObject);
         GiveAllReward(party);
         if (party.IsFull(NEEDS.SANITY)) {
-            EndAction(party);
+            EndAction(party, targetObject);
         }
     }
-    public override CharacterAction Clone(ObjectState state) {
-        PrayAction prayAction = new PrayAction(state);
+    public override CharacterAction Clone() {
+        PrayAction prayAction = new PrayAction();
         SetCommonData(prayAction);
         prayAction.Initialize();
         return prayAction;

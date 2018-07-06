@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class CleanseAction : CharacterAction {
 
-    public CleanseAction(ObjectState state) : base(state, ACTION_TYPE.CLEANSE) {
+    public CleanseAction() : base(ACTION_TYPE.CLEANSE) {
     }
 }

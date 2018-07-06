@@ -4,21 +4,21 @@ using UnityEngine;
 using ECS;
 
 public class PatrolAction : CharacterAction {
-    public PatrolAction(ObjectState state) : base(state, ACTION_TYPE.PATROL) {
+    public PatrolAction() : base(ACTION_TYPE.PATROL) {
 
     }
 
     #region Overrides
-    public override void PerformAction(CharacterParty party) {
-        base.PerformAction(party);
-        ActionSuccess();
+    public override void PerformAction(CharacterParty party, IObject targetObject) {
+        base.PerformAction(party, targetObject);
+        ActionSuccess(targetObject);
         GiveAllReward(party);
         if (party.IsFull(NEEDS.PRESTIGE)) {
-            EndAction(party);
+            EndAction(party, targetObject);
         }
     }
-    public override CharacterAction Clone(ObjectState state) {
-        PatrolAction patrolAction = new PatrolAction(state);
+    public override CharacterAction Clone() {
+        PatrolAction patrolAction = new PatrolAction();
         SetCommonData(patrolAction);
         patrolAction.Initialize();
         return patrolAction;

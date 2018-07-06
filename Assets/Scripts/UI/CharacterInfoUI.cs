@@ -178,17 +178,17 @@ public class CharacterInfoUI : UIMenu {
     }
     private void UpdateTraitInfo() {
         string text = string.Empty;
-        if (currentlyShowingCharacter.traits.Count > 0 || currentlyShowingCharacter.tags.Count > 0) {
-            for (int i = 0; i < currentlyShowingCharacter.traits.Count; i++) {
-                Trait trait = currentlyShowingCharacter.traits[i];
-                if (i > 0) {
-                    text += ", ";
-                }
-                text += trait.traitName;
-            }
-            if (currentlyShowingCharacter.traits.Count > 0) {
-                text += ", ";
-            }
+        if (currentlyShowingCharacter.tags.Count > 0) { //currentlyShowingCharacter.traits.Count > 0 ||
+            //for (int i = 0; i < currentlyShowingCharacter.traits.Count; i++) {
+            //    Trait trait = currentlyShowingCharacter.traits[i];
+            //    if (i > 0) {
+            //        text += ", ";
+            //    }
+            //    text += trait.traitName;
+            //}
+            //if (currentlyShowingCharacter.traits.Count > 0) {
+            //    text += ", ";
+            //}
             for (int i = 0; i < currentlyShowingCharacter.tags.Count; i++) {
                 CharacterTag tag = currentlyShowingCharacter.tags[i];
                 if (i > 0) {
@@ -370,7 +370,7 @@ public class CharacterInfoUI : UIMenu {
     public void ReleaseCharacter() {
         CharacterAction action = currentlyShowingCharacter.party.characterObject.currentState.GetAction(ACTION_TYPE.RELEASE);
         ReleaseAction releaseAction = action as ReleaseAction;
-        releaseAction.ReleaseCharacter();
+        releaseAction.ReleaseCharacter(currentlyShowingCharacter.party.characterObject);
     }
     #endregion
 

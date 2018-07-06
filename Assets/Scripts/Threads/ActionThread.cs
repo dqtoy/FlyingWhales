@@ -8,6 +8,7 @@ public class ActionThread : Multithread {
     private CharacterActionAdvertisement[] choices;
     private CharacterParty _party;
     private CharacterAction chosenAction;
+    private IObject chosenObject;
     private List<CharacterActionAdvertisement> allChoices;
     private ChainAction chosenChainAction;
     private string actionLog;
@@ -72,10 +73,10 @@ public class ActionThread : Multithread {
             if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
                 for (int k = 0; k < iobject.currentState.actions.Count; k++) {
                     CharacterAction action = iobject.currentState.actions[k];
-                    if (action.MeetsRequirements(_party, landmark) && action.CanBeDone() && action.CanBeDoneBy(_party)) { //Filter
-                        float happinessIncrease = _party.TotalHappinessIncrease(action);
+                    if (action.MeetsRequirements(_party, landmark) && action.CanBeDone(iobject) && action.CanBeDoneBy(_party, iobject)) { //Filter
+                        float happinessIncrease = _party.TotalHappinessIncrease(action, iobject);
                         actionLog += "\n" + action.actionData.actionName + " = " + happinessIncrease + " (" + iobject.objectName + " at " + iobject.specificLocation.locationName + ")";
-                        PutToChoices(action, happinessIncrease);
+                        PutToChoices(action, iobject, happinessIncrease);
                     }
                 }
             }
@@ -89,7 +90,9 @@ public class ActionThread : Multithread {
 //#if UNITY_EDITOR
 //        _party.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + " " + actionLog);
 //#endif
-        chosenAction = PickAction();
+        CharacterActionAdvertisement chosenActionAd = PickAction();
+        chosenAction = chosenActionAd.action;
+        chosenObject = chosenActionAd.targetObject;
         //#if UNITY_EDITOR
         //_party.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + 
         //    " Chosen action: " + chosenAction.actionType.ToString() + " at " + chosenAction.state.obj.objectLocation.landmarkName + "(" + chosenAction.state.obj.objectLocation.tileLocation.tileName + ")");
@@ -171,28 +174,30 @@ public class ActionThread : Multithread {
     //    return null;
     //}
     private void ReturnAction() {
-        _party.actionData.ReturnActionFromThread(chosenAction, chosenChainAction);
+        _party.actionData.ReturnActionFromThread(chosenAction, chosenObject, chosenChainAction);
     }
-    private void PutToChoices(CharacterAction action, float advertisement) {
+    private void PutToChoices(CharacterAction action, IObject targetObject, float advertisement) {
         CharacterActionAdvertisement actionAdvertisement = new CharacterActionAdvertisement();
-        actionAdvertisement.Set(action, advertisement);
+        actionAdvertisement.Set(action, targetObject, advertisement);
         allChoices.Add(actionAdvertisement);
        
     }
-    private CharacterAction PickAction() {
+    private CharacterActionAdvertisement PickAction() {
         choices[0].Reset();
         choices[1].Reset();
         choices[2].Reset();
         float advertisement = 0f;
         CharacterAction action = null;
+        IObject targetObject = null;
         for (int i = 0; i < allChoices.Count; i++) {
             action = allChoices[i].action;
+            targetObject = allChoices[i].targetObject;
             advertisement = allChoices[i].advertisement;
             if (choices[0].action == null) {
-                choices[0].Set(action, advertisement);
+                choices[0].Set(action, targetObject, advertisement);
             } else {
                 if (advertisement > choices[0].advertisement) {
-                    choices[0].Set(action, advertisement);
+                    choices[0].Set(action, targetObject, advertisement);
                 }
             }
             //if (choices[0].action == null) {
@@ -225,22 +230,23 @@ public class ActionThread : Multithread {
         //    maxChoice = 2;
         //}
         int chosenIndex = 0; //Utilities.rng.Next(0, maxChoice);
-        CharacterAction chosenAction = choices[chosenIndex].action;
-        if (chosenAction == null) {
+        CharacterActionAdvertisement chosenActionAd = choices[chosenIndex];
+
+        if (chosenActionAd.action == null) {
             string error = _party.name + " could not find an action to do! Choices were ";
             for (int i = 0; i < choices.Length; i++) {
                 CharacterActionAdvertisement currAd = choices[i];
                 if (currAd.action != null) {
-                    error += "\n" + currAd.action.actionType.ToString() + " " + currAd.action.state.obj.objectName + " at " + currAd.action.state.obj.objectLocation.landmarkName;
+                    error += "\n" + currAd.action.actionType.ToString() + " " + currAd.targetObject.objectName + " at " + currAd.targetObject.objectLocation.landmarkName;
                 }
             }
             throw new Exception(error);
         }
         if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && _party.icharacters.Contains(UIManager.Instance.characterInfoUI.currentlyShowingCharacter)) {
-            Debug.Log("Chosen Action: " + chosenAction.actionData.actionName + " = " + choices[chosenIndex].advertisement + " (" + chosenAction.state.obj.objectName + " at " + chosenAction.state.obj.specificLocation.locationName + ")");
+            Debug.Log("Chosen Action: " + chosenActionAd.action.actionData.actionName + " = " + chosenActionAd.advertisement + " (" + chosenActionAd.targetObject.objectName + " at " + chosenActionAd.targetObject.specificLocation.locationName + ")");
         }
         //Debug.Log("Chosen Action: " + chosenAction.actionData.actionName + " = " + choices[chosenIndex].advertisement + " (" + chosenAction.state.obj.objectName + " at " + chosenAction.state.obj.objectLocation.landmarkName + ")");
-        return chosenAction;
+        return chosenActionAd;
     }
 
     private void RemoveActionFromChoices(CharacterAction action) {
@@ -255,10 +261,10 @@ public class ActionThread : Multithread {
         if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
             for (int k = 0; k < iobject.currentState.actions.Count; k++) {
                 CharacterAction action = iobject.currentState.actions[k];
-                if (action.MeetsRequirements(_party, null) && action.CanBeDone() && action.CanBeDoneBy(_party)) { //Filter
-                    float happinessIncrease = _party.TotalHappinessIncrease(action);
+                if (action.MeetsRequirements(_party, null) && action.CanBeDone(iobject) && action.CanBeDoneBy(_party, iobject)) { //Filter
+                    float happinessIncrease = _party.TotalHappinessIncrease(action, iobject);
                     actionLog += "\n" + action.actionData.actionName + " = " + happinessIncrease + " (" + iobject.objectName + ")";
-                    PutToChoices(action, happinessIncrease);
+                    PutToChoices(action, iobject, happinessIncrease);
                 }
             }
         }

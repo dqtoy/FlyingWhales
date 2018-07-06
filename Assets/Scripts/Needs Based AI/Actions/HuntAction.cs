@@ -4,27 +4,27 @@ using ECS;
 using UnityEngine;
 
 public class HuntAction : CharacterAction {
-    public HuntAction(ObjectState state): base(state, ACTION_TYPE.HUNT) {
+    public HuntAction(): base(ACTION_TYPE.HUNT) {
 
     }
 
     #region Overrides
-    public override void PerformAction(CharacterParty party) {
-        base.PerformAction(party);
+    public override void PerformAction(CharacterParty party, IObject targetObject) {
+        base.PerformAction(party, targetObject);
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < actionData.successRate) {
-            ActionSuccess();
+            ActionSuccess(targetObject);
             GiveAllReward(party);
             if (party.IsFull(NEEDS.FULLNESS)){
-                EndAction(party);
+                EndAction(party, targetObject);
             }
         } else {
-            ActionFail();
+            ActionFail(targetObject);
             GiveReward(NEEDS.ENERGY, party);
         }
     }
-    public override CharacterAction Clone(ObjectState state) {
-        HuntAction huntAction = new HuntAction(state);
+    public override CharacterAction Clone() {
+        HuntAction huntAction = new HuntAction();
         SetCommonData(huntAction);
         huntAction.Initialize();
         return huntAction;
