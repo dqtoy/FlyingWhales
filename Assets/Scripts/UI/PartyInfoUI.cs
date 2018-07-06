@@ -40,7 +40,7 @@ public class PartyInfoUI : UIMenu {
         string text = string.Empty;
 		if(!currentlyShowingParty.isDead){
             text += "<b>Name:</b> " + currentlyShowingParty.name;
-            text += "<b>Party Power:</b> " + currentlyShowingParty.computedPower;
+            text += "\n<b>Party Power:</b> " + currentlyShowingParty.computedPower;
             text += "\n<b>Characters:</b>";
             for (int i = 0; i < currentlyShowingParty.icharacters.Count; i++) {
                 ICharacter member = currentlyShowingParty.icharacters[i];

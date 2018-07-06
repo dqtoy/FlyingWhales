@@ -81,6 +81,8 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
             } else if (iparty.icharacters.Count == 1) {
                 if (iparty.icharacters[0] is ECS.Character) {
                     UIManager.Instance.ShowCharacterInfo(iparty.icharacters[0] as ECS.Character);
+                } else if (iparty.icharacters[0] is Monster) {
+                    UIManager.Instance.ShowMonsterInfo(iparty.icharacters[0] as Monster);
                 }
             }
         }

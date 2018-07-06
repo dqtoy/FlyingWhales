@@ -253,6 +253,7 @@ public class Monster : ICharacter {
         _isDead = true;
         Messenger.Broadcast(Signals.MONSTER_DEATH, this);
         _party.RemoveCharacter(this);
+        MonsterManager.Instance.allMonsters.Remove(this);
     }
     private float GetAttackPower() {
         //float statUsed = (float) Utilities.GetStatByClass(this);
@@ -293,10 +294,10 @@ public class Monster : ICharacter {
         _id = Utilities.SetID(this);
         BaseInitialize();
     }
-    public void Initialize(MonsterSaveData data){
-        _id = Utilities.SetID(this, data.id);
-        BaseInitialize();
-    }
+    //public void Initialize(MonsterSaveData data){
+    //    _id = Utilities.SetID(this, data.id);
+    //    BaseInitialize();
+    //}
     public void SetSide(SIDES side) {
         _currentSide = side;
     }
