@@ -58,13 +58,11 @@ public class Area {
     public void AddTile(HexTile tile, bool revalidateTiles = true) {
         if (!tiles.Contains(tile)) {
             tiles.Add(tile);
-            tile.SetBaseSprite(Biomes.Instance.bareTiles[0]);
-            tile.SetBiomeDetailState(false);
             tile.SetArea(this);
             if (revalidateTiles) {
                 RevalidateTiles();
             }
-            Messenger.Broadcast(Signals.AREA_TILE_ADDED, this);
+            Messenger.Broadcast(Signals.AREA_TILE_ADDED, this, tile);
         }
     }
     public void RemoveTile(List<HexTile> tiles, bool revalidateTiles = true) {
@@ -81,7 +79,7 @@ public class Area {
         if (revalidateTiles) {
             RevalidateTiles();
         }
-        Messenger.Broadcast(Signals.AREA_TILE_REMOVED, this);
+        Messenger.Broadcast(Signals.AREA_TILE_REMOVED, this, tile);
     }
     private void RevalidateTiles() {
         List<HexTile> tilesToCheck = new List<HexTile>(tiles);

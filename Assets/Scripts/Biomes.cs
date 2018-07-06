@@ -160,15 +160,16 @@ public class Biomes : MonoBehaviour {
 #endif
         if (currentHexTile.elevationType == ELEVATION.WATER) {
             SetElevationSpriteForTile(currentHexTile);
-            currentHexTile.UpdateLedgesAndOutlines();
+            //currentHexTile.UpdateLedgesAndOutlines();
             currentHexTile.SetSortingOrder(sortingOrder);
             return;
-        } else {
-            currentHexTile.UpdateLedgesAndOutlines();
-            if (updateNeighbours) {
-                currentHexTile.AllNeighbours.ForEach(x => x.UpdateLedgesAndOutlines());
-            }
-        }
+        } 
+        //else {
+        //    currentHexTile.UpdateLedgesAndOutlines();
+        //    if (updateNeighbours) {
+        //        currentHexTile.AllNeighbours.ForEach(x => x.UpdateLedgesAndOutlines());
+        //    }
+        //}
         if (currentHexTile.elevationType == ELEVATION.PLAIN) {
             LoadPlainTileVisuals(currentHexTile, sortingOrder);
         } else if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {

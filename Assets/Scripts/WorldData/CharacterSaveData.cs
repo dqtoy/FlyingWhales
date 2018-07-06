@@ -28,7 +28,11 @@ public class CharacterSaveData {
         gender = character.gender;
         role = character.role.roleType;
         if (character.role != null) {
-            job = character.role.job.jobType;
+            if (character.role.job != null) {
+                job = character.role.job.jobType;
+            } else {
+                job = CHARACTER_JOB.NONE;
+            }
         } else {
             job = CHARACTER_JOB.NONE;
         }

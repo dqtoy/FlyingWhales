@@ -38,8 +38,8 @@ public class PartyInfoUI : UIMenu {
             return;
         }
         string text = string.Empty;
-        text += "[b]Name:[/b] " + currentlyShowingParty.name;
-		text += "\n[b]Characters:[/b]";
+        text += "<b>Name:</b> " + currentlyShowingParty.name;
+		text += "\n<b>Characters:</b>";
 		if(currentlyShowingParty.icharacters.Count > 0){
 			for (int i = 0; i < currentlyShowingParty.icharacters.Count; i++) {
                 ICharacter member = currentlyShowingParty.icharacters[i];

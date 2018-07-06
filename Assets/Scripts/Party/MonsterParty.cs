@@ -8,11 +8,15 @@ using ECS;
 public class MonsterParty : NewParty {
     private string _name;
     private MonsterObj _monsterObj;
+    private string _setupName;
 
     #region getters/setters
     //public override string name {
     //    get { return _name; }
     //}
+    public string setupName {
+        get { return _setupName; }
+    }
     public MonsterObj monsterObj {
         get { return _monsterObj; }
     }
@@ -43,13 +47,17 @@ public class MonsterParty : NewParty {
     }
     public override void PartyDeath() {
         base.PartyDeath();
-        MonsterManager.Instance.allMonsterParties.Remove(this);
+        MonsterManager.Instance.RemoveMonster(this);
+        Messenger.Broadcast(Signals.MONSTER_PARTY_DIED, this);
     }
     #endregion
 
     #region Utilities
     public void SetName(string name) {
         _name = name;
+    }
+    public void SetSetupName(string setupName) {
+        _setupName = setupName;
     }
     #endregion
 }

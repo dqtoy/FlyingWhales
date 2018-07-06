@@ -35,6 +35,8 @@ public class Player : ILeader{
         playerArea = null;
         snatchCredits = 0;
         _snatchedCharacters = new List<ECS.Character>();
+        Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_ADDED, OnTileAddedToPlayerArea);
+        Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileAddedToPlayerArea);
     }
 
     #region Corruption
@@ -51,6 +53,18 @@ public class Player : ILeader{
     }
     private void SetPlayerArea(Area area) {
         playerArea = area;
+    }
+    private void OnTileAddedToPlayerArea(Area affectedArea, HexTile addedTile) {
+        if (playerArea != null && affectedArea.id == playerArea.id) {
+            addedTile.SetBaseSprite(Biomes.Instance.bareTiles[0]);
+            addedTile.SetBiomeDetailState(false);
+        }
+    }
+    private void OnTileRemovedFromPlayerArea(Area affectedArea, HexTile removedTile) {
+        if (playerArea != null && affectedArea.id == playerArea.id) {
+            Biomes.Instance.UpdateTileVisuals(removedTile);
+            removedTile.SetBiomeDetailState(true);
+        }
     }
     #endregion
 

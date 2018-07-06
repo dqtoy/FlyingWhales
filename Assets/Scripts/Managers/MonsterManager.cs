@@ -9,6 +9,7 @@ public class MonsterManager : MonoBehaviour {
     public GameObject monsterIconPrefab;
     public MonsterComponent monsterComponent;
 
+    [SerializeField] private List<MonsterPartyComponent> monsterPartySetups;
     public List<MonsterParty> allMonsterParties;
 
     #region getters/setters
@@ -42,49 +43,60 @@ public class MonsterManager : MonoBehaviour {
         newMonster.Initialize();
         return newMonster;
     }
-    public Monster CreateNewMonster(MonsterSaveData data) {
-        Monster newMonster = _monstersDictionary[data.monsterName].CreateNewCopy();
-        newMonster.Initialize(data);
-        return newMonster;
+    //public Monster CreateNewMonster(MonsterSaveData data) {
+    //    Monster newMonster = _monstersDictionary[data.monsterName].CreateNewCopy();
+    //    newMonster.Initialize(data);
+    //    return newMonster;
+    //}
+    public MonsterPartyComponent GetMonsterPartySetup(string partyName) {
+        for (int i = 0; i < monsterPartySetups.Count; i++) {
+            MonsterPartyComponent currComponent = monsterPartySetups[i];
+            if (currComponent.name.Equals(partyName)) {
+                return currComponent;
+            }
+        }
+        throw new System.Exception("No monster party setup with name " + partyName);
     }
-    public Monster SpawnMonsterOnTile(HexTile tile, string monsterName) {
-        Monster newMonster = CreateNewMonster(monsterName);
-        MonsterParty monsterParty = newMonster.CreateNewParty();
-        monsterParty.CreateIcon();
-        monsterParty.icon.SetPosition(tile.transform.position);
-        monsterParty.SetSpecificLocation(tile);
-        return newMonster;
-    }
-    public Monster SpawnMonsterOnTile(HexTile tile, MonsterSaveData data) {
-        Monster newMonster = CreateNewMonster(data);
-        MonsterParty monsterParty = newMonster.CreateNewParty();
-        monsterParty.CreateIcon();
-        monsterParty.icon.SetPosition(tile.transform.position);
-        monsterParty.SetSpecificLocation(tile);
-        return newMonster;
-    }
-    public Monster SpawnMonsterOnLandmark(BaseLandmark landmark, string monsterName) {
-        Monster newMonster = CreateNewMonster(monsterName);
-        MonsterParty monsterParty = newMonster.CreateNewParty();
-#if !WORLD_CREATION_TOOL
-        monsterParty.CreateIcon();
-        monsterParty.icon.SetPosition(landmark.tileLocation.transform.position);
-#endif
-        landmark.AddCharacterToLocation(monsterParty);
-        return newMonster;
-    }
-    public Monster SpawnMonsterOnLandmark(BaseLandmark landmark, MonsterSaveData data) {
-        Monster newMonster = CreateNewMonster(data);
-        MonsterParty monsterParty = newMonster.CreateNewParty();
-#if !WORLD_CREATION_TOOL
-        monsterParty.CreateIcon();
-        monsterParty.icon.SetPosition(landmark.tileLocation.transform.position);
-#endif
-        landmark.AddCharacterToLocation(monsterParty);
-        return newMonster;
-    }
+
+    //public Monster SpawnMonsterOnTile(HexTile tile, string monsterName) {
+    //    Monster newMonster = CreateNewMonster(monsterName);
+    //    MonsterParty monsterParty = newMonster.CreateNewParty();
+    //    monsterParty.CreateIcon();
+    //    monsterParty.icon.SetPosition(tile.transform.position);
+    //    monsterParty.SetSpecificLocation(tile);
+    //    return newMonster;
+    //}
+    //public Monster SpawnMonsterOnTile(HexTile tile, MonsterSaveData data) {
+    //    Monster newMonster = CreateNewMonster(data);
+    //    MonsterParty monsterParty = newMonster.CreateNewParty();
+    //    monsterParty.CreateIcon();
+    //    monsterParty.icon.SetPosition(tile.transform.position);
+    //    monsterParty.SetSpecificLocation(tile);
+    //    return newMonster;
+    //}
+//    public Monster SpawnMonsterOnLandmark(BaseLandmark landmark, string monsterName) {
+//        Monster newMonster = CreateNewMonster(monsterName);
+//        MonsterParty monsterParty = newMonster.CreateNewParty();
+//#if !WORLD_CREATION_TOOL
+//        monsterParty.CreateIcon();
+//        monsterParty.icon.SetPosition(landmark.tileLocation.transform.position);
+//#endif
+//        landmark.AddCharacterToLocation(monsterParty);
+//        return newMonster;
+//    }
+//    public Monster SpawnMonsterOnLandmark(BaseLandmark landmark, MonsterSaveData data) {
+//        Monster newMonster = CreateNewMonster(data);
+//        MonsterParty monsterParty = newMonster.CreateNewParty();
+//#if !WORLD_CREATION_TOOL
+//        monsterParty.CreateIcon();
+//        monsterParty.icon.SetPosition(landmark.tileLocation.transform.position);
+//#endif
+//        landmark.AddCharacterToLocation(monsterParty);
+//        return newMonster;
+//    }
     public MonsterParty SpawnMonsterPartyOnLandmark(BaseLandmark landmark, MonsterPartyComponent monsterPartyComponent) {
         MonsterParty monsterParty = new MonsterParty();
+        monsterParty.SetSetupName(monsterPartyComponent.name);
         for (int i = 0; i < monsterPartyComponent.monsters.Length; i++) {
             string monsterName = monsterPartyComponent.monsters[i].name;
             Monster monster = CreateNewMonster(monsterName);
@@ -95,12 +107,20 @@ public class MonsterManager : MonoBehaviour {
         monsterParty.icon.SetPosition(landmark.tileLocation.transform.position);
 #endif
         landmark.AddCharacterToLocation(monsterParty);
+        allMonsterParties.Add(monsterParty);
         return monsterParty;
     }
-    public void DespawnMonsterOnLandmark(BaseLandmark landmark, Monster monster) {
-        landmark.RemoveCharacterFromLocation(monster.party);
-        //RemoveMonster(monster);
+    public void DespawnMonsterPartyOnLandmark(BaseLandmark landmark, MonsterParty monsterParty) {
+        landmark.RemoveCharacterFromLocation(monsterParty);
+        RemoveMonster(monsterParty);
+#if !WORLD_CREATION_TOOL
+        GameObject.Destroy(monsterParty.icon.gameObject);
+#endif
     }
+    //public void DespawnMonsterOnLandmark(BaseLandmark landmark, Monster monster) {
+    //    landmark.RemoveCharacterFromLocation(monster.party);
+    //    //RemoveMonster(monster);
+    //}
     public void RemoveMonster(MonsterParty party) {
         allMonsterParties.Remove(party);
 #if !WORLD_CREATION_TOOL
@@ -144,21 +164,28 @@ public class MonsterManager : MonoBehaviour {
             RemoveMonster(monsterParties[i]);
         }
     }
+
     public void LoadMonsters(WorldSaveData data) {
         if (data.monstersData != null) {
             for (int i = 0; i < data.monstersData.Count; i++) {
                 MonsterSaveData monsterData = data.monstersData[i];
-                if (monsterData.locationType == LOCATION_IDENTIFIER.HEXTILE) {
-#if WORLD_CREATION_TOOL
-                    HexTile tile = worldcreator.WorldCreatorManager.Instance.GetHexTile(monsterData.locationID);
-#else
-                    HexTile tile = GridMap.Instance.GetHexTile(monsterData.locationID);
-#endif
-                    SpawnMonsterOnTile(tile, monsterData);
-                } else if (monsterData.locationType == LOCATION_IDENTIFIER.LANDMARK) {
+                MonsterPartyComponent partyComp = GetMonsterPartySetup(monsterData.monsterName);
+                if (monsterData.locationType == LOCATION_IDENTIFIER.LANDMARK) {
                     BaseLandmark landmark = LandmarkManager.Instance.GetLandmarkByID(monsterData.locationID);
-                    SpawnMonsterOnLandmark(landmark, monsterData);
+                    SpawnMonsterPartyOnLandmark(landmark, partyComp);
                 }
+
+//                if (monsterData.locationType == LOCATION_IDENTIFIER.HEXTILE) {
+//#if WORLD_CREATION_TOOL
+//                    HexTile tile = worldcreator.WorldCreatorManager.Instance.GetHexTile(monsterData.locationID);
+//#else
+//                    HexTile tile = GridMap.Instance.GetHexTile(monsterData.locationID);
+//#endif
+//                    SpawnMonsterOnTile(tile, monsterData);
+//                } else if (monsterData.locationType == LOCATION_IDENTIFIER.LANDMARK) {
+//                    BaseLandmark landmark = LandmarkManager.Instance.GetLandmarkByID(monsterData.locationID);
+//                    SpawnMonsterOnLandmark(landmark, monsterData);
+//                }
             }
         }
     }
