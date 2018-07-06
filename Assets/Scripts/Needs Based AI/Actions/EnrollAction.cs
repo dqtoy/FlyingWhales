@@ -6,28 +6,29 @@ public class EnrollAction : CharacterAction {
 
     private ECS.Character mentor;
 
-    public EnrollAction(ObjectState state) : base(state, ACTION_TYPE.ENROLL) {
-        if (this.state.obj is ICharacterObject) {
-            ICharacterObject owner = this.state.obj as ICharacterObject;
-            if (owner.iparty is CharacterParty) {
-                mentor = ((owner.iparty as CharacterParty).mainCharacter as ECS.Character);
-            }
-        }
+    public EnrollAction() : base(ACTION_TYPE.ENROLL) {
+        
     }
 
     #region Overrides
-    public override void PerformAction(CharacterParty party) {
-        base.PerformAction(party);
-        ActionSuccess();
+    public override void PerformAction(CharacterParty party, IObject targetObject) {
+        base.PerformAction(party, targetObject);
+        //ActionSuccess();
         GiveAllReward(party);
     }
-    public override CharacterAction Clone(ObjectState state) {
-        EnrollAction idleAction = new EnrollAction(state);
+    public override CharacterAction Clone() {
+        EnrollAction idleAction = new EnrollAction();
         SetCommonData(idleAction);
         idleAction.Initialize();
         return idleAction;
     }
-    public override bool CanBeDoneBy(CharacterParty party) {
+    public override bool CanBeDoneBy(CharacterParty party, IObject targetObject) {
+        if (targetObject is ICharacterObject) {
+            ICharacterObject owner = targetObject as ICharacterObject;
+            if (owner.iparty.icharacters[0] is ECS.Character) {
+                mentor = (owner.iparty.icharacters[0] as ECS.Character);
+            }
+        }
         ICharacter currCharacter = party.mainCharacter;
         if (currCharacter is ECS.Character) {
             ECS.Character character = currCharacter as ECS.Character;
@@ -36,9 +37,9 @@ public class EnrollAction : CharacterAction {
                 return true;
             }
         }
-        return base.CanBeDoneBy(party);
+        return base.CanBeDoneBy(party, targetObject);
     }
-    public override bool CanBeDone() {
+    public override bool CanBeDone(IObject targetObject) {
         return false; //Change this to something more elegant, this is to prevent other characters that don't have the release character quest from releasing this character.
     }
     #endregion

@@ -276,9 +276,9 @@ public class ObjectManager : MonoBehaviour {
             case ACTION_TYPE.CLEANSE:
                 return new CleanseAction();
             case ACTION_TYPE.ENROLL:
-                return new EnrollAction(state);
+                return new EnrollAction();
             case ACTION_TYPE.TRAIN:
-                return new TrainAction(state);
+                return new TrainAction();
             case ACTION_TYPE.DAYDREAM:
                 return new DaydreamAction();
             case ACTION_TYPE.BERSERK:
