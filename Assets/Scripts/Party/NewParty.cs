@@ -28,7 +28,13 @@ public class NewParty : IParty {
         get { return _icharacters[0].name + "'s Party"; }
     }
     public string urlName {
-        get { return "<link=" + '"' + this._id.ToString() + "_party" + '"' + ">" + name + "</link>"; }
+        get {
+            if (_icharacters.Count == 1) {
+                return "<link=" + '"' + _icharacters[0].id.ToString() + "_character" + '"' + ">" + name + "</link>";
+            } else {
+                return "<link=" + '"' + this._id.ToString() + "_party" + '"' + ">" + name + "</link>";
+            }
+        }
     }
     public string coloredUrlName {
         get { return "<link=" + '"' + this._id.ToString() + "_party" + '"' + ">" + "<color=#000000>" + name + "</color></link>"; }

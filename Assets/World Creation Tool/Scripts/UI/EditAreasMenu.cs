@@ -54,6 +54,7 @@ namespace worldcreator {
         private void OnAreaCreated(Area createdArea) {
             GameObject areaItemGO = GameObject.Instantiate(areaItemPrefab, areasScrollView.content);
             AreaEditorItem areaItem = areaItemGO.GetComponent<AreaEditorItem>();
+            areaItem.Initialize();
             areaItem.SetArea(createdArea);
         }
         private void LoadAreaTypeChoices() {

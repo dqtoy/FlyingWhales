@@ -53,4 +53,8 @@ public static class Signals {
     #region Quest Signals
     public static string CHARACTER_SNATCHED = "OnCharacterSnatched"; //Parameters (Character snatchedCharacter)
     #endregion
+
+    #region Party
+    public static string MONSTER_PARTY_DIED = "OnMonsterPartyDied"; //Parameters (MonsterParty monsterParty)
+    #endregion
 }

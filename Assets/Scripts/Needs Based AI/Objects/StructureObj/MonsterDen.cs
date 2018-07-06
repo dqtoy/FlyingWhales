@@ -7,7 +7,7 @@ public class MonsterDen : StructureObj {
     private const int SPAWN_COOLDOWN_TICKS = 48;
 
     private int spawnCooldown;
-    private Monster spawn;
+    private MonsterParty spawnedParty;
 
     public MonsterDen() : base() {
         _specificObjectType = LANDMARK_TYPE.MONSTER_DEN;
@@ -38,8 +38,8 @@ public class MonsterDen : StructureObj {
             AreaData areaData = LandmarkManager.Instance.GetAreaData(areaOfObj.areaType);
             if (areaData.possibleMonsterSpawns.Count > 0) {
                 MonsterPartyComponent chosenMonster = areaData.possibleMonsterSpawns[Random.Range(0, areaData.possibleMonsterSpawns.Count)];
-                Monster spawnedMonster = MonsterManager.Instance.SpawnMonsterOnLandmark(this.objectLocation, chosenMonster.name);
-                BindMonsterToDen(spawnedMonster);
+                MonsterParty spawnedMonsterParty = MonsterManager.Instance.SpawnMonsterPartyOnLandmark(this.objectLocation, chosenMonster);
+                BindMonsterPartyToDen(spawnedMonsterParty);
             }
         } else {
             Debug.LogWarning("Monster Den is not part of and area, so it cannot spawn a monster!" + specificLocation.tileLocation.ToString(), specificLocation.tileLocation.gameObject);
@@ -47,17 +47,17 @@ public class MonsterDen : StructureObj {
     }
 
 
-    private void BindMonsterToDen(Monster monster) {
-        spawn = monster;
+    private void BindMonsterPartyToDen(MonsterParty party) {
+        spawnedParty = party;
         ChangeState(GetState("Occupied"));
-        Messenger.AddListener<Monster>(Signals.MONSTER_DEATH, OnMonsterDied);
+        Messenger.AddListener<MonsterParty>(Signals.MONSTER_PARTY_DIED, OnMonsterPartyDied);
     }
 
-    private void OnMonsterDied(Monster monsterThatDied) {
-        if (monsterThatDied.id == spawn.id) {
-            spawn = null;
+    private void OnMonsterPartyDied(MonsterParty partyThatDied) {
+        if (partyThatDied.id == spawnedParty.id) {
+            spawnedParty = null;
             ChangeState(GetState("Spawning"));
-            Messenger.RemoveListener<Monster>(Signals.MONSTER_DEATH, OnMonsterDied);
+            Messenger.RemoveListener<MonsterParty>(Signals.MONSTER_PARTY_DIED, OnMonsterPartyDied);
         }
     }
 

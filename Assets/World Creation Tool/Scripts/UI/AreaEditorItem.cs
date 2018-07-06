@@ -22,21 +22,28 @@ namespace worldcreator {
         #endregion
 
         #region Monobehaviours
-        private void Awake() {
-            LoadAreaTypeChoices();
-            Messenger.AddListener<Area>(Signals.AREA_TILE_ADDED, UpdateInfo);
-            Messenger.AddListener<Area>(Signals.AREA_TILE_REMOVED, UpdateInfo);
-        }
+        
         private void Update() {
             areaNameLbl.text = area.name;
         }
         #endregion
 
+        public void Initialize() {
+            LoadAreaTypeChoices();
+            Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_ADDED, UpdateInfo);
+            Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, UpdateInfo);
+        }
         public void SetArea(Area area) {
             _area = area;
             UpdateInfo(area);
         }
         private void UpdateInfo(Area area) {
+            areaColorSwatch.color = area.areaColor;
+            areaNameLbl.text = area.name;
+            areaTilesLbl.text = area.tiles.Count.ToString();
+            areaTypeDropdown.value = Utilities.GetOptionIndex(areaTypeDropdown, area.areaType.ToString());
+        }
+        private void UpdateInfo(Area area, HexTile tile) {
             if (_area.id == area.id) {
                 areaColorSwatch.color = area.areaColor;
                 areaNameLbl.text = area.name;

@@ -578,19 +578,24 @@ public class CharacterRole {
     public void AssignJob(CHARACTER_JOB jobType) {
         switch (jobType) {
             case CHARACTER_JOB.SHOPKEEPER:
-            _job = new Shopkeeper(this);
-            break;
+                _job = new Shopkeeper(this);
+                break;
             case CHARACTER_JOB.MINER:
-            _job = new Miner(this);
-            break;
+                _job = new Miner(this);
+                break;
             case CHARACTER_JOB.WOODCUTTER:
-            _job = new Woodcutter(this);
-            break;
+                _job = new Woodcutter(this);
+                break;
             case CHARACTER_JOB.FARMER:
-            _job = new Farmer(this);
-            break;
+                _job = new Farmer(this);
+                break;
+            default:
+                _job = null;
+                break;
         }
-        _job.OnAssignJob();
+        if (_job != null) {
+            _job.OnAssignJob();
+        }
     }
     #endregion
 }

@@ -1445,62 +1445,64 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             settings.AddMenuItem(renameArea);
         }
 
-        if (this.areaOfTile != null && landmarkOnTile == null) {
-            //landmark creation
-            ContextMenuItemSettings createLandmarkItem = new ContextMenuItemSettings("Create Landmark");
-            settings.AddMenuItem(createLandmarkItem);
+        if (this.areaOfTile != null) {
+            AreaData areaData = LandmarkManager.Instance.GetAreaData(_areaOfTile.areaType);
+            if (landmarkOnTile == null) {
+                //landmark creation
+                ContextMenuItemSettings createLandmarkItem = new ContextMenuItemSettings("Create Landmark");
+                settings.AddMenuItem(createLandmarkItem);
 
-            ContextMenuSettings createLandmarkSettings = new ContextMenuSettings();
-            createLandmarkItem.SetSubMenu(createLandmarkSettings);
+                ContextMenuSettings createLandmarkSettings = new ContextMenuSettings();
+                createLandmarkItem.SetSubMenu(createLandmarkSettings);
 
-            AreaData data = LandmarkManager.Instance.GetAreaData(_areaOfTile.areaType);
-            for (int i = 0; i < data.allowedLandmarkTypes.Count; i++) {
-                LANDMARK_TYPE landmarkType = data.allowedLandmarkTypes[i];
-                ContextMenuItemSettings createLandmark = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString()));
-                createLandmark.onClickAction = () => worldcreator.WorldCreatorUI.Instance.editLandmarksMenu.SpawnLandmark(landmarkType, this);
-                createLandmarkSettings.AddMenuItem(createLandmark);
-            }            
-            //end landmark creation
-        }
-        if (landmarkOnTile != null) {
-            //Landmark Destruction
-            ContextMenuItemSettings createLandmarkItem = new ContextMenuItemSettings("Destroy Landmark");
-            createLandmarkItem.onClickAction = () => worldcreator.WorldCreatorManager.Instance.DestroyLandmarks(this);
-            settings.AddMenuItem(createLandmarkItem);
-            //end landmark destruction
+                for (int i = 0; i < areaData.allowedLandmarkTypes.Count; i++) {
+                    LANDMARK_TYPE landmarkType = areaData.allowedLandmarkTypes[i];
+                    ContextMenuItemSettings createLandmark = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString()));
+                    createLandmark.onClickAction = () => worldcreator.WorldCreatorUI.Instance.editLandmarksMenu.SpawnLandmark(landmarkType, this);
+                    createLandmarkSettings.AddMenuItem(createLandmark);
+                }
+                //end landmark creation
+            } else {
+                //Landmark Destruction
+                ContextMenuItemSettings destroyLandmarkItem = new ContextMenuItemSettings("Destroy Landmark");
+                destroyLandmarkItem.onClickAction = () => worldcreator.WorldCreatorManager.Instance.DestroyLandmarks(this);
+                settings.AddMenuItem(destroyLandmarkItem);
+                //end landmark destruction
 
-            //Monster Spawning
-            ContextMenuItemSettings spawnMonster = new ContextMenuItemSettings("Spawn Monster");
-            settings.AddMenuItem(spawnMonster);
+                //Monster Spawning
+                ContextMenuItemSettings spawnMonster = new ContextMenuItemSettings("Spawn Monster");
+                settings.AddMenuItem(spawnMonster);
 
-            ContextMenuSettings createMonsterSettings = new ContextMenuSettings();
-            spawnMonster.SetSubMenu(createMonsterSettings);
+                ContextMenuSettings createMonsterSettings = new ContextMenuSettings();
+                spawnMonster.SetSubMenu(createMonsterSettings);
 
-            foreach (KeyValuePair<string, Monster> kvp in MonsterManager.Instance.monstersDictionary) {
-                ContextMenuItemSettings spawnMonsterItem = new ContextMenuItemSettings(kvp.Key);
-                spawnMonsterItem.onClickAction = () => MonsterManager.Instance.SpawnMonsterOnLandmark(landmarkOnTile, kvp.Key);
-                createMonsterSettings.AddMenuItem(spawnMonsterItem);
+                for (int i = 0; i < areaData.possibleMonsterSpawns.Count; i++) {
+                    MonsterPartyComponent monsterParty = areaData.possibleMonsterSpawns[i];
+                    ContextMenuItemSettings spawnMonsterItem = new ContextMenuItemSettings(monsterParty.name);
+                    spawnMonsterItem.onClickAction = () => MonsterManager.Instance.SpawnMonsterPartyOnLandmark(landmarkOnTile, monsterParty);
+                    createMonsterSettings.AddMenuItem(spawnMonsterItem);
+                }
+                //end monster spawning
+
+                //Monster despawning
+                if (MonsterManager.Instance.HasMonsterOnLandmark(this.landmarkOnTile)) {
+                    ContextMenuItemSettings despawnMonster = new ContextMenuItemSettings("Despawn Monster");
+                    settings.AddMenuItem(despawnMonster);
+
+                    ContextMenuSettings despawnMonsterSettings = new ContextMenuSettings();
+                    despawnMonster.SetSubMenu(despawnMonsterSettings);
+
+                    for (int i = 0; i < this.landmarkOnTile.charactersAtLocation.Count; i++) {
+                        IParty currParty = this.landmarkOnTile.charactersAtLocation[i];
+                        if (currParty is MonsterParty) {
+                            ContextMenuItemSettings despawnMonsterItem = new ContextMenuItemSettings(currParty.name);
+                            despawnMonsterItem.onClickAction = () => MonsterManager.Instance.DespawnMonsterPartyOnLandmark(landmarkOnTile, currParty as MonsterParty);
+                            despawnMonsterSettings.AddMenuItem(despawnMonsterItem);
+                        }
+                    }
+                }
+                //end monster despawning
             }
-            //end monster spawning
-
-            ////Monster despawning
-            //if (MonsterManager.Instance.HasMonsterOnLandmark(this.landmarkOnTile)) {
-            //    ContextMenuItemSettings despawnMonster = new ContextMenuItemSettings("Despawn Monster");
-            //    settings.AddMenuItem(despawnMonster);
-
-            //    ContextMenuSettings despawnMonsterSettings = new ContextMenuSettings();
-            //    despawnMonster.SetSubMenu(despawnMonsterSettings);
-
-            //    for (int i = 0; i < this.landmarkOnTile.charactersAtLocation.Count; i++) {
-            //        ICharacter currCharacter = this.landmarkOnTile.charactersAtLocation[i];
-            //        if (currCharacter.icharacterType == ICHARACTER_TYPE.MONSTER) {
-            //            ContextMenuItemSettings despawnMonsterItem = new ContextMenuItemSettings(currCharacter.name);
-            //            despawnMonsterItem.onClickAction = () => MonsterManager.Instance.DespawnMonsterOnLandmark(landmarkOnTile, currCharacter as Monster);
-            //            despawnMonsterSettings.AddMenuItem(despawnMonsterItem);
-            //        }
-            //    }
-            //}
-            ////end monster despawning
         }
         return settings;
     }
