@@ -47,13 +47,13 @@ public class Monster : ICharacter {
 
     #region getters/setters
     public string name {
-        get { return "[" + _id + "]" + _name; }
+        get { return _name; }
     }
     public string urlName {
-        get { return "<link=" + '"' + this._id.ToString() + "_monster" + '"' + ">" + this._name + "</link>"; }
+        get { return "<link=" + '"' + this._id.ToString() + "_monster" + '"' + ">" + "[" + _id + "]" + this._name + "</link>"; }
     }
     public string coloredUrlName {
-        get { return "<link=" + '"' + this._id.ToString() + "_monster" + '"' + ">" + "<color=#" + this._characterColorCode + ">" + this._name + "</color></link>"; }
+        get { return "<link=" + '"' + this._id.ToString() + "_monster" + '"' + ">" + "<color=#" + this._characterColorCode + ">" + "[" + _id + "]" + this._name + "</color></link>"; }
     }
     public int id {
         get { return _id; }
