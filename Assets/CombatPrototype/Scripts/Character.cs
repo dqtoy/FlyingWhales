@@ -2447,10 +2447,13 @@ namespace ECS {
         private void ConstructDesperateActions() {
             _desperateActions = new List<CharacterAction>();
             _desperateActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.BERSERK));
+            _desperateActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.SELFMUTILATE));
+            _desperateActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.FLAIL));
         }
         private void ConstructIdleActions() {
             _idleActions = new List<CharacterAction>();
             _idleActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DAYDREAM));
+            _idleActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.PLAY));
         }
         public CharacterAction GetRandomDesperateAction() {
             return _desperateActions[Utilities.rng.Next(0, _desperateActions.Count)];

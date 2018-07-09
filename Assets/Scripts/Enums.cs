@@ -1278,6 +1278,9 @@ public enum ACTION_TYPE {
     TRAIN,
     DAYDREAM,
     BERSERK,
+    PLAY,
+    FLAIL,
+    SELFMUTILATE,
 }
 
 public enum OBJECT_TYPE {

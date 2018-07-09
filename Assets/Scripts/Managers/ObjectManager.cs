@@ -283,6 +283,12 @@ public class ObjectManager : MonoBehaviour {
                 return new DaydreamAction();
             case ACTION_TYPE.BERSERK:
                 return new BerserkAction();
+            case ACTION_TYPE.SELFMUTILATE:
+                return new SelfMutilateAction();
+            case ACTION_TYPE.FLAIL:
+                return new FlailAction();
+            case ACTION_TYPE.PLAY:
+                return new PlayAction();
 
         }
         return null;
