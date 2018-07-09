@@ -37,7 +37,7 @@ public class ReleaseCharacterQuest : Quest {
         if (character.role.roleType == CHARACTER_ROLE.HERO && questData.gainPowerType == ReleaseCharacterQuestData.Gain_Power_Type.None) {
             List<ReleaseCharacterQuestData.Gain_Power_Type> availablePowerSources = new List<ReleaseCharacterQuestData.Gain_Power_Type>();
             //- if there is a Retired Hero from non-hostile Factions with no negative relationship to the character, Mentor is available
-            if (CharacterManager.Instance.HasCharacterWithJob(CHARACTER_JOB.RETIRED_HERO)) { //TODO: Add faction relationship checking
+            if (CharacterManager.Instance.HasCharacterWithClass("Retired Hero")) { //TODO: Add faction relationship checking
 
             }
             //- if there is a Shop from non-hostile settlements, Equipment is available
@@ -51,7 +51,7 @@ public class ReleaseCharacterQuest : Quest {
 
     private List<Character> GetElligibleMentors(Character character) {
         List<Character> elligibleMentors = new List<Character>();
-        List<Character> mentors = CharacterManager.Instance.GetCharactersWithJob(CHARACTER_JOB.RETIRED_HERO);
+        List<Character> mentors = CharacterManager.Instance.GetCharactersWithClass("Retired Hero");
         for (int i = 0; i < mentors.Count; i++) {
             Character currMentor = mentors[i];
             Relationship relMentor = currMentor.GetRelationshipWith(character);

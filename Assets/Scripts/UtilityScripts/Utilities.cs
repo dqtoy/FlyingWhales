@@ -1369,37 +1369,6 @@ public class Utilities : MonoBehaviour {
     #endregion
 
     #region Characters
-    public static TECHNOLOGY GetTechnologyForCharacterClass(CHARACTER_CLASS charClass) {
-        switch (charClass) {
-            case CHARACTER_CLASS.ARCHER:
-                return TECHNOLOGY.ARCHER_CLASS;
-            case CHARACTER_CLASS.SPEARMAN:
-                return TECHNOLOGY.SPEARMAN_CLASS;
-            case CHARACTER_CLASS.SWORDSMAN:
-                return TECHNOLOGY.SWORDSMAN_CLASS;
-            case CHARACTER_CLASS.ROGUE:
-                return TECHNOLOGY.ROGUE_CLASS;
-            case CHARACTER_CLASS.WILDLING:
-                return TECHNOLOGY.WILDLING_CLASS;
-            case CHARACTER_CLASS.MAGE:
-                return TECHNOLOGY.MAGE_CLASS;
-            case CHARACTER_CLASS.BARBARIAN:
-                return TECHNOLOGY.BARBARIAN_CLASS;
-            case CHARACTER_CLASS.RANGER:
-                return TECHNOLOGY.RANGER_CLASS;
-            case CHARACTER_CLASS.KNIGHT:
-                return TECHNOLOGY.KNIGHT_CLASS;
-            case CHARACTER_CLASS.BATTLEMAGE:
-                return TECHNOLOGY.BATTLEMAGE_CLASS;
-            case CHARACTER_CLASS.ARCANIST:
-                return TECHNOLOGY.ARCANIST_CLASS;
-            case CHARACTER_CLASS.NIGHTBLADE:
-                return TECHNOLOGY.NIGHTBLADE_CLASS;
-            case CHARACTER_CLASS.SCOUT:
-                return TECHNOLOGY.SCOUT_CLASS;
-        }
-        return TECHNOLOGY.NONE;
-    }
     //This is the list of armor, set by priority, change if needed
     public static List<ARMOR_TYPE> orderedArmorTypes = new List<ARMOR_TYPE>() {
             ARMOR_TYPE.SHIRT,

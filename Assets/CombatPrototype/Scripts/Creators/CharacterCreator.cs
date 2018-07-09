@@ -14,17 +14,17 @@ namespace ECS {
 		public override void OnInspectorGUI() {
 			if(characterComponent == null){
 				characterComponent = (CharacterComponent)target;
-				characterComponent.raceChoices = GetAllRaceSetups();
+				//characterComponent.raceChoices = GetAllRaceSetups();
 				characterComponent.characterClassChoices = GetAllCharacterClasses();
 
-				if(characterComponent.raceSettingName != string.Empty){
-					for (int i = 0; i < characterComponent.raceChoices.Count; i++) {
-						if(characterComponent.raceSettingName == characterComponent.raceChoices[i]){
-							characterComponent.currRaceSelectedIndex = i;
-							break;
-						}
-					}
-				}
+				//if(characterComponent.raceSettingName != string.Empty){
+				//	for (int i = 0; i < characterComponent.raceChoices.Count; i++) {
+				//		if(characterComponent.raceSettingName == characterComponent.raceChoices[i]){
+				//			characterComponent.currRaceSelectedIndex = i;
+				//			break;
+				//		}
+				//	}
+				//}
 
 				if(characterComponent.characterClassName != string.Empty){
 					for (int i = 0; i < characterComponent.characterClassChoices.Count; i++) {
@@ -38,7 +38,7 @@ namespace ECS {
             GUILayout.Label("ECS.Character Setup Creator ", EditorStyles.boldLabel);
 			characterComponent.fileName = EditorGUILayout.TextField("File Name: ", characterComponent.fileName);
             
-			characterComponent.currRaceSelectedIndex = EditorGUILayout.Popup("Race Setup: ", characterComponent.currRaceSelectedIndex, characterComponent.raceChoices.ToArray());
+			//characterComponent.currRaceSelectedIndex = EditorGUILayout.Popup("Race Setup: ", characterComponent.currRaceSelectedIndex, characterComponent.raceChoices.ToArray());
 			characterComponent.currCharacterSelectedIndex = EditorGUILayout.Popup("ECS.Character Class: ", characterComponent.currCharacterSelectedIndex, characterComponent.characterClassChoices.ToArray());
 			characterComponent.optionalRole = (CHARACTER_ROLE)EditorGUILayout.EnumPopup("Optional Role: ", characterComponent.optionalRole);
 
@@ -82,7 +82,7 @@ namespace ECS {
 
 
 
-			characterComponent.raceSettingName = characterComponent.raceChoices[characterComponent.currRaceSelectedIndex];
+			//characterComponent.raceSettingName = characterComponent.raceChoices[characterComponent.currRaceSelectedIndex];
 			characterComponent.characterClassName = characterComponent.characterClassChoices[characterComponent.currCharacterSelectedIndex];
 
 			if (GUILayout.Button("Save ECS.Character")) {
@@ -126,7 +126,7 @@ namespace ECS {
 		private CharacterSetup ConstructCharacterSetup() {
             CharacterSetup newCharacter = new CharacterSetup();
             newCharacter.fileName = characterComponent.fileName;
-			newCharacter.raceSettingName = characterComponent.raceSettingName;
+			//newCharacter.raceSettingName = characterComponent.raceSettingName;
 			newCharacter.characterClassName = characterComponent.characterClassName;
 			newCharacter.optionalRole = characterComponent.optionalRole;
             newCharacter.tags = characterComponent.tags;

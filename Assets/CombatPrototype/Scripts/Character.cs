@@ -360,29 +360,35 @@ namespace ECS {
         }
         #endregion
 
-        public Character(CharacterSetup baseSetup, GENDER gender) : this() {
+        public Character(string className, RACE race, GENDER gender) : this() {
             _id = Utilities.SetID(this);
-			_characterClass = baseSetup.characterClass.CreateNewCopy();
-			_raceSetting = baseSetup.raceSetting.CreateNewCopy();
+			_characterClass = CharacterManager.Instance.classesDictionary[className].CreateNewCopy();
+			_raceSetting = RaceManager.Instance.racesDictionary[race.ToString()].CreateNewCopy();
             _gender = gender;
             _name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
             _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait();
             _skills = GetGeneralSkills();
             _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
 
-            GenerateSetupTags(baseSetup);
             GenerateRaceTags();
 
             AllocateStatPoints(10);
             LevelUp();
 
-            EquipPreEquippedItems(baseSetup);
+            CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(className);
+            if(setup != null) {
+                GenerateSetupTags(setup);
+                EquipPreEquippedItems(setup);
+                if(setup.optionalRole != CHARACTER_ROLE.NONE) {
+                    AssignRole(setup.optionalRole);
+                }
+            }
         }
         public Character(CharacterSaveData data) : this(){
             _id = Utilities.SetID(this, data.id);
-            CharacterSetup baseSetup = CombatManager.Instance.GetBaseCharacterSetup(data.className, data.race);
+            CharacterSetup baseSetup = CombatManager.Instance.GetBaseCharacterSetup(data.className);
             _characterClass = baseSetup.characterClass.CreateNewCopy();
-            _raceSetting = baseSetup.raceSetting.CreateNewCopy();
+            _raceSetting = RaceManager.Instance.racesDictionary[data.race.ToString()].CreateNewCopy();
             _gender = data.gender;
             _name = data.name;
             //LoadRelationships(data.relationshipsData);
@@ -2040,15 +2046,13 @@ namespace ECS {
         }
         public void ChangeRace(RACE race) {
             //TODO: Change data as needed
-            ECS.CharacterSetup setup = ECS.CombatManager.Instance.GetBaseCharacterSetup(_characterClass.className, race);
-            _characterClass = setup.characterClass.CreateNewCopy();
-            _raceSetting = setup.raceSetting.CreateNewCopy();
+            RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
+            _raceSetting = raceSetting.CreateNewCopy();
         }
         public void ChangeClass(string className) {
             //TODO: Change data as needed
-            ECS.CharacterSetup setup = ECS.CombatManager.Instance.GetBaseCharacterSetup(className, _raceSetting.race);
-            _characterClass = setup.characterClass.CreateNewCopy();
-            _raceSetting = setup.raceSetting.CreateNewCopy();
+            CharacterClass charClass = CharacterManager.Instance.classesDictionary[className];
+            _characterClass = charClass.CreateNewCopy();
         }
 		public void SetName(string newName){
 			_name = newName;

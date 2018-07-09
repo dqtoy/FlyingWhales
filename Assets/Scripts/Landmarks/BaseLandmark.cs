@@ -360,7 +360,7 @@ public class BaseLandmark : ILocation {
          */
     public Character CreateNewCharacter(RACE raceOfChar, CHARACTER_ROLE charRole, string className, bool determineAction = true) {
         //RACE raceOfChar = GetRaceBasedOnProportion();
-        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar, Utilities.GetRandomGender(), CHARACTER_JOB.NONE, _owner);
+        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar, Utilities.GetRandomGender(), _owner);
         newCharacter.SetHome(this.tileLocation.areaOfTile);
         //if (reduceCivilians) {
         //    AdjustCivilians(raceOfChar, -1);
@@ -405,34 +405,6 @@ public class BaseLandmark : ILocation {
     //    return newCharacter;
     //}
 
-    /*
-     Create a new character, given a character setup name.
-         */
-    public Character CreateNewCharacter(RACE raceOfChar, string setupName, bool reduceCivilians = true, bool determineAction = true) {
-        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(setupName, Utilities.GetRandomGender(), CHARACTER_JOB.NONE, _owner);
-        //newCharacter.AssignRole(charRole);
-        //newCharacter.SetFaction(_owner);
-        newCharacter.SetHome(this.tileLocation.areaOfTile);
-        //if (reduceCivilians) {
-        //    AdjustCivilians(raceOfChar, -1);
-        //}
-        if (_owner != null) {
-            _owner.AddNewCharacter(newCharacter);
-        }
-        NewParty party = newCharacter.CreateNewParty();
-        party.CreateIcon();
-        this.AddCharacterToLocation(party);
-        //this.AddCharacterHomeOnLandmark(newCharacter);
-        party.icon.SetPosition(this.tileLocation.transform.position);
-        //if (newCharacter.role.roleType != CHARACTER_ROLE.FOLLOWER) {
-        //    //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
-        //    if (determineAction) {
-        //        newCharacter.DetermineAction();
-        //    }
-        //}
-        //UIManager.Instance.UpdateFactionSummary();
-        return newCharacter;
-    }
 	public Character GetPrisonerByID(int id){
 		for (int i = 0; i < _prisoners.Count; i++) {
 			if (_prisoners [i].id == id){

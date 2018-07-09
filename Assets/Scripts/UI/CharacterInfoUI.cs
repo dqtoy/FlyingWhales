@@ -131,9 +131,6 @@ public class CharacterInfoUI : UIMenu {
         }
         if (currentlyShowingCharacter.role != null) {
             text += "\n<b>Role: </b>" + currentlyShowingCharacter.role.roleType.ToString();
-            if (currentlyShowingCharacter.role.job != null) {
-                text += "\n<b>Job: </b>" + currentlyShowingCharacter.role.job.jobType.ToString();
-            }
         }
 
         text += "\n<b>Faction: </b>" + (currentlyShowingCharacter.faction != null ? currentlyShowingCharacter.faction.urlName : "NONE");

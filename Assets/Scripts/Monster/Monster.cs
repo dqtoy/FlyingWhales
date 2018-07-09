@@ -152,6 +152,9 @@ public class Monster : ICharacter {
     public CharacterRole role {
         get { return null; }
     }
+    public CharacterClass characterClass {
+        get { return null; }
+    }
     //public Combat currentCombat {
     //    get { return _currentCombat; }
     //    set { _currentCombat = value; }
@@ -278,8 +281,7 @@ public class Monster : ICharacter {
     #region Interface
     private void BaseInitialize() {
         _isDead = false;
-        CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(Utilities.NormalizeString(_type.ToString()));
-        _raceSetting = setup.raceSetting.CreateNewCopy();
+        _raceSetting = RaceManager.Instance.racesDictionary[_type.ToString()].CreateNewCopy();
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
         _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
         if (_skills == null) {

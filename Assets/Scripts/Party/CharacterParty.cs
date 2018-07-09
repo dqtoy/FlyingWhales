@@ -36,7 +36,7 @@ public class CharacterParty : NewParty {
 
     public void CreateCharacterObject() {
 #if !WORLD_CREATION_TOOL
-        if (mainCharacter.role.job != null && mainCharacter.role.job.jobType == CHARACTER_JOB.RETIRED_HERO) {
+        if (mainCharacter.characterClass != null && mainCharacter.characterClass.className == "Retired Hero") {
             _characterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.CHARACTER, "RetiredHeroObject") as CharacterObj;
         } else {
             _characterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.CHARACTER, "CharacterObject") as CharacterObj;

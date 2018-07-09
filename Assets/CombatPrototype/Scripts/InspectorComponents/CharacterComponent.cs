@@ -7,17 +7,17 @@ namespace ECS {
 		public string fileName;
 
 		public string characterClassName;
-		public string raceSettingName;
+		//public string raceSettingName;
 		public CHARACTER_ROLE optionalRole;
         public List<CHARACTER_TAG> tags;
 
 		[SerializeField] internal List<ItemAndType> preEquippedItems;
 
 		public int currCharacterSelectedIndex;
-		public int currRaceSelectedIndex;
+		//public int currRaceSelectedIndex;
 		public int currItemSelectedIndex;
 
-		public List<string> raceChoices;
+		//public List<string> raceChoices;
 		public List<string> characterClassChoices;
 
 		public bool itemFoldout;

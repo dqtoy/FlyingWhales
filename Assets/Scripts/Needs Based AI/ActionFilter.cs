@@ -58,42 +58,42 @@ public class MustNotBeRole : ActionFilter {
         return false;
     }
 }
-public class MustBeJob : ActionFilter {
+public class MustBeClass : ActionFilter {
 
-    private List<CHARACTER_JOB> _allowedJobs;
+    private List<string> _allowedClasses;
 
-    public MustBeJob(List<ACTION_FILTER> allowedJobs) {
-        _allowedJobs = new List<CHARACTER_JOB>();
-        for (int i = 0; i < allowedJobs.Count; i++) {
-            ACTION_FILTER currFilter = allowedJobs[i];
-            CHARACTER_JOB job = (CHARACTER_JOB)Enum.Parse(typeof(CHARACTER_JOB), currFilter.ToString());
-            _allowedJobs.Add(job);
+    public MustBeClass(List<ACTION_FILTER> allowedClasses) {
+        _allowedClasses = new List<string>();
+        for (int i = 0; i < allowedClasses.Count; i++) {
+            ACTION_FILTER currFilter = allowedClasses[i];
+            CHARACTER_CLASS charClass = (CHARACTER_CLASS) Enum.Parse(typeof(CHARACTER_CLASS), currFilter.ToString());
+            _allowedClasses.Add(charClass.ToString());
         }
     }
     public override bool MeetsRequirements(ECS.Character character, BaseLandmark landmark) {
-        if (character.role != null && character.role.job != null) {
-            if (_allowedJobs.Contains(character.role.job.jobType)) {
+        if (character.characterClass != null) {
+            if (_allowedClasses.Contains(character.characterClass.className)) {
                 return true;
             }
         }
         return false;
     }
 }
-public class MustNotBeJob : ActionFilter {
+public class MustNotBeClass : ActionFilter {
 
-    private List<CHARACTER_JOB> _unallowedJobs;
+    private List<string> _unallowedClasses;
 
-    public MustNotBeJob(List<ACTION_FILTER> unallowedJobs) {
-        _unallowedJobs = new List<CHARACTER_JOB>();
+    public MustNotBeClass(List<ACTION_FILTER> unallowedJobs) {
+        _unallowedClasses = new List<string>();
         for (int i = 0; i < unallowedJobs.Count; i++) {
             ACTION_FILTER currFilter = unallowedJobs[i];
-            CHARACTER_JOB job = (CHARACTER_JOB)Enum.Parse(typeof(CHARACTER_JOB), currFilter.ToString());
-            _unallowedJobs.Add(job);
+            CHARACTER_CLASS charClass = (CHARACTER_CLASS) Enum.Parse(typeof(CHARACTER_CLASS), currFilter.ToString());
+            _unallowedClasses.Add(charClass.ToString());
         }
     }
     public override bool MeetsRequirements(ECS.Character character, BaseLandmark landmark) {
-        if (character.role != null && character.role.job != null) {
-            if (_unallowedJobs.Contains(character.role.job.jobType)) {
+        if (character.characterClass != null) {
+            if (_unallowedClasses.Contains(character.characterClass.className)) {
                 return false;
             }
         }

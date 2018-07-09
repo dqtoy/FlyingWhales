@@ -50,9 +50,9 @@ namespace ECS {
         /*
          * Create a new character given a base character setup.
          * */
-        internal ECS.Character CreateNewCharacter(CharacterSetup baseCharacter) {
-            return new ECS.Character(baseCharacter, Utilities.GetRandomGender());
-        }
+        //internal ECS.Character CreateNewCharacter(CharacterSetup baseCharacter) {
+        //    return new ECS.Character(baseCharacter, Utilities.GetRandomGender());
+        //}
 
 		private void ConstructCharacterColors(){
 			unusedColors = characterColors.ToList (); 
@@ -78,35 +78,15 @@ namespace ECS {
 			}
 		}
 
-		internal CharacterSetup GetBaseCharacterSetupBasedOnClass(string className){
-			for (int i = 0; i < this.baseCharacters.Length; i++) {
-                CharacterSetup currBase = this.baseCharacters[i];
-                if (currBase.characterClassName.ToLower() == className.ToLower()){
-					return currBase;
-				}
-			}
-			return null;
-		}
-
-        internal CharacterSetup GetBaseCharacterSetup(string className, RACE race) {
+        internal CharacterSetup GetBaseCharacterSetup(string className) {
             for (int i = 0; i < this.baseCharacters.Length; i++) {
                 CharacterSetup currBase = this.baseCharacters[i];
-                if (currBase.characterClassName.ToLower() == className.ToLower() && currBase.raceSetting.race == race) {
+                if (currBase.characterClassName.ToLower() == className.ToLower()) {
                     return currBase;
                 }
             }
             return null;
         }
-
-		internal CharacterSetup GetBaseCharacterSetup(string fileName) {
-			for (int i = 0; i < this.baseCharacters.Length; i++) {
-				CharacterSetup currBase = this.baseCharacters[i];
-				if (currBase.fileName == fileName) {
-					return currBase;
-				}
-			}
-			return null;
-		}
 
 		internal void NewCombat(){
 			this.combat = new Combat ();
