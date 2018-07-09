@@ -233,7 +233,7 @@ public class CharacterManager : MonoBehaviour {
             newCharacter.SetHome(homeLocation);
             //homeLocation.AddCharacterHomeOnLandmark(newCharacter);
         }
-        CharacterParty party = newCharacter.CreateNewParty();
+        NewParty party = newCharacter.CreateNewParty();
         if (data.locationID != -1) {
             ILocation currentLocation = LandmarkManager.Instance.GetLocationBasedOnID(data.locationType, data.locationID);
 #if !WORLD_CREATION_TOOL

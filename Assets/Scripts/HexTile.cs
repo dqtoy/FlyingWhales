@@ -82,7 +82,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     //Landmark
     private BaseLandmark _landmarkOnTile = null;
 
-    protected List<IParty> _charactersAtLocation = new List<IParty>(); //List of characters/party on landmark
+    protected List<NewParty> _charactersAtLocation = new List<NewParty>(); //List of characters/party on landmark
 
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
 
@@ -139,7 +139,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public GameObject clickHighlightGO {
         get { return _clickHighlightGO; }
     }
-    public List<IParty> charactersAtLocation {
+    public List<NewParty> charactersAtLocation {
         get { return _charactersAtLocation; }
     }
     public HexTile tileLocation {
@@ -1309,7 +1309,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     #region Characters
-	public void AddCharacterToLocation(IParty iparty) {
+	public void AddCharacterToLocation(NewParty iparty) {
 		if (!_charactersAtLocation.Contains(iparty)) {
 			_charactersAtLocation.Add(iparty);
             iparty.SetSpecificLocation(this);
@@ -1325,7 +1325,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             //}
         }
 	}
-	public void RemoveCharacterFromLocation(IParty iparty) {
+	public void RemoveCharacterFromLocation(NewParty iparty) {
 		_charactersAtLocation.Remove(iparty);
         iparty.SetSpecificLocation(null);
   //      if (character.icharacterType == ICHARACTER_TYPE.CHARACTER){
@@ -1339,7 +1339,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //    UnScheduleCombatCheck();
         //}
 	}
-    public void ReplaceCharacterAtLocation(IParty ipartyToReplace, IParty ipartyToAdd) {
+    public void ReplaceCharacterAtLocation(NewParty ipartyToReplace, NewParty ipartyToAdd) {
         if (_charactersAtLocation.Contains(ipartyToReplace)) {
             int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(ipartyToReplace);
             _charactersAtLocation.Insert(indexOfCharacterToReplace, ipartyToAdd);

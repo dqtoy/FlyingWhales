@@ -70,13 +70,13 @@ public class ReleaseCharacterQuestData : CharacterQuestData {
         return false;
     }
 
-    public IParty GetFirstHostileInPath() {
+    public NewParty GetFirstHostileInPath() {
         for (int i = 0; i < tilePathToTarget.Count; i++) {
             HexTile currTile = tilePathToTarget[i];
             BaseLandmark landmarkOnTile = currTile.landmarkOnTile;
             if (landmarkOnTile != null && landmarkOnTile.charactersAtLocation.Count > 0) {
                 for (int j = 0; j < landmarkOnTile.charactersAtLocation.Count; j++) {
-                    IParty currParty = landmarkOnTile.charactersAtLocation[j];
+                    NewParty currParty = landmarkOnTile.charactersAtLocation[j];
                     if (currParty is MonsterParty) {
                         return currParty;
                     }

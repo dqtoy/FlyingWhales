@@ -13,7 +13,7 @@ public class ReleaseCharacterQuest : Quest {
         if (character.party.computedPower >= questData.requiredPower) { //if current power is greater than or equal to Required Power
             if (questData.HasHostilesInPath()) { //check if there are hostiles along the path
                 //if yes, inspect nearest hostile along the path
-                IParty nearestHostile = questData.GetFirstHostileInPath();
+                NewParty nearestHostile = questData.GetFirstHostileInPath();
                 if (nearestHostile.computedPower <= character.party.computedPower) { //if within power range, Attack action
                     return nearestHostile.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
                 } else { //if above power range, set Required Power value

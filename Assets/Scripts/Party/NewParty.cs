@@ -68,6 +68,10 @@ public class NewParty : IParty {
     public StructureObj homeStructure {
         get { return _icharacters[0].homeStructure; }
     }
+    public Combat currentCombat {
+        get { return _currentCombat; }
+        set { _currentCombat = value; }
+    }
     public ICharacter mainCharacter {
         get { return _icharacters[0]; }
     }
@@ -102,6 +106,8 @@ public class NewParty : IParty {
         _icharacterObject.ChangeState(deadState);
         GameObject.Destroy(_icon.gameObject);
         _icon = null;
+
+        _currentCombat = null;
     }
     #endregion
 
@@ -179,6 +185,59 @@ public class NewParty : IParty {
     public void GoToLocation(GameObject locationGO, PATHFINDING_MODE pathfindingMode, Action doneAction = null) {
         _icon.SetActionOnTargetReached(doneAction);
         _icon.SetTargetGO(locationGO);
+    }
+    #endregion
+
+    #region Berserk
+    public void BerserkModeOn() {
+        Messenger.AddListener<NewParty>(Signals.PARTY_ENTERED_LANDMARK, FindCombat);
+    }
+    public void BerserkModeOff() {
+        Messenger.RemoveListener<NewParty>(Signals.PARTY_ENTERED_LANDMARK, FindCombat);
+    }
+    private void FindCombat(NewParty partyThatEntered) {
+        if(partyThatEntered._specificLocation != null && this._specificLocation != null && this._specificLocation == partyThatEntered._specificLocation && this._currentCombat == null) {
+            StartCombatWith(partyThatEntered);
+        }
+    }
+    #endregion
+
+    #region Combat
+    public void StartCombatWith(NewParty enemy) {
+        if(enemy is CharacterParty) {
+            (enemy as CharacterParty).actionData.SetIsHalted(true);
+        }
+        if (this is CharacterParty) {
+            (this as CharacterParty).actionData.SetIsHalted(true);
+        }
+        //If attack target is not yet in combat, start new combat, else, join the combat on the opposing side
+        Combat combat = this.currentCombat;
+        if (combat == null) {
+            combat = new Combat();
+            combat.AddParty(SIDES.A, enemy);
+            combat.AddParty(SIDES.B, this);
+            //MultiThreadPool.Instance.AddToThreadPool(combat);
+            Debug.Log("Starting combat between " + enemy.name + " and  " + this.name);
+            combat.CombatSimulation();
+        } else {
+            if (enemy.currentCombat != null && enemy.currentCombat == combat) {
+                return;
+            }
+            SIDES sideToJoin = CombatManager.Instance.GetOppositeSide(this.icharacters[0].currentSide);
+            combat.AddParty(sideToJoin, enemy);
+        }
+
+        Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "start_combat");
+        combatLog.AddToFillers(enemy, enemy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        combatLog.AddToFillers(combat, " fought with ", LOG_IDENTIFIER.COMBAT);
+        combatLog.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+
+        for (int i = 0; i < enemy.icharacters.Count; i++) {
+            enemy.icharacters[i].AddHistory(combatLog);
+        }
+        for (int i = 0; i < this.icharacters.Count; i++) {
+            this.icharacters[i].AddHistory(combatLog);
+        }
     }
     #endregion
 }

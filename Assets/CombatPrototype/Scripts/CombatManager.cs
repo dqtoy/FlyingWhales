@@ -123,7 +123,7 @@ namespace ECS {
                 ICharacter icharacter = combat.charactersSideA[0];
                 if (icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                     Character character = icharacter as Character;
-                    PartyContinuesAction(character.party, true);
+                    PartyContinuesActionAfterCombat(character.party, true);
                 }
                 icharacter.ResetToFullHP();
                 icharacter.ResetToFullSP();
@@ -133,7 +133,7 @@ namespace ECS {
                 ICharacter icharacter = combat.charactersSideB[0];
                 if (icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                     Character character = icharacter as Character;
-                    PartyContinuesAction(character.party, true);
+                    PartyContinuesActionAfterCombat(character.party, true);
                 }
                 icharacter.ResetToFullHP();
                 icharacter.ResetToFullSP();
@@ -389,7 +389,7 @@ namespace ECS {
             }
             return combatRooms;
         }
-        public void PartyContinuesAction(CharacterParty party, bool isActionSucess) {
+        public void PartyContinuesActionAfterCombat(CharacterParty party, bool isActionSucess) {
             if (party.actionData.isHalted) {
                 party.actionData.SetIsHalted(false);
                 party.icon.OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
@@ -402,6 +402,7 @@ namespace ECS {
                         party.actionData.currentAction.EndAction(party, party.actionData.currentTargetObject);
                     }
                 }
+                party.currentCombat = null;
             }
         }
         public SIDES GetOppositeSide(SIDES side) {

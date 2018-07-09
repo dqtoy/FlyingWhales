@@ -27,7 +27,7 @@ public class BaseLandmark : ILocation {
     protected List<Log> _history;
     protected int _combatHistoryID;
     protected Dictionary<int, Combat> _combatHistory;
-    protected List<IParty> _charactersAtLocation;
+    protected List<NewParty> _charactersAtLocation;
     protected List<Item> _itemsInLandmark;
     protected Dictionary<Character, GameDate> _characterTraces; //Lasts for 60 days
     protected List<LANDMARK_TAG> _landmarkTags;
@@ -97,7 +97,7 @@ public class BaseLandmark : ILocation {
 	public Dictionary<int, Combat> combatHistory {
 		get { return _combatHistory; }
 	}
-    public List<IParty> charactersAtLocation {
+    public List<NewParty> charactersAtLocation {
         get { return _charactersAtLocation; }
     }
 	public HexTile tileLocation{
@@ -155,7 +155,7 @@ public class BaseLandmark : ILocation {
         _history = new List<Log>();
         _combatHistory = new Dictionary<int, Combat>();
         _combatHistoryID = 0;
-        _charactersAtLocation = new List<IParty>();
+        _charactersAtLocation = new List<NewParty>();
         _itemsInLandmark = new List<Item>();
         _characterTraces = new Dictionary<Character, GameDate>();
         //_totalDurability = landmarkData.hitPoints;
@@ -365,7 +365,7 @@ public class BaseLandmark : ILocation {
         //if (reduceCivilians) {
         //    AdjustCivilians(raceOfChar, -1);
         //}
-        CharacterParty party = newCharacter.CreateNewParty();
+        NewParty party = newCharacter.CreateNewParty();
         party.CreateIcon();
         this.owner.AddNewCharacter(newCharacter);
         this.AddCharacterToLocation(party);
@@ -419,7 +419,7 @@ public class BaseLandmark : ILocation {
         if (_owner != null) {
             _owner.AddNewCharacter(newCharacter);
         }
-        CharacterParty party = newCharacter.CreateNewParty();
+        NewParty party = newCharacter.CreateNewParty();
         party.CreateIcon();
         this.AddCharacterToLocation(party);
         //this.AddCharacterHomeOnLandmark(newCharacter);
@@ -444,7 +444,7 @@ public class BaseLandmark : ILocation {
     #endregion
 
     #region Location
-    public void AddCharacterToLocation(IParty iparty) {
+    public void AddCharacterToLocation(NewParty iparty) {
         if (!_charactersAtLocation.Contains(iparty)) {
             _charactersAtLocation.Add(iparty);
             //if (character.icharacterType == ICHARACTER_TYPE.CHARACTER) {
@@ -453,6 +453,7 @@ public class BaseLandmark : ILocation {
             iparty.SetSpecificLocation(this);
 #if !WORLD_CREATION_TOOL
             _landmarkVisual.OnCharacterEnteredLandmark(iparty);
+            Messenger.Broadcast<NewParty>(Signals.PARTY_ENTERED_LANDMARK, iparty);
 #endif
         }
          //character.SetSpecificLocation(this);
@@ -470,7 +471,7 @@ public class BaseLandmark : ILocation {
             //}
         //}
     }
-    public void RemoveCharacterFromLocation(IParty iparty) {
+    public void RemoveCharacterFromLocation(NewParty iparty) {
         _charactersAtLocation.Remove(iparty);
         //if (character.icharacterType == ICHARACTER_TYPE.CHARACTER) {
         //Character currChar = character as Character;
@@ -492,7 +493,7 @@ public class BaseLandmark : ILocation {
         //}
     }
 
-    public void ReplaceCharacterAtLocation(IParty ipartyToReplace, IParty ipartyToAdd) {
+    public void ReplaceCharacterAtLocation(NewParty ipartyToReplace, NewParty ipartyToAdd) {
         if (_charactersAtLocation.Contains(ipartyToReplace)) {
             int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(ipartyToReplace);
             _charactersAtLocation.Insert(indexOfCharacterToReplace, ipartyToAdd);

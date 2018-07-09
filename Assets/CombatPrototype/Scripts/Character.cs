@@ -33,7 +33,7 @@ namespace ECS {
         private StructureObj _homeStructure;
         private Region _currentRegion;
         //private CharacterAvatar _avatar;
-        private Combat _currentCombat;
+        //private Combat _currentCombat;
         private Weapon _equippedWeapon;
         private CharacterBattleTracker _battleTracker;
         private CharacterBattleOnlyTracker _battleOnlyTracker;
@@ -145,7 +145,7 @@ namespace ECS {
         //public Faction attackedByFaction {
         //    get { return _party.attackedByFaction; }
         //}
-        public IParty iparty {
+        public NewParty iparty {
             get { return _party; }
         }
         public CharacterParty party {
@@ -306,10 +306,10 @@ namespace ECS {
         public Dictionary<ELEMENT, float> elementalResistances {
             get { return _elementalResistances; }
         }
-        public Combat currentCombat {
-            get { return _currentCombat; }
-            set { _currentCombat = value; }
-        }
+        //public Combat currentCombat {
+        //    get { return party.currentCombat; }
+        //    //set { _currentCombat = value; }
+        //}
         public int actRate {
             get { return _actRate; }
             set { _actRate = value; }
@@ -720,13 +720,13 @@ namespace ECS {
 		public void FaintOrDeath(){
 			string pickedWeight = GetFaintOrDeath ();
 			if(pickedWeight == "faint"){
-				if(_currentCombat == null){
+				if(_party.currentCombat == null){
 					Faint ();
 				}else{
-                    _currentCombat.CharacterFainted(this);
+                    _party.currentCombat.CharacterFainted(this);
                 }
 			}else if(pickedWeight == "die"){
-                _currentCombat.CharacterDeath(this);
+                _party.currentCombat.CharacterDeath(this);
                 Death();
     //            if (this.currentCombat == null){
 				//	Death ();
@@ -1467,7 +1467,7 @@ namespace ECS {
 				STATUS_EFFECT statusEffect = _statusEffects[i];
 				int chance = Utilities.rng.Next (0, 100);
 				if (chance < 15) {
-					_currentCombat.AddCombatLog(this.name + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
+                    _party.currentCombat.AddCombatLog(this.name + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
 					RemoveStatusEffect (statusEffect);
 					i--;
 				}
@@ -1480,7 +1480,7 @@ namespace ECS {
 						if(statusEffect != STATUS_EFFECT.DECAPITATED){
 							int chance = Utilities.rng.Next (0, 100);
 							if(chance < 15){
-                                _currentCombat.AddCombatLog(this.name + "'s " + bodyPart.name.ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
+                                _party.currentCombat.AddCombatLog(this.name + "'s " + bodyPart.name.ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
 								bodyPart.RemoveStatusEffectOnSecondaryBodyParts (statusEffect);
 								bodyPart.statusEffects.RemoveAt (j);
 								j--;
@@ -1957,7 +1957,7 @@ namespace ECS {
         /*
          Create a new Party with this character as the leader.
              */
-        public CharacterParty CreateNewParty() {
+        public NewParty CreateNewParty() {
             if(_party != null) {
                 _party.RemoveCharacter(this);
             }
@@ -1966,7 +1966,7 @@ namespace ECS {
             newParty.CreateCharacterObject();
             return newParty;
         }
-		public void SetParty(IParty party) {
+		public void SetParty(NewParty party) {
 			_party = party as CharacterParty;
 		}
         #endregion

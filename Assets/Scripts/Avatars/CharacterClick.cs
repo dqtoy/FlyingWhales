@@ -34,7 +34,7 @@ public class CharacterClick : MonoBehaviour {
                 return;
             }
         }
-        IParty iparty = icon.iparty;
+        NewParty iparty = icon.iparty;
         if (iparty.icharacters.Count > 1) {
             UIManager.Instance.ShowPartyInfo(iparty as NewParty);
         } else if (iparty.icharacters.Count == 1) {
