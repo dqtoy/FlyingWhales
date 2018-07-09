@@ -383,7 +383,7 @@ public class Party: IEncounterable {
                 return false; //characters are of same faction
             }
             FactionRelationship rel = this.faction.GetRelationshipWith(factionOfEnemy);
-            if (rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+            if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
                 return true; //factions of combatants are hostile
             }
             return false;

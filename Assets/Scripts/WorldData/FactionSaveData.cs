@@ -9,6 +9,7 @@ public class FactionSaveData {
     public string factionName;
     public ColorSave factionColor;
     public List<int> ownedAreas;
+    public Dictionary<int, FACTION_RELATIONSHIP_STATUS> relationships;
     public int leaderID;
 
     public FactionSaveData(Faction faction) {
@@ -16,6 +17,7 @@ public class FactionSaveData {
         factionName = faction.name;
         factionColor = new ColorSave(faction.factionColor);
         ConstructOwnedAreas(faction);
+        ConstructRelationships(faction);
 
         if (faction.leader == null) {
             leaderID = -1;
@@ -28,6 +30,12 @@ public class FactionSaveData {
         for (int i = 0; i < faction.ownedAreas.Count; i++) {
             Area area = faction.ownedAreas[i];
             ownedAreas.Add(area.id);
+        }
+    }
+    private void ConstructRelationships(Faction faction) {
+        relationships = new Dictionary<int, FACTION_RELATIONSHIP_STATUS>();
+        foreach (KeyValuePair<Faction, FactionRelationship> kvp in faction.relationships) {
+            relationships.Add(kvp.Key.id, kvp.Value.relationshipStatus);
         }
     }
 }

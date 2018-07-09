@@ -32,7 +32,6 @@ public class FactionSummaryUI : UIMenu {
     }
 
     public void UpdateFactionsSummary() {
-        List<Faction> factions = new List<Faction>(FactionManager.Instance.orderedFactions); ;
         //factions.Reverse();
         for (int i = 0; i < factionSummaryEntries.Length; i++) {
             FactionSummaryEntry fse = factionSummaryEntries[i];

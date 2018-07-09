@@ -99,50 +99,52 @@ namespace PathFind {
                         newPath = path.AddStep(n, d);
                         queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
                     }
-                } else if (pathfindingMode == PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP) {
-                    Faction pathfinderFaction = (Faction)data;
-                    foreach (Node n in path.LastStep.allNeighbourRoads) {
-                        Faction tileFaction = n.region.owner;
-                        if (tileFaction == null || pathfinderFaction == null || tileFaction.id == pathfinderFaction.id) {
-                            //the region the node is in, currently has no owner yet, allow passage
-                            //or the region the node is in, is owned by the faction of the pathfinder
-                            d = distance(path.LastStep, n);
-                            newPath = path.AddStep(n, d);
-                            queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
-                        } else {
-                            FactionRelationship rel = pathfinderFaction.GetRelationshipWith(tileFaction);
-                            if (rel.relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
-                                //if the owner of the tile is not hostile with the pathfinder, allow passage
-                                d = distance(path.LastStep, n);
-                                newPath = path.AddStep(n, d);
-                                queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
-                            }
-                        }
-                    }
-                } else if (pathfindingMode == PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP) {
-                    if (data == null) {
-                        throw new Exception("No faction data is provided for pathfinding!");
-                    }
-                    Faction pathfinderFaction = (Faction)data;
-                    foreach (Node n in path.LastStep.NoWaterTiles) {
-                        Faction tileFaction = n.region.owner;
-                        if (tileFaction == null || tileFaction.id == pathfinderFaction.id) {
-                            //the region the node is in, currently has no owner yet, allow passage
-                            //or the region the node is in, is owned by the faction of the pathfinder
-                            d = distance(path.LastStep, n);
-                            newPath = path.AddStep(n, d);
-                            queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
-                        } else {
-                            FactionRelationship rel = pathfinderFaction.GetRelationshipWith(tileFaction);
-                            if (rel.relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
-                                //if the owner of the tile is not hostile with the pathfinder, allow passage
-                                d = distance(path.LastStep, n);
-                                newPath = path.AddStep(n, d);
-                                queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
-                            }
-                        }
-                    }
-                } else if (pathfindingMode == PATHFINDING_MODE.UNRESTRICTED) {
+                } 
+                //else if (pathfindingMode == PATHFINDING_MODE.USE_ROADS_FACTION_RELATIONSHIP) {
+                //    Faction pathfinderFaction = (Faction)data;
+                //    foreach (Node n in path.LastStep.allNeighbourRoads) {
+                //        Faction tileFaction = n.region.owner;
+                //        if (tileFaction == null || pathfinderFaction == null || tileFaction.id == pathfinderFaction.id) {
+                //            //the region the node is in, currently has no owner yet, allow passage
+                //            //or the region the node is in, is owned by the faction of the pathfinder
+                //            d = distance(path.LastStep, n);
+                //            newPath = path.AddStep(n, d);
+                //            queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                //        } else {
+                //            FactionRelationship rel = pathfinderFaction.GetRelationshipWith(tileFaction);
+                //            if (rel.relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
+                //                //if the owner of the tile is not hostile with the pathfinder, allow passage
+                //                d = distance(path.LastStep, n);
+                //                newPath = path.AddStep(n, d);
+                //                queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                //            }
+                //        }
+                //    }
+                //} else if (pathfindingMode == PATHFINDING_MODE.NORMAL_FACTION_RELATIONSHIP) {
+                //    if (data == null) {
+                //        throw new Exception("No faction data is provided for pathfinding!");
+                //    }
+                //    Faction pathfinderFaction = (Faction)data;
+                //    foreach (Node n in path.LastStep.NoWaterTiles) {
+                //        Faction tileFaction = n.region.owner;
+                //        if (tileFaction == null || tileFaction.id == pathfinderFaction.id) {
+                //            //the region the node is in, currently has no owner yet, allow passage
+                //            //or the region the node is in, is owned by the faction of the pathfinder
+                //            d = distance(path.LastStep, n);
+                //            newPath = path.AddStep(n, d);
+                //            queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                //        } else {
+                //            FactionRelationship rel = pathfinderFaction.GetRelationshipWith(tileFaction);
+                //            if (rel.relationshipStatus != RELATIONSHIP_STATUS.HOSTILE) {
+                //                //if the owner of the tile is not hostile with the pathfinder, allow passage
+                //                d = distance(path.LastStep, n);
+                //                newPath = path.AddStep(n, d);
+                //                queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                //            }
+                //        }
+                //    }
+                //} 
+                else if (pathfindingMode == PATHFINDING_MODE.UNRESTRICTED) {
                     foreach (Node n in path.LastStep.AllNeighbours) {
                         d = distance(path.LastStep, n);
                         newPath = path.AddStep(n, d);
