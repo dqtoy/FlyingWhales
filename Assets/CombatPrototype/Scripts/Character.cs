@@ -366,7 +366,7 @@ namespace ECS {
 			_raceSetting = RaceManager.Instance.racesDictionary[race.ToString()].CreateNewCopy();
             _gender = gender;
             _name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
-            _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait();
+            _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
             _skills = GetGeneralSkills();
             _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
 

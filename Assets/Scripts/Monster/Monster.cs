@@ -198,7 +198,7 @@ public class Monster : ICharacter {
         newMonster._dodgeChance = this._dodgeChance;
         newMonster._hitChance = this._hitChance;
         newMonster._critChance = this._critChance;
-        newMonster._portraitSettings = CharacterManager.Instance.GenerateRandomPortrait();
+        newMonster._portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(RACE.HUMANS, GENDER.MALE);
 //#if !WORLD_CREATION_TOOL
 //        newMonster._monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
 //        newMonster._monsterObj.SetMonster(newMonster);

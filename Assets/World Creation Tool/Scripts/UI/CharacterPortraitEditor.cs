@@ -27,9 +27,9 @@ public class CharacterPortraitEditor : MonoBehaviour {
     [SerializeField] private InputField fileNameField;
 
     private void Start() {
-        if (portraitSettings == null) {
-            portraitSettings = CharacterManager.Instance.GenerateRandomPortrait();
-        }
+        //if (portraitSettings == null) {
+        //    portraitSettings = CharacterManager.Instance.GenerateRandomPortrait();
+        //}
         SetStepperValues();
         UpdateVisuals();
         UpdatePortraitControls();
@@ -40,13 +40,13 @@ public class CharacterPortraitEditor : MonoBehaviour {
         portrait.GeneratePortrait(portraitSettings, IMAGE_SIZE.X256);
     }
     private void SetStepperValues() {
-        headStepper.maximum = CharacterManager.Instance.headSpriteCount - 1;
-        hairStepper.maximum = CharacterManager.Instance.hairSpriteCount - 1;
-        eyesStepper.maximum = CharacterManager.Instance.eyeSpriteCount - 1;
-        noseStepper.maximum = CharacterManager.Instance.noseSpriteCount - 1;
-        mouthStepper.maximum = CharacterManager.Instance.mouthSpriteCount - 1;
-        eyebrowsStepper.maximum = CharacterManager.Instance.eyebrowSpriteCount - 1;
-        bodyStepper.maximum = CharacterManager.Instance.bodySpriteCount - 1;
+        //headStepper.maximum = CharacterManager.Instance.headSpriteCount - 1;
+        //hairStepper.maximum = CharacterManager.Instance.hairSpriteCount - 1;
+        //eyesStepper.maximum = CharacterManager.Instance.eyeSpriteCount - 1;
+        //noseStepper.maximum = CharacterManager.Instance.noseSpriteCount - 1;
+        //mouthStepper.maximum = CharacterManager.Instance.mouthSpriteCount - 1;
+        //eyebrowsStepper.maximum = CharacterManager.Instance.eyebrowSpriteCount - 1;
+        //bodyStepper.maximum = CharacterManager.Instance.bodySpriteCount - 1;
     }
     private void UpdatePortraitControls() {
         headStepper.SetStepperValue(portraitSettings.headIndex);

@@ -6,12 +6,12 @@ using UnityEngine;
 public struct PortraitAssetCollection {
 
     public GENDER gender;
-    public List<PortraitAsset> bodyAssets;
+    public List<Sprite> bodyAssets;
     public List<HairSetting> hairAssets;
-    public List<PortraitAsset> headAssets;
-    public List<PortraitAsset> noseAssets;
-    public List<PortraitAsset> mouthAssets;
-    public List<PortraitAsset> eyeAssets;
-    public List<PortraitAsset> eyebrowAssets;
+    public List<Sprite> headAssets;
+    public List<Sprite> noseAssets;
+    public List<Sprite> mouthAssets;
+    public List<Sprite> eyeAssets;
+    public List<Sprite> eyebrowAssets;
     public List<Color> hairColors;
 }

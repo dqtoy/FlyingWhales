@@ -31,24 +31,25 @@ public class CharacterManager : MonoBehaviour {
 
     [Header("Character Portrait Assets")]
     public GameObject characterPortraitPrefab;
-    [SerializeField] private List<RacePortraitAssets> portraitAssets;
+    [SerializeField] private List<RacePortraitAssets> portraitAssetsx64;
+    [SerializeField] private List<RacePortraitAssets> portraitAssetsx256;
 
-    [SerializeField] private List<PortraitAsset> bodyAssets;
-    [SerializeField] private List<PortraitAsset> hairAssets;
-    [SerializeField] private List<PortraitAsset> headAssets;
-    [SerializeField] private List<PortraitAsset> noseAssets;
-    [SerializeField] private List<PortraitAsset> mouthAssets;
-    [SerializeField] private List<PortraitAsset> eyeAssets;
-    [SerializeField] private List<PortraitAsset> eyebrowAssets;
-    [SerializeField] private List<Color> hairColors;
+    //[SerializeField] private List<PortraitAsset> bodyAssets;
+    //[SerializeField] private List<PortraitAsset> hairAssets;
+    //[SerializeField] private List<PortraitAsset> headAssets;
+    //[SerializeField] private List<PortraitAsset> noseAssets;
+    //[SerializeField] private List<PortraitAsset> mouthAssets;
+    //[SerializeField] private List<PortraitAsset> eyeAssets;
+    //[SerializeField] private List<PortraitAsset> eyebrowAssets;
+    //[SerializeField] private List<Color> hairColors;
 
-    private Dictionary<IMAGE_SIZE, List<Sprite>> bodySprites;
-    private Dictionary<IMAGE_SIZE, List<Sprite>> hairSprites;
-    private Dictionary<IMAGE_SIZE, List<Sprite>> headSprites;
-    private Dictionary<IMAGE_SIZE, List<Sprite>> noseSprites;
-    private Dictionary<IMAGE_SIZE, List<Sprite>> mouthSprites;
-    private Dictionary<IMAGE_SIZE, List<Sprite>> eyeSprites;
-    private Dictionary<IMAGE_SIZE, List<Sprite>> eyebrowSprites;
+    //private Dictionary<IMAGE_SIZE, List<Sprite>> bodySprites;
+    //private Dictionary<IMAGE_SIZE, List<Sprite>> hairSprites;
+    //private Dictionary<IMAGE_SIZE, List<Sprite>> headSprites;
+    //private Dictionary<IMAGE_SIZE, List<Sprite>> noseSprites;
+    //private Dictionary<IMAGE_SIZE, List<Sprite>> mouthSprites;
+    //private Dictionary<IMAGE_SIZE, List<Sprite>> eyeSprites;
+    //private Dictionary<IMAGE_SIZE, List<Sprite>> eyebrowSprites;
 
     #region getters/setters
     //public Dictionary<int, HashSet<Citizen>> elligibleCitizenAgeTable {
@@ -63,27 +64,27 @@ public class CharacterManager : MonoBehaviour {
     public Dictionary<ELEMENT, float> elementsChanceDictionary {
         get { return _elementsChanceDictionary; }
     }
-    public int bodySpriteCount {
-        get { return bodySprites[IMAGE_SIZE.X64].Count; }
-    }
-    public int hairSpriteCount {
-        get { return hairSprites[IMAGE_SIZE.X64].Count; }
-    }
-    public int headSpriteCount {
-        get { return headSprites[IMAGE_SIZE.X64].Count; }
-    }
-    public int noseSpriteCount {
-        get { return noseSprites[IMAGE_SIZE.X64].Count; }
-    }
-    public int mouthSpriteCount {
-        get { return mouthSprites[IMAGE_SIZE.X64].Count; }
-    }
-    public int eyeSpriteCount {
-        get { return eyeSprites[IMAGE_SIZE.X64].Count; }
-    }
-    public int eyebrowSpriteCount {
-        get { return eyebrowSprites[IMAGE_SIZE.X64].Count; }
-    }
+    //public int bodySpriteCount {
+    //    get { return bodySprites[IMAGE_SIZE.X64].Count; }
+    //}
+    //public int hairSpriteCount {
+    //    get { return hairSprites[IMAGE_SIZE.X64].Count; }
+    //}
+    //public int headSpriteCount {
+    //    get { return headSprites[IMAGE_SIZE.X64].Count; }
+    //}
+    //public int noseSpriteCount {
+    //    get { return noseSprites[IMAGE_SIZE.X64].Count; }
+    //}
+    //public int mouthSpriteCount {
+    //    get { return mouthSprites[IMAGE_SIZE.X64].Count; }
+    //}
+    //public int eyeSpriteCount {
+    //    get { return eyeSprites[IMAGE_SIZE.X64].Count; }
+    //}
+    //public int eyebrowSpriteCount {
+    //    get { return eyebrowSprites[IMAGE_SIZE.X64].Count; }
+    //}
     #endregion
 
     private void Awake() {
@@ -95,7 +96,7 @@ public class CharacterManager : MonoBehaviour {
         ConstructTraitDictionary();
         ConstructAllClasses();
         ConstructElementChanceDictionary();
-        ConstructPortraitDictionaries();
+        //ConstructPortraitDictionaries();
     }
 
     #region ECS.Character Types
@@ -142,6 +143,7 @@ public class CharacterManager : MonoBehaviour {
             className = "Classless";
 		}
 		ECS.Character newCharacter = new ECS.Character(className, race, gender);
+        NewParty party = newCharacter.CreateNewParty();
         if (faction != null) {
             newCharacter.SetFaction(faction);
         }
@@ -520,75 +522,110 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Character Portraits
-    private void ConstructPortraitDictionaries() {
-        bodySprites = new Dictionary<IMAGE_SIZE, List<Sprite>>();
-        for (int i = 0; i < bodyAssets.Count; i++) {
-            PortraitAsset assets = bodyAssets[i];
-            bodySprites.Add(assets.imageSize, assets.assets);
+    //private void ConstructPortraitDictionaries() {
+        //bodySprites = new Dictionary<IMAGE_SIZE, List<Sprite>>();
+        //for (int i = 0; i < bodyAssets.Count; i++) {
+        //    PortraitAsset assets = bodyAssets[i];
+        //    bodySprites.Add(assets.imageSize, assets.assets);
+        //}
+        //hairSprites = new Dictionary<IMAGE_SIZE, List<Sprite>>();
+        //for (int i = 0; i < hairAssets.Count; i++) {
+        //    PortraitAsset assets = hairAssets[i];
+        //    hairSprites.Add(assets.imageSize, assets.assets);
+        //}
+        //headSprites = new Dictionary<IMAGE_SIZE, List<Sprite>>();
+        //for (int i = 0; i < headAssets.Count; i++) {
+        //    PortraitAsset assets = headAssets[i];
+        //    headSprites.Add(assets.imageSize, assets.assets);
+        //}
+        //noseSprites = new Dictionary<IMAGE_SIZE, List<Sprite>>();
+        //for (int i = 0; i < noseAssets.Count; i++) {
+        //    PortraitAsset assets = noseAssets[i];
+        //    noseSprites.Add(assets.imageSize, assets.assets);
+        //}
+        //mouthSprites = new Dictionary<IMAGE_SIZE, List<Sprite>>();
+        //for (int i = 0; i < mouthAssets.Count; i++) {
+        //    PortraitAsset assets = mouthAssets[i];
+        //    mouthSprites.Add(assets.imageSize, assets.assets);
+        //}
+        //eyeSprites = new Dictionary<IMAGE_SIZE, List<Sprite>>();
+        //for (int i = 0; i < eyeAssets.Count; i++) {
+        //    PortraitAsset assets = eyeAssets[i];
+        //    eyeSprites.Add(assets.imageSize, assets.assets);
+        //}
+        //eyebrowSprites = new Dictionary<IMAGE_SIZE, List<Sprite>>();
+        //for (int i = 0; i < eyebrowAssets.Count; i++) {
+        //    PortraitAsset assets = eyebrowAssets[i];
+        //    eyebrowSprites.Add(assets.imageSize, assets.assets);
+        //}
+    //}
+
+    public PortraitAssetCollection GetPortraitAssets(RACE race, GENDER gender, IMAGE_SIZE imgSize = IMAGE_SIZE.X256) {
+        if (imgSize == IMAGE_SIZE.X256) {
+            for (int i = 0; i < portraitAssetsx256.Count; i++) {
+                RacePortraitAssets racePortraitAssets = portraitAssetsx256[i];
+                if (racePortraitAssets.race == race) {
+                    if (gender == GENDER.MALE) {
+                        return racePortraitAssets.maleAssets;
+                    } else {
+                        return racePortraitAssets.femaleAssets;
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < portraitAssetsx64.Count; i++) {
+                RacePortraitAssets racePortraitAssets = portraitAssetsx64[i];
+                if (racePortraitAssets.race == race) {
+                    if (gender == GENDER.MALE) {
+                        return racePortraitAssets.maleAssets;
+                    } else {
+                        return racePortraitAssets.femaleAssets;
+                    }
+                }
+            }
         }
-        hairSprites = new Dictionary<IMAGE_SIZE, List<Sprite>>();
-        for (int i = 0; i < hairAssets.Count; i++) {
-            PortraitAsset assets = hairAssets[i];
-            hairSprites.Add(assets.imageSize, assets.assets);
-        }
-        headSprites = new Dictionary<IMAGE_SIZE, List<Sprite>>();
-        for (int i = 0; i < headAssets.Count; i++) {
-            PortraitAsset assets = headAssets[i];
-            headSprites.Add(assets.imageSize, assets.assets);
-        }
-        noseSprites = new Dictionary<IMAGE_SIZE, List<Sprite>>();
-        for (int i = 0; i < noseAssets.Count; i++) {
-            PortraitAsset assets = noseAssets[i];
-            noseSprites.Add(assets.imageSize, assets.assets);
-        }
-        mouthSprites = new Dictionary<IMAGE_SIZE, List<Sprite>>();
-        for (int i = 0; i < mouthAssets.Count; i++) {
-            PortraitAsset assets = mouthAssets[i];
-            mouthSprites.Add(assets.imageSize, assets.assets);
-        }
-        eyeSprites = new Dictionary<IMAGE_SIZE, List<Sprite>>();
-        for (int i = 0; i < eyeAssets.Count; i++) {
-            PortraitAsset assets = eyeAssets[i];
-            eyeSprites.Add(assets.imageSize, assets.assets);
-        }
-        eyebrowSprites = new Dictionary<IMAGE_SIZE, List<Sprite>>();
-        for (int i = 0; i < eyebrowAssets.Count; i++) {
-            PortraitAsset assets = eyebrowAssets[i];
-            eyebrowSprites.Add(assets.imageSize, assets.assets);
-        }
+        throw new System.Exception("No portraits for " + race.ToString() + " " + gender.ToString());
     }
-    public PortraitSettings GenerateRandomPortrait() {
+    public PortraitSettings GenerateRandomPortrait(RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
         PortraitSettings ps = new PortraitSettings();
-        ps.headIndex = Random.Range(0, headAssets[0].assets.Count);
-        ps.eyesIndex = Random.Range(0, eyeAssets[0].assets.Count);
-        ps.eyeBrowIndex = Random.Range(0, eyebrowAssets[0].assets.Count);
-        ps.hairIndex = Random.Range(0, hairAssets[0].assets.Count);
-        ps.noseIndex = Random.Range(0, noseAssets[0].assets.Count);
-        ps.mouthIndex = Random.Range(0, mouthAssets[0].assets.Count);
-        ps.bodyIndex = Random.Range(0, bodyAssets[0].assets.Count);
-        ps.hairColor = hairColors[Random.Range(0, hairColors.Count)];
+        ps.headIndex = Random.Range(0, pac.headAssets.Count);
+        ps.eyesIndex = Random.Range(0, pac.eyeAssets.Count);
+        ps.eyeBrowIndex = Random.Range(0, pac.eyebrowAssets.Count);
+        ps.hairIndex = Random.Range(0, pac.hairAssets.Count);
+        ps.noseIndex = Random.Range(0, pac.noseAssets.Count);
+        ps.mouthIndex = Random.Range(0, pac.mouthAssets.Count);
+        ps.bodyIndex = Random.Range(0, pac.bodyAssets.Count);
+        ps.hairColor = pac.hairColors[Random.Range(0, pac.hairColors.Count)];
         return ps;
     }
-    public Sprite GetHairSprite(int index,  IMAGE_SIZE imgSize) {
-        return hairSprites[imgSize][index];
+    public HairSetting GetHairSprite(int index,  IMAGE_SIZE imgSize, RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender, imgSize);
+        return pac.hairAssets[index];
     }
-    public Sprite GetBodySprite(int index, IMAGE_SIZE imgSize) {
-        return bodySprites[imgSize][index];
+    public Sprite GetBodySprite(int index, IMAGE_SIZE imgSize, RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender, imgSize);
+        return pac.bodyAssets[index];
     }
-    public Sprite GetHeadSprite(int index, IMAGE_SIZE imgSize) {
-        return headSprites[imgSize][index];
+    public Sprite GetHeadSprite(int index, IMAGE_SIZE imgSize, RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender, imgSize);
+        return pac.headAssets[index];
     }
-    public Sprite GetNoseSprite(int index, IMAGE_SIZE imgSize) {
-        return noseSprites[imgSize][index];
+    public Sprite GetNoseSprite(int index, IMAGE_SIZE imgSize, RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender, imgSize);
+        return pac.noseAssets[index];
     }
-    public Sprite GetMouthSprite(int index, IMAGE_SIZE imgSize) {
-        return mouthSprites[imgSize][index];
+    public Sprite GetMouthSprite(int index, IMAGE_SIZE imgSize, RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender, imgSize);
+        return pac.mouthAssets[index];
     }
-    public Sprite GetEyeSprite(int index, IMAGE_SIZE imgSize) {
-        return eyeSprites[imgSize][index];
+    public Sprite GetEyeSprite(int index, IMAGE_SIZE imgSize, RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender, imgSize);
+        return pac.eyeAssets[index];
     }
-    public Sprite GetEyebrowSprite(int index, IMAGE_SIZE imgSize) {
-        return eyebrowSprites[imgSize][index];
+    public Sprite GetEyebrowSprite(int index, IMAGE_SIZE imgSize, RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender, imgSize);
+        return pac.eyebrowAssets[index];
     }
     #endregion
 
