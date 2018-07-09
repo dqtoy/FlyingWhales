@@ -260,5 +260,18 @@ public class FactionManager : MonoBehaviour {
         }
         throw new System.Exception(faction1.name + " does not have the same relationship object as " + faction2.name + "!");
     }
+    public FACTION_RELATIONSHIP_STATUS GetRelationshipStatusBetween(Faction faction1, Faction faction2) {
+        FactionRelationship rel = GetRelationshipBetween(faction1, faction2);
+        return rel.relationshipStatus;
+    }
+    public List<Faction> GetNonHostileFactionsWith(Faction faction) {
+        List<Faction> nonHostileFactions = new List<Faction>();
+        foreach (KeyValuePair<Faction, FactionRelationship> kvp in faction.relationships) {
+            if (kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NON_HOSTILE) {
+                nonHostileFactions.Add(kvp.Key);
+            }
+        }
+        return nonHostileFactions;
+    }
     #endregion
 }

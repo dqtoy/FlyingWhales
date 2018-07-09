@@ -1365,16 +1365,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     #endregion
 
-    #region Materials
-    public void SetMaterialOnTile(MATERIAL material) {
-        //_materialOnTile = material;
-        //GameObject resource = GameObject.Instantiate(Biomes.Instance.ebonyPrefab, resourceParent) as GameObject;
-        //resource.transform.localPosition = Vector3.zero;
-        //resource.transform.localScale = Vector3.one;
-        region.AddTileWithMaterial(this);
-    }
-    #endregion
-
     #region Corruption
     public void SetCorruption(bool state, BaseLandmark landmark = null) {
         if(_isCorrupted != state) {

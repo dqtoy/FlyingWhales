@@ -445,59 +445,7 @@ public class LandmarkManager : MonoBehaviour {
     }
     #endregion
 
-    #region Material Generation
-    /*
-     Generate Materials
-         */
-    public void GenerateMaterials() {
-        List<HexTile> elligibleTiles = new List<HexTile>(GridMap.Instance.hexTiles.Where(x => x.elevationType != ELEVATION.WATER && !x.isRoad)); //Get tiles that aren't water and are not habitable,  && !x.isHabitable
-        //Tiles that are within 2 tiles of a habitable tile, cannot have resources
-        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-            Region currRegion = GridMap.Instance.allRegions[i];
-            List<HexTile> tilesToRemove = currRegion.centerOfMass.GetTilesInRange(2);
-            Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
-        }
-
-        WeightedDictionary<MATERIAL> materialWeights = Utilities.GetMaterialWeights();
-
-        //Dictionary<MATERIAL, int> createdMaterials = new Dictionary<MATERIAL, int>();
-        Debug.Log("Creating " + initialResourceLandmarks.ToString() + " materials..... ");
-        int placedMaterials = 0;
-
-        while (placedMaterials != initialResourceLandmarks) {
-            if (elligibleTiles.Count <= 0) {
-                Debug.Log("Only created " + placedMaterials.ToString() + " landmarks");
-                return;
-            }
-            HexTile chosenTile = elligibleTiles[Random.Range(0, elligibleTiles.Count)];
-            elligibleTiles.Remove(chosenTile);
-            List<HexTile> tilesToRemove = chosenTile.GetTilesInRange(1);
-            Utilities.ListRemoveRange(elligibleTiles, tilesToRemove);
-
-            MATERIAL chosenMaterial = materialWeights.PickRandomElementGivenWeights();
-            chosenTile.SetMaterialOnTile(chosenMaterial);
-
-            ////Keep track of number of materials per type
-            //if (createdMaterials.ContainsKey(chosenMaterial)) {
-            //    createdMaterials[chosenMaterial]++;
-            //} else {
-            //    createdMaterials.Add(chosenMaterial, 1);
-            //}
-            placedMaterials++;
-        }
-        Debug.Log("Created " + placedMaterials.ToString() + " materials");
-
-        //foreach (KeyValuePair<MATERIAL, int> kvp in createdMaterials) {
-        //    Debug.Log(kvp.Key.ToString() + " - " + kvp.Value.ToString());
-        //}
-    }
-    #endregion
-
     #region Utilities
-    //public BASE_LANDMARK_TYPE GetBaseLandmarkType(LANDMARK_TYPE landmarkType) {
-    //    LandmarkData landmarkData = GetLandmarkData(landmarkType);
-    //    return landmarkData.baseLandmarkType;
-    //}
     public BaseLandmark GetLandmarkByID(int id) {
         List<BaseLandmark> allLandmarks = GetAllLandmarks();
         for (int i = 0; i < allLandmarks.Count; i++) {
@@ -548,44 +496,6 @@ public class LandmarkManager : MonoBehaviour {
         }
         return allLandmarksOfType;
     }
-    //public List<BaseLandmark> GetLandmarksOfType(BASE_LANDMARK_TYPE baseLandmarkType) {
-    //    List<BaseLandmark> allLandmarksOfType = new List<BaseLandmark>();
-    //    for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-    //        Region currRegion = GridMap.Instance.allRegions[i];
-    //        for (int j = 0; j < currRegion.landmarks.Count; j++) {
-    //            BaseLandmark currLandmark = currRegion.landmarks[j];
-    //            if (GetBaseLandmarkType(currLandmark.specificLandmarkType) == baseLandmarkType) {
-    //                allLandmarksOfType.Add(currLandmark);
-    //            }
-    //        }
-    //    }
-    //    return allLandmarksOfType;
-    //}
-    //public List<BaseLandmark> GetLandmarksOfType(BASE_LANDMARK_TYPE baseLandmarkType, List<Region> except) {
-    //    List<BaseLandmark> allLandmarksOfType = new List<BaseLandmark>();
-    //    for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-    //        Region currRegion = GridMap.Instance.allRegions[i];
-    //        if (except.Contains(currRegion)) {
-    //            continue; //skip
-    //        }
-    //        for (int j = 0; j < currRegion.landmarks.Count; j++) {
-    //            BaseLandmark currLandmark = currRegion.landmarks[j];
-    //            if (GetBaseLandmarkType(currLandmark.specificLandmarkType) == baseLandmarkType) {
-    //                allLandmarksOfType.Add(currLandmark);
-    //            }
-    //        }
-    //    }
-    //    return allLandmarksOfType;
-    //}
-    //public BaseLandmarkData GetBaseLandmarkData(BASE_LANDMARK_TYPE baseLandmarkType) {
-    //    for (int i = 0; i < baseLandmarkData.Count; i++) {
-    //        BaseLandmarkData currData = baseLandmarkData[i];
-    //        if (currData.baseLandmarkType == baseLandmarkType) {
-    //            return currData;
-    //        }
-    //    }
-    //    throw new System.Exception("There is no base landmark data for " + baseLandmarkType);
-    //}
     public List<BaseLandmark> GetAllLandmarks(List<Region> regions = null) {
         List<BaseLandmark> allLandmarks = new List<BaseLandmark>();
 #if WORLD_CREATION_TOOL

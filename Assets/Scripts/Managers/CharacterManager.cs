@@ -31,12 +31,8 @@ public class CharacterManager : MonoBehaviour {
 
     [Header("Character Portrait Assets")]
     public GameObject characterPortraitPrefab;
-    //public List<HairSetting> hairSettings;
-    //public List<Sprite> headSprites;
-    //public List<Sprite> noseSprites;
-    //public List<Sprite> mouthSprites;
-    //public List<Sprite> eyeSprites;
-    //public List<Sprite> eyeBrowSprites;
+    [SerializeField] private List<RacePortraitAssets> portraitAssets;
+
     [SerializeField] private List<PortraitAsset> bodyAssets;
     [SerializeField] private List<PortraitAsset> hairAssets;
     [SerializeField] private List<PortraitAsset> headAssets;

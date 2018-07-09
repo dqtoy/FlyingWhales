@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public struct AreaData {
     public AREA_TYPE areaType;
+    public BASE_AREA_TYPE baseAreaType;
     public List<LANDMARK_TYPE> allowedLandmarkTypes;
     public List<MonsterPartyComponent> possibleMonsterSpawns;
 }
