@@ -49,7 +49,12 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler {
                             UIManager.Instance.ShowCombatLog(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.combatHistory[idToUse]);
                         }
                     }
-                } 
+                } else if (linkText.Contains("_monster")) {
+                    Monster monster = MonsterManager.Instance.GetMonsterByID(idToUse);
+                    if (monster != null) {
+                        UIManager.Instance.ShowMonsterInfo(monster);
+                    }
+                }
                 //else if (linkText.Contains("_monster")) {
                 //        if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter.combatHistory.ContainsKey(idToUse)) {
                 //            UIManager.Instance.ShowCombatLog(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.combatHistory[idToUse]);
@@ -63,8 +68,8 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler {
                 if (lf.obj != null) {
                     if (lf.obj is Character) {
                         UIManager.Instance.ShowCharacterInfo(lf.obj as Character);
-                    } else if (lf.obj is Party) {
-                        UIManager.Instance.ShowCharacterInfo((lf.obj as Party).partyLeader);
+                    } else if (lf.obj is Monster) {
+                        UIManager.Instance.ShowMonsterInfo((lf.obj as Monster));
                     } else if (lf.obj is BaseLandmark) {
                         UIManager.Instance.ShowLandmarkInfo(lf.obj as BaseLandmark);
                     } else if (lf.obj is Combat) {

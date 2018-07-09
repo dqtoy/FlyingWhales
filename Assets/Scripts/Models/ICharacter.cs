@@ -18,6 +18,9 @@ public interface ICharacter {
     int currentRow { get; }
     int id { get; }
     int currentSP { get; }
+    int pFinalAttack { get; }
+    int mFinalAttack { get; }
+    int speed { get; }
     string coloredUrlName { get; }
     string urlName { get; }
     string name { get; }

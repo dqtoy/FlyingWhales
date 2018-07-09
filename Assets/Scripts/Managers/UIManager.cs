@@ -386,10 +386,19 @@ public class UIManager : MonoBehaviour {
     //}
     #endregion
 
+    private void HideMainUI() {
+        mainUIGO.SetActive(false);
+    }
+
+    public void ShowMainUI() {
+        mainUIGO.SetActive(true);
+    }
+
     #region Landmark Info
     [Space(10)]
     [Header("Landmark Info")]
-    [SerializeField] internal LandmarkInfoUI landmarkInfoUI;
+    [SerializeField]
+    internal LandmarkInfoUI landmarkInfoUI;
     public void ShowLandmarkInfo(BaseLandmark landmark) {
         HideMainUI();
         if (factionInfoUI.isShowing) {
@@ -407,6 +416,9 @@ public class UIManager : MonoBehaviour {
         if (partyinfoUI.isShowing) {
             partyinfoUI.HideMenu();
         }
+        if (monsterInfoUI.isShowing) {
+            monsterInfoUI.HideMenu();
+        }
         landmarkInfoUI.SetData(landmark);
         landmarkInfoUI.OpenMenu();
         landmark.CenterOnLandmark();
@@ -422,7 +434,8 @@ public class UIManager : MonoBehaviour {
     #region Faction Info
     [Space(10)]
     [Header("Faction Info")]
-    [SerializeField] internal FactionInfoUI factionInfoUI;
+    [SerializeField]
+    internal FactionInfoUI factionInfoUI;
     public void ShowFactionInfo(Faction faction) {
         HideMainUI();
         if (landmarkInfoUI.isShowing) {
@@ -440,6 +453,9 @@ public class UIManager : MonoBehaviour {
         if (partyinfoUI.isShowing) {
             partyinfoUI.HideMenu();
         }
+        if (monsterInfoUI.isShowing) {
+            monsterInfoUI.HideMenu();
+        }
         factionInfoUI.SetData(faction);
         factionInfoUI.OpenMenu();
         //		playerActionsUI.ShowPlayerActionsUI ();
@@ -450,14 +466,6 @@ public class UIManager : MonoBehaviour {
         }
     }
     #endregion
-
-    private void HideMainUI() {
-        mainUIGO.SetActive(false);
-    }
-
-    public void ShowMainUI() {
-        mainUIGO.SetActive(true);
-    }
 
     #region Character Info
     [Space(10)]
@@ -479,6 +487,9 @@ public class UIManager : MonoBehaviour {
         //}
         if (partyinfoUI.isShowing) {
             partyinfoUI.HideMenu();
+        }
+        if (monsterInfoUI.isShowing) {
+            monsterInfoUI.HideMenu();
         }
         characterInfoUI.SetData(character);
         characterInfoUI.OpenMenu();
@@ -513,6 +524,9 @@ public class UIManager : MonoBehaviour {
         if (partyinfoUI.isShowing) {
             partyinfoUI.HideMenu();
         }
+        if (monsterInfoUI.isShowing) {
+            monsterInfoUI.HideMenu();
+        }
         hexTileInfoUI.SetData(hexTile);
         hexTileInfoUI.OpenMenu();
         //		playerActionsUI.ShowPlayerActionsUI ();
@@ -545,12 +559,51 @@ public class UIManager : MonoBehaviour {
         if (hexTileInfoUI.isShowing) {
             hexTileInfoUI.HideMenu();
         }
+        if (monsterInfoUI.isShowing) {
+            monsterInfoUI.HideMenu();
+        }
         partyinfoUI.SetData(party);
         partyinfoUI.OpenMenu();
     }
     public void UpdatePartyInfo() {
         if (partyinfoUI.isShowing) {
             partyinfoUI.UpdatePartyInfo();
+        }
+    }
+    #endregion
+
+    #region Monster Info
+    [Space(10)]
+    [Header("Monster Info")]
+    [SerializeField]
+    internal MonsterInfoUI monsterInfoUI;
+    public void ShowMonsterInfo(Monster monster) {
+        HideMainUI();
+        if (landmarkInfoUI.isShowing) {
+            landmarkInfoUI.HideMenu();
+        }
+        if (factionInfoUI.isShowing) {
+            factionInfoUI.HideMenu();
+        }
+        if (hexTileInfoUI.isShowing) {
+            hexTileInfoUI.HideMenu();
+        }
+        //if (questInfoUI.isShowing) {
+        //    questInfoUI.HideMenu();
+        //}
+        if (partyinfoUI.isShowing) {
+            partyinfoUI.HideMenu();
+        }
+        if (characterInfoUI.isShowing) {
+            characterInfoUI.HideMenu();
+        }
+        monsterInfoUI.SetData(monster);
+        monsterInfoUI.OpenMenu();
+        //		playerActionsUI.ShowPlayerActionsUI ();
+    }
+    public void UpdateMonsterInfo() {
+        if (monsterInfoUI.isShowing) {
+            monsterInfoUI.UpdateMonsterInfo();
         }
     }
     #endregion
