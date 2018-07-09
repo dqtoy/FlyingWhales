@@ -58,7 +58,7 @@ namespace ECS{
                     rowNumber = 5;
                 }
                 character.SetSide(side);
-                character.currentCombat = this;
+                //character.currentCombat = this;
                 character.SetRowNumber(rowNumber);
                 character.actRate = character.speed * 5;
                 character.battleOnlyTracker.Reset();
@@ -84,7 +84,7 @@ namespace ECS{
             }
             for (int i = 0; i < characters.Count; i++) {
 				characters[i].SetSide (side);
-                characters[i].currentCombat = this;
+                //characters[i].currentCombat = this;
                 characters[i].SetRowNumber(rowNumber);
                 characters[i].actRate = characters[i].speed * 5;
                 if (hasStarted && !isDone) {
@@ -97,37 +97,45 @@ namespace ECS{
 				CombatPrototypeUI.Instance.UpdateCharactersList(side);
 			}
 		}
-        internal void AddParty(SIDES side, IParty iparty) {
+        internal void AddParty(SIDES side, NewParty iparty) {
             for (int i = 0; i < iparty.icharacters.Count; i++) {
                 AddCharacter(side, iparty.icharacters[i]);
             }
+            iparty.currentCombat = this;
         }
         //Remove a character from a side
-        internal void RemoveCharacter(SIDES side, ICharacter character) {
+        internal bool RemoveCharacter(SIDES side, ICharacter character) {
             if (side == SIDES.A) {
-                this.charactersSideA.Remove(character);
+                if (this.charactersSideA.Remove(character)) {
+                    return true;
+                }
             } else {
-                this.charactersSideB.Remove(character);
-            }
-			character.currentCombat = null;
-			if (CombatPrototypeUI.Instance != null) {
-				CombatPrototypeUI.Instance.UpdateCharactersList (side);
+                if (this.charactersSideB.Remove(character)) {
+                    return true;
+                }
 			}
+            //character.currentCombat = null;
+            if (CombatPrototypeUI.Instance != null) {
+                CombatPrototypeUI.Instance.UpdateCharactersList(side);
+            }
+            return false;
         }
         //Remove character without specifying a side
-        internal void RemoveCharacter(ICharacter character) {
+        internal bool RemoveCharacter(ICharacter character) {
             if (this.charactersSideA.Remove(character)) {
-				character.currentCombat = null;
+				//character.currentCombat = null;
 				if (CombatPrototypeUI.Instance != null) {
 					CombatPrototypeUI.Instance.UpdateCharactersList (SIDES.A);
 				}
-            } else {
-                this.charactersSideB.Remove(character);
-				character.currentCombat = null;
+                return true;
+            } else if(this.charactersSideB.Remove(character)){
+				//character.currentCombat = null;
 				if (CombatPrototypeUI.Instance != null) {
 					CombatPrototypeUI.Instance.UpdateCharactersList (SIDES.B);
 				}
+                return true;
             }
+            return false;
         }
         internal List<ICharacter> GetCharactersOnSide(SIDES side) {
             if (side == SIDES.A) {
@@ -1143,14 +1151,18 @@ namespace ECS{
 
 		#region Flee Skill
 		private void FleeSkill(ICharacter sourceCharacter, ICharacter targetCharacter){
-			//TODO: ICharacter flees
-			RemoveCharacter(targetCharacter);
-			fledCharacters.Add (targetCharacter);
-			//targetCharacter.SetIsDefeated (true);
-            if(targetCharacter.iparty is CharacterParty) {
-                CombatManager.Instance.PartyContinuesAction(targetCharacter.iparty as CharacterParty, false);
+            //TODO: ICharacter flees
+            if (RemoveCharacter(targetCharacter)) {
+                fledCharacters.Add(targetCharacter);
+                //targetCharacter.SetIsDefeated (true);
+                if (targetCharacter.iparty is CharacterParty) {
+                    if(targetCharacter.iparty.icharacters.Count > 1) {
+                        targetCharacter.CreateNewParty();
+                    }
+                    CombatManager.Instance.PartyContinuesActionAfterCombat(targetCharacter.iparty as CharacterParty, false);
+                }
+                AddCombatLog(targetCharacter.coloredUrlName + " chickened out and ran away!", targetCharacter.currentSide);
             }
-            AddCombatLog(targetCharacter.coloredUrlName + " chickened out and ran away!", targetCharacter.currentSide);
 		}
 		#endregion
 
@@ -1179,30 +1191,31 @@ namespace ECS{
 
 		//This will receive the "CharacterDeath" signal when broadcasted, this is a listener
 		internal void CharacterDeath(ICharacter character){
-			RemoveCharacter (character);
-            //Give exp to other side if monster died
-            if (character.icharacterType == ICHARACTER_TYPE.MONSTER) {
-                Monster monster = character as Monster;
-                SIDES oppositeSide = SIDES.B;
-                if(monster.currentSide == SIDES.B) {
-                    oppositeSide = SIDES.A;
+			if(RemoveCharacter(character)) {
+                //Give exp to other side if monster died
+                if (character.icharacterType == ICHARACTER_TYPE.MONSTER) {
+                    Monster monster = character as Monster;
+                    SIDES oppositeSide = SIDES.B;
+                    if (monster.currentSide == SIDES.B) {
+                        oppositeSide = SIDES.A;
+                    }
+                    List<ICharacter> killerCharacters = GetCharactersOnSide(oppositeSide);
+                    for (int i = 0; i < killerCharacters.Count; i++) {
+                        killerCharacters[i].AdjustExperience(monster.experienceDrop);
+                    }
                 }
-                List<ICharacter> killerCharacters = GetCharactersOnSide(oppositeSide);
-                for (int i = 0; i < killerCharacters.Count; i++) {
-                    killerCharacters[i].AdjustExperience(monster.experienceDrop);
-                }
+                //deadCharacters.Add (character);
+                //character.SetIsDefeated (true);
+                AddCombatLog(character.coloredUrlName + " died horribly!", character.currentSide);
             }
-            //deadCharacters.Add (character);
-            //character.SetIsDefeated (true);
-            AddCombatLog(character.coloredUrlName + " died horribly!", character.currentSide);
-           
 		}
 
 		internal void CharacterFainted(ICharacter character){
-			RemoveCharacter (character);
-			faintedCharacters.Add (character);
-			//character.SetIsDefeated (true);
-			AddCombatLog(character.coloredUrlName + " fainted!", character.currentSide);
+            if (RemoveCharacter(character)) {
+                faintedCharacters.Add(character);
+                //character.SetIsDefeated (true);
+                AddCombatLog(character.coloredUrlName + " fainted!", character.currentSide);
+            }
 		}
 
 		//Check essential body part quantity, if all are decapitated, instant death

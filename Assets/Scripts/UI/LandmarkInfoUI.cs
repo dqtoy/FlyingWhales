@@ -109,7 +109,7 @@ public class LandmarkInfoUI : UIMenu {
         text += "\n<b>Parties At Landmark: </b> ";
         if (currentlyShowingLandmark.charactersAtLocation.Count > 0) {
 			for (int i = 0; i < currentlyShowingLandmark.charactersAtLocation.Count; i++) {
-                IParty currObject = currentlyShowingLandmark.charactersAtLocation[i];
+                NewParty currObject = currentlyShowingLandmark.charactersAtLocation[i];
                 if (currObject is CharacterParty) {
                     CharacterParty currChar = currObject as CharacterParty;
                     text += "\n" + currChar.urlName; // + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");

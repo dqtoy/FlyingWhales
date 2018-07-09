@@ -51,7 +51,7 @@ public class LandmarkObject : MonoBehaviour {
     public void UpdateProgressBar() {
         hpProgressBar.value = (float) _landmark.landmarkObj.currentHP / (float) _landmark.landmarkObj.maxHP;
     }
-    public void OnCharacterEnteredLandmark(IParty iparty) {
+    public void OnCharacterEnteredLandmark(NewParty iparty) {
         //add character portrait to grid
         CharacterPortrait portrait = iparty.icon.characterPortrait;
         portrait.transform.SetParent(charactersScrollView.content.transform);
@@ -62,7 +62,7 @@ public class LandmarkObject : MonoBehaviour {
         //iparty.icon.gameObject.SetActive(false);
         iparty.icon.SetVisualState(false);
     }
-    public void OnCharacterExitedLandmark(IParty iparty) {
+    public void OnCharacterExitedLandmark(NewParty iparty) {
         //remove character portrait from grid
         iparty.icon.ReclaimPortrait();
         //iparty.icon.gameObject.SetActive(true);

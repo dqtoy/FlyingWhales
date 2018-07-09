@@ -131,9 +131,6 @@ public class CharacterInfoUI : UIMenu {
         }
         if (currentlyShowingCharacter.role != null) {
             text += "\n<b>Role: </b>" + currentlyShowingCharacter.role.roleType.ToString();
-            if (currentlyShowingCharacter.role.job != null) {
-                text += "\n<b>Job: </b>" + currentlyShowingCharacter.role.job.jobType.ToString();
-            }
         }
 
         text += "\n<b>Faction: </b>" + (currentlyShowingCharacter.faction != null ? currentlyShowingCharacter.faction.urlName : "NONE");
@@ -409,8 +406,8 @@ public class CharacterInfoUI : UIMenu {
 
     #region Death
     public void DieCharacter() {
-        if(currentlyShowingCharacter.currentCombat != null) {
-            currentlyShowingCharacter.currentCombat.CharacterDeath(currentlyShowingCharacter);
+        if(currentlyShowingCharacter.party.currentCombat != null) {
+            currentlyShowingCharacter.party.currentCombat.CharacterDeath(currentlyShowingCharacter);
         }
         currentlyShowingCharacter.Death();
     }

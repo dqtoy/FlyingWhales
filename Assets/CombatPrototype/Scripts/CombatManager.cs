@@ -50,9 +50,9 @@ namespace ECS {
         /*
          * Create a new character given a base character setup.
          * */
-        internal ECS.Character CreateNewCharacter(CharacterSetup baseCharacter) {
-            return new ECS.Character(baseCharacter, Utilities.GetRandomGender());
-        }
+        //internal ECS.Character CreateNewCharacter(CharacterSetup baseCharacter) {
+        //    return new ECS.Character(baseCharacter, Utilities.GetRandomGender());
+        //}
 
 		private void ConstructCharacterColors(){
 			unusedColors = characterColors.ToList (); 
@@ -78,35 +78,15 @@ namespace ECS {
 			}
 		}
 
-		internal CharacterSetup GetBaseCharacterSetupBasedOnClass(string className){
-			for (int i = 0; i < this.baseCharacters.Length; i++) {
-                CharacterSetup currBase = this.baseCharacters[i];
-                if (currBase.characterClassName.ToLower() == className.ToLower()){
-					return currBase;
-				}
-			}
-			return null;
-		}
-
-        internal CharacterSetup GetBaseCharacterSetup(string className, RACE race) {
+        internal CharacterSetup GetBaseCharacterSetup(string className) {
             for (int i = 0; i < this.baseCharacters.Length; i++) {
                 CharacterSetup currBase = this.baseCharacters[i];
-                if (currBase.characterClassName.ToLower() == className.ToLower() && currBase.raceSetting.race == race) {
+                if (currBase.characterClassName.ToLower() == className.ToLower()) {
                     return currBase;
                 }
             }
             return null;
         }
-
-		internal CharacterSetup GetBaseCharacterSetup(string fileName) {
-			for (int i = 0; i < this.baseCharacters.Length; i++) {
-				CharacterSetup currBase = this.baseCharacters[i];
-				if (currBase.fileName == fileName) {
-					return currBase;
-				}
-			}
-			return null;
-		}
 
 		internal void NewCombat(){
 			this.combat = new Combat ();
@@ -123,7 +103,7 @@ namespace ECS {
                 ICharacter icharacter = combat.charactersSideA[0];
                 if (icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                     Character character = icharacter as Character;
-                    PartyContinuesAction(character.party, true);
+                    PartyContinuesActionAfterCombat(character.party, true);
                 }
                 icharacter.ResetToFullHP();
                 icharacter.ResetToFullSP();
@@ -133,7 +113,7 @@ namespace ECS {
                 ICharacter icharacter = combat.charactersSideB[0];
                 if (icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                     Character character = icharacter as Character;
-                    PartyContinuesAction(character.party, true);
+                    PartyContinuesActionAfterCombat(character.party, true);
                 }
                 icharacter.ResetToFullHP();
                 icharacter.ResetToFullSP();
@@ -389,7 +369,7 @@ namespace ECS {
             }
             return combatRooms;
         }
-        public void PartyContinuesAction(CharacterParty party, bool isActionSucess) {
+        public void PartyContinuesActionAfterCombat(CharacterParty party, bool isActionSucess) {
             if (party.actionData.isHalted) {
                 party.actionData.SetIsHalted(false);
                 party.icon.OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
@@ -402,6 +382,7 @@ namespace ECS {
                         party.actionData.currentAction.EndAction(party, party.actionData.currentTargetObject);
                     }
                 }
+                party.currentCombat = null;
             }
         }
         public SIDES GetOppositeSide(SIDES side) {

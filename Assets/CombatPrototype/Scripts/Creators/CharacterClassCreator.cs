@@ -31,6 +31,10 @@ namespace ECS {
 			EditorGUILayout.PropertyField(allowedWeaponType, true);
 			serializedObject.ApplyModifiedProperties ();
 
+            SerializedProperty harvestResource = serializedObject.FindProperty("harvestResources");
+            EditorGUILayout.PropertyField(harvestResource, true);
+            serializedObject.ApplyModifiedProperties();
+
             SerializedProperty skillsPerLevel = serializedObject.FindProperty("skillsPerLevel");
             EditorGUILayout.PropertyField(skillsPerLevel, true);
             serializedObject.ApplyModifiedProperties();

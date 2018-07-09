@@ -12,6 +12,7 @@ namespace ECS {
         [SerializeField] private float _hpModifier;
         [SerializeField] private float _spModifier;
         [SerializeField] private List<WEAPON_TYPE> _allowedWeaponTypes;
+        [SerializeField] private List<RESOURCE> _harvestResources;
         [SerializeField] private List<StringListWrapper> _skillsPerLevelNames;
 
         //private int _dodgeRate;
@@ -56,6 +57,9 @@ namespace ECS {
         public List<Skill[]> skillsPerLevel {
             get { return _skillsPerLevel; }
         }
+        public List<RESOURCE> harvestResources {
+            get { return _harvestResources; }
+        }
         #endregion
 
         public CharacterClass CreateNewCopy() {
@@ -71,6 +75,7 @@ namespace ECS {
             //newClass._parryRate = this._parryRate;
             //newClass._blockRate = this._blockRate;
 			newClass._allowedWeaponTypes = new List<WEAPON_TYPE>(this._allowedWeaponTypes);
+            newClass._harvestResources = new List<RESOURCE>(this._harvestResources);
             newClass._skillsPerLevel = new List<Skill[]>();
             for (int i = 0; i < this._skillsPerLevel.Count; i++) {
                 Skill[] skillsArray = new Skill[this._skillsPerLevel[i].Length];
@@ -94,6 +99,7 @@ namespace ECS {
             //this._parryRate = classComponent.parryRate;
             //this._blockRate = classComponent.blockRate;
             this._allowedWeaponTypes = classComponent.allowedWeaponTypes;
+            this._harvestResources = classComponent.harvestResources;
             this._skillsPerLevelNames = new List<StringListWrapper>();
             for (int i = 0; i < classComponent.skillsPerLevel.Count; i++) {
                 StringListWrapper skillNames = new StringListWrapper();

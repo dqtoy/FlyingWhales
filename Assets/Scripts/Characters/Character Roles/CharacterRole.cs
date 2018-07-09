@@ -11,7 +11,6 @@ using ECS;
 
 public class CharacterRole {
 	protected Character _character;
-    protected Job _job;
     protected CHARACTER_ROLE _roleType;
     //protected List<ACTION_ALIGNMENT> _allowedQuestAlignments;
     //protected List<QUEST_TYPE> _allowedQuestTypes;
@@ -32,9 +31,6 @@ public class CharacterRole {
 	public Character character{
 		get { return _character; }
 	}
-    public Job job {
-        get { return _job; }
-    }
     //public List<ACTION_ALIGNMENT> allowedQuestAlignments {
     //    get { return _allowedQuestAlignments; }
     //}
@@ -571,34 +567,6 @@ public class CharacterRole {
             return 0.8f;
         }
         return 1f;
-    }
-    #endregion
-
-    #region Job
-    public void AssignJob(CHARACTER_JOB jobType) {
-        switch (jobType) {
-            case CHARACTER_JOB.SHOPKEEPER:
-                _job = new Shopkeeper(this);
-                break;
-            case CHARACTER_JOB.MINER:
-                _job = new Miner(this);
-                break;
-            case CHARACTER_JOB.WOODCUTTER:
-                _job = new Woodcutter(this);
-                break;
-            case CHARACTER_JOB.FARMER:
-                _job = new Farmer(this);
-                break;
-            case CHARACTER_JOB.RETIRED_HERO:
-                _job = new RetiredHero(this);
-                break;
-            default:
-                _job = null;
-                break;
-        }
-        if (_job != null) {
-            _job.OnAssignJob();
-        }
     }
     #endregion
 }

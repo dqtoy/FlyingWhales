@@ -854,30 +854,22 @@ public enum CHARACTER_ROLE {
     //BEAST,
 }
 public enum CHARACTER_CLASS {
-    CLASSLESS,
-    ARCHER,
-    SPEARMAN,
-    SWORDSMAN,
-    ROGUE,
-    WILDLING,
-    MAGE,
-    BARBARIAN,
-    RANGER,
-    KNIGHT,
-    BATTLEMAGE,
-    ARCANIST,
-    SCOUT,
-    NIGHTBLADE,
     WARRIOR,
-}
-public enum CHARACTER_JOB {
-    NONE,
+    BARBARIAN,
     SHOPKEEPER,
     MINER,
     WOODCUTTER,
     FARMER,
     RETIRED_HERO
 }
+//public enum CHARACTER_JOB {
+//    NONE,
+//    SHOPKEEPER,
+//    MINER,
+//    WOODCUTTER,
+//    FARMER,
+//    RETIRED_HERO
+//}
 public enum CHARACTER_PRODUCTION_CAP {
     CITY_COUNT,
     MINOR_FACTION,
@@ -1278,6 +1270,9 @@ public enum ACTION_TYPE {
     TRAIN,
     DAYDREAM,
     BERSERK,
+    PLAY,
+    FLAIL,
+    SELFMUTILATE,
 }
 
 public enum OBJECT_TYPE {
@@ -1305,7 +1300,7 @@ public enum NEEDS {
 public enum ACTION_FILTER_TYPE {
     ROLE,
     LOCATION,
-    JOB,
+    CLASS,
 }
 public enum ACTION_FILTER_CONDITION {
     IS,

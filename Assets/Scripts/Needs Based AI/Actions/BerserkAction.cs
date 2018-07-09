@@ -14,17 +14,18 @@ public class BerserkAction : CharacterAction {
     }
 
     #region Overrides
+    public override void OnChooseAction(NewParty iparty, IObject targetObject) {
+        base.OnChooseAction(iparty, targetObject);
+        iparty.BerserkModeOn();
+    }
     public override void PerformAction(CharacterParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
         GiveAllReward(party);
-        if(party.icharacters[0].currentCombat != null) {
-
-        }
+    }
+    public override void EndAction(CharacterParty party, IObject targetObject) {
+        base.EndAction(party, targetObject);
+        party.BerserkModeOff();
     }
     #endregion
-
-    private void FindCombat() {
-
-    }
 }

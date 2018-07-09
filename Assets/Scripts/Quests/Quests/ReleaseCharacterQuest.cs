@@ -14,7 +14,7 @@ public class ReleaseCharacterQuest : Quest {
         if (character.party.computedPower >= questData.requiredPower) { //if current power is greater than or equal to Required Power
             if (questData.HasHostilesInPath()) { //check if there are hostiles along the path
                 //if yes, inspect nearest hostile along the path
-                IParty nearestHostile = questData.GetFirstHostileInPath();
+                NewParty nearestHostile = questData.GetFirstHostileInPath();
                 if (nearestHostile.computedPower <= character.party.computedPower) { //if within power range, Attack action
                     data.SetLastActionDesperateState(false);
                     return nearestHostile.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
@@ -37,7 +37,7 @@ public class ReleaseCharacterQuest : Quest {
         //if character is a Hero, and Gain Power Type is None, check which Gain Power Type options are available
         if (character.role.roleType == CHARACTER_ROLE.HERO && questData.gainPowerType == ReleaseCharacterQuestData.Gain_Power_Type.None) {
             List<ReleaseCharacterQuestData.Gain_Power_Type> availablePowerSources = new List<ReleaseCharacterQuestData.Gain_Power_Type>();
-            if (CharacterManager.Instance.HasCharacterWithJob(CHARACTER_JOB.RETIRED_HERO)) {
+            if (CharacterManager.Instance.HasCharacterWithClass("Retired Hero")) {
                 //if there is a Retired Hero from non-hostile Factions with no negative relationship to the character, Mentor is available
                 questData.SetElligibleMentors(GetElligibleMentors(character));
                 if (questData.elligibleMentors != null && questData.elligibleMentors.Count > 0) {
@@ -103,7 +103,7 @@ public class ReleaseCharacterQuest : Quest {
             return null;
         }
         List<Character> elligibleMentors = new List<Character>();
-        List<Character> mentors = CharacterManager.Instance.GetCharactersWithJob(CHARACTER_JOB.RETIRED_HERO);
+        List<Character> mentors = CharacterManager.Instance.GetCharactersWithClass("Retired Hero");
         List<Faction> nonHostileFactions = FactionManager.Instance.GetNonHostileFactionsWith(character.faction);
         for (int i = 0; i < mentors.Count; i++) {
             Character currMentor = mentors[i];

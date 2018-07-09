@@ -17,7 +17,7 @@ public class CharacterObj : ICharacterObject {
     private BaseLandmark _objectLocation;
 
     #region getters/setters
-    public IParty iparty {
+    public NewParty iparty {
         get { return _party; }
     }
     public CharacterParty party {

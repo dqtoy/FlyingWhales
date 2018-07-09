@@ -137,83 +137,18 @@ public class CharacterManager : MonoBehaviour {
     /*
      Create a new character, given a role, class and race.
          */
-    public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race, GENDER gender, CHARACTER_JOB job = CHARACTER_JOB.NONE, Faction faction = null) {
+    public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race, GENDER gender, Faction faction = null) {
 		if(className == "None"){
             className = "Classless";
 		}
-        ECS.CharacterSetup setup = ECS.CombatManager.Instance.GetBaseCharacterSetup(className, race);
-        if (setup == null) {
-            Debug.LogError("THERE IS NO CLASS WITH THE NAME: " + className + "!");
-            return null;
-        }
-		ECS.Character newCharacter = new ECS.Character(setup, gender);
+		ECS.Character newCharacter = new ECS.Character(className, race, gender);
         if (faction != null) {
             newCharacter.SetFaction(faction);
         }
-        if (setup.optionalRole == CHARACTER_ROLE.NONE) {
-            if (charRole != CHARACTER_ROLE.NONE) {
-                newCharacter.AssignRole(charRole);
-            }
-        } else {
-            newCharacter.AssignRole(setup.optionalRole);
+        if (newCharacter.role == null && charRole != CHARACTER_ROLE.NONE) {
+            newCharacter.AssignRole(charRole);
         }
 
-        if (job != CHARACTER_JOB.NONE && newCharacter.role != null) {
-            newCharacter.role.AssignJob(job);
-        }
-
-        _allCharacters.Add(newCharacter);
-        Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
-        return newCharacter;
-    }
-
-	public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, GENDER gender, CHARACTER_JOB job, ECS.CharacterSetup setup) {
-		if (setup == null) {
-			return null;
-		}
-		ECS.Character newCharacter = new ECS.Character(setup, gender);
-        if(setup.optionalRole == CHARACTER_ROLE.NONE) {
-            if(charRole != CHARACTER_ROLE.NONE) {
-                newCharacter.AssignRole(charRole);
-            }
-        } else {
-            newCharacter.AssignRole(setup.optionalRole);
-        }
-
-        if (job != CHARACTER_JOB.NONE && newCharacter.role != null) {
-            newCharacter.role.AssignJob(job);
-        }
-
-#if WORLD_CREATION_TOOL
-        CharacterParty party = newCharacter.CreateNewParty();
-#endif
-
-        _allCharacters.Add(newCharacter);
-        Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
-        return newCharacter;
-	}
-
-    /*
-     Create a new character, given filename.
-         */
-    public ECS.Character CreateNewCharacter(string fileName, GENDER gender, CHARACTER_JOB job = CHARACTER_JOB.NONE, Faction faction = null) {
-        ECS.CharacterSetup setup = ECS.CombatManager.Instance.GetBaseCharacterSetup(fileName);
-        if (setup == null) {
-            Debug.LogError("THERE IS NO CLASS WITH THE NAME: " + fileName + "!");
-            return null;
-        }
-        ECS.Character newCharacter = new ECS.Character(setup, gender);
-
-        if (faction != null) {
-            newCharacter.SetFaction(faction);
-        }
-        if (setup.optionalRole != CHARACTER_ROLE.NONE) {
-            newCharacter.AssignRole(setup.optionalRole);
-        }
-
-        if (job != CHARACTER_JOB.NONE && newCharacter.role != null) {
-            newCharacter.role.AssignJob(job);
-        }
         _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
@@ -221,15 +156,12 @@ public class CharacterManager : MonoBehaviour {
     public ECS.Character CreateNewCharacter(CharacterSaveData data) {
         ECS.Character newCharacter = new ECS.Character(data);        
         newCharacter.AssignRole(data.role);
-        if (newCharacter.role != null && data.job != CHARACTER_JOB.NONE) {
-            newCharacter.role.AssignJob(data.job);
-        }
         if (data.homeID != -1) {
             Area homeLocation = LandmarkManager.Instance.GetAreaByID(data.homeID);
             newCharacter.SetHome(homeLocation);
             //homeLocation.AddCharacterHomeOnLandmark(newCharacter);
         }
-        CharacterParty party = newCharacter.CreateNewParty();
+        NewParty party = newCharacter.CreateNewParty();
         if (data.locationID != -1) {
             ILocation currentLocation = LandmarkManager.Instance.GetLocationBasedOnID(data.locationType, data.locationID);
 #if !WORLD_CREATION_TOOL
@@ -546,20 +478,20 @@ public class CharacterManager : MonoBehaviour {
     public List<string> GetNonCivilianClasses() {
         return classesDictionary.Keys.Where(x => x != "Civilian").ToList();
     }
-    public List<Character> GetCharactersWithJob(CHARACTER_JOB job) {
+    public List<Character> GetCharactersWithClass(string className) {
         List<Character> characters = new List<Character>();
         for (int i = 0; i < allCharacters.Count; i++) {
             Character currChar = allCharacters[i];
-            if (currChar.role.job != null && currChar.role.job.jobType == job) {
+            if (currChar.characterClass != null && currChar.characterClass.className == className) {
                 characters.Add(currChar);
             }
         }
         return characters;
     }
-    public bool HasCharacterWithJob(CHARACTER_JOB job) {
+    public bool HasCharacterWithClass(string className) {
         for (int i = 0; i < allCharacters.Count; i++) {
             Character currChar = allCharacters[i];
-            if (currChar.role.job != null && currChar.role.job.jobType == job) {
+            if (currChar.characterClass != null && currChar.characterClass.className == className) {
                 return true;
             }
         }

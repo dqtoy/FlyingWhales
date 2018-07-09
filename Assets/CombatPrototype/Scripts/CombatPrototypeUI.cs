@@ -60,15 +60,15 @@ namespace ECS{
         }
 
         public void AddCharacterToSideA() {
-            ECS.Character newChar = CombatManager.Instance.CreateNewCharacter((CharacterSetup)sideAPopupList.data);
-            CombatManager.Instance.combat.AddCharacter(SIDES.A, newChar);
-            CombatPrototypeUI.Instance.SetCharacterAsSelected(newChar);
+            //ECS.Character newChar = CombatManager.Instance.CreateNewCharacter((CharacterSetup)sideAPopupList.data);
+            //CombatManager.Instance.combat.AddCharacter(SIDES.A, newChar);
+            //CombatPrototypeUI.Instance.SetCharacterAsSelected(newChar);
         }
 
         public void AddCharacterToSideB() {
-            ECS.Character newChar = CombatManager.Instance.CreateNewCharacter((CharacterSetup)sideBPopupList.data);
-            CombatManager.Instance.combat.AddCharacter(SIDES.B, newChar);
-            CombatPrototypeUI.Instance.SetCharacterAsSelected(newChar);
+            //ECS.Character newChar = CombatManager.Instance.CreateNewCharacter((CharacterSetup)sideBPopupList.data);
+            //CombatManager.Instance.combat.AddCharacter(SIDES.B, newChar);
+            //CombatPrototypeUI.Instance.SetCharacterAsSelected(newChar);
         }
 
         public void UpdateCharactersList(SIDES side) {

@@ -148,6 +148,7 @@ public class ActionData {
                     CharacterAction newAction = currentTargetObject.currentState.GetActionInState(currentAction);
                     if (newAction != null) {
                         if(newAction != currentAction) {
+                            currentAction.EndAction(_party, currentTargetObject);
                             AssignAction(newAction, currentTargetObject);
                         }
                     } else {

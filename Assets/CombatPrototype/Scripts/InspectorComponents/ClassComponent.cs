@@ -16,6 +16,7 @@ namespace ECS{
         //public int blockRate;
 
         public List<WEAPON_TYPE> allowedWeaponTypes;
+        public List<RESOURCE> harvestResources;
         public List<TextAssetListWrapper> skillsPerLevel;
 
         //public List<StringListWrapper> skillsPerLevelNames;

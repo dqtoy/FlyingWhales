@@ -37,7 +37,7 @@ public class CharacterAction {
 
     #region Virtuals
     public virtual void Initialize() {}
-    public virtual void OnChooseAction(IParty iparty, IObject targetObject) {}
+    public virtual void OnChooseAction(NewParty iparty, IObject targetObject) {}
     public virtual void OnFirstEncounter(CharacterParty party, IObject targetObject) {
         if(targetObject.objectLocation != null) {
             Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");

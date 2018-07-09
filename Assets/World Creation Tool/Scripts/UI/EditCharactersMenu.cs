@@ -37,11 +37,11 @@ namespace worldcreator {
             RACE race = (RACE)Enum.Parse(typeof(RACE), raceDropdown.options[raceDropdown.value].text);
             GENDER gender = (GENDER)Enum.Parse(typeof(GENDER), genderDropdown.options[genderDropdown.value].text);
             CHARACTER_ROLE role = (CHARACTER_ROLE)Enum.Parse(typeof(CHARACTER_ROLE), roleDropdown.options[roleDropdown.value].text);
-            CHARACTER_JOB job = (CHARACTER_JOB)Enum.Parse(typeof(CHARACTER_JOB), jobDropdown.options[jobDropdown.value].text);
+            //CHARACTER_JOB job = (CHARACTER_JOB)Enum.Parse(typeof(CHARACTER_JOB), jobDropdown.options[jobDropdown.value].text);
             string className = classDropdown.options[classDropdown.value].text;
 
-            ECS.CharacterSetup setup = ECS.CombatManager.Instance.GetBaseCharacterSetup(className, race);
-            ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(role, gender, job, setup);
+            ECS.CharacterSetup setup = ECS.CombatManager.Instance.GetBaseCharacterSetup(className);
+            ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(role, className, race, gender);
             //Debug.Log("Created new character " + newCharacter.name + "")
         }
         private void OnCreateNewCharacter(Character newCharacter) {
@@ -80,7 +80,7 @@ namespace worldcreator {
             raceDropdown.AddOptions(Utilities.GetEnumChoices<RACE>());
             genderDropdown.AddOptions(Utilities.GetEnumChoices<GENDER>());
             roleDropdown.AddOptions(Utilities.GetEnumChoices<CHARACTER_ROLE>());
-            jobDropdown.AddOptions(Utilities.GetEnumChoices<CHARACTER_JOB>(true));
+            //jobDropdown.AddOptions(Utilities.GetEnumChoices<CHARACTER_JOB>(true));
         }
         #endregion
 

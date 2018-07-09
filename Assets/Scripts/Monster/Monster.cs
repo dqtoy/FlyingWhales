@@ -38,7 +38,7 @@ public class Monster : ICharacter {
     private StructureObj _homeStructure;
     private RaceSetting _raceSetting;
     private MonsterParty _party;
-    private Combat _currentCombat;
+    //private Combat _currentCombat;
     private SIDES _currentSide;
     private List<BodyPart> _bodyParts;
     private List<CharacterAction> _desperateActions;
@@ -152,10 +152,13 @@ public class Monster : ICharacter {
     public CharacterRole role {
         get { return null; }
     }
-    public Combat currentCombat {
-        get { return _currentCombat; }
-        set { _currentCombat = value; }
+    public CharacterClass characterClass {
+        get { return null; }
     }
+    //public Combat currentCombat {
+    //    get { return _currentCombat; }
+    //    set { _currentCombat = value; }
+    //}
     public List<Skill> skills {
         get { return _skills; }
     }
@@ -168,7 +171,7 @@ public class Monster : ICharacter {
     public Dictionary<ELEMENT, float> elementalResistances {
         get { return _elementalResistances; }
     }
-    public IParty iparty {
+    public NewParty iparty {
         get { return _party; }
     }
     public List<CharacterAction> desperateActions {
@@ -278,8 +281,7 @@ public class Monster : ICharacter {
     #region Interface
     private void BaseInitialize() {
         _isDead = false;
-        CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(Utilities.NormalizeString(_type.ToString()));
-        _raceSetting = setup.raceSetting.CreateNewCopy();
+        _raceSetting = RaceManager.Instance.racesDictionary[_type.ToString()].CreateNewCopy();
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
         _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
         if (_skills == null) {
@@ -322,7 +324,7 @@ public class Monster : ICharacter {
         }
     }
     public void FaintOrDeath() {
-        _currentCombat.CharacterDeath(this);
+        _party.currentCombat.CharacterDeath(this);
         Death();
     }
     public int GetPDef(ICharacter enemy) {
@@ -350,7 +352,7 @@ public class Monster : ICharacter {
         _homeStructure = newHomeStructure;
         newHomeStructure.AdjustNumOfResidents(1);
     }
-    public MonsterParty CreateNewParty() {
+    public NewParty CreateNewParty() {
         if (_party != null) {
             _party.RemoveCharacter(this);
         }
@@ -358,7 +360,7 @@ public class Monster : ICharacter {
         newParty.AddCharacter(this);
         return newParty;
     }
-    public void SetParty(IParty party) {
+    public void SetParty(NewParty party) {
         _party = party as MonsterParty;
     }
     public CharacterTag AssignTag(CHARACTER_TAG tag) {

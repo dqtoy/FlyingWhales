@@ -36,7 +36,8 @@ public interface ICharacter {
     StructureObj homeStructure { get; }
     Area home { get; } //Character only
     CharacterRole role { get; } //Character only
-    Combat currentCombat { get; set; }
+    CharacterClass characterClass { get; } //Character only
+    //Combat currentCombat { get; set; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }
     List<Skill> skills { get; }
@@ -44,7 +45,7 @@ public interface ICharacter {
     List<CharacterAction> desperateActions { get; }
     List<CharacterAction> idleActions { get; }
     PortraitSettings portraitSettings { get; }
-    IParty iparty { get; }
+    NewParty iparty { get; }
 
     //functions
     void FaintOrDeath();
@@ -58,13 +59,14 @@ public interface ICharacter {
     void AdjustHP(int amount);
     void AdjustExperience(int amount);
     void EnableDisableSkills(Combat combat);
-    void SetParty(IParty party);
+    void SetParty(NewParty party);
     void SetHomeLandmark(BaseLandmark newHomeLandmark);
     void SetHomeStructure(StructureObj newHomeStructure);
     void AddHistory(Log log); //Character only
     int GetPDef(ICharacter enemy);
     int GetMDef(ICharacter enemy);
-    CharacterTag AssignTag(CHARACTER_TAG tag); //Character only
+    NewParty CreateNewParty();
     CharacterAction GetRandomDesperateAction();
     CharacterAction GetRandomIdleAction();
+    CharacterTag AssignTag(CHARACTER_TAG tag); //Character only
 }
