@@ -74,7 +74,7 @@ public class MapGenerator : MonoBehaviour {
         ObjectManager.Instance.Initialize();
 
         Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
-        Biomes.Instance.GenerateTileBiomeDetails(GridMap.Instance.hexTiles);
+        //Biomes.Instance.GenerateTileBiomeDetails(GridMap.Instance.hexTiles);
 
         LandmarkManager.Instance.InitializeLandmarks();
         CharacterManager.Instance.GenerateCharactersForTesting(8);
@@ -152,7 +152,7 @@ public class MapGenerator : MonoBehaviour {
         yield return null;
 
         Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
-        Biomes.Instance.GenerateTileBiomeDetails(GridMap.Instance.hexTiles);
+        //Biomes.Instance.GenerateTileBiomeDetails(GridMap.Instance.hexTiles);
 
         LandmarkManager.Instance.InitializeLandmarks();
         //CharacterManager.Instance.GenerateCharactersForTesting(1);

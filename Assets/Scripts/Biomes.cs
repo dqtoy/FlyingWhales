@@ -152,30 +152,21 @@ public class Biomes : MonoBehaviour {
     }
 
     internal void UpdateTileVisuals(HexTile currentHexTile, bool updateNeighbours = false) {
-        //int sortingOrder = currentHexTile.xCoordinate - currentHexTile.yCoordinate;
 #if WORLD_CREATION_TOOL
         int sortingOrder = ((int)worldcreator.WorldCreatorManager.Instance.height - 1) -  currentHexTile.yCoordinate;
 #else
         int sortingOrder = ((int)GridMap.Instance.height - 1) -  currentHexTile.yCoordinate;
 #endif
-        if (currentHexTile.elevationType == ELEVATION.WATER) {
-            SetElevationSpriteForTile(currentHexTile);
-            //currentHexTile.UpdateLedgesAndOutlines();
-            currentHexTile.SetSortingOrder(sortingOrder);
-            return;
-        } 
-        //else {
-        //    currentHexTile.UpdateLedgesAndOutlines();
-        //    if (updateNeighbours) {
-        //        currentHexTile.AllNeighbours.ForEach(x => x.UpdateLedgesAndOutlines());
-        //    }
-        //}
         if (currentHexTile.elevationType == ELEVATION.PLAIN) {
             LoadPlainTileVisuals(currentHexTile, sortingOrder);
         } else if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
             LoadMountainTileVisuals(currentHexTile, sortingOrder);
         } else if (currentHexTile.elevationType == ELEVATION.TREES) {
             LoadTreeTileVisuals(currentHexTile, sortingOrder);
+        } else {
+            //For Water
+            SetElevationSpriteForTile(currentHexTile);
+            currentHexTile.SetSortingOrder(sortingOrder);
         }
 
     }
@@ -263,67 +254,67 @@ public class Biomes : MonoBehaviour {
         }
         
     }
-    internal void GenerateTileBiomeDetails(List<HexTile> tiles) {
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile currentHexTile = tiles[i];
-            GenerateTileBiomeDetails(currentHexTile);
-            //if(currentHexTile.elevationType != ELEVATION.PLAIN) {
-            //    continue;
-            //}
-            //if (currentHexTile.biomeType == BIOMES.FOREST) {
-            //    continue;
-            //}
-            //GenerateTileBiomeDetails(currentHexTile);
-        }
-    }
-    internal void GenerateTileBiomeDetails(HexTile tile) {
-        if (tile.biomeType == BIOMES.SNOW || tile.biomeType == BIOMES.TUNDRA) {
-            AddBiomeDetailToTile(tile);
-        }
-    }
+    //internal void GenerateTileBiomeDetails(List<HexTile> tiles) {
+    //    for (int i = 0; i < tiles.Count; i++) {
+    //        HexTile currentHexTile = tiles[i];
+    //        GenerateTileBiomeDetails(currentHexTile);
+    //        //if(currentHexTile.elevationType != ELEVATION.PLAIN) {
+    //        //    continue;
+    //        //}
+    //        //if (currentHexTile.biomeType == BIOMES.FOREST) {
+    //        //    continue;
+    //        //}
+    //        //GenerateTileBiomeDetails(currentHexTile);
+    //    }
+    //}
+    //internal void GenerateTileBiomeDetails(HexTile tile) {
+    //    if (tile.biomeType == BIOMES.SNOW || tile.biomeType == BIOMES.TUNDRA) {
+    //        AddBiomeDetailToTile(tile);
+    //    }
+    //}
 
-    internal void AddBiomeDetailToTile(HexTile tile) {
-        GameObject biomeDetailToUse = null;
-        if (tile.elevationType == ELEVATION.PLAIN) {
-            switch (tile.biomeType) {
-                case BIOMES.SNOW:
-                    if (snowDetails.Length > 0) {
-                        biomeDetailToUse = snowDetails[Random.Range(0, snowDetails.Length)];
-                    }
-                    break;
-                case BIOMES.TUNDRA:
-                    if (tundraDetails.Length > 0) {
-                        biomeDetailToUse = tundraDetails[Random.Range(0, tundraDetails.Length)];
-                    }
-                    break;
-                case BIOMES.DESERT:
-                    if (desertDetails.Length > 0) {
-                        biomeDetailToUse = desertDetails[Random.Range(0, desertDetails.Length)];
-                    }
-                    break;
-                case BIOMES.GRASSLAND:
-                    if (grasslandDetails.Length > 0) {
-                        biomeDetailToUse = grasslandDetails[Random.Range(0, grasslandDetails.Length)];
-                    }
-                    break;
-                    //case BIOMES.WOODLAND:
-                    //    centerSpriteToUse = woodlandTrees[Random.Range(0, woodlandTrees.Length)];
-                    //    tile.SetCenterSprite(centerSpriteToUse);
-                    //    //Utilities.SetSpriteSortingLayer(tile.centerPiece.spriteRenderer, "Structures Layer");
-                    //    break;
-                    //case BIOMES.FOREST:
-                    //    centerSpriteToUse = forestTrees[Random.Range(0, forestTrees.Length)];
-                    //    tile.SetCenterSprite(centerSpriteToUse);
-                    //    //Utilities.SetSpriteSortingLayer(tile.centerPiece.spriteRenderer, "Structures Layer");
-                    //    break;
-            }
-        }
-        //if (biomeDetailToUse != null) {
-            tile.AddBiomeDetailToTile(biomeDetailToUse);
-        //}
+    //internal void AddBiomeDetailToTile(HexTile tile) {
+    //    GameObject biomeDetailToUse = null;
+    //    if (tile.elevationType == ELEVATION.PLAIN) {
+    //        switch (tile.biomeType) {
+    //            case BIOMES.SNOW:
+    //                if (snowDetails.Length > 0) {
+    //                    biomeDetailToUse = snowDetails[Random.Range(0, snowDetails.Length)];
+    //                }
+    //                break;
+    //            case BIOMES.TUNDRA:
+    //                if (tundraDetails.Length > 0) {
+    //                    biomeDetailToUse = tundraDetails[Random.Range(0, tundraDetails.Length)];
+    //                }
+    //                break;
+    //            case BIOMES.DESERT:
+    //                if (desertDetails.Length > 0) {
+    //                    biomeDetailToUse = desertDetails[Random.Range(0, desertDetails.Length)];
+    //                }
+    //                break;
+    //            case BIOMES.GRASSLAND:
+    //                if (grasslandDetails.Length > 0) {
+    //                    biomeDetailToUse = grasslandDetails[Random.Range(0, grasslandDetails.Length)];
+    //                }
+    //                break;
+    //                //case BIOMES.WOODLAND:
+    //                //    centerSpriteToUse = woodlandTrees[Random.Range(0, woodlandTrees.Length)];
+    //                //    tile.SetCenterSprite(centerSpriteToUse);
+    //                //    //Utilities.SetSpriteSortingLayer(tile.centerPiece.spriteRenderer, "Structures Layer");
+    //                //    break;
+    //                //case BIOMES.FOREST:
+    //                //    centerSpriteToUse = forestTrees[Random.Range(0, forestTrees.Length)];
+    //                //    tile.SetCenterSprite(centerSpriteToUse);
+    //                //    //Utilities.SetSpriteSortingLayer(tile.centerPiece.spriteRenderer, "Structures Layer");
+    //                //    break;
+    //        }
+    //    }
+    //    //if (biomeDetailToUse != null) {
+    //        tile.AddBiomeDetailToTile(biomeDetailToUse);
+    //    //}
 
-        //tile.UpdateSortingOrder();
-    }
+    //    //tile.UpdateSortingOrder();
+    //}
 
     internal void SetElevationSpriteForTile(HexTile currentHexTile) {
         //int sortingOrder = currentHexTile.xCoordinate - currentHexTile.yCoordinate;

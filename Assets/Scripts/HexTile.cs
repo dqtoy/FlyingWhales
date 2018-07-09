@@ -279,23 +279,23 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //biomeColor = minimapHexSprite.color;
 
     }
-    internal void AddBiomeDetailToTile(GameObject detailPrefab) {
-        Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(biomeDetailParentGO);
-        if (children != null) {
-            for (int i = 0; i < children.Length; i++) {
-                Transform currChild = children[i];
-                GameObject.Destroy(currChild.gameObject);
-            }
-        }
-        if (detailPrefab != null) {
-            GameObject detailGO = GameObject.Instantiate(detailPrefab, biomeDetailParentGO.transform) as GameObject;
-            detailGO.transform.localScale = Vector3.one;
-            detailGO.transform.localPosition = Vector3.zero;
-        }
-    }
-    internal void SetBiomeDetailState(bool state) {
-        biomeDetailParentGO.SetActive(state);
-    }
+    //internal void AddBiomeDetailToTile(GameObject detailPrefab) {
+    //    Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(biomeDetailParentGO);
+    //    if (children != null) {
+    //        for (int i = 0; i < children.Length; i++) {
+    //            Transform currChild = children[i];
+    //            GameObject.Destroy(currChild.gameObject);
+    //        }
+    //    }
+    //    if (detailPrefab != null) {
+    //        GameObject detailGO = GameObject.Instantiate(detailPrefab, biomeDetailParentGO.transform) as GameObject;
+    //        detailGO.transform.localScale = Vector3.one;
+    //        detailGO.transform.localPosition = Vector3.zero;
+    //    }
+    //}
+    //internal void SetBiomeDetailState(bool state) {
+    //    biomeDetailParentGO.SetActive(state);
+    //}
     #endregion
 
     #region Landmarks
@@ -722,21 +722,21 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //} else {
         //    centerPiece.GetComponent<SpriteRenderer>().sortingOrder = 60; //sortingOrder + 52;
         //}
-#if !WORLD_CREATION_TOOL
-        int centerPieceSortingOrder = (int)GridMap.Instance.height - yCoordinate;
-#else
-        int centerPieceSortingOrder = (int)worldcreator.WorldCreatorManager.Instance.height - yCoordinate;
-#endif
+//#if !WORLD_CREATION_TOOL
+//        int centerPieceSortingOrder = (int)GridMap.Instance.height - yCoordinate;
+//#else
+//        int centerPieceSortingOrder = (int)worldcreator.WorldCreatorManager.Instance.height - yCoordinate;
+//#endif
 
-        //SpriteRenderer mainRenderer = centerPiece.GetComponent<SpriteRenderer>();
-        //mainRenderer.sortingOrder = centerPieceSortingOrder;
-        SpriteRenderer[] children = centerPiece.GetComponentsInChildren<SpriteRenderer>();
-        for (int i = 0; i < children.Length; i++) {
-            SpriteRenderer currRenderer = children[i];
-            //if (currRenderer != mainRenderer) {
-                currRenderer.sortingOrder = centerPieceSortingOrder;
-            //}
-        }
+//        //SpriteRenderer mainRenderer = centerPiece.GetComponent<SpriteRenderer>();
+//        //mainRenderer.sortingOrder = centerPieceSortingOrder;
+//        SpriteRenderer[] children = centerPiece.GetComponentsInChildren<SpriteRenderer>();
+//        for (int i = 0; i < children.Length; i++) {
+//            SpriteRenderer currRenderer = children[i];
+//            //if (currRenderer != mainRenderer) {
+//                currRenderer.sortingOrder = centerPieceSortingOrder;
+//            //}
+//        }
 
         //SpriteRenderer[] resourcesSprites = resourceParent.GetComponentsInChildren<SpriteRenderer>();
         //for (int i = 0; i < resourcesSprites.Length; i++) {
