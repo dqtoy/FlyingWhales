@@ -61,7 +61,7 @@ public class CharacterInfoUI : UIMenu {
         Messenger.AddListener(Signals.UPDATE_UI, UpdateCharacterInfo);
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         Messenger.AddListener<BaseLandmark>(Signals.PLAYER_LANDMARK_CREATED, OnPlayerLandmarkCreated);
-        Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         logHistoryItems = new LogHistoryItem[MAX_HISTORY_LOGS];
         //populate history logs table
         for (int i = 0; i < MAX_HISTORY_LOGS; i++) {
@@ -92,12 +92,12 @@ public class CharacterInfoUI : UIMenu {
     }
     #endregion
 
-    private void OnCharacterDied(ECS.Character deadCharacter) {
-        if (isShowing && currentlyShowingCharacter != null && currentlyShowingCharacter.id == deadCharacter.id) {
-            SetData(null);
-            CloseMenu();
-        }
-    }
+    //private void OnCharacterDied(ECS.Character deadCharacter) {
+    //    if (isShowing && currentlyShowingCharacter != null && currentlyShowingCharacter.id == deadCharacter.id) {
+    //        SetData(null);
+    //        CloseMenu();
+    //    }
+    //}
 
     public override void SetData(object data) {
         base.SetData(data);
@@ -147,7 +147,12 @@ public class CharacterInfoUI : UIMenu {
     }
     public void UpdateGeneralInfo() {
         string text = string.Empty;
-        text += "<b>Specific Location: </b>" + (currentlyShowingCharacter.party.specificLocation != null ? currentlyShowingCharacter.party.specificLocation.locationName : "NONE");
+        if (currentlyShowingCharacter.party == null) {
+            text += "<b>Specific Location: </b>NONE";
+        } else {
+            text += "<b>Specific Location: </b>" + (currentlyShowingCharacter.party.specificLocation != null ? currentlyShowingCharacter.party.specificLocation.locationName : "NONE");
+        }
+        
         text += "\n<b>Current Action: </b>";
         if (currentlyShowingCharacter.party.actionData.currentAction != null) {
             text += currentlyShowingCharacter.party.actionData.currentAction.actionData.actionName.ToString() + " ";
@@ -160,6 +165,8 @@ public class CharacterInfoUI : UIMenu {
             text += "\n<b>Happiness: </b>" + currentlyShowingCharacter.role.happiness;
         }
         text += "\n<b>Computed Power: </b>" + currentlyShowingCharacter.computedPower;
+        text += "\n<b>P Final Attack: </b>" + currentlyShowingCharacter.pFinalAttack;
+        text += "\n<b>M Final Attack: </b>" + currentlyShowingCharacter.mFinalAttack;
         generalInfoLbl.text = text;
 
     }
@@ -361,7 +368,7 @@ public class CharacterInfoUI : UIMenu {
 
     #region Release Character
     public void ShowReleaseButton() {
-        if (currentlyShowingCharacter.party.characterObject.currentState.stateName == "Imprisoned") {
+        if (currentlyShowingCharacter.party != null && currentlyShowingCharacter.party.characterObject.currentState.stateName == "Imprisoned") {
             releaseBtnGO.SetActive(true);
         } else {
             releaseBtnGO.SetActive(false);

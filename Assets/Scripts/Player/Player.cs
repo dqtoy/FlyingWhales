@@ -58,13 +58,11 @@ public class Player : ILeader{
     private void OnTileAddedToPlayerArea(Area affectedArea, HexTile addedTile) {
         if (playerArea != null && affectedArea.id == playerArea.id) {
             addedTile.SetBaseSprite(Biomes.Instance.bareTiles[0]);
-            addedTile.SetBiomeDetailState(false);
         }
     }
     private void OnTileRemovedFromPlayerArea(Area affectedArea, HexTile removedTile) {
         if (playerArea != null && affectedArea.id == playerArea.id) {
             Biomes.Instance.UpdateTileVisuals(removedTile);
-            removedTile.SetBiomeDetailState(true);
         }
     }
     #endregion

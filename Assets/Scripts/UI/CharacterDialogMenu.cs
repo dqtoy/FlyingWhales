@@ -39,6 +39,14 @@ public class CharacterDialogMenu : UIMenu {
             }
         }
         this.gameObject.SetActive(true);
+        GameManager.Instance.SetPausedState(true);
+        UIManager.Instance.SetTimeControlsState(false);
         textTyper.Execute();
+    }
+
+    public override void HideMenu() {
+        UIManager.Instance.SetTimeControlsState(true);
+        //GameManager.Instance.SetPausedState(false);
+        base.HideMenu();
     }
 }

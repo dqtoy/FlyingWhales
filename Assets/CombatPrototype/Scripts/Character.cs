@@ -220,6 +220,29 @@ namespace ECS {
         public int baseMaxHP {
             get { return _baseMaxHP; }
         }
+        public int pFinalAttack {
+            get {
+                float weaponAttack = 0f;
+                float str = (float) strength;
+                if (_equippedWeapon != null) {
+                    weaponAttack = _equippedWeapon.attackPower;
+                }
+                return (int) (((weaponAttack + str) * (1f + ((float) str / 20f))) * (1f + ((float) level / 100f)));
+            }
+        }
+        public int mFinalAttack {
+            get {
+                float weaponAttack = 0f;
+                float intl = (float) intelligence;
+                if (_equippedWeapon != null) {
+                    weaponAttack = _equippedWeapon.attackPower;
+                }
+                return (int) (((weaponAttack + intl) * (1f + ((float) intl / 20f))) * (1f + ((float) level / 100f)));
+            }
+        }
+        public int speed {
+            get { return agility + level; }
+        }
         public Color characterColor {
             get { return _characterColor; }
         }
@@ -382,6 +405,7 @@ namespace ECS {
             _exploredLandmarks = new List<BaseLandmark>();
             _statusEffects = new List<STATUS_EFFECT>();
             _tags = new List<CharacterTag>();
+            _equippedWeaponPower = 0f;
             _isDead = false;
             _isFainted = false;
             //_isDefeated = false;
@@ -1148,7 +1172,7 @@ namespace ECS {
 			if(newWeapon.owner == null){
 				OwnItem (newWeapon);
 			}
-			_equippedWeaponPower += newWeapon.weaponPower;
+			_equippedWeaponPower = newWeapon.weaponPower;
             _equippedWeapon = newWeapon;
 			//for (int i = 0; i < newWeapon.skills.Count; i++) {
 			//	this._skills.Add (newWeapon.skills [i]);
@@ -1188,7 +1212,7 @@ namespace ECS {
 			//for (int i = 0; i < weapon.skills.Count; i++) {
 			//	this._skills.Remove (weapon.skills [i]);
 			//}
-			_equippedWeaponPower -= weapon.weaponPower;
+			_equippedWeaponPower = 0f;
 		}
 		//Try to equip an armor to a body part of this character and add it to the list of items this character have
 		internal bool TryEquipArmor(Armor armor){
@@ -2143,7 +2167,7 @@ namespace ECS {
                     return false; //characters are of same faction
                 }
                 FactionRelationship rel = this.faction.GetRelationshipWith(factionOfEnemy);
-                if(rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
+                if(rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
                     return true; //factions of combatants are hostile
                 }
                 return false;
@@ -2372,11 +2396,11 @@ namespace ECS {
         }
         public int GetPDef(ICharacter enemy) {
             float levelDiff = (float) (enemy.level - level);
-            return (int)((((float) (_bonusPDef + (strength + (vitality * 2)))) * (1f + (_bonusPDefPercent / 100f))) * (1f + ((levelDiff < 0 ? 0: levelDiff) / 100f)));
+            return (int)((((float) (_bonusPDef + (strength + (vitality * 2)))) * (1f + (_bonusPDefPercent / 100f))) * (1f + ((levelDiff < 0 ? 0: levelDiff) / 20f)));
         }
         public int GetMDef(ICharacter enemy) {
             float levelDiff = (float) (enemy.level - level);
-            return (int) ((((float) (_bonusMDef + (intelligence + (vitality * 2)))) * (1f + (_bonusMDefPercent / 100f))) * (1f + ((levelDiff < 0 ? 0 : levelDiff) / 100f)));
+            return (int) ((((float) (_bonusMDef + (intelligence + (vitality * 2)))) * (1f + (_bonusMDefPercent / 100f))) * (1f + ((levelDiff < 0 ? 0 : levelDiff) / 20f)));
         }
         public int GetSelfPdef() {
             return (int) ((float) _bonusPDef * (1f + (_bonusPDefPercent / 100f)));
@@ -2467,7 +2491,9 @@ namespace ECS {
             dialogChoices.Add(killYourselfChoice);
             if (otherCharacters.Count > 0) {
                 ECS.Character characterToAttack = otherCharacters[UnityEngine.Random.Range(0, otherCharacters.Count)];
-                CharacterDialogChoice attackCharacterChoice = new CharacterDialogChoice("Attack " + characterToAttack.name, () => party.actionData.AssignAction(party.characterObject.currentState.GetAction(ACTION_TYPE.ATTACK), party.characterObject));
+                CharacterDialogChoice attackCharacterChoice = new CharacterDialogChoice("Attack " + characterToAttack.name, 
+                    () => party.actionData.ForceDoAction(characterToAttack.party.characterObject.currentState.GetAction(ACTION_TYPE.ATTACK)
+                    , characterToAttack.party.characterObject));
                 dialogChoices.Add(attackCharacterChoice);
             }
 

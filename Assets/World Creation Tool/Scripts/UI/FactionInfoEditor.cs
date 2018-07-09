@@ -9,17 +9,24 @@ public class FactionInfoEditor : MonoBehaviour {
     private Faction _faction;
 
     [SerializeField] private InputField nameInputField;
-    [SerializeField] private Text charactersSummaryText;
-    [SerializeField] private Text areaSummaryText;
+    [SerializeField] private Text charactersSummaryLbl;
+    [SerializeField] private Text areaSummaryLbl;
     [SerializeField] private Dropdown areasDropdown;
     [SerializeField] private Dropdown leadersDropdown;
+
+    [Header("Relationships")]
+    [SerializeField] private Text relationshipSummaryLbl;
+    [SerializeField] private Dropdown factionsDropdown;
+    [SerializeField] private Dropdown relStatDropdown;
 
     public void ShowFactionInfo(Faction faction) {
         _faction = faction;
         LoadAreaChoices();
         LoadLeaderChoices();
-        UpdateInfo();
+        LoadRelationshipChoices();
+        UpdateBasicInfo();
         UpdateAreas();
+        UpdateRelationshipInfo();
         this.gameObject.SetActive(true);
     }
 
@@ -27,13 +34,13 @@ public class FactionInfoEditor : MonoBehaviour {
         this.gameObject.SetActive(false);
     }
 
-    private void UpdateInfo() {
+    private void UpdateBasicInfo() {
         nameInputField.text = _faction.name;
         //characters
-        charactersSummaryText.text = string.Empty;
+        charactersSummaryLbl.text = string.Empty;
         for (int i = 0; i < _faction.characters.Count; i++) {
             ECS.Character currCharacter = _faction.characters[i];
-            charactersSummaryText.text += currCharacter.name + "\n";
+            charactersSummaryLbl.text += currCharacter.name + "\n";
         }
 
         if (_faction.leader != null) {
@@ -41,11 +48,34 @@ public class FactionInfoEditor : MonoBehaviour {
             leadersDropdown.itemText.text = _faction.leader.name;
         }
     }
+
+    public void OnNewFactionCreated(Faction newFaction) {
+        if (_faction == null) {
+            return;
+        }
+        LoadRelationshipChoices();
+        UpdateRelationshipInfo();
+    }
+    public void OnFactionDeleted(Faction deletedFaction) {
+        if (_faction == null) {
+            return;
+        }
+        LoadRelationshipChoices();
+        UpdateRelationshipInfo();
+    }
+
+    #region Basic Info
+    public void ChangeFactionName(string newName) {
+        _faction.SetName(newName);
+    }
+    #endregion
+
+    #region Areas
     private void UpdateAreas() {
-        areaSummaryText.text = string.Empty;
+        areaSummaryLbl.text = string.Empty;
         for (int i = 0; i < _faction.ownedAreas.Count; i++) {
             Area currArea = _faction.ownedAreas[i];
-            areaSummaryText.text += currArea.name + "\n";
+            areaSummaryLbl.text += currArea.name + "\n";
         }
     }
     private void LoadAreaChoices() {
@@ -69,10 +99,9 @@ public class FactionInfoEditor : MonoBehaviour {
         LandmarkManager.Instance.UnownArea(chosenArea);
         UpdateAreas();
     }
-    public void ChangeFactionName(string newName) {
-        _faction.SetName(newName);
-    }
+    #endregion
 
+    #region Leader
     private void LoadLeaderChoices() {
         leadersDropdown.ClearOptions();
         leadersDropdown.AddOptions(_faction.characters.Select(x => x.name).ToList());
@@ -82,5 +111,34 @@ public class FactionInfoEditor : MonoBehaviour {
         ECS.Character character = CharacterManager.Instance.GetCharacterByName(characterName);
         _faction.SetLeader(character);
     }
+    #endregion
 
+    #region Relationships
+    private void LoadRelationshipChoices() {
+        factionsDropdown.ClearOptions();
+        List<string> factionOnptions = FactionManager.Instance.allFactions.Where(x => x.id != _faction.id).Select(x => x.name).ToList();
+        factionsDropdown.AddOptions(factionOnptions);
+
+        relStatDropdown.ClearOptions();
+        relStatDropdown.AddOptions(Utilities.GetEnumChoices<FACTION_RELATIONSHIP_STATUS>());
+    } 
+    private void UpdateRelationshipInfo() {
+        string text = string.Empty;
+        foreach (KeyValuePair<Faction, FactionRelationship> kvp in _faction.relationships) {
+            text += kvp.Key.name + " - " + kvp.Value.relationshipStatus.ToString() + "\n";
+        }
+        relationshipSummaryLbl.text = text;
+
+    }
+    public void ApplyRelationshipStatus() {
+        string factionName = factionsDropdown.options[factionsDropdown.value].text;
+        string relStatString = relStatDropdown.options[relStatDropdown.value].text;
+
+        Faction faction = FactionManager.Instance.GetFactionBasedOnName(factionName);
+        FACTION_RELATIONSHIP_STATUS relStat = (FACTION_RELATIONSHIP_STATUS)System.Enum.Parse(typeof(FACTION_RELATIONSHIP_STATUS), relStatString);
+
+        _faction.GetRelationshipWith(faction).ChangeRelationshipStatus(relStat);
+        UpdateRelationshipInfo();
+    }
+    #endregion
 }

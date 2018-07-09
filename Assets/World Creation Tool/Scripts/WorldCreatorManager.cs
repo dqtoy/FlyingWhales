@@ -94,7 +94,7 @@ namespace worldcreator {
             WorldCreatorUI.Instance.InitializeMenus();
             ECS.CombatManager.Instance.Initialize();
             Biomes.Instance.UpdateTileVisuals(hexTiles);
-            Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
+            //Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
             Biomes.Instance.LoadPassableTypes(hexTiles);
             CreateNewRegion(hexTiles);
             GenerateOuterGrid();
@@ -136,7 +136,7 @@ namespace worldcreator {
             }
             hexTiles.ForEach(o => o.FindNeighbours(map));
             Biomes.Instance.UpdateTileVisuals(hexTiles);
-            Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
+            //Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
             Biomes.Instance.LoadPassableTypes(hexTiles);
 
             WorldCreatorUI.Instance.InitializeMenus();
@@ -222,7 +222,7 @@ namespace worldcreator {
 
                     currHex.SetElevation(hexToCopy.elevationType);
                     Biomes.Instance.SetBiomeForTile(hexToCopy.biomeType, currHex);
-                    Biomes.Instance.GenerateTileBiomeDetails(currHex);
+                    //Biomes.Instance.GenerateTileBiomeDetails(currHex);
                     Biomes.Instance.SetElevationSpriteForTile(currHex);
                     hexToCopy.region.AddOuterGridTile(currHex);
                     Biomes.Instance.UpdateTileVisuals(currHex);
@@ -517,7 +517,7 @@ namespace worldcreator {
             for (int i = 0; i < tiles.Count; i++) {
                 HexTile currTile = tiles[i];
                 Biomes.Instance.UpdateTileVisuals(currTile, true);
-                Biomes.Instance.GenerateTileBiomeDetails(currTile);
+                //Biomes.Instance.GenerateTileBiomeDetails(currTile);
                 Biomes.Instance.LoadPassableTypes(currTile);
             }
             
@@ -526,7 +526,6 @@ namespace worldcreator {
             tile.SetBiome(biome);
             if (updateVisuals) {
                 Biomes.Instance.UpdateTileVisuals(tile, true);
-                Biomes.Instance.GenerateTileBiomeDetails(tile);
                 Biomes.Instance.LoadPassableTypes(tile);
             }
         }
@@ -541,7 +540,6 @@ namespace worldcreator {
             for (int i = 0; i < tiles.Count; i++) {
                 HexTile currTile = tiles[i];
                 Biomes.Instance.UpdateTileVisuals(currTile, true);
-                Biomes.Instance.GenerateTileBiomeDetails(currTile);
                 Biomes.Instance.LoadPassableTypes(currTile);
             }
         }
@@ -561,7 +559,6 @@ namespace worldcreator {
             tile.SetElevation(elevation);
             if (updateVisuals) {
                 Biomes.Instance.UpdateTileVisuals(tile, true);
-                Biomes.Instance.GenerateTileBiomeDetails(tile);
                 Biomes.Instance.LoadPassableTypes(tile);
             }
         }

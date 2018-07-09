@@ -60,7 +60,7 @@ namespace ECS{
                 character.SetSide(side);
                 //character.currentCombat = this;
                 character.SetRowNumber(rowNumber);
-                character.actRate = character.agility * 5;
+                character.actRate = character.speed * 5;
                 character.battleOnlyTracker.Reset();
                 if (hasStarted && !isDone) {
                     string log = character.coloredUrlName + " joins the battle on Side " + side.ToString();
@@ -86,7 +86,7 @@ namespace ECS{
 				characters[i].SetSide (side);
                 //characters[i].currentCombat = this;
                 characters[i].SetRowNumber(rowNumber);
-                characters[i].actRate = characters[i].agility * 5;
+                characters[i].actRate = characters[i].speed * 5;
                 if (hasStarted && !isDone) {
                     string log = characters[i].coloredUrlName + " joins the battle on Side " + side.ToString();
                     Debug.Log(log);
@@ -271,9 +271,9 @@ namespace ECS{
 
             ICharacter chosenCharacter = Utilities.PickRandomElementWithWeights<ICharacter>(characterActivationWeights);
 			foreach (ICharacter character in characterActivationWeights.Keys) {
-				character.actRate += character.baseAgility;
+				character.actRate += character.speed;
 			}
-			chosenCharacter.actRate = chosenCharacter.agility * 5;
+			chosenCharacter.actRate = chosenCharacter.speed * 5;
 			return chosenCharacter;
 		}
 
@@ -508,8 +508,13 @@ namespace ECS{
         }
 
         private float GetSkillInitialWeight(ICharacter sourceCharacter, ICharacter targetCharacter, AttackSkill attackSkill, float weaponAttack, float missingHP, int levelDiff, CharacterBattleTracker battleTracker = null) {
-            int statUsed = attackSkill.attackCategory == ATTACK_CATEGORY.PHYSICAL ? sourceCharacter.strength : sourceCharacter.intelligence;
-            int finalAttack = GetFinalAttack(statUsed, sourceCharacter.level, weaponAttack);
+            //int statUsed = attackSkill.attackCategory == ATTACK_CATEGORY.PHYSICAL ? sourceCharacter.strength : sourceCharacter.intelligence;
+            int finalAttack = 0;
+            if(attackSkill.attackCategory == ATTACK_CATEGORY.PHYSICAL) {
+                finalAttack = sourceCharacter.pFinalAttack;
+            } else {
+                finalAttack = sourceCharacter.mFinalAttack;
+            }
             float rawDamage = ((float) finalAttack * ((float) attackSkill.power / 100f)) * 1; //Subject to change: the *1 is the targets that will hit, this will change in the future
 
             float modifier = GetModifier(sourceCharacter, targetCharacter, attackSkill, rawDamage, missingHP, levelDiff, battleTracker);
@@ -831,10 +836,10 @@ namespace ECS{
             }
 
             int finalAttack = 0;
-            if(sourceCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
-                finalAttack = GetFinalAttack(statMod, sourceCharacter.level, weaponAttack);
-            } else if (sourceCharacter.icharacterType == ICHARACTER_TYPE.MONSTER) {
-                finalAttack = (sourceCharacter as Monster).attackPower;
+            if (attackSkill.attackCategory == ATTACK_CATEGORY.PHYSICAL) {
+                finalAttack = sourceCharacter.pFinalAttack;
+            } else {
+                finalAttack = sourceCharacter.mFinalAttack;
             }
             int damage = (int) (((float)finalAttack * (attackSkill.power / 100f)) * (critDamage / 100f));
             int computedDamageRange = (int) ((float) damage * (damageRange / 100f));
@@ -1275,9 +1280,9 @@ namespace ECS{
 			return null;
 		}
 
-        private int GetFinalAttack(int stat, int level, float weaponAttack) {
-            return (int) (((weaponAttack + stat) * (1f + ((float)stat / 2f))) * (1f + ((float) level / 100f)));
-        }
+        //private int GetFinalAttack(int stat, int level, float weaponAttack) {
+        //    return (int) (((weaponAttack + stat) * (1f + ((float)stat / 20f))) * (1f + ((float) level / 100f)));
+        //}
 
         //public Character GetOpposingCharacters(ICharacter character) {
         //    if (attacker is ICharacter) {

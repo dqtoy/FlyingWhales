@@ -11,6 +11,7 @@ public class MonsterManager : MonoBehaviour {
 
     [SerializeField] private List<MonsterPartyComponent> monsterPartySetups;
     public List<MonsterParty> allMonsterParties;
+    public List<Monster> allMonsters;
 
     #region getters/setters
     public Dictionary<string, Monster> monstersDictionary {
@@ -21,6 +22,7 @@ public class MonsterManager : MonoBehaviour {
     private void Awake() {
         Instance = this;
         allMonsterParties = new List<MonsterParty>();
+        allMonsters = new List<Monster>();
     }
 
     public void Initialize() {
@@ -41,6 +43,7 @@ public class MonsterManager : MonoBehaviour {
     public Monster CreateNewMonster(string monsterName) {
         Monster newMonster = _monstersDictionary[monsterName].CreateNewCopy();
         newMonster.Initialize();
+        allMonsters.Add(newMonster);
         return newMonster;
     }
     //public Monster CreateNewMonster(MonsterSaveData data) {
@@ -188,5 +191,14 @@ public class MonsterManager : MonoBehaviour {
 //                }
             }
         }
+    }
+    public Monster GetMonsterByID(int id) {
+        for (int i = 0; i < allMonsters.Count; i++) {
+            Monster currChar = allMonsters[i];
+            if (currChar.id == id) {
+                return currChar;
+            }
+        }
+        return null;
     }
 }

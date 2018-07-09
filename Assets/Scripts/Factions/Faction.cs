@@ -56,9 +56,6 @@ public class Faction {
 	public float factionPower{
 		get { return this._characters.Sum (x => x.characterPower); }
 	}
-    public int activeWars {
-        get { return relationships.Where(x => x.Value.isAtWar).Count(); }
-    }
     public List<BaseLandmark> landmarkInfo {
         get { return _landmarkInfo; }
     }
@@ -105,44 +102,7 @@ public class Faction {
          */
     public virtual void SetLeader(ILeader leader) {
         _leader = leader;
-		//if(_leader != null){
-		//	List<ECS.Character> villageHeads = GetCharactersOfType(CHARACTER_ROLE.VILLAGE_HEAD);
-		//	for (int i = 0; i < villageHeads.Count; i++) {
-		//		ECS.Character currHead = villageHeads[i];
-		//		//leaders have relationships with their Village heads and vise versa.
-		//		CharacterManager.Instance.CreateNewRelationshipBetween(leader, currHead);
-		//	}
-		//}
     }
-    #endregion
-
-    #region Settlements
-    //public void AddSettlement(Settlement settlement) {
-    //    if (!_settlements.Contains(settlement)) {
-    //        _settlements.Add(settlement);
-    //        RecalculateFactionSize();
-    //        FactionManager.Instance.UpdateFactionOrderBy();
-    //    }
-    //}
-    //public void RemoveSettlement(Settlement settlement) {
-    //    _settlements.Remove(settlement);
-    //    RecalculateFactionSize();
-    //    FactionManager.Instance.UpdateFactionOrderBy();
-    //}
-    /*
-     Recalculate the size of this faction given the 
-     number of settlements it has.
-         */
-    //private void RecalculateFactionSize() {
-    //    int settlementCount = settlements.Count;
-    //    if (settlementCount < FactionManager.Instance.smallToMediumReq) {
-    //        _factionSize = FACTION_SIZE.SMALL;
-    //    } else if (settlementCount >= FactionManager.Instance.smallToMediumReq && settlementCount < FactionManager.Instance.mediumToLargeReq) {
-    //        _factionSize = FACTION_SIZE.MEDIUM;
-    //    } else if (settlementCount >= FactionManager.Instance.mediumToLargeReq) {
-    //        _factionSize = FACTION_SIZE.LARGE;
-    //    }
-    //}
     #endregion
 
     #region Regions
@@ -171,7 +131,6 @@ public class Faction {
     public void AddNewCharacter(ECS.Character character) {
         if (!_characters.Contains(character)) {
             _characters.Add(character);
-            //FactionManager.Instance.UpdateFactionOrderBy();
         }
     }
     public void RemoveCharacter(ECS.Character character) {
@@ -179,7 +138,6 @@ public class Faction {
         if (_leader != null && character.id == _leader.id) {
             SetLeader(null);
         }
-        //FactionManager.Instance.UpdateFactionOrderBy();
     }
     public List<ECS.Character> GetCharactersOfType(CHARACTER_ROLE role) {
         List<ECS.Character> chars = new List<ECS.Character>();
@@ -197,28 +155,6 @@ public class Faction {
     public void SetName(string name) {
         _name = name;
     }
-    //public List<Faction> GetMajorFactionsWithRelationshipStatus(List<RELATIONSHIP_STATUS> relStatuses) {
-    //    List<Faction> factionsWithStatus = new List<Faction>();
-    //    foreach (KeyValuePair<Faction, FactionRelationship> kvp in _relationships) {
-    //        Faction currFaction = kvp.Key;
-    //        FactionRelationship currRel = kvp.Value;
-    //        if (currFaction.factionType == FACTION_TYPE.MAJOR && relStatuses.Contains(currRel.relationshipStatus)) {
-    //            factionsWithStatus.Add(currFaction);
-    //        }
-    //    }
-    //    return factionsWithStatus;
-    //}
-    //public List<Faction> GetMajorFactionsWithRelationshipStatus(RELATIONSHIP_STATUS relStatus) {
-    //    List<Faction> factionsWithStatus = new List<Faction>();
-    //    foreach (KeyValuePair<Faction, FactionRelationship> kvp in _relationships) {
-    //        Faction currFaction = kvp.Key;
-    //        FactionRelationship currRel = kvp.Value;
-    //        if (currFaction.factionType == FACTION_TYPE.MAJOR && relStatus == currRel.relationshipStatus) {
-    //            factionsWithStatus.Add(currFaction);
-    //        }
-    //    }
-    //    return factionsWithStatus;
-    //}
     public ECS.Character GetCharacterByID(int id) {
         for (int i = 0; i < _characters.Count; i++) {
             if (_characters[i].id == id) {
@@ -227,36 +163,12 @@ public class Faction {
         }
         return null;
     }
- //   public Settlement GetSettlementWithHighestPopulation() {
- //       Settlement highestPopulationSettlement = null;
- //       for (int i = 0; i < _settlements.Count; i++) {
- //           Settlement settlement = _settlements[i];
- //           if (highestPopulationSettlement == null) {
- //               highestPopulationSettlement = settlement;
- //           } else {
- //               //if (settlement.civilians > highestPopulationSettlement.civilians) {
- //               //    highestPopulationSettlement = settlement;
- //               //}
- //           }
- //       }
- //       return highestPopulationSettlement;
-	//}
-	//public bool IsAtWar(){
-	//	foreach (FactionRelationship factionRel in _relationships.Values) {
-	//		if(factionRel.factionLookup[this._id].targetFaction.factionType == FACTION_TYPE.MAJOR && factionRel.isAtWar){
-	//			return true;
-	//		}else if(factionRel.factionLookup[this._id].targetFaction.factionType == FACTION_TYPE.MINOR && factionRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
-	//			return true;
-	//		}
-	//	}
-	//	return false;
-	//}
     public bool IsHostileWith(Faction faction) {
         if(faction.id == this.id) {
             return false;
         }
         FactionRelationship rel = GetRelationshipWith(faction);
-        return rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE;
+        return rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE;
     }
     public bool HasLandmarkOfType(LANDMARK_TYPE landmarkType) {
         for (int i = 0; i < _ownedLandmarks.Count; i++) {
@@ -318,19 +230,6 @@ public class Faction {
     #endregion
 
     #region Landmarks
-    ///*
-    // This returns a list of all the owned landmarks
-    // of this faction, this includes settlements as well.
-    //     */
-    //public List<BaseLandmark> GetAllOwnedLandmarks() {
-    //    List<BaseLandmark> ownedLandmarks = new List<BaseLandmark>();
-    //    for (int i = 0; i < _settlements.Count; i++) {
-    //        Settlement currSettlement = _settlements[i];
-    //        ownedLandmarks.Add(currSettlement);
-    //        ownedLandmarks.AddRange(currSettlement.ownedLandmarks);
-    //    }
-    //    return ownedLandmarks;
-    //}
     public BaseLandmark GetOwnedLandmarkOfType(LANDMARK_TYPE landmarkType) {
         for (int i = 0; i < _ownedLandmarks.Count; i++) {
             BaseLandmark currLandmark = _ownedLandmarks[i];

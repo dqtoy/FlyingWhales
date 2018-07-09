@@ -47,13 +47,13 @@ public class Monster : ICharacter {
 
     #region getters/setters
     public string name {
-        get { return "[" + _id + "]" + _name; }
+        get { return _name; }
     }
     public string urlName {
-        get { return "<link=" + '"' + this._id.ToString() + "_monster" + '"' + ">" + this._name + "</link>"; }
+        get { return "<link=" + '"' + this._id.ToString() + "_monster" + '"' + ">" + "[" + _id + "]" + this._name + "</link>"; }
     }
     public string coloredUrlName {
-        get { return "<link=" + '"' + this._id.ToString() + "_monster" + '"' + ">" + "<color=#" + this._characterColorCode + ">" + this._name + "</color></link>"; }
+        get { return "<link=" + '"' + this._id.ToString() + "_monster" + '"' + ">" + "<color=#" + this._characterColorCode + ">" + "[" + _id + "]" + this._name + "</color></link>"; }
     }
     public int id {
         get { return _id; }
@@ -97,6 +97,15 @@ public class Monster : ICharacter {
     }
     public int experienceDrop {
         get { return _experienceDrop; }
+    }
+    public int pFinalAttack {
+        get { return attackPower; }
+    }
+    public int mFinalAttack {
+        get { return attackPower; }
+    }
+    public int speed {
+        get { return agility + level; }
     }
     public float critChance {
         get { return _critChance; }
@@ -244,6 +253,7 @@ public class Monster : ICharacter {
         _isDead = true;
         Messenger.Broadcast(Signals.MONSTER_DEATH, this);
         _party.RemoveCharacter(this);
+        MonsterManager.Instance.allMonsters.Remove(this);
     }
     private float GetAttackPower() {
         //float statUsed = (float) Utilities.GetStatByClass(this);
@@ -284,10 +294,10 @@ public class Monster : ICharacter {
         _id = Utilities.SetID(this);
         BaseInitialize();
     }
-    public void Initialize(MonsterSaveData data){
-        _id = Utilities.SetID(this, data.id);
-        BaseInitialize();
-    }
+    //public void Initialize(MonsterSaveData data){
+    //    _id = Utilities.SetID(this, data.id);
+    //    BaseInitialize();
+    //}
     public void SetSide(SIDES side) {
         _currentSide = side;
     }

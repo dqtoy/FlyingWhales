@@ -20,12 +20,14 @@ namespace worldcreator {
             newFactionItem.SetFaction(newFaction);
             items.Add(newFaction, newFactionItem);
             UpdateItems();
+            factionInfoEditor.OnNewFactionCreated(newFaction);
         }
         public void OnFactionDeleted(Faction deletedFaction) {
             FactionEditorItem item = GetFactionItem(deletedFaction);
             GameObject.Destroy(item.gameObject);
             items.Remove(deletedFaction);
             UpdateItems();
+            factionInfoEditor.OnFactionDeleted(deletedFaction);
         }
 
         public void CreateNewFaction() {

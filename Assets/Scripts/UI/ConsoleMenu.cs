@@ -185,7 +185,7 @@ public class ConsoleMenu : UIMenu {
         string faction1Name = parameters[1];
         string faction2Name = parameters[2];
 
-        RELATIONSHIP_STATUS newRelStatus;
+        FACTION_RELATIONSHIP_STATUS newRelStatus;
 
         if (isFaction1Numeric) {
             faction1 = FactionManager.Instance.GetFactionBasedOnID(faction1ID);
@@ -200,7 +200,7 @@ public class ConsoleMenu : UIMenu {
         }
 
         try {
-            newRelStatus = (RELATIONSHIP_STATUS)Enum.Parse(typeof(RELATIONSHIP_STATUS), newRelStatusString, true);
+            newRelStatus = (FACTION_RELATIONSHIP_STATUS)Enum.Parse(typeof(FACTION_RELATIONSHIP_STATUS), newRelStatusString, true);
         } catch {
             AddCommandHistory(consoleLbl.text);
             AddErrorMessage("There was an error in the command format of /change_faction_rel_stat");

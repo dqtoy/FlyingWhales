@@ -59,4 +59,9 @@ public static class Signals {
     #region Party
     public static string MONSTER_PARTY_DIED = "OnMonsterPartyDied"; //Parameters (MonsterParty monsterParty)
     #endregion
+
+    #region Factions
+    public static string FACTION_CREATED = "OnFactionCreated"; //Parameters (Faction createdFaction)
+    public static string FACTION_DELETED = "OnFactionDeleted"; //Parameters (Faction deletedFaction)
+    #endregion
 }
