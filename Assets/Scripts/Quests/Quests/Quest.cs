@@ -15,7 +15,7 @@ public class Quest {
         this.questType = questType;
     }
 
-    public virtual CharacterAction GetQuestAction(ECS.Character character, CharacterQuestData data) {
+    public virtual CharacterAction GetQuestAction(ECS.Character character, CharacterQuestData data, ref IObject targetObject) {
         return null;
     }
 

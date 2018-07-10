@@ -13,8 +13,8 @@ public class CharacterQuestData {
         _owner = owner;
     }
 
-    public CharacterAction GetNextQuestAction() {
-        return _parentQuest.GetQuestAction(_owner, this);
+    public CharacterAction GetNextQuestAction(ref IObject targetObject) {
+        return _parentQuest.GetQuestAction(_owner, this, ref targetObject);
     }
 
     #region virtuals

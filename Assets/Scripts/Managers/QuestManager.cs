@@ -46,14 +46,14 @@ public class QuestManager : MonoBehaviour {
         return null;
     }
 
-    public CharacterAction GetNextQuestAction(QUEST_TYPE type, ECS.Character character, CharacterQuestData data) {
-        if (availableQuests.ContainsKey(type)) {
-            Quest quest = availableQuests[type];
-            return quest.GetQuestAction(character, data);
-        } else {
-            throw new System.Exception("There is no available quest of type " + type.ToString());
-        }
-    }
+    //public CharacterAction GetNextQuestAction(QUEST_TYPE type, ECS.Character character, CharacterQuestData data) {
+    //    if (availableQuests.ContainsKey(type)) {
+    //        Quest quest = availableQuests[type];
+    //        return quest.GetQuestAction(character, data);
+    //    } else {
+    //        throw new System.Exception("There is no available quest of type " + type.ToString());
+    //    }
+    //}
 
 
 }

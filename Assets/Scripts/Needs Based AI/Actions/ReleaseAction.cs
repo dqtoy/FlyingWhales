@@ -43,10 +43,11 @@ public class ReleaseAction : CharacterAction {
         if (targetObject.currentState.stateName == "Imprisoned") {
             ObjectState aliveState = targetObject.GetState("Alive");
             targetObject.ChangeState(aliveState);
-        }
-        if(targetObject is ICharacterObject) {
-            ICharacterObject icharacterObject = targetObject as ICharacterObject;
-            icharacterObject.iparty.GoHome();
+
+            if (targetObject is ICharacterObject) {
+                ICharacterObject icharacterObject = targetObject as ICharacterObject;
+                icharacterObject.iparty.GoHome();
+            }
         }
     }
 }
