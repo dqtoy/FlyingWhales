@@ -13,6 +13,19 @@ public class MonsterManager : MonoBehaviour {
     public List<MonsterParty> allMonsterParties;
     public List<Monster> allMonsters;
 
+    [Header("Monster Icons")]
+    [SerializeField] private Sprite catSprite;
+    [SerializeField] private Sprite direBeast1Sprite;
+    [SerializeField] private Sprite direBeast2Sprite;
+    [SerializeField] private Sprite golem1Sprite;
+    [SerializeField] private Sprite golem2Sprite;
+    [SerializeField] private Sprite orc1Sprite;
+    [SerializeField] private Sprite rat1Sprite;
+    [SerializeField] private Sprite rat2Sprite;
+    [SerializeField] private Sprite slime1Sprite;
+    [SerializeField] private Sprite slime2Sprite;
+    [SerializeField] private Sprite wolf1Sprite;
+
     #region getters/setters
     public Dictionary<string, Monster> monstersDictionary {
         get { return _monstersDictionary; }
@@ -201,4 +214,37 @@ public class MonsterManager : MonoBehaviour {
         }
         return null;
     }
+
+    #region Icons
+    public Sprite GetMonsterSprite(string monster) {
+        if (monster.Contains("Cat")) {
+            return catSprite;
+        } else if (monster.Contains("Direbeast")) {
+            if (monster.Contains("1")) {
+                return direBeast1Sprite;
+            } else {
+                return direBeast2Sprite;
+            }
+        } else if (monster.Contains("Golem")) {
+            if (monster.Contains("1")) {
+                return golem1Sprite;
+            } else {
+                return golem2Sprite;
+            }
+        } else if (monster.Contains("Orc")) {
+            return orc1Sprite;
+        } else if (monster.Contains("Rat")) {
+            return rat1Sprite;
+        } else if (monster.Contains("Slime")) {
+            if (monster.Contains("1")) {
+                return slime1Sprite;
+            } else {
+                return slime2Sprite;
+            }
+        } else if (monster.Contains("Wolf")) {
+            return wolf1Sprite;
+        }
+        return null;
+    }
+    #endregion
 }

@@ -62,13 +62,14 @@ public class CharacterIcon : MonoBehaviour {
         //    _avatarSprite.sprite = CharacterManager.Instance.GetSpriteByRole(_character.role.roleType);
         //}
 
+
 #if !WORLD_CREATION_TOOL
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
         characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
         characterPortrait.GeneratePortrait(_iparty.icharacters[0], IMAGE_SIZE.X64);
         portraitGO.SetActive(false);
 #endif
-        
+
         Messenger.AddListener<bool>(Signals.PAUSED, SetMovementState);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
 
