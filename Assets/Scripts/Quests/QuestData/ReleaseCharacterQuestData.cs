@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using ECS;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,17 +12,18 @@ public class ReleaseCharacterQuestData : CharacterQuestData {
         Hunt
     }
 
-    public ECS.Character targetCharacter { get; private set; }
+    public Character targetCharacter { get; private set; }
     public float requiredPower { get; private set; }
     public Gain_Power_Type gainPowerType { get; private set; }
     public List<Vector3> vectorPathToTarget { get; private set; }
     public List<HexTile> tilePathToTarget { get; private set; }
+    public List<Character> elligibleMentors { get; private set; }
 
     public bool isWaitingForPath { get { return _owner.party.icon.pathfinder.isWaitingForPathCalculation; } }
 
     private HexTile targetTile;
 
-    public ReleaseCharacterQuestData(Quest parentQuest, ECS.Character owner, ECS.Character targetCharacter) : base(parentQuest, owner) {
+    public ReleaseCharacterQuestData(Quest parentQuest, Character owner, ECS.Character targetCharacter) : base(parentQuest, owner) {
         this.targetCharacter = targetCharacter;
         targetTile = targetCharacter.currLocation;
         requiredPower = 0f;
@@ -29,17 +31,11 @@ public class ReleaseCharacterQuestData : CharacterQuestData {
 
     #region overrides
     public override IEnumerator SetupValuesCoroutine() {
-        //Debug.Log(_owner.name + " setting up values for release character quest");
         UpdateVectorPath();
         while (isWaitingForPath) {
             yield return null;
         }
         tilePathToTarget =  _owner.party.icon.ConvertToTilePath(vectorPathToTarget);
-        //for (int i = 0; i < tilePathToTarget.Count; i++) {
-        //    tilePathToTarget[i].HighlightTile(Color.gray, 128f/255f);
-        //    yield return null;
-        //}
-        //Debug.Log(_owner.name + " done setting up values for release character quest");
     }
     #endregion
 
@@ -49,12 +45,14 @@ public class ReleaseCharacterQuestData : CharacterQuestData {
     private void OnVectorPathComputed(List<Vector3> path) {
         vectorPathToTarget = path;
     }
-
     public void SetRequiredPower(float power) {
         requiredPower = power;
     }
     public void SetGainPowerType(Gain_Power_Type gainPowerType) {
         this.gainPowerType = gainPowerType;
+    }
+    public void SetElligibleMentors(List<Character> elligibleMentors) {
+        this.elligibleMentors = elligibleMentors;
     }
 
     public bool HasHostilesInPath() {

@@ -11,21 +11,15 @@ public class Region : IHasNeighbours<Region> {
     private HexTile _centerOfMass;
     private List<HexTile> _tilesInRegion; //This also includes the center of mass
     private List<HexTile> _outerGridTilesInRegion;
-    //private Color regionColor;
     private List<Region> _adjacentRegions;
     private List<Region> _adjacentRegionsViaRoad;
-    private List<HexTile> _tilesWithMaterials; //The tiles inside the region that have materials
 
     private Color defaultBorderColor = new Color(94f / 255f, 94f / 255f, 94f / 255f, 255f / 255f);
 
     //Landmarks
     private List<BaseLandmark> _landmarks; //This contains all the landmarks in the region, except for it's city
-                                           //private List<BaseLandmark> _allLandmarks; //This contains all the landmarks in the region
 
     private List<HexTile> _outerTiles;
-
-    //Roads
-    private List<HexTile> _roadTilesInRegion;
 
     //Ownership
     private Faction _owner;
@@ -58,12 +52,6 @@ public class Region : IHasNeighbours<Region> {
     internal List<BaseLandmark> landmarks {
         get { return _landmarks; }
     }
-    //internal List<BaseLandmark> allLandmarks {
-    //	get { return _landmarks; }
-    //}
-    internal List<HexTile> roadTilesInRegion {
-        get { return _roadTilesInRegion; }
-    }
     internal Faction owner {
         get { return _owner; } //The faction that owns this region
     }
@@ -73,14 +61,7 @@ public class Region : IHasNeighbours<Region> {
     internal BaseLandmark mainLandmark {
         get { return _centerOfMass.landmarkOnTile; }
     }
-    internal List<HexTile> tilesWithMaterials {
-        get { return _tilesWithMaterials; }
-    }
-    //internal List<ICharacter> charactersInRegion {
-    //    get { return GetCharactersInRegion(); }
-    //}
     internal int numOfCharactersInLandmarks {
-        //get { return landmarks.Sum(x => x.charactersAtLocation.Sum(y => y.numOfCharacters)); }
         get { return landmarks.Sum(x => x.charactersAtLocation.Count); }
     }
     public List<SpriteRenderer> regionBorderLines { get; private set; }
@@ -98,9 +79,7 @@ public class Region : IHasNeighbours<Region> {
         _tilesInRegion = new List<HexTile>();
         _outerGridTilesInRegion = new List<HexTile>();
         _adjacentRegionsViaRoad = new List<Region>();
-        _roadTilesInRegion = new List<HexTile>();
         _landmarks = new List<BaseLandmark>();
-        _tilesWithMaterials = new List<HexTile>();
         AddTile(centerOfMass);
         SetCenterOfMass(centerOfMass);
     }
@@ -111,9 +90,7 @@ public class Region : IHasNeighbours<Region> {
         _tilesInRegion = new List<HexTile>();
         _outerGridTilesInRegion = new List<HexTile>();
         _adjacentRegionsViaRoad = new List<Region>();
-        _roadTilesInRegion = new List<HexTile>();
         _landmarks = new List<BaseLandmark>();
-        _tilesWithMaterials = new List<HexTile>();
         AddTile(tilesInRegion);
         SetCenterOfMass(centerOfMass);
     }
@@ -123,9 +100,7 @@ public class Region : IHasNeighbours<Region> {
         _tilesInRegion = new List<HexTile>();
         _outerGridTilesInRegion = new List<HexTile>();
         _adjacentRegionsViaRoad = new List<Region>();
-        _roadTilesInRegion = new List<HexTile>();
         _landmarks = new List<BaseLandmark>();
-        _tilesWithMaterials = new List<HexTile>();
         AddTile(tilesInRegion);
         SetCenterOfMass(centerOfMass);
     }
@@ -208,9 +183,9 @@ public class Region : IHasNeighbours<Region> {
         //_centerOfMass.emptyCityGO.SetActive (true);
         //_centerOfMass.CreateLandmarkOfType(BASE_LANDMARK_TYPE.SETTLEMENT, LANDMARK_TYPE.TOWN);
     }
-#endregion
+    #endregion
 
-#region Ownership
+    #region Ownership
     public void SetOwner(Faction owner) {
         if (_owner != null) {
             _owner.UnownRegion(this);
@@ -220,9 +195,9 @@ public class Region : IHasNeighbours<Region> {
             ReColorBorderTiles(defaultBorderColor);
         }
     }
-#endregion
+    #endregion
 
-#region Adjacency Functions
+    #region Adjacency Functions
     /*
      * <summary>
      * Check For Adjacent regions, this will populate the
@@ -277,29 +252,9 @@ public class Region : IHasNeighbours<Region> {
             }
         }
     }
-#endregion
+    #endregion
 
-#region Tile Functions
-    //internal List<HexTile> GetTilesAdjacentOnlyTo(Region otherRegion) {
-    //    List<HexTile> adjacentTiles = new List<HexTile>();
-    //    for (int i = 0; i < _outerTiles.Count; i++) {
-    //        HexTile currTile = _outerTiles[i];
-    //        if(currTile.roadType != ROAD_TYPE.MAJOR && currTile.MajorRoadTiles.Count <= 0 && currTile.AllNeighbours.Where(x => x.region.id == otherRegion.id).Any()) {
-    //            bool isOnlyAdjacentToOtherRegion = true;
-    //            for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
-    //                HexTile currNeighbour = currTile.AllNeighbours[j];
-    //                if (currNeighbour.region.id != otherRegion.id && currNeighbour.region.id != this.id) {
-    //                    isOnlyAdjacentToOtherRegion = false;
-    //                    break;
-    //                }
-    //            }
-    //            if (isOnlyAdjacentToOtherRegion) {
-    //                adjacentTiles.Add(currTile);
-    //            }
-    //        }
-    //    }
-    //    return adjacentTiles;
-    //}
+    #region Tile Functions
     internal void AddTile(HexTile tile) {
         if (!_tilesInRegion.Contains(tile)) {
             _tilesInRegion.Add(tile);
@@ -389,34 +344,10 @@ public class Region : IHasNeighbours<Region> {
             regionBorderLines.Add(sprite);
         }
     }
-#endregion
-
-    #region Materials
-    public void AddTileWithMaterial(HexTile tile) {
-        if (!_tilesWithMaterials.Contains(tile)) {
-            _tilesWithMaterials.Add(tile);
-        }
-    }
-    public void RemoveTileWithMaterial(HexTile tile) {
-        _tilesWithMaterials.Remove(tile);
-    }
-    //internal int GetActivelyHarvestedMaterialsOfType(MATERIAL material) {
-    //    int count = 0;
-    //    for (int i = 0; i < _landmarks.Count; i++) {
-    //        BaseLandmark currLandmark = _landmarks[i];
-    //        if (currLandmark is ResourceLandmark) {
-    //            ResourceLandmark resourceLandmark = currLandmark as ResourceLandmark;
-    //            //check if the landmark has the material specified, and already has a structure built on it.
-    //            if (resourceLandmark.materialOnLandmark == material && resourceLandmark.tileLocation.HasStructure()) {
-    //                count++;
-    //            }
-    //        }
-    //    }
-    //    return count;
-    //}
     #endregion
 
-#region Landmark Functions
+  
+    #region Landmark Functions
     internal void AddLandmarkToRegion(BaseLandmark landmark) {
         if (!_landmarks.Contains(landmark)) {
             _landmarks.Add(landmark);
@@ -444,19 +375,9 @@ public class Region : IHasNeighbours<Region> {
         }
         return landmarksOfType;
     }
-    //public List<BaseLandmark> GetLandmarksOfType(BASE_LANDMARK_TYPE baseLandmarkType) {
-    //    List<BaseLandmark> landmarksOfType = new List<BaseLandmark>();
-    //    for (int i = 0; i < landmarks.Count; i++) {
-    //        BaseLandmark currLandmark = landmarks[i];
-    //        if (LandmarkManager.Instance.GetLandmarkData(currLandmark.specificLandmarkType).baseLandmarkType == baseLandmarkType) {
-    //            landmarksOfType.Add(currLandmark);
-    //        }
-    //    }
-    //    return landmarksOfType;
-    //}
-#endregion
+    #endregion
 
-#region Road Functions
+    #region Road Functions
     /*
      Check if there are any landmarks in this region, 
      that are connected to any landmarks in another region.
@@ -496,48 +417,29 @@ public class Region : IHasNeighbours<Region> {
         }
         return nearestLandmark;
     }
-    internal void AddTileAsRoad(HexTile tile) {
-        if (!_roadTilesInRegion.Contains(tile)) {
-            _roadTilesInRegion.Add(tile);
-        }
-    }
-    internal void RemoveTileAsRoad(HexTile tile) {
-        _roadTilesInRegion.Remove(tile);
-    }
-#endregion
+    #endregion
 
-#region Utilities
-    //private List<ICharacter> GetCharactersInRegion() {
-    //    List<ICharacter> characters = new List<ICharacter>();
-    //    for (int i = 0; i < tilesInRegion.Count; i++) {
-    //        HexTile currTile = tilesInRegion[i];
-    //        characters.AddRange(currTile.charactersAtLocation.Select(x => x));
-    //        if (currTile.landmarkOnTile != null) {
-    //            characters.AddRange(currTile.landmarkOnTile.charactersAtLocation.Select(x => x));
-    //        }
-    //    }
-    //    return characters;
-    //}
+    #region Utilities
     internal void LogPassableTiles() {
-        Dictionary<PASSABLE_TYPE, int> passableTiles = new Dictionary<PASSABLE_TYPE, int>();
-        PASSABLE_TYPE[] types = Utilities.GetEnumValues<PASSABLE_TYPE>();
-        for (int i = 0; i < types.Length; i++) {
-            passableTiles.Add(types[i], 0);
-        }
+            Dictionary<PASSABLE_TYPE, int> passableTiles = new Dictionary<PASSABLE_TYPE, int>();
+            PASSABLE_TYPE[] types = Utilities.GetEnumValues<PASSABLE_TYPE>();
+            for (int i = 0; i < types.Length; i++) {
+                passableTiles.Add(types[i], 0);
+            }
 
-        for (int i = 0; i < tilesInRegion.Count; i++) {
-            HexTile currTile = tilesInRegion[i];
-            passableTiles[currTile.passableType]++;
+            for (int i = 0; i < tilesInRegion.Count; i++) {
+                HexTile currTile = tilesInRegion[i];
+                passableTiles[currTile.passableType]++;
+            }
+            string text = this._name + " tiles summary (" + tilesInRegion.Count.ToString() + "): ";
+            foreach (KeyValuePair<PASSABLE_TYPE, int> kvp in passableTiles) {
+                text += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+            }
+            Debug.Log(text, this.centerOfMass);
         }
-        string text = this._name + " tiles summary (" + tilesInRegion.Count.ToString() + "): ";
-        foreach (KeyValuePair<PASSABLE_TYPE, int> kvp in passableTiles) {
-            text += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
-        }
-        Debug.Log(text, this.centerOfMass);
-    }
-#endregion
+    #endregion
 
-#region Islands
+    #region Islands
     public List<RegionIsland> GetIslands() {
         List<HexTile> regionTiles = new List<HexTile>(tilesInRegion);
         Dictionary<HexTile, RegionIsland> islands = new Dictionary<HexTile, RegionIsland>();
@@ -639,12 +541,6 @@ public class Region : IHasNeighbours<Region> {
         island2.ClearIsland();
         return island1;
     }
-    //public bool IsPartOfMainIsland(HexTile tile) {
-    //    if (_islands[tile] == _mainIsland) {
-    //        return true;
-    //    }
-    //    return false;
-    //}
     private void ConnectIslands(List<RegionIsland> islands, Dictionary<HexTile, RegionIsland> islandsDict) {
         int previousIslandsCount = islands.Count;
         while (islands.Count > 1) {
@@ -752,18 +648,18 @@ public class Region : IHasNeighbours<Region> {
         return PathGenerator.Instance.GetPath(randomTile1, randomTile2, PATHFINDING_MODE.PASSABLE_REGION_ONLY, this) != null;
     }
     private void FlattenTiles(List<HexTile> tiles) {
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile currTile = tiles[i];
-            if (currTile.isPassable) {
-                continue;
+            for (int i = 0; i < tiles.Count; i++) {
+                HexTile currTile = tiles[i];
+                if (currTile.isPassable) {
+                    continue;
+                }
+                currTile.SetElevation(ELEVATION.PLAIN);
+                currTile.SetPassableState(true);
+                currTile.DeterminePassableType();
+                currTile.PassableNeighbours.ForEach(x => x.DeterminePassableType());
             }
-            currTile.SetElevation(ELEVATION.PLAIN);
-            currTile.SetPassableState(true);
-            currTile.DeterminePassableType();
-            currTile.PassableNeighbours.ForEach(x => x.DeterminePassableType());
         }
-    }
-#endregion
+    #endregion
 
     public void WallOffRegion() {
         for (int i = 0; i < outerTiles.Count; i++) {
@@ -862,7 +758,7 @@ public class Region : IHasNeighbours<Region> {
         Debug.Log(log);
     }
 
-#region Corruption
+    #region Corruption
     //public void LandmarkStartedCorruption(BaseLandmark corruptedLandmark) {
     //    for (int i = 0; i < landmarks.Count; i++) {
     //        BaseLandmark landmark = landmarks[i];
@@ -879,7 +775,20 @@ public class Region : IHasNeighbours<Region> {
     //        }
     //    }
     //}
-#endregion
+    #endregion
+
+    #region Areas
+    public List<Area> GetAreasInRegion() {
+        List<Area> areas = new List<Area>();
+        for (int i = 0; i < tilesInRegion.Count; i++) {
+            HexTile currTile = tilesInRegion[i];
+            if (currTile.areaOfTile != null && !areas.Contains(currTile.areaOfTile)) {
+                areas.Add(currTile.areaOfTile);
+            }
+        }
+        return areas;
+    }
+    #endregion
 }
 
 public class RegionIsland {

@@ -52,7 +52,7 @@ namespace worldcreator {
             Messenger.AddListener<Relationship>(Signals.RELATIONSHIP_CREATED, OnRelationshipCreated);
             Messenger.AddListener<Relationship>(Signals.RELATIONSHIP_REMOVED, OnRelationshipRemoved);
 
-            LoadTemplateChoices();
+            
             LoadDropdownOptions();
             LoadEquipmentChoices();
             LoadInventoryChoices();
@@ -67,6 +67,7 @@ namespace worldcreator {
             LoadCharacters();
             LoadEquipment();
             LoadInventory();
+            LoadTemplateChoices();
             Messenger.AddListener<Item, Character>(Signals.ITEM_EQUIPPED, OnItemEquipped);
             Messenger.AddListener<Item, Character>(Signals.ITEM_UNEQUIPPED, OnItemUnequipped);
             Messenger.AddListener<Item, Character>(Signals.ITEM_OBTAINED, OnItemObtained);
@@ -84,8 +85,9 @@ namespace worldcreator {
         #region Portrait Editor
         public void LoadTemplateChoices() {
             portraitTemplates = new Dictionary<string, PortraitSettings>();
-            Directory.CreateDirectory(Utilities.portraitsSavePath);
-            DirectoryInfo info = new DirectoryInfo(Utilities.portraitsSavePath);
+            string path = Utilities.portraitsSavePath + _character.raceSetting.race + "/" + _character.gender.ToString() + "/";
+            Directory.CreateDirectory(path);
+            DirectoryInfo info = new DirectoryInfo(path);
             FileInfo[] files = info.GetFiles("*" + Utilities.portraitFileExt);
             for (int i = 0; i < files.Length; i++) {
                 FileInfo currInfo = files[i];

@@ -16,12 +16,13 @@ public class CharacterIcon : MonoBehaviour {
     [SerializeField] private AIDestinationSetter _destinationSetter;
     [SerializeField] private LineRenderer lineRenderer;
     [SerializeField] private Seeker seeker;
-    //[SerializeField] private EdgeCollider2D edgeCollider;
     [SerializeField] private CharacterPathfinder _pathfinder;
 
     public CharacterPortrait characterPortrait { get; private set; }
 
+    private MOVEMENT_TYPE movementType;
     private NewParty _iparty;
+
 
     private ILocation _targetLocation;
     private bool _isIdle;
@@ -77,6 +78,7 @@ public class CharacterIcon : MonoBehaviour {
 #endif
     }
 
+    #region Pathfinding
     public void SetTarget(ILocation target) {
         if (target != null) {
             if (_targetLocation == target) {
@@ -98,7 +100,6 @@ public class CharacterIcon : MonoBehaviour {
         //_aiPath.destination = _targetLocation.tileLocation.transform.position;
         //_aiPath.SetRecalculatePathState(true);
     }
-
     public void SetTarget(Vector3 target) {
         if (_aiPath.destination == target) {
             return;
@@ -117,7 +118,7 @@ public class CharacterIcon : MonoBehaviour {
             _destinationSetter.target = null;
         }
     }
-
+    #endregion
 
     #region Visuals
     public void ReclaimPortrait() {
@@ -154,6 +155,9 @@ public class CharacterIcon : MonoBehaviour {
     #endregion
 
     #region Utilities
+    public void SetMovementType(MOVEMENT_TYPE type) {
+        movementType = type;
+    }
     public void GetVectorPath(HexTile target, Action<List<Vector3>> onPathCalculated) {
         pathfinder.transform.position = aiPath.transform.position;
         //edgeCollider.transform.position = aiPath.transform.position;
@@ -174,30 +178,28 @@ public class CharacterIcon : MonoBehaviour {
         _characterVisualGO.SetActive(state);
         _aiPath.gameObject.SetActive(state);
     }
-    #endregion
-
     public void SetPosition(Vector3 position) {
         this.transform.position = position;
     }
-
     public void SetActionOnTargetReached(Action action) {
         _aiPath.SetActionOnTargetReached(action);
     }
+    #endregion
 
     #region Monobehaviours
-//    private HexTile previousTile = null;
-//    private void Update() {
-//#if UNITY_EDITOR && !WORLD_CREATION_TOOL
-//        if (UIManager.Instance.characterInfoUI.activeCharacter != null &&
-//            UIManager.Instance.characterInfoUI.activeCharacter.id == _icharacter.id && _icharacter.specificLocation is HexTile) {
-//            if (previousTile != null) {
-//                previousTile.UnHighlightTile();
-//            }
-//            (_icharacter.specificLocation as HexTile).HighlightTile(Color.gray, 128f/255f);
-//            previousTile = _icharacter.specificLocation as HexTile;
-//        }
-//#endif
-//    }
+    //    private HexTile previousTile = null;
+    //    private void Update() {
+    //#if UNITY_EDITOR && !WORLD_CREATION_TOOL
+    //        if (UIManager.Instance.characterInfoUI.activeCharacter != null &&
+    //            UIManager.Instance.characterInfoUI.activeCharacter.id == _icharacter.id && _icharacter.specificLocation is HexTile) {
+    //            if (previousTile != null) {
+    //                previousTile.UnHighlightTile();
+    //            }
+    //            (_icharacter.specificLocation as HexTile).HighlightTile(Color.gray, 128f/255f);
+    //            previousTile = _icharacter.specificLocation as HexTile;
+    //        }
+    //#endif
+    //    }
     private void LateUpdate() {
         //Debug.Log(_aiPath.velocity);
         Vector3 newPos = _aiPath.transform.localPosition;

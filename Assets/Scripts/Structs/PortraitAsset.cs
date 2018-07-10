@@ -4,6 +4,6 @@ using UnityEngine;
 
 [System.Serializable]
 public struct PortraitAsset {
-    public IMAGE_SIZE imageSize;
+    //public IMAGE_SIZE imageSize;
     public List<Sprite> assets;
 }

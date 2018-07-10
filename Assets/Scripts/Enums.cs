@@ -1363,6 +1363,11 @@ public enum LEVEL {
     AVERAGE,
     LOW
 }
+public enum BASE_AREA_TYPE {
+    SETTLEMENT,
+    DUNGEON,
+    PLAYER,
+}
 public enum AREA_TYPE {
     ELVEN_SETTLEMENT,
     HUMAN_SETTLEMENT,
@@ -1417,4 +1422,9 @@ public enum MESSAGE_BOX_MODE {
 public enum ICHARACTER_TYPE {
     CHARACTER,
     MONSTER,
+}
+
+public enum MOVEMENT_TYPE {
+    NORMAL,
+    AVOID
 }

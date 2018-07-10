@@ -6,6 +6,7 @@ public class CharacterQuestData {
 
     protected Quest _parentQuest;
     protected ECS.Character _owner;
+    public bool lastActionWasDesperate = false;
 
     public CharacterQuestData(Quest parentQuest, ECS.Character owner) {
         _parentQuest = parentQuest;
@@ -19,4 +20,8 @@ public class CharacterQuestData {
     #region virtuals
     public virtual IEnumerator SetupValuesCoroutine() { yield return null; }
     #endregion
+
+    public void SetLastActionDesperateState(bool state) {
+        lastActionWasDesperate = state;
+    }
 }

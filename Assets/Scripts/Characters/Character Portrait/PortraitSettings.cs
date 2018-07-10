@@ -5,7 +5,8 @@ using UnityEngine;
 [System.Serializable]
 public class PortraitSettings {
 
-    //public GENDER gender;
+    public RACE race;
+    public GENDER gender;
     public int headIndex;
     public int eyesIndex;
     public int eyeBrowIndex;

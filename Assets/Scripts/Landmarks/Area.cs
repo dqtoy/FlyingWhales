@@ -99,6 +99,10 @@ public class Area {
     public void SetAreaType(AREA_TYPE areaType) {
         this.areaType = areaType;
     }
+    public BASE_AREA_TYPE GetBaseAreaType() {
+        AreaData data = LandmarkManager.Instance.GetAreaData(areaType);
+        return data.baseAreaType;
+    }
     #endregion
 
     #region Visuals
@@ -136,4 +140,9 @@ public class Area {
     }
     #endregion
 
+    #region Utilities
+    public bool HasLandmarkOfType(LANDMARK_TYPE type) {
+        return landmarks.Where(x => x.specificLandmarkType == type).Any();
+    }
+    #endregion
 }

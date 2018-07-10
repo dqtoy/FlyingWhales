@@ -366,7 +366,7 @@ namespace ECS {
 			_raceSetting = RaceManager.Instance.racesDictionary[race.ToString()].CreateNewCopy();
             _gender = gender;
             _name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
-            _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait();
+            _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
             _skills = GetGeneralSkills();
             _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
 
@@ -450,6 +450,7 @@ namespace ECS {
             //Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
             Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
+            Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         }
         public void Initialize() { }
 
@@ -801,6 +802,7 @@ namespace ECS {
                 Messenger.RemoveListener<Region> ("RegionDeath", RegionDeath);
 				Messenger.RemoveListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
                 Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
+                Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
 
                 CombatManager.Instance.ReturnCharacterColorToPool (_characterColor);
 
@@ -2126,6 +2128,14 @@ namespace ECS {
                 }
             }
             return false;
+        }
+        public Character GetCharacterWithRelationshipStatus(CHARACTER_RELATIONSHIP relStat) {
+            foreach (KeyValuePair<Character, Relationship> kvp in relationships) {
+                if (kvp.Value.HasStatus(relStat)) {
+                    return kvp.Key;
+                }
+            }
+            return null;
         }
         public void LoadRelationships(List<RelationshipSaveData> data) {
             _relationships = new Dictionary<Character, Relationship>();
