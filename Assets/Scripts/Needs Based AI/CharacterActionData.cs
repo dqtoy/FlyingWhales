@@ -39,6 +39,8 @@ public struct CharacterActionData {
     public RESOURCE resourceNeeded;
     public int resourceAmountNeeded;
 
+    public int providedExp;
+
     public ActionEvent successFunction;
     public ActionEvent failFunction;
 
@@ -52,7 +54,7 @@ public struct CharacterActionData {
 #if UNITY_EDITOR
 [CustomPropertyDrawer(typeof(CharacterActionData))]
 public class CharacterActionDrawer : PropertyDrawer {
-    private bool enableSuccessRate, enableResourceGiven, enableResourceNeeded;
+    private bool enableSuccessRate, enableResourceGiven, enableResourceNeeded, enableProvidedExperience;
     private SerializedProperty filtersProp;
     private float filtersHeight;
 
@@ -148,16 +150,19 @@ public class CharacterActionDrawer : PropertyDrawer {
         //enableDuration = HasDuration(actionType);
         enableResourceGiven = GivesResource(actionType);
         enableResourceNeeded = NeedResource(actionType);
+        enableProvidedExperience = ProvidesExperience(actionType);
 
         float defaultSuccessRateYPos = hpRecoveredYPos + hpRecoveredRect.height;
         //float defaultDurationYPos = failPosY + pFailFunctionRect.height + 16;
         float defaultResourceGivenYPos = hpRecoveredYPos + hpRecoveredRect.height + 16;
         float defaultResourceNeededYPos = hpRecoveredYPos + hpRecoveredRect.height + 32;
+        float defaultProvidedExperienceYPos = hpRecoveredYPos + hpRecoveredRect.height + 48;
 
         float successRateYPos = defaultSuccessRateYPos;
         //float durationYPos = defaultDurationYPos;
         float resourceGivenYPos = defaultResourceGivenYPos;
         float resourceNeededYPos = defaultResourceNeededYPos;
+        float providedExperienceYPos = defaultProvidedExperienceYPos;
 
         //Success Rate
         if (enableSuccessRate) {
@@ -208,17 +213,36 @@ public class CharacterActionDrawer : PropertyDrawer {
             property.FindPropertyRelative("resourceAmountNeeded").intValue = 0;
         }
 
+        //Provided Experience
+        if (enableProvidedExperience) {
+            if (!enableResourceGiven) {
+                providedExperienceYPos = defaultResourceGivenYPos;
+                if (!enableSuccessRate) {
+                    providedExperienceYPos = defaultSuccessRateYPos;
+                    if (!enableResourceNeeded) {
+                        providedExperienceYPos = defaultResourceNeededYPos;
+                    }
+                }
+            }
+            LoadProvidesExperienceResourceField(resourceNeededYPos, position, property, label);
+        } else {
+            property.FindPropertyRelative("providedExp").intValue = 0;
+        }
+
         float filtersYPos = defaultResourceNeededYPos;
         if (!enableResourceNeeded) {
             filtersYPos = defaultResourceNeededYPos;
             if (!enableResourceGiven) {
                 filtersYPos = defaultResourceGivenYPos;
-                //if (!enableDuration) {
-                //    filtersYPos = defaultDurationYPos;
-                    if (!enableSuccessRate) {
-                        filtersYPos = defaultSuccessRateYPos;
+                if (!enableSuccessRate) {
+                    filtersYPos = defaultSuccessRateYPos;
+                    if (!enableResourceNeeded) {
+                        filtersYPos = defaultResourceNeededYPos;
+                        if (!enableProvidedExperience) {
+                            filtersYPos = defaultProvidedExperienceYPos;
+                        }
                     }
-                //}
+                }
             }
         }
         filtersYPos += 16;
@@ -266,6 +290,9 @@ public class CharacterActionDrawer : PropertyDrawer {
         if (enableResourceNeeded) {
             modifier += 3;
         }
+        if (enableProvidedExperience) {
+            modifier += 3;
+        }
         return base.GetPropertyHeight(property, label) * modifier;
     }
 
@@ -302,6 +329,13 @@ public class CharacterActionDrawer : PropertyDrawer {
         var resourceAmountNeededRect = new Rect(position.x, resourceNeededRect.y + 16, position.width, 16);
         EditorGUI.PropertyField(resourceNeededRect, property.FindPropertyRelative("resourceNeeded"));
         EditorGUI.PropertyField(resourceAmountNeededRect, property.FindPropertyRelative("resourceAmountNeeded"));
+        //EditorGUI.indentLevel = 0;
+    }
+    private void LoadProvidesExperienceResourceField(float yPos, Rect position, SerializedProperty property, GUIContent label) {
+        //EditorGUI.indentLevel = -7;
+        //EditorGUI.LabelField(new Rect(position.x, yPos, 50, 50), "Needs Resource");
+        var providedExpRect = new Rect(position.x, yPos, position.width, 16);
+        EditorGUI.PropertyField(providedExpRect, property.FindPropertyRelative("providedExp"));
         //EditorGUI.indentLevel = 0;
     }
     #endregion
@@ -353,6 +387,14 @@ public class CharacterActionDrawer : PropertyDrawer {
     private bool NeedResource(ACTION_TYPE actionType) {
         switch (actionType) {
             case ACTION_TYPE.REPAIR:
+                return true;
+            default:
+                return false;
+        }
+    }
+    private bool ProvidesExperience(ACTION_TYPE actionType) {
+        switch (actionType) {
+            case ACTION_TYPE.TRAIN:
                 return true;
             default:
                 return false;

@@ -2141,6 +2141,15 @@ namespace ECS {
             }
             return null;
         }
+        public List<Character> GetCharactersWithRelationshipStatus(CHARACTER_RELATIONSHIP relStat) {
+            List<Character> characters = new List<Character>();
+            foreach (KeyValuePair<Character, Relationship> kvp in relationships) {
+                if (kvp.Value.HasStatus(relStat) && characters.Contains(kvp.Key)) {
+                    characters.Add(kvp.Key);
+                }
+            }
+            return characters;
+        }
         public void LoadRelationships(List<RelationshipSaveData> data) {
             _relationships = new Dictionary<Character, Relationship>();
             for (int i = 0; i < data.Count; i++) {
