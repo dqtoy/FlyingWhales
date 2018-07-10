@@ -64,4 +64,8 @@ public static class Signals {
     public static string FACTION_CREATED = "OnFactionCreated"; //Parameters (Faction createdFaction)
     public static string FACTION_DELETED = "OnFactionDeleted"; //Parameters (Faction deletedFaction)
     #endregion
+
+    #region Actions
+    public static string ACTION_SUCCESS = "OnActionSuccess"; //Parameters (CharacterParty partyThatSucceeded, CharacterAction actionThatSucceeded)
+    #endregion
 }

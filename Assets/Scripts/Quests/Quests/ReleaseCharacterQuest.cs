@@ -48,10 +48,10 @@ public class ReleaseCharacterQuest : Quest {
             //    //if there is a Shop from non-hostile settlements, Equipment is available
             //    availablePowerSources.Add(ReleaseCharacterQuestData.Gain_Power_Type.Equipment);
             //}
-            //if (IsDungeonTypeAreaAvailable(character)) {
-            //    //if there is at least one Dungeon type area in the region, Hunt is available
-            //    availablePowerSources.Add(ReleaseCharacterQuestData.Gain_Power_Type.Hunt);
-            //}
+            if (IsDungeonTypeAreaAvailable(character)) {
+                //if there is at least one Dungeon type area in the region, Hunt is available
+                availablePowerSources.Add(ReleaseCharacterQuestData.Gain_Power_Type.Hunt);
+            }
             //randomize between available options and set it as Gain Power Type
             if (availablePowerSources.Count > 0) {
                 questData.SetGainPowerType(availablePowerSources[Utilities.rng.Next(0, availablePowerSources.Count)]);
@@ -71,7 +71,7 @@ public class ReleaseCharacterQuest : Quest {
                     data.SetLastActionDesperateState(true);
                     return character.GetRandomDesperateAction();
                 } else {
-                    //TODO: abandon quest
+                    data.AbandonQuest(); //abandon quest
                 }
             }
         } else {
@@ -83,7 +83,7 @@ public class ReleaseCharacterQuest : Quest {
                 case ReleaseCharacterQuestData.Gain_Power_Type.Equipment:
                     break;
                 case ReleaseCharacterQuestData.Gain_Power_Type.Hunt:
-                    break;
+                    return GetHuntAction(character, questData);
                 default:
                     break;
             }
@@ -183,11 +183,62 @@ public class ReleaseCharacterQuest : Quest {
             return nearestMentor.party.characterObject.currentState.GetAction(ACTION_TYPE.ENROLL); //perform Enroll action on the Retired Hero, avoid strong hostiles
         }
     }
+    private CharacterAction GetHuntAction(Character character, ReleaseCharacterQuestData data) {
+        // List all hostile parties within the region whose Power is lower than character by at least 10%
+        List<IParty> hostiles = GetHostileCharactersFor(character);
+        //If none are available, perform Idle Action. Loop. If Idle Action performed 5 times in a row, set Gain Power Type to None
+        if (hostiles.Count > 0) {
+            //Randomly select one and perform Attack action
+            IParty chosenParty = hostiles[Random.Range(0, hostiles.Count)];
+            data.OnChooseHuntCharacter(chosenParty);
+            return chosenParty.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
+        } else {
+            //If none are available, perform Idle Action. Loop. If Idle Action performed 5 times in a row, set Gain Power Type to None
+            data.OnDoIdleActionFromHunt();
+            if (data.idleActionsInARow >= 5) {
+                data.ResetIdleActions();
+                data.SetGainPowerType(ReleaseCharacterQuestData.Gain_Power_Type.None);
+            }
+            return character.GetRandomIdleAction();
+        }
+    }
     #endregion
 
     #region Utilities
     private bool IsCharacterStudent(Character character) {
         return character.AlreadyHasRelationshipStatus(CHARACTER_RELATIONSHIP.MENTOR); //check if character has a character that he considers as his/her mentor
+    }
+    private List<IParty> GetHostileCharactersFor(Character character) {
+        List<IParty> hostileCharacters = new List<IParty>();
+        Region regionOfChar = character.specificLocation.tileLocation.region;
+        // List all hostile parties within the region whose Power is lower than character by at least 10%
+        for (int i = 0; i < regionOfChar.landmarks.Count; i++) {
+            BaseLandmark baseLandmark = regionOfChar.landmarks[i];
+            for (int j = 0; j < baseLandmark.charactersAtLocation.Count; j++) {
+                IParty currParty = baseLandmark.charactersAtLocation[j];
+                if (currParty.id == character.party.id) {
+                    continue; //skip
+                }
+                float powerComparison = GetPowerComparison(character.party, currParty);
+                if (powerComparison < 0.10f) {
+                    continue; //skip. power comparison is less than 10%
+                }
+                if (currParty is CharacterParty) {
+                    Character partyMainChar = (currParty as CharacterParty).mainCharacter as Character;
+                    Relationship rel = character.GetRelationshipWith(partyMainChar);
+                    if (rel != null && rel.IsNegative()) {
+                        continue; //skip. relationship is not negative
+                    }
+                }
+                hostileCharacters.Add(currParty);
+            }
+        }
+        return hostileCharacters;
+    }
+    private float GetPowerComparison(IParty party1, IParty party2) {
+        //how much stronger is party1 compared to party2?
+        float difference = party1.computedPower - party2.computedPower;
+        return party1.computedPower / difference;
     }
     #endregion
 }

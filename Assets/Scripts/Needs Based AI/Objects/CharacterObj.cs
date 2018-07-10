@@ -124,6 +124,18 @@ public class CharacterObj : ICharacterObject {
     public void OnAddToLandmark(BaseLandmark newLocation) {
         SetObjectLocation(newLocation);
     }
+    public bool OwnsAction(CharacterAction action) {
+        for (int i = 0; i < states.Count; i++) {
+            ObjectState currState = states[i];
+            for (int j = 0; j < currState.actions.Count; j++) {
+                CharacterAction currAction = currState.actions[j];
+                if (currAction == action) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Resource Inventory

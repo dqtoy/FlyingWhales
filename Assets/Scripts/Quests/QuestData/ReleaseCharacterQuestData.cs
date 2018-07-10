@@ -18,9 +18,13 @@ public class ReleaseCharacterQuestData : CharacterQuestData {
     public List<Vector3> vectorPathToTarget { get; private set; }
     public List<HexTile> tilePathToTarget { get; private set; }
     public List<Character> elligibleMentors { get; private set; }
+    public int idleActionsInARow { get; private set; }
+    public int huntedCharactersCount { get; private set; }
+    public IParty huntedParty { get; private set; }
 
     public bool isWaitingForPath { get { return _owner.party.icon.pathfinder.isWaitingForPathCalculation; } }
 
+    private int huntExp = 500;
     private HexTile targetTile;
 
     public ReleaseCharacterQuestData(Quest parentQuest, Character owner, ECS.Character targetCharacter) : base(parentQuest, owner) {
@@ -82,5 +86,31 @@ public class ReleaseCharacterQuestData : CharacterQuestData {
             }
         }
         return null;
+    }
+
+    public void OnChooseHuntCharacter(IParty partyToHunt) {
+        huntedParty = partyToHunt;
+        Messenger.AddListener<CharacterParty, CharacterAction>(Signals.ACTION_SUCCESS, OnHuntCharacterDone);
+    }
+
+    public void OnDoIdleActionFromHunt() {
+        idleActionsInARow++;
+    }
+    public void ResetIdleActions() {
+        idleActionsInARow = 0;
+    }
+    public void OnHuntCharacterDone(CharacterParty succeededParty, CharacterAction succeededAction) {
+        if (huntedParty.icharacterObject.OwnsAction(succeededAction) && succeededParty.id == _owner.party.id) {
+            Messenger.RemoveListener<CharacterParty, CharacterAction>(Signals.ACTION_SUCCESS, OnHuntCharacterDone);
+            Debug.Log(_owner.name + " successfully hunted " + huntedParty.name);
+            huntedParty = null;
+            huntedCharactersCount++;
+            //After successfully killing 5, gain ? Experience and set Gain Power Type to None
+            if (huntedCharactersCount == 5) {
+                huntedCharactersCount = 0;
+                _owner.AdjustExperience(huntExp);
+                SetGainPowerType(Gain_Power_Type.None);
+            }
+        }
     }
 }

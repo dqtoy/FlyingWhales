@@ -19,6 +19,9 @@ public class CharacterQuestData {
 
     #region virtuals
     public virtual IEnumerator SetupValuesCoroutine() { yield return null; }
+    public virtual void AbandonQuest() {
+        _owner.RemoveQuestData(this);
+    }
     #endregion
 
     public void SetLastActionDesperateState(bool state) {

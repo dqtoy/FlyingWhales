@@ -100,6 +100,18 @@ public class MonsterObj : ICharacterObject {
         }
         return null;
     }
+    public bool OwnsAction(CharacterAction action) {
+        for (int i = 0; i < states.Count; i++) {
+            ObjectState currState = states[i];
+            for (int j = 0; j < currState.actions.Count; j++) {
+                CharacterAction currAction = currState.actions[j];
+                if (currAction == action) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     public IObject Clone() {
         MonsterObj clone = new MonsterObj(_party);
         clone.SetObjectName(this._objectName);
