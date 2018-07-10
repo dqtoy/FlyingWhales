@@ -25,11 +25,34 @@ public class CharacterPortraitEditor : MonoBehaviour {
     [SerializeField] private ColorPickerControl hairColorPicker;
     [SerializeField] private Image hairColorImage;
     [SerializeField] private InputField fileNameField;
+    [SerializeField] private Dropdown raceDropdown;
+    [SerializeField] private Dropdown genderDropdown;
+
+    private RACE chosenRace {
+        get { return (RACE)System.Enum.Parse(typeof(RACE), raceDropdown.options[raceDropdown.value].text); }
+    }
+    private GENDER chosenGender {
+        get { return (GENDER)System.Enum.Parse(typeof(GENDER), genderDropdown.options[genderDropdown.value].text); }
+    }
 
     private void Start() {
-        //if (portraitSettings == null) {
-        //    portraitSettings = CharacterManager.Instance.GenerateRandomPortrait();
-        //}
+        LoadDropdownSettings();
+        if (portraitSettings == null) {
+            portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(chosenRace, chosenGender);
+        }
+        SetStepperValues();
+        UpdateVisuals();
+        UpdatePortraitControls();
+    }
+
+    public void OnChangeRace(int choice) {
+        portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(chosenRace, chosenGender);
+        SetStepperValues();
+        UpdateVisuals();
+        UpdatePortraitControls();
+    }
+    public void OnChangeGender(int choice) {
+        portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(chosenRace, chosenGender);
         SetStepperValues();
         UpdateVisuals();
         UpdatePortraitControls();
@@ -40,13 +63,23 @@ public class CharacterPortraitEditor : MonoBehaviour {
         portrait.GeneratePortrait(portraitSettings, IMAGE_SIZE.X256);
     }
     private void SetStepperValues() {
-        //headStepper.maximum = CharacterManager.Instance.headSpriteCount - 1;
-        //hairStepper.maximum = CharacterManager.Instance.hairSpriteCount - 1;
-        //eyesStepper.maximum = CharacterManager.Instance.eyeSpriteCount - 1;
-        //noseStepper.maximum = CharacterManager.Instance.noseSpriteCount - 1;
-        //mouthStepper.maximum = CharacterManager.Instance.mouthSpriteCount - 1;
-        //eyebrowsStepper.maximum = CharacterManager.Instance.eyebrowSpriteCount - 1;
-        //bodyStepper.maximum = CharacterManager.Instance.bodySpriteCount - 1;
+        headStepper.maximum = CharacterManager.Instance.GetHeadSpriteCount(chosenRace, chosenGender) - 1;
+        hairStepper.maximum = CharacterManager.Instance.GetHairSpriteCount(chosenRace, chosenGender) - 1;
+        eyesStepper.maximum = CharacterManager.Instance.GetEyeSpriteCount(chosenRace, chosenGender) - 1;
+        noseStepper.maximum = CharacterManager.Instance.GetNoseSpriteCount(chosenRace, chosenGender) - 1;
+        mouthStepper.maximum = CharacterManager.Instance.GetMouthSpriteCount(chosenRace, chosenGender) - 1;
+        eyebrowsStepper.maximum = CharacterManager.Instance.GetEyebrowSpriteCount(chosenRace, chosenGender) - 1;
+        bodyStepper.maximum = CharacterManager.Instance.GetBodySpriteCount(chosenRace, chosenGender) - 1;
+    }
+    private void LoadDropdownSettings() {
+        raceDropdown.ClearOptions();
+        List<string> raceOptions = new List<string>();
+        raceOptions.Add("HUMANS");
+        raceOptions.Add("ELVES");
+        raceDropdown.AddOptions(raceOptions);
+
+        genderDropdown.ClearOptions();
+        genderDropdown.AddOptions(Utilities.GetEnumChoices<GENDER>());
     }
     private void UpdatePortraitControls() {
         headStepper.SetStepperValue(portraitSettings.headIndex);
@@ -58,6 +91,19 @@ public class CharacterPortraitEditor : MonoBehaviour {
         bodyStepper.SetStepperValue(portraitSettings.bodyIndex);
         hairColorImage.color = portraitSettings.hairColor;
         hairColorPicker.CurrentColor = portraitSettings.hairColor;
+    }
+    private void UpdatePortraitControls(PortraitSettings settings) {
+        raceDropdown.value = Utilities.GetOptionIndex(raceDropdown, settings.race.ToString());
+        genderDropdown.value = Utilities.GetOptionIndex(genderDropdown, settings.gender.ToString());
+        headStepper.SetStepperValue(settings.headIndex);
+        hairStepper.SetStepperValue(settings.hairIndex);
+        eyesStepper.SetStepperValue(settings.eyesIndex);
+        noseStepper.SetStepperValue(settings.noseIndex);
+        mouthStepper.SetStepperValue(settings.mouthIndex);
+        eyebrowsStepper.SetStepperValue(settings.eyeBrowIndex);
+        bodyStepper.SetStepperValue(settings.bodyIndex);
+        hairColorImage.color = settings.hairColor;
+        hairColorPicker.CurrentColor = settings.hairColor;
     }
     public void ShowHairColorPicker() {
         hairColorPicker.ShowMenu();
@@ -103,7 +149,7 @@ public class CharacterPortraitEditor : MonoBehaviour {
         if (!saveName.Contains(Utilities.portraitFileExt)) {
             saveName += Utilities.portraitFileExt;
         }
-        if (Utilities.DoesFileExist(Utilities.portraitsSavePath + saveName)) {
+        if (Utilities.DoesFileExist(Utilities.portraitsSavePath + chosenRace.ToString() + "/" + chosenGender + "/" + saveName)) {
             UnityAction yesAction = new UnityAction(() => SavePortrait());
             worldcreator.WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.YES_NO, "Overwrite Template", "Do you want to overwrite template file " + saveName + "?", yesAction);
         } else {
@@ -115,7 +161,7 @@ public class CharacterPortraitEditor : MonoBehaviour {
         if (!saveName.Contains(Utilities.portraitFileExt)) {
             saveName += Utilities.portraitFileExt;
         }
-        SaveGame.Save<PortraitSettings>(Utilities.portraitsSavePath + saveName, portraitSettings);
+        SaveGame.Save<PortraitSettings>(Utilities.portraitsSavePath  + chosenRace.ToString() + "/" + chosenGender + "/" + saveName, portraitSettings);
         worldcreator.WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Success", "Successfully saved template!");
         worldcreator.WorldCreatorUI.Instance.OnPortraitTemplatesChanged();
     }
@@ -124,8 +170,8 @@ public class CharacterPortraitEditor : MonoBehaviour {
         string path = EditorUtility.OpenFilePanel("Choose template", Utilities.portraitsSavePath, Utilities.portraitFileExt.Remove(0, 1));
         if (path.Length != 0) {
             portraitSettings = SaveGame.Load<PortraitSettings>(path);
+            UpdatePortraitControls(portraitSettings);
             UpdateVisuals();
-            UpdatePortraitControls();
         }
 #endif
     }

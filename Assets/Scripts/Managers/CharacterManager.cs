@@ -589,6 +589,8 @@ public class CharacterManager : MonoBehaviour {
     public PortraitSettings GenerateRandomPortrait(RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
         PortraitSettings ps = new PortraitSettings();
+        ps.race = race;
+        ps.gender = gender;
         ps.headIndex = Random.Range(0, pac.headAssets.Count);
         ps.eyesIndex = Random.Range(0, pac.eyeAssets.Count);
         ps.eyeBrowIndex = Random.Range(0, pac.eyebrowAssets.Count);
@@ -598,6 +600,15 @@ public class CharacterManager : MonoBehaviour {
         ps.bodyIndex = Random.Range(0, pac.bodyAssets.Count);
         ps.hairColor = pac.hairColors[Random.Range(0, pac.hairColors.Count)];
         return ps;
+    }
+    public PortraitSettings GenerateRandomPortrait() {
+        RACE randomRace = RACE.HUMANS;
+        if (Random.Range(0, 2) == 1) {
+            randomRace = RACE.ELVES;
+        }
+        GENDER[] genderChoices = Utilities.GetEnumValues<GENDER>();
+        GENDER randomGender = genderChoices[Random.Range(0, genderChoices.Length)];
+        return GenerateRandomPortrait(randomRace, randomGender);
     }
     public HairSetting GetHairSprite(int index,  IMAGE_SIZE imgSize, RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender, imgSize);
@@ -626,6 +637,34 @@ public class CharacterManager : MonoBehaviour {
     public Sprite GetEyebrowSprite(int index, IMAGE_SIZE imgSize, RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender, imgSize);
         return pac.eyebrowAssets[index];
+    }
+    public int GetHairSpriteCount(RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
+        return pac.hairAssets.Count;
+    }
+    public int GetBodySpriteCount(RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
+        return pac.bodyAssets.Count;
+    }
+    public int GetHeadSpriteCount(RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
+        return pac.headAssets.Count;
+    }
+    public int GetNoseSpriteCount(RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
+        return pac.noseAssets.Count;
+    }
+    public int GetMouthSpriteCount(RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
+        return pac.mouthAssets.Count;
+    }
+    public int GetEyeSpriteCount(RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
+        return pac.eyeAssets.Count;
+    }
+    public int GetEyebrowSpriteCount(RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
+        return pac.eyebrowAssets.Count;
     }
     #endregion
 
