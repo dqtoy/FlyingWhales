@@ -8,7 +8,6 @@ public class ChangeClassAction : CharacterAction {
     public string advertisedClassName;
 
     public ChangeClassAction() : base(ACTION_TYPE.CHANGE_CLASS) {
-        _actionData.duration = 1;
     }
 
     #region Overrides
