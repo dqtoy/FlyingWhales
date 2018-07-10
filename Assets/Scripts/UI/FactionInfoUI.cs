@@ -19,11 +19,11 @@ public class FactionInfoUI : UIMenu {
         get { return _data as Faction; }
     }
 
-    internal override void Initialize() {
-        base.Initialize();
-        Messenger.AddListener("UpdateUI", UpdateFactionInfo);
-        //tweenPos.AddOnFinished(() => UpdateFactionInfo());
-    }
+    //internal override void Initialize() {
+    //    base.Initialize();
+    //    Messenger.AddListener("UpdateUI", UpdateFactionInfo);
+    //    //tweenPos.AddOnFinished(() => UpdateFactionInfo());
+    //}
 
     public override void OpenMenu() {
         base.OpenMenu();

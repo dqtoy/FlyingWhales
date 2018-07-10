@@ -10,16 +10,16 @@ public class EncounterPartyManager : MonoBehaviour {
 	void Awake(){
 		Instance = this;
 	}
-	internal void Initialize(){
-		_allEncounterParties = new List<EncounterParty>();
-		foreach (Transform child in this.transform) {
-			if(child.gameObject.activeSelf){
-				EncounterParty encounterParty = child.GetComponent<EncounterParty> ();
-				encounterParty.Initialize();
-				_allEncounterParties.Add(encounterParty);
-			}
-		}
-	}
+	//internal void Initialize(){
+		//_allEncounterParties = new List<EncounterParty>();
+		//foreach (Transform child in this.transform) {
+		//	if(child.gameObject.activeSelf){
+		//		EncounterParty encounterParty = child.GetComponent<EncounterParty> ();
+		//		encounterParty.Initialize();
+		//		_allEncounterParties.Add(encounterParty);
+		//	}
+		//}
+	//}
 	internal EncounterParty GetEncounterParty(string partyName){
 		for (int i = 0; i < _allEncounterParties.Count; i++) {
 			EncounterParty encounterParty = _allEncounterParties[i];

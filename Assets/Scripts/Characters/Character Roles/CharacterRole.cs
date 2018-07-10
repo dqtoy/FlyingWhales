@@ -512,48 +512,86 @@ public class CharacterRole {
     //Formula for calculation of happiness based on current fullness, meaning what's the happiness equivalent given the fullness
     private float CalculateFullnessImpact(float currentFullness) {
         //return (-(Mathf.Pow (1.007f, (float) -currentFullness))) + (float)_maxFullness;
-        float result = (Mathf.Pow(1.05f, -currentFullness)) + 20f;
-        if (currentFullness < 0) { result *= -1f; }
+        //float result = (Mathf.Pow(1.05f, -currentFullness)) + 20f;
+        float result = 0f;
+        if(currentFullness >= 0f) {
+            result = (currentFullness / 10f) + 30f;
+        } else {
+            result = (0.65f * (currentFullness / 25f)) * -currentFullness;
+        }
+        //if (currentFullness < 0) { result *= -1f; }
         return result;
     }
 
     //Formula for calculation of happiness based on current energy, meaning what's the happiness equivalent given the energy
     private float CalculateEnergyImpact(float currentEnergy) {
         //return (-0.4f * ((float) -currentEnergy)) + 350f;
-        float result = (0.5f * -currentEnergy) + 50f;
-        if (currentEnergy < 0) { result *= -1f; }
+        //float result = (0.5f * -currentEnergy) + 50f;
+        //if (currentEnergy < 0) { result *= -1f; }
+
+        float result = 0f;
+        if (currentEnergy >= 0f) {
+            result = (currentEnergy / 2.5f) + 30f;
+        } else {
+            result = currentEnergy;
+        }
         return result;
     }
 
     //Formula for calculation of happiness based on current fun, meaning what's the happiness equivalent given the fun
     private float CalculateFunImpact(float currentFun) {
-        float value = 1.09f; //* currentFun;
-        float result = (Mathf.Pow(value, -currentFun)) + 10f;
-        if (currentFun < 0) { result *= -1f; }
+        //float value = 1.09f; //* currentFun;
+        //float result = (Mathf.Pow(value, -currentFun)) + 10f;
+        //if (currentFun < 0) { result *= -1f; }
+
+        float result = 0f;
+        if (currentFun >= 0f) {
+            result = (((3f * currentFun) / 10f) * 2f) + 40f;
+        } else {
+            result = currentFun / 2f;
+        }
         return result;
     }
 
     //Formula for calculation of happiness based on current prestige, meaning what's the happiness equivalent given the prestige
     private float CalculatePrestigeImpact(float currentPrestige) {
-        float value = 1.07f;// * currentPrestige;
-        float result = (Mathf.Pow(value, -currentPrestige)) + 15f;
-        if (currentPrestige < 0) { result *= -1f; }
+        //float value = 1.07f;// * currentPrestige;
+        //float result = (Mathf.Pow(value, -currentPrestige)) + 15f;
+        //if (currentPrestige < 0) { result *= -1f; }
+        float result = 0f;
+        if (currentPrestige >= 0f) {
+            result = currentPrestige - 50f;
+        } else {
+            result = currentPrestige * 2f;
+        }
         return result;
     }
 
     //Formula for calculation of happiness based on current sanity, meaning what's the happiness equivalent given the sanity
     private float CalculateSanityImpact(float currentSanity) {
-        float value = 1.08f;// * currentSanity;
-        float result = Mathf.Pow(value, -currentSanity);
-        if (currentSanity < 0) { result *= -1f; }
+        //float value = 1.08f;// * currentSanity;
+        //float result = Mathf.Pow(value, -currentSanity);
+        //if (currentSanity < 0) { result *= -1f; }
+        float result = 0f;
+        if (currentSanity >= 0f) {
+            result = ((4f * currentSanity) / 20f) + 70f;
+        } else {
+            result = Mathf.Pow((currentSanity / 5f), 1.7f);
+        }
         return result;
     }
 
     //Formula for calculation of happiness based on current safety, meaning what's the happiness equivalent given the safety
     private float CalculateSafetyImpact(float currentSafety) {
         //return (0.2f * ((float)currentSafety)) + 150f;
-        float result = (Mathf.Pow(1.045f, -currentSafety)) + 5f;
-        if (currentSafety < 0) { result *= -1f; }
+        //float result = (Mathf.Pow(1.045f, -currentSafety)) + 5f;
+        //if (currentSafety < 0) { result *= -1f; }
+        float result = 0f;
+        if (currentSafety >= 0f) {
+            result = 20f;
+        } else {
+            result = ((100f * currentSafety) / 25f) - 50f;
+        }
         return result;
     }
     private float GetDistanceModifier(HexTile from, HexTile to) {

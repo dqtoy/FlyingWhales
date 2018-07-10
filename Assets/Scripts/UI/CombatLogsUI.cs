@@ -24,6 +24,8 @@ public class CombatLogsUI : UIMenu {
 		_currentlyShowingCombat = combat;
         isShowing = true;
         this.gameObject.SetActive(true);
+        SideACharacters();
+        SideBCharacters();
         //logsScrollView.ResetPosition();
     }
 
@@ -32,8 +34,6 @@ public class CombatLogsUI : UIMenu {
         this.gameObject.SetActive(false);
     }
 	public void UpdateCombatLogs(){
-		SideACharacters ();
-		SideBCharacters ();
 		CombatLogs ();
 	}
 	private void CombatLogs() {

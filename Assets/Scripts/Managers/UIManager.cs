@@ -171,6 +171,14 @@ public class UIManager : MonoBehaviour {
     private void UpdateUI() {
         dateLbl.SetText(GameManager.Instance.days.ToString() + " " + LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + ", " + GameManager.Instance.year.ToString()
             + " (Tick " + GameManager.Instance.hour + ")");
+
+        UpdateCharacterInfo();
+        UpdateFactionInfo();
+        UpdateHexTileInfo();
+        UpdateLandmarkInfo();
+        UpdateMonsterInfo();
+        UpdatePartyInfo();
+        UpdateCombatLogs();
     }
 
     #region World Controls
@@ -607,6 +615,23 @@ public class UIManager : MonoBehaviour {
         }
     }
     #endregion
+    #region Combat Info
+    [Space(10)]
+    [Header("Combat History")]
+    [SerializeField] internal CombatLogsUI combatLogUI;
+    public void ShowCombatLog(ECS.Combat combat) {
+        //if(questLogUI.isShowing){
+        //	questLogUI.HideQuestLogs ();
+        //}
+        combatLogUI.ShowCombatLogs(combat);
+        combatLogUI.UpdateCombatLogs();
+    }
+    public void UpdateCombatLogs() {
+        if (combatLogUI.isShowing) {
+            combatLogUI.UpdateCombatLogs();
+        }
+    }
+    #endregion
 
     #region Player Actions
     [Space(10)]
@@ -705,19 +730,6 @@ public class UIManager : MonoBehaviour {
     }
     public void HideConsole() {
         consoleUI.HideConsole();
-    }
-    #endregion
-
-    #region Combat History Logs
-    [Space(10)]
-    [Header("Combat History")]
-    [SerializeField] internal CombatLogsUI combatLogUI;
-    public void ShowCombatLog(ECS.Combat combat) {
-        //if(questLogUI.isShowing){
-        //	questLogUI.HideQuestLogs ();
-        //}
-        combatLogUI.ShowCombatLogs(combat);
-        combatLogUI.UpdateCombatLogs();
     }
     #endregion
 

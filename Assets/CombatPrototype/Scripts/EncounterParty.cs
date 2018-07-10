@@ -7,16 +7,16 @@ public class EncounterParty : MonoBehaviour {
 
 	private List<ECS.CharacterSetup> _characterSetups;
 
-	internal void Initialize(){
-		_characterSetups = new List<ECS.CharacterSetup> ();
-		ConstructAllCharacterSetups ();
-	}
-	private void ConstructAllCharacterSetups(){
-		for (int i = 0; i < partyMembers.Length; i++) {
-			ECS.CharacterSetup charSetup = ECS.CombatManager.Instance.GetBaseCharacterSetup(partyMembers[i].name);
-			_characterSetups.Add(charSetup);
-		}	
-	}
+	//internal void Initialize(){
+	//	_characterSetups = new List<ECS.CharacterSetup> ();
+	//	//ConstructAllCharacterSetups ();
+	//}
+	//private void ConstructAllCharacterSetups(){
+	//	for (int i = 0; i < partyMembers.Length; i++) {
+	//		ECS.CharacterSetup charSetup = ECS.CombatManager.Instance.GetBaseCharacterSetup(partyMembers[i].name);
+	//		_characterSetups.Add(charSetup);
+	//	}	
+	//}
 
 	//internal List<ECS.Character> GetAllCharacters(DungeonLandmark originLandmark = null){
 	//	List<ECS.Character> characters = new List<ECS.Character> ();
