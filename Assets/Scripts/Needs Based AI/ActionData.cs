@@ -12,6 +12,7 @@ public class ActionData {
     public int currentDay;
     public bool isDone;
     public bool isWaiting; //is still waiting from other thread?
+    public RESOURCE depositingResource;
 
     private CharacterActionAdvertisement[] choices;
     private ActionThread actionThread;
