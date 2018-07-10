@@ -27,6 +27,8 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
     [Header("Hair")]
     [SerializeField] private Image hair;
     [SerializeField] private Image hairBack;
+    [SerializeField] private Image hairOverlay;
+    [SerializeField] private Image hairBackOverlay;
 
     [Header("Body")]
     [SerializeField] private Image body;
@@ -102,11 +104,15 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
         HairSetting chosenHairSettings = CharacterManager.Instance.GetHairSprite(index, _imgSize, _portraitSettings.race, _portraitSettings.gender);
         //Sprite hairSprite = CharacterManager.Instance.GetHairSprite(index, _imgSize, _character.);
         hair.sprite = chosenHairSettings.hairSprite;
+        hairOverlay.sprite = chosenHairSettings.hairSprite;
         hairBack.sprite = chosenHairSettings.hairBackSprite;
+        hairBackOverlay.sprite = chosenHairSettings.hairBackSprite;
         if (chosenHairSettings.hairBackSprite == null) {
             hairBack.gameObject.SetActive(false);
+            hairBackOverlay.gameObject.SetActive(false);
         } else {
             hairBack.gameObject.SetActive(true);
+            hairBackOverlay.gameObject.SetActive(true);
         }
            
         if (!_ignoreSize) {
@@ -160,8 +166,11 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
         }
     }
     public void SetHairColor(Color hairColor) {
-        hair.color = hairColor;
-        hairBack.color = hairColor;
+        //hair.color = hairColor;
+        //hairBack.color = hairColor;
+        Color newColor = new Color(hairColor.r, hairColor.g, hairColor.b, 115f/255f);
+        hairOverlay.color = newColor;
+        hairBackOverlay.color = newColor;
     }
     public Color GetHairColor() {
         return hair.color;
