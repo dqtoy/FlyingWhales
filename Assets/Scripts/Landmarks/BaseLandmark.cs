@@ -365,12 +365,12 @@ public class BaseLandmark : ILocation {
         //if (reduceCivilians) {
         //    AdjustCivilians(raceOfChar, -1);
         //}
-        NewParty party = newCharacter.CreateNewParty();
-        party.CreateIcon();
+        //NewParty party = newCharacter.CreateNewParty();
+        newCharacter.party.CreateIcon();
         this.owner.AddNewCharacter(newCharacter);
-        this.AddCharacterToLocation(party);
+        this.AddCharacterToLocation(newCharacter.party);
         //this.AddCharacterHomeOnLandmark(newCharacter);
-        party.icon.SetPosition(this.tileLocation.transform.position);
+        newCharacter.party.icon.SetPosition(this.tileLocation.transform.position);
         //if (charRole != CHARACTER_ROLE.FOLLOWER) {
         //    //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
         //    if (determineAction) {

@@ -9,7 +9,7 @@ public class StartupManager : MonoBehaviour {
         LevelLoaderManager.UpdateLoadingInfo("Initializing Data...");
         DataConstructor.Instance.InitializeData();
         ECS.CombatManager.Instance.Initialize();
-        EncounterPartyManager.Instance.Initialize ();
+        //EncounterPartyManager.Instance.Initialize ();
 		MaterialManager.Instance.Initialize ();
 		ProductionManager.Instance.Initialize ();
 		TaskManager.Instance.Initialize ();
