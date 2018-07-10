@@ -737,6 +737,7 @@ public enum LANDMARK_TYPE {
     FARM,
     GOLD_MINE,
     LUMBERYARD,
+    PALACE,
 }
 public enum WEIGHTED_ACTION_REQS {
     NONE,
@@ -888,6 +889,7 @@ public enum TASK_STATUS {
 }
 public enum QUEST_TYPE { 
     RELEASE_CHARACTER,
+    BUILD_STRUCTURE,
 }
 public enum TASK_TYPE { //This is the list of actions a character can do on it's own
     QUEST,
@@ -1273,6 +1275,8 @@ public enum ACTION_TYPE {
     PLAY,
     FLAIL,
     SELFMUTILATE,
+    DEPOSIT,
+    CHANGE_CLASS,
 }
 
 public enum OBJECT_TYPE {

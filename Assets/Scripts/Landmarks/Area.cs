@@ -12,9 +12,14 @@ public class Area {
     public HexTile coreTile { get; private set; }
     public Color areaColor { get; private set; }
     public Faction owner { get; private set; }
+    public List<string> orderClasses { get; private set; }
 
     public List<BaseLandmark> landmarks { get { return tiles.Where(x => x.landmarkOnTile != null).Select(x => x.landmarkOnTile).ToList(); } }
     public int totalCivilians { get { return landmarks.Sum(x => x.civilianCount); } }
+
+    public List<string> excessClasses;
+    public List<string> missingClasses;
+    public List<ICharacter> residents;
 
     public Area(HexTile coreTile, AREA_TYPE areaType) {
         id = Utilities.SetID(this);
@@ -24,6 +29,7 @@ public class Area {
         SetAreaType(areaType);
         SetCoreTile(coreTile);
         //AddTile(coreTile);
+        ScheduleStartOfMonthActions();
     }
     public Area(AreaSaveData data) {
         id = Utilities.SetID(this, data.areaID);
@@ -37,6 +43,7 @@ public class Area {
         SetCoreTile(GridMap.Instance.GetHexTile(data.coreTileID));
 #endif
         AddTile(Utilities.GetTilesFromIDs(data.tileData));
+        ScheduleStartOfMonthActions();
     }
 
     public void SetName(string name) {
@@ -143,6 +150,45 @@ public class Area {
     #region Utilities
     public bool HasLandmarkOfType(LANDMARK_TYPE type) {
         return landmarks.Where(x => x.specificLandmarkType == type).Any();
+    }
+    private void StartOfMonth() {
+        UpdateExcessAndMissingClasses();
+        ScheduleStartOfMonthActions();
+    }
+    private void ScheduleStartOfMonthActions() {
+        GameDate gameDate = GameManager.Instance.FirstDayOfTheMonth();
+        gameDate.AddMonths(1);
+        SchedulingManager.Instance.AddEntry(gameDate, () => StartOfMonth());
+    }
+    #endregion
+
+    #region Classes
+    private void UpdateExcessAndMissingClasses() {
+        missingClasses.Clear();
+        excessClasses.Clear();
+        List<ICharacter> newResidents = new List<ICharacter>(residents);
+        int count = newResidents.Count;
+        for (int i = 0; i < count; i++) {
+            ICharacter resident = ResidentsHasClass(orderClasses[i], newResidents);
+            if (resident != null) {
+                newResidents.Remove(resident);
+            } else {
+                missingClasses.Add(orderClasses[i]);
+            }
+        }
+        for (int i = 0; i < newResidents.Count; i++) {
+            if(newResidents[i].characterClass != null) {
+                excessClasses.Add(newResidents[i].characterClass.className);
+            }
+        }
+    }
+    private ICharacter ResidentsHasClass(string className, List<ICharacter> residents) {
+        for (int i = 0; i < residents.Count; i++) {
+            if(residents[i].characterClass != null && residents[i].characterClass.className == className) {
+                return residents[i];
+            }
+        }
+        return null;
     }
     #endregion
 }

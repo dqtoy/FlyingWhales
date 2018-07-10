@@ -2058,6 +2058,7 @@ namespace ECS {
             //TODO: Change data as needed
             CharacterClass charClass = CharacterManager.Instance.classesDictionary[className];
             _characterClass = charClass.CreateNewCopy();
+            OnCharacterClassChange();
         }
 		public void SetName(string newName){
 			_name = newName;
@@ -2585,6 +2586,7 @@ namespace ECS {
         }
         public void SetHome(Area newHome) {
             _home = newHome;
+            newHome.residents.Add(this);
         }
         public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
             this._homeLandmark = newHomeLandmark;

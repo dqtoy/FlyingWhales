@@ -131,9 +131,6 @@ public class GameManager : MonoBehaviour {
             if (days > daysInMonth[this.month]) {
                 this.days = 1;
                 this.month += 1;
-                if (Messenger.eventTable.ContainsKey("OnMonthEnd")) {
-                    Messenger.Broadcast("OnMonthEnd");
-                }
                 if (this.month > 12) {
                     this.month = 1;
                     this.year += 1;
