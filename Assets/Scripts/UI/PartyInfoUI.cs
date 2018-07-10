@@ -17,10 +17,10 @@ public class PartyInfoUI : UIMenu {
         get { return _data as NewParty; }
     }
 
-    internal override void Initialize() {
-        base.Initialize();
-        Messenger.AddListener(Signals.UPDATE_UI, UpdatePartyInfo);
-    }
+    //internal override void Initialize() {
+    //    base.Initialize();
+    //    //Messenger.AddListener(Signals.UPDATE_UI, UpdatePartyInfo);
+    //}
 
     public override void OpenMenu() {
         base.OpenMenu();

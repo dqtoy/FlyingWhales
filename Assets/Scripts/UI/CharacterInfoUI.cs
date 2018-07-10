@@ -58,7 +58,7 @@ public class CharacterInfoUI : UIMenu {
     internal override void Initialize() {
         base.Initialize();
         isWaitingForAttackTarget = false;
-        Messenger.AddListener(Signals.UPDATE_UI, UpdateCharacterInfo);
+        //Messenger.AddListener(Signals.UPDATE_UI, UpdateCharacterInfo);
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         Messenger.AddListener<BaseLandmark>(Signals.PLAYER_LANDMARK_CREATED, OnPlayerLandmarkCreated);
         //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);

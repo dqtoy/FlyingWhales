@@ -16,10 +16,10 @@ public class MonsterInfoUI : UIMenu {
         get { return _data as Monster; }
     }
 
-    internal override void Initialize() {
-        base.Initialize();
-        Messenger.AddListener(Signals.UPDATE_UI, UpdateMonsterInfo);
-    }
+    //internal override void Initialize() {
+    //    base.Initialize();
+    //    //Messenger.AddListener(Signals.UPDATE_UI, UpdateMonsterInfo);
+    //}
 
     public override void OpenMenu() {
         base.OpenMenu();

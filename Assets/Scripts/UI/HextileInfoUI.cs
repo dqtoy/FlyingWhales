@@ -18,11 +18,11 @@ public class HextileInfoUI : UIMenu {
         get { return _data as HexTile; }
     }
 
-    internal override void Initialize() {
-        base.Initialize();
-        Messenger.AddListener("UpdateUI", UpdateHexTileInfo);
-        //tweenPos.AddOnFinished(() => UpdateHexTileInfo());
-    }
+    //internal override void Initialize() {
+    //    base.Initialize();
+    //    Messenger.AddListener("UpdateUI", UpdateHexTileInfo);
+    //    //tweenPos.AddOnFinished(() => UpdateHexTileInfo());
+    //}
 
     public override void OpenMenu() {
         base.OpenMenu();

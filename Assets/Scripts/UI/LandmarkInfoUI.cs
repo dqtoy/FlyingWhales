@@ -39,7 +39,7 @@ public class LandmarkInfoUI : UIMenu {
     internal override void Initialize() {
         base.Initialize();
         SetWaitingForAttackState(false);
-        Messenger.AddListener("UpdateUI", UpdateLandmarkInfo);
+        //Messenger.AddListener("UpdateUI", UpdateLandmarkInfo);
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
 
         logHistoryItems = new LogHistoryItem[MAX_HISTORY_LOGS];
