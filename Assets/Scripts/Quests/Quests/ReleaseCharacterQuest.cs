@@ -9,7 +9,7 @@ public class ReleaseCharacterQuest : Quest {
     }
 
     #region overrides
-    public override CharacterAction GetQuestAction(Character character, CharacterQuestData data) {
+    public override CharacterAction GetQuestAction(Character character, CharacterQuestData data, ref IObject targetObject) {
         ReleaseCharacterQuestData questData = data as ReleaseCharacterQuestData;
         if (character.party.computedPower >= questData.requiredPower) { //if current power is greater than or equal to Required Power
             if (questData.HasHostilesInPath()) { //check if there are hostiles along the path
@@ -17,12 +17,14 @@ public class ReleaseCharacterQuest : Quest {
                 NewParty nearestHostile = questData.GetFirstHostileInPath();
                 if (nearestHostile.computedPower <= character.party.computedPower) { //if within power range, Attack action
                     data.SetLastActionDesperateState(false);
+                    targetObject = nearestHostile.icharacterObject;
                     return nearestHostile.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
                 } else { //if above power range, set Required Power value
                     questData.SetRequiredPower(nearestHostile.computedPower);
                 }
             } else { //if no, Release target
                 data.SetLastActionDesperateState(false);
+                targetObject = questData.targetCharacter.party.characterObject;
                 return questData.targetCharacter.party.characterObject.currentState.GetAction(ACTION_TYPE.RELEASE);
             }
         }
@@ -48,10 +50,10 @@ public class ReleaseCharacterQuest : Quest {
             //    //if there is a Shop from non-hostile settlements, Equipment is available
             //    availablePowerSources.Add(ReleaseCharacterQuestData.Gain_Power_Type.Equipment);
             //}
-            //if (IsDungeonTypeAreaAvailable(character)) {
-            //    //if there is at least one Dungeon type area in the region, Hunt is available
-            //    availablePowerSources.Add(ReleaseCharacterQuestData.Gain_Power_Type.Hunt);
-            //}
+            if (IsDungeonTypeAreaAvailable(character)) {
+                //if there is at least one Dungeon type area in the region, Hunt is available
+                availablePowerSources.Add(ReleaseCharacterQuestData.Gain_Power_Type.Hunt);
+            }
             //randomize between available options and set it as Gain Power Type
             if (availablePowerSources.Count > 0) {
                 questData.SetGainPowerType(availablePowerSources[Utilities.rng.Next(0, availablePowerSources.Count)]);
@@ -63,15 +65,17 @@ public class ReleaseCharacterQuest : Quest {
             if (!data.lastActionWasDesperate) {
                 //perform character's Desperate Action
                 data.SetLastActionDesperateState(true);
+                targetObject = character.party.icharacterObject;
                 return character.GetRandomDesperateAction();
             } else {
                 //after performing the Desperate Action, check again if there is a Gain Power Type available, 
                 //if still none, 50% chance to perform character's Desperate Action and loop this again, 50% chance to abandon Quest
                 if (Utilities.rng.Next(0, 2) == 0) {
                     data.SetLastActionDesperateState(true);
+                    targetObject = character.party.icharacterObject;
                     return character.GetRandomDesperateAction();
                 } else {
-                    //TODO: abandon quest
+                    data.AbandonQuest(); //abandon quest
                 }
             }
         } else {
@@ -79,17 +83,17 @@ public class ReleaseCharacterQuest : Quest {
             //perform action, based on gain power type
             switch (questData.gainPowerType) {
                 case ReleaseCharacterQuestData.Gain_Power_Type.Mentor:
-                    return GetMentorAction(character, questData);
+                    return GetMentorAction(character, questData, ref targetObject);
                 case ReleaseCharacterQuestData.Gain_Power_Type.Equipment:
                     break;
                 case ReleaseCharacterQuestData.Gain_Power_Type.Hunt:
-                    break;
+                    return GetHuntAction(character, questData, ref targetObject);
                 default:
                     break;
             }
 
         }
-        return base.GetQuestAction(character, data);
+        return base.GetQuestAction(character, data, ref targetObject);
     }
     #endregion
 
@@ -164,7 +168,7 @@ public class ReleaseCharacterQuest : Quest {
     }
 
     #region Gain Power Type Actions
-    private CharacterAction GetMentorAction(Character character, ReleaseCharacterQuestData data) {
+    private CharacterAction GetMentorAction(Character character, ReleaseCharacterQuestData data, ref IObject targetObject) {
         if (IsCharacterStudent(character)) { //If character is already a Student of another character.
             //NOTE: This already has checking for if the mentor is dead, since this checks the characters relationships, and once a character dies, relationships are removed
             Character mentor = character.GetCharacterWithRelationshipStatus(CHARACTER_RELATIONSHIP.MENTOR);
@@ -172,6 +176,7 @@ public class ReleaseCharacterQuest : Quest {
             if (trainAction != null && trainAction.CanBeDoneBy(character.party, mentor.party.characterObject)) { //if Train action is available
                 //perform Train action on the Mentor, avoid strong hostiles
                 data.SetGainPowerType(ReleaseCharacterQuestData.Gain_Power_Type.None);//set Gain Power Type to None
+                targetObject = mentor.party.characterObject;
                 return trainAction;
             } else { //if Train action is not available
                 return character.GetRandomIdleAction(); //perform character's Idle Action
@@ -180,7 +185,29 @@ public class ReleaseCharacterQuest : Quest {
             List<Character> mentors = data.elligibleMentors.OrderBy(x => character.specificLocation.tileLocation.GetDistanceTo(x.specificLocation.tileLocation)).ToList();
             Character nearestMentor = mentors[0];
             character.party.icon.SetMovementType(MOVEMENT_TYPE.AVOID);
+            targetObject = nearestMentor.party.characterObject;
             return nearestMentor.party.characterObject.currentState.GetAction(ACTION_TYPE.ENROLL); //perform Enroll action on the Retired Hero, avoid strong hostiles
+        }
+    }
+    private CharacterAction GetHuntAction(Character character, ReleaseCharacterQuestData data, ref IObject targetObject) {
+        // List all hostile parties within the region whose Power is lower than character by at least 10%
+        List<IParty> hostiles = GetHostileCharactersFor(character);
+        //If none are available, perform Idle Action. Loop. If Idle Action performed 5 times in a row, set Gain Power Type to None
+        if (hostiles.Count > 0) {
+            //Randomly select one and perform Attack action
+            IParty chosenParty = hostiles[Random.Range(0, hostiles.Count)];
+            data.OnChooseHuntCharacter(chosenParty);
+            targetObject = chosenParty.icharacterObject;
+            return chosenParty.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
+        } else {
+            //If none are available, perform Idle Action. Loop. If Idle Action performed 5 times in a row, set Gain Power Type to None
+            data.OnDoIdleActionFromHunt();
+            if (data.idleActionsInARow >= 5) {
+                data.ResetIdleActions();
+                data.SetGainPowerType(ReleaseCharacterQuestData.Gain_Power_Type.None);
+            }
+            targetObject = character.party.characterObject;
+            return character.GetRandomIdleAction();
         }
     }
     #endregion
@@ -188,6 +215,38 @@ public class ReleaseCharacterQuest : Quest {
     #region Utilities
     private bool IsCharacterStudent(Character character) {
         return character.AlreadyHasRelationshipStatus(CHARACTER_RELATIONSHIP.MENTOR); //check if character has a character that he considers as his/her mentor
+    }
+    private List<IParty> GetHostileCharactersFor(Character character) {
+        List<IParty> hostileCharacters = new List<IParty>();
+        Region regionOfChar = character.specificLocation.tileLocation.region;
+        // List all hostile parties within the region whose Power is lower than character by at least 10%
+        for (int i = 0; i < regionOfChar.landmarks.Count; i++) {
+            BaseLandmark baseLandmark = regionOfChar.landmarks[i];
+            for (int j = 0; j < baseLandmark.charactersAtLocation.Count; j++) {
+                IParty currParty = baseLandmark.charactersAtLocation[j];
+                if (currParty.id == character.party.id) {
+                    continue; //skip
+                }
+                float powerComparison = GetPowerComparison(character.party, currParty);
+                if (powerComparison < 0.10f) {
+                    continue; //skip. power comparison is less than 10%
+                }
+                if (currParty is CharacterParty) {
+                    Character partyMainChar = (currParty as CharacterParty).mainCharacter as Character;
+                    Relationship rel = character.GetRelationshipWith(partyMainChar);
+                    if (rel != null && rel.IsNegative()) {
+                        continue; //skip. relationship is not negative
+                    }
+                }
+                hostileCharacters.Add(currParty);
+            }
+        }
+        return hostileCharacters;
+    }
+    private float GetPowerComparison(IParty party1, IParty party2) {
+        //how much stronger is party1 compared to party2?
+        float difference = party1.computedPower - party2.computedPower;
+        return party1.computedPower / difference;
     }
     #endregion
 }

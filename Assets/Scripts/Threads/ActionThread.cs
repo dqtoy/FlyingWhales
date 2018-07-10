@@ -56,10 +56,14 @@ public class ActionThread : Multithread {
             //        //wait until path has completed computation
             //    }
             //}
-            chosenAction = chosenQuest.GetNextQuestAction();
-            if (chosenAction != null) {
-                return true;
+            IObject targetObject = null;
+            chosenAction = chosenQuest.GetNextQuestAction(ref targetObject);
+            chosenObject = targetObject;
+            if (chosenAction == null) {
+                chosenObject = _party.characterObject;
+                chosenAction = _party.mainCharacter.GetRandomIdleAction(); //Characters with no Quests with Happiness above 100 should perform a random Idle Action
             }
+            return true;
         }
         return false;
     }

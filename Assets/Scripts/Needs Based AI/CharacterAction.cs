@@ -85,7 +85,9 @@ public class CharacterAction {
         party.actionData.EndAction();
     }
     public virtual void DoneDuration(CharacterParty party, IObject targetObject) { }
-    public virtual void SuccessEndAction(CharacterParty party) { }
+    public virtual void SuccessEndAction(CharacterParty party) {
+        Messenger.Broadcast(Signals.ACTION_SUCCESS, party, this);
+    }
     #endregion
 
     #region Filters

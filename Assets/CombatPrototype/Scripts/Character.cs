@@ -2020,10 +2020,13 @@ namespace ECS {
                 _questData.Add(questData);
             }
         }
+        public void RemoveQuestData(CharacterQuestData questData) {
+            _questData.Remove(questData);
+        }
         #endregion
 
         #region Tags
-		public void AssignInitialTags(){
+        public void AssignInitialTags(){
 			int tagChance = UnityEngine.Random.Range (0, 100);
 			CHARACTER_TAG[] initialTags = (CHARACTER_TAG[])System.Enum.GetValues (typeof(CHARACTER_TAG));
 			for (int j = 0; j < initialTags.Length; j++) {

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public interface ICharacterObject: IObject {
     NewParty iparty { get; }
+
+    bool OwnsAction(CharacterAction action);
     //ObjectState currentState { get; }
 
     //ObjectState GetState(string state);

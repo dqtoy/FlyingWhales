@@ -27,10 +27,14 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
     [Header("Hair")]
     [SerializeField] private Image hair;
     [SerializeField] private Image hairBack;
+    [SerializeField] private Image hairOverlay;
+    [SerializeField] private Image hairBackOverlay;
 
     [Header("Body")]
     [SerializeField] private Image body;
 
+    [Header("Monster")]
+    [SerializeField] private Image wholeImage;
     #region getters/setters
     public ECS.Character thisCharacter {
         get { return _character as ECS.Character; }
@@ -40,16 +44,33 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
     public void GeneratePortrait(ICharacter character, IMAGE_SIZE imgSize, bool ignoreSize = false) {
         _character = character;
         _ignoreSize = ignoreSize;
-        _portraitSettings = character.portraitSettings;
         SetImageSize(imgSize, ignoreSize);
-        SetBody(character.portraitSettings.bodyIndex);
-        SetHead(character.portraitSettings.headIndex);
-        SetEyes(character.portraitSettings.eyesIndex);
-        SetEyebrows(character.portraitSettings.eyesIndex);
-        SetNose(character.portraitSettings.noseIndex);
-        SetMouth(character.portraitSettings.mouthIndex);
-        SetHair(character.portraitSettings.hairIndex);
-        SetHairColor(character.portraitSettings.hairColor);
+        _portraitSettings = character.portraitSettings;
+        if (character is ECS.Character) {
+            SetBody(character.portraitSettings.bodyIndex);
+            SetHead(character.portraitSettings.headIndex);
+            SetEyes(character.portraitSettings.eyesIndex);
+            SetEyebrows(character.portraitSettings.eyesIndex);
+            SetNose(character.portraitSettings.noseIndex);
+            SetMouth(character.portraitSettings.mouthIndex);
+            SetHair(character.portraitSettings.hairIndex);
+            SetHairColor(character.portraitSettings.hairColor);
+            wholeImage.gameObject.SetActive(false);
+        } else if (character is Monster) {
+            body.gameObject.SetActive(false);
+            head.gameObject.SetActive(false);
+            eyes.gameObject.SetActive(false);
+            eyebrows.gameObject.SetActive(false);
+            nose.gameObject.SetActive(false);
+            mouth.gameObject.SetActive(false);
+            hair.gameObject.SetActive(false);
+            hairBack.gameObject.SetActive(false);
+            hairOverlay.gameObject.SetActive(false);
+            hairBackOverlay.gameObject.SetActive(false);
+            wholeImage.sprite = MonsterManager.Instance.GetMonsterSprite(character.name);
+            wholeImage.gameObject.SetActive(true);
+        }
+        
     }
     public void GeneratePortrait(PortraitSettings portraitSettings, IMAGE_SIZE imgSize, bool ignoreSize = false) {
         _ignoreSize = ignoreSize;
@@ -102,11 +123,15 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
         HairSetting chosenHairSettings = CharacterManager.Instance.GetHairSprite(index, _imgSize, _portraitSettings.race, _portraitSettings.gender);
         //Sprite hairSprite = CharacterManager.Instance.GetHairSprite(index, _imgSize, _character.);
         hair.sprite = chosenHairSettings.hairSprite;
+        hairOverlay.sprite = chosenHairSettings.hairSprite;
         hairBack.sprite = chosenHairSettings.hairBackSprite;
+        hairBackOverlay.sprite = chosenHairSettings.hairBackSprite;
         if (chosenHairSettings.hairBackSprite == null) {
             hairBack.gameObject.SetActive(false);
+            hairBackOverlay.gameObject.SetActive(false);
         } else {
             hairBack.gameObject.SetActive(true);
+            hairBackOverlay.gameObject.SetActive(true);
         }
            
         if (!_ignoreSize) {
@@ -160,8 +185,11 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
         }
     }
     public void SetHairColor(Color hairColor) {
-        hair.color = hairColor;
-        hairBack.color = hairColor;
+        //hair.color = hairColor;
+        //hairBack.color = hairColor;
+        Color newColor = new Color(hairColor.r, hairColor.g, hairColor.b, 115f/255f);
+        hairOverlay.color = newColor;
+        hairBackOverlay.color = newColor;
     }
     public Color GetHairColor() {
         return hair.color;
