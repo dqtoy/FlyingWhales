@@ -18,10 +18,7 @@ public class BaseLandmark : ILocation {
     protected bool _isOccupied;
     protected string _landmarkName;
     protected Faction _owner;
-    //protected List<Character> _charactersWithHomeOnLandmark;
-    //protected Dictionary<RACE, int> _civiliansByRace;
-    //protected int _currDurability;
-    //protected int _totalDurability;
+    protected List<Character> _charactersWithHomeOnLandmark;
     protected LandmarkObject _landmarkVisual;
     protected List<Character> _prisoners; //list of prisoners on landmark
     protected List<Log> _history;
@@ -32,20 +29,12 @@ public class BaseLandmark : ILocation {
     protected Dictionary<Character, GameDate> _characterTraces; //Lasts for 60 days
     protected List<LANDMARK_TAG> _landmarkTags;
     protected StructureObj _landmarkObj;
-    //protected List<IObject> _objects;
     private Dictionary<RESOURCE, int> _resourceInventory;
     private List<HexTile> _nextCorruptedTilesToCheck;
     private bool _hasBeenCorrupted;
     protected bool _isAttackingAnotherLandmark;
-    //private List<HexTile> _diagonalRightTiles;
-    //private List<HexTile> _diagonalLeftTiles;
-    //private List<HexTile> _horizontalTiles;
     private List<HexTile> _wallTiles;
     public bool hasAdjacentCorruptedLandmark;
-    //private int _diagonalLeftBlocked;
-    //private int _diagonalRightBlocked;
-    //private int _horizontalBlocked;
-    //private Dictionary<BaseLandmark, string> _blockedLandmarkDirection;
     private int _civilianCount;
 
     #region getters/setters
@@ -76,15 +65,18 @@ public class BaseLandmark : ILocation {
     public Faction owner {
         get { return _owner; }
     }
+    public List<Character> charactersWithHomeOnLandmark {
+        get { return _charactersWithHomeOnLandmark; }
+    }
   //  public virtual int totalPopulation {
-		//get { return civilians + CharactersCount(); }
+  //get { return civilians + CharactersCount(); }
   //  }
-	//public int civilians {
-	//	get { return _civiliansByRace.Sum(x => x.Value); }
- //   }
- //   public Dictionary<RACE, int> civiliansByRace {
- //       get { return _civiliansByRace; }
- //   }
+  //public int civilians {
+  //	get { return _civiliansByRace.Sum(x => x.Value); }
+  //   }
+  //   public Dictionary<RACE, int> civiliansByRace {
+  //       get { return _civiliansByRace; }
+  //   }
     public LandmarkObject landmarkVisual {
         get { return _landmarkVisual; }
     }
@@ -150,7 +142,7 @@ public class BaseLandmark : ILocation {
     public BaseLandmark() {
         _connections = new List<BaseLandmark>();
         _owner = null; //landmark has no owner yet
-        //_charactersWithHomeOnLandmark = new List<Character>();
+        _charactersWithHomeOnLandmark = new List<Character>();
         _prisoners = new List<Character>();
         _history = new List<Log>();
         _combatHistory = new Dictionary<int, Combat>();
@@ -369,7 +361,7 @@ public class BaseLandmark : ILocation {
         newCharacter.party.CreateIcon();
         this.owner.AddNewCharacter(newCharacter);
         this.AddCharacterToLocation(newCharacter.party);
-        //this.AddCharacterHomeOnLandmark(newCharacter);
+        this.AddCharacterHomeOnLandmark(newCharacter);
         newCharacter.party.icon.SetPosition(this.tileLocation.transform.position);
         //if (charRole != CHARACTER_ROLE.FOLLOWER) {
         //    //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
@@ -379,32 +371,14 @@ public class BaseLandmark : ILocation {
         //}
         return newCharacter;
     }
-    /*
-     Create a new character, given a role and class.
-     This will also subtract from the civilian population.
-         */
-    //public Character CreateNewCharacter(RACE raceOfChar, CHARACTER_ROLE charRole, string className, bool determineAction = true) {
-    //    Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar);
-        
-    //    newCharacter.SetHome(this);
-    //    //if (reduceCivilians) {
-    //    //    AdjustCivilians(raceOfChar, -1);
-    //    //}
-    //    if (owner != null) {
-    //        newCharacter.SetFaction(owner);
-    //        owner.AddNewCharacter(newCharacter);
-    //    }
-    //    newCharacter.CreateIcon();
-    //    AddCharacterToLocation(newCharacter);
-    //    AddCharacterHomeOnLandmark(newCharacter);
-    //    newCharacter.icon.SetPosition(this.tileLocation.transform.position);
-    //    if (determineAction) {
-    //        newCharacter.DetermineAction();
-    //    }
-    //    Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
-    //    return newCharacter;
-    //}
-
+    public void AddCharacterHomeOnLandmark(Character character) {
+        if (!_charactersWithHomeOnLandmark.Contains(character)) {
+            _charactersWithHomeOnLandmark.Add(character);
+        }
+    }
+    public void RemoveCharacterHomeOnLandmark(Character character) {
+        _charactersWithHomeOnLandmark.Remove(character);
+    }
 	public Character GetPrisonerByID(int id){
 		for (int i = 0; i < _prisoners.Count; i++) {
 			if (_prisoners [i].id == id){

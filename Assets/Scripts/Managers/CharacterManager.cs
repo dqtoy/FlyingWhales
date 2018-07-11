@@ -184,6 +184,7 @@ public class CharacterManager : MonoBehaviour {
             BaseLandmark homeLandmark = LandmarkManager.Instance.GetLandmarkByID(data.homeLandmarkID);
             newCharacter.SetHomeLandmark(homeLandmark);
 #if !WORLD_CREATION_TOOL
+            homeLandmark.AddCharacterHomeOnLandmark(newCharacter);
             newCharacter.SetHomeStructure(homeLandmark.landmarkObj);
 #endif
         }

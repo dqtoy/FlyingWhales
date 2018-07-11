@@ -17,6 +17,16 @@ public class RestAction : CharacterAction {
             EndAction(party, targetObject);
         }
     }
+    public override bool CanBeDoneBy(CharacterParty party, IObject targetObject) {
+        //Filter: Residents of this Structure
+        if (targetObject is StructureObj) {
+            BaseLandmark landmark = (targetObject as StructureObj).objectLocation;
+            if (landmark.charactersWithHomeOnLandmark.Contains(party.mainCharacter as ECS.Character)) {
+                return true;
+            }
+        }
+        return false;
+    }
     public override CharacterAction Clone() {
         RestAction restAction = new RestAction();
         SetCommonData(restAction);
