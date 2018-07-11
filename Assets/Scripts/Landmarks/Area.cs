@@ -48,9 +48,9 @@ public class Area {
         SetCoreTile(worldcreator.WorldCreatorManager.Instance.GetHexTile(data.coreTileID));
 #else
         SetCoreTile(GridMap.Instance.GetHexTile(data.coreTileID));
+        ScheduleStartOfMonthActions();
 #endif
         AddTile(Utilities.GetTilesFromIDs(data.tileData));
-        ScheduleStartOfMonthActions();
     }
 
     public void SetName(string name) {
@@ -196,6 +196,15 @@ public class Area {
             }
         }
         return null;
+    }
+    #endregion
+
+    #region Structure Priorities
+    public void AddPriority(StructurePriority newPrio) {
+        orderStructures.Add(newPrio);
+    }
+    public void RemovePriority(StructurePriority newPrio) {
+        orderStructures.Remove(newPrio);
     }
     #endregion
 }
