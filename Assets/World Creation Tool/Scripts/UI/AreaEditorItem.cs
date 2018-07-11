@@ -82,7 +82,6 @@ namespace worldcreator {
             //UpdateInfo();
             WorldCreatorManager.Instance.selectionComponent.ClearSelectedTiles();
         }
-
         public void RemoveTilesFromArea() {
             List<HexTile> validSelectedTiles = new List<HexTile>(WorldCreatorManager.Instance.selectionComponent.selection
                 .Where(x => x.areaOfTile != null && x.areaOfTile.id == _area.id && _area.coreTile.id != x.id));
@@ -90,7 +89,6 @@ namespace worldcreator {
             //UpdateInfo();
             WorldCreatorManager.Instance.selectionComponent.ClearSelectedTiles();
         }
-
         public void DeleteArea() {
             LandmarkManager.Instance.RemoveArea(_area);
             _area.UnhighlightArea();
@@ -99,15 +97,11 @@ namespace worldcreator {
             }
             GameObject.Destroy(this.gameObject);
         }
-        //#region UI Events
-        //public void OnPointerEnter(PointerEventData eventData) {
-        //    _area.HighlightArea();
-        //}
-        //public void OnPointerExit(PointerEventData eventData) {
-        //    _area.UnhighlightArea();
-        //}
-        //#endregion
+        public void EditArea() {
+            WorldCreatorUI.Instance.editAreasMenu.infoEditor.Show(_area);
+        }
 
+        #region Utilities
         private void ValidateLandmarks() {
             AreaData data = LandmarkManager.Instance.GetAreaData(_area.areaType);
             List<BaseLandmark> invalidLandmarks = new List<BaseLandmark>();
@@ -122,5 +116,6 @@ namespace worldcreator {
                 LandmarkManager.Instance.DestroyLandmarkOnTile(invalidLandmarks[i].tileLocation);
             }
         }
+        #endregion
     }
 }

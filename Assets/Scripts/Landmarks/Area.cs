@@ -13,6 +13,7 @@ public class Area {
     public Color areaColor { get; private set; }
     public Faction owner { get; private set; }
     public List<string> orderClasses { get; private set; }
+    public List<StructurePriority> orderStructures { get; private set; }
 
     public List<BaseLandmark> landmarks { get { return tiles.Where(x => x.landmarkOnTile != null).Select(x => x.landmarkOnTile).ToList(); } }
     public int totalCivilians { get { return landmarks.Sum(x => x.civilianCount); } }
@@ -26,6 +27,7 @@ public class Area {
         SetName(RandomNameGenerator.Instance.GetRegionName());
         tiles = new List<HexTile>();
         residents = new List<ICharacter>();
+        orderStructures = new List<StructurePriority>();
         areaColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         SetAreaType(areaType);
         SetCoreTile(coreTile);
@@ -39,6 +41,7 @@ public class Area {
         SetName(data.areaName);
         tiles = new List<HexTile>();
         residents = new List<ICharacter>();
+        orderStructures = new List<StructurePriority>();
         areaColor = data.areaColor;
         SetAreaType(data.areaType);
 #if WORLD_CREATION_TOOL

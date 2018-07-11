@@ -13,6 +13,8 @@ namespace worldcreator {
         [SerializeField] private ScrollRect areasScrollView;
         [SerializeField] private Button createNewAreaBtn;
 
+        public AreaInfoEditor infoEditor;
+        
         public void HideMenu() {
             Messenger.RemoveListener<HexTile>(Signals.TILE_LEFT_CLICKED, CreateNewArea);
             createNewAreaBtn.interactable = true;
