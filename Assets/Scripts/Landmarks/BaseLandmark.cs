@@ -19,7 +19,7 @@ public class BaseLandmark : ILocation {
     protected string _landmarkName;
     protected Faction _owner;
     protected List<Character> _charactersWithHomeOnLandmark;
-    protected LandmarkObject _landmarkVisual;
+    protected LandmarkVisual _landmarkVisual;
     protected List<Character> _prisoners; //list of prisoners on landmark
     protected List<Log> _history;
     protected int _combatHistoryID;
@@ -77,7 +77,7 @@ public class BaseLandmark : ILocation {
   //   public Dictionary<RACE, int> civiliansByRace {
   //       get { return _civiliansByRace; }
   //   }
-    public LandmarkObject landmarkVisual {
+    public LandmarkVisual landmarkVisual {
         get { return _landmarkVisual; }
     }
 	public List<Character> prisoners {
@@ -492,7 +492,7 @@ public class BaseLandmark : ILocation {
     #endregion
 
     #region Utilities
-    public void SetLandmarkObject(LandmarkObject obj) {
+    public void SetLandmarkObject(LandmarkVisual obj) {
         _landmarkVisual = obj;
         _landmarkVisual.SetLandmark(this);
     }

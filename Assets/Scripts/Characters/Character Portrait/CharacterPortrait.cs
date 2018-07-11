@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
+public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler {
 
     private ICharacter _character;
     private IMAGE_SIZE _imgSize;
@@ -35,6 +35,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
 
     [Header("Monster")]
     [SerializeField] private Image wholeImage;
+
     #region getters/setters
     public ECS.Character thisCharacter {
         get { return _character as ECS.Character; }
@@ -86,6 +87,17 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
         SetHairColor(portraitSettings.hairColor);
     }
 
+    #region Pointer Actions
+    public void OnPointerEnter(PointerEventData eventData) {
+#if !WORLD_CREATION_TOOL
+        this.transform.localScale = new Vector3(2f, 2f, 1f);
+#endif
+    }
+    public void OnPointerExit(PointerEventData eventData) {
+#if !WORLD_CREATION_TOOL
+        this.transform.localScale = Vector3.one;
+#endif
+    }
     public void OnPointerClick(PointerEventData eventData) {
 #if !WORLD_CREATION_TOOL
         if (_character != null) {
@@ -105,7 +117,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
                 }
             }
             NewParty iparty = _character.iparty;
-            if(iparty.icharacters.Count > 1) {
+            if (iparty.icharacters.Count > 1) {
                 UIManager.Instance.ShowPartyInfo(iparty);
             } else if (iparty.icharacters.Count == 1) {
                 if (iparty.icharacters[0] is ECS.Character) {
@@ -117,7 +129,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler {
         }
 #endif
     }
-
+    #endregion
 
     public void SetHair(int index) {
         HairSetting chosenHairSettings = CharacterManager.Instance.GetHairSprite(index, _imgSize, _portraitSettings.race, _portraitSettings.gender);

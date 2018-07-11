@@ -328,7 +328,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (landmarkGO != null) {
             landmarkGO.transform.localPosition = Vector3.zero;
             landmarkGO.transform.localScale = Vector3.one;
-            _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkObject>());
+            _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkVisual>());
         }
         _region.AddLandmarkToRegion(_landmarkOnTile);
         if (_landmarkOnTile != null) {
@@ -371,7 +371,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (landmarkGO != null) {
             landmarkGO.transform.localPosition = Vector3.zero;
             landmarkGO.transform.localScale = Vector3.one;
-            _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkObject>());
+            _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkVisual>());
         }
         _region.AddLandmarkToRegion(_landmarkOnTile);
         if (_landmarkOnTile != null) {
@@ -400,7 +400,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //    }
         //} else {
             GameObject landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
-            landmarkGO.GetComponent<LandmarkObject>().SetIconState(true);
+            landmarkGO.GetComponent<LandmarkVisual>().SetIconState(true);
             return landmarkGO;
         //}
     }
@@ -412,7 +412,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         landmarkGO.transform.localScale = Vector3.one;
         _landmarkOnTile = landmark;
         if (landmarkGO != null) {
-            _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkObject>());
+            _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkVisual>());
         }
         _region.AddLandmarkToRegion(_landmarkOnTile);
         if (_landmarkOnTile != null) {

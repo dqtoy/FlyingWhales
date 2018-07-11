@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using Pathfinding;
 
-public class LandmarkObject : MonoBehaviour {
+public class LandmarkVisual : MonoBehaviour {
 
     private BaseLandmark _landmark;
 
@@ -56,6 +56,7 @@ public class LandmarkObject : MonoBehaviour {
         CharacterPortrait portrait = iparty.icon.characterPortrait;
         portrait.transform.SetParent(charactersScrollView.content.transform);
         portrait.transform.localScale = Vector3.one;
+        (portrait.transform as RectTransform).pivot = new Vector2(0.5f, 0f);
         (portrait.transform as RectTransform).sizeDelta = new Vector2(65, 65);
         portrait.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
         portrait.gameObject.SetActive(true);

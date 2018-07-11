@@ -25,16 +25,20 @@ public class Area {
         id = Utilities.SetID(this);
         SetName(RandomNameGenerator.Instance.GetRegionName());
         tiles = new List<HexTile>();
+        residents = new List<ICharacter>();
         areaColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         SetAreaType(areaType);
         SetCoreTile(coreTile);
         //AddTile(coreTile);
+#if !WORLD_CREATION_TOOL
         ScheduleStartOfMonthActions();
+#endif
     }
     public Area(AreaSaveData data) {
         id = Utilities.SetID(this, data.areaID);
         SetName(data.areaName);
         tiles = new List<HexTile>();
+        residents = new List<ICharacter>();
         areaColor = data.areaColor;
         SetAreaType(data.areaType);
 #if WORLD_CREATION_TOOL

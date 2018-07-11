@@ -124,6 +124,7 @@ public class CharacterIcon : MonoBehaviour {
     #region Visuals
     public void ReclaimPortrait() {
         characterPortrait.transform.SetParent(this.transform);
+        (characterPortrait.transform as RectTransform).pivot = new Vector2(1f, 1f);
         characterPortrait.gameObject.SetActive(false);
     }
     #endregion

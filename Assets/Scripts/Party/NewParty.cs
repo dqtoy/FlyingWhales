@@ -126,7 +126,7 @@ public class NewParty : IParty {
                 if (tile != null) {
                     return tile;
                 } else {
-                    LandmarkObject landmarkObject = collide.gameObject.GetComponent<LandmarkObject>();
+                    LandmarkVisual landmarkObject = collide.gameObject.GetComponent<LandmarkVisual>();
                     if (landmarkObject != null) {
                         return landmarkObject.landmark.tileLocation;
                     }

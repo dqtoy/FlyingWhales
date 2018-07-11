@@ -115,7 +115,7 @@ public class ArmyIcon : MonoBehaviour {
     }
     private void OnTriggerEnter2D(Collider2D other) {
         if(other.tag == "Landmark") {
-            _army.CollidedWithLandmark(other.GetComponent<LandmarkObject>().landmark);
+            _army.CollidedWithLandmark(other.GetComponent<LandmarkVisual>().landmark);
         }
     }
     private void OnDestroy() {
