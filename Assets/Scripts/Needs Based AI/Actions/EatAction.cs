@@ -19,10 +19,26 @@ public class EatAction : CharacterAction {
     public override bool CanBeDoneBy(CharacterParty party, IObject targetObject) {
         //Filter: Residents of this Structure
         if (targetObject is StructureObj) {
-            BaseLandmark landmark = (targetObject as StructureObj).objectLocation;
-            if (landmark.charactersWithHomeOnLandmark.Contains(party.mainCharacter as ECS.Character)) {
-                return true;
+            StructureObj structureObj = targetObject as StructureObj;
+            if (structureObj.specificObjectType == LANDMARK_TYPE.ELVEN_HOUSES || structureObj.specificObjectType == LANDMARK_TYPE.HUMAN_HOUSES) {
+                BaseLandmark landmark = structureObj.objectLocation;
+                if (landmark.charactersWithHomeOnLandmark.Contains(party.mainCharacter as ECS.Character)) {
+                    return true;
+                }
+            } else if (structureObj.specificObjectType == LANDMARK_TYPE.INN) {
+                if (party.mainCharacter.faction != null) {
+                    Faction landmarkFaction = structureObj.objectLocation.tileLocation.areaOfTile.owner;
+                    if (landmarkFaction != null) {
+                        Faction characterFaction = party.mainCharacter.faction;
+                        FactionRelationship rel = FactionManager.Instance.GetRelationshipBetween(landmarkFaction, characterFaction);
+                        if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NON_HOSTILE) {
+                            return true;
+                        }
+                    }
+
+                }
             }
+
         }
         return false;
     }
