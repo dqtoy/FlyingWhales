@@ -27,6 +27,7 @@ public class Area {
         SetName(RandomNameGenerator.Instance.GetRegionName());
         tiles = new List<HexTile>();
         residents = new List<ICharacter>();
+        orderClasses = new List<string>();
         orderStructures = new List<StructurePriority>();
         areaColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         SetAreaType(areaType);
@@ -41,7 +42,16 @@ public class Area {
         SetName(data.areaName);
         tiles = new List<HexTile>();
         residents = new List<ICharacter>();
-        orderStructures = new List<StructurePriority>();
+        if (data.orderClasses != null) {
+            orderClasses = data.orderClasses;
+        } else {
+            orderClasses = new List<string>();
+        }
+        if (data.orderStructures != null) {
+            orderStructures = data.orderStructures;
+        } else {
+            orderStructures = new List<StructurePriority>();
+        }
         areaColor = data.areaColor;
         SetAreaType(data.areaType);
 #if WORLD_CREATION_TOOL
@@ -197,13 +207,19 @@ public class Area {
         }
         return null;
     }
+    public void AddClassPriority(string newPrio) {
+        orderClasses.Add(newPrio);
+    }
+    public void RemoveClassPriority(int index) {
+        orderClasses.RemoveAt(index);
+    }
     #endregion
 
     #region Structure Priorities
-    public void AddPriority(StructurePriority newPrio) {
+    public void AddStructurePriority(StructurePriority newPrio) {
         orderStructures.Add(newPrio);
     }
-    public void RemovePriority(StructurePriority newPrio) {
+    public void RemoveStructurePriority(StructurePriority newPrio) {
         orderStructures.Remove(newPrio);
     }
     #endregion

@@ -62,7 +62,7 @@ public class StructurePriorityItem : MonoBehaviour {
         worldcreator.WorldCreatorUI.Instance.editAreasMenu.infoEditor.LoadStructurePriorities();
     }
     public void Remove() {
-        worldcreator.WorldCreatorUI.Instance.editAreasMenu.infoEditor.currentArea.RemovePriority(item);
+        worldcreator.WorldCreatorUI.Instance.editAreasMenu.infoEditor.currentArea.RemoveStructurePriority(item);
         worldcreator.WorldCreatorUI.Instance.editAreasMenu.infoEditor.LoadStructurePriorities();
     }
 }
