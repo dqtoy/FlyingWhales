@@ -2023,6 +2023,7 @@ namespace ECS {
         public void RemoveQuestData(CharacterQuestData questData) {
             _questData.Remove(questData);
         }
+
         #endregion
 
         #region Tags

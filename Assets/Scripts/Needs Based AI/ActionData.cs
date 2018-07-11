@@ -6,13 +6,13 @@ using ECS;
 public class ActionData {
     private CharacterParty _party;
     public CharacterAction currentAction;
+    public CharacterQuestData questDataAssociatedWithCurrentAction;
     public IObject currentTargetObject;
     //public ChainAction currentChainAction;
     public object specificTarget;
     public int currentDay;
     public bool isDone;
     public bool isWaiting; //is still waiting from other thread?
-    public RESOURCE depositingResource;
 
     private CharacterActionAdvertisement[] choices;
     private ActionThread actionThread;

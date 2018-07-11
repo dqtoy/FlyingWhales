@@ -5,7 +5,7 @@ using ECS;
 
 public class ChangeClassAction : CharacterAction {
     public NewParty partyAssigned;
-    public string advertisedClassName;
+    private string _advertisedClassName;
 
     public ChangeClassAction() : base(ACTION_TYPE.CHANGE_CLASS) {
     }
@@ -21,7 +21,7 @@ public class ChangeClassAction : CharacterAction {
         GiveAllReward(party);
         if(partyAssigned != null && partyAssigned.icharacters[0] is Character) {
             Character character = partyAssigned.icharacters[0] as Character;
-            character.ChangeClass(advertisedClassName);
+            character.ChangeClass(_advertisedClassName);
         }
     }
     public override bool CanBeDone(IObject targetObject) {
@@ -32,8 +32,8 @@ public class ChangeClassAction : CharacterAction {
     }
     public override bool CanBeDoneBy(CharacterParty party, IObject targetObject) {
         if(party.icharacters[0].characterClass != null) {
-            if(targetObject.objectLocation.tileLocation.areaOfTile.excessClasses.Contains(party.icharacters[0].characterClass.className)
-                && targetObject.objectLocation.tileLocation.areaOfTile.missingClasses.Contains(advertisedClassName)) { //TODO: Subject for change
+            if(party.home.excessClasses.Contains(party.icharacters[0].characterClass.className)
+                && party.home.missingClasses.Contains(_advertisedClassName)) { //TODO: Subject for change
                 return true;
             }
         }
@@ -46,6 +46,6 @@ public class ChangeClassAction : CharacterAction {
     #endregion
 
     public void SetAdvertisedClass(string className) {
-        advertisedClassName = className;
+        _advertisedClassName = className;
     }
 }
