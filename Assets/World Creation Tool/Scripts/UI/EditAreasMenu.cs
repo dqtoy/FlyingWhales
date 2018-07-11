@@ -26,6 +26,7 @@ namespace worldcreator {
         public void Initialize() {
             LoadAreaTypeChoices();
             Messenger.AddListener<Area>(Signals.AREA_CREATED, OnAreaCreated);
+            infoEditor.Initialize();
         }
 
         public void StartNewAreaCreation() {

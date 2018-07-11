@@ -10,6 +10,8 @@ public class AreaSaveData {
     public List<int> tileData; //list of tile id's that belong to this region
     public Color32 areaColor;
     public int ownerID;
+    public List<string> orderClasses;
+    public List<StructurePriority> orderStructures;
 
     public AreaSaveData(Area area) {
         areaID = area.id;
@@ -27,6 +29,8 @@ public class AreaSaveData {
         } else {
             ownerID = area.owner.id;
         }
-        
+
+        orderClasses = area.orderClasses;
+        orderStructures = area.orderStructures;
     }
 }
