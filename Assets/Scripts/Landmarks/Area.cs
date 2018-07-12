@@ -121,9 +121,19 @@ public class Area {
             tilesToCheck.Remove(currTile);
         }
     }
-    //public List<HexTile> GetAdjacentFlatTiles() {
-
-    //}
+    public List<HexTile> GetAdjacentBuildableTiles() {
+        List<HexTile> elligibleTiles = new List<HexTile>();
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile currTile = tiles[i];
+            for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
+                HexTile currNeighbour = currTile.AllNeighbours[j];
+                if (currNeighbour.isPassable && currNeighbour.landmarkOnTile == null && currNeighbour.areaOfTile == null && !elligibleTiles.Contains(currNeighbour)) {
+                    elligibleTiles.Add(currNeighbour);
+                }
+            }
+        }
+        return elligibleTiles;
+    }
     #endregion
 
     #region Area Type

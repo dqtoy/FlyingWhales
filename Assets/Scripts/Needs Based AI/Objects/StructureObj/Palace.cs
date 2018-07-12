@@ -51,8 +51,13 @@ public class Palace : StructureObj {
         if (activeBuildStructureQuest == null) {
             if (Random.Range(0, 100) < 20) {
                 StructurePriority prio = this.objectLocation.tileLocation.areaOfTile.GetNextStructurePriority();
-                //create build structure quest
-                //BuildStructureQuest buildQuest = new BuildStructureQuest(prio.setting, )
+                List<HexTile> choices = this.objectLocation.tileLocation.areaOfTile.GetAdjacentBuildableTiles();
+                if (prio != null && choices.Count > 0) {
+                    HexTile targetTile = choices[Random.Range(0, choices.Count)];
+                    //create build structure quest
+                    BuildStructureQuest buildQuest = new BuildStructureQuest(prio.setting, targetTile);
+                    activeBuildStructureQuest = buildQuest;
+                }
             }
         }
     }
