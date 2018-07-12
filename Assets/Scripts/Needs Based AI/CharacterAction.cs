@@ -106,6 +106,17 @@ public class CharacterAction {
         }
         return true; //meets all requirements
     }
+    public virtual bool MeetsRequirements(string className, BaseLandmark landmark) {
+        if (filters != null) {
+            for (int i = 0; i < filters.Length; i++) {
+                ActionFilter currFilter = filters[i];
+                if (!currFilter.MeetsRequirements(className, landmark)) {
+                    return false; //does not meet a requirement
+                }
+            }
+        }
+        return true; //meets all requirements
+    }
     #endregion
 
     #region Utilities

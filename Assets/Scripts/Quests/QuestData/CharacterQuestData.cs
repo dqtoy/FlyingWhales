@@ -1,14 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ECS;
 
 public class CharacterQuestData {
 
     protected Quest _parentQuest;
-    protected ECS.Character _owner;
+    protected Character _owner;
     public bool lastActionWasDesperate = false;
 
-    public CharacterQuestData(Quest parentQuest, ECS.Character owner) {
+    #region getters/setters
+    public Quest parentQuest {
+        get { return _parentQuest; }
+    }
+    public Character owner {
+        get { return _owner; }
+    }
+    #endregion
+
+    public CharacterQuestData(Quest parentQuest, Character owner) {
         _parentQuest = parentQuest;
         _owner = owner;
     }

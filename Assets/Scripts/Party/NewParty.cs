@@ -91,7 +91,9 @@ public class NewParty : IParty {
         _isDead = false;
         _icharacters = new List<ICharacter>();
 #if !WORLD_CREATION_TOOL
-        Messenger.AddListener<ActionThread>("LookForAction", AdvertiseSelf);
+        Messenger.AddListener<ActionThread>(Signals.LOOK_FOR_ACTION, AdvertiseSelf);
+        Messenger.AddListener<BuildStructureQuestData>(Signals.BUILD_STRUCTURE_LOOK_ACTION, BuildStructureLookingForAction);
+
         //ConstructResourceInventory();
 #endif
     }
@@ -101,7 +103,8 @@ public class NewParty : IParty {
     public virtual void PartyDeath() {
         _isDead = true;
         this.specificLocation.RemoveCharacterFromLocation(this);
-        Messenger.RemoveListener<ActionThread>("LookForAction", AdvertiseSelf);
+        Messenger.RemoveListener<ActionThread>(Signals.LOOK_FOR_ACTION, AdvertiseSelf);
+        Messenger.RemoveListener<BuildStructureQuestData>(Signals.BUILD_STRUCTURE_LOOK_ACTION, BuildStructureLookingForAction);
         ObjectState deadState = _icharacterObject.GetState("Dead");
         _icharacterObject.ChangeState(deadState);
         GameObject.Destroy(_icon.gameObject);
@@ -185,6 +188,11 @@ public class NewParty : IParty {
     public void GoToLocation(GameObject locationGO, PATHFINDING_MODE pathfindingMode, Action doneAction = null) {
         _icon.SetActionOnTargetReached(doneAction);
         _icon.SetTargetGO(locationGO);
+    }
+    public void BuildStructureLookingForAction(BuildStructureQuestData questData) {
+        if(_currentRegion.id == questData.owner.party.currentRegion.id) {
+            questData.AddToChoicesOfAllActionsThatCanObtainResource(_icharacterObject);
+        }
     }
     #endregion
 
