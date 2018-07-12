@@ -56,6 +56,12 @@ namespace worldcreator {
             LoadInventoryChoices();
         }
 
+        public void UpdateInfo() {
+            if (_character != null) {
+                ShowCharacterInfo(_character);
+            }
+        }
+
         public void ShowCharacterInfo(Character character) {
             _character = character;
             portrait.GeneratePortrait(_character, IMAGE_SIZE.X256);
