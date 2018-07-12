@@ -48,7 +48,7 @@ public class ActionThread : Multithread {
         if (_party.questData.Count > 0 && _party.mainCharacter.role != null && _party.mainCharacter.role.happiness >= 100) {
             //when a character's happiness is 100 or above, he chooses randomly between his active quests and calls a function from it which should return an instruction of which next action to execute
             int randomIndex = Utilities.rng.Next(0, _party.questData.Count);
-            CharacterQuestData chosenQuest = _party.questData[randomIndex];
+            CharacterQuestData chosenQuestData = _party.questData[randomIndex];
             //if (chosenQuest is ReleaseCharacterQuestData) {
             //    ReleaseCharacterQuestData data = chosenQuest as ReleaseCharacterQuestData;
             //    data.UpdateVectorPath();
@@ -57,11 +57,13 @@ public class ActionThread : Multithread {
             //    }
             //}
             IObject targetObject = null;
-            chosenAction = chosenQuest.GetNextQuestAction(ref targetObject);
+            chosenAction = chosenQuestData.GetNextQuestAction(ref targetObject);
             chosenObject = targetObject;
             if (chosenAction == null) {
                 chosenObject = _party.characterObject;
                 chosenAction = _party.mainCharacter.GetRandomIdleAction(); //Characters with no Quests with Happiness above 100 should perform a random Idle Action
+            } else {
+                _party.actionData.SetActionParentQuest(chosenQuestData.parentQuest);
             }
             return true;
         }
@@ -97,6 +99,7 @@ public class ActionThread : Multithread {
         CharacterActionAdvertisement chosenActionAd = PickAction();
         chosenAction = chosenActionAd.action;
         chosenObject = chosenActionAd.targetObject;
+        _party.actionData.SetActionParentQuest(null);
         //#if UNITY_EDITOR
         //_party.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + 
         //    " Chosen action: " + chosenAction.actionType.ToString() + " at " + chosenAction.state.obj.objectLocation.landmarkName + "(" + chosenAction.state.obj.objectLocation.tileLocation.tileName + ")");

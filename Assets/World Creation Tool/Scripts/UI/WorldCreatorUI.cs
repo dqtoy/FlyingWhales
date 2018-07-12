@@ -274,6 +274,9 @@ namespace worldcreator {
             editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(false);
             editCharactersMenuGO.SetActive(true);
+            if (editCharactersMenu.characterInfoEditor.gameObject.activeSelf) {
+                editCharactersMenu.characterInfoEditor.UpdateInfo();
+            }
             _editAreasMenu.HideMenu();
 
             rectangleSelectionBtn.interactable = true;

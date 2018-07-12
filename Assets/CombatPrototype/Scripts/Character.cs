@@ -396,11 +396,13 @@ namespace ECS {
             _skills = GetGeneralSkills();
             //_skills.AddRange (GetBodyPartSkills ());
 
+            //GenerateSetupTags(baseSetup);
             GenerateRaceTags();
 
             AllocateStatPoints(10);
             LevelUp();
 
+            //EquipPreEquippedItems(baseSetup);
             CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(data.className);
             if (setup != null) {
                 GenerateSetupTags(setup);
@@ -2061,11 +2063,10 @@ namespace ECS {
             _raceSetting = raceSetting.CreateNewCopy();
         }
         public void ChangeClass(string className) {
-            //TODO: Log
+            //TODO: Change data as needed
             CharacterClass charClass = CharacterManager.Instance.classesDictionary[className];
             _characterClass = charClass.CreateNewCopy();
             OnCharacterClassChange();
-            //TODO: Check equipped items
         }
 		public void SetName(string newName){
 			_name = newName;

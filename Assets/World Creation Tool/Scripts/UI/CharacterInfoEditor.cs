@@ -52,15 +52,20 @@ namespace worldcreator {
             Messenger.AddListener<Relationship>(Signals.RELATIONSHIP_CREATED, OnRelationshipCreated);
             Messenger.AddListener<Relationship>(Signals.RELATIONSHIP_REMOVED, OnRelationshipRemoved);
 
-            
-            LoadDropdownOptions();
             LoadEquipmentChoices();
             LoadInventoryChoices();
+        }
+
+        public void UpdateInfo() {
+            if (_character != null) {
+                ShowCharacterInfo(_character);
+            }
         }
 
         public void ShowCharacterInfo(Character character) {
             _character = character;
             portrait.GeneratePortrait(_character, IMAGE_SIZE.X256);
+            LoadDropdownOptions();
             //UpdatePortraitControls();
             UpdateBasicInfo();
             LoadRelationships();
@@ -84,6 +89,9 @@ namespace worldcreator {
 
         #region Portrait Editor
         public void LoadTemplateChoices() {
+            if (_character == null) {
+                return;
+            }
             portraitTemplates = new Dictionary<string, PortraitSettings>();
             string path = Utilities.portraitsSavePath + _character.raceSetting.race + "/" + _character.gender.ToString() + "/";
             Directory.CreateDirectory(path);

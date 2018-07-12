@@ -5,25 +5,32 @@ using UnityEngine;
 [System.Serializable]
 public class StructurePrioritySetting {
 
-    public ACTION_TYPE actionType;
-    public List<Resource> resourceCost;
+    public List<Resource> buildResourceCost;
+    public List<Resource> repairResourceCost;
     public LANDMARK_TYPE landmarkType;
 
-    public StructurePrioritySetting(ACTION_TYPE actionType, List<Resource> resourceCost, LANDMARK_TYPE landmarkType) {
-        this.actionType = actionType;
-        this.resourceCost = resourceCost;
+    public StructurePrioritySetting(List<Resource> buildCost, List<Resource> repairCost, LANDMARK_TYPE landmarkType) {
+        this.buildResourceCost = buildCost;
+        this.repairResourceCost = repairCost;
         this.landmarkType = landmarkType;
     }
     public StructurePrioritySetting() {
-        this.actionType = ACTION_TYPE.ABDUCT;
-        this.resourceCost = new List<Resource>();
+        this.buildResourceCost = new List<Resource>();
+        this.repairResourceCost = new List<Resource>();
         this.landmarkType = LANDMARK_TYPE.DEMONIC_PORTAL;
     }
 
-    public void AddResourceCost(Resource newCost) {
-        resourceCost.Add(newCost);
+    public void AddBuildResourceCost(Resource newCost) {
+        buildResourceCost.Add(newCost);
     }
-    public void RemoveResourceCost(Resource cost) {
-        resourceCost.Remove(cost);
+    public void RemoveBuildResourceCost(Resource cost) {
+        buildResourceCost.Remove(cost);
+    }
+
+    public void AddRepairResourceCost(Resource newCost) {
+        repairResourceCost.Add(newCost);
+    }
+    public void RemoveRepairResourceCost(Resource cost) {
+        repairResourceCost.Remove(cost);
     }
 }

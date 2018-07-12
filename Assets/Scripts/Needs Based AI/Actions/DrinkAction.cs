@@ -28,8 +28,11 @@ public class DrinkAction : CharacterAction {
             Faction landmarkFaction = (targetObject as StructureObj).objectLocation.tileLocation.areaOfTile.owner;
             if (landmarkFaction != null) {
                 Faction characterFaction = party.mainCharacter.faction;
+                if (characterFaction.id == landmarkFaction.id) {
+                    return true; //same factions
+                }
                 FactionRelationship rel = FactionManager.Instance.GetRelationshipBetween(landmarkFaction, characterFaction);
-                if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NON_HOSTILE) {
+                if (rel != null && rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NON_HOSTILE) {
                     return true;
                 }
             }

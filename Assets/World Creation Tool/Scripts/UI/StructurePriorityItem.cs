@@ -10,8 +10,7 @@ public class StructurePriorityItem : MonoBehaviour {
     private int index;
 
     [SerializeField] private Text indexLbl;
-    [SerializeField] private RectTransform settingsParent;
-    [SerializeField] private EnvelopContentUnityUI envelopContent;
+    [SerializeField] private StructurePrioritySettingItem settingItem;
 
     public void SetItem(StructurePriority item, int index) {
         this.index = index;
@@ -21,22 +20,15 @@ public class StructurePriorityItem : MonoBehaviour {
     }
 
     private void LoadSettings() {
-        Utilities.DestroyChildren(settingsParent);
-        for (int i = 0; i < item.settings.Count; i++) {
-            StructurePrioritySetting setting = item.settings[i];
-            GameObject settingsItemGO = GameObject.Instantiate(worldcreator.WorldCreatorUI.Instance.editAreasMenu.infoEditor.structurePrioritySettingItemGO, settingsParent);
-            settingsItemGO.GetComponent<StructurePrioritySettingItem>().SetSetting(setting, this);
-        }
-        envelopContent.Execute();
+        //Utilities.DestroyChildren(settingsParent);
+        //StructurePrioritySetting setting = item.setting;
+        //GameObject settingsItemGO = GameObject.Instantiate(worldcreator.WorldCreatorUI.Instance.editAreasMenu.infoEditor.structurePrioritySettingItemGO, settingsParent);
+        settingItem.SetSetting(item.setting, this);
+        //envelopContent.Execute();
     }
 
-    public void AddSetting() {
-        StructurePrioritySetting newSetting = new StructurePrioritySetting();
-        item.AddSettings(newSetting);
-        LoadSettings();
-    }
-    public void OnRemoveSetting() {
-        LoadSettings();
+    public void UpdateSettings() {
+        settingItem.UpdateInfo();
     }
 
     public void MoveUp() {

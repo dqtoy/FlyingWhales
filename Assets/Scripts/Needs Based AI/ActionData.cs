@@ -19,11 +19,12 @@ public class ActionData {
     private bool _isNotFirstEncounter;
     private bool _isHalted;
     private bool _hasDoneActionAtHome;
+    private Quest _currentActionParentQuest; //this will be null if the characters current action did not come from a quest
     private float _homeMultiplier;
 
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
     public List<string> actionHistory;
-#endif
+    #endif
 
     #region getters/setters
     public float homeMultiplier {
@@ -31,6 +32,9 @@ public class ActionData {
     }
     public bool isHalted {
         get { return _isHalted; }
+    }
+    public Quest currentActionParentQuest {
+        get { return _currentActionParentQuest; }
     }
     #endregion
 
@@ -40,6 +44,7 @@ public class ActionData {
         choices = new CharacterActionAdvertisement[3];
         actionThread = new ActionThread(_party);
         _party.onDailyAction += PerformCurrentAction;
+        _currentActionParentQuest = null;
         _homeMultiplier = 1f;
         _hasDoneActionAtHome = false;
         _isHalted = false;
@@ -58,10 +63,15 @@ public class ActionData {
         this.isDone = false;
         this.isWaiting = false;
         this._isNotFirstEncounter = false;
+        this._currentActionParentQuest = null;
     }
 
     public void SetSpecificTarget(object target) {
         specificTarget = target;
+    }
+
+    public void SetActionParentQuest(Quest parentQuest) {
+        _currentActionParentQuest = parentQuest;
     }
 
     public void ReturnActionFromThread(CharacterAction characterAction, IObject targetObject, ChainAction chainAction) {

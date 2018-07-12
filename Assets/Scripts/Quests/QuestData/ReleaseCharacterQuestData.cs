@@ -12,7 +12,6 @@ public class ReleaseCharacterQuestData : CharacterQuestData {
         Hunt
     }
 
-    public Character targetCharacter { get; private set; }
     public float requiredPower { get; private set; }
     public Gain_Power_Type gainPowerType { get; private set; }
     public List<Vector3> vectorPathToTarget { get; private set; }
@@ -28,9 +27,10 @@ public class ReleaseCharacterQuestData : CharacterQuestData {
     private HexTile targetTile;
 
     public ReleaseCharacterQuestData(Quest parentQuest, Character owner, ECS.Character targetCharacter) : base(parentQuest, owner) {
-        this.targetCharacter = targetCharacter;
-        targetTile = targetCharacter.currLocation;
+        targetTile = (parentQuest as ReleaseCharacterQuest).targetCharacter.currLocation;
         requiredPower = 0f;
+        Messenger.AddListener<Quest>(Signals.QUEST_DONE, OnQuestDone);
+        
     }
 
     #region overrides
@@ -42,6 +42,17 @@ public class ReleaseCharacterQuestData : CharacterQuestData {
         tilePathToTarget =  _owner.party.icon.ConvertToTilePath(vectorPathToTarget);
     }
     #endregion
+
+    private void OnQuestDone(Quest doneQuest) {
+        if (_parentQuest.id == doneQuest.id) {
+            Messenger.RemoveListener<Quest>(Signals.QUEST_DONE, OnQuestDone);
+            _owner.RemoveQuestData(this); //remove this data from the character
+            if (_owner.party.actionData.currentActionParentQuest != null && _owner.party.actionData.currentActionParentQuest.id == doneQuest.id) {
+                //cancel the characters current action then look for another action
+                _owner.party.actionData.EndAction();
+            }
+        }
+    }
 
     public void UpdateVectorPath() {
         _owner.party.icon.GetVectorPath(targetTile, OnVectorPathComputed);
