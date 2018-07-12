@@ -63,6 +63,9 @@ public class PlayerManager : MonoBehaviour {
 
     #region Snatch
     public bool CanSnatch() {
+        if (player == null) {
+            return false;
+        }
         return player.snatchCredits > 0;
     }
     #endregion

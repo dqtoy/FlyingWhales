@@ -9,7 +9,9 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
     private ICharacter _character;
     private IMAGE_SIZE _imgSize;
     private bool _ignoreSize;
+    private bool _ignoreHover;
     private PortraitSettings _portraitSettings;
+    private Vector2 normalSize;
 
     [Header("Head")]
     [SerializeField] private Image head;
@@ -42,9 +44,10 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
     }
     #endregion
 
-    public void GeneratePortrait(ICharacter character, IMAGE_SIZE imgSize, bool ignoreSize = false) {
+    public void GeneratePortrait(ICharacter character, IMAGE_SIZE imgSize, bool ignoreHover = true, bool ignoreSize = false) {
         _character = character;
         _ignoreSize = ignoreSize;
+        _ignoreHover = ignoreHover;
         SetImageSize(imgSize, ignoreSize);
         _portraitSettings = character.portraitSettings;
         if (character is ECS.Character) {
@@ -69,12 +72,18 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
             hairOverlay.gameObject.SetActive(false);
             hairBackOverlay.gameObject.SetActive(false);
             wholeImage.sprite = MonsterManager.Instance.GetMonsterSprite(character.name);
+            if (imgSize == IMAGE_SIZE.X256) {
+                wholeImage.rectTransform.sizeDelta = new Vector2(256f, 256f);
+            } else {
+                wholeImage.rectTransform.sizeDelta = new Vector2(64f, 64f);
+            }
             wholeImage.gameObject.SetActive(true);
         }
         
     }
-    public void GeneratePortrait(PortraitSettings portraitSettings, IMAGE_SIZE imgSize, bool ignoreSize = false) {
+    public void GeneratePortrait(PortraitSettings portraitSettings, IMAGE_SIZE imgSize, bool ignoreHover = true, bool ignoreSize = false) {
         _ignoreSize = ignoreSize;
+        _ignoreHover = ignoreHover;
         _portraitSettings = portraitSettings;
         SetImageSize(imgSize, ignoreSize);
         SetBody(portraitSettings.bodyIndex);
@@ -90,12 +99,34 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
     #region Pointer Actions
     public void OnPointerEnter(PointerEventData eventData) {
 #if !WORLD_CREATION_TOOL
-        this.transform.localScale = new Vector3(2f, 2f, 1f);
+        if (_ignoreHover) {
+            return;
+        }
+        Vector2 currentSize = (this.transform as RectTransform).sizeDelta;
+        Vector2 newSize = new Vector2(currentSize.x + (currentSize.x * 0.5f), currentSize.y + (currentSize.y * 0.5f));
+        (this.transform as RectTransform).sizeDelta = newSize;
+        RectTransform[] rt = Utilities.GetComponentsInDirectChildren<RectTransform>(this.gameObject);
+        for (int i = 0; i < rt.Length; i++) {
+            rt[i].sizeDelta = newSize;
+        }
+        
 #endif
     }
     public void OnPointerExit(PointerEventData eventData) {
 #if !WORLD_CREATION_TOOL
-        this.transform.localScale = Vector3.one;
+        if (_ignoreHover) {
+            return;
+        }
+        (this.transform as RectTransform).sizeDelta = normalSize;
+        RectTransform[] rt = Utilities.GetComponentsInDirectChildren<RectTransform>(this.gameObject);
+        for (int i = 0; i < rt.Length; i++) {
+            rt[i].sizeDelta = normalSize;
+        }
+        //LandmarkVisual lv = this.gameObject.GetComponentInParent<LandmarkVisual>();
+        //if (lv != null) {
+        //    lv.SnapTo(this.transform as RectTransform);
+        //}
+        //this.transform.localScale = Vector3.one;
 #endif
     }
     public void OnPointerClick(PointerEventData eventData) {
@@ -149,6 +180,8 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
         if (!_ignoreSize) {
             hair.SetNativeSize();
             hairBack.SetNativeSize();
+            hairOverlay.SetNativeSize();
+            hairBackOverlay.SetNativeSize();
         }
         
         //if (chosenHairSettings.hairBackSprite == null) {
@@ -221,5 +254,6 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
                     break;
             }
         }
+        normalSize = (this.transform as RectTransform).sizeDelta;
     }
 }

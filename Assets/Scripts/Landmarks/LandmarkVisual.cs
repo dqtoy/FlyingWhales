@@ -56,9 +56,9 @@ public class LandmarkVisual : MonoBehaviour {
         CharacterPortrait portrait = iparty.icon.characterPortrait;
         portrait.transform.SetParent(charactersScrollView.content.transform);
         portrait.transform.localScale = Vector3.one;
-        (portrait.transform as RectTransform).pivot = new Vector2(0.5f, 0f);
-        (portrait.transform as RectTransform).sizeDelta = new Vector2(65, 65);
-        portrait.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+        //(portrait.transform as RectTransform).pivot = new Vector2(0.5f, 0f);
+        (portrait.transform as RectTransform).sizeDelta = new Vector2(64, 64);
+        //portrait.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
         portrait.gameObject.SetActive(true);
         //iparty.icon.gameObject.SetActive(false);
         iparty.icon.SetVisualState(false);
@@ -79,6 +79,14 @@ public class LandmarkVisual : MonoBehaviour {
         destinationSetter.target = null;
         lineRenderer.positionCount = 0;
         //lineRenderer.gameObject.SetActive(false);
+    }
+
+    public void SnapTo(RectTransform target) {
+        Canvas.ForceUpdateCanvases();
+
+        charactersScrollView.content.anchoredPosition =
+            (Vector2)charactersScrollView.transform.InverseTransformPoint(charactersScrollView.content.position)
+            - (Vector2)charactersScrollView.transform.InverseTransformPoint(target.position);
     }
     #region Monobehaviour
     private void OnMouseOver() {
