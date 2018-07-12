@@ -84,6 +84,9 @@ namespace worldcreator {
 
         #region Portrait Editor
         public void LoadTemplateChoices() {
+            if (_character == null) {
+                return;
+            }
             portraitTemplates = new Dictionary<string, PortraitSettings>();
             string path = Utilities.portraitsSavePath + _character.raceSetting.race + "/" + _character.gender.ToString() + "/";
             Directory.CreateDirectory(path);
