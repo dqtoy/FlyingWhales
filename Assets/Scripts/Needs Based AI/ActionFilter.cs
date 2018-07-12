@@ -11,6 +11,9 @@ public class ActionFilter : ICloneable {
     public virtual bool MeetsRequirements(BaseLandmark landmark) {
         return false;
     }
+    public virtual bool MeetsRequirements(string className, BaseLandmark landmark) {
+        return true;
+    }
 
     public virtual object Clone() {
         return this.MemberwiseClone();
@@ -78,6 +81,12 @@ public class MustBeClass : ActionFilter {
         }
         return false;
     }
+    public override bool MeetsRequirements(string className, BaseLandmark landmark) {
+        if (_allowedClasses.Contains(className)) {
+            return true;
+        }
+        return false;
+    }
 }
 public class MustNotBeClass : ActionFilter {
 
@@ -96,6 +105,12 @@ public class MustNotBeClass : ActionFilter {
             if (_unallowedClasses.Contains(character.characterClass.className)) {
                 return false;
             }
+        }
+        return true;
+    }
+    public override bool MeetsRequirements(string className, BaseLandmark landmark) {
+        if (_unallowedClasses.Contains(className)) {
+            return false;
         }
         return true;
     }

@@ -2061,6 +2061,7 @@ namespace ECS {
             //TODO: Change data as needed
             RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
             _raceSetting = raceSetting.CreateNewCopy();
+            //TODO: check equipped items and add log
         }
         public void ChangeClass(string className) {
             //TODO: Change data as needed

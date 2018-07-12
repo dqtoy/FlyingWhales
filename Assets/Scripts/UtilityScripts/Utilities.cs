@@ -1515,4 +1515,15 @@ public class Utilities : MonoBehaviour {
     }
     #endregion
 
+    #region Dictionary
+    public static TValue GetRandomValueFromDictionary<TKey, TValue>(IDictionary<TKey, TValue> dict) {
+        List<TValue> values = Enumerable.ToList(dict.Values);
+        return values[rng.Next(dict.Count)];
+    }
+    public static TKey GetRandomKeyFromDictionary<TKey, TValue>(IDictionary<TKey, TValue> dict) {
+        List<TKey> keys = Enumerable.ToList(dict.Keys);
+        return keys[rng.Next(dict.Count)];
+    }
+    #endregion
+
 }
