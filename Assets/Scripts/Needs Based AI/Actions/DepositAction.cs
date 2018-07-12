@@ -17,7 +17,7 @@ public class DepositAction : CharacterAction {
         RESOURCE resource = RESOURCE.NONE;
         if (party.actionData.questDataAssociatedWithCurrentAction is BuildStructureQuestData) {
             resource = (party.actionData.questDataAssociatedWithCurrentAction as BuildStructureQuestData).currentDepositingResource;
-        } 
+        }
         if(resource != RESOURCE.NONE) {
             int deposit = depositingAmount;
             if(party.characterObject.resourceInventory[resource] < deposit) {
@@ -29,6 +29,9 @@ public class DepositAction : CharacterAction {
         if(party.characterObject.resourceInventory[resource] <= 0) {
             EndAction(party, targetObject);
         }
+    }
+    public override bool CanBeDone(IObject targetObject) {
+        return false;
     }
     public override void EndAction(CharacterParty party, IObject targetObject) {
         base.EndAction(party, targetObject);

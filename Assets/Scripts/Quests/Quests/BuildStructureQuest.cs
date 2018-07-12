@@ -39,7 +39,7 @@ public class BuildStructureQuest : Quest {
         CharacterParty characterParty = character.party;
         targetObject = _buildingStructure;
         for (int i = 0; i < _lackingResources.Count; i++) {
-            if (characterParty.characterObject.resourceInventory[_lackingResources[i]] >= 100) { //resource type is still lacking
+            if (characterParty.characterObject.resourceInventory[_lackingResources[i]] >= 100) { //character has more than 100 of the lacking resource
                 //Give deposit action
                 buildQuestData.SetDepositingResource(_lackingResources[i]);
                 DepositAction depositAction = _buildingStructure.currentState.GetAction(ACTION_TYPE.DEPOSIT) as DepositAction;

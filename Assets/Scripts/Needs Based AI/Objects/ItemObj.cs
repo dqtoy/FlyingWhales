@@ -100,5 +100,8 @@ public class ItemObj : IObject {
     public void OnAddToLandmark(BaseLandmark newLocation) {
         SetObjectLocation(newLocation);
     }
+    public void AdjustResource(RESOURCE resource, int amount) {
+        //Don't have resource inventory
+    }
     #endregion
 }
