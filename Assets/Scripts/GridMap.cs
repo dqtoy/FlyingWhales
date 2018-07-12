@@ -219,7 +219,7 @@ public class GridMap : MonoBehaviour {
                 currHex.SetElevation(hexToCopy.elevationType);
                 Biomes.Instance.SetBiomeForTile(hexToCopy.biomeType, currHex);
                 //Biomes.Instance.AddBiomeDetailToTile(currHex);
-                Biomes.Instance.SetElevationSpriteForTile(currHex);
+                Biomes.Instance.UpdateTileVisuals(currHex);
                 hexToCopy.region.AddOuterGridTile(currHex);
 
 

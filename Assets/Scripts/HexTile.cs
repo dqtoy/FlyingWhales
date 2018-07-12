@@ -28,15 +28,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private GameObject topLeftLedge;
     [SerializeField] private GameObject topRightLedge;
 
-    //[Space(10)]
-    //[Header("Outlines")]
-    //[SerializeField] private GameObject topLeftOutline;
-    //[SerializeField] private GameObject topRightOutline;
-    //[SerializeField] private GameObject leftOutline;
-    //[SerializeField] private GameObject rightOutline;
-    //[SerializeField] private GameObject botLeftOutline;
-    //[SerializeField] private GameObject botRightOutline;
-
     [Space(10)]
     [Header("Tile Visuals")]
     [SerializeField] private GameObject _centerPiece;
@@ -44,7 +35,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] internal Transform UIParent;
     [SerializeField] private Transform resourceParent;
     [SerializeField] private GameObject biomeDetailParentGO;
-    [SerializeField] private TextMesh tileTextMesh;
     [SerializeField] private GameObject _emptyCityGO;
     [SerializeField] private GameObject _hoverHighlightGO;
     [SerializeField] private GameObject _clickHighlightGO;
@@ -302,29 +292,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public BaseLandmark CreateLandmarkOfType(LANDMARK_TYPE landmarkType) {
         GameObject landmarkGO = null;
         //Create Landmark Game Object on tile
-#if WORLD_CREATION_TOOL
-        landmarkGO = GameObject.Instantiate(worldcreator.WorldCreatorManager.Instance.landmarkItemPrefab, structureParentGO.transform) as GameObject;
-#else
-        landmarkGO = CreateLandmarkObject(landmarkType);
-#endif
+        landmarkGO = CreateLandmarkVisual(landmarkType);
         _landmarkOnTile = new BaseLandmark(this, landmarkType);
-        //switch (baseLandmarkType) {
-        //    case BASE_LANDMARK_TYPE.SETTLEMENT:
-        //        _landmarkOnTile = new Settlement(this, landmarkType);
-        //        break;
-        //    case BASE_LANDMARK_TYPE.RESOURCE:
-        //        _landmarkOnTile = new ResourceLandmark(this, landmarkType);
-        //        break;
-        //    case BASE_LANDMARK_TYPE.DUNGEON:
-        //        _landmarkOnTile = new DungeonLandmark(this, landmarkType);
-        //        break;
-        //    case BASE_LANDMARK_TYPE.LAIR:
-        //        _landmarkOnTile = new LairLandmark(this, landmarkType);
-        //        break;
-        //    default:
-                
-        //        break;
-        //}
         if (landmarkGO != null) {
             landmarkGO.transform.localPosition = Vector3.zero;
             landmarkGO.transform.localScale = Vector3.one;
@@ -342,32 +311,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public BaseLandmark CreateLandmarkOfType(LandmarkSaveData data) {
         GameObject landmarkGO = null;
         //Create Landmark Game Object on tile
-#if WORLD_CREATION_TOOL
-        landmarkGO = GameObject.Instantiate(worldcreator.WorldCreatorManager.Instance.landmarkItemPrefab, structureParentGO.transform) as GameObject;
-#else
-        landmarkGO = CreateLandmarkObject(data.landmarkType);
-#endif
+        landmarkGO = CreateLandmarkVisual(data.landmarkType);
         _landmarkOnTile = new BaseLandmark(this, data);
         _landmarkOnTile.SetCivilianCount(data.civilianCount);
-
-        //switch (baseLandmarkType) {
-        //    case BASE_LANDMARK_TYPE.SETTLEMENT:
-        //        _landmarkOnTile = new Settlement(this, data);
-        //        (_landmarkOnTile as Settlement).SetCivilianCount(data.civilianCount);
-        //        break;
-        //    case BASE_LANDMARK_TYPE.RESOURCE:
-        //        _landmarkOnTile = new ResourceLandmark(this, data);
-        //        break;
-        //    case BASE_LANDMARK_TYPE.DUNGEON:
-        //        _landmarkOnTile = new DungeonLandmark(this, data);
-        //        break;
-        //    case BASE_LANDMARK_TYPE.LAIR:
-        //        _landmarkOnTile = new LairLandmark(this, data);
-        //        break;
-        //    default:
-        //        _landmarkOnTile = new BaseLandmark(this, data);
-        //        break;
-        //}
         if (landmarkGO != null) {
             landmarkGO.transform.localPosition = Vector3.zero;
             landmarkGO.transform.localScale = Vector3.one;
@@ -382,27 +328,21 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
         return _landmarkOnTile;
     }
-    private GameObject CreateLandmarkObject(LANDMARK_TYPE landmarkType) {
-        //if (this.region.owner != null) {
-        //    if (landmarkType == LANDMARK_TYPE.ELVEN_SETTLEMENT || landmarkType == LANDMARK_TYPE.IRON_MINES || landmarkType == LANDMARK_TYPE.OAK_LUMBERYARD) {
-        //        GameObject prefab = CityGenerator.Instance.GetLandmarkPrefab(landmarkType, this.region.owner.race);
-        //        GameObject obj = GameObject.Instantiate(prefab, structureParentGO.transform);
-        //        if (landmarkType != LANDMARK_TYPE.ELVEN_SETTLEMENT) {
-        //            obj.transform.localScale = new Vector2(1.5f, 1.5f);
-        //        }
-        //        GameObject landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
-        //        landmarkGO.GetComponent<LandmarkObject>().SetIconState(false);
-        //        return landmarkGO;
-        //    } else {
-        //        GameObject landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
-        //        landmarkGO.GetComponent<LandmarkObject>().SetIconState(true);
-        //        return landmarkGO;
-        //    }
-        //} else {
-            GameObject landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+    private GameObject CreateLandmarkVisual(LANDMARK_TYPE landmarkType) {
+#if WORLD_CREATION_TOOL
+        GameObject landmarkGO = GameObject.Instantiate(worldcreator.WorldCreatorManager.Instance.landmarkItemPrefab, structureParentGO.transform) as GameObject;
+#else
+        GameObject landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+#endif
+        Sprite landmarkTileSprite = LandmarkManager.Instance.GetLandmarkTileSprite(landmarkType);
+        if (landmarkTileSprite == null) {
+            DeactivateCenterPiece();
             landmarkGO.GetComponent<LandmarkVisual>().SetIconState(true);
-            return landmarkGO;
-        //}
+        } else {
+            SetCenterSprite(landmarkTileSprite);
+            landmarkGO.GetComponent<LandmarkVisual>().SetIconState(false);
+        }
+        return landmarkGO;
     }
     public BaseLandmark LoadLandmark(BaseLandmark landmark) {
         GameObject landmarkGO = null;
@@ -717,41 +657,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     internal void UpdateSortingOrder() {
         int sortingOrder = spriteRenderer.sortingOrder;
-        //if (elevationType == ELEVATION.MOUNTAIN) {
-        //    centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 56;
-        //} else {
-        //    centerPiece.GetComponent<SpriteRenderer>().sortingOrder = 60; //sortingOrder + 52;
-        //}
-//#if !WORLD_CREATION_TOOL
-//        int centerPieceSortingOrder = (int)GridMap.Instance.height - yCoordinate;
-//#else
-//        int centerPieceSortingOrder = (int)worldcreator.WorldCreatorManager.Instance.height - yCoordinate;
-//#endif
-
-//        //SpriteRenderer mainRenderer = centerPiece.GetComponent<SpriteRenderer>();
-//        //mainRenderer.sortingOrder = centerPieceSortingOrder;
-//        SpriteRenderer[] children = centerPiece.GetComponentsInChildren<SpriteRenderer>();
-//        for (int i = 0; i < children.Length; i++) {
-//            SpriteRenderer currRenderer = children[i];
-//            //if (currRenderer != mainRenderer) {
-//                currRenderer.sortingOrder = centerPieceSortingOrder;
-//            //}
-//        }
-
-        //SpriteRenderer[] resourcesSprites = resourceParent.GetComponentsInChildren<SpriteRenderer>();
-        //for (int i = 0; i < resourcesSprites.Length; i++) {
-        //    resourcesSprites[i].sortingOrder = sortingOrder + 57;
-        //}
-
-        //kingdomColorSprite.spriteRenderer.sortingOrder = sortingOrder + 3;
         highlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 4;
-
-        //topLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-        //leftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-        //botLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-        //botRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-        //rightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-        //topRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
     }
     internal SpriteRenderer ActivateBorder(HEXTILE_DIRECTION direction, Color color) {
         SpriteRenderer activatedBorder = null;
@@ -789,9 +695,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         return activatedBorder;
     }
     internal void DeactivateCenterPiece() {
-        if (this.biomeType == BIOMES.FOREST && this.elevationType == ELEVATION.PLAIN) {
-            centerPiece.SetActive(false);
-        }
+        centerPiece.SetActive(false);
     }
     internal void LoadEdges() {
         int biomeLayerOfHexTile = Utilities.biomeLayering.IndexOf(this.biomeType);
@@ -897,22 +801,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         color.a = 255f / 255f;
         minimapHexSprite.color = color;
     }
-    public void SetTileText(string text, int fontSize, Color fontColor, string layer = "Default") {
-        tileTextMesh.text = text;
-        tileTextMesh.characterSize = fontSize;
-        tileTextMesh.color = fontColor;
-        tileTextMesh.gameObject.layer = LayerMask.NameToLayer(layer);
-        tileTextMesh.transform.localPosition = Vector3.zero;
-        tileTextMesh.gameObject.SetActive(true);
-    }
-    //private void SetOutlinesState(bool state) {
-    //    topLeftOutline.SetActive(state);
-    //    topRightOutline.SetActive(state);
-    //    leftOutline.SetActive(state);
-    //    rightOutline.SetActive(state);
-    //    botLeftOutline.SetActive(state);
-    //    botRightOutline.SetActive(state);
-    //}
     public void HighlightTile(Color color, float alpha) {
         color.a = alpha;
         _highlightGO.SetActive(true);
@@ -1038,43 +926,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #region Passability
     public void SetPassableState(bool state) {
         _isPassable = state;
-        //_centerPiece.SetActive(!state);
-//#if WORLD_CREATION_TOOL
-//        unpassableGO.SetActive(false);
-//#else
         unpassableGO.SetActive(!state);
-//#endif
         if (!state) {
             _passableType = PASSABLE_TYPE.UNPASSABLE;
-        }
-        //UpdatePassableVisuals();
-    }
-    public void SetPassableObject(object obj) {
-        SetCenterSprite(null);
-        Transform[] existingChildren = Utilities.GetComponentsInDirectChildren<Transform>(centerPiece);
-        if (existingChildren != null) {
-            for (int i = 0; i < existingChildren.Length; i++) {
-                Transform currChild = existingChildren[i];
-                GameObject.Destroy(currChild.gameObject);
-            }
-        }
-
-        if (obj == null) {
-            //SetCenterSprite(null);
-            return;
-        }
-        if (obj is Sprite) {
-            SetCenterSprite(obj as Sprite);
-        } else {
-            GameObject centerObj = GameObject.Instantiate(obj as Object, centerPiece.transform) as GameObject;
-            centerObj.transform.localPosition = Vector3.zero;
-            centerObj.transform.localScale = Vector3.one;
-            SpriteRenderer[] children = centerObj.GetComponentsInChildren<SpriteRenderer>();
-            for (int i = 0; i < children.Length; i++) {
-                SpriteRenderer currChild = children[i];
-                currChild.sortingLayerName = "TileDetails";
-            }
-            SetCenterSprite(null);
         }
     }
     public void DeterminePassableType() {

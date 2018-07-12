@@ -23,14 +23,15 @@ public class LandmarkManager : MonoBehaviour {
 
     public List<Area> allAreas;
 
-	//Crater
-	public BaseLandmark craterLandmark;
+    #region Monobehaviours
     private void Awake() {
         Instance = this;
         corruptedLandmarksCount = 0;
         allAreas = new List<Area>();
     }
+    #endregion
 
+    #region Landmarks
     public void LoadLandmarks(WorldSaveData data) {
         if (data.landmarksData != null) {
             for (int i = 0; i < data.landmarksData.Count; i++) {
@@ -39,23 +40,6 @@ public class LandmarkManager : MonoBehaviour {
             }
         }
     }
-    public void LoadAreas(WorldSaveData data) {
-        if (data.areaData != null) {
-            for (int i = 0; i < data.areaData.Count; i++) {
-                AreaSaveData areaData = data.areaData[i];
-                Area newArea = CreateNewArea(areaData);
-                if (areaData.ownerID != -1) {
-                    Faction owner = FactionManager.Instance.GetFactionBasedOnID(areaData.ownerID);
-                    if (owner != null) {
-                        OwnArea(owner, newArea);
-                    }
-                }
-            }
-        }
-    }
-    /*
-     Create a new landmark on a specified tile.
-     */
     public BaseLandmark CreateNewLandmarkOnTile(HexTile location, LANDMARK_TYPE landmarkType) {
         if (location.landmarkOnTile != null) {
             //Destroy landmark on tile
@@ -109,7 +93,7 @@ public class LandmarkManager : MonoBehaviour {
     }
     public void DestroyLandmarkOnTile(HexTile tile) {
         BaseLandmark landmarkOnTile = tile.landmarkOnTile;
-        while(landmarkOnTile.charactersAtLocation.Count != 0) {
+        while (landmarkOnTile.charactersAtLocation.Count != 0) {
             landmarkOnTile.RemoveCharacterFromLocation(landmarkOnTile.charactersAtLocation[0]);
         }
         //while (landmarkOnTile.charactersWithHomeOnLandmark.Count != 0) {
@@ -120,7 +104,6 @@ public class LandmarkManager : MonoBehaviour {
         tile.region.RemoveLandmarkFromRegion(landmarkOnTile);
         GameObject.Destroy(landmarkOnTile.landmarkVisual.gameObject);
     }
-
     public BaseLandmark LoadLandmarkOnTile(HexTile location, BaseLandmark landmark) {
         BaseLandmark newLandmark = location.LoadLandmark(landmark);
         //newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
@@ -136,21 +119,16 @@ public class LandmarkManager : MonoBehaviour {
         //		AddInitialLandmarkItems (newLandmark);
         return newLandmark;
     }
-    /*
-     Occupy a specified landmark.
-         */
     public void OccupyLandmark(BaseLandmark landmark, Faction occupant) {
         landmark.OccupyLandmark(occupant);
     }
-    /*
-     Occupy the main settlement in a region
-         */
     public void OccupyLandmark(Region region, Faction occupant) {
         region.centerOfMass.landmarkOnTile.OccupyLandmark(occupant);
     }
-	public void OccupyLandmark(HexTile hexTile, Faction occupant) {
-		hexTile.landmarkOnTile.OccupyLandmark(occupant);
-	}
+    public void OccupyLandmark(HexTile hexTile, Faction occupant) {
+        hexTile.landmarkOnTile.OccupyLandmark(occupant);
+    }
+    #endregion
 
     #region Landmark Generation
     //public bool GenerateLandmarks() {
@@ -194,7 +172,7 @@ public class LandmarkManager : MonoBehaviour {
     //            createdLandmarks.Add(createdLandmark);
     //        }
     //    }
-        
+
     //    while (createdLandmarks.Count < initialLandmarkCount) {
     //        if (elligibleTiles.Count <= 0) {
     //            return false; //ran out of tiles
@@ -512,9 +490,27 @@ public class LandmarkManager : MonoBehaviour {
         }
         return allLandmarks;
     }
+    public Sprite GetLandmarkTileSprite(LANDMARK_TYPE landmarkType) {
+        LandmarkData data = GetLandmarkData(landmarkType);
+        return data.landmarkTileSprite;
+    }
     #endregion
 
     #region Areas
+    public void LoadAreas(WorldSaveData data) {
+        if (data.areaData != null) {
+            for (int i = 0; i < data.areaData.Count; i++) {
+                AreaSaveData areaData = data.areaData[i];
+                Area newArea = CreateNewArea(areaData);
+                if (areaData.ownerID != -1) {
+                    Faction owner = FactionManager.Instance.GetFactionBasedOnID(areaData.ownerID);
+                    if (owner != null) {
+                        OwnArea(owner, newArea);
+                    }
+                }
+            }
+        }
+    }
     public AreaData GetAreaData(AREA_TYPE areaType) {
         for (int i = 0; i < areaData.Count; i++) {
             AreaData currData = areaData[i];

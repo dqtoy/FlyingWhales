@@ -223,7 +223,7 @@ namespace worldcreator {
                     currHex.SetElevation(hexToCopy.elevationType);
                     Biomes.Instance.SetBiomeForTile(hexToCopy.biomeType, currHex);
                     //Biomes.Instance.GenerateTileBiomeDetails(currHex);
-                    Biomes.Instance.SetElevationSpriteForTile(currHex);
+                    //Biomes.Instance.UpdateTileVisuals(currHex);
                     hexToCopy.region.AddOuterGridTile(currHex);
                     Biomes.Instance.UpdateTileVisuals(currHex);
 

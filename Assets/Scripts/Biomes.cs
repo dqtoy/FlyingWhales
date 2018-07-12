@@ -123,34 +123,15 @@ public class Biomes : MonoBehaviour {
             currentHexTile.SetPassableState(false);
         }
     }
-
-    //internal void LoadPassableObjects(List<HexTile> tiles, List<HexTile> outerGrid = null) {
-    //    for (int i = 0; i < tiles.Count; i++) {
-    //        HexTile currentHexTile = tiles[i];
-    //        LoadPassableObjects(currentHexTile);
-    //    }
-    //    if (outerGrid != null) {
-    //        for (int i = 0; i < outerGrid.Count; i++) {
-    //            HexTile currentHexTile = outerGrid[i];
-    //            LoadPassableObjects(currentHexTile, true);
-    //        }
-    //    }
-    //}
-
-    //internal void LoadPassableObjects(HexTile currentHexTile, bool isOuterGrid = false) {
-    //    //object centerObj = GetCenterObject(currentHexTile);
-    //    //currentHexTile.SetPassableObject(centerObj);
-    //    if (currentHexTile.elevationType == ELEVATION.PLAIN && !isOuterGrid) {
-    //        currentHexTile.SetPassableState(true);
-    //    } else {
-    //        currentHexTile.SetPassableState(false);
-    //    }
-    //}
-   
     internal void SetBiomeForTile(BIOMES biomeForTile, HexTile currentHexTile) {
         currentHexTile.SetBiome(biomeForTile);
     }
-
+    internal void UpdateTileVisuals(List<HexTile> allTiles) {
+        for (int i = 0; i < allTiles.Count; i++) {
+            HexTile currentHexTile = allTiles[i];
+            UpdateTileVisuals(currentHexTile);
+        }
+    }
     internal void UpdateTileVisuals(HexTile currentHexTile, bool updateNeighbours = false) {
 #if WORLD_CREATION_TOOL
         int sortingOrder = ((int)worldcreator.WorldCreatorManager.Instance.height - 1) -  currentHexTile.yCoordinate;
@@ -165,12 +146,11 @@ public class Biomes : MonoBehaviour {
             LoadTreeTileVisuals(currentHexTile, sortingOrder);
         } else {
             //For Water
-            SetElevationSpriteForTile(currentHexTile);
-            currentHexTile.SetSortingOrder(sortingOrder);
+            LoadWaterTileVisuals(currentHexTile, sortingOrder);
+            //currentHexTile.SetSortingOrder(sortingOrder);
         }
 
     }
-
     private void LoadPlainTileVisuals(HexTile tile, int sortingOrder) {
         switch (tile.biomeType) {
             case BIOMES.SNOW:
@@ -246,92 +226,13 @@ public class Biomes : MonoBehaviour {
         }
         tile.SetSortingOrder(sortingOrder);
     }
-
-    internal void UpdateTileVisuals(List<HexTile> allTiles) {
-        for (int i = 0; i < allTiles.Count; i++) {
-            HexTile currentHexTile = allTiles[i];
-            UpdateTileVisuals(currentHexTile);
-        }
-        
+    private void LoadWaterTileVisuals(HexTile tile, int sortingOrder) {
+        Sprite waterSpriteToUse = waterTiles[Random.Range(0, waterTiles.Length)];
+        tile.spriteRenderer.sortingLayerName = "Water";
+        tile.spriteRenderer.sprite = waterSpriteToUse;
+        tile.DeactivateCenterPiece();
+        return;
     }
-    //internal void GenerateTileBiomeDetails(List<HexTile> tiles) {
-    //    for (int i = 0; i < tiles.Count; i++) {
-    //        HexTile currentHexTile = tiles[i];
-    //        GenerateTileBiomeDetails(currentHexTile);
-    //        //if(currentHexTile.elevationType != ELEVATION.PLAIN) {
-    //        //    continue;
-    //        //}
-    //        //if (currentHexTile.biomeType == BIOMES.FOREST) {
-    //        //    continue;
-    //        //}
-    //        //GenerateTileBiomeDetails(currentHexTile);
-    //    }
-    //}
-    //internal void GenerateTileBiomeDetails(HexTile tile) {
-    //    if (tile.biomeType == BIOMES.SNOW || tile.biomeType == BIOMES.TUNDRA) {
-    //        AddBiomeDetailToTile(tile);
-    //    }
-    //}
-
-    //internal void AddBiomeDetailToTile(HexTile tile) {
-    //    GameObject biomeDetailToUse = null;
-    //    if (tile.elevationType == ELEVATION.PLAIN) {
-    //        switch (tile.biomeType) {
-    //            case BIOMES.SNOW:
-    //                if (snowDetails.Length > 0) {
-    //                    biomeDetailToUse = snowDetails[Random.Range(0, snowDetails.Length)];
-    //                }
-    //                break;
-    //            case BIOMES.TUNDRA:
-    //                if (tundraDetails.Length > 0) {
-    //                    biomeDetailToUse = tundraDetails[Random.Range(0, tundraDetails.Length)];
-    //                }
-    //                break;
-    //            case BIOMES.DESERT:
-    //                if (desertDetails.Length > 0) {
-    //                    biomeDetailToUse = desertDetails[Random.Range(0, desertDetails.Length)];
-    //                }
-    //                break;
-    //            case BIOMES.GRASSLAND:
-    //                if (grasslandDetails.Length > 0) {
-    //                    biomeDetailToUse = grasslandDetails[Random.Range(0, grasslandDetails.Length)];
-    //                }
-    //                break;
-    //                //case BIOMES.WOODLAND:
-    //                //    centerSpriteToUse = woodlandTrees[Random.Range(0, woodlandTrees.Length)];
-    //                //    tile.SetCenterSprite(centerSpriteToUse);
-    //                //    //Utilities.SetSpriteSortingLayer(tile.centerPiece.spriteRenderer, "Structures Layer");
-    //                //    break;
-    //                //case BIOMES.FOREST:
-    //                //    centerSpriteToUse = forestTrees[Random.Range(0, forestTrees.Length)];
-    //                //    tile.SetCenterSprite(centerSpriteToUse);
-    //                //    //Utilities.SetSpriteSortingLayer(tile.centerPiece.spriteRenderer, "Structures Layer");
-    //                //    break;
-    //        }
-    //    }
-    //    //if (biomeDetailToUse != null) {
-    //        tile.AddBiomeDetailToTile(biomeDetailToUse);
-    //    //}
-
-    //    //tile.UpdateSortingOrder();
-    //}
-
-    internal void SetElevationSpriteForTile(HexTile currentHexTile) {
-        //int sortingOrder = currentHexTile.xCoordinate - currentHexTile.yCoordinate;
-        if(currentHexTile.elevationType == ELEVATION.WATER) {
-            Sprite waterSpriteToUse = waterTiles[Random.Range(0, waterTiles.Length)];
-            currentHexTile.spriteRenderer.sortingLayerName = "Water";
-            currentHexTile.spriteRenderer.sprite = waterSpriteToUse;
-            currentHexTile.centerPiece.SetActive(false);
-            return;
-        }
-    }
-	internal void DeactivateCenterPieces(){
-		for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
-			HexTile currentHexTile = GridMap.Instance.listHexes [i].GetComponent<HexTile> ();
-			currentHexTile.DeactivateCenterPiece();
-		}
-	}
 	internal void GenerateElevation(List<HexTile> tiles, int mapWidth, int mapHeight) {
 		CalculateElevationAndMoisture(tiles, mapWidth, mapHeight);
 	}
