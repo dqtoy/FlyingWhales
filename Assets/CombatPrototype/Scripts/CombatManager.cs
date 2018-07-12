@@ -104,8 +104,10 @@ namespace ECS {
                 if (icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                     Character character = icharacter as Character;
                     PartyContinuesActionAfterCombat(character.party, true);
+                } else {
+                    icharacter.iparty.currentCombat = null;
                 }
-                icharacter.ResetToFullHP();
+                //icharacter.ResetToFullHP();
                 icharacter.ResetToFullSP();
                 combat.RemoveCharacter(SIDES.A, icharacter);
             }
@@ -114,8 +116,10 @@ namespace ECS {
                 if (icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                     Character character = icharacter as Character;
                     PartyContinuesActionAfterCombat(character.party, true);
+                } else {
+                    icharacter.iparty.currentCombat = null;
                 }
-                icharacter.ResetToFullHP();
+                //icharacter.ResetToFullHP();
                 icharacter.ResetToFullSP();
                 combat.RemoveCharacter(SIDES.B, icharacter);
             }
@@ -372,8 +376,6 @@ namespace ECS {
         public void PartyContinuesActionAfterCombat(CharacterParty party, bool isActionSucess) {
             if (party.actionData.isHalted) {
                 party.actionData.SetIsHalted(false);
-                party.icon.OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
-                party.icon.SetMovementState(GameManager.Instance.isPaused);
                 if (party.actionData.currentAction != null) {
                     if (party.actionData.currentAction.actionType == ACTION_TYPE.ATTACK || party.actionData.currentAction.actionType == ACTION_TYPE.JOIN_BATTLE) {
                         if (isActionSucess) {

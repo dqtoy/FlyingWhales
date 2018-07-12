@@ -38,7 +38,21 @@ public class MonsterInfoUI : UIMenu {
         }
         string text = string.Empty;
         text += "<b>Name:</b> " + currentlyShowingMonster.name;
-        text += "\n<b>Party Power:</b> " + currentlyShowingMonster.computedPower;
+        text += "\n<b>Level:</b> " + currentlyShowingMonster.level;
+        text += "\n<b>HP:</b> " + currentlyShowingMonster.currentHP + "/" + currentlyShowingMonster.maxHP;
+        text += "\n<b>SP:</b> " + currentlyShowingMonster.currentSP + "/" + currentlyShowingMonster.maxSP;
+        text += "\n<b>Str:</b> " + currentlyShowingMonster.strength + ", <b>Int:</b> " + currentlyShowingMonster.intelligence;
+        text += "\n<b>Agi:</b> " + currentlyShowingMonster.agility + ", <b>Vit:</b> " + currentlyShowingMonster.vitality;
+        text += "\n<b>Exp Drop:</b> " + currentlyShowingMonster.experienceDrop;
+
+        text += "\n<b>P Final Attack:</b> " + currentlyShowingMonster.pFinalAttack;
+        text += "\n<b>M Final Attack:</b> " + currentlyShowingMonster.pFinalAttack;
+        text += "\n<b>PDef:</b> " + currentlyShowingMonster.pDef;
+        text += "\n<b>MDef:</b> " + currentlyShowingMonster.mDef;
+        text += "\n<b>Crit Chance:</b> " + currentlyShowingMonster.critChance + "%";
+        text += "\n<b>Dodge Chance:</b> " + currentlyShowingMonster.dodgeChance + "%";
+        text += "\n<b>Computed Power:</b> " + currentlyShowingMonster.computedPower;
+
         monsterInfoLbl.text = text;
         //infoScrollView.ResetPosition();
     }

@@ -19,9 +19,9 @@ public class DrinkAction : CharacterAction {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
         GiveAllReward(party);
-        if (party.IsFull(NEEDS.FUN)) {
-            EndAction(party, targetObject);
-        }
+        //if (party.IsFull(NEEDS.FUN)) {
+        //    EndAction(party, targetObject);
+        //}
     }
     public override bool CanBeDoneBy(CharacterParty party, IObject targetObject) {
         if (party.mainCharacter.faction != null) {
