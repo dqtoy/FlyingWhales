@@ -5,12 +5,10 @@ using UnityEngine;
 public class BerserkAction : CharacterAction {
 
     public BerserkAction() : base(ACTION_TYPE.BERSERK) {
-        _actionData.providedFullness = -0.2f;
-        _actionData.providedEnergy = -0.2f;
-        _actionData.providedFun = -0.2f;
-        _actionData.providedPrestige = -0.2f;
+        _actionData.providedEnergy = -2f;
+        _actionData.providedSanity = 1f;
 
-        _actionData.duration = 48;
+        _actionData.duration = 24;
     }
 
     #region Overrides
@@ -26,6 +24,12 @@ public class BerserkAction : CharacterAction {
     public override void EndAction(CharacterParty party, IObject targetObject) {
         base.EndAction(party, targetObject);
         party.BerserkModeOff();
+    }
+    public override CharacterAction Clone() {
+        BerserkAction action = new BerserkAction();
+        SetCommonData(action);
+        action.Initialize();
+        return action;
     }
     #endregion
 }

@@ -5,8 +5,9 @@ using UnityEngine;
 public class FlailAction : CharacterAction {
 
     public FlailAction() : base(ACTION_TYPE.FLAIL) {
-        _actionData.providedFun = -0.1f;
-        _actionData.duration = 48;
+        _actionData.providedEnergy = -2f;
+        _actionData.providedFullness = -1f;
+        _actionData.duration = 24;
     }
 
     #region Overrides

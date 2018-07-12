@@ -43,6 +43,12 @@ public class ChangeClassAction : CharacterAction {
         base.EndAction(party, targetObject);
         partyAssigned = null;
     }
+    public override CharacterAction Clone() {
+        ChangeClassAction action = new ChangeClassAction();
+        SetCommonData(action);
+        action.Initialize();
+        return action;
+    }
     #endregion
 
     public void SetAdvertisedClass(string className) {

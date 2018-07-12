@@ -1277,6 +1277,7 @@ public enum ACTION_TYPE {
     SELFMUTILATE,
     DEPOSIT,
     CHANGE_CLASS,
+    CHAT,
 }
 
 public enum OBJECT_TYPE {

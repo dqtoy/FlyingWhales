@@ -289,6 +289,12 @@ public class ObjectManager : MonoBehaviour {
                 return new FlailAction();
             case ACTION_TYPE.PLAY:
                 return new PlayAction();
+            case ACTION_TYPE.CHAT:
+                return new ChatAction();
+            case ACTION_TYPE.DEPOSIT:
+                return new DepositAction();
+            case ACTION_TYPE.CHANGE_CLASS:
+                return new ChangeClassAction();
 
         }
         return null;
