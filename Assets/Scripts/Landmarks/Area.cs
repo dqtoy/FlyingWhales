@@ -28,6 +28,8 @@ public class Area {
         tiles = new List<HexTile>();
         residents = new List<ICharacter>();
         orderClasses = new List<string>();
+        excessClasses = new List<string>();
+        missingClasses = new List<string>();
         orderStructures = new List<StructurePriority>();
         areaColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         SetAreaType(areaType);
@@ -42,6 +44,8 @@ public class Area {
         SetName(data.areaName);
         tiles = new List<HexTile>();
         residents = new List<ICharacter>();
+        excessClasses = new List<string>();
+        missingClasses = new List<string>();
         if (data.orderClasses != null) {
             orderClasses = data.orderClasses;
         } else {

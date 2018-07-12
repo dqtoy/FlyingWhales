@@ -16,5 +16,11 @@ public class FlailAction : CharacterAction {
         ActionSuccess(targetObject);
         GiveAllReward(party);
     }
+    public override CharacterAction Clone() {
+        FlailAction action = new FlailAction();
+        SetCommonData(action);
+        action.Initialize();
+        return action;
+    }
     #endregion
 }
