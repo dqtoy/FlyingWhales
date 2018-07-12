@@ -2110,6 +2110,36 @@ namespace ECS {
         //        actionThread.AddToChoices(_characterObject);
         //    }
         //}
+        public bool CanObtainResource(List<RESOURCE> resources) {
+            if (this.role != null) {//characters without a role cannot get actions, and therefore cannot obtain resources
+                for (int i = 0; i < _party.currentRegion.landmarks.Count; i++) {
+                    BaseLandmark landmark = _party.currentRegion.landmarks[i];
+                    StructureObj iobject = landmark.landmarkObj;
+                    if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
+                        for (int k = 0; k < iobject.currentState.actions.Count; k++) {
+                            CharacterAction action = iobject.currentState.actions[k];
+                            if (action.actionData.resourceGiven != RESOURCE.NONE && resources.Contains(action.actionData.resourceGiven)) { //does the action grant a resource, and is that a resource that is needed
+                                if (action.MeetsRequirements(_party, landmark) && action.CanBeDone(iobject) && action.CanBeDoneBy(_party, iobject)) { //Filter
+                                    //if the character can do an action that yields a needed resource, return true
+                                    return true;
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        public bool IsSpecialCivilian() {
+            if (this.characterClass != null) {
+                if (this.characterClass.className.Equals("Farmer") || this.characterClass.className.Equals("Miner") || this.characterClass.className.Equals("Retired Hero") ||
+                    this.characterClass.className.Equals("Shopkeeper") || this.characterClass.className.Equals("Woodcutter")) {
+                    return true;
+                }
+            }
+            return false;
+        }
         #endregion
 
         #region Relationships

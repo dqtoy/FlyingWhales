@@ -70,7 +70,7 @@ public class MustBeClass : ActionFilter {
         for (int i = 0; i < allowedClasses.Count; i++) {
             ACTION_FILTER currFilter = allowedClasses[i];
             CHARACTER_CLASS charClass = (CHARACTER_CLASS) Enum.Parse(typeof(CHARACTER_CLASS), currFilter.ToString());
-            _allowedClasses.Add(charClass.ToString());
+            _allowedClasses.Add(Utilities.NormalizeStringUpperCaseFirstLetters(charClass.ToString()));
         }
     }
     public override bool MeetsRequirements(ECS.Character character, BaseLandmark landmark) {

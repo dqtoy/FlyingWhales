@@ -53,17 +53,26 @@ public class QuestManager : MonoBehaviour {
         availableQuests[quest.questType].Remove(quest);
     }
     
-    public void TakeQuest(QUEST_TYPE type, ECS.Character questTaker, object data) {
+    public void TakeQuest(QUEST_TYPE type, ECS.Character questTaker, object data = null) {
         CharacterQuestData questData = ConstructQuestData(type, questTaker, data);
         questTaker.AddQuestData(questData);
     }
+    public void TakeQuest(Quest quest, ECS.Character questTaker, object data = null) {
+        CharacterQuestData questData = ConstructQuestData(quest, questTaker, data);
+        questTaker.AddQuestData(questData);
+    }
 
-    public CharacterQuestData ConstructQuestData(QUEST_TYPE type, ECS.Character questTaker, object data) {
+    private CharacterQuestData ConstructQuestData(QUEST_TYPE type, ECS.Character questTaker, object data) {
         Quest quest = (GetQuest(type, data));
+        return ConstructQuestData(quest, questTaker, data);
+    }
+    private CharacterQuestData ConstructQuestData(Quest quest, ECS.Character questTaker, object data) {
         if (quest != null) {
-            switch (type) {
+            switch (quest.questType) {
                 case QUEST_TYPE.RELEASE_CHARACTER:
                     return new ReleaseCharacterQuestData(quest, questTaker, data as ECS.Character);
+                case QUEST_TYPE.BUILD_STRUCTURE:
+                    return new BuildStructureQuestData(quest, questTaker);
                 default:
                     break;
             }

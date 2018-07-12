@@ -362,6 +362,11 @@ public class ObjectManager : MonoBehaviour {
             case LANDMARK_TYPE.LUMBERYARD:
                 structureObj = new Lumberyard();
                 break;
+            case LANDMARK_TYPE.PALACE:
+                structureObj = new Palace();
+                break;
+            default:
+                throw new System.Exception("No class for " + component.specificObjectType.ToString() + " has been created yet!");
         }
         component.CopyDataToStructureObject(structureObj);
         return structureObj;
