@@ -29,8 +29,6 @@ public class ReleaseCharacterQuestData : CharacterQuestData {
     public ReleaseCharacterQuestData(Quest parentQuest, Character owner, ECS.Character targetCharacter) : base(parentQuest, owner) {
         targetTile = (parentQuest as ReleaseCharacterQuest).targetCharacter.currLocation;
         requiredPower = 0f;
-        Messenger.AddListener<Quest>(Signals.QUEST_DONE, OnQuestDone);
-        
     }
 
     #region overrides
@@ -42,17 +40,6 @@ public class ReleaseCharacterQuestData : CharacterQuestData {
         tilePathToTarget =  _owner.party.icon.ConvertToTilePath(vectorPathToTarget);
     }
     #endregion
-
-    private void OnQuestDone(Quest doneQuest) {
-        if (_parentQuest.id == doneQuest.id) {
-            Messenger.RemoveListener<Quest>(Signals.QUEST_DONE, OnQuestDone);
-            _owner.RemoveQuestData(this); //remove this data from the character
-            if (_owner.party.actionData.currentActionParentQuest != null && _owner.party.actionData.currentActionParentQuest.id == doneQuest.id) {
-                //cancel the characters current action then look for another action
-                _owner.party.actionData.EndAction();
-            }
-        }
-    }
 
     public void UpdateVectorPath() {
         _owner.party.icon.GetVectorPath(targetTile, OnVectorPathComputed);
