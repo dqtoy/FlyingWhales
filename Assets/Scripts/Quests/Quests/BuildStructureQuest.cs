@@ -85,6 +85,7 @@ public class BuildStructureQuest : Quest {
         }
         if(_lackingResources.Count <= 0) {
             //End quest
+            QuestManager.Instance.OnQuestDone(this);
         }
     }
 
