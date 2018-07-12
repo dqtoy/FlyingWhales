@@ -13,9 +13,9 @@ public class PrayAction : CharacterAction {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
         GiveAllReward(party);
-        if (party.IsFull(NEEDS.SANITY)) {
-            EndAction(party, targetObject);
-        }
+        //if (party.IsFull(NEEDS.SANITY)) {
+        //    EndAction(party, targetObject);
+        //}
     }
     public override CharacterAction Clone() {
         PrayAction prayAction = new PrayAction();
