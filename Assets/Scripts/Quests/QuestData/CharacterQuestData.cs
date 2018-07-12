@@ -8,6 +8,12 @@ public class CharacterQuestData {
     protected ECS.Character _owner;
     public bool lastActionWasDesperate = false;
 
+    #region getters/setters
+    public Quest parentQuest {
+        get { return _parentQuest; }
+    }
+    #endregion
+
     public CharacterQuestData(Quest parentQuest, ECS.Character owner) {
         _parentQuest = parentQuest;
         _owner = owner;

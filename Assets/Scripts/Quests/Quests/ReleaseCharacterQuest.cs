@@ -5,7 +5,19 @@ using ECS;
 using UnityEngine;
 
 public class ReleaseCharacterQuest : Quest {
-    public ReleaseCharacterQuest() : base(QUEST_TYPE.RELEASE_CHARACTER) {
+
+    protected Character _targetCharacter;
+
+    #region getters.setters
+    public Character targetCharacter {
+        get { return _targetCharacter; }
+    }
+    #endregion
+
+    public ReleaseCharacterQuest(Character targetCharacter) : base(QUEST_TYPE.RELEASE_CHARACTER) {
+        _targetCharacter = targetCharacter;
+        Messenger.AddListener<Character>(Signals.CHARACTER_RELEASED, OnCharacterReleased);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnTargetDied);
     }
 
     #region overrides
@@ -24,8 +36,8 @@ public class ReleaseCharacterQuest : Quest {
                 }
             } else { //if no, Release target
                 data.SetLastActionDesperateState(false);
-                targetObject = questData.targetCharacter.party.characterObject;
-                return questData.targetCharacter.party.characterObject.currentState.GetAction(ACTION_TYPE.RELEASE);
+                targetObject = targetCharacter.party.characterObject;
+                return targetCharacter.party.characterObject.currentState.GetAction(ACTION_TYPE.RELEASE);
             }
         }
 
@@ -96,6 +108,25 @@ public class ReleaseCharacterQuest : Quest {
         return base.GetQuestAction(character, data, ref targetObject);
     }
     #endregion
+
+    private void OnCharacterReleased(Character releasedCharacter) {
+        if (releasedCharacter.id == targetCharacter.id) {
+            //Set Quest as finished
+            QuestManager.Instance.OnQuestDone(this);
+            RemoveListerners();
+        }
+    }
+    private void OnTargetDied(Character characterThatDied) {
+        if (characterThatDied.id == targetCharacter.id) {
+            //Set Quest as finished
+            QuestManager.Instance.OnQuestDone(this);
+            RemoveListerners();
+        }
+    }
+    private void RemoveListerners() {
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_RELEASED, OnCharacterReleased);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnTargetDied);
+    }
 
     /*
      Get a list of mentors that do not have negative relationships 
@@ -249,4 +280,23 @@ public class ReleaseCharacterQuest : Quest {
         return party1.computedPower / difference;
     }
     #endregion
+
+    #region Equations
+    public override int GetHashCode() {
+        return base.GetHashCode();
+    }
+    public override bool Equals(object obj) {
+        if (obj is ECS.Character) {
+            return this.Equals(obj as ECS.Character);
+        }
+        return base.Equals(obj);
+    }
+    public bool Equals(ECS.Character character) {
+        if (character.id == targetCharacter.id) {
+            return true;
+        }
+        return false;
+    }
+    #endregion
+    
 }

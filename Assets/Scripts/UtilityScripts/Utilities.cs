@@ -76,6 +76,9 @@ public class Utilities : MonoBehaviour {
         } else if (obj is NewParty) {
             lastPartyID += 1;
             return lastPartyID;
+        } else if (obj is Quest) {
+            lastQuestID += 1;
+            return lastQuestID;
         }
         return 0;
 	}
@@ -98,6 +101,8 @@ public class Utilities : MonoBehaviour {
             lastAreaID = idToUse;
         } else if (obj is NewParty) {
             lastPartyID = idToUse;
+        } else if (obj is Quest) {
+            lastQuestID += idToUse;
         }
         return idToUse;
     }
