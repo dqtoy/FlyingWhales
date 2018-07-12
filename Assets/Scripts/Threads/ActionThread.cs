@@ -45,28 +45,28 @@ public class ActionThread : Multithread {
         }
     }
     private bool LookForActionFromQuests() {
-        if (_party.questData.Count > 0 && _party.mainCharacter.role != null && _party.mainCharacter.role.happiness >= 100) {
-            //when a character's happiness is 100 or above, he chooses randomly between his active quests and calls a function from it which should return an instruction of which next action to execute
-            int randomIndex = Utilities.rng.Next(0, _party.questData.Count);
-            CharacterQuestData chosenQuestData = _party.questData[randomIndex];
-            //if (chosenQuest is ReleaseCharacterQuestData) {
-            //    ReleaseCharacterQuestData data = chosenQuest as ReleaseCharacterQuestData;
-            //    data.UpdateVectorPath();
-            //    while (data.isWaitingForPath) {
-            //        //wait until path has completed computation
-            //    }
-            //}
-            IObject targetObject = null;
-            chosenAction = chosenQuestData.GetNextQuestAction(ref targetObject);
-            chosenObject = targetObject;
-            if (chosenAction == null) {
+        if (_party.mainCharacter.role.happiness >= 100) {
+            if (_party.questData.Count > 0) {
+                //when a character's happiness is 100 or above, he chooses randomly between his active quests and calls a function from it which should return an instruction of which next action to execute
+                int randomIndex = Utilities.rng.Next(0, _party.questData.Count);
+                CharacterQuestData chosenQuestData = _party.questData[randomIndex];
+   
+                IObject targetObject = null;
+                chosenAction = chosenQuestData.GetNextQuestAction(ref targetObject);
+                chosenObject = targetObject;
+                if (chosenAction != null) {
+                    _party.actionData.questDataAssociatedWithCurrentAction = chosenQuestData;
+                    return true;
+                } else {
+                    throw new Exception("Cannot find action from " + chosenQuestData.parentQuest.questType.ToString());
+                }
+            } else { //no quests
                 chosenObject = _party.characterObject;
                 chosenAction = _party.mainCharacter.GetRandomIdleAction(); //Characters with no Quests with Happiness above 100 should perform a random Idle Action
-            } else {
-                _party.actionData.SetActionParentQuest(chosenQuestData.parentQuest);
+                return true;
             }
-            return true;
         }
+        
         return false;
     }
     private void LookForActionFromAdvertisements() {
@@ -99,7 +99,7 @@ public class ActionThread : Multithread {
         CharacterActionAdvertisement chosenActionAd = PickAction();
         chosenAction = chosenActionAd.action;
         chosenObject = chosenActionAd.targetObject;
-        _party.actionData.SetActionParentQuest(null);
+        _party.actionData.questDataAssociatedWithCurrentAction = null;
         //#if UNITY_EDITOR
         //_party.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + 
         //    " Chosen action: " + chosenAction.actionType.ToString() + " at " + chosenAction.state.obj.objectLocation.landmarkName + "(" + chosenAction.state.obj.objectLocation.tileLocation.tileName + ")");

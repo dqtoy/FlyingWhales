@@ -24,19 +24,22 @@ public class DrinkAction : CharacterAction {
         }
     }
     public override bool CanBeDoneBy(CharacterParty party, IObject targetObject) {
-        if (party.mainCharacter.faction != null && targetObject is StructureObj) {
-            Faction landmarkFaction = (targetObject as StructureObj).objectLocation.tileLocation.areaOfTile.owner;
-            if (landmarkFaction != null) {
-                Faction characterFaction = party.mainCharacter.faction;
-                if (characterFaction.id == landmarkFaction.id) {
-                    return true; //same factions
-                }
-                FactionRelationship rel = FactionManager.Instance.GetRelationshipBetween(landmarkFaction, characterFaction);
-                if (rel != null && rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NON_HOSTILE) {
-                    return true;
+        if (party.mainCharacter.faction != null) {
+            if (targetObject is StructureObj) {
+                Faction landmarkFaction = (targetObject as StructureObj).objectLocation.tileLocation.areaOfTile.owner;
+                if (landmarkFaction != null) {
+                    Faction characterFaction = party.mainCharacter.faction;
+                    if (characterFaction.id == landmarkFaction.id) {
+                        return true; //same factions
+                    }
+                    FactionRelationship rel = FactionManager.Instance.GetRelationshipBetween(landmarkFaction, characterFaction);
+                    if (rel != null && rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NON_HOSTILE) {
+                        return true;
+                    }
                 }
             }
-                
+        } else {
+            return true; //if factionless allow
         }
         return false;
     }

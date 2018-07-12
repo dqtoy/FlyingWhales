@@ -40,7 +40,8 @@ public class RestAction : CharacterAction {
                             return true;
                         }
                     }
-
+                } else {
+                    return true; //if factionless allow
                 }
             }
             

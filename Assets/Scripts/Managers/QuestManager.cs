@@ -25,27 +25,28 @@ public class QuestManager : MonoBehaviour {
         }
     }
 
-    public void CreateQuest(QUEST_TYPE questType, object data) {
-        Quest createdQuest = null;
-        switch (questType) {
-            case QUEST_TYPE.RELEASE_CHARACTER:
-                createdQuest = new ReleaseCharacterQuest(data as ECS.Character);
-                break;
-            case QUEST_TYPE.BUILD_STRUCTURE:
-                break;
-            default:
-                break;
-        }
-        if (createdQuest != null) {
-            AddAvailableQuest(createdQuest);
-        }
-    }
+    //public void CreateQuest(QUEST_TYPE questType, object data) {
+    //    Quest createdQuest = null;
+    //    switch (questType) {
+    //        case QUEST_TYPE.RELEASE_CHARACTER:
+    //            createdQuest = new ReleaseCharacterQuest(data as ECS.Character);
+    //            break;
+    //        case QUEST_TYPE.BUILD_STRUCTURE:
+    //            createdQuest = new BuildStructureQuest()
+    //            break;
+    //        default:
+    //            break;
+    //    }
+    //    if (createdQuest != null) {
+    //        AddAvailableQuest(createdQuest);
+    //    }
+    //}
     public void OnQuestDone(Quest doneQuest) {
         RemoveAvailableQuest(doneQuest);
         Messenger.Broadcast(Signals.QUEST_DONE, doneQuest);
     }
 
-    private void AddAvailableQuest(Quest quest) {
+    public void AddAvailableQuest(Quest quest) {
         availableQuests[quest.questType].Add(quest);
     }
     private void RemoveAvailableQuest(Quest quest) {

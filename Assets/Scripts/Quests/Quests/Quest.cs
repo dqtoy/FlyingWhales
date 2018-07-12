@@ -14,6 +14,7 @@ public class Quest {
     public Quest(QUEST_TYPE questType) {
         this.id = Utilities.SetID(this);
         this.questType = questType;
+        QuestManager.Instance.AddAvailableQuest(this);
     }
 
     public virtual CharacterAction GetQuestAction(ECS.Character character, CharacterQuestData data, ref IObject targetObject) {

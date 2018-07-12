@@ -121,6 +121,9 @@ public class Area {
             tilesToCheck.Remove(currTile);
         }
     }
+    //public List<HexTile> GetAdjacentFlatTiles() {
+
+    //}
     #endregion
 
     #region Area Type
@@ -225,6 +228,18 @@ public class Area {
     }
     public void RemoveStructurePriority(StructurePriority newPrio) {
         orderStructures.Remove(newPrio);
+    }
+    public StructurePriority GetNextStructurePriority() {
+        List<LANDMARK_TYPE> currentLandmarks = new List<LANDMARK_TYPE>(landmarks.Select(x => x.specificLandmarkType));
+        for (int i = 0; i < orderStructures.Count; i++) {
+            StructurePriority currPrio = orderStructures[i];
+            if (currentLandmarks.Contains(currPrio.setting.landmarkType)) {
+                currentLandmarks.Remove(currPrio.setting.landmarkType);
+            } else {
+                return currPrio;
+            }
+        }
+        return null;
     }
     #endregion
 }

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Palace : StructureObj {
 
+    private BuildStructureQuest activeBuildStructureQuest = null;
+
     public Palace() : base() {
         _specificObjectType = LANDMARK_TYPE.PALACE;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
@@ -21,6 +23,7 @@ public class Palace : StructureObj {
     private void StartOfMonth() {
         UpdateAdvertisedChangeClassAction();
         ScheduleStartOfMonthActions();
+        //CheckForBuildStructureQuest();
     }
     private void ScheduleStartOfMonthActions() {
         GameDate gameDate = GameManager.Instance.FirstDayOfTheMonth();
@@ -40,6 +43,16 @@ public class Palace : StructureObj {
             }
             if(highestPriorityMissingRole != string.Empty) {
                 changeClassAction.SetAdvertisedClass(highestPriorityMissingRole);
+            }
+        }
+    }
+    private void CheckForBuildStructureQuest() {
+        //At the start of each month, if the Settlement has no active Build Structure Quest, there is a 20% chance that a Build Structure Quest will be created
+        if (activeBuildStructureQuest == null) {
+            if (Random.Range(0, 100) < 20) {
+                StructurePriority prio = this.objectLocation.tileLocation.areaOfTile.GetNextStructurePriority();
+                //create build structure quest
+                BuildStructureQuest buildQuest = new BuildStructureQuest(prio.setting, )
             }
         }
     }

@@ -38,7 +38,8 @@ public class EatAction : CharacterAction {
                             return true;
                         }
                     }
-
+                } else {
+                    return true; //if factionless allow
                 }
             }
 
