@@ -66,7 +66,7 @@ public class CharacterIcon : MonoBehaviour {
 #if !WORLD_CREATION_TOOL
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
         characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
-        characterPortrait.GeneratePortrait(_iparty.icharacters[0], IMAGE_SIZE.X64);
+        characterPortrait.GeneratePortrait(_iparty.icharacters[0], IMAGE_SIZE.X64, false);
         portraitGO.SetActive(false);
 #endif
 
@@ -124,7 +124,7 @@ public class CharacterIcon : MonoBehaviour {
     #region Visuals
     public void ReclaimPortrait() {
         characterPortrait.transform.SetParent(this.transform);
-        (characterPortrait.transform as RectTransform).pivot = new Vector2(1f, 1f);
+        //(characterPortrait.transform as RectTransform).pivot = new Vector2(1f, 1f);
         characterPortrait.gameObject.SetActive(false);
     }
     #endregion
