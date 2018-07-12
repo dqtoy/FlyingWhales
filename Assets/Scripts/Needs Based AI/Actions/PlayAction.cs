@@ -5,11 +5,10 @@ using UnityEngine;
 public class PlayAction : CharacterAction {
 
     public PlayAction() : base(ACTION_TYPE.PLAY) {
-        _actionData.providedFullness = -0.2f;
-        _actionData.providedEnergy = -0.2f;
-        _actionData.providedFun = 0.2f;
+        _actionData.providedEnergy = -1f;
+        _actionData.providedFun = 2f;
 
-        _actionData.duration = 48;
+        _actionData.duration = 24;
     }
 
     #region Overrides
@@ -17,6 +16,12 @@ public class PlayAction : CharacterAction {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
         GiveAllReward(party);
+    }
+    public override CharacterAction Clone() {
+        PlayAction action = new PlayAction();
+        SetCommonData(action);
+        action.Initialize();
+        return action;
     }
     #endregion
 }

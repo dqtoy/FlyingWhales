@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DaydreamAction : CharacterAction {
+public class ChatAction : CharacterAction {
 
-    public DaydreamAction() : base(ACTION_TYPE.DAYDREAM) {
-        _actionData.providedEnergy = -1f;
-        _actionData.providedFun = 1f;
+    public ChatAction() : base(ACTION_TYPE.CHAT) {
+        _actionData.providedSanity = 3f;
 
-        _actionData.duration = 24;
+        _actionData.duration = 12;
     }
 
     #region Overrides
@@ -18,7 +17,7 @@ public class DaydreamAction : CharacterAction {
         GiveAllReward(party);
     }
     public override CharacterAction Clone() {
-        DaydreamAction action = new DaydreamAction();
+        ChatAction action = new ChatAction();
         SetCommonData(action);
         action.Initialize();
         return action;

@@ -17,16 +17,21 @@ public class DepositAction : CharacterAction {
         RESOURCE resource = RESOURCE.NONE;
         if (party.actionData.questDataAssociatedWithCurrentAction is BuildStructureQuestData) {
             resource = (party.actionData.questDataAssociatedWithCurrentAction as BuildStructureQuestData).currentDepositingResource;
-        } 
+        }
         if(resource != RESOURCE.NONE) {
             int deposit = depositingAmount;
             if(party.characterObject.resourceInventory[resource] < deposit) {
                 deposit = party.characterObject.resourceInventory[resource];
             }
-            party.characterObject.resourceInventory[resource] -= deposit;
-            targetObject.resourceInventory[resource] += deposit;
+            party.characterObject.AdjustResource(resource, -deposit);
+            targetObject.AdjustResource(resource, deposit);
         }
-
+        if(party.characterObject.resourceInventory[resource] <= 0) {
+            EndAction(party, targetObject);
+        }
+    }
+    public override bool CanBeDone(IObject targetObject) {
+        return false;
     }
     public override void EndAction(CharacterParty party, IObject targetObject) {
         base.EndAction(party, targetObject);

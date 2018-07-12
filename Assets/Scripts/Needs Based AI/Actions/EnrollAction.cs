@@ -50,10 +50,10 @@ public class EnrollAction : CharacterAction {
         GiveAllReward(party);
     }
     public override CharacterAction Clone() {
-        EnrollAction idleAction = new EnrollAction();
-        SetCommonData(idleAction);
-        idleAction.Initialize();
-        return idleAction;
+        EnrollAction action = new EnrollAction();
+        SetCommonData(action);
+        action.Initialize();
+        return action;
     }
     public override bool CanBeDoneBy(CharacterParty party, IObject targetObject) {
         if (targetObject is ICharacterObject) {

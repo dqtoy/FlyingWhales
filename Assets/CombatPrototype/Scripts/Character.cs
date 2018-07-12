@@ -2490,6 +2490,7 @@ namespace ECS {
             _idleActions = new List<CharacterAction>();
             _idleActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DAYDREAM));
             _idleActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.PLAY));
+            _idleActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.CHAT));
         }
         public CharacterAction GetRandomDesperateAction() {
             return _desperateActions[Utilities.rng.Next(0, _desperateActions.Count)];
