@@ -27,8 +27,8 @@ public class BuildStructureQuest : Quest {
     public override CharacterAction GetQuestAction(Character character, CharacterQuestData data, ref IObject targetObject) {
         BuildStructureQuestData buildQuestData = data as BuildStructureQuestData;
         List<RESOURCE> lackingResources = new List<RESOURCE>();
-        for (int i = 0; i < _setting.resourceCost.Count; i++) {
-            Resource resource = _setting.resourceCost[i];
+        for (int i = 0; i < _setting.buildResourceCost.Count; i++) {
+            Resource resource = _setting.buildResourceCost[i];
             if (_buildingStructure.resourceInventory[resource.resource] < resource.amount) {
                 lackingResources.Add(resource.resource);
             }

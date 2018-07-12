@@ -8,6 +8,7 @@ public class ResourceCostItem : MonoBehaviour {
     public Resource resource;
 
     public System.Action<Resource> onDeleteResource;
+    public System.Action onEditResource;
 
     [SerializeField] private Dropdown resourceTypeDropdown;
     [SerializeField] private InputField resourceAmountField;
@@ -29,12 +30,21 @@ public class ResourceCostItem : MonoBehaviour {
             onDeleteResource(resource);
         }
     }
+
+    public void OnResourceEdited() {
+        if (onEditResource != null) {
+            onEditResource();
+        }
+    }
+
     public void OnResourceChanged(int choice) {
         string resourceString = resourceTypeDropdown.options[resourceTypeDropdown.value].text;
         RESOURCE resourceType = (RESOURCE)System.Enum.Parse(typeof(RESOURCE), resourceString);
         resource.resource = resourceType;
+        OnResourceEdited();
     }
     public void OnResourceAmountChanged(string amount) {
         resource.amount = System.Int32.Parse(amount);
+        OnResourceEdited();
     }
 }

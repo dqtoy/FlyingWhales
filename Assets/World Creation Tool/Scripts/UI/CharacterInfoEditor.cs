@@ -52,8 +52,6 @@ namespace worldcreator {
             Messenger.AddListener<Relationship>(Signals.RELATIONSHIP_CREATED, OnRelationshipCreated);
             Messenger.AddListener<Relationship>(Signals.RELATIONSHIP_REMOVED, OnRelationshipRemoved);
 
-            
-            LoadDropdownOptions();
             LoadEquipmentChoices();
             LoadInventoryChoices();
         }
@@ -61,6 +59,7 @@ namespace worldcreator {
         public void ShowCharacterInfo(Character character) {
             _character = character;
             portrait.GeneratePortrait(_character, IMAGE_SIZE.X256);
+            LoadDropdownOptions();
             //UpdatePortraitControls();
             UpdateBasicInfo();
             LoadRelationships();

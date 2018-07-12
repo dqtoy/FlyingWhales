@@ -10,7 +10,6 @@ public class AreaInfoEditor : MonoBehaviour {
 
     [Header("Settlement Priorities")]
     public GameObject structurePriorityItemGO;
-    public GameObject structurePrioritySettingItemGO;
     [SerializeField] private ScrollRect structurePriorityScrollView;
     [SerializeField] private StructurePrioritySettingsEditor settingsEditor;
 
@@ -45,14 +44,23 @@ public class AreaInfoEditor : MonoBehaviour {
         }
     }
     public void AddStructurePriority() {
-        StructurePriority newPrio = new StructurePriority();
         StructurePrioritySetting newSetting = new StructurePrioritySetting();
-        newPrio.AddSettings(newSetting);
+        StructurePriority newPrio = new StructurePriority(newSetting);
         currentArea.AddStructurePriority(newPrio);
         LoadStructurePriorities();
     }
-    public void ShowSettingsEditor(StructurePrioritySetting settings) {
-        settingsEditor.ShowSettings(settings);
+    public void ShowSettingsEditor(StructurePrioritySetting settings, StructurePriority parent) {
+        settingsEditor.ShowSettings(settings, parent);
+    }
+    public void OnPriorityEdited(StructurePriority priority) {
+        StructurePriorityItem[] items = Utilities.GetComponentsInDirectChildren<StructurePriorityItem>(structurePriorityScrollView.content.gameObject);
+        for (int i = 0; i < items.Length; i++) {
+            StructurePriorityItem currItem = items[i];
+            if (currItem.item == priority) {
+                currItem.UpdateSettings();
+                break;
+            }
+        }
     }
     #endregion
 

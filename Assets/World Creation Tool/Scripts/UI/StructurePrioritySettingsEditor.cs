@@ -6,57 +6,80 @@ using UnityEngine.UI;
 public class StructurePrioritySettingsEditor : MonoBehaviour {
 
     private StructurePrioritySetting currSetting;
+    private StructurePriority parentPriority;
 
-    [SerializeField] private Dropdown actionTypeDropdown;
     [SerializeField] private Dropdown landmarkTypeDropdown;
-    [SerializeField] private ScrollRect resourceCostScrollView;
+    [SerializeField] private ScrollRect buildResourceCostScrollView;
+    [SerializeField] private ScrollRect repairResourceCostScrollView;
     [SerializeField] private GameObject resourceItemPrefab;
 
     public void Initialize() {
         LoadDropdownOptions();
     }
     private void LoadDropdownOptions() {
-        actionTypeDropdown.ClearOptions();
-        actionTypeDropdown.AddOptions(Utilities.GetEnumChoices<ACTION_TYPE>());
-
         landmarkTypeDropdown.ClearOptions();
         landmarkTypeDropdown.AddOptions(Utilities.GetEnumChoices<LANDMARK_TYPE>());
     }
 
-    public void ShowSettings(StructurePrioritySetting setting) {
+    public void ShowSettings(StructurePrioritySetting setting, StructurePriority parent) {
         currSetting = setting;
-        actionTypeDropdown.value = Utilities.GetOptionIndex(actionTypeDropdown, currSetting.actionType.ToString());
+        parentPriority = parent;
         landmarkTypeDropdown.value = Utilities.GetOptionIndex(landmarkTypeDropdown, currSetting.landmarkType.ToString());
-        UpdateResourceCosts();
+        UpdateBuildResourceCosts();
         this.gameObject.SetActive(true);
     }
-    public void UpdateResourceCosts() {
-        Utilities.DestroyChildren(resourceCostScrollView.content);
-        for (int i = 0; i < currSetting.resourceCost.Count; i++) {
-            Resource cost = currSetting.resourceCost[i];
-            GameObject resourceGO = GameObject.Instantiate(resourceItemPrefab, resourceCostScrollView.content);
+
+    #region Build Costs
+    public void UpdateBuildResourceCosts() {
+        Utilities.DestroyChildren(buildResourceCostScrollView.content);
+        for (int i = 0; i < currSetting.buildResourceCost.Count; i++) {
+            Resource cost = currSetting.buildResourceCost[i];
+            GameObject resourceGO = GameObject.Instantiate(resourceItemPrefab, buildResourceCostScrollView.content);
             ResourceCostItem item = resourceGO.GetComponent<ResourceCostItem>();
             item.SetResource(cost);
-            item.onDeleteResource = DeleteResource;
+            item.onDeleteResource = DeleteBuildResource;
+            item.onEditResource = () => worldcreator.WorldCreatorUI.Instance.editAreasMenu.infoEditor.OnPriorityEdited(parentPriority);
         }
+        worldcreator.WorldCreatorUI.Instance.editAreasMenu.infoEditor.OnPriorityEdited(parentPriority);
     }
-    public void DeleteResource(Resource resource) {
-        currSetting.RemoveResourceCost(resource);
-        UpdateResourceCosts();
+    public void DeleteBuildResource(Resource resource) {
+        currSetting.RemoveBuildResourceCost(resource);
+        UpdateBuildResourceCosts();
     }
-    public void AddResource() {
-        currSetting.AddResourceCost(new Resource(RESOURCE.FOOD, 0));
-        UpdateResourceCosts();
+    public void AddBuildResource() {
+        currSetting.AddBuildResourceCost(new Resource(RESOURCE.FOOD, 0));
+        UpdateBuildResourceCosts();
     }
-    public void OnActionChanged(int choice) {
-        string actionString = actionTypeDropdown.options[actionTypeDropdown.value].text;
-        ACTION_TYPE actionType = (ACTION_TYPE)System.Enum.Parse(typeof(ACTION_TYPE), actionString);
-        currSetting.actionType = actionType;
+    #endregion
+
+    #region Repair Costs
+    public void UpdateRepairResourceCosts() {
+        Utilities.DestroyChildren(buildResourceCostScrollView.content);
+        for (int i = 0; i < currSetting.buildResourceCost.Count; i++) {
+            Resource cost = currSetting.buildResourceCost[i];
+            GameObject resourceGO = GameObject.Instantiate(resourceItemPrefab, repairResourceCostScrollView.content);
+            ResourceCostItem item = resourceGO.GetComponent<ResourceCostItem>();
+            item.SetResource(cost);
+            item.onDeleteResource = DeleteRepairResource;
+            item.onEditResource = () => worldcreator.WorldCreatorUI.Instance.editAreasMenu.infoEditor.OnPriorityEdited(parentPriority);
+        }
+        worldcreator.WorldCreatorUI.Instance.editAreasMenu.infoEditor.OnPriorityEdited(parentPriority);
     }
+    public void DeleteRepairResource(Resource resource) {
+        currSetting.RemoveRepairResourceCost(resource);
+        UpdateRepairResourceCosts();
+    }
+    public void AddRepairResource() {
+        currSetting.AddRepairResourceCost(new Resource(RESOURCE.FOOD, 0));
+        UpdateRepairResourceCosts();
+    }
+    #endregion
+
     public void OnLandmarkChanged(int choice) {
         string landmarkString = landmarkTypeDropdown.options[landmarkTypeDropdown.value].text;
         LANDMARK_TYPE landmarkType = (LANDMARK_TYPE)System.Enum.Parse(typeof(LANDMARK_TYPE), landmarkString);
         currSetting.landmarkType = landmarkType;
+        worldcreator.WorldCreatorUI.Instance.editAreasMenu.infoEditor.OnPriorityEdited(parentPriority);
     }
 
     public void Hide() {
