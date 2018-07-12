@@ -52,7 +52,7 @@ public class Palace : StructureObj {
             if (Random.Range(0, 100) < 20) {
                 StructurePriority prio = this.objectLocation.tileLocation.areaOfTile.GetNextStructurePriority();
                 //create build structure quest
-                BuildStructureQuest buildQuest = new BuildStructureQuest(prio.setting, )
+                //BuildStructureQuest buildQuest = new BuildStructureQuest(prio.setting, )
             }
         }
     }
