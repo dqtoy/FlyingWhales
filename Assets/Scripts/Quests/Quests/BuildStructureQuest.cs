@@ -77,8 +77,8 @@ public class BuildStructureQuest : Quest {
 
     public void UpdateLackingResources() {
         _lackingResources.Clear();
-        for (int i = 0; i < _setting.resourceCost.Count; i++) {
-            Resource resource = _setting.resourceCost[i];
+        for (int i = 0; i < _setting.buildResourceCost.Count; i++) {
+            Resource resource = _setting.buildResourceCost[i];
             if (_buildingStructure.resourceInventory[resource.resource] < resource.amount) {
                 _lackingResources.Add(resource.resource);
             }
