@@ -95,6 +95,9 @@ public class Monster : ICharacter {
     public int currentSP {
         get { return _currentSP; }
     }
+    public int maxSP {
+        get { return _maxSP; }
+    }
     public int experienceDrop {
         get { return _experienceDrop; }
     }
@@ -107,8 +110,20 @@ public class Monster : ICharacter {
     public int speed {
         get { return agility + level; }
     }
+    public int pDef {
+        get { return _pDef; }
+    }
+    public int mDef {
+        get { return _mDef; }
+    }
     public float critChance {
         get { return _critChance; }
+    }
+    public float dodgeChance {
+        get { return _dodgeChance; }
+    }
+    public float hitChance {
+        get { return _hitChance; }
     }
     public float critDamage {
         get { return 0f; }

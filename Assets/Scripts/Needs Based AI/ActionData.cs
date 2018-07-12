@@ -132,6 +132,9 @@ public class ActionData {
             _isHalted = state;
             if (state) {
                 _party.icon.aiPath.maxSpeed = 0f;
+            } else {
+                _party.icon.OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
+                _party.icon.SetMovementState(GameManager.Instance.isPaused);
             }
         }
     }
