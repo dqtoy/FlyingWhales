@@ -386,8 +386,7 @@ namespace ECS {
         }
         public Character(CharacterSaveData data) : this(){
             _id = Utilities.SetID(this, data.id);
-            CharacterSetup baseSetup = CombatManager.Instance.GetBaseCharacterSetup(data.className);
-            _characterClass = baseSetup.characterClass.CreateNewCopy();
+            _characterClass = CharacterManager.Instance.classesDictionary[data.className].CreateNewCopy();
             _raceSetting = RaceManager.Instance.racesDictionary[data.race.ToString()].CreateNewCopy();
             _gender = data.gender;
             _name = data.name;
@@ -397,13 +396,19 @@ namespace ECS {
             _skills = GetGeneralSkills();
             //_skills.AddRange (GetBodyPartSkills ());
 
-            GenerateSetupTags(baseSetup);
             GenerateRaceTags();
 
             AllocateStatPoints(10);
             LevelUp();
 
-            EquipPreEquippedItems(baseSetup);
+            CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(data.className);
+            if (setup != null) {
+                GenerateSetupTags(setup);
+                EquipPreEquippedItems(setup);
+                if (setup.optionalRole != CHARACTER_ROLE.NONE) {
+                    AssignRole(setup.optionalRole);
+                }
+            }
             SubscribeToSignals();
         }
         public Character() {
@@ -2056,10 +2061,11 @@ namespace ECS {
             _raceSetting = raceSetting.CreateNewCopy();
         }
         public void ChangeClass(string className) {
-            //TODO: Change data as needed
+            //TODO: Log
             CharacterClass charClass = CharacterManager.Instance.classesDictionary[className];
             _characterClass = charClass.CreateNewCopy();
             OnCharacterClassChange();
+            //TODO: Check equipped items
         }
 		public void SetName(string newName){
 			_name = newName;
