@@ -23,10 +23,12 @@ public class DepositAction : CharacterAction {
             if(party.characterObject.resourceInventory[resource] < deposit) {
                 deposit = party.characterObject.resourceInventory[resource];
             }
-            party.characterObject.resourceInventory[resource] -= deposit;
-            targetObject.resourceInventory[resource] += deposit;
+            party.characterObject.AdjustResource(resource, -deposit);
+            targetObject.AdjustResource(resource, deposit);
         }
-
+        if(party.characterObject.resourceInventory[resource] <= 0) {
+            EndAction(party, targetObject);
+        }
     }
     public override void EndAction(CharacterParty party, IObject targetObject) {
         base.EndAction(party, targetObject);

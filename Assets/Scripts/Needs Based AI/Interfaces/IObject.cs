@@ -21,6 +21,7 @@ public interface IObject {
     void EndState(ObjectState state);
     void SetObjectLocation(BaseLandmark newLocation);
     void OnAddToLandmark(BaseLandmark newLocation);
+    void AdjustResource(RESOURCE resource, int amount);
 
     ObjectState GetState(string name);
     IObject Clone();
