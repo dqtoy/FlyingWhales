@@ -23,7 +23,7 @@ public class Palace : StructureObj {
 
     public void Initialize() {
         SchedulingManager.Instance.AddEntry(new GameDate(1, 1, 80, 2), () => StartOfMonth()); //so that only cloned palaces schedule monthly
-        SchedulingManager.Instance.AddEntry(new GameDate(1, 31, 80, 48), () => EndOfMonth()); //so that only cloned palaces schedule monthly
+        SchedulingManager.Instance.AddEntry(new GameDate(1, 1, 80, 48), () => EndOfMonth()); //so that only cloned palaces schedule monthly
     }
 
     private void StartOfMonth() {
@@ -129,6 +129,10 @@ public class Palace : StructureObj {
         if (activeBuildStructureQuest != null && doneQuest.id == activeBuildStructureQuest.id) {
             Messenger.RemoveListener<Quest>(Signals.QUEST_DONE, OnBuildDone);
             activeBuildStructureQuest = null; //means that there is no active build quest, since the current one has been completed
+            if (activeBuildStructureQuest.lackingResources.Count != 0) { //There are still lacking resources, means that he building was not completed, destory the landmark
+                LandmarkManager.Instance.DestroyLandmarkOnTile(activeBuildStructureQuest.targetTile);
+
+            }
         }
     }
 }
