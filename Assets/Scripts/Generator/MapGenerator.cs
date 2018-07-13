@@ -101,9 +101,9 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.GenerateGrid(data);
         CameraMove.Instance.Initialize();
         CameraMove.Instance.CalculateCameraBounds();
-        Minimap.Instance.Initialize();
         ObjectPoolManager.Instance.InitializeObjectPools();
         CameraMove.Instance.SetWholemapCameraValues();
+        Minimap.Instance.Initialize();
         //EquatorGenerator.Instance.GenerateEquator((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance.hexTiles);
         //Biomes.Instance.GenerateElevation(GridMap.Instance.hexTiles, (int)GridMap.Instance.width, (int)GridMap.Instance.height);
 

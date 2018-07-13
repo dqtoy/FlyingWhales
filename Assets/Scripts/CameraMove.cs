@@ -164,6 +164,7 @@ public class CameraMove : MonoBehaviour {
 
     public void Initialize() {
         Messenger.AddListener(Signals.GAME_LOADED, SetInitialCameraPosition);
+        Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_ADDED, UpdateMinimapTexture);
     }
     private void SetInitialCameraPosition() {
         Vector3 initialPos = Vector3.zero;
@@ -190,6 +191,9 @@ public class CameraMove : MonoBehaviour {
         wholeMapCamera.targetTexture = minimapTexture;
     }
     public void UpdateMinimapTexture() {
+        wholeMapCamera.Render();
+    }
+    public void UpdateMinimapTexture(Area affectedArea, HexTile tile) {
         wholeMapCamera.Render();
     }
 

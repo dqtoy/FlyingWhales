@@ -34,7 +34,7 @@ public class Area {
         areaColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         SetAreaType(areaType);
         SetCoreTile(coreTile);
-        //AddTile(coreTile);
+        AddTile(coreTile);
 #if !WORLD_CREATION_TOOL
         ScheduleStartOfMonthActions();
 #endif
@@ -87,6 +87,7 @@ public class Area {
         if (!tiles.Contains(tile)) {
             tiles.Add(tile);
             tile.SetArea(this);
+            tile.SetMinimapTileColor(areaColor);
             if (revalidateTiles) {
                 RevalidateTiles();
             }
