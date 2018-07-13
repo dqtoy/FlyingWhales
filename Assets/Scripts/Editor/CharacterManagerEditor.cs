@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(CharacterManager))]
 public class CharacterManagerEditor : Editor {
 
@@ -28,3 +29,5 @@ public class CharacterManagerEditor : Editor {
         }
     }
 }
+
+#endif

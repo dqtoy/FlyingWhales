@@ -162,7 +162,6 @@ public class CharacterInfoUI : UIMenu {
                 CharacterQuestData data = currentlyShowingCharacter.questData[i];
                 text += "\n" + data.parentQuest.name;
             }
-            text += currentlyShowingCharacter.party.actionData.currentAction.actionData.actionName.ToString() + " ";
         } else {
             text += "NONE";
         }

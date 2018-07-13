@@ -676,6 +676,7 @@ public class CharacterManager : MonoBehaviour {
     }
     #endregion
 
+#if UNITY_EDITOR
     #region Editor
     public void LoadPortraitAssets(IMAGE_SIZE imgSize, string assetsPath) {
         if (imgSize == IMAGE_SIZE.X64) {
@@ -708,7 +709,6 @@ public class CharacterManager : MonoBehaviour {
             }
         }
     }
-
     private void LoadSpritesToList(string[] files, PortraitAssetCollection collectionToUse) {
         for (int k = 0; k < files.Length; k++) {
             string fullFilePath = files[k];
@@ -761,4 +761,6 @@ public class CharacterManager : MonoBehaviour {
         }
     }
     #endregion
+#endif
+
 }
