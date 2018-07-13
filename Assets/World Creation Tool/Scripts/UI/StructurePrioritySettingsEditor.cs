@@ -26,6 +26,7 @@ public class StructurePrioritySettingsEditor : MonoBehaviour {
         parentPriority = parent;
         landmarkTypeDropdown.value = Utilities.GetOptionIndex(landmarkTypeDropdown, currSetting.landmarkType.ToString());
         UpdateBuildResourceCosts();
+        UpdateRepairResourceCosts();
         this.gameObject.SetActive(true);
     }
 
@@ -54,9 +55,9 @@ public class StructurePrioritySettingsEditor : MonoBehaviour {
 
     #region Repair Costs
     public void UpdateRepairResourceCosts() {
-        Utilities.DestroyChildren(buildResourceCostScrollView.content);
-        for (int i = 0; i < currSetting.buildResourceCost.Count; i++) {
-            Resource cost = currSetting.buildResourceCost[i];
+        Utilities.DestroyChildren(repairResourceCostScrollView.content);
+        for (int i = 0; i < currSetting.repairResourceCost.Count; i++) {
+            Resource cost = currSetting.repairResourceCost[i];
             GameObject resourceGO = GameObject.Instantiate(resourceItemPrefab, repairResourceCostScrollView.content);
             ResourceCostItem item = resourceGO.GetComponent<ResourceCostItem>();
             item.SetResource(cost);
