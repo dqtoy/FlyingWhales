@@ -192,17 +192,17 @@ public class CharacterAvatar : PooledObject{
         if (path != null && path.Count > 0) {
             if (this.specificLocation.tileLocation.landmarkOnTile != null) {
                 Log leftLog = null;
-                //if (_mainCharacter.party != null) {
+                //if (mainCharacter.party != null) {
                 //    leftLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "left_location_party");
-                //    leftLog.AddToFillers(_mainCharacter.party, _mainCharacter.party.name, LOG_IDENTIFIER.PARTY_1);
+                //    leftLog.AddToFillers(mainCharacter.party, mainCharacter.party.name, LOG_IDENTIFIER.PARTY_1);
                 //    leftLog.AddToFillers(this.specificLocation.tileLocation.landmarkOnTile, this.specificLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-                //    leftLog.AddToFillers(null, _mainCharacter.actionData.currentAction.GetLeaveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
+                //    leftLog.AddToFillers(null, mainCharacter.actionData.currentAction.GetLeaveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
                 //    leftLog.AddToFillers(targetLocation, targetLocation.locationName, LOG_IDENTIFIER.LANDMARK_2);
                 //} else {
                 //    leftLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "left_location");
-                //    leftLog.AddToFillers(_mainCharacter, _mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                //    leftLog.AddToFillers(mainCharacter, mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 //    leftLog.AddToFillers(this.specificLocation.tileLocation.landmarkOnTile, this.specificLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-                //    leftLog.AddToFillers(null, _mainCharacter.actionData.currentAction.GetLeaveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
+                //    leftLog.AddToFillers(null, mainCharacter.actionData.currentAction.GetLeaveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
                 //    leftLog.AddToFillers(targetLocation, targetLocation.locationName, LOG_IDENTIFIER.LANDMARK_2);
                 //}
                 this.specificLocation.tileLocation.landmarkOnTile.AddHistory(leftLog);
@@ -265,30 +265,30 @@ public class CharacterAvatar : PooledObject{
                 _isTravelling = false;
                 AddCharactersToLocation(targetLocation);
                 _specificLocation = targetLocation; //set location as the target location, in case the target location is a landmark
-                //if (_mainCharacter.actionData.currentAction == null) {
-                //    throw new Exception(_mainCharacter.name + "'s task is null!");
+                //if (mainCharacter.actionData.currentAction == null) {
+                //    throw new Exception(mainCharacter.name + "'s task is null!");
                 //}
 				if (this.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
                     Log arriveLog = null;
-                    //if (_mainCharacter.actionData.currentAction is MoveTo) {
+                    //if (mainCharacter.actionData.currentAction is MoveTo) {
                     //    arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "visit_location");
-                    //    if (_mainCharacter.party != null) {
-                    //        arriveLog.AddToFillers(_mainCharacter.party, _mainCharacter.party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    //    if (mainCharacter.party != null) {
+                    //        arriveLog.AddToFillers(mainCharacter.party, mainCharacter.party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     //    } else {
-                    //        arriveLog.AddToFillers(_mainCharacter, _mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    //        arriveLog.AddToFillers(mainCharacter, mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     //    }
                     //    arriveLog.AddToFillers(this.specificLocation.tileLocation.landmarkOnTile, this.specificLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
                     //} else {
-                    //    if (_mainCharacter.party != null) {
+                    //    if (mainCharacter.party != null) {
                     //        arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location_party");
-                    //        arriveLog.AddToFillers(_mainCharacter.party, _mainCharacter.party.name, LOG_IDENTIFIER.PARTY_1);
+                    //        arriveLog.AddToFillers(mainCharacter.party, mainCharacter.party.name, LOG_IDENTIFIER.PARTY_1);
                     //        arriveLog.AddToFillers(this.specificLocation.tileLocation.landmarkOnTile, this.specificLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-                    //        arriveLog.AddToFillers(null, _mainCharacter.actionData.currentAction.GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
+                    //        arriveLog.AddToFillers(null, mainCharacter.actionData.currentAction.GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
                     //    } else {
                     //        arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
-                    //        arriveLog.AddToFillers(_mainCharacter, _mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    //        arriveLog.AddToFillers(mainCharacter, mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     //        arriveLog.AddToFillers(this.specificLocation.tileLocation.landmarkOnTile, this.specificLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-                    //        arriveLog.AddToFillers(null, _mainCharacter.actionData.currentAction.GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
+                    //        arriveLog.AddToFillers(null, mainCharacter.actionData.currentAction.GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
                     //    }
                     //}
                     this.specificLocation.tileLocation.landmarkOnTile.AddHistory(arriveLog);
@@ -322,13 +322,13 @@ public class CharacterAvatar : PooledObject{
         _hasArrived = state;
     }
     internal void PauseMovement() {
-        Debug.Log(this.mainCharacter.name + "'s avatar has paused movement!");
+        Debug.Log(this._mainCharacter.name + "'s avatar has paused movement!");
         _isMovementPaused = true;
         smoothMovement.ForceStopMovement();
         //this.smoothMovement.onMoveFinished -= PauseMovement;
     }
     internal void ResumeMovement() {
-        Debug.Log(this.mainCharacter.name + "'s avatar has resumed movement!");
+        Debug.Log(this._mainCharacter.name + "'s avatar has resumed movement!");
         _isMovementPaused = false;
         NewMove();
     }
@@ -406,8 +406,8 @@ public class CharacterAvatar : PooledObject{
 		if(_characters[0].party == null){
 			_characters [0].LeaveTraceOnLandmark ();
 		}else{
-            if(_characters[0].party.icharacters[0] is Character) {
-                Character character = _characters[0].party.icharacters[0] as Character;
+            if(_characters[0].party.mainCharacter is Character) {
+                Character character = _characters[0].party.mainCharacter as Character;
                 character.LeaveTraceOnLandmark();
             }
         }
@@ -419,8 +419,8 @@ public class CharacterAvatar : PooledObject{
         if (_characters[0].party == null) {
             _characters[0].CheckForItemDrop();
         } else {
-            if (_characters[0].party.icharacters[0] is Character) {
-                Character character = _characters[0].party.icharacters[0] as Character;
+            if (_characters[0].party.mainCharacter is Character) {
+                Character character = _characters[0].party.mainCharacter as Character;
                 character.LeaveTraceOnLandmark();
             }
         }

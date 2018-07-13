@@ -61,8 +61,7 @@ public class ActionThread : Multithread {
                     throw new Exception("Cannot find action from " + chosenQuestData.parentQuest.questType.ToString());
                 }
             } else { //no quests
-                chosenObject = _party.characterObject;
-                chosenAction = _party.mainCharacter.GetRandomIdleAction(); //Characters with no Quests with Happiness above 100 should perform a random Idle Action
+                chosenAction = _party.mainCharacter.GetRandomIdleAction(ref chosenObject); //Characters with no Quests with Happiness above 100 should perform a random Idle Action
                 return true;
             }
         }

@@ -66,7 +66,7 @@ public interface ICharacter {
     int GetPDef(ICharacter enemy);
     int GetMDef(ICharacter enemy);
     NewParty CreateNewParty();
-    CharacterAction GetRandomDesperateAction();
-    CharacterAction GetRandomIdleAction();
+    CharacterAction GetRandomDesperateAction(ref IObject targetObject);
+    CharacterAction GetRandomIdleAction(ref IObject targetObject);
     CharacterTag AssignTag(CHARACTER_TAG tag); //Character only
 }

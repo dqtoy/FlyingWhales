@@ -26,12 +26,12 @@ public class NewParty : IParty {
         set { _numOfAttackers = value; }
     }
     public virtual string name {
-        get { return _icharacters[0].name + "'s Party"; }
+        get { return mainCharacter.name + "'s Party"; }
     }
     public string urlName {
         get {
             if (_icharacters.Count == 1) {
-                return "<link=" + '"' + _icharacters[0].id.ToString() + "_character" + '"' + ">" + name + "</link>";
+                return "<link=" + '"' + mainCharacter.id.ToString() + "_character" + '"' + ">" + name + "</link>";
             } else {
                 return "<link=" + '"' + this._id.ToString() + "_party" + '"' + ">" + name + "</link>";
             }
@@ -54,7 +54,7 @@ public class NewParty : IParty {
         set { _attackedByFaction = value; }
     }
     public Faction faction {
-        get { return _icharacters[0].faction; }
+        get { return mainCharacter.faction; }
     }
     public CharacterIcon icon {
         get { return _icon; }
@@ -63,17 +63,17 @@ public class NewParty : IParty {
         get { return _currentRegion; }
     }
     public Area home {
-        get { return _icharacters[0].home; }
+        get { return mainCharacter.home; }
     }
     public StructureObj homeStructure {
-        get { return _icharacters[0].homeStructure; }
+        get { return mainCharacter.homeStructure; }
     }
     public Combat currentCombat {
         get { return _currentCombat; }
         set { _currentCombat = value; }
     }
     public ICharacter mainCharacter {
-        get { return _icharacters[0]; }
+        get { return mainCharacter; }
     }
     public ICharacterObject icharacterObject {
         get { return _icharacterObject; }
@@ -160,14 +160,14 @@ public class NewParty : IParty {
         }
     }
     public void GoHome() {
-        GoToLocation(_icharacters[0].homeStructure.objectLocation, PATHFINDING_MODE.USE_ROADS);
+        GoToLocation(mainCharacter.homeStructure.objectLocation, PATHFINDING_MODE.USE_ROADS);
     }
     #endregion
 
     #region Quests
     private List<CharacterQuestData> GetQuestData() {
-        if (_icharacters.Count > 0 && _icharacters[0] is ECS.Character) {
-            return (_icharacters[0] as ECS.Character).questData;
+        if (_icharacters.Count > 0 && mainCharacter is ECS.Character) {
+            return (mainCharacter as ECS.Character).questData;
         }
         return null;
     }
@@ -231,7 +231,7 @@ public class NewParty : IParty {
             if (enemy.currentCombat != null && enemy.currentCombat == combat) {
                 return;
             }
-            SIDES sideToJoin = CombatManager.Instance.GetOppositeSide(this.icharacters[0].currentSide);
+            SIDES sideToJoin = CombatManager.Instance.GetOppositeSide(this.mainCharacter.currentSide);
             combat.AddParty(sideToJoin, enemy);
         }
 
@@ -245,6 +245,26 @@ public class NewParty : IParty {
         }
         for (int i = 0; i < this.icharacters.Count; i++) {
             this.icharacters[i].AddHistory(combatLog);
+        }
+    }
+    public void JoinCombatWith(NewParty friend) {
+        if (friend.currentCombat != null) {
+            if (this is CharacterParty) {
+                (this as CharacterParty).actionData.SetIsHalted(true);
+            }
+            friend.currentCombat.AddParty(friend.mainCharacter.currentSide, this);
+
+            Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "join_combat");
+            combatLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            combatLog.AddToFillers(friend.currentCombat, " joins battle of ", LOG_IDENTIFIER.COMBAT);
+            combatLog.AddToFillers(friend, friend.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+
+            for (int i = 0; i < this.icharacters.Count; i++) {
+                this.icharacters[i].AddHistory(combatLog);
+            }
+            for (int i = 0; i < friend.icharacters.Count; i++) {
+                friend.icharacters[i].AddHistory(combatLog);
+            }
         }
     }
     #endregion

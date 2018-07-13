@@ -95,8 +95,8 @@ public class CharacterAction {
         _filters = filters;
     }
     public virtual bool MeetsRequirements(CharacterParty party, BaseLandmark landmark) {
-        if (filters != null && party.icharacters[0] is Character) {
-            Character character = party.icharacters[0] as Character;
+        if (filters != null && party.mainCharacter is Character) {
+            Character character = party.mainCharacter as Character;
             for (int i = 0; i < filters.Length; i++) {
                 ActionFilter currFilter = filters[i];
                 if (!currFilter.MeetsRequirements(character, landmark)) {

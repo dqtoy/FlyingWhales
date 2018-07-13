@@ -16,8 +16,8 @@ public class EnrollAction : CharacterAction {
         if (mentor == null) {
             if (targetObject is ICharacterObject) {
                 ICharacterObject owner = targetObject as ICharacterObject;
-                if (owner.iparty.icharacters[0] is ECS.Character) {
-                    mentor = (owner.iparty.icharacters[0] as ECS.Character);
+                if (owner.iparty.mainCharacter is ECS.Character) {
+                    mentor = (owner.iparty.mainCharacter as ECS.Character);
                 }
             }
         }
@@ -58,8 +58,8 @@ public class EnrollAction : CharacterAction {
     public override bool CanBeDoneBy(CharacterParty party, IObject targetObject) {
         if (targetObject is ICharacterObject) {
             ICharacterObject owner = targetObject as ICharacterObject;
-            if (owner.iparty.icharacters[0] is ECS.Character) {
-                mentor = (owner.iparty.icharacters[0] as ECS.Character);
+            if (owner.iparty.mainCharacter is ECS.Character) {
+                mentor = (owner.iparty.mainCharacter as ECS.Character);
             }
         }
         ICharacter currCharacter = party.mainCharacter;

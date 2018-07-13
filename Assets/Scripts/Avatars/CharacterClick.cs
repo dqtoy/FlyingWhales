@@ -38,8 +38,8 @@ public class CharacterClick : MonoBehaviour {
         if (iparty.icharacters.Count > 1) {
             UIManager.Instance.ShowPartyInfo(iparty as NewParty);
         } else if (iparty.icharacters.Count == 1) {
-            if (iparty.icharacters[0] is ECS.Character) {
-                UIManager.Instance.ShowCharacterInfo(iparty.icharacters[0] as ECS.Character);
+            if (iparty.mainCharacter is ECS.Character) {
+                UIManager.Instance.ShowCharacterInfo(iparty.mainCharacter as ECS.Character);
             }
         }
 

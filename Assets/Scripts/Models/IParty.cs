@@ -17,6 +17,7 @@ public interface IParty {
     Area home { get; }
     StructureObj homeStructure { get; }
     Combat currentCombat { get; set; }
+    ICharacter mainCharacter { get; }
     ICharacterObject icharacterObject { get; }
     ILocation specificLocation { get; }
     List<ICharacter> icharacters { get; }

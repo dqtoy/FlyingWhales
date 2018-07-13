@@ -264,14 +264,14 @@ public class FactionManager : MonoBehaviour {
         FactionRelationship rel = GetRelationshipBetween(faction1, faction2);
         return rel.relationshipStatus;
     }
-    public List<Faction> GetNonHostileFactionsWith(Faction faction) {
-        List<Faction> nonHostileFactions = new List<Faction>();
+    public List<Faction> GetFactionsWithByStatus(Faction faction, FACTION_RELATIONSHIP_STATUS status) {
+        List<Faction> factions = new List<Faction>();
         foreach (KeyValuePair<Faction, FactionRelationship> kvp in faction.relationships) {
-            if (kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NON_HOSTILE) {
-                nonHostileFactions.Add(kvp.Key);
+            if (kvp.Value.relationshipStatus == status) {
+                factions.Add(kvp.Key);
             }
         }
-        return nonHostileFactions;
+        return factions;
     }
     #endregion
 }

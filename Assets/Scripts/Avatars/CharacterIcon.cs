@@ -54,9 +54,9 @@ public class CharacterIcon : MonoBehaviour {
         _iparty = iparty;
         normalScale = _avatarGO.transform.localScale;
         //UpdateColor();
-        this.name = _iparty.icharacters[0].name + "'s Icon";
-        //edgeCollider.gameObject.name =  _iparty.icharacters[0].name + "'s Edge Collider";
-        pathfinder.gameObject.name = _iparty.icharacters[0].name + "'s Pathfinder";
+        this.name = _iparty.mainCharacter.name + "'s Icon";
+        //edgeCollider.gameObject.name =  _iparty.mainCharacter.name + "'s Edge Collider";
+        pathfinder.gameObject.name = _iparty.mainCharacter.name + "'s Pathfinder";
         _isIdle = true;
         //if (_character.role != null) {
         //    _avatarSprite.sprite = CharacterManager.Instance.GetSpriteByRole(_character.role.roleType);
@@ -66,7 +66,7 @@ public class CharacterIcon : MonoBehaviour {
 #if !WORLD_CREATION_TOOL
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
         characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
-        characterPortrait.GeneratePortrait(_iparty.icharacters[0], IMAGE_SIZE.X64, false);
+        characterPortrait.GeneratePortrait(_iparty.mainCharacter, IMAGE_SIZE.X64, false);
         portraitGO.SetActive(false);
 #endif
 
