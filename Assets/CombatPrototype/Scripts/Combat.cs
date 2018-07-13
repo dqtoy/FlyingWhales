@@ -411,7 +411,7 @@ namespace ECS{
                                         float initialWeight = GetSkillInitialWeight(sourceCharacter, targetCharacter, attackSkill, weaponAttack, missingHP, levelDiff, character.battleTracker);
                                         float specialModifier = GetSpecialModifier(sourceCharacter, targetCharacter, attackSkill, character.battleTracker);
                                         int finalWeight = Mathf.CeilToInt(initialWeight * (specialModifier / 100f));
-                                        if (finalWeight >= 0) {
+                                        if (finalWeight > 0) {
                                             skillActivationWeights.Add(attackSkill, finalWeight);
                                         }
                                     }
@@ -431,7 +431,7 @@ namespace ECS{
                         float initialWeight = (float) attackSkill.activationWeight; // GetSkillInitialWeight(sourceCharacter, targetCharacter, attackSkill, weaponAttack, missingHP, levelDiff);
                         float specialModifier = GetSpecialModifier(sourceCharacter, targetCharacter, attackSkill);
                         int finalWeight = Mathf.CeilToInt(initialWeight * (specialModifier / 100f));
-                        if(finalWeight >= 0) {
+                        if(finalWeight > 0) {
                             skillActivationWeights.Add(attackSkill, finalWeight);
                         }
                     }

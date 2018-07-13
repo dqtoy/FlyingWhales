@@ -546,9 +546,11 @@ public class CharacterRole {
 
         float result = 0f;
         if (currentFun >= 0f) {
-            result = (((3f * currentFun) / 10f) * 2f) + 40f;
+            //result = (((3f * currentFun) / 10f) * 2f) + 40f;
+            result = (currentFun / 2.5f) + 40;
         } else {
-            result = currentFun / 2f;
+            //result = currentFun / 2f;
+            result = ((0.4f * (currentFun / 11f)) * -currentFun) + 40;
         }
         return result;
     }
@@ -576,7 +578,7 @@ public class CharacterRole {
         if (currentSanity >= 0f) {
             result = ((4f * currentSanity) / 20f) + 70f;
         } else {
-            result = Mathf.Pow((currentSanity / 5f), 1.7f);
+            result = Mathf.Pow((currentSanity / 5f), 2f);
         }
         return result;
     }
