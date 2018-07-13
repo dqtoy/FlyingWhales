@@ -36,7 +36,7 @@ public class Area {
         SetCoreTile(coreTile);
         AddTile(coreTile);
 #if !WORLD_CREATION_TOOL
-        ScheduleStartOfMonthActions();
+        ScheduleFirstAction();
 #endif
     }
     public Area(AreaSaveData data) {
@@ -62,7 +62,7 @@ public class Area {
         SetCoreTile(worldcreator.WorldCreatorManager.Instance.GetHexTile(data.coreTileID));
 #else
         SetCoreTile(GridMap.Instance.GetHexTile(data.coreTileID));
-        ScheduleStartOfMonthActions();
+        ScheduleFirstAction();
 #endif
         AddTile(Utilities.GetTilesFromIDs(data.tileData));
     }
@@ -191,8 +191,13 @@ public class Area {
         ScheduleStartOfMonthActions();
     }
     private void ScheduleStartOfMonthActions() {
-        GameDate gameDate = GameManager.Instance.FirstDayOfTheMonth();
-        gameDate.AddMonths(1);
+        GameDate gameDate = GameManager.Instance.Today();
+        gameDate.SetHours(1);
+        gameDate.AddDays(1);
+        SchedulingManager.Instance.AddEntry(gameDate, () => StartOfMonth());
+    }
+    private void ScheduleFirstAction() {
+        GameDate gameDate = new GameDate(1, 1, GameManager.Instance.year, 1);
         SchedulingManager.Instance.AddEntry(gameDate, () => StartOfMonth());
     }
     #endregion

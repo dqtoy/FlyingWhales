@@ -55,6 +55,9 @@ public struct GameDate {
 		this.year = year;
         this.hour = hour;
 	}
+    public void SetHours(int hour) {
+        this.hour = hour;
+    }
 	public void SetDate(GameDate gameDate){
 		this.month = gameDate.month;
 		this.day = gameDate.day;
