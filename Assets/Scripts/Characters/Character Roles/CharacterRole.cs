@@ -576,7 +576,7 @@ public class CharacterRole {
         if (currentSanity >= 0f) {
             result = ((4f * currentSanity) / 20f) + 70f;
         } else {
-            result = Mathf.Pow((currentSanity / 5f), 1.7f);
+            result = Mathf.Pow((currentSanity / 5f), 2f);
         }
         return result;
     }
