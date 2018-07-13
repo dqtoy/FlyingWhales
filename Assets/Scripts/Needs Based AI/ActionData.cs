@@ -144,6 +144,10 @@ public class ActionData {
                 if (_isHalted) {
                     return;
                 }
+                if (!_isNotFirstEncounter) {
+                    DoAction();
+                    return;
+                }
                 ILocation characterLocation = _party.specificLocation;
                 if (characterLocation != null && currentTargetObject.specificLocation != null && characterLocation.tileLocation.id == currentTargetObject.specificLocation.tileLocation.id) {
                     //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action
