@@ -22,6 +22,7 @@ public class BuildStructureQuest : Quest {
         targetTile = landToBuild;
         CreateLandmarkForInitialization(landToBuild);
         UpdateLackingResources();
+        UIManager.Instance.UpdateQuestSummary();
     }
 
     #region Utilities

@@ -2030,7 +2030,14 @@ namespace ECS {
         public void RemoveQuestData(CharacterQuestData questData) {
             _questData.Remove(questData);
         }
-
+        public bool HasQuest(Quest quest) {
+            for (int i = 0; i < questData.Count; i++) {
+                if (questData[i].parentQuest.id == quest.id) {
+                    return true;
+                }
+            }
+            return false;
+        }
         #endregion
 
         #region Tags

@@ -815,4 +815,25 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
+    #region Quest Summary
+    [Space(10)]
+    [Header("Quest Summary")]
+    [SerializeField] TextMeshProUGUI questSummaryLbl;
+    public void UpdateQuestSummary() {
+        string questSummary = string.Empty;
+        foreach (KeyValuePair<QUEST_TYPE, List<Quest>> kvp in QuestManager.Instance.availableQuests) {
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                Quest currQuest = kvp.Value[i];
+                questSummary += "<b>" + currQuest.name + "</b>\n";
+                List<ECS.Character> characters = currQuest.GetAcceptedCharacters();
+                for (int j = 0; j < characters.Count; j++) {
+                    questSummary += "       " + characters[j].urlName + "\n";
+                }
+            }
+           
+        }
+        questSummaryLbl.text = questSummary;
+    }
+    #endregion
+
 }
