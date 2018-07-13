@@ -33,23 +33,8 @@ public class CharacterManager : MonoBehaviour {
     public GameObject characterPortraitPrefab;
     [SerializeField] private List<RacePortraitAssets> portraitAssetsx64;
     [SerializeField] private List<RacePortraitAssets> portraitAssetsx256;
+    public List<Color> hairColors;
 
-    //[SerializeField] private List<PortraitAsset> bodyAssets;
-    //[SerializeField] private List<PortraitAsset> hairAssets;
-    //[SerializeField] private List<PortraitAsset> headAssets;
-    //[SerializeField] private List<PortraitAsset> noseAssets;
-    //[SerializeField] private List<PortraitAsset> mouthAssets;
-    //[SerializeField] private List<PortraitAsset> eyeAssets;
-    //[SerializeField] private List<PortraitAsset> eyebrowAssets;
-    //[SerializeField] private List<Color> hairColors;
-
-    //private Dictionary<IMAGE_SIZE, List<Sprite>> bodySprites;
-    //private Dictionary<IMAGE_SIZE, List<Sprite>> hairSprites;
-    //private Dictionary<IMAGE_SIZE, List<Sprite>> headSprites;
-    //private Dictionary<IMAGE_SIZE, List<Sprite>> noseSprites;
-    //private Dictionary<IMAGE_SIZE, List<Sprite>> mouthSprites;
-    //private Dictionary<IMAGE_SIZE, List<Sprite>> eyeSprites;
-    //private Dictionary<IMAGE_SIZE, List<Sprite>> eyebrowSprites;
 
     #region getters/setters
     //public Dictionary<int, HashSet<Citizen>> elligibleCitizenAgeTable {
@@ -599,7 +584,8 @@ public class CharacterManager : MonoBehaviour {
         ps.noseIndex = Random.Range(0, pac.noseAssets.Count);
         ps.mouthIndex = Random.Range(0, pac.mouthAssets.Count);
         ps.bodyIndex = Random.Range(0, pac.bodyAssets.Count);
-        ps.hairColor = pac.hairColors[Random.Range(0, pac.hairColors.Count)];
+        ps.facialHairIndex = Random.Range(0, pac.facialHairAssets.Count);
+        ps.hairColor = hairColors[Random.Range(0, hairColors.Count)];
         return ps;
     }
     public PortraitSettings GenerateRandomPortrait() {
@@ -618,6 +604,13 @@ public class CharacterManager : MonoBehaviour {
     public Sprite GetBodySprite(int index, IMAGE_SIZE imgSize, RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender, imgSize);
         return pac.bodyAssets[index];
+    }
+    public Sprite GetFacialHairSprite(int index, IMAGE_SIZE imgSize, RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender, imgSize);
+        if (pac.facialHairAssets.Count <= 0) {
+            return null;
+        }
+        return pac.facialHairAssets[index];
     }
     public Sprite GetHeadSprite(int index, IMAGE_SIZE imgSize, RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender, imgSize);
@@ -646,6 +639,10 @@ public class CharacterManager : MonoBehaviour {
     public int GetBodySpriteCount(RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
         return pac.bodyAssets.Count;
+    }
+    public int GetFacialHairSpriteCount(RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
+        return pac.facialHairAssets.Count;
     }
     public int GetHeadSpriteCount(RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
@@ -678,4 +675,92 @@ public class CharacterManager : MonoBehaviour {
         }
     }
     #endregion
+
+#if UNITY_EDITOR
+    #region Editor
+    public void LoadPortraitAssets(IMAGE_SIZE imgSize, string assetsPath) {
+        if (imgSize == IMAGE_SIZE.X64) {
+            portraitAssetsx64.Clear();
+        } else if (imgSize == IMAGE_SIZE.X256) {
+            portraitAssetsx256.Clear();
+        }
+
+        string[] subdirectories = System.IO.Directory.GetDirectories(assetsPath); //races
+        for (int i = 0; i < subdirectories.Length; i++) {
+            string fullSubDirPath = subdirectories[i];
+            string dirFileName = System.IO.Path.GetFileName(fullSubDirPath);
+            RACE currRace = (RACE)System.Enum.Parse(typeof(RACE), dirFileName);
+            RacePortraitAssets currRaceAssets = new RacePortraitAssets(currRace);
+            string[] genderDirs = System.IO.Directory.GetDirectories(fullSubDirPath);
+            for (int j = 0; j < genderDirs.Length; j++) {
+                string fullGenderPath = genderDirs[j];
+                GENDER currGender = (GENDER)System.Enum.Parse(typeof(GENDER), System.IO.Path.GetFileName(fullGenderPath));
+                string[] files = System.IO.Directory.GetFiles(fullGenderPath, "*.png");
+                PortraitAssetCollection collectionToUse = currRaceAssets.maleAssets;
+                if (currGender == GENDER.FEMALE) {
+                    collectionToUse = currRaceAssets.femaleAssets;
+                }
+                LoadSpritesToList(files, collectionToUse);
+            }
+            if (imgSize == IMAGE_SIZE.X64) {
+                portraitAssetsx64.Add(currRaceAssets);
+            } else if (imgSize == IMAGE_SIZE.X256) {
+                portraitAssetsx256.Add(currRaceAssets);
+            }
+        }
+    }
+    private void LoadSpritesToList(string[] files, PortraitAssetCollection collectionToUse) {
+        for (int k = 0; k < files.Length; k++) {
+            string fullFilePath = files[k];
+            string fileName = System.IO.Path.GetFileName(fullFilePath);
+            Sprite currSprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(fullFilePath);
+            if (fileName.Contains("body")) {
+                collectionToUse.bodyAssets.Add(currSprite);
+            } else if (fileName.Contains("brow")) {
+                collectionToUse.eyebrowAssets.Add(currSprite);
+            } else if (fileName.Contains("eye")) {
+                collectionToUse.eyeAssets.Add(currSprite);
+            } else if (fileName.Contains("face")) {
+                collectionToUse.headAssets.Add(currSprite);
+            } else if (fileName.Contains("hair")) {
+                if (fileName.Contains("b")) {
+                    for (int l = 0; l < collectionToUse.hairAssets.Count; l++) {
+                        HairSetting hairSetting = collectionToUse.hairAssets[l];
+                        string currSpriteID = System.Text.RegularExpressions.Regex.Match(currSprite.name, @"\d+").Value;
+                        string currSettingID = System.Text.RegularExpressions.Regex.Match(hairSetting.hairSprite.name, @"\d+").Value;
+                        if (currSpriteID.Equals(currSettingID)) {
+                            hairSetting.hairBackSprite = currSprite;
+                            break;
+                        }
+                    }
+                } else {
+                    HairSetting newHair = new HairSetting();
+                    newHair.hairSprite = currSprite;
+                    collectionToUse.hairAssets.Add(newHair);
+                }
+            } else if (fileName.Contains("mouth")) {
+                collectionToUse.mouthAssets.Add(currSprite);
+            } else if (fileName.Contains("nose")) {
+                collectionToUse.noseAssets.Add(currSprite);
+            } else if (fileName.Contains("beard")) {
+                collectionToUse.facialHairAssets.Add(currSprite);
+            }
+        }
+        OrganizeLists(collectionToUse);
+    }
+    private void OrganizeLists(PortraitAssetCollection collection) {
+        collection.bodyAssets = collection.bodyAssets.OrderBy(x => System.Int32.Parse(System.Text.RegularExpressions.Regex.Match(x.name, @"\d+").Value)).ToList();
+        collection.eyebrowAssets = collection.eyebrowAssets.OrderBy(x => System.Int32.Parse(System.Text.RegularExpressions.Regex.Match(x.name, @"\d+").Value)).ToList();
+        collection.eyeAssets = collection.eyeAssets.OrderBy(x => System.Int32.Parse(System.Text.RegularExpressions.Regex.Match(x.name, @"\d+").Value)).ToList();
+        collection.headAssets = collection.headAssets.OrderBy(x => System.Int32.Parse(System.Text.RegularExpressions.Regex.Match(x.name, @"\d+").Value)).ToList();
+        collection.hairAssets = collection.hairAssets.OrderBy(x => System.Int32.Parse(System.Text.RegularExpressions.Regex.Match(x.hairSprite.name, @"\d+").Value)).ToList();
+        collection.mouthAssets = collection.mouthAssets.OrderBy(x => System.Int32.Parse(System.Text.RegularExpressions.Regex.Match(x.name, @"\d+").Value)).ToList();
+        collection.noseAssets = collection.noseAssets.OrderBy(x => System.Int32.Parse(System.Text.RegularExpressions.Regex.Match(x.name, @"\d+").Value)).ToList();
+        if (collection.facialHairAssets != null) {
+            collection.facialHairAssets = collection.facialHairAssets.OrderBy(x => System.Int32.Parse(System.Text.RegularExpressions.Regex.Match(x.name, @"\d+").Value)).ToList();
+        }
+    }
+    #endregion
+#endif
+
 }

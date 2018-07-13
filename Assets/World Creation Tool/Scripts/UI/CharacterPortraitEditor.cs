@@ -22,6 +22,7 @@ public class CharacterPortraitEditor : MonoBehaviour {
     [SerializeField] private Stepper mouthStepper;
     [SerializeField] private Stepper eyebrowsStepper;
     [SerializeField] private Stepper bodyStepper;
+    [SerializeField] private Stepper facialHairStepper;
     [SerializeField] private ColorPickerControl hairColorPicker;
     [SerializeField] private Image hairColorImage;
     [SerializeField] private InputField fileNameField;
@@ -70,6 +71,7 @@ public class CharacterPortraitEditor : MonoBehaviour {
         mouthStepper.maximum = CharacterManager.Instance.GetMouthSpriteCount(chosenRace, chosenGender) - 1;
         eyebrowsStepper.maximum = CharacterManager.Instance.GetEyebrowSpriteCount(chosenRace, chosenGender) - 1;
         bodyStepper.maximum = CharacterManager.Instance.GetBodySpriteCount(chosenRace, chosenGender) - 1;
+        facialHairStepper.maximum = CharacterManager.Instance.GetFacialHairSpriteCount(chosenRace, chosenGender) - 1;
     }
     private void LoadDropdownSettings() {
         raceDropdown.ClearOptions();
@@ -88,6 +90,7 @@ public class CharacterPortraitEditor : MonoBehaviour {
         noseStepper.SetStepperValue(portraitSettings.noseIndex);
         mouthStepper.SetStepperValue(portraitSettings.mouthIndex);
         eyebrowsStepper.SetStepperValue(portraitSettings.eyeBrowIndex);
+        facialHairStepper.SetStepperValue(portraitSettings.facialHairIndex);
         bodyStepper.SetStepperValue(portraitSettings.bodyIndex);
         hairColorImage.color = portraitSettings.hairColor;
         hairColorPicker.CurrentColor = portraitSettings.hairColor;
@@ -102,6 +105,7 @@ public class CharacterPortraitEditor : MonoBehaviour {
         mouthStepper.SetStepperValue(settings.mouthIndex);
         eyebrowsStepper.SetStepperValue(settings.eyeBrowIndex);
         bodyStepper.SetStepperValue(settings.bodyIndex);
+        facialHairStepper.SetStepperValue(settings.facialHairIndex);
         hairColorImage.color = settings.hairColor;
         hairColorPicker.CurrentColor = settings.hairColor;
     }
@@ -135,6 +139,10 @@ public class CharacterPortraitEditor : MonoBehaviour {
     public void UpdateBody(int index) {
         portrait.SetBody(index);
         portraitSettings.bodyIndex = index;
+    }
+    public void UpdateFacialHair(int index) {
+        portrait.SetFacialHair(index);
+        portraitSettings.facialHairIndex = index;
     }
     public void UpdateHairColor(Color color) {
         portrait.SetHairColor(color);

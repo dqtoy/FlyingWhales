@@ -8,6 +8,7 @@ using UnityEngine;
 
 public class Quest {
 
+    public string name { get { return GetQuestName(); } }
     public int id { get; private set; }
     public QUEST_TYPE questType { get; private set; }
 
@@ -19,6 +20,19 @@ public class Quest {
 
     public virtual CharacterAction GetQuestAction(ECS.Character character, CharacterQuestData data, ref IObject targetObject) {
         return null;
+    }
+    protected virtual string GetQuestName() {
+        return questType.ToString();
+    }
+    public List<ECS.Character> GetAcceptedCharacters() {
+        List<ECS.Character> characters = new List<ECS.Character>();
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            ECS.Character currChar = CharacterManager.Instance.allCharacters[i];
+            if (currChar.HasQuest(this)) {
+                characters.Add(currChar);
+            }
+        }
+        return characters;
     }
 
 }

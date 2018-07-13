@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public struct HairSetting {
+public class HairSetting {
     public Sprite hairSprite;
     public Sprite hairBackSprite;
 }

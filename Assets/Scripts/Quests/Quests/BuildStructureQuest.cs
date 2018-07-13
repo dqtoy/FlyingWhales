@@ -8,6 +8,8 @@ public class BuildStructureQuest : Quest {
     private StructureObj _buildingStructure;
     private List<RESOURCE> _lackingResources;
 
+    private HexTile targetTile;
+
     #region getters/setters
     public List<RESOURCE> lackingResources {
         get { return _lackingResources; }
@@ -17,8 +19,10 @@ public class BuildStructureQuest : Quest {
     public BuildStructureQuest(StructurePrioritySetting setting, HexTile landToBuild) : base(QUEST_TYPE.BUILD_STRUCTURE) {
         _setting = setting;
         _lackingResources = new List<RESOURCE>();
+        targetTile = landToBuild;
         CreateLandmarkForInitialization(landToBuild);
         UpdateLackingResources();
+        UIManager.Instance.UpdateQuestSummary();
     }
 
     #region Utilities
@@ -73,6 +77,9 @@ public class BuildStructureQuest : Quest {
         }
         //return base.GetQuestAction(character, data, ref targetObject);
     }
+    protected override string GetQuestName() {
+        return "Build " + Utilities.NormalizeStringUpperCaseFirstLetters(_setting.landmarkType.ToString()) + " at " + targetTile.locationName;
+    }
     #endregion
 
     public void UpdateLackingResources() {
@@ -85,6 +92,7 @@ public class BuildStructureQuest : Quest {
         }
         if(_lackingResources.Count <= 0) {
             //End quest
+            targetTile.landmarkOnTile.landmarkObj.ChangeState(targetTile.landmarkOnTile.landmarkObj.GetState("Default"));
             QuestManager.Instance.OnQuestDone(this);
         }
     }

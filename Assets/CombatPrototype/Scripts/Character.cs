@@ -2042,7 +2042,14 @@ namespace ECS {
         public void RemoveQuestData(CharacterQuestData questData) {
             _questData.Remove(questData);
         }
-
+        public bool HasQuest(Quest quest) {
+            for (int i = 0; i < questData.Count; i++) {
+                if (questData[i].parentQuest.id == quest.id) {
+                    return true;
+                }
+            }
+            return false;
+        }
         #endregion
 
         #region Tags
@@ -2082,14 +2089,17 @@ namespace ECS {
             _characterClass = charClass.CreateNewCopy();
             OnCharacterClassChange();
 
+#if !WORLD_CREATION_TOOL
             Log log = new Log(GameManager.Instance.Today(), "CharacterActions", "ChangeClassAction", "change_class");
             log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, previousClassName, LOG_IDENTIFIER.STRING_1);
             log.AddToFillers(null, _characterClass.className, LOG_IDENTIFIER.STRING_2);
             AddHistory(log);
             //check equipped items
+#endif
+
         }
-		public void SetName(string newName){
+        public void SetName(string newName){
 			_name = newName;
 		}
         //If true, character can't do daily action (onDailyAction), i.e. actions, needs

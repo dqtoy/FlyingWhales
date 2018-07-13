@@ -32,6 +32,8 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
     [SerializeField] private Image hairBack;
     [SerializeField] private Image hairOverlay;
     [SerializeField] private Image hairBackOverlay;
+    [SerializeField] private Image facialHair;
+    [SerializeField] private Image facialHairOverlay;
 
     [Header("Body")]
     [SerializeField] private Image body;
@@ -62,6 +64,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
             SetNose(character.portraitSettings.noseIndex);
             SetMouth(character.portraitSettings.mouthIndex);
             SetHair(character.portraitSettings.hairIndex);
+            SetFacialHair(character.portraitSettings.facialHairIndex);
             SetHairColor(character.portraitSettings.hairColor);
             wholeImage.gameObject.SetActive(false);
         } else if (character is Monster) {
@@ -73,8 +76,10 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
             mouth.gameObject.SetActive(false);
             hair.gameObject.SetActive(false);
             hairBack.gameObject.SetActive(false);
+            facialHair.gameObject.SetActive(false);
             hairOverlay.gameObject.SetActive(false);
             hairBackOverlay.gameObject.SetActive(false);
+            facialHairOverlay.gameObject.SetActive(false);
             wholeImage.sprite = MonsterManager.Instance.GetMonsterSprite(character.name);
             //if (imgSize == IMAGE_SIZE.X256) {
             //    wholeImage.rectTransform.sizeDelta = new Vector2(256f, 256f);
@@ -240,6 +245,20 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
             mouth.SetNativeSize();
         }
     }
+    public void SetFacialHair(int index) {
+        facialHair.sprite = CharacterManager.Instance.GetFacialHairSprite(index, _imgSize, _portraitSettings.race, _portraitSettings.gender);
+        facialHairOverlay.sprite = facialHair.sprite;
+        if (facialHair.sprite == null) {
+            facialHair.gameObject.SetActive(false);
+            facialHairOverlay.gameObject.SetActive(false);
+        } else {
+            facialHair.gameObject.SetActive(true);
+            facialHairOverlay.gameObject.SetActive(true);
+        }
+        if (!_ignoreSize) {
+            body.SetNativeSize();
+        }
+    }
     public void SetBody(int index) {
         body.sprite = CharacterManager.Instance.GetBodySprite(index, _imgSize, _portraitSettings.race, _portraitSettings.gender);
         if (!_ignoreSize) {
@@ -252,6 +271,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
         Color newColor = new Color(hairColor.r, hairColor.g, hairColor.b, 115f/255f);
         hairOverlay.color = newColor;
         hairBackOverlay.color = newColor;
+        facialHairOverlay.color = newColor;
     }
     public Color GetHairColor() {
         return hair.color;
@@ -266,6 +286,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
         _imgSize = imgSize;
         float size = 0f;
         if (!ignoreSize) {
+            RectTransform[] rt = Utilities.GetComponentsInDirectChildren<RectTransform>(this.gameObject);
             switch (imgSize) {
                 case IMAGE_SIZE.X64:
                     size = 64f;
@@ -282,23 +303,11 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
                 default:
                     break;
             }
+            (this.transform as RectTransform).sizeDelta = new Vector2(size, size);
+            for (int i = 0; i < rt.Length; i++) {
+                rt[i].sizeDelta = new Vector2(size, size);
+            }
         }
-        if (updateAllSizes) {
-            head.rectTransform.sizeDelta = new Vector2(size, size);
-            eyes.rectTransform.sizeDelta = new Vector2(size, size);
-            eyebrows.rectTransform.sizeDelta = new Vector2(size, size);
-            nose.rectTransform.sizeDelta = new Vector2(size, size);
-            mouth.rectTransform.sizeDelta = new Vector2(size, size);
-            hair.rectTransform.sizeDelta = new Vector2(size, size);
-            hairOverlay.rectTransform.sizeDelta = new Vector2(size, size);
-            hairBack.rectTransform.sizeDelta = new Vector2(size, size);
-            hairBackOverlay.rectTransform.sizeDelta = new Vector2(size, size);
-            body.rectTransform.sizeDelta = new Vector2(size, size);
-        }
-
-        (this.transform as RectTransform).sizeDelta = new Vector2(size, size);
-        wholeImage.rectTransform.sizeDelta = new Vector2(size, size);
-
         normalSize = (this.transform as RectTransform).sizeDelta;
     }
 }
