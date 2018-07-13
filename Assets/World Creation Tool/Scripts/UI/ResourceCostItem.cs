@@ -44,6 +44,9 @@ public class ResourceCostItem : MonoBehaviour {
         OnResourceEdited();
     }
     public void OnResourceAmountChanged(string amount) {
+        if (string.IsNullOrEmpty(amount)) {
+            return;
+        }
         resource.amount = System.Int32.Parse(amount);
         OnResourceEdited();
     }

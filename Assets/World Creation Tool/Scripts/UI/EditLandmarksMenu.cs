@@ -75,6 +75,9 @@ namespace worldcreator {
             }
         }
         private void SetHousesCivilians(string civilians) {
+            if (string.IsNullOrEmpty(civilians)) {
+                return;
+            }
             int civiliansCount = Int32.Parse(civilians);
             for (int i = 0; i < lastCreatedLandmarks.Count; i++) {
                 BaseLandmark currLandmark = lastCreatedLandmarks[i];
