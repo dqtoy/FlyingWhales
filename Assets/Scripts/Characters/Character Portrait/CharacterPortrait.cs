@@ -243,12 +243,19 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
     private void SetImageSize(IMAGE_SIZE imgSize, bool ignoreSize) {
         _imgSize = imgSize;
         if (!ignoreSize) {
+            RectTransform[] rt = Utilities.GetComponentsInDirectChildren<RectTransform>(this.gameObject);
             switch (imgSize) {
                 case IMAGE_SIZE.X64:
                     (this.transform as RectTransform).sizeDelta = new Vector2(64f, 64f);
+                    for (int i = 0; i < rt.Length; i++) {
+                        rt[i].sizeDelta = new Vector2(64f, 64f);
+                    }
                     break;
                 case IMAGE_SIZE.X256:
                     (this.transform as RectTransform).sizeDelta = new Vector2(256f, 256f);
+                    for (int i = 0; i < rt.Length; i++) {
+                        rt[i].sizeDelta = new Vector2(256f, 256f);
+                    }
                     break;
                 default:
                     break;

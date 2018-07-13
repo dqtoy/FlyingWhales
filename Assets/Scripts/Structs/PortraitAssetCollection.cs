@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public struct PortraitAssetCollection {
+public class PortraitAssetCollection {
 
     public GENDER gender;
     public List<Sprite> bodyAssets;
@@ -13,5 +13,15 @@ public struct PortraitAssetCollection {
     public List<Sprite> mouthAssets;
     public List<Sprite> eyeAssets;
     public List<Sprite> eyebrowAssets;
-    public List<Color> hairColors;
+
+    public PortraitAssetCollection(GENDER gender) {
+        this.gender = gender;
+        bodyAssets = new List<Sprite>();
+        hairAssets = new List<HairSetting>();
+        headAssets = new List<Sprite>();
+        noseAssets = new List<Sprite>();
+        mouthAssets = new List<Sprite>();
+        eyeAssets = new List<Sprite>();
+        eyebrowAssets = new List<Sprite>();
+    }
 }
