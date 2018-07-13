@@ -2091,6 +2091,9 @@ namespace ECS {
             _characterClass = charClass.CreateNewCopy();
             OnCharacterClassChange();
 
+            _home.excessClasses.Remove(previousClassName);
+            _home.missingClasses.Remove(_characterClass.className);
+
 #if !WORLD_CREATION_TOOL
             Log log = new Log(GameManager.Instance.Today(), "CharacterActions", "ChangeClassAction", "change_class");
             log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
