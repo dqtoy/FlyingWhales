@@ -93,7 +93,7 @@ public class GameManager : MonoBehaviour {
 	public GameDate FirstDayOfTheMonth() {
 		return new GameDate(this.month, 1, this.year, 1);
 	}
-	public void SetPausedState(bool isPaused){
+    public void SetPausedState(bool isPaused){
         //Debug.Log("Set paused state to " + isPaused);
 		this.isPaused = isPaused;
         Messenger.Broadcast(Signals.PAUSED, isPaused);

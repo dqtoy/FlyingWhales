@@ -881,10 +881,13 @@ namespace ECS {
 				while(_tags.Count > 0){
 					RemoveCharacterTag (_tags [0]);
 				}
-//				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
-//					Messenger.Broadcast ("CharacterDeath", this);
-//				}
-				if(onCharacterDeath != null){
+                while (questData.Count != 0) {
+                    questData[0].AbandonQuest();
+                }
+                //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
+                //					Messenger.Broadcast ("CharacterDeath", this);
+                //				}
+                if (onCharacterDeath != null){
 					onCharacterDeath();
 				}
                 onCharacterDeath = null;

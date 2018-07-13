@@ -14,6 +14,9 @@ public class BuildStructureQuest : Quest {
     public List<RESOURCE> lackingResources {
         get { return _lackingResources; }
     }
+    public StructurePrioritySetting setting {
+        get { return _setting; }
+    }
     #endregion
 
     public BuildStructureQuest(StructurePrioritySetting setting, HexTile landToBuild) : base(QUEST_TYPE.BUILD_STRUCTURE) {

@@ -314,7 +314,7 @@ public class ConsoleMenu : UIMenu {
 
     #region Characters
     private void KillCharacter(string[] parameters) {
-        if (parameters.Length != 2) {
+        if (parameters.Length < 2) {
             AddCommandHistory(consoleLbl.text);
             AddErrorMessage("There was an error in the command format of /kill");
             return;
@@ -322,15 +322,29 @@ public class ConsoleMenu : UIMenu {
         string characterParameterString = parameters[1];
         int characterID;
 
+        string characterName = string.Empty;
+        for (int i = 1; i < parameters.Length; i++) {
+            characterName += parameters[i] + " ";
+        }
+        characterName = characterName.Trim();
+
         bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
 
+        ECS.Character character = null;
+
         if (isCharacterParameterNumeric) {
-            ECS.Character character = CharacterManager.Instance.GetCharacterByID(characterID);
-            character.Death();
+            character = CharacterManager.Instance.GetCharacterByID(characterID);
         } else {
+            character = CharacterManager.Instance.GetCharacterByName(characterName);
+        }
+
+        if (character == null) {
             AddCommandHistory(consoleLbl.text);
             AddErrorMessage("There was an error in the command format of /kill");
+            return;
         }
+
+        character.Death();
     }
     //private void AdjustGold(string[] parameters) {
     //    if (parameters.Length != 3) {
