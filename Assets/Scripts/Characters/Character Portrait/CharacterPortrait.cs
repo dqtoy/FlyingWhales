@@ -54,7 +54,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
         _character = character;
         _ignoreSize = ignoreSize;
         _ignoreHover = ignoreHover;
-        SetImageSize(imgSize, ignoreSize, false);
+        SetImageSize(imgSize, ignoreSize);
         _portraitSettings = character.portraitSettings;
         if (character is ECS.Character) {
             SetBody(character.portraitSettings.bodyIndex);
@@ -98,7 +98,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
         _ignoreSize = ignoreSize;
         _ignoreHover = ignoreHover;
         _portraitSettings = portraitSettings;
-        SetImageSize(imgSize, ignoreSize, false);
+        SetImageSize(imgSize, ignoreSize);
         SetBody(portraitSettings.bodyIndex);
         SetHead(portraitSettings.headIndex);
         SetEyes(portraitSettings.eyesIndex);
