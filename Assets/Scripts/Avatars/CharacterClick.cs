@@ -48,7 +48,7 @@ public class CharacterClick : MonoBehaviour {
         if (icon.iparty is CharacterParty) {
             CharacterParty thisParty = icon.iparty as CharacterParty;
             if (thisParty.actionData.currentAction != null) {
-                if (other.tag == "Character" && (thisParty.actionData.currentAction.actionType == ACTION_TYPE.ATTACK || thisParty.actionData.currentAction.actionType == ACTION_TYPE.CHAT) && thisParty.actionData.currentTargetObject is ICharacterObject) {
+                if (other.tag == "Character" && (thisParty.actionData.currentAction.actionType == ACTION_TYPE.ATTACK) && thisParty.actionData.currentTargetObject is ICharacterObject) { //|| thisParty.actionData.currentAction.actionType == ACTION_TYPE.CHAT
                     ICharacterObject icharacterObject = thisParty.actionData.currentTargetObject as ICharacterObject;
                     CharacterIcon enemy = other.GetComponent<CharacterClick>().icon;
                     if (icharacterObject.iparty.id == enemy.iparty.id) {//attackAction.icharacterObj.iparty == enemy.iparty.icharacterType && 
