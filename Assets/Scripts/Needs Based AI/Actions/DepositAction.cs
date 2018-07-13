@@ -4,7 +4,7 @@ using UnityEngine;
 using ECS;
 
 public class DepositAction : CharacterAction {
-    int depositingAmount = 20;
+    int depositingAmount = 50;
 
     public DepositAction() : base(ACTION_TYPE.DEPOSIT) {
 

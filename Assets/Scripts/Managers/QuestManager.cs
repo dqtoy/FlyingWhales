@@ -44,7 +44,6 @@ public class QuestManager : MonoBehaviour {
     public void OnQuestDone(Quest doneQuest) {
         RemoveAvailableQuest(doneQuest);
         Messenger.Broadcast(Signals.QUEST_DONE, doneQuest);
-        UIManager.Instance.UpdateQuestSummary();
     }
 
     public void AddAvailableQuest(Quest quest) {
@@ -57,12 +56,10 @@ public class QuestManager : MonoBehaviour {
     public void TakeQuest(QUEST_TYPE type, ECS.Character questTaker, object data = null) {
         CharacterQuestData questData = ConstructQuestData(type, questTaker, data);
         questTaker.AddQuestData(questData);
-        UIManager.Instance.UpdateQuestSummary();
     }
     public void TakeQuest(Quest quest, ECS.Character questTaker, object data = null) {
         CharacterQuestData questData = ConstructQuestData(quest, questTaker, data);
         questTaker.AddQuestData(questData);
-        UIManager.Instance.UpdateQuestSummary();
     }
 
     private CharacterQuestData ConstructQuestData(QUEST_TYPE type, ECS.Character questTaker, object data) {

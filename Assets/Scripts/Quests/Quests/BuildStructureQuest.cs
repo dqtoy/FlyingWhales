@@ -25,7 +25,6 @@ public class BuildStructureQuest : Quest {
         targetTile = landToBuild;
         CreateLandmarkForInitialization(landToBuild);
         UpdateLackingResources();
-        UIManager.Instance.UpdateQuestSummary();
     }
 
     #region Utilities
@@ -98,6 +97,17 @@ public class BuildStructureQuest : Quest {
             targetTile.landmarkOnTile.landmarkObj.ChangeState(targetTile.landmarkOnTile.landmarkObj.GetState("Default"));
             QuestManager.Instance.OnQuestDone(this);
         }
+    }
+    public List<Resource> GetNeededResources() {
+        List<Resource> missingResources = new List<Resource>();
+        for (int i = 0; i < _setting.buildResourceCost.Count; i++) {
+            Resource neededResource = _setting.buildResourceCost[i];
+            int currentBuildingAmount = _buildingStructure.resourceInventory[neededResource.resource];
+            if (currentBuildingAmount < neededResource.amount) {
+                missingResources.Add(new Resource(neededResource.resource, neededResource.amount - currentBuildingAmount));
+            }
+        }
+        return missingResources;
     }
 
     private CharacterAction ActionThatCanObtainResource(Character character, BuildStructureQuestData buildQuestData, ref IObject targetObject) {
