@@ -546,9 +546,11 @@ public class CharacterRole {
 
         float result = 0f;
         if (currentFun >= 0f) {
-            result = (((3f * currentFun) / 10f) * 2f) + 40f;
+            //result = (((3f * currentFun) / 10f) * 2f) + 40f;
+            result = (currentFun / 2.5f) + 40;
         } else {
-            result = currentFun / 2f;
+            //result = currentFun / 2f;
+            result = ((0.4f * (currentFun / 11f)) * -currentFun) + 40;
         }
         return result;
     }
