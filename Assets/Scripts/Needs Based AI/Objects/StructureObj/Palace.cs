@@ -22,7 +22,7 @@ public class Palace : StructureObj {
     #endregion
 
     public void Initialize() {
-        SchedulingManager.Instance.AddEntry(new GameDate(1, 1, 80, 1), () => StartOfMonth()); //so that only cloned palaces schedule monthly
+        SchedulingManager.Instance.AddEntry(new GameDate(1, 1, 80, 2), () => StartOfMonth()); //so that only cloned palaces schedule monthly
     }
 
     private void StartOfMonth() {
@@ -31,9 +31,9 @@ public class Palace : StructureObj {
         CheckForBuildStructureQuest();
     }
     private void ScheduleStartOfMonthActions() {
-        GameDate gameDate = GameManager.Instance.FirstDayOfTheMonth();
-        gameDate.AddMonths(1);
-        gameDate.AddHours(1);
+        GameDate gameDate = GameManager.Instance.Today();
+        gameDate.SetHours(2);
+        gameDate.AddDays(1);
         SchedulingManager.Instance.AddEntry(gameDate, () => StartOfMonth());
     }
     private void UpdateAdvertisedChangeClassAction() {
