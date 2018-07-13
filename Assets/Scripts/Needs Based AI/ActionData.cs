@@ -155,8 +155,10 @@ public class ActionData {
                             AssignAction(newAction, currentTargetObject);
                         }
                     } else {
-                        currentAction.EndAction(_party, currentTargetObject);
-                        return;
+                        if(!_party.mainCharacter.desperateActions.Contains(currentAction) && !_party.mainCharacter.idleActions.Contains(currentAction)) {
+                            currentAction.EndAction(_party, currentTargetObject);
+                            return;
+                        }
                     }
                     //}
                     DoAction();
