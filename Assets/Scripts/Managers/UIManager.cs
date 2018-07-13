@@ -183,6 +183,7 @@ public class UIManager : MonoBehaviour {
         UpdateMonsterInfo();
         UpdatePartyInfo();
         UpdateCombatLogs();
+        UpdateQuestSummary();
     }
 
     #region World Controls
