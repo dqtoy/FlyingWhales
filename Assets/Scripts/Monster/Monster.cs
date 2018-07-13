@@ -316,10 +316,12 @@ public class Monster : ICharacter {
         _currentSP = _maxSP;
         SetCharacterColor(Color.red);
 
+#if !WORLD_CREATION_TOOL
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, UIManager.Instance.characterPortraitsParent);
         _characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
         _characterPortrait.GeneratePortrait(this, IMAGE_SIZE.X36, true);
         portraitGO.SetActive(false);
+#endif
     }
     public void Initialize() {
         _id = Utilities.SetID(this);
@@ -496,5 +498,5 @@ public class Monster : ICharacter {
             }
         }
     }
-    #endregion
+#endregion
 }

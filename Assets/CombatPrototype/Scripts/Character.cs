@@ -397,10 +397,12 @@ namespace ECS {
             //LoadRelationships(data.relationshipsData);
             _portraitSettings = data.portraitSettings;
 
+#if !WORLD_CREATION_TOOL
             GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, UIManager.Instance.characterPortraitsParent);
             _characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
             _characterPortrait.GeneratePortrait(this, IMAGE_SIZE.X36, true);
             portraitGO.SetActive(false);
+#endif
 
             _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
             _skills = GetGeneralSkills();
@@ -471,11 +473,11 @@ namespace ECS {
         }
         public void Initialize() { }
 
-        #region Signals
+#region Signals
         private void SubscribeToSignals() {
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
         }
-        #endregion
+#endregion
 
         private void AllocateStatPoints(int statAllocation){
             _baseStrength = 0;
@@ -909,7 +911,7 @@ namespace ECS {
             onCharacterDeath -= onDeathAction;
         }
 
-		#region Body Parts
+#region Body Parts
 		/*
      * Add new body parts here.
      * */
@@ -1005,9 +1007,9 @@ namespace ECS {
             }
             return false;
 		}
-		#endregion
+#endregion
 
-		#region Items
+#region Items
 		//If a character picks up an item, it is automatically added to his/her inventory
 		internal void PickupItem(Item item){
 			Item newItem = item;
@@ -1504,9 +1506,9 @@ namespace ECS {
             //AdjustBonusIntelligence(-item.bonusIntelligence);
             //AdjustBonusVitality(-item.bonusVitality);
         }
-        #endregion
+#endregion
 
-        #region Status Effects
+#region Status Effects
         internal void AddStatusEffect(STATUS_EFFECT statusEffect){
 			this._statusEffects.Add (statusEffect);
 		}
@@ -1553,9 +1555,9 @@ namespace ECS {
             }
             return false;
         }
-		#endregion
+#endregion
 
-		#region Skills
+#region Skills
 		private List<Skill> GetGeneralSkills(){
             List<Skill> allGeneralSkills = new List<Skill>();
             foreach (Skill skill in SkillManager.Instance.generalSkills.Values) {
@@ -1580,9 +1582,9 @@ namespace ECS {
 			}
 			return allBodyPartSkills;
 		}
-		#endregion
+#endregion
 
-		#region Roles
+#region Roles
 		public void AssignRole(CHARACTER_ROLE role) {
             bool wasRoleChanged = false;
 			if(_role != null){
@@ -1633,15 +1635,15 @@ namespace ECS {
 			//	AssignRole (CHARACTER_ROLE.TAMED_BEAST);
 			//}
 		}
-		#endregion
+#endregion
 
-		#region Character Class
+#region Character Class
 		public void AssignClass(CharacterClass charClass) {
 			_characterClass = charClass;
 		}
-		#endregion
+#endregion
 
-		#region Traits
+#region Traits
   //      private void GenerateTraits() {
   //          CharacterType baseCharacterType = CharacterManager.Instance.GetRandomCharacterType();
   //          //_characterType = baseCharacterType;
@@ -1802,9 +1804,9 @@ namespace ECS {
 		//	}
 		//	return false;
 		//}
-        #endregion
+#endregion
 
-		#region Character Tags
+#region Character Tags
 		public CharacterTag AssignTag(CHARACTER_TAG tag) {
 			if(HasTag(tag)){
 				return null;
@@ -1995,16 +1997,16 @@ namespace ECS {
             }
 			return null;
 		}
-		#endregion
+#endregion
 
-        #region Faction
+#region Faction
         public void SetFaction(Faction faction) {
 			_faction = faction;
             Messenger.Broadcast<Character>(Signals.FACTION_SET, this);
 		}
-		#endregion
+#endregion
 
-		#region Party
+#region Party
         /*
          Create a new Party with this character as the leader.
              */
@@ -2020,9 +2022,9 @@ namespace ECS {
 		public void SetParty(NewParty party) {
 			_party = party as CharacterParty;
 		}
-        #endregion
+#endregion
 
-        #region Location
+#region Location
 		public bool IsCharacterInAdjacentRegionOfThis(Character targetCharacter){
 			for (int i = 0; i < _currentRegion.adjacentRegionsViaRoad.Count; i++) {
 				if(targetCharacter.party.currentRegion.id == _currentRegion.adjacentRegionsViaRoad[i].id){
@@ -2031,9 +2033,9 @@ namespace ECS {
 			}
 			return false;
 		}
-		#endregion
+#endregion
 
-		#region Quests
+#region Quests
         public void AddQuestData(CharacterQuestData questData) {
             if (!_questData.Contains(questData)) {
                 _questData.Add(questData);
@@ -2050,9 +2052,9 @@ namespace ECS {
             }
             return false;
         }
-        #endregion
+#endregion
 
-        #region Tags
+#region Tags
         public void AssignInitialTags(){
 			int tagChance = UnityEngine.Random.Range (0, 100);
 			CHARACTER_TAG[] initialTags = (CHARACTER_TAG[])System.Enum.GetValues (typeof(CHARACTER_TAG));
@@ -2063,15 +2065,15 @@ namespace ECS {
 				}
 			}
 		}
-        #endregion
+#endregion
 
-        #region HP
+#region HP
         public bool IsHealthFull() {
             return _currentHP >= _maxHP;
         }
-        #endregion
+#endregion
 
-        #region Utilities
+#region Utilities
         public void ChangeGender(GENDER gender) {
             _gender = gender;
             Messenger.Broadcast(Signals.GENDER_CHANGED, this, gender);
@@ -2170,9 +2172,9 @@ namespace ECS {
             }
             return false;
         }
-        #endregion
+#endregion
 
-        #region Relationships
+#region Relationships
         public void AddNewRelationship(Character relWith, Relationship relationship) {
             if (!_relationships.ContainsKey(relWith)) {
                 _relationships.Add(relWith, relationship);
@@ -2230,9 +2232,9 @@ namespace ECS {
 
             }
         }
-        #endregion
+#endregion
 
-        #region History
+#region History
         public void AddHistory(Log log) {
             _history.Add(log);
             if (this._history.Count > 20) {
@@ -2240,9 +2242,9 @@ namespace ECS {
             }
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
         }
-        #endregion
+#endregion
 
-		#region Character
+#region Character
 		public bool IsHostileWith(Character character){
             if (this.faction == null) {
                 return true; //this character has no faction
@@ -2275,15 +2277,15 @@ namespace ECS {
         public STANCE GetCurrentStance() {
             return STANCE.NEUTRAL;
         }
-        #endregion
+#endregion
 
-		#region Combat Handlers
+#region Combat Handlers
 		public void SetIsInCombat (bool state){
 			_isInCombat = state;
 		}
-        #endregion
+#endregion
 
-        #region Landmarks
+#region Landmarks
         public void AddExploredLandmark(BaseLandmark landmark){
 			_exploredLandmarks.Add(landmark); //did not add checking if landmark is already in list, since I want to allow duplicates
             //schedule removal of landmark after 6 months
@@ -2294,9 +2296,9 @@ namespace ECS {
         private void RemoveLandmarkAsExplored(BaseLandmark landmark) {
             _exploredLandmarks.Remove(landmark);
         }
-		#endregion
+#endregion
 
-		#region Psytoxin
+#region Psytoxin
 		private void RegionPsytoxin(List<Region> regions){
 			for (int i = 0; i < regions.Count; i++) {
 				if(_party.currentRegion.id == regions[i].id){
@@ -2321,9 +2323,9 @@ namespace ECS {
 				}
 			}
 		}
-		#endregion
+#endregion
 
-		#region Traces
+#region Traces
 		public void LeaveTraceOnLandmark(){
 			ILocation location = _party.specificLocation;
 			if(location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
@@ -2380,9 +2382,9 @@ namespace ECS {
 			}
 			return null;
 		}
-        #endregion
+#endregion
 
-        #region Action Queue
+#region Action Queue
         public bool DoesSatisfiesPrerequisite(IPrerequisite prerequisite) {
             if(prerequisite.prerequisiteType == PREREQUISITE.RESOURCE) {
                 ResourcePrerequisite resourcePrerequisite = prerequisite as ResourcePrerequisite;
@@ -2392,9 +2394,9 @@ namespace ECS {
             }
             return false;
         }
-        #endregion
+#endregion
 
-        #region Needs
+#region Needs
         private void CiviliansDiedReduceSanity(StructureObj whereCiviliansDied, int amount) {
             if(_currentRegion.id == whereCiviliansDied.objectLocation.tileLocation.region.id) {
                 ILocation location = _party.specificLocation;
@@ -2405,15 +2407,15 @@ namespace ECS {
                 }
             }
         }
-        #endregion
+#endregion
 
-        #region Portrait Settings
+#region Portrait Settings
         public void SetPortraitSettings(PortraitSettings settings) {
             _portraitSettings = settings;
         }
-        #endregion
+#endregion
 
-        #region RPG
+#region RPG
         public void LevelUp() {
             if(_level < CharacterManager.Instance.maxLevel) {
                 _level += 1;
@@ -2524,9 +2526,9 @@ namespace ECS {
             //sa formula merong pdef at mdef pero kelangan yun ng enemy parameter, papano yun since yung computation na ito ay para ma compute ang sariling power lang mismo?
             //ano yung '(2XVIT) multiplied or added by prefix/suffix effect', wala namang ganun ang vitality.
         }
-        #endregion
+#endregion
 
-        #region Player/Character Actions
+#region Player/Character Actions
         public void OnThisCharacterSnatched() {
             BaseLandmark snatcherLair = PlayerManager.Instance.player.GetAvailableSnatcherLair();
             if (snatcherLair == null) {
@@ -2621,9 +2623,9 @@ namespace ECS {
             }
             return null;
         }
-        #endregion
+#endregion
 
-        #region Snatch
+#region Snatch
         /*
          When the player successfully snatches a character, other characters with relation to 
          the snatched one would all be sent signals to check whether they should react or not. 
@@ -2667,9 +2669,9 @@ namespace ECS {
                 144,
                 onClickAction);
         }
-        #endregion
+#endregion
 
-        #region Home
+#region Home
         public void LookForNewHomeStructure() {
             //Try to get a new home structure from this character's area
             StructureObj structure = GetNewHomeStructureFromArea(_home);
@@ -2731,6 +2733,6 @@ namespace ECS {
             _homeStructure = newHomeStructure;
             newHomeStructure.AdjustNumOfResidents(1);
         }
-        #endregion
+#endregion
     }
 }

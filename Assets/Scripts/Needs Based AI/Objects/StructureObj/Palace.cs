@@ -56,7 +56,7 @@ public class Palace : StructureObj {
     private void CheckForBuildStructureQuest() {
         //At the start of each month, if the Settlement has no active Build Structure Quest
         if (activeBuildStructureQuest == null) {
-            if (Random.Range(0, 100) < 100) { //there is a 20% chance that a Build Structure Quest will be created
+            if (Random.Range(0, 100) < 20) { //there is a 20% chance that a Build Structure Quest will be created
                 StructurePriority prio = this.objectLocation.tileLocation.areaOfTile.GetNextStructurePriority();
                 List<HexTile> choices = this.objectLocation.tileLocation.areaOfTile.GetAdjacentBuildableTiles();
                 if (prio != null && choices.Count > 0) {
