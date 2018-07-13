@@ -20,6 +20,7 @@ public class ChatAction : CharacterAction {
                     CharacterParty characterParty = icharacterObject.iparty as CharacterParty;
                     characterParty.actionData.SetIsHalted(true);
                 }
+
                 Log log = new Log(GameManager.Instance.Today(), "CharacterActions", "ChatAction", "start_chat");
                 log.AddToFillers(party.mainCharacter, party.mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(icharacterObject.iparty.mainCharacter, icharacterObject.iparty.mainCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
