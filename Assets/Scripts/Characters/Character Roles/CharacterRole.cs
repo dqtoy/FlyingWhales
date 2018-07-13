@@ -325,7 +325,7 @@ public class CharacterRole {
     }
 
     public void DepletePrestige() {
-        AdjustPrestige(-0.6f);
+        AdjustPrestige(-1.2f);
     }
     public void SetPrestige(float amount) {
         _prestige = amount;
