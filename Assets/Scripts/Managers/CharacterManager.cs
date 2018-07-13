@@ -562,9 +562,9 @@ public class CharacterManager : MonoBehaviour {
     //}
 
     public PortraitAssetCollection GetPortraitAssets(RACE race, GENDER gender, IMAGE_SIZE imgSize = IMAGE_SIZE.X256) {
-        if (imgSize == IMAGE_SIZE.X256) {
-            for (int i = 0; i < portraitAssetsx256.Count; i++) {
-                RacePortraitAssets racePortraitAssets = portraitAssetsx256[i];
+        if (imgSize == IMAGE_SIZE.X64) {
+            for (int i = 0; i < portraitAssetsx64.Count; i++) {
+                RacePortraitAssets racePortraitAssets = portraitAssetsx64[i];
                 if (racePortraitAssets.race == race) {
                     if (gender == GENDER.MALE) {
                         return racePortraitAssets.maleAssets;
@@ -574,8 +574,8 @@ public class CharacterManager : MonoBehaviour {
                 }
             }
         } else {
-            for (int i = 0; i < portraitAssetsx64.Count; i++) {
-                RacePortraitAssets racePortraitAssets = portraitAssetsx64[i];
+            for (int i = 0; i < portraitAssetsx256.Count; i++) {
+                RacePortraitAssets racePortraitAssets = portraitAssetsx256[i];
                 if (racePortraitAssets.race == race) {
                     if (gender == GENDER.MALE) {
                         return racePortraitAssets.maleAssets;

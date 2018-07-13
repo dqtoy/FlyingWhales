@@ -38,6 +38,7 @@ namespace ECS {
         private CharacterBattleTracker _battleTracker;
         private CharacterBattleOnlyTracker _battleOnlyTracker;
         private PortraitSettings _portraitSettings;
+        private CharacterPortrait _characterPortrait;
         private Color _characterColor;
         //[System.NonSerialized] private List<Trait> _traits;
         //private List<TRAIT> _allTraits;
@@ -302,6 +303,9 @@ namespace ECS {
         public PortraitSettings portraitSettings {
             get { return _portraitSettings; }
         }
+        public CharacterPortrait characterPortrait {
+            get { return _characterPortrait; }
+        }
         public int level {
             get { return _level; }
         }
@@ -392,6 +396,12 @@ namespace ECS {
             _name = data.name;
             //LoadRelationships(data.relationshipsData);
             _portraitSettings = data.portraitSettings;
+
+            GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, UIManager.Instance.characterPortraitsParent);
+            _characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
+            _characterPortrait.GeneratePortrait(this, IMAGE_SIZE.X36, true);
+            portraitGO.SetActive(false);
+
             _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
             _skills = GetGeneralSkills();
             //_skills.AddRange (GetBodyPartSkills ());
@@ -881,6 +891,8 @@ namespace ECS {
                     Messenger.Broadcast(Signals.CHARACTER_KILLED, killer, this);
                 }
 
+                GameObject.Destroy(_characterPortrait.gameObject);
+                _characterPortrait = null;
                 //ObjectState deadState = _characterObject.GetState("Dead");
                 //_characterObject.ChangeState(deadState);
 
@@ -2528,7 +2540,7 @@ namespace ECS {
             _idleActions = new List<CharacterAction>();
             _idleActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DAYDREAM));
             _idleActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.PLAY));
-            _idleActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.CHAT));
+            //_idleActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.CHAT));
         }
         public CharacterAction GetRandomDesperateAction(ref IObject targetObject) {
             targetObject = _party.characterObject;

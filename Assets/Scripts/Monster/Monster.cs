@@ -38,6 +38,7 @@ public class Monster : ICharacter {
     private StructureObj _homeStructure;
     private RaceSetting _raceSetting;
     private MonsterParty _party;
+    private CharacterPortrait _characterPortrait;
     //private Combat _currentCombat;
     private SIDES _currentSide;
     private List<BodyPart> _bodyParts;
@@ -170,6 +171,9 @@ public class Monster : ICharacter {
     public CharacterClass characterClass {
         get { return null; }
     }
+    public CharacterPortrait characterPortrait {
+        get { return _characterPortrait; }
+    }
     //public Combat currentCombat {
     //    get { return _currentCombat; }
     //    set { _currentCombat = value; }
@@ -272,6 +276,9 @@ public class Monster : ICharacter {
         Messenger.Broadcast(Signals.MONSTER_DEATH, this);
         _party.RemoveCharacter(this);
         MonsterManager.Instance.allMonsters.Remove(this);
+
+        GameObject.Destroy(_characterPortrait.gameObject);
+        _characterPortrait = null;
     }
     private float GetAttackPower() {
         //float statUsed = (float) Utilities.GetStatByClass(this);
@@ -308,6 +315,11 @@ public class Monster : ICharacter {
         _currentHP = _maxHP;
         _currentSP = _maxSP;
         SetCharacterColor(Color.red);
+
+        GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, UIManager.Instance.characterPortraitsParent);
+        _characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
+        _characterPortrait.GeneratePortrait(this, IMAGE_SIZE.X36, true);
+        portraitGO.SetActive(false);
     }
     public void Initialize() {
         _id = Utilities.SetID(this);

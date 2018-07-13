@@ -37,6 +37,7 @@ public interface ICharacter {
     Area home { get; } //Character only
     CharacterRole role { get; } //Character only
     CharacterClass characterClass { get; } //Character only
+    CharacterPortrait characterPortrait { get; }
     //Combat currentCombat { get; set; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }

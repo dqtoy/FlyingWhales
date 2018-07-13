@@ -64,6 +64,10 @@ public class UIManager : MonoBehaviour {
     [Header("Character Dialog Menu")]
     [SerializeField] private CharacterDialogMenu characterDialogMenu;
 
+    [Space(10)]
+    [Header("Portraits")]
+    public Transform characterPortraitsParent;
+
     [Space(10)] //FOR TESTING
     [Header("For Testing")]
     public ButtonToggle toggleBordersBtn;

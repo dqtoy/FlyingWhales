@@ -73,7 +73,7 @@ public class NewParty : IParty {
         set { _currentCombat = value; }
     }
     public ICharacter mainCharacter {
-        get { return mainCharacter; }
+        get { return _icharacters[0]; }
     }
     public ICharacterObject icharacterObject {
         get { return _icharacterObject; }
