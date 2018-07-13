@@ -282,11 +282,11 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
         }
     }
 
-    private void SetImageSize(IMAGE_SIZE imgSize, bool ignoreSize, bool updateAllSizes) {
+    private void SetImageSize(IMAGE_SIZE imgSize, bool ignoreSize) {
         _imgSize = imgSize;
         float size = 0f;
         if (!ignoreSize) {
-            RectTransform[] rt = Utilities.GetComponentsInDirectChildren<RectTransform>(this.gameObject);
+            //RectTransform[] rt = Utilities.GetComponentsInDirectChildren<RectTransform>(this.gameObject);
             switch (imgSize) {
                 case IMAGE_SIZE.X64:
                     size = 64f;
@@ -304,9 +304,22 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
                     break;
             }
             (this.transform as RectTransform).sizeDelta = new Vector2(size, size);
-            for (int i = 0; i < rt.Length; i++) {
-                rt[i].sizeDelta = new Vector2(size, size);
-            }
+            head.rectTransform.sizeDelta = new Vector2(size, size);
+            eyes.rectTransform.sizeDelta = new Vector2(size, size);
+            eyebrows.rectTransform.sizeDelta = new Vector2(size, size);
+            nose.rectTransform.sizeDelta = new Vector2(size, size);
+            mouth.rectTransform.sizeDelta = new Vector2(size, size);
+            hair.rectTransform.sizeDelta = new Vector2(size, size);
+            hairBack.rectTransform.sizeDelta = new Vector2(size, size);
+            hairOverlay.rectTransform.sizeDelta = new Vector2(size, size);
+            hairBackOverlay.rectTransform.sizeDelta = new Vector2(size, size);
+            facialHair.rectTransform.sizeDelta = new Vector2(size, size);
+            facialHairOverlay.rectTransform.sizeDelta = new Vector2(size, size);
+            body.rectTransform.sizeDelta = new Vector2(size, size);
+            wholeImage.rectTransform.sizeDelta = new Vector2(size, size);
+            //for (int i = 0; i < rt.Length; i++) {
+            //    rt[i].sizeDelta = new Vector2(size, size);
+            //}
         }
         normalSize = (this.transform as RectTransform).sizeDelta;
     }
