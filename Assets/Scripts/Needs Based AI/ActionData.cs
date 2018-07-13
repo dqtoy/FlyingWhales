@@ -163,9 +163,10 @@ public class ActionData {
                     //}
                     DoAction();
                 } else {
-                    if (currentTargetObject.specificLocation != null) {
-                        if (currentAction.actionType == ACTION_TYPE.ATTACK) {
-                            _party.GoToLocation(currentTargetObject.specificLocation, PATHFINDING_MODE.USE_ROADS);
+                    ILocation location = currentTargetObject.specificLocation;
+                    if (location != null) {
+                        if (currentAction.actionType == ACTION_TYPE.ATTACK || currentAction.actionType == ACTION_TYPE.CHAT) {
+                            _party.GoToLocation(location, PATHFINDING_MODE.USE_ROADS);
                         }
                     } else {
                         if(currentTargetObject.currentState.stateName == "Dead") { //if object is dead
