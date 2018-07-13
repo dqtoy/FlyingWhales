@@ -79,8 +79,8 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler {
                         if(party.icharacters.Count > 1) {
                             UIManager.Instance.ShowPartyInfo(party);
                         } else if (party.icharacters.Count == 1) {
-                            if(party.icharacters[0] is Character) {
-                                UIManager.Instance.ShowCharacterInfo(party.icharacters[0] as Character);
+                            if(party.mainCharacter is Character) {
+                                UIManager.Instance.ShowCharacterInfo(party.mainCharacter as Character);
                             }
                         }
                     }

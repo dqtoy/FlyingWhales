@@ -19,8 +19,8 @@ public class ChangeClassAction : CharacterAction {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
         GiveAllReward(party);
-        if(partyAssigned != null && partyAssigned.icharacters[0] is Character) {
-            Character character = partyAssigned.icharacters[0] as Character;
+        if(partyAssigned != null && partyAssigned.mainCharacter is Character) {
+            Character character = partyAssigned.mainCharacter as Character;
             character.ChangeClass(_advertisedClassName);
         }
     }
@@ -31,8 +31,8 @@ public class ChangeClassAction : CharacterAction {
         return base.CanBeDone(targetObject);
     }
     public override bool CanBeDoneBy(CharacterParty party, IObject targetObject) {
-        if(party.icharacters[0].characterClass != null) {
-            if(party.home.excessClasses.Contains(party.icharacters[0].characterClass.className)
+        if(party.mainCharacter.characterClass != null) {
+            if(party.home.excessClasses.Contains(party.mainCharacter.characterClass.className)
                 && party.home.missingClasses.Contains(_advertisedClassName)) { //TODO: Subject for change
                 return true;
             }

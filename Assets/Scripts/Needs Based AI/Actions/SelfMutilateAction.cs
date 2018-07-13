@@ -25,7 +25,7 @@ public class SelfMutilateAction : CharacterAction {
     #endregion
 
     private void Mutilate(NewParty party) {
-        int hpReduction = (int)((float)party.icharacters[0].maxHP * 0.01f);
-        party.icharacters[0].AdjustHP(-hpReduction);
+        int hpReduction = (int)((float)party.mainCharacter.maxHP * 0.01f);
+        party.mainCharacter.AdjustHP(-hpReduction);
     }
 }
