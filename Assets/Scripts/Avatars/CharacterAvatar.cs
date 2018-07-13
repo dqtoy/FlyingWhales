@@ -406,8 +406,8 @@ public class CharacterAvatar : PooledObject{
 		if(_characters[0].party == null){
 			_characters [0].LeaveTraceOnLandmark ();
 		}else{
-            if(_characters[0].party.icharacters[0] is Character) {
-                Character character = _characters[0].party.icharacters[0] as Character;
+            if(_characters[0].party.mainCharacter is Character) {
+                Character character = _characters[0].party.mainCharacter as Character;
                 character.LeaveTraceOnLandmark();
             }
         }

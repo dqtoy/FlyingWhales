@@ -610,6 +610,8 @@ public enum LOG_IDENTIFIER{
     COMBAT,
     //PARTY_NAME,
     OTHER,
+    STRING_1,
+    STRING_2,
 }
 
 public enum LAIR {

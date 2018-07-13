@@ -74,12 +74,14 @@ public class CharacterParty : NewParty {
         return true;
     }
     public void AssignRandomDesperateAction() {
-        CharacterAction action = _icharacters[0].GetRandomDesperateAction();
-        actionData.AssignAction(action, characterObject);
+        IObject targetObject = null;
+        CharacterAction action = _icharacters[0].GetRandomDesperateAction(ref targetObject);
+        actionData.AssignAction(action, targetObject);
     }
     public void AssignRandomIdleAction() {
-        CharacterAction action = _icharacters[0].GetRandomIdleAction();
-        actionData.AssignAction(action, characterObject);
+        IObject targetObject = null;
+        CharacterAction action = _icharacters[0].GetRandomIdleAction(ref targetObject);
+        actionData.AssignAction(action, targetObject);
     }
 #endregion
 

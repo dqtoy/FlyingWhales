@@ -63,7 +63,7 @@ public class NewParty : IParty {
         get { return _currentRegion; }
     }
     public Area home {
-        get { return _icharacters[0].home; }
+        get { return mainCharacter.home; }
     }
     public StructureObj homeStructure {
         get { return _icharacters[0].homeStructure; }
@@ -245,6 +245,26 @@ public class NewParty : IParty {
         }
         for (int i = 0; i < this.icharacters.Count; i++) {
             this.icharacters[i].AddHistory(combatLog);
+        }
+    }
+    public void JoinCombatWith(NewParty friend) {
+        if (friend.currentCombat != null) {
+            if (this is CharacterParty) {
+                (this as CharacterParty).actionData.SetIsHalted(true);
+            }
+            friend.currentCombat.AddParty(friend.icharacters[0].currentSide, this);
+
+            Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "join_combat");
+            combatLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            combatLog.AddToFillers(friend.currentCombat, " joins battle of ", LOG_IDENTIFIER.COMBAT);
+            combatLog.AddToFillers(friend, friend.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+
+            for (int i = 0; i < this.icharacters.Count; i++) {
+                this.icharacters[i].AddHistory(combatLog);
+            }
+            for (int i = 0; i < friend.icharacters.Count; i++) {
+                friend.icharacters[i].AddHistory(combatLog);
+            }
         }
     }
     #endregion

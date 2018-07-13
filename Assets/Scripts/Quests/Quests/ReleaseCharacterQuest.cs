@@ -77,15 +77,15 @@ public class ReleaseCharacterQuest : Quest {
             if (!data.lastActionWasDesperate) {
                 //perform character's Desperate Action
                 data.SetLastActionDesperateState(true);
-                targetObject = character.party.icharacterObject;
-                return character.GetRandomDesperateAction();
+                //targetObject = character.party.icharacterObject;
+                return character.GetRandomDesperateAction(ref targetObject);
             } else {
                 //after performing the Desperate Action, check again if there is a Gain Power Type available, 
                 //if still none, 50% chance to perform character's Desperate Action and loop this again, 50% chance to abandon Quest
                 if (Utilities.rng.Next(0, 2) == 0) {
                     data.SetLastActionDesperateState(true);
-                    targetObject = character.party.icharacterObject;
-                    return character.GetRandomDesperateAction();
+                    //targetObject = character.party.icharacterObject;
+                    return character.GetRandomDesperateAction(ref targetObject);
                 } else {
                     data.AbandonQuest(); //abandon quest
                 }
@@ -139,7 +139,7 @@ public class ReleaseCharacterQuest : Quest {
         }
         List<Character> elligibleMentors = new List<Character>();
         List<Character> mentors = CharacterManager.Instance.GetCharactersWithClass("Retired Hero");
-        List<Faction> nonHostileFactions = FactionManager.Instance.GetNonHostileFactionsWith(character.faction);
+        List<Faction> nonHostileFactions = FactionManager.Instance.GetFactionsWithByStatus(character.faction, FACTION_RELATIONSHIP_STATUS.NON_HOSTILE);
         for (int i = 0; i < mentors.Count; i++) {
             Character currMentor = mentors[i];
             if (currMentor.party.characterObject.currentState.GetAction(ACTION_TYPE.ENROLL) == null||
@@ -174,7 +174,7 @@ public class ReleaseCharacterQuest : Quest {
             Debug.LogWarning(character.name + " is trying to get elligible shops, but it does not have a faction!");
             return false;
         }
-        List<Faction> nonHostileFactions = FactionManager.Instance.GetNonHostileFactionsWith(character.faction);
+        List<Faction> nonHostileFactions = FactionManager.Instance.GetFactionsWithByStatus(character.faction, FACTION_RELATIONSHIP_STATUS.NON_HOSTILE);
         for (int i = 0; i < nonHostileFactions.Count; i++) {
             Faction currFaction = nonHostileFactions[i];
             for (int j = 0; j < currFaction.ownedAreas.Count; j++) {
@@ -210,7 +210,7 @@ public class ReleaseCharacterQuest : Quest {
                 targetObject = mentor.party.characterObject;
                 return trainAction;
             } else { //if Train action is not available
-                return character.GetRandomIdleAction(); //perform character's Idle Action
+                return character.GetRandomIdleAction(ref targetObject); //perform character's Idle Action
             }
         } else {//If character is not yet a Student, find nearest Retired Hero character (no negative relationships only and not yet Student of that character)
             List<Character> mentors = data.elligibleMentors.OrderBy(x => character.specificLocation.tileLocation.GetDistanceTo(x.specificLocation.tileLocation)).ToList();
@@ -237,8 +237,8 @@ public class ReleaseCharacterQuest : Quest {
                 data.ResetIdleActions();
                 data.SetGainPowerType(ReleaseCharacterQuestData.Gain_Power_Type.None);
             }
-            targetObject = character.party.characterObject;
-            return character.GetRandomIdleAction();
+            //targetObject = character.party.characterObject;
+            return character.GetRandomIdleAction(ref targetObject);
         }
     }
     #endregion

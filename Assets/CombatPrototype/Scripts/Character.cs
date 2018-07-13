@@ -2065,9 +2065,17 @@ namespace ECS {
         }
         public void ChangeClass(string className) {
             //TODO: Change data as needed
+            string previousClassName = _characterClass.className;
             CharacterClass charClass = CharacterManager.Instance.classesDictionary[className];
             _characterClass = charClass.CreateNewCopy();
             OnCharacterClassChange();
+
+            Log log = new Log(GameManager.Instance.Today(), "CharacterActions", "ChangeClassAction", "change_class");
+            log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(null, previousClassName, LOG_IDENTIFIER.STRING_1);
+            log.AddToFillers(null, _characterClass.className, LOG_IDENTIFIER.STRING_2);
+            AddHistory(log);
+            //check equipped items
         }
 		public void SetName(string newName){
 			_name = newName;
@@ -2520,13 +2528,76 @@ namespace ECS {
             _idleActions = new List<CharacterAction>();
             _idleActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DAYDREAM));
             _idleActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.PLAY));
-            //_idleActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.CHAT));
+            _idleActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.CHAT));
         }
-        public CharacterAction GetRandomDesperateAction() {
-            return _desperateActions[Utilities.rng.Next(0, _desperateActions.Count)];
+        public CharacterAction GetRandomDesperateAction(ref IObject targetObject) {
+            targetObject = _party.characterObject;
+            CharacterAction chosenAction = _desperateActions[Utilities.rng.Next(0, _desperateActions.Count)];
+            return chosenAction;
         }
-        public CharacterAction GetRandomIdleAction() {
-            return _idleActions[Utilities.rng.Next(0, _idleActions.Count)];
+        public CharacterAction GetRandomIdleAction(ref IObject targetObject) {
+            targetObject = _party.characterObject;
+            CharacterAction chosenAction = _idleActions[Utilities.rng.Next(0, _idleActions.Count)];
+            if (chosenAction is ChatAction) {
+                List<NewParty> partyPool = new List<NewParty>();
+                //priority 1
+                NewParty chosenParty = GetPriority1TargetChatAction(partyPool);
+                if(chosenParty == null) {
+                    chosenParty = GetPriority2TargetChatAction(partyPool);
+                    if (chosenParty == null) {
+                        chosenParty = GetPriority3TargetChatAction(partyPool);
+                    }
+                }
+                targetObject = chosenParty.icharacterObject;
+            }
+            return chosenAction;
+        }
+        private NewParty GetPriority1TargetChatAction(List<NewParty> partyPool) {
+            partyPool.Clear();
+            for (int i = 0; i < faction.characters.Count; i++) {
+                NewParty party = faction.characters[i].party;
+                if (party.id != this._party.id && !partyPool.Contains(party)) {
+                    partyPool.Add(party);
+                }
+            }
+            if(partyPool.Count > 0) {
+                return partyPool[Utilities.rng.Next(0, partyPool.Count)];
+            }
+            return null;
+        }
+        private NewParty GetPriority2TargetChatAction(List<NewParty> partyPool) {
+            partyPool.Clear();
+            List<Faction> nonHostileFactions = FactionManager.Instance.GetFactionsWithByStatus(faction, FACTION_RELATIONSHIP_STATUS.NON_HOSTILE);
+            for (int i = 0; i < nonHostileFactions.Count; i++) {
+                Faction faction = nonHostileFactions[i];
+                for (int k = 0; k < faction.characters.Count; k++) {
+                    NewParty party = faction.characters[k].party;
+                    if (party.id != this._party.id && !partyPool.Contains(party)) {
+                        partyPool.Add(party);
+                    }
+                }
+            }
+            if (partyPool.Count > 0) {
+                return partyPool[Utilities.rng.Next(0, partyPool.Count)];
+            }
+            return null;
+        }
+        private NewParty GetPriority3TargetChatAction(List<NewParty> partyPool) {
+            partyPool.Clear();
+            List<Faction> hostileFactions = FactionManager.Instance.GetFactionsWithByStatus(faction, FACTION_RELATIONSHIP_STATUS.HOSTILE);
+            for (int i = 0; i < hostileFactions.Count; i++) {
+                Faction faction = hostileFactions[i];
+                for (int k = 0; k < faction.characters.Count; k++) {
+                    NewParty party = faction.characters[k].party;
+                    if (party.id != this._party.id && !partyPool.Contains(party)) {
+                        partyPool.Add(party);
+                    }
+                }
+            }
+            if (partyPool.Count > 0) {
+                return partyPool[Utilities.rng.Next(0, partyPool.Count)];
+            }
+            return null;
         }
         #endregion
 

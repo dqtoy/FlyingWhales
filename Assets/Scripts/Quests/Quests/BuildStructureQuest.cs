@@ -47,7 +47,7 @@ public class BuildStructureQuest : Quest {
             }
         }
         //If not, check if he has an action that can obtain that resource type
-        CharacterAction actionThatCanObtainResource = ActionThatCanObtainResource(character, buildQuestData, targetObject);
+        CharacterAction actionThatCanObtainResource = ActionThatCanObtainResource(character, buildQuestData, ref targetObject);
         if(actionThatCanObtainResource != null) {
             return actionThatCanObtainResource;
         } else {
@@ -63,12 +63,12 @@ public class BuildStructureQuest : Quest {
                 } else {
                     //If not, abandon Quest and perform an Idle Action.
                     buildQuestData.AbandonQuest();
-                    return character.GetRandomIdleAction();
+                    return character.GetRandomIdleAction(ref targetObject);
                 }
             } else {
                 //If not, abandon Quest and perform an Idle Action.
                 buildQuestData.AbandonQuest();
-                return character.GetRandomIdleAction();
+                return character.GetRandomIdleAction(ref targetObject);
             }
         }
         //return base.GetQuestAction(character, data, ref targetObject);
@@ -89,7 +89,7 @@ public class BuildStructureQuest : Quest {
         }
     }
 
-    private CharacterAction ActionThatCanObtainResource(Character character, BuildStructureQuestData buildQuestData, IObject targetObject) {
+    private CharacterAction ActionThatCanObtainResource(Character character, BuildStructureQuestData buildQuestData, ref IObject targetObject) {
         CharacterParty party = character.party;
         buildQuestData.ResetAllActionsThatCanObtainResource();
         buildQuestData.ResetClassesThatCanObtainResource();

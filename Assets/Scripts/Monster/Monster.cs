@@ -296,6 +296,8 @@ public class Monster : ICharacter {
     #region Interface
     private void BaseInitialize() {
         _isDead = false;
+        _desperateActions = new List<CharacterAction>();
+        _idleActions = new List<CharacterAction>();
         _raceSetting = RaceManager.Instance.racesDictionary[_type.ToString()].CreateNewCopy();
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
         _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
@@ -385,10 +387,10 @@ public class Monster : ICharacter {
     public void AddHistory(Log log) {
         //No history
     }
-    public CharacterAction GetRandomDesperateAction() {
+    public CharacterAction GetRandomDesperateAction(ref IObject targetObject) {
         return _desperateActions[Utilities.rng.Next(0, _desperateActions.Count)];
     }
-    public CharacterAction GetRandomIdleAction() {
+    public CharacterAction GetRandomIdleAction(ref IObject targetObject) {
         return _idleActions[Utilities.rng.Next(0, _idleActions.Count)];
     }
     public void EnableDisableSkills(Combat combat) {

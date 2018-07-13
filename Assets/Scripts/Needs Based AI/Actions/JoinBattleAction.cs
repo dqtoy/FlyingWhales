@@ -58,26 +58,6 @@ public class JoinBattleAction : CharacterAction {
     }
     #endregion
     private void StartEncounter(CharacterParty friend, CharacterObj characterObj) {
-        friend.actionData.SetIsHalted(true);
-        FriendWillJoinCombat(friend, characterObj);
-    }
-    private void FriendWillJoinCombat(CharacterParty friend, CharacterObj characterObj) {
-        if(characterObj.party.currentCombat != null) {
-            characterObj.party.currentCombat.AddParty(characterObj.party.icharacters[0].currentSide, friend);
-
-            Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "join_combat");
-            combatLog.AddToFillers(friend, friend.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            combatLog.AddToFillers(characterObj.party.currentCombat, " joins battle of ", LOG_IDENTIFIER.COMBAT);
-            combatLog.AddToFillers(characterObj.party, characterObj.party.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-
-            for (int i = 0; i < friend.icharacters.Count; i++) {
-                friend.icharacters[i].AddHistory(combatLog);
-            }
-            for (int i = 0; i < characterObj.party.icharacters.Count; i++) {
-                characterObj.party.icharacters[i].AddHistory(combatLog);
-            }
-        } else {
-            CombatManager.Instance.PartyContinuesActionAfterCombat(friend, false);
-        }
+        friend.JoinCombatWith(characterObj.party);
     }
 }

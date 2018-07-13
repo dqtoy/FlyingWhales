@@ -198,9 +198,11 @@ public class ActionData {
             currentAction.OnFirstEncounter(_party, currentTargetObject);
             _isNotFirstEncounter = true;
         }
-        currentAction.PerformAction(_party, currentTargetObject);
-        if (currentAction.actionData.duration > 0) {
-            AdjustCurrentDay(1);
+        if (!isDone) {
+            currentAction.PerformAction(_party, currentTargetObject);
+            if (currentAction.actionData.duration > 0) {
+                AdjustCurrentDay(1);
+            }
         }
     }
 
