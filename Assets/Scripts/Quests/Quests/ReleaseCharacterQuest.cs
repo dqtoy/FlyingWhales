@@ -18,7 +18,6 @@ public class ReleaseCharacterQuest : Quest {
         _targetCharacter = targetCharacter;
         Messenger.AddListener<Character>(Signals.CHARACTER_RELEASED, OnCharacterReleased);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnTargetDied);
-        UIManager.Instance.UpdateQuestSummary();
     }
 
     #region overrides
