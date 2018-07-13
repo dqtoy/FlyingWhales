@@ -73,6 +73,9 @@ public class BuildStructureQuest : Quest {
         }
         //return base.GetQuestAction(character, data, ref targetObject);
     }
+    protected override string GetQuestName() {
+        return "Build " + Utilities.NormalizeStringUpperCaseFirstLetters(_setting.landmarkType.ToString());
+    }
     #endregion
 
     public void UpdateLackingResources() {

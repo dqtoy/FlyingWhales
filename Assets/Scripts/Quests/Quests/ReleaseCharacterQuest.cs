@@ -107,6 +107,9 @@ public class ReleaseCharacterQuest : Quest {
         }
         return base.GetQuestAction(character, data, ref targetObject);
     }
+    protected override string GetQuestName() {
+        return "Release " + _targetCharacter.name;
+    }
     #endregion
 
     private void OnCharacterReleased(Character releasedCharacter) {

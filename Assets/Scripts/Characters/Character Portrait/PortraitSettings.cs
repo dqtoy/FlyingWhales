@@ -14,5 +14,6 @@ public class PortraitSettings {
     public int noseIndex;
     public int mouthIndex;
     public int bodyIndex;
+    public int facialHairIndex = 5; //blank
     public Color32 hairColor;
 }

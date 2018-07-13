@@ -13,6 +13,7 @@ public class PortraitAssetCollection {
     public List<Sprite> mouthAssets;
     public List<Sprite> eyeAssets;
     public List<Sprite> eyebrowAssets;
+    public List<Sprite> facialHairAssets;
 
     public PortraitAssetCollection(GENDER gender) {
         this.gender = gender;
@@ -23,5 +24,6 @@ public class PortraitAssetCollection {
         mouthAssets = new List<Sprite>();
         eyeAssets = new List<Sprite>();
         eyebrowAssets = new List<Sprite>();
+        facialHairAssets = new List<Sprite>();
     }
 }

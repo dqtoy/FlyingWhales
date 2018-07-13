@@ -156,6 +156,17 @@ public class CharacterInfoUI : UIMenu {
         } else {
             text += "NONE";
         }
+        text += "\n<b>Taken Quests: </b>";
+        if (currentlyShowingCharacter.questData.Count > 0) {
+            for (int i = 0; i < currentlyShowingCharacter.questData.Count; i++) {
+                CharacterQuestData data = currentlyShowingCharacter.questData[i];
+                text += "\n" + data.parentQuest.name;
+            }
+            text += currentlyShowingCharacter.party.actionData.currentAction.actionData.actionName.ToString() + " ";
+        } else {
+            text += "NONE";
+        }
+
         if (currentlyShowingCharacter.role != null) {
             text += "\n<b>Fullness: </b>" + currentlyShowingCharacter.role.fullness.ToString("F0") + ", <b>Energy: </b>" + currentlyShowingCharacter.role.energy.ToString("F0") + ", <b>Fun: </b>" + currentlyShowingCharacter.role.fun.ToString("F0");
             text += "\n<b>Sanity: </b>" + currentlyShowingCharacter.role.sanity.ToString("F0") + ", <b>Prestige: </b>" + currentlyShowingCharacter.role.prestige.ToString("F0") + ", <b>Safety: </b>" + currentlyShowingCharacter.role.safety.ToString("F0");
