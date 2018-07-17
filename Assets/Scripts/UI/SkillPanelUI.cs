@@ -31,6 +31,7 @@ public class SkillPanelUI : MonoBehaviour {
     public Transform contentTransform;
 
     [NonSerialized] public WeaponTypeButton currentSelectedWeaponTypeButton;
+    [NonSerialized] public List<string> allSkills;
     //private string[] _attackCategories;
     //private string[] _elements;
     //private string[] _targetTypes;
@@ -44,6 +45,7 @@ public class SkillPanelUI : MonoBehaviour {
     // Use this for initialization
     void Start () {
         _allowedWeaponTypes = new List<string>();
+        allSkills = new List<string>();
         LoadAllData();
 	}
 
@@ -63,9 +65,13 @@ public class SkillPanelUI : MonoBehaviour {
         elementOptions.AddOptions(elements.ToList());
         targetTypeOptions.AddOptions(targetTypes.ToList());
         allowedWeaponsOptions.AddOptions(weaponTypes.ToList());
+
+        allSkills = new List<string>();
+        UpdateSkillList();
     }
 
     private void ClearData() {
+        currentSelectedWeaponTypeButton = null;
         skillNameInput.text = string.Empty;
         skillDescInput.text = string.Empty;
 
@@ -118,6 +124,8 @@ public class SkillPanelUI : MonoBehaviour {
         //Re-import the file to update the reference in the editor
         UnityEditor.AssetDatabase.ImportAsset(path);
         Debug.Log("Successfully saved skill at " + path);
+
+        UpdateSkillList();
     }
 
     private void SetCommonData(Skill newSkill) {
@@ -170,6 +178,7 @@ public class SkillPanelUI : MonoBehaviour {
             _allowedWeaponTypes.Add(weaponType);
             GameObject go = GameObject.Instantiate(weaponTypeBtnGO, contentTransform);
             go.GetComponent<WeaponTypeButton>().buttonText.text = weaponType;
+            go.GetComponent<WeaponTypeButton>().panelName = "skill";
         }
     }
     private int GetAttackTypeIndex(ATTACK_CATEGORY attackType) {
@@ -196,6 +205,17 @@ public class SkillPanelUI : MonoBehaviour {
         }
         return 0;
     }
+    private void UpdateSkillList() {
+        allSkills.Clear();
+        string path = Utilities.dataPath + "Skills/CLASS/ATTACK/";
+        foreach (string file in Directory.GetFiles(path, "*.json")) {
+            allSkills.Add(Path.GetFileNameWithoutExtension(file));
+        }
+
+        foreach (Transform child in ClassPanelUI.Instance.skillsContentTransform) {
+            child.GetComponent<LevelCollapseUI>().UpdateSkillList();
+        }
+    }
     #endregion
 
     #region OnValueChanged
@@ -219,6 +239,7 @@ public class SkillPanelUI : MonoBehaviour {
             _allowedWeaponTypes.Add(weaponTypeToAdd);
             GameObject go = GameObject.Instantiate(weaponTypeBtnGO, contentTransform);
             go.GetComponent<WeaponTypeButton>().buttonText.text = weaponTypeToAdd;
+            go.GetComponent<WeaponTypeButton>().panelName = "skill";
         }
     }
     public void OnRemoveWeaponType() {
