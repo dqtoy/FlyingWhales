@@ -107,7 +107,7 @@ public class Utilities : MonoBehaviour {
         return idToUse;
     }
 
-#region Pathfinding
+    #region Pathfinding
 	public static List<Point> EvenNeighbours {
 		get {
 			return new List<Point> {
@@ -1474,9 +1474,15 @@ public class Utilities : MonoBehaviour {
 	}
     #endregion
 
-    #region Integer Utilities
+    #region Number Utilities
     public static bool IsEven(int num) {
         return num % 2 == 0;
+    }
+    public static bool IsPositive(float num) {
+        if (num > 0) {
+            return true;
+        }
+        return false;
     }
     #endregion
 
