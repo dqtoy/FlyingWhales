@@ -31,6 +31,8 @@ public class CameraMove : MonoBehaviour {
     [SerializeField] internal float MIN_Y;
     [SerializeField] internal float MAX_Y;
 
+    [SerializeField] private BoundDrawer boundDrawer;
+    [SerializeField] private Bounds bounds;
     //[SerializeField] private float minXUIAdjustment;
     //[SerializeField] private float maxXUIAdjustment;
     //[SerializeField] private float minYUIAdjustment;
@@ -122,31 +124,11 @@ public class CameraMove : MonoBehaviour {
             Vector3 point = Camera.main.WorldToViewportPoint(target.position);
             Vector3 delta = target.position - Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));
             Vector3 destination = transform.position + delta;
-            //float xCoord = Mathf.Clamp(destination.x, MIN_X, MAX_X);
-            //float yCoord = Mathf.Clamp(destination.y, MIN_Y, MAX_Y);
-            //destination = new Vector3(xCoord, yCoord, destination.z);
-            //if (!allowHorizontalMovement) {
-            //    xCoord = transform.position.x;
-            //}
-            //if (!allowVerticalMovement) {
-            //    yCoord = transform.position.y;
-            //}
             transform.position = Vector3.SmoothDamp(transform.position, destination, ref velocity, dampTime);
             if (HasReachedBounds() || (Mathf.Approximately(transform.position.x, destination.x) && Mathf.Approximately(transform.position.y, destination.y))) {
                 target = null;
             }
         }
-
-        //if (!allowVerticalMovement || !allowHorizontalMovement) {
-        //    Vector3 pos = Vector3.zero;
-        //    if (!allowVerticalMovement) {
-        //        pos.y = 0f + (maxYUIAdjustment/2f);
-        //    }
-        //    if (!allowHorizontalMovement) {
-        //        pos.x = 0f + (maxXUIAdjustment/2f);
-        //    }
-        //    this.transform.position = pos;
-        //}
         ConstrainCameraBounds();
     }
 
@@ -156,8 +138,6 @@ public class CameraMove : MonoBehaviour {
     }
     private void SetInitialCameraPosition() {
         Vector3 initialPos = Vector3.zero;
-        //initialPos.x += maxXUIAdjustment/2f;
-        //initialPos.y += maxYUIAdjustment/2f;
         initialPos.z = -10;
         this.transform.position = initialPos;
     }
@@ -191,7 +171,6 @@ public class CameraMove : MonoBehaviour {
     }
 
     public void CalculateCameraBounds() {
-        //Bounds bounds = new Bounds()
 #if WORLD_CREATION_TOOL
         if (worldcreator.WorldCreatorManager.Instance.map == null) {
             return;
@@ -211,42 +190,23 @@ public class CameraMove : MonoBehaviour {
         float mapX = Mathf.Floor(topRightCornerCoordinates.x);
         float mapY = Mathf.Floor(topRightCornerCoordinates.y);
 
-
-        float vertExtent = Camera.main.orthographicSize;    
+        float vertExtent = Camera.main.orthographicSize;
         float horzExtent = vertExtent * Screen.width / Screen.height;
- 
-         // Calculations assume map is position at the origin
-        minX = mapX / 2.0f - horzExtent;
-        maxX = horzExtent - mapX / 2.0f;
-        minY = mapY / 2.0f - vertExtent;
-        maxY = vertExtent - mapY / 2.0f;
 
-        float halfOfHexagon = (256f / 2f) / 100f; //1.28
+        //// Calculations assume map is position at the origin
+        //minX = mapX / 2.0f - horzExtent;
+        //maxX = horzExtent - mapX / 2.0f;
+        //minY = mapY / 2.0f - vertExtent;
+        //maxY = vertExtent - mapY / 2.0f;
 
-        //#endif
-        if (Utilities.IsPositive(minX)) {
-            MIN_X = minX + halfOfHexagon;
-        } else {
-            MIN_X = minX - halfOfHexagon;
-        }
+        //MIN_X = minX;
+        //MAX_X = maxX;
+        //MIN_Y = minY;
+        //MAX_Y = maxY;
 
-        if (Utilities.IsPositive(maxX)) {
-            MAX_X = maxX + halfOfHexagon;
-        } else {
-            MAX_X = maxX - halfOfHexagon;
-        }
-
-        if (Utilities.IsPositive(minY)) {
-            MIN_Y = minY + halfOfHexagon;
-        } else {
-            MIN_Y = minY - halfOfHexagon;
-        }
-
-        if (Utilities.IsPositive(maxY)) {
-            MAX_Y = maxY + halfOfHexagon;
-        } else {
-            MAX_Y = maxY - halfOfHexagon;
-        }
+        Bounds newBounds = new Bounds();
+        newBounds.extents = new Vector3(Mathf.Abs(rightMostTile.transform.position.x) + 1.28f, Mathf.Abs(topMostTile.transform.position.y) + 1.28f, 0f);
+        SetCameraBounds(newBounds, horzExtent, vertExtent);
     }
     public void ConstrainCameraBounds() {
         float xLowerBound = MIN_X;
@@ -254,18 +214,13 @@ public class CameraMove : MonoBehaviour {
         float yLowerBound = MIN_Y;
         float yUpperBound = MAX_Y;
         if (MAX_X < MIN_X) {
-            //switch
             xLowerBound = MAX_X;
             xUpperBound = MIN_X;
         }
         if (MAX_Y < MIN_Y) {
-            //switch
             yLowerBound = MAX_Y;
             yUpperBound = MIN_Y;
-        }
-        if (IsWithinBounds(transform.position.x, xLowerBound, xUpperBound) && IsWithinBounds(transform.position.y, yLowerBound, yUpperBound)) {
-            return; //already within bounds
-        }
+        }        
         float xCoord = Mathf.Clamp(transform.position.x, xLowerBound, xUpperBound);
         float yCoord = Mathf.Clamp(transform.position.y, yLowerBound, yUpperBound);
         float zCoord = Mathf.Clamp(transform.position.z, MIN_Z, MAX_Z);
@@ -274,18 +229,18 @@ public class CameraMove : MonoBehaviour {
             yCoord,
             zCoord);
     }
-    private Vector3 ConstrainPosition(Vector3 pos) {
-        float xCoord = Mathf.Clamp(pos.x, MIN_X, MAX_X);
-        float yCoord = Mathf.Clamp(pos.y, MIN_Y, MAX_Y);
-        float zCoord = Mathf.Clamp(pos.z, MIN_Z, MAX_Z);
-        //if (!allowHorizontalMovement) {
-        //    xCoord = pos.x;
-        //}
-        //if (!allowVerticalMovement) {
-        //    yCoord = pos.y;
-        //}
-        return new Vector3(xCoord, yCoord, zCoord);
-    }
+    //private Vector3 ConstrainPosition(Vector3 pos) {
+    //    float xCoord = Mathf.Clamp(pos.x, MIN_X, MAX_X);
+    //    float yCoord = Mathf.Clamp(pos.y, MIN_Y, MAX_Y);
+    //    float zCoord = Mathf.Clamp(pos.z, MIN_Z, MAX_Z);
+    //    //if (!allowHorizontalMovement) {
+    //    //    xCoord = pos.x;
+    //    //}
+    //    //if (!allowVerticalMovement) {
+    //    //    yCoord = pos.y;
+    //    //}
+    //    return new Vector3(xCoord, yCoord, zCoord);
+    //}
     private bool HasReachedBounds() {
         if ((Mathf.Approximately(transform.position.x, MAX_X) || Mathf.Approximately(transform.position.x, MIN_X)) &&
                 (Mathf.Approximately(transform.position.y, MAX_Y) || Mathf.Approximately(transform.position.y, MIN_Y))) {
@@ -309,5 +264,37 @@ public class CameraMove : MonoBehaviour {
             return true;
         }
         return false;
+    }
+
+    private void SetCameraBounds(Bounds bounds, float horzExtent, float vertExtent) {
+        this.bounds = bounds;
+        boundDrawer.bounds = bounds;
+        MIN_X = bounds.min.x + horzExtent;
+        MAX_X = bounds.max.x - horzExtent;
+        MIN_Y = bounds.min.y + vertExtent;
+        MAX_Y = bounds.max.y - vertExtent;
+    }
+
+    private Vector2[] GetCameraWorldCorners(Camera camera) {
+        Vector2[] corners = new Vector2[4]; //4 corners
+
+        // Screens coordinate corner location
+        var upperLeftScreen = new Vector2(0, Screen.height);
+        var upperRightScreen = new Vector2(Screen.width, Screen.height);
+        var lowerLeftScreen = new Vector2(0, 0);
+        var lowerRightScreen = new Vector2(Screen.width, 0);
+
+        //Corner locations in world coordinates
+        var upperLeft = camera.ScreenToWorldPoint(upperLeftScreen);
+        var upperRight = camera.ScreenToWorldPoint(upperRightScreen);
+        var lowerRight = camera.ScreenToWorldPoint(lowerRightScreen);
+        var lowerLeft = camera.ScreenToWorldPoint(lowerLeftScreen);
+
+        corners[0] = upperLeft;
+        corners[1] = upperRight;
+        corners[2] = lowerRight;
+        corners[3] = lowerLeft;
+
+        return corners;
     }
 }
