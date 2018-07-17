@@ -146,15 +146,6 @@ public class GridMap : MonoBehaviour {
         float newY = yOffset * (int)(newHeight / 2);
 
         outerGridList = new List<HexTile>();
-        outerGrid = new HexTile[newWidth, newHeight];
-        //if((int)width % 2 != 0) {
-        //    //odd
-        //    newX += xOffset / 2f;
-        //}
-        //if ((int)height % 2 != 0) {
-        //    //odd
-        //    newY += yOffset / 2f;
-        //}
         _borderParent.transform.localPosition = new Vector2(-newX, -newY);
         for (int x = 0; x < newWidth; x++) {
             for (int y = 0; y < newHeight; y++) {
@@ -175,17 +166,11 @@ public class GridMap : MonoBehaviour {
                 HexTile currHex = hex.GetComponent<HexTile>();
                 currHex.Initialize();
                 currHex.data.tileName = hex.name;
-                currHex.data.xCoordinate = x;
-                currHex.data.yCoordinate = y;
+                currHex.data.xCoordinate = x - _borderThickness;
+                currHex.data.yCoordinate = y - _borderThickness;
                 
-                outerGrid[x, y] = currHex;
                 outerGridList.Add(currHex);
 
-                //int xToCopy = Mathf.Clamp(x, 0, (int)width - 1);
-                //int yToCopy = Mathf.Clamp(y, 0, (int)height - 1);
-
-                //int xToCopy = Mathf.Max(x - (_borderThickness * 2), 0);
-                //int yToCopy = Mathf.Max(y - (_borderThickness * 2), 0);
                 int xToCopy = x - _borderThickness;
                 int yToCopy = y - _borderThickness;
                 if (x < _borderThickness && y - _borderThickness >= 0 && y < height) { //if border thickness is 2 (0 and 1)
@@ -214,7 +199,7 @@ public class GridMap : MonoBehaviour {
 
                 HexTile hexToCopy = map[xToCopy, yToCopy];
 
-                hex.name = x + "," + y + "(Border) Copied from " + hexToCopy.name;
+                currHex.name = currHex.xCoordinate + "," + currHex.yCoordinate + "(Border) Copied from " + hexToCopy.name;
 
                 currHex.SetElevation(hexToCopy.elevationType);
                 Biomes.Instance.SetBiomeForTile(hexToCopy.biomeType, currHex);
@@ -226,11 +211,10 @@ public class GridMap : MonoBehaviour {
                 currHex.DisableColliders();
                 currHex.unpassableGO.GetComponent<PolygonCollider2D>().enabled = true;
                 currHex.unpassableGO.SetActive(true);
-                //currHex.HideFogOfWarObjects();
             }
         }
 
-        outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(outerGrid, true));
+        //outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(outerGrid, true));
     }
     //public void GenerateNeighboursWithSameTag() {
     //    for (int i = 0; i < listHexes.Count; i++) {
@@ -304,46 +288,46 @@ public class GridMap : MonoBehaviour {
     #endregion
 
     #region Region Generation
-    internal void DivideOuterGridRegions() {
-        for (int i = 0; i < outerGridList.Count; i++) {
-            HexTile currTile = outerGridList[i];
-            for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
-                HexTile currNeighbour = currTile.AllNeighbours[j];
-                if (currNeighbour.region != currTile.region) {
-                    //Load Border For currTile
-                    HEXTILE_DIRECTION borderTileToActivate = currTile.GetNeighbourDirection(currNeighbour, true);
-                    SpriteRenderer border = currTile.ActivateBorder(borderTileToActivate, Color.white);
-                    currTile.region.AddRegionBorderLineSprite(border);
+    //internal void DivideOuterGridRegions() {
+    //    for (int i = 0; i < outerGridList.Count; i++) {
+    //        HexTile currTile = outerGridList[i];
+    //        for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
+    //            HexTile currNeighbour = currTile.AllNeighbours[j];
+    //            if (currNeighbour.region != currTile.region) {
+    //                //Load Border For currTile
+    //                HEXTILE_DIRECTION borderTileToActivate = currTile.GetNeighbourDirection(currNeighbour);
+    //                SpriteRenderer border = currTile.ActivateBorder(borderTileToActivate, Color.white);
+    //                currTile.region.AddRegionBorderLineSprite(border);
 
-                    if (GridMap.Instance.hexTiles.Contains(currNeighbour)) {
-                        HEXTILE_DIRECTION neighbourBorderTileToActivate = HEXTILE_DIRECTION.NONE;
-                        if (borderTileToActivate == HEXTILE_DIRECTION.NORTH_WEST) {
-                            neighbourBorderTileToActivate = HEXTILE_DIRECTION.SOUTH_EAST;
-                        } else if (borderTileToActivate == HEXTILE_DIRECTION.NORTH_EAST) {
-                            neighbourBorderTileToActivate = HEXTILE_DIRECTION.SOUTH_WEST;
-                        } else if (borderTileToActivate == HEXTILE_DIRECTION.EAST) {
-                            neighbourBorderTileToActivate = HEXTILE_DIRECTION.WEST;
-                        } else if (borderTileToActivate == HEXTILE_DIRECTION.SOUTH_EAST) {
-                            neighbourBorderTileToActivate = HEXTILE_DIRECTION.NORTH_WEST;
-                        } else if (borderTileToActivate == HEXTILE_DIRECTION.SOUTH_WEST) {
-                            neighbourBorderTileToActivate = HEXTILE_DIRECTION.NORTH_EAST;
-                        } else if (borderTileToActivate == HEXTILE_DIRECTION.WEST) {
-                            neighbourBorderTileToActivate = HEXTILE_DIRECTION.EAST;
-                        }
-                        border = currNeighbour.ActivateBorder(neighbourBorderTileToActivate, Color.white);
-                        currNeighbour.region.AddRegionBorderLineSprite(border);
-                    }
+    //                if (GridMap.Instance.hexTiles.Contains(currNeighbour)) {
+    //                    HEXTILE_DIRECTION neighbourBorderTileToActivate = HEXTILE_DIRECTION.NONE;
+    //                    if (borderTileToActivate == HEXTILE_DIRECTION.NORTH_WEST) {
+    //                        neighbourBorderTileToActivate = HEXTILE_DIRECTION.SOUTH_EAST;
+    //                    } else if (borderTileToActivate == HEXTILE_DIRECTION.NORTH_EAST) {
+    //                        neighbourBorderTileToActivate = HEXTILE_DIRECTION.SOUTH_WEST;
+    //                    } else if (borderTileToActivate == HEXTILE_DIRECTION.EAST) {
+    //                        neighbourBorderTileToActivate = HEXTILE_DIRECTION.WEST;
+    //                    } else if (borderTileToActivate == HEXTILE_DIRECTION.SOUTH_EAST) {
+    //                        neighbourBorderTileToActivate = HEXTILE_DIRECTION.NORTH_WEST;
+    //                    } else if (borderTileToActivate == HEXTILE_DIRECTION.SOUTH_WEST) {
+    //                        neighbourBorderTileToActivate = HEXTILE_DIRECTION.NORTH_EAST;
+    //                    } else if (borderTileToActivate == HEXTILE_DIRECTION.WEST) {
+    //                        neighbourBorderTileToActivate = HEXTILE_DIRECTION.EAST;
+    //                    }
+    //                    border = currNeighbour.ActivateBorder(neighbourBorderTileToActivate, Color.white);
+    //                    currNeighbour.region.AddRegionBorderLineSprite(border);
+    //                }
 
-                    //if(currTile.xCoordinate == _borderThickness - 1 && currTile.yCoordinate > _borderThickness && currTile.yCoordinate < height) {
-                    //    //tile is part of left border
-                    //    if(borderTileToActivate == HEXTILE_DIRECTION.NORTH_WEST) {
-                    //        currTile.region.AddRegionBorderLineSprite(currTile.ActivateBorder(HEXTILE_DIRECTION.NORTH_EAST));
-                    //    }
-                    //}
-                }
-            }
-        }
-    }
+    //                //if(currTile.xCoordinate == _borderThickness - 1 && currTile.yCoordinate > _borderThickness && currTile.yCoordinate < height) {
+    //                //    //tile is part of left border
+    //                //    if(borderTileToActivate == HEXTILE_DIRECTION.NORTH_WEST) {
+    //                //        currTile.region.AddRegionBorderLineSprite(currTile.ActivateBorder(HEXTILE_DIRECTION.NORTH_EAST));
+    //                //    }
+    //                //}
+    //            }
+    //        }
+    //    }
+    //}
     /*
      * Divide the created grid into 
      * regions. Refer to https://gamedev.stackexchange.com/questions/57213/generate-equal-regions-in-a-hex-map 

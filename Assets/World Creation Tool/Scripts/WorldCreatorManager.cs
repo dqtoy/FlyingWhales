@@ -28,7 +28,6 @@ namespace worldcreator {
         [Space(10)]
         [Header("Outer Grid")]
         public List<HexTile> outerGridList;
-        public HexTile[,] outerGrid;
         [SerializeField] private Transform _borderParent;
         public int _borderThickness;
 
@@ -162,7 +161,6 @@ namespace worldcreator {
             float newY = yOffset * (int)(newHeight / 2);
 
             outerGridList = new List<HexTile>();
-            outerGrid = new HexTile[newWidth, newHeight];
 
             _borderParent.transform.localPosition = new Vector2(-newX, -newY);
             for (int x = 0; x < newWidth; x++) {
@@ -184,10 +182,9 @@ namespace worldcreator {
                     HexTile currHex = hex.GetComponent<HexTile>();
                     currHex.Initialize();
                     currHex.data.tileName = hex.name;
-                    currHex.data.xCoordinate = x;
-                    currHex.data.yCoordinate = y;
+                    currHex.data.xCoordinate = x - _borderThickness;
+                    currHex.data.yCoordinate = y - _borderThickness;
 
-                    outerGrid[x, y] = currHex;
                     outerGridList.Add(currHex);
 
                     int xToCopy = x - _borderThickness;
@@ -218,7 +215,7 @@ namespace worldcreator {
 
                     HexTile hexToCopy = map[xToCopy, yToCopy];
 
-                    hex.name = x + "," + y + "(Border) Copied from " + hexToCopy.name;
+                    currHex.name = currHex.xCoordinate + "," + currHex.yCoordinate + "(Border) Copied from " + hexToCopy.name;
 
                     currHex.SetElevation(hexToCopy.elevationType);
                     Biomes.Instance.SetBiomeForTile(hexToCopy.biomeType, currHex);
@@ -235,7 +232,18 @@ namespace worldcreator {
                 }
             }
 
-            outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(outerGrid, true));
+            //outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(outerGrid, true));
+        }
+        private bool IsCoordinatePartOfMainMap(int x, int y) {
+            try {
+                HexTile tile = map[x, y];
+                if (tile != null) {
+                    return true;
+                }
+                return false;
+            }catch(IndexOutOfRangeException) {
+                return false;
+            }
         }
         private void LoadRegions(WorldSaveData data) {
             for (int i = 0; i < data.regionsData.Count; i++) {
@@ -516,7 +524,7 @@ namespace worldcreator {
             }
             for (int i = 0; i < tiles.Count; i++) {
                 HexTile currTile = tiles[i];
-                Biomes.Instance.UpdateTileVisuals(currTile, true);
+                Biomes.Instance.UpdateTileVisuals(currTile);
                 //Biomes.Instance.GenerateTileBiomeDetails(currTile);
                 Biomes.Instance.LoadPassableTypes(currTile);
             }
@@ -525,7 +533,7 @@ namespace worldcreator {
         public void SetBiomes(HexTile tile, BIOMES biome, bool updateVisuals = true) {
             tile.SetBiome(biome);
             if (updateVisuals) {
-                Biomes.Instance.UpdateTileVisuals(tile, true);
+                Biomes.Instance.UpdateTileVisuals(tile);
                 Biomes.Instance.LoadPassableTypes(tile);
             }
         }
@@ -539,7 +547,7 @@ namespace worldcreator {
             }
             for (int i = 0; i < tiles.Count; i++) {
                 HexTile currTile = tiles[i];
-                Biomes.Instance.UpdateTileVisuals(currTile, true);
+                Biomes.Instance.UpdateTileVisuals(currTile);
                 Biomes.Instance.LoadPassableTypes(currTile);
             }
         }
@@ -558,7 +566,7 @@ namespace worldcreator {
             }
             tile.SetElevation(elevation);
             if (updateVisuals) {
-                Biomes.Instance.UpdateTileVisuals(tile, true);
+                Biomes.Instance.UpdateTileVisuals(tile);
                 Biomes.Instance.LoadPassableTypes(tile);
             }
         }

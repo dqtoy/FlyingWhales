@@ -32,6 +32,7 @@ public class CharacterQuestData {
     public virtual IEnumerator SetupValuesCoroutine() { yield return null; }
     public virtual void AbandonQuest() {
         _owner.RemoveQuestData(this);
+        Messenger.RemoveListener<Quest>(Signals.QUEST_DONE, OnQuestDone);
     }
     protected virtual void OnQuestDone(Quest doneQuest) {
         if (_parentQuest.id == doneQuest.id) {
