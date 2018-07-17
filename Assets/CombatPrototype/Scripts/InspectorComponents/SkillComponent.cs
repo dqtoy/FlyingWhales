@@ -12,7 +12,8 @@ namespace ECS{
 		public int activationWeight;
 		//public float accuracy;
 		public int range;
-
+        public TARGET_TYPE targetType;
+        public int numOfRowsHit;
 
         //Attack Skill Fields
         public int power;
@@ -25,7 +26,7 @@ namespace ECS{
 		public int healPower;
 
         //Body Part
-        public SkillRequirement[] skillRequirements;
+        //public SkillRequirement[] skillRequirements;
 
         //Weapon
         public WEAPON_TYPE[] allowedWeaponTypes;

@@ -22,8 +22,9 @@ namespace ECS {
 			//skillComponent.actWeightType = (ACTIVATION_WEIGHT_TYPE)EditorGUILayout.EnumPopup("Activation Weight Type: ", skillComponent.actWeightType);
 			skillComponent.activationWeight = EditorGUILayout.IntField("Activation Weight: ", skillComponent.activationWeight);
 			skillComponent.range = EditorGUILayout.IntField("Range: ", skillComponent.range);
-			//skillComponent.accuracy = EditorGUILayout.Slider("Accuracy: ", skillComponent.accuracy, 0f, 100f);
-
+            skillComponent.targetType = (TARGET_TYPE) EditorGUILayout.EnumPopup("Target Type: ", skillComponent.targetType);
+            //skillComponent.accuracy = EditorGUILayout.Slider("Accuracy: ", skillComponent.accuracy, 0f, 100f);
+            ShowTargetTypeFields();
             switch (skillComponent.skillType) {
                 case SKILL_TYPE.ATTACK:
                     ShowAttackSkillFields();
@@ -42,10 +43,7 @@ namespace ECS {
                     break;
             }
             switch (skillComponent.skillCategory) {
-                case SKILL_CATEGORY.BODY_PART:
-                ShowBodyPartFields();
-                break;
-                case SKILL_CATEGORY.WEAPON:
+                case SKILL_CATEGORY.CLASS:
                 ShowWeaponFields();
                 break;
             }
@@ -95,6 +93,11 @@ namespace ECS {
         private void ShowMoveItemFields() {
             //Nothing yet
         }
+        private void ShowTargetTypeFields() {
+            if(skillComponent.targetType == TARGET_TYPE.ROW) {
+                skillComponent.numOfRowsHit = EditorGUILayout.IntField("Cell Amount: ", skillComponent.numOfRowsHit);
+            }
+        }
 
         #region Saving
         private void SaveSkill(string fileName) {
@@ -138,7 +141,12 @@ namespace ECS {
 			newSkill.activationWeight = skillComponent.activationWeight;
 			//newSkill.accuracy = skillComponent.accuracy;
 			newSkill.range = skillComponent.range;
-			newSkill.skillRequirements = skillComponent.skillRequirements;
+            newSkill.targetType = skillComponent.targetType;
+            newSkill.numOfRowsHit = skillComponent.numOfRowsHit;
+            if (newSkill.numOfRowsHit <= 0) {
+                newSkill.numOfRowsHit = 1;
+            }
+            //newSkill.skillRequirements = skillComponent.skillRequirements;
             newSkill.allowedWeaponTypes = skillComponent.allowedWeaponTypes;
         }
         private void SaveAttackSkill(string path) {

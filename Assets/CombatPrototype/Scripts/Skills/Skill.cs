@@ -13,9 +13,12 @@ namespace ECS {
         public int activationWeight;
         //public float accuracy;
         public int range;
-		public bool isEnabled;
-        public SkillRequirement[] skillRequirements;
+        public TARGET_TYPE targetType;
+        public int numOfRowsHit;
         public WEAPON_TYPE[] allowedWeaponTypes;
+
+        //Not part of skill creator
+        public bool isEnabled;
 
         public Skill CreateNewCopy(){
 			if (this is AttackSkill) {
@@ -57,19 +60,22 @@ namespace ECS {
 			skill.activationWeight = this.activationWeight;
 			//skill.accuracy = this.accuracy;
 			skill.range = this.range;
-			skill.isEnabled = this.isEnabled;
+            skill.targetType = this.targetType;
+            skill.numOfRowsHit = this.numOfRowsHit;
+
+            skill.isEnabled = this.isEnabled;
             if(this.allowedWeaponTypes != null && this.allowedWeaponTypes.Length > 0) {
                 skill.allowedWeaponTypes = new WEAPON_TYPE[this.allowedWeaponTypes.Length];
                 Array.Copy(this.allowedWeaponTypes, skill.allowedWeaponTypes, this.allowedWeaponTypes.Length);
             }
-            if(this.skillRequirements != null && this.skillRequirements.Length > 0) {
-                skill.skillRequirements = new SkillRequirement[this.skillRequirements.Length];
-                for (int i = 0; i < this.skillRequirements.Length; i++) {
-                    skill.skillRequirements[i] = new SkillRequirement();
-                    skill.skillRequirements[i].attributeRequired = this.skillRequirements[i].attributeRequired;
-                    skill.skillRequirements[i].itemQuantity = this.skillRequirements[i].itemQuantity;
-                }
-            }
+            //if(this.skillRequirements != null && this.skillRequirements.Length > 0) {
+            //    skill.skillRequirements = new SkillRequirement[this.skillRequirements.Length];
+            //    for (int i = 0; i < this.skillRequirements.Length; i++) {
+            //        skill.skillRequirements[i] = new SkillRequirement();
+            //        skill.skillRequirements[i].attributeRequired = this.skillRequirements[i].attributeRequired;
+            //        skill.skillRequirements[i].itemQuantity = this.skillRequirements[i].itemQuantity;
+            //    }
+            //}
 		}
     }
 }

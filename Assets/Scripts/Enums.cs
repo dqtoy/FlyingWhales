@@ -1005,8 +1005,7 @@ public enum SKILL_TYPE {
 }
 public enum SKILL_CATEGORY {
 	GENERAL,
-	BODY_PART,
-	WEAPON,
+	CLASS,
 }
 
 public enum ATTACK_TYPE {
@@ -1436,4 +1435,9 @@ public enum ICHARACTER_TYPE {
 public enum MOVEMENT_TYPE {
     NORMAL,
     AVOID
+}
+
+public enum TARGET_TYPE {
+    SINGLE,
+    ROW,
 }
