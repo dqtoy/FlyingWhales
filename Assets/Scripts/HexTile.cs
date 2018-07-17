@@ -459,7 +459,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     #region Pathfinding
-    public void FindNeighbours(HexTile[,] gameBoard, bool isForOuterGrid = false) {
+    public void FindNeighbours(HexTile[,] gameBoard) {
         _neighbourDirections = new Dictionary<HEXTILE_DIRECTION, HexTile>();
         var neighbours = new List<HexTile>();
 
@@ -499,13 +499,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             if (currNeighbour == null) {
                 continue;
             }
-            HEXTILE_DIRECTION dir = GetNeighbourDirection(currNeighbour, isForOuterGrid);
+            HEXTILE_DIRECTION dir = GetNeighbourDirection(currNeighbour);
             if (dir != HEXTILE_DIRECTION.NONE) {
                 _neighbourDirections.Add(dir, currNeighbour);
             }
         }
     }
-    internal HEXTILE_DIRECTION GetNeighbourDirection(HexTile neighbour, bool isForOuterGrid = false) {
+    internal HEXTILE_DIRECTION GetNeighbourDirection(HexTile neighbour) {
         if (neighbour == null) {
             return HEXTILE_DIRECTION.NONE;
         }
@@ -514,20 +514,19 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
         int thisXCoordinate = this.xCoordinate;
         int thisYCoordinate = this.yCoordinate;
-        if (isForOuterGrid) {
-#if WORLD_CREATION_TOOL
-            if (!worldcreator.WorldCreatorManager.Instance.outerGridList.Contains(neighbour)) {
-                thisXCoordinate -= worldcreator.WorldCreatorManager.Instance._borderThickness;
-                thisYCoordinate -= worldcreator.WorldCreatorManager.Instance._borderThickness;
-            }
-#else
-            if (!GridMap.Instance.outerGridList.Contains(neighbour)) {
-                thisXCoordinate -= GridMap.Instance._borderThickness;
-                thisYCoordinate -= GridMap.Instance._borderThickness;
-            }
-#endif
-
-        }
+//        if (isForOuterGrid) {
+//#if WORLD_CREATION_TOOL
+//            if (!worldcreator.WorldCreatorManager.Instance.outerGridList.Contains(neighbour)) {
+//                thisXCoordinate -= worldcreator.WorldCreatorManager.Instance._borderThickness;
+//                thisYCoordinate -= worldcreator.WorldCreatorManager.Instance._borderThickness;
+//            }
+//#else
+//            if (!GridMap.Instance.outerGridList.Contains(neighbour)) {
+//                thisXCoordinate -= GridMap.Instance._borderThickness;
+//                thisYCoordinate -= GridMap.Instance._borderThickness;
+//            }
+//#endif
+//        }
             Point difference = new Point((neighbour.xCoordinate - thisXCoordinate),
                     (neighbour.yCoordinate - thisYCoordinate));
         if (thisYCoordinate % 2 == 0) { //even
@@ -1120,27 +1119,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [ContextMenu("Force Reset Tile")]
     public void ForceResetTile() {
         ResetTile();
-    }
-    [ContextMenu("Load Border Lines")]
-    public void LoadBorderLinesForTesting() {
-        HexTile currTile = this;
-        for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
-            HexTile currNeighbour = currTile.AllNeighbours[j];
-            if (currNeighbour.region != currTile.region) {
-                //Load Border For currTile
-                Debug.Log(currNeighbour.name + " - " + currTile.GetNeighbourDirection(currNeighbour, true).ToString());
-                //HEXTILE_DIRECTION borderTileToActivate = currTile.GetNeighbourDirection(currNeighbour, true);
-                //SpriteRenderer border = currTile.ActivateBorder(borderTileToActivate);
-                //currTile.region.AddRegionBorderLineSprite(border);
-
-                //if(currTile.xCoordinate == _borderThickness - 1 && currTile.yCoordinate > _borderThickness && currTile.yCoordinate < height) {
-                //    //tile is part of left border
-                //    if(borderTileToActivate == HEXTILE_DIRECTION.NORTH_WEST) {
-                //        currTile.region.AddRegionBorderLineSprite(currTile.ActivateBorder(HEXTILE_DIRECTION.NORTH_EAST));
-                //    }
-                //}
-            }
-        }
     }
     [ContextMenu("Log Neighbour Directions")]
     public void LogNeighbourDirections() {

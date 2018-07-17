@@ -132,11 +132,11 @@ public class Biomes : MonoBehaviour {
             UpdateTileVisuals(currentHexTile);
         }
     }
-    internal void UpdateTileVisuals(HexTile currentHexTile, bool updateNeighbours = false) {
+    internal void UpdateTileVisuals(HexTile currentHexTile) {
 #if WORLD_CREATION_TOOL
         int sortingOrder = ((int)worldcreator.WorldCreatorManager.Instance.height - 1) -  currentHexTile.yCoordinate;
 #else
-        int sortingOrder = ((int)GridMap.Instance.height - 1) -  currentHexTile.yCoordinate;
+        int sortingOrder = (((int)GridMap.Instance.height - 1) -  currentHexTile.yCoordinate);
 #endif
         if (currentHexTile.elevationType == ELEVATION.PLAIN) {
             LoadPlainTileVisuals(currentHexTile, sortingOrder);

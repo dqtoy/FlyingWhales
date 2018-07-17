@@ -48,7 +48,7 @@ public class MapGenerator : MonoBehaviour {
         RoadManager.Instance.GenerateTilePassableTypes();
 
         GridMap.Instance.GenerateOuterGrid();
-        GridMap.Instance.DivideOuterGridRegions();
+        //GridMap.Instance.DivideOuterGridRegions();
 
         UIManager.Instance.InitializeUI();
         ObjectManager.Instance.Initialize();
@@ -117,7 +117,7 @@ public class MapGenerator : MonoBehaviour {
         st.Stop();
 
         GridMap.Instance.GenerateOuterGrid();
-        GridMap.Instance.DivideOuterGridRegions();
+        //GridMap.Instance.DivideOuterGridRegions();
 
         Biomes.Instance.LoadPassableTypes(GridMap.Instance.hexTiles, GridMap.Instance.outerGridList);
 
