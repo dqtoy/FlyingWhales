@@ -71,7 +71,7 @@ public class CharacterPortraitEditor : MonoBehaviour {
         mouthStepper.maximum = CharacterManager.Instance.GetMouthSpriteCount(chosenRace, chosenGender) - 1;
         eyebrowsStepper.maximum = CharacterManager.Instance.GetEyebrowSpriteCount(chosenRace, chosenGender) - 1;
         bodyStepper.maximum = CharacterManager.Instance.GetBodySpriteCount(chosenRace, chosenGender) - 1;
-        facialHairStepper.maximum = CharacterManager.Instance.GetFacialHairSpriteCount(chosenRace, chosenGender) - 1;
+        facialHairStepper.maximum = Mathf.Max(0, CharacterManager.Instance.GetFacialHairSpriteCount(chosenRace, chosenGender) - 1);
     }
     private void LoadDropdownSettings() {
         raceDropdown.ClearOptions();
