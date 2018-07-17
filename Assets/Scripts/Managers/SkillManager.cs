@@ -10,8 +10,9 @@ public class SkillManager : MonoBehaviour {
     public static SkillManager Instance = null;
 
     public Dictionary<string, Skill> allSkills;
-	public Dictionary<string, Skill> bodyPartSkills;
+	//public Dictionary<string, Skill> bodyPartSkills;
     public Dictionary<string, Skill> generalSkills;
+    public Dictionary<string, Skill> classSkills;
 
     //public Dictionary<WEAPON_TYPE, List<Skill>> weaponTypeSkills = new Dictionary<WEAPON_TYPE, List<Skill>>();
 
@@ -25,7 +26,7 @@ public class SkillManager : MonoBehaviour {
 	}
     private void ConstructAllSkillsList() {
         allSkills = new Dictionary<string, Skill>();
-		bodyPartSkills = new Dictionary<string, Skill> ();
+        classSkills = new Dictionary<string, Skill> ();
         generalSkills = new Dictionary<string, Skill>();
         string path = Utilities.dataPath + "Skills/";
         string[] directories = Directory.GetDirectories(path); //Get first level skill types
@@ -71,8 +72,8 @@ public class SkillManager : MonoBehaviour {
                             break;
                     }
 					if(skill != null){
-						if(skill.skillCategory == SKILL_CATEGORY.BODY_PART){
-							bodyPartSkills.Add(skill.skillName, skill);
+                        if (skill.skillCategory == SKILL_CATEGORY.CLASS){
+                            classSkills.Add(skill.skillName, skill);
 						}else if (skill.skillCategory == SKILL_CATEGORY.GENERAL) {
                             generalSkills.Add(skill.skillName, skill);
                         }

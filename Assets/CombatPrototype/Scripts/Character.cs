@@ -569,18 +569,18 @@ namespace ECS {
 				Skill skill = this._skills [i];
 				skill.isEnabled = true;
 
-                if(skill.skillRequirements != null) {
-                    for (int j = 0; j < skill.skillRequirements.Length; j++) {
-                        SkillRequirement skillRequirement = skill.skillRequirements[j];
-                        if (!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)) {
-                            skill.isEnabled = false;
-                            break;
-                        }
-                    }
-                    if (!skill.isEnabled) {
-                        continue;
-                    }
-                }
+                //if(skill.skillRequirements != null) {
+                //    for (int j = 0; j < skill.skillRequirements.Length; j++) {
+                //        SkillRequirement skillRequirement = skill.skillRequirements[j];
+                //        if (!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)) {
+                //            skill.isEnabled = false;
+                //            break;
+                //        }
+                //    }
+                //    if (!skill.isEnabled) {
+                //        continue;
+                //    }
+                //}
 
                 if (skill is AttackSkill){
                     AttackSkill attackSkill = skill as AttackSkill;
@@ -964,52 +964,52 @@ namespace ECS {
 			}
 			return null;
 		}
-		internal bool HasActivatableBodyPartSkill(){
-			for (int i = 0; i < this._skills.Count; i++) {
-				Skill skill = this._skills [i];
-				if(skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.BODY_PART){
-					return true;
-				}
-			}
-            for (int i = 0; i < _level; i++) {
-                if (i < _characterClass.skillsPerLevel.Count) {
-                    if(_characterClass.skillsPerLevel[i] != null) {
-                        for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
-                            Skill skill = _characterClass.skillsPerLevel[i][j];
-                            if (skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.BODY_PART) {
-                                return true;
-                            }
-                        }
-                    }
-                } else {
-                    break;
-                }
-            }
-            return false;
-		}
-		internal bool HasActivatableWeaponSkill(){
-			for (int i = 0; i < this._skills.Count; i++) {
-				Skill skill = this._skills [i];
-				if(skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.WEAPON){
-					return true;
-				}
-			}
-            for (int i = 0; i < _level; i++) {
-                if (i < _characterClass.skillsPerLevel.Count) {
-                    if (_characterClass.skillsPerLevel[i] != null) {
-                        for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
-                            Skill skill = _characterClass.skillsPerLevel[i][j];
-                            if (skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.WEAPON) {
-                                return true;
-                            }
-                        }
-                    }
-                } else {
-                    break;
-                }
-            }
-            return false;
-		}
+		//internal bool HasActivatableBodyPartSkill(){
+		//	for (int i = 0; i < this._skills.Count; i++) {
+		//		Skill skill = this._skills [i];
+		//		if(skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.BODY_PART){
+		//			return true;
+		//		}
+		//	}
+  //          for (int i = 0; i < _level; i++) {
+  //              if (i < _characterClass.skillsPerLevel.Count) {
+  //                  if(_characterClass.skillsPerLevel[i] != null) {
+  //                      for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
+  //                          Skill skill = _characterClass.skillsPerLevel[i][j];
+  //                          if (skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.BODY_PART) {
+  //                              return true;
+  //                          }
+  //                      }
+  //                  }
+  //              } else {
+  //                  break;
+  //              }
+  //          }
+  //          return false;
+		//}
+		//internal bool HasActivatableWeaponSkill(){
+		//	for (int i = 0; i < this._skills.Count; i++) {
+		//		Skill skill = this._skills [i];
+		//		if(skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.WEAPON){
+		//			return true;
+		//		}
+		//	}
+  //          for (int i = 0; i < _level; i++) {
+  //              if (i < _characterClass.skillsPerLevel.Count) {
+  //                  if (_characterClass.skillsPerLevel[i] != null) {
+  //                      for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
+  //                          Skill skill = _characterClass.skillsPerLevel[i][j];
+  //                          if (skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.WEAPON) {
+  //                              return true;
+  //                          }
+  //                      }
+  //                  }
+  //              } else {
+  //                  break;
+  //              }
+  //          }
+  //          return false;
+		//}
 #endregion
 
 #region Items
@@ -1568,23 +1568,23 @@ namespace ECS {
             }
             return allGeneralSkills;
 		}
-		private List<Skill> GetBodyPartSkills(){
-			List<Skill> allBodyPartSkills = new List<Skill>();
-			foreach (Skill skill in SkillManager.Instance.bodyPartSkills.Values) {
-				bool requirementsPassed = true;
-				//Skill skill	= SkillManager.Instance.bodyPartSkills [skillName];
-				for (int j = 0; j < skill.skillRequirements.Length; j++) {
-					if(!HasAttribute(skill.skillRequirements[j].attributeRequired, skill.skillRequirements[j].itemQuantity)){
-						requirementsPassed = false;
-						break;
-					}
-				}
-				if(requirementsPassed){
-					allBodyPartSkills.Add (skill.CreateNewCopy ());
-				}
-			}
-			return allBodyPartSkills;
-		}
+		//private List<Skill> GetBodyPartSkills(){
+		//	List<Skill> allBodyPartSkills = new List<Skill>();
+		//	foreach (Skill skill in SkillManager.Instance.bodyPartSkills.Values) {
+		//		bool requirementsPassed = true;
+		//		//Skill skill	= SkillManager.Instance.bodyPartSkills [skillName];
+		//		for (int j = 0; j < skill.skillRequirements.Length; j++) {
+		//			if(!HasAttribute(skill.skillRequirements[j].attributeRequired, skill.skillRequirements[j].itemQuantity)){
+		//				requirementsPassed = false;
+		//				break;
+		//			}
+		//		}
+		//		if(requirementsPassed){
+		//			allBodyPartSkills.Add (skill.CreateNewCopy ());
+		//		}
+		//	}
+		//	return allBodyPartSkills;
+		//}
 #endregion
 
 #region Roles
