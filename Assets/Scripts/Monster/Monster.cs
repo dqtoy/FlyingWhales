@@ -6,23 +6,23 @@ using ECS;
 
 public class Monster : ICharacter {
     //Serialized fields
-    private string _name;
-    private MONSTER_TYPE _type;
-    private MONSTER_CATEGORY _category;
-    private int _level;
-    private int _experienceDrop;
-    private int _maxHP;
-    private int _maxSP;
-    private int _attackPower;
-    private int _speed;
-    private int _pDef;
-    private int _mDef;
-    private float _dodgeChance;
-    private float _hitChance;
-    private float _critChance;
-    private List<Skill> _skills;
-    private Dictionary<ELEMENT, float> _elementalWeaknesses;
-    private Dictionary<ELEMENT, float> _elementalResistances;
+    [SerializeField] private string _name;
+    [SerializeField] private MONSTER_TYPE _type;
+    [SerializeField] private MONSTER_CATEGORY _category;
+    [SerializeField] private int _level;
+    [SerializeField] private int _experienceDrop;
+    [SerializeField] private int _maxHP;
+    [SerializeField] private int _maxSP;
+    [SerializeField] private int _attackPower;
+    [SerializeField] private int _speed;
+    [SerializeField] private int _pDef;
+    [SerializeField] private int _mDef;
+    [SerializeField] private float _dodgeChance;
+    [SerializeField] private float _hitChance;
+    [SerializeField] private float _critChance;
+    [SerializeField] private List<string> _skillNames;
+    [SerializeField] private List<ElementChance> _elementChanceWeaknesses;
+    [SerializeField] private List<ElementChance> _elementChanceResistances;
     //To add item drops and their chances
 
     private string _characterColorCode;
@@ -39,12 +39,15 @@ public class Monster : ICharacter {
     private RaceSetting _raceSetting;
     private MonsterParty _party;
     private CharacterPortrait _characterPortrait;
+    private PortraitSettings _portraitSettings;
     //private Combat _currentCombat;
     private SIDES _currentSide;
     private List<BodyPart> _bodyParts;
     private List<CharacterAction> _desperateActions;
     private List<CharacterAction> _idleActions;
-    private PortraitSettings _portraitSettings;
+    private List<Skill> _skills;
+    private Dictionary<ELEMENT, float> _elementalWeaknesses;
+    private Dictionary<ELEMENT, float> _elementalResistances;
 
     #region getters/setters
     public string name {
@@ -181,6 +184,9 @@ public class Monster : ICharacter {
     public List<Skill> skills {
         get { return _skills; }
     }
+    public List<string> skillNames {
+        get { return _skillNames; }
+    }
     public List<BodyPart> bodyParts {
         get { return _bodyParts; }
     }
@@ -247,23 +253,55 @@ public class Monster : ICharacter {
         this._dodgeChance = monsterComponent.dodgeChance;
         this._hitChance = monsterComponent.hitChance;
         this._critChance = monsterComponent.critChance;
+        this._skillNames = monsterComponent.skillNames;
+        this._elementChanceWeaknesses = monsterComponent.elementChanceWeaknesses;
+        this._elementChanceResistances = monsterComponent.elementChanceResistances;
+    }
 
-        this._skills = new List<Skill>();
-        for (int i = 0; i < monsterComponent.skillNames.Count; i++) {
-            _skills.Add(SkillManager.Instance.allSkills[monsterComponent.skillNames[i]]);
+    public void SetDataFromMonsterPanelUI() {
+        this._name = MonsterPanelUI.Instance.nameInput.text;
+        this._type = (MONSTER_TYPE) System.Enum.Parse(typeof(MONSTER_TYPE), MonsterPanelUI.Instance.typeOptions.options[MonsterPanelUI.Instance.typeOptions.value].text);
+        this._category = MONSTER_CATEGORY.NORMAL;
+        this._experienceDrop = int.Parse(MonsterPanelUI.Instance.expInput.text);
+        this._level = int.Parse(MonsterPanelUI.Instance.levelInput.text);
+        if(this._level < 1) {
+            this._level = 1;
+        }else if (this._level > 100) {
+            this._level = 100;
         }
+        this._maxHP = int.Parse(MonsterPanelUI.Instance.hpInput.text);
+        this._maxSP = int.Parse(MonsterPanelUI.Instance.spInput.text);
+        this._attackPower = int.Parse(MonsterPanelUI.Instance.powerInput.text);
+        this._speed = int.Parse(MonsterPanelUI.Instance.speedInput.text);
+        this._pDef = int.Parse(MonsterPanelUI.Instance.pdefInput.text);
+        this._mDef = int.Parse(MonsterPanelUI.Instance.mdefInput.text);
+        this._dodgeChance = float.Parse(MonsterPanelUI.Instance.dodgeInput.text);
+        this._hitChance = float.Parse(MonsterPanelUI.Instance.hitInput.text);
+        this._critChance = float.Parse(MonsterPanelUI.Instance.critInput.text);
+        this._skillNames = MonsterPanelUI.Instance.allSkills;
+        this._elementChanceWeaknesses = new List<ElementChance>();
+        this._elementChanceResistances = new List<ElementChance>();
+    }
 
+    public void ConstructMonsterData() {
+        this._skills = new List<Skill>();
+        for (int i = 0; i < _skillNames.Count; i++) {
+            this._skills.Add(SkillManager.Instance.allSkills[_skillNames[i]]);
+        }
         this._elementalWeaknesses = new Dictionary<ELEMENT, float>();
-        for (int i = 0; i < monsterComponent.elementChanceWeaknesses.Count; i++) {
-            ElementChance elementChance = monsterComponent.elementChanceWeaknesses[i];
+        for (int i = 0; i < _elementChanceWeaknesses.Count; i++) {
+            ElementChance elementChance = _elementChanceWeaknesses[i];
             this._elementalWeaknesses.Add(elementChance.element, elementChance.chance);
         }
 
         this._elementalResistances = new Dictionary<ELEMENT, float>();
-        for (int i = 0; i < monsterComponent.elementChanceResistances.Count; i++) {
-            ElementChance elementChance = monsterComponent.elementChanceResistances[i];
+        for (int i = 0; i < _elementChanceResistances.Count; i++) {
+            ElementChance elementChance = _elementChanceResistances[i];
             this._elementalResistances.Add(elementChance.element, elementChance.chance);
         }
+        _skillNames.Clear();
+        _elementChanceWeaknesses.Clear();
+        _elementChanceResistances.Clear();
     }
 
     #region Utilities

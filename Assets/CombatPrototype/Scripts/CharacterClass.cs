@@ -23,31 +23,31 @@ namespace ECS {
         #region getters/setters
         public string className {
             get { return _className; }
-            set { _className = value; }
+            //set { _className = value; }
         }
         public float strWeightAllocation {
             get { return _strWeightAllocation; }
-            set { _strWeightAllocation = value; }
+            //set { _strWeightAllocation = value; }
         }
         public float intWeightAllocation {
             get { return _intWeightAllocation; }
-            set { _intWeightAllocation = value; }
+            //set { _intWeightAllocation = value; }
         }
         public float agiWeightAllocation {
             get { return _agiWeightAllocation; }
-            set { _agiWeightAllocation = value; }
+            //set { _agiWeightAllocation = value; }
         }
         public float vitWeightAllocation {
             get { return _vitWeightAllocation; }
-            set { _vitWeightAllocation = value; }
+            //set { _vitWeightAllocation = value; }
         }
         public float hpModifier {
             get { return _hpModifier; }
-            set { _hpModifier = value; }
+            //set { _hpModifier = value; }
         }
         public float spModifier {
             get { return _spModifier; }
-            set { _spModifier = value; }
+            //set { _spModifier = value; }
         }
         //public int dodgeRate {
         //    get { return _dodgeRate; }
@@ -60,14 +60,14 @@ namespace ECS {
         //}
         public List<WEAPON_TYPE> allowedWeaponTypes {
             get { return _allowedWeaponTypes; }
-            set { _allowedWeaponTypes = value; }
+            //set { _allowedWeaponTypes = value; }
         }
         public List<Skill[]> skillsPerLevel {
             get { return _skillsPerLevel; }
         }
         public List<StringListWrapper> skillsPerLevelNames {
             get { return _skillsPerLevelNames; }
-            set { _skillsPerLevelNames = value; }
+            //set { _skillsPerLevelNames = value; }
         }
         public List<RESOURCE> harvestResources {
             get { return _harvestResources; }
@@ -120,6 +120,29 @@ namespace ECS {
                     skillNames.list.Add(classComponent.skillsPerLevel[i].list[j].name);
                 }
                 _skillsPerLevelNames.Add(skillNames);
+            }
+        }
+
+        public void SetDataFromClassPanelUI() {
+            this._className = ClassPanelUI.Instance.classNameInput.text;
+            this._strWeightAllocation = int.Parse(ClassPanelUI.Instance.strWeightAllocInput.text);
+            this._intWeightAllocation = int.Parse(ClassPanelUI.Instance.intWeightAllocInput.text);
+            this._agiWeightAllocation = int.Parse(ClassPanelUI.Instance.agiWeightAllocInput.text);
+            this._vitWeightAllocation = int.Parse(ClassPanelUI.Instance.vitWeightAllocInput.text);
+            this._hpModifier = int.Parse(ClassPanelUI.Instance.hpMultiplierInput.text);
+            this._spModifier = int.Parse(ClassPanelUI.Instance.spMultiplierInput.text);
+
+            this._allowedWeaponTypes = new List<WEAPON_TYPE>();
+            for (int i = 0; i < _allowedWeaponTypes.Count; i++) {
+                this._allowedWeaponTypes.Add((WEAPON_TYPE) System.Enum.Parse(typeof(WEAPON_TYPE), ClassPanelUI.Instance.allowedWeaponTypes[i]));
+            }
+
+            this._skillsPerLevelNames = new List<StringListWrapper>();
+            foreach (Transform child in ClassPanelUI.Instance.skillsContentTransform) {
+                LevelCollapseUI collapseUI = child.GetComponent<LevelCollapseUI>();
+                StringListWrapper skillNames = new StringListWrapper();
+                skillNames.list = collapseUI.skills;
+                this._skillsPerLevelNames.Add(skillNames);
             }
         }
 

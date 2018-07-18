@@ -149,7 +149,7 @@ public class SkillPanelUI : MonoBehaviour {
     }
 
     public void LoadSkill() {
-        string filePath = EditorUtility.OpenFilePanel("Select Skill", Utilities.dataPath + "Skills/CLASS/ATTACK/" + skillNameInput.text, "json");
+        string filePath = EditorUtility.OpenFilePanel("Select Skill", Utilities.dataPath + "Skills/CLASS/ATTACK/", "json");
 
         if (!string.IsNullOrEmpty(filePath)) {
             string dataAsJson = File.ReadAllText(filePath);
@@ -215,6 +215,8 @@ public class SkillPanelUI : MonoBehaviour {
         foreach (Transform child in ClassPanelUI.Instance.skillsContentTransform) {
             child.GetComponent<LevelCollapseUI>().UpdateSkillList();
         }
+
+        MonsterPanelUI.Instance.UpdateSkillList();
     }
     #endregion
 

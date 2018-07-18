@@ -36,14 +36,19 @@ public class ClassPanelUI : MonoBehaviour {
     [NonSerialized] public int latestLevel;
 
     private List<string> _allowedWeaponTypes;
-    private List<StringListWrapper> _skillsPerLevelNames;
+
+    #region getters/setters
+    public List<string> allowedWeaponTypes {
+        get { return _allowedWeaponTypes; }
+    }
+
+    #endregion
 
     void Awake() {
         Instance = this;
     }
     void Start() {
         _allowedWeaponTypes = new List<string>();
-        _skillsPerLevelNames = new List<StringListWrapper>();
         LoadAllData();
     }
 
@@ -70,7 +75,6 @@ public class ClassPanelUI : MonoBehaviour {
         allowedWeaponsOptions.value = 0;
 
         _allowedWeaponTypes.Clear();
-        _skillsPerLevelNames.Clear();
         foreach (Transform child in allowedWeaponsContentTransform) {
             GameObject.Destroy(child.gameObject);
         }
@@ -96,7 +100,7 @@ public class ClassPanelUI : MonoBehaviour {
     private void SaveClassJson(string path) {
         CharacterClass newClass = new CharacterClass();
 
-        SetCommonData(newClass);
+        newClass.SetDataFromClassPanelUI();
 
         string jsonString = JsonUtility.ToJson(newClass);
 
@@ -106,34 +110,11 @@ public class ClassPanelUI : MonoBehaviour {
 
         //Re-import the file to update the reference in the editor
         UnityEditor.AssetDatabase.ImportAsset(path);
-        Debug.Log("Successfully saved skill at " + path);
-    }
-
-    private void SetCommonData(CharacterClass newClass) {
-        newClass.className = classNameInput.text;
-        newClass.strWeightAllocation = int.Parse(strWeightAllocInput.text);
-        newClass.intWeightAllocation = int.Parse(intWeightAllocInput.text);
-        newClass.agiWeightAllocation = int.Parse(agiWeightAllocInput.text);
-        newClass.vitWeightAllocation = int.Parse(vitWeightAllocInput.text);
-        newClass.hpModifier = int.Parse(hpMultiplierInput.text);
-        newClass.spModifier = int.Parse(spMultiplierInput.text);
-
-        newClass.allowedWeaponTypes = new List<WEAPON_TYPE>();
-        for (int i = 0; i < _allowedWeaponTypes.Count; i++) {
-            newClass.allowedWeaponTypes.Add((WEAPON_TYPE) System.Enum.Parse(typeof(WEAPON_TYPE), _allowedWeaponTypes[i]));
-        }
-
-        newClass.skillsPerLevelNames = new List<StringListWrapper>();
-        foreach (Transform child in skillsContentTransform) {
-            LevelCollapseUI collapseUI = child.GetComponent<LevelCollapseUI>();
-            StringListWrapper skillNames = new StringListWrapper();
-            skillNames.list = collapseUI.skills;
-            newClass.skillsPerLevelNames.Add(skillNames);
-        }
+        Debug.Log("Successfully saved class at " + path);
     }
 
     private void LoadClass() {
-        string filePath = EditorUtility.OpenFilePanel("Select Class", Utilities.dataPath + "CharacterClasses/" + classNameInput.text, "json");
+        string filePath = EditorUtility.OpenFilePanel("Select Class", Utilities.dataPath + "CharacterClasses/", "json");
 
         if (!string.IsNullOrEmpty(filePath)) {
             string dataAsJson = File.ReadAllText(filePath);

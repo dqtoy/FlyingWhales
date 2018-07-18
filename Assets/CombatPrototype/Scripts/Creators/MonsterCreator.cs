@@ -64,15 +64,9 @@ public class MonsterCreator : Editor {
         }
     }
     private void SaveMonsterJson(string path) {
-        if (monsterComponent.skillNames == null) {
-            monsterComponent.skillNames = new List<string>();
-        } else {
-            monsterComponent.skillNames.Clear();
-        }
-        for (int i = 0; i < monsterComponent.skills.Count; i++) {
-            monsterComponent.skillNames.Add(monsterComponent.skills[i].name);
-        }
-        string jsonString = JsonUtility.ToJson(monsterComponent);
+        Monster monster = new Monster();
+        monster.SetData(monsterComponent);
+        string jsonString = JsonUtility.ToJson(monster);
         System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
         writer.WriteLine(jsonString);
         writer.Close();
