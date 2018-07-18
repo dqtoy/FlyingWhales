@@ -34,6 +34,7 @@ public class ClassPanelUI : MonoBehaviour {
 
     [NonSerialized] public WeaponTypeButton currentSelectedWeaponTypeButton;
     [NonSerialized] public int latestLevel;
+    [NonSerialized] public List<string> allClasses;
 
     private List<string> _allowedWeaponTypes;
 
@@ -48,17 +49,27 @@ public class ClassPanelUI : MonoBehaviour {
         Instance = this;
     }
     void Start() {
+        allClasses = new List<string>();
         _allowedWeaponTypes = new List<string>();
         LoadAllData();
     }
 
     #region Utilities
+    private void UpdateClassList() {
+        allClasses.Clear();
+        string path = Utilities.dataPath + "CharacterClasses/";
+        foreach (string file in Directory.GetFiles(path, "*.json")) {
+            allClasses.Add(Path.GetFileNameWithoutExtension(file));
+        }
+        CharacterPanelUI.Instance.UpdateClassOptions();
+    }
     private void LoadAllData() {
         allowedWeaponsOptions.ClearOptions();
 
         string[] weaponTypes = System.Enum.GetNames(typeof(WEAPON_TYPE));
 
         allowedWeaponsOptions.AddOptions(weaponTypes.ToList());
+        UpdateClassList();
     }
     private void ClearData() {
         latestLevel = 0;
@@ -111,6 +122,8 @@ public class ClassPanelUI : MonoBehaviour {
         //Re-import the file to update the reference in the editor
         UnityEditor.AssetDatabase.ImportAsset(path);
         Debug.Log("Successfully saved class at " + path);
+
+        UpdateClassList();
     }
 
     private void LoadClass() {

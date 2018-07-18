@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 
-public class Monster : ICharacter {
+public class Monster : ICharacter, ICharacterSim {
     //Serialized fields
     [SerializeField] private string _name;
     [SerializeField] private MONSTER_TYPE _type;
@@ -137,6 +137,9 @@ public class Monster : ICharacter {
     }
     public bool isDead {
         get { return _isDead; }
+    }
+    public MONSTER_TYPE type {
+        get { return _type; }
     }
     public GENDER gender {
         get { return GENDER.MALE; }

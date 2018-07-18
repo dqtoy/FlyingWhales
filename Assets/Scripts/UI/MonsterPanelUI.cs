@@ -88,7 +88,7 @@ public class MonsterPanelUI : MonoBehaviour {
     }
     private void SaveMonster() {
         if (nameInput.text == string.Empty) {
-            EditorUtility.DisplayDialog("Error", "Please specify a Mosnter Name", "OK");
+            EditorUtility.DisplayDialog("Error", "Please specify a Monster Name", "OK");
             return;
         }
         string path = Utilities.dataPath + "Monsters/" + nameInput.text + ".json";
@@ -132,7 +132,7 @@ public class MonsterPanelUI : MonoBehaviour {
 
     private void LoadMonsterDataToUI(Monster monster) {
         nameInput.text = monster.name;
-
+        typeOptions.value = GetMonsterTypeIndex(monster.type);
         levelInput.text = monster.level.ToString();
         expInput.text = monster.experienceDrop.ToString();
         hpInput.text = monster.maxHP.ToString();
@@ -151,6 +151,14 @@ public class MonsterPanelUI : MonoBehaviour {
             GameObject go = GameObject.Instantiate(monsterSkillBtnGO, skillContentTransform);
             go.GetComponent<MonsterSkillButton>().buttonText.text = skillName;
         }
+    }
+    private int GetMonsterTypeIndex(MONSTER_TYPE monsterType) {
+        for (int i = 0; i < typeOptions.options.Count; i++) {
+            if (typeOptions.options[i].text == monsterType.ToString()) {
+                return i;
+            }
+        }
+        return 0;
     }
     #endregion
 
