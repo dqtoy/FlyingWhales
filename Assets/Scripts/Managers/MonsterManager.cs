@@ -7,7 +7,7 @@ public class MonsterManager : MonoBehaviour {
 
     private Dictionary<string, Monster> _monstersDictionary;
     public GameObject monsterIconPrefab;
-    public MonsterComponent monsterComponent;
+    //public MonsterComponent monsterComponent;
 
     [SerializeField] private List<MonsterPartyComponent> monsterPartySetups;
     public List<MonsterParty> allMonsterParties;
@@ -45,11 +45,11 @@ public class MonsterManager : MonoBehaviour {
     private void ConstructAllMonsters() {
         _monstersDictionary = new Dictionary<string, Monster>();
         string path = Utilities.dataPath + "Monsters/";
-        string[] classes = System.IO.Directory.GetFiles(path, "*.json");
-        for (int i = 0; i < classes.Length; i++) {
-            JsonUtility.FromJsonOverwrite(System.IO.File.ReadAllText(classes[i]), monsterComponent);
-            Monster monster = new Monster();
-            monster.SetData(monsterComponent);
+        string[] monsters = System.IO.Directory.GetFiles(path, "*.json");
+        for (int i = 0; i < monsters.Length; i++) {
+            //JsonUtility.FromJsonOverwrite(System.IO.File.ReadAllText(classes[i]), monsterComponent);
+            Monster monster = JsonUtility.FromJson<Monster>(System.IO.File.ReadAllText(monsters[i]));
+            monster.ConstructMonsterData();
             _monstersDictionary.Add(monster.name, monster);
         }
     }

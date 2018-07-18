@@ -1,0 +1,187 @@
+﻿#if UNITY_EDITOR
+using System.Collections;
+using System.Collections.Generic;
+using System;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEditor;
+using System.IO;
+using ECS;
+
+public class MonsterPanelUI : MonoBehaviour {
+    public static MonsterPanelUI Instance;
+
+    public InputField nameInput;
+    public InputField levelInput;
+    public InputField expInput;
+    public InputField hpInput;
+    public InputField spInput;
+    public InputField powerInput;
+    public InputField speedInput;
+    public InputField pdefInput;
+    public InputField mdefInput;
+    public InputField dodgeInput;
+    public InputField hitInput;
+    public InputField critInput;
+
+    public Dropdown typeOptions;
+    public Dropdown skillOptions;
+
+    public Transform skillContentTransform;
+
+    public GameObject monsterSkillBtnGO;
+
+    [NonSerialized] public MonsterSkillButton currentSelectedButton;
+
+    private List<string> _allSkills;
+
+    #region getters/setters
+    public List<string> allSkills {
+        get { return _allSkills; }
+    }
+    #endregion
+
+    void Awake() {
+        Instance = this;
+    }
+    void Start() {
+        _allSkills = new List<string>();
+        LoadAllData();
+    }
+
+    #region Utilities
+    public void UpdateSkillList() {
+        skillOptions.ClearOptions();
+        skillOptions.AddOptions(SkillPanelUI.Instance.allSkills);
+    }
+    private void LoadAllData() {
+        typeOptions.ClearOptions();
+
+        string[] monsterTypes = System.Enum.GetNames(typeof(MONSTER_TYPE));
+
+        typeOptions.AddOptions(monsterTypes.ToList());
+    }
+    private void ClearData() {
+        currentSelectedButton = null;
+        nameInput.text = string.Empty;
+
+        levelInput.text = "1";
+        expInput.text = "0";
+        hpInput.text = "0";
+        spInput.text = "0";
+        powerInput.text = "0";
+        speedInput.text = "0";
+        pdefInput.text = "0";
+        mdefInput.text = "0";
+        dodgeInput.text = "0";
+        hitInput.text = "0";
+        critInput.text = "0";
+
+        typeOptions.value = 0;
+        skillOptions.value = 0;
+
+        _allSkills.Clear();
+        foreach (Transform child in skillContentTransform) {
+            GameObject.Destroy(child.gameObject);
+        }
+    }
+    private void SaveMonster() {
+        if (nameInput.text == string.Empty) {
+            EditorUtility.DisplayDialog("Error", "Please specify a Mosnter Name", "OK");
+            return;
+        }
+        string path = Utilities.dataPath + "Monsters/" + nameInput.text + ".json";
+        if (Utilities.DoesFileExist(path)) {
+            if (EditorUtility.DisplayDialog("Overwrite Monster", "A monster with name " + nameInput.text + " already exists. Replace with this monster?", "Yes", "No")) {
+                File.Delete(path);
+                SaveMonsterJson(path);
+            }
+        } else {
+            SaveMonsterJson(path);
+        }
+    }
+    private void SaveMonsterJson(string path) {
+        Monster newMonster = new Monster();
+
+        newMonster.SetDataFromMonsterPanelUI();
+
+        string jsonString = JsonUtility.ToJson(newMonster);
+
+        System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
+        writer.WriteLine(jsonString);
+        writer.Close();
+
+        //Re-import the file to update the reference in the editor
+        UnityEditor.AssetDatabase.ImportAsset(path);
+        Debug.Log("Successfully saved monster at " + path);
+    }
+ 
+
+    private void LoadMonster() {
+        string filePath = EditorUtility.OpenFilePanel("Select Monster", Utilities.dataPath + "Monsters/", "json");
+
+        if (!string.IsNullOrEmpty(filePath)) {
+            string dataAsJson = File.ReadAllText(filePath);
+
+            Monster monster = JsonUtility.FromJson<Monster>(dataAsJson);
+            ClearData();
+            LoadMonsterDataToUI(monster);
+        }
+    }
+
+    private void LoadMonsterDataToUI(Monster monster) {
+        nameInput.text = monster.name;
+
+        levelInput.text = monster.level.ToString();
+        expInput.text = monster.experienceDrop.ToString();
+        hpInput.text = monster.maxHP.ToString();
+        spInput.text = monster.maxSP.ToString();
+        powerInput.text = monster.attackPower.ToString();
+        speedInput.text = monster.agility.ToString();
+        pdefInput.text = monster.pDef.ToString();
+        mdefInput.text = monster.mDef.ToString();
+        dodgeInput.text = monster.dodgeChance.ToString();
+        hitInput.text = monster.hitChance.ToString();
+        critInput.text = monster.critChance.ToString();
+
+        for (int i = 0; i < monster.skillNames.Count; i++) {
+            string skillName = monster.skillNames[i];
+            _allSkills.Add(skillName);
+            GameObject go = GameObject.Instantiate(monsterSkillBtnGO, skillContentTransform);
+            go.GetComponent<MonsterSkillButton>().buttonText.text = skillName;
+        }
+    }
+    #endregion
+
+    #region Button Clicks
+    public void OnClickAddNewMonster() {
+        ClearData();
+    }
+    public void OnClickEditMonster() {
+        LoadMonster();
+    }
+    public void OnClickSaveMonster() {
+        SaveMonster();
+    }
+    public void OnClickAddSkill() {
+        string skillToAdd = skillOptions.options[skillOptions.value].text;
+        if (!_allSkills.Contains(skillToAdd)) {
+            _allSkills.Add(skillToAdd);
+            GameObject go = GameObject.Instantiate(monsterSkillBtnGO, skillContentTransform);
+            go.GetComponent<MonsterSkillButton>().buttonText.text = skillToAdd;
+        }
+    }
+    public void OnClickRemoveSkill() {
+        if (currentSelectedButton != null) {
+            string skillToRemove = currentSelectedButton.buttonText.text;
+            if (_allSkills.Remove(skillToRemove)) {
+                GameObject.Destroy(currentSelectedButton.gameObject);
+                currentSelectedButton = null;
+            }
+        }
+    }
+
+    #endregion
+}
+#endif
