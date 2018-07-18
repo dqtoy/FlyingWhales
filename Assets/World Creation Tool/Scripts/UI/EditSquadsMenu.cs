@@ -16,6 +16,15 @@ public class EditSquadsMenu : MonoBehaviour {
     public void Initialize() {
         Messenger.AddListener<ECS.Character>(Signals.CHARACTER_CREATED, OnCharacterCreated);
         Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, OnCharacterRemoved);
+
+        Messenger.AddListener<Squad>(Signals.SQUAD_CREATED, OnSquadCreated);
+        Messenger.AddListener<Squad>(Signals.SQUAD_DELETED, OnSquadDeleted);
+
+        Messenger.AddListener<ICharacter, Squad>(Signals.SQUAD_MEMBER_REMOVED, OnCharacterRemovedFromSquad);
+        Messenger.AddListener<ICharacter, Squad>(Signals.SQUAD_MEMBER_ADDED, OnCharacterAddedToSquad);
+
+        Messenger.AddListener<ICharacter, Squad>(Signals.SQUAD_LEADER_SET, OnSquadLeaderSet);
+
         items = new List<CharacterSquadEditorItem>();
         squadItems = new List<SquadEditorItem>();
     }
@@ -28,12 +37,39 @@ public class EditSquadsMenu : MonoBehaviour {
         items.Add(characterItem);
     }
     public void OnCharacterRemoved(ECS.Character removedCharacter) {
-        CharacterSquadEditorItem characterItem = GetItem(removedCharacter);
+        CharacterSquadEditorItem characterItem = GetCharacterSquadItem(removedCharacter);
         items.Remove(characterItem);
         GameObject.Destroy(characterItem.gameObject);
     }
+    public void OnCharacterRemovedFromSquad(ICharacter character, Squad squad) {
+        if (character is ECS.Character) {
+            CharacterSquadEditorItem item = GetCharacterSquadItem(character as ECS.Character);
+            if (item.transform.parent != charactersScrollView.content) {
+                item.transform.SetParent(charactersScrollView.content);
+            }
+        }
+    }
+    public void OnCharacterAddedToSquad(ICharacter character, Squad squad) {
+        if (character is ECS.Character && squad.squadLeader.id != character.id) {
+            CharacterSquadEditorItem item = GetCharacterSquadItem(character as ECS.Character);
+            SquadEditorItem squadItem = GetSquadItem(squad);
+            if (item.transform.parent != squadItem.membersContainer) {
+                item.transform.SetParent(squadItem.membersContainer);
+            }
+        }
+    }
+    public void OnSquadLeaderSet(ICharacter character, Squad squad) {
+        if (character is ECS.Character) {
+            CharacterSquadEditorItem item = GetCharacterSquadItem(character as ECS.Character);
+            SquadEditorItem squadItem = GetSquadItem(squad);
+            if (item.transform.parent != squadItem.leaderContainer) {
+                item.transform.SetParent(squadItem.leaderContainer);
+                item.transform.localPosition = Vector3.zero;
+            }
+        }
+    }
 
-    private CharacterSquadEditorItem GetItem(ECS.Character character) {
+    private CharacterSquadEditorItem GetCharacterSquadItem(ECS.Character character) {
         for (int i = 0; i < items.Count; i++) {
             CharacterSquadEditorItem currItem = items[i];
             if (currItem.character.id == character.id) {
@@ -42,12 +78,29 @@ public class EditSquadsMenu : MonoBehaviour {
         }
         return null;
     }
+    private SquadEditorItem GetSquadItem(Squad squad) {
+        for (int i = 0; i < squadItems.Count; i++) {
+            SquadEditorItem currItem = squadItems[i];
+            if (currItem.squad.id == squad.id) {
+                return currItem;
+            }
+        }
+        return null;
+    }
 
-    public void CreateNewSquad() {
+    private void OnSquadCreated(Squad squad) {
         GameObject squadGO = GameObject.Instantiate(squadEditorPrefab, squadsScrollView.content);
         SquadEditorItem squadItem = squadGO.GetComponent<SquadEditorItem>();
-        squadItem.SetSquad(new Squad());
+        squadItem.SetSquad(squad);
         squadItems.Add(squadItem);
+    }
+    private void OnSquadDeleted(Squad squad) {
+        SquadEditorItem squadItem = GetSquadItem(squad);
+        GameObject.Destroy(squadItem.gameObject);
+    }
+
+    public void CreateNewSquad() {
+        CharacterManager.Instance.CreateNewSquad();
     }
 
     public void OnItemDraggedBack(Transform transform) {

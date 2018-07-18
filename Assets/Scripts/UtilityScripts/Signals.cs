@@ -72,4 +72,12 @@ public static class Signals {
     #region Actions
     public static string ACTION_SUCCESS = "OnActionSuccess"; //Parameters (CharacterParty partyThatSucceeded, CharacterAction actionThatSucceeded)
     #endregion
+
+    #region Squads
+    public static string SQUAD_CREATED = "OnSquadCreated"; //Parameters (Squad createdSquad)
+    public static string SQUAD_DELETED = "OnSquadDeleted"; //Parameters (Squad deletedSquad)
+    public static string SQUAD_MEMBER_REMOVED = "OnSquadMemberRemoved"; //Parameters (ICharacter removedCharacter, Squad affectedSquad)
+    public static string SQUAD_MEMBER_ADDED = "OnSquadMemberAdded"; //Parameters (ICharacter addedCharacter, Squad affectedSquad)
+    public static string SQUAD_LEADER_SET = "OnSquadLeaderSet"; //Parameters (ICharacter leader, Squad affectedSquad)
+    #endregion
 }

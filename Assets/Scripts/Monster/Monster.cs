@@ -48,6 +48,7 @@ public class Monster : ICharacter {
     private List<Skill> _skills;
     private Dictionary<ELEMENT, float> _elementalWeaknesses;
     private Dictionary<ELEMENT, float> _elementalResistances;
+    private Squad _squad;
 
     #region getters/setters
     public string name {
@@ -204,6 +205,9 @@ public class Monster : ICharacter {
     }
     public List<CharacterAction> idleActions {
         get { return _idleActions; }
+    }
+    public Squad squad {
+        get { return _squad; }
     }
     #endregion
 
@@ -536,5 +540,11 @@ public class Monster : ICharacter {
             }
         }
     }
-#endregion
+    #endregion
+
+    #region Squads
+    public void SetSquad(Squad squad) {
+        _squad = squad;
+    }
+    #endregion
 }

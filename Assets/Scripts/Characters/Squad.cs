@@ -26,6 +26,13 @@ public class Squad {
     public Squad() {
         id = Utilities.SetID(this);
         SetName("Squad " + id.ToString());
+        squadMembers = new List<ICharacter>();
+    }
+
+    public Squad(SquadSaveData data) {
+        id = Utilities.SetID(this, data.squadID);
+        SetName(data.squadName);
+        squadMembers = new List<ICharacter>();
     }
 
     public void SetName(string name) {
@@ -34,13 +41,26 @@ public class Squad {
 
     public void SetLeader(ICharacter leader) {
         squadLeader = leader;
+        Messenger.Broadcast(Signals.SQUAD_LEADER_SET, leader, this);
+        AddMember(leader);
     }
     public void AddMember(ICharacter member) {
         if (!squadMembers.Contains(member)) {
             squadMembers.Add(member);
+            member.SetSquad(this);
+            Messenger.Broadcast(Signals.SQUAD_MEMBER_ADDED, member, this);
         }
     }
     public void RemoveMember(ICharacter member) {
-        squadMembers.Remove(member);
+        if (squadMembers.Remove(member)) {
+            Messenger.Broadcast(Signals.SQUAD_MEMBER_REMOVED, member, this);
+            member.SetSquad(null);
+        }
+    }
+
+    public void Disband() {
+        while (squadMembers.Count != 0) {
+            RemoveMember(squadMembers[0]);
+        }
     }
 }

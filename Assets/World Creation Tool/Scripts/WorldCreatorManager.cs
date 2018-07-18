@@ -149,6 +149,7 @@ namespace worldcreator {
             CharacterManager.Instance.LoadCharacters(data);
             CharacterManager.Instance.LoadRelationships(data);
             MonsterManager.Instance.LoadMonsters(data);
+            CharacterManager.Instance.LoadSquads(data);
             //PathfindingManager.Instance.LoadSettings(data.pathfindingSettings);
 
             WorldCreatorUI.Instance.OnDoneLoadingGrid();
@@ -614,6 +615,7 @@ namespace worldcreator {
             worldData.OccupyLandmarksData(LandmarkManager.Instance.GetAllLandmarks());
             worldData.OccupyCharactersData(CharacterManager.Instance.allCharacters);
             worldData.OccupyAreaData(LandmarkManager.Instance.allAreas);
+            worldData.OccupySquadData(CharacterManager.Instance.allSquads);
             worldData.OccupyMonstersData(MonsterManager.Instance.allMonsterParties);
             worldData.OccupyPathfindingSettings(map, width, height);
             if (!saveName.Contains(Utilities.worldConfigFileExt)) {
