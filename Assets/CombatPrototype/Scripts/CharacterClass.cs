@@ -23,24 +23,31 @@ namespace ECS {
         #region getters/setters
         public string className {
             get { return _className; }
+            set { _className = value; }
         }
         public float strWeightAllocation {
             get { return _strWeightAllocation; }
+            set { _strWeightAllocation = value; }
         }
         public float intWeightAllocation {
             get { return _intWeightAllocation; }
+            set { _intWeightAllocation = value; }
         }
         public float agiWeightAllocation {
             get { return _agiWeightAllocation; }
+            set { _agiWeightAllocation = value; }
         }
         public float vitWeightAllocation {
             get { return _vitWeightAllocation; }
+            set { _vitWeightAllocation = value; }
         }
         public float hpModifier {
             get { return _hpModifier; }
+            set { _hpModifier = value; }
         }
         public float spModifier {
             get { return _spModifier; }
+            set { _spModifier = value; }
         }
         //public int dodgeRate {
         //    get { return _dodgeRate; }
@@ -53,9 +60,14 @@ namespace ECS {
         //}
         public List<WEAPON_TYPE> allowedWeaponTypes {
             get { return _allowedWeaponTypes; }
+            set { _allowedWeaponTypes = value; }
         }
         public List<Skill[]> skillsPerLevel {
             get { return _skillsPerLevel; }
+        }
+        public List<StringListWrapper> skillsPerLevelNames {
+            get { return _skillsPerLevelNames; }
+            set { _skillsPerLevelNames = value; }
         }
         public List<RESOURCE> harvestResources {
             get { return _harvestResources; }

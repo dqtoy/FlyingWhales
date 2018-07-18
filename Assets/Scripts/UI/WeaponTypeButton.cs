@@ -5,8 +5,13 @@ using UnityEngine.UI;
 
 public class WeaponTypeButton : MonoBehaviour {
     public Text buttonText;
+    public string panelName;
 
     public void SetCurrentlySelectedButton() {
-        SkillPanelUI.Instance.currentSelectedWeaponTypeButton = this;
+        if(panelName == "skill") {
+            SkillPanelUI.Instance.currentSelectedWeaponTypeButton = this;
+        }else if (panelName == "class") {
+            ClassPanelUI.Instance.currentSelectedWeaponTypeButton = this;
+        }
     }
 }
