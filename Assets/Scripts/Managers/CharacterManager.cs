@@ -20,6 +20,8 @@ public class CharacterManager : MonoBehaviour {
     private Dictionary<ELEMENT, float> _elementsChanceDictionary;
     private List<Character> _allCharacters;
 
+    public List<Squad> allSquads { get; private set; }
+
 	public Sprite heroSprite;
 	public Sprite villainSprite;
 	public Sprite hermitSprite;
@@ -73,6 +75,7 @@ public class CharacterManager : MonoBehaviour {
     private void Awake() {
         Instance = this;
         _allCharacters = new List<Character>();
+        allSquads = new List<Squad>();
     }
 
     public void Initialize() {
@@ -508,6 +511,17 @@ public class CharacterManager : MonoBehaviour {
         for (int i = 0; i < elements.Length; i++) {
             _elementsChanceDictionary.Add(elements[i], 0f);
         }
+    }
+    #endregion
+
+    #region Squads
+    public void AddSquad(Squad squad) {
+        if (!allSquads.Contains(squad)) {
+            allSquads.Add(squad);
+        }
+    }
+    public void RemoveSquad(Squad squad) {
+        allSquads.Remove(squad);
     }
     #endregion
 
