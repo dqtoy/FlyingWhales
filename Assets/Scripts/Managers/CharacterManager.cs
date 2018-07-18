@@ -16,8 +16,6 @@ public class CharacterManager : MonoBehaviour {
 
     public int maxLevel;
     public List<CharacterType> characterTypes;
-    public List<Trait> traitSetup;
-    private Dictionary<TRAIT, string> traitDictionary;
     private Dictionary<string, CharacterClass> _classesDictionary;
     private Dictionary<ELEMENT, float> _elementsChanceDictionary;
     private List<Character> _allCharacters;
@@ -78,7 +76,6 @@ public class CharacterManager : MonoBehaviour {
     }
 
     public void Initialize() {
-        ConstructTraitDictionary();
         ConstructAllClasses();
         ConstructElementChanceDictionary();
         //ConstructPortraitDictionaries();
@@ -207,168 +204,6 @@ public class CharacterManager : MonoBehaviour {
             //CharacterClass currentClass = new CharacterClass();
             currentClass.ConstructSkills();
             _classesDictionary.Add(currentClass.className, currentClass);
-        }
-    }
-    #endregion
-
-    #region Traits
-    internal Trait CreateNewTraitForCharacter(TRAIT traitType, ECS.Character character) {
-        if(traitDictionary == null) {
-            ConstructTraitDictionary();
-        }
-        Trait createdTrait = null;
-        switch (traitType) {
-            case TRAIT.IMPERIALIST:
-                createdTrait = JsonUtility.FromJson<Imperialist>(traitDictionary[traitType]);
-                break;
-            case TRAIT.HOSTILE:
-                createdTrait = JsonUtility.FromJson<Hostile>(traitDictionary[traitType]);
-                break;
-            case TRAIT.PACIFIST:
-                createdTrait = JsonUtility.FromJson<Pacifist>(traitDictionary[traitType]);
-                break;
-            case TRAIT.SCHEMING:
-                createdTrait = JsonUtility.FromJson<Scheming>(traitDictionary[traitType]);
-                break;
-            case TRAIT.OPPORTUNIST:
-                createdTrait = JsonUtility.FromJson<Opportunist>(traitDictionary[traitType]);
-                break;
-            case TRAIT.EFFICIENT:
-                createdTrait = JsonUtility.FromJson<Efficient>(traitDictionary[traitType]);
-                break;
-            case TRAIT.INEPT:
-                createdTrait = JsonUtility.FromJson<Inept>(traitDictionary[traitType]);
-                break;
-            case TRAIT.MEDDLER:
-                createdTrait = JsonUtility.FromJson<Meddler>(traitDictionary[traitType]);
-                break;
-            case TRAIT.SMART:
-                createdTrait = JsonUtility.FromJson<Smart>(traitDictionary[traitType]);
-                break;
-            case TRAIT.DUMB:
-                createdTrait = JsonUtility.FromJson<Dumb>(traitDictionary[traitType]);
-                break;
-            case TRAIT.CHARISMATIC:
-                createdTrait = JsonUtility.FromJson<Charismatic>(traitDictionary[traitType]);
-                break;
-            case TRAIT.REPULSIVE:
-                createdTrait = JsonUtility.FromJson<Repulsive>(traitDictionary[traitType]);
-                break;
-            case TRAIT.RUTHLESS:
-                createdTrait = JsonUtility.FromJson<Ruthless>(traitDictionary[traitType]);
-                break;
-            case TRAIT.DECEITFUL:
-                createdTrait = JsonUtility.FromJson<Deceitful>(traitDictionary[traitType]);
-                break;
-            case TRAIT.BENEVOLENT:
-                createdTrait = JsonUtility.FromJson<Benevolent>(traitDictionary[traitType]);
-                break;
-            case TRAIT.DIPLOMATIC:
-                createdTrait = JsonUtility.FromJson<Diplomatic>(traitDictionary[traitType]);
-                break;
-            case TRAIT.DEFENSIVE:
-                createdTrait = JsonUtility.FromJson<Defensive>(traitDictionary[traitType]);
-                break;
-            case TRAIT.HONEST:
-                createdTrait = JsonUtility.FromJson<Honest>(traitDictionary[traitType]);
-                break;
-            case TRAIT.RACIST:
-                createdTrait = JsonUtility.FromJson<Racist>(traitDictionary[traitType]);
-                break;
-            case TRAIT.ROBUST:
-                createdTrait = JsonUtility.FromJson<Robust>(traitDictionary[traitType]);
-                break;
-            case TRAIT.FRAGILE:
-                createdTrait = JsonUtility.FromJson<Fragile>(traitDictionary[traitType]);
-                break;
-            case TRAIT.STRONG:
-                createdTrait = JsonUtility.FromJson<Strong>(traitDictionary[traitType]);
-                break;
-            case TRAIT.WEAK:
-                createdTrait = JsonUtility.FromJson<Weak>(traitDictionary[traitType]);
-                break;
-            case TRAIT.CLUMSY:
-                createdTrait = JsonUtility.FromJson<Clumsy>(traitDictionary[traitType]);
-                break;
-            case TRAIT.AGILE:
-                createdTrait = JsonUtility.FromJson<Agile>(traitDictionary[traitType]);
-                break;
-            default:
-                break;
-        }
-        //if (character != null && createdTrait != null) {
-        //    createdTrait.AssignCitizen(citizen);
-        //}
-        return createdTrait;
-    }
-    internal Trait GetTrait(TRAIT trait) {
-        for (int i = 0; i < traitSetup.Count; i++) {
-            Trait currTrait = traitSetup[i];
-            if (currTrait.trait == trait) {
-                return currTrait;
-            }
-        }
-        return null;
-    }
-    public void ResetTraitSetup() {
-        traitSetup.Clear();
-        TRAIT[] allTraits = Utilities.GetEnumValues<TRAIT>();
-        for (int i = 0; i < allTraits.Length; i++) {
-            TRAIT currTrait = allTraits[i];
-            string jsonStringOfTrait = GetJsonStringOfTrait(currTrait);
-            if (!string.IsNullOrEmpty(jsonStringOfTrait)) {
-                Trait traitFromFile = JsonUtility.FromJson<Trait>(jsonStringOfTrait);
-                traitSetup.Add(traitFromFile);
-            }
-        }
-    }
-#if UNITY_EDITOR
-    public void ApplyTraitSetup() {
-        for (int i = 0; i < traitSetup.Count; i++) {
-            Trait currTrait = traitSetup[i];
-            SaveTraitJson(currTrait.traitName, currTrait);
-        }
-    }
-    private void SaveTraitJson(string fileName, Trait traitSetup) {
-        string path = Utilities.dataPath + "Traits/" + fileName + ".json";
-
-        string jsonString = JsonUtility.ToJson(traitSetup);
-
-        System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
-        writer.WriteLine(jsonString);
-        writer.Close();
-
-        //Re-import the file to update the reference in the editor
-        UnityEditor.AssetDatabase.ImportAsset(path);
-        //TextAsset asset = Resources.Load("Data/Traits/" + fileName + ".json") as TextAsset;
-
-        //Print the text from the file
-        Debug.Log(GetJsonStringOfTrait(traitSetup.trait));
-    }
-#endif
-    private string GetJsonStringOfTrait(TRAIT trait) {
-        string path = Utilities.dataPath + "Traits/" + Utilities.NormalizeString(trait.ToString()) + ".json";
-        string jsonString = string.Empty;
-        try {
-            //Read the text from directly from the test.txt file
-            System.IO.StreamReader reader = new System.IO.StreamReader(path);
-            jsonString = reader.ReadToEnd();
-            reader.Close();
-        } catch {
-            //Do nothing
-        }
-        
-        return jsonString;
-    }
-    internal void ConstructTraitDictionary() {
-        traitDictionary = new Dictionary<TRAIT, string>();
-        TRAIT[] allTraits = Utilities.GetEnumValues<TRAIT>();
-        for (int i = 0; i < allTraits.Length; i++) {
-            TRAIT currTrait = allTraits[i];
-            string jsonStringOfTrait = GetJsonStringOfTrait(currTrait);
-            if (!string.IsNullOrEmpty(jsonStringOfTrait)) {
-                traitDictionary.Add(currTrait, jsonStringOfTrait);
-            }
         }
     }
     #endregion

@@ -1465,9 +1465,9 @@ public class Utilities : MonoBehaviour {
     #region Character Tags
 	public static int GetTagWorldGenChance(CHARACTER_TAG tag){
 		switch(tag){
-		case CHARACTER_TAG.HERBALIST:
-		case CHARACTER_TAG.RITUALIST:
-			return 13;
+		//case CHARACTER_TAG.HERBALIST:
+		//case CHARACTER_TAG.RITUALIST:
+		//	return 13;
 		default:
 			return 0;
 		}
