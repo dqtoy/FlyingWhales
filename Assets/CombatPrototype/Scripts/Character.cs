@@ -32,16 +32,12 @@ namespace ECS {
         private BaseLandmark _homeLandmark;
         private StructureObj _homeStructure;
         private Region _currentRegion;
-        //private CharacterAvatar _avatar;
-        //private Combat _currentCombat;
         private Weapon _equippedWeapon;
         private CharacterBattleTracker _battleTracker;
         private CharacterBattleOnlyTracker _battleOnlyTracker;
         private PortraitSettings _portraitSettings;
         private CharacterPortrait _characterPortrait;
         private Color _characterColor;
-        //[System.NonSerialized] private List<Trait> _traits;
-        //private List<TRAIT> _allTraits;
         private List<STATUS_EFFECT> _statusEffects;
         private List<BodyPart> _bodyParts;
         private List<Item> _equippedItems;
@@ -57,6 +53,8 @@ namespace ECS {
         private Dictionary<ELEMENT, float> _elementalWeaknesses;
         private Dictionary<ELEMENT, float> _elementalResistances;
         private Dictionary<Character, List<string>> _traceInfo;
+        private int _mentalPoints;
+        private int _physicalPoints;
         public Dictionary<int, Combat> combatHistory;
 
         //Stats
@@ -122,9 +120,6 @@ namespace ECS {
         public GENDER gender {
             get { return _gender; }
         }
-        //public List<Trait> traits {
-        //    get { return _traits; }
-        //}
         public List<CharacterTag> tags {
             get { return _tags; }
         }
@@ -143,9 +138,6 @@ namespace ECS {
         public Faction faction {
             get { return _faction; }
         }
-        //public Faction attackedByFaction {
-        //    get { return _party.attackedByFaction; }
-        //}
         public NewParty iparty {
             get { return _party; }
         }
@@ -161,9 +153,6 @@ namespace ECS {
         public ILocation specificLocation {
             get { return (_party.specificLocation != null ? _party.specificLocation : null); }
         }
-        //public Region currentRegion {
-        //    get { return _party.currentRegion; }
-        //}
         public List<BodyPart> bodyParts {
             get { return this._bodyParts; }
         }
@@ -291,15 +280,6 @@ namespace ECS {
         public Dictionary<Character, List<string>> traceInfo {
             get { return _traceInfo; }
         }
-        //public ActionData actionData {
-        //    get { return _actionData; }
-        //}
-        //public CharacterIcon icon {
-        //    get { return _party.icon; }
-        //}
-        //public bool isIdle {
-        //    get { return _isIdle; }
-        //}
         public PortraitSettings portraitSettings {
             get { return _portraitSettings; }
         }
@@ -333,10 +313,6 @@ namespace ECS {
         public Dictionary<ELEMENT, float> elementalResistances {
             get { return _elementalResistances; }
         }
-        //public Combat currentCombat {
-        //    get { return party.currentCombat; }
-        //    //set { _currentCombat = value; }
-        //}
         public int actRate {
             get { return _actRate; }
             set { _actRate = value; }
@@ -361,6 +337,12 @@ namespace ECS {
         }
         public List<CharacterAction> idleActions {
             get { return _idleActions; }
+        }
+        public int mentalPoints {
+            get { return _mentalPoints; }
+        }
+        public int physicalPoints {
+            get { return _physicalPoints; }
         }
         #endregion
 
@@ -465,19 +447,19 @@ namespace ECS {
             //_combatHistoryID = 0;
 
             Messenger.AddListener<Region>("RegionDeath", RegionDeath);
-            Messenger.AddListener<List<Region>>("RegionPsytoxin", RegionPsytoxin);
-            //Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
+            //Messenger.AddListener<List<Region>>("RegionPsytoxin", RegionPsytoxin);
+            Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
             Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         }
         public void Initialize() { }
 
-#region Signals
+        #region Signals
         private void SubscribeToSignals() {
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
         }
-#endregion
+        #endregion
 
         private void AllocateStatPoints(int statAllocation){
             _baseStrength = 0;
@@ -819,9 +801,10 @@ namespace ECS {
 				_isDead = true;
                 
                 Messenger.RemoveListener<Region> ("RegionDeath", RegionDeath);
-				Messenger.RemoveListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
+				//Messenger.RemoveListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
                 Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
                 Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
+                Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
 
                 CombatManager.Instance.ReturnCharacterColorToPool (_characterColor);
 
@@ -914,7 +897,7 @@ namespace ECS {
             onCharacterDeath -= onDeathAction;
         }
 
-#region Body Parts
+        #region Body Parts
 		/*
      * Add new body parts here.
      * */
@@ -1010,9 +993,9 @@ namespace ECS {
   //          }
   //          return false;
 		//}
-#endregion
+        #endregion
 
-#region Items
+        #region Items
 		//If a character picks up an item, it is automatically added to his/her inventory
 		internal void PickupItem(Item item){
 			Item newItem = item;
@@ -1509,9 +1492,9 @@ namespace ECS {
             //AdjustBonusIntelligence(-item.bonusIntelligence);
             //AdjustBonusVitality(-item.bonusVitality);
         }
-#endregion
+        #endregion
 
-#region Status Effects
+        #region Status Effects
         internal void AddStatusEffect(STATUS_EFFECT statusEffect){
 			this._statusEffects.Add (statusEffect);
 		}
@@ -1558,9 +1541,9 @@ namespace ECS {
             }
             return false;
         }
-#endregion
+        #endregion
 
-#region Skills
+        #region Skills
 		private List<Skill> GetGeneralSkills(){
             List<Skill> allGeneralSkills = new List<Skill>();
             foreach (Skill skill in SkillManager.Instance.generalSkills.Values) {
@@ -1585,9 +1568,9 @@ namespace ECS {
 		//	}
 		//	return allBodyPartSkills;
 		//}
-#endregion
+        #endregion
 
-#region Roles
+        #region Roles
 		public void AssignRole(CHARACTER_ROLE role) {
             bool wasRoleChanged = false;
 			if(_role != null){
@@ -1638,244 +1621,31 @@ namespace ECS {
 			//	AssignRole (CHARACTER_ROLE.TAMED_BEAST);
 			//}
 		}
-#endregion
+        #endregion
 
-#region Character Class
+        #region Character Class
 		public void AssignClass(CharacterClass charClass) {
 			_characterClass = charClass;
 		}
-#endregion
+        #endregion
 
-#region Traits
-  //      private void GenerateTraits() {
-  //          CharacterType baseCharacterType = CharacterManager.Instance.GetRandomCharacterType();
-  //          //_characterType = baseCharacterType;
-  //          _allTraits = new List<TRAIT>(baseCharacterType.otherTraits);
-  //          //Charisma
-  //          if (baseCharacterType.charismaTrait == CHARISMA.NONE) {
-  //              TRAIT charismaTrait = GenerateCharismaTrait();
-  //              if(charismaTrait != TRAIT.NONE) {
-  //                  _allTraits.Add(charismaTrait);
-  //              }
-  //          } else {
-  //              _allTraits.Add((TRAIT)baseCharacterType.charismaTrait);
-  //          }
-  //          //Intelligence
-  //          if (baseCharacterType.intelligenceTrait == INTELLIGENCE.NONE) {
-  //              TRAIT intTrait = GenerateIntelligenceTrait();
-  //              if(intTrait != TRAIT.NONE) {
-  //                  _allTraits.Add(intTrait);
-  //              }
-  //          } else {
-  //              _allTraits.Add((TRAIT)baseCharacterType.intelligenceTrait);
-  //          }
-  //          //Efficiency
-  //          if (baseCharacterType.efficiencyTrait == EFFICIENCY.NONE) {
-  //              TRAIT efficiencyTrait = GenerateEfficiencyTrait();
-  //              if (efficiencyTrait != TRAIT.NONE) {
-  //                  _allTraits.Add(efficiencyTrait);
-  //              }
-  //          } else {
-  //              _allTraits.Add((TRAIT)baseCharacterType.efficiencyTrait);
-  //          }
-  //          //Military
-  //          if (baseCharacterType.militaryTrait == MILITARY.NONE) {
-  //              TRAIT militaryTrait = GenerateMilitaryTrait();
-  //              _allTraits.Add(militaryTrait);
-  //          } else {
-  //              _allTraits.Add((TRAIT)baseCharacterType.militaryTrait);
-  //          }
-  //          //Health
-  //          if (baseCharacterType.healthTrait == HEALTH.NONE) {
-  //              TRAIT healthTrait = GenerateHealthTrait();
-  //              if(healthTrait != TRAIT.NONE) {
-  //                  _allTraits.Add(healthTrait);
-  //              }
-  //          } else {
-  //              _allTraits.Add((TRAIT)baseCharacterType.healthTrait);
-  //          }
-  //          //Strength
-  //          if (baseCharacterType.strengthTrait == STRENGTH.NONE) {
-  //              TRAIT strengthTrait = GenerateStrengthTrait();
-  //              if (strengthTrait != TRAIT.NONE) {
-  //                  _allTraits.Add(strengthTrait);
-  //              }
-  //          } else {
-  //              _allTraits.Add((TRAIT)baseCharacterType.strengthTrait);
-  //          }
-  //          //Agility
-  //          if (baseCharacterType.agilityTrait == AGILITY.NONE) {
-  //              TRAIT agilityTrait = GenerateAgilityTrait();
-  //              if (agilityTrait != TRAIT.NONE) {
-  //                  _allTraits.Add(agilityTrait);
-  //              }
-  //          } else {
-  //              _allTraits.Add((TRAIT)baseCharacterType.agilityTrait);
-  //          }
-  //          _traits = new List<Trait>();
-  //          for (int i = 0; i < _allTraits.Count; i++) {
-  //              TRAIT currTrait = _allTraits[i];
-  //              Trait trait = CharacterManager.Instance.CreateNewTraitForCharacter(currTrait, this);
-  //              if (trait != null) {
-		//			AddTrait (trait);
-  //              }
-  //          }
-  //      }
-		//public void AddTrait(Trait trait){
-		//	trait.AssignCharacter(this);
-		//	_traits.Add(trait);
-		//}
-		//public void RemoveTrait(Trait trait){
-		//	trait.AssignCharacter(null);
-		//	_traits.Remove(trait);
-		//}
-        private TRAIT GenerateCharismaTrait() {
-            int chance = UnityEngine.Random.Range(0, 100);
-            if (chance < 20) {
-                return TRAIT.CHARISMATIC; //20%
-            } else if (chance >= 20 && chance < 40) {
-                return TRAIT.REPULSIVE; //20%
-            } else {
-                return TRAIT.NONE;
+        #region Character Tags
+        public void AssignInitialTags() {
+            int tagChance = UnityEngine.Random.Range(0, 100);
+            CHARACTER_TAG[] initialTags = (CHARACTER_TAG[])System.Enum.GetValues(typeof(CHARACTER_TAG));
+            for (int j = 0; j < initialTags.Length; j++) {
+                CHARACTER_TAG tag = initialTags[j];
+                if (tagChance < Utilities.GetTagWorldGenChance(tag)) {
+                    AssignTag(tag);
+                }
             }
         }
-        private TRAIT GenerateIntelligenceTrait() {
-            int chance = UnityEngine.Random.Range(0, 100);
-            if (chance < 20) {
-                return TRAIT.SMART; //20%
-            } else if (chance >= 20 && chance < 40) {
-                return TRAIT.DUMB; //20%
-            } else {
-                return TRAIT.NONE;
-            }
-        }
-        private TRAIT GenerateEfficiencyTrait() {
-            int chance = UnityEngine.Random.Range(0, 100);
-            if (chance < 20) {
-                return TRAIT.EFFICIENT; //20%
-            } else if (chance >= 20 && chance < 40) {
-                return TRAIT.INEPT; //20%
-            } else {
-                return TRAIT.NONE;
-            }
-        }
-        private TRAIT GenerateMilitaryTrait() {
-            int chance = UnityEngine.Random.Range(0, 100);
-            if (chance < 20) {
-                return TRAIT.HOSTILE; //20%
-            } else if (chance >= 20 && chance < 40) {
-                return TRAIT.PACIFIST; //20%
-            } else {
-                return TRAIT.NONE;
-            }
-        }
-        private TRAIT GenerateHealthTrait() {
-            int chance = UnityEngine.Random.Range(0, 100);
-            if (chance < 20) {
-                return TRAIT.ROBUST; //20%
-            } else if (chance >= 20 && chance < 40) {
-                return TRAIT.FRAGILE; //20%
-            } else {
-                return TRAIT.NONE;
-            }
-        }
-        private TRAIT GenerateStrengthTrait() {
-            int chance = UnityEngine.Random.Range(0, 100);
-            if (chance < 20) {
-                return TRAIT.STRONG; //20%
-            } else if (chance >= 20 && chance < 40) {
-                return TRAIT.WEAK; //20%
-            } else {
-                return TRAIT.NONE;
-            }
-        }
-        private TRAIT GenerateAgilityTrait() {
-            int chance = UnityEngine.Random.Range(0, 100);
-            if (chance < 20) {
-                return TRAIT.AGILE; //20%
-            } else if (chance >= 20 && chance < 40) {
-                return TRAIT.CLUMSY; //20%
-            } else {
-                return TRAIT.NONE;
-            }
-        }
-  //      public bool HasTrait(TRAIT trait) {
-		//	for (int i = 0; i < _traits.Count; i++) {
-		//		if(_traits[i].trait == trait) {
-		//			return true;
-		//		}
-		//	}
-		//	return false;
-		//}
-#endregion
-
-#region Character Tags
-		public CharacterTag AssignTag(CHARACTER_TAG tag) {
+        public CharacterTag AssignTag(CHARACTER_TAG tag) {
 			if(HasTag(tag)){
 				return null;
 			}
 			CharacterTag charTag = null;
 			switch (tag) {
-			case CHARACTER_TAG.ANCIENT_KNOWLEDGE:
-				charTag = new AncientKnowledge (this);
-				break;
-			case CHARACTER_TAG.CRIMINAL:
-				charTag = new Criminal (this);
-				break;
-			case CHARACTER_TAG.HYPNOTIZED:
-				charTag = new Hypnotized (this);
-				break;
-			case CHARACTER_TAG.SAPIENT:
-				charTag = new Sapient (this);
-				break;
-			case CHARACTER_TAG.TERMINALLY_ILL:
-				charTag = new TerminallyIll (this);
-				break;
-			case CHARACTER_TAG.VAMPIRE:
-				charTag = new Vampire (this);
-				break;
-			case CHARACTER_TAG.LOST_HEIR:
-				charTag = new LostHeir (this);
-				break;
-            case CHARACTER_TAG.SUCCESSOR:
-                charTag = new Successor(this);
-                break;
-			case CHARACTER_TAG.TYRANNICAL:
-				charTag = new Tyrannical(this);
-				break;
-			case CHARACTER_TAG.WARMONGER:
-				charTag = new Warmonger(this);
-				break;
-			case CHARACTER_TAG.MILD_PSYTOXIN:
-				charTag = new MildPsytoxin(this);
-				break;
-			case CHARACTER_TAG.MODERATE_PSYTOXIN:
-				charTag = new ModeratePsytoxin(this);
-				break;
-			case CHARACTER_TAG.SEVERE_PSYTOXIN:
-				charTag = new SeverePsytoxin(this);
-				break;
-			case CHARACTER_TAG.RITUALIST:
-				charTag = new Ritualist(this);
-				break;
-			case CHARACTER_TAG.HERBALIST:
-				charTag = new Herbalist(this);
-				break;
-            case CHARACTER_TAG.HIBERNATES:
-                charTag = new Hibernates(this);
-                break;
-            case CHARACTER_TAG.PREDATOR:
-                charTag = new Predator(this);
-                break;
-			case CHARACTER_TAG.HUNTED:
-				charTag = new Hunted(this);
-				break;
-            case CHARACTER_TAG.ALPHA:
-                charTag = new Alpha(this);
-                break;
-            case CHARACTER_TAG.BETA:
-                charTag = new Beta(this);
-                break;
             case CHARACTER_TAG.HUNGRY:
                 charTag = new Hungry(this);
                 break;
@@ -1902,6 +1672,33 @@ namespace ECS {
                 break;
             case CHARACTER_TAG.DRUNK:
                 charTag = new Drunk(this);
+                break;
+            case CHARACTER_TAG.DISTURBED:
+                charTag = new Disturbed(this);
+                break;
+            case CHARACTER_TAG.CRAZED:
+                charTag = new Crazed(this);
+                break;
+            case CHARACTER_TAG.DEMORALIZED:
+                charTag = new Demoralized(this);
+                break;
+            case CHARACTER_TAG.STARVING:
+                charTag = new Starving(this);
+                break;
+            case CHARACTER_TAG.WOUNDED:
+                charTag = new Wounded(this);
+                break;
+            case CHARACTER_TAG.WRECKED:
+                charTag = new Wrecked(this);
+                break;
+            case CHARACTER_TAG.IMPULSIVE:
+                charTag = new Impulsive(this);
+                break;
+            case CHARACTER_TAG.BETRAYED:
+                charTag = new Betrayed(this);
+                break;
+            case CHARACTER_TAG.HEARTBROKEN:
+                charTag = new Heartbroken(this);
                 break;
             }
 			if(charTag != null){
@@ -1939,7 +1736,14 @@ namespace ECS {
             }
 			return false;
         }
-		public bool HasTags(CHARACTER_TAG[] tagsToHave, bool mustHaveAll = false){
+        public bool RemoveCharacterTag(List<CHARACTER_TAG> tags) {
+            for (int i = 0; i < tags.Count; i++) {
+                CHARACTER_TAG currTag = tags[i];
+                RemoveCharacterTag(currTag);
+            }
+            return false;
+        }
+        public bool HasTags(CHARACTER_TAG[] tagsToHave, bool mustHaveAll = false){
 			return DoesHaveTags (this, tagsToHave, mustHaveAll);
 		}
 		private bool DoesHaveTags(Character currCharacter, CHARACTER_TAG[] tagsToHave, bool mustHaveAll = false){
@@ -2000,16 +1804,16 @@ namespace ECS {
             }
 			return null;
 		}
-#endregion
+        #endregion
 
-#region Faction
+        #region Faction
         public void SetFaction(Faction faction) {
 			_faction = faction;
             Messenger.Broadcast<Character>(Signals.FACTION_SET, this);
 		}
-#endregion
+        #endregion
 
-#region Party
+        #region Party
         /*
          Create a new Party with this character as the leader.
              */
@@ -2025,9 +1829,9 @@ namespace ECS {
 		public void SetParty(NewParty party) {
 			_party = party as CharacterParty;
 		}
-#endregion
+        #endregion
 
-#region Location
+        #region Location
 		public bool IsCharacterInAdjacentRegionOfThis(Character targetCharacter){
 			for (int i = 0; i < _currentRegion.adjacentRegionsViaRoad.Count; i++) {
 				if(targetCharacter.party.currentRegion.id == _currentRegion.adjacentRegionsViaRoad[i].id){
@@ -2036,9 +1840,9 @@ namespace ECS {
 			}
 			return false;
 		}
-#endregion
+        #endregion
 
-#region Quests
+        #region Quests
         public void AddQuestData(CharacterQuestData questData) {
             if (!_questData.Contains(questData)) {
                 _questData.Add(questData);
@@ -2055,28 +1859,15 @@ namespace ECS {
             }
             return false;
         }
-#endregion
+        #endregion
 
-#region Tags
-        public void AssignInitialTags(){
-			int tagChance = UnityEngine.Random.Range (0, 100);
-			CHARACTER_TAG[] initialTags = (CHARACTER_TAG[])System.Enum.GetValues (typeof(CHARACTER_TAG));
-			for (int j = 0; j < initialTags.Length; j++) {
-				CHARACTER_TAG tag = initialTags [j];
-				if(tagChance < Utilities.GetTagWorldGenChance(tag)){
-					AssignTag (tag);
-				}
-			}
-		}
-#endregion
-
-#region HP
+        #region HP
         public bool IsHealthFull() {
             return _currentHP >= _maxHP;
         }
-#endregion
+        #endregion
 
-#region Utilities
+        #region Utilities
         public void ChangeGender(GENDER gender) {
             _gender = gender;
             Messenger.Broadcast(Signals.GENDER_CHANGED, this, gender);
@@ -2137,11 +1928,12 @@ namespace ECS {
             _characterColorCode = ColorUtility.ToHtmlStringRGBA(_characterColor).Substring(0, 6);
         }
         public void EverydayAction() {
-            //if (!_isIdle) {
-                if (onDailyAction != null) {
-                    onDailyAction();
-                }
-            //}
+            ////if (!_isIdle) {
+            //    if (onDailyAction != null) {
+            //        onDailyAction();
+            //    }
+            ////}
+            CheckForPPDeath();
         }
         //public void AdvertiseSelf(ActionThread actionThread) {
         //    if(actionThread.character.id != this.id && _currentRegion.id == actionThread.character.party.currentRegion.id) {
@@ -2178,9 +1970,9 @@ namespace ECS {
             }
             return false;
         }
-#endregion
+        #endregion
 
-#region Relationships
+        #region Relationships
         public void AddNewRelationship(Character relWith, Relationship relationship) {
             if (!_relationships.ContainsKey(relWith)) {
                 _relationships.Add(relWith, relationship);
@@ -2238,9 +2030,9 @@ namespace ECS {
 
             }
         }
-#endregion
+        #endregion
 
-#region History
+        #region History
         public void AddHistory(Log log) {
             _history.Add(log);
             if (this._history.Count > 20) {
@@ -2248,9 +2040,9 @@ namespace ECS {
             }
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
         }
-#endregion
+        #endregion
 
-#region Character
+        #region Character
 		public bool IsHostileWith(Character character){
             if (this.faction == null) {
                 return true; //this character has no faction
@@ -2283,15 +2075,15 @@ namespace ECS {
         public STANCE GetCurrentStance() {
             return STANCE.NEUTRAL;
         }
-#endregion
+        #endregion
 
-#region Combat Handlers
+        #region Combat Handlers
 		public void SetIsInCombat (bool state){
 			_isInCombat = state;
 		}
-#endregion
+        #endregion
 
-#region Landmarks
+        #region Landmarks
         public void AddExploredLandmark(BaseLandmark landmark){
 			_exploredLandmarks.Add(landmark); //did not add checking if landmark is already in list, since I want to allow duplicates
             //schedule removal of landmark after 6 months
@@ -2302,36 +2094,36 @@ namespace ECS {
         private void RemoveLandmarkAsExplored(BaseLandmark landmark) {
             _exploredLandmarks.Remove(landmark);
         }
-#endregion
+        #endregion
 
-#region Psytoxin
-		private void RegionPsytoxin(List<Region> regions){
-			for (int i = 0; i < regions.Count; i++) {
-				if(_party.currentRegion.id == regions[i].id){
-					InfectedByPsytoxin ();
-					break;
-				}
-			}
-		}
-		private void InfectedByPsytoxin(){
-			if(HasTag(CHARACTER_TAG.SEVERE_PSYTOXIN)){
-				return;	
-			}
-			ModeratePsytoxin modPsytoxin = (ModeratePsytoxin)GetTag (CHARACTER_TAG.MODERATE_PSYTOXIN);
-			if(modPsytoxin != null){
-				modPsytoxin.TriggerWorsenCase ();
-			}else{
-				MildPsytoxin mildPsytoxin = (MildPsytoxin)GetTag (CHARACTER_TAG.MILD_PSYTOXIN);
-				if(mildPsytoxin != null){
-					mildPsytoxin.TriggerWorsenCase ();
-				}else{
-					AssignTag (CHARACTER_TAG.MILD_PSYTOXIN);
-				}
-			}
-		}
-#endregion
+        //#region Psytoxin
+		//private void RegionPsytoxin(List<Region> regions){
+		//	for (int i = 0; i < regions.Count; i++) {
+		//		if(_party.currentRegion.id == regions[i].id){
+		//			InfectedByPsytoxin ();
+		//			break;
+		//		}
+		//	}
+		//}
+		//private void InfectedByPsytoxin(){
+		//	if(HasTag(CHARACTER_TAG.SEVERE_PSYTOXIN)){
+		//		return;	
+		//	}
+		//	ModeratePsytoxin modPsytoxin = (ModeratePsytoxin)GetTag (CHARACTER_TAG.MODERATE_PSYTOXIN);
+		//	if(modPsytoxin != null){
+		//		modPsytoxin.TriggerWorsenCase ();
+		//	}else{
+		//		MildPsytoxin mildPsytoxin = (MildPsytoxin)GetTag (CHARACTER_TAG.MILD_PSYTOXIN);
+		//		if(mildPsytoxin != null){
+		//			mildPsytoxin.TriggerWorsenCase ();
+		//		}else{
+		//			AssignTag (CHARACTER_TAG.MILD_PSYTOXIN);
+		//		}
+		//	}
+		//}
+        //#endregion
 
-#region Traces
+        #region Traces
 		public void LeaveTraceOnLandmark(){
 			ILocation location = _party.specificLocation;
 			if(location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
@@ -2388,9 +2180,9 @@ namespace ECS {
 			}
 			return null;
 		}
-#endregion
+        #endregion
 
-#region Action Queue
+        #region Action Queue
         public bool DoesSatisfiesPrerequisite(IPrerequisite prerequisite) {
             if(prerequisite.prerequisiteType == PREREQUISITE.RESOURCE) {
                 ResourcePrerequisite resourcePrerequisite = prerequisite as ResourcePrerequisite;
@@ -2400,9 +2192,9 @@ namespace ECS {
             }
             return false;
         }
-#endregion
+        #endregion
 
-#region Needs
+        #region Needs
         private void CiviliansDiedReduceSanity(StructureObj whereCiviliansDied, int amount) {
             if(_currentRegion.id == whereCiviliansDied.objectLocation.tileLocation.region.id) {
                 ILocation location = _party.specificLocation;
@@ -2413,15 +2205,15 @@ namespace ECS {
                 }
             }
         }
-#endregion
+        #endregion
 
-#region Portrait Settings
+        #region Portrait Settings
         public void SetPortraitSettings(PortraitSettings settings) {
             _portraitSettings = settings;
         }
-#endregion
+        #endregion
 
-#region RPG
+        #region RPG
         public void LevelUp() {
             if(_level < CharacterManager.Instance.maxLevel) {
                 _level += 1;
@@ -2532,9 +2324,9 @@ namespace ECS {
             //sa formula merong pdef at mdef pero kelangan yun ng enemy parameter, papano yun since yung computation na ito ay para ma compute ang sariling power lang mismo?
             //ano yung '(2XVIT) multiplied or added by prefix/suffix effect', wala namang ganun ang vitality.
         }
-#endregion
+        #endregion
 
-#region Player/Character Actions
+        #region Player/Character Actions
         public void OnThisCharacterSnatched() {
             BaseLandmark snatcherLair = PlayerManager.Instance.player.GetAvailableSnatcherLair();
             if (snatcherLair == null) {
@@ -2629,9 +2421,9 @@ namespace ECS {
             }
             return null;
         }
-#endregion
+        #endregion
 
-#region Snatch
+        #region Snatch
         /*
          When the player successfully snatches a character, other characters with relation to 
          the snatched one would all be sent signals to check whether they should react or not. 
@@ -2675,9 +2467,9 @@ namespace ECS {
                 144,
                 onClickAction);
         }
-#endregion
+        #endregion
 
-#region Home
+        #region Home
         public void LookForNewHomeStructure() {
             //Try to get a new home structure from this character's area
             StructureObj structure = GetNewHomeStructureFromArea(_home);
@@ -2739,6 +2531,54 @@ namespace ECS {
             _homeStructure = newHomeStructure;
             newHomeStructure.AdjustNumOfResidents(1);
         }
-#endregion
+        #endregion
+
+        #region Mental Points
+        public void AdjustMentalPoints(int adjustment) {
+            _mentalPoints += adjustment;
+            _mentalPoints = Mathf.Min(0, mentalPoints);
+        }
+        public void SetMentalPoints(int points) {
+            _mentalPoints = points;
+            _mentalPoints = Mathf.Min(0, mentalPoints);
+        }
+        #endregion
+
+        #region Physical Points
+        public void AdjustPhysicalPoints(int adjustment) {
+            _physicalPoints += adjustment;
+            _physicalPoints = Mathf.Min(0, physicalPoints);
+        }
+        public void SetPhysicalPoints(int points) {
+            _physicalPoints = points;
+            _physicalPoints = Mathf.Min(0, physicalPoints);
+        }
+        private void CheckForPPDeath() {
+            if (this.physicalPoints <= -5) {
+                //If the character has -5 or lower Physical Points, he has a 0.5% chance to die per tick. 
+                float deathChance = 0.5f;
+                int difference = Mathf.Abs(this.physicalPoints + 5);
+                deathChance += difference * 0.5f; //For every point lower than -5, add 0.5% to chance to die per tick.
+                if (UnityEngine.Random.Range(0f, 100f) < deathChance) {
+                    List<string> deathCauses = new List<string>();
+                    if (HasTags(new CHARACTER_TAG[] { CHARACTER_TAG.TIRED, CHARACTER_TAG.EXHAUSTED})) {
+                        deathCauses.Add("exhaustion");
+                    }
+                    if (HasTags(new CHARACTER_TAG[] { CHARACTER_TAG.HUNGRY, CHARACTER_TAG.STARVING })) {
+                        deathCauses.Add("starvation");
+                    }
+                    if (HasTags(new CHARACTER_TAG[] { CHARACTER_TAG.WOUNDED, CHARACTER_TAG.WRECKED })) {
+                        deathCauses.Add("injury");
+                    }
+
+                    Log deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "pp_death");
+                    deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    deathLog.AddToFillers(null, deathCauses[UnityEngine.Random.Range(0, deathCauses.Count)], LOG_IDENTIFIER.OTHER);
+                    AddHistory(deathLog);
+                    this.Death();
+                }
+            }
+        }
+        #endregion
     }
 }

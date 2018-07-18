@@ -174,6 +174,8 @@ public class CharacterInfoUI : UIMenu {
         text += "\n<b>Computed Power: </b>" + currentlyShowingCharacter.computedPower;
         text += "\n<b>P Final Attack: </b>" + currentlyShowingCharacter.pFinalAttack;
         text += "\n<b>M Final Attack: </b>" + currentlyShowingCharacter.mFinalAttack;
+        text += "\n<b>Mental Points: </b>" + currentlyShowingCharacter.mentalPoints;
+        text += "\n<b>Physical Points: </b>" + currentlyShowingCharacter.physicalPoints;
         generalInfoLbl.text = text;
 
     }
