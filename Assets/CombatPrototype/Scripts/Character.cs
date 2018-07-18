@@ -55,6 +55,7 @@ namespace ECS {
         private Dictionary<Character, List<string>> _traceInfo;
         private int _mentalPoints;
         private int _physicalPoints;
+        private Squad _squad;
         public Dictionary<int, Combat> combatHistory;
 
         //Stats
@@ -343,6 +344,9 @@ namespace ECS {
         }
         public int physicalPoints {
             get { return _physicalPoints; }
+        }
+        public Squad squad {
+            get { return _squad; }
         }
         #endregion
 
@@ -2578,6 +2582,12 @@ namespace ECS {
                     this.Death(null, true);
                 }
             }
+        }
+        #endregion
+
+        #region Squads
+        public void SetSquad(Squad squad) {
+            _squad = squad;
         }
         #endregion
     }

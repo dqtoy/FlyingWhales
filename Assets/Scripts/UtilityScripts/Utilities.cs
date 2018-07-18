@@ -26,6 +26,7 @@ public class Utilities : MonoBehaviour {
     public static int lastAreaID = 0;
     public static int lastMonsterID = 0;
     public static int lastPartyID = 0;
+    public static int lastSquadID = 0;
 
     public static float defenseBuff = 1.20f;
 	public static int defaultCityHP = 300;
@@ -79,6 +80,9 @@ public class Utilities : MonoBehaviour {
         } else if (obj is Quest) {
             lastQuestID += 1;
             return lastQuestID;
+        } else if (obj is Squad) {
+            lastSquadID += 1;
+            return lastSquadID;
         }
         return 0;
 	}
@@ -102,7 +106,9 @@ public class Utilities : MonoBehaviour {
         } else if (obj is NewParty) {
             lastPartyID = idToUse;
         } else if (obj is Quest) {
-            lastQuestID += idToUse;
+            lastQuestID = idToUse;
+        } else if (obj is Squad) {
+            lastSquadID = idToUse;
         }
         return idToUse;
     }

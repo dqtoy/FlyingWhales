@@ -47,6 +47,7 @@ public interface ICharacter {
     List<CharacterAction> idleActions { get; }
     PortraitSettings portraitSettings { get; }
     NewParty iparty { get; }
+    Squad squad { get; }
 
     //functions
     void FaintOrDeath();
@@ -64,6 +65,7 @@ public interface ICharacter {
     void SetHomeLandmark(BaseLandmark newHomeLandmark);
     void SetHomeStructure(StructureObj newHomeStructure);
     void AddHistory(Log log); //Character only
+    void SetSquad(Squad squad);
     int GetPDef(ICharacter enemy);
     int GetMDef(ICharacter enemy);
     NewParty CreateNewParty();

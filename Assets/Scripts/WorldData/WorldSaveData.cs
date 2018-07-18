@@ -13,6 +13,7 @@ public class WorldSaveData {
     public List<CharacterSaveData> charactersData;
     public List<MonsterSaveData> monstersData;
     public List<AreaSaveData> areaData;
+    public List<SquadSaveData> squadData;
     public byte[] pathfindingSettings;
 
     private Dictionary<int, HexTileData> tileDictionary;
@@ -67,6 +68,14 @@ public class WorldSaveData {
             Area currArea = areas[i];
             AreaSaveData currData = new AreaSaveData(currArea);
             areaData.Add(currData);
+        }
+    }
+    public void OccupySquadData(List<Squad> squads) {
+        squadData = new List<SquadSaveData>();
+        for (int i = 0; i < squads.Count; i++) {
+            Squad currSquad = squads[i];
+            SquadSaveData data = new SquadSaveData(currSquad);
+            squadData.Add(data);
         }
     }
     public void OccupyMonstersData(List<MonsterParty> monsters) {

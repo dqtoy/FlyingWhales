@@ -15,8 +15,8 @@ namespace worldcreator {
         public EventSystem eventSystem;
         public Canvas canvas;
 
-        public const float toolbarShowingPos = -493.6f;
-        public const float toolbarHiddenPos = -588f;
+        public const float toolbarShowingPos = -480f;
+        public const float toolbarHiddenPos = -599.95f;
 
         [Header("World Generation")]
         [SerializeField] private GameObject mainMenuGO;
@@ -73,6 +73,11 @@ namespace worldcreator {
         [SerializeField] private EditAreasMenu _editAreasMenu;
 
         [Space(10)]
+        [Header("Edit Squads Menu")]
+        [SerializeField] private GameObject editSquadsMenuGO;
+        [SerializeField] private EditSquadsMenu _editSquadsMenu;
+
+        [Space(10)]
         [Header("Saving")]
         [SerializeField] private GameObject saveMenuGO;
         [SerializeField] private GameObject saveItemPrefab;
@@ -118,6 +123,9 @@ namespace worldcreator {
         public EditAreasMenu editAreasMenu {
             get { return _editAreasMenu; }
         }
+        public EditSquadsMenu editSquadsMenu {
+            get { return _editSquadsMenu; }
+        }
         public MessageBox messageBox {
             get { return _messageBox; }
         }
@@ -139,6 +147,7 @@ namespace worldcreator {
             editCharactersMenu.Initialize();
             tileInfo.Initialize();
             editAreasMenu.Initialize();
+            editSquadsMenu.Initialize();
         }
 
         #region Main Menu
@@ -204,6 +213,7 @@ namespace worldcreator {
             editLandmarksMenuGO.SetActive(false);
             editCharactersMenuGO.SetActive(false);
             _editAreasMenu.HideMenu();
+            editSquadsMenuGO.SetActive(false);
 
             rectangleSelectionBtn.interactable = true;
             regionSelectionBtn.interactable = true;
@@ -218,6 +228,7 @@ namespace worldcreator {
             editLandmarksMenuGO.SetActive(false);
             editCharactersMenuGO.SetActive(false);
             _editAreasMenu.HideMenu();
+            editSquadsMenuGO.SetActive(false);
 
             rectangleSelectionBtn.interactable = true;
             regionSelectionBtn.interactable = true;
@@ -231,6 +242,7 @@ namespace worldcreator {
             editRegionsMenuGO.SetActive(true);
             editLandmarksMenuGO.SetActive(false);
             _editAreasMenu.HideMenu();
+            editSquadsMenuGO.SetActive(false);
 
             rectangleSelectionBtn.interactable = true;
             //rectangleSelectionBtn.isOn = true;
@@ -247,6 +259,7 @@ namespace worldcreator {
             editCharactersMenuGO.SetActive(false);
             _editAreasMenu.HideMenu();
             editFactionsMenu.HideFactionInfo();
+            editSquadsMenuGO.SetActive(false);
 
             tileSelectionBtn.interactable = true;
             rectangleSelectionBtn.interactable = true;
@@ -262,6 +275,7 @@ namespace worldcreator {
             editLandmarksMenuGO.SetActive(true);
             editCharactersMenuGO.SetActive(false);
             _editAreasMenu.HideMenu();
+            editSquadsMenuGO.SetActive(false);
 
             rectangleSelectionBtn.interactable = true;
             regionSelectionBtn.interactable = true;
@@ -278,6 +292,7 @@ namespace worldcreator {
                 editCharactersMenu.characterInfoEditor.UpdateInfo();
             }
             _editAreasMenu.HideMenu();
+            editSquadsMenuGO.SetActive(false);
 
             rectangleSelectionBtn.interactable = true;
             regionSelectionBtn.interactable = true;
@@ -291,6 +306,21 @@ namespace worldcreator {
             editLandmarksMenuGO.SetActive(false);
             editCharactersMenuGO.SetActive(false);
             _editAreasMenu.ShowMenu();
+            editSquadsMenuGO.SetActive(false);
+
+            rectangleSelectionBtn.interactable = true;
+            regionSelectionBtn.interactable = true;
+            tileSelectionBtn.interactable = true;
+        }
+        public void OnClickEditSquads() {
+            editBiomeMenuGO.SetActive(false);
+            editElevationMenuGO.SetActive(false);
+            editFactionMenuGO.SetActive(false);
+            editRegionsMenuGO.SetActive(false);
+            editLandmarksMenuGO.SetActive(false);
+            editCharactersMenuGO.SetActive(false);
+            _editAreasMenu.HideMenu();
+            editSquadsMenuGO.SetActive(true);
 
             rectangleSelectionBtn.interactable = true;
             regionSelectionBtn.interactable = true;
