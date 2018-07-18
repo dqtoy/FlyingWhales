@@ -796,7 +796,7 @@ namespace ECS {
             }
         }
 		//Character's death
-		internal void Death(Character killer = null){
+		internal void Death(Character killer = null, bool diedFromPP = false){
 			if(!_isDead){
 				_isDead = true;
                 
@@ -812,7 +812,7 @@ namespace ECS {
                     throw new Exception("Specific location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
                 }
 
-				if(_party.specificLocation != null && _party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+				if(!diedFromPP && _party.specificLocation != null && _party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
                     Log deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death");
                     deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     AddHistory(deathLog);
@@ -2575,7 +2575,7 @@ namespace ECS {
                     deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     deathLog.AddToFillers(null, deathCauses[UnityEngine.Random.Range(0, deathCauses.Count)], LOG_IDENTIFIER.OTHER);
                     AddHistory(deathLog);
-                    this.Death();
+                    this.Death(null, true);
                 }
             }
         }
