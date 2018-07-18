@@ -33,10 +33,9 @@ public class CameraMove : MonoBehaviour {
 
     [SerializeField] private BoundDrawer boundDrawer;
     [SerializeField] private Bounds bounds;
-    //[SerializeField] private float minXUIAdjustment;
-    //[SerializeField] private float maxXUIAdjustment;
-    //[SerializeField] private float minYUIAdjustment;
-    //[SerializeField] private float maxYUIAdjustment;
+
+    [SerializeField] private bool allowVerticalMovement;
+    [SerializeField] private bool allowHorizontalMovement;
 
     private float previousCameraFOV;
 
@@ -65,19 +64,27 @@ public class CameraMove : MonoBehaviour {
         float xAxisValue = Input.GetAxis("Horizontal");
         float zAxisValue = Input.GetAxis("Vertical");
 #if WORLD_CREATION_TOOL
-        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
-            iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("y", Camera.main.transform.position.y + zAxisValue, "time", 0.1f));
-        }
-        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) {
-            iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("x", Camera.main.transform.position.x + xAxisValue, "time", 0.1f));
-        }
-#else
-        if (!UIManager.Instance.IsConsoleShowing()) {
+        if (allowVerticalMovement) {
             if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
                 iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("y", Camera.main.transform.position.y + zAxisValue, "time", 0.1f));
             }
+        }
+        if (allowHorizontalMovement) {
             if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) {
                 iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("x", Camera.main.transform.position.x + xAxisValue, "time", 0.1f));
+            }
+        }
+#else
+        if (!UIManager.Instance.IsConsoleShowing()) {
+            if (allowVerticalMovement) {
+                if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
+                    iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("y", Camera.main.transform.position.y + zAxisValue, "time", 0.1f));
+                }
+            }
+            if (allowHorizontalMovement) {
+                if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) {
+                    iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("x", Camera.main.transform.position.x + xAxisValue, "time", 0.1f));
+                }
             }
         }
 #endif
@@ -99,9 +106,9 @@ public class CameraMove : MonoBehaviour {
                 Camera.main.orthographicSize = fov;
                 nameplateCamera.orthographicSize = fov;
 #if !WORLD_CREATION_TOOL
-                if (GameManager.Instance.gameHasStarted) {
+                //if (GameManager.Instance.gameHasStarted) {
                     CalculateCameraBounds();
-                }
+                //}
 #else
                 _uiCamera.orthographicSize = fov;
                 CalculateCameraBounds();
@@ -181,6 +188,9 @@ public class CameraMove : MonoBehaviour {
         HexTile topMostTile = worldcreator.WorldCreatorManager.Instance.map[worldcreator.WorldCreatorManager.Instance.width/2, worldcreator.WorldCreatorManager.Instance.height - 1];
         HexTile botMostTile = worldcreator.WorldCreatorManager.Instance.map[worldcreator.WorldCreatorManager.Instance.width/2, 0];
 #else
+        if (GridMap.Instance.map == null) {
+            return;
+        }
         Vector2 topRightCornerCoordinates = GridMap.Instance.map[(int)GridMap.Instance.width - 1, (int)GridMap.Instance.height - 1].transform.localPosition;
         HexTile leftMostTile = GridMap.Instance.map[0, (int)GridMap.Instance.height / 2];
         HexTile rightMostTile = GridMap.Instance.map[(int)GridMap.Instance.width - 1, (int)GridMap.Instance.height / 2];
@@ -193,20 +203,23 @@ public class CameraMove : MonoBehaviour {
         float vertExtent = Camera.main.orthographicSize;
         float horzExtent = vertExtent * Screen.width / Screen.height;
 
-        //// Calculations assume map is position at the origin
-        //minX = mapX / 2.0f - horzExtent;
-        //maxX = horzExtent - mapX / 2.0f;
-        //minY = mapY / 2.0f - vertExtent;
-        //maxY = vertExtent - mapY / 2.0f;
-
-        //MIN_X = minX;
-        //MAX_X = maxX;
-        //MIN_Y = minY;
-        //MAX_Y = maxY;
-
         Bounds newBounds = new Bounds();
-        newBounds.extents = new Vector3(Mathf.Abs(rightMostTile.transform.position.x) + 1.28f, Mathf.Abs(topMostTile.transform.position.y) + 1.28f, 0f);
+        newBounds.extents = new Vector3(Mathf.Abs(rightMostTile.transform.position.x) + (1.28f * 2f), Mathf.Abs(topMostTile.transform.position.y) + (1.28f * 2f), 0f);
         SetCameraBounds(newBounds, horzExtent, vertExtent);
+
+        if (Utilities.IsVisibleFrom(leftMostTile.gameObject.GetComponent<Renderer>(), Camera.main)
+            && Utilities.IsVisibleFrom(rightMostTile.gameObject.GetComponent<Renderer>(), Camera.main)) {
+            allowHorizontalMovement = false;
+        } else {
+            allowHorizontalMovement = true;
+        }
+
+        if (Utilities.IsVisibleFrom(topMostTile.gameObject.GetComponent<Renderer>(), Camera.main)
+            && Utilities.IsVisibleFrom(botMostTile.gameObject.GetComponent<Renderer>(), Camera.main)) {
+            allowVerticalMovement = false;
+        } else {
+            allowVerticalMovement = true;
+        }
     }
     public void ConstrainCameraBounds() {
         float xLowerBound = MIN_X;
@@ -224,6 +237,16 @@ public class CameraMove : MonoBehaviour {
         float xCoord = Mathf.Clamp(transform.position.x, xLowerBound, xUpperBound);
         float yCoord = Mathf.Clamp(transform.position.y, yLowerBound, yUpperBound);
         float zCoord = Mathf.Clamp(transform.position.z, MIN_Z, MAX_Z);
+        if (!allowHorizontalMovement) {
+            xCoord = 0f;
+        }
+        if (!allowVerticalMovement) {
+            yCoord = 0f;
+        }
+        //if (!allowVerticalMovement && !allowHorizontalMovement) {
+        //    xCoord = 0f;
+        //    yCoord = 0f;
+        //}
         Camera.main.transform.position = new Vector3(
             xCoord,
             yCoord,
@@ -269,10 +292,16 @@ public class CameraMove : MonoBehaviour {
     private void SetCameraBounds(Bounds bounds, float horzExtent, float vertExtent) {
         this.bounds = bounds;
         boundDrawer.bounds = bounds;
-        MIN_X = bounds.min.x + horzExtent;
-        MAX_X = bounds.max.x - horzExtent;
-        MIN_Y = bounds.min.y + vertExtent;
-        MAX_Y = bounds.max.y - vertExtent;
+        float halfOfHexagon = (256f / 2f) / 100f; //1.28
+#if WORLD_CREATION_TOOL
+        int borderCount = worldcreator.WorldCreatorManager.Instance._borderThickness;
+#else
+        int borderCount = GridMap.Instance._borderThickness;
+#endif
+        MIN_X = bounds.min.x + horzExtent - (halfOfHexagon * borderCount);
+        MAX_X = bounds.max.x - horzExtent + (halfOfHexagon * borderCount);
+        MIN_Y = bounds.min.y + vertExtent - (halfOfHexagon * borderCount);
+        MAX_Y = bounds.max.y - vertExtent + (halfOfHexagon * borderCount);
     }
 
     private Vector2[] GetCameraWorldCorners(Camera camera) {
