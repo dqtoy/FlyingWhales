@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ECS;
+using System.IO;
 
 public class Monster : ICharacter, ICharacterSim {
     //Serialized fields
@@ -291,9 +292,11 @@ public class Monster : ICharacter, ICharacterSim {
     }
 
     public void ConstructMonsterData() {
-        this._skills = new List<Skill>();
-        for (int i = 0; i < _skillNames.Count; i++) {
-            this._skills.Add(SkillManager.Instance.allSkills[_skillNames[i]]);
+        if(SkillManager.Instance != null) {
+            this._skills = new List<Skill>();
+            for (int i = 0; i < _skillNames.Count; i++) {
+                this._skills.Add(SkillManager.Instance.allSkills[_skillNames[i]]);
+            }
         }
         this._elementalWeaknesses = new Dictionary<ELEMENT, float>();
         for (int i = 0; i < _elementChanceWeaknesses.Count; i++) {
@@ -343,6 +346,45 @@ public class Monster : ICharacter, ICharacterSim {
         }
         return allGeneralSkills;
     }
+    private void ConstructSkills() {
+        _skills = new List<Skill>();
+        string path = string.Empty;
+        path = Utilities.dataPath + "Skills/GENERAL/";
+        string[] directories = Directory.GetDirectories(path);
+        for (int i = 0; i < directories.Length; i++) {
+            string skillType = new DirectoryInfo(directories[i]).Name;
+            SKILL_TYPE currSkillType = (SKILL_TYPE) System.Enum.Parse(typeof(SKILL_TYPE), skillType);
+            string[] files = Directory.GetFiles(directories[i], "*.json");
+            for (int j = 0; j < files.Length; j++) {
+                string dataAsJson = File.ReadAllText(files[j]);
+                switch (currSkillType) {
+                    case SKILL_TYPE.ATTACK:
+                    AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill>(dataAsJson);
+                    _skills.Add(attackSkill);
+                    break;
+                    case SKILL_TYPE.HEAL:
+                    HealSkill healSkill = JsonUtility.FromJson<HealSkill>(dataAsJson);
+                    _skills.Add(healSkill);
+                    break;
+                    case SKILL_TYPE.OBTAIN_ITEM:
+                    ObtainSkill obtainSkill = JsonUtility.FromJson<ObtainSkill>(dataAsJson);
+                    _skills.Add(obtainSkill);
+                    break;
+                    case SKILL_TYPE.FLEE:
+                    break;
+                    case SKILL_TYPE.MOVE:
+                    MoveSkill moveSkill = JsonUtility.FromJson<MoveSkill>(dataAsJson);
+                    _skills.Add(moveSkill);
+                    break;
+                }
+            }
+        }
+        for (int i = 0; i < _skillNames.Count; i++) {
+            path = Utilities.dataPath + "Skills/CLASS/ATTACK/" + _skillNames[i] + ".json";
+            AttackSkill skill = JsonUtility.FromJson<AttackSkill>(System.IO.File.ReadAllText(path));
+            _skills.Add(skill);
+        }
+    }
     #endregion
 
     #region Interface
@@ -368,9 +410,25 @@ public class Monster : ICharacter, ICharacterSim {
         portraitGO.SetActive(false);
 #endif
     }
+    private void BaseInitializeSim() {
+        _isDead = false;
+        _desperateActions = new List<CharacterAction>();
+        _idleActions = new List<CharacterAction>();
+        _raceSetting = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText(Utilities.dataPath + "RaceSettings/" + _type.ToString() +".json"));
+        _battleOnlyTracker = new CharacterBattleOnlyTracker();
+        _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
+        _currentHP = _maxHP;
+        _currentSP = _maxSP;
+        ConstructSkills();
+        SetCharacterColor(Color.red);
+    }
     public void Initialize() {
         _id = Utilities.SetID(this);
         BaseInitialize();
+    }
+    public void InitializeSim() {
+        BaseInitializeSim();
+        ConstructMonsterData();
     }
     //public void Initialize(MonsterSaveData data){
     //    _id = Utilities.SetID(this, data.id);
@@ -400,13 +458,23 @@ public class Monster : ICharacter, ICharacterSim {
         }
     }
     public void FaintOrDeath() {
-        _party.currentCombat.CharacterDeath(this);
-        Death();
+        if (CombatSimManager.Instance == null) {
+            _party.currentCombat.CharacterDeath(this);
+            Death();
+        } else {
+            DeathSim();
+        }
     }
     public int GetPDef(ICharacter enemy) {
         return _pDef;
     }
     public int GetMDef(ICharacter enemy) {
+        return _mDef;
+    }
+    public int GetPDef(ICharacterSim enemy) {
+        return _pDef;
+    }
+    public int GetMDef(ICharacterSim enemy) {
         return _mDef;
     }
     public void ResetToFullHP() {
@@ -451,6 +519,10 @@ public class Monster : ICharacter, ICharacterSim {
     }
     public CharacterAction GetRandomIdleAction(ref IObject targetObject) {
         return _idleActions[Utilities.rng.Next(0, _idleActions.Count)];
+    }
+    public void DeathSim() {
+        _isDead = true;
+        CombatSimManager.Instance.currentCombat.CharacterDeath(this);
     }
     public void EnableDisableSkills(Combat combat) {
         bool isAllAttacksInRange = true;
@@ -528,6 +600,97 @@ public class Monster : ICharacter, ICharacterSim {
                         } else {
                             for (int j = 0; j < combat.charactersSideA.Count; j++) {
                                 ICharacter enemy = combat.charactersSideA[j];
+                                if (enemy.currentRow > this._currentRow) {
+                                    hasEnemyOnRight = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!hasEnemyOnRight) {
+                            skill.isEnabled = false;
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    public void EnableDisableSkills(CombatSim combat) {
+        bool isAllAttacksInRange = true;
+        bool isAttackInRange = false;
+
+        //Body part skills / general skills
+        for (int i = 0; i < this._skills.Count; i++) {
+            Skill skill = this._skills[i];
+            skill.isEnabled = true;
+
+            if (skill is AttackSkill) {
+                isAttackInRange = combat.HasTargetInRangeForSkill(skill, this);
+                if (!isAttackInRange) {
+                    isAllAttacksInRange = false;
+                    skill.isEnabled = false;
+                    continue;
+                }
+            } else if (skill is FleeSkill) {
+                if (this.currentHP >= (this.maxHP / 2)) {
+                    skill.isEnabled = false;
+                    continue;
+                }
+            }
+        }
+
+        for (int i = 0; i < this._skills.Count; i++) {
+            Skill skill = this._skills[i];
+            if (skill is MoveSkill) {
+                skill.isEnabled = true;
+                if (isAllAttacksInRange) {
+                    skill.isEnabled = false;
+                    continue;
+                }
+                if (skill.skillName == "MoveLeft") {
+                    if (this._currentRow == 1) {
+                        skill.isEnabled = false;
+                        continue;
+                    } else {
+                        bool hasEnemyOnLeft = false;
+                        if (combat.charactersSideA.Contains(this)) {
+                            for (int j = 0; j < combat.charactersSideB.Count; j++) {
+                                ICharacterSim enemy = combat.charactersSideB[j];
+                                if (enemy.currentRow < this._currentRow) {
+                                    hasEnemyOnLeft = true;
+                                    break;
+                                }
+                            }
+                        } else {
+                            for (int j = 0; j < combat.charactersSideA.Count; j++) {
+                                ICharacterSim enemy = combat.charactersSideA[j];
+                                if (enemy.currentRow < this._currentRow) {
+                                    hasEnemyOnLeft = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!hasEnemyOnLeft) {
+                            skill.isEnabled = false;
+                            continue;
+                        }
+                    }
+                } else if (skill.skillName == "MoveRight") {
+                    if (this._currentRow == 5) {
+                        skill.isEnabled = false;
+                    } else {
+                        bool hasEnemyOnRight = false;
+                        if (combat.charactersSideA.Contains(this)) {
+                            for (int j = 0; j < combat.charactersSideB.Count; j++) {
+                                ICharacterSim enemy = combat.charactersSideB[j];
+                                if (enemy.currentRow > this._currentRow) {
+                                    hasEnemyOnRight = true;
+                                    break;
+                                }
+                            }
+                        } else {
+                            for (int j = 0; j < combat.charactersSideA.Count; j++) {
+                                ICharacterSim enemy = combat.charactersSideA[j];
                                 if (enemy.currentRow > this._currentRow) {
                                     hasEnemyOnRight = true;
                                     break;

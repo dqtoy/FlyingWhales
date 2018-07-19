@@ -15,6 +15,7 @@ public class CharacterPanelUI : MonoBehaviour {
     public static CharacterPanelUI Instance;
 
     public Dropdown classOptions;
+    public Dropdown genderOptions;
 
     public InputField nameInput;
     public InputField levelInput;
@@ -98,15 +99,24 @@ public class CharacterPanelUI : MonoBehaviour {
     }
     void Start() {
         _skillNames = new List<string>();
+        LoadAllData();
     }
 
     #region Utilities
+    private void LoadAllData() {
+        genderOptions.ClearOptions();
+
+        string[] genders = System.Enum.GetNames(typeof(GENDER));
+
+        genderOptions.AddOptions(genders.ToList());
+    }
     public void UpdateClassOptions() {
         classOptions.ClearOptions();
         classOptions.AddOptions(ClassPanelUI.Instance.allClasses);
     }
     private void ClearData() {
         classOptions.value = 0;
+        genderOptions.value = 0;
 
         nameInput.text = string.Empty;
         levelInput.text = "1";
@@ -165,6 +175,8 @@ public class CharacterPanelUI : MonoBehaviour {
         //Re-import the file to update the reference in the editor
         UnityEditor.AssetDatabase.ImportAsset(path);
         Debug.Log("Successfully saved character at " + path);
+
+        CombatSimManager.Instance.UpdateAllCharacters();
     }
     private void LoadCharacter() {
         string filePath = EditorUtility.OpenFilePanel("Select Character", Utilities.dataPath + "CharacterSims/", "json");
@@ -181,6 +193,7 @@ public class CharacterPanelUI : MonoBehaviour {
     private void LoadCharacterDataToUI(CharacterSim character) {
         nameInput.text = character.name;
         classOptions.value = GetClassIndex(character.className);
+        genderOptions.value = GetGenderIndex(character.gender);
         levelInput.text = character.level.ToString();
         weaponAttackInput.text = character.weaponAttack.ToString();
 
@@ -199,10 +212,10 @@ public class CharacterPanelUI : MonoBehaviour {
         _intBuild = character.intBuild;
         _agiBuild = character.agiBuild;
         _vitBuild = character.vitBuild;
-        _str = character.str;
-        _int = character.intl;
-        _agi = character.agi;
-        _vit = character.vit;
+        _str = character.strength;
+        _int = character.intelligence;
+        _agi = character.agility;
+        _vit = character.vitality;
         _hp = character.maxHP;
         _sp = character.maxSP;
 
@@ -217,6 +230,14 @@ public class CharacterPanelUI : MonoBehaviour {
     private int GetClassIndex(string className) {
         for (int i = 0; i < classOptions.options.Count; i++) {
             if (classOptions.options[i].text == className) {
+                return i;
+            }
+        }
+        return 0;
+    }
+    private int GetGenderIndex(GENDER gender) {
+        for (int i = 0; i < genderOptions.options.Count; i++) {
+            if (genderOptions.options[i].text == gender.ToString()) {
                 return i;
             }
         }

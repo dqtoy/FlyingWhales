@@ -115,6 +115,8 @@ public class MonsterPanelUI : MonoBehaviour {
         //Re-import the file to update the reference in the editor
         UnityEditor.AssetDatabase.ImportAsset(path);
         Debug.Log("Successfully saved monster at " + path);
+
+        CombatSimManager.Instance.UpdateAllMonsters();
     }
  
 

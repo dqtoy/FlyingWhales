@@ -36,11 +36,11 @@ public class SkillManager : MonoBehaviour {
             for (int j = 0; j < subDirectories.Length; j++) {
                 string currSubDirectory = subDirectories[j];
                 string skillType = new DirectoryInfo(currSubDirectory).Name;
+                SKILL_TYPE currSkillType = (SKILL_TYPE) Enum.Parse(typeof(SKILL_TYPE), skillType);
                 string[] files = Directory.GetFiles(currSubDirectory, "*.json");
                 for (int k = 0; k < files.Length; k++) {
                     string currFilePath = files[k];
                     string dataAsJson = File.ReadAllText(currFilePath);
-                    SKILL_TYPE currSkillType = (SKILL_TYPE)Enum.Parse(typeof(SKILL_TYPE), skillType);
 					Skill skill = null;
                     switch (currSkillType) {
 						case SKILL_TYPE.ATTACK:

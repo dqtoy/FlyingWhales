@@ -218,7 +218,7 @@ namespace ECS {
                 if (_equippedWeapon != null) {
                     weaponAttack = _equippedWeapon.attackPower;
                 }
-                return (int) (((weaponAttack + str) * (1f + ((float) str / 20f))) * (1f + ((float) level / 100f)));
+                return (int) (((weaponAttack + str) * (1f + (str / 20f))) * (1f + ((float) level / 100f)));
             }
         }
         public int mFinalAttack {
@@ -228,7 +228,7 @@ namespace ECS {
                 if (_equippedWeapon != null) {
                     weaponAttack = _equippedWeapon.attackPower;
                 }
-                return (int) (((weaponAttack + intl) * (1f + ((float) intl / 20f))) * (1f + ((float) level / 100f)));
+                return (int) (((weaponAttack + intl) * (1f + (intl / 20f))) * (1f + ((float) level / 100f)));
             }
         }
         public int speed {

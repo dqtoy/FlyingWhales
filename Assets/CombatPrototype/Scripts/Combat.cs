@@ -798,7 +798,6 @@ namespace ECS{
             string log = string.Empty;
             Character attacker = null;
             Weapon weapon = null;
-            float weaponAttack = 0f;
             float damageRange = 0f;
             int statMod = sourceCharacter.strength;
             int def = targetCharacter.GetPDef(sourceCharacter);
@@ -806,7 +805,6 @@ namespace ECS{
             if (sourceCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                 attacker = sourceCharacter as Character;
                 weapon = attacker.equippedWeapon;
-                weaponAttack = weapon.attackPower;
             }
             if (attackSkill.attackCategory == ATTACK_CATEGORY.MAGICAL) {
                 statMod = sourceCharacter.intelligence;
