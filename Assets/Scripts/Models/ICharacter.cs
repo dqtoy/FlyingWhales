@@ -46,7 +46,8 @@ public interface ICharacter {
     List<CharacterAction> desperateActions { get; }
     List<CharacterAction> idleActions { get; }
     PortraitSettings portraitSettings { get; }
-    NewParty iparty { get; }
+    NewParty ownParty { get; }
+    NewParty currentParty { get; }
     Squad squad { get; }
 
     //functions
@@ -61,14 +62,17 @@ public interface ICharacter {
     void AdjustHP(int amount);
     void AdjustExperience(int amount);
     void EnableDisableSkills(Combat combat);
-    void SetParty(NewParty party);
+    void SetOwnedParty(NewParty party);
+    void SetCurrentParty(NewParty party);
+    void OnRemovedFromParty();
     void SetHomeLandmark(BaseLandmark newHomeLandmark);
     void SetHomeStructure(StructureObj newHomeStructure);
     void AddHistory(Log log); //Character only
     void SetSquad(Squad squad);
+    bool InviteToParty(ICharacter inviter);
     int GetPDef(ICharacter enemy);
     int GetMDef(ICharacter enemy);
-    NewParty CreateNewParty();
+    NewParty CreateOwnParty();
     CharacterAction GetRandomDesperateAction(ref IObject targetObject);
     CharacterAction GetRandomIdleAction(ref IObject targetObject);
     CharacterTag AssignTag(CHARACTER_TAG tag); //Character only

@@ -42,46 +42,46 @@ public class BuildStructureQuest : Quest {
     #endregion
 
     #region overrides
-    public override CharacterAction GetQuestAction(Character character, CharacterQuestData data, ref IObject targetObject) {
-        BuildStructureQuestData buildQuestData = data as BuildStructureQuestData;
-        //When a character asks for action, check which resource types are still lacking from the Quest and see if the character has at least 100 of it in his inventory. If yes, give the character Deposit action.
-        CharacterParty characterParty = character.party;
-        targetObject = _buildingStructure;
-        for (int i = 0; i < _lackingResources.Count; i++) {
-            if (characterParty.characterObject.resourceInventory[_lackingResources[i]] >= 100) { //character has more than 100 of the lacking resource
-                //Give deposit action
-                buildQuestData.SetDepositingResource(_lackingResources[i]);
-                DepositAction depositAction = _buildingStructure.currentState.GetAction(ACTION_TYPE.DEPOSIT) as DepositAction;
-                return depositAction;
-            }
-        }
-        //If not, check if he has an action that can obtain that resource type
-        CharacterAction actionThatCanObtainResource = ActionThatCanObtainResource(character, buildQuestData, ref targetObject);
-        if(actionThatCanObtainResource != null) {
-            return actionThatCanObtainResource;
-        } else {
-            //If not, check if character's class is an Excess Class
-            if (character.home.excessClasses.Contains(character.characterClass.className)) {
-                //If yes, perform Change Role to a Role that can obtain needed resource type
-                if(buildQuestData.classesThatCanObtainResource.Count > 0) {
-                    string chosenClassName = buildQuestData.classesThatCanObtainResource[Utilities.rng.Next(0, buildQuestData.classesThatCanObtainResource.Count)];
-                    ChangeClassAction changeClassAction = character.party.characterObject.currentState.GetAction(ACTION_TYPE.CHANGE_CLASS) as ChangeClassAction;
-                    changeClassAction.SetAdvertisedClass(chosenClassName);
-                    targetObject = character.party.characterObject;
-                    return changeClassAction;
-                } else {
-                    //If not, abandon Quest and perform an Idle Action.
-                    buildQuestData.AbandonQuest();
-                    return character.GetRandomIdleAction(ref targetObject);
-                }
-            } else {
-                //If not, abandon Quest and perform an Idle Action.
-                buildQuestData.AbandonQuest();
-                return character.GetRandomIdleAction(ref targetObject);
-            }
-        }
-        //return base.GetQuestAction(character, data, ref targetObject);
-    }
+    //public override CharacterAction GetQuestAction(Character character, CharacterQuestData data, ref IObject targetObject) {
+    //    BuildStructureQuestData buildQuestData = data as BuildStructureQuestData;
+    //    //When a character asks for action, check which resource types are still lacking from the Quest and see if the character has at least 100 of it in his inventory. If yes, give the character Deposit action.
+    //    CharacterParty characterParty = character.party;
+    //    targetObject = _buildingStructure;
+    //    for (int i = 0; i < _lackingResources.Count; i++) {
+    //        if (characterParty.characterObject.resourceInventory[_lackingResources[i]] >= 100) { //character has more than 100 of the lacking resource
+    //            //Give deposit action
+    //            buildQuestData.SetDepositingResource(_lackingResources[i]);
+    //            DepositAction depositAction = _buildingStructure.currentState.GetAction(ACTION_TYPE.DEPOSIT) as DepositAction;
+    //            return depositAction;
+    //        }
+    //    }
+    //    //If not, check if he has an action that can obtain that resource type
+    //    CharacterAction actionThatCanObtainResource = ActionThatCanObtainResource(character, buildQuestData, ref targetObject);
+    //    if(actionThatCanObtainResource != null) {
+    //        return actionThatCanObtainResource;
+    //    } else {
+    //        //If not, check if character's class is an Excess Class
+    //        if (character.home.excessClasses.Contains(character.characterClass.className)) {
+    //            //If yes, perform Change Role to a Role that can obtain needed resource type
+    //            if(buildQuestData.classesThatCanObtainResource.Count > 0) {
+    //                string chosenClassName = buildQuestData.classesThatCanObtainResource[Utilities.rng.Next(0, buildQuestData.classesThatCanObtainResource.Count)];
+    //                ChangeClassAction changeClassAction = character.party.characterObject.currentState.GetAction(ACTION_TYPE.CHANGE_CLASS) as ChangeClassAction;
+    //                changeClassAction.SetAdvertisedClass(chosenClassName);
+    //                targetObject = character.party.characterObject;
+    //                return changeClassAction;
+    //            } else {
+    //                //If not, abandon Quest and perform an Idle Action.
+    //                buildQuestData.AbandonQuest();
+    //                return character.GetRandomIdleAction(ref targetObject);
+    //            }
+    //        } else {
+    //            //If not, abandon Quest and perform an Idle Action.
+    //            buildQuestData.AbandonQuest();
+    //            return character.GetRandomIdleAction(ref targetObject);
+    //        }
+    //    }
+    //    //return base.GetQuestAction(character, data, ref targetObject);
+    //}
     protected override string GetQuestName() {
         return "Build " + Utilities.NormalizeStringUpperCaseFirstLetters(_setting.landmarkType.ToString()) + " at " + _targetTile.locationName;
     }

@@ -146,21 +146,21 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
 #if !WORLD_CREATION_TOOL
         if (_character != null) {
             if (UIManager.Instance.characterInfoUI.isWaitingForAttackTarget) {
-                CharacterAction attackAction = _character.iparty.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
-                if (attackAction.CanBeDone(_character.iparty.icharacterObject) && attackAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party, _character.iparty.icharacterObject)) { //TODO: Change this checker to relationship status checking instead of just faction
-                    UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party.actionData.AssignAction(attackAction, _character.iparty.icharacterObject);
+                CharacterAction attackAction = _character.ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
+                if (attackAction.CanBeDone(_character.ownParty.icharacterObject) && attackAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party, _character.ownParty.icharacterObject)) { //TODO: Change this checker to relationship status checking instead of just faction
+                    UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party.actionData.AssignAction(attackAction, _character.ownParty.icharacterObject);
                     UIManager.Instance.characterInfoUI.SetAttackButtonState(false);
                     return;
                 }
             } else if (UIManager.Instance.characterInfoUI.isWaitingForJoinBattleTarget) {
-                CharacterAction joinBattleAction = _character.iparty.icharacterObject.currentState.GetAction(ACTION_TYPE.JOIN_BATTLE);
-                if (joinBattleAction.CanBeDone(_character.iparty.icharacterObject) && joinBattleAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party, _character.iparty.icharacterObject)) { //TODO: Change this checker to relationship status checking instead of just faction
-                    UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party.actionData.AssignAction(joinBattleAction, _character.iparty.icharacterObject);
+                CharacterAction joinBattleAction = _character.ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.JOIN_BATTLE);
+                if (joinBattleAction.CanBeDone(_character.ownParty.icharacterObject) && joinBattleAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party, _character.ownParty.icharacterObject)) { //TODO: Change this checker to relationship status checking instead of just faction
+                    UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party.actionData.AssignAction(joinBattleAction, _character.ownParty.icharacterObject);
                     UIManager.Instance.characterInfoUI.SetJoinBattleButtonState(false);
                     return;
                 }
             }
-            NewParty iparty = _character.iparty;
+            NewParty iparty = _character.ownParty;
             if (nameLbl.gameObject.activeSelf) {
                 if (_character is ECS.Character) {
                     UIManager.Instance.ShowCharacterInfo(_character as ECS.Character);

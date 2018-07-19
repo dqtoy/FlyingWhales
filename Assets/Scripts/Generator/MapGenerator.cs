@@ -37,7 +37,7 @@ public class MapGenerator : MonoBehaviour {
         LevelLoaderManager.UpdateLoadingInfo("Generating Biomes...");
         yield return null;
         Biomes.Instance.GenerateBiome(GridMap.Instance.hexTiles);
-        Biomes.Instance.LoadPassableTypes(GridMap.Instance.hexTiles, GridMap.Instance.outerGridList);
+        Biomes.Instance.LoadPassableStates(GridMap.Instance.hexTiles, GridMap.Instance.outerGridList);
 
         LevelLoaderManager.UpdateLoadingInfo("Generating Regions...");
         yield return null;
@@ -119,7 +119,7 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.GenerateOuterGrid();
         //GridMap.Instance.DivideOuterGridRegions();
 
-        Biomes.Instance.LoadPassableTypes(GridMap.Instance.hexTiles, GridMap.Instance.outerGridList);
+        Biomes.Instance.LoadPassableStates(GridMap.Instance.hexTiles, GridMap.Instance.outerGridList);
 
         RoadManager.Instance.GenerateTilePassableTypes();
 

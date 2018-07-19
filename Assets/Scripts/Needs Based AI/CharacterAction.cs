@@ -88,6 +88,9 @@ public class CharacterAction {
     public virtual void SuccessEndAction(CharacterParty party) {
         Messenger.Broadcast(Signals.ACTION_SUCCESS, party, this);
     }
+    public virtual bool ShouldGoToTargetObjectOnChoose() {
+        return true;
+    }
     #endregion
 
     #region Filters

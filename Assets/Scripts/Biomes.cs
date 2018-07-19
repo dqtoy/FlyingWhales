@@ -104,19 +104,19 @@ public class Biomes : MonoBehaviour {
 		//GenerateBareBiome();
 	}
 
-    public void LoadPassableTypes(List<HexTile> tiles, List<HexTile> outerGrid = null) {
+    public void LoadPassableStates(List<HexTile> tiles, List<HexTile> outerGrid = null) {
         for (int i = 0; i < tiles.Count; i++) {
             HexTile currentHexTile = tiles[i];
-            LoadPassableTypes(currentHexTile);
+            LoadPassableStates(currentHexTile);
         }
         if (outerGrid != null) {
             for (int i = 0; i < outerGrid.Count; i++) {
                 HexTile currentHexTile = outerGrid[i];
-                LoadPassableTypes(currentHexTile, true);
+                LoadPassableStates(currentHexTile, true);
             }
         }
     }
-    public void LoadPassableTypes(HexTile currentHexTile, bool isOuterGrid = false) {
+    public void LoadPassableStates(HexTile currentHexTile, bool isOuterGrid = false) {
         if (currentHexTile.elevationType == ELEVATION.PLAIN && !isOuterGrid) {
             currentHexTile.SetPassableState(true);
         } else {

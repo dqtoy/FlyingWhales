@@ -40,6 +40,43 @@ public class ActionThread : Multithread {
     }
     #endregion
     private void LookForAction() {
+        if (_party.mainCharacter is Character) {
+            Character character = _party.mainCharacter as Character;
+            if (!character.actionQueue.IsEmpty) {//If Action Queue is not empty, pop the earliest one
+                ActionQueueItem item = character.actionQueue.Dequeue();
+                chosenAction = item.action;
+                chosenObject = item.targetObject;
+            } else {
+                IObject targetObject = null;
+                //If Action Queue is empty, check if Happiness is above 200 and Mental Points and Physical Points are both above -3.
+                if (character.role.happiness > 200 && character.mentalPoints > -3 && character.physicalPoints > -3) {
+                    List<Quest> availableQuests = character.GetAllQuestsIncludingSquad();
+                    if (availableQuests.Count > 0) { //If yes, check if there is at least one Quest
+                        Quest selectedQuest = availableQuests[Utilities.rng.Next(0, availableQuests.Count)];
+                        QuestAction actionFromQuest = selectedQuest.GetQuestAction(character, character.GetDataForQuest(selectedQuest));
+                        if (selectedQuest.groupType == GROUP_TYPE.SOLO) { //If selected Quest is a Solo Quest
+                            if (character.IsInParty()) { //If character is in a party
+
+                            }
+                        }
+                    } else { //If no, choose a random Idle Action
+                        chosenAction = character.GetRandomIdleAction(ref targetObject);
+                        chosenObject = targetObject;
+                    }
+                } else {
+                    //If Action Queue is empty, and either Happiness is 200 or below or either of Mental Points or Physical Points is -3 or below, choose from Advertisements
+                    CharacterAction actionFromAds = GetActionFromAdvertisements(ref targetObject);
+                    if (character.IsSquadLeader()) {
+                        //if character is a Squad Leader and has party members, perform Disband Party then add selected Action to the Queue
+                        character.AddActionToQueue(actionFromAds, targetObject);
+                    } else {
+                        //otherwise, perform selected Action
+                        chosenAction = actionFromAds;
+                        chosenObject = targetObject;
+                    }
+                }
+            }
+        }
         if (!LookForActionFromQuests()) {
             LookForActionFromAdvertisements();
         }
@@ -107,6 +144,35 @@ public class ActionThread : Multithread {
         //Check Prerequisites, currently for resource prerequisites only
         //CheckPrerequisites(chosenAction);
 
+    }
+    private CharacterAction GetActionFromAdvertisements(ref IObject targetObject) {
+        allChoices.Clear();
+
+        actionLog = _party.name + "'s Action Advertisements: ";
+        for (int i = 0; i < _party.currentRegion.landmarks.Count; i++) {
+            BaseLandmark landmark = _party.currentRegion.landmarks[i];
+            StructureObj iobject = landmark.landmarkObj;
+            if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
+                for (int k = 0; k < iobject.currentState.actions.Count; k++) {
+                    CharacterAction action = iobject.currentState.actions[k];
+                    if (action.MeetsRequirements(_party, landmark) && action.CanBeDone(iobject) && action.CanBeDoneBy(_party, iobject)) { //Filter
+                        float happinessIncrease = _party.TotalHappinessIncrease(action, iobject);
+                        actionLog += "\n" + action.actionData.actionName + " = " + happinessIncrease + " (" + iobject.objectName + " at " + iobject.specificLocation.locationName + ")";
+                        PutToChoices(action, iobject, happinessIncrease);
+                    }
+                }
+            }
+        }
+        if (Messenger.eventTable.ContainsKey(Signals.LOOK_FOR_ACTION)) {
+            Messenger.Broadcast<ActionThread>(Signals.LOOK_FOR_ACTION, this);
+        }
+        if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _party.id) {
+            Debug.Log(actionLog);
+        }
+
+        CharacterActionAdvertisement chosenActionAd = PickAction();
+        targetObject = chosenActionAd.targetObject;
+        return chosenActionAd.action;
     }
     //private void CheckPrerequisites(CharacterAction characterAction) {
     //    if (HasPrerequisite(characterAction)) {

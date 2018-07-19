@@ -43,7 +43,7 @@ public class DungeonParty : Party {
 		if(!forDeath){
 			//member.specificLocation.AddCharacterToLocation(member);
 		}
-		member.SetParty(null);
+		member.SetOwnedParty(null);
 		//member.SetCurrentTask (null);
 		//if (_partyMembers.Count <= 0) {
 		//	this.specificLocation.RemoveCharacterFromLocation(this);

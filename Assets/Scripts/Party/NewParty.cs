@@ -147,12 +147,13 @@ public class NewParty : IParty {
     public void AddCharacter(ICharacter icharacter) {
         if (!_icharacters.Contains(icharacter)) {
             _icharacters.Add(icharacter);
-            icharacter.SetParty(this);
+            icharacter.SetCurrentParty(this);
+            Messenger.Broadcast(Signals.CHARACTER_JOINED_PARTY, icharacter, this);
         }
     }
     public void RemoveCharacter(ICharacter icharacter) {
         if (_icharacters.Remove(icharacter)) {
-            icharacter.SetParty(null);
+            icharacter.OnRemovedFromParty();
             //Check if there are still characters in this party, if not, change to dead state
             if (_icharacters.Count <= 0) {
                 PartyDeath();

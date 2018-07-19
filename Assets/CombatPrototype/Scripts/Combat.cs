@@ -1155,11 +1155,11 @@ namespace ECS{
             if (RemoveCharacter(targetCharacter)) {
                 fledCharacters.Add(targetCharacter);
                 //targetCharacter.SetIsDefeated (true);
-                if (targetCharacter.iparty is CharacterParty) {
-                    if(targetCharacter.iparty.icharacters.Count > 1) {
-                        targetCharacter.CreateNewParty();
+                if (targetCharacter.ownParty is CharacterParty) {
+                    if(targetCharacter.ownParty.icharacters.Count > 1) {
+                        targetCharacter.CreateOwnParty();
                     }
-                    CombatManager.Instance.PartyContinuesActionAfterCombat(targetCharacter.iparty as CharacterParty, false);
+                    CombatManager.Instance.PartyContinuesActionAfterCombat(targetCharacter.ownParty as CharacterParty, false);
                 }
                 AddCombatLog(targetCharacter.coloredUrlName + " chickened out and ran away!", targetCharacter.currentSide);
             }
