@@ -1268,6 +1268,7 @@ public enum ACTION_TYPE {
     DEPOSIT,
     CHANGE_CLASS,
     CHAT,
+    WAITING,
 }
 
 public enum OBJECT_TYPE {
