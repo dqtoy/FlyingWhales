@@ -46,7 +46,7 @@ public class CharacterParty : NewParty {
 #endif
     }
 
-#region Utilities
+    #region Utilities
     private void EverydayAction() {
         if (!_isIdle) {
             if (onDailyAction != null) {
@@ -83,10 +83,10 @@ public class CharacterParty : NewParty {
         CharacterAction action = mainCharacter.GetRandomIdleAction(ref targetObject);
         actionData.AssignAction(action, targetObject);
     }
-#endregion
+    #endregion
 
 
-#region Overrides
+    #region Overrides
     public override void PartyDeath() {
         base.PartyDeath();
         Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
@@ -106,5 +106,5 @@ public class CharacterParty : NewParty {
         PathfindingManager.Instance.AddAgent(_icon.pathfinder);
 
     }
-#endregion
+    #endregion
 }

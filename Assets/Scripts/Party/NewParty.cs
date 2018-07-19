@@ -112,6 +112,17 @@ public class NewParty : IParty {
 
         _currentCombat = null;
     }
+    public virtual void DisbandParty() {
+        while (icharacters.Count != 1) {
+            for (int i = 0; i < icharacters.Count; i++) {
+                ICharacter currCharacter = icharacters[i];
+                if (currCharacter.ownParty.id != this.id) {
+                    icharacters.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+    }
     #endregion
 
     #region Interface
@@ -154,6 +165,12 @@ public class NewParty : IParty {
     public void RemoveCharacter(ICharacter icharacter) {
         if (_icharacters.Remove(icharacter)) {
             icharacter.OnRemovedFromParty();
+            if (this.specificLocation is BaseLandmark) {
+                this.specificLocation.AddCharacterToLocation(icharacter.ownParty);
+            } else {
+                icharacter.ownParty.icon.SetVisualState(true);
+                icharacter.ownParty.icon.SetAIPathPosition(this.specificLocation.tileLocation.transform.position);
+            }
             //Check if there are still characters in this party, if not, change to dead state
             if (_icharacters.Count <= 0) {
                 PartyDeath();

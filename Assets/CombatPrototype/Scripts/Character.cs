@@ -2651,15 +2651,27 @@ namespace ECS {
                 return false;
             }
         }
-        public List<Quest> GetAllQuestsIncludingSquad() {
-            if (squad != null && this.IsSquadLeader()) {
-                List<Quest> quests = new List<Quest>();
-                quests.AddRange(GetAcceptedQuestsByGroup(GROUP_TYPE.SOLO));
-                quests.AddRange(squad.GetSquadQuests());
-                return quests;
+        public bool IsSquadMember() {
+            if (_squad == null) {
+                return false;
             } else {
-                return questData.Select(x => x.parentQuest).ToList();
+                if (_squad.squadLeader != null && _squad.squadLeader.id != this.id) {
+                    return true;
+                }
+                return false;
             }
+        }
+        public List<Quest> GetElligibleQuests() {
+            List<Quest> quests = new List<Quest>();
+            if (this.IsSquadLeader()) {
+                quests.AddRange(this.GetAcceptedQuestsByGroup(GROUP_TYPE.SOLO));
+                quests.AddRange(squad.GetSquadQuests());
+            } else if (this.IsSquadMember()) {
+                quests.AddRange(this.GetAcceptedQuestsByGroup(GROUP_TYPE.SOLO));
+            } else if (squad == null) {
+                quests.AddRange(this.GetAcceptedQuestsByGroup(GROUP_TYPE.SOLO));
+            }
+            return quests;
         }
         #endregion
 

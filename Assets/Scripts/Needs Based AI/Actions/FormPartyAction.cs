@@ -33,7 +33,7 @@ public class FormPartyAction : CharacterAction {
     public override void OnChooseAction(NewParty iparty, IObject targetObject) {
         joiningCharacters = new List<ICharacter>();
         party = iparty as CharacterParty;
-        minimumDuration = 15;
+        minimumDuration = 12;
         //When a Squad Leader starts performing a Forming Party action, it will loop through all other party members:
         for (int i = 0; i < iparty.icharacters.Count; i++) {
             ICharacter character = iparty.icharacters[i];

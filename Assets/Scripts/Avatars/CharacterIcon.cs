@@ -183,6 +183,9 @@ public class CharacterIcon : MonoBehaviour {
     public void SetPosition(Vector3 position) {
         this.transform.position = position;
     }
+    public void SetAIPathPosition(Vector3 position) {
+        _aiPath.transform.position = position;
+    }
     public void SetActionOnTargetReached(Action action) {
         _aiPath.SetActionOnTargetReached(action);
     }

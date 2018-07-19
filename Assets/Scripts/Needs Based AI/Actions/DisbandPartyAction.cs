@@ -15,8 +15,7 @@ public class DisbandPartyAction : CharacterAction {
 
     public override void PerformAction(CharacterParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
-        for (int i = 0; i < party.icharacters.Count; i++) {
-            ICharacter character = party.icharacters[i];
-        }
+        party.DisbandParty();
+        EndAction(party, targetObject);
     }
 }
