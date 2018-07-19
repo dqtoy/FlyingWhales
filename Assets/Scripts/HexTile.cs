@@ -61,7 +61,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [Space(10)]
     [Header("Structure Objects")]
     [SerializeField] private GameObject structureParentGO;
-    private StructureObject _structureObjOnTile;
+    [SerializeField] private SpriteRenderer mainStructure;
+    [SerializeField] private SpriteRenderer structureTint;
 
     [Space(10)]
     [Header("Minimap Objects")]
@@ -146,9 +147,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public bool isPassable {
         get { return _isPassable; }
-    }
-    public StructureObject structureObjOnTile {
-        get { return _structureObjOnTile; }
     }
     public bool isCorrupted {
         get { return _isCorrupted; }
@@ -334,12 +332,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #else
         GameObject landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
 #endif
-        Sprite landmarkTileSprite = LandmarkManager.Instance.GetLandmarkTileSprite(landmarkType);
-        if (landmarkTileSprite == null) {
-            DeactivateCenterPiece();
+        List<LandmarkStructureSprite> landmarkTileSprites = LandmarkManager.Instance.GetLandmarkTileSprites(landmarkType);
+        if (landmarkTileSprites == null || landmarkTileSprites.Count == 0) {
+            //DeactivateCenterPiece();
+            HideLandmarkTileSprites();
             landmarkGO.GetComponent<LandmarkVisual>().SetIconState(true);
         } else {
-            SetCenterSprite(landmarkTileSprite);
+            SetLandmarkTileSprite(landmarkTileSprites[Random.Range(0, landmarkTileSprites.Count)]);
             landmarkGO.GetComponent<LandmarkVisual>().SetIconState(false);
         }
         return landmarkGO;
@@ -363,6 +362,19 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public void RemoveLandmarkOnTile() {
         _landmarkOnTile = null;
+    }
+    private void SetLandmarkTileSprite(LandmarkStructureSprite sprites) {
+        mainStructure.sprite = sprites.mainSprite;
+        structureTint.sprite = sprites.tintSprite;
+        mainStructure.gameObject.SetActive(true);
+        structureTint.gameObject.SetActive(true);
+    }
+    private void HideLandmarkTileSprites() {
+        mainStructure.gameObject.SetActive(false);
+        structureTint.gameObject.SetActive(false);
+    }
+    public void SetStructureTint(Color color) {
+        structureTint.color = color;
     }
     #endregion
 
@@ -810,70 +822,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
     #endregion
 
-    #region Structures Functions
-    //internal void CreateStructureOnTile(Faction faction, STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
-    //    GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(faction.race, structureType);
-
-    //    string structureKey = gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)].name;
-    //    GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structureKey, Vector3.zero, Quaternion.identity, structureParentGO.transform);
-    //    AssignStructureObjectToTile(structureGO.GetComponent<StructureObject>());
-    //    if (structureType == STRUCTURE_TYPE.CITY) {
-    //        structureGO.transform.localPosition = new Vector3(0f, -0.85f, 0f);
-    //        _landmarkOnTile.landmarkVisual.SetIconState(false);
-    //    }
-
-    //    _structureObjOnTile.Initialize(structureType, faction.factionColor, structureState, this);
-    //    this._centerPiece.SetActive(false);
-    //}
-    /*
-        * Assign a structure object to this tile.
-        * NOTE: This will destroy any current structures on this tile
-        * and replace it with the new assigned one.
-        * */
-    internal void AssignStructureObjectToTile(StructureObject structureObj) {
-        if (_structureObjOnTile != null) {
-            //Destroy Current Structure
-            _structureObjOnTile.DestroyStructure();
-        }
-        _structureObjOnTile = structureObj;
-        structureObj.transform.SetParent(this.structureParentGO.transform);
-        structureObj.transform.localPosition = Vector3.zero;
-    }
-    internal GameObject CreateSpecialStructureOnTile(LAIR lairType) {
-        GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(CityGenerator.Instance.GetStructurePrefabForSpecialStructures(lairType).name,
-            Vector3.zero, Quaternion.identity, structureParentGO.transform);
-        //GameObject.Instantiate(
-        //CityGenerator.Instance.GetStructurePrefabForSpecialStructures(lairType), structureParentGO.transform) as GameObject;
-        structureGO.transform.localPosition = Vector3.zero;
-        return structureGO;
-    }
-    internal void HideStructures() {
-        structureParentGO.SetActive(false);
-    }
-    internal void ShowStructures() {
-        structureParentGO.SetActive(true);
-    }
-    public void RuinStructureOnTile(bool immediatelyDestroyStructures) {
-        if (_structureObjOnTile != null) {
-            Debug.Log(GameManager.Instance.month + "/" + GameManager.Instance.days + "/" + GameManager.Instance.year + " - RUIN STRUCTURE ON: " + this.name);
-            if (immediatelyDestroyStructures) {
-                _structureObjOnTile.DestroyStructure();
-            } else {
-                _structureObjOnTile.SetStructureState(STRUCTURE_STATE.RUINED);
-            }
-            if (landmarkOnTile != null) {
-                //landmarkOnTile.AddHistory ("Landmark structure destroyed!");
-            }
-        }
-    }
-    /*
-        Does this tile have a structure on it?
-            */
-    public bool HasStructure() {
-        return _structureObjOnTile != null || (landmarkOnTile != null && landmarkOnTile.isOccupied);
-    }
-    #endregion
-
     #region Tile Functions
     public void DisableColliders() {
         this.GetComponent<Collider2D>().enabled = false;
@@ -891,7 +839,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void ResetTile() {
         this.isOccupied = false;
 
-        RuinStructureOnTile(false);
+        //RuinStructureOnTile(false);
         Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
         for (int i = 0; i < children.Length; i++) {
             ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
@@ -901,20 +849,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         this.isOccupied = true;
     }
     public void Unoccupy(bool immediatelyDestroyStructures = false) {
-        //if (!_isBorderOfCities.Select(x => x.kingdom).Contains(ownedByCity.kingdom)
-        //    && !_isOuterTileOfCities.Select(x => x.kingdom).Contains(ownedByCity.kingdom)) {
-        //    _visibleByKingdoms.Remove(ownedByCity.kingdom);
-        //}
         isOccupied = false;
-        //ownedByCity = null;
-        //SetMinimapTileColor(biomeColor);
-        //this._kingdomColorSprite.color = Color.white;
-        //this.kingdomColorSprite.gameObject.SetActive(false);
-        RuinStructureOnTile(immediatelyDestroyStructures);
-        //city = null;
 
-        //Destroy Nameplates
-        //RemoveCityNamePlate();
         Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
         for (int i = 0; i < children.Length; i++) {
             ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);

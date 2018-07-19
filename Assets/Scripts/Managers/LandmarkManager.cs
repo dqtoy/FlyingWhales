@@ -490,9 +490,9 @@ public class LandmarkManager : MonoBehaviour {
         }
         return allLandmarks;
     }
-    public Sprite GetLandmarkTileSprite(LANDMARK_TYPE landmarkType) {
+    public List<LandmarkStructureSprite> GetLandmarkTileSprites(LANDMARK_TYPE landmarkType) {
         LandmarkData data = GetLandmarkData(landmarkType);
-        return data.landmarkTileSprite;
+        return data.landmarkTileSprites;
     }
     #endregion
 
@@ -565,6 +565,7 @@ public class LandmarkManager : MonoBehaviour {
         }
         newOwner.OwnArea(area);
         area.SetOwner(newOwner);
+        area.TintStructuresInArea(newOwner.factionColor);
     }
     public void UnownArea(Area area) {
         if (area.owner != null) {

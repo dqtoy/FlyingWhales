@@ -126,9 +126,9 @@ public class LandmarkMustBeState : ActionFilter {
         this.requiredState = (STRUCTURE_STATE)Enum.Parse(typeof(STRUCTURE_STATE), requiredState.ToString());
     }
     public override bool MeetsRequirements(ECS.Character character, BaseLandmark landmark) {
-        if (landmark.tileLocation.structureObjOnTile != null && landmark.tileLocation.structureObjOnTile.structureState == requiredState) {
-            return true;
-        }
+        //if (landmark.tileLocation.structureObjOnTile != null && landmark.tileLocation.structureObjOnTile.structureState == requiredState) {
+        //    return true;
+        //}
         return false;
     }
 }

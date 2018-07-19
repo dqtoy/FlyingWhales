@@ -174,6 +174,11 @@ public class Area {
             currTile.UnHighlightTile();
         }
     }
+    public void TintStructuresInArea(Color color) {
+        for (int i = 0; i < tiles.Count; i++) {
+            tiles[i].SetStructureTint(color);
+        }
+    }
     #endregion
 
     #region Owner

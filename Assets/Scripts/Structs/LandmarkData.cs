@@ -9,7 +9,7 @@ public class LandmarkData {
     public List<LANDMARK_TAG> uniqueTags;
     public LandmarkItemData[] itemData;
     public Sprite landmarkObjectSprite;
-    public Sprite landmarkTileSprite;
+    public List<LandmarkStructureSprite> landmarkTileSprites;//index 0 is main structure, index 1 is tint
     public List<PASSABLE_TYPE> possibleSpawnPoints;
 
     private WeightedDictionary<string> _itemWeights;
