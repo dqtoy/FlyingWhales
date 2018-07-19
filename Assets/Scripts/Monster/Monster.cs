@@ -61,6 +61,9 @@ public class Monster : ICharacter, ICharacterSim {
     public string coloredUrlName {
         get { return "<link=" + '"' + this._id.ToString() + "_monster" + '"' + ">" + "<color=#" + this._characterColorCode + ">" + "[" + _id + "]" + this._name + "</color></link>"; }
     }
+    public string idName {
+        get { return "[" + _id + "]" + this._name; }
+    }
     public int id {
         get { return _id; }
     }
@@ -427,6 +430,7 @@ public class Monster : ICharacter, ICharacterSim {
         BaseInitialize();
     }
     public void InitializeSim() {
+        _id = Utilities.SetID(this);
         BaseInitializeSim();
         ConstructMonsterData();
     }

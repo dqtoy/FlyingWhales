@@ -32,6 +32,7 @@ public class CharacterSim : ICharacterSim {
     [SerializeField] private GENDER _gender;
     [SerializeField] private List<string> _skillNames;
 
+    private int _id;
     private int _currentHP;
     private int _currentSP;
     private int _currentRow;
@@ -55,8 +56,14 @@ public class CharacterSim : ICharacterSim {
     public string name {
         get { return _name; }
     }
+    public string idName {
+        get { return "[" + _id + "]" + this._name; }
+    }
     public string className {
         get { return _className; }
+    }
+    public int id {
+        get { return _id; }
     }
     public int level {
         get { return _level; }
@@ -194,6 +201,7 @@ public class CharacterSim : ICharacterSim {
     #endregion
 
     public void InitializeSim() {
+        _id = Utilities.SetID(this);
         ConstructClass();
         ConstructSkills();
         ResetToFullHP();

@@ -27,6 +27,7 @@ public class Utilities : MonoBehaviour {
     public static int lastMonsterID = 0;
     public static int lastPartyID = 0;
     public static int lastSquadID = 0;
+    public static int lastCharacterSimID = 0;
 
     public static float defenseBuff = 1.20f;
 	public static int defaultCityHP = 300;
@@ -83,6 +84,9 @@ public class Utilities : MonoBehaviour {
         } else if (obj is Squad) {
             lastSquadID += 1;
             return lastSquadID;
+        } else if (obj is CharacterSim) {
+            lastCharacterSimID += 1;
+            return lastCharacterSimID;
         }
         return 0;
 	}
@@ -109,6 +113,8 @@ public class Utilities : MonoBehaviour {
             lastQuestID = idToUse;
         } else if (obj is Squad) {
             lastSquadID = idToUse;
+        } else if (obj is CharacterSim) {
+            lastCharacterSimID = idToUse;
         }
         return idToUse;
     }

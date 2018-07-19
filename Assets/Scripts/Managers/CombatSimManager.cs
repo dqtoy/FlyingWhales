@@ -140,45 +140,41 @@ public class CombatSimManager : MonoBehaviour {
     }
     public void OnClickAddSideA() {
         string chosenCharacterName = sideAOptions.options[sideAOptions.value].text;
-        if (!SideAContains(chosenCharacterName)) {
-            ICharacterSim icharacterSim = null;
-            if (_allCharacters.Contains(chosenCharacterName)) {
-                string path = characterPath + chosenCharacterName + ".json";
-                CharacterSim characterSim = JsonUtility.FromJson<CharacterSim>(System.IO.File.ReadAllText(path));
-                icharacterSim = characterSim;
-            } else {
-                string path = monsterPath + chosenCharacterName + ".json";
-                Monster monster = JsonUtility.FromJson<Monster>(System.IO.File.ReadAllText(path));
-                icharacterSim = monster;
-            }
-            icharacterSim.InitializeSim();
-            _sideAList.Add(icharacterSim);
-            GameObject go = GameObject.Instantiate(characterSimBtnPrefab, sideAContentTransform);
-            go.GetComponent<CharacterSimButton>().buttonText.text = icharacterSim.name;
-            go.GetComponent<CharacterSimButton>().side = SIDES.A;
-            go.GetComponent<CharacterSimButton>().icharacterSim = icharacterSim;
+        ICharacterSim icharacterSim = null;
+        if (_allCharacters.Contains(chosenCharacterName)) {
+            string path = characterPath + chosenCharacterName + ".json";
+            CharacterSim characterSim = JsonUtility.FromJson<CharacterSim>(System.IO.File.ReadAllText(path));
+            icharacterSim = characterSim;
+        } else {
+            string path = monsterPath + chosenCharacterName + ".json";
+            Monster monster = JsonUtility.FromJson<Monster>(System.IO.File.ReadAllText(path));
+            icharacterSim = monster;
         }
+        icharacterSim.InitializeSim();
+        _sideAList.Add(icharacterSim);
+        GameObject go = GameObject.Instantiate(characterSimBtnPrefab, sideAContentTransform);
+        go.GetComponent<CharacterSimButton>().buttonText.text = icharacterSim.idName;
+        go.GetComponent<CharacterSimButton>().side = SIDES.A;
+        go.GetComponent<CharacterSimButton>().icharacterSim = icharacterSim;
     }
     public void OnClickAddSideB() {
         string chosenCharacterName = sideBOptions.options[sideBOptions.value].text;
-        if (!SideAContains(chosenCharacterName)) {
-            ICharacterSim icharacterSim = null;
-            if (_allCharacters.Contains(chosenCharacterName)) {
-                string path = characterPath + chosenCharacterName + ".json";
-                CharacterSim characterSim = JsonUtility.FromJson<CharacterSim>(System.IO.File.ReadAllText(path));
-                icharacterSim = characterSim;
-            } else {
-                string path = monsterPath + chosenCharacterName + ".json";
-                Monster monster = JsonUtility.FromJson<Monster>(System.IO.File.ReadAllText(path));
-                icharacterSim = monster;
-            }
-            icharacterSim.InitializeSim();
-            _sideBList.Add(icharacterSim);
-            GameObject go = GameObject.Instantiate(characterSimBtnPrefab, sideBContentTransform);
-            go.GetComponent<CharacterSimButton>().buttonText.text = icharacterSim.name;
-            go.GetComponent<CharacterSimButton>().side = SIDES.B;
-            go.GetComponent<CharacterSimButton>().icharacterSim = icharacterSim;
+        ICharacterSim icharacterSim = null;
+        if (_allCharacters.Contains(chosenCharacterName)) {
+            string path = characterPath + chosenCharacterName + ".json";
+            CharacterSim characterSim = JsonUtility.FromJson<CharacterSim>(System.IO.File.ReadAllText(path));
+            icharacterSim = characterSim;
+        } else {
+            string path = monsterPath + chosenCharacterName + ".json";
+            Monster monster = JsonUtility.FromJson<Monster>(System.IO.File.ReadAllText(path));
+            icharacterSim = monster;
         }
+        icharacterSim.InitializeSim();
+        _sideBList.Add(icharacterSim);
+        GameObject go = GameObject.Instantiate(characterSimBtnPrefab, sideBContentTransform);
+        go.GetComponent<CharacterSimButton>().buttonText.text = icharacterSim.idName;
+        go.GetComponent<CharacterSimButton>().side = SIDES.B;
+        go.GetComponent<CharacterSimButton>().icharacterSim = icharacterSim;
     }
     public void OnClickRemoveSideA() {
         if(currentlySelectedSideAButton != null) {

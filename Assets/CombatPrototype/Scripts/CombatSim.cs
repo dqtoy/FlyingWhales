@@ -43,7 +43,7 @@ public class CombatSim {
 
     public void CharacterDeath(ICharacterSim character) {
         if (RemoveCharacter(character)) {
-            AddCombatLog(character.name + " died horribly!", character.currentSide);
+            AddCombatLog(character.idName + " died horribly!", character.currentSide);
         }
     }
     //This simulates the whole combat system
@@ -100,7 +100,7 @@ public class CombatSim {
         AddCombatLog("Winners:", SIDES.A);
         for (int i = 0; i < winnerCharacters.Count; i++) {
             ICharacterSim character = winnerCharacters[i];
-            AddCombatLog("  " + character.name + " (" + character.currentHP + "/" + character.maxHP + ")", SIDES.A);
+            AddCombatLog("  " + character.idName + " (" + character.currentHP + "/" + character.maxHP + ")", SIDES.A);
         }
     }
 
@@ -348,7 +348,7 @@ public class CombatSim {
             return;
         }
         Armor armor = chosenBodyPart.GetArmor();
-        log += sourceCharacter.name + " " + attackSkill.skillName.ToLower() + " " + targetCharacter.name + " in the " + chosenBodyPart.name.ToLower();
+        log += sourceCharacter.idName + " " + attackSkill.skillName.ToLower() + " " + targetCharacter.idName + " in the " + chosenBodyPart.name.ToLower();
 
         if (attacker != null) {
             //damageRange = ItemManager.Instance.weaponTypeData[weapon.weaponType].damageRange;
@@ -441,9 +441,9 @@ public class CombatSim {
         HealSkill healSkill = (HealSkill) skill;
         targetCharacter.AdjustHP(healSkill.healPower);
         if (sourceCharacter == targetCharacter) {
-            AddCombatLog(sourceCharacter.name + " used " + healSkill.skillName + " and healed himself/herself for " + healSkill.healPower.ToString() + ".", sourceCharacter.currentSide);
+            AddCombatLog(sourceCharacter.idName + " used " + healSkill.skillName + " and healed himself/herself for " + healSkill.healPower.ToString() + ".", sourceCharacter.currentSide);
         } else if (sourceCharacter == targetCharacter) {
-            AddCombatLog(sourceCharacter.name + " used " + healSkill.skillName + " and healed " + targetCharacter.name + " for " + healSkill.healPower.ToString() + ".", sourceCharacter.currentSide);
+            AddCombatLog(sourceCharacter.idName + " used " + healSkill.skillName + " and healed " + targetCharacter.idName + " for " + healSkill.healPower.ToString() + ".", sourceCharacter.currentSide);
         }
 
     }
@@ -461,7 +461,7 @@ public class CombatSim {
             //    }
             //    CombatManager.Instance.PartyContinuesActionAfterCombat(targetCharacter.iparty as CharacterParty, false);
             //}
-            AddCombatLog(targetCharacter.name + " chickened out and ran away!", targetCharacter.currentSide);
+            AddCombatLog(targetCharacter.idName + " chickened out and ran away!", targetCharacter.currentSide);
         }
     }
     #endregion
@@ -469,7 +469,7 @@ public class CombatSim {
     #region Obtain Item Skill
     private void ObtainItemSkill(ICharacterSim sourceCharacter, ICharacterSim targetCharacter) {
         //TODO: ICharacter obtains an item
-        AddCombatLog(targetCharacter.name + " obtained an item.", targetCharacter.currentSide);
+        AddCombatLog(targetCharacter.idName + " obtained an item.", targetCharacter.currentSide);
     }
     #endregion
 
@@ -479,12 +479,12 @@ public class CombatSim {
             if (targetCharacter.currentRow != 1) {
                 targetCharacter.SetRowNumber(targetCharacter.currentRow - 1);
             }
-            AddCombatLog(targetCharacter.name + " moved to the left. (" + targetCharacter.currentRow + ")", targetCharacter.currentSide);
+            AddCombatLog(targetCharacter.idName + " moved to the left. (" + targetCharacter.currentRow + ")", targetCharacter.currentSide);
         } else if (skill.skillName == "MoveRight") {
             if (targetCharacter.currentRow != 5) {
                 targetCharacter.SetRowNumber(targetCharacter.currentRow + 1);
             }
-            AddCombatLog(targetCharacter.name + " moved to the right.(" + targetCharacter.currentRow + ")", targetCharacter.currentSide);
+            AddCombatLog(targetCharacter.idName + " moved to the right.(" + targetCharacter.currentRow + ")", targetCharacter.currentSide);
         }
     }
     #endregion

@@ -5,6 +5,7 @@ using ECS;
 
 public interface ICharacterSim {
     string name { get; }
+    string idName { get; }
     int actRate { get; set; }
     int speed { get; }
     int currentRow { get; }
