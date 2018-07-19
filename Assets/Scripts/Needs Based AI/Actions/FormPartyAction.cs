@@ -96,9 +96,6 @@ public class FormPartyAction : CharacterAction {
                     locationChoices[TileType.Non_Deadend].Add(currTile); //Non-deadend Tiles with no structure
                 }
             }
-
-            
-
         }
 
         foreach (KeyValuePair<TileType, List<HexTile>> kvp in locationChoices) {
@@ -129,6 +126,25 @@ public class FormPartyAction : CharacterAction {
                 EndAction(party, targetObject);
             }
         }
+    }
+    //Give all provided needs to the character regardless of the amount
+    public override void GiveAllReward(CharacterParty party) {
+        for (int i = 0; i < party.icharacters.Count; i++) {
+            ICharacter icharacter = party.icharacters[i];
+            icharacter.role.AdjustFullness(_actionData.providedFullness);
+            icharacter.role.AdjustEnergy(_actionData.providedEnergy);
+            icharacter.role.AdjustPrestige(_actionData.providedPrestige);
+            if (party.icharacters.Count >= 2) { //only if there are at least 2 members in the party
+                icharacter.role.AdjustSanity(_actionData.providedSanity);
+                icharacter.role.AdjustFun(_actionData.providedFun);
+            }
+            icharacter.role.AdjustSafety(_actionData.providedSafety);
+            if (_actionData.hpRecoveredPercentage != 0f && icharacter.currentHP < icharacter.maxHP) {
+                float hpRecovery = (_actionData.hpRecoveredPercentage / 100f) * (float)icharacter.maxHP;
+                icharacter.AdjustHP((int)hpRecovery);
+            }
+        }
+
     }
     public override void EndAction(CharacterParty party, IObject targetObject) {
         base.EndAction(party, targetObject);

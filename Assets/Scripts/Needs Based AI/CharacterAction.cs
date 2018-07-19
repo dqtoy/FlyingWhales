@@ -91,9 +91,6 @@ public class CharacterAction {
     public virtual bool ShouldGoToTargetObjectOnChoose() {
         return true;
     }
-    public virtual new string ToString() {
-        return actionType.ToString();
-    }
     #endregion
 
     #region Filters
@@ -164,7 +161,7 @@ public class CharacterAction {
     }
 
     //Give all provided needs to the character regardless of the amount
-    public void GiveAllReward(CharacterParty party) {
+    public virtual void GiveAllReward(CharacterParty party) {
         for (int i = 0; i < party.icharacters.Count; i++) {
             ICharacter icharacter = party.icharacters[i];
             icharacter.role.AdjustFullness(_actionData.providedFullness);

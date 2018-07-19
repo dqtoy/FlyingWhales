@@ -41,13 +41,13 @@ public class ActionThread : Multithread {
     #endregion
     private void LookForAction() {
         if (_party.mainCharacter is Character) {
-            actionLog = _party.name + "'s Action Logic: ";
+            actionLog = "[" + Utilities.GetDateString(GameManager.Instance.Today()) + "]" + _party.name + "'s Action Logic: ";
             Character character = _party.mainCharacter as Character;
             if (!character.actionQueue.IsEmpty) {//If Action Queue is not empty, pop the earliest one
                 ActionQueueItem item = character.actionQueue.Dequeue();
                 chosenAction = item.action;
                 chosenObject = item.targetObject;
-                actionLog += "\nGot action from queue " + chosenAction.ToString();
+                actionLog += "\nGot action from queue " + chosenAction.actionData.actionName + "-" + chosenObject.objectName;
             } else {
                 //If Action Queue is empty, check if Happiness is above 200 and Mental Points and Physical Points are both above -3.
                 if (character.role.happiness > CharacterManager.Instance.HAPPINESS_THRESHOLD && character.mentalPoints > CharacterManager.Instance.MENTAL_THRESHOLD 
@@ -64,15 +64,18 @@ public class ActionThread : Multithread {
                     IObject targetObject = null;
                     //If Action Queue is empty, and either Happiness is 200 or below or either of Mental Points or Physical Points is -3 or below, choose from Advertisements
                     CharacterAction actionFromAds = GetActionFromAdvertisements(ref targetObject);
+                    actionLog += "\n" + character.name + " will choose action from advertisements";
                     if (character.IsSquadLeader()) {
                         //if character is a Squad Leader and has party members, perform Disband Party then add selected Action to the Queue
                         chosenAction = character.currentParty.icharacterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY);
                         chosenObject = character.currentParty.icharacterObject;
                         character.AddActionToQueue(actionFromAds, targetObject);
+                        actionLog += "\n" + character.name + " disbanded party and added " + chosenAction.actionData.actionName + " " + chosenObject.objectName + " to action queue";
                     } else {
                         //otherwise, perform selected Action
                         chosenAction = actionFromAds;
                         chosenObject = targetObject;
+                        actionLog += "\n" + character.name + " chose to " + chosenAction.actionData.actionName + " " + chosenObject.objectName;
                     }
                 }
             }
@@ -86,9 +89,11 @@ public class ActionThread : Multithread {
         //}
     }
     private void LookForActionForSquadLeader(Character character, List<Quest> availableQuests) {
+        actionLog += "\nGetting action for squad leader:"; 
         if (availableQuests.Count > 0) { //If yes, check if there is at least one Quest
             Quest selectedQuest = availableQuests[Utilities.rng.Next(0, availableQuests.Count)];
             QuestAction actionFromQuest = selectedQuest.GetQuestAction(character, character.GetDataForQuest(selectedQuest));
+            actionLog += "\nSelected quest is " + selectedQuest.name;
             if (selectedQuest.groupType == GROUP_TYPE.SOLO) { //If selected Quest is a Solo Quest
                 if (character.IsInParty()) { //If character is in a party
                     if (IsQuestActionAchieveable(actionFromQuest)) {//if action from Quest is achievable
@@ -96,11 +101,13 @@ public class ActionThread : Multithread {
                         chosenObject = character.currentParty.icharacterObject;
                         //Disband Party then add action from the Quest to the Action Queue
                         character.AddActionToQueue(actionFromQuest.action, actionFromQuest.targetObject);
+                        actionLog += "\n" + character.name + " disbanded party and added action " + actionFromQuest.action.actionData.actionName + " " + chosenObject.objectName + " to queue.";
                     } else {
                         //if action from Quest is not achievable, Disband Party and perform Grind Action
                         chosenAction = character.currentParty.icharacterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY);
                         chosenObject = character.currentParty.icharacterObject;
                         //TODO: Add Grind Action
+                        actionLog += "\n" + character.name + " disbanded party and grind action to queue";
                     }
 
                 } else {
@@ -109,9 +116,11 @@ public class ActionThread : Multithread {
                         //obtain and perform Action from the Quest
                         chosenAction = actionFromQuest.action;
                         chosenObject = actionFromQuest.targetObject;
+                        actionLog += "\n" + character.name + " got action " + chosenAction.actionData.actionName + " " + chosenObject.objectName + " from quest";
                     } else {
                         //if action from Quest is not achievable
                         //TODO: Add Grind Action
+                        actionLog += "\n" + character.name + " decided to grind";
                     }
                 }
             } else if (selectedQuest.groupType == GROUP_TYPE.PARTY) {
@@ -119,40 +128,49 @@ public class ActionThread : Multithread {
                 //Perform Forming Party action which sends out signals to all other Squad Followers
                 chosenAction = _party.icharacterObject.currentState.GetAction(ACTION_TYPE.FORM_PARTY);
                 chosenObject = _party.icharacterObject;
+                actionLog += "\n" + character.name + " chose to form a party.";
                 if (IsQuestActionAchieveable(actionFromQuest)) {
                     //if action from Quest is achievable, add action from the Quest to the Action Queue
                     character.AddActionToQueue(actionFromQuest.action, actionFromQuest.targetObject);
+                    actionLog += "\n" + character.name + " added action " + chosenAction.actionData.actionName + " " + chosenObject.objectName + " from quest to queue.";
                 } else {
                     //if action from Quest is not achievable, perform Grind Action
                     //TODO: Add Grind Action
+                    actionLog += "\n" + character.name + " decided to grind";
                 }
             }
         } else { //If no, choose a random Idle Action
             IObject targetObject = null;
             chosenAction = character.GetRandomIdleAction(ref targetObject);
             chosenObject = targetObject;
+            actionLog += "\n" + character.name + " chose to " + chosenAction.actionData.actionName + " " + chosenObject.objectName;
         }
     }
     private void LookForActionForSquadMember(Character character, List<Quest> availableQuests) {
+        actionLog += "\nGetting action for squad follower:";
         //If Squad Follower, choose only from available Solo Quests, if None, perform a random Idle Action
         if (availableQuests.Count == 0) {
             IObject targetObject = null;
             chosenAction = character.GetRandomIdleAction(ref targetObject);
             chosenObject = targetObject;
+            actionLog += "\n" + character.name + " chose to " + chosenAction.actionData.actionName + " " + chosenObject.objectName;
         } else {
             Quest chosenQuest = availableQuests[Utilities.rng.Next(0, availableQuests.Count)];
             QuestAction questAction = chosenQuest.GetQuestAction(character, character.GetDataForQuest(chosenQuest));
             chosenAction = questAction.action;
             chosenObject = questAction.targetObject;
+            actionLog += "\n" + character.name + " decided to do action " + chosenAction.actionData.actionName + " " + chosenObject.objectName + " from quest " + chosenQuest.name;
         }
     }
     private void LookForActionSquadless(Character character, List<Quest> availableQuests) {
+        actionLog += "\nGetting action for squadless:";
         //If Squadless, choose only from available Solo Quests:
         if (availableQuests.Count == 0) {
             //if no available Solo Quest, perform a random Idle Action
             IObject targetObject = null;
             chosenAction = character.GetRandomIdleAction(ref targetObject);
             chosenObject = targetObject;
+            actionLog += "\n" + character.name + " chose to " + chosenAction.actionData.actionName + " " + chosenObject.objectName;
         } else {
             Quest chosenQuest = availableQuests[Utilities.rng.Next(0, availableQuests.Count)];
             QuestAction questAction = chosenQuest.GetQuestAction(character, character.GetDataForQuest(chosenQuest));
@@ -160,9 +178,11 @@ public class ActionThread : Multithread {
                 //if action from Quest is achievable, add action from the Quest to the Action Queue
                 chosenAction = questAction.action;
                 chosenObject = questAction.targetObject;
+                actionLog += "\n" + character.name + " decided to do action " + chosenAction.actionData.actionName + " " + chosenObject.objectName + " from quest " + chosenQuest.name;
             } else {
                 //if action from Quest is not achievable, perform Grind Action
                 //TODO: Grind Action
+                actionLog += "\n" + character.name + " decided to grind";
             }
         }
     }
@@ -234,7 +254,7 @@ public class ActionThread : Multithread {
     private CharacterAction GetActionFromAdvertisements(ref IObject targetObject) {
         allChoices.Clear();
 
-        actionLog = _party.name + "'s Action Advertisements: ";
+        actionLog += _party.name + "'s Action Advertisements: ";
         for (int i = 0; i < _party.currentRegion.landmarks.Count; i++) {
             BaseLandmark landmark = _party.currentRegion.landmarks[i];
             StructureObj iobject = landmark.landmarkObj;
@@ -400,9 +420,9 @@ public class ActionThread : Multithread {
             }
             throw new Exception(error);
         }
-        if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && _party.icharacters.Contains(UIManager.Instance.characterInfoUI.currentlyShowingCharacter)) {
-            Debug.Log("Chosen Action: " + chosenActionAd.action.actionData.actionName + " = " + chosenActionAd.advertisement + " (" + chosenActionAd.targetObject.objectName + " at " + chosenActionAd.targetObject.specificLocation.locationName + ")");
-        }
+        //if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && _party.icharacters.Contains(UIManager.Instance.characterInfoUI.currentlyShowingCharacter)) {
+        //    Debug.Log("Chosen Action: " + chosenActionAd.action.actionData.actionName + " = " + chosenActionAd.advertisement + " (" + chosenActionAd.targetObject.objectName + " at " + chosenActionAd.targetObject.specificLocation.locationName + ")");
+        //}
         //Debug.Log("Chosen Action: " + chosenAction.actionData.actionName + " = " + choices[chosenIndex].advertisement + " (" + chosenAction.state.obj.objectName + " at " + chosenAction.state.obj.objectLocation.landmarkName + ")");
         return chosenActionAd;
     }

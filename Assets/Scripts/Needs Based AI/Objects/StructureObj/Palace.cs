@@ -29,11 +29,11 @@ public class Palace : StructureObj {
     private void StartOfMonth() {
         UpdateAdvertisedChangeClassAction();
         ScheduleStartOfMonthActions();
-        CheckForBuildStructureQuest();
+        //CheckForBuildStructureQuest();
     }
     private void EndOfMonth() {
         ScheduleEndOfMonthActions();
-        CheckBuildStructureElligibility();
+        //CheckBuildStructureElligibility();
     }
     private void ScheduleStartOfMonthActions() {
         GameDate gameDate = GameManager.Instance.Today();
