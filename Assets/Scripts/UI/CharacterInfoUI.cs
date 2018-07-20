@@ -184,6 +184,30 @@ public class CharacterInfoUI : UIMenu {
         for (int i = 0; i < currentlyShowingCharacter.ownParty.icharacters.Count; i++) {
             text += "\n - " + currentlyShowingCharacter.ownParty.icharacters[i].name;
         }
+        text += "\n<b>Squad: </b>" + currentlyShowingCharacter.ownParty.name;
+        if (currentlyShowingCharacter.squad != null) {
+            for (int i = 0; i < currentlyShowingCharacter.squad.squadMembers.Count; i++) {
+                ICharacter currChar = currentlyShowingCharacter.squad.squadMembers[i];
+                if (currentlyShowingCharacter.squad.squadLeader.id == currChar.id) {
+                    text += "\n - " + currChar.name + " (LEADER)";
+                } else {
+                    text += "\n - " + currChar.name;
+                }
+            }
+            List<Quest> quests = currentlyShowingCharacter.squad.GetSquadQuests();
+            text += "\n<b>Squad Quests: </b>";
+            if (quests.Count > 0) {
+                for (int i = 0; i < quests.Count; i++) {
+                    Quest currQuest = quests[i];
+                    text += "\n - " + currQuest.name + "(" + currQuest.groupType.ToString() + ")";
+                }
+            } else {
+                text += "NONE";
+            }
+            
+        } else {
+            text += "NONE";
+        }
         generalInfoLbl.text = text;
 
     }
