@@ -17,6 +17,16 @@ public class CharacterActionQueue<T> {
         if (IsEmpty) {
             return default(T);
         } else {
+            T firstElement = list[0];
+            list.RemoveAt(0);
+            return firstElement;
+        }
+    }
+
+    public T Peek() {
+        if (IsEmpty) {
+            return default(T);
+        } else {
             return list[0];
         }
     }
@@ -27,6 +37,10 @@ public class CharacterActionQueue<T> {
 
     public bool IsEmpty {
         get { return list.Count <= 0; }
+    }
+
+    public void Clear() {
+        list.Clear();
     }
 
 }

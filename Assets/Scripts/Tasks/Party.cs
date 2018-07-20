@@ -198,7 +198,7 @@ public class Party: IEncounterable {
 			//member.avatar.RemoveCharacter(member);
    //     }
 
-        member.SetParty(null);
+        member.SetOwnedParty(null);
 		//member.SetCurrentTask(null);
 		if (_partyMembers.Count <= 0 || member.id == _partyLeader.id) {
             //JustDisbandParty ();

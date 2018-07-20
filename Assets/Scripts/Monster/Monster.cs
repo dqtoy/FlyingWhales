@@ -24,8 +24,8 @@ public class Monster : ICharacter, ICharacterSim {
     [SerializeField] private List<string> _skillNames;
     [SerializeField] private List<ElementChance> _elementChanceWeaknesses;
     [SerializeField] private List<ElementChance> _elementChanceResistances;
-    //To add item drops and their chances
 
+    //To add item drops and their chances
     private string _characterColorCode;
     private int _id;
     private int _currentHP;
@@ -38,7 +38,7 @@ public class Monster : ICharacter, ICharacterSim {
     private BaseLandmark _homeLandmark;
     private StructureObj _homeStructure;
     private RaceSetting _raceSetting;
-    private MonsterParty _party;
+    private MonsterParty _ownParty;
     private CharacterPortrait _characterPortrait;
     private PortraitSettings _portraitSettings;
     //private Combat _currentCombat;
@@ -50,6 +50,7 @@ public class Monster : ICharacter, ICharacterSim {
     private Dictionary<ELEMENT, float> _elementalWeaknesses;
     private Dictionary<ELEMENT, float> _elementalResistances;
     private Squad _squad;
+    private NewParty _currentParty;
 
     #region getters/setters
     public string name {
@@ -174,7 +175,7 @@ public class Monster : ICharacter, ICharacterSim {
         get { return _portraitSettings; }
     }
     public MonsterParty party {
-        get { return _party; }
+        get { return _ownParty; }
     }
     public CharacterRole role {
         get { return null; }
@@ -204,8 +205,8 @@ public class Monster : ICharacter, ICharacterSim {
     public Dictionary<ELEMENT, float> elementalResistances {
         get { return _elementalResistances; }
     }
-    public NewParty iparty {
-        get { return _party; }
+    public NewParty ownParty {
+        get { return _ownParty; }
     }
     public List<CharacterAction> desperateActions {
         get { return _desperateActions; }
@@ -215,6 +216,12 @@ public class Monster : ICharacter, ICharacterSim {
     }
     public Squad squad {
         get { return _squad; }
+    }
+    public NewParty currentParty {
+        get { return _currentParty; }
+    }
+    public CharacterActionQueue<ActionQueueItem> actionQueue {
+        get { return null; }
     }
     #endregion
 
@@ -325,7 +332,7 @@ public class Monster : ICharacter, ICharacterSim {
     public void Death() {
         _isDead = true;
         Messenger.Broadcast(Signals.MONSTER_DEATH, this);
-        _party.RemoveCharacter(this);
+        _ownParty.RemoveCharacter(this);
         MonsterManager.Instance.allMonsters.Remove(this);
 
         GameObject.Destroy(_characterPortrait.gameObject);
@@ -463,7 +470,7 @@ public class Monster : ICharacter, ICharacterSim {
     }
     public void FaintOrDeath() {
         if (CombatSimManager.Instance == null) {
-            _party.currentCombat.CharacterDeath(this);
+            _ownParty.currentCombat.CharacterDeath(this);
             Death();
         } else {
             DeathSim();
@@ -500,16 +507,16 @@ public class Monster : ICharacter, ICharacterSim {
         _homeStructure = newHomeStructure;
         newHomeStructure.AdjustNumOfResidents(1);
     }
-    public NewParty CreateNewParty() {
-        if (_party != null) {
-            _party.RemoveCharacter(this);
+    public NewParty CreateOwnParty() {
+        if (_ownParty != null) {
+            _ownParty.RemoveCharacter(this);
         }
         MonsterParty newParty = new MonsterParty();
         newParty.AddCharacter(this);
         return newParty;
     }
-    public void SetParty(NewParty party) {
-        _party = party as MonsterParty;
+    public void SetOwnedParty(NewParty party) {
+        _ownParty = party as MonsterParty;
     }
     public CharacterTag AssignTag(CHARACTER_TAG tag) {
         //No tag assignment
@@ -709,6 +716,15 @@ public class Monster : ICharacter, ICharacterSim {
                 }
             }
         }
+    }
+    public void SetCurrentParty(NewParty party) {
+        _currentParty = party as CharacterParty;
+    }
+    public void OnRemovedFromParty() {
+        SetCurrentParty(_ownParty); //set the character's party to it's own party
+    }
+    public bool InviteToParty(ICharacter inviter) {
+        return false;
     }
     #endregion
 

@@ -35,15 +35,21 @@ public class Squad {
         squadMembers = new List<ICharacter>();
     }
 
+    #region Misc
     public void SetName(string name) {
         this.name = name;
     }
+    #endregion
 
+    #region Leader
     public void SetLeader(ICharacter leader) {
         squadLeader = leader;
         Messenger.Broadcast(Signals.SQUAD_LEADER_SET, leader, this);
         AddMember(leader);
     }
+    #endregion
+
+    #region Members
     public void AddMember(ICharacter member) {
         if (!squadMembers.Contains(member)) {
             squadMembers.Add(member);
@@ -57,10 +63,33 @@ public class Squad {
             member.SetSquad(null);
         }
     }
+    #endregion
 
+    #region Squad Management
     public void Disband() {
         while (squadMembers.Count != 0) {
             RemoveMember(squadMembers[0]);
         }
     }
+    #endregion
+
+    #region Quests
+    public List<Quest> GetSquadQuests() {
+        List<Quest> quests = new List<Quest>();
+        for (int i = 0; i < squadMembers.Count; i++) {
+            ICharacter currMember = squadMembers[i];
+            if (currMember is ECS.Character) {
+                ECS.Character character = currMember as ECS.Character;
+                for (int j = 0; j < character.questData.Count; j++) {
+                    CharacterQuestData currData = character.questData[j];
+                    if (currData.parentQuest.groupType == GROUP_TYPE.PARTY && !quests.Contains(currData.parentQuest)) {
+                        quests.Add(currData.parentQuest);
+                    }
+                }
+            }
+        }
+        return quests;
+    }
+    #endregion
+
 }

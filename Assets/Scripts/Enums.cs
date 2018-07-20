@@ -893,6 +893,10 @@ public enum QUEST_TYPE {
     RELEASE_CHARACTER,
     BUILD_STRUCTURE,
 }
+public enum GROUP_TYPE {
+    SOLO,
+    PARTY,
+}
 public enum TASK_TYPE { //This is the list of actions a character can do on it's own
     QUEST,
     REST,
@@ -1269,6 +1273,11 @@ public enum ACTION_TYPE {
     CHANGE_CLASS,
     CHAT,
     WAITING,
+    DISBAND_PARTY,
+    FORM_PARTY,
+    IN_PARTY,
+    JOIN_PARTY,
+    GRIND
 }
 
 public enum OBJECT_TYPE {

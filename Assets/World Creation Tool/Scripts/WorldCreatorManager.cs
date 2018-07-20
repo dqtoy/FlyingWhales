@@ -94,7 +94,7 @@ namespace worldcreator {
             ECS.CombatManager.Instance.Initialize();
             Biomes.Instance.UpdateTileVisuals(hexTiles);
             //Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
-            Biomes.Instance.LoadPassableTypes(hexTiles);
+            Biomes.Instance.LoadPassableStates(hexTiles);
             CreateNewRegion(hexTiles);
             GenerateOuterGrid();
             WorldCreatorUI.Instance.OnDoneLoadingGrid();
@@ -136,7 +136,7 @@ namespace worldcreator {
             hexTiles.ForEach(o => o.FindNeighbours(map));
             Biomes.Instance.UpdateTileVisuals(hexTiles);
             //Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
-            Biomes.Instance.LoadPassableTypes(hexTiles);
+            Biomes.Instance.LoadPassableStates(hexTiles);
 
             WorldCreatorUI.Instance.InitializeMenus();
             ECS.CombatManager.Instance.Initialize();
@@ -527,7 +527,7 @@ namespace worldcreator {
                 HexTile currTile = tiles[i];
                 Biomes.Instance.UpdateTileVisuals(currTile);
                 //Biomes.Instance.GenerateTileBiomeDetails(currTile);
-                Biomes.Instance.LoadPassableTypes(currTile);
+                Biomes.Instance.LoadPassableStates(currTile);
             }
             
         }
@@ -535,7 +535,7 @@ namespace worldcreator {
             tile.SetBiome(biome);
             if (updateVisuals) {
                 Biomes.Instance.UpdateTileVisuals(tile);
-                Biomes.Instance.LoadPassableTypes(tile);
+                Biomes.Instance.LoadPassableStates(tile);
             }
         }
         #endregion
@@ -549,7 +549,7 @@ namespace worldcreator {
             for (int i = 0; i < tiles.Count; i++) {
                 HexTile currTile = tiles[i];
                 Biomes.Instance.UpdateTileVisuals(currTile);
-                Biomes.Instance.LoadPassableTypes(currTile);
+                Biomes.Instance.LoadPassableStates(currTile);
             }
         }
         public void SetElevation(HexTile tile, ELEVATION elevation, bool updateVisuals = true) {
@@ -568,7 +568,7 @@ namespace worldcreator {
             tile.SetElevation(elevation);
             if (updateVisuals) {
                 Biomes.Instance.UpdateTileVisuals(tile);
-                Biomes.Instance.LoadPassableTypes(tile);
+                Biomes.Instance.LoadPassableStates(tile);
             }
         }
         #endregion

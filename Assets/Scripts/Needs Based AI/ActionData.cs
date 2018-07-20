@@ -81,7 +81,9 @@ public class ActionData {
             throw new System.Exception("Action of " + _party.name + " is null!");
         }
         action.OnChooseAction(_party, targetObject);
-        _party.GoToLocation(targetObject.specificLocation, PATHFINDING_MODE.USE_ROADS);
+        if (action.ShouldGoToTargetObjectOnChoose()) {
+            _party.GoToLocation(targetObject.specificLocation, PATHFINDING_MODE.USE_ROADS);
+        }
         //if (action.state.obj.icharacterType == ICHARACTER_TYPE.CHARACTERObj) {
         //    CharacterObj characterObj = action.state.obj as CharacterObj;
         //    _party.GoToLocation(characterObj.character.icon.gameObject, PATHFINDING_MODE.USE_ROADS);
