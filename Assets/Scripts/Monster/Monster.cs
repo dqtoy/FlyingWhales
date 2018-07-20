@@ -524,6 +524,18 @@ public class Monster : ICharacter, ICharacterSim {
     public CharacterAction GetRandomIdleAction(ref IObject targetObject) {
         return _idleActions[Utilities.rng.Next(0, _idleActions.Count)];
     }
+    public CharacterAction GetIdleOrDesperateAction(ACTION_CATEGORY category, ACTION_TYPE type) {
+        List<CharacterAction> actionPool = _desperateActions;
+        if (category == ACTION_CATEGORY.IDLE) {
+            actionPool = _idleActions;
+        }
+        for (int i = 0; i < actionPool.Count; i++) {
+            if (actionPool[i].actionData.actionType == type) {
+                return actionPool[i];
+            }
+        }
+        return null;
+    }
     public void DeathSim() {
         _isDead = true;
         CombatSimManager.Instance.currentCombat.CharacterDeath(this);

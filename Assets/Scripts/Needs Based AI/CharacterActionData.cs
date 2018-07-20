@@ -9,6 +9,7 @@ using UnityEngine.Events;
 [System.Serializable]
 public struct CharacterActionData {
     public ACTION_TYPE actionType;
+    public ACTION_CATEGORY actionCategory;
     public string actionName;
     public ActionFilterData[] filters;
 

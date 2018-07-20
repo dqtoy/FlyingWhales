@@ -75,11 +75,9 @@ public class LocalizationManager : MonoBehaviour {
 	 * */
 	public string GetLocalizedValue(string category, string file, string key){
 		string result = string.Empty;
-        try {
-            if (this._localizedText[category][file].ContainsKey(key)) {
-                result = this._localizedText[category][file][key];
-            }
-        } catch (KeyNotFoundException) {
+        if (this._localizedText[category][file].ContainsKey(key)) {
+            result = this._localizedText[category][file][key];
+        } else {
             throw new System.Exception("Localization error! " + category + "/" + file + "/" + key);
         }
 		return result;

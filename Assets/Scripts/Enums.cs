@@ -1270,6 +1270,11 @@ public enum ACTION_TYPE {
     CHAT,
     WAITING,
 }
+public enum ACTION_CATEGORY {
+    NORMAL,
+    IDLE,
+    DESPERATE,
+}
 
 public enum OBJECT_TYPE {
     CHARACTER,

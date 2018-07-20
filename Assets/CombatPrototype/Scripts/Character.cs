@@ -2346,15 +2346,31 @@ namespace ECS {
         }
         private void ConstructDesperateActions() {
             _desperateActions = new List<CharacterAction>();
-            _desperateActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.BERSERK));
-            _desperateActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.SELFMUTILATE));
-            _desperateActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.FLAIL));
+            CharacterAction berserk = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.BERSERK);
+            CharacterAction selfMutilate = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.SELFMUTILATE);
+            CharacterAction flail = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.FLAIL);
+
+            berserk.SetActionCategory(ACTION_CATEGORY.DESPERATE);
+            selfMutilate.SetActionCategory(ACTION_CATEGORY.DESPERATE);
+            flail.SetActionCategory(ACTION_CATEGORY.DESPERATE);
+
+            _desperateActions.Add(berserk);
+            _desperateActions.Add(selfMutilate);
+            _desperateActions.Add(flail);
         }
         private void ConstructIdleActions() {
             _idleActions = new List<CharacterAction>();
-            _idleActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DAYDREAM));
-            _idleActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.PLAY));
-            _idleActions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.CHAT));
+            CharacterAction daydream = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DAYDREAM);
+            CharacterAction play = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.PLAY);
+            CharacterAction chat = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.CHAT);
+
+            daydream.SetActionCategory(ACTION_CATEGORY.IDLE);
+            play.SetActionCategory(ACTION_CATEGORY.IDLE);
+            chat.SetActionCategory(ACTION_CATEGORY.IDLE);
+
+            _idleActions.Add(daydream);
+            _idleActions.Add(play);
+            _idleActions.Add(chat);
         }
         public CharacterAction GetRandomDesperateAction(ref IObject targetObject) {
             targetObject = _party.characterObject;
@@ -2365,24 +2381,41 @@ namespace ECS {
             targetObject = _party.characterObject;
             CharacterAction chosenAction = _idleActions[Utilities.rng.Next(0, _idleActions.Count)];
             if (chosenAction is ChatAction) {
-                List<NewParty> partyPool = new List<NewParty>();
+                List<CharacterParty> partyPool = new List<CharacterParty>();
                 //priority 1
-                NewParty chosenParty = GetPriority1TargetChatAction(partyPool);
+                CharacterParty chosenParty = GetPriority1TargetChatAction(partyPool);
                 if(chosenParty == null) {
                     chosenParty = GetPriority2TargetChatAction(partyPool);
                     if (chosenParty == null) {
                         chosenParty = GetPriority3TargetChatAction(partyPool);
+                        if (chosenParty == null) {
+                            chosenParty = GetPriority4TargetChatAction(partyPool);
+                        }
                     }
                 }
                 targetObject = chosenParty.icharacterObject;
             }
             return chosenAction;
         }
-        private NewParty GetPriority1TargetChatAction(List<NewParty> partyPool) {
+        public CharacterAction GetIdleOrDesperateAction(ACTION_CATEGORY category, ACTION_TYPE type) {
+            List<CharacterAction> actionPool = _desperateActions;
+            if(category == ACTION_CATEGORY.IDLE) {
+                actionPool = _idleActions;
+            }
+            for (int i = 0; i < actionPool.Count; i++) {
+                if(actionPool[i].actionData.actionType == type) {
+                    return actionPool[i];
+                }
+            }
+            return null;
+        }
+
+        private CharacterParty GetPriority1TargetChatAction(List<CharacterParty> partyPool) {
+            //random parties within same faction within settlements
             partyPool.Clear();
             for (int i = 0; i < faction.characters.Count; i++) {
-                NewParty party = faction.characters[i].party;
-                if (party.id != this._party.id && !partyPool.Contains(party)) {
+                CharacterParty party = faction.characters[i].party;
+                if (party.id != this._party.id && !partyPool.Contains(party) && faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)) {
                     partyPool.Add(party);
                 }
             }
@@ -2391,14 +2424,15 @@ namespace ECS {
             }
             return null;
         }
-        private NewParty GetPriority2TargetChatAction(List<NewParty> partyPool) {
+        private CharacterParty GetPriority2TargetChatAction(List<CharacterParty> partyPool) {
+            //random parties within non-hostile factions within settlements
             partyPool.Clear();
-            List<Faction> nonHostileFactions = FactionManager.Instance.GetFactionsWithByStatus(faction, FACTION_RELATIONSHIP_STATUS.NON_HOSTILE);
+            List<Faction> nonHostileFactions = FactionManager.Instance.GetFactionsWithByStatus(faction, FACTION_RELATIONSHIP_STATUS.NON_HOSTILE); 
             for (int i = 0; i < nonHostileFactions.Count; i++) {
-                Faction faction = nonHostileFactions[i];
-                for (int k = 0; k < faction.characters.Count; k++) {
-                    NewParty party = faction.characters[k].party;
-                    if (party.id != this._party.id && !partyPool.Contains(party)) {
+                Faction nonHostileFaction = nonHostileFactions[i];
+                for (int k = 0; k < nonHostileFaction.characters.Count; k++) {
+                    CharacterParty party = nonHostileFaction.characters[k].party;
+                    if (party.id != this._party.id && !partyPool.Contains(party) && faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)) {
                         partyPool.Add(party);
                     }
                 }
@@ -2408,14 +2442,29 @@ namespace ECS {
             }
             return null;
         }
-        private NewParty GetPriority3TargetChatAction(List<NewParty> partyPool) {
+        private CharacterParty GetPriority3TargetChatAction(List<CharacterParty> partyPool) {
+            //random parties within same faction outside settlements currently performing an Idle Action
             partyPool.Clear();
-            List<Faction> hostileFactions = FactionManager.Instance.GetFactionsWithByStatus(faction, FACTION_RELATIONSHIP_STATUS.HOSTILE);
-            for (int i = 0; i < hostileFactions.Count; i++) {
-                Faction faction = hostileFactions[i];
-                for (int k = 0; k < faction.characters.Count; k++) {
-                    NewParty party = faction.characters[k].party;
-                    if (party.id != this._party.id && !partyPool.Contains(party)) {
+            for (int i = 0; i < faction.characters.Count; i++) {
+                CharacterParty party = faction.characters[i].party;
+                if (party.id != this._party.id && !partyPool.Contains(party) && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.IDLE && !faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)) {
+                    partyPool.Add(party);
+                }
+            }
+            if (partyPool.Count > 0) {
+                return partyPool[Utilities.rng.Next(0, partyPool.Count)];
+            }
+            return null;
+        }
+        private CharacterParty GetPriority4TargetChatAction(List<CharacterParty> partyPool) {
+            //random parties within non-hostile faction outside settlements currently performing an Idle Action
+            partyPool.Clear();
+            List<Faction> nonHostileFactions = FactionManager.Instance.GetFactionsWithByStatus(faction, FACTION_RELATIONSHIP_STATUS.NON_HOSTILE);
+            for (int i = 0; i < nonHostileFactions.Count; i++) {
+                Faction nonHostileFaction = nonHostileFactions[i];
+                for (int k = 0; k < nonHostileFaction.characters.Count; k++) {
+                    CharacterParty party = nonHostileFaction.characters[k].party;
+                    if (party.id != this._party.id && !partyPool.Contains(party) && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.IDLE && !faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)) { //random parties within non-hostile factions within settlements
                         partyPool.Add(party);
                     }
                 }

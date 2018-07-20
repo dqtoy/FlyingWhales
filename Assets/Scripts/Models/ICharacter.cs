@@ -71,5 +71,6 @@ public interface ICharacter {
     NewParty CreateNewParty();
     CharacterAction GetRandomDesperateAction(ref IObject targetObject);
     CharacterAction GetRandomIdleAction(ref IObject targetObject);
+    CharacterAction GetIdleOrDesperateAction(ACTION_CATEGORY category, ACTION_TYPE type);
     CharacterTag AssignTag(CHARACTER_TAG tag); //Character only
 }
