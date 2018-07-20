@@ -40,9 +40,9 @@ public class ActionThread : Multithread {
     }
     #endregion
     private void LookForAction() {
-        if (_party.mainCharacter is Character) {
+        if (_party.owner is Character) {
             actionLog = "[" + Utilities.GetDateString(GameManager.Instance.Today()) + "]" + _party.name + "'s Action Logic: ";
-            Character character = _party.mainCharacter as Character;
+            Character character = _party.owner as Character;
             if (!character.actionQueue.IsEmpty) {//If Action Queue is not empty, pop the earliest one
                 ActionQueueItem item = character.actionQueue.Dequeue();
                 chosenAction = item.action;

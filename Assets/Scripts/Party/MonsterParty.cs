@@ -22,7 +22,7 @@ public class MonsterParty : NewParty {
     }
     #endregion
 
-    public MonsterParty() : base() {
+    public MonsterParty() : base(null) {
 #if !WORLD_CREATION_TOOL
         _monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
         _monsterObj.SetMonster(this);

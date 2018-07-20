@@ -808,7 +808,7 @@ namespace ECS {
             }
         }
 		//Character's death
-		internal void Death(Character killer = null, bool diedFromPP = false){
+		internal void Death(bool diedFromPP = false){
 			if(!_isDead){
 				_isDead = true;
                 
@@ -890,9 +890,9 @@ namespace ECS {
 				}
                 onCharacterDeath = null;
                 Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
-                if (killer != null) {
-                    Messenger.Broadcast(Signals.CHARACTER_KILLED, killer, this);
-                }
+                //if (killer != null) {
+                //    Messenger.Broadcast(Signals.CHARACTER_KILLED, killer, this);
+                //}
 
                 GameObject.Destroy(_characterPortrait.gameObject);
                 _characterPortrait = null;
@@ -1866,6 +1866,12 @@ namespace ECS {
             }
             return false;
         }
+        public bool IsInOwnParty() {
+            if (currentParty.id == ownParty.id) {
+                return true;
+            }
+            return false;
+        }
         public bool InviteToParty(ICharacter inviter) {
             if (IsInParty()) {
                 return false;
@@ -2404,17 +2410,17 @@ namespace ECS {
                 throw new Exception("There is not available snatcher lair!");
             } else {
                 Imprison();
-                if (this.currentParty.id == ownParty.id) {
+                if (IsInOwnParty()) {
                     //character is in his/her own party
-                    ILocation location = _ownParty.specificLocation;
+                    ILocation location = currentParty.specificLocation;
                     if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) { //if character is at a landmark
-                        location.RemoveCharacterFromLocation(_ownParty);
+                        location.RemoveCharacterFromLocation(currentParty);
                     }
                 } else {
                     //character is in another party
                     this.currentParty.RemoveCharacter(this);
                 }
-                snatcherLair.AddCharacterToLocation(_ownParty);
+                snatcherLair.AddCharacterToLocation(ownParty);
             }
         }
         private void ConstructDesperateActions() {
@@ -2701,7 +2707,7 @@ namespace ECS {
                     deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     deathLog.AddToFillers(null, deathCauses[UnityEngine.Random.Range(0, deathCauses.Count)], LOG_IDENTIFIER.OTHER);
                     AddHistory(deathLog);
-                    this.Death(null, true);
+                    this.Death(true);
                 }
             }
         }

@@ -16,6 +16,7 @@ public class NewParty : IParty {
     protected Combat _currentCombat;
     protected ILocation _specificLocation;
     protected ICharacterObject _icharacterObject;
+    protected ICharacter _owner;
 
     #region getters/setters
     public int id {
@@ -84,9 +85,13 @@ public class NewParty : IParty {
     public List<CharacterQuestData> questData {
         get { return GetQuestData(); }
     }
+    public ICharacter owner {
+        get { return _owner; }
+    }
     #endregion
 
-    public NewParty() {
+    public NewParty(ICharacter owner) {
+        _owner = owner;
         _id = Utilities.SetID(this);
         _isDead = false;
         _icharacters = new List<ICharacter>();
@@ -112,14 +117,8 @@ public class NewParty : IParty {
         _currentCombat = null;
     }
     public virtual void DisbandParty() {
-        while (icharacters.Count != 1) {
-            for (int i = 0; i < icharacters.Count; i++) {
-                ICharacter currCharacter = icharacters[i];
-                if (currCharacter.ownParty.id != this.id) {
-                    RemoveCharacter(currCharacter);
-                    break;
-                }
-            }
+        while (icharacters.Count != 0) {
+            RemoveCharacter(icharacters[0]);
         }
     }
     protected virtual void RemoveListeners() {

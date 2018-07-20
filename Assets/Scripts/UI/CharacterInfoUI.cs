@@ -176,6 +176,14 @@ public class CharacterInfoUI : UIMenu {
         text += "\n<b>M Final Attack: </b>" + currentlyShowingCharacter.mFinalAttack;
         text += "\n<b>Mental Points: </b>" + currentlyShowingCharacter.mentalPoints;
         text += "\n<b>Physical Points: </b>" + currentlyShowingCharacter.physicalPoints;
+        text += "\n<b>Current Party: </b>" + currentlyShowingCharacter.currentParty.name;
+        for (int i = 0; i < currentlyShowingCharacter.currentParty.icharacters.Count; i++) {
+            text += "\n - " + currentlyShowingCharacter.currentParty.icharacters[i].name;
+        }
+        text += "\n<b>Own Party: </b>" + currentlyShowingCharacter.ownParty.name;
+        for (int i = 0; i < currentlyShowingCharacter.ownParty.icharacters.Count; i++) {
+            text += "\n - " + currentlyShowingCharacter.ownParty.icharacters[i].name;
+        }
         generalInfoLbl.text = text;
 
     }
