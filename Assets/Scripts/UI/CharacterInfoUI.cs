@@ -184,8 +184,9 @@ public class CharacterInfoUI : UIMenu {
         for (int i = 0; i < currentlyShowingCharacter.ownParty.icharacters.Count; i++) {
             text += "\n - " + currentlyShowingCharacter.ownParty.icharacters[i].name;
         }
-        text += "\n<b>Squad: </b>" + currentlyShowingCharacter.ownParty.name;
+        text += "\n<b>Squad: </b>";
         if (currentlyShowingCharacter.squad != null) {
+            text += currentlyShowingCharacter.squad.name + " (PP: " + currentlyShowingCharacter.squad.potentialPower + ")";
             for (int i = 0; i < currentlyShowingCharacter.squad.squadMembers.Count; i++) {
                 ICharacter currChar = currentlyShowingCharacter.squad.squadMembers[i];
                 if (currentlyShowingCharacter.squad.squadLeader.id == currChar.id) {
