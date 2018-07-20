@@ -31,11 +31,11 @@ public class CharacterAction {
     }
 
     #region Virtuals
-    public virtual void Initialize() {}
-    public virtual void OnChooseAction(NewParty iparty, IObject targetObject) {}
+    public virtual void Initialize() { }
+    public virtual void OnChooseAction(NewParty iparty, IObject targetObject) { }
     public virtual void OnFirstEncounter(CharacterParty party, IObject targetObject) {
         string arriveActionLog = GetArriveActionString();
-        if(arriveActionLog != string.Empty) {
+        if (arriveActionLog != string.Empty) {
             if (targetObject.objectLocation != null) {
                 Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
                 arriveLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -55,7 +55,7 @@ public class CharacterAction {
             }
         }
     }
-    public virtual void PerformAction(CharacterParty party, IObject targetObject) {}
+    public virtual void PerformAction(CharacterParty party, IObject targetObject) { }
     public virtual void ActionSuccess(IObject targetObject) {
         if (_actionData.successFunction != null) {
             _actionData.successFunction.Invoke(targetObject);
@@ -84,6 +84,9 @@ public class CharacterAction {
     public virtual void DoneDuration(CharacterParty party, IObject targetObject) { }
     public virtual void SuccessEndAction(CharacterParty party) {
         Messenger.Broadcast(Signals.ACTION_SUCCESS, party, this);
+    }
+    public virtual bool ShouldGoToTargetObjectOnChoose() {
+        return true;
     }
     #endregion
 
@@ -158,7 +161,7 @@ public class CharacterAction {
     }
 
     //Give all provided needs to the character regardless of the amount
-    public void GiveAllReward(CharacterParty party) {
+    public virtual void GiveAllReward(CharacterParty party) {
         for (int i = 0; i < party.icharacters.Count; i++) {
             ICharacter icharacter = party.icharacters[i];
             icharacter.role.AdjustFullness(_actionData.providedFullness);

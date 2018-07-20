@@ -81,22 +81,18 @@ public class ActionData {
             throw new System.Exception("Action of " + _party.name + " is null!");
         }
         action.OnChooseAction(_party, targetObject);
-        if(targetObject != null) {
-            _party.GoToLocation(targetObject.specificLocation, PATHFINDING_MODE.USE_ROADS);
-            if (targetObject.objectType == OBJECT_TYPE.STRUCTURE) {
-                Area areaOfStructure = targetObject.objectLocation.tileLocation.areaOfTile;
-                if (areaOfStructure != null && _party.home != null && areaOfStructure.id == _party.home.id) {
-                    _homeMultiplier = 1f;
-                    _hasDoneActionAtHome = true;
+        if (action.ShouldGoToTargetObjectOnChoose()) {
+            if (targetObject != null) {
+                _party.GoToLocation(targetObject.specificLocation, PATHFINDING_MODE.USE_ROADS);
+                if (targetObject.objectType == OBJECT_TYPE.STRUCTURE) {
+                    Area areaOfStructure = targetObject.objectLocation.tileLocation.areaOfTile;
+                    if (areaOfStructure != null && _party.home != null && areaOfStructure.id == _party.home.id) {
+                        _homeMultiplier = 1f;
+                        _hasDoneActionAtHome = true;
+                    }
                 }
             }
-        }
-        //if (action.state.obj.icharacterType == ICHARACTER_TYPE.CHARACTERObj) {
-        //    CharacterObj characterObj = action.state.obj as CharacterObj;
-        //    _party.GoToLocation(characterObj.character.icon.gameObject, PATHFINDING_MODE.USE_ROADS);
-        //} else {
-        //    _party.GoToLocation(action.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
-        //}
+        }   
     }
     public void DetachActionData() {
         Reset();

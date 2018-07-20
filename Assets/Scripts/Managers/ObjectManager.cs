@@ -297,6 +297,16 @@ public class ObjectManager : MonoBehaviour {
                 return new ChangeClassAction();
             case ACTION_TYPE.WAITING:
                 return new WaitingInteractionAction();
+            case ACTION_TYPE.FORM_PARTY:
+                return new FormPartyAction();
+            case ACTION_TYPE.DISBAND_PARTY:
+                return new DisbandPartyAction();
+            case ACTION_TYPE.IN_PARTY:
+                return new InPartyAction();
+            case ACTION_TYPE.JOIN_PARTY:
+                return new JoinPartyAction();
+            case ACTION_TYPE.GRIND:
+                return new GrindAction();
         }
         return null;
     }

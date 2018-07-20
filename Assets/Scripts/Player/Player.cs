@@ -103,7 +103,7 @@ public class Player : ILeader{
         
     }
     private bool IsSnatchSuccess(ECS.Character character) {
-        //return true;
+        return true;
         if (character.role == null) {
             return true;
         }

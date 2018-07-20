@@ -36,6 +36,10 @@ public class CharacterManager : MonoBehaviour {
     public List<Color> hairColors;
 
 
+    public readonly int HAPPINESS_THRESHOLD = 200;
+    public readonly int MENTAL_THRESHOLD = -3;
+    public readonly int PHYSICAL_THRESHOLD = -3;
+
     #region getters/setters
     //public Dictionary<int, HashSet<Citizen>> elligibleCitizenAgeTable {
     //    get { return citizenAgeTable.Where(x => x.Value.Any()).ToDictionary(x => x.Key, v => v.Value); }
@@ -137,7 +141,7 @@ public class CharacterManager : MonoBehaviour {
             className = "Classless";
 		}
 		ECS.Character newCharacter = new ECS.Character(className, race, gender);
-        NewParty party = newCharacter.CreateNewParty();
+        NewParty party = newCharacter.CreateOwnParty();
         if (faction != null) {
             newCharacter.SetFaction(faction);
         }
@@ -157,7 +161,7 @@ public class CharacterManager : MonoBehaviour {
             newCharacter.SetHome(homeLocation);
             //homeLocation.AddCharacterHomeOnLandmark(newCharacter);
         }
-        NewParty party = newCharacter.CreateNewParty();
+        NewParty party = newCharacter.CreateOwnParty();
         if (data.locationID != -1) {
             ILocation currentLocation = LandmarkManager.Instance.GetLocationBasedOnID(data.locationType, data.locationID);
 #if !WORLD_CREATION_TOOL
@@ -331,6 +335,17 @@ public class CharacterManager : MonoBehaviour {
             }
         }
         return false;
+    }
+    public NewParty GetPartyByID(int id) {
+        for (int i = 0; i < allCharacters.Count; i++) {
+            Character currCharacter = allCharacters[i];
+            if (currCharacter.ownParty.id == id) {
+                return currCharacter.ownParty;
+            } else if (currCharacter.currentParty.id == id) {
+                return currCharacter.currentParty;
+            }
+        }
+        return null;
     }
     #endregion
 

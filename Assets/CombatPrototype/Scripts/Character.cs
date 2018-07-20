@@ -27,7 +27,8 @@ namespace ECS {
         private RaceSetting _raceSetting;
         private CharacterRole _role;
         private Faction _faction;
-        private CharacterParty _party;
+        private CharacterParty _ownParty;
+        private CharacterParty _currentParty;
         private Area _home;
         private BaseLandmark _homeLandmark;
         private StructureObj _homeStructure;
@@ -47,6 +48,7 @@ namespace ECS {
         private List<Log> _history;
         private List<CharacterQuestData> _questData;
         private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
+        private CharacterActionQueue<ActionQueueItem> _actionQueue;
         private List<CharacterAction> _desperateActions;
         private List<CharacterAction> _idleActions;
         private Dictionary<Character, Relationship> _relationships;
@@ -139,20 +141,23 @@ namespace ECS {
         public Faction faction {
             get { return _faction; }
         }
-        public NewParty iparty {
-            get { return _party; }
+        public NewParty ownParty {
+            get { return _ownParty; }
         }
         public CharacterParty party {
-            get { return _party; }
+            get { return _ownParty; }
+        }
+        public NewParty currentParty {
+            get { return _currentParty; }
         }
         public List<CharacterQuestData> questData {
             get { return _questData; }
         }
         public HexTile currLocation {
-            get { return (_party.specificLocation != null ? _party.specificLocation.tileLocation : null); }
+            get { return (_ownParty.specificLocation != null ? _ownParty.specificLocation.tileLocation : null); }
         }
         public ILocation specificLocation {
-            get { return (_party.specificLocation != null ? _party.specificLocation : null); }
+            get { return (_ownParty.specificLocation != null ? _ownParty.specificLocation : null); }
         }
         public List<BodyPart> bodyParts {
             get { return this._bodyParts; }
@@ -348,6 +353,9 @@ namespace ECS {
         public Squad squad {
             get { return _squad; }
         }
+        public CharacterActionQueue<ActionQueueItem> actionQueue {
+            get { return _actionQueue; }
+        }
         #endregion
 
         public Character(string className, RACE race, GENDER gender) : this() {
@@ -424,7 +432,7 @@ namespace ECS {
             _traceInfo = new Dictionary<Character, List<string>>();
             _history = new List<Log>();
             _questData = new List<CharacterQuestData>();
-            //_actionQueue = new CharacterActionQueue<CharacterAction>();
+            _actionQueue = new CharacterActionQueue<ActionQueueItem>();
             //previousActions = new Dictionary<CharacterTask, string>();
             _relationships = new Dictionary<Character, Relationship>();
             //_actionData = new ActionData(this);
@@ -756,13 +764,13 @@ namespace ECS {
 		public void FaintOrDeath(){
 			string pickedWeight = GetFaintOrDeath ();
 			if(pickedWeight == "faint"){
-				if(_party.currentCombat == null){
+				if(_ownParty.currentCombat == null){
 					Faint ();
 				}else{
-                    _party.currentCombat.CharacterFainted(this);
+                    _ownParty.currentCombat.CharacterFainted(this);
                 }
 			}else if(pickedWeight == "die"){
-                _party.currentCombat.CharacterDeath(this);
+                _ownParty.currentCombat.CharacterDeath(this);
                 Death();
     //            if (this.currentCombat == null){
 				//	Death ();
@@ -788,14 +796,14 @@ namespace ECS {
 			}
 		}
         public void Imprison() {
-            if(_party.icharacters.Count > 1) {
-                CreateNewParty();
-            }
-            if(_party.characterObject.currentState.stateName != "Imprisoned") {
-                ObjectState imprisonedState = _party.characterObject.GetState("Imprisoned");
-                _party.characterObject.ChangeState(imprisonedState);
+            //if(_ownParty.icharacters.Count > 1) {
+            //    CreateOwnParty();
+            //}
+            if(_ownParty.characterObject.currentState.stateName != "Imprisoned") {
+                ObjectState imprisonedState = _ownParty.characterObject.GetState("Imprisoned");
+                _ownParty.characterObject.ChangeState(imprisonedState);
 
-                _party.SetIsIdle(true); //this makes the character not do any action, and needs are halted
+                _ownParty.SetIsIdle(true); //this makes the character not do any action, and needs are halted
                 //Do other things when imprisoned
             }
         }
@@ -812,15 +820,15 @@ namespace ECS {
 
                 CombatManager.Instance.ReturnCharacterColorToPool (_characterColor);
 
-                if (_party.specificLocation == null) {
+                if (_ownParty.specificLocation == null) {
                     throw new Exception("Specific location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
                 }
 
-				if(!diedFromPP && _party.specificLocation != null && _party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+				if(!diedFromPP && _ownParty.specificLocation != null && _ownParty.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
                     Log deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death");
                     deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     AddHistory(deathLog);
-                    (_party.specificLocation as BaseLandmark).AddHistory(deathLog);
+                    (_ownParty.specificLocation as BaseLandmark).AddHistory(deathLog);
 				}
                 
                 //Drop all Items
@@ -830,7 +838,7 @@ namespace ECS {
 				while (_inventory.Count > 0) {
 					ThrowItem (_inventory [0]);
 				}
-                _party.RemoveCharacter(this);
+                _ownParty.RemoveCharacter(this);
                 //Remove ActionData
                 //_actionData.DetachActionData();
 
@@ -1020,8 +1028,8 @@ namespace ECS {
             obtainLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             obtainLog.AddToFillers(null, item.itemName, LOG_IDENTIFIER.ITEM_1);
             AddHistory(obtainLog);
-			if (_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-                (_party.specificLocation as BaseLandmark).AddHistory(obtainLog);
+			if (_ownParty.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+                (_ownParty.specificLocation as BaseLandmark).AddHistory(obtainLog);
             }
 #endif
             Messenger.Broadcast(Signals.ITEM_OBTAINED, newItem, this);
@@ -1035,7 +1043,7 @@ namespace ECS {
 			this._inventory.Remove (item);
 			//item.exploreWeight = 15;
 			if(addInLandmark){
-				ILocation location = _party.specificLocation;
+				ILocation location = _ownParty.specificLocation;
 				if(location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
 					BaseLandmark landmark = location as BaseLandmark;
 					landmark.AddItemInLandmark(item);
@@ -1045,7 +1053,7 @@ namespace ECS {
         }
         internal void DropItem(Item item) {
             ThrowItem(item);
-            ILocation location = _party.specificLocation;
+            ILocation location = _ownParty.specificLocation;
 			if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
 				//BaseLandmark landmark = location as BaseLandmark;
                 Log dropLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "drop_item");
@@ -1058,7 +1066,7 @@ namespace ECS {
 
         }
         internal void CheckForItemDrop() {
-            ILocation location = _party.specificLocation;
+            ILocation location = _ownParty.specificLocation;
             if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
                 if (UnityEngine.Random.Range(0, 100) < 3) {
                     Dictionary<Item, Character> itemPool = new Dictionary<Item, Character>();
@@ -1510,7 +1518,7 @@ namespace ECS {
 				STATUS_EFFECT statusEffect = _statusEffects[i];
 				int chance = Utilities.rng.Next (0, 100);
 				if (chance < 15) {
-                    _party.currentCombat.AddCombatLog(this.name + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
+                    _ownParty.currentCombat.AddCombatLog(this.name + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
 					RemoveStatusEffect (statusEffect);
 					i--;
 				}
@@ -1523,7 +1531,7 @@ namespace ECS {
 						if(statusEffect != STATUS_EFFECT.DECAPITATED){
 							int chance = Utilities.rng.Next (0, 100);
 							if(chance < 15){
-                                _party.currentCombat.AddCombatLog(this.name + "'s " + bodyPart.name.ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
+                                _ownParty.currentCombat.AddCombatLog(this.name + "'s " + bodyPart.name.ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
 								bodyPart.RemoveStatusEffectOnSecondaryBodyParts (statusEffect);
 								bodyPart.statusEffects.RemoveAt (j);
 								j--;
@@ -1821,18 +1829,46 @@ namespace ECS {
         /*
          Create a new Party with this character as the leader.
              */
-        public NewParty CreateNewParty() {
-            if(_party != null) {
-                _party.RemoveCharacter(this);
+        public NewParty CreateOwnParty() {
+            if(_ownParty != null) {
+                _ownParty.RemoveCharacter(this);
             }
             CharacterParty newParty = new CharacterParty();
             newParty.AddCharacter(this);
             newParty.CreateCharacterObject();
+            SetOwnedParty(newParty);
             return newParty;
         }
-		public void SetParty(NewParty party) {
-			_party = party as CharacterParty;
+		public void SetOwnedParty(NewParty party) {
+			_ownParty = party as CharacterParty;
 		}
+        public void SetCurrentParty(NewParty party) {
+            _currentParty = party as CharacterParty;
+        }
+        public void OnRemovedFromParty() {
+            SetCurrentParty(_ownParty); //set the character's party to it's own party
+        }
+        public bool IsInParty() {
+            if (party.icharacters.Count > 1) {
+                return true; //if the character is in a party that has more than 1 characters
+            }
+            return false;
+        }
+        public bool InviteToParty(ICharacter inviter) {
+            if (IsInParty()) {
+                return false;
+            }
+            if (party.isIdle) {
+                return false;
+            }
+            if (this.party.actionData.currentAction == null || idleActions.Contains(this.party.actionData.currentAction)) {
+                //accept invitation
+                this.actionQueue.Clear();
+                this.party.actionData.ForceDoAction(inviter.ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.JOIN_PARTY), inviter.ownParty.icharacterObject);
+                return true;
+            }
+            return false;
+        }
         #endregion
 
         #region Location
@@ -1862,6 +1898,25 @@ namespace ECS {
                 }
             }
             return false;
+        }
+        public CharacterQuestData GetDataForQuest(Quest quest) {
+            for (int i = 0; i < questData.Count; i++) {
+                CharacterQuestData data = questData[i];
+                if (data.parentQuest.id == quest.id) {
+                    return data;
+                }
+            }
+            return null;
+        }
+        public List<Quest> GetAcceptedQuestsByGroup(GROUP_TYPE groupType) {
+            List<Quest> quests = new List<Quest>();
+            for (int i = 0; i < questData.Count; i++) {
+                CharacterQuestData data = questData[i];
+                if (data.parentQuest.groupType == groupType) {
+                    quests.Add(data.parentQuest);
+                }
+            }
+            return quests;
         }
         #endregion
 
@@ -1914,12 +1969,12 @@ namespace ECS {
         }
         public void CenterOnCharacter() {
             if (!this.isDead) {
-                CameraMove.Instance.CenterCameraOn(_party.specificLocation.tileLocation.gameObject);
+                CameraMove.Instance.CenterCameraOn(_ownParty.specificLocation.tileLocation.gameObject);
             }
         }
 		//Death of this character if he/she is in the region specified
 		private void RegionDeath(Region region){
-			if(_party.currentRegion.id == region.id){
+			if(_ownParty.currentRegion.id == region.id){
 				Death ();
 			}
 		}
@@ -1946,14 +2001,14 @@ namespace ECS {
         //}
         public bool CanObtainResource(List<RESOURCE> resources) {
             if (this.role != null) {//characters without a role cannot get actions, and therefore cannot obtain resources
-                for (int i = 0; i < _party.currentRegion.landmarks.Count; i++) {
-                    BaseLandmark landmark = _party.currentRegion.landmarks[i];
+                for (int i = 0; i < _ownParty.currentRegion.landmarks.Count; i++) {
+                    BaseLandmark landmark = _ownParty.currentRegion.landmarks[i];
                     StructureObj iobject = landmark.landmarkObj;
                     if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
                         for (int k = 0; k < iobject.currentState.actions.Count; k++) {
                             CharacterAction action = iobject.currentState.actions[k];
                             if (action.actionData.resourceGiven != RESOURCE.NONE && resources.Contains(action.actionData.resourceGiven)) { //does the action grant a resource, and is that a resource that is needed
-                                if (action.MeetsRequirements(_party, landmark) && action.CanBeDone(iobject) && action.CanBeDoneBy(_party, iobject)) { //Filter
+                                if (action.MeetsRequirements(_ownParty, landmark) && action.CanBeDone(iobject) && action.CanBeDoneBy(_ownParty, iobject)) { //Filter
                                     //if the character can do an action that yields a needed resource, return true
                                     return true;
                                 }
@@ -2129,7 +2184,7 @@ namespace ECS {
 
         #region Traces
 		public void LeaveTraceOnLandmark(){
-			ILocation location = _party.specificLocation;
+			ILocation location = _ownParty.specificLocation;
 			if(location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
 				BaseLandmark landmark = location as BaseLandmark;
 				int chance = UnityEngine.Random.Range (0, 100);
@@ -2190,7 +2245,7 @@ namespace ECS {
         public bool DoesSatisfiesPrerequisite(IPrerequisite prerequisite) {
             if(prerequisite.prerequisiteType == PREREQUISITE.RESOURCE) {
                 ResourcePrerequisite resourcePrerequisite = prerequisite as ResourcePrerequisite;
-                if(resourcePrerequisite.resourceType != RESOURCE.NONE && _party.characterObject.resourceInventory[resourcePrerequisite.resourceType] >= resourcePrerequisite.amount) {
+                if(resourcePrerequisite.resourceType != RESOURCE.NONE && _ownParty.characterObject.resourceInventory[resourcePrerequisite.resourceType] >= resourcePrerequisite.amount) {
                     return true;
                 }
             }
@@ -2201,7 +2256,7 @@ namespace ECS {
         #region Needs
         private void CiviliansDiedReduceSanity(StructureObj whereCiviliansDied, int amount) {
             if(_currentRegion.id == whereCiviliansDied.objectLocation.tileLocation.region.id) {
-                ILocation location = _party.specificLocation;
+                ILocation location = _ownParty.specificLocation;
                 if (location.tileLocation.id == whereCiviliansDied.objectLocation.tileLocation.id || whereCiviliansDied.objectLocation.tileLocation.neighbourDirections.ContainsValue(location.tileLocation)){
                     int sanityToReduce = amount * 5;
                     this.role.AdjustSanity(-sanityToReduce);
@@ -2337,11 +2392,17 @@ namespace ECS {
                 throw new Exception("There is not available snatcher lair!");
             } else {
                 Imprison();
-                ILocation location = _party.specificLocation;
-                if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) { //if character is at a landmark
-                    location.RemoveCharacterFromLocation(_party);
+                if (this.currentParty.id == ownParty.id) {
+                    //character is in his/her own party
+                    ILocation location = _ownParty.specificLocation;
+                    if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) { //if character is at a landmark
+                        location.RemoveCharacterFromLocation(_ownParty);
+                    }
+                } else {
+                    //character is in another party
+                    this.currentParty.RemoveCharacter(this);
                 }
-                snatcherLair.AddCharacterToLocation(_party);
+                snatcherLair.AddCharacterToLocation(_ownParty);
             }
         }
         private void ConstructDesperateActions() {
@@ -2373,12 +2434,12 @@ namespace ECS {
             _idleActions.Add(chat);
         }
         public CharacterAction GetRandomDesperateAction(ref IObject targetObject) {
-            targetObject = _party.characterObject;
+            targetObject = _ownParty.characterObject;
             CharacterAction chosenAction = _desperateActions[Utilities.rng.Next(0, _desperateActions.Count)];
             return chosenAction;
         }
         public CharacterAction GetRandomIdleAction(ref IObject targetObject) {
-            targetObject = _party.characterObject;
+            targetObject = _ownParty.characterObject;
             CharacterAction chosenAction = _idleActions[Utilities.rng.Next(0, _idleActions.Count)];
             if (chosenAction is ChatAction) {
                 List<CharacterParty> partyPool = new List<CharacterParty>();
@@ -2415,7 +2476,7 @@ namespace ECS {
             partyPool.Clear();
             for (int i = 0; i < faction.characters.Count; i++) {
                 CharacterParty party = faction.characters[i].party;
-                if (party.id != this._party.id && !partyPool.Contains(party) && faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)) {
+                if (party.id != this._ownParty.id && !partyPool.Contains(party) && faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)) {
                     partyPool.Add(party);
                 }
             }
@@ -2432,7 +2493,7 @@ namespace ECS {
                 Faction nonHostileFaction = nonHostileFactions[i];
                 for (int k = 0; k < nonHostileFaction.characters.Count; k++) {
                     CharacterParty party = nonHostileFaction.characters[k].party;
-                    if (party.id != this._party.id && !partyPool.Contains(party) && faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)) {
+                    if (party.id != this._ownParty.id && !partyPool.Contains(party) && faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)) {
                         partyPool.Add(party);
                     }
                 }
@@ -2447,7 +2508,7 @@ namespace ECS {
             partyPool.Clear();
             for (int i = 0; i < faction.characters.Count; i++) {
                 CharacterParty party = faction.characters[i].party;
-                if (party.id != this._party.id && !partyPool.Contains(party) && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.IDLE && !faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)) {
+                if (party.id != this._ownParty.id && !partyPool.Contains(party) && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.IDLE && !faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)) {
                     partyPool.Add(party);
                 }
             }
@@ -2464,7 +2525,7 @@ namespace ECS {
                 Faction nonHostileFaction = nonHostileFactions[i];
                 for (int k = 0; k < nonHostileFaction.characters.Count; k++) {
                     CharacterParty party = nonHostileFaction.characters[k].party;
-                    if (party.id != this._party.id && !partyPool.Contains(party) && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.IDLE && !faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)) { //random parties within non-hostile factions within settlements
+                    if (party.id != this._ownParty.id && !partyPool.Contains(party) && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.IDLE && !faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)) { //random parties within non-hostile factions within settlements
                         partyPool.Add(party);
                     }
                 }
@@ -2487,7 +2548,7 @@ namespace ECS {
                 if (relationships.ContainsKey(otherCharacter)) { //if this character has a relationship with the one that was snatched
                     Debug.Log(this.name + " will react to " + otherCharacter.name + " being snatched!");
                     //For now make all characters that have relationship with the snatched character, react.
-                    if (UnityEngine.Random.Range(0, 2) == 0) {
+                    if (UnityEngine.Random.Range(0, 1) == 0) {
                         //obtain release character questline
                         Debug.Log(this.name + " decided to release " + otherCharacter.name + " by himself");
                         QuestManager.Instance.TakeQuest(QUEST_TYPE.RELEASE_CHARACTER, this, otherCharacter);
@@ -2637,6 +2698,53 @@ namespace ECS {
         #region Squads
         public void SetSquad(Squad squad) {
             _squad = squad;
+        }
+        public bool IsSquadLeader() {
+            if (_squad == null) {
+                return false;
+            } else {
+                if (_squad.squadLeader != null && _squad.squadLeader.id == this.id) {
+                    return true;
+                }
+                return false;
+            }
+        }
+        public bool IsSquadMember() {
+            if (_squad == null) {
+                return false;
+            } else {
+                if (_squad.squadLeader != null && _squad.squadLeader.id != this.id) {
+                    return true;
+                }
+                return false;
+            }
+        }
+        public List<Quest> GetElligibleQuests() {
+            List<Quest> quests = new List<Quest>();
+            if (this.IsSquadLeader()) {
+                quests.AddRange(this.GetAcceptedQuestsByGroup(GROUP_TYPE.SOLO));
+                quests.AddRange(squad.GetSquadQuests());
+            } else if (this.IsSquadMember()) {
+                quests.AddRange(this.GetAcceptedQuestsByGroup(GROUP_TYPE.SOLO));
+            } else if (squad == null) {
+                quests.AddRange(this.GetAcceptedQuestsByGroup(GROUP_TYPE.SOLO));
+            }
+            return quests;
+        }
+        #endregion
+
+        #region Action Queue
+        public void AddActionToQueue(CharacterAction action, IObject targetObject, int position = -1) {
+            if (position == -1) {
+                //add action to end
+                _actionQueue.Enqueue(new ActionQueueItem(action, targetObject));
+            } else {
+                //Insert action to specified position
+                _actionQueue.Enqueue(new ActionQueueItem(action, targetObject), position);
+            }
+        }
+        public void RemoveActionFromQueue(ActionQueueItem item) {
+            _actionQueue.Remove(item);
         }
         #endregion
     }

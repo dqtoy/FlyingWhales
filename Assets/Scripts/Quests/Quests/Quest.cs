@@ -11,6 +11,7 @@ public class Quest {
     public string name { get { return GetQuestName(); } }
     public int id { get; private set; }
     public QUEST_TYPE questType { get; private set; }
+    public virtual GROUP_TYPE groupType { get { return GROUP_TYPE.SOLO; } }
 
     public Quest(QUEST_TYPE questType) {
         this.id = Utilities.SetID(this);
@@ -18,7 +19,7 @@ public class Quest {
         QuestManager.Instance.AddAvailableQuest(this);
     }
 
-    public virtual CharacterAction GetQuestAction(ECS.Character character, CharacterQuestData data, ref IObject targetObject) {
+    public virtual QuestAction GetQuestAction(ECS.Character character, CharacterQuestData data) {
         return null;
     }
     protected virtual string GetQuestName() {

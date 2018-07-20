@@ -25,7 +25,8 @@ public class CharacterQuestData {
     }
 
     public CharacterAction GetNextQuestAction(ref IObject targetObject) {
-        return _parentQuest.GetQuestAction(_owner, this, ref targetObject);
+        return null;
+            //_parentQuest.GetQuestAction(_owner, this, ref targetObject);
     }
 
     #region virtuals

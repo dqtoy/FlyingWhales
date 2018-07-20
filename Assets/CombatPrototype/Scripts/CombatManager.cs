@@ -105,7 +105,7 @@ namespace ECS {
                     Character character = icharacter as Character;
                     PartyContinuesActionAfterCombat(character.party, true);
                 } else {
-                    icharacter.iparty.currentCombat = null;
+                    icharacter.ownParty.currentCombat = null;
                 }
                 //icharacter.ResetToFullHP();
                 icharacter.ResetToFullSP();
@@ -117,7 +117,7 @@ namespace ECS {
                     Character character = icharacter as Character;
                     PartyContinuesActionAfterCombat(character.party, true);
                 } else {
-                    icharacter.iparty.currentCombat = null;
+                    icharacter.ownParty.currentCombat = null;
                 }
                 //icharacter.ResetToFullHP();
                 icharacter.ResetToFullSP();
