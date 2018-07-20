@@ -796,9 +796,9 @@ namespace ECS {
 			}
 		}
         public void Imprison() {
-            if(_ownParty.icharacters.Count > 1) {
-                CreateOwnParty();
-            }
+            //if(_ownParty.icharacters.Count > 1) {
+            //    CreateOwnParty();
+            //}
             if(_ownParty.characterObject.currentState.stateName != "Imprisoned") {
                 ObjectState imprisonedState = _ownParty.characterObject.GetState("Imprisoned");
                 _ownParty.characterObject.ChangeState(imprisonedState);
@@ -1858,6 +1858,9 @@ namespace ECS {
             if (IsInParty()) {
                 return false;
             }
+            if (party.isIdle) {
+                return false;
+            }
             if (this.party.actionData.currentAction == null || idleActions.Contains(this.party.actionData.currentAction)) {
                 //accept invitation
                 this.actionQueue.Clear();
@@ -2389,9 +2392,15 @@ namespace ECS {
                 throw new Exception("There is not available snatcher lair!");
             } else {
                 Imprison();
-                ILocation location = _ownParty.specificLocation;
-                if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) { //if character is at a landmark
-                    location.RemoveCharacterFromLocation(_ownParty);
+                if (this.currentParty.id == ownParty.id) {
+                    //character is in his/her own party
+                    ILocation location = _ownParty.specificLocation;
+                    if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) { //if character is at a landmark
+                        location.RemoveCharacterFromLocation(_ownParty);
+                    }
+                } else {
+                    //character is in another party
+                    this.currentParty.RemoveCharacter(this);
                 }
                 snatcherLair.AddCharacterToLocation(_ownParty);
             }
@@ -2490,7 +2499,7 @@ namespace ECS {
                 if (relationships.ContainsKey(otherCharacter)) { //if this character has a relationship with the one that was snatched
                     Debug.Log(this.name + " will react to " + otherCharacter.name + " being snatched!");
                     //For now make all characters that have relationship with the snatched character, react.
-                    if (UnityEngine.Random.Range(0, 2) == 0) {
+                    if (UnityEngine.Random.Range(0, 1) == 0) {
                         //obtain release character questline
                         Debug.Log(this.name + " decided to release " + otherCharacter.name + " by himself");
                         QuestManager.Instance.TakeQuest(QUEST_TYPE.RELEASE_CHARACTER, this, otherCharacter);
@@ -2684,6 +2693,9 @@ namespace ECS {
                 //Insert action to specified position
                 _actionQueue.Enqueue(new ActionQueueItem(action, targetObject), position);
             }
+        }
+        public void RemoveActionFromQueue(ActionQueueItem item) {
+            _actionQueue.Remove(item);
         }
         #endregion
     }

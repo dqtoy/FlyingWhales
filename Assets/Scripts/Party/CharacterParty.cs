@@ -30,6 +30,8 @@ public class CharacterParty : NewParty {
         _actionData = new ActionData(this);
 #if !WORLD_CREATION_TOOL
         Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
+        Messenger.AddListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
+        Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         //ConstructResourceInventory();
 #endif
     }
@@ -85,11 +87,9 @@ public class CharacterParty : NewParty {
     }
     #endregion
 
-
     #region Overrides
     public override void PartyDeath() {
         base.PartyDeath();
-        Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
         actionData.DetachActionData();
     }
     /*
@@ -105,6 +105,28 @@ public class CharacterParty : NewParty {
         PathfindingManager.Instance.AddAgent(_icon.aiPath);
         PathfindingManager.Instance.AddAgent(_icon.pathfinder);
 
+    }
+    protected override void RemoveListeners() {
+        base.RemoveListeners();
+        Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
+        Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
+        Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+    }
+    #endregion
+
+    #region Outside Handlers
+    public void OnCharacterSnatched(Character snatchedCharacter) {
+        if (this.mainCharacter.id == snatchedCharacter.id) {
+            //snatched character was the main character of this party, disband it
+            DisbandParty();
+        }
+    }
+    public void OnCharacterDied(Character diedCharacter) {
+        if (this.mainCharacter.id == diedCharacter.id) {
+            //character that died was the main character of this party, disband it
+            DisbandParty();
+            RemoveListeners();
+        }
     }
     #endregion
 }

@@ -52,6 +52,14 @@ public class FormPartyAction : CharacterAction {
             }
         }
         //Then, the character will select a safe spot within 3 tile radius of his current location. To determine this, this is the order of priority:
+        //check first if the party's current location is already fine
+        if (party.specificLocation.tileLocation.areaOfTile == null || party.specificLocation.tileLocation.areaOfTile.owner == null) {
+            if (party.specificLocation.tileLocation.areaOfTile.owner.id == party.faction.id) {
+                InviteSquadMembers(iparty.mainCharacter);
+                return;
+            }
+        }
+
         ILocation targetLocation = null;
         Dictionary<TileType, List<HexTile>> locationChoices = new Dictionary<TileType, List<HexTile>>() {
             {TileType.S_Tile_Of_Faction, new List<HexTile>()},
@@ -149,7 +157,7 @@ public class FormPartyAction : CharacterAction {
     public override void EndAction(CharacterParty party, IObject targetObject) {
         base.EndAction(party, targetObject);
         Messenger.RemoveListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
-        Messenger.RemoveListener<ICharacter>(Signals.CHARACTER_JOINED_PARTY, OnCharacterDied);
+        Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
     }
     public override bool ShouldGoToTargetObjectOnChoose() {
         return false;
@@ -158,13 +166,18 @@ public class FormPartyAction : CharacterAction {
     private void InviteSquadMembers(ICharacter squadLeader) {
         for (int i = 0; i < squadLeader.squad.squadFollowers.Count; i++) {
             ICharacter follower = squadLeader.squad.squadFollowers[i];
+            string text = follower.name + " is invited to join " + squadLeader.name + "'s party";
             if (follower.InviteToParty(squadLeader)) {
                 joiningCharacters.Add(follower);
+                text += "\n" + follower.name + " accepted the invitation!";
+            } else {
+                text += "\n" + follower.name + " declined the invitation!";
             }
+            Debug.Log(text);
         }
         if (joiningCharacters.Count > 0) {
             Messenger.AddListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
-            Messenger.AddListener<ICharacter>(Signals.CHARACTER_JOINED_PARTY, OnCharacterDied);
+            Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         }
     }
 
@@ -176,7 +189,7 @@ public class FormPartyAction : CharacterAction {
             }
         }
     }
-    private void OnCharacterDied(ICharacter character) {
+    private void OnCharacterDied(ECS.Character character) {
         if (joiningCharacters.Contains(character)) {
             joiningCharacters.Remove(character);
             CheckForEnd();

@@ -106,7 +106,7 @@ public class ActionThread : Multithread {
                         //if action from Quest is not achievable, Disband Party and perform Grind Action
                         chosenAction = character.currentParty.icharacterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY);
                         chosenObject = character.currentParty.icharacterObject;
-                        //TODO: Add Grind Action
+                        character.AddActionToQueue(character.currentParty.icharacterObject.currentState.GetAction(ACTION_TYPE.GRIND), character.currentParty.icharacterObject);
                         actionLog += "\n" + character.name + " disbanded party and grind action to queue";
                     }
 
@@ -118,8 +118,9 @@ public class ActionThread : Multithread {
                         chosenObject = actionFromQuest.targetObject;
                         actionLog += "\n" + character.name + " got action " + chosenAction.actionData.actionName + " " + chosenObject.objectName + " from quest";
                     } else {
-                        //if action from Quest is not achievable
-                        //TODO: Add Grind Action
+                        //if action from Quest is not achievable, Grind
+                        chosenAction = character.currentParty.icharacterObject.currentState.GetAction(ACTION_TYPE.GRIND);
+                        chosenObject = character.currentParty.icharacterObject;
                         actionLog += "\n" + character.name + " decided to grind";
                     }
                 }
@@ -132,10 +133,11 @@ public class ActionThread : Multithread {
                 if (IsQuestActionAchieveable(actionFromQuest)) {
                     //if action from Quest is achievable, add action from the Quest to the Action Queue
                     character.AddActionToQueue(actionFromQuest.action, actionFromQuest.targetObject);
-                    actionLog += "\n" + character.name + " added action " + chosenAction.actionData.actionName + " " + chosenObject.objectName + " from quest to queue.";
+                    actionLog += "\n" + character.name + " added action " + actionFromQuest.action.actionData.actionName + " " + actionFromQuest.targetObject.objectName + " from quest to queue.";
                 } else {
                     //if action from Quest is not achievable, perform Grind Action
-                    //TODO: Add Grind Action
+                    chosenAction = character.currentParty.icharacterObject.currentState.GetAction(ACTION_TYPE.GRIND);
+                    chosenObject = character.currentParty.icharacterObject;
                     actionLog += "\n" + character.name + " decided to grind";
                 }
             }
@@ -181,7 +183,8 @@ public class ActionThread : Multithread {
                 actionLog += "\n" + character.name + " decided to do action " + chosenAction.actionData.actionName + " " + chosenObject.objectName + " from quest " + chosenQuest.name;
             } else {
                 //if action from Quest is not achievable, perform Grind Action
-                //TODO: Grind Action
+                chosenAction = character.currentParty.icharacterObject.currentState.GetAction(ACTION_TYPE.GRIND);
+                chosenObject = character.currentParty.icharacterObject;
                 actionLog += "\n" + character.name + " decided to grind";
             }
         }

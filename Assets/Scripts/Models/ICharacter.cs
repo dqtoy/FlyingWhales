@@ -49,6 +49,7 @@ public interface ICharacter {
     NewParty ownParty { get; }
     NewParty currentParty { get; }
     Squad squad { get; }
+    CharacterActionQueue<ActionQueueItem> actionQueue { get; }
 
     //functions
     void FaintOrDeath();

@@ -282,7 +282,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
         }
     }
 
-    private void SetImageSize(IMAGE_SIZE imgSize, bool ignoreSize) {
+    public void SetImageSize(IMAGE_SIZE imgSize, bool ignoreSize) {
         _imgSize = imgSize;
         float size = 0f;
         if (!ignoreSize) {

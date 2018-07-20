@@ -336,6 +336,17 @@ public class CharacterManager : MonoBehaviour {
         }
         return false;
     }
+    public NewParty GetPartyByID(int id) {
+        for (int i = 0; i < allCharacters.Count; i++) {
+            Character currCharacter = allCharacters[i];
+            if (currCharacter.ownParty.id == id) {
+                return currCharacter.ownParty;
+            } else if (currCharacter.currentParty.id == id) {
+                return currCharacter.currentParty;
+            }
+        }
+        return null;
+    }
     #endregion
 
     #region Avatars

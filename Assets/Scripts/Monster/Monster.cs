@@ -216,6 +216,9 @@ public class Monster : ICharacter, ICharacterSim {
     public NewParty currentParty {
         get { return _currentParty; }
     }
+    public CharacterActionQueue<ActionQueueItem> actionQueue {
+        get { return null; }
+    }
     #endregion
 
     public Monster CreateNewCopy() {

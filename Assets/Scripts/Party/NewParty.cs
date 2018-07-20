@@ -103,8 +103,7 @@ public class NewParty : IParty {
     public virtual void PartyDeath() {
         _isDead = true;
         this.specificLocation.RemoveCharacterFromLocation(this);
-        Messenger.RemoveListener<ActionThread>(Signals.LOOK_FOR_ACTION, AdvertiseSelf);
-        Messenger.RemoveListener<BuildStructureQuestData>(Signals.BUILD_STRUCTURE_LOOK_ACTION, BuildStructureLookingForAction);
+        RemoveListeners();
         ObjectState deadState = _icharacterObject.GetState("Dead");
         _icharacterObject.ChangeState(deadState);
         GameObject.Destroy(_icon.gameObject);
@@ -122,6 +121,10 @@ public class NewParty : IParty {
                 }
             }
         }
+    }
+    protected virtual void RemoveListeners() {
+        Messenger.RemoveListener<ActionThread>(Signals.LOOK_FOR_ACTION, AdvertiseSelf);
+        Messenger.RemoveListener<BuildStructureQuestData>(Signals.BUILD_STRUCTURE_LOOK_ACTION, BuildStructureLookingForAction);
     }
     #endregion
 

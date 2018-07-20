@@ -59,8 +59,9 @@ public class PartyInfoUI : UIMenu {
         for (int i = 0; i < currentlyShowingParty.icharacters.Count; i++) {
             ICharacter member = currentlyShowingParty.icharacters[i];
             if(member.characterPortrait.transform.parent != content.transform) {
-                member.characterPortrait.transform.parent = content.transform;
+                member.characterPortrait.transform.SetParent(content.transform);
             }
+            member.characterPortrait.SetImageSize(IMAGE_SIZE.X36, false);
             member.characterPortrait.gameObject.SetActive(true);
             member.characterPortrait.ToggleNameLabel(true);
         }
