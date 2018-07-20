@@ -32,6 +32,9 @@ public class GrindAction : CharacterAction {
             if (party.mainCharacter is ECS.Character) {
                 (party.mainCharacter as ECS.Character).AddActionToQueue(chosenParty.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK), chosenParty.icharacterObject);
             }
+        } else {
+            IObject obj = null;
+            party.mainCharacter.AddActionToQueue(party.mainCharacter.GetRandomDesperateAction(ref obj), obj);
         }
         GiveAllReward(party);
         EndAction(party, targetObject);

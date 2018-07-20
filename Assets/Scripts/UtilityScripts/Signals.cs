@@ -81,4 +81,8 @@ public static class Signals {
     public static string SQUAD_MEMBER_ADDED = "OnSquadMemberAdded"; //Parameters (ICharacter addedCharacter, Squad affectedSquad)
     public static string SQUAD_LEADER_SET = "OnSquadLeaderSet"; //Parameters (ICharacter leader, Squad affectedSquad)
     #endregion
+
+    #region Combat
+    public static string COMBAT_DONE = "OnCombatDone"; //Parameters (Combat doneCombat)
+    #endregion
 }

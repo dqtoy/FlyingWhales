@@ -938,7 +938,7 @@ public class Utilities : MonoBehaviour {
         return GENDER.FEMALE;
     }
     public static string GetDateString(GameDate date) {
-        return NormalizeString(((MONTH)date.month).ToString()) + " " + date.day.ToString() + ", " + date.year.ToString();
+        return date.month + "/" + date.day + "/" + date.year;
     }
     /*
      * <summary>
@@ -1243,7 +1243,7 @@ public class Utilities : MonoBehaviour {
         return tiles;
     }
     public static float GetPowerComparison(IParty party1, IParty party2) {
-        if (party1.computedPower >= party2.computedPower) { //party1 power is higher than or equal party2 power
+        if (party1.computedPower <= party2.computedPower) { //party1 power is higher than or equal party2 power
             //Percent increase = [(new value - original value)/original value] * 100
             return ((party2.computedPower - party1.computedPower) / party1.computedPower) * 100;
         } else { //party1 power is lower than party2 power

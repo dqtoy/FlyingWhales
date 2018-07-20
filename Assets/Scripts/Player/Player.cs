@@ -37,6 +37,7 @@ public class Player : ILeader{
         _snatchedCharacters = new List<ECS.Character>();
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_ADDED, OnTileAddedToPlayerArea);
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileAddedToPlayerArea);
+        Messenger.AddListener<Character>(Signals.CHARACTER_RELEASED, OnCharacterReleased);
     }
 
     #region Corruption
@@ -150,6 +151,9 @@ public class Player : ILeader{
             }
         }
         return false;
+    }
+    private void OnCharacterReleased(Character releasedCharacter) {
+        _snatchedCharacters.Remove(releasedCharacter);
     }
     #endregion
 }

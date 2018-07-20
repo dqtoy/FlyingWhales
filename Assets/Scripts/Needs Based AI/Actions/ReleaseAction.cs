@@ -47,6 +47,10 @@ public class ReleaseAction : CharacterAction {
             if (targetObject is ICharacterObject) {
                 ICharacterObject icharacterObject = targetObject as ICharacterObject;
                 icharacterObject.iparty.GoHome();
+                if (icharacterObject.iparty is CharacterParty) {
+                    (icharacterObject.iparty as CharacterParty).SetIsIdle(false);
+                }
+                
                 if (icharacterObject is CharacterObj) {
                     Messenger.Broadcast(Signals.CHARACTER_RELEASED, (icharacterObject as CharacterObj).party.mainCharacter as ECS.Character);
                 }

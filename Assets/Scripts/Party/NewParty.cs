@@ -116,7 +116,7 @@ public class NewParty : IParty {
             for (int i = 0; i < icharacters.Count; i++) {
                 ICharacter currCharacter = icharacters[i];
                 if (currCharacter.ownParty.id != this.id) {
-                    icharacters.RemoveAt(i);
+                    RemoveCharacter(currCharacter);
                     break;
                 }
             }
@@ -162,6 +162,7 @@ public class NewParty : IParty {
         if (!_icharacters.Contains(icharacter)) {
             _icharacters.Add(icharacter);
             icharacter.SetCurrentParty(this);
+            icharacter.OnAddedToParty();
             Messenger.Broadcast(Signals.CHARACTER_JOINED_PARTY, icharacter, this);
         }
     }
@@ -171,8 +172,8 @@ public class NewParty : IParty {
             if (this.specificLocation is BaseLandmark) {
                 this.specificLocation.AddCharacterToLocation(icharacter.ownParty);
             } else {
-                icharacter.ownParty.icon.SetVisualState(true);
                 icharacter.ownParty.icon.SetAIPathPosition(this.specificLocation.tileLocation.transform.position);
+                icharacter.ownParty.icon.SetVisualState(true);
             }
             //Check if there are still characters in this party, if not, change to dead state
             if (_icharacters.Count <= 0) {

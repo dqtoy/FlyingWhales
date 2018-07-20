@@ -66,6 +66,7 @@ public interface ICharacter {
     void SetOwnedParty(NewParty party);
     void SetCurrentParty(NewParty party);
     void OnRemovedFromParty();
+    void OnAddedToParty();
     void SetHomeLandmark(BaseLandmark newHomeLandmark);
     void SetHomeStructure(StructureObj newHomeStructure);
     void AddHistory(Log log); //Character only
@@ -77,4 +78,6 @@ public interface ICharacter {
     CharacterAction GetRandomDesperateAction(ref IObject targetObject);
     CharacterAction GetRandomIdleAction(ref IObject targetObject);
     CharacterTag AssignTag(CHARACTER_TAG tag); //Character only
+    void AddActionToQueue(CharacterAction action, IObject targetObject, CharacterQuestData associatedQuestData = null, int position = -1);
+    void RemoveActionFromQueue(ActionQueueItem item);
 }

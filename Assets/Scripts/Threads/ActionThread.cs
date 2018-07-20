@@ -47,6 +47,7 @@ public class ActionThread : Multithread {
                 ActionQueueItem item = character.actionQueue.Dequeue();
                 chosenAction = item.action;
                 chosenObject = item.targetObject;
+                _party.actionData.questDataAssociatedWithCurrentAction = item.associatedQuestData;
                 actionLog += "\nGot action from queue " + chosenAction.actionData.actionName + "-" + chosenObject.objectName;
             } else {
                 //If Action Queue is empty, check if Happiness is above 200 and Mental Points and Physical Points are both above -3.
@@ -92,7 +93,8 @@ public class ActionThread : Multithread {
         actionLog += "\nGetting action for squad leader:"; 
         if (availableQuests.Count > 0) { //If yes, check if there is at least one Quest
             Quest selectedQuest = availableQuests[Utilities.rng.Next(0, availableQuests.Count)];
-            QuestAction actionFromQuest = selectedQuest.GetQuestAction(character, character.GetDataForQuest(selectedQuest));
+            CharacterQuestData questActionData = character.GetDataForQuest(selectedQuest);
+            QuestAction actionFromQuest = selectedQuest.GetQuestAction(character, questActionData);
             actionLog += "\nSelected quest is " + selectedQuest.name;
             if (selectedQuest.groupType == GROUP_TYPE.SOLO) { //If selected Quest is a Solo Quest
                 if (character.IsInParty()) { //If character is in a party
@@ -100,7 +102,7 @@ public class ActionThread : Multithread {
                         chosenAction = character.currentParty.icharacterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY);
                         chosenObject = character.currentParty.icharacterObject;
                         //Disband Party then add action from the Quest to the Action Queue
-                        character.AddActionToQueue(actionFromQuest.action, actionFromQuest.targetObject);
+                        character.AddActionToQueue(actionFromQuest.action, actionFromQuest.targetObject, questActionData);
                         actionLog += "\n" + character.name + " disbanded party and added action " + actionFromQuest.action.actionData.actionName + " " + chosenObject.objectName + " to queue.";
                     } else {
                         //if action from Quest is not achievable, Disband Party and perform Grind Action
@@ -116,6 +118,7 @@ public class ActionThread : Multithread {
                         //obtain and perform Action from the Quest
                         chosenAction = actionFromQuest.action;
                         chosenObject = actionFromQuest.targetObject;
+                        _party.actionData.questDataAssociatedWithCurrentAction = questActionData;
                         actionLog += "\n" + character.name + " got action " + chosenAction.actionData.actionName + " " + chosenObject.objectName + " from quest";
                     } else {
                         //if action from Quest is not achievable, Grind
@@ -132,13 +135,12 @@ public class ActionThread : Multithread {
                 actionLog += "\n" + character.name + " chose to form a party.";
                 if (IsQuestActionAchieveable(actionFromQuest)) {
                     //if action from Quest is achievable, add action from the Quest to the Action Queue
-                    character.AddActionToQueue(actionFromQuest.action, actionFromQuest.targetObject);
+                    character.AddActionToQueue(actionFromQuest.action, actionFromQuest.targetObject, questActionData);
                     actionLog += "\n" + character.name + " added action " + actionFromQuest.action.actionData.actionName + " " + actionFromQuest.targetObject.objectName + " from quest to queue.";
                 } else {
                     //if action from Quest is not achievable, perform Grind Action
-                    chosenAction = character.currentParty.icharacterObject.currentState.GetAction(ACTION_TYPE.GRIND);
-                    chosenObject = character.currentParty.icharacterObject;
-                    actionLog += "\n" + character.name + " decided to grind";
+                    character.AddActionToQueue(character.currentParty.icharacterObject.currentState.GetAction(ACTION_TYPE.GRIND), character.currentParty.icharacterObject);
+                    actionLog += "\n" + character.name + " added grind action to queue";
                 }
             }
         } else { //If no, choose a random Idle Action
@@ -158,9 +160,11 @@ public class ActionThread : Multithread {
             actionLog += "\n" + character.name + " chose to " + chosenAction.actionData.actionName + " " + chosenObject.objectName;
         } else {
             Quest chosenQuest = availableQuests[Utilities.rng.Next(0, availableQuests.Count)];
-            QuestAction questAction = chosenQuest.GetQuestAction(character, character.GetDataForQuest(chosenQuest));
+            CharacterQuestData questActionData = character.GetDataForQuest(chosenQuest);
+            QuestAction questAction = chosenQuest.GetQuestAction(character, questActionData);
             chosenAction = questAction.action;
             chosenObject = questAction.targetObject;
+            _party.actionData.questDataAssociatedWithCurrentAction = questActionData;
             actionLog += "\n" + character.name + " decided to do action " + chosenAction.actionData.actionName + " " + chosenObject.objectName + " from quest " + chosenQuest.name;
         }
     }
@@ -175,11 +179,13 @@ public class ActionThread : Multithread {
             actionLog += "\n" + character.name + " chose to " + chosenAction.actionData.actionName + " " + chosenObject.objectName;
         } else {
             Quest chosenQuest = availableQuests[Utilities.rng.Next(0, availableQuests.Count)];
-            QuestAction questAction = chosenQuest.GetQuestAction(character, character.GetDataForQuest(chosenQuest));
+            CharacterQuestData questActionData = character.GetDataForQuest(chosenQuest);
+            QuestAction questAction = chosenQuest.GetQuestAction(character, questActionData);
             if (IsQuestActionAchieveable(questAction)) {
                 //if action from Quest is achievable, add action from the Quest to the Action Queue
                 chosenAction = questAction.action;
                 chosenObject = questAction.targetObject;
+                _party.actionData.questDataAssociatedWithCurrentAction = questActionData;
                 actionLog += "\n" + character.name + " decided to do action " + chosenAction.actionData.actionName + " " + chosenObject.objectName + " from quest " + chosenQuest.name;
             } else {
                 //if action from Quest is not achievable, perform Grind Action
