@@ -11,7 +11,6 @@ public class BuildAction : CharacterAction {
 
     public BuildAction(string structureName) : base(ACTION_TYPE.BUILD) {
         _structureName = structureName;
-        _needsSpecificTarget = true;
         _isStructureInLandmark = false;
     }
 

@@ -7,7 +7,6 @@ using ECS;
 public class CharacterAction {
     //protected ObjectState _state;
     protected ActionFilter[] _filters;
-    protected bool _needsSpecificTarget;
     [SerializeField] protected CharacterActionData _actionData;
 
     #region getters/setters
@@ -23,14 +22,10 @@ public class CharacterAction {
     public CharacterActionData actionData {
         get { return _actionData; }
     }
-    public bool needsSpecificTarget {
-        get { return _needsSpecificTarget; }
-    }
     #endregion
 
     public CharacterAction(ACTION_TYPE actionType) {
         //_state = state;
-        _needsSpecificTarget = false;
         _actionData.actionType = actionType;
         _actionData.actionName = Utilities.NormalizeStringUpperCaseFirstLetters(actionType.ToString());
     }
@@ -39,24 +34,26 @@ public class CharacterAction {
     public virtual void Initialize() { }
     public virtual void OnChooseAction(NewParty iparty, IObject targetObject) { }
     public virtual void OnFirstEncounter(CharacterParty party, IObject targetObject) {
-        if (targetObject.objectLocation != null) {
-            Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
-            arriveLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            arriveLog.AddToFillers(targetObject.objectLocation, targetObject.objectLocation.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-            arriveLog.AddToFillers(null, GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
-            for (int i = 0; i < party.icharacters.Count; i++) {
-                party.icharacters[i].AddHistory(arriveLog);
-            }
-        } else {
-            Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
-            arriveLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            arriveLog.AddToFillers(targetObject.specificLocation.tileLocation, targetObject.specificLocation.tileLocation.tileName, LOG_IDENTIFIER.LANDMARK_1);
-            arriveLog.AddToFillers(null, GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
-            for (int i = 0; i < party.icharacters.Count; i++) {
-                party.icharacters[i].AddHistory(arriveLog);
+        string arriveActionLog = GetArriveActionString();
+        if (arriveActionLog != string.Empty && targetObject != null) {
+            if (targetObject.objectLocation != null) {
+                Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
+                arriveLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                arriveLog.AddToFillers(targetObject.objectLocation, targetObject.objectLocation.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+                arriveLog.AddToFillers(null, arriveActionLog, LOG_IDENTIFIER.ACTION_DESCRIPTION);
+                for (int i = 0; i < party.icharacters.Count; i++) {
+                    party.icharacters[i].AddHistory(arriveLog);
+                }
+            } else {
+                Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
+                arriveLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                arriveLog.AddToFillers(targetObject.specificLocation.tileLocation, targetObject.specificLocation.tileLocation.tileName, LOG_IDENTIFIER.LANDMARK_1);
+                arriveLog.AddToFillers(null, arriveActionLog, LOG_IDENTIFIER.ACTION_DESCRIPTION);
+                for (int i = 0; i < party.icharacters.Count; i++) {
+                    party.icharacters[i].AddHistory(arriveLog);
+                }
             }
         }
-
     }
     public virtual void PerformAction(CharacterParty party, IObject targetObject) { }
     public virtual void ActionSuccess(IObject targetObject) {
@@ -125,6 +122,9 @@ public class CharacterAction {
     #region Utilities
     public void SetActionData(CharacterActionData data) {
         _actionData = data;
+    }
+    public void SetActionCategory(ACTION_CATEGORY category) {
+        _actionData.actionCategory = category;
     }
     //public void SetObjectState(ObjectState state) {
     //    _state = state;
@@ -230,10 +230,18 @@ public class CharacterAction {
 
     #region Logs
     public virtual string GetArriveActionString() {
-        return LocalizationManager.Instance.GetLocalizedValue("CharacterActions", this.GetType().ToString(), "arrive_action");
+        string file = this.GetType().ToString();
+        if (LocalizationManager.Instance.localizedText["CharacterActions"][file].ContainsKey("arrive_action")) {
+            return LocalizationManager.Instance.GetLocalizedValue("CharacterActions", file, "arrive_action");
+        }
+        return string.Empty;
     }
     public virtual string GetLeaveActionString() {
-        return LocalizationManager.Instance.GetLocalizedValue("CharacterActions", this.GetType().ToString(), "leave_action");
+        string file = this.GetType().ToString();
+        if (LocalizationManager.Instance.localizedText["CharacterActions"][file].ContainsKey("leave_action")) {
+            return LocalizationManager.Instance.GetLocalizedValue("CharacterActions", file, "leave_action");
+        }
+        return string.Empty;
     }
     #endregion
 }

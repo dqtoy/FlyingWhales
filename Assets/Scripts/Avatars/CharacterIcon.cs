@@ -73,7 +73,6 @@ public class CharacterIcon : MonoBehaviour {
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
 
 #if !WORLD_CREATION_TOOL
-        OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
         SetMovementState(GameManager.Instance.isPaused);
 #endif
     }
@@ -130,11 +129,14 @@ public class CharacterIcon : MonoBehaviour {
 
     #region Speed
     public void SetMovementState(bool state) {
+        //if true, pause movement, else, continue moving
         if (_iparty is CharacterParty && (_iparty as CharacterParty).actionData.isHalted) {
             return;
         }
         if (state) {
             _aiPath.maxSpeed = 0f;
+        } else {
+            OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
         }
     }
     public void OnProgressionSpeedChanged(PROGRESSION_SPEED speed) {

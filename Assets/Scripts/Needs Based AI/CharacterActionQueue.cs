@@ -34,6 +34,9 @@ public class CharacterActionQueue<T> {
     public bool Remove(T value) {
         return list.Remove(value);
     }
+    public void RemoveAt(int index) {
+        list.RemoveAt(index);
+    }
 
     public bool IsEmpty {
         get { return list.Count <= 0; }
@@ -41,6 +44,14 @@ public class CharacterActionQueue<T> {
 
     public void Clear() {
         list.Clear();
+    }
+
+    public int Count {
+        get { return list.Count; }
+    }
+
+    public T GetBasedOnIndex(int index) {
+        return list[index];
     }
 
 }

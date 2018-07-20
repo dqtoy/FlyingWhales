@@ -4,7 +4,7 @@ using UnityEngine;
 using ECS;
 
 public class WaitingInteractionAction : CharacterAction {
-    private Character _waiterCharacter;
+    private Character _waitedCharacter;
     private CharacterAction _waitedAction;
 
     public WaitingInteractionAction() : base(ACTION_TYPE.WAITING) {
@@ -20,8 +20,8 @@ public class WaitingInteractionAction : CharacterAction {
     #endregion
 
     #region Utilities
-    public void SetWaiterCharacter(Character character) {
-        _waiterCharacter = character;
+    public void SetWaitedCharacter(Character character) {
+        _waitedCharacter = character;
     }
     public void SetWaitedAction(CharacterAction action) {
         _waitedAction = action;

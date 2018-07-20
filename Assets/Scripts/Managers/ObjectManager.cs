@@ -295,6 +295,8 @@ public class ObjectManager : MonoBehaviour {
                 return new DepositAction();
             case ACTION_TYPE.CHANGE_CLASS:
                 return new ChangeClassAction();
+            case ACTION_TYPE.WAITING:
+                return new WaitingInteractionAction();
             case ACTION_TYPE.FORM_PARTY:
                 return new FormPartyAction();
             case ACTION_TYPE.DISBAND_PARTY:

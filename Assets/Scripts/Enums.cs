@@ -1279,6 +1279,11 @@ public enum ACTION_TYPE {
     JOIN_PARTY,
     GRIND
 }
+public enum ACTION_CATEGORY {
+    NORMAL,
+    IDLE,
+    DESPERATE,
+}
 
 public enum OBJECT_TYPE {
     CHARACTER,

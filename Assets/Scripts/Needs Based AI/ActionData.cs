@@ -82,22 +82,17 @@ public class ActionData {
         }
         action.OnChooseAction(_party, targetObject);
         if (action.ShouldGoToTargetObjectOnChoose()) {
-            _party.GoToLocation(targetObject.specificLocation, PATHFINDING_MODE.USE_ROADS);
-        }
-        //if (action.state.obj.icharacterType == ICHARACTER_TYPE.CHARACTERObj) {
-        //    CharacterObj characterObj = action.state.obj as CharacterObj;
-        //    _party.GoToLocation(characterObj.character.icon.gameObject, PATHFINDING_MODE.USE_ROADS);
-        //} else {
-        //    _party.GoToLocation(action.state.obj.specificLocation, PATHFINDING_MODE.USE_ROADS);
-        //}
-
-        if (targetObject.objectType == OBJECT_TYPE.STRUCTURE) {
-            Area areaOfStructure = targetObject.objectLocation.tileLocation.areaOfTile;
-            if (areaOfStructure != null && _party.home != null && areaOfStructure.id == _party.home.id) {
-                _homeMultiplier = 1f;
-                _hasDoneActionAtHome = true;
+            if (targetObject != null) {
+                _party.GoToLocation(targetObject.specificLocation, PATHFINDING_MODE.USE_ROADS);
+                if (targetObject.objectType == OBJECT_TYPE.STRUCTURE) {
+                    Area areaOfStructure = targetObject.objectLocation.tileLocation.areaOfTile;
+                    if (areaOfStructure != null && _party.home != null && areaOfStructure.id == _party.home.id) {
+                        _homeMultiplier = 1f;
+                        _hasDoneActionAtHome = true;
+                    }
+                }
             }
-        }
+        }   
     }
     public void DetachActionData() {
         Reset();
@@ -120,12 +115,12 @@ public class ActionData {
     }
     public void SetIsHalted(bool state) {
         if (_isHalted != state) {
-            _isHalted = state;
-            if (state) {
-                _party.icon.aiPath.maxSpeed = 0f;
+            if (!_isHalted){
+                _party.icon.SetMovementState(state);
+                _isHalted = state;
             } else {
-                _party.icon.OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
-                _party.icon.SetMovementState(GameManager.Instance.isPaused);
+                _isHalted = state;
+                _party.icon.SetMovementState(state);
             }
         }
     }
@@ -150,36 +145,40 @@ public class ActionData {
                 //    DoAction();
                 //    return;
                 //}
-                ILocation characterLocation = _party.specificLocation;
-                if (characterLocation != null && currentTargetObject.specificLocation != null && characterLocation.tileLocation.id == currentTargetObject.specificLocation.tileLocation.id) {
-                    //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action
-                    //if (currentAction.state.stateName != currentAction.state.obj.currentState.stateName) {
-                    CharacterAction newAction = currentTargetObject.currentState.GetActionInState(currentAction);
-                    if (newAction != null) {
-                        if(newAction != currentAction) {
-                            currentAction.EndAction(_party, currentTargetObject);
-                            AssignAction(newAction, currentTargetObject);
-                        }
-                    } else {
-                        if(!_party.mainCharacter.desperateActions.Contains(currentAction) && !_party.mainCharacter.idleActions.Contains(currentAction)) {
-                            currentAction.EndAction(_party, currentTargetObject);
-                            return;
-                        }
-                    }
-                    //}
+                if(currentTargetObject == null) {
                     DoAction();
                 } else {
-                    ILocation location = currentTargetObject.specificLocation;
-                    if (location != null) {
-                        if (currentAction.actionType == ACTION_TYPE.ATTACK) { //|| currentAction.actionType == ACTION_TYPE.CHAT
-                            _party.GoToLocation(location, PATHFINDING_MODE.USE_ROADS);
+                    ILocation characterLocation = _party.specificLocation;
+                    if (characterLocation != null && currentTargetObject.specificLocation != null && characterLocation.tileLocation.id == currentTargetObject.specificLocation.tileLocation.id) {
+                        //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action
+                        //if (currentAction.state.stateName != currentAction.state.obj.currentState.stateName) {
+                        CharacterAction newAction = currentTargetObject.currentState.GetActionInState(currentAction);
+                        if (newAction != null) {
+                            if (newAction != currentAction) {
+                                currentAction.EndAction(_party, currentTargetObject);
+                                AssignAction(newAction, currentTargetObject);
+                            }
+                        } else {
+                            if (!_party.mainCharacter.desperateActions.Contains(currentAction) && !_party.mainCharacter.idleActions.Contains(currentAction)) {
+                                currentAction.EndAction(_party, currentTargetObject);
+                                return;
+                            }
                         }
+                        //}
+                        DoAction();
                     } else {
-                        if(currentTargetObject.currentState.stateName == "Dead") { //if object is dead
-                            currentAction.EndAction(_party, currentTargetObject);
+                        ILocation location = currentTargetObject.specificLocation;
+                        if (location != null) {
+                            if (currentAction.actionType == ACTION_TYPE.ATTACK) { //|| currentAction.actionType == ACTION_TYPE.CHAT
+                                _party.GoToLocation(location, PATHFINDING_MODE.USE_ROADS);
+                            }
+                        } else {
+                            if (currentTargetObject.currentState.stateName == "Dead") { //if object is dead
+                                currentAction.EndAction(_party, currentTargetObject);
+                            }
                         }
+
                     }
-                    
                 }
                 //else {
                 //    Debug.Log(_party.name + " can't perform " + currentAction.actionData.actionName + " because he is not in the same location!");
