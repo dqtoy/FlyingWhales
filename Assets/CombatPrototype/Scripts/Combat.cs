@@ -60,7 +60,7 @@ namespace ECS{
                 character.SetSide(side);
                 //character.currentCombat = this;
                 character.SetRowNumber(rowNumber);
-                character.actRate = character.speed * 5;
+                character.actRate = character.speed;
                 character.battleOnlyTracker.Reset();
                 if (hasStarted && !isDone) {
                     string log = character.coloredUrlName + " joins the battle on Side " + side.ToString();
@@ -86,7 +86,7 @@ namespace ECS{
 				characters[i].SetSide (side);
                 //characters[i].currentCombat = this;
                 characters[i].SetRowNumber(rowNumber);
-                characters[i].actRate = characters[i].speed * 5;
+                characters[i].actRate = characters[i].speed;
                 if (hasStarted && !isDone) {
                     string log = characters[i].coloredUrlName + " joins the battle on Side " + side.ToString();
                     Debug.Log(log);
@@ -273,7 +273,7 @@ namespace ECS{
 			foreach (ICharacter character in characterActivationWeights.Keys) {
 				character.actRate += character.speed;
 			}
-			chosenCharacter.actRate = chosenCharacter.speed * 5;
+			chosenCharacter.actRate = chosenCharacter.speed;
 			return chosenCharacter;
 		}
 

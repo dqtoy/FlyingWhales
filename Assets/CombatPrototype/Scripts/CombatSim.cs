@@ -29,7 +29,7 @@ public class CombatSim {
             character.SetSide(side);
             //character.currentCombat = this;
             character.SetRowNumber(rowNumber);
-            character.actRate = character.speed * 5;
+            character.actRate = character.speed;
         }
     }
     public bool RemoveCharacter(ICharacterSim character) {
@@ -117,7 +117,7 @@ public class CombatSim {
         foreach (ICharacterSim character in characterActivationWeights.Keys) {
             character.actRate += character.speed;
         }
-        chosenCharacter.actRate = chosenCharacter.speed * 5;
+        chosenCharacter.actRate = chosenCharacter.speed;
         return chosenCharacter;
     }
     private ICharacterSim GetTargetCharacter(ICharacterSim sourceCharacter, Skill skill) {
