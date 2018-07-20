@@ -34,12 +34,6 @@ public class ChatAction : CharacterAction {
         Reset();
         if (targetObject != null && targetObject is CharacterObj) {
             CharacterParty targetParty = (targetObject as CharacterObj).party;
-            //if(targetParty.actionData.currentAction.actionData.actionType == ACTION_TYPE.CHAT) {
-            //    ChatAction targetChatAction = targetParty.actionData.currentAction as ChatAction;
-            //    if(targetChatAction.chatee == iparty.mainCharacter as Character) {
-            //        return;
-            //    }
-            //}
             Character targetCharacter = targetParty.mainCharacter as Character;
             WaitingInteractionAction waitingInteractionAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.WAITING) as WaitingInteractionAction;
             waitingInteractionAction.SetWaitedCharacter(iparty.mainCharacter as Character);
@@ -47,6 +41,7 @@ public class ChatAction : CharacterAction {
 
             SetChatee(targetCharacter, waitingInteractionAction);
             //put wait interaction in target queue
+            targetCharacter.AddActionToQueue(waitingInteractionAction, null, 0);
         }
     }
     public override void OnFirstEncounter(CharacterParty party, IObject targetObject) {
@@ -62,6 +57,9 @@ public class ChatAction : CharacterAction {
 
                 if (icharacterObject.iparty is CharacterParty) {
                     CharacterParty targetParty = icharacterObject.iparty as CharacterParty;
+                    Character targetCharacter = targetParty.mainCharacter as Character;
+
+                    _chatee.RemoveActionFromQueue(_chateeWaitAction);
                     //Remove wait for interaction action
 
                     if (targetParty.actionData.currentAction.actionData.actionType != ACTION_TYPE.CHAT) {

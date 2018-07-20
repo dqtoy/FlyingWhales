@@ -35,7 +35,7 @@ public class CharacterAction {
     public virtual void OnChooseAction(NewParty iparty, IObject targetObject) { }
     public virtual void OnFirstEncounter(CharacterParty party, IObject targetObject) {
         string arriveActionLog = GetArriveActionString();
-        if (arriveActionLog != string.Empty) {
+        if (arriveActionLog != string.Empty && targetObject != null) {
             if (targetObject.objectLocation != null) {
                 Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
                 arriveLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

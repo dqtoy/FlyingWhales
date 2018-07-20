@@ -2476,7 +2476,7 @@ namespace ECS {
             partyPool.Clear();
             for (int i = 0; i < faction.characters.Count; i++) {
                 CharacterParty party = faction.characters[i].party;
-                if (party.id != this._ownParty.id && !partyPool.Contains(party) && faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)) {
+                if (party.id != this._ownParty.id && !partyPool.Contains(party)) { //&& faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)
                     partyPool.Add(party);
                 }
             }
@@ -2493,7 +2493,7 @@ namespace ECS {
                 Faction nonHostileFaction = nonHostileFactions[i];
                 for (int k = 0; k < nonHostileFaction.characters.Count; k++) {
                     CharacterParty party = nonHostileFaction.characters[k].party;
-                    if (party.id != this._ownParty.id && !partyPool.Contains(party) && faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)) {
+                    if (party.id != this._ownParty.id && !partyPool.Contains(party)) { // && faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)
                         partyPool.Add(party);
                     }
                 }
@@ -2508,7 +2508,7 @@ namespace ECS {
             partyPool.Clear();
             for (int i = 0; i < faction.characters.Count; i++) {
                 CharacterParty party = faction.characters[i].party;
-                if (party.id != this._ownParty.id && !partyPool.Contains(party) && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.IDLE && !faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)) {
+                if (party.id != this._ownParty.id && !partyPool.Contains(party) && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.IDLE) { // && !faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)
                     partyPool.Add(party);
                 }
             }
@@ -2525,7 +2525,7 @@ namespace ECS {
                 Faction nonHostileFaction = nonHostileFactions[i];
                 for (int k = 0; k < nonHostileFaction.characters.Count; k++) {
                     CharacterParty party = nonHostileFaction.characters[k].party;
-                    if (party.id != this._ownParty.id && !partyPool.Contains(party) && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.IDLE && !faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)) { //random parties within non-hostile factions within settlements
+                    if (party.id != this._ownParty.id && !partyPool.Contains(party) && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.IDLE) { // && !faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)
                         partyPool.Add(party);
                     }
                 }
@@ -2745,6 +2745,15 @@ namespace ECS {
         }
         public void RemoveActionFromQueue(ActionQueueItem item) {
             _actionQueue.Remove(item);
+        }
+        public void RemoveActionFromQueue(CharacterAction action) {
+            for (int i = 0; i < _actionQueue.Count; i++) {
+                ActionQueueItem queueItem = _actionQueue.GetBasedOnIndex(i);
+                if(queueItem.action == action) {
+                    _actionQueue.RemoveAt(i);
+                    break;
+                }
+            }
         }
         #endregion
     }
