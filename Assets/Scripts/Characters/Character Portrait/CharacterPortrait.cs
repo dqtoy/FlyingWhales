@@ -44,6 +44,9 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
     [Header("Name")]
     [SerializeField] private TextMeshProUGUI nameLbl;
 
+    [Header("Borders")]
+    [SerializeField] private GameObject borders;
+
     #region getters/setters
     public ECS.Character thisCharacter {
         get { return _character as ECS.Character; }
@@ -120,6 +123,9 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
         (this.transform as RectTransform).sizeDelta = newSize;
         RectTransform[] rt = Utilities.GetComponentsInDirectChildren<RectTransform>(this.gameObject);
         for (int i = 0; i < rt.Length; i++) {
+            if (rt[i] == borders.transform) {
+                continue;
+            }
             rt[i].sizeDelta = newSize;
         }
         
@@ -133,6 +139,9 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
         (this.transform as RectTransform).sizeDelta = normalSize;
         RectTransform[] rt = Utilities.GetComponentsInDirectChildren<RectTransform>(this.gameObject);
         for (int i = 0; i < rt.Length; i++) {
+            if (rt[i] == borders.transform) {
+                continue;
+            }
             rt[i].sizeDelta = normalSize;
         }
         //LandmarkVisual lv = this.gameObject.GetComponentInParent<LandmarkVisual>();
@@ -322,5 +331,9 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
             //}
         }
         normalSize = (this.transform as RectTransform).sizeDelta;
+    }
+
+    public void SetBorderState(bool state) {
+        borders.SetActive(state);
     }
 }
