@@ -747,6 +747,9 @@ public class Monster : ICharacter, ICharacterSim {
     public bool InviteToParty(ICharacter inviter) {
         return false;
     }
+    public bool IsInOwnParty() {
+        return true;
+    }
     #endregion
 
     #region Squads
