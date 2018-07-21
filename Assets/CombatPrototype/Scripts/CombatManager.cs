@@ -99,11 +99,18 @@ namespace ECS {
    //             Character currDeadCharacter = combat.deadCharacters[i];
    //             currDeadCharacter.Death ();
 			//}
-            while(combat.charactersSideA.Count > 0) {
+            while(combat.charactersSideA.Count > 0) { //characters that are still alive after combat
                 ICharacter icharacter = combat.charactersSideA[0];
                 if (icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                     Character character = icharacter as Character;
-                    PartyContinuesActionAfterCombat(character.party, true);
+                    CharacterParty characterParty = character.currentParty as CharacterParty;
+                    if (character.IsInOwnParty()) { //only characters that own the party they are in
+                        PartyContinuesActionAfterCombat(characterParty, true);
+                    } else { //characters that do not own the party they are in
+                        if (characterParty.IsOwnerDead()) { //if the owner of the party is dead, disband the party
+                            characterParty.DisbandParty();
+                        }
+                    }
                 } else {
                     icharacter.ownParty.currentCombat = null;
                 }
@@ -111,11 +118,18 @@ namespace ECS {
                 icharacter.ResetToFullSP();
                 combat.RemoveCharacter(SIDES.A, icharacter);
             }
-            while (combat.charactersSideB.Count > 0) {
+            while (combat.charactersSideB.Count > 0) { //characters that are still alive after combat
                 ICharacter icharacter = combat.charactersSideB[0];
                 if (icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                     Character character = icharacter as Character;
-                    PartyContinuesActionAfterCombat(character.party, true);
+                    CharacterParty characterParty = character.currentParty as CharacterParty;
+                    if (character.IsInOwnParty()) { //only characters that own the party they are in
+                        PartyContinuesActionAfterCombat(characterParty, true);
+                    } else { //characters that do not own the party they are in
+                        if (characterParty.IsOwnerDead()) { //if the owner of the party is dead, disband the party
+                            characterParty.DisbandParty();
+                        }
+                    }
                 } else {
                     icharacter.ownParty.currentCombat = null;
                 }

@@ -16,6 +16,7 @@ public class NewParty : IParty {
     protected Combat _currentCombat;
     protected ILocation _specificLocation;
     protected ICharacterObject _icharacterObject;
+    protected ICharacter _owner;
 
     #region getters/setters
     public int id {
@@ -84,9 +85,13 @@ public class NewParty : IParty {
     public List<CharacterQuestData> questData {
         get { return GetQuestData(); }
     }
+    public ICharacter owner {
+        get { return _owner; }
+    }
     #endregion
 
-    public NewParty() {
+    public NewParty(ICharacter owner) {
+        _owner = owner;
         _id = Utilities.SetID(this);
         _isDead = false;
         _icharacters = new List<ICharacter>();
@@ -112,14 +117,8 @@ public class NewParty : IParty {
         _currentCombat = null;
     }
     public virtual void DisbandParty() {
-        while (icharacters.Count != 1) {
-            for (int i = 0; i < icharacters.Count; i++) {
-                ICharacter currCharacter = icharacters[i];
-                if (currCharacter.ownParty.id != this.id) {
-                    icharacters.RemoveAt(i);
-                    break;
-                }
-            }
+        while (icharacters.Count != 0) {
+            RemoveCharacter(icharacters[0]);
         }
     }
     protected virtual void RemoveListeners() {
@@ -162,6 +161,7 @@ public class NewParty : IParty {
         if (!_icharacters.Contains(icharacter)) {
             _icharacters.Add(icharacter);
             icharacter.SetCurrentParty(this);
+            icharacter.OnAddedToParty();
             Messenger.Broadcast(Signals.CHARACTER_JOINED_PARTY, icharacter, this);
         }
     }
@@ -171,8 +171,8 @@ public class NewParty : IParty {
             if (this.specificLocation is BaseLandmark) {
                 this.specificLocation.AddCharacterToLocation(icharacter.ownParty);
             } else {
-                icharacter.ownParty.icon.SetVisualState(true);
                 icharacter.ownParty.icon.SetAIPathPosition(this.specificLocation.tileLocation.transform.position);
+                icharacter.ownParty.icon.SetVisualState(true);
             }
             //Check if there are still characters in this party, if not, change to dead state
             if (_icharacters.Count <= 0) {

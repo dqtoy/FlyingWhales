@@ -9,11 +9,15 @@ public class CharacterParty : NewParty {
     public delegate void DailyAction();
     public DailyAction onDailyAction;
 
+
     private bool _isIdle; //can't do action, needs will not deplete
     private CharacterObj _characterObj;
     private ActionData _actionData;
 
     #region getters/setters
+    public override string name {
+        get { return _owner.name + "'s Party"; }
+    }
     public bool isIdle {
         get { return _isIdle; }
     }
@@ -25,7 +29,7 @@ public class CharacterParty : NewParty {
     }
     #endregion
 
-    public CharacterParty(): base() {
+    public CharacterParty(ICharacter owner): base(owner) {
         _isIdle = false;
         _actionData = new ActionData(this);
 #if !WORLD_CREATION_TOOL
@@ -85,6 +89,9 @@ public class CharacterParty : NewParty {
         CharacterAction action = mainCharacter.GetRandomIdleAction(ref targetObject);
         actionData.AssignAction(action, targetObject);
     }
+    public bool IsOwnerDead() {
+        return _owner.isDead;
+    }
     #endregion
 
     #region Overrides
@@ -92,6 +99,18 @@ public class CharacterParty : NewParty {
         base.PartyDeath();
         actionData.DetachActionData();
     }
+    public void DisbandPartyKeepOwner() {
+        while (icharacters.Count != 1) {
+            for (int i = 0; i < icharacters.Count; i++) {
+                ICharacter currCharacter = icharacters[i];
+                if (currCharacter.id != owner.id) {
+                    RemoveCharacter(currCharacter);
+                    break;
+                }
+            }
+        }
+    }
+
     /*
         Create a new icon for this character.
         Each character owns 1 icon.
@@ -116,16 +135,15 @@ public class CharacterParty : NewParty {
 
     #region Outside Handlers
     public void OnCharacterSnatched(Character snatchedCharacter) {
-        if (this.mainCharacter.id == snatchedCharacter.id) {
+        if (snatchedCharacter.id == _owner.id) {
             //snatched character was the main character of this party, disband it
-            DisbandParty();
+            DisbandPartyKeepOwner();
         }
     }
     public void OnCharacterDied(Character diedCharacter) {
-        if (this.mainCharacter.id == diedCharacter.id) {
+        if (diedCharacter.id == _owner.id && this.currentCombat == null) {
             //character that died was the main character of this party, disband it
             DisbandParty();
-            RemoveListeners();
         }
     }
     #endregion

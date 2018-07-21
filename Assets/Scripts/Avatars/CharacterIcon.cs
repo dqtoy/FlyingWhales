@@ -23,7 +23,6 @@ public class CharacterIcon : MonoBehaviour {
     private MOVEMENT_TYPE movementType;
     private NewParty _iparty;
 
-
     private ILocation _targetLocation;
     private bool _isIdle;
     private string upOrDown = "Down";

@@ -764,13 +764,13 @@ namespace ECS {
 		public void FaintOrDeath(){
 			string pickedWeight = GetFaintOrDeath ();
 			if(pickedWeight == "faint"){
-				if(_ownParty.currentCombat == null){
+				if(currentParty.currentCombat == null){
 					Faint ();
 				}else{
-                    _ownParty.currentCombat.CharacterFainted(this);
+                    currentParty.currentCombat.CharacterFainted(this);
                 }
 			}else if(pickedWeight == "die"){
-                _ownParty.currentCombat.CharacterDeath(this);
+                currentParty.currentCombat.CharacterDeath(this);
                 Death();
     //            if (this.currentCombat == null){
 				//	Death ();
@@ -808,7 +808,7 @@ namespace ECS {
             }
         }
 		//Character's death
-		internal void Death(Character killer = null, bool diedFromPP = false){
+		internal void Death(bool diedFromPP = false){
 			if(!_isDead){
 				_isDead = true;
                 
@@ -820,15 +820,15 @@ namespace ECS {
 
                 CombatManager.Instance.ReturnCharacterColorToPool (_characterColor);
 
-                if (_ownParty.specificLocation == null) {
+                if (currentParty.specificLocation == null) {
                     throw new Exception("Specific location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
                 }
 
-				if(!diedFromPP && _ownParty.specificLocation != null && _ownParty.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+				if(!diedFromPP && currentParty.specificLocation != null && currentParty.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
                     Log deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death");
                     deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     AddHistory(deathLog);
-                    (_ownParty.specificLocation as BaseLandmark).AddHistory(deathLog);
+                    (currentParty.specificLocation as BaseLandmark).AddHistory(deathLog);
 				}
                 
                 //Drop all Items
@@ -838,7 +838,10 @@ namespace ECS {
 				while (_inventory.Count > 0) {
 					ThrowItem (_inventory [0]);
 				}
-                _ownParty.RemoveCharacter(this);
+                //if (currentParty.id != _ownParty.id) {
+                    currentParty.RemoveCharacter(this);
+                //}
+                //_ownParty.PartyDeath();
                 //Remove ActionData
                 //_actionData.DetachActionData();
 
@@ -887,9 +890,9 @@ namespace ECS {
 				}
                 onCharacterDeath = null;
                 Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
-                if (killer != null) {
-                    Messenger.Broadcast(Signals.CHARACTER_KILLED, killer, this);
-                }
+                //if (killer != null) {
+                //    Messenger.Broadcast(Signals.CHARACTER_KILLED, killer, this);
+                //}
 
                 GameObject.Destroy(_characterPortrait.gameObject);
                 _characterPortrait = null;
@@ -1833,10 +1836,10 @@ namespace ECS {
             if(_ownParty != null) {
                 _ownParty.RemoveCharacter(this);
             }
-            CharacterParty newParty = new CharacterParty();
+            CharacterParty newParty = new CharacterParty(this);
+            SetOwnedParty(newParty);
             newParty.AddCharacter(this);
             newParty.CreateCharacterObject();
-            SetOwnedParty(newParty);
             return newParty;
         }
 		public void SetOwnedParty(NewParty party) {
@@ -1847,10 +1850,25 @@ namespace ECS {
         }
         public void OnRemovedFromParty() {
             SetCurrentParty(_ownParty); //set the character's party to it's own party
+            _ownParty.actionData.EndAction();
+        }
+        public void OnAddedToParty() {
+            if (this.currentParty.id != _ownParty.id) {
+                if (_ownParty.specificLocation is BaseLandmark) {
+                    _ownParty.specificLocation.RemoveCharacterFromLocation(_ownParty);
+                }
+                _ownParty.icon.SetVisualState(false);
+            }
         }
         public bool IsInParty() {
             if (party.icharacters.Count > 1) {
                 return true; //if the character is in a party that has more than 1 characters
+            }
+            return false;
+        }
+        public bool IsInOwnParty() {
+            if (currentParty.id == ownParty.id) {
+                return true;
             }
             return false;
         }
@@ -2392,17 +2410,17 @@ namespace ECS {
                 throw new Exception("There is not available snatcher lair!");
             } else {
                 Imprison();
-                if (this.currentParty.id == ownParty.id) {
+                if (IsInOwnParty()) {
                     //character is in his/her own party
-                    ILocation location = _ownParty.specificLocation;
+                    ILocation location = currentParty.specificLocation;
                     if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) { //if character is at a landmark
-                        location.RemoveCharacterFromLocation(_ownParty);
+                        location.RemoveCharacterFromLocation(currentParty);
                     }
                 } else {
                     //character is in another party
                     this.currentParty.RemoveCharacter(this);
                 }
-                snatcherLair.AddCharacterToLocation(_ownParty);
+                snatcherLair.AddCharacterToLocation(ownParty);
             }
         }
         private void ConstructDesperateActions() {
@@ -2689,7 +2707,7 @@ namespace ECS {
                     deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     deathLog.AddToFillers(null, deathCauses[UnityEngine.Random.Range(0, deathCauses.Count)], LOG_IDENTIFIER.OTHER);
                     AddHistory(deathLog);
-                    this.Death(null, true);
+                    this.Death(true);
                 }
             }
         }
@@ -2734,13 +2752,13 @@ namespace ECS {
         #endregion
 
         #region Action Queue
-        public void AddActionToQueue(CharacterAction action, IObject targetObject, int position = -1) {
+        public void AddActionToQueue(CharacterAction action, IObject targetObject, CharacterQuestData associatedQuestData = null, int position = -1) {
             if (position == -1) {
                 //add action to end
-                _actionQueue.Enqueue(new ActionQueueItem(action, targetObject));
+                _actionQueue.Enqueue(new ActionQueueItem(action, targetObject, associatedQuestData));
             } else {
                 //Insert action to specified position
-                _actionQueue.Enqueue(new ActionQueueItem(action, targetObject), position);
+                _actionQueue.Enqueue(new ActionQueueItem(action, targetObject, associatedQuestData), position);
             }
         }
         public void RemoveActionFromQueue(ActionQueueItem item) {

@@ -512,6 +512,7 @@ public class Monster : ICharacter, ICharacterSim {
             _ownParty.RemoveCharacter(this);
         }
         MonsterParty newParty = new MonsterParty();
+        SetOwnedParty(newParty);
         newParty.AddCharacter(this);
         return newParty;
     }
@@ -735,6 +736,14 @@ public class Monster : ICharacter, ICharacterSim {
     public void OnRemovedFromParty() {
         SetCurrentParty(_ownParty); //set the character's party to it's own party
     }
+    public void OnAddedToParty() {
+        //if (this.currentParty.id != _ownParty.id) {
+        //    if (_ownParty.specificLocation is BaseLandmark) {
+        //        _ownParty.specificLocation.RemoveCharacterFromLocation(_ownParty);
+        //    }
+        //    _ownParty.icon.SetVisualState(false);
+        //}
+    }
     public bool InviteToParty(ICharacter inviter) {
         return false;
     }
@@ -744,5 +753,10 @@ public class Monster : ICharacter, ICharacterSim {
     public void SetSquad(Squad squad) {
         _squad = squad;
     }
+    #endregion
+
+    #region Action Queue
+    public void AddActionToQueue(CharacterAction action, IObject targetObject, CharacterQuestData associatedQuestData = null, int position = -1) {  }
+    public void RemoveActionFromQueue(ActionQueueItem item) {    }
     #endregion
 }

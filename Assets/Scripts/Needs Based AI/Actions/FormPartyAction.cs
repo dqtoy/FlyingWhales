@@ -45,7 +45,7 @@ public class FormPartyAction : CharacterAction {
                         && currCharacter.mentalPoints < CharacterManager.Instance.MENTAL_THRESHOLD && currCharacter.mentalPoints < CharacterManager.Instance.PHYSICAL_THRESHOLD) {
                         //end their In Party action and put them out of the party
                         iparty.RemoveCharacter(currCharacter);
-                        currCharacter.party.actionData.EndAction();
+                        //currCharacter.party.actionData.EndAction();
                     }
                     //Otherwise, maintain existing In Party action
                 }
@@ -54,10 +54,11 @@ public class FormPartyAction : CharacterAction {
         //Then, the character will select a safe spot within 3 tile radius of his current location. To determine this, this is the order of priority:
         //check first if the party's current location is already fine
         if (party.specificLocation.tileLocation.areaOfTile == null || party.specificLocation.tileLocation.areaOfTile.owner == null) {
-            if (party.specificLocation.tileLocation.areaOfTile.owner.id == party.faction.id) {
-                InviteSquadMembers(iparty.mainCharacter);
-                return;
-            }
+            InviteSquadMembers(iparty.mainCharacter);
+            return;
+        } else if(party.specificLocation.tileLocation.areaOfTile.owner.id == party.faction.id) {
+            InviteSquadMembers(iparty.mainCharacter);
+            return;
         }
 
         ILocation targetLocation = null;
@@ -156,8 +157,12 @@ public class FormPartyAction : CharacterAction {
     }
     public override void EndAction(CharacterParty party, IObject targetObject) {
         base.EndAction(party, targetObject);
-        Messenger.RemoveListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
-        Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_JOINED_PARTY)) {
+            Messenger.RemoveListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
+        }
+        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_DEATH)) {
+            Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        }
     }
     public override bool ShouldGoToTargetObjectOnChoose() {
         return false;

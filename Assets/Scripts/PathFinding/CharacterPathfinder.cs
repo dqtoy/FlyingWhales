@@ -19,7 +19,7 @@ public class CharacterPathfinder : AIPath {
 
         destinationSetter.target = destination.transform;
         //Debug.Log("Calculating path to " + destination.name);
-        UpdateMe();
+        SearchPath();
         this.maxSpeed = 0f;
     }
 

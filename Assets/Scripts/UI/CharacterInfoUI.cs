@@ -176,6 +176,39 @@ public class CharacterInfoUI : UIMenu {
         text += "\n<b>M Final Attack: </b>" + currentlyShowingCharacter.mFinalAttack;
         text += "\n<b>Mental Points: </b>" + currentlyShowingCharacter.mentalPoints;
         text += "\n<b>Physical Points: </b>" + currentlyShowingCharacter.physicalPoints;
+        text += "\n<b>Current Party: </b>" + currentlyShowingCharacter.currentParty.name;
+        for (int i = 0; i < currentlyShowingCharacter.currentParty.icharacters.Count; i++) {
+            text += "\n - " + currentlyShowingCharacter.currentParty.icharacters[i].name;
+        }
+        text += "\n<b>Own Party: </b>" + currentlyShowingCharacter.ownParty.name;
+        for (int i = 0; i < currentlyShowingCharacter.ownParty.icharacters.Count; i++) {
+            text += "\n - " + currentlyShowingCharacter.ownParty.icharacters[i].name;
+        }
+        text += "\n<b>Squad: </b>";
+        if (currentlyShowingCharacter.squad != null) {
+            text += currentlyShowingCharacter.squad.name + " (PP: " + currentlyShowingCharacter.squad.potentialPower + ")";
+            for (int i = 0; i < currentlyShowingCharacter.squad.squadMembers.Count; i++) {
+                ICharacter currChar = currentlyShowingCharacter.squad.squadMembers[i];
+                if (currentlyShowingCharacter.squad.squadLeader.id == currChar.id) {
+                    text += "\n - " + currChar.name + " (LEADER)";
+                } else {
+                    text += "\n - " + currChar.name;
+                }
+            }
+            List<Quest> quests = currentlyShowingCharacter.squad.GetSquadQuests();
+            text += "\n<b>Squad Quests: </b>";
+            if (quests.Count > 0) {
+                for (int i = 0; i < quests.Count; i++) {
+                    Quest currQuest = quests[i];
+                    text += "\n - " + currQuest.name + "(" + currQuest.groupType.ToString() + ")";
+                }
+            } else {
+                text += "NONE";
+            }
+            
+        } else {
+            text += "NONE";
+        }
         generalInfoLbl.text = text;
 
     }

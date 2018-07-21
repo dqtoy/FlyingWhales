@@ -41,7 +41,7 @@ public class ChatAction : CharacterAction {
 
             SetChatee(targetCharacter, waitingInteractionAction);
             //put wait interaction in target queue
-            targetCharacter.AddActionToQueue(waitingInteractionAction, null, 0);
+            targetCharacter.AddActionToQueue(waitingInteractionAction, null, null, 0);
         }
     }
     public override void OnFirstEncounter(CharacterParty party, IObject targetObject) {

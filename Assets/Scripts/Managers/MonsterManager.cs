@@ -116,6 +116,7 @@ public class MonsterManager : MonoBehaviour {
         for (int i = 0; i < monsterPartyComponent.monsters.Length; i++) {
             string monsterName = monsterPartyComponent.monsters[i].name;
             Monster monster = CreateNewMonster(monsterName);
+            monster.SetOwnedParty(monsterParty);
             monsterParty.AddCharacter(monster);
         }
 #if !WORLD_CREATION_TOOL

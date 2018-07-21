@@ -15,7 +15,7 @@ public class DisbandPartyAction : CharacterAction {
 
     public override void PerformAction(CharacterParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
-        party.DisbandParty();
+        party.DisbandPartyKeepOwner();
         EndAction(party, targetObject);
     }
 }
