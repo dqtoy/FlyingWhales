@@ -2063,11 +2063,9 @@ namespace ECS {
             _characterColorCode = ColorUtility.ToHtmlStringRGBA(_characterColor).Substring(0, 6);
         }
         public void EverydayAction() {
-            ////if (!_isIdle) {
-            //    if (onDailyAction != null) {
-            //        onDailyAction();
-            //    }
-            ////}
+            if (onDailyAction != null) {
+                onDailyAction();
+            }
             CheckForPPDeath();
         }
         //public void AdvertiseSelf(ActionThread actionThread) {
