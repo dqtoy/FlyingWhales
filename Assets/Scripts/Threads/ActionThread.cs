@@ -67,11 +67,17 @@ public class ActionThread : Multithread {
                     CharacterAction actionFromAds = GetActionFromAdvertisements(ref targetObject);
                     actionLog += "\n" + character.name + " will choose action from advertisements";
                     if (character.IsSquadLeader()) {
-                        //if character is a Squad Leader and has party members, perform Disband Party then add selected Action to the Queue
-                        chosenAction = character.currentParty.icharacterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY);
-                        chosenObject = character.currentParty.icharacterObject;
-                        character.AddActionToQueue(actionFromAds, targetObject);
-                        actionLog += "\n" + character.name + " disbanded party and added " + chosenAction.actionData.actionName + " " + chosenObject.objectName + " to action queue";
+                        if (character.ownParty.icharacters.Count > 1) {
+                            //if character is a Squad Leader and has party members, perform Disband Party then add selected Action to the Queue
+                            chosenAction = character.currentParty.icharacterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY);
+                            chosenObject = character.currentParty.icharacterObject;
+                            character.AddActionToQueue(actionFromAds, targetObject);
+                            actionLog += "\n" + character.name + " disbanded party and added " + chosenAction.actionData.actionName + " " + chosenObject.objectName + " to action queue";
+                        } else {
+                            chosenAction = actionFromAds;
+                            chosenObject = targetObject;
+                            actionLog += "\n" + character.name + " chose to " + chosenAction.actionData.actionName + " " + chosenObject.objectName;
+                        }
                     } else {
                         //otherwise, perform selected Action
                         chosenAction = actionFromAds;

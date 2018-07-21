@@ -47,15 +47,19 @@ public class TileInfoUI : MonoBehaviour {
         info += "\nLandmark Name: [" + landmark.id + "] " + landmark.landmarkName;
         info += "\nLandmark Type: " + landmark.specificLandmarkType.ToString();
         info += "\nCivilians: " + landmark.civilianCount.ToString();
-        //info += "\nCharacters with homes here: ";
-        //for (int i = 0; i < landmark.charactersWithHomeOnLandmark.Count; i++) {
-        //    ECS.Character currChar = landmark.charactersWithHomeOnLandmark[i];
-        //    info += "\n   - " + currChar.name;
-        //}
         info += "\nCharacters located here: ";
         for (int i = 0; i < landmark.charactersAtLocation.Count; i++) {
             NewParty currChar = landmark.charactersAtLocation[i];
             info += "\n   - " + currChar.name;
+        }
+        if (landmark is MonsterSpawnerLandmark) {
+            info += "\nMonster Set: ";
+            MonsterSpawnerLandmark msl = landmark as MonsterSpawnerLandmark;
+            if (msl.monsterChoices == null) {
+                info += "NONE";
+            } else {
+                info += msl.monsterChoices.name;
+            }
         }
         return info;
     }
