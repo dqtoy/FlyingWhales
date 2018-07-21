@@ -406,7 +406,9 @@ public class CombatSim {
 
         //Calculate total damage
         damage = (int) ((float) damage * elementModifier);
-
+        if(damage < 1) {
+            damage = 1;
+        }
         log += "(" + damage.ToString() + ")";
 
         AddCombatLog(log, sourceCharacter.currentSide);
