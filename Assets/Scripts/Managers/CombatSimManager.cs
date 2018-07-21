@@ -34,10 +34,22 @@ public class CombatSimManager : MonoBehaviour {
     private List<string> _allMonsters;
     private List<string> _allCharacters;
     private Dictionary<ELEMENT, float> _elementsChanceDictionary;
+    private Dictionary<WEAPON_TYPE, WeaponType> _weaponTypeData;
+    private Dictionary<WEAPON_PREFIX, WeaponPrefix> _weaponPrefixes;
+    private Dictionary<WEAPON_SUFFIX, WeaponSuffix> _weaponSuffixes;
 
     #region getters/setters
     public Dictionary<ELEMENT, float> elementsChanceDictionary {
         get { return _elementsChanceDictionary; }
+    }
+    public Dictionary<WEAPON_TYPE, WeaponType> weaponTypeData {
+        get { return _weaponTypeData; }
+    }
+    public Dictionary<WEAPON_PREFIX, WeaponPrefix> weaponPrefixes {
+        get { return _weaponPrefixes; }
+    }
+    public Dictionary<WEAPON_SUFFIX, WeaponSuffix> weaponSuffixes {
+        get { return _weaponSuffixes; }
     }
     public List<ICharacterSim> sideAList {
         get { return _sideAList; }
@@ -59,6 +71,8 @@ public class CombatSimManager : MonoBehaviour {
         _sideAList = new List<ICharacterSim>();
         _sideBList = new List<ICharacterSim>();
         ConstructElementChanceDictionary();
+        ConstructWeaponTypeData();
+        ConstructWeaponPrefixesAndSuffixes();
         UpdateAllCharacters();
         UpdateAllMonsters();
         UpdateCharacterOptions();
@@ -119,6 +133,49 @@ public class CombatSimManager : MonoBehaviour {
         for (int i = 0; i < elements.Length; i++) {
             _elementsChanceDictionary.Add(elements[i], 0f);
         }
+    }
+    private void ConstructWeaponTypeData() {
+        _weaponTypeData = new Dictionary<WEAPON_TYPE, WeaponType>();
+        string path = Utilities.dataPath + "WeaponTypes/";
+        string[] files = Directory.GetFiles(path, "*.json");
+        for (int i = 0; i < files.Length; i++) {
+            string currFilePath = files[i];
+            string dataAsJson = File.ReadAllText(currFilePath);
+            WeaponType data = JsonUtility.FromJson<WeaponType>(dataAsJson);
+            _weaponTypeData.Add(data.weaponType, data);
+        }
+    }
+    private void ConstructWeaponPrefixesAndSuffixes() {
+        _weaponPrefixes = new Dictionary<WEAPON_PREFIX, WeaponPrefix>();
+        _weaponSuffixes = new Dictionary<WEAPON_SUFFIX, WeaponSuffix>();
+        WEAPON_PREFIX[] prefixes = (WEAPON_PREFIX[]) Enum.GetValues(typeof(WEAPON_PREFIX));
+        WEAPON_SUFFIX[] suffixes = (WEAPON_SUFFIX[]) Enum.GetValues(typeof(WEAPON_SUFFIX));
+        for (int i = 0; i < prefixes.Length; i++) {
+            CreateWeaponPrefix(prefixes[i]);
+        }
+        for(int i = 0; i < suffixes.Length; i++) {
+            CreateWeaponSuffix(suffixes[i]);
+        }
+
+    }
+    private void CreateWeaponPrefix(WEAPON_PREFIX prefix) {
+        if (!_weaponPrefixes.ContainsKey(prefix)) {
+            switch (prefix) {
+                case WEAPON_PREFIX.NONE:
+                _weaponPrefixes.Add(prefix, new WeaponPrefix(prefix));
+                break;
+            }
+        }
+    }
+    private void CreateWeaponSuffix(WEAPON_SUFFIX suffix) {
+        if (!_weaponSuffixes.ContainsKey(suffix)) {
+            switch (suffix) {
+                case WEAPON_SUFFIX.NONE:
+                _weaponSuffixes.Add(suffix, new WeaponSuffix(suffix));
+                break;
+            }
+        }
+
     }
     #endregion
 

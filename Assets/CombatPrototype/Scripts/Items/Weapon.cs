@@ -44,10 +44,20 @@ namespace ECS{
             get { return (_weaponPower + prefix.flatModifier) * (1f + (prefix.percentModifier / 100f)); }
         }
         public WeaponPrefix prefix {
-            get { return ItemManager.Instance.weaponPrefixes[_prefix]; }
+            get {
+                if(ItemManager.Instance != null){
+                    return ItemManager.Instance.weaponPrefixes[_prefix];
+                }
+                return CombatSimManager.Instance.weaponPrefixes[_prefix];
+            }
         }
         public WeaponSuffix suffix {
-            get { return ItemManager.Instance.weaponSuffixes[_suffix]; }
+            get {
+                if (ItemManager.Instance != null) {
+                    return ItemManager.Instance.weaponSuffixes[_suffix];
+                }
+                return CombatSimManager.Instance.weaponSuffixes[_suffix];
+            }
         }
         #endregion
 

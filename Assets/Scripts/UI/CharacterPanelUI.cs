@@ -16,10 +16,10 @@ public class CharacterPanelUI : MonoBehaviour {
 
     public Dropdown classOptions;
     public Dropdown genderOptions;
+    public Dropdown weaponOptions;
 
     public InputField nameInput;
     public InputField levelInput;
-    public InputField weaponAttackInput;
     public InputField pHeadInput;
     public InputField pBodyInput;
     public InputField pLegsInput;
@@ -105,9 +105,17 @@ public class CharacterPanelUI : MonoBehaviour {
     #region Utilities
     private void LoadAllData() {
         genderOptions.ClearOptions();
+        weaponOptions.ClearOptions();
 
         string[] genders = System.Enum.GetNames(typeof(GENDER));
 
+        List<string> weapons = new List<string>();
+        string path = Utilities.dataPath + "Items/WEAPON/";
+        foreach (string file in Directory.GetFiles(path, "*.json")) {
+            weapons.Add(Path.GetFileNameWithoutExtension(file));
+        }
+
+        weaponOptions.AddOptions(weapons);
         genderOptions.AddOptions(genders.ToList());
     }
     public void UpdateClassOptions() {
@@ -117,10 +125,10 @@ public class CharacterPanelUI : MonoBehaviour {
     private void ClearData() {
         classOptions.value = 0;
         genderOptions.value = 0;
+        weaponOptions.value = 0;
 
         nameInput.text = string.Empty;
         levelInput.text = "1";
-        weaponAttackInput.text = "0";
 
         strBuildLbl.text = "0";
         intBuildLbl.text = "0";
@@ -194,8 +202,8 @@ public class CharacterPanelUI : MonoBehaviour {
         nameInput.text = character.name;
         classOptions.value = GetClassIndex(character.className);
         genderOptions.value = GetGenderIndex(character.gender);
+        weaponOptions.value = GetWeaponIndex(character.weaponName);
         levelInput.text = character.level.ToString();
-        weaponAttackInput.text = character.weaponAttack.ToString();
 
         pHeadInput.text = character.pDefHead.ToString();
         pBodyInput.text = character.pDefBody.ToString();
@@ -238,6 +246,14 @@ public class CharacterPanelUI : MonoBehaviour {
     private int GetGenderIndex(GENDER gender) {
         for (int i = 0; i < genderOptions.options.Count; i++) {
             if (genderOptions.options[i].text == gender.ToString()) {
+                return i;
+            }
+        }
+        return 0;
+    }
+    private int GetWeaponIndex(string weaponName) {
+        for (int i = 0; i < weaponOptions.options.Count; i++) {
+            if (weaponOptions.options[i].text == weaponName) {
                 return i;
             }
         }
