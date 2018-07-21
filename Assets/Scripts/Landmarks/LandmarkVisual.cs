@@ -89,18 +89,18 @@ public class LandmarkVisual : MonoBehaviour {
             - (Vector2)charactersScrollView.transform.InverseTransformPoint(target.position);
     }
     #region Monobehaviour
-    private void OnMouseOver() {
-        _landmark.tileLocation.MouseOver();
-        if (Input.GetMouseButtonDown(0)) {
-            _landmark.tileLocation.LeftClick();
-        }
-        if (Input.GetMouseButtonDown(1)) {
-            _landmark.tileLocation.RightClick();
-        }
-    }
-    private void OnMouseExit() {
-        _landmark.tileLocation.MouseExit();
-    }
+    //private void OnMouseOver() {
+    //    _landmark.tileLocation.MouseOver();
+    //    if (Input.GetMouseButtonDown(0)) {
+    //        _landmark.tileLocation.LeftClick();
+    //    }
+    //    if (Input.GetMouseButtonDown(1)) {
+    //        _landmark.tileLocation.RightClick();
+    //    }
+    //}
+    //private void OnMouseExit() {
+    //    _landmark.tileLocation.MouseExit();
+    //}
     //private void OnMouseDown() {
     //    if (Input.GetMouseButtonDown(0)) {
     //        _landmark.tileLocation.LeftClick();
