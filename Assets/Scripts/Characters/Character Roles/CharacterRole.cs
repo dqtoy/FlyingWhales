@@ -165,7 +165,11 @@ public class CharacterRole {
     }
 
     public void DepleteFullness() {
-        AdjustFullness(-1.25f);
+        if (_fullness > 0) {
+            AdjustFullness(-1.04f);
+        } else {
+            AdjustFullness(-0.347f);
+        }
     }
     public void SetFullness(float amount) {
         _fullness = amount;
@@ -227,7 +231,7 @@ public class CharacterRole {
     }
 
     public void DepleteEnergy() {
-        AdjustEnergy(-0.875f);
+        AdjustEnergy(-0.694f);
     }
     public void SetEnergy(float amount) {
         _energy = amount;
@@ -284,7 +288,11 @@ public class CharacterRole {
     }
 
     public void DepleteFun() {
-        AdjustFun(-0.5f);
+        if(_fun > 0) {
+            AdjustFun(-0.416f);
+        } else {
+            AdjustFun(-0.297f);
+        }
     }
     public void SetFun(float amount) {
         _fun = amount;
@@ -341,7 +349,11 @@ public class CharacterRole {
     }
 
     public void DepletePrestige() {
-        AdjustPrestige(-1.2f);
+        if(_prestige > 0) {
+            AdjustPrestige(-1.39f);
+        } else {
+            AdjustPrestige(-0.245f);
+        }
     }
     public void SetPrestige(float amount) {
         _prestige = amount;
