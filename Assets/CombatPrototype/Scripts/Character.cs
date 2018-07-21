@@ -1566,27 +1566,57 @@ namespace ECS {
             }
             return allGeneralSkills;
 		}
-		//private List<Skill> GetBodyPartSkills(){
-		//	List<Skill> allBodyPartSkills = new List<Skill>();
-		//	foreach (Skill skill in SkillManager.Instance.bodyPartSkills.Values) {
-		//		bool requirementsPassed = true;
-		//		//Skill skill	= SkillManager.Instance.bodyPartSkills [skillName];
-		//		for (int j = 0; j < skill.skillRequirements.Length; j++) {
-		//			if(!HasAttribute(skill.skillRequirements[j].attributeRequired, skill.skillRequirements[j].itemQuantity)){
-		//				requirementsPassed = false;
-		//				break;
-		//			}
-		//		}
-		//		if(requirementsPassed){
-		//			allBodyPartSkills.Add (skill.CreateNewCopy ());
-		//		}
-		//	}
-		//	return allBodyPartSkills;
-		//}
+        public List<Skill> GetClassSkills() {
+            List<Skill> skills = new List<Skill>();
+            for (int i = 0; i < level; i++) {
+                if (i < characterClass.skillsPerLevel.Count) {
+                    if (characterClass.skillsPerLevel[i] != null) {
+                        for (int j = 0; j < characterClass.skillsPerLevel[i].Length; j++) {
+                            Skill skill = characterClass.skillsPerLevel[i][j];
+                            skills.Add(skill);
+                        }
+                    }
+                }
+            }
+            return skills;
+        }
+        public List<AttackSkill> GetClassAttackSkills() {
+            List<AttackSkill> skills = new List<AttackSkill>();
+            for (int i = 0; i < level; i++) {
+                if (i < characterClass.skillsPerLevel.Count) {
+                    if (characterClass.skillsPerLevel[i] != null) {
+                        for (int j = 0; j < characterClass.skillsPerLevel[i].Length; j++) {
+                            Skill skill = characterClass.skillsPerLevel[i][j];
+                            if(skill is AttackSkill) {
+                                skills.Add(skill as AttackSkill);
+                            }
+                        }
+                    }
+                }
+            }
+            return skills;
+        }
+        //private List<Skill> GetBodyPartSkills(){
+        //	List<Skill> allBodyPartSkills = new List<Skill>();
+        //	foreach (Skill skill in SkillManager.Instance.bodyPartSkills.Values) {
+        //		bool requirementsPassed = true;
+        //		//Skill skill	= SkillManager.Instance.bodyPartSkills [skillName];
+        //		for (int j = 0; j < skill.skillRequirements.Length; j++) {
+        //			if(!HasAttribute(skill.skillRequirements[j].attributeRequired, skill.skillRequirements[j].itemQuantity)){
+        //				requirementsPassed = false;
+        //				break;
+        //			}
+        //		}
+        //		if(requirementsPassed){
+        //			allBodyPartSkills.Add (skill.CreateNewCopy ());
+        //		}
+        //	}
+        //	return allBodyPartSkills;
+        //}
         #endregion
 
         #region Roles
-		public void AssignRole(CHARACTER_ROLE role) {
+        public void AssignRole(CHARACTER_ROLE role) {
             bool wasRoleChanged = false;
 			if(_role != null){
 				_role.ChangedRole ();
@@ -2416,18 +2446,22 @@ namespace ECS {
             AdjustSP(_maxSP);
         }
         private float GetAttackPower() {
-            float statUsed = (float)Utilities.GetStatByClass(this);
+            //float statUsed = (float)Utilities.GetStatByClass(this);
             float weaponAttack = 0f;
             if(_equippedWeapon != null) {
                 weaponAttack = _equippedWeapon.attackPower;
             }
-            return (((weaponAttack + statUsed) * (statUsed / 2f)) * (1f + (agility / 100f))) * (1f + (level / 100f));
+            //return (((weaponAttack + statUsed) * (statUsed / 2f)) * (1f + (agility / 100f))) * (1f + (level / 100f));
+            List<AttackSkill> allAttackSkillsAvailable = GetClassAttackSkills();
+            float skillMultiplier = ((float) allAttackSkillsAvailable.Sum(x => x.power) / (float) allAttackSkillsAvailable.Count) * ((float) _sp / ((float) allAttackSkillsAvailable.Sum(x => x.spCost) / (float) allAttackSkillsAvailable.Count));
+            if(skillMultiplier < 1f) {
+                skillMultiplier = 1f;
+            }
+            return (float)((((strength + intelligence + weaponAttack) / 2f) * (1f + ((strength + intelligence) / 40f)) * (1f + (level / 100f)) * skillMultiplier) * speed);
         }
         private float GetDefensePower() {
-            return ((float)(strength + intelligence + GetSelfPdef() + GetSelfMdef() + maxHP + (vitality * 2)) * (1f + (level / 100f))) * (1f + (agility / 100f));
-            //follow up questions : 
-            //sa formula merong pdef at mdef pero kelangan yun ng enemy parameter, papano yun since yung computation na ito ay para ma compute ang sariling power lang mismo?
-            //ano yung '(2XVIT) multiplied or added by prefix/suffix effect', wala namang ganun ang vitality.
+            //return ((float)(strength + intelligence + GetSelfPdef() + GetSelfMdef() + maxHP + (vitality * 2)) * (1f + (level / 100f))) * (1f + (agility / 100f));
+            return (float) (((strength + (4f * vitality) + intelligence + GetSelfPdef() + GetSelfMdef()) / 2f) * _currentHP * (1f + (level / 20f)));
         }
         #endregion
 
