@@ -110,6 +110,7 @@ namespace ECS {
                         if (characterParty.IsOwnerDead()) { //if the owner of the party is dead, disband the party
                             characterParty.DisbandParty();
                         }
+                        icharacter.ownParty.currentCombat = null;
                     }
                 } else {
                     icharacter.ownParty.currentCombat = null;
@@ -129,6 +130,7 @@ namespace ECS {
                         if (characterParty.IsOwnerDead()) { //if the owner of the party is dead, disband the party
                             characterParty.DisbandParty();
                         }
+                        icharacter.ownParty.currentCombat = null;
                     }
                 } else {
                     icharacter.ownParty.currentCombat = null;

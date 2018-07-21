@@ -81,7 +81,8 @@ public class ActionThread : Multithread {
                 }
             }
 
-            if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == character.id) {
+            if ((UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == character.id) ||
+                (UIManager.Instance.partyinfoUI.currentlyShowingParty != null && UIManager.Instance.partyinfoUI.currentlyShowingParty.owner != null && UIManager.Instance.partyinfoUI.currentlyShowingParty.owner.id == character.id)) {
                 Debug.Log(actionLog);
             }
         }

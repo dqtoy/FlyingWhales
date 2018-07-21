@@ -2045,7 +2045,7 @@ namespace ECS {
         }
         public void CenterOnCharacter() {
             if (!this.isDead) {
-                CameraMove.Instance.CenterCameraOn(_ownParty.specificLocation.tileLocation.gameObject);
+                CameraMove.Instance.CenterCameraOn(currentParty.specificLocation.tileLocation.gameObject);
             }
         }
 		//Death of this character if he/she is in the region specified

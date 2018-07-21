@@ -72,6 +72,7 @@ public interface ICharacter {
     void AddHistory(Log log); //Character only
     void SetSquad(Squad squad);
     bool InviteToParty(ICharacter inviter);
+    bool IsInOwnParty();
     int GetPDef(ICharacter enemy);
     int GetMDef(ICharacter enemy);
     NewParty CreateOwnParty();

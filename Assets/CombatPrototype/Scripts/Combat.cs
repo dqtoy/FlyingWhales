@@ -99,7 +99,9 @@ namespace ECS{
 		}
         internal void AddParty(SIDES side, NewParty iparty) {
             for (int i = 0; i < iparty.icharacters.Count; i++) {
-                AddCharacter(side, iparty.icharacters[i]);
+                ICharacter currChar = iparty.icharacters[i];
+                AddCharacter(side, currChar);
+                currChar.ownParty.currentCombat = this;
             }
             iparty.currentCombat = this;
         }
@@ -1155,11 +1157,16 @@ namespace ECS{
             if (RemoveCharacter(targetCharacter)) {
                 fledCharacters.Add(targetCharacter);
                 //targetCharacter.SetIsDefeated (true);
-                if (targetCharacter.ownParty is CharacterParty) {
-                    if(targetCharacter.ownParty.icharacters.Count > 1) {
-                        targetCharacter.CreateOwnParty();
+                if (targetCharacter.IsInOwnParty()) { // the fled character is in his own party
+                    if (targetCharacter.ownParty is CharacterParty) {
+                        (targetCharacter.ownParty as CharacterParty).DisbandPartyKeepOwner(); //leave the other party members
+                        CombatManager.Instance.PartyContinuesActionAfterCombat(targetCharacter.ownParty as CharacterParty, false);
                     }
-                    CombatManager.Instance.PartyContinuesActionAfterCombat(targetCharacter.ownParty as CharacterParty, false);
+                } else {
+                    if (targetCharacter.currentParty is CharacterParty) {
+                        //the fled character is in another character's party, leave the party
+                        targetCharacter.currentParty.RemoveCharacter(targetCharacter); //this will also trigger the end of the characters In Party action
+                    }
                 }
                 AddCombatLog(targetCharacter.coloredUrlName + " chickened out and ran away!", targetCharacter.currentSide);
             }
