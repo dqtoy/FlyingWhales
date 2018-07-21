@@ -188,7 +188,7 @@ public class CombatSim {
         if (sourceCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
             CharacterSim character = sourceCharacter as CharacterSim;
             if (sourceCharacter.battleOnlyTracker.lastDamageTaken < sourceCharacter.currentHP) {//character must have a weapon and sourceCharacter last damage taken must not be >= current health
-                weaponAttack = character.weaponAttack;
+                weaponAttack = character.equippedWeapon.attackPower;
                 for (int i = 0; i < character.skills.Count; i++) {
                     Skill skill = character.skills[i];
                     if (skill.isEnabled && skill.skillType == SKILL_TYPE.ATTACK) {
@@ -326,11 +326,13 @@ public class CombatSim {
         string log = string.Empty;
         CharacterSim attacker = null;
         float damageRange = 0f;
+        Weapon weapon = null;
         int statMod = sourceCharacter.strength;
         int def = targetCharacter.GetPDef(sourceCharacter);
         float critDamage = 100f;
         if (sourceCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
             attacker = sourceCharacter as CharacterSim;
+            weapon = attacker.equippedWeapon;
         }
         if (attackSkill.attackCategory == ATTACK_CATEGORY.MAGICAL) {
             statMod = sourceCharacter.intelligence;
@@ -350,10 +352,10 @@ public class CombatSim {
         Armor armor = chosenBodyPart.GetArmor();
         log += sourceCharacter.idName + " " + attackSkill.skillName.ToLower() + " " + targetCharacter.idName + " in the " + chosenBodyPart.name.ToLower();
 
-        if (attacker != null) {
-            //damageRange = ItemManager.Instance.weaponTypeData[weapon.weaponType].damageRange;
+        if (weapon != null) {
+            damageRange = CombatSimManager.Instance.weaponTypeData[weapon.weaponType].damageRange;
 
-            log += " with " + (sourceCharacter.gender == GENDER.MALE ? "his" : "her") + " weapon.";
+            log += " with " + (sourceCharacter.gender == GENDER.MALE ? "his" : "her") + " " + weapon.itemName + ".";
 
         } else {
             log += ".";
@@ -380,9 +382,9 @@ public class CombatSim {
         if (attackSkill.element != ELEMENT.NONE) {
             elementUsed = attackSkill.element;
         } else {
-            //if (weapon != null && weapon.element != ELEMENT.NONE) {
-            //    elementUsed = weapon.element;
-            //}
+            if (weapon != null && weapon.element != ELEMENT.NONE) {
+                elementUsed = weapon.element;
+            }
         }
         float elementalWeakness = 0f;
         float elementalResistance = 0f;

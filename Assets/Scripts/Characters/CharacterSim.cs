@@ -7,6 +7,7 @@ using System.IO;
 public class CharacterSim : ICharacterSim {
     [SerializeField] private string _name;
     [SerializeField] private string _className;
+    [SerializeField] private string _weaponName;
     [SerializeField] private int _level;
     [SerializeField] private int _strBuild;
     [SerializeField] private int _intBuild;
@@ -28,7 +29,6 @@ public class CharacterSim : ICharacterSim {
     [SerializeField] private int _mDefLegs;
     [SerializeField] private int _mDefHands;
     [SerializeField] private int _mDefFeet;
-    [SerializeField] private float _weaponAttack;
     [SerializeField] private GENDER _gender;
     [SerializeField] private List<string> _skillNames;
 
@@ -47,6 +47,7 @@ public class CharacterSim : ICharacterSim {
     private CharacterClass _characterClass;
     private CharacterBattleTracker _battleTracker;
     private CharacterBattleOnlyTracker _battleOnlyTracker;
+    private Weapon _equippedWeapon;
     private List<Skill> _skills;
     private List<BodyPart> _bodyParts;
     private Dictionary<ELEMENT, float> _elementalWeaknesses;
@@ -61,6 +62,9 @@ public class CharacterSim : ICharacterSim {
     }
     public string className {
         get { return _className; }
+    }
+    public string weaponName {
+        get { return _weaponName; }
     }
     public int id {
         get { return _id; }
@@ -97,9 +101,6 @@ public class CharacterSim : ICharacterSim {
     }
     public int vitBuild {
         get { return _vitBuild; }
-    }
-    public float weaponAttack {
-        get { return _weaponAttack; }
     }
     public int pDefHead {
         get { return _pDefHead; }
@@ -150,13 +151,13 @@ public class CharacterSim : ICharacterSim {
     public int pFinalAttack {
         get {
             float str = (float) strength;
-            return (int) (((weaponAttack + str) * (1f + (str / 20f))) * (1f + ((float) level / 100f)));
+            return (int) (((_equippedWeapon.attackPower + str) * (1f + (str / 20f))) * (1f + ((float) level / 100f)));
         }
     }
     public int mFinalAttack {
         get {
             float intl = (float) intelligence;
-            return (int) (((weaponAttack + intl) * (1f + (intl / 20f))) * (1f + ((float) level / 100f)));
+            return (int) (((_equippedWeapon.attackPower + intl) * (1f + (intl / 20f))) * (1f + ((float) level / 100f)));
         }
     }
     public float critChance {
@@ -183,6 +184,9 @@ public class CharacterSim : ICharacterSim {
     public CharacterBattleTracker battleTracker {
         get { return _battleTracker; }
     }
+    public Weapon equippedWeapon {
+        get { return _equippedWeapon; }
+    }
     public List<string> skillNames {
         get { return _skillNames; }
     }
@@ -206,6 +210,7 @@ public class CharacterSim : ICharacterSim {
         ConstructSkills();
         ResetToFullHP();
         ResetToFullSP();
+        _equippedWeapon = JsonUtility.FromJson<Weapon>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/WEAPON/" + _weaponName + ".json"));
         _raceSetting = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText(Utilities.dataPath + "RaceSettings/HUMANS.json"));
         _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
@@ -216,6 +221,7 @@ public class CharacterSim : ICharacterSim {
     public void SetDataFromCharacterPanelUI() {
         _name = CharacterPanelUI.Instance.nameInput.text;
         _className = CharacterPanelUI.Instance.classOptions.options[CharacterPanelUI.Instance.classOptions.value].text;
+        _weaponName = CharacterPanelUI.Instance.weaponOptions.options[CharacterPanelUI.Instance.weaponOptions.value].text;
         _gender = (GENDER) System.Enum.Parse(typeof(GENDER), CharacterPanelUI.Instance.genderOptions.options[CharacterPanelUI.Instance.genderOptions.value].text);
         _level = int.Parse(CharacterPanelUI.Instance.levelInput.text);
         _strBuild = CharacterPanelUI.Instance.strBuild;
@@ -228,7 +234,6 @@ public class CharacterSim : ICharacterSim {
         _vit = CharacterPanelUI.Instance.vit;
         _maxHP = CharacterPanelUI.Instance.hp;
         _maxSP = CharacterPanelUI.Instance.sp;
-        _weaponAttack = float.Parse(CharacterPanelUI.Instance.weaponAttackInput.text);
 
         _pDefHead = int.Parse(CharacterPanelUI.Instance.pHeadInput.text);
         _pDefBody = int.Parse(CharacterPanelUI.Instance.pBodyInput.text);
