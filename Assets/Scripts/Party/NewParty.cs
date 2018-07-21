@@ -225,7 +225,7 @@ public class NewParty : IParty {
         Messenger.RemoveListener<NewParty>(Signals.PARTY_ENTERED_LANDMARK, FindCombat);
     }
     private void FindCombat(NewParty partyThatEntered) {
-        if(partyThatEntered._specificLocation != null && this._specificLocation != null && this._specificLocation == partyThatEntered._specificLocation && this._currentCombat == null) {
+        if(partyThatEntered._specificLocation != null && this._specificLocation != null && this._specificLocation == partyThatEntered._specificLocation && partyThatEntered.id != this.id && this._currentCombat == null) {
             StartCombatWith(partyThatEntered);
         }
     }
