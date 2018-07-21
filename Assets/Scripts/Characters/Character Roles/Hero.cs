@@ -69,7 +69,7 @@ public class Hero : CharacterRole {
         DepleteFullness();
         DepleteEnergy();
         DepleteFun();
-        DepleteSanity();
+        //DepleteSanity();
         DepletePrestige();
     }
 }

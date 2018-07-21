@@ -44,7 +44,7 @@ public class Civilian : CharacterRole {
         DepleteFullness();
         DepleteEnergy();
         DepleteFun();
-        DepleteSanity();
+        //DepleteSanity();
         DepletePrestige();
     }
 }

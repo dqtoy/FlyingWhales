@@ -48,7 +48,7 @@ public class ActionThread : Multithread {
                 chosenAction = item.action;
                 chosenObject = item.targetObject;
                 _party.actionData.questDataAssociatedWithCurrentAction = item.associatedQuestData;
-                actionLog += "\nGot action from queue " + chosenAction.actionData.actionName + "-" + chosenObject.objectName;
+                actionLog += "\nGot action from queue " + chosenAction.actionData.actionName + "-" + (chosenObject == null ? "null" : chosenObject.objectName);
             } else {
                 //If Action Queue is empty, check if Happiness is above 200 and Mental Points and Physical Points are both above -3.
                 if (character.role.happiness > CharacterManager.Instance.HAPPINESS_THRESHOLD && character.mentalPoints > CharacterManager.Instance.MENTAL_THRESHOLD 

@@ -231,14 +231,14 @@ public class CharacterAction {
     #region Logs
     public virtual string GetArriveActionString() {
         string file = this.GetType().ToString();
-        if (LocalizationManager.Instance.localizedText["CharacterActions"][file].ContainsKey("arrive_action")) {
+        if (LocalizationManager.Instance.localizedText["CharacterActions"].ContainsKey(file)) {
             return LocalizationManager.Instance.GetLocalizedValue("CharacterActions", file, "arrive_action");
         }
         return string.Empty;
     }
     public virtual string GetLeaveActionString() {
         string file = this.GetType().ToString();
-        if (LocalizationManager.Instance.localizedText["CharacterActions"][file].ContainsKey("leave_action")) {
+        if (LocalizationManager.Instance.localizedText["CharacterActions"].ContainsKey(file)) {
             return LocalizationManager.Instance.GetLocalizedValue("CharacterActions", file, "leave_action");
         }
         return string.Empty;
