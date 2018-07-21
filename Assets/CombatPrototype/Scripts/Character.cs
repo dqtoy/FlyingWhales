@@ -1938,14 +1938,28 @@ namespace ECS {
         }
         public void OnTakeQuest(Quest takenQuest) {
             if (takenQuest.groupType == GROUP_TYPE.PARTY && this.squad == null) { //When a character gains a Party Type Quest and he isnt a part of a Squad yet,
+                if (this.role == null) {
+                    return;
+                }
                 if (this.role.roleType == CHARACTER_ROLE.CIVILIAN) { //If he is a Civilian-type
                     if (this.mentalPoints <= -6) {
                         //if Mental Points is -6 or below, the character will request to chat with the Player and ask for his help
                     } else if (this.HasTag(CHARACTER_TAG.IMPULSIVE)) {
                         //else, if character has impulsive trait, a change action to a randomized Hero class will be added at the end of his Action Queue.
-                        AddActionToQueue(ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.CHANGE_CLASS), ownParty.icharacterObject);
+                        ChangeClassAction changeClassAction = ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.CHANGE_CLASS) as ChangeClassAction;
+                        string[] choices = new string[] { "Warrior" };
+                        changeClassAction.SetAdvertisedClass(choices[UnityEngine.Random.Range(0, choices.Length)]);
+                        AddActionToQueue(changeClassAction, ownParty.icharacterObject);
                     } else {
                         //else, character will advertise his Quest for other people to take
+                    }
+                } else if (this.role.roleType == CHARACTER_ROLE.HERO) { //If he is a Hero-type
+                    if (this.mentalPoints <= -6) {
+                        //if Mental Points is -6 or below, the character will request to chat with the Player and ask for his help
+                    } else if (this.HasTag(CHARACTER_TAG.IMPULSIVE)) {
+                        //else, if character has impulsive trait, he will attempt the quest without any other people's help
+                    } else {
+                        //else, character will create a new Squad and become its Squad Leader and will perform a Recruit Squadmates action
                     }
                 }
             }
