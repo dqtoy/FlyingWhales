@@ -1936,6 +1936,20 @@ namespace ECS {
             }
             return quests;
         }
+        public void OnTakeQuest(Quest takenQuest) {
+            if (takenQuest.groupType == GROUP_TYPE.PARTY && this.squad == null) { //When a character gains a Party Type Quest and he isnt a part of a Squad yet,
+                if (this.role.roleType == CHARACTER_ROLE.CIVILIAN) { //If he is a Civilian-type
+                    if (this.mentalPoints <= -6) {
+                        //if Mental Points is -6 or below, the character will request to chat with the Player and ask for his help
+                    } else if (this.HasTag(CHARACTER_TAG.IMPULSIVE)) {
+                        //else, if character has impulsive trait, a change action to a randomized Hero class will be added at the end of his Action Queue.
+                        AddActionToQueue(ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.CHANGE_CLASS), ownParty.icharacterObject);
+                    } else {
+                        //else, character will advertise his Quest for other people to take
+                    }
+                }
+            }
+        }
         #endregion
 
         #region HP
@@ -1962,10 +1976,10 @@ namespace ECS {
             _characterClass = charClass.CreateNewCopy();
             OnCharacterClassChange();
 
+#if !WORLD_CREATION_TOOL
             _home.excessClasses.Remove(previousClassName);
             _home.missingClasses.Remove(_characterClass.className);
 
-#if !WORLD_CREATION_TOOL
             Log log = new Log(GameManager.Instance.Today(), "CharacterActions", "ChangeClassAction", "change_class");
             log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, previousClassName, LOG_IDENTIFIER.STRING_1);
