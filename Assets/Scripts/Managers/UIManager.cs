@@ -348,7 +348,23 @@ public class UIManager : MonoBehaviour {
 	 * over a UI Object
 	 * */
     public bool IsMouseOnUI() {
-        return eventSystem.IsPointerOverGameObject();
+        PointerEventData pointer = new PointerEventData(EventSystem.current);
+        pointer.position = Input.mousePosition;
+
+        List<RaycastResult> raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, raycastResults);
+
+        if (raycastResults.Count > 0) {
+            foreach (var go in raycastResults) {
+                if (go.gameObject.layer == LayerMask.NameToLayer("UI")) {
+                    //Debug.Log(go.gameObject.name, go.gameObject);
+                    return true;
+                }
+
+            }
+        }
+        return false;
+            //eventSystem.IsPointerOverGameObject();
         //if (uiCamera != null) {
         //if (Minimap.Instance.isDragging) {
         //    return true;
