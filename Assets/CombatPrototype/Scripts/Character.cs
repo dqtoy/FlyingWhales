@@ -2444,22 +2444,22 @@ namespace ECS {
             AdjustSP(_maxSP);
         }
         private float GetAttackPower() {
-            //float statUsed = (float)Utilities.GetStatByClass(this);
+            float statUsed = (float) Utilities.GetStatByClass(this);
             float weaponAttack = 0f;
             if(_equippedWeapon != null) {
                 weaponAttack = _equippedWeapon.attackPower;
             }
-            //return (((weaponAttack + statUsed) * (statUsed / 2f)) * (1f + (agility / 100f))) * (1f + (level / 100f));
-            List<AttackSkill> allAttackSkillsAvailable = GetClassAttackSkills();
-            float skillMultiplier = ((float) allAttackSkillsAvailable.Sum(x => x.power) / (float) allAttackSkillsAvailable.Count) * ((float) _sp / ((float) allAttackSkillsAvailable.Sum(x => x.spCost) / (float) allAttackSkillsAvailable.Count));
-            if(skillMultiplier < 1f) {
-                skillMultiplier = 1f;
-            }
-            return (float)((((strength + intelligence + weaponAttack) / 2f) * (1f + ((strength + intelligence) / 40f)) * (1f + (level / 100f)) * skillMultiplier) * speed);
+            return (((weaponAttack + statUsed) * (statUsed / 2f)) * (1f + (agility / 100f))) * (1f + (level / 100f));
+            //List<AttackSkill> allAttackSkillsAvailable = GetClassAttackSkills();
+            //float skillMultiplier = ((float) allAttackSkillsAvailable.Sum(x => x.power) / (float) allAttackSkillsAvailable.Count) * ((float) _sp / ((float) allAttackSkillsAvailable.Sum(x => x.spCost) / (float) allAttackSkillsAvailable.Count));
+            //if(skillMultiplier < 1f) {
+            //    skillMultiplier = 1f;
+            //}
+            //return (float)((((strength + intelligence + weaponAttack) / 2f) * (1f + ((strength + intelligence) / 40f)) * (1f + (level / 100f)) * skillMultiplier) * speed);
         }
         private float GetDefensePower() {
-            //return ((float)(strength + intelligence + GetSelfPdef() + GetSelfMdef() + maxHP + (vitality * 2)) * (1f + (level / 100f))) * (1f + (agility / 100f));
-            return (float) (((strength + (4f * vitality) + intelligence + GetSelfPdef() + GetSelfMdef()) / 2f) * _currentHP * (1f + (level / 20f)));
+            return ((float) (strength + intelligence + GetSelfPdef() + GetSelfMdef() + currentHP + (vitality * 2)) * (1f + (level / 100f))) * (1f + (agility / 100f));
+            //return (float) (((strength + (4f * vitality) + intelligence + GetSelfPdef() + GetSelfMdef()) / 2f) * _currentHP * (1f + (level / 20f)));
         }
         #endregion
 
