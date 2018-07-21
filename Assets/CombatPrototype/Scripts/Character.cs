@@ -1946,7 +1946,10 @@ namespace ECS {
                         //if Mental Points is -6 or below, the character will request to chat with the Player and ask for his help
                     } else if (this.HasTag(CHARACTER_TAG.IMPULSIVE)) {
                         //else, if character has impulsive trait, a change action to a randomized Hero class will be added at the end of his Action Queue.
-                        //AddActionToQueue(ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.CHANGE_CLASS), ownParty.icharacterObject);
+                        ChangeClassAction changeClassAction = ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.CHANGE_CLASS) as ChangeClassAction;
+                        string[] choices = new string[] { "Warrior" };
+                        changeClassAction.SetAdvertisedClass(choices[UnityEngine.Random.Range(0, choices.Length)]);
+                        AddActionToQueue(changeClassAction, ownParty.icharacterObject);
                     } else {
                         //else, character will advertise his Quest for other people to take
                     }

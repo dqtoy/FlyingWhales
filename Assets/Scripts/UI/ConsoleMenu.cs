@@ -43,6 +43,7 @@ public class ConsoleMenu : UIMenu {
             {"/toggle_road", ToggleRoads },
             {"/set_icon_target", SetIconTarget },
             {"/set_need", SetCharacterNeedsValue},
+            {"/add_tag", AddCharacterTag},
         };
     }
 
@@ -494,6 +495,37 @@ public class ConsoleMenu : UIMenu {
 
         character.role.SetNeedValue(need, needValue);
         AddSuccessMessage("Set " + character.name + "'s " + need.ToString() + " to " + character.role.GetNeedValue(need).ToString());
+    }
+    private void AddCharacterTag(string[] parameters) {
+        if (parameters.Length < 3) {//command, need type, need value, character name/id
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+        string characterParameterString = string.Empty;
+        int characterID;
+        for (int i = 2; i < parameters.Length; i++) {
+            characterParameterString += parameters[i] + " ";
+        }
+        characterParameterString = characterParameterString.Trim();
+
+        bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
+        ECS.Character character;
+        if (isCharacterParameterNumeric) {
+            character = CharacterManager.Instance.GetCharacterByID(characterID);
+        } else {
+            character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+        }
+        
+        CHARACTER_TAG tag = (CHARACTER_TAG)Enum.Parse(typeof(CHARACTER_TAG), parameters[1]);
+
+        if (character == null) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+        }
+
+        character.AssignTag(tag);
+        AddSuccessMessage("Added " + tag.ToString() + " tag to " + character.name);
     }
     #endregion
 

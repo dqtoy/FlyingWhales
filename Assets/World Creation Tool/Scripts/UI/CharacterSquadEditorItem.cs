@@ -13,7 +13,12 @@ public class CharacterSquadEditorItem : MonoBehaviour {
 
     public void SetCharacter(ECS.Character character) {
         this.character = character;
-        characterNameLbl.text = character.name;
-        otherInfoLbl.text = character.role.roleType.ToString() + "/" + character.characterClass.className;
+    }
+
+    private void Update() {
+        if (character != null) {
+            characterNameLbl.text = character.name;
+            otherInfoLbl.text = character.role.roleType.ToString() + "/" + character.characterClass.className;
+        }
     }
 }
