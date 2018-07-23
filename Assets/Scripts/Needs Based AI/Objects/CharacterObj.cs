@@ -39,12 +39,7 @@ public class CharacterObj : ICharacterObject {
         get { return _isInvisible; }
     }
     public BaseLandmark objectLocation {
-        get {
-            if(specificLocation != null && specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-                return specificLocation as BaseLandmark;
-            }
-            return _objectLocation;
-        }
+        get { return _party.landmarkLocation; }
     }
     public ILocation specificLocation {
         get { return _party.specificLocation; }
