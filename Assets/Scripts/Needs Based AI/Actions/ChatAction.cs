@@ -95,19 +95,21 @@ public class ChatAction : CharacterAction {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
         GiveAllReward(party);
+        if(party.characterObject.currentState.stateName != "Alive") {
+            EndAction(party, targetObject);
+            while (_chatters.Count > 0) {
+                Character chatter = _chatters[0];
+                if (chatter.party.actionData.currentAction.actionData.actionType == ACTION_TYPE.CHAT) {
+                    ChatAction chatterAction = chatter.party.actionData.currentAction as ChatAction;
+                    chatterAction.RemoveChatee(chatter);
+                }
+            }
+        }
     }
     public override void EndAction(CharacterParty party, IObject targetObject) {
         //Relationship effects
         RemoveChatee(party.mainCharacter as Character);
-        //for (int i = 0; i < _chatters.Count; i++) {
-        //    Character chatter = _chatters[i];
-        //    if(chatter.party.actionData.currentAction.actionData.actionType == ACTION_TYPE.CHAT) {
-        //        ChatAction chatterAction = chatter.party.actionData.currentAction as ChatAction;
-        //        if(chatterAction.RemoveChatee(party.mainCharacter as Character, chatter)) {
-        //            i--;
-        //        }
-        //    }
-        //}
+
         if (_chatters.Count <= 0 && _chatee == null) {
             party.icon.SetMovementState(false);
             base.EndAction(party, targetObject);
