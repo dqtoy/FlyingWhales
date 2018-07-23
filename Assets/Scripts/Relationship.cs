@@ -205,6 +205,16 @@ public class Relationship {
         //}
         //return false;
     }
+    public bool HasAnyStatus(CHARACTER_RELATIONSHIP[] status) {
+        for (int i = 0; i < status.Length; i++) {
+            CHARACTER_RELATIONSHIP rel = status[i];
+            if (_relationshipStatuses.Contains(rel)) {
+                return true;
+            }
+        }
+        return false;
+        
+    }
     //public CharacterRelationship GetExactRelationship(CHARACTER_RELATIONSHIP char1Relationship, CHARACTER_RELATIONSHIP char2Relationship){
     //	for (int i = 0; i < _relationshipStatus.Count; i++) {
     //		if(_relationshipStatus[i].character1Relationship == char1Relationship && _relationshipStatus[i].character2Relationship == char2Relationship){

@@ -417,7 +417,6 @@ namespace ECS {
                     AssignRole(setup.optionalRole);
                 }
             }
-            SubscribeToSignals();
         }
         public Character() {
             _tags = new List<CharacterTag>();
@@ -457,19 +456,28 @@ namespace ECS {
             ConstructDesperateActions();
             ConstructIdleActions();
             //_combatHistoryID = 0;
-
-            Messenger.AddListener<Region>("RegionDeath", RegionDeath);
-            //Messenger.AddListener<List<Region>>("RegionPsytoxin", RegionPsytoxin);
-            Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
-            Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
-            Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
-            Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
+            SubscribeToSignals();
         }
         public void Initialize() { }
 
         #region Signals
         private void SubscribeToSignals() {
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
+            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
+            Messenger.AddListener<Region>("RegionDeath", RegionDeath);
+            Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
+            Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
+            Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
+            //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
+        }
+        private void UnsubscribeSignals() {
+            Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
+            Messenger.RemoveListener<Region>("RegionDeath", RegionDeath);
+            Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
+            Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
+            Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
+            //Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         }
         #endregion
 
@@ -812,11 +820,12 @@ namespace ECS {
 			if(!_isDead){
 				_isDead = true;
                 
-                Messenger.RemoveListener<Region> ("RegionDeath", RegionDeath);
-				//Messenger.RemoveListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
-                Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
-                Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
-                Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
+    //            Messenger.RemoveListener<Region> ("RegionDeath", RegionDeath);
+				////Messenger.RemoveListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
+    //            Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
+    //            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
+    //            Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
+                UnsubscribeSignals();
 
                 CombatManager.Instance.ReturnCharacterColorToPool (_characterColor);
 
@@ -2098,6 +2107,34 @@ namespace ECS {
             if (this.characterClass != null) {
                 if (this.characterClass.className.Equals("Farmer") || this.characterClass.className.Equals("Miner") || this.characterClass.className.Equals("Retired Hero") ||
                     this.characterClass.className.Equals("Shopkeeper") || this.characterClass.className.Equals("Woodcutter")) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        private void OnOtherCharacterDied(Character character) {
+            if (character.id != this.id) {
+                if (IsCharacterLovedOne(character)) { //A character gains heartbroken tag for 15 days when a family member or a loved one dies.
+                    AssignTag(CHARACTER_TAG.HEARTBROKEN);
+                }
+                RemoveRelationshipWith(character);
+            }
+        }
+        public bool IsCharacterLovedOne(Character otherCharacter) {
+            Relationship rel = GetRelationshipWith(otherCharacter);
+            if (rel != null) {
+                CHARACTER_RELATIONSHIP[] lovedOneStatuses = new CHARACTER_RELATIONSHIP[] {
+                    CHARACTER_RELATIONSHIP.FATHER,
+                    CHARACTER_RELATIONSHIP.MOTHER,
+                    CHARACTER_RELATIONSHIP.BROTHER,
+                    CHARACTER_RELATIONSHIP.SISTER,
+                    CHARACTER_RELATIONSHIP.SON,
+                    CHARACTER_RELATIONSHIP.DAUGHTER,
+                    CHARACTER_RELATIONSHIP.LOVER,
+                    CHARACTER_RELATIONSHIP.HUSBAND,
+                    CHARACTER_RELATIONSHIP.WIFE,
+                };
+                if (rel.HasAnyStatus(lovedOneStatuses)) {
                     return true;
                 }
             }
