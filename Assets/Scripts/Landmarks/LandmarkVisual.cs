@@ -62,12 +62,14 @@ public class LandmarkVisual : MonoBehaviour {
         portrait.gameObject.SetActive(true);
         //iparty.icon.gameObject.SetActive(false);
         iparty.icon.SetVisualState(false);
+        iparty.icon.characterPortrait.SetBorderState(true);
     }
     public void OnCharacterExitedLandmark(NewParty iparty) {
         //remove character portrait from grid
         iparty.icon.ReclaimPortrait();
         //iparty.icon.gameObject.SetActive(true);
         iparty.icon.SetVisualState(true);
+        iparty.icon.characterPortrait.SetBorderState(false);
     }
     public void DrawPathTo(BaseLandmark otherLandmark) {
         if (destinationSetter.target != otherLandmark.tileLocation.transform) {

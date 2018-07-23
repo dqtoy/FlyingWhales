@@ -215,18 +215,12 @@ public class CharacterRole {
             //Character gains Hungry tag when Fullness is below 0 to -75.
             _character.AssignTag(CHARACTER_TAG.HUNGRY);
             _character.RemoveCharacterTag(CHARACTER_TAG.STARVING);
-            //Character gains Wounded tag when Fullness is below 0 to -75.
-            _character.AssignTag(CHARACTER_TAG.WOUNDED);
-            _character.RemoveCharacterTag(CHARACTER_TAG.WRECKED);
         } else if (_fullness < -75) {
-            //Character gains Starving tag when Fullness is below -75
+            //Character gains Starving tag when Fullness is below -75   
             _character.AssignTag(CHARACTER_TAG.STARVING);
             _character.RemoveCharacterTag(CHARACTER_TAG.HUNGRY);
-            //Character gains Wrecked tag when Fullness is below -75
-            _character.AssignTag(CHARACTER_TAG.WRECKED);
-            _character.RemoveCharacterTag(CHARACTER_TAG.WOUNDED);
         } else {
-            _character.RemoveCharacterTag(new List<CHARACTER_TAG>() { CHARACTER_TAG.HUNGRY, CHARACTER_TAG.STARVING, CHARACTER_TAG.WOUNDED, CHARACTER_TAG.WRECKED });
+            _character.RemoveCharacterTag(new List<CHARACTER_TAG>() { CHARACTER_TAG.HUNGRY, CHARACTER_TAG.STARVING });
         }
     }
 
@@ -457,7 +451,17 @@ public class CharacterRole {
         SetSafety(newSafety);
     }
     private void OnSafetyEdited() {
-
+        if (_safety < 0 && _safety >= -75) {
+            //Character gains Wounded tag when Safety is below 0 to -75.
+            _character.AssignTag(CHARACTER_TAG.WOUNDED);
+            _character.RemoveCharacterTag(CHARACTER_TAG.WRECKED);
+        } else if (_safety < -75) {
+            //Character gains Wrecked tag when Safety is below -75.
+            _character.AssignTag(CHARACTER_TAG.WRECKED);
+            _character.RemoveCharacterTag(CHARACTER_TAG.WOUNDED);
+        } else {
+            _character.RemoveCharacterTag(new List<CHARACTER_TAG>() { CHARACTER_TAG.WOUNDED, CHARACTER_TAG.WRECKED });
+        }
     }
 
     public void AdjustConstantSanityBuff(int adjustment) {

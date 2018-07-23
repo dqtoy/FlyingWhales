@@ -763,6 +763,25 @@ public class Utilities : MonoBehaviour {
         }
         throw new Exception("Could not pick element in weights");
     }
+    public static T PickRandomElementWithWeights<T>(Dictionary<T, float> weights) {
+        float totalOfAllWeights = GetTotalOfWeights(weights);
+        int chance = rng.Next(0, (int)totalOfAllWeights);
+        float upperBound = 0;
+        float lowerBound = 0;
+        foreach (KeyValuePair<T, float> kvp in weights) {
+            T currElementType = kvp.Key;
+            float weightOfCurrElement = kvp.Value;
+            if (weightOfCurrElement <= 0) {
+                continue;
+            }
+            upperBound += weightOfCurrElement;
+            if (chance >= lowerBound && chance < upperBound) {
+                return currElementType;
+            }
+            lowerBound = upperBound;
+        }
+        throw new Exception("Could not pick element in weights");
+    }
     /*
      * This will return an array that has 2 elements 
      * of the same type. The 1st element is the first key in the dictionary, and the

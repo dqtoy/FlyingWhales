@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 using System;
+using System.Linq;
 
 public class ActionThread : Multithread {
     private CharacterActionAdvertisement[] choices;
@@ -67,11 +68,17 @@ public class ActionThread : Multithread {
                     CharacterAction actionFromAds = GetActionFromAdvertisements(ref targetObject);
                     actionLog += "\n" + character.name + " will choose action from advertisements";
                     if (character.IsSquadLeader()) {
-                        //if character is a Squad Leader and has party members, perform Disband Party then add selected Action to the Queue
-                        chosenAction = character.currentParty.icharacterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY);
-                        chosenObject = character.currentParty.icharacterObject;
-                        character.AddActionToQueue(actionFromAds, targetObject);
-                        actionLog += "\n" + character.name + " disbanded party and added " + chosenAction.actionData.actionName + " " + chosenObject.objectName + " to action queue";
+                        if (character.ownParty.icharacters.Count > 1) {
+                            //if character is a Squad Leader and has party members, perform Disband Party then add selected Action to the Queue
+                            chosenAction = character.currentParty.icharacterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY);
+                            chosenObject = character.currentParty.icharacterObject;
+                            character.AddActionToQueue(actionFromAds, targetObject);
+                            actionLog += "\n" + character.name + " disbanded party and added " + chosenAction.actionData.actionName + " " + chosenObject.objectName + " to action queue";
+                        } else {
+                            chosenAction = actionFromAds;
+                            chosenObject = targetObject;
+                            actionLog += "\n" + character.name + " chose to " + chosenAction.actionData.actionName + " " + chosenObject.objectName;
+                        }
                     } else {
                         //otherwise, perform selected Action
                         chosenAction = actionFromAds;
@@ -85,7 +92,13 @@ public class ActionThread : Multithread {
                 (UIManager.Instance.partyinfoUI.currentlyShowingParty != null && UIManager.Instance.partyinfoUI.currentlyShowingParty.owner != null && UIManager.Instance.partyinfoUI.currentlyShowingParty.owner.id == character.id)) {
                 Debug.Log(actionLog);
             }
+            if (chosenAction == null) {
+                //perform desperate action if no action was taken
+                chosenAction = character.GetRandomDesperateAction(ref chosenObject);
+            }
         }
+
+        
         //if (!LookForActionFromQuests()) {
         //    LookForActionFromAdvertisements();
         //}
@@ -282,9 +295,9 @@ public class ActionThread : Multithread {
         if (Messenger.eventTable.ContainsKey(Signals.LOOK_FOR_ACTION)) {
             Messenger.Broadcast<ActionThread>(Signals.LOOK_FOR_ACTION, this);
         }
-        if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _party.id) {
-            Debug.Log(actionLog);
-        }
+        //if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _party.id) {
+        //    Debug.Log(actionLog);
+        //}
 
         CharacterActionAdvertisement chosenActionAd = PickAction();
         targetObject = chosenActionAd.targetObject;
@@ -371,45 +384,46 @@ public class ActionThread : Multithread {
        
     }
     private CharacterActionAdvertisement PickAction() {
-        choices[0].Reset();
-        choices[1].Reset();
-        choices[2].Reset();
-        float advertisement = 0f;
-        CharacterAction action = null;
-        IObject targetObject = null;
-        for (int i = 0; i < allChoices.Count; i++) {
-            action = allChoices[i].action;
-            targetObject = allChoices[i].targetObject;
-            advertisement = allChoices[i].advertisement;
-            if (choices[0].action == null) {
-                choices[0].Set(action, targetObject, advertisement);
-            } else {
-                if (advertisement > choices[0].advertisement) {
-                    choices[0].Set(action, targetObject, advertisement);
-                }
-            }
-            //if (choices[0].action == null) {
-            //    choices[0].Set(action, advertisement);
-            //} else if (choices[1].action == null) {
-            //    choices[1].Set(action, advertisement);
-            //} else if (choices[2].action == null) {
-            //    choices[2].Set(action, advertisement);
-            //} else {
-            //    if (choices[0].advertisement <= choices[1].advertisement && choices[0].advertisement <= choices[2].advertisement) {
-            //        if (advertisement > choices[0].advertisement) {
-            //            choices[0].Set(action, advertisement);
-            //        }
-            //    } else if (choices[1].advertisement <= choices[0].advertisement && choices[1].advertisement <= choices[2].advertisement) {
-            //        if (advertisement > choices[1].advertisement) {
-            //            choices[1].Set(action, advertisement);
-            //        }
-            //    } else if (choices[2].advertisement <= choices[0].advertisement && choices[2].advertisement <= choices[1].advertisement) {
-            //        if (advertisement > choices[2].advertisement) {
-            //            choices[2].Set(action, advertisement);
-            //        }
-            //    }
-            //}
-        }
+        //choices[0].Reset();
+        //choices[1].Reset();
+        //choices[2].Reset();
+        //float advertisement = 0f;
+        //CharacterAction action = null;
+        //IObject targetObject = null;
+        allChoices = allChoices.OrderByDescending(x => x.advertisement).ToList();
+        //for (int i = 0; i < allChoices.Count; i++) {
+        //    action = allChoices[i].action;
+        //    targetObject = allChoices[i].targetObject;
+        //    advertisement = allChoices[i].advertisement;
+        //    if (choices[0].action == null) {
+        //        choices[0].Set(action, targetObject, advertisement);
+        //    } else {
+        //        if (advertisement > choices[0].advertisement) {
+        //            choices[0].Set(action, targetObject, advertisement);
+        //        }
+        //    }
+        //    //if (choices[0].action == null) {
+        //    //    choices[0].Set(action, advertisement);
+        //    //} else if (choices[1].action == null) {
+        //    //    choices[1].Set(action, advertisement);
+        //    //} else if (choices[2].action == null) {
+        //    //    choices[2].Set(action, advertisement);
+        //    //} else {
+        //    //    if (choices[0].advertisement <= choices[1].advertisement && choices[0].advertisement <= choices[2].advertisement) {
+        //    //        if (advertisement > choices[0].advertisement) {
+        //    //            choices[0].Set(action, advertisement);
+        //    //        }
+        //    //    } else if (choices[1].advertisement <= choices[0].advertisement && choices[1].advertisement <= choices[2].advertisement) {
+        //    //        if (advertisement > choices[1].advertisement) {
+        //    //            choices[1].Set(action, advertisement);
+        //    //        }
+        //    //    } else if (choices[2].advertisement <= choices[0].advertisement && choices[2].advertisement <= choices[1].advertisement) {
+        //    //        if (advertisement > choices[2].advertisement) {
+        //    //            choices[2].Set(action, advertisement);
+        //    //        }
+        //    //    }
+        //    //}
+        //}
 
         //int maxChoice = 3;
         //if (choices[1].action == null) {
@@ -417,8 +431,27 @@ public class ActionThread : Multithread {
         //} else if (choices[2].action == null) {
         //    maxChoice = 2;
         //}
-        int chosenIndex = 0; //Utilities.rng.Next(0, maxChoice);
-        CharacterActionAdvertisement chosenActionAd = choices[chosenIndex];
+        //int chosenIndex = 0; //Utilities.rng.Next(0, maxChoice);
+        //CharacterActionAdvertisement chosenActionAd = choices[chosenIndex];
+        Dictionary<CharacterActionAdvertisement, float> weightedAds = new Dictionary<CharacterActionAdvertisement, float>();
+        for (int i = 0; i < allChoices.Count; i++) {
+            CharacterActionAdvertisement currChoice = allChoices[i];
+            weightedAds.Add(currChoice, currChoice.advertisement);
+            if (weightedAds.Count == 3) {
+                break;
+            }
+        }
+        //if (choices[0].action == null) {
+        //    weightedAds.Add(choices[0], choices[0].advertisement);
+        //} else if (choices[1].action == null) {
+        //    weightedAds.Add(choices[1], choices[1].advertisement);
+        //} else if (choices[2].action == null) {
+        //    weightedAds.Add(choices[2], choices[2].advertisement);
+        //}
+        CharacterActionAdvertisement chosenActionAd = new CharacterActionAdvertisement();
+        if (Utilities.GetTotalOfWeights(weightedAds) > 0) {
+            chosenActionAd = Utilities.PickRandomElementWithWeights(weightedAds);
+        }
 
         if (chosenActionAd.action == null) {
             string error = _party.name + " could not find an action to do! Choices were ";

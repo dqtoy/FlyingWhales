@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 [System.Serializable]
 public class LandmarkData {
+    [Header("General Data")]
     public string landmarkTypeString;
     public LANDMARK_TYPE landmarkType;
     public List<LANDMARK_TAG> uniqueTags;
@@ -11,6 +12,11 @@ public class LandmarkData {
     public Sprite landmarkObjectSprite;
     public List<LandmarkStructureSprite> landmarkTileSprites;
     public List<PASSABLE_TYPE> possibleSpawnPoints;
+
+    [Header("Monster Spawner")]
+    public bool isMonsterSpawner;
+    public List<MonsterSet> monsterSets;
+    public int monsterSpawnCooldown;
 
     private WeightedDictionary<string> _itemWeights;
 
