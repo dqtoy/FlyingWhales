@@ -162,7 +162,9 @@ public class NewParty : IParty {
             _icharacters.Add(icharacter);
             icharacter.SetCurrentParty(this);
             icharacter.OnAddedToParty();
-            Messenger.Broadcast(Signals.CHARACTER_JOINED_PARTY, icharacter, this);
+            if (icharacter is ECS.Character) {
+                Messenger.Broadcast(Signals.CHARACTER_JOINED_PARTY, icharacter, this);
+            }
         }
     }
     public void RemoveCharacter(ICharacter icharacter) {
@@ -173,6 +175,9 @@ public class NewParty : IParty {
             } else {
                 icharacter.ownParty.icon.SetAIPathPosition(this.specificLocation.tileLocation.transform.position);
                 icharacter.ownParty.icon.SetVisualState(true);
+            }
+            if (icharacter is ECS.Character) {
+                Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, icharacter, this);
             }
             //Check if there are still characters in this party, if not, change to dead state
             if (_icharacters.Count <= 0) {

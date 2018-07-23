@@ -92,7 +92,8 @@ public class ActionData {
                     }
                 }
             }
-        }   
+        }
+        Messenger.Broadcast(Signals.ACTION_TAKEN, action, _party);
     }
     public void DetachActionData() {
         Reset();
@@ -126,6 +127,7 @@ public class ActionData {
     }
     private void AdjustCurrentDay(int amount) {
         this.currentDay += amount;
+        Messenger.Broadcast(Signals.ACTION_DAY_ADJUSTED, currentAction, _party);
         if(this.currentDay >= currentAction.actionData.duration) {
             currentAction.DoneDuration(_party, currentTargetObject);
             currentAction.EndAction(_party, currentTargetObject);

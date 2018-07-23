@@ -33,15 +33,20 @@ public class UIManager : MonoBehaviour {
     [Header("Date Objects")]
     [SerializeField] private ToggleGroup speedToggleGroup;
     [SerializeField] private Toggle pauseBtn;
+    [SerializeField] private TextMeshProUGUI pauseBtnLbl;
     [SerializeField] private Toggle x1Btn;
+    [SerializeField] private TextMeshProUGUI x1BtnLbl;
     [SerializeField] private Toggle x2Btn;
+    [SerializeField] private TextMeshProUGUI x2BtnLbl;
     [SerializeField] private Toggle x4Btn;
+    [SerializeField] private TextMeshProUGUI x4BtnLbl;
     [SerializeField] private TextMeshProUGUI dateLbl;
 
     [Space(10)]
     [Header("Small Info")]
     public GameObject smallInfoGO;
     public TextMeshProUGUI smallInfoLbl;
+    public EnvelopContentUnityUI smallInfoEnvelopContent;
 
     [Space(10)]
     [Header("World Info Menu")]
@@ -173,8 +178,7 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     private void UpdateUI() {
-        dateLbl.SetText(GameManager.Instance.days.ToString() + " " + LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + ", " + GameManager.Instance.year.ToString()
-            + " (Tick " + GameManager.Instance.hour + ")");
+        dateLbl.SetText("Day " + GameManager.Instance.days.ToString() + " (Tick " + GameManager.Instance.hour + ")");
 
         UpdateCharacterInfo();
         UpdateFactionInfo();
@@ -229,6 +233,42 @@ public class UIManager : MonoBehaviour {
             onPauseEventExpiration(false);
         }
     }
+    public void UpdatePauseToggleColor(bool isOn) {
+        Color color = new Color();
+        if (isOn) {
+            ColorUtility.TryParseHtmlString("#495D6B", out color);
+        } else {
+            color = Color.white;
+        }
+        pauseBtnLbl.color = color;
+    }
+    public void Updatex1ToggleColor(bool isOn) {
+        Color color = new Color();
+        if (isOn) {
+            ColorUtility.TryParseHtmlString("#495D6B", out color);
+        } else {
+            color = Color.white;
+        }
+        x1BtnLbl.color = color;
+    }
+    public void Updatex2ToggleColor(bool isOn) {
+        Color color = new Color();
+        if (isOn) {
+            ColorUtility.TryParseHtmlString("#495D6B", out color);
+        } else {
+            color = Color.white;
+        }
+        x2BtnLbl.color = color;
+    }
+    public void Updatex4ToggleColor(bool isOn) {
+        Color color = new Color();
+        if (isOn) {
+            ColorUtility.TryParseHtmlString("#495D6B", out color);
+        } else {
+            color = Color.white;
+        }
+        x4BtnLbl.color = color;
+    }
     #endregion
 
     #region Minimap
@@ -275,11 +315,15 @@ public class UIManager : MonoBehaviour {
     #region Tooltips
     public void ShowSmallInfo(string info) {
         smallInfoLbl.text = info;
-
+        smallInfoGO.SetActive(true);
+        smallInfoEnvelopContent.Execute();
         var v3 = Input.mousePosition;
         //v3.z = 10.0f;
         //v3 = uiCamera.ScreenToWorldPoint(v3);
         //v3.y -= 0.15f;
+
+        v3.x += 50f;
+        v3.y -= 50f;
 
         //Bounds uiCameraBounds = uiCamera.GetComponent<Camera>().bound
 
@@ -295,9 +339,7 @@ public class UIManager : MonoBehaviour {
         //    v3 = uiCamera.ScreenToWorldPoint(v3);
         //    v3.x -= 0.2f;
         //}
-
         smallInfoGO.transform.position = v3;
-        smallInfoGO.SetActive(true);
     }
     public void HideSmallInfo() {
         smallInfoGO.SetActive(false);
