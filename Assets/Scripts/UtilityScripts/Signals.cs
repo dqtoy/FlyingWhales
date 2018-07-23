@@ -72,6 +72,7 @@ public static class Signals {
 
     #region Actions
     public static string ACTION_SUCCESS = "OnActionSuccess"; //Parameters (CharacterParty partyThatSucceeded, CharacterAction actionThatSucceeded)
+    public static string STATE_ENDED = "OnStateEnded"; //Parameters (CharacterParty party, ObjectState state)
     #endregion
 
     #region Squads

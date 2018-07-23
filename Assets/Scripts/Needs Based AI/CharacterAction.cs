@@ -88,6 +88,14 @@ public class CharacterAction {
     public virtual bool ShouldGoToTargetObjectOnChoose() {
         return true;
     }
+    public virtual void PartyPerformingActionChangedState(CharacterParty partyPerformer, IObject targetObject, ObjectState stateThatEnded) {
+        if (Messenger.eventTable.ContainsKey(Signals.STATE_ENDED)) {
+            Messenger.Broadcast(Signals.STATE_ENDED, partyPerformer, stateThatEnded);
+        }
+    }
+    public virtual void APartyHasEndedItsState(CharacterParty party, IObject targetObject, CharacterParty partyThatChangedState, ObjectState stateThatEnded) {
+
+    }
     #endregion
 
     #region Filters

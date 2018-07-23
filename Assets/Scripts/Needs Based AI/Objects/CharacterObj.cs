@@ -89,7 +89,9 @@ public class CharacterObj : ICharacterObject {
 
     }
     public void EndState(ObjectState state) {
-
+        if(_party.actionData.currentAction != null) {
+            _party.actionData.currentAction.PartyPerformingActionChangedState(_party, _party.actionData.currentTargetObject, state);
+        }
     }
     public ObjectState GetState(string name) {
         for (int i = 0; i < _states.Count; i++) {

@@ -45,6 +45,7 @@ public class ActionData {
         _isHalted = false;
 #if !WORLD_CREATION_TOOL
         SchedulingManager.Instance.AddEntry(GameManager.Instance.EndOfTheMonth(), () => CheckDoneActionHome());
+        Messenger.AddListener<CharacterParty, ObjectState>(Signals.STATE_ENDED, APartyEndedState);
 #endif
 #if UNITY_EDITOR
         actionHistory = new List<string>();
@@ -98,6 +99,7 @@ public class ActionData {
         Reset();
         _party.onDailyAction -= PerformCurrentAction;
         _party = null;
+        Messenger.RemoveListener<CharacterParty, ObjectState>(Signals.STATE_ENDED, APartyEndedState);
         //Messenger.RemoveListener(Signals.HOUR_ENDED, PerformCurrentAction);
     }
 
@@ -173,7 +175,7 @@ public class ActionData {
                                 _party.GoToLocation(location, PATHFINDING_MODE.USE_ROADS);
                             }
                         } else {
-                            if (currentTargetObject.currentState.stateName == "Dead") { //if object is dead
+                            if (currentTargetObject.currentState.stateName != "Alive") { //if object is dead
                                 currentAction.EndAction(_party, currentTargetObject);
                             }
                         }
@@ -255,5 +257,11 @@ public class ActionData {
             EndAction();
         }
         AssignAction(newAction, targetObject);
+    }
+
+    private void APartyEndedState(CharacterParty partyThatChangedState, ObjectState stateEnded) {
+        if(currentAction != null) {
+            currentAction.APartyHasEndedItsState(_party, currentTargetObject, partyThatChangedState, stateEnded);
+        }
     }
 }
