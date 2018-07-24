@@ -73,6 +73,14 @@ public class NewParty : IParty {
         get { return _currentCombat; }
         set { _currentCombat = value; }
     }
+    public BaseLandmark landmarkLocation {
+        get {
+            if(_specificLocation != null && _specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+                return _specificLocation as BaseLandmark;
+            }
+            return null;
+        }
+    }
     public ICharacter mainCharacter {
         get { return _icharacters[0]; }
     }

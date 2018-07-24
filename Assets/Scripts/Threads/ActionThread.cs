@@ -239,46 +239,46 @@ public class ActionThread : Multithread {
         
         return false;
     }
-    private void LookForActionFromAdvertisements() {
-        allChoices.Clear();
+//    private void LookForActionFromAdvertisements() {
+//        allChoices.Clear();
 
-        actionLog = _party.name + "'s Action Advertisements: ";
-        for (int i = 0; i < _party.currentRegion.landmarks.Count; i++) {
-            BaseLandmark landmark = _party.currentRegion.landmarks[i];
-            StructureObj iobject = landmark.landmarkObj;
-            if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
-                for (int k = 0; k < iobject.currentState.actions.Count; k++) {
-                    CharacterAction action = iobject.currentState.actions[k];
-                    if (action.MeetsRequirements(_party, landmark) && action.CanBeDone(iobject) && action.CanBeDoneBy(_party, iobject)) { //Filter
-                        float happinessIncrease = _party.TotalHappinessIncrease(action, iobject);
-                        actionLog += "\n" + action.actionData.actionName + " = " + happinessIncrease + " (" + iobject.objectName + " at " + iobject.specificLocation.locationName + ")";
-                        PutToChoices(action, iobject, happinessIncrease);
-                    }
-                }
-            }
-        }
-        if (Messenger.eventTable.ContainsKey(Signals.LOOK_FOR_ACTION)) {
-            Messenger.Broadcast<ActionThread>(Signals.LOOK_FOR_ACTION, this);
-        }
-        if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _party.id) {
-            Debug.Log(actionLog);
-        }
-//#if UNITY_EDITOR
-//        _party.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + " " + actionLog);
-//#endif
-        CharacterActionAdvertisement chosenActionAd = PickAction();
-        chosenAction = chosenActionAd.action;
-        chosenObject = chosenActionAd.targetObject;
-        _party.actionData.questDataAssociatedWithCurrentAction = null;
-        //#if UNITY_EDITOR
-        //_party.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + 
-        //    " Chosen action: " + chosenAction.actionType.ToString() + " at " + chosenAction.state.obj.objectLocation.landmarkName + "(" + chosenAction.state.obj.objectLocation.tileLocation.tileName + ")");
-        //#endif
+//        actionLog = _party.name + "'s Action Advertisements: ";
+//        for (int i = 0; i < _party.currentRegion.landmarks.Count; i++) {
+//            BaseLandmark landmark = _party.currentRegion.landmarks[i];
+//            StructureObj iobject = landmark.landmarkObj;
+//            if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
+//                for (int k = 0; k < iobject.currentState.actions.Count; k++) {
+//                    CharacterAction action = iobject.currentState.actions[k];
+//                    if (action.MeetsRequirements(_party, landmark) && action.CanBeDone(iobject) && action.CanBeDoneBy(_party, iobject)) { //Filter
+//                        float happinessIncrease = _party.TotalHappinessIncrease(action, iobject);
+//                        actionLog += "\n" + action.actionData.actionName + " = " + happinessIncrease + " (" + iobject.objectName + " at " + iobject.specificLocation.locationName + ")";
+//                        PutToChoices(action, iobject, happinessIncrease);
+//                    }
+//                }
+//            }
+//        }
+//        if (Messenger.eventTable.ContainsKey(Signals.LOOK_FOR_ACTION)) {
+//            Messenger.Broadcast<ActionThread>(Signals.LOOK_FOR_ACTION, this);
+//        }
+//        if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _party.id) {
+//            Debug.Log(actionLog);
+//        }
+////#if UNITY_EDITOR
+////        _party.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + " " + actionLog);
+////#endif
+//        CharacterActionAdvertisement chosenActionAd = PickAction();
+//        chosenAction = chosenActionAd.action;
+//        chosenObject = chosenActionAd.targetObject;
+//        _party.actionData.questDataAssociatedWithCurrentAction = null;
+//        //#if UNITY_EDITOR
+//        //_party.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + 
+//        //    " Chosen action: " + chosenAction.actionType.ToString() + " at " + chosenAction.state.obj.objectLocation.landmarkName + "(" + chosenAction.state.obj.objectLocation.tileLocation.tileName + ")");
+//        //#endif
 
-        //Check Prerequisites, currently for resource prerequisites only
-        //CheckPrerequisites(chosenAction);
+//        //Check Prerequisites, currently for resource prerequisites only
+//        //CheckPrerequisites(chosenAction);
 
-    }
+//    }
     private CharacterAction GetActionFromAdvertisements(ref IObject targetObject) {
         allChoices.Clear();
 

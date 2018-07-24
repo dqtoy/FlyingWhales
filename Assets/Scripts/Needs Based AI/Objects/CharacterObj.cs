@@ -39,12 +39,7 @@ public class CharacterObj : ICharacterObject {
         get { return _isInvisible; }
     }
     public BaseLandmark objectLocation {
-        get {
-            if(specificLocation != null && specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-                return specificLocation as BaseLandmark;
-            }
-            return _objectLocation;
-        }
+        get { return _party.landmarkLocation; }
     }
     public ILocation specificLocation {
         get { return _party.specificLocation; }
@@ -94,7 +89,9 @@ public class CharacterObj : ICharacterObject {
 
     }
     public void EndState(ObjectState state) {
-
+        if(_party.actionData.currentAction != null) {
+            _party.actionData.currentAction.PartyPerformingActionChangedState(_party, _party.actionData.currentTargetObject, state);
+        }
     }
     public ObjectState GetState(string name) {
         for (int i = 0; i < _states.Count; i++) {

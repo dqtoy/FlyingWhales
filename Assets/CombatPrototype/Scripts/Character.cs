@@ -2574,7 +2574,6 @@ namespace ECS {
             CharacterAction chosenAction = _idleActions[Utilities.rng.Next(0, _idleActions.Count)];
             if (chosenAction is ChatAction) {
                 List<CharacterParty> partyPool = new List<CharacterParty>();
-                //priority 1
                 CharacterParty chosenParty = GetPriority1TargetChatAction(partyPool);
                 if(chosenParty == null) {
                     chosenParty = GetPriority2TargetChatAction(partyPool);
@@ -2585,7 +2584,14 @@ namespace ECS {
                         }
                     }
                 }
-                targetObject = chosenParty.icharacterObject;
+                if(chosenParty == null) {
+                    _idleActions.Remove(chosenAction);
+                    CharacterAction newChosenAction = _idleActions[Utilities.rng.Next(0, _idleActions.Count)];
+                    _idleActions.Add(chosenAction);
+                    return newChosenAction;
+                } else {
+                    targetObject = chosenParty.icharacterObject;
+                }
             }
             return chosenAction;
         }
@@ -2607,7 +2613,7 @@ namespace ECS {
             partyPool.Clear();
             for (int i = 0; i < faction.characters.Count; i++) {
                 CharacterParty party = faction.characters[i].party;
-                if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && !partyPool.Contains(party)) { //&& faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)
+                if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && party.landmarkLocation != null && faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile) && !partyPool.Contains(party)) {
                     partyPool.Add(party);
                 }
             }
@@ -2624,7 +2630,7 @@ namespace ECS {
                 Faction nonHostileFaction = nonHostileFactions[i];
                 for (int k = 0; k < nonHostileFaction.characters.Count; k++) {
                     CharacterParty party = nonHostileFaction.characters[k].party;
-                    if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && !partyPool.Contains(party)) { // && faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)
+                    if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && party.landmarkLocation != null && faction.ownedAreas.Contains(party.landmarkLocation.tileLocation.areaOfTile) && !partyPool.Contains(party)) {
                         partyPool.Add(party);
                     }
                 }
@@ -2639,7 +2645,7 @@ namespace ECS {
             partyPool.Clear();
             for (int i = 0; i < faction.characters.Count; i++) {
                 CharacterParty party = faction.characters[i].party;
-                if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && !partyPool.Contains(party) && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.IDLE) { // && !faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)
+                if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && party.landmarkLocation != null && !faction.ownedAreas.Contains(party.landmarkLocation.tileLocation.areaOfTile) && !partyPool.Contains(party) && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.IDLE) {
                     partyPool.Add(party);
                 }
             }
@@ -2656,7 +2662,7 @@ namespace ECS {
                 Faction nonHostileFaction = nonHostileFactions[i];
                 for (int k = 0; k < nonHostileFaction.characters.Count; k++) {
                     CharacterParty party = nonHostileFaction.characters[k].party;
-                    if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && !partyPool.Contains(party) && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.IDLE) { // && !faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile)
+                    if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && party.landmarkLocation != null && !faction.ownedAreas.Contains(party.landmarkLocation.tileLocation.areaOfTile) && !partyPool.Contains(party) && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.IDLE) {
                         partyPool.Add(party);
                     }
                 }
