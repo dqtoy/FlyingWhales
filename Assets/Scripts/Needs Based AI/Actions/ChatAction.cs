@@ -106,21 +106,24 @@ public class ChatAction : CharacterAction {
         }
     }
     public override void PartyPerformingActionChangedState(CharacterParty partyPerformer, IObject targetObject, ObjectState stateThatEnded) {
+        base.PartyPerformingActionChangedState(partyPerformer, targetObject, stateThatEnded);
         if (stateThatEnded.stateName == "Alive") {
-            while (_chatters.Count > 0) {
-                Character chatter = _chatters[0];
-                if (chatter.party.actionData.currentAction.actionData.actionType == ACTION_TYPE.CHAT) {
-                    ChatAction chatterAction = chatter.party.actionData.currentAction as ChatAction;
-                    chatterAction.RemoveChatee(chatter);
-                }
-            }
+            //while (_chatters.Count > 0) {
+            //    Character chatter = _chatters[0];
+            //    if (chatter.party.actionData.currentAction.actionData.actionType == ACTION_TYPE.CHAT) {
+            //        ChatAction chatterAction = chatter.party.actionData.currentAction as ChatAction;
+            //        chatterAction.EndAction(chatter.party, chatter.party.actionData.currentTargetObject);
+            //    }
+            //}
             EndAction(partyPerformer, targetObject);
         }
     }
     public override void APartyHasEndedItsState(CharacterParty party, IObject targetObject, CharacterParty partyThatChangedState, ObjectState stateThatEnded) {
         base.APartyHasEndedItsState(party, targetObject, partyThatChangedState, stateThatEnded);
-        if (stateThatEnded.stateName == "Alive" && _chatee.party.id == partyThatChangedState.id) {
-            EndAction(party, targetObject);
+        if (_chatee != null) {
+            if (stateThatEnded.stateName == "Alive" && _chatee.party.id == partyThatChangedState.id) {
+                EndAction(party, targetObject);
+            }
         }
     }
     public override CharacterAction Clone() {
@@ -158,12 +161,12 @@ public class ChatAction : CharacterAction {
                     _chatee.party.icon.SetMovementState(false);
                     _chatee.party.actionData.EndAction();
                 }
-                SetChatee(null, null);
             } else if (_chatee.party.actionData.currentAction.actionType == ACTION_TYPE.WAITING) {
                 if(_chatee.party.actionData.currentAction == _chateeWaitAction) {
                     _chatee.party.actionData.EndAction();
                 }
             }
+            SetChatee(null, null);
         }
     }
     #endregion
