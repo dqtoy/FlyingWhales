@@ -107,11 +107,10 @@ public class ActionThread : Multithread {
         actionLog += "\nGetting action for squad leader:"; 
         if (availableQuests.Count > 0) { //If yes, check if there is at least one Quest
             Quest selectedQuest = availableQuests[Utilities.rng.Next(0, availableQuests.Count)];
+            CharacterQuestData questActionData = character.GetDataForQuest(selectedQuest);
+            QuestAction actionFromQuest = selectedQuest.GetQuestAction(character, questActionData);
+            actionLog += "\nSelected quest is " + selectedQuest.name;
             if (selectedQuest.groupType == GROUP_TYPE.SOLO) { //If selected Quest is a Solo Quest
-                CharacterQuestData questActionData = character.GetDataForQuest(selectedQuest);
-                QuestAction actionFromQuest = selectedQuest.GetQuestAction(character, questActionData);
-                actionLog += "\nSelected quest is " + selectedQuest.name;
-
                 if (character.IsInParty()) { //If character is in a party
                     if (IsQuestActionAchieveable(actionFromQuest)) {//if action from Quest is achievable
                         chosenAction = character.currentParty.icharacterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY);
@@ -143,10 +142,6 @@ public class ActionThread : Multithread {
                     }
                 }
             } else if (selectedQuest.groupType == GROUP_TYPE.PARTY) {
-                CharacterQuestData questActionData = character.GetSquadDataForQuest(selectedQuest);
-                QuestAction actionFromQuest = selectedQuest.GetQuestAction(character, questActionData);
-                actionLog += "\nSelected quest is " + selectedQuest.name;
-
                 //If selected Quest is a Party Quest, obtain Action from it
                 //Perform Forming Party action which sends out signals to all other Squad Followers
                 chosenAction = _party.icharacterObject.currentState.GetAction(ACTION_TYPE.FORM_PARTY);
