@@ -587,12 +587,24 @@ public class CharacterRole {
         //return (-(Mathf.Pow (1.007f, (float) -currentFullness))) + (float)_maxFullness;
         //float result = (Mathf.Pow(1.05f, -currentFullness)) + 20f;
         float result = 0f;
-        if(currentFullness >= 0f) {
-            result = (currentFullness / 10f) + 30f;
-        } else {
-            result = (0.65f * (currentFullness / 25f)) * -currentFullness;
-        }
+        //if(currentFullness >= 0f) {
+        //    result = (currentFullness / 10f) + 30f;
+        //} else {
+        //    result = (0.65f * (currentFullness / 25f)) * -currentFullness;
+        //}
         //if (currentFullness < 0) { result *= -1f; }
+        if(currentFullness >= -25f) {
+            result = (currentFullness / 0.5f) + 50f;
+        }else if (currentFullness <= -50f && currentFullness >= -75f) {
+            result = currentFullness + 50f;
+        } else if (currentFullness < -75f) {
+            result = (currentFullness * 3f) - 200f;
+        }
+        if (result > 100f) {
+            result = 100f;
+        } else if (result < -100f) {
+            result = -100f;
+        }
         return result;
     }
 
@@ -602,12 +614,12 @@ public class CharacterRole {
         //float result = (0.5f * -currentEnergy) + 50f;
         //if (currentEnergy < 0) { result *= -1f; }
 
-        float result = 0f;
-        if (currentEnergy >= 0f) {
-            result = (currentEnergy / 2.5f) + 30f;
-        } else {
-            result = currentEnergy;
-        }
+        float result = currentEnergy;
+        //if (currentEnergy >= 0f) {
+        //    result = (currentEnergy / 2.5f) + 30f;
+        //} else {
+        //    result = currentEnergy;
+        //}
         return result;
     }
 
@@ -618,12 +630,24 @@ public class CharacterRole {
         //if (currentFun < 0) { result *= -1f; }
 
         float result = 0f;
-        if (currentFun >= 0f) {
-            //result = (((3f * currentFun) / 10f) * 2f) + 40f;
-            result = (currentFun / 2.5f) + 40;
+        //if (currentFun >= 0f) {
+        //    //result = (((3f * currentFun) / 10f) * 2f) + 40f;
+        //    result = (currentFun / 2.5f) + 40;
+        //} else {
+        //    //result = currentFun / 2f;
+        //    result = ((0.4f * (currentFun / 11f)) * -currentFun) + 40;
+        //}
+        if(currentFun >= 0f) {
+            result = (currentFun / 0.5f) + 50f;
+        }else if(currentFun >= -50f && currentFun < 0f) {
+            result = currentFun + 50f;
         } else {
-            //result = currentFun / 2f;
-            result = ((0.4f * (currentFun / 11f)) * -currentFun) + 40;
+            result = (currentFun / 0.5f) - 100f;
+        }
+        if (result > 100f) {
+            result = 100f;
+        } else if (result < -100f) {
+            result = -100f;
         }
         return result;
     }
@@ -634,10 +658,17 @@ public class CharacterRole {
         //float result = (Mathf.Pow(value, -currentPrestige)) + 15f;
         //if (currentPrestige < 0) { result *= -1f; }
         float result = 0f;
-        if (currentPrestige >= 0f) {
-            result = currentPrestige - 50f;
+        if (currentPrestige >= 50f) {
+            //result = currentPrestige - 50f;
+            result = (currentPrestige / 0.5f) - 100f;
         } else {
-            result = currentPrestige * 2f;
+            //result = currentPrestige * 2f;
+            result = currentPrestige - 50f;
+        }
+        if (result > 100f) {
+            result = 100f;
+        } else if (result < -100f) {
+            result = -100f;
         }
         return result;
     }
@@ -648,10 +679,17 @@ public class CharacterRole {
         //float result = Mathf.Pow(value, -currentSanity);
         //if (currentSanity < 0) { result *= -1f; }
         float result = 0f;
-        if (currentSanity >= 0f) {
-            result = ((4f * currentSanity) / 20f) + 70f;
+        if (currentSanity > 0f) {
+            //result = ((4f * currentSanity) / 20f) + 70f;
+            result = currentSanity * 2f;
         } else {
-            result = Mathf.Pow((currentSanity / 5f), 2f);
+            //result = Mathf.Pow((currentSanity / 5f), 2f);
+            result = currentSanity;
+        }
+        if(result > 100f) {
+            result = 100f;
+        }else if(result < -100f) {
+            result = -100f;
         }
         return result;
     }
@@ -662,10 +700,17 @@ public class CharacterRole {
         //float result = (Mathf.Pow(1.045f, -currentSafety)) + 5f;
         //if (currentSafety < 0) { result *= -1f; }
         float result = 0f;
-        if (currentSafety >= 0f) {
-            result = 20f;
+        if (currentSafety <= 50f && currentSafety >= -50f) {
+            //result = 20f;
+            result = currentSafety;
         } else {
-            result = ((100f * currentSafety) / 25f) - 50f;
+            //result = ((100f * currentSafety) / 25f) - 50f;
+            result = (currentSafety / 0.5f) - 50f;
+        }
+        if (result > 100f) {
+            result = 100f;
+        } else if (result < -100f) {
+            result = -100f;
         }
         return result;
     }
