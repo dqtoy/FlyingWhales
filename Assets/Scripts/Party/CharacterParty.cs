@@ -66,6 +66,9 @@ public class CharacterParty : NewParty {
     //If true, party can't do daily action (onDailyAction), i.e. actions, needs
     public void SetIsIdle(bool state) {
         _isIdle = state;
+        if (_isIdle) {
+            _actionData.Reset();
+        }
     }
     public float TotalHappinessIncrease(CharacterAction action, IObject targetObject) {
         return _icharacters.Sum(x => x.role.GetTotalHappinessIncrease(action, targetObject));

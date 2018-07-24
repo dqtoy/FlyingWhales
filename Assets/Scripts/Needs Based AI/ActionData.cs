@@ -54,6 +54,7 @@ public class ActionData {
 
     public void Reset() {
         this.currentAction = null;
+        this.currentTargetObject = null;
         //this.currentChainAction = null;
         this.currentDay = 0;
         this.isDone = false;
@@ -235,7 +236,7 @@ public class ActionData {
         }
 
         for (int i = 0; i < dataToSetup.Count; i++) {
-            CharacterQuestData questData = _party.questData[i];
+            CharacterQuestData questData = dataToSetup[i];
             yield return GameManager.Instance.StartCoroutine(questData.SetupValuesCoroutine());
         }
         MultiThreadPool.Instance.AddToThreadPool(actionThread);
