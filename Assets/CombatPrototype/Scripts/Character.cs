@@ -1965,6 +1965,22 @@ namespace ECS {
             }
             return null;
         }
+        public CharacterQuestData GetSquadDataForQuest(Quest quest) {
+            //get quest data for quest that can come from a squad member
+            if (IsSquadLeader() && quest.groupType == GROUP_TYPE.PARTY) {
+                for (int i = 0; i < squad.squadMembers.Count; i++) {
+                    ICharacter currMember = squad.squadMembers[i];
+                    if (currMember is Character) {
+                        Character member = currMember as Character;
+                        CharacterQuestData questData = member.GetDataForQuest(quest);
+                        if (questData != null) {
+                            return questData;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
         public List<Quest> GetAcceptedQuestsByGroup(GROUP_TYPE groupType) {
             List<Quest> quests = new List<Quest>();
             for (int i = 0; i < questData.Count; i++) {
