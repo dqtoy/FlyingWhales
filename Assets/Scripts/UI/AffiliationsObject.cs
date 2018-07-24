@@ -10,27 +10,85 @@ public class AffiliationsObject : MonoBehaviour {
     [SerializeField] private GameObject squadGO;
     [SerializeField] private GameObject partyGO;
 
-    public void UpdateAffiliations(ECS.Character character) {
-        _character = character;
-        if (character.isFactionless) {
+    public void Initialize(ECS.Character character) {
+        Initialize();
+        SetCharacter(character);
+    }
+    public void Initialize() {
+        Messenger.AddListener<ICharacter, Squad>(Signals.SQUAD_MEMBER_ADDED, OnSquadEdited);
+        Messenger.AddListener<ICharacter, Squad>(Signals.SQUAD_MEMBER_REMOVED, OnSquadEdited);
+        Messenger.AddListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnPartyEdited);
+        Messenger.AddListener<ICharacter, NewParty>(Signals.CHARACTER_LEFT_PARTY, OnPartyEdited);
+        Messenger.AddListener<ECS.Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnFactionEdited);
+        Messenger.AddListener<ECS.Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnFactionEdited);
+    }
+    public void Reset() {
+        Messenger.RemoveListener<ICharacter, Squad>(Signals.SQUAD_MEMBER_ADDED, OnSquadEdited);
+        Messenger.RemoveListener<ICharacter, Squad>(Signals.SQUAD_MEMBER_REMOVED, OnSquadEdited);
+        Messenger.RemoveListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnPartyEdited);
+        Messenger.RemoveListener<ICharacter, NewParty>(Signals.CHARACTER_LEFT_PARTY, OnPartyEdited);
+        Messenger.RemoveListener<ECS.Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnFactionEdited);
+        Messenger.RemoveListener<ECS.Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnFactionEdited);
+        _character = null;
+    }
+
+    #region Signal Handlers
+    private void OnSquadEdited(ICharacter character, Squad affectedSquad) {
+        if (_character == null) {
+            return;
+        }
+        if (character is ECS.Character && _character.id == character.id) {
+            UpdateAffiliations();
+        }
+    }
+    private void OnPartyEdited(ICharacter character, NewParty affectedParty) {
+        if (_character == null) {
+            return;
+        }
+        if (_character.party == null || _character.currentParty.id == affectedParty.id) {
+            UpdateAffiliations();
+        }
+    }
+    private void OnFactionEdited(ICharacter character, Faction affectedFaction) {
+        if (_character == null) {
+            return;
+        }
+        if (character is ECS.Character && _character.id == character.id) {
+            UpdateAffiliations();
+        }
+    }
+    #endregion
+
+    #region Utilities
+    public void UpdateAffiliations() {
+        if (_character == null) {
+            return;
+        }
+        if (_character.isFactionless) {
             factionGO.SetActive(false);
         } else {
             factionGO.SetActive(true);
         }
 
-        if (character.squad == null) {
+        if (_character.squad == null) {
             squadGO.SetActive(false);
         } else {
             squadGO.SetActive(true);
         }
 
-        if (character.currentParty.icharacters.Count <= 1) {
+        if (_character.currentParty.icharacters.Count <= 1) {
             partyGO.SetActive(false);
         } else {
             partyGO.SetActive(true);
         }
     }
+    public void SetCharacter(ECS.Character character) {
+        _character = character;
+        UpdateAffiliations();
+    }
+    #endregion
 
+    #region Pointer Functions
     public void ShowFactionInfo() {
         UIManager.Instance.ShowSmallInfo(_character.faction.name);
     }
@@ -43,4 +101,5 @@ public class AffiliationsObject : MonoBehaviour {
     public void HideInfo() {
         UIManager.Instance.HideSmallInfo();
     }
+    #endregion
 }

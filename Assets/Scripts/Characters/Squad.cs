@@ -90,6 +90,22 @@ public class Squad {
         }
         return quests;
     }
+    public List<CharacterQuestData> GetSquadQuestData() {
+        List<CharacterQuestData> questData = new List<CharacterQuestData>();
+        for (int i = 0; i < squadMembers.Count; i++) {
+            ICharacter currMember = squadMembers[i];
+            if (currMember is ECS.Character) {
+                ECS.Character character = currMember as ECS.Character;
+                for (int j = 0; j < character.questData.Count; j++) {
+                    CharacterQuestData currData = character.questData[j];
+                    if (currData.parentQuest.groupType == GROUP_TYPE.PARTY && !questData.Contains(currData)) {
+                        questData.Add(currData);
+                    }
+                }
+            }
+        }
+        return questData;
+    }
     #endregion
 
 }

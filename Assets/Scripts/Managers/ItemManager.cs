@@ -113,25 +113,38 @@ public class ItemManager : MonoBehaviour {
             for (int k = 0; k < files.Length; k++) {
                 string currFilePath = files[k];
                 string dataAsJson = File.ReadAllText(currFilePath);
+                Texture2D tex = new Texture2D(24, 24);
                 switch (currItemType) {
-				case ITEM_TYPE.WEAPON:
-					ECS.Weapon newWeapon = JsonUtility.FromJson<ECS.Weapon> (dataAsJson);
-					_allItems.Add (newWeapon.itemName, newWeapon);
-					_allWeapons.Add (newWeapon.itemName, newWeapon);
-                    CreateWeaponPrefix(newWeapon.prefixType);
-                    CreateWeaponSuffix(newWeapon.suffixType);
-                    break;
-                case ITEM_TYPE.ARMOR:
-                    ECS.Armor newArmor = JsonUtility.FromJson<ECS.Armor>(dataAsJson);
-                    _allItems.Add(newArmor.itemName, newArmor);
-					_allArmors.Add (newArmor.itemName, newArmor);
-                    CreateArmorPrefix(newArmor.prefixType);
-                    CreateArmorSuffix(newArmor.suffixType);
-                    break;
-                default:
-					ECS.Item newItem = JsonUtility.FromJson<ECS.Item>(dataAsJson);
-					_allItems.Add(newItem.itemName, newItem);
-                    break;
+				    case ITEM_TYPE.WEAPON:
+					    ECS.Weapon newWeapon = JsonUtility.FromJson<ECS.Weapon> (dataAsJson);
+                        if (newWeapon.spriteData != null) {
+                            tex.LoadImage(newWeapon.spriteData);
+                            newWeapon.itemSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+                        }
+                        _allItems.Add (newWeapon.itemName, newWeapon);
+					    _allWeapons.Add (newWeapon.itemName, newWeapon);
+                        CreateWeaponPrefix(newWeapon.prefixType);
+                        CreateWeaponSuffix(newWeapon.suffixType);
+                        break;
+                    case ITEM_TYPE.ARMOR:
+                        ECS.Armor newArmor = JsonUtility.FromJson<ECS.Armor>(dataAsJson);
+                        if (newArmor.spriteData != null) {
+                            tex.LoadImage(newArmor.spriteData);
+                            newArmor.itemSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+                        }
+                        _allItems.Add(newArmor.itemName, newArmor);
+					    _allArmors.Add (newArmor.itemName, newArmor);
+                        CreateArmorPrefix(newArmor.prefixType);
+                        CreateArmorSuffix(newArmor.suffixType);
+                        break;
+                    default:
+					    ECS.Item newItem = JsonUtility.FromJson<ECS.Item>(dataAsJson);
+                        if (newItem.spriteData != null) {
+                            tex.LoadImage(newItem.spriteData);
+                            newItem.itemSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+                        }
+                        _allItems.Add(newItem.itemName, newItem);
+                        break;
                 }
             }
         }

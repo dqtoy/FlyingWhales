@@ -41,6 +41,7 @@ namespace ECS {
         private Color _characterColor;
         private List<STATUS_EFFECT> _statusEffects;
         private List<BodyPart> _bodyParts;
+        private Dictionary<string, IBodyPart> _bodyPartDict;
         private List<Item> _equippedItems;
         private List<Item> _inventory;
         private List<Skill> _skills;
@@ -90,16 +91,6 @@ namespace ECS {
         private float _bonusMDefPercent;
         private float _critChance;
         private float _critDamage;
-
-        //private CharacterActionQueue<CharacterAction> _actionQueue;
-        //private CharacterAction _currentAction;
-        //private ILocation _specificLocation;
-
-        //private bool _isDefeated;
-        //private bool _isIdle; //can't do action, needs will not deplete
-
-        //private Action _currentFunction;
-        //private ActionData _actionData;
 
         #region getters / setters
         public string firstName {
@@ -367,7 +358,7 @@ namespace ECS {
             _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
             _skills = GetGeneralSkills();
             _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
-
+            ConstructBodyPartDict(_raceSetting.bodyParts);
             GenerateRaceTags();
 
             AllocateStatPoints(10);
@@ -399,6 +390,7 @@ namespace ECS {
 #endif
 
             _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
+            ConstructBodyPartDict(_raceSetting.bodyParts);
             _skills = GetGeneralSkills();
             //_skills.AddRange (GetBodyPartSkills ());
 
@@ -561,8 +553,14 @@ namespace ECS {
 			}
 			return false;
 		}
-		//Enables or Disables skills based on skill requirements
-		public void EnableDisableSkills(Combat combat){
+        internal IBodyPart GetBodyPart(string bodyPartType) {
+            if (_bodyPartDict.ContainsKey(bodyPartType)) {
+                return _bodyPartDict[bodyPartType];
+            }
+            return null;
+        }
+        //Enables or Disables skills based on skill requirements
+        public void EnableDisableSkills(Combat combat){
 			bool isAllAttacksInRange = true;
 			bool isAttackInRange = false;
 
@@ -971,6 +969,17 @@ namespace ECS {
 			}
 			return null;
 		}
+        private void ConstructBodyPartDict(List<BodyPart> parts) {
+            _bodyPartDict = new Dictionary<string, IBodyPart>();
+            for (int i = 0; i < parts.Count; i++) {
+                BodyPart bodyPart = parts[i];
+                _bodyPartDict.Add(bodyPart.name, bodyPart);
+                for (int j = 0; j < bodyPart.secondaryBodyParts.Count; j++) {
+                    SecondaryBodyPart secondaryBodyPart = bodyPart.secondaryBodyParts[j];
+                    _bodyPartDict.Add(secondaryBodyPart.name, secondaryBodyPart);
+                }
+            }
+        }
 		//internal bool HasActivatableBodyPartSkill(){
 		//	for (int i = 0; i < this._skills.Count; i++) {
 		//		Skill skill = this._skills [i];
@@ -1961,6 +1970,22 @@ namespace ECS {
                 CharacterQuestData data = questData[i];
                 if (data.parentQuest.id == quest.id) {
                     return data;
+                }
+            }
+            return null;
+        }
+        public CharacterQuestData GetSquadDataForQuest(Quest quest) {
+            //get quest data for quest that can come from a squad member
+            if (IsSquadLeader() && quest.groupType == GROUP_TYPE.PARTY) {
+                for (int i = 0; i < squad.squadMembers.Count; i++) {
+                    ICharacter currMember = squad.squadMembers[i];
+                    if (currMember is Character) {
+                        Character member = currMember as Character;
+                        CharacterQuestData questData = member.GetDataForQuest(quest);
+                        if (questData != null) {
+                            return questData;
+                        }
+                    }
                 }
             }
             return null;

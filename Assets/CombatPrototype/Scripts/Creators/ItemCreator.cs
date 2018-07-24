@@ -23,6 +23,10 @@ namespace ECS {
             itemComponent.isObtainable = EditorGUILayout.Toggle("Is Obtainable :", itemComponent.isObtainable);
             itemComponent.goldCost = EditorGUILayout.IntField("Gold Cost: ", itemComponent.goldCost);
 
+            SerializedProperty spriteAttribute = serializedObject.FindProperty("itemSprite");
+            EditorGUILayout.PropertyField(spriteAttribute, true);
+            serializedObject.ApplyModifiedProperties();
+
             switch (itemComponent.itemType) {
 			case ITEM_TYPE.WEAPON:
 				ShowWeaponFields();
@@ -164,6 +168,13 @@ namespace ECS {
             newItem.isUnlimited = itemComponent.isUnlimited;
             newItem._isObtainable = itemComponent.isObtainable;
             newItem.goldCost = itemComponent.goldCost;
+            newItem.itemSprite = itemComponent.itemSprite;
+            if (newItem.itemSprite != null) {
+                newItem.spriteData = newItem.itemSprite.texture.GetRawTextureData();
+            } else {
+                newItem.spriteData = null;
+            }
+            
             //newItem.bonusActRate = itemComponent.bonusActRate;
             //newItem.bonusStrength = itemComponent.bonusStrength;
             //newItem.bonusIntelligence = itemComponent.bonusIntelligence;

@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class UIMenu : MonoBehaviour {
-    [SerializeField] protected Button goBackBtn;
+    //[SerializeField] protected Button goBackBtn;
     [SerializeField] protected Button closeBtn;
     internal bool isShowing;
 

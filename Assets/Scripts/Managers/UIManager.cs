@@ -178,7 +178,7 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     private void UpdateUI() {
-        dateLbl.SetText("Day " + GameManager.Instance.days.ToString() + " (Tick " + GameManager.Instance.hour + ")");
+        dateLbl.SetText("Day " + GameManager.Instance.days.ToString());
 
         UpdateCharacterInfo();
         UpdateFactionInfo();

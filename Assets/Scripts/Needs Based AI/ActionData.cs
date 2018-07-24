@@ -227,7 +227,14 @@ public class ActionData {
     }
 
     private IEnumerator LookForActionCoroutine() {
-        for (int i = 0; i < _party.questData.Count; i++) {
+        List<CharacterQuestData> dataToSetup = new List<CharacterQuestData>(_party.questData);
+        if (_party.owner is ECS.Character && (_party.owner as ECS.Character).IsSquadLeader()) {
+            dataToSetup.AddRange(_party.owner.squad.GetSquadQuestData());
+        } else {
+            dataToSetup.AddRange(_party.questData);
+        }
+
+        for (int i = 0; i < dataToSetup.Count; i++) {
             CharacterQuestData questData = _party.questData[i];
             yield return GameManager.Instance.StartCoroutine(questData.SetupValuesCoroutine());
         }

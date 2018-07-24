@@ -13,17 +13,9 @@ public class CharactersSummaryUI : UIMenu {
     [SerializeField] private ScrollRect charactersScrollRect;
     [SerializeField] private Color evenColor;
     [SerializeField] private Color oddColor;
-    //[SerializeField] private UIEventTrigger nameHeaderTrigger;
-    //[SerializeField] private UIEventTrigger factionHeaderTrigger;
-    //[SerializeField] private UIEventTrigger raceHeaderTrigger;
-    //[SerializeField] private UIEventTrigger roleHeaderTrigger;
 
     private Dictionary<ECS.Character, CharacterSummaryEntry> characterEntries;
 
-    //public override void ShowMenu() {
-    //    base.ShowMenu();
-    //    StartCoroutine(UIManager.Instance.RepositionGrid(characterEntriesGrid));
-    //}
 
     internal override void Initialize() {
         base.Initialize();
