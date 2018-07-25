@@ -11,8 +11,6 @@ namespace ECS{
         public bool isUnlimited;
         public bool _isObtainable;
         public int goldCost;
-        public Sprite itemSprite;
-        public byte[] spriteData;
 
         protected ECS.Character _owner; //Not included in CreateNewCopy
         protected bool _isEquipped;
@@ -107,7 +105,6 @@ namespace ECS{
             item._isObtainable = isObtainable;
             item.interactString = interactString;
             item.goldCost = goldCost;
-            item.itemSprite = itemSprite;
             //item.statusEffectResistances = new List<StatusEffectRate>(statusEffectResistances);
         }
     }

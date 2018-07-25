@@ -423,7 +423,7 @@ namespace ECS {
             _traceInfo = new Dictionary<Character, List<string>>();
             _history = new List<Log>();
             _questData = new List<CharacterQuestData>();
-            _actionQueue = new CharacterActionQueue<ActionQueueItem>();
+            _actionQueue = new CharacterActionQueue<ActionQueueItem>(this);
             //previousActions = new Dictionary<CharacterTask, string>();
             _relationships = new Dictionary<Character, Relationship>();
             //_actionData = new ActionData(this);

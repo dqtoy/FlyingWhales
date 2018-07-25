@@ -191,6 +191,9 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
         }
 #endif
     }
+    public void OnClick(BaseEventData eventData) {
+        OnPointerClick(eventData as PointerEventData);
+    }
     #endregion
 
     public void SetHair(int index) {

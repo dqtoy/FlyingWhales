@@ -28,6 +28,8 @@ public class ItemManager : MonoBehaviour {
     private Dictionary<ARMOR_PREFIX, ArmorPrefix> _armorPrefixes;
     private Dictionary<ARMOR_SUFFIX, ArmorSuffix> _armorSuffixes;
 
+    [SerializeField] private List<ItemSprite> itemSprites;
+
     //private List<List<ECS.Item>> _itemTiers;
     //private List<List<ECS.Weapon>> _weaponTiers;
     //private List<List<ECS.Armor>> _armorTiers;
@@ -117,10 +119,6 @@ public class ItemManager : MonoBehaviour {
                 switch (currItemType) {
 				    case ITEM_TYPE.WEAPON:
 					    ECS.Weapon newWeapon = JsonUtility.FromJson<ECS.Weapon> (dataAsJson);
-                        if (newWeapon.spriteData != null) {
-                            tex.LoadImage(newWeapon.spriteData);
-                            newWeapon.itemSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
-                        }
                         _allItems.Add (newWeapon.itemName, newWeapon);
 					    _allWeapons.Add (newWeapon.itemName, newWeapon);
                         CreateWeaponPrefix(newWeapon.prefixType);
@@ -128,10 +126,6 @@ public class ItemManager : MonoBehaviour {
                         break;
                     case ITEM_TYPE.ARMOR:
                         ECS.Armor newArmor = JsonUtility.FromJson<ECS.Armor>(dataAsJson);
-                        if (newArmor.spriteData != null) {
-                            tex.LoadImage(newArmor.spriteData);
-                            newArmor.itemSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
-                        }
                         _allItems.Add(newArmor.itemName, newArmor);
 					    _allArmors.Add (newArmor.itemName, newArmor);
                         CreateArmorPrefix(newArmor.prefixType);
@@ -139,10 +133,6 @@ public class ItemManager : MonoBehaviour {
                         break;
                     default:
 					    ECS.Item newItem = JsonUtility.FromJson<ECS.Item>(dataAsJson);
-                        if (newItem.spriteData != null) {
-                            tex.LoadImage(newItem.spriteData);
-                            newItem.itemSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
-                        }
                         _allItems.Add(newItem.itemName, newItem);
                         break;
                 }
@@ -337,6 +327,16 @@ public class ItemManager : MonoBehaviour {
 	internal EQUIPMENT_TYPE GetRandomEquipmentTypeByItemType(ITEM_TYPE itemType){
 		return _equipmentTypes [itemType] [UnityEngine.Random.Range (0, _equipmentTypes [itemType].Count)];
 	}
+
+    public Sprite GetItemSprite(string itemName) {
+        for (int i = 0; i < itemSprites.Count; i++) {
+            ItemSprite item = itemSprites[i];
+            if (item.itemName.Equals(itemName)) {
+                return item.sprite;
+            }
+        }
+        return null;
+    }
 
 	//internal ECS.Weapon GetRandomWeaponTier(int tier){
 	//	if(tier > 0){

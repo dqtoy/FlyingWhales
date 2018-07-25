@@ -11,6 +11,12 @@ public class ActionIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     [SerializeField] private Image progressBarImage;
 
+    #region getters/setters
+    public CharacterAction action {
+        get { return _action; }
+    }
+    #endregion
+
     public void Initialize() {
         Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_DAY_ADJUSTED, OnActionDayAdjusted);
     }
@@ -35,7 +41,7 @@ public class ActionIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             //Color color = progressBarImage.color;
             //color.a = 255f/255f;
             //progressBarImage.color = color;
-            progressBarImage.fillAmount = (_character.currentParty as CharacterParty).actionData.currentDay / _action.actionData.duration;
+            progressBarImage.fillAmount = (float)(_character.currentParty as CharacterParty).actionData.currentDay / (float)_action.actionData.duration;
         }
     }
     private void OnActionDayAdjusted(CharacterAction action, CharacterParty party) {
@@ -49,7 +55,7 @@ public class ActionIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void OnPointerEnter(PointerEventData eventData) {
         if (_action != null) {
-            UIManager.Instance.ShowSmallInfo(_action.actionData.actionName);
+            UIManager.Instance.ShowSmallInfo(_action.actionData.actionName + " " + (_character.currentParty as CharacterParty).actionData.currentDay.ToString() + "/" + _action.actionData.duration.ToString());
         } else {
             UIManager.Instance.ShowSmallInfo("NONE");
         }

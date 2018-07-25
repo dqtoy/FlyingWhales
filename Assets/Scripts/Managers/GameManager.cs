@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour {
     public int hour;
     public int hoursPerDay;
 
+    public int startYear;
+
     public PROGRESSION_SPEED currProgressionSpeed;
 
 	public float progressionSpeed;

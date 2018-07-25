@@ -24,7 +24,6 @@ namespace ECS{
         public bool isUnlimited;
         public bool isObtainable;
         public int goldCost;
-        public Sprite itemSprite;
         //public List<StatusEffectRate> statusEffectResistances = new List<StatusEffectRate>();
 
         //Weapon Fields

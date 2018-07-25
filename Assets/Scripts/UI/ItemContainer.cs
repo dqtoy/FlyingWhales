@@ -19,7 +19,7 @@ public class ItemContainer : PooledObject, IPointerEnterHandler, IPointerExitHan
         if (item == null) {
             itemIcon.sprite = null;
         } else {
-            itemIcon.sprite = item.itemSprite;
+            itemIcon.sprite = ItemManager.Instance.GetItemSprite(item.itemName);
         }
     }
 

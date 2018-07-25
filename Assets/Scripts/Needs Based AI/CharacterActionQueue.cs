@@ -4,13 +4,24 @@ using UnityEngine;
 
 public class CharacterActionQueue<T> {
     private readonly List<T> list = new List<T>();
+    public ECS.Character character { get; private set; }
+
+    public CharacterActionQueue(ECS.Character owner) {
+        character = owner;
+    }
 
     public void Enqueue(T value) {
         list.Add(value);
+        if (value is ActionQueueItem) {
+            Messenger.Broadcast(Signals.ACTION_ADDED_TO_QUEUE, value as ActionQueueItem, character);
+        }
     }
 
     public void Enqueue(T value, int index) {
         list.Insert(index, value);
+        if (value is ActionQueueItem) {
+            Messenger.Broadcast(Signals.ACTION_ADDED_TO_QUEUE, value as ActionQueueItem, character);
+        }
     }
 
     public T Dequeue() {
@@ -19,6 +30,9 @@ public class CharacterActionQueue<T> {
         } else {
             T firstElement = list[0];
             list.RemoveAt(0);
+            if (firstElement is ActionQueueItem) {
+                Messenger.Broadcast(Signals.ACTION_REMOVED_FROM_QUEUE, firstElement as ActionQueueItem, character);
+            }
             return firstElement;
         }
     }
@@ -32,9 +46,16 @@ public class CharacterActionQueue<T> {
     }
 
     public bool Remove(T value) {
+        if (value is ActionQueueItem) {
+            Messenger.Broadcast(Signals.ACTION_REMOVED_FROM_QUEUE, value as ActionQueueItem, character);
+        }
         return list.Remove(value);
     }
     public void RemoveAt(int index) {
+        T element = list[index];
+        if (element is ActionQueueItem) {
+            Messenger.Broadcast(Signals.ACTION_REMOVED_FROM_QUEUE, element as ActionQueueItem, character);
+        }
         list.RemoveAt(index);
     }
 

@@ -28,6 +28,7 @@ public class CharacterRelationshipItem : PooledObject {
 
     public void SetRelationship(Relationship rel) {
         this.rel = rel;
+        UpdateInfo();
     }
     public void SetBGColor(Color color, Color relStatColor) {
         bg.color = color;
