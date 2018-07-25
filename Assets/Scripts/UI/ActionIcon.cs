@@ -1,15 +1,18 @@
-﻿using System.Collections;
+﻿using EZObjectPools;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ActionIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
+public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandler {
 
     private CharacterAction _action;
     private ECS.Character _character;
 
     [SerializeField] private Image progressBarImage;
+    [SerializeField] private Image middleCircleImage;
+    [SerializeField] private Image iconImage;
 
     #region getters/setters
     public CharacterAction action {
@@ -33,14 +36,8 @@ public class ActionIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             return;
         }
         if (_action.actionData.duration == 0) {
-            //Color color = progressBarImage.color;
-            //color.a = 64f/255f;
-            //progressBarImage.color = color;
             progressBarImage.fillAmount = 1f;
         } else {
-            //Color color = progressBarImage.color;
-            //color.a = 255f/255f;
-            //progressBarImage.color = color;
             progressBarImage.fillAmount = (float)(_character.currentParty as CharacterParty).actionData.currentDay / (float)_action.actionData.duration;
         }
     }
@@ -63,5 +60,19 @@ public class ActionIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void OnPointerExit(PointerEventData eventData) {
         UIManager.Instance.HideSmallInfo();
+    }
+
+    public void SetAlpha(float alpha) {
+        Color color = progressBarImage.color;
+        color.a = alpha;
+        progressBarImage.color = color;
+    }
+
+    public override void Reset() {
+        base.Reset();
+        Messenger.RemoveListener<CharacterAction, CharacterParty>(Signals.ACTION_DAY_ADJUSTED, OnActionDayAdjusted);
+        _action = null;
+        _character = null;
+        SetAlpha(255f/255f);
     }
 }

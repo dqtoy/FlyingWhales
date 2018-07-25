@@ -205,6 +205,7 @@ public class CharacterInfoUI : UIMenu {
             actionItem.Initialize();
             actionItem.SetCharacter(currentlyShowingCharacter);
             actionItem.SetAction(queueItem.action);
+            actionItem.SetAlpha(128f/255f);
         }
     }
     //public void UpdateGeneralInfo() {
