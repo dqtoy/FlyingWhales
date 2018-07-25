@@ -9,6 +9,7 @@ using UnityEngine;
 public class Quest {
 
     public string name { get { return GetQuestName(); } }
+    public string questDescription { get { return GetQuestDescription(); } }
     public int id { get; private set; }
     public QUEST_TYPE questType { get; private set; }
     public virtual GROUP_TYPE groupType { get { return GROUP_TYPE.SOLO; } }
@@ -24,6 +25,9 @@ public class Quest {
     }
     protected virtual string GetQuestName() {
         return questType.ToString();
+    }
+    protected virtual string GetQuestDescription() {
+        return "This is the default quest description";
     }
     public List<ECS.Character> GetAcceptedCharacters() {
         List<ECS.Character> characters = new List<ECS.Character>();

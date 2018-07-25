@@ -10,6 +10,8 @@ public class AffiliationsObject : MonoBehaviour {
     [SerializeField] private GameObject squadGO;
     [SerializeField] private GameObject partyGO;
 
+    private bool disableParty;
+
     public void Initialize(ECS.Character character) {
         Initialize();
         SetCharacter(character);
@@ -59,6 +61,10 @@ public class AffiliationsObject : MonoBehaviour {
     }
     #endregion
 
+    public void SetDisablePartyState(bool disableParty) {
+        this.disableParty = disableParty;
+    }
+
     #region Utilities
     public void UpdateAffiliations() {
         if (_character == null) {
@@ -76,7 +82,7 @@ public class AffiliationsObject : MonoBehaviour {
             squadGO.SetActive(true);
         }
 
-        if (_character.currentParty.icharacters.Count <= 1) {
+        if (disableParty || _character.currentParty.icharacters.Count <= 1) {
             partyGO.SetActive(false);
         } else {
             partyGO.SetActive(true);
@@ -97,6 +103,9 @@ public class AffiliationsObject : MonoBehaviour {
     }
     public void ShowPartyInfo() {
         UIManager.Instance.ShowSmallInfo(_character.currentParty.name);
+    }
+    public void OnClickPartyIcon() {
+        UIManager.Instance.ShowPartyInfo(_character.currentParty);
     }
     public void HideInfo() {
         UIManager.Instance.HideSmallInfo();
