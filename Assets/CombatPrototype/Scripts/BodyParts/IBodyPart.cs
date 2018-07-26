@@ -79,8 +79,8 @@ namespace ECS{
 				if(attribute != null){
 					attribute.SetAttributeAsUsed(true);
 					currItem.bodyPartsAttached.Add(this);
-//					itemsAttached.Add (item);
-					return true;
+                    itemsAttached.Add(item);
+                    return true;
 				}
             } else if (item is Armor) {
                 Armor currItem = (Armor)item;
@@ -88,8 +88,8 @@ namespace ECS{
 				if(currAttribute != null){
 					currAttribute.SetAttributeAsUsed(true);
 					currItem.bodyPartAttached = this;
-//					itemsAttached.Add (item);
-					return true;
+                    itemsAttached.Add(item);
+                    return true;
 				}
             }
 			return false;
@@ -156,6 +156,15 @@ namespace ECS{
 			}
 			return null;
 		}
+        internal Weapon GetWeapon() {
+            for (int i = 0; i < itemsAttached.Count; i++) {
+                Item currItem = itemsAttached[i];
+                if (currItem.itemType == ITEM_TYPE.WEAPON) {
+                    return (Weapon)currItem;
+                }
+            }
+            return null;
+        }
         #endregion
 
         #region Attributes

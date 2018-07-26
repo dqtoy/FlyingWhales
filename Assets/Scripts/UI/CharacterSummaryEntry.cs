@@ -3,16 +3,18 @@ using System.Collections;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using EZObjectPools;
 
-public class CharacterSummaryEntry : MonoBehaviour, IPointerClickHandler {
+public class CharacterSummaryEntry : PooledObject {
 
     private ECS.Character _character;
 
     [SerializeField] private Image bgSprite;
     [SerializeField] private TextMeshProUGUI characterNameLbl;
-    [SerializeField] private TextMeshProUGUI factionNameLbl;
-    [SerializeField] private TextMeshProUGUI raceLbl;
-    [SerializeField] private TextMeshProUGUI roleLbl;
+    [SerializeField] private TextMeshProUGUI characterLvlClassLbl;
+    [SerializeField] private CharacterPortrait characterPortrait;
+    [SerializeField] private AffiliationsObject affiliations;
+    [SerializeField] private ActionIcon actionIcon;
 
     #region getters/setters
     public ECS.Character character {
@@ -20,44 +22,45 @@ public class CharacterSummaryEntry : MonoBehaviour, IPointerClickHandler {
     }
     #endregion
 
+    public void Initialize() {
+        Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
+        actionIcon.Initialize();
+    }
+
     public void SetCharacter(ECS.Character character) {
         _character = character;
+        affiliations.Initialize(character);
+        actionIcon.SetCharacter(character);
+        characterPortrait.GeneratePortrait(character, IMAGE_SIZE.X256, true, true);
         UpdateCharacterInfo();
+        UpdateAffiliations();
+    }
+    public void UpdateAffiliations() {
+        affiliations.UpdateAffiliations();
     }
 
     public void UpdateCharacterInfo() {
         characterNameLbl.text = character.name;
-        if (_character.isFactionless) {
-            factionNameLbl.text = "Unaligned";
-        } else {
-            factionNameLbl.text = character.faction.name;
-            bgSprite.color = character.faction.factionColor;
-        }
-        raceLbl.text = Utilities.NormalizeString(character.raceSetting.race.ToString());
-        roleLbl.text = Utilities.NormalizeString(character.role.roleType.ToString());
+        characterLvlClassLbl.text = "Lvl." + character.level.ToString() + " " + character.characterClass.className;
     }
 
-    public void OnPointerClick(PointerEventData eventData) {
-        UIManager.Instance.ShowCharacterInfo(_character);
+    public void SetBGColor(Color color) {
+        bgSprite.color = color;
     }
 
-    #region Sorting
-    public void OnOrderByName() {
-        this.name = _character.name;
-    }
-    public void OnOrderByFaction() {
-        if (_character.faction == null) {
-            this.name = "Unaligned";
-        } else {
-            this.name = _character.faction.name;
+    private void OnActionTaken(CharacterAction action, CharacterParty party) {
+        if (party.icharacters.Contains(_character)) {
+            actionIcon.SetAction(action);
         }
     }
-    public void OnOrderByRace() {
-        this.name = _character.raceSetting.race.ToString();
+    private void RemoveListeners() {
+        Messenger.RemoveListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
+        affiliations.Reset();
     }
-    public void OnOrderByRole() {
-        this.name = _character.role.roleType.ToString();
-    }
-    #endregion
 
+    public override void Reset() {
+        base.Reset();
+        RemoveListeners();
+        _character = null;
+    }
 }

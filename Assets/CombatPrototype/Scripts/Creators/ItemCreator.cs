@@ -164,6 +164,7 @@ namespace ECS {
             newItem.isUnlimited = itemComponent.isUnlimited;
             newItem._isObtainable = itemComponent.isObtainable;
             newItem.goldCost = itemComponent.goldCost;
+            
             //newItem.bonusActRate = itemComponent.bonusActRate;
             //newItem.bonusStrength = itemComponent.bonusStrength;
             //newItem.bonusIntelligence = itemComponent.bonusIntelligence;

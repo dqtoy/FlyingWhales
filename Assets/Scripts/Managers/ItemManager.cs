@@ -28,6 +28,8 @@ public class ItemManager : MonoBehaviour {
     private Dictionary<ARMOR_PREFIX, ArmorPrefix> _armorPrefixes;
     private Dictionary<ARMOR_SUFFIX, ArmorSuffix> _armorSuffixes;
 
+    [SerializeField] private List<ItemSprite> itemSprites;
+
     //private List<List<ECS.Item>> _itemTiers;
     //private List<List<ECS.Weapon>> _weaponTiers;
     //private List<List<ECS.Armor>> _armorTiers;
@@ -113,25 +115,26 @@ public class ItemManager : MonoBehaviour {
             for (int k = 0; k < files.Length; k++) {
                 string currFilePath = files[k];
                 string dataAsJson = File.ReadAllText(currFilePath);
+                Texture2D tex = new Texture2D(24, 24);
                 switch (currItemType) {
-				case ITEM_TYPE.WEAPON:
-					ECS.Weapon newWeapon = JsonUtility.FromJson<ECS.Weapon> (dataAsJson);
-					_allItems.Add (newWeapon.itemName, newWeapon);
-					_allWeapons.Add (newWeapon.itemName, newWeapon);
-                    CreateWeaponPrefix(newWeapon.prefixType);
-                    CreateWeaponSuffix(newWeapon.suffixType);
-                    break;
-                case ITEM_TYPE.ARMOR:
-                    ECS.Armor newArmor = JsonUtility.FromJson<ECS.Armor>(dataAsJson);
-                    _allItems.Add(newArmor.itemName, newArmor);
-					_allArmors.Add (newArmor.itemName, newArmor);
-                    CreateArmorPrefix(newArmor.prefixType);
-                    CreateArmorSuffix(newArmor.suffixType);
-                    break;
-                default:
-					ECS.Item newItem = JsonUtility.FromJson<ECS.Item>(dataAsJson);
-					_allItems.Add(newItem.itemName, newItem);
-                    break;
+				    case ITEM_TYPE.WEAPON:
+					    ECS.Weapon newWeapon = JsonUtility.FromJson<ECS.Weapon> (dataAsJson);
+                        _allItems.Add (newWeapon.itemName, newWeapon);
+					    _allWeapons.Add (newWeapon.itemName, newWeapon);
+                        CreateWeaponPrefix(newWeapon.prefixType);
+                        CreateWeaponSuffix(newWeapon.suffixType);
+                        break;
+                    case ITEM_TYPE.ARMOR:
+                        ECS.Armor newArmor = JsonUtility.FromJson<ECS.Armor>(dataAsJson);
+                        _allItems.Add(newArmor.itemName, newArmor);
+					    _allArmors.Add (newArmor.itemName, newArmor);
+                        CreateArmorPrefix(newArmor.prefixType);
+                        CreateArmorSuffix(newArmor.suffixType);
+                        break;
+                    default:
+					    ECS.Item newItem = JsonUtility.FromJson<ECS.Item>(dataAsJson);
+                        _allItems.Add(newItem.itemName, newItem);
+                        break;
                 }
             }
         }
@@ -324,6 +327,16 @@ public class ItemManager : MonoBehaviour {
 	internal EQUIPMENT_TYPE GetRandomEquipmentTypeByItemType(ITEM_TYPE itemType){
 		return _equipmentTypes [itemType] [UnityEngine.Random.Range (0, _equipmentTypes [itemType].Count)];
 	}
+
+    public Sprite GetItemSprite(string itemName) {
+        for (int i = 0; i < itemSprites.Count; i++) {
+            ItemSprite item = itemSprites[i];
+            if (item.itemName.Equals(itemName)) {
+                return item.sprite;
+            }
+        }
+        return null;
+    }
 
 	//internal ECS.Weapon GetRandomWeaponTier(int tier){
 	//	if(tier > 0){

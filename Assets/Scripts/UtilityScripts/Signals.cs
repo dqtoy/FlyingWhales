@@ -63,16 +63,23 @@ public static class Signals {
     #region Party
     public static string MONSTER_PARTY_DIED = "OnMonsterPartyDied"; //Parameters (MonsterParty monsterParty)
     public static string CHARACTER_JOINED_PARTY = "OnCharacterJoinedParty"; //Parameters (ICharacter characterThatJoined, NewParty affectedParty)
+    public static string CHARACTER_LEFT_PARTY = "OnCharacterLeftParty"; //Parameters (ICharacter characterThatLeft, NewParty affectedParty)
     #endregion
 
     #region Factions
     public static string FACTION_CREATED = "OnFactionCreated"; //Parameters (Faction createdFaction)
     public static string FACTION_DELETED = "OnFactionDeleted"; //Parameters (Faction deletedFaction)
+    public static string CHARACTER_ADDED_TO_FACTION = "OnCharacterAddedToFaction"; //Parameters (Character addedCharacter, Faction affectedFaction)
+    public static string CHARACTER_REMOVED_FROM_FACTION = "OnCharacterRemovedFromFaction"; //Parameters (Character addedCharacter, Faction affectedFaction)
     #endregion
 
     #region Actions
     public static string ACTION_SUCCESS = "OnActionSuccess"; //Parameters (CharacterParty partyThatSucceeded, CharacterAction actionThatSucceeded)
     public static string STATE_ENDED = "OnStateEnded"; //Parameters (CharacterParty party, ObjectState state)
+    public static string ACTION_DAY_ADJUSTED = "OnActionDayAdjusted"; //Parameters (CharacterAction action, CharacterParty doer)
+    public static string ACTION_TAKEN = "OnActionTaken"; //Parameters (CharacterAction action, CharacterParty doer)
+    public static string ACTION_ADDED_TO_QUEUE = "OnActionAddedToQueue"; //Parameters (CharacterAction actionAdded, Character affectedCharacter)
+    public static string ACTION_REMOVED_FROM_QUEUE = "OnActionRemovedFromQueue"; //Parameters (CharacterAction actionRemoved, Character affectedCharacter)
     #endregion
 
     #region Squads

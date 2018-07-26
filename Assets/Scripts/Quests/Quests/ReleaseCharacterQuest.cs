@@ -122,6 +122,9 @@ public class ReleaseCharacterQuest : Quest {
     protected override string GetQuestName() {
         return "Release " + _targetCharacter.name;
     }
+    protected override string GetQuestDescription() {
+        return "Release " + _targetCharacter.name + " from imprisonment.";
+    }
     #endregion
 
     private void OnCharacterReleased(Character releasedCharacter) {

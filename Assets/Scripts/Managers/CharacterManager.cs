@@ -29,6 +29,9 @@ public class CharacterManager : MonoBehaviour {
 	public Sprite banditSprite;
 	public Sprite chieftainSprite;
 
+    [Header("Character Tag Icons")]
+    [SerializeField] private List<CharacterTagIconSetting> characterTagIcons;
+
     [Header("Character Portrait Assets")]
     public GameObject characterPortraitPrefab;
     [SerializeField] private List<RacePortraitAssets> portraitAssetsx64;
@@ -343,6 +346,15 @@ public class CharacterManager : MonoBehaviour {
                 return currCharacter.ownParty;
             } else if (currCharacter.currentParty.id == id) {
                 return currCharacter.currentParty;
+            }
+        }
+        return null;
+    }
+    public Sprite GetCharacterTagSprite(CHARACTER_TAG tag) {
+        for (int i = 0; i < characterTagIcons.Count; i++) {
+            CharacterTagIconSetting currSettings = characterTagIcons[i];
+            if (currSettings.tag == tag) {
+                return currSettings.icon;
             }
         }
         return null;

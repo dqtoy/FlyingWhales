@@ -1554,7 +1554,13 @@ public class Utilities : MonoBehaviour {
     public static void DestroyChildren(Transform parent) {
         Transform[] children = GetComponentsInDirectChildren<Transform>(parent.gameObject);
         for (int i = 0; i < children.Length; i++) {
-            GameObject.Destroy(children[i].gameObject);
+            Transform currTransform = children[i];
+            if (currTransform.gameObject.GetComponent<EZObjectPools.PooledObject>() == null) {
+                GameObject.Destroy(currTransform.gameObject);
+            } else {
+                ObjectPoolManager.Instance.DestroyObject(currTransform.gameObject);
+            }
+            
         }
     }
     public static bool IsUIElementInsideScreen(RectTransform uiElement, Canvas canvas) {
