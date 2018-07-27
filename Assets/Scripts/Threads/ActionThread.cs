@@ -128,12 +128,12 @@ public class ActionThread : Multithread {
                     }
 
                 } else {
+                    _party.actionData.questDataAssociatedWithCurrentAction = questActionData;
                     // If character is not in party
                     if (IsQuestActionAchieveable(actionFromQuest)) {//if action from Quest is achievable
                         //obtain and perform Action from the Quest
                         chosenAction = actionFromQuest.action;
                         chosenObject = actionFromQuest.targetObject;
-                        _party.actionData.questDataAssociatedWithCurrentAction = questActionData;
                         actionLog += "\n" + character.name + " got action " + chosenAction.actionData.actionName + " " + chosenObject.objectName + " from quest";
                     } else {
                         //if action from Quest is not achievable, Grind
@@ -151,6 +151,7 @@ public class ActionThread : Multithread {
                 //Perform Forming Party action which sends out signals to all other Squad Followers
                 chosenAction = _party.icharacterObject.currentState.GetAction(ACTION_TYPE.FORM_PARTY);
                 chosenObject = _party.icharacterObject;
+                _party.actionData.questDataAssociatedWithCurrentAction = questActionData;
                 actionLog += "\n" + character.name + " chose to form a party.";
                 if (IsQuestActionAchieveable(actionFromQuest)) {
                     //if action from Quest is achievable, add action from the Quest to the Action Queue

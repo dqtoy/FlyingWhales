@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class ItemContainer : PooledObject, IPointerEnterHandler, IPointerExitHandler {
 
     private ECS.Item item;
+    private bool isHovering = false;
 
     [SerializeField] private Image itemIcon;
 
@@ -25,16 +26,24 @@ public class ItemContainer : PooledObject, IPointerEnterHandler, IPointerExitHan
 
     public void OnPointerEnter(PointerEventData eventData) {
         if (item != null) {
-            UIManager.Instance.ShowSmallInfo(item.itemName);
+            isHovering = true;
         }
     }
 
     public void OnPointerExit(PointerEventData eventData) {
+        isHovering = false;
         UIManager.Instance.HideSmallInfo();
     }
 
     public override void Reset() {
         base.Reset();
         item = null;
+        isHovering = false;
+    }
+
+    private void Update() {
+        if (isHovering) {
+            UIManager.Instance.ShowSmallInfo(item.itemName);
+        }
     }
 }

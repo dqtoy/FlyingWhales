@@ -22,6 +22,7 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private ActionIcon currentActionIcon;
     [SerializeField] private ScrollRect actionQueueScrollView;
     [SerializeField] private GameObject actionIconPrefab;
+    [SerializeField] private string actionIconPrefabName;
 
     [Space(10)]
     [Header("Stats")]
@@ -114,8 +115,8 @@ public class CharacterInfoUI : UIMenu {
         //Messenger.AddListener(Signals.UPDATE_UI, UpdateCharacterInfo);
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         Messenger.AddListener<BaseLandmark>(Signals.PLAYER_LANDMARK_CREATED, OnPlayerLandmarkCreated);
-        Messenger.AddListener<ActionQueueItem, Character>(Signals.ACTION_ADDED_TO_QUEUE, OnActionAddedToQueue);
-        Messenger.AddListener<ActionQueueItem, Character>(Signals.ACTION_REMOVED_FROM_QUEUE, OnActionRemovedFromQueue);
+        //Messenger.AddListener<ActionQueueItem, Character>(Signals.ACTION_ADDED_TO_QUEUE, OnActionAddedToQueue);
+        //Messenger.AddListener<ActionQueueItem, Character>(Signals.ACTION_REMOVED_FROM_QUEUE, OnActionRemovedFromQueue);
         Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
         affiliations.Initialize();
         currentActionIcon.Initialize();
@@ -150,7 +151,6 @@ public class CharacterInfoUI : UIMenu {
         _activeCharacter = (Character)_data;
         UpdateCharacterInfo();
         UpdateRelationshipInfo();
-        UpdateActionQueue();
         ShowAttackButton();
         ShowReleaseButton();
         CheckShowSnatchButton();
@@ -182,6 +182,7 @@ public class CharacterInfoUI : UIMenu {
         UpdateTagInfo();
         UpdateMoodInfo();
         UpdateItemsInfo();
+        UpdateActionQueue();
         //UpdateEquipmentInfo();
         //UpdateInventoryInfo();
         UpdateAllHistoryInfo();
@@ -478,7 +479,7 @@ public class CharacterInfoUI : UIMenu {
     #region Action Queue
     private void OnActionAddedToQueue(ActionQueueItem actionAdded, Character character) {
         if (currentlyShowingCharacter != null && currentlyShowingCharacter.id == character.id) {
-            GameObject actionItemGO = UIManager.Instance.InstantiateUIObject(actionIconPrefab.name, actionQueueScrollView.content);
+            GameObject actionItemGO = UIManager.Instance.InstantiateUIObject(actionIconPrefabName, actionQueueScrollView.content);
             ActionIcon actionItem = actionItemGO.GetComponent<ActionIcon>();
             actionItem.Initialize();
             actionItem.SetCharacter(currentlyShowingCharacter);

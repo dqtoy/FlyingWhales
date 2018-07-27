@@ -16,6 +16,7 @@ public class UIManager : MonoBehaviour {
     public OnAddNewBattleLog onAddNewBattleLog;
 
     public Camera uiCamera;
+    public RectTransform mainRT;
     [SerializeField] private EventSystem eventSystem;
 
     [SerializeField] UIMenu[] allMenus;
@@ -45,6 +46,7 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Small Info")]
     public GameObject smallInfoGO;
+    public RectTransform smallInfoRT;
     public TextMeshProUGUI smallInfoLbl;
     public EnvelopContentUnityUI smallInfoEnvelopContent;
 
@@ -238,7 +240,7 @@ public class UIManager : MonoBehaviour {
         if (isOn) {
             ColorUtility.TryParseHtmlString("#495D6B", out color);
         } else {
-            color = Color.white;
+            ColorUtility.TryParseHtmlString("#F7EED4", out color);
         }
         pauseBtnLbl.color = color;
     }
@@ -247,7 +249,7 @@ public class UIManager : MonoBehaviour {
         if (isOn) {
             ColorUtility.TryParseHtmlString("#495D6B", out color);
         } else {
-            color = Color.white;
+            ColorUtility.TryParseHtmlString("#F7EED4", out color);
         }
         x1BtnLbl.color = color;
     }
@@ -256,7 +258,7 @@ public class UIManager : MonoBehaviour {
         if (isOn) {
             ColorUtility.TryParseHtmlString("#495D6B", out color);
         } else {
-            color = Color.white;
+            ColorUtility.TryParseHtmlString("#F7EED4", out color);
         }
         x2BtnLbl.color = color;
     }
@@ -265,7 +267,7 @@ public class UIManager : MonoBehaviour {
         if (isOn) {
             ColorUtility.TryParseHtmlString("#495D6B", out color);
         } else {
-            color = Color.white;
+            ColorUtility.TryParseHtmlString("#F7EED4", out color);
         }
         x4BtnLbl.color = color;
     }
@@ -318,28 +320,54 @@ public class UIManager : MonoBehaviour {
         smallInfoGO.SetActive(true);
         smallInfoEnvelopContent.Execute();
         var v3 = Input.mousePosition;
-        //v3.z = 10.0f;
-        //v3 = uiCamera.ScreenToWorldPoint(v3);
-        //v3.y -= 0.15f;
+
+        smallInfoRT.anchorMin = new Vector2(0f, 1f);
+        smallInfoRT.anchorMax = new Vector2(0f, 1f);
+        smallInfoRT.pivot = new Vector2(0f, 1f);
 
         v3.x += 50f;
         v3.y -= 50f;
-
-        //Bounds uiCameraBounds = uiCamera.GetComponent<Camera>().bound
-
-        //if (v3.y <= 0f) {
-        //    v3 = Input.mousePosition;
-        //    v3.z = 10.0f;
-        //    v3 = uiCamera.ScreenToWorldPoint(v3);
-        //    v3.y += 0.1f;
-        //}
-        //if (v3.x >= -13.8f) {
-        //    v3 = Input.mousePosition;
-        //    v3.z = 10.0f;
-        //    v3 = uiCamera.ScreenToWorldPoint(v3);
-        //    v3.x -= 0.2f;
-        //}
         smallInfoGO.transform.position = v3;
+
+        Vector3[] corners = new Vector3[4]; //bottom-left, top-left, top-right, bottom-right
+        List<int> cornersOutside = new List<int>();
+        smallInfoRT.GetWorldCorners(corners);
+        for (int i = 0; i < 4; i++) {
+            // Backtransform to parent space
+            Vector3 localSpacePoint = mainRT.InverseTransformPoint(corners[i]);
+            // If parent (canvas) does not contain checked items any point
+            if (!mainRT.rect.Contains(localSpacePoint)) {
+                cornersOutside.Add(i);
+            }
+        }
+
+        if (cornersOutside.Count != 0) {
+            string log = "Corners outside are: ";
+            for (int i = 0; i < cornersOutside.Count; i++) {
+                log += cornersOutside[i].ToString() + ", ";
+            }
+            Debug.Log(log);
+            if (cornersOutside.Contains(2) && cornersOutside.Contains(3)) {
+                if (cornersOutside.Contains(0)) {
+                    //bottom side and right side are outside, move anchor to bottom right
+                    smallInfoRT.anchorMin = new Vector2(1f, 0f);
+                    smallInfoRT.anchorMax = new Vector2(1f, 0f);
+                    smallInfoRT.pivot = new Vector2(1f, 0f);
+                } else {
+                    //right side is outside, move anchor to top right side
+                    smallInfoRT.anchorMin = new Vector2(1f, 1f);
+                    smallInfoRT.anchorMax = new Vector2(1f, 1f);
+                    smallInfoRT.pivot = new Vector2(1f, 1f);
+                }
+            } else if (cornersOutside.Contains(0) && cornersOutside.Contains(3)) {
+                //bottom side is outside, move anchor to bottom left
+                smallInfoRT.anchorMin = new Vector2(0f, 0f);
+                smallInfoRT.anchorMax = new Vector2(0f, 0f);
+                smallInfoRT.pivot = new Vector2(0f, 0f);
+            }
+            smallInfoGO.transform.position = Input.mousePosition;
+        }
+
     }
     public void HideSmallInfo() {
         smallInfoGO.SetActive(false);

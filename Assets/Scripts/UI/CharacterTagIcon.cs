@@ -9,6 +9,8 @@ public class CharacterTagIcon : MonoBehaviour, IPointerEnterHandler, IPointerExi
     private CHARACTER_TAG _tag;
     [SerializeField] private Image icon;
 
+    private bool isHovering = false;
+
     public void SetTag(CHARACTER_TAG tag) {
         _tag = tag;
         LoadIcon(tag);
@@ -19,10 +21,17 @@ public class CharacterTagIcon : MonoBehaviour, IPointerEnterHandler, IPointerExi
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
-        UIManager.Instance.ShowSmallInfo(Utilities.NormalizeStringUpperCaseFirstLetters(_tag.ToString()));
+        isHovering = true;
     }
 
     public void OnPointerExit(PointerEventData eventData) {
+        isHovering = false;
         UIManager.Instance.HideSmallInfo();
+    }
+
+    private void Update() {
+        if (isHovering) {
+            UIManager.Instance.ShowSmallInfo(Utilities.NormalizeStringUpperCaseFirstLetters(_tag.ToString()));
+        }
     }
 }
