@@ -11,6 +11,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
     private IMAGE_SIZE _imgSize;
     private bool _ignoreSize;
     private bool _ignoreHover;
+    private bool _isNormalSize;
     private PortraitSettings _portraitSettings;
     private Vector2 normalSize;
 
@@ -128,7 +129,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
             }
             rt[i].sizeDelta = newSize;
         }
-        
+        _isNormalSize = false;
 #endif
     }
     public void OnPointerExit(PointerEventData eventData) {
@@ -136,14 +137,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
         if (_ignoreHover) {
             return;
         }
-        (this.transform as RectTransform).sizeDelta = normalSize;
-        RectTransform[] rt = Utilities.GetComponentsInDirectChildren<RectTransform>(this.gameObject);
-        for (int i = 0; i < rt.Length; i++) {
-            if (rt[i] == borders.transform) {
-                continue;
-            }
-            rt[i].sizeDelta = normalSize;
-        }
+        NormalizeSize();
         //LandmarkVisual lv = this.gameObject.GetComponentInParent<LandmarkVisual>();
         //if (lv != null) {
         //    lv.SnapTo(this.transform as RectTransform);
@@ -195,6 +189,18 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
         OnPointerClick(eventData as PointerEventData);
     }
     #endregion
+
+    public void NormalizeSize() {
+        (this.transform as RectTransform).sizeDelta = normalSize;
+        RectTransform[] rt = Utilities.GetComponentsInDirectChildren<RectTransform>(this.gameObject);
+        for (int i = 0; i < rt.Length; i++) {
+            if (rt[i] == borders.transform) {
+                continue;
+            }
+            rt[i].sizeDelta = normalSize;
+        }
+        _isNormalSize = true;
+    }
 
     public void SetHair(int index) {
         HairSetting chosenHairSettings = CharacterManager.Instance.GetHairSprite(index, _imgSize, _portraitSettings.race, _portraitSettings.gender);
@@ -339,4 +345,13 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
     public void SetBorderState(bool state) {
         borders.SetActive(state);
     }
+
+    #region Monobehaviours
+    void OnDisable() {
+        if (_isNormalSize) {
+            return;
+        }
+        NormalizeSize();
+    }
+    #endregion
 }
