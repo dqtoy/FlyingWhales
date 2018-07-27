@@ -280,8 +280,8 @@ public class CharacterInfoUI : UIMenu {
     //}
 
     private void UpdateStatInfo() {
-        healthProgressBar.value = currentlyShowingCharacter.currentHP / currentlyShowingCharacter.maxHP;
-        manaProgressBar.value = currentlyShowingCharacter.currentSP / currentlyShowingCharacter.maxSP;
+        healthProgressBar.value = (float)currentlyShowingCharacter.currentHP / (float) currentlyShowingCharacter.maxHP;
+        manaProgressBar.value = (float) currentlyShowingCharacter.currentSP / (float) currentlyShowingCharacter.maxSP;
         strengthLbl.text = currentlyShowingCharacter.strength.ToString();
         agilityLbl.text = currentlyShowingCharacter.agility.ToString();
         intelligenceLbl.text = currentlyShowingCharacter.intelligence.ToString();
