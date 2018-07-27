@@ -14,6 +14,8 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
     [SerializeField] private Image middleCircleImage;
     [SerializeField] private Image iconImage;
 
+    private bool isHovering = false;
+
     #region getters/setters
     public CharacterAction action {
         get { return _action; }
@@ -51,14 +53,11 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
-        if (_action != null) {
-            UIManager.Instance.ShowSmallInfo(_action.actionData.actionName + " " + (_character.currentParty as CharacterParty).actionData.currentDay.ToString() + "/" + _action.actionData.duration.ToString());
-        } else {
-            UIManager.Instance.ShowSmallInfo("NONE");
-        }
+        isHovering = true;
     }
 
     public void OnPointerExit(PointerEventData eventData) {
+        isHovering = false;
         UIManager.Instance.HideSmallInfo();
     }
 
@@ -74,5 +73,16 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
         _action = null;
         _character = null;
         SetAlpha(255f/255f);
+        isHovering = false;
+    }
+
+    private void Update() {
+        if (isHovering) {
+            if (_action != null) {
+                UIManager.Instance.ShowSmallInfo(_action.actionData.actionName + " " + (_character.currentParty as CharacterParty).actionData.currentDay.ToString() + "/" + _action.actionData.duration.ToString());
+            } else {
+                UIManager.Instance.ShowSmallInfo("NONE");
+            }
+        }
     }
 }

@@ -5,18 +5,27 @@ using UnityEngine;
 public class AffiliationsObject : MonoBehaviour {
 
     private ECS.Character _character;
+    private enum HoveredObject {
+        None,
+        Faction,
+        Squad,
+        Party,
+    }
 
     [SerializeField] private GameObject factionGO;
     [SerializeField] private GameObject squadGO;
     [SerializeField] private GameObject partyGO;
 
     private bool disableParty;
+    private bool isHovering = false;
+    private HoveredObject hoveredObject = HoveredObject.None;
 
     public void Initialize(ECS.Character character) {
         Initialize();
         SetCharacter(character);
     }
     public void Initialize() {
+        Messenger.AddListener(Signals.UPDATE_UI, UpdateAffiliations);
         Messenger.AddListener<ICharacter, Squad>(Signals.SQUAD_MEMBER_ADDED, OnSquadEdited);
         Messenger.AddListener<ICharacter, Squad>(Signals.SQUAD_MEMBER_REMOVED, OnSquadEdited);
         Messenger.AddListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnPartyEdited);
@@ -31,6 +40,7 @@ public class AffiliationsObject : MonoBehaviour {
         Messenger.RemoveListener<ICharacter, NewParty>(Signals.CHARACTER_LEFT_PARTY, OnPartyEdited);
         Messenger.RemoveListener<ECS.Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnFactionEdited);
         Messenger.RemoveListener<ECS.Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnFactionEdited);
+        Messenger.RemoveListener(Signals.UPDATE_UI, UpdateAffiliations);
         _character = null;
     }
 
@@ -96,19 +106,44 @@ public class AffiliationsObject : MonoBehaviour {
 
     #region Pointer Functions
     public void ShowFactionInfo() {
-        UIManager.Instance.ShowSmallInfo(_character.faction.name);
+        isHovering = true;
+        hoveredObject = HoveredObject.Faction;
     }
     public void ShowSquadInfo() {
-        UIManager.Instance.ShowSmallInfo(_character.squad.name);
+        isHovering = true;
+        hoveredObject = HoveredObject.Squad;
     }
     public void ShowPartyInfo() {
-        UIManager.Instance.ShowSmallInfo(_character.currentParty.name);
+        isHovering = true;
+        hoveredObject = HoveredObject.Party;
     }
     public void OnClickPartyIcon() {
         UIManager.Instance.ShowPartyInfo(_character.currentParty);
     }
     public void HideInfo() {
+        isHovering = false;
+        hoveredObject = HoveredObject.None;
         UIManager.Instance.HideSmallInfo();
+    }
+    #endregion
+
+    #region Monobehaviours
+    private void Update() {
+        if (isHovering) {
+            switch (hoveredObject) {
+                case HoveredObject.Faction:
+                    UIManager.Instance.ShowSmallInfo(_character.faction.name);
+                    break;
+                case HoveredObject.Squad:
+                    UIManager.Instance.ShowSmallInfo(_character.squad.name);
+                    break;
+                case HoveredObject.Party:
+                    UIManager.Instance.ShowSmallInfo(_character.currentParty.name);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
     #endregion
 }
