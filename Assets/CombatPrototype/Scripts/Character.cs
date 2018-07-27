@@ -858,10 +858,10 @@ namespace ECS {
                 //}
 
                 if (this._faction != null){
-					if(this._faction.leader != null && this._faction.leader.id == this.id) {
-						//If this character is the leader of a faction, set that factions leader as null
-						this._faction.SetLeader(null);
-					}
+					//if(this._faction.leader != null && this._faction.leader.id == this.id) {
+					//	//If this character is the leader of a faction, set that factions leader as null
+					//	this._faction.SetLeader(null);
+					//}
 					this._faction.RemoveCharacter(this); //remove this character from it's factions list of characters
 				}
 

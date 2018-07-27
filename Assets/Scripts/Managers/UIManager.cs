@@ -499,7 +499,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     internal LandmarkInfoUI landmarkInfoUI;
     public void ShowLandmarkInfo(BaseLandmark landmark) {
-        HideMainUI();
+        //HideMainUI();
         if (factionInfoUI.isShowing) {
             factionInfoUI.HideMenu();
         }
@@ -536,22 +536,22 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     internal FactionInfoUI factionInfoUI;
     public void ShowFactionInfo(Faction faction) {
-        HideMainUI();
+        //HideMainUI();
         if (landmarkInfoUI.isShowing) {
             landmarkInfoUI.HideMenu();
         }
-        if (characterInfoUI.isShowing) {
-            characterInfoUI.HideMenu();
-        }
+        //if (characterInfoUI.isShowing) {
+        //    characterInfoUI.HideMenu();
+        //}
         if (hexTileInfoUI.isShowing) {
             hexTileInfoUI.HideMenu();
         }
         //if (questInfoUI.isShowing) {
         //    questInfoUI.HideMenu();
         //}
-        if (partyinfoUI.isShowing) {
-            partyinfoUI.HideMenu();
-        }
+        //if (partyinfoUI.isShowing) {
+        //    partyinfoUI.HideMenu();
+        //}
         if (monsterInfoUI.isShowing) {
             monsterInfoUI.HideMenu();
         }
@@ -571,13 +571,13 @@ public class UIManager : MonoBehaviour {
     [Header("Character Info")]
     [SerializeField] internal CharacterInfoUI characterInfoUI;
     public void ShowCharacterInfo(ECS.Character character) {
-        HideMainUI();
+        //HideMainUI();
         if (landmarkInfoUI.isShowing) {
             landmarkInfoUI.HideMenu();
         }
-        if (factionInfoUI.isShowing) {
-            factionInfoUI.HideMenu();
-        }
+        //if (factionInfoUI.isShowing) {
+        //    factionInfoUI.HideMenu();
+        //}
         if (hexTileInfoUI.isShowing) {
             hexTileInfoUI.HideMenu();
         }

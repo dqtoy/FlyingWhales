@@ -120,6 +120,9 @@ public class AffiliationsObject : MonoBehaviour {
     public void OnClickPartyIcon() {
         UIManager.Instance.ShowPartyInfo(_character.currentParty);
     }
+    public void OnClickFactionIcon() {
+        UIManager.Instance.ShowFactionInfo(_character.faction);
+    }
     public void HideInfo() {
         isHovering = false;
         hoveredObject = HoveredObject.None;

@@ -24,6 +24,7 @@ public class CharacterSummaryEntry : PooledObject {
 
     public void Initialize() {
         Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
+        Messenger.AddListener(Signals.UPDATE_UI, UpdateCharacterInfo);
         actionIcon.Initialize();
     }
 
@@ -31,7 +32,8 @@ public class CharacterSummaryEntry : PooledObject {
         _character = character;
         affiliations.Initialize(character);
         actionIcon.SetCharacter(character);
-        characterPortrait.GeneratePortrait(character, IMAGE_SIZE.X256, true, true);
+        characterPortrait.SetDimensions(42f);
+        characterPortrait.GeneratePortrait(character, IMAGE_SIZE.X64, true, true);
         UpdateCharacterInfo();
         UpdateAffiliations();
     }
@@ -40,6 +42,9 @@ public class CharacterSummaryEntry : PooledObject {
     }
 
     public void UpdateCharacterInfo() {
+        if (character == null) {
+            return;
+        }
         characterNameLbl.text = character.name;
         characterLvlClassLbl.text = "Lvl." + character.level.ToString() + " " + character.characterClass.className;
     }
@@ -55,6 +60,7 @@ public class CharacterSummaryEntry : PooledObject {
     }
     private void RemoveListeners() {
         Messenger.RemoveListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
+        Messenger.RemoveListener(Signals.UPDATE_UI, UpdateCharacterInfo);
         affiliations.Reset();
     }
 
