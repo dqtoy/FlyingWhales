@@ -19,12 +19,14 @@ public class PartyCharacterItem : PooledObject {
         this.character = character;
         portrait.GeneratePortrait(character, IMAGE_SIZE.X64, true, true);
         nameLbl.text = character.name;
-        lvlClassLbl.text = "Lvl." + character.level.ToString() + " " + character.characterClass.className;
         if (character is ECS.Character) {
+            lvlClassLbl.text = "Lvl." + character.level.ToString() + " " + character.characterClass.className;
             affiliations.SetDisablePartyState(true);
             affiliations.Initialize(character as ECS.Character);
             affiliations.gameObject.SetActive(true);
+            lvlClassLbl.gameObject.SetActive(true);
         } else {
+            lvlClassLbl.gameObject.SetActive(false);
             affiliations.gameObject.SetActive(false);
         }
     }

@@ -584,9 +584,9 @@ public class UIManager : MonoBehaviour {
         //if (questInfoUI.isShowing) {
         //    questInfoUI.HideMenu();
         //}
-        if (partyinfoUI.isShowing) {
-            partyinfoUI.HideMenu();
-        }
+        //if (partyinfoUI.isShowing) {
+        //    partyinfoUI.HideMenu();
+        //}
         if (monsterInfoUI.isShowing) {
             monsterInfoUI.HideMenu();
         }
@@ -649,9 +649,9 @@ public class UIManager : MonoBehaviour {
         if (factionInfoUI.isShowing) {
             factionInfoUI.HideMenu();
         }
-        if (characterInfoUI.isShowing) {
-            characterInfoUI.HideMenu();
-        }
+        //if (characterInfoUI.isShowing) {
+        //    characterInfoUI.HideMenu();
+        //}
         //if (questInfoUI.isShowing) {
         //	questInfoUI.HideMenu();
         //}
