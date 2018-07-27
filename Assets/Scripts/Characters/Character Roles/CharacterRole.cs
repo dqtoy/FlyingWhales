@@ -490,8 +490,8 @@ public class CharacterRole {
     }
 
     public void UpdateHappiness() {
-        _happiness = CalculateFullnessImpact(_fullness) + CalculateEnergyImpact(_energy) + CalculateFunImpact(_fun)
-            + CalculatePrestigeImpact(_prestige) + CalculateSanityImpact(_sanity) + CalculateSafetyImpact(_safety);
+        _happiness = (CalculateFullnessImpact(_fullness) + CalculateEnergyImpact(_energy) + CalculateFunImpact(_fun)
+            + CalculatePrestigeImpact(_prestige) + CalculateSanityImpact(_sanity) + CalculateSafetyImpact(_safety)) / 6f;
     }
 
     public float GetTotalHappinessIncrease(CharacterAction characterAction, IObject targetObject) {
