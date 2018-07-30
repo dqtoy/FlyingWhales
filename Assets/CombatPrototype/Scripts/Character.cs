@@ -23,6 +23,7 @@ namespace ECS {
         private bool _isFainted;
         private bool _isInCombat;
         private GENDER _gender;
+        private MODE _currentMode;
         private CharacterClass _characterClass;
         private RaceSetting _raceSetting;
         private CharacterRole _role;
@@ -111,6 +112,9 @@ namespace ECS {
         }
         public GENDER gender {
             get { return _gender; }
+        }
+        public MODE currentMode {
+            get { return _currentMode; }
         }
         public List<CharacterTag> tags {
             get { return _tags; }
@@ -2166,6 +2170,9 @@ namespace ECS {
                 }
             }
             return false;
+        }
+        public void SetMode(MODE mode) {
+            _currentMode = mode;
         }
         #endregion
 

@@ -32,6 +32,7 @@ public class Monster : ICharacter, ICharacterSim {
     private int _actRate;
     private int _currentRow;
     private bool _isDead;
+    private MODE _currentMode;
     private Color _characterColor;
     private CharacterBattleOnlyTracker _battleOnlyTracker;
     private BaseLandmark _homeLandmark;
@@ -154,6 +155,9 @@ public class Monster : ICharacter, ICharacterSim {
     }
     public ICHARACTER_TYPE icharacterType {
         get { return ICHARACTER_TYPE.MONSTER; }
+    }
+    public MODE currentMode {
+        get { return _currentMode; }
     }
     public CharacterBattleOnlyTracker battleOnlyTracker {
         get { return _battleOnlyTracker; }
@@ -534,6 +538,9 @@ public class Monster : ICharacter, ICharacterSim {
     public void DeathSim() {
         _isDead = true;
         CombatSimManager.Instance.currentCombat.CharacterDeath(this);
+    }
+    public void SetMode(MODE mode) {
+        _currentMode = mode;
     }
     public void EnableDisableSkills(Combat combat) {
         bool isAllAttacksInRange = true;

@@ -29,5 +29,4 @@ public interface IParty {
     void RemoveCharacter(ICharacter icharacter);
     void AdvertiseSelf(ActionThread actionThread);
     void SetSpecificLocation(ILocation location);
-    void SetMode(MODE mode);
 }

@@ -9,7 +9,6 @@ public class NewParty : IParty {
     protected int _id;
     protected int _numOfAttackers;
     protected bool _isDead;
-    protected MODE _currentMode;
     protected List<ICharacter> _icharacters;
     protected Region _currentRegion;
     protected CharacterIcon _icon;
@@ -49,7 +48,7 @@ public class NewParty : IParty {
         get { return _isDead; }
     }
     public MODE currentMode {
-        get { return _currentMode; }
+        get { return _icharacters[0].currentMode; }
     }
     public List<ICharacter> icharacters {
         get { return _icharacters; }
@@ -199,9 +198,6 @@ public class NewParty : IParty {
     }
     public void GoHome() {
         GoToLocation(mainCharacter.homeStructure.objectLocation, PATHFINDING_MODE.USE_ROADS);
-    }
-    public void SetMode(MODE mode) {
-        _currentMode = mode;
     }
     #endregion
 
