@@ -173,11 +173,11 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
             } else {
                 if (iparty.icharacters.Count > 1) {
                     UIManager.Instance.ShowPartyInfo(iparty);
-                } else if (iparty.icharacters.Count == 1) {
-                    if (iparty.mainCharacter is ECS.Character) {
-                        UIManager.Instance.ShowCharacterInfo(iparty.mainCharacter as ECS.Character);
-                    } else if (iparty.mainCharacter is Monster) {
-                        UIManager.Instance.ShowMonsterInfo(iparty.mainCharacter as Monster);
+                } else  {
+                    if (_character is ECS.Character) {
+                        UIManager.Instance.ShowCharacterInfo(_character as ECS.Character);
+                    } else if (_character is Monster) {
+                        UIManager.Instance.ShowMonsterInfo(_character as Monster);
                     }
                 }
             }
@@ -321,27 +321,29 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
                 default:
                     break;
             }
-            (this.transform as RectTransform).sizeDelta = new Vector2(size, size);
-            head.rectTransform.sizeDelta = new Vector2(size, size);
-            eyes.rectTransform.sizeDelta = new Vector2(size, size);
-            eyebrows.rectTransform.sizeDelta = new Vector2(size, size);
-            nose.rectTransform.sizeDelta = new Vector2(size, size);
-            mouth.rectTransform.sizeDelta = new Vector2(size, size);
-            hair.rectTransform.sizeDelta = new Vector2(size, size);
-            hairBack.rectTransform.sizeDelta = new Vector2(size, size);
-            hairOverlay.rectTransform.sizeDelta = new Vector2(size, size);
-            hairBackOverlay.rectTransform.sizeDelta = new Vector2(size, size);
-            facialHair.rectTransform.sizeDelta = new Vector2(size, size);
-            facialHairOverlay.rectTransform.sizeDelta = new Vector2(size, size);
-            body.rectTransform.sizeDelta = new Vector2(size, size);
-            wholeImage.rectTransform.sizeDelta = new Vector2(size, size);
+            SetDimensions(size);
             //for (int i = 0; i < rt.Length; i++) {
             //    rt[i].sizeDelta = new Vector2(size, size);
             //}
         }
         normalSize = (this.transform as RectTransform).sizeDelta;
     }
-
+    public void SetDimensions(float size) {
+        (this.transform as RectTransform).sizeDelta = new Vector2(size, size);
+        head.rectTransform.sizeDelta = new Vector2(size, size);
+        eyes.rectTransform.sizeDelta = new Vector2(size, size);
+        eyebrows.rectTransform.sizeDelta = new Vector2(size, size);
+        nose.rectTransform.sizeDelta = new Vector2(size, size);
+        mouth.rectTransform.sizeDelta = new Vector2(size, size);
+        hair.rectTransform.sizeDelta = new Vector2(size, size);
+        hairBack.rectTransform.sizeDelta = new Vector2(size, size);
+        hairOverlay.rectTransform.sizeDelta = new Vector2(size, size);
+        hairBackOverlay.rectTransform.sizeDelta = new Vector2(size, size);
+        facialHair.rectTransform.sizeDelta = new Vector2(size, size);
+        facialHairOverlay.rectTransform.sizeDelta = new Vector2(size, size);
+        body.rectTransform.sizeDelta = new Vector2(size, size);
+        wholeImage.rectTransform.sizeDelta = new Vector2(size, size);
+    }
     public void SetBorderState(bool state) {
         borders.SetActive(state);
     }

@@ -9,6 +9,7 @@ public class FactionInfoEditor : MonoBehaviour {
     private Faction _faction;
 
     [SerializeField] private InputField nameInputField;
+    [SerializeField] private InputField descriptionInputField;
     [SerializeField] private Text charactersSummaryLbl;
     [SerializeField] private Text areaSummaryLbl;
     [SerializeField] private Dropdown areasDropdown;
@@ -36,6 +37,7 @@ public class FactionInfoEditor : MonoBehaviour {
 
     private void UpdateBasicInfo() {
         nameInputField.text = _faction.name;
+        descriptionInputField.text = _faction.description;
         //characters
         charactersSummaryLbl.text = string.Empty;
         for (int i = 0; i < _faction.characters.Count; i++) {
@@ -67,6 +69,9 @@ public class FactionInfoEditor : MonoBehaviour {
     #region Basic Info
     public void ChangeFactionName(string newName) {
         _faction.SetName(newName);
+    }
+    public void ChangeDescriptionName(string description) {
+        _faction.SetDescription(description);
     }
     #endregion
 

@@ -65,6 +65,14 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
         Color color = progressBarImage.color;
         color.a = alpha;
         progressBarImage.color = color;
+
+        color = middleCircleImage.color;
+        color.a = alpha;
+        middleCircleImage.color = color;
+
+        color = iconImage.color;
+        color.a = alpha;
+        iconImage.color = color;
     }
 
     public override void Reset() {

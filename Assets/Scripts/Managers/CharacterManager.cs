@@ -39,7 +39,7 @@ public class CharacterManager : MonoBehaviour {
     public List<Color> hairColors;
 
 
-    public readonly int HAPPINESS_THRESHOLD = 200;
+    public readonly int HAPPINESS_THRESHOLD = 20;
     public readonly int MENTAL_THRESHOLD = -3;
     public readonly int PHYSICAL_THRESHOLD = -3;
 

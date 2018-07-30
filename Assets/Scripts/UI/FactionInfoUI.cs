@@ -9,21 +9,25 @@ public class FactionInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Content")]
-    [SerializeField] private TweenPosition tweenPos;
-    [SerializeField] private TextMeshProUGUI factionInfoLbl;
-    [SerializeField] private TextMeshProUGUI relationshipsLbl;
-    [SerializeField] private ScrollRect infoScrollView;
-    [SerializeField] private ScrollRect relationshipsScrollView;
+    [SerializeField] private TextMeshProUGUI factionNameLbl;
+    [SerializeField] private TextMeshProUGUI factionDescriptionLbl;
+    [SerializeField] private CharacterSummaryEntry leaderEntry;
+    [SerializeField] private ScrollRect charactersScrollView;
+    [SerializeField] private ScrollRect propertiesScrollView;
+    [SerializeField] private GameObject characterEntryPrefab;
+    [SerializeField] private GameObject propertyPrefab;
+    [SerializeField] private Color evenColor;
+    [SerializeField] private Color oddColor;
 
     internal Faction currentlyShowingFaction {
         get { return _data as Faction; }
     }
 
-    //internal override void Initialize() {
-    //    base.Initialize();
-    //    Messenger.AddListener("UpdateUI", UpdateFactionInfo);
-    //    //tweenPos.AddOnFinished(() => UpdateFactionInfo());
-    //}
+    internal override void Initialize() {
+        base.Initialize();
+        //Messenger.AddListener("UpdateUI", UpdateFactionInfo);
+        leaderEntry.Initialize();
+    }
 
     public override void OpenMenu() {
         base.OpenMenu();
@@ -41,66 +45,46 @@ public class FactionInfoUI : UIMenu {
         if(currentlyShowingFaction == null) {
             return;
         }
-        string text = string.Empty;
-        text += "<b>ID:</b> " + currentlyShowingFaction.id.ToString();
-        text += "\n<b>Name:</b> " + currentlyShowingFaction.name;
+        factionNameLbl.text = currentlyShowingFaction.name;
+        factionDescriptionLbl.text = currentlyShowingFaction.description;
+
+        if (currentlyShowingFaction.leader != null && currentlyShowingFaction.leader is ECS.Character) {
+            leaderEntry.gameObject.SetActive(true);
+            leaderEntry.SetCharacter(currentlyShowingFaction.leader as ECS.Character);
+        } else {
+            leaderEntry.gameObject.SetActive(false);
+        }
+        UpdateFactionCharacters();
+        UpdateFactionAreas();
+    }
+
+    public void UpdateFactionCharacters() {
+        Utilities.DestroyChildren(charactersScrollView.content);
+        List<ECS.Character> characters = new List<ECS.Character>(currentlyShowingFaction.characters);
         if (currentlyShowingFaction.leader != null) {
-            text += "\n<b>Leader:</b> " + currentlyShowingFaction.leader.name;
+            characters.Remove(currentlyShowingFaction.leader as ECS.Character);
         }
-        text += "\n<b>Owned Landmarks: </b> ";
-        List<BaseLandmark> ownedLandmarks = currentlyShowingFaction.ownedLandmarks;
-        if (ownedLandmarks.Count > 0) {
-            for (int i = 0; i < ownedLandmarks.Count; i++) {
-                BaseLandmark landmark = ownedLandmarks[i];
-                text += "\n  - " + landmark.urlName + " (" + landmark.specificLandmarkType.ToString() + ")";
+        for (int i = 0; i < characters.Count; i++) {
+            ECS.Character currCharacter = characters[i];
+            GameObject characterEntryGO = UIManager.Instance.InstantiateUIObject(characterEntryPrefab.name, charactersScrollView.content);
+            CharacterSummaryEntry characterEntry = characterEntryGO.GetComponent<CharacterSummaryEntry>();
+            characterEntry.SetCharacter(currCharacter);
+            characterEntry.Initialize();
+            if (Utilities.IsEven(i)) {
+                characterEntry.SetBGColor(evenColor);
+            } else {
+                characterEntry.SetBGColor(oddColor);
             }
-        } else {
-            text += "NONE";
         }
-
-        text += "\n<b>Owned Areas: </b> ";
-        List<Area> ownedAreas = currentlyShowingFaction.ownedAreas;
-        if (ownedAreas.Count > 0) {
-            for (int i = 0; i < ownedAreas.Count; i++) {
-                Area area = ownedAreas[i];
-                text += "\n  - " + area.name;
-            }
-        } else {
-            text += "NONE";
+    }
+    public void UpdateFactionAreas() {
+        Utilities.DestroyChildren(propertiesScrollView.content);
+        for (int i = 0; i < currentlyShowingFaction.ownedAreas.Count; i++) {
+            Area currArea = currentlyShowingFaction.ownedAreas[i];
+            GameObject propertyGO = UIManager.Instance.InstantiateUIObject(propertyPrefab.name, propertiesScrollView.content);
+            FactionPropertyItem property = propertyGO.GetComponent<FactionPropertyItem>();
+            property.SetArea(currArea);
         }
-
-        text += "\n<b>Characters: </b> ";
-		if (currentlyShowingFaction.characters.Count > 0) {
-			for (int i = 0; i < currentlyShowingFaction.characters.Count; i++) {
-				ECS.Character currChar = currentlyShowingFaction.characters[i];
-				text += "\n" + currChar.urlName  + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
-				if (currChar.party.actionData.currentAction != null) {
-                    //if(currChar.currentTask.taskType == TASK_TYPE.QUEST) {
-                    //    text += " (" + ((OldQuest.Quest)currChar.currentTask).urlName + ")";
-                    //} else {
-                        text += " (" + currChar.party.actionData.currentAction.actionData.actionName.ToString() + ")";
-                    //}
-					
-				}
-			}
-		} else {
-			text += "NONE";
-		}
-			
-        factionInfoLbl.text = text;
-
-        //Relationships
-        string relationshipText = string.Empty;
-        relationshipText += "\n<b>Relationships:</b> ";
-        //if (currentlyShowingFaction.relationships.Count > 0) {
-        //    foreach (KeyValuePair<Faction, FactionRelationship> kvp in currentlyShowingFaction.relationships) {
-        //        relationshipText += "\n " + kvp.Key.factionType.ToString() + " " + kvp.Key.urlName + ": " + kvp.Value.relationshipStatus.ToString();
-        //    }
-        //} else {
-            relationshipText += "NONE";
-        //}
-
-        relationshipsLbl.text = relationshipText;
     }
 //	public void OnClickCloseBtn(){
 ////		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();

@@ -7,6 +7,7 @@ using UnityEngine;
 public class FactionSaveData {
     public int factionID;
     public string factionName;
+    public string factionDescription;
     public ColorSave factionColor;
     public List<int> ownedAreas;
     public Dictionary<int, FACTION_RELATIONSHIP_STATUS> relationships;
@@ -15,6 +16,7 @@ public class FactionSaveData {
     public FactionSaveData(Faction faction) {
         factionID = faction.id;
         factionName = faction.name;
+        factionDescription = faction.description;
         factionColor = new ColorSave(faction.factionColor);
         ConstructOwnedAreas(faction);
         ConstructRelationships(faction);

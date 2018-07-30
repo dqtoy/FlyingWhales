@@ -69,7 +69,7 @@ public class ActionData {
         AssignAction(characterAction, targetObject, chainAction);
     }
     public void AssignAction(CharacterAction action, IObject targetObject, ChainAction chainAction = null) {
-        if (_party.isDead) {
+        if (_party == null || _party.isDead) {
             return;
         }
         Reset();

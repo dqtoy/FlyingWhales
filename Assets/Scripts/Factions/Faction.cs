@@ -10,6 +10,7 @@ using System;
 public class Faction {
 	protected int _id;
     protected string _name;
+    protected string _description;
     protected ILeader _leader;
     private Sprite _emblem;
     private Sprite _emblemBG;
@@ -29,7 +30,10 @@ public class Faction {
     public string name {
 		get { return _name; }
     }
-	public string urlName {
+    public string description {
+        get { return _description; }
+    }
+    public string urlName {
 		get { return "<link=" + '"' + this._id.ToString() + "_faction" + '"' +">" + this._name + "</link>"; }
     }
     public ILeader leader {
@@ -85,6 +89,7 @@ public class Faction {
     public Faction(FactionSaveData data) {
         _id = Utilities.SetID(this, data.factionID);
         SetName(data.factionName);
+        SetDescription(data.factionDescription);
         factionColor = data.factionColor;
         _characters = new List<ECS.Character>();
         _ownedLandmarks = new List<BaseLandmark>();
@@ -138,9 +143,9 @@ public class Faction {
         if (_characters.Remove(character)) {
             Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_FACTION, character, this);
         }
-        if (_leader != null && character.id == _leader.id) {
-            SetLeader(null);
-        }
+        //if (_leader != null && character.id == _leader.id) {
+        //    SetLeader(null);
+        //}
     }
     public List<ECS.Character> GetCharactersOfType(CHARACTER_ROLE role) {
         List<ECS.Character> chars = new List<ECS.Character>();
@@ -157,6 +162,9 @@ public class Faction {
     #region Utilities
     public void SetName(string name) {
         _name = name;
+    }
+    public void SetDescription(string description) {
+        _description = description;
     }
     public ECS.Character GetCharacterByID(int id) {
         for (int i = 0; i < _characters.Count; i++) {
