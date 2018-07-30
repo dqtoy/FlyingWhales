@@ -1012,9 +1012,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             _hoverHighlightGO.SetActive(true);
             this.landmarkOnTile.landmarkVisual.ShowHPAndName(true);
         }
-        if(this.areaOfTile != null) {
-            UIManager.Instance.ShowSmallInfo(this.areaOfTile.name);
-        }
         Messenger.Broadcast(Signals.TILE_HOVERED_OVER, this);
         //ShowHexTileInfo();
         //if (Input.GetMouseButtonDown(0)) {
