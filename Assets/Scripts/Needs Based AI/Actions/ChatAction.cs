@@ -97,6 +97,9 @@ public class ChatAction : CharacterAction {
         GiveAllReward(party);
     }
     public override void EndAction(CharacterParty party, IObject targetObject) {
+        if (party.actionData.isDone) {
+            return;
+        }
         //Relationship effects
         RemoveChatee(party.mainCharacter as Character);
 

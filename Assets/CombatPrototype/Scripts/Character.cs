@@ -846,8 +846,13 @@ namespace ECS {
 				while (_inventory.Count > 0) {
 					ThrowItem (_inventory [0]);
 				}
+
+                if(_currentParty.mainCharacter.id == this.id) {
+                    _currentParty.actionData.currentAction.EndAction(_currentParty, _currentParty.actionData.currentTargetObject)
+                }
+                _currentParty.RemoveCharacter(this);
+
                 //if (currentParty.id != _ownParty.id) {
-                    currentParty.RemoveCharacter(this);
                 //}
                 //_ownParty.PartyDeath();
                 //Remove ActionData
