@@ -848,7 +848,7 @@ namespace ECS {
 				}
 
                 if(_currentParty.mainCharacter.id == this.id) {
-                    _currentParty.actionData.currentAction.EndAction(_currentParty, _currentParty.actionData.currentTargetObject)
+                    _currentParty.actionData.currentAction.EndAction(_currentParty, _currentParty.actionData.currentTargetObject);
                 }
                 _currentParty.RemoveCharacter(this);
 
