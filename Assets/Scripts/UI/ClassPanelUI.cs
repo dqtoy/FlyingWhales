@@ -17,8 +17,10 @@ public class ClassPanelUI : MonoBehaviour {
     public InputField intWeightAllocInput;
     public InputField agiWeightAllocInput;
     public InputField vitWeightAllocInput;
-    public InputField hpMultiplierInput;
-    public InputField spMultiplierInput;
+    public InputField baseHPInput;
+    public InputField hpPerLevelInput;
+    public InputField baseSPInput;
+    public InputField spPerLevelInput;
 
     public Dropdown allowedWeaponsOptions;
 
@@ -80,8 +82,10 @@ public class ClassPanelUI : MonoBehaviour {
         intWeightAllocInput.text = "0";
         agiWeightAllocInput.text = "0";
         vitWeightAllocInput.text = "0";
-        hpMultiplierInput.text = "0";
-        spMultiplierInput.text = "0";
+        baseHPInput.text = "0";
+        hpPerLevelInput.text = "0";
+        baseSPInput.text = "0";
+        spPerLevelInput.text = "0";
 
         allowedWeaponsOptions.value = 0;
 
@@ -144,8 +148,10 @@ public class ClassPanelUI : MonoBehaviour {
         intWeightAllocInput.text = characterClass.intWeightAllocation.ToString();
         agiWeightAllocInput.text = characterClass.agiWeightAllocation.ToString();
         vitWeightAllocInput.text = characterClass.vitWeightAllocation.ToString();
-        hpMultiplierInput.text = characterClass.hpModifier.ToString();
-        spMultiplierInput.text = characterClass.spModifier.ToString();
+        baseHPInput.text = characterClass.baseHP.ToString();
+        hpPerLevelInput.text = characterClass.hpPerLevel.ToString();
+        baseSPInput.text = characterClass.baseSP.ToString();
+        spPerLevelInput.text = characterClass.spPerLevel.ToString();
 
         for (int i = 0; i < characterClass.allowedWeaponTypes.Count; i++) {
             string weaponType = characterClass.allowedWeaponTypes[i].ToString();

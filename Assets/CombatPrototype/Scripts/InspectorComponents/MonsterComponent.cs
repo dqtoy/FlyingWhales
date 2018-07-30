@@ -13,8 +13,7 @@ public class MonsterComponent : MonoBehaviour {
     public int maxSP;
     public int attackPower;
     public int speed;
-    public int pDef;
-    public int mDef;
+    public int def;
     public float dodgeChance;
     public float hitChance;
     public float critChance;

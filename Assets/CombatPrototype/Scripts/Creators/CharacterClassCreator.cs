@@ -21,8 +21,10 @@ namespace ECS {
             currCharacterClass.intWeightAllocation = EditorGUILayout.FloatField("Intelligence Weight Allocation: ", currCharacterClass.intWeightAllocation);
             currCharacterClass.agiWeightAllocation = EditorGUILayout.FloatField("Agility Weight Allocation: ", currCharacterClass.agiWeightAllocation);
             currCharacterClass.vitWeightAllocation = EditorGUILayout.FloatField("Vitality Weight Allocation: ", currCharacterClass.vitWeightAllocation);
-            currCharacterClass.hpModifier = EditorGUILayout.FloatField("HP Modifier: ", currCharacterClass.hpModifier);
-            currCharacterClass.spModifier = EditorGUILayout.FloatField("SP Modifier: ", currCharacterClass.spModifier);
+            currCharacterClass.baseHP = EditorGUILayout.FloatField("Base HP: ", currCharacterClass.baseHP);
+            currCharacterClass.hpPerLevel = EditorGUILayout.FloatField("HP Per Level: ", currCharacterClass.hpPerLevel);
+            currCharacterClass.baseSP = EditorGUILayout.FloatField("Base SP: ", currCharacterClass.baseSP);
+            currCharacterClass.spPerLevel = EditorGUILayout.FloatField("SP Per Level: ", currCharacterClass.spPerLevel);
             //currCharacterClass.dodgeRate = EditorGUILayout.IntField("Dodge Rate: ", currCharacterClass.dodgeRate);
             //currCharacterClass.parryRate = EditorGUILayout.IntField("Parry Rate: ", currCharacterClass.parryRate);
             //currCharacterClass.blockRate = EditorGUILayout.IntField("Block Rate: ", currCharacterClass.blockRate);

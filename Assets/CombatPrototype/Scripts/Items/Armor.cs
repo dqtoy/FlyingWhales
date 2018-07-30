@@ -6,8 +6,7 @@ namespace ECS{
 	public class Armor : Item {
         [SerializeField] private ARMOR_TYPE _armorType;
         [SerializeField] private string _armorBodyType;
-        [SerializeField] private int _pDef;
-        [SerializeField] private int _mDef;
+        [SerializeField] private int _def;
         [SerializeField] private ARMOR_PREFIX _prefix;
         [SerializeField] private ARMOR_SUFFIX _suffix;
         //public MATERIAL material;
@@ -34,13 +33,9 @@ namespace ECS{
             get { return _armorBodyType; }
             set { _armorBodyType = value; }
         }
-        public int pDef {
-            get { return _pDef; }
-            set { _pDef = value; }
-        }
-        public int mDef {
-            get { return _mDef; }
-            set { _mDef = value; }
+        public int def {
+            get { return _def; }
+            set { _def = value; }
         }
         public ArmorPrefix prefix {
             get { return ItemManager.Instance.armorPrefixes[_prefix]; }
@@ -55,8 +50,7 @@ namespace ECS{
             Armor copy = new Armor();
             copy.armorType = armorType;
             copy.armorBodyType = armorBodyType;
-            copy.pDef = pDef;
-            copy.mDef = mDef;
+            copy._def = _def;
             copy._prefix = _prefix;
             copy._suffix = _suffix;
             //copy.material = material;

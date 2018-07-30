@@ -5,8 +5,7 @@ using UnityEngine;
 public class ArmorPrefix {
     protected ARMOR_PREFIX _armorPrefix;
     protected string _name;
-    protected float _bonusPDefPercent;
-    protected float _bonusMDefPercent;
+    protected float _bonusDefPercent;
 
     #region getters/setters
     public ARMOR_PREFIX armorPrefix {
@@ -15,11 +14,8 @@ public class ArmorPrefix {
     public string name {
         get { return _name; }
     }
-    public float bonusPDefPercent {
-        get { return _bonusPDefPercent; }
-    }
-    public float bonusMDefPercent {
-        get { return _bonusMDefPercent; }
+    public float bonusDefPercent {
+        get { return _bonusDefPercent; }
     }
     #endregion
 

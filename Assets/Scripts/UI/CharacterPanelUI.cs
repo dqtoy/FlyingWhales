@@ -20,16 +20,11 @@ public class CharacterPanelUI : MonoBehaviour {
 
     public InputField nameInput;
     public InputField levelInput;
-    public InputField pHeadInput;
-    public InputField pBodyInput;
-    public InputField pLegsInput;
-    public InputField pHandsInput;
-    public InputField pFeetInput;
-    public InputField mHeadInput;
-    public InputField mBodyInput;
-    public InputField mLegsInput;
-    public InputField mHandsInput;
-    public InputField mFeetInput;
+    public InputField dHeadInput;
+    public InputField dBodyInput;
+    public InputField dLegsInput;
+    public InputField dHandsInput;
+    public InputField dFeetInput;
 
 
     public TextMeshProUGUI strBuildLbl;
@@ -143,16 +138,11 @@ public class CharacterPanelUI : MonoBehaviour {
 
         skillsLbl.text = "None";
 
-        pHeadInput.text = "0";
-        pBodyInput.text = "0";
-        pLegsInput.text = "0";
-        pHandsInput.text = "0";
-        pFeetInput.text = "0";
-        mHeadInput.text = "0";
-        mBodyInput.text = "0";
-        mLegsInput.text = "0";
-        mHandsInput.text = "0";
-        mFeetInput.text = "0";
+        dHeadInput.text = "0";
+        dBodyInput.text = "0";
+        dLegsInput.text = "0";
+        dHandsInput.text = "0";
+        dFeetInput.text = "0";
     }
     private void SaveCharacter() {
         if (nameInput.text == string.Empty) {
@@ -205,16 +195,11 @@ public class CharacterPanelUI : MonoBehaviour {
         weaponOptions.value = GetWeaponIndex(character.weaponName);
         levelInput.text = character.level.ToString();
 
-        pHeadInput.text = character.pDefHead.ToString();
-        pBodyInput.text = character.pDefBody.ToString();
-        pLegsInput.text = character.pDefLegs.ToString();
-        pHandsInput.text = character.pDefHands.ToString();
-        pFeetInput.text = character.pDefFeet.ToString();
-        mHeadInput.text = character.mDefHead.ToString();
-        mBodyInput.text = character.mDefBody.ToString();
-        mLegsInput.text = character.mDefLegs.ToString();
-        mHandsInput.text = character.mDefHands.ToString();
-        mFeetInput.text = character.mDefFeet.ToString();
+        dHeadInput.text = character.defHead.ToString();
+        dBodyInput.text = character.defBody.ToString();
+        dLegsInput.text = character.defLegs.ToString();
+        dHandsInput.text = character.defHands.ToString();
+        dFeetInput.text = character.defFeet.ToString();
 
         _strBuild = character.strBuild;
         _intBuild = character.intBuild;
@@ -302,11 +287,12 @@ public class CharacterPanelUI : MonoBehaviour {
         RecomputeMaxSP(level, characterClass);
     }
     private void RecomputeMaxHP(int level, CharacterClass characterClass) {
-        int maxHP = 10 + (Mathf.CeilToInt(characterClass.hpModifier * ((Mathf.Pow((float) level, 0.7f)) / 0.33f)));
-        _hp = maxHP + (int) ((float) maxHP * ((float) _vit / 100f));
+        float vitality = (float) vit;
+        _hp = (int) ((characterClass.baseHP + (characterClass.hpPerLevel * (float) level)) * (1f + ((vitality / 5f) / 100f)) + (vitality * 2f)); //TODO: + passive hp bonus
     }
     private void RecomputeMaxSP(int level, CharacterClass characterClass) {
-        _sp = 10 + (Mathf.CeilToInt(characterClass.spModifier * ((Mathf.Pow((float) level, 0.7f)) / 0.33f)));
+        float intelligence = (float) intl;
+        _sp = (int) ((characterClass.baseSP + (characterClass.spPerLevel * (float) level)) * (1f + ((intelligence / 5f) / 100f)) + (intelligence * 2f)); //TODO: + passive sp bonus
     }
     private void UpdateSkills(int level, CharacterClass characterClass) {
         _skillNames.Clear();

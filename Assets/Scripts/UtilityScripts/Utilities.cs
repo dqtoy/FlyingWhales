@@ -1506,12 +1506,23 @@ public class Utilities : MonoBehaviour {
             case "Mage":
                 return character.intelligence;
         }
-        return 0;
+        return character.strength;
+    }
+    public static ATTACK_CATEGORY GetAttackCategoryByClass(ECS.Character character) {
+        switch (character.characterClass.className) {
+            case "Warrior":
+            case "Barbarian":
+            return ATTACK_CATEGORY.PHYSICAL;
+            case "Arcanist":
+            case "Mage":
+            return ATTACK_CATEGORY.MAGICAL;
+        }
+        return ATTACK_CATEGORY.PHYSICAL;
     }
     #endregion
 
     #region Character Tags
-	public static int GetTagWorldGenChance(CHARACTER_TAG tag){
+    public static int GetTagWorldGenChance(CHARACTER_TAG tag){
 		switch(tag){
 		//case CHARACTER_TAG.HERBALIST:
 		//case CHARACTER_TAG.RITUALIST:

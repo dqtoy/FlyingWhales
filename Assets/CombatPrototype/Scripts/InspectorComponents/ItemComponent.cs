@@ -68,8 +68,7 @@ namespace ECS{
 		//Armor Fields
 		public ARMOR_TYPE armorType;
 		public string armorBodyType;
-        public int pDef;
-        public int mDef;
+        public int def;
         public ARMOR_PREFIX armorPrefix;
         public ARMOR_SUFFIX armorSuffix;
         //public MATERIAL armorMaterial;

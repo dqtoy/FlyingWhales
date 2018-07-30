@@ -37,6 +37,5 @@ public interface ICharacterSim {
     void AdjustSP(int amount);
     void AdjustHP(int amount);
     void EnableDisableSkills(CombatSim combatSim);
-    int GetPDef(ICharacterSim enemy);
-    int GetMDef(ICharacterSim enemy);
+    int GetDef();
 }

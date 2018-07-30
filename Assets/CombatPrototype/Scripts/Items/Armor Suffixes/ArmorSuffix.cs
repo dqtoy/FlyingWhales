@@ -5,8 +5,7 @@ using UnityEngine;
 public class ArmorSuffix {
     protected ARMOR_SUFFIX _armorSuffix;
     protected string _name;
-    protected float _bonusPDefPercent;
-    protected float _bonusMDefPercent;
+    protected float _bonusDefPercent;
 
     #region getters/setters
     public ARMOR_SUFFIX armorSuffix {
@@ -15,11 +14,8 @@ public class ArmorSuffix {
     public string name {
         get { return _name; }
     }
-    public float bonusPDefPercent {
-        get { return _bonusPDefPercent; }
-    }
-    public float bonusMDefPercent {
-        get { return _bonusMDefPercent; }
+    public float bonusDefPercent {
+        get { return _bonusDefPercent; }
     }
     #endregion
 

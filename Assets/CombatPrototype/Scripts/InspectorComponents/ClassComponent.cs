@@ -9,8 +9,10 @@ namespace ECS{
 		public float intWeightAllocation;
 		public float agiWeightAllocation;
 		public float vitWeightAllocation;
-        public float hpModifier;
-        public float spModifier;
+        public float baseHP;
+        public float hpPerLevel;
+        public float baseSP;
+        public float spPerLevel;
         //public int dodgeRate;
         //public int parryRate;
         //public int blockRate;

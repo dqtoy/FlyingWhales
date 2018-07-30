@@ -155,6 +155,26 @@ public class CharacterInfoUI : UIMenu {
         ShowReleaseButton();
         CheckShowSnatchButton();
     }
+    public override void ShowTooltip(GameObject objectHovered) {
+        base.ShowTooltip(objectHovered);
+        if(objectHovered == healthProgressBar.gameObject) {
+            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.currentHP + "/" + currentlyShowingCharacter.maxHP);
+        }else if (objectHovered == manaProgressBar.gameObject) {
+            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.currentSP + "/" + currentlyShowingCharacter.maxSP);
+        } else if (objectHovered == overallProgressBar.gameObject) {
+            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.happiness.ToString());
+        } else if (objectHovered == energyProgressBar.gameObject) {
+            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.energy.ToString());
+        } else if (objectHovered == fullnessProgressBar.gameObject) {
+            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.fullness.ToString());
+        } else if (objectHovered == funProgressBar.gameObject) {
+            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.fun.ToString());
+        } else if (objectHovered == prestigeProgressBar.gameObject) {
+            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.prestige.ToString());
+        } else if (objectHovered == sanityProgressBar.gameObject) {
+            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.sanity.ToString());
+        }
+    }
     #endregion
 
     //private void OnCharacterDied(ECS.Character deadCharacter) {

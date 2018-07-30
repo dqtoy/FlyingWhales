@@ -33,7 +33,7 @@ public class MonsterDen : StructureObj {
     public void ReduceSpawnCooldown(int amount) {
         spawnCooldown -= amount;
         if (spawnCooldown <= 0) {
-            SpawnMonster();
+            //SpawnMonster();
             ResetSpawnCooldown();
         }
     }

@@ -41,7 +41,7 @@ namespace ECS{
             set { _weaponPower = value; }
         }
         public float attackPower {
-            get { return (_weaponPower + prefix.flatModifier) * (1f + (prefix.percentModifier / 100f)); }
+            get { return (_weaponPower + (prefix.flatModifier + suffix.flatModifier)) * (1f + ((prefix.percentModifier + suffix.percentModifier) / 100f)); }
         }
         public WeaponPrefix prefix {
             get {

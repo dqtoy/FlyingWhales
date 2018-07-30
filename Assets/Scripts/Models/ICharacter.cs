@@ -73,8 +73,7 @@ public interface ICharacter {
     void SetSquad(Squad squad);
     bool InviteToParty(ICharacter inviter);
     bool IsInOwnParty();
-    int GetPDef(ICharacter enemy);
-    int GetMDef(ICharacter enemy);
+    int GetDef();
     NewParty CreateOwnParty();
     CharacterAction GetRandomDesperateAction(ref IObject targetObject);
     CharacterAction GetRandomIdleAction(ref IObject targetObject);
