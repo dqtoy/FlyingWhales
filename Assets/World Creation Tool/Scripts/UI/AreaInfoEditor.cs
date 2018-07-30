@@ -18,6 +18,9 @@ public class AreaInfoEditor : MonoBehaviour {
     [SerializeField] private ScrollRect classPriorityScrollView;
     [SerializeField] private Dropdown classChoicesDropdown;
 
+    [Header("Recommended Power")]
+    [SerializeField] private InputField powerInput;
+
     public void Initialize() {
         settingsEditor.Initialize();
         LoadClassChoices();
@@ -26,11 +29,16 @@ public class AreaInfoEditor : MonoBehaviour {
     public void Show(Area area) {
         currentArea = area;
         this.gameObject.SetActive(true);
-        LoadStructurePriorities();
-        LoadClassPriorities();
+        LoadData();
     }
     public void Hide() {
         this.gameObject.SetActive(false);
+    }
+
+    public void LoadData() {
+        LoadStructurePriorities();
+        LoadClassPriorities();
+        powerInput.text = currentArea.recommendedPower.ToString();
     }
 
     #region Structure Priorities
@@ -85,6 +93,13 @@ public class AreaInfoEditor : MonoBehaviour {
     public void AddClassPriority() {
         currentArea.AddClassPriority(classChoicesDropdown.options[classChoicesDropdown.value].text);
         LoadClassPriorities();
+    }
+    #endregion
+
+    #region Recommended Power
+    public void SetRecommendedPower(string strPower) {
+        float power = float.Parse(strPower);
+        currentArea.SetRecommendedPower(power);
     }
     #endregion
 }

@@ -7,6 +7,7 @@ public class Area {
 
     public int id { get; private set; }
     public string name { get; private set; }
+    public float recommendedPower { get; private set; }
     public AREA_TYPE areaType { get; private set; }
     public List<HexTile> tiles { get; private set; }
     public HexTile coreTile { get; private set; }
@@ -42,6 +43,7 @@ public class Area {
     public Area(AreaSaveData data) {
         id = Utilities.SetID(this, data.areaID);
         SetName(data.areaName);
+        SetRecommendedPower(data.recommendedPower);
         tiles = new List<HexTile>();
         residents = new List<ICharacter>();
         excessClasses = new List<string>();
@@ -65,6 +67,10 @@ public class Area {
         ScheduleFirstAction();
 #endif
         AddTile(Utilities.GetTilesFromIDs(data.tileData));
+    }
+
+    public void SetRecommendedPower(float power) {
+        this.recommendedPower = power;
     }
 
     public void SetName(string name) {

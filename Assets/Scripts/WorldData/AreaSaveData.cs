@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class AreaSaveData {
     public int areaID;
+    public float recommendedPower;
     public string areaName;
     public AREA_TYPE areaType;
     public int coreTileID;
@@ -16,6 +17,7 @@ public class AreaSaveData {
     public AreaSaveData(Area area) {
         areaID = area.id;
         areaName = area.name;
+        recommendedPower = area.recommendedPower;
         areaType = area.areaType;
         coreTileID = area.coreTile.id;
         tileData = new List<int>();
