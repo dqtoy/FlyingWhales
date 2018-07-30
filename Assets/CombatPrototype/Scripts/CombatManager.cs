@@ -393,7 +393,7 @@ namespace ECS {
             if (party.actionData.isHalted) {
                 party.actionData.SetIsHalted(false);
                 if (party.actionData.currentAction != null) {
-                    if (party.actionData.currentAction.actionType == ACTION_TYPE.ATTACK || party.actionData.currentAction.actionType == ACTION_TYPE.JOIN_BATTLE) {
+                    if ((party.actionData.currentAction.actionType == ACTION_TYPE.ATTACK || party.actionData.currentAction.actionType == ACTION_TYPE.JOIN_BATTLE) && party.actionData.isNotFirstEncounter) {
                         if (isActionSucess) {
                             party.actionData.currentAction.SuccessEndAction(party);
                         }

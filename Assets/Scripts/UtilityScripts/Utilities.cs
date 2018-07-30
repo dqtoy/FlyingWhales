@@ -11,15 +11,15 @@ using UnityEngine.UI;
 #pragma warning disable 0414 // private field assigned but not used.
 
 public class Utilities : MonoBehaviour {
-	public static System.Random rng = new System.Random(); 
+    public static System.Random rng = new System.Random();
     public static int lastRegionID = 0;
-	public static int lastKingdomColorIndex = 0;
+    public static int lastKingdomColorIndex = 0;
     public static int lastFactionColorIndex = 0;
-	public static int lastAlliancePoolID = 0;
-	public static int lastWarfareID = 0;
+    public static int lastAlliancePoolID = 0;
+    public static int lastWarfareID = 0;
     public static int lastLogID = 0;
     public static int lastLandmarkID = 0;
-	public static int lastFactionID = 0;
+    public static int lastFactionID = 0;
     public static int lastCharacterID = 0;
     public static int lastQuestID = 0;
     public static int lastItemID = 0;
@@ -30,9 +30,9 @@ public class Utilities : MonoBehaviour {
     public static int lastCharacterSimID = 0;
 
     public static float defenseBuff = 1.20f;
-	public static int defaultCityHP = 300;
+    public static int defaultCityHP = 300;
 
-	public static LANGUAGES defaultLanguage = LANGUAGES.ENGLISH;
+    public static LANGUAGES defaultLanguage = LANGUAGES.ENGLISH;
     public static string dataPath {
         get {
 #if UNITY_EDITOR
@@ -50,20 +50,20 @@ public class Utilities : MonoBehaviour {
     /*
 	 * Set unique id
 	 * */
-    public static int SetID<T>(T obj){
-        if(obj is Region) {
+    public static int SetID<T>(T obj) {
+        if (obj is Region) {
             lastRegionID += 1;
             return lastRegionID;
         } else if (obj is Log) {
             lastLogID += 1;
             return lastLogID;
-		} else if (obj is BaseLandmark) {
+        } else if (obj is BaseLandmark) {
             lastLandmarkID += 1;
             return lastLandmarkID;
-		} else if (obj is Faction) {
-			lastFactionID += 1;
-			return lastFactionID;
-        } else if(obj is ECS.Character) {
+        } else if (obj is Faction) {
+            lastFactionID += 1;
+            return lastFactionID;
+        } else if (obj is ECS.Character) {
             lastCharacterID += 1;
             return lastCharacterID;
         } else if (obj is ECS.Item) {
@@ -89,7 +89,7 @@ public class Utilities : MonoBehaviour {
             return lastCharacterSimID;
         }
         return 0;
-	}
+    }
     public static int SetID<T>(T obj, int idToUse) {
         if (obj is Region) {
             lastRegionID = idToUse;
@@ -120,31 +120,31 @@ public class Utilities : MonoBehaviour {
     }
 
     #region Pathfinding
-	public static List<Point> EvenNeighbours {
-		get {
-			return new List<Point> {
-				new Point(-1, 1),
-				new Point(0, 1),
-				new Point(1, 0),
-				new Point(0, -1),
-				new Point(-1, -1),
-				new Point(-1, 0),
+    public static List<Point> EvenNeighbours {
+        get {
+            return new List<Point> {
+                new Point(-1, 1),
+                new Point(0, 1),
+                new Point(1, 0),
+                new Point(0, -1),
+                new Point(-1, -1),
+                new Point(-1, 0),
 
-			};
-		}
-	}
-	public static List<Point> OddNeighbours {
-		get {
-			return new List<Point> {
-				new Point(0, 1),
-				new Point(1, 1),
-				new Point(1, 0),
-				new Point(1, -1),
-				new Point(0, -1),
-				new Point(-1, 0),
-			};
-		}
-	}
+            };
+        }
+    }
+    public static List<Point> OddNeighbours {
+        get {
+            return new List<Point> {
+                new Point(0, 1),
+                new Point(1, 1),
+                new Point(1, 0),
+                new Point(1, -1),
+                new Point(0, -1),
+                new Point(-1, 0),
+            };
+        }
+    }
     #endregion
 
     #region Color Utilities
@@ -155,25 +155,25 @@ public class Utilities : MonoBehaviour {
     public static Color GetColorForTrait(TRAIT trait) {
         switch (trait) {
             case TRAIT.CHARISMATIC:
-                return darkGreen;
+            return darkGreen;
             case TRAIT.REPULSIVE:
-                return darkRed;
+            return darkRed;
             case TRAIT.SMART:
-                return darkGreen;
+            return darkGreen;
             case TRAIT.DUMB:
-                return darkRed;
+            return darkRed;
             case TRAIT.EFFICIENT:
-                return darkGreen;
+            return darkGreen;
             case TRAIT.INEPT:
-                return darkRed;
+            return darkRed;
             case TRAIT.HOSTILE:
-                return darkRed;
+            return darkRed;
             //case TRAIT.MILITANT:
             //    return lightRed;
             case TRAIT.PACIFIST:
-                return darkGreen;
+            return darkGreen;
             default:
-                return Color.white;
+            return Color.white;
         }
     }
     public static Color[] factionColorCycle = new Color[] {
@@ -504,7 +504,7 @@ public class Utilities : MonoBehaviour {
         //		string pronoun = Utilities.GetStringBetweenTwoChars (word, '_', '_');
         string[] pronouns = word.Split('/');
         if (genderSubject is ECS.Character) {
-            GENDER gender = ((ECS.Character)genderSubject).gender;
+            GENDER gender = ((ECS.Character) genderSubject).gender;
             if (gender == GENDER.MALE) {
                 if (pronouns.Length > 0) {
                     if (!string.IsNullOrEmpty(pronouns[0])) {
@@ -661,7 +661,7 @@ public class Utilities : MonoBehaviour {
     }
     public static List<string> GetEnumChoices<T>(bool includeNone = false) {
         List<string> options = new List<string>();
-        T[] values = (T[])Enum.GetValues(typeof(T));
+        T[] values = (T[]) Enum.GetValues(typeof(T));
         for (int i = 0; i < values.Length; i++) {
             T currOption = values[i];
             if (!includeNone) {
@@ -765,7 +765,7 @@ public class Utilities : MonoBehaviour {
     }
     public static T PickRandomElementWithWeights<T>(Dictionary<T, float> weights) {
         float totalOfAllWeights = GetTotalOfWeights(weights);
-        int chance = rng.Next(0, (int)totalOfAllWeights);
+        int chance = rng.Next(0, (int) totalOfAllWeights);
         float upperBound = 0;
         float lowerBound = 0;
         foreach (KeyValuePair<T, float> kvp in weights) {
@@ -881,7 +881,7 @@ public class Utilities : MonoBehaviour {
         if (!typeof(T).IsEnum) {
             throw new ArgumentException("GetValues<T> can only be called for types derived from System.Enum", "T");
         }
-        return (T[])Enum.GetValues(typeof(T));
+        return (T[]) Enum.GetValues(typeof(T));
     }
     public static List<T> Shuffle<T>(List<T> list) {
         List<T> newList = new List<T>(list);
@@ -982,21 +982,21 @@ public class Utilities : MonoBehaviour {
     public static string GetNormalizedSingularRace(RACE race) {
         switch (race) {
             case RACE.HUMANS:
-                return "Human";
+            return "Human";
             case RACE.ELVES:
-                return "Elf";
+            return "Elf";
             case RACE.MINGONS:
-                return "Mingon";
+            return "Mingon";
             case RACE.CROMADS:
-                return "Cromad";
+            return "Cromad";
             case RACE.GOBLIN:
-                return "Goblin";
+            return "Goblin";
             case RACE.TROLL:
-                return "Troll";
+            return "Troll";
             case RACE.DRAGON:
-                return "Dragon";
+            return "Dragon";
             default:
-                return Utilities.NormalizeString(race.ToString());
+            return Utilities.NormalizeString(race.ToString());
         }
     }
     public static HexTile GetCenterTile(List<HexTile> tiles, HexTile[,] map, int width, int height) {
@@ -1186,9 +1186,9 @@ public class Utilities : MonoBehaviour {
             case CHARACTER_RELATIONSHIP.HUSBAND:
             case CHARACTER_RELATIONSHIP.WIFE:
             case CHARACTER_RELATIONSHIP.RIVAL:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     /*
@@ -1208,7 +1208,7 @@ public class Utilities : MonoBehaviour {
         //};
         if (relStat == CHARACTER_RELATIONSHIP.FATHER || relStat == CHARACTER_RELATIONSHIP.MOTHER) {
             if (relationship.HasStatus(CHARACTER_RELATIONSHIP.SON) || relationship.HasStatus(CHARACTER_RELATIONSHIP.DAUGHTER) || relationship.HasStatus(CHARACTER_RELATIONSHIP.WIFE)
-                || relationship.HasStatus(CHARACTER_RELATIONSHIP.HUSBAND) || relationship.HasStatus(CHARACTER_RELATIONSHIP.BROTHER)|| relationship.HasStatus(CHARACTER_RELATIONSHIP.SISTER) 
+                || relationship.HasStatus(CHARACTER_RELATIONSHIP.HUSBAND) || relationship.HasStatus(CHARACTER_RELATIONSHIP.BROTHER) || relationship.HasStatus(CHARACTER_RELATIONSHIP.SISTER)
                 || relationship.HasStatus(CHARACTER_RELATIONSHIP.MOTHER) || relationship.HasStatus(CHARACTER_RELATIONSHIP.FATHER)) {
                 return true;
             }
@@ -1275,7 +1275,7 @@ public class Utilities : MonoBehaviour {
             return ((party2.computedPower - party1.computedPower) / party1.computedPower) * 100;
         } else { //party1 power is lower than party2 power
             //Percent decrease = [(original value - new value)/original value] * 100
-            return ((party1.computedPower - party2.computedPower)/party1.computedPower)*100;
+            return ((party1.computedPower - party2.computedPower) / party1.computedPower) * 100;
         }
     }
     #endregion
@@ -1320,7 +1320,7 @@ public class Utilities : MonoBehaviour {
     }
     public static LANDMARK_TYPE ConvertMaterialToLandmarkType(MATERIAL material) {
         try {
-            LANDMARK_TYPE landmarkType = (LANDMARK_TYPE)System.Enum.Parse(typeof(LANDMARK_TYPE), material.ToString(), true);
+            LANDMARK_TYPE landmarkType = (LANDMARK_TYPE) System.Enum.Parse(typeof(LANDMARK_TYPE), material.ToString(), true);
             return landmarkType;
         } catch {
             throw new Exception("THERE IS NO LANDMARK TYPE FOR MATERIAL " + material.ToString());
@@ -1402,23 +1402,23 @@ public class Utilities : MonoBehaviour {
     public static ECS.IBodyPart.ATTRIBUTE GetNeededAttributeForArmor(ECS.Armor armor) {
         switch (armor.armorBodyType) {
             case "Head":
-                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_HEAD_ARMOR;
+            return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_HEAD_ARMOR;
             case "Torso":
-                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_TORSO_ARMOR;
+            return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_TORSO_ARMOR;
             case "Tail":
-                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_TAIL_ARMOR;
+            return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_TAIL_ARMOR;
             case "Arm":
-                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_ARM_ARMOR;
+            return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_ARM_ARMOR;
             case "Hand":
-                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_HAND_ARMOR;
+            return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_HAND_ARMOR;
             case "Leg":
-                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_LEG_ARMOR;
-			case "Hip":
-				return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_HIP_ARMOR;
+            return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_LEG_ARMOR;
+            case "Hip":
+            return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_HIP_ARMOR;
             case "Feet":
-                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_FOOT_ARMOR;
+            return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_FOOT_ARMOR;
             default:
-                return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_TORSO_ARMOR;
+            return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_TORSO_ARMOR;
         }
     }
     #endregion
@@ -1435,29 +1435,29 @@ public class Utilities : MonoBehaviour {
     public static TECHNOLOGY GetTechnologyForEquipment(EQUIPMENT_TYPE equipmentType) {
         switch (equipmentType) {
             case EQUIPMENT_TYPE.SWORD:
-                return TECHNOLOGY.SWORD_MAKING;
+            return TECHNOLOGY.SWORD_MAKING;
             case EQUIPMENT_TYPE.DAGGER:
-                return TECHNOLOGY.DAGGER_MAKING;
+            return TECHNOLOGY.DAGGER_MAKING;
             case EQUIPMENT_TYPE.SPEAR:
-                return TECHNOLOGY.SPEAR_MAKING;
+            return TECHNOLOGY.SPEAR_MAKING;
             case EQUIPMENT_TYPE.BOW:
-                return TECHNOLOGY.BOW_MAKING;
+            return TECHNOLOGY.BOW_MAKING;
             case EQUIPMENT_TYPE.STAFF:
-                return TECHNOLOGY.STAFF_MAKING;
+            return TECHNOLOGY.STAFF_MAKING;
             case EQUIPMENT_TYPE.AXE:
-                return TECHNOLOGY.AXE_MAKING;
+            return TECHNOLOGY.AXE_MAKING;
             case EQUIPMENT_TYPE.SHIRT:
-                return TECHNOLOGY.CHEST_ARMOR_MAKING;
+            return TECHNOLOGY.CHEST_ARMOR_MAKING;
             case EQUIPMENT_TYPE.BRACER:
-                return TECHNOLOGY.GLOVE_MAKING;
+            return TECHNOLOGY.GLOVE_MAKING;
             case EQUIPMENT_TYPE.HELMET:
-                return TECHNOLOGY.HELMET_MAKING;
+            return TECHNOLOGY.HELMET_MAKING;
             case EQUIPMENT_TYPE.LEGGINGS:
-                return TECHNOLOGY.LEGGINGS_MAKING;
+            return TECHNOLOGY.LEGGINGS_MAKING;
             case EQUIPMENT_TYPE.BOOT:
-                return TECHNOLOGY.BOOT_MAKING;
+            return TECHNOLOGY.BOOT_MAKING;
             default:
-                throw new Exception("There is no technology for " + equipmentType.ToString());
+            throw new Exception("There is no technology for " + equipmentType.ToString());
         }
     }
     public static WeightedDictionary<ARMOR_TYPE> weightedArmorTypes;
@@ -1486,25 +1486,25 @@ public class Utilities : MonoBehaviour {
             case EQUIPMENT_TYPE.BOW:
             case EQUIPMENT_TYPE.STAFF:
             case EQUIPMENT_TYPE.AXE:
-                return ITEM_TYPE.WEAPON;
+            return ITEM_TYPE.WEAPON;
             case EQUIPMENT_TYPE.SHIRT:
             case EQUIPMENT_TYPE.BRACER:
             case EQUIPMENT_TYPE.HELMET:
             case EQUIPMENT_TYPE.LEGGINGS:
             case EQUIPMENT_TYPE.BOOT:
-                return ITEM_TYPE.ARMOR;
+            return ITEM_TYPE.ARMOR;
             default:
-                return ITEM_TYPE.WEAPON;
+            return ITEM_TYPE.WEAPON;
         }
     }
     public static int GetStatByClass(ECS.Character character) {
         switch (character.characterClass.className) {
             case "Warrior":
             case "Barbarian":
-                return character.strength;
+            return character.strength;
             case "Arcanist":
             case "Mage":
-                return character.intelligence;
+            return character.intelligence;
         }
         return character.strength;
     }
@@ -1519,6 +1519,30 @@ public class Utilities : MonoBehaviour {
         }
         return ATTACK_CATEGORY.PHYSICAL;
     }
+    //0 = 0% combat/no combat, 50 = 50% combat, 100 = 100% combat/combat
+    public static Dictionary<MODE, Dictionary<MODE, int>> combatChanceGrid = new Dictionary<MODE, Dictionary<MODE, int>>() {
+        {MODE.DEFAULT,
+            new Dictionary<MODE, int>(){
+                {MODE.DEFAULT, 100},
+                {MODE.ALERT, 100},
+                {MODE.STEALTH, 0},
+            }
+        },
+        {MODE.ALERT,
+            new Dictionary<MODE, int>(){
+                {MODE.DEFAULT, 100},
+                {MODE.ALERT, 100},
+                {MODE.STEALTH, 50},
+            }
+        },
+        {MODE.STEALTH,
+            new Dictionary<MODE, int>(){
+                {MODE.DEFAULT, 0},
+                {MODE.ALERT, 50},
+                {MODE.STEALTH, 0},
+            }
+        },
+    };
     #endregion
 
     #region Character Tags

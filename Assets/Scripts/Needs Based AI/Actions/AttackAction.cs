@@ -5,12 +5,13 @@ using ECS;
 
 public class AttackAction : CharacterAction {
     //private ICharacterObject _icharacterObj;
+    private bool _hasAttacked;
 
-    //#region getters/setters
-    //public ICharacterObject icharacterObj {
-    //    get { return _icharacterObj; }
-    //}
-    //#endregion
+    #region getters/setters
+    public bool hasAttacked {
+        get { return _hasAttacked; }
+    }
+    #endregion
     public AttackAction() : base(ACTION_TYPE.ATTACK) {
 
     }
