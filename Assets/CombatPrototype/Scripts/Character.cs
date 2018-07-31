@@ -1788,11 +1788,13 @@ namespace ECS {
 		public void AddCharacterTag(CharacterTag tag){
 			_tags.Add(tag);
 			tag.Initialize ();
+            Messenger.Broadcast(Signals.CHARACTER_TAG_ADDED, this, tag);
 		}
 		public bool RemoveCharacterTag(CharacterTag tag){
 			if(_tags.Remove(tag)){
 				tag.OnRemoveTag();
-				return true;
+                Messenger.Broadcast(Signals.CHARACTER_TAG_REMOVED, this, tag);
+                return true;
 			}
 			return false;
 		}

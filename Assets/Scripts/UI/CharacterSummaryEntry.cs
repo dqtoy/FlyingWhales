@@ -32,6 +32,7 @@ public class CharacterSummaryEntry : PooledObject {
         _character = character;
         affiliations.Initialize(character);
         actionIcon.SetCharacter(character);
+        actionIcon.SetAction((character.currentParty as CharacterParty).actionData.currentAction);
         characterPortrait.SetDimensions(42f);
         characterPortrait.GeneratePortrait(character, IMAGE_SIZE.X64, true, true);
         UpdateCharacterInfo();
@@ -68,5 +69,6 @@ public class CharacterSummaryEntry : PooledObject {
         base.Reset();
         RemoveListeners();
         _character = null;
+        actionIcon.Reset();
     }
 }
