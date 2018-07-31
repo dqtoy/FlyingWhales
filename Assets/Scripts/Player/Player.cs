@@ -70,7 +70,7 @@ public class Player : ILeader{
 
     #region Faction
     public void CreatePlayerFaction() {
-        Faction playerFaction = FactionManager.Instance.CreateNewFaction();
+        Faction playerFaction = FactionManager.Instance.CreateNewFaction(true);
         playerFaction.SetLeader(this);
         SetPlayerFaction(playerFaction);
     }

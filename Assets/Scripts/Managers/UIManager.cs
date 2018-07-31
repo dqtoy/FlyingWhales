@@ -869,6 +869,15 @@ public class UIManager : MonoBehaviour {
     //}
     #endregion
 
+    #region Faction Summary
+    [Space(10)]
+    [Header("Factions Summary")]
+    public FactionSummaryUI factionsSummaryMenu;
+    public void ShowFactionsSummary() {
+        factionsSummaryMenu.OpenMenu();
+    }
+    #endregion
+
     #region Context Menu
     [Space(10)]
     [Header("Context Menu")]

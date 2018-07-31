@@ -91,11 +91,13 @@ public class FactionManager : MonoBehaviour {
 			character.EquipItem (item);
 		}
 	}
-    public Faction CreateNewFaction() {
+    public Faction CreateNewFaction(bool isPlayerFaction = false) {
         Faction newFaction = new Faction();
         allFactions.Add(newFaction);
         CreateRelationshipsForFaction(newFaction);
-        Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
+        if (!isPlayerFaction) {
+            Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
+        }
         return newFaction;
     }
     public Faction CreateNewFaction(FactionSaveData data) {
