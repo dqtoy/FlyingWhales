@@ -47,11 +47,12 @@ public class MonsterInfoUI : UIMenu {
 
         text += "\n<b>P Final Attack:</b> " + currentlyShowingMonster.pFinalAttack;
         text += "\n<b>M Final Attack:</b> " + currentlyShowingMonster.pFinalAttack;
-        text += "\n<b>PDef:</b> " + currentlyShowingMonster.pDef;
-        text += "\n<b>MDef:</b> " + currentlyShowingMonster.mDef;
+        text += "\n<b>Def:</b> " + currentlyShowingMonster.def;
         text += "\n<b>Crit Chance:</b> " + currentlyShowingMonster.critChance + "%";
         text += "\n<b>Dodge Chance:</b> " + currentlyShowingMonster.dodgeChance + "%";
         text += "\n<b>Computed Power:</b> " + currentlyShowingMonster.computedPower;
+
+        text += "\n<b>Mode:</b> " + currentlyShowingMonster.currentMode.ToString();
 
         monsterInfoLbl.text = text;
         //infoScrollView.ResetPosition();

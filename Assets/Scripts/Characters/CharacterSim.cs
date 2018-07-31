@@ -19,16 +19,11 @@ public class CharacterSim : ICharacterSim {
     [SerializeField] private int _vit;
     [SerializeField] private int _maxHP;
     [SerializeField] private int _maxSP;
-    [SerializeField] private int _pDefHead;
-    [SerializeField] private int _pDefBody;
-    [SerializeField] private int _pDefLegs;
-    [SerializeField] private int _pDefHands;
-    [SerializeField] private int _pDefFeet;
-    [SerializeField] private int _mDefHead;
-    [SerializeField] private int _mDefBody;
-    [SerializeField] private int _mDefLegs;
-    [SerializeField] private int _mDefHands;
-    [SerializeField] private int _mDefFeet;
+    [SerializeField] private int _defHead;
+    [SerializeField] private int _defBody;
+    [SerializeField] private int _defLegs;
+    [SerializeField] private int _defHands;
+    [SerializeField] private int _defFeet;
     [SerializeField] private GENDER _gender;
     [SerializeField] private List<string> _skillNames;
 
@@ -39,8 +34,7 @@ public class CharacterSim : ICharacterSim {
     private int _actRate;
     private float _critChance;
     private float _critDamage;
-    private float _bonusPDefPercent;
-    private float _bonusMDefPercent;
+    private float _bonusDefPercent;
     private bool _isDead;
     private SIDES _currentSide;
     private RaceSetting _raceSetting;
@@ -102,35 +96,20 @@ public class CharacterSim : ICharacterSim {
     public int vitBuild {
         get { return _vitBuild; }
     }
-    public int pDefHead {
-        get { return _pDefHead; }
+    public int defHead {
+        get { return _defHead; }
     }
-    public int pDefBody {
-        get { return _pDefBody; }
+    public int defBody {
+        get { return _defBody; }
     }
-    public int pDefLegs {
-        get { return _pDefLegs; }
+    public int defLegs {
+        get { return _defLegs; }
     }
-    public int pDefHands {
-        get { return _pDefHands; }
+    public int defHands {
+        get { return _defHands; }
     }
-    public int pDefFeet {
-        get { return _pDefFeet; }
-    }
-    public int mDefHead {
-        get { return _mDefHead; }
-    }
-    public int mDefBody {
-        get { return _mDefBody; }
-    }
-    public int mDefLegs {
-        get { return _mDefLegs; }
-    }
-    public int mDefHands {
-        get { return _mDefHands; }
-    }
-    public int mDefFeet {
-        get { return _mDefFeet; }
+    public int defFeet {
+        get { return _defFeet; }
     }
     public int currentRow {
         get { return _currentRow; }
@@ -235,17 +214,11 @@ public class CharacterSim : ICharacterSim {
         _maxHP = CharacterPanelUI.Instance.hp;
         _maxSP = CharacterPanelUI.Instance.sp;
 
-        _pDefHead = int.Parse(CharacterPanelUI.Instance.pHeadInput.text);
-        _pDefBody = int.Parse(CharacterPanelUI.Instance.pBodyInput.text);
-        _pDefLegs = int.Parse(CharacterPanelUI.Instance.pLegsInput.text);
-        _pDefHands = int.Parse(CharacterPanelUI.Instance.pHandsInput.text);
-        _pDefFeet = int.Parse(CharacterPanelUI.Instance.pFeetInput.text);
-
-        _mDefHead = int.Parse(CharacterPanelUI.Instance.mHeadInput.text);
-        _mDefBody = int.Parse(CharacterPanelUI.Instance.mBodyInput.text);
-        _mDefLegs = int.Parse(CharacterPanelUI.Instance.mLegsInput.text);
-        _mDefHands = int.Parse(CharacterPanelUI.Instance.mHandsInput.text);
-        _mDefFeet = int.Parse(CharacterPanelUI.Instance.mFeetInput.text);
+        _defHead = int.Parse(CharacterPanelUI.Instance.dHeadInput.text);
+        _defBody = int.Parse(CharacterPanelUI.Instance.dBodyInput.text);
+        _defLegs = int.Parse(CharacterPanelUI.Instance.dLegsInput.text);
+        _defHands = int.Parse(CharacterPanelUI.Instance.dHandsInput.text);
+        _defFeet = int.Parse(CharacterPanelUI.Instance.dFeetInput.text);
 
         _skillNames = CharacterPanelUI.Instance.skillNames;
     }
@@ -282,13 +255,9 @@ public class CharacterSim : ICharacterSim {
         _isDead = true;
         CombatSimManager.Instance.currentCombat.CharacterDeath(this);
     }
-    public int GetPDef(ICharacterSim enemy) {
-        float levelDiff = (float) (enemy.level - level);
-        return (int) ((((float) (GetPDefBonus() + (strength + (vitality * 2)))) * (1f + (_bonusPDefPercent / 100f))) * (1f + ((levelDiff < 0 ? 0 : levelDiff) / 20f)));
-    }
-    public int GetMDef(ICharacterSim enemy) {
-        float levelDiff = (float) (enemy.level - level);
-        return (int) ((((float) (GetMDefBonus() + (intelligence + (vitality * 2)))) * (1f + (_bonusMDefPercent / 100f))) * (1f + ((levelDiff < 0 ? 0 : levelDiff) / 20f)));
+    public int GetDef() {
+        float vit = (float) vitality;
+        return (int) ((((GetDefBonus() * (1f + ((vit / 5) / 100f)))) * (1f + (_bonusDefPercent / 100f))) + (vit / 4f)); //TODO: + passive skill def bonus
     }
     public void EnableDisableSkills(CombatSim combatSim) {
         bool isAllAttacksInRange = true;
@@ -432,11 +401,8 @@ public class CharacterSim : ICharacterSim {
             _skills.Add(skill);
         }
     }
-    private int GetPDefBonus() {
-        return _pDefHead + _pDefBody + _pDefLegs + _pDefHands + _pDefFeet;
-    }
-    private int GetMDefBonus() {
-        return _mDefHead + _mDefBody + _mDefLegs + _mDefHands + _mDefFeet;
+    private int GetDefBonus() {
+        return _defHead + _defBody + _defLegs + _defHands + _defFeet;
     }
     #endregion
 }

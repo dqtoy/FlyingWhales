@@ -1151,6 +1151,12 @@ public enum STANCE {
     STEALTHY
 }
 
+public enum MODE {
+    DEFAULT,
+    ALERT,
+    STEALTH
+}
+
 public enum STORYLINE {
     THE_LOST_HEIR,
 	INIMICAL_INCANTATIONS,

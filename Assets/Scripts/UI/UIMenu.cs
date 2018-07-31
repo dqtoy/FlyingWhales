@@ -51,6 +51,9 @@ public class UIMenu : MonoBehaviour {
     public virtual void SetData(object data) {
         _data = data;
     }
+    public virtual void ShowTooltip(GameObject objectHovered) {
+
+    }
     #endregion
 
     private bool CanGoBack() {

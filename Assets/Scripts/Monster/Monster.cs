@@ -16,8 +16,7 @@ public class Monster : ICharacter, ICharacterSim {
     [SerializeField] private int _maxSP;
     [SerializeField] private int _attackPower;
     [SerializeField] private int _speed;
-    [SerializeField] private int _pDef;
-    [SerializeField] private int _mDef;
+    [SerializeField] private int _def;
     [SerializeField] private float _dodgeChance;
     [SerializeField] private float _hitChance;
     [SerializeField] private float _critChance;
@@ -33,6 +32,7 @@ public class Monster : ICharacter, ICharacterSim {
     private int _actRate;
     private int _currentRow;
     private bool _isDead;
+    private MODE _currentMode;
     private Color _characterColor;
     private CharacterBattleOnlyTracker _battleOnlyTracker;
     private BaseLandmark _homeLandmark;
@@ -118,13 +118,13 @@ public class Monster : ICharacter, ICharacterSim {
         get { return attackPower; }
     }
     public int speed {
-        get { return agility + level; }
+        get {
+            float agi = (float) agility;
+            return (int) (100f * ((1f + ((agi / 5f) / 100f)) + (float) level + (agi / 3f)));
+        }
     }
-    public int pDef {
-        get { return _pDef; }
-    }
-    public int mDef {
-        get { return _mDef; }
+    public int def {
+        get { return _def; }
     }
     public float critChance {
         get { return _critChance; }
@@ -139,7 +139,7 @@ public class Monster : ICharacter, ICharacterSim {
         get { return 0f; }
     }
     public float computedPower {
-        get { return GetAttackPower() + GetDefensePower(); }
+        get { return GetComputedPower(); }
     }
     public bool isDead {
         get { return _isDead; }
@@ -155,6 +155,9 @@ public class Monster : ICharacter, ICharacterSim {
     }
     public ICHARACTER_TYPE icharacterType {
         get { return ICHARACTER_TYPE.MONSTER; }
+    }
+    public MODE currentMode {
+        get { return _currentMode; }
     }
     public CharacterBattleOnlyTracker battleOnlyTracker {
         get { return _battleOnlyTracker; }
@@ -236,8 +239,7 @@ public class Monster : ICharacter, ICharacterSim {
         newMonster._maxSP = this._maxSP;
         newMonster._attackPower = this._attackPower;
         newMonster._speed = this._speed;
-        newMonster._pDef = this._pDef;
-        newMonster._mDef = this._mDef;
+        newMonster._def = this._def;
         newMonster._dodgeChance = this._dodgeChance;
         newMonster._hitChance = this._hitChance;
         newMonster._critChance = this._critChance;
@@ -266,8 +268,7 @@ public class Monster : ICharacter, ICharacterSim {
         this._maxSP = monsterComponent.maxSP;
         this._attackPower = monsterComponent.attackPower;
         this._speed = monsterComponent.speed;
-        this._pDef = monsterComponent.pDef;
-        this._mDef = monsterComponent.mDef;
+        this._def = monsterComponent.def;
         this._dodgeChance = monsterComponent.dodgeChance;
         this._hitChance = monsterComponent.hitChance;
         this._critChance = monsterComponent.critChance;
@@ -291,8 +292,7 @@ public class Monster : ICharacter, ICharacterSim {
         this._maxSP = int.Parse(MonsterPanelUI.Instance.spInput.text);
         this._attackPower = int.Parse(MonsterPanelUI.Instance.powerInput.text);
         this._speed = int.Parse(MonsterPanelUI.Instance.speedInput.text);
-        this._pDef = int.Parse(MonsterPanelUI.Instance.pdefInput.text);
-        this._mDef = int.Parse(MonsterPanelUI.Instance.mdefInput.text);
+        this._def = int.Parse(MonsterPanelUI.Instance.defInput.text);
         this._dodgeChance = float.Parse(MonsterPanelUI.Instance.dodgeInput.text);
         this._hitChance = float.Parse(MonsterPanelUI.Instance.hitInput.text);
         this._critChance = float.Parse(MonsterPanelUI.Instance.critInput.text);
@@ -338,13 +338,13 @@ public class Monster : ICharacter, ICharacterSim {
         GameObject.Destroy(_characterPortrait.gameObject);
         _characterPortrait = null;
     }
-    private float GetAttackPower() {
-        //float statUsed = (float) Utilities.GetStatByClass(this);
-        float weaponAttack = (float)attackPower;
-        return (((weaponAttack + (float)strength) * (1f + ((float) strength / 100f))) * (1f + ((float) agility / 100f))) * (1f + ((float) level / 100f));
-    }
-    private float GetDefensePower() {
-        return ((float) (strength + intelligence + _pDef + _mDef + maxHP + (2 * vitality)) * (1f + ((float) level / 100f))) * (1f + ((float) agility / 100f));
+    private float GetComputedPower() {
+        float totalAttack = (float) attackPower;
+        float maxHPFloat = (float) maxHP;
+        float maxSPFloat = (float) maxSP;
+        //TODO: totalAttack += final damage bonus
+        float compPower = (totalAttack + (float) GetDef() + (float) (speed - 100) + (maxHPFloat / 10f) + (maxSPFloat / 10f)) * ((((float) currentHP / maxHPFloat) + ((float) currentSP / maxSPFloat)) / 2f);
+        return compPower *= party.icharacters.Count;
     }
     private List<Skill> GetGeneralSkills() {
         List<Skill> allGeneralSkills = new List<Skill>();
@@ -476,17 +476,8 @@ public class Monster : ICharacter, ICharacterSim {
             DeathSim();
         }
     }
-    public int GetPDef(ICharacter enemy) {
-        return _pDef;
-    }
-    public int GetMDef(ICharacter enemy) {
-        return _mDef;
-    }
-    public int GetPDef(ICharacterSim enemy) {
-        return _pDef;
-    }
-    public int GetMDef(ICharacterSim enemy) {
-        return _mDef;
+    public int GetDef() {
+        return _def;
     }
     public void ResetToFullHP() {
         AdjustHP(_maxHP);
@@ -547,6 +538,9 @@ public class Monster : ICharacter, ICharacterSim {
     public void DeathSim() {
         _isDead = true;
         CombatSimManager.Instance.currentCombat.CharacterDeath(this);
+    }
+    public void SetMode(MODE mode) {
+        _currentMode = mode;
     }
     public void EnableDisableSkills(Combat combat) {
         bool isAllAttacksInRange = true;

@@ -133,6 +133,10 @@ public class MapGenerator : MonoBehaviour {
         st.Stop();
 
         //GridMap.Instance.OccupyRegions(data);
+        LevelLoaderManager.UpdateLoadingInfo("Loading Areas...");
+        yield return null;
+        LandmarkManager.Instance.LoadAreas(data);
+
 
         LevelLoaderManager.UpdateLoadingInfo("Loading Landmarks...");
         yield return null;
@@ -140,7 +144,6 @@ public class MapGenerator : MonoBehaviour {
         LandmarkManager.Instance.LoadLandmarks(data);
         st.Stop();
 
-        LandmarkManager.Instance.LoadAreas(data);
 
         //LandmarkManager.Instance.GeneratePlayerLandmarks(playerRegion);
         PathfindingManager.Instance.LoadSettings(data.pathfindingSettings);

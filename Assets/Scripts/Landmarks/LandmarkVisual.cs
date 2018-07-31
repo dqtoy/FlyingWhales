@@ -13,6 +13,7 @@ public class LandmarkVisual : MonoBehaviour {
     [SerializeField] private SpriteRenderer topSprite;
     [SerializeField] private SpriteRenderer botSprite;
     [SerializeField] private GameObject exploredGO;
+    [SerializeField] private GameObject landmarkNameplateGO;
     [SerializeField] private SpriteRenderer iconSprite;
     [SerializeField] private Slider hpProgressBar;
     [SerializeField] private ScrollRect charactersScrollView;
@@ -20,6 +21,7 @@ public class LandmarkVisual : MonoBehaviour {
     [SerializeField] private Seeker seeker;
     [SerializeField] private AIDestinationSetter destinationSetter;
     [SerializeField] private LineRenderer lineRenderer;
+    public GameObject landmarkHPGO;
 
     #region getters/setters
     public BaseLandmark landmark {
@@ -89,6 +91,17 @@ public class LandmarkVisual : MonoBehaviour {
         charactersScrollView.content.anchoredPosition =
             (Vector2)charactersScrollView.transform.InverseTransformPoint(charactersScrollView.content.position)
             - (Vector2)charactersScrollView.transform.InverseTransformPoint(target.position);
+    }
+
+    public void ShowHPAndName(bool state) {
+        if (_landmark.tileLocation.areaOfTile == null) {
+            landmarkNameplateGO.SetActive(state);
+        } else {
+            if (state) {
+                UIManager.Instance.ShowSmallInfo(_landmark.tileLocation.areaOfTile.name);
+            }
+        }
+        landmarkHPGO.SetActive(state);
     }
     #region Monobehaviour
     //private void OnMouseOver() {

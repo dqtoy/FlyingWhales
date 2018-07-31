@@ -9,8 +9,10 @@ namespace ECS {
         [SerializeField] private float _intWeightAllocation;
         [SerializeField] private float _agiWeightAllocation;
         [SerializeField] private float _vitWeightAllocation;
-        [SerializeField] private float _hpModifier;
-        [SerializeField] private float _spModifier;
+        [SerializeField] private float _baseHP;
+        [SerializeField] private float _hpPerLevel;
+        [SerializeField] private float _baseSP;
+        [SerializeField] private float _spPerLevel;
         [SerializeField] private List<WEAPON_TYPE> _allowedWeaponTypes;
         [SerializeField] private List<RESOURCE> _harvestResources;
         [SerializeField] private List<StringListWrapper> _skillsPerLevelNames;
@@ -41,13 +43,19 @@ namespace ECS {
             get { return _vitWeightAllocation; }
             //set { _vitWeightAllocation = value; }
         }
-        public float hpModifier {
-            get { return _hpModifier; }
+        public float baseHP {
+            get { return _baseHP; }
             //set { _hpModifier = value; }
         }
-        public float spModifier {
-            get { return _spModifier; }
+        public float hpPerLevel {
+            get { return _hpPerLevel; }
+        }
+        public float baseSP {
+            get { return _baseSP; }
             //set { _spModifier = value; }
+        }
+        public float spPerLevel {
+            get { return _spPerLevel; }
         }
         //public int dodgeRate {
         //    get { return _dodgeRate; }
@@ -81,12 +89,14 @@ namespace ECS {
 			newClass._intWeightAllocation = this._intWeightAllocation;
 			newClass._agiWeightAllocation = this._agiWeightAllocation;
 			newClass._vitWeightAllocation = this._vitWeightAllocation;
-            newClass._hpModifier = this._hpModifier;
-            newClass._spModifier = this._spModifier;
+            newClass._baseHP = this._baseHP;
+            newClass._hpPerLevel = this._hpPerLevel;
+            newClass._baseSP = this._baseSP;
+            newClass._spPerLevel = this._spPerLevel;
             //newClass._dodgeRate = this._dodgeRate;
-            //newClass._parryRate = this._parryRate;
+            //newClass._parryRate = this._parryRate;                        
             //newClass._blockRate = this._blockRate;
-			newClass._allowedWeaponTypes = new List<WEAPON_TYPE>(this._allowedWeaponTypes);
+            newClass._allowedWeaponTypes = new List<WEAPON_TYPE>(this._allowedWeaponTypes);
             newClass._harvestResources = new List<RESOURCE>(this._harvestResources);
             newClass._skillsPerLevel = new List<Skill[]>();
             for (int i = 0; i < this._skillsPerLevel.Count; i++) {
@@ -105,8 +115,10 @@ namespace ECS {
             this._intWeightAllocation = classComponent.intWeightAllocation;
             this._agiWeightAllocation = classComponent.agiWeightAllocation;
             this._vitWeightAllocation = classComponent.vitWeightAllocation;
-            this._hpModifier = classComponent.hpModifier;
-            this._spModifier = classComponent.spModifier;
+            this._baseHP = classComponent.baseHP;
+            this._hpPerLevel = classComponent.hpPerLevel;
+            this._baseSP = classComponent.baseSP;
+            this._spPerLevel = classComponent.spPerLevel;
             //this._dodgeRate = classComponent.dodgeRate;
             //this._parryRate = classComponent.parryRate;
             //this._blockRate = classComponent.blockRate;
@@ -129,8 +141,10 @@ namespace ECS {
             this._intWeightAllocation = int.Parse(ClassPanelUI.Instance.intWeightAllocInput.text);
             this._agiWeightAllocation = int.Parse(ClassPanelUI.Instance.agiWeightAllocInput.text);
             this._vitWeightAllocation = int.Parse(ClassPanelUI.Instance.vitWeightAllocInput.text);
-            this._hpModifier = int.Parse(ClassPanelUI.Instance.hpMultiplierInput.text);
-            this._spModifier = int.Parse(ClassPanelUI.Instance.spMultiplierInput.text);
+            this._baseHP = int.Parse(ClassPanelUI.Instance.baseHPInput.text);
+            this._hpPerLevel = int.Parse(ClassPanelUI.Instance.hpPerLevelInput.text);
+            this._baseSP = int.Parse(ClassPanelUI.Instance.baseSPInput.text);
+            this._spPerLevel = int.Parse(ClassPanelUI.Instance.spPerLevelInput.text);
 
             this._allowedWeaponTypes = new List<WEAPON_TYPE>();
             for (int i = 0; i < _allowedWeaponTypes.Count; i++) {

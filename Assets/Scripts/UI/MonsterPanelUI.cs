@@ -19,8 +19,7 @@ public class MonsterPanelUI : MonoBehaviour {
     public InputField spInput;
     public InputField powerInput;
     public InputField speedInput;
-    public InputField pdefInput;
-    public InputField mdefInput;
+    public InputField defInput;
     public InputField dodgeInput;
     public InputField hitInput;
     public InputField critInput;
@@ -72,8 +71,7 @@ public class MonsterPanelUI : MonoBehaviour {
         spInput.text = "0";
         powerInput.text = "0";
         speedInput.text = "0";
-        pdefInput.text = "0";
-        mdefInput.text = "0";
+        defInput.text = "0";
         dodgeInput.text = "0";
         hitInput.text = "0";
         critInput.text = "0";
@@ -141,8 +139,7 @@ public class MonsterPanelUI : MonoBehaviour {
         spInput.text = monster.maxSP.ToString();
         powerInput.text = monster.attackPower.ToString();
         speedInput.text = monster.agility.ToString();
-        pdefInput.text = monster.pDef.ToString();
-        mdefInput.text = monster.mDef.ToString();
+        defInput.text = monster.def.ToString();
         dodgeInput.text = monster.dodgeChance.ToString();
         hitInput.text = monster.hitChance.ToString();
         critInput.text = monster.critChance.ToString();

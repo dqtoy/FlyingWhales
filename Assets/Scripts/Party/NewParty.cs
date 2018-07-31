@@ -47,6 +47,9 @@ public class NewParty : IParty {
     public bool isDead {
         get { return _isDead; }
     }
+    public MODE currentMode {
+        get { return _icharacters[0].currentMode; }
+    }
     public List<ICharacter> icharacters {
         get { return _icharacters; }
     }
@@ -246,6 +249,9 @@ public class NewParty : IParty {
 
     #region Combat
     public void StartCombatWith(NewParty enemy) {
+        if(enemy.currentCombat != null && this.currentCombat != null && enemy.currentCombat == this.currentCombat) {
+            return;
+        }
         if(enemy is CharacterParty) {
             (enemy as CharacterParty).actionData.SetIsHalted(true);
         }

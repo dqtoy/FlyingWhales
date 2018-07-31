@@ -30,6 +30,7 @@ public interface ICharacter {
     bool isDead { get; }
     GENDER gender { get; }
     ICHARACTER_TYPE icharacterType { get; }
+    MODE currentMode { get; }
     CharacterBattleOnlyTracker battleOnlyTracker { get; }
     Faction faction { get; }
     BaseLandmark homeLandmark { get; }
@@ -71,10 +72,10 @@ public interface ICharacter {
     void SetHomeStructure(StructureObj newHomeStructure);
     void AddHistory(Log log); //Character only
     void SetSquad(Squad squad);
+    void SetMode(MODE mode);
     bool InviteToParty(ICharacter inviter);
     bool IsInOwnParty();
-    int GetPDef(ICharacter enemy);
-    int GetMDef(ICharacter enemy);
+    int GetDef();
     NewParty CreateOwnParty();
     CharacterAction GetRandomDesperateAction(ref IObject targetObject);
     CharacterAction GetRandomIdleAction(ref IObject targetObject);

@@ -1010,6 +1010,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
+            this.landmarkOnTile.landmarkVisual.ShowHPAndName(true);
         }
         Messenger.Broadcast(Signals.TILE_HOVERED_OVER, this);
         //ShowHexTileInfo();
@@ -1027,6 +1028,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //}
 #else
         _hoverHighlightGO.SetActive(false);
+        if (this.landmarkOnTile != null) {
+            this.landmarkOnTile.landmarkVisual.ShowHPAndName(false);
+        }
         HideSmallInfoWindow();
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
             return;

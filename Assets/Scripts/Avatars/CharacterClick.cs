@@ -48,11 +48,24 @@ public class CharacterClick : MonoBehaviour {
         if (icon.iparty is CharacterParty) {
             CharacterParty thisParty = icon.iparty as CharacterParty;
             if (thisParty.actionData.currentAction != null) {
-                if (other.tag == "Character" && (thisParty.actionData.currentAction.actionType == ACTION_TYPE.ATTACK) && thisParty.actionData.currentTargetObject is ICharacterObject) { //|| thisParty.actionData.currentAction.actionType == ACTION_TYPE.CHAT
-                    ICharacterObject icharacterObject = thisParty.actionData.currentTargetObject as ICharacterObject;
+                if (other.tag == "Character") { //|| thisParty.actionData.currentAction.actionType == ACTION_TYPE.CHAT
                     CharacterIcon enemy = other.GetComponent<CharacterClick>().icon;
-                    if (icharacterObject.iparty.id == enemy.iparty.id) {//attackAction.icharacterObj.iparty == enemy.iparty.icharacterType && 
-                        thisParty.actionData.DoAction();
+                    if (thisParty.actionData.currentAction.actionType == ACTION_TYPE.ATTACK && thisParty.actionData.currentTargetObject is ICharacterObject) {
+                        ICharacterObject icharacterObject = thisParty.actionData.currentTargetObject as ICharacterObject;
+                        if (icharacterObject.iparty.id == enemy.iparty.id) {//attackAction.icharacterObj.iparty == enemy.iparty.icharacterType && 
+                            thisParty.actionData.DoAction();
+                        }
+                    } else {
+                        //Check if hostile faction, if it is, check mode for combat chances
+                        FactionRelationship factionRelationship = thisParty.faction.GetRelationshipWith(enemy.iparty.faction);
+                        if (factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+                            int combatChance = Utilities.rng.Next(0, 100);
+                            int value = Utilities.combatChanceGrid[thisParty.currentMode][enemy.iparty.currentMode];
+                            if(combatChance < value) {
+                                //Combat
+                                thisParty.StartCombatWith(enemy.iparty);
+                            }
+                        }
                     }
                 }
             }

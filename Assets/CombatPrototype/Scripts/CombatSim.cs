@@ -328,7 +328,7 @@ public class CombatSim {
         float damageRange = 0f;
         Weapon weapon = null;
         int statMod = sourceCharacter.strength;
-        int def = targetCharacter.GetPDef(sourceCharacter);
+        int def = targetCharacter.GetDef();
         float critDamage = 100f;
         if (sourceCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
             attacker = sourceCharacter as CharacterSim;
@@ -336,7 +336,6 @@ public class CombatSim {
         }
         if (attackSkill.attackCategory == ATTACK_CATEGORY.MAGICAL) {
             statMod = sourceCharacter.intelligence;
-            def = targetCharacter.GetMDef(sourceCharacter);
         }
         int critChance = Utilities.rng.Next(0, 100);
         if (critChance < sourceCharacter.critChance) {
@@ -375,6 +374,8 @@ public class CombatSim {
 
         //Reduce damage by defense of target
         damage -= def;
+
+        //TODO: Add final damage bonus
 
         //Calculate elemental weakness and resistance
         //Use element of skill if it has one, if not, use weapon element instead if it has one

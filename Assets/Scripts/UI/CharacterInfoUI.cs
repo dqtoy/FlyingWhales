@@ -18,6 +18,7 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private CharacterPortrait characterPortrait;
     [SerializeField] private TextMeshProUGUI nameLbl;
     [SerializeField] private TextMeshProUGUI lvlClassLbl;
+    [SerializeField] private TextMeshProUGUI modeLbl;
     [SerializeField] private AffiliationsObject affiliations;
     [SerializeField] private ActionIcon currentActionIcon;
     [SerializeField] private ScrollRect actionQueueScrollView;
@@ -155,6 +156,26 @@ public class CharacterInfoUI : UIMenu {
         ShowReleaseButton();
         CheckShowSnatchButton();
     }
+    public override void ShowTooltip(GameObject objectHovered) {
+        base.ShowTooltip(objectHovered);
+        if(objectHovered == healthProgressBar.gameObject) {
+            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.currentHP + "/" + currentlyShowingCharacter.maxHP);
+        }else if (objectHovered == manaProgressBar.gameObject) {
+            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.currentSP + "/" + currentlyShowingCharacter.maxSP);
+        } else if (objectHovered == overallProgressBar.gameObject) {
+            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.happiness.ToString());
+        } else if (objectHovered == energyProgressBar.gameObject) {
+            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.energy.ToString());
+        } else if (objectHovered == fullnessProgressBar.gameObject) {
+            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.fullness.ToString());
+        } else if (objectHovered == funProgressBar.gameObject) {
+            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.fun.ToString());
+        } else if (objectHovered == prestigeProgressBar.gameObject) {
+            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.prestige.ToString());
+        } else if (objectHovered == sanityProgressBar.gameObject) {
+            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.sanity.ToString());
+        }
+    }
     #endregion
 
     //private void OnCharacterDied(ECS.Character deadCharacter) {
@@ -193,6 +214,7 @@ public class CharacterInfoUI : UIMenu {
     private void UpdateBasicInfo() {
         nameLbl.text = currentlyShowingCharacter.name;
         lvlClassLbl.text = "Lvl." + currentlyShowingCharacter.level.ToString() + " " + currentlyShowingCharacter.characterClass.className;
+        modeLbl.text = currentlyShowingCharacter.currentMode.ToString();
         affiliations.SetCharacter(currentlyShowingCharacter);
         currentActionIcon.SetCharacter(currentlyShowingCharacter);
         currentActionIcon.SetAction((currentlyShowingCharacter.currentParty as CharacterParty).actionData.currentAction);

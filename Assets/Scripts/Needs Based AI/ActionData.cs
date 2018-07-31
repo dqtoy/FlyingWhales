@@ -32,6 +32,9 @@ public class ActionData {
     public bool isHalted {
         get { return _isHalted; }
     }
+    public bool isNotFirstEncounter {
+        get { return _isNotFirstEncounter; }
+    }
     #endregion
 
     public ActionData(CharacterParty party) {

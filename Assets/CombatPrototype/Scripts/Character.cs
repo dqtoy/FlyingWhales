@@ -23,6 +23,7 @@ namespace ECS {
         private bool _isFainted;
         private bool _isInCombat;
         private GENDER _gender;
+        private MODE _currentMode;
         private CharacterClass _characterClass;
         private RaceSetting _raceSetting;
         private CharacterRole _role;
@@ -85,10 +86,8 @@ namespace ECS {
         private int _maxExperience;
         private int _sp;
         private int _maxSP;
-        private int _bonusPDef;
-        private int _bonusMDef;
-        private float _bonusPDefPercent;
-        private float _bonusMDefPercent;
+        private int _bonusDef;
+        private float _bonusDefPercent;
         private float _critChance;
         private float _critDamage;
 
@@ -113,6 +112,9 @@ namespace ECS {
         }
         public GENDER gender {
             get { return _gender; }
+        }
+        public MODE currentMode {
+            get { return _currentMode; }
         }
         public List<CharacterTag> tags {
             get { return _tags; }
@@ -214,7 +216,7 @@ namespace ECS {
                 if (_equippedWeapon != null) {
                     weaponAttack = _equippedWeapon.attackPower;
                 }
-                return (int) (((weaponAttack + str) * (1f + (str / 20f))) * (1f + ((float) level / 100f)));
+                return (int) (((weaponAttack + (str / 3f)) * (1f + ((str / 10f) / 100f))) * ((float)level * 4f)); //TODO: + passive bonus attack
             }
         }
         public int mFinalAttack {
@@ -224,11 +226,14 @@ namespace ECS {
                 if (_equippedWeapon != null) {
                     weaponAttack = _equippedWeapon.attackPower;
                 }
-                return (int) (((weaponAttack + intl) * (1f + (intl / 20f))) * (1f + ((float) level / 100f)));
+                return (int) (((weaponAttack + (intl / 3f)) * (1f + ((intl / 10f) / 100f))) * ((float) level * 4f)); //TODO: + passive bonus attack
             }
         }
         public int speed {
-            get { return agility + level; }
+            get {
+                float agi = (float) agility;
+                return (int) (100f * ((1f + ((agi / 5f )/ 100f)) + (float) level + (agi / 3f))); //TODO: + passive speed bonus
+            }
         }
         public Color characterColor {
             get { return _characterColor; }
@@ -324,7 +329,7 @@ namespace ECS {
             get { return _battleOnlyTracker; }
         }
         public float computedPower {
-            get { return GetAttackPower() + GetDefensePower(); }
+            get { return GetComputedPower(); }
         }
         public ICHARACTER_TYPE icharacterType {
             get { return ICHARACTER_TYPE.CHARACTER; }
@@ -845,8 +850,13 @@ namespace ECS {
 				while (_inventory.Count > 0) {
 					ThrowItem (_inventory [0]);
 				}
+
+                if(_currentParty.mainCharacter.id == this.id) {
+                    _currentParty.actionData.currentAction.EndAction(_currentParty, _currentParty.actionData.currentTargetObject);
+                }
+                _currentParty.RemoveCharacter(this);
+
                 //if (currentParty.id != _ownParty.id) {
-                    currentParty.RemoveCharacter(this);
                 //}
                 //_ownParty.PartyDeath();
                 //Remove ActionData
@@ -1501,10 +1511,8 @@ namespace ECS {
         private void AddItemBonuses(Item item) {
             if(item.itemType == ITEM_TYPE.ARMOR) {
                 Armor armor = (Armor) item;
-                _bonusPDef += armor.pDef;
-                _bonusMDef += armor.mDef;
-                _bonusPDefPercent += (armor.prefix.bonusPDefPercent + armor.suffix.bonusPDefPercent);
-                _bonusMDefPercent += (armor.prefix.bonusMDefPercent + armor.suffix.bonusMDefPercent);
+                _bonusDef += armor.def;
+                _bonusDefPercent += (armor.prefix.bonusDefPercent + armor.suffix.bonusDefPercent);
             }
             //AdjustMaxHP(item.bonusMaxHP);
             //AdjustBonusStrength(item.bonusStrength);
@@ -1515,10 +1523,8 @@ namespace ECS {
         private void RemoveItemBonuses(Item item) {
             if (item.itemType == ITEM_TYPE.ARMOR) {
                 Armor armor = (Armor) item;
-                _bonusPDef -= armor.pDef;
-                _bonusMDef -= armor.mDef;
-                _bonusPDefPercent -= (armor.prefix.bonusPDefPercent + armor.suffix.bonusPDefPercent);
-                _bonusMDefPercent -= (armor.prefix.bonusMDefPercent + armor.suffix.bonusMDefPercent);
+                _bonusDef -= armor.def;
+                _bonusDefPercent -= (armor.prefix.bonusDefPercent + armor.suffix.bonusDefPercent);
             }
             //AdjustMaxHP(-item.bonusMaxHP);
             //AdjustBonusStrength(-item.bonusStrength);
@@ -2165,6 +2171,9 @@ namespace ECS {
             }
             return false;
         }
+        public void SetMode(MODE mode) {
+            _currentMode = mode;
+        }
         #endregion
 
         #region Relationships
@@ -2472,9 +2481,11 @@ namespace ECS {
             _critDamage += amount;
         }
         private void RecomputeMaxHP() {
-            this._fixedMaxHP = 10 + (Mathf.CeilToInt(_characterClass.hpModifier * ((Mathf.Pow((float) _level, 0.7f)) / 0.33f)));
+            //this._fixedMaxHP = 10 + (Mathf.CeilToInt(_characterClass.hpModifier * ((Mathf.Pow((float) _level, 0.7f)) / 0.33f)));
+            float vit = (float) vitality;
+            this._fixedMaxHP = (int)((_characterClass.baseHP + (_characterClass.hpPerLevel * (float)level)) * (1f + ((vit / 5f) / 100f)) + (vit * 2f)); //TODO: + passive hp bonus
             int previousMaxHP = this._maxHP;
-            this._maxHP = this._fixedMaxHP + (int) ((float) this._fixedMaxHP * ((float) vitality / 100f));
+            this._maxHP = this._fixedMaxHP;
             if (this._currentHP > this._maxHP || this._currentHP == previousMaxHP) {
                 this._currentHP = this._maxHP;
             }
@@ -2483,21 +2494,14 @@ namespace ECS {
             _maxExperience = Mathf.CeilToInt(100f * ((Mathf.Pow((float) _level, 1.25f)) / 1.1f));
         }
         private void RecomputeMaxSP() {
-            _maxSP = 10 + (Mathf.CeilToInt(_characterClass.spModifier * ((Mathf.Pow((float) _level, 0.7f)) / 0.33f)));
+            float intl = (float) intelligence;
+            _maxSP = (int) ((_characterClass.baseSP + (_characterClass.spPerLevel * (float) level)) * (1f + ((intl / 5f) / 100f)) + (intl * 2f)); //TODO: + passive sp bonus
         }
-        public int GetPDef(ICharacter enemy) {
-            float levelDiff = (float) (enemy.level - level);
-            return (int)((((float) (_bonusPDef + (strength + (vitality * 2)))) * (1f + (_bonusPDefPercent / 100f))) * (1f + ((levelDiff < 0 ? 0: levelDiff) / 20f)));
-        }
-        public int GetMDef(ICharacter enemy) {
-            float levelDiff = (float) (enemy.level - level);
-            return (int) ((((float) (_bonusMDef + (intelligence + (vitality * 2)))) * (1f + (_bonusMDefPercent / 100f))) * (1f + ((levelDiff < 0 ? 0 : levelDiff) / 20f)));
-        }
-        public int GetSelfPdef() {
-            return (int) ((float) _bonusPDef * (1f + (_bonusPDefPercent / 100f)));
-        }
-        public int GetSelfMdef() {
-            return (int) ((float) _bonusMDef * (1f + (_bonusMDefPercent / 100f)));
+        public int GetDef() {
+            //float levelDiff = (float) (enemy.level - level);
+            //return (int)((((float) (_bonusPDef + (strength + (vitality * 2)))) * (1f + (_bonusPDefPercent / 100f))) * (1f + ((levelDiff < 0 ? 0: levelDiff) / 20f)));
+            float vit = (float) vitality;
+            return (int) ((((_bonusDef * (1f + ((vit / 5) / 100f)))) * (1f + (_bonusDefPercent / 100f))) + (vit / 4f)); //TODO: + passive skill def bonus
         }
         public void ResetToFullHP() {
             AdjustHP(_maxHP);
@@ -2505,23 +2509,19 @@ namespace ECS {
         public void ResetToFullSP() {
             AdjustSP(_maxSP);
         }
-        private float GetAttackPower() {
-            float statUsed = (float) Utilities.GetStatByClass(this);
-            float weaponAttack = 0f;
-            if(_equippedWeapon != null) {
-                weaponAttack = _equippedWeapon.attackPower;
+        private float GetComputedPower() {
+            ATTACK_CATEGORY attackCat = Utilities.GetAttackCategoryByClass(this);
+            float totalAttack = 0f;
+            if(attackCat == ATTACK_CATEGORY.PHYSICAL) {
+                totalAttack = (float)pFinalAttack;
+            }else if (attackCat == ATTACK_CATEGORY.MAGICAL) {
+                totalAttack = (float) mFinalAttack;
             }
-            return (((weaponAttack + statUsed) * (statUsed / 2f)) * (1f + (agility / 100f))) * (1f + (level / 100f));
-            //List<AttackSkill> allAttackSkillsAvailable = GetClassAttackSkills();
-            //float skillMultiplier = ((float) allAttackSkillsAvailable.Sum(x => x.power) / (float) allAttackSkillsAvailable.Count) * ((float) _sp / ((float) allAttackSkillsAvailable.Sum(x => x.spCost) / (float) allAttackSkillsAvailable.Count));
-            //if(skillMultiplier < 1f) {
-            //    skillMultiplier = 1f;
-            //}
-            //return (float)((((strength + intelligence + weaponAttack) / 2f) * (1f + ((strength + intelligence) / 40f)) * (1f + (level / 100f)) * skillMultiplier) * speed);
-        }
-        private float GetDefensePower() {
-            return ((float) (strength + intelligence + GetSelfPdef() + GetSelfMdef() + currentHP + (vitality * 2)) * (1f + (level / 100f))) * (1f + (agility / 100f));
-            //return (float) (((strength + (4f * vitality) + intelligence + GetSelfPdef() + GetSelfMdef()) / 2f) * _currentHP * (1f + (level / 20f)));
+            float maxHPFloat = (float) maxHP;
+            float maxSPFloat = (float) maxSP;
+            //TODO: totalAttack += final damage bonus
+            float compPower = (totalAttack + (float) GetDef() + (float) (speed - 100) + (maxHPFloat / 10f) + (maxSPFloat / 10f)) * ((((float)currentHP / maxHPFloat) + ((float)currentSP / maxSPFloat)) / 2f);
+            return compPower *= party.icharacters.Count;
         }
         #endregion
 

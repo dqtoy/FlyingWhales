@@ -104,8 +104,7 @@ namespace ECS {
         private void ShowArmorFields() {
 			itemComponent.armorType = (ARMOR_TYPE)EditorGUILayout.EnumPopup("Armor Type: ", itemComponent.armorType);
 			itemComponent.armorBodyType = EditorGUILayout.TextField("Body Armor Type: ", itemComponent.armorBodyType);
-            itemComponent.pDef = EditorGUILayout.IntField("PDef: ", itemComponent.pDef);
-            itemComponent.mDef = EditorGUILayout.IntField("MDef: ", itemComponent.mDef);
+            itemComponent.def = EditorGUILayout.IntField("Def: ", itemComponent.def);
             itemComponent.armorPrefix = (ARMOR_PREFIX) EditorGUILayout.EnumPopup("Prefix: ", itemComponent.armorPrefix);
             itemComponent.armorSuffix = (ARMOR_SUFFIX) EditorGUILayout.EnumPopup("Suffix: ", itemComponent.armorSuffix);
 
@@ -205,8 +204,7 @@ namespace ECS {
 
 			armor.armorType = itemComponent.armorType;
 			armor.armorBodyType = itemComponent.armorBodyType;
-            armor.pDef = itemComponent.pDef;
-            armor.mDef = itemComponent.mDef;
+            armor.def = itemComponent.def;
             armor.SetPrefix(itemComponent.armorPrefix);
             armor.SetSuffix(itemComponent.armorSuffix);
             //armor.material = itemComponent.armorMaterial;
