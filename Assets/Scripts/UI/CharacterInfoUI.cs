@@ -119,6 +119,8 @@ public class CharacterInfoUI : UIMenu {
         //Messenger.AddListener<ActionQueueItem, Character>(Signals.ACTION_ADDED_TO_QUEUE, OnActionAddedToQueue);
         //Messenger.AddListener<ActionQueueItem, Character>(Signals.ACTION_REMOVED_FROM_QUEUE, OnActionRemovedFromQueue);
         Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
+        Messenger.AddListener<Character, CharacterTag>(Signals.CHARACTER_TAG_ADDED, OnCharacterTagAdded);
+        Messenger.AddListener<Character, CharacterTag>(Signals.CHARACTER_TAG_REMOVED, OnCharacterTagRemoved);
         affiliations.Initialize();
         currentActionIcon.Initialize();
         //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
@@ -151,6 +153,7 @@ public class CharacterInfoUI : UIMenu {
         base.ShowMenu();
         _activeCharacter = (Character)_data;
         UpdateCharacterInfo();
+        UpdateTagInfo();
         UpdateRelationshipInfo();
         ShowAttackButton();
         ShowReleaseButton();
@@ -200,7 +203,6 @@ public class CharacterInfoUI : UIMenu {
         UpdateBasicInfo();
         //UpdateGeneralInfo();
         UpdateStatInfo();
-        UpdateTagInfo();
         UpdateMoodInfo();
         UpdateItemsInfo();
         UpdateActionQueue();
@@ -231,76 +233,6 @@ public class CharacterInfoUI : UIMenu {
             actionItem.SetAlpha(128f/255f);
         }
     }
-    //public void UpdateGeneralInfo() {
-    //    string text = string.Empty;
-    //    if (currentlyShowingCharacter.party == null) {
-    //        text += "<b>Specific Location: </b>NONE";
-    //    } else {
-    //        text += "<b>Specific Location: </b>" + (currentlyShowingCharacter.party.specificLocation != null ? currentlyShowingCharacter.party.specificLocation.locationName : "NONE");
-    //    }
-        
-    //    text += "\n<b>Current Action: </b>";
-    //    if (currentlyShowingCharacter.party.actionData.currentAction != null) {
-    //        text += currentlyShowingCharacter.party.actionData.currentAction.actionData.actionName.ToString() + " ";
-    //    } else {
-    //        text += "NONE";
-    //    }
-    //    text += "\n<b>Taken Quests: </b>";
-    //    if (currentlyShowingCharacter.questData.Count > 0) {
-    //        for (int i = 0; i < currentlyShowingCharacter.questData.Count; i++) {
-    //            CharacterQuestData data = currentlyShowingCharacter.questData[i];
-    //            text += "\n" + data.parentQuest.name;
-    //        }
-    //    } else {
-    //        text += "NONE";
-    //    }
-
-    //    if (currentlyShowingCharacter.role != null) {
-    //        text += "\n<b>Fullness: </b>" + currentlyShowingCharacter.role.fullness.ToString("F0") + ", <b>Energy: </b>" + currentlyShowingCharacter.role.energy.ToString("F0") + ", <b>Fun: </b>" + currentlyShowingCharacter.role.fun.ToString("F0");
-    //        text += "\n<b>Sanity: </b>" + currentlyShowingCharacter.role.sanity.ToString("F0") + ", <b>Prestige: </b>" + currentlyShowingCharacter.role.prestige.ToString("F0") + ", <b>Safety: </b>" + currentlyShowingCharacter.role.safety.ToString("F0");
-    //        text += "\n<b>Happiness: </b>" + currentlyShowingCharacter.role.happiness;
-    //    }
-    //    text += "\n<b>Computed Power: </b>" + currentlyShowingCharacter.computedPower;
-    //    text += "\n<b>P Final Attack: </b>" + currentlyShowingCharacter.pFinalAttack;
-    //    text += "\n<b>M Final Attack: </b>" + currentlyShowingCharacter.mFinalAttack;
-    //    text += "\n<b>Mental Points: </b>" + currentlyShowingCharacter.mentalPoints;
-    //    text += "\n<b>Physical Points: </b>" + currentlyShowingCharacter.physicalPoints;
-    //    text += "\n<b>Current Party: </b>" + currentlyShowingCharacter.currentParty.name;
-    //    for (int i = 0; i < currentlyShowingCharacter.currentParty.icharacters.Count; i++) {
-    //        text += "\n - " + currentlyShowingCharacter.currentParty.icharacters[i].name;
-    //    }
-    //    text += "\n<b>Own Party: </b>" + currentlyShowingCharacter.ownParty.name;
-    //    for (int i = 0; i < currentlyShowingCharacter.ownParty.icharacters.Count; i++) {
-    //        text += "\n - " + currentlyShowingCharacter.ownParty.icharacters[i].name;
-    //    }
-    //    text += "\n<b>Squad: </b>";
-    //    if (currentlyShowingCharacter.squad != null) {
-    //        text += currentlyShowingCharacter.squad.name + " (PP: " + currentlyShowingCharacter.squad.potentialPower + ")";
-    //        for (int i = 0; i < currentlyShowingCharacter.squad.squadMembers.Count; i++) {
-    //            ICharacter currChar = currentlyShowingCharacter.squad.squadMembers[i];
-    //            if (currentlyShowingCharacter.squad.squadLeader.id == currChar.id) {
-    //                text += "\n - " + currChar.name + " (LEADER)";
-    //            } else {
-    //                text += "\n - " + currChar.name;
-    //            }
-    //        }
-    //        List<Quest> quests = currentlyShowingCharacter.squad.GetSquadQuests();
-    //        text += "\n<b>Squad Quests: </b>";
-    //        if (quests.Count > 0) {
-    //            for (int i = 0; i < quests.Count; i++) {
-    //                Quest currQuest = quests[i];
-    //                text += "\n - " + currQuest.name + "(" + currQuest.groupType.ToString() + ")";
-    //            }
-    //        } else {
-    //            text += "NONE";
-    //        }
-            
-    //    } else {
-    //        text += "NONE";
-    //    }
-    //    generalInfoLbl.text = text;
-
-    //}
 
     private void UpdateStatInfo() {
         healthProgressBar.value = (float)currentlyShowingCharacter.currentHP / (float) currentlyShowingCharacter.maxHP;
@@ -309,14 +241,6 @@ public class CharacterInfoUI : UIMenu {
         agilityLbl.text = currentlyShowingCharacter.agility.ToString();
         intelligenceLbl.text = currentlyShowingCharacter.intelligence.ToString();
         vitalityLbl.text = currentlyShowingCharacter.vitality.ToString();
-    }
-    private void UpdateTagInfo() {
-        Utilities.DestroyChildren(tagsScrollView.content);
-        for (int i = 0; i < currentlyShowingCharacter.tags.Count; i++) {
-            CharacterTag currTag = currentlyShowingCharacter.tags[i];
-            GameObject tagGO = UIManager.Instance.InstantiateUIObject(characterTagPrefab.name, tagsScrollView.content);
-            tagGO.GetComponent<CharacterTagIcon>().SetTag(currTag.tagType);
-        }
     }
     private void UpdateMoodInfo() {
         overallProgressBar.value = currentlyShowingCharacter.role.happiness;
@@ -466,6 +390,40 @@ public class CharacterInfoUI : UIMenu {
             counter++;
         }
     }
+
+    #region Character Tags
+    private void UpdateTagInfo() {
+        Utilities.DestroyChildren(tagsScrollView.content);
+        for (int i = 0; i < currentlyShowingCharacter.tags.Count; i++) {
+            CharacterTag currTag = currentlyShowingCharacter.tags[i];
+            AddTag(currTag);
+        }
+    }
+    private void AddTag(CharacterTag tag) {
+        GameObject tagGO = UIManager.Instance.InstantiateUIObject(characterTagPrefab.name, tagsScrollView.content);
+        tagGO.GetComponent<CharacterTagIcon>().SetTag(tag);
+    }
+    private void RemoveTag(CharacterTag tag) {
+        CharacterTagIcon[] icons = Utilities.GetComponentsInDirectChildren<CharacterTagIcon>(tagsScrollView.content.gameObject);
+        for (int i = 0; i < icons.Length; i++) {
+            CharacterTagIcon icon = icons[i];
+            if (icon.tag == tag) {
+                ObjectPoolManager.Instance.DestroyObject(icon.gameObject);
+                break;
+            }
+        }
+    }
+    private void OnCharacterTagAdded(Character affectedCharacter, CharacterTag tag) {
+        if (currentlyShowingCharacter != null && currentlyShowingCharacter.id == affectedCharacter.id) {
+            AddTag(tag);
+        }
+    }
+    private void OnCharacterTagRemoved(Character affectedCharacter, CharacterTag tag) {
+        if (currentlyShowingCharacter != null && currentlyShowingCharacter.id == affectedCharacter.id) {
+            RemoveTag(tag);
+        }
+    }
+    #endregion
 
     #region Utilities
     public void UpdateMoodColor(bool isOn) {

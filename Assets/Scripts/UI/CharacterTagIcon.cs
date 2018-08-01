@@ -1,19 +1,20 @@
-﻿using System.Collections;
+﻿using EZObjectPools;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CharacterTagIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
+public class CharacterTagIcon : PooledObject, IPointerEnterHandler, IPointerExitHandler {
 
-    private CHARACTER_TAG _tag;
+    public CharacterTag tag { get; private set; }
     [SerializeField] private Image icon;
 
     private bool isHovering = false;
 
-    public void SetTag(CHARACTER_TAG tag) {
-        _tag = tag;
-        LoadIcon(tag);
+    public void SetTag(CharacterTag tag) {
+        this.tag = tag;
+        LoadIcon(tag.tagType);
     }
 
     private void LoadIcon(CHARACTER_TAG tag) {
@@ -31,7 +32,12 @@ public class CharacterTagIcon : MonoBehaviour, IPointerEnterHandler, IPointerExi
 
     private void Update() {
         if (isHovering) {
-            UIManager.Instance.ShowSmallInfo(Utilities.NormalizeStringUpperCaseFirstLetters(_tag.ToString()));
+            UIManager.Instance.ShowSmallInfo(Utilities.NormalizeStringUpperCaseFirstLetters(tag.tagType.ToString()));
         }
+    }
+
+    public override void Reset() {
+        base.Reset();
+        tag = null;
     }
 }

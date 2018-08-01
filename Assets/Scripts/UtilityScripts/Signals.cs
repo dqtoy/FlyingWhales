@@ -45,6 +45,10 @@ public static class Signals {
     public static string LOOK_FOR_ACTION = "LookForAction"; //Parameters (ActionThread actionThread)
     public static string BUILD_STRUCTURE_LOOK_ACTION = "BuildStructureLookAction"; //Parameters (BuildStructureQuestData questData)
 
+    #region Character
+    public static string CHARACTER_TAG_ADDED = "OnCharacterTagAdded"; //Parameters (Character affectedCharacter, CharacterTag addedTag)
+    public static string CHARACTER_TAG_REMOVED = "OnCharacterTagRemoved"; //Parameters (Character affectedCharacter, CharacterTag removedTag)
+    #endregion
 
     #region UI
     public static string SHOW_POPUP_MESSAGE = "ShowPopupMessage"; //Parameters (string message, MESSAGE_BOX_MODE mode, bool expires)

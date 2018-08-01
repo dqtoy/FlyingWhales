@@ -277,7 +277,21 @@ namespace ECS {
             }
         }
         public bool isFactionless {
-            get { return faction == null; }
+            get {
+                if (FactionManager.Instance.defaultFaction == null) {
+                    if (faction != null) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                } else {
+                    if (faction != null && FactionManager.Instance.defaultFaction.id == faction.id) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
         }
         public Dictionary<Character, List<string>> traceInfo {
             get { return _traceInfo; }
@@ -1788,11 +1802,13 @@ namespace ECS {
 		public void AddCharacterTag(CharacterTag tag){
 			_tags.Add(tag);
 			tag.Initialize ();
+            Messenger.Broadcast(Signals.CHARACTER_TAG_ADDED, this, tag);
 		}
 		public bool RemoveCharacterTag(CharacterTag tag){
 			if(_tags.Remove(tag)){
 				tag.OnRemoveTag();
-				return true;
+                Messenger.Broadcast(Signals.CHARACTER_TAG_REMOVED, this, tag);
+                return true;
 			}
 			return false;
 		}

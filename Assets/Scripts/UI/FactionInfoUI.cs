@@ -26,12 +26,16 @@ public class FactionInfoUI : UIMenu {
     internal override void Initialize() {
         base.Initialize();
         //Messenger.AddListener("UpdateUI", UpdateFactionInfo);
+        Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         leaderEntry.Initialize();
     }
 
     public override void OpenMenu() {
         base.OpenMenu();
         UpdateFactionInfo();
+        UpdateFactionLeader();
+        UpdateFactionCharacters();
+        UpdateFactionAreas();
     }
 
     public override void SetData(object data) {
@@ -47,15 +51,17 @@ public class FactionInfoUI : UIMenu {
         }
         factionNameLbl.text = currentlyShowingFaction.name;
         factionDescriptionLbl.text = currentlyShowingFaction.description;
+    }
 
+    private void UpdateFactionLeader() {
         if (currentlyShowingFaction.leader != null && currentlyShowingFaction.leader is ECS.Character) {
             leaderEntry.gameObject.SetActive(true);
+            leaderEntry.Initialize();
             leaderEntry.SetCharacter(currentlyShowingFaction.leader as ECS.Character);
         } else {
             leaderEntry.gameObject.SetActive(false);
+            leaderEntry.Reset();
         }
-        UpdateFactionCharacters();
-        UpdateFactionAreas();
     }
 
     public void UpdateFactionCharacters() {
@@ -86,8 +92,34 @@ public class FactionInfoUI : UIMenu {
             property.SetArea(currArea);
         }
     }
-//	public void OnClickCloseBtn(){
-////		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
-//		HideMenu ();
-//	}
+    private CharacterSummaryEntry GetCharacterSummary(ECS.Character character) {
+        CharacterSummaryEntry[] entries = Utilities.GetComponentsInDirectChildren<CharacterSummaryEntry>(charactersScrollView.content.gameObject);
+        for (int i = 0; i < entries.Length; i++) {
+            CharacterSummaryEntry currEntry = entries[i];
+            if (currEntry.character.id == character.id) {
+                return currEntry;
+            }
+        }
+        return null;
+    }
+    //	public void OnClickCloseBtn(){
+    ////		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
+    //		HideMenu ();
+    //	}
+
+    #region Handlers
+    private void OnCharacterDied(ECS.Character characterThatDied) {
+        if (leaderEntry.gameObject.activeSelf) {
+            if (leaderEntry.character.id == characterThatDied.id) {
+                leaderEntry.gameObject.SetActive(false);
+                leaderEntry.Reset();
+                return;
+            }
+        }
+        CharacterSummaryEntry entry = GetCharacterSummary(characterThatDied);
+        if (entry != null) {
+            ObjectPoolManager.Instance.DestroyObject(entry.gameObject);
+        }
+    }
+    #endregion
 }

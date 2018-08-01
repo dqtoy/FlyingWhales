@@ -94,7 +94,15 @@ public class WorldSaveData {
         settings.nodes = true;
         pathfindingSettings = AstarPath.active.data.SerializeGraphs(settings);
     }
-
+    public bool HasFactionlessCharacter() {
+        for (int i = 0; i < charactersData.Count; i++) {
+            CharacterSaveData data = charactersData[i];
+            if (data.factionID == -1) {
+                return true;
+            }
+        }
+        return false;
+    }
     public void ConstructTileDictionary() {
         tileDictionary = new Dictionary<int, HexTileData>();
         for (int i = 0; i < tilesData.Count; i++) {

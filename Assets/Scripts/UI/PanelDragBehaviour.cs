@@ -10,6 +10,8 @@ public class PanelDragBehaviour : MonoBehaviour, IDragHandler, IBeginDragHandler
 
     private bool allowDrag;
 
+    private Vector3 difference; //how far the cursor is from the center of the rect
+
     public void Awake() {
         rect = GetComponent<RectTransform>();
     }
@@ -23,6 +25,8 @@ public class PanelDragBehaviour : MonoBehaviour, IDragHandler, IBeginDragHandler
                 if (go.gameObject.GetComponent<PanelDragBehaviour>() != null) {
                     //Debug.Log(go.gameObject.name, go.gameObject);
                     allowDrag = true;
+                    difference = rect.position - new Vector3(eventData.position.x, eventData.position.y, 0f);
+                    //Debug.Log("Difference is " + difference.ToString());
                     break;
                 }
 
@@ -48,7 +52,7 @@ public class PanelDragBehaviour : MonoBehaviour, IDragHandler, IBeginDragHandler
 
     public void OnDrag(PointerEventData eventData) {
         if (allowDrag) {
-            transform.position = Input.mousePosition;
+            transform.position = Input.mousePosition + difference;
         }
     }
 }
