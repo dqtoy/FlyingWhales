@@ -31,7 +31,7 @@ public class CameraMove : MonoBehaviour {
     [SerializeField] internal float MIN_Y;
     [SerializeField] internal float MAX_Y;
 
-    [SerializeField] private BoundDrawer boundDrawer;
+    //[SerializeField] private BoundDrawer boundDrawer;
     [SerializeField] private Bounds bounds;
 
     [SerializeField] private bool allowVerticalMovement;
@@ -291,7 +291,7 @@ public class CameraMove : MonoBehaviour {
 
     private void SetCameraBounds(Bounds bounds, float horzExtent, float vertExtent) {
         this.bounds = bounds;
-        boundDrawer.bounds = bounds;
+        //boundDrawer.bounds = bounds;
         float halfOfHexagon = (256f / 2f) / 100f; //1.28
 #if WORLD_CREATION_TOOL
         int borderCount = worldcreator.WorldCreatorManager.Instance._borderThickness;
