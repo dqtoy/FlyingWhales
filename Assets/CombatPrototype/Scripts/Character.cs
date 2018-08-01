@@ -277,7 +277,21 @@ namespace ECS {
             }
         }
         public bool isFactionless {
-            get { return faction == null; }
+            get {
+                if (FactionManager.Instance.defaultFaction == null) {
+                    if (faction != null) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                } else {
+                    if (faction != null && FactionManager.Instance.defaultFaction.id == faction.id) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
         }
         public Dictionary<Character, List<string>> traceInfo {
             get { return _traceInfo; }

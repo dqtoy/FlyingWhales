@@ -8,6 +8,7 @@ public class FactionManager : MonoBehaviour {
     public static FactionManager Instance = null;
 
     public List<Faction> allFactions = new List<Faction>();
+    public Faction defaultFaction { get; private set; }
 
     [Space(10)]
     [Header("Visuals")]
@@ -33,8 +34,17 @@ public class FactionManager : MonoBehaviour {
             }
 #endif
         }
+        if (data.HasFactionlessCharacter()) {
+            CreateNeutralFaction();
+        }
     }
-
+    private void CreateNeutralFaction() {
+        Faction newFaction = new Faction();
+        allFactions.Add(newFaction);
+        defaultFaction = newFaction;
+        CreateRelationshipsForFaction(newFaction);
+        Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
+    }
     /*
      Generate the initital factions,
      races are specified in the inspector (inititalRaces)
