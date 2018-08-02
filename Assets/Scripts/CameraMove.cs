@@ -8,6 +8,7 @@ public class CameraMove : MonoBehaviour {
 	[SerializeField] private float _minFov;
 	[SerializeField] private float _maxFov;
 	[SerializeField] private float sensitivity;
+    [SerializeField] private float _zoomSpeed = 5f;
     [SerializeField] private Camera nameplateCamera;
     [SerializeField] private Camera _wholeMapCamera;
     [SerializeField] private Camera _uiCamera;
@@ -97,14 +98,14 @@ public class CameraMove : MonoBehaviour {
 #endif
             //camera scrolling code
             float fov = Camera.main.orthographicSize;
-            float adjustment = Input.GetAxis("Mouse ScrollWheel") * (sensitivity * -1f);
-            fov += adjustment;
+            float adjustment = Input.GetAxis("Mouse ScrollWheel") * (sensitivity);
+            fov -= adjustment;
             fov = Mathf.Clamp(fov, _minFov, _maxFov);
 
             if (!Mathf.Approximately(previousCameraFOV, fov)) {
                 previousCameraFOV = fov;
-                Camera.main.orthographicSize = fov;
-                nameplateCamera.orthographicSize = fov;
+                Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
+                nameplateCamera.orthographicSize = Mathf.Lerp(nameplateCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
 #if !WORLD_CREATION_TOOL
                 //if (GameManager.Instance.gameHasStarted) {
                     CalculateCameraBounds();
