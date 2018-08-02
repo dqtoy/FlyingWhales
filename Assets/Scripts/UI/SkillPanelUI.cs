@@ -1,11 +1,12 @@
-﻿#if UNITY_EDITOR
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using System.IO;
 using ECS;
 
@@ -91,7 +92,8 @@ public class SkillPanelUI : MonoBehaviour {
         }
     }
     private void SaveSkill() {
-        if(skillNameInput.text == string.Empty) {
+#if UNITY_EDITOR
+        if (skillNameInput.text == string.Empty) {
             EditorUtility.DisplayDialog("Error", "Please specify a Skill Name", "OK");
             return;
         }
@@ -104,6 +106,7 @@ public class SkillPanelUI : MonoBehaviour {
         } else {
             SaveSkillJson(path);
         }
+#endif
     }
     private void SaveSkillJson(string path) {
         AttackSkill newSkill = new AttackSkill();
@@ -121,8 +124,10 @@ public class SkillPanelUI : MonoBehaviour {
         writer.WriteLine(jsonString);
         writer.Close();
 
+#if UNITY_EDITOR
         //Re-import the file to update the reference in the editor
         UnityEditor.AssetDatabase.ImportAsset(path);
+#endif
         Debug.Log("Successfully saved skill at " + path);
 
         UpdateSkillList();
@@ -149,6 +154,7 @@ public class SkillPanelUI : MonoBehaviour {
     }
 
     public void LoadSkill() {
+#if UNITY_EDITOR
         string filePath = EditorUtility.OpenFilePanel("Select Skill", Utilities.dataPath + "Skills/CLASS/ATTACK/", "json");
 
         if (!string.IsNullOrEmpty(filePath)) {
@@ -158,6 +164,7 @@ public class SkillPanelUI : MonoBehaviour {
             ClearData();
             LoadSkillDataToUI(attackSkill);
         }
+#endif
     }
 
     private void LoadSkillDataToUI(AttackSkill attackSkill) {
@@ -261,4 +268,3 @@ public class SkillPanelUI : MonoBehaviour {
     }
     #endregion
 }
-#endif

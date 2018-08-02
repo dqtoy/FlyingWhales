@@ -1,11 +1,12 @@
-﻿#if UNITY_EDITOR
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using System.IO;
 using ECS;
 
@@ -85,6 +86,7 @@ public class MonsterPanelUI : MonoBehaviour {
         }
     }
     private void SaveMonster() {
+#if UNITY_EDITOR
         if (nameInput.text == string.Empty) {
             EditorUtility.DisplayDialog("Error", "Please specify a Monster Name", "OK");
             return;
@@ -98,6 +100,7 @@ public class MonsterPanelUI : MonoBehaviour {
         } else {
             SaveMonsterJson(path);
         }
+#endif
     }
     private void SaveMonsterJson(string path) {
         Monster newMonster = new Monster();
@@ -110,8 +113,10 @@ public class MonsterPanelUI : MonoBehaviour {
         writer.WriteLine(jsonString);
         writer.Close();
 
+#if UNITY_EDITOR
         //Re-import the file to update the reference in the editor
         UnityEditor.AssetDatabase.ImportAsset(path);
+#endif
         Debug.Log("Successfully saved monster at " + path);
 
         CombatSimManager.Instance.UpdateAllMonsters();
@@ -119,6 +124,7 @@ public class MonsterPanelUI : MonoBehaviour {
  
 
     private void LoadMonster() {
+#if UNITY_EDITOR
         string filePath = EditorUtility.OpenFilePanel("Select Monster", Utilities.dataPath + "Monsters/", "json");
 
         if (!string.IsNullOrEmpty(filePath)) {
@@ -128,6 +134,7 @@ public class MonsterPanelUI : MonoBehaviour {
             ClearData();
             LoadMonsterDataToUI(monster);
         }
+#endif
     }
 
     private void LoadMonsterDataToUI(Monster monster) {
@@ -191,4 +198,3 @@ public class MonsterPanelUI : MonoBehaviour {
 
     #endregion
 }
-#endif
