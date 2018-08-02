@@ -13,6 +13,7 @@ public class CharactersSummaryUI : UIMenu {
     [SerializeField] private ScrollRect charactersScrollRect;
     [SerializeField] private Color evenColor;
     [SerializeField] private Color oddColor;
+    [SerializeField] private VerticalLayoutGroup layoutGroup; 
 
     private Dictionary<ECS.Character, CharacterSummaryEntry> characterEntries;
 
@@ -25,6 +26,11 @@ public class CharactersSummaryUI : UIMenu {
         Messenger.AddListener<ECS.Character>(Signals.ROLE_CHANGED, UpdateCharacterEntry);
         Messenger.AddListener<ECS.Character>(Signals.FACTION_SET, UpdateCharacterEntry);
         //sortingAction = () => OrderByName();
+    }
+
+    public override void OpenMenu() {
+        base.OpenMenu();
+        StartCoroutine(ExecuteLayoutGroup());
     }
 
     private void AddCharacterEntry(ECS.Character character) {
@@ -40,6 +46,9 @@ public class CharactersSummaryUI : UIMenu {
         } else {
             newEntry.SetBGColor(oddColor);
         }
+        if (this.isShowing) {
+            StartCoroutine(ExecuteLayoutGroup());
+        }
         //sortingAction();
     }
     private void RemoveCharacterEntry(ECS.Character character) {
@@ -48,6 +57,9 @@ public class CharactersSummaryUI : UIMenu {
             characterEntries.Remove(character);
             ObjectPoolManager.Instance.DestroyObject(characterEntry.gameObject);
             UpdateListColors();
+        }
+        if (this.isShowing) {
+            StartCoroutine(ExecuteLayoutGroup());
         }
         //sortingAction();
     }
@@ -121,5 +133,11 @@ public class CharactersSummaryUI : UIMenu {
         }
     }
     #endregion
+
+    private IEnumerator ExecuteLayoutGroup() {
+        layoutGroup.enabled = true;
+        yield return null;
+        layoutGroup.enabled = false;
+    }
 
 }

@@ -43,6 +43,7 @@ public class Utilities : MonoBehaviour {
         }
     }
     public static string worldConfigsSavePath { get { return Application.persistentDataPath + "/Saves/"; } }
+    public static string worldConfigsTemplatesPath { get { return Application.streamingAssetsPath + "/WorldTemplates/"; } }
     public static string worldConfigFileExt { get { return ".worldConfig"; } }
     public static string portraitsSavePath { get { return dataPath + "PortraitSettings/"; } }
     public static string portraitFileExt { get { return ".portraitSetting"; } }

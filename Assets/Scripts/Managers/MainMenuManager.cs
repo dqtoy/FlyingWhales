@@ -28,11 +28,24 @@ public class MainMenuManager : MonoBehaviour {
     }
 
     private void LoadWorldConfigurations() {
+        //initial templates
+        Directory.CreateDirectory(Utilities.worldConfigsTemplatesPath);
+        DirectoryInfo templateDirInfo = new DirectoryInfo(Utilities.worldConfigsTemplatesPath);
+        FileInfo[] templateFiles = templateDirInfo.GetFiles("*.worldConfig");
+        for (int i = 0; i < templateFiles.Length; i++) {
+            FileInfo currFile = templateFiles[i];
+            GameObject configGO = GameObject.Instantiate(worldConfigPrefab, worldConfigContent.transform);
+            configGO.transform.localScale = Vector3.one;
+            WorldConfigItem item = configGO.GetComponent<WorldConfigItem>();
+            item.SetFile(currFile);
+        }
+
+        //custom maps
         Directory.CreateDirectory(Utilities.worldConfigsSavePath);
-        DirectoryInfo info = new DirectoryInfo(Utilities.worldConfigsSavePath);
-        FileInfo[] files = info.GetFiles("*.worldConfig");
-        for (int i = 0; i < files.Length; i++) {
-            FileInfo currFile = files[i];
+        DirectoryInfo customMapDirInfo = new DirectoryInfo(Utilities.worldConfigsSavePath);
+        FileInfo[] customMapFiles = customMapDirInfo.GetFiles("*.worldConfig");
+        for (int i = 0; i < customMapFiles.Length; i++) {
+            FileInfo currFile = customMapFiles[i];
             GameObject configGO = GameObject.Instantiate(worldConfigPrefab, worldConfigContent.transform);
             configGO.transform.localScale = Vector3.one;
             WorldConfigItem item = configGO.GetComponent<WorldConfigItem>();
