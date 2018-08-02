@@ -56,14 +56,16 @@ public class CharacterClick : MonoBehaviour {
                             thisParty.actionData.DoAction();
                         }
                     } else {
-                        //Check if hostile faction, if it is, check mode for combat chances
-                        FactionRelationship factionRelationship = thisParty.faction.GetRelationshipWith(enemy.iparty.faction);
-                        if (factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
-                            int combatChance = Utilities.rng.Next(0, 100);
-                            int value = Utilities.combatChanceGrid[thisParty.currentMode][enemy.iparty.currentMode];
-                            if(combatChance < value) {
-                                //Combat
-                                thisParty.StartCombatWith(enemy.iparty);
+                        if(thisParty.faction.id != enemy.iparty.faction.id) {
+                            //Check if hostile faction, if it is, check mode for combat chances
+                            FactionRelationship factionRelationship = thisParty.faction.GetRelationshipWith(enemy.iparty.faction);
+                            if (factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+                                int combatChance = Utilities.rng.Next(0, 100);
+                                int value = Utilities.combatChanceGrid[thisParty.currentMode][enemy.iparty.currentMode];
+                                if (combatChance < value) {
+                                    //Combat
+                                    thisParty.StartCombatWith(enemy.iparty);
+                                }
                             }
                         }
                     }
