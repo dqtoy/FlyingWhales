@@ -616,7 +616,9 @@ namespace ECS{
 			////}
 			//return activationWeight;
 		//}
-		//Check if there are targets in range for the specific skill so that the character can know if the skill can be activated 
+		
+            
+        //Check if there are targets in range for the specific skill so that the character can know if the skill can be activated 
 		internal bool HasTargetInRangeForSkill(Skill skill, ICharacter sourceCharacter){
 			if(skill is AttackSkill){
 				if(sourceCharacter.currentSide == SIDES.A){
@@ -669,6 +671,7 @@ namespace ECS{
 			}
 			return true;
 		}
+
 		//Returns the row distance/difference of two characters
 		private int GetRowDistanceBetweenTwoCharacters(ICharacter sourceCharacter, ICharacter targetCharacter){
 			int distance = targetCharacter.currentRow - sourceCharacter.currentRow;
