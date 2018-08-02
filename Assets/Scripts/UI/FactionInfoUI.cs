@@ -109,16 +109,18 @@ public class FactionInfoUI : UIMenu {
 
     #region Handlers
     private void OnCharacterDied(ECS.Character characterThatDied) {
-        if (leaderEntry.gameObject.activeSelf) {
-            if (leaderEntry.character.id == characterThatDied.id) {
-                leaderEntry.gameObject.SetActive(false);
-                leaderEntry.Reset();
-                return;
+        if (isShowing) {
+            if (leaderEntry.gameObject.activeSelf) {
+                if (leaderEntry.character.id == characterThatDied.id) {
+                    leaderEntry.gameObject.SetActive(false);
+                    leaderEntry.Reset();
+                    return;
+                }
             }
-        }
-        CharacterSummaryEntry entry = GetCharacterSummary(characterThatDied);
-        if (entry != null) {
-            ObjectPoolManager.Instance.DestroyObject(entry.gameObject);
+            CharacterSummaryEntry entry = GetCharacterSummary(characterThatDied);
+            if (entry != null) {
+                ObjectPoolManager.Instance.DestroyObject(entry.gameObject);
+            }
         }
     }
     #endregion
