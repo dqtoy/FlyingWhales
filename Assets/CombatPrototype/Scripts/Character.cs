@@ -2678,7 +2678,9 @@ namespace ECS {
             partyPool.Clear();
             for (int i = 0; i < faction.characters.Count; i++) {
                 CharacterParty party = faction.characters[i].party;
-                if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && party.landmarkLocation != null && !faction.ownedAreas.Contains(party.landmarkLocation.tileLocation.areaOfTile) && !partyPool.Contains(party) && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.IDLE) {
+                if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && party.landmarkLocation != null 
+                    && !faction.ownedAreas.Contains(party.landmarkLocation.tileLocation.areaOfTile) && !partyPool.Contains(party) 
+                    && party.actionData.currentAction != null && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.IDLE) {
                     partyPool.Add(party);
                 }
             }
@@ -2695,7 +2697,9 @@ namespace ECS {
                 Faction nonHostileFaction = nonHostileFactions[i];
                 for (int k = 0; k < nonHostileFaction.characters.Count; k++) {
                     CharacterParty party = nonHostileFaction.characters[k].party;
-                    if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && party.landmarkLocation != null && !faction.ownedAreas.Contains(party.landmarkLocation.tileLocation.areaOfTile) && !partyPool.Contains(party) && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.IDLE) {
+                    if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && party.landmarkLocation != null 
+                        && !faction.ownedAreas.Contains(party.landmarkLocation.tileLocation.areaOfTile) && !partyPool.Contains(party) 
+                        && party.actionData.currentAction != null && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.IDLE) {
                         partyPool.Add(party);
                     }
                 }
