@@ -16,7 +16,7 @@ public class Civilian : CharacterRole {
         UpdateSafety();
         UpdateHappiness();
 
-        _character.onDailyAction += StartDepletion;
+        //_character.onDailyAction += StartDepletion;
     }
 
     #region Overrides

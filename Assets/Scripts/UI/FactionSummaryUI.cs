@@ -18,6 +18,10 @@ public class FactionSummaryUI : UIMenu {
         Messenger.AddListener<Faction>(Signals.FACTION_DELETED, OnFactionDeleted);
         items = new Dictionary<Faction, FactionSummaryItem>();
     }
+    public override void CloseMenu() {
+        base.CloseMenu();
+        UIManager.Instance.OnCloseFactionSummary();
+    }
 
     private void OnFactionCreated(Faction createdFaction) {
         GameObject factionItemGO = UIManager.Instance.InstantiateUIObject(factionItemPrefab.name, factionsScrollView.content);

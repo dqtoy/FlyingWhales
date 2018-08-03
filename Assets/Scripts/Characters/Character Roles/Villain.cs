@@ -32,26 +32,19 @@ public class Villain : CharacterRole {
         UpdateHappiness();
 
         //_character.characterObject.resourceInventory[RESOURCE.ELF_CIVILIAN] = 100;
-        _character.onDailyAction += StartDepletion;
+        //_character.onDailyAction += StartDepletion;
     }
 
     #region Overrides
-    public override void DeathRole() {
-        base.DeathRole();
-        Messenger.RemoveListener(Signals.HOUR_ENDED, StartDepletion);
-    }
-    public override void ChangedRole() {
-        base.ChangedRole();
-#if !WORLD_CREATION_TOOL
-        Messenger.RemoveListener(Signals.HOUR_ENDED, StartDepletion);
-#endif
-    }
+    //public override void DeathRole() {
+    //    base.DeathRole();
+    //    //Messenger.RemoveListener(Signals.HOUR_ENDED, StartDepletion);
+    //}
+    //public override void ChangedRole() {
+        //base.ChangedRole();
+//#if !WORLD_CREATION_TOOL
+//        Messenger.RemoveListener(Signals.HOUR_ENDED, StartDepletion);
+//#endif
+    //}
     #endregion
-
-    private void StartDepletion() {
-        DepleteFullness();
-        DepleteEnergy();
-        DepleteFun();
-        //DepletePrestige();
-    }
 }

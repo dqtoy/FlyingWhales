@@ -32,6 +32,10 @@ public class CharactersSummaryUI : UIMenu {
         base.OpenMenu();
         StartCoroutine(ExecuteLayoutGroup());
     }
+    public override void CloseMenu() {
+        base.CloseMenu();
+        UIManager.Instance.OnCloseCharacterSummary();
+    }
 
     private void AddCharacterEntry(ECS.Character character) {
         GameObject newEntryGO = UIManager.Instance.InstantiateUIObject(characterEntryPrefab.name, charactersScrollRect.content);

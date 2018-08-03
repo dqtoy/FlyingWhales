@@ -75,6 +75,9 @@ public class UIManager : MonoBehaviour {
     [Header("Portraits")]
     public Transform characterPortraitsParent;
 
+    public Color onToggleTextColor;
+    public Color offToggleTextColor;
+
     [Space(10)] //FOR TESTING
     [Header("For Testing")]
     public ButtonToggle toggleBordersBtn;
@@ -419,7 +422,6 @@ public class UIManager : MonoBehaviour {
     public void ToggleObject(GameObject objectToToggle) {
         objectToToggle.SetActive(!objectToToggle.activeSelf);
     }
-
     /*
 	 * Checker for if the mouse is currently
 	 * over a UI Object
@@ -713,6 +715,7 @@ public class UIManager : MonoBehaviour {
         }
     }
     #endregion
+
     #region Combat Info
     [Space(10)]
     [Header("Combat History")]
@@ -835,6 +838,7 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Characters Summary")]
     [SerializeField] private GameObject charactersSummaryGO;
+    [SerializeField] private Toggle charactersToggleBtn;
     public CharactersSummaryUI charactersSummaryMenu;
     public void ShowCharactersSummary() {
         //HideQuestsSummary();
@@ -867,14 +871,38 @@ public class UIManager : MonoBehaviour {
     //    questsSummaryLbl.text = questSummary;
     //    questsSummaryLbl.ResizeCollider();
     //}
+    public void ToggleCharacterSummary() {
+        if (charactersSummaryMenu.isShowing) {
+            HideCharactersSummary();
+        } else {
+            ShowCharactersSummary();
+        }
+    }
+    public void OnCloseCharacterSummary() {
+        charactersToggleBtn.isOn = false;
+    }
     #endregion
 
     #region Faction Summary
     [Space(10)]
     [Header("Factions Summary")]
     public FactionSummaryUI factionsSummaryMenu;
+    [SerializeField] private Toggle factionsToggleBtn;
     public void ShowFactionsSummary() {
         factionsSummaryMenu.OpenMenu();
+    }
+    public void HideFactionSummary() {
+        factionsSummaryMenu.CloseMenu();
+    }
+    public void ToggleFactionSummary() {
+        if (factionsSummaryMenu.isShowing) {
+            HideFactionSummary();
+        } else {
+            ShowFactionsSummary();
+        }
+    }
+    public void OnCloseFactionSummary() {
+        factionsToggleBtn.isOn = false;
     }
     #endregion
 
