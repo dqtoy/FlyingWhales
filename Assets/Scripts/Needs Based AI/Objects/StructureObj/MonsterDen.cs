@@ -14,11 +14,7 @@ public class MonsterDen : StructureObj {
     public MonsterDen() : base() {
         _specificObjectType = LANDMARK_TYPE.MONSTER_DEN;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
-        if (objectLocation is MonsterSpawnerLandmark) {
-            SetBaseSpawnCooldown((objectLocation as MonsterSpawnerLandmark).monsterSpawnCooldown);
-        }
-        ResetSpawnCooldown();
-        SpawnMonster();
+        
         //_resourceInventory[RESOURCE.IRON] = 5000;
     }
 
@@ -27,6 +23,14 @@ public class MonsterDen : StructureObj {
         MonsterDen clone = new MonsterDen();
         SetCommonData(clone);
         return clone;
+    }
+    public override void OnAddToLandmark(BaseLandmark newLocation) {
+        base.OnAddToLandmark(newLocation);
+        if (objectLocation is MonsterSpawnerLandmark) {
+            SetBaseSpawnCooldown((objectLocation as MonsterSpawnerLandmark).monsterSpawnCooldown);
+        }
+        ResetSpawnCooldown();
+        SpawnMonster();
     }
     #endregion
 
