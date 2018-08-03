@@ -34,12 +34,15 @@ public class FactionManager : MonoBehaviour {
             }
 #endif
         }
+#if !WORLD_CREATION_TOOL
         if (data.HasFactionlessCharacter()) {
             CreateNeutralFaction();
         }
+#endif
     }
     private void CreateNeutralFaction() {
         Faction newFaction = new Faction();
+        newFaction.SetName("Neutral");
         allFactions.Add(newFaction);
         defaultFaction = newFaction;
         CreateRelationshipsForFaction(newFaction);

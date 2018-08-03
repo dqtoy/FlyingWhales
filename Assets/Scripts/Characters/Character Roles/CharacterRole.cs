@@ -128,7 +128,7 @@ public class CharacterRole {
         DepleteFullness();
         DepleteEnergy();
         DepleteFun();
-        //DepletePrestige();
+        DepletePrestige();
     }
     public void SetNeedValue(NEEDS need, float newValue) {
         switch (need) {
