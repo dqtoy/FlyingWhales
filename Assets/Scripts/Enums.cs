@@ -1158,9 +1158,7 @@ public enum MODE {
 }
 
 public enum STORYLINE {
-    THE_LOST_HEIR,
-	INIMICAL_INCANTATIONS,
-	METEOR_STRIKE,
+    THE_DYING_KING,
 }
 
 public enum ACTION_ALIGNMENT {

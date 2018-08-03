@@ -1,11 +1,12 @@
-﻿#if UNITY_EDITOR
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using System.IO;
 using ECS;
 using TMPro;
@@ -145,6 +146,7 @@ public class CharacterPanelUI : MonoBehaviour {
         dFeetInput.text = "0";
     }
     private void SaveCharacter() {
+#if UNITY_EDITOR
         if (nameInput.text == string.Empty) {
             EditorUtility.DisplayDialog("Error", "Please specify a Character Name", "OK");
             return;
@@ -158,6 +160,7 @@ public class CharacterPanelUI : MonoBehaviour {
         } else {
             SaveCharacterJson(path);
         }
+#endif
     }
     private void SaveCharacterJson(string path) {
         CharacterSim newCharacter = new CharacterSim();
@@ -170,13 +173,16 @@ public class CharacterPanelUI : MonoBehaviour {
         writer.WriteLine(jsonString);
         writer.Close();
 
+#if UNITY_EDITOR
         //Re-import the file to update the reference in the editor
         UnityEditor.AssetDatabase.ImportAsset(path);
+#endif
         Debug.Log("Successfully saved character at " + path);
 
         CombatSimManager.Instance.UpdateAllCharacters();
     }
     private void LoadCharacter() {
+#if UNITY_EDITOR
         string filePath = EditorUtility.OpenFilePanel("Select Character", Utilities.dataPath + "CharacterSims/", "json");
 
         if (!string.IsNullOrEmpty(filePath)) {
@@ -186,6 +192,7 @@ public class CharacterPanelUI : MonoBehaviour {
             ClearData();
             LoadCharacterDataToUI(character);
         }
+#endif
     }
 
     private void LoadCharacterDataToUI(CharacterSim character) {
@@ -370,4 +377,3 @@ public class CharacterPanelUI : MonoBehaviour {
     }
     #endregion
 }
-#endif

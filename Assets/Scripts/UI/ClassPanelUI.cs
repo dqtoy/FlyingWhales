@@ -1,11 +1,12 @@
-﻿#if UNITY_EDITOR
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using System.IO;
 using ECS;
 
@@ -99,15 +100,19 @@ public class ClassPanelUI : MonoBehaviour {
     }
     private void SaveClass() {
         if (classNameInput.text == string.Empty) {
+#if UNTIY_EDITOR
             EditorUtility.DisplayDialog("Error", "Please specify a Class Name", "OK");
             return;
+#endif
         }
         string path = Utilities.dataPath + "CharacterClasses/" + classNameInput.text + ".json";
         if (Utilities.DoesFileExist(path)) {
+#if UNITY_EDITOR
             if (EditorUtility.DisplayDialog("Overwrite Class", "A class with name " + classNameInput.text + " already exists. Replace with this class?", "Yes", "No")) {
                 File.Delete(path);
                 SaveClassJson(path);
             }
+#endif
         } else {
             SaveClassJson(path);
         }
@@ -123,14 +128,17 @@ public class ClassPanelUI : MonoBehaviour {
         writer.WriteLine(jsonString);
         writer.Close();
 
+#if UNITY_EDITOR
         //Re-import the file to update the reference in the editor
         UnityEditor.AssetDatabase.ImportAsset(path);
+#endif
         Debug.Log("Successfully saved class at " + path);
 
         UpdateClassList();
     }
 
     private void LoadClass() {
+#if UNITY_EDITOR
         string filePath = EditorUtility.OpenFilePanel("Select Class", Utilities.dataPath + "CharacterClasses/", "json");
 
         if (!string.IsNullOrEmpty(filePath)) {
@@ -140,6 +148,7 @@ public class ClassPanelUI : MonoBehaviour {
             ClearData();
             LoadClassDataToUI(characterClass);
         }
+#endif
     }
 
     private void LoadClassDataToUI(CharacterClass characterClass) {
@@ -226,4 +235,3 @@ public class ClassPanelUI : MonoBehaviour {
     }
     #endregion
 }
-#endif

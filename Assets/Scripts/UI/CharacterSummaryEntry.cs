@@ -24,7 +24,7 @@ public class CharacterSummaryEntry : PooledObject {
 
     public void Initialize() {
         Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
-        Messenger.AddListener(Signals.UPDATE_UI, UpdateCharacterInfo);
+        //Messenger.AddListener(Signals.UPDATE_UI, UpdateCharacterInfo);
         actionIcon.Initialize();
     }
 
@@ -34,7 +34,7 @@ public class CharacterSummaryEntry : PooledObject {
         actionIcon.SetCharacter(character);
         actionIcon.SetAction((character.currentParty as CharacterParty).actionData.currentAction);
         characterPortrait.SetDimensions(42f);
-        characterPortrait.GeneratePortrait(character, IMAGE_SIZE.X64, true, true);
+        characterPortrait.GeneratePortrait(character, IMAGE_SIZE.X256, true, true);
         UpdateCharacterInfo();
         UpdateAffiliations();
     }

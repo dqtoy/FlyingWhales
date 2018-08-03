@@ -17,7 +17,7 @@ public class WorldConfigItem : MonoBehaviour {
         this.file = file;
         fileName = file.Name.Replace(Utilities.worldConfigFileExt, "");
         worldConfigName.text = fileName;
-        Texture2D worldConfigTexture = IMG2Sprite.LoadTexture(Utilities.worldConfigsSavePath + fileName + ".png");
+        Texture2D worldConfigTexture = IMG2Sprite.LoadTexture(file.DirectoryName + "\\" + fileName + ".png");
         Sprite newSprite = Sprite.Create(worldConfigTexture, new Rect(0, 0, worldConfigTexture.width, worldConfigTexture.height), new Vector2(0.5f, 0.5f));
         worldScreenshot.sprite = newSprite;
         //worldScreenshot.MakePixelPerfect();

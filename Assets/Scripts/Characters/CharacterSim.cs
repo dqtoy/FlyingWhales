@@ -119,7 +119,10 @@ public class CharacterSim : ICharacterSim {
         set { _actRate = value; }
     }
     public int speed {
-        get { return agility + level; }
+        get {
+            float agi = (float) agility;
+            return (int) (100f * ((1f + ((agi / 5f) / 100f)) + (float) level + (agi / 3f))); //TODO: + passive speed bonus
+        }
     }
     public int currentHP {
         get { return _currentHP; }
@@ -130,13 +133,13 @@ public class CharacterSim : ICharacterSim {
     public int pFinalAttack {
         get {
             float str = (float) strength;
-            return (int) (((_equippedWeapon.attackPower + str) * (1f + (str / 20f))) * (1f + ((float) level / 100f)));
+            return (int) (((_equippedWeapon.attackPower + (str / 3f)) * (1f + ((str / 10f) / 100f))) * ((float) level * 4f)); //TODO: + passive bonus attack
         }
     }
     public int mFinalAttack {
         get {
             float intl = (float) intelligence;
-            return (int) (((_equippedWeapon.attackPower + intl) * (1f + (intl / 20f))) * (1f + ((float) level / 100f)));
+            return (int) (((_equippedWeapon.attackPower + (intl / 3f)) * (1f + ((intl / 10f) / 100f))) * ((float) level * 4f)); //TODO: + passive bonus attack
         }
     }
     public float critChance {
@@ -260,8 +263,8 @@ public class CharacterSim : ICharacterSim {
         return (int) ((((GetDefBonus() * (1f + ((vit / 5) / 100f)))) * (1f + (_bonusDefPercent / 100f))) + (vit / 4f)); //TODO: + passive skill def bonus
     }
     public void EnableDisableSkills(CombatSim combatSim) {
-        bool isAllAttacksInRange = true;
-        bool isAttackInRange = false;
+        //bool isAllAttacksInRange = true;
+        //bool isAttackInRange = false;
 
         //Body part skills / general skills
         for (int i = 0; i < this._skills.Count; i++) {
@@ -274,86 +277,90 @@ public class CharacterSim : ICharacterSim {
                     skill.isEnabled = false;
                     continue;
                 }
-                isAttackInRange = combatSim.HasTargetInRangeForSkill(skill, this);
-                if (!isAttackInRange) {
-                    isAllAttacksInRange = false;
-                    skill.isEnabled = false;
-                    continue;
-                }
+                //isAttackInRange = combatSim.HasTargetInRangeForSkill(skill, this);
+                //if (!isAttackInRange) {
+                //    isAllAttacksInRange = false;
+                //    skill.isEnabled = false;
+                //    continue;
+                //}
             } else if (skill is FleeSkill) {
                 if (this.currentHP >= (this.maxHP / 2)) {
                     skill.isEnabled = false;
                     continue;
                 }
-            }
+            } 
+            //else if (skill is MoveSkill) {
+            //    skill.isEnabled = false;
+            //    continue;
+            //}
         }
 
-        for (int i = 0; i < this._skills.Count; i++) {
-            Skill skill = this._skills[i];
-            if (skill is MoveSkill) {
-                skill.isEnabled = true;
-                if (isAllAttacksInRange) {
-                    skill.isEnabled = false;
-                    continue;
-                }
-                if (skill.skillName == "MoveLeft") {
-                    if (this._currentRow == 1) {
-                        skill.isEnabled = false;
-                        continue;
-                    } else {
-                        bool hasEnemyOnLeft = false;
-                        if (combatSim.charactersSideA.Contains(this)) {
-                            for (int j = 0; j < combatSim.charactersSideB.Count; j++) {
-                                ICharacterSim enemy = combatSim.charactersSideB[j];
-                                if (enemy.currentRow < this._currentRow) {
-                                    hasEnemyOnLeft = true;
-                                    break;
-                                }
-                            }
-                        } else {
-                            for (int j = 0; j < combatSim.charactersSideA.Count; j++) {
-                                ICharacterSim enemy = combatSim.charactersSideA[j];
-                                if (enemy.currentRow < this._currentRow) {
-                                    hasEnemyOnLeft = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (!hasEnemyOnLeft) {
-                            skill.isEnabled = false;
-                            continue;
-                        }
-                    }
-                } else if (skill.skillName == "MoveRight") {
-                    if (this._currentRow == 5) {
-                        skill.isEnabled = false;
-                    } else {
-                        bool hasEnemyOnRight = false;
-                        if (combatSim.charactersSideA.Contains(this)) {
-                            for (int j = 0; j < combatSim.charactersSideB.Count; j++) {
-                                ICharacterSim enemy = combatSim.charactersSideB[j];
-                                if (enemy.currentRow > this._currentRow) {
-                                    hasEnemyOnRight = true;
-                                    break;
-                                }
-                            }
-                        } else {
-                            for (int j = 0; j < combatSim.charactersSideA.Count; j++) {
-                                ICharacterSim enemy = combatSim.charactersSideA[j];
-                                if (enemy.currentRow > this._currentRow) {
-                                    hasEnemyOnRight = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (!hasEnemyOnRight) {
-                            skill.isEnabled = false;
-                            continue;
-                        }
-                    }
-                }
-            }
-        }
+        //for (int i = 0; i < this._skills.Count; i++) {
+        //    Skill skill = this._skills[i];
+        //    if (skill is MoveSkill) {
+        //        skill.isEnabled = true;
+        //        if (isAllAttacksInRange) {
+        //            skill.isEnabled = false;
+        //            continue;
+        //        }
+        //        if (skill.skillName == "MoveLeft") {
+        //            if (this._currentRow == 1) {
+        //                skill.isEnabled = false;
+        //                continue;
+        //            } else {
+        //                bool hasEnemyOnLeft = false;
+        //                if (combatSim.charactersSideA.Contains(this)) {
+        //                    for (int j = 0; j < combatSim.charactersSideB.Count; j++) {
+        //                        ICharacterSim enemy = combatSim.charactersSideB[j];
+        //                        if (enemy.currentRow < this._currentRow) {
+        //                            hasEnemyOnLeft = true;
+        //                            break;
+        //                        }
+        //                    }
+        //                } else {
+        //                    for (int j = 0; j < combatSim.charactersSideA.Count; j++) {
+        //                        ICharacterSim enemy = combatSim.charactersSideA[j];
+        //                        if (enemy.currentRow < this._currentRow) {
+        //                            hasEnemyOnLeft = true;
+        //                            break;
+        //                        }
+        //                    }
+        //                }
+        //                if (!hasEnemyOnLeft) {
+        //                    skill.isEnabled = false;
+        //                    continue;
+        //                }
+        //            }
+        //        } else if (skill.skillName == "MoveRight") {
+        //            if (this._currentRow == 5) {
+        //                skill.isEnabled = false;
+        //            } else {
+        //                bool hasEnemyOnRight = false;
+        //                if (combatSim.charactersSideA.Contains(this)) {
+        //                    for (int j = 0; j < combatSim.charactersSideB.Count; j++) {
+        //                        ICharacterSim enemy = combatSim.charactersSideB[j];
+        //                        if (enemy.currentRow > this._currentRow) {
+        //                            hasEnemyOnRight = true;
+        //                            break;
+        //                        }
+        //                    }
+        //                } else {
+        //                    for (int j = 0; j < combatSim.charactersSideA.Count; j++) {
+        //                        ICharacterSim enemy = combatSim.charactersSideA[j];
+        //                        if (enemy.currentRow > this._currentRow) {
+        //                            hasEnemyOnRight = true;
+        //                            break;
+        //                        }
+        //                    }
+        //                }
+        //                if (!hasEnemyOnRight) {
+        //                    skill.isEnabled = false;
+        //                    continue;
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
     }
     #endregion
 
