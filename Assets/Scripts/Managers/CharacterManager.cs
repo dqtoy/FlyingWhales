@@ -111,12 +111,15 @@ public class CharacterManager : MonoBehaviour {
                     if (factionData.leaderID != -1 && factionData.leaderID == currCharacter.id) {
                         characterFaction.SetLeader(currCharacter);
                     }
-                } else {
+                }
+#if !WORLD_CREATION_TOOL
+                else {
                     characterFaction = FactionManager.Instance.defaultFaction;
                     characterFaction.AddNewCharacter(currCharacter);
                     currCharacter.SetFaction(characterFaction);
 
                 }
+#endif
             }
 #if WORLD_CREATION_TOOL
             worldcreator.WorldCreatorUI.Instance.editFactionsMenu.UpdateItems();
