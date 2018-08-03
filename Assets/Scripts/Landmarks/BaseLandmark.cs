@@ -631,16 +631,16 @@ public class BaseLandmark : ILocation {
 	//	newItem.isUnlimited = isUnlimited;
 	//	AddItemInLandmark (newItem);
 	//}
-	public Item SpawnItemInLandmark(string itemName){
-		Item item = ItemManager.Instance.CreateNewItemInstance (itemName);
-		AddItemInLandmark (item);
-		return item;
-	}
-	public Item SpawnItemInLandmark(Item item){
-		Item newItem = item.CreateNewCopy();
-		AddItemInLandmark (newItem);
-		return item;
-	}
+	//public Item SpawnItemInLandmark(string itemName){
+	//	Item item = ItemManager.Instance.CreateNewItemInstance (itemName);
+	//	AddItemInLandmark (item);
+	//	return item;
+	//}
+	//public Item SpawnItemInLandmark(Item item){
+	//	Item newItem = item.CreateNewCopy();
+	//	AddItemInLandmark (newItem);
+	//	return item;
+	//}
 	public bool HasItem(string itemName){
 		for (int i = 0; i < _itemsInLandmark.Count; i++) {
 			if (_itemsInLandmark [i].itemName == itemName) {

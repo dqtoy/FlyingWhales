@@ -1149,10 +1149,14 @@ namespace ECS {
 				if (itemType == ITEM_TYPE.WEAPON) {
 					Weapon weapon = ItemManager.Instance.CreateNewItemInstance(itemName) as Weapon;
 					//weapon.ConstructSkillsList ();
-					TryEquipWeapon(weapon);
-				} else if (itemType == ITEM_TYPE.ARMOR) {
+                    if(weapon != null) {
+                        TryEquipWeapon(weapon);
+                    }
+                } else if (itemType == ITEM_TYPE.ARMOR) {
                     Armor armor = ItemManager.Instance.CreateNewItemInstance(itemName) as Armor;
-					TryEquipArmor(armor);
+                    if (armor != null) {
+                        TryEquipArmor(armor);
+                    }
 				}
 			}
 		}
@@ -1161,11 +1165,15 @@ namespace ECS {
                 if (itemType.ToLower() == "weapon") {
                     Weapon weapon = ItemManager.Instance.CreateNewItemInstance(itemName) as Weapon;
                     //weapon.ConstructSkillsList();
-                    TryEquipWeapon(weapon);
+                    if (weapon != null) {
+                        TryEquipWeapon(weapon);
+                    }
                 }
                 else if (itemType.ToLower() == "armor") {
                     Armor armor = ItemManager.Instance.CreateNewItemInstance(itemName) as Armor;
-                    TryEquipArmor(armor);
+                    if (armor != null) {
+                        TryEquipArmor(armor);
+                    }
                 }
             }
         }

@@ -202,7 +202,9 @@ public class CharacterManager : MonoBehaviour {
             for (int i = 0; i < data.equipmentData.Count; i++) {
                 string equipmentName = data.equipmentData[i];
                 Item currItem = ItemManager.Instance.CreateNewItemInstance(equipmentName);
-                newCharacter.EquipItem(currItem);
+                if (currItem != null) {
+                    newCharacter.EquipItem(currItem);
+                }
             }
         }
 
@@ -210,7 +212,9 @@ public class CharacterManager : MonoBehaviour {
             for (int i = 0; i < data.inventoryData.Count; i++) {
                 string itemName = data.inventoryData[i];
                 Item currItem = ItemManager.Instance.CreateNewItemInstance(itemName);
-                newCharacter.PickupItem(currItem);
+                if (currItem != null) {
+                    newCharacter.PickupItem(currItem);
+                }
             }
         }
 
