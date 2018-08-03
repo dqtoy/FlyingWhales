@@ -692,7 +692,7 @@ namespace worldcreator {
         ELEVATION,
         FACTION,
         REGION,
-        LANDMARKS
+        LANDMARKS,
     }
     public enum SELECTION_MODE {
         RECTANGLE,

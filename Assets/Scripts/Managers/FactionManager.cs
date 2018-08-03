@@ -98,8 +98,10 @@ public class FactionManager : MonoBehaviour {
 		foreach (ARMOR_TYPE armorType in ItemManager.Instance.armorTypeData.Keys) {
 			string armorName = Utilities.NormalizeString(materialToUse.ToString()) + " " + Utilities.NormalizeString(armorType.ToString());
 			ECS.Item item = ItemManager.Instance.CreateNewItemInstance(armorName);
-			character.EquipItem (item);
-		}
+            if(item != null) {
+                character.EquipItem(item);
+            }
+        }
 	}
     public Faction CreateNewFaction(bool isPlayerFaction = false) {
         Faction newFaction = new Faction();

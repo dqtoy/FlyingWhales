@@ -143,7 +143,8 @@ public class ItemManager : MonoBehaviour {
         if (_allItems.ContainsKey(itemName)) {
             return _allItems[itemName].CreateNewCopy();
         }
-        throw new System.Exception("There is no item type called " + itemName);
+        return null;
+        //throw new System.Exception("There is no item type called " + itemName);
     }
 
     public ECS.Item CreateNewItemInstance(MATERIAL itemMaterial, EQUIPMENT_TYPE equipmentType) {
@@ -151,7 +152,8 @@ public class ItemManager : MonoBehaviour {
         if (_allItems.ContainsKey(itemName)) {
             return _allItems[itemName].CreateNewCopy();
         }
-        throw new System.Exception("There is no item type called " + itemName);
+        return null;
+        //throw new System.Exception("There is no item type called " + itemName);
     }
     private void ConstructWeaponTypeData() {
         _weaponTypeData = new Dictionary<WEAPON_TYPE, ECS.WeaponType>();
@@ -299,30 +301,30 @@ public class ItemManager : MonoBehaviour {
         return false;
     }
 
-	internal ECS.Weapon GetRandomWeapon(){
-		int index = UnityEngine.Random.Range (0, allWeapons.Count);
-		int count = 0;
-		foreach (ECS.Weapon weapon in allWeapons.Values) {
-			if(index == count){
-				return (ECS.Weapon)CreateNewItemInstance (weapon.itemName);
-			}else{
-				count++;
-			}
-		}
-		return null;
-	}
-	internal ECS.Armor GetRandomArmor(){
-		int index = UnityEngine.Random.Range (0, _allArmors.Count);
-		int count = 0;
-		foreach (ECS.Armor armor in _allArmors.Values) {
-			if(index == count){
-				return (ECS.Armor)CreateNewItemInstance (armor.itemName);
-			}else{
-				count++;
-			}
-		}
-		return null;
-	}
+	//internal ECS.Weapon GetRandomWeapon(){
+	//	int index = UnityEngine.Random.Range (0, allWeapons.Count);
+	//	int count = 0;
+	//	foreach (ECS.Weapon weapon in allWeapons.Values) {
+	//		if(index == count){
+	//			return (ECS.Weapon)CreateNewItemInstance (weapon.itemName);
+	//		}else{
+	//			count++;
+	//		}
+	//	}
+	//	return null;
+	//}
+	//internal ECS.Armor GetRandomArmor(){
+	//	int index = UnityEngine.Random.Range (0, _allArmors.Count);
+	//	int count = 0;
+	//	foreach (ECS.Armor armor in _allArmors.Values) {
+	//		if(index == count){
+	//			return (ECS.Armor)CreateNewItemInstance (armor.itemName);
+	//		}else{
+	//			count++;
+	//		}
+	//	}
+	//	return null;
+	//}
 
 	internal EQUIPMENT_TYPE GetRandomEquipmentTypeByItemType(ITEM_TYPE itemType){
 		return _equipmentTypes [itemType] [UnityEngine.Random.Range (0, _equipmentTypes [itemType].Count)];
