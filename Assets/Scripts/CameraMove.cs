@@ -65,14 +65,16 @@ public class CameraMove : MonoBehaviour {
         float xAxisValue = Input.GetAxis("Horizontal");
         float zAxisValue = Input.GetAxis("Vertical");
 #if WORLD_CREATION_TOOL
-        if (allowVerticalMovement) {
-            if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
-                iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("y", Camera.main.transform.position.y + zAxisValue, "time", 0.1f));
+        if (!worldcreator.WorldCreatorUI.Instance.IsUserOnUI()) {
+            if (allowVerticalMovement) {
+                if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
+                    iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("y", Camera.main.transform.position.y + zAxisValue, "time", 0.1f));
+                }
             }
-        }
-        if (allowHorizontalMovement) {
-            if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) {
-                iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("x", Camera.main.transform.position.x + xAxisValue, "time", 0.1f));
+            if (allowHorizontalMovement) {
+                if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) {
+                    iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("x", Camera.main.transform.position.x + xAxisValue, "time", 0.1f));
+                }
             }
         }
 #else
@@ -92,7 +94,7 @@ public class CameraMove : MonoBehaviour {
 
         Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
 #if WORLD_CREATION_TOOL
-        if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI() && screenRect.Contains(Input.mousePosition)) {
+        if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI() && !worldcreator.WorldCreatorUI.Instance.IsUserOnUI() && screenRect.Contains(Input.mousePosition)) {
 #else
         if (!UIManager.Instance.IsMouseOnUI() && screenRect.Contains(Input.mousePosition)) {
 #endif

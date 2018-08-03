@@ -22,7 +22,6 @@ namespace worldcreator {
         #endregion
 
         #region Monobehaviours
-        
         private void Update() {
             areaNameLbl.text = area.name;
         }

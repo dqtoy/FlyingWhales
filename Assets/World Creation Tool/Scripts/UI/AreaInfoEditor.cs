@@ -8,6 +8,9 @@ public class AreaInfoEditor : MonoBehaviour {
 
     internal Area currentArea;
 
+    [Header("Basic Info")]
+    [SerializeField] private InputField areaNameField;
+
     [Header("Settlement Priorities")]
     public GameObject structurePriorityItemGO;
     [SerializeField] private ScrollRect structurePriorityScrollView;
@@ -36,10 +39,17 @@ public class AreaInfoEditor : MonoBehaviour {
     }
 
     public void LoadData() {
+        areaNameField.text = currentArea.name;
         LoadStructurePriorities();
         LoadClassPriorities();
         powerInput.text = currentArea.recommendedPower.ToString();
     }
+
+    #region Basic Info
+    public void SetAreaName(string name) {
+        currentArea.SetName(name);
+    }
+    #endregion
 
     #region Structure Priorities
     public void LoadStructurePriorities() {

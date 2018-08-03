@@ -486,6 +486,14 @@ namespace worldcreator {
         public bool IsMouseOnUI() {
             return eventSystem.IsPointerOverGameObject();
         }
+        public bool IsUserOnUI() {
+            if (eventSystem.currentSelectedGameObject != null) {
+                if (eventSystem.currentSelectedGameObject.GetComponent<InputField>() != null) {
+                    return true;
+                }
+            }
+            return false;
+        }
         #endregion
 
     }
