@@ -1,1 +1,1 @@
-{"skillName":"Bash","skillType":0,"description":"Bash","skillCategory":1,"activationWeight":0,"range":1,"targetType":0,"numOfRowsHit":1,"skillRequirements":[],"allowedWeaponTypes":[1],"isEnabled":false,"power":200,"spCost":8,"attackCategory":0,"element":0}
+{"skillName":"Bash","skillType":0,"description":"Bash","skillCategory":1,"activationWeight":0,"range":1,"targetType":0,"numOfRowsHit":1,"allowedWeaponTypes":[1],"isEnabled":false,"power":125,"spCost":8,"attackCategory":0,"element":0}
