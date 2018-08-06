@@ -47,20 +47,15 @@ namespace ECS{
 
         #region overrides
         public override Item CreateNewCopy() {
+            if (isStackable) {
+                return ItemManager.Instance.allWeapons[itemName];
+            }
             Armor copy = new Armor();
             copy.armorType = armorType;
             copy.armorBodyType = armorBodyType;
             copy._def = _def;
             copy._prefix = _prefix;
             copy._suffix = _suffix;
-            //copy.material = material;
-            //copy.quality = quality;
-            //copy.baseDamageMitigation = baseDamageMitigation;
-            //copy.damageNullificationChance = damageNullificationChance;
-            
-            //copy.ineffectiveAttackTypes = new List<ATTACK_TYPE>(ineffectiveAttackTypes);
-            //copy.effectiveAttackTypes = new List<ATTACK_TYPE>(effectiveAttackTypes);
-            //copy.attributes = new List<IBodyPart.ATTRIBUTE>(attributes);
             copy.bodyPartAttached = null;
             SetCommonData(copy);
             return copy;
@@ -73,17 +68,5 @@ namespace ECS{
         public void SetSuffix(ARMOR_SUFFIX suffix) {
             _suffix = suffix;
         }
-
-        //     public void SetQuality(QUALITY quality) {
-        //         this.quality = quality;
-        //if(quality == QUALITY.CRUDE){
-        //	this.baseDamageMitigation += ItemManager.Instance.crudeArmorMitigationModifier;
-        //	this.durability += ItemManager.Instance.crudeArmorDurabilityModifier;
-        //}else if(quality == QUALITY.EXCEPTIONAL){
-        //	this.baseDamageMitigation += ItemManager.Instance.exceptionalArmorMitigationModifier;
-        //	this.durability += ItemManager.Instance.exceptionalArmorDurabilityModifier;
-        //}
-        //this.currDurability = this.durability;
-        //     }
     }
 }

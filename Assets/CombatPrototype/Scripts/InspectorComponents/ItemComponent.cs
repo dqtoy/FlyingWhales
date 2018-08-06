@@ -21,8 +21,6 @@ namespace ECS{
         //public int cost;
         //      public int exploreWeight;
         //      public int collectChance;
-        public bool isUnlimited;
-        public bool isObtainable;
         public int goldCost;
         //public List<StatusEffectRate> statusEffectResistances = new List<StatusEffectRate>();
 

@@ -19,8 +19,6 @@ namespace ECS {
 			itemComponent.itemName = EditorGUILayout.TextField("Item Name: ", itemComponent.itemName);
 			itemComponent.description = EditorGUILayout.TextField("Description: ", itemComponent.description);
             itemComponent.interactString = EditorGUILayout.TextField("Interaction text: ", itemComponent.interactString);
-            itemComponent.isUnlimited = EditorGUILayout.Toggle("Is Unlimited :", itemComponent.isUnlimited);
-            itemComponent.isObtainable = EditorGUILayout.Toggle("Is Obtainable :", itemComponent.isObtainable);
             itemComponent.goldCost = EditorGUILayout.IntField("Gold Cost: ", itemComponent.goldCost);
 
             switch (itemComponent.itemType) {
@@ -160,8 +158,6 @@ namespace ECS {
 			newItem.itemName = itemComponent.itemName;
 			newItem.description = itemComponent.description;
             newItem.interactString = itemComponent.interactString;
-            newItem.isUnlimited = itemComponent.isUnlimited;
-            newItem._isObtainable = itemComponent.isObtainable;
             newItem.goldCost = itemComponent.goldCost;
             
             //newItem.bonusActRate = itemComponent.bonusActRate;
