@@ -1056,10 +1056,6 @@ namespace ECS {
 		//If a character picks up an item, it is automatically added to his/her inventory
 		internal void PickupItem(Item item){
 			Item newItem = item;
-			if(item.isUnlimited){
-				newItem = item.CreateNewCopy ();
-				newItem.isUnlimited = false;
-			}
             if (_inventory.Contains(newItem)) {
                 throw new Exception(this.name + " already has an instance of " + newItem.itemName);
             }
@@ -1241,10 +1237,6 @@ namespace ECS {
 				}
 			}
 			Weapon newWeapon = weapon;
-			if(weapon.isUnlimited){
-				newWeapon = (Weapon)weapon.CreateNewCopy ();
-				newWeapon.isUnlimited = false;
-			}
 			AddEquippedItem(newWeapon);
 			//newWeapon.SetPossessor (this);
 			//newWeapon.ResetDurability();
@@ -1301,10 +1293,6 @@ namespace ECS {
 				return false;
 			}
 			Armor newArmor = armor;
-			if(armor.isUnlimited){
-				newArmor = (Armor)armor.CreateNewCopy ();
-				newArmor.isUnlimited = false;
-			}
 			bodyPartToEquip.AttachItem(newArmor, Utilities.GetNeededAttributeForArmor(newArmor));
 			//			armor.bodyPartAttached = bodyPart;
 			AddEquippedItem(newArmor);
