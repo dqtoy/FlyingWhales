@@ -149,6 +149,10 @@ public class UIManager : MonoBehaviour {
             allMenus[i].Initialize();
             allMenus[i].ApplyUnifiedSettings(settings);
         }
+        UnifiedSelectableBehaviour[] selectables = this.GetComponentsInChildren<UnifiedSelectableBehaviour>(true);
+        for (int i = 0; i < selectables.Length; i++) {
+            selectables[i].Initialize();
+        }
         //popupMessageBox.Initialize();
         Messenger.AddListener<HexTile>(Signals.TILE_RIGHT_CLICKED, ShowContextMenu);
         Messenger.AddListener<HexTile>(Signals.TILE_LEFT_CLICKED, HideContextMenu);
@@ -1003,4 +1007,13 @@ public class UnifiedUISettings {
     [Header("ScrollView Element Settings")]
     public Color evenColor;
     public Color oddColor;
+
+    [Header("Selectable Settings")]
+    public Sprite hoverOverSprite;
+    public Sprite hoverOutSprite;
+    public Color hoverOverTextColor;
+    public Color hoverOutTextColor;
+    public Color toggleOnTextColor = new Color(73f/255f, 93f/255f, 107f/255f, 255f/255f);
+    public Color toggleOffTextColor = new Color(247f/255f, 238f/255f, 212f/255f, 255f/255f);
+
 }

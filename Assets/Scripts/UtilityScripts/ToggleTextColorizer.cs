@@ -7,8 +7,8 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Toggle))]
 public class ToggleTextColorizer : MonoBehaviour {
 
-    [SerializeField] private Color onColor;
-    [SerializeField] private Color offColor;
+    private Color onColor = new Color(73f/255f, 93f/255f, 107f/255f, 255f/255f);
+    private Color offColor = new Color(247f/255f, 238f/255f, 212f/255f, 255f/255f);
     [SerializeField] private TextMeshProUGUI targetText;
 
     public void OnValueChange(bool isOn) {
