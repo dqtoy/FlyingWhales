@@ -106,13 +106,16 @@ public class CombatSim {
 
     private ICharacterSim GetCharacterThatWillAct(Dictionary<ICharacterSim, int> characterActivationWeights, List<ICharacterSim> charactersSideA, List<ICharacterSim> charactersSideB) {
         characterActivationWeights.Clear();
+        string speedLog = "Characters' Speeds:";
         for (int i = 0; i < charactersSideA.Count; i++) {
             characterActivationWeights.Add(charactersSideA[i], charactersSideA[i].actRate);
+            speedLog += "\n" + charactersSideA[i].name + " - " + charactersSideA[i].actRate;
         }
         for (int i = 0; i < charactersSideB.Count; i++) {
             characterActivationWeights.Add(charactersSideB[i], charactersSideB[i].actRate);
+            speedLog += "\n" + charactersSideB[i].name + " - " + charactersSideB[i].actRate;
         }
-
+        Debug.Log(speedLog);
         ICharacterSim chosenCharacter = Utilities.PickRandomElementWithWeights<ICharacterSim>(characterActivationWeights);
         foreach (ICharacterSim character in characterActivationWeights.Keys) {
             character.actRate += character.speed;
