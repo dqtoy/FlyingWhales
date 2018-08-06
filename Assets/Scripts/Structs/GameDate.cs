@@ -94,4 +94,8 @@ public struct GameDate {
 
         return totalDays;
     }
+
+    public string GetDayAndTicksString() {
+        return ConvertToDays().ToString() + "." + hour.ToString();
+    }
 }

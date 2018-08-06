@@ -183,7 +183,7 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     private void UpdateUI() {
-        dateLbl.SetText("Day " + GameManager.Instance.Today().ConvertToDays());
+        dateLbl.SetText("Day " + GameManager.Instance.Today().GetDayAndTicksString());
 
         UpdateCharacterInfo();
         UpdateFactionInfo();
