@@ -2575,15 +2575,15 @@ namespace ECS {
             _idleActions = new List<CharacterAction>();
             CharacterAction daydream = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DAYDREAM);
             CharacterAction play = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.PLAY);
-            CharacterAction chat = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.CHAT);
+            //CharacterAction chat = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.CHAT);
 
             daydream.SetActionCategory(ACTION_CATEGORY.IDLE);
             play.SetActionCategory(ACTION_CATEGORY.IDLE);
-            chat.SetActionCategory(ACTION_CATEGORY.IDLE);
+            //chat.SetActionCategory(ACTION_CATEGORY.IDLE);
 
             _idleActions.Add(daydream);
             _idleActions.Add(play);
-            _idleActions.Add(chat);
+            //_idleActions.Add(chat);
         }
         public CharacterAction GetRandomDesperateAction(ref IObject targetObject) {
             targetObject = _ownParty.characterObject;
