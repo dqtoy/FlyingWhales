@@ -1393,6 +1393,9 @@ public enum AREA_TYPE {
 public enum ELEMENT {
     NONE,
     FIRE,
+    WATER,
+    EARTH,
+    WIND,
 }
 
 public enum MONSTER_TYPE {
