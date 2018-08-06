@@ -278,14 +278,14 @@ namespace ECS {
         }
         public bool isFactionless {
             get {
-                if (FactionManager.Instance.defaultFaction == null) {
+                if (FactionManager.Instance.neutralFaction == null) {
                     if (faction != null) {
                         return false;
                     } else {
                         return true;
                     }
                 } else {
-                    if (faction != null && FactionManager.Instance.defaultFaction.id == faction.id) {
+                    if (faction != null && FactionManager.Instance.neutralFaction.id == faction.id) {
                         return true;
                     } else {
                         return false;

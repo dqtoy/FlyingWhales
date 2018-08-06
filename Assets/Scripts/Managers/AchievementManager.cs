@@ -13,9 +13,9 @@ public class AchievementManager : MonoBehaviour {
     };
 
     private SteamAchievement[] m_Achievements = new SteamAchievement[] {
-        new SteamAchievement(Achievement.FIRST_SNATCH, "Snatched!", "Successfully snatched a character."),
-        new SteamAchievement(Achievement.FIRST_INTERACTION, "Extrovert", "Talked with a character."),
-        new SteamAchievement(Achievement.SNATCH_5, "Kidnapper", "Snatched 5 characters."),
+        new SteamAchievement(Achievement.FIRST_SNATCH, "", ""),
+        new SteamAchievement(Achievement.FIRST_INTERACTION, "", ""),
+        new SteamAchievement(Achievement.SNATCH_5, "", ""),
     };
 
     private CGameID _gameID;
@@ -95,6 +95,10 @@ public class AchievementManager : MonoBehaviour {
     }
     #endregion
 
+    private void Initialize() {
+
+    }
+
     #region Callbacks
     private void OnUserStatsReceived(UserStatsReceived_t val) {
         if (!SteamManager.Initialized)
@@ -150,6 +154,10 @@ public class AchievementManager : MonoBehaviour {
         // Store stats end of frame
         shouldStoreStats = true;
     }
+
+    #region Handlers
+
+    #endregion
 
     private class SteamAchievement {
         public Achievement m_eAchievementID;

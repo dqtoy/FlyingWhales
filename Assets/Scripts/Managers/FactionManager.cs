@@ -8,7 +8,7 @@ public class FactionManager : MonoBehaviour {
     public static FactionManager Instance = null;
 
     public List<Faction> allFactions = new List<Faction>();
-    public Faction defaultFaction { get; private set; }
+    public Faction neutralFaction { get; private set; }
 
     [Space(10)]
     [Header("Visuals")]
@@ -35,16 +35,16 @@ public class FactionManager : MonoBehaviour {
 #endif
         }
 #if !WORLD_CREATION_TOOL
-        if (data.HasFactionlessCharacter()) {
+        //if (data.HasFactionlessCharacter()) {
             CreateNeutralFaction();
-        }
+        //}
 #endif
     }
     private void CreateNeutralFaction() {
         Faction newFaction = new Faction();
         newFaction.SetName("Neutral");
         allFactions.Add(newFaction);
-        defaultFaction = newFaction;
+        neutralFaction = newFaction;
         CreateRelationshipsForFaction(newFaction);
         Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
     }
