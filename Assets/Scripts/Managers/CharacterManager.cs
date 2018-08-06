@@ -114,7 +114,7 @@ public class CharacterManager : MonoBehaviour {
                 }
 #if !WORLD_CREATION_TOOL
                 else {
-                    characterFaction = FactionManager.Instance.defaultFaction;
+                    characterFaction = FactionManager.Instance.neutralFaction;
                     characterFaction.AddNewCharacter(currCharacter);
                     currCharacter.SetFaction(characterFaction);
 

@@ -15,6 +15,8 @@ using Steamworks;
 //
 [DisallowMultipleComponent]
 public class SteamManager : MonoBehaviour {
+    public bool disabled = true;
+
 	private static SteamManager s_instance;
 	private static SteamManager Instance {
 		get {
@@ -42,6 +44,9 @@ public class SteamManager : MonoBehaviour {
 	}
 
 	private void Awake() {
+        if (disabled) {
+            return;
+        }
 		// Only one instance of SteamManager at a time!
 		if (s_instance != null) {
 			Destroy(gameObject);
