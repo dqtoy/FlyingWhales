@@ -30,7 +30,7 @@ public class MapGenerator : MonoBehaviour {
         CameraMove.Instance.CalculateCameraBounds();
         ObjectPoolManager.Instance.InitializeObjectPools();
         CameraMove.Instance.SetWholemapCameraValues();
-        Minimap.Instance.Initialize();
+        //Minimap.Instance.Initialize();  //TODO: Uncomment when minimap is put back
         EquatorGenerator.Instance.GenerateEquator((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance.hexTiles);
         Biomes.Instance.GenerateElevation(GridMap.Instance.hexTiles, (int)GridMap.Instance.width, (int)GridMap.Instance.height);
 
@@ -103,7 +103,7 @@ public class MapGenerator : MonoBehaviour {
         CameraMove.Instance.CalculateCameraBounds();
         ObjectPoolManager.Instance.InitializeObjectPools();
         CameraMove.Instance.SetWholemapCameraValues();
-        Minimap.Instance.Initialize();
+        //Minimap.Instance.Initialize(); TODO: Uncomment When minimap is put back
         //EquatorGenerator.Instance.GenerateEquator((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance.hexTiles);
         //Biomes.Instance.GenerateElevation(GridMap.Instance.hexTiles, (int)GridMap.Instance.width, (int)GridMap.Instance.height);
 

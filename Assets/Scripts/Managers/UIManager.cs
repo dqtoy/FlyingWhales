@@ -19,6 +19,11 @@ public class UIManager : MonoBehaviour {
     public RectTransform mainRT;
     [SerializeField] private EventSystem eventSystem;
 
+    [Space(10)]
+    [Header("Unified Settings")]
+    public UnifiedUISettings settings;
+
+    [Space(10)]
     [SerializeField] UIMenu[] allMenus;
 
     [Space(10)]
@@ -142,8 +147,9 @@ public class UIManager : MonoBehaviour {
     internal void InitializeUI() {
         for (int i = 0; i < allMenus.Length; i++) {
             allMenus[i].Initialize();
+            allMenus[i].ApplyUnifiedSettings(settings);
         }
-        popupMessageBox.Initialize();
+        //popupMessageBox.Initialize();
         Messenger.AddListener<HexTile>(Signals.TILE_RIGHT_CLICKED, ShowContextMenu);
         Messenger.AddListener<HexTile>(Signals.TILE_LEFT_CLICKED, HideContextMenu);
         Messenger.AddListener<string, int, UnityAction>(Signals.SHOW_NOTIFICATION, ShowNotification);
@@ -188,7 +194,7 @@ public class UIManager : MonoBehaviour {
         UpdateCharacterInfo();
         UpdateFactionInfo();
         UpdateHexTileInfo();
-        UpdateLandmarkInfo();
+        //UpdateLandmarkInfo();
         UpdateMonsterInfo();
         UpdatePartyInfo();
         UpdateCombatLogs();
@@ -527,8 +533,8 @@ public class UIManager : MonoBehaviour {
         //if (monsterInfoUI.isShowing) {
         //    monsterInfoUI.HideMenu();
         //}
-        landmarkInfoUI.SetData(landmark);
-        landmarkInfoUI.OpenMenu();
+        //landmarkInfoUI.SetData(landmark);
+        //landmarkInfoUI.OpenMenu();
         landmark.CenterOnLandmark();
         //		playerActionsUI.ShowPlayerActionsUI ();
     }
@@ -913,7 +919,8 @@ public class UIManager : MonoBehaviour {
     public GameObject contextMenuItemPrefab;
     public UIContextMenu contextMenu;
     private void ShowContextMenu(HexTile tile) {
-        if (PlayerManager.Instance.isChoosingStartingTile || landmarkInfoUI.isWaitingForAttackTarget) {
+        if (PlayerManager.Instance.isChoosingStartingTile) {
+            //|| landmarkInfoUI.isWaitingForAttackTarget
             return;
         }
         ContextMenuSettings settings = tile.GetContextMenuSettings();
@@ -975,5 +982,25 @@ public class UIManager : MonoBehaviour {
         questSummaryLbl.text = questSummary;
     }
     #endregion
+}
 
+[System.Serializable]
+public class UnifiedUISettings {
+    [Header("Frame Settings")]
+    public Color bgColor;
+    public Color outlineColor;
+    public Color innerHeaderColor;
+    public Color outerHeaderColor;
+    public float outlineThickness;
+    public float headerHeight;
+    public float closeBtnSize;
+
+    [Header("ScrollView Settings")]
+    public ScrollRect.MovementType scrollMovementType;
+    public float scrollSensitivity;
+    public ScrollRect.ScrollbarVisibility scrollbarVisibility;
+
+    [Header("ScrollView Element Settings")]
+    public Color evenColor;
+    public Color oddColor;
 }

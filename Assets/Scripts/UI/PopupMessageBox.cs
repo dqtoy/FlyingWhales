@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class PopupMessageBox : MonoBehaviour{
+public class PopupMessageBox : UIMenu{
 
     public static PopupMessageBox Instance = null;
 
@@ -23,7 +23,7 @@ public class PopupMessageBox : MonoBehaviour{
         Instance = this;
     }
 
-    public void Initialize() {
+    internal override void Initialize() {
         Messenger.AddListener<string, MESSAGE_BOX_MODE, bool>(Signals.SHOW_POPUP_MESSAGE, ShowMessage);
         Messenger.AddListener(Signals.HIDE_POPUP_MESSAGE, HideMessage);
     }

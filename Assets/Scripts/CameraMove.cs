@@ -124,7 +124,8 @@ public class CameraMove : MonoBehaviour {
             Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D)) {
 #else
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) ||
-            Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D) || Minimap.Instance.isDragging) {
+            Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D) 
+            || (Minimap.Instance != null && Minimap.Instance.isDragging)) {
 #endif
             //reset target when player pushes a button to pan the camera
             target = null;
@@ -161,12 +162,14 @@ public class CameraMove : MonoBehaviour {
         float xSize = Mathf.FloorToInt(topCornerHexTile.transform.localPosition.x + 4f) * 3;
         float zSize = Mathf.FloorToInt(topCornerHexTile.transform.localPosition.y + 4f) * 3;
 
-        int width = (int)Mathf.Min(xSize, Minimap.Instance.maxWidth);
-        int height = (int)Mathf.Min(zSize, Minimap.Instance.maxHeight);
+        if (Minimap.Instance != null) {
+            int width = (int)Mathf.Min(xSize, Minimap.Instance.maxWidth);
+            int height = (int)Mathf.Min(zSize, Minimap.Instance.maxHeight);
 
-        minimapTexture = new RenderTexture(width, height, 16, RenderTextureFormat.ARGB32);
-        minimapTexture.Create();
-        wholeMapCamera.targetTexture = minimapTexture;
+            minimapTexture = new RenderTexture(width, height, 16, RenderTextureFormat.ARGB32);
+            minimapTexture.Create();
+            wholeMapCamera.targetTexture = minimapTexture;
+        }
     }
     public void UpdateMinimapTexture() {
         wholeMapCamera.Render();

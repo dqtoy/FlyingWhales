@@ -249,7 +249,7 @@ public class ConsoleMenu : UIMenu {
             AddErrorMessage("There was an error in the command format of " + parameters[0]);
             return;
         }
-        UIManager.Instance.ShowLandmarkInfo(landmark);
+        //UIManager.Instance.ShowLandmarkInfo(landmark);
         //character.CenterOnCharacter();
     }
     #endregion
