@@ -345,8 +345,8 @@ public class UIManager : MonoBehaviour {
         smallInfoRT.anchorMax = new Vector2(0f, 1f);
         smallInfoRT.pivot = new Vector2(0f, 1f);
 
-        v3.x += 50f;
-        v3.y -= 50f;
+        v3.x += 25f;
+        v3.y -= 25f;
         smallInfoGO.transform.position = v3;
 
         Vector3[] corners = new Vector3[4]; //bottom-left, top-left, top-right, bottom-right

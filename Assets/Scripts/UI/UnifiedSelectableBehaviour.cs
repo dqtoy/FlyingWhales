@@ -38,6 +38,11 @@ public class UnifiedSelectableBehaviour : MonoBehaviour, IPointerEnterHandler, I
         }
     }
 
+    public void Reset() {
+        selectable.image.sprite = UIManager.Instance.settings.hoverOutSprite;
+        text.color = UIManager.Instance.settings.hoverOutTextColor;
+    }
+
     public void OnPointerEnter(PointerEventData eventData) {
         isHovering = true;
         if (isToggle) {

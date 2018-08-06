@@ -44,6 +44,10 @@ public class UIMenu : MonoBehaviour {
          */
     public virtual void OpenMenu() {
         //UIManager.Instance.AddMenuToQueue(this, _data);
+        UnifiedSelectableBehaviour usb = closeBtn.gameObject.GetComponent<UnifiedSelectableBehaviour>();
+        if (usb != null) {
+            usb.Reset();
+        }
         ShowMenu();
     }
     public virtual void CloseMenu() {
