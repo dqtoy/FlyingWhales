@@ -216,7 +216,7 @@ namespace ECS {
                 if (_equippedWeapon != null) {
                     weaponAttack = _equippedWeapon.attackPower;
                 }
-                return (int) (((weaponAttack + (str / 3f)) * (1f + ((str / 10f) / 100f))) * ((float)level * 4f)); //TODO: + passive bonus attack
+                return (int) (((weaponAttack + (str / 3f)) * (1f + ((str / 10f) / 100f))) + ((float)level * 4f)); //TODO: + passive bonus attack
             }
         }
         public int mFinalAttack {
@@ -226,7 +226,7 @@ namespace ECS {
                 if (_equippedWeapon != null) {
                     weaponAttack = _equippedWeapon.attackPower;
                 }
-                return (int) (((weaponAttack + (intl / 3f)) * (1f + ((intl / 10f) / 100f))) * ((float) level * 4f)); //TODO: + passive bonus attack
+                return (int) (((weaponAttack + (intl / 3f)) * (1f + ((intl / 10f) / 100f))) + ((float) level * 4f)); //TODO: + passive bonus attack
             }
         }
         public int speed {
@@ -476,7 +476,7 @@ namespace ECS {
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
             Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
             Messenger.AddListener<Region>("RegionDeath", RegionDeath);
-            Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
+            //Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
             Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
             //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
@@ -485,7 +485,7 @@ namespace ECS {
             Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
             Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
             Messenger.RemoveListener<Region>("RegionDeath", RegionDeath);
-            Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
+            //Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
             Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
             //Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
@@ -1056,10 +1056,6 @@ namespace ECS {
 		//If a character picks up an item, it is automatically added to his/her inventory
 		internal void PickupItem(Item item){
 			Item newItem = item;
-			if(item.isUnlimited){
-				newItem = item.CreateNewCopy ();
-				newItem.isUnlimited = false;
-			}
             if (_inventory.Contains(newItem)) {
                 throw new Exception(this.name + " already has an instance of " + newItem.itemName);
             }
@@ -1241,10 +1237,6 @@ namespace ECS {
 				}
 			}
 			Weapon newWeapon = weapon;
-			if(weapon.isUnlimited){
-				newWeapon = (Weapon)weapon.CreateNewCopy ();
-				newWeapon.isUnlimited = false;
-			}
 			AddEquippedItem(newWeapon);
 			//newWeapon.SetPossessor (this);
 			//newWeapon.ResetDurability();
@@ -1301,10 +1293,6 @@ namespace ECS {
 				return false;
 			}
 			Armor newArmor = armor;
-			if(armor.isUnlimited){
-				newArmor = (Armor)armor.CreateNewCopy ();
-				newArmor.isUnlimited = false;
-			}
 			bodyPartToEquip.AttachItem(newArmor, Utilities.GetNeededAttributeForArmor(newArmor));
 			//			armor.bodyPartAttached = bodyPart;
 			AddEquippedItem(newArmor);
@@ -2587,15 +2575,15 @@ namespace ECS {
             _idleActions = new List<CharacterAction>();
             CharacterAction daydream = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DAYDREAM);
             CharacterAction play = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.PLAY);
-            CharacterAction chat = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.CHAT);
+            //CharacterAction chat = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.CHAT);
 
             daydream.SetActionCategory(ACTION_CATEGORY.IDLE);
             play.SetActionCategory(ACTION_CATEGORY.IDLE);
-            chat.SetActionCategory(ACTION_CATEGORY.IDLE);
+            //chat.SetActionCategory(ACTION_CATEGORY.IDLE);
 
             _idleActions.Add(daydream);
             _idleActions.Add(play);
-            _idleActions.Add(chat);
+            //_idleActions.Add(chat);
         }
         public CharacterAction GetRandomDesperateAction(ref IObject targetObject) {
             targetObject = _ownParty.characterObject;

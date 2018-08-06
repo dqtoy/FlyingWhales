@@ -595,11 +595,8 @@ public class BaseLandmark : ILocation {
 		_itemsInLandmark.AddRange (item);
 	}
 	public void RemoveItemInLandmark(Item item){
-		if(!item.isUnlimited){
-			_itemsInLandmark.Remove (item);
-			//item.SetPossessor (null);
-		}
-	}
+        _itemsInLandmark.Remove(item);
+    }
     public void RemoveItemInLandmark(string itemName) {
         for (int i = 0; i < itemsInLandmark.Count; i++) {
             ECS.Item currItem = itemsInLandmark[i];

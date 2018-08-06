@@ -114,37 +114,19 @@ namespace ECS{
 
         #region overrides
         public override Item CreateNewCopy() {
+            if (isStackable) {
+                return ItemManager.Instance.allWeapons[itemName];
+            }
             Weapon copy = new Weapon();
             copy.weaponType = weaponType;
-            //copy.material = material;
-            //copy.quality = quality;
             copy.weaponPower = weaponPower;
             copy._prefix = _prefix;
             copy._suffix = _suffix;
             copy.element = element;
-			//copy.damageRange = damageRange;
-   //         copy.attributes = new List<IBodyPart.ATTRIBUTE>(attributes);
-   //         copy.equipRequirements = new List<IBodyPart.ATTRIBUTE>(equipRequirements);
             copy.bodyPartsAttached = new List<IBodyPart>(bodyPartsAttached);
-
-            //copy.attackSkills = new List<string>(attackSkills);
-            //copy.healSkills = new List<string>(healSkills);
             SetCommonData(copy);
-            //copy.ConstructSkillsList();
             return copy;
         }
         #endregion
-
-   //     public void SetQuality(QUALITY quality) {
-   //         this.quality = quality;
-			//if(quality == QUALITY.CRUDE){
-			//	this.weaponPower += ItemManager.Instance.crudeWeaponPowerModifier;
-			//	this.durability += ItemManager.Instance.crudeWeaponDurabilityModifier;
-			//}else if(quality == QUALITY.EXCEPTIONAL){
-			//	this.weaponPower += ItemManager.Instance.exceptionalWeaponPowerModifier;
-			//	this.durability += ItemManager.Instance.exceptionalWeaponDurabilityModifier;
-			//}
-			//this.currDurability = this.durability;
-   //     }
     }
 }

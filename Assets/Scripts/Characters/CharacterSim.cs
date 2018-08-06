@@ -133,13 +133,13 @@ public class CharacterSim : ICharacterSim {
     public int pFinalAttack {
         get {
             float str = (float) strength;
-            return (int) (((_equippedWeapon.attackPower + (str / 3f)) * (1f + ((str / 10f) / 100f))) * ((float) level * 4f)); //TODO: + passive bonus attack
+            return (int) (((_equippedWeapon.attackPower + (str / 3f)) * (1f + ((str / 10f) / 100f))) + ((float) level * 4f)); //TODO: + passive bonus attack
         }
     }
     public int mFinalAttack {
         get {
             float intl = (float) intelligence;
-            return (int) (((_equippedWeapon.attackPower + (intl / 3f)) * (1f + ((intl / 10f) / 100f))) * ((float) level * 4f)); //TODO: + passive bonus attack
+            return (int) (((_equippedWeapon.attackPower + (intl / 3f)) * (1f + ((intl / 10f) / 100f))) + ((float) level * 4f)); //TODO: + passive bonus attack
         }
     }
     public float critChance {

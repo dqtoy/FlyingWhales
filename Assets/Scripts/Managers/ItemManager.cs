@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System;
+using ECS;
 
 public class ItemManager : MonoBehaviour {
 
@@ -13,12 +14,12 @@ public class ItemManager : MonoBehaviour {
         "Tier 1 Weapon Chest"
     };
 
-    private Dictionary<string, ECS.Item> _allItems;
-	private Dictionary<string, ECS.Weapon> _allWeapons;
-	private Dictionary<string, ECS.Armor> _allArmors;
+    private Dictionary<string, Item> _allItems;
+	private Dictionary<string, Weapon> _allWeapons;
+	private Dictionary<string, Armor> _allArmors;
 
-    private Dictionary<WEAPON_TYPE, ECS.WeaponType> _weaponTypeData;
-    private Dictionary<ARMOR_TYPE, ECS.ArmorType> _armorTypeData;
+    private Dictionary<WEAPON_TYPE, WeaponType> _weaponTypeData;
+    private Dictionary<ARMOR_TYPE, ArmorType> _armorTypeData;
 
 	private Dictionary<ITEM_TYPE, List<EQUIPMENT_TYPE>> _equipmentTypes;
 
@@ -30,9 +31,9 @@ public class ItemManager : MonoBehaviour {
 
     [SerializeField] private List<ItemSprite> itemSprites;
 
-    //private List<List<ECS.Item>> _itemTiers;
-    //private List<List<ECS.Weapon>> _weaponTiers;
-    //private List<List<ECS.Armor>> _armorTiers;
+    //private List<List<Item>> _itemTiers;
+    //private List<List<Weapon>> _weaponTiers;
+    //private List<List<Armor>> _armorTiers;
 
     //   public int crudeWeaponPowerModifier;
     //public int exceptionalWeaponPowerModifier;
@@ -48,10 +49,10 @@ public class ItemManager : MonoBehaviour {
     //public List<TextAssetListWrapper> weaponTiersAsset;
 
     #region getters/setters
-    public Dictionary<ARMOR_TYPE, ECS.ArmorType> armorTypeData{
+    public Dictionary<ARMOR_TYPE, ArmorType> armorTypeData{
 		get { return _armorTypeData; }
 	}
-	public Dictionary<WEAPON_TYPE, ECS.WeaponType> weaponTypeData{
+	public Dictionary<WEAPON_TYPE, WeaponType> weaponTypeData{
 		get { return _weaponTypeData; }
 	}
     public Dictionary<WEAPON_PREFIX, WeaponPrefix> weaponPrefixes {
@@ -66,13 +67,13 @@ public class ItemManager : MonoBehaviour {
     public Dictionary<ARMOR_SUFFIX, ArmorSuffix> armorSuffixes {
         get { return _armorSuffixes; }
     }
-    public Dictionary<string, ECS.Item> allItems {
+    public Dictionary<string, Item> allItems {
         get { return _allItems; }
     }
-    public Dictionary<string, ECS.Weapon> allWeapons {
+    public Dictionary<string, Weapon> allWeapons {
         get { return _allWeapons; }
     }
-    public Dictionary<string, ECS.Armor> allArmors {
+    public Dictionary<string, Armor> allArmors {
         get { return _allArmors; }
     }
     #endregion
@@ -102,9 +103,9 @@ public class ItemManager : MonoBehaviour {
 
 	}
     private void ConstructItemsDictionary() {
-        _allItems = new Dictionary<string, ECS.Item>();
-		_allWeapons = new Dictionary<string, ECS.Weapon>();
-		_allArmors = new Dictionary<string, ECS.Armor> ();
+        _allItems = new Dictionary<string, Item>();
+		_allWeapons = new Dictionary<string, Weapon>();
+		_allArmors = new Dictionary<string, Armor> ();
         string path = Utilities.dataPath + "Items/";
         string[] directories = Directory.GetDirectories(path);
         for (int i = 0; i < directories.Length; i++) {
@@ -118,28 +119,28 @@ public class ItemManager : MonoBehaviour {
                 Texture2D tex = new Texture2D(24, 24);
                 switch (currItemType) {
 				    case ITEM_TYPE.WEAPON:
-					    ECS.Weapon newWeapon = JsonUtility.FromJson<ECS.Weapon> (dataAsJson);
+					    Weapon newWeapon = JsonUtility.FromJson<Weapon> (dataAsJson);
                         _allItems.Add (newWeapon.itemName, newWeapon);
 					    _allWeapons.Add (newWeapon.itemName, newWeapon);
                         CreateWeaponPrefix(newWeapon.prefixType);
                         CreateWeaponSuffix(newWeapon.suffixType);
                         break;
                     case ITEM_TYPE.ARMOR:
-                        ECS.Armor newArmor = JsonUtility.FromJson<ECS.Armor>(dataAsJson);
+                        Armor newArmor = JsonUtility.FromJson<Armor>(dataAsJson);
                         _allItems.Add(newArmor.itemName, newArmor);
 					    _allArmors.Add (newArmor.itemName, newArmor);
                         CreateArmorPrefix(newArmor.prefixType);
                         CreateArmorSuffix(newArmor.suffixType);
                         break;
                     default:
-					    ECS.Item newItem = JsonUtility.FromJson<ECS.Item>(dataAsJson);
+					    Item newItem = JsonUtility.FromJson<Item>(dataAsJson);
                         _allItems.Add(newItem.itemName, newItem);
                         break;
                 }
             }
         }
     }
-    public ECS.Item CreateNewItemInstance(string itemName) {
+    public Item CreateNewItemInstance(string itemName) {
         if (_allItems.ContainsKey(itemName)) {
             return _allItems[itemName].CreateNewCopy();
         }
@@ -147,7 +148,7 @@ public class ItemManager : MonoBehaviour {
         //throw new System.Exception("There is no item type called " + itemName);
     }
 
-    public ECS.Item CreateNewItemInstance(MATERIAL itemMaterial, EQUIPMENT_TYPE equipmentType) {
+    public Item CreateNewItemInstance(MATERIAL itemMaterial, EQUIPMENT_TYPE equipmentType) {
         string itemName = Utilities.NormalizeString(itemMaterial.ToString()) + " " + Utilities.NormalizeString(equipmentType.ToString());
         if (_allItems.ContainsKey(itemName)) {
             return _allItems[itemName].CreateNewCopy();
@@ -156,26 +157,26 @@ public class ItemManager : MonoBehaviour {
         //throw new System.Exception("There is no item type called " + itemName);
     }
     private void ConstructWeaponTypeData() {
-        _weaponTypeData = new Dictionary<WEAPON_TYPE, ECS.WeaponType>();
+        _weaponTypeData = new Dictionary<WEAPON_TYPE, WeaponType>();
         string path = Utilities.dataPath + "WeaponTypes/";
         string[] files = Directory.GetFiles(path, "*.json");
         for (int i = 0; i < files.Length; i++) {
             string currFilePath = files[i];
             string dataAsJson = File.ReadAllText(currFilePath);
-            ECS.WeaponType data = JsonUtility.FromJson<ECS.WeaponType>(dataAsJson);
+            WeaponType data = JsonUtility.FromJson<WeaponType>(dataAsJson);
             _weaponTypeData.Add(data.weaponType, data);
 			_equipmentTypes [ITEM_TYPE.WEAPON].Add ((EQUIPMENT_TYPE)data.weaponType);
 			_equipmentTypes [ITEM_TYPE.ITEM].Add ((EQUIPMENT_TYPE)data.weaponType);
         }
     }
     private void ConstructArmorTypeData() {
-        _armorTypeData = new Dictionary<ARMOR_TYPE, ECS.ArmorType>();
+        _armorTypeData = new Dictionary<ARMOR_TYPE, ArmorType>();
         string path = Utilities.dataPath + "ArmorTypes/";
         string[] files = Directory.GetFiles(path, "*.json");
         for (int i = 0; i < files.Length; i++) {
             string currFilePath = files[i];
             string dataAsJson = File.ReadAllText(currFilePath);
-            ECS.ArmorType data = JsonUtility.FromJson<ECS.ArmorType>(dataAsJson);
+            ArmorType data = JsonUtility.FromJson<ArmorType>(dataAsJson);
             _armorTypeData.Add(data.armorType, data);
 			_equipmentTypes [ITEM_TYPE.ARMOR].Add ((EQUIPMENT_TYPE)data.armorType);
 			_equipmentTypes [ITEM_TYPE.ITEM].Add ((EQUIPMENT_TYPE)data.armorType);
@@ -224,9 +225,9 @@ public class ItemManager : MonoBehaviour {
     }
 
     //private void ConstructArmorTiers(){
-    //	_armorTiers = new List<List<ECS.Armor>> ();
+    //	_armorTiers = new List<List<Armor>> ();
     //	for (int i = 0; i < armorTiersAsset.Count; i++) {
-    //		List<ECS.Armor> armorList = new List<ECS.Armor> ();
+    //		List<Armor> armorList = new List<Armor> ();
     //		for (int j = 0; j < armorTiersAsset[i].list.Count; j++) {
     //			armorList.Add (allArmors[armorTiersAsset [i].list [j].name]);
     //		}
@@ -234,9 +235,9 @@ public class ItemManager : MonoBehaviour {
     //	}
     //}
     //private void ConstructWeaponTiers(){
-    //	_weaponTiers = new List<List<ECS.Weapon>> ();
+    //	_weaponTiers = new List<List<Weapon>> ();
     //	for (int i = 0; i < weaponTiersAsset.Count; i++) {
-    //		List<ECS.Weapon> weaponList = new List<ECS.Weapon> ();
+    //		List<Weapon> weaponList = new List<Weapon> ();
     //		for (int j = 0; j < weaponTiersAsset[i].list.Count; j++) {
     //			weaponList.Add (allWeapons[weaponTiersAsset [i].list [j].name]);
     //		}
@@ -244,13 +245,13 @@ public class ItemManager : MonoBehaviour {
     //	}
     //}
     //private void ConstructItemTiers(){
-    //	_itemTiers = new List<List<ECS.Item>> ();
+    //	_itemTiers = new List<List<Item>> ();
     //	int maxCount = _weaponTiers.Count;
     //	if(_armorTiers.Count > _weaponTiers.Count){
     //		maxCount = _armorTiers.Count;
     //	}
     //	for (int i = 0; i < maxCount; i++) {
-    //		List<ECS.Item> itemAssets = new List<ECS.Item> ();
+    //		List<Item> itemAssets = new List<Item> ();
     //		if(i < _armorTiers.Count){
     //			for (int j = 0; j < _armorTiers[i].Count; j++) {
     //				itemAssets.Add (_armorTiers [i][j]);
@@ -266,13 +267,13 @@ public class ItemManager : MonoBehaviour {
     //}
 
 
-    internal ECS.WeaponType GetWeaponTypeData(WEAPON_TYPE weaponType) {
+    internal WeaponType GetWeaponTypeData(WEAPON_TYPE weaponType) {
         if (_weaponTypeData.ContainsKey(weaponType)) {
             return _weaponTypeData[weaponType];
         }
         return null;
     }
-    internal ECS.ArmorType GetArmorTypeData(ARMOR_TYPE armorType) {
+    internal ArmorType GetArmorTypeData(ARMOR_TYPE armorType) {
         if (_armorTypeData.ContainsKey(armorType)) {
             return _armorTypeData[armorType];
         }
@@ -301,24 +302,24 @@ public class ItemManager : MonoBehaviour {
         return false;
     }
 
-	//internal ECS.Weapon GetRandomWeapon(){
+	//internal Weapon GetRandomWeapon(){
 	//	int index = UnityEngine.Random.Range (0, allWeapons.Count);
 	//	int count = 0;
-	//	foreach (ECS.Weapon weapon in allWeapons.Values) {
+	//	foreach (Weapon weapon in allWeapons.Values) {
 	//		if(index == count){
-	//			return (ECS.Weapon)CreateNewItemInstance (weapon.itemName);
+	//			return (Weapon)CreateNewItemInstance (weapon.itemName);
 	//		}else{
 	//			count++;
 	//		}
 	//	}
 	//	return null;
 	//}
-	//internal ECS.Armor GetRandomArmor(){
+	//internal Armor GetRandomArmor(){
 	//	int index = UnityEngine.Random.Range (0, _allArmors.Count);
 	//	int count = 0;
-	//	foreach (ECS.Armor armor in _allArmors.Values) {
+	//	foreach (Armor armor in _allArmors.Values) {
 	//		if(index == count){
-	//			return (ECS.Armor)CreateNewItemInstance (armor.itemName);
+	//			return (Armor)CreateNewItemInstance (armor.itemName);
 	//		}else{
 	//			count++;
 	//		}
@@ -340,33 +341,33 @@ public class ItemManager : MonoBehaviour {
         return null;
     }
 
-	//internal ECS.Weapon GetRandomWeaponTier(int tier){
+	//internal Weapon GetRandomWeaponTier(int tier){
 	//	if(tier > 0){
 	//		int index = tier - 1;
-	//		ECS.Weapon weaponAsset = _weaponTiers [index] [UnityEngine.Random.Range (0, _weaponTiers [index].Count)];
-	//		return (ECS.Weapon)CreateNewItemInstance (weaponAsset.itemName);
+	//		Weapon weaponAsset = _weaponTiers [index] [UnityEngine.Random.Range (0, _weaponTiers [index].Count)];
+	//		return (Weapon)CreateNewItemInstance (weaponAsset.itemName);
 	//	}
 	//	return null;
 	//}
 
-	//internal ECS.Armor GetRandomArmorTier(int tier){
+	//internal Armor GetRandomArmorTier(int tier){
 	//	if(tier > 0){
 	//		int index = tier - 1;
-	//		ECS.Armor armorAsset = _armorTiers [index] [UnityEngine.Random.Range (0, _armorTiers [index].Count)];
-	//		return (ECS.Armor)CreateNewItemInstance (armorAsset.itemName);
+	//		Armor armorAsset = _armorTiers [index] [UnityEngine.Random.Range (0, _armorTiers [index].Count)];
+	//		return (Armor)CreateNewItemInstance (armorAsset.itemName);
 	//	}
 	//	return null;
 	//}
 
-	//internal ECS.Item GetRandomItemTier(int tier){
+	//internal Item GetRandomItemTier(int tier){
 	//	if(tier > 0){
 	//		int index = tier - 1;
-	//		ECS.Item itemAsset = _itemTiers [index] [UnityEngine.Random.Range (0, _itemTiers [index].Count)];
+	//		Item itemAsset = _itemTiers [index] [UnityEngine.Random.Range (0, _itemTiers [index].Count)];
 	//		return CreateNewItemInstance (itemAsset.itemName);
 	//	}
 	//	return null;
 	//}
-	//internal ECS.Item GetRandomTier(int tier, ITEM_TYPE itemType){
+	//internal Item GetRandomTier(int tier, ITEM_TYPE itemType){
 	//	if(itemType == ITEM_TYPE.WEAPON){
 	//		return GetRandomWeaponTier (tier);
 	//	}else if(itemType == ITEM_TYPE.ARMOR){
@@ -377,7 +378,7 @@ public class ItemManager : MonoBehaviour {
 	//	return null;
 	//}
 
-	//internal List<ECS.Weapon> GetWeaponTierList(int tier){
+	//internal List<Weapon> GetWeaponTierList(int tier){
 	//	if(tier > 0){
 	//		int index = tier - 1;
 	//		return _weaponTiers [index];
@@ -385,7 +386,7 @@ public class ItemManager : MonoBehaviour {
 	//	return null;
 	//}
 
-	//internal List<ECS.Armor> GetArmorTierList(int tier){
+	//internal List<Armor> GetArmorTierList(int tier){
 	//	if(tier > 0){
 	//		int index = tier - 1;
 	//		return _armorTiers [index];
@@ -393,7 +394,7 @@ public class ItemManager : MonoBehaviour {
 	//	return null;
 	//}
 
-	//internal List<ECS.Item> GetItemTierList(int tier){
+	//internal List<Item> GetItemTierList(int tier){
 	//	if(tier > 0){
 	//		int index = tier - 1;
 	//		return _itemTiers [index];
@@ -401,7 +402,7 @@ public class ItemManager : MonoBehaviour {
 	//	return null;
 	//}
 
- //   public bool IsLootChest(ECS.Item item) {
+ //   public bool IsLootChest(Item item) {
  //       if (lootChestNames.Contains(item.itemName)) {
  //           return true;
  //       }

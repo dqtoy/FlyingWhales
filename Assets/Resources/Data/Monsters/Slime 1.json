@@ -1,1 +1,1 @@
-{"_name":"Slime 1","_type":0,"_category":0,"_level":1,"_experienceDrop":20,"_maxHP":50,"_maxSP":0,"_attackPower":8,"_speed":100,"_def":0,"_dodgeChance":0.0,"_hitChance":0.0,"_critChance":0.0,"_skillNames":["Normal Attack"],"_elementChanceWeaknesses":[],"_elementChanceResistances":[]}
+{"_name":"Slime 1","_type":0,"_category":0,"_level":1,"_experienceDrop":20,"_maxHP":40,"_maxSP":0,"_attackPower":10,"_speed":100,"_def":0,"_dodgeChance":0.0,"_hitChance":0.0,"_critChance":0.0,"_skillNames":["Normal Attack"],"_elementChanceWeaknesses":[],"_elementChanceResistances":[]}

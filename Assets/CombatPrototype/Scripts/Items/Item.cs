@@ -8,9 +8,8 @@ namespace ECS{
 		public string itemName;
 		public string description;
         public string interactString;
-        public bool isUnlimited;
-        public bool _isObtainable;
         public int goldCost;
+        public bool isStackable;
 
         protected ECS.Character _owner; //Not included in CreateNewCopy
         protected bool _isEquipped;
@@ -22,9 +21,6 @@ namespace ECS{
         public bool isEquipped{
 			get { return _isEquipped; }
 		}
-        public bool isObtainable {
-            get { return (itemType != ITEM_TYPE.ITEM ? true : _isObtainable); }
-        }
         public int id {
             get { return _id; }
         }
@@ -64,9 +60,6 @@ namespace ECS{
         //public void SetcollectChance(int weight) {
         //    collectChance = weight;
         //}
-        public void SetIsUnlimited(bool state) {
-            isUnlimited = state;
-        }
 
         public void OnItemPlacedOnLandmark(BaseLandmark landmark) {
             Messenger.Broadcast(Signals.ITEM_PLACED_LANDMARK, this, landmark);
@@ -77,6 +70,9 @@ namespace ECS{
 
         #region virtuals
         public virtual Item CreateNewCopy() {
+            if (isStackable) {
+                return ItemManager.Instance.allItems[itemName];
+            }
             Item copy = new Item();
             SetCommonData(copy);
             return copy;
@@ -87,25 +83,8 @@ namespace ECS{
             item.itemType = itemType;
             item.itemName = itemName;
             item.description = description;
-            //         item.bonusActRate = bonusActRate;
-            //         item.bonusStrength = bonusStrength;
-            //         item.bonusIntelligence = bonusIntelligence;
-            //         item.bonusAgility = bonusAgility;
-            //         item.bonusVitality = bonusVitality;
-            //         item.bonusMaxHP = bonusMaxHP;
-            //         item.bonusDodgeRate = bonusDodgeRate;
-            //         item.bonusParryRate = bonusParryRate;
-            //         item.bonusBlockRate = bonusBlockRate;
-            //         item.durability = durability;
-            //         item.currDurability = currDurability;
-            //item.cost = cost;
-            //item.exploreWeight = exploreWeight;
-            //item.collectChance = collectChance;
-            item.isUnlimited = isUnlimited;
-            item._isObtainable = isObtainable;
             item.interactString = interactString;
             item.goldCost = goldCost;
-            //item.statusEffectResistances = new List<StatusEffectRate>(statusEffectResistances);
         }
     }
 }
