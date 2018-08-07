@@ -142,8 +142,8 @@ namespace worldcreator {
             ECS.CombatManager.Instance.Initialize();
             LoadRegions(data);
             FactionManager.Instance.LoadFactions(data);
-            LandmarkManager.Instance.LoadLandmarks(data);
             LandmarkManager.Instance.LoadAreas(data);
+            LandmarkManager.Instance.LoadLandmarks(data);
             OccupyRegions(data);
             GenerateOuterGrid();
             CharacterManager.Instance.LoadCharacters(data);
