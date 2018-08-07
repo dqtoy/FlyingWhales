@@ -26,6 +26,7 @@ public class WorldConfigItem : MonoBehaviour {
     public void OnChooseFile() {
         if (file != null) {
             WorldSaveData data = SaveGame.Load<WorldSaveData>(file.FullName);
+            Utilities.ValidateSaveData(data);
             WorldConfigManager.Instance.SetDataToUse(data);
         } else {
             WorldConfigManager.Instance.SetDataToUse(null);

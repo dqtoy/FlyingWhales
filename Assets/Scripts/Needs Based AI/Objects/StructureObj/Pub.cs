@@ -5,7 +5,7 @@ using UnityEngine;
 public class Pub : StructureObj {
 
 	public Pub() : base() {
-        _specificObjectType = LANDMARK_TYPE.PUB;
+        //_specificObjectType = LANDMARK_TYPE.PUB;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
     }
 

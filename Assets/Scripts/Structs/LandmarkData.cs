@@ -10,7 +10,8 @@ public class LandmarkData {
     public List<LANDMARK_TAG> uniqueTags;
     public LandmarkItemData[] itemData;
     public Sprite landmarkObjectSprite;
-    public List<LandmarkStructureSprite> landmarkTileSprites;
+    public List<LandmarkStructureSprite> humansLandmarkTileSprites;
+    public List<LandmarkStructureSprite> elvenLandmarkTileSprites;
     public List<PASSABLE_TYPE> possibleSpawnPoints;
 
     [Header("Monster Spawner")]

@@ -365,7 +365,7 @@ public class CharacterAvatar : PooledObject{
 //        }
 
         UIManager.Instance.UpdateHexTileInfo();
-        UIManager.Instance.UpdateLandmarkInfo();
+        //UIManager.Instance.UpdateLandmarkInfo();
     }
 	protected void AddCharactersToLocation(ILocation location) {
         _specificLocation = location;
@@ -381,7 +381,7 @@ public class CharacterAvatar : PooledObject{
 //		}
 
 		UIManager.Instance.UpdateHexTileInfo();
-        UIManager.Instance.UpdateLandmarkInfo();
+        //UIManager.Instance.UpdateLandmarkInfo();
     }
 	public void SetQueuedAction(Action action){
 		queuedAction = action;

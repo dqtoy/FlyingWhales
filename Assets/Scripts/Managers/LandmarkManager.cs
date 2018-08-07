@@ -314,19 +314,19 @@ public class LandmarkManager : MonoBehaviour {
             case LEVEL.HIGH:
                 landmarksSettings.Add(LANDMARK_TYPE.INN, 2);
                 landmarksSettings.Add(LANDMARK_TYPE.HUNTING_GROUNDS, 2);
-                landmarksSettings.Add(LANDMARK_TYPE.PUB, 2);
+                //landmarksSettings.Add(LANDMARK_TYPE.PUB, 2);
                 landmarksSettings.Add(LANDMARK_TYPE.TEMPLE, 2);
                 break;
             case LEVEL.AVERAGE:
                 landmarksSettings.Add(LANDMARK_TYPE.INN, 2);
                 landmarksSettings.Add(LANDMARK_TYPE.HUNTING_GROUNDS, 2);
-                landmarksSettings.Add(LANDMARK_TYPE.PUB, 1);
+                //landmarksSettings.Add(LANDMARK_TYPE.PUB, 1);
                 landmarksSettings.Add(LANDMARK_TYPE.TEMPLE, 1);
                 break;
             case LEVEL.LOW:
                 landmarksSettings.Add(LANDMARK_TYPE.INN, 1);
                 landmarksSettings.Add(LANDMARK_TYPE.HUNTING_GROUNDS, 1);
-                landmarksSettings.Add(LANDMARK_TYPE.PUB, 1);
+                //landmarksSettings.Add(LANDMARK_TYPE.PUB, 1);
                 landmarksSettings.Add(LANDMARK_TYPE.TEMPLE, 1);
                 break;
             default:
@@ -490,9 +490,14 @@ public class LandmarkManager : MonoBehaviour {
         }
         return allLandmarks;
     }
-    public List<LandmarkStructureSprite> GetLandmarkTileSprites(LANDMARK_TYPE landmarkType) {
+    public List<LandmarkStructureSprite> GetLandmarkTileSprites(LANDMARK_TYPE landmarkType, RACE race = RACE.NONE) {
         LandmarkData data = GetLandmarkData(landmarkType);
-        return data.landmarkTileSprites;
+        if (race == RACE.HUMANS) {
+            return data.humansLandmarkTileSprites;
+        } else if (race == RACE.ELVES) {
+            return data.elvenLandmarkTileSprites;
+        }
+        return null;
     }
     #endregion
 
