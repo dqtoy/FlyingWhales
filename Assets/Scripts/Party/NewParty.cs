@@ -132,7 +132,7 @@ public class NewParty : IParty {
             RemoveCharacter(icharacters[0]);
         }
     }
-    protected virtual void RemoveListeners() {
+    public virtual void RemoveListeners() {
         Messenger.RemoveListener<ActionThread>(Signals.LOOK_FOR_ACTION, AdvertiseSelf);
         Messenger.RemoveListener<BuildStructureQuestData>(Signals.BUILD_STRUCTURE_LOOK_ACTION, BuildStructureLookingForAction);
     }
@@ -179,6 +179,10 @@ public class NewParty : IParty {
         }
     }
     public void RemoveCharacter(ICharacter icharacter) {
+        //bool isCharacterMain = false;
+        //if(mainCharacter == icharacter) {
+        //    isCharacterMain = true;
+        //}
         if (_icharacters.Remove(icharacter)) {
             icharacter.OnRemovedFromParty();
             if (this.specificLocation is BaseLandmark) {
@@ -189,6 +193,9 @@ public class NewParty : IParty {
             }
             if (icharacter is ECS.Character) {
                 Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, icharacter, this);
+                //if (isCharacterMain) {
+                //    icharacter.ownParty.icon.SetAnimator(CharacterManager.Instance.GetAnimatorByRole(mainCharacter.role.roleType));
+                //}
             }
             //Check if there are still characters in this party, if not, change to dead state
             if (_icharacters.Count <= 0) {

@@ -38,6 +38,9 @@ public class CharactersSummaryUI : UIMenu {
     }
 
     private void AddCharacterEntry(ECS.Character character) {
+        if(character.role.roleType == CHARACTER_ROLE.PLAYER) {
+            return;
+        }
         GameObject newEntryGO = UIManager.Instance.InstantiateUIObject(characterEntryPrefab.name, charactersScrollRect.content);
         newEntryGO.transform.localScale = Vector3.one;
         CharacterSummaryEntry newEntry = newEntryGO.GetComponent<CharacterSummaryEntry>();

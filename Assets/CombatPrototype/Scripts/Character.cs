@@ -404,7 +404,7 @@ namespace ECS {
 #if !WORLD_CREATION_TOOL
             GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, UIManager.Instance.characterPortraitsParent);
             _characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
-            _characterPortrait.GeneratePortrait(this, IMAGE_SIZE.X36, true);
+            _characterPortrait.GeneratePortrait(this, IMAGE_SIZE.X36, true, false, data.role);
             portraitGO.SetActive(false);
 #endif
 
@@ -481,7 +481,7 @@ namespace ECS {
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
             //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         }
-        private void UnsubscribeSignals() {
+        public void UnsubscribeSignals() {
             Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
             Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
             Messenger.RemoveListener<Region>("RegionDeath", RegionDeath);
@@ -1673,6 +1673,9 @@ namespace ECS {
                     break;
                 case CHARACTER_ROLE.KING:
                     _role = new King(this);
+                    break;
+                case CHARACTER_ROLE.PLAYER:
+                _role = new PlayerRole(this);
                     break;
                 default:
 		            break;

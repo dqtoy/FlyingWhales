@@ -38,6 +38,8 @@ public class CharacterManager : MonoBehaviour {
     [SerializeField] private List<RacePortraitAssets> portraitAssetsx256;
     public List<Color> hairColors;
 
+    [Header("Character Role Animators")]
+    [SerializeField] private RuntimeAnimatorController[] characterAnimators;
 
     public readonly int HAPPINESS_THRESHOLD = 20;
     public readonly int MENTAL_THRESHOLD = -3;
@@ -596,6 +598,17 @@ public class CharacterManager : MonoBehaviour {
     }
     public void RemoveSquad(Squad squad) {
         allSquads.Remove(squad);
+    }
+    #endregion
+
+    #region Animator
+    public RuntimeAnimatorController GetAnimatorByRole(CHARACTER_ROLE role) {
+        for (int i = 0; i < characterAnimators.Length; i++) {
+            if (characterAnimators[i].name == role.ToString()) {
+                return characterAnimators[i];
+            }
+        }
+        return null;
     }
     #endregion
 

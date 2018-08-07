@@ -325,5 +325,8 @@ public class CharacterIcon : MonoBehaviour {
             return "Up";
         }
     }
+    public void SetAnimator(RuntimeAnimatorController animator) {
+        _avatarAnimator.runtimeAnimatorController = animator;
+    }
     #endregion
 }
