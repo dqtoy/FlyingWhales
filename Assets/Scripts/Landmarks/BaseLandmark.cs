@@ -395,15 +395,14 @@ public class BaseLandmark : ILocation {
     #region Location
     public void AddCharacterToLocation(NewParty iparty) {
         if (!_charactersAtLocation.Contains(iparty)) {
-            iparty.SetSpecificLocation(this);
             //if(iparty.mainCharacter is Character && iparty.mainCharacter.role.roleType != CHARACTER_ROLE.PLAYER) {
                 _charactersAtLocation.Add(iparty);
                 //if (character.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                 //Character currChar = character as Character;
                 this.tileLocation.RemoveCharacterFromLocation(iparty);
-
+            iparty.SetSpecificLocation(this);
 #if !WORLD_CREATION_TOOL
-                _landmarkVisual.OnCharacterEnteredLandmark(iparty);
+            _landmarkVisual.OnCharacterEnteredLandmark(iparty);
                 Messenger.Broadcast<NewParty>(Signals.PARTY_ENTERED_LANDMARK, iparty);
 #endif
             //}
