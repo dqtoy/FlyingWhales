@@ -853,6 +853,7 @@ public enum CHARACTER_ROLE {
 	VILLAIN,
     CIVILIAN,
     KING,
+    PLAYER,
     //FOLLOWER,
     //HERMIT,
     //BEAST,

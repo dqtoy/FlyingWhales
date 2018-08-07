@@ -198,8 +198,10 @@ public class Area {
         return landmarks.Where(x => x.specificLandmarkType == type).Any();
     }
     private void StartOfMonth() {
-        UpdateExcessAndMissingClasses();
-        ScheduleStartOfMonthActions();
+        if(orderClasses.Count > 0) {
+            UpdateExcessAndMissingClasses();
+            ScheduleStartOfMonthActions();
+        }
     }
     private void ScheduleStartOfMonthActions() {
         GameDate gameDate = GameManager.Instance.Today();

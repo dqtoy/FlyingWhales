@@ -33,6 +33,10 @@ public class PlayerManager : MonoBehaviour {
         player.CreatePlayerFaction();
         player.CreatePlayerArea(tile);
         LandmarkManager.Instance.OwnArea(player.playerFaction, player.playerArea);
+        ECS.Character playerCharacter = tile.landmarkOnTile.CreateNewCharacter(RACE.HUMANS, CHARACTER_ROLE.PLAYER, "Warrior");
+        playerCharacter.party.actionData.SetCannotPerformAction(true);
+        playerCharacter.party.RemoveListeners();
+        playerCharacter.UnsubscribeSignals();
         Messenger.RemoveListener<HexTile>(Signals.TILE_LEFT_CLICKED, OnChooseStartingTile);
         Messenger.Broadcast(Signals.HIDE_POPUP_MESSAGE);
         GameManager.Instance.StartProgression();

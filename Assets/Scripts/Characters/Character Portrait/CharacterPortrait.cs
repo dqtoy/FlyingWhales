@@ -15,6 +15,11 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
     private PortraitSettings _portraitSettings;
     private Vector2 normalSize;
 
+    public bool ignoreInteractions;
+
+    [Header("BG")]
+    [SerializeField] private Image bg;
+
     [Header("Head")]
     [SerializeField] private Image head;
 
@@ -42,11 +47,15 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
     [Header("Monster")]
     [SerializeField] private Image wholeImage;
 
+    [Header("Player")]
+    [SerializeField] private Image playerLocator;
+
     [Header("Name")]
     [SerializeField] private TextMeshProUGUI nameLbl;
 
     [Header("Borders")]
     [SerializeField] private GameObject borders;
+    [SerializeField] private GameObject borderParent;
 
     #region getters/setters
     public ECS.Character thisCharacter {
@@ -54,11 +63,33 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
     }
     #endregion
 
-    public void GeneratePortrait(ICharacter character, IMAGE_SIZE imgSize, bool ignoreHover = true, bool ignoreSize = false) {
+    public void GeneratePortrait(ICharacter character, IMAGE_SIZE imgSize, bool ignoreHover = true, bool ignoreSize = false, CHARACTER_ROLE role = CHARACTER_ROLE.NONE) {
         _character = character;
         _ignoreSize = ignoreSize;
         _ignoreHover = ignoreHover;
         SetImageSize(imgSize, ignoreSize);
+        if (character is ECS.Character) {
+            if (role == CHARACTER_ROLE.PLAYER || (character.role != null && character.role.roleType == CHARACTER_ROLE.PLAYER)) {
+                _ignoreHover = true;
+                _ignoreSize = true;
+                body.gameObject.SetActive(false);
+                head.gameObject.SetActive(false);
+                eyes.gameObject.SetActive(false);
+                eyebrows.gameObject.SetActive(false);
+                nose.gameObject.SetActive(false);
+                mouth.gameObject.SetActive(false);
+                hair.gameObject.SetActive(false);
+                hairBack.gameObject.SetActive(false);
+                facialHair.gameObject.SetActive(false);
+                hairOverlay.gameObject.SetActive(false);
+                hairBackOverlay.gameObject.SetActive(false);
+                facialHairOverlay.gameObject.SetActive(false);
+                playerLocator.gameObject.SetActive(true);
+                bg.enabled = false;
+                borderParent.SetActive(false);
+                return;
+            }
+        }
         _portraitSettings = character.portraitSettings;
         if (character is ECS.Character) {
             SetBody(character.portraitSettings.bodyIndex);
@@ -116,7 +147,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
     #region Pointer Actions
     public void OnPointerEnter(PointerEventData eventData) {
 #if !WORLD_CREATION_TOOL
-        if (_ignoreHover) {
+        if (_ignoreHover || ignoreInteractions) {
             return;
         }
         Vector2 currentSize = (this.transform as RectTransform).sizeDelta;
@@ -134,7 +165,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
     }
     public void OnPointerExit(PointerEventData eventData) {
 #if !WORLD_CREATION_TOOL
-        if (_ignoreHover) {
+        if (_ignoreHover || ignoreInteractions) {
             return;
         }
         NormalizeSize();
@@ -147,6 +178,9 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
     }
     public void OnPointerClick(PointerEventData eventData) {
 #if !WORLD_CREATION_TOOL
+        if (ignoreInteractions) {
+            return;
+        }
         if (_character != null) {
             if (UIManager.Instance.characterInfoUI.isWaitingForAttackTarget) {
                 CharacterAction attackAction = _character.ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
@@ -186,6 +220,9 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
 #endif
     }
     public void OnClick(BaseEventData eventData) {
+        if (ignoreInteractions) {
+            return;
+        }
         OnPointerClick(eventData as PointerEventData);
     }
     #endregion
@@ -349,11 +386,11 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
     }
 
     #region Monobehaviours
-    void OnDisable() {
-        if (_isNormalSize) {
-            return;
-        }
-        NormalizeSize();
-    }
+    //void OnDisable() {
+    //    if (_isNormalSize) {
+    //        return;
+    //    }
+    //    NormalizeSize();
+    //}
     #endregion
 }

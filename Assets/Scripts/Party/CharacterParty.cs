@@ -124,11 +124,12 @@ public class CharacterParty : NewParty {
             Vector3.zero, Quaternion.identity, CharacterManager.Instance.characterIconsParent);
         _icon = characterIconGO.GetComponent<CharacterIcon>();
         _icon.SetCharacter(this);
+        _icon.SetAnimator(CharacterManager.Instance.GetAnimatorByRole(mainCharacter.role.roleType));
         PathfindingManager.Instance.AddAgent(_icon.aiPath);
         PathfindingManager.Instance.AddAgent(_icon.pathfinder);
 
     }
-    protected override void RemoveListeners() {
+    public override void RemoveListeners() {
         base.RemoveListeners();
         Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
         Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);

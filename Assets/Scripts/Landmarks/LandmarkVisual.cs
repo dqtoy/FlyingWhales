@@ -10,18 +10,24 @@ public class LandmarkVisual : MonoBehaviour {
     private BaseLandmark _landmark;
 
     [SerializeField] private TextMeshProUGUI landmarkLbl;
+    [SerializeField] private TextMeshProUGUI charCountLbl;
     [SerializeField] private SpriteRenderer topSprite;
     [SerializeField] private SpriteRenderer botSprite;
     [SerializeField] private GameObject exploredGO;
     [SerializeField] private GameObject landmarkNameplateGO;
+    [SerializeField] private GameObject characterIndicatorGO;
     [SerializeField] private SpriteRenderer iconSprite;
     [SerializeField] private Slider hpProgressBar;
     [SerializeField] private ScrollRect charactersScrollView;
+    [SerializeField] private Transform hoverContent;
+    [SerializeField] private Transform playerContent;
     [SerializeField] private AIPath aiPath;
     [SerializeField] private Seeker seeker;
     [SerializeField] private AIDestinationSetter destinationSetter;
     [SerializeField] private LineRenderer lineRenderer;
     public GameObject landmarkHPGO;
+
+    private int _charCount;
 
     #region getters/setters
     public BaseLandmark landmark {
@@ -56,8 +62,14 @@ public class LandmarkVisual : MonoBehaviour {
     public void OnCharacterEnteredLandmark(NewParty iparty) {
         //add character portrait to grid
         CharacterPortrait portrait = iparty.icon.characterPortrait;
-        portrait.transform.SetParent(charactersScrollView.content.transform);
+        if(iparty.mainCharacter is ECS.Character && iparty.mainCharacter.role.roleType == CHARACTER_ROLE.PLAYER) {
+            portrait.transform.SetParent(playerContent);
+        } else {
+            portrait.transform.SetParent(hoverContent);
+            AdjustCharCount(1);
+        }
         portrait.transform.localScale = Vector3.one;
+        portrait.ignoreInteractions = true;
         //(portrait.transform as RectTransform).pivot = new Vector2(0.5f, 0f);
         (portrait.transform as RectTransform).sizeDelta = new Vector2(64, 64);
         //portrait.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
@@ -72,6 +84,10 @@ public class LandmarkVisual : MonoBehaviour {
         //iparty.icon.gameObject.SetActive(true);
         iparty.icon.SetVisualState(true);
         iparty.icon.characterPortrait.SetBorderState(false);
+        if (iparty.mainCharacter is ECS.Character && iparty.mainCharacter.role.roleType == CHARACTER_ROLE.PLAYER) {
+        } else {
+            AdjustCharCount(-1);
+        }
     }
     public void DrawPathTo(BaseLandmark otherLandmark) {
         if (destinationSetter.target != otherLandmark.tileLocation.transform) {
@@ -102,6 +118,23 @@ public class LandmarkVisual : MonoBehaviour {
             }
         }
         landmarkHPGO.SetActive(state);
+    }
+    private void AdjustCharCount(int amount) {
+        _charCount += amount;
+        charCountLbl.text = _charCount.ToString();
+        if (_charCount > 0) {
+            characterIndicatorGO.SetActive(true);
+        } else {
+            characterIndicatorGO.SetActive(false);
+        }
+    }
+    private void UpdateCharCount() {
+        charCountLbl.text = _landmark.charactersAtLocation.Count.ToString();
+        if(_landmark.charactersAtLocation.Count > 0) {
+            characterIndicatorGO.SetActive(true);
+        } else {
+            characterIndicatorGO.SetActive(false);
+        }
     }
     #region Monobehaviour
     //private void OnMouseOver() {
@@ -134,6 +167,12 @@ public class LandmarkVisual : MonoBehaviour {
                 
             }
         }
+    }
+    #endregion
+
+    #region Pointer Actions
+    public void ShowCharactersInLandmark(bool state) {
+        hoverContent.gameObject.SetActive(state);
     }
     #endregion
 }

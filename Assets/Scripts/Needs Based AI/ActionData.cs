@@ -19,6 +19,7 @@ public class ActionData {
     private bool _isNotFirstEncounter;
     private bool _isHalted;
     private bool _hasDoneActionAtHome;
+    private bool _cannotPerformAction;
     private float _homeMultiplier;
 
     #if UNITY_EDITOR
@@ -46,6 +47,7 @@ public class ActionData {
         _homeMultiplier = 1f;
         _hasDoneActionAtHome = false;
         _isHalted = false;
+        _cannotPerformAction = false;
 #if !WORLD_CREATION_TOOL
         SchedulingManager.Instance.AddEntry(GameManager.Instance.EndOfTheMonth(), () => CheckDoneActionHome());
         Messenger.AddListener<CharacterParty, ObjectState>(Signals.STATE_ENDED, APartyEndedState);
@@ -131,6 +133,9 @@ public class ActionData {
             }
         }
     }
+    public void SetCannotPerformAction(bool state) {
+        _cannotPerformAction = state;
+    }
     private void AdjustCurrentDay(int amount) {
         this.currentDay += amount;
         Messenger.Broadcast(Signals.ACTION_DAY_ADJUSTED, currentAction, _party);
@@ -146,7 +151,7 @@ public class ActionData {
     private void PerformCurrentAction() {
         if (!isWaiting && _party.icon.targetLocation == null) {
             if (!isDone && currentAction != null){
-                if (_isHalted) {
+                if (_isHalted || _cannotPerformAction) {
                     return;
                 }
                 //if (!_isNotFirstEncounter) {

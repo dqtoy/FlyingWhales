@@ -359,7 +359,7 @@ public class BaseLandmark : ILocation {
         //}
         //NewParty party = newCharacter.CreateNewParty();
         newCharacter.party.CreateIcon();
-        this.owner.AddNewCharacter(newCharacter);
+        this.tileLocation.areaOfTile.owner.AddNewCharacter(newCharacter);
         this.AddCharacterToLocation(newCharacter.party);
         this.AddCharacterHomeOnLandmark(newCharacter);
         newCharacter.party.icon.SetPosition(this.tileLocation.transform.position);
@@ -395,15 +395,18 @@ public class BaseLandmark : ILocation {
     #region Location
     public void AddCharacterToLocation(NewParty iparty) {
         if (!_charactersAtLocation.Contains(iparty)) {
-            _charactersAtLocation.Add(iparty);
-            //if (character.icharacterType == ICHARACTER_TYPE.CHARACTER) {
-            //Character currChar = character as Character;
-            this.tileLocation.RemoveCharacterFromLocation(iparty);
             iparty.SetSpecificLocation(this);
+            //if(iparty.mainCharacter is Character && iparty.mainCharacter.role.roleType != CHARACTER_ROLE.PLAYER) {
+                _charactersAtLocation.Add(iparty);
+                //if (character.icharacterType == ICHARACTER_TYPE.CHARACTER) {
+                //Character currChar = character as Character;
+                this.tileLocation.RemoveCharacterFromLocation(iparty);
+
 #if !WORLD_CREATION_TOOL
-            _landmarkVisual.OnCharacterEnteredLandmark(iparty);
-            Messenger.Broadcast<NewParty>(Signals.PARTY_ENTERED_LANDMARK, iparty);
+                _landmarkVisual.OnCharacterEnteredLandmark(iparty);
+                Messenger.Broadcast<NewParty>(Signals.PARTY_ENTERED_LANDMARK, iparty);
 #endif
+            //}
         }
          //character.SetSpecificLocation(this);
     //        if (character.icharacterType == ICHARACTER_TYPE.CHARACTER) {
