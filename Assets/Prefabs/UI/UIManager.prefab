@@ -16188,9 +16188,17 @@ MonoBehaviour:
   bgImage: {fileID: 0}
   outlineImage: {fileID: 0}
   isWaitingForAttackTarget: 0
-  tweenPos: {fileID: 114576630262556912}
-  landmarkInfoLbl: {fileID: 0}
-  infoScrollView: {fileID: 0}
+  structureTypeLbl: {fileID: 0}
+  structureIcon: {fileID: 0}
+  areaIcon: {fileID: 0}
+  factionIcon: {fileID: 0}
+  healthProgressBar: {fileID: 0}
+  charactersGO: {fileID: 0}
+  landmarkCharacterPrefab: {fileID: 0}
+  charactersScrollView: {fileID: 0}
+  itemsGO: {fileID: 0}
+  eventsGO: {fileID: 0}
+  eventsScrollView: {fileID: 0}
   logHistoryPrefab: {fileID: 1000010317409672, guid: 9c3df809898ed064ba174fb8c9970249,
     type: 2}
   historyScrollView: {fileID: 0}

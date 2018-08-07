@@ -26,6 +26,16 @@ public class LandmarkInfoUI : UIMenu {
     [SerializeField] private ScrollRect charactersScrollView;
 
     [Space(10)]
+    [Header("Items")]
+    [SerializeField] private GameObject itemsGO;
+    private ItemContainer[] itemContainers;
+
+    [Space(10)]
+    [Header("Events")]
+    [SerializeField] private GameObject eventsGO;
+    [SerializeField] private ScrollRect eventsScrollView;
+
+    [Space(10)]
     [Header("Logs")]
     [SerializeField] private GameObject logHistoryPrefab;
     [SerializeField] private ScrollRect historyScrollView;
