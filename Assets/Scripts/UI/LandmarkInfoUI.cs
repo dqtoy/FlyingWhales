@@ -13,10 +13,17 @@ public class LandmarkInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Content")]
-    [SerializeField] private TweenPosition tweenPos;
-    [SerializeField] private TextMeshProUGUI landmarkInfoLbl;
-    [SerializeField] private ScrollRect infoScrollView;
-	
+    [SerializeField] private TextMeshProUGUI structureTypeLbl;
+    [SerializeField] private Image structureIcon;
+    [SerializeField] private Image areaIcon;
+    [SerializeField] private Image factionIcon;
+    [SerializeField] private Slider healthProgressBar;
+
+    [Space(10)]
+    [Header("Characters")]
+    [SerializeField] private GameObject charactersGO;
+    [SerializeField] private GameObject landmarkCharacterPrefab;
+    [SerializeField] private ScrollRect charactersScrollView;
 
     [Space(10)]
     [Header("Logs")]
@@ -71,109 +78,109 @@ public class LandmarkInfoUI : UIMenu {
     }
 
     public void UpdateLandmarkInfo() {
-        if(currentlyShowingLandmark == null) {
-            return;
-        }
-        string text = string.Empty;
-		if (currentlyShowingLandmark.landmarkName != string.Empty) {
-			text += "<b>Name:</b> " + currentlyShowingLandmark.landmarkName + "\n";
-		}
-		text += "<b>Location:</b> " + currentlyShowingLandmark.tileLocation.urlName;
-        if (currentlyShowingLandmark.tileLocation.areaOfTile != null) {
-            text += " <b>Area:</b> " + currentlyShowingLandmark.tileLocation.areaOfTile.name;
-            if (currentlyShowingLandmark.tileLocation.areaOfTile.owner != null) {
-                text += " (Owner: " + currentlyShowingLandmark.tileLocation.areaOfTile.owner.name + ")"; 
-            }
-        }
-        text += "\n<b>Landmark Type:</b> " + currentlyShowingLandmark.landmarkObj.objectName + " (" + currentlyShowingLandmark.landmarkObj.currentState.stateName + ")";
-        text += "\n<b>HP:</b> " + currentlyShowingLandmark.landmarkObj.currentHP.ToString() + "/" + currentlyShowingLandmark.landmarkObj.maxHP.ToString();
-        text += "\n<b>Durability:</b> " + currentlyShowingLandmark.currDurability.ToString() + "/" + currentlyShowingLandmark.totalDurability.ToString();
-        text += "\n<b>Can Be Occupied:</b> " + currentlyShowingLandmark.canBeOccupied.ToString();
-		text += "\n<b>Is Occupied:</b> " + currentlyShowingLandmark.isOccupied.ToString();
+  //      if(currentlyShowingLandmark == null) {
+  //          return;
+  //      }
+  //      string text = string.Empty;
+		//if (currentlyShowingLandmark.landmarkName != string.Empty) {
+		//	text += "<b>Name:</b> " + currentlyShowingLandmark.landmarkName + "\n";
+		//}
+		//text += "<b>Location:</b> " + currentlyShowingLandmark.tileLocation.urlName;
+  //      if (currentlyShowingLandmark.tileLocation.areaOfTile != null) {
+  //          text += " <b>Area:</b> " + currentlyShowingLandmark.tileLocation.areaOfTile.name;
+  //          if (currentlyShowingLandmark.tileLocation.areaOfTile.owner != null) {
+  //              text += " (Owner: " + currentlyShowingLandmark.tileLocation.areaOfTile.owner.name + ")"; 
+  //          }
+  //      }
+  //      text += "\n<b>Landmark Type:</b> " + currentlyShowingLandmark.landmarkObj.objectName + " (" + currentlyShowingLandmark.landmarkObj.currentState.stateName + ")";
+  //      text += "\n<b>HP:</b> " + currentlyShowingLandmark.landmarkObj.currentHP.ToString() + "/" + currentlyShowingLandmark.landmarkObj.maxHP.ToString();
+  //      text += "\n<b>Durability:</b> " + currentlyShowingLandmark.currDurability.ToString() + "/" + currentlyShowingLandmark.totalDurability.ToString();
+  //      text += "\n<b>Can Be Occupied:</b> " + currentlyShowingLandmark.canBeOccupied.ToString();
+		//text += "\n<b>Is Occupied:</b> " + currentlyShowingLandmark.isOccupied.ToString();
 
-        if (currentlyShowingLandmark.owner != null) {
-            text += "\n<b>Owner:</b> " + currentlyShowingLandmark.owner.urlName;
-            text += "\n<b>Settlement Population: </b> " + currentlyShowingLandmark.civilianCount.ToString();
-        }
+  //      if (currentlyShowingLandmark.owner != null) {
+  //          text += "\n<b>Owner:</b> " + currentlyShowingLandmark.owner.urlName;
+  //          text += "\n<b>Settlement Population: </b> " + currentlyShowingLandmark.civilianCount.ToString();
+  //      }
 
-        text += "\n<b>Connections: </b> ";
-        if (currentlyShowingLandmark.connections.Count > 0) {
-            for (int i = 0; i < currentlyShowingLandmark.connections.Count; i++) {
-                BaseLandmark connection = currentlyShowingLandmark.connections[i];
-                text += "\n" + connection.urlName;
-            }
-        } else {
-            text += "NONE";
-        }
+  //      text += "\n<b>Connections: </b> ";
+  //      if (currentlyShowingLandmark.connections.Count > 0) {
+  //          for (int i = 0; i < currentlyShowingLandmark.connections.Count; i++) {
+  //              BaseLandmark connection = currentlyShowingLandmark.connections[i];
+  //              text += "\n" + connection.urlName;
+  //          }
+  //      } else {
+  //          text += "NONE";
+  //      }
 
-        text += "\n<b>Parties At Landmark: </b> ";
-        if (currentlyShowingLandmark.charactersAtLocation.Count > 0) {
-			for (int i = 0; i < currentlyShowingLandmark.charactersAtLocation.Count; i++) {
-                NewParty currObject = currentlyShowingLandmark.charactersAtLocation[i];
-                if (currObject is CharacterParty) {
-                    CharacterParty currChar = currObject as CharacterParty;
-                    text += "\n" + currChar.urlName; // + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
-                } else if (currObject is MonsterParty) {
-                    //MonsterParty monster = currObject as MonsterParty;
-                    text += "\n" + currObject.name;
-                }
-            }
-		} else {
-			text += "NONE";
-		}
-        text += "\n<b>Characters At Tile: </b> ";
-		if (currentlyShowingLandmark.tileLocation.charactersAtLocation.Count > 0) {
-			for (int i = 0; i < currentlyShowingLandmark.tileLocation.charactersAtLocation.Count; i++) {
-				object currObject = currentlyShowingLandmark.tileLocation.charactersAtLocation[i];
-                if (currObject is ECS.Character) {
-                    ECS.Character currChar = (ECS.Character)currObject;
-                    text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
-                    if (currChar.party.actionData.currentAction != null) {
-                        text += " (" + currChar.party.actionData.currentAction.actionData.actionName + ")";
-                    }
-                } 
-                //else if (currObject is Party) {
-                //    Party currParty = (Party)currObject;
-                //    text += "\n" + currParty.urlName + " - " + (currParty.currentAction != null ? currParty.currentAction.ToString() : "NONE");
-                //}
-            }
-        } else {
-            text += "NONE";
-        }
+  //      text += "\n<b>Parties At Landmark: </b> ";
+  //      if (currentlyShowingLandmark.charactersAtLocation.Count > 0) {
+		//	for (int i = 0; i < currentlyShowingLandmark.charactersAtLocation.Count; i++) {
+  //              NewParty currObject = currentlyShowingLandmark.charactersAtLocation[i];
+  //              if (currObject is CharacterParty) {
+  //                  CharacterParty currChar = currObject as CharacterParty;
+  //                  text += "\n" + currChar.urlName; // + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
+  //              } else if (currObject is MonsterParty) {
+  //                  //MonsterParty monster = currObject as MonsterParty;
+  //                  text += "\n" + currObject.name;
+  //              }
+  //          }
+		//} else {
+		//	text += "NONE";
+		//}
+  //      text += "\n<b>Characters At Tile: </b> ";
+		//if (currentlyShowingLandmark.tileLocation.charactersAtLocation.Count > 0) {
+		//	for (int i = 0; i < currentlyShowingLandmark.tileLocation.charactersAtLocation.Count; i++) {
+		//		object currObject = currentlyShowingLandmark.tileLocation.charactersAtLocation[i];
+  //              if (currObject is ECS.Character) {
+  //                  ECS.Character currChar = (ECS.Character)currObject;
+  //                  text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
+  //                  if (currChar.party.actionData.currentAction != null) {
+  //                      text += " (" + currChar.party.actionData.currentAction.actionData.actionName + ")";
+  //                  }
+  //              } 
+  //              //else if (currObject is Party) {
+  //              //    Party currParty = (Party)currObject;
+  //              //    text += "\n" + currParty.urlName + " - " + (currParty.currentAction != null ? currParty.currentAction.ToString() : "NONE");
+  //              //}
+  //          }
+  //      } else {
+  //          text += "NONE";
+  //      }
 
-		text += "\n<b>Traces:</b> ";
-		if(currentlyShowingLandmark.characterTraces.Count > 0){
-			foreach (ECS.Character character in currentlyShowingLandmark.characterTraces.Keys) {
-				text += "\n" + character.urlName + ", " + currentlyShowingLandmark.characterTraces[character].ToStringDate();
-			}
-		} else {
-			text += "NONE";
-		}
+		//text += "\n<b>Traces:</b> ";
+		//if(currentlyShowingLandmark.characterTraces.Count > 0){
+		//	foreach (ECS.Character character in currentlyShowingLandmark.characterTraces.Keys) {
+		//		text += "\n" + character.urlName + ", " + currentlyShowingLandmark.characterTraces[character].ToStringDate();
+		//	}
+		//} else {
+		//	text += "NONE";
+		//}
 
-		text += "\n<b>Items In Landmark: </b> ";
-		if (currentlyShowingLandmark.itemsInLandmark.Count > 0) {
-			for (int i = 0; i < currentlyShowingLandmark.itemsInLandmark.Count; i++) {
-				ECS.Item item = currentlyShowingLandmark.itemsInLandmark[i];
-				text += "\n" + item.itemName + " (" + ((item.owner == null ? "NONE" : item.owner.name)) + ")";
-			}
-		} else {
-			text += "NONE";
-		}
+		//text += "\n<b>Items In Landmark: </b> ";
+		//if (currentlyShowingLandmark.itemsInLandmark.Count > 0) {
+		//	for (int i = 0; i < currentlyShowingLandmark.itemsInLandmark.Count; i++) {
+		//		ECS.Item item = currentlyShowingLandmark.itemsInLandmark[i];
+		//		text += "\n" + item.itemName + " (" + ((item.owner == null ? "NONE" : item.owner.name)) + ")";
+		//	}
+		//} else {
+		//	text += "NONE";
+		//}
 
-        if (currentlyShowingLandmark.specificLandmarkType == LANDMARK_TYPE.SHOP) {
-            text += "\n<b>Items In Shop: </b> ";
-            Shop shop = currentlyShowingLandmark.landmarkObj as Shop;
-            if (shop.availableItems.Count > 0) {
-                for (int i = 0; i < shop.availableItems.Count; i++) {
-                    text += "\n" + shop.availableItems[i];
-                }
-            } else {
-                text += "NONE";
-            }
+  //      if (currentlyShowingLandmark.specificLandmarkType == LANDMARK_TYPE.SHOP) {
+  //          text += "\n<b>Items In Shop: </b> ";
+  //          Shop shop = currentlyShowingLandmark.landmarkObj as Shop;
+  //          if (shop.availableItems.Count > 0) {
+  //              for (int i = 0; i < shop.availableItems.Count; i++) {
+  //                  text += "\n" + shop.availableItems[i];
+  //              }
+  //          } else {
+  //              text += "NONE";
+  //          }
             
-        }
+  //      }
        
-        landmarkInfoLbl.text = text;
+  //      landmarkInfoLbl.text = text;
     }
 
     #region Log History

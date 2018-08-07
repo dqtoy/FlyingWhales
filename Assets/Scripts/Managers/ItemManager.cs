@@ -103,9 +103,9 @@ public class ItemManager : MonoBehaviour {
 
 	}
     private void ConstructItemsDictionary() {
-        _allItems = new Dictionary<string, Item>();
-		_allWeapons = new Dictionary<string, Weapon>();
-		_allArmors = new Dictionary<string, Armor> ();
+        _allItems = new Dictionary<string, Item>(StringComparer.OrdinalIgnoreCase);
+		_allWeapons = new Dictionary<string, Weapon>(StringComparer.OrdinalIgnoreCase);
+		_allArmors = new Dictionary<string, Armor> (StringComparer.OrdinalIgnoreCase);
         string path = Utilities.dataPath + "Items/";
         string[] directories = Directory.GetDirectories(path);
         for (int i = 0; i < directories.Length; i++) {

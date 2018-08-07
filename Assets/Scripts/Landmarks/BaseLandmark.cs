@@ -379,6 +379,9 @@ public class BaseLandmark : ILocation {
     public void RemoveCharacterHomeOnLandmark(Character character) {
         _charactersWithHomeOnLandmark.Remove(character);
     }
+    public bool IsResident(ICharacter character) {
+        return _charactersWithHomeOnLandmark.Contains(character);
+    }
 	public Character GetPrisonerByID(int id){
 		for (int i = 0; i < _prisoners.Count; i++) {
 			if (_prisoners [i].id == id){
