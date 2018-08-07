@@ -343,7 +343,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #else
         GameObject landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
 #endif
-        List<LandmarkStructureSprite> landmarkTileSprites = LandmarkManager.Instance.GetLandmarkTileSprites(landmarkType);
+        RACE race = RACE.NONE;
+        if (areaOfTile != null) {
+            if (areaOfTile.areaType == AREA_TYPE.ELVEN_SETTLEMENT) {
+                race = RACE.ELVES;
+            } else if (areaOfTile.areaType == AREA_TYPE.HUMAN_SETTLEMENT) {
+                race = RACE.HUMANS;
+            }
+        }
+        List<LandmarkStructureSprite> landmarkTileSprites = LandmarkManager.Instance.GetLandmarkTileSprites(landmarkType, race);
         if (landmarkTileSprites == null || landmarkTileSprites.Count == 0) {
             //DeactivateCenterPiece();
             HideLandmarkTileSprites();

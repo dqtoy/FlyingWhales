@@ -340,8 +340,8 @@ public class ObjectManager : MonoBehaviour {
             case LANDMARK_TYPE.INN:
                 structureObj = new Inn();
                 break;
-            case LANDMARK_TYPE.PUB:
-                structureObj = new Pub();
+            //case LANDMARK_TYPE.PUB:
+            //    structureObj = new Pub();
                 break;
             case LANDMARK_TYPE.TEMPLE:
                 structureObj = new Temple();

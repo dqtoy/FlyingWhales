@@ -1624,4 +1624,19 @@ public class Utilities : MonoBehaviour {
     }
     #endregion
 
+    #region Saves
+    public static void ValidateSaveData(WorldSaveData saveData) {
+        if (saveData.landmarksData != null) {
+            List<LandmarkSaveData> invalidData = new List<LandmarkSaveData>();
+            for (int i = 0; i < saveData.landmarksData.Count; i++) {
+                LandmarkSaveData landmarkData = saveData.landmarksData[i];
+                if (landmarkData.landmarkType == LANDMARK_TYPE.NONE) {
+                    invalidData.Add(landmarkData);
+                }
+            }
+            ListRemoveRange(saveData.landmarksData, invalidData);
+        }
+    }
+    #endregion
+
 }

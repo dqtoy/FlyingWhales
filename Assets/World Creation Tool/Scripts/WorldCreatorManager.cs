@@ -655,7 +655,9 @@ namespace worldcreator {
 
         public WorldSaveData GetWorldData(string saveName) {
             FileInfo saveFile = GetSaveFile(saveName);
-            return SaveGame.Load<WorldSaveData>(Utilities.worldConfigsSavePath + saveName);
+            WorldSaveData saveData = SaveGame.Load<WorldSaveData>(Utilities.worldConfigsSavePath + saveName);
+            Utilities.ValidateSaveData(saveData);
+            return saveData;
         }
         public FileInfo GetSaveFile(string saveName) {
             Directory.CreateDirectory(Utilities.worldConfigsSavePath);
