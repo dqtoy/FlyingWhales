@@ -66,10 +66,10 @@ public class LandmarkVisual : MonoBehaviour {
             portrait.transform.SetParent(playerContent);
         } else {
             portrait.transform.SetParent(hoverContent);
+            portrait.ignoreInteractions = true;
             AdjustCharCount(1);
         }
         portrait.transform.localScale = Vector3.one;
-        portrait.ignoreInteractions = true;
         //(portrait.transform as RectTransform).pivot = new Vector2(0.5f, 0f);
         (portrait.transform as RectTransform).sizeDelta = new Vector2(64, 64);
         //portrait.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);

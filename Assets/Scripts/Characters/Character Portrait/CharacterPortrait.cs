@@ -102,6 +102,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
             SetFacialHair(character.portraitSettings.facialHairIndex);
             SetHairColor(character.portraitSettings.hairColor);
             wholeImage.gameObject.SetActive(false);
+            playerLocator.gameObject.SetActive(false);
         } else if (character is Monster) {
             body.gameObject.SetActive(false);
             head.gameObject.SetActive(false);
@@ -126,7 +127,10 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
             //    wholeImage.rectTransform.sizeDelta = new Vector2(36f, 36f);
             //}
             wholeImage.gameObject.SetActive(true);
+            playerLocator.gameObject.SetActive(false);
         }
+        bg.enabled = true;
+        borderParent.SetActive(true);
         nameLbl.text = character.urlName;
     }
     public void GeneratePortrait(PortraitSettings portraitSettings, IMAGE_SIZE imgSize, bool ignoreHover = true, bool ignoreSize = false) {
@@ -260,7 +264,8 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
             hairOverlay.SetNativeSize();
             hairBackOverlay.SetNativeSize();
         }
-        
+        hair.gameObject.SetActive(true);
+        hairOverlay.gameObject.SetActive(true);
         //if (chosenHairSettings.hairBackSprite == null) {
         //    hairBack.sprite = chosenHairSettings.hairSprite;
         //} else {
@@ -273,6 +278,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
         if (!_ignoreSize) {
             head.SetNativeSize();
         }
+        head.gameObject.SetActive(true);
     }
     public void SetEyes(int index) {
         Sprite eyeSprite = CharacterManager.Instance.GetEyeSprite(index, _imgSize, _portraitSettings.race, _portraitSettings.gender);
@@ -280,6 +286,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
         if (!_ignoreSize) {
             eyes.SetNativeSize();
         }
+        eyes.gameObject.SetActive(true);
     }
     public void SetEyebrows(int index) {
         Sprite eyeBrowSprite = CharacterManager.Instance.GetEyebrowSprite(index, _imgSize, _portraitSettings.race, _portraitSettings.gender);
@@ -287,18 +294,21 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
         if (!_ignoreSize) {
             eyebrows.SetNativeSize();
         }
+        eyebrows.gameObject.SetActive(true);
     }
     public void SetNose(int index) {
         nose.sprite = CharacterManager.Instance.GetNoseSprite(index, _imgSize, _portraitSettings.race, _portraitSettings.gender);
         if (!_ignoreSize) {
             nose.SetNativeSize();
         }
+        nose.gameObject.SetActive(true);
     }
     public void SetMouth(int index) {
         mouth.sprite = CharacterManager.Instance.GetMouthSprite(index, _imgSize, _portraitSettings.race, _portraitSettings.gender);
         if (!_ignoreSize) {
             mouth.SetNativeSize();
         }
+        mouth.gameObject.SetActive(true);
     }
     public void SetFacialHair(int index) {
         facialHair.sprite = CharacterManager.Instance.GetFacialHairSprite(index, _imgSize, _portraitSettings.race, _portraitSettings.gender);
@@ -319,6 +329,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
         if (!_ignoreSize) {
             body.SetNativeSize();
         }
+        body.gameObject.SetActive(true);
     }
     public void SetHairColor(Color hairColor) {
         //hair.color = hairColor;

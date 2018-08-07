@@ -610,7 +610,11 @@ public class UIManager : MonoBehaviour {
         //    monsterInfoUI.HideMenu();
         //}
         characterInfoUI.SetData(character);
-        characterInfoUI.OpenMenu();
+        if(character.role.roleType != CHARACTER_ROLE.PLAYER) {
+            characterInfoUI.OpenMenu();
+        } else {
+            characterInfoUI.HideMenu();
+        }
         character.CenterOnCharacter();
         //		playerActionsUI.ShowPlayerActionsUI ();
     }
