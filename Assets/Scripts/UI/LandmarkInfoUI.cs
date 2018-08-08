@@ -282,11 +282,11 @@ public class LandmarkInfoUI : UIMenu {
             return;
         }
         if (obj.objectLocation.id == currentlyShowingLandmark.id) {
-            if (newState.stateName.Equals("Ready")) {
-                SetActiveAttackButtonGO(true);
-            } else {
-                SetActiveAttackButtonGO(false);
-            }
+            //if (newState.stateName.Equals("Ready")) {
+            //    SetActiveAttackButtonGO(true);
+            //} else {
+            //    SetActiveAttackButtonGO(false);
+            //}
         }
     }
 
