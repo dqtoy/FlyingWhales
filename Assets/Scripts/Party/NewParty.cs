@@ -242,12 +242,12 @@ public class NewParty : IParty {
 
     #region Berserk
     public void BerserkModeOn() {
-        Messenger.AddListener<NewParty>(Signals.PARTY_ENTERED_LANDMARK, FindCombat);
+        Messenger.AddListener<NewParty, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, FindCombat);
     }
     public void BerserkModeOff() {
-        Messenger.RemoveListener<NewParty>(Signals.PARTY_ENTERED_LANDMARK, FindCombat);
+        Messenger.RemoveListener<NewParty, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, FindCombat);
     }
-    private void FindCombat(NewParty partyThatEntered) {
+    private void FindCombat(NewParty partyThatEntered, BaseLandmark landmark) {
         if(partyThatEntered._specificLocation != null && this._specificLocation != null && this._specificLocation == partyThatEntered._specificLocation && partyThatEntered.id != this.id && this._currentCombat == null) {
             StartCombatWith(partyThatEntered);
         }
