@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine.UI;
+using ECS;
 
 public class LandmarkInfoUI : UIMenu {
 
@@ -28,6 +29,7 @@ public class LandmarkInfoUI : UIMenu {
     [Space(10)]
     [Header("Items")]
     [SerializeField] private GameObject itemsGO;
+    [SerializeField] private RectTransform itemsParent;
     private ItemContainer[] itemContainers;
 
     [Space(10)]
@@ -71,126 +73,56 @@ public class LandmarkInfoUI : UIMenu {
             logHistoryItems[i].gameObject.SetActive(false);
         }
 
+        //populate item containers
+        itemContainers = itemsParent.GetComponentsInChildren<ItemContainer>();
         Messenger.AddListener<StructureObj, ObjectState>(Signals.STRUCTURE_STATE_CHANGED, OnStructureChangedState);
+        Messenger.AddListener<NewParty, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, OnPartyEnteredLandmark);
+        Messenger.AddListener<NewParty, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, OnPartyExitedLandmark);
+        Messenger.AddListener<Item, BaseLandmark>(Signals.ITEM_PLACED_AT_LANDMARK, OnItemAddedToLandmark);
+        Messenger.AddListener<Item, BaseLandmark>(Signals.ITEM_REMOVED_FROM_LANDMARK, OnItemRemovedFromLandmark);
     }
     public override void ShowMenu() {
         base.ShowMenu();
-        UpdateLandmarkInfo();
+        UpdateBasicInfo();
+        UpdateCharacters();
+        UpdateItems();
         UpdateAllHistoryInfo();
-        ShowAttackButton();
+        //ShowAttackButton();
     }
-    public override void SetData(object data) {
-        base.SetData(data);
-        UIManager.Instance.hexTileInfoUI.SetData((data as BaseLandmark).tileLocation);
-        if (isShowing) {
-            UpdateLandmarkInfo();
-        }
-    }
+    //public override void SetData(object data) {
+        //base.SetData(data);
+        //UIManager.Instance.hexTileInfoUI.SetData((data as BaseLandmark).tileLocation);
+        //if (isShowing) {
+        //    UpdateLandmarkInfo();
+        //}
+    //}
 
     public void UpdateLandmarkInfo() {
-  //      if(currentlyShowingLandmark == null) {
-  //          return;
-  //      }
-  //      string text = string.Empty;
-		//if (currentlyShowingLandmark.landmarkName != string.Empty) {
-		//	text += "<b>Name:</b> " + currentlyShowingLandmark.landmarkName + "\n";
-		//}
-		//text += "<b>Location:</b> " + currentlyShowingLandmark.tileLocation.urlName;
-  //      if (currentlyShowingLandmark.tileLocation.areaOfTile != null) {
-  //          text += " <b>Area:</b> " + currentlyShowingLandmark.tileLocation.areaOfTile.name;
-  //          if (currentlyShowingLandmark.tileLocation.areaOfTile.owner != null) {
-  //              text += " (Owner: " + currentlyShowingLandmark.tileLocation.areaOfTile.owner.name + ")"; 
-  //          }
-  //      }
-  //      text += "\n<b>Landmark Type:</b> " + currentlyShowingLandmark.landmarkObj.objectName + " (" + currentlyShowingLandmark.landmarkObj.currentState.stateName + ")";
-  //      text += "\n<b>HP:</b> " + currentlyShowingLandmark.landmarkObj.currentHP.ToString() + "/" + currentlyShowingLandmark.landmarkObj.maxHP.ToString();
-  //      text += "\n<b>Durability:</b> " + currentlyShowingLandmark.currDurability.ToString() + "/" + currentlyShowingLandmark.totalDurability.ToString();
-  //      text += "\n<b>Can Be Occupied:</b> " + currentlyShowingLandmark.canBeOccupied.ToString();
-		//text += "\n<b>Is Occupied:</b> " + currentlyShowingLandmark.isOccupied.ToString();
-
-  //      if (currentlyShowingLandmark.owner != null) {
-  //          text += "\n<b>Owner:</b> " + currentlyShowingLandmark.owner.urlName;
-  //          text += "\n<b>Settlement Population: </b> " + currentlyShowingLandmark.civilianCount.ToString();
-  //      }
-
-  //      text += "\n<b>Connections: </b> ";
-  //      if (currentlyShowingLandmark.connections.Count > 0) {
-  //          for (int i = 0; i < currentlyShowingLandmark.connections.Count; i++) {
-  //              BaseLandmark connection = currentlyShowingLandmark.connections[i];
-  //              text += "\n" + connection.urlName;
-  //          }
-  //      } else {
-  //          text += "NONE";
-  //      }
-
-  //      text += "\n<b>Parties At Landmark: </b> ";
-  //      if (currentlyShowingLandmark.charactersAtLocation.Count > 0) {
-		//	for (int i = 0; i < currentlyShowingLandmark.charactersAtLocation.Count; i++) {
-  //              NewParty currObject = currentlyShowingLandmark.charactersAtLocation[i];
-  //              if (currObject is CharacterParty) {
-  //                  CharacterParty currChar = currObject as CharacterParty;
-  //                  text += "\n" + currChar.urlName; // + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
-  //              } else if (currObject is MonsterParty) {
-  //                  //MonsterParty monster = currObject as MonsterParty;
-  //                  text += "\n" + currObject.name;
-  //              }
-  //          }
-		//} else {
-		//	text += "NONE";
-		//}
-  //      text += "\n<b>Characters At Tile: </b> ";
-		//if (currentlyShowingLandmark.tileLocation.charactersAtLocation.Count > 0) {
-		//	for (int i = 0; i < currentlyShowingLandmark.tileLocation.charactersAtLocation.Count; i++) {
-		//		object currObject = currentlyShowingLandmark.tileLocation.charactersAtLocation[i];
-  //              if (currObject is ECS.Character) {
-  //                  ECS.Character currChar = (ECS.Character)currObject;
-  //                  text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
-  //                  if (currChar.party.actionData.currentAction != null) {
-  //                      text += " (" + currChar.party.actionData.currentAction.actionData.actionName + ")";
-  //                  }
-  //              } 
-  //              //else if (currObject is Party) {
-  //              //    Party currParty = (Party)currObject;
-  //              //    text += "\n" + currParty.urlName + " - " + (currParty.currentAction != null ? currParty.currentAction.ToString() : "NONE");
-  //              //}
-  //          }
-  //      } else {
-  //          text += "NONE";
-  //      }
-
-		//text += "\n<b>Traces:</b> ";
-		//if(currentlyShowingLandmark.characterTraces.Count > 0){
-		//	foreach (ECS.Character character in currentlyShowingLandmark.characterTraces.Keys) {
-		//		text += "\n" + character.urlName + ", " + currentlyShowingLandmark.characterTraces[character].ToStringDate();
-		//	}
-		//} else {
-		//	text += "NONE";
-		//}
-
-		//text += "\n<b>Items In Landmark: </b> ";
-		//if (currentlyShowingLandmark.itemsInLandmark.Count > 0) {
-		//	for (int i = 0; i < currentlyShowingLandmark.itemsInLandmark.Count; i++) {
-		//		ECS.Item item = currentlyShowingLandmark.itemsInLandmark[i];
-		//		text += "\n" + item.itemName + " (" + ((item.owner == null ? "NONE" : item.owner.name)) + ")";
-		//	}
-		//} else {
-		//	text += "NONE";
-		//}
-
-  //      if (currentlyShowingLandmark.specificLandmarkType == LANDMARK_TYPE.SHOP) {
-  //          text += "\n<b>Items In Shop: </b> ";
-  //          Shop shop = currentlyShowingLandmark.landmarkObj as Shop;
-  //          if (shop.availableItems.Count > 0) {
-  //              for (int i = 0; i < shop.availableItems.Count; i++) {
-  //                  text += "\n" + shop.availableItems[i];
-  //              }
-  //          } else {
-  //              text += "NONE";
-  //          }
-            
-  //      }
-       
-  //      landmarkInfoLbl.text = text;
+        if (currentlyShowingLandmark == null) {
+            return;
+        }
+        UpdateHP();
+    }
+    private void UpdateBasicInfo() {
+        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(currentlyShowingLandmark.specificLandmarkType);
+        structureIcon.sprite = data.landmarkTypeIcon;
+        structureTypeLbl.text = data.landmarkTypeString;
+        if (currentlyShowingLandmark.tileLocation.areaOfTile == null) {
+            areaIcon.gameObject.SetActive(false);
+        } else {
+            areaIcon.gameObject.SetActive(true);
+        }
+        if (currentlyShowingLandmark.owner == null) {
+            factionIcon.gameObject.SetActive(false);
+        } else {
+            factionIcon.gameObject.SetActive(true);
+        }
+        healthProgressBar.minValue = 0f;
+        healthProgressBar.maxValue = currentlyShowingLandmark.totalDurability;
+        UpdateHP();
+    }
+    private void UpdateHP() {
+        healthProgressBar.value = currentlyShowingLandmark.currDurability;
     }
 
     #region Log History
@@ -234,6 +166,62 @@ public class LandmarkInfoUI : UIMenu {
     }
     #endregion
 
+    #region Characters
+    private void UpdateCharacters() {
+        Utilities.DestroyChildren(charactersScrollView.content);
+        for (int i = 0; i < currentlyShowingLandmark.charactersAtLocation.Count; i++) {
+            NewParty currParty = currentlyShowingLandmark.charactersAtLocation[i];
+            CreateNewCharacterItem(currParty);
+        }
+    }
+    private LandmarkCharacterItem GetItem(NewParty party) {
+        LandmarkCharacterItem[] items = Utilities.GetComponentsInDirectChildren<LandmarkCharacterItem>(charactersScrollView.content.gameObject);
+        for (int i = 0; i < items.Length; i++) {
+            LandmarkCharacterItem item = items[i];
+            if (item.party.id == party.id) {
+                return item;
+            }
+        }
+        return null;
+    }
+    private void CreateNewCharacterItem(NewParty party) {
+        GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
+        LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
+        item.SetParty(party, currentlyShowingLandmark);
+    }
+    private void OnPartyEnteredLandmark(NewParty party, BaseLandmark landmark) {
+        if (isShowing && currentlyShowingLandmark != null && currentlyShowingLandmark.id == landmark.id) {
+            CreateNewCharacterItem(party);
+        }
+    }
+    private void OnPartyExitedLandmark(NewParty party, BaseLandmark landmark) {
+        if (isShowing && currentlyShowingLandmark != null && currentlyShowingLandmark.id == landmark.id) {
+            LandmarkCharacterItem item = GetItem(party);
+            ObjectPoolManager.Instance.DestroyObject(item.gameObject);
+        }
+    }
+    #endregion
+    
+    #region Items
+    private void UpdateItems() {
+        for (int i = 0; i < itemContainers.Length; i++) {
+            ItemContainer container = itemContainers[i];
+            Item item = currentlyShowingLandmark.itemsInLandmark.ElementAtOrDefault(i);
+            container.SetItem(item);
+        }
+    }
+    private void OnItemAddedToLandmark(Item item, BaseLandmark landmark) {
+        if (isShowing && currentlyShowingLandmark != null && currentlyShowingLandmark.id == landmark.id) {
+            UpdateItems();
+        }
+    }
+    private void OnItemRemovedFromLandmark(Item item, BaseLandmark landmark) {
+        if (isShowing && currentlyShowingLandmark != null && currentlyShowingLandmark.id == landmark.id) {
+            UpdateItems();
+        }
+    }
+    #endregion
+
     public void OnClickCloseBtn(){
 		HideMenu ();
 	}
@@ -261,7 +249,7 @@ public class LandmarkInfoUI : UIMenu {
     //    SetWaitingForAttackState(!isWaitingForAttackTarget);
     //}
     public void SetWaitingForAttackState(bool state) {
-        attackBtnToggle.isOn = state;
+        //attackBtnToggle.isOn = state;
     }
     public void OnSetAttackState(bool state) {
         isWaitingForAttackTarget = state;

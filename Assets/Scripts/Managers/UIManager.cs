@@ -537,8 +537,8 @@ public class UIManager : MonoBehaviour {
         //if (monsterInfoUI.isShowing) {
         //    monsterInfoUI.HideMenu();
         //}
-        //landmarkInfoUI.SetData(landmark);
-        //landmarkInfoUI.OpenMenu();
+        landmarkInfoUI.SetData(landmark);
+        landmarkInfoUI.OpenMenu();
         landmark.CenterOnLandmark();
         //		playerActionsUI.ShowPlayerActionsUI ();
     }

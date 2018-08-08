@@ -403,7 +403,7 @@ public class BaseLandmark : ILocation {
             iparty.SetSpecificLocation(this);
 #if !WORLD_CREATION_TOOL
             _landmarkVisual.OnCharacterEnteredLandmark(iparty);
-                Messenger.Broadcast<NewParty>(Signals.PARTY_ENTERED_LANDMARK, iparty);
+                Messenger.Broadcast<NewParty, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, iparty, this);
 #endif
             //}
         }
@@ -429,16 +429,17 @@ public class BaseLandmark : ILocation {
         iparty.SetSpecificLocation(null);
 #if !WORLD_CREATION_TOOL
         _landmarkVisual.OnCharacterExitedLandmark(iparty);
+        Messenger.Broadcast<NewParty, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, iparty, this);
 #endif
-    //}
+        //}
         //character.SetSpecificLocation(null);
-   //     if (character.icharacterType == ICHARACTER_TYPE.CHARACTER) {
-   //         Character currChar = character as Character;
-			//currChar.SetSpecificLocation(null);
-   //     } else if (character is Party) {
-   //         Party currParty = character as Party;
-			//currParty.SetSpecificLocation(null);
-   //     }
+        //     if (character.icharacterType == ICHARACTER_TYPE.CHARACTER) {
+        //         Character currChar = character as Character;
+        //currChar.SetSpecificLocation(null);
+        //     } else if (character is Party) {
+        //         Party currParty = character as Party;
+        //currParty.SetSpecificLocation(null);
+        //     }
         //if (_charactersAtLocation.Count == 0 && _hasScheduledCombatCheck) {
         //    UnScheduleCombatCheck();
         //}
@@ -597,10 +598,14 @@ public class BaseLandmark : ILocation {
         item.OnItemPlacedOnLandmark(this);
 	}
 	public void AddItemsInLandmark(List<Item> item){
-		_itemsInLandmark.AddRange (item);
+        for (int i = 0; i < item.Count; i++) {
+            AddItemInLandmark(item[i]);
+        }
+		//_itemsInLandmark.AddRange (item);
 	}
 	public void RemoveItemInLandmark(Item item){
         _itemsInLandmark.Remove(item);
+        Messenger.Broadcast(Signals.ITEM_REMOVED_FROM_LANDMARK, item, this);
     }
     public void RemoveItemInLandmark(string itemName) {
         for (int i = 0; i < itemsInLandmark.Count; i++) {
