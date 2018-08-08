@@ -43,7 +43,7 @@ public class ConsoleMenu : UIMenu {
             {"/toggle_road", ToggleRoads },
             {"/set_icon_target", SetIconTarget },
             {"/set_need", SetCharacterNeedsValue},
-            {"/add_tag", AddCharacterTag},
+            {"/add_tag", AddCharacterAttribute},
         };
     }
 
@@ -496,7 +496,7 @@ public class ConsoleMenu : UIMenu {
         character.role.SetNeedValue(need, needValue);
         AddSuccessMessage("Set " + character.name + "'s " + need.ToString() + " to " + character.role.GetNeedValue(need).ToString());
     }
-    private void AddCharacterTag(string[] parameters) {
+    private void AddCharacterAttribute(string[] parameters) {
         if (parameters.Length < 3) {//command, need type, need value, character name/id
             AddCommandHistory(consoleLbl.text);
             AddErrorMessage("There was an error in the command format of " + parameters[0]);
@@ -517,7 +517,7 @@ public class ConsoleMenu : UIMenu {
             character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
         }
         
-        CHARACTER_TAG tag = (CHARACTER_TAG)Enum.Parse(typeof(CHARACTER_TAG), parameters[1]);
+        ATTRIBUTE tag = (ATTRIBUTE)Enum.Parse(typeof(ATTRIBUTE), parameters[1]);
 
         if (character == null) {
             AddCommandHistory(consoleLbl.text);

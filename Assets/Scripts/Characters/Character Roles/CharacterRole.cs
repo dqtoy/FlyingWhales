@@ -197,40 +197,40 @@ public class CharacterRole {
         //    _isFamished = true;
         //    if (_isHungry) {
         //        _isHungry = false;
-        //        _character.RemoveCharacterTag(CHARACTER_TAG.HUNGRY);
+        //        _character.RemoveCharacterAttribute(ATTRIBUTE.HUNGRY);
         //    }
-        //    _character.AssignTag(CHARACTER_TAG.FAMISHED);
+        //    _character.AssignTag(ATTRIBUTE.FAMISHED);
         //}
         //else if(_fullness > 10f && _fullness <= 30f && !_isHungry) {
         //    _isHungry = true;
         //    if (_isFamished) {
         //        _isFamished = false;
-        //        _character.RemoveCharacterTag(CHARACTER_TAG.FAMISHED);
+        //        _character.RemoveCharacterAttribute(ATTRIBUTE.FAMISHED);
         //    }
-        //    _character.AssignTag(CHARACTER_TAG.HUNGRY);
+        //    _character.AssignTag(ATTRIBUTE.HUNGRY);
         //}
         //else if (_fullness > 30f) {
         //    if (_isHungry) {
         //        _isHungry = false;
-        //        _character.RemoveCharacterTag(CHARACTER_TAG.HUNGRY);
+        //        _character.RemoveCharacterAttribute(ATTRIBUTE.HUNGRY);
         //    }
         //    if (_isFamished) {
         //        _isFamished = false;
-        //        _character.RemoveCharacterTag(CHARACTER_TAG.FAMISHED);
+        //        _character.RemoveCharacterAttribute(ATTRIBUTE.FAMISHED);
         //    }
         //}
     }
     private void OnFullnessEdited() {
         if (_fullness < 0 && _fullness >= -75) {
             //Character gains Hungry tag when Fullness is below 0 to -75.
-            _character.AssignTag(CHARACTER_TAG.HUNGRY);
-            _character.RemoveCharacterTag(CHARACTER_TAG.STARVING);
+            _character.AssignTag(ATTRIBUTE.HUNGRY);
+            _character.RemoveCharacterAttribute(ATTRIBUTE.STARVING);
         } else if (_fullness < -75) {
             //Character gains Starving tag when Fullness is below -75   
-            _character.AssignTag(CHARACTER_TAG.STARVING);
-            _character.RemoveCharacterTag(CHARACTER_TAG.HUNGRY);
+            _character.AssignTag(ATTRIBUTE.STARVING);
+            _character.RemoveCharacterAttribute(ATTRIBUTE.HUNGRY);
         } else {
-            _character.RemoveCharacterTag(new List<CHARACTER_TAG>() { CHARACTER_TAG.HUNGRY, CHARACTER_TAG.STARVING });
+            _character.RemoveCharacterAttribute(new List<ATTRIBUTE>() { ATTRIBUTE.HUNGRY, ATTRIBUTE.STARVING });
         }
     }
 
@@ -254,40 +254,40 @@ public class CharacterRole {
         //    _isExhausted = true;
         //    if (_isTired) {
         //        _isTired = false;
-        //        _character.RemoveCharacterTag(CHARACTER_TAG.TIRED);
+        //        _character.RemoveCharacterAttribute(ATTRIBUTE.TIRED);
         //    }
-        //    _character.AssignTag(CHARACTER_TAG.EXHAUSTED);
+        //    _character.AssignTag(ATTRIBUTE.EXHAUSTED);
         //}
         //else if (_energy > 10f && _energy <= 30f && !_isTired) {
         //    _isTired = true;
         //    if (_isExhausted) {
         //        _isExhausted = false;
-        //        _character.RemoveCharacterTag(CHARACTER_TAG.EXHAUSTED);
+        //        _character.RemoveCharacterAttribute(ATTRIBUTE.EXHAUSTED);
         //    }
-        //    _character.AssignTag(CHARACTER_TAG.TIRED);
+        //    _character.AssignTag(ATTRIBUTE.TIRED);
         //}
         //else if (_energy > 30f) {
         //    if (_isTired) {
         //        _isTired = false;
-        //        _character.RemoveCharacterTag(CHARACTER_TAG.TIRED);
+        //        _character.RemoveCharacterAttribute(ATTRIBUTE.TIRED);
         //    }
         //    if (_isExhausted) {
         //        _isExhausted = false;
-        //        _character.RemoveCharacterTag(CHARACTER_TAG.EXHAUSTED);
+        //        _character.RemoveCharacterAttribute(ATTRIBUTE.EXHAUSTED);
         //    }
         //}
     }
     private void OnEnergyEdited() {
         if (_energy < 0 && _energy >= -75) {
             //Character gains Tired tag when Energy is below 0 to -75.
-            _character.AssignTag(CHARACTER_TAG.TIRED);
-            _character.RemoveCharacterTag(CHARACTER_TAG.EXHAUSTED);
+            _character.AssignTag(ATTRIBUTE.TIRED);
+            _character.RemoveCharacterAttribute(ATTRIBUTE.EXHAUSTED);
         } else if (_energy < -75) {
             //Character gains Crazed tag when Energy is below -75
-            _character.AssignTag(CHARACTER_TAG.EXHAUSTED);
-            _character.RemoveCharacterTag(CHARACTER_TAG.TIRED);
+            _character.AssignTag(ATTRIBUTE.EXHAUSTED);
+            _character.RemoveCharacterAttribute(ATTRIBUTE.TIRED);
         } else {
-            _character.RemoveCharacterTag(new List<CHARACTER_TAG>() { CHARACTER_TAG.TIRED, CHARACTER_TAG.EXHAUSTED });
+            _character.RemoveCharacterAttribute(new List<ATTRIBUTE>() { ATTRIBUTE.TIRED, ATTRIBUTE.EXHAUSTED });
         }
     }
 
@@ -315,40 +315,40 @@ public class CharacterRole {
         //    _isDepressed = true;
         //    if (_isSad) {
         //        _isSad = false;
-        //        _character.RemoveCharacterTag(CHARACTER_TAG.SAD);
+        //        _character.RemoveCharacterAttribute(ATTRIBUTE.SAD);
         //    }
-        //    _character.AssignTag(CHARACTER_TAG.DEPRESSED);
+        //    _character.AssignTag(ATTRIBUTE.DEPRESSED);
         //}
         //else if (_fun > 10f && _fun <= 30f && !_isSad) {
         //    _isSad = true;
         //    if (_isDepressed) {
         //        _isDepressed = false;
-        //        _character.RemoveCharacterTag(CHARACTER_TAG.DEPRESSED);
+        //        _character.RemoveCharacterAttribute(ATTRIBUTE.DEPRESSED);
         //    }
-        //    _character.AssignTag(CHARACTER_TAG.SAD);
+        //    _character.AssignTag(ATTRIBUTE.SAD);
         //}
         //else if (_fun > 30f) {
         //    if (_isSad) {
         //        _isSad = false;
-        //        _character.RemoveCharacterTag(CHARACTER_TAG.SAD);
+        //        _character.RemoveCharacterAttribute(ATTRIBUTE.SAD);
         //    }
         //    if (_isDepressed) {
         //        _isDepressed = false;
-        //        _character.RemoveCharacterTag(CHARACTER_TAG.DEPRESSED);
+        //        _character.RemoveCharacterAttribute(ATTRIBUTE.DEPRESSED);
         //    }
         //}
     }
     private void OnFunEdited() {
         if (_fun < 0 && _fun >= -75) {
             //Character gains Sad tag when Fun is below 0 to -75.
-            _character.AssignTag(CHARACTER_TAG.SAD);
-            _character.RemoveCharacterTag(CHARACTER_TAG.DEPRESSED);
+            _character.AssignTag(ATTRIBUTE.SAD);
+            _character.RemoveCharacterAttribute(ATTRIBUTE.DEPRESSED);
         } else if (_fun < -75) {
             //Character gains Depressed tag when Fun is below -75
-            _character.AssignTag(CHARACTER_TAG.DEPRESSED);
-            _character.RemoveCharacterTag(CHARACTER_TAG.SAD);
+            _character.AssignTag(ATTRIBUTE.DEPRESSED);
+            _character.RemoveCharacterAttribute(ATTRIBUTE.SAD);
         } else {
-            _character.RemoveCharacterTag(new List<CHARACTER_TAG>() { CHARACTER_TAG.SAD, CHARACTER_TAG.DEPRESSED });
+            _character.RemoveCharacterAttribute(new List<ATTRIBUTE>() { ATTRIBUTE.SAD, ATTRIBUTE.DEPRESSED });
         }
     }
 
@@ -375,40 +375,40 @@ public class CharacterRole {
         //    _isInsecure = true;
         //    if (_isAnxious) {
         //        _isAnxious = false;
-        //        _character.RemoveCharacterTag(CHARACTER_TAG.ANXIOUS);
+        //        _character.RemoveCharacterAttribute(ATTRIBUTE.ANXIOUS);
         //    }
-        //    _character.AssignTag(CHARACTER_TAG.INSECURE);
+        //    _character.AssignTag(ATTRIBUTE.INSECURE);
         //}
         //else if (_prestige > 10f && _prestige <= 30f && !_isAnxious) {
         //    _isAnxious = true;
         //    if (_isInsecure) {
         //        _isInsecure = false;
-        //        _character.RemoveCharacterTag(CHARACTER_TAG.INSECURE);
+        //        _character.RemoveCharacterAttribute(ATTRIBUTE.INSECURE);
         //    }
-        //    _character.AssignTag(CHARACTER_TAG.ANXIOUS);
+        //    _character.AssignTag(ATTRIBUTE.ANXIOUS);
         //}
         //else if (_prestige > 30f) {
         //    if (_isAnxious) {
         //        _isAnxious = false;
-        //        _character.RemoveCharacterTag(CHARACTER_TAG.ANXIOUS);
+        //        _character.RemoveCharacterAttribute(ATTRIBUTE.ANXIOUS);
         //    }
         //    if (_isInsecure) {
         //        _isInsecure = false;
-        //        _character.RemoveCharacterTag(CHARACTER_TAG.INSECURE);
+        //        _character.RemoveCharacterAttribute(ATTRIBUTE.INSECURE);
         //    }
         //}
     }
     private void OnPrestigeEdited() {
         if (_prestige < 0 && _prestige >= -75) {
             //Character gains Anxious tag when Prestige is below 0 to -75.
-            _character.AssignTag(CHARACTER_TAG.ANXIOUS);
-            _character.RemoveCharacterTag(CHARACTER_TAG.DEMORALIZED);
+            _character.AssignTag(ATTRIBUTE.ANXIOUS);
+            _character.RemoveCharacterAttribute(ATTRIBUTE.DEMORALIZED);
         } else if (_prestige < -75) {
             //Character gains Demoralized tag when Sanity is below -75
-            _character.AssignTag(CHARACTER_TAG.DEMORALIZED);
-            _character.RemoveCharacterTag(CHARACTER_TAG.ANXIOUS);
+            _character.AssignTag(ATTRIBUTE.DEMORALIZED);
+            _character.RemoveCharacterAttribute(ATTRIBUTE.ANXIOUS);
         } else {
-            _character.RemoveCharacterTag(new List<CHARACTER_TAG>() { CHARACTER_TAG.ANXIOUS, CHARACTER_TAG.DEMORALIZED });
+            _character.RemoveCharacterAttribute(new List<ATTRIBUTE>() { ATTRIBUTE.ANXIOUS, ATTRIBUTE.DEMORALIZED });
         }
     }
 
@@ -431,14 +431,14 @@ public class CharacterRole {
     private void OnSanityEdited() {
         if (_sanity < 0 && _sanity >= -75) {
             //Character gains Disturbed tag when Sanity is below 0 to -75.
-            _character.AssignTag(CHARACTER_TAG.DISTURBED);
-            _character.RemoveCharacterTag(CHARACTER_TAG.CRAZED);
+            _character.AssignTag(ATTRIBUTE.DISTURBED);
+            _character.RemoveCharacterAttribute(ATTRIBUTE.CRAZED);
         } else if (_sanity < -75) {
             //Character gains Crazed tag when Sanity is below -75
-            _character.AssignTag(CHARACTER_TAG.CRAZED);
-            _character.RemoveCharacterTag(CHARACTER_TAG.DISTURBED);
+            _character.AssignTag(ATTRIBUTE.CRAZED);
+            _character.RemoveCharacterAttribute(ATTRIBUTE.DISTURBED);
         } else {
-            _character.RemoveCharacterTag(new List<CHARACTER_TAG>() { CHARACTER_TAG.DISTURBED, CHARACTER_TAG.CRAZED });
+            _character.RemoveCharacterAttribute(new List<ATTRIBUTE>() { ATTRIBUTE.DISTURBED, ATTRIBUTE.CRAZED });
         }
     }
 
@@ -463,14 +463,14 @@ public class CharacterRole {
     private void OnSafetyEdited() {
         if (_safety < 0 && _safety >= -75) {
             //Character gains Wounded tag when Safety is below 0 to -75.
-            _character.AssignTag(CHARACTER_TAG.WOUNDED);
-            _character.RemoveCharacterTag(CHARACTER_TAG.WRECKED);
+            _character.AssignTag(ATTRIBUTE.WOUNDED);
+            _character.RemoveCharacterAttribute(ATTRIBUTE.WRECKED);
         } else if (_safety < -75) {
             //Character gains Wrecked tag when Safety is below -75.
-            _character.AssignTag(CHARACTER_TAG.WRECKED);
-            _character.RemoveCharacterTag(CHARACTER_TAG.WOUNDED);
+            _character.AssignTag(ATTRIBUTE.WRECKED);
+            _character.RemoveCharacterAttribute(ATTRIBUTE.WOUNDED);
         } else {
-            _character.RemoveCharacterTag(new List<CHARACTER_TAG>() { CHARACTER_TAG.WOUNDED, CHARACTER_TAG.WRECKED });
+            _character.RemoveCharacterAttribute(new List<ATTRIBUTE>() { ATTRIBUTE.WOUNDED, ATTRIBUTE.WRECKED });
         }
     }
 

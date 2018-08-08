@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using ECS;
 using UnityEngine;
 
-public class Starving : CharacterTag {
-    public Starving(Character character) : base(character, CHARACTER_TAG.STARVING) {
+public class Starving : CharacterAttribute {
+    public Starving(Character character) : base(character, ATTRIBUTE.STARVING) {
     }
 
     public override void Initialize() {

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using ECS;
 using UnityEngine;
 
-public class Betrayed : CharacterTag {
-    public Betrayed(Character character) : base(character, CHARACTER_TAG.BETRAYED) {
+public class Betrayed : CharacterAttribute {
+    public Betrayed(Character character) : base(character, ATTRIBUTE.BETRAYED) {
     }
 
     public override void Initialize() {

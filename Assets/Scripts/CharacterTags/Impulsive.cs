@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using ECS;
 using UnityEngine;
 
-public class Impulsive : CharacterTag {
-    public Impulsive(Character character) : base(character, CHARACTER_TAG.IMPULSIVE) {
+public class Impulsive : CharacterAttribute {
+    public Impulsive(Character character) : base(character, ATTRIBUTE.IMPULSIVE) {
     }
 
     public override void Initialize() {

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public struct CharacterTagIconSetting {
+public struct CharacterAttributeIconSetting {
 
-    public CHARACTER_TAG tag;
+    public ATTRIBUTE tag;
     public Sprite icon;
 }

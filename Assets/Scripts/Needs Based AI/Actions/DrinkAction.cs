@@ -12,7 +12,7 @@ public class DrinkAction : CharacterAction {
         base.OnFirstEncounter(party, targetObject);
         //Add history log
         for (int i = 0; i < party.icharacters.Count; i++) {
-            party.icharacters[i].AssignTag(CHARACTER_TAG.DRUNK);
+            party.icharacters[i].AssignTag(ATTRIBUTE.DRUNK);
         }
     }
     public override void PerformAction(CharacterParty party, IObject targetObject) {

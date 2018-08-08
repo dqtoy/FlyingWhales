@@ -2,20 +2,20 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class CharacterTag {
+public class CharacterAttribute {
 	protected ECS.Character _character;
-	protected string _tagName;
-	protected CHARACTER_TAG _tagType;
+	protected string _name;
+	protected ATTRIBUTE _attribute;
 	//protected List<CharacterTask> _tagTasks;
 	protected StatsModifierPercentage _statsModifierPercentage;
 	protected bool _isRemoved;
 
 	#region getters/setters
-	public string tagName {
-		get { return _tagName; }
+	public string name {
+		get { return _name; }
 	}
-	public CHARACTER_TAG tagType {
-		get { return _tagType; }
+	public ATTRIBUTE attribute {
+		get { return _attribute; }
 	}
 	public ECS.Character character{
 		get { return _character; }
@@ -31,10 +31,10 @@ public class CharacterTag {
 	}
 	#endregion
 
-	public CharacterTag(ECS.Character character, CHARACTER_TAG tagType){
+	public CharacterAttribute(ECS.Character character, ATTRIBUTE attribute) {
 		_character = character;
-		_tagType = tagType;
-		_tagName = Utilities.NormalizeStringUpperCaseFirstLetters (_tagType.ToString ());
+        _attribute = attribute;
+        _name = Utilities.NormalizeStringUpperCaseFirstLetters (_attribute.ToString ());
 		//_tagTasks = new List<CharacterTask> ();
 		_statsModifierPercentage = new StatsModifierPercentage ();
 		_isRemoved = false;

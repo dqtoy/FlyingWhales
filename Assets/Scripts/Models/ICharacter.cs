@@ -80,7 +80,7 @@ public interface ICharacter {
     CharacterAction GetRandomDesperateAction(ref IObject targetObject);
     CharacterAction GetRandomIdleAction(ref IObject targetObject);
     CharacterAction GetIdleOrDesperateAction(ACTION_CATEGORY category, ACTION_TYPE type);
-    CharacterTag AssignTag(CHARACTER_TAG tag); //Character only
+    CharacterAttribute AssignTag(ATTRIBUTE tag); //Character only
     void AddActionToQueue(CharacterAction action, IObject targetObject, CharacterQuestData associatedQuestData = null, int position = -1);
     void RemoveActionFromQueue(ActionQueueItem item);
 }

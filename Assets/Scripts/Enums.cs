@@ -1104,7 +1104,7 @@ public enum ENCOUNTERABLE{
 	PARTY,
 }
 
-public enum CHARACTER_TAG{
+public enum ATTRIBUTE{
     SAPIENT,
 
     HUNGRY,

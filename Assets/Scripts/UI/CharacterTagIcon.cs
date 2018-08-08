@@ -5,20 +5,20 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CharacterTagIcon : PooledObject, IPointerEnterHandler, IPointerExitHandler {
+public class CharacterAttributeIcon : PooledObject, IPointerEnterHandler, IPointerExitHandler {
 
-    public CharacterTag tag { get; private set; }
+    public CharacterAttribute attribute { get; private set; }
     [SerializeField] private Image icon;
 
     private bool isHovering = false;
 
-    public void SetTag(CharacterTag tag) {
-        this.tag = tag;
-        LoadIcon(tag.tagType);
+    public void SetTag(CharacterAttribute attribute) {
+        this.attribute = attribute;
+        LoadIcon(attribute.attribute);
     }
 
-    private void LoadIcon(CHARACTER_TAG tag) {
-        icon.sprite = CharacterManager.Instance.GetCharacterTagSprite(tag);
+    private void LoadIcon(ATTRIBUTE attribute) {
+        icon.sprite = CharacterManager.Instance.GetCharacterAttributeSprite(attribute);
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
@@ -32,7 +32,7 @@ public class CharacterTagIcon : PooledObject, IPointerEnterHandler, IPointerExit
 
     private void Update() {
         if (isHovering) {
-            UIManager.Instance.ShowSmallInfo(Utilities.NormalizeStringUpperCaseFirstLetters(tag.tagType.ToString()));
+            UIManager.Instance.ShowSmallInfo(Utilities.NormalizeStringUpperCaseFirstLetters(attribute.attribute.ToString()));
         }
     }
 

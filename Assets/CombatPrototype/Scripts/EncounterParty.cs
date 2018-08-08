@@ -24,7 +24,7 @@ public class EncounterParty : MonoBehaviour {
 	//		ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(_characterSetups[i].optionalRole, Utilities.GetRandomGender(), _characterSetups[i]);
 	//		newCharacter.SetCharacterColor (Color.red);
 	//		if(originLandmark != null){
- //               if (newCharacter.raceSetting.tags.Contains(CHARACTER_TAG.NESTING)) {
+ //               if (newCharacter.raceSetting.tags.Contains(ATTRIBUTE.NESTING)) {
  //                   newCharacter.SetLair(originLandmark);
  //               }
 	//			originLandmark.AddCharacterToLocation(newCharacter);

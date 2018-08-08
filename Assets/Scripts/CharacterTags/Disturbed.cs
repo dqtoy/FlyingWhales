@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using ECS;
 using UnityEngine;
 
-public class Disturbed : CharacterTag {
-    public Disturbed(Character character) : base(character, CHARACTER_TAG.DISTURBED) {
+public class Disturbed : CharacterAttribute {
+    public Disturbed(Character character) : base(character, ATTRIBUTE.DISTURBED) {
     }
 
     public override void Initialize() {
