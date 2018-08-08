@@ -35,7 +35,7 @@ public class SpecificCharacterTaskButton : MonoBehaviour {
 	private void ClickAction(){
 		ECS.Character character = UIManager.Instance.characterInfoUI.activeCharacter;
 		if(character == null){
-			UIManager.Instance.HidePlayerActions ();
+			//UIManager.Instance.HidePlayerActions ();
 			return;
 		}
 		//if(character.avatar != null && character.avatar.isMovingToHex){

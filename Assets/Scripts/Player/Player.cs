@@ -10,18 +10,7 @@ public class Player : ILeader{
     public Area playerArea { get; private set; }
     public int snatchCredits { get; private set; }
 
-    public int id {
-        get {
-            return -645;
-        }
-    }
-
-    public string name {
-        get {
-            return "Player";
-        }
-    }
-
+    private List<CharacterAction> _actions;
     private List<ECS.Character> _snatchedCharacters;
 
     //#region getters/setters
@@ -29,6 +18,18 @@ public class Player : ILeader{
     //    get { return _playerArea; }
     //}
     //#endregion
+
+    #region getters/setters
+    public int id {
+        get { return -645; }
+    }
+    public string name {
+        get { return "Player"; }
+    }
+    public List<CharacterAction> actions {
+        get { return _actions; }
+    }
+    #endregion
 
     public Player() {
         _corruption = 0;
@@ -38,6 +39,7 @@ public class Player : ILeader{
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_ADDED, OnTileAddedToPlayerArea);
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileAddedToPlayerArea);
         Messenger.AddListener<Character>(Signals.CHARACTER_RELEASED, OnCharacterReleased);
+        ConstructPlayerActions();
     }
 
     #region Corruption
@@ -154,6 +156,18 @@ public class Player : ILeader{
     }
     private void OnCharacterReleased(Character releasedCharacter) {
         _snatchedCharacters.Remove(releasedCharacter);
+    }
+    #endregion
+
+    #region Actions
+    private void ConstructPlayerActions() {
+        _actions = new List<CharacterAction>();
+        _actions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.MOVE));
+        for (int i = 0; i < _actions.Count; i++) {
+            _actions[i].Initialize();
+            GameObject go = GameObject.Instantiate(UIManager.Instance.playerActionsUI.playerActionsBtnPrefab, UIManager.Instance.playerActionsUI.playerActionsContentTransform);
+            go.GetComponent<PlayerActionBtn>().SetAction(_actions[i]);
+        }
     }
     #endregion
 }
