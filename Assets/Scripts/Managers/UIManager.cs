@@ -56,6 +56,11 @@ public class UIManager : MonoBehaviour {
     public EnvelopContentUnityUI smallInfoEnvelopContent;
 
     [Space(10)]
+    [Header("Detailed Info")]
+    public GameObject detailedInfoGO;
+    public TextMeshProUGUI detailedInfoLbl;
+
+    [Space(10)]
     [Header("World Info Menu")]
     [SerializeField] private GameObject worldInfoCharactersSelectedGO;
     [SerializeField] private GameObject worldInfoQuestsSelectedGO;
@@ -205,12 +210,6 @@ public class UIManager : MonoBehaviour {
         UpdateQuestSummary();
     }
 
-    private void CheckSmallInfoValidity() {
-        if (smallInfoGO.activeSelf) {
-
-        }
-    }
-
     #region World Controls
     private void UpdateSpeedToggles(bool isPaused) {
         if (isPaused) {
@@ -229,7 +228,6 @@ public class UIManager : MonoBehaviour {
             }
         }
         }
-
     public void SetProgressionSpeed1X() {
         GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X1);
         Unpause();
@@ -339,19 +337,30 @@ public class UIManager : MonoBehaviour {
         smallInfoLbl.text = info;
         smallInfoGO.SetActive(true);
         smallInfoEnvelopContent.Execute();
+        PositionTooltip(smallInfoRT);
+    }
+    public void HideSmallInfo() {
+        smallInfoGO.SetActive(false);
+        //smallInfoGO.transform.parent = this.transform;
+    }
+    public void ShowDetailedInfo(IParty party) {
+        detailedInfoLbl.text = party.name;
+
+    }
+    private void PositionTooltip(RectTransform rt) {
         var v3 = Input.mousePosition;
 
-        smallInfoRT.anchorMin = new Vector2(0f, 1f);
-        smallInfoRT.anchorMax = new Vector2(0f, 1f);
-        smallInfoRT.pivot = new Vector2(0f, 1f);
+        rt.anchorMin = new Vector2(0f, 1f);
+        rt.anchorMax = new Vector2(0f, 1f);
+        rt.pivot = new Vector2(0f, 1f);
 
         v3.x += 25f;
         v3.y -= 25f;
-        smallInfoGO.transform.position = v3;
+        rt.position = v3;
 
         Vector3[] corners = new Vector3[4]; //bottom-left, top-left, top-right, bottom-right
         List<int> cornersOutside = new List<int>();
-        smallInfoRT.GetWorldCorners(corners);
+        rt.GetWorldCorners(corners);
         for (int i = 0; i < 4; i++) {
             // Backtransform to parent space
             Vector3 localSpacePoint = mainRT.InverseTransformPoint(corners[i]);
@@ -370,28 +379,23 @@ public class UIManager : MonoBehaviour {
             if (cornersOutside.Contains(2) && cornersOutside.Contains(3)) {
                 if (cornersOutside.Contains(0)) {
                     //bottom side and right side are outside, move anchor to bottom right
-                    smallInfoRT.anchorMin = new Vector2(1f, 0f);
-                    smallInfoRT.anchorMax = new Vector2(1f, 0f);
-                    smallInfoRT.pivot = new Vector2(1f, 0f);
+                    rt.anchorMin = new Vector2(1f, 0f);
+                    rt.anchorMax = new Vector2(1f, 0f);
+                    rt.pivot = new Vector2(1f, 0f);
                 } else {
                     //right side is outside, move anchor to top right side
-                    smallInfoRT.anchorMin = new Vector2(1f, 1f);
-                    smallInfoRT.anchorMax = new Vector2(1f, 1f);
-                    smallInfoRT.pivot = new Vector2(1f, 1f);
+                    rt.anchorMin = new Vector2(1f, 1f);
+                    rt.anchorMax = new Vector2(1f, 1f);
+                    rt.pivot = new Vector2(1f, 1f);
                 }
             } else if (cornersOutside.Contains(0) && cornersOutside.Contains(3)) {
                 //bottom side is outside, move anchor to bottom left
-                smallInfoRT.anchorMin = new Vector2(0f, 0f);
-                smallInfoRT.anchorMax = new Vector2(0f, 0f);
-                smallInfoRT.pivot = new Vector2(0f, 0f);
+                rt.anchorMin = new Vector2(0f, 0f);
+                rt.anchorMax = new Vector2(0f, 0f);
+                rt.pivot = new Vector2(0f, 0f);
             }
-            smallInfoGO.transform.position = Input.mousePosition;
+            rt.position = Input.mousePosition;
         }
-
-    }
-    public void HideSmallInfo() {
-        smallInfoGO.SetActive(false);
-        //smallInfoGO.transform.parent = this.transform;
     }
     #endregion
 
