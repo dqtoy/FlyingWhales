@@ -28,7 +28,7 @@ public class CharacterTaskButton : MonoBehaviour {
 	private void ClickAction(){
 		ECS.Character character = UIManager.Instance.characterInfoUI.activeCharacter;
 		if(character == null){
-			UIManager.Instance.HidePlayerActions ();
+			//UIManager.Instance.HidePlayerActions ();
 			return;
 		}
 		//if (!task.needsSpecificTarget) {

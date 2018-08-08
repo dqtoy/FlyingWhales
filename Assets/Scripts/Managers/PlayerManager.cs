@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ECS;
 
 public class PlayerManager : MonoBehaviour {
 
@@ -8,6 +9,7 @@ public class PlayerManager : MonoBehaviour {
     public bool isChoosingStartingTile = false;
 
     public Player player = null;
+    public Character playerCharacter;
 
     private void Awake() {
         Instance = this;
@@ -33,7 +35,7 @@ public class PlayerManager : MonoBehaviour {
         player.CreatePlayerFaction();
         player.CreatePlayerArea(tile);
         LandmarkManager.Instance.OwnArea(player.playerFaction, player.playerArea);
-        ECS.Character playerCharacter = tile.landmarkOnTile.CreateNewCharacter(RACE.HUMANS, CHARACTER_ROLE.PLAYER, "Warrior");
+        playerCharacter = tile.landmarkOnTile.CreateNewCharacter(RACE.HUMANS, CHARACTER_ROLE.PLAYER, "Warrior");
         playerCharacter.party.actionData.SetCannotPerformAction(true);
         playerCharacter.party.RemoveListeners();
         playerCharacter.UnsubscribeSignals();

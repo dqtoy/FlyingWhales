@@ -730,6 +730,22 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
+    #region Player Actions
+    [Space(10)]
+    [Header("Player Actions")]
+    [SerializeField]
+    internal PlayerActionsUI playerActionsUI;
+    public void ShowPlayerActions(BaseLandmark landmark) {
+        playerActionsUI.SetData(landmark);
+        playerActionsUI.OpenMenu();
+    }
+    public void UpdatePlayerActions() {
+        if (playerActionsUI.isShowing) {
+            playerActionsUI.UpdatePlayerActions();
+        }
+    }
+    #endregion
+
     #region Combat Info
     [Space(10)]
     [Header("Combat History")]
@@ -745,20 +761,6 @@ public class UIManager : MonoBehaviour {
         if (combatLogUI.isShowing) {
             combatLogUI.UpdateCombatLogs();
         }
-    }
-    #endregion
-
-    #region Player Actions
-    [Space(10)]
-    [Header("Player Actions")]
-    [SerializeField] internal PlayerActionsUI playerActionsUI;
-    public void ShowPlayerActions(ILocation location) {
-        //		playerActionsUI.transform.parent = location.tileLocation.UIParent;
-        playerActionsUI.ShowPlayerActionsUI(location);
-        playerActionsUI.Reposition();
-    }
-    public void HidePlayerActions() {
-        playerActionsUI.HidePlayerActionsUI();
     }
     #endregion
 

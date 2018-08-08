@@ -9,9 +9,10 @@ public class CharacterIcon : MonoBehaviour {
 
     [SerializeField] private SpriteRenderer _icon;
     [SerializeField] private GameObject _avatarGO;
+    [SerializeField] private GameObject _characterVisualGO;
+    [SerializeField] private GameObject _playerLocatorGO;
     [SerializeField] private CharacterAIPath _aiPath;
     [SerializeField] private SpriteRenderer _avatarSprite;
-    [SerializeField] private GameObject _characterVisualGO;
     [SerializeField] private Animator _avatarAnimator;
     [SerializeField] private AIDestinationSetter _destinationSetter;
     [SerializeField] private LineRenderer lineRenderer;
@@ -124,6 +125,11 @@ public class CharacterIcon : MonoBehaviour {
         characterPortrait.transform.SetParent(this.transform);
         //(characterPortrait.transform as RectTransform).pivot = new Vector2(1f, 1f);
         characterPortrait.gameObject.SetActive(false);
+    }
+    public void ReclaimPortraitAsPlayer() {
+        ReclaimPortrait();
+        _playerLocatorGO.SetActive(true);
+        //(characterPortrait.transform as RectTransform).pivot = new Vector2(1f, 1f);
     }
     #endregion
 

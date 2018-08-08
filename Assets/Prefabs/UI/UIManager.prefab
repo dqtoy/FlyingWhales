@@ -13290,8 +13290,8 @@ MonoBehaviour:
   hexTileInfoUI: {fileID: 114388667334895196}
   partyinfoUI: {fileID: 114189756459514498}
   monsterInfoUI: {fileID: 0}
-  combatLogUI: {fileID: 114095413008313116}
   playerActionsUI: {fileID: 0}
+  combatLogUI: {fileID: 114095413008313116}
   consoleUI: {fileID: 114797340351722682}
   charactersSummaryGO: {fileID: 1505494758707914}
   charactersToggleBtn: {fileID: 0}

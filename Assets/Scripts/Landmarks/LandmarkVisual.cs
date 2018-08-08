@@ -80,14 +80,16 @@ public class LandmarkVisual : MonoBehaviour {
     }
     public void OnCharacterExitedLandmark(NewParty iparty) {
         //remove character portrait from grid
-        iparty.icon.ReclaimPortrait();
         //iparty.icon.gameObject.SetActive(true);
-        iparty.icon.SetVisualState(true);
-        iparty.icon.characterPortrait.SetBorderState(false);
+
         if (iparty.mainCharacter is ECS.Character && iparty.mainCharacter.role.roleType == CHARACTER_ROLE.PLAYER) {
+            iparty.icon.ReclaimPortraitAsPlayer();
         } else {
+            iparty.icon.ReclaimPortrait();
             AdjustCharCount(-1);
         }
+        iparty.icon.SetVisualState(true);
+        iparty.icon.characterPortrait.SetBorderState(false);
     }
     public void DrawPathTo(BaseLandmark otherLandmark) {
         if (destinationSetter.target != otherLandmark.tileLocation.transform) {

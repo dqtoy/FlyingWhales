@@ -984,7 +984,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             //    }
             UIManager.Instance.ShowLandmarkInfo(this.landmarkOnTile);
         }
-        UIManager.Instance.HidePlayerActions();
+        UIManager.Instance.playerActionsUI.HideMenu();
 #endif
     }
     public void RightClick() {
@@ -993,7 +993,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             return;
         }
         Messenger.Broadcast(Signals.TILE_RIGHT_CLICKED, this);
-        if (landmarkOnTile != null) {
+        if (landmarkOnTile != null && (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.role.roleType == CHARACTER_ROLE.PLAYER)) {
             UIManager.Instance.ShowPlayerActions(this.landmarkOnTile);
         }
 #endif
