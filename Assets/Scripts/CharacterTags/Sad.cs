@@ -2,8 +2,8 @@
 using System.Collections;
 using ECS;
 
-public class Sad : CharacterTag {
-    public Sad(Character character) : base(character, CHARACTER_TAG.SAD) {
+public class Sad : CharacterAttribute {
+    public Sad(Character character) : base(character, ATTRIBUTE.SAD) {
 
     }
 

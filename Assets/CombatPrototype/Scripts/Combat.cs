@@ -303,7 +303,7 @@ namespace ECS{
             //				}
 
             //				//int chance = Utilities.rng.Next(0, 100);
-            //				//if(sourceCharacter.HasTag(CHARACTER_TAG.MILD_PSYTOXIN)){
+            //				//if(sourceCharacter.HasTag(ATTRIBUTE.MILD_PSYTOXIN)){
             //				//	if(chance < 10){
             //				//		if(sourceCharacter.currentSide == SIDES.A){
             //				//			oppositeTargets = this.charactersSideA;
@@ -311,7 +311,7 @@ namespace ECS{
             //				//			oppositeTargets = this.charactersSideB;
             //				//		}
             //				//	}
-            //				//}else if(sourceCharacter.HasTag(CHARACTER_TAG.MODERATE_PSYTOXIN)){
+            //				//}else if(sourceCharacter.HasTag(ATTRIBUTE.MODERATE_PSYTOXIN)){
             //				//	if(chance < 20){
             //				//		if(sourceCharacter.currentSide == SIDES.A){
             //				//			oppositeTargets = this.charactersSideA;
@@ -335,7 +335,7 @@ namespace ECS{
             //				}
 
             //				//int chance = Utilities.rng.Next (0, 100);
-            //				//if(sourceCharacter.HasTag(CHARACTER_TAG.MILD_PSYTOXIN)){
+            //				//if(sourceCharacter.HasTag(ATTRIBUTE.MILD_PSYTOXIN)){
             //				//	if(chance < 10){
             //				//		if(sourceCharacter.currentSide == SIDES.B){
             //				//			sameTargets = this.charactersSideA;
@@ -343,7 +343,7 @@ namespace ECS{
             //				//			sameTargets = this.charactersSideB;
             //				//		}
             //				//	}
-            //				//}else if(sourceCharacter.HasTag(CHARACTER_TAG.MODERATE_PSYTOXIN)){
+            //				//}else if(sourceCharacter.HasTag(ATTRIBUTE.MODERATE_PSYTOXIN)){
             //				//	if(chance < 20){
             //				//		if(sourceCharacter.currentSide == SIDES.B){
             //				//			sameTargets = this.charactersSideA;

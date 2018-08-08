@@ -119,8 +119,8 @@ public class CharacterInfoUI : UIMenu {
         //Messenger.AddListener<ActionQueueItem, Character>(Signals.ACTION_ADDED_TO_QUEUE, OnActionAddedToQueue);
         //Messenger.AddListener<ActionQueueItem, Character>(Signals.ACTION_REMOVED_FROM_QUEUE, OnActionRemovedFromQueue);
         //Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
-        Messenger.AddListener<Character, CharacterTag>(Signals.CHARACTER_TAG_ADDED, OnCharacterTagAdded);
-        Messenger.AddListener<Character, CharacterTag>(Signals.CHARACTER_TAG_REMOVED, OnCharacterTagRemoved);
+        Messenger.AddListener<Character, CharacterAttribute>(Signals.ATTRIBUTE_ADDED, OnCharacterAttributeAdded);
+        Messenger.AddListener<Character, CharacterAttribute>(Signals.ATTRIBUTE_REMOVED, OnCharacterAttributeRemoved);
         affiliations.Initialize();
         currentActionIcon.Initialize();
         //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
@@ -396,30 +396,30 @@ public class CharacterInfoUI : UIMenu {
     private void UpdateTagInfo() {
         Utilities.DestroyChildren(tagsScrollView.content);
         for (int i = 0; i < currentlyShowingCharacter.tags.Count; i++) {
-            CharacterTag currTag = currentlyShowingCharacter.tags[i];
+            CharacterAttribute currTag = currentlyShowingCharacter.tags[i];
             AddTag(currTag);
         }
     }
-    private void AddTag(CharacterTag tag) {
+    private void AddTag(CharacterAttribute tag) {
         GameObject tagGO = UIManager.Instance.InstantiateUIObject(characterTagPrefab.name, tagsScrollView.content);
-        tagGO.GetComponent<CharacterTagIcon>().SetTag(tag);
+        tagGO.GetComponent<CharacterAttributeIcon>().SetTag(tag);
     }
-    private void RemoveTag(CharacterTag tag) {
-        CharacterTagIcon[] icons = Utilities.GetComponentsInDirectChildren<CharacterTagIcon>(tagsScrollView.content.gameObject);
+    private void RemoveTag(CharacterAttribute tag) {
+        CharacterAttributeIcon[] icons = Utilities.GetComponentsInDirectChildren<CharacterAttributeIcon>(tagsScrollView.content.gameObject);
         for (int i = 0; i < icons.Length; i++) {
-            CharacterTagIcon icon = icons[i];
-            if (icon.tag == tag) {
+            CharacterAttributeIcon icon = icons[i];
+            if (icon.attribute == tag) {
                 ObjectPoolManager.Instance.DestroyObject(icon.gameObject);
                 break;
             }
         }
     }
-    private void OnCharacterTagAdded(Character affectedCharacter, CharacterTag tag) {
+    private void OnCharacterAttributeAdded(Character affectedCharacter, CharacterAttribute tag) {
         if (currentlyShowingCharacter != null && currentlyShowingCharacter.id == affectedCharacter.id) {
             AddTag(tag);
         }
     }
-    private void OnCharacterTagRemoved(Character affectedCharacter, CharacterTag tag) {
+    private void OnCharacterAttributeRemoved(Character affectedCharacter, CharacterAttribute tag) {
         if (currentlyShowingCharacter != null && currentlyShowingCharacter.id == affectedCharacter.id) {
             RemoveTag(tag);
         }

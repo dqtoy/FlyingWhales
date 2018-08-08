@@ -36,8 +36,8 @@ public static class Signals {
     #endregion
 
     #region Character
-    public static string CHARACTER_TAG_ADDED = "OnCharacterTagAdded"; //Parameters (Character affectedCharacter, CharacterTag addedTag)
-    public static string CHARACTER_TAG_REMOVED = "OnCharacterTagRemoved"; //Parameters (Character affectedCharacter, CharacterTag removedTag)
+    public static string ATTRIBUTE_ADDED = "OnCharacterAttributeAdded"; //Parameters (Character affectedCharacter, CharacterAttribute addedTag)
+    public static string ATTRIBUTE_REMOVED = "OnCharacterAttributeRemoved"; //Parameters (Character affectedCharacter, CharacterAttribute removedTag)
     public static string ITEM_PLACED_INVENTORY = "OnItemPlacedAtInventory"; //Parameters (Item item, Character character)
     public static string CHARACTER_DEATH = "OnCharacterDied"; //Parameters (Character characterThatDied)
     public static string CHARACTER_KILLED = "OnCharacterKilled"; //Parameters (Character killer, Character characterThatDied)

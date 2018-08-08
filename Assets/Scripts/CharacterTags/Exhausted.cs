@@ -2,8 +2,8 @@
 using System.Collections;
 using ECS;
 
-public class Exhausted : CharacterTag {
-    public Exhausted(Character character) : base(character, CHARACTER_TAG.EXHAUSTED) {
+public class Exhausted : CharacterAttribute {
+    public Exhausted(Character character) : base(character, ATTRIBUTE.EXHAUSTED) {
 
     }
 

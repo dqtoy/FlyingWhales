@@ -30,7 +30,7 @@ public class CharacterManager : MonoBehaviour {
 	public Sprite chieftainSprite;
 
     [Header("Character Tag Icons")]
-    [SerializeField] private List<CharacterTagIconSetting> characterTagIcons;
+    [SerializeField] private List<CharacterAttributeIconSetting> characterTagIcons;
 
     [Header("Character Portrait Assets")]
     public GameObject characterPortraitPrefab;
@@ -364,9 +364,9 @@ public class CharacterManager : MonoBehaviour {
         }
         return null;
     }
-    public Sprite GetCharacterTagSprite(CHARACTER_TAG tag) {
+    public Sprite GetCharacterAttributeSprite(ATTRIBUTE tag) {
         for (int i = 0; i < characterTagIcons.Count; i++) {
-            CharacterTagIconSetting currSettings = characterTagIcons[i];
+            CharacterAttributeIconSetting currSettings = characterTagIcons[i];
             if (currSettings.tag == tag) {
                 return currSettings.icon;
             }

@@ -121,7 +121,7 @@ public class CharacterSim : ICharacterSim {
     public int speed {
         get {
             float agi = (float) agility;
-            return (int) (100f * ((1f + ((agi / 5f) / 100f)) + (float) level + (agi / 3f))); //TODO: + passive speed bonus
+            return (int) ((100f * (1f + ((agi / 5f) / 100f))) + (float) level + (agi / 3f)); //TODO: + passive speed bonus
         }
     }
     public int currentHP {
