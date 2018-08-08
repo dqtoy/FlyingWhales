@@ -59,6 +59,8 @@ public class UIManager : MonoBehaviour {
     [Header("Detailed Info")]
     public GameObject detailedInfoGO;
     public TextMeshProUGUI detailedInfoLbl;
+    public RectTransform detailedInfoContentParent;
+    public CharacterPortrait[] detailedInfoPortraits;
 
     [Space(10)]
     [Header("World Info Menu")]
@@ -344,8 +346,20 @@ public class UIManager : MonoBehaviour {
         //smallInfoGO.transform.parent = this.transform;
     }
     public void ShowDetailedInfo(IParty party) {
+        detailedInfoGO.SetActive(true);
         detailedInfoLbl.text = party.name;
-
+        Utilities.DestroyChildren(detailedInfoContentParent);
+        for (int i = 0; i < party.icharacters.Count; i++) {
+            ICharacter character = party.icharacters[i];
+            GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterPortrait", Vector3.zero, Quaternion.identity, detailedInfoContentParent);
+            CharacterPortrait portrait = portraitGO.GetComponent<CharacterPortrait>();
+            portrait.SetDimensions(48f);
+            portrait.GeneratePortrait(character, IMAGE_SIZE.X64, true, true);
+        }
+        PositionTooltip(detailedInfoGO.transform as RectTransform);
+    }
+    public void HideDetailedInfo() {
+        detailedInfoGO.SetActive(false);
     }
     private void PositionTooltip(RectTransform rt) {
         var v3 = Input.mousePosition;

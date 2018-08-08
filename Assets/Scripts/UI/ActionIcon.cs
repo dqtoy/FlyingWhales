@@ -24,6 +24,7 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
 
     public void Initialize() {
         Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_DAY_ADJUSTED, OnActionDayAdjusted);
+        Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
     }
     public void SetCharacter(ECS.Character character) {
         _character = character;
@@ -75,9 +76,16 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
         iconImage.color = color;
     }
 
+    private void OnActionTaken(CharacterAction action, CharacterParty party) {
+        if (party.icharacters.Contains(_character)) {
+            SetAction(action);
+        }
+    }
+
     public override void Reset() {
         base.Reset();
         Messenger.RemoveListener<CharacterAction, CharacterParty>(Signals.ACTION_DAY_ADJUSTED, OnActionDayAdjusted);
+        Messenger.RemoveListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
         _action = null;
         _character = null;
         SetAlpha(255f/255f);
