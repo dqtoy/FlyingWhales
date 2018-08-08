@@ -118,7 +118,7 @@ public class CharacterInfoUI : UIMenu {
         Messenger.AddListener<BaseLandmark>(Signals.PLAYER_LANDMARK_CREATED, OnPlayerLandmarkCreated);
         //Messenger.AddListener<ActionQueueItem, Character>(Signals.ACTION_ADDED_TO_QUEUE, OnActionAddedToQueue);
         //Messenger.AddListener<ActionQueueItem, Character>(Signals.ACTION_REMOVED_FROM_QUEUE, OnActionRemovedFromQueue);
-        Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
+        //Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
         Messenger.AddListener<Character, CharacterAttribute>(Signals.ATTRIBUTE_ADDED, OnCharacterAttributeAdded);
         Messenger.AddListener<Character, CharacterAttribute>(Signals.ATTRIBUTE_REMOVED, OnCharacterAttributeRemoved);
         affiliations.Initialize();
@@ -158,6 +158,8 @@ public class CharacterInfoUI : UIMenu {
         ShowAttackButton();
         ShowReleaseButton();
         CheckShowSnatchButton();
+        currentActionIcon.SetCharacter(currentlyShowingCharacter);
+        currentActionIcon.SetAction((currentlyShowingCharacter.currentParty as CharacterParty).actionData.currentAction);
     }
     public override void ShowTooltip(GameObject objectHovered) {
         base.ShowTooltip(objectHovered);
@@ -218,8 +220,7 @@ public class CharacterInfoUI : UIMenu {
         lvlClassLbl.text = "Lvl." + currentlyShowingCharacter.level.ToString() + " " + currentlyShowingCharacter.characterClass.className;
         modeLbl.text = currentlyShowingCharacter.currentMode.ToString();
         affiliations.SetCharacter(currentlyShowingCharacter);
-        currentActionIcon.SetCharacter(currentlyShowingCharacter);
-        currentActionIcon.SetAction((currentlyShowingCharacter.currentParty as CharacterParty).actionData.currentAction);
+        
     }
     private void UpdateActionQueue() {
         Utilities.DestroyChildren(actionQueueScrollView.content);
@@ -482,11 +483,11 @@ public class CharacterInfoUI : UIMenu {
         }
         return null;
     }
-    private void OnActionTaken(CharacterAction takenAction, CharacterParty party) {
-        if (currentlyShowingCharacter != null && currentlyShowingCharacter.currentParty.id == party.id) {
-            currentActionIcon.SetAction(takenAction);
-        }
-    }
+    //private void OnActionTaken(CharacterAction takenAction, CharacterParty party) {
+    //    if (currentlyShowingCharacter != null && currentlyShowingCharacter.currentParty.id == party.id) {
+    //        currentActionIcon.SetAction(takenAction);
+    //    }
+    //}
     #endregion
 
     #region History

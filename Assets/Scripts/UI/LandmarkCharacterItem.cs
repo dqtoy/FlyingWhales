@@ -10,6 +10,14 @@ public class LandmarkCharacterItem : PooledObject {
     public NewParty party { get; private set; }
     private BaseLandmark _landmark;
 
+    private bool isHovering = false;
+    private HoveredObject hoveredObject = HoveredObject.None;
+    private enum HoveredObject {
+        None,
+        Party,
+        Character
+    }
+
     [Header("Visitors")]
     [SerializeField] private CharacterPortrait visitorPortrait;
     [SerializeField] private Image visitorParty;
@@ -25,6 +33,13 @@ public class LandmarkCharacterItem : PooledObject {
         this.party = party;
         _landmark = landmark;
         UpdateVisuals();
+        Messenger.AddListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
+        Messenger.AddListener<ICharacter, NewParty>(Signals.CHARACTER_LEFT_PARTY, OnCharacterLeftParty);
+        if (party is CharacterParty) {
+            actionIcon.Initialize();
+            actionIcon.SetCharacter(party.owner as Character);
+            actionIcon.SetAction((party as CharacterParty).actionData.currentAction);
+        }
     }
 
     public void UpdateVisuals() {
@@ -59,9 +74,56 @@ public class LandmarkCharacterItem : PooledObject {
         }
     }
 
+    public void OnHoverPartyIcon() {
+        isHovering = true;
+        hoveredObject = HoveredObject.Party;
+    }
+    public void OnHoverOverCharacter() {
+        isHovering = true;
+        hoveredObject = HoveredObject.Character;
+    }
+    public void OnHoverOut() {
+        isHovering = false;
+        hoveredObject = HoveredObject.None;
+        UIManager.Instance.HideSmallInfo();
+        UIManager.Instance.HideDetailedInfo();
+    }
+
+    private void Update() {
+        if (isHovering) {
+            if (hoveredObject == HoveredObject.Party) {
+                UIManager.Instance.ShowDetailedInfo(party);
+            } else if (hoveredObject == HoveredObject.Character) {
+                UIManager.Instance.ShowSmallInfo(party.owner.name);
+            }
+        }
+    }
+
+    #region Listeners
+    private void OnCharacterJoinedParty(ICharacter character, NewParty affectedParty) {
+        if (party.id == affectedParty.id) {
+            UpdateVisuals();
+        }
+    }
+    private void OnCharacterLeftParty(ICharacter character, NewParty affectedParty) {
+        if (party.id == affectedParty.id) {
+            UpdateVisuals();
+        }
+    }
+    #endregion
+
     public override void Reset() {
         base.Reset();
+        if (isHovering) {
+            UIManager.Instance.HideSmallInfo();
+            UIManager.Instance.HideDetailedInfo();
+        }
         party = null;
         _landmark = null;
+        actionIcon.Reset();
+        isHovering = false;
+        hoveredObject = HoveredObject.None;
+        Messenger.RemoveListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
+        Messenger.RemoveListener<ICharacter, NewParty>(Signals.CHARACTER_LEFT_PARTY, OnCharacterLeftParty);
     }
 }

@@ -23,7 +23,7 @@ public class CharacterSummaryEntry : PooledObject {
     #endregion
 
     public void Initialize() {
-        Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
+        //Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
         //Messenger.AddListener(Signals.UPDATE_UI, UpdateCharacterInfo);
         actionIcon.Initialize();
     }
@@ -54,14 +54,14 @@ public class CharacterSummaryEntry : PooledObject {
         bgSprite.color = color;
     }
 
-    private void OnActionTaken(CharacterAction action, CharacterParty party) {
-        if (party.icharacters.Contains(_character)) {
-            actionIcon.SetAction(action);
-        }
-    }
+    //private void OnActionTaken(CharacterAction action, CharacterParty party) {
+    //    if (party.icharacters.Contains(_character)) {
+    //        actionIcon.SetAction(action);
+    //    }
+    //}
     private void RemoveListeners() {
-        Messenger.RemoveListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
-        Messenger.RemoveListener(Signals.UPDATE_UI, UpdateCharacterInfo);
+        //Messenger.RemoveListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
+        //Messenger.RemoveListener(Signals.UPDATE_UI, UpdateCharacterInfo);
         affiliations.Reset();
     }
 
