@@ -10,6 +10,7 @@ namespace ECS{
         public string interactString;
         public int goldCost;
         public bool isStackable;
+        public List<string> attributeNames;
 
         protected ECS.Character _owner; //Not included in CreateNewCopy
         protected bool _isEquipped;

@@ -365,21 +365,22 @@ public class ItemChest : IEncounterable {
                 default:
                     break;
             }
-		} else if (_chestType == ITEM_TYPE.ITEM) {
-			switch (_tier) {
-			case 1:
-			case 2:
-			case 3:
-			case 4:
-			case 5:
-				crudeChance = 30;
-				normalChance = 50;
-				exceptionalChance = 20;
-				break;
-			default:
-				break;
-			}
-		}
+		} 
+  //      else if (_chestType == ITEM_TYPE.ITEM) {
+		//	switch (_tier) {
+		//	case 1:
+		//	case 2:
+		//	case 3:
+		//	case 4:
+		//	case 5:
+		//		crudeChance = 30;
+		//		normalChance = 50;
+		//		exceptionalChance = 20;
+		//		break;
+		//	default:
+		//		break;
+		//	}
+		//}
         _qualityWeights.AddElement(QUALITY.CRUDE, crudeChance);
         _qualityWeights.AddElement(QUALITY.NORMAL, normalChance);
         _qualityWeights.AddElement(QUALITY.EXCEPTIONAL, exceptionalChance);

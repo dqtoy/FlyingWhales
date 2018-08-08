@@ -89,7 +89,7 @@ public class ItemManager : MonoBehaviour {
         _equipmentTypes = new Dictionary<ITEM_TYPE, List<EQUIPMENT_TYPE>> ();
 		_equipmentTypes.Add (ITEM_TYPE.WEAPON, new List<EQUIPMENT_TYPE> ());
 		_equipmentTypes.Add (ITEM_TYPE.ARMOR, new List<EQUIPMENT_TYPE> ());
-		_equipmentTypes.Add (ITEM_TYPE.ITEM, new List<EQUIPMENT_TYPE> ());
+		//_equipmentTypes.Add (ITEM_TYPE.ITEM, new List<EQUIPMENT_TYPE> ());
 		ConstructItemsDictionary();
         ConstructWeaponTypeData();
         ConstructArmorTypeData();
@@ -166,7 +166,7 @@ public class ItemManager : MonoBehaviour {
             WeaponType data = JsonUtility.FromJson<WeaponType>(dataAsJson);
             _weaponTypeData.Add(data.weaponType, data);
 			_equipmentTypes [ITEM_TYPE.WEAPON].Add ((EQUIPMENT_TYPE)data.weaponType);
-			_equipmentTypes [ITEM_TYPE.ITEM].Add ((EQUIPMENT_TYPE)data.weaponType);
+			//_equipmentTypes [ITEM_TYPE.ITEM].Add ((EQUIPMENT_TYPE)data.weaponType);
         }
     }
     private void ConstructArmorTypeData() {
@@ -179,7 +179,7 @@ public class ItemManager : MonoBehaviour {
             ArmorType data = JsonUtility.FromJson<ArmorType>(dataAsJson);
             _armorTypeData.Add(data.armorType, data);
 			_equipmentTypes [ITEM_TYPE.ARMOR].Add ((EQUIPMENT_TYPE)data.armorType);
-			_equipmentTypes [ITEM_TYPE.ITEM].Add ((EQUIPMENT_TYPE)data.armorType);
+			//_equipmentTypes [ITEM_TYPE.ITEM].Add ((EQUIPMENT_TYPE)data.armorType);
         }
     }
 

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 namespace ECS{
 	public class Armor : Item {
         [SerializeField] private ARMOR_TYPE _armorType;
-        [SerializeField] private string _armorBodyType;
         [SerializeField] private int _def;
         [SerializeField] private ARMOR_PREFIX _prefix;
         [SerializeField] private ARMOR_SUFFIX _suffix;
@@ -29,10 +28,6 @@ namespace ECS{
         public ARMOR_SUFFIX suffixType {
             get { return _suffix; }
         }
-        public string armorBodyType {
-            get { return _armorBodyType; }
-            set { _armorBodyType = value; }
-        }
         public int def {
             get { return _def; }
             set { _def = value; }
@@ -52,7 +47,6 @@ namespace ECS{
             }
             Armor copy = new Armor();
             copy.armorType = armorType;
-            copy.armorBodyType = armorBodyType;
             copy._def = _def;
             copy._prefix = _prefix;
             copy._suffix = _suffix;

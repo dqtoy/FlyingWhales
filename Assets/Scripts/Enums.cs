@@ -1046,8 +1046,8 @@ public enum CHARACTER_ATTRIBUTES {
 public enum ITEM_TYPE{
 	WEAPON,
 	ARMOR,
-	ITEM,
-	PLANT,
+	CONSUMABLE,
+	MISC,
 }
 
 public enum EQUIPMENT_TYPE {
@@ -1434,4 +1434,9 @@ public enum MOVEMENT_TYPE {
 public enum TARGET_TYPE {
     SINGLE,
     ROW,
+}
+public enum ATTRIBUTE_CATEGORY {
+    CHARACTER,
+    ITEM,
+    STRUCTURE,
 }
