@@ -17,6 +17,13 @@ public class AttributePanelUI : MonoBehaviour {
     public InputField nameInput;
     public Toggle hiddenToggle;
 
+    private List<string> _allItemAttributes;
+
+    #region getters/setters
+    public List<string> allItemAttributes {
+        get { return _allItemAttributes; }
+    }
+    #endregion
     void Awake() {
         Instance = this;
     }
@@ -25,12 +32,22 @@ public class AttributePanelUI : MonoBehaviour {
     }
 
     #region Utilities
+    private void UpdateItemAttributes() {
+        _allItemAttributes.Clear();
+        string path = Utilities.dataPath + "Attributes/ITEM/";
+        foreach (string file in Directory.GetFiles(path, "*.json")) {
+            _allItemAttributes.Add(Path.GetFileNameWithoutExtension(file));
+        }
+        ItemPanelUI.Instance.UpdateAttributeOptions();
+    }
     private void LoadAllData() {
+        _allItemAttributes = new List<string>();
         categoryOptions.ClearOptions();
 
         string[] categories = System.Enum.GetNames(typeof(ATTRIBUTE_CATEGORY));
 
         categoryOptions.AddOptions(categories.ToList());
+        UpdateItemAttributes();
     }
     private void ClearData() {
         categoryOptions.value = 0;
@@ -70,6 +87,7 @@ public class AttributePanelUI : MonoBehaviour {
         UnityEditor.AssetDatabase.ImportAsset(path);
 #endif
         Debug.Log("Successfully saved attribute at " + path);
+        UpdateItemAttributes();
     }
     private void LoadAttribute() {
 #if UNITY_EDITOR

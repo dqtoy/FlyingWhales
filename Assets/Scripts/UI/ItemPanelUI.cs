@@ -22,6 +22,7 @@ public class ItemPanelUI : MonoBehaviour {
     public Dropdown armorPrefixOptions;
     public Dropdown armorSuffixOptions;
     public Dropdown elementOptions;
+    public Dropdown attributeOptions;
 
     public InputField nameInput;
     public InputField descriptionInput;
@@ -34,6 +35,12 @@ public class ItemPanelUI : MonoBehaviour {
 
     public GameObject weaponFieldsGO;
     public GameObject armorFieldsGO;
+    public GameObject attributeBtnPrefab;
+
+    public Transform attributeContentTransform;
+
+    private List<string> _attributes;
+    private AttributeBtn _currentSelectedButton;
 
     void Awake() {
         Instance = this;
@@ -44,6 +51,7 @@ public class ItemPanelUI : MonoBehaviour {
 
     #region Utilities
     private void LoadAllData() {
+        _attributes = new List<string>();
         itemTypeOptions.ClearOptions();
         weaponTypeOptions.ClearOptions();
         armorTypeOptions.ClearOptions();
@@ -52,6 +60,7 @@ public class ItemPanelUI : MonoBehaviour {
         armorPrefixOptions.ClearOptions();
         armorSuffixOptions.ClearOptions();
         elementOptions.ClearOptions();
+        attributeOptions.ClearOptions();
 
         string[] itemTypes = System.Enum.GetNames(typeof(ITEM_TYPE));
         string[] weaponTypes = System.Enum.GetNames(typeof(WEAPON_TYPE));
@@ -62,6 +71,12 @@ public class ItemPanelUI : MonoBehaviour {
         string[] armorSuffixes = System.Enum.GetNames(typeof(ARMOR_SUFFIX));
         string[] elements = System.Enum.GetNames(typeof(ELEMENT));
 
+        List<string> attributes = new List<string>();
+        string path = Utilities.dataPath + "Attributes/ITEM/";
+        foreach (string file in Directory.GetFiles(path, "*.json")) {
+            attributes.Add(Path.GetFileNameWithoutExtension(file));
+        }
+
 
         itemTypeOptions.AddOptions(itemTypes.ToList());
         weaponTypeOptions.AddOptions(weaponTypes.ToList());
@@ -71,6 +86,7 @@ public class ItemPanelUI : MonoBehaviour {
         armorPrefixOptions.AddOptions(armorPrefixes.ToList());
         armorSuffixOptions.AddOptions(armorSuffixes.ToList());
         elementOptions.AddOptions(elements.ToList());
+        attributeOptions.AddOptions(attributes);
     }
     private void ClearData() {
         itemTypeOptions.value = 0;
@@ -81,6 +97,7 @@ public class ItemPanelUI : MonoBehaviour {
         armorPrefixOptions.value = 0;
         armorSuffixOptions.value = 0;
         elementOptions.value = 0;
+        attributeOptions.value = 0;
 
         nameInput.text = string.Empty;
         descriptionInput.text = string.Empty;
@@ -92,6 +109,11 @@ public class ItemPanelUI : MonoBehaviour {
         stackableToggle.isOn = false;
 
         armorFieldsGO.SetActive(false);
+
+        _attributes.Clear();
+        foreach (Transform child in attributeContentTransform) {
+            GameObject.Destroy(child.gameObject);
+        }
     }
     private void SaveItem() {
 #if UNITY_EDITOR
@@ -157,6 +179,7 @@ public class ItemPanelUI : MonoBehaviour {
         newItem.interactString = interactionInput.text;
         newItem.goldCost = int.Parse(goldCostInput.text);
         newItem.isStackable = stackableToggle.isOn;
+        newItem.attributeNames = _attributes;
     }
     private void SaveJson(Item item, string path) {
         string jsonString = JsonUtility.ToJson(item);
@@ -194,7 +217,6 @@ public class ItemPanelUI : MonoBehaviour {
         }
 #endif
     }
-
     private void LoadItemDataToUI(Item item) {
         itemTypeOptions.value = GetItemTypeIndex(item.itemType.ToString());
         nameInput.text = item.itemName;
@@ -202,8 +224,14 @@ public class ItemPanelUI : MonoBehaviour {
         interactionInput.text = item.interactString;
         goldCostInput.text = item.goldCost.ToString();
         stackableToggle.isOn = item.isStackable;
+        for (int i = 0; i < item.attributeNames.Count; i++) {
+            string attribute = item.attributeNames[i];
+            _attributes.Add(attribute);
+            GameObject go = GameObject.Instantiate(attributeBtnPrefab, attributeContentTransform);
+            go.GetComponent<AttributeBtn>().buttonText.text = attribute;
+        }
 
-        if(item.itemType == ITEM_TYPE.WEAPON) {
+        if (item.itemType == ITEM_TYPE.WEAPON) {
             Weapon weapon = item as Weapon;
             weaponTypeOptions.value = GetWeaponTypeIndex(weapon.weaponType.ToString());
             weaponPrefixOptions.value = GetWeaponPrefixIndex(weapon.prefixType.ToString());
@@ -282,6 +310,13 @@ public class ItemPanelUI : MonoBehaviour {
         }
         return 0;
     }
+    public void SetCurrentlySelectedButton(AttributeBtn btn) {
+        _currentSelectedButton = btn;
+    }
+    public void UpdateAttributeOptions() {
+        attributeOptions.ClearOptions();
+        attributeOptions.AddOptions(AttributePanelUI.Instance.allItemAttributes);
+    }
     #endregion
 
     #region OnValueChanged
@@ -307,6 +342,23 @@ public class ItemPanelUI : MonoBehaviour {
     }
     public void OnClickSaveItem() {
         SaveItem();
+    }
+    public void OnAddAttribute() {
+        string attributeToAdd = attributeOptions.options[attributeOptions.value].text;
+        if (!_attributes.Contains(attributeToAdd)) {
+            _attributes.Add(attributeToAdd);
+            GameObject go = GameObject.Instantiate(attributeBtnPrefab, attributeContentTransform);
+            go.GetComponent<AttributeBtn>().buttonText.text = attributeToAdd;
+        }
+    }
+    public void OnRemoveAttribute() {
+        if (_currentSelectedButton != null) {
+            string attributeToRemove = _currentSelectedButton.buttonText.text;
+            if (_attributes.Remove(attributeToRemove)) {
+                GameObject.Destroy(_currentSelectedButton.gameObject);
+                _currentSelectedButton = null;
+            }
+        }
     }
     #endregion
 }
