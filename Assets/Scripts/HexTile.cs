@@ -932,14 +932,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #region Monobehaviour Functions
     private void OnMouseOver() {
         MouseOver();
-#if !WORLD_CREATION_TOOL
-        if (Input.GetMouseButtonDown(0)) {
-            LeftClick();
-        }
-        if (Input.GetMouseButtonDown(1)) {
-            RightClick();
-        }
-#endif
     }
     private void OnMouseExit() {
         MouseExit();
@@ -1015,6 +1007,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #else
         if (UIManager.Instance.IsMouseOnUI()) {
             return;
+        }
+        if (Input.GetMouseButtonDown(0)) {
+            LeftClick();
+        }
+        if (Input.GetMouseButtonDown(1)) {
+            RightClick();
         }
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
