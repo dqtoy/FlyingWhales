@@ -23,6 +23,7 @@ public class Monster : ICharacter, ICharacterSim {
     [SerializeField] private List<string> _skillNames;
     [SerializeField] private List<ElementChance> _elementChanceWeaknesses;
     [SerializeField] private List<ElementChance> _elementChanceResistances;
+    [SerializeField] private List<ItemDrop> _itemDrops;
 
     //To add item drops and their chances
     private string _characterColorCode;
@@ -49,6 +50,7 @@ public class Monster : ICharacter, ICharacterSim {
     private List<Skill> _skills;
     private Dictionary<ELEMENT, float> _elementalWeaknesses;
     private Dictionary<ELEMENT, float> _elementalResistances;
+    private Dictionary<string, float> _itemDropsLookup;
     private Squad _squad;
     private NewParty _currentParty;
 
@@ -203,11 +205,17 @@ public class Monster : ICharacter, ICharacterSim {
     public List<BodyPart> bodyParts {
         get { return _bodyParts; }
     }
+    public List<ItemDrop> itemDrops {
+        get { return _itemDrops; }
+    }
     public Dictionary<ELEMENT, float> elementalWeaknesses {
         get { return _elementalWeaknesses; }
     }
     public Dictionary<ELEMENT, float> elementalResistances {
         get { return _elementalResistances; }
+    }
+    public Dictionary<string, float> itemDropsLookup {
+        get { return _itemDropsLookup; }
     }
     public NewParty ownParty {
         get { return _ownParty; }
@@ -255,6 +263,7 @@ public class Monster : ICharacter, ICharacterSim {
         }
         newMonster._elementalWeaknesses = new Dictionary<ELEMENT, float>(this._elementalWeaknesses);
         newMonster._elementalResistances = new Dictionary<ELEMENT, float>(this._elementalResistances);
+        newMonster._itemDropsLookup = new Dictionary<string, float>(this._itemDropsLookup);
 
         return newMonster;
     }
@@ -300,6 +309,7 @@ public class Monster : ICharacter, ICharacterSim {
         this._skillNames = MonsterPanelUI.Instance.allSkills;
         this._elementChanceWeaknesses = new List<ElementChance>();
         this._elementChanceResistances = new List<ElementChance>();
+        this._itemDrops = MonsterPanelUI.Instance.itemDrops;
     }
 
     public void ConstructMonsterData() {
@@ -314,15 +324,24 @@ public class Monster : ICharacter, ICharacterSim {
             ElementChance elementChance = _elementChanceWeaknesses[i];
             this._elementalWeaknesses.Add(elementChance.element, elementChance.chance);
         }
-
         this._elementalResistances = new Dictionary<ELEMENT, float>();
         for (int i = 0; i < _elementChanceResistances.Count; i++) {
             ElementChance elementChance = _elementChanceResistances[i];
             this._elementalResistances.Add(elementChance.element, elementChance.chance);
         }
+
         _skillNames.Clear();
         _elementChanceWeaknesses.Clear();
         _elementChanceResistances.Clear();
+        ConstructItemDrops();
+    }
+    private void ConstructItemDrops() {
+        this._itemDropsLookup = new Dictionary<string, float>();
+        for (int i = 0; i < _itemDrops.Count; i++) {
+            ItemDrop itemDrop = _itemDrops[i];
+            this._itemDropsLookup.Add(itemDrop.itemName, itemDrop.dropRate);
+        }
+        _itemDrops.Clear();
     }
 
     #region Utilities
@@ -459,19 +478,21 @@ public class Monster : ICharacter, ICharacterSim {
         _currentSP += amount;
         _currentSP = Mathf.Clamp(_currentSP, 0, _maxSP);
     }
-    public void AdjustHP(int amount) {
+    public void AdjustHP(int amount, ICharacter killer = null) {
         int previous = this._currentHP;
         this._currentHP += amount;
         this._currentHP = Mathf.Clamp(this._currentHP, 0, _maxHP);
         if (previous != this._currentHP) {
             if (this._currentHP == 0) {
-                FaintOrDeath();
+                FaintOrDeath(killer);
             }
         }
     }
-    public void FaintOrDeath() {
+    public void FaintOrDeath(ICharacter killer) {
         if (CombatSimManager.Instance == null) {
-            _ownParty.currentCombat.CharacterDeath(this);
+            if (_ownParty.currentCombat != null) {
+                _ownParty.currentCombat.CharacterDeath(this, killer);
+            }
             Death();
         } else {
             DeathSim();

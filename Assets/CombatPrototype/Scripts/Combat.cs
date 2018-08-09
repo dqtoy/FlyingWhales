@@ -762,8 +762,8 @@ namespace ECS{
 			AddCombatLog (character.coloredUrlName + " counterattacked!", character.currentSide);
 		}
 
-		private void InstantDeath(ICharacter character){
-			character.FaintOrDeath();
+		private void InstantDeath(ICharacter character, ICharacter sourceCharacter) {
+			character.FaintOrDeath(sourceCharacter);
 		}
 
 		#region Attack Skill
@@ -896,7 +896,7 @@ namespace ECS{
             AddCombatLog(log, sourceCharacter.currentSide);
 
             int previousCurrentHP = targetCharacter.currentHP;
-            targetCharacter.AdjustHP(-damage);
+            targetCharacter.AdjustHP(-damage, sourceCharacter);
 
             //Add HP Lost
             int lastDamageTaken = previousCurrentHP - targetCharacter.currentHP;
@@ -1201,18 +1201,30 @@ namespace ECS{
 		#endregion
 
 		//This will receive the "CharacterDeath" signal when broadcasted, this is a listener
-		internal void CharacterDeath(ICharacter character){
+		internal void CharacterDeath(ICharacter character, ICharacter killer){
 			if(RemoveCharacter(character)) {
                 //Give exp to other side if monster died
-                if (character.icharacterType == ICHARACTER_TYPE.MONSTER) {
-                    Monster monster = character as Monster;
-                    SIDES oppositeSide = SIDES.B;
-                    if (monster.currentSide == SIDES.B) {
-                        oppositeSide = SIDES.A;
-                    }
-                    List<ICharacter> killerCharacters = GetCharactersOnSide(oppositeSide);
-                    for (int i = 0; i < killerCharacters.Count; i++) {
-                        killerCharacters[i].AdjustExperience(monster.experienceDrop);
+                if(killer != null) {
+                    if (character.icharacterType == ICHARACTER_TYPE.MONSTER) {
+                        Monster monster = character as Monster;
+                        List<ICharacter> killerCharacters = GetCharactersOnSide(killer.currentSide);
+                        for (int i = 0; i < killerCharacters.Count; i++) {
+                            killerCharacters[i].AdjustExperience(monster.experienceDrop);
+                        }
+
+                        //Give item drops to killer
+                        if (killer is Character) {
+                            Character killerChar = killer as Character;
+                            int chance = 0;
+                            foreach (KeyValuePair<string, float> itemDrop in monster.itemDropsLookup) {
+                                chance = Utilities.rng.Next(0, 100);
+                                if (chance < itemDrop.Value) {
+                                    Item item = ItemManager.Instance.allItems[itemDrop.Key].CreateNewCopy();
+                                    killerChar.PickupItem(item);
+                                }
+                            }
+                        }
+
                     }
                 }
                 //deadCharacters.Add (character);
@@ -1230,7 +1242,7 @@ namespace ECS{
 		}
 
 		//Check essential body part quantity, if all are decapitated, instant death
-		private void CheckBodyPart(string bodyPart, ICharacter character){
+		private void CheckBodyPart(string bodyPart, ICharacter character, ICharacter sourceCharacter){
 			for (int i = 0; i < character.bodyParts.Count; i++) {
 				BodyPart characterBodyPart = character.bodyParts [i];
 				if(characterBodyPart.name == bodyPart && !characterBodyPart.statusEffects.Contains(STATUS_EFFECT.DECAPITATED)){
@@ -1244,7 +1256,7 @@ namespace ECS{
 					}
 				}
 			}
-			InstantDeath (character);
+			InstantDeath (character, sourceCharacter);
 		}
 
 		#region Logs

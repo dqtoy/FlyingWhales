@@ -53,7 +53,7 @@ public interface ICharacter {
     CharacterActionQueue<ActionQueueItem> actionQueue { get; }
 
     //functions
-    void FaintOrDeath();
+    void FaintOrDeath(ICharacter killer);
     void ResetToFullHP();
     void ResetToFullSP();
     void Initialize();
@@ -61,7 +61,7 @@ public interface ICharacter {
     void SetSide(ECS.SIDES side);
     void SetRowNumber(int row);
     void AdjustSP(int amount);
-    void AdjustHP(int amount);
+    void AdjustHP(int amount, ICharacter killer = null);
     void AdjustExperience(int amount);
     void EnableDisableSkills(Combat combat);
     void SetOwnedParty(NewParty party);

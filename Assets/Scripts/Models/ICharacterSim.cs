@@ -35,7 +35,7 @@ public interface ICharacterSim {
     void SetSide(SIDES side);
     void SetRowNumber(int row);
     void AdjustSP(int amount);
-    void AdjustHP(int amount);
+    void AdjustHP(int amount, ICharacter killer = null);
     void EnableDisableSkills(CombatSim combatSim);
     int GetDef();
 }

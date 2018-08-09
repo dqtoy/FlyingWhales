@@ -24,21 +24,32 @@ public class MonsterPanelUI : MonoBehaviour {
     public InputField dodgeInput;
     public InputField hitInput;
     public InputField critInput;
+    public InputField itemDropRateInput;
 
     public Dropdown typeOptions;
     public Dropdown skillOptions;
+    public Dropdown itemDropOptions;
 
     public Transform skillContentTransform;
+    public Transform itemDropContentTransform;
 
+    public GameObject skillsGO;
+    public GameObject itemDropGO;
     public GameObject monsterSkillBtnGO;
+    public GameObject itemDropBtnPrefab;
 
     [NonSerialized] public MonsterSkillButton currentSelectedButton;
 
+    private ItemDropBtn _currentSelectedItemDropBtn;
     private List<string> _allSkills;
+    private List<ItemDrop> _itemDrops;
 
     #region getters/setters
     public List<string> allSkills {
         get { return _allSkills; }
+    }
+    public List<ItemDrop> itemDrops {
+        get { return _itemDrops; }
     }
     #endregion
 
@@ -46,7 +57,6 @@ public class MonsterPanelUI : MonoBehaviour {
         Instance = this;
     }
     void Start() {
-        _allSkills = new List<string>();
         LoadAllData();
     }
 
@@ -55,11 +65,29 @@ public class MonsterPanelUI : MonoBehaviour {
         skillOptions.ClearOptions();
         skillOptions.AddOptions(SkillPanelUI.Instance.allSkills);
     }
+    public void UpdateItemDropOptions() {
+        itemDropOptions.ClearOptions();
+        itemDropOptions.AddOptions(ItemPanelUI.Instance.allItems);
+    }
     private void LoadAllData() {
+        _allSkills = new List<string>();
+        _itemDrops = new List<ItemDrop>();
         typeOptions.ClearOptions();
+        itemDropOptions.ClearOptions();
 
         string[] monsterTypes = System.Enum.GetNames(typeof(MONSTER_TYPE));
 
+        List<string> allItems = new List<string>();
+        string path = Utilities.dataPath + "Items/";
+        string[] directories = Directory.GetDirectories(path);
+        for (int i = 0; i < directories.Length; i++) {
+            string[] files = Directory.GetFiles(directories[i], "*.json");
+            for (int j = 0; j < files.Length; j++) {
+                allItems.Add(Path.GetFileNameWithoutExtension(files[j]));
+            }
+        }
+
+        itemDropOptions.AddOptions(allItems);
         typeOptions.AddOptions(monsterTypes.ToList());
     }
     private void ClearData() {
@@ -76,12 +104,18 @@ public class MonsterPanelUI : MonoBehaviour {
         dodgeInput.text = "0";
         hitInput.text = "0";
         critInput.text = "0";
+        itemDropRateInput.text = "0";
 
         typeOptions.value = 0;
         skillOptions.value = 0;
+        itemDropOptions.value = 0;
 
         _allSkills.Clear();
+        _itemDrops.Clear();
         foreach (Transform child in skillContentTransform) {
+            GameObject.Destroy(child.gameObject);
+        }
+        foreach (Transform child in itemDropContentTransform) {
             GameObject.Destroy(child.gameObject);
         }
     }
@@ -121,8 +155,6 @@ public class MonsterPanelUI : MonoBehaviour {
 
         CombatSimManager.Instance.UpdateAllMonsters();
     }
- 
-
     private void LoadMonster() {
 #if UNITY_EDITOR
         string filePath = EditorUtility.OpenFilePanel("Select Monster", Utilities.dataPath + "Monsters/", "json");
@@ -136,7 +168,6 @@ public class MonsterPanelUI : MonoBehaviour {
         }
 #endif
     }
-
     private void LoadMonsterDataToUI(Monster monster) {
         nameInput.text = monster.name;
         typeOptions.value = GetMonsterTypeIndex(monster.type);
@@ -157,6 +188,12 @@ public class MonsterPanelUI : MonoBehaviour {
             GameObject go = GameObject.Instantiate(monsterSkillBtnGO, skillContentTransform);
             go.GetComponent<MonsterSkillButton>().buttonText.text = skillName;
         }
+        for (int i = 0; i < monster.itemDrops.Count; i++) {
+            ItemDrop itemDrop = monster.itemDrops[i];
+            _itemDrops.Add(itemDrop);
+            GameObject go = GameObject.Instantiate(itemDropBtnPrefab, itemDropContentTransform);
+            go.GetComponent<ItemDropBtn>().Set(itemDrop.itemName, itemDrop.dropRate);
+        }
     }
     private int GetMonsterTypeIndex(MONSTER_TYPE monsterType) {
         for (int i = 0; i < typeOptions.options.Count; i++) {
@@ -165,6 +202,26 @@ public class MonsterPanelUI : MonoBehaviour {
             }
         }
         return 0;
+    }
+    public void SetItemDropBn(ItemDropBtn btn) {
+        _currentSelectedItemDropBtn = btn;
+    }
+    private bool HasItemDrop(string itemName) {
+        for (int i = 0; i < _itemDrops.Count; i++) {
+            if(_itemDrops[i].itemName == itemName) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private bool RemoveItemDrop(string itemName) {
+        for (int i = 0; i < _itemDrops.Count; i++) {
+            if (_itemDrops[i].itemName == itemName) {
+                _itemDrops.RemoveAt(i);
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
@@ -195,6 +252,35 @@ public class MonsterPanelUI : MonoBehaviour {
             }
         }
     }
-
+    public void OnClickSkills() {
+        skillsGO.SetActive(true);
+        itemDropGO.SetActive(false);
+    }
+    public void OnClickItemDrops() {
+        skillsGO.SetActive(false);
+        itemDropGO.SetActive(true);
+    }
+    public void OnClickAddItemDrop() {
+        string itemToAdd = itemDropOptions.options[itemDropOptions.value].text;
+        if (!HasItemDrop(itemToAdd)) {
+            float rate = float.Parse(itemDropRateInput.text);
+            ItemDrop itemDrop = new ItemDrop() {
+                itemName = itemToAdd,
+                dropRate = rate
+            };
+            _itemDrops.Add(itemDrop);
+            GameObject go = GameObject.Instantiate(itemDropBtnPrefab, itemDropContentTransform);
+            go.GetComponent<ItemDropBtn>().Set(itemDrop.itemName, itemDrop.dropRate);
+        }
+    }
+    public void OnClickRemoveItemDrop() {
+        if (_currentSelectedItemDropBtn != null) {
+            string itemToRemove = _currentSelectedItemDropBtn.name;
+            if (RemoveItemDrop(itemToRemove)) {
+                GameObject.Destroy(_currentSelectedItemDropBtn.gameObject);
+                _currentSelectedItemDropBtn = null;
+            }
+        }
+    }
     #endregion
 }
