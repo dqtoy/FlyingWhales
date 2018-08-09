@@ -24,6 +24,7 @@ public class EditStorylinesMenu : MonoBehaviour {
         Instance = this;
 	}
     void Start() {
+        _storylineButtons = new List<StorylineBtn>();
         LoadAllStorylinesOptions();
     }
 
