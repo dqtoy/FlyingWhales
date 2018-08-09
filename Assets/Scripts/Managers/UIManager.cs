@@ -151,13 +151,22 @@ public class UIManager : MonoBehaviour {
                 //previous tile hovered is same as current tile hovered, increment time hovered
                 timeHovered += Time.deltaTime;
             }
-            if (timeHovered >= hoverThreshold) {
-                //show tile info
-                ShowDetailedInfo(currentTileHovered);
-            } else {
-                //hide Tile info
+            if (IsMouseOnUI()) {
+                timeHovered = 0f;
                 HideDetailedInfo();
+            } else {
+                if (timeHovered >= hoverThreshold) {
+                    //show tile info
+                    ShowDetailedInfo(currentTileHovered);
+                } else {
+                    //hide Tile info
+                    HideDetailedInfo();
+                }
             }
+           
+        }
+        if (IsMouseOnUI()) {
+            currentTileHovered = null;
         }
     }
     #endregion
