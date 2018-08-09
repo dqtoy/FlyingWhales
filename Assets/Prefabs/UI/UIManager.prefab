@@ -13269,6 +13269,7 @@ MonoBehaviour:
   detailedInfoGO: {fileID: 0}
   detailedInfoLbl: {fileID: 0}
   detailedInfoContentParent: {fileID: 0}
+  detailedInfoPortraits: []
   worldInfoCharactersSelectedGO: {fileID: 1932147088919262}
   worldInfoQuestsSelectedGO: {fileID: 1428204439127018}
   worldInfoStorylinesSelectedGO: {fileID: 1066265375892452}
