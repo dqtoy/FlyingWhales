@@ -43,8 +43,15 @@ public class ItemPanelUI : MonoBehaviour {
     public Transform attributeContentTransform;
 
     private List<string> _attributes;
+    private List<string> _allItems;
     private Dictionary<string, Sprite> _iconSprites;
     private AttributeBtn _currentSelectedButton;
+
+    #region getters/setters
+    public List<string> allItems {
+        get { return _allItems; }
+    }
+    #endregion
 
     void Awake() {
         Instance = this;
@@ -54,8 +61,21 @@ public class ItemPanelUI : MonoBehaviour {
     }
 
     #region Utilities
+    private void UpdateAllItems() {
+        _allItems.Clear();
+        string path = Utilities.dataPath + "Items/";
+        string[] directories = Directory.GetDirectories(path);
+        for (int i = 0; i < directories.Length; i++) {
+            string[] files = Directory.GetFiles(directories[i], "*.json");
+            for (int j = 0; j < files.Length; j++) {
+                _allItems.Add(Path.GetFileNameWithoutExtension(files[j]));
+            }
+        }
+        MonsterPanelUI.Instance.UpdateItemDropOptions();
+    }
     private void LoadAllData() {
         _attributes = new List<string>();
+        _allItems = new List<string>();
         itemTypeOptions.ClearOptions();
         weaponTypeOptions.ClearOptions();
         armorTypeOptions.ClearOptions();
@@ -64,7 +84,7 @@ public class ItemPanelUI : MonoBehaviour {
         armorPrefixOptions.ClearOptions();
         armorSuffixOptions.ClearOptions();
         elementOptions.ClearOptions();
-        attributeOptions.ClearOptions();
+        //attributeOptions.ClearOptions();
         iconOptions.ClearOptions();
 
         string[] itemTypes = System.Enum.GetNames(typeof(ITEM_TYPE));
@@ -76,11 +96,11 @@ public class ItemPanelUI : MonoBehaviour {
         string[] armorSuffixes = System.Enum.GetNames(typeof(ARMOR_SUFFIX));
         string[] elements = System.Enum.GetNames(typeof(ELEMENT));
 
-        List<string> attributes = new List<string>();
-        string path = Utilities.dataPath + "Attributes/ITEM/";
-        foreach (string file in Directory.GetFiles(path, "*.json")) {
-            attributes.Add(Path.GetFileNameWithoutExtension(file));
-        }
+        //List<string> attributes = new List<string>();
+        //string path = Utilities.dataPath + "Attributes/ITEM/";
+        //foreach (string file in Directory.GetFiles(path, "*.json")) {
+        //    attributes.Add(Path.GetFileNameWithoutExtension(file));
+        //}
 
         Sprite[] icons = Resources.LoadAll<Sprite>("Textures/ItemIcons");
         _iconSprites = new Dictionary<string, Sprite>();
@@ -97,8 +117,10 @@ public class ItemPanelUI : MonoBehaviour {
         armorPrefixOptions.AddOptions(armorPrefixes.ToList());
         armorSuffixOptions.AddOptions(armorSuffixes.ToList());
         elementOptions.AddOptions(elements.ToList());
-        attributeOptions.AddOptions(attributes);
+        //attributeOptions.AddOptions(attributes);
         iconOptions.AddOptions(_iconSprites.Keys.ToList());
+
+        UpdateAllItems();
     }
     private void ClearData() {
         itemTypeOptions.value = 0;
@@ -210,6 +232,7 @@ public class ItemPanelUI : MonoBehaviour {
 #endif
 
         Debug.Log("Successfully saved item at " + path);
+        UpdateAllItems();
     }
     private void LoadItem() {
 #if UNITY_EDITOR
