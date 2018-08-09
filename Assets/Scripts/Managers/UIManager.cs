@@ -58,7 +58,9 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Detailed Info")]
     public GameObject detailedInfoGO;
+    public RectTransform detailedInfoRect;
     public TextMeshProUGUI detailedInfoLbl;
+    public Image detailedInfoIcon;
     public RectTransform detailedInfoContentParent;
     public CharacterPortrait[] detailedInfoPortraits;
 
@@ -141,6 +143,22 @@ public class UIManager : MonoBehaviour {
             }
         }
         UpdateSpeedToggles(GameManager.Instance.isPaused);
+        if (currentTileHovered != null) {
+            if (previousTileHovered == null || currentTileHovered.id != previousTileHovered.id) {
+                //tile hovered changed, reset timer
+                timeHovered = 0f;
+            } else {
+                //previous tile hovered is same as current tile hovered, increment time hovered
+                timeHovered += Time.deltaTime;
+            }
+            if (timeHovered >= hoverThreshold) {
+                //show tile info
+                ShowDetailedInfo(currentTileHovered);
+            } else {
+                //hide Tile info
+                HideDetailedInfo();
+            }
+        }
     }
     #endregion
 
@@ -164,6 +182,9 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<HexTile>(Signals.TILE_RIGHT_CLICKED, ShowContextMenu);
         Messenger.AddListener<HexTile>(Signals.TILE_LEFT_CLICKED, HideContextMenu);
         Messenger.AddListener<string, int, UnityAction>(Signals.SHOW_NOTIFICATION, ShowNotification);
+
+        Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OVER, OnHoverOverTile);
+        Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OUT, OnHoverOutTile);
     }
 
     #region Font Utilities
@@ -347,7 +368,11 @@ public class UIManager : MonoBehaviour {
     }
     public void ShowDetailedInfo(IParty party) {
         detailedInfoGO.SetActive(true);
+        detailedInfoRect.sizeDelta = new Vector2(226f, 80f);
+        detailedInfoLbl.alignment = TextAlignmentOptions.Center;
         detailedInfoLbl.text = party.name;
+        detailedInfoIcon.gameObject.SetActive(false);
+        detailedInfoContentParent.gameObject.SetActive(true);
         Utilities.DestroyChildren(detailedInfoContentParent);
         for (int i = 0; i < party.icharacters.Count; i++) {
             ICharacter character = party.icharacters[i];
@@ -356,6 +381,32 @@ public class UIManager : MonoBehaviour {
             portrait.SetDimensions(48f);
             portrait.GeneratePortrait(character, IMAGE_SIZE.X64, true, true);
         }
+        PositionTooltip(detailedInfoGO.transform as RectTransform);
+    }
+    public void ShowDetailedInfo(HexTile tile) {
+        detailedInfoGO.SetActive(true);
+        detailedInfoLbl.alignment = TextAlignmentOptions.Left;
+        detailedInfoLbl.text = Utilities.NormalizeString(tile.biomeType.ToString()) + "(" + Utilities.NormalizeString(tile.elevationType.ToString()) + ")";
+        detailedInfoContentParent.gameObject.SetActive(false);
+        if (tile.landmarkOnTile == null) {
+            detailedInfoRect.sizeDelta = new Vector2(155f, 35f);
+            detailedInfoIcon.gameObject.SetActive(false);
+        } else {
+            detailedInfoRect.sizeDelta = new Vector2(155f, 80f);
+            detailedInfoIcon.gameObject.SetActive(true);
+            detailedInfoIcon.sprite = LandmarkManager.Instance.GetLandmarkData(tile.landmarkOnTile.specificLandmarkType).landmarkTypeIcon;
+        }
+
+        
+        
+        //Utilities.DestroyChildren(detailedInfoContentParent);
+        //for (int i = 0; i < party.icharacters.Count; i++) {
+        //    ICharacter character = party.icharacters[i];
+        //    GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterPortrait", Vector3.zero, Quaternion.identity, detailedInfoContentParent);
+        //    CharacterPortrait portrait = portraitGO.GetComponent<CharacterPortrait>();
+        //    portrait.SetDimensions(48f);
+        //    portrait.GeneratePortrait(character, IMAGE_SIZE.X64, true, true);
+        //}
         PositionTooltip(detailedInfoGO.transform as RectTransform);
     }
     public void HideDetailedInfo() {
@@ -988,7 +1039,7 @@ public class UIManager : MonoBehaviour {
     #region Quest Summary
     [Space(10)]
     [Header("Quest Summary")]
-    [SerializeField] TextMeshProUGUI questSummaryLbl;
+    [SerializeField] private TextMeshProUGUI questSummaryLbl;
     public void UpdateQuestSummary() {
         string questSummary = string.Empty;
         foreach (KeyValuePair<QUEST_TYPE, List<Quest>> kvp in QuestManager.Instance.availableQuests) {
@@ -1008,6 +1059,20 @@ public class UIManager : MonoBehaviour {
            
         }
         questSummaryLbl.text = questSummary;
+    }
+    #endregion
+
+    #region Tile Hover
+    private HexTile previousTileHovered;
+    private HexTile currentTileHovered;
+    private float timeHovered;
+    private const float hoverThreshold = 1.5f;
+    private void OnHoverOverTile(HexTile tile) {
+        previousTileHovered = currentTileHovered;
+        currentTileHovered = tile;
+    }
+    private void OnHoverOutTile(HexTile tile) {
+        currentTileHovered = null;
     }
     #endregion
 }
