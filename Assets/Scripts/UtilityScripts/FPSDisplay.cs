@@ -28,7 +28,8 @@ public class FPSDisplay : MonoBehaviour {
             text += " Agents: " + PathfindingManager.Instance.allAgents.Count.ToString();
             if (SteamManager.Initialized) {
                 string name = SteamFriends.GetPersonaName();
-                text+= "\nSteam Name: " + name;
+                text += "\nSteam Name: " + name;
+                text += "\nCharacters Snatched: " + AchievementManager.Instance.charactersSnatched;
             }
             GUI.Label(rect, text, style);
         }

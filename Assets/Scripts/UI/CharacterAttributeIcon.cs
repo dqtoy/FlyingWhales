@@ -38,6 +38,6 @@ public class CharacterAttributeIcon : PooledObject, IPointerEnterHandler, IPoint
 
     public override void Reset() {
         base.Reset();
-        tag = null;
+        attribute = null;
     }
 }

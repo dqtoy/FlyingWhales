@@ -20187,6 +20187,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8baee866c4431024a8b2ca2549afb597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  charactersSnatched: 0
 --- !u!1 &547046164
 GameObject:
   m_ObjectHideFlags: 0
@@ -54821,6 +54822,7 @@ MonoBehaviour:
   - {fileID: 1491448549}
   - {fileID: 937600963}
   - {fileID: 914495163}
+  - {fileID: 1614811351}
   notificationPrefab: {fileID: 1000013330282484, guid: 6f7f3659399d54b46a177dfd8842a12c,
     type: 2}
   mainUIGO: {fileID: 1631841080}

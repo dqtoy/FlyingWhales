@@ -31,6 +31,9 @@ public class AchievementManager : MonoBehaviour {
     // Should we store stats this frame?
     private bool shouldStoreStats;
 
+    // Persisted Stat details
+    public int charactersSnatched;
+
     #region Monobehaviours
     private void OnEnable() {
         if (!SteamManager.Initialized)
@@ -72,31 +75,63 @@ public class AchievementManager : MonoBehaviour {
         if (!statsValid)
             return;
 
-        ////Store stats in the Steam database if necessary
-        //if (shouldStoreStats) {
-        //    // already set any achievements in UnlockAchievement
+        //Store stats in the Steam database if necessary
+        if (shouldStoreStats) {
+            // already set any achievements in UnlockAchievement
 
-        //    // set stats
-        //    SteamUserStats.SetStat("NumGames", m_nTotalGamesPlayed);
-        //    SteamUserStats.SetStat("NumWins", m_nTotalNumWins);
-        //    SteamUserStats.SetStat("NumLosses", m_nTotalNumLosses);
-        //    SteamUserStats.SetStat("FeetTraveled", m_flTotalFeetTraveled);
-        //    SteamUserStats.SetStat("MaxFeetTraveled", m_flMaxFeetTraveled);
-        //    // Update average feet / second stat
-        //    SteamUserStats.UpdateAvgRateStat("AverageSpeed", m_flGameFeetTraveled, m_flGameDurationSeconds);
-        //    // The averaged result is calculated for us
-        //    SteamUserStats.GetStat("AverageSpeed", out m_flAverageSpeed);
+            // set stats
+            SteamUserStats.SetStat("snatched_characters", charactersSnatched);
+            
+            bool bSuccess = SteamUserStats.StoreStats();
+            // If this failed, we never sent anything to the server, try
+            // again later.
+            shouldStoreStats = !bSuccess;
+        }
 
-        //    bool bSuccess = SteamUserStats.StoreStats();
-        //    // If this failed, we never sent anything to the server, try
-        //    // again later.
-        //    shouldStoreStats = !bSuccess;
-        //}
+        
+    }
+    private void OnGUI() {
+        if (!SteamManager.Initialized) {
+            //GUILayout.Label("Steamworks not Initialized");
+            return;
+        }
+
+        if (UIManager.Instance == null || !UIManager.Instance.IsConsoleShowing()) {
+            return;
+        }
+        //GUILayout.Label("m_ulTickCountGameStart: " + m_ulTickCountGameStart);
+        //GUILayout.Label("m_flGameDurationSeconds: " + m_flGameDurationSeconds);
+        //GUILayout.Label("m_flGameFeetTraveled: " + m_flGameFeetTraveled);
+        //GUILayout.Space(10);
+        //GUILayout.Label("NumGames: " + m_nTotalGamesPlayed);
+        //GUILayout.Label("NumWins: " + m_nTotalNumWins);
+        //GUILayout.Label("NumLosses: " + m_nTotalNumLosses);
+        //GUILayout.Label("FeetTraveled: " + m_flTotalFeetTraveled);
+        //GUILayout.Label("MaxFeetTraveled: " + m_flMaxFeetTraveled);
+        //GUILayout.Label("AverageSpeed: " + m_flAverageSpeed);
+
+        GUILayout.BeginArea(new Rect(Screen.width - 300, 0, 300, 800));
+        foreach (SteamAchievement ach in m_Achievements) {
+            GUILayout.Label(ach.m_eAchievementID.ToString());
+            GUILayout.Label(ach.m_strName + " - " + ach.m_strDescription);
+            GUILayout.Label("Achieved: " + ach.m_bAchieved);
+            GUILayout.Space(20);
+        }
+
+        // FOR TESTING PURPOSES ONLY!
+        if (GUILayout.Button("RESET STATS AND ACHIEVEMENTS")) {
+            SteamUserStats.ResetAllStats(true);
+            ResetStats();
+            //SteamUserStats.RequestCurrentStats();
+            //OnGameStateChange(EClientGameState.k_EClientGameActive);
+            shouldStoreStats = true;
+        }
+        GUILayout.EndArea();
     }
     #endregion
 
-    private void Initialize() {
-
+    public void Initialize() {
+        Messenger.AddListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
     }
 
     #region Callbacks
@@ -122,23 +157,41 @@ public class AchievementManager : MonoBehaviour {
                     }
                 }
 
-                //// load stats
-                //SteamUserStats.GetStat("NumGames", out m_nTotalGamesPlayed);
-                //SteamUserStats.GetStat("NumWins", out m_nTotalNumWins);
-                //SteamUserStats.GetStat("NumLosses", out m_nTotalNumLosses);
-                //SteamUserStats.GetStat("FeetTraveled", out m_flTotalFeetTraveled);
-                //SteamUserStats.GetStat("MaxFeetTraveled", out m_flMaxFeetTraveled);
-                //SteamUserStats.GetStat("AverageSpeed", out m_flAverageSpeed);
+                // load stats
+                SteamUserStats.GetStat("snatched_characters", out charactersSnatched);
             } else {
                 Debug.Log("RequestStats - failed, " + val.m_eResult);
             }
         }
     }
     private void OnUserStatsStored(UserStatsStored_t val) {
-
+        // we may get callbacks for other games' stats arriving, ignore them
+        if ((ulong)_gameID == val.m_nGameID) {
+            if (EResult.k_EResultOK == val.m_eResult) {
+                Debug.Log("StoreStats - success");
+            } else if (EResult.k_EResultInvalidParam == val.m_eResult) {
+                // One or more stats we set broke a constraint. They've been reverted,
+                // and we should re-iterate the values now to keep in sync.
+                Debug.Log("StoreStats - some failed to validate");
+                // Fake up a callback here so that we re-load the values.
+                UserStatsReceived_t callback = new UserStatsReceived_t();
+                callback.m_eResult = EResult.k_EResultOK;
+                callback.m_nGameID = (ulong)_gameID;
+                OnUserStatsReceived(callback);
+            } else {
+                Debug.Log("StoreStats - failed, " + val.m_eResult);
+            }
+        }
     }
     private void OnAchievementStored(UserAchievementStored_t val) {
-
+        // We may get callbacks for other games' stats arriving, ignore them
+        if ((ulong)_gameID == val.m_nGameID) {
+            if (0 == val.m_nMaxProgress) {
+                Debug.Log("Achievement '" + val.m_rgchAchievementName + "' unlocked!");
+            } else {
+                Debug.Log("Achievement '" + val.m_rgchAchievementName + "' progress callback, (" + val.m_nCurProgress + "," + val.m_nMaxProgress + ")");
+            }
+        }
     }
     #endregion
 
@@ -155,8 +208,16 @@ public class AchievementManager : MonoBehaviour {
         shouldStoreStats = true;
     }
 
-    #region Handlers
+    private void ResetStats() {
+        charactersSnatched = 0;
+    }
 
+    #region Handlers
+    private void OnCharacterSnatched(ECS.Character snatchedCharacter) {
+        charactersSnatched++;
+        shouldStoreStats = true;
+        Debug.Log("Incremented snatched characters to " + charactersSnatched.ToString());
+    }
     #endregion
 
     private class SteamAchievement {

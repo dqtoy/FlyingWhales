@@ -80,6 +80,9 @@ public class MapGenerator : MonoBehaviour {
         CharacterManager.Instance.GenerateCharactersForTesting(8);
         CameraMove.Instance.UpdateMinimapTexture();
         QuestManager.Instance.Initialize();
+        if (SteamManager.Initialized) {
+            AchievementManager.Instance.Initialize();
+        }
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
         LevelLoaderManager.SetLoadingState(false);
@@ -168,6 +171,9 @@ public class MapGenerator : MonoBehaviour {
 
         CameraMove.Instance.UpdateMinimapTexture();
         QuestManager.Instance.Initialize();
+        if (SteamManager.Initialized) {
+            AchievementManager.Instance.Initialize();
+        }
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
         LevelLoaderManager.SetLoadingState(false);
