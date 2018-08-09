@@ -8,6 +8,7 @@ namespace ECS{
 		public string itemName;
 		public string description;
         public string interactString;
+        public string iconName;
         public int goldCost;
         public bool isStackable;
         public List<string> attributeNames;
