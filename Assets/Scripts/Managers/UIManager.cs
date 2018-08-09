@@ -177,7 +177,6 @@ public class UIManager : MonoBehaviour {
         x2Btn.interactable = state;
         x4Btn.interactable = state;
     }
-
     internal void InitializeUI() {
         for (int i = 0; i < allMenus.Length; i++) {
             allMenus[i].Initialize();
