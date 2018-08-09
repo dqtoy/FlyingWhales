@@ -329,14 +329,18 @@ public class Monster : ICharacter, ICharacterSim {
             ElementChance elementChance = _elementChanceResistances[i];
             this._elementalResistances.Add(elementChance.element, elementChance.chance);
         }
+
+        _skillNames.Clear();
+        _elementChanceWeaknesses.Clear();
+        _elementChanceResistances.Clear();
+        ConstructItemDrops();
+    }
+    private void ConstructItemDrops() {
         this._itemDropsLookup = new Dictionary<string, float>();
         for (int i = 0; i < _itemDrops.Count; i++) {
             ItemDrop itemDrop = _itemDrops[i];
             this._itemDropsLookup.Add(itemDrop.itemName, itemDrop.dropRate);
         }
-        _skillNames.Clear();
-        _elementChanceWeaknesses.Clear();
-        _elementChanceResistances.Clear();
         _itemDrops.Clear();
     }
 
@@ -474,19 +478,21 @@ public class Monster : ICharacter, ICharacterSim {
         _currentSP += amount;
         _currentSP = Mathf.Clamp(_currentSP, 0, _maxSP);
     }
-    public void AdjustHP(int amount) {
+    public void AdjustHP(int amount, ICharacter killer = null) {
         int previous = this._currentHP;
         this._currentHP += amount;
         this._currentHP = Mathf.Clamp(this._currentHP, 0, _maxHP);
         if (previous != this._currentHP) {
             if (this._currentHP == 0) {
-                FaintOrDeath();
+                FaintOrDeath(killer);
             }
         }
     }
-    public void FaintOrDeath() {
+    public void FaintOrDeath(ICharacter killer) {
         if (CombatSimManager.Instance == null) {
-            _ownParty.currentCombat.CharacterDeath(this);
+            if (_ownParty.currentCombat != null) {
+                _ownParty.currentCombat.CharacterDeath(this, killer);
+            }
             Death();
         } else {
             DeathSim();

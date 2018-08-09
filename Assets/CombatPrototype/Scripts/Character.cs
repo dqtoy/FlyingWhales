@@ -751,7 +751,7 @@ namespace ECS {
 			this._currentSide = side;
 		}
         //Adjust current HP based on specified paramater, but HP must not go below 0
-        public void AdjustHP(int amount){
+        public void AdjustHP(int amount, ICharacter killer = null) {
             int previous = this._currentHP;
 			this._currentHP += amount;
 			this._currentHP = Mathf.Clamp(this._currentHP, 0, _maxHP);
@@ -760,7 +760,7 @@ namespace ECS {
                     _role.UpdateSafety();
                 }
                 if (this._currentHP == 0) {
-                    FaintOrDeath();
+                    FaintOrDeath(killer);
                 }
             }
 		}
@@ -786,7 +786,7 @@ namespace ECS {
 
 			//return faintDieDict.PickRandomElementGivenWeights ();
 		}
-		public void FaintOrDeath(){
+		public void FaintOrDeath(ICharacter killer){
 			string pickedWeight = GetFaintOrDeath ();
 			if(pickedWeight == "faint"){
 				if(currentParty.currentCombat == null){
@@ -795,7 +795,9 @@ namespace ECS {
                     currentParty.currentCombat.CharacterFainted(this);
                 }
 			}else if(pickedWeight == "die"){
-                currentParty.currentCombat.CharacterDeath(this);
+                if (currentParty.currentCombat != null) {
+                    currentParty.currentCombat.CharacterDeath(this, killer);
+                }
                 Death();
     //            if (this.currentCombat == null){
 				//	Death ();

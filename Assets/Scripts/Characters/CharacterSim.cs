@@ -240,7 +240,7 @@ public class CharacterSim : ICharacterSim {
     public void ResetToFullSP() {
         AdjustSP(_maxSP);
     }
-    public void AdjustHP(int amount) {
+    public void AdjustHP(int amount, ICharacter killer = null) {
         int previous = this._currentHP;
         this._currentHP += amount;
         this._currentHP = Mathf.Clamp(this._currentHP, 0, _maxHP);
