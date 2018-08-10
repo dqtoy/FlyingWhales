@@ -20,6 +20,9 @@ public class MonsterParty : NewParty {
     public MonsterObj monsterObj {
         get { return _monsterObj; }
     }
+    public override ICharacter owner {
+        get { return mainCharacter; }
+    }
     #endregion
 
     public MonsterParty() : base(null) {

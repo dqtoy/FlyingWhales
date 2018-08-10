@@ -30,7 +30,7 @@ public class CharactersSummaryUI : UIMenu {
 
     public override void OpenMenu() {
         base.OpenMenu();
-        StartCoroutine(ExecuteLayoutGroup());
+        //StartCoroutine(ExecuteLayoutGroup());
     }
     public override void CloseMenu() {
         base.CloseMenu();
@@ -53,9 +53,9 @@ public class CharactersSummaryUI : UIMenu {
         } else {
             newEntry.SetBGColor(oddColor);
         }
-        if (this.isShowing) {
-            StartCoroutine(ExecuteLayoutGroup());
-        }
+        //if (this.isShowing) {
+        //    StartCoroutine(ExecuteLayoutGroup());
+        //}
         //sortingAction();
     }
     private void RemoveCharacterEntry(ECS.Character character) {
@@ -65,9 +65,9 @@ public class CharactersSummaryUI : UIMenu {
             ObjectPoolManager.Instance.DestroyObject(characterEntry.gameObject);
             UpdateListColors();
         }
-        if (this.isShowing) {
-            StartCoroutine(ExecuteLayoutGroup());
-        }
+        //if (this.isShowing) {
+        //    StartCoroutine(ExecuteLayoutGroup());
+        //}
         //sortingAction();
     }
     private CharacterSummaryEntry GetCharacterEntry(ECS.Character character) {
@@ -141,10 +141,10 @@ public class CharactersSummaryUI : UIMenu {
     }
     #endregion
 
-    private IEnumerator ExecuteLayoutGroup() {
-        layoutGroup.enabled = true;
-        yield return null;
-        layoutGroup.enabled = false;
-    }
+    //private IEnumerator ExecuteLayoutGroup() {
+        //layoutGroup.enabled = true;
+        //yield return null;
+        //layoutGroup.enabled = false;
+    //}
 
 }

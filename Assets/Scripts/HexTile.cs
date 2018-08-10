@@ -382,6 +382,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void RemoveLandmarkOnTile() {
         _landmarkOnTile = null;
     }
+    public void RemoveLandmarkVisuals() {
+        HideLandmarkTileSprites();
+        GameObject.Destroy(landmarkOnTile.landmarkVisual.gameObject);
+    }
     private void SetLandmarkTileSprite(LandmarkStructureSprite sprites) {
         mainStructure.sprite = sprites.mainSprite;
         structureTint.sprite = sprites.tintSprite;
@@ -1215,12 +1219,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         ContextMenuSettings settings = new ContextMenuSettings();
         if (this.areaOfTile != null) {
             ContextMenuItemSettings renameArea = new ContextMenuItemSettings("Rename Area");
-            renameArea.onClickAction = () => worldcreator.WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Rename Area", "Rename area to what?", this.areaOfTile.SetName, UnityEngine.UI.InputField.CharacterValidation.Alphanumeric);
+            renameArea.onClickAction = () => worldcreator.WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Rename Area", "Rename area to what?", this.areaOfTile.SetName, UnityEngine.UI.InputField.CharacterValidation.Name);
             settings.AddMenuItem(renameArea);
         }
         if (this.landmarkOnTile != null) {
             ContextMenuItemSettings renameArea = new ContextMenuItemSettings("Rename Landmark");
-            renameArea.onClickAction = () => worldcreator.WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Rename Landmark", "Rename landmark to what?", this.landmarkOnTile.SetName, UnityEngine.UI.InputField.CharacterValidation.Alphanumeric);
+            renameArea.onClickAction = () => worldcreator.WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Rename Landmark", "Rename landmark to what?", this.landmarkOnTile.SetName, UnityEngine.UI.InputField.CharacterValidation.Name);
             settings.AddMenuItem(renameArea);
         }
 

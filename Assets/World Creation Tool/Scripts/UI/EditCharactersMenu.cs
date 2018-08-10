@@ -14,7 +14,6 @@ namespace worldcreator {
         [SerializeField] private Dropdown genderDropdown;
         [SerializeField] private Dropdown roleDropdown;
         [SerializeField] private Dropdown classDropdown;
-        [SerializeField] private Dropdown jobDropdown;
         [SerializeField] private ScrollRect charactersScrollView;
 
         [SerializeField] private CharacterInfoEditor _characterInfoEditor;
@@ -75,7 +74,6 @@ namespace worldcreator {
             raceDropdown.ClearOptions();
             genderDropdown.ClearOptions();
             roleDropdown.ClearOptions();
-            jobDropdown.ClearOptions();
             classDropdown.AddOptions(Utilities.GetFileChoices(Utilities.dataPath + "CharacterClasses/", "*.json"));
             raceDropdown.AddOptions(Utilities.GetEnumChoices<RACE>());
             genderDropdown.AddOptions(Utilities.GetEnumChoices<GENDER>());
