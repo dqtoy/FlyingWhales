@@ -22,7 +22,7 @@ public class ChatAction : CharacterAction {
 
     public ChatAction() : base(ACTION_TYPE.CHAT) {
         _actionData.providedSanity = 3f;
-        _actionData.duration = 12;
+        _actionData.duration = 8;
         _chatters = new List<Character>();
         _chatee = null;
         _chateeWaitAction = null;

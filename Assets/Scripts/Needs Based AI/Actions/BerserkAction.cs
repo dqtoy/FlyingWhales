@@ -8,7 +8,7 @@ public class BerserkAction : CharacterAction {
         _actionData.providedEnergy = -2f;
         _actionData.providedSanity = 1f;
 
-        _actionData.duration = 24;
+        _actionData.duration = 12;
     }
 
     #region Overrides

@@ -6,7 +6,7 @@ public class SelfMutilateAction : CharacterAction {
     public SelfMutilateAction() : base(ACTION_TYPE.SELFMUTILATE) {
         _actionData.providedFun = -1f;
         _actionData.providedSanity = -1f;
-        _actionData.duration = 24;
+        _actionData.duration = 8;
     }
 
     #region Overrides
@@ -25,7 +25,7 @@ public class SelfMutilateAction : CharacterAction {
     #endregion
 
     private void Mutilate(NewParty party) {
-        int hpReduction = (int)((float)party.mainCharacter.maxHP * 0.01f);
+        int hpReduction = (int)((float)party.mainCharacter.maxHP * 0.02f);
         party.mainCharacter.AdjustHP(-hpReduction);
     }
 }

@@ -8,7 +8,7 @@ public class DaydreamAction : CharacterAction {
         _actionData.providedEnergy = -1f;
         _actionData.providedFun = 1f;
 
-        _actionData.duration = 24;
+        _actionData.duration = 8;
     }
 
     #region Overrides
