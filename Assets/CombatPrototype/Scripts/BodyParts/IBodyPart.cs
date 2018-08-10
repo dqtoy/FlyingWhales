@@ -101,8 +101,8 @@ namespace ECS{
 				if(attribute != null){
 					attribute.SetAttributeAsUsed(false);
 					currItem.bodyPartsAttached.Remove(this);
-//					itemsAttached.Remove(item);
-					return true;
+                    itemsAttached.Remove(item);
+                    return true;
 				}
             } else if (item is Armor) {
                 Armor currItem = (Armor)item;
@@ -110,8 +110,8 @@ namespace ECS{
 				if(attribute != null){
 					attribute.SetAttributeAsUsed(false);
 					currItem.bodyPartAttached = null;
-//					itemsAttached.Remove(item);
-					return true;
+                    itemsAttached.Remove(item);
+                    return true;
 				}
             }
 			return false;

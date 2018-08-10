@@ -8,6 +8,13 @@ public class CharacterSim : ICharacterSim {
     [SerializeField] private string _name;
     [SerializeField] private string _className;
     [SerializeField] private string _weaponName;
+    [SerializeField] private string _headArmorName;
+    [SerializeField] private string _bodyArmorName;
+    [SerializeField] private string _legsArmorName;
+    [SerializeField] private string _leftHandArmorName;
+    [SerializeField] private string _rightHandArmorName;
+    [SerializeField] private string _leftFootArmorName;
+    [SerializeField] private string _rightFootArmorName;
     [SerializeField] private int _level;
     [SerializeField] private int _strBuild;
     [SerializeField] private int _intBuild;
@@ -19,11 +26,11 @@ public class CharacterSim : ICharacterSim {
     [SerializeField] private int _vit;
     [SerializeField] private int _maxHP;
     [SerializeField] private int _maxSP;
-    [SerializeField] private int _defHead;
-    [SerializeField] private int _defBody;
-    [SerializeField] private int _defLegs;
-    [SerializeField] private int _defHands;
-    [SerializeField] private int _defFeet;
+    //[SerializeField] private int _defHead;
+    //[SerializeField] private int _defBody;
+    //[SerializeField] private int _defLegs;
+    //[SerializeField] private int _defHands;
+    //[SerializeField] private int _defFeet;
     [SerializeField] private GENDER _gender;
     [SerializeField] private List<string> _skillNames;
 
@@ -34,6 +41,7 @@ public class CharacterSim : ICharacterSim {
     private int _actRate;
     private float _critChance;
     private float _critDamage;
+    private float _bonusDef;
     private float _bonusDefPercent;
     private bool _isDead;
     private SIDES _currentSide;
@@ -44,6 +52,7 @@ public class CharacterSim : ICharacterSim {
     private Weapon _equippedWeapon;
     private List<Skill> _skills;
     private List<BodyPart> _bodyParts;
+    private List<Item> _equippedItems;
     private Dictionary<ELEMENT, float> _elementalWeaknesses;
     private Dictionary<ELEMENT, float> _elementalResistances;
 
@@ -59,6 +68,27 @@ public class CharacterSim : ICharacterSim {
     }
     public string weaponName {
         get { return _weaponName; }
+    }
+    public string headArmorName {
+        get { return _headArmorName; }
+    }
+    public string bodyArmorName {
+        get { return _bodyArmorName; }
+    }
+    public string legsArmorName {
+        get { return _legsArmorName; }
+    }
+    public string leftHandArmorName {
+        get { return _leftHandArmorName; }
+    }
+    public string rightHandArmorName {
+        get { return _rightHandArmorName; }
+    }
+    public string leftFootArmorName {
+        get { return _leftFootArmorName; }
+    }
+    public string rightFootArmorName {
+        get { return _rightFootArmorName; }
     }
     public int id {
         get { return _id; }
@@ -96,21 +126,21 @@ public class CharacterSim : ICharacterSim {
     public int vitBuild {
         get { return _vitBuild; }
     }
-    public int defHead {
-        get { return _defHead; }
-    }
-    public int defBody {
-        get { return _defBody; }
-    }
-    public int defLegs {
-        get { return _defLegs; }
-    }
-    public int defHands {
-        get { return _defHands; }
-    }
-    public int defFeet {
-        get { return _defFeet; }
-    }
+    //public int defHead {
+    //    get { return _defHead; }
+    //}
+    //public int defBody {
+    //    get { return _defBody; }
+    //}
+    //public int defLegs {
+    //    get { return _defLegs; }
+    //}
+    //public int defHands {
+    //    get { return _defHands; }
+    //}
+    //public int defFeet {
+    //    get { return _defFeet; }
+    //}
     public int currentRow {
         get { return _currentRow; }
     }
@@ -192,18 +222,27 @@ public class CharacterSim : ICharacterSim {
         ConstructSkills();
         ResetToFullHP();
         ResetToFullSP();
-        _equippedWeapon = JsonUtility.FromJson<Weapon>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/WEAPON/" + _weaponName + ".json"));
         _raceSetting = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText(Utilities.dataPath + "RaceSettings/HUMANS.json"));
         _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
+        _equippedItems = new List<Item>();
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
         _battleTracker = new CharacterBattleTracker();
         _elementalWeaknesses = new Dictionary<ELEMENT, float>(CombatSimManager.Instance.elementsChanceDictionary);
         _elementalResistances = new Dictionary<ELEMENT, float>(CombatSimManager.Instance.elementsChanceDictionary);
+        EquipWeaponArmors();
     }
     public void SetDataFromCharacterPanelUI() {
         _name = CharacterPanelUI.Instance.nameInput.text;
         _className = CharacterPanelUI.Instance.classOptions.options[CharacterPanelUI.Instance.classOptions.value].text;
         _weaponName = CharacterPanelUI.Instance.weaponOptions.options[CharacterPanelUI.Instance.weaponOptions.value].text;
+        _headArmorName = CharacterPanelUI.Instance.headArmorOptions.options[CharacterPanelUI.Instance.headArmorOptions.value].text;
+        _bodyArmorName = CharacterPanelUI.Instance.bodyArmorOptions.options[CharacterPanelUI.Instance.bodyArmorOptions.value].text;
+        _legsArmorName = CharacterPanelUI.Instance.legsArmorOptions.options[CharacterPanelUI.Instance.legsArmorOptions.value].text;
+        _leftHandArmorName = CharacterPanelUI.Instance.leftHandArmorOptions.options[CharacterPanelUI.Instance.leftHandArmorOptions.value].text;
+        _rightHandArmorName = CharacterPanelUI.Instance.rightHandArmorOptions.options[CharacterPanelUI.Instance.rightHandArmorOptions.value].text;
+        _leftFootArmorName = CharacterPanelUI.Instance.leftFootArmorOptions.options[CharacterPanelUI.Instance.leftFootArmorOptions.value].text;
+        _rightFootArmorName = CharacterPanelUI.Instance.rightFootArmorOptions.options[CharacterPanelUI.Instance.rightFootArmorOptions.value].text;
+
         _gender = (GENDER) System.Enum.Parse(typeof(GENDER), CharacterPanelUI.Instance.genderOptions.options[CharacterPanelUI.Instance.genderOptions.value].text);
         _level = int.Parse(CharacterPanelUI.Instance.levelInput.text);
         _strBuild = CharacterPanelUI.Instance.strBuild;
@@ -217,14 +256,49 @@ public class CharacterSim : ICharacterSim {
         _maxHP = CharacterPanelUI.Instance.hp;
         _maxSP = CharacterPanelUI.Instance.sp;
 
-        _defHead = int.Parse(CharacterPanelUI.Instance.dHeadInput.text);
-        _defBody = int.Parse(CharacterPanelUI.Instance.dBodyInput.text);
-        _defLegs = int.Parse(CharacterPanelUI.Instance.dLegsInput.text);
-        _defHands = int.Parse(CharacterPanelUI.Instance.dHandsInput.text);
-        _defFeet = int.Parse(CharacterPanelUI.Instance.dFeetInput.text);
+        //_defHead = int.Parse(CharacterPanelUI.Instance.dHeadInput.text);
+        //_defBody = int.Parse(CharacterPanelUI.Instance.dBodyInput.text);
+        //_defLegs = int.Parse(CharacterPanelUI.Instance.dLegsInput.text);
+        //_defHands = int.Parse(CharacterPanelUI.Instance.dHandsInput.text);
+        //_defFeet = int.Parse(CharacterPanelUI.Instance.dFeetInput.text);
 
         _skillNames = CharacterPanelUI.Instance.skillNames;
     }
+    private void EquipWeaponArmors() {
+        Weapon weapon = JsonUtility.FromJson<Weapon>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/WEAPON/" + _weaponName + ".json"));
+        EquipItem(weapon);
+
+        if (_headArmorName != "None") {
+            Armor headArmor = JsonUtility.FromJson<Armor>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/ARMOR/" + _headArmorName + ".json"));
+            EquipItem(headArmor);
+        }
+        if (_bodyArmorName != "None") {
+            Armor bodyArmor = JsonUtility.FromJson<Armor>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/ARMOR/" + _bodyArmorName + ".json"));
+            EquipItem(bodyArmor);
+        }
+        if (_legsArmorName != "None") {
+            Armor legArmor = JsonUtility.FromJson<Armor>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/ARMOR/" + _legsArmorName + ".json"));
+            EquipItem(legArmor);
+        }
+        if (_leftHandArmorName != "None") {
+            Armor leftHandArmor = JsonUtility.FromJson<Armor>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/ARMOR/" + _leftHandArmorName + ".json"));
+            EquipItem(leftHandArmor);
+        }
+        if (_rightHandArmorName != "None") {
+            Armor rightHandArmor = JsonUtility.FromJson<Armor>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/ARMOR/" + _rightHandArmorName + ".json"));
+            EquipItem(rightHandArmor);
+        }
+        if (_leftFootArmorName != "None") {
+            Armor leftFootArmor = JsonUtility.FromJson<Armor>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/ARMOR/" + _leftFootArmorName + ".json"));
+            EquipItem(leftFootArmor);
+        }
+        if (_rightFootArmorName != "None") {
+            Armor rightFootArmor = JsonUtility.FromJson<Armor>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/ARMOR/" + _rightFootArmorName + ".json"));
+            EquipItem(rightFootArmor);
+        }
+
+    }
+
 
     #region Interface
     public void SetSide(SIDES side) {
@@ -260,7 +334,7 @@ public class CharacterSim : ICharacterSim {
     }
     public int GetDef() {
         float vit = (float) vitality;
-        return (int) ((((GetDefBonus() * (1f + ((vit / 5) / 100f)))) * (1f + (_bonusDefPercent / 100f))) + (vit / 4f)); //TODO: + passive skill def bonus
+        return (int) ((((_bonusDef * (1f + ((vit / 5) / 100f)))) * (1f + (_bonusDefPercent / 100f))) + (vit / 4f)); //TODO: + passive skill def bonus
     }
     public void EnableDisableSkills(CombatSim combatSim) {
         //bool isAllAttacksInRange = true;
@@ -408,8 +482,125 @@ public class CharacterSim : ICharacterSim {
             _skills.Add(skill);
         }
     }
-    private int GetDefBonus() {
-        return _defHead + _defBody + _defLegs + _defHands + _defFeet;
+    #endregion
+
+    #region Equipment
+    public bool EquipItem(Item item) {
+        bool hasEquipped = false;
+        if (item is Weapon) {
+            Weapon weapon = (Weapon) item;
+            hasEquipped = TryEquipWeapon(weapon);
+        } else if (item is Armor) {
+            Armor armor = (Armor) item;
+            hasEquipped = TryEquipArmor(armor);
+        }
+        return hasEquipped;
+    }
+    //Unequips an item of a character, whether it's a weapon, armor, etc.
+    public void UnequipItem(Item item) {
+        if (item is Weapon) {
+            UnequipWeapon((Weapon) item);
+        } else if (item is Armor) {
+            UnequipArmor((Armor) item);
+        }
+        RemoveEquippedItem(item);
+    }
+    public bool TryEquipWeapon(Weapon weapon) {
+        if (!_characterClass.allowedWeaponTypes.Contains(weapon.weaponType)) {
+            return false;
+        }
+        for (int j = 0; j < CombatSimManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements.Count; j++) {
+            IBodyPart.ATTRIBUTE currReq = CombatSimManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements[j];
+            if (!AttachWeaponToBodyPart(weapon, currReq)) {
+                DetachWeaponFromBodyParts(weapon);
+                return false;
+            }
+        }
+        AddEquippedItem(weapon);
+        _equippedWeapon = weapon;
+        return true;
+    }
+    public bool TryEquipArmor(Armor armor) {
+        IBodyPart bodyPartToEquip = GetBodyPartForArmor(armor);
+        if (bodyPartToEquip == null) {
+            return false;
+        }
+        bodyPartToEquip.AttachItem(armor, Utilities.GetNeededAttributeForArmor(armor));
+        AddEquippedItem(armor);
+        return true;
+    }
+    private void UnequipWeapon(Weapon weapon) {
+        DetachWeaponFromBodyParts(weapon);
+        _equippedWeapon = null;
+    }
+    private void UnequipArmor(Armor armor) {
+        armor.bodyPartAttached.DettachItem(armor, Utilities.GetNeededAttributeForArmor(armor));
+    }
+    private bool AttachWeaponToBodyPart(Weapon weapon, IBodyPart.ATTRIBUTE req) {
+        for (int i = 0; i < this._bodyParts.Count; i++) {
+            BodyPart currBodyPart = this._bodyParts[i];
+            if (currBodyPart.AttachItem(weapon, req)) {
+                return true;
+            }
+            for (int j = 0; j < currBodyPart.secondaryBodyParts.Count; j++) {
+                if (currBodyPart.secondaryBodyParts[j].AttachItem(weapon, req)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    private void DetachWeaponFromBodyParts(Weapon weapon) {
+        for (int i = 0; i < CombatSimManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements.Count; i++) {
+            IBodyPart.ATTRIBUTE req = CombatSimManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements[i];
+            for (int j = 0; j < weapon.bodyPartsAttached.Count; j++) {
+                if (weapon.bodyPartsAttached[j].DettachItem(weapon, req)) {
+                    break;
+                }
+            }
+        }
+    }
+    internal IBodyPart GetBodyPartForArmor(Armor armor) {
+        IBodyPart.ATTRIBUTE neededAttribute = Utilities.GetNeededAttributeForArmor(armor);
+        for (int i = 0; i < bodyParts.Count; i++) {
+            BodyPart currBodyPart = bodyParts[i];
+            //check if currBodyPart can equip the armor
+            if (currBodyPart.HasUnusedAttribute(neededAttribute)) {
+                return currBodyPart;
+            }
+            for (int j = 0; j < currBodyPart.secondaryBodyParts.Count; j++) {
+                //check if currBodyPart can equip the armor
+                if (currBodyPart.secondaryBodyParts[j].HasUnusedAttribute(neededAttribute)) {
+                    return currBodyPart.secondaryBodyParts[j];
+                }
+            }
+        }
+        return null;
+    }
+    public void AddEquippedItem(Item newItem) {
+        this._equippedItems.Add(newItem);
+        newItem.SetEquipped(true);
+        AddItemBonuses(newItem);
+    }
+    public void RemoveEquippedItem(Item newItem) {
+        if (this._equippedItems.Remove(newItem)) {
+            newItem.SetEquipped(false);
+            RemoveItemBonuses(newItem);
+        }
+    }
+    private void AddItemBonuses(Item item) {
+        if (item.itemType == ITEM_TYPE.ARMOR) {
+            Armor armor = (Armor) item;
+            _bonusDef += armor.def;
+            _bonusDefPercent += (armor.prefix.bonusDefPercent + armor.suffix.bonusDefPercent);
+        }
+    }
+    private void RemoveItemBonuses(Item item) {
+        if (item.itemType == ITEM_TYPE.ARMOR) {
+            Armor armor = (Armor) item;
+            _bonusDef -= armor.def;
+            _bonusDefPercent -= (armor.prefix.bonusDefPercent + armor.suffix.bonusDefPercent);
+        }
     }
     #endregion
 }

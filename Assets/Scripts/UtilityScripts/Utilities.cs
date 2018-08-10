@@ -1401,7 +1401,13 @@ public class Utilities : MonoBehaviour {
 
     #region Combat Prototype
     public static ECS.IBodyPart.ATTRIBUTE GetNeededAttributeForArmor(ECS.Armor armor) {
-        switch (ItemManager.Instance.armorTypeData[armor.armorType].armorBodyType) {
+        string armorBodyType = string.Empty;
+        if(ItemManager.Instance != null) {
+            armorBodyType = ItemManager.Instance.armorTypeData[armor.armorType].armorBodyType;
+        } else {
+            armorBodyType = CombatSimManager.Instance.armorTypeData[armor.armorType].armorBodyType;
+        }
+        switch (armorBodyType) {
             case "Head":
             return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_HEAD_ARMOR;
             case "Torso":

@@ -7,6 +7,7 @@ public class Attribute {
     [SerializeField] protected bool _isHidden;
     [SerializeField] protected ATTRIBUTE_CATEGORY _category;
 
+
     #region getters/setters
     public string name {
         get { return _name; }

@@ -18,7 +18,6 @@ namespace ECS {
         private int _id;
         private int _gold;
         private int _actRate;
-        private float _equippedWeaponPower;
         private bool _isDead;
         private bool _isFainted;
         private bool _isInCombat;
@@ -259,12 +258,6 @@ namespace ECS {
         public List<Log> history {
             get { return this._history; }
         }
-        public float characterPower {
-            get { return (float) _currentHP + (float) ((strength + intelligence + agility) * 2) + _equippedWeaponPower; }
-        }
-        public float equippedWeaponPower {
-            get { return _equippedWeaponPower; }
-        }
         public int gold {
             get { return _gold; }
         }
@@ -434,7 +427,6 @@ namespace ECS {
             _exploredLandmarks = new List<BaseLandmark>();
             _statusEffects = new List<STATUS_EFFECT>();
             _tags = new List<CharacterAttribute>();
-            _equippedWeaponPower = 0f;
             _isDead = false;
             _isFainted = false;
             //_isDefeated = false;
@@ -1246,7 +1238,6 @@ namespace ECS {
 			if(newWeapon.owner == null){
 				OwnItem (newWeapon);
 			}
-			_equippedWeaponPower = newWeapon.weaponPower;
             _equippedWeapon = newWeapon;
 			//for (int i = 0; i < newWeapon.skills.Count; i++) {
 			//	this._skills.Add (newWeapon.skills [i]);
@@ -1283,10 +1274,10 @@ namespace ECS {
 		//Unequips weapon of a character
 		private void UnequipWeapon(Weapon weapon) {
 			DetachWeaponFromBodyParts (weapon);
-			//for (int i = 0; i < weapon.skills.Count; i++) {
-			//	this._skills.Remove (weapon.skills [i]);
-			//}
-			_equippedWeaponPower = 0f;
+            //for (int i = 0; i < weapon.skills.Count; i++) {
+            //	this._skills.Remove (weapon.skills [i]);
+            //}
+            _equippedWeapon = null;
 		}
 		//Try to equip an armor to a body part of this character and add it to the list of items this character have
 		internal bool TryEquipArmor(Armor armor){
@@ -1526,11 +1517,6 @@ namespace ECS {
                 _bonusDef += armor.def;
                 _bonusDefPercent += (armor.prefix.bonusDefPercent + armor.suffix.bonusDefPercent);
             }
-            //AdjustMaxHP(item.bonusMaxHP);
-            //AdjustBonusStrength(item.bonusStrength);
-            //AdjustBonusIntelligence(item.bonusIntelligence);
-            //AdjustBonusAgility(item.bonusAgility);
-            //AdjustBonusVitality(item.bonusVitality);
         }
         private void RemoveItemBonuses(Item item) {
             if (item.itemType == ITEM_TYPE.ARMOR) {
@@ -1538,10 +1524,6 @@ namespace ECS {
                 _bonusDef -= armor.def;
                 _bonusDefPercent -= (armor.prefix.bonusDefPercent + armor.suffix.bonusDefPercent);
             }
-            //AdjustMaxHP(-item.bonusMaxHP);
-            //AdjustBonusStrength(-item.bonusStrength);
-            //AdjustBonusIntelligence(-item.bonusIntelligence);
-            //AdjustBonusVitality(-item.bonusVitality);
         }
         #endregion
 

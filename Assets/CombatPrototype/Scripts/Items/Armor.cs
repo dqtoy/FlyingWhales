@@ -33,10 +33,20 @@ namespace ECS{
             set { _def = value; }
         }
         public ArmorPrefix prefix {
-            get { return ItemManager.Instance.armorPrefixes[_prefix]; }
+            get {
+                if (ItemManager.Instance != null) {
+                    return ItemManager.Instance.armorPrefixes[_prefix];
+                }
+                return CombatSimManager.Instance.armorPrefixes[_prefix];
+            }
         }
         public ArmorSuffix suffix {
-            get { return ItemManager.Instance.armorSuffixes[_suffix]; }
+            get {
+                if (ItemManager.Instance != null) {
+                    return ItemManager.Instance.armorSuffixes[_suffix];
+                }
+                return CombatSimManager.Instance.armorSuffixes[_suffix];
+            }
         }
         #endregion
 

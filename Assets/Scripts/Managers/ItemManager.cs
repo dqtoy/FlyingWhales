@@ -182,7 +182,6 @@ public class ItemManager : MonoBehaviour {
 			//_equipmentTypes [ITEM_TYPE.ITEM].Add ((EQUIPMENT_TYPE)data.armorType);
         }
     }
-
     private void CreateWeaponPrefix(WEAPON_PREFIX prefix) {
         if(!_weaponPrefixes.ContainsKey(prefix)) {
             switch (prefix) {
@@ -200,9 +199,7 @@ public class ItemManager : MonoBehaviour {
                 break;
             }
         }
-
     }
-
     private void CreateArmorPrefix(ARMOR_PREFIX prefix) {
         if (!_armorPrefixes.ContainsKey(prefix)) {
             switch (prefix) {

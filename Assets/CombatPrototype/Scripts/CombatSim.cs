@@ -351,7 +351,7 @@ public class CombatSim {
             Debug.LogError("NO MORE BODY PARTS!");
             return;
         }
-        Armor armor = chosenBodyPart.GetArmor();
+        //Armor armor = chosenBodyPart.GetArmor();
         log += sourceCharacter.idName + " " + attackSkill.skillName.ToLower() + " " + targetCharacter.idName + " in the " + chosenBodyPart.name.ToLower();
 
         if (weapon != null) {

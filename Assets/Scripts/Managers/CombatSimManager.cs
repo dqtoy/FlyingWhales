@@ -35,8 +35,11 @@ public class CombatSimManager : MonoBehaviour {
     private List<string> _allCharacters;
     private Dictionary<ELEMENT, float> _elementsChanceDictionary;
     private Dictionary<WEAPON_TYPE, WeaponType> _weaponTypeData;
+    private Dictionary<ARMOR_TYPE, ArmorType> _armorTypeData;
     private Dictionary<WEAPON_PREFIX, WeaponPrefix> _weaponPrefixes;
     private Dictionary<WEAPON_SUFFIX, WeaponSuffix> _weaponSuffixes;
+    private Dictionary<ARMOR_PREFIX, ArmorPrefix> _armorPrefixes;
+    private Dictionary<ARMOR_SUFFIX, ArmorSuffix> _armorSuffixes;
 
     #region getters/setters
     public Dictionary<ELEMENT, float> elementsChanceDictionary {
@@ -45,11 +48,20 @@ public class CombatSimManager : MonoBehaviour {
     public Dictionary<WEAPON_TYPE, WeaponType> weaponTypeData {
         get { return _weaponTypeData; }
     }
+    public Dictionary<ARMOR_TYPE, ArmorType> armorTypeData {
+        get { return _armorTypeData; }
+    }
     public Dictionary<WEAPON_PREFIX, WeaponPrefix> weaponPrefixes {
         get { return _weaponPrefixes; }
     }
     public Dictionary<WEAPON_SUFFIX, WeaponSuffix> weaponSuffixes {
         get { return _weaponSuffixes; }
+    }
+    public Dictionary<ARMOR_PREFIX, ArmorPrefix> armorPrefixes {
+        get { return _armorPrefixes; }
+    }
+    public Dictionary<ARMOR_SUFFIX, ArmorSuffix> armorSuffixes {
+        get { return _armorSuffixes; }
     }
     public List<ICharacterSim> sideAList {
         get { return _sideAList; }
@@ -72,7 +84,9 @@ public class CombatSimManager : MonoBehaviour {
         _sideBList = new List<ICharacterSim>();
         ConstructElementChanceDictionary();
         ConstructWeaponTypeData();
+        ConstructArmorTypeData();
         ConstructWeaponPrefixesAndSuffixes();
+        ConstructArmorPrefixesAndSuffixes();
         UpdateAllCharacters();
         UpdateAllMonsters();
         UpdateCharacterOptions();
@@ -145,6 +159,17 @@ public class CombatSimManager : MonoBehaviour {
             _weaponTypeData.Add(data.weaponType, data);
         }
     }
+    private void ConstructArmorTypeData() {
+        _armorTypeData = new Dictionary<ARMOR_TYPE, ArmorType>();
+        string path = Utilities.dataPath + "ArmorTypes/";
+        string[] files = Directory.GetFiles(path, "*.json");
+        for (int i = 0; i < files.Length; i++) {
+            string currFilePath = files[i];
+            string dataAsJson = File.ReadAllText(currFilePath);
+            ArmorType data = JsonUtility.FromJson<ArmorType>(dataAsJson);
+            _armorTypeData.Add(data.armorType, data);
+        }
+    }
     private void ConstructWeaponPrefixesAndSuffixes() {
         _weaponPrefixes = new Dictionary<WEAPON_PREFIX, WeaponPrefix>();
         _weaponSuffixes = new Dictionary<WEAPON_SUFFIX, WeaponSuffix>();
@@ -156,7 +181,18 @@ public class CombatSimManager : MonoBehaviour {
         for(int i = 0; i < suffixes.Length; i++) {
             CreateWeaponSuffix(suffixes[i]);
         }
-
+    }
+    private void ConstructArmorPrefixesAndSuffixes() {
+        _armorPrefixes = new Dictionary<ARMOR_PREFIX, ArmorPrefix>();
+        _armorSuffixes = new Dictionary<ARMOR_SUFFIX, ArmorSuffix>();
+        ARMOR_PREFIX[] prefixes = (ARMOR_PREFIX[]) Enum.GetValues(typeof(ARMOR_PREFIX));
+        ARMOR_SUFFIX[] suffixes = (ARMOR_SUFFIX[]) Enum.GetValues(typeof(ARMOR_SUFFIX));
+        for (int i = 0; i < prefixes.Length; i++) {
+            CreateArmorPrefix(prefixes[i]);
+        }
+        for (int i = 0; i < suffixes.Length; i++) {
+            CreateArmorSuffix(suffixes[i]);
+        }
     }
     private void CreateWeaponPrefix(WEAPON_PREFIX prefix) {
         if (!_weaponPrefixes.ContainsKey(prefix)) {
@@ -175,7 +211,24 @@ public class CombatSimManager : MonoBehaviour {
                 break;
             }
         }
-
+    }
+    private void CreateArmorPrefix(ARMOR_PREFIX prefix) {
+        if (!_armorPrefixes.ContainsKey(prefix)) {
+            switch (prefix) {
+                case ARMOR_PREFIX.NONE:
+                _armorPrefixes.Add(prefix, new ArmorPrefix(prefix));
+                break;
+            }
+        }
+    }
+    private void CreateArmorSuffix(ARMOR_SUFFIX suffix) {
+        if (!_armorSuffixes.ContainsKey(suffix)) {
+            switch (suffix) {
+                case ARMOR_SUFFIX.NONE:
+                _armorSuffixes.Add(suffix, new ArmorSuffix(suffix));
+                break;
+            }
+        }
     }
     #endregion
 
