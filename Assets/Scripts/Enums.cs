@@ -1440,3 +1440,8 @@ public enum ATTRIBUTE_CATEGORY {
     ITEM,
     STRUCTURE,
 }
+
+public enum ATTRIBUTE_BEHAVIOR {
+    NONE,
+    DEPLETE_FUN,
+}

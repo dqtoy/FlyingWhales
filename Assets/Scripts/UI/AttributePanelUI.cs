@@ -14,16 +14,43 @@ public class AttributePanelUI : MonoBehaviour {
     public static AttributePanelUI Instance;
 
     public Dropdown categoryOptions;
+    public Dropdown tickBehaviorOptions;
+    public Dropdown addBehaviorOptions;
+    public Dropdown removeBehaviorOptions;
+
     public InputField nameInput;
     public Toggle hiddenToggle;
 
-    private List<string> _allItemAttributes;
+    public Transform tickBehaviorContentTransform;
+    public Transform addBehaviorContentTransform;
+    public Transform removeBehaviorContentTransform;
 
+    public GameObject behaviorBtnPrefab;
+
+    private BehaviorBtn _currentSelectTickBtn;
+    private BehaviorBtn _currentSelectAddBtn;
+    private BehaviorBtn _currentSelectRemoveBtn;
+
+    private List<string> _allItemAttributes;
+    private List<string> _tickBehaviors;
+    private List<string> _addBehaviors;
+    private List<string> _removeBehaviors;
+    
     #region getters/setters
     public List<string> allItemAttributes {
         get { return _allItemAttributes; }
     }
+    public List<string> tickBehaviors {
+        get { return _tickBehaviors; }
+    }
+    public List<string> addBehaviors {
+        get { return _addBehaviors; }
+    }
+    public List<string> removeBehaviors {
+        get { return _removeBehaviors; }
+    }
     #endregion
+
     void Awake() {
         Instance = this;
     }
@@ -42,17 +69,47 @@ public class AttributePanelUI : MonoBehaviour {
     }
     private void LoadAllData() {
         _allItemAttributes = new List<string>();
+        _tickBehaviors = new List<string>();
+        _addBehaviors = new List<string>();
+        _removeBehaviors = new List<string>();
+
         categoryOptions.ClearOptions();
+        tickBehaviorOptions.ClearOptions();
+        addBehaviorOptions.ClearOptions();
+        removeBehaviorOptions.ClearOptions();
 
         string[] categories = System.Enum.GetNames(typeof(ATTRIBUTE_CATEGORY));
+        string[] behaviors = System.Enum.GetNames(typeof(ATTRIBUTE_BEHAVIOR));
 
         categoryOptions.AddOptions(categories.ToList());
+        tickBehaviorOptions.AddOptions(behaviors.ToList());
+        addBehaviorOptions.AddOptions(behaviors.ToList());
+        removeBehaviorOptions.AddOptions(behaviors.ToList());
+
         UpdateItemAttributes();
     }
     private void ClearData() {
         categoryOptions.value = 0;
+        tickBehaviorOptions.value = 0;
+        addBehaviorOptions.value = 0;
+        removeBehaviorOptions.value = 0;
         nameInput.text = string.Empty;
         hiddenToggle.isOn = false;
+
+
+        _tickBehaviors.Clear();
+        _addBehaviors.Clear();
+        _removeBehaviors.Clear();
+
+        foreach (Transform child in tickBehaviorContentTransform) {
+            GameObject.Destroy(child.gameObject);
+        }
+        foreach (Transform child in addBehaviorContentTransform) {
+            GameObject.Destroy(child.gameObject);
+        }
+        foreach (Transform child in removeBehaviorContentTransform) {
+            GameObject.Destroy(child.gameObject);
+        }
     }
     private void SaveAttribute() {
 #if UNITY_EDITOR
@@ -104,6 +161,25 @@ public class AttributePanelUI : MonoBehaviour {
         nameInput.text = attribute.name;
         hiddenToggle.isOn = attribute.isHidden;
         categoryOptions.value = GetCategoryIndex(attribute.category.ToString());
+
+        for (int i = 0; i < attribute.tickBehaviors.Count; i++) {
+            string behavior = attribute.tickBehaviors[i].ToString();
+            _tickBehaviors.Add(behavior);
+            GameObject go = GameObject.Instantiate(behaviorBtnPrefab, tickBehaviorContentTransform);
+            go.GetComponent<BehaviorBtn>().buttonText.text = behavior;
+        }
+        for (int i = 0; i < attribute.onAddedBehaviors.Count; i++) {
+            string behavior = attribute.onAddedBehaviors[i].ToString();
+            _addBehaviors.Add(behavior);
+            GameObject go = GameObject.Instantiate(behaviorBtnPrefab, addBehaviorContentTransform);
+            go.GetComponent<BehaviorBtn>().buttonText.text = behavior;
+        }
+        for (int i = 0; i < attribute.onRemovedBehaviors.Count; i++) {
+            string behavior = attribute.onRemovedBehaviors[i].ToString();
+            _removeBehaviors.Add(behavior);
+            GameObject go = GameObject.Instantiate(behaviorBtnPrefab, removeBehaviorContentTransform);
+            go.GetComponent<BehaviorBtn>().buttonText.text = behavior;
+        }
     }
     private int GetCategoryIndex(string categoryName) {
         for (int i = 0; i < categoryOptions.options.Count; i++) {
@@ -112,6 +188,15 @@ public class AttributePanelUI : MonoBehaviour {
             }
         }
         return 0;
+    }
+    public void SetCurrentSelectBehaviorBtn(BehaviorBtn btn) {
+        if(btn.gameObject.transform.parent == tickBehaviorContentTransform) {
+            _currentSelectTickBtn = btn;
+        }else if (btn.gameObject.transform.parent == addBehaviorContentTransform) {
+            _currentSelectAddBtn = btn;
+        }else if (btn.gameObject.transform.parent == removeBehaviorContentTransform) {
+            _currentSelectRemoveBtn = btn;
+        }
     }
     #endregion
 
@@ -124,6 +209,57 @@ public class AttributePanelUI : MonoBehaviour {
     }
     public void OnClickSaveAttribute() {
         SaveAttribute();
+    }
+    public void OnAddTickBehavior() {
+        string behaviorToAdd = tickBehaviorOptions.options[tickBehaviorOptions.value].text;
+        if (behaviorToAdd != "NONE" && !_tickBehaviors.Contains(behaviorToAdd)) {
+            _tickBehaviors.Add(behaviorToAdd);
+            GameObject go = GameObject.Instantiate(behaviorBtnPrefab, tickBehaviorContentTransform);
+            go.GetComponent<BehaviorBtn>().buttonText.text = behaviorToAdd;
+        }
+    }
+    public void OnRemoveTickBehavior() {
+        if (_currentSelectTickBtn != null) {
+            string behaviorToRemove = _currentSelectTickBtn.buttonText.text;
+            if (_tickBehaviors.Remove(behaviorToRemove)) {
+                GameObject.Destroy(_currentSelectTickBtn.gameObject);
+                _currentSelectTickBtn = null;
+            }
+        }
+    }
+    public void OnAddAddedBehavior() {
+        string behaviorToAdd = addBehaviorOptions.options[addBehaviorOptions.value].text;
+        if (behaviorToAdd != "NONE" && !_addBehaviors.Contains(behaviorToAdd)) {
+            _addBehaviors.Add(behaviorToAdd);
+            GameObject go = GameObject.Instantiate(behaviorBtnPrefab, addBehaviorContentTransform);
+            go.GetComponent<BehaviorBtn>().buttonText.text = behaviorToAdd;
+        }
+    }
+    public void OnRemoveAddedBehavior() {
+        if (_currentSelectAddBtn != null) {
+            string behaviorToRemove = _currentSelectAddBtn.buttonText.text;
+            if (_addBehaviors.Remove(behaviorToRemove)) {
+                GameObject.Destroy(_currentSelectAddBtn.gameObject);
+                _currentSelectAddBtn = null;
+            }
+        }
+    }
+    public void OnAddRemovedBehavior() {
+        string behaviorToAdd = removeBehaviorOptions.options[removeBehaviorOptions.value].text;
+        if (behaviorToAdd != "NONE" && !_removeBehaviors.Contains(behaviorToAdd)) {
+            _removeBehaviors.Add(behaviorToAdd);
+            GameObject go = GameObject.Instantiate(behaviorBtnPrefab, removeBehaviorContentTransform);
+            go.GetComponent<BehaviorBtn>().buttonText.text = behaviorToAdd;
+        }
+    }
+    public void OnRemoveRemovedBehavior() {
+        if (_currentSelectRemoveBtn != null) {
+            string behaviorToRemove = _currentSelectRemoveBtn.buttonText.text;
+            if (_removeBehaviors.Remove(behaviorToRemove)) {
+                GameObject.Destroy(_currentSelectRemoveBtn.gameObject);
+                _currentSelectRemoveBtn = null;
+            }
+        }
     }
     #endregion
 }
