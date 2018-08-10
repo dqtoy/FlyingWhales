@@ -56,6 +56,15 @@ public class CharacterClick : MonoBehaviour {
                             thisParty.actionData.DoAction();
                         }
                     } else {
+                        if (thisParty.faction == null) {
+                            throw new System.Exception(thisParty.name + " has no faction!");
+                        }
+                        if (enemy.iparty == null) {
+                            throw new System.Exception(enemy.name + " has no party!");
+                        }
+                        if (enemy.iparty.faction == null) {
+                            throw new System.Exception(enemy.name + " has no faction!");
+                        }
                         if(thisParty.faction.id != enemy.iparty.faction.id) {
                             //Check if hostile faction, if it is, check mode for combat chances
                             FactionRelationship factionRelationship = thisParty.faction.GetRelationshipWith(enemy.iparty.faction);
