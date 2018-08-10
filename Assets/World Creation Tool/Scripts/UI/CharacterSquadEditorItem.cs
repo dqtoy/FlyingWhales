@@ -19,6 +19,11 @@ public class CharacterSquadEditorItem : MonoBehaviour {
     private void Update() {
         if (character != null) {
             characterNameLbl.text = character.name;
+            if (character.isFactionless) {
+                characterNameLbl.text += "(Neutral)";
+            } else {
+                characterNameLbl.text += "(" + character.faction.name + ")";
+            }
             otherInfoLbl.text = character.role.roleType.ToString() + "/" + character.characterClass.className;
         }
     }

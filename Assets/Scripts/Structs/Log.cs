@@ -9,6 +9,7 @@ public class Log {
 	public MONTH month;
 	public int day;
 	public int year;
+    public int hour;
 
 	public string category;
 	public string file;
@@ -19,11 +20,12 @@ public class Log {
 
     public string logCallStack;
 
-	public Log(int month, int day, int year, string category, string file, string key){
+	public Log(int month, int day, int year, int hour, string category, string file, string key){
         this.id = Utilities.SetID<Log>(this);
 		this.month = (MONTH)month;
 		this.day = day;
 		this.year = year;
+        this.hour = hour;
 		this.category = category;
 		this.file = file;
 		this.key = key;
@@ -35,6 +37,7 @@ public class Log {
         this.month = (MONTH)date.month;
         this.day = date.day;
         this.year = date.year;
+        this.hour = date.hour;
         this.category = category;
         this.file = file;
         this.key = key;
