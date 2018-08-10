@@ -448,7 +448,7 @@ public class UIManager : MonoBehaviour {
             for (int i = 0; i < cornersOutside.Count; i++) {
                 log += cornersOutside[i].ToString() + ", ";
             }
-            Debug.Log(log);
+            //Debug.Log(log);
             if (cornersOutside.Contains(2) && cornersOutside.Contains(3)) {
                 if (cornersOutside.Contains(0)) {
                     //bottom side and right side are outside, move anchor to bottom right

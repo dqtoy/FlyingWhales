@@ -397,6 +397,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         structureTint.gameObject.SetActive(false);
     }
     public void SetStructureTint(Color color) {
+        color.a = 150f/255f;
         structureTint.color = color;
     }
     #endregion
