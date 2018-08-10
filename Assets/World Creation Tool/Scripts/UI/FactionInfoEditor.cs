@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UI.Extensions.ColorPicker;
 
 public class FactionInfoEditor : MonoBehaviour {
 
@@ -14,6 +15,8 @@ public class FactionInfoEditor : MonoBehaviour {
     [SerializeField] private Text areaSummaryLbl;
     [SerializeField] private Dropdown areasDropdown;
     [SerializeField] private Dropdown leadersDropdown;
+    [SerializeField] private Image factionColor;
+    [SerializeField] private ColorPickerControl factionColorPicker;
 
     [Header("Relationships")]
     [SerializeField] private Text relationshipSummaryLbl;
@@ -38,6 +41,8 @@ public class FactionInfoEditor : MonoBehaviour {
     private void UpdateBasicInfo() {
         nameInputField.text = _faction.name;
         descriptionInputField.text = _faction.description;
+        factionColor.color = _faction.factionColor;
+        factionColorPicker.CurrentColor = _faction.factionColor;
         //characters
         charactersSummaryLbl.text = string.Empty;
         for (int i = 0; i < _faction.characters.Count; i++) {
@@ -72,6 +77,9 @@ public class FactionInfoEditor : MonoBehaviour {
     }
     public void ChangeDescriptionName(string description) {
         _faction.SetDescription(description);
+    }
+    public void ChangeFactionColor(Color color) {
+        _faction.SetFactionColor(color);
     }
     #endregion
 

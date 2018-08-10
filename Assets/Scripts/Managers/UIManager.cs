@@ -397,10 +397,10 @@ public class UIManager : MonoBehaviour {
         detailedInfoLbl.text = Utilities.NormalizeString(tile.biomeType.ToString()) + "(" + Utilities.NormalizeString(tile.elevationType.ToString()) + ")";
         detailedInfoContentParent.gameObject.SetActive(false);
         if (tile.landmarkOnTile == null) {
-            detailedInfoRect.sizeDelta = new Vector2(155f, 35f);
+            detailedInfoRect.sizeDelta = new Vector2(170f, 35f);
             detailedInfoIcon.gameObject.SetActive(false);
         } else {
-            detailedInfoRect.sizeDelta = new Vector2(155f, 80f);
+            detailedInfoRect.sizeDelta = new Vector2(170f, 80f);
             detailedInfoIcon.gameObject.SetActive(true);
             detailedInfoIcon.sprite = LandmarkManager.Instance.GetLandmarkData(tile.landmarkOnTile.specificLandmarkType).landmarkTypeIcon;
         }
@@ -584,7 +584,6 @@ public class UIManager : MonoBehaviour {
     private void HideMainUI() {
         mainUIGO.SetActive(false);
     }
-
     public void ShowMainUI() {
         mainUIGO.SetActive(true);
     }

@@ -73,7 +73,7 @@ public class Faction {
         SetName(RandomNameGenerator.Instance.GenerateKingdomName());
         _emblem = FactionManager.Instance.GenerateFactionEmblem(this);
         _emblemBG = FactionManager.Instance.GenerateFactionEmblemBG();
-        factionColor = Utilities.GetColorForFaction();
+        SetFactionColor (Utilities.GetColorForFaction());
         _characters = new List<ECS.Character>();
         _ownedLandmarks = new List<BaseLandmark>();
         _ownedRegions = new List<Region>();
@@ -87,7 +87,7 @@ public class Faction {
         _id = Utilities.SetID(this, data.factionID);
         SetName(data.factionName);
         SetDescription(data.factionDescription);
-        factionColor = data.factionColor;
+        SetFactionColor(data.factionColor);
         _characters = new List<ECS.Character>();
         _ownedLandmarks = new List<BaseLandmark>();
         _ownedRegions = new List<Region>();
@@ -157,6 +157,9 @@ public class Faction {
     #endregion
 
     #region Utilities
+    public void SetFactionColor(Color color) {
+        factionColor = color;
+    }
     public void SetName(string name) {
         _name = name;
     }
