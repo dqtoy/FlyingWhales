@@ -825,7 +825,7 @@ namespace ECS{
                 Debug.LogError("NO MORE BODY PARTS!");
                 return;
             }
-            Armor armor = chosenBodyPart.GetArmor();
+            //Armor armor = chosenBodyPart.GetArmor();
             log += sourceCharacter.coloredUrlName + " " + attackSkill.skillName.ToLower() + " " + targetCharacter.coloredUrlName + " in the " + chosenBodyPart.name.ToLower();
 
             if (weapon != null) {

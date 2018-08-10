@@ -602,7 +602,7 @@ PlayerSettings:
   webGLCompressionFormat: 1
   webGLLinkerTarget: 0
   scriptingDefineSymbols:
-    1: 
+    1: WORLD_CREATION_TOOL
     4: 
     7: 
     13: 

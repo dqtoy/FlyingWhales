@@ -18,14 +18,21 @@ public class CharacterPanelUI : MonoBehaviour {
     public Dropdown classOptions;
     public Dropdown genderOptions;
     public Dropdown weaponOptions;
+    public Dropdown headArmorOptions;
+    public Dropdown bodyArmorOptions;
+    public Dropdown legsArmorOptions;
+    public Dropdown leftHandArmorOptions;
+    public Dropdown rightHandArmorOptions;
+    public Dropdown leftFootArmorOptions;
+    public Dropdown rightFootArmorOptions;
 
     public InputField nameInput;
     public InputField levelInput;
-    public InputField dHeadInput;
-    public InputField dBodyInput;
-    public InputField dLegsInput;
-    public InputField dHandsInput;
-    public InputField dFeetInput;
+    //public InputField dHeadInput;
+    //public InputField dBodyInput;
+    //public InputField dLegsInput;
+    //public InputField dHandsInput;
+    //public InputField dFeetInput;
 
 
     public TextMeshProUGUI strBuildLbl;
@@ -102,6 +109,13 @@ public class CharacterPanelUI : MonoBehaviour {
     private void LoadAllData() {
         genderOptions.ClearOptions();
         weaponOptions.ClearOptions();
+        headArmorOptions.ClearOptions();
+        bodyArmorOptions.ClearOptions();
+        legsArmorOptions.ClearOptions();
+        leftHandArmorOptions.ClearOptions();
+        rightHandArmorOptions.ClearOptions();
+        leftFootArmorOptions.ClearOptions();
+        rightFootArmorOptions.ClearOptions();
 
         string[] genders = System.Enum.GetNames(typeof(GENDER));
 
@@ -111,17 +125,59 @@ public class CharacterPanelUI : MonoBehaviour {
             weapons.Add(Path.GetFileNameWithoutExtension(file));
         }
 
+        List<string> armors = new List<string>();
+        armors.Add("None");
+        string path2 = Utilities.dataPath + "Items/ARMOR/";
+        foreach (string file in Directory.GetFiles(path2, "*.json")) {
+            armors.Add(Path.GetFileNameWithoutExtension(file));
+        }
+
         weaponOptions.AddOptions(weapons);
         genderOptions.AddOptions(genders.ToList());
+        headArmorOptions.AddOptions(armors);
+        bodyArmorOptions.AddOptions(armors);
+        legsArmorOptions.AddOptions(armors);
+        leftHandArmorOptions.AddOptions(armors);
+        rightHandArmorOptions.AddOptions(armors);
+        leftFootArmorOptions.AddOptions(armors);
+        rightFootArmorOptions.AddOptions(armors);
     }
     public void UpdateClassOptions() {
         classOptions.ClearOptions();
         classOptions.AddOptions(ClassPanelUI.Instance.allClasses);
     }
+    public void UpdateItemOptions() {
+        weaponOptions.ClearOptions();
+        weaponOptions.AddOptions(ItemPanelUI.Instance.allWeapons);
+        UpdateArmorOptions();
+    }
+    private void UpdateArmorOptions() {
+        headArmorOptions.ClearOptions();
+        bodyArmorOptions.ClearOptions();
+        legsArmorOptions.ClearOptions();
+        leftHandArmorOptions.ClearOptions();
+        rightHandArmorOptions.ClearOptions();
+        leftFootArmorOptions.ClearOptions();
+        rightFootArmorOptions.ClearOptions();
+        headArmorOptions.AddOptions(ItemPanelUI.Instance.allArmors);
+        bodyArmorOptions.AddOptions(ItemPanelUI.Instance.allArmors);
+        legsArmorOptions.AddOptions(ItemPanelUI.Instance.allArmors);
+        leftHandArmorOptions.AddOptions(ItemPanelUI.Instance.allArmors);
+        rightHandArmorOptions.AddOptions(ItemPanelUI.Instance.allArmors);
+        leftFootArmorOptions.AddOptions(ItemPanelUI.Instance.allArmors);
+        rightFootArmorOptions.AddOptions(ItemPanelUI.Instance.allArmors);
+    }
     private void ClearData() {
         classOptions.value = 0;
         genderOptions.value = 0;
         weaponOptions.value = 0;
+        headArmorOptions.value = 0;
+        bodyArmorOptions.value = 0;
+        legsArmorOptions.value = 0;
+        leftHandArmorOptions.value = 0;
+        rightHandArmorOptions.value = 0;
+        leftFootArmorOptions.value = 0;
+        rightFootArmorOptions.value = 0;
 
         nameInput.text = string.Empty;
         levelInput.text = "1";
@@ -139,11 +195,11 @@ public class CharacterPanelUI : MonoBehaviour {
 
         skillsLbl.text = "None";
 
-        dHeadInput.text = "0";
-        dBodyInput.text = "0";
-        dLegsInput.text = "0";
-        dHandsInput.text = "0";
-        dFeetInput.text = "0";
+        //dHeadInput.text = "0";
+        //dBodyInput.text = "0";
+        //dLegsInput.text = "0";
+        //dHandsInput.text = "0";
+        //dFeetInput.text = "0";
     }
     private void SaveCharacter() {
 #if UNITY_EDITOR
@@ -197,16 +253,24 @@ public class CharacterPanelUI : MonoBehaviour {
 
     private void LoadCharacterDataToUI(CharacterSim character) {
         nameInput.text = character.name;
+        levelInput.text = character.level.ToString();
+
         classOptions.value = GetClassIndex(character.className);
         genderOptions.value = GetGenderIndex(character.gender);
         weaponOptions.value = GetWeaponIndex(character.weaponName);
-        levelInput.text = character.level.ToString();
+        headArmorOptions.value = GetArmorIndex(character.headArmorName, headArmorOptions);
+        bodyArmorOptions.value = GetArmorIndex(character.bodyArmorName, bodyArmorOptions);
+        legsArmorOptions.value = GetArmorIndex(character.legsArmorName, legsArmorOptions);
+        leftHandArmorOptions.value = GetArmorIndex(character.leftHandArmorName, leftHandArmorOptions);
+        rightHandArmorOptions.value = GetArmorIndex(character.rightHandArmorName, rightHandArmorOptions);
+        leftFootArmorOptions.value = GetArmorIndex(character.leftFootArmorName, leftFootArmorOptions);
+        rightFootArmorOptions.value = GetArmorIndex(character.rightFootArmorName, rightFootArmorOptions);
 
-        dHeadInput.text = character.defHead.ToString();
-        dBodyInput.text = character.defBody.ToString();
-        dLegsInput.text = character.defLegs.ToString();
-        dHandsInput.text = character.defHands.ToString();
-        dFeetInput.text = character.defFeet.ToString();
+        //dHeadInput.text = character.defHead.ToString();
+        //dBodyInput.text = character.defBody.ToString();
+        //dLegsInput.text = character.defLegs.ToString();
+        //dHandsInput.text = character.defHands.ToString();
+        //dFeetInput.text = character.defFeet.ToString();
 
         _strBuild = character.strBuild;
         _intBuild = character.intBuild;
@@ -246,6 +310,14 @@ public class CharacterPanelUI : MonoBehaviour {
     private int GetWeaponIndex(string weaponName) {
         for (int i = 0; i < weaponOptions.options.Count; i++) {
             if (weaponOptions.options[i].text == weaponName) {
+                return i;
+            }
+        }
+        return 0;
+    }
+    private int GetArmorIndex(string armorName, Dropdown ddOptions) {
+        for (int i = 0; i < ddOptions.options.Count; i++) {
+            if (ddOptions.options[i].text == armorName) {
                 return i;
             }
         }

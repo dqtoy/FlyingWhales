@@ -44,12 +44,21 @@ public class ItemPanelUI : MonoBehaviour {
 
     private List<string> _attributes;
     private List<string> _allItems;
+    private List<string> _allWeapons;
+    private List<string> _allArmors;
+
     private Dictionary<string, Sprite> _iconSprites;
     private AttributeBtn _currentSelectedButton;
 
     #region getters/setters
     public List<string> allItems {
         get { return _allItems; }
+    }
+    public List<string> allWeapons {
+        get { return _allWeapons; }
+    }
+    public List<string> allArmors {
+        get { return _allArmors; }
     }
     #endregion
 
@@ -63,19 +72,33 @@ public class ItemPanelUI : MonoBehaviour {
     #region Utilities
     private void UpdateAllItems() {
         _allItems.Clear();
+        _allWeapons.Clear();
+        _allArmors.Clear();
+
+        _allArmors.Add("None");
         string path = Utilities.dataPath + "Items/";
         string[] directories = Directory.GetDirectories(path);
         for (int i = 0; i < directories.Length; i++) {
+            string folderName = new DirectoryInfo(directories[i]).Name;
             string[] files = Directory.GetFiles(directories[i], "*.json");
             for (int j = 0; j < files.Length; j++) {
-                _allItems.Add(Path.GetFileNameWithoutExtension(files[j]));
+                string fileName = Path.GetFileNameWithoutExtension(files[j]);
+                if (folderName == "WEAPON") {
+                    _allWeapons.Add(fileName);
+                }else if (folderName == "ARMOR") {
+                    _allArmors.Add(fileName);
+                }
+                _allItems.Add(fileName);
             }
         }
         MonsterPanelUI.Instance.UpdateItemDropOptions();
+        CharacterPanelUI.Instance.UpdateItemOptions();
     }
     private void LoadAllData() {
         _attributes = new List<string>();
         _allItems = new List<string>();
+        _allWeapons = new List<string>();
+        _allArmors = new List<string>();
         itemTypeOptions.ClearOptions();
         weaponTypeOptions.ClearOptions();
         armorTypeOptions.ClearOptions();

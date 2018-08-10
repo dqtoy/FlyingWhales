@@ -57,9 +57,6 @@ public class Faction {
 	public int warmongering {
 		get { return _warmongering; }
 	}
-	public float factionPower{
-		get { return this._characters.Sum (x => x.characterPower); }
-	}
     public List<BaseLandmark> landmarkInfo {
         get { return _landmarkInfo; }
     }

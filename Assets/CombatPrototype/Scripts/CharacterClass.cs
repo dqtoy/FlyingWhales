@@ -147,7 +147,7 @@ namespace ECS {
             this._spPerLevel = int.Parse(ClassPanelUI.Instance.spPerLevelInput.text);
 
             this._allowedWeaponTypes = new List<WEAPON_TYPE>();
-            for (int i = 0; i < _allowedWeaponTypes.Count; i++) {
+            for (int i = 0; i < ClassPanelUI.Instance.allowedWeaponTypes.Count; i++) {
                 this._allowedWeaponTypes.Add((WEAPON_TYPE) System.Enum.Parse(typeof(WEAPON_TYPE), ClassPanelUI.Instance.allowedWeaponTypes[i]));
             }
 
