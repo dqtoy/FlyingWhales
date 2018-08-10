@@ -8,7 +8,7 @@ public class PlayAction : CharacterAction {
         _actionData.providedEnergy = -1f;
         _actionData.providedFun = 2f;
 
-        _actionData.duration = 24;
+        _actionData.duration = 8;
     }
 
     #region Overrides
