@@ -40,7 +40,8 @@ namespace worldcreator {
             List<HexTile> choices = new List<HexTile>(WorldCreatorManager.Instance.selectionComponent.selection);
             HexTile chosenTile = choices[Random.Range(0, choices.Count)];
             if (chosenTile.landmarkOnTile != null) {
-                _character.party.SetSpecificLocation(chosenTile.landmarkOnTile);
+                chosenTile.landmarkOnTile.AddCharacterToLocation(_character.party);
+                //_character.party.SetSpecificLocation(chosenTile.landmarkOnTile);
             } else {
                 _character.party.SetSpecificLocation(chosenTile);
             }

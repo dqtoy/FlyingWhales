@@ -96,7 +96,7 @@ public class NewParty : IParty {
     public List<CharacterQuestData> questData {
         get { return GetQuestData(); }
     }
-    public ICharacter owner {
+    public virtual ICharacter owner {
         get { return _owner; }
     }
     #endregion

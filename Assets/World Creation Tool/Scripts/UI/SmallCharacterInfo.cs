@@ -17,6 +17,12 @@ public class SmallCharacterInfo : MonoBehaviour {
         characterInfoLbl.text += "\nGender: " + character.gender.ToString();
         characterInfoLbl.text += "\nRole: " + character.role.roleType.ToString();
         characterInfoLbl.text += "\nClass: " + character.characterClass.className;
+        characterInfoLbl.text += "\nFaction: ";
+        if (character.isFactionless) {
+            characterInfoLbl.text += "NONE";
+        } else {
+            characterInfoLbl.text += character.faction.name;
+        }
         this.gameObject.SetActive(true);
     }
     public void HideSmallCharacterInfo() {

@@ -220,13 +220,14 @@ public class Area {
         missingClasses.Clear();
         excessClasses.Clear();
         List<ICharacter> newResidents = new List<ICharacter>(residents);
-        int count = newResidents.Count;
-        for (int i = 0; i < count; i++) {
-            ICharacter resident = ResidentsHasClass(orderClasses[i], newResidents);
+        //int count = newResidents.Count;
+        for (int i = 0; i < orderClasses.Count; i++) {
+            string prioClass = orderClasses[i];
+            ICharacter resident = ResidentsHasClass(prioClass, newResidents);
             if (resident != null) {
                 newResidents.Remove(resident);
             } else {
-                missingClasses.Add(orderClasses[i]);
+                missingClasses.Add(prioClass);
             }
         }
         for (int i = 0; i < newResidents.Count; i++) {

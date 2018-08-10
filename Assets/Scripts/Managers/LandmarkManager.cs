@@ -100,9 +100,9 @@ public class LandmarkManager : MonoBehaviour {
         //    landmarkOnTile.charactersWithHomeOnLandmark[0].SetHome(null);
         //    landmarkOnTile.RemoveCharacterHomeOnLandmark(landmarkOnTile.charactersWithHomeOnLandmark[0]);
         //}
+        tile.RemoveLandmarkVisuals();
         tile.RemoveLandmarkOnTile();
         tile.region.RemoveLandmarkFromRegion(landmarkOnTile);
-        GameObject.Destroy(landmarkOnTile.landmarkVisual.gameObject);
     }
     public BaseLandmark LoadLandmarkOnTile(HexTile location, BaseLandmark landmark) {
         BaseLandmark newLandmark = location.LoadLandmark(landmark);

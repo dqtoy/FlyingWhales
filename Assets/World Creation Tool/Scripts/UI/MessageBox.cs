@@ -60,6 +60,8 @@ public class MessageBox : MonoBehaviour {
         messageGO.SetActive(false);
         yesNoGO.SetActive(false);
         okGO.SetActive(true);
+        inputField.text = string.Empty;
+        inputField.Select();
         inputField.characterValidation = inputType;
 
         yesBtn.onClick.RemoveAllListeners();
