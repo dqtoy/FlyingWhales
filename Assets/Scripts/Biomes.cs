@@ -134,9 +134,9 @@ public class Biomes : MonoBehaviour {
     }
     internal void UpdateTileVisuals(HexTile currentHexTile) {
 #if WORLD_CREATION_TOOL
-        int sortingOrder = ((int)worldcreator.WorldCreatorManager.Instance.height - 1) -  currentHexTile.yCoordinate;
+        int sortingOrder = ((int)worldcreator.WorldCreatorManager.Instance.height - 1) -  currentHexTile.yCoordinate - 2;
 #else
-        int sortingOrder = (((int)GridMap.Instance.height - 1) -  currentHexTile.yCoordinate);
+        int sortingOrder = (((int)GridMap.Instance.height - 1) -  currentHexTile.yCoordinate) - 2;
 #endif
         if (currentHexTile.elevationType == ELEVATION.PLAIN) {
             LoadPlainTileVisuals(currentHexTile, sortingOrder);
@@ -199,7 +199,7 @@ public class Biomes : MonoBehaviour {
                 tile.SetBaseSprite(forestSpriteToUse);
                 break;
         }
-        tile.SetSortingOrder(sortingOrder);
+        tile.SetSortingOrder(sortingOrder, "TileDetails");
     }
     private void LoadTreeTileVisuals(HexTile tile, int sortingOrder) {
         switch (tile.biomeType) {
@@ -224,7 +224,7 @@ public class Biomes : MonoBehaviour {
                 tile.SetBaseSprite(forestSpriteToUse);
                 break;
         }
-        tile.SetSortingOrder(sortingOrder);
+        tile.SetSortingOrder(sortingOrder, "TileDetails");
     }
     private void LoadWaterTileVisuals(HexTile tile, int sortingOrder) {
         Sprite waterSpriteToUse = waterTiles[Random.Range(0, waterTiles.Length)];

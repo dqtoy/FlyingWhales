@@ -686,12 +686,18 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     #region Tile Visuals
-    internal void SetSortingOrder(int sortingOrder) {
+    internal void SetSortingOrder(int sortingOrder, string sortingLayerName = "Default") {
         spriteRenderer.sortingOrder = sortingOrder;
+        spriteRenderer.sortingLayerName = sortingLayerName;
+        //if (!sortingLayerName.Equals("Default")) {
+            
+        //}
         UpdateSortingOrder();
     }
     internal void UpdateSortingOrder() {
         int sortingOrder = spriteRenderer.sortingOrder;
+        mainStructure.sortingOrder = sortingOrder;
+        structureTint.sortingOrder = sortingOrder + 1;
         highlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 4;
     }
     internal SpriteRenderer ActivateBorder(HEXTILE_DIRECTION direction, Color color) {
