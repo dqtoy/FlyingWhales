@@ -2362,13 +2362,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   landmarkLbl: {fileID: 0}
+  charCountLbl: {fileID: 0}
   topSprite: {fileID: 212000013826377234}
   botSprite: {fileID: 212000010539593988}
   exploredGO: {fileID: 1000012935631484}
   landmarkNameplateGO: {fileID: 0}
+  characterIndicatorGO: {fileID: 0}
   iconSprite: {fileID: 0}
   hpProgressBar: {fileID: 0}
   charactersScrollView: {fileID: 0}
+  hoverContent: {fileID: 0}
+  playerContent: {fileID: 0}
   aiPath: {fileID: 0}
   seeker: {fileID: 0}
   destinationSetter: {fileID: 0}
@@ -2683,7 +2687,7 @@ SpriteRenderer:
   m_SortingLayer: 3
   m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 27303066097d7bf4fbdb75966307da5d, type: 3}
-  m_Color: {r: 0.8113208, g: 0.44010326, b: 0.44010326, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

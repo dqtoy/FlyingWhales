@@ -33,8 +33,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1497639810564476}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 8.383208, y: 6.2957954, z: -90.109886}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -67,6 +67,7 @@ MonoBehaviour:
     itemData: []
     landmarkObjectSprite: {fileID: 0}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites: []
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 0600000007000000
@@ -79,6 +80,7 @@ MonoBehaviour:
     itemData: []
     landmarkObjectSprite: {fileID: 0}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites: []
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 010000000200000005000000
@@ -91,6 +93,7 @@ MonoBehaviour:
     itemData: []
     landmarkObjectSprite: {fileID: 0}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites: []
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 010000000200000005000000
@@ -103,6 +106,7 @@ MonoBehaviour:
     itemData: []
     landmarkObjectSprite: {fileID: 0}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites: []
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 97be908950d991c49b0092d3a14acceb, type: 3}
       tintSprite: {fileID: 21300000, guid: 36bb9c87d942a0747a60b417b0cd79e2, type: 3}
@@ -117,6 +121,7 @@ MonoBehaviour:
     itemData: []
     landmarkObjectSprite: {fileID: 0}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites: []
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 0300000004000000
@@ -129,6 +134,7 @@ MonoBehaviour:
     itemData: []
     landmarkObjectSprite: {fileID: 0}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites: []
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 0300000004000000
@@ -141,6 +147,7 @@ MonoBehaviour:
     itemData: []
     landmarkObjectSprite: {fileID: 0}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites: []
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
@@ -153,6 +160,9 @@ MonoBehaviour:
     itemData: []
     landmarkObjectSprite: {fileID: 0}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 0b1a6dfee21888942b79f0008084a2b8, type: 3}
+      tintSprite: {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 0b1a6dfee21888942b79f0008084a2b8, type: 3}
       tintSprite: {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
@@ -167,6 +177,7 @@ MonoBehaviour:
     itemData: []
     landmarkObjectSprite: {fileID: 0}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites: []
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 99997bff53b6d7042a70307d331e1d3f, type: 3}
       tintSprite: {fileID: 21300000, guid: 03b9f985c5fc3c74b8f56977df17c459, type: 3}
@@ -181,6 +192,7 @@ MonoBehaviour:
     itemData: []
     landmarkObjectSprite: {fileID: 0}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites: []
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
@@ -194,6 +206,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300064, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites: []
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
@@ -207,6 +220,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300064, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites: []
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: fcf1353cbcd1f08478171177da44e53a, type: 3}
@@ -226,6 +240,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300064, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites: []
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 6b15ab4e0c664d94f906a2b783906619, type: 3}
       tintSprite: {fileID: 21300000, guid: d25eaa8dbe14ebb4e96d58aabf1b978f, type: 3}
@@ -245,6 +260,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300064, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites: []
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
@@ -264,6 +280,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites: []
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
@@ -277,6 +294,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300040, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites: []
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 89966dd0fee7fab4abe474ffa1727756, type: 3}
       tintSprite: {fileID: 21300000, guid: 7828e545f69833d49a9b79ab03928852, type: 3}
@@ -292,6 +310,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300046, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites: []
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 897345c9564591c4697a148359e3dc3b, type: 3}
       tintSprite: {fileID: 21300000, guid: 455f303fb578b4841ae48fd16107beb2, type: 3}
@@ -307,6 +326,9 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300024, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 6b1f2c8a016859143b61f1cb6005250e, type: 3}
+      tintSprite: {fileID: 21300000, guid: 9d1349113684fd348ab6dd814eaf5ae4, type: 3}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 6b1f2c8a016859143b61f1cb6005250e, type: 3}
       tintSprite: {fileID: 21300000, guid: 9d1349113684fd348ab6dd814eaf5ae4, type: 3}
@@ -322,6 +344,9 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300018, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 3f5f539ec1c81814e972d6b0b4903932, type: 3}
+      tintSprite: {fileID: 21300000, guid: 59980d3c50e9c3c4e8c869029a0ccc2e, type: 3}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 3f5f539ec1c81814e972d6b0b4903932, type: 3}
       tintSprite: {fileID: 21300000, guid: 59980d3c50e9c3c4e8c869029a0ccc2e, type: 3}
@@ -337,6 +362,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites: []
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 25ad2f1445b44a44780267f577682fc6, type: 3}
       tintSprite: {fileID: 21300000, guid: 2509d8d1c25f61343a7e20c936950617, type: 3}

@@ -496,8 +496,13 @@ public class LandmarkManager : MonoBehaviour {
             return data.humansLandmarkTileSprites;
         } else if (race == RACE.ELVES) {
             return data.elvenLandmarkTileSprites;
+        } else {
+            if (data.neutralTileSprites.Count > 0) {
+                return data.neutralTileSprites;
+            } else {
+                return null;
+            }
         }
-        return null;
     }
     #endregion
 

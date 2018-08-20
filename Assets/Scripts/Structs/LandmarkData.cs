@@ -11,6 +11,7 @@ public class LandmarkData {
     public LandmarkItemData[] itemData;
     public Sprite landmarkObjectSprite;
     public Sprite landmarkTypeIcon;
+    public List<LandmarkStructureSprite> neutralTileSprites; //These are the sprites that will be used if landmark is not owned by a race
     public List<LandmarkStructureSprite> humansLandmarkTileSprites;
     public List<LandmarkStructureSprite> elvenLandmarkTileSprites;
     public List<PASSABLE_TYPE> possibleSpawnPoints;
