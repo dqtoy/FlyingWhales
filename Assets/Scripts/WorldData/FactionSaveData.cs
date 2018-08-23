@@ -12,6 +12,7 @@ public class FactionSaveData {
     public List<int> ownedAreas;
     public Dictionary<int, FACTION_RELATIONSHIP_STATUS> relationships;
     public int leaderID;
+    public string emblemBGName;
 
     public FactionSaveData(Faction faction) {
         factionID = faction.id;
@@ -26,6 +27,7 @@ public class FactionSaveData {
         } else {
             leaderID = faction.leader.id;
         }
+        emblemBGName = faction.emblemBG.name;
     }
     private void ConstructOwnedAreas(Faction faction) {
         ownedAreas = new List<int>();

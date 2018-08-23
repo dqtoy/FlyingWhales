@@ -107,8 +107,8 @@ public class CharacterManager : MonoBehaviour {
                 ECS.Character currCharacter = CreateNewCharacter(currData);
                 Faction characterFaction = FactionManager.Instance.GetFactionBasedOnID(currData.factionID);
                 if (characterFaction != null) {
-                    characterFaction.AddNewCharacter(currCharacter);
                     currCharacter.SetFaction(characterFaction);
+                    characterFaction.AddNewCharacter(currCharacter);
                     FactionSaveData factionData = data.GetFactionData(characterFaction.id);
                     if (factionData.leaderID != -1 && factionData.leaderID == currCharacter.id) {
                         characterFaction.SetLeader(currCharacter);
@@ -117,9 +117,8 @@ public class CharacterManager : MonoBehaviour {
 #if !WORLD_CREATION_TOOL
                 else {
                     characterFaction = FactionManager.Instance.neutralFaction;
-                    characterFaction.AddNewCharacter(currCharacter);
                     currCharacter.SetFaction(characterFaction);
-
+                    characterFaction.AddNewCharacter(currCharacter);
                 }
 #endif
             }

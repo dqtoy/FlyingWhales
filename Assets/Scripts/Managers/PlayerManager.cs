@@ -11,6 +11,14 @@ public class PlayerManager : MonoBehaviour {
     public Player player = null;
     public Character playerCharacter;
 
+    [SerializeField] private Sprite[] _playerAreaFloorSprites;
+
+    #region getters/setters
+    public Sprite[] playerAreaFloorSprites {
+        get { return _playerAreaFloorSprites; }
+    }
+    #endregion
+
     private void Awake() {
         Instance = this;
     }

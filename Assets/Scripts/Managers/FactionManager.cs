@@ -16,6 +16,12 @@ public class FactionManager : MonoBehaviour {
     [SerializeField] private List<Sprite> _emblems;
     [SerializeField] private List<Sprite> usedEmblems = new List<Sprite>();
 
+    #region getters
+    public List<Sprite> emblemBGs {
+        get { return _emblemBGs; }
+    }
+    #endregion
+
     private void Awake() {
         Instance = this;
     }
@@ -43,6 +49,7 @@ public class FactionManager : MonoBehaviour {
     private void CreateNeutralFaction() {
         Faction newFaction = new Faction();
         newFaction.SetName("Neutral");
+        newFaction.SetEmblemBG(GetFactionEmblem("08_neutrals"));
         allFactions.Add(newFaction);
         neutralFaction = newFaction;
         CreateRelationshipsForFaction(newFaction);
@@ -171,6 +178,15 @@ public class FactionManager : MonoBehaviour {
     }
     internal Sprite GenerateFactionEmblemBG() {
         return _emblemBGs[Random.Range(0, _emblemBGs.Count)];
+    }
+    public Sprite GetFactionEmblem(string emblemName) {
+        for (int i = 0; i < _emblemBGs.Count; i++) {
+            Sprite currBG = _emblemBGs[i];
+            if (currBG.name.Equals(emblemName)) {
+                return currBG;
+            }
+        }
+        return null;
     }
     internal void AddEmblemAsUsed(Sprite emblem) {
         if (!usedEmblems.Contains(emblem)) {

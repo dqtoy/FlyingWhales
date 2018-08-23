@@ -1015,7 +1015,8 @@ public class UIManager : MonoBehaviour {
             contextMenu.gameObject.SetActive(true);
             //Vector2 pos;
             //RectTransformUtility.ScreenPointToLocalPointInRectangle(this.transform as RectTransform, Input.mousePosition, eventSystem.camera, out pos);
-            contextMenu.transform.position = Input.mousePosition;
+            //contextMenu.transform.position = Input.mousePosition;
+            PositionTooltip(contextMenu.transform as RectTransform);
         }
         
     }

@@ -60,7 +60,7 @@ public class Player : ILeader{
     }
     private void OnTileAddedToPlayerArea(Area affectedArea, HexTile addedTile) {
         if (playerArea != null && affectedArea.id == playerArea.id) {
-            addedTile.SetBaseSprite(Biomes.Instance.bareTiles[0]);
+            addedTile.SetBaseSprite(PlayerManager.Instance.playerAreaFloorSprites[Random.Range(0, PlayerManager.Instance.playerAreaFloorSprites.Length)]);
         }
     }
     private void OnTileRemovedFromPlayerArea(Area affectedArea, HexTile removedTile) {

@@ -52,14 +52,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _emblemBGs:
-  - {fileID: 21300034, guid: 81ffe2b26e4cc334891e1f27496e4200, type: 3}
-  - {fileID: 21300036, guid: 81ffe2b26e4cc334891e1f27496e4200, type: 3}
-  - {fileID: 21300038, guid: 81ffe2b26e4cc334891e1f27496e4200, type: 3}
-  - {fileID: 21300040, guid: 81ffe2b26e4cc334891e1f27496e4200, type: 3}
-  - {fileID: 21300042, guid: 81ffe2b26e4cc334891e1f27496e4200, type: 3}
-  - {fileID: 21300044, guid: 81ffe2b26e4cc334891e1f27496e4200, type: 3}
-  - {fileID: 21300046, guid: 81ffe2b26e4cc334891e1f27496e4200, type: 3}
-  - {fileID: 21300048, guid: 81ffe2b26e4cc334891e1f27496e4200, type: 3}
+  - {fileID: 21300000, guid: 67863499e7779d940ab5bf1e065ef914, type: 3}
+  - {fileID: 21300000, guid: ff407ec858dee994b891244e5a73bedf, type: 3}
+  - {fileID: 21300000, guid: 43ba4717803f0274680d425b28b46d00, type: 3}
+  - {fileID: 21300000, guid: 33ea93062d13d5440a7adb62194c5d88, type: 3}
+  - {fileID: 21300000, guid: a3395863ffebe994d9753f978405384c, type: 3}
+  - {fileID: 21300000, guid: 2dbbc7843630fc64683aa84b8a907489, type: 3}
+  - {fileID: 21300000, guid: cb41db455c563124088019a12d533929, type: 3}
+  - {fileID: 21300000, guid: 3abd07ad2915cda41bb797eeac446fb9, type: 3}
+  - {fileID: 21300000, guid: f086bc337ec847648a8313e02a41ec8b, type: 3}
   _emblems:
   - {fileID: 21300050, guid: 81ffe2b26e4cc334891e1f27496e4200, type: 3}
   - {fileID: 21300052, guid: 81ffe2b26e4cc334891e1f27496e4200, type: 3}

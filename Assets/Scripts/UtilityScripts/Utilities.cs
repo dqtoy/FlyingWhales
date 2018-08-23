@@ -1642,6 +1642,16 @@ public class Utilities : MonoBehaviour {
             }
             ListRemoveRange(saveData.landmarksData, invalidData);
         }
+
+        if (saveData.factionsData != null) {
+            //Faction Emblems
+            for (int i = 0; i < saveData.factionsData.Count; i++) {
+                FactionSaveData currData = saveData.factionsData[i];
+                if (string.IsNullOrEmpty(currData.emblemBGName)) {
+                    currData.emblemBGName = FactionManager.Instance.emblemBGs[0].name;
+                }
+            }
+        }
     }
     #endregion
 

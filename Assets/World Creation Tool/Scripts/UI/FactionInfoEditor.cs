@@ -17,6 +17,7 @@ public class FactionInfoEditor : MonoBehaviour {
     [SerializeField] private Dropdown leadersDropdown;
     [SerializeField] private Image factionColor;
     [SerializeField] private ColorPickerControl factionColorPicker;
+    [SerializeField] private Dropdown emblemBGDropdown;
 
     [Header("Relationships")]
     [SerializeField] private Text relationshipSummaryLbl;
@@ -28,6 +29,7 @@ public class FactionInfoEditor : MonoBehaviour {
         LoadAreaChoices();
         LoadLeaderChoices();
         LoadRelationshipChoices();
+        LoadEmblemChoices();
         UpdateBasicInfo();
         UpdateAreas();
         UpdateRelationshipInfo();
@@ -54,6 +56,8 @@ public class FactionInfoEditor : MonoBehaviour {
             leadersDropdown.value = Utilities.GetOptionIndex(leadersDropdown, _faction.leader.name);
             leadersDropdown.itemText.text = _faction.leader.name;
         }
+
+        emblemBGDropdown.value = Utilities.GetOptionIndex(emblemBGDropdown, _faction.emblemBG.name);
     }
 
     public void OnNewFactionCreated(Faction newFaction) {
@@ -152,6 +156,25 @@ public class FactionInfoEditor : MonoBehaviour {
 
         _faction.GetRelationshipWith(faction).ChangeRelationshipStatus(relStat);
         UpdateRelationshipInfo();
+    }
+    #endregion
+
+    #region Emblems
+    private void LoadEmblemChoices() {
+        emblemBGDropdown.ClearOptions();
+        List<Dropdown.OptionData> options = new List<Dropdown.OptionData>();
+        for (int i = 0; i < FactionManager.Instance.emblemBGs.Count; i++) {
+            Sprite currBG = FactionManager.Instance.emblemBGs[i];
+            Dropdown.OptionData currData = new Dropdown.OptionData();
+            currData.image = currBG;
+            currData.text = currBG.name;
+            options.Add(currData);
+        }
+        emblemBGDropdown.AddOptions(options);
+    }
+    public void SetFactionEmblemBG(int choice) {
+        Sprite chosenBG = emblemBGDropdown.options[choice].image;
+        _faction.SetEmblemBG(chosenBG);
     }
     #endregion
 }

@@ -260,6 +260,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   factionNameLbl: {fileID: 114486360122030906}
   bg: {fileID: 114430516562759878}
+  emblemBG: {fileID: 114105204071209028}
 --- !u!222 &222028151090734848
 CanvasRenderer:
   m_ObjectHideFlags: 1

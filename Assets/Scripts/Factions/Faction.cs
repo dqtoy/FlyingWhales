@@ -72,7 +72,7 @@ public class Faction {
 		this._id = Utilities.SetID<Faction>(this);
         SetName(RandomNameGenerator.Instance.GenerateKingdomName());
         _emblem = FactionManager.Instance.GenerateFactionEmblem(this);
-        _emblemBG = FactionManager.Instance.GenerateFactionEmblemBG();
+        SetEmblemBG(FactionManager.Instance.GenerateFactionEmblemBG());
         SetFactionColor (Utilities.GetColorForFaction());
         _characters = new List<ECS.Character>();
         _ownedLandmarks = new List<BaseLandmark>();
@@ -88,6 +88,8 @@ public class Faction {
         SetName(data.factionName);
         SetDescription(data.factionDescription);
         SetFactionColor(data.factionColor);
+        //_emblem = FactionManager.Instance.GenerateFactionEmblem(this);
+        SetEmblemBG(FactionManager.Instance.GetFactionEmblem(data.emblemBGName));
         _characters = new List<ECS.Character>();
         _ownedLandmarks = new List<BaseLandmark>();
         _ownedRegions = new List<Region>();
@@ -268,6 +270,12 @@ public class Faction {
     }
     public void UnownArea(Area area) {
         _ownedAreas.Remove(area);
+    }
+    #endregion
+
+    #region Emblems
+    public void SetEmblemBG(Sprite bg) {
+        _emblemBG = bg;
     }
     #endregion
 }
