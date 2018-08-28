@@ -24,30 +24,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public GameObject unpassableGO;
 
     [Space(10)]
-    [Header("Ledges")]
-    [SerializeField] private GameObject topLeftLedge;
-    [SerializeField] private GameObject topRightLedge;
-
-    [Space(10)]
     [Header("Tile Visuals")]
     [SerializeField] private GameObject _centerPiece;
     [SerializeField] private GameObject _highlightGO;
     [SerializeField] internal Transform UIParent;
-    [SerializeField] private Transform resourceParent;
-    [SerializeField] private GameObject biomeDetailParentGO;
     [SerializeField] private GameObject _emptyCityGO;
     [SerializeField] private GameObject _hoverHighlightGO;
     [SerializeField] private GameObject _clickHighlightGO;
     [SerializeField] private GameObject _corruptionHighlightGO;
-
-    [Space(10)]
-    [Header("Tile Edges")]
-    [SerializeField] private GameObject topLeftEdge;
-    [SerializeField] private GameObject leftEdge;
-    [SerializeField] private GameObject botLeftEdge;
-    [SerializeField] private GameObject botRightEdge;
-    [SerializeField] private GameObject rightEdge;
-    [SerializeField] private GameObject topRightEdge;
 
     [Space(10)]
     [Header("Tile Borders")]
@@ -196,64 +180,64 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     internal void SetElevation(ELEVATION elevationType) {
         data.elevationType = elevationType;
     }
-    public void UpdateLedgesAndOutlines() {
-        if (neighbourDirections == null) {
-            return;
-        }
-        if (elevationType != ELEVATION.WATER) {
-            //re enable all outlines and disable all ledges
-            topLeftLedge.SetActive(false);
-            topRightLedge.SetActive(false);
-            //SetOutlinesState(true);
-        } else { //tile is water
-            //check neighbours
-            //if north west tile is not water, activate top left ledge
-            if (neighbourDirections.ContainsKey(HEXTILE_DIRECTION.NORTH_WEST) && neighbourDirections[HEXTILE_DIRECTION.NORTH_WEST].elevationType != ELEVATION.WATER) {
-                topLeftLedge.SetActive(true);
-                //topLeftOutline.SetActive(false);
-            } else {
-                //tile doesn't have a north west neighbour
-            }
-            //if north east tile is not water, activate top right edge
-            if (neighbourDirections.ContainsKey(HEXTILE_DIRECTION.NORTH_EAST) && neighbourDirections[HEXTILE_DIRECTION.NORTH_EAST].elevationType != ELEVATION.WATER) {
-                topRightLedge.SetActive(true);
-                //topRightOutline.SetActive(false);
-            } else {
-                //tile doesn't have a north east neighbour
-            }
+    //public void UpdateLedgesAndOutlines() {
+    //    if (neighbourDirections == null) {
+    //        return;
+    //    }
+    //    if (elevationType != ELEVATION.WATER) {
+    //        //re enable all outlines and disable all ledges
+    //        //topLeftLedge.SetActive(false);
+    //        //topRightLedge.SetActive(false);
+    //        //SetOutlinesState(true);
+    //    } else { //tile is water
+    //        //check neighbours
+    //        //if north west tile is not water, activate top left ledge
+    //        //if (neighbourDirections.ContainsKey(HEXTILE_DIRECTION.NORTH_WEST) && neighbourDirections[HEXTILE_DIRECTION.NORTH_WEST].elevationType != ELEVATION.WATER) {
+    //        //    topLeftLedge.SetActive(true);
+    //        //    //topLeftOutline.SetActive(false);
+    //        //} else {
+    //        //    //tile doesn't have a north west neighbour
+    //        //}
+    //        ////if north east tile is not water, activate top right edge
+    //        //if (neighbourDirections.ContainsKey(HEXTILE_DIRECTION.NORTH_EAST) && neighbourDirections[HEXTILE_DIRECTION.NORTH_EAST].elevationType != ELEVATION.WATER) {
+    //        //    topRightLedge.SetActive(true);
+    //        //    //topRightOutline.SetActive(false);
+    //        //} else {
+    //        //    //tile doesn't have a north east neighbour
+    //        //}
 
-            ////check outlines
-            //foreach (KeyValuePair<HEXTILE_DIRECTION, HexTile> kvp in neighbourDirections) {
-            //    HexTile neighbour = kvp.Value;
-            //    HEXTILE_DIRECTION direction = kvp.Key;
-            //    if (neighbour.elevationType == ELEVATION.WATER) {
-            //        //deactivate the outline tile in that direction
-            //        switch (direction) {
-            //            case HEXTILE_DIRECTION.NORTH_WEST:
-            //                topLeftOutline.SetActive(false);
-            //                break;
-            //            case HEXTILE_DIRECTION.NORTH_EAST:
-            //                topRightOutline.SetActive(false);
-            //                break;
-            //            case HEXTILE_DIRECTION.EAST:
-            //                rightOutline.SetActive(false);
-            //                break;
-            //            case HEXTILE_DIRECTION.SOUTH_EAST:
-            //                botRightOutline.SetActive(false);
-            //                break;
-            //            case HEXTILE_DIRECTION.SOUTH_WEST:
-            //                botLeftOutline.SetActive(false);
-            //                break;
-            //            case HEXTILE_DIRECTION.WEST:
-            //                leftOutline.SetActive(false);
-            //                break;
-            //            default:
-            //                break;
-            //        }
-            //    }
-            //}
-        }
-    }
+    //        ////check outlines
+    //        //foreach (KeyValuePair<HEXTILE_DIRECTION, HexTile> kvp in neighbourDirections) {
+    //        //    HexTile neighbour = kvp.Value;
+    //        //    HEXTILE_DIRECTION direction = kvp.Key;
+    //        //    if (neighbour.elevationType == ELEVATION.WATER) {
+    //        //        //deactivate the outline tile in that direction
+    //        //        switch (direction) {
+    //        //            case HEXTILE_DIRECTION.NORTH_WEST:
+    //        //                topLeftOutline.SetActive(false);
+    //        //                break;
+    //        //            case HEXTILE_DIRECTION.NORTH_EAST:
+    //        //                topRightOutline.SetActive(false);
+    //        //                break;
+    //        //            case HEXTILE_DIRECTION.EAST:
+    //        //                rightOutline.SetActive(false);
+    //        //                break;
+    //        //            case HEXTILE_DIRECTION.SOUTH_EAST:
+    //        //                botRightOutline.SetActive(false);
+    //        //                break;
+    //        //            case HEXTILE_DIRECTION.SOUTH_WEST:
+    //        //                botLeftOutline.SetActive(false);
+    //        //                break;
+    //        //            case HEXTILE_DIRECTION.WEST:
+    //        //                leftOutline.SetActive(false);
+    //        //                break;
+    //        //            default:
+    //        //                break;
+    //        //        }
+    //        //    }
+    //        //}
+    //    }
+    //}
     #endregion
 
     #region Biome Functions
@@ -738,99 +722,99 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     internal void DeactivateCenterPiece() {
         centerPiece.SetActive(false);
     }
-    internal void LoadEdges() {
-        int biomeLayerOfHexTile = Utilities.biomeLayering.IndexOf(this.biomeType);
-        List<HexTile> neighbours = new List<HexTile>(this.AllNeighbours);
-        if (this.elevationType == ELEVATION.WATER) {
-            neighbours = neighbours.Where(x => x.elevationType != ELEVATION.WATER).ToList();
-        }
-        for (int i = 0; i < neighbours.Count; i++) {
-            HexTile currentNeighbour = neighbours[i];
+    //internal void LoadEdges() {
+    //    int biomeLayerOfHexTile = Utilities.biomeLayering.IndexOf(this.biomeType);
+    //    List<HexTile> neighbours = new List<HexTile>(this.AllNeighbours);
+    //    if (this.elevationType == ELEVATION.WATER) {
+    //        neighbours = neighbours.Where(x => x.elevationType != ELEVATION.WATER).ToList();
+    //    }
+    //    for (int i = 0; i < neighbours.Count; i++) {
+    //        HexTile currentNeighbour = neighbours[i];
 
-            int biomeLayerOfNeighbour = Utilities.biomeLayering.IndexOf(currentNeighbour.biomeType);
+    //        int biomeLayerOfNeighbour = Utilities.biomeLayering.IndexOf(currentNeighbour.biomeType);
 
-            if (biomeLayerOfHexTile < biomeLayerOfNeighbour || this.elevationType == ELEVATION.WATER) {
-                //int neighbourX = currentNeighbour.xCoordinate;
-                //int neighbourY = currentNeighbour.yCoordinate;
+    //        if (biomeLayerOfHexTile < biomeLayerOfNeighbour || this.elevationType == ELEVATION.WATER) {
+    //            //int neighbourX = currentNeighbour.xCoordinate;
+    //            //int neighbourY = currentNeighbour.yCoordinate;
 
-                Point difference = new Point((currentNeighbour.xCoordinate - this.xCoordinate),
-                    (currentNeighbour.yCoordinate - this.yCoordinate));
-                if ((currentNeighbour.biomeType != this.biomeType && currentNeighbour.elevationType != ELEVATION.WATER) ||
-                    this.elevationType == ELEVATION.WATER) {
-                    GameObject gameObjectToEdit = null;
-                    Texture[] spriteMasksToChooseFrom = null;
-                    if (this.yCoordinate % 2 == 0) {
-                        if (difference.X == -1 && difference.Y == 1) {
-                            //top left
-                            gameObjectToEdit = this.topLeftEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.topLeftMasks;
-                        } else if (difference.X == 0 && difference.Y == 1) {
-                            //top right
-                            gameObjectToEdit = this.topRightEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.topRightMasks;
-                        } else if (difference.X == 1 && difference.Y == 0) {
-                            //right
-                            gameObjectToEdit = this.rightEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.rightMasks;
-                        } else if (difference.X == 0 && difference.Y == -1) {
-                            //bottom right
-                            gameObjectToEdit = this.botRightEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.botRightMasks;
-                        } else if (difference.X == -1 && difference.Y == -1) {
-                            //bottom left
-                            gameObjectToEdit = this.botLeftEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.botLeftMasks;
-                        } else if (difference.X == -1 && difference.Y == 0) {
-                            //left
-                            gameObjectToEdit = this.leftEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.leftMasks;
-                        }
-                    } else {
-                        if (difference.X == 0 && difference.Y == 1) {
-                            //top left
-                            gameObjectToEdit = this.topLeftEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.topLeftMasks;
-                        } else if (difference.X == 1 && difference.Y == 1) {
-                            //top right
-                            gameObjectToEdit = this.topRightEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.topRightMasks;
-                        } else if (difference.X == 1 && difference.Y == 0) {
-                            //right
-                            gameObjectToEdit = this.rightEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.rightMasks;
-                        } else if (difference.X == 1 && difference.Y == -1) {
-                            //bottom right
-                            gameObjectToEdit = this.botRightEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.botRightMasks;
-                        } else if (difference.X == 0 && difference.Y == -1) {
-                            //bottom left
-                            gameObjectToEdit = this.botLeftEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.botLeftMasks;
-                        } else if (difference.X == -1 && difference.Y == 0) {
-                            //left
-                            gameObjectToEdit = this.leftEdge;
-                            spriteMasksToChooseFrom = Biomes.Instance.leftMasks;
-                        }
-                    }
-                    if (gameObjectToEdit != null && spriteMasksToChooseFrom != null) {
-                        SpriteRenderer sr = gameObjectToEdit.GetComponent<SpriteRenderer>();
-                        sr.sprite = Biomes.Instance.GetTextureForBiome(currentNeighbour.biomeType);
-                        sr.sortingOrder += biomeLayerOfNeighbour;
-                        //                        Material mat = new Material(Shader.Find("AlphaMask"));
-                        gameObjectToEdit.GetComponent<SpriteRenderer>().material.SetTexture("_Alpha", spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
-                        gameObjectToEdit.SetActive(true);
+    //            Point difference = new Point((currentNeighbour.xCoordinate - this.xCoordinate),
+    //                (currentNeighbour.yCoordinate - this.yCoordinate));
+    //            if ((currentNeighbour.biomeType != this.biomeType && currentNeighbour.elevationType != ELEVATION.WATER) ||
+    //                this.elevationType == ELEVATION.WATER) {
+    //                GameObject gameObjectToEdit = null;
+    //                Texture[] spriteMasksToChooseFrom = null;
+    //                if (this.yCoordinate % 2 == 0) {
+    //                    if (difference.X == -1 && difference.Y == 1) {
+    //                        //top left
+    //                        gameObjectToEdit = this.topLeftEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.topLeftMasks;
+    //                    } else if (difference.X == 0 && difference.Y == 1) {
+    //                        //top right
+    //                        gameObjectToEdit = this.topRightEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.topRightMasks;
+    //                    } else if (difference.X == 1 && difference.Y == 0) {
+    //                        //right
+    //                        gameObjectToEdit = this.rightEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.rightMasks;
+    //                    } else if (difference.X == 0 && difference.Y == -1) {
+    //                        //bottom right
+    //                        gameObjectToEdit = this.botRightEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.botRightMasks;
+    //                    } else if (difference.X == -1 && difference.Y == -1) {
+    //                        //bottom left
+    //                        gameObjectToEdit = this.botLeftEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.botLeftMasks;
+    //                    } else if (difference.X == -1 && difference.Y == 0) {
+    //                        //left
+    //                        gameObjectToEdit = this.leftEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.leftMasks;
+    //                    }
+    //                } else {
+    //                    if (difference.X == 0 && difference.Y == 1) {
+    //                        //top left
+    //                        gameObjectToEdit = this.topLeftEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.topLeftMasks;
+    //                    } else if (difference.X == 1 && difference.Y == 1) {
+    //                        //top right
+    //                        gameObjectToEdit = this.topRightEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.topRightMasks;
+    //                    } else if (difference.X == 1 && difference.Y == 0) {
+    //                        //right
+    //                        gameObjectToEdit = this.rightEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.rightMasks;
+    //                    } else if (difference.X == 1 && difference.Y == -1) {
+    //                        //bottom right
+    //                        gameObjectToEdit = this.botRightEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.botRightMasks;
+    //                    } else if (difference.X == 0 && difference.Y == -1) {
+    //                        //bottom left
+    //                        gameObjectToEdit = this.botLeftEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.botLeftMasks;
+    //                    } else if (difference.X == -1 && difference.Y == 0) {
+    //                        //left
+    //                        gameObjectToEdit = this.leftEdge;
+    //                        spriteMasksToChooseFrom = Biomes.Instance.leftMasks;
+    //                    }
+    //                }
+    //                if (gameObjectToEdit != null && spriteMasksToChooseFrom != null) {
+    //                    SpriteRenderer sr = gameObjectToEdit.GetComponent<SpriteRenderer>();
+    //                    sr.sprite = Biomes.Instance.GetTextureForBiome(currentNeighbour.biomeType);
+    //                    sr.sortingOrder += biomeLayerOfNeighbour;
+    //                    //                        Material mat = new Material(Shader.Find("AlphaMask"));
+    //                    gameObjectToEdit.GetComponent<SpriteRenderer>().material.SetTexture("_Alpha", spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
+    //                    gameObjectToEdit.SetActive(true);
 
-                        //                        gameObjectToEdit.spriteRenderer.material = mat;
-                        //gameObjectToEdit.spriteRenderer.material.SetTexture("Alpha (A)", (Texture)spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
-                        //					gameObjectToEdit.GetComponent<SpriteRenderer> ().material = materialForTile;
-                    }
+    //                    //                        gameObjectToEdit.spriteRenderer.material = mat;
+    //                    //gameObjectToEdit.spriteRenderer.material.SetTexture("Alpha (A)", (Texture)spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
+    //                    //					gameObjectToEdit.GetComponent<SpriteRenderer> ().material = materialForTile;
+    //                }
 
-                }
-            }
+    //            }
+    //        }
 
 
-        }
-    }
+    //    }
+    //}
     internal void SetBaseSprite(Sprite baseSprite) {
         spriteRenderer.sprite = baseSprite;
     }

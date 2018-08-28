@@ -382,6 +382,7 @@ public class CharacterInfoUI : UIMenu {
         foreach (KeyValuePair<Character, Relationship> kvp in currentlyShowingCharacter.relationships) {
             GameObject relItemGO = UIManager.Instance.InstantiateUIObject(relationshipItemPrefab.name, relationsScrollView.content);
             CharacterRelationshipItem relItem = relItemGO.GetComponent<CharacterRelationshipItem>();
+            relItem.Initialize();
             if (Utilities.IsEven(counter)) {
                 relItem.SetBGColor(evenRelationshipColor, oddRelationshipColor);
             } else {

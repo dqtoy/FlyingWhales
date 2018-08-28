@@ -1,0 +1,105 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: UIAtlas
+  m_EditorData:
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingParameters:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: f0faac4181dd6214997f8e797b8d45a8, type: 3}
+    bindAsDefault: 1
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 9a9317c62f76a34428932da7bab9bd38, type: 3}
+  - {fileID: 21300000, guid: 03e3bd48445a43a4ba4261e543505998, type: 3}
+  - {fileID: 21300000, guid: c1a6e50d0ccdd2043bbe00862f05a7c2, type: 3}
+  - {fileID: 21300000, guid: fd93c6f70e8bb394da445de1541b7a4a, type: 3}
+  - {fileID: 21300000, guid: 965f4acf34e71284a9aa8a88edeb588b, type: 3}
+  - {fileID: 21300000, guid: 4652714ce43ba6b418b36fb1096097aa, type: 3}
+  - {fileID: 21300000, guid: 82eab3f617c0c5548b51c185de5213db, type: 3}
+  - {fileID: 21300000, guid: b162fcb89a910a24d8e1820591830ed6, type: 3}
+  - {fileID: 21300000, guid: a5c48149d2b17b948b58eac00a98179f, type: 3}
+  - {fileID: 21300000, guid: 242c17e615d8aed499a292a8f83644da, type: 3}
+  - {fileID: 21300000, guid: e85f3de777721aa4c80974663644d447, type: 3}
+  - {fileID: 21300000, guid: d8f934b9c9177744abc9bd6bb5f1468e, type: 3}
+  - {fileID: 21300000, guid: 527da0c7d139b5340b0be5608e67c1c6, type: 3}
+  - {fileID: 21300000, guid: dd9696dee86226a4c9290ee4eedd3dec, type: 3}
+  - {fileID: 21300000, guid: 37d78dea7a98af64f9d5e2e65a562410, type: 3}
+  - {fileID: 21300000, guid: 507d5cdd01db6b446a3bfa2e8581fb96, type: 3}
+  - {fileID: 21300000, guid: c88a94c9d75bf554c947e3bce46c6248, type: 3}
+  - {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+  - {fileID: 21300000, guid: ce180f3998a1d374bb967f413236461e, type: 3}
+  - {fileID: 21300000, guid: a5395f97de35aa84082b68504fff53a3, type: 3}
+  - {fileID: 21300000, guid: febd7bc28a21ea044a06f7266d76b729, type: 3}
+  - {fileID: 21300000, guid: 3abd07ad2915cda41bb797eeac446fb9, type: 3}
+  - {fileID: 21300000, guid: a3395863ffebe994d9753f978405384c, type: 3}
+  - {fileID: 21300000, guid: 43ba4717803f0274680d425b28b46d00, type: 3}
+  - {fileID: 21300000, guid: f086bc337ec847648a8313e02a41ec8b, type: 3}
+  - {fileID: 21300000, guid: 67863499e7779d940ab5bf1e065ef914, type: 3}
+  - {fileID: 21300000, guid: cb41db455c563124088019a12d533929, type: 3}
+  - {fileID: 21300000, guid: ddad73fa0a9f6d14987b61071fa85f88, type: 3}
+  - {fileID: 21300000, guid: aa22b1f7d082a954b89cee55568a8e0c, type: 3}
+  - {fileID: 21300000, guid: 2dbbc7843630fc64683aa84b8a907489, type: 3}
+  - {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
+  - {fileID: 21300000, guid: 33ea93062d13d5440a7adb62194c5d88, type: 3}
+  - {fileID: 21300000, guid: 93d2bb2383b7e9349a010d11a704343b, type: 3}
+  - {fileID: 21300000, guid: ff407ec858dee994b891244e5a73bedf, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - Stampede_by_Kekai
+  - calendar-page-empty
+  - WhiteCircle
+  - BottomMenuContainer
+  - 08_neutrals
+  - 05_ironarms
+  - 03_windfamily
+  - 09_demons
+  - 01_royalchord
+  - 07_ancientones
+  - 06_guardians
+  - 04_stringbloc
+  - 02_percussionshouse
+  - TopMenuContainer
+  - DefaultBottomButton
+  - ClickedBottomButton
+  - Achievement_boss_skybreaker
+  - StructureIcon
+  - ClickedButton
+  - DefaultButton
+  - White_square
+  - 08_neutrals
+  - 05_ironarms
+  - 03_windfamily
+  - 09_demons
+  - 01_royalchord
+  - 07_ancientones
+  - Horse
+  - Varangian
+  - 06_guardians
+  - Hungry
+  - 04_stringbloc
+  - Kow_tow_travels
+  - 02_percussionshouse
+  m_Tag: UIAtlas
+  m_IsVariant: 0

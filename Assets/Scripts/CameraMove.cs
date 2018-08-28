@@ -213,15 +213,15 @@ public class CameraMove : MonoBehaviour {
         newBounds.extents = new Vector3(Mathf.Abs(rightMostTile.transform.position.x) + (1.28f * 2f), Mathf.Abs(topMostTile.transform.position.y) + (1.28f * 2f), 0f);
         SetCameraBounds(newBounds, horzExtent, vertExtent);
 
-        if (Utilities.IsVisibleFrom(leftMostTile.gameObject.GetComponent<Renderer>(), Camera.main)
-            && Utilities.IsVisibleFrom(rightMostTile.gameObject.GetComponent<Renderer>(), Camera.main)) {
+        if (Utilities.IsVisibleFrom(leftMostTile.gameObject.GetComponentInChildren<Renderer>(), Camera.main)
+            && Utilities.IsVisibleFrom(rightMostTile.gameObject.GetComponentInChildren<Renderer>(), Camera.main)) {
             allowHorizontalMovement = false;
         } else {
             allowHorizontalMovement = true;
         }
 
-        if (Utilities.IsVisibleFrom(topMostTile.gameObject.GetComponent<Renderer>(), Camera.main)
-            && Utilities.IsVisibleFrom(botMostTile.gameObject.GetComponent<Renderer>(), Camera.main)) {
+        if (Utilities.IsVisibleFrom(topMostTile.gameObject.GetComponentInChildren<Renderer>(), Camera.main)
+            && Utilities.IsVisibleFrom(botMostTile.gameObject.GetComponentInChildren<Renderer>(), Camera.main)) {
             allowVerticalMovement = false;
         } else {
             allowVerticalMovement = true;

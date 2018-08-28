@@ -25,14 +25,6 @@ public class Biomes : MonoBehaviour {
 	[SerializeField] private Sprite[] _bareTiles;
 
     [Space(10)]
-    [Header("Biome Detail Prefabs")]
-    [SerializeField] private GameObject[] grasslandDetails;
-    [SerializeField] private GameObject[] tundraDetails;
-    [SerializeField] private GameObject[] snowDetails;
-    [SerializeField] private GameObject[] desertDetails;
-
-
-    [Space(10)]
     [Header("Mountain Sprites")]
     [SerializeField] private Sprite[] grasslandMountains;
 	[SerializeField] private Sprite[] forestMountains;
@@ -48,39 +40,39 @@ public class Biomes : MonoBehaviour {
     [SerializeField] private Sprite[] snowTrees;
     [SerializeField] private Sprite[] tundraTrees;
 
-    [Space(10)]
-    [Header("Biome Textures")]
-    [SerializeField] private Sprite grasslandTexture;
-	[SerializeField] private Sprite snowTexture;
-	[SerializeField] private Sprite desertTexture;
-	[SerializeField] private Sprite forestTexture;
-	[SerializeField] private Sprite woodlandTexture;
-	[SerializeField] private Sprite tundraTexture;
+ //   [Space(10)]
+ //   [Header("Biome Textures")]
+ //   [SerializeField] private Sprite grasslandTexture;
+	//[SerializeField] private Sprite snowTexture;
+	//[SerializeField] private Sprite desertTexture;
+	//[SerializeField] private Sprite forestTexture;
+	//[SerializeField] private Sprite woodlandTexture;
+	//[SerializeField] private Sprite tundraTexture;
 
-    [Space(10)]
-    [Header("Hextile Masks")]
-    public Texture[] topRightMasks;
-    public Texture[] rightMasks;
-    public Texture[] botRightMasks;
-    public Texture[] topLeftMasks;
-    public Texture[] leftMasks;
-    public Texture[] botLeftMasks;
+    //[Space(10)]
+    //[Header("Hextile Masks")]
+    //public Texture[] topRightMasks;
+    //public Texture[] rightMasks;
+    //public Texture[] botRightMasks;
+    //public Texture[] topLeftMasks;
+    //public Texture[] leftMasks;
+    //public Texture[] botLeftMasks;
 
-    [Space(10)]
-    [Header("Resource Prefabs")]
-    public GameObject behemothPrefab;
-    public GameObject cobaltPrefab;
-    public GameObject cornPrefab;
-    public GameObject deerPrefab;
-    public GameObject ebonyPrefab;
-    public GameObject granitePrefab;
-    public GameObject manaStonesPrefab;
-    public GameObject mithrilPrefab;
-    public GameObject oakPrefab;
-    public GameObject pigPrefab;
-    public GameObject ricePrefab;
-    public GameObject slatePrefab;
-    public GameObject wheatPrefab;
+    //[Space(10)]
+    //[Header("Resource Prefabs")]
+    //public GameObject behemothPrefab;
+    //public GameObject cobaltPrefab;
+    //public GameObject cornPrefab;
+    //public GameObject deerPrefab;
+    //public GameObject ebonyPrefab;
+    //public GameObject granitePrefab;
+    //public GameObject manaStonesPrefab;
+    //public GameObject mithrilPrefab;
+    //public GameObject oakPrefab;
+    //public GameObject pigPrefab;
+    //public GameObject ricePrefab;
+    //public GameObject slatePrefab;
+    //public GameObject wheatPrefab;
 
     #region getters/setters
     public Sprite[] bareTiles{
@@ -382,16 +374,16 @@ public class Biomes : MonoBehaviour {
 		}
 	}
 
-	internal void GenerateTileEdges(){
-		for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
-			HexTile currHexTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
-            currHexTile.LoadEdges();
-		}
-        for (int i = 0; i < GridMap.Instance.outerGridList.Count; i++) {
-            HexTile currHexTile = GridMap.Instance.outerGridList[i];
-            currHexTile.LoadEdges();
-        }
-    }
+	//internal void GenerateTileEdges(){
+	//	for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
+	//		HexTile currHexTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
+ //           currHexTile.LoadEdges();
+	//	}
+ //       for (int i = 0; i < GridMap.Instance.outerGridList.Count; i++) {
+ //           HexTile currHexTile = GridMap.Instance.outerGridList[i];
+ //           currHexTile.LoadEdges();
+ //       }
+ //   }
 
     public void DetermineIslands() {
         List<HexTile> passableTiles = GetPassableTiles();
@@ -690,24 +682,24 @@ public class Biomes : MonoBehaviour {
     //    }
     //    return null;
     //}
-    internal Sprite GetTextureForBiome(BIOMES biomeType) {
-        if (biomeType == BIOMES.GRASSLAND) {
-            return grasslandTexture;
-        } 
-        //else if (biomeType == BIOMES.WOODLAND) {
-        //    return grasslandTexture;
-        //} 
-        else if (biomeType == BIOMES.TUNDRA) {
-            return tundraTexture;
-        } else if (biomeType == BIOMES.FOREST) {
-            return forestTexture;
-        } else if (biomeType == BIOMES.DESERT) {
-            return desertTexture;
-        } else if (biomeType == BIOMES.SNOW) {
-            return snowTexture;
-        }
-        return null;
-    }
+    //internal Sprite GetTextureForBiome(BIOMES biomeType) {
+    //    if (biomeType == BIOMES.GRASSLAND) {
+    //        return grasslandTexture;
+    //    } 
+    //    //else if (biomeType == BIOMES.WOODLAND) {
+    //    //    return grasslandTexture;
+    //    //} 
+    //    else if (biomeType == BIOMES.TUNDRA) {
+    //        return tundraTexture;
+    //    } else if (biomeType == BIOMES.FOREST) {
+    //        return forestTexture;
+    //    } else if (biomeType == BIOMES.DESERT) {
+    //        return desertTexture;
+    //    } else if (biomeType == BIOMES.SNOW) {
+    //        return snowTexture;
+    //    }
+    //    return null;
+    //}
     //public object GetCenterObject(HexTile tile) {
     //    switch (tile.elevationType) {
     //        case ELEVATION.MOUNTAIN:
