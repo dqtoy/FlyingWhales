@@ -84,12 +84,12 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 0309dac6798f0e7429c7cd7d3daeadaf
     vertices: []
     indices: 
     edges: []
     weights: []
-  spritePackingTag: CHARACTER_PORTRAIT
+  spritePackingTag: 
   userData: 
   assetBundleName: 
   assetBundleVariant: 
