@@ -36,8 +36,8 @@ public class Player : ILeader{
         playerArea = null;
         snatchCredits = 0;
         _snatchedCharacters = new List<ECS.Character>();
-        Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_ADDED, OnTileAddedToPlayerArea);
-        Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileAddedToPlayerArea);
+        //Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_ADDED, OnTileAddedToPlayerArea);
+        Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
         Messenger.AddListener<Character>(Signals.CHARACTER_RELEASED, OnCharacterReleased);
         ConstructPlayerActions();
     }
@@ -53,16 +53,16 @@ public class Player : ILeader{
         Area playerArea = LandmarkManager.Instance.CreateNewArea(chosenCoreTile, AREA_TYPE.DEMONIC_INTRUSION);
         BaseLandmark demonicPortal = LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenCoreTile, LANDMARK_TYPE.DEMONIC_PORTAL);
         SetPlayerArea(playerArea);
-        OnTileAddedToPlayerArea(playerArea, chosenCoreTile);
+        //OnTileAddedToPlayerArea(playerArea, chosenCoreTile);
     }
     private void SetPlayerArea(Area area) {
         playerArea = area;
     }
-    private void OnTileAddedToPlayerArea(Area affectedArea, HexTile addedTile) {
-        if (playerArea != null && affectedArea.id == playerArea.id) {
-            addedTile.SetBaseSprite(PlayerManager.Instance.playerAreaFloorSprites[Random.Range(0, PlayerManager.Instance.playerAreaFloorSprites.Length)]);
-        }
-    }
+    //private void OnTileAddedToPlayerArea(Area affectedArea, HexTile addedTile) {
+    //    if (playerArea != null && affectedArea.id == playerArea.id) {
+    //        addedTile.SetBaseSprite(PlayerManager.Instance.playerAreaFloorSprites[Random.Range(0, PlayerManager.Instance.playerAreaFloorSprites.Length)]);
+    //    }
+    //}
     private void OnTileRemovedFromPlayerArea(Area affectedArea, HexTile removedTile) {
         if (playerArea != null && affectedArea.id == playerArea.id) {
             Biomes.Instance.UpdateTileVisuals(removedTile);

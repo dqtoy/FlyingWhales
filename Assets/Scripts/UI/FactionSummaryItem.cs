@@ -12,12 +12,13 @@ public class FactionSummaryItem : PooledObject, IPointerClickHandler {
 
     [SerializeField] private TextMeshProUGUI factionNameLbl;
     [SerializeField] private Image bg;
-    [SerializeField] private Image emblemBG;
+    [SerializeField] private FactionEmblem emblem;
 
     public void SetFaction(Faction faction) {
         _faction = faction;
         factionNameLbl.text = _faction.name;
-        emblemBG.sprite = faction.emblemBG;
+        emblem.SetFaction(_faction);
+        //emblemBG.sprite = faction.emblemBG;
     }
     public void SetBGColor(Color color) {
         bg.color = color;

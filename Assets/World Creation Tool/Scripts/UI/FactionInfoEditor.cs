@@ -18,6 +18,7 @@ public class FactionInfoEditor : MonoBehaviour {
     [SerializeField] private Image factionColor;
     [SerializeField] private ColorPickerControl factionColorPicker;
     [SerializeField] private Dropdown emblemBGDropdown;
+    [SerializeField] private Dropdown emblemSymbolDropdown;
 
     [Header("Relationships")]
     [SerializeField] private Text relationshipSummaryLbl;
@@ -57,7 +58,8 @@ public class FactionInfoEditor : MonoBehaviour {
             leadersDropdown.itemText.text = _faction.leader.name;
         }
 
-        emblemBGDropdown.value = Utilities.GetOptionIndex(emblemBGDropdown, _faction.emblemBG.name);
+        emblemBGDropdown.value = Utilities.GetOptionIndex(emblemBGDropdown, _faction.emblemBG.id.ToString());
+        emblemSymbolDropdown.value = Utilities.GetOptionIndex(emblemSymbolDropdown, FactionManager.Instance.GetEmblemSymbolIndex(_faction.emblemSymbol).ToString());
     }
 
     public void OnNewFactionCreated(Faction newFaction) {
@@ -162,19 +164,33 @@ public class FactionInfoEditor : MonoBehaviour {
     #region Emblems
     private void LoadEmblemChoices() {
         emblemBGDropdown.ClearOptions();
-        List<Dropdown.OptionData> options = new List<Dropdown.OptionData>();
+        List<Dropdown.OptionData> bgOptions = new List<Dropdown.OptionData>();
         for (int i = 0; i < FactionManager.Instance.emblemBGs.Count; i++) {
-            Sprite currBG = FactionManager.Instance.emblemBGs[i];
+            EmblemBG currBG = FactionManager.Instance.emblemBGs[i];
+            Dropdown.OptionData currData = new Dropdown.OptionData();
+            currData.image = currBG.frame;
+            currData.text = currBG.id.ToString();
+            bgOptions.Add(currData);
+        }
+        emblemBGDropdown.AddOptions(bgOptions);
+
+        emblemSymbolDropdown.ClearOptions();
+        List<Dropdown.OptionData> symbolOptions = new List<Dropdown.OptionData>();
+        for (int i = 0; i < FactionManager.Instance.emblemSymbols.Count; i++) {
+            Sprite currBG = FactionManager.Instance.emblemSymbols[i];
             Dropdown.OptionData currData = new Dropdown.OptionData();
             currData.image = currBG;
-            currData.text = currBG.name;
-            options.Add(currData);
+            currData.text = i.ToString();
+            symbolOptions.Add(currData);
         }
-        emblemBGDropdown.AddOptions(options);
+        emblemSymbolDropdown.AddOptions(symbolOptions);
     }
     public void SetFactionEmblemBG(int choice) {
-        Sprite chosenBG = emblemBGDropdown.options[choice].image;
-        _faction.SetEmblemBG(chosenBG);
+        int chosenBGID = System.Int32.Parse(emblemBGDropdown.options[choice].text);
+        _faction.SetEmblemBG(FactionManager.Instance.GetFactionEmblemBG(chosenBGID));
+    }
+    public void SetFactionEmblemSymbol(int choice) {
+        _faction.SetEmblemSymbol(emblemSymbolDropdown.options[choice].image);
     }
     #endregion
 }

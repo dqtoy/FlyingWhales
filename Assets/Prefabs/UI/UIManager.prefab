@@ -16197,7 +16197,7 @@ MonoBehaviour:
   structureTypeLbl: {fileID: 0}
   structureIcon: {fileID: 0}
   areaIcon: {fileID: 0}
-  factionIcon: {fileID: 0}
+  factionEmblem: {fileID: 0}
   healthProgressBar: {fileID: 0}
   charactersGO: {fileID: 0}
   landmarkCharacterPrefab: {fileID: 0}
@@ -20758,6 +20758,7 @@ MonoBehaviour:
   propertiesScrollView: {fileID: 0}
   characterEntryPrefab: {fileID: 0}
   propertyPrefab: {fileID: 0}
+  emblem: {fileID: 0}
   evenColor: {r: 0, g: 0, b: 0, a: 0}
   oddColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!114 &114537632108183684

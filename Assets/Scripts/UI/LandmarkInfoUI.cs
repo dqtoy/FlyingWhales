@@ -17,7 +17,7 @@ public class LandmarkInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI structureTypeLbl;
     [SerializeField] private Image structureIcon;
     [SerializeField] private Image areaIcon;
-    [SerializeField] private Image factionIcon;
+    [SerializeField] private FactionEmblem factionEmblem;
     [SerializeField] private Slider healthProgressBar;
 
     [Space(10)]
@@ -113,9 +113,10 @@ public class LandmarkInfoUI : UIMenu {
             areaIcon.gameObject.SetActive(true);
         }
         if (currentlyShowingLandmark.owner == null) {
-            factionIcon.gameObject.SetActive(false);
+            factionEmblem.gameObject.SetActive(false);
         } else {
-            factionIcon.gameObject.SetActive(true);
+            factionEmblem.gameObject.SetActive(true);
+            factionEmblem.SetFaction(currentlyShowingLandmark.owner);
         }
         healthProgressBar.minValue = 0f;
         healthProgressBar.maxValue = currentlyShowingLandmark.totalDurability;

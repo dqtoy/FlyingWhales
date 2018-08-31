@@ -12,6 +12,7 @@ public enum BIOMES{
 	FOREST,
 	BARE,
 	NONE,
+    ANCIENT_RUIN,
 }
 public enum EQUATOR_LINE{
 	HORIZONTAL,
@@ -1372,6 +1373,7 @@ public enum AREA_TYPE {
     HUMAN_SETTLEMENT,
     WILDLANDS,
     DEMONIC_INTRUSION, //Player area
+    ANCIENT_RUINS,
 }
 public enum ELEMENT {
     NONE,

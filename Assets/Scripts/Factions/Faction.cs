@@ -12,8 +12,8 @@ public class Faction {
     protected string _name;
     protected string _description;
     protected ILeader _leader;
-    private Sprite _emblem;
-    private Sprite _emblemBG;
+    private Sprite _emblemSymbol;
+    private EmblemBG _emblemBG;
     protected List<Region> _ownedRegions;
     protected List<BaseLandmark> _ownedLandmarks;
     internal Color factionColor;
@@ -39,10 +39,10 @@ public class Faction {
     public ILeader leader {
         get { return _leader; }
     }
-    public Sprite emblem {
-        get { return _emblem; }
+    public Sprite emblemSymbol {
+        get { return _emblemSymbol; }
     }
-    public Sprite emblemBG {
+    public EmblemBG emblemBG {
         get { return _emblemBG; }
     }
     public List<ECS.Character> characters {
@@ -71,7 +71,7 @@ public class Faction {
     public Faction() {
 		this._id = Utilities.SetID<Faction>(this);
         SetName(RandomNameGenerator.Instance.GenerateKingdomName());
-        _emblem = FactionManager.Instance.GenerateFactionEmblem(this);
+        _emblemSymbol = FactionManager.Instance.GenerateFactionEmblem(this);
         SetEmblemBG(FactionManager.Instance.GenerateFactionEmblemBG());
         SetFactionColor (Utilities.GetColorForFaction());
         _characters = new List<ECS.Character>();
@@ -88,8 +88,11 @@ public class Faction {
         SetName(data.factionName);
         SetDescription(data.factionDescription);
         SetFactionColor(data.factionColor);
+        if (data.emblemSymbolIndex != -1) {
+            SetEmblemSymbol(FactionManager.Instance.GetFactionEmblemSymbol(data.emblemSymbolIndex));
+        }
         //_emblem = FactionManager.Instance.GenerateFactionEmblem(this);
-        SetEmblemBG(FactionManager.Instance.GetFactionEmblem(data.emblemBGName));
+        SetEmblemBG(FactionManager.Instance.GetFactionEmblemBG(data.emblemBGID));
         _characters = new List<ECS.Character>();
         _ownedLandmarks = new List<BaseLandmark>();
         _ownedRegions = new List<Region>();
@@ -274,8 +277,11 @@ public class Faction {
     #endregion
 
     #region Emblems
-    public void SetEmblemBG(Sprite bg) {
+    public void SetEmblemBG(EmblemBG bg) {
         _emblemBG = bg;
+    }
+    public void SetEmblemSymbol(Sprite symbol) {
+        _emblemSymbol = symbol;
     }
     #endregion
 }

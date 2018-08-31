@@ -67,7 +67,9 @@ MonoBehaviour:
     itemData: []
     landmarkObjectSprite: {fileID: 0}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    neutralTileSprites: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: e51888dfb7058024aa3d4cc54418c6cd, type: 3}
+      tintSprite: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 0600000007000000
@@ -398,4 +400,12 @@ MonoBehaviour:
     baseAreaType: 2
     allowedLandmarkTypes: 010000000f000000
     possibleMonsterSpawns: []
+  - areaType: 4
+    baseAreaType: 1
+    allowedLandmarkTypes: 0b0000000e000000
+    possibleMonsterSpawns: []
   corruptedLandmarksCount: 0
+  ancientRuinTowerSprite: {fileID: 21300000, guid: ef09c80c77be9fd44b96fa5ee6f851e5,
+    type: 3}
+  ancientRuinBlockerSprite: {fileID: 21300000, guid: 783f972861f61dd4fa6d5931ea433539,
+    type: 3}

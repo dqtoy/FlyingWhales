@@ -67,7 +67,7 @@ public class MapGenerator : MonoBehaviour {
 
         PathfindingManager.Instance.CreateGrid(GridMap.Instance.map, (int)GridMap.Instance.width, (int)GridMap.Instance.height);
 
-        FactionManager.Instance.OccupyLandmarksInFactionRegions();
+        //FactionManager.Instance.OccupyLandmarksInFactionRegions();
 
         LevelLoaderManager.UpdateLoadingInfo("Starting Game...");
         yield return null;
@@ -152,7 +152,7 @@ public class MapGenerator : MonoBehaviour {
         PathfindingManager.Instance.LoadSettings(data.pathfindingSettings);
         //PathfindingManager.Instance.CreateGrid(GridMap.Instance.map, (int) GridMap.Instance.width, (int) GridMap.Instance.height);
 
-        FactionManager.Instance.OccupyLandmarksInFactionRegions();
+        //FactionManager.Instance.OccupyLandmarksInFactionRegions();
 
         LevelLoaderManager.UpdateLoadingInfo("Starting Game...");
         yield return null;

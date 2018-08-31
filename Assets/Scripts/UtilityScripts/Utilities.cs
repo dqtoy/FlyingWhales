@@ -1647,9 +1647,9 @@ public class Utilities : MonoBehaviour {
             //Faction Emblems
             for (int i = 0; i < saveData.factionsData.Count; i++) {
                 FactionSaveData currData = saveData.factionsData[i];
-                if (string.IsNullOrEmpty(currData.emblemBGName)) {
-                    currData.emblemBGName = FactionManager.Instance.emblemBGs[0].name;
-                }
+                //if (string.IsNullOrEmpty(currData.emblemBGName)) {
+                //    currData.emblemBGName = FactionManager.Instance.emblemBGs[0].name;
+                //}
             }
         }
     }

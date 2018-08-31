@@ -370,13 +370,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         HideLandmarkTileSprites();
         GameObject.Destroy(landmarkOnTile.landmarkVisual.gameObject);
     }
-    private void SetLandmarkTileSprite(LandmarkStructureSprite sprites) {
+    public void SetLandmarkTileSprite(LandmarkStructureSprite sprites) {
         mainStructure.sprite = sprites.mainSprite;
         structureTint.sprite = sprites.tintSprite;
         mainStructure.gameObject.SetActive(true);
         structureTint.gameObject.SetActive(true);
     }
-    private void HideLandmarkTileSprites() {
+    public void HideLandmarkTileSprites() {
         mainStructure.gameObject.SetActive(false);
         structureTint.gameObject.SetActive(false);
     }

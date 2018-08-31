@@ -17,7 +17,7 @@ public class AffiliationsObject : MonoBehaviour {
     [SerializeField] private GameObject squadGO;
     [SerializeField] private GameObject partyGO;
 
-    private Image factionEmblemBG;
+    [SerializeField] private FactionEmblem factionEmblem;
 
     private bool disableParty;
     private bool isHovering = false;
@@ -29,7 +29,6 @@ public class AffiliationsObject : MonoBehaviour {
     }
     public void Initialize() {
         Image[] factionChildImages = Utilities.GetComponentsInDirectChildren<Image>(factionGO);
-        factionEmblemBG = factionChildImages[0];
         Messenger.AddListener(Signals.UPDATE_UI, UpdateAffiliations);
         Messenger.AddListener<ICharacter, Squad>(Signals.SQUAD_MEMBER_ADDED, OnSquadEdited);
         Messenger.AddListener<ICharacter, Squad>(Signals.SQUAD_MEMBER_REMOVED, OnSquadEdited);
@@ -87,15 +86,11 @@ public class AffiliationsObject : MonoBehaviour {
         }
         if (_character.isFactionless) {
             factionGO.SetActive(false);
-            factionEmblemBG.sprite = null;
         } else {
             factionGO.SetActive(true);
             if (_character.faction != null) {
-                factionEmblemBG.sprite = _character.faction.emblemBG;
-            } else {
-                factionEmblemBG.sprite = null;
+                factionEmblem.SetFaction(_character.faction);
             }
-                
         }
 
         if (_character.squad == null) {

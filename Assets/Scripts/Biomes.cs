@@ -23,6 +23,7 @@ public class Biomes : MonoBehaviour {
 	[SerializeField] private Sprite[] waterTiles;
 	[SerializeField] private Sprite[] snowTiles;
 	[SerializeField] private Sprite[] _bareTiles;
+    [SerializeField] private Sprite[] _ancientRuinTiles;
 
     [Space(10)]
     [Header("Mountain Sprites")]
@@ -40,47 +41,16 @@ public class Biomes : MonoBehaviour {
     [SerializeField] private Sprite[] snowTrees;
     [SerializeField] private Sprite[] tundraTrees;
 
- //   [Space(10)]
- //   [Header("Biome Textures")]
- //   [SerializeField] private Sprite grasslandTexture;
-	//[SerializeField] private Sprite snowTexture;
-	//[SerializeField] private Sprite desertTexture;
-	//[SerializeField] private Sprite forestTexture;
-	//[SerializeField] private Sprite woodlandTexture;
-	//[SerializeField] private Sprite tundraTexture;
-
-    //[Space(10)]
-    //[Header("Hextile Masks")]
-    //public Texture[] topRightMasks;
-    //public Texture[] rightMasks;
-    //public Texture[] botRightMasks;
-    //public Texture[] topLeftMasks;
-    //public Texture[] leftMasks;
-    //public Texture[] botLeftMasks;
-
-    //[Space(10)]
-    //[Header("Resource Prefabs")]
-    //public GameObject behemothPrefab;
-    //public GameObject cobaltPrefab;
-    //public GameObject cornPrefab;
-    //public GameObject deerPrefab;
-    //public GameObject ebonyPrefab;
-    //public GameObject granitePrefab;
-    //public GameObject manaStonesPrefab;
-    //public GameObject mithrilPrefab;
-    //public GameObject oakPrefab;
-    //public GameObject pigPrefab;
-    //public GameObject ricePrefab;
-    //public GameObject slatePrefab;
-    //public GameObject wheatPrefab;
-
     #region getters/setters
     public Sprite[] bareTiles{
 		get{ return this._bareTiles; }
 	}
-	#endregion
+    public Sprite[] ancienctRuinTiles {
+        get { return this._ancientRuinTiles; }
+    }
+    #endregion
 
-	void Awake(){
+    void Awake(){
 		Instance = this;
 	}
 
@@ -165,6 +135,10 @@ public class Biomes : MonoBehaviour {
                 Sprite forestSpriteToUse = forestTiles[Random.Range(0, forestTiles.Length)];
                 tile.SetBaseSprite(forestSpriteToUse);
                 break;
+            case BIOMES.ANCIENT_RUIN:
+                Sprite ruinSpriteToUse = ancienctRuinTiles[Random.Range(0, ancienctRuinTiles.Length)];
+                tile.SetBaseSprite(ruinSpriteToUse);
+                break;
         }
         tile.SetSortingOrder(sortingOrder);
     }
@@ -190,6 +164,10 @@ public class Biomes : MonoBehaviour {
                 Sprite forestSpriteToUse = forestMountains[Random.Range(0, forestMountains.Length)];
                 tile.SetBaseSprite(forestSpriteToUse);
                 break;
+            case BIOMES.ANCIENT_RUIN:
+                Sprite ruinSpriteToUse = ancienctRuinTiles[Random.Range(0, ancienctRuinTiles.Length)];
+                tile.SetBaseSprite(ruinSpriteToUse);
+                break;
         }
         tile.SetSortingOrder(sortingOrder, "TileDetails");
     }
@@ -214,6 +192,10 @@ public class Biomes : MonoBehaviour {
             case BIOMES.FOREST:
                 Sprite forestSpriteToUse = forestTrees[Random.Range(0, forestTrees.Length)];
                 tile.SetBaseSprite(forestSpriteToUse);
+                break;
+            case BIOMES.ANCIENT_RUIN:
+                Sprite ruinSpriteToUse = ancienctRuinTiles[Random.Range(0, ancienctRuinTiles.Length)];
+                tile.SetBaseSprite(ruinSpriteToUse);
                 break;
         }
         tile.SetSortingOrder(sortingOrder, "TileDetails");

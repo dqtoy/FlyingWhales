@@ -12,13 +12,16 @@ public class FactionManager : MonoBehaviour {
 
     [Space(10)]
     [Header("Visuals")]
-    [SerializeField] private List<Sprite> _emblemBGs;
-    [SerializeField] private List<Sprite> _emblems;
+    [SerializeField] private List<EmblemBG> _emblemBGs;
+    [SerializeField] private List<Sprite> _emblemSymbols;
     [SerializeField] private List<Sprite> usedEmblems = new List<Sprite>();
 
     #region getters
-    public List<Sprite> emblemBGs {
+    public List<EmblemBG> emblemBGs {
         get { return _emblemBGs; }
+    }
+    public List<Sprite> emblemSymbols {
+        get { return _emblemSymbols; }
     }
     #endregion
 
@@ -49,7 +52,8 @@ public class FactionManager : MonoBehaviour {
     private void CreateNeutralFaction() {
         Faction newFaction = new Faction();
         newFaction.SetName("Neutral");
-        newFaction.SetEmblemBG(GetFactionEmblem("08_neutrals"));
+        newFaction.SetEmblemBG(GetFactionEmblemBG(0));
+        newFaction.SetEmblemSymbol(GetFactionEmblemSymbol(0));
         allFactions.Add(newFaction);
         neutralFaction = newFaction;
         CreateRelationshipsForFaction(newFaction);
@@ -165,7 +169,7 @@ public class FactionManager : MonoBehaviour {
      * Will return an error if there are no more available emblems.
      * */
     internal Sprite GenerateFactionEmblem(Faction faction) {
-        List<Sprite> emblemsToUse = new List<Sprite>(_emblems);
+        List<Sprite> emblemsToUse = new List<Sprite>(_emblemSymbols);
         for (int i = 0; i < emblemsToUse.Count; i++) {
             Sprite currSprite = emblemsToUse[i];
             if (!usedEmblems.Contains(currSprite)) {
@@ -173,20 +177,20 @@ public class FactionManager : MonoBehaviour {
                 return currSprite;
             }
         }
-        return _emblems[Random.Range(0, _emblems.Count)];
+        return _emblemSymbols[Random.Range(0, _emblemSymbols.Count)];
         //throw new System.Exception("There are no more emblems for kingdom: " + faction.name);
     }
-    internal Sprite GenerateFactionEmblemBG() {
+    internal EmblemBG GenerateFactionEmblemBG() {
         return _emblemBGs[Random.Range(0, _emblemBGs.Count)];
     }
-    public Sprite GetFactionEmblem(string emblemName) {
+    public EmblemBG GetFactionEmblemBG(int emblemID) {
         for (int i = 0; i < _emblemBGs.Count; i++) {
-            Sprite currBG = _emblemBGs[i];
-            if (currBG.name.Equals(emblemName)) {
+            EmblemBG currBG = _emblemBGs[i];
+            if (currBG.id.Equals(emblemID)) {
                 return currBG;
             }
         }
-        return null;
+        throw new System.Exception("There is no emblem bg with id " + emblemID);
     }
     internal void AddEmblemAsUsed(Sprite emblem) {
         if (!usedEmblems.Contains(emblem)) {
@@ -197,6 +201,20 @@ public class FactionManager : MonoBehaviour {
     }
     internal void RemoveEmblemAsUsed(Sprite emblem) {
         usedEmblems.Remove(emblem);
+    }
+    public int GetEmblemSymbolIndex(Sprite symbol) {
+        if (symbol != null) {
+            for (int i = 0; i < _emblemSymbols.Count; i++) {
+                Sprite currSymbol = _emblemSymbols[i];
+                if (currSymbol == symbol) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+    public Sprite GetFactionEmblemSymbol(int index) {
+        return _emblemSymbols[index];
     }
     #endregion
 

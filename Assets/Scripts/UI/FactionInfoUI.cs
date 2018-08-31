@@ -16,6 +16,7 @@ public class FactionInfoUI : UIMenu {
     [SerializeField] private ScrollRect propertiesScrollView;
     [SerializeField] private GameObject characterEntryPrefab;
     [SerializeField] private GameObject propertyPrefab;
+    [SerializeField] private FactionEmblem emblem;
     [SerializeField] private Color evenColor;
     [SerializeField] private Color oddColor;
 
@@ -51,6 +52,7 @@ public class FactionInfoUI : UIMenu {
         }
         factionNameLbl.text = currentlyShowingFaction.name;
         factionDescriptionLbl.text = currentlyShowingFaction.description;
+        emblem.SetFaction(currentlyShowingFaction);
     }
 
     private void UpdateFactionLeader() {

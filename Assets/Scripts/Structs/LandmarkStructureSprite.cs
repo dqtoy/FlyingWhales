@@ -6,4 +6,9 @@ using UnityEngine;
 public struct LandmarkStructureSprite {
     public Sprite mainSprite;
     public Sprite tintSprite;
+
+    public LandmarkStructureSprite(Sprite mainSprite, Sprite tintSprite) {
+        this.mainSprite = mainSprite;
+        this.tintSprite = tintSprite;
+    }
 }

@@ -12,10 +12,14 @@ public class PlayerManager : MonoBehaviour {
     public Character playerCharacter;
 
     [SerializeField] private Sprite[] _playerAreaFloorSprites;
+    [SerializeField] private Sprite[] _playerAreaDefaultStructureSprites;
 
     #region getters/setters
     public Sprite[] playerAreaFloorSprites {
         get { return _playerAreaFloorSprites; }
+    }
+    public Sprite[] playerAreaDefaultStructureSprites {
+        get { return _playerAreaDefaultStructureSprites; }
     }
     #endregion
 

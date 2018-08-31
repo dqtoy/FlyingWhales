@@ -23,6 +23,9 @@ public class LandmarkManager : MonoBehaviour {
 
     public List<Area> allAreas;
 
+    public Sprite ancientRuinTowerSprite;
+    public Sprite ancientRuinBlockerSprite;
+
     #region Monobehaviours
     private void Awake() {
         Instance = this;
@@ -77,6 +80,9 @@ public class LandmarkManager : MonoBehaviour {
         //BASE_LANDMARK_TYPE baseLandmarkType = landmarkData.baseLandmarkType;
         BaseLandmark newLandmark = location.CreateLandmarkOfType(saveData);
 #if !WORLD_CREATION_TOOL
+        if (newLandmark.tileLocation.areaOfTile != null && newLandmark.tileLocation.areaOfTile.owner != null) {
+            OccupyLandmark(newLandmark, newLandmark.tileLocation.areaOfTile.owner);
+        }
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
         //newLandmark.GenerateDiagonalLeftTiles();
         //newLandmark.GenerateDiagonalRightTiles();

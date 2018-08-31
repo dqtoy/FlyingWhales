@@ -97,6 +97,7 @@ public class Area {
             if (revalidateTiles) {
                 RevalidateTiles();
             }
+            OnTileAddedToArea(tile);
             Messenger.Broadcast(Signals.AREA_TILE_ADDED, this, tile);
         }
     }
@@ -114,6 +115,7 @@ public class Area {
         if (revalidateTiles) {
             RevalidateTiles();
         }
+        OnTileRemovedFromArea(tile);
         Messenger.Broadcast(Signals.AREA_TILE_REMOVED, this, tile);
     }
     private void RevalidateTiles() {
@@ -141,15 +143,67 @@ public class Area {
         }
         return elligibleTiles;
     }
+    private void OnTileAddedToArea(HexTile addedTile) {
+        if (this.areaType == AREA_TYPE.ANCIENT_RUINS) {
+            addedTile.SetBiome(BIOMES.ANCIENT_RUIN);
+            Biomes.Instance.UpdateTileVisuals(addedTile);
+        }
+        //update tile visuals if necessary
+        if (this.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
+            addedTile.SetBaseSprite(PlayerManager.Instance.playerAreaFloorSprites[Random.Range(0, PlayerManager.Instance.playerAreaFloorSprites.Length)]);
+            if (coreTile.id != addedTile.id) {
+                addedTile.SetLandmarkTileSprite(new LandmarkStructureSprite(PlayerManager.Instance.playerAreaDefaultStructureSprites[Random.Range(0, PlayerManager.Instance.playerAreaDefaultStructureSprites.Length)], null));
+            }
+        } else if (this.areaType == AREA_TYPE.ANCIENT_RUINS) {
+            //addedTile.SetBaseSprite(Biomes.Instance.ancienctRuinTiles[Random.Range(0, Biomes.Instance.ancienctRuinTiles.Length)]);
+            if (coreTile.id == addedTile.id) {
+                addedTile.SetLandmarkTileSprite(new LandmarkStructureSprite(LandmarkManager.Instance.ancientRuinTowerSprite, null));
+            } else {
+                if (Utilities.IsEven(tiles.Count)) {
+                    addedTile.SetLandmarkTileSprite(new LandmarkStructureSprite(LandmarkManager.Instance.ancientRuinBlockerSprite, null));
+                }
+            }
+        }
+    }
+    private void OnTileRemovedFromArea(HexTile removedTile) {
+        if (this.areaType == AREA_TYPE.ANCIENT_RUINS) {
+            removedTile.SetBaseSprite(Biomes.Instance.ancienctRuinTiles[Random.Range(0, Biomes.Instance.ancienctRuinTiles.Length)]);
+            removedTile.HideLandmarkTileSprites();
+        }
+        ////update tile visuals if necessary
+        //if (this.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
+        //    removedTile.SetBaseSprite(PlayerManager.Instance.playerAreaFloorSprites[Random.Range(0, PlayerManager.Instance.playerAreaFloorSprites.Length)]);
+        //    if (coreTile.id != removedTile.id) {
+        //        removedTile.SetLandmarkTileSprite(new LandmarkStructureSprite(PlayerManager.Instance.playerAreaDefaultStructureSprites[Random.Range(0, PlayerManager.Instance.playerAreaDefaultStructureSprites.Length)], null));
+        //    }
+        //} else if (this.areaType == AREA_TYPE.ANCIENT_RUINS) {
+        //    removedTile.SetBaseSprite(Biomes.Instance.ancienctRuinTiles[Random.Range(0, Biomes.Instance.ancienctRuinTiles.Length)]);
+        //    if (coreTile.id == removedTile.id) {
+        //        removedTile.SetLandmarkTileSprite(new LandmarkStructureSprite(LandmarkManager.Instance.ancientRuinTowerSprite, null));
+        //    } else {
+        //        if (Utilities.IsEven(tiles.Count)) {
+        //            removedTile.SetLandmarkTileSprite(new LandmarkStructureSprite(LandmarkManager.Instance.ancientRuinBlockerSprite, null));
+        //        }
+        //    }
+        //}
+    }
     #endregion
 
     #region Area Type
     public void SetAreaType(AREA_TYPE areaType) {
         this.areaType = areaType;
+        OnAreaTypeSet();
     }
     public BASE_AREA_TYPE GetBaseAreaType() {
         AreaData data = LandmarkManager.Instance.GetAreaData(areaType);
         return data.baseAreaType;
+    }
+    private void OnAreaTypeSet() {
+        //update tile visuals
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile currTile = tiles[i];
+            OnTileAddedToArea(currTile);
+        }
     }
     #endregion
 
