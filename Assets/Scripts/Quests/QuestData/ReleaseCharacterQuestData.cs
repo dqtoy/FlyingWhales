@@ -21,7 +21,7 @@ public class ReleaseCharacterQuestData : CharacterQuestData {
     //public int huntedCharactersCount { get; private set; }
     //public IParty huntedParty { get; private set; }
 
-    public bool isWaitingForPath { get { return _owner.currentParty.icon.pathfinder.isWaitingForPathCalculation; } }
+    //public bool isWaitingForPath { get { return _owner.currentParty.icon.pathfinder.isWaitingForPathCalculation; } }
 
     //private int huntExp = 500;
     private HexTile targetTile;
@@ -33,16 +33,16 @@ public class ReleaseCharacterQuestData : CharacterQuestData {
 
     #region overrides
     public override IEnumerator SetupValuesCoroutine() {
-        UpdateVectorPath();
-        while (isWaitingForPath) {
-            yield return null;
-        }
-        tilePathToTarget =  _owner.currentParty.icon.ConvertToTilePath(vectorPathToTarget);
+        //UpdateVectorPath();
+        //while (isWaitingForPath) {
+        yield return null;
+        //}
+        //tilePathToTarget = _owner.currentParty.icon.ConvertToTilePath(vectorPathToTarget);
     }
     #endregion
 
     public void UpdateVectorPath() {
-        _owner.currentParty.icon.GetVectorPath(targetTile, OnVectorPathComputed);
+        //_owner.currentParty.icon.GetVectorPath(targetTile, OnVectorPathComputed);
     }
     private void OnVectorPathComputed(List<Vector3> path) {
         vectorPathToTarget = path;

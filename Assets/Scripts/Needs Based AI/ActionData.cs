@@ -90,7 +90,7 @@ public class ActionData {
         action.OnChooseAction(_party, targetObject);
         if (action.ShouldGoToTargetObjectOnChoose()) {
             if (targetObject != null) {
-                _party.GoToLocation(targetObject.specificLocation, PATHFINDING_MODE.USE_ROADS);
+                _party.GoToLocation(targetObject.specificLocation, PATHFINDING_MODE.PASSABLE);
                 if (targetObject.objectType == OBJECT_TYPE.STRUCTURE) {
                     Area areaOfStructure = targetObject.objectLocation.tileLocation.areaOfTile;
                     if (areaOfStructure != null && _party.home != null && areaOfStructure.id == _party.home.id) {
@@ -124,13 +124,15 @@ public class ActionData {
     }
     public void SetIsHalted(bool state) {
         if (_isHalted != state) {
-            if (!_isHalted){
-                _party.icon.SetMovementState(state);
-                _isHalted = state;
-            } else {
-                _isHalted = state;
-                _party.icon.SetMovementState(state);
-            }
+            _isHalted = state;
+            _party.icon.SetMovementState(state);
+            //if (!_isHalted){
+            //    _party.icon.SetMovementState(state);
+            //    _isHalted = state;
+            //} else {
+            //    _isHalted = state;
+            //    _party.icon.SetMovementState(state);
+            //}
         }
     }
     public void SetCannotPerformAction(bool state) {
@@ -149,7 +151,7 @@ public class ActionData {
     }
 
     private void PerformCurrentAction() {
-        if (!isWaiting && _party.icon.targetLocation == null) {
+        if (!isWaiting && _party.icon.hasArrived) {
             if (!isDone && currentAction != null){
                 if (_isHalted || _cannotPerformAction) {
                     return;
@@ -183,7 +185,7 @@ public class ActionData {
                         ILocation location = currentTargetObject.specificLocation;
                         if (location != null) {
                             if (currentAction.actionType == ACTION_TYPE.ATTACK || currentAction.actionType == ACTION_TYPE.CHAT) {
-                                _party.GoToLocation(location, PATHFINDING_MODE.USE_ROADS);
+                                _party.GoToLocation(location, PATHFINDING_MODE.PASSABLE);
                             }
                         } else {
                             if (currentTargetObject.currentState.stateName != "Alive") { //if object is dead

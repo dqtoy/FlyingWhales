@@ -82,12 +82,14 @@ public class LandmarkVisual : MonoBehaviour {
         //remove character portrait from grid
         //iparty.icon.gameObject.SetActive(true);
 
-        if (iparty.mainCharacter is ECS.Character && iparty.mainCharacter.role.roleType == CHARACTER_ROLE.PLAYER) {
-            iparty.icon.ReclaimPortraitAsPlayer();
-        } else {
-            iparty.icon.ReclaimPortrait();
-            AdjustCharCount(-1);
-        }
+        iparty.icon.ReclaimPortrait();
+        AdjustCharCount(-1);
+        //if (iparty.mainCharacter is ECS.Character && iparty.mainCharacter.role.roleType == CHARACTER_ROLE.PLAYER) {
+        //    iparty.icon.ReclaimPortraitAsPlayer();
+        //} else {
+        //    iparty.icon.ReclaimPortrait();
+        //    AdjustCharCount(-1);
+        //}
         iparty.icon.SetVisualState(true);
         iparty.icon.characterPortrait.SetBorderState(false);
     }

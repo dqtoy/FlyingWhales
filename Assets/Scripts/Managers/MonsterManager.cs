@@ -114,10 +114,12 @@ public class MonsterManager : MonoBehaviour {
         MonsterParty monsterParty = new MonsterParty();
         monsterParty.SetSetupName(monsterPartyComponent.name);
         for (int i = 0; i < monsterPartyComponent.monsters.Length; i++) {
-            string monsterName = monsterPartyComponent.monsters[i].name;
-            Monster monster = CreateNewMonster(monsterName);
-            monster.SetOwnedParty(monsterParty);
-            monsterParty.AddCharacter(monster);
+            if (monsterPartyComponent.monsters[i] != null) {
+                string monsterName = monsterPartyComponent.monsters[i].name;
+                Monster monster = CreateNewMonster(monsterName);
+                monster.SetOwnedParty(monsterParty);
+                monsterParty.AddCharacter(monster);
+            }
         }
 #if !WORLD_CREATION_TOOL
         monsterParty.CreateIcon();

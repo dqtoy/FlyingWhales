@@ -13,7 +13,7 @@ public interface IParty {
     MODE currentMode { get; }
     Faction attackedByFaction { get; set; }
     Faction faction { get; }
-    CharacterIcon icon { get; }
+    CharacterAvatar icon { get; }
     Region currentRegion { get; }
     Area home { get; }
     StructureObj homeStructure { get; }

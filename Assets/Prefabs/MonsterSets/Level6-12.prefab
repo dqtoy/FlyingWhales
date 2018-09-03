@@ -53,6 +53,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parties:
   - {fileID: 114735646941030760, guid: 62d1eb16173c2ee4986e7609984d383b, type: 2}
-  - {fileID: 114735646941030760, guid: 0cac3be884b39ea4aa313deec030fdf4, type: 2}
-  - {fileID: 114735646941030760, guid: 003dc6c744371804b9805de6260a0af2, type: 2}
   - {fileID: 114735646941030760, guid: 1df669a5db23165428e3714051d5eb6c, type: 2}

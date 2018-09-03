@@ -19,6 +19,7 @@ public class CharacterManager : MonoBehaviour {
     private Dictionary<string, CharacterClass> _classesDictionary;
     private Dictionary<ELEMENT, float> _elementsChanceDictionary;
     private List<Character> _allCharacters;
+    private List<CharacterAvatar> _allCharacterAvatars;
 
     public List<Squad> allSquads { get; private set; }
 
@@ -84,6 +85,7 @@ public class CharacterManager : MonoBehaviour {
     private void Awake() {
         Instance = this;
         _allCharacters = new List<Character>();
+        _allCharacterAvatars = new List<CharacterAvatar>();
         allSquads = new List<Squad>();
     }
 
@@ -237,6 +239,16 @@ public class CharacterManager : MonoBehaviour {
             currentClass.ConstructSkills();
             _classesDictionary.Add(currentClass.className, currentClass);
         }
+    }
+    public void AddCharacterAvatar(CharacterAvatar characterAvatar) {
+        int centerOrderLayer = (_allCharacterAvatars.Count * 2) + 1;
+        int frameOrderLayer = centerOrderLayer + 1;
+        characterAvatar.SetFrameOrderLayer(frameOrderLayer);
+        characterAvatar.SetCenterOrderLayer(centerOrderLayer);
+        _allCharacterAvatars.Add(characterAvatar);
+    }
+    public void RemoveCharacterAvatar(CharacterAvatar characterAvatar) {
+        _allCharacterAvatars.Remove(characterAvatar);
     }
     #endregion
 

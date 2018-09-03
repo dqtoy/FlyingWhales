@@ -10,7 +10,7 @@ public class MoveAction : CharacterAction {
     #region Overrides
     public override void OnChooseAction(NewParty iparty, IObject targetObject) {
         base.OnChooseAction(iparty, targetObject);
-        iparty.GoToLocation(targetObject.objectLocation, PATHFINDING_MODE.USE_ROADS);
+        iparty.GoToLocation(targetObject.objectLocation, PATHFINDING_MODE.PASSABLE);
     }
     #endregion
 }

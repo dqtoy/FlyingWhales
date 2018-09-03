@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26f8d9838afb5fc40a0c8e247b4f74ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterIconPrefab: {fileID: 1504054632542230, guid: d54add2dbe00fab4f84fb22131e60706,
+  characterIconPrefab: {fileID: 1000012712350628, guid: 5372250d22a51bc40a200236eee58ac2,
     type: 2}
   characterIconsParent: {fileID: 0}
   armyIconPrefab: {fileID: 1133497675646328, guid: 4bb373cd3a987c3419a7dd262591d640,

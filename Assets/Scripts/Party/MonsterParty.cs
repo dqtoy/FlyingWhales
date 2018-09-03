@@ -44,9 +44,11 @@ public class MonsterParty : NewParty {
         base.CreateIcon();
         GameObject characterIconGO = GameObject.Instantiate(MonsterManager.Instance.monsterIconPrefab,
             Vector3.zero, Quaternion.identity, CharacterManager.Instance.characterIconsParent);
-        _icon = characterIconGO.GetComponent<CharacterIcon>();
-        _icon.SetCharacter(this);
-        PathfindingManager.Instance.AddAgent(_icon.aiPath);
+        _icon = characterIconGO.GetComponent<CharacterAvatar>();
+        _icon.Init(this);
+        //_icon = characterIconGO.GetComponent<CharacterIcon>();
+        //_icon.SetCharacter(this);
+        //PathfindingManager.Instance.AddAgent(_icon.aiPath);
     }
     public override void PartyDeath() {
         base.PartyDeath();

@@ -122,11 +122,14 @@ public class CharacterParty : NewParty {
         base.CreateIcon();
         GameObject characterIconGO = GameObject.Instantiate(CharacterManager.Instance.characterIconPrefab,
             Vector3.zero, Quaternion.identity, CharacterManager.Instance.characterIconsParent);
-        _icon = characterIconGO.GetComponent<CharacterIcon>();
-        _icon.SetCharacter(this);
-        _icon.SetAnimator(CharacterManager.Instance.GetAnimatorByRole(mainCharacter.role.roleType));
-        PathfindingManager.Instance.AddAgent(_icon.aiPath);
-        PathfindingManager.Instance.AddAgent(_icon.pathfinder);
+
+        _icon = characterIconGO.GetComponent<CharacterAvatar>();
+        _icon.Init(this);
+        //_icon = characterIconGO.GetComponent<CharacterIcon>();
+        //_icon.SetCharacter(this);
+        //_icon.SetAnimator(CharacterManager.Instance.GetAnimatorByRole(mainCharacter.role.roleType));
+        //PathfindingManager.Instance.AddAgent(_icon.aiPath);
+        //PathfindingManager.Instance.AddAgent(_icon.pathfinder);
 
     }
     public override void RemoveListeners() {

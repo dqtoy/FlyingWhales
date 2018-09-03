@@ -395,7 +395,6 @@ MonoBehaviour:
     - {fileID: 114699570168267200, guid: 75808fa97636091458ed5a69742591dc, type: 2}
     - {fileID: 114872897285337152, guid: bae98bcd307d58943b2bb0532de8b87d, type: 2}
     - {fileID: 114735646941030760, guid: f4ee95df282423f4dbb3f3acabda013b, type: 2}
-    - {fileID: 0}
   - areaType: 3
     baseAreaType: 2
     allowedLandmarkTypes: 010000000f000000

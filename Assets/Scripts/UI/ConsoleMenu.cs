@@ -627,7 +627,7 @@ public class ConsoleMenu : UIMenu {
 
         HexTile startTile = null;
         HexTile targetTile = null;
-        PATHFINDING_MODE pathfindingMode = PATHFINDING_MODE.USE_ROADS;
+        PATHFINDING_MODE pathfindingMode = PATHFINDING_MODE.PASSABLE;
         if (parameters.Length > 3) {
             pathfindingMode = (PATHFINDING_MODE)Enum.Parse(typeof(PATHFINDING_MODE), parameters[3]);
         }

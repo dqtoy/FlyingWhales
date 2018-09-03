@@ -96,11 +96,12 @@ public class PathFindingThread : Multithread {
 	}
 
 	public void ReturnPath(){
-        if (_landmark != null) {
-            this._landmark.ReceivePath(receivedPath);
-        } else {
-            this._characterAvatar.ReceivePath(receivedPath, this);
-        }
+        this._characterAvatar.ReceivePath(receivedPath, this);
+        //if (_landmark != null) {
+        //    this._landmark.ReceivePath(receivedPath);
+        //} else {
+        //    this._characterAvatar.ReceivePath(receivedPath, this);
+        //}
 
     }
 }

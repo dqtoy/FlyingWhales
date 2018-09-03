@@ -20604,7 +20604,7 @@ MonoBehaviour:
   days: 1
   year: 80
   hour: 1
-  hoursPerDay: 48
+  hoursPerDay: 144
   startYear: 80
   currProgressionSpeed: 0
   progressionSpeed: 1
@@ -34118,6 +34118,12 @@ Prefab:
       propertyPath: m_Layer
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 114010664997495754, guid: df1a57ad038002c44b07891adf63c660,
+        type: 2}
+      propertyPath: monsterIconPrefab
+      value: 
+      objectReference: {fileID: 1000012712350628, guid: 5372250d22a51bc40a200236eee58ac2,
+        type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: df1a57ad038002c44b07891adf63c660, type: 2}
   m_IsPrefabParent: 0

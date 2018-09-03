@@ -3,7 +3,7 @@ using System.Collections;
 
 public class HeroAvatar : CharacterAvatar {
 
-	internal override void NewMove() {
+	public override void NewMove() {
 //		if(_characters[0].isInCombat){
 //			_characters[0].SetCurrentFunction (() => NewMove ());
 //			return;
@@ -15,12 +15,12 @@ public class HeroAvatar : CharacterAvatar {
    //             return;
    //         }
    //     }
-        if (this.path.Count > 0) {
-			//RemoveCharactersFromLocation(this.currLocation);
-			this.MakeCitizenMove(this.specificLocation.tileLocation, this.path[0]);
-            RemoveCharactersFromLocation(this.specificLocation);
-            AddCharactersToLocation(this.specificLocation.tileLocation);
-        }
+   //     if (this.path.Count > 0) {
+			////RemoveCharactersFromLocation(this.currLocation);
+			//this.MakeCitizenMove(this.specificLocation.tileLocation, this.path[0]);
+   //         RemoveCharactersFromLocation(this.specificLocation);
+   //         AddCharactersToLocation(this.specificLocation.tileLocation);
+   //     }
 
 	}
 }

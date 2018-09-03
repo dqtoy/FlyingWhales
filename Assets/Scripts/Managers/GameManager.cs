@@ -25,9 +25,9 @@ public class GameManager : MonoBehaviour {
     public bool allowConsole = true;
     public bool displayFPS = true;
 
-    private const float X1_SPEED = 2f;
-    private const float X2_SPEED = 1f;
-    private const float X4_SPEED = 0.3f;
+    private const float X1_SPEED = 0.75f;
+    private const float X2_SPEED = 0.5f;
+    private const float X4_SPEED = 0.25f;
 
     private float timeElapsed;
     private bool _gameHasStarted;

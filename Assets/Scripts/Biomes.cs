@@ -555,7 +555,7 @@ public class Biomes : MonoBehaviour {
         HexTile randomTile1 = island1.tilesInIsland[Random.Range(0, island1.tilesInIsland.Count)];
         HexTile randomTile2 = island2.tilesInIsland[Random.Range(0, island2.tilesInIsland.Count)];
 
-        return PathGenerator.Instance.GetPath(randomTile1, randomTile2, PATHFINDING_MODE.USE_ROADS) != null;
+        return PathGenerator.Instance.GetPath(randomTile1, randomTile2, PATHFINDING_MODE.PASSABLE) != null;
     }
 
     public List<HexTile> GetPassableTiles() {

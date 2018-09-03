@@ -2080,7 +2080,7 @@ namespace ECS {
         //    _isIdle = state;
         //}
         public bool HasPathToParty(Party partyToJoin) {
-            return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.USE_ROADS, _faction) != null;
+            return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.PASSABLE, _faction) != null;
         }
         public void CenterOnCharacter() {
             if (!this.isDead) {

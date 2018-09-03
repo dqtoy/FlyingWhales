@@ -11,7 +11,7 @@ public class NewParty : IParty {
     protected bool _isDead;
     protected List<ICharacter> _icharacters;
     protected Region _currentRegion;
-    protected CharacterIcon _icon;
+    protected CharacterAvatar _icon;
     protected Faction _attackedByFaction;
     protected Combat _currentCombat;
     protected ILocation _specificLocation;
@@ -60,7 +60,7 @@ public class NewParty : IParty {
     public Faction faction {
         get { return mainCharacter.faction; }
     }
-    public CharacterIcon icon {
+    public CharacterAvatar icon {
         get { return _icon; }
     }
     public Region currentRegion {
@@ -143,24 +143,25 @@ public class NewParty : IParty {
         actionThread.AddToChoices(_icharacterObject);
     }
     private ILocation GetSpecificLocation() {
-        if (_specificLocation != null) {
-            return _specificLocation;
-        } else {
-            if (_icon != null) {
-                Collider2D collide = Physics2D.OverlapCircle(icon.aiPath.transform.position, 0.1f, LayerMask.GetMask("Hextiles"));
-                //Collider[] collide = Physics.OverlapSphere(icon.aiPath.transform.position, 5f);
-                HexTile tile = collide.gameObject.GetComponent<HexTile>();
-                if (tile != null) {
-                    return tile;
-                } else {
-                    LandmarkVisual landmarkObject = collide.gameObject.GetComponent<LandmarkVisual>();
-                    if (landmarkObject != null) {
-                        return landmarkObject.landmark.tileLocation;
-                    }
-                }
-            }
-            return null;
-        }
+        return _specificLocation;
+        //if (_specificLocation != null) {
+        //    return _specificLocation;
+        //} else {
+        //    if (_icon != null) {
+        //        Collider2D collide = Physics2D.OverlapCircle(icon.aiPath.transform.position, 0.1f, LayerMask.GetMask("Hextiles"));
+        //        //Collider[] collide = Physics.OverlapSphere(icon.aiPath.transform.position, 5f);
+        //        HexTile tile = collide.gameObject.GetComponent<HexTile>();
+        //        if (tile != null) {
+        //            return tile;
+        //        } else {
+        //            LandmarkVisual landmarkObject = collide.gameObject.GetComponent<LandmarkVisual>();
+        //            if (landmarkObject != null) {
+        //                return landmarkObject.landmark.tileLocation;
+        //            }
+        //        }
+        //    }
+        //    return null;
+        //}
     }
     public void SetSpecificLocation(ILocation location) {
         _specificLocation = location;
@@ -188,7 +189,7 @@ public class NewParty : IParty {
             if (this.specificLocation is BaseLandmark) {
                 this.specificLocation.AddCharacterToLocation(icharacter.ownParty);
             } else {
-                icharacter.ownParty.icon.SetAIPathPosition(this.specificLocation.tileLocation.transform.position);
+                //icharacter.ownParty.icon.SetAIPathPosition(this.specificLocation.tileLocation.transform.position);
                 icharacter.ownParty.icon.SetVisualState(true);
             }
             if (icharacter is ECS.Character) {
@@ -204,7 +205,7 @@ public class NewParty : IParty {
         }
     }
     public void GoHome() {
-        GoToLocation(mainCharacter.homeStructure.objectLocation, PATHFINDING_MODE.USE_ROADS);
+        GoToLocation(mainCharacter.homeStructure.objectLocation, PATHFINDING_MODE.PASSABLE);
     }
     #endregion
 
@@ -225,14 +226,15 @@ public class NewParty : IParty {
                 doneAction();
             }
         } else {
-            _icon.SetActionOnTargetReached(doneAction);
+            //_icon.SetActionOnTargetReached(doneAction);
             _icon.SetTarget(targetLocation);
+            _icon.StartPath(PATHFINDING_MODE.PASSABLE, doneAction);
         }
     }
-    public void GoToLocation(GameObject locationGO, PATHFINDING_MODE pathfindingMode, Action doneAction = null) {
-        _icon.SetActionOnTargetReached(doneAction);
-        _icon.SetTargetGO(locationGO);
-    }
+    //public void GoToLocation(GameObject locationGO, PATHFINDING_MODE pathfindingMode, Action doneAction = null) {
+    //    _icon.SetActionOnTargetReached(doneAction);
+    //    _icon.SetTargetGO(locationGO);
+    //}
     public void BuildStructureLookingForAction(BuildStructureQuestData questData) {
         if(_currentRegion.id == questData.owner.party.currentRegion.id) {
             questData.AddToChoicesOfAllActionsThatCanObtainResource(_icharacterObject);

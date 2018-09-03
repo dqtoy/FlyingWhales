@@ -123,7 +123,7 @@ public class FormPartyAction : CharacterAction {
             throw new System.Exception("Target location for form party of " + iparty.mainCharacter.name + " is null!");
         }
 
-        iparty.GoToLocation(targetLocation, PATHFINDING_MODE.USE_ROADS, () => InviteSquadMembers(iparty.mainCharacter)); //The character will move to the target tile and perform the action for Minimum Duration
+        iparty.GoToLocation(targetLocation, PATHFINDING_MODE.PASSABLE, () => InviteSquadMembers(iparty.mainCharacter)); //The character will move to the target tile and perform the action for Minimum Duration
         base.OnChooseAction(iparty, targetObject);
     }
     public override void PerformAction(CharacterParty party, IObject targetObject) {
