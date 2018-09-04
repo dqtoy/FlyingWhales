@@ -1284,12 +1284,14 @@ public enum ACTION_TYPE {
     FORM_PARTY,
     IN_PARTY,
     JOIN_PARTY,
-    GRIND
+    GRIND,
+    MINING,
+    WOODCUTTING,
+    WORKING,
 }
 public enum ACTION_CATEGORY {
-    NORMAL,
-    IDLE,
-    DESPERATE,
+    WORK,
+    MISC,
 }
 
 public enum OBJECT_TYPE {
@@ -1442,7 +1444,6 @@ public enum ATTRIBUTE_CATEGORY {
     ITEM,
     STRUCTURE,
 }
-
 public enum ATTRIBUTE_BEHAVIOR {
     NONE,
     DEPLETE_FUN,

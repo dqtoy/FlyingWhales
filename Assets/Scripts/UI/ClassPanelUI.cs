@@ -24,6 +24,7 @@ public class ClassPanelUI : MonoBehaviour {
     public InputField spPerLevelInput;
 
     public Dropdown allowedWeaponsOptions;
+    public Dropdown workActionOptions;
 
     public GameObject allowedWeaponsGO;
     public GameObject skillsGO;
@@ -68,10 +69,13 @@ public class ClassPanelUI : MonoBehaviour {
     }
     private void LoadAllData() {
         allowedWeaponsOptions.ClearOptions();
+        workActionOptions.ClearOptions();
 
         string[] weaponTypes = System.Enum.GetNames(typeof(WEAPON_TYPE));
+        string[] workActions = System.Enum.GetNames(typeof(ACTION_TYPE));
 
         allowedWeaponsOptions.AddOptions(weaponTypes.ToList());
+        workActionOptions.AddOptions(workActions.ToList());
         UpdateClassList();
     }
     private void ClearData() {
@@ -89,6 +93,7 @@ public class ClassPanelUI : MonoBehaviour {
         spPerLevelInput.text = "0";
 
         allowedWeaponsOptions.value = 0;
+        workActionOptions.value = 0;
 
         _allowedWeaponTypes.Clear();
         foreach (Transform child in allowedWeaponsContentTransform) {
@@ -161,6 +166,7 @@ public class ClassPanelUI : MonoBehaviour {
         hpPerLevelInput.text = characterClass.hpPerLevel.ToString();
         baseSPInput.text = characterClass.baseSP.ToString();
         spPerLevelInput.text = characterClass.spPerLevel.ToString();
+        workActionOptions.value = GetDropdownIndex(workActionOptions, characterClass.workActionType.ToString());
 
         for (int i = 0; i < characterClass.allowedWeaponTypes.Count; i++) {
             string weaponType = characterClass.allowedWeaponTypes[i].ToString();
@@ -185,6 +191,14 @@ public class ClassPanelUI : MonoBehaviour {
             return go;
         }
         return null;
+    }
+    private int GetDropdownIndex(Dropdown options, string name) {
+        for (int i = 0; i < options.options.Count; i++) {
+            if (options.options[i].text == name) {
+                return i;
+            }
+        }
+        return 0;
     }
     #endregion
 

@@ -309,6 +309,12 @@ public class ObjectManager : MonoBehaviour {
                 return new GrindAction();
             case ACTION_TYPE.MOVE:
                 return new MoveAction();
+            case ACTION_TYPE.MINING:
+                return new MiningAction();
+            case ACTION_TYPE.WOODCUTTING:
+                return new WoodcuttingAction();
+            case ACTION_TYPE.WORKING:
+                return new WorkingAction();
         }
         return null;
     }

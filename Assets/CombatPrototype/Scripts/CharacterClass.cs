@@ -21,7 +21,6 @@ namespace ECS {
         //private int _dodgeRate;
         //private int _parryRate;
         //private int _blockRate;
-        private CharacterAction _workAction;
         private List<Skill[]> _skillsPerLevel;
 
         #region getters/setters
@@ -59,6 +58,9 @@ namespace ECS {
         public float spPerLevel {
             get { return _spPerLevel; }
         }
+        public ACTION_TYPE workActionType {
+            get { return _workActionType; }
+        }
         //public int dodgeRate {
         //    get { return _dodgeRate; }
         //}
@@ -95,6 +97,7 @@ namespace ECS {
             newClass._hpPerLevel = this._hpPerLevel;
             newClass._baseSP = this._baseSP;
             newClass._spPerLevel = this._spPerLevel;
+            newClass._workActionType = this._workActionType;
             //newClass._dodgeRate = this._dodgeRate;
             //newClass._parryRate = this._parryRate;                        
             //newClass._blockRate = this._blockRate;
@@ -121,6 +124,7 @@ namespace ECS {
             this._hpPerLevel = classComponent.hpPerLevel;
             this._baseSP = classComponent.baseSP;
             this._spPerLevel = classComponent.spPerLevel;
+            this._workActionType = classComponent.workActionType;
             //this._dodgeRate = classComponent.dodgeRate;
             //this._parryRate = classComponent.parryRate;
             //this._blockRate = classComponent.blockRate;
@@ -147,6 +151,7 @@ namespace ECS {
             this._hpPerLevel = int.Parse(ClassPanelUI.Instance.hpPerLevelInput.text);
             this._baseSP = int.Parse(ClassPanelUI.Instance.baseSPInput.text);
             this._spPerLevel = int.Parse(ClassPanelUI.Instance.spPerLevelInput.text);
+            this._workActionType = (ACTION_TYPE)System.Enum.Parse(typeof(ACTION_TYPE), ClassPanelUI.Instance.workActionOptions.options[ClassPanelUI.Instance.workActionOptions.value].text);
 
             this._allowedWeaponTypes = new List<WEAPON_TYPE>();
             for (int i = 0; i < ClassPanelUI.Instance.allowedWeaponTypes.Count; i++) {
@@ -163,12 +168,8 @@ namespace ECS {
         }
 
         public void ConstructData() {
-            ConstructWorkActions();
             ConstructSchedule();
             ConstructSkills();
-        }
-        private void ConstructWorkActions() {
-            _workAction = ObjectManager.Instance.CreateNewCharacterAction(_workActionType);
         }
         private void ConstructSchedule() {
             //TODO

@@ -13,6 +13,7 @@ namespace ECS{
         public float hpPerLevel;
         public float baseSP;
         public float spPerLevel;
+        public ACTION_TYPE workActionType;
         //public int dodgeRate;
         //public int parryRate;
         //public int blockRate;

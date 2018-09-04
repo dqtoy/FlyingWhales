@@ -25,6 +25,8 @@ namespace ECS {
             currCharacterClass.hpPerLevel = EditorGUILayout.FloatField("HP Per Level: ", currCharacterClass.hpPerLevel);
             currCharacterClass.baseSP = EditorGUILayout.FloatField("Base SP: ", currCharacterClass.baseSP);
             currCharacterClass.spPerLevel = EditorGUILayout.FloatField("SP Per Level: ", currCharacterClass.spPerLevel);
+            currCharacterClass.workActionType = (ACTION_TYPE)EditorGUILayout.EnumPopup("Work Action: ", currCharacterClass.workActionType);
+
             //currCharacterClass.dodgeRate = EditorGUILayout.IntField("Dodge Rate: ", currCharacterClass.dodgeRate);
             //currCharacterClass.parryRate = EditorGUILayout.IntField("Parry Rate: ", currCharacterClass.parryRate);
             //currCharacterClass.blockRate = EditorGUILayout.IntField("Block Rate: ", currCharacterClass.blockRate);
