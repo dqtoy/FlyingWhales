@@ -1296,6 +1296,9 @@ public enum ACTION_TYPE {
     IN_PARTY,
     JOIN_PARTY,
     GRIND,
+    MINING,
+    WOODCUTTING,
+    WORKING,
     PARTY,
     READ,
     SING,
@@ -1307,9 +1310,8 @@ public enum ACTION_TYPE {
     STALK,
 }
 public enum ACTION_CATEGORY {
-    NORMAL,
-    IDLE,
-    DESPERATE,
+    WORK,
+    MISC,
 }
 
 public enum OBJECT_TYPE {
@@ -1462,7 +1464,6 @@ public enum ATTRIBUTE_CATEGORY {
     ITEM,
     STRUCTURE,
 }
-
 public enum ATTRIBUTE_BEHAVIOR {
     NONE,
     DEPLETE_FUN,

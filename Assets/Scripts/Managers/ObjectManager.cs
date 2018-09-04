@@ -313,6 +313,12 @@ public class ObjectManager : MonoBehaviour {
                 return new ReadAction();
             case ACTION_TYPE.PARTY:
                 return new PartyAction();
+            case ACTION_TYPE.MINING:
+                return new MiningAction();
+            case ACTION_TYPE.WOODCUTTING:
+                return new WoodcuttingAction();
+            case ACTION_TYPE.WORKING:
+                return new WorkingAction();
         }
         return null;
     }

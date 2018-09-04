@@ -32,6 +32,7 @@ namespace ECS {
         private Area _home;
         private BaseLandmark _homeLandmark;
         private StructureObj _homeStructure;
+        private BaseLandmark _workplace;
         private Region _currentRegion;
         private Weapon _equippedWeapon;
         private CharacterBattleTracker _battleTracker;
@@ -39,6 +40,7 @@ namespace ECS {
         private PortraitSettings _portraitSettings;
         private CharacterPortrait _characterPortrait;
         private Color _characterColor;
+        private CharacterAction _genericWorkAction;
         private List<STATUS_EFFECT> _statusEffects;
         private List<BodyPart> _bodyParts;
         private Dictionary<string, IBodyPart> _bodyPartDict;
@@ -143,6 +145,9 @@ namespace ECS {
         }
         public NewParty currentParty {
             get { return _currentParty; }
+        }
+        public CharacterAction genericWorkAction {
+            get { return _genericWorkAction; }
         }
         public List<CharacterQuestData> questData {
             get { return _questData; }
@@ -438,6 +443,7 @@ namespace ECS {
             _actionQueue = new CharacterActionQueue<ActionQueueItem>(this);
             //previousActions = new Dictionary<CharacterTask, string>();
             _relationships = new Dictionary<Character, Relationship>();
+            _genericWorkAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.WORKING);
             //_actionData = new ActionData(this);
 
 
@@ -2550,8 +2556,8 @@ namespace ECS {
             CharacterAction play = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.PLAY);
             //CharacterAction chat = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.CHAT);
 
-            daydream.SetActionCategory(ACTION_CATEGORY.IDLE);
-            play.SetActionCategory(ACTION_CATEGORY.IDLE);
+            daydream.SetActionCategory(ACTION_CATEGORY.MISC);
+            play.SetActionCategory(ACTION_CATEGORY.MISC);
             //chat.SetActionCategory(ACTION_CATEGORY.IDLE);
 
             _idleActions.Add(daydream);
@@ -2632,7 +2638,7 @@ namespace ECS {
                 CharacterParty party = faction.characters[i].party;
                 if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && party.landmarkLocation != null 
                     && !faction.ownedAreas.Contains(party.landmarkLocation.tileLocation.areaOfTile) && !partyPool.Contains(party) 
-                    && party.actionData.currentAction != null && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.IDLE) {
+                    && party.actionData.currentAction != null && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.MISC) {
                     partyPool.Add(party);
                 }
             }
@@ -2651,7 +2657,7 @@ namespace ECS {
                     CharacterParty party = nonHostileFaction.characters[k].party;
                     if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && party.landmarkLocation != null 
                         && !faction.ownedAreas.Contains(party.landmarkLocation.tileLocation.areaOfTile) && !partyPool.Contains(party) 
-                        && party.actionData.currentAction != null && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.IDLE) {
+                        && party.actionData.currentAction != null && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.MISC) {
                         partyPool.Add(party);
                     }
                 }
@@ -2760,6 +2766,7 @@ namespace ECS {
         public void SetHome(Area newHome) {
             _home = newHome;
             newHome.residents.Add(this);
+            LookForNewWorkplace();
         }
         public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
             this._homeLandmark = newHomeLandmark;
@@ -2770,6 +2777,27 @@ namespace ECS {
             }
             _homeStructure = newHomeStructure;
             newHomeStructure.AdjustNumOfResidents(1);
+        }
+        #endregion
+
+        #region Work
+        private void LookForNewWorkplace() {
+            //TODO: QUESTING action (for Heroes)
+            if(_characterClass.workActionType == ACTION_TYPE.WORKING) {
+                _workplace = _homeLandmark;
+            } else {
+                List<BaseLandmark> workplaceChoices = new List<BaseLandmark>();
+                for (int i = 0; i < _home.landmarks.Count; i++) {
+                    StructureObj structure = _home.landmarks[i].landmarkObj;
+                    for (int j = 0; j < structure.currentState.actions.Count; j++) {
+                        if(structure.currentState.actions[j].actionType == _characterClass.workActionType) {
+                            workplaceChoices.Add(_home.landmarks[i]);
+                            break;
+                        }
+                    }
+                }
+                _workplace = workplaceChoices[UnityEngine.Random.Range(0, workplaceChoices.Count)];
+            }
         }
         #endregion
 

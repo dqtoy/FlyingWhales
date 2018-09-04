@@ -546,13 +546,9 @@ public class Monster : ICharacter, ICharacterSim {
         return _idleActions[Utilities.rng.Next(0, _idleActions.Count)];
     }
     public CharacterAction GetIdleOrDesperateAction(ACTION_CATEGORY category, ACTION_TYPE type) {
-        List<CharacterAction> actionPool = _desperateActions;
-        if (category == ACTION_CATEGORY.IDLE) {
-            actionPool = _idleActions;
-        }
-        for (int i = 0; i < actionPool.Count; i++) {
-            if (actionPool[i].actionData.actionType == type) {
-                return actionPool[i];
+        for (int i = 0; i < _idleActions.Count; i++) {
+            if (_idleActions[i].actionData.actionType == type) {
+                return _idleActions[i];
             }
         }
         return null;
