@@ -77,34 +77,34 @@ public class FactionManager : MonoBehaviour {
             chosenRegion.SetMinimapColor(newFaction.factionColor, 69f / 255f);
         }
     }
-    public void GenerateFactionCharacters() {
-        for (int i = 0; i < allFactions.Count; i++) {
-            Faction currFaction = allFactions[i];
-            for (int j = 0; j < currFaction.ownedLandmarks.Count; j++) {
-                BaseLandmark currLandmark = currFaction.ownedLandmarks[j];
-                CreateInitialFactionCharacters(currFaction, currLandmark);
-            }
-            //CreateChieftainForFaction(currTribe);
-        }
-    }
-    /*
-     Initital tribes should have a chieftain and a village head.
-         */
-    private void CreateInitialFactionCharacters(Faction faction, BaseLandmark landmark) {
-        int numOfCharacters = Random.Range(1, 3); //Generate 1 to 3 characters in each Village with civilians, limit class based on technologies known by its Faction.
-        WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary();
-        for (int i = 0; i < numOfCharacters; i++) {
-            CHARACTER_CLASS chosenClass = CHARACTER_CLASS.WARRIOR;
-            CHARACTER_ROLE chosenRole = characterRoleProductionDictionary.PickRandomElementGivenWeights();
-            RACE randomRace = RACE.HUMANS;
-            if (Random.Range(0, 2) == 1) {
-                randomRace = RACE.ELVES;
-            }
-			ECS.Character newChar = landmark.CreateNewCharacter(randomRace, chosenRole, Utilities.NormalizeString(chosenClass.ToString()));
-			//Initial Character tags
-			newChar.AssignInitialTags();
-        }
-    }
+    //public void GenerateFactionCharacters() {
+    //    for (int i = 0; i < allFactions.Count; i++) {
+    //        Faction currFaction = allFactions[i];
+    //        for (int j = 0; j < currFaction.ownedLandmarks.Count; j++) {
+    //            BaseLandmark currLandmark = currFaction.ownedLandmarks[j];
+    //            CreateInitialFactionCharacters(currFaction, currLandmark);
+    //        }
+    //        //CreateChieftainForFaction(currTribe);
+    //    }
+    //}
+   // /*
+   //  Initital tribes should have a chieftain and a village head.
+   //      */
+   // private void CreateInitialFactionCharacters(Faction faction, BaseLandmark landmark) {
+   //     int numOfCharacters = Random.Range(1, 3); //Generate 1 to 3 characters in each Village with civilians, limit class based on technologies known by its Faction.
+   //     WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary();
+   //     for (int i = 0; i < numOfCharacters; i++) {
+   //         CHARACTER_CLASS chosenClass = CHARACTER_CLASS.WARRIOR;
+   //         CHARACTER_ROLE chosenRole = characterRoleProductionDictionary.PickRandomElementGivenWeights();
+   //         RACE randomRace = RACE.HUMANS;
+   //         if (Random.Range(0, 2) == 1) {
+   //             randomRace = RACE.ELVES;
+   //         }
+			//ECS.Character newChar = landmark.CreateNewCharacter(randomRace, chosenRole, Utilities.NormalizeString(chosenClass.ToString()));
+			////Initial Character tags
+			//newChar.AssignInitialTags();
+   //     }
+   // }
 	private void EquipFullArmorSet(MATERIAL materialToUse, ECS.Character character){
 		if(materialToUse == MATERIAL.NONE){
 			return;

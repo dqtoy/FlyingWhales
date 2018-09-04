@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using ECS;
 using UnityEngine;
 
-public class Wounded : CharacterAttribute {
-    public Wounded(Character character) : base(character, ATTRIBUTE.WOUNDED) {
+public class Wounded : CharacterTag {
+    public Wounded(Character character) : base(character, CHARACTER_TAG.WOUNDED) {
     }
 
     public override void Initialize() {

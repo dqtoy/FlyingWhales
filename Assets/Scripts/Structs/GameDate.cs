@@ -16,8 +16,8 @@ public struct GameDate {
 
     public void AddHours(int amount) {
         this.hour += amount;
-        while (this.hour > GameManager.Instance.hoursPerDay) {
-			this.hour -= GameManager.Instance.hoursPerDay;
+        while (this.hour > GameManager.hoursPerDay) {
+			this.hour -= GameManager.hoursPerDay;
             AddDays(1);
         }
     }

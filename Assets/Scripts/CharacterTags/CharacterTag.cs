@@ -2,19 +2,19 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class CharacterAttribute {
+public class CharacterTag {
 	protected ECS.Character _character;
 	protected string _name;
-	protected ATTRIBUTE _attribute;
-	//protected List<CharacterTask> _tagTasks;
+	protected CHARACTER_TAG _attribute;
 	protected StatsModifierPercentage _statsModifierPercentage;
 	protected bool _isRemoved;
+    protected List<ACTION_TYPE> _grantedActionTypes;
 
 	#region getters/setters
 	public string name {
 		get { return _name; }
 	}
-	public ATTRIBUTE attribute {
+	public CHARACTER_TAG attribute {
 		get { return _attribute; }
 	}
 	public ECS.Character character{
@@ -31,26 +31,18 @@ public class CharacterAttribute {
 	}
 	#endregion
 
-	public CharacterAttribute(ECS.Character character, ATTRIBUTE attribute) {
+	public CharacterTag(ECS.Character character, CHARACTER_TAG attribute) {
 		_character = character;
         _attribute = attribute;
         _name = Utilities.NormalizeStringUpperCaseFirstLetters (_attribute.ToString ());
-		//_tagTasks = new List<CharacterTask> ();
 		_statsModifierPercentage = new StatsModifierPercentage ();
 		_isRemoved = false;
-	}
+        _grantedActionTypes = new List<ACTION_TYPE>();
+
+    }
 
 	#region Virtuals
 	public virtual void Initialize(){}
-	//public virtual void AddTaskWeightsFromTags(WeightedDictionary<CharacterTask> tasks) {
-	//	for (int i = 0; i < _tagTasks.Count; i++) {
-	//		CharacterTask currTask = _tagTasks[i];
-	//		if(currTask.forPlayerOnly || !currTask.AreConditionsMet(_character)){
-	//			continue;
-	//		}
-	//		tasks.AddElement (currTask, currTask.GetSelectionWeight(_character));
-	//	}
-	//}
     /*
      What should happen when a tag is removed
          */
@@ -59,14 +51,4 @@ public class CharacterAttribute {
 	}
     public virtual void PerformDailyAction() {}
 	#endregion
-
-    //public CharacterTask GetTask(TASK_TYPE taskType) {
-    //    for (int i = 0; i < _tagTasks.Count; i++) {
-    //        CharacterTask currTask = _tagTasks[i];
-    //        if (currTask.taskType == taskType) {
-    //            return currTask;
-    //        }
-    //    }
-    //    return null;
-    //}
 }

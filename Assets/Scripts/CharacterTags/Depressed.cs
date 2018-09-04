@@ -2,8 +2,8 @@
 using System.Collections;
 using ECS;
 
-public class Depressed : CharacterAttribute {
-    public Depressed(Character character) : base(character, ATTRIBUTE.DEPRESSED) {
+public class Depressed : CharacterTag {
+    public Depressed(Character character) : base(character, CHARACTER_TAG.DEPRESSED) {
 
     }
 

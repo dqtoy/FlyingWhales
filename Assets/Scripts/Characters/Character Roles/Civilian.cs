@@ -11,9 +11,9 @@ public class Civilian : CharacterRole {
         SetFullness(100);
         SetEnergy(100);
         SetFun(60);
-        SetPrestige(40);
-        SetSanity(100);
-        UpdateSafety();
+        //SetPrestige(40);
+        //SetSanity(100);
+        //UpdateSafety();
         UpdateHappiness();
 
         //_character.onDailyAction += StartDepletion;
@@ -45,6 +45,6 @@ public class Civilian : CharacterRole {
         DepleteEnergy();
         DepleteFun();
         //DepleteSanity();
-        DepletePrestige();
+        //DepletePrestige();
     }
 }

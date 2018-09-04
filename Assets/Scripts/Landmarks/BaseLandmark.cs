@@ -350,27 +350,27 @@ public class BaseLandmark : ILocation {
      Create a new character, given a role and class.
      This will also subtract from the civilian population.
          */
-    public Character CreateNewCharacter(RACE raceOfChar, CHARACTER_ROLE charRole, string className, bool determineAction = true) {
-        //RACE raceOfChar = GetRaceBasedOnProportion();
-        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar, Utilities.GetRandomGender(), _owner);
-        newCharacter.SetHome(this.tileLocation.areaOfTile);
-        //if (reduceCivilians) {
-        //    AdjustCivilians(raceOfChar, -1);
-        //}
-        //NewParty party = newCharacter.CreateNewParty();
-        newCharacter.party.CreateIcon();
-        this.tileLocation.areaOfTile.owner.AddNewCharacter(newCharacter);
-        this.AddCharacterToLocation(newCharacter.party);
-        this.AddCharacterHomeOnLandmark(newCharacter);
-        newCharacter.party.icon.SetPosition(this.tileLocation.transform.position);
-        //if (charRole != CHARACTER_ROLE.FOLLOWER) {
-        //    //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
-        //    if (determineAction) {
-        //        newCharacter.DetermineAction();
-        //    }
-        //}
-        return newCharacter;
-    }
+    //public Character CreateNewCharacter(RACE raceOfChar, CHARACTER_ROLE charRole, string className, bool determineAction = true) {
+    //    //RACE raceOfChar = GetRaceBasedOnProportion();
+    //    Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar, Utilities.GetRandomGender(), _owner);
+    //    newCharacter.SetHome(this.tileLocation.areaOfTile);
+    //    //if (reduceCivilians) {
+    //    //    AdjustCivilians(raceOfChar, -1);
+    //    //}
+    //    //NewParty party = newCharacter.CreateNewParty();
+    //    newCharacter.party.CreateIcon();
+    //    this.tileLocation.areaOfTile.owner.AddNewCharacter(newCharacter);
+    //    this.AddCharacterToLocation(newCharacter.party);
+    //    this.AddCharacterHomeOnLandmark(newCharacter);
+    //    newCharacter.party.icon.SetPosition(this.tileLocation.transform.position);
+    //    //if (charRole != CHARACTER_ROLE.FOLLOWER) {
+    //    //    //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
+    //    //    if (determineAction) {
+    //    //        newCharacter.DetermineAction();
+    //    //    }
+    //    //}
+    //    return newCharacter;
+    //}
     public void AddCharacterHomeOnLandmark(Character character) {
         if (!_charactersWithHomeOnLandmark.Contains(character)) {
             _charactersWithHomeOnLandmark.Add(character);

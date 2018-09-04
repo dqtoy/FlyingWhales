@@ -85,18 +85,18 @@ public class Area {
         for (int i = 0; i < tiles.Count; i++) {
             AddTile(tiles[i], false);
         }
-        if (revalidateTiles) {
-            RevalidateTiles();
-        }
+        //if (revalidateTiles) {
+        //    RevalidateTiles();
+        //}
     }
     public void AddTile(HexTile tile, bool revalidateTiles = true) {
         if (!tiles.Contains(tile)) {
             tiles.Add(tile);
             tile.SetArea(this);
             tile.SetMinimapTileColor(areaColor);
-            if (revalidateTiles) {
-                RevalidateTiles();
-            }
+            //if (revalidateTiles) {
+            //    RevalidateTiles();
+            //}
             OnTileAddedToArea(tile);
             Messenger.Broadcast(Signals.AREA_TILE_ADDED, this, tile);
         }
@@ -105,16 +105,16 @@ public class Area {
         for (int i = 0; i < tiles.Count; i++) {
             RemoveTile(tiles[i], false);
         }
-        if (revalidateTiles) {
-            RevalidateTiles();
-        }
+        //if (revalidateTiles) {
+        //    RevalidateTiles();
+        //}
     }
     public void RemoveTile(HexTile tile, bool revalidateTiles = true) {
         tiles.Remove(tile);
         tile.SetArea(null);
-        if (revalidateTiles) {
-            RevalidateTiles();
-        }
+        //if (revalidateTiles) {
+        //    RevalidateTiles();
+        //}
         OnTileRemovedFromArea(tile);
         Messenger.Broadcast(Signals.AREA_TILE_REMOVED, this, tile);
     }

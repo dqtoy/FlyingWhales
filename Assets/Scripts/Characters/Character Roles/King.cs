@@ -11,9 +11,9 @@ public class King : CharacterRole {
         SetFullness(100);
         SetEnergy(100);
         SetFun(60);
-        SetPrestige(40);
-        SetSanity(100);
-        UpdateSafety();
+        //SetPrestige(40);
+        //SetSanity(100);
+        //UpdateSafety();
         UpdateHappiness();
     }
 

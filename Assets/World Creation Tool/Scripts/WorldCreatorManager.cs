@@ -529,7 +529,6 @@ namespace worldcreator {
                 //Biomes.Instance.GenerateTileBiomeDetails(currTile);
                 Biomes.Instance.LoadPassableStates(currTile);
             }
-            
         }
         public void SetBiomes(HexTile tile, BIOMES biome, bool updateVisuals = true) {
             tile.SetBiome(biome);

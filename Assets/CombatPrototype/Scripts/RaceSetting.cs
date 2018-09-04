@@ -9,7 +9,7 @@ namespace ECS {
         public List<BodyPart> bodyParts;
 
         public int restRegenAmount;
-        public List<ATTRIBUTE> tags;
+        public List<CHARACTER_TAG> tags;
 
         internal RaceSetting CreateNewCopy() {
             RaceSetting newRaceSetting = new RaceSetting();
@@ -29,7 +29,7 @@ namespace ECS {
 			//newRaceSetting.agiWeightAllocation = this.agiWeightAllocation;
 			//newRaceSetting.hpWeightAllocation = this.hpWeightAllocation;
             newRaceSetting.restRegenAmount = this.restRegenAmount;
-            newRaceSetting.tags = new List<ATTRIBUTE>(this.tags);
+            newRaceSetting.tags = new List<CHARACTER_TAG>(this.tags);
             return newRaceSetting;
         }
     }

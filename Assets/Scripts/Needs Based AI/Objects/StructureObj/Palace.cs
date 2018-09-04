@@ -22,8 +22,8 @@ public class Palace : StructureObj {
     #endregion
 
     public void Initialize() {
-        SchedulingManager.Instance.AddEntry(new GameDate(1, 1, 80, 2), () => StartOfMonth()); //so that only cloned palaces schedule monthly
-        SchedulingManager.Instance.AddEntry(new GameDate(1, 1, 80, 48), () => EndOfMonth()); //so that only cloned palaces schedule monthly
+        //SchedulingManager.Instance.AddEntry(new GameDate(1, 1, 80, 2), () => StartOfMonth()); //so that only cloned palaces schedule monthly
+        //SchedulingManager.Instance.AddEntry(new GameDate(1, 1, 80, 48), () => EndOfMonth()); //so that only cloned palaces schedule monthly
     }
 
     private void StartOfMonth() {

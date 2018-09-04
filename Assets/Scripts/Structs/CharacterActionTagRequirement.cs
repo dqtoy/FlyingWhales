@@ -1,0 +1,22 @@
+﻿using ECS;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[System.Serializable]
+public class CharacterActionTagRequirement {
+
+    public ACTION_FILTER_CONDITION condition;
+    public List<CHARACTER_TAG> tags;
+
+    public bool MeetsRequirement(Character character) {
+        if (condition == ACTION_FILTER_CONDITION.IS) {
+            //the character must have ALL the tags to meet the requirement
+            return character.HasTags(tags.ToArray(), true);
+        } else {
+            //the character must have NONE of the tags to meet the requirement
+            return !character.HasTags(tags.ToArray());
+        }
+    }
+
+}

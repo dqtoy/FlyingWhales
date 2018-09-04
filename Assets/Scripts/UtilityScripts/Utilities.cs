@@ -847,6 +847,27 @@ public class Utilities : MonoBehaviour {
         }
         return actionWeightsSummary;
     }
+    public static string GetWeightsSummary<T>(Dictionary<T, float> weights, string title = "Weights Summary: ") {
+        string actionWeightsSummary = title;
+        foreach (KeyValuePair<T, float> kvp in weights) {
+            T key = kvp.Key;
+            float value = kvp.Value;
+            //if(key is Kingdom) {
+            //    actionWeightsSummary += "\n" + ((Kingdom)((object)key)).name + " - " + kvp.Value.ToString();
+            //} else if(key is AlliancePool) {
+            //    actionWeightsSummary += "\n" + ((AlliancePool)((object)key)).name + " - " + kvp.Value.ToString();
+            //} else 
+            if (key is ECS.Character) {
+                actionWeightsSummary += "\n" + (key as ECS.Character).name + " - " + kvp.Value.ToString();
+            } else if (key is BaseLandmark) {
+                actionWeightsSummary += "\n" + (key as BaseLandmark).landmarkName + " - " + kvp.Value.ToString();
+            } else {
+                actionWeightsSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+            }
+
+        }
+        return actionWeightsSummary;
+    }
     public static string GetWeightsSummary<T>(Dictionary<T, Dictionary<T, int>> weights, string title = "Weights Summary: ") {
         string actionWeightsSummary = title;
         foreach (KeyValuePair<T, Dictionary<T, int>> kvp in weights) {
@@ -1553,7 +1574,7 @@ public class Utilities : MonoBehaviour {
     #endregion
 
     #region Character Tags
-    public static int GetTagWorldGenChance(ATTRIBUTE tag){
+    public static int GetTagWorldGenChance(CHARACTER_TAG tag){
 		switch(tag){
 		//case ATTRIBUTE.HERBALIST:
 		//case ATTRIBUTE.RITUALIST:

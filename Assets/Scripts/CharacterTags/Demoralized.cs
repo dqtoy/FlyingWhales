@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using ECS;
 using UnityEngine;
 
-public class Demoralized : CharacterAttribute {
-    public Demoralized(Character character) : base(character, ATTRIBUTE.DEMORALIZED) {
+public class Demoralized : CharacterTag {
+    public Demoralized(Character character) : base(character, CHARACTER_TAG.DEMORALIZED) {
     }
 
     public override void Initialize() {

@@ -13,9 +13,9 @@ public class PatrolAction : CharacterAction {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
         GiveAllReward(party);
-        if (party.IsFull(NEEDS.PRESTIGE)) {
+        //if (party.IsFull(NEEDS.PRESTIGE)) {
             EndAction(party, targetObject);
-        }
+        //}
     }
     public override CharacterAction Clone() {
         PatrolAction patrolAction = new PatrolAction();

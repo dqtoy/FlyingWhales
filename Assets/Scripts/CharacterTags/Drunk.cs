@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 
-public class Drunk : CharacterAttribute {
-    public Drunk(Character character) : base(character, ATTRIBUTE.DRUNK) {
+public class Drunk : CharacterTag {
+    public Drunk(Character character) : base(character, CHARACTER_TAG.DRUNK) {
 
     }
 

@@ -42,9 +42,9 @@ public class Hero : CharacterRole {
         SetFullness(100);
         SetEnergy(100);
         SetFun(60);
-        SetPrestige(0);
-        SetSanity(100);
-        UpdateSafety();
+        //SetPrestige(0);
+        //SetSanity(100);
+        //UpdateSafety();
         UpdateHappiness();
     }
 
@@ -70,6 +70,6 @@ public class Hero : CharacterRole {
         DepleteEnergy();
         DepleteFun();
         //DepleteSanity();
-        DepletePrestige();
+        //DepletePrestige();
     }
 }

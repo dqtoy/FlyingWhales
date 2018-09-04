@@ -16,7 +16,7 @@ namespace ECS{
 		//public int agiWeightAllocation;
 		//public int hpWeightAllocation;
         public int restRegenAmount;
-        public List<ATTRIBUTE> tags;
+        public List<CHARACTER_TAG> tags;
 	}
 }
 

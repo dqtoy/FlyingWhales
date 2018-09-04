@@ -62,7 +62,7 @@ MonoBehaviour:
     - _actionData:
         actionType: 0
         actionCategory: 0
-        actionName: 
+        actionName: Rest
         filters: []
         advertisedFullness: 0
         advertisedFun: 0
@@ -99,7 +99,7 @@ MonoBehaviour:
     - _actionData:
         actionType: 4
         actionCategory: 0
-        actionName: 
+        actionName: Eat
         filters: []
         advertisedFullness: 180
         advertisedFun: 0
@@ -117,6 +117,43 @@ MonoBehaviour:
         successRate: 0
         duration: 4
         hpRecoveredPercentage: 8
+        resourceGiven: 0
+        minResourceGiven: 0
+        maxResourceGiven: 0
+        resourceNeeded: 0
+        resourceAmountNeeded: 0
+        providedExp: 0
+        successFunction:
+          m_PersistentCalls:
+            m_Calls: []
+          m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+        failFunction:
+          m_PersistentCalls:
+            m_Calls: []
+          m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    - _actionData:
+        actionType: 41
+        actionCategory: 0
+        actionName: Woodcutting
+        filters: []
+        advertisedFullness: 0
+        advertisedFun: 0
+        advertisedEnergy: 0
+        advertisedPrestige: 0
+        advertisedSanity: 0
+        advertisedSafety: 0
+        advertisedResource: 0
+        providedFullness: 0
+        providedFun: 10
+        providedEnergy: 0
+        providedPrestige: 0
+        providedSanity: 0
+        providedSafety: 0
+        successRate: 0
+        duration: 4
+        hpRecoveredPercentage: 0
         resourceGiven: 0
         minResourceGiven: 0
         maxResourceGiven: 0

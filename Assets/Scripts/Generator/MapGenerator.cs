@@ -77,7 +77,7 @@ public class MapGenerator : MonoBehaviour {
         //Biomes.Instance.GenerateTileBiomeDetails(GridMap.Instance.hexTiles);
 
         LandmarkManager.Instance.InitializeLandmarks();
-        CharacterManager.Instance.GenerateCharactersForTesting(8);
+        //CharacterManager.Instance.GenerateCharactersForTesting(8);
         CameraMove.Instance.UpdateMinimapTexture();
         QuestManager.Instance.Initialize();
         if (SteamManager.Initialized) {
