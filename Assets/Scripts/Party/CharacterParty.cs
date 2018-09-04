@@ -82,11 +82,6 @@ public class CharacterParty : NewParty {
         }
         return true;
     }
-    public void AssignRandomDesperateAction() {
-        IObject targetObject = null;
-        CharacterAction action = mainCharacter.GetRandomDesperateAction(ref targetObject);
-        actionData.AssignAction(action, targetObject);
-    }
     public void AssignRandomIdleAction() {
         IObject targetObject = null;
         CharacterAction action = mainCharacter.GetRandomIdleAction(ref targetObject);

@@ -236,7 +236,7 @@ public class CharacterManager : MonoBehaviour {
         for (int i = 0; i < classes.Length; i++) {
             CharacterClass currentClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(classes[i]));
             //CharacterClass currentClass = new CharacterClass();
-            currentClass.ConstructSkills();
+            currentClass.ConstructData();
             _classesDictionary.Add(currentClass.className, currentClass);
         }
     }

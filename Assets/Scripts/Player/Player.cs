@@ -39,7 +39,7 @@ public class Player : ILeader{
         //Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_ADDED, OnTileAddedToPlayerArea);
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
         Messenger.AddListener<Character>(Signals.CHARACTER_RELEASED, OnCharacterReleased);
-        ConstructPlayerActions();
+        //ConstructPlayerActions();
     }
 
     #region Corruption

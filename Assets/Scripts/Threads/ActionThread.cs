@@ -94,7 +94,7 @@ public class ActionThread : Multithread {
             }
             if (chosenAction == null) {
                 //perform desperate action if no action was taken
-                chosenAction = character.GetRandomDesperateAction(ref chosenObject);
+                chosenAction = character.GetRandomIdleAction(ref chosenObject);
             }
         }
 

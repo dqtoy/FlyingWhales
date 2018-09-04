@@ -50,7 +50,6 @@ namespace ECS {
         private List<CharacterQuestData> _questData;
         private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
         private CharacterActionQueue<ActionQueueItem> _actionQueue;
-        private List<CharacterAction> _desperateActions;
         private List<CharacterAction> _idleActions;
         private Dictionary<Character, Relationship> _relationships;
         private Dictionary<ELEMENT, float> _elementalWeaknesses;
@@ -341,9 +340,6 @@ namespace ECS {
         public ICHARACTER_TYPE icharacterType {
             get { return ICHARACTER_TYPE.CHARACTER; }
         }
-        public List<CharacterAction> desperateActions {
-            get { return _desperateActions; }
-        }
         public List<CharacterAction> idleActions {
             get { return _idleActions; }
         }
@@ -456,7 +452,6 @@ namespace ECS {
             combatHistory = new Dictionary<int, Combat>();
 
             GetRandomCharacterColor();
-            ConstructDesperateActions();
             ConstructIdleActions();
             //_combatHistoryID = 0;
             SubscribeToSignals();
@@ -2544,20 +2539,6 @@ namespace ECS {
                 snatcherLair.AddCharacterToLocation(ownParty);
             }
         }
-        private void ConstructDesperateActions() {
-            _desperateActions = new List<CharacterAction>();
-            CharacterAction berserk = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.BERSERK);
-            CharacterAction selfMutilate = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.SELFMUTILATE);
-            CharacterAction flail = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.FLAIL);
-
-            berserk.SetActionCategory(ACTION_CATEGORY.DESPERATE);
-            selfMutilate.SetActionCategory(ACTION_CATEGORY.DESPERATE);
-            flail.SetActionCategory(ACTION_CATEGORY.DESPERATE);
-
-            _desperateActions.Add(berserk);
-            _desperateActions.Add(selfMutilate);
-            _desperateActions.Add(flail);
-        }
         private void ConstructIdleActions() {
             _idleActions = new List<CharacterAction>();
             CharacterAction daydream = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DAYDREAM);
@@ -2571,11 +2552,6 @@ namespace ECS {
             _idleActions.Add(daydream);
             _idleActions.Add(play);
             //_idleActions.Add(chat);
-        }
-        public CharacterAction GetRandomDesperateAction(ref IObject targetObject) {
-            targetObject = _ownParty.characterObject;
-            CharacterAction chosenAction = _desperateActions[Utilities.rng.Next(0, _desperateActions.Count)];
-            return chosenAction;
         }
         public CharacterAction GetRandomIdleAction(ref IObject targetObject) {
             targetObject = _ownParty.characterObject;
@@ -2604,13 +2580,9 @@ namespace ECS {
             return chosenAction;
         }
         public CharacterAction GetIdleOrDesperateAction(ACTION_CATEGORY category, ACTION_TYPE type) {
-            List<CharacterAction> actionPool = _desperateActions;
-            if(category == ACTION_CATEGORY.IDLE) {
-                actionPool = _idleActions;
-            }
-            for (int i = 0; i < actionPool.Count; i++) {
-                if(actionPool[i].actionData.actionType == type) {
-                    return actionPool[i];
+            for (int i = 0; i < _idleActions.Count; i++) {
+                if(_idleActions[i].actionData.actionType == type) {
+                    return _idleActions[i];
                 }
             }
             return null;

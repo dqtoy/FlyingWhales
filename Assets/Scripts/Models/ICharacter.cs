@@ -44,7 +44,6 @@ public interface ICharacter {
     Dictionary<ELEMENT, float> elementalResistances { get; }
     List<Skill> skills { get; }
     List<BodyPart> bodyParts { get; }
-    List<CharacterAction> desperateActions { get; }
     List<CharacterAction> idleActions { get; }
     PortraitSettings portraitSettings { get; }
     NewParty ownParty { get; }
@@ -77,7 +76,6 @@ public interface ICharacter {
     bool IsInOwnParty();
     int GetDef();
     NewParty CreateOwnParty();
-    CharacterAction GetRandomDesperateAction(ref IObject targetObject);
     CharacterAction GetRandomIdleAction(ref IObject targetObject);
     CharacterAction GetIdleOrDesperateAction(ACTION_CATEGORY category, ACTION_TYPE type);
     CharacterAttribute AssignTag(ATTRIBUTE tag); //Character only

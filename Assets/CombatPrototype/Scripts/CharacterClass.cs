@@ -16,10 +16,12 @@ namespace ECS {
         [SerializeField] private List<WEAPON_TYPE> _allowedWeaponTypes;
         [SerializeField] private List<RESOURCE> _harvestResources;
         [SerializeField] private List<StringListWrapper> _skillsPerLevelNames;
+        [SerializeField] private ACTION_TYPE _workActionType;
 
         //private int _dodgeRate;
         //private int _parryRate;
         //private int _blockRate;
+        private CharacterAction _workAction;
         private List<Skill[]> _skillsPerLevel;
 
         #region getters/setters
@@ -160,7 +162,18 @@ namespace ECS {
             }
         }
 
-        public void ConstructSkills() {
+        public void ConstructData() {
+            ConstructWorkActions();
+            ConstructSchedule();
+            ConstructSkills();
+        }
+        private void ConstructWorkActions() {
+            _workAction = ObjectManager.Instance.CreateNewCharacterAction(_workActionType);
+        }
+        private void ConstructSchedule() {
+            //TODO
+        }
+        private void ConstructSkills() {
             _skillsPerLevel = new List<Skill[]>();
             for (int i = 0; i < _skillsPerLevelNames.Count; i++) {
                 Skill[] skillArray = new Skill[_skillsPerLevelNames[i].list.Count];
