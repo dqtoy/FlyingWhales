@@ -52,7 +52,7 @@ namespace ECS {
         private List<CharacterQuestData> _questData;
         private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
         private CharacterActionQueue<ActionQueueItem> _actionQueue;
-        private List<CharacterAction> _idleActions;
+        private List<CharacterAction> _miscActions;
         private Dictionary<Character, Relationship> _relationships;
         private Dictionary<ELEMENT, float> _elementalWeaknesses;
         private Dictionary<ELEMENT, float> _elementalResistances;
@@ -345,8 +345,8 @@ namespace ECS {
         public ICHARACTER_TYPE icharacterType {
             get { return ICHARACTER_TYPE.CHARACTER; }
         }
-        public List<CharacterAction> idleActions {
-            get { return _idleActions; }
+        public List<CharacterAction> miscActions {
+            get { return _miscActions; }
         }
         public int mentalPoints {
             get { return _mentalPoints; }
@@ -458,7 +458,7 @@ namespace ECS {
             combatHistory = new Dictionary<int, Combat>();
 
             GetRandomCharacterColor();
-            ConstructIdleActions();
+            ConstructMiscActions();
             //_combatHistoryID = 0;
             SubscribeToSignals();
         }
@@ -1933,7 +1933,7 @@ namespace ECS {
             if (party.isIdle) {
                 return false;
             }
-            if (this.party.actionData.currentAction == null || idleActions.Contains(this.party.actionData.currentAction)) {
+            if (this.party.actionData.currentAction == null || miscActions.Contains(this.party.actionData.currentAction)) {
                 //accept invitation
                 this.actionQueue.Clear();
                 this.party.actionData.ForceDoAction(inviter.ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.JOIN_PARTY), inviter.ownParty.icharacterObject);
@@ -2545,23 +2545,23 @@ namespace ECS {
                 snatcherLair.AddCharacterToLocation(ownParty);
             }
         }
-        private void ConstructIdleActions() {
-            _idleActions = new List<CharacterAction>();
-            CharacterAction daydream = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DAYDREAM);
-            CharacterAction play = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.PLAY);
+        private void ConstructMiscActions() {
+            _miscActions = new List<CharacterAction>();
+            CharacterAction read = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.READ);
+            CharacterAction foolingAround = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.FOOLING_AROUND);
             //CharacterAction chat = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.CHAT);
 
-            daydream.SetActionCategory(ACTION_CATEGORY.MISC);
-            play.SetActionCategory(ACTION_CATEGORY.MISC);
+            read.SetActionCategory(ACTION_CATEGORY.MISC);
+            read.SetActionCategory(ACTION_CATEGORY.MISC);
             //chat.SetActionCategory(ACTION_CATEGORY.IDLE);
 
-            _idleActions.Add(daydream);
-            _idleActions.Add(play);
+            _miscActions.Add(read);
+            _miscActions.Add(foolingAround);
             //_idleActions.Add(chat);
         }
-        public CharacterAction GetRandomIdleAction(ref IObject targetObject) {
+        public CharacterAction GetRandomMiscAction(ref IObject targetObject) {
             targetObject = _ownParty.characterObject;
-            CharacterAction chosenAction = _idleActions[Utilities.rng.Next(0, _idleActions.Count)];
+            CharacterAction chosenAction = _miscActions[Utilities.rng.Next(0, _miscActions.Count)];
             if (chosenAction is ChatAction) {
                 List<CharacterParty> partyPool = new List<CharacterParty>();
                 CharacterParty chosenParty = GetPriority1TargetChatAction(partyPool);
@@ -2575,9 +2575,9 @@ namespace ECS {
                     }
                 }
                 if(chosenParty == null) {
-                    _idleActions.Remove(chosenAction);
-                    CharacterAction newChosenAction = _idleActions[Utilities.rng.Next(0, _idleActions.Count)];
-                    _idleActions.Add(chosenAction);
+                    _miscActions.Remove(chosenAction);
+                    CharacterAction newChosenAction = _miscActions[Utilities.rng.Next(0, _miscActions.Count)];
+                    _miscActions.Add(chosenAction);
                     return newChosenAction;
                 } else {
                     targetObject = chosenParty.icharacterObject;
@@ -2585,13 +2585,21 @@ namespace ECS {
             }
             return chosenAction;
         }
-        public CharacterAction GetIdleOrDesperateAction(ACTION_CATEGORY category, ACTION_TYPE type) {
-            for (int i = 0; i < _idleActions.Count; i++) {
-                if(_idleActions[i].actionData.actionType == type) {
-                    return _idleActions[i];
+        public CharacterAction GetMiscAction(ACTION_TYPE type) {
+            for (int i = 0; i < _miscActions.Count; i++) {
+                if(_miscActions[i].actionData.actionType == type) {
+                    return _miscActions[i];
                 }
             }
             return null;
+        }
+        public void AddMiscAction(CharacterAction characterAction) {
+            if (!_miscActions.Contains(characterAction)) {
+                _miscActions.Add(characterAction);
+            }
+        }
+        public void RemoveMiscAction(CharacterAction characterAction) {
+            _miscActions.Remove(characterAction);
         }
 
         private CharacterParty GetPriority1TargetChatAction(List<CharacterParty> partyPool) {

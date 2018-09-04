@@ -8,10 +8,15 @@ public class CharacterAction {
     //protected ObjectState _state;
     protected ActionFilter[] _filters;
     [SerializeField] protected CharacterActionData _actionData;
+    protected int _weight;
+
 
     #region getters/setters
     public ACTION_TYPE actionType {
         get { return _actionData.actionType; }
+    }
+    public int weight {
+        get { return _weight; }
     }
     public ActionFilter[] filters {
         get { return _filters; }
@@ -28,6 +33,7 @@ public class CharacterAction {
         //_state = state;
         _actionData.actionType = actionType;
         _actionData.actionName = Utilities.NormalizeStringUpperCaseFirstLetters(actionType.ToString());
+        _weight = 100;
     }
 
     #region Virtuals
@@ -198,6 +204,9 @@ public class CharacterAction {
                 action._actionData.prerequisites[i].SetAction(action);
             }
         }
+    }
+    public void AdjustWeight(int amount) {
+        _weight += amount;
     }
     #endregion
 

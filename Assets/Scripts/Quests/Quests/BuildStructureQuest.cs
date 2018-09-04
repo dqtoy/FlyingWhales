@@ -73,12 +73,12 @@ public class BuildStructureQuest : Quest {
                 } else {
                     //If not, abandon Quest and perform an Idle Action.
                     buildQuestData.AbandonQuest();
-                    return new QuestAction(character.GetRandomIdleAction(ref targetObject), targetObject);
+                    return new QuestAction(character.GetRandomMiscAction(ref targetObject), targetObject);
                 }
             } else {
                 //If not, abandon Quest and perform an Idle Action.
                 buildQuestData.AbandonQuest();
-                return new QuestAction(character.GetRandomIdleAction(ref targetObject), targetObject);
+                return new QuestAction(character.GetRandomMiscAction(ref targetObject), targetObject);
             }
         }
         //return base.GetQuestAction(character, data, ref targetObject);

@@ -174,7 +174,7 @@ public class ActionData {
                                 AssignAction(newAction, currentTargetObject);
                             }
                         } else {
-                            if (!_party.mainCharacter.idleActions.Contains(currentAction)) {
+                            if (!_party.mainCharacter.miscActions.Contains(currentAction)) {
                                 currentAction.EndAction(_party, currentTargetObject);
                                 return;
                             }

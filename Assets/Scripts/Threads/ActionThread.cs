@@ -94,7 +94,7 @@ public class ActionThread : Multithread {
             }
             if (chosenAction == null) {
                 //perform desperate action if no action was taken
-                chosenAction = character.GetRandomIdleAction(ref chosenObject);
+                chosenAction = character.GetRandomMiscAction(ref chosenObject);
             }
         }
 
@@ -165,7 +165,7 @@ public class ActionThread : Multithread {
             }
         } else { //If no, choose a random Idle Action
             IObject targetObject = null;
-            chosenAction = character.GetRandomIdleAction(ref targetObject);
+            chosenAction = character.GetRandomMiscAction(ref targetObject);
             chosenObject = targetObject;
             actionLog += "\n" + character.name + " chose to " + chosenAction.actionData.actionName + " " + chosenObject.objectName;
         }
@@ -175,7 +175,7 @@ public class ActionThread : Multithread {
         //If Squad Follower, choose only from available Solo Quests, if None, perform a random Idle Action
         if (availableQuests.Count == 0) {
             IObject targetObject = null;
-            chosenAction = character.GetRandomIdleAction(ref targetObject);
+            chosenAction = character.GetRandomMiscAction(ref targetObject);
             chosenObject = targetObject;
             actionLog += "\n" + character.name + " chose to " + chosenAction.actionData.actionName + " " + chosenObject.objectName;
         } else {
@@ -194,7 +194,7 @@ public class ActionThread : Multithread {
         if (availableQuests.Count == 0) {
             //if no available Solo Quest, perform a random Idle Action
             IObject targetObject = null;
-            chosenAction = character.GetRandomIdleAction(ref targetObject);
+            chosenAction = character.GetRandomMiscAction(ref targetObject);
             chosenObject = targetObject;
             actionLog += "\n" + character.name + " chose to " + chosenAction.actionData.actionName + " " + chosenObject.objectName;
         } else {
@@ -233,7 +233,7 @@ public class ActionThread : Multithread {
                     throw new Exception("Cannot find action from " + chosenQuestData.parentQuest.questType.ToString());
                 }
             } else { //no quests
-                chosenAction = _party.mainCharacter.GetRandomIdleAction(ref chosenObject); //Characters with no Quests with Happiness above 100 should perform a random Idle Action
+                chosenAction = _party.mainCharacter.GetRandomMiscAction(ref chosenObject); //Characters with no Quests with Happiness above 100 should perform a random Idle Action
                 return true;
             }
         }

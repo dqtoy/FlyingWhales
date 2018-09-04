@@ -45,8 +45,7 @@ public class Monster : ICharacter, ICharacterSim {
     //private Combat _currentCombat;
     private SIDES _currentSide;
     private List<BodyPart> _bodyParts;
-    private List<CharacterAction> _desperateActions;
-    private List<CharacterAction> _idleActions;
+    private List<CharacterAction> _miscActions;
     private List<Skill> _skills;
     private Dictionary<ELEMENT, float> _elementalWeaknesses;
     private Dictionary<ELEMENT, float> _elementalResistances;
@@ -220,11 +219,8 @@ public class Monster : ICharacter, ICharacterSim {
     public NewParty ownParty {
         get { return _ownParty; }
     }
-    public List<CharacterAction> desperateActions {
-        get { return _desperateActions; }
-    }
-    public List<CharacterAction> idleActions {
-        get { return _idleActions; }
+    public List<CharacterAction> miscActions {
+        get { return _miscActions; }
     }
     public Squad squad {
         get { return _squad; }
@@ -420,8 +416,7 @@ public class Monster : ICharacter, ICharacterSim {
     #region Interface
     private void BaseInitialize() {
         _isDead = false;
-        _desperateActions = new List<CharacterAction>();
-        _idleActions = new List<CharacterAction>();
+        _miscActions = new List<CharacterAction>();
         _raceSetting = RaceManager.Instance.racesDictionary[_type.ToString()].CreateNewCopy();
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
         _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
@@ -442,8 +437,7 @@ public class Monster : ICharacter, ICharacterSim {
     }
     private void BaseInitializeSim() {
         _isDead = false;
-        _desperateActions = new List<CharacterAction>();
-        _idleActions = new List<CharacterAction>();
+        _miscActions = new List<CharacterAction>();
         _raceSetting = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText(Utilities.dataPath + "RaceSettings/" + _type.ToString() +".json"));
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
         _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
@@ -539,16 +533,13 @@ public class Monster : ICharacter, ICharacterSim {
     public void AddHistory(Log log) {
         //No history
     }
-    public CharacterAction GetRandomDesperateAction(ref IObject targetObject) {
-        return _desperateActions[Utilities.rng.Next(0, _desperateActions.Count)];
+    public CharacterAction GetRandomMiscAction(ref IObject targetObject) {
+        return _miscActions[Utilities.rng.Next(0, _miscActions.Count)];
     }
-    public CharacterAction GetRandomIdleAction(ref IObject targetObject) {
-        return _idleActions[Utilities.rng.Next(0, _idleActions.Count)];
-    }
-    public CharacterAction GetIdleOrDesperateAction(ACTION_CATEGORY category, ACTION_TYPE type) {
-        for (int i = 0; i < _idleActions.Count; i++) {
-            if (_idleActions[i].actionData.actionType == type) {
-                return _idleActions[i];
+    public CharacterAction GetMiscAction(ACTION_CATEGORY category, ACTION_TYPE type) {
+        for (int i = 0; i < _miscActions.Count; i++) {
+            if (_miscActions[i].actionData.actionType == type) {
+                return _miscActions[i];
             }
         }
         return null;

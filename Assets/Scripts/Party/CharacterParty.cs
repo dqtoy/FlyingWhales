@@ -82,9 +82,9 @@ public class CharacterParty : NewParty {
         }
         return true;
     }
-    public void AssignRandomIdleAction() {
+    public void AssignRandomMiscAction() {
         IObject targetObject = null;
-        CharacterAction action = mainCharacter.GetRandomIdleAction(ref targetObject);
+        CharacterAction action = mainCharacter.GetRandomMiscAction(ref targetObject);
         actionData.AssignAction(action, targetObject);
     }
     public bool IsOwnerDead() {
