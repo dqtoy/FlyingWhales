@@ -256,6 +256,9 @@ namespace ECS {
         public StructureObj homeStructure {
             get { return _homeStructure; }
         }
+        public BaseLandmark workplace {
+            get { return _workplace; }
+        }
         public float remainingHP { //Percentage of remaining HP this character has
             get { return (float) currentHP / (float) maxHP; }
         }

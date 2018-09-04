@@ -134,9 +134,9 @@ MonoBehaviour:
           m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
             PublicKeyToken=null
     - _actionData:
-        actionType: 38
+        actionType: 41
         actionCategory: 0
-        actionName: Eat
+        actionName: Woodcutting
         filters: []
         advertisedFullness: 0
         advertisedFun: 0

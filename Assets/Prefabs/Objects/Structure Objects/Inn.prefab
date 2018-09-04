@@ -177,9 +177,9 @@ MonoBehaviour:
           m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
             PublicKeyToken=null
     - _actionData:
-        actionType: 37
+        actionType: 40
         actionCategory: 0
-        actionName: Drink
+        actionName: Mining
         filters:
         - filterType: 0
           condition: 0

@@ -64,10 +64,8 @@ public class ActionThread : Multithread {
                 } else if(character.role.roleType == CHARACTER_ROLE.CIVILIAN) { //if character is civilian
                     actionLog += "\nDetermining civilian work action...";
                     //get work action based on class (Farmer, Miner, etc.) then do that until work period ends.
-                    //TODO: Change this to get actions based on class
-                    IObject targetObject = null;
-                    chosenAction = character.GetRandomIdleAction(ref targetObject);
-                    chosenObject = targetObject;
+                    chosenObject = character.workplace.landmarkObj;
+                    chosenAction = character.workplace.landmarkObj.currentState.GetAction(character.characterClass.workActionType);
                     _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
                     actionLog += "\nGot civilian work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
                 }

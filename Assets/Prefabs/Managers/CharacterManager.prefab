@@ -840,11 +840,12 @@ MonoBehaviour:
   - {fileID: 9100000, guid: 391c4c9ecbeeb4e44bea4fd871b44df7, type: 2}
   - {fileID: 9100000, guid: a980adc8910cb7847b091bec2c84c0e2, type: 2}
   miscActionRequirements:
-    m_keys: 2500000027000000280000001700000029000000260000002a0000002b0000001e0000002c0000002d000000
+    m_keys: 28000000290000002a0000002b000000170000002c0000002d0000002e0000001e0000002f00000030000000
     m_values:
     - data:
       - condition: 0
         tags: 13000000
+    - data: []
     - data:
       - condition: 0
         tags: 14000000
@@ -861,7 +862,6 @@ MonoBehaviour:
     - data:
       - condition: 0
         tags: 19000000
-    - data: []
     - data: []
     - data: []
     - data: []
