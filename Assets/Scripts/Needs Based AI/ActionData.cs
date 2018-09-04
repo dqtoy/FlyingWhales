@@ -22,6 +22,9 @@ public class ActionData {
     private bool _cannotPerformAction;
     private float _homeMultiplier;
 
+    public bool isCurrentActionFromEvent { get { return false; }} //TODO: change this to actually be set if a character's action comes from an event.
+    public SCHEDULE_PHASE_TYPE currentActionPhaseType { get; private set; }
+
     #if UNITY_EDITOR
     public List<string> actionHistory;
     #endif
@@ -113,6 +116,9 @@ public class ActionData {
     public void EndAction() {
         isDone = true;
     }
+    public void SetCurrentActionPhaseType(SCHEDULE_PHASE_TYPE phaseType) {
+        currentActionPhaseType = phaseType;
+    }
     public void SetCurrentAction(CharacterAction action) {
         this.currentAction = action;
     }
@@ -164,7 +170,8 @@ public class ActionData {
                     DoAction();
                 } else {
                     ILocation characterLocation = _party.specificLocation;
-                    if (characterLocation != null && currentTargetObject.specificLocation != null && characterLocation.tileLocation.id == currentTargetObject.specificLocation.tileLocation.id) {
+                    if (characterLocation != null && currentTargetObject.specificLocation != null 
+                        && characterLocation.tileLocation.id == currentTargetObject.specificLocation.tileLocation.id) {
                         //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action
                         //if (currentAction.state.stateName != currentAction.state.obj.currentState.stateName) {
                         CharacterAction newAction = currentTargetObject.currentState.GetActionInState(currentAction);
@@ -231,29 +238,29 @@ public class ActionData {
 
     private void LookForAction() {
         isWaiting = true;
-        GameManager.Instance.StartCoroutine(LookForActionCoroutine());
+        //GameManager.Instance.StartCoroutine(LookForActionCoroutine());
         //for (int i = 0; i < _party.questData.Count; i++) {
         //    CharacterQuestData questData = _party.questData[i];
         //    GameManager.Instance.StartCoroutine(questData.SetupValuesCoroutine());
         //}
-        //MultiThreadPool.Instance.AddToThreadPool(actionThread);
-    }
-
-    private IEnumerator LookForActionCoroutine() {
-        List<CharacterQuestData> dataToSetup = new List<CharacterQuestData>(_party.questData);
-        if (_party.owner is ECS.Character && (_party.owner as ECS.Character).IsSquadLeader()) {
-            dataToSetup.AddRange(_party.owner.squad.GetSquadQuestData());
-        } else {
-            dataToSetup.AddRange(_party.questData);
-        }
-
-        for (int i = 0; i < dataToSetup.Count; i++) {
-            CharacterQuestData questData = dataToSetup[i];
-            yield return GameManager.Instance.StartCoroutine(questData.SetupValuesCoroutine());
-        }
         MultiThreadPool.Instance.AddToThreadPool(actionThread);
-        //Debug.Log(_party.mainCharacter.name + " Look For action coroutine done!");
     }
+
+    //private IEnumerator LookForActionCoroutine() {
+    //    List<CharacterQuestData> dataToSetup = new List<CharacterQuestData>(_party.questData);
+    //    if (_party.owner is ECS.Character && (_party.owner as ECS.Character).IsSquadLeader()) {
+    //        dataToSetup.AddRange(_party.owner.squad.GetSquadQuestData());
+    //    } else {
+    //        dataToSetup.AddRange(_party.questData);
+    //    }
+
+    //    for (int i = 0; i < dataToSetup.Count; i++) {
+    //        CharacterQuestData questData = dataToSetup[i];
+    //        yield return GameManager.Instance.StartCoroutine(questData.SetupValuesCoroutine());
+    //    }
+    //    MultiThreadPool.Instance.AddToThreadPool(actionThread);
+    //    //Debug.Log(_party.mainCharacter.name + " Look For action coroutine done!");
+    //}
 
     //Checks if the character has already done an action in his home settlement
     private void CheckDoneActionHome() {

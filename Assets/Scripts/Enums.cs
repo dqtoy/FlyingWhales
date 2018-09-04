@@ -1038,11 +1038,11 @@ public enum STATUS_EFFECT {
     BURNING,
 	CONFUSED,
 }
-public enum CHARACTER_ATTRIBUTES {
-    STRENGTH,
-    INTELLIGENCE,
-    AGILITY
-}
+//public enum CHARACTER_ATTRIBUTES {
+//    STRENGTH,
+//    INTELLIGENCE,
+//    AGILITY
+//}
 
 public enum ITEM_TYPE{
 	WEAPON,
@@ -1105,7 +1105,7 @@ public enum ENCOUNTERABLE{
 	PARTY,
 }
 
-public enum ATTRIBUTE{
+public enum CHARACTER_TAG{
     SAPIENT,
 
     HUNGRY,
@@ -1133,7 +1133,18 @@ public enum ATTRIBUTE{
 
     IMPULSIVE,
     BETRAYED,
-    HEARTBROKEN
+    HEARTBROKEN,
+
+    GREGARIOUS,
+    HUMAN,
+    ELF,
+    DEAF,
+    MUTE,
+    DAYDREAMER,
+    MEDITATOR,
+    INTROVERT,
+    EXTROVERT,
+    BOOKWORM,
 }
 
 public enum PRODUCTION_TYPE{
@@ -1284,7 +1295,16 @@ public enum ACTION_TYPE {
     FORM_PARTY,
     IN_PARTY,
     JOIN_PARTY,
-    GRIND
+    GRIND,
+    PARTY,
+    READ,
+    SING,
+    PLAY_INSTRUMENT,
+    MEDITATE,
+    FOOL_AROUND,
+    HOUSE_KEEP,
+    ARGUE,
+    STALK,
 }
 public enum ACTION_CATEGORY {
     NORMAL,
@@ -1309,9 +1329,9 @@ public enum NEEDS {
     FULLNESS,
     ENERGY,
     FUN,
-    PRESTIGE,
-    SANITY,
-    SAFETY,
+    //PRESTIGE,
+    //SANITY,
+    //SAFETY,
 }
 
 public enum ACTION_FILTER_TYPE {
@@ -1446,4 +1466,10 @@ public enum ATTRIBUTE_CATEGORY {
 public enum ATTRIBUTE_BEHAVIOR {
     NONE,
     DEPLETE_FUN,
+}
+
+public enum SCHEDULE_PHASE_TYPE {
+    WORK,
+    MISC,
+    SPECIAL,
 }

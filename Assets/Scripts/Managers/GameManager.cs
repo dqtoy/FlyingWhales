@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour {
 	public int days;
 	public int year;
     public int hour;
-    public int hoursPerDay;
+    public const int hoursPerDay = 144;
 
     public int startYear;
 
@@ -90,7 +90,7 @@ public class GameManager : MonoBehaviour {
         return new GameDate(this.month, this.days, this.year, this.hour);
     }
     public GameDate EndOfTheMonth() {
-        return new GameDate(this.month, daysInMonth[this.month], this.year, this.hoursPerDay);
+        return new GameDate(this.month, daysInMonth[this.month], this.year, hoursPerDay);
     }
 	public GameDate FirstDayOfTheMonth() {
 		return new GameDate(this.month, 1, this.year, 1);
@@ -118,6 +118,7 @@ public class GameManager : MonoBehaviour {
 	}
     public void HourStarted() {
         Messenger.Broadcast(Signals.HOUR_STARTED);
+        Messenger.Broadcast(Signals.UPDATE_UI);
     }
     /*
      * Function that triggers daily actions

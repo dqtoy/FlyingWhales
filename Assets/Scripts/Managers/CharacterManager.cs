@@ -15,7 +15,7 @@ public class CharacterManager : MonoBehaviour {
     public Transform armyIconsParent;
 
     public int maxLevel;
-    public List<CharacterType> characterTypes;
+    //public List<CharacterType> characterTypes;
     private Dictionary<string, CharacterClass> _classesDictionary;
     private Dictionary<ELEMENT, float> _elementsChanceDictionary;
     private List<Character> _allCharacters;
@@ -41,6 +41,12 @@ public class CharacterManager : MonoBehaviour {
 
     [Header("Character Role Animators")]
     [SerializeField] private RuntimeAnimatorController[] characterAnimators;
+
+    [Header("Character Misc Actions")]
+    //TODO: Determine if this is actually necessary?
+    //Reason for this, is so that at the start of the game, each character will have a list of action types that it can do during it's misc phase. 
+    //A sort of initial filtering, so that the character does not have to check every action in it's area.
+    public ActionCharacterTagListDictionary miscActionRequirements; //The misc actions that any character can do, along with the initial tag requirements that the character must have.
 
     public readonly int HAPPINESS_THRESHOLD = 20;
     public readonly int MENTAL_THRESHOLD = -3;
@@ -95,11 +101,11 @@ public class CharacterManager : MonoBehaviour {
         //ConstructPortraitDictionaries();
     }
 
-    #region ECS.Character Types
-    internal CharacterType GetRandomCharacterType() {
-        return characterTypes[Random.Range(0, characterTypes.Count)];
-    }
-    #endregion
+    //#region ECS.Character Types
+    //internal CharacterType GetRandomCharacterType() {
+    //    return characterTypes[Random.Range(0, characterTypes.Count)];
+    //}
+    //#endregion
 
     #region Characters
     public void LoadCharacters(WorldSaveData data) {
@@ -159,8 +165,13 @@ public class CharacterManager : MonoBehaviour {
         if (faction != null) {
             newCharacter.SetFaction(faction);
         }
-        if (newCharacter.role == null && charRole != CHARACTER_ROLE.NONE) {
-            newCharacter.AssignRole(charRole);
+        if (newCharacter.role == null) {
+            if (charRole != CHARACTER_ROLE.NONE) {
+                newCharacter.AssignRole(charRole);
+            }
+            if (charRole != CHARACTER_ROLE.PLAYER) {
+                newCharacter.SetDailySchedule(CharacterScheduleManager.Instance.GetScheduleForCharacter(newCharacter));
+            }
         }
 
         _allCharacters.Add(newCharacter);
@@ -168,14 +179,22 @@ public class CharacterManager : MonoBehaviour {
         return newCharacter;
     }
     public ECS.Character CreateNewCharacter(CharacterSaveData data) {
-        ECS.Character newCharacter = new ECS.Character(data);        
-        newCharacter.AssignRole(data.role);
+        ECS.Character newCharacter = new ECS.Character(data);
+        if (data.role != CHARACTER_ROLE.NONE) {
+            newCharacter.AssignRole(data.role);
+        }
+        //newCharacter.AssignRole(data.role);
         if (data.homeID != -1) {
             Area homeLocation = LandmarkManager.Instance.GetAreaByID(data.homeID);
             newCharacter.SetHome(homeLocation);
             //homeLocation.AddCharacterHomeOnLandmark(newCharacter);
         }
         NewParty party = newCharacter.CreateOwnParty();
+#if !WORLD_CREATION_TOOL
+        if (data.role != CHARACTER_ROLE.PLAYER) {
+            newCharacter.SetDailySchedule(CharacterScheduleManager.Instance.GetScheduleForCharacter(newCharacter));
+        }
+#endif
         if (data.locationID != -1) {
             ILocation currentLocation = LandmarkManager.Instance.GetLocationBasedOnID(data.locationType, data.locationID);
 #if !WORLD_CREATION_TOOL
@@ -321,27 +340,27 @@ public class CharacterManager : MonoBehaviour {
         }
         return null;
     }
-    public void GenerateCharactersForTesting(int number) {
-        List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks().Where(x => x.owner != null).ToList();
-        //List<Settlement> allOwnedSettlements = new List<Settlement>();
-        //for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) {
-        //    allOwnedSettlements.AddRange(FactionManager.Instance.allTribes[i].settlements);
-        //}
-        WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary();
+    //public void GenerateCharactersForTesting(int number) {
+    //    List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks().Where(x => x.owner != null).ToList();
+    //    //List<Settlement> allOwnedSettlements = new List<Settlement>();
+    //    //for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) {
+    //    //    allOwnedSettlements.AddRange(FactionManager.Instance.allTribes[i].settlements);
+    //    //}
+    //    WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary();
 
-        for (int i = 0; i < number; i++) {
-            BaseLandmark chosenLandmark = allLandmarks[Random.Range(0, allLandmarks.Count)];
-            //WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(chosenSettlement);
+    //    for (int i = 0; i < number; i++) {
+    //        BaseLandmark chosenLandmark = allLandmarks[Random.Range(0, allLandmarks.Count)];
+    //        //WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(chosenSettlement);
 
-            //CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
-            CHARACTER_CLASS chosenClass = CHARACTER_CLASS.WARRIOR;
-            CHARACTER_ROLE chosenRole = characterRoleProductionDictionary.PickRandomElementGivenWeights();
-            ECS.Character newChar = chosenLandmark.CreateNewCharacter(RACE.HUMANS, chosenRole, Utilities.NormalizeString(chosenClass.ToString()), false);
-            //Initial Character tags
-            newChar.AssignInitialTags();
-            //CharacterManager.Instance.EquipCharacterWithBestGear(chosenSettlement, newChar);
-        }
-    }
+    //        //CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
+    //        CHARACTER_CLASS chosenClass = CHARACTER_CLASS.WARRIOR;
+    //        CHARACTER_ROLE chosenRole = characterRoleProductionDictionary.PickRandomElementGivenWeights();
+    //        ECS.Character newChar = chosenLandmark.CreateNewCharacter(RACE.HUMANS, chosenRole, Utilities.NormalizeString(chosenClass.ToString()), false);
+    //        //Initial Character tags
+    //        newChar.AssignInitialTags();
+    //        //CharacterManager.Instance.EquipCharacterWithBestGear(chosenSettlement, newChar);
+    //    }
+    //}
     public List<string> GetNonCivilianClasses() {
         return classesDictionary.Keys.Where(x => x != "Civilian").ToList();
     }
@@ -375,7 +394,7 @@ public class CharacterManager : MonoBehaviour {
         }
         return null;
     }
-    public Sprite GetCharacterAttributeSprite(ATTRIBUTE tag) {
+    public Sprite GetCharacterAttributeSprite(CHARACTER_TAG tag) {
         for (int i = 0; i < characterTagIcons.Count; i++) {
             CharacterAttributeIconSetting currSettings = characterTagIcons[i];
             if (currSettings.tag == tag) {
@@ -620,6 +639,28 @@ public class CharacterManager : MonoBehaviour {
             }
         }
         return null;
+    }
+    #endregion
+
+    #region Misc Actions
+    public List<ACTION_TYPE> GetAllowedMiscActionsForCharacter(Character character) {
+        List<ACTION_TYPE> actions = new List<ACTION_TYPE>();
+        foreach (KeyValuePair<ACTION_TYPE, List<CharacterActionTagRequirement>> kvp in miscActionRequirements) {
+            ACTION_TYPE currActionType = kvp.Key;
+            List<CharacterActionTagRequirement> requirements = kvp.Value;
+            bool meetsAllRequirements = true;
+            for (int i = 0; i < requirements.Count; i++) {
+                CharacterActionTagRequirement currReq = requirements[i];
+                if (!currReq.MeetsRequirement(character)) {
+                    meetsAllRequirements = false; //the character does not meet all requirements
+                    break;
+                }
+            }
+            if (meetsAllRequirements) {
+                actions.Add(currActionType); //the character meets all the initial requirements.
+            }
+        }
+        return actions;
     }
     #endregion
 

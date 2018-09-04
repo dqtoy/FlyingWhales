@@ -142,12 +142,12 @@ public class FormPartyAction : CharacterAction {
             ICharacter icharacter = party.icharacters[i];
             icharacter.role.AdjustFullness(_actionData.providedFullness);
             icharacter.role.AdjustEnergy(_actionData.providedEnergy);
-            icharacter.role.AdjustPrestige(_actionData.providedPrestige);
+            //icharacter.role.AdjustPrestige(_actionData.providedPrestige);
             if (party.icharacters.Count >= 2) { //only if there are at least 2 members in the party
-                icharacter.role.AdjustSanity(_actionData.providedSanity);
+                //icharacter.role.AdjustSanity(_actionData.providedSanity);
                 icharacter.role.AdjustFun(_actionData.providedFun);
             }
-            icharacter.role.AdjustSafety(_actionData.providedSafety);
+            //icharacter.role.AdjustSafety(_actionData.providedSafety);
             if (_actionData.hpRecoveredPercentage != 0f && icharacter.currentHP < icharacter.maxHP) {
                 float hpRecovery = (_actionData.hpRecoveredPercentage / 100f) * (float)icharacter.maxHP;
                 icharacter.AdjustHP((int)hpRecovery);

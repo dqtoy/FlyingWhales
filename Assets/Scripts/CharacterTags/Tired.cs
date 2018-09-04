@@ -2,8 +2,8 @@
 using System.Collections;
 using ECS;
 
-public class Tired : CharacterAttribute {
-    public Tired(Character character) : base(character, ATTRIBUTE.TIRED) {
+public class Tired : CharacterTag {
+    public Tired(Character character) : base(character, CHARACTER_TAG.TIRED) {
 
     }
 

@@ -27,8 +27,8 @@ public class Villain : CharacterRole {
         SetFullness(100);
         SetEnergy(100);
         SetFun(60);
-        SetPrestige(40);
-        SetSanity(100);
+        //SetPrestige(40);
+        //SetSanity(100);
         UpdateHappiness();
 
         //_character.characterObject.resourceInventory[RESOURCE.ELF_CIVILIAN] = 100;

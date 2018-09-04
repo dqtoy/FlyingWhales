@@ -9,6 +9,8 @@ public class CharacterAction {
     protected ActionFilter[] _filters;
     [SerializeField] protected CharacterActionData _actionData;
 
+    private const int Base_Misc_Action_Weight = 50;
+
     #region getters/setters
     public ACTION_TYPE actionType {
         get { return _actionData.actionType; }
@@ -96,6 +98,9 @@ public class CharacterAction {
     public virtual void APartyHasEndedItsState(CharacterParty party, IObject targetObject, CharacterParty partyThatChangedState, ObjectState stateThatEnded) {
 
     }
+    public virtual int GetMiscActionWeight(CharacterParty party, IObject targetObject) {
+        return Base_Misc_Action_Weight;
+    }
     #endregion
 
     #region Filters
@@ -155,15 +160,15 @@ public class CharacterAction {
                 case NEEDS.FUN:
                 icharacter.role.AdjustFun(_actionData.providedFun);
                 break;
-                case NEEDS.PRESTIGE:
-                icharacter.role.AdjustPrestige(_actionData.providedPrestige);
-                break;
-                case NEEDS.SANITY:
-                icharacter.role.AdjustSanity(_actionData.providedSanity);
-                break;
-                case NEEDS.SAFETY:
-                icharacter.role.AdjustSafety(_actionData.providedSafety);
-                break;
+                //case NEEDS.PRESTIGE:
+                //icharacter.role.AdjustPrestige(_actionData.providedPrestige);
+                //break;
+                //case NEEDS.SANITY:
+                //icharacter.role.AdjustSanity(_actionData.providedSanity);
+                //break;
+                //case NEEDS.SAFETY:
+                //icharacter.role.AdjustSafety(_actionData.providedSafety);
+                //break;
             }
         }
     }
@@ -175,9 +180,9 @@ public class CharacterAction {
             icharacter.role.AdjustFullness(_actionData.providedFullness);
             icharacter.role.AdjustEnergy(_actionData.providedEnergy);
             icharacter.role.AdjustFun(_actionData.providedFun);
-            icharacter.role.AdjustPrestige(_actionData.providedPrestige);
-            icharacter.role.AdjustSanity(_actionData.providedSanity);
-            icharacter.role.AdjustSafety(_actionData.providedSafety);
+            //icharacter.role.AdjustPrestige(_actionData.providedPrestige);
+            //icharacter.role.AdjustSanity(_actionData.providedSanity);
+            //icharacter.role.AdjustSafety(_actionData.providedSafety);
             if (_actionData.hpRecoveredPercentage != 0f && icharacter.currentHP < icharacter.maxHP) {
                 float hpRecovery = (_actionData.hpRecoveredPercentage / 100f) * (float) icharacter.maxHP;
                 icharacter.AdjustHP((int) hpRecovery);
@@ -203,7 +208,8 @@ public class CharacterAction {
 
     #region Advertisement
     public float GetTotalAdvertisementValue(Character character) {
-        return GetFoodAdvertisementValue(character) + GetEnergyAdvertisementValue(character) + GetJoyAdvertisementValue(character) + GetPrestigeAdvertisementValue(character);
+        return GetFoodAdvertisementValue(character) + GetEnergyAdvertisementValue(character) + GetJoyAdvertisementValue(character);
+            //+ GetPrestigeAdvertisementValue(character);
     }
     private float GetAdvertisementValue(float currentNeed, float advertisedNeed) {
         //350, 8
@@ -231,9 +237,9 @@ public class CharacterAction {
     private float GetJoyAdvertisementValue(Character character) {
         return GetAdvertisementValue(character.role.fun, _actionData.advertisedFun);
     }
-    private float GetPrestigeAdvertisementValue(Character character) {
-        return GetAdvertisementValue(character.role.prestige, _actionData.advertisedPrestige);
-    }
+    //private float GetPrestigeAdvertisementValue(Character character) {
+    //    return GetAdvertisementValue(character.role.prestige, _actionData.advertisedPrestige);
+    //}
     #endregion
 
     #region Logs

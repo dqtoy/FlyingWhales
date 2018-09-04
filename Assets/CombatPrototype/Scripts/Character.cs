@@ -45,7 +45,7 @@ namespace ECS {
         private List<Item> _equippedItems;
         private List<Item> _inventory;
         private List<Skill> _skills;
-        private List<CharacterAttribute> _tags;
+        private List<CharacterTag> _tags;
         private List<Log> _history;
         private List<CharacterQuestData> _questData;
         private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
@@ -89,6 +89,9 @@ namespace ECS {
         private float _critChance;
         private float _critDamage;
 
+        public CharacterSchedule dailySchedule { get; private set; }
+        public List<ACTION_TYPE> miscActionTypes { get; private set; } //List of action types that this character can do for misc phase (Combination of actions granted by class and tags)
+
         #region getters / setters
         public string firstName {
             get { return name.Split(' ')[0]; }
@@ -114,7 +117,7 @@ namespace ECS {
         public MODE currentMode {
             get { return _currentMode; }
         }
-        public List<CharacterAttribute> tags {
+        public List<CharacterTag> tags {
             get { return _tags; }
         }
         public Dictionary<Character, Relationship> relationships {
@@ -380,6 +383,7 @@ namespace ECS {
                     AssignRole(setup.optionalRole);
                 }
             }
+            DetermineAllowedMiscActions();
         }
         public Character(CharacterSaveData data) : this(){
             _id = Utilities.SetID(this, data.id);
@@ -417,12 +421,13 @@ namespace ECS {
                     AssignRole(setup.optionalRole);
                 }
             }
+            DetermineAllowedMiscActions();
         }
         public Character() {
-            _tags = new List<CharacterAttribute>();
+            _tags = new List<CharacterTag>();
             _exploredLandmarks = new List<BaseLandmark>();
             _statusEffects = new List<STATUS_EFFECT>();
-            _tags = new List<CharacterAttribute>();
+            _tags = new List<CharacterTag>();
             _isDead = false;
             _isFainted = false;
             //_isDefeated = false;
@@ -464,7 +469,7 @@ namespace ECS {
             Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
             Messenger.AddListener<Region>("RegionDeath", RegionDeath);
             //Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
-            Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
+            //Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
             //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         }
@@ -473,7 +478,7 @@ namespace ECS {
             Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
             Messenger.RemoveListener<Region>("RegionDeath", RegionDeath);
             //Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
-            Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
+            //Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
             //Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         }
@@ -743,9 +748,9 @@ namespace ECS {
 			this._currentHP += amount;
 			this._currentHP = Mathf.Clamp(this._currentHP, 0, _maxHP);
             if(previous != this._currentHP) {
-                if(_role != null) {
-                    _role.UpdateSafety();
-                }
+                //if(_role != null) {
+                //    _role.UpdateSafety();
+                //}
                 if (this._currentHP == 0) {
                     FaintOrDeath(killer);
                 }
@@ -1670,7 +1675,7 @@ namespace ECS {
 			//TODO: Things to do when a character changes role
 
 //			AssignRole(role);
-			if(_raceSetting.tags.Contains(ATTRIBUTE.SAPIENT)){
+			if(_raceSetting.tags.Contains(CHARACTER_TAG.SAPIENT)){
 				CHARACTER_ROLE roleToCreate = CHARACTER_ROLE.HERO;
 				WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary();
 				if (characterRoleProductionDictionary.GetTotalOfWeights () > 0) {
@@ -1693,72 +1698,72 @@ namespace ECS {
         #region Character Tags
         public void AssignInitialTags() {
             int tagChance = UnityEngine.Random.Range(0, 100);
-            ATTRIBUTE[] initialTags = (ATTRIBUTE[])System.Enum.GetValues(typeof(ATTRIBUTE));
+            CHARACTER_TAG[] initialTags = (CHARACTER_TAG[])System.Enum.GetValues(typeof(CHARACTER_TAG));
             for (int j = 0; j < initialTags.Length; j++) {
-                ATTRIBUTE tag = initialTags[j];
+                CHARACTER_TAG tag = initialTags[j];
                 if (tagChance < Utilities.GetTagWorldGenChance(tag)) {
                     AssignTag(tag);
                 }
             }
         }
-        public CharacterAttribute AssignTag(ATTRIBUTE tag) {
+        public CharacterTag AssignTag(CHARACTER_TAG tag) {
 			if(HasTag(tag)){
 				return null;
 			}
-			CharacterAttribute charTag = null;
+			CharacterTag charTag = null;
 			switch (tag) {
-            case ATTRIBUTE.HUNGRY:
+            case CHARACTER_TAG.HUNGRY:
                 charTag = new Hungry(this);
                 break;
-            case ATTRIBUTE.FAMISHED:
+            case CHARACTER_TAG.FAMISHED:
                 charTag = new Famished(this);
                 break;
-            case ATTRIBUTE.TIRED:
+            case CHARACTER_TAG.TIRED:
                 charTag = new Tired(this);
                 break;
-            case ATTRIBUTE.EXHAUSTED:
+            case CHARACTER_TAG.EXHAUSTED:
                 charTag = new Exhausted(this);
                 break;
-            case ATTRIBUTE.SAD:
+            case CHARACTER_TAG.SAD:
                 charTag = new Sad(this);
                 break;
-            case ATTRIBUTE.DEPRESSED:
+            case CHARACTER_TAG.DEPRESSED:
                 charTag = new Depressed(this);
                 break;
-            case ATTRIBUTE.ANXIOUS:
+            case CHARACTER_TAG.ANXIOUS:
                 charTag = new Anxious(this);
                 break;
-            case ATTRIBUTE.INSECURE:
+            case CHARACTER_TAG.INSECURE:
                 charTag = new Insecure(this);
                 break;
-            case ATTRIBUTE.DRUNK:
+            case CHARACTER_TAG.DRUNK:
                 charTag = new Drunk(this);
                 break;
-            case ATTRIBUTE.DISTURBED:
+            case CHARACTER_TAG.DISTURBED:
                 charTag = new Disturbed(this);
                 break;
-            case ATTRIBUTE.CRAZED:
+            case CHARACTER_TAG.CRAZED:
                 charTag = new Crazed(this);
                 break;
-            case ATTRIBUTE.DEMORALIZED:
+            case CHARACTER_TAG.DEMORALIZED:
                 charTag = new Demoralized(this);
                 break;
-            case ATTRIBUTE.STARVING:
+            case CHARACTER_TAG.STARVING:
                 charTag = new Starving(this);
                 break;
-            case ATTRIBUTE.WOUNDED:
+            case CHARACTER_TAG.WOUNDED:
                 charTag = new Wounded(this);
                 break;
-            case ATTRIBUTE.WRECKED:
+            case CHARACTER_TAG.WRECKED:
                 charTag = new Wrecked(this);
                 break;
-            case ATTRIBUTE.IMPULSIVE:
+            case CHARACTER_TAG.IMPULSIVE:
                 charTag = new Impulsive(this);
                 break;
-            case ATTRIBUTE.BETRAYED:
+            case CHARACTER_TAG.BETRAYED:
                 charTag = new Betrayed(this);
                 break;
-            case ATTRIBUTE.HEARTBROKEN:
+            case CHARACTER_TAG.HEARTBROKEN:
                 charTag = new Heartbroken(this);
                 break;
             }
@@ -1777,12 +1782,12 @@ namespace ECS {
                 AssignTag(setup.tags[i]);
             }
         }
-		public void AddCharacterAttribute(CharacterAttribute tag){
+		public void AddCharacterAttribute(CharacterTag tag){
 			_tags.Add(tag);
 			tag.Initialize ();
             Messenger.Broadcast(Signals.ATTRIBUTE_ADDED, this, tag);
 		}
-		public bool RemoveCharacterAttribute(CharacterAttribute tag){
+		public bool RemoveCharacterAttribute(CharacterTag tag){
 			if(_tags.Remove(tag)){
 				tag.OnRemoveTag();
                 Messenger.Broadcast(Signals.ATTRIBUTE_REMOVED, this, tag);
@@ -1790,26 +1795,26 @@ namespace ECS {
 			}
 			return false;
 		}
-		public bool RemoveCharacterAttribute(ATTRIBUTE tag) {
+		public bool RemoveCharacterAttribute(CHARACTER_TAG tag) {
             for (int i = 0; i < _tags.Count; i++) {
-                CharacterAttribute currTag = _tags[i];
+                CharacterTag currTag = _tags[i];
                 if (currTag.attribute == tag) {
                     return RemoveCharacterAttribute(currTag);
                 }
             }
 			return false;
         }
-        public bool RemoveCharacterAttribute(List<ATTRIBUTE> tags) {
+        public bool RemoveCharacterAttribute(List<CHARACTER_TAG> tags) {
             for (int i = 0; i < tags.Count; i++) {
-                ATTRIBUTE currTag = tags[i];
+                CHARACTER_TAG currTag = tags[i];
                 RemoveCharacterAttribute(currTag);
             }
             return false;
         }
-        public bool HasTags(ATTRIBUTE[] tagsToHave, bool mustHaveAll = false){
+        public bool HasTags(CHARACTER_TAG[] tagsToHave, bool mustHaveAll = false){
 			return DoesHaveTags (this, tagsToHave, mustHaveAll);
 		}
-		private bool DoesHaveTags(Character currCharacter, ATTRIBUTE[] tagsToHave, bool mustHaveAll = false){
+		private bool DoesHaveTags(Character currCharacter, CHARACTER_TAG[] tagsToHave, bool mustHaveAll = false){
 			if(mustHaveAll){
 				int tagsCount = 0;
 				for (int i = 0; i < currCharacter.tags.Count; i++) {
@@ -1834,7 +1839,7 @@ namespace ECS {
 			}
 			return false;
 		}
-		public bool HasTag(ATTRIBUTE tag) {
+		public bool HasTag(CHARACTER_TAG tag) {
             for (int i = 0; i < _tags.Count; i++) {
                 if (_tags[i].attribute == tag) {
                     return true;
@@ -1851,7 +1856,7 @@ namespace ECS {
             }
 			return false;
 		}
-		public CharacterAttribute GetTag(ATTRIBUTE tag){
+		public CharacterTag GetTag(CHARACTER_TAG tag){
             for (int i = 0; i < _tags.Count; i++) {
                 if (_tags[i].attribute == tag) {
                     return _tags[i];
@@ -1859,7 +1864,7 @@ namespace ECS {
             }
 			return null;
 		}
-		public CharacterAttribute GetTag(string tag){
+		public CharacterTag GetTag(string tag){
             for (int i = 0; i < _tags.Count; i++) {
                 if (_tags[i].name == tag) {
                     return _tags[i];
@@ -2008,7 +2013,7 @@ namespace ECS {
                 if (this.role.roleType == CHARACTER_ROLE.CIVILIAN) { //If he is a Civilian-type
                     if (this.mentalPoints <= -6) {
                         //if Mental Points is -6 or below, the character will request to chat with the Player and ask for his help
-                    } else if (this.HasTag(ATTRIBUTE.IMPULSIVE)) {
+                    } else if (this.HasTag(CHARACTER_TAG.IMPULSIVE)) {
                         //else, if character has impulsive trait, a change action to a randomized Hero class will be added at the end of his Action Queue.
                         ChangeClassAction changeClassAction = ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.CHANGE_CLASS) as ChangeClassAction;
                         string[] choices = new string[] { "Warrior" };
@@ -2020,7 +2025,7 @@ namespace ECS {
                 } else if (this.role.roleType == CHARACTER_ROLE.HERO) { //If he is a Hero-type
                     if (this.mentalPoints <= -6) {
                         //if Mental Points is -6 or below, the character will request to chat with the Player and ask for his help
-                    } else if (this.HasTag(ATTRIBUTE.IMPULSIVE)) {
+                    } else if (this.HasTag(CHARACTER_TAG.IMPULSIVE)) {
                         //else, if character has impulsive trait, he will attempt the quest without any other people's help
                     } else {
                         //else, character will create a new Squad and become its Squad Leader and will perform a Recruit Squadmates action
@@ -2140,7 +2145,7 @@ namespace ECS {
         private void OnOtherCharacterDied(Character character) {
             if (character.id != this.id) {
                 if (IsCharacterLovedOne(character)) { //A character gains heartbroken tag for 15 days when a family member or a loved one dies.
-                    AssignTag(ATTRIBUTE.HEARTBROKEN);
+                    AssignTag(CHARACTER_TAG.HEARTBROKEN);
                 }
                 RemoveRelationshipWith(character);
             }
@@ -2392,18 +2397,18 @@ namespace ECS {
         }
         #endregion
 
-        #region Needs
-        private void CiviliansDiedReduceSanity(StructureObj whereCiviliansDied, int amount) {
-            if(_currentRegion.id == whereCiviliansDied.objectLocation.tileLocation.region.id) {
-                ILocation location = _ownParty.specificLocation;
-                if (location.tileLocation.id == whereCiviliansDied.objectLocation.tileLocation.id || whereCiviliansDied.objectLocation.tileLocation.neighbourDirections.ContainsValue(location.tileLocation)){
-                    int sanityToReduce = amount * 5;
-                    this.role.AdjustSanity(-sanityToReduce);
-                    Debug.Log(this.name + " has reduced its sanity by " + sanityToReduce + " because " + amount + " civilians died in " + whereCiviliansDied.objectLocation.tileLocation.tileName + " (" + whereCiviliansDied.objectLocation.tileLocation.coordinates + ")");
-                }
-            }
-        }
-        #endregion
+        //#region Needs
+        //private void CiviliansDiedReduceSanity(StructureObj whereCiviliansDied, int amount) {
+        //    if(_currentRegion.id == whereCiviliansDied.objectLocation.tileLocation.region.id) {
+        //        ILocation location = _ownParty.specificLocation;
+        //        if (location.tileLocation.id == whereCiviliansDied.objectLocation.tileLocation.id || whereCiviliansDied.objectLocation.tileLocation.neighbourDirections.ContainsValue(location.tileLocation)){
+        //            int sanityToReduce = amount * 5;
+        //            //this.role.AdjustSanity(-sanityToReduce);
+        //            Debug.Log(this.name + " has reduced its sanity by " + sanityToReduce + " because " + amount + " civilians died in " + whereCiviliansDied.objectLocation.tileLocation.tileName + " (" + whereCiviliansDied.objectLocation.tileLocation.coordinates + ")");
+        //        }
+        //    }
+        //}
+        //#endregion
 
         #region Portrait Settings
         public void SetPortraitSettings(PortraitSettings settings) {
@@ -2796,13 +2801,13 @@ namespace ECS {
                 deathChance += difference * 0.5f; //For every point lower than -5, add 0.5% to chance to die per tick.
                 if (UnityEngine.Random.Range(0f, 100f) < deathChance) {
                     List<string> deathCauses = new List<string>();
-                    if (HasTags(new ATTRIBUTE[] { ATTRIBUTE.TIRED, ATTRIBUTE.EXHAUSTED})) {
+                    if (HasTags(new CHARACTER_TAG[] { CHARACTER_TAG.TIRED, CHARACTER_TAG.EXHAUSTED})) {
                         deathCauses.Add("exhaustion");
                     }
-                    if (HasTags(new ATTRIBUTE[] { ATTRIBUTE.HUNGRY, ATTRIBUTE.STARVING })) {
+                    if (HasTags(new CHARACTER_TAG[] { CHARACTER_TAG.HUNGRY, CHARACTER_TAG.STARVING })) {
                         deathCauses.Add("starvation");
                     }
-                    if (HasTags(new ATTRIBUTE[] { ATTRIBUTE.WOUNDED, ATTRIBUTE.WRECKED })) {
+                    if (HasTags(new CHARACTER_TAG[] { CHARACTER_TAG.WOUNDED, CHARACTER_TAG.WRECKED })) {
                         deathCauses.Add("injury");
                     }
 
@@ -2875,6 +2880,44 @@ namespace ECS {
                     break;
                 }
             }
+        }
+        #endregion
+
+        #region Schedule
+        public void SetDailySchedule(CharacterSchedule schedule) {
+            dailySchedule = schedule;
+            dailySchedule.Initialize(this);
+        }
+        public void OnDailySchedulePhaseStarted(CharacterSchedulePhase phase) {
+            if (!this.IsInOwnParty()) {
+                return; //this character is not in it's owned party, that means he/she is just a member of the party, and shall not decide what action to do!
+            }
+            Debug.Log(GameManager.Instance.Today().GetDayAndTicksString() + " " + this.name + " started phase " + phase.phaseName + "(" + phase.phaseType.ToString() + ") Phase Length: " + phase.phaseLength);
+            if (phase.phaseType == SCHEDULE_PHASE_TYPE.WORK) {
+                //if the started phase is work, the character will stop his/her current action (if not from event), and start doing work actions.
+                if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.MISC) {
+                    //end current action, then look for a new one.
+                    _ownParty.actionData.EndAction();
+                }
+            } else if (phase.phaseType == SCHEDULE_PHASE_TYPE.MISC) {
+                //if the started phase is misc, the character will NOT stop his/her current action if his/her current action is a work action, he/she will instead,
+                //wait for the current action to end, then he/she will start doing misc actions.
+            }
+        }
+        public void OnDailySchedulePhaseEnded(CharacterSchedulePhase phase) {
+            if (!this.IsInOwnParty()) {
+                return; //this character is not in it's owned party, that means he/she is just a member of the party, and shall not decide what action to do!
+            }
+            Debug.Log(GameManager.Instance.Today().GetDayAndTicksString() + " " + this.name + " ended phase " + phase.phaseName + "(" + phase.phaseType.ToString() + ")");
+        }
+        #endregion
+
+        #region Misc Actions
+        /*
+         Determine the initial list of misc actions that the character can do.
+             */
+        private void DetermineAllowedMiscActions() {
+            miscActionTypes = CharacterManager.Instance.GetAllowedMiscActionsForCharacter(this);
         }
         #endregion
     }

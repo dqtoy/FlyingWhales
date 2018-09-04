@@ -58,52 +58,6 @@ MonoBehaviour:
     type: 2}
   armyIconsParent: {fileID: 0}
   maxLevel: 100
-  characterTypes:
-  - characterTypeName: Aggressive Warlord
-    charismaTrait: 0
-    intelligenceTrait: 0
-    efficiencyTrait: 0
-    militaryTrait: 2
-    healthTrait: 0
-    strengthTrait: 0
-    agilityTrait: 0
-    otherTraits: 0d000000
-  - characterTypeName: Evil Puppetmaster
-    charismaTrait: 0
-    intelligenceTrait: 9
-    efficiencyTrait: 0
-    militaryTrait: 3
-    healthTrait: 0
-    strengthTrait: 0
-    agilityTrait: 0
-    otherTraits: 04000000080000000e000000
-  - characterTypeName: Opportunistic Bandwagoner
-    charismaTrait: 0
-    intelligenceTrait: 0
-    efficiencyTrait: 0
-    militaryTrait: 0
-    healthTrait: 21
-    strengthTrait: 23
-    agilityTrait: 0
-    otherTraits: 050000000e000000
-  - characterTypeName: Noble Crusader
-    charismaTrait: 11
-    intelligenceTrait: 0
-    efficiencyTrait: 0
-    militaryTrait: 0
-    healthTrait: 0
-    strengthTrait: 0
-    agilityTrait: 0
-    otherTraits: 0f00000010000000
-  - characterTypeName: Peaceful Trader
-    charismaTrait: 0
-    intelligenceTrait: 0
-    efficiencyTrait: 6
-    militaryTrait: 3
-    healthTrait: 0
-    strengthTrait: 0
-    agilityTrait: 0
-    otherTraits: 10000000
   heroSprite: {fileID: 21300056, guid: be352ea3d46036640bb6df35b7b4dc2b, type: 3}
   villainSprite: {fileID: 21300034, guid: be352ea3d46036640bb6df35b7b4dc2b, type: 3}
   hermitSprite: {fileID: 21300050, guid: be352ea3d46036640bb6df35b7b4dc2b, type: 3}
@@ -885,3 +839,35 @@ MonoBehaviour:
   - {fileID: 9100000, guid: 8efddeb1fd5629b459de99851a8d758b, type: 2}
   - {fileID: 9100000, guid: 391c4c9ecbeeb4e44bea4fd871b44df7, type: 2}
   - {fileID: 9100000, guid: a980adc8910cb7847b091bec2c84c0e2, type: 2}
+  miscActionRequirements:
+    m_keys: 2500000027000000280000001700000029000000260000002a0000002b0000001e0000002c0000002d000000
+    m_values:
+    - data:
+      - condition: 0
+        tags: 13000000
+    - data:
+      - condition: 0
+        tags: 14000000
+      - condition: 1
+        tags: 1600000017000000
+    - data:
+      - condition: 0
+        tags: 14000000
+      - condition: 1
+        tags: 16000000
+    - data:
+      - condition: 0
+        tags: 18000000
+    - data:
+      - condition: 0
+        tags: 19000000
+    - data: []
+    - data: []
+    - data: []
+    - data: []
+    - data:
+      - condition: 0
+        tags: 1b000000
+      - condition: 1
+        tags: 1a000000
+    - data: []

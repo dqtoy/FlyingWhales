@@ -5,6 +5,6 @@ using UnityEngine;
 [System.Serializable]
 public struct CharacterAttributeIconSetting {
 
-    public ATTRIBUTE tag;
+    public CHARACTER_TAG tag;
     public Sprite icon;
 }

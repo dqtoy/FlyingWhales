@@ -15,12 +15,17 @@ public class CharacterRole {
 	protected bool _cancelsAllOtherTasks;
 	protected bool _isRemoved;
     protected bool _isHungry, _isFamished, _isTired, _isExhausted, _isSad, _isDepressed, _isAnxious, _isInsecure;
-    protected float _fullness, _energy, _fun, _prestige, _sanity, _safety;
-    protected float _maxFullness, _maxEnergy, _maxFun, _maxPrestige, _maxSanity, _maxSafety;
-    protected float _minFullness, _minEnergy, _minFun, _minPrestige, _minSanity, _minSafety;
+    protected float _fullness, _energy, _fun;
+    //, _prestige, _sanity, _safety;
+    protected float _maxFullness, _maxEnergy, _maxFun;
+    //, _maxPrestige, _maxSanity, _maxSafety;
+    protected float _minFullness, _minEnergy, _minFun;
+    //, _minPrestige, _minSanity, _minSafety;
     protected float _happiness;
 
     protected float _constantSanityBuff, _constantFunBuff;
+
+    private const float Needs_Threshold = 80f;
 
     #region getters/setters
     public CHARACTER_ROLE roleType {
@@ -29,18 +34,6 @@ public class CharacterRole {
 	public Character character{
 		get { return _character; }
 	}
-    //public List<ACTION_ALIGNMENT> allowedQuestAlignments {
-    //    get { return _allowedQuestAlignments; }
-    //}
-    //public List<QUEST_TYPE> allowedQuestTypes {
-    //    get { return _allowedQuestTypes; }
-    //}
-	//public List<CharacterTask> roleTasks {
-	//	get { return _roleTasks; }
-	//}
-	//public CharacterTask defaultRoleTask {
-	//	get { return _defaultRoleTask; }
-	//}
 	public bool cancelsAllOtherTasks {
 		get { return _cancelsAllOtherTasks; }
 	}
@@ -56,15 +49,15 @@ public class CharacterRole {
     public float fun {
         get { return Mathf.Clamp(_fun + _constantFunBuff, _minFun, _maxFun); }
     }
-    public float prestige {
-        get { return _prestige; }
-    }
-    public float sanity {
-        get { return Mathf.Clamp(_sanity + _constantSanityBuff, _minSanity, _maxSanity); }
-    }
-    public float safety {
-        get { return _safety; }
-    }
+    //public float prestige {
+    //    get { return _prestige; }
+    //}
+    //public float sanity {
+    //    get { return Mathf.Clamp(_sanity + _constantSanityBuff, _minSanity, _maxSanity); }
+    //}
+    //public float safety {
+    //    get { return _safety; }
+    //}
     public float maxFullness {
         get { return _maxFullness; }
     }
@@ -74,15 +67,15 @@ public class CharacterRole {
     public float maxFun {
         get { return _maxFun; }
     }
-    public float maxPrestige {
-        get { return _maxPrestige; }
-    }
-    public float maxSanity {
-        get { return _maxSanity; }
-    }
-    public float maxSafety {
-        get { return _maxSafety; }
-    }
+    //public float maxPrestige {
+    //    get { return _maxPrestige; }
+    //}
+    //public float maxSanity {
+    //    get { return _maxSanity; }
+    //}
+    //public float maxSafety {
+    //    get { return _maxSafety; }
+    //}
     public float happiness {
         get { return _happiness; }
     }
@@ -96,19 +89,18 @@ public class CharacterRole {
         _maxFullness = 100f;
         _maxEnergy = 100f;
         _maxFun = 100f;
-        _maxPrestige = 100f;
-        _maxSanity = 100f;
-        _maxSafety = 100f;
+        //_maxPrestige = 100f;
+        //_maxSanity = 100f;
+        //_maxSafety = 100f;
 
         _minFullness = -100f;
         _minEnergy = -100f;
         _minFun = -100f;
-        _minPrestige = -100f;
-        _minSanity = -100f;
-        _minSafety = -100f;
+        //_minPrestige = -100f;
+        //_minSanity = -100f;
+        //_minSafety = -100f;
     }
-
-
+    
     #region Virtuals
     public virtual void DeathRole(){
 		_isRemoved = true;
@@ -128,7 +120,7 @@ public class CharacterRole {
         DepleteFullness();
         DepleteEnergy();
         DepleteFun();
-        DepletePrestige();
+        //DepletePrestige();
     }
     public void SetNeedValue(NEEDS need, float newValue) {
         switch (need) {
@@ -141,15 +133,15 @@ public class CharacterRole {
             case NEEDS.FUN:
                 SetFun(newValue);
                 break;
-            case NEEDS.PRESTIGE:
-                SetPrestige(newValue);
-                break;
-            case NEEDS.SANITY:
-                SetSanity(newValue);
-                break;
-            case NEEDS.SAFETY:
-                SetSafety(newValue);
-                break;
+            //case NEEDS.PRESTIGE:
+            //    SetPrestige(newValue);
+            //    break;
+            //case NEEDS.SANITY:
+            //    SetSanity(newValue);
+            //    break;
+            //case NEEDS.SAFETY:
+            //    SetSafety(newValue);
+            //    break;
             default:
                 break;
         }
@@ -163,12 +155,12 @@ public class CharacterRole {
                 return _energy;
             case NEEDS.FUN:
                 return _fun;
-            case NEEDS.PRESTIGE:
-                return _prestige;
-            case NEEDS.SANITY:
-                return _sanity;
-            case NEEDS.SAFETY:
-                return _safety;
+            //case NEEDS.PRESTIGE:
+            //    return _prestige;
+            //case NEEDS.SANITY:
+            //    return _sanity;
+            //case NEEDS.SAFETY:
+            //    return _safety;
             default:
                 return 0;
         }
@@ -223,14 +215,14 @@ public class CharacterRole {
     private void OnFullnessEdited() {
         if (_fullness < 0 && _fullness >= -75) {
             //Character gains Hungry tag when Fullness is below 0 to -75.
-            _character.AssignTag(ATTRIBUTE.HUNGRY);
-            _character.RemoveCharacterAttribute(ATTRIBUTE.STARVING);
+            _character.AssignTag(CHARACTER_TAG.HUNGRY);
+            _character.RemoveCharacterAttribute(CHARACTER_TAG.STARVING);
         } else if (_fullness < -75) {
             //Character gains Starving tag when Fullness is below -75   
-            _character.AssignTag(ATTRIBUTE.STARVING);
-            _character.RemoveCharacterAttribute(ATTRIBUTE.HUNGRY);
+            _character.AssignTag(CHARACTER_TAG.STARVING);
+            _character.RemoveCharacterAttribute(CHARACTER_TAG.HUNGRY);
         } else {
-            _character.RemoveCharacterAttribute(new List<ATTRIBUTE>() { ATTRIBUTE.HUNGRY, ATTRIBUTE.STARVING });
+            _character.RemoveCharacterAttribute(new List<CHARACTER_TAG>() { CHARACTER_TAG.HUNGRY, CHARACTER_TAG.STARVING });
         }
     }
 
@@ -280,14 +272,14 @@ public class CharacterRole {
     private void OnEnergyEdited() {
         if (_energy < 0 && _energy >= -75) {
             //Character gains Tired tag when Energy is below 0 to -75.
-            _character.AssignTag(ATTRIBUTE.TIRED);
-            _character.RemoveCharacterAttribute(ATTRIBUTE.EXHAUSTED);
+            _character.AssignTag(CHARACTER_TAG.TIRED);
+            _character.RemoveCharacterAttribute(CHARACTER_TAG.EXHAUSTED);
         } else if (_energy < -75) {
             //Character gains Crazed tag when Energy is below -75
-            _character.AssignTag(ATTRIBUTE.EXHAUSTED);
-            _character.RemoveCharacterAttribute(ATTRIBUTE.TIRED);
+            _character.AssignTag(CHARACTER_TAG.EXHAUSTED);
+            _character.RemoveCharacterAttribute(CHARACTER_TAG.TIRED);
         } else {
-            _character.RemoveCharacterAttribute(new List<ATTRIBUTE>() { ATTRIBUTE.TIRED, ATTRIBUTE.EXHAUSTED });
+            _character.RemoveCharacterAttribute(new List<CHARACTER_TAG>() { CHARACTER_TAG.TIRED, CHARACTER_TAG.EXHAUSTED });
         }
     }
 
@@ -341,142 +333,142 @@ public class CharacterRole {
     private void OnFunEdited() {
         if (_fun < 0 && _fun >= -75) {
             //Character gains Sad tag when Fun is below 0 to -75.
-            _character.AssignTag(ATTRIBUTE.SAD);
-            _character.RemoveCharacterAttribute(ATTRIBUTE.DEPRESSED);
+            _character.AssignTag(CHARACTER_TAG.SAD);
+            _character.RemoveCharacterAttribute(CHARACTER_TAG.DEPRESSED);
         } else if (_fun < -75) {
             //Character gains Depressed tag when Fun is below -75
-            _character.AssignTag(ATTRIBUTE.DEPRESSED);
-            _character.RemoveCharacterAttribute(ATTRIBUTE.SAD);
+            _character.AssignTag(CHARACTER_TAG.DEPRESSED);
+            _character.RemoveCharacterAttribute(CHARACTER_TAG.SAD);
         } else {
-            _character.RemoveCharacterAttribute(new List<ATTRIBUTE>() { ATTRIBUTE.SAD, ATTRIBUTE.DEPRESSED });
+            _character.RemoveCharacterAttribute(new List<CHARACTER_TAG>() { CHARACTER_TAG.SAD, CHARACTER_TAG.DEPRESSED });
         }
     }
 
-    public void DepletePrestige() {
-        if(_prestige > 0) {
-            AdjustPrestige(-1.39f);
-        } else {
-            AdjustPrestige(-0.245f);
-        }
-    }
-    public void SetPrestige(float amount) {
-        _prestige = amount;
-        OnPrestigeEdited();
-    }
-    public void AdjustPrestige(float amount) {
-        float previous = _prestige;
-        _prestige += amount;
-        _prestige = Mathf.Clamp(_prestige, _minPrestige, _maxPrestige);
-        if (previous != _prestige) {
-            UpdateHappiness();
-            OnPrestigeEdited();
-        }
-        //if (_prestige <= 0f && !_isInsecure) {
-        //    _isInsecure = true;
-        //    if (_isAnxious) {
-        //        _isAnxious = false;
-        //        _character.RemoveCharacterAttribute(ATTRIBUTE.ANXIOUS);
-        //    }
-        //    _character.AssignTag(ATTRIBUTE.INSECURE);
-        //}
-        //else if (_prestige > 10f && _prestige <= 30f && !_isAnxious) {
-        //    _isAnxious = true;
-        //    if (_isInsecure) {
-        //        _isInsecure = false;
-        //        _character.RemoveCharacterAttribute(ATTRIBUTE.INSECURE);
-        //    }
-        //    _character.AssignTag(ATTRIBUTE.ANXIOUS);
-        //}
-        //else if (_prestige > 30f) {
-        //    if (_isAnxious) {
-        //        _isAnxious = false;
-        //        _character.RemoveCharacterAttribute(ATTRIBUTE.ANXIOUS);
-        //    }
-        //    if (_isInsecure) {
-        //        _isInsecure = false;
-        //        _character.RemoveCharacterAttribute(ATTRIBUTE.INSECURE);
-        //    }
-        //}
-    }
-    private void OnPrestigeEdited() {
-        if (_prestige < 0 && _prestige >= -75) {
-            //Character gains Anxious tag when Prestige is below 0 to -75.
-            _character.AssignTag(ATTRIBUTE.ANXIOUS);
-            _character.RemoveCharacterAttribute(ATTRIBUTE.DEMORALIZED);
-        } else if (_prestige < -75) {
-            //Character gains Demoralized tag when Sanity is below -75
-            _character.AssignTag(ATTRIBUTE.DEMORALIZED);
-            _character.RemoveCharacterAttribute(ATTRIBUTE.ANXIOUS);
-        } else {
-            _character.RemoveCharacterAttribute(new List<ATTRIBUTE>() { ATTRIBUTE.ANXIOUS, ATTRIBUTE.DEMORALIZED });
-        }
-    }
+    //public void DepletePrestige() {
+    //    if(_prestige > 0) {
+    //        AdjustPrestige(-1.39f);
+    //    } else {
+    //        AdjustPrestige(-0.245f);
+    //    }
+    //}
+    //public void SetPrestige(float amount) {
+    //    _prestige = amount;
+    //    OnPrestigeEdited();
+    //}
+    //public void AdjustPrestige(float amount) {
+    //    float previous = _prestige;
+    //    _prestige += amount;
+    //    _prestige = Mathf.Clamp(_prestige, _minPrestige, _maxPrestige);
+    //    if (previous != _prestige) {
+    //        UpdateHappiness();
+    //        OnPrestigeEdited();
+    //    }
+    //    //if (_prestige <= 0f && !_isInsecure) {
+    //    //    _isInsecure = true;
+    //    //    if (_isAnxious) {
+    //    //        _isAnxious = false;
+    //    //        _character.RemoveCharacterAttribute(ATTRIBUTE.ANXIOUS);
+    //    //    }
+    //    //    _character.AssignTag(ATTRIBUTE.INSECURE);
+    //    //}
+    //    //else if (_prestige > 10f && _prestige <= 30f && !_isAnxious) {
+    //    //    _isAnxious = true;
+    //    //    if (_isInsecure) {
+    //    //        _isInsecure = false;
+    //    //        _character.RemoveCharacterAttribute(ATTRIBUTE.INSECURE);
+    //    //    }
+    //    //    _character.AssignTag(ATTRIBUTE.ANXIOUS);
+    //    //}
+    //    //else if (_prestige > 30f) {
+    //    //    if (_isAnxious) {
+    //    //        _isAnxious = false;
+    //    //        _character.RemoveCharacterAttribute(ATTRIBUTE.ANXIOUS);
+    //    //    }
+    //    //    if (_isInsecure) {
+    //    //        _isInsecure = false;
+    //    //        _character.RemoveCharacterAttribute(ATTRIBUTE.INSECURE);
+    //    //    }
+    //    //}
+    //}
+    //private void OnPrestigeEdited() {
+    //    if (_prestige < 0 && _prestige >= -75) {
+    //        //Character gains Anxious tag when Prestige is below 0 to -75.
+    //        _character.AssignTag(ATTRIBUTE.ANXIOUS);
+    //        _character.RemoveCharacterAttribute(ATTRIBUTE.DEMORALIZED);
+    //    } else if (_prestige < -75) {
+    //        //Character gains Demoralized tag when Sanity is below -75
+    //        _character.AssignTag(ATTRIBUTE.DEMORALIZED);
+    //        _character.RemoveCharacterAttribute(ATTRIBUTE.ANXIOUS);
+    //    } else {
+    //        _character.RemoveCharacterAttribute(new List<ATTRIBUTE>() { ATTRIBUTE.ANXIOUS, ATTRIBUTE.DEMORALIZED });
+    //    }
+    //}
 
-    public void DepleteSanity() {
-        AdjustSanity(-0.2f);
-    }
-    public void SetSanity(float amount) {
-        _sanity = amount;
-        OnSanityEdited();
-    }
-    public void AdjustSanity(float amount) {
-        float previous = _sanity;
-        _sanity += amount;
-        _sanity = Mathf.Clamp(_sanity, _minSanity, _maxSanity);
-        if (previous != _sanity) {
-            UpdateHappiness();
-            OnSanityEdited();
-        }
-    }
-    private void OnSanityEdited() {
-        if (_sanity < 0 && _sanity >= -75) {
-            //Character gains Disturbed tag when Sanity is below 0 to -75.
-            _character.AssignTag(ATTRIBUTE.DISTURBED);
-            _character.RemoveCharacterAttribute(ATTRIBUTE.CRAZED);
-        } else if (_sanity < -75) {
-            //Character gains Crazed tag when Sanity is below -75
-            _character.AssignTag(ATTRIBUTE.CRAZED);
-            _character.RemoveCharacterAttribute(ATTRIBUTE.DISTURBED);
-        } else {
-            _character.RemoveCharacterAttribute(new List<ATTRIBUTE>() { ATTRIBUTE.DISTURBED, ATTRIBUTE.CRAZED });
-        }
-    }
+    //public void DepleteSanity() {
+    //    AdjustSanity(-0.2f);
+    //}
+    //public void SetSanity(float amount) {
+    //    _sanity = amount;
+    //    OnSanityEdited();
+    //}
+    //public void AdjustSanity(float amount) {
+    //    float previous = _sanity;
+    //    _sanity += amount;
+    //    _sanity = Mathf.Clamp(_sanity, _minSanity, _maxSanity);
+    //    if (previous != _sanity) {
+    //        UpdateHappiness();
+    //        OnSanityEdited();
+    //    }
+    //}
+    //private void OnSanityEdited() {
+    //    if (_sanity < 0 && _sanity >= -75) {
+    //        //Character gains Disturbed tag when Sanity is below 0 to -75.
+    //        _character.AssignTag(ATTRIBUTE.DISTURBED);
+    //        _character.RemoveCharacterAttribute(ATTRIBUTE.CRAZED);
+    //    } else if (_sanity < -75) {
+    //        //Character gains Crazed tag when Sanity is below -75
+    //        _character.AssignTag(ATTRIBUTE.CRAZED);
+    //        _character.RemoveCharacterAttribute(ATTRIBUTE.DISTURBED);
+    //    } else {
+    //        _character.RemoveCharacterAttribute(new List<ATTRIBUTE>() { ATTRIBUTE.DISTURBED, ATTRIBUTE.CRAZED });
+    //    }
+    //}
 
-    public void SetSafety(float amount) {
-        _safety = amount;
-        OnSafetyEdited();
-    }
-    public void AdjustSafety(float amount) {
-        float previous = _safety;
-        _safety += amount;
-        _safety = Mathf.Clamp(_safety, _minSafety, _maxSafety);
-        if (previous != _safety) {
-            UpdateHappiness();
-            OnSafetyEdited();
-        }
-    }
-    public void UpdateSafety() {
-        float hpPercent = (float) character.currentHP / (float) character.maxHP;
-        float newSafety = (hpPercent * (_maxSafety - _minSafety)) + _minSafety;
-        SetSafety(newSafety);
-    }
-    private void OnSafetyEdited() {
-        if (_safety < 0 && _safety >= -75) {
-            //Character gains Wounded tag when Safety is below 0 to -75.
-            _character.AssignTag(ATTRIBUTE.WOUNDED);
-            _character.RemoveCharacterAttribute(ATTRIBUTE.WRECKED);
-        } else if (_safety < -75) {
-            //Character gains Wrecked tag when Safety is below -75.
-            _character.AssignTag(ATTRIBUTE.WRECKED);
-            _character.RemoveCharacterAttribute(ATTRIBUTE.WOUNDED);
-        } else {
-            _character.RemoveCharacterAttribute(new List<ATTRIBUTE>() { ATTRIBUTE.WOUNDED, ATTRIBUTE.WRECKED });
-        }
-    }
+    //public void SetSafety(float amount) {
+    //    _safety = amount;
+    //    OnSafetyEdited();
+    //}
+    //public void AdjustSafety(float amount) {
+    //    float previous = _safety;
+    //    _safety += amount;
+    //    _safety = Mathf.Clamp(_safety, _minSafety, _maxSafety);
+    //    if (previous != _safety) {
+    //        UpdateHappiness();
+    //        OnSafetyEdited();
+    //    }
+    //}
+    //public void UpdateSafety() {
+    //    float hpPercent = (float) character.currentHP / (float) character.maxHP;
+    //    float newSafety = (hpPercent * (_maxSafety - _minSafety)) + _minSafety;
+    //    SetSafety(newSafety);
+    //}
+    //private void OnSafetyEdited() {
+    //    if (_safety < 0 && _safety >= -75) {
+    //        //Character gains Wounded tag when Safety is below 0 to -75.
+    //        _character.AssignTag(ATTRIBUTE.WOUNDED);
+    //        _character.RemoveCharacterAttribute(ATTRIBUTE.WRECKED);
+    //    } else if (_safety < -75) {
+    //        //Character gains Wrecked tag when Safety is below -75.
+    //        _character.AssignTag(ATTRIBUTE.WRECKED);
+    //        _character.RemoveCharacterAttribute(ATTRIBUTE.WOUNDED);
+    //    } else {
+    //        _character.RemoveCharacterAttribute(new List<ATTRIBUTE>() { ATTRIBUTE.WOUNDED, ATTRIBUTE.WRECKED });
+    //    }
+    //}
 
-    public void AdjustConstantSanityBuff(int adjustment) {
-        _constantSanityBuff += adjustment;
-    }
+    //public void AdjustConstantSanityBuff(int adjustment) {
+    //    _constantSanityBuff += adjustment;
+    //}
     public void AdjustConstantFunBuff(int adjustment) {
         _constantFunBuff += adjustment;
     }
@@ -484,29 +476,40 @@ public class CharacterRole {
     public bool IsFull(NEEDS need) {
         switch (need) {
             case NEEDS.FULLNESS:
-            return _fullness >= _maxFullness;
+                return _fullness >= _maxFullness;
             case NEEDS.ENERGY:
-            return _energy >= _maxEnergy;
+                return _energy >= _maxEnergy;
             case NEEDS.FUN:
-            return _fun >= _maxFun;
-            case NEEDS.PRESTIGE:
-            return _prestige >= _maxPrestige;
-            case NEEDS.SANITY:
-            return _sanity >= _maxSanity;
-            case NEEDS.SAFETY:
-            return _safety >= _maxSafety;
+                return _fun >= _maxFun;
+            //case NEEDS.PRESTIGE:
+            //return _prestige >= _maxPrestige;
+            //case NEEDS.SANITY:
+            //return _sanity >= _maxSanity;
+            //case NEEDS.SAFETY:
+            //return _safety >= _maxSafety;
+        }
+        return false;
+    }
+
+    /*
+     This is to check if the average of the 3 needs meet the threshold.
+         */
+    public bool AreNeedsMet() {
+        float average = (fullness + energy + fun) / 3f;
+        if (average >= Needs_Threshold) {
+            return true; //needs are met
         }
         return false;
     }
 
     public void UpdateHappiness() {
-        _happiness = (CalculateFullnessImpact(_fullness) + CalculateEnergyImpact(_energy) + CalculateFunImpact(_fun)
-            + CalculatePrestigeImpact(_prestige) + CalculateSanityImpact(_sanity) + CalculateSafetyImpact(_safety)) / 6f;
+        _happiness = (CalculateFullnessImpact(_fullness) + CalculateEnergyImpact(_energy) + CalculateFunImpact(_fun)) / 6f;
+        //+ CalculatePrestigeImpact(_prestige) + CalculateSanityImpact(_sanity) + CalculateSafetyImpact(_safety)) / 6f;
     }
 
     public float GetTotalHappinessIncrease(CharacterAction characterAction, IObject targetObject) {
-        float result = (GetHappinessIncrease(NEEDS.FULLNESS, characterAction) + GetHappinessIncrease(NEEDS.ENERGY, characterAction) + GetHappinessIncrease(NEEDS.FUN, characterAction)
-            + GetHappinessIncrease(NEEDS.PRESTIGE, characterAction) + GetHappinessIncrease(NEEDS.SANITY, characterAction) + GetHappinessIncrease(NEEDS.SAFETY, characterAction)); // GetDistanceModifier(_character.specificLocation.tileLocation, characterAction.state.obj.specificLocation.tileLocation);
+        float result = (GetHappinessIncrease(NEEDS.FULLNESS, characterAction) + GetHappinessIncrease(NEEDS.ENERGY, characterAction) + GetHappinessIncrease(NEEDS.FUN, characterAction));
+            //+ GetHappinessIncrease(NEEDS.PRESTIGE, characterAction) + GetHappinessIncrease(NEEDS.SANITY, characterAction) + GetHappinessIncrease(NEEDS.SAFETY, characterAction)); // GetDistanceModifier(_character.specificLocation.tileLocation, characterAction.state.obj.specificLocation.tileLocation);
 
         if (targetObject.objectType == OBJECT_TYPE.STRUCTURE) {
             Area areaOfStructure = targetObject.objectLocation.tileLocation.areaOfTile;
@@ -562,24 +565,24 @@ public class CharacterRole {
             advertisedAmount = action.actionData.advertisedFun;
             calculateImpact = CalculateFunImpact;
             break;
-            case NEEDS.PRESTIGE:
-            currentAmount = _prestige;
-            maxAmount = _maxPrestige;
-            advertisedAmount = action.actionData.advertisedPrestige;
-            calculateImpact = CalculatePrestigeImpact;
-            break;
-            case NEEDS.SANITY:
-            currentAmount = _sanity;
-            maxAmount = _maxSanity;
-            advertisedAmount = action.actionData.advertisedSanity;
-            calculateImpact = CalculateSanityImpact;
-            break;
-            case NEEDS.SAFETY:
-            currentAmount = _safety;
-            maxAmount = _maxSafety;
-            advertisedAmount = action.actionData.advertisedSafety;
-            calculateImpact = CalculateSafetyImpact;
-            break;
+            //case NEEDS.PRESTIGE:
+            //currentAmount = _prestige;
+            //maxAmount = _maxPrestige;
+            //advertisedAmount = action.actionData.advertisedPrestige;
+            //calculateImpact = CalculatePrestigeImpact;
+            //break;
+            //case NEEDS.SANITY:
+            //currentAmount = _sanity;
+            //maxAmount = _maxSanity;
+            //advertisedAmount = action.actionData.advertisedSanity;
+            //calculateImpact = CalculateSanityImpact;
+            //break;
+            //case NEEDS.SAFETY:
+            //currentAmount = _safety;
+            //maxAmount = _maxSafety;
+            //advertisedAmount = action.actionData.advertisedSafety;
+            //calculateImpact = CalculateSafetyImpact;
+            //break;
         }
         float futureAmount = currentAmount + advertisedAmount;
         if(calculateImpact != null) {
@@ -662,68 +665,68 @@ public class CharacterRole {
         return result;
     }
 
-    //Formula for calculation of happiness based on current prestige, meaning what's the happiness equivalent given the prestige
-    private float CalculatePrestigeImpact(float currentPrestige) {
-        //float value = 1.07f;// * currentPrestige;
-        //float result = (Mathf.Pow(value, -currentPrestige)) + 15f;
-        //if (currentPrestige < 0) { result *= -1f; }
-        float result = 0f;
-        if (currentPrestige >= 50f) {
-            //result = currentPrestige - 50f;
-            result = (currentPrestige / 0.5f) - 100f;
-        } else {
-            //result = currentPrestige * 2f;
-            result = currentPrestige - 50f;
-        }
-        if (result > 100f) {
-            result = 100f;
-        } else if (result < -100f) {
-            result = -100f;
-        }
-        return result;
-    }
+    ////Formula for calculation of happiness based on current prestige, meaning what's the happiness equivalent given the prestige
+    //private float CalculatePrestigeImpact(float currentPrestige) {
+    //    //float value = 1.07f;// * currentPrestige;
+    //    //float result = (Mathf.Pow(value, -currentPrestige)) + 15f;
+    //    //if (currentPrestige < 0) { result *= -1f; }
+    //    float result = 0f;
+    //    if (currentPrestige >= 50f) {
+    //        //result = currentPrestige - 50f;
+    //        result = (currentPrestige / 0.5f) - 100f;
+    //    } else {
+    //        //result = currentPrestige * 2f;
+    //        result = currentPrestige - 50f;
+    //    }
+    //    if (result > 100f) {
+    //        result = 100f;
+    //    } else if (result < -100f) {
+    //        result = -100f;
+    //    }
+    //    return result;
+    //}
 
-    //Formula for calculation of happiness based on current sanity, meaning what's the happiness equivalent given the sanity
-    private float CalculateSanityImpact(float currentSanity) {
-        //float value = 1.08f;// * currentSanity;
-        //float result = Mathf.Pow(value, -currentSanity);
-        //if (currentSanity < 0) { result *= -1f; }
-        float result = 0f;
-        if (currentSanity > 0f) {
-            //result = ((4f * currentSanity) / 20f) + 70f;
-            result = currentSanity * 2f;
-        } else {
-            //result = Mathf.Pow((currentSanity / 5f), 2f);
-            result = currentSanity;
-        }
-        if(result > 100f) {
-            result = 100f;
-        }else if(result < -100f) {
-            result = -100f;
-        }
-        return result;
-    }
+    ////Formula for calculation of happiness based on current sanity, meaning what's the happiness equivalent given the sanity
+    //private float CalculateSanityImpact(float currentSanity) {
+    //    //float value = 1.08f;// * currentSanity;
+    //    //float result = Mathf.Pow(value, -currentSanity);
+    //    //if (currentSanity < 0) { result *= -1f; }
+    //    float result = 0f;
+    //    if (currentSanity > 0f) {
+    //        //result = ((4f * currentSanity) / 20f) + 70f;
+    //        result = currentSanity * 2f;
+    //    } else {
+    //        //result = Mathf.Pow((currentSanity / 5f), 2f);
+    //        result = currentSanity;
+    //    }
+    //    if(result > 100f) {
+    //        result = 100f;
+    //    }else if(result < -100f) {
+    //        result = -100f;
+    //    }
+    //    return result;
+    //}
 
-    //Formula for calculation of happiness based on current safety, meaning what's the happiness equivalent given the safety
-    private float CalculateSafetyImpact(float currentSafety) {
-        //return (0.2f * ((float)currentSafety)) + 150f;
-        //float result = (Mathf.Pow(1.045f, -currentSafety)) + 5f;
-        //if (currentSafety < 0) { result *= -1f; }
-        float result = 0f;
-        if (currentSafety <= 50f && currentSafety >= -50f) {
-            //result = 20f;
-            result = currentSafety;
-        } else {
-            //result = ((100f * currentSafety) / 25f) - 50f;
-            result = (currentSafety / 0.5f) - 50f;
-        }
-        if (result > 100f) {
-            result = 100f;
-        } else if (result < -100f) {
-            result = -100f;
-        }
-        return result;
-    }
+    ////Formula for calculation of happiness based on current safety, meaning what's the happiness equivalent given the safety
+    //private float CalculateSafetyImpact(float currentSafety) {
+    //    //return (0.2f * ((float)currentSafety)) + 150f;
+    //    //float result = (Mathf.Pow(1.045f, -currentSafety)) + 5f;
+    //    //if (currentSafety < 0) { result *= -1f; }
+    //    float result = 0f;
+    //    if (currentSafety <= 50f && currentSafety >= -50f) {
+    //        //result = 20f;
+    //        result = currentSafety;
+    //    } else {
+    //        //result = ((100f * currentSafety) / 25f) - 50f;
+    //        result = (currentSafety / 0.5f) - 50f;
+    //    }
+    //    if (result > 100f) {
+    //        result = 100f;
+    //    } else if (result < -100f) {
+    //        result = -100f;
+    //    }
+    //    return result;
+    //}
     private float GetDistanceModifier(HexTile from, HexTile to) {
         int distance = PathGenerator.Instance.GetDistanceBetweenTwoTiles(from, to);
         if(distance == 99999) {

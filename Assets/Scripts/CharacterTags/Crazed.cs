@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using ECS;
 using UnityEngine;
 
-public class Crazed : CharacterAttribute {
-    public Crazed(Character character) : base(character, ATTRIBUTE.CRAZED) {
+public class Crazed : CharacterTag {
+    public Crazed(Character character) : base(character, CHARACTER_TAG.CRAZED) {
     }
 
     public override void Initialize() {
