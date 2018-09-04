@@ -7,17 +7,17 @@ using UnityEngine.UI;
 
 public class CharacterAttributeIcon : PooledObject, IPointerEnterHandler, IPointerExitHandler {
 
-    public CharacterTag attribute { get; private set; }
+    public CharacterAttribute attribute { get; private set; }
     [SerializeField] private Image icon;
 
     private bool isHovering = false;
 
-    public void SetTag(CharacterTag attribute) {
+    public void SetTag(CharacterAttribute attribute) {
         this.attribute = attribute;
         LoadIcon(attribute.attribute);
     }
 
-    private void LoadIcon(CHARACTER_TAG attribute) {
+    private void LoadIcon(ATTRIBUTE attribute) {
         icon.sprite = CharacterManager.Instance.GetCharacterAttributeSprite(attribute);
     }
 

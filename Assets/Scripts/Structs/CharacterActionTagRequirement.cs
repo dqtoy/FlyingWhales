@@ -7,7 +7,7 @@ using UnityEngine;
 public class CharacterActionTagRequirement {
 
     public ACTION_FILTER_CONDITION condition;
-    public List<CHARACTER_TAG> tags;
+    public List<ATTRIBUTE> tags;
 
     public bool MeetsRequirement(Character character) {
         if (condition == ACTION_FILTER_CONDITION.IS) {

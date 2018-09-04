@@ -2,10 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class CharacterTag {
+public class CharacterAttribute {
 	protected ECS.Character _character;
 	protected string _name;
-	protected CHARACTER_TAG _attribute;
+	protected ATTRIBUTE _attribute;
 	protected StatsModifierPercentage _statsModifierPercentage;
 	protected bool _isRemoved;
     protected List<ACTION_TYPE> _grantedActionTypes;
@@ -14,7 +14,7 @@ public class CharacterTag {
 	public string name {
 		get { return _name; }
 	}
-	public CHARACTER_TAG attribute {
+	public ATTRIBUTE attribute {
 		get { return _attribute; }
 	}
 	public ECS.Character character{
@@ -31,7 +31,7 @@ public class CharacterTag {
 	}
 	#endregion
 
-	public CharacterTag(ECS.Character character, CHARACTER_TAG attribute) {
+	public CharacterAttribute(ECS.Character character, ATTRIBUTE attribute) {
 		_character = character;
         _attribute = attribute;
         _name = Utilities.NormalizeStringUpperCaseFirstLetters (_attribute.ToString ());

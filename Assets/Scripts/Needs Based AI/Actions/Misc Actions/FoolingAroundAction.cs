@@ -26,4 +26,4 @@ public class FoolingAroundAction : CharacterAction {
     }
     #endregion
 }
-}
+

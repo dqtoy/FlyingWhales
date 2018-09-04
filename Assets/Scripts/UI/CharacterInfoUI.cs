@@ -119,8 +119,8 @@ public class CharacterInfoUI : UIMenu {
         //Messenger.AddListener<ActionQueueItem, Character>(Signals.ACTION_ADDED_TO_QUEUE, OnActionAddedToQueue);
         //Messenger.AddListener<ActionQueueItem, Character>(Signals.ACTION_REMOVED_FROM_QUEUE, OnActionRemovedFromQueue);
         //Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
-        Messenger.AddListener<Character, CharacterTag>(Signals.ATTRIBUTE_ADDED, OnCharacterAttributeAdded);
-        Messenger.AddListener<Character, CharacterTag>(Signals.ATTRIBUTE_REMOVED, OnCharacterAttributeRemoved);
+        Messenger.AddListener<Character, CharacterAttribute>(Signals.ATTRIBUTE_ADDED, OnCharacterAttributeAdded);
+        Messenger.AddListener<Character, CharacterAttribute>(Signals.ATTRIBUTE_REMOVED, OnCharacterAttributeRemoved);
         affiliations.Initialize();
         currentActionIcon.Initialize();
         //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
@@ -398,15 +398,15 @@ public class CharacterInfoUI : UIMenu {
     private void UpdateTagInfo() {
         Utilities.DestroyChildren(tagsScrollView.content);
         for (int i = 0; i < currentlyShowingCharacter.tags.Count; i++) {
-            CharacterTag currTag = currentlyShowingCharacter.tags[i];
+            CharacterAttribute currTag = currentlyShowingCharacter.tags[i];
             AddTag(currTag);
         }
     }
-    private void AddTag(CharacterTag tag) {
+    private void AddTag(CharacterAttribute tag) {
         GameObject tagGO = UIManager.Instance.InstantiateUIObject(characterTagPrefab.name, tagsScrollView.content);
         tagGO.GetComponent<CharacterAttributeIcon>().SetTag(tag);
     }
-    private void RemoveTag(CharacterTag tag) {
+    private void RemoveTag(CharacterAttribute tag) {
         CharacterAttributeIcon[] icons = Utilities.GetComponentsInDirectChildren<CharacterAttributeIcon>(tagsScrollView.content.gameObject);
         for (int i = 0; i < icons.Length; i++) {
             CharacterAttributeIcon icon = icons[i];
@@ -416,12 +416,12 @@ public class CharacterInfoUI : UIMenu {
             }
         }
     }
-    private void OnCharacterAttributeAdded(Character affectedCharacter, CharacterTag tag) {
+    private void OnCharacterAttributeAdded(Character affectedCharacter, CharacterAttribute tag) {
         if (currentlyShowingCharacter != null && currentlyShowingCharacter.id == affectedCharacter.id) {
             AddTag(tag);
         }
     }
-    private void OnCharacterAttributeRemoved(Character affectedCharacter, CharacterTag tag) {
+    private void OnCharacterAttributeRemoved(Character affectedCharacter, CharacterAttribute tag) {
         if (currentlyShowingCharacter != null && currentlyShowingCharacter.id == affectedCharacter.id) {
             RemoveTag(tag);
         }

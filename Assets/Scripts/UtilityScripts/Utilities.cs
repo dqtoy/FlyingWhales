@@ -1574,7 +1574,7 @@ public class Utilities : MonoBehaviour {
     #endregion
 
     #region Character Tags
-    public static int GetTagWorldGenChance(CHARACTER_TAG tag){
+    public static int GetTagWorldGenChance(ATTRIBUTE tag){
 		switch(tag){
 		//case ATTRIBUTE.HERBALIST:
 		//case ATTRIBUTE.RITUALIST:

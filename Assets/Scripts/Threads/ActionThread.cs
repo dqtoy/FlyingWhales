@@ -56,11 +56,11 @@ public class ActionThread : Multithread {
                     actionLog += "\nDetermining hero work action...";
                     //go to tavern and look for a quest, then do that quest until work period ends
                     //TODO: Change this to get actions from quest boards
-                    IObject targetObject = null;
-                    chosenAction = character.GetRandomIdleAction(ref targetObject);
-                    chosenObject = targetObject;
-                    _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
-                    actionLog += "\nGot hero work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
+                    //IObject targetObject = null;
+                    //chosenAction = character.GetRandomIdleAction(ref targetObject);
+                    //chosenObject = targetObject;
+                    //_party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
+                    //actionLog += "\nGot hero work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
                 } else if(character.role.roleType == CHARACTER_ROLE.CIVILIAN) { //if character is civilian
                     actionLog += "\nDetermining civilian work action...";
                     //get work action based on class (Farmer, Miner, etc.) then do that until work period ends.

@@ -47,7 +47,7 @@ namespace ECS {
         private List<Item> _equippedItems;
         private List<Item> _inventory;
         private List<Skill> _skills;
-        private List<CharacterTag> _tags;
+        private List<CharacterAttribute> _tags;
         private List<Log> _history;
         private List<CharacterQuestData> _questData;
         private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
@@ -119,7 +119,7 @@ namespace ECS {
         public MODE currentMode {
             get { return _currentMode; }
         }
-        public List<CharacterTag> tags {
+        public List<CharacterAttribute> tags {
             get { return _tags; }
         }
         public Dictionary<Character, Relationship> relationships {
@@ -432,10 +432,10 @@ namespace ECS {
             DetermineAllowedMiscActions();
         }
         public Character() {
-            _tags = new List<CharacterTag>();
+            _tags = new List<CharacterAttribute>();
             _exploredLandmarks = new List<BaseLandmark>();
             _statusEffects = new List<STATUS_EFFECT>();
-            _tags = new List<CharacterTag>();
+            _tags = new List<CharacterAttribute>();
             _isDead = false;
             _isFainted = false;
             //_isDefeated = false;
@@ -1684,7 +1684,7 @@ namespace ECS {
 			//TODO: Things to do when a character changes role
 
 //			AssignRole(role);
-			if(_raceSetting.tags.Contains(CHARACTER_TAG.SAPIENT)){
+			if(_raceSetting.tags.Contains(ATTRIBUTE.SAPIENT)){
 				CHARACTER_ROLE roleToCreate = CHARACTER_ROLE.HERO;
 				WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary();
 				if (characterRoleProductionDictionary.GetTotalOfWeights () > 0) {
@@ -1707,72 +1707,72 @@ namespace ECS {
         #region Character Tags
         public void AssignInitialTags() {
             int tagChance = UnityEngine.Random.Range(0, 100);
-            CHARACTER_TAG[] initialTags = (CHARACTER_TAG[])System.Enum.GetValues(typeof(CHARACTER_TAG));
+            ATTRIBUTE[] initialTags = (ATTRIBUTE[])System.Enum.GetValues(typeof(ATTRIBUTE));
             for (int j = 0; j < initialTags.Length; j++) {
-                CHARACTER_TAG tag = initialTags[j];
+                ATTRIBUTE tag = initialTags[j];
                 if (tagChance < Utilities.GetTagWorldGenChance(tag)) {
                     AssignTag(tag);
                 }
             }
         }
-        public CharacterTag AssignTag(CHARACTER_TAG tag) {
+        public CharacterAttribute AssignTag(ATTRIBUTE tag) {
 			if(HasTag(tag)){
 				return null;
 			}
-			CharacterTag charTag = null;
+			CharacterAttribute charTag = null;
 			switch (tag) {
-            case CHARACTER_TAG.HUNGRY:
+            case ATTRIBUTE.HUNGRY:
                 charTag = new Hungry(this);
                 break;
-            case CHARACTER_TAG.FAMISHED:
+            case ATTRIBUTE.FAMISHED:
                 charTag = new Famished(this);
                 break;
-            case CHARACTER_TAG.TIRED:
+            case ATTRIBUTE.TIRED:
                 charTag = new Tired(this);
                 break;
-            case CHARACTER_TAG.EXHAUSTED:
+            case ATTRIBUTE.EXHAUSTED:
                 charTag = new Exhausted(this);
                 break;
-            case CHARACTER_TAG.SAD:
+            case ATTRIBUTE.SAD:
                 charTag = new Sad(this);
                 break;
-            case CHARACTER_TAG.DEPRESSED:
+            case ATTRIBUTE.DEPRESSED:
                 charTag = new Depressed(this);
                 break;
-            case CHARACTER_TAG.ANXIOUS:
+            case ATTRIBUTE.ANXIOUS:
                 charTag = new Anxious(this);
                 break;
-            case CHARACTER_TAG.INSECURE:
+            case ATTRIBUTE.INSECURE:
                 charTag = new Insecure(this);
                 break;
-            case CHARACTER_TAG.DRUNK:
+            case ATTRIBUTE.DRUNK:
                 charTag = new Drunk(this);
                 break;
-            case CHARACTER_TAG.DISTURBED:
+            case ATTRIBUTE.DISTURBED:
                 charTag = new Disturbed(this);
                 break;
-            case CHARACTER_TAG.CRAZED:
+            case ATTRIBUTE.CRAZED:
                 charTag = new Crazed(this);
                 break;
-            case CHARACTER_TAG.DEMORALIZED:
+            case ATTRIBUTE.DEMORALIZED:
                 charTag = new Demoralized(this);
                 break;
-            case CHARACTER_TAG.STARVING:
+            case ATTRIBUTE.STARVING:
                 charTag = new Starving(this);
                 break;
-            case CHARACTER_TAG.WOUNDED:
+            case ATTRIBUTE.WOUNDED:
                 charTag = new Wounded(this);
                 break;
-            case CHARACTER_TAG.WRECKED:
+            case ATTRIBUTE.WRECKED:
                 charTag = new Wrecked(this);
                 break;
-            case CHARACTER_TAG.IMPULSIVE:
+            case ATTRIBUTE.IMPULSIVE:
                 charTag = new Impulsive(this);
                 break;
-            case CHARACTER_TAG.BETRAYED:
+            case ATTRIBUTE.BETRAYED:
                 charTag = new Betrayed(this);
                 break;
-            case CHARACTER_TAG.HEARTBROKEN:
+            case ATTRIBUTE.HEARTBROKEN:
                 charTag = new Heartbroken(this);
                 break;
             }
@@ -1791,12 +1791,12 @@ namespace ECS {
                 AssignTag(setup.tags[i]);
             }
         }
-		public void AddCharacterAttribute(CharacterTag tag){
+		public void AddCharacterAttribute(CharacterAttribute tag){
 			_tags.Add(tag);
 			tag.Initialize ();
             Messenger.Broadcast(Signals.ATTRIBUTE_ADDED, this, tag);
 		}
-		public bool RemoveCharacterAttribute(CharacterTag tag){
+		public bool RemoveCharacterAttribute(CharacterAttribute tag){
 			if(_tags.Remove(tag)){
 				tag.OnRemoveTag();
                 Messenger.Broadcast(Signals.ATTRIBUTE_REMOVED, this, tag);
@@ -1804,26 +1804,26 @@ namespace ECS {
 			}
 			return false;
 		}
-		public bool RemoveCharacterAttribute(CHARACTER_TAG tag) {
+		public bool RemoveCharacterAttribute(ATTRIBUTE tag) {
             for (int i = 0; i < _tags.Count; i++) {
-                CharacterTag currTag = _tags[i];
+                CharacterAttribute currTag = _tags[i];
                 if (currTag.attribute == tag) {
                     return RemoveCharacterAttribute(currTag);
                 }
             }
 			return false;
         }
-        public bool RemoveCharacterAttribute(List<CHARACTER_TAG> tags) {
+        public bool RemoveCharacterAttribute(List<ATTRIBUTE> tags) {
             for (int i = 0; i < tags.Count; i++) {
-                CHARACTER_TAG currTag = tags[i];
+                ATTRIBUTE currTag = tags[i];
                 RemoveCharacterAttribute(currTag);
             }
             return false;
         }
-        public bool HasTags(CHARACTER_TAG[] tagsToHave, bool mustHaveAll = false){
+        public bool HasTags(ATTRIBUTE[] tagsToHave, bool mustHaveAll = false){
 			return DoesHaveTags (this, tagsToHave, mustHaveAll);
 		}
-		private bool DoesHaveTags(Character currCharacter, CHARACTER_TAG[] tagsToHave, bool mustHaveAll = false){
+		private bool DoesHaveTags(Character currCharacter, ATTRIBUTE[] tagsToHave, bool mustHaveAll = false){
 			if(mustHaveAll){
 				int tagsCount = 0;
 				for (int i = 0; i < currCharacter.tags.Count; i++) {
@@ -1848,7 +1848,7 @@ namespace ECS {
 			}
 			return false;
 		}
-		public bool HasTag(CHARACTER_TAG tag) {
+		public bool HasTag(ATTRIBUTE tag) {
             for (int i = 0; i < _tags.Count; i++) {
                 if (_tags[i].attribute == tag) {
                     return true;
@@ -1865,7 +1865,7 @@ namespace ECS {
             }
 			return false;
 		}
-		public CharacterTag GetTag(CHARACTER_TAG tag){
+		public CharacterAttribute GetTag(ATTRIBUTE tag){
             for (int i = 0; i < _tags.Count; i++) {
                 if (_tags[i].attribute == tag) {
                     return _tags[i];
@@ -1873,7 +1873,7 @@ namespace ECS {
             }
 			return null;
 		}
-		public CharacterTag GetTag(string tag){
+		public CharacterAttribute GetTag(string tag){
             for (int i = 0; i < _tags.Count; i++) {
                 if (_tags[i].name == tag) {
                     return _tags[i];
@@ -2022,7 +2022,7 @@ namespace ECS {
                 if (this.role.roleType == CHARACTER_ROLE.CIVILIAN) { //If he is a Civilian-type
                     if (this.mentalPoints <= -6) {
                         //if Mental Points is -6 or below, the character will request to chat with the Player and ask for his help
-                    } else if (this.HasTag(CHARACTER_TAG.IMPULSIVE)) {
+                    } else if (this.HasTag(ATTRIBUTE.IMPULSIVE)) {
                         //else, if character has impulsive trait, a change action to a randomized Hero class will be added at the end of his Action Queue.
                         ChangeClassAction changeClassAction = ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.CHANGE_CLASS) as ChangeClassAction;
                         string[] choices = new string[] { "Warrior" };
@@ -2034,7 +2034,7 @@ namespace ECS {
                 } else if (this.role.roleType == CHARACTER_ROLE.HERO) { //If he is a Hero-type
                     if (this.mentalPoints <= -6) {
                         //if Mental Points is -6 or below, the character will request to chat with the Player and ask for his help
-                    } else if (this.HasTag(CHARACTER_TAG.IMPULSIVE)) {
+                    } else if (this.HasTag(ATTRIBUTE.IMPULSIVE)) {
                         //else, if character has impulsive trait, he will attempt the quest without any other people's help
                     } else {
                         //else, character will create a new Squad and become its Squad Leader and will perform a Recruit Squadmates action
@@ -2154,7 +2154,7 @@ namespace ECS {
         private void OnOtherCharacterDied(Character character) {
             if (character.id != this.id) {
                 if (IsCharacterLovedOne(character)) { //A character gains heartbroken tag for 15 days when a family member or a loved one dies.
-                    AssignTag(CHARACTER_TAG.HEARTBROKEN);
+                    AssignTag(ATTRIBUTE.HEARTBROKEN);
                 }
                 RemoveRelationshipWith(character);
             }
@@ -2840,13 +2840,13 @@ namespace ECS {
                 deathChance += difference * 0.5f; //For every point lower than -5, add 0.5% to chance to die per tick.
                 if (UnityEngine.Random.Range(0f, 100f) < deathChance) {
                     List<string> deathCauses = new List<string>();
-                    if (HasTags(new CHARACTER_TAG[] { CHARACTER_TAG.TIRED, CHARACTER_TAG.EXHAUSTED})) {
+                    if (HasTags(new ATTRIBUTE[] { ATTRIBUTE.TIRED, ATTRIBUTE.EXHAUSTED})) {
                         deathCauses.Add("exhaustion");
                     }
-                    if (HasTags(new CHARACTER_TAG[] { CHARACTER_TAG.HUNGRY, CHARACTER_TAG.STARVING })) {
+                    if (HasTags(new ATTRIBUTE[] { ATTRIBUTE.HUNGRY, ATTRIBUTE.STARVING })) {
                         deathCauses.Add("starvation");
                     }
-                    if (HasTags(new CHARACTER_TAG[] { CHARACTER_TAG.WOUNDED, CHARACTER_TAG.WRECKED })) {
+                    if (HasTags(new ATTRIBUTE[] { ATTRIBUTE.WOUNDED, ATTRIBUTE.WRECKED })) {
                         deathCauses.Add("injury");
                     }
 

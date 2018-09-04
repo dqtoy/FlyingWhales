@@ -394,7 +394,7 @@ public class CharacterManager : MonoBehaviour {
         }
         return null;
     }
-    public Sprite GetCharacterAttributeSprite(CHARACTER_TAG tag) {
+    public Sprite GetCharacterAttributeSprite(ATTRIBUTE tag) {
         for (int i = 0; i < characterTagIcons.Count; i++) {
             CharacterAttributeIconSetting currSettings = characterTagIcons[i];
             if (currSettings.tag == tag) {

@@ -517,7 +517,7 @@ public class ConsoleMenu : UIMenu {
             character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
         }
         
-        CHARACTER_TAG tag = (CHARACTER_TAG)Enum.Parse(typeof(CHARACTER_TAG), parameters[1]);
+        ATTRIBUTE tag = (ATTRIBUTE)Enum.Parse(typeof(ATTRIBUTE), parameters[1]);
 
         if (character == null) {
             AddCommandHistory(consoleLbl.text);

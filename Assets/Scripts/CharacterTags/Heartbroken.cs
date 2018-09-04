@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using ECS;
 using UnityEngine;
 
-public class Heartbroken : CharacterTag {
-    public Heartbroken(Character character) : base(character, CHARACTER_TAG.HEARTBROKEN) {
+public class Heartbroken : CharacterAttribute {
+    public Heartbroken(Character character) : base(character, ATTRIBUTE.HEARTBROKEN) {
     }
 
     public override void Initialize() {

@@ -1474,3 +1474,8 @@ public enum ATTRIBUTE_BEHAVIOR {
     NONE,
     DEPLETE_FUN,
 }
+public enum SCHEDULE_PHASE_TYPE {
+    WORK,
+    MISC,
+    SPECIAL,
+}

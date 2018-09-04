@@ -215,14 +215,14 @@ public class CharacterRole {
     private void OnFullnessEdited() {
         if (_fullness < 0 && _fullness >= -75) {
             //Character gains Hungry tag when Fullness is below 0 to -75.
-            _character.AssignTag(CHARACTER_TAG.HUNGRY);
-            _character.RemoveCharacterAttribute(CHARACTER_TAG.STARVING);
+            _character.AssignTag(ATTRIBUTE.HUNGRY);
+            _character.RemoveCharacterAttribute(ATTRIBUTE.STARVING);
         } else if (_fullness < -75) {
             //Character gains Starving tag when Fullness is below -75   
-            _character.AssignTag(CHARACTER_TAG.STARVING);
-            _character.RemoveCharacterAttribute(CHARACTER_TAG.HUNGRY);
+            _character.AssignTag(ATTRIBUTE.STARVING);
+            _character.RemoveCharacterAttribute(ATTRIBUTE.HUNGRY);
         } else {
-            _character.RemoveCharacterAttribute(new List<CHARACTER_TAG>() { CHARACTER_TAG.HUNGRY, CHARACTER_TAG.STARVING });
+            _character.RemoveCharacterAttribute(new List<ATTRIBUTE>() { ATTRIBUTE.HUNGRY, ATTRIBUTE.STARVING });
         }
     }
 
@@ -272,14 +272,14 @@ public class CharacterRole {
     private void OnEnergyEdited() {
         if (_energy < 0 && _energy >= -75) {
             //Character gains Tired tag when Energy is below 0 to -75.
-            _character.AssignTag(CHARACTER_TAG.TIRED);
-            _character.RemoveCharacterAttribute(CHARACTER_TAG.EXHAUSTED);
+            _character.AssignTag(ATTRIBUTE.TIRED);
+            _character.RemoveCharacterAttribute(ATTRIBUTE.EXHAUSTED);
         } else if (_energy < -75) {
             //Character gains Crazed tag when Energy is below -75
-            _character.AssignTag(CHARACTER_TAG.EXHAUSTED);
-            _character.RemoveCharacterAttribute(CHARACTER_TAG.TIRED);
+            _character.AssignTag(ATTRIBUTE.EXHAUSTED);
+            _character.RemoveCharacterAttribute(ATTRIBUTE.TIRED);
         } else {
-            _character.RemoveCharacterAttribute(new List<CHARACTER_TAG>() { CHARACTER_TAG.TIRED, CHARACTER_TAG.EXHAUSTED });
+            _character.RemoveCharacterAttribute(new List<ATTRIBUTE>() { ATTRIBUTE.TIRED, ATTRIBUTE.EXHAUSTED });
         }
     }
 
@@ -333,14 +333,14 @@ public class CharacterRole {
     private void OnFunEdited() {
         if (_fun < 0 && _fun >= -75) {
             //Character gains Sad tag when Fun is below 0 to -75.
-            _character.AssignTag(CHARACTER_TAG.SAD);
-            _character.RemoveCharacterAttribute(CHARACTER_TAG.DEPRESSED);
+            _character.AssignTag(ATTRIBUTE.SAD);
+            _character.RemoveCharacterAttribute(ATTRIBUTE.DEPRESSED);
         } else if (_fun < -75) {
             //Character gains Depressed tag when Fun is below -75
-            _character.AssignTag(CHARACTER_TAG.DEPRESSED);
-            _character.RemoveCharacterAttribute(CHARACTER_TAG.SAD);
+            _character.AssignTag(ATTRIBUTE.DEPRESSED);
+            _character.RemoveCharacterAttribute(ATTRIBUTE.SAD);
         } else {
-            _character.RemoveCharacterAttribute(new List<CHARACTER_TAG>() { CHARACTER_TAG.SAD, CHARACTER_TAG.DEPRESSED });
+            _character.RemoveCharacterAttribute(new List<ATTRIBUTE>() { ATTRIBUTE.SAD, ATTRIBUTE.DEPRESSED });
         }
     }
 
