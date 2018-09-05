@@ -319,6 +319,8 @@ public class ObjectManager : MonoBehaviour {
                 return new WoodcuttingAction();
             case ACTION_TYPE.WORKING:
                 return new WorkingAction();
+            case ACTION_TYPE.TAKE_QUEST:
+                return new TakeQuestAction();
         }
         return null;
     }
