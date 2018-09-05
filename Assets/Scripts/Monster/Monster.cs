@@ -536,7 +536,7 @@ public class Monster : ICharacter, ICharacterSim {
     public CharacterAction GetRandomMiscAction(ref IObject targetObject) {
         return _miscActions[Utilities.rng.Next(0, _miscActions.Count)];
     }
-    public CharacterAction GetMiscAction(ACTION_CATEGORY category, ACTION_TYPE type) {
+    public CharacterAction GetMiscAction(ACTION_TYPE type) {
         for (int i = 0; i < _miscActions.Count; i++) {
             if (_miscActions[i].actionData.actionType == type) {
                 return _miscActions[i];

@@ -77,7 +77,7 @@ public interface ICharacter {
     int GetDef();
     NewParty CreateOwnParty();
     CharacterAction GetRandomMiscAction(ref IObject targetObject);
-    CharacterAction GetMiscAction(ACTION_CATEGORY category, ACTION_TYPE type);
+    CharacterAction GetMiscAction(ACTION_TYPE type);
     CharacterAttribute AssignTag(ATTRIBUTE tag); //Character only
     void AddActionToQueue(CharacterAction action, IObject targetObject, CharacterQuestData associatedQuestData = null, int position = -1);
     void RemoveActionFromQueue(ActionQueueItem item);

@@ -33,39 +33,39 @@ public class AttributeManager : MonoBehaviour {
     }
 
     public void Initialize() {
-        _allAttributes = new List<Attribute>();
-        _allCharacterAttributes = new List<Attribute>();
-        _allItemAttributes = new List<Attribute>();
-        _allStructureAttributes = new List<Attribute>();
+        //_allAttributes = new List<Attribute>();
+        //_allCharacterAttributes = new List<Attribute>();
+        //_allItemAttributes = new List<Attribute>();
+        //_allStructureAttributes = new List<Attribute>();
 
-        string path = Utilities.dataPath + "Attributes/";
-        string[] directories = Directory.GetDirectories(path);
-        for (int i = 0; i < directories.Length; i++) {
-            string folderName = new DirectoryInfo(directories[i]).Name;
-            string[] files = Directory.GetFiles(directories[i], "*.json");
-            if (folderName == "CHARACTER") {
-                for (int j = 0; j < files.Length; j++) {
-                    Attribute attribute = JsonUtility.FromJson<Attribute>(System.IO.File.ReadAllText(files[j]));
-                    attribute.Initialize();
-                    _allCharacterAttributes.Add(attribute);
-                    _allAttributes.Add(attribute);
-                }
-            } else if (folderName == "ITEM") {
-                for (int j = 0; j < files.Length; j++) {
-                    Attribute attribute = JsonUtility.FromJson<Attribute>(System.IO.File.ReadAllText(files[j]));
-                    attribute.Initialize();
-                    _allItemAttributes.Add(attribute);
-                    _allAttributes.Add(attribute);
-                }
-            } else if (folderName == "STRUCTURE") {
-                for (int j = 0; j < files.Length; j++) {
-                    Attribute attribute = JsonUtility.FromJson<Attribute>(System.IO.File.ReadAllText(files[j]));
-                    attribute.Initialize();
-                    _allStructureAttributes.Add(attribute);
-                    _allAttributes.Add(attribute);
-                }
-            }
-        }
+        //string path = Utilities.dataPath + "Attributes/";
+        //string[] directories = Directory.GetDirectories(path);
+        //for (int i = 0; i < directories.Length; i++) {
+        //    string folderName = new DirectoryInfo(directories[i]).Name;
+        //    string[] files = Directory.GetFiles(directories[i], "*.json");
+        //    if (folderName == "CHARACTER") {
+        //        for (int j = 0; j < files.Length; j++) {
+        //            Attribute attribute = JsonUtility.FromJson<Attribute>(System.IO.File.ReadAllText(files[j]));
+        //            attribute.Initialize();
+        //            _allCharacterAttributes.Add(attribute);
+        //            _allAttributes.Add(attribute);
+        //        }
+        //    } else if (folderName == "ITEM") {
+        //        for (int j = 0; j < files.Length; j++) {
+        //            Attribute attribute = JsonUtility.FromJson<Attribute>(System.IO.File.ReadAllText(files[j]));
+        //            attribute.Initialize();
+        //            _allItemAttributes.Add(attribute);
+        //            _allAttributes.Add(attribute);
+        //        }
+        //    } else if (folderName == "STRUCTURE") {
+        //        for (int j = 0; j < files.Length; j++) {
+        //            Attribute attribute = JsonUtility.FromJson<Attribute>(System.IO.File.ReadAllText(files[j]));
+        //            attribute.Initialize();
+        //            _allStructureAttributes.Add(attribute);
+        //            _allAttributes.Add(attribute);
+        //        }
+        //    }
+        //}
     }
 
     public Action<Character> GetBehavior(ATTRIBUTE_BEHAVIOR type) {

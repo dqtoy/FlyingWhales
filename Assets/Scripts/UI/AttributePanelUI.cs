@@ -129,22 +129,22 @@ public class AttributePanelUI : MonoBehaviour {
 #endif
     }
     private void SaveAttributeJson(string path) {
-        Attribute newAttribute = new Attribute();
+//        Attribute newAttribute = new Attribute();
 
-        newAttribute.SetDataFromAttributePanelUI();
+//        newAttribute.SetDataFromAttributePanelUI();
 
-        string jsonString = JsonUtility.ToJson(newAttribute);
+//        string jsonString = JsonUtility.ToJson(newAttribute);
 
-        System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
-        writer.WriteLine(jsonString);
-        writer.Close();
+//        System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
+//        writer.WriteLine(jsonString);
+//        writer.Close();
 
-#if UNITY_EDITOR
-        //Re-import the file to update the reference in the editor
-        UnityEditor.AssetDatabase.ImportAsset(path);
-#endif
-        Debug.Log("Successfully saved attribute at " + path);
-        UpdateItemAttributes();
+//#if UNITY_EDITOR
+//        //Re-import the file to update the reference in the editor
+//        UnityEditor.AssetDatabase.ImportAsset(path);
+//#endif
+//        Debug.Log("Successfully saved attribute at " + path);
+//        UpdateItemAttributes();
     }
     private void LoadAttribute() {
 #if UNITY_EDITOR
@@ -162,24 +162,24 @@ public class AttributePanelUI : MonoBehaviour {
         hiddenToggle.isOn = attribute.isHidden;
         categoryOptions.value = GetCategoryIndex(attribute.category.ToString());
 
-        for (int i = 0; i < attribute.tickBehaviors.Count; i++) {
-            string behavior = attribute.tickBehaviors[i].ToString();
-            _tickBehaviors.Add(behavior);
-            GameObject go = GameObject.Instantiate(behaviorBtnPrefab, tickBehaviorContentTransform);
-            go.GetComponent<BehaviorBtn>().buttonText.text = behavior;
-        }
-        for (int i = 0; i < attribute.onAddedBehaviors.Count; i++) {
-            string behavior = attribute.onAddedBehaviors[i].ToString();
-            _addBehaviors.Add(behavior);
-            GameObject go = GameObject.Instantiate(behaviorBtnPrefab, addBehaviorContentTransform);
-            go.GetComponent<BehaviorBtn>().buttonText.text = behavior;
-        }
-        for (int i = 0; i < attribute.onRemovedBehaviors.Count; i++) {
-            string behavior = attribute.onRemovedBehaviors[i].ToString();
-            _removeBehaviors.Add(behavior);
-            GameObject go = GameObject.Instantiate(behaviorBtnPrefab, removeBehaviorContentTransform);
-            go.GetComponent<BehaviorBtn>().buttonText.text = behavior;
-        }
+        //for (int i = 0; i < attribute.tickBehaviors.Count; i++) {
+        //    string behavior = attribute.tickBehaviors[i].ToString();
+        //    _tickBehaviors.Add(behavior);
+        //    GameObject go = GameObject.Instantiate(behaviorBtnPrefab, tickBehaviorContentTransform);
+        //    go.GetComponent<BehaviorBtn>().buttonText.text = behavior;
+        //}
+        //for (int i = 0; i < attribute.onAddedBehaviors.Count; i++) {
+        //    string behavior = attribute.onAddedBehaviors[i].ToString();
+        //    _addBehaviors.Add(behavior);
+        //    GameObject go = GameObject.Instantiate(behaviorBtnPrefab, addBehaviorContentTransform);
+        //    go.GetComponent<BehaviorBtn>().buttonText.text = behavior;
+        //}
+        //for (int i = 0; i < attribute.onRemovedBehaviors.Count; i++) {
+        //    string behavior = attribute.onRemovedBehaviors[i].ToString();
+        //    _removeBehaviors.Add(behavior);
+        //    GameObject go = GameObject.Instantiate(behaviorBtnPrefab, removeBehaviorContentTransform);
+        //    go.GetComponent<BehaviorBtn>().buttonText.text = behavior;
+        //}
     }
     private int GetCategoryIndex(string categoryName) {
         for (int i = 0; i < categoryOptions.options.Count; i++) {

@@ -64,7 +64,7 @@ public class ChatAction : CharacterAction {
 
                     if (targetParty.actionData.currentAction.actionData.actionType != ACTION_TYPE.CHAT) {
                         targetParty.actionData.currentAction.EndAction(targetParty, targetObject);
-                        ChatAction actionToAssign = targetParty.mainCharacter.GetMiscAction(_actionData.actionCategory, _actionData.actionType) as ChatAction;
+                        ChatAction actionToAssign = targetParty.mainCharacter.GetMiscAction(_actionData.actionType) as ChatAction;
                         targetParty.actionData.AssignAction(actionToAssign, null);
                         actionToAssign.AddChatter(party.mainCharacter as Character);
                     } else {
