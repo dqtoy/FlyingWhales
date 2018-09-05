@@ -14,6 +14,7 @@ public class StructureObj : IObject {
     protected ActionEvent _onHPReachedFull;
 
     protected List<ObjectState> _states;
+    protected List<Attribute> _attributes;
     protected Dictionary<RESOURCE, int> _resourceInventory;
 
     protected string _objectName;
@@ -36,6 +37,9 @@ public class StructureObj : IObject {
     }
     public List<ObjectState> states {
         get { return _states; }
+    }
+    public List<Attribute> attributes {
+        get { return _attributes; }
     }
     public ObjectState currentState {
         get { return _currentState; }
@@ -74,6 +78,7 @@ public class StructureObj : IObject {
 
     public StructureObj() {
         _objectType = OBJECT_TYPE.STRUCTURE;
+        _attributes = new List<Attribute>();
         ConstructResourceInventory();
     }
     #region Virtuals
@@ -250,6 +255,26 @@ public class StructureObj : IObject {
     }
     public void AdjustNumOfResidents(int amount) {
         _numOfResidentCivilians += amount;
+    }
+    public Attribute GetAttribute(ATTRIBUTE attribute) {
+        for (int i = 0; i < _attributes.Count; i++) {
+            if (_attributes[i].attribute == attribute) {
+                return _attributes[i];
+            }
+        }
+        return null;
+    }
+    public bool RemoveAttribute(ATTRIBUTE attributeType) {
+        for (int i = 0; i < _attributes.Count; i++) {
+            if (_attributes[i].attribute == attributeType) {
+                _attributes.RemoveAt(i);
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool RemoveAttribute(Attribute attribute) {
+        return _attributes.Remove(attribute);
     }
     #endregion
 

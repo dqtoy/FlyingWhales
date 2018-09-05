@@ -18,6 +18,11 @@ public class HousekeepingAction : CharacterAction {
         //give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige
         GiveAllReward(party);
     }
+    public override void DoneDuration(CharacterParty party, IObject targetObject) {
+        base.DoneDuration(party, targetObject);
+        StructureObj structure = targetObject as StructureObj;
+        structure.RemoveAttribute(ATTRIBUTE.DIRTY);
+    }
     public override CharacterAction Clone() {
         HousekeepingAction action = new HousekeepingAction();
         SetCommonData(action);

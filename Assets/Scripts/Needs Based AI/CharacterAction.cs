@@ -9,6 +9,8 @@ public class CharacterAction {
     protected ActionFilter[] _filters;
     [SerializeField] protected CharacterActionData _actionData;
     protected int _weight;
+    protected int _disableCounter; //if has at least 1 point, disable action
+    protected int _enableCounter; //remove action from list if this has 0 point
 
 
     private const int Base_Misc_Action_Weight = 50;
@@ -19,6 +21,12 @@ public class CharacterAction {
     }
     public int weight {
         get { return _weight; }
+    }
+    public int disableCounter {
+        get { return _disableCounter; }
+    }
+    public int enableCounter {
+        get { return _enableCounter; }
     }
     public ActionFilter[] filters {
         get { return _filters; }
@@ -107,6 +115,23 @@ public class CharacterAction {
     public virtual int GetMiscActionWeight(CharacterParty party, IObject targetObject) {
         return Base_Misc_Action_Weight;
     }
+    //Give all provided needs to the character regardless of the amount
+    public virtual void GiveAllReward(CharacterParty party) {
+        for (int i = 0; i < party.icharacters.Count; i++) {
+            ICharacter icharacter = party.icharacters[i];
+            icharacter.role.AdjustFullness(_actionData.providedFullness);
+            icharacter.role.AdjustEnergy(_actionData.providedEnergy);
+            icharacter.role.AdjustFun(_actionData.providedFun);
+            //icharacter.role.AdjustPrestige(_actionData.providedPrestige);
+            //icharacter.role.AdjustSanity(_actionData.providedSanity);
+            //icharacter.role.AdjustSafety(_actionData.providedSafety);
+            if (_actionData.hpRecoveredPercentage != 0f && icharacter.currentHP < icharacter.maxHP) {
+                float hpRecovery = (_actionData.hpRecoveredPercentage / 100f) * (float) icharacter.maxHP;
+                icharacter.AdjustHP((int) hpRecovery);
+            }
+        }
+
+    }
     #endregion
 
     #region Filters
@@ -179,23 +204,6 @@ public class CharacterAction {
         }
     }
 
-    //Give all provided needs to the character regardless of the amount
-    public virtual void GiveAllReward(CharacterParty party) {
-        for (int i = 0; i < party.icharacters.Count; i++) {
-            ICharacter icharacter = party.icharacters[i];
-            icharacter.role.AdjustFullness(_actionData.providedFullness);
-            icharacter.role.AdjustEnergy(_actionData.providedEnergy);
-            icharacter.role.AdjustFun(_actionData.providedFun);
-            //icharacter.role.AdjustPrestige(_actionData.providedPrestige);
-            //icharacter.role.AdjustSanity(_actionData.providedSanity);
-            //icharacter.role.AdjustSafety(_actionData.providedSafety);
-            if (_actionData.hpRecoveredPercentage != 0f && icharacter.currentHP < icharacter.maxHP) {
-                float hpRecovery = (_actionData.hpRecoveredPercentage / 100f) * (float) icharacter.maxHP;
-                icharacter.AdjustHP((int) hpRecovery);
-            }
-        }
-        
-    }
     public void SetCommonData(CharacterAction action) {
         if (this._filters != null) {
             action._filters = new ActionFilter[this._filters.Length];
@@ -212,6 +220,20 @@ public class CharacterAction {
     }
     public void AdjustWeight(int amount) {
         _weight += amount;
+    }
+    public void AdjustDisableCounter(int amount) {
+        _disableCounter += amount;
+    }
+    public void AdjustEnableCounter(int amount) {
+        _enableCounter += amount;
+    }
+    public void OnAddActionToCharacter(Character character) {
+        for (int i = 0; i < character.attributes.Count; i++) {
+            character.attributes[i].CharacterHasAction(this);
+        }
+    }
+    public void OnRemoveActionFromCharacter(Character character) {
+
     }
     #endregion
 

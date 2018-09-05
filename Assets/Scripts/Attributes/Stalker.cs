@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 
-public class Daydreamer : Attribute {
+public class Stalker : Attribute {
 
-    CharacterAction daydream;
-    public Daydreamer() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.DAYDREAMER) {
+    CharacterAction stalk;
+    public Stalker() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.STALKER) {
 
     }
 
     #region Overrides
     public override void OnAddAttribute(Character character) {
         base.OnAddAttribute(character);
-        daydream = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DAYDREAM);
-        character.AddMiscAction(daydream);
+        stalk = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.STALK);
+        character.AddMiscAction(stalk);
     }
     public override void OnRemoveAttribute() {
         base.OnRemoveAttribute();
-        character.RemoveMiscAction(daydream);
+        character.RemoveMiscAction(stalk);
     }
     #endregion
 }

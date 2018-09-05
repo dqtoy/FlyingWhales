@@ -48,6 +48,7 @@ namespace ECS {
         private List<Item> _inventory;
         private List<Skill> _skills;
         private List<CharacterAttribute> _tags;
+        private List<Attribute> _attributes;
         private List<Log> _history;
         private List<CharacterQuestData> _questData;
         private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
@@ -121,6 +122,9 @@ namespace ECS {
         }
         public List<CharacterAttribute> tags {
             get { return _tags; }
+        }
+        public List<Attribute> attributes {
+            get { return _attributes; }
         }
         public Dictionary<Character, Relationship> relationships {
             get { return _relationships; }
@@ -433,6 +437,7 @@ namespace ECS {
         }
         public Character() {
             _tags = new List<CharacterAttribute>();
+            _attributes = new List<Attribute>();
             _exploredLandmarks = new List<BaseLandmark>();
             _statusEffects = new List<STATUS_EFFECT>();
             _tags = new List<CharacterAttribute>();
@@ -466,7 +471,7 @@ namespace ECS {
             combatHistory = new Dictionary<int, Combat>();
 
             GetRandomCharacterColor();
-            ConstructMiscActions();
+            ConstructDefaultMiscActions();
             //_combatHistoryID = 0;
             SubscribeToSignals();
         }
@@ -528,34 +533,34 @@ namespace ECS {
             
 		}
 		//Check if the body parts of this character has the attribute necessary and quantity
-		internal bool HasAttribute(IBodyPart.ATTRIBUTE attribute, int quantity){
-			int count = 0;
-			for (int i = 0; i < this._bodyParts.Count; i++) {
-				BodyPart bodyPart = this._bodyParts [i];
+		//internal bool HasAttribute(IBodyPart.ATTRIBUTE attribute, int quantity){
+		//	int count = 0;
+		//	for (int i = 0; i < this._bodyParts.Count; i++) {
+		//		BodyPart bodyPart = this._bodyParts [i];
 
-				if(bodyPart.statusEffects.Count <= 0){
-					if(bodyPart.HasAttribute(attribute)){
-						count += 1;
-						if(count >= quantity){
-							return true;
-						}
-					}
-				}
+		//		if(bodyPart.statusEffects.Count <= 0){
+		//			if(bodyPart.HasAttribute(attribute)){
+		//				count += 1;
+		//				if(count >= quantity){
+		//					return true;
+		//				}
+		//			}
+		//		}
 
-				for (int j = 0; j < bodyPart.secondaryBodyParts.Count; j++) {
-					SecondaryBodyPart secondaryBodyPart = bodyPart.secondaryBodyParts [j];
-					if (secondaryBodyPart.statusEffects.Count <= 0) {
-						if (secondaryBodyPart.HasAttribute(attribute)) {
-							count += 1;
-							if (count >= quantity) {
-								return true;
-							}
-						}
-					}
-				}
-			}
-			return false;
-		}
+		//		for (int j = 0; j < bodyPart.secondaryBodyParts.Count; j++) {
+		//			SecondaryBodyPart secondaryBodyPart = bodyPart.secondaryBodyParts [j];
+		//			if (secondaryBodyPart.statusEffects.Count <= 0) {
+		//				if (secondaryBodyPart.HasAttribute(attribute)) {
+		//					count += 1;
+		//					if (count >= quantity) {
+		//						return true;
+		//					}
+		//				}
+		//			}
+		//		}
+		//	}
+		//	return false;
+		//}
 		internal bool HasBodyPart(string bodyPartType){
 			for (int i = 0; i < this._bodyParts.Count; i++) {
 				BodyPart bodyPart = this._bodyParts [i];
@@ -2553,7 +2558,7 @@ namespace ECS {
                 snatcherLair.AddCharacterToLocation(ownParty);
             }
         }
-        private void ConstructMiscActions() {
+        private void ConstructDefaultMiscActions() {
             _miscActions = new List<CharacterAction>();
             CharacterAction read = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.READ);
             CharacterAction foolingAround = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.FOOLING_AROUND);
@@ -2593,6 +2598,18 @@ namespace ECS {
             }
             return chosenAction;
         }
+        public CharacterAction GetWeightedMiscAction(ref IObject targetObject) {
+            targetObject = _ownParty.characterObject;
+            WeightedDictionary<CharacterAction> miscActionOptions = new WeightedDictionary<CharacterAction>();
+            for (int i = 0; i < _miscActions.Count; i++) {
+                CharacterAction action = _miscActions[i];
+                if(action.disableCounter <= 0 && action.enableCounter > 0) {
+                    miscActionOptions.AddElement(action, action.weight);
+                }
+            }
+            CharacterAction chosenAction = miscActionOptions.PickRandomElementGivenWeights();
+            return chosenAction;
+        }
         public CharacterAction GetMiscAction(ACTION_TYPE type) {
             for (int i = 0; i < _miscActions.Count; i++) {
                 if(_miscActions[i].actionData.actionType == type) {
@@ -2604,10 +2621,18 @@ namespace ECS {
         public void AddMiscAction(CharacterAction characterAction) {
             if (!_miscActions.Contains(characterAction)) {
                 _miscActions.Add(characterAction);
+                characterAction.OnAddActionToCharacter(this);
             }
+            characterAction.AdjustEnableCounter(1);
         }
         public void RemoveMiscAction(CharacterAction characterAction) {
-            _miscActions.Remove(characterAction);
+            if(characterAction.enableCounter > 1) {
+                characterAction.AdjustEnableCounter(1);
+            } else {
+                if (_miscActions.Remove(characterAction)) {
+                    characterAction.OnRemoveActionFromCharacter(this);
+                }
+            }
         }
 
         private CharacterParty GetPriority1TargetChatAction(List<CharacterParty> partyPool) {

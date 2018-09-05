@@ -10,7 +10,6 @@ public class Attribute {
     protected ATTRIBUTE _attribute;
     protected ATTRIBUTE_CATEGORY _category;
     protected Character _character;
-    protected List<CharacterAction> _tempRemovedActions;
     //[SerializeField] protected List<ATTRIBUTE_BEHAVIOR> _tickBehaviors;
     //[SerializeField] protected List<ATTRIBUTE_BEHAVIOR> _onAddedBehaviors;
     //[SerializeField] protected List<ATTRIBUTE_BEHAVIOR> _onRemovedBehaviors;
@@ -49,7 +48,6 @@ public class Attribute {
     #region Virtuals
     public virtual void OnAddAttribute(Character character) {
         _character = character;
-        _tempRemovedActions = new List<CharacterAction>();
         //if (onAddBehavior != null) {
         //    onAddBehavior(_character);
         //}
@@ -58,6 +56,11 @@ public class Attribute {
         //if (onRemoveBehavior != null) {
         //    onRemoveBehavior(_character);
         //}
+    }
+
+    //Checks if the given action of a character will undergo changes by this attribute
+    public virtual void CharacterHasAction(CharacterAction action) {
+
     }
     #endregion
 

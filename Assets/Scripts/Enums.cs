@@ -1151,6 +1151,8 @@ public enum ATTRIBUTE{
     INTROVERT,
     EXTROVERT,
     BELLIGERENT,
+    HUMAN,
+    STALKER,
 }
 
 public enum PRODUCTION_TYPE{

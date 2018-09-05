@@ -5,6 +5,8 @@ using ECS;
 
 public class Deafened : Attribute {
 
+    CharacterAction sing;
+    CharacterAction playInstrument;
     public Deafened() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.DEAFENED) {
 
     }
@@ -12,23 +14,34 @@ public class Deafened : Attribute {
     #region Overrides
     public override void OnAddAttribute(Character character) {
         base.OnAddAttribute(character);
-        CharacterAction sing = character.GetMiscAction(ACTION_TYPE.SING);
-        CharacterAction playInstrument = character.GetMiscAction(ACTION_TYPE.PLAYING_INSTRUMENT);
-        if(sing != null) {
-            character.RemoveMiscAction(sing);
-            _tempRemovedActions.Add(sing);
+        sing = character.GetMiscAction(ACTION_TYPE.SING);
+        playInstrument = character.GetMiscAction(ACTION_TYPE.PLAYING_INSTRUMENT);
+
+        if (sing != null) {
+            sing.AdjustDisableCounter(1);
         }
         if (playInstrument != null) {
-            character.RemoveMiscAction(playInstrument);
-            _tempRemovedActions.Add(playInstrument);
+            playInstrument.AdjustDisableCounter(1);
         }
     }
     public override void OnRemoveAttribute() {
         base.OnRemoveAttribute();
-        for (int i = 0; i < _tempRemovedActions.Count; i++) {
-            character.AddMiscAction(_tempRemovedActions[i]);
+        if (sing != null) {
+            sing.AdjustDisableCounter(-1);
         }
-        _tempRemovedActions.Clear();
+        if (playInstrument != null) {
+            playInstrument.AdjustDisableCounter(-1);
+        }
+    }
+    public override void CharacterHasAction(CharacterAction action) {
+        base.CharacterHasAction(action);
+        if(action.actionType == ACTION_TYPE.SING) {
+            sing = action;
+            action.AdjustDisableCounter(1);
+        }else if (action.actionType == ACTION_TYPE.PLAYING_INSTRUMENT) {
+            playInstrument = action;
+            action.AdjustDisableCounter(1);
+        }
     }
     #endregion
 }
