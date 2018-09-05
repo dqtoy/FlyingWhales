@@ -54,6 +54,11 @@ public class ActionThread : Multithread {
             if (character.dailySchedule.currentPhase.phaseType == SCHEDULE_PHASE_TYPE.WORK){ //if work phase
                 if (character.role.roleType == CHARACTER_ROLE.HERO) { //if character is hero
                     actionLog += "\nDetermining hero work action...";
+                    //if (character.workplace.HasQuestBoard()) {
+
+                    //} else {
+                    //    throw new Exception(character.name + "'s workplace has no quest board!");
+                    //}
                     //go to tavern and look for a quest, then do that quest until work period ends
                     //TODO: Change this to get actions from quest boards
                     //IObject targetObject = null;
@@ -61,6 +66,11 @@ public class ActionThread : Multithread {
                     //chosenObject = targetObject;
                     //_party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
                     //actionLog += "\nGot hero work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
+                    IObject targetObject = null;
+                    chosenAction = character.GetRandomMiscAction(ref targetObject);
+                    chosenObject = targetObject;
+                    _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
+                    actionLog += "\nGot hero work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
                 } else if(character.role.roleType == CHARACTER_ROLE.CIVILIAN) { //if character is civilian
                     actionLog += "\nDetermining civilian work action...";
                     //get work action based on class (Farmer, Miner, etc.) then do that until work period ends.
@@ -75,7 +85,7 @@ public class ActionThread : Multithread {
                     actionLog += "\nDetermining non need misc action...";
                     //Get action from misc actions based on the tags of this character and possibly some consistent actions that are present for everyone
                     IObject targetObject = null;
-                    chosenAction = GetMiscAction(ref targetObject);
+                    chosenAction = character.GetRandomMiscAction(ref targetObject);
                     chosenObject = targetObject;
                     _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
                     actionLog += "\nGot non-need misc action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
@@ -151,7 +161,7 @@ public class ActionThread : Multithread {
     //        }
     //    }
 
-        
+
     //    //if (!LookForActionFromQuests()) {
     //    //    LookForActionFromAdvertisements();
     //    //}
@@ -274,7 +284,7 @@ public class ActionThread : Multithread {
     //            //when a character's happiness is 100 or above, he chooses randomly between his active quests and calls a function from it which should return an instruction of which next action to execute
     //            int randomIndex = Utilities.rng.Next(0, _party.questData.Count);
     //            CharacterQuestData chosenQuestData = _party.questData[randomIndex];
-   
+
     //            IObject targetObject = null;
     //            chosenAction = chosenQuestData.GetNextQuestAction(ref targetObject);
     //            chosenObject = targetObject;
@@ -289,53 +299,54 @@ public class ActionThread : Multithread {
     //            return true;
     //        }
     //    }
-        
+
     //    return false;
     //}
-//    private void LookForActionFromAdvertisements() {
-//        allChoices.Clear();
+    //    private void LookForActionFromAdvertisements() {
+    //        allChoices.Clear();
 
-//        actionLog = _party.name + "'s Action Advertisements: ";
-//        for (int i = 0; i < _party.currentRegion.landmarks.Count; i++) {
-//            BaseLandmark landmark = _party.currentRegion.landmarks[i];
-//            StructureObj iobject = landmark.landmarkObj;
-//            if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
-//                for (int k = 0; k < iobject.currentState.actions.Count; k++) {
-//                    CharacterAction action = iobject.currentState.actions[k];
-//                    if (action.MeetsRequirements(_party, landmark) && action.CanBeDone(iobject) && action.CanBeDoneBy(_party, iobject)) { //Filter
-//                        float happinessIncrease = _party.TotalHappinessIncrease(action, iobject);
-//                        actionLog += "\n" + action.actionData.actionName + " = " + happinessIncrease + " (" + iobject.objectName + " at " + iobject.specificLocation.locationName + ")";
-//                        PutToChoices(action, iobject, happinessIncrease);
-//                    }
-//                }
-//            }
-//        }
-//        if (Messenger.eventTable.ContainsKey(Signals.LOOK_FOR_ACTION)) {
-//            Messenger.Broadcast<ActionThread>(Signals.LOOK_FOR_ACTION, this);
-//        }
-//        if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _party.id) {
-//            Debug.Log(actionLog);
-//        }
-////#if UNITY_EDITOR
-////        _party.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + " " + actionLog);
-////#endif
-//        CharacterActionAdvertisement chosenActionAd = PickAction();
-//        chosenAction = chosenActionAd.action;
-//        chosenObject = chosenActionAd.targetObject;
-//        _party.actionData.questDataAssociatedWithCurrentAction = null;
-//        //#if UNITY_EDITOR
-//        //_party.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + 
-//        //    " Chosen action: " + chosenAction.actionType.ToString() + " at " + chosenAction.state.obj.objectLocation.landmarkName + "(" + chosenAction.state.obj.objectLocation.tileLocation.tileName + ")");
-//        //#endif
+    //        actionLog = _party.name + "'s Action Advertisements: ";
+    //        for (int i = 0; i < _party.currentRegion.landmarks.Count; i++) {
+    //            BaseLandmark landmark = _party.currentRegion.landmarks[i];
+    //            StructureObj iobject = landmark.landmarkObj;
+    //            if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
+    //                for (int k = 0; k < iobject.currentState.actions.Count; k++) {
+    //                    CharacterAction action = iobject.currentState.actions[k];
+    //                    if (action.MeetsRequirements(_party, landmark) && action.CanBeDone(iobject) && action.CanBeDoneBy(_party, iobject)) { //Filter
+    //                        float happinessIncrease = _party.TotalHappinessIncrease(action, iobject);
+    //                        actionLog += "\n" + action.actionData.actionName + " = " + happinessIncrease + " (" + iobject.objectName + " at " + iobject.specificLocation.locationName + ")";
+    //                        PutToChoices(action, iobject, happinessIncrease);
+    //                    }
+    //                }
+    //            }
+    //        }
+    //        if (Messenger.eventTable.ContainsKey(Signals.LOOK_FOR_ACTION)) {
+    //            Messenger.Broadcast<ActionThread>(Signals.LOOK_FOR_ACTION, this);
+    //        }
+    //        if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _party.id) {
+    //            Debug.Log(actionLog);
+    //        }
+    ////#if UNITY_EDITOR
+    ////        _party.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + " " + actionLog);
+    ////#endif
+    //        CharacterActionAdvertisement chosenActionAd = PickAction();
+    //        chosenAction = chosenActionAd.action;
+    //        chosenObject = chosenActionAd.targetObject;
+    //        _party.actionData.questDataAssociatedWithCurrentAction = null;
+    //        //#if UNITY_EDITOR
+    //        //_party.actionData.actionHistory.Add(Utilities.GetDateString(GameManager.Instance.Today()) + 
+    //        //    " Chosen action: " + chosenAction.actionType.ToString() + " at " + chosenAction.state.obj.objectLocation.landmarkName + "(" + chosenAction.state.obj.objectLocation.tileLocation.tileName + ")");
+    //        //#endif
 
-//        //Check Prerequisites, currently for resource prerequisites only
-//        //CheckPrerequisites(chosenAction);
+    //        //Check Prerequisites, currently for resource prerequisites only
+    //        //CheckPrerequisites(chosenAction);
 
-//    }
+    //    }
 
     /*
      Get misc actions NOT based on needs.
          */
+    [System.Obsolete("Use ECS.Character.GetRandomMiscAction Instead.")]
     private CharacterAction GetMiscAction(ref IObject targetObject) {
         actionLog += "\nMisc Action Weights: ";
         WeightedDictionary<CharacterActionAdvertisement> miscActionWeights = new WeightedDictionary<CharacterActionAdvertisement>();

@@ -50,7 +50,7 @@ namespace ECS {
         private List<CharacterAttribute> _tags;
         private List<Attribute> _attributes;
         private List<Log> _history;
-        private List<CharacterQuestData> _questData;
+        //private List<CharacterQuestData> _questData;
         private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
         private CharacterActionQueue<ActionQueueItem> _actionQueue;
         private List<CharacterAction> _miscActions;
@@ -153,9 +153,9 @@ namespace ECS {
         public CharacterAction genericWorkAction {
             get { return _genericWorkAction; }
         }
-        public List<CharacterQuestData> questData {
-            get { return _questData; }
-        }
+        //public List<CharacterQuestData> questData {
+        //    get { return _questData; }
+        //}
         public HexTile currLocation {
             get { return (_ownParty.specificLocation != null ? _ownParty.specificLocation.tileLocation : null); }
         }
@@ -447,7 +447,7 @@ namespace ECS {
             //_isIdle = false;
             _traceInfo = new Dictionary<Character, List<string>>();
             _history = new List<Log>();
-            _questData = new List<CharacterQuestData>();
+            //_questData = new List<CharacterQuestData>();
             _actionQueue = new CharacterActionQueue<ActionQueueItem>(this);
             //previousActions = new Dictionary<CharacterTask, string>();
             _relationships = new Dictionary<Character, Relationship>();
@@ -918,9 +918,9 @@ namespace ECS {
 				while(_tags.Count > 0){
 					RemoveCharacterAttribute (_tags [0]);
 				}
-                while (questData.Count != 0) {
-                    questData[0].AbandonQuest();
-                }
+                //while (questData.Count != 0) {
+                //    questData[0].AbandonQuest();
+                //}
                 //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
                 //					Messenger.Broadcast ("CharacterDeath", this);
                 //				}
@@ -1968,57 +1968,57 @@ namespace ECS {
         #endregion
 
         #region Quests
-        public void AddQuestData(CharacterQuestData questData) {
-            if (!_questData.Contains(questData)) {
-                _questData.Add(questData);
-            }
-        }
-        public void RemoveQuestData(CharacterQuestData questData) {
-            _questData.Remove(questData);
-        }
-        public bool HasQuest(Quest quest) {
-            for (int i = 0; i < questData.Count; i++) {
-                if (questData[i].parentQuest.id == quest.id) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        public CharacterQuestData GetDataForQuest(Quest quest) {
-            for (int i = 0; i < questData.Count; i++) {
-                CharacterQuestData data = questData[i];
-                if (data.parentQuest.id == quest.id) {
-                    return data;
-                }
-            }
-            return null;
-        }
-        public CharacterQuestData GetSquadDataForQuest(Quest quest) {
-            //get quest data for quest that can come from a squad member
-            if (IsSquadLeader() && quest.groupType == GROUP_TYPE.PARTY) {
-                for (int i = 0; i < squad.squadMembers.Count; i++) {
-                    ICharacter currMember = squad.squadMembers[i];
-                    if (currMember is Character) {
-                        Character member = currMember as Character;
-                        CharacterQuestData questData = member.GetDataForQuest(quest);
-                        if (questData != null) {
-                            return questData;
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-        public List<Quest> GetAcceptedQuestsByGroup(GROUP_TYPE groupType) {
-            List<Quest> quests = new List<Quest>();
-            for (int i = 0; i < questData.Count; i++) {
-                CharacterQuestData data = questData[i];
-                if (data.parentQuest.groupType == groupType) {
-                    quests.Add(data.parentQuest);
-                }
-            }
-            return quests;
-        }
+        //public void AddQuestData(CharacterQuestData questData) {
+        //    if (!_questData.Contains(questData)) {
+        //        _questData.Add(questData);
+        //    }
+        //}
+        //public void RemoveQuestData(CharacterQuestData questData) {
+        //    _questData.Remove(questData);
+        //}
+        //public bool HasQuest(Quest quest) {
+        //    for (int i = 0; i < questData.Count; i++) {
+        //        if (questData[i].parentQuest.id == quest.id) {
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
+        //public CharacterQuestData GetDataForQuest(Quest quest) {
+        //    for (int i = 0; i < questData.Count; i++) {
+        //        CharacterQuestData data = questData[i];
+        //        if (data.parentQuest.id == quest.id) {
+        //            return data;
+        //        }
+        //    }
+        //    return null;
+        //}
+        //public CharacterQuestData GetSquadDataForQuest(Quest quest) {
+        //    //get quest data for quest that can come from a squad member
+        //    if (IsSquadLeader() && quest.groupType == GROUP_TYPE.PARTY) {
+        //        for (int i = 0; i < squad.squadMembers.Count; i++) {
+        //            ICharacter currMember = squad.squadMembers[i];
+        //            if (currMember is Character) {
+        //                Character member = currMember as Character;
+        //                CharacterQuestData questData = member.GetDataForQuest(quest);
+        //                if (questData != null) {
+        //                    return questData;
+        //                }
+        //            }
+        //        }
+        //    }
+        //    return null;
+        //}
+        //public List<Quest> GetAcceptedQuestsByGroup(GROUP_TYPE groupType) {
+        //    List<Quest> quests = new List<Quest>();
+        //    for (int i = 0; i < questData.Count; i++) {
+        //        CharacterQuestData data = questData[i];
+        //        if (data.parentQuest.groupType == groupType) {
+        //            quests.Add(data.parentQuest);
+        //        }
+        //    }
+        //    return quests;
+        //}
         public void OnTakeQuest(Quest takenQuest) {
             if (takenQuest.groupType == GROUP_TYPE.PARTY && this.squad == null) { //When a character gains a Party Type Quest and he isnt a part of a Squad yet,
                 if (this.role == null) {
@@ -2819,7 +2819,7 @@ namespace ECS {
         #region Work
         private void LookForNewWorkplace() {
             //TODO: QUESTING action (for Heroes)
-            if(_characterClass.workActionType == ACTION_TYPE.WORKING) {
+            if (_characterClass.workActionType == ACTION_TYPE.WORKING) {
                 _workplace = _homeLandmark;
             } else {
                 List<BaseLandmark> workplaceChoices = new List<BaseLandmark>();
@@ -2831,6 +2831,9 @@ namespace ECS {
                             break;
                         }
                     }
+                }
+                if (workplaceChoices.Count == 0) {
+                    throw new Exception("Could not find workplace for " + this.name);
                 }
                 _workplace = workplaceChoices[UnityEngine.Random.Range(0, workplaceChoices.Count)];
             }
@@ -2909,18 +2912,18 @@ namespace ECS {
                 return false;
             }
         }
-        public List<Quest> GetElligibleQuests() {
-            List<Quest> quests = new List<Quest>();
-            if (this.IsSquadLeader()) {
-                quests.AddRange(this.GetAcceptedQuestsByGroup(GROUP_TYPE.SOLO));
-                quests.AddRange(squad.GetSquadQuests());
-            } else if (this.IsSquadMember()) {
-                quests.AddRange(this.GetAcceptedQuestsByGroup(GROUP_TYPE.SOLO));
-            } else if (squad == null) {
-                quests.AddRange(this.GetAcceptedQuestsByGroup(GROUP_TYPE.SOLO));
-            }
-            return quests;
-        }
+        //public List<Quest> GetElligibleQuests() {
+        //    List<Quest> quests = new List<Quest>();
+        //    if (this.IsSquadLeader()) {
+        //        quests.AddRange(this.GetAcceptedQuestsByGroup(GROUP_TYPE.SOLO));
+        //        quests.AddRange(squad.GetSquadQuests());
+        //    } else if (this.IsSquadMember()) {
+        //        quests.AddRange(this.GetAcceptedQuestsByGroup(GROUP_TYPE.SOLO));
+        //    } else if (squad == null) {
+        //        quests.AddRange(this.GetAcceptedQuestsByGroup(GROUP_TYPE.SOLO));
+        //    }
+        //    return quests;
+        //}
         #endregion
 
         #region Action Queue
@@ -2977,6 +2980,7 @@ namespace ECS {
         #endregion
 
         #region Misc Actions
+        [System.Obsolete("Use GetRandomMiscAction Instead.")]
         /*
          Determine the initial list of misc actions that the character can do.
              */

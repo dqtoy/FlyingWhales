@@ -1316,6 +1316,7 @@ public enum ACTION_TYPE {
     HOUSEKEEPING,
     ARGUE,
     STALK,
+    TAKE_QUEST,
 }
 public enum ACTION_CATEGORY {
     WORK,

@@ -93,9 +93,9 @@ public class NewParty : IParty {
     public ILocation specificLocation {
         get { return GetSpecificLocation(); }
     }
-    public List<CharacterQuestData> questData {
-        get { return GetQuestData(); }
-    }
+    //public List<CharacterQuestData> questData {
+    //    get { return GetQuestData(); }
+    //}
     public virtual ICharacter owner {
         get { return _owner; }
     }
@@ -108,7 +108,7 @@ public class NewParty : IParty {
         _icharacters = new List<ICharacter>();
 #if !WORLD_CREATION_TOOL
         Messenger.AddListener<ActionThread>(Signals.LOOK_FOR_ACTION, AdvertiseSelf);
-        Messenger.AddListener<BuildStructureQuestData>(Signals.BUILD_STRUCTURE_LOOK_ACTION, BuildStructureLookingForAction);
+        //Messenger.AddListener<BuildStructureQuestData>(Signals.BUILD_STRUCTURE_LOOK_ACTION, BuildStructureLookingForAction);
 
         //ConstructResourceInventory();
 #endif
@@ -134,7 +134,7 @@ public class NewParty : IParty {
     }
     public virtual void RemoveListeners() {
         Messenger.RemoveListener<ActionThread>(Signals.LOOK_FOR_ACTION, AdvertiseSelf);
-        Messenger.RemoveListener<BuildStructureQuestData>(Signals.BUILD_STRUCTURE_LOOK_ACTION, BuildStructureLookingForAction);
+        //Messenger.RemoveListener<BuildStructureQuestData>(Signals.BUILD_STRUCTURE_LOOK_ACTION, BuildStructureLookingForAction);
     }
     #endregion
 
@@ -210,12 +210,12 @@ public class NewParty : IParty {
     #endregion
 
     #region Quests
-    private List<CharacterQuestData> GetQuestData() {
-        if (_icharacters.Count > 0 && mainCharacter is ECS.Character) {
-            return (mainCharacter as ECS.Character).questData;
-        }
-        return null;
-    }
+    //private List<CharacterQuestData> GetQuestData() {
+    //    if (_icharacters.Count > 0 && mainCharacter is ECS.Character) {
+    //        return (mainCharacter as ECS.Character).questData;
+    //    }
+    //    return null;
+    //}
     #endregion
 
     #region Utilities
@@ -235,11 +235,11 @@ public class NewParty : IParty {
     //    _icon.SetActionOnTargetReached(doneAction);
     //    _icon.SetTargetGO(locationGO);
     //}
-    public void BuildStructureLookingForAction(BuildStructureQuestData questData) {
-        if(_currentRegion.id == questData.owner.party.currentRegion.id) {
-            questData.AddToChoicesOfAllActionsThatCanObtainResource(_icharacterObject);
-        }
-    }
+    //public void BuildStructureLookingForAction(BuildStructureQuestData questData) {
+    //    if(_currentRegion.id == questData.owner.party.currentRegion.id) {
+    //        questData.AddToChoicesOfAllActionsThatCanObtainResource(_icharacterObject);
+    //    }
+    //}
     #endregion
 
     #region Berserk
