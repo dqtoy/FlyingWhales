@@ -15,9 +15,9 @@ public class DepositAction : CharacterAction {
         ActionSuccess(targetObject);
         GiveAllReward(party);
         RESOURCE resource = RESOURCE.NONE;
-        if (party.actionData.questDataAssociatedWithCurrentAction is BuildStructureQuestData) {
-            resource = (party.actionData.questDataAssociatedWithCurrentAction as BuildStructureQuestData).currentDepositingResource;
-        }
+        //if (party.actionData.questDataAssociatedWithCurrentAction is BuildStructureQuestData) {
+        //    resource = (party.actionData.questDataAssociatedWithCurrentAction as BuildStructureQuestData).currentDepositingResource;
+        //}
         if(resource != RESOURCE.NONE) {
             int deposit = depositingAmount;
             if(party.characterObject.resourceInventory[resource] < deposit) {
@@ -35,10 +35,10 @@ public class DepositAction : CharacterAction {
     }
     public override void EndAction(CharacterParty party, IObject targetObject) {
         base.EndAction(party, targetObject);
-        if(party.actionData.questDataAssociatedWithCurrentAction.parentQuest is BuildStructureQuest) {
-            BuildStructureQuest buildStructureQuest = party.actionData.questDataAssociatedWithCurrentAction.parentQuest as BuildStructureQuest;
-            buildStructureQuest.UpdateLackingResources();
-        }
+        //if(party.actionData.questDataAssociatedWithCurrentAction.parentQuest is BuildStructureQuest) {
+        //    BuildStructureQuest buildStructureQuest = party.actionData.questDataAssociatedWithCurrentAction.parentQuest as BuildStructureQuest;
+        //    buildStructureQuest.UpdateLackingResources();
+        //}
     }
     public override CharacterAction Clone() {
         DepositAction depositAction = new DepositAction();

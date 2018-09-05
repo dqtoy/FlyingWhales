@@ -55,12 +55,12 @@ public class QuestManager : MonoBehaviour {
     
     public void TakeQuest(QUEST_TYPE type, ECS.Character questTaker, object data = null) {
         CharacterQuestData questData = ConstructQuestData(type, questTaker, data);
-        questTaker.AddQuestData(questData);
+        //questTaker.AddQuestData(questData);
         questTaker.OnTakeQuest(questData.parentQuest);
     }
     public void TakeQuest(Quest quest, ECS.Character questTaker, object data = null) {
         CharacterQuestData questData = ConstructQuestData(quest, questTaker, data);
-        questTaker.AddQuestData(questData);
+        //questTaker.AddQuestData(questData);
         questTaker.OnTakeQuest(quest);
     }
 
@@ -71,10 +71,10 @@ public class QuestManager : MonoBehaviour {
     private CharacterQuestData ConstructQuestData(Quest quest, ECS.Character questTaker, object data) {
         if (quest != null) {
             switch (quest.questType) {
-                case QUEST_TYPE.RELEASE_CHARACTER:
-                    return new ReleaseCharacterQuestData(quest, questTaker, data as ECS.Character);
-                case QUEST_TYPE.BUILD_STRUCTURE:
-                    return new BuildStructureQuestData(quest, questTaker);
+                //case QUEST_TYPE.RELEASE_CHARACTER:
+                //    return new ReleaseCharacterQuestData(quest, questTaker, data as ECS.Character);
+                //case QUEST_TYPE.BUILD_STRUCTURE:
+                //    return new BuildStructureQuestData(quest, questTaker);
                 default:
                     break;
             }

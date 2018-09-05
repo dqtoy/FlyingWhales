@@ -29,15 +29,15 @@ public class Quest {
     protected virtual string GetQuestDescription() {
         return "This is the default quest description";
     }
-    public List<ECS.Character> GetAcceptedCharacters() {
-        List<ECS.Character> characters = new List<ECS.Character>();
-        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-            ECS.Character currChar = CharacterManager.Instance.allCharacters[i];
-            if (!currChar.isDead && currChar.HasQuest(this)) {
-                characters.Add(currChar);
-            }
-        }
-        return characters;
-    }
+    //public List<ECS.Character> GetAcceptedCharacters() {
+    //    List<ECS.Character> characters = new List<ECS.Character>();
+    //    for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+    //        ECS.Character currChar = CharacterManager.Instance.allCharacters[i];
+    //        if (!currChar.isDead && currChar.HasQuest(this)) {
+    //            characters.Add(currChar);
+    //        }
+    //    }
+    //    return characters;
+    //}
 
 }

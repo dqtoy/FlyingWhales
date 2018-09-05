@@ -93,7 +93,7 @@ public class Player : ILeader{
             if (!_snatchedCharacters.Contains(character)) {
                 _snatchedCharacters.Add(character);
                 character.OnThisCharacterSnatched();
-                ReleaseCharacterQuest rcq = new ReleaseCharacterQuest(character); //create quest
+                //ReleaseCharacterQuest rcq = new ReleaseCharacterQuest(character); //create quest
                 //QuestManager.Instance.CreateQuest(QUEST_TYPE.RELEASE_CHARACTER, character);
                 Messenger.Broadcast(Signals.SHOW_POPUP_MESSAGE, "Successfully snatched " + character.name, MESSAGE_BOX_MODE.MESSAGE_ONLY, true);
                 Debug.Log("Snatched " + character.name);

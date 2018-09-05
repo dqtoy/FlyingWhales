@@ -15,5 +15,9 @@ public class Inn : StructureObj {
         SetCommonData(clone);
         return clone;
     }
+    public override void OnAddToLandmark(BaseLandmark newLocation) {
+        base.OnAddToLandmark(newLocation);
+        newLocation.CreateQuestBoard();
+    }
     #endregion
 }

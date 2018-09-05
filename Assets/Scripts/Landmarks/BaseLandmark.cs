@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ECS;
 
-//[System.Serializable]
 public class BaseLandmark : ILocation {
     protected int _id;
     protected HexTile _location;
@@ -36,6 +35,7 @@ public class BaseLandmark : ILocation {
     private List<HexTile> _wallTiles;
     public bool hasAdjacentCorruptedLandmark;
     private int _civilianCount;
+    public QuestBoard questBoard { get; private set; }
 
     #region getters/setters
     public int id {
@@ -119,21 +119,6 @@ public class BaseLandmark : ILocation {
     public bool isAttackingAnotherLandmark {
         get { return _isAttackingAnotherLandmark; }
     }
-    //public List<IObject> objects {
-    //    get { return _objects; }
-    //}
-    //public int diagonalLeftBlocked {
-    //    get { return _diagonalLeftBlocked; }
-    //}
-    //public int diagonalRightBlocked {
-    //    get { return _diagonalRightBlocked; }
-    //}
-    //public int horizontalBlocked {
-    //    get { return _horizontalBlocked; }
-    //}
-    //public List<Character> charactersWithHomeOnLandmark {
-    //    get { return _charactersWithHomeOnLandmark; }
-    //}
     public int civilianCount {
         get { return _civilianCount; }
     }
@@ -273,76 +258,6 @@ public class BaseLandmark : ILocation {
 		_isOccupied = true;
 		_location.Occupy();
 	}
-    #endregion
-
-    #region Population
-    //   private void ConstructCiviliansDictionary() {
-    //       _civiliansByRace = new Dictionary<RACE, int>();
-    //       RACE[] allRaces = Utilities.GetEnumValues<RACE>();
-    //       for (int i = 0; i < allRaces.Length; i++) {
-    //           RACE currRace = allRaces[i];
-    //           if(currRace != RACE.NONE) {
-    //               _civiliansByRace.Add(currRace, 0);
-    //           }
-    //       }
-    //   }
-    //   private void GenerateCivilians() {
-    //       Faction ownerOfRegion = tileLocation.region.owner;
-    //       LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
-    //       //int civilians = Random.Range(landmarkData.minCivilians, landmarkData.maxCivilians);
-    //       RACE civiliansRace = RACE.NONE;
-    //       //if (specificLandmarkType == LANDMARK_TYPE.GOBLIN_CAMP) {
-    //       //    civiliansRace = RACE.GOBLIN;
-    //       //} else {
-    //           if (ownerOfRegion != null) {
-    //               civiliansRace = ownerOfRegion.race;
-    //           } else {
-    //               civiliansRace = RACE.HUMANS;
-    //               if (Random.Range(0, 2) == 1) {
-    //                   civiliansRace = RACE.ELVES;
-    //               }
-    //           }
-    //       //}
-    //       AdjustCivilians(civiliansRace, civilians);
-    //   }
-    //   public void AdjustCivilians(RACE race, int amount, Character culprit = null) {
-    //       _civiliansByRace[race] += amount;
-    //       _civiliansByRace[race] = Mathf.Max(0, _civiliansByRace[race]);
-    //	if(culprit != null){
-    //		QuestManager.Instance.CreateHuntQuest (culprit);
-    //	}
-    //   }
-    //   public void AdjustCivilians(Dictionary<RACE, int> civilians) {
-    //       foreach (KeyValuePair<RACE, int> kvp in civilians) {
-    //           AdjustCivilians(kvp.Key, kvp.Value);
-    //       }
-    //   }
-    //   public Dictionary<RACE, int> ReduceCivilians(int amount) {
-    //       Dictionary<RACE, int> reducedCivilians = new Dictionary<RACE, int>();
-    //       for (int i = 0; i < Mathf.Abs(amount); i++) {
-    //           RACE chosenRace = GetRaceBasedOnProportion();
-    //           AdjustCivilians(chosenRace, -1);
-    //           if (reducedCivilians.ContainsKey(chosenRace)) {
-    //               reducedCivilians[chosenRace] += 1;
-    //           } else {
-    //               reducedCivilians.Add(chosenRace, 1);
-    //           }
-    //       }
-    //       return reducedCivilians;
-    //   }
-    //public void KillAllCivilians(){
-    //	RACE[] races = _civiliansByRace.Keys.ToArray ();
-    //	for (int i = 0; i < races.Length; i++) {
-    //		_civiliansByRace [races [i]] = 0;
-    //	}
-    //}
-    //   protected RACE GetRaceBasedOnProportion() {
-    //       WeightedDictionary<RACE> raceDict = new WeightedDictionary<RACE>(_civiliansByRace);
-    //       if (raceDict.GetTotalOfWeights() > 0) {
-    //           return raceDict.PickRandomElementGivenWeights();
-    //       }
-    //       throw new System.Exception("Cannot get race to produce!");
-    //   }
     #endregion
 
     #region Characters
@@ -616,38 +531,6 @@ public class BaseLandmark : ILocation {
             }
         }
     }
-    //private WeightedDictionary<Item> GetExploreItemWeights() {
-    //    WeightedDictionary<Item> itemWeights = new WeightedDictionary<Item>();
-    //    for (int i = 0; i < _itemsInLandmark.Count; i++) {
-    //        Item currItem = _itemsInLandmark[i];
-    //        itemWeights.AddElement(currItem, currItem.exploreWeight);
-    //    }
-    //    return itemWeights;
-    //}
-
-	//public void SpawnItemInLandmark(string itemName, int exploreWeight, bool isUnlimited){
-	//	Item item = ItemManager.Instance.CreateNewItemInstance (itemName);
-	//	item.exploreWeight = exploreWeight;
-	//	item.isUnlimited = isUnlimited;
-	//	AddItemInLandmark (item);
-	//}
-
-	//public void SpawnItemInLandmark(Item item, int exploreWeight, bool isUnlimited){
-	//	Item newItem = item.CreateNewCopy();
-    //  newItem.exploreWeight = exploreWeight;
-	//	newItem.isUnlimited = isUnlimited;
-	//	AddItemInLandmark (newItem);
-	//}
-	//public Item SpawnItemInLandmark(string itemName){
-	//	Item item = ItemManager.Instance.CreateNewItemInstance (itemName);
-	//	AddItemInLandmark (item);
-	//	return item;
-	//}
-	//public Item SpawnItemInLandmark(Item item){
-	//	Item newItem = item.CreateNewCopy();
-	//	AddItemInLandmark (newItem);
-	//	return item;
-	//}
 	public bool HasItem(string itemName){
 		for (int i = 0; i < _itemsInLandmark.Count; i++) {
 			if (_itemsInLandmark [i].itemName == itemName) {
@@ -694,57 +577,6 @@ public class BaseLandmark : ILocation {
         //obj.SetObjectLocation(this);
         obj.OnAddToLandmark(this);
     }
-    //public bool AddObject(IObject obj) {
-    //    if (!_objects.Contains(obj)) {
-    //        _objects.Add(obj);
-    //        obj.OnAddToLandmark(this);
-    //        return true;
-    //    }
-    //    return false;
-    //}
-    //public void RemoveObject(IObject obj) {
-    //    _objects.Remove(obj);
-    //    obj.SetObjectLocation(null);
-    //}
-    //public IObject GetObject(OBJECT_TYPE objectType, string name) {
-    //    for (int i = 0; i < _objects.Count; i++) {
-    //        if(_objects[i].objectType == objectType && _objects[i].objectName == name) {
-    //            return _objects[i];
-    //        }
-    //    }
-    //    return null;
-    //}
-    //public IObject GetObject(string name) {
-    //    for (int i = 0; i < _objects.Count; i++) {
-    //        if (_objects[i].objectName == name) {
-    //            return _objects[i];
-    //        }
-    //    }
-    //    return null;
-    //}
-    #endregion
-
-    #region Resource Inventory
-    //public void ConstructResourceInventory() {
-    //    _resourceInventory = new Dictionary<RESOURCE, int>();
-    //    RESOURCE[] allResources = Utilities.GetEnumValues<RESOURCE>();
-    //    for (int i = 0; i < allResources.Length; i++) {
-    //        if (allResources[i] != RESOURCE.NONE) {
-    //            _resourceInventory.Add(allResources[i], 0);
-    //        }
-    //    }
-    //}
-    //public void AdjustResource(RESOURCE resource, int amount) {
-    //    _resourceInventory[resource] += amount;
-    //}
-    //public void TransferResourceTo(RESOURCE resource, int amount, BaseLandmark target) {
-    //    AdjustResource(resource, -amount);
-    //    target.AdjustResource(resource, amount);
-    //}
-    //public void TransferResourceTo(RESOURCE resource, int amount, CharacterObj target) {
-    //    AdjustResource(resource, -amount);
-    //    target.AdjustResource(resource, amount);
-    //}
     #endregion
 
     #region Corruption
@@ -824,33 +656,6 @@ public class BaseLandmark : ILocation {
             //}
         }
     }
-    //public void AdjustDiagonalLeftBlocked(int amount) {
-    //    _diagonalLeftBlocked += amount;
-    //    if(_diagonalLeftBlocked < 0) {
-    //        _diagonalLeftBlocked = 0;
-    //    }
-    //}
-    //public void AdjustDiagonalRightBlocked(int amount) {
-    //    _diagonalRightBlocked += amount;
-    //    if (_diagonalRightBlocked < 0) {
-    //        _diagonalRightBlocked = 0;
-    //    }
-    //}
-    //public void AdjustHorizontalBlocked(int amount) {
-    //    _horizontalBlocked += amount;
-    //    if (_horizontalBlocked < 0) {
-    //        _horizontalBlocked = 0;
-    //    }
-    //}
-    //public void AdjustDirectionBlocked(string direction, int amount) {
-    //    if(direction == "diagonalleft") {
-    //        AdjustDiagonalLeftBlocked(amount);
-    //    }else if (direction == "diagonalright") {
-    //        AdjustDiagonalRightBlocked(amount);
-    //    }else if (direction == "horizontal") {
-    //        AdjustHorizontalBlocked(amount);
-    //    }
-    //}
     public void ALandmarkHasStartedCorruption(BaseLandmark corruptedLandmark) {
         //Messenger.RemoveListener<BaseLandmark>("StartCorruption", ALandmarkHasStartedCorruption);
 
@@ -980,11 +785,6 @@ public class BaseLandmark : ILocation {
         //AdjustDirectionBlocked(direction, 1);
         //_blockedLandmarkDirection.Add(corruptedLandmark, direction);
     }
-    //public void ALandmarkHasStoppedCorruption(BaseLandmark corruptedLandmark) {
-    //    string direction = _blockedLandmarkDirection[corruptedLandmark];
-    //    AdjustDirectionBlocked(direction, -1);
-    //    _blockedLandmarkDirection.Remove(corruptedLandmark);
-    //}
 
     public void PutWallUp() {
         //_wallDirection = direction;
@@ -1076,23 +876,20 @@ public class BaseLandmark : ILocation {
             }
         }
     }
-    //public bool IsDirectionBlocked(string direction) {
-    //    if (!tileLocation.isCorrupted) {
-    //        if(direction == "diagonalleft") {
-    //            return _diagonalLeftBlocked > 0;
-    //        }else if (direction == "diagonalright") {
-    //            return _diagonalRightBlocked > 0;
-    //        } else if (direction == "horizontal") {
-    //            return _horizontalBlocked > 0;
-    //        }
-    //    }
-    //    return false;
-    //}
     #endregion
 
     #region Civilians
     public void SetCivilianCount(int count) {
         _civilianCount = count;
+    }
+    #endregion
+
+    #region Quest Board
+    public void CreateQuestBoard() {
+        questBoard = new QuestBoard(this);
+    }
+    public bool HasQuestBoard() {
+        return questBoard != null;
     }
     #endregion
 }
