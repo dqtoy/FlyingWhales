@@ -21,6 +21,7 @@ namespace ECS {
         private bool _isDead;
         private bool _isFainted;
         private bool _isInCombat;
+        private bool _doNotDisturb;
         private GENDER _gender;
         private MODE _currentMode;
         private CharacterClass _characterClass;
@@ -369,6 +370,9 @@ namespace ECS {
         }
         public CharacterActionQueue<ActionQueueItem> actionQueue {
             get { return _actionQueue; }
+        }
+        public bool doNotDisturb {
+            get { return _doNotDisturb; }
         }
         #endregion
 
@@ -1886,6 +1890,22 @@ namespace ECS {
             }
 			return null;
 		}
+        public Attribute GetAttribute(ATTRIBUTE attribute) {
+            for (int i = 0; i < _attributes.Count; i++) {
+                if (_attributes[i].attribute == attribute) {
+                    return _attributes[i];
+                }
+            }
+            return null;
+        }
+        public Attribute GetAttribute(string attribute) {
+            for (int i = 0; i < _attributes.Count; i++) {
+                if (_attributes[i].name == attribute) {
+                    return _attributes[i];
+                }
+            }
+            return null;
+        }
         #endregion
 
         #region Faction
@@ -2194,6 +2214,9 @@ namespace ECS {
         public void SetMode(MODE mode) {
             _currentMode = mode;
         }
+        public void SetDoNotDisturb(bool state) {
+            _doNotDisturb = state;
+        }
         #endregion
 
         #region Relationships
@@ -2253,6 +2276,17 @@ namespace ECS {
                 _relationships.Add(otherCharacter, rel);
 
             }
+        }
+        public Character GetPartner() {
+            foreach (KeyValuePair<Character, Relationship> kvp in _relationships) {
+                for (int i = 0; i < kvp.Value.relationshipStatuses.Count; i++) {
+                    CHARACTER_RELATIONSHIP status = kvp.Value.relationshipStatuses[i];
+                    if (status == CHARACTER_RELATIONSHIP.HUSBAND || status == CHARACTER_RELATIONSHIP.WIFE) {
+                        return kvp.Key;
+                    }
+                }
+            }
+            return null;
         }
         #endregion
 
@@ -2606,16 +2640,23 @@ namespace ECS {
             return chosenAction;
         }
         public CharacterAction GetWeightedMiscAction(ref IObject targetObject) {
-            targetObject = _ownParty.characterObject;
-            WeightedDictionary<CharacterAction> miscActionOptions = new WeightedDictionary<CharacterAction>();
+            WeightedDictionary<ActionAndTarget> miscActionOptions = new WeightedDictionary<ActionAndTarget>();
             for (int i = 0; i < _miscActions.Count; i++) {
-                CharacterAction action = _miscActions[i];
-                if(action.disableCounter <= 0 && action.enableCounter > 0) {
-                    miscActionOptions.AddElement(action, action.weight);
+                CharacterAction currentAction = _miscActions[i];
+                if(currentAction.disableCounter <= 0 && currentAction.enableCounter > 0) {
+                    IObject currentTarget = currentAction.GetTargetObject(_ownParty);
+                    if(currentTarget != null) {
+                        ActionAndTarget actionAndTarget = new ActionAndTarget() {
+                            action = currentAction,
+                            target = currentTarget
+                        };
+                        miscActionOptions.AddElement(actionAndTarget, currentAction.weight);
+                    }
                 }
             }
-            CharacterAction chosenAction = miscActionOptions.PickRandomElementGivenWeights();
-            return chosenAction;
+            ActionAndTarget chosen = miscActionOptions.PickRandomElementGivenWeights();
+            targetObject = chosen.target;
+            return chosen.action;
         }
         public CharacterAction GetMiscAction(ACTION_TYPE type) {
             for (int i = 0; i < _miscActions.Count; i++) {
