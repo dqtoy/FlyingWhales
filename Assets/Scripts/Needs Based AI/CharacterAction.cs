@@ -132,6 +132,9 @@ public class CharacterAction {
         }
 
     }
+    public virtual IObject GetTargetObject(CharacterParty sourceParty) {
+        return sourceParty.characterObject;
+    }
     #endregion
 
     #region Filters
