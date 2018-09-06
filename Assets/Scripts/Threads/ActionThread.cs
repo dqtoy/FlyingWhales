@@ -54,21 +54,8 @@ public class ActionThread : Multithread {
             if (character.dailySchedule.currentPhase.phaseType == SCHEDULE_PHASE_TYPE.WORK){ //if work phase
                 if (character.role.roleType == CHARACTER_ROLE.HERO) { //if character is hero
                     actionLog += "\nDetermining hero work action...";
-                    //if (character.workplace.HasQuestBoard()) {
-
-                    //} else {
-                    //    throw new Exception(character.name + "'s workplace has no quest board!");
-                    //}
-                    //go to tavern and look for a quest, then do that quest until work period ends
-                    //TODO: Change this to get actions from quest boards
-                    //IObject targetObject = null;
-                    //chosenAction = character.GetRandomIdleAction(ref targetObject);
-                    //chosenObject = targetObject;
-                    //_party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
-                    //actionLog += "\nGot hero work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
-                    IObject targetObject = null;
-                    chosenAction = character.GetRandomMiscAction(ref targetObject);
-                    chosenObject = targetObject;
+                    chosenObject = character.workplace.landmarkObj;
+                    chosenAction = character.workplace.landmarkObj.currentState.GetAction(character.characterClass.workActionType); //Hero work action is QUESTING.
                     _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
                     actionLog += "\nGot hero work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
                 } else if(character.role.roleType == CHARACTER_ROLE.CIVILIAN) { //if character is civilian
@@ -342,43 +329,6 @@ public class ActionThread : Multithread {
     //        //CheckPrerequisites(chosenAction);
 
     //    }
-
-    /*
-     Get misc actions NOT based on needs.
-         */
-    [System.Obsolete("Use ECS.Character.GetRandomMiscAction Instead.")]
-    private CharacterAction GetMiscAction(ref IObject targetObject) {
-        actionLog += "\nMisc Action Weights: ";
-        WeightedDictionary<CharacterActionAdvertisement> miscActionWeights = new WeightedDictionary<CharacterActionAdvertisement>();
-        Character owner = _party.owner as Character;
-        for (int i = 0; i < owner.home.landmarks.Count; i++) { //get actions from home area only.
-            BaseLandmark landmark = owner.home.landmarks[i];
-            StructureObj iobject = landmark.landmarkObj;
-            if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
-                for (int k = 0; k < iobject.currentState.actions.Count; k++) {
-                    CharacterAction action = iobject.currentState.actions[k];
-                    if (owner.miscActionTypes.Contains(action.actionType) &&
-                        action.MeetsRequirements(_party, landmark) && action.CanBeDone(iobject) && action.CanBeDoneBy(_party, iobject)) { //Filter
-                        int weight = action.GetMiscActionWeight(_party, iobject);
-                        if (weight > 0) {
-                            CharacterActionAdvertisement actionAd = new CharacterActionAdvertisement();
-                            actionAd.action = action;
-                            actionAd.targetObject = iobject;
-                            actionAd.advertisement = weight;
-                            miscActionWeights.AddElement(actionAd, weight);
-                            actionLog += "\n" + actionAd.action.actionType + " at " + actionAd.targetObject.specificLocation.locationName;
-                        }
-                    }
-                }
-            }
-        }
-        if (miscActionWeights.GetTotalOfWeights() > 0) {
-            CharacterActionAdvertisement chosenActionAd = miscActionWeights.PickRandomElementGivenWeights();
-            targetObject = chosenActionAd.targetObject;
-            return chosenActionAd.action;
-        }
-        return null;
-    }
     private CharacterAction GetActionFromAdvertisements(ref IObject targetObject) {
         allChoices.Clear();
 

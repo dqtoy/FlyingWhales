@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TakeQuestAction : CharacterAction {
+public class QuestingAction : CharacterAction {
+    public QuestingAction() : base(ACTION_TYPE.QUESTING) { }
 
-    public TakeQuestAction() : base(ACTION_TYPE.TAKE_QUEST) {
-    }
-
-    #region Overrides
+    #region overrides
     public override void PerformAction(CharacterParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
 
@@ -15,7 +13,7 @@ public class TakeQuestAction : CharacterAction {
         GiveAllReward(party);
     }
     public override CharacterAction Clone() {
-        TakeQuestAction action = new TakeQuestAction();
+        QuestingAction action = new QuestingAction();
         SetCommonData(action);
         action.Initialize();
         return action;

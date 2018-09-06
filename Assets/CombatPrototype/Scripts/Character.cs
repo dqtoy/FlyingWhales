@@ -93,7 +93,7 @@ namespace ECS {
         private float _critDamage;
 
         public CharacterSchedule dailySchedule { get; private set; }
-        public List<ACTION_TYPE> miscActionTypes { get; private set; } //List of action types that this character can do for misc phase (Combination of actions granted by class and tags)
+        public Quest currentQuest { get; private set; }
 
         #region getters / setters
         public string firstName {
@@ -395,7 +395,7 @@ namespace ECS {
                     AssignRole(setup.optionalRole);
                 }
             }
-            DetermineAllowedMiscActions();
+            //DetermineAllowedMiscActions();
         }
         public Character(CharacterSaveData data) : this(){
             _id = Utilities.SetID(this, data.id);
@@ -433,7 +433,7 @@ namespace ECS {
                     AssignRole(setup.optionalRole);
                 }
             }
-            DetermineAllowedMiscActions();
+            //DetermineAllowedMiscActions();
         }
         public Character() {
             _tags = new List<CharacterAttribute>();
@@ -2020,32 +2020,35 @@ namespace ECS {
         //    return quests;
         //}
         public void OnTakeQuest(Quest takenQuest) {
-            if (takenQuest.groupType == GROUP_TYPE.PARTY && this.squad == null) { //When a character gains a Party Type Quest and he isnt a part of a Squad yet,
-                if (this.role == null) {
-                    return;
-                }
-                if (this.role.roleType == CHARACTER_ROLE.CIVILIAN) { //If he is a Civilian-type
-                    if (this.mentalPoints <= -6) {
-                        //if Mental Points is -6 or below, the character will request to chat with the Player and ask for his help
-                    } else if (this.HasTag(ATTRIBUTE.IMPULSIVE)) {
-                        //else, if character has impulsive trait, a change action to a randomized Hero class will be added at the end of his Action Queue.
-                        ChangeClassAction changeClassAction = ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.CHANGE_CLASS) as ChangeClassAction;
-                        string[] choices = new string[] { "Warrior" };
-                        changeClassAction.SetAdvertisedClass(choices[UnityEngine.Random.Range(0, choices.Length)]);
-                        AddActionToQueue(changeClassAction, ownParty.icharacterObject);
-                    } else {
-                        //else, character will advertise his Quest for other people to take
-                    }
-                } else if (this.role.roleType == CHARACTER_ROLE.HERO) { //If he is a Hero-type
-                    if (this.mentalPoints <= -6) {
-                        //if Mental Points is -6 or below, the character will request to chat with the Player and ask for his help
-                    } else if (this.HasTag(ATTRIBUTE.IMPULSIVE)) {
-                        //else, if character has impulsive trait, he will attempt the quest without any other people's help
-                    } else {
-                        //else, character will create a new Squad and become its Squad Leader and will perform a Recruit Squadmates action
-                    }
-                }
-            }
+            //if (takenQuest.groupType == GROUP_TYPE.PARTY && this.squad == null) { //When a character gains a Party Type Quest and he isnt a part of a Squad yet,
+            //    if (this.role == null) {
+            //        return;
+            //    }
+            //    if (this.role.roleType == CHARACTER_ROLE.CIVILIAN) { //If he is a Civilian-type
+            //        if (this.mentalPoints <= -6) {
+            //            //if Mental Points is -6 or below, the character will request to chat with the Player and ask for his help
+            //        } else if (this.HasTag(ATTRIBUTE.IMPULSIVE)) {
+            //            //else, if character has impulsive trait, a change action to a randomized Hero class will be added at the end of his Action Queue.
+            //            ChangeClassAction changeClassAction = ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.CHANGE_CLASS) as ChangeClassAction;
+            //            string[] choices = new string[] { "Warrior" };
+            //            changeClassAction.SetAdvertisedClass(choices[UnityEngine.Random.Range(0, choices.Length)]);
+            //            AddActionToQueue(changeClassAction, ownParty.icharacterObject);
+            //        } else {
+            //            //else, character will advertise his Quest for other people to take
+            //        }
+            //    } else if (this.role.roleType == CHARACTER_ROLE.HERO) { //If he is a Hero-type
+            //        if (this.mentalPoints <= -6) {
+            //            //if Mental Points is -6 or below, the character will request to chat with the Player and ask for his help
+            //        } else if (this.HasTag(ATTRIBUTE.IMPULSIVE)) {
+            //            //else, if character has impulsive trait, he will attempt the quest without any other people's help
+            //        } else {
+            //            //else, character will create a new Squad and become its Squad Leader and will perform a Recruit Squadmates action
+            //        }
+            //    }
+            //}
+        }
+        public bool HasQuest() {
+            return currentQuest != null;
         }
         #endregion
 
@@ -2976,16 +2979,6 @@ namespace ECS {
                 return; //this character is not in it's owned party, that means he/she is just a member of the party, and shall not decide what action to do!
             }
             Debug.Log(GameManager.Instance.Today().GetDayAndTicksString() + " " + this.name + " ended phase " + phase.phaseName + "(" + phase.phaseType.ToString() + ")");
-        }
-        #endregion
-
-        #region Misc Actions
-        [System.Obsolete("Use GetRandomMiscAction Instead.")]
-        /*
-         Determine the initial list of misc actions that the character can do.
-             */
-        private void DetermineAllowedMiscActions() {
-            miscActionTypes = CharacterManager.Instance.GetAllowedMiscActionsForCharacter(this);
         }
         #endregion
     }

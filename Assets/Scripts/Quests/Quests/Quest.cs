@@ -12,12 +12,11 @@ public class Quest {
     public string questDescription { get { return GetQuestDescription(); } }
     public int id { get; private set; }
     public QUEST_TYPE questType { get; private set; }
-    public virtual GROUP_TYPE groupType { get { return GROUP_TYPE.SOLO; } }
 
     public Quest(QUEST_TYPE questType) {
         this.id = Utilities.SetID(this);
         this.questType = questType;
-        QuestManager.Instance.AddAvailableQuest(this);
+        //QuestManager.Instance.AddAvailableQuest(this);
     }
 
     public virtual QuestAction GetQuestAction(ECS.Character character, CharacterQuestData data) {
