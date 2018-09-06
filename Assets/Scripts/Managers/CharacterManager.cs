@@ -169,9 +169,11 @@ public class CharacterManager : MonoBehaviour {
             if (charRole != CHARACTER_ROLE.NONE) {
                 newCharacter.AssignRole(charRole);
             }
+#if !WORLD_CREATION_TOOL
             if (charRole != CHARACTER_ROLE.PLAYER) {
                 newCharacter.SetDailySchedule(CharacterScheduleManager.Instance.GetScheduleForCharacter(newCharacter));
             }
+#endif
         }
 
         _allCharacters.Add(newCharacter);

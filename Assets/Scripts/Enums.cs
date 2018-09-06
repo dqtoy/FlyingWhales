@@ -1320,6 +1320,7 @@ public enum ACTION_TYPE {
     STALK,
     QUESTING,
     FETCH,
+    WAIT_FOR_PARTY,
 }
 public enum ACTION_CATEGORY {
     WORK,

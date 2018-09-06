@@ -323,6 +323,10 @@ public class ObjectManager : MonoBehaviour {
                 return new QuestingAction();
             case ACTION_TYPE.FETCH:
                 return new FetchAction();
+            case ACTION_TYPE.WAIT_FOR_PARTY:
+                return new WaitForPartyAction();
+            case ACTION_TYPE.FOOLING_AROUND:
+                return new FoolingAroundAction();
         }
         return null;
     }

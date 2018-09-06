@@ -3089,6 +3089,9 @@ namespace ECS {
             }
             Debug.Log(GameManager.Instance.Today().GetDayAndTicksString() + " " + this.name + " ended phase " + phase.phaseName + "(" + phase.phaseType.ToString() + ")");
         }
+        //public bool CanReachWork() {
+
+        //}
         #endregion
     }
 }
