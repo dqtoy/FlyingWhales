@@ -401,6 +401,15 @@ public class BaseLandmark : ILocation {
     //     }
     //     return count;
     // }
+    public bool IsCharacterAtLocation(ICharacter character) {
+        for (int i = 0; i < _charactersAtLocation.Count; i++) {
+            NewParty currParty = _charactersAtLocation[i];
+            if (currParty.icharacters.Contains(character)) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Combat
