@@ -2,15 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Unfaithful : MonoBehaviour {
+public class Unfaithful : Attribute {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public Unfaithful() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.UNFAITHFUL) {
+
+    }
 }

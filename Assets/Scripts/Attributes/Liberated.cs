@@ -2,15 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Liberated : MonoBehaviour {
+public class Liberated : Attribute {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public Liberated() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.LIBERATED) {
+
+    }
 }

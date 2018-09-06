@@ -191,7 +191,8 @@ public class ActionData {
                     } else {
                         ILocation location = currentTargetObject.specificLocation;
                         if (location != null) {
-                            if (currentAction.actionType == ACTION_TYPE.ATTACK || currentAction.actionType == ACTION_TYPE.CHAT) {
+                            //if (currentAction.actionType == ACTION_TYPE.ATTACK || currentAction.actionType == ACTION_TYPE.CHAT) {
+                            if (currentAction.actionType == ACTION_TYPE.STALK) {
                                 _party.GoToLocation(location, PATHFINDING_MODE.PASSABLE);
                             }
                         } else {

@@ -1790,7 +1790,42 @@ namespace ECS {
 			}
             return charTag;
 		}
-		private void GenerateRaceTags(){
+        public Attribute CreateAttribute(ATTRIBUTE type) {
+            switch (type) {
+                case ATTRIBUTE.GREGARIOUS:
+                return new Gregarious();
+                case ATTRIBUTE.BOOKWORM:
+                return new Bookworm();
+                case ATTRIBUTE.SINGER:
+                return new Singer();
+                case ATTRIBUTE.DAYDREAMER:
+                return new Daydreamer();
+                case ATTRIBUTE.MEDITATOR:
+                return new Meditator();
+                case ATTRIBUTE.CLEANER:
+                return new Cleaner();
+                case ATTRIBUTE.INTROVERT:
+                return new Introvert();
+                case ATTRIBUTE.EXTROVERT:
+                return new Extrovert();
+                case ATTRIBUTE.BELLIGERENT:
+                return new Belligerent();
+                case ATTRIBUTE.LIBERATED:
+                return new Liberated();
+                case ATTRIBUTE.UNFAITHFUL:
+                return new Unfaithful();
+                case ATTRIBUTE.DEAFENED:
+                return new Deafened();
+                case ATTRIBUTE.MUTE:
+                return new Mute();
+                case ATTRIBUTE.ROYALTY:
+                return new Royalty();
+                case ATTRIBUTE.STALKER:
+                return new Stalker();
+            }
+            return null;
+        }
+        private void GenerateRaceTags(){
 			for (int i = 0; i < _raceSetting.tags.Count; i++) {
 				AssignTag (_raceSetting.tags [i]);
 			}
@@ -1905,6 +1940,27 @@ namespace ECS {
                 }
             }
             return null;
+        }
+        public Attribute AddAttribute(ATTRIBUTE attribute) {
+            if(GetAttribute(attribute) == null) {
+                Attribute newAttribute = CreateAttribute(attribute);
+                _attributes.Add(newAttribute);
+                newAttribute.OnAddAttribute(this);
+                return newAttribute;
+            }
+            return null;
+        }
+        public bool RemoveAttribute(ATTRIBUTE attribute) {
+            for (int i = 0; i < _attributes.Count; i++) {
+                if(_attributes[i].attribute == attribute) {
+                    _attributes.RemoveAt(i);
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool RemoveAttribute(Attribute attribute) {
+            return _attributes.Remove(attribute);
         }
         #endregion
 

@@ -2,15 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Introvert : MonoBehaviour {
+public class Introvert : Attribute {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public Introvert() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.INTROVERT) {
+
+    }
 }

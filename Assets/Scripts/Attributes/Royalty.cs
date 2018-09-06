@@ -2,15 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Royalty : MonoBehaviour {
+public class Royalty : Attribute {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public Royalty() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.ROYALTY) {
+
+    }
 }

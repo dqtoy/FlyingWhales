@@ -6,6 +6,14 @@ using ECS;
 public class Stalker : Attribute {
 
     CharacterAction stalk;
+    private Character _stalkee;
+
+    #region getters/setters
+    public Character stalkee {
+        get { return _stalkee; }
+    }
+    #endregion
+
     public Stalker() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.STALKER) {
 
     }
@@ -21,4 +29,8 @@ public class Stalker : Attribute {
         character.RemoveMiscAction(stalk);
     }
     #endregion
+
+    public void SetStalkee(Character character) {
+        _stalkee = character;
+    }
 }

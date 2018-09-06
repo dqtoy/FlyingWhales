@@ -1240,7 +1240,8 @@ public enum CHARACTER_RELATIONSHIP{
     HUSBAND,
     WIFE,
     ENEMY,
-    RIVAL
+    RIVAL,
+    STALKER,
     //RIVAL,
 	//FRIEND,
 	//ENEMY,

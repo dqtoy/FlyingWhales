@@ -2,15 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Extrovert : MonoBehaviour {
+public class Extrovert : Attribute {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public Extrovert() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.EXTROVERT) {
+
+    }
 }

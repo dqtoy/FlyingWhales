@@ -2,15 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Belligerent : MonoBehaviour {
+public class Belligerent : Attribute {
+    
+    public Belligerent() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.BELLIGERENT) {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    }
 }

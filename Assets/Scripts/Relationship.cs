@@ -177,6 +177,12 @@ public class Relationship {
     public void AddRelationshipStatus(CHARACTER_RELATIONSHIP relStat) {
         if (!_relationshipStatuses.Contains(relStat)) {
             _relationshipStatuses.Add(relStat);
+            if(relStat == CHARACTER_RELATIONSHIP.STALKER) {
+                Stalker stalker = targetCharacter.AddAttribute(ATTRIBUTE.STALKER) as Stalker;
+                if(stalker != null) {
+                    stalker.SetStalkee(sourceCharacter);
+                }
+            }
         }
     }
     public void AddRelationshipStatus(List<CHARACTER_RELATIONSHIP> relStat) {
@@ -186,6 +192,9 @@ public class Relationship {
     }
     public void RemoveRelationshipStatus(CHARACTER_RELATIONSHIP relStat) {
         _relationshipStatuses.Remove(relStat);
+        if (relStat == CHARACTER_RELATIONSHIP.STALKER) {
+            targetCharacter.RemoveAttribute(ATTRIBUTE.STALKER);
+        }
     }
     //public bool HasCategory(CHARACTER_RELATIONSHIP_CATEGORY category){
     //	for (int i = 0; i < _relationshipStatus.Count; i++) {
