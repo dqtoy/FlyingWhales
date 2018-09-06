@@ -321,6 +321,8 @@ public class ObjectManager : MonoBehaviour {
                 return new WorkingAction();
             case ACTION_TYPE.QUESTING:
                 return new QuestingAction();
+            case ACTION_TYPE.FETCH:
+                return new FetchAction();
         }
         return null;
     }

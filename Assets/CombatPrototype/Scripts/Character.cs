@@ -479,7 +479,7 @@ namespace ECS {
 
         #region Signals
         private void SubscribeToSignals() {
-            Messenger.AddListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
+            //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
             Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
             Messenger.AddListener<Region>("RegionDeath", RegionDeath);
             //Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
@@ -488,7 +488,7 @@ namespace ECS {
             //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         }
         public void UnsubscribeSignals() {
-            Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
+            //Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
             Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
             Messenger.RemoveListener<Region>("RegionDeath", RegionDeath);
             //Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
@@ -2050,6 +2050,10 @@ namespace ECS {
         public bool HasQuest() {
             return currentQuest != null;
         }
+        public void SetQuest(Quest quest) {
+            currentQuest = quest;
+            Debug.Log("Set " + this.name + "'s quest to " + quest.name);
+        }
         #endregion
 
         #region HP
@@ -2714,44 +2718,44 @@ namespace ECS {
          the snatched one would all be sent signals to check whether they should react or not. 
          Other character reaction would depend on their relationship, happiness and traits.
              */
-        private void OnCharacterSnatched(ECS.Character otherCharacter) {
-            if (otherCharacter.id != this.id && this.party.characterObject.currentState.stateName != "Imprisoned") {
-                if (relationships.ContainsKey(otherCharacter)) { //if this character has a relationship with the one that was snatched
-                    Debug.Log(this.name + " will react to " + otherCharacter.name + " being snatched!");
-                    //For now make all characters that have relationship with the snatched character, react.
-                    if (UnityEngine.Random.Range(0, 1) == 0) {
-                        //obtain release character questline
-                        Debug.Log(this.name + " decided to release " + otherCharacter.name + " by himself");
-                        QuestManager.Instance.TakeQuest(QUEST_TYPE.RELEASE_CHARACTER, this, otherCharacter);
-                    } else {
-                        //bargain with player
-                        Debug.Log(this.name + " will bargain for " + otherCharacter.name + "'s freedom!");
-                        TriggerBargain(otherCharacter);
-                    }
-                }
-            }
-        }
-        private void TriggerBargain(ECS.Character bargainingFor) {
-            List<CharacterDialogChoice> dialogChoices = new List<CharacterDialogChoice>();
-            CharacterDialogChoice killYourselfChoice = new CharacterDialogChoice("Kill yourself!", () => this.Death());
-            List<Character> otherCharacters = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => x.party.characterObject.currentState.stateName != "Imprisoned"));
-            otherCharacters.Remove(this);
-            dialogChoices.Add(killYourselfChoice);
-            if (otherCharacters.Count > 0) {
-                ECS.Character characterToAttack = otherCharacters[UnityEngine.Random.Range(0, otherCharacters.Count)];
-                CharacterDialogChoice attackCharacterChoice = new CharacterDialogChoice("Attack " + characterToAttack.name, 
-                    () => party.actionData.ForceDoAction(characterToAttack.party.characterObject.currentState.GetAction(ACTION_TYPE.ATTACK)
-                    , characterToAttack.party.characterObject));
-                dialogChoices.Add(attackCharacterChoice);
-            }
+        //private void OnCharacterSnatched(ECS.Character otherCharacter) {
+        //    if (otherCharacter.id != this.id && this.party.characterObject.currentState.stateName != "Imprisoned") {
+        //        if (relationships.ContainsKey(otherCharacter)) { //if this character has a relationship with the one that was snatched
+        //            Debug.Log(this.name + " will react to " + otherCharacter.name + " being snatched!");
+        //            //For now make all characters that have relationship with the snatched character, react.
+        //            if (UnityEngine.Random.Range(0, 1) == 0) {
+        //                //obtain release character questline
+        //                Debug.Log(this.name + " decided to release " + otherCharacter.name + " by himself");
+        //                //QuestManager.Instance.TakeQuest(QUEST_TYPE.RELEASE_CHARACTER, this, otherCharacter);
+        //            } else {
+        //                //bargain with player
+        //                Debug.Log(this.name + " will bargain for " + otherCharacter.name + "'s freedom!");
+        //                TriggerBargain(otherCharacter);
+        //            }
+        //        }
+        //    }
+        //}
+        //private void TriggerBargain(ECS.Character bargainingFor) {
+        //    List<CharacterDialogChoice> dialogChoices = new List<CharacterDialogChoice>();
+        //    CharacterDialogChoice killYourselfChoice = new CharacterDialogChoice("Kill yourself!", () => this.Death());
+        //    List<Character> otherCharacters = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => x.party.characterObject.currentState.stateName != "Imprisoned"));
+        //    otherCharacters.Remove(this);
+        //    dialogChoices.Add(killYourselfChoice);
+        //    if (otherCharacters.Count > 0) {
+        //        ECS.Character characterToAttack = otherCharacters[UnityEngine.Random.Range(0, otherCharacters.Count)];
+        //        CharacterDialogChoice attackCharacterChoice = new CharacterDialogChoice("Attack " + characterToAttack.name, 
+        //            () => party.actionData.ForceDoAction(characterToAttack.party.characterObject.currentState.GetAction(ACTION_TYPE.ATTACK)
+        //            , characterToAttack.party.characterObject));
+        //        dialogChoices.Add(attackCharacterChoice);
+        //    }
 
-            UnityEngine.Events.UnityAction onClickAction = () => Messenger.Broadcast(Signals.SHOW_CHARACTER_DIALOG, this, "Please release " + bargainingFor.name + "!", dialogChoices);
+        //    UnityEngine.Events.UnityAction onClickAction = () => Messenger.Broadcast(Signals.SHOW_CHARACTER_DIALOG, this, "Please release " + bargainingFor.name + "!", dialogChoices);
 
-            Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>
-                (Signals.SHOW_NOTIFICATION, this.name + " wants to bargain for " + bargainingFor.name + "'s freedom!",
-                144,
-                onClickAction);
-        }
+        //    Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>
+        //        (Signals.SHOW_NOTIFICATION, this.name + " wants to bargain for " + bargainingFor.name + "'s freedom!",
+        //        144,
+        //        onClickAction);
+        //}
         #endregion
 
         #region Home
@@ -2805,7 +2809,9 @@ namespace ECS {
         public void SetHome(Area newHome) {
             _home = newHome;
             newHome.residents.Add(this);
+#if !WORLD_CREATION_TOOL
             LookForNewWorkplace();
+#endif
         }
         public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
             this._homeLandmark = newHomeLandmark;
@@ -2970,8 +2976,14 @@ namespace ECS {
                     _ownParty.actionData.EndAction();
                 }
             } else if (phase.phaseType == SCHEDULE_PHASE_TYPE.MISC) {
-                //if the started phase is misc, the character will NOT stop his/her current action if his/her current action is a work action, he/she will instead,
-                //wait for the current action to end, then he/she will start doing misc actions.
+                //if the started phase is misc, the character will NOT stop his/her current action if his/her current action is a work action (unless that work action is unending), 
+                //he/she will instead, wait for the current action to end, then he/she will start doing misc actions.
+                if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.WORK) {
+                    if (_ownParty.actionData.currentAction != null && _ownParty.actionData.currentAction.actionData.duration == 0) {
+                        //current work action is un ending, end it.
+                        _ownParty.actionData.EndAction();
+                    }
+                }
             }
         }
         public void OnDailySchedulePhaseEnded(CharacterSchedulePhase phase) {

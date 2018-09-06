@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4501479734804922}
   - component: {fileID: 114010664997495754}
   - component: {fileID: 114165885577064042}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: MonsterManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -52,7 +52,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9520609c3a46f164290ae9e2cbecdbfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monsterIconPrefab: {fileID: 1504054632542230, guid: 830b58204e4b46e499f7df9685aefdde,
+  monsterIconPrefab: {fileID: 1000012712350628, guid: 5372250d22a51bc40a200236eee58ac2,
     type: 2}
   monsterPartySetups:
   - {fileID: 114076955503950830, guid: 9bb9b02baf076a345a720f24a40c4928, type: 2}
@@ -71,11 +71,8 @@ MonoBehaviour:
   - {fileID: 114735646941030760, guid: 6333550dd99c917499c78f7be0f2dc2f, type: 2}
   - {fileID: 114735646941030760, guid: 9830adc92c764444eb8e394104307fd2, type: 2}
   - {fileID: 114735646941030760, guid: 62d1eb16173c2ee4986e7609984d383b, type: 2}
-  - {fileID: 114735646941030760, guid: 0cac3be884b39ea4aa313deec030fdf4, type: 2}
-  - {fileID: 114735646941030760, guid: 003dc6c744371804b9805de6260a0af2, type: 2}
   - {fileID: 114735646941030760, guid: 1df669a5db23165428e3714051d5eb6c, type: 2}
   - {fileID: 114735646941030760, guid: 813aa6d8fee493449b545fee1d074275, type: 2}
-  - {fileID: 114735646941030760, guid: 296bed85d10c92c428a0dafbca2df84f, type: 2}
   - {fileID: 114735646941030760, guid: cdc6649179f5f5543878240a2792e53e, type: 2}
   - {fileID: 114735646941030760, guid: ece47a322f39a3f4ba239e9cc1beb338, type: 2}
   - {fileID: 114735646941030760, guid: a398f45349e0936429d8f3356e642d41, type: 2}

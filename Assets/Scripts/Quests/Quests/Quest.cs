@@ -19,7 +19,7 @@ public class Quest {
         //QuestManager.Instance.AddAvailableQuest(this);
     }
 
-    public virtual QuestAction GetQuestAction(ECS.Character character, CharacterQuestData data) {
+    public virtual QuestAction GetQuestAction(ECS.Character character) {
         return null;
     }
     protected virtual string GetQuestName() {

@@ -451,6 +451,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     internal float GetDistanceTo(HexTile targetHextile) {
         return Vector3.Distance(this.transform.position, targetHextile.transform.position);
     }
+    public int GetDistanceFrom(HexTile target) {
+        List<HexTile> path = PathGenerator.Instance.GetPath(this, target, PATHFINDING_MODE.PASSABLE);
+        if (path != null) {
+            return path.Count;
+        }
+        return -1;
+    }
     public bool CanBuildLandmarkHere(LANDMARK_TYPE landmarkToBuild, LandmarkData data, Dictionary<HexTile, LANDMARK_TYPE> landmarksToBeCreated) {
         if (this.hasLandmark || !this.isPassable || landmarksToBeCreated.ContainsKey(this)) {
             return false; //this tile is not passable or already has a landmark

@@ -55,28 +55,91 @@ MonoBehaviour:
   - _stateName: Spawning
     _everydayAction:
       m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 114012481577862306}
-          m_MethodName: ReduceSpawnCooldown
-          m_Mode: 0
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
+        m_Calls: []
       m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
         PublicKeyToken=null
-    _actions: []
+    _actions:
+    - _actionData:
+        actionType: 50
+        actionCategory: 0
+        actionName: Fetch
+        filters: []
+        advertisedFullness: 0
+        advertisedFun: 0
+        advertisedEnergy: 0
+        advertisedPrestige: 0
+        advertisedSanity: 0
+        advertisedSafety: 0
+        advertisedResource: 0
+        providedFullness: 0
+        providedFun: 0
+        providedEnergy: 0
+        providedPrestige: 0
+        providedSanity: 0
+        providedSafety: 0
+        successRate: 0
+        duration: 0
+        hpRecoveredPercentage: 0
+        resourceGiven: 0
+        minResourceGiven: 0
+        maxResourceGiven: 0
+        resourceNeeded: 0
+        resourceAmountNeeded: 0
+        providedExp: 0
+        successFunction:
+          m_PersistentCalls:
+            m_Calls: []
+          m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+        failFunction:
+          m_PersistentCalls:
+            m_Calls: []
+          m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+            PublicKeyToken=null
   - _stateName: Occupied
     _everydayAction:
       m_PersistentCalls:
         m_Calls: []
       m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
         PublicKeyToken=null
-    _actions: []
+    _actions:
+    - _actionData:
+        actionType: 50
+        actionCategory: 0
+        actionName: 
+        filters: []
+        advertisedFullness: 0
+        advertisedFun: 0
+        advertisedEnergy: 0
+        advertisedPrestige: 0
+        advertisedSanity: 0
+        advertisedSafety: 0
+        advertisedResource: 0
+        providedFullness: 0
+        providedFun: 0
+        providedEnergy: 0
+        providedPrestige: 0
+        providedSanity: 0
+        providedSafety: 0
+        successRate: 0
+        duration: 0
+        hpRecoveredPercentage: 0
+        resourceGiven: 0
+        minResourceGiven: 0
+        maxResourceGiven: 0
+        resourceNeeded: 0
+        resourceAmountNeeded: 0
+        providedExp: 0
+        successFunction:
+          m_PersistentCalls:
+            m_Calls: []
+          m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+        failFunction:
+          m_PersistentCalls:
+            m_Calls: []
+          m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+            PublicKeyToken=null
   - _stateName: Ruined
     _everydayAction:
       m_PersistentCalls:
@@ -94,7 +157,7 @@ MonoBehaviour:
     - _actionData:
         actionType: 28
         actionCategory: 0
-        actionName: 
+        actionName: Deposit
         filters: []
         advertisedFullness: 0
         advertisedFun: 0
