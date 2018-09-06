@@ -2,20 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TakeQuestAction : CharacterAction {
+public class FetchAction : CharacterAction {
+    public FetchAction() : base(ACTION_TYPE.FETCH) { }
 
-    public TakeQuestAction() : base(ACTION_TYPE.TAKE_QUEST) {
-    }
-
-    #region Overrides
+    #region overrides
     public override void PerformAction(CharacterParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
-
-        //give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige
-        GiveAllReward(party);
+        //TODO: Add Item Obtaining from monster drops
+        //GiveAllReward(party);
     }
     public override CharacterAction Clone() {
-        TakeQuestAction action = new TakeQuestAction();
+        FetchAction action = new FetchAction();
         SetCommonData(action);
         action.Initialize();
         return action;

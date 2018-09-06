@@ -94,7 +94,7 @@ namespace ECS {
         private float _critDamage;
 
         public CharacterSchedule dailySchedule { get; private set; }
-        public List<ACTION_TYPE> miscActionTypes { get; private set; } //List of action types that this character can do for misc phase (Combination of actions granted by class and tags)
+        public Quest currentQuest { get; private set; }
 
         #region getters / setters
         public string firstName {
@@ -399,7 +399,7 @@ namespace ECS {
                     AssignRole(setup.optionalRole);
                 }
             }
-            DetermineAllowedMiscActions();
+            //DetermineAllowedMiscActions();
         }
         public Character(CharacterSaveData data) : this(){
             _id = Utilities.SetID(this, data.id);
@@ -437,7 +437,7 @@ namespace ECS {
                     AssignRole(setup.optionalRole);
                 }
             }
-            DetermineAllowedMiscActions();
+            //DetermineAllowedMiscActions();
         }
         public Character() {
             _tags = new List<CharacterAttribute>();
@@ -483,7 +483,7 @@ namespace ECS {
 
         #region Signals
         private void SubscribeToSignals() {
-            Messenger.AddListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
+            //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
             Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
             Messenger.AddListener<Region>("RegionDeath", RegionDeath);
             //Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
@@ -492,7 +492,7 @@ namespace ECS {
             //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         }
         public void UnsubscribeSignals() {
-            Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
+            //Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
             Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
             Messenger.RemoveListener<Region>("RegionDeath", RegionDeath);
             //Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
@@ -2040,32 +2040,39 @@ namespace ECS {
         //    return quests;
         //}
         public void OnTakeQuest(Quest takenQuest) {
-            if (takenQuest.groupType == GROUP_TYPE.PARTY && this.squad == null) { //When a character gains a Party Type Quest and he isnt a part of a Squad yet,
-                if (this.role == null) {
-                    return;
-                }
-                if (this.role.roleType == CHARACTER_ROLE.CIVILIAN) { //If he is a Civilian-type
-                    if (this.mentalPoints <= -6) {
-                        //if Mental Points is -6 or below, the character will request to chat with the Player and ask for his help
-                    } else if (this.HasTag(ATTRIBUTE.IMPULSIVE)) {
-                        //else, if character has impulsive trait, a change action to a randomized Hero class will be added at the end of his Action Queue.
-                        ChangeClassAction changeClassAction = ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.CHANGE_CLASS) as ChangeClassAction;
-                        string[] choices = new string[] { "Warrior" };
-                        changeClassAction.SetAdvertisedClass(choices[UnityEngine.Random.Range(0, choices.Length)]);
-                        AddActionToQueue(changeClassAction, ownParty.icharacterObject);
-                    } else {
-                        //else, character will advertise his Quest for other people to take
-                    }
-                } else if (this.role.roleType == CHARACTER_ROLE.HERO) { //If he is a Hero-type
-                    if (this.mentalPoints <= -6) {
-                        //if Mental Points is -6 or below, the character will request to chat with the Player and ask for his help
-                    } else if (this.HasTag(ATTRIBUTE.IMPULSIVE)) {
-                        //else, if character has impulsive trait, he will attempt the quest without any other people's help
-                    } else {
-                        //else, character will create a new Squad and become its Squad Leader and will perform a Recruit Squadmates action
-                    }
-                }
-            }
+            //if (takenQuest.groupType == GROUP_TYPE.PARTY && this.squad == null) { //When a character gains a Party Type Quest and he isnt a part of a Squad yet,
+            //    if (this.role == null) {
+            //        return;
+            //    }
+            //    if (this.role.roleType == CHARACTER_ROLE.CIVILIAN) { //If he is a Civilian-type
+            //        if (this.mentalPoints <= -6) {
+            //            //if Mental Points is -6 or below, the character will request to chat with the Player and ask for his help
+            //        } else if (this.HasTag(ATTRIBUTE.IMPULSIVE)) {
+            //            //else, if character has impulsive trait, a change action to a randomized Hero class will be added at the end of his Action Queue.
+            //            ChangeClassAction changeClassAction = ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.CHANGE_CLASS) as ChangeClassAction;
+            //            string[] choices = new string[] { "Warrior" };
+            //            changeClassAction.SetAdvertisedClass(choices[UnityEngine.Random.Range(0, choices.Length)]);
+            //            AddActionToQueue(changeClassAction, ownParty.icharacterObject);
+            //        } else {
+            //            //else, character will advertise his Quest for other people to take
+            //        }
+            //    } else if (this.role.roleType == CHARACTER_ROLE.HERO) { //If he is a Hero-type
+            //        if (this.mentalPoints <= -6) {
+            //            //if Mental Points is -6 or below, the character will request to chat with the Player and ask for his help
+            //        } else if (this.HasTag(ATTRIBUTE.IMPULSIVE)) {
+            //            //else, if character has impulsive trait, he will attempt the quest without any other people's help
+            //        } else {
+            //            //else, character will create a new Squad and become its Squad Leader and will perform a Recruit Squadmates action
+            //        }
+            //    }
+            //}
+        }
+        public bool HasQuest() {
+            return currentQuest != null;
+        }
+        public void SetQuest(Quest quest) {
+            currentQuest = quest;
+            Debug.Log("Set " + this.name + "'s quest to " + quest.name);
         }
         #endregion
 
@@ -2752,44 +2759,44 @@ namespace ECS {
          the snatched one would all be sent signals to check whether they should react or not. 
          Other character reaction would depend on their relationship, happiness and traits.
              */
-        private void OnCharacterSnatched(ECS.Character otherCharacter) {
-            if (otherCharacter.id != this.id && this.party.characterObject.currentState.stateName != "Imprisoned") {
-                if (relationships.ContainsKey(otherCharacter)) { //if this character has a relationship with the one that was snatched
-                    Debug.Log(this.name + " will react to " + otherCharacter.name + " being snatched!");
-                    //For now make all characters that have relationship with the snatched character, react.
-                    if (UnityEngine.Random.Range(0, 1) == 0) {
-                        //obtain release character questline
-                        Debug.Log(this.name + " decided to release " + otherCharacter.name + " by himself");
-                        QuestManager.Instance.TakeQuest(QUEST_TYPE.RELEASE_CHARACTER, this, otherCharacter);
-                    } else {
-                        //bargain with player
-                        Debug.Log(this.name + " will bargain for " + otherCharacter.name + "'s freedom!");
-                        TriggerBargain(otherCharacter);
-                    }
-                }
-            }
-        }
-        private void TriggerBargain(ECS.Character bargainingFor) {
-            List<CharacterDialogChoice> dialogChoices = new List<CharacterDialogChoice>();
-            CharacterDialogChoice killYourselfChoice = new CharacterDialogChoice("Kill yourself!", () => this.Death());
-            List<Character> otherCharacters = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => x.party.characterObject.currentState.stateName != "Imprisoned"));
-            otherCharacters.Remove(this);
-            dialogChoices.Add(killYourselfChoice);
-            if (otherCharacters.Count > 0) {
-                ECS.Character characterToAttack = otherCharacters[UnityEngine.Random.Range(0, otherCharacters.Count)];
-                CharacterDialogChoice attackCharacterChoice = new CharacterDialogChoice("Attack " + characterToAttack.name, 
-                    () => party.actionData.ForceDoAction(characterToAttack.party.characterObject.currentState.GetAction(ACTION_TYPE.ATTACK)
-                    , characterToAttack.party.characterObject));
-                dialogChoices.Add(attackCharacterChoice);
-            }
+        //private void OnCharacterSnatched(ECS.Character otherCharacter) {
+        //    if (otherCharacter.id != this.id && this.party.characterObject.currentState.stateName != "Imprisoned") {
+        //        if (relationships.ContainsKey(otherCharacter)) { //if this character has a relationship with the one that was snatched
+        //            Debug.Log(this.name + " will react to " + otherCharacter.name + " being snatched!");
+        //            //For now make all characters that have relationship with the snatched character, react.
+        //            if (UnityEngine.Random.Range(0, 1) == 0) {
+        //                //obtain release character questline
+        //                Debug.Log(this.name + " decided to release " + otherCharacter.name + " by himself");
+        //                //QuestManager.Instance.TakeQuest(QUEST_TYPE.RELEASE_CHARACTER, this, otherCharacter);
+        //            } else {
+        //                //bargain with player
+        //                Debug.Log(this.name + " will bargain for " + otherCharacter.name + "'s freedom!");
+        //                TriggerBargain(otherCharacter);
+        //            }
+        //        }
+        //    }
+        //}
+        //private void TriggerBargain(ECS.Character bargainingFor) {
+        //    List<CharacterDialogChoice> dialogChoices = new List<CharacterDialogChoice>();
+        //    CharacterDialogChoice killYourselfChoice = new CharacterDialogChoice("Kill yourself!", () => this.Death());
+        //    List<Character> otherCharacters = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => x.party.characterObject.currentState.stateName != "Imprisoned"));
+        //    otherCharacters.Remove(this);
+        //    dialogChoices.Add(killYourselfChoice);
+        //    if (otherCharacters.Count > 0) {
+        //        ECS.Character characterToAttack = otherCharacters[UnityEngine.Random.Range(0, otherCharacters.Count)];
+        //        CharacterDialogChoice attackCharacterChoice = new CharacterDialogChoice("Attack " + characterToAttack.name, 
+        //            () => party.actionData.ForceDoAction(characterToAttack.party.characterObject.currentState.GetAction(ACTION_TYPE.ATTACK)
+        //            , characterToAttack.party.characterObject));
+        //        dialogChoices.Add(attackCharacterChoice);
+        //    }
 
-            UnityEngine.Events.UnityAction onClickAction = () => Messenger.Broadcast(Signals.SHOW_CHARACTER_DIALOG, this, "Please release " + bargainingFor.name + "!", dialogChoices);
+        //    UnityEngine.Events.UnityAction onClickAction = () => Messenger.Broadcast(Signals.SHOW_CHARACTER_DIALOG, this, "Please release " + bargainingFor.name + "!", dialogChoices);
 
-            Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>
-                (Signals.SHOW_NOTIFICATION, this.name + " wants to bargain for " + bargainingFor.name + "'s freedom!",
-                144,
-                onClickAction);
-        }
+        //    Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>
+        //        (Signals.SHOW_NOTIFICATION, this.name + " wants to bargain for " + bargainingFor.name + "'s freedom!",
+        //        144,
+        //        onClickAction);
+        //}
         #endregion
 
         #region Home
@@ -2843,7 +2850,9 @@ namespace ECS {
         public void SetHome(Area newHome) {
             _home = newHome;
             newHome.residents.Add(this);
+#if !WORLD_CREATION_TOOL
             LookForNewWorkplace();
+#endif
         }
         public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
             this._homeLandmark = newHomeLandmark;
@@ -3008,8 +3017,14 @@ namespace ECS {
                     _ownParty.actionData.EndAction();
                 }
             } else if (phase.phaseType == SCHEDULE_PHASE_TYPE.MISC) {
-                //if the started phase is misc, the character will NOT stop his/her current action if his/her current action is a work action, he/she will instead,
-                //wait for the current action to end, then he/she will start doing misc actions.
+                //if the started phase is misc, the character will NOT stop his/her current action if his/her current action is a work action (unless that work action is unending), 
+                //he/she will instead, wait for the current action to end, then he/she will start doing misc actions.
+                if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.WORK) {
+                    if (_ownParty.actionData.currentAction != null && _ownParty.actionData.currentAction.actionData.duration == 0) {
+                        //current work action is un ending, end it.
+                        _ownParty.actionData.EndAction();
+                    }
+                }
             }
         }
         public void OnDailySchedulePhaseEnded(CharacterSchedulePhase phase) {
@@ -3017,16 +3032,6 @@ namespace ECS {
                 return; //this character is not in it's owned party, that means he/she is just a member of the party, and shall not decide what action to do!
             }
             Debug.Log(GameManager.Instance.Today().GetDayAndTicksString() + " " + this.name + " ended phase " + phase.phaseName + "(" + phase.phaseType.ToString() + ")");
-        }
-        #endregion
-
-        #region Misc Actions
-        [System.Obsolete("Use GetRandomMiscAction Instead.")]
-        /*
-         Determine the initial list of misc actions that the character can do.
-             */
-        private void DetermineAllowedMiscActions() {
-            miscActionTypes = CharacterManager.Instance.GetAllowedMiscActionsForCharacter(this);
         }
         #endregion
     }

@@ -1050,22 +1050,22 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI questSummaryLbl;
     public void UpdateQuestSummary() {
         string questSummary = string.Empty;
-        foreach (KeyValuePair<QUEST_TYPE, List<Quest>> kvp in QuestManager.Instance.availableQuests) {
-            for (int i = 0; i < kvp.Value.Count; i++) {
-                Quest currQuest = kvp.Value[i];
-                questSummary += "<b>" + currQuest.name + "</b>\n";
-                //if (currQuest is BuildStructureQuest) {
-                //    List<Resource> neededResources = (currQuest as BuildStructureQuest).GetNeededResources();
-                //    questSummary += "Needed Resources: ";
-                //    neededResources.ForEach(x => questSummary += x.resource.ToString() + " - " + x.amount.ToString() + "\n");
-                //}
-                //List<ECS.Character> characters = currQuest.GetAcceptedCharacters();
-                //for (int j = 0; j < characters.Count; j++) {
-                //    questSummary += "       " + characters[j].urlName + "\n";
-                //}
-            }
+        //foreach (KeyValuePair<QUEST_TYPE, List<Quest>> kvp in QuestManager.Instance.availableQuests) {
+        //    for (int i = 0; i < kvp.Value.Count; i++) {
+        //        Quest currQuest = kvp.Value[i];
+        //        questSummary += "<b>" + currQuest.name + "</b>\n";
+        //        //if (currQuest is BuildStructureQuest) {
+        //        //    List<Resource> neededResources = (currQuest as BuildStructureQuest).GetNeededResources();
+        //        //    questSummary += "Needed Resources: ";
+        //        //    neededResources.ForEach(x => questSummary += x.resource.ToString() + " - " + x.amount.ToString() + "\n");
+        //        //}
+        //        //List<ECS.Character> characters = currQuest.GetAcceptedCharacters();
+        //        //for (int j = 0; j < characters.Count; j++) {
+        //        //    questSummary += "       " + characters[j].urlName + "\n";
+        //        //}
+        //    }
            
-        }
+        //}
         questSummaryLbl.text = questSummary;
     }
     #endregion

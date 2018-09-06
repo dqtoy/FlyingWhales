@@ -895,6 +895,7 @@ public enum TASK_STATUS {
 public enum QUEST_TYPE { 
     RELEASE_CHARACTER,
     BUILD_STRUCTURE,
+    FETCH_ITEM,
 }
 public enum GROUP_TYPE {
     SOLO,
@@ -1316,7 +1317,8 @@ public enum ACTION_TYPE {
     HOUSEKEEPING,
     ARGUE,
     STALK,
-    TAKE_QUEST,
+    QUESTING,
+    FETCH,
 }
 public enum ACTION_CATEGORY {
     WORK,
