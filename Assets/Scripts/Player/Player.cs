@@ -10,6 +10,10 @@ public class Player : ILeader{
     public Area playerArea { get; private set; }
     public int snatchCredits { get; private set; }
 
+    private int _threatLevel;
+    private int _redMagic;
+    private int _blueMagic;
+    private int _greenMagic;
     private List<CharacterAction> _actions;
     private List<ECS.Character> _snatchedCharacters;
 
@@ -26,6 +30,18 @@ public class Player : ILeader{
     public string name {
         get { return "Player"; }
     }
+    public int redMagic {
+        get { return _redMagic; }
+    }
+    public int blueMagic {
+        get { return _blueMagic; }
+    }
+    public int greenMagic {
+        get { return _greenMagic; }
+    }
+    public int threatLevel {
+        get { return _threatLevel; }
+    }
     public List<CharacterAction> actions {
         get { return _actions; }
     }
@@ -35,6 +51,9 @@ public class Player : ILeader{
         _corruption = 0;
         playerArea = null;
         snatchCredits = 0;
+        SetRedMagic(50);
+        SetBlueMagic(50);
+        SetGreenMagic(50);
         _snatchedCharacters = new List<ECS.Character>();
         //Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_ADDED, OnTileAddedToPlayerArea);
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
@@ -168,6 +187,40 @@ public class Player : ILeader{
             GameObject go = GameObject.Instantiate(UIManager.Instance.playerActionsUI.playerActionsBtnPrefab, UIManager.Instance.playerActionsUI.playerActionsContentTransform);
             go.GetComponent<PlayerActionBtn>().SetAction(_actions[i]);
         }
+    }
+    #endregion
+
+    #region Magic
+    public void SetRedMagic(int amount) {
+        _redMagic = amount;
+    }
+    public void SetBlueMagic(int amount) {
+        _blueMagic = amount;
+    }
+    public void SetGreenMagic(int amount) {
+        _greenMagic = amount;
+    }
+    public void AdjustRedMagic(int amount) {
+        _redMagic += amount;
+        _redMagic = Mathf.Clamp(_redMagic, 0, 100);
+    }
+    public void AdjustBlueMagic(int amount) {
+        _blueMagic += amount;
+        _blueMagic = Mathf.Clamp(_blueMagic, 0, 100);
+    }
+    public void AdjustGreenMagic(int amount) {
+        _greenMagic += amount;
+        _greenMagic = Mathf.Clamp(_greenMagic, 0, 100);
+    }
+    #endregion
+
+    #region Threat
+    public void SetThreatLevel(int amount) {
+        _threatLevel = amount;
+    }
+    public void AdjustThreatLevel(int amount) {
+        _threatLevel += amount;
+        _threatLevel = Mathf.Clamp(_threatLevel, 0, 100);
     }
     #endregion
 }

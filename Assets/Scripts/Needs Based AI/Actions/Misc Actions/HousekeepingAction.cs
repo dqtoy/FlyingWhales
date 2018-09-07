@@ -21,7 +21,16 @@ public class HousekeepingAction : CharacterAction {
     public override void DoneDuration(CharacterParty party, IObject targetObject) {
         base.DoneDuration(party, targetObject);
         StructureObj structure = targetObject as StructureObj;
-        structure.RemoveAttribute(ATTRIBUTE.DIRTY);
+        structure.SetIsDirty(false);
+        GameDate dirtyDate = GameManager.Instance.Today();
+        dirtyDate.AddDays(1);
+        SchedulingManager.Instance.AddEntry(dirtyDate, () => structure.SetIsDirty(true));
+    }
+    public override IObject GetTargetObject(CharacterParty sourceParty) {
+        if(sourceParty.mainCharacter.homeLandmark.landmarkObj.currentState.stateName != "Ruined" && sourceParty.mainCharacter.homeLandmark.landmarkObj.isDirty) {
+            return sourceParty.mainCharacter.homeLandmark.landmarkObj;
+        }
+        return null;
     }
     public override CharacterAction Clone() {
         HousekeepingAction action = new HousekeepingAction();

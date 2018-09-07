@@ -13,17 +13,18 @@ public class StructureObj : IObject {
     protected ActionEvent _onHPReachedZero;
     protected ActionEvent _onHPReachedFull;
 
+    protected string _objectName;
+    protected int _currentHP;
+    protected int _numOfResidentCivilians;
+    protected bool _isDirty;
+    protected RESOURCE _madeOf;
+    protected BaseLandmark _objectLocation;
+    [NonSerialized] protected ObjectState _currentState;
     protected List<ObjectState> _states;
     protected List<Attribute> _attributes;
     protected Dictionary<RESOURCE, int> _resourceInventory;
 
-    protected string _objectName;
-    [NonSerialized] protected ObjectState _currentState;
-    protected BaseLandmark _objectLocation;
-    protected int _currentHP;
-    protected RESOURCE _madeOf;
 
-    private int _numOfResidentCivilians;
 
     #region getters/setters
     public string objectName {
@@ -74,11 +75,15 @@ public class StructureObj : IObject {
     public RESOURCE madeOf {
         get { return _madeOf; }
     }
+    public bool isDirty {
+        get { return _isDirty; }
+    }
     #endregion
 
     public StructureObj() {
         _objectType = OBJECT_TYPE.STRUCTURE;
         _attributes = new List<Attribute>();
+        SetIsDirty(true);
         ConstructResourceInventory();
     }
     #region Virtuals
@@ -275,6 +280,11 @@ public class StructureObj : IObject {
     }
     public bool RemoveAttribute(Attribute attribute) {
         return _attributes.Remove(attribute);
+    }
+    public void SetIsDirty(bool state) {
+        if(_currentState.stateName != "Ruined") {
+            _isDirty = state;
+        }
     }
     #endregion
 

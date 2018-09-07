@@ -1169,13 +1169,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void SetCorruption(bool state, BaseLandmark landmark = null) {
         if(_isCorrupted != state) {
             _isCorrupted = state;
-            if (_isCorrupted) {
-                corruptedLandmark = landmark;
-            }
-            this._corruptionHighlightGO.SetActive(_isCorrupted);
-            if (landmarkOnTile != null) {
-                landmarkOnTile.ToggleCorruption(_isCorrupted);
-            }
+            //if (_isCorrupted) {
+            //    corruptedLandmark = landmark;
+            //}
+            //this._corruptionHighlightGO.SetActive(_isCorrupted);
+            //if (landmarkOnTile != null) {
+            //    landmarkOnTile.ToggleCorruption(_isCorrupted);
+            //}
         }
     }
     public bool CanThisTileBeCorrupted() {
@@ -1195,14 +1195,23 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         _uncorruptibleLandmarkNeighbors = amount;
     }
     public void AdjustUncorruptibleLandmarkNeighbors(int amount) {
-            _uncorruptibleLandmarkNeighbors += amount;
-            if(_uncorruptibleLandmarkNeighbors < 0) {
-                _uncorruptibleLandmarkNeighbors = 0;
-            }
-            if(_uncorruptibleLandmarkNeighbors > 1 && _landmarkOnTile != null) {
-                _uncorruptibleLandmarkNeighbors = 1;
+        _uncorruptibleLandmarkNeighbors += amount;
+        if(_uncorruptibleLandmarkNeighbors < 0) {
+            _uncorruptibleLandmarkNeighbors = 0;
+        }
+        if(_uncorruptibleLandmarkNeighbors > 1 && _landmarkOnTile != null) {
+            _uncorruptibleLandmarkNeighbors = 1;
+        }
+    }
+    public int GetCorruptedNeighborsCount() {
+        int count = 0;
+        for (int i = 0; i < AllNeighbours.Count; i++) {
+            if (AllNeighbours[i].isCorrupted) {
+                count++;
             }
         }
+        return count;
+    }
     #endregion
 
     #region Areas
