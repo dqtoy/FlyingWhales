@@ -381,6 +381,8 @@ public class CharacterActionDrawer : PropertyDrawer {
                 return true;
             case ACTION_TYPE.ABDUCT:
                 return true;
+            case ACTION_TYPE.MINING:
+                return true;
             default:
                 return false;
         }

@@ -62,7 +62,7 @@ MonoBehaviour:
     - _actionData:
         actionType: 8
         actionCategory: 0
-        actionName: 
+        actionName: Harvest
         filters:
         - filterType: 2
           condition: 0
@@ -85,6 +85,46 @@ MonoBehaviour:
         hpRecoveredPercentage: 0
         resourceGiven: 2
         minResourceGiven: 20
+        maxResourceGiven: 50
+        resourceNeeded: 0
+        resourceAmountNeeded: 0
+        providedExp: 0
+        successFunction:
+          m_PersistentCalls:
+            m_Calls: []
+          m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+        failFunction:
+          m_PersistentCalls:
+            m_Calls: []
+          m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    - _actionData:
+        actionType: 37
+        actionCategory: 0
+        actionName: Mining
+        filters:
+        - filterType: 2
+          condition: 0
+          objects: 05000000
+        advertisedFullness: 0
+        advertisedFun: 0
+        advertisedEnergy: 0
+        advertisedPrestige: 0
+        advertisedSanity: 0
+        advertisedSafety: 0
+        advertisedResource: 0
+        providedFullness: 0
+        providedFun: 0
+        providedEnergy: 0
+        providedPrestige: 3
+        providedSanity: 0
+        providedSafety: 0
+        successRate: 0
+        duration: 0
+        hpRecoveredPercentage: 0
+        resourceGiven: 2
+        minResourceGiven: 10
         maxResourceGiven: 50
         resourceNeeded: 0
         resourceAmountNeeded: 0
@@ -130,7 +170,7 @@ MonoBehaviour:
     - _actionData:
         actionType: 28
         actionCategory: 0
-        actionName: 
+        actionName: Deposit
         filters: []
         advertisedFullness: 0
         advertisedFun: 0

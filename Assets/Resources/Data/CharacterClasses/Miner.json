@@ -1,1 +1,1 @@
-{"_className":"Miner","_strWeightAllocation":0.0,"_intWeightAllocation":0.0,"_agiWeightAllocation":0.0,"_vitWeightAllocation":0.0,"_hpModifier":0.0,"_spModifier":0.0,"_allowedWeaponTypes":[1],"_harvestResources":[3,2],"_skillsPerLevelNames":[]}
+{"_className":"Miner","_strWeightAllocation":0.0,"_intWeightAllocation":0.0,"_agiWeightAllocation":0.0,"_vitWeightAllocation":0.0,"_baseHP":0.0,"_hpPerLevel":0.0,"_baseSP":0.0,"_spPerLevel":0.0,"_allowedWeaponTypes":[1],"_harvestResources":[3,2],"_skillsPerLevelNames":[],"_workActionType":37}
