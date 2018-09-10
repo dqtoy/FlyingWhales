@@ -395,6 +395,9 @@ public class UIManager : MonoBehaviour {
         detailedInfoGO.SetActive(true);
         detailedInfoLbl.alignment = TextAlignmentOptions.Left;
         detailedInfoLbl.text = Utilities.NormalizeString(tile.biomeType.ToString()) + "(" + Utilities.NormalizeString(tile.elevationType.ToString()) + ")";
+        detailedInfoLbl.text += "\nRed Magic: " + tile.redMagicAmount.ToString();
+        detailedInfoLbl.text += "\nBlue Magic: " + tile.blueMagicAmount.ToString();
+        detailedInfoLbl.text += "\nGreen Magic: " + tile.greenMagicAmount.ToString();
         detailedInfoContentParent.gameObject.SetActive(false);
         if (tile.landmarkOnTile == null) {
             detailedInfoRect.sizeDelta = new Vector2(170f, 35f);
@@ -404,9 +407,6 @@ public class UIManager : MonoBehaviour {
             detailedInfoIcon.gameObject.SetActive(true);
             detailedInfoIcon.sprite = LandmarkManager.Instance.GetLandmarkData(tile.landmarkOnTile.specificLandmarkType).landmarkTypeIcon;
         }
-
-        
-        
         //Utilities.DestroyChildren(detailedInfoContentParent);
         //for (int i = 0; i < party.icharacters.Count; i++) {
         //    ICharacter character = party.icharacters[i];

@@ -282,9 +282,9 @@ public class StructureObj : IObject {
         return _attributes.Remove(attribute);
     }
     public void SetIsDirty(bool state) {
-        if(_currentState.stateName != "Ruined") {
+        //if(_currentState.stateName != "Ruined") {
             _isDirty = state;
-        }
+        //}
     }
     #endregion
 

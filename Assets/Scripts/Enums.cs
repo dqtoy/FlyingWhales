@@ -1486,3 +1486,9 @@ public enum SCHEDULE_PHASE_TYPE {
     MISC,
     SPECIAL,
 }
+public enum ABUNDANCE {
+    NONE,
+    HIGH,
+    MED,
+    LOW,
+}
