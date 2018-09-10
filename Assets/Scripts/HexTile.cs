@@ -155,6 +155,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     public void Initialize() {
         //spriteRenderer = this.GetComponent<SpriteRenderer>();
+        SetMagicAbundance();
     }
 
     #region Region Functions
@@ -1393,8 +1394,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void DeactivateMagicTransferToPlayer() {
         Messenger.RemoveListener(Signals.HOUR_STARTED, TransferMagicToPlayer);
     }
-    private void SetMagicAbundance() {
-        switch (biomeType) {
+    public void SetMagicAbundance() {
+        switch (data.biomeType) {
             case BIOMES.DESERT:
             _redMagicAmount = Utilities.GetMagicAmountByAbundance(ABUNDANCE.MED);
             _blueMagicAmount = Utilities.GetMagicAmountByAbundance(ABUNDANCE.NONE);

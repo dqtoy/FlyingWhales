@@ -62,6 +62,7 @@ public class PlayerManager : MonoBehaviour {
     public void AddTileToPlayerArea(HexTile tile) {
         player.playerArea.AddTile(tile);
         tile.SetCorruption(true);
+        tile.ActivateMagicTransferToPlayer();
         for (int i = 0; i < tile.AllNeighbours.Count; i++) {
             HexTile neighbor = tile.AllNeighbours[i];
             if (!neighbor.isCorrupted) {
