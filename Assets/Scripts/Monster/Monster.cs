@@ -526,7 +526,7 @@ public class Monster : ICharacter, ICharacterSim {
     public void SetOwnedParty(NewParty party) {
         _ownParty = party as MonsterParty;
     }
-    public CharacterAttribute AssignTag(ATTRIBUTE tag) {
+    public CharacterAttribute AssignAttribute(ATTRIBUTE tag) {
         //No tag assignment
         return null;
     }

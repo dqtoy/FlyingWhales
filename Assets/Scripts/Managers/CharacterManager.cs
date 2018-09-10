@@ -42,12 +42,6 @@ public class CharacterManager : MonoBehaviour {
     [Header("Character Role Animators")]
     [SerializeField] private RuntimeAnimatorController[] characterAnimators;
 
-    [Header("Character Misc Actions")]
-    //TODO: Determine if this is actually necessary?
-    //Reason for this, is so that at the start of the game, each character will have a list of action types that it can do during it's misc phase. 
-    //A sort of initial filtering, so that the character does not have to check every action in it's area.
-    public ActionCharacterTagListDictionary miscActionRequirements; //The misc actions that any character can do, along with the initial tag requirements that the character must have.
-
     public readonly int HAPPINESS_THRESHOLD = 20;
     public readonly int MENTAL_THRESHOLD = -3;
     public readonly int PHYSICAL_THRESHOLD = -3;
@@ -641,28 +635,6 @@ public class CharacterManager : MonoBehaviour {
             }
         }
         return null;
-    }
-    #endregion
-
-    #region Misc Actions
-    public List<ACTION_TYPE> GetAllowedMiscActionsForCharacter(Character character) {
-        List<ACTION_TYPE> actions = new List<ACTION_TYPE>();
-        foreach (KeyValuePair<ACTION_TYPE, List<CharacterActionTagRequirement>> kvp in miscActionRequirements) {
-            ACTION_TYPE currActionType = kvp.Key;
-            List<CharacterActionTagRequirement> requirements = kvp.Value;
-            bool meetsAllRequirements = true;
-            for (int i = 0; i < requirements.Count; i++) {
-                CharacterActionTagRequirement currReq = requirements[i];
-                if (!currReq.MeetsRequirement(character)) {
-                    meetsAllRequirements = false; //the character does not meet all requirements
-                    break;
-                }
-            }
-            if (meetsAllRequirements) {
-                actions.Add(currActionType); //the character meets all the initial requirements.
-            }
-        }
-        return actions;
     }
     #endregion
 
