@@ -14,18 +14,20 @@ public class CharacterScheduleManager : MonoBehaviour {
     }
 
     public CharacterSchedule GetScheduleForCharacter(Character character) {
-        CharacterScheduleTemplate template = GetScheduleTemplate(character.role.roleType); //get template for role
+        CharacterScheduleTemplate template = GetScheduleTemplate(character.characterClass.className); //get template for role
         if (template != null) {
             return template.schedule.Clone();
         }
         return null;
     }
 
-    private CharacterScheduleTemplate GetScheduleTemplate(CHARACTER_ROLE role) {
-        if (scheduleTemplates.ContainsKey(role)) {
-            return scheduleTemplates[role];
+    private CharacterScheduleTemplate GetScheduleTemplate(string className) {
+        if (scheduleTemplates.ContainsKey(className)) {
+            return scheduleTemplates[className];
         }
-        return null; //change to error message, when all roles are expected to have a schedule
-        throw new System.Exception("There is no schedule template for " + role.ToString());
+        //return null; //change to error message, when all roles are expected to have a schedule
+        throw new System.Exception("There is no schedule template for " + className.ToString());
     }
+
+
 }

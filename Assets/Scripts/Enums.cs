@@ -1321,6 +1321,7 @@ public enum ACTION_TYPE {
     QUESTING,
     FETCH,
     WAIT_FOR_PARTY,
+    TURN_IN_QUEST,
 }
 public enum ACTION_CATEGORY {
     WORK,

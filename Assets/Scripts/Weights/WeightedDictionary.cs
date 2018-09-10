@@ -98,7 +98,9 @@ public class WeightedDictionary<T> {
     internal void LogDictionaryValues(string title) {
         Debug.Log(Utilities.GetWeightsSummary(_dictionary, title));
     }
-
+    internal string GetWeightsSummary(string title) {
+        return Utilities.GetWeightsSummary(_dictionary, title);
+    }
     internal int GetTotalOfWeights() {
         return Utilities.GetTotalOfWeights(_dictionary);
     }

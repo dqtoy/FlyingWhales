@@ -386,14 +386,14 @@ namespace ECS {
             _skills = GetGeneralSkills();
             _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
             ConstructBodyPartDict(_raceSetting.bodyParts);
-            GenerateRaceTags();
+            GenerateRaceAttributes();
 
             AllocateStatPoints(10);
             LevelUp();
 
             CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(className);
             if(setup != null) {
-                GenerateSetupTags(setup);
+                GenerateSetupAttributes(setup);
                 EquipPreEquippedItems(setup);
                 if(setup.optionalRole != CHARACTER_ROLE.NONE) {
                     AssignRole(setup.optionalRole);
@@ -423,7 +423,7 @@ namespace ECS {
             //_skills.AddRange (GetBodyPartSkills ());
 
             //GenerateSetupTags(baseSetup);
-            GenerateRaceTags();
+            GenerateRaceAttributes();
 
             AllocateStatPoints(10);
             LevelUp();
@@ -431,7 +431,7 @@ namespace ECS {
             //EquipPreEquippedItems(baseSetup);
             CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(data.className);
             if (setup != null) {
-                GenerateSetupTags(setup);
+                GenerateSetupAttributes(setup);
                 EquipPreEquippedItems(setup);
                 if (setup.optionalRole != CHARACTER_ROLE.NONE) {
                     AssignRole(setup.optionalRole);
@@ -489,6 +489,7 @@ namespace ECS {
             //Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
             //Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
+            Messenger.AddListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
             //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         }
         public void UnsubscribeSignals() {
@@ -498,6 +499,7 @@ namespace ECS {
             //Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
             //Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
+            Messenger.RemoveListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
             //Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         }
         #endregion
@@ -1494,6 +1496,26 @@ namespace ECS {
             }
             return false;
         }
+        internal bool HasItem(string itemName, int quantity) {
+            int counter = 0;
+            for (int i = 0; i < _equippedItems.Count; i++) {
+                Item currItem = _equippedItems[i];
+                if (currItem.itemName.Equals(itemName)) {
+                    counter++;
+                }
+            }
+            for (int i = 0; i < _inventory.Count; i++) {
+                Item currItem = _inventory[i];
+                if (currItem.itemName.Equals(itemName)) {
+                    counter++;
+                }
+            }
+            if (counter >= quantity) {
+                return true;
+            } else {
+                return false;
+            }
+        }
         internal Item GetItemInInventory(string itemName){
 			for (int i = 0; i < _inventory.Count; i++) {
 				Item currItem = _inventory[i];
@@ -1714,18 +1736,18 @@ namespace ECS {
         #endregion
 
         #region Character Tags
-        public void AssignInitialTags() {
+        public void AssignInitialAttributes() {
             int tagChance = UnityEngine.Random.Range(0, 100);
             ATTRIBUTE[] initialTags = (ATTRIBUTE[])System.Enum.GetValues(typeof(ATTRIBUTE));
             for (int j = 0; j < initialTags.Length; j++) {
                 ATTRIBUTE tag = initialTags[j];
                 if (tagChance < Utilities.GetTagWorldGenChance(tag)) {
-                    AssignTag(tag);
+                    AssignAttribute(tag);
                 }
             }
         }
-        public CharacterAttribute AssignTag(ATTRIBUTE tag) {
-			if(HasTag(tag)){
+        public CharacterAttribute AssignAttribute(ATTRIBUTE tag) {
+			if(HasAttribute(tag)){
 				return null;
 			}
 			CharacterAttribute charTag = null;
@@ -1825,14 +1847,14 @@ namespace ECS {
             }
             return null;
         }
-        private void GenerateRaceTags(){
+        private void GenerateRaceAttributes(){
 			for (int i = 0; i < _raceSetting.tags.Count; i++) {
-				AssignTag (_raceSetting.tags [i]);
+				AssignAttribute (_raceSetting.tags [i]);
 			}
 		}
-        private void GenerateSetupTags(CharacterSetup setup) {
+        private void GenerateSetupAttributes(CharacterSetup setup) {
             for (int i = 0; i < setup.tags.Count; i++) {
-                AssignTag(setup.tags[i]);
+                AssignAttribute(setup.tags[i]);
             }
         }
 		public void AddCharacterAttribute(CharacterAttribute tag){
@@ -1864,10 +1886,10 @@ namespace ECS {
             }
             return false;
         }
-        public bool HasTags(ATTRIBUTE[] tagsToHave, bool mustHaveAll = false){
-			return DoesHaveTags (this, tagsToHave, mustHaveAll);
+        public bool HasAttributes(ATTRIBUTE[] tagsToHave, bool mustHaveAll = false){
+			return DoesHaveAttributes (this, tagsToHave, mustHaveAll);
 		}
-		private bool DoesHaveTags(Character currCharacter, ATTRIBUTE[] tagsToHave, bool mustHaveAll = false){
+		private bool DoesHaveAttributes(Character currCharacter, ATTRIBUTE[] tagsToHave, bool mustHaveAll = false){
 			if(mustHaveAll){
 				int tagsCount = 0;
 				for (int i = 0; i < currCharacter.tags.Count; i++) {
@@ -1892,7 +1914,7 @@ namespace ECS {
 			}
 			return false;
 		}
-		public bool HasTag(ATTRIBUTE tag) {
+		public bool HasAttribute(ATTRIBUTE tag) {
             for (int i = 0; i < _tags.Count; i++) {
                 if (_tags[i].attribute == tag) {
                     return true;
@@ -1901,7 +1923,7 @@ namespace ECS {
 
             return false;
 		}
-		public bool HasTag(string tag) {
+		public bool HasAttribute(string tag) {
             for (int i = 0; i < _tags.Count; i++) {
                 if (_tags[i].name == tag) {
                     return true;
@@ -2095,7 +2117,7 @@ namespace ECS {
         //    }
         //    return quests;
         //}
-        public void OnTakeQuest(Quest takenQuest) {
+        //public void OnTakeQuest(Quest takenQuest) {
             //if (takenQuest.groupType == GROUP_TYPE.PARTY && this.squad == null) { //When a character gains a Party Type Quest and he isnt a part of a Squad yet,
             //    if (this.role == null) {
             //        return;
@@ -2122,13 +2144,20 @@ namespace ECS {
             //        }
             //    }
             //}
-        }
+        //}
         public bool HasQuest() {
             return currentQuest != null;
         }
         public void SetQuest(Quest quest) {
             currentQuest = quest;
+            quest.OnAcceptQuest(this);
             Debug.Log("Set " + this.name + "'s quest to " + quest.name);
+        }
+        public void RemoveQuest() {
+            if (currentQuest != null) {
+                currentQuest.OnQuestRemoved();
+            }
+            SetQuest(null);
         }
         #endregion
 
@@ -2242,7 +2271,7 @@ namespace ECS {
         private void OnOtherCharacterDied(Character character) {
             if (character.id != this.id) {
                 if (IsCharacterLovedOne(character)) { //A character gains heartbroken tag for 15 days when a family member or a loved one dies.
-                    AssignTag(ATTRIBUTE.HEARTBROKEN);
+                    AssignAttribute(ATTRIBUTE.HEARTBROKEN);
                 }
                 RemoveRelationshipWith(character);
             }
@@ -2669,9 +2698,17 @@ namespace ECS {
             _miscActions.Add(foolingAround);
             //_idleActions.Add(chat);
         }
-        public CharacterAction GetRandomMiscAction(ref IObject targetObject) {
+        public CharacterAction GetRandomMiscAction(ref IObject targetObject, ref string actionLog) {
             targetObject = _ownParty.characterObject;
-            CharacterAction chosenAction = _miscActions[Utilities.rng.Next(0, _miscActions.Count)];
+            WeightedDictionary<CharacterAction> miscActionWeights = new WeightedDictionary<CharacterAction>();
+            for (int i = 0; i < _miscActions.Count; i++) {
+                miscActionWeights.AddElement(_miscActions[i], _miscActions[i].GetMiscActionWeight(this));
+            }
+            if (miscActionWeights.GetTotalOfWeights() <= 0) {
+                return null; //The total chance of misc actions are less than or equal to 0
+            }
+            actionLog += "\n" + miscActionWeights.GetWeightsSummary("Misc Action Weights: ");
+            CharacterAction chosenAction = miscActionWeights.PickRandomElementGivenWeights();
             if (chosenAction is ChatAction) {
                 List<CharacterParty> partyPool = new List<CharacterParty>();
                 CharacterParty chosenParty = GetPriority1TargetChatAction(partyPool);
@@ -2905,10 +2942,12 @@ namespace ECS {
         }
         public void SetHome(Area newHome) {
             _home = newHome;
-            newHome.residents.Add(this);
+            if (newHome != null) {
+                newHome.residents.Add(this);
 #if !WORLD_CREATION_TOOL
-            LookForNewWorkplace();
+                LookForNewWorkplace();
 #endif
+            }
         }
         public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
             this._homeLandmark = newHomeLandmark;
@@ -2919,6 +2958,11 @@ namespace ECS {
             }
             _homeStructure = newHomeStructure;
             newHomeStructure.AdjustNumOfResidents(1);
+        }
+        private void OnAreaDeleted(Area deletedArea) {
+            if (_home.id == deletedArea.id) {
+                SetHome(null);
+            }
         }
         #endregion
 
@@ -2974,13 +3018,13 @@ namespace ECS {
                 deathChance += difference * 0.5f; //For every point lower than -5, add 0.5% to chance to die per tick.
                 if (UnityEngine.Random.Range(0f, 100f) < deathChance) {
                     List<string> deathCauses = new List<string>();
-                    if (HasTags(new ATTRIBUTE[] { ATTRIBUTE.TIRED, ATTRIBUTE.EXHAUSTED})) {
+                    if (HasAttributes(new ATTRIBUTE[] { ATTRIBUTE.TIRED, ATTRIBUTE.EXHAUSTED})) {
                         deathCauses.Add("exhaustion");
                     }
-                    if (HasTags(new ATTRIBUTE[] { ATTRIBUTE.HUNGRY, ATTRIBUTE.STARVING })) {
+                    if (HasAttributes(new ATTRIBUTE[] { ATTRIBUTE.HUNGRY, ATTRIBUTE.STARVING })) {
                         deathCauses.Add("starvation");
                     }
-                    if (HasTags(new ATTRIBUTE[] { ATTRIBUTE.WOUNDED, ATTRIBUTE.WRECKED })) {
+                    if (HasAttributes(new ATTRIBUTE[] { ATTRIBUTE.WOUNDED, ATTRIBUTE.WRECKED })) {
                         deathCauses.Add("injury");
                     }
 
@@ -3077,8 +3121,10 @@ namespace ECS {
                 //he/she will instead, wait for the current action to end, then he/she will start doing misc actions.
                 if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.WORK) {
                     if (_ownParty.actionData.currentAction != null && _ownParty.actionData.currentAction.actionData.duration == 0) {
-                        //current work action is un ending, end it.
+                        //current work action is unending, end it.
                         _ownParty.actionData.EndAction();
+                        //also disband the party. TODO: Add case for when to disband the party when the action is not unending
+                        _ownParty.actionData.ForceDoAction(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
                     }
                 }
             }

@@ -58,18 +58,7 @@ public class QuestingAction : CharacterAction {
                     party.actionData.ForceDoAction(questAction.action, questAction.targetObject);
                 }
             }
-
-
-            //if (mainCharacter.HasQuest()) {
-            //    //the character already has a quest, do that.
-            //    QuestAction questAction = mainCharacter.currentQuest.GetQuestAction(mainCharacter);
-            //    party.actionData.ForceDoAction(questAction.action, questAction.targetObject);
-            //    //TODO: Add party waiting phase
-            //} else {
-                
-            //    //TODO: Add party waiting phase
-            //}
-            ////give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige
+            //give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige
             GiveAllReward(party);
         }
     }

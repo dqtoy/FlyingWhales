@@ -18,7 +18,7 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private CharacterPortrait characterPortrait;
     [SerializeField] private TextMeshProUGUI nameLbl;
     [SerializeField] private TextMeshProUGUI lvlClassLbl;
-    [SerializeField] private TextMeshProUGUI modeLbl;
+    [SerializeField] private TextMeshProUGUI phaseLbl;
     [SerializeField] private AffiliationsObject affiliations;
     [SerializeField] private ActionIcon currentActionIcon;
     [SerializeField] private ScrollRect actionQueueScrollView;
@@ -219,9 +219,8 @@ public class CharacterInfoUI : UIMenu {
     private void UpdateBasicInfo() {
         nameLbl.text = currentlyShowingCharacter.name;
         lvlClassLbl.text = "Lvl." + currentlyShowingCharacter.level.ToString() + " " + currentlyShowingCharacter.characterClass.className;
-        modeLbl.text = currentlyShowingCharacter.currentMode.ToString();
+        phaseLbl.text = currentlyShowingCharacter.dailySchedule.currentPhase.phaseName;
         affiliations.SetCharacter(currentlyShowingCharacter);
-        
     }
     private void UpdateActionQueue() {
         Utilities.DestroyChildren(actionQueueScrollView.content);

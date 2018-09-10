@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class ScheduleTemplateDictionary : SerializableDictionary<CHARACTER_ROLE, CharacterScheduleTemplate> { }
+public class ScheduleTemplateDictionary : SerializableDictionary<string, CharacterScheduleTemplate> { }
 
 [System.Serializable]
 public class ActionCharacterTagListDictionary : SerializableDictionary<ACTION_TYPE, List<CharacterActionTagRequirement>, CharacterTagListStorage> { }

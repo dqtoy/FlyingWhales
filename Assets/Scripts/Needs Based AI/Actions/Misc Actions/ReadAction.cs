@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using ECS;
 using UnityEngine;
 
 public class ReadAction : CharacterAction {
@@ -23,6 +24,14 @@ public class ReadAction : CharacterAction {
         SetCommonData(action);
         action.Initialize();
         return action;
+    }
+    public override int GetMiscActionWeight(Character character) {
+        int weight = base.GetMiscActionWeight(character);
+        if (character.HasAttribute(ATTRIBUTE.BOOKWORM)) {
+            //if has bookworm attribute, add more weight
+            weight += 50;
+        }
+        return weight;
     }
     #endregion
 }

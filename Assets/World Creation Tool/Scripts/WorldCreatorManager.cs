@@ -41,7 +41,7 @@ namespace worldcreator {
             DataConstructor.Instance.InitializeData();
         }
         private void Update() {
-            HighlightAreas();
+            //HighlightAreas();
         }
 
         #region Grid Generation

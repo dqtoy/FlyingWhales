@@ -69,12 +69,12 @@ namespace worldcreator {
             List<HexTile> validSelectedTiles = new List<HexTile>();
             for (int i = 0; i < WorldCreatorManager.Instance.selectionComponent.selection.Count; i++) {
                 HexTile currTile = WorldCreatorManager.Instance.selectionComponent.selection[i];
-                if (!currTile.isPassable || currTile.areaOfTile != null) {
-                    continue;//skip
-                }
-                if (currTile.landmarkOnTile != null && !data.allowedLandmarkTypes.Contains(currTile.landmarkOnTile.specificLandmarkType)) {
-                    continue;//skip
-                }
+                //if (!currTile.isPassable || currTile.areaOfTile != null) {
+                //    continue;//skip
+                //}
+                //if (currTile.landmarkOnTile != null && !data.allowedLandmarkTypes.Contains(currTile.landmarkOnTile.specificLandmarkType)) {
+                //    continue;//skip
+                //}
                 validSelectedTiles.Add(currTile);
             }
             _area.AddTile(validSelectedTiles);

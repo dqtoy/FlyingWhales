@@ -381,6 +381,10 @@ public class CharacterActionDrawer : PropertyDrawer {
                 return true;
             case ACTION_TYPE.ABDUCT:
                 return true;
+            case ACTION_TYPE.MINING:
+                return true;
+            case ACTION_TYPE.WOODCUTTING:
+                return true;
             default:
                 return false;
         }

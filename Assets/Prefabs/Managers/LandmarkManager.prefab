@@ -262,9 +262,33 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300064, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    neutralTileSprites: []
-    humansLandmarkTileSprites: []
-    elvenLandmarkTileSprites: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 63d253e0c6b317d4395379a46b5ad2f2, type: 3}
+      tintSprite: {fileID: 0}
+    - mainSprite: {fileID: 21300000, guid: 65cd2e8691df5aa408946fb5b873bdd3, type: 3}
+      tintSprite: {fileID: 0}
+    - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
+      tintSprite: {fileID: 0}
+    - mainSprite: {fileID: 21300000, guid: 568e996242fb9a84b9028d668e263ef3, type: 3}
+      tintSprite: {fileID: 0}
+    humansLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 63d253e0c6b317d4395379a46b5ad2f2, type: 3}
+      tintSprite: {fileID: 0}
+    - mainSprite: {fileID: 21300000, guid: 65cd2e8691df5aa408946fb5b873bdd3, type: 3}
+      tintSprite: {fileID: 0}
+    - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
+      tintSprite: {fileID: 0}
+    - mainSprite: {fileID: 21300000, guid: 568e996242fb9a84b9028d668e263ef3, type: 3}
+      tintSprite: {fileID: 0}
+    elvenLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 63d253e0c6b317d4395379a46b5ad2f2, type: 3}
+      tintSprite: {fileID: 0}
+    - mainSprite: {fileID: 21300000, guid: 65cd2e8691df5aa408946fb5b873bdd3, type: 3}
+      tintSprite: {fileID: 0}
+    - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
+      tintSprite: {fileID: 0}
+    - mainSprite: {fileID: 21300000, guid: 568e996242fb9a84b9028d668e263ef3, type: 3}
+      tintSprite: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isMonsterSpawner: 1
     monsterSets:
@@ -379,30 +403,18 @@ MonoBehaviour:
   - areaType: 0
     baseAreaType: 0
     allowedLandmarkTypes: 0c00000009000000040000001000000014000000
-    possibleMonsterSpawns: []
   - areaType: 1
     baseAreaType: 0
     allowedLandmarkTypes: 0d00000009000000040000001000000014000000
-    possibleMonsterSpawns: []
   - areaType: 2
     baseAreaType: 1
     allowedLandmarkTypes: 0b0000000e000000
-    possibleMonsterSpawns:
-    - {fileID: 114260156823697922, guid: 47cbcf11b84d6694899caee34a60a8ee, type: 2}
-    - {fileID: 114076955503950830, guid: 9bb9b02baf076a345a720f24a40c4928, type: 2}
-    - {fileID: 114445399016585892, guid: fc899463ec4407f42816043304a12267, type: 2}
-    - {fileID: 114038419590652748, guid: 286427b62ca0f1c45894ad103ce4aece, type: 2}
-    - {fileID: 114699570168267200, guid: 75808fa97636091458ed5a69742591dc, type: 2}
-    - {fileID: 114872897285337152, guid: bae98bcd307d58943b2bb0532de8b87d, type: 2}
-    - {fileID: 114735646941030760, guid: f4ee95df282423f4dbb3f3acabda013b, type: 2}
   - areaType: 3
     baseAreaType: 2
     allowedLandmarkTypes: 010000000f000000
-    possibleMonsterSpawns: []
   - areaType: 4
     baseAreaType: 1
     allowedLandmarkTypes: 0b0000000e000000
-    possibleMonsterSpawns: []
   corruptedLandmarksCount: 0
   ancientRuinTowerSprite: {fileID: 21300000, guid: ef09c80c77be9fd44b96fa5ee6f851e5,
     type: 3}

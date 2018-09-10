@@ -526,14 +526,14 @@ public class Monster : ICharacter, ICharacterSim {
     public void SetOwnedParty(NewParty party) {
         _ownParty = party as MonsterParty;
     }
-    public CharacterAttribute AssignTag(ATTRIBUTE tag) {
+    public CharacterAttribute AssignAttribute(ATTRIBUTE tag) {
         //No tag assignment
         return null;
     }
     public void AddHistory(Log log) {
         //No history
     }
-    public CharacterAction GetRandomMiscAction(ref IObject targetObject) {
+    public CharacterAction GetRandomMiscAction(ref IObject targetObject, ref string actionLog) {
         return _miscActions[Utilities.rng.Next(0, _miscActions.Count)];
     }
     public CharacterAction GetMiscAction(ACTION_TYPE type) {
@@ -770,5 +770,17 @@ public class Monster : ICharacter, ICharacterSim {
     #region Action Queue
     public void AddActionToQueue(CharacterAction action, IObject targetObject, CharacterQuestData associatedQuestData = null, int position = -1) {  }
     public void RemoveActionFromQueue(ActionQueueItem item) {    }
+    #endregion
+
+    #region Item Drops
+    public List<string> GetRandomDroppedItems() {
+        List<string> drops = new List<string>();
+        foreach (KeyValuePair<string, float> kvp in itemDropsLookup) {
+            if (UnityEngine.Random.Range(0f, 100f) < kvp.Value) {
+                drops.Add(kvp.Key);
+            }
+        }
+        return drops;
+    }
     #endregion
 }

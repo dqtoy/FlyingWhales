@@ -25,5 +25,13 @@ public class SingAction : CharacterAction {
         action.Initialize();
         return action;
     }
+    public override int GetMiscActionWeight(Character character) {
+        int weight = base.GetMiscActionWeight(character);
+        if (character.HasAttribute(ATTRIBUTE.SINGER)) {
+            //if has singer attribute, add more weight
+            weight += 50;
+        }
+        return weight;
+    }
     #endregion
 }

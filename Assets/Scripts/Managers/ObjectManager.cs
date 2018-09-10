@@ -327,6 +327,8 @@ public class ObjectManager : MonoBehaviour {
                 return new WaitForPartyAction();
             case ACTION_TYPE.FOOLING_AROUND:
                 return new FoolingAroundAction();
+            case ACTION_TYPE.TURN_IN_QUEST:
+                return new TurnInQuestAction();
         }
         return null;
     }

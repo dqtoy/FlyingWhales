@@ -186,10 +186,12 @@ public class NewParty : IParty {
         //}
         if (_icharacters.Remove(icharacter)) {
             icharacter.OnRemovedFromParty();
+            icharacter.ownParty.icon.transform.position = this.specificLocation.tileLocation.transform.position;
             if (this.specificLocation is BaseLandmark) {
                 this.specificLocation.AddCharacterToLocation(icharacter.ownParty);
             } else {
                 //icharacter.ownParty.icon.SetAIPathPosition(this.specificLocation.tileLocation.transform.position);
+                icharacter.ownParty.SetSpecificLocation(this.specificLocation);
                 icharacter.ownParty.icon.SetVisualState(true);
             }
             if (icharacter is ECS.Character) {

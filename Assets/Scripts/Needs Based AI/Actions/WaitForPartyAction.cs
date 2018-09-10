@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using ECS;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,6 +16,13 @@ public class WaitForPartyAction : CharacterAction {
         //if (waitCounter <= 0) {
         //    //done waiting
         //}
+        Character mainCharacter = party.mainCharacter as Character;
+        if (mainCharacter.squad.squadMembers.Count == mainCharacter.ownParty.icharacters.Count) {
+            //if the character's squad is already complete, do not wait
+            Messenger.RemoveListener<NewParty, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, OnPartyEnteredLandmark);
+            QuestAction questAction = mainCharacter.currentQuest.GetQuestAction(mainCharacter);
+            party.actionData.ForceDoAction(questAction.action, questAction.targetObject);
+        }
     }
     public override CharacterAction Clone() {
         WaitForPartyAction action = new WaitForPartyAction();

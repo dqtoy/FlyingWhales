@@ -112,9 +112,6 @@ public class CharacterAction {
     public virtual void APartyHasEndedItsState(CharacterParty party, IObject targetObject, CharacterParty partyThatChangedState, ObjectState stateThatEnded) {
 
     }
-    public virtual int GetMiscActionWeight(CharacterParty party, IObject targetObject) {
-        return Base_Misc_Action_Weight;
-    }
     //Give all provided needs to the character regardless of the amount
     public virtual void GiveAllReward(CharacterParty party) {
         for (int i = 0; i < party.icharacters.Count; i++) {
@@ -290,6 +287,12 @@ public class CharacterAction {
             return LocalizationManager.Instance.GetLocalizedValue("CharacterActions", file, "leave_action");
         }
         return string.Empty;
+    }
+    #endregion
+
+    #region Misc Action
+    public virtual int GetMiscActionWeight(Character character) {
+        return Base_Misc_Action_Weight;
     }
     #endregion
 }
