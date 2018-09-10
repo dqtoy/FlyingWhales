@@ -2698,9 +2698,17 @@ namespace ECS {
             _miscActions.Add(foolingAround);
             //_idleActions.Add(chat);
         }
-        public CharacterAction GetRandomMiscAction(ref IObject targetObject) {
+        public CharacterAction GetRandomMiscAction(ref IObject targetObject, ref string actionLog) {
             targetObject = _ownParty.characterObject;
-            CharacterAction chosenAction = _miscActions[Utilities.rng.Next(0, _miscActions.Count)];
+            WeightedDictionary<CharacterAction> miscActionWeights = new WeightedDictionary<CharacterAction>();
+            for (int i = 0; i < _miscActions.Count; i++) {
+                miscActionWeights.AddElement(_miscActions[i], _miscActions[i].GetMiscActionWeight(this));
+            }
+            if (miscActionWeights.GetTotalOfWeights() <= 0) {
+                return null; //The total chance of misc actions are less than or equal to 0
+            }
+            actionLog += "\n" + miscActionWeights.GetWeightsSummary("Misc Action Weights: ");
+            CharacterAction chosenAction = miscActionWeights.PickRandomElementGivenWeights();
             if (chosenAction is ChatAction) {
                 List<CharacterParty> partyPool = new List<CharacterParty>();
                 CharacterParty chosenParty = GetPriority1TargetChatAction(partyPool);

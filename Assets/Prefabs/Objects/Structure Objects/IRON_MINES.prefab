@@ -117,7 +117,7 @@ MonoBehaviour:
         providedFullness: 0
         providedFun: 0
         providedEnergy: 0
-        providedPrestige: 3
+        providedPrestige: 0
         providedSanity: 0
         providedSafety: 0
         successRate: 0

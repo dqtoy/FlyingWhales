@@ -72,7 +72,7 @@ public class ActionThread : Multithread {
                     actionLog += "\nDetermining non need misc action...";
                     //Get action from misc actions based on the tags of this character and possibly some consistent actions that are present for everyone
                     IObject targetObject = null;
-                    chosenAction = character.GetRandomMiscAction(ref targetObject);
+                    chosenAction = character.GetRandomMiscAction(ref targetObject, ref actionLog);
                     chosenObject = targetObject;
                     _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
                     actionLog += "\nGot non-need misc action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
