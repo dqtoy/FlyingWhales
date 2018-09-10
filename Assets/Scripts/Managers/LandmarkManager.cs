@@ -99,6 +99,9 @@ public class LandmarkManager : MonoBehaviour {
     }
     public void DestroyLandmarkOnTile(HexTile tile) {
         BaseLandmark landmarkOnTile = tile.landmarkOnTile;
+        if (landmarkOnTile == null) {
+            return;
+        }
         while (landmarkOnTile.charactersAtLocation.Count != 0) {
             landmarkOnTile.RemoveCharacterFromLocation(landmarkOnTile.charactersAtLocation[0]);
         }

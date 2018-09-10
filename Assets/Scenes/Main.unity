@@ -42642,7 +42642,7 @@ GameObject:
   - component: {fileID: 1177978645}
   - component: {fileID: 1177978646}
   m_Layer: 5
-  m_Name: Mode_TOOLTIP_NO
+  m_Name: Phase_TOOLTIP_NO
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -54084,7 +54084,7 @@ MonoBehaviour:
   characterPortrait: {fileID: 115583474}
   nameLbl: {fileID: 0}
   lvlClassLbl: {fileID: 0}
-  modeLbl: {fileID: 0}
+  phaseLbl: {fileID: 0}
   affiliations: {fileID: 0}
   currentActionIcon: {fileID: 0}
   actionQueueScrollView: {fileID: 0}
@@ -58522,7 +58522,7 @@ MonoBehaviour:
   characterPortrait: {fileID: 1128198447}
   nameLbl: {fileID: 1152001739}
   lvlClassLbl: {fileID: 1056118094}
-  modeLbl: {fileID: 1177978646}
+  phaseLbl: {fileID: 1177978646}
   affiliations: {fileID: 2048867012}
   currentActionIcon: {fileID: 1310595136}
   actionQueueScrollView: {fileID: 495301624}

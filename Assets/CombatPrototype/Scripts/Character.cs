@@ -489,6 +489,7 @@ namespace ECS {
             //Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
             //Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
+            Messenger.AddListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
             //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         }
         public void UnsubscribeSignals() {
@@ -498,6 +499,7 @@ namespace ECS {
             //Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
             //Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
+            Messenger.RemoveListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
             //Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         }
         #endregion
@@ -1494,6 +1496,26 @@ namespace ECS {
             }
             return false;
         }
+        internal bool HasItem(string itemName, int quantity) {
+            int counter = 0;
+            for (int i = 0; i < _equippedItems.Count; i++) {
+                Item currItem = _equippedItems[i];
+                if (currItem.itemName.Equals(itemName)) {
+                    counter++;
+                }
+            }
+            for (int i = 0; i < _inventory.Count; i++) {
+                Item currItem = _inventory[i];
+                if (currItem.itemName.Equals(itemName)) {
+                    counter++;
+                }
+            }
+            if (counter >= quantity) {
+                return true;
+            } else {
+                return false;
+            }
+        }
         internal Item GetItemInInventory(string itemName){
 			for (int i = 0; i < _inventory.Count; i++) {
 				Item currItem = _inventory[i];
@@ -2095,7 +2117,7 @@ namespace ECS {
         //    }
         //    return quests;
         //}
-        public void OnTakeQuest(Quest takenQuest) {
+        //public void OnTakeQuest(Quest takenQuest) {
             //if (takenQuest.groupType == GROUP_TYPE.PARTY && this.squad == null) { //When a character gains a Party Type Quest and he isnt a part of a Squad yet,
             //    if (this.role == null) {
             //        return;
@@ -2122,13 +2144,20 @@ namespace ECS {
             //        }
             //    }
             //}
-        }
+        //}
         public bool HasQuest() {
             return currentQuest != null;
         }
         public void SetQuest(Quest quest) {
             currentQuest = quest;
+            quest.OnAcceptQuest(this);
             Debug.Log("Set " + this.name + "'s quest to " + quest.name);
+        }
+        public void RemoveQuest() {
+            if (currentQuest != null) {
+                currentQuest.OnQuestRemoved();
+            }
+            SetQuest(null);
         }
         #endregion
 
@@ -2905,10 +2934,12 @@ namespace ECS {
         }
         public void SetHome(Area newHome) {
             _home = newHome;
-            newHome.residents.Add(this);
+            if (newHome != null) {
+                newHome.residents.Add(this);
 #if !WORLD_CREATION_TOOL
-            LookForNewWorkplace();
+                LookForNewWorkplace();
 #endif
+            }
         }
         public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
             this._homeLandmark = newHomeLandmark;
@@ -2919,6 +2950,11 @@ namespace ECS {
             }
             _homeStructure = newHomeStructure;
             newHomeStructure.AdjustNumOfResidents(1);
+        }
+        private void OnAreaDeleted(Area deletedArea) {
+            if (_home.id == deletedArea.id) {
+                SetHome(null);
+            }
         }
         #endregion
 

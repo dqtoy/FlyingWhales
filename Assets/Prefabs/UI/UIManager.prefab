@@ -17030,7 +17030,7 @@ MonoBehaviour:
   characterPortrait: {fileID: 0}
   nameLbl: {fileID: 0}
   lvlClassLbl: {fileID: 0}
-  modeLbl: {fileID: 0}
+  phaseLbl: {fileID: 0}
   affiliations: {fileID: 0}
   currentActionIcon: {fileID: 0}
   actionQueueScrollView: {fileID: 0}

@@ -771,4 +771,16 @@ public class Monster : ICharacter, ICharacterSim {
     public void AddActionToQueue(CharacterAction action, IObject targetObject, CharacterQuestData associatedQuestData = null, int position = -1) {  }
     public void RemoveActionFromQueue(ActionQueueItem item) {    }
     #endregion
+
+    #region Item Drops
+    public List<string> GetRandomDroppedItems() {
+        List<string> drops = new List<string>();
+        foreach (KeyValuePair<string, float> kvp in itemDropsLookup) {
+            if (UnityEngine.Random.Range(0f, 100f) < kvp.Value) {
+                drops.Add(kvp.Key);
+            }
+        }
+        return drops;
+    }
+    #endregion
 }
