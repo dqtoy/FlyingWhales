@@ -2,15 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Inspect : MonoBehaviour {
+public class Inspect : PlayerAbility {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+	public Inspect(IInteractable interactable): base(interactable) {
+        _name = "Inspect";
+        _description = "Inspect a structure, character, or monster";
+        _powerCost = 5;
+        _threatGain = 2;
+        _cooldown = 12;
+    }
+
+    #region Overrides
+    public override void Activate() {
+
+        base.Activate();
+    }
+    #endregion
 }
