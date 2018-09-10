@@ -85,13 +85,14 @@ SpriteAtlas:
   - {fileID: 21300078, guid: 56a2c57009ed96c41b97b19cc3d6b340, type: 3}
   - {fileID: 21300000, guid: ef09c80c77be9fd44b96fa5ee6f851e5, type: 3}
   - {fileID: 21300000, guid: b5b83e78c3a48954fa35de29644bea69, type: 3}
+  - {fileID: 21300000, guid: d7be314c435a53e4996c7ae583f3e955, type: 3}
   - {fileID: 21300000, guid: e51888dfb7058024aa3d4cc54418c6cd, type: 3}
-  - {fileID: 21300000, guid: 1c3747051a96e7a45bbc35847d3a3376, type: 3}
-  - {fileID: 21300000, guid: 7bcf611035629054786bbbf6b8ae0b71, type: 3}
-  - {fileID: 21300000, guid: 5a830d0740218fc45b19e75ff0a4b6e0, type: 3}
+  - {fileID: 21300000, guid: b1ec0d6ae9a024e48b5541acb37f47bf, type: 3}
   - {fileID: 21300000, guid: 783f972861f61dd4fa6d5931ea433539, type: 3}
+  - {fileID: 21300000, guid: 316ddb7009538c24fa9d92c1d957a0f9, type: 3}
   - {fileID: 21300000, guid: d5a1f05924329334dadc9809969f8281, type: 3}
   - {fileID: 21300000, guid: 972ff563105192947aec026e904f95ba, type: 3}
+  - {fileID: 21300000, guid: 10684bec90479f64f9f517a6db0f31d2, type: 3}
   - {fileID: 21300000, guid: 1824d50e92226a8428284955865e952d, type: 3}
   - {fileID: 21300000, guid: ec5cf9cba9396494189cbd042ff5a2e8, type: 3}
   - {fileID: 21300000, guid: bc0fdc68227150c488e1d5988e09871d, type: 3}
@@ -313,13 +314,14 @@ SpriteAtlas:
   - HumanStructuresRuined_12
   - ancient_ruins_tower
   - demonic_mountains1
+  - demonic_mountains_cold1
   - demon_portal
-  - ancient_ruins_flat3
-  - ancient_ruins_flat2
-  - ancient_ruins_flat1
+  - demonic_cold_forest1
   - ancient_ruins_blocker1
+  - demonic_mountains_desert1
   - demonic_flat2
   - demonic_flat3
+  - demonic_desert_forest1
   - demonic_forest1
   - demonic_flat1
   - demon_pens

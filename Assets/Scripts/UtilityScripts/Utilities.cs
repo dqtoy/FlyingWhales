@@ -1676,4 +1676,18 @@ public class Utilities : MonoBehaviour {
     }
     #endregion
 
+    #region Magic
+    public static int GetMagicAmountByAbundance(ABUNDANCE abundance) {
+        switch (abundance) {
+            case ABUNDANCE.HIGH:
+            return rng.Next(80,101);
+            case ABUNDANCE.MED:
+            return rng.Next(30, 80);
+            case ABUNDANCE.LOW:
+            return rng.Next(5, 30);
+        }
+        return 0;
+    }
+    #endregion
+
 }

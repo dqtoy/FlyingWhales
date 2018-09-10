@@ -72,6 +72,7 @@ public class Player : ILeader{
         Area playerArea = LandmarkManager.Instance.CreateNewArea(chosenCoreTile, AREA_TYPE.DEMONIC_INTRUSION);
         BaseLandmark demonicPortal = LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenCoreTile, LANDMARK_TYPE.DEMONIC_PORTAL);
         SetPlayerArea(playerArea);
+        ActivateMagicTransferToPlayer();
         //OnTileAddedToPlayerArea(playerArea, chosenCoreTile);
     }
     private void SetPlayerArea(Area area) {
@@ -191,6 +192,14 @@ public class Player : ILeader{
     #endregion
 
     #region Magic
+    private void ActivateMagicTransferToPlayer() {
+        Messenger.AddListener(Signals.HOUR_STARTED, TransferMagicToPlayer);
+    }
+    private void TransferMagicToPlayer() {
+        AdjustRedMagic(1);
+        AdjustBlueMagic(1);
+        AdjustGreenMagic(1);
+    }
     public void SetRedMagic(int amount) {
         _redMagic = amount;
     }
