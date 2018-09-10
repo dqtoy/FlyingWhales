@@ -114,6 +114,7 @@ public class ActionData {
     }
 
     public void EndAction() {
+        Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() +"] Ended " + _party.name + " action " + currentAction.actionData.actionName);
         isDone = true;
     }
     public void SetCurrentActionPhaseType(SCHEDULE_PHASE_TYPE phaseType) {
