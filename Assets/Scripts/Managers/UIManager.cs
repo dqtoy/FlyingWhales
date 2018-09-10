@@ -393,17 +393,17 @@ public class UIManager : MonoBehaviour {
     }
     public void ShowDetailedInfo(HexTile tile) {
         detailedInfoGO.SetActive(true);
-        detailedInfoLbl.alignment = TextAlignmentOptions.Left;
+        detailedInfoLbl.alignment = TextAlignmentOptions.TopLeft;
         detailedInfoLbl.text = Utilities.NormalizeString(tile.biomeType.ToString()) + "(" + Utilities.NormalizeString(tile.elevationType.ToString()) + ")";
         detailedInfoLbl.text += "\nRed Magic: " + tile.redMagicAmount.ToString();
         detailedInfoLbl.text += "\nBlue Magic: " + tile.blueMagicAmount.ToString();
         detailedInfoLbl.text += "\nGreen Magic: " + tile.greenMagicAmount.ToString();
         detailedInfoContentParent.gameObject.SetActive(false);
         if (tile.landmarkOnTile == null) {
-            detailedInfoRect.sizeDelta = new Vector2(170f, 35f);
+            detailedInfoRect.sizeDelta = new Vector2(170f, 85f);
             detailedInfoIcon.gameObject.SetActive(false);
         } else {
-            detailedInfoRect.sizeDelta = new Vector2(170f, 80f);
+            detailedInfoRect.sizeDelta = new Vector2(170f, 130f);
             detailedInfoIcon.gameObject.SetActive(true);
             detailedInfoIcon.sprite = LandmarkManager.Instance.GetLandmarkData(tile.landmarkOnTile.specificLandmarkType).landmarkTypeIcon;
         }

@@ -1493,3 +1493,6 @@ public enum ABUNDANCE {
     MED,
     LOW,
 }
+public enum HIDDEN_DESIRE {
+    NONE,
+}

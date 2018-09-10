@@ -15,7 +15,8 @@ public class Player : ILeader{
     private int _blueMagic;
     private int _greenMagic;
     private List<CharacterAction> _actions;
-    private List<ECS.Character> _snatchedCharacters;
+    private List<Character> _snatchedCharacters;
+    private List<Intel> _intels;
 
     //#region getters/setters
     //public Area playerArea {
@@ -45,6 +46,9 @@ public class Player : ILeader{
     public List<CharacterAction> actions {
         get { return _actions; }
     }
+    public List<Intel> intels {
+        get { return _intels; }
+    }
     #endregion
 
     public Player() {
@@ -54,7 +58,9 @@ public class Player : ILeader{
         SetRedMagic(50);
         SetBlueMagic(50);
         SetGreenMagic(50);
+        SetThreatLevel(20);
         _snatchedCharacters = new List<ECS.Character>();
+        _intels = new List<Intel>();
         //Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_ADDED, OnTileAddedToPlayerArea);
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
         Messenger.AddListener<Character>(Signals.CHARACTER_RELEASED, OnCharacterReleased);
@@ -71,6 +77,7 @@ public class Player : ILeader{
     public void CreatePlayerArea(HexTile chosenCoreTile) {
         Area playerArea = LandmarkManager.Instance.CreateNewArea(chosenCoreTile, AREA_TYPE.DEMONIC_INTRUSION);
         BaseLandmark demonicPortal = LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenCoreTile, LANDMARK_TYPE.DEMONIC_PORTAL);
+        chosenCoreTile.SetCorruption(true);
         SetPlayerArea(playerArea);
         ActivateMagicTransferToPlayer();
         //OnTileAddedToPlayerArea(playerArea, chosenCoreTile);
@@ -230,6 +237,17 @@ public class Player : ILeader{
     public void AdjustThreatLevel(int amount) {
         _threatLevel += amount;
         _threatLevel = Mathf.Clamp(_threatLevel, 0, 100);
+    }
+    #endregion
+
+    #region Intel
+    public void AddIntel(Intel intel) {
+        if (!_intels.Contains(intel)) {
+            _intels.Add(intel);
+        }
+    }
+    public bool RemoveIntel(Intel intel) {
+        return _intels.Remove(intel);
     }
     #endregion
 }

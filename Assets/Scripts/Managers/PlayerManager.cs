@@ -70,13 +70,13 @@ public class PlayerManager : MonoBehaviour {
                     if (neighbor.landmarkOnTile != null) {
                         //Flat tile with structure
                         if(neighbor.GetCorruptedNeighborsCount() >= 4) {
-                            neighbor.SetCorruption(true);
+                            AddTileToPlayerArea(neighbor);
                         }
                     }
                 } else {
                     //Non flat tile
                     if (neighbor.GetCorruptedNeighborsCount() >= 3) {
-                        neighbor.SetCorruption(true);
+                        AddTileToPlayerArea(neighbor);
                     }
                 }
             }
