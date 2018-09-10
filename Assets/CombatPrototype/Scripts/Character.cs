@@ -3121,8 +3121,8 @@ namespace ECS {
                 //he/she will instead, wait for the current action to end, then he/she will start doing misc actions.
                 if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.WORK) {
                     if (_ownParty.actionData.currentAction != null && _ownParty.actionData.currentAction.actionData.duration == 0) {
-                        //current work action is unending, end it.
-                        _ownParty.actionData.EndAction();
+                        ////current work action is unending, end it.
+                        //_ownParty.actionData.EndAction();
                         //also disband the party. TODO: Add case for when to disband the party when the action is not unending
                         _ownParty.actionData.ForceDoAction(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
                     }

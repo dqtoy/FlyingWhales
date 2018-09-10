@@ -62,14 +62,14 @@ public class PartyInfoUI : UIMenu {
     private void UpdateQuest() {
         if (currentlyShowingParty is CharacterParty) {
             CharacterParty party = currentlyShowingParty as CharacterParty;
-            if (party.actionData.questDataAssociatedWithCurrentAction != null) {
-                Quest quest = party.actionData.questDataAssociatedWithCurrentAction.parentQuest;
-                questTitleLbl.text = quest.name;
-                questDescriptionLbl.text = quest.questDescription;
-                questGO.SetActive(true);
-            } else {
-                questGO.SetActive(false);
-            }
+            //if (party.actionData.questDataAssociatedWithCurrentAction != null) {
+            //    Quest quest = party.actionData.questDataAssociatedWithCurrentAction.parentQuest;
+            //    questTitleLbl.text = quest.name;
+            //    questDescriptionLbl.text = quest.questDescription;
+            //    questGO.SetActive(true);
+            //} else {
+            //    questGO.SetActive(false);
+            //}
         } else {
             questGO.SetActive(false);
         }

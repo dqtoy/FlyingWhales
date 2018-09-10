@@ -37,7 +37,6 @@ public class FetchAction : CharacterAction {
                         (party.mainCharacter as Character).PickupItem(item);
                         fetchLog += "\n" + item.itemName;
                     }
-                    
                 }
             } else {
                 fetchLog = party.name + " did not obtain any item.";

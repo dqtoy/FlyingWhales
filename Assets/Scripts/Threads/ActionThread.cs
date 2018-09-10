@@ -57,6 +57,7 @@ public class ActionThread : Multithread {
                     chosenObject = character.workplace.landmarkObj;
                     chosenAction = character.workplace.landmarkObj.currentState.GetAction(character.characterClass.workActionType); //Hero work action is QUESTING.
                     _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
+                    _party.actionData.SetQuestAssociatedWithAction(null);
                     actionLog += "\nGot hero work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
                 } else if(character.role.roleType == CHARACTER_ROLE.CIVILIAN) { //if character is civilian
                     actionLog += "\nDetermining civilian work action...";
@@ -64,6 +65,7 @@ public class ActionThread : Multithread {
                     chosenObject = character.workplace.landmarkObj;
                     chosenAction = character.workplace.landmarkObj.currentState.GetAction(character.characterClass.workActionType);
                     _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
+                    _party.actionData.SetQuestAssociatedWithAction(null);
                     actionLog += "\nGot civilian work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
                 }
             } else if (character.dailySchedule.currentPhase.phaseType == SCHEDULE_PHASE_TYPE.MISC) { //if misc phase
@@ -75,6 +77,7 @@ public class ActionThread : Multithread {
                     chosenAction = character.GetRandomMiscAction(ref targetObject, ref actionLog);
                     chosenObject = targetObject;
                     _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
+                    _party.actionData.SetQuestAssociatedWithAction(null);
                     actionLog += "\nGot non-need misc action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
                 } else { //if not
                     actionLog += "\nDetermining need misc action...";
@@ -83,6 +86,7 @@ public class ActionThread : Multithread {
                     chosenAction = GetActionFromAdvertisements(ref targetObject);
                     chosenObject = targetObject;
                     _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
+                    _party.actionData.SetQuestAssociatedWithAction(null);
                     actionLog += "\nGot need misc action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
                 }
             }
