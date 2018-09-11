@@ -218,7 +218,13 @@ public class CharacterInfoUI : UIMenu {
     }
     private void UpdateBasicInfo() {
         nameLbl.text = currentlyShowingCharacter.name;
-        lvlClassLbl.text = "Lvl." + currentlyShowingCharacter.level.ToString() + " " + currentlyShowingCharacter.characterClass.className;
+        if (currentlyShowingCharacter.isBeingInspected) {
+            lvlClassLbl.text = "Lvl." + currentlyShowingCharacter.level.ToString() + " " + currentlyShowingCharacter.characterClass.className;
+        } else {
+            if (!currentlyShowingCharacter.hasBeenInspected) {
+                lvlClassLbl.text = "???";
+            }
+        }
         phaseLbl.text = currentlyShowingCharacter.dailySchedule.currentPhase.phaseName;
         affiliations.SetCharacter(currentlyShowingCharacter);
     }
