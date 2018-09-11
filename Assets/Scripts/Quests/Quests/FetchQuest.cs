@@ -55,8 +55,16 @@ public class FetchQuest : Quest {
     private void OnItemObtained(Item obtainedItem, Character characterThatObtainedItem) {
         if (characterThatObtainedItem.id == owner.id) {
             if (characterThatObtainedItem.HasItem(neededItemName, neededQuantity)) {
+                Debug.Log(characterThatObtainedItem.name + " has obtained the needed items for the quest OUTSIDE of doing a quest action. Setting quest as done!");
                 this.SetQuestAsDone();
             }
+        }
+    }
+
+    public void CheckIfQuestIsCompleted() {
+        if (this.owner.HasItem(neededItemName, neededQuantity)) {
+            Debug.Log(this.owner.name + " has obtained the needed items for the quest. Setting quest as done!");
+            this.SetQuestAsDone();
         }
     }
 }

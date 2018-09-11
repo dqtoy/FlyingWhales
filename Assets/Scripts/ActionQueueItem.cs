@@ -6,11 +6,11 @@ public class ActionQueueItem {
 
     public CharacterAction action;
     public IObject targetObject;
-    public CharacterQuestData associatedQuestData;
+    public Quest associatedQuest;
 
-    public ActionQueueItem(CharacterAction action, IObject targetObject, CharacterQuestData associatedQuestData = null) {
+    public ActionQueueItem(CharacterAction action, IObject targetObject, Quest associatedQuest = null) {
         this.action = action;
         this.targetObject = targetObject;
-        this.associatedQuestData = associatedQuestData;
+        this.associatedQuest = associatedQuest;
     }
 }

@@ -42,7 +42,7 @@ public class BaseLandmark : ILocation {
         get { return _id; }
     }
     public string locationName {
-        get { return landmarkName; }
+        get { return landmarkName + " " + tileLocation.locationName; }
     }
     public string landmarkName {
 		get { return _landmarkName; }

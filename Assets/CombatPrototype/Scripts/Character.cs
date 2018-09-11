@@ -1094,7 +1094,7 @@ namespace ECS {
 
         #region Items
 		//If a character picks up an item, it is automatically added to his/her inventory
-		internal void PickupItem(Item item){
+		internal void PickupItem(Item item, bool broadcast = true){
 			Item newItem = item;
             if (_inventory.Contains(newItem)) {
                 throw new Exception(this.name + " already has an instance of " + newItem.itemName);
@@ -1113,7 +1113,9 @@ namespace ECS {
                 (_ownParty.specificLocation as BaseLandmark).AddHistory(obtainLog);
             }
 #endif
-            Messenger.Broadcast(Signals.ITEM_OBTAINED, newItem, this);
+            if (broadcast) {
+                Messenger.Broadcast(Signals.ITEM_OBTAINED, newItem, this);
+            }
             newItem.OnItemPutInInventory(this);
         }
 		internal void ThrowItem(Item item, bool addInLandmark = true){
@@ -2176,8 +2178,10 @@ namespace ECS {
         }
         public void SetQuest(Quest quest) {
             currentQuest = quest;
-            quest.OnAcceptQuest(this);
-            Debug.Log("Set " + this.name + "'s quest to " + quest.name);
+            if (currentQuest != null) {
+                currentQuest.OnAcceptQuest(this);
+                Debug.Log("Set " + this.name + "'s quest to " + currentQuest.name);
+            }
         }
         public void RemoveQuest() {
             if (currentQuest != null) {
@@ -3103,13 +3107,13 @@ namespace ECS {
         #endregion
 
         #region Action Queue
-        public void AddActionToQueue(CharacterAction action, IObject targetObject, CharacterQuestData associatedQuestData = null, int position = -1) {
+        public void AddActionToQueue(CharacterAction action, IObject targetObject, Quest associatedQuest = null, int position = -1) {
             if (position == -1) {
                 //add action to end
-                _actionQueue.Enqueue(new ActionQueueItem(action, targetObject, associatedQuestData));
+                _actionQueue.Enqueue(new ActionQueueItem(action, targetObject, associatedQuest));
             } else {
                 //Insert action to specified position
-                _actionQueue.Enqueue(new ActionQueueItem(action, targetObject, associatedQuestData), position);
+                _actionQueue.Enqueue(new ActionQueueItem(action, targetObject, associatedQuest), position);
             }
         }
         public void RemoveActionFromQueue(ActionQueueItem item) {
@@ -3138,15 +3142,39 @@ namespace ECS {
             Debug.Log(GameManager.Instance.Today().GetDayAndTicksString() + " " + this.name + " started phase " + phase.phaseName + "(" + phase.phaseType.ToString() + ") Phase Length: " + phase.phaseLength);
             if (phase.phaseType == SCHEDULE_PHASE_TYPE.WORK) {
                 //if the started phase is work, the character will stop his/her current action (if not from event), and start doing work actions.
+                //TODO: Add checking whether current action is from event
+                _ownParty.actionData.LookForAction();
+            } 
+            //else if (phase.phaseType == SCHEDULE_PHASE_TYPE.MISC) {
+            //    //if the started phase is misc, the character will NOT stop his/her current action if his/her current action is a work action (unless that work action is unending), 
+            //    //he/she will instead, wait for the current action to end, then he/she will start doing misc actions.
+            //    if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.WORK) {
+            //        if (_ownParty.actionData.currentAction != null && _ownParty.actionData.currentAction.actionData.duration == 0) { //this includes idle action
+            //            ////current work action is unending, end it.
+            //            //_ownParty.actionData.EndAction();
+            //            //also disband the party. TODO: Add case for when to disband the party when the action is not unending
+            //            _ownParty.actionData.ForceDoAction(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
+            //        }
+            //    }
+            //}
+        }
+        public void OnDailySchedulePhaseEnded(CharacterSchedulePhase phase) {
+            if (!this.IsInOwnParty()) {
+                return; //this character is not in it's owned party, that means he/she is just a member of the party, and shall not decide what action to do!
+            }
+            Debug.Log(GameManager.Instance.Today().GetDayAndTicksString() + " " + this.name + " ended phase " + phase.phaseName + "(" + phase.phaseType.ToString() + ")");
+            if (phase.phaseType == SCHEDULE_PHASE_TYPE.MISC) {
+                //if the ended phase is misc, the character will stop his/her current action (if not from event), and start doing work actions.
                 if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.MISC) {
                     //end current action, then look for a new one.
                     _ownParty.actionData.EndAction();
                 }
-            } else if (phase.phaseType == SCHEDULE_PHASE_TYPE.MISC) {
-                //if the started phase is misc, the character will NOT stop his/her current action if his/her current action is a work action (unless that work action is unending), 
+            } else if (phase.phaseType == SCHEDULE_PHASE_TYPE.WORK) {
+                //if the ended phase is work, the character will NOT stop his/her current action if his/her current action is a work action (unless that work action is unending), 
                 //he/she will instead, wait for the current action to end, then he/she will start doing misc actions.
                 if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.WORK) {
-                    if (_ownParty.actionData.currentAction != null && _ownParty.actionData.currentAction.actionData.duration == 0) {
+                    if (_ownParty.actionData.currentAction != null && _ownParty.actionData.currentAction.actionData.duration == 0 
+                        && _ownParty.actionData.currentAction.actionData.actionType != ACTION_TYPE.TURN_IN_QUEST) {//TODO: Remove Special case for turn in quest when bug has been fixed //this includes idle action
                         ////current work action is unending, end it.
                         //_ownParty.actionData.EndAction();
                         //also disband the party. TODO: Add case for when to disband the party when the action is not unending
@@ -3155,15 +3183,37 @@ namespace ECS {
                 }
             }
         }
-        public void OnDailySchedulePhaseEnded(CharacterSchedulePhase phase) {
-            if (!this.IsInOwnParty()) {
-                return; //this character is not in it's owned party, that means he/she is just a member of the party, and shall not decide what action to do!
+        /*
+         Can this character reach work, given it's current location.
+         NOTE: Only call this during work phase.
+             */
+        public bool CanReachWork() {
+            if (this.dailySchedule.currentPhase.phaseType != SCHEDULE_PHASE_TYPE.WORK) {
+                throw new Exception(this.name + " is trying to use CanReachWork() while not in work phase!");
             }
-            Debug.Log(GameManager.Instance.Today().GetDayAndTicksString() + " " + this.name + " ended phase " + phase.phaseName + "(" + phase.phaseType.ToString() + ")");
+            //check this character's work schedule
+            int deadlineTick = this.dailySchedule.currentPhase.startTick + 6; //start of work phase + 1 hour(6 ticks)
+            GameDate today = GameManager.Instance.Today();
+            if (today.hour > deadlineTick) {
+                return false; //this character cannot reach work on time
+            } else {
+                List<HexTile> pathToWorkplace = PathGenerator.Instance.GetPath(this.specificLocation, this.workplace, PATHFINDING_MODE.PASSABLE);
+                int tileDistance = pathToWorkplace.Count;
+                int travelTime = tileDistance * 3; //because it takes 3 ticks to reach the center of one tile to another
+                if (today.hour + travelTime > deadlineTick) {
+                    return false; //this character cannot reach work on time
+                } else {
+                    return true; //this character can reach work on time
+                }
+            }
         }
-        //public bool CanReachWork() {
-
-        //}
+        /*
+         Determine at what tick the character has to be at work.
+         NOTE: This is only accurate when used while in work phase
+             */
+        public int GetWorkDeadlineTick() {
+            return this.dailySchedule.currentPhase.startTick + 6; //start of work phase + 1 hour(6 ticks)
+        }
         #endregion
 
         #region IInteractable

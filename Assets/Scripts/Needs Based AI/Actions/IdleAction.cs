@@ -4,9 +4,11 @@ using UnityEngine;
 using ECS;
 
 public class IdleAction : CharacterAction {
+
     public IdleAction() : base(ACTION_TYPE.IDLE) {
 
     }
+    
     #region Overrides
     public override void PerformAction(CharacterParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);

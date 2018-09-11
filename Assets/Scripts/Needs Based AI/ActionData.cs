@@ -65,7 +65,7 @@ public class ActionData {
         this.currentTargetObject = null;
         //this.currentChainAction = null;
         this.currentDay = 0;
-        this.isDone = false;
+        SetIsDone (false);
         this.isWaiting = false;
         this._isNotFirstEncounter = false;
     }
@@ -115,16 +115,23 @@ public class ActionData {
 
     public void EndAction() {
         Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() +"] Ended " + _party.name + " action " + currentAction.actionData.actionName);
-        isDone = true;
+        SetIsDone(true);
     }
     public void SetCurrentActionPhaseType(SCHEDULE_PHASE_TYPE phaseType) {
         currentActionPhaseType = phaseType;
     }
     public void SetCurrentAction(CharacterAction action) {
         this.currentAction = action;
+        Debug.Log("Set current action of " + _party.name + " to " + this.currentAction.actionData.actionName);
     }
     public void SetCurrentTargetObject(IObject targetObject) {
         this.currentTargetObject = targetObject;
+        if (this.currentTargetObject == null) {
+            Debug.Log("Set current target object of " + _party.name + " to null.");
+        } else {
+            Debug.Log("Set current target object of " + _party.name + " to " + this.currentTargetObject.objectName);
+        }
+       
     }
     public void SetQuestAssociatedWithAction(Quest quest) {
         questAssociatedWithCurrentAction = quest;
@@ -158,6 +165,7 @@ public class ActionData {
     }
     public void SetIsDone(bool state) {
         this.isDone = state;
+        Debug.Log("Set is done to " + state.ToString());
     }
 
     private void PerformCurrentAction() {
@@ -241,7 +249,7 @@ public class ActionData {
         }
     }
 
-    private void LookForAction() {
+    public void LookForAction() {
         isWaiting = true;
         //GameManager.Instance.StartCoroutine(LookForActionCoroutine());
         //for (int i = 0; i < _party.questData.Count; i++) {
@@ -286,9 +294,10 @@ public class ActionData {
          */
     public void ForceDoAction(CharacterAction newAction, IObject targetObject) {
         if (currentAction != null) {
-            EndAction();
+            currentAction.EndAction(_party, currentTargetObject);
         }
         AssignAction(newAction, targetObject);
+        Debug.Log("Forced " + _party.name + " to perform " + newAction.actionData.actionName + " at " + targetObject.objectName);
     }
 
     private void APartyEndedState(CharacterParty partyThatChangedState, ObjectState stateEnded) {

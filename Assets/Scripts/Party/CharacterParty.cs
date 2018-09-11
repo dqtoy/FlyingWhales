@@ -54,13 +54,18 @@ public class CharacterParty : NewParty {
 
     #region Utilities
     private void EverydayAction() {
+        if ((this.owner.ownParty as CharacterParty).actionData.currentAction != null &&
+            (this.owner.ownParty as CharacterParty).actionData.currentAction.actionType == ACTION_TYPE.IN_PARTY) {
+            return;
+        }
         if (!_isIdle) {
             if (onDailyAction != null) {
                 onDailyAction();
             }
-            for (int i = 0; i < _icharacters.Count; i++) {
-                _icharacters[i].EverydayAction();
-            }
+            //Disabled everyday action for other characters in party
+            //for (int i = 0; i < _icharacters.Count; i++) {
+            //    _icharacters[i].EverydayAction();
+            //}
         }
     }
     //If true, party can't do daily action (onDailyAction), i.e. actions, needs
