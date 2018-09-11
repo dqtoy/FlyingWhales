@@ -265,6 +265,14 @@ public class CharacterManager : MonoBehaviour {
     public void RemoveCharacterAvatar(CharacterAvatar characterAvatar) {
         _allCharacterAvatars.Remove(characterAvatar);
     }
+    public Character GetCharacterByClass(string className) {
+        for (int i = 0; i < _allCharacters.Count; i++) {
+            if(_allCharacters[i].characterClass.className == className) {
+                return _allCharacters[i];
+            }
+        }
+        return null;
+    }
     #endregion
 
     #region Relationships

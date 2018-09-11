@@ -8,10 +8,12 @@ public class GameManager : MonoBehaviour {
 	public static GameManager Instance = null;
 
 	public static int[] daysInMonth = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    public static string[] daysInWords = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 	public int month;
 	public int days;
 	public int year;
     public int hour;
+    public int continuousDays;
     public const int hoursPerDay = 144;
 
     public int startYear;
@@ -131,6 +133,7 @@ public class GameManager : MonoBehaviour {
         if(this.hour > hoursPerDay) {
             this.hour = 1;
             this.days += 1;
+            this.continuousDays += 1;
             if (days > daysInMonth[this.month]) {
                 this.days = 1;
                 this.month += 1;

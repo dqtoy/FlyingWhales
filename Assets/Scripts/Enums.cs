@@ -1495,4 +1495,12 @@ public enum ABUNDANCE {
 }
 public enum HIDDEN_DESIRE {
     NONE,
+    SECRET_AFFAIR,
+}
+public enum GAME_EVENT {
+    SECRET_MEETING,
+}
+public enum EVENT_PHASE {
+    PREPARATION,
+    PROPER,
 }

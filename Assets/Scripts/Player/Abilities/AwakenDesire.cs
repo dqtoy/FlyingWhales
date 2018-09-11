@@ -2,15 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AwakenDesire : MonoBehaviour {
+public class AwakenDesire : PlayerAbility {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public AwakenDesire() : base() {
+        _name = "Awaken Hidden Desire";
+        _description = "Awaken a hidden desire of character";
+        _powerCost = 35;
+        _threatGain = 10;
+        _cooldown = 12;
+    }
+
+    #region Overrides
+    public override void Activate(IInteractable interactable) {
+        interactable.hiddenDesire.Awaken();
+        base.Activate(interactable);
+    }
+    #endregion
 }

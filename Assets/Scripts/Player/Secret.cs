@@ -19,9 +19,10 @@ public class Secret {
     public void RevealSecret() {
         if (!_isRevealed) {
             _isRevealed = true;
-            Intel intel = IntelManager.Instance.intelLookup[intelIDToBeUnlocked];
-            PlayerManager.Instance.player.AddIntel(intel);
-
+            if(intelIDToBeUnlocked != -1) {
+                Intel intel = IntelManager.Instance.intelLookup[intelIDToBeUnlocked];
+                PlayerManager.Instance.player.AddIntel(intel);
+            }
             //Reveal goals/subgoals
         }
     }

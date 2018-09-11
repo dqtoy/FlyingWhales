@@ -6,7 +6,7 @@ using System.IO;
 using System;
 
 namespace ECS {
-    public class Character : ICharacter, ILeader {
+    public class Character : ICharacter, ILeader, IInteractable {
         public delegate void OnCharacterDeath();
         public OnCharacterDeath onCharacterDeath;
 
@@ -44,6 +44,9 @@ namespace ECS {
         private CharacterPortrait _characterPortrait;
         private Color _characterColor;
         private CharacterAction _genericWorkAction;
+        private HiddenDesire _hiddenDesire;
+        private Secret _currentlySelectedSecret;
+        private List<Secret> _secrets;
         private List<STATUS_EFFECT> _statusEffects;
         private List<BodyPart> _bodyParts;
         private Dictionary<string, IBodyPart> _bodyPartDict;
@@ -61,6 +64,7 @@ namespace ECS {
         private Dictionary<ELEMENT, float> _elementalWeaknesses;
         private Dictionary<ELEMENT, float> _elementalResistances;
         private Dictionary<Character, List<string>> _traceInfo;
+        private Dictionary<int, GAME_EVENT> _intelReactions; //int = intel id
         private int _mentalPoints;
         private int _physicalPoints;
         private Squad _squad;
@@ -382,6 +386,18 @@ namespace ECS {
         public bool hasBeenInspected {
             get { return _hasBeenInspected; }
         }
+        public HiddenDesire hiddenDesire {
+            get { return _hiddenDesire; }
+        }
+        public Secret currentlySelectedSecret {
+            get { return _currentlySelectedSecret; }
+        }
+        public List<Secret> secrets {
+            get { return _secrets; }
+        }
+        public Dictionary<int, GAME_EVENT> intelReactions {
+            get { return _intelReactions; }
+        }
         #endregion
 
         public Character(string className, RACE race, GENDER gender) : this() {
@@ -453,6 +469,8 @@ namespace ECS {
             _exploredLandmarks = new List<BaseLandmark>();
             _statusEffects = new List<STATUS_EFFECT>();
             _tags = new List<CharacterAttribute>();
+            _secrets = new List<Secret>();
+            _intelReactions = new Dictionary<int, GAME_EVENT>();
             _isDead = false;
             _isFainted = false;
             //_isDefeated = false;
@@ -3146,6 +3164,15 @@ namespace ECS {
         //public bool CanReachWork() {
 
         //}
+        #endregion
+
+        #region IInteractable
+        public void SetIsBeingInspected(bool state) {
+            _isBeingInspected = state;
+        }
+        public void SetHasBeenInspected(bool state) {
+            _hasBeenInspected = state;
+        }
         #endregion
     }
 }

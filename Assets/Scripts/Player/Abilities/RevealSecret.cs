@@ -1,16 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ECS;
 
-public class RevealSecret : MonoBehaviour {
+public class RevealSecret : PlayerAbility {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public RevealSecret() : base() {
+        _name = "Reveal Secret";
+        _description = "Reveal a character's secret";
+        _powerCost = 20;
+        _threatGain = 2;
+        _cooldown = 12;
+    }
+
+    #region Overrides
+    public override void Activate(IInteractable interactable) {
+        if (interactable is Character) {
+            Character character = interactable as Character;
+            if(character.currentlySelectedSecret != null) {
+                character.currentlySelectedSecret.RevealSecret();
+                base.Activate(interactable);
+            }
+        }
+    }
+    #endregion
 }

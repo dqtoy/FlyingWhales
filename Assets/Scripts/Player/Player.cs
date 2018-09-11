@@ -14,6 +14,7 @@ public class Player : ILeader{
     private int _redMagic;
     private int _blueMagic;
     private int _greenMagic;
+    private Intel _currentlySelectedIntel;
     private List<CharacterAction> _actions;
     private List<Character> _snatchedCharacters;
     private List<Intel> _intels;
@@ -42,6 +43,9 @@ public class Player : ILeader{
     }
     public int threatLevel {
         get { return _threatLevel; }
+    }
+    public Intel currentlySelectedIntel {
+        get { return _currentlySelectedIntel; }
     }
     public List<CharacterAction> actions {
         get { return _actions; }
@@ -248,6 +252,15 @@ public class Player : ILeader{
     }
     public bool RemoveIntel(Intel intel) {
         return _intels.Remove(intel);
+    }
+    public void PickIntelToGiveToCharacter(Character character, ShareIntel shareIntelAbility) {
+        //TODO
+    }
+    private void GiveIntelToCharacter(Character character, ShareIntel shareIntelAbility) {
+        if (character.intelReactions.ContainsKey(_currentlySelectedIntel.id)) {
+            GameEvent gameEvent = EventManager.Instance.AddNewEvent(character.intelReactions[_currentlySelectedIntel.id]);
+            shareIntelAbility.HasGivenIntel(character);
+        }
     }
     #endregion
 }
