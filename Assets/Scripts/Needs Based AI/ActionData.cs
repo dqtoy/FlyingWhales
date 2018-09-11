@@ -65,7 +65,7 @@ public class ActionData {
         this.currentTargetObject = null;
         //this.currentChainAction = null;
         this.currentDay = 0;
-        this.isDone = false;
+        SetIsDone (false);
         this.isWaiting = false;
         this._isNotFirstEncounter = false;
     }
@@ -115,16 +115,23 @@ public class ActionData {
 
     public void EndAction() {
         Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() +"] Ended " + _party.name + " action " + currentAction.actionData.actionName);
-        isDone = true;
+        SetIsDone(true);
     }
     public void SetCurrentActionPhaseType(SCHEDULE_PHASE_TYPE phaseType) {
         currentActionPhaseType = phaseType;
     }
     public void SetCurrentAction(CharacterAction action) {
         this.currentAction = action;
+        Debug.Log("Set current action of " + _party.name + " to " + this.currentAction.actionData.actionName);
     }
     public void SetCurrentTargetObject(IObject targetObject) {
         this.currentTargetObject = targetObject;
+        if (this.currentTargetObject == null) {
+            Debug.Log("Set current target object of " + _party.name + " to null.");
+        } else {
+            Debug.Log("Set current target object of " + _party.name + " to " + this.currentTargetObject.objectName);
+        }
+       
     }
     public void SetQuestAssociatedWithAction(Quest quest) {
         questAssociatedWithCurrentAction = quest;
@@ -158,6 +165,7 @@ public class ActionData {
     }
     public void SetIsDone(bool state) {
         this.isDone = state;
+        Debug.Log("Set is done to " + state.ToString());
     }
 
     private void PerformCurrentAction() {
@@ -176,6 +184,9 @@ public class ActionData {
                     ILocation characterLocation = _party.specificLocation;
                     if (characterLocation != null && currentTargetObject.specificLocation != null 
                         && characterLocation.tileLocation.id == currentTargetObject.specificLocation.tileLocation.id) {
+                        if (currentAction != null && currentAction.actionData.actionType == ACTION_TYPE.TURN_IN_QUEST) {
+                            Debug.Log("");
+                        }
                         //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action
                         //if (currentAction.state.stateName != currentAction.state.obj.currentState.stateName) {
                         CharacterAction newAction = currentTargetObject.currentState.GetActionInState(currentAction);
@@ -289,6 +300,7 @@ public class ActionData {
             EndAction();
         }
         AssignAction(newAction, targetObject);
+        Debug.Log("Forced " + _party.name + " to perform " + newAction.actionData.actionName + " at " + targetObject.objectName);
     }
 
     private void APartyEndedState(CharacterParty partyThatChangedState, ObjectState stateEnded) {

@@ -44,6 +44,9 @@ public class Quest {
      This is called to set the quest as done.
          */
     public virtual void SetQuestAsDone() {
+        if (isQuestDone) {
+            return; //quest is already done
+        }
         Debug.Log(this.owner.party.name + " set quest as done.");
         isQuestDone = true;
         OnQuestDone();

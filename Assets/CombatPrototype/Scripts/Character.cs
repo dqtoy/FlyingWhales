@@ -1068,7 +1068,7 @@ namespace ECS {
 
         #region Items
 		//If a character picks up an item, it is automatically added to his/her inventory
-		internal void PickupItem(Item item){
+		internal void PickupItem(Item item, bool broadcast = true){
 			Item newItem = item;
             if (_inventory.Contains(newItem)) {
                 throw new Exception(this.name + " already has an instance of " + newItem.itemName);
@@ -1087,7 +1087,9 @@ namespace ECS {
                 (_ownParty.specificLocation as BaseLandmark).AddHistory(obtainLog);
             }
 #endif
-            Messenger.Broadcast(Signals.ITEM_OBTAINED, newItem, this);
+            if (broadcast) {
+                Messenger.Broadcast(Signals.ITEM_OBTAINED, newItem, this);
+            }
             newItem.OnItemPutInInventory(this);
         }
 		internal void ThrowItem(Item item, bool addInLandmark = true){
@@ -2150,8 +2152,10 @@ namespace ECS {
         }
         public void SetQuest(Quest quest) {
             currentQuest = quest;
-            quest.OnAcceptQuest(this);
-            Debug.Log("Set " + this.name + "'s quest to " + quest.name);
+            if (currentQuest != null) {
+                currentQuest.OnAcceptQuest(this);
+                Debug.Log("Set " + this.name + "'s quest to " + currentQuest.name);
+            }
         }
         public void RemoveQuest() {
             if (currentQuest != null) {
