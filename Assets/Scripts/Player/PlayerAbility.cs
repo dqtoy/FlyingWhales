@@ -12,15 +12,13 @@ public class PlayerAbility {
 
     protected int _cooldownCount;
     protected bool _isEnabled;
-    protected IInteractable _interactable;
 
-    public PlayerAbility(IInteractable interactable) {
-        _interactable = interactable;
+    public PlayerAbility() {
     }
 
     #region Virtuals
-    public virtual void Activate() {
-        PayPowerCost();
+    public virtual void Activate(IInteractable interactable) {
+        PayPowerCost(interactable);
         ThreatGain();
         GoOnCooldown();
     }
@@ -45,12 +43,12 @@ public class PlayerAbility {
     public void SetIsEnabled(bool state) {
         _isEnabled = state;
     }
-    private void PayPowerCost() {
-        if(_interactable is Character) {
+    private void PayPowerCost(IInteractable interactable) {
+        if(interactable is Character) {
             PlayerManager.Instance.player.AdjustBlueMagic(-_powerCost);
-        }else if (_interactable is BaseLandmark) {
+        }else if (interactable is BaseLandmark) {
             PlayerManager.Instance.player.AdjustGreenMagic(-_powerCost);
-        }else if (_interactable is Monster) {
+        }else if (interactable is Monster) {
             PlayerManager.Instance.player.AdjustRedMagic(-_powerCost);
         }
     }

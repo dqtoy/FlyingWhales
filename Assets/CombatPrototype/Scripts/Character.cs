@@ -22,6 +22,8 @@ namespace ECS {
         private bool _isFainted;
         private bool _isInCombat;
         private bool _doNotDisturb;
+        private bool _isBeingInspected;
+        private bool _hasBeenInspected;
         private GENDER _gender;
         private MODE _currentMode;
         private CharacterClass _characterClass;
@@ -373,6 +375,12 @@ namespace ECS {
         }
         public bool doNotDisturb {
             get { return _doNotDisturb; }
+        }
+        public bool isBeingInspected {
+            get { return _isBeingInspected; }
+        }
+        public bool hasBeenInspected {
+            get { return _hasBeenInspected; }
         }
         #endregion
 

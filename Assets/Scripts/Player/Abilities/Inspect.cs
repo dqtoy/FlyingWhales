@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ECS;
 
 public class Inspect : PlayerAbility {
 
-	public Inspect(IInteractable interactable): base(interactable) {
+	public Inspect(): base() {
         _name = "Inspect";
         _description = "Inspect a structure, character, or monster";
         _powerCost = 5;
@@ -13,9 +14,32 @@ public class Inspect : PlayerAbility {
     }
 
     #region Overrides
-    public override void Activate() {
+    public override void Activate(IInteractable interactable) {
+        interactable.SetIsBeingInspected(true);
+        if (!interactable.hasBeenInspected) {
+            interactable.SetHasBeenInspected(true);
+        }
+        UpdateInfoUI(interactable);
+        ScheduleEndInspection(interactable);
+        base.Activate(interactable);
+    }
+    #endregion
 
-        base.Activate();
+    #region Utilities
+    private void ScheduleEndInspection(IInteractable interactable) {
+        GameDate date = GameManager.Instance.Today();
+        date.AddDays(2);
+        SchedulingManager.Instance.AddEntry(date, () => EndInspection(interactable));
+    }
+    private void EndInspection(IInteractable interactable) {
+        interactable.SetIsBeingInspected(false);
+    }
+    private void UpdateInfoUI(IInteractable interactable) {
+        if (interactable is Character) {
+            UIManager.Instance.UpdateCharacterInfo();
+        }else if (interactable is BaseLandmark) {
+            UIManager.Instance.UpdateLandmarkInfo();
+        }
     }
     #endregion
 }
