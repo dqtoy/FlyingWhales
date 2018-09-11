@@ -81,7 +81,7 @@ public class PathGenerator : MonoBehaviour {
 	/*
 	 * Get List of tiles (Path) that will connect 2 city tiles
 	 * */
-	public List<HexTile> GetPath(HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data = null){
+	public List<HexTile> GetPath(ILocation startingTile, ILocation destinationTile, PATHFINDING_MODE pathfindingMode, object data = null){
 		if(startingTile == null || destinationTile == null){
 			return null;
 		}
@@ -103,9 +103,9 @@ public class PathGenerator : MonoBehaviour {
 //		}
 
         Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
-		Func<HexTile, double> estimate = t => Math.Sqrt (Math.Pow (t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow (t.yCoordinate - destinationTile.yCoordinate, 2));
+		Func<HexTile, double> estimate = t => Math.Sqrt (Math.Pow (t.xCoordinate - destinationTile.tileLocation.xCoordinate, 2) + Math.Pow (t.yCoordinate - destinationTile.tileLocation.yCoordinate, 2));
 
-		var path = PathFind.PathFind.FindPath (startingTile, destinationTile, distance, estimate, pathfindingMode, data);
+		var path = PathFind.PathFind.FindPath (startingTile.tileLocation, destinationTile.tileLocation, distance, estimate, pathfindingMode, data);
 
 //		if (pathfindingMode == PATHFINDING_MODE.POINT_TO_POINT || pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES || pathfindingMode == PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE
 //			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 

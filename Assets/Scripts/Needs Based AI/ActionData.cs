@@ -184,9 +184,6 @@ public class ActionData {
                     ILocation characterLocation = _party.specificLocation;
                     if (characterLocation != null && currentTargetObject.specificLocation != null 
                         && characterLocation.tileLocation.id == currentTargetObject.specificLocation.tileLocation.id) {
-                        if (currentAction != null && currentAction.actionData.actionType == ACTION_TYPE.TURN_IN_QUEST) {
-                            Debug.Log("");
-                        }
                         //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action
                         //if (currentAction.state.stateName != currentAction.state.obj.currentState.stateName) {
                         CharacterAction newAction = currentTargetObject.currentState.GetActionInState(currentAction);
@@ -252,7 +249,7 @@ public class ActionData {
         }
     }
 
-    private void LookForAction() {
+    public void LookForAction() {
         isWaiting = true;
         //GameManager.Instance.StartCoroutine(LookForActionCoroutine());
         //for (int i = 0; i < _party.questData.Count; i++) {
@@ -297,7 +294,7 @@ public class ActionData {
          */
     public void ForceDoAction(CharacterAction newAction, IObject targetObject) {
         if (currentAction != null) {
-            EndAction();
+            currentAction.EndAction(_party, currentTargetObject);
         }
         AssignAction(newAction, targetObject);
         Debug.Log("Forced " + _party.name + " to perform " + newAction.actionData.actionName + " at " + targetObject.objectName);

@@ -5480,7 +5480,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   frameImage: {fileID: 1731804896}
-  colorImage: {fileID: 521654655}
+  tintImage: {fileID: 0}
+  tintOutlineImage: {fileID: 0}
   emblemImage: {fileID: 851917199}
 --- !u!114 &1731804896
 MonoBehaviour:

@@ -20,11 +20,10 @@ public class JoinPartyAction : CharacterAction {
             (targetObject as ICharacterObject).iparty.AddCharacter(party.mainCharacter);
         }
         ActionSuccess(targetObject);
-        EndAction(party, targetObject);
+        party.actionData.ForceDoAction(party.icharacterObject.currentState.GetAction(ACTION_TYPE.IN_PARTY), party.icharacterObject);
     }
     public override void EndAction(CharacterParty party, IObject targetObject) {
         base.EndAction(party, targetObject);
-        party.actionData.ForceDoAction(party.icharacterObject.currentState.GetAction(ACTION_TYPE.IN_PARTY), party.icharacterObject);
         party.icon.SetVisualState(false);
     }
     #endregion

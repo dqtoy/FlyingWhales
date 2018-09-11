@@ -768,7 +768,7 @@ public class Monster : ICharacter, ICharacterSim {
     #endregion
 
     #region Action Queue
-    public void AddActionToQueue(CharacterAction action, IObject targetObject, CharacterQuestData associatedQuestData = null, int position = -1) {  }
+    public void AddActionToQueue(CharacterAction action, IObject targetObject, Quest associatedQuest = null, int position = -1) {  }
     public void RemoveActionFromQueue(ActionQueueItem item) {    }
     #endregion
 

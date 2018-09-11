@@ -5,5 +5,5 @@ using UnityEngine;
 [System.Serializable]
 public struct EmblemBG {
     public int id;
-    public Sprite frame, tint;
+    public Sprite frame, tint, outline;
 }

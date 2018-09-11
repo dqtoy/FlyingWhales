@@ -20,5 +20,9 @@ public class TurnInQuestAction : CharacterAction {
         mainCharacter.RemoveQuest();
         EndAction(party, targetObject);
     }
+    public override void EndAction(CharacterParty party, IObject targetObject) {
+        base.EndAction(party, targetObject);
+
+    }
     #endregion
 }

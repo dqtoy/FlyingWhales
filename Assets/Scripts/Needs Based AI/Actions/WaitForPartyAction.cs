@@ -7,22 +7,24 @@ public class WaitForPartyAction : CharacterAction {
 
     private IParty waitingParty;
 
+    private int waitCounter;
+
     public WaitForPartyAction() : base(ACTION_TYPE.WAIT_FOR_PARTY) { }
 
     #region overrides
     public override void PerformAction(CharacterParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
-        //waitCounter--;
-        //if (waitCounter <= 0) {
-        //    //done waiting
-        //}
-        Character mainCharacter = party.mainCharacter as Character;
-        if (mainCharacter.squad.squadMembers.Count == mainCharacter.ownParty.icharacters.Count) {
-            //if the character's squad is already complete, do not wait
-            Messenger.RemoveListener<NewParty, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, OnPartyEnteredLandmark);
-            QuestAction questAction = mainCharacter.currentQuest.GetQuestAction(mainCharacter);
-            party.actionData.ForceDoAction(questAction.action, questAction.targetObject);
+        waitCounter--;
+        if (waitCounter <= 0) {
+            //done waiting
+            StartQuestAction(party);
+        } else {
+            if (party.mainCharacter.squad.squadMembers.Count == party.mainCharacter.ownParty.icharacters.Count) {
+                //if the character's squad is already complete, do not wait
+                StartQuestAction(party);
+            }
         }
+        
     }
     public override CharacterAction Clone() {
         WaitForPartyAction action = new WaitForPartyAction();
@@ -34,20 +36,23 @@ public class WaitForPartyAction : CharacterAction {
         base.OnChooseAction(iparty, targetObject);
         waitingParty = iparty;
         Messenger.AddListener<NewParty, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, OnPartyEnteredLandmark);
-        //waitCounter = 6;
-        //if the character is a squad member, add listener to when a character is added to his/her location
-        //if the character is a squad leader, do nothing.
+        GameDate today = GameManager.Instance.Today();
+        int deadlineTick = (iparty.owner as Character).GetWorkDeadlineTick();
+        //this assumes that the deadline tick is greater than the current tick,
+        //if somehow the current tick is greater, the wait counter will become negative and will, thrigger start quest at PerformAction()
+        waitCounter = deadlineTick - today.hour;
     }
-    public override void DoneDuration(CharacterParty party, IObject targetObject) {
-        base.DoneDuration(party, targetObject);
-        Messenger.RemoveListener<NewParty, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, OnPartyEnteredLandmark);
-        if ((party.owner as ECS.Character).IsSquadLeader()) {
-            QuestAction questAction = (party.mainCharacter as ECS.Character).currentQuest.GetQuestAction(party.mainCharacter as ECS.Character);
-            party.actionData.ForceDoAction(questAction.action, questAction.targetObject);
-        } else {
-            //means that the character could not join party, start idling
-        }
-    }
+    //public override void DoneDuration(CharacterParty party, IObject targetObject) {
+    //    base.DoneDuration(party, targetObject);
+    //    Messenger.RemoveListener<NewParty, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, OnPartyEnteredLandmark);
+    //    if ((party.owner as ECS.Character).IsSquadLeader()) {
+    //        QuestAction questAction = (party.mainCharacter as ECS.Character).currentQuest.GetQuestAction(party.mainCharacter as ECS.Character);
+    //        party.actionData.ForceDoAction(questAction.action, questAction.targetObject);
+    //    } else {
+    //        //means that the character could not join party, start idling at workplace
+    //        party.actionData.ForceDoAction(party.characterObject.currentState.GetAction(ACTION_TYPE.IDLE), (party.owner as Character).workplace.landmarkObj);
+    //    }
+    //}
     #endregion
 
     private void OnPartyEnteredLandmark(NewParty party, BaseLandmark landmark) {
@@ -59,5 +64,19 @@ public class WaitForPartyAction : CharacterAction {
                 (waitingParty as CharacterParty).actionData.ForceDoAction(party.mainCharacter.squad.squadLeader.ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.JOIN_PARTY), party.mainCharacter.squad.squadLeader.ownParty.icharacterObject);
             }
         }
+    }
+
+    private void StartQuestAction(CharacterParty party) {
+        Character mainCharacter = party.mainCharacter as Character;
+        if (mainCharacter.IsSquadLeader()) {
+            QuestAction questAction = mainCharacter.currentQuest.GetQuestAction(party.mainCharacter as ECS.Character);
+            party.actionData.ForceDoAction(questAction.action, questAction.targetObject);
+        } else {
+            //means that the character could not join party, start idling at workplace
+            party.actionData.ForceDoAction(party.characterObject.currentState.GetAction(ACTION_TYPE.IDLE), (party.owner as Character).workplace.landmarkObj);
+        }
+        Messenger.RemoveListener<NewParty, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, OnPartyEnteredLandmark);
+        //QuestAction questAction = mainCharacter.currentQuest.GetQuestAction(mainCharacter);
+        //party.actionData.ForceDoAction(questAction.action, questAction.targetObject);
     }
 }
