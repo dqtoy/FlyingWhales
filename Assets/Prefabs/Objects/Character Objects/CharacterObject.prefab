@@ -226,7 +226,7 @@ MonoBehaviour:
         providedSanity: 0
         providedSafety: 0
         successRate: 0
-        duration: 1
+        duration: 0
         hpRecoveredPercentage: 0
         resourceGiven: 0
         minResourceGiven: 0
@@ -321,7 +321,7 @@ MonoBehaviour:
     - _actionData:
         actionType: 36
         actionCategory: 0
-        actionName: Join Party
+        actionName: Grind
         filters: []
         advertisedFullness: 0
         advertisedFun: 0
@@ -358,7 +358,7 @@ MonoBehaviour:
     - _actionData:
         actionType: 51
         actionCategory: 0
-        actionName: Join Party
+        actionName: Wait For Party
         filters: []
         advertisedFullness: 0
         advertisedFun: 0

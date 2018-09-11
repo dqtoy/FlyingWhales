@@ -39,11 +39,11 @@ public class CharacterQuestData {
         if (_parentQuest.id == doneQuest.id) {
             Messenger.RemoveListener<Quest>(Signals.QUEST_DONE, OnQuestDone);
             //_owner.RemoveQuestData(this); //remove this data from the character
-            if (_owner.party.actionData.questDataAssociatedWithCurrentAction != null 
-                && _owner.party.actionData.questDataAssociatedWithCurrentAction.parentQuest.id == doneQuest.id) {
-                //cancel the characters current action then look for another action
-                _owner.party.actionData.EndAction();
-            }
+            //if (_owner.party.actionData.questDataAssociatedWithCurrentAction != null 
+            //    && _owner.party.actionData.questDataAssociatedWithCurrentAction.parentQuest.id == doneQuest.id) {
+            //    //cancel the characters current action then look for another action
+            //    _owner.party.actionData.EndAction();
+            //}
         }
     }
     #endregion

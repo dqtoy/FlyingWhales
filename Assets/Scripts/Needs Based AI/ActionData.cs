@@ -6,7 +6,7 @@ using ECS;
 public class ActionData {
     private CharacterParty _party;
     public CharacterAction currentAction;
-    public CharacterQuestData questDataAssociatedWithCurrentAction;
+    public Quest questAssociatedWithCurrentAction { get; private set; }
     public IObject currentTargetObject;
     //public ChainAction currentChainAction;
     public object specificTarget;
@@ -125,6 +125,9 @@ public class ActionData {
     }
     public void SetCurrentTargetObject(IObject targetObject) {
         this.currentTargetObject = targetObject;
+    }
+    public void SetQuestAssociatedWithAction(Quest quest) {
+        questAssociatedWithCurrentAction = quest;
     }
     public void SetCurrentDay(int day) {
         this.currentDay = day;

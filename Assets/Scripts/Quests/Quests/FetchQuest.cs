@@ -21,9 +21,17 @@ public class FetchQuest : Quest {
     }
     public override QuestAction GetQuestAction(Character character) {
         if (isQuestDone) {
+            //if the quest was finished outside a quest action (eg. character obtained item from other combat), 
+            //make the character turn in the quest once he/she chooses to perform a quest action (from this quest)again.
+            character.party.actionData.SetQuestAssociatedWithAction(null);
+            Debug.Log(this.owner.party.name + " quest is already done. Turning in quest...");
+            if (Messenger.eventTable.ContainsKey(Signals.ITEM_OBTAINED)) {
+                Messenger.RemoveListener<Item, Character>(Signals.ITEM_OBTAINED, OnItemObtained);
+            }
             return new QuestAction(character.workplace.landmarkObj.currentState.GetAction(ACTION_TYPE.TURN_IN_QUEST), character.workplace.landmarkObj);
         } else {
             QuestAction action = new QuestAction(targetLandmark.landmarkObj.currentState.GetAction(ACTION_TYPE.FETCH), targetLandmark.landmarkObj);
+            character.party.actionData.SetQuestAssociatedWithAction(this);
             return action;
         }
     }
@@ -36,6 +44,11 @@ public class FetchQuest : Quest {
     protected override void OnQuestDone() {
         base.OnQuestDone();
         Messenger.RemoveListener<Item, Character>(Signals.ITEM_OBTAINED, OnItemObtained);
+        if (this.owner.party.actionData.questAssociatedWithCurrentAction != null && this.owner.party.actionData.questAssociatedWithCurrentAction.id == this.id) {
+            //if the quest owner finished the quest while doing an action that this quest provided, immediately turn in the quest, otherwise, see GetQuestAction() 
+            Debug.Log(this.owner.party.name + " obtained all needed items. Setting next action to turn in quest");
+            this.owner.party.actionData.ForceDoAction(owner.workplace.landmarkObj.currentState.GetAction(ACTION_TYPE.TURN_IN_QUEST), owner.workplace.landmarkObj);
+        }
     }
     #endregion
 
