@@ -101,6 +101,7 @@ namespace ECS {
 
         public CharacterSchedule dailySchedule { get; private set; }
         public Quest currentQuest { get; private set; }
+        public CharacterEventSchedule eventSchedule { get; private set; }
 
         #region getters / setters
         public string firstName {
@@ -482,6 +483,7 @@ namespace ECS {
             //previousActions = new Dictionary<CharacterTask, string>();
             _relationships = new Dictionary<Character, Relationship>();
             _genericWorkAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.WORKING);
+            
             //_actionData = new ActionData(this);
 
 
@@ -499,6 +501,7 @@ namespace ECS {
             _equippedItems = new List<Item>();
             _inventory = new List<Item>();
             combatHistory = new Dictionary<int, Combat>();
+            eventSchedule = new CharacterEventSchedule();
 
             GetRandomCharacterColor();
             ConstructDefaultMiscActions();
@@ -3217,6 +3220,13 @@ namespace ECS {
              */
         public int GetWorkDeadlineTick() {
             return this.dailySchedule.currentPhase.startTick + 6; //start of work phase + 1 hour(6 ticks)
+        }
+        #endregion
+
+        #region Event Schedule
+        public void AddScheduledAction(GameDate date, CharacterAction action) {
+            eventSchedule.AddElement(date, action);
+            //TODO: Add checking for if an action has already been scheduled for the specified date.
         }
         #endregion
 
