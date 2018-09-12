@@ -59,6 +59,12 @@ public class PlayerManager : MonoBehaviour {
         //LandmarkManager.Instance.CreateNewArea(tile, AREA_TYPE.DEMONIC_INTRUSION);
     }
 
+    public void PurchaseTile(HexTile tile) {
+        if(player.lifestones > 0) {
+            player.AdjustLifestone(-1);
+            AddTileToPlayerArea(tile);
+        }
+    }
     public void AddTileToPlayerArea(HexTile tile) {
         player.playerArea.AddTile(tile);
         tile.SetCorruption(true);

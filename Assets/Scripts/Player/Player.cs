@@ -48,6 +48,9 @@ public class Player : ILeader{
     public int threatLevel {
         get { return _threatLevel; }
     }
+    public int lifestones {
+        get { return _lifestones; }
+    }
     public float currentLifestoneChance {
         get { return _currentLifestoneChance; }
     }
