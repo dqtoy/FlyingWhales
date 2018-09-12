@@ -184,21 +184,7 @@ public class ActionData {
                     ILocation characterLocation = _party.specificLocation;
                     if (characterLocation != null && currentTargetObject.specificLocation != null 
                         && characterLocation.tileLocation.id == currentTargetObject.specificLocation.tileLocation.id) {
-                        //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action
-                        //if (currentAction.state.stateName != currentAction.state.obj.currentState.stateName) {
-                        CharacterAction newAction = currentTargetObject.currentState.GetActionInState(currentAction);
-                        if (newAction != null) {
-                            if (newAction != currentAction) {
-                                currentAction.EndAction(_party, currentTargetObject);
-                                AssignAction(newAction, currentTargetObject);
-                            }
-                        } else {
-                            if (!_party.mainCharacter.miscActions.Contains(currentAction)) {
-                                currentAction.EndAction(_party, currentTargetObject);
-                                return;
-                            }
-                        }
-                        //}
+                        ValidateCurrentAction(); //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action
                         DoAction();
                     } else {
                         ILocation location = currentTargetObject.specificLocation;
@@ -248,7 +234,6 @@ public class ActionData {
             }
         }
     }
-
     public void LookForAction() {
         isWaiting = true;
         //GameManager.Instance.StartCoroutine(LookForActionCoroutine());
@@ -257,6 +242,23 @@ public class ActionData {
         //    GameManager.Instance.StartCoroutine(questData.SetupValuesCoroutine());
         //}
         MultiThreadPool.Instance.AddToThreadPool(actionThread);
+    }
+    private void ValidateCurrentAction() {
+        //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action
+        //if (currentAction.state.stateName != currentAction.state.obj.currentState.stateName) {
+        CharacterAction newAction = currentTargetObject.currentState.GetActionInState(currentAction);
+        if (newAction != null) {
+            if (newAction != currentAction) {
+                currentAction.EndAction(_party, currentTargetObject);
+                AssignAction(newAction, currentTargetObject);
+            }
+        } else {
+            if (!_party.mainCharacter.miscActions.Contains(currentAction)) {
+                currentAction.EndAction(_party, currentTargetObject);
+                return;
+            }
+        }
+        //}
     }
 
     //private IEnumerator LookForActionCoroutine() {

@@ -56,7 +56,7 @@ public interface ICharacter {
     void ResetToFullHP();
     void ResetToFullSP();
     void Initialize();
-    void EverydayAction();
+    //void EverydayAction();
     void SetSide(ECS.SIDES side);
     void SetRowNumber(int row);
     void AdjustSP(int amount);

@@ -27,6 +27,9 @@ public class CharacterParty : NewParty {
     public ActionData actionData {
         get { return _actionData; }
     }
+    public Character characterOwner {
+        get { return owner as Character; }
+    }
     #endregion
 
     public CharacterParty(ICharacter owner): base(owner) {
@@ -54,14 +57,23 @@ public class CharacterParty : NewParty {
 
     #region Utilities
     private void EverydayAction() {
-        if ((this.owner.ownParty as CharacterParty).actionData.currentAction != null &&
-            (this.owner.ownParty as CharacterParty).actionData.currentAction.actionType == ACTION_TYPE.IN_PARTY) {
+        if (!this.owner.IsInOwnParty()) {
+            //if this character is not in its own party, do not perform action!
             return;
         }
         if (!_isIdle) {
-            if (onDailyAction != null) {
-                onDailyAction();
+            if (characterOwner.HasEventScheduled(GameManager.Instance.Today()) && !actionData.isCurrentActionFromEvent) {
+                //the character has an event action scheduled for today, and it's current action is not from an event
+                //queue the next action as the event action
+                EventAction scheduledEventAction = characterOwner.GetScheduledEventAction(GameManager.Instance.Today());
+                characterOwner.AddActionToQueue(scheduledEventAction.action, scheduledEventAction.targetObject);
+                actionData.EndAction(); //end current action after queueing event action
+            } else {
+                if (onDailyAction != null) {
+                    onDailyAction();
+                }
             }
+            
             //Disabled everyday action for other characters in party
             //for (int i = 0; i < _icharacters.Count; i++) {
             //    _icharacters[i].EverydayAction();

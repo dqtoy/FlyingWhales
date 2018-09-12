@@ -2260,12 +2260,12 @@ namespace ECS {
             _characterColor = color;
             _characterColorCode = ColorUtility.ToHtmlStringRGBA(_characterColor).Substring(0, 6);
         }
-        public void EverydayAction() {
-            if (onDailyAction != null) {
-                onDailyAction();
-            }
-            CheckForPPDeath();
-        }
+        //public void EverydayAction() {
+        //    if (onDailyAction != null) {
+        //        onDailyAction();
+        //    }
+        //    CheckForPPDeath();
+        //}
         //public void AdvertiseSelf(ActionThread actionThread) {
         //    if(actionThread.character.id != this.id && _currentRegion.id == actionThread.character.party.currentRegion.id) {
         //        actionThread.AddToChoices(_characterObject);
@@ -3224,9 +3224,15 @@ namespace ECS {
         #endregion
 
         #region Event Schedule
-        public void AddScheduledAction(GameDate date, CharacterAction action) {
-            eventSchedule.AddElement(date, action);
+        public void AddScheduledAction(GameDate date, CharacterAction action, IObject targetObject) {
+            eventSchedule.AddElement(date, new EventAction(action, targetObject));
             //TODO: Add checking for if an action has already been scheduled for the specified date.
+        }
+        public bool HasEventScheduled(GameDate date) {
+            return eventSchedule.HasScheduledAction(date);
+        }
+        public EventAction GetScheduledEventAction(GameDate date) {
+            return eventSchedule[date];
         }
         #endregion
 
