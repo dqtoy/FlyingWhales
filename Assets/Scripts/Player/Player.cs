@@ -14,6 +14,8 @@ public class Player : ILeader{
     private int _redMagic;
     private int _blueMagic;
     private int _greenMagic;
+    private int _lifestones;
+    private float _currentLifestoneChance;
     private Intel _currentlySelectedIntel;
     private Item _currentlySelectedItem;
     private List<CharacterAction> _actions;
@@ -46,6 +48,9 @@ public class Player : ILeader{
     public int threatLevel {
         get { return _threatLevel; }
     }
+    public float currentLifestoneChance {
+        get { return _currentLifestoneChance; }
+    }
     public Intel currentlySelectedIntel {
         get { return _currentlySelectedIntel; }
     }
@@ -68,7 +73,7 @@ public class Player : ILeader{
         SetBlueMagic(50);
         SetGreenMagic(50);
         SetThreatLevel(20);
-
+        SetCurrentLifestoneChance(25f);
         //Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_ADDED, OnTileAddedToPlayerArea);
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
         Messenger.AddListener<Character>(Signals.CHARACTER_RELEASED, OnCharacterReleased);
@@ -294,6 +299,27 @@ public class Player : ILeader{
             giveItemAbility.HasGivenItem(character);
             _currentlySelectedItem = null;
         }
+    }
+    #endregion
+
+    #region Lifestone
+    public void DecreaseLifestoneChance() {
+        if(_currentLifestoneChance > 2f) {
+            float decreaseRate = 5f;
+            if(_currentLifestoneChance <= 15f) {
+                decreaseRate = 1f;
+            }
+            _currentLifestoneChance -= decreaseRate;
+        }
+    }
+    public void SetCurrentLifestoneChance(float amount) {
+        _currentLifestoneChance = amount;
+    }
+    public void SetLifestone(int amount) {
+        _lifestones = amount;
+    }
+    public void AdjustLifestone(int amount) {
+        _lifestones += amount;
     }
     #endregion
 }

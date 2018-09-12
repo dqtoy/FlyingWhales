@@ -4,10 +4,10 @@ using UnityEngine;
 using ECS;
 
 public class PlayerManager : MonoBehaviour {
-
     public static PlayerManager Instance = null;
-    public bool isChoosingStartingTile = false;
 
+    public int totalLifestonesInWorld;
+    public bool isChoosingStartingTile = false;
     public Player player = null;
     public Character playerCharacter;
 
@@ -97,6 +97,10 @@ public class PlayerManager : MonoBehaviour {
                 break;
         }
         Messenger.Broadcast(Signals.PLAYER_LANDMARK_CREATED, newLandmark);
+    }
+
+    public void AdjustTotalLifestones(int amount) {
+        totalLifestonesInWorld += amount;
     }
 
     #region Snatch
