@@ -77,9 +77,12 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
     }
 
     private void OnActionTaken(CharacterAction action, CharacterParty party) {
-        if (party.icharacters.Contains(_character)) {
+        if (_character != null && party.id == _character.ownParty.id) {
             SetAction(action);
         }
+        //if (party.icharacters.Contains(_character)) {
+        //    SetAction(action);
+        //}
     }
 
     public override void Reset() {

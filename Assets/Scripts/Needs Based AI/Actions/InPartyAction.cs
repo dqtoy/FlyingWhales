@@ -15,6 +15,7 @@ public class InPartyAction : CharacterAction {
     }
     public override void EndAction(CharacterParty party, IObject targetObject) {
         base.EndAction(party, targetObject);
+        party.actionData.LookForAction();
     }
     #endregion
 }

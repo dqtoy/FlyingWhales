@@ -101,6 +101,7 @@ public class CharacterParty : NewParty {
     #region Overrides
     public override void PartyDeath() {
         base.PartyDeath();
+        Debug.Log(this.name + " detached its action data");
         actionData.DetachActionData();
     }
     public void DisbandPartyKeepOwner() {

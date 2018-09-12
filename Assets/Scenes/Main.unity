@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311992, g: 0.38074034, b: 0.35872713, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -20588,6 +20588,7 @@ MonoBehaviour:
   days: 1
   year: 80
   hour: 1
+  continuousDays: 0
   startYear: 80
   currProgressionSpeed: 0
   progressionSpeed: 1
@@ -20598,7 +20599,7 @@ MonoBehaviour:
   defaultCursorTexture: {fileID: 2800000, guid: 3b159dc765142944492cd69555358826,
     type: 3}
   targetCursorTexture: {fileID: 2800000, guid: 7357d53bb13f567458d4c9364c6fa54d, type: 3}
-  cursorMode: 1
+  cursorMode: 0
   hotSpot: {x: 0, y: 0}
 --- !u!114 &557822220
 MonoBehaviour:

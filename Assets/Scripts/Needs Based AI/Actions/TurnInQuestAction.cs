@@ -22,7 +22,10 @@ public class TurnInQuestAction : CharacterAction {
     }
     public override void EndAction(CharacterParty party, IObject targetObject) {
         base.EndAction(party, targetObject);
-
+        if ((party.owner as Character).dailySchedule.currentPhase.phaseType != SCHEDULE_PHASE_TYPE.WORK) {
+            //the turn in quest action has reached another phase, disband party after doing this action
+            (party.owner as Character).AddActionToQueue(party.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), party.characterObject);
+        }
     }
     #endregion
 }

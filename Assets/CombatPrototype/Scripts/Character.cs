@@ -2043,7 +2043,7 @@ namespace ECS {
         }
         public void OnRemovedFromParty() {
             SetCurrentParty(_ownParty); //set the character's party to it's own party
-            _ownParty.actionData.EndAction();
+            _ownParty.actionData.currentAction.EndAction(_ownParty, _ownParty.actionData.currentTargetObject);
         }
         public void OnAddedToParty() {
             if (this.currentParty.id != _ownParty.id) {
@@ -3195,7 +3195,11 @@ namespace ECS {
             int deadlineTick = this.dailySchedule.currentPhase.startTick + 6; //start of work phase + 1 hour(6 ticks)
             GameDate today = GameManager.Instance.Today();
             if (today.hour > deadlineTick) {
-                return false; //this character cannot reach work on time
+                if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.WORK && this.specificLocation.tileLocation.id == workplace.tileLocation.id) {
+                    return true; //the characters previous action phase type was from work and he/she is already at their workplace
+                } else {
+                    return false; //this character cannot reach work on time
+                }
             } else {
                 List<HexTile> pathToWorkplace = PathGenerator.Instance.GetPath(this.specificLocation, this.workplace, PATHFINDING_MODE.PASSABLE);
                 int tileDistance = pathToWorkplace.Count;
