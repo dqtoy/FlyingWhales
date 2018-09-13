@@ -70,7 +70,7 @@ public class WaitForPartyAction : CharacterAction {
         Character mainCharacter = party.mainCharacter as Character;
         if (mainCharacter.IsSquadLeader()) {
             QuestAction questAction = mainCharacter.currentQuest.GetQuestAction(party.mainCharacter as ECS.Character);
-            party.actionData.ForceDoAction(questAction.action, questAction.targetObject);
+            party.actionData.ForceDoAction(questAction);
         } else {
             //means that the character could not join party, start idling at workplace
             party.actionData.ForceDoAction(party.characterObject.currentState.GetAction(ACTION_TYPE.IDLE), (party.owner as Character).workplace.landmarkObj);

@@ -561,7 +561,7 @@ public class ActionThread : Multithread {
         if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
             for (int k = 0; k < iobject.currentState.actions.Count; k++) {
                 CharacterAction action = iobject.currentState.actions[k];
-                if(action is ChangeClassAction) {
+                if(action is ChangeClassAction || action is IdleAction) {
                     continue; //temp only, make a new variable in action data, ie. bool dontAdvertise, to force an action to advertise or not
                 }
                 if (action.MeetsRequirements(_party, null) && action.CanBeDone(iobject) && action.CanBeDoneBy(_party, iobject)) { //Filter

@@ -3008,7 +3008,6 @@ namespace ECS {
 
         #region Work
         private void LookForNewWorkplace() {
-            //TODO: QUESTING action (for Heroes)
             if (_characterClass.workActionType == ACTION_TYPE.WORKING) {
                 _workplace = _homeLandmark;
             } else {

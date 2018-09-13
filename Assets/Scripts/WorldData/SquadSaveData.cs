@@ -8,6 +8,8 @@ public class SquadSaveData {
     public int leaderID;
     public string squadName;
     public Dictionary<int, ICHARACTER_TYPE> memberIDs;
+    public int emblemBGIndex;
+    public int emblemIndex;
 
     public SquadSaveData(Squad squad) {
         squadID = squad.id;
@@ -23,6 +25,9 @@ public class SquadSaveData {
             ICharacter currMember = squad.squadMembers[i];
             memberIDs.Add(currMember.id, currMember.icharacterType);
         }
-        
+
+        emblemBGIndex = CharacterManager.Instance.GetEmblemBGIndex(squad.emblemBG);
+        emblemIndex = CharacterManager.Instance.GetEmblemIndex(squad.emblem);
+
     }
 }

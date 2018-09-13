@@ -33,6 +33,10 @@ public class CharacterManager : MonoBehaviour {
     [Header("Character Tag Icons")]
     [SerializeField] private List<CharacterAttributeIconSetting> characterTagIcons;
 
+    [Header("Squad Emblems")]
+    [SerializeField] private List<EmblemBG> _emblemBGs;
+    [SerializeField] private List<Sprite> _emblemSymbols;
+
     [Header("Character Portrait Assets")]
     public GameObject characterPortraitPrefab;
     [SerializeField] private List<RacePortraitAssets> portraitAssetsx64;
@@ -47,9 +51,6 @@ public class CharacterManager : MonoBehaviour {
     public readonly int PHYSICAL_THRESHOLD = -3;
 
     #region getters/setters
-    //public Dictionary<int, HashSet<Citizen>> elligibleCitizenAgeTable {
-    //    get { return citizenAgeTable.Where(x => x.Value.Any()).ToDictionary(x => x.Key, v => v.Value); }
-    //}
     public Dictionary<string, CharacterClass> classesDictionary {
         get { return _classesDictionary; }
     }
@@ -59,27 +60,12 @@ public class CharacterManager : MonoBehaviour {
     public Dictionary<ELEMENT, float> elementsChanceDictionary {
         get { return _elementsChanceDictionary; }
     }
-    //public int bodySpriteCount {
-    //    get { return bodySprites[IMAGE_SIZE.X64].Count; }
-    //}
-    //public int hairSpriteCount {
-    //    get { return hairSprites[IMAGE_SIZE.X64].Count; }
-    //}
-    //public int headSpriteCount {
-    //    get { return headSprites[IMAGE_SIZE.X64].Count; }
-    //}
-    //public int noseSpriteCount {
-    //    get { return noseSprites[IMAGE_SIZE.X64].Count; }
-    //}
-    //public int mouthSpriteCount {
-    //    get { return mouthSprites[IMAGE_SIZE.X64].Count; }
-    //}
-    //public int eyeSpriteCount {
-    //    get { return eyeSprites[IMAGE_SIZE.X64].Count; }
-    //}
-    //public int eyebrowSpriteCount {
-    //    get { return eyebrowSprites[IMAGE_SIZE.X64].Count; }
-    //}
+    public List<EmblemBG> emblemBGs {
+        get { return _emblemBGs; }
+    }
+    public List<Sprite> emblemSymbols {
+        get { return _emblemSymbols; }
+    }
     #endregion
 
     private void Awake() {
@@ -94,12 +80,6 @@ public class CharacterManager : MonoBehaviour {
         ConstructElementChanceDictionary();
         //ConstructPortraitDictionaries();
     }
-
-    //#region ECS.Character Types
-    //internal CharacterType GetRandomCharacterType() {
-    //    return characterTypes[Random.Range(0, characterTypes.Count)];
-    //}
-    //#endregion
 
     #region Characters
     public void LoadCharacters(WorldSaveData data) {
@@ -301,30 +281,6 @@ public class CharacterManager : MonoBehaviour {
     }
     #endregion
 
-	#region Prisoner Conversion
-	//public void SchedulePrisonerConversion(){
-	//	GameDate newSched = GameManager.Instance.Today ();
-	//	newSched.AddDays (7);
-	//	SchedulingManager.Instance.AddEntry (newSched, () => PrisonerConversion ());
-	//}
-	//private void PrisonerConversion(){
-	//	int allPrisonersWorldwide = FactionManager.Instance.allFactions.Sum (x => x.settlements.Sum (y => y.prisoners.Count));
-	//	if(allPrisonersWorldwide > 0){
-	//		int chance = UnityEngine.Random.Range (0, 100);
-	//		float value = (float)allPrisonersWorldwide * 0.2f;
-
-	//		if(chance < value){
-	//			Faction faction = FactionManager.Instance.allFactions [UnityEngine.Random.Range (0, FactionManager.Instance.allFactions.Count)];
-	//			Settlement settlement = faction.settlements [UnityEngine.Random.Range (0, faction.settlements.Count)];
-	//			ECS.Character characterToBeConverted = settlement.prisoners [UnityEngine.Random.Range (0, settlement.prisoners.Count)];
-	//			characterToBeConverted.ConvertToFaction ();
-	//		}
-	//	}
-
-	//	SchedulePrisonerConversion ();
-	//}
-    #endregion
-
     #region Utilities
     public Character GetCharacterByID(int id) {
         for (int i = 0; i < _allCharacters.Count; i++) {
@@ -430,44 +386,6 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Character Portraits
-    //private void ConstructPortraitDictionaries() {
-        //bodySprites = new Dictionary<IMAGE_SIZE, List<Sprite>>();
-        //for (int i = 0; i < bodyAssets.Count; i++) {
-        //    PortraitAsset assets = bodyAssets[i];
-        //    bodySprites.Add(assets.imageSize, assets.assets);
-        //}
-        //hairSprites = new Dictionary<IMAGE_SIZE, List<Sprite>>();
-        //for (int i = 0; i < hairAssets.Count; i++) {
-        //    PortraitAsset assets = hairAssets[i];
-        //    hairSprites.Add(assets.imageSize, assets.assets);
-        //}
-        //headSprites = new Dictionary<IMAGE_SIZE, List<Sprite>>();
-        //for (int i = 0; i < headAssets.Count; i++) {
-        //    PortraitAsset assets = headAssets[i];
-        //    headSprites.Add(assets.imageSize, assets.assets);
-        //}
-        //noseSprites = new Dictionary<IMAGE_SIZE, List<Sprite>>();
-        //for (int i = 0; i < noseAssets.Count; i++) {
-        //    PortraitAsset assets = noseAssets[i];
-        //    noseSprites.Add(assets.imageSize, assets.assets);
-        //}
-        //mouthSprites = new Dictionary<IMAGE_SIZE, List<Sprite>>();
-        //for (int i = 0; i < mouthAssets.Count; i++) {
-        //    PortraitAsset assets = mouthAssets[i];
-        //    mouthSprites.Add(assets.imageSize, assets.assets);
-        //}
-        //eyeSprites = new Dictionary<IMAGE_SIZE, List<Sprite>>();
-        //for (int i = 0; i < eyeAssets.Count; i++) {
-        //    PortraitAsset assets = eyeAssets[i];
-        //    eyeSprites.Add(assets.imageSize, assets.assets);
-        //}
-        //eyebrowSprites = new Dictionary<IMAGE_SIZE, List<Sprite>>();
-        //for (int i = 0; i < eyebrowAssets.Count; i++) {
-        //    PortraitAsset assets = eyebrowAssets[i];
-        //    eyebrowSprites.Add(assets.imageSize, assets.assets);
-        //}
-    //}
-
     public PortraitAssetCollection GetPortraitAssets(RACE race, GENDER gender, IMAGE_SIZE imgSize = IMAGE_SIZE.X256) {
         if (imgSize == IMAGE_SIZE.X64) {
             for (int i = 0; i < portraitAssetsx64.Count; i++) {
@@ -732,5 +650,32 @@ public class CharacterManager : MonoBehaviour {
     }
     #endregion
 #endif
+
+    #region Squad Emblems
+    public EmblemBG GetRandomEmblemBG() {
+        return _emblemBGs[Random.Range(0, _emblemBGs.Count)];
+    }
+    public Sprite GetRandomEmblem() {
+        return _emblemSymbols[Random.Range(0, _emblemSymbols.Count)];
+    }
+    public int GetEmblemBGIndex(EmblemBG emblemBG) {
+        for (int i = 0; i < _emblemBGs.Count; i++) {
+            EmblemBG currBG = _emblemBGs[i];
+            if (currBG.Equals(emblemBG)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    public int GetEmblemIndex(Sprite emblem) {
+        for (int i = 0; i < _emblemSymbols.Count; i++) {
+            Sprite currSprite = _emblemSymbols[i];
+            if (currSprite.name.Equals(emblem.name)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    #endregion
 
 }

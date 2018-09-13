@@ -16,24 +16,31 @@ public class QuestBoard {
             throw new System.Exception("Non hero character " + character.name + " is trying to get a quest!");
         }
         //get all landmarks that are part of the area that can spawn monsters
-        //pick the nearest one
-        List<MonsterSpawnerLandmark> landmarks = owner.tileLocation.areaOfTile.landmarks
-            .Where(x => x is MonsterSpawnerLandmark && x.tileLocation.GetDistanceFrom(owner.tileLocation) != -1)
-            .OrderBy(x => x.tileLocation.GetDistanceFrom(owner.tileLocation))
-            .Select(x => x as MonsterSpawnerLandmark)
-            .ToList();
-        if (landmarks.Count == 0) {
+        List<HexTile> tilesInRange = owner.tileLocation.GetTilesInRange(6);
+        List<MonsterSpawnerLandmark> choices = new List<MonsterSpawnerLandmark>();
+        for (int i = 0; i < tilesInRange.Count; i++) {
+            HexTile currTile = tilesInRange[i];
+            if (currTile.landmarkOnTile != null && currTile.landmarkOnTile is MonsterSpawnerLandmark) {
+                choices.Add(currTile.landmarkOnTile as MonsterSpawnerLandmark);
+            }
+        }
+        //List<MonsterSpawnerLandmark> landmarks = owner.tileLocation.areaOfTile.landmarks
+        //    .Where(x => x is MonsterSpawnerLandmark && x.tileLocation.GetDistanceFrom(owner.tileLocation) != -1)
+        //    .OrderBy(x => x.tileLocation.GetDistanceFrom(owner.tileLocation))
+        //    .Select(x => x as MonsterSpawnerLandmark)
+        //    .ToList();
+        if (choices.Count == 0) {
             Debug.LogWarning("Could not generate fetch quest for " + character.name + " because there are no monster spawner landmarks in area!");
         } else {
-            MonsterSpawnerLandmark chosenLandmark = landmarks[0];
+            MonsterSpawnerLandmark chosenLandmark = choices[Random.Range(0, choices.Count)];
             //once landmark has been picked. Pick a monster the character must encounter
-            //MonsterPartyComponent chosenSet = chosenLandmark.monsterChoices.parties[Random.Range(0, chosenLandmark.monsterChoices.parties.Length)];
-            //TextAsset chosenMonsterAsset = chosenSet.monsters[Random.Range(0, chosenSet.monsters.Length)];
-            //Monster chosenMonster = MonsterManager.Instance.monstersDictionary[chosenMonsterAsset.name];
-            //List<string> itemChoices = chosenMonster.itemDropsLookup.Where(x => x.Value > 0f).Select(x => x.Key).ToList();
-            //string chosenItem = itemChoices[Random.Range(0, itemChoices.Count)]; //Then pick an item that that monster can drop
+            MonsterPartyComponent chosenSet = chosenLandmark.monsterChoices.parties[Random.Range(0, chosenLandmark.monsterChoices.parties.Length)];
+            TextAsset chosenMonsterAsset = chosenSet.monsters[Random.Range(0, chosenSet.monsters.Length)];
+            Monster chosenMonster = MonsterManager.Instance.monstersDictionary[chosenMonsterAsset.name];
+            List<string> itemChoices = chosenMonster.itemDropsLookup.Where(x => x.Value > 0f).Select(x => x.Key).ToList();
+            string chosenItem = itemChoices[Random.Range(0, itemChoices.Count)]; //Then pick an item that that monster can drop
             int amount = Random.Range(2, 5); //randomize the amount of items needed for now
-            FetchQuest fetchQuest = new FetchQuest(chosenLandmark, "Misc1", amount);
+            FetchQuest fetchQuest = new FetchQuest(chosenLandmark, chosenItem, amount);
             return fetchQuest;
         }
         return null;
