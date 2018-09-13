@@ -1,16 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ECS;
 
-public class Spook : MonoBehaviour {
+public class Spook : PlayerAbility {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public Spook() : base() {
+        _name = "Spook";
+        _description = "Spook a character into leaving the location";
+        _powerCost = 10;
+        _threatGain = 2;
+        _cooldown = 12;
+    }
+
+    #region Overrides
+    public override void Activate(IInteractable interactable) {
+        if (interactable is Character) {
+            Character character = interactable as Character;
+            if(character.AddAttribute(ATTRIBUTE.SPOOKED) != null) {
+                base.Activate(interactable);
+            }
+        }
+    }
+    #endregion
 }
