@@ -1141,6 +1141,24 @@ public class UIManager : MonoBehaviour {
             }
         }
     }
+    public void PopulateLandmarkItemsInPicker() {
+        BaseLandmark landmark = PlayerManager.Instance.player.currentTargetInteractable as BaseLandmark;
+        List<Item> items = landmark.itemsInLandmark;
+        int length = items.Count;
+        if (currentActivePlayerPickerButtons.Count > items.Count) {
+            length = currentActivePlayerPickerButtons.Count;
+        }
+        for (int i = 0; i < length; i++) {
+            if (i >= items.Count) {
+                currentActivePlayerPickerButtons[i].gameObject.SetActive(false);
+            } else if (i >= currentActivePlayerPickerButtons.Count) {
+                CreatePlayerPickerButton(items[i]);
+            } else {
+                currentActivePlayerPickerButtons[i].gameObject.SetActive(true);
+                currentActivePlayerPickerButtons[i].SetPlayerPicker(items[i]);
+            }
+        }
+    }
     private void CreatePlayerPickerButton(IPlayerPicker playerPicker) {
         GameObject go = GameObject.Instantiate(playerPickerButtonPrefab, playerPickerContentTransform);
         PlayerPickerButton playerPickerButton = go.GetComponent<PlayerPickerButton>();

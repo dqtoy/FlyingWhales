@@ -124,6 +124,8 @@ public class PlayerManager : MonoBehaviour {
             UIManager.Instance.PopulatePlayerIntelsInPicker();
         }else if (player.currentActiveAbility is GiveItem) {
             UIManager.Instance.PopulatePlayerItemsInPicker();
+        } else if (player.currentActiveAbility is TakeItem) {
+            UIManager.Instance.PopulateLandmarkItemsInPicker();
         }
         UIManager.Instance.ShowPlayerPicker();
     }

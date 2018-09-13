@@ -8,13 +8,15 @@ using System.Collections.Generic;
 using System.Linq;
 using ECS;
 
-public class BaseLandmark : ILocation {
+public class BaseLandmark : ILocation, IInteractable {
     protected int _id;
     protected HexTile _location;
     protected LANDMARK_TYPE _specificLandmarkType;
     protected List<BaseLandmark> _connections;
     protected bool _canBeOccupied; //can the landmark be occupied?
     protected bool _isOccupied;
+    protected bool _isBeingInspected;
+    protected bool _hasBeenInspected;
     protected string _landmarkName;
     protected Faction _owner;
     protected List<Character> _charactersWithHomeOnLandmark;
@@ -35,7 +37,6 @@ public class BaseLandmark : ILocation {
     private List<HexTile> _wallTiles;
     public bool hasAdjacentCorruptedLandmark;
     private int _civilianCount;
-    private Item _currentlySelectedItemInLandmark;
     public QuestBoard questBoard { get; private set; }
 
     #region getters/setters
@@ -123,8 +124,14 @@ public class BaseLandmark : ILocation {
     public int civilianCount {
         get { return _civilianCount; }
     }
-    public Item currentlySelectedItemInLandmark {
-        get { return _currentlySelectedItemInLandmark; }
+    public bool isBeingInspected {
+        get { return _isBeingInspected; }
+    }
+    public bool hasBeenInspected {
+        get { return _hasBeenInspected; }
+    }
+    public HiddenDesire hiddenDesire {
+        get { return null; }
     }
     #endregion
 
@@ -552,9 +559,6 @@ public class BaseLandmark : ILocation {
 		}
 		return false;
 	}
-    public void SetCurrentlySelectedItemInLandmark(Item item) {
-        _currentlySelectedItemInLandmark = item;
-    }
     #endregion
 
 	#region Traces
@@ -906,6 +910,15 @@ public class BaseLandmark : ILocation {
     }
     public bool HasQuestBoard() {
         return questBoard != null;
+    }
+    #endregion
+
+    #region IInteractable
+    public void SetIsBeingInspected(bool state) {
+        _isBeingInspected = state;
+    }
+    public void SetHasBeenInspected(bool state) {
+        _hasBeenInspected = state;
     }
     #endregion
 }

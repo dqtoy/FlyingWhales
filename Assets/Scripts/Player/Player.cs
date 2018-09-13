@@ -17,7 +17,7 @@ public class Player : ILeader{
     private int _lifestones;
     private float _currentLifestoneChance;
     private IPlayerPicker _currentlySelectedPlayerPicker;
-    private Character _currentTargetCharacter;
+    private IInteractable _currentTargetInteractable;
     private PlayerAbility _currentActiveAbility;
     private List<CharacterAction> _actions;
     private List<Character> _snatchedCharacters;
@@ -57,6 +57,9 @@ public class Player : ILeader{
     }
     public PlayerAbility currentActiveAbility {
         get { return _currentActiveAbility; }
+    }
+    public IInteractable currentTargetInteractable {
+        get { return _currentTargetInteractable; }
     }
     public List<CharacterAction> actions {
         get { return _actions; }
@@ -279,18 +282,19 @@ public class Player : ILeader{
     }
     public void PickIntelToGiveToCharacter(Character character, ShareIntel shareIntelAbility) {
         //TODO
-        _currentTargetCharacter = character;
+        _currentTargetInteractable = character;
         _currentActiveAbility = shareIntelAbility;
         PlayerManager.Instance.ShowPlayerPickerAndPopulate();
     }
     private void GiveIntelToCharacter() {
         Intel intel = _currentlySelectedPlayerPicker as Intel;
         ShareIntel shareIntel = _currentActiveAbility as ShareIntel;
-        if (_currentTargetCharacter.intelReactions.ContainsKey(intel.id)) {
-            GameEvent gameEvent = EventManager.Instance.AddNewEvent(_currentTargetCharacter.intelReactions[intel.id]);
-            shareIntel.HasGivenIntel(_currentTargetCharacter);
+        Character character = _currentTargetInteractable as Character;
+        if (character.intelReactions.ContainsKey(intel.id)) {
+            GameEvent gameEvent = EventManager.Instance.AddNewEvent(character.intelReactions[intel.id]);
+            shareIntel.HasGivenIntel(character);
             _currentlySelectedPlayerPicker = null;
-            _currentTargetCharacter = null;
+            _currentTargetInteractable = null;
             _currentActiveAbility = null;
         }
     }
@@ -305,18 +309,36 @@ public class Player : ILeader{
     }
     public void PickItemToGiveToCharacter(Character character, GiveItem giveItemAbility) {
         //TODO
-        _currentTargetCharacter = character;
+        _currentTargetInteractable = character;
         _currentActiveAbility = giveItemAbility;
         PlayerManager.Instance.ShowPlayerPickerAndPopulate();
     }
     private void GiveItemToCharacter() {
         Item item = _currentlySelectedPlayerPicker as Item;
         GiveItem giveItem = _currentActiveAbility as GiveItem;
-        _currentTargetCharacter.PickupItem(item);
+        Character character = _currentTargetInteractable as Character;
+        character.PickupItem(item);
         RemoveItem(item);
-        giveItem.HasGivenItem(_currentTargetCharacter);
+        giveItem.HasGivenItem(character);
         _currentlySelectedPlayerPicker = null;
-        _currentTargetCharacter = null;
+        _currentTargetInteractable = null;
+        _currentActiveAbility = null;
+    }
+    public void PickItemToTakeFromLandmark(BaseLandmark landmark, TakeItem takeItem) {
+        //TODO
+        _currentTargetInteractable = landmark;
+        _currentActiveAbility = takeItem;
+        PlayerManager.Instance.ShowPlayerPickerAndPopulate();
+    }
+    private void TakeItemFromLandmark() {
+        Item item = _currentlySelectedPlayerPicker as Item;
+        TakeItem takeItem = _currentActiveAbility as TakeItem;
+        BaseLandmark landmark = _currentTargetInteractable as BaseLandmark;
+        AddItem(item);
+        landmark.RemoveItemInLandmark(item);
+        takeItem.HasTakenItem(landmark);
+        _currentlySelectedPlayerPicker = null;
+        _currentTargetInteractable = null;
         _currentActiveAbility = null;
     }
     #endregion
@@ -347,11 +369,13 @@ public class Player : ILeader{
         _currentlySelectedPlayerPicker = playerPicker;
     }
     public void OnOkPlayerPicker() {
-        if(_currentlySelectedPlayerPicker != null && _currentTargetCharacter != null && _currentActiveAbility != null) {
+        if(_currentlySelectedPlayerPicker != null && _currentTargetInteractable != null && _currentActiveAbility != null) {
             if(_currentActiveAbility is GiveItem) {
                 GiveItemToCharacter();
             }else if (_currentActiveAbility is ShareIntel) {
                 GiveIntelToCharacter();
+            } else if (_currentActiveAbility is TakeItem) {
+                TakeItemFromLandmark();
             }
         }
     }

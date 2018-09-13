@@ -17,13 +17,12 @@ public class TakeItem : PlayerAbility {
     public override void Activate(IInteractable interactable) {
         if (interactable is BaseLandmark) {
             BaseLandmark landmark = interactable as BaseLandmark;
-            if(landmark.currentlySelectedItemInLandmark != null) {
-                PlayerManager.Instance.player.AddItem(landmark.currentlySelectedItemInLandmark);
-                landmark.RemoveItemInLandmark(landmark.currentlySelectedItemInLandmark);
-                landmark.SetCurrentlySelectedItemInLandmark(null);
-                base.Activate(interactable);
-            }
+            PlayerManager.Instance.player.PickItemToTakeFromLandmark(landmark, this);
         }
     }
     #endregion
+
+    public void HasTakenItem(IInteractable interactable) {
+        base.Activate(interactable);
+    }
 }
