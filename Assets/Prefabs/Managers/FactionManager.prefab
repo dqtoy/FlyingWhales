@@ -51,6 +51,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 464f5db4b7a01d24daeadd01f91080ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _factionEmblems:
+  - {fileID: 21300000, guid: 7d8b9e6d403093a47bbd67c4579fc30e, type: 3}
+  - {fileID: 21300000, guid: c48691d7942da31489e0920e06068c1b, type: 3}
+  - {fileID: 21300000, guid: 753e5c738b4b3ac4b91918f25067be1f, type: 3}
+  - {fileID: 21300000, guid: e60c3cda02f82ba45b542f22f9e78b03, type: 3}
+  - {fileID: 21300000, guid: 4c3b67432f5fd374eac45b1e4375b1e3, type: 3}
+  - {fileID: 21300000, guid: 1881be4e2a432374f9ca4a47c3e30c06, type: 3}
+  - {fileID: 21300000, guid: 3a0c3c0d69bd87440aa82110003fa003, type: 3}
+  - {fileID: 21300000, guid: aedd6c71646ab304dad0ae875c18b2cd, type: 3}
+  - {fileID: 21300000, guid: fd9b1ed7f978dae4f85ebfa5eb14d230, type: 3}
   _emblemBGs:
   - id: 0
     frame: {fileID: 21300000, guid: 16fe8168036d48c46a8e8c246960dab0, type: 3}
@@ -107,4 +117,3 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 9dc897d77a160ee45ba92b7d96c7b857, type: 3}
   - {fileID: 21300000, guid: aff42a55af40efc469e2645796b04de4, type: 3}
   - {fileID: 21300000, guid: ac095d66703753d43b3f8cfdd825bd8e, type: 3}
-  usedEmblems: []

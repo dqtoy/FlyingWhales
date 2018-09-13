@@ -12,8 +12,7 @@ public class FactionSaveData {
     public List<int> ownedAreas;
     public Dictionary<int, FACTION_RELATIONSHIP_STATUS> relationships;
     public int leaderID;
-    public int emblemBGID;
-    public int emblemSymbolIndex;
+    public int emblemIndex;
 
     public FactionSaveData(Faction faction) {
         factionID = faction.id;
@@ -28,8 +27,7 @@ public class FactionSaveData {
         } else {
             leaderID = faction.leader.id;
         }
-        emblemBGID = faction.emblemBG.id;
-        emblemSymbolIndex = FactionManager.Instance.GetEmblemSymbolIndex(faction.emblemSymbol);
+        emblemIndex = FactionManager.Instance.GetFactionEmblemIndex(faction.emblem);
     }
     private void ConstructOwnedAreas(Faction faction) {
         ownedAreas = new List<int>();

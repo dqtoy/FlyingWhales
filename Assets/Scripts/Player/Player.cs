@@ -217,7 +217,7 @@ public class Player : ILeader{
     #region Actions
     private void ConstructPlayerActions() {
         _actions = new List<CharacterAction>();
-        _actions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.MOVE));
+        _actions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.MOVE_TO));
         for (int i = 0; i < _actions.Count; i++) {
             _actions[i].Initialize();
             GameObject go = GameObject.Instantiate(UIManager.Instance.playerActionsUI.playerActionsBtnPrefab, UIManager.Instance.playerActionsUI.playerActionsContentTransform);

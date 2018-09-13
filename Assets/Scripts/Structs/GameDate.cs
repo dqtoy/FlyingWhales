@@ -77,7 +77,85 @@ public struct GameDate {
 		return false;
 	}
 
-	public string ToStringDate(){
+    /*
+     Is this date before other date
+         */
+    public bool IsBefore(GameDate otherDate) {
+        if (this.year < otherDate.year) {
+            return true;
+        } else if (this.year == otherDate.year) {
+            //the 2 dates are of the same year
+            if (this.month < otherDate.month) {
+                //this.month is less than the otherDate.month
+                return true;
+            } else if (this.month == otherDate.month) {
+                //this.month is equal to otherDate.month
+                if (this.day < otherDate.day) {
+                    return true;
+                } else if (this.day == otherDate.day) {
+                    if (this.hour < otherDate.hour) {
+                        return true;
+                    } else if (this.hour == otherDate.hour) {
+                        //the 2 dates are the exact same, return false
+                        return false;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    //this.day is greater than otherDate.year
+                    return false;
+                }
+            } else {
+                //this.month is greater than otherDate.month)
+                return false;
+            }
+        } else {
+            //this.year is greater than otherDate.year
+            return false;
+        }
+       
+    }
+
+    /*
+     Is this date after other date
+         */
+    public bool IsAfter(GameDate otherDate) {
+        if (this.year < otherDate.year) {
+            return false;
+        } else if (this.year == otherDate.year) {
+            //the 2 dates are of the same year
+            if (this.month < otherDate.month) {
+                //this.month is less than the otherDate.month
+                return false;
+            } else if (this.month == otherDate.month) {
+                //this.month is equal to otherDate.month
+                if (this.day < otherDate.day) {
+                    return true;
+                } else if (this.day == otherDate.day) {
+                    if (this.hour < otherDate.hour) {
+                        return false;
+                    } else if (this.hour == otherDate.hour) {
+                        //the 2 dates are the exact same, return false
+                        return false;
+                    } else {
+                        return true;
+                    }
+                } else {
+                    //this.day is greater than otherDate.day
+                    return true;
+                }
+            } else {
+                //this.month is greater than otherDate.month)
+                return false;
+            }
+        } else {
+            //this.year is greater than otherDate.year
+            return true;
+        }
+
+    }
+
+    public string ToStringDate(){
 		return ((MONTH)this.month).ToString() + " " + this.day + ", " + this.year;
 	}
 

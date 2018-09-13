@@ -23,7 +23,8 @@ public class ActionData {
     private bool _isBeingAssistedByPlayer;
     private float _homeMultiplier;
 
-    public bool isCurrentActionFromEvent { get { return false; }} //TODO: change this to actually be set if a character's action comes from an event.
+    public GameEvent eventConnectedWithAction { get; private set; } //the event that this party's current action is from
+    public bool isCurrentActionFromEvent { get { return eventConnectedWithAction != null; } } //if the eventConnectedWithAction is not null, the current action is from an event
     public SCHEDULE_PHASE_TYPE currentActionPhaseType { get; private set; }
 
     #if UNITY_EDITOR
@@ -67,11 +68,13 @@ public class ActionData {
     public void Reset() {
         this.currentAction = null;
         this.currentTargetObject = null;
+        this.eventConnectedWithAction = null;
         //this.currentChainAction = null;
         this.currentDay = 0;
         SetIsDone (false);
         this.isWaiting = false;
         this._isNotFirstEncounter = false;
+        SetQuestAssociatedWithAction(null);
         _isBeingAssistedByPlayer = false;
     }
 
@@ -299,7 +302,6 @@ public class ActionData {
     }
 
     /*
-     NOTE: This is only for testing purposes!
      This will end the character's current action and assign the new action.
          */
     public void ForceDoAction(CharacterAction newAction, IObject targetObject) {
@@ -308,6 +310,14 @@ public class ActionData {
         }
         AssignAction(newAction, targetObject);
         Debug.Log("Forced " + _party.name + " to perform " + newAction.actionData.actionName + " at " + targetObject.objectName);
+    }
+    public void ForceDoAction(QuestAction newAction) {
+        if (currentAction != null) {
+            currentAction.EndAction(_party, currentTargetObject);
+        }
+        AssignAction(newAction.action, newAction.targetObject);
+        SetQuestAssociatedWithAction(newAction.associatedQuest);
+        Debug.Log("Forced " + _party.name + " to perform " + newAction.action.actionData.actionName + " at " + newAction.targetObject.objectName);
     }
 
     private void APartyEndedState(CharacterParty partyThatChangedState, ObjectState stateEnded) {

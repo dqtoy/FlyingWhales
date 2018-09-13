@@ -12,8 +12,7 @@ public class Faction {
     protected string _name;
     protected string _description;
     protected ILeader _leader;
-    private Sprite _emblemSymbol;
-    private EmblemBG _emblemBG;
+    private Sprite _emblem;
     protected List<Region> _ownedRegions;
     protected List<BaseLandmark> _ownedLandmarks;
     internal Color factionColor;
@@ -39,11 +38,8 @@ public class Faction {
     public ILeader leader {
         get { return _leader; }
     }
-    public Sprite emblemSymbol {
-        get { return _emblemSymbol; }
-    }
-    public EmblemBG emblemBG {
-        get { return _emblemBG; }
+    public Sprite emblem {
+        get { return _emblem; }
     }
     public List<ECS.Character> characters {
         get { return _characters; }
@@ -71,8 +67,7 @@ public class Faction {
     public Faction() {
 		this._id = Utilities.SetID<Faction>(this);
         SetName(RandomNameGenerator.Instance.GenerateKingdomName());
-        _emblemSymbol = FactionManager.Instance.GenerateFactionEmblem(this);
-        SetEmblemBG(FactionManager.Instance.GenerateFactionEmblemBG());
+        SetEmblem(FactionManager.Instance.GenerateFactionEmblem(this));
         SetFactionColor (Utilities.GetColorForFaction());
         _characters = new List<ECS.Character>();
         _ownedLandmarks = new List<BaseLandmark>();
@@ -88,11 +83,11 @@ public class Faction {
         SetName(data.factionName);
         SetDescription(data.factionDescription);
         SetFactionColor(data.factionColor);
-        if (data.emblemSymbolIndex != -1) {
-            SetEmblemSymbol(FactionManager.Instance.GetFactionEmblemSymbol(data.emblemSymbolIndex));
-        }
+        //if (data.emblemSymbolIndex != -1) {
+        //    SetEmblemSymbol(FactionManager.Instance.GetFactionEmblemSymbol(data.emblemSymbolIndex));
+        //}
         //_emblem = FactionManager.Instance.GenerateFactionEmblem(this);
-        SetEmblemBG(FactionManager.Instance.GetFactionEmblemBG(data.emblemBGID));
+        SetEmblem(FactionManager.Instance.GetFactionEmblem(data.emblemIndex));
         _characters = new List<ECS.Character>();
         _ownedLandmarks = new List<BaseLandmark>();
         _ownedRegions = new List<Region>();
@@ -277,11 +272,8 @@ public class Faction {
     #endregion
 
     #region Emblems
-    public void SetEmblemBG(EmblemBG bg) {
-        _emblemBG = bg;
-    }
-    public void SetEmblemSymbol(Sprite symbol) {
-        _emblemSymbol = symbol;
+    public void SetEmblem(Sprite sprite) {
+        _emblem = sprite;
     }
     #endregion
 }

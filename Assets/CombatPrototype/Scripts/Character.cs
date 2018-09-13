@@ -2816,7 +2816,6 @@ namespace ECS {
                 }
             }
         }
-
         private CharacterParty GetPriority1TargetChatAction(List<CharacterParty> partyPool) {
             //random parties within same faction within settlements
             partyPool.Clear();
@@ -3232,14 +3231,17 @@ namespace ECS {
         #endregion
 
         #region Event Schedule
-        public void AddScheduledAction(GameDate date, CharacterAction action, IObject targetObject) {
-            eventSchedule.AddElement(date, new EventAction(action, targetObject));
-            //TODO: Add checking for if an action has already been scheduled for the specified date.
+        public void AddScheduledAction(DateRange dateRange, GameEvent gameEvent) {
+            eventSchedule.AddElement(dateRange, gameEvent);
+            //TODO: Add checking for if an event has already been scheduled for the specified date.
         }
+        //public bool HasConflictingSchedule(GameDate startDate, GameDate endDate) {
+
+        //}
         public bool HasEventScheduled(GameDate date) {
-            return eventSchedule.HasScheduledAction(date);
+            return false;
         }
-        public EventAction GetScheduledEventAction(GameDate date) {
+        public GameEvent GetScheduledEvent(GameDate date) {
             return eventSchedule[date];
         }
         #endregion

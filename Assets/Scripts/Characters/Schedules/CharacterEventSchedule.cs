@@ -4,26 +4,37 @@ using UnityEngine;
 
 public class CharacterEventSchedule {
 
-    private readonly Dictionary<string, EventAction> eventSchedule;
+    private readonly Dictionary<DateRange, GameEvent> eventSchedule;
 
-    public EventAction this[GameDate key] {
+    public GameEvent this[GameDate key] {
         get {
-            return eventSchedule[key.GetDayAndTicksString()];
+            return GetEventForDate(key);
         }
     }
 
     public CharacterEventSchedule() {
-        eventSchedule = new Dictionary<string, EventAction>();
+        eventSchedule = new Dictionary<DateRange, GameEvent>();
     }
 
-    public bool ContainsKey(GameDate key) {
-        return eventSchedule.ContainsKey(key.GetDayAndTicksString());
+    //public bool ContainsKey(GameDate key) {
+    //    return eventSchedule.ContainsKey(key.GetDayAndTicksString());
+    //}
+    public void AddElement(DateRange key, GameEvent value) {
+        eventSchedule.Add(key, value);
     }
-    public void AddElement(GameDate key, EventAction value) {
-        eventSchedule.Add(key.GetDayAndTicksString(), value);
-    }
-    public bool HasScheduledAction(GameDate date) {
-        return ContainsKey(date);
+    //public bool HasScheduledAction(GameDate date) {
+    //    return ContainsKey(date);
+    //}
+
+    private GameEvent GetEventForDate(GameDate date) {
+        foreach (KeyValuePair<DateRange, GameEvent> kvp in eventSchedule) {
+            DateRange currRange = kvp.Key;
+            GameEvent currEvent = kvp.Value;
+            if (currRange.IsInRange(date)) {
+                return currEvent;
+            }
+        }
+        return null;
     }
     
 }
