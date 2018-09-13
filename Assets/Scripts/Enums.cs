@@ -336,6 +336,7 @@ public enum LANDMARK_TYPE {
     GOLD_MINE = 18,
     LUMBERYARD = 19,
     PALACE = 20,
+    CAMP = 21,
 }
 public enum TECHNOLOGY {
     //Weapon Production
