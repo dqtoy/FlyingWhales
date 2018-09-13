@@ -1,16 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerPickerButton : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
-		
-	}
+    public Text buttonText;
+    IPlayerPicker _playerPicker;
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public void SetPlayerPicker(IPlayerPicker playerPicker) {
+        _playerPicker = playerPicker;
+        buttonText.text = _playerPicker.thisName;
+    }
+
+    public void OnClickPlayerPicker() {
+        PlayerManager.Instance.player.SetCurrentlySelectedPlayerPicker(_playerPicker);
+    }
 }

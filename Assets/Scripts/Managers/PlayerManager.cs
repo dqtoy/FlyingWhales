@@ -117,4 +117,15 @@ public class PlayerManager : MonoBehaviour {
         return player.snatchCredits > 0;
     }
     #endregion
+
+    #region PlayerPicker
+    public void ShowPlayerPickerAndPopulate() {
+        if(player.currentActiveAbility is ShareIntel) {
+            UIManager.Instance.PopulatePlayerIntelsInPicker();
+        }else if (player.currentActiveAbility is GiveItem) {
+            UIManager.Instance.PopulatePlayerItemsInPicker();
+        }
+        UIManager.Instance.ShowPlayerPicker();
+    }
+    #endregion
 }

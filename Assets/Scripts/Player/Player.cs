@@ -16,8 +16,9 @@ public class Player : ILeader{
     private int _greenMagic;
     private int _lifestones;
     private float _currentLifestoneChance;
-    private Intel _currentlySelectedIntel;
-    private Item _currentlySelectedItem;
+    private IPlayerPicker _currentlySelectedPlayerPicker;
+    private Character _currentTargetCharacter;
+    private PlayerAbility _currentActiveAbility;
     private List<CharacterAction> _actions;
     private List<Character> _snatchedCharacters;
     private List<Intel> _intels;
@@ -54,14 +55,17 @@ public class Player : ILeader{
     public float currentLifestoneChance {
         get { return _currentLifestoneChance; }
     }
-    public Intel currentlySelectedIntel {
-        get { return _currentlySelectedIntel; }
+    public PlayerAbility currentActiveAbility {
+        get { return _currentActiveAbility; }
     }
     public List<CharacterAction> actions {
         get { return _actions; }
     }
     public List<Intel> intels {
         get { return _intels; }
+    }
+    public List<Item> items {
+        get { return _items; }
     }
     #endregion
 
@@ -275,12 +279,19 @@ public class Player : ILeader{
     }
     public void PickIntelToGiveToCharacter(Character character, ShareIntel shareIntelAbility) {
         //TODO
+        _currentTargetCharacter = character;
+        _currentActiveAbility = shareIntelAbility;
+        PlayerManager.Instance.ShowPlayerPickerAndPopulate();
     }
-    private void GiveIntelToCharacter(Character character, ShareIntel shareIntelAbility) {
-        if (_currentlySelectedIntel != null && character.intelReactions.ContainsKey(_currentlySelectedIntel.id)) {
-            GameEvent gameEvent = EventManager.Instance.AddNewEvent(character.intelReactions[_currentlySelectedIntel.id]);
-            shareIntelAbility.HasGivenIntel(character);
-            _currentlySelectedIntel = null;
+    private void GiveIntelToCharacter() {
+        Intel intel = _currentlySelectedPlayerPicker as Intel;
+        ShareIntel shareIntel = _currentActiveAbility as ShareIntel;
+        if (_currentTargetCharacter.intelReactions.ContainsKey(intel.id)) {
+            GameEvent gameEvent = EventManager.Instance.AddNewEvent(_currentTargetCharacter.intelReactions[intel.id]);
+            shareIntel.HasGivenIntel(_currentTargetCharacter);
+            _currentlySelectedPlayerPicker = null;
+            _currentTargetCharacter = null;
+            _currentActiveAbility = null;
         }
     }
     #endregion
@@ -294,14 +305,19 @@ public class Player : ILeader{
     }
     public void PickItemToGiveToCharacter(Character character, GiveItem giveItemAbility) {
         //TODO
+        _currentTargetCharacter = character;
+        _currentActiveAbility = giveItemAbility;
+        PlayerManager.Instance.ShowPlayerPickerAndPopulate();
     }
-    private void GiveItemToCharacter(Character character, GiveItem giveItemAbility) {
-        if(_currentlySelectedItem != null) {
-            character.PickupItem(_currentlySelectedItem);
-            RemoveItem(_currentlySelectedItem);
-            giveItemAbility.HasGivenItem(character);
-            _currentlySelectedItem = null;
-        }
+    private void GiveItemToCharacter() {
+        Item item = _currentlySelectedPlayerPicker as Item;
+        GiveItem giveItem = _currentActiveAbility as GiveItem;
+        _currentTargetCharacter.PickupItem(item);
+        RemoveItem(item);
+        giveItem.HasGivenItem(_currentTargetCharacter);
+        _currentlySelectedPlayerPicker = null;
+        _currentTargetCharacter = null;
+        _currentActiveAbility = null;
     }
     #endregion
 
@@ -323,6 +339,21 @@ public class Player : ILeader{
     }
     public void AdjustLifestone(int amount) {
         _lifestones += amount;
+    }
+    #endregion
+
+    #region PlayerPicker
+    public void SetCurrentlySelectedPlayerPicker(IPlayerPicker playerPicker) {
+        _currentlySelectedPlayerPicker = playerPicker;
+    }
+    public void OnOkPlayerPicker() {
+        if(_currentlySelectedPlayerPicker != null && _currentTargetCharacter != null && _currentActiveAbility != null) {
+            if(_currentActiveAbility is GiveItem) {
+                GiveItemToCharacter();
+            }else if (_currentActiveAbility is ShareIntel) {
+                GiveIntelToCharacter();
+            }
+        }
     }
     #endregion
 }

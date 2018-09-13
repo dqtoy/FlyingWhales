@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
+using ECS;
 
 public class UIManager : MonoBehaviour {
 
@@ -88,6 +89,14 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Portraits")]
     public Transform characterPortraitsParent;
+
+    [Space(10)]
+    [Header("Player")]
+    [SerializeField] private ScrollRect playerPickerScroll;
+    [SerializeField] private Transform playerPickerContentTransform;
+    [SerializeField] private GameObject playerPickerGO;
+    [SerializeField] private GameObject playerPickerButtonPrefab;
+    private List<PlayerPickerButton> currentActivePlayerPickerButtons;
 
     public Color onToggleTextColor;
     public Color offToggleTextColor;
@@ -665,7 +674,7 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Character Info")]
     [SerializeField] internal CharacterInfoUI characterInfoUI;
-    public void ShowCharacterInfo(ECS.Character character) {
+    public void ShowCharacterInfo(Character character) {
         //HideMainUI();
         //if (landmarkInfoUI.isShowing) {
         //    landmarkInfoUI.HideMenu();
@@ -826,7 +835,7 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Combat History")]
     [SerializeField] internal CombatLogsUI combatLogUI;
-    public void ShowCombatLog(ECS.Combat combat) {
+    public void ShowCombatLog(Combat combat) {
         //if(questLogUI.isShowing){
         //	questLogUI.HideQuestLogs ();
         //}
@@ -862,8 +871,8 @@ public class UIManager : MonoBehaviour {
         //        text += " - HexTile " + (currSetting.data as HexTile).name;
         //    } else if (currSetting.data is BaseLandmark) {
         //        text += " - Landmark " + (currSetting.data as BaseLandmark).landmarkName;
-        //    } else if (currSetting.data is ECS.Character) {
-        //        text += " - Character " + (currSetting.data as ECS.Character).name;
+        //    } else if (currSetting.data is Character) {
+        //        text += " - Character " + (currSetting.data as Character).name;
         //    } else if (currSetting.data is OldQuest.Quest) {
         //        text += " - OldQuest.Quest " + (currSetting.data as OldQuest.Quest).questType.ToString();
         //    }
@@ -889,8 +898,8 @@ public class UIManager : MonoBehaviour {
         //        text += " - HexTile " + (currSetting.data as HexTile).name;
         //    } else if (currSetting.data is BaseLandmark) {
         //        text += " - Landmark " + (currSetting.data as BaseLandmark).landmarkName;
-        //    } else if (currSetting.data is ECS.Character) {
-        //        text += " - Character " + (currSetting.data as ECS.Character).name;
+        //    } else if (currSetting.data is Character) {
+        //        text += " - Character " + (currSetting.data as Character).name;
         //    } else if (currSetting.data is OldQuest.Quest) {
         //        text += " - OldQuest.Quest " + (currSetting.data as OldQuest.Quest).questType.ToString();
         //    }
@@ -952,7 +961,7 @@ public class UIManager : MonoBehaviour {
     //            questSummary += "\n   Characters on Quest: ";
     //            if (currentQuest.acceptedCharacters.Count > 0) {
     //                for (int j = 0; j < currentQuest.acceptedCharacters.Count; j++) {
-    //                    ECS.Character currCharacter = currentQuest.acceptedCharacters[j];
+    //                    Character currCharacter = currentQuest.acceptedCharacters[j];
     //                    questSummary += "\n" + currCharacter.urlName + " (" + currCharacter.currentQuestPhase.phaseName + ")";
     //                }
     //            } else {
@@ -1059,7 +1068,7 @@ public class UIManager : MonoBehaviour {
         //        //    questSummary += "Needed Resources: ";
         //        //    neededResources.ForEach(x => questSummary += x.resource.ToString() + " - " + x.amount.ToString() + "\n");
         //        //}
-        //        //List<ECS.Character> characters = currQuest.GetAcceptedCharacters();
+        //        //List<Character> characters = currQuest.GetAcceptedCharacters();
         //        //for (int j = 0; j < characters.Count; j++) {
         //        //    questSummary += "       " + characters[j].urlName + "\n";
         //        //}
@@ -1081,6 +1090,62 @@ public class UIManager : MonoBehaviour {
     }
     private void OnHoverOutTile(HexTile tile) {
         currentTileHovered = null;
+    }
+    #endregion
+
+    #region Player
+    public void ShowPlayerPicker() {
+        playerPickerGO.SetActive(true);
+    }
+    public void HidePlayerPicker() {
+        playerPickerGO.SetActive(false);
+    }
+    public void OnClickOkPlayerPicker() {
+        PlayerManager.Instance.player.OnOkPlayerPicker();
+        HidePlayerPicker();
+    }
+    public void OnClickClosePlayerPicker() {
+        HidePlayerPicker();
+    }
+    public void PopulatePlayerItemsInPicker() {
+        List<Item> items = PlayerManager.Instance.player.items;
+        int length = items.Count;
+        if(currentActivePlayerPickerButtons.Count > items.Count) {
+            length = currentActivePlayerPickerButtons.Count;
+        }
+        for (int i = 0; i < length; i++) {
+            if(i >= items.Count) {
+                currentActivePlayerPickerButtons[i].gameObject.SetActive(false);
+            }else if (i >= currentActivePlayerPickerButtons.Count) {
+                CreatePlayerPickerButton(items[i]);
+            } else {
+                currentActivePlayerPickerButtons[i].gameObject.SetActive(true);
+                currentActivePlayerPickerButtons[i].SetPlayerPicker(items[i]);
+            }
+        }
+    }
+    public void PopulatePlayerIntelsInPicker() {
+        List<Intel> intels = PlayerManager.Instance.player.intels;
+        int length = intels.Count;
+        if (currentActivePlayerPickerButtons.Count > intels.Count) {
+            length = currentActivePlayerPickerButtons.Count;
+        }
+        for (int i = 0; i < length; i++) {
+            if (i >= intels.Count) {
+                currentActivePlayerPickerButtons[i].gameObject.SetActive(false);
+            } else if (i >= currentActivePlayerPickerButtons.Count) {
+                CreatePlayerPickerButton(intels[i]);
+            } else {
+                currentActivePlayerPickerButtons[i].gameObject.SetActive(true);
+                currentActivePlayerPickerButtons[i].SetPlayerPicker(intels[i]);
+            }
+        }
+    }
+    private void CreatePlayerPickerButton(IPlayerPicker playerPicker) {
+        GameObject go = GameObject.Instantiate(playerPickerButtonPrefab, playerPickerContentTransform);
+        PlayerPickerButton playerPickerButton = go.GetComponent<PlayerPickerButton>();
+        playerPickerButton.SetPlayerPicker(playerPicker);
+        currentActivePlayerPickerButtons.Add(playerPickerButton);
     }
     #endregion
 }
