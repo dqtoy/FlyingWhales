@@ -30,9 +30,11 @@ public class MessageBox : MonoBehaviour {
         if (mode == MESSAGE_BOX.YES_NO) {
             yesNoGO.SetActive(true);
             okGO.SetActive(false);
+            cancelBtn.gameObject.SetActive(false);
         } else if (mode == MESSAGE_BOX.OK) {
             yesNoGO.SetActive(false);
             okGO.SetActive(true);
+            cancelBtn.gameObject.SetActive(false);
         }
         yesBtn.onClick.RemoveAllListeners();
         noBtn.onClick.RemoveAllListeners();

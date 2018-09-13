@@ -37,7 +37,7 @@ namespace worldcreator {
             CharacterManager.Instance.RemoveCharacter(_character);
         }
         public void SetLocation() {
-            List<HexTile> choices = new List<HexTile>(WorldCreatorManager.Instance.selectionComponent.selection);
+            List<HexTile> choices = new List<HexTile>(WorldCreatorManager.Instance.selectionComponent.nonOuterSelection);
             HexTile chosenTile = choices[Random.Range(0, choices.Count)];
             if (chosenTile.landmarkOnTile != null) {
                 chosenTile.landmarkOnTile.AddCharacterToLocation(_character.party);
@@ -50,7 +50,7 @@ namespace worldcreator {
             }
         }
         public void SetHome() {
-            List<HexTile> choices = new List<HexTile>(WorldCreatorManager.Instance.selectionComponent.selection);
+            List<HexTile> choices = new List<HexTile>(WorldCreatorManager.Instance.selectionComponent.nonOuterSelection);
             //for (int i = 0; i < WorldCreatorManager.Instance.selectionComponent.selection.Count; i++) {
             //    HexTile currTile = WorldCreatorManager.Instance.selectionComponent.selection[i];
             //    if (currTile.areaOfTile != null && !choices.Contains(currTile.areaOfTile)) {
@@ -75,7 +75,7 @@ namespace worldcreator {
                 setHomeBtn.interactable = true;
             }
 
-            if (WorldCreatorManager.Instance.selectionComponent.selection.Count == 0) {
+            if (WorldCreatorManager.Instance.selectionComponent.nonOuterSelection.Count == 0) {
                 setLocationBtn.interactable = false;
             } else {
                 setLocationBtn.interactable = true;

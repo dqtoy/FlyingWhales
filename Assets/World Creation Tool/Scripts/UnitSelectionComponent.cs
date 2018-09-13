@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -8,6 +9,7 @@ namespace worldcreator {
     public class UnitSelectionComponent : MonoBehaviour {
         bool isSelecting = false;
         Vector2 originDragMousePosition;
+        Vector2 originDragWorldPosition;
         [SerializeField] private List<HexTile> highlightedTiles = new List<HexTile>();
 
         private HexTile dragStartTile;
@@ -15,6 +17,9 @@ namespace worldcreator {
         #region getters/setters
         public List<HexTile> selection {
             get { return highlightedTiles; }
+        }
+        public List<HexTile> nonOuterSelection {
+            get { return highlightedTiles.Where(x => !WorldCreatorManager.Instance.outerGridList.Contains(x)).ToList(); }
         }
         public List<Region> selectedRegions {
             get { return GetSelectedRegions(); }
@@ -34,67 +39,40 @@ namespace worldcreator {
             Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OUT, OnHoverOutTile);
         }
 
-        public void OnDragStart() {
-            //ClearSelectedTiles();
-            dragStartTile = null;
-            isSelecting = true;
-            originDragMousePosition = Input.mousePosition;
-            Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(worldPos, Vector2.up, 0.1f, LayerMask.GetMask("Hextiles"));
-            if (hit.collider != null) {
-                HexTile hitTile = hit.collider.GetComponent<HexTile>();
-                if (hitTile != null) {
-                    dragStartTile = hitTile;
-                    //Debug.Log("Drag Started " + dragStartTile.name);
-                }
-            }
-        }
-        public void Dragging() {
-            if (isSelecting) {
-                Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                RaycastHit2D hit = Physics2D.Raycast(worldPos, Vector2.up, 0.1f, LayerMask.GetMask("Hextiles"));
-                if (hit.collider != null) {
-                    HexTile hitTile = hit.collider.GetComponent<HexTile>();
-                    if (dragStartTile == null) {
-                        dragStartTile = hitTile;
-                        //Debug.Log("Drag Started " + dragStartTile.name);
-                        return;
-                    }
-                    
-                    //Debug.Log("Dragging on " + hitTile.name);
-                    if (hitTile != null && hitTile.id != dragStartTile.id) {
-                        ClearSelectedTiles();
-                        List<HexTile> selected = GetSelection(dragStartTile, hitTile);
-                        for (int i = 0; i < selected.Count; i++) {
-                            HexTile currTile = selected[i];
-                            currTile.HighlightTile(Color.gray, 128f/255f);
-                            AddToHighlightedTiles(currTile);
-                        }
-                    }
-                }
-            }
-        }
-        public void OnDragEnd() {
-            //Debug.Log("Drag Ended");
-            isSelecting = false;
-        }
-        //public void Drag(BaseEventData data) {
-        //    Debug.Log("Dragging");
-        //}
 
         private void Update() {
             if (WorldCreatorManager.Instance.selectionMode == SELECTION_MODE.RECTANGLE && !WorldCreatorUI.Instance.IsMouseOnUI()) {
                 // If we press the left mouse button, save mouse location and begin selection
                 if (Input.GetMouseButtonDown(0)) {
-                    //isSelecting = true;
-                    //originDragPosition = Input.mousePosition;
-                    OnDragStart();
+                    isSelecting = true;
+                    originDragMousePosition = Input.mousePosition;
+                    originDragWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 }
                 // If we let go of the left mouse button, end selection
                 if (Input.GetMouseButtonUp(0)) {
-                    OnDragEnd();
+                    isSelecting = false;
                 }
             }
+
+            if (isSelecting) {
+                ClearSelectedTiles();
+                Collider2D[] colliders = Physics2D.OverlapAreaAll(originDragWorldPosition, Camera.main.ScreenToWorldPoint(Input.mousePosition), LayerMask.GetMask("Hextiles"));
+                for (int i = 0; i < colliders.Length; i++) {
+                    Collider2D currCollider = colliders[i];
+                    HexTile tile = currCollider.gameObject.GetComponent<HexTile>();
+                    if (tile != null) {
+                        AddToHighlightedTiles(tile);
+                        //tile.HighlightTile(Color.gray, 128f/255f);
+                    }
+                }
+            }
+
+            //if (Input.GetKeyDown(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.A)) {
+            //    //select all
+            //    Debug.Log("Select All");
+            //    ClearSelectedTiles();
+            //    AddToHighlightedTiles(WorldCreatorManager.Instance.allTiles);
+            //}
 
             if (Input.GetKeyDown(KeyCode.Escape)) {
                 ClearSelectedTiles();
@@ -110,11 +88,13 @@ namespace worldcreator {
 
         private void OnGUI() {
             if (isSelecting) {
-                // Create a rect from both mouse positions
+                //Draw the selection rectangle
                 var rect = Utilities.GetScreenRect(originDragMousePosition, Input.mousePosition);
                 Utilities.DrawScreenRect(rect, new Color(0.8f, 0.8f, 0.95f, 0.25f));
                 Utilities.DrawScreenRectBorder(rect, 2, new Color(0.8f, 0.8f, 0.95f));
-                Dragging();
+
+                
+                //Dragging();
                 //List<HexTile> selectedTiles = new List<HexTile>(highlightedTiles);
                 //ClearSelectedTiles();
                 //for (int i = 0; i < selectedTiles.Count; i++) {
@@ -185,7 +165,9 @@ namespace worldcreator {
                     tile.HighlightTile(Color.grey, 128f/255f);
                     break;
                 case SELECTION_MODE.REGION:
-                    tile.region.HighlightRegion(Color.grey, 128/255f);
+                    if (tile.region != null) {
+                        tile.region.HighlightRegion(Color.grey, 128/255f);
+                    }
                     break;
                 default:
                     break;
@@ -200,7 +182,9 @@ namespace worldcreator {
                     }
                     break;
                 case SELECTION_MODE.REGION:
-                    tile.region.UnhighlightRegion();
+                    if (tile.region != null) {
+                        tile.region.UnhighlightRegion();
+                    }
                     break;
                 default:
                     break;

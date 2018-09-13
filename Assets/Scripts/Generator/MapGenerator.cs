@@ -119,7 +119,7 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.LoadRegions(data);
         st.Stop();
 
-        GridMap.Instance.GenerateOuterGrid();
+        GridMap.Instance.GenerateOuterGrid(data);
         //GridMap.Instance.DivideOuterGridRegions();
 
         Biomes.Instance.LoadPassableStates(GridMap.Instance.hexTiles, GridMap.Instance.outerGridList);

@@ -7,6 +7,7 @@ public class WorldSaveData {
     public int width;
     public int height;
     public List<HexTileData> tilesData;
+    public List<HexTileData> outerGridTilesData;
     public List<RegionSaveData> regionsData;
     public List<FactionSaveData> factionsData;
     public List<LandmarkSaveData> landmarksData;
@@ -17,6 +18,7 @@ public class WorldSaveData {
     public byte[] pathfindingSettings;
 
     private Dictionary<int, HexTileData> tileDictionary;
+    private Dictionary<int, HexTileData> outerTileDictionary;
 
     public WorldSaveData(int width, int height) {
         this.width = width;
@@ -28,6 +30,13 @@ public class WorldSaveData {
         for (int i = 0; i < tiles.Count; i++) {
             HexTile currTile = tiles[i];
             tilesData.Add(currTile.data);
+        }
+    }
+    public void OccupyOuterTileData(List<HexTile> outerTiles) {
+        outerGridTilesData = new List<HexTileData>();
+        for (int i = 0; i < outerTiles.Count; i++) {
+            HexTile currTile = outerTiles[i];
+            outerGridTilesData.Add(currTile.data);
         }
     }
     public void OccupyRegionData(List<Region> regions) {
@@ -120,6 +129,20 @@ public class WorldSaveData {
             }
         } else {
             return tileDictionary[tileID];
+        }
+        return null;
+    }
+
+    public HexTileData GetOuterTileData(int tileID) {
+        if (outerTileDictionary == null) {
+            for (int i = 0; i < outerGridTilesData.Count; i++) {
+                HexTileData currData = outerGridTilesData[i];
+                if (currData.id == tileID) {
+                    return currData;
+                }
+            }
+        } else {
+            return outerTileDictionary[tileID];
         }
         return null;
     }
