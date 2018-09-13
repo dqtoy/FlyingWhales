@@ -101,6 +101,7 @@ namespace ECS {
 
         public CharacterSchedule dailySchedule { get; private set; }
         public Quest currentQuest { get; private set; }
+        public CharacterEventSchedule eventSchedule { get; private set; }
 
         #region getters / setters
         public string firstName {
@@ -482,6 +483,7 @@ namespace ECS {
             //previousActions = new Dictionary<CharacterTask, string>();
             _relationships = new Dictionary<Character, Relationship>();
             _genericWorkAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.WORKING);
+            
             //_actionData = new ActionData(this);
 
 
@@ -499,6 +501,7 @@ namespace ECS {
             _equippedItems = new List<Item>();
             _inventory = new List<Item>();
             combatHistory = new Dictionary<int, Combat>();
+            eventSchedule = new CharacterEventSchedule();
 
             GetRandomCharacterColor();
             ConstructDefaultMiscActions();
@@ -2043,7 +2046,7 @@ namespace ECS {
         }
         public void OnRemovedFromParty() {
             SetCurrentParty(_ownParty); //set the character's party to it's own party
-            _ownParty.actionData.EndAction();
+            _ownParty.actionData.currentAction.EndAction(_ownParty, _ownParty.actionData.currentTargetObject);
         }
         public void OnAddedToParty() {
             if (this.currentParty.id != _ownParty.id) {
@@ -2257,12 +2260,12 @@ namespace ECS {
             _characterColor = color;
             _characterColorCode = ColorUtility.ToHtmlStringRGBA(_characterColor).Substring(0, 6);
         }
-        public void EverydayAction() {
-            if (onDailyAction != null) {
-                onDailyAction();
-            }
-            CheckForPPDeath();
-        }
+        //public void EverydayAction() {
+        //    if (onDailyAction != null) {
+        //        onDailyAction();
+        //    }
+        //    CheckForPPDeath();
+        //}
         //public void AdvertiseSelf(ActionThread actionThread) {
         //    if(actionThread.character.id != this.id && _currentRegion.id == actionThread.character.party.currentRegion.id) {
         //        actionThread.AddToChoices(_characterObject);
@@ -3195,7 +3198,11 @@ namespace ECS {
             int deadlineTick = this.dailySchedule.currentPhase.startTick + 6; //start of work phase + 1 hour(6 ticks)
             GameDate today = GameManager.Instance.Today();
             if (today.hour > deadlineTick) {
-                return false; //this character cannot reach work on time
+                if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.WORK && this.specificLocation.tileLocation.id == workplace.tileLocation.id) {
+                    return true; //the characters previous action phase type was from work and he/she is already at their workplace
+                } else {
+                    return false; //this character cannot reach work on time
+                }
             } else {
                 List<HexTile> pathToWorkplace = PathGenerator.Instance.GetPath(this.specificLocation, this.workplace, PATHFINDING_MODE.PASSABLE);
                 int tileDistance = pathToWorkplace.Count;
@@ -3213,6 +3220,19 @@ namespace ECS {
              */
         public int GetWorkDeadlineTick() {
             return this.dailySchedule.currentPhase.startTick + 6; //start of work phase + 1 hour(6 ticks)
+        }
+        #endregion
+
+        #region Event Schedule
+        public void AddScheduledAction(GameDate date, CharacterAction action, IObject targetObject) {
+            eventSchedule.AddElement(date, new EventAction(action, targetObject));
+            //TODO: Add checking for if an action has already been scheduled for the specified date.
+        }
+        public bool HasEventScheduled(GameDate date) {
+            return eventSchedule.HasScheduledAction(date);
+        }
+        public EventAction GetScheduledEventAction(GameDate date) {
+            return eventSchedule[date];
         }
         #endregion
 

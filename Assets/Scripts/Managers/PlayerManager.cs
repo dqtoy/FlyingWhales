@@ -4,10 +4,10 @@ using UnityEngine;
 using ECS;
 
 public class PlayerManager : MonoBehaviour {
-
     public static PlayerManager Instance = null;
-    public bool isChoosingStartingTile = false;
 
+    public int totalLifestonesInWorld;
+    public bool isChoosingStartingTile = false;
     public Player player = null;
     public Character playerCharacter;
 
@@ -59,6 +59,12 @@ public class PlayerManager : MonoBehaviour {
         //LandmarkManager.Instance.CreateNewArea(tile, AREA_TYPE.DEMONIC_INTRUSION);
     }
 
+    public void PurchaseTile(HexTile tile) {
+        if(player.lifestones > 0) {
+            player.AdjustLifestone(-1);
+            AddTileToPlayerArea(tile);
+        }
+    }
     public void AddTileToPlayerArea(HexTile tile) {
         player.playerArea.AddTile(tile);
         tile.SetCorruption(true);
@@ -97,6 +103,10 @@ public class PlayerManager : MonoBehaviour {
                 break;
         }
         Messenger.Broadcast(Signals.PLAYER_LANDMARK_CREATED, newLandmark);
+    }
+
+    public void AdjustTotalLifestones(int amount) {
+        totalLifestonesInWorld += amount;
     }
 
     #region Snatch

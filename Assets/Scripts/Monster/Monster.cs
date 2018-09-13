@@ -501,9 +501,9 @@ public class Monster : ICharacter, ICharacterSim {
     public void ResetToFullSP() {
         AdjustSP(_maxSP);
     }
-    public void EverydayAction() {
-        //No daily/tick action
-    }
+    //public void EverydayAction() {
+    //    //No daily/tick action
+    //}
     public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
         this._homeLandmark = newHomeLandmark;
     }

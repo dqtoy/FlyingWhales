@@ -35,6 +35,7 @@ public class BaseLandmark : ILocation {
     private List<HexTile> _wallTiles;
     public bool hasAdjacentCorruptedLandmark;
     private int _civilianCount;
+    private Item _currentlySelectedItemInLandmark;
     public QuestBoard questBoard { get; private set; }
 
     #region getters/setters
@@ -121,6 +122,9 @@ public class BaseLandmark : ILocation {
     }
     public int civilianCount {
         get { return _civilianCount; }
+    }
+    public Item currentlySelectedItemInLandmark {
+        get { return _currentlySelectedItemInLandmark; }
     }
     #endregion
 
@@ -548,6 +552,9 @@ public class BaseLandmark : ILocation {
 		}
 		return false;
 	}
+    public void SetCurrentlySelectedItemInLandmark(Item item) {
+        _currentlySelectedItemInLandmark = item;
+    }
     #endregion
 
 	#region Traces

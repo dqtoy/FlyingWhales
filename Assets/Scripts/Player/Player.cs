@@ -14,10 +14,14 @@ public class Player : ILeader{
     private int _redMagic;
     private int _blueMagic;
     private int _greenMagic;
+    private int _lifestones;
+    private float _currentLifestoneChance;
     private Intel _currentlySelectedIntel;
+    private Item _currentlySelectedItem;
     private List<CharacterAction> _actions;
     private List<Character> _snatchedCharacters;
     private List<Intel> _intels;
+    private List<Item> _items;
 
     //#region getters/setters
     //public Area playerArea {
@@ -44,6 +48,12 @@ public class Player : ILeader{
     public int threatLevel {
         get { return _threatLevel; }
     }
+    public int lifestones {
+        get { return _lifestones; }
+    }
+    public float currentLifestoneChance {
+        get { return _currentLifestoneChance; }
+    }
     public Intel currentlySelectedIntel {
         get { return _currentlySelectedIntel; }
     }
@@ -59,16 +69,23 @@ public class Player : ILeader{
         _corruption = 0;
         playerArea = null;
         snatchCredits = 0;
+        _snatchedCharacters = new List<ECS.Character>();
+        _intels = new List<Intel>();
+        _items = new List<Item>();
         SetRedMagic(50);
         SetBlueMagic(50);
         SetGreenMagic(50);
         SetThreatLevel(20);
-        _snatchedCharacters = new List<ECS.Character>();
-        _intels = new List<Intel>();
+        SetCurrentLifestoneChance(25f);
         //Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_ADDED, OnTileAddedToPlayerArea);
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
         Messenger.AddListener<Character>(Signals.CHARACTER_RELEASED, OnCharacterReleased);
+        Messenger.AddListener(Signals.HOUR_STARTED, EverydayAction);
         //ConstructPlayerActions();
+    }
+
+    private void EverydayAction() {
+        DepleteThreatLevel();
     }
 
     #region Corruption
@@ -242,6 +259,9 @@ public class Player : ILeader{
         _threatLevel += amount;
         _threatLevel = Mathf.Clamp(_threatLevel, 0, 100);
     }
+    private void DepleteThreatLevel() {
+        AdjustThreatLevel(-1);
+    }
     #endregion
 
     #region Intel
@@ -257,10 +277,52 @@ public class Player : ILeader{
         //TODO
     }
     private void GiveIntelToCharacter(Character character, ShareIntel shareIntelAbility) {
-        if (character.intelReactions.ContainsKey(_currentlySelectedIntel.id)) {
+        if (_currentlySelectedIntel != null && character.intelReactions.ContainsKey(_currentlySelectedIntel.id)) {
             GameEvent gameEvent = EventManager.Instance.AddNewEvent(character.intelReactions[_currentlySelectedIntel.id]);
             shareIntelAbility.HasGivenIntel(character);
+            _currentlySelectedIntel = null;
         }
+    }
+    #endregion
+
+    #region Items
+    public void AddItem(Item item) {
+        _items.Add(item);
+    }
+    public bool RemoveItem(Item item) {
+        return _items.Remove(item);
+    }
+    public void PickItemToGiveToCharacter(Character character, GiveItem giveItemAbility) {
+        //TODO
+    }
+    private void GiveItemToCharacter(Character character, GiveItem giveItemAbility) {
+        if(_currentlySelectedItem != null) {
+            character.PickupItem(_currentlySelectedItem);
+            RemoveItem(_currentlySelectedItem);
+            giveItemAbility.HasGivenItem(character);
+            _currentlySelectedItem = null;
+        }
+    }
+    #endregion
+
+    #region Lifestone
+    public void DecreaseLifestoneChance() {
+        if(_currentLifestoneChance > 2f) {
+            float decreaseRate = 5f;
+            if(_currentLifestoneChance <= 15f) {
+                decreaseRate = 1f;
+            }
+            _currentLifestoneChance -= decreaseRate;
+        }
+    }
+    public void SetCurrentLifestoneChance(float amount) {
+        _currentLifestoneChance = amount;
+    }
+    public void SetLifestone(int amount) {
+        _lifestones = amount;
+    }
+    public void AdjustLifestone(int amount) {
+        _lifestones += amount;
     }
     #endregion
 }

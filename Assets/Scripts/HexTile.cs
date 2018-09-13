@@ -1339,7 +1339,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         ContextMenuSettings settings = new ContextMenuSettings();
         if ((this.areaOfTile == null || this.areaOfTile.id != PlayerManager.Instance.player.playerArea.id) && this.landmarkOnTile == null && this.isPassable && IsAdjacentToPlayerArea()) {
             ContextMenuItemSettings purchaseTileItem = new ContextMenuItemSettings("Purchase Tile");
-            purchaseTileItem.onClickAction += () => PlayerManager.Instance.AddTileToPlayerArea(this);
+            purchaseTileItem.onClickAction += () => PlayerManager.Instance.PurchaseTile(this);
             settings.AddMenuItem(purchaseTileItem);
         }
         if (this.areaOfTile != null && this.areaOfTile.id == PlayerManager.Instance.player.playerArea.id && this.landmarkOnTile == null) {
