@@ -34,17 +34,25 @@ namespace worldcreator {
             createNewAreaBtn.interactable = false;
             WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "New Area Creation", "Pick a core tile for the new area");
             WorldCreatorManager.Instance.selectionComponent.ClearSelectedTiles();
+            WorldCreatorManager.Instance.SetSelectionMode(SELECTION_MODE.TILE);
             //List<HexTile> validSelectedTiles = new List<HexTile>(WorldCreatorManager.Instance.selectionComponent.selection.Where(x => x.isPassable));
             //HexTile coreTile = validSelectedTiles[UnityEngine.Random.Range(0, validSelectedTiles.Count)];
             //AREA_TYPE chosenAreaType = (AREA_TYPE)Enum.Parse(typeof(AREA_TYPE), areaTypeDropdown.options[areaTypeDropdown.value].text);
             //LandmarkManager.Instance.CreateNewArea(coreTile, chosenAreaType, validSelectedTiles);
         }
         private void CreateNewArea(HexTile coreTile) {
+            if (WorldCreatorManager.Instance.outerGridList.Contains(coreTile)) {
+                WorldCreatorManager.Instance.selectionComponent.ClearSelectedTiles();
+                WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Area Creation Error", "Core tile must not be part of outer grid!");
+                return;
+            }
             if (!coreTile.isPassable) {
+                WorldCreatorManager.Instance.selectionComponent.ClearSelectedTiles();
                 WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Area Creation Error", "Core tile must be passable!");
                 return;
             }
             if (coreTile.areaOfTile != null) {
+                WorldCreatorManager.Instance.selectionComponent.ClearSelectedTiles();
                 WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Area Creation Error", "That tile is already part of an existing area!");
                 return;
             }

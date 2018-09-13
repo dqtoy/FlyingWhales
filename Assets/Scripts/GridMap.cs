@@ -146,6 +146,8 @@ public class GridMap : MonoBehaviour {
         float newX = xOffset * (int)(newWidth / 2);
         float newY = yOffset * (int)(newHeight / 2);
 
+        int id = 0;
+
         outerGridList = new List<HexTile>();
         _borderParent.transform.localPosition = new Vector2(-newX, -newY);
         for (int x = 0; x < newWidth; x++) {
@@ -166,6 +168,7 @@ public class GridMap : MonoBehaviour {
                 hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
                 HexTile currHex = hex.GetComponent<HexTile>();
                 currHex.Initialize();
+                currHex.data.id = id;
                 currHex.data.tileName = hex.name;
                 currHex.data.xCoordinate = x - _borderThickness;
                 currHex.data.yCoordinate = y - _borderThickness;
@@ -212,9 +215,53 @@ public class GridMap : MonoBehaviour {
                 currHex.DisableColliders();
                 currHex.unpassableGO.GetComponent<PolygonCollider2D>().enabled = true;
                 currHex.unpassableGO.SetActive(true);
+                id++;
             }
         }
 
+        //outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(outerGrid, true));
+    }
+    internal void GenerateOuterGrid(WorldSaveData data) {
+        if (data.outerGridTilesData == null) {
+            GenerateOuterGrid(); //generate default outer grid
+            return;
+        }
+        int newWidth = (int)width + (_borderThickness * 2);
+        int newHeight = (int)height + (_borderThickness * 2);
+
+        float newX = xOffset * (int)(newWidth / 2);
+        float newY = yOffset * (int)(newHeight / 2);
+
+        outerGridList = new List<HexTile>();
+        int id = 0;
+        _borderParent.transform.localPosition = new Vector2(-newX, -newY);
+        for (int x = 0; x < newWidth; x++) {
+            for (int y = 0; y < newHeight; y++) {
+                if ((x >= _borderThickness && x < newWidth - _borderThickness) && (y >= _borderThickness && y < newHeight - _borderThickness)) {
+                    continue;
+                }
+                float xPosition = x * xOffset;
+
+                float yPosition = y * yOffset;
+                if (y % 2 == 1) {
+                    xPosition += xOffset / 2;
+                }
+
+                GameObject hex = GameObject.Instantiate(goHex) as GameObject;
+                hex.transform.SetParent(_borderParent.transform);
+                hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
+                hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
+                HexTile currHex = hex.GetComponent<HexTile>();
+                currHex.Initialize();
+                currHex.data = data.GetOuterTileData(id);
+                currHex.data.xCoordinate = x - _borderThickness;
+                currHex.data.yCoordinate = y - _borderThickness;
+
+                outerGridList.Add(currHex);
+                id++;
+            }
+        }
+        Biomes.Instance.UpdateTileVisuals(outerGridList);
         //outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(outerGrid, true));
     }
     //public void GenerateNeighboursWithSameTag() {

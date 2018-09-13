@@ -69,6 +69,9 @@ namespace worldcreator {
             List<HexTile> validSelectedTiles = new List<HexTile>();
             for (int i = 0; i < WorldCreatorManager.Instance.selectionComponent.selection.Count; i++) {
                 HexTile currTile = WorldCreatorManager.Instance.selectionComponent.selection[i];
+                if (WorldCreatorManager.Instance.outerGridList.Contains(currTile)) {
+                    continue; //skip, the current tile is part of the outer grid
+                }
                 //if (!currTile.isPassable || currTile.areaOfTile != null) {
                 //    continue;//skip
                 //}
