@@ -611,6 +611,7 @@ public enum ATTRIBUTE{
     BELLIGERENT,
     HUMAN,
     STALKER,
+    SPOOKED,
 }
 public enum PRODUCTION_TYPE{
 	WEAPON,

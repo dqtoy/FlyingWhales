@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace ECS{
-	public class Item : EntityComponent {
+	public class Item : EntityComponent, IPlayerPicker {
         public ITEM_TYPE itemType;
 		public string itemName;
 		public string description;
@@ -20,6 +20,9 @@ namespace ECS{
         //protected TaskCreator _possessor; //Not included in CreateNewCopy
 
         #region getters/setters
+        public string thisName {
+            get { return itemName; }
+        }
         public bool isEquipped{
 			get { return _isEquipped; }
 		}

@@ -1875,6 +1875,8 @@ namespace ECS {
                 return new Royalty();
                 case ATTRIBUTE.STALKER:
                 return new Stalker();
+                case ATTRIBUTE.SPOOKED:
+                return new Spooked();
             }
             return null;
         }
@@ -2006,6 +2008,7 @@ namespace ECS {
         public bool RemoveAttribute(ATTRIBUTE attribute) {
             for (int i = 0; i < _attributes.Count; i++) {
                 if(_attributes[i].attribute == attribute) {
+                    _attributes[i].OnRemoveAttribute();
                     _attributes.RemoveAt(i);
                     return true;
                 }
@@ -2013,7 +2016,12 @@ namespace ECS {
             return false;
         }
         public bool RemoveAttribute(Attribute attribute) {
-            return _attributes.Remove(attribute);
+            Attribute attributeToBeRemoved = attribute;
+            if (_attributes.Remove(attribute)) {
+                attributeToBeRemoved.OnRemoveAttribute();
+                return true;
+            }
+            return false;
         }
         #endregion
 

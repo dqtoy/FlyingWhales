@@ -20,6 +20,7 @@ public class ActionData {
     private bool _isHalted;
     private bool _hasDoneActionAtHome;
     private bool _cannotPerformAction;
+    private bool _isBeingAssistedByPlayer;
     private float _homeMultiplier;
 
     public GameEvent eventConnectedWithAction { get; private set; } //the event that this party's current action is from
@@ -39,6 +40,9 @@ public class ActionData {
     }
     public bool isNotFirstEncounter {
         get { return _isNotFirstEncounter; }
+    }
+    public bool isBeingAssistedByPlayer {
+        get { return _isBeingAssistedByPlayer; }
     }
     #endregion
 
@@ -71,6 +75,7 @@ public class ActionData {
         this.isWaiting = false;
         this._isNotFirstEncounter = false;
         SetQuestAssociatedWithAction(null);
+        _isBeingAssistedByPlayer = false;
     }
 
     public void SetSpecificTarget(object target) {
@@ -157,6 +162,9 @@ public class ActionData {
     }
     public void SetCannotPerformAction(bool state) {
         _cannotPerformAction = state;
+    }
+    public void SetIsBeingAssisted(bool state) {
+        _isBeingAssistedByPlayer = true;
     }
     private void AdjustCurrentDay(int amount) {
         this.currentDay += amount;
