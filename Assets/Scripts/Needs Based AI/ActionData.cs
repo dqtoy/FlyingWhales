@@ -20,6 +20,7 @@ public class ActionData {
     private bool _isHalted;
     private bool _hasDoneActionAtHome;
     private bool _cannotPerformAction;
+    private bool _isBeingAssistedByPlayer;
     private float _homeMultiplier;
 
     public bool isCurrentActionFromEvent { get { return false; }} //TODO: change this to actually be set if a character's action comes from an event.
@@ -38,6 +39,9 @@ public class ActionData {
     }
     public bool isNotFirstEncounter {
         get { return _isNotFirstEncounter; }
+    }
+    public bool isBeingAssistedByPlayer {
+        get { return _isBeingAssistedByPlayer; }
     }
     #endregion
 
@@ -68,6 +72,7 @@ public class ActionData {
         SetIsDone (false);
         this.isWaiting = false;
         this._isNotFirstEncounter = false;
+        _isBeingAssistedByPlayer = false;
     }
 
     public void SetSpecificTarget(object target) {
@@ -154,6 +159,9 @@ public class ActionData {
     }
     public void SetCannotPerformAction(bool state) {
         _cannotPerformAction = state;
+    }
+    public void SetIsBeingAssisted(bool state) {
+        _isBeingAssistedByPlayer = true;
     }
     private void AdjustCurrentDay(int amount) {
         this.currentDay += amount;

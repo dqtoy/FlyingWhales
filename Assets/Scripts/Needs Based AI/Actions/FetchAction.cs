@@ -9,6 +9,7 @@ public class FetchAction : CharacterAction {
 
     private const int Obtain_Item_Chance = 100;
 
+
     public FetchAction() : base(ACTION_TYPE.FETCH) { }
 
     #region overrides
@@ -18,7 +19,7 @@ public class FetchAction : CharacterAction {
             fetchCooldown--;
 
             if (fetchCooldown == 0) {
-                fetchCooldown = GetFetchCooldown();
+                fetchCooldown = GetFetchCooldown(party);
                 string fetchLog = string.Empty;
                 //check if chance to obtain item is met
                 if (Random.Range(0, 100) < Obtain_Item_Chance) {
@@ -57,12 +58,15 @@ public class FetchAction : CharacterAction {
     }
     public override void OnChooseAction(NewParty iparty, IObject targetObject) {
         base.OnChooseAction(iparty, targetObject);
-        fetchCooldown = GetFetchCooldown();
+        fetchCooldown = GetFetchCooldown(iparty as CharacterParty);
     }
     #endregion
 
-    private int GetFetchCooldown() {
-        return Random.Range(3, 7); //Every 3-6 ticks the party has a chance to obtain an item.
+    private int GetFetchCooldown(CharacterParty party) {
+        if (party.actionData.isBeingAssistedByPlayer) {
+            return Random.Range(3, 6);
+        }
+        return Random.Range(4, 8); //Every 4-7 ticks the party has a chance to obtain an item.
     }
 
     private void CheckForQuestCompletion(CharacterParty party) {
