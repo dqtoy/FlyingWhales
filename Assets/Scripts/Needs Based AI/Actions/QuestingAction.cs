@@ -28,7 +28,7 @@ public class QuestingAction : CharacterAction {
                     if (mainCharacter.squad.squadMembers.Count == mainCharacter.ownParty.icharacters.Count) {
                         //if the character's squad is already complete, do not wait
                         QuestAction questAction = mainCharacter.currentQuest.GetQuestAction(mainCharacter);
-                        party.actionData.ForceDoAction(questAction.action, questAction.targetObject);
+                        party.actionData.ForceDoAction(questAction);
                     } else {
                         //else, wait for 1 hour (6 ticks)
                         party.actionData.ForceDoAction(party.characterObject.currentState.GetAction(ACTION_TYPE.WAIT_FOR_PARTY), party.characterObject);
@@ -53,10 +53,10 @@ public class QuestingAction : CharacterAction {
                     } else {
                         throw new System.Exception(mainCharacter.name + "'s workplace has no quest board!");
                     }
-                } else { //if yes, get action from quest
-                    QuestAction questAction = mainCharacter.currentQuest.GetQuestAction(mainCharacter);
-                    party.actionData.ForceDoAction(questAction.action, questAction.targetObject);
                 }
+                //if yes, get action from quest
+                QuestAction questAction = mainCharacter.currentQuest.GetQuestAction(mainCharacter);
+                party.actionData.ForceDoAction(questAction);
             }
             //give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige
             GiveAllReward(party);

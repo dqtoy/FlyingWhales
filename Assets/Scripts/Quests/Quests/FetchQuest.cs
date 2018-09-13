@@ -23,15 +23,15 @@ public class FetchQuest : Quest {
         if (isQuestDone) {
             //if the quest was finished outside a quest action (eg. character obtained item from other combat), 
             //make the character turn in the quest once he/she chooses to perform a quest action (from this quest)again.
-            character.party.actionData.SetQuestAssociatedWithAction(null);
+            //character.party.actionData.SetQuestAssociatedWithAction(null);
             Debug.Log(this.owner.party.name + " quest is already done. Turning in quest...");
             if (Messenger.eventTable.ContainsKey(Signals.ITEM_OBTAINED)) {
                 Messenger.RemoveListener<Item, Character>(Signals.ITEM_OBTAINED, OnItemObtained);
             }
-            return new QuestAction(character.workplace.landmarkObj.currentState.GetAction(ACTION_TYPE.TURN_IN_QUEST), character.workplace.landmarkObj);
+            return new QuestAction(character.workplace.landmarkObj.currentState.GetAction(ACTION_TYPE.TURN_IN_QUEST), character.workplace.landmarkObj, this);
         } else {
-            QuestAction action = new QuestAction(targetLandmark.landmarkObj.currentState.GetAction(ACTION_TYPE.FETCH), targetLandmark.landmarkObj);
-            character.party.actionData.SetQuestAssociatedWithAction(this);
+            QuestAction action = new QuestAction(targetLandmark.landmarkObj.currentState.GetAction(ACTION_TYPE.FETCH), targetLandmark.landmarkObj, this);
+            //character.party.actionData.SetQuestAssociatedWithAction(this);
             return action;
         }
     }

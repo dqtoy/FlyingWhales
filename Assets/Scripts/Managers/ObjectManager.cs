@@ -307,8 +307,8 @@ public class ObjectManager : MonoBehaviour {
                 return new JoinPartyAction();
             case ACTION_TYPE.GRIND:
                 return new GrindAction();
-            case ACTION_TYPE.MOVE:
-                return new MoveAction();
+            case ACTION_TYPE.MOVE_TO:
+                return new MoveToAction();
             case ACTION_TYPE.READ:
                 return new ReadAction();
             case ACTION_TYPE.PARTY:

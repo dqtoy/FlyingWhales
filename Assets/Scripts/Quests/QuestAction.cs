@@ -6,10 +6,12 @@ public class QuestAction {
     public CharacterAction action;
     public IObject targetObject;
     public float requiredPower;
+    public Quest associatedQuest;
 
-    public QuestAction(CharacterAction action, IObject targetObject, float requiredPower = 0) {
+    public QuestAction(CharacterAction action, IObject targetObject, Quest associatedQuest, float requiredPower = 0) {
         this.action = action;
         this.targetObject = targetObject;
+        this.associatedQuest = associatedQuest;
         this.requiredPower = requiredPower;
     }
 }

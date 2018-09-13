@@ -65,9 +65,9 @@ public class CharacterParty : NewParty {
             if (characterOwner.HasEventScheduled(GameManager.Instance.Today()) && !actionData.isCurrentActionFromEvent) {
                 //the character has an event action scheduled for today, and it's current action is not from an event
                 //queue the next action as the event action
-                EventAction scheduledEventAction = characterOwner.GetScheduledEventAction(GameManager.Instance.Today());
-                characterOwner.AddActionToQueue(scheduledEventAction.action, scheduledEventAction.targetObject);
-                actionData.EndAction(); //end current action after queueing event action
+                GameEvent scheduledEvent = characterOwner.GetScheduledEvent(GameManager.Instance.Today());
+                //characterOwner.AddActionToQueue(scheduledEvent.action, scheduledEvent.targetObject);
+                //actionData.EndAction(); //end current action after queueing event action
             } else {
                 if (onDailyAction != null) {
                     onDailyAction();

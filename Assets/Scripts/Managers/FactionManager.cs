@@ -12,9 +12,11 @@ public class FactionManager : MonoBehaviour {
 
     [Space(10)]
     [Header("Visuals")]
+    [SerializeField] private List<Sprite> _factionEmblems;
+
     [SerializeField] private List<EmblemBG> _emblemBGs;
     [SerializeField] private List<Sprite> _emblemSymbols;
-    [SerializeField] private List<Sprite> usedEmblems = new List<Sprite>();
+    //[SerializeField] private List<Sprite> usedEmblems = new List<Sprite>();
 
     #region getters
     public List<EmblemBG> emblemBGs {
@@ -22,6 +24,9 @@ public class FactionManager : MonoBehaviour {
     }
     public List<Sprite> emblemSymbols {
         get { return _emblemSymbols; }
+    }
+    public List<Sprite> factionEmblems {
+        get { return _factionEmblems; }
     }
     #endregion
 
@@ -52,8 +57,8 @@ public class FactionManager : MonoBehaviour {
     private void CreateNeutralFaction() {
         Faction newFaction = new Faction();
         newFaction.SetName("Neutral");
-        newFaction.SetEmblemBG(GetFactionEmblemBG(0));
-        newFaction.SetEmblemSymbol(GetFactionEmblemSymbol(0));
+        newFaction.SetEmblem(GetFactionEmblem(7));
+        //newFaction.SetEmblemSymbol(GetFactionEmblemSymbol(0));
         allFactions.Add(newFaction);
         neutralFaction = newFaction;
         CreateRelationshipsForFaction(newFaction);
@@ -169,53 +174,63 @@ public class FactionManager : MonoBehaviour {
      * Will return an error if there are no more available emblems.
      * */
     internal Sprite GenerateFactionEmblem(Faction faction) {
-        List<Sprite> emblemsToUse = new List<Sprite>(_emblemSymbols);
-        for (int i = 0; i < emblemsToUse.Count; i++) {
-            Sprite currSprite = emblemsToUse[i];
-            if (!usedEmblems.Contains(currSprite)) {
-                AddEmblemAsUsed(currSprite);
-                return currSprite;
-            }
-        }
-        return _emblemSymbols[Random.Range(0, _emblemSymbols.Count)];
+        //List<Sprite> emblemsToUse = new List<Sprite>(_emblemSymbols);
+        //for (int i = 0; i < emblemsToUse.Count; i++) {
+        //    Sprite currSprite = emblemsToUse[i];
+        //    if (!usedEmblems.Contains(currSprite)) {
+        //        AddEmblemAsUsed(currSprite);
+        //        return currSprite;
+        //    }
+        //}
+        return _factionEmblems[Random.Range(0, _factionEmblems.Count)];
         //throw new System.Exception("There are no more emblems for kingdom: " + faction.name);
     }
-    internal EmblemBG GenerateFactionEmblemBG() {
-        return _emblemBGs[Random.Range(0, _emblemBGs.Count)];
+    //internal Sprite GenerateFactionEmblemBG() {
+    //    return _emblemBGs[Random.Range(0, _emblemBGs.Count)];
+    //}
+    public Sprite GetFactionEmblem(int emblemIndex) {
+        return _factionEmblems[emblemIndex];
+        //for (int i = 0; i < _emblemBGs.Count; i++) {
+        //    EmblemBG currBG = _emblemBGs[i];
+        //    if (currBG.id.Equals(emblemID)) {
+        //        return currBG;
+        //    }
+        //}
+        //throw new System.Exception("There is no emblem bg with id " + emblemID);
     }
-    public EmblemBG GetFactionEmblemBG(int emblemID) {
-        for (int i = 0; i < _emblemBGs.Count; i++) {
-            EmblemBG currBG = _emblemBGs[i];
-            if (currBG.id.Equals(emblemID)) {
-                return currBG;
-            }
-        }
-        throw new System.Exception("There is no emblem bg with id " + emblemID);
-    }
-    internal void AddEmblemAsUsed(Sprite emblem) {
-        if (!usedEmblems.Contains(emblem)) {
-            usedEmblems.Add(emblem);
-        } else {
-            throw new System.Exception("Emblem " + emblem.name + " is already being used!");
-        }
-    }
-    internal void RemoveEmblemAsUsed(Sprite emblem) {
-        usedEmblems.Remove(emblem);
-    }
-    public int GetEmblemSymbolIndex(Sprite symbol) {
-        if (symbol != null) {
-            for (int i = 0; i < _emblemSymbols.Count; i++) {
-                Sprite currSymbol = _emblemSymbols[i];
-                if (currSymbol == symbol) {
-                    return i;
-                }
+    public int GetFactionEmblemIndex(Sprite emblem) {
+        for (int i = 0; i < _factionEmblems.Count; i++) {
+            Sprite currSprite = _factionEmblems[i];
+            if (currSprite.name == emblem.name) {
+                return i;
             }
         }
         return -1;
     }
-    public Sprite GetFactionEmblemSymbol(int index) {
-        return _emblemSymbols[index];
-    }
+    //internal void AddEmblemAsUsed(Sprite emblem) {
+    //    if (!usedEmblems.Contains(emblem)) {
+    //        usedEmblems.Add(emblem);
+    //    } else {
+    //        throw new System.Exception("Emblem " + emblem.name + " is already being used!");
+    //    }
+    //}
+    //internal void RemoveEmblemAsUsed(Sprite emblem) {
+    //    usedEmblems.Remove(emblem);
+    //}
+    //public int GetEmblemSymbolIndex(Sprite symbol) {
+    //    if (symbol != null) {
+    //        for (int i = 0; i < _emblemSymbols.Count; i++) {
+    //            Sprite currSymbol = _emblemSymbols[i];
+    //            if (currSymbol == symbol) {
+    //                return i;
+    //            }
+    //        }
+    //    }
+    //    return -1;
+    //}
+    //public Sprite GetFactionEmblemSymbol(int index) {
+    //    return _emblemSymbols[index];
+    //}
     #endregion
 
     #region Characters
