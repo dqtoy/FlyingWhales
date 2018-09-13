@@ -57,8 +57,4 @@ public class MaterialManager : MonoBehaviour {
                 return false;
         }
     }
-    public TECHNOLOGY GetNeededTechnologyForMaterialStructure(MATERIAL material) {
-        Construction constructionData = GetConstructionDataForMaterial(material);
-        return constructionData.technology;
-    }
 }

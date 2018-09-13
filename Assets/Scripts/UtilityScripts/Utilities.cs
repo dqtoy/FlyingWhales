@@ -153,30 +153,6 @@ public class Utilities : MonoBehaviour {
     public static Color lightGreen = new Color(124f / 255f, 252f / 255f, 0f / 255f);
     public static Color darkRed = new Color(139f / 255f, 0f / 255f, 0f / 255f);
     public static Color lightRed = new Color(255f / 255f, 0f / 255f, 0f / 255f);
-    public static Color GetColorForTrait(TRAIT trait) {
-        switch (trait) {
-            case TRAIT.CHARISMATIC:
-            return darkGreen;
-            case TRAIT.REPULSIVE:
-            return darkRed;
-            case TRAIT.SMART:
-            return darkGreen;
-            case TRAIT.DUMB:
-            return darkRed;
-            case TRAIT.EFFICIENT:
-            return darkGreen;
-            case TRAIT.INEPT:
-            return darkRed;
-            case TRAIT.HOSTILE:
-            return darkRed;
-            //case TRAIT.MILITANT:
-            //    return lightRed;
-            case TRAIT.PACIFIST:
-            return darkGreen;
-            default:
-            return Color.white;
-        }
-    }
     public static Color[] factionColorCycle = new Color[] {
         new Color32(0xDB, 0x00, 0x00, 0x91), // Red DB000091
 		new Color32(0x00, 0x51, 0xF3, 0x91), // Blue 0051F391
@@ -677,29 +653,6 @@ public class Utilities : MonoBehaviour {
     #endregion
 
     #region Weighted Dictionary
-    public static Dictionary<WEIGHTED_ACTION, int> MergeWeightedActionDictionaries(Dictionary<WEIGHTED_ACTION, int> dict1, Dictionary<WEIGHTED_ACTION, int> dict2) {
-        Dictionary<WEIGHTED_ACTION, int> mergedDict = new Dictionary<WEIGHTED_ACTION, int>();
-        foreach (KeyValuePair<WEIGHTED_ACTION, int> kvp in dict1) {
-            WEIGHTED_ACTION currKey = kvp.Key;
-            int currValue = kvp.Value;
-            if (dict2.ContainsKey(currKey)) {
-                currValue += dict2[currKey];
-            }
-            mergedDict.Add(currKey, currValue);
-        }
-        foreach (KeyValuePair<WEIGHTED_ACTION, int> kvp in dict2) {
-            WEIGHTED_ACTION currKey = kvp.Key;
-            int currValue = kvp.Value;
-            if (dict1.ContainsKey(currKey)) {
-                currValue += dict1[currKey];
-            }
-            if (!mergedDict.ContainsKey(currKey)) {
-                mergedDict.Add(currKey, currValue);
-            }
-
-        }
-        return mergedDict;
-    }
     public static Dictionary<T, int> MergeWeightedActionDictionaries<T>(Dictionary<T, int> dict1, Dictionary<T, int> dict2) {
         Dictionary<T, int> mergedDict = new Dictionary<T, int>();
         foreach (KeyValuePair<T, int> kvp in dict1) {
@@ -1460,34 +1413,6 @@ public class Utilities : MonoBehaviour {
             ARMOR_TYPE.BOOT,
             ARMOR_TYPE.BRACER
     };
-    public static TECHNOLOGY GetTechnologyForEquipment(EQUIPMENT_TYPE equipmentType) {
-        switch (equipmentType) {
-            case EQUIPMENT_TYPE.SWORD:
-            return TECHNOLOGY.SWORD_MAKING;
-            case EQUIPMENT_TYPE.DAGGER:
-            return TECHNOLOGY.DAGGER_MAKING;
-            case EQUIPMENT_TYPE.SPEAR:
-            return TECHNOLOGY.SPEAR_MAKING;
-            case EQUIPMENT_TYPE.BOW:
-            return TECHNOLOGY.BOW_MAKING;
-            case EQUIPMENT_TYPE.STAFF:
-            return TECHNOLOGY.STAFF_MAKING;
-            case EQUIPMENT_TYPE.AXE:
-            return TECHNOLOGY.AXE_MAKING;
-            case EQUIPMENT_TYPE.SHIRT:
-            return TECHNOLOGY.CHEST_ARMOR_MAKING;
-            case EQUIPMENT_TYPE.BRACER:
-            return TECHNOLOGY.GLOVE_MAKING;
-            case EQUIPMENT_TYPE.HELMET:
-            return TECHNOLOGY.HELMET_MAKING;
-            case EQUIPMENT_TYPE.LEGGINGS:
-            return TECHNOLOGY.LEGGINGS_MAKING;
-            case EQUIPMENT_TYPE.BOOT:
-            return TECHNOLOGY.BOOT_MAKING;
-            default:
-            throw new Exception("There is no technology for " + equipmentType.ToString());
-        }
-    }
     public static WeightedDictionary<ARMOR_TYPE> weightedArmorTypes;
     public static WeightedDictionary<ARMOR_TYPE> GetWeightedArmorTypes() {
         if (weightedArmorTypes == null) {
