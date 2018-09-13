@@ -8,18 +8,18 @@ public class CharacterSchedulePhase {
     public string phaseName;
     public SCHEDULE_PHASE_TYPE phaseType;
     [Range(1, GameManager.hoursPerDay)] public int startTick;
-    [Range(1, GameManager.hoursPerDay)] public int endTick;
+    //[Range(1, GameManager.hoursPerDay)] public int endTick;
 
-    public int phaseLength {
-        get { return endTick - startTick; }
-    }
+    //public int phaseLength {
+    //    get { return endTick - startTick; }
+    //}
 
     public CharacterSchedulePhase Clone() {
         CharacterSchedulePhase clone = new CharacterSchedulePhase();
         clone.phaseName = phaseName;
         clone.phaseType = phaseType;
         clone.startTick = startTick;
-        clone.endTick = endTick;
+        //clone.endTick = endTick;
         return clone;
     }
 }

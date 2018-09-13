@@ -50,6 +50,10 @@ public class FetchQuest : Quest {
             this.owner.party.actionData.ForceDoAction(owner.workplace.landmarkObj.currentState.GetAction(ACTION_TYPE.TURN_IN_QUEST), owner.workplace.landmarkObj);
         }
     }
+    public override void OnQuestTurnedIn() {
+        owner.ThrowItem(neededItemName, neededQuantity, false);
+        base.OnQuestTurnedIn();
+    }
     #endregion
 
     private void OnItemObtained(Item obtainedItem, Character characterThatObtainedItem) {

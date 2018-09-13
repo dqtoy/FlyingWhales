@@ -1137,6 +1137,13 @@ namespace ECS {
 			}
             Messenger.Broadcast(Signals.ITEM_THROWN, item, this);
         }
+        internal void ThrowItem(string itemName, int quantity, bool addInLandmark = true) {
+            for (int i = 0; i < quantity; i++) {
+                if (HasItem(itemName)) {
+                    ThrowItem(GetItemInAll(itemName), addInLandmark);
+                }
+            }
+        }
         internal void DropItem(Item item) {
             ThrowItem(item);
             ILocation location = _ownParty.specificLocation;
@@ -2194,9 +2201,9 @@ namespace ECS {
                 Debug.Log("Set " + this.name + "'s quest to " + currentQuest.name);
             }
         }
-        public void RemoveQuest() {
+        public void TurnInQuest() {
             if (currentQuest != null) {
-                currentQuest.OnQuestRemoved();
+                currentQuest.OnQuestTurnedIn();
             }
             SetQuest(null);
         }
@@ -3148,7 +3155,7 @@ namespace ECS {
             if (!this.IsInOwnParty()) {
                 return; //this character is not in it's owned party, that means he/she is just a member of the party, and shall not decide what action to do!
             }
-            Debug.Log(GameManager.Instance.Today().GetDayAndTicksString() + " " + this.name + " started phase " + phase.phaseName + "(" + phase.phaseType.ToString() + ") Phase Length: " + phase.phaseLength);
+            Debug.Log(GameManager.Instance.Today().GetDayAndTicksString() + " " + this.name + " started phase " + phase.phaseName + "(" + phase.phaseType.ToString() + ")");
             if (phase.phaseType == SCHEDULE_PHASE_TYPE.WORK) {
                 //if the started phase is work, the character will stop his/her current action (if not from event), and start doing work actions.
                 //TODO: Add checking whether current action is from event

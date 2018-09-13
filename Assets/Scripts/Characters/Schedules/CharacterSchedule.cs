@@ -9,7 +9,7 @@ public class CharacterSchedule {
 
     public Character owner { get; private set; }
     public CharacterSchedulePhase currentPhase { get; private set; }
-    private CharacterSchedulePhase nextPhase;
+    private CharacterSchedulePhase nextPhase { get { return GetNextPhase(); } }
 
     public CharacterSchedule() {
         phases = new List<CharacterSchedulePhase>();
@@ -28,46 +28,49 @@ public class CharacterSchedule {
          */
     public void Initialize(Character character) {
         owner = character;
+        Messenger.AddListener(Signals.HOUR_STARTED, WaitForPhaseStart);
+        Messenger.AddListener(Signals.HOUR_ENDED, WaitForPhaseEnd);
         StartNextPhase(phases[0]);
     }
 
     private void SetCurrentPhase(CharacterSchedulePhase phase) {
         currentPhase = phase;
     }
-    private void EndCurrentPhase() {
-        owner.OnDailySchedulePhaseEnded(currentPhase);
-        //TODO: Change this to use scheduling instead, when the scheduling manager has been converted to handle functions at start of ticks too
-        if (Messenger.eventTable.ContainsKey(Signals.HOUR_ENDED)) {
-            Messenger.RemoveListener(Signals.HOUR_ENDED, WaitForPhaseEnd);
-        }
-        nextPhase = GetNextPhase();
-        Messenger.AddListener(Signals.HOUR_STARTED, WaitForPhaseStart);
-        //GameDate nextPhaseStart = GameManager.Instance.Today();
-        //nextPhaseStart.AddHours(1);
-        //SchedulingManager.Instance.AddEntry(nextPhaseStart, () => StartNextPhase(GetNextPhase()));
-    }
-
+    
     private void StartNextPhase(CharacterSchedulePhase nextPhase) {
         SetCurrentPhase(nextPhase);
         owner.OnDailySchedulePhaseStarted(nextPhase);
+        //this.nextPhase = GetNextPhase(); //set next phase to the next phase
         //TODO: Change this to use scheduling instead, when the scheduling manager has been converted to handle functions at start of ticks too
-        if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
-            Messenger.RemoveListener(Signals.HOUR_STARTED, WaitForPhaseStart);
-        }
-        Messenger.AddListener(Signals.HOUR_ENDED, WaitForPhaseEnd);
+        //if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
+        //    Messenger.RemoveListener(Signals.HOUR_STARTED, WaitForPhaseStart);
+        //}
+        //Messenger.AddListener(Signals.HOUR_ENDED, WaitForPhaseEnd);
         //GameDate phaseEnd = GameManager.Instance.Today();
         //phaseEnd.AddHours(currentPhase.phaseLength);
         //SchedulingManager.Instance.AddEntry(phaseEnd, () => EndCurrentPhase());
     }
 
     private void WaitForPhaseEnd() {
-        if (GameManager.Instance.Today().hour == currentPhase.endTick) {
+        if (GameManager.Instance.Today().hour == Mathf.Clamp(nextPhase.startTick - 1, 1, GameManager.hoursPerDay)) {
             EndCurrentPhase();
         }
     }
+    private void EndCurrentPhase() {
+        owner.OnDailySchedulePhaseEnded(currentPhase);
+        //TODO: Change this to use scheduling instead, when the scheduling manager has been converted to handle functions at start of ticks too
+        //if (Messenger.eventTable.ContainsKey(Signals.HOUR_ENDED)) {
+        //    Messenger.RemoveListener(Signals.HOUR_ENDED, WaitForPhaseEnd);
+        //}
+        //Messenger.AddListener(Signals.HOUR_STARTED, WaitForPhaseStart);
+        //GameDate nextPhaseStart = GameManager.Instance.Today();
+        //nextPhaseStart.AddHours(1);
+        //SchedulingManager.Instance.AddEntry(nextPhaseStart, () => StartNextPhase(GetNextPhase()));
+    }
+
     private void WaitForPhaseStart() {
         if (GameManager.Instance.Today().hour == nextPhase.startTick) {
-            StartNextPhase(GetNextPhase());
+            StartNextPhase(nextPhase);
         }
     }
 
