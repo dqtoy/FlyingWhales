@@ -164,7 +164,7 @@ public class ActionData {
         _cannotPerformAction = state;
     }
     public void SetIsBeingAssisted(bool state) {
-        _isBeingAssistedByPlayer = true;
+        _isBeingAssistedByPlayer = state;
     }
     private void AdjustCurrentDay(int amount) {
         this.currentDay += amount;

@@ -398,6 +398,9 @@ public class ObjectManager : MonoBehaviour {
             case LANDMARK_TYPE.PALACE:
                 structureObj = new Palace();
                 break;
+            case LANDMARK_TYPE.CAMP:
+                structureObj = new Camp();
+                break;
             default:
                 throw new System.Exception("No class for " + component.specificObjectType.ToString() + " has been created yet!");
         }

@@ -326,4 +326,37 @@ public class Area {
         return null;
     }
     #endregion
+
+    #region Camp
+    public void CreateCampForHouse(HexTile houseTile) {
+        HexTile campsite = GetCampsiteForHouse(houseTile);
+        BaseLandmark camp = LandmarkManager.Instance.CreateNewLandmarkOnTile(campsite, LANDMARK_TYPE.CAMP);
+
+    }
+    private HexTile GetCampsiteForHouse(HexTile houseTile) {
+        HexTile chosenTile = null;
+        for (int i = 0; i < houseTile.AllNeighbours.Count; i++) {
+            HexTile neighbor = houseTile.AllNeighbours[i];
+            if (neighbor.isPassable && neighbor.landmarkOnTile == null) {
+                chosenTile = neighbor;
+                break;
+            }
+        }
+        if(chosenTile != null) {
+            return chosenTile;
+        }
+
+        List<HexTile> potentialCampsites = new List<HexTile>();
+        for (int i = 0; i < landmarks.Count; i++) {
+            for (int j = 0; j < landmarks[i].tileLocation.AllNeighbours.Count; j++) {
+                HexTile neighbor = landmarks[i].tileLocation.AllNeighbours[j];
+                if(neighbor.isPassable && neighbor.landmarkOnTile == null) {
+                    potentialCampsites.Add(neighbor);
+                }
+            }
+        }
+        chosenTile = potentialCampsites[UnityEngine.Random.Range(0, potentialCampsites.Count)];
+        return chosenTile;
+    }
+    #endregion
 }
