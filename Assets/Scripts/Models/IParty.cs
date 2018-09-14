@@ -16,9 +16,9 @@ public interface IParty {
     CharacterAvatar icon { get; }
     Region currentRegion { get; }
     Area home { get; }
-    StructureObj homeStructure { get; }
     Combat currentCombat { get; set; }
     BaseLandmark landmarkLocation { get; }
+    BaseLandmark homeLandmark { get; }
     ICharacter mainCharacter { get; }
     ICharacterObject icharacterObject { get; }
     ILocation specificLocation { get; }
