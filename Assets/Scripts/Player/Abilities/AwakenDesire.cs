@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AwakenDesire : PlayerAbility {
 
-    public AwakenDesire() : base() {
+    public AwakenDesire() : base(ABILITY_TYPE.CHARACTER) {
         _name = "Awaken Hidden Desire";
         _description = "Awaken a hidden desire of character";
         _powerCost = 35;

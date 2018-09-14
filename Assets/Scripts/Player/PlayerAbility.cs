@@ -12,8 +12,20 @@ public class PlayerAbility {
 
     protected int _cooldownCount;
     protected bool _isEnabled;
+    protected ABILITY_TYPE _type;
+    protected PlayerAbilityButton _playerAbilityButton;
 
-    public PlayerAbility() {
+    #region getters/setters
+    public string name {
+        get { return _name; }
+    }
+    public ABILITY_TYPE type {
+        get { return _type; }
+    }
+    #endregion
+
+    public PlayerAbility(ABILITY_TYPE type) {
+        _type = type;
     }
 
     #region Virtuals
@@ -26,22 +38,27 @@ public class PlayerAbility {
 
     #region Utilities
     public void GoOnCooldown() {
-        _cooldownCount = 0;
+        _cooldownCount = _cooldown;
+        _playerAbilityButton.cooldownText.text = "(" + _cooldownCount + ")";
+        _playerAbilityButton.cooldownText.gameObject.SetActive(true);
         SetIsEnabled(false);
         Messenger.AddListener(Signals.HOUR_STARTED, Cooldown);
     }
     private void Cooldown() {
-        _cooldownCount++;
-        if(_cooldownCount >= _cooldown) {
+        _cooldownCount--;
+        _playerAbilityButton.cooldownText.text = "(" + _cooldownCount + ")";
+        if (_cooldownCount <= 0) {
             StopCooldownAndEnableAbility();
         }
     }
     private void StopCooldownAndEnableAbility() {
         Messenger.RemoveListener(Signals.HOUR_STARTED, Cooldown);
         SetIsEnabled(true);
+        _playerAbilityButton.cooldownText.gameObject.SetActive(false);
     }
     public void SetIsEnabled(bool state) {
         _isEnabled = state;
+        _playerAbilityButton.button.interactable = state;
     }
     private void PayPowerCost(IInteractable interactable) {
         if(interactable is Character) {
@@ -54,6 +71,12 @@ public class PlayerAbility {
     }
     private void ThreatGain() {
         PlayerManager.Instance.player.AdjustThreatLevel(_threatGain);
+    }
+    #endregion
+
+    #region UI
+    public void SetPlayerAbilityButton(PlayerAbilityButton playerAbilityButton) {
+        _playerAbilityButton = playerAbilityButton;
     }
     #endregion
 }

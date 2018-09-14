@@ -5,7 +5,7 @@ using ECS;
 
 public class TakeItem : PlayerAbility {
 
-    public TakeItem() : base() {
+    public TakeItem() : base(ABILITY_TYPE.STRUCTURE) {
         _name = "Take Item";
         _description = "Take item from a structure";
         _powerCost = 10;

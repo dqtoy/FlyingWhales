@@ -148,6 +148,7 @@ public class CharacterInfoUI : UIMenu {
     public override void HideMenu() {
         _activeCharacter = null;
         base.HideMenu();
+        PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
     }
     public override void ShowMenu() {
         base.ShowMenu();
@@ -160,6 +161,7 @@ public class CharacterInfoUI : UIMenu {
         CheckShowSnatchButton();
         currentActionIcon.SetCharacter(currentlyShowingCharacter);
         currentActionIcon.SetAction((currentlyShowingCharacter.currentParty as CharacterParty).actionData.currentAction);
+        PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(currentlyShowingCharacter);
     }
     public override void ShowTooltip(GameObject objectHovered) {
         base.ShowTooltip(objectHovered);

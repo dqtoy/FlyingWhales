@@ -88,13 +88,18 @@ public class LandmarkInfoUI : UIMenu {
         UpdateItems();
         UpdateAllHistoryInfo();
         //ShowAttackButton();
+        PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(currentlyShowingLandmark);
+    }
+    public override void HideMenu() {
+        base.HideMenu();
+        PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
     }
     //public override void SetData(object data) {
-        //base.SetData(data);
-        //UIManager.Instance.hexTileInfoUI.SetData((data as BaseLandmark).tileLocation);
-        //if (isShowing) {
-        //    UpdateLandmarkInfo();
-        //}
+    //base.SetData(data);
+    //UIManager.Instance.hexTileInfoUI.SetData((data as BaseLandmark).tileLocation);
+    //if (isShowing) {
+    //    UpdateLandmarkInfo();
+    //}
     //}
 
     public void UpdateLandmarkInfo() {

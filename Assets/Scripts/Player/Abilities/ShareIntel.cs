@@ -5,7 +5,7 @@ using ECS;
 
 public class ShareIntel : PlayerAbility {
 
-    public ShareIntel() : base() {
+    public ShareIntel() : base(ABILITY_TYPE.CHARACTER) {
         _name = "Share Intel";
         _description = "Share intel to a character which may or may not change his/her behaviour";
         _powerCost = 5;

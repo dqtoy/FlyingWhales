@@ -5,7 +5,7 @@ using ECS;
 
 public class Inspect : PlayerAbility {
 
-	public Inspect(): base() {
+	public Inspect(): base(ABILITY_TYPE.ALL) {
         _name = "Inspect";
         _description = "Inspect a structure, character, or monster";
         _powerCost = 5;

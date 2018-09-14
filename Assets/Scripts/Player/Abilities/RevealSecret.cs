@@ -5,7 +5,7 @@ using ECS;
 
 public class RevealSecret : PlayerAbility {
 
-    public RevealSecret() : base() {
+    public RevealSecret() : base(ABILITY_TYPE.CHARACTER) {
         _name = "Reveal Secret";
         _description = "Reveal a character's secret";
         _powerCost = 20;
