@@ -37,7 +37,6 @@ public class Monster : ICharacter, ICharacterSim {
     private Color _characterColor;
     private CharacterBattleOnlyTracker _battleOnlyTracker;
     private BaseLandmark _homeLandmark;
-    private StructureObj _homeStructure;
     private RaceSetting _raceSetting;
     private MonsterParty _ownParty;
     private CharacterPortrait _characterPortrait;
@@ -169,9 +168,6 @@ public class Monster : ICharacter, ICharacterSim {
     }
     public BaseLandmark homeLandmark {
         get { return _homeLandmark; }
-    }
-    public StructureObj homeStructure {
-        get { return _homeStructure; }
     }
     public Area home {
         get { return null; }
@@ -506,13 +502,6 @@ public class Monster : ICharacter, ICharacterSim {
     //}
     public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
         this._homeLandmark = newHomeLandmark;
-    }
-    public void SetHomeStructure(StructureObj newHomeStructure) {
-        if (_homeStructure != null) {
-            _homeStructure.AdjustNumOfResidents(-1);
-        }
-        _homeStructure = newHomeStructure;
-        newHomeStructure.AdjustNumOfResidents(1);
     }
     public NewParty CreateOwnParty() {
         if (_ownParty != null) {

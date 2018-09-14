@@ -34,7 +34,7 @@ namespace ECS {
         private CharacterParty _currentParty;
         private Area _home;
         private BaseLandmark _homeLandmark;
-        private StructureObj _homeStructure;
+        //private StructureObj _homeStructure;
         private BaseLandmark _workplace;
         private Region _currentRegion;
         private Weapon _equippedWeapon;
@@ -265,9 +265,9 @@ namespace ECS {
         public BaseLandmark homeLandmark {
             get { return _homeLandmark; }
         }
-        public StructureObj homeStructure {
-            get { return _homeStructure; }
-        }
+        //public StructureObj homeStructure {
+        //    get { return _homeStructure; }
+        //}
         public BaseLandmark workplace {
             get { return _workplace; }
         }
@@ -2933,52 +2933,54 @@ namespace ECS {
         #endregion
 
         #region Home
-        public void LookForNewHomeStructure() {
+        public void LookForNewHome() {
             //Try to get a new home structure from this character's area
-            StructureObj structure = GetNewHomeStructureFromArea(_home);
-            if (structure != null) {
-                SetHomeStructure(structure);
+            BaseLandmark landmark = GetNewHomeFromArea(_home);
+            if (landmark != null) {
+                _homeLandmark.RemoveCharacterHomeOnLandmark(this);
+                landmark.AddCharacterHomeOnLandmark(this);
             } else {
                 //If there is no available structure, look for it in other areas of the faction and migrate there
-                structure = GetNewHomeStructureFromFaction();
-                if (structure != null) {
-                    SetHomeStructure(structure);
-                    SetHome(structure.objectLocation.tileLocation.areaOfTile);
+                landmark = GetNewHomeFromFaction();
+                if (landmark != null) {
+                    SetHome(landmark.tileLocation.areaOfTile);
+                    _homeLandmark.RemoveCharacterHomeOnLandmark(this);
+                    landmark.AddCharacterHomeOnLandmark(this);
                 } else {
                     //TODO: For future update, migrate to another friendly faction's structure
                 }
             }
         }
-        private StructureObj GetNewHomeStructureFromArea(Area area) {
-            StructureObj chosenStructure = null;
+        private BaseLandmark GetNewHomeFromArea(Area area) {
+            BaseLandmark chosenLandmark = null;
             for (int i = 0; i < area.landmarks.Count; i++) {
-                StructureObj structure = area.landmarks[i].landmarkObj;
-                if (structure != _homeStructure && structure.specificObjectType == _homeStructure.specificObjectType) {
-                    if (chosenStructure == null) {
-                        chosenStructure = structure;
+                BaseLandmark landmark = area.landmarks[i];
+                if (landmark != _homeLandmark && landmark.landmarkObj.specificObjectType == _homeLandmark.landmarkObj.specificObjectType) {
+                    if (chosenLandmark == null) {
+                        chosenLandmark = landmark;
                     } else {
-                        if (structure.numOfResidentCivilians < chosenStructure.numOfResidentCivilians) {
-                            chosenStructure = structure;
+                        if (landmark.charactersWithHomeOnLandmark.Count < chosenLandmark.charactersWithHomeOnLandmark.Count) {
+                            chosenLandmark = landmark;
                         }
                     }
                 }
             }
-            return chosenStructure;
+            return chosenLandmark;
         }
-        private StructureObj GetNewHomeStructureFromFaction() {
-            StructureObj chosenStructure = null;
+        private BaseLandmark GetNewHomeFromFaction() {
+            BaseLandmark chosenLandmark = null;
             if (_faction != null) {
                 for (int i = 0; i < _faction.ownedAreas.Count; i++) {
                     Area area = _faction.ownedAreas[i];
                     if (area.id != _home.id) {
-                        chosenStructure = GetNewHomeStructureFromArea(area);
-                        if (chosenStructure != null) {
+                        chosenLandmark = GetNewHomeFromArea(area);
+                        if (chosenLandmark != null) {
                             break;
                         }
                     }
                 }
             }
-            return chosenStructure;
+            return chosenLandmark;
         }
         public void SetHome(Area newHome) {
             _home = newHome;
@@ -2992,13 +2994,13 @@ namespace ECS {
         public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
             this._homeLandmark = newHomeLandmark;
         }
-        public void SetHomeStructure(StructureObj newHomeStructure) {
-            if (_homeStructure != null) {
-                _homeStructure.AdjustNumOfResidents(-1);
-            }
-            _homeStructure = newHomeStructure;
-            newHomeStructure.AdjustNumOfResidents(1);
-        }
+        //public void SetHomeStructure(StructureObj newHomeStructure) {
+        //    if (_homeStructure != null) {
+        //        _homeStructure.AdjustNumOfResidents(-1);
+        //    }
+        //    _homeStructure = newHomeStructure;
+        //    newHomeStructure.AdjustNumOfResidents(1);
+        //}
         private void OnAreaDeleted(Area deletedArea) {
             if (_home.id == deletedArea.id) {
                 SetHome(null);

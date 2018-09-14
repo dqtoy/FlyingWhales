@@ -34,7 +34,7 @@ public interface ICharacter {
     CharacterBattleOnlyTracker battleOnlyTracker { get; }
     Faction faction { get; }
     BaseLandmark homeLandmark { get; }
-    StructureObj homeStructure { get; }
+    //StructureObj homeStructure { get; }
     Area home { get; } //Character only
     CharacterRole role { get; } //Character only
     CharacterClass characterClass { get; } //Character only
@@ -68,7 +68,7 @@ public interface ICharacter {
     void OnRemovedFromParty();
     void OnAddedToParty();
     void SetHomeLandmark(BaseLandmark newHomeLandmark);
-    void SetHomeStructure(StructureObj newHomeStructure);
+    //void SetHomeStructure(StructureObj newHomeStructure);
     void AddHistory(Log log); //Character only
     void SetSquad(Squad squad);
     void SetMode(MODE mode);

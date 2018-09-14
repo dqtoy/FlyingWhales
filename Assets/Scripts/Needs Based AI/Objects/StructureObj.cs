@@ -15,7 +15,6 @@ public class StructureObj : IObject {
 
     protected string _objectName;
     protected int _currentHP;
-    protected int _numOfResidentCivilians;
     protected bool _isDirty;
     protected RESOURCE _madeOf;
     protected BaseLandmark _objectLocation;
@@ -23,8 +22,6 @@ public class StructureObj : IObject {
     protected List<ObjectState> _states;
     protected List<Attribute> _attributes;
     protected Dictionary<RESOURCE, int> _resourceInventory;
-
-
 
     #region getters/setters
     public string objectName {
@@ -53,9 +50,6 @@ public class StructureObj : IObject {
     }
     public int currentHP {
         get { return _currentHP; }
-    }
-    public int numOfResidentCivilians {
-        get { return _numOfResidentCivilians; }
     }
     public BaseLandmark objectLocation {
         get { return _objectLocation; }
@@ -107,7 +101,9 @@ public class StructureObj : IObject {
         SetObjectLocation(newLocation);
     }
     public virtual void StartState(ObjectState state) {
-
+        if(state.stateName == "Ruined") {
+            objectLocation.MigrateCharactersToAnotherLandmark();
+        }
     }
     public virtual void EndState(ObjectState state) {
 
@@ -257,9 +253,6 @@ public class StructureObj : IObject {
     }
     public void SetIsMadeOf(RESOURCE resource) {
         _madeOf = resource;
-    }
-    public void AdjustNumOfResidents(int amount) {
-        _numOfResidentCivilians += amount;
     }
     public Attribute GetAttribute(ATTRIBUTE attribute) {
         for (int i = 0; i < _attributes.Count; i++) {

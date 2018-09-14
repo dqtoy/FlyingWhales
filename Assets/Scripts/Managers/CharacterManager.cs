@@ -212,7 +212,6 @@ public class CharacterManager : MonoBehaviour {
             newCharacter.SetHomeLandmark(homeLandmark);
 #if !WORLD_CREATION_TOOL
             homeLandmark.AddCharacterHomeOnLandmark(newCharacter);
-            newCharacter.SetHomeStructure(homeLandmark.landmarkObj);
 #endif
         }
 
