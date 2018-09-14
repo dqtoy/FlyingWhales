@@ -328,10 +328,13 @@ public class Area {
     #endregion
 
     #region Camp
+    public BaseLandmark CreateCampOnTile(HexTile tile) {
+        BaseLandmark camp = LandmarkManager.Instance.CreateNewLandmarkOnTile(tile, LANDMARK_TYPE.CAMP);
+        return camp;
+    }
     public BaseLandmark CreateCampForHouse(HexTile houseTile) {
         HexTile campsite = GetCampsiteForHouse(houseTile);
-        BaseLandmark camp = LandmarkManager.Instance.CreateNewLandmarkOnTile(campsite, LANDMARK_TYPE.CAMP);
-        return camp;
+        return CreateCampOnTile(campsite);
     }
     private HexTile GetCampsiteForHouse(HexTile houseTile) {
         HexTile chosenTile = null;
