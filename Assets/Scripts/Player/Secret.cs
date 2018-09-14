@@ -29,6 +29,14 @@ public class Secret {
         description = secretComponent.description;
         intelIDToBeUnlocked = secretComponent.intelIDToBeUnlocked;
     }
+    public Secret Clone() {
+        Secret newSecret = new Secret();
+        newSecret.id = this.id;
+        newSecret.name = this.name;
+        newSecret.description = this.description;
+        newSecret.intelIDToBeUnlocked = this.intelIDToBeUnlocked;
+        return newSecret;
+    }
     public void RevealSecret() {
         if (!_isRevealed) {
             _isRevealed = true;
