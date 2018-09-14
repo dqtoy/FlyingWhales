@@ -5,59 +5,60 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-[CustomEditor(typeof(IntelComponent))]
-public class IntelCreator : Editor {
-    IntelComponent currentComponent;
+[CustomEditor(typeof(SecretComponent))]
+public class SecretCreator : Editor {
+    SecretComponent currentComponent;
 
     public override void OnInspectorGUI() {
         if (currentComponent == null) {
-            currentComponent = (IntelComponent) target;
+            currentComponent = (SecretComponent) target;
         }
 
-        GUILayout.Label("Intel Creator ", EditorStyles.boldLabel);
+        GUILayout.Label("Secret Creator ", EditorStyles.boldLabel);
         currentComponent.id = EditorGUILayout.IntField("ID: ", currentComponent.id);
         currentComponent.thisName = EditorGUILayout.TextField("Name: ", currentComponent.thisName);
         currentComponent.description = EditorGUILayout.TextField("Description: ", currentComponent.description);
+        currentComponent.intelIDToBeUnlocked = EditorGUILayout.IntField("Intel ID To Be Unlocked: ", currentComponent.intelIDToBeUnlocked);
 
-        if (GUILayout.Button("Create Intel")) {
-            SaveIntel();
+        if (GUILayout.Button("Create Secret")) {
+            SaveSecret();
         }
     }
 
     #region Saving
-    private void SaveIntel() {
+    private void SaveSecret() {
         string strID = currentComponent.id.ToString();
         if (string.IsNullOrEmpty(strID)) {
             EditorUtility.DisplayDialog("Error", "Please specify an ID", "OK");
             return;
         }
-        string path = Utilities.dataPath + "Intels/";
+        string path = Utilities.dataPath + "Secrets/";
         string fileName = "[" + strID + "]" + currentComponent.thisName + ".json";
         string detailedPath = string.Empty;
-        if (AlreadyHasIntelID(path, strID, ref detailedPath)) {
-            if (EditorUtility.DisplayDialog("Overwrite Intel", "An intel with ID " + strID + " already exists. Replace with this intel?", "Yes", "No")) {
+        if (AlreadyHasSecretID(path, strID, ref detailedPath)) {
+            if (EditorUtility.DisplayDialog("Overwrite Secret", "An secret with ID " + strID + " already exists. Replace with this secret?", "Yes", "No")) {
                 File.Delete(detailedPath);
-                SaveIntelJson(currentComponent, path + fileName);
+                SaveSecretJson(currentComponent, path + fileName);
             }
         } else {
-            SaveIntelJson(currentComponent, path + fileName);
+            SaveSecretJson(currentComponent, path + fileName);
         }
     }
-    private void SaveIntelJson(IntelComponent currentComponent, string path) {
-        Intel intel = new Intel();
-        intel.SetData(currentComponent);
-        string jsonString = JsonUtility.ToJson(intel);
+    private void SaveSecretJson(SecretComponent currentComponent, string path) {
+        Secret secret = new Secret();
+        secret.SetData(currentComponent);
+        string jsonString = JsonUtility.ToJson(secret);
         System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
         writer.WriteLine(jsonString);
         writer.Close();
         UnityEditor.AssetDatabase.ImportAsset(path);
-        Debug.Log("Successfully saved intel " + currentComponent.id + " at " + path);
+        Debug.Log("Successfully saved secret " + currentComponent.id + " at " + path);
     }
-    private bool AlreadyHasIntelID(string path, string id, ref string detailedPath) {
+    private bool AlreadyHasSecretID(string path, string id, ref string detailedPath) {
         foreach (string file in Directory.GetFiles(path, "*.json")) {
             string fileName = Path.GetFileNameWithoutExtension(file);
-            string intelID = fileName.Substring(1, (fileName.IndexOf(']') - 1));
-            if(intelID == id) {
+            string secretID = fileName.Substring(1, (fileName.IndexOf(']') - 1));
+            if(secretID == id) {
                 detailedPath = file;
                 return true;
             }

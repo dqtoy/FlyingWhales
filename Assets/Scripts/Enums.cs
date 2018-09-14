@@ -521,7 +521,8 @@ public enum ITEM_TYPE{
 	WEAPON,
 	ARMOR,
 	CONSUMABLE,
-	MISC,
+	KEY,
+    JUNK,
 }
 
 public enum EQUIPMENT_TYPE {
