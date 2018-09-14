@@ -289,10 +289,4 @@ public class CharacterAction {
         return string.Empty;
     }
     #endregion
-
-    #region Misc Action
-    public virtual int GetMiscActionWeight(Character character) {
-        return Base_Misc_Action_Weight;
-    }
-    #endregion
 }

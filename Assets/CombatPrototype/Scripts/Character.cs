@@ -53,7 +53,6 @@ namespace ECS {
         private List<Item> _equippedItems;
         private List<Item> _inventory;
         private List<Skill> _skills;
-        private List<CharacterAttribute> _tags;
         private List<Attribute> _attributes;
         private List<Log> _history;
         //private List<CharacterQuestData> _questData;
@@ -127,9 +126,6 @@ namespace ECS {
         }
         public MODE currentMode {
             get { return _currentMode; }
-        }
-        public List<CharacterAttribute> tags {
-            get { return _tags; }
         }
         public List<Attribute> attributes {
             get { return _attributes; }
@@ -446,7 +442,9 @@ namespace ECS {
             ConstructBodyPartDict(_raceSetting.bodyParts);
             _skills = GetGeneralSkills();
             //_skills.AddRange (GetBodyPartSkills ());
-
+            if (data.attributes != null) {
+                AddAttributes(data.attributes);
+            }
             //GenerateSetupTags(baseSetup);
             GenerateRaceAttributes();
 
@@ -465,11 +463,9 @@ namespace ECS {
             //DetermineAllowedMiscActions();
         }
         public Character() {
-            _tags = new List<CharacterAttribute>();
             _attributes = new List<Attribute>();
             _exploredLandmarks = new List<BaseLandmark>();
             _statusEffects = new List<STATUS_EFFECT>();
-            _tags = new List<CharacterAttribute>();
             _secrets = new List<Secret>();
             _intelReactions = new Dictionary<int, GAME_EVENT>();
             _isDead = false;
@@ -950,9 +946,9 @@ namespace ECS {
                 if (_role != null){
 					_role.DeathRole ();
 				}
-				while(_tags.Count > 0){
-					RemoveCharacterAttribute (_tags [0]);
-				}
+				//while(_tags.Count > 0){
+				//	RemoveCharacterAttribute (_tags [0]);
+				//}
                 //while (questData.Count != 0) {
                 //    questData[0].AbandonQuest();
                 //}
@@ -1774,82 +1770,82 @@ namespace ECS {
         #endregion
 
         #region Character Tags
-        public void AssignInitialAttributes() {
-            int tagChance = UnityEngine.Random.Range(0, 100);
-            ATTRIBUTE[] initialTags = (ATTRIBUTE[])System.Enum.GetValues(typeof(ATTRIBUTE));
-            for (int j = 0; j < initialTags.Length; j++) {
-                ATTRIBUTE tag = initialTags[j];
-                if (tagChance < Utilities.GetTagWorldGenChance(tag)) {
-                    AssignAttribute(tag);
-                }
-            }
-        }
-        public CharacterAttribute AssignAttribute(ATTRIBUTE tag) {
-			if(HasAttribute(tag)){
-				return null;
-			}
-			CharacterAttribute charTag = null;
-			switch (tag) {
-            case ATTRIBUTE.HUNGRY:
-                charTag = new Hungry(this);
-                break;
-            case ATTRIBUTE.FAMISHED:
-                charTag = new Famished(this);
-                break;
-            case ATTRIBUTE.TIRED:
-                charTag = new Tired(this);
-                break;
-            case ATTRIBUTE.EXHAUSTED:
-                charTag = new Exhausted(this);
-                break;
-            case ATTRIBUTE.SAD:
-                charTag = new Sad(this);
-                break;
-            case ATTRIBUTE.DEPRESSED:
-                charTag = new Depressed(this);
-                break;
-            case ATTRIBUTE.ANXIOUS:
-                charTag = new Anxious(this);
-                break;
-            case ATTRIBUTE.INSECURE:
-                charTag = new Insecure(this);
-                break;
-            case ATTRIBUTE.DRUNK:
-                charTag = new Drunk(this);
-                break;
-            case ATTRIBUTE.DISTURBED:
-                charTag = new Disturbed(this);
-                break;
-            case ATTRIBUTE.CRAZED:
-                charTag = new Crazed(this);
-                break;
-            case ATTRIBUTE.DEMORALIZED:
-                charTag = new Demoralized(this);
-                break;
-            case ATTRIBUTE.STARVING:
-                charTag = new Starving(this);
-                break;
-            case ATTRIBUTE.WOUNDED:
-                charTag = new Wounded(this);
-                break;
-            case ATTRIBUTE.WRECKED:
-                charTag = new Wrecked(this);
-                break;
-            case ATTRIBUTE.IMPULSIVE:
-                charTag = new Impulsive(this);
-                break;
-            case ATTRIBUTE.BETRAYED:
-                charTag = new Betrayed(this);
-                break;
-            case ATTRIBUTE.HEARTBROKEN:
-                charTag = new Heartbroken(this);
-                break;
-            }
-			if(charTag != null){
-				AddCharacterAttribute (charTag);
-			}
-            return charTag;
-		}
+        //public void AssignInitialAttributes() {
+        //    int tagChance = UnityEngine.Random.Range(0, 100);
+        //    ATTRIBUTE[] initialTags = (ATTRIBUTE[])System.Enum.GetValues(typeof(ATTRIBUTE));
+        //    for (int j = 0; j < initialTags.Length; j++) {
+        //        ATTRIBUTE tag = initialTags[j];
+        //        if (tagChance < Utilities.GetTagWorldGenChance(tag)) {
+        //            AddAttribute(tag);
+        //        }
+        //    }
+        //}
+  //      public CharacterAttribute AddAttribute(ATTRIBUTE tag) {
+		//	if(HasAttribute(tag)){
+		//		return null;
+		//	}
+		//	CharacterAttribute charTag = null;
+		//	switch (tag) {
+  //          case ATTRIBUTE.HUNGRY:
+  //              charTag = new Hungry(this);
+  //              break;
+  //          case ATTRIBUTE.FAMISHED:
+  //              charTag = new Famished(this);
+  //              break;
+  //          case ATTRIBUTE.TIRED:
+  //              charTag = new Tired(this);
+  //              break;
+  //          case ATTRIBUTE.EXHAUSTED:
+  //              charTag = new Exhausted(this);
+  //              break;
+  //          case ATTRIBUTE.SAD:
+  //              charTag = new Sad(this);
+  //              break;
+  //          case ATTRIBUTE.DEPRESSED:
+  //              charTag = new Depressed(this);
+  //              break;
+  //          case ATTRIBUTE.ANXIOUS:
+  //              charTag = new Anxious(this);
+  //              break;
+  //          case ATTRIBUTE.INSECURE:
+  //              charTag = new Insecure(this);
+  //              break;
+  //          case ATTRIBUTE.DRUNK:
+  //              charTag = new Drunk(this);
+  //              break;
+  //          case ATTRIBUTE.DISTURBED:
+  //              charTag = new Disturbed(this);
+  //              break;
+  //          case ATTRIBUTE.CRAZED:
+  //              charTag = new Crazed(this);
+  //              break;
+  //          case ATTRIBUTE.DEMORALIZED:
+  //              charTag = new Demoralized(this);
+  //              break;
+  //          case ATTRIBUTE.STARVING:
+  //              charTag = new Starving(this);
+  //              break;
+  //          case ATTRIBUTE.WOUNDED:
+  //              charTag = new Wounded(this);
+  //              break;
+  //          case ATTRIBUTE.WRECKED:
+  //              charTag = new Wrecked(this);
+  //              break;
+  //          case ATTRIBUTE.IMPULSIVE:
+  //              charTag = new Impulsive(this);
+  //              break;
+  //          case ATTRIBUTE.BETRAYED:
+  //              charTag = new Betrayed(this);
+  //              break;
+  //          case ATTRIBUTE.HEARTBROKEN:
+  //              charTag = new Heartbroken(this);
+  //              break;
+  //          }
+		//	if(charTag != null){
+		//		AddCharacterAttribute (charTag);
+		//	}
+  //          return charTag;
+		//}
         public Attribute CreateAttribute(ATTRIBUTE type) {
             switch (type) {
                 case ATTRIBUTE.GREGARIOUS:
@@ -1884,47 +1880,56 @@ namespace ECS {
                 return new Stalker();
                 case ATTRIBUTE.SPOOKED:
                 return new Spooked();
+                case ATTRIBUTE.HUMAN:
+                    return new Human();
+                case ATTRIBUTE.HUNGRY:
+                    return new Hungry();
+                case ATTRIBUTE.FAMISHED:
+                    return new Famished();
+                case ATTRIBUTE.TIRED:
+                    return new Tired();
+                case ATTRIBUTE.EXHAUSTED:
+                    return new Exhausted();
+                case ATTRIBUTE.SAD:
+                    return new Sad();
+                case ATTRIBUTE.DEPRESSED:
+                    return new Depressed();
+                case ATTRIBUTE.ANXIOUS:
+                    return new Anxious();
+                case ATTRIBUTE.INSECURE:
+                    return new Insecure();
+                case ATTRIBUTE.DRUNK:
+                    return new Drunk();
+                case ATTRIBUTE.DISTURBED:
+                    return new Disturbed();
+                case ATTRIBUTE.CRAZED:
+                    return new Crazed();
+                case ATTRIBUTE.DEMORALIZED:
+                    return new Demoralized();
+                case ATTRIBUTE.STARVING:
+                    return new Starving();
+                case ATTRIBUTE.WOUNDED:
+                    return new Wounded();
+                case ATTRIBUTE.WRECKED:
+                    return new Wrecked();
+                case ATTRIBUTE.IMPULSIVE:
+                    return new Impulsive();
+                case ATTRIBUTE.BETRAYED:
+                    return new Betrayed();
+                case ATTRIBUTE.HEARTBROKEN:
+                    return new Heartbroken();
             }
             return null;
         }
         private void GenerateRaceAttributes(){
 			for (int i = 0; i < _raceSetting.tags.Count; i++) {
-				AssignAttribute (_raceSetting.tags [i]);
+				AddAttribute (_raceSetting.tags [i]);
 			}
 		}
         private void GenerateSetupAttributes(CharacterSetup setup) {
             for (int i = 0; i < setup.tags.Count; i++) {
-                AssignAttribute(setup.tags[i]);
+                AddAttribute(setup.tags[i]);
             }
-        }
-		public void AddCharacterAttribute(CharacterAttribute tag){
-			_tags.Add(tag);
-			tag.Initialize ();
-            Messenger.Broadcast(Signals.ATTRIBUTE_ADDED, this, tag);
-		}
-		public bool RemoveCharacterAttribute(CharacterAttribute tag){
-			if(_tags.Remove(tag)){
-				tag.OnRemoveTag();
-                Messenger.Broadcast(Signals.ATTRIBUTE_REMOVED, this, tag);
-                return true;
-			}
-			return false;
-		}
-		public bool RemoveCharacterAttribute(ATTRIBUTE tag) {
-            for (int i = 0; i < _tags.Count; i++) {
-                CharacterAttribute currTag = _tags[i];
-                if (currTag.attribute == tag) {
-                    return RemoveCharacterAttribute(currTag);
-                }
-            }
-			return false;
-        }
-        public bool RemoveCharacterAttribute(List<ATTRIBUTE> tags) {
-            for (int i = 0; i < tags.Count; i++) {
-                ATTRIBUTE currTag = tags[i];
-                RemoveCharacterAttribute(currTag);
-            }
-            return false;
         }
         public bool HasAttributes(ATTRIBUTE[] tagsToHave, bool mustHaveAll = false){
 			return DoesHaveAttributes (this, tagsToHave, mustHaveAll);
@@ -1932,9 +1937,9 @@ namespace ECS {
 		private bool DoesHaveAttributes(Character currCharacter, ATTRIBUTE[] tagsToHave, bool mustHaveAll = false){
 			if(mustHaveAll){
 				int tagsCount = 0;
-				for (int i = 0; i < currCharacter.tags.Count; i++) {
+				for (int i = 0; i < currCharacter.attributes.Count; i++) {
 					for (int j = 0; j < tagsToHave.Length; j++) {
-						if(tagsToHave[j] == currCharacter.tags[i].attribute) {
+						if(tagsToHave[j] == currCharacter.attributes[i].attribute) {
 							tagsCount++;
 							break;
 						}
@@ -1944,48 +1949,15 @@ namespace ECS {
 					}
 				}
 			}else{
-				for (int i = 0; i < currCharacter.tags.Count; i++) {
+				for (int i = 0; i < currCharacter.attributes.Count; i++) {
 					for (int j = 0; j < tagsToHave.Length; j++) {
-						if(tagsToHave[j] == currCharacter.tags[i].attribute) {
+						if(tagsToHave[j] == currCharacter.attributes[i].attribute) {
 							return true;
 						}
 					}
 				}
 			}
 			return false;
-		}
-		public bool HasAttribute(ATTRIBUTE tag) {
-            for (int i = 0; i < _tags.Count; i++) {
-                if (_tags[i].attribute == tag) {
-                    return true;
-                }
-            }
-
-            return false;
-		}
-		public bool HasAttribute(string tag) {
-            for (int i = 0; i < _tags.Count; i++) {
-                if (_tags[i].name == tag) {
-                    return true;
-                }
-            }
-			return false;
-		}
-		public CharacterAttribute GetTag(ATTRIBUTE tag){
-            for (int i = 0; i < _tags.Count; i++) {
-                if (_tags[i].attribute == tag) {
-                    return _tags[i];
-                }
-            }
-			return null;
-		}
-		public CharacterAttribute GetTag(string tag){
-            for (int i = 0; i < _tags.Count; i++) {
-                if (_tags[i].name == tag) {
-                    return _tags[i];
-                }
-            }
-			return null;
 		}
         public Attribute GetAttribute(ATTRIBUTE attribute) {
             for (int i = 0; i < _attributes.Count; i++) {
@@ -2007,16 +1979,31 @@ namespace ECS {
             if(GetAttribute(attribute) == null) {
                 Attribute newAttribute = CreateAttribute(attribute);
                 _attributes.Add(newAttribute);
+#if !WORLD_CREATION_TOOL
                 newAttribute.OnAddAttribute(this);
+#endif
+                Messenger.Broadcast<Character, Attribute>(Signals.ATTRIBUTE_ADDED, this, newAttribute);
                 return newAttribute;
             }
             return null;
         }
+        public void AddAttributes(List<ATTRIBUTE> attributes) {
+            for (int i = 0; i < attributes.Count; i++) {
+                AddAttribute(attributes[i]);
+            }
+        }
+        public void RemoveAttributes(List<ATTRIBUTE> attributes) {
+            for (int i = 0; i < attributes.Count; i++) {
+                RemoveAttribute(attributes[i]);
+            }
+        }
         public bool RemoveAttribute(ATTRIBUTE attribute) {
             for (int i = 0; i < _attributes.Count; i++) {
                 if(_attributes[i].attribute == attribute) {
-                    _attributes[i].OnRemoveAttribute();
+                    Attribute removedAttribute = _attributes[i];
+                    removedAttribute.OnRemoveAttribute();
                     _attributes.RemoveAt(i);
+                    Messenger.Broadcast<Character, Attribute>(Signals.ATTRIBUTE_REMOVED, this, removedAttribute);
                     return true;
                 }
             }
@@ -2026,6 +2013,7 @@ namespace ECS {
             Attribute attributeToBeRemoved = attribute;
             if (_attributes.Remove(attribute)) {
                 attributeToBeRemoved.OnRemoveAttribute();
+                Messenger.Broadcast<Character, Attribute>(Signals.ATTRIBUTE_REMOVED, this, attributeToBeRemoved);
                 return true;
             }
             return false;
@@ -2319,7 +2307,7 @@ namespace ECS {
         private void OnOtherCharacterDied(Character character) {
             if (character.id != this.id) {
                 if (IsCharacterLovedOne(character)) { //A character gains heartbroken tag for 15 days when a family member or a loved one dies.
-                    AssignAttribute(ATTRIBUTE.HEARTBROKEN);
+                    AddAttribute(ATTRIBUTE.HEARTBROKEN);
                 }
                 RemoveRelationshipWith(character);
             }
@@ -2746,17 +2734,9 @@ namespace ECS {
             _miscActions.Add(foolingAround);
             //_idleActions.Add(chat);
         }
-        public CharacterAction GetRandomMiscAction(ref IObject targetObject, ref string actionLog) {
+        public CharacterAction GetRandomMiscAction(ref IObject targetObject) {
             targetObject = _ownParty.characterObject;
-            WeightedDictionary<CharacterAction> miscActionWeights = new WeightedDictionary<CharacterAction>();
-            for (int i = 0; i < _miscActions.Count; i++) {
-                miscActionWeights.AddElement(_miscActions[i], _miscActions[i].GetMiscActionWeight(this));
-            }
-            if (miscActionWeights.GetTotalOfWeights() <= 0) {
-                return null; //The total chance of misc actions are less than or equal to 0
-            }
-            actionLog += "\n" + miscActionWeights.GetWeightsSummary("Misc Action Weights: ");
-            CharacterAction chosenAction = miscActionWeights.PickRandomElementGivenWeights();
+            CharacterAction chosenAction = _miscActions[UnityEngine.Random.Range(0, _miscActions.Count)];
             if (chosenAction is ChatAction) {
                 List<CharacterParty> partyPool = new List<CharacterParty>();
                 CharacterParty chosenParty = GetPriority1TargetChatAction(partyPool);
@@ -2780,7 +2760,7 @@ namespace ECS {
             }
             return chosenAction;
         }
-        public CharacterAction GetWeightedMiscAction(ref IObject targetObject) {
+        public CharacterAction GetWeightedMiscAction(ref IObject targetObject, ref string actionLog) {
             WeightedDictionary<ActionAndTarget> miscActionOptions = new WeightedDictionary<ActionAndTarget>();
             for (int i = 0; i < _miscActions.Count; i++) {
                 CharacterAction currentAction = _miscActions[i];
@@ -2795,6 +2775,7 @@ namespace ECS {
                     }
                 }
             }
+            actionLog += "\n" + miscActionOptions.GetWeightsSummary("Misc Action Weights: ");
             ActionAndTarget chosen = miscActionOptions.PickRandomElementGivenWeights();
             targetObject = chosen.target;
             return chosen.action;

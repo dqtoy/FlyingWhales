@@ -2,18 +2,20 @@
 using System.Collections;
 using ECS;
 
-public class Hungry : CharacterAttribute {
-    public Hungry(Character character) : base(character, ATTRIBUTE.HUNGRY) {
+public class Hungry : Attribute {
+
+
+    public Hungry() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.HUNGRY) {
 
     }
 
-    public override void Initialize() {
-        base.Initialize();
+    public override void OnAddAttribute(Character character) {
+        base.OnAddAttribute(character);
         _character.AdjustPhysicalPoints(-1);
     }
 
-    public override void OnRemoveTag() {
-        base.OnRemoveTag();
+    public override void OnRemoveAttribute() {
+        base.OnRemoveAttribute();
         _character.AdjustPhysicalPoints(1);
     }
 }

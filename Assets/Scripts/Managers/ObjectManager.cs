@@ -329,6 +329,10 @@ public class ObjectManager : MonoBehaviour {
                 return new FoolingAroundAction();
             case ACTION_TYPE.TURN_IN_QUEST:
                 return new TurnInQuestAction();
+            case ACTION_TYPE.SING:
+                return new SingAction();
+            case ACTION_TYPE.PLAYING_INSTRUMENT:
+                return new PlayingInstrumentAction();
         }
         return null;
     }

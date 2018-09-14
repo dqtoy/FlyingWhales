@@ -28,15 +28,28 @@ public class CharacterSchedule {
          */
     public void Initialize(Character character) {
         owner = character;
+        ValidateSchedule();
         Messenger.AddListener(Signals.HOUR_STARTED, WaitForPhaseStart);
         Messenger.AddListener(Signals.HOUR_ENDED, WaitForPhaseEnd);
         StartNextPhase(phases[0]);
     }
 
+    private void ValidateSchedule() {
+        int lastStartTick = 0;
+        for (int i = 0; i < phases.Count; i++) {
+            CharacterSchedulePhase currentPhase = phases[i];
+            if (lastStartTick == 0) {
+                lastStartTick = currentPhase.startTick;
+            } else {
+                if (lastStartTick > currentPhase.startTick) {
+                    throw new System.Exception("There was an error while trying to validate the daily scedule of " + owner.characterClass.className + " " + owner.name + ". Please check schedule for any inconsistencies.");
+                }
+            }
+        }
+    }
     private void SetCurrentPhase(CharacterSchedulePhase phase) {
         currentPhase = phase;
     }
-    
     private void StartNextPhase(CharacterSchedulePhase nextPhase) {
         SetCurrentPhase(nextPhase);
         owner.OnDailySchedulePhaseStarted(nextPhase);
@@ -50,7 +63,6 @@ public class CharacterSchedule {
         //phaseEnd.AddHours(currentPhase.phaseLength);
         //SchedulingManager.Instance.AddEntry(phaseEnd, () => EndCurrentPhase());
     }
-
     private void WaitForPhaseEnd() {
         if (GameManager.Instance.Today().hour == Mathf.Clamp(nextPhase.startTick - 1, 1, GameManager.hoursPerDay)) {
             EndCurrentPhase();
@@ -67,13 +79,11 @@ public class CharacterSchedule {
         //nextPhaseStart.AddHours(1);
         //SchedulingManager.Instance.AddEntry(nextPhaseStart, () => StartNextPhase(GetNextPhase()));
     }
-
     private void WaitForPhaseStart() {
         if (GameManager.Instance.Today().hour == nextPhase.startTick) {
             StartNextPhase(nextPhase);
         }
     }
-
     private CharacterSchedulePhase GetNextPhase() {
         int currentPhaseIndex = phases.IndexOf(currentPhase);
         if (phases.Count-1 == currentPhaseIndex) {

@@ -515,14 +515,14 @@ public class Monster : ICharacter, ICharacterSim {
     public void SetOwnedParty(NewParty party) {
         _ownParty = party as MonsterParty;
     }
-    public CharacterAttribute AssignAttribute(ATTRIBUTE tag) {
+    public Attribute AddAttribute(ATTRIBUTE tag) {
         //No tag assignment
         return null;
     }
     public void AddHistory(Log log) {
         //No history
     }
-    public CharacterAction GetRandomMiscAction(ref IObject targetObject, ref string actionLog) {
+    public CharacterAction GetRandomMiscAction(ref IObject targetObject) {
         return _miscActions[Utilities.rng.Next(0, _miscActions.Count)];
     }
     public CharacterAction GetMiscAction(ACTION_TYPE type) {

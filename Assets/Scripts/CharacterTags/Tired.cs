@@ -2,18 +2,18 @@
 using System.Collections;
 using ECS;
 
-public class Tired : CharacterAttribute {
-    public Tired(Character character) : base(character, ATTRIBUTE.TIRED) {
+public class Tired : Attribute {
+    public Tired() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.TIRED) {
 
     }
 
-    public override void Initialize() {
-        base.Initialize();
+    public override void OnAddAttribute(Character character) {
+        base.OnAddAttribute(character);
         _character.AdjustPhysicalPoints(-1);
     }
 
-    public override void OnRemoveTag() {
-        base.OnRemoveTag();
+    public override void OnRemoveAttribute() {
+        base.OnRemoveAttribute();
         _character.AdjustPhysicalPoints(1);
     }
 }

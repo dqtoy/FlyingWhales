@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UI.Extensions.ColorPicker;
 
 public class SquadEditorItem : MonoBehaviour {
 
@@ -10,6 +11,9 @@ public class SquadEditorItem : MonoBehaviour {
     [SerializeField] private InputField squadNameField;
     [SerializeField] private Dropdown emblemBGDropdown;
     [SerializeField] private Dropdown emblemDropdown;
+    [SerializeField] private Image colorImage;
+    [SerializeField] private ColorPickerControl squadColoPicker;
+
     public RectTransform leaderContainer;
     public RectTransform membersContainer;
 
@@ -20,6 +24,8 @@ public class SquadEditorItem : MonoBehaviour {
 
         emblemBGDropdown.value = Utilities.GetOptionIndex(emblemBGDropdown, CharacterManager.Instance.GetEmblemBGIndex(squad.emblemBG).ToString());
         emblemDropdown.value = Utilities.GetOptionIndex(emblemDropdown, CharacterManager.Instance.GetEmblemIndex(squad.emblem).ToString());
+        colorImage.color = squad.squadColor;
+        squadColoPicker.CurrentColor = squad.squadColor;
     }
 
     public void OnLeaderDropped(Transform transform) {

@@ -483,7 +483,7 @@ MonoBehaviour:
       importance: 1
       attributes: []
   restRegenAmount: 20
-  tags: 
+  tags: 23000000
 --- !u!114 &114000011880070438
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -103,8 +103,7 @@ public class CharacterParty : NewParty {
     }
     public void AssignRandomMiscAction() {
         IObject targetObject = null;
-        string actionLog = string.Empty;
-        CharacterAction action = mainCharacter.GetRandomMiscAction(ref targetObject, ref actionLog);
+        CharacterAction action = mainCharacter.GetRandomMiscAction(ref targetObject);
         actionData.AssignAction(action, targetObject);
     }
     public bool IsOwnerDead() {

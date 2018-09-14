@@ -3,25 +3,16 @@ using System.Collections.Generic;
 using ECS;
 using UnityEngine;
 
-public class Disturbed : CharacterAttribute {
-    public Disturbed(Character character) : base(character, ATTRIBUTE.DISTURBED) {
+public class Disturbed : Attribute {
+    public Disturbed() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.DISTURBED) {
     }
 
-    public override void Initialize() {
-        base.Initialize();
+    public override void OnAddAttribute(Character character) {
+        base.OnAddAttribute(character);
         _character.AdjustMentalPoints(-2);
     }
-
-    public override void OnRemoveTag() {
-        base.OnRemoveTag();
+    public override void OnRemoveAttribute() {
+        base.OnRemoveAttribute();
         _character.AdjustMentalPoints(2);
-    }
-
-    public override void PerformDailyAction() {
-        base.PerformDailyAction();
-    }
-
-    public override string ToString() {
-        return base.ToString();
     }
 }
