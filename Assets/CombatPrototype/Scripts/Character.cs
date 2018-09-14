@@ -3230,12 +3230,13 @@ namespace ECS {
 
 #region Event Schedule
         public void AddScheduledAction(DateRange dateRange, GameEvent gameEvent) {
-            eventSchedule.AddElement(dateRange, gameEvent);
-            //TODO: Add checking for if an event has already been scheduled for the specified date.
+            if (eventSchedule.HasConflictingSchedule(dateRange)) {
+                //TODO: there is a conflict in the current schedule of the character, move the new event to a new schedule.
+                eventSchedule.AddElement(dateRange, gameEvent);
+            } else {
+                eventSchedule.AddElement(dateRange, gameEvent);
+            }
         }
-        //public bool HasConflictingSchedule(GameDate startDate, GameDate endDate) {
-
-        //}
         public bool HasEventScheduled(GameDate date) {
             return false;
         }

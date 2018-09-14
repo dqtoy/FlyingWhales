@@ -48,4 +48,9 @@ public class EventManager : MonoBehaviour {
         }
         return null;
     }
+
+    public void GenerateEventForTesting() {
+        SecretMeeting secretMeetingEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.SECRET_MEETING) as SecretMeeting;
+        secretMeetingEvent.Initialize(CharacterManager.Instance.allCharacters[0], CharacterManager.Instance.allCharacters[1]);
+    }
 }

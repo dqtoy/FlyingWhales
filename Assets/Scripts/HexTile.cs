@@ -1254,6 +1254,22 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             ContextMenuItemSettings renameArea = new ContextMenuItemSettings("Rename Landmark");
             renameArea.onClickAction = () => worldcreator.WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Rename Landmark", "Rename landmark to what?", this.landmarkOnTile.SetName, UnityEngine.UI.InputField.CharacterValidation.Name);
             settings.AddMenuItem(renameArea);
+
+            //monster spawn set
+            if (landmarkOnTile is MonsterSpawnerLandmark) {
+                LandmarkData data = LandmarkManager.Instance.GetLandmarkData(landmarkOnTile.specificLandmarkType);
+                ContextMenuItemSettings setMonsterSet = new ContextMenuItemSettings("Set Monster Spawn Choices");
+                settings.AddMenuItem(setMonsterSet);
+                ContextMenuSettings setMonsterSettings = new ContextMenuSettings();
+                setMonsterSet.SetSubMenu(setMonsterSettings);
+                for (int i = 0; i < data.monsterSets.Count; i++) {
+                    MonsterSet monsterSet = data.monsterSets[i];
+                    ContextMenuItemSettings setMonsterItem = new ContextMenuItemSettings(monsterSet.name);
+                    setMonsterItem.onClickAction = () => (landmarkOnTile as MonsterSpawnerLandmark).SetMonsterChoices(monsterSet);
+                    setMonsterSettings.AddMenuItem(setMonsterItem);
+                }
+            }
+            //monster spawn end
         }
 
         if (this.areaOfTile != null) {
@@ -1279,23 +1295,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                 destroyLandmarkItem.onClickAction = () => worldcreator.WorldCreatorManager.Instance.DestroyLandmarks(this);
                 settings.AddMenuItem(destroyLandmarkItem);
                 //end landmark destruction
-
-                //monster spawn set
-                if (landmarkOnTile is MonsterSpawnerLandmark) {
-                    LandmarkData data = LandmarkManager.Instance.GetLandmarkData(landmarkOnTile.specificLandmarkType);
-
-                    ContextMenuItemSettings setMonsterSet = new ContextMenuItemSettings("Set Monster Spawn Choices");
-                    settings.AddMenuItem(setMonsterSet);
-                    ContextMenuSettings setMonsterSettings = new ContextMenuSettings();
-                    setMonsterSet.SetSubMenu(setMonsterSettings);
-                    for (int i = 0; i < data.monsterSets.Count; i++) {
-                        MonsterSet monsterSet = data.monsterSets[i];
-                        ContextMenuItemSettings setMonsterItem = new ContextMenuItemSettings(monsterSet.name);
-                        setMonsterItem.onClickAction = () => (landmarkOnTile as MonsterSpawnerLandmark).SetMonsterChoices(monsterSet);
-                        setMonsterSettings.AddMenuItem(setMonsterItem);
-                    }
-                }
-                //monster spawn end
 
                 ////Monster Spawning
                 //ContextMenuItemSettings spawnMonster = new ContextMenuItemSettings("Spawn Monster");

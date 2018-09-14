@@ -15,26 +15,30 @@ public class CharacterEventSchedule {
     public CharacterEventSchedule() {
         eventSchedule = new Dictionary<DateRange, GameEvent>();
     }
-
-    //public bool ContainsKey(GameDate key) {
-    //    return eventSchedule.ContainsKey(key.GetDayAndTicksString());
-    //}
     public void AddElement(DateRange key, GameEvent value) {
         eventSchedule.Add(key, value);
     }
-    //public bool HasScheduledAction(GameDate date) {
-    //    return ContainsKey(date);
-    //}
-
+    public bool HasConflictingSchedule(DateRange newRange) {
+        foreach (KeyValuePair<DateRange, GameEvent> kvp in eventSchedule) {
+            if (kvp.Key.HasConflictWith(newRange)) {
+                return true;
+            }
+        }
+        return false;
+    }
     private GameEvent GetEventForDate(GameDate date) {
         foreach (KeyValuePair<DateRange, GameEvent> kvp in eventSchedule) {
             DateRange currRange = kvp.Key;
             GameEvent currEvent = kvp.Value;
-            if (currRange.IsInRange(date)) {
+            if (currRange.IsDateInRange(date)) {
                 return currEvent;
             }
         }
         return null;
+    }
+
+    public GameDate GetNextFreeDate() {
+        return new GameDate();
     }
     
 }

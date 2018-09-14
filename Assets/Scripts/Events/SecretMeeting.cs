@@ -25,11 +25,15 @@ public class SecretMeeting : GameEvent {
         _character2 = character2;
 
         SetName("Secret Meeting between " + _character1.name + " and " + _character2.name);
-
-        //ScheduleMeeting
+        ScheduleMeeting();
     }
     private void ScheduleMeeting() {
         GameDate meetingDate = GetInitialMeetingDate();
+        GameDate endDate = GameManager.Instance.Today();
+        endDate.AddHours(GetEventDurationRoughEstimate());
+
+        _character1.AddScheduledAction(new DateRange(meetingDate, endDate), this);
+        _character2.AddScheduledAction(new DateRange(meetingDate, endDate), this);
         //Check if there is a special event on that day on any character, if there is, postpone this meeting by 1 day and recheck
     }
     private GameDate GetInitialMeetingDate() {
@@ -45,5 +49,9 @@ public class SecretMeeting : GameEvent {
         }
         meetingDate.AddDays(initialMeetingDay);
         return meetingDate;
+    }
+
+    public override int GetEventDurationRoughEstimate() {
+        return 50;
     }
 }
