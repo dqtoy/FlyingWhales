@@ -524,7 +524,7 @@ public class ConsoleMenu : UIMenu {
             AddErrorMessage("There was an error in the command format of " + parameters[0]);
         }
 
-        character.AssignAttribute(tag);
+        character.AddAttribute(tag);
         AddSuccessMessage("Added " + tag.ToString() + " tag to " + character.name);
     }
     #endregion

@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using ECS;
 using UnityEngine;
 
-public class Crazed : CharacterAttribute {
-    public Crazed(Character character) : base(character, ATTRIBUTE.CRAZED) {
+public class Crazed : Attribute {
+    public Crazed() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.CRAZED) {
     }
 
-    public override void Initialize() {
-        base.Initialize();
+    public override void OnAddAttribute(Character character) {
+        base.OnAddAttribute(character);
         _character.AdjustMentalPoints(-3);
     }
-
-    public override void OnRemoveTag() {
-        base.OnRemoveTag();
+    public override void OnRemoveAttribute() {
+        base.OnRemoveAttribute();
         _character.AdjustMentalPoints(3);
     }
 }

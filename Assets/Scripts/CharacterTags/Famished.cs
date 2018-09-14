@@ -2,8 +2,8 @@
 using System.Collections;
 using ECS;
 
-public class Famished : CharacterAttribute {
-    public Famished(Character character) : base(character, ATTRIBUTE.FAMISHED) {
+public class Famished : Attribute {
+    public Famished() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.FAMISHED) {
 
     }
 }

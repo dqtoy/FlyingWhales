@@ -2,18 +2,17 @@
 using System.Collections;
 using ECS;
 
-public class Anxious : CharacterAttribute {
-    public Anxious(Character character) : base(character, ATTRIBUTE.ANXIOUS) {
+public class Anxious : Attribute {
+    public Anxious() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.ANXIOUS) {
 
     }
 
-    public override void Initialize() {
-        base.Initialize();
+    public override void OnAddAttribute(Character character) {
+        base.OnAddAttribute(character);
         _character.AdjustMentalPoints(-1);
     }
-
-    public override void OnRemoveTag() {
-        base.OnRemoveTag();
+    public override void OnRemoveAttribute() {
+        base.OnRemoveAttribute();
         _character.AdjustMentalPoints(1);
     }
 }

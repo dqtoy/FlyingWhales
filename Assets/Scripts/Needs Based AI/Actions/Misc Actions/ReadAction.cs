@@ -25,13 +25,5 @@ public class ReadAction : CharacterAction {
         action.Initialize();
         return action;
     }
-    public override int GetMiscActionWeight(Character character) {
-        int weight = base.GetMiscActionWeight(character);
-        if (character.HasAttribute(ATTRIBUTE.BOOKWORM)) {
-            //if has bookworm attribute, add more weight
-            weight += 50;
-        }
-        return weight;
-    }
     #endregion
 }

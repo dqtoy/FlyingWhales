@@ -19,6 +19,7 @@ public class CharacterSaveData {
     public List<string> equipmentData;
     public List<string> inventoryData;
     public List<RelationshipSaveData> relationshipsData;
+    public List<ATTRIBUTE> attributes;
 
     public CharacterSaveData(ECS.Character character) {
         id = character.id;
@@ -70,6 +71,11 @@ public class CharacterSaveData {
         relationshipsData = new List<RelationshipSaveData>();
         foreach (KeyValuePair<ECS.Character, Relationship> kvp in character.relationships) {
             relationshipsData.Add(new RelationshipSaveData(kvp.Value));
+        }
+
+        attributes = new List<ATTRIBUTE>();
+        for (int i = 0; i < character.attributes.Count; i++) {
+            attributes.Add(character.attributes[i].attribute);
         }
     }
 }

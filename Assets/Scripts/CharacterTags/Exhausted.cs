@@ -2,18 +2,16 @@
 using System.Collections;
 using ECS;
 
-public class Exhausted : CharacterAttribute {
-    public Exhausted(Character character) : base(character, ATTRIBUTE.EXHAUSTED) {
+public class Exhausted : Attribute {
+    public Exhausted() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.EXHAUSTED) {
 
     }
-
-    public override void Initialize() {
-        base.Initialize();
+    public override void OnAddAttribute(Character character) {
+        base.OnAddAttribute(character);
         _character.AdjustPhysicalPoints(-2);
     }
-
-    public override void OnRemoveTag() {
-        base.OnRemoveTag();
+    public override void OnRemoveAttribute() {
+        base.OnRemoveAttribute();
         _character.AdjustPhysicalPoints(2);
     }
 }

@@ -3,15 +3,8 @@ using System.Collections.Generic;
 using ECS;
 using UnityEngine;
 
-public class Impulsive : CharacterAttribute {
-    public Impulsive(Character character) : base(character, ATTRIBUTE.IMPULSIVE) {
+public class Impulsive : Attribute {
+    public Impulsive() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.IMPULSIVE) {
     }
 
-    public override void Initialize() {
-        base.Initialize();
-    }
-
-    public override void OnRemoveTag() {
-        base.OnRemoveTag();
-    }
 }

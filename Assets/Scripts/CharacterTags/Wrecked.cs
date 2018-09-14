@@ -3,17 +3,15 @@ using System.Collections.Generic;
 using ECS;
 using UnityEngine;
 
-public class Wrecked : CharacterAttribute {
-    public Wrecked(Character character) : base(character, ATTRIBUTE.WRECKED) {
+public class Wrecked : Attribute {
+    public Wrecked() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.WRECKED) {
     }
-
-    public override void Initialize() {
-        base.Initialize();
+    public override void OnAddAttribute(Character character) {
+        base.OnAddAttribute(character);
         _character.AdjustPhysicalPoints(-3);
     }
-
-    public override void OnRemoveTag() {
-        base.OnRemoveTag();
+    public override void OnRemoveAttribute() {
+        base.OnRemoveAttribute();
         _character.AdjustPhysicalPoints(3);
     }
 }
