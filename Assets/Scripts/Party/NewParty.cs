@@ -69,9 +69,6 @@ public class NewParty : IParty {
     public Area home {
         get { return mainCharacter.home; }
     }
-    public StructureObj homeStructure {
-        get { return mainCharacter.homeStructure; }
-    }
     public Combat currentCombat {
         get { return _currentCombat; }
         set { _currentCombat = value; }
@@ -83,6 +80,9 @@ public class NewParty : IParty {
             }
             return null;
         }
+    }
+    public BaseLandmark homeLandmark {
+        get { return mainCharacter.homeLandmark; }
     }
     public ICharacter mainCharacter {
         get { return _icharacters[0]; }
@@ -207,7 +207,7 @@ public class NewParty : IParty {
         }
     }
     public void GoHome() {
-        GoToLocation(mainCharacter.homeStructure.objectLocation, PATHFINDING_MODE.PASSABLE);
+        GoToLocation(mainCharacter.homeLandmark, PATHFINDING_MODE.PASSABLE);
     }
     #endregion
 
