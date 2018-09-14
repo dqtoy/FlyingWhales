@@ -14,17 +14,25 @@ public class JoinPartyAction : CharacterAction {
         return action;
     }
 
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
-        base.PerformAction(party, targetObject);
+    public override void OnChooseAction(NewParty iparty, IObject targetObject) {
+        base.OnChooseAction(iparty, targetObject);
         if (targetObject is ICharacterObject) {
-            (targetObject as ICharacterObject).iparty.AddCharacter(party.mainCharacter);
+            (targetObject as ICharacterObject).iparty.AddCharacter(iparty.mainCharacter);
         }
         ActionSuccess(targetObject);
-        party.actionData.ForceDoAction(party.icharacterObject.currentState.GetAction(ACTION_TYPE.IN_PARTY), party.icharacterObject);
+        (iparty as CharacterParty).actionData.ForceDoAction(iparty.icharacterObject.currentState.GetAction(ACTION_TYPE.IN_PARTY), iparty.icharacterObject);
     }
+
+    //public override void PerformAction(CharacterParty party, IObject targetObject) {
+    //    base.PerformAction(party, targetObject);
+        
+    //}
     public override void EndAction(CharacterParty party, IObject targetObject) {
         base.EndAction(party, targetObject);
         party.icon.SetVisualState(false);
+    }
+    public override bool ShouldGoToTargetObjectOnChoose() {
+        return false; //assumes that the party that invited the character is already at the same location
     }
     #endregion
 }

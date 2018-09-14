@@ -156,6 +156,7 @@ public class CharacterAvatar : MonoBehaviour{
                 _isTravelling = false;
                 SetHasArrivedState(true);
                 targetLocation.AddCharacterToLocation(_party);
+                Debug.Log(_party.name + " has arrived at " + targetLocation.locationName + " on " + GameManager.Instance.Today().GetDayAndTicksString());
                 if(onPathFinished != null) {
                     onPathFinished();
                 }

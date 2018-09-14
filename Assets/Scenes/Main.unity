@@ -11436,11 +11436,6 @@ MonoBehaviour:
     - structureType: 4
       structureGameObjects:
       - {fileID: 1000011764750812, guid: 379818be39befa14f89d65a27f1f1c4d, type: 2}
-  lycanLair: {fileID: 1000013691641208, guid: 30fae836759ee3e49a38175a208c87c5, type: 2}
-  stormWitchLair: {fileID: 1000010009882414, guid: 4661b0946d6ed8f40bd83a9beee192e3,
-    type: 2}
-  pereLair: {fileID: 1000011189658324, guid: c61d62e1220b85f42873228d5efc0d94, type: 2}
-  ghoulLair: {fileID: 1000011764750812, guid: 379818be39befa14f89d65a27f1f1c4d, type: 2}
   landmarkGO: {fileID: 1000010040247426, guid: 62f5adf3c35fcea45a8e702a164cf60d, type: 2}
 --- !u!1 &313489265
 GameObject:

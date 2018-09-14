@@ -47,8 +47,8 @@ public class ActionData {
     #endregion
 
     public ActionData(CharacterParty party) {
-        Reset();
         _party = party;
+        Reset();
         choices = new CharacterActionAdvertisement[3];
         actionThread = new ActionThread(_party);
         _party.onDailyAction += PerformCurrentAction;
@@ -93,6 +93,7 @@ public class ActionData {
             action = chainAction.action;
         }
         //this.currentChainAction = chainAction;
+        actionHistory.Add("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + action.actionData.actionName + " - " + targetObject.objectName + " Call Stack: \n" + StackTraceUtility.ExtractStackTrace());
         SetCurrentAction(action);
         SetCurrentTargetObject(targetObject);
         if (action == null) {
@@ -130,7 +131,7 @@ public class ActionData {
     }
     public void SetCurrentAction(CharacterAction action) {
         this.currentAction = action;
-        Debug.Log("Set current action of " + _party.name + " to " + this.currentAction.actionData.actionName);
+        Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() + "] Set current action of " + _party.name + " to " + this.currentAction.actionData.actionName);
     }
     public void SetCurrentTargetObject(IObject targetObject) {
         this.currentTargetObject = targetObject;
@@ -176,10 +177,10 @@ public class ActionData {
     }
     public void SetIsDone(bool state) {
         this.isDone = state;
-        Debug.Log("Set is done to " + state.ToString());
+        Debug.Log(_party.name + " Set is done to " + state.ToString());
     }
 
-    private void PerformCurrentAction() {
+    public void PerformCurrentAction() {
         if (!isWaiting && _party.icon.hasArrived) {
             if (!isDone && currentAction != null){
                 if (_isHalted || _cannotPerformAction) {
@@ -317,7 +318,7 @@ public class ActionData {
         }
         AssignAction(newAction.action, newAction.targetObject);
         SetQuestAssociatedWithAction(newAction.associatedQuest);
-        Debug.Log("Forced " + _party.name + " to perform " + newAction.action.actionData.actionName + " at " + newAction.targetObject.objectName);
+        Debug.Log("Forced " + _party.name + " to perform action " + newAction.action.actionData.actionName + " from quest " + newAction.associatedQuest.name + " at " + newAction.targetObject.objectName);
     }
 
     private void APartyEndedState(CharacterParty partyThatChangedState, ObjectState stateEnded) {

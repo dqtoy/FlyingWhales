@@ -30,7 +30,7 @@ public class ConsoleMenu : UIMenu {
             //{"/quest_cancel", CancelQuest},
             //{"/adjust_gold", AdjustGold},
             {"/lfli", LogFactionLandmarkInfo},
-            //{"/log_actions", LogCharacterActions },
+            {"/log_actions", LogCharacterActions },
             //{"/adjust_resources", AdjustResources}
             {"/center_character", CenterOnCharacter},
             {"/center_landmark", CenterOnLandmark },
@@ -370,39 +370,39 @@ public class ConsoleMenu : UIMenu {
     //        AddErrorMessage("There was an error in the command format of /adjust_gold");
     //    }
     //}
-    //private void LogCharacterActions(string[] parameters) {
-    //    if (parameters.Length < 2) {
-    //        AddCommandHistory(consoleLbl.text);
-    //        AddErrorMessage("There was an error in the command format of " + parameters[0]);
-    //        return;
-    //    }
-    //    string characterParameterString = string.Empty;
-    //    for (int i = 1; i < parameters.Length; i++) {
-    //        characterParameterString += parameters[i] + " ";
-    //    }
-    //    characterParameterString = characterParameterString.Trim();
-    //    int characterID;
+    private void LogCharacterActions(string[] parameters) {
+        if (parameters.Length < 2) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+        string characterParameterString = string.Empty;
+        for (int i = 1; i < parameters.Length; i++) {
+            characterParameterString += parameters[i] + " ";
+        }
+        characterParameterString = characterParameterString.Trim();
+        int characterID;
 
-    //    bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
-    //    ECS.Character character = null;
-    //    if (isCharacterParameterNumeric) {
-    //        character = CharacterManager.Instance.GetCharacterByID(characterID);
-    //    } else {
-    //        character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
-    //    }
+        bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
+        ECS.Character character = null;
+        if (isCharacterParameterNumeric) {
+            character = CharacterManager.Instance.GetCharacterByID(characterID);
+        } else {
+            character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+        }
 
-    //    if (character == null) {
-    //        AddErrorMessage("There was an error in the command format of " + parameters[0]);
-    //        return;
-    //    }
+        if (character == null) {
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
 
-    //    string text = string.Empty;
-    //    for (int i = 0; i < character.party.actionData.actionHistory.Count; i++) {
-    //        text += character.party.actionData.actionHistory[i] + "\n";
-    //    }
-    //    Debug.Log(text);
-    //    AddSuccessMessage(text);
-    //}
+        string text = character.name + "'s Action Log: \n";
+        for (int i = 0; i < character.party.actionData.actionHistory.Count; i++) {
+            text += character.party.actionData.actionHistory[i] + "\n";
+        }
+        Debug.Log(text);
+        AddSuccessMessage(text);
+    }
     private void CenterOnCharacter(string[] parameters) {
         if (parameters.Length < 2) {
             AddCommandHistory(consoleLbl.text);

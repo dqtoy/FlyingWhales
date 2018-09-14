@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class FetchAction : CharacterAction {
 
-    private int fetchCooldown;
-
     private const int Obtain_Item_Chance = 100;
 
 
@@ -15,11 +13,12 @@ public class FetchAction : CharacterAction {
     #region overrides
     public override void PerformAction(CharacterParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
-        if (fetchCooldown > 0) {
-            fetchCooldown--;
+        FetchQuest fetchQuest = ((party.owner as Character).currentQuest as FetchQuest);
+        if (fetchQuest.fetchCooldown > 0) {
+            fetchQuest.AdjustFetchCooldown(-1);
 
-            if (fetchCooldown == 0) {
-                fetchCooldown = GetFetchCooldown(party);
+            if (fetchQuest.fetchCooldown == 0) {
+                fetchQuest.SetFetchCooldown(GetFetchCooldown(party));
                 string fetchLog = string.Empty;
                 //check if chance to obtain item is met
                 if (Random.Range(0, 100) < Obtain_Item_Chance) {
@@ -58,7 +57,8 @@ public class FetchAction : CharacterAction {
     }
     public override void OnChooseAction(NewParty iparty, IObject targetObject) {
         base.OnChooseAction(iparty, targetObject);
-        fetchCooldown = GetFetchCooldown(iparty as CharacterParty);
+        FetchQuest fetchQuest = ((iparty.owner as Character).currentQuest as FetchQuest);
+        fetchQuest.SetFetchCooldown(GetFetchCooldown(iparty as CharacterParty));
     }
     #endregion
 
