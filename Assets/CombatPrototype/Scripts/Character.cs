@@ -1137,6 +1137,13 @@ namespace ECS {
 			}
             Messenger.Broadcast(Signals.ITEM_THROWN, item, this);
         }
+        internal void ThrowItem(string itemName, int quantity, bool addInLandmark = true) {
+            for (int i = 0; i < quantity; i++) {
+                if (HasItem(itemName)) {
+                    ThrowItem(GetItemInAll(itemName), addInLandmark);
+                }
+            }
+        }
         internal void DropItem(Item item) {
             ThrowItem(item);
             ILocation location = _ownParty.specificLocation;
@@ -2083,9 +2090,9 @@ namespace ECS {
             if (party.isIdle) {
                 return false;
             }
-            if (this.party.actionData.currentAction == null || miscActions.Contains(this.party.actionData.currentAction)) {
+            if (this.party.actionData.currentAction == null || this.party.actionData.currentAction.actionData.actionType == ACTION_TYPE.WAIT_FOR_PARTY) {
                 //accept invitation
-                this.actionQueue.Clear();
+                //this.actionQueue.Clear();
                 this.party.actionData.ForceDoAction(inviter.ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.JOIN_PARTY), inviter.ownParty.icharacterObject);
                 return true;
             }
@@ -2194,9 +2201,9 @@ namespace ECS {
                 Debug.Log("Set " + this.name + "'s quest to " + currentQuest.name);
             }
         }
-        public void RemoveQuest() {
+        public void TurnInQuest() {
             if (currentQuest != null) {
-                currentQuest.OnQuestRemoved();
+                currentQuest.OnQuestTurnedIn();
             }
             SetQuest(null);
         }
@@ -3010,7 +3017,6 @@ namespace ECS {
 
         #region Work
         private void LookForNewWorkplace() {
-            //TODO: QUESTING action (for Heroes)
             if (_characterClass.workActionType == ACTION_TYPE.WORKING) {
                 _workplace = _homeLandmark;
             } else {
@@ -3151,7 +3157,7 @@ namespace ECS {
             if (!this.IsInOwnParty()) {
                 return; //this character is not in it's owned party, that means he/she is just a member of the party, and shall not decide what action to do!
             }
-            Debug.Log(GameManager.Instance.Today().GetDayAndTicksString() + " " + this.name + " started phase " + phase.phaseName + "(" + phase.phaseType.ToString() + ") Phase Length: " + phase.phaseLength);
+            Debug.Log(GameManager.Instance.Today().GetDayAndTicksString() + " " + this.name + " started phase " + phase.phaseName + "(" + phase.phaseType.ToString() + ")");
             if (phase.phaseType == SCHEDULE_PHASE_TYPE.WORK) {
                 //if the started phase is work, the character will stop his/her current action (if not from event), and start doing work actions.
                 //TODO: Add checking whether current action is from event
@@ -3228,7 +3234,7 @@ namespace ECS {
          NOTE: This is only accurate when used while in work phase
              */
         public int GetWorkDeadlineTick() {
-            return this.dailySchedule.currentPhase.startTick + 6; //start of work phase + 1 hour(6 ticks)
+            return this.dailySchedule.currentPhase.startTick + 7; //start of work phase + 1 hour(6 ticks) + 1 tick (because if other character arrives at exactly the work deadline, he/she will not be included in party, even though they are technically not late)
         }
         #endregion
 

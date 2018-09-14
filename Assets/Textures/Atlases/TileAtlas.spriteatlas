@@ -51,6 +51,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 99997bff53b6d7042a70307d331e1d3f, type: 3}
   - {fileID: 21300000, guid: 3f5f539ec1c81814e972d6b0b4903932, type: 3}
   - {fileID: 21300000, guid: 455f303fb578b4841ae48fd16107beb2, type: 3}
+  - {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
   - {fileID: 21300000, guid: 59980d3c50e9c3c4e8c869029a0ccc2e, type: 3}
   - {fileID: 21300000, guid: 22c48310b47583145a8bc2ccc6845bfe, type: 3}
   - {fileID: 21300000, guid: 7828e545f69833d49a9b79ab03928852, type: 3}
@@ -284,6 +285,7 @@ SpriteAtlas:
   - human_tavern
   - human_lumberyard
   - human_farm_colour
+  - ancient_ruins_temple
   - human_lumberyard_colour
   - human_item_shop_colour
   - human_item_shop_colour

@@ -9,6 +9,9 @@ public class Squad {
     public string name { get; private set; }
     public ICharacter squadLeader { get; private set; }
     public List<ICharacter> squadMembers { get; private set; } //all members + leader
+    public EmblemBG emblemBG { get; private set; }
+    public Sprite emblem { get; private set; }
+    public Color squadColor { get; private set; }
 
     #region getters/setters
     public List<ICharacter> squadFollowers {
@@ -27,12 +30,18 @@ public class Squad {
         id = Utilities.SetID(this);
         SetName("Squad " + id.ToString());
         squadMembers = new List<ICharacter>();
+        emblemBG = CharacterManager.Instance.GetRandomEmblemBG();
+        emblem = CharacterManager.Instance.GetRandomEmblem();
+        SetSquadColor(Color.white);
     }
 
     public Squad(SquadSaveData data) {
         id = Utilities.SetID(this, data.squadID);
         SetName(data.squadName);
         squadMembers = new List<ICharacter>();
+        emblemBG = CharacterManager.Instance.emblemBGs[data.emblemBGIndex];
+        emblem = CharacterManager.Instance.emblemSymbols[data.emblemIndex];
+        SetSquadColor(data.squadColor);
     }
 
     #region Misc
@@ -106,6 +115,18 @@ public class Squad {
     //    }
     //    return questData;
     //}
+    #endregion
+
+    #region Emblem
+    public void SetEmblemBG(EmblemBG emblemBG) {
+        this.emblemBG = emblemBG;
+    }
+    public void SetEmblem(Sprite emblem) {
+        this.emblem = emblem;
+    }
+    public void SetSquadColor(Color color) {
+        this.squadColor = color;
+    }
     #endregion
 
 }

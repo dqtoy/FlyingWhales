@@ -51,7 +51,7 @@ public class Quest {
         isQuestDone = true;
         OnQuestDone();
     }
-    public virtual void OnQuestRemoved() {
+    public virtual void OnQuestTurnedIn() {
         owner = null;
     }
     #endregion

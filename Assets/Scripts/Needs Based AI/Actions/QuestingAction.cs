@@ -32,6 +32,7 @@ public class QuestingAction : CharacterAction {
                     } else {
                         //else, wait for 1 hour (6 ticks)
                         party.actionData.ForceDoAction(party.characterObject.currentState.GetAction(ACTION_TYPE.WAIT_FOR_PARTY), party.characterObject);
+                        InviteSquadMembersInLandmark(mainCharacter.squad, mainCharacter.workplace);
                     }
                 } else { //if character is a squad member
                     //check if squad leader is already waiting for party members
@@ -69,4 +70,17 @@ public class QuestingAction : CharacterAction {
         return action;
     }
     #endregion
+
+    private void InviteSquadMembersInLandmark(Squad squad, BaseLandmark landmark) {
+        for (int i = 0; i < landmark.charactersAtLocation.Count; i++) {
+            NewParty currParty = landmark.charactersAtLocation[i];
+            if (currParty is CharacterParty) {
+                CharacterParty charParty = (currParty as CharacterParty);
+                Character partyOwner = charParty.characterOwner;
+                if (partyOwner.id != squad.squadLeader.id && squad.squadMembers.Contains(partyOwner)) {
+                    partyOwner.InviteToParty(squad.squadLeader);
+                }
+            }
+        }
+    }
 }

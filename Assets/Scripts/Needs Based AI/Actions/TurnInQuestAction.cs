@@ -17,7 +17,7 @@ public class TurnInQuestAction : CharacterAction {
         base.PerformAction(party, targetObject);
         //turn in the quest
         Character mainCharacter = party.owner as Character;
-        mainCharacter.RemoveQuest();
+        mainCharacter.TurnInQuest();
         EndAction(party, targetObject);
     }
     public override void EndAction(CharacterParty party, IObject targetObject) {

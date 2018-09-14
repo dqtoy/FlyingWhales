@@ -56,12 +56,12 @@ MonoBehaviour:
     - phaseName: Misc
       phaseType: 1
       startTick: 1
-      endTick: 36
+      endTick: 15
     - phaseName: Work
       phaseType: 0
-      startTick: 37
-      endTick: 72
+      startTick: 16
+      endTick: 80
     - phaseName: Misc 2
       phaseType: 1
-      startTick: 73
+      startTick: 81
       endTick: 144

@@ -18,6 +18,7 @@ public class AffiliationsObject : MonoBehaviour {
     [SerializeField] private GameObject partyGO;
 
     [SerializeField] private FactionEmblem factionEmblem;
+    [SerializeField] private SquadEmblem squadEmblem;
 
     private bool disableParty;
     private bool isHovering = false;
@@ -97,6 +98,7 @@ public class AffiliationsObject : MonoBehaviour {
             squadGO.SetActive(false);
         } else {
             squadGO.SetActive(true);
+            squadEmblem.SetSquad(_character.squad);
         }
 
         if (disableParty || _character.currentParty.icharacters.Count <= 1) {

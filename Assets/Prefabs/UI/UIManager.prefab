@@ -13282,6 +13282,10 @@ MonoBehaviour:
   notificationArea: {fileID: 0}
   characterDialogMenu: {fileID: 0}
   characterPortraitsParent: {fileID: 0}
+  playerPickerScroll: {fileID: 0}
+  playerPickerContentTransform: {fileID: 0}
+  playerPickerGO: {fileID: 0}
+  playerPickerButtonPrefab: {fileID: 0}
   onToggleTextColor: {r: 0, g: 0, b: 0, a: 0}
   offToggleTextColor: {r: 0, g: 0, b: 0, a: 0}
   toggleBordersBtn: {fileID: 114483810657171272}

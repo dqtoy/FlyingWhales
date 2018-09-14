@@ -9,6 +9,8 @@ public class FetchQuest : Quest {
     private string neededItemName;
     private int neededQuantity;
 
+    public int fetchCooldown { get; private set; }
+
     public FetchQuest(BaseLandmark targetLandmark, string neededItemName, int neededQuantity) : base(QUEST_TYPE.FETCH_ITEM) {
         this.targetLandmark = targetLandmark;
         this.neededItemName = neededItemName;
@@ -50,6 +52,10 @@ public class FetchQuest : Quest {
             this.owner.party.actionData.ForceDoAction(owner.workplace.landmarkObj.currentState.GetAction(ACTION_TYPE.TURN_IN_QUEST), owner.workplace.landmarkObj);
         }
     }
+    public override void OnQuestTurnedIn() {
+        owner.ThrowItem(neededItemName, neededQuantity, false);
+        base.OnQuestTurnedIn();
+    }
     #endregion
 
     private void OnItemObtained(Item obtainedItem, Character characterThatObtainedItem) {
@@ -60,11 +66,17 @@ public class FetchQuest : Quest {
             }
         }
     }
-
     public void CheckIfQuestIsCompleted() {
         if (this.owner.HasItem(neededItemName, neededQuantity)) {
             Debug.Log(this.owner.name + " has obtained the needed items for the quest. Setting quest as done!");
             this.SetQuestAsDone();
         }
+    }
+
+    public void AdjustFetchCooldown(int adjustment) {
+        fetchCooldown += adjustment;
+    }
+    public void SetFetchCooldown(int cooldown) {
+        fetchCooldown = cooldown;
     }
 }

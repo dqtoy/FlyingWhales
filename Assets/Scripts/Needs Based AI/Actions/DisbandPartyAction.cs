@@ -13,9 +13,14 @@ public class DisbandPartyAction : CharacterAction {
         return action;
     }
 
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
-        base.PerformAction(party, targetObject);
-        party.DisbandPartyKeepOwner();
-        EndAction(party, targetObject);
+    //public override void PerformAction(CharacterParty party, IObject targetObject) {
+    //    base.PerformAction(party, targetObject);
+       
+    //}
+    public override void OnChooseAction(NewParty iparty, IObject targetObject) {
+        base.OnChooseAction(iparty, targetObject);
+        CharacterParty charParty = iparty as CharacterParty;
+        charParty.DisbandPartyKeepOwner();
+        EndAction(charParty, targetObject);
     }
 }
