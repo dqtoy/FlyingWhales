@@ -76,5 +76,8 @@ public class SquadEditorItem : MonoBehaviour {
         //int chosenBGIndex = System.Int32.Parse(emblemDropdown.options[choice].text);
         squad.SetEmblem(CharacterManager.Instance.emblemSymbols[choice]);
     }
+    public void SetSquadColor(Color color) {
+        squad.SetSquadColor(color);
+    }
     #endregion
 }

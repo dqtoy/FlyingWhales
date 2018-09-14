@@ -15,5 +15,7 @@ public class SquadEmblem : MonoBehaviour {
         tint.sprite = squad.emblemBG.tint;
         outline.sprite = squad.emblemBG.outline;
         sigil.sprite = squad.emblem;
+
+        tint.color = squad.squadColor;
     }
 }

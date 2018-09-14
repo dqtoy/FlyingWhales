@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using BayatGames.SaveGameFree.Types;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ public class SquadSaveData {
     public Dictionary<int, ICHARACTER_TYPE> memberIDs;
     public int emblemBGIndex;
     public int emblemIndex;
+    public ColorSave squadColor;
 
     public SquadSaveData(Squad squad) {
         squadID = squad.id;
@@ -28,6 +30,6 @@ public class SquadSaveData {
 
         emblemBGIndex = CharacterManager.Instance.GetEmblemBGIndex(squad.emblemBG);
         emblemIndex = CharacterManager.Instance.GetEmblemIndex(squad.emblem);
-
+        squadColor = new ColorSave(squad.squadColor);
     }
 }
