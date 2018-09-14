@@ -177,6 +177,7 @@ namespace worldcreator {
         public void SetRace(int choice) {
             RACE newRace = (RACE)Enum.Parse(typeof(RACE), raceField.options[choice].text);
             _character.ChangeRace(newRace);
+            LoadAttributeSummary();
         }
         public void SetGender(int choice) {
             GENDER newGender = (GENDER)Enum.Parse(typeof(GENDER), genderField.options[choice].text);
