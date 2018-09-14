@@ -5,7 +5,7 @@ using ECS;
 
 public class Assist : PlayerAbility {
 
-    public Assist() : base() {
+    public Assist() : base(ABILITY_TYPE.CHARACTER) {
         _name = "Assist";
         _description = "Assist a character pn the current action";
         _powerCost = 10;

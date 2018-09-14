@@ -916,3 +916,8 @@ public enum EVENT_PHASE {
     PREPARATION,
     PROPER,
 }
+public enum ABILITY_TYPE {
+    ALL,
+    CHARACTER,
+    STRUCTURE,
+}

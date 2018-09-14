@@ -5,7 +5,7 @@ using ECS;
 
 public class Spook : PlayerAbility {
 
-    public Spook() : base() {
+    public Spook() : base(ABILITY_TYPE.CHARACTER) {
         _name = "Spook";
         _description = "Spook a character into leaving the location";
         _powerCost = 10;

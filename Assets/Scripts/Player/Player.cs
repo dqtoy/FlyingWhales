@@ -23,6 +23,7 @@ public class Player : ILeader{
     private List<Character> _snatchedCharacters;
     private List<Intel> _intels;
     private List<Item> _items;
+    private List<PlayerAbility> _allAbilities;
 
     //#region getters/setters
     //public Area playerArea {
@@ -70,6 +71,9 @@ public class Player : ILeader{
     public List<Item> items {
         get { return _items; }
     }
+    public List<PlayerAbility> allAbilities {
+        get { return _allAbilities; }
+    }
     #endregion
 
     public Player() {
@@ -84,6 +88,7 @@ public class Player : ILeader{
         SetGreenMagic(50);
         SetThreatLevel(20);
         SetCurrentLifestoneChance(25f);
+        ConstructAbilities();
         //Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_ADDED, OnTileAddedToPlayerArea);
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
         Messenger.AddListener<Character>(Signals.CHARACTER_RELEASED, OnCharacterReleased);
@@ -378,6 +383,29 @@ public class Player : ILeader{
                 TakeItemFromLandmark();
             }
         }
+    }
+    #endregion
+
+    #region Abilities
+    private void ConstructAbilities() {
+        _allAbilities = new List<PlayerAbility>();
+        Inspect inspect = new Inspect();
+        RevealSecret revealSecret = new RevealSecret();
+        Spook spook = new Spook();
+        Assist assist = new Assist();
+        GiveItem giveItem = new GiveItem();
+        ShareIntel shareIntel = new ShareIntel();
+        TakeItem takeItem = new TakeItem();
+
+        _allAbilities.Add(inspect);
+        _allAbilities.Add(revealSecret);
+        _allAbilities.Add(spook);
+        _allAbilities.Add(assist);
+        _allAbilities.Add(giveItem);
+        _allAbilities.Add(shareIntel);
+        _allAbilities.Add(takeItem);
+
+        PlayerAbilitiesUI.Instance.ConstructAbilityButtons();
     }
     #endregion
 }

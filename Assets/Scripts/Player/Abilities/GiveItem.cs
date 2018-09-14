@@ -5,7 +5,7 @@ using ECS;
 
 public class GiveItem : PlayerAbility {
 
-    public GiveItem() : base() {
+    public GiveItem() : base(ABILITY_TYPE.CHARACTER) {
         _name = "Give Item";
         _description = "Give item to a character";
         _powerCost = 10;
