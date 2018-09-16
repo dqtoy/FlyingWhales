@@ -405,7 +405,7 @@ public class Player : ILeader{
         _allAbilities.Add(shareIntel);
         _allAbilities.Add(takeItem);
 
-        PlayerAbilitiesUI.Instance.ConstructAbilityButtons();
+        PlayerAbilitiesUI.Instance.ConstructAbilityButtons(_allAbilities);
     }
     #endregion
 }

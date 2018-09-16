@@ -31,10 +31,10 @@ public class PlayerAbilitiesUI : MonoBehaviour {
         abilitiesGO.SetActive(false);
     }
 
-    public void ConstructAbilityButtons() {
+    public void ConstructAbilityButtons(List<PlayerAbility> allAbilities) {
         _playerAbilityButtons = new List<PlayerAbilityButton>();
-        for (int i = 0; i < PlayerManager.Instance.player.allAbilities.Count; i++) {
-            PlayerAbility playerAbility = PlayerManager.Instance.player.allAbilities[i];
+        for (int i = 0; i < allAbilities.Count; i++) {
+            PlayerAbility playerAbility = allAbilities[i];
             GameObject go = GameObject.Instantiate(playerAbilityButtonPrefab, abilitiesGO.transform);
             PlayerAbilityButton playerAbilityButton = go.GetComponent<PlayerAbilityButton>();
             playerAbilityButton.SetPlayerAbility(playerAbility);

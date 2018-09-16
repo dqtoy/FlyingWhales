@@ -7,7 +7,7 @@ public struct DateRange {
     public GameDate startDate;
     public GameDate endDate;
 
-    public int rangeInTicks { get { return GetRangeInTicks(); } }
+    public int rangeInTicks { get { return 0; } }//GetRangeInTicks();
 
     public DateRange(GameDate startDate, GameDate endDate) {
         this.startDate = startDate;

@@ -217,6 +217,9 @@ public class ActionData {
                 //    Debug.Log(_party.name + " can't perform " + currentAction.actionData.actionName + " because he is not in the same location!");
                 //}
             } else {
+                if (_cannotPerformAction) {
+                    return;
+                }
                 LookForAction();
                 //if (currentChainAction != null && currentChainAction.parentChainAction != null) {
                 //    if(currentChainAction.IsPrerequisiteFinished(_party, currentChainAction)) {
