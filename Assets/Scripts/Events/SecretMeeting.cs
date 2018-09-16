@@ -32,8 +32,8 @@ public class SecretMeeting : GameEvent {
         GameDate endDate = GameManager.Instance.Today();
         endDate.AddHours(GetEventDurationRoughEstimate());
 
-        _character1.AddScheduledAction(new DateRange(meetingDate, endDate), this);
-        _character2.AddScheduledAction(new DateRange(meetingDate, endDate), this);
+        _character1.AddScheduledEvent(new DateRange(meetingDate, endDate), this);
+        _character2.AddScheduledEvent(new DateRange(meetingDate, endDate), this);
         //Check if there is a special event on that day on any character, if there is, postpone this meeting by 1 day and recheck
     }
     private GameDate GetInitialMeetingDate() {

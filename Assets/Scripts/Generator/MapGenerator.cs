@@ -83,10 +83,11 @@ public class MapGenerator : MonoBehaviour {
         if (SteamManager.Initialized) {
             AchievementManager.Instance.Initialize();
         }
+        EventManager.Instance.GenerateEventForTesting();
+
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
         LevelLoaderManager.SetLoadingState(false);
-        
         Messenger.Broadcast(Signals.GAME_LOADED);
         yield return new WaitForSeconds(1f);
         PlayerManager.Instance.ChooseStartingTile();
@@ -174,6 +175,9 @@ public class MapGenerator : MonoBehaviour {
         if (SteamManager.Initialized) {
             AchievementManager.Instance.Initialize();
         }
+
+        EventManager.Instance.GenerateEventForTesting();
+
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
         LevelLoaderManager.SetLoadingState(false);

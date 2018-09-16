@@ -3229,12 +3229,15 @@ namespace ECS {
 #endregion
 
 #region Event Schedule
-        public void AddScheduledAction(DateRange dateRange, GameEvent gameEvent) {
+        public void AddScheduledEvent(DateRange dateRange, GameEvent gameEvent) {
+            //TODO: Once event has been scheduled, schedule every tick checking 144 ticks before the start date of the new event
             if (eventSchedule.HasConflictingSchedule(dateRange)) {
                 //TODO: there is a conflict in the current schedule of the character, move the new event to a new schedule.
                 eventSchedule.AddElement(dateRange, gameEvent);
+                Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + this.name + " has a conflicting schedule");
             } else {
                 eventSchedule.AddElement(dateRange, gameEvent);
+                Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + this.name + " added scehduled event " + gameEvent.name + " on " + dateRange.ToString());
             }
         }
         public bool HasEventScheduled(GameDate date) {
@@ -3242,6 +3245,16 @@ namespace ECS {
         }
         public GameEvent GetScheduledEvent(GameDate date) {
             return eventSchedule[date];
+        }
+        private void StartEveryTickCheckForEvent() {
+            //set next game event variable to the next event, to prevent checking the schecule every tick
+            //Add every tick listener for events
+        }
+        private void EventEveryTick() {
+            //check the character's current location
+            //then check the character's next game event start date
+            //given the character's location, if it needs to leave now, to reach the location
+            //end their current action, then start going to the target location
         }
 #endregion
 

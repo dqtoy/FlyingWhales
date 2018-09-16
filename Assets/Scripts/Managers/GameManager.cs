@@ -51,6 +51,7 @@ public class GameManager : MonoBehaviour {
         this.timeElapsed = 0f;
         _gameHasStarted = false;
         SetCursorToDefault();
+        //Application.logMessageReceived += LogCallback;
     }
     private void FixedUpdate() {
         if (_gameHasStarted && !isPaused) {
@@ -159,20 +160,11 @@ public class GameManager : MonoBehaviour {
     public void PrintEventTable() {
         Messenger.PrintEventTable();
     }
-    //[SerializeField] private HexTile center;
-    //[SerializeField] private int range;
-    //[ContextMenu("Get Tiles In Range")]
-    //public void GetTilesTester() {
-    //    List<HexTile> tiles = GridMap.Instance.GetTilesInRange(center, range);
-    //    StartCoroutine(SelectSlowly(tiles));
-    //    //UnityEditor.Selection.objects = tiles.Select(x => x.gameObject).ToArray();
-    //    //for (int i = 0; i < tiles.Count; i++) {
-    //    //    Debug.Log(tiles[i].name);
-    //    //}
-    //}
     #endregion
 
-    //public void StartCoroutine(Coroutine coroutine) {
-    //    StartCoroutine(coroutine);
+    #region Utilities
+    //private void LogCallback(string condition, string stackTrace, LogType type) {
+    //    Debug.LogWarning(condition + "\n" + stackTrace);
     //}
+    #endregion
 }

@@ -32,6 +32,14 @@ public struct DateRange {
         return false;
     }
 
+    public override string ToString() {
+        return startDate.GetDayAndTicksString() + " - " + endDate.GetDayAndTicksString();
+    }
+
+    public int GetStartDateValue() {
+        return (startDate.day * GameManager.hoursPerDay)  + startDate.hour;
+    }
+
     //private int GetRangeInTicks() {
     //    GameDate difference = new GameDate();
     //    difference.year = endDate.year - startDate.year;

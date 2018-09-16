@@ -10,6 +10,12 @@ public class GameEvent {
 
     protected Dictionary<Character, Queue<EventAction>> eventActions;
 
+    #region getters/setters
+    public string name {
+        get { return _name; }
+    }
+    #endregion
+
     public GameEvent(GAME_EVENT type) {
         _type = type;
         SetName(Utilities.NormalizeStringUpperCaseFirstLetters(_type.ToString()));
