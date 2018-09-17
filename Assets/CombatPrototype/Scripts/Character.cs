@@ -3256,6 +3256,13 @@ namespace ECS {
                 Debug.Log(this.name + " scheduled every tick check for event " + gameEvent.name + " on " + checkDate.GetDayAndTicksString());
             }
         }
+        public void AddScheduledEvent(GameDate startDate, GameEvent gameEvent) {
+            GameDate endDate = startDate;
+            endDate.AddHours(gameEvent.GetEventDurationRoughEstimate());
+
+            DateRange dateRange = new DateRange(startDate, endDate);
+            AddScheduledEvent(dateRange, gameEvent);
+        }
         public bool HasEventScheduled(GameDate date) {
             return false;
         }

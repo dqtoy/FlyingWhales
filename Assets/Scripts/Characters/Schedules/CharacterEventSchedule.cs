@@ -54,7 +54,23 @@ public class CharacterEventSchedule {
         }
         return null;
     }
-    public GameDate GetNextFreeDate() {
+    public GameDate GetNextFreeDateForEvent(GameEvent gameEvent) {
+        //this is only ususally called when there is a conflict in the schedule
+
+        //check the length from today to the earliest schedule, if the event (given its duration), can fit, schedule it there?
+        int counter = 0;
+        //check each entry in the schedule
+        foreach (KeyValuePair<DateRange, GameEvent> kvp in eventSchedule) {//for each schedule element
+            if (counter + 1 == eventSchedule.Count) { //check if this is the last element of the schedule
+                //if it is, schedule the event anywhere after this element's endDate
+            } else { //if this element is not the last element 
+
+            }
+        }
+                //check this element's endDate and the next elements startDate
+                    //if the distance between the 2 dates can fit the event (given it's duration), schedule the event in between the 2 dates
+                    //if not, continue to the next element in the schedule.
+
         return new GameDate();
     }
     public string GetEventScheduleSummary() {
