@@ -33,7 +33,6 @@ public struct GameDate {
             AddMonths(count);
         }
     } 
-
 	public void AddMonths(int amount){
 		this.month += amount;
 		while (this.month > 12) {
@@ -44,10 +43,23 @@ public struct GameDate {
             this.day = GameManager.daysInMonth[this.month];
         }
 	}
-
 	public void AddYears(int amount){
 		this.year += amount;
 	}
+
+    public void ReduceHours(int amount) {
+        for (int i = 0; i < amount; i++) {
+            if (this.hour == 0) {
+
+            }
+            this.hour -= 1;
+        }
+    }
+    public void ReduceDays(int amount) {
+        for (int i = 0; i < amount; i++) {
+
+        }
+    }
 
 	public void SetDate(int month, int day, int year, int hour){
 		this.month = month;

@@ -2022,16 +2022,16 @@ namespace ECS {
             }
             return false;
         }
-#endregion
+        #endregion
 
-#region Faction
+        #region Faction
         public void SetFaction(Faction faction) {
 			_faction = faction;
             Messenger.Broadcast<Character>(Signals.FACTION_SET, this);
 		}
-#endregion
+        #endregion
 
-#region Party
+        #region Party
         /*
          Create a new Party with this character as the leader.
              */
@@ -2090,9 +2090,9 @@ namespace ECS {
             }
             return false;
         }
-#endregion
+        #endregion
 
-#region Location
+        #region Location
 		public bool IsCharacterInAdjacentRegionOfThis(Character targetCharacter){
 			for (int i = 0; i < _currentRegion.adjacentRegionsViaRoad.Count; i++) {
 				if(targetCharacter.party.currentRegion.id == _currentRegion.adjacentRegionsViaRoad[i].id){
@@ -2101,9 +2101,9 @@ namespace ECS {
 			}
 			return false;
 		}
-#endregion
+        #endregion
 
-#region Quests
+        #region Quests
         //public void AddQuestData(CharacterQuestData questData) {
         //    if (!_questData.Contains(questData)) {
         //        _questData.Add(questData);
@@ -2199,15 +2199,15 @@ namespace ECS {
             }
             SetQuest(null);
         }
-#endregion
+        #endregion
 
-#region HP
+        #region HP
         public bool IsHealthFull() {
             return _currentHP >= _maxHP;
         }
-#endregion
+        #endregion
 
-#region Utilities
+        #region Utilities
         public void ChangeGender(GENDER gender) {
             _gender = gender;
             Messenger.Broadcast(Signals.GENDER_CHANGED, this, gender);
@@ -2347,9 +2347,9 @@ namespace ECS {
         public void SetDoNotDisturb(bool state) {
             _doNotDisturb = state;
         }
-#endregion
+        #endregion
 
-#region Relationships
+        #region Relationships
         public void AddNewRelationship(Character relWith, Relationship relationship) {
             if (!_relationships.ContainsKey(relWith)) {
                 _relationships.Add(relWith, relationship);
@@ -2418,9 +2418,9 @@ namespace ECS {
             }
             return null;
         }
-#endregion
+        #endregion
 
-#region History
+        #region History
         public void AddHistory(Log log) {
             _history.Add(log);
             if (this._history.Count > 20) {
@@ -2428,9 +2428,9 @@ namespace ECS {
             }
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
         }
-#endregion
+        #endregion
 
-#region Character
+        #region Character
 		public bool IsHostileWith(Character character){
             if (this.faction == null) {
                 return true; //this character has no faction
@@ -2463,15 +2463,15 @@ namespace ECS {
         public STANCE GetCurrentStance() {
             return STANCE.NEUTRAL;
         }
-#endregion
+        #endregion
 
-#region Combat Handlers
+        #region Combat Handlers
 		public void SetIsInCombat (bool state){
 			_isInCombat = state;
 		}
-#endregion
+        #endregion
 
-#region Landmarks
+        #region Landmarks
         public void AddExploredLandmark(BaseLandmark landmark){
 			_exploredLandmarks.Add(landmark); //did not add checking if landmark is already in list, since I want to allow duplicates
             //schedule removal of landmark after 6 months
@@ -2482,7 +2482,7 @@ namespace ECS {
         private void RemoveLandmarkAsExplored(BaseLandmark landmark) {
             _exploredLandmarks.Remove(landmark);
         }
-#endregion
+        #endregion
 
         //#region Psytoxin
 		//private void RegionPsytoxin(List<Region> regions){
@@ -2511,7 +2511,7 @@ namespace ECS {
 		//}
         //#endregion
 
-#region Traces
+        #region Traces
 		public void LeaveTraceOnLandmark(){
 			ILocation location = _ownParty.specificLocation;
 			if(location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
@@ -2568,9 +2568,9 @@ namespace ECS {
 			}
 			return null;
 		}
-#endregion
+        #endregion
 
-#region Action Queue
+        #region Action Queue
         public bool DoesSatisfiesPrerequisite(IPrerequisite prerequisite) {
             if(prerequisite.prerequisiteType == PREREQUISITE.RESOURCE) {
                 ResourcePrerequisite resourcePrerequisite = prerequisite as ResourcePrerequisite;
@@ -2580,7 +2580,7 @@ namespace ECS {
             }
             return false;
         }
-#endregion
+        #endregion
 
         //#region Needs
         //private void CiviliansDiedReduceSanity(StructureObj whereCiviliansDied, int amount) {
@@ -2595,13 +2595,13 @@ namespace ECS {
         //}
         //#endregion
 
-#region Portrait Settings
+        #region Portrait Settings
         public void SetPortraitSettings(PortraitSettings settings) {
             _portraitSettings = settings;
         }
-#endregion
+        #endregion
 
-#region RPG
+        #region RPG
         public void LevelUp() {
             if(_level < CharacterManager.Instance.maxLevel) {
                 _level += 1;
@@ -2707,9 +2707,9 @@ namespace ECS {
             float compPower = (totalAttack + (float) GetDef() + (float) (speed - 100) + (maxHPFloat / 10f) + (maxSPFloat / 10f)) * ((((float)currentHP / maxHPFloat) + ((float)currentSP / maxSPFloat)) / 2f);
             return compPower *= party.icharacters.Count;
         }
-#endregion
+        #endregion
 
-#region Player/Character Actions
+        #region Player/Character Actions
         public void OnThisCharacterSnatched() {
             BaseLandmark snatcherLair = PlayerManager.Instance.player.GetAvailableSnatcherLair();
             if (snatcherLair == null) {
@@ -2881,9 +2881,9 @@ namespace ECS {
             }
             return null;
         }
-#endregion
+        #endregion
 
-#region Snatch
+        #region Snatch
         /*
          When the player successfully snatches a character, other characters with relation to 
          the snatched one would all be sent signals to check whether they should react or not. 
@@ -2927,9 +2927,9 @@ namespace ECS {
         //        144,
         //        onClickAction);
         //}
-#endregion
+        #endregion
 
-#region Home
+        #region Home
         public void LookForNewHome() {
             //Try to get a new home structure from this character's area
             BaseLandmark landmark = GetNewHomeFromArea(_home);
@@ -3003,9 +3003,9 @@ namespace ECS {
                 SetHome(null);
             }
         }
-#endregion
+        #endregion
 
-#region Work
+        #region Work
         private void LookForNewWorkplace() {
             if (_characterClass.workActionType == ACTION_TYPE.WORKING) {
                 _workplace = _homeLandmark;
@@ -3026,9 +3026,9 @@ namespace ECS {
                 _workplace = workplaceChoices[UnityEngine.Random.Range(0, workplaceChoices.Count)];
             }
         }
-#endregion
+        #endregion
 
-#region Mental Points
+        #region Mental Points
         public void AdjustMentalPoints(int adjustment) {
             _mentalPoints += adjustment;
             _mentalPoints = Mathf.Min(0, mentalPoints);
@@ -3037,9 +3037,9 @@ namespace ECS {
             _mentalPoints = points;
             _mentalPoints = Mathf.Min(0, mentalPoints);
         }
-#endregion
+        #endregion
 
-#region Physical Points
+        #region Physical Points
         public void AdjustPhysicalPoints(int adjustment) {
             _physicalPoints += adjustment;
             _physicalPoints = Mathf.Min(0, physicalPoints);
@@ -3074,9 +3074,9 @@ namespace ECS {
                 }
             }
         }
-#endregion
+        #endregion
 
-#region Squads
+        #region Squads
         public void SetSquad(Squad squad) {
             _squad = squad;
         }
@@ -3112,9 +3112,9 @@ namespace ECS {
         //    }
         //    return quests;
         //}
-#endregion
+        #endregion
 
-#region Action Queue
+        #region Action Queue
         public void AddActionToQueue(CharacterAction action, IObject targetObject, Quest associatedQuest = null, int position = -1) {
             if (position == -1) {
                 //add action to end
@@ -3136,9 +3136,9 @@ namespace ECS {
                 }
             }
         }
-#endregion
+        #endregion
 
-#region Schedule
+        #region Schedule
         public void SetDailySchedule(CharacterSchedule schedule) {
             dailySchedule = schedule;
             dailySchedule.Initialize(this);
@@ -3149,9 +3149,10 @@ namespace ECS {
             }
             Debug.Log(GameManager.Instance.Today().GetDayAndTicksString() + " " + this.name + " started phase " + phase.phaseName + "(" + phase.phaseType.ToString() + ")");
             if (phase.phaseType == SCHEDULE_PHASE_TYPE.WORK) {
-                //if the started phase is work, the character will stop his/her current action (if not from event), and start doing work actions.
-                //TODO: Add checking whether current action is from event
-                _ownParty.actionData.LookForAction();
+                //if the started phase is work, the character will stop his/her current action (if not from event or also from work), and start doing work actions.
+                if (_ownParty.actionData.currentActionPhaseType != SCHEDULE_PHASE_TYPE.WORK && !_ownParty.actionData.isCurrentActionFromEvent) {
+                    _ownParty.actionData.LookForAction();
+                }
             } 
             //else if (phase.phaseType == SCHEDULE_PHASE_TYPE.MISC) {
             //    //if the started phase is misc, the character will NOT stop his/her current action if his/her current action is a work action (unless that work action is unending), 
@@ -3226,9 +3227,9 @@ namespace ECS {
         public int GetWorkDeadlineTick() {
             return this.dailySchedule.currentPhase.startTick + 7; //start of work phase + 1 hour(6 ticks) + 1 tick (because if other character arrives at exactly the work deadline, he/she will not be included in party, even though they are technically not late)
         }
-#endregion
+        #endregion
 
-#region Event Schedule
+        #region Event Schedule
         public void AddScheduledEvent(DateRange dateRange, GameEvent gameEvent) {
             //TODO: Once event has been scheduled, schedule every tick checking 144 ticks before the start date of the new event
             if (eventSchedule.HasConflictingSchedule(dateRange)) {
@@ -3237,6 +3238,7 @@ namespace ECS {
                 Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + this.name + " has a conflicting schedule");
             } else {
                 eventSchedule.AddElement(dateRange, gameEvent);
+                //GameDate checkDate = new GameDate(dateRange.startDate);
                 Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + this.name + " added scehduled event " + gameEvent.name + " on " + dateRange.ToString());
             }
         }
@@ -3256,15 +3258,15 @@ namespace ECS {
             //given the character's location, if it needs to leave now, to reach the location
             //end their current action, then start going to the target location
         }
-#endregion
+        #endregion
 
-#region IInteractable
+        #region IInteractable
         public void SetIsBeingInspected(bool state) {
             _isBeingInspected = state;
         }
         public void SetHasBeenInspected(bool state) {
             _hasBeenInspected = state;
         }
-#endregion
+        #endregion
     }
 }

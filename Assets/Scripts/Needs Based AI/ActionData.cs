@@ -217,9 +217,6 @@ public class ActionData {
                 //    Debug.Log(_party.name + " can't perform " + currentAction.actionData.actionName + " because he is not in the same location!");
                 //}
             } else {
-                if (_cannotPerformAction) {
-                    return;
-                }
                 LookForAction();
                 //if (currentChainAction != null && currentChainAction.parentChainAction != null) {
                 //    if(currentChainAction.IsPrerequisiteFinished(_party, currentChainAction)) {
@@ -250,6 +247,9 @@ public class ActionData {
         }
     }
     public void LookForAction() {
+        if (_cannotPerformAction) {
+            return;
+        }
         isWaiting = true;
         //GameManager.Instance.StartCoroutine(LookForActionCoroutine());
         //for (int i = 0; i < _party.questData.Count; i++) {
