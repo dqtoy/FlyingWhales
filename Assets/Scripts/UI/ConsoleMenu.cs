@@ -18,7 +18,7 @@ public class ConsoleMenu : UIMenu {
     [SerializeField] private InputField consoleInputField;
 
     [SerializeField] private GameObject commandHistoryGO;
-    [SerializeField] private Text commandHistoryLbl;
+    [SerializeField] private TextMeshProUGUI commandHistoryLbl;
 
     internal override void Initialize() {
         commandHistory = new List<string>();
@@ -44,7 +44,8 @@ public class ConsoleMenu : UIMenu {
             {"/set_icon_target", SetIconTarget },
             {"/set_need", SetCharacterNeedsValue},
             {"/add_tag", AddCharacterAttribute},
-            {"/log_event_schedule", LogCharacterActions },
+            {"/log_event_schedule", LogEventSchedule },
+            {"/schedule_event", ScheduleEvent },
         };
     }
 
@@ -811,6 +812,12 @@ public class ConsoleMenu : UIMenu {
         //        currTile.SetRoadState(!currTile.roadState);
         //    }
         //}
+    }
+    #endregion
+
+    #region Events
+    private void ScheduleEvent(string[] parameters) {
+
     }
     #endregion
 

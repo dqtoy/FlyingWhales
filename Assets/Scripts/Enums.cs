@@ -912,6 +912,7 @@ public enum HIDDEN_DESIRE {
 public enum GAME_EVENT {
     SECRET_MEETING,
     MONSTER_ATTACK,
+    TEST_EVENT,
 }
 public enum EVENT_PHASE {
     PREPARATION,

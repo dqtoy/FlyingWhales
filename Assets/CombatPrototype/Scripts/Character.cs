@@ -3124,6 +3124,15 @@ namespace ECS {
                 _actionQueue.Enqueue(new ActionQueueItem(action, targetObject, associatedQuest), position);
             }
         }
+        public void AddActionToQueue(EventAction eventAction, GameEvent associatedEvent, int position = -1) {
+            if (position == -1) {
+                //add action to end
+                _actionQueue.Enqueue(new ActionQueueItem(eventAction.action, eventAction.targetObject, null, associatedEvent));
+            } else {
+                //Insert action to specified position
+                _actionQueue.Enqueue(new ActionQueueItem(eventAction.action, eventAction.targetObject, null, associatedEvent), position);
+            }
+        }
         public void RemoveActionFromQueue(ActionQueueItem item) {
             _actionQueue.Remove(item);
         }
@@ -3184,8 +3193,7 @@ namespace ECS {
                 if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.WORK) {
                     if (_ownParty.actionData.currentAction != null && _ownParty.actionData.currentAction.actionData.duration == 0 
                         && _ownParty.actionData.currentAction.actionData.actionType != ACTION_TYPE.TURN_IN_QUEST) {//TODO: Remove Special case for turn in quest when bug has been fixed //this includes idle action
-                        ////current work action is unending, end it.
-                        //_ownParty.actionData.EndAction();
+                        //current work action is unending, end it.
                         //also disband the party. TODO: Add case for when to disband the party when the action is not unending
                         _ownParty.actionData.ForceDoAction(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
                     }
@@ -3230,16 +3238,22 @@ namespace ECS {
         #endregion
 
         #region Event Schedule
+        private GameEvent nextScheduledEvent;
+        private DateRange nextScheduledEventDate;
         public void AddScheduledEvent(DateRange dateRange, GameEvent gameEvent) {
-            //TODO: Once event has been scheduled, schedule every tick checking 144 ticks before the start date of the new event
             if (eventSchedule.HasConflictingSchedule(dateRange)) {
                 //TODO: there is a conflict in the current schedule of the character, move the new event to a new schedule.
                 eventSchedule.AddElement(dateRange, gameEvent);
                 Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + this.name + " has a conflicting schedule");
             } else {
                 eventSchedule.AddElement(dateRange, gameEvent);
-                //GameDate checkDate = new GameDate(dateRange.startDate);
                 Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + this.name + " added scehduled event " + gameEvent.name + " on " + dateRange.ToString());
+
+                GameDate checkDate = dateRange.startDate;
+                checkDate.ReduceHours(GameManager.hoursPerDay);
+                //Once event has been scheduled, schedule every tick checking 144 ticks before the start date of the new event
+                SchedulingManager.Instance.AddEntry(checkDate, () => StartEveryTickCheckForEvent());
+                Debug.Log(this.name + " scheduled every tick check for event " + gameEvent.name + " on " + checkDate.GetDayAndTicksString());
             }
         }
         public bool HasEventScheduled(GameDate date) {
@@ -3249,14 +3263,25 @@ namespace ECS {
             return eventSchedule[date];
         }
         private void StartEveryTickCheckForEvent() {
-            //set next game event variable to the next event, to prevent checking the schecule every tick
-            //Add every tick listener for events
+            nextScheduledEvent = eventSchedule.GetNextEvent(); //Set next game event variable to the next event, to prevent checking the schecule every tick
+            nextScheduledEventDate = eventSchedule.GetDateRangeForEvent(nextScheduledEvent);
+            Debug.Log(this.name + " started checking every tick for event " + nextScheduledEvent.name);
+            Messenger.AddListener(Signals.HOUR_ENDED, EventEveryTick); //Add every tick listener for events
         }
         private void EventEveryTick() {
-            //check the character's current location
-            //then check the character's next game event start date
-            //given the character's location, if it needs to leave now, to reach the location
-            //end their current action, then start going to the target location
+            HexTile currentLoc = this.ownParty.specificLocation.tileLocation; //check the character's current location
+            EventAction nextEventAction = nextScheduledEvent.PeekNextEventAction(this);
+            int travelTime = PathGenerator.Instance.GetTravelTimeInTicks(this.specificLocation, nextEventAction.targetLocation, PATHFINDING_MODE.PASSABLE);
+
+            GameDate eventArrivalDate = GameManager.Instance.Today();
+            eventArrivalDate.AddHours(travelTime); //given the start date and the travel time, check if the character has to leave now to reach the event in time
+            if (!eventArrivalDate.IsBefore(nextScheduledEventDate.startDate)) { //if the estimated arrival date is NOT before the next events' scheduled start date
+                //leave now and do the event action
+                AddActionToQueue(nextScheduledEvent.GetNextEventAction(this), nextScheduledEvent); //queue the event action
+                nextScheduledEvent = null;
+                _ownParty.actionData.EndCurrentAction();  //then end their current action
+                Messenger.RemoveListener(Signals.HOUR_ENDED, EventEveryTick);
+            }
         }
         #endregion
 

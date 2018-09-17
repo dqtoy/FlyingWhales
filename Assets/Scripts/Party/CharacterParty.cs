@@ -64,20 +64,23 @@ public class CharacterParty : NewParty {
                     this.characterOwner.onDailyAction();
                 }
             } else {
-                if (characterOwner.HasEventScheduled(GameManager.Instance.Today()) && !actionData.isCurrentActionFromEvent) {
-                    //the character has an event action scheduled for today, and it's current action is not from an event
-                    //queue the next action as the event action
-                    //EventAction scheduledEventAction = characterOwner.GetScheduledEventAction(GameManager.Instance.Today());
-                    //characterOwner.AddActionToQueue(scheduledEventAction.action, scheduledEventAction.targetObject);
-                    //actionData.EndAction(); //end current action after queueing event action
-                } else {
-                    if (onDailyAction != null) {
-                        onDailyAction();
-                    }
+                if (onDailyAction != null) {
+                    onDailyAction();
+                }
+                if (!actionData.isCurrentActionFromEvent) {
+                    //the character's current action is not from an event
                     if (this.characterOwner.onDailyAction != null) {
                         this.characterOwner.onDailyAction();
                     }
-                }
+                } 
+                //else {
+                //    if (onDailyAction != null) {
+                //        onDailyAction();
+                //    }
+                //    if (this.characterOwner.onDailyAction != null) {
+                //        this.characterOwner.onDailyAction();
+                //    }
+                //}
             }
             
         }

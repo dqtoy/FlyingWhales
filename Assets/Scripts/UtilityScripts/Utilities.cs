@@ -28,6 +28,7 @@ public class Utilities : MonoBehaviour {
     public static int lastPartyID = 0;
     public static int lastSquadID = 0;
     public static int lastCharacterSimID = 0;
+    public static int lastGameEventID = 0;
 
     public static float defenseBuff = 1.20f;
     public static int defaultCityHP = 300;
@@ -88,6 +89,9 @@ public class Utilities : MonoBehaviour {
         } else if (obj is CharacterSim) {
             lastCharacterSimID += 1;
             return lastCharacterSimID;
+        } else if (obj is GameEvent) {
+            lastGameEventID += 1;
+            return lastGameEventID;
         }
         return 0;
     }
@@ -116,6 +120,8 @@ public class Utilities : MonoBehaviour {
             lastSquadID = idToUse;
         } else if (obj is CharacterSim) {
             lastCharacterSimID = idToUse;
+        } else if (obj is GameEvent) {
+            lastGameEventID = idToUse;
         }
         return idToUse;
     }

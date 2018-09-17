@@ -23,8 +23,8 @@ public class ActionData {
     private bool _isBeingAssistedByPlayer;
     private float _homeMultiplier;
 
-    public GameEvent eventConnectedWithAction { get; private set; } //the event that this party's current action is from
-    public bool isCurrentActionFromEvent { get { return eventConnectedWithAction != null; } } //if the eventConnectedWithAction is not null, the current action is from an event
+    public GameEvent eventAssociatedWithAction { get; private set; } //the event that this party's current action is from
+    public bool isCurrentActionFromEvent { get { return eventAssociatedWithAction != null; } } //if the eventConnectedWithAction is not null, the current action is from an event
     public SCHEDULE_PHASE_TYPE currentActionPhaseType { get; private set; }
 
     #if UNITY_EDITOR
@@ -68,23 +68,23 @@ public class ActionData {
     public void Reset() {
         this.currentAction = null;
         this.currentTargetObject = null;
-        this.eventConnectedWithAction = null;
         //this.currentChainAction = null;
         this.currentDay = 0;
         SetIsDone (false);
         this.isWaiting = false;
         this._isNotFirstEncounter = false;
         SetQuestAssociatedWithAction(null);
+        SetEventAssociatedWithAction(null);
         _isBeingAssistedByPlayer = false;
     }
 
     public void SetSpecificTarget(object target) {
         specificTarget = target;
     }
-    public void ReturnActionFromThread(CharacterAction characterAction, IObject targetObject, ChainAction chainAction) {
-        AssignAction(characterAction, targetObject, chainAction);
+    public void ReturnActionFromThread(CharacterAction characterAction, IObject targetObject, ChainAction chainAction, Quest associatedQuest, GameEvent associatedEvent) {
+        AssignAction(characterAction, targetObject, chainAction, associatedQuest, associatedEvent);
     }
-    public void AssignAction(CharacterAction action, IObject targetObject, ChainAction chainAction = null) {
+    public void AssignAction(CharacterAction action, IObject targetObject, ChainAction chainAction = null, Quest associatedQuest = null, GameEvent associatedEvent = null) {
         if (_party == null || _party.isDead) {
             return;
         }
@@ -93,9 +93,11 @@ public class ActionData {
             action = chainAction.action;
         }
         //this.currentChainAction = chainAction;
-        actionHistory.Add("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + action.actionData.actionName + " - " + targetObject.objectName + " Call Stack: \n" + StackTraceUtility.ExtractStackTrace());
+        actionHistory.Add("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + action.actionData.actionName + " - " + targetObject.objectName + "\n");
         SetCurrentAction(action);
         SetCurrentTargetObject(targetObject);
+        SetQuestAssociatedWithAction(associatedQuest);
+        SetEventAssociatedWithAction(associatedEvent);
         if (action == null) {
             throw new System.Exception("Action of " + _party.name + " is null!");
         }
@@ -126,6 +128,9 @@ public class ActionData {
         Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() +"] Ended " + _party.name + " action " + currentAction.actionData.actionName);
         SetIsDone(true);
     }
+    public void EndCurrentAction() {
+        currentAction.EndAction(_party, currentTargetObject);
+    }
     public void SetCurrentActionPhaseType(SCHEDULE_PHASE_TYPE phaseType) {
         currentActionPhaseType = phaseType;
     }
@@ -142,8 +147,12 @@ public class ActionData {
         }
        
     }
-    public void SetQuestAssociatedWithAction(Quest quest) {
+    private void SetQuestAssociatedWithAction(Quest quest) {
         questAssociatedWithCurrentAction = quest;
+    }
+    private void SetEventAssociatedWithAction(GameEvent gameEvent) {
+        eventAssociatedWithAction = gameEvent;
+        SetCurrentActionPhaseType(SCHEDULE_PHASE_TYPE.SPECIAL);
     }
     public void SetCurrentDay(int day) {
         this.currentDay = day;
@@ -196,7 +205,7 @@ public class ActionData {
                     ILocation characterLocation = _party.specificLocation;
                     if (characterLocation != null && currentTargetObject.specificLocation != null 
                         && characterLocation.tileLocation.id == currentTargetObject.specificLocation.tileLocation.id) {
-                        ValidateCurrentAction(); //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action
+                        //ValidateCurrentAction(); //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action
                         DoAction();
                     } else {
                         ILocation location = currentTargetObject.specificLocation;

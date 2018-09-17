@@ -82,30 +82,30 @@ public class AffiliationsObject : MonoBehaviour {
 
     #region Utilities
     public void UpdateAffiliations() {
-        //if (_character == null) {
-        //    return;
-        //}
-        //if (_character.isFactionless) {
-        //    factionGO.SetActive(false);
-        //} else {
-        //    factionGO.SetActive(true);
-        //    if (_character.faction != null) {
-        //        factionEmblem.SetFaction(_character.faction);
-        //    }
-        //}
+        if (_character == null) {
+            return;
+        }
+        if (_character.isFactionless) {
+            factionGO.SetActive(false);
+        } else {
+            factionGO.SetActive(true);
+            if (_character.faction != null) {
+                factionEmblem.SetFaction(_character.faction);
+            }
+        }
 
-        //if (_character.squad == null) {
-        //    squadGO.SetActive(false);
-        //} else {
-        //    squadGO.SetActive(true);
-        //    squadEmblem.SetSquad(_character.squad);
-        //}
+        if (_character.squad == null) {
+            squadGO.SetActive(false);
+        } else {
+            squadGO.SetActive(true);
+            squadEmblem.SetSquad(_character.squad);
+        }
 
-        //if (disableParty || _character.currentParty.icharacters.Count <= 1) {
-        //    partyGO.SetActive(false);
-        //} else {
-        //    partyGO.SetActive(true);
-        //}
+        if (disableParty || _character.currentParty.icharacters.Count <= 1) {
+            partyGO.SetActive(false);
+        } else {
+            partyGO.SetActive(true);
+        }
     }
     public void SetCharacter(ECS.Character character) {
         _character = character;

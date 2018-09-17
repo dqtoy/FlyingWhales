@@ -13,6 +13,9 @@ public class ActionThread : Multithread {
     private List<CharacterActionAdvertisement> allChoices;
     private ChainAction chosenChainAction;
     private string actionLog;
+    private Quest associatedQuest;
+    private GameEvent associatedEvent;
+
 
     #region getters/setters
     public CharacterParty party {
@@ -47,69 +50,90 @@ public class ActionThread : Multithread {
      is involved in a storyline.
          */
     private void LookForAction() {
+        associatedEvent = null;
+        associatedQuest = null;
         if (_party.owner is Character) {
             Character character = _party.owner as Character;
+            actionLog = "[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + character.name + "'s Action Logic: ";
             if (!character.actionQueue.IsEmpty) {//If Action Queue is not empty, pop the earliest one
                 ActionQueueItem item = character.actionQueue.Dequeue();
                 chosenAction = item.action;
                 chosenObject = item.targetObject;
-                _party.actionData.SetQuestAssociatedWithAction(item.associatedQuest);
+                associatedQuest = item.associatedQuest;
+                associatedEvent = item.associatedEvent;
+                //_party.actionData.SetQuestAssociatedWithAction(item.associatedQuest);
+                //_party.actionData.SetEventAssociatedWithAction(item.associatedEvent);
                 actionLog += "\nGot action from queue " + chosenAction.actionData.actionName + "-" + (chosenObject == null ? "null" : chosenObject.objectName);
-            } else {
-                actionLog = "[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + character.name + "'s Action Logic: ";
-                //Check first what phase the character is in
-                if (character.dailySchedule.currentPhase.phaseType == SCHEDULE_PHASE_TYPE.WORK) { //if work phase
-                    if (character.role.roleType == CHARACTER_ROLE.HERO) { //if character is hero
-                        actionLog += "\nDetermining hero work action...";
-                        //check if he/she can reach his/her work on time.
-                        if (character.CanReachWork()) {// if yes, go to work and perform work action
-                            chosenObject = character.workplace.landmarkObj;
-                            chosenAction = character.workplace.landmarkObj.currentState.GetAction(character.characterClass.workActionType); //Hero work action is QUESTING.
-                            _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
-                            //_party.actionData.SetQuestAssociatedWithAction(null);
-                            actionLog += "\nGot hero work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
-                        } else { //if no, idle at home, until end of work phase
-                            actionLog += "\nHero will be late for work, idle at home instead.";
-                            actionLog += " Current location is " + _party.specificLocation.locationName;
-                            chosenObject = character.homeLandmark.landmarkObj;
-                            chosenAction = _party.characterObject.currentState.GetAction(ACTION_TYPE.IDLE);
-                            _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
-                            //_party.actionData.SetQuestAssociatedWithAction(null);
-                            actionLog += "\nGot hero work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
-                        }
-                    } else if (character.role.roleType == CHARACTER_ROLE.CIVILIAN) { //if character is civilian
-                        actionLog += "\nDetermining civilian work action...";
-                        //get work action based on class (Farmer, Miner, etc.) then do that until work period ends.
-                        chosenObject = character.workplace.landmarkObj;
-                        chosenAction = character.workplace.landmarkObj.currentState.GetAction(character.characterClass.workActionType);
-                        _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
-                        //_party.actionData.SetQuestAssociatedWithAction(null);
-                        actionLog += "\nGot civilian work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
-                    }
-                } else if (character.dailySchedule.currentPhase.phaseType == SCHEDULE_PHASE_TYPE.MISC) { //if misc phase
-                                                                                                         //first check if needs meet their thresholds (NOTE: Will this be changed to overall value?)
-                    if (character.role.AreNeedsMet()) { //if needs are met
-                        actionLog += "\nDetermining non need misc action...";
-                        //Get action from misc actions based on the tags of this character and possibly some consistent actions that are present for everyone
-                        IObject targetObject = null;
-                        chosenAction = character.GetWeightedMiscAction(ref targetObject, ref actionLog);
-                        chosenObject = targetObject;
-                        _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
-                        //_party.actionData.SetQuestAssociatedWithAction(null);
-                        actionLog += "\nGot non-need misc action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
-                    } else { //if not
-                        actionLog += "\nDetermining need misc action...";
-                        //Get action from needs advertisements
-                        IObject targetObject = null;
-                        chosenAction = GetActionFromAdvertisements(ref targetObject);
-                        chosenObject = targetObject;
-                        _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
-                        //_party.actionData.SetQuestAssociatedWithAction(null);
-                        actionLog += "\nGot need misc action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
-                    }
+                return;
+            } else if (_party.actionData.isCurrentActionFromEvent) {
+                GameEvent eventAssociated = _party.actionData.eventAssociatedWithAction;
+                //if the current action is from an event, check if this character can still get an action from it
+                if (eventAssociated.PeekNextEventAction(character) != null) {
+                    //if yes, perform the action from the event.
+                    EventAction nextEventAction = eventAssociated.GetNextEventAction(character);
+                    chosenAction = nextEventAction.action;
+                    chosenObject = nextEventAction.targetObject;
+                    associatedEvent = eventAssociated;
+                    actionLog += "\nGot action from event " + chosenAction.actionData.actionName + "-" + (chosenObject == null ? "null" : chosenObject.objectName);
+                    return;
+                } else {
+                    //if not, set the event as done for this character and continue with it's daily actions
+                    eventAssociated.EndEventForCharacter(character);
                 }
-                Debug.Log(actionLog);
+            } 
+            //This starts the characters normal action logic (daily actions)
+            //Check first what phase the character is in
+            if (character.dailySchedule.currentPhase.phaseType == SCHEDULE_PHASE_TYPE.WORK) { //if work phase
+                if (character.role.roleType == CHARACTER_ROLE.HERO) { //if character is hero
+                    actionLog += "\nDetermining hero work action...";
+                    //check if he/she can reach his/her work on time.
+                    if (character.CanReachWork()) {// if yes, go to work and perform work action
+                        chosenObject = character.workplace.landmarkObj;
+                        chosenAction = character.workplace.landmarkObj.currentState.GetAction(character.characterClass.workActionType); //Hero work action is QUESTING.
+                        _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
+                        //_party.actionData.SetQuestAssociatedWithAction(null);
+                        actionLog += "\nGot hero work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
+                    } else { //if no, idle at home, until end of work phase
+                        actionLog += "\nHero will be late for work, idle at home instead.";
+                        actionLog += " Current location is " + _party.specificLocation.locationName;
+                        chosenObject = character.homeLandmark.landmarkObj;
+                        chosenAction = _party.characterObject.currentState.GetAction(ACTION_TYPE.IDLE);
+                        _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
+                        //_party.actionData.SetQuestAssociatedWithAction(null);
+                        actionLog += "\nGot hero work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
+                    }
+                } else if (character.role.roleType == CHARACTER_ROLE.CIVILIAN) { //if character is civilian
+                    actionLog += "\nDetermining civilian work action...";
+                    //get work action based on class (Farmer, Miner, etc.) then do that until work period ends.
+                    chosenObject = character.workplace.landmarkObj;
+                    chosenAction = character.workplace.landmarkObj.currentState.GetAction(character.characterClass.workActionType);
+                    _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
+                    //_party.actionData.SetQuestAssociatedWithAction(null);
+                    actionLog += "\nGot civilian work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
+                }
+            } else if (character.dailySchedule.currentPhase.phaseType == SCHEDULE_PHASE_TYPE.MISC) { //if misc phase
+                                                                                                        //first check if needs meet their thresholds (NOTE: Will this be changed to overall value?)
+                if (character.role.AreNeedsMet()) { //if needs are met
+                    actionLog += "\nDetermining non need misc action...";
+                    //Get action from misc actions based on the tags of this character and possibly some consistent actions that are present for everyone
+                    IObject targetObject = null;
+                    chosenAction = character.GetWeightedMiscAction(ref targetObject, ref actionLog);
+                    chosenObject = targetObject;
+                    _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
+                    //_party.actionData.SetQuestAssociatedWithAction(null);
+                    actionLog += "\nGot non-need misc action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
+                } else { //if not
+                    actionLog += "\nDetermining need misc action...";
+                    //Get action from needs advertisements
+                    IObject targetObject = null;
+                    chosenAction = GetActionFromAdvertisements(ref targetObject);
+                    chosenObject = targetObject;
+                    _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
+                    //_party.actionData.SetQuestAssociatedWithAction(null);
+                    actionLog += "\nGot need misc action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
+                }
             }
+            Debug.Log(actionLog);
         }
     }
 
@@ -454,7 +478,7 @@ public class ActionThread : Multithread {
     //}
 
     private void ReturnAction() {
-        _party.actionData.ReturnActionFromThread(chosenAction, chosenObject, chosenChainAction);
+        _party.actionData.ReturnActionFromThread(chosenAction, chosenObject, chosenChainAction, associatedQuest, associatedEvent);
     }
     private void PutToChoices(CharacterAction action, IObject targetObject, float advertisement) {
         CharacterActionAdvertisement actionAdvertisement = new CharacterActionAdvertisement();

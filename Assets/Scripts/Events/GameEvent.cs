@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GameEvent {
+    public int id { get; private set; }
     protected string _name;
     protected GAME_EVENT _type;
     protected EVENT_PHASE _phase;
@@ -21,6 +22,7 @@ public class GameEvent {
     #endregion
 
     public GameEvent(GAME_EVENT type) {
+        id = Utilities.SetID(this);
         _type = type;
         _isDone = false;
         SetName(Utilities.NormalizeStringUpperCaseFirstLetters(_type.ToString()));
@@ -37,6 +39,15 @@ public class GameEvent {
 
     #region Virtuals
     public virtual EventAction GetNextEventAction(Character character) {
+        if (eventActions[character].Count != 0) {
+            return eventActions[character].Dequeue();
+        }
+        return null;
+    }
+    public virtual EventAction PeekNextEventAction(Character character) {
+        if (eventActions[character].Count != 0) {
+            return eventActions[character].Peek();
+        }
         return null;
     }
     /*
@@ -48,6 +59,9 @@ public class GameEvent {
     public virtual void EndEvent() {
         _isDone = true;
         EventManager.Instance.RemoveEvent(this);
+    }
+    public virtual void EndEventForCharacter(Character character) {
+        character.eventSchedule.RemoveElement(this);
     }
     #endregion
 }
