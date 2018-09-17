@@ -25,12 +25,14 @@ public class Inspect : PlayerAbility {
         UpdateInfoUI(interactable);
         ScheduleEndInspection(interactable);
 
-        if(PlayerManager.Instance.totalLifestonesInWorld > 0) {
-            int chance = UnityEngine.Random.Range(0, 100);
-            if(chance < PlayerManager.Instance.player.currentLifestoneChance) {
-                PlayerManager.Instance.AdjustTotalLifestones(-1);
-                PlayerManager.Instance.player.AdjustLifestone(1);
-                PlayerManager.Instance.player.DecreaseLifestoneChance();
+        if(interactable is BaseLandmark) {
+            if (PlayerManager.Instance.totalLifestonesInWorld > 0) {
+                int chance = UnityEngine.Random.Range(0, 100);
+                if (chance < PlayerManager.Instance.player.currentLifestoneChance) {
+                    PlayerManager.Instance.AdjustTotalLifestones(-1);
+                    PlayerManager.Instance.player.AdjustLifestone(1);
+                    PlayerManager.Instance.player.DecreaseLifestoneChance();
+                }
             }
         }
         base.Activate(interactable);

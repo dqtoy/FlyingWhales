@@ -7,6 +7,7 @@ public class GameEvent {
     protected string _name;
     protected GAME_EVENT _type;
     protected EVENT_PHASE _phase;
+    protected bool _isDone;
 
     protected Dictionary<Character, Queue<EventAction>> eventActions;
 
@@ -14,10 +15,14 @@ public class GameEvent {
     public string name {
         get { return _name; }
     }
+    public bool isDone {
+        get { return _isDone; }
+    }
     #endregion
 
     public GameEvent(GAME_EVENT type) {
         _type = type;
+        _isDone = false;
         SetName(Utilities.NormalizeStringUpperCaseFirstLetters(_type.ToString()));
     }
 
@@ -39,6 +44,10 @@ public class GameEvent {
          */
     public virtual int GetEventDurationRoughEstimate() {
         return 0;
+    }
+    public virtual void EndEvent() {
+        _isDone = true;
+        EventManager.Instance.RemoveEvent(this);
     }
     #endregion
 }

@@ -911,6 +911,7 @@ public enum HIDDEN_DESIRE {
 }
 public enum GAME_EVENT {
     SECRET_MEETING,
+    MONSTER_ATTACK,
 }
 public enum EVENT_PHASE {
     PREPARATION,
@@ -920,4 +921,5 @@ public enum ABILITY_TYPE {
     ALL,
     CHARACTER,
     STRUCTURE,
+    MONSTER,
 }

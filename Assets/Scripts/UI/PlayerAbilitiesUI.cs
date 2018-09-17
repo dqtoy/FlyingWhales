@@ -7,6 +7,7 @@ public class PlayerAbilitiesUI : MonoBehaviour {
     public static PlayerAbilitiesUI Instance;
 
     public GameObject abilitiesGO;
+    public GameObject abilitiesParentGO;
     public GameObject playerAbilityButtonPrefab;
 
     private IInteractable _currentlySelectedInteractable;
@@ -25,9 +26,11 @@ public class PlayerAbilitiesUI : MonoBehaviour {
     public void ShowPlayerAbilitiesUI(IInteractable interactable) {
         _currentlySelectedInteractable = interactable;
         ShowAbilitiesOf(interactable);
+        abilitiesParentGO.SetActive(true);
         abilitiesGO.SetActive(true);
     }
     public void HidePlayerAbilitiesUI() {
+        abilitiesParentGO.SetActive(false);
         abilitiesGO.SetActive(false);
     }
     public void CollpaseAbilitiesUI() {

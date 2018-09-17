@@ -76,6 +76,10 @@ MonoBehaviour:
   - {fileID: 114735646941030760, guid: cdc6649179f5f5543878240a2792e53e, type: 2}
   - {fileID: 114735646941030760, guid: ece47a322f39a3f4ba239e9cc1beb338, type: 2}
   - {fileID: 114735646941030760, guid: a398f45349e0936429d8f3356e642d41, type: 2}
+  monsterAttackParties:
+  - {fileID: 114076955503950830, guid: 9bb9b02baf076a345a720f24a40c4928, type: 2}
+  - {fileID: 114260156823697922, guid: 47cbcf11b84d6694899caee34a60a8ee, type: 2}
+  - {fileID: 114445399016585892, guid: fc899463ec4407f42816043304a12267, type: 2}
   catSprite: {fileID: 21300000, guid: ba56a251aea2abe4daa3cc9bad485dce, type: 3}
   direBeast1Sprite: {fileID: 21300000, guid: bca2aeea0b2a8654ab50e55f0e65d759, type: 3}
   direBeast2Sprite: {fileID: 21300000, guid: f4edeffc1bf768240a933d4fd98bebb7, type: 3}
