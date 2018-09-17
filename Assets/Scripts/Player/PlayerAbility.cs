@@ -33,6 +33,7 @@ public class PlayerAbility {
         PayPowerCost(interactable);
         ThreatGain();
         GoOnCooldown();
+        PlayerUI.Instance.UpdateUI();
     }
     #endregion
 

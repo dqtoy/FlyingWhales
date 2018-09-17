@@ -248,6 +248,7 @@ public class UIManager : MonoBehaviour {
         UpdatePartyInfo();
         UpdateCombatLogs();
         UpdateQuestSummary();
+        PlayerUI.Instance.UpdateUI();
     }
 
     #region World Controls

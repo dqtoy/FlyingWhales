@@ -85,9 +85,9 @@ public class CharacterAvatar : MonoBehaviour{
         targetLocation = target;
     }
     public void StartPath(PATHFINDING_MODE pathFindingMode, Action actionOnPathFinished = null) {
-        if (smoothMovement.isMoving) {
-            smoothMovement.ForceStopMovement();
-        }
+        //if (smoothMovement.isMoving) {
+        //    smoothMovement.ForceStopMovement();
+        //}
         Reset();
         if (this.targetLocation != null) {
             SetHasArrivedState(false);

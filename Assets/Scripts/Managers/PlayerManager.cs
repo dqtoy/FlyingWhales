@@ -56,6 +56,7 @@ public class PlayerManager : MonoBehaviour {
         GameManager.Instance.StartProgression();
         isChoosingStartingTile = false;
         UIManager.Instance.SetTimeControlsState(true);
+        PlayerUI.Instance.UpdateUI();
         //LandmarkManager.Instance.CreateNewArea(tile, AREA_TYPE.DEMONIC_INTRUSION);
     }
 

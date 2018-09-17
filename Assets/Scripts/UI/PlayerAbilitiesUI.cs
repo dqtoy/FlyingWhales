@@ -30,6 +30,9 @@ public class PlayerAbilitiesUI : MonoBehaviour {
     public void HidePlayerAbilitiesUI() {
         abilitiesGO.SetActive(false);
     }
+    public void CollpaseAbilitiesUI() {
+        abilitiesGO.SetActive(!abilitiesGO.activeSelf);
+    }
 
     public void ConstructAbilityButtons(List<PlayerAbility> allAbilities) {
         _playerAbilityButtons = new List<PlayerAbilityButton>();

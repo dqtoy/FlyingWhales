@@ -222,6 +222,10 @@ public class NewParty : IParty {
 
     #region Utilities
     public void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null) {
+        if (_icon.isMovingToHex) {
+            _icon.SetQueuedAction(() => GoToLocation(targetLocation, pathfindingMode, doneAction));
+            return;
+        }
         if (specificLocation == targetLocation) {
             //action doer is already at the target location
             if (doneAction != null) {
