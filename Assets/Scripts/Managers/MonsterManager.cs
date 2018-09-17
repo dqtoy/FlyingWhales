@@ -10,6 +10,8 @@ public class MonsterManager : MonoBehaviour {
     //public MonsterComponent monsterComponent;
 
     [SerializeField] private List<MonsterPartyComponent> monsterPartySetups;
+    public List<MonsterPartyComponent> monsterAttackParties;
+
     public List<MonsterParty> allMonsterParties;
     public List<Monster> allMonsters;
 

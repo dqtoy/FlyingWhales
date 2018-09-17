@@ -136,6 +136,7 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<bool>(Signals.PAUSED, UpdateSpeedToggles);
     }
     private void Start() {
+        currentActivePlayerPickerButtons = new List<PlayerPickerButton>();
         Messenger.AddListener(Signals.UPDATE_UI, UpdateUI);
         NormalizeFontSizes();
         ToggleBorders();
@@ -1100,6 +1101,7 @@ public class UIManager : MonoBehaviour {
     }
     public void HidePlayerPicker() {
         playerPickerGO.SetActive(false);
+        PlayerManager.Instance.player.OnHidePlayerPicker();
     }
     public void OnClickOkPlayerPicker() {
         PlayerManager.Instance.player.OnOkPlayerPicker();

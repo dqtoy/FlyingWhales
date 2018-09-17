@@ -198,7 +198,10 @@ public class BaseLandmark : ILocation, IInteractable {
 
     #region Virtuals
     public virtual void Initialize() {}
-	public virtual void DestroyLandmark(bool putRuinStructure){}
+	public virtual void DestroyLandmark(){
+        ObjectState ruined = landmarkObj.GetState("Ruined");
+        landmarkObj.ChangeState(ruined);
+    }
     /*
      What should happen when a character searches this landmark
          */

@@ -289,7 +289,7 @@ public class Player : ILeader{
         //TODO
         _currentTargetInteractable = character;
         _currentActiveAbility = shareIntelAbility;
-        PlayerManager.Instance.ShowPlayerPickerAndPopulate();
+        PlayerUI.Instance.ShowPlayerPickerAndPopulate();
     }
     private void GiveIntelToCharacter() {
         Intel intel = _currentlySelectedPlayerPicker as Intel;
@@ -298,9 +298,6 @@ public class Player : ILeader{
         if (character.intelReactions.ContainsKey(intel.id)) {
             GameEvent gameEvent = EventManager.Instance.AddNewEvent(character.intelReactions[intel.id]);
             shareIntel.HasGivenIntel(character);
-            _currentlySelectedPlayerPicker = null;
-            _currentTargetInteractable = null;
-            _currentActiveAbility = null;
         }
     }
     #endregion
@@ -316,7 +313,7 @@ public class Player : ILeader{
         //TODO
         _currentTargetInteractable = character;
         _currentActiveAbility = giveItemAbility;
-        PlayerManager.Instance.ShowPlayerPickerAndPopulate();
+        PlayerUI.Instance.ShowPlayerPickerAndPopulate();
     }
     private void GiveItemToCharacter() {
         Item item = _currentlySelectedPlayerPicker as Item;
@@ -325,15 +322,12 @@ public class Player : ILeader{
         character.PickupItem(item);
         RemoveItem(item);
         giveItem.HasGivenItem(character);
-        _currentlySelectedPlayerPicker = null;
-        _currentTargetInteractable = null;
-        _currentActiveAbility = null;
     }
     public void PickItemToTakeFromLandmark(BaseLandmark landmark, TakeItem takeItem) {
         //TODO
         _currentTargetInteractable = landmark;
         _currentActiveAbility = takeItem;
-        PlayerManager.Instance.ShowPlayerPickerAndPopulate();
+        PlayerUI.Instance.ShowPlayerPickerAndPopulate();
     }
     private void TakeItemFromLandmark() {
         Item item = _currentlySelectedPlayerPicker as Item;
@@ -342,9 +336,6 @@ public class Player : ILeader{
         AddItem(item);
         landmark.RemoveItemInLandmark(item);
         takeItem.HasTakenItem(landmark);
-        _currentlySelectedPlayerPicker = null;
-        _currentTargetInteractable = null;
-        _currentActiveAbility = null;
     }
     #endregion
 
@@ -384,6 +375,11 @@ public class Player : ILeader{
             }
         }
     }
+    public void OnHidePlayerPicker() {
+        _currentlySelectedPlayerPicker = null;
+        _currentTargetInteractable = null;
+        _currentActiveAbility = null;
+    }
     #endregion
 
     #region Abilities
@@ -396,6 +392,7 @@ public class Player : ILeader{
         GiveItem giveItem = new GiveItem();
         ShareIntel shareIntel = new ShareIntel();
         TakeItem takeItem = new TakeItem();
+        MonsterAttack monsterAttack = new MonsterAttack();
 
         _allAbilities.Add(inspect);
         _allAbilities.Add(revealSecret);
@@ -404,6 +401,7 @@ public class Player : ILeader{
         _allAbilities.Add(giveItem);
         _allAbilities.Add(shareIntel);
         _allAbilities.Add(takeItem);
+        _allAbilities.Add(monsterAttack);
 
         PlayerAbilitiesUI.Instance.ConstructAbilityButtons(_allAbilities);
     }

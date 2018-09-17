@@ -44,9 +44,11 @@ public class EventManager : MonoBehaviour {
     private GameEvent CreateNewEvent(GAME_EVENT eventType) {
         switch (eventType) {
             case GAME_EVENT.SECRET_MEETING:
-                return new SecretMeeting();
+            return new SecretMeeting();
+            case GAME_EVENT.MONSTER_ATTACK:
+            return new MonsterAttackEvent();
             case GAME_EVENT.TEST_EVENT:
-                return new TestEvent();
+            return new TestEvent();
         }
         return null;
     }

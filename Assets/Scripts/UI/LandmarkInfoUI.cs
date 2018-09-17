@@ -88,7 +88,9 @@ public class LandmarkInfoUI : UIMenu {
         UpdateItems();
         UpdateAllHistoryInfo();
         //ShowAttackButton();
-        PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(currentlyShowingLandmark);
+        if(currentlyShowingLandmark.specificLandmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
+            PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(currentlyShowingLandmark);
+        }
     }
     public override void HideMenu() {
         base.HideMenu();
