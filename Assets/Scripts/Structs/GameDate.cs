@@ -49,18 +49,36 @@ public struct GameDate {
 
     public void ReduceHours(int amount) {
         for (int i = 0; i < amount; i++) {
-            if (this.hour == 0) {
-
-            }
             this.hour -= 1;
+            if (this.hour <= 0) {
+                ReduceDays(1);
+                this.hour = GameManager.hoursPerDay;
+            }
         }
     }
     public void ReduceDays(int amount) {
         for (int i = 0; i < amount; i++) {
-
+            this.day -= 1;
+            if (this.day == 0) {
+                ReduceMonth(1);
+                this.day = GameManager.daysInMonth[this.month];
+            }
         }
     }
-
+    public void ReduceMonth(int amount) {
+        for (int i = 0; i < amount; i++) {
+            this.month -= 1;
+            if (this.month == 0) {
+                this.month = 12; //last month
+                ReduceYear(1);
+            }
+        }
+    }
+    public void ReduceYear(int amount) {
+        for (int i = 0; i < amount; i++) {
+            this.year -= 1;
+        }
+    }
 	public void SetDate(int month, int day, int year, int hour){
 		this.month = month;
 		this.day = day;

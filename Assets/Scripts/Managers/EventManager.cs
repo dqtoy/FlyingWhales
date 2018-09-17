@@ -44,13 +44,18 @@ public class EventManager : MonoBehaviour {
     private GameEvent CreateNewEvent(GAME_EVENT eventType) {
         switch (eventType) {
             case GAME_EVENT.SECRET_MEETING:
-            return new SecretMeeting();
+                return new SecretMeeting();
+            case GAME_EVENT.TEST_EVENT:
+                return new TestEvent();
         }
         return null;
     }
 
     public void GenerateEventForTesting() {
-        SecretMeeting secretMeetingEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.SECRET_MEETING) as SecretMeeting;
-        secretMeetingEvent.Initialize(CharacterManager.Instance.allCharacters[0], CharacterManager.Instance.allCharacters[1]);
+        //return;
+        if (CharacterManager.Instance.allCharacters.Count > 1) {
+            SecretMeeting secretMeetingEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.SECRET_MEETING) as SecretMeeting;
+            secretMeetingEvent.Initialize(CharacterManager.Instance.allCharacters[0], CharacterManager.Instance.allCharacters[1]);
+        }
     }
 }

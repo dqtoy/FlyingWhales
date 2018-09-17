@@ -20,6 +20,16 @@ public class CharacterEventSchedule {
         eventSchedule.Add(key, value);
         OrganizeSchedule();
     }
+    public void RemoveElement(GameEvent gameEvent) {
+        foreach (KeyValuePair<DateRange, GameEvent> kvp in eventSchedule) {
+            DateRange currRange = kvp.Key;
+            GameEvent currEvent = kvp.Value;
+            if (currEvent.id == gameEvent.id) {
+                eventSchedule.Remove(kvp.Key);
+                break;
+            }
+        }
+    }
     /*
      This will organize the scedule from earliest to latest
          */
@@ -60,6 +70,15 @@ public class CharacterEventSchedule {
             return eventSchedule.ElementAt(0).Value;
         }
         return null;
+    }
+
+    public DateRange GetDateRangeForEvent(GameEvent gameEvent) {
+        foreach (KeyValuePair<DateRange, GameEvent> kvp in eventSchedule) {
+            if (kvp.Value.id == gameEvent.id) {
+                return kvp.Key;
+            }
+        }
+        throw new System.Exception("There is no game event " + gameEvent.name + " in the character's schedule!");
     }
     
 }

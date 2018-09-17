@@ -111,7 +111,7 @@ public class LandmarkInfoUI : UIMenu {
     private void UpdateBasicInfo() {
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(currentlyShowingLandmark.specificLandmarkType);
         structureIcon.sprite = data.landmarkTypeIcon;
-        structureTypeLbl.text = data.landmarkTypeString;
+        structureTypeLbl.text = data.landmarkTypeString + "(" + currentlyShowingLandmark.locationName + ")";
         if (currentlyShowingLandmark.tileLocation.areaOfTile == null) {
             areaIcon.gameObject.SetActive(false);
         } else {
