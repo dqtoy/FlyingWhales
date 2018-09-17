@@ -15,7 +15,10 @@ public class ShareIntel : PlayerAbility {
 
     #region Overrides
     public override void Activate(IInteractable interactable) {
-        if(interactable is Character) {
+        if (!CanBeActivated(interactable)) {
+            return;
+        }
+        if (interactable is Character) {
             Character character = interactable as Character;
             PlayerManager.Instance.player.PickIntelToGiveToCharacter(character, this);
         }

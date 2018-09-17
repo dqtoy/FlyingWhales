@@ -15,6 +15,9 @@ public class TakeItem : PlayerAbility {
 
     #region Overrides
     public override void Activate(IInteractable interactable) {
+        if (!CanBeActivated(interactable)) {
+            return;
+        }
         if (interactable is BaseLandmark) {
             BaseLandmark landmark = interactable as BaseLandmark;
             PlayerManager.Instance.player.PickItemToTakeFromLandmark(landmark, this);

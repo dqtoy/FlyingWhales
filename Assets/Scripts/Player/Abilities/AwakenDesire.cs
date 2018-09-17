@@ -14,6 +14,9 @@ public class AwakenDesire : PlayerAbility {
 
     #region Overrides
     public override void Activate(IInteractable interactable) {
+        if (!CanBeActivated(interactable)) {
+            return;
+        }
         interactable.hiddenDesire.Awaken();
         base.Activate(interactable);
     }
