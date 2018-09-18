@@ -53,7 +53,7 @@ public class GameEvent {
     /*
      Roughly, how long will this event take to complete?
          */
-    public virtual int GetEventDurationRoughEstimate() {
+    public virtual int GetEventDurationRoughEstimateInTicks() {
         return 0;
     }
     public virtual void EndEvent() {

@@ -7,7 +7,7 @@ public struct DateRange {
     public GameDate startDate;
     public GameDate endDate;
 
-    //public int rangeInTicks { get { return GetRangeInTicks(); } }
+    public int rangeInTicks { get { return GetRangeInTicks(); } }
 
     public DateRange(GameDate startDate, GameDate endDate) {
         this.startDate = startDate;
@@ -40,9 +40,15 @@ public struct DateRange {
         return (startDate.day * GameManager.hoursPerDay)  + startDate.hour;
     }
 
-    //private int GetRangeInTicks() {
-    //    GameDate startDate = this.startDate;
-    //    GameDate endDate = this.endDate;
-
-    //}
+    private int GetRangeInTicks() {
+        //TODO: Change this to use maths
+        int range = 0;
+        GameDate startDate = this.startDate;
+        GameDate endDate = this.endDate;
+        while (!startDate.IsSameDate(endDate)) {
+            startDate.AddHours(1);
+            range++;
+        }
+        return range;
+    }
 }

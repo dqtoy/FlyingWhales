@@ -3242,9 +3242,13 @@ namespace ECS {
         private DateRange nextScheduledEventDate;
         public void AddScheduledEvent(DateRange dateRange, GameEvent gameEvent) {
             if (eventSchedule.HasConflictingSchedule(dateRange)) {
-                //TODO: there is a conflict in the current schedule of the character, move the new event to a new schedule.
-                eventSchedule.AddElement(dateRange, gameEvent);
-                Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + this.name + " has a conflicting schedule");
+                //There is a conflict in the current schedule of the character, move the new event to a new schedule.
+                GameDate nextFreeDate = eventSchedule.GetNextFreeDateForEvent(gameEvent);
+                GameDate endDate = nextFreeDate;
+                endDate.AddHours(gameEvent.GetEventDurationRoughEstimateInTicks());
+                DateRange newSched = new DateRange(nextFreeDate, endDate);
+                eventSchedule.AddElement(newSched, gameEvent);
+                Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + this.name + " has a conflicting schedule. Rescheduled event to " + newSched.ToString());
             } else {
                 eventSchedule.AddElement(dateRange, gameEvent);
                 Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + this.name + " added scehduled event " + gameEvent.name + " on " + dateRange.ToString());
@@ -3258,7 +3262,7 @@ namespace ECS {
         }
         public void AddScheduledEvent(GameDate startDate, GameEvent gameEvent) {
             GameDate endDate = startDate;
-            endDate.AddHours(gameEvent.GetEventDurationRoughEstimate());
+            endDate.AddHours(gameEvent.GetEventDurationRoughEstimateInTicks());
 
             DateRange dateRange = new DateRange(startDate, endDate);
             AddScheduledEvent(dateRange, gameEvent);

@@ -56,21 +56,36 @@ public class CharacterEventSchedule {
     }
     public GameDate GetNextFreeDateForEvent(GameEvent gameEvent) {
         //this is only ususally called when there is a conflict in the schedule
-
         //check the length from today to the earliest schedule, if the event (given its duration), can fit, schedule it there?
         int counter = 0;
         //check each entry in the schedule
         foreach (KeyValuePair<DateRange, GameEvent> kvp in eventSchedule) {//for each schedule element
+            DateRange currRange = kvp.Key;
+            GameEvent currEvent = kvp.Value;
+            GameDate nextFreeDate;
             if (counter + 1 == eventSchedule.Count) { //check if this is the last element of the schedule
                 //if it is, schedule the event anywhere after this element's endDate
+                nextFreeDate = currRange.endDate;
+                //schedule the next event 1 day after
+                nextFreeDate.AddDays(1);
+                counter++;
+                return nextFreeDate;
             } else { //if this element is not the last element 
-
+                KeyValuePair<DateRange, GameEvent> nextElement = eventSchedule.ElementAt(counter + 1);
+                DateRange nextElementRange = nextElement.Key;
+                DateRange availableRange = new DateRange(currRange.endDate, nextElement.Key.startDate); //check this element's endDate and the next elements startDate
+                if (availableRange.rangeInTicks + GameManager.hoursPerDay >= gameEvent.GetEventDurationRoughEstimateInTicks()) {
+                    //if the distance between the 2 dates can fit the event (given it's duration), schedule the event in between the 2 dates
+                    nextFreeDate = availableRange.startDate;
+                    nextFreeDate.AddDays(1);
+                    return nextFreeDate;
+                } else {
+                    //if not, continue to the next element in the schedule.
+                    continue;
+                }
             }
         }
-                //check this element's endDate and the next elements startDate
-                    //if the distance between the 2 dates can fit the event (given it's duration), schedule the event in between the 2 dates
-                    //if not, continue to the next element in the schedule.
-
+        Debug.LogWarning("A character cannot find a date to schedule new event!");
         return new GameDate();
     }
     public string GetEventScheduleSummary() {

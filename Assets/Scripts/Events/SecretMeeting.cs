@@ -72,7 +72,7 @@ public class SecretMeeting : GameEvent {
         SetName("Secret Meeting between " + _character1.name + " and " + _character2.name + " at " + chosenMeetup.locationName);
 
         GameDate endDate = meetingDate;
-        endDate.AddHours(GetEventDurationRoughEstimate());
+        endDate.AddHours(GetEventDurationRoughEstimateInTicks());
 
         _character1.AddScheduledEvent(new DateRange(meetingDate, endDate), this);
         _character2.AddScheduledEvent(new DateRange(meetingDate, endDate), this);
@@ -91,7 +91,7 @@ public class SecretMeeting : GameEvent {
         meetingDate.AddDays(initialMeetingDay);
         return meetingDate;
     }
-    public override int GetEventDurationRoughEstimate() {
+    public override int GetEventDurationRoughEstimateInTicks() {
         int longestDuartion = 0;
         foreach (KeyValuePair<Character, Queue<EventAction>> kvp in eventActions) {
             int currCharactersDuration = 0;
