@@ -51,25 +51,16 @@ public class SecretMeeting : GameEvent {
 
         EatAction char1EatAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.EAT) as EatAction;
         EatAction char2EatAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.EAT) as EatAction;
-        char1EatAction.SetDuration(16);
-        char2EatAction.SetDuration(16);
-        //char1WaitAction.SetOnWaitedCharacterArrivedAction(_character1.ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.IDLE));
-        //char2WaitAction.SetOnWaitedCharacterArrivedAction(_character2.ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.IDLE));
+        char1EatAction.SetDuration(72);
+        char2EatAction.SetDuration(72);
 
         GameDate waitDeadline = meetingDate;
         waitDeadline.AddHours(20); //both of the characters will wait for 20 ticks from the meeting date
         char1WaitAction.SetWaitUntil(waitDeadline);
         char2WaitAction.SetWaitUntil(waitDeadline);
 
-        //CharacterAction harvestAction = chosenMeetup.landmarkObj.currentState.GetAction(ACTION_TYPE.HARVEST);
         eventActions[_character1].Enqueue(new EventAction(char1WaitAction, chosenMeetup.landmarkObj, 20)); //wait at meetup for 20 ticks
         eventActions[_character2].Enqueue(new EventAction(char2WaitAction, chosenMeetup.landmarkObj, 20));
-
-        
-        //allLandmarks = LandmarkManager.Instance.GetAllLandmarks().Where(x => x.specificLandmarkType == LANDMARK_TYPE.LUMBERYARD).ToList();
-        //BaseLandmark otherLandmark = allLandmarks[Utilities.rng.Next(0, allLandmarks.Count)];
-
-        //CharacterAction woodCuttingAction = otherLandmark.landmarkObj.currentState.GetAction(ACTION_TYPE.WOODCUTTING);
 
         eventActions[_character1].Enqueue(new EventAction(char1EatAction, chosenMeetup.landmarkObj, char1EatAction.actionData.duration)); //once met up, idle at meetup for 30 ticks
         eventActions[_character2].Enqueue(new EventAction(char2EatAction, chosenMeetup.landmarkObj, char2EatAction.actionData.duration));
@@ -96,20 +87,20 @@ public class SecretMeeting : GameEvent {
         meetingDate.AddDays(initialMeetingDay);
         return meetingDate;
     }
-    public override int GetEventDurationRoughEstimateInTicks() {
-        int longestDuartion = 0;
-        foreach (KeyValuePair<Character, Queue<EventAction>> kvp in eventActions) {
-            int currCharactersDuration = 0;
-            for (int i = 0; i < kvp.Value.Count; i++) {
-                EventAction currentAction = kvp.Value.ElementAt(i);
-                currCharactersDuration += currentAction.duration;
-            }
-            if (longestDuartion < currCharactersDuration) {
-                longestDuartion = currCharactersDuration;
-            }
-        }
-        return longestDuartion;
-    }
+    //public override int GetEventDurationRoughEstimateInTicks() {
+    //    int longestDuartion = 0;
+    //    foreach (KeyValuePair<Character, Queue<EventAction>> kvp in eventActions) {
+    //        int currCharactersDuration = 0;
+    //        for (int i = 0; i < kvp.Value.Count; i++) {
+    //            EventAction currentAction = kvp.Value.ElementAt(i);
+    //            currCharactersDuration += currentAction.duration;
+    //        }
+    //        if (longestDuartion < currCharactersDuration) {
+    //            longestDuartion = currCharactersDuration;
+    //        }
+    //    }
+    //    return longestDuartion;
+    //}
 
     public override void EndEventForCharacter(Character character) {
         base.EndEventForCharacter(character);

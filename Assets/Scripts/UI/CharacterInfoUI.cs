@@ -5,6 +5,7 @@ using System.Linq;
 using ECS;
 using TMPro;
 using UnityEngine.UI;
+using System;
 
 public class CharacterInfoUI : UIMenu {
 
@@ -97,6 +98,16 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private Button snatchBtn;
     [SerializeField] private GameObject releaseBtnGO;
 
+    [Space(10)]
+    [Header("Scheduling")]
+    [SerializeField] private Dropdown monthDropdown;
+    [SerializeField] private Dropdown dayDropdown;
+    [SerializeField] private InputField yearField;
+    [SerializeField] private InputField tickField;
+    [SerializeField] private TextMeshProUGUI daysConversionLbl;
+    [SerializeField] private Button scheduleManualBtn;
+
+
     private LogHistoryItem[] logHistoryItems;
     private ItemContainer[] inventoryItemContainers;
 
@@ -126,6 +137,7 @@ public class CharacterInfoUI : UIMenu {
         //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         InititalizeLogsMenu();
         InititalizeInventoryMenu();
+        InitializeSchedulingMenu();
     }
     private void InititalizeLogsMenu() {
         logHistoryItems = new LogHistoryItem[MAX_HISTORY_LOGS];
@@ -633,6 +645,77 @@ public class CharacterInfoUI : UIMenu {
             currentlyShowingCharacter.party.currentCombat.CharacterDeath(currentlyShowingCharacter, null);
         }
         currentlyShowingCharacter.Death();
+    }
+    #endregion
+
+    #region Scheduling
+    private void InitializeSchedulingMenu() {
+        monthDropdown.ClearOptions();
+        tickField.text = string.Empty;
+        yearField.text = string.Empty;
+
+        monthDropdown.AddOptions(new List<string>() { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"});
+        //List<string> tickOptions = new List<string>();
+        //for (int i = 1; i <= GameManager.hoursPerDay; i++) {
+        //    tickOptions.Add(i.ToString());
+        //}
+        //tickField.AddOptions(tickOptions);
+        UpdateDays(MONTH.JAN);
+    }
+    public void OnMonthChanged(int choice) {
+        UpdateDays((MONTH)choice);
+    }
+    private void UpdateDays(MONTH month) {
+        dayDropdown.ClearOptions();
+        List<string> options = new List<string>();
+        for (int i = 1; i <= GameManager.daysInMonth[(int)month]; i++) {
+            options.Add(i.ToString());
+        }
+        dayDropdown.AddOptions(options);
+    }
+    public void ValidateHour(string value) {
+        int hour = Int32.Parse(value);
+        hour = Mathf.Clamp(hour, 1, GameManager.hoursPerDay);
+        tickField.text = hour.ToString();
+    }
+    public void ValidateYear(string value) {
+        int year = Int32.Parse(value);
+        year = Mathf.Max(GameManager.Instance.year, year);
+        yearField.text = year.ToString();
+    }
+    public void ScheduleManual() {
+        int month = Int32.Parse(monthDropdown.options[monthDropdown.value].text);
+        int day = Int32.Parse(dayDropdown.options[dayDropdown.value].text);
+        int year = Int32.Parse(yearField.text);
+        int hour = Int32.Parse(tickField.text);
+        TestEvent testEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.TEST_EVENT) as TestEvent;
+        testEvent.Initialize(currentlyShowingCharacter);
+        testEvent.ScheduleEvent(new GameDate(month, day, year, hour));
+    }
+    public void ScheduleAuto() {
+        TestEvent testEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.TEST_EVENT) as TestEvent;
+        testEvent.Initialize(currentlyShowingCharacter);
+        testEvent.ScheduleEvent();
+    }
+    private void Update() {
+        int month;
+        int day;
+        int year;
+        int hour;
+        //daysConversionLbl.text = "Today is " + GameManager.Instance.Today().ToStringDate() + "Day Conversion: ";
+        if (Int32.TryParse(monthDropdown.options[monthDropdown.value].text, out month) && 
+            Int32.TryParse(dayDropdown.options[dayDropdown.value].text, out day) &&
+            Int32.TryParse(yearField.text, out year) &&
+            Int32.TryParse(tickField.text, out hour)) {
+            GameDate date = new GameDate(month, day, year, hour);
+            daysConversionLbl.text = "Day Conversion: " + date.GetDayAndTicksString();
+            if (!scheduleManualBtn.interactable) {
+                scheduleManualBtn.interactable = true;
+            }
+        } else {
+            daysConversionLbl.text = "Day Conversion: Invalid";
+            scheduleManualBtn.interactable = false;
+        }
     }
     #endregion
 }

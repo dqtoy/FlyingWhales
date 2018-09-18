@@ -160,7 +160,7 @@ public struct GameDate {
             } else if (this.month == otherDate.month) {
                 //this.month is equal to otherDate.month
                 if (this.day < otherDate.day) {
-                    return true;
+                    return false;
                 } else if (this.day == otherDate.day) {
                     if (this.hour < otherDate.hour) {
                         return false;
@@ -186,7 +186,7 @@ public struct GameDate {
     }
 
     public string ToStringDate(){
-		return ((MONTH)this.month).ToString() + " " + this.day + ", " + this.year;
+		return ((MONTH)this.month).ToString() + " " + this.day + ", " + this.year + " H: " + this.hour;
 	}
 
     public int ConvertToDays() {

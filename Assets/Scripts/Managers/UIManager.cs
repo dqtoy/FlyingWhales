@@ -330,6 +330,9 @@ public class UIManager : MonoBehaviour {
         }
         x4BtnLbl.color = color;
     }
+    public void ShowDateSummary() {
+        ShowSmallInfo(GameManager.Instance.Today().ToStringDate());
+    }
     #endregion
 
     #region Minimap

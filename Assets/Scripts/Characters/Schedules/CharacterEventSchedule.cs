@@ -57,6 +57,23 @@ public class CharacterEventSchedule {
     public GameDate GetNextFreeDateForEvent(GameEvent gameEvent) {
         //this is only ususally called when there is a conflict in the schedule
         //check the length from today to the earliest schedule, if the event (given its duration), can fit, schedule it there?
+        if (eventSchedule.Count == 0) { //if there are no events in the schedule
+            //schedule the next event 1 day after today
+            GameDate today = GameManager.Instance.Today();
+            today.AddDays(1);
+            return today;
+        } else {
+            KeyValuePair<DateRange, GameEvent> firstElement = eventSchedule.ElementAt(0);
+            GameDate firstEventStartDate = firstElement.Key.startDate;
+            DateRange range = new DateRange(GameManager.Instance.Today(), firstEventStartDate);
+            //if the available range is greater than the event duration in ticks + 1 day worth of ticks then use that range
+            if (range.rangeInTicks  >= gameEvent.GetEventDurationRoughEstimateInTicks() + GameManager.hoursPerDay) {
+                GameDate freeDate = GameManager.Instance.Today();
+                freeDate.AddDays(1);
+                return freeDate;
+            }
+        }
+        
         int counter = 0;
         //check each entry in the schedule
         foreach (KeyValuePair<DateRange, GameEvent> kvp in eventSchedule) {//for each schedule element
