@@ -199,6 +199,7 @@ public class BaseLandmark : ILocation, IInteractable {
     #region Virtuals
     public virtual void Initialize() {}
 	public virtual void DestroyLandmark(){
+        Messenger.Broadcast(Signals.DESTROY_LANDMARK, this);
         ObjectState ruined = landmarkObj.GetState("Ruined");
         landmarkObj.ChangeState(ruined);
     }

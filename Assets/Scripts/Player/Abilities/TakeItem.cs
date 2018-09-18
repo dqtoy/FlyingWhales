@@ -18,10 +18,8 @@ public class TakeItem : PlayerAbility {
         if (!CanBeActivated(interactable)) {
             return;
         }
-        if (interactable is BaseLandmark) {
-            BaseLandmark landmark = interactable as BaseLandmark;
-            PlayerManager.Instance.player.PickItemToTakeFromLandmark(landmark, this);
-        }
+        BaseLandmark landmark = interactable as BaseLandmark;
+        PlayerManager.Instance.player.PickItemToTakeFromLandmark(landmark, this);
     }
     #endregion
 

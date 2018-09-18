@@ -17,11 +17,9 @@ public class MonsterAttack : PlayerAbility {
         if (!CanBeActivated(interactable)) {
             return;
         }
-        if (interactable is BaseLandmark) {
-            MonsterAttackEvent gameEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.MONSTER_ATTACK) as MonsterAttackEvent;
-            gameEvent.Initialize(interactable as BaseLandmark);
-            base.Activate(interactable);
-        }
+        MonsterAttackEvent gameEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.MONSTER_ATTACK) as MonsterAttackEvent;
+        gameEvent.Initialize(interactable as BaseLandmark);
+        base.Activate(interactable);
     }
     #endregion
 }

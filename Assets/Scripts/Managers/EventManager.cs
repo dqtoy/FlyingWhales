@@ -49,6 +49,8 @@ public class EventManager : MonoBehaviour {
             return new MonsterAttackEvent();
             case GAME_EVENT.TEST_EVENT:
             return new TestEvent();
+            case GAME_EVENT.DRAGON_ATTACK:
+            return new DragonAttack();
         }
         return null;
     }

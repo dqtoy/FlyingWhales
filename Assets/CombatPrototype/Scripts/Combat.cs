@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace ECS{
 	public enum SIDES{
@@ -26,8 +27,9 @@ namespace ECS{
         //internal ILocation location;
 		internal bool isDone;
         internal bool hasStarted;
+        internal Action afterCombatAction;
 
-		public Combat(){
+		public Combat(Action action = null){
 //			this.allCharactersAndSides = new Dictionary<SIDES, List<ICharacter>> ();
 			this.charactersSideA = new List<ICharacter> ();
 			this.charactersSideB = new List<ICharacter> ();
@@ -41,6 +43,7 @@ namespace ECS{
             this.hasStarted = false;
 
 			this.resultsLog = new List<string> ();
+            this.afterCombatAction = action;
 //			Messenger.AddListener<ICharacter> ("CharacterDeath", CharacterDeath);
 		}
 

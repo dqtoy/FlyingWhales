@@ -161,10 +161,10 @@ namespace ECS {
         //    get { return _questData; }
         //}
         public HexTile currLocation {
-            get { return (_ownParty.specificLocation != null ? _ownParty.specificLocation.tileLocation : null); }
+            get { return (_currentParty.specificLocation != null ? _currentParty.specificLocation.tileLocation : null); }
         }
         public ILocation specificLocation {
-            get { return (_ownParty.specificLocation != null ? _ownParty.specificLocation : null); }
+            get { return (_currentParty.specificLocation != null ? _currentParty.specificLocation : null); }
         }
         public List<BodyPart> bodyParts {
             get { return this._bodyParts; }
@@ -515,6 +515,7 @@ namespace ECS {
             //Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
             Messenger.AddListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
+            Messenger.AddListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
             //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         }
         public void UnsubscribeSignals() {
@@ -525,6 +526,7 @@ namespace ECS {
             //Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
             Messenger.RemoveListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
+            Messenger.RemoveListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
             //Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         }
         #endregion
@@ -946,6 +948,9 @@ namespace ECS {
                 if (_role != null){
 					_role.DeathRole ();
 				}
+                if(_homeLandmark != null) {
+                    _homeLandmark.RemoveCharacterHomeOnLandmark(this);
+                }
 				//while(_tags.Count > 0){
 				//	RemoveCharacterAttribute (_tags [0]);
 				//}
@@ -1918,6 +1923,8 @@ namespace ECS {
                     return new Betrayed();
                 case ATTRIBUTE.HEARTBROKEN:
                     return new Heartbroken();
+                case ATTRIBUTE.MARKED:
+                return new Marked();
             }
             return null;
         }
@@ -2481,6 +2488,11 @@ namespace ECS {
 		}
         private void RemoveLandmarkAsExplored(BaseLandmark landmark) {
             _exploredLandmarks.Remove(landmark);
+        }
+        private void OnDestroyLandmark(BaseLandmark landmark) {
+            if(specificLocation.tileLocation.landmarkOnTile != null && specificLocation.tileLocation.landmarkOnTile.id == landmark.id) {
+                Death();
+            }
         }
         #endregion
 

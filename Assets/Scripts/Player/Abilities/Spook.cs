@@ -18,11 +18,9 @@ public class Spook : PlayerAbility {
         if (!CanBeActivated(interactable)) {
             return;
         }
-        if (interactable is Character) {
-            Character character = interactable as Character;
-            if(character.AddAttribute(ATTRIBUTE.SPOOKED) != null) {
-                base.Activate(interactable);
-            }
+        Character character = interactable as Character;
+        if (character.AddAttribute(ATTRIBUTE.SPOOKED) != null) {
+            base.Activate(interactable);
         }
     }
     #endregion

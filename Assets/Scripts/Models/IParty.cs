@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ECS;
+using System;
 
 public interface IParty {
     int id { get; }
@@ -24,7 +25,7 @@ public interface IParty {
     ILocation specificLocation { get; }
     List<ICharacter> icharacters { get; }
 
-    void GoHome();
+    void GoHome(Action action = null);
     void AddCharacter(ICharacter icharacter);
     void RemoveCharacter(ICharacter icharacter);
     void AdvertiseSelf(ActionThread actionThread);

@@ -19,6 +19,7 @@ public class Player : ILeader{
     private IPlayerPicker _currentlySelectedPlayerPicker;
     private IInteractable _currentTargetInteractable;
     private PlayerAbility _currentActiveAbility;
+    private Character _markedCharacter;
     private List<CharacterAction> _actions;
     private List<Character> _snatchedCharacters;
     private List<Intel> _intels;
@@ -58,6 +59,9 @@ public class Player : ILeader{
     }
     public PlayerAbility currentActiveAbility {
         get { return _currentActiveAbility; }
+    }
+    public Character markedCharacter {
+        get { return _markedCharacter; }
     }
     public IInteractable currentTargetInteractable {
         get { return _currentTargetInteractable; }
@@ -309,6 +313,14 @@ public class Player : ILeader{
     public bool RemoveItem(Item item) {
         return _items.Remove(item);
     }
+    public Item GetItem(string itemName) {
+        for (int i = 0; i < _items.Count; i++) {
+            if(_items[i].itemName == itemName) {
+                return _items[i];
+            }
+        }
+        return null;
+    }
     public void PickItemToGiveToCharacter(Character character, GiveItem giveItemAbility) {
         //TODO
         _currentTargetInteractable = character;
@@ -393,6 +405,7 @@ public class Player : ILeader{
         ShareIntel shareIntel = new ShareIntel();
         TakeItem takeItem = new TakeItem();
         MonsterAttack monsterAttack = new MonsterAttack();
+        Mark mark = new Mark();
 
         _allAbilities.Add(inspect);
         _allAbilities.Add(revealSecret);
@@ -402,8 +415,15 @@ public class Player : ILeader{
         _allAbilities.Add(shareIntel);
         _allAbilities.Add(takeItem);
         _allAbilities.Add(monsterAttack);
+        _allAbilities.Add(mark);
 
         PlayerAbilitiesUI.Instance.ConstructAbilityButtons(_allAbilities);
+    }
+    #endregion
+
+    #region Character
+    public void SetMarkedCharacter(Character character) {
+        _markedCharacter = character;
     }
     #endregion
 }

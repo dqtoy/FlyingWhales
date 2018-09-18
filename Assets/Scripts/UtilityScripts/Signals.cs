@@ -33,6 +33,7 @@ public static class Signals {
     public static string PLAYER_LANDMARK_CREATED = "OnPlayerLandmarkCreated"; //Parameters (BaseLandmark createdLandmark)
     public static string PARTY_ENTERED_LANDMARK = "OnPartyEnteredLandmark"; //Parameters (IParty partyThatEntered, BaseLandmark landmark)
     public static string PARTY_EXITED_LANDMARK = "OnPartyExitedLandmark"; //Parameters (IParty partyThatEntered, BaseLandmark landmark)
+    public static string DESTROY_LANDMARK = "OnDestroyLandmark"; //Parameteres (BaseLandmark destroyedLandmark)
     #endregion
 
     #region Character

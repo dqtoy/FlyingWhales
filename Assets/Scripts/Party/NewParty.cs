@@ -206,8 +206,8 @@ public class NewParty : IParty {
             }
         }
     }
-    public void GoHome() {
-        GoToLocation(mainCharacter.homeLandmark, PATHFINDING_MODE.PASSABLE);
+    public void GoHome(Action doneAction = null) {
+        GoToLocation(mainCharacter.homeLandmark, PATHFINDING_MODE.PASSABLE, doneAction);
     }
     #endregion
 
@@ -263,7 +263,7 @@ public class NewParty : IParty {
     #endregion
 
     #region Combat
-    public void StartCombatWith(NewParty enemy) {
+    public void StartCombatWith(NewParty enemy, Action afterCombatAction = null) {
         if(enemy.currentCombat != null && this.currentCombat != null && enemy.currentCombat == this.currentCombat) {
             return;
         }

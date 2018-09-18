@@ -18,10 +18,8 @@ public class GiveItem : PlayerAbility {
         if (!CanBeActivated(interactable)) {
             return;
         }
-        if (interactable is Character) {
-            Character character = interactable as Character;
-            PlayerManager.Instance.player.PickItemToGiveToCharacter(character, this);
-        }
+        Character character = interactable as Character;
+        PlayerManager.Instance.player.PickItemToGiveToCharacter(character, this);
     }
     #endregion
 

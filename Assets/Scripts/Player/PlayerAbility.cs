@@ -35,6 +35,9 @@ public class PlayerAbility {
         GoOnCooldown();
         PlayerUI.Instance.UpdateUI();
     }
+    public virtual void CanBeDone() {
+
+    }
     #endregion
 
     #region Utilities

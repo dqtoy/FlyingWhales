@@ -18,12 +18,10 @@ public class RevealSecret : PlayerAbility {
         if (!CanBeActivated(interactable)) {
             return;
         }
-        if (interactable is Character) {
-            Character character = interactable as Character;
-            if(character.currentlySelectedSecret != null) {
-                character.currentlySelectedSecret.RevealSecret();
-                base.Activate(interactable);
-            }
+        Character character = interactable as Character;
+        if (character.currentlySelectedSecret != null) {
+            character.currentlySelectedSecret.RevealSecret();
+            base.Activate(interactable);
         }
     }
     #endregion

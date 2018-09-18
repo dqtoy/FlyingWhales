@@ -1,0 +1,1 @@
+{"_name":"Dragon","_type":1,"_category":0,"_level":10,"_experienceDrop":200,"_maxHP":1500,"_maxSP":500,"_attackPower":100,"_speed":1,"_def":100,"_dodgeChance":0.0,"_hitChance":0.0,"_critChance":0.0,"_skillNames":["Skill300","Skill175","Skill150"],"_elementChanceWeaknesses":[],"_elementChanceResistances":[],"_itemDrops":[]}

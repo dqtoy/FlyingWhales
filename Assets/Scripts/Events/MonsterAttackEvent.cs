@@ -17,6 +17,7 @@ public class MonsterAttackEvent : GameEvent {
         _targetLandmark = target;
         MonsterPartyComponent chosenParty = MonsterManager.Instance.monsterAttackParties[UnityEngine.Random.Range(0, MonsterManager.Instance.monsterAttackParties.Count)];
         _monsterPartySpawned = MonsterManager.Instance.SpawnMonsterPartyOnLandmark(_targetLandmark, chosenParty);
+        ScheduleEnd();
     }
 
     public void ScheduleEnd() {

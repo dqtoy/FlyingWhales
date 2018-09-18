@@ -614,6 +614,7 @@ public enum ATTRIBUTE{
     HUMAN,
     STALKER,
     SPOOKED,
+    MARKED,
 }
 public enum PRODUCTION_TYPE{
 	WEAPON,
@@ -913,6 +914,7 @@ public enum GAME_EVENT {
     SECRET_MEETING,
     MONSTER_ATTACK,
     TEST_EVENT,
+    DRAGON_ATTACK,
 }
 public enum EVENT_PHASE {
     PREPARATION,

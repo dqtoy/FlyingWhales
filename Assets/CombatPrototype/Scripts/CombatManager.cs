@@ -139,6 +139,9 @@ namespace ECS {
                 icharacter.ResetToFullSP();
                 combat.RemoveCharacter(SIDES.B, icharacter);
             }
+            if(combat.afterCombatAction != null) {
+                combat.afterCombatAction();
+            }
             //Prisoner or Leave to Die
             //List<ECS.Character> winningCharacters = null;
             //int leaveToDieWeight = 100;

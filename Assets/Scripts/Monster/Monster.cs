@@ -5,7 +5,7 @@ using UnityEngine;
 using ECS;
 using System.IO;
 
-public class Monster : ICharacter, ICharacterSim {
+public class Monster : ICharacter, ICharacterSim, IInteractable {
     //Serialized fields
     [SerializeField] private string _name;
     [SerializeField] private MONSTER_TYPE _type;
@@ -33,6 +33,9 @@ public class Monster : ICharacter, ICharacterSim {
     private int _actRate;
     private int _currentRow;
     private bool _isDead;
+    private bool _isBeingInspected;
+    private bool _hasBeenInspected;
+    private bool _isSleeping;
     private MODE _currentMode;
     private Color _characterColor;
     private CharacterBattleOnlyTracker _battleOnlyTracker;
@@ -145,6 +148,15 @@ public class Monster : ICharacter, ICharacterSim {
     public bool isDead {
         get { return _isDead; }
     }
+    public bool isBeingInspected {
+        get { return _isBeingInspected; }
+    }
+    public bool hasBeenInspected {
+        get { return _hasBeenInspected; }
+    }
+    public bool isSleeping {
+        get { return _isSleeping; }
+    }
     public MONSTER_TYPE type {
         get { return _type; }
     }
@@ -186,6 +198,9 @@ public class Monster : ICharacter, ICharacterSim {
     }
     public CharacterPortrait characterPortrait {
         get { return _characterPortrait; }
+    }
+    public HiddenDesire hiddenDesire {
+        get { return null; }
     }
     //public Combat currentCombat {
     //    get { return _currentCombat; }
@@ -407,6 +422,9 @@ public class Monster : ICharacter, ICharacterSim {
             _skills.Add(skill);
         }
     }
+    public void SetSleeping(bool state) {
+        _isSleeping = state;
+    }
     #endregion
 
     #region Interface
@@ -539,6 +557,12 @@ public class Monster : ICharacter, ICharacterSim {
     }
     public void SetMode(MODE mode) {
         _currentMode = mode;
+    }
+    public void SetIsBeingInspected(bool state) {
+        _isBeingInspected = state;
+    }
+    public void SetHasBeenInspected(bool state) {
+        _hasBeenInspected = true;
     }
     public void EnableDisableSkills(Combat combat) {
         //bool isAllAttacksInRange = true;

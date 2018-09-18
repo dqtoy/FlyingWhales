@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 
-public class Assist : PlayerAbility {
+public class Mark : PlayerAbility {
 
-    public Assist() : base(ABILITY_TYPE.CHARACTER) {
-        _name = "Assist";
-        _description = "Assist a character pn the current action";
+    public Mark() : base(ABILITY_TYPE.CHARACTER) {
+        _name = "Mark";
+        _description = "Marks a character";
         _powerCost = 10;
         _threatGain = 2;
         _cooldown = 12;
@@ -18,8 +18,14 @@ public class Assist : PlayerAbility {
         if (!CanBeActivated(interactable)) {
             return;
         }
+        Item dragonEgg = PlayerManager.Instance.player.GetItem("Dragon Egg");
+        if(dragonEgg == null) {
+            return;
+        }
+
         Character character = interactable as Character;
-        character.party.actionData.SetIsBeingAssisted(true);
+        character.AddAttribute(ATTRIBUTE.MARKED);
+        PlayerManager.Instance.player.RemoveItem(dragonEgg);
         base.Activate(interactable);
     }
     #endregion

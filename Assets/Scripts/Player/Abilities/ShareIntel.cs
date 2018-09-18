@@ -18,10 +18,8 @@ public class ShareIntel : PlayerAbility {
         if (!CanBeActivated(interactable)) {
             return;
         }
-        if (interactable is Character) {
-            Character character = interactable as Character;
-            PlayerManager.Instance.player.PickIntelToGiveToCharacter(character, this);
-        }
+        Character character = interactable as Character;
+        PlayerManager.Instance.player.PickIntelToGiveToCharacter(character, this);
     }
     #endregion
 
