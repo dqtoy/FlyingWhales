@@ -14,9 +14,6 @@ public class MonsterAttack : PlayerAbility {
 
     #region Overrides
     public override void Activate(IInteractable interactable) {
-        if (!CanBeActivated(interactable)) {
-            return;
-        }
         MonsterAttackEvent gameEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.MONSTER_ATTACK) as MonsterAttackEvent;
         gameEvent.Initialize(interactable as BaseLandmark);
         base.Activate(interactable);

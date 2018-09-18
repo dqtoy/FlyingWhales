@@ -15,9 +15,6 @@ public class Inspect : PlayerAbility {
 
     #region Overrides
     public override void Activate(IInteractable interactable) {
-        if (!CanBeActivated(interactable)) {
-            return;
-        }
         interactable.SetIsBeingInspected(true);
         if (!interactable.hasBeenInspected) {
             interactable.SetHasBeenInspected(true);
@@ -36,6 +33,14 @@ public class Inspect : PlayerAbility {
             }
         }
         base.Activate(interactable);
+    }
+    public override bool CanBeDone(IInteractable interactable) {
+        if (base.CanBeDone(interactable)) {
+            if (!interactable.isBeingInspected) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 

@@ -15,11 +15,8 @@ public class Awaken : PlayerAbility {
 
     #region Overrides
     public override void Activate(IInteractable interactable) {
-        if (!CanBeActivated(interactable)) {
-            return;
-        }
         Monster monster = interactable as Monster;
-        if(monster.isSleeping && monster.name == "Dragon") {
+        if(monster.name == "Dragon") {
             monster.SetSleeping(false);
             if(PlayerManager.Instance.player.markedCharacter != null) {
                 DragonAttack dragonAttack = EventManager.Instance.AddNewEvent(GAME_EVENT.DRAGON_ATTACK) as DragonAttack;
@@ -29,6 +26,15 @@ public class Awaken : PlayerAbility {
             }
             base.Activate(monster);
         }
+    }
+    public override bool CanBeDone(IInteractable interactable) {
+        if (base.CanBeDone(interactable)) {
+            Monster monster = interactable as Monster;
+            if (monster.isSleeping) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 

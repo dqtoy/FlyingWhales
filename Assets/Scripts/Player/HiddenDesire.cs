@@ -8,6 +8,13 @@ public class HiddenDesire {
     protected string _description;
     protected HIDDEN_DESIRE _type;
     protected Character _host;
+    protected bool _isAwakened;
+
+    #region getters/setters
+    public bool isAwakened {
+        get { return _isAwakened; }
+    }
+    #endregion
 
     public HiddenDesire(HIDDEN_DESIRE type, Character host) {
         _host = host;
@@ -17,7 +24,7 @@ public class HiddenDesire {
 
     #region Virtuals
     public virtual void Awaken() {
-
+        _isAwakened = true;
     }
     #endregion
 }

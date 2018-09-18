@@ -35,8 +35,8 @@ public class PlayerAbility {
         GoOnCooldown();
         PlayerUI.Instance.UpdateUI();
     }
-    public virtual void CanBeDone() {
-
+    public virtual bool CanBeDone(IInteractable interactable) {
+        return CanBeActivated(interactable);
     }
     #endregion
 
@@ -62,7 +62,11 @@ public class PlayerAbility {
     }
     public void SetIsEnabled(bool state) {
         _isEnabled = state;
-        _playerAbilityButton.button.interactable = state;
+        if (state) {
+            _playerAbilityButton.button.interactable = _playerAbilityButton.canBeDone;
+        } else {
+            _playerAbilityButton.button.interactable = state;
+        }
     }
     private void PayPowerCost(IInteractable interactable) {
         if(interactable is Character) {

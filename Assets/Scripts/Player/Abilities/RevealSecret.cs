@@ -15,14 +15,18 @@ public class RevealSecret : PlayerAbility {
 
     #region Overrides
     public override void Activate(IInteractable interactable) {
-        if (!CanBeActivated(interactable)) {
-            return;
-        }
         Character character = interactable as Character;
-        if (character.currentlySelectedSecret != null) {
-            character.currentlySelectedSecret.RevealSecret();
-            base.Activate(interactable);
+        character.currentlySelectedSecret.RevealSecret();
+        base.Activate(interactable);
+    }
+    public override bool CanBeDone(IInteractable interactable) {
+        if (base.CanBeDone(interactable)) {
+            Character character = interactable as Character;
+            if (character.currentlySelectedSecret != null && !character.currentlySelectedSecret.isRevealed) {
+                return true;
+            }
         }
+        return false;
     }
     #endregion
 }

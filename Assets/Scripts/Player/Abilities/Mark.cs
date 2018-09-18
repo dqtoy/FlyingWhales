@@ -15,18 +15,19 @@ public class Mark : PlayerAbility {
 
     #region Overrides
     public override void Activate(IInteractable interactable) {
-        if (!CanBeActivated(interactable)) {
-            return;
-        }
         Item dragonEgg = PlayerManager.Instance.player.GetItem("Dragon Egg");
-        if(dragonEgg == null) {
-            return;
-        }
-
         Character character = interactable as Character;
         character.AddAttribute(ATTRIBUTE.MARKED);
         PlayerManager.Instance.player.RemoveItem(dragonEgg);
         base.Activate(interactable);
+    }
+    public override bool CanBeDone(IInteractable interactable) {
+        if (base.CanBeDone(interactable)) {
+            if (PlayerManager.Instance.player.GetItem("Dragon Egg") != null) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 }

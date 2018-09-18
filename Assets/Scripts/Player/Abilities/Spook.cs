@@ -15,13 +15,18 @@ public class Spook : PlayerAbility {
 
     #region Overrides
     public override void Activate(IInteractable interactable) {
-        if (!CanBeActivated(interactable)) {
-            return;
-        }
         Character character = interactable as Character;
-        if (character.AddAttribute(ATTRIBUTE.SPOOKED) != null) {
-            base.Activate(interactable);
+        character.AddAttribute(ATTRIBUTE.SPOOKED);
+        base.Activate(interactable);
+    }
+    public override bool CanBeDone(IInteractable interactable) {
+        if (base.CanBeDone(interactable)) {
+            Character character = interactable as Character;
+            if (character.GetAttribute(ATTRIBUTE.SPOOKED) == null) {
+                return true;
+            }
         }
+        return false;
     }
     #endregion
 }

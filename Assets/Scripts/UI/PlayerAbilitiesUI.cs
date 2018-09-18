@@ -59,10 +59,13 @@ public class PlayerAbilitiesUI : MonoBehaviour {
         }
         for (int i = 0; i < _playerAbilityButtons.Count; i++) {
             PlayerAbilityButton playerAbilityButton = _playerAbilityButtons[i];
+            playerAbilityButton.SetCanBeDone(playerAbilityButton.playerAbility.CanBeDone(interactable));
             if(playerAbilityButton.playerAbility.type == ABILITY_TYPE.ALL) {
+                playerAbilityButton.button.interactable = playerAbilityButton.canBeDone;
                 continue;
             }
             if(playerAbilityButton.playerAbility.type == type) {
+                playerAbilityButton.button.interactable = playerAbilityButton.canBeDone;
                 playerAbilityButton.gameObject.SetActive(true);
             } else {
                 playerAbilityButton.gameObject.SetActive(false);
