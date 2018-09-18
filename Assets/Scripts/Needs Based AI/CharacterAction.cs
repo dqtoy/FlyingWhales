@@ -176,7 +176,6 @@ public class CharacterAction {
     public void GenerateName() {
         _actionData.actionName = Utilities.NormalizeStringUpperCaseFirstLetters(actionType.ToString());
     }
-
     //Give specific provided need to a character
     public void GiveReward(NEEDS need, CharacterParty party) {
         for (int i = 0; i < party.icharacters.Count; i++) {
@@ -202,6 +201,9 @@ public class CharacterAction {
                 //break;
             }
         }
+    }
+    public void SetDuration(int duration) {
+        _actionData.duration = duration;
     }
 
     public void SetCommonData(CharacterAction action) {

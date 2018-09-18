@@ -48,6 +48,11 @@ public class SecretMeeting : GameEvent {
         WaitingInteractionAction char2WaitAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.WAITING) as WaitingInteractionAction;
         char1WaitAction.SetWaitedCharacter(_character2);
         char2WaitAction.SetWaitedCharacter(_character1);
+
+        EatAction char1EatAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.EAT) as EatAction;
+        EatAction char2EatAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.EAT) as EatAction;
+        char1EatAction.SetDuration(16);
+        char2EatAction.SetDuration(16);
         //char1WaitAction.SetOnWaitedCharacterArrivedAction(_character1.ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.IDLE));
         //char2WaitAction.SetOnWaitedCharacterArrivedAction(_character2.ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.IDLE));
 
@@ -56,18 +61,18 @@ public class SecretMeeting : GameEvent {
         char1WaitAction.SetWaitUntil(waitDeadline);
         char2WaitAction.SetWaitUntil(waitDeadline);
 
-        CharacterAction harvestAction = chosenMeetup.landmarkObj.currentState.GetAction(ACTION_TYPE.HARVEST);
-        eventActions[_character1].Enqueue(new EventAction(harvestAction, chosenMeetup.landmarkObj, harvestAction.actionData.duration)); //wait at meetup for 20 ticks
-        eventActions[_character2].Enqueue(new EventAction(harvestAction, chosenMeetup.landmarkObj, harvestAction.actionData.duration));
+        //CharacterAction harvestAction = chosenMeetup.landmarkObj.currentState.GetAction(ACTION_TYPE.HARVEST);
+        eventActions[_character1].Enqueue(new EventAction(char1WaitAction, chosenMeetup.landmarkObj, 20)); //wait at meetup for 20 ticks
+        eventActions[_character2].Enqueue(new EventAction(char2WaitAction, chosenMeetup.landmarkObj, 20));
 
         
-        allLandmarks = LandmarkManager.Instance.GetAllLandmarks().Where(x => x.specificLandmarkType == LANDMARK_TYPE.LUMBERYARD).ToList();
-        BaseLandmark otherLandmark = allLandmarks[Utilities.rng.Next(0, allLandmarks.Count)];
+        //allLandmarks = LandmarkManager.Instance.GetAllLandmarks().Where(x => x.specificLandmarkType == LANDMARK_TYPE.LUMBERYARD).ToList();
+        //BaseLandmark otherLandmark = allLandmarks[Utilities.rng.Next(0, allLandmarks.Count)];
 
-        CharacterAction woodCuttingAction = otherLandmark.landmarkObj.currentState.GetAction(ACTION_TYPE.WOODCUTTING);
+        //CharacterAction woodCuttingAction = otherLandmark.landmarkObj.currentState.GetAction(ACTION_TYPE.WOODCUTTING);
 
-        eventActions[_character1].Enqueue(new EventAction(woodCuttingAction, otherLandmark.landmarkObj, woodCuttingAction.actionData.duration)); //once met up, idle at meetup for 30 ticks
-        eventActions[_character2].Enqueue(new EventAction(woodCuttingAction, otherLandmark.landmarkObj, woodCuttingAction.actionData.duration));
+        eventActions[_character1].Enqueue(new EventAction(char1EatAction, chosenMeetup.landmarkObj, char1EatAction.actionData.duration)); //once met up, idle at meetup for 30 ticks
+        eventActions[_character2].Enqueue(new EventAction(char2EatAction, chosenMeetup.landmarkObj, char2EatAction.actionData.duration));
 
         SetName("Secret Meeting between " + _character1.name + " and " + _character2.name + " at " + chosenMeetup.locationName);
 

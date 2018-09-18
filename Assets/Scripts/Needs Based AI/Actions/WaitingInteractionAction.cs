@@ -20,9 +20,17 @@ public class WaitingInteractionAction : CharacterAction {
     }
     public override void OnChooseAction(NewParty iparty, IObject targetObject) {
         base.OnChooseAction(iparty, targetObject);
+        GameDate today = GameManager.Instance.Today();
+        if (IsWaitedCharacterHere(iparty) || today.IsSameDate(waitUntil)) {
+            EndAction(iparty as CharacterParty, targetObject);
+        }
     }
     public override void PerformAction(CharacterParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
+        GameDate today = GameManager.Instance.Today();
+        if (IsWaitedCharacterHere(party) || today.IsSameDate(waitUntil)) {
+            EndAction(party, targetObject);
+        }
     }
     #endregion
 
@@ -39,6 +47,15 @@ public class WaitingInteractionAction : CharacterAction {
     }
     public void SetWaitUntil(GameDate endDate) {
         waitUntil = endDate;
+    }
+    private bool IsWaitedCharacterHere(NewParty party) {
+        for (int i = 0; i < party.specificLocation.charactersAtLocation.Count; i++) {
+            NewParty currParty = party.specificLocation.charactersAtLocation[i];
+            if (currParty.icharacters.Contains(_waitedCharacter)) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 }

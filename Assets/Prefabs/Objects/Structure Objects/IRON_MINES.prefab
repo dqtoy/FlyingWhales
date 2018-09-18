@@ -121,7 +121,7 @@ MonoBehaviour:
         providedSanity: 0
         providedSafety: 0
         successRate: 0
-        duration: 0
+        duration: 16
         hpRecoveredPercentage: 0
         resourceGiven: 2
         minResourceGiven: 10
