@@ -1,6 +1,7 @@
 ﻿using ECS;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameEvent {
@@ -54,7 +55,18 @@ public class GameEvent {
      Roughly, how long will this event take to complete?
          */
     public virtual int GetEventDurationRoughEstimateInTicks() {
-        return 0;
+        int longestDuartion = 0;
+        foreach (KeyValuePair<Character, Queue<EventAction>> kvp in eventActions) {
+            int currCharactersDuration = 0;
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                EventAction currentAction = kvp.Value.ElementAt(i);
+                currCharactersDuration += currentAction.duration;
+            }
+            if (longestDuartion < currCharactersDuration) {
+                longestDuartion = currCharactersDuration;
+            }
+        }
+        return longestDuartion;
     }
     public virtual void EndEvent() {
         _isDone = true;

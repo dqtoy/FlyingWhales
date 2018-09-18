@@ -3253,6 +3253,7 @@ namespace ECS {
         private GameEvent nextScheduledEvent;
         private DateRange nextScheduledEventDate;
         public void AddScheduledEvent(DateRange dateRange, GameEvent gameEvent) {
+            Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + this.name + " will schedule an event to " + dateRange.ToString());
             if (eventSchedule.HasConflictingSchedule(dateRange)) {
                 //There is a conflict in the current schedule of the character, move the new event to a new schedule.
                 GameDate nextFreeDate = eventSchedule.GetNextFreeDateForEvent(gameEvent);
@@ -3267,6 +3268,11 @@ namespace ECS {
 
                 GameDate checkDate = dateRange.startDate;
                 checkDate.ReduceHours(GameManager.hoursPerDay);
+                if (checkDate.IsBefore(GameManager.Instance.Today())) { //if the check date is before today
+                    //start check on the next tick
+                    checkDate = GameManager.Instance.Today();
+                    checkDate.AddHours(1);
+                }
                 //Once event has been scheduled, schedule every tick checking 144 ticks before the start date of the new event
                 SchedulingManager.Instance.AddEntry(checkDate, () => StartEveryTickCheckForEvent());
                 Debug.Log(this.name + " scheduled every tick check for event " + gameEvent.name + " on " + checkDate.GetDayAndTicksString());
@@ -3278,6 +3284,14 @@ namespace ECS {
 
             DateRange dateRange = new DateRange(startDate, endDate);
             AddScheduledEvent(dateRange, gameEvent);
+        }
+        public void AddScheduledEvent(GameEvent gameEvent) {
+            //schedule a game event without specifing a date
+            GameDate nextFreeDate = eventSchedule.GetNextFreeDateForEvent(gameEvent);
+            GameDate endDate = nextFreeDate;
+            endDate.AddHours(gameEvent.GetEventDurationRoughEstimateInTicks());
+            DateRange newSched = new DateRange(nextFreeDate, endDate);
+            AddScheduledEvent(newSched, gameEvent);
         }
         public bool HasEventScheduled(GameDate date) {
             return false;
