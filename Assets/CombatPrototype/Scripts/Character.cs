@@ -3219,9 +3219,19 @@ namespace ECS {
                 if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.WORK) {
                     if (_ownParty.actionData.currentAction != null && _ownParty.actionData.currentAction.actionData.duration == 0 
                         && _ownParty.actionData.currentAction.actionData.actionType != ACTION_TYPE.TURN_IN_QUEST) {//TODO: Remove Special case for turn in quest when bug has been fixed //this includes idle action
-                        //current work action is unending, end it.
-                        //also disband the party. TODO: Add case for when to disband the party when the action is not unending
-                        _ownParty.actionData.ForceDoAction(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
+                        if (_ownParty.icon.isTravelling) {
+                            //if the characters action is unending, but he/she is still travelling to the target, then queue the disband party action instead
+                            //then end his/her current action when he/she arrives at their destination
+                            AddActionToQueue(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
+                            ownParty.icon.AddActionOnPathFinished(() => _ownParty.actionData.currentAction.EndAction(_ownParty, _ownParty.actionData.currentTargetObject));
+                        } else {
+                            //if the characters action is unending, and he/she is not travelling, end their action immediately then force them to disband party
+                            _ownParty.actionData.ForceDoAction(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
+                        }
+
+                        ////current work action is unending, end it.
+                        ////also disband the party. TODO: Add case for when to disband the party when the action is not unending
+                        //_ownParty.actionData.ForceDoAction(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
                     }
                 }
             }
@@ -3332,9 +3342,10 @@ namespace ECS {
             if (!eventArrivalDate.IsBefore(nextScheduledEventDate.startDate)) { //if the estimated arrival date is NOT before the next events' scheduled start date
                 //leave now and do the event action
                 AddActionToQueue(nextScheduledEvent.GetNextEventAction(this), nextScheduledEvent); //queue the event action
-                nextScheduledEvent = null;
                 _ownParty.actionData.EndCurrentAction();  //then end their current action
                 Messenger.RemoveListener(Signals.HOUR_ENDED, EventEveryTick);
+                Debug.Log(GameManager.Instance.TodayLogString() + this.name + " stopped checking every tick for event " + nextScheduledEvent.name);
+                nextScheduledEvent = null;
             }
         }
         #endregion

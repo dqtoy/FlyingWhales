@@ -210,6 +210,9 @@ public class CharacterAvatar : MonoBehaviour{
         _isMovementPaused = false;
         NewMove();
     }
+    public void AddActionOnPathFinished(Action action) {
+        onPathFinished += action;
+    }
     #endregion
 
     #region Utilities
