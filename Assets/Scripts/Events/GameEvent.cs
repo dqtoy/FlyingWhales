@@ -17,8 +17,11 @@ public class GameEvent {
     public string name {
         get { return _name; }
     }
-    public bool isDone {
+    public virtual bool isDone {
         get { return _isDone; }
+    }
+    public GAME_EVENT type {
+        get { return _type; }
     }
     #endregion
 
@@ -74,6 +77,9 @@ public class GameEvent {
     }
     public virtual void EndEventForCharacter(Character character) {
         character.eventSchedule.RemoveElement(this);
+    }
+    public virtual bool MeetsRequirements(Character character) {
+        return true;
     }
     #endregion
 }

@@ -168,11 +168,7 @@ namespace ECS {
         }
 
         public void ConstructData() {
-            ConstructSchedule();
             ConstructSkills();
-        }
-        private void ConstructSchedule() {
-            //TODO
         }
         private void ConstructSkills() {
             _skillsPerLevel = new List<Skill[]>();

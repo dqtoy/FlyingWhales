@@ -118,7 +118,9 @@ public class NewParty : IParty {
     public virtual void CreateIcon() { }
     public virtual void PartyDeath() {
         _isDead = true;
+        ILocation deathLocation = this.specificLocation;
         this.specificLocation.RemoveCharacterFromLocation(this);
+        SetSpecificLocation(deathLocation); //set the specific location of this party, to the location it died at
         RemoveListeners();
         ObjectState deadState = _icharacterObject.GetState("Dead");
         _icharacterObject.ChangeState(deadState);

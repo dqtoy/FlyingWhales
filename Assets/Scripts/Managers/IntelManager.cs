@@ -31,4 +31,8 @@ public class IntelManager : MonoBehaviour {
             _intelLookup.Add(intel.id, intel);
         }
     }
+
+    public Intel GetIntel(int id) {
+        return _intelLookup[id];
+    }
 }

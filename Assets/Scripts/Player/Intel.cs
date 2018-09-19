@@ -18,4 +18,8 @@ public class Intel : IPlayerPicker {
         name = intelComponent.thisName;
         description = intelComponent.description;
     }
+
+    public override string ToString() {
+        return "[" + id.ToString() + "] " + name + " - " + description; 
+    }
 }

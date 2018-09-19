@@ -74,6 +74,7 @@ public interface ICharacter {
     void SetMode(MODE mode);
     bool InviteToParty(ICharacter inviter);
     bool IsInOwnParty();
+    void Death();
     int GetDef();
     NewParty CreateOwnParty();
     CharacterAction GetRandomMiscAction(ref IObject targetObject);

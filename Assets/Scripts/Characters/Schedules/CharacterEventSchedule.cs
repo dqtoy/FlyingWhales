@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using ECS;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -6,6 +7,7 @@ using UnityEngine;
 public class CharacterEventSchedule {
 
     private Dictionary<DateRange, GameEvent> eventSchedule;
+    private Character owner;
 
     public GameEvent this[GameDate key] {
         get {
@@ -13,7 +15,8 @@ public class CharacterEventSchedule {
         }
     }
 
-    public CharacterEventSchedule() {
+    public CharacterEventSchedule(Character owner) {
+        this.owner = owner;
         eventSchedule = new Dictionary<DateRange, GameEvent>();
     }
     public void AddElement(DateRange key, GameEvent value) {
@@ -58,9 +61,9 @@ public class CharacterEventSchedule {
         //this is only ususally called when there is a conflict in the schedule
         //check the length from today to the earliest schedule, if the event (given its duration), can fit, schedule it there?
         if (eventSchedule.Count == 0) { //if there are no events in the schedule
-            //schedule the next event 1 day after today
+            //schedule the next event 72 ticks after today (half day)
             GameDate today = GameManager.Instance.Today();
-            today.AddDays(1);
+            today.AddHours(72);
             return today;
         } else {
             KeyValuePair<DateRange, GameEvent> firstElement = eventSchedule.ElementAt(0);

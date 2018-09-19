@@ -46,6 +46,7 @@ public class ConsoleMenu : UIMenu {
             {"/add_tag", AddCharacterAttribute},
             {"/log_event_schedule", LogEventSchedule },
             {"/awaken_desire", AwakenHiddenDesire },
+            {"/share_intel", ShareIntel },
         };
     }
 
@@ -593,6 +594,43 @@ public class ConsoleMenu : UIMenu {
             AddErrorMessage(character.name + " does not have a hidden desire!");
         }
         
+    }
+    private void ShareIntel(string[] parameters) {
+        if (parameters.Length < 3) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+        string intelIDParameterString = parameters[1];
+        string characterParameterString = string.Empty;
+        for (int i = 2; i < parameters.Length; i++) {
+            characterParameterString += parameters[i] + " ";
+        }
+        characterParameterString = characterParameterString.Trim();
+        int characterID;
+        int intelID;
+
+        bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
+        ECS.Character character = null;
+        if (isCharacterParameterNumeric) {
+            character = CharacterManager.Instance.GetCharacterByID(characterID);
+        } else {
+            character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+        }
+
+        Intel intel = null;
+        bool isIntelParameterNumeric = int.TryParse(intelIDParameterString, out intelID);
+        if (isIntelParameterNumeric) {
+            intel = IntelManager.Instance.GetIntel(intelID);
+        }
+
+        if (character == null || intel == null) {
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+
+        PlayerManager.Instance.player.GiveIntelToCharacter(intel, character);
+        AddSuccessMessage("Gave intel that " + intel.description + " to " + character.name);
     }
     #endregion
 

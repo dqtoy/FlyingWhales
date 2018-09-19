@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ECS;
+using UnityEngine.Events;
 
 [System.Serializable]
 public class CharacterAction {
@@ -11,7 +12,7 @@ public class CharacterAction {
     protected int _weight;
     protected int _disableCounter; //if has at least 1 point, disable action
     protected int _enableCounter; //remove action from list if this has 0 point
-
+    protected UnityAction onEndAction;
 
     private const int Base_Misc_Action_Weight = 50;
 
@@ -96,6 +97,9 @@ public class CharacterAction {
     }
     public virtual void EndAction(CharacterParty party, IObject targetObject) {
         party.actionData.EndAction();
+        if (onEndAction != null) {
+            onEndAction();
+        }
     }
     public virtual void DoneDuration(CharacterParty party, IObject targetObject) { }
     public virtual void SuccessEndAction(CharacterParty party) {
@@ -236,6 +240,9 @@ public class CharacterAction {
     }
     public void OnRemoveActionFromCharacter(Character character) {
 
+    }
+    public void SetOnEndAction(UnityAction action) {
+        onEndAction = action;
     }
     #endregion
 
