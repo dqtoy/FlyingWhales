@@ -35,7 +35,7 @@ public class ActionThread : Multithread {
         try {
             LookForAction();
         } catch (Exception e) {
-            Debug.LogError(e.Message + " ST: " + e.StackTrace);
+            Debug.LogError(e.Message + " Stack Trace: \n" + e.StackTrace);
         }
     }
     public override void FinishMultithread() {
@@ -89,7 +89,11 @@ public class ActionThread : Multithread {
                     //check if he/she can reach his/her work on time.
                     if (character.CanReachWork()) {// if yes, go to work and perform work action
                         chosenObject = character.workplace.landmarkObj;
-                        chosenAction = character.workplace.landmarkObj.currentState.GetAction(character.characterClass.workActionType); //Hero work action is QUESTING.
+                        if (character.characterClass.workActionType == ACTION_TYPE.WORKING) {
+                            chosenAction = character.genericWorkAction;
+                        } else {
+                            chosenAction = character.workplace.landmarkObj.currentState.GetAction(character.characterClass.workActionType); //Hero work action is QUESTING.
+                        }
                         _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
                         //_party.actionData.SetQuestAssociatedWithAction(null);
                         actionLog += "\nGot hero work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;

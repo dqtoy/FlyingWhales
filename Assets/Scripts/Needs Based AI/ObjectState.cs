@@ -91,6 +91,7 @@ public class ObjectState {
                 return currAction;
             }
         }
+        Debug.LogWarning(_object.objectName + " has no action type " + type.ToString() + " in it's current state " + stateName);
         return null;
     }
     #endregion

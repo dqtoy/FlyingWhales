@@ -87,6 +87,7 @@ public class CharacterManager : MonoBehaviour {
             for (int i = 0; i < data.charactersData.Count; i++) {
                 CharacterSaveData currData = data.charactersData[i];
                 ECS.Character currCharacter = CreateNewCharacter(currData);
+                CheckForHiddenDesire(currCharacter); //TODO: Remove this when setup for hidden desire in character editor is done
                 Faction characterFaction = FactionManager.Instance.GetFactionBasedOnID(currData.factionID);
                 if (characterFaction != null) {
                     currCharacter.SetFaction(characterFaction);
@@ -160,6 +161,13 @@ public class CharacterManager : MonoBehaviour {
             newCharacter.AssignRole(data.role);
         }
         //newCharacter.AssignRole(data.role);
+        if (data.homeLandmarkID != -1) {
+            BaseLandmark homeLandmark = LandmarkManager.Instance.GetLandmarkByID(data.homeLandmarkID);
+            newCharacter.SetHomeLandmark(homeLandmark);
+#if !WORLD_CREATION_TOOL
+            homeLandmark.AddCharacterHomeOnLandmark(newCharacter);
+#endif
+        }
         if (data.homeID != -1) {
             Area homeLocation = LandmarkManager.Instance.GetAreaByID(data.homeID);
             newCharacter.SetHome(homeLocation);
@@ -184,14 +192,6 @@ public class CharacterManager : MonoBehaviour {
             else{
                 party.SetSpecificLocation(currentLocation);
             }
-#endif
-        }
-
-        if (data.homeLandmarkID != -1) {
-            BaseLandmark homeLandmark = LandmarkManager.Instance.GetLandmarkByID(data.homeLandmarkID);
-            newCharacter.SetHomeLandmark(homeLandmark);
-#if !WORLD_CREATION_TOOL
-            homeLandmark.AddCharacterHomeOnLandmark(newCharacter);
 #endif
         }
 
@@ -674,6 +674,30 @@ public class CharacterManager : MonoBehaviour {
             }
         }
         return -1;
+    }
+    #endregion
+
+    #region Hidden Desire
+    /*
+     NOTE: THIS IS FOR TESTING ONLY!
+         */
+    private void CheckForHiddenDesire(Character character) {
+        if (character.characterClass.className.Equals("General")) {
+            //general max
+            SetHiddenDesireForCharacter(HIDDEN_DESIRE.SECRET_AFFAIR, character);
+        }
+    }
+    public void SetHiddenDesireForCharacter(HIDDEN_DESIRE hiddenDesire, Character character) {
+        HiddenDesire desire = CreateHiddenDesire(hiddenDesire, character);
+        character.SetHiddenDesire(desire);
+    }
+    private HiddenDesire CreateHiddenDesire(HIDDEN_DESIRE hiddenDesire, Character host) {
+        switch (hiddenDesire) {
+            case HIDDEN_DESIRE.SECRET_AFFAIR:
+                return new SecretAffair(host);
+            default:
+                return null;
+        }
     }
     #endregion
 

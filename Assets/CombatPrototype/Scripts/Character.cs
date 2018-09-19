@@ -1738,7 +1738,10 @@ namespace ECS {
                     _role = new King(this);
                     break;
                 case CHARACTER_ROLE.PLAYER:
-                _role = new PlayerRole(this);
+                    _role = new PlayerRole(this);
+                    break;
+                case CHARACTER_ROLE.GUARDIAN:
+                    _role = new Guardian(this);
                     break;
                 default:
 		            break;
@@ -2748,11 +2751,13 @@ namespace ECS {
             //CharacterAction chat = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.CHAT);
 
             read.SetActionCategory(ACTION_CATEGORY.MISC);
-            read.SetActionCategory(ACTION_CATEGORY.MISC);
+            foolingAround.SetActionCategory(ACTION_CATEGORY.MISC);
             //chat.SetActionCategory(ACTION_CATEGORY.IDLE);
 
-            _miscActions.Add(read);
-            _miscActions.Add(foolingAround);
+            AddMiscAction(read);
+            AddMiscAction(foolingAround);
+            //_miscActions.Add(read);
+            //_miscActions.Add(foolingAround);
             //_idleActions.Add(chat);
         }
         public CharacterAction GetRandomMiscAction(ref IObject targetObject) {
@@ -3231,6 +3236,9 @@ namespace ECS {
                 }
             } else {
                 List<HexTile> pathToWorkplace = PathGenerator.Instance.GetPath(this.specificLocation, this.workplace, PATHFINDING_MODE.PASSABLE);
+                if (pathToWorkplace == null) {
+                    return false; //there is no path to workplace
+                }
                 int tileDistance = pathToWorkplace.Count;
                 int travelTime = tileDistance * 3; //because it takes 3 ticks to reach the center of one tile to another
                 if (today.hour + travelTime > deadlineTick) {
@@ -3328,6 +3336,20 @@ namespace ECS {
         }
         public void SetHasBeenInspected(bool state) {
             _hasBeenInspected = state;
+        }
+        #endregion
+
+        #region Hidden Desire
+        public void SetHiddenDesire(HiddenDesire hiddenDesire) {
+            _hiddenDesire = hiddenDesire;
+        }
+        public void AwakenHiddenDesire() {
+            if (_hiddenDesire == null || _hiddenDesire.isAwakened) {
+                //if the character does not have a hidden desire
+                //or the hidden desire is already awakened
+                return;
+            }
+            _hiddenDesire.Awaken();
         }
         #endregion
     }

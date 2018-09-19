@@ -76,6 +76,7 @@ public class Faction {
 		_warmongering = 0;
         _landmarkInfo = new List<BaseLandmark>();
         _ownedAreas = new List<Area>();
+
     }
 
     public Faction(FactionSaveData data) {
@@ -95,6 +96,10 @@ public class Faction {
         _warmongering = 0;
         _landmarkInfo = new List<BaseLandmark>();
         _ownedAreas = new List<Area>();
+    }
+
+    private void AddListeners() {
+        Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveCharacter);
     }
 
     #region virtuals

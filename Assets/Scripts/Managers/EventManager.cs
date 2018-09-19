@@ -56,7 +56,7 @@ public class EventManager : MonoBehaviour {
     }
 
     public void GenerateEventForTesting() {
-        //return;
+        return;
         if (CharacterManager.Instance.allCharacters.Count > 1) {
             SecretMeeting secretMeetingEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.SECRET_MEETING) as SecretMeeting;
             secretMeetingEvent.Initialize(CharacterManager.Instance.allCharacters[0], CharacterManager.Instance.allCharacters[1]);

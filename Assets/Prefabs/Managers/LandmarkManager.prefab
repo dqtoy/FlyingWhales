@@ -187,7 +187,9 @@ MonoBehaviour:
     itemData: []
     landmarkObjectSprite: {fileID: 0}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    neutralTileSprites: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 99997bff53b6d7042a70307d331e1d3f, type: 3}
+      tintSprite: {fileID: 21300000, guid: 03b9f985c5fc3c74b8f56977df17c459, type: 3}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 99997bff53b6d7042a70307d331e1d3f, type: 3}
       tintSprite: {fileID: 21300000, guid: 03b9f985c5fc3c74b8f56977df17c459, type: 3}
