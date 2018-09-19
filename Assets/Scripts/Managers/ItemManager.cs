@@ -31,6 +31,8 @@ public class ItemManager : MonoBehaviour {
 
     [SerializeField] private List<ItemSprite> itemSprites;
 
+    private Dictionary<string, Sprite> _iconSprites;
+
     //private List<List<Item>> _itemTiers;
     //private List<List<Weapon>> _weaponTiers;
     //private List<List<Armor>> _armorTiers;
@@ -91,6 +93,7 @@ public class ItemManager : MonoBehaviour {
 		_equipmentTypes.Add (ITEM_TYPE.ARMOR, new List<EQUIPMENT_TYPE> ());
 		//_equipmentTypes.Add (ITEM_TYPE.ITEM, new List<EQUIPMENT_TYPE> ());
 		ConstructItemsDictionary();
+        ConstructItemSprites();
         ConstructWeaponTypeData();
         ConstructArmorTypeData();
         CreateWeaponPrefix(WEAPON_PREFIX.NONE);
@@ -138,6 +141,14 @@ public class ItemManager : MonoBehaviour {
                         break;
                 }
             }
+        }
+    }
+    private void ConstructItemSprites() {
+        Sprite[] icons = Resources.LoadAll<Sprite>("Textures/ItemIcons");
+        _iconSprites = new Dictionary<string, Sprite>();
+        _iconSprites.Add("None", null);
+        for (int i = 0; i < icons.Length; i++) {
+            _iconSprites.Add(icons[i].name, icons[i]);
         }
     }
     public Item CreateNewItemInstance(string itemName) {
@@ -338,71 +349,78 @@ public class ItemManager : MonoBehaviour {
         return null;
     }
 
-	//internal Weapon GetRandomWeaponTier(int tier){
-	//	if(tier > 0){
-	//		int index = tier - 1;
-	//		Weapon weaponAsset = _weaponTiers [index] [UnityEngine.Random.Range (0, _weaponTiers [index].Count)];
-	//		return (Weapon)CreateNewItemInstance (weaponAsset.itemName);
-	//	}
-	//	return null;
-	//}
+    public Sprite GetIconSprite(string iconName) {
+        if (_iconSprites.ContainsKey(iconName)) {
+            return _iconSprites[iconName];
+        }
+        return null;
+    }
 
-	//internal Armor GetRandomArmorTier(int tier){
-	//	if(tier > 0){
-	//		int index = tier - 1;
-	//		Armor armorAsset = _armorTiers [index] [UnityEngine.Random.Range (0, _armorTiers [index].Count)];
-	//		return (Armor)CreateNewItemInstance (armorAsset.itemName);
-	//	}
-	//	return null;
-	//}
+    //internal Weapon GetRandomWeaponTier(int tier){
+    //	if(tier > 0){
+    //		int index = tier - 1;
+    //		Weapon weaponAsset = _weaponTiers [index] [UnityEngine.Random.Range (0, _weaponTiers [index].Count)];
+    //		return (Weapon)CreateNewItemInstance (weaponAsset.itemName);
+    //	}
+    //	return null;
+    //}
 
-	//internal Item GetRandomItemTier(int tier){
-	//	if(tier > 0){
-	//		int index = tier - 1;
-	//		Item itemAsset = _itemTiers [index] [UnityEngine.Random.Range (0, _itemTiers [index].Count)];
-	//		return CreateNewItemInstance (itemAsset.itemName);
-	//	}
-	//	return null;
-	//}
-	//internal Item GetRandomTier(int tier, ITEM_TYPE itemType){
-	//	if(itemType == ITEM_TYPE.WEAPON){
-	//		return GetRandomWeaponTier (tier);
-	//	}else if(itemType == ITEM_TYPE.ARMOR){
-	//		return GetRandomArmorTier (tier);
-	//	}else if(itemType == ITEM_TYPE.ITEM){
-	//		return GetRandomItemTier (tier);
-	//	}
-	//	return null;
-	//}
+    //internal Armor GetRandomArmorTier(int tier){
+    //	if(tier > 0){
+    //		int index = tier - 1;
+    //		Armor armorAsset = _armorTiers [index] [UnityEngine.Random.Range (0, _armorTiers [index].Count)];
+    //		return (Armor)CreateNewItemInstance (armorAsset.itemName);
+    //	}
+    //	return null;
+    //}
 
-	//internal List<Weapon> GetWeaponTierList(int tier){
-	//	if(tier > 0){
-	//		int index = tier - 1;
-	//		return _weaponTiers [index];
-	//	}
-	//	return null;
-	//}
+    //internal Item GetRandomItemTier(int tier){
+    //	if(tier > 0){
+    //		int index = tier - 1;
+    //		Item itemAsset = _itemTiers [index] [UnityEngine.Random.Range (0, _itemTiers [index].Count)];
+    //		return CreateNewItemInstance (itemAsset.itemName);
+    //	}
+    //	return null;
+    //}
+    //internal Item GetRandomTier(int tier, ITEM_TYPE itemType){
+    //	if(itemType == ITEM_TYPE.WEAPON){
+    //		return GetRandomWeaponTier (tier);
+    //	}else if(itemType == ITEM_TYPE.ARMOR){
+    //		return GetRandomArmorTier (tier);
+    //	}else if(itemType == ITEM_TYPE.ITEM){
+    //		return GetRandomItemTier (tier);
+    //	}
+    //	return null;
+    //}
 
-	//internal List<Armor> GetArmorTierList(int tier){
-	//	if(tier > 0){
-	//		int index = tier - 1;
-	//		return _armorTiers [index];
-	//	}
-	//	return null;
-	//}
+    //internal List<Weapon> GetWeaponTierList(int tier){
+    //	if(tier > 0){
+    //		int index = tier - 1;
+    //		return _weaponTiers [index];
+    //	}
+    //	return null;
+    //}
 
-	//internal List<Item> GetItemTierList(int tier){
-	//	if(tier > 0){
-	//		int index = tier - 1;
-	//		return _itemTiers [index];
-	//	}
-	//	return null;
-	//}
+    //internal List<Armor> GetArmorTierList(int tier){
+    //	if(tier > 0){
+    //		int index = tier - 1;
+    //		return _armorTiers [index];
+    //	}
+    //	return null;
+    //}
 
- //   public bool IsLootChest(Item item) {
- //       if (lootChestNames.Contains(item.itemName)) {
- //           return true;
- //       }
- //       return false;
- //   }
+    //internal List<Item> GetItemTierList(int tier){
+    //	if(tier > 0){
+    //		int index = tier - 1;
+    //		return _itemTiers [index];
+    //	}
+    //	return null;
+    //}
+
+    //   public bool IsLootChest(Item item) {
+    //       if (lootChestNames.Contains(item.itemName)) {
+    //           return true;
+    //       }
+    //       return false;
+    //   }
 }

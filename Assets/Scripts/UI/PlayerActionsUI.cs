@@ -13,7 +13,7 @@ public class PlayerActionsUI : UIMenu {
     }
 
     public override void OpenMenu() {
-        ShowMenu();
+        base.OpenMenu();
         UpdatePlayerActions();
     }
     public override void SetData(object data) {

@@ -81,8 +81,8 @@ public class LandmarkInfoUI : UIMenu {
         Messenger.AddListener<Item, BaseLandmark>(Signals.ITEM_PLACED_AT_LANDMARK, OnItemAddedToLandmark);
         Messenger.AddListener<Item, BaseLandmark>(Signals.ITEM_REMOVED_FROM_LANDMARK, OnItemRemovedFromLandmark);
     }
-    public override void ShowMenu() {
-        base.ShowMenu();
+    public override void OpenMenu() {
+        base.OpenMenu();
         UpdateBasicInfo();
         UpdateCharacters();
         UpdateItems();
@@ -92,8 +92,8 @@ public class LandmarkInfoUI : UIMenu {
             PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(currentlyShowingLandmark);
         }
     }
-    public override void HideMenu() {
-        base.HideMenu();
+    public override void CloseMenu() {
+        base.CloseMenu();
         PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
     }
     //public override void SetData(object data) {
@@ -231,7 +231,7 @@ public class LandmarkInfoUI : UIMenu {
     #endregion
 
     public void OnClickCloseBtn(){
-		HideMenu ();
+		CloseMenu ();
 	}
     public void CenterOnLandmark() {
         currentlyShowingLandmark.CenterOnLandmark();

@@ -157,13 +157,13 @@ public class CharacterInfoUI : UIMenu {
     }
 
     #region Overrides
-    public override void HideMenu() {
+    public override void CloseMenu() {
+        base.CloseMenu();
         _activeCharacter = null;
-        base.HideMenu();
         PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
     }
-    public override void ShowMenu() {
-        base.ShowMenu();
+    public override void OpenMenu() {
+        base.OpenMenu();
         _activeCharacter = (Character)_data;
         UpdateCharacterInfo();
         UpdateTagInfo();

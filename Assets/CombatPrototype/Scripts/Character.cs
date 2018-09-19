@@ -3306,7 +3306,7 @@ namespace ECS {
             Messenger.AddListener(Signals.HOUR_ENDED, EventEveryTick); //Add every tick listener for events
         }
         private void EventEveryTick() {
-            HexTile currentLoc = this.ownParty.specificLocation.tileLocation; //check the character's current location
+            HexTile currentLoc = this.currentParty.specificLocation.tileLocation; //check the character's current location
             EventAction nextEventAction = nextScheduledEvent.PeekNextEventAction(this);
             int travelTime = PathGenerator.Instance.GetTravelTimeInTicks(this.specificLocation, nextEventAction.targetLocation, PATHFINDING_MODE.PASSABLE);
 

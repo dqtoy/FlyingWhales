@@ -703,7 +703,7 @@ public class UIManager : MonoBehaviour {
         if(character.role.roleType != CHARACTER_ROLE.PLAYER) {
             characterInfoUI.OpenMenu();
         } else {
-            characterInfoUI.HideMenu();
+            characterInfoUI.CloseMenu();
         }
         character.CenterOnCharacter();
         //		playerActionsUI.ShowPlayerActionsUI ();
@@ -889,7 +889,7 @@ public class UIManager : MonoBehaviour {
         _menuHistory.RemoveAt(_menuHistory.Count - 1);
         UIMenuSettings menuToShow = _menuHistory.ElementAt(_menuHistory.Count - 1);
         //_menuHistory.Remove(menuToShow);
-        menuToShow.menu.ShowMenu();
+        menuToShow.menu.OpenMenu();
         menuToShow.menu.SetData(menuToShow.data);
         //string text = string.Empty;
         //for (int i = 0; i < _menuHistory.Count; i++) {

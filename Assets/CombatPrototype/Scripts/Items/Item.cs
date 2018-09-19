@@ -90,6 +90,9 @@ namespace ECS{
             item.description = description;
             item.interactString = interactString;
             item.goldCost = goldCost;
+            item.iconName = iconName;
+            item.isStackable = isStackable;
+            item.attributeNames = new List<string>(attributeNames);
         }
     }
 }

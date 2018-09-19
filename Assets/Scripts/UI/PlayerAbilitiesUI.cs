@@ -56,16 +56,19 @@ public class PlayerAbilitiesUI : MonoBehaviour {
         ABILITY_TYPE type = ABILITY_TYPE.CHARACTER;
         if (interactable is BaseLandmark) {
             type = ABILITY_TYPE.STRUCTURE;
+        }else if (interactable is Monster) {
+            type = ABILITY_TYPE.MONSTER;
         }
         for (int i = 0; i < _playerAbilityButtons.Count; i++) {
             PlayerAbilityButton playerAbilityButton = _playerAbilityButtons[i];
-            playerAbilityButton.SetCanBeDone(playerAbilityButton.playerAbility.CanBeDone(interactable));
             if(playerAbilityButton.playerAbility.type == ABILITY_TYPE.ALL) {
-                playerAbilityButton.button.interactable = playerAbilityButton.canBeDone;
+                playerAbilityButton.SetCanBeDone(playerAbilityButton.playerAbility.CanBeDone(interactable));
+                playerAbilityButton.EnableDisable();
                 continue;
             }
             if(playerAbilityButton.playerAbility.type == type) {
-                playerAbilityButton.button.interactable = playerAbilityButton.canBeDone;
+                playerAbilityButton.SetCanBeDone(playerAbilityButton.playerAbility.CanBeDone(interactable));
+                playerAbilityButton.EnableDisable();
                 playerAbilityButton.gameObject.SetActive(true);
             } else {
                 playerAbilityButton.gameObject.SetActive(false);

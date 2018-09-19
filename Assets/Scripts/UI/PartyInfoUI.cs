@@ -28,8 +28,8 @@ public class PartyInfoUI : UIMenu {
         actionIcon.Initialize();
     }
 
-    public override void ShowMenu() {
-        base.ShowMenu();
+    public override void OpenMenu() {
+        base.OpenMenu();
         UpdatePartyInfo();
     }
     public override void SetData(object data) {

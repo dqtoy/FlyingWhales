@@ -13,7 +13,12 @@ public class CharacterAvatarClick : MonoBehaviour {
         if (characterAvatar.party.icharacters.Count > 1) {
             UIManager.Instance.ShowPartyInfo(characterAvatar.party);
         } else {
-            UIManager.Instance.ShowCharacterInfo(characterAvatar.party.mainCharacter as Character);
+            if(characterAvatar.party.mainCharacter is Character) {
+                UIManager.Instance.ShowCharacterInfo(characterAvatar.party.mainCharacter as Character);
+            }else if(characterAvatar.party.mainCharacter is Monster) {
+                UIManager.Instance.ShowMonsterInfo(characterAvatar.party.mainCharacter as Monster);
+
+            }
         }
     }
 }
