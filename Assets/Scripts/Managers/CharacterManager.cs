@@ -88,6 +88,8 @@ public class CharacterManager : MonoBehaviour {
                 CharacterSaveData currData = data.charactersData[i];
                 ECS.Character currCharacter = CreateNewCharacter(currData);
                 CheckForHiddenDesire(currCharacter); //TODO: Remove this when setup for hidden desire in character editor is done
+                CheckForIntelActions(currCharacter); //TODO: Remove this when setup for hidden desire in character editor is done
+                CheckForIntelReactions(currCharacter);
                 Faction characterFaction = FactionManager.Instance.GetFactionBasedOnID(currData.factionID);
                 if (characterFaction != null) {
                     currCharacter.SetFaction(characterFaction);
@@ -293,7 +295,7 @@ public class CharacterManager : MonoBehaviour {
     public Character GetCharacterByName(string name) {
         for (int i = 0; i < _allCharacters.Count; i++) {
             Character currChar = _allCharacters[i];
-            if (currChar.name.Equals(name)) {
+            if (currChar.name.Equals(name, System.StringComparison.CurrentCultureIgnoreCase)) {
                 return currChar;
             }
         }
@@ -685,6 +687,22 @@ public class CharacterManager : MonoBehaviour {
         if (character.characterClass.className.Equals("General")) {
             //general max
             SetHiddenDesireForCharacter(HIDDEN_DESIRE.SECRET_AFFAIR, character);
+        }
+    }
+    /*
+     NOTE: THIS IS FOR TESTING ONLY!
+         */
+    private void CheckForIntelActions(Character character) {
+        if (character.characterClass.className.Equals("General")) {
+            character.onCharacterDeath += () => PlayerManager.Instance.player.AddIntel(IntelManager.Instance.GetIntel(1));
+        }
+    }
+    /*
+     NOTE: THIS IS FOR TESTING ONLY!
+         */
+    private void CheckForIntelReactions(Character character) {
+        if (character.characterClass.className.Equals("Lady")) {
+            character.AddIntelReaction(1, GAME_EVENT.SUICIDE);
         }
     }
     public void SetHiddenDesireForCharacter(HIDDEN_DESIRE hiddenDesire, Character character) {

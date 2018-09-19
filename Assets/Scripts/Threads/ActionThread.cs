@@ -67,8 +67,8 @@ public class ActionThread : Multithread {
                 return;
             } else if (_party.actionData.isCurrentActionFromEvent) {
                 GameEvent eventAssociated = _party.actionData.eventAssociatedWithAction;
-                //if the current action is from an event, check if this character can still get an action from it
-                if (eventAssociated.PeekNextEventAction(character) != null) {
+                //if the current action is from an event, and the associated event is no yet done, check if this character can still get an action from it
+                if (!eventAssociated.isDone && eventAssociated.PeekNextEventAction(character) != null) {
                     //if yes, perform the action from the event.
                     EventAction nextEventAction = eventAssociated.GetNextEventAction(character);
                     chosenAction = nextEventAction.action;

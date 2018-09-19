@@ -284,6 +284,8 @@ public class Player : ILeader{
     public void AddIntel(Intel intel) {
         if (!_intels.Contains(intel)) {
             _intels.Add(intel);
+            Debug.Log("Added intel " + intel.ToString());
+            Messenger.Broadcast(Signals.INTEL_ADDED, intel);
         }
     }
     public bool RemoveIntel(Intel intel) {
@@ -299,9 +301,14 @@ public class Player : ILeader{
         Intel intel = _currentlySelectedPlayerPicker as Intel;
         ShareIntel shareIntel = _currentActiveAbility as ShareIntel;
         Character character = _currentTargetInteractable as Character;
+        GiveIntelToCharacter(intel, character, shareIntel);
+    }
+    public void GiveIntelToCharacter(Intel intel, Character character, ShareIntel shareIntel = null) {
         if (character.intelReactions.ContainsKey(intel.id)) {
-            GameEvent gameEvent = EventManager.Instance.AddNewEvent(character.intelReactions[intel.id]);
-            shareIntel.HasGivenIntel(character);
+            character.OnIntelGiven(intel);
+            if (shareIntel != null) {
+                shareIntel.HasGivenIntel(character);
+            }
         }
     }
     #endregion

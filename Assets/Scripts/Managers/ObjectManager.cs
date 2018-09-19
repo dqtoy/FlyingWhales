@@ -333,6 +333,8 @@ public class ObjectManager : MonoBehaviour {
                 return new SingAction();
             case ACTION_TYPE.PLAYING_INSTRUMENT:
                 return new PlayingInstrumentAction();
+            case ACTION_TYPE.SUICIDE:
+                return new SuicideAction();
         }
         return null;
     }

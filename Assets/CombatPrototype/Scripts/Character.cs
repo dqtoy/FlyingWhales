@@ -497,7 +497,7 @@ namespace ECS {
             _equippedItems = new List<Item>();
             _inventory = new List<Item>();
             combatHistory = new Dictionary<int, Combat>();
-            eventSchedule = new CharacterEventSchedule();
+            eventSchedule = new CharacterEventSchedule(this);
 
             GetRandomCharacterColor();
             ConstructDefaultMiscActions();
@@ -874,7 +874,7 @@ namespace ECS {
             }
         }
 		//Character's death
-		internal void Death(bool diedFromPP = false){
+		public void Death(){
 			if(!_isDead){
 				_isDead = true;
                 
@@ -891,7 +891,7 @@ namespace ECS {
                     throw new Exception("Specific location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
                 }
 
-				if(!diedFromPP && currentParty.specificLocation != null && currentParty.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+				if(currentParty.specificLocation != null && currentParty.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
                     Log deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death");
                     deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     AddHistory(deathLog);
@@ -907,7 +907,9 @@ namespace ECS {
 				}
 
                 if(_currentParty.mainCharacter.id == this.id) {
-                    _currentParty.actionData.currentAction.EndAction(_currentParty, _currentParty.actionData.currentTargetObject);
+                    if (_currentParty.actionData.currentAction != null) {
+                        _currentParty.actionData.currentAction.EndAction(_currentParty, _currentParty.actionData.currentTargetObject);
+                    }
                 }
                 _currentParty.RemoveCharacter(this);
 
@@ -951,15 +953,16 @@ namespace ECS {
                 if(_homeLandmark != null) {
                     _homeLandmark.RemoveCharacterHomeOnLandmark(this);
                 }
-				//while(_tags.Count > 0){
-				//	RemoveCharacterAttribute (_tags [0]);
-				//}
+                //while(_tags.Count > 0){
+                //	RemoveCharacterAttribute (_tags [0]);
+                //}
                 //while (questData.Count != 0) {
                 //    questData[0].AbandonQuest();
                 //}
                 //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
                 //					Messenger.Broadcast ("CharacterDeath", this);
                 //				}
+                dailySchedule.OnOwnerDied();
                 if (onCharacterDeath != null){
 					onCharacterDeath();
 				}
@@ -2328,7 +2331,7 @@ namespace ECS {
                 if (IsCharacterLovedOne(character)) { //A character gains heartbroken tag for 15 days when a family member or a loved one dies.
                     AddAttribute(ATTRIBUTE.HEARTBROKEN);
                 }
-                RemoveRelationshipWith(character);
+                //RemoveRelationshipWith(character);
             }
         }
         public bool IsCharacterLovedOne(Character otherCharacter) {
@@ -2427,6 +2430,12 @@ namespace ECS {
                 }
             }
             return null;
+        }
+        public bool HasRelationshipWith(Character otherCharacter) {
+            return _relationships.ContainsKey(otherCharacter);
+        }
+        public bool HasRelationshipStatusWith(Character otherCharacter, CHARACTER_RELATIONSHIP relStat) {
+            return _relationships[otherCharacter].HasStatus(relStat);
         }
         #endregion
 
@@ -3065,32 +3074,32 @@ namespace ECS {
             _physicalPoints = points;
             _physicalPoints = Mathf.Min(0, physicalPoints);
         }
-        private void CheckForPPDeath() {
-            if (this.physicalPoints <= -5) {
-                //If the character has -5 or lower Physical Points, he has a 0.5% chance to die per tick. 
-                float deathChance = 0.5f;
-                int difference = Mathf.Abs(this.physicalPoints + 5);
-                deathChance += difference * 0.5f; //For every point lower than -5, add 0.5% to chance to die per tick.
-                if (UnityEngine.Random.Range(0f, 100f) < deathChance) {
-                    List<string> deathCauses = new List<string>();
-                    if (HasAttributes(new ATTRIBUTE[] { ATTRIBUTE.TIRED, ATTRIBUTE.EXHAUSTED})) {
-                        deathCauses.Add("exhaustion");
-                    }
-                    if (HasAttributes(new ATTRIBUTE[] { ATTRIBUTE.HUNGRY, ATTRIBUTE.STARVING })) {
-                        deathCauses.Add("starvation");
-                    }
-                    if (HasAttributes(new ATTRIBUTE[] { ATTRIBUTE.WOUNDED, ATTRIBUTE.WRECKED })) {
-                        deathCauses.Add("injury");
-                    }
+        //private void CheckForPPDeath() {
+        //    if (this.physicalPoints <= -5) {
+        //        //If the character has -5 or lower Physical Points, he has a 0.5% chance to die per tick. 
+        //        float deathChance = 0.5f;
+        //        int difference = Mathf.Abs(this.physicalPoints + 5);
+        //        deathChance += difference * 0.5f; //For every point lower than -5, add 0.5% to chance to die per tick.
+        //        if (UnityEngine.Random.Range(0f, 100f) < deathChance) {
+        //            List<string> deathCauses = new List<string>();
+        //            if (HasAttributes(new ATTRIBUTE[] { ATTRIBUTE.TIRED, ATTRIBUTE.EXHAUSTED})) {
+        //                deathCauses.Add("exhaustion");
+        //            }
+        //            if (HasAttributes(new ATTRIBUTE[] { ATTRIBUTE.HUNGRY, ATTRIBUTE.STARVING })) {
+        //                deathCauses.Add("starvation");
+        //            }
+        //            if (HasAttributes(new ATTRIBUTE[] { ATTRIBUTE.WOUNDED, ATTRIBUTE.WRECKED })) {
+        //                deathCauses.Add("injury");
+        //            }
 
-                    Log deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "pp_death");
-                    deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    deathLog.AddToFillers(null, deathCauses[UnityEngine.Random.Range(0, deathCauses.Count)], LOG_IDENTIFIER.OTHER);
-                    AddHistory(deathLog);
-                    this.Death(true);
-                }
-            }
-        }
+        //            Log deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "pp_death");
+        //            deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //            deathLog.AddToFillers(null, deathCauses[UnityEngine.Random.Range(0, deathCauses.Count)], LOG_IDENTIFIER.OTHER);
+        //            AddHistory(deathLog);
+        //            this.Death(true);
+        //        }
+        //    }
+        //}
         #endregion
 
         #region Squads
@@ -3350,6 +3359,38 @@ namespace ECS {
                 return;
             }
             _hiddenDesire.Awaken();
+        }
+        #endregion
+
+        #region Intel
+        public void AddIntelReaction(int intelID, GAME_EVENT reaction) {
+            if (!_intelReactions.ContainsKey(intelID)) {
+                _intelReactions.Add(intelID, reaction);
+            }
+        }
+        public void AddIntelReaction(Intel intel, GAME_EVENT reaction) {
+            AddIntelReaction(intel.id, reaction);
+        }
+        public void RemoveIntelReaction(Intel intel) {
+            RemoveIntelReaction(intel.id);
+        }
+        public void RemoveIntelReaction(int intelID) {
+            _intelReactions.Remove(intelID);
+        }
+        public void OnIntelGiven(Intel intel) {
+            Debug.Log(GameManager.Instance.TodayLogString() + this.name + " was given intel that " + intel.description);
+            GameEvent gameEvent = EventManager.Instance.AddNewEvent(this.intelReactions[intel.id]);
+            if (gameEvent.MeetsRequirements(this)) {
+                switch (gameEvent.type) {
+                    case GAME_EVENT.SUICIDE:
+                        (gameEvent as SuicideEvent).Initialize(this);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            //Remove intel reaction from character, even if he/she did not meet the requirements for the reaction?
+            RemoveIntelReaction(intel);
         }
         #endregion
     }

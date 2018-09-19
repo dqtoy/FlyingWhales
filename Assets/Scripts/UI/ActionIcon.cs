@@ -80,8 +80,10 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
         //if (_character != null && party.id == _character.ownParty.id) {
         //    SetAction(action);
         //}
-        if (party.icharacters.Contains(_character)) {
-            SetAction(action);
+        if (party != null) {
+            if (party.icharacters.Contains(_character)) {
+                SetAction(action);
+            }
         }
     }
 

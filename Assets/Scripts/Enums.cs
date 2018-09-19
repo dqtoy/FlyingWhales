@@ -722,6 +722,7 @@ public enum ACTION_TYPE {
     FETCH,
     WAIT_FOR_PARTY,
     TURN_IN_QUEST,
+    SUICIDE,
 }
 public enum ACTION_CATEGORY {
     WORK,
@@ -902,6 +903,7 @@ public enum GAME_EVENT {
     MONSTER_ATTACK,
     TEST_EVENT,
     DRAGON_ATTACK,
+    SUICIDE,
 }
 public enum EVENT_PHASE {
     PREPARATION,

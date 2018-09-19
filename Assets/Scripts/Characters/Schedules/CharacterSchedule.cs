@@ -93,4 +93,9 @@ public class CharacterSchedule {
             return phases[currentPhaseIndex + 1];
         }
     }
+
+    public void OnOwnerDied() {
+        Messenger.RemoveListener(Signals.HOUR_STARTED, WaitForPhaseStart);
+        Messenger.RemoveListener(Signals.HOUR_ENDED, WaitForPhaseEnd);
+    }
 }

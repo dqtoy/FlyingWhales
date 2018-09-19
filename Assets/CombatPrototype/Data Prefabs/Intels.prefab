@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4112920038877240}
   - component: {fileID: 114900588893126154}
+  - component: {fileID: 114820538694294626}
   m_Layer: 0
   m_Name: Intels
   m_TagString: Untagged
@@ -40,6 +41,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114820538694294626
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1055359713298668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4466ba7df4f5df4cb18123cbefb692c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: 1
+  thisName: General_Max_Death
+  description: General Max has died.
 --- !u!114 &114900588893126154
 MonoBehaviour:
   m_ObjectHideFlags: 1

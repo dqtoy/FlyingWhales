@@ -203,6 +203,8 @@ public class UIManager : MonoBehaviour {
 
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OVER, OnHoverOverTile);
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OUT, OnHoverOutTile);
+
+        Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
     }
 
     #region Font Utilities
@@ -1170,6 +1172,9 @@ public class UIManager : MonoBehaviour {
         PlayerPickerButton playerPickerButton = go.GetComponent<PlayerPickerButton>();
         playerPickerButton.SetPlayerPicker(playerPicker);
         currentActivePlayerPickerButtons.Add(playerPickerButton);
+    }
+    private void OnIntelAdded(Intel intel) {
+        ShowNotification("New Intel Obtained!", 5, () => PlayerUI.Instance.ShowPlayerPickerIntel());
     }
     #endregion
 }

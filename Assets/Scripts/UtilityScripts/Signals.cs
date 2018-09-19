@@ -109,4 +109,8 @@ public static class Signals {
     #region Combat
     public static string COMBAT_DONE = "OnCombatDone"; //Parameters (Combat doneCombat)
     #endregion
+
+    #region Player
+    public static string INTEL_ADDED = "OnIntelAdded"; //Parameters (Intel addedIntel)
+    #endregion
 }

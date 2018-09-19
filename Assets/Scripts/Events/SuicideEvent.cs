@@ -1,0 +1,39 @@
+﻿using ECS;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class SuicideEvent : GameEvent {
+
+    private Character character;
+
+    public SuicideEvent() : base(GAME_EVENT.SUICIDE) {
+    }
+
+    public void Initialize(Character character) {
+        this.character = character;
+        eventActions = new Dictionary<Character, Queue<EventAction>>();
+        eventActions.Add(character, new Queue<EventAction>());
+
+        //schedule suicide action
+        CharacterAction suicideAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.SUICIDE);
+        eventActions[character].Enqueue(new EventAction(suicideAction, character.ownParty.icharacterObject, 1));
+
+        character.AddScheduledEvent(this);
+    }
+
+    public override bool MeetsRequirements(Character character) {
+        //TODO: Change this to be unspecific for lady of the lake
+        Character generalMax = CharacterManager.Instance.GetCharacterByClass("General");
+        if (!character.HasRelationshipWith(generalMax)) {
+            return false; //Lady of the lake does not have relationship with general max
+        }
+        if (!character.HasRelationshipStatusWith(generalMax, CHARACTER_RELATIONSHIP.LOVER)) {
+            return false; //Lady of the lake and general max are not lovers
+        }
+        return base.MeetsRequirements(character);
+        
+    }
+
+
+}
