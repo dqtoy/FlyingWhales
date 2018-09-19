@@ -30,6 +30,8 @@ public class MonsterPanelUI : MonoBehaviour {
     public Dropdown skillOptions;
     public Dropdown itemDropOptions;
 
+    public Toggle isSleepingOnSpawnToggle;
+
     public Transform skillContentTransform;
     public Transform itemDropContentTransform;
 
@@ -110,6 +112,8 @@ public class MonsterPanelUI : MonoBehaviour {
         skillOptions.value = 0;
         itemDropOptions.value = 0;
 
+        isSleepingOnSpawnToggle.isOn = false;
+
         _allSkills.Clear();
         _itemDrops.Clear();
         foreach (Transform child in skillContentTransform) {
@@ -181,6 +185,7 @@ public class MonsterPanelUI : MonoBehaviour {
         dodgeInput.text = monster.dodgeChance.ToString();
         hitInput.text = monster.hitChance.ToString();
         critInput.text = monster.critChance.ToString();
+        isSleepingOnSpawnToggle.isOn = monster.isSleepingOnSpawn;
 
         for (int i = 0; i < monster.skillNames.Count; i++) {
             string skillName = monster.skillNames[i];

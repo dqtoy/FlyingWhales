@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4757141424653350}
   - component: {fileID: 114217525972374750}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ObjectManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72,6 +72,7 @@ MonoBehaviour:
   - {fileID: 114012481577862306, guid: 298a7e357b7e2d340b40a39c5503e338, type: 2}
   - {fileID: 114943314918187516, guid: 61572babce2855546b8a45f8271a99b7, type: 2}
   - {fileID: 114917336244844668, guid: f5fea11074c7f274c8d3f2d5ae499f8c, type: 2}
+  - {fileID: 114635312997033302, guid: 4b228fcbf058c83478596beb139a7f1c, type: 2}
   characterObjectComponents:
   - {fileID: 114023154591909926, guid: 8666de66ca65add4b8afeb5fc44cc68d, type: 2}
   - {fileID: 114023154591909926, guid: b6818289fed035c468a353046295094f, type: 2}

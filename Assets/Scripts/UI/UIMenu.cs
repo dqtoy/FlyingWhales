@@ -28,35 +28,40 @@ public class UIMenu : MonoBehaviour {
     /*
      Used when a menu is currently being shown, but only the data has changed
          */
-    public virtual void ShowMenu() {
-        isShowing = true;
-        //if(goBackBtn != null) {
-        //    goBackBtn.gameObject.SetActive(CanGoBack());
-        //}
-        this.gameObject.SetActive(true);
-    }
-    public virtual void HideMenu() {
-        isShowing = false;
-        this.gameObject.SetActive(false);
-    }
+    //public virtual void ShowMenu() {
+    //    isShowing = true;
+    //    //if(goBackBtn != null) {
+    //    //    goBackBtn.gameObject.SetActive(CanGoBack());
+    //    //}
+    //    this.gameObject.SetActive(true);
+    //}
+    //public virtual void HideMenu() {
+    //    isShowing = false;
+    //    this.gameObject.SetActive(false);
+    //}
     /*
      When a menu is opened from being closed
          */
     public virtual void OpenMenu() {
         //UIManager.Instance.AddMenuToQueue(this, _data);
+        isShowing = true;
         UnifiedSelectableBehaviour usb = closeBtn.gameObject.GetComponent<UnifiedSelectableBehaviour>();
         if (usb != null) {
             usb.Reset();
         }
-        ShowMenu();
+        this.gameObject.SetActive(true);
+        //ShowMenu();
     }
     public virtual void CloseMenu() {
         //UIManager.Instance.ClearMenuHistory();
-        HideMenu();
-        UIManager.Instance.ShowMainUI();
+        //HideMenu();
+        isShowing = false;
+        this.gameObject.SetActive(false);
+        //UIManager.Instance.ShowMainUI();
     }
     public virtual void GoBack() {
-        HideMenu();
+        //HideMenu();
+        CloseMenu();
         //UIManager.Instance.ShowPreviousMenu();
     }
     public virtual void SetData(object data) {

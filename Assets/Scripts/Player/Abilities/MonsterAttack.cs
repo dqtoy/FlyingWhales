@@ -18,5 +18,15 @@ public class MonsterAttack : PlayerAbility {
         gameEvent.Initialize(interactable as BaseLandmark);
         base.Activate(interactable);
     }
+    public override bool CanBeDone(IInteractable interactable) {
+        if (base.CanBeDone(interactable)) {
+            BaseLandmark landmark = interactable as BaseLandmark;
+            if (landmark.specificLandmarkType != LANDMARK_TYPE.DEMONIC_PORTAL && landmark.specificLandmarkType != LANDMARK_TYPE.MONSTER_DEN 
+                && landmark.specificLandmarkType != LANDMARK_TYPE.LAIR) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 }

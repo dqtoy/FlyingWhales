@@ -278,7 +278,7 @@ public class NewParty : IParty {
         //If attack target is not yet in combat, start new combat, else, join the combat on the opposing side
         Combat combat = this.currentCombat;
         if (combat == null) {
-            combat = new Combat();
+            combat = new Combat(afterCombatAction);
             combat.AddParty(SIDES.A, enemy);
             combat.AddParty(SIDES.B, this);
             //MultiThreadPool.Instance.AddToThreadPool(combat);

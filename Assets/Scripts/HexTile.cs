@@ -990,7 +990,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             //    }
             UIManager.Instance.ShowLandmarkInfo(this.landmarkOnTile);
         }
-        UIManager.Instance.playerActionsUI.HideMenu();
+        UIManager.Instance.playerActionsUI.CloseMenu();
 #endif
     }
     public void RightClick() {

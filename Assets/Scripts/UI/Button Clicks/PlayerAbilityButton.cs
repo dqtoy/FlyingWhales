@@ -20,6 +20,7 @@ public class PlayerAbilityButton : MonoBehaviour {
         get { return _canBeDone; }
     }
     #endregion
+
     public void SetPlayerAbility(PlayerAbility playerAbility) {
         _playerAbility = playerAbility;
         buttonText.text = _playerAbility.name.ToUpper();
@@ -29,5 +30,13 @@ public class PlayerAbilityButton : MonoBehaviour {
     }
     public void OnClickPlayerAbility() {
         _playerAbility.Activate(PlayerAbilitiesUI.Instance.currentlySelectedInteractable);
+    }
+
+    public void EnableDisable() {
+        if (_playerAbility.isEnabled) {
+            button.interactable = _canBeDone;
+        } else {
+            button.interactable = false;
+        }
     }
 }

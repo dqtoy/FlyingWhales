@@ -8,9 +8,23 @@ using UnityEngine.UI;
 public class MonsterInfoUI : UIMenu {
 
     [Space(10)]
-    [Header("Content")]
-    [SerializeField] private TextMeshProUGUI monsterInfoLbl;
-    [SerializeField] private ScrollRect infoScrollView;
+    [Header("Basic Info")]
+    [SerializeField] private TextMeshProUGUI monsterInfoNameLbl;
+    [SerializeField] private TextMeshProUGUI monsterInfoLevelLbl;
+
+    [Space(10)]
+    [Header("Stat Info")]
+    [SerializeField] private Slider healthProgressBar;
+    [SerializeField] private Slider manaProgressBar;
+    [SerializeField] private TextMeshProUGUI strengthLbl;
+    [SerializeField] private TextMeshProUGUI agilityLbl;
+    [SerializeField] private TextMeshProUGUI intelligenceLbl;
+    [SerializeField] private TextMeshProUGUI vitalityLbl;
+    [SerializeField] private TextMeshProUGUI expDropLbl;
+
+    [Space(10)]
+    [Header("Other Info")]
+    [SerializeField] private TextMeshProUGUI otherInfoLbl;
 
     internal Monster currentlyShowingMonster {
         get { return _data as Monster; }
@@ -24,6 +38,11 @@ public class MonsterInfoUI : UIMenu {
     public override void OpenMenu() {
         base.OpenMenu();
         UpdateMonsterInfo();
+        PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(currentlyShowingMonster);
+    }
+    public override void CloseMenu() {
+        base.CloseMenu();
+        PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
     }
     public override void SetData(object data) {
         base.SetData(data);
@@ -36,25 +55,36 @@ public class MonsterInfoUI : UIMenu {
         if (currentlyShowingMonster == null) {
             return;
         }
-        string text = string.Empty;
-        text += "<b>Name:</b> " + currentlyShowingMonster.name;
-        text += "\n<b>Level:</b> " + currentlyShowingMonster.level;
-        text += "\n<b>HP:</b> " + currentlyShowingMonster.currentHP + "/" + currentlyShowingMonster.maxHP;
-        text += "\n<b>SP:</b> " + currentlyShowingMonster.currentSP + "/" + currentlyShowingMonster.maxSP;
-        text += "\n<b>Str:</b> " + currentlyShowingMonster.strength + ", <b>Int:</b> " + currentlyShowingMonster.intelligence;
-        text += "\n<b>Agi:</b> " + currentlyShowingMonster.agility + ", <b>Vit:</b> " + currentlyShowingMonster.vitality;
-        text += "\n<b>Exp Drop:</b> " + currentlyShowingMonster.experienceDrop;
+        UpdateBasicInfo();
+        UpdateStatsInfo();
+        UpdateOtherInfo();
+        //Item drop info
 
+    }
+
+    private void UpdateBasicInfo() {
+        monsterInfoNameLbl.text = currentlyShowingMonster.name;
+        monsterInfoLevelLbl.text = "Lvl." + currentlyShowingMonster.level;
+    }
+    private void UpdateStatsInfo() {
+        healthProgressBar.value = (float) currentlyShowingMonster.currentHP / (float) currentlyShowingMonster.maxHP;
+        manaProgressBar.value = (float) currentlyShowingMonster.currentSP / (float) currentlyShowingMonster.maxSP;
+        strengthLbl.text = currentlyShowingMonster.strength.ToString();
+        agilityLbl.text = currentlyShowingMonster.agility.ToString();
+        intelligenceLbl.text = currentlyShowingMonster.intelligence.ToString();
+        vitalityLbl.text = currentlyShowingMonster.vitality.ToString();
+        expDropLbl.text = currentlyShowingMonster.experienceDrop.ToString();
+    }
+    private void UpdateOtherInfo() {
+        string text = string.Empty;
         text += "\n<b>P Final Attack:</b> " + currentlyShowingMonster.pFinalAttack;
         text += "\n<b>M Final Attack:</b> " + currentlyShowingMonster.pFinalAttack;
         text += "\n<b>Def:</b> " + currentlyShowingMonster.def;
         text += "\n<b>Crit Chance:</b> " + currentlyShowingMonster.critChance + "%";
         text += "\n<b>Dodge Chance:</b> " + currentlyShowingMonster.dodgeChance + "%";
         text += "\n<b>Computed Power:</b> " + currentlyShowingMonster.computedPower;
+        text += "\n<b>Is Sleeping:</b> " + currentlyShowingMonster.isSleeping;
 
-        text += "\n<b>Mode:</b> " + currentlyShowingMonster.currentMode.ToString();
-
-        monsterInfoLbl.text = text;
-        //infoScrollView.ResetPosition();
+        otherInfoLbl.text = text;
     }
 }

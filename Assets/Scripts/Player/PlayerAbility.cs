@@ -19,6 +19,9 @@ public class PlayerAbility {
     public string name {
         get { return _name; }
     }
+    public bool isEnabled {
+        get { return _isEnabled; }
+    }
     public ABILITY_TYPE type {
         get { return _type; }
     }
@@ -26,6 +29,7 @@ public class PlayerAbility {
 
     public PlayerAbility(ABILITY_TYPE type) {
         _type = type;
+        _isEnabled = true;
     }
 
     #region Virtuals
@@ -33,6 +37,7 @@ public class PlayerAbility {
         PayPowerCost(interactable);
         ThreatGain();
         GoOnCooldown();
+        _playerAbilityButton.SetCanBeDone(CanBeDone(interactable));
         PlayerUI.Instance.UpdateUI();
     }
     public virtual bool CanBeDone(IInteractable interactable) {
@@ -62,11 +67,7 @@ public class PlayerAbility {
     }
     public void SetIsEnabled(bool state) {
         _isEnabled = state;
-        if (state) {
-            _playerAbilityButton.button.interactable = _playerAbilityButton.canBeDone;
-        } else {
-            _playerAbilityButton.button.interactable = state;
-        }
+        _playerAbilityButton.EnableDisable();
     }
     private void PayPowerCost(IInteractable interactable) {
         if(interactable is Character) {

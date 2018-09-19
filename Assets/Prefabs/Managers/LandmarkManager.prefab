@@ -73,6 +73,7 @@ MonoBehaviour:
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 0600000007000000
+    startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
@@ -86,6 +87,7 @@ MonoBehaviour:
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 010000000200000005000000
+    startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
@@ -99,6 +101,7 @@ MonoBehaviour:
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 010000000200000005000000
+    startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
@@ -114,6 +117,7 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: 36bb9c87d942a0747a60b417b0cd79e2, type: 3}
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 0600000007000000
+    startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
@@ -127,6 +131,7 @@ MonoBehaviour:
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 0300000004000000
+    startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
@@ -140,6 +145,7 @@ MonoBehaviour:
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 0300000004000000
+    startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
@@ -153,6 +159,7 @@ MonoBehaviour:
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
+    startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
@@ -170,6 +177,7 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
+    startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
@@ -187,6 +195,7 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: 03b9f985c5fc3c74b8f56977df17c459, type: 3}
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
+    startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
@@ -200,6 +209,7 @@ MonoBehaviour:
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
+    startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
@@ -214,6 +224,7 @@ MonoBehaviour:
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
+    startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
@@ -234,6 +245,7 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 3a45dae052a768e45b88c6a722e03f8d, type: 3}
       tintSprite: {fileID: 21300000, guid: 9f89551edef6d6743a2486dea9f60a21, type: 3}
     possibleSpawnPoints: 01000000020000000600000007000000
+    startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
@@ -254,6 +266,7 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: d17f26b8defdee446a0719c4630d3ef2, type: 3}
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
+    startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
@@ -298,6 +311,7 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
       tintSprite: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
+    startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
     - {fileID: 114946858911628526, guid: 336c4ebd4586d214b9190e8677feeb77, type: 2}
@@ -318,6 +332,7 @@ MonoBehaviour:
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
+    startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
@@ -334,6 +349,7 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: 7828e545f69833d49a9b79ab03928852, type: 3}
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
+    startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
@@ -352,6 +368,7 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: 455f303fb578b4841ae48fd16107beb2, type: 3}
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
+    startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
@@ -370,6 +387,7 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: 9d1349113684fd348ab6dd814eaf5ae4, type: 3}
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
+    startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
@@ -388,6 +406,7 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: 59980d3c50e9c3c4e8c869029a0ccc2e, type: 3}
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
+    startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
@@ -404,6 +423,29 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: 2509d8d1c25f61343a7e20c936950617, type: 3}
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
+    startingMonsterSpawn: {fileID: 0}
+    isMonsterSpawner: 0
+    monsterSets: []
+    monsterSpawnCooldown: 0
+  - landmarkTypeString: Lair
+    landmarkType: 22
+    uniqueTags: 
+    itemData: []
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: ef09c80c77be9fd44b96fa5ee6f851e5, type: 3}
+      tintSprite: {fileID: 0}
+    humansLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: ef09c80c77be9fd44b96fa5ee6f851e5, type: 3}
+      tintSprite: {fileID: 0}
+    elvenLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: ef09c80c77be9fd44b96fa5ee6f851e5, type: 3}
+      tintSprite: {fileID: 0}
+    possibleSpawnPoints: 01000000020000000600000007000000
+    startingMonsterSpawn: {fileID: 114870140623750678, guid: 5eff0dfec87dc444ba512bdf201ce2c9,
+      type: 2}
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0

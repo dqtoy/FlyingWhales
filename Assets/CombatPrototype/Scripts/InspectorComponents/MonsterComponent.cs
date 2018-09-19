@@ -17,6 +17,7 @@ public class MonsterComponent : MonoBehaviour {
     public float dodgeChance;
     public float hitChance;
     public float critChance;
+    public bool isSleepingOnSpawn;
     public List<TextAsset> skills;
     public List<string> skillNames;
     public List<ElementChance> elementChanceWeaknesses;

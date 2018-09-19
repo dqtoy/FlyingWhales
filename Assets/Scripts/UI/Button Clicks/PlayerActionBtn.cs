@@ -15,6 +15,6 @@ public class PlayerActionBtn : MonoBehaviour {
 
     public void OnClickAction() {
         _action.OnChooseAction(PlayerManager.Instance.playerCharacter.party, UIManager.Instance.playerActionsUI.currentlyShowingLandmark.landmarkObj);
-        UIManager.Instance.playerActionsUI.HideMenu();
+        UIManager.Instance.playerActionsUI.CloseMenu();
     }
 }

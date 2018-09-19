@@ -20,6 +20,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     [SerializeField] private float _dodgeChance;
     [SerializeField] private float _hitChance;
     [SerializeField] private float _critChance;
+    [SerializeField] private bool _isSleepingOnSpawn;
     [SerializeField] private List<string> _skillNames;
     [SerializeField] private List<ElementChance> _elementChanceWeaknesses;
     [SerializeField] private List<ElementChance> _elementChanceResistances;
@@ -157,6 +158,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public bool isSleeping {
         get { return _isSleeping; }
     }
+    public bool isSleepingOnSpawn {
+        get { return _isSleepingOnSpawn; }
+    }
     public MONSTER_TYPE type {
         get { return _type; }
     }
@@ -259,6 +263,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         newMonster._dodgeChance = this._dodgeChance;
         newMonster._hitChance = this._hitChance;
         newMonster._critChance = this._critChance;
+        newMonster._isSleepingOnSpawn = this._isSleepingOnSpawn;
         newMonster._portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(RACE.HUMANS, GENDER.MALE);
 //#if !WORLD_CREATION_TOOL
 //        newMonster._monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
@@ -289,6 +294,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         this._dodgeChance = monsterComponent.dodgeChance;
         this._hitChance = monsterComponent.hitChance;
         this._critChance = monsterComponent.critChance;
+        this._isSleepingOnSpawn = monsterComponent.isSleepingOnSpawn;
         this._skillNames = monsterComponent.skillNames;
         this._elementChanceWeaknesses = monsterComponent.elementChanceWeaknesses;
         this._elementChanceResistances = monsterComponent.elementChanceResistances;
@@ -313,6 +319,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         this._dodgeChance = float.Parse(MonsterPanelUI.Instance.dodgeInput.text);
         this._hitChance = float.Parse(MonsterPanelUI.Instance.hitInput.text);
         this._critChance = float.Parse(MonsterPanelUI.Instance.critInput.text);
+        this._isSleepingOnSpawn = MonsterPanelUI.Instance.isSleepingOnSpawnToggle.isOn;
         this._skillNames = MonsterPanelUI.Instance.allSkills;
         this._elementChanceWeaknesses = new List<ElementChance>();
         this._elementChanceResistances = new List<ElementChance>();
@@ -441,6 +448,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _currentHP = _maxHP;
         _currentSP = _maxSP;
         SetCharacterColor(Color.red);
+        SetSleeping(_isSleepingOnSpawn);
 
 #if !WORLD_CREATION_TOOL
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, UIManager.Instance.characterPortraitsParent);

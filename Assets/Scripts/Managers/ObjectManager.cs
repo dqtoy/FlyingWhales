@@ -57,6 +57,13 @@ public class ObjectManager : MonoBehaviour {
         _npcObjects = new List<NPCObj>();
         _landmarkObjects = new List<LandmarkObj>();
         _monsterObjects = new List<MonsterObj>();
+        for (int i = 0; i < monsterObjectComponents.Count; i++) {
+            MonsterObjectComponent currComp = monsterObjectComponents[i];
+            MonsterObj monsterObject = ConvertComponentToMonsterObject(currComp);
+            SetInitialDataOfObjects(currComp, monsterObject, monsterObjectComponents[i].gameObject.name);
+            _monsterObjects.Add(monsterObject);
+            _allObjects.Add(monsterObject);
+        }
         for (int i = 0; i < structureObjectComponents.Count; i++) {
             StructureObjectComponent currComp = structureObjectComponents[i];
             StructureObj structureObject = ConvertComponentToStructureObject(currComp);
@@ -92,13 +99,6 @@ public class ObjectManager : MonoBehaviour {
             landmarkObject.SetObjectName(landmarkObjectComponents[i].gameObject.name);
             _landmarkObjects.Add(landmarkObject);
             _allObjects.Add(landmarkObject);
-        }
-        for (int i = 0; i < monsterObjectComponents.Count; i++) {
-            MonsterObjectComponent currComp = monsterObjectComponents[i];
-            MonsterObj monsterObject = ConvertComponentToMonsterObject(currComp);
-            SetInitialDataOfObjects(currComp, monsterObject, monsterObjectComponents[i].gameObject.name);
-            _monsterObjects.Add(monsterObject);
-            _allObjects.Add(monsterObject);
         }
     }
     private void SetInitialDataOfObjects(ObjectComponent objComp, IObject iobject, string objectName = "") {
@@ -407,6 +407,9 @@ public class ObjectManager : MonoBehaviour {
             case LANDMARK_TYPE.CAMP:
                 structureObj = new Camp();
                 break;
+            case LANDMARK_TYPE.LAIR:
+                structureObj = new Lair();
+            break;
             default:
                 throw new System.Exception("No class for " + component.specificObjectType.ToString() + " has been created yet!");
         }

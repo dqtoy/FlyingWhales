@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ECS;
 
 public class Lair : StructureObj {
 
 	public Lair() : base() {
-        //_specificObjectType = SPECIFIC_OBJECT_TYPE.LAIR;
+        _specificObjectType = LANDMARK_TYPE.LAIR;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
     }
 
@@ -15,5 +16,20 @@ public class Lair : StructureObj {
         SetCommonData(clone);
         return clone;
     }
+    public override void OnAddToLandmark(BaseLandmark newLocation) {
+        base.OnAddToLandmark(newLocation);
+        SpawnDragonAndEgg();
+    }
     #endregion
+
+    private void SpawnDragonAndEgg() {
+        MonsterPartyComponent monsterPartyComponent = LandmarkManager.Instance.GetLandmarkData(LANDMARK_TYPE.LAIR).startingMonsterSpawn;
+        if(monsterPartyComponent != null) {
+            MonsterParty monsterParty = MonsterManager.Instance.SpawnMonsterPartyOnLandmark(_objectLocation, monsterPartyComponent);
+            if(monsterParty.mainCharacter.name == "Dragon") {
+                Item dragonEgg = ItemManager.Instance.CreateNewItemInstance("Dragon Egg");
+                _objectLocation.AddItemInLandmark(dragonEgg);
+            }
+        }
+    }
 }

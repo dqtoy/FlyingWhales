@@ -35,7 +35,7 @@ public class CharacterDialogMenu : UIMenu {
                 currButton.GetComponentInChildren<TextMeshProUGUI>().text = currChoice.buttonTitle;
                 currButton.onClick.RemoveAllListeners();
                 currButton.onClick.AddListener(currChoice.onClickAction);
-                currButton.onClick.AddListener(HideMenu);
+                currButton.onClick.AddListener(CloseMenu);
             }
         }
         this.gameObject.SetActive(true);
@@ -44,9 +44,9 @@ public class CharacterDialogMenu : UIMenu {
         textTyper.Execute();
     }
 
-    public override void HideMenu() {
+    public override void CloseMenu() {
         UIManager.Instance.SetTimeControlsState(true);
         //GameManager.Instance.SetPausedState(false);
-        base.HideMenu();
+        base.CloseMenu();
     }
 }

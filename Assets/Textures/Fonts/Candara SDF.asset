@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Name: Candara SDF
   m_EditorClassIdentifier: 
   hashCode: -2001613429
-  material: {fileID: 21631512272969824}
+  material: {fileID: 21413521877298816}
   materialHashCode: -1058362592
   fontAssetType: 1
   m_fontInfo:
@@ -37,7 +37,7 @@ MonoBehaviour:
     Padding: 5
     AtlasWidth: 512
     AtlasHeight: 512
-  atlas: {fileID: 28084080793471498}
+  atlas: {fileID: 28837597433537132}
   m_glyphInfoList:
   - id: 32
     x: 6
@@ -969,7 +969,7 @@ MonoBehaviour:
   boldSpacing: 7
   italicStyle: 35
   tabSize: 10
---- !u!21 &21631512272969824
+--- !u!21 &21413521877298816
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
@@ -1000,13 +1000,13 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 28084080793471498}
+        m_Texture: {fileID: 28837597433537132}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OutlineTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
+        m_Offset: {x: 10, y: 10}
     m_Floats:
     - _Ambient: 0.5
     - _Bevel: 0.5
@@ -1019,6 +1019,7 @@ Material:
     - _ColorMask: 15
     - _Diffuse: 0.5
     - _FaceDilate: 0
+    - _FaceShininess: 0
     - _FaceUVSpeedX: 0
     - _FaceUVSpeedY: 0
     - _GlowInner: 0.05
@@ -1029,10 +1030,12 @@ Material:
     - _LightAngle: 3.1416
     - _MaskSoftnessX: 0
     - _MaskSoftnessY: 0
+    - _OutlineShininess: 0
     - _OutlineSoftness: 0
     - _OutlineUVSpeedX: 0
     - _OutlineUVSpeedY: 0
     - _OutlineWidth: 0
+    - _Padding: 0
     - _PerspectiveFilter: 0.875
     - _Reflectivity: 10
     - _ScaleRatioA: 0.8333333
@@ -1050,25 +1053,28 @@ Material:
     - _TextureHeight: 512
     - _TextureWidth: 512
     - _UnderlayDilate: 0
-    - _UnderlayOffsetX: 0
-    - _UnderlayOffsetY: 0
+    - _UnderlayOffsetX: 1
+    - _UnderlayOffsetY: -1
     - _UnderlaySoftness: 0
+    - _UseUIAlphaClip: 0
     - _VertexOffsetX: 0
     - _VertexOffsetY: 0
     - _WeightBold: 0.75
     - _WeightNormal: 0
     m_Colors:
     - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EnvMatrixRotation: {r: 0, g: 0, b: 0, a: 0}
     - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
     - _GlowColor: {r: 0, g: 1, b: 0, a: 0.5}
     - _MaskCoord: {r: 0, g: 0, b: 32767, a: 32767}
-    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+    - _OutlineColor: {r: 1, g: 1, b: 1, a: 1}
     - _ReflectFaceColor: {r: 0, g: 0, b: 0, a: 1}
     - _ReflectOutlineColor: {r: 0, g: 0, b: 0, a: 1}
+    - _SpecColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
-    - _UnderlayColor: {r: 0, g: 0, b: 0, a: 0.5}
---- !u!28 &28084080793471498
+    - _UnderlayColor: {r: 0, g: 0, b: 0, a: 1}
+--- !u!28 &28837597433537132
 Texture2D:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}

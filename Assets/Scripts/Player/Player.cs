@@ -413,6 +413,7 @@ public class Player : ILeader{
         TakeItem takeItem = new TakeItem();
         MonsterAttack monsterAttack = new MonsterAttack();
         Mark mark = new Mark();
+        Awaken awaken = new Awaken();
 
         _allAbilities.Add(inspect);
         _allAbilities.Add(revealSecret);
@@ -423,6 +424,7 @@ public class Player : ILeader{
         _allAbilities.Add(takeItem);
         _allAbilities.Add(monsterAttack);
         _allAbilities.Add(mark);
+        _allAbilities.Add(awaken);
 
         PlayerAbilitiesUI.Instance.ConstructAbilityButtons(_allAbilities);
     }

@@ -15,6 +15,7 @@ public class LandmarkData {
     public List<LandmarkStructureSprite> humansLandmarkTileSprites;
     public List<LandmarkStructureSprite> elvenLandmarkTileSprites;
     public List<PASSABLE_TYPE> possibleSpawnPoints;
+    public MonsterPartyComponent startingMonsterSpawn;
 
     [Header("Monster Spawner")]
     public bool isMonsterSpawner;
