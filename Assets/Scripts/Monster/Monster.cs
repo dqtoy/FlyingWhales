@@ -432,6 +432,11 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public void SetSleeping(bool state) {
         _isSleeping = state;
     }
+    public void TryToSleep() {
+        if (!_isSleeping && _currentParty.specificLocation.tileLocation.id == _homeLandmark.id) {
+            SetSleeping(true);
+        }
+    }
     #endregion
 
     #region Interface

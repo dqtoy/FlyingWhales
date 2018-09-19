@@ -50,6 +50,9 @@ public class CharacterAvatar : MonoBehaviour{
     public bool hasArrived {
         get { return _hasArrived; }
     }
+    public GameObject avatarVisual {
+        get { return _avatarVisual; }
+    }
     #endregion
 
     public virtual void Init(NewParty party) {
@@ -115,6 +118,9 @@ public class CharacterAvatar : MonoBehaviour{
             this.path = path;
             _currPathfindingRequest = null;
             _isTravelling = true;
+            if(_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+                _party.specificLocation.tileLocation.landmarkOnTile.landmarkVisual.OnCharacterExitedLandmark(_party);
+            }
             NewMove();
         }
     }
@@ -122,9 +128,9 @@ public class CharacterAvatar : MonoBehaviour{
         if (this.targetLocation != null && this.path != null) {
             if (this.path.Count > 0) {
 				this.MakeCitizenMove(_party.specificLocation.tileLocation, this.path[0]);
-                RemoveCharactersFromLocation(_party.specificLocation);
-                AddCharactersToLocation(this.path[0]);
-                this.path.RemoveAt(0);
+                //RemoveCharactersFromLocation(_party.specificLocation);
+                //AddCharactersToLocation(this.path[0]);
+                //this.path.RemoveAt(0);
             }
         }
     }
@@ -143,11 +149,11 @@ public class CharacterAvatar : MonoBehaviour{
 			Debug.LogError (GameManager.Instance.Today ().ToStringDate());
 			Debug.LogError ("Location: " + _party.specificLocation.locationName);
 		}
-        //if (this.path.Count > 0) {
-        //    RemoveCharactersFromLocation(_party.specificLocation);
-        //    AddCharactersToLocation(this.path[0]);
-        //    this.path.RemoveAt(0);
-        //}
+        if (this.path.Count > 0) {
+            RemoveCharactersFromLocation(_party.specificLocation);
+            AddCharactersToLocation(this.path[0]);
+            this.path.RemoveAt(0);
+        }
         HasArrivedAtTargetLocation();
     }
     public virtual void HasArrivedAtTargetLocation() {

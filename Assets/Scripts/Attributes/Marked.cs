@@ -14,6 +14,7 @@ public class Marked : Attribute {
         base.OnAddAttribute(character);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, CharacterDeath);
         PlayerManager.Instance.player.SetMarkedCharacter(_character);
+        Messenger.Broadcast(Signals.CHARACTER_MARKED);
     }
     public override void OnRemoveAttribute() {
         base.OnRemoveAttribute();
