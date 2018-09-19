@@ -20,6 +20,9 @@ public class CharacterEventSchedule {
         eventSchedule = new Dictionary<DateRange, GameEvent>();
     }
     public void AddElement(DateRange key, GameEvent value) {
+        if (eventSchedule.ContainsKey(key)) {
+            throw new System.Exception("There is already a key " + key.ToString() + " in " + owner.name + "'s event schedule!");
+        }
         eventSchedule.Add(key, value);
         OrganizeSchedule();
     }
@@ -58,21 +61,20 @@ public class CharacterEventSchedule {
         return null;
     }
     public GameDate GetNextFreeDateForEvent(GameEvent gameEvent) {
-        //this is only ususally called when there is a conflict in the schedule
-        //check the length from today to the earliest schedule, if the event (given its duration), can fit, schedule it there?
         if (eventSchedule.Count == 0) { //if there are no events in the schedule
-            //schedule the next event 72 ticks after today (half day)
+            //schedule the next event a few ticks after today
             GameDate today = GameManager.Instance.Today();
-            today.AddHours(72);
+            today.AddHours(10);
             return today;
         } else {
+            //check the length from today to the earliest schedule, if the event (given its duration), can fit, schedule it there?
             KeyValuePair<DateRange, GameEvent> firstElement = eventSchedule.ElementAt(0);
             GameDate firstEventStartDate = firstElement.Key.startDate;
-            DateRange range = new DateRange(GameManager.Instance.Today(), firstEventStartDate);
-            //if the available range is greater than the event duration in ticks + 1 day worth of ticks then use that range
-            if (range.rangeInTicks  >= gameEvent.GetEventDurationRoughEstimateInTicks() + GameManager.hoursPerDay) {
+            DateRange availableRange = new DateRange(GameManager.Instance.Today(), firstEventStartDate);
+            //if the available range is greater than the event duration in ticks + 1/2 day worth of ticks then use that range
+            if (availableRange.rangeInTicks  >= gameEvent.GetEventDurationRoughEstimateInTicks() + (GameManager.hoursPerDay/2)) {
                 GameDate freeDate = GameManager.Instance.Today();
-                freeDate.AddDays(1);
+                freeDate.AddHours(GameManager.hoursPerDay/2);
                 return freeDate;
             }
         }
@@ -82,25 +84,24 @@ public class CharacterEventSchedule {
         foreach (KeyValuePair<DateRange, GameEvent> kvp in eventSchedule) {//for each schedule element
             DateRange currRange = kvp.Key;
             GameEvent currEvent = kvp.Value;
-            GameDate nextFreeDate;
             if (counter + 1 == eventSchedule.Count) { //check if this is the last element of the schedule
                 //if it is, schedule the event anywhere after this element's endDate
-                nextFreeDate = currRange.endDate;
+                GameDate nextFreeDate = currRange.endDate;
                 //schedule the next event 1 day after
                 nextFreeDate.AddDays(1);
-                counter++;
                 return nextFreeDate;
             } else { //if this element is not the last element 
                 KeyValuePair<DateRange, GameEvent> nextElement = eventSchedule.ElementAt(counter + 1);
                 DateRange nextElementRange = nextElement.Key;
                 DateRange availableRange = new DateRange(currRange.endDate, nextElement.Key.startDate); //check this element's endDate and the next elements startDate
-                if (availableRange.rangeInTicks + GameManager.hoursPerDay >= gameEvent.GetEventDurationRoughEstimateInTicks()) {
-                    //if the distance between the 2 dates can fit the event (given it's duration), schedule the event in between the 2 dates
-                    nextFreeDate = availableRange.startDate;
-                    nextFreeDate.AddDays(1);
+                if (availableRange.rangeInTicks >= gameEvent.GetEventDurationRoughEstimateInTicks() + (GameManager.hoursPerDay/2)) {
+                    //if the distance between the 2 dates can fit the event (given it's duration) + 1/2 day woth of ticks, schedule the event in between the 2 dates
+                    GameDate nextFreeDate = availableRange.startDate;
+                    nextFreeDate.AddHours(GameManager.hoursPerDay/2);
                     return nextFreeDate;
                 } else {
                     //if not, continue to the next element in the schedule.
+                    counter++;
                     continue;
                 }
             }

@@ -43,10 +43,19 @@ public struct DateRange {
     private int GetRangeInTicks() {
         //TODO: Change this to use maths
         int range = 0;
-        GameDate startDate = this.startDate;
-        GameDate endDate = this.endDate;
-        while (!startDate.IsSameDate(endDate)) {
-            startDate.AddHours(1);
+        GameDate lowerDate;
+        GameDate higherDate;
+        if (this.startDate.IsBefore(this.endDate)) {
+            lowerDate = this.startDate;
+            higherDate = this.endDate;
+        } else {
+            lowerDate = this.endDate;
+            higherDate = this.startDate;
+        }
+        //GameDate startDate = this.startDate;
+        //GameDate endDate = this.endDate;
+        while (!lowerDate.IsSameDate(higherDate)) {
+            lowerDate.AddHours(1);
             range++;
         }
         return range;
