@@ -444,18 +444,25 @@ public class LandmarkManager : MonoBehaviour {
         return null;
     }
     public BaseLandmark GetLandmarkByName(string name) {
-        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-            Region currRegion = GridMap.Instance.allRegions[i];
-            if (currRegion.mainLandmark.landmarkName == name) {
-                return currRegion.mainLandmark;
-            }
-            for (int j = 0; j < currRegion.landmarks.Count; j++) {
-                BaseLandmark currLandmark = currRegion.landmarks[j];
-                if (currLandmark.landmarkName == name) {
-                    return currLandmark;
-                }
+        List<BaseLandmark> allLandmarks = GetAllLandmarks();
+        for (int i = 0; i < allLandmarks.Count; i++) {
+            BaseLandmark currLandmark = allLandmarks[i];
+            if (currLandmark.landmarkName.Equals(name, System.StringComparison.CurrentCultureIgnoreCase)) {
+                return currLandmark;
             }
         }
+        //for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+        //    Region currRegion = GridMap.Instance.allRegions[i];
+        //    if (currRegion.mainLandmark.landmarkName.Equals(name, System.StringComparison.CurrentCultureIgnoreCase)) {
+        //        return currRegion.mainLandmark;
+        //    }
+        //    for (int j = 0; j < currRegion.landmarks.Count; j++) {
+        //        BaseLandmark currLandmark = currRegion.landmarks[j];
+        //        if (currLandmark.landmarkName.Equals(name, System.StringComparison.CurrentCultureIgnoreCase)) {
+        //            return currLandmark;
+        //        }
+        //    }
+        //}
         return null;
     }
     public bool HasLandmarkOfType(LANDMARK_TYPE landmarkType) {

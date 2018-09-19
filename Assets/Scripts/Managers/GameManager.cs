@@ -92,6 +92,9 @@ public class GameManager : MonoBehaviour {
     public GameDate Today() {
         return new GameDate(this.month, this.days, this.year, this.hour);
     }
+    public string TodayLogString() {
+        return "[" + new GameDate(this.month, this.days, this.year, this.hour).GetDayAndTicksString() + "] ";
+    }
     public GameDate EndOfTheMonth() {
         return new GameDate(this.month, daysInMonth[this.month], this.year, hoursPerDay);
     }

@@ -17084,6 +17084,12 @@ MonoBehaviour:
   joinBattleBtnToggle: {fileID: 0}
   snatchBtn: {fileID: 0}
   releaseBtnGO: {fileID: 0}
+  monthDropdown: {fileID: 0}
+  dayDropdown: {fileID: 0}
+  yearField: {fileID: 0}
+  tickField: {fileID: 0}
+  daysConversionLbl: {fileID: 0}
+  scheduleManualBtn: {fileID: 0}
 --- !u!114 &114329952907277334
 MonoBehaviour:
   m_ObjectHideFlags: 1

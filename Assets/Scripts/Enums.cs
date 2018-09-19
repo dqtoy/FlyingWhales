@@ -399,25 +399,12 @@ public enum TECHNOLOGY {
 }
 public enum CHARACTER_ROLE {
     NONE,
-    //CHIEFTAIN,
-    //WARLORD,
     HERO,
-    //ADVENTURER,
-    //COLONIST,
-    //VILLAGE_HEAD,
-    //WORKER,
-	//TAMED_BEAST,
-	//BANDIT,
-    //ANCIENT_VAMPIRE,
-	//CRATER_BEAST,
-	//SLYX,
 	VILLAIN,
     CIVILIAN,
     KING,
     PLAYER,
-    //FOLLOWER,
-    //HERMIT,
-    //BEAST,
+    GUARDIAN,
 }
 public enum CHARACTER_CLASS {
     WARRIOR,

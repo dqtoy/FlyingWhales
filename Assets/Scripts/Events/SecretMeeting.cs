@@ -42,8 +42,8 @@ public class SecretMeeting : GameEvent {
         isDone[_character1] = false; //reset is done
         isDone[_character2] = false; //reset is done
 
-        List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks().Where(x => x.specificLandmarkType == LANDMARK_TYPE.IRON_MINES).ToList();
-        BaseLandmark chosenMeetup = allLandmarks[Utilities.rng.Next(0, allLandmarks.Count)];
+        //List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks().Where(x => x.specificLandmarkType == LANDMARK_TYPE.IRON_MINES).ToList();
+        BaseLandmark chosenMeetup = LandmarkManager.Instance.GetLandmarkByName("Haundiville");
         WaitingInteractionAction char1WaitAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.WAITING) as WaitingInteractionAction;
         WaitingInteractionAction char2WaitAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.WAITING) as WaitingInteractionAction;
         char1WaitAction.SetWaitedCharacter(_character2);
@@ -78,11 +78,11 @@ public class SecretMeeting : GameEvent {
         int initialMeetingHours = 50; //120//8 PM
         GameDate meetingDate = GameManager.Instance.Today();
         meetingDate.SetHours(initialMeetingHours);
-        int currentDay = GameManager.Instance.continuousDays % 7;
-        if (currentDay < initialMeetingDay) {
-            initialMeetingDay -= currentDay;
-        } else if (currentDay > initialMeetingDay) {
-            initialMeetingDay = 7 - (currentDay - initialMeetingDay);
+        int currentDayInWeek = GameManager.Instance.continuousDays % 7;
+        if (currentDayInWeek < initialMeetingDay) {
+            initialMeetingDay -= currentDayInWeek;
+        } else if (currentDayInWeek > initialMeetingDay) {
+            initialMeetingDay = 7 - (currentDayInWeek - initialMeetingDay);
         }
         meetingDate.AddDays(initialMeetingDay);
         return meetingDate;

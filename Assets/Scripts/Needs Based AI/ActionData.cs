@@ -152,7 +152,9 @@ public class ActionData {
     }
     private void SetEventAssociatedWithAction(GameEvent gameEvent) {
         eventAssociatedWithAction = gameEvent;
-        SetCurrentActionPhaseType(SCHEDULE_PHASE_TYPE.SPECIAL);
+        if (gameEvent != null) {
+            SetCurrentActionPhaseType(SCHEDULE_PHASE_TYPE.SPECIAL);
+        }
     }
     public void SetCurrentDay(int day) {
         this.currentDay = day;

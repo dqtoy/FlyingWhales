@@ -11,6 +11,9 @@ public class HiddenDesire {
     protected bool _isAwakened;
 
     #region getters/setters
+    public string name {
+        get { return _name; }
+    }
     public bool isAwakened {
         get { return _isAwakened; }
     }
@@ -25,6 +28,7 @@ public class HiddenDesire {
     #region Virtuals
     public virtual void Awaken() {
         _isAwakened = true;
+        Debug.Log(GameManager.Instance.TodayLogString() + "Awakened " + _host.name + "'s hidden desire: " + name);
     }
     #endregion
 }
