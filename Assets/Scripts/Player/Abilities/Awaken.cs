@@ -5,6 +5,7 @@ using ECS;
 
 public class Awaken : PlayerAbility {
 
+    private Monster monster;
     public Awaken() : base(ABILITY_TYPE.MONSTER) {
         _name = "Awaken";
         _description = "Awaken a monster from deep slumber";
@@ -15,13 +16,13 @@ public class Awaken : PlayerAbility {
 
     #region Overrides
     public override void Activate(IInteractable interactable) {
-        Monster monster = interactable as Monster;
+        monster = interactable as Monster;
         if(monster.name == "Dragon") {
             monster.SetSleeping(false);
             if(PlayerManager.Instance.player.markedCharacter != null) {
-                DragonAttack dragonAttack = EventManager.Instance.AddNewEvent(GAME_EVENT.DRAGON_ATTACK) as DragonAttack;
-                dragonAttack.Initialize(PlayerManager.Instance.player.markedCharacter, monster.party);
+                TriggerDragonAttack();
             } else {
+                Messenger.AddListener(Signals.CHARACTER_MARKED, ReceivedMarkedCharacterSignal);
                 ScheduleSleep(monster);
             }
             base.Activate(monster);
@@ -41,6 +42,21 @@ public class Awaken : PlayerAbility {
     private void ScheduleSleep(Monster monster) {
         GameDate sleepDate = GameManager.Instance.Today();
         sleepDate.AddDays(1);
-        SchedulingManager.Instance.AddEntry(sleepDate, () => monster.SetSleeping(true));
+        SchedulingManager.Instance.AddEntry(sleepDate, () => MonsterWillSleep());
+    }
+
+    private void ReceivedMarkedCharacterSignal() {
+        Messenger.RemoveListener(Signals.CHARACTER_MARKED, ReceivedMarkedCharacterSignal);
+        TriggerDragonAttack();
+    }
+    private void TriggerDragonAttack() {
+        DragonAttack dragonAttack = EventManager.Instance.AddNewEvent(GAME_EVENT.DRAGON_ATTACK) as DragonAttack;
+        dragonAttack.Initialize(PlayerManager.Instance.player.markedCharacter, monster.party);
+    }
+    private void MonsterWillSleep() {
+        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_MARKED)) {
+            Messenger.RemoveListener(Signals.CHARACTER_MARKED, ReceivedMarkedCharacterSignal);
+        }
+        monster.TryToSleep();
     }
 }
