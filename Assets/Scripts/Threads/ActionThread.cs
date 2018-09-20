@@ -384,8 +384,8 @@ public class ActionThread : Multithread {
         allChoices.Clear();
 
         actionLog += "\n" + _party.name + "'s Need Action Advertisements: ";
-        for (int i = 0; i < _party.owner.home.landmarks.Count; i++) { //get advertisements from home area only.
-            BaseLandmark landmark = _party.owner.home.landmarks[i];
+        for (int i = 0; i < _party.owner.homeLandmark.tileLocation.areaOfTile.landmarks.Count; i++) { //get advertisements from home area only.
+            BaseLandmark landmark = _party.owner.homeLandmark.tileLocation.areaOfTile.landmarks[i];
             StructureObj iobject = landmark.landmarkObj;
             if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
                 for (int k = 0; k < iobject.currentState.actions.Count; k++) {

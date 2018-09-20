@@ -35,12 +35,12 @@ public class CharacterSaveData {
         } else {
             locationID = -1;
         }
-
-        if (character.home != null) {
-            homeID = character.home.id;
-        } else {
-            homeID = -1;
-        }
+        homeID = -1;
+        //if (character.home != null) {
+        //    homeID = character.home.id;
+        //} else {
+            
+        //}
 
         if (character.homeLandmark != null) {
             homeLandmarkID = character.homeLandmark.id;

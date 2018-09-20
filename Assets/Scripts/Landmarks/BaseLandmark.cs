@@ -19,7 +19,7 @@ public class BaseLandmark : ILocation, IInteractable {
     protected bool _hasBeenInspected;
     protected string _landmarkName;
     protected Faction _owner;
-    protected List<Character> _charactersWithHomeOnLandmark;
+    protected List<ICharacter> _charactersWithHomeOnLandmark;
     protected LandmarkVisual _landmarkVisual;
     protected List<Character> _prisoners; //list of prisoners on landmark
     protected List<Log> _history;
@@ -67,7 +67,7 @@ public class BaseLandmark : ILocation, IInteractable {
     public Faction owner {
         get { return _owner; }
     }
-    public List<Character> charactersWithHomeOnLandmark {
+    public List<ICharacter> charactersWithHomeOnLandmark {
         get { return _charactersWithHomeOnLandmark; }
     }
   //  public virtual int totalPopulation {
@@ -138,7 +138,7 @@ public class BaseLandmark : ILocation, IInteractable {
     public BaseLandmark() {
         _connections = new List<BaseLandmark>();
         _owner = null; //landmark has no owner yet
-        _charactersWithHomeOnLandmark = new List<Character>();
+        _charactersWithHomeOnLandmark = new List<ICharacter>();
         _prisoners = new List<Character>();
         _history = new List<Log>();
         _combatHistory = new Dictionary<int, Combat>();
@@ -301,13 +301,13 @@ public class BaseLandmark : ILocation, IInteractable {
     //    //}
     //    return newCharacter;
     //}
-    public void AddCharacterHomeOnLandmark(Character character) {
+    public void AddCharacterHomeOnLandmark(ICharacter character) {
         if (!_charactersWithHomeOnLandmark.Contains(character)) {
             _charactersWithHomeOnLandmark.Add(character);
             character.SetHomeLandmark(this);
         }
     }
-    public void RemoveCharacterHomeOnLandmark(Character character) {
+    public void RemoveCharacterHomeOnLandmark(ICharacter character) {
         _charactersWithHomeOnLandmark.Remove(character);
         character.SetHomeLandmark(null);
     }
@@ -937,7 +937,7 @@ public class BaseLandmark : ILocation, IInteractable {
         if(homeLandmarks.Count > 0) {
             BaseLandmark chosenLandmark = homeLandmarks[0];
             while(_charactersWithHomeOnLandmark.Count > 0) {
-                Character character = _charactersWithHomeOnLandmark[0];
+                ICharacter character = _charactersWithHomeOnLandmark[0];
                 RemoveCharacterHomeOnLandmark(character);
                 chosenLandmark.AddCharacterHomeOnLandmark(character);
             }
@@ -978,7 +978,7 @@ public class BaseLandmark : ILocation, IInteractable {
                         //Last camp
                         camp.AdjustCivilianCount(civiliansRemainder);
                         while (_charactersWithHomeOnLandmark.Count > 0) {
-                            Character character = _charactersWithHomeOnLandmark[0];
+                            ICharacter character = _charactersWithHomeOnLandmark[0];
                             RemoveCharacterHomeOnLandmark(character);
                             camp.AddCharacterHomeOnLandmark(character);
                         }
@@ -986,7 +986,7 @@ public class BaseLandmark : ILocation, IInteractable {
                         int count = 3;
                         while (count > 0) {
                             if (_charactersWithHomeOnLandmark.Count > 0) {
-                                Character character = _charactersWithHomeOnLandmark[0];
+                                ICharacter character = _charactersWithHomeOnLandmark[0];
                                 RemoveCharacterHomeOnLandmark(character);
                                 camp.AddCharacterHomeOnLandmark(character);
                             } else {

@@ -330,6 +330,7 @@ public class Area {
     #region Camp
     public BaseLandmark CreateCampOnTile(HexTile tile) {
         BaseLandmark camp = LandmarkManager.Instance.CreateNewLandmarkOnTile(tile, LANDMARK_TYPE.CAMP);
+        camp.tileLocation.SetArea(this);
         return camp;
     }
     public BaseLandmark CreateCampForHouse(HexTile houseTile) {

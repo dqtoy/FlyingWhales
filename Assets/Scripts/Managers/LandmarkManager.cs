@@ -569,7 +569,7 @@ public class LandmarkManager : MonoBehaviour {
     }
     public void RemoveArea(Area area) {
         allAreas.Remove(area);
-        Messenger.Broadcast(Signals.AREA_DELETED, area);
+        //Messenger.Broadcast(Signals.AREA_DELETED, area);
     }
     public Area CreateNewArea(AreaSaveData data) {
         Area newArea = new Area(data);

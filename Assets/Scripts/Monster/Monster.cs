@@ -185,9 +185,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public BaseLandmark homeLandmark {
         get { return _homeLandmark; }
     }
-    public Area home {
-        get { return null; }
-    }
+    //public Area home {
+    //    get { return null; }
+    //}
     public PortraitSettings portraitSettings {
         get { return _portraitSettings; }
     }
@@ -366,7 +366,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public void Death() {
         _isDead = true;
         Messenger.Broadcast(Signals.MONSTER_DEATH, this);
-        _ownParty.RemoveCharacter(this);
+        _currentParty.RemoveCharacter(this);
         MonsterManager.Instance.allMonsters.Remove(this);
 
         GameObject.Destroy(_characterPortrait.gameObject);

@@ -103,19 +103,20 @@ namespace ECS {
                 ICharacter icharacter = combat.charactersSideA[0];
                 if (icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                     Character character = icharacter as Character;
-                    CharacterParty characterParty = character.currentParty as CharacterParty;
-                    if (character.IsInOwnParty()) { //only characters that own the party they are in
-                        PartyContinuesActionAfterCombat(characterParty, true);
-                    } else { //characters that do not own the party they are in
-                        if (characterParty.IsOwnerDead()) { //if the owner of the party is dead, disband the party
-                            characterParty.DisbandParty();
-                        }
-                        icharacter.ownParty.currentCombat = null;
+                    //CharacterParty characterParty = character.currentParty as CharacterParty;
+                    //if (!character.IsInOwnParty()) { //characters that do not own the party they are in
+                    //    if (characterParty.IsOwnerDead()) { //if the owner of the party is dead, disband the party
+                    //        characterParty.DisbandPartyKeepOwner();
+                    //    }
+                    //}
+                    CharacterParty ownParty = icharacter.ownParty as CharacterParty;
+                    if (ownParty.actionData.isHalted) {
+                        ownParty.actionData.SetIsHalted(false);
                     }
-                } else {
-                    icharacter.ownParty.currentCombat = null;
                 }
                 //icharacter.ResetToFullHP();
+                icharacter.ownParty.currentCombat = null;
+                //icharacter.currentParty.currentCombat = null;
                 icharacter.ResetToFullSP();
                 combat.RemoveCharacter(SIDES.A, icharacter);
             }
@@ -123,19 +124,20 @@ namespace ECS {
                 ICharacter icharacter = combat.charactersSideB[0];
                 if (icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                     Character character = icharacter as Character;
-                    CharacterParty characterParty = character.currentParty as CharacterParty;
-                    if (character.IsInOwnParty()) { //only characters that own the party they are in
-                        PartyContinuesActionAfterCombat(characterParty, true);
-                    } else { //characters that do not own the party they are in
-                        if (characterParty.IsOwnerDead()) { //if the owner of the party is dead, disband the party
-                            characterParty.DisbandParty();
-                        }
-                        icharacter.ownParty.currentCombat = null;
+                    //CharacterParty characterParty = character.currentParty as CharacterParty;
+                    //if (!character.IsInOwnParty()) { //characters that do not own the party they are in
+                    //    if (characterParty.IsOwnerDead()) { //if the owner of the party is dead, disband the party
+                    //        characterParty.DisbandPartyKeepOwner();
+                    //    }
+                    //}
+                    CharacterParty ownParty = icharacter.ownParty as CharacterParty;
+                    if (ownParty.actionData.isHalted) {
+                        ownParty.actionData.SetIsHalted(false);
                     }
-                } else {
-                    icharacter.ownParty.currentCombat = null;
                 }
                 //icharacter.ResetToFullHP();
+                icharacter.ownParty.currentCombat = null;
+                //icharacter.currentParty.currentCombat = null;
                 icharacter.ResetToFullSP();
                 combat.RemoveCharacter(SIDES.B, icharacter);
             }
@@ -392,20 +394,20 @@ namespace ECS {
             }
             return combatRooms;
         }
-        public void PartyContinuesActionAfterCombat(CharacterParty party, bool isActionSucess) {
-            if (party.actionData.isHalted) {
-                party.actionData.SetIsHalted(false);
-                if (party.actionData.currentAction != null) {
-                    if ((party.actionData.currentAction.actionType == ACTION_TYPE.ATTACK || party.actionData.currentAction.actionType == ACTION_TYPE.JOIN_BATTLE) && party.actionData.isNotFirstEncounter) {
-                        if (isActionSucess) {
-                            party.actionData.currentAction.SuccessEndAction(party);
-                        }
-                        party.actionData.currentAction.EndAction(party, party.actionData.currentTargetObject);
-                    }
-                }
-                party.currentCombat = null;
-            }
-        }
+        //public void PartyContinuesActionAfterCombat(CharacterParty party, bool isActionSucess) {
+        //    if (party.actionData.isHalted) {
+        //        party.actionData.SetIsHalted(false);
+        //        if (party.actionData.currentAction != null) {
+        //            if ((party.actionData.currentAction.actionType == ACTION_TYPE.ATTACK || party.actionData.currentAction.actionType == ACTION_TYPE.JOIN_BATTLE) && party.actionData.isNotFirstEncounter) {
+        //                if (isActionSucess) {
+        //                    party.actionData.currentAction.SuccessEndAction(party);
+        //                }
+        //                party.actionData.currentAction.EndAction(party, party.actionData.currentTargetObject);
+        //            }
+        //        }
+        //        party.currentCombat = null;
+        //    }
+        //}
         public SIDES GetOppositeSide(SIDES side) {
             if(side == SIDES.A) {
                 return SIDES.B;

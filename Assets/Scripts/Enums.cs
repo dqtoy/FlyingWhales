@@ -724,6 +724,7 @@ public enum ACTION_TYPE {
     WAIT_FOR_PARTY,
     TURN_IN_QUEST,
     SUICIDE,
+    DEFEND,
 }
 public enum ACTION_CATEGORY {
     WORK,

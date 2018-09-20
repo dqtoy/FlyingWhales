@@ -20,7 +20,7 @@ public class GoHomeAction : CharacterAction {
         return goHomeAction;
     }
     public override bool CanBeDoneBy(CharacterParty party, IObject targetObject) {
-        if (party.home == null || targetObject.objectLocation.tileLocation.areaOfTile.id != party.home.id) {
+        if (party.homeLandmark == null || targetObject.objectLocation.tileLocation.areaOfTile.id != party.homeLandmark.tileLocation.areaOfTile.id) {
             return false;
         }
         return base.CanBeDoneBy(party, targetObject);

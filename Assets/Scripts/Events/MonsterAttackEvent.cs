@@ -17,6 +17,9 @@ public class MonsterAttackEvent : GameEvent {
         _targetLandmark = target;
         MonsterPartyComponent chosenParty = MonsterManager.Instance.monsterAttackParties[UnityEngine.Random.Range(0, MonsterManager.Instance.monsterAttackParties.Count)];
         _monsterPartySpawned = MonsterManager.Instance.SpawnMonsterPartyOnLandmark(_targetLandmark, chosenParty);
+        if (_monsterPartySpawned.specificLocation.tileLocation.landmarkOnTile != null) {
+            Messenger.Broadcast(Signals.LANDMARK_UNDER_ATTACK, _monsterPartySpawned, this);
+        }
         ScheduleEnd();
     }
 
@@ -34,7 +37,7 @@ public class MonsterAttackEvent : GameEvent {
         if (_isDone) {
             return;
         }
-        if(!_monsterPartySpawned.isDead && _monsterPartySpawned.icharacters.Count > 0) {
+        if(!_monsterPartySpawned.isDead) {
             _targetLandmark.DestroyLandmark();
         }
         EndEvent();

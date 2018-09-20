@@ -119,7 +119,7 @@ public class MonsterManager : MonoBehaviour {
             if (monsterPartyComponent.monsters[i] != null) {
                 string monsterName = monsterPartyComponent.monsters[i].name;
                 Monster monster = CreateNewMonster(monsterName);
-                monster.SetHomeLandmark(landmark);
+                landmark.AddCharacterHomeOnLandmark(monster);
                 monster.SetOwnedParty(monsterParty);
                 monsterParty.AddCharacter(monster);
             }

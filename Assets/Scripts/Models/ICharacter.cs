@@ -35,7 +35,7 @@ public interface ICharacter {
     Faction faction { get; }
     BaseLandmark homeLandmark { get; }
     //StructureObj homeStructure { get; }
-    Area home { get; } //Character only
+    //Area home { get; } //Character only
     CharacterRole role { get; } //Character only
     CharacterClass characterClass { get; } //Character only
     CharacterPortrait characterPortrait { get; }

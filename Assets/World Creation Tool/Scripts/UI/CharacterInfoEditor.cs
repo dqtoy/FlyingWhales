@@ -157,13 +157,11 @@ namespace worldcreator {
             }
             factionField.value = Utilities.GetOptionIndex(factionField, factionName);
             otherInfoLbl.text = string.Empty;
-            if (_character.home == null) {
+            if (_character.homeLandmark == null) {
                 otherInfoLbl.text += "Home: NONE";
             } else {
-                otherInfoLbl.text += "Home Area: " + _character.home.name.ToString();
-                if (_character.homeLandmark != null) {
-                    otherInfoLbl.text += "(" + _character.homeLandmark.landmarkName + ")";
-                }
+                otherInfoLbl.text += "Home Area: " + _character.homeLandmark.tileLocation.areaOfTile.name.ToString();
+                otherInfoLbl.text += "(" + _character.homeLandmark.landmarkName + ")";
             }
             if (_character.party.specificLocation == null) {
                 otherInfoLbl.text += "\nLocation: NONE";
