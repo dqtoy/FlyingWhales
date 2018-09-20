@@ -27,7 +27,8 @@ public class DragonAttack : GameEvent {
 
     private void CombatWithTarget() {
         //Make sure that the target character will not leave
-        _dragonParty.StartCombatWith(_targetCharacter.currentParty, () => CheckCombatResults());
+        Combat combat = _dragonParty.StartCombatWith(_targetCharacter.currentParty);
+        combat.AddAfterCombatAction(() => CheckCombatResults());
     }
     private void CheckCombatResults() {
         if(!_dragonParty.isDead && _dragonParty.icharacters.Count > 0) {

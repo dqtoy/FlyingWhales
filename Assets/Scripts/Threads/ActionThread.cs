@@ -11,7 +11,7 @@ public class ActionThread : Multithread {
     private CharacterAction chosenAction;
     private IObject chosenObject;
     private List<CharacterActionAdvertisement> allChoices;
-    private ChainAction chosenChainAction;
+    //private ChainAction chosenChainAction;
     private string actionLog;
     private Quest associatedQuest;
     private GameEvent associatedEvent;
@@ -482,7 +482,7 @@ public class ActionThread : Multithread {
     //}
 
     private void ReturnAction() {
-        _party.actionData.ReturnActionFromThread(chosenAction, chosenObject, chosenChainAction, associatedQuest, associatedEvent);
+        _party.actionData.ReturnActionFromThread(chosenAction, chosenObject, associatedQuest, associatedEvent);
     }
     private void PutToChoices(CharacterAction action, IObject targetObject, float advertisement) {
         CharacterActionAdvertisement actionAdvertisement = new CharacterActionAdvertisement();

@@ -81,17 +81,17 @@ public class ActionData {
     public void SetSpecificTarget(object target) {
         specificTarget = target;
     }
-    public void ReturnActionFromThread(CharacterAction characterAction, IObject targetObject, ChainAction chainAction, Quest associatedQuest, GameEvent associatedEvent) {
-        AssignAction(characterAction, targetObject, chainAction, associatedQuest, associatedEvent);
+    public void ReturnActionFromThread(CharacterAction characterAction, IObject targetObject, Quest associatedQuest, GameEvent associatedEvent) {
+        AssignAction(characterAction, targetObject, associatedQuest, associatedEvent);
     }
-    public void AssignAction(CharacterAction action, IObject targetObject, ChainAction chainAction = null, Quest associatedQuest = null, GameEvent associatedEvent = null) {
+    public void AssignAction(CharacterAction action, IObject targetObject, Quest associatedQuest = null, GameEvent associatedEvent = null) {
         if (_party == null || _party.isDead) {
             return;
         }
         Reset();
-        if (chainAction != null) {
-            action = chainAction.action;
-        }
+        //if (chainAction != null) {
+        //    action = chainAction.action;
+        //}
         //this.currentChainAction = chainAction;
         actionHistory.Add("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + action.actionData.actionName + " - " + targetObject.objectName + "\n");
         SetCurrentAction(action);

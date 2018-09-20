@@ -19,6 +19,7 @@ namespace ECS{
 		internal List<ICharacter> fledCharacters;
 		internal List<ICharacter> characterSideACopy;
 		internal List<ICharacter> characterSideBCopy;
+        internal List<Action> afterCombatActions;
 
 		internal SIDES winningSide;
 		internal SIDES losingSide;
@@ -27,23 +28,22 @@ namespace ECS{
         //internal ILocation location;
 		internal bool isDone;
         internal bool hasStarted;
-        internal Action afterCombatAction;
 
-		public Combat(Action action = null){
+		public Combat(){
 //			this.allCharactersAndSides = new Dictionary<SIDES, List<ICharacter>> ();
 			this.charactersSideA = new List<ICharacter> ();
 			this.charactersSideB = new List<ICharacter> ();
             this.characterSideACopy = new List<ICharacter>();
             this.characterSideBCopy = new List<ICharacter>();
             this.deadCharacters = new List<ICharacter> ();
-			this.faintedCharacters = new List<ICharacter> ();
+			//this.faintedCharacters = new List<ICharacter> ();
 			this.fledCharacters = new List<ICharacter> ();
+            this.afterCombatActions = new List<Action>();
 			//this.location = location;
 			this.isDone = false;
             this.hasStarted = false;
 
 			this.resultsLog = new List<string> ();
-            this.afterCombatAction = action;
 //			Messenger.AddListener<ICharacter> ("CharacterDeath", CharacterDeath);
 		}
 
@@ -1305,6 +1305,10 @@ namespace ECS{
             }
 			return null;
 		}
+
+        public void AddAfterCombatAction(Action action) {
+            afterCombatActions.Add(action);
+        }
 
         //private int GetFinalAttack(int stat, int level, float weaponAttack) {
         //    return (int) (((weaponAttack + stat) * (1f + ((float)stat / 20f))) * (1f + ((float) level / 100f)));

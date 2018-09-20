@@ -265,9 +265,9 @@ public class NewParty : IParty {
     #endregion
 
     #region Combat
-    public void StartCombatWith(NewParty enemy, Action afterCombatAction = null) {
+    public Combat StartCombatWith(NewParty enemy) {
         if(enemy.currentCombat != null && this.currentCombat != null && enemy.currentCombat == this.currentCombat) {
-            return;
+            return this.currentCombat;
         }
         if(enemy is CharacterParty) {
             (enemy as CharacterParty).actionData.SetIsHalted(true);
@@ -278,7 +278,7 @@ public class NewParty : IParty {
         //If attack target is not yet in combat, start new combat, else, join the combat on the opposing side
         Combat combat = this.currentCombat;
         if (combat == null) {
-            combat = new Combat(afterCombatAction);
+            combat = new Combat();
             combat.AddParty(SIDES.A, enemy);
             combat.AddParty(SIDES.B, this);
             //MultiThreadPool.Instance.AddToThreadPool(combat);
@@ -286,7 +286,7 @@ public class NewParty : IParty {
             combat.CombatSimulation();
         } else {
             if (enemy.currentCombat != null && enemy.currentCombat == combat) {
-                return;
+                return combat;
             }
             SIDES sideToJoin = CombatManager.Instance.GetOppositeSide(this.mainCharacter.currentSide);
             combat.AddParty(sideToJoin, enemy);
@@ -303,6 +303,7 @@ public class NewParty : IParty {
         for (int i = 0; i < this.icharacters.Count; i++) {
             this.icharacters[i].AddHistory(combatLog);
         }
+        return combat;
     }
     public void JoinCombatWith(NewParty friend) {
         if (friend.currentCombat != null) {

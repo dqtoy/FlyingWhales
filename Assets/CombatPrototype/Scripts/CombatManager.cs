@@ -139,8 +139,8 @@ namespace ECS {
                 icharacter.ResetToFullSP();
                 combat.RemoveCharacter(SIDES.B, icharacter);
             }
-            if(combat.afterCombatAction != null) {
-                combat.afterCombatAction();
+            for (int i = 0; i < combat.afterCombatActions.Count; i++) {
+                combat.afterCombatActions[i]();
             }
             //Prisoner or Leave to Die
             //List<ECS.Character> winningCharacters = null;
