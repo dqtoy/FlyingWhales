@@ -26,6 +26,8 @@ GameObject:
   - component: {fileID: 114000010193709686}
   - component: {fileID: 114000014144513950}
   - component: {fileID: 114000014005220292}
+  - component: {fileID: 114773716926385036}
+  - component: {fileID: 114447058533311578}
   m_Layer: 0
   m_Name: Items
   m_TagString: Untagged
@@ -68,7 +70,6 @@ MonoBehaviour:
   weaponSuffix: 0
   element: 0
   armorType: 0
-  armorBodyType: 
   def: 0
   armorPrefix: 0
   armorSuffix: 0
@@ -94,7 +95,6 @@ MonoBehaviour:
   weaponSuffix: 0
   element: 0
   armorType: 0
-  armorBodyType: 
   def: 0
   armorPrefix: 0
   armorSuffix: 0
@@ -120,7 +120,6 @@ MonoBehaviour:
   weaponSuffix: 0
   element: 0
   armorType: 0
-  armorBodyType: 
   def: 0
   armorPrefix: 0
   armorSuffix: 0
@@ -146,7 +145,6 @@ MonoBehaviour:
   weaponSuffix: 0
   element: 0
   armorType: 0
-  armorBodyType: 
   def: 0
   armorPrefix: 0
   armorSuffix: 0
@@ -172,7 +170,6 @@ MonoBehaviour:
   weaponSuffix: 0
   element: 0
   armorType: 0
-  armorBodyType: 
   def: 0
   armorPrefix: 0
   armorSuffix: 0
@@ -198,7 +195,6 @@ MonoBehaviour:
   weaponSuffix: 0
   element: 0
   armorType: 0
-  armorBodyType: 
   def: 0
   armorPrefix: 0
   armorSuffix: 0
@@ -224,7 +220,56 @@ MonoBehaviour:
   weaponSuffix: 0
   element: 0
   armorType: 0
-  armorBodyType: 
+  def: 0
+  armorPrefix: 0
+  armorSuffix: 0
+--- !u!114 &114447058533311578
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012985903072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 911b53e41cd88f54a8fe013fdbc1791b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemType: 4
+  itemName: Blank Scroll
+  description: A useless scroll.
+  interactString: obtained
+  goldCost: 0
+  weaponPower: 0
+  weaponType: 0
+  weaponPrefix: 0
+  weaponSuffix: 0
+  element: 0
+  armorType: 0
+  def: 0
+  armorPrefix: 0
+  armorSuffix: 0
+--- !u!114 &114773716926385036
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012985903072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 911b53e41cd88f54a8fe013fdbc1791b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemType: 3
+  itemName: Dispel Sleep Scroll
+  description: Scroll to awaken ancient beings.
+  interactString: obtained
+  goldCost: 0
+  weaponPower: 0
+  weaponType: 0
+  weaponPrefix: 0
+  weaponSuffix: 0
+  element: 0
+  armorType: 0
   def: 0
   armorPrefix: 0
   armorSuffix: 0

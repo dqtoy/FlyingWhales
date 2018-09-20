@@ -95,6 +95,12 @@ public class LandmarkManager : MonoBehaviour {
         //ConstructLandmarkObjects(landmarkData, newLandmark);
         //		AddInitialLandmarkItems (newLandmark);
 #endif
+        if (saveData.items != null) {
+            for (int i = 0; i < saveData.items.Count; i++) {
+                string currItemName = saveData.items[i];
+                newLandmark.AddItemInLandmark(ItemManager.Instance.CreateNewItemInstance(currItemName));
+            }
+        }
         return newLandmark;
     }
     public void DestroyLandmarkOnTile(HexTile tile) {

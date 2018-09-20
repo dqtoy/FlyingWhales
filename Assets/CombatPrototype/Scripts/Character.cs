@@ -3320,6 +3320,10 @@ namespace ECS {
             DateRange newSched = new DateRange(nextFreeDate, endDate);
             AddScheduledEvent(newSched, gameEvent);
         }
+        public void ForceEvent(GameEvent gameEvent) {
+            //if we need to force an event to happen (i.e. Defend Action for Monster Attacks Event)
+            //
+        }
         public bool HasEventScheduled(GameDate date) {
             return false;
         }
@@ -3339,13 +3343,18 @@ namespace ECS {
 
             GameDate eventArrivalDate = GameManager.Instance.Today();
             eventArrivalDate.AddHours(travelTime); //given the start date and the travel time, check if the character has to leave now to reach the event in time
-            if (!eventArrivalDate.IsBefore(nextScheduledEventDate.startDate)) { //if the estimated arrival date is NOT before the next events' scheduled start date
-                //leave now and do the event action
-                AddActionToQueue(nextScheduledEvent.GetNextEventAction(this), nextScheduledEvent); //queue the event action
-                _ownParty.actionData.EndCurrentAction();  //then end their current action
+            if (!eventArrivalDate.IsBefore(nextScheduledEventDate.startDate) && !party.actionData.isCurrentActionFromEvent) { //if the estimated arrival date is NOT before the next events' scheduled start date
+                if (party.actionData.isCurrentActionFromEvent) { //if this character's current action is from an event, do not perform the action from the next scheduled event.
+                    Debug.LogWarning(this.name + " did not perform the next event action, since their current action is already from an event");
+                } else { //else if this character's action is not from an event
+                        //leave now and do the event action
+                    AddActionToQueue(nextScheduledEvent.GetNextEventAction(this), nextScheduledEvent); //queue the event action
+                    _ownParty.actionData.EndCurrentAction();  //then end their current action
+                }
                 Messenger.RemoveListener(Signals.HOUR_ENDED, EventEveryTick);
                 Debug.Log(GameManager.Instance.TodayLogString() + this.name + " stopped checking every tick for event " + nextScheduledEvent.name);
                 nextScheduledEvent = null;
+
             }
         }
         #endregion
@@ -3392,13 +3401,15 @@ namespace ECS {
             Debug.Log(GameManager.Instance.TodayLogString() + this.name + " was given intel that " + intel.description);
             GameEvent gameEvent = EventManager.Instance.AddNewEvent(this.intelReactions[intel.id]);
             if (gameEvent.MeetsRequirements(this)) {
+                List<Character> characters = new List<Character>();
                 switch (gameEvent.type) {
                     case GAME_EVENT.SUICIDE:
-                        (gameEvent as SuicideEvent).Initialize(this);
+                        characters.Add(this);
                         break;
                     default:
                         break;
                 }
+                gameEvent.Initialize(characters);
             }
             //Remove intel reaction from character, even if he/she did not meet the requirements for the reaction?
             RemoveIntelReaction(intel);

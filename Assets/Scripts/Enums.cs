@@ -724,6 +724,7 @@ public enum ACTION_TYPE {
     WAIT_FOR_PARTY,
     TURN_IN_QUEST,
     SUICIDE,
+    RESEARCH,
 }
 public enum ACTION_CATEGORY {
     WORK,
@@ -898,6 +899,7 @@ public enum ABUNDANCE {
 public enum HIDDEN_DESIRE {
     NONE,
     SECRET_AFFAIR,
+    RESEARCH_SCROLL,
 }
 public enum GAME_EVENT {
     SECRET_MEETING,
@@ -905,6 +907,7 @@ public enum GAME_EVENT {
     TEST_EVENT,
     DRAGON_ATTACK,
     SUICIDE,
+    RESEARCH_SCROLLS,
 }
 public enum EVENT_PHASE {
     PREPARATION,

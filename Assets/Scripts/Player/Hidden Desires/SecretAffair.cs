@@ -12,8 +12,8 @@ public class SecretAffair : HiddenDesire {
     public override void Awaken() {
         base.Awaken();
         Character ladyOfTheLake = CharacterManager.Instance.GetCharacterByClass("Lady");
-        SecretMeeting secretMeetingEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.SECRET_MEETING) as SecretMeeting;
-        secretMeetingEvent.Initialize(_host, ladyOfTheLake);
+        GameEvent secretMeetingEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.SECRET_MEETING);
+        secretMeetingEvent.Initialize(new List<Character>() { _host, ladyOfTheLake });
     }
     #endregion
 }

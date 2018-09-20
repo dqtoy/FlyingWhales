@@ -22,15 +22,12 @@ public class SecretMeeting : GameEvent {
 
     public SecretMeeting(): base(GAME_EVENT.SECRET_MEETING) {
     }
-    public void Initialize(Character character1, Character character2) {
-        _generalMax = character1;
-        _ladyOfTheLake = character2;
-
-        eventActions = new Dictionary<Character, Queue<EventAction>>();
+    public override void Initialize(List<Character> characters) {
+        base.Initialize(characters);
+        _generalMax = characters[0];
+        _ladyOfTheLake = characters[1];
+        
         isDoneDict = new Dictionary<Character, bool>();
-
-        eventActions.Add(_generalMax, new Queue<EventAction>());
-        eventActions.Add(_ladyOfTheLake, new Queue<EventAction>());
 
         isDoneDict.Add(_generalMax, false);
         isDoneDict.Add(_ladyOfTheLake, false);

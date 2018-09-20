@@ -11,11 +11,12 @@ public class TestEvent : GameEvent {
 
     }
 
-    public void Initialize(Character character) {
-        this.character = character;
+    public override void Initialize(List<Character> characters) {
+        base.Initialize(characters);
+        this.character = characters[0];
 
-        eventActions = new Dictionary<Character, Queue<EventAction>>();
-        eventActions.Add(character, new Queue<EventAction>());
+        //eventActions = new Dictionary<Character, Queue<EventAction>>();
+        //eventActions.Add(character, new Queue<EventAction>());
     }
 
     public void ScheduleEvent(GameDate startDate) {

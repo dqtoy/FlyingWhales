@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class LandmarkSaveData {
@@ -9,6 +10,7 @@ public class LandmarkSaveData {
     public LANDMARK_TYPE landmarkType;
     public int civilianCount;
     public int chosenMonsterSet;
+    public List<string> items;
 
     public LandmarkSaveData(BaseLandmark landmark) {
         landmarkID = landmark.id;
@@ -16,6 +18,7 @@ public class LandmarkSaveData {
         locationCoordinates = new Point(landmark.tileLocation.xCoordinate, landmark.tileLocation.yCoordinate);
         landmarkType = landmark.specificLandmarkType;
         civilianCount = landmark.civilianCount;
+        items = new List<string>(landmark.itemsInLandmark.Select(x => x.itemName));
         if (landmark is MonsterSpawnerLandmark) {
             MonsterSet monsterChoices = (landmark as MonsterSpawnerLandmark).monsterChoices;
             if (monsterChoices == null) {

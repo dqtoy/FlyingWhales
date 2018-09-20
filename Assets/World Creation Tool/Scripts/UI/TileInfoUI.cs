@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using ECS;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -51,6 +52,11 @@ public class TileInfoUI : MonoBehaviour {
         for (int i = 0; i < landmark.charactersAtLocation.Count; i++) {
             NewParty currChar = landmark.charactersAtLocation[i];
             info += "\n   - " + currChar.name;
+        }
+        info += "\nItems here: ";
+        for (int i = 0; i < landmark.itemsInLandmark.Count; i++) {
+            Item currItem = landmark.itemsInLandmark[i];
+            info += "\n   - " + currItem.itemName;
         }
         if (landmark is MonsterSpawnerLandmark) {
             info += "\nMonster Set: ";
