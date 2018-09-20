@@ -41,7 +41,7 @@ public class QuestBoard : IQuestGiver {
             for (int i = 0; i < postedQuests.Count; i++) {
                 Quest currQuest = postedQuests[i];
                 if (currQuest.CanBeTakenBy(character)) {
-                    return currQuest;
+                    return currQuest.Clone();
                 }
             }
         } 

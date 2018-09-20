@@ -4,6 +4,9 @@ using ECS;
 using UnityEngine;
 
 public class ResearchScrollDesire : HiddenDesire {
+
+    public SurrenderItemsQuest surrenderScrollsQuest { get; private set; }
+
     public ResearchScrollDesire(Character host) : base(HIDDEN_DESIRE.RESEARCH_SCROLL, host) {
     }
 
@@ -11,10 +14,10 @@ public class ResearchScrollDesire : HiddenDesire {
     public override void Awaken() {
         base.Awaken();
         //when awakened, create a new quest to obtain scrolls,
-        SurrenderItemsQuest quest = new SurrenderItemsQuest(_host, "Scroll");
+        surrenderScrollsQuest = new SurrenderItemsQuest(_host, "Scroll");
         List<BaseLandmark> questBoards = LandmarkManager.Instance.GetAllLandmarksWithQuestBoard();
         for (int i = 0; i < questBoards.Count; i++) {
-            questBoards[i].questBoard.PostQuest(quest);
+            questBoards[i].questBoard.PostQuest(surrenderScrollsQuest);
         }
         //also activate a listener for when the character obtains a new scroll
         Messenger.AddListener<Item, Character>(Signals.ITEM_OBTAINED, OnItemObtained);

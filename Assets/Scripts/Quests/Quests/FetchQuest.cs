@@ -18,6 +18,11 @@ public class FetchQuest : Quest {
     }
 
     #region overrides
+    public override Quest Clone() {
+        FetchQuest clone = new FetchQuest(this.questGiver, targetLandmark, neededItemName, neededQuantity);
+        SetCommonData(clone);
+        return clone;
+    }
     protected override string GetQuestName() {
         return "Fetch " + neededItemName + " " + neededQuantity + " from " + targetLandmark.landmarkName;
     }

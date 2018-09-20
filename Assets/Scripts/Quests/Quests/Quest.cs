@@ -32,6 +32,9 @@ public class Quest {
     }
 
     #region virtuals
+    public virtual Quest Clone() {
+        return null;
+    }
     public virtual QuestAction GetQuestAction(ECS.Character character) {
         return null;
     }
@@ -108,6 +111,11 @@ public class Quest {
         }
     }
     #endregion
+
+    protected void SetCommonData(Quest quest) {
+        //quest.questType = this.questType;
+        //quest.questGiver = this.questGiver;
+    }
 
     //public List<ECS.Character> GetAcceptedCharacters() {
     //    List<ECS.Character> characters = new List<ECS.Character>();
