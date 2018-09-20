@@ -60,11 +60,11 @@ public class SecretMeeting : GameEvent {
         char1WaitAction.SetWaitUntil(waitDeadline);
         char2WaitAction.SetWaitUntil(waitDeadline);
 
-        eventActions[_generalMax].Enqueue(new EventAction(char1WaitAction, chosenMeetup.landmarkObj, 20)); //wait at meetup for 20 ticks
-        eventActions[_ladyOfTheLake].Enqueue(new EventAction(char2WaitAction, chosenMeetup.landmarkObj, 20));
+        eventActions[_generalMax].Enqueue(new EventAction(char1WaitAction, chosenMeetup.landmarkObj, this, 20)); //wait at meetup for 20 ticks
+        eventActions[_ladyOfTheLake].Enqueue(new EventAction(char2WaitAction, chosenMeetup.landmarkObj, this, 20));
 
-        eventActions[_generalMax].Enqueue(new EventAction(char1EatAction, chosenMeetup.landmarkObj, char1EatAction.actionData.duration)); //once met up, idle at meetup for 30 ticks
-        eventActions[_ladyOfTheLake].Enqueue(new EventAction(char2EatAction, chosenMeetup.landmarkObj, char2EatAction.actionData.duration));
+        eventActions[_generalMax].Enqueue(new EventAction(char1EatAction, chosenMeetup.landmarkObj, this, char1EatAction.actionData.duration)); //once met up, idle at meetup for 30 ticks
+        eventActions[_ladyOfTheLake].Enqueue(new EventAction(char2EatAction, chosenMeetup.landmarkObj, this, char2EatAction.actionData.duration));
 
         SetName("Secret Meeting between " + _generalMax.name + " and " + _ladyOfTheLake.name + " at " + chosenMeetup.locationName);
 

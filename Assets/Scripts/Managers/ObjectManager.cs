@@ -337,6 +337,8 @@ public class ObjectManager : MonoBehaviour {
                 return new SuicideAction();
             case ACTION_TYPE.RESEARCH:
                 return new ResearchAction();
+            case ACTION_TYPE.GIVE_ITEM:
+                return new GiveItemAction();
         }
         return null;
     }

@@ -16,7 +16,7 @@ public class SuicideEvent : GameEvent {
 
         //schedule suicide action
         CharacterAction suicideAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.SUICIDE);
-        eventActions[character].Enqueue(new EventAction(suicideAction, character.ownParty.icharacterObject, 1));
+        eventActions[character].Enqueue(new EventAction(suicideAction, character.ownParty.icharacterObject, this, 1));
 
         character.AddScheduledEvent(this);
     }

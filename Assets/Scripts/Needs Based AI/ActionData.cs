@@ -334,6 +334,14 @@ public class ActionData {
         SetQuestAssociatedWithAction(newAction.associatedQuest);
         Debug.Log("Forced " + _party.name + " to perform action " + newAction.action.actionData.actionName + " from quest " + newAction.associatedQuest.name + " at " + newAction.targetObject.objectName);
     }
+    public void ForceDoAction(EventAction newAction) {
+        if (currentAction != null) {
+            currentAction.EndAction(_party, currentTargetObject);
+        }
+        AssignAction(newAction.action, newAction.targetObject);
+        SetEventAssociatedWithAction(newAction.associatedEvent);
+        Debug.Log("Forced " + _party.name + " to perform action " + newAction.action.actionData.actionName + " from event " + newAction.associatedEvent.name + " at " + newAction.targetObject.objectName);
+    }
 
     private void APartyEndedState(CharacterParty partyThatChangedState, ObjectState stateEnded) {
         if(currentAction != null) {

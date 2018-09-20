@@ -110,7 +110,11 @@ public class ActionThread : Multithread {
                     actionLog += "\nDetermining civilian work action...";
                     //get work action based on class (Farmer, Miner, etc.) then do that until work period ends.
                     chosenObject = character.workplace.landmarkObj;
-                    chosenAction = character.workplace.landmarkObj.currentState.GetAction(character.characterClass.workActionType);
+                    if (character.characterClass.workActionType == ACTION_TYPE.WORKING) {
+                        chosenAction = character.genericWorkAction;
+                    } else {
+                        chosenAction = character.workplace.landmarkObj.currentState.GetAction(character.characterClass.workActionType);
+                    }
                     _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
                     //_party.actionData.SetQuestAssociatedWithAction(null);
                     actionLog += "\nGot civilian work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;

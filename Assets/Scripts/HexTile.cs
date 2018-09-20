@@ -1280,7 +1280,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             placeItem.SetSubMenu(placeItemSubMenu);
             foreach (KeyValuePair<string, Item> kvp in ItemManager.Instance.allItems) {
                 ContextMenuItemSettings currItemItem = new ContextMenuItemSettings(kvp.Key);
-                currItemItem.onClickAction = () => landmarkOnTile.AddItemInLandmark(ItemManager.Instance.CreateNewItemInstance(kvp.Key));
+                currItemItem.onClickAction = () => landmarkOnTile.AddItem(ItemManager.Instance.CreateNewItemInstance(kvp.Key));
                 placeItemSubMenu.AddMenuItem(currItemItem);
             }
             //place item end

@@ -530,7 +530,7 @@ public class BaseLandmark : ILocation, IInteractable {
         }
         return QUALITY.NORMAL;
     }
-    public void AddItemInLandmark(Item item){
+    public void AddItem(Item item){
         if (_itemsInLandmark.Contains(item)) {
             throw new System.Exception(this.landmarkName + " already has an instance of " + item.itemName);
         }
@@ -538,9 +538,9 @@ public class BaseLandmark : ILocation, IInteractable {
 		//item.SetPossessor (this);
         item.OnItemPlacedOnLandmark(this);
 	}
-	public void AddItemsInLandmark(List<Item> item){
+	public void AddItem(List<Item> item){
         for (int i = 0; i < item.Count; i++) {
-            AddItemInLandmark(item[i]);
+            AddItem(item[i]);
         }
 		//_itemsInLandmark.AddRange (item);
 	}

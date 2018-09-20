@@ -53,6 +53,8 @@ public class EventManager : MonoBehaviour {
                 return new DragonAttack();
             case GAME_EVENT.SUICIDE:
                 return new SuicideEvent();
+            case GAME_EVENT.RESEARCH_SCROLLS:
+                return new ResearchScrollsEvent();
         }
         return null;
     }

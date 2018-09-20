@@ -41,10 +41,10 @@ public class QuestManager : MonoBehaviour {
     //        AddAvailableQuest(createdQuest);
     //    }
     //}
-    public void OnQuestDone(Quest doneQuest) {
+    //public void OnQuestDone(Quest doneQuest) {
         //RemoveAvailableQuest(doneQuest);
-        Messenger.Broadcast(Signals.QUEST_DONE, doneQuest);
-    }
+        //Messenger.Broadcast(Signals.QUEST_DONE, doneQuest);
+    //}
 
     //public void AddAvailableQuest(Quest quest) {
     //    availableQuests[quest.questType].Add(quest);

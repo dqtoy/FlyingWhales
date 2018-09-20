@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TurnInQuestAction : CharacterAction {
+
     public TurnInQuestAction() : base(ACTION_TYPE.TURN_IN_QUEST) {}
 
     #region overrides
@@ -15,10 +16,19 @@ public class TurnInQuestAction : CharacterAction {
     }
     public override void PerformAction(CharacterParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
-        //turn in the quest
         Character mainCharacter = party.owner as Character;
-        mainCharacter.TurnInQuest();
-        EndAction(party, targetObject);
+        if (mainCharacter.currentQuest == null) {
+            //if the main character's current quest is null,
+            //this would ususally happen because something unusual happened to the
+            //current quest of the character. So therefore, it was set to null
+            EndAction(party, targetObject);
+        } else {
+            //turn in the quest
+            //mainCharacter.TurnInQuest();
+            mainCharacter.currentQuest.OnQuestTurnedIn();
+            mainCharacter.SetQuest(null);
+            EndAction(party, targetObject);
+        }
     }
     public override void EndAction(CharacterParty party, IObject targetObject) {
         base.EndAction(party, targetObject);

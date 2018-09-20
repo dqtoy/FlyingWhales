@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ResearchScrolls : GameEvent {
+public class ResearchScrollsEvent : GameEvent {
 
     private Character researcher;
 
-    public ResearchScrolls() : base(GAME_EVENT.RESEARCH_SCROLLS) {
+    public ResearchScrollsEvent() : base(GAME_EVENT.RESEARCH_SCROLLS) {
     }
 
     public override void Initialize(List<Character> characters) {
@@ -21,7 +21,7 @@ public class ResearchScrolls : GameEvent {
         //schedule research a day after obtaining a new scroll
         CharacterAction researchAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RESEARCH);
         researchAction.SetDuration(1);
-        eventActions[researcher].Enqueue(new EventAction(researchAction, researcher.homeLandmark.landmarkObj, researchAction.actionData.duration));
+        eventActions[researcher].Enqueue(new EventAction(researchAction, researcher.homeLandmark.landmarkObj, this, researchAction.actionData.duration));
 
         GameDate endDate = startDate;
         endDate.AddHours(GetEventDurationRoughEstimateInTicks());

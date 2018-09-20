@@ -11,6 +11,11 @@ public class ResearchScrollDesire : HiddenDesire {
     public override void Awaken() {
         base.Awaken();
         //when awakened, create a new quest to obtain scrolls,
+        SurrenderItemsQuest quest = new SurrenderItemsQuest(_host, "Scroll");
+        List<BaseLandmark> questBoards = LandmarkManager.Instance.GetAllLandmarksWithQuestBoard();
+        for (int i = 0; i < questBoards.Count; i++) {
+            questBoards[i].questBoard.PostQuest(quest);
+        }
         //also activate a listener for when the character obtains a new scroll
         Messenger.AddListener<Item, Character>(Signals.ITEM_OBTAINED, OnItemObtained);
     }

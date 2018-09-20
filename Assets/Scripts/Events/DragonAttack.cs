@@ -39,7 +39,7 @@ public class DragonAttack : GameEvent {
 
     private void LayEggAndGoToSleep() {
         Item dragonEgg = ItemManager.Instance.CreateNewItemInstance("Dragon Egg");
-        _dragonParty.homeLandmark.AddItemInLandmark(dragonEgg);
+        _dragonParty.homeLandmark.AddItem(dragonEgg);
         (_dragonParty.mainCharacter as Monster).SetSleeping(true);
     }
 }

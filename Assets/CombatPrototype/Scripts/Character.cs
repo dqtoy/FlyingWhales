@@ -6,7 +6,7 @@ using System.IO;
 using System;
 
 namespace ECS {
-    public class Character : ICharacter, ILeader, IInteractable {
+    public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         public delegate void OnCharacterDeath();
         public OnCharacterDeath onCharacterDeath;
 
@@ -394,6 +394,12 @@ namespace ECS {
         }
         public Dictionary<int, GAME_EVENT> intelReactions {
             get { return _intelReactions; }
+        }
+        public IObject questGiverObj {
+            get { return currentParty.icharacterObject; }
+        }
+        public QUEST_GIVER_TYPE questGiverType {
+            get { return QUEST_GIVER_TYPE.CHARACTER; }
         }
         #endregion
 
@@ -1136,7 +1142,7 @@ namespace ECS {
 				ILocation location = _ownParty.specificLocation;
 				if(location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
 					BaseLandmark landmark = location as BaseLandmark;
-					landmark.AddItemInLandmark(item);
+					landmark.AddItem(item);
 				}
 			}
             Messenger.Broadcast(Signals.ITEM_THROWN, item, this);
@@ -1558,6 +1564,53 @@ namespace ECS {
                 return false;
             }
         }
+        internal bool HasItem(Item item) {
+            if (inventory.Contains(item) || equippedItems.Contains(item)) {
+                return true;
+            }
+            return false;
+        }
+        /*
+         Does this character have an item that is like the required item.
+         For example, if you want to check if the character has any scrolls,
+         without specifying the types of scrolls.
+             */
+        internal bool HasItemLike(string itemName, int quantity) {
+            int counter = 0;
+            for (int i = 0; i < _equippedItems.Count; i++) {
+                Item currItem = _equippedItems[i];
+                if (currItem.itemName.Contains(itemName)) {
+                    counter++;
+                }
+            }
+            for (int i = 0; i < _inventory.Count; i++) {
+                Item currItem = _inventory[i];
+                if (currItem.itemName.Contains(itemName)) {
+                    counter++;
+                }
+            }
+            if (counter >= quantity) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        public List<Item> GetItemsLike(string itemName) {
+            List<Item> items = new List<Item>();
+            for (int i = 0; i < _equippedItems.Count; i++) {
+                Item currItem = _equippedItems[i];
+                if (currItem.itemName.Contains(itemName)) {
+                    items.Add(currItem);
+                }
+            }
+            for (int i = 0; i < _inventory.Count; i++) {
+                Item currItem = _inventory[i];
+                if (currItem.itemName.Contains(itemName)) {
+                    items.Add(currItem);
+                }
+            }
+            return items;
+        }
         internal Item GetItemInInventory(string itemName){
 			for (int i = 0; i < _inventory.Count; i++) {
 				Item currItem = _inventory[i];
@@ -1605,6 +1658,16 @@ namespace ECS {
                 Armor armor = (Armor) item;
                 _bonusDef -= armor.def;
                 _bonusDefPercent -= (armor.prefix.bonusDefPercent + armor.suffix.bonusDefPercent);
+            }
+        }
+        public void GiveItemsTo(List<Item> items, Character otherCharacter) {
+            for (int i = 0; i < items.Count; i++) {
+                Item currItem = items[i];
+                if (this.HasItem(currItem)) { //check if the character still has the item that he wants to give
+                    this.ThrowItem(currItem, false);
+                    otherCharacter.PickupItem(currItem);
+                    Debug.Log(this.name + " gave item " + currItem.itemName + " to " + otherCharacter.name);
+                }
             }
         }
         #endregion
@@ -2205,12 +2268,6 @@ namespace ECS {
                 currentQuest.OnAcceptQuest(this);
                 Debug.Log("Set " + this.name + "'s quest to " + currentQuest.name);
             }
-        }
-        public void TurnInQuest() {
-            if (currentQuest != null) {
-                currentQuest.OnQuestTurnedIn();
-            }
-            SetQuest(null);
         }
         #endregion
 
