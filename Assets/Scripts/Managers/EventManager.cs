@@ -53,15 +53,17 @@ public class EventManager : MonoBehaviour {
                 return new DragonAttack();
             case GAME_EVENT.SUICIDE:
                 return new SuicideEvent();
+            case GAME_EVENT.RESEARCH_SCROLLS:
+                return new ResearchScrollsEvent();
         }
         return null;
     }
 
     public void GenerateEventForTesting() {
         return;
-        if (CharacterManager.Instance.allCharacters.Count > 1) {
-            SecretMeeting secretMeetingEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.SECRET_MEETING) as SecretMeeting;
-            secretMeetingEvent.Initialize(CharacterManager.Instance.allCharacters[0], CharacterManager.Instance.allCharacters[1]);
-        }
+        //if (CharacterManager.Instance.allCharacters.Count > 1) {
+        //    SecretMeeting secretMeetingEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.SECRET_MEETING) as SecretMeeting;
+        //    secretMeetingEvent.Initialize(CharacterManager.Instance.allCharacters[0], CharacterManager.Instance.allCharacters[1]);
+        //}
     }
 }

@@ -428,6 +428,7 @@ public enum QUEST_TYPE {
     RELEASE_CHARACTER,
     BUILD_STRUCTURE,
     FETCH_ITEM,
+    SURRENDER_ITEMS,
 }
 public enum FACTION_RELATIONSHIP_STATUS {
     NON_HOSTILE,
@@ -725,6 +726,8 @@ public enum ACTION_TYPE {
     TURN_IN_QUEST,
     SUICIDE,
     DEFEND,
+    RESEARCH,
+    GIVE_ITEM,
 }
 public enum ACTION_CATEGORY {
     WORK,
@@ -899,6 +902,7 @@ public enum ABUNDANCE {
 public enum HIDDEN_DESIRE {
     NONE,
     SECRET_AFFAIR,
+    RESEARCH_SCROLL,
 }
 public enum GAME_EVENT {
     SECRET_MEETING,
@@ -906,6 +910,7 @@ public enum GAME_EVENT {
     TEST_EVENT,
     DRAGON_ATTACK,
     SUICIDE,
+    RESEARCH_SCROLLS,
 }
 public enum EVENT_PHASE {
     PREPARATION,
@@ -916,4 +921,8 @@ public enum ABILITY_TYPE {
     CHARACTER,
     STRUCTURE,
     MONSTER,
+}
+public enum QUEST_GIVER_TYPE {
+    QUEST_BOARD,
+    CHARACTER,
 }

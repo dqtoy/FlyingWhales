@@ -42,6 +42,13 @@ public class GameEvent {
     #endregion
 
     #region Virtuals
+    public virtual void Initialize(List<Character> characters) {
+        eventActions = new Dictionary<Character, Queue<EventAction>>();
+        for (int i = 0; i < characters.Count; i++) {
+            Character currCharacter = characters[i];
+            eventActions.Add(currCharacter, new Queue<EventAction>());
+        }
+    }
     public virtual EventAction GetNextEventAction(Character character) {
         if (eventActions[character].Count != 0) {
             return eventActions[character].Dequeue();

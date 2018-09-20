@@ -72,7 +72,7 @@ public static class Signals {
     #region Quest Signals
     public static string CHARACTER_SNATCHED = "OnCharacterSnatched"; //Parameters (Character snatchedCharacter)
     public static string CHARACTER_RELEASED = "OnCharacterReleased"; //Parameters (Character releasedCharacter)
-    public static string QUEST_DONE = "OnQuestDone"; //Parameter (Quest doneQuest)
+    public static string QUEST_TURNED_IN = "OnQuestTurnedIn"; //Parameter (Quest turnedInQuest)
     #endregion
 
     #region Party

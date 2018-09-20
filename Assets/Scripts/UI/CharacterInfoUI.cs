@@ -689,12 +689,12 @@ public class CharacterInfoUI : UIMenu {
         int year = Int32.Parse(yearField.text);
         int hour = Int32.Parse(tickField.text);
         TestEvent testEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.TEST_EVENT) as TestEvent;
-        testEvent.Initialize(currentlyShowingCharacter);
+        testEvent.Initialize(new List<Character>() { currentlyShowingCharacter });
         testEvent.ScheduleEvent(new GameDate(month, day, year, hour));
     }
     public void ScheduleAuto() {
         TestEvent testEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.TEST_EVENT) as TestEvent;
-        testEvent.Initialize(currentlyShowingCharacter);
+        testEvent.Initialize(new List<Character>() { currentlyShowingCharacter });
         testEvent.ScheduleEvent();
     }
     private void Update() {

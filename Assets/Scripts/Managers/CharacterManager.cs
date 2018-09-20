@@ -687,6 +687,9 @@ public class CharacterManager : MonoBehaviour {
         if (character.characterClass.className.Equals("General")) {
             //general max
             SetHiddenDesireForCharacter(HIDDEN_DESIRE.SECRET_AFFAIR, character);
+        } else if (character.characterClass.className.Equals("High Priest")) {
+            //High Priest
+            SetHiddenDesireForCharacter(HIDDEN_DESIRE.RESEARCH_SCROLL, character);
         }
     }
     /*
@@ -713,6 +716,8 @@ public class CharacterManager : MonoBehaviour {
         switch (hiddenDesire) {
             case HIDDEN_DESIRE.SECRET_AFFAIR:
                 return new SecretAffair(host);
+            case HIDDEN_DESIRE.RESEARCH_SCROLL:
+                return new ResearchScrollDesire(host);
             default:
                 return null;
         }

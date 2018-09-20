@@ -10,14 +10,13 @@ public class SuicideEvent : GameEvent {
     public SuicideEvent() : base(GAME_EVENT.SUICIDE) {
     }
 
-    public void Initialize(Character character) {
-        this.character = character;
-        eventActions = new Dictionary<Character, Queue<EventAction>>();
-        eventActions.Add(character, new Queue<EventAction>());
+    public override void Initialize(List<Character> characters) {
+        base.Initialize(characters);
+        this.character = characters[0];
 
         //schedule suicide action
         CharacterAction suicideAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.SUICIDE);
-        eventActions[character].Enqueue(new EventAction(suicideAction, character.ownParty.icharacterObject, 1));
+        eventActions[character].Enqueue(new EventAction(suicideAction, character.ownParty.icharacterObject, this, 1));
 
         character.AddScheduledEvent(this);
     }

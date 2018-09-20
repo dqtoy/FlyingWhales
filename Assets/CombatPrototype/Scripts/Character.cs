@@ -6,7 +6,7 @@ using System.IO;
 using System;
 
 namespace ECS {
-    public class Character : ICharacter, ILeader, IInteractable {
+    public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         public delegate void OnCharacterDeath();
         public OnCharacterDeath onCharacterDeath;
 
@@ -394,6 +394,12 @@ namespace ECS {
         }
         public Dictionary<int, GAME_EVENT> intelReactions {
             get { return _intelReactions; }
+        }
+        public IObject questGiverObj {
+            get { return currentParty.icharacterObject; }
+        }
+        public QUEST_GIVER_TYPE questGiverType {
+            get { return QUEST_GIVER_TYPE.CHARACTER; }
         }
         #endregion
 
@@ -1136,7 +1142,7 @@ namespace ECS {
 				ILocation location = _ownParty.specificLocation;
 				if(location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
 					BaseLandmark landmark = location as BaseLandmark;
-					landmark.AddItemInLandmark(item);
+					landmark.AddItem(item);
 				}
 			}
             Messenger.Broadcast(Signals.ITEM_THROWN, item, this);
@@ -1558,6 +1564,53 @@ namespace ECS {
                 return false;
             }
         }
+        internal bool HasItem(Item item) {
+            if (inventory.Contains(item) || equippedItems.Contains(item)) {
+                return true;
+            }
+            return false;
+        }
+        /*
+         Does this character have an item that is like the required item.
+         For example, if you want to check if the character has any scrolls,
+         without specifying the types of scrolls.
+             */
+        internal bool HasItemLike(string itemName, int quantity) {
+            int counter = 0;
+            for (int i = 0; i < _equippedItems.Count; i++) {
+                Item currItem = _equippedItems[i];
+                if (currItem.itemName.Contains(itemName)) {
+                    counter++;
+                }
+            }
+            for (int i = 0; i < _inventory.Count; i++) {
+                Item currItem = _inventory[i];
+                if (currItem.itemName.Contains(itemName)) {
+                    counter++;
+                }
+            }
+            if (counter >= quantity) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        public List<Item> GetItemsLike(string itemName) {
+            List<Item> items = new List<Item>();
+            for (int i = 0; i < _equippedItems.Count; i++) {
+                Item currItem = _equippedItems[i];
+                if (currItem.itemName.Contains(itemName)) {
+                    items.Add(currItem);
+                }
+            }
+            for (int i = 0; i < _inventory.Count; i++) {
+                Item currItem = _inventory[i];
+                if (currItem.itemName.Contains(itemName)) {
+                    items.Add(currItem);
+                }
+            }
+            return items;
+        }
         internal Item GetItemInInventory(string itemName){
 			for (int i = 0; i < _inventory.Count; i++) {
 				Item currItem = _inventory[i];
@@ -1605,6 +1658,16 @@ namespace ECS {
                 Armor armor = (Armor) item;
                 _bonusDef -= armor.def;
                 _bonusDefPercent -= (armor.prefix.bonusDefPercent + armor.suffix.bonusDefPercent);
+            }
+        }
+        public void GiveItemsTo(List<Item> items, Character otherCharacter) {
+            for (int i = 0; i < items.Count; i++) {
+                Item currItem = items[i];
+                if (this.HasItem(currItem)) { //check if the character still has the item that he wants to give
+                    this.ThrowItem(currItem, false);
+                    otherCharacter.PickupItem(currItem);
+                    Debug.Log(this.name + " gave item " + currItem.itemName + " to " + otherCharacter.name);
+                }
             }
         }
         #endregion
@@ -2205,12 +2268,6 @@ namespace ECS {
                 currentQuest.OnAcceptQuest(this);
                 Debug.Log("Set " + this.name + "'s quest to " + currentQuest.name);
             }
-        }
-        public void TurnInQuest() {
-            if (currentQuest != null) {
-                currentQuest.OnQuestTurnedIn();
-            }
-            SetQuest(null);
         }
         #endregion
 
@@ -3227,9 +3284,19 @@ namespace ECS {
                 if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.WORK) {
                     if (_ownParty.actionData.currentAction != null && _ownParty.actionData.currentAction.actionData.duration == 0 
                         && _ownParty.actionData.currentAction.actionData.actionType != ACTION_TYPE.TURN_IN_QUEST) {//TODO: Remove Special case for turn in quest when bug has been fixed //this includes idle action
-                        //current work action is unending, end it.
-                        //also disband the party. TODO: Add case for when to disband the party when the action is not unending
-                        _ownParty.actionData.ForceDoAction(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
+                        if (_ownParty.icon.isTravelling) {
+                            //if the characters action is unending, but he/she is still travelling to the target, then queue the disband party action instead
+                            //then end his/her current action when he/she arrives at their destination
+                            AddActionToQueue(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
+                            ownParty.icon.AddActionOnPathFinished(() => _ownParty.actionData.currentAction.EndAction(_ownParty, _ownParty.actionData.currentTargetObject));
+                        } else {
+                            //if the characters action is unending, and he/she is not travelling, end their action immediately then force them to disband party
+                            _ownParty.actionData.ForceDoAction(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
+                        }
+
+                        ////current work action is unending, end it.
+                        ////also disband the party. TODO: Add case for when to disband the party when the action is not unending
+                        //_ownParty.actionData.ForceDoAction(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
                     }
                 }
             }
@@ -3318,8 +3385,15 @@ namespace ECS {
             DateRange newSched = new DateRange(nextFreeDate, endDate);
             AddScheduledEvent(newSched, gameEvent);
         }
+        public void ForceEvent(GameEvent gameEvent) {
+            //if we need to force an event to happen (i.e. Defend Action for Monster Attacks Event)
+            //
+        }
         public bool HasEventScheduled(GameDate date) {
-            return false;
+            return eventSchedule[date] != null;
+        }
+        public bool HasEventScheduled(GAME_EVENT eventType) {
+            return eventSchedule.HasEventOfType(eventType);
         }
         public GameEvent GetScheduledEvent(GameDate date) {
             return eventSchedule[date];
@@ -3337,12 +3411,18 @@ namespace ECS {
 
             GameDate eventArrivalDate = GameManager.Instance.Today();
             eventArrivalDate.AddHours(travelTime); //given the start date and the travel time, check if the character has to leave now to reach the event in time
-            if (!eventArrivalDate.IsBefore(nextScheduledEventDate.startDate)) { //if the estimated arrival date is NOT before the next events' scheduled start date
-                //leave now and do the event action
-                AddActionToQueue(nextScheduledEvent.GetNextEventAction(this), nextScheduledEvent); //queue the event action
-                nextScheduledEvent = null;
-                _ownParty.actionData.EndCurrentAction();  //then end their current action
+            if (!eventArrivalDate.IsBefore(nextScheduledEventDate.startDate) && !party.actionData.isCurrentActionFromEvent) { //if the estimated arrival date is NOT before the next events' scheduled start date
+                if (party.actionData.isCurrentActionFromEvent) { //if this character's current action is from an event, do not perform the action from the next scheduled event.
+                    Debug.LogWarning(this.name + " did not perform the next event action, since their current action is already from an event");
+                } else { //else if this character's action is not from an event
+                        //leave now and do the event action
+                    AddActionToQueue(nextScheduledEvent.GetNextEventAction(this), nextScheduledEvent); //queue the event action
+                    _ownParty.actionData.EndCurrentAction();  //then end their current action
+                }
                 Messenger.RemoveListener(Signals.HOUR_ENDED, EventEveryTick);
+                Debug.Log(GameManager.Instance.TodayLogString() + this.name + " stopped checking every tick for event " + nextScheduledEvent.name);
+                nextScheduledEvent = null;
+
             }
         }
         #endregion
@@ -3389,13 +3469,15 @@ namespace ECS {
             Debug.Log(GameManager.Instance.TodayLogString() + this.name + " was given intel that " + intel.description);
             GameEvent gameEvent = EventManager.Instance.AddNewEvent(this.intelReactions[intel.id]);
             if (gameEvent.MeetsRequirements(this)) {
+                List<Character> characters = new List<Character>();
                 switch (gameEvent.type) {
                     case GAME_EVENT.SUICIDE:
-                        (gameEvent as SuicideEvent).Initialize(this);
+                        characters.Add(this);
                         break;
                     default:
                         break;
                 }
+                gameEvent.Initialize(characters);
             }
             //Remove intel reaction from character, even if he/she did not meet the requirements for the reaction?
             RemoveIntelReaction(intel);

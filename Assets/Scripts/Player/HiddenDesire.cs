@@ -23,6 +23,14 @@ public class HiddenDesire {
         _host = host;
         _type = type;
         _name = Utilities.NormalizeStringUpperCaseFirstLetters(_type.ToString());
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+    }
+
+    private void OnCharacterDied(Character character) {
+        if (character.id == _host.id) {
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+            OnHostDied();
+        }
     }
 
     #region Virtuals
@@ -30,5 +38,6 @@ public class HiddenDesire {
         _isAwakened = true;
         Debug.Log(GameManager.Instance.TodayLogString() + "Awakened " + _host.name + "'s hidden desire: " + name);
     }
+    public virtual void OnHostDied() {}
     #endregion
 }

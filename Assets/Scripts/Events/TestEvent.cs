@@ -11,11 +11,12 @@ public class TestEvent : GameEvent {
 
     }
 
-    public void Initialize(Character character) {
-        this.character = character;
+    public override void Initialize(List<Character> characters) {
+        base.Initialize(characters);
+        this.character = characters[0];
 
-        eventActions = new Dictionary<Character, Queue<EventAction>>();
-        eventActions.Add(character, new Queue<EventAction>());
+        //eventActions = new Dictionary<Character, Queue<EventAction>>();
+        //eventActions.Add(character, new Queue<EventAction>());
     }
 
     public void ScheduleEvent(GameDate startDate) {
@@ -45,8 +46,8 @@ public class TestEvent : GameEvent {
         CharacterAction eatAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.EAT);
         eatAction.SetDuration(15);
 
-        eventActions[character].Enqueue(new EventAction(restAction, firstLandmark.landmarkObj, restAction.actionData.duration));
-        eventActions[character].Enqueue(new EventAction(eatAction, otherLandmark.landmarkObj, eatAction.actionData.duration));
+        eventActions[character].Enqueue(new EventAction(restAction, firstLandmark.landmarkObj, this, restAction.actionData.duration));
+        eventActions[character].Enqueue(new EventAction(eatAction, otherLandmark.landmarkObj, this, eatAction.actionData.duration));
     }
 
 }

@@ -1251,9 +1251,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             settings.AddMenuItem(renameArea);
         }
         if (this.landmarkOnTile != null) {
+            //rename area
             ContextMenuItemSettings renameArea = new ContextMenuItemSettings("Rename Landmark");
             renameArea.onClickAction = () => worldcreator.WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Rename Landmark", "Rename landmark to what?", this.landmarkOnTile.SetName, UnityEngine.UI.InputField.CharacterValidation.Name);
             settings.AddMenuItem(renameArea);
+            //end rename area
 
             //monster spawn set
             if (landmarkOnTile is MonsterSpawnerLandmark) {
@@ -1270,6 +1272,33 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                 }
             }
             //monster spawn end
+
+            //place item
+            ContextMenuItemSettings placeItem = new ContextMenuItemSettings("Place Item");
+            settings.AddMenuItem(placeItem);
+            ContextMenuSettings placeItemSubMenu = new ContextMenuSettings();
+            placeItem.SetSubMenu(placeItemSubMenu);
+            foreach (KeyValuePair<string, Item> kvp in ItemManager.Instance.allItems) {
+                ContextMenuItemSettings currItemItem = new ContextMenuItemSettings(kvp.Key);
+                currItemItem.onClickAction = () => landmarkOnTile.AddItem(ItemManager.Instance.CreateNewItemInstance(kvp.Key));
+                placeItemSubMenu.AddMenuItem(currItemItem);
+            }
+            //place item end
+
+            if (landmarkOnTile.itemsInLandmark.Count > 0) {
+                //remove item
+                ContextMenuItemSettings removeItem = new ContextMenuItemSettings("Remove Item");
+                settings.AddMenuItem(removeItem);
+                ContextMenuSettings removeItemSubMenu = new ContextMenuSettings();
+                removeItem.SetSubMenu(removeItemSubMenu);
+                for (int i = 0; i < landmarkOnTile.itemsInLandmark.Count; i++) {
+                    Item currItem = landmarkOnTile.itemsInLandmark[i];
+                    ContextMenuItemSettings currItemItem = new ContextMenuItemSettings(currItem.itemName);
+                    currItemItem.onClickAction = () => landmarkOnTile.RemoveItemInLandmark(currItem);
+                    removeItemSubMenu.AddMenuItem(currItemItem);
+                }
+                //remove item end
+            }
         }
 
         if (this.areaOfTile != null) {

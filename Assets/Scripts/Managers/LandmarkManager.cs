@@ -95,6 +95,12 @@ public class LandmarkManager : MonoBehaviour {
         //ConstructLandmarkObjects(landmarkData, newLandmark);
         //		AddInitialLandmarkItems (newLandmark);
 #endif
+        if (saveData.items != null) {
+            for (int i = 0; i < saveData.items.Count; i++) {
+                string currItemName = saveData.items[i];
+                newLandmark.AddItem(ItemManager.Instance.CreateNewItemInstance(currItemName));
+            }
+        }
         return newLandmark;
     }
     public void DestroyLandmarkOnTile(HexTile tile) {
@@ -414,6 +420,17 @@ public class LandmarkManager : MonoBehaviour {
             }
         }
         return null;
+    }
+    public List<BaseLandmark> GetAllLandmarksWithQuestBoard() {
+        List<BaseLandmark> allLandmarks = GetAllLandmarks();
+        List<BaseLandmark> relevantLandmarks = new List<BaseLandmark>();
+        for (int i = 0; i < allLandmarks.Count; i++) {
+            BaseLandmark currLandmark = allLandmarks[i];
+            if (currLandmark.HasQuestBoard()) {
+                relevantLandmarks.Add(currLandmark);
+            }
+        }
+        return relevantLandmarks;
     }
     #endregion
 

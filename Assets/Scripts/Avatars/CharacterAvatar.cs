@@ -23,13 +23,13 @@ public class CharacterAvatar : MonoBehaviour{
 
     protected ILocation targetLocation;
 
-	protected List<HexTile> path;
+    [SerializeField] protected List<HexTile> path;
 
-	private bool _hasArrived = false;
-    private bool _isInitialized = false;
-    private bool _isMovementPaused = false;
-    private bool _isTravelling = false;
-	private bool _isMovingToHex = false;
+	[SerializeField] private bool _hasArrived = false;
+    [SerializeField] private bool _isInitialized = false;
+    [SerializeField] private bool _isMovementPaused = false;
+    [SerializeField] private bool _isTravelling = false;
+    [SerializeField] private bool _isMovingToHex = false;
 	private Action queuedAction = null;
 
     public CharacterPortrait characterPortrait { get; private set; }
@@ -215,6 +215,9 @@ public class CharacterAvatar : MonoBehaviour{
         Debug.Log(_party.name + " has resumed movement!");
         _isMovementPaused = false;
         NewMove();
+    }
+    public void AddActionOnPathFinished(Action action) {
+        onPathFinished += action;
     }
     #endregion
 

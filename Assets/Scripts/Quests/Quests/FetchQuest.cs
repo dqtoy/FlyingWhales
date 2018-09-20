@@ -11,7 +11,7 @@ public class FetchQuest : Quest {
 
     public int fetchCooldown { get; private set; }
 
-    public FetchQuest(BaseLandmark targetLandmark, string neededItemName, int neededQuantity) : base(QUEST_TYPE.FETCH_ITEM) {
+    public FetchQuest(IQuestGiver questGiver, BaseLandmark targetLandmark, string neededItemName, int neededQuantity) : base(QUEST_TYPE.FETCH_ITEM, questGiver) {
         this.targetLandmark = targetLandmark;
         this.neededItemName = neededItemName;
         this.neededQuantity = neededQuantity;
@@ -25,15 +25,10 @@ public class FetchQuest : Quest {
         if (isQuestDone) {
             //if the quest was finished outside a quest action (eg. character obtained item from other combat), 
             //make the character turn in the quest once he/she chooses to perform a quest action (from this quest)again.
-            //character.party.actionData.SetQuestAssociatedWithAction(null);
             Debug.Log(this.owner.party.name + " quest is already done. Turning in quest...");
-            if (Messenger.eventTable.ContainsKey(Signals.ITEM_OBTAINED)) {
-                Messenger.RemoveListener<Item, Character>(Signals.ITEM_OBTAINED, OnItemObtained);
-            }
-            return new QuestAction(character.workplace.landmarkObj.currentState.GetAction(ACTION_TYPE.TURN_IN_QUEST), character.workplace.landmarkObj, this);
+            return new QuestAction(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.TURN_IN_QUEST), questGiver.questGiverObj, this);
         } else {
             QuestAction action = new QuestAction(targetLandmark.landmarkObj.currentState.GetAction(ACTION_TYPE.FETCH), targetLandmark.landmarkObj, this);
-            //character.party.actionData.SetQuestAssociatedWithAction(this);
             return action;
         }
     }
@@ -49,25 +44,32 @@ public class FetchQuest : Quest {
         if (this.owner.party.actionData.questAssociatedWithCurrentAction != null && this.owner.party.actionData.questAssociatedWithCurrentAction.id == this.id) {
             //if the quest owner finished the quest while doing an action that this quest provided, immediately turn in the quest, otherwise, see GetQuestAction() 
             Debug.Log(this.owner.party.name + " obtained all needed items. Setting next action to turn in quest");
-            this.owner.party.actionData.ForceDoAction(owner.workplace.landmarkObj.currentState.GetAction(ACTION_TYPE.TURN_IN_QUEST), owner.workplace.landmarkObj);
+            this.owner.party.actionData.ForceDoAction(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.TURN_IN_QUEST), questGiver.questGiverObj);
         }
     }
     public override void OnQuestTurnedIn() {
         owner.ThrowItem(neededItemName, neededQuantity, false);
+        //for (int i = 0; i < neededQuantity; i++) { //give the items to the quest giver
+        //    questGiver.AddItem(ItemManager.Instance.CreateNewItemInstance(neededItemName));
+        //}
         base.OnQuestTurnedIn();
+    }
+    protected override void CancelQuest() {
+        base.CancelQuest();
+        Messenger.RemoveListener<Item, Character>(Signals.ITEM_OBTAINED, OnItemObtained);
     }
     #endregion
 
     private void OnItemObtained(Item obtainedItem, Character characterThatObtainedItem) {
         if (characterThatObtainedItem.id == owner.id) {
-            if (characterThatObtainedItem.HasItem(neededItemName, neededQuantity)) {
+            if (characterThatObtainedItem.HasItemLike(neededItemName, neededQuantity)) {
                 Debug.Log(characterThatObtainedItem.name + " has obtained the needed items for the quest OUTSIDE of doing a quest action. Setting quest as done!");
                 this.SetQuestAsDone();
             }
         }
     }
     public void CheckIfQuestIsCompleted() {
-        if (this.owner.HasItem(neededItemName, neededQuantity)) {
+        if (this.owner.HasItemLike(neededItemName, neededQuantity)) {
             Debug.Log(this.owner.name + " has obtained the needed items for the quest. Setting quest as done!");
             this.SetQuestAsDone();
         }

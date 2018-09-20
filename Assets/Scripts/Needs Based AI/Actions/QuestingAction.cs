@@ -18,7 +18,7 @@ public class QuestingAction : CharacterAction {
                     //check if he/she already has a quest
                     if (!mainCharacter.HasQuest()) { //if none, get one from workplace
                         if (mainCharacter.workplace.HasQuestBoard()) {
-                            Quest createdQuest = mainCharacter.workplace.questBoard.GenerateQuestForCharacter(mainCharacter);
+                            Quest createdQuest = mainCharacter.workplace.questBoard.GetQuestForCharacter(mainCharacter);
                             if (createdQuest == null) {
                                 throw new System.Exception("Could not create quest for " + mainCharacter.name + "!");
                             }
@@ -52,7 +52,7 @@ public class QuestingAction : CharacterAction {
                 //check if he/she has a quest
                 if (!mainCharacter.HasQuest()) {//if not, get one from workplace
                     if (mainCharacter.workplace.HasQuestBoard()) {
-                        Quest createdQuest = mainCharacter.workplace.questBoard.GenerateQuestForCharacter(mainCharacter);
+                        Quest createdQuest = mainCharacter.workplace.questBoard.GetQuestForCharacter(mainCharacter);
                         if (createdQuest == null) {
                             throw new System.Exception("Could not create quest for " + mainCharacter.name + "!");
                         }

@@ -21,7 +21,7 @@ public class CharacterQuestData {
     public CharacterQuestData(Quest parentQuest, Character owner) {
         _parentQuest = parentQuest;
         _owner = owner;
-        Messenger.AddListener<Quest>(Signals.QUEST_DONE, OnQuestDone);
+        //Messenger.AddListener<Quest>(Signals.QUEST_DONE, OnQuestDone);
     }
 
     public CharacterAction GetNextQuestAction(ref IObject targetObject) {
@@ -33,11 +33,11 @@ public class CharacterQuestData {
     public virtual IEnumerator SetupValuesCoroutine() { yield return null; }
     public virtual void AbandonQuest() {
         //_owner.RemoveQuestData(this);
-        Messenger.RemoveListener<Quest>(Signals.QUEST_DONE, OnQuestDone);
+        //Messenger.RemoveListener<Quest>(Signals.QUEST_DONE, OnQuestDone);
     }
     protected virtual void OnQuestDone(Quest doneQuest) {
         if (_parentQuest.id == doneQuest.id) {
-            Messenger.RemoveListener<Quest>(Signals.QUEST_DONE, OnQuestDone);
+            //Messenger.RemoveListener<Quest>(Signals.QUEST_DONE, OnQuestDone);
             //_owner.RemoveQuestData(this); //remove this data from the character
             //if (_owner.party.actionData.questDataAssociatedWithCurrentAction != null 
             //    && _owner.party.actionData.questDataAssociatedWithCurrentAction.parentQuest.id == doneQuest.id) {

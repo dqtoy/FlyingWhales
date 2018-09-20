@@ -22,5 +22,6 @@ public class DisbandPartyAction : CharacterAction {
         CharacterParty charParty = iparty as CharacterParty;
         charParty.DisbandPartyKeepOwner();
         EndAction(charParty, targetObject);
+        charParty.actionData.LookForAction();
     }
 }

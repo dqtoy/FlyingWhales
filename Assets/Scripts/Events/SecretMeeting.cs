@@ -22,15 +22,12 @@ public class SecretMeeting : GameEvent {
 
     public SecretMeeting(): base(GAME_EVENT.SECRET_MEETING) {
     }
-    public void Initialize(Character character1, Character character2) {
-        _generalMax = character1;
-        _ladyOfTheLake = character2;
-
-        eventActions = new Dictionary<Character, Queue<EventAction>>();
+    public override void Initialize(List<Character> characters) {
+        base.Initialize(characters);
+        _generalMax = characters[0];
+        _ladyOfTheLake = characters[1];
+        
         isDoneDict = new Dictionary<Character, bool>();
-
-        eventActions.Add(_generalMax, new Queue<EventAction>());
-        eventActions.Add(_ladyOfTheLake, new Queue<EventAction>());
 
         isDoneDict.Add(_generalMax, false);
         isDoneDict.Add(_ladyOfTheLake, false);
@@ -63,11 +60,11 @@ public class SecretMeeting : GameEvent {
         char1WaitAction.SetWaitUntil(waitDeadline);
         char2WaitAction.SetWaitUntil(waitDeadline);
 
-        eventActions[_generalMax].Enqueue(new EventAction(char1WaitAction, chosenMeetup.landmarkObj, 20)); //wait at meetup for 20 ticks
-        eventActions[_ladyOfTheLake].Enqueue(new EventAction(char2WaitAction, chosenMeetup.landmarkObj, 20));
+        eventActions[_generalMax].Enqueue(new EventAction(char1WaitAction, chosenMeetup.landmarkObj, this, 20)); //wait at meetup for 20 ticks
+        eventActions[_ladyOfTheLake].Enqueue(new EventAction(char2WaitAction, chosenMeetup.landmarkObj, this, 20));
 
-        eventActions[_generalMax].Enqueue(new EventAction(char1EatAction, chosenMeetup.landmarkObj, char1EatAction.actionData.duration)); //once met up, idle at meetup for 30 ticks
-        eventActions[_ladyOfTheLake].Enqueue(new EventAction(char2EatAction, chosenMeetup.landmarkObj, char2EatAction.actionData.duration));
+        eventActions[_generalMax].Enqueue(new EventAction(char1EatAction, chosenMeetup.landmarkObj, this, char1EatAction.actionData.duration)); //once met up, idle at meetup for 30 ticks
+        eventActions[_ladyOfTheLake].Enqueue(new EventAction(char2EatAction, chosenMeetup.landmarkObj, this, char2EatAction.actionData.duration));
 
         SetName("Secret Meeting between " + _generalMax.name + " and " + _ladyOfTheLake.name + " at " + chosenMeetup.locationName);
 
