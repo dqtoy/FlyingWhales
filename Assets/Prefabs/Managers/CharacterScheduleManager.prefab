@@ -59,10 +59,12 @@ MonoBehaviour:
     - Woodcutter
     - General
     - Lady
+    - High Priest
     m_values:
     - {fileID: 114734657753937842, guid: 66be82e99c8d1d540aa9c8bd589a4c44, type: 2}
     - {fileID: 114734657753937842, guid: 5eb1921fb87aa1c4b9f5360a4f8fab39, type: 2}
     - {fileID: 114734657753937842, guid: 5eb1921fb87aa1c4b9f5360a4f8fab39, type: 2}
     - {fileID: 114734657753937842, guid: 5eb1921fb87aa1c4b9f5360a4f8fab39, type: 2}
+    - {fileID: 114734657753937842, guid: 66be82e99c8d1d540aa9c8bd589a4c44, type: 2}
     - {fileID: 114734657753937842, guid: 66be82e99c8d1d540aa9c8bd589a4c44, type: 2}
     - {fileID: 114734657753937842, guid: 66be82e99c8d1d540aa9c8bd589a4c44, type: 2}

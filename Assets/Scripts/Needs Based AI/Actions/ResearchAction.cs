@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using ECS;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,6 +16,22 @@ public class ResearchAction : CharacterAction {
     }
     public override void PerformAction(CharacterParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
+        List<Item> researchedScrolls = new List<Item>();
+        for (int i = 0; i < party.characterOwner.inventory.Count; i++) {
+            Item currItem = party.characterOwner.inventory[i];
+            if (currItem.itemName.Contains("Scroll")) {
+                Debug.Log(party.characterOwner.name + " researched " + currItem.itemName);
+                if (currItem.itemName.Contains("Dispel")) {
+                    //Awaken Skazi
+                }
+                researchedScrolls.Add(currItem);
+            }
+        }
+        //remove researched scrolls from inventory
+        for (int i = 0; i < researchedScrolls.Count; i++) {
+            Item currScroll = researchedScrolls[i];
+            party.characterOwner.ThrowItem(currScroll, false);
+        }
     }
     #endregion
 }

@@ -3325,7 +3325,10 @@ namespace ECS {
             //
         }
         public bool HasEventScheduled(GameDate date) {
-            return false;
+            return eventSchedule[date] != null;
+        }
+        public bool HasEventScheduled(GAME_EVENT eventType) {
+            return eventSchedule.HasEventOfType(eventType);
         }
         public GameEvent GetScheduledEvent(GameDate date) {
             return eventSchedule[date];

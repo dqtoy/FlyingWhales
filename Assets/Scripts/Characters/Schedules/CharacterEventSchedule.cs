@@ -132,5 +132,14 @@ public class CharacterEventSchedule {
         }
         throw new System.Exception("There is no game event " + gameEvent.name + " in the character's schedule!");
     }
+
+    public bool HasEventOfType(GAME_EVENT eventType) {
+        foreach (KeyValuePair<DateRange, GameEvent> kvp in eventSchedule) {
+            if (kvp.Value.type == eventType) {
+                return true;
+            }
+        }
+        return false;
+    }
     
 }

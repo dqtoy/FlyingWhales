@@ -20,7 +20,7 @@ public class ResearchScrolls : GameEvent {
         //this is ususally called when the researcher obtains a new scroll
         //schedule research a day after obtaining a new scroll
         CharacterAction researchAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RESEARCH);
-        researchAction.SetDuration(10);
+        researchAction.SetDuration(1);
         eventActions[researcher].Enqueue(new EventAction(researchAction, researcher.homeLandmark.landmarkObj, researchAction.actionData.duration));
 
         GameDate endDate = startDate;
