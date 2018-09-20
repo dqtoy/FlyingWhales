@@ -166,9 +166,9 @@ public class CharacterParty : NewParty {
         }
     }
     public void OnCharacterDied(Character diedCharacter) {
-        if (diedCharacter.id == _owner.id && this.currentCombat == null) {
+        if (diedCharacter.id == _owner.id) {
             //character that died was the main character of this party, disband it
-            DisbandParty();
+            DisbandPartyKeepOwner();
         }
     }
     #endregion

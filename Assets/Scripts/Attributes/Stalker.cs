@@ -5,7 +5,6 @@ using ECS;
 
 public class Stalker : Attribute {
 
-    CharacterAction stalk;
     private Character _stalkee;
 
     #region getters/setters
@@ -21,12 +20,12 @@ public class Stalker : Attribute {
     #region Overrides
     public override void OnAddAttribute(Character character) {
         base.OnAddAttribute(character);
-        stalk = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.STALK);
+        CharacterAction stalk = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.STALK);
         character.AddMiscAction(stalk);
     }
     public override void OnRemoveAttribute() {
         base.OnRemoveAttribute();
-        character.RemoveMiscAction(stalk);
+        character.RemoveMiscAction(ACTION_TYPE.STALK);
     }
     #endregion
 

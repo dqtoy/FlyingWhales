@@ -32,7 +32,7 @@ namespace ECS {
         private Faction _faction;
         private CharacterParty _ownParty;
         private CharacterParty _currentParty;
-        private Area _home;
+        //private Area _home;
         private BaseLandmark _homeLandmark;
         //private StructureObj _homeStructure;
         private BaseLandmark _workplace;
@@ -255,9 +255,9 @@ namespace ECS {
         public string characterColorCode {
             get { return _characterColorCode; }
         }
-        public Area home {
-            get { return _home; }
-        }
+        //public Area home {
+        //    get { return _home; }
+        //}
         public BaseLandmark homeLandmark {
             get { return _homeLandmark; }
         }
@@ -520,7 +520,7 @@ namespace ECS {
             //Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
             //Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
-            Messenger.AddListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
+            //Messenger.AddListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
             Messenger.AddListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
             //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         }
@@ -531,7 +531,7 @@ namespace ECS {
             //Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
             //Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
-            Messenger.RemoveListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
+            //Messenger.RemoveListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
             Messenger.RemoveListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
             //Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         }
@@ -912,13 +912,13 @@ namespace ECS {
 					ThrowItem (_inventory [0]);
 				}
 
-                if(_currentParty.mainCharacter.id == this.id) {
-                    if (_currentParty.actionData.currentAction != null) {
-                        _currentParty.actionData.currentAction.EndAction(_currentParty, _currentParty.actionData.currentTargetObject);
+                if(IsInOwnParty()) {
+                    if (_ownParty.actionData.currentAction != null) {
+                        _ownParty.actionData.currentAction.EndAction(_ownParty, _ownParty.actionData.currentTargetObject);
                     }
                 }
                 _currentParty.RemoveCharacter(this);
-
+                _ownParty.PartyDeath();
                 //if (currentParty.id != _ownParty.id) {
                 //}
                 //_ownParty.PartyDeath();
@@ -2301,8 +2301,8 @@ namespace ECS {
             OnCharacterClassChange();
 
 #if !WORLD_CREATION_TOOL
-            _home.excessClasses.Remove(previousClassName);
-            _home.missingClasses.Remove(_characterClass.className);
+            _homeLandmark.tileLocation.areaOfTile.excessClasses.Remove(previousClassName);
+            _homeLandmark.tileLocation.areaOfTile.missingClasses.Remove(_characterClass.className);
 
             Log log = new Log(GameManager.Instance.Today(), "CharacterActions", "ChangeClassAction", "change_class");
             log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -2881,18 +2881,25 @@ namespace ECS {
             return null;
         }
         public void AddMiscAction(CharacterAction characterAction) {
-            if (!_miscActions.Contains(characterAction)) {
+            CharacterAction sameAction = GetMiscAction(characterAction.actionType);
+            if (sameAction == null) {
                 _miscActions.Add(characterAction);
-                characterAction.OnAddActionToCharacter(this);
-            }
-            characterAction.AdjustEnableCounter(1);
-        }
-        public void RemoveMiscAction(CharacterAction characterAction) {
-            if(characterAction.enableCounter > 1) {
                 characterAction.AdjustEnableCounter(1);
+                characterAction.OnAddActionToCharacter(this);
             } else {
-                if (_miscActions.Remove(characterAction)) {
-                    characterAction.OnRemoveActionFromCharacter(this);
+                sameAction.AdjustEnableCounter(1);
+            }
+        }
+
+        public void RemoveMiscAction(ACTION_TYPE actionType) {
+            CharacterAction sameAction = GetMiscAction(actionType);
+            if (sameAction != null) {
+                if (sameAction.enableCounter > 1) {
+                    sameAction.AdjustEnableCounter(-1);
+                } else {
+                    if (_miscActions.Remove(sameAction)) {
+                        sameAction.OnRemoveActionFromCharacter(this);
+                    }
                 }
             }
         }
@@ -3015,7 +3022,7 @@ namespace ECS {
         #region Home
         public void LookForNewHome() {
             //Try to get a new home structure from this character's area
-            BaseLandmark landmark = GetNewHomeFromArea(_home);
+            BaseLandmark landmark = GetNewHomeFromArea(_homeLandmark.tileLocation.areaOfTile);
             if (landmark != null) {
                 _homeLandmark.RemoveCharacterHomeOnLandmark(this);
                 landmark.AddCharacterHomeOnLandmark(this);
@@ -3023,7 +3030,7 @@ namespace ECS {
                 //If there is no available structure, look for it in other areas of the faction and migrate there
                 landmark = GetNewHomeFromFaction();
                 if (landmark != null) {
-                    SetHome(landmark.tileLocation.areaOfTile);
+                    //SetHome(landmark.tileLocation.areaOfTile);
                     _homeLandmark.RemoveCharacterHomeOnLandmark(this);
                     landmark.AddCharacterHomeOnLandmark(this);
                 } else {
@@ -3052,7 +3059,7 @@ namespace ECS {
             if (_faction != null) {
                 for (int i = 0; i < _faction.ownedAreas.Count; i++) {
                     Area area = _faction.ownedAreas[i];
-                    if (area.id != _home.id) {
+                    if (area.id != _homeLandmark.tileLocation.areaOfTile.id) {
                         chosenLandmark = GetNewHomeFromArea(area);
                         if (chosenLandmark != null) {
                             break;
@@ -3062,16 +3069,17 @@ namespace ECS {
             }
             return chosenLandmark;
         }
-        public void SetHome(Area newHome) {
-            _home = newHome;
-            if (newHome != null) {
-                newHome.residents.Add(this);
+        //public void SetHome(Area newHome) {
+        //    _home = newHome;
+        //}
+        public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
+            if(_homeLandmark != null && newHomeLandmark != null && _homeLandmark.tileLocation.areaOfTile.id != newHomeLandmark.tileLocation.areaOfTile.id) {
+                _homeLandmark.tileLocation.areaOfTile.residents.Remove(this);
+                newHomeLandmark.tileLocation.areaOfTile.residents.Add(this);
 #if !WORLD_CREATION_TOOL
                 LookForNewWorkplace();
 #endif
             }
-        }
-        public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
             this._homeLandmark = newHomeLandmark;
         }
         //public void SetHomeStructure(StructureObj newHomeStructure) {
@@ -3081,11 +3089,11 @@ namespace ECS {
         //    _homeStructure = newHomeStructure;
         //    newHomeStructure.AdjustNumOfResidents(1);
         //}
-        private void OnAreaDeleted(Area deletedArea) {
-            if (_home.id == deletedArea.id) {
-                SetHome(null);
-            }
-        }
+        //private void OnAreaDeleted(Area deletedArea) {
+        //    if (_home.id == deletedArea.id) {
+        //        SetHome(null);
+        //    }
+        //}
         #endregion
 
         #region Work
@@ -3094,11 +3102,11 @@ namespace ECS {
                 _workplace = _homeLandmark;
             } else {
                 List<BaseLandmark> workplaceChoices = new List<BaseLandmark>();
-                for (int i = 0; i < _home.landmarks.Count; i++) {
-                    StructureObj structure = _home.landmarks[i].landmarkObj;
+                for (int i = 0; i < _homeLandmark.tileLocation.areaOfTile.landmarks.Count; i++) {
+                    StructureObj structure = _homeLandmark.tileLocation.areaOfTile.landmarks[i].landmarkObj;
                     for (int j = 0; j < structure.currentState.actions.Count; j++) {
                         if(structure.currentState.actions[j].actionType == _characterClass.workActionType) {
-                            workplaceChoices.Add(_home.landmarks[i]);
+                            workplaceChoices.Add(_homeLandmark.tileLocation.areaOfTile.landmarks[i]);
                             break;
                         }
                     }

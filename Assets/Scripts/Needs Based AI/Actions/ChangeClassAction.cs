@@ -32,8 +32,8 @@ public class ChangeClassAction : CharacterAction {
     }
     public override bool CanBeDoneBy(CharacterParty party, IObject targetObject) {
         if(party.mainCharacter.characterClass != null) {
-            if(party.home.excessClasses.Contains(party.mainCharacter.characterClass.className)
-                && party.home.missingClasses.Contains(_advertisedClassName)) { //TODO: Subject for change
+            if(party.homeLandmark.tileLocation.areaOfTile.excessClasses.Contains(party.mainCharacter.characterClass.className)
+                && party.homeLandmark.tileLocation.areaOfTile.missingClasses.Contains(_advertisedClassName)) { //TODO: Subject for change
                 return true;
             }
         }

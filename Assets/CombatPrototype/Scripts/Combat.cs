@@ -11,7 +11,10 @@ namespace ECS{
 	}
 
 	public class Combat : Multithread {
-//		public Dictionary<SIDES, List<ICharacter>> allCharactersAndSides;
+        //		public Dictionary<SIDES, List<ICharacter>> allCharactersAndSides;
+        public delegate void Results();
+        public static event Results CheckResults;
+
 		internal List<ICharacter> charactersSideA;
 		internal List<ICharacter> charactersSideB;
 		internal List<ICharacter> deadCharacters;
@@ -22,7 +25,6 @@ namespace ECS{
         internal List<Action> afterCombatActions;
 
 		internal SIDES winningSide;
-		internal SIDES losingSide;
 
 		internal List<string> resultsLog;
         //internal ILocation location;
@@ -60,6 +62,13 @@ namespace ECS{
                     this.characterSideBCopy.Add(character);
                     rowNumber = 5;
                 }
+                if(character is Character) {
+                    (character as Character).SetDoNotDisturb(true);
+                }
+                if (character.ownParty is CharacterParty) {
+                    (character.ownParty as CharacterParty).actionData.SetIsHalted(true);
+                }
+                character.ownParty.currentCombat = this;
                 character.SetSide(side);
                 //character.currentCombat = this;
                 character.SetRowNumber(rowNumber);
@@ -87,6 +96,9 @@ namespace ECS{
             }
             for (int i = 0; i < characters.Count; i++) {
 				characters[i].SetSide (side);
+                if (characters[i] is Character) {
+                    (characters[i] as Character).SetDoNotDisturb(true);
+                }
                 //characters[i].currentCombat = this;
                 characters[i].SetRowNumber(rowNumber);
                 characters[i].actRate = characters[i].speed;
@@ -104,38 +116,52 @@ namespace ECS{
             for (int i = 0; i < iparty.icharacters.Count; i++) {
                 ICharacter currChar = iparty.icharacters[i];
                 AddCharacter(side, currChar);
-                currChar.ownParty.currentCombat = this;
             }
-            iparty.currentCombat = this;
+            //iparty.currentCombat = this;
+            //if (iparty is CharacterParty) {
+            //    (iparty as CharacterParty).actionData.SetIsHalted(true);
+            //}
         }
         //Remove a character from a side
         internal bool RemoveCharacter(SIDES side, ICharacter character) {
             if (side == SIDES.A) {
                 if (this.charactersSideA.Remove(character)) {
+                    if(character is Character) {
+                        (character as Character).SetDoNotDisturb(false);
+                    }
                     return true;
                 }
             } else {
                 if (this.charactersSideB.Remove(character)) {
+                    if (character is Character) {
+                        (character as Character).SetDoNotDisturb(false);
+                    }
                     return true;
                 }
 			}
             //character.currentCombat = null;
-            if (CombatPrototypeUI.Instance != null) {
-                CombatPrototypeUI.Instance.UpdateCharactersList(side);
-            }
+            //if (CombatPrototypeUI.Instance != null) {
+            //    CombatPrototypeUI.Instance.UpdateCharactersList(side);
+            //}
             return false;
         }
         //Remove character without specifying a side
         internal bool RemoveCharacter(ICharacter character) {
             if (this.charactersSideA.Remove(character)) {
-				//character.currentCombat = null;
-				if (CombatPrototypeUI.Instance != null) {
+                if (character is Character) {
+                    (character as Character).SetDoNotDisturb(false);
+                }
+                //character.currentCombat = null;
+                if (CombatPrototypeUI.Instance != null) {
 					CombatPrototypeUI.Instance.UpdateCharactersList (SIDES.A);
 				}
                 return true;
             } else if(this.charactersSideB.Remove(character)){
-				//character.currentCombat = null;
-				if (CombatPrototypeUI.Instance != null) {
+                if (character is Character) {
+                    (character as Character).SetDoNotDisturb(false);
+                }
+                //character.currentCombat = null;
+                if (CombatPrototypeUI.Instance != null) {
 					CombatPrototypeUI.Instance.UpdateCharactersList (SIDES.B);
 				}
                 return true;
@@ -237,10 +263,8 @@ namespace ECS{
             }
             if (this.charactersSideA.Count > 0) {
                 winningSide = SIDES.A;
-                losingSide = SIDES.B;
             } else {
                 winningSide = SIDES.B;
-                losingSide = SIDES.A;
             }
             AddCombatLog("Combat Ends", SIDES.A);
             sideAChars = string.Empty;
@@ -1166,10 +1190,20 @@ namespace ECS{
                 //targetCharacter.SetIsDefeated (true);
                 if (targetCharacter.IsInOwnParty()) { // the fled character is in his own party
                     if (targetCharacter.ownParty is CharacterParty) {
-                        (targetCharacter.ownParty as CharacterParty).DisbandPartyKeepOwner(); //leave the other party members
-                        CombatManager.Instance.PartyContinuesActionAfterCombat(targetCharacter.ownParty as CharacterParty, false);
+                        CharacterParty party = targetCharacter.ownParty as CharacterParty;
+                        if (party.actionData.isHalted) {
+                            party.actionData.SetIsHalted(false);
+                        }
+                        party.DisbandPartyKeepOwner(); //leave the other party members
+                        //CombatManager.Instance.PartyContinuesActionAfterCombat(targetCharacter.ownParty as CharacterParty, false);
                     }
                 } else {
+                    if (targetCharacter.ownParty is CharacterParty) {
+                        CharacterParty party = targetCharacter.ownParty as CharacterParty;
+                        if (party.actionData.isHalted) {
+                            party.actionData.SetIsHalted(false);
+                        }
+                    }
                     if (targetCharacter.currentParty is CharacterParty) {
                         //the fled character is in another character's party, leave the party
                         targetCharacter.currentParty.RemoveCharacter(targetCharacter); //this will also trigger the end of the characters In Party action

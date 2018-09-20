@@ -4,9 +4,6 @@ using UnityEngine;
 using ECS;
 
 public class Human : Attribute {
-
-    CharacterAction sing;
-    CharacterAction playInstrument;
     public Human() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.HUMAN) {
 
     }
@@ -14,16 +11,16 @@ public class Human : Attribute {
     #region Overrides
     public override void OnAddAttribute(Character character) {
         base.OnAddAttribute(character);
-        sing = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.SING);
-        playInstrument = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.PLAYING_INSTRUMENT);
+        CharacterAction sing = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.SING);
+        CharacterAction playInstrument = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.PLAYING_INSTRUMENT);
 
         character.AddMiscAction(sing);
         character.AddMiscAction(playInstrument);
     }
     public override void OnRemoveAttribute() {
         base.OnRemoveAttribute();
-        character.RemoveMiscAction(sing);
-        character.RemoveMiscAction(playInstrument);
+        character.RemoveMiscAction(ACTION_TYPE.SING);
+        character.RemoveMiscAction(ACTION_TYPE.PLAYING_INSTRUMENT);
     }
     #endregion
 }

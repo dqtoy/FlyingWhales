@@ -165,16 +165,16 @@ public class CharacterManager : MonoBehaviour {
         //newCharacter.AssignRole(data.role);
         if (data.homeLandmarkID != -1) {
             BaseLandmark homeLandmark = LandmarkManager.Instance.GetLandmarkByID(data.homeLandmarkID);
-            newCharacter.SetHomeLandmark(homeLandmark);
-#if !WORLD_CREATION_TOOL
+            //newCharacter.SetHomeLandmark(homeLandmark);
+//#if !WORLD_CREATION_TOOL
             homeLandmark.AddCharacterHomeOnLandmark(newCharacter);
-#endif
+//#endif
         }
-        if (data.homeID != -1) {
-            Area homeLocation = LandmarkManager.Instance.GetAreaByID(data.homeID);
-            newCharacter.SetHome(homeLocation);
-            //homeLocation.AddCharacterHomeOnLandmark(newCharacter);
-        }
+        //if (data.homeID != -1) {
+        //    Area homeLocation = LandmarkManager.Instance.GetAreaByID(data.homeID);
+        //    newCharacter.SetHome(homeLocation);
+        //    //homeLocation.AddCharacterHomeOnLandmark(newCharacter);
+        //}
         NewParty party = newCharacter.CreateOwnParty();
 #if !WORLD_CREATION_TOOL
         if (data.role != CHARACTER_ROLE.PLAYER) {

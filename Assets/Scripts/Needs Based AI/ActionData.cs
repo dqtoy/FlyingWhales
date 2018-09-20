@@ -107,7 +107,7 @@ public class ActionData {
                 _party.GoToLocation(targetObject.specificLocation, PATHFINDING_MODE.PASSABLE);
                 if (targetObject.objectType == OBJECT_TYPE.STRUCTURE) {
                     Area areaOfStructure = targetObject.objectLocation.tileLocation.areaOfTile;
-                    if (areaOfStructure != null && _party.home != null && areaOfStructure.id == _party.home.id) {
+                    if (areaOfStructure != null && _party.homeLandmark.tileLocation.areaOfTile != null && areaOfStructure.id == _party.homeLandmark.tileLocation.areaOfTile.id) {
                         _homeMultiplier = 1f;
                         _hasDoneActionAtHome = true;
                     }

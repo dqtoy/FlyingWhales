@@ -9,6 +9,8 @@ public class NewParty : IParty {
     protected int _id;
     protected int _numOfAttackers;
     protected bool _isDead;
+    protected bool _isAttacking;
+    protected bool _isDefending;
     protected List<ICharacter> _icharacters;
     protected Region _currentRegion;
     protected CharacterAvatar _icon;
@@ -47,6 +49,12 @@ public class NewParty : IParty {
     public bool isDead {
         get { return _isDead; }
     }
+    public bool isAttacking {
+        get { return _isAttacking; }
+    }
+    public bool isDefending {
+        get { return _isDefending; }
+    }
     public MODE currentMode {
         get { return _icharacters[0].currentMode; }
     }
@@ -66,9 +74,9 @@ public class NewParty : IParty {
     public Region currentRegion {
         get { return _currentRegion; }
     }
-    public Area home {
-        get { return mainCharacter.home; }
-    }
+    //public Area home {
+    //    get { return mainCharacter.home; }
+    //}
     public Combat currentCombat {
         get { return _currentCombat; }
         set { _currentCombat = value; }
@@ -129,11 +137,11 @@ public class NewParty : IParty {
 
         _currentCombat = null;
     }
-    public virtual void DisbandParty() {
-        while (icharacters.Count != 0) {
-            RemoveCharacter(icharacters[0]);
-        }
-    }
+    //public virtual void DisbandParty() {
+    //    while (icharacters.Count != 0) {
+    //        RemoveCharacter(icharacters[0]);
+    //    }
+    //}
     public virtual void RemoveListeners() {
         Messenger.RemoveListener<ActionThread>(Signals.LOOK_FOR_ACTION, AdvertiseSelf);
         //Messenger.RemoveListener<BuildStructureQuestData>(Signals.BUILD_STRUCTURE_LOOK_ACTION, BuildStructureLookingForAction);
@@ -186,6 +194,9 @@ public class NewParty : IParty {
         //if(mainCharacter == icharacter) {
         //    isCharacterMain = true;
         //}
+        if(_owner == icharacter) {
+            return;
+        }
         if (_icharacters.Remove(icharacter)) {
             icharacter.OnRemovedFromParty();
             icharacter.ownParty.icon.transform.position = this.specificLocation.tileLocation.transform.position;
@@ -239,6 +250,12 @@ public class NewParty : IParty {
             _icon.StartPath(PATHFINDING_MODE.PASSABLE, doneAction);
         }
     }
+    public void SetIsAttacking(bool state) {
+        _isAttacking = state;
+    }
+    public void SetIsDefending(bool state) {
+        _isDefending = state;
+    }
     //public void GoToLocation(GameObject locationGO, PATHFINDING_MODE pathfindingMode, Action doneAction = null) {
     //    _icon.SetActionOnTargetReached(doneAction);
     //    _icon.SetTargetGO(locationGO);
@@ -269,12 +286,12 @@ public class NewParty : IParty {
         if(enemy.currentCombat != null && this.currentCombat != null && enemy.currentCombat == this.currentCombat) {
             return this.currentCombat;
         }
-        if(enemy is CharacterParty) {
-            (enemy as CharacterParty).actionData.SetIsHalted(true);
-        }
-        if (this is CharacterParty) {
-            (this as CharacterParty).actionData.SetIsHalted(true);
-        }
+        //if(enemy is CharacterParty) {
+        //    (enemy as CharacterParty).actionData.SetIsHalted(true);
+        //}
+        //if (this is CharacterParty) {
+        //    (this as CharacterParty).actionData.SetIsHalted(true);
+        //}
         //If attack target is not yet in combat, start new combat, else, join the combat on the opposing side
         Combat combat = this.currentCombat;
         if (combat == null) {
@@ -307,9 +324,9 @@ public class NewParty : IParty {
     }
     public void JoinCombatWith(NewParty friend) {
         if (friend.currentCombat != null) {
-            if (this is CharacterParty) {
-                (this as CharacterParty).actionData.SetIsHalted(true);
-            }
+            //if (this is CharacterParty) {
+            //    (this as CharacterParty).actionData.SetIsHalted(true);
+            //}
             friend.currentCombat.AddParty(friend.mainCharacter.currentSide, this);
 
             Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "join_combat");

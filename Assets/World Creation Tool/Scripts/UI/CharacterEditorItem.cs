@@ -58,8 +58,8 @@ namespace worldcreator {
             //    }
             //}
             HexTile chosenTile = choices[Random.Range(0, choices.Count)];
-            _character.SetHome(chosenTile.areaOfTile);
-            _character.SetHomeLandmark(chosenTile.landmarkOnTile);
+            //_character.SetHome(chosenTile.areaOfTile);
+            chosenTile.landmarkOnTile.AddCharacterHomeOnLandmark(_character);
             //BaseLandmark chosenLandmark = choices[Random.Range(0, choices.Count)];
             //_character.SetHome(chosenLandmark);
             if (WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.gameObject.activeSelf) {

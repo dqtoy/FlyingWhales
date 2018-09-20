@@ -34,6 +34,7 @@ public static class Signals {
     public static string PARTY_ENTERED_LANDMARK = "OnPartyEnteredLandmark"; //Parameters (IParty partyThatEntered, BaseLandmark landmark)
     public static string PARTY_EXITED_LANDMARK = "OnPartyExitedLandmark"; //Parameters (IParty partyThatEntered, BaseLandmark landmark)
     public static string DESTROY_LANDMARK = "OnDestroyLandmark"; //Parameteres (BaseLandmark destroyedLandmark)
+    public static string LANDMARK_UNDER_ATTACK = "OnLandmarkUnderAttack"; //Parameters (BaseLandmark underAttackedLandmark, GameEvent associatedEvent = null)
     #endregion
 
     #region Character

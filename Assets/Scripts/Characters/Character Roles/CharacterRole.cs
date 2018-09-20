@@ -513,7 +513,7 @@ public class CharacterRole {
 
         if (targetObject.objectType == OBJECT_TYPE.STRUCTURE) {
             Area areaOfStructure = targetObject.objectLocation.tileLocation.areaOfTile;
-            if (areaOfStructure != null && _character.home != null && areaOfStructure.id == _character.home.id) {
+            if (areaOfStructure != null && _character.homeLandmark.tileLocation.areaOfTile != null && areaOfStructure.id == _character.homeLandmark.tileLocation.areaOfTile.id) {
                 result *= _character.party.actionData.homeMultiplier;
             }
         }else if (characterAction.actionType == ACTION_TYPE.ATTACK && targetObject is ICharacterObject) {
