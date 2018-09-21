@@ -3076,11 +3076,11 @@ namespace ECS {
             if(_homeLandmark != null && newHomeLandmark != null && _homeLandmark.tileLocation.areaOfTile.id != newHomeLandmark.tileLocation.areaOfTile.id) {
                 _homeLandmark.tileLocation.areaOfTile.residents.Remove(this);
                 newHomeLandmark.tileLocation.areaOfTile.residents.Add(this);
-#if !WORLD_CREATION_TOOL
-                LookForNewWorkplace();
-#endif
             }
             this._homeLandmark = newHomeLandmark;
+#if !WORLD_CREATION_TOOL
+            LookForNewWorkplace();
+#endif
         }
         //public void SetHomeStructure(StructureObj newHomeStructure) {
         //    if (_homeStructure != null) {
@@ -3285,13 +3285,23 @@ namespace ECS {
                     if (_ownParty.actionData.currentAction != null && _ownParty.actionData.currentAction.actionData.duration == 0 
                         && _ownParty.actionData.currentAction.actionData.actionType != ACTION_TYPE.TURN_IN_QUEST) {//TODO: Remove Special case for turn in quest when bug has been fixed //this includes idle action
                         if (_ownParty.icon.isTravelling) {
-                            //if the characters action is unending, but he/she is still travelling to the target, then queue the disband party action instead
+                            //if the characters action is unending, but he/she is still travelling to the target, 
+                            if (_ownParty.icharacters.Count > 1) { //check if their own party has more than 1 member
+                                //if it does then queue the disband party action instead
+                                AddActionToQueue(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
+                            }
                             //then end his/her current action when he/she arrives at their destination
-                            AddActionToQueue(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
                             ownParty.icon.AddActionOnPathFinished(() => _ownParty.actionData.currentAction.EndAction(_ownParty, _ownParty.actionData.currentTargetObject));
                         } else {
-                            //if the characters action is unending, and he/she is not travelling, end their action immediately then force them to disband party
-                            _ownParty.actionData.ForceDoAction(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
+                            //if the characters action is unending, and he/she is not travelling, 
+                            //check if their own party has more than 1 member, 
+                            if (_ownParty.icharacters.Count > 1) {
+                                //if it does, then force them to disband party
+                                _ownParty.actionData.ForceDoAction(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
+                            } else {
+                                //else, just end their current action
+                                _ownParty.actionData.currentAction.EndAction(_ownParty, _ownParty.actionData.currentTargetObject);
+                            } 
                         }
 
                         ////current work action is unending, end it.

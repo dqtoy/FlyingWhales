@@ -86,8 +86,8 @@ public class ActionThread : Multithread {
             if (character.dailySchedule.currentPhase.phaseType == SCHEDULE_PHASE_TYPE.WORK) { //if work phase
                 if (character.role.roleType == CHARACTER_ROLE.HERO) { //if character is hero
                     actionLog += "\nDetermining hero work action...";
-                    //check if he/she can reach his/her work on time.
-                    if (character.CanReachWork()) {// if yes, go to work and perform work action
+                    //check if he/she can reach his/her work on time or if the character is already working?
+                    if (_party.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.WORK || character.CanReachWork()) {// if yes, go to work and perform work action
                         chosenObject = character.workplace.landmarkObj;
                         if (character.characterClass.workActionType == ACTION_TYPE.WORKING) {
                             chosenAction = character.genericWorkAction;
