@@ -320,11 +320,11 @@ public class ActionData {
      This will end the character's current action and assign the new action.
          */
     public void ForceDoAction(CharacterAction newAction, IObject targetObject) {
+        Debug.Log("Forced " + _party.name + " to perform " + newAction.actionData.actionName + " at " + targetObject.objectName);
         if (currentAction != null) {
             currentAction.EndAction(_party, currentTargetObject);
         }
         AssignAction(newAction, targetObject);
-        Debug.Log("Forced " + _party.name + " to perform " + newAction.actionData.actionName + " at " + targetObject.objectName);
     }
     public void ForceDoAction(QuestAction newAction) {
         if (currentAction != null) {
