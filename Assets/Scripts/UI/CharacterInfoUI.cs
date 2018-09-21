@@ -663,7 +663,7 @@ public class CharacterInfoUI : UIMenu {
         UpdateDays(MONTH.JAN);
     }
     public void OnMonthChanged(int choice) {
-        UpdateDays((MONTH)choice);
+        UpdateDays((MONTH)choice + 1);
     }
     private void UpdateDays(MONTH month) {
         dayDropdown.ClearOptions();
@@ -697,6 +697,11 @@ public class CharacterInfoUI : UIMenu {
         testEvent.Initialize(new List<Character>() { currentlyShowingCharacter });
         testEvent.ScheduleEvent();
     }
+    public void LogEventSchedule() {
+        string text = currentlyShowingCharacter.name + "'s Event Schedule: \n";
+        text += currentlyShowingCharacter.eventSchedule.GetEventScheduleSummary();
+        Debug.Log(text);
+    }
     private void Update() {
         int month;
         int day;
@@ -709,8 +714,15 @@ public class CharacterInfoUI : UIMenu {
             Int32.TryParse(tickField.text, out hour)) {
             GameDate date = new GameDate(month, day, year, hour);
             daysConversionLbl.text = "Day Conversion: " + date.GetDayAndTicksString();
-            if (!scheduleManualBtn.interactable) {
-                scheduleManualBtn.interactable = true;
+            if (date.IsBefore(GameManager.Instance.Today())) {
+                //the specified schedule date is before today
+                //do not allow
+                scheduleManualBtn.interactable = false;
+                daysConversionLbl.text += "(Invalid)";
+            } else {
+                if (!scheduleManualBtn.interactable) {
+                    scheduleManualBtn.interactable = true;
+                }
             }
         } else {
             daysConversionLbl.text = "Day Conversion: Invalid";

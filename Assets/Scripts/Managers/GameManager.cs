@@ -51,7 +51,9 @@ public class GameManager : MonoBehaviour {
         this.timeElapsed = 0f;
         _gameHasStarted = false;
         SetCursorToDefault();
-        //Application.logMessageReceived += LogCallback;
+#if !WORLD_CREATION_TOOL
+        Application.logMessageReceived += LogCallback;
+#endif
     }
     private void FixedUpdate() {
         if (_gameHasStarted && !isPaused) {
@@ -166,8 +168,8 @@ public class GameManager : MonoBehaviour {
     #endregion
 
     #region Utilities
-    //private void LogCallback(string condition, string stackTrace, LogType type) {
-    //    Debug.LogWarning(condition + "\n" + stackTrace);
-    //}
+    private void LogCallback(string condition, string stackTrace, LogType type) {
+        CharacterManager.Instance.CategorizeLog(condition, stackTrace, type);
+    }
     #endregion
 }

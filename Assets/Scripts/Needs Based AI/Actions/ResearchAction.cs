@@ -22,7 +22,10 @@ public class ResearchAction : CharacterAction {
             if (currItem.itemName.Contains("Scroll")) {
                 Debug.Log(party.characterOwner.name + " researched " + currItem.itemName);
                 if (currItem.itemName.Contains("Dispel")) {
+                    //end research scrolls quest
+                    QuestManager.Instance.RemoveQuestFromBoards((party.characterOwner.hiddenDesire as ResearchScrollDesire).surrenderScrollsQuest);
                     //Awaken Skazi
+                    Debug.LogWarning(party.characterOwner.name + " has awakened the skazi!");
                 }
                 researchedScrolls.Add(currItem);
             }

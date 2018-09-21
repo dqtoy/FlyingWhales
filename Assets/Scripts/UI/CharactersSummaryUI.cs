@@ -23,6 +23,7 @@ public class CharactersSummaryUI : UIMenu {
         characterEntries = new Dictionary<ECS.Character, CharacterSummaryEntry>();
         Messenger.AddListener<ECS.Character>(Signals.CHARACTER_CREATED, AddCharacterEntry);
         //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveCharacterEntry);
+        Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, UpdateCharacterEntry);
         Messenger.AddListener<ECS.Character>(Signals.ROLE_CHANGED, UpdateCharacterEntry);
         Messenger.AddListener<ECS.Character>(Signals.FACTION_SET, UpdateCharacterEntry);
         //sortingAction = () => OrderByName();

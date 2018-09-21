@@ -16,6 +16,13 @@ public class QuestManager : MonoBehaviour {
         //ConstructQuests();
     }
 
+    public void RemoveQuestFromBoards(Quest quest) {
+        List<BaseLandmark> landmarks = LandmarkManager.Instance.GetAllLandmarksWithQuestBoard();
+        for (int i = 0; i < landmarks.Count; i++) {
+            landmarks[i].questBoard.RemoveQuest(quest);
+        }
+    }
+
     //private void ConstructQuests() {
     //    availableQuests = new Dictionary<QUEST_TYPE, List<Quest>>();
     //    QUEST_TYPE[] questTypes = Utilities.GetEnumValues<QUEST_TYPE>();

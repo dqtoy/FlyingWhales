@@ -1,4 +1,5 @@
-﻿using EZObjectPools;
+﻿using ECS;
+using EZObjectPools;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,6 +26,7 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
     public void Initialize() {
         Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_DAY_ADJUSTED, OnActionDayAdjusted);
         Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
+        //Messenger.AddListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
     }
     public void SetCharacter(ECS.Character character) {
         _character = character;
@@ -80,17 +82,28 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
         //if (_character != null && party.id == _character.ownParty.id) {
         //    SetAction(action);
         //}
-        if (party != null) {
-            if (party.icharacters.Contains(_character)) {
+        if (party != null && _character != null) {
+            if (party.id == _character.currentParty.id) {
                 SetAction(action);
             }
+            //if (party.icharacters.Contains(_character)) {
+            //    SetAction(action);
+            //}
         }
     }
+    //private void OnCharacterJoinedParty(ICharacter character, NewParty party) {
+    //    if (_character != null) {
+    //        if (character.id == this._character.id) {
+    //            SetAction((party as CharacterParty).actionData.currentAction);
+    //        }
+    //    }
+    //}
 
     public override void Reset() {
         base.Reset();
         Messenger.RemoveListener<CharacterAction, CharacterParty>(Signals.ACTION_DAY_ADJUSTED, OnActionDayAdjusted);
         Messenger.RemoveListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
+        //Messenger.RemoveListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
         _action = null;
         _character = null;
         SetAlpha(255f/255f);
@@ -100,7 +113,11 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
     private void Update() {
         if (isHovering) {
             if (_action != null) {
-                UIManager.Instance.ShowSmallInfo(_action.actionData.actionName + " " + (_character.currentParty as CharacterParty).actionData.currentDay.ToString() + "/" + _action.actionData.duration.ToString());
+                string summary = _action.actionData.actionName;
+                if (_action.actionData.duration != 0) {
+                    summary += " " + (_character.currentParty as CharacterParty).actionData.currentDay.ToString() + "/" + _action.actionData.duration.ToString();
+                }
+                UIManager.Instance.ShowSmallInfo(summary);
             } else {
                 UIManager.Instance.ShowSmallInfo("NONE");
             }

@@ -9,6 +9,7 @@ public class SecretMeeting : GameEvent {
     private Character _generalMax;
     private Character _ladyOfTheLake;
 
+
     #region getters/setters
     public Character generalMax {
         get { return _generalMax; }
@@ -115,6 +116,9 @@ public class SecretMeeting : GameEvent {
     }
 
     private void SetCharactersAsLovers() {
+        if (generalMax.isDead || ladyOfTheLake.isDead) {
+            return;
+        }
         Relationship char1Rel;
         Relationship char2Rel;
         if (!generalMax.HasRelationshipWith(ladyOfTheLake)) {
@@ -145,13 +149,13 @@ public class SecretMeeting : GameEvent {
             base.EndEventForCharacter(ladyOfTheLake);
             EndEvent();
             if (!generalMax.isDead) {
-                if (generalMax.party.actionData.isCurrentActionFromEvent && generalMax.party.actionData.eventAssociatedWithAction.id == this.id) {
+                if (generalMax.party.actionData.isCurrentActionFromEvent && generalMax.party.actionData.currentAction.actionType != ACTION_TYPE.WAITING && generalMax.party.actionData.eventAssociatedWithAction.id == this.id) {
                     //character1's current action is from this event, end it
                     generalMax.party.actionData.currentAction.EndAction(generalMax.party, generalMax.party.actionData.currentTargetObject);
                 }
             }
             if (!ladyOfTheLake.isDead) {
-                if (ladyOfTheLake.party.actionData.isCurrentActionFromEvent && ladyOfTheLake.party.actionData.eventAssociatedWithAction.id == this.id) {
+                if (ladyOfTheLake.party.actionData.isCurrentActionFromEvent && ladyOfTheLake.party.actionData.currentAction.actionType != ACTION_TYPE.WAITING && ladyOfTheLake.party.actionData.eventAssociatedWithAction.id == this.id) {
                     //character1's current action is from this event, end it
                     ladyOfTheLake.party.actionData.currentAction.EndAction(ladyOfTheLake.party, ladyOfTheLake.party.actionData.currentTargetObject);
                 }

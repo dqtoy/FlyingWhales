@@ -50,6 +50,8 @@ public class CharacterManager : MonoBehaviour {
     public readonly int MENTAL_THRESHOLD = -3;
     public readonly int PHYSICAL_THRESHOLD = -3;
 
+    public Dictionary<Character, List<string>> allCharacterLogs { get; private set; }
+
     #region getters/setters
     public Dictionary<string, CharacterClass> classesDictionary {
         get { return _classesDictionary; }
@@ -73,6 +75,7 @@ public class CharacterManager : MonoBehaviour {
         _allCharacters = new List<Character>();
         _allCharacterAvatars = new List<CharacterAvatar>();
         allSquads = new List<Squad>();
+        allCharacterLogs = new Dictionary<Character, List<string>>();
     }
 
     public void Initialize() {
@@ -159,6 +162,8 @@ public class CharacterManager : MonoBehaviour {
     }
     public ECS.Character CreateNewCharacter(CharacterSaveData data) {
         ECS.Character newCharacter = new ECS.Character(data);
+        allCharacterLogs.Add(newCharacter, new List<string>());
+
         if (data.role != CHARACTER_ROLE.NONE) {
             newCharacter.AssignRole(data.role);
         }
@@ -361,6 +366,25 @@ public class CharacterManager : MonoBehaviour {
             if (currSettings.tag == tag) {
                 return currSettings.icon;
             }
+        }
+        return null;
+    }
+    public void CategorizeLog(string log, string stackTrace, LogType type) {
+        Dictionary<Character, List<string>> modifiedLogs = new Dictionary<Character, List<string>>();
+        foreach (KeyValuePair<Character, List<string>> kvp in allCharacterLogs) {
+            Character currCharacter = kvp.Key;
+            List<string> currLogs = kvp.Value;
+            if (log.Contains(currCharacter.name)) {
+                currLogs.Add(log + " Stack Trace: \n" + stackTrace);
+            }
+            //allCharacterLogs[currCharacter] = currLogs;
+            modifiedLogs.Add(currCharacter, currLogs);
+        }
+        allCharacterLogs = modifiedLogs;
+    }
+    public List<string> GetCharacterLogs(Character character) {
+        if (allCharacterLogs.ContainsKey(character)) {
+            return allCharacterLogs[character];
         }
         return null;
     }
@@ -727,5 +751,4 @@ public class CharacterManager : MonoBehaviour {
         }
     }
     #endregion
-
 }

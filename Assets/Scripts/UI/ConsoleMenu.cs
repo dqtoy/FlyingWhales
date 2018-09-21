@@ -47,6 +47,7 @@ public class ConsoleMenu : UIMenu {
             {"/log_event_schedule", LogEventSchedule },
             {"/awaken_desire", AwakenHiddenDesire },
             {"/share_intel", ShareIntel },
+            {"/show_logs", ShowLogs },
         };
     }
 
@@ -631,6 +632,39 @@ public class ConsoleMenu : UIMenu {
 
         PlayerManager.Instance.player.GiveIntelToCharacter(intel, character);
         AddSuccessMessage("Gave intel that " + intel.description + " to " + character.name);
+    }
+    private void ShowLogs(string[] parameters) {
+        if (parameters.Length < 2) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+        string characterParameterString = string.Empty;
+        for (int i = 1; i < parameters.Length; i++) {
+            characterParameterString += parameters[i] + " ";
+        }
+        characterParameterString = characterParameterString.Trim();
+        int characterID;
+
+        bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
+        ECS.Character character = null;
+        if (isCharacterParameterNumeric) {
+            character = CharacterManager.Instance.GetCharacterByID(characterID);
+        } else {
+            character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+        }
+
+        if (character == null) {
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+
+        string logSummary = character.name + "'s logs: ";
+        List<string> logs = CharacterManager.Instance.GetCharacterLogs(character);
+        for (int i = 0; i < logs.Count; i++) {
+            logSummary += "\n" + logs[i];
+        }
+        AddSuccessMessage(logSummary);
     }
     #endregion
 

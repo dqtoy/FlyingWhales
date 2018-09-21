@@ -16,11 +16,11 @@ public class JoinPartyAction : CharacterAction {
 
     public override void OnChooseAction(NewParty iparty, IObject targetObject) {
         base.OnChooseAction(iparty, targetObject);
+        (iparty as CharacterParty).actionData.ForceDoAction(iparty.icharacterObject.currentState.GetAction(ACTION_TYPE.IN_PARTY), iparty.icharacterObject);
         if (targetObject is ICharacterObject) {
             (targetObject as ICharacterObject).iparty.AddCharacter(iparty.mainCharacter);
         }
         ActionSuccess(targetObject);
-        (iparty as CharacterParty).actionData.ForceDoAction(iparty.icharacterObject.currentState.GetAction(ACTION_TYPE.IN_PARTY), iparty.icharacterObject);
     }
 
     //public override void PerformAction(CharacterParty party, IObject targetObject) {

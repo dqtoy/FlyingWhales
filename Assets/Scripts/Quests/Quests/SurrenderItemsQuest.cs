@@ -12,12 +12,19 @@ public class SurrenderItemsQuest : Quest {
     }
 
     #region overrides
+    public override Quest Clone() {
+        SurrenderItemsQuest clone = new SurrenderItemsQuest(this.questGiver, neededItemName);
+        SetCommonData(clone);
+        return clone;
+    }
     protected override string GetQuestName() {
         return "Surrender all " + neededItemName + "s to" + questGiver.name;
     }
     public override QuestAction GetQuestAction(Character character) {
         GiveItemAction giveAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.GIVE_ITEM) as GiveItemAction;
         giveAction.SetItemsToGive(character.GetItemsLike(neededItemName));
+
+        giveAction.SetOnEndAction(() => SetQuestAsDone());
 
         QuestAction action = new QuestAction(giveAction, questGiver.questGiverObj, this);
         return action;
@@ -29,6 +36,16 @@ public class SurrenderItemsQuest : Quest {
         }
         return base.CanBeTakenBy(character);
     }
+    protected override void OnQuestDone() {
+        base.OnQuestDone();
+        Character character = owner;
+        character.currentQuest.OnQuestTurnedIn();
+        character.SetQuest(null);
+    }
+    //protected override void CancelQuest() {
+    //    base.CancelQuest();
+    //    Messenger.RemoveListener<Item, Character>(Signals.ITEM_OBTAINED, OnItemObtained);
+    //}
     //public override void OnAcceptQuest(Character accepter) {
     //    base.OnAcceptQuest(accepter);
     //    //listen for when the owner of the quest obtains an item, if he/she already has the required items, 

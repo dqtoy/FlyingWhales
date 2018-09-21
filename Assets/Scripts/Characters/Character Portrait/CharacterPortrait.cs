@@ -209,15 +209,15 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
                     UIManager.Instance.ShowMonsterInfo(_character as Monster);
                 }
             } else {
-                if (iparty.icharacters.Count > 1) {
-                    UIManager.Instance.ShowPartyInfo(iparty);
-                } else  {
-                    if (_character is ECS.Character) {
-                        UIManager.Instance.ShowCharacterInfo(_character as ECS.Character);
-                    } else if (_character is Monster) {
-                        UIManager.Instance.ShowMonsterInfo(_character as Monster);
-                    }
+                //if (iparty.icharacters.Count > 1) {
+                //    UIManager.Instance.ShowPartyInfo(iparty);
+                //} else  {
+                if (_character is ECS.Character) {
+                    UIManager.Instance.ShowCharacterInfo(_character as ECS.Character);
+                } else if (_character is Monster) {
+                    UIManager.Instance.ShowMonsterInfo(_character as Monster);
                 }
+                //}
             }
             
         }

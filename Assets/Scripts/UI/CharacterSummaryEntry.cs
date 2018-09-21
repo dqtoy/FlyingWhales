@@ -46,7 +46,11 @@ public class CharacterSummaryEntry : PooledObject {
         if (character == null) {
             return;
         }
+
         characterNameLbl.text = character.name;
+        if (character.isDead) {
+            characterNameLbl.text += "(Dead)"; 
+        }
         characterLvlClassLbl.text = "Lvl." + character.level.ToString() + " " + character.characterClass.className;
     }
 
