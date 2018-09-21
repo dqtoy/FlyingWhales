@@ -697,6 +697,11 @@ public class CharacterInfoUI : UIMenu {
         testEvent.Initialize(new List<Character>() { currentlyShowingCharacter });
         testEvent.ScheduleEvent();
     }
+    public void LogEventSchedule() {
+        string text = currentlyShowingCharacter.name + "'s Event Schedule: \n";
+        text += currentlyShowingCharacter.eventSchedule.GetEventScheduleSummary();
+        Debug.Log(text);
+    }
     private void Update() {
         int month;
         int day;

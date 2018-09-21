@@ -88,6 +88,10 @@ public class LandmarkCharacterItem : PooledObject {
         UIManager.Instance.HideSmallInfo();
         UIManager.Instance.HideDetailedInfo();
     }
+    public void OnClickParty() {
+        UIManager.Instance.ShowPartyInfo(party);
+    }
+
 
     private void Update() {
         if (isHovering) {
