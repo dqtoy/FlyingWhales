@@ -25663,7 +25663,7 @@ MonoBehaviour:
   defaultCursorTexture: {fileID: 2800000, guid: 3b159dc765142944492cd69555358826,
     type: 3}
   targetCursorTexture: {fileID: 2800000, guid: 7357d53bb13f567458d4c9364c6fa54d, type: 3}
-  cursorMode: 0
+  cursorMode: 1
   hotSpot: {x: 0, y: 0}
 --- !u!114 &557822220
 MonoBehaviour:
