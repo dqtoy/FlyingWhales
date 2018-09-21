@@ -62,14 +62,12 @@ public class PlayerAbilitiesUI : MonoBehaviour {
         for (int i = 0; i < _playerAbilityButtons.Count; i++) {
             PlayerAbilityButton playerAbilityButton = _playerAbilityButtons[i];
             if(playerAbilityButton.playerAbility.type == ABILITY_TYPE.ALL) {
-                playerAbilityButton.SetCanBeDone(playerAbilityButton.playerAbility.CanBeDone(interactable));
-                playerAbilityButton.EnableDisable();
+                playerAbilityButton.UpdateThis(interactable);
                 continue;
             }
             if(playerAbilityButton.playerAbility.type == type) {
-                playerAbilityButton.SetCanBeDone(playerAbilityButton.playerAbility.CanBeDone(interactable));
-                playerAbilityButton.EnableDisable();
                 playerAbilityButton.gameObject.SetActive(true);
+                playerAbilityButton.UpdateThis(interactable);
             } else {
                 playerAbilityButton.gameObject.SetActive(false);
             }

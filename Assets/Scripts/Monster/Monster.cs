@@ -176,6 +176,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public MODE currentMode {
         get { return _currentMode; }
     }
+    public ILocation specificLocation {
+        get { return _currentParty.specificLocation; }
+    }
     public CharacterBattleOnlyTracker battleOnlyTracker {
         get { return _battleOnlyTracker; }
     }
@@ -365,8 +368,10 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public void Death() {
         _isDead = true;
+        Messenger.RemoveListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
         Messenger.Broadcast(Signals.MONSTER_DEATH, this);
         _currentParty.RemoveCharacter(this);
+        _ownParty.PartyDeath();
         MonsterManager.Instance.allMonsters.Remove(this);
 
         GameObject.Destroy(_characterPortrait.gameObject);
@@ -461,6 +466,8 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _characterPortrait.GeneratePortrait(this, IMAGE_SIZE.X36, true);
         portraitGO.SetActive(false);
 #endif
+
+        Messenger.AddListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
     }
     private void BaseInitializeSim() {
         _isDead = false;
@@ -807,6 +814,14 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
             }
         }
         return drops;
+    }
+    #endregion
+
+    #region Landmark
+    private void OnDestroyLandmark(BaseLandmark landmark) {
+        if (specificLocation.tileLocation.landmarkOnTile != null && specificLocation.tileLocation.landmarkOnTile.id == landmark.id) {
+            Death();
+        }
     }
     #endregion
 }

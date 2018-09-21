@@ -39,4 +39,10 @@ public class PlayerAbilityButton : MonoBehaviour {
             button.interactable = false;
         }
     }
+    public void UpdateThis(IInteractable interactable) {
+        if (gameObject.activeSelf) {
+            SetCanBeDone(_playerAbility.CanBeDone(interactable));
+            EnableDisable();
+        }
+    }
 }

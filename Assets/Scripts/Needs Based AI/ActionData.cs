@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ECS;
+using System;
 
 public class ActionData {
     private CharacterParty _party;
@@ -58,7 +59,7 @@ public class ActionData {
         _cannotPerformAction = false;
 #if !WORLD_CREATION_TOOL
         SchedulingManager.Instance.AddEntry(GameManager.Instance.EndOfTheMonth(), () => CheckDoneActionHome());
-        Messenger.AddListener<CharacterParty, ObjectState>(Signals.STATE_ENDED, APartyEndedState);
+        //Messenger.AddListener<CharacterParty, ObjectState>(Signals.STATE_ENDED, APartyEndedState);
 #endif
 #if UNITY_EDITOR
         actionHistory = new List<string>();
@@ -117,10 +118,10 @@ public class ActionData {
         Messenger.Broadcast(Signals.ACTION_TAKEN, action, _party);
     }
     public void DetachActionData() {
-        Reset();
         _party.onDailyAction -= PerformCurrentAction;
+        Reset();
         _party = null;
-        Messenger.RemoveListener<CharacterParty, ObjectState>(Signals.STATE_ENDED, APartyEndedState);
+        //Messenger.RemoveListener<CharacterParty, ObjectState>(Signals.STATE_ENDED, APartyEndedState);
         //Messenger.RemoveListener(Signals.HOUR_ENDED, PerformCurrentAction);
     }
 
@@ -252,7 +253,7 @@ public class ActionData {
         }
         if (!isDone) {
             currentAction.PerformAction(_party, currentTargetObject);
-            if (currentAction.actionData.duration > 0) {
+            if (currentAction != null && currentAction.actionData.duration > 0) {
                 AdjustCurrentDay(1);
             }
         }
@@ -343,9 +344,9 @@ public class ActionData {
         Debug.Log("Forced " + _party.name + " to perform action " + newAction.action.actionData.actionName + " from event " + newAction.associatedEvent.name + " at " + newAction.targetObject.objectName);
     }
 
-    private void APartyEndedState(CharacterParty partyThatChangedState, ObjectState stateEnded) {
-        if(currentAction != null) {
-            currentAction.APartyHasEndedItsState(_party, currentTargetObject, partyThatChangedState, stateEnded);
-        }
-    }
+    //private void APartyEndedState(CharacterParty partyThatChangedState, ObjectState stateEnded) {
+    //    if(currentAction != null) {
+    //        currentAction.APartyHasEndedItsState(_party, currentTargetObject, partyThatChangedState, stateEnded);
+    //    }
+    //}
 }

@@ -2814,14 +2814,18 @@ namespace ECS {
             _miscActions = new List<CharacterAction>();
             CharacterAction read = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.READ);
             CharacterAction foolingAround = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.FOOLING_AROUND);
-            //CharacterAction chat = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.CHAT);
+            CharacterAction argue = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ARGUE);
+            CharacterAction chat = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.CHAT);
 
             read.SetActionCategory(ACTION_CATEGORY.MISC);
             foolingAround.SetActionCategory(ACTION_CATEGORY.MISC);
-            //chat.SetActionCategory(ACTION_CATEGORY.IDLE);
+            chat.SetActionCategory(ACTION_CATEGORY.MISC);
+            argue.SetActionCategory(ACTION_CATEGORY.MISC);
 
             AddMiscAction(read);
             AddMiscAction(foolingAround);
+            AddMiscAction(chat);
+            AddMiscAction(argue);
             //_miscActions.Add(read);
             //_miscActions.Add(foolingAround);
             //_idleActions.Add(chat);
@@ -3073,14 +3077,28 @@ namespace ECS {
         //    _home = newHome;
         //}
         public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
-            if(_homeLandmark != null && newHomeLandmark != null && _homeLandmark.tileLocation.areaOfTile.id != newHomeLandmark.tileLocation.areaOfTile.id) {
-                _homeLandmark.tileLocation.areaOfTile.residents.Remove(this);
-                newHomeLandmark.tileLocation.areaOfTile.residents.Add(this);
-#if !WORLD_CREATION_TOOL
-                LookForNewWorkplace();
-#endif
-            }
+            BaseLandmark previousHome = _homeLandmark;
             this._homeLandmark = newHomeLandmark;
+            if (previousHome != null) {
+                previousHome.tileLocation.areaOfTile.residents.Remove(this);
+                if(_homeLandmark != null) {
+                    _homeLandmark.tileLocation.areaOfTile.residents.Add(this);
+                    if (_homeLandmark.tileLocation.areaOfTile.id != previousHome.tileLocation.areaOfTile.id) {
+#if !WORLD_CREATION_TOOL
+                        LookForNewWorkplace();
+#endif
+                    }
+                }
+
+            } else {
+                if (_homeLandmark != null) {
+                    _homeLandmark.tileLocation.areaOfTile.residents.Add(this);
+#if !WORLD_CREATION_TOOL
+                    LookForNewWorkplace();
+#endif
+                }
+            }
+            
         }
         //public void SetHomeStructure(StructureObj newHomeStructure) {
         //    if (_homeStructure != null) {

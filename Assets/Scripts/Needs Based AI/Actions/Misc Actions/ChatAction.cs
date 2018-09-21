@@ -42,8 +42,7 @@ public class ChatAction : CharacterAction {
                 CharacterParty targetParty = icharacterObject.iparty as CharacterParty;
                 Character targetCharacter = targetParty.mainCharacter as Character;
 
-                if (targetParty.actionData.currentAction.actionData.actionType != ACTION_TYPE.CHAT) {
-                    targetParty.actionData.currentAction.EndAction(targetParty, targetParty.actionData.currentTargetObject);
+                if (targetParty.actionData.currentAction == null) {
                     ChatAction actionToAssign = targetParty.mainCharacter.GetMiscAction(_actionData.actionType) as ChatAction;
                     targetParty.actionData.AssignAction(actionToAssign, party.icharacterObject);
 
@@ -52,6 +51,18 @@ public class ChatAction : CharacterAction {
                     log.AddToFillers(icharacterObject.iparty.mainCharacter, icharacterObject.iparty.mainCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     party.mainCharacter.AddHistory(log);
                     icharacterObject.iparty.mainCharacter.AddHistory(log);
+                } else {
+                    if (targetParty.actionData.currentAction.actionData.actionType != ACTION_TYPE.CHAT) {
+                        targetParty.actionData.currentAction.EndAction(targetParty, targetParty.actionData.currentTargetObject);
+                        ChatAction actionToAssign = targetParty.mainCharacter.GetMiscAction(_actionData.actionType) as ChatAction;
+                        targetParty.actionData.AssignAction(actionToAssign, party.icharacterObject);
+
+                        Log log = new Log(GameManager.Instance.Today(), "CharacterActions", "ChatAction", "start_chat");
+                        log.AddToFillers(party.mainCharacter, party.mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        log.AddToFillers(icharacterObject.iparty.mainCharacter, icharacterObject.iparty.mainCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                        party.mainCharacter.AddHistory(log);
+                        icharacterObject.iparty.mainCharacter.AddHistory(log);
+                    }
                 }
             }
         }

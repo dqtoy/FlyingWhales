@@ -291,6 +291,8 @@ public class ObjectManager : MonoBehaviour {
                 return new PlayAction();
             case ACTION_TYPE.CHAT:
                 return new ChatAction();
+            case ACTION_TYPE.ARGUE:
+                return new ArgueAction();
             case ACTION_TYPE.DEPOSIT:
                 return new DepositAction();
             case ACTION_TYPE.CHANGE_CLASS:
@@ -341,6 +343,12 @@ public class ObjectManager : MonoBehaviour {
                 return new ResearchAction();
             case ACTION_TYPE.GIVE_ITEM:
                 return new GiveItemAction();
+            case ACTION_TYPE.MEDITATE:
+                return new MeditateAction();
+            case ACTION_TYPE.HOUSEKEEPING:
+                return new HousekeepingAction();
+            case ACTION_TYPE.STALK:
+                return new StalkAction();
         }
         return null;
     }

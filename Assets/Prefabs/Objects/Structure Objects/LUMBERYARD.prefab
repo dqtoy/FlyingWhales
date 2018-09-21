@@ -60,7 +60,7 @@ MonoBehaviour:
         PublicKeyToken=null
     _actions:
     - _actionData:
-        actionType: 8
+        actionType: 38
         actionCategory: 0
         actionName: Harvest
         filters:

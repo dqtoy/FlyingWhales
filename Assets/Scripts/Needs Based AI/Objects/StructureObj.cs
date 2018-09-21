@@ -102,6 +102,7 @@ public class StructureObj : IObject {
     }
     public virtual void StartState(ObjectState state) {
         if(state.stateName == "Ruined") {
+            objectLocation.tileLocation.SetLandmarkTileSprite(new LandmarkStructureSprite(LandmarkManager.Instance.ruinedSprite, null));
             objectLocation.MigrateCharactersToAnotherLandmark();
         }
     }

@@ -9,7 +9,7 @@ public class MonsterAttackEvent : GameEvent {
     private int _durationDays;
 
     public MonsterAttackEvent() : base(GAME_EVENT.MONSTER_ATTACK) {
-        _durationDays = 2;
+        _durationDays = 1;
         Messenger.AddListener<MonsterParty>(Signals.MONSTER_PARTY_DIED, MonsterPartyDied);
     }
 
@@ -17,8 +17,9 @@ public class MonsterAttackEvent : GameEvent {
         _targetLandmark = target;
         MonsterPartyComponent chosenParty = MonsterManager.Instance.monsterAttackParties[UnityEngine.Random.Range(0, MonsterManager.Instance.monsterAttackParties.Count)];
         _monsterPartySpawned = MonsterManager.Instance.SpawnMonsterPartyOnLandmark(_targetLandmark, chosenParty);
+        _monsterPartySpawned.SetIsAttacking(true);
         if (_monsterPartySpawned.specificLocation.tileLocation.landmarkOnTile != null) {
-            Messenger.Broadcast(Signals.LANDMARK_UNDER_ATTACK, _monsterPartySpawned, this);
+            Messenger.Broadcast(Signals.LANDMARK_UNDER_ATTACK, _monsterPartySpawned.GetBase(), this.GetBase());
         }
         ScheduleEnd();
     }
@@ -37,10 +38,18 @@ public class MonsterAttackEvent : GameEvent {
         if (_isDone) {
             return;
         }
-        if(!_monsterPartySpawned.isDead) {
+        if(_monsterPartySpawned.currentCombat != null) {
+            _monsterPartySpawned.currentCombat.AddAfterCombatAction(() => WaitForCombatToFinish());
+            return;
+        }
+        _monsterPartySpawned.SetIsAttacking(false);
+        if (!_monsterPartySpawned.isDead) {
             _targetLandmark.DestroyLandmark();
         }
         EndEvent();
+    }
+    private void WaitForCombatToFinish() {
+        EndTerrorization();
     }
 
     #region Overrides

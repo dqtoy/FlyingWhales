@@ -14,8 +14,6 @@ public class CharacterAction {
     protected int _enableCounter; //remove action from list if this has 0 point
     protected UnityAction onEndAction;
 
-    private const int Base_Misc_Action_Weight = 50;
-
     #region getters/setters
     public ACTION_TYPE actionType {
         get { return _actionData.actionType; }

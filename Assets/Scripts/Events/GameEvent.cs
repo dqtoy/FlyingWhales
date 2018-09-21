@@ -29,6 +29,7 @@ public class GameEvent {
         id = Utilities.SetID(this);
         _type = type;
         _isDone = false;
+        eventActions = new Dictionary<Character, Queue<EventAction>>();
         SetName(Utilities.NormalizeStringUpperCaseFirstLetters(_type.ToString()));
     }
 
@@ -39,11 +40,13 @@ public class GameEvent {
     public void SetPhase(EVENT_PHASE phase) {
         _phase = phase;
     }
+    public GameEvent GetBase() {
+        return this;
+    }
     #endregion
 
     #region Virtuals
     public virtual void Initialize(List<Character> characters) {
-        eventActions = new Dictionary<Character, Queue<EventAction>>();
         for (int i = 0; i < characters.Count; i++) {
             Character currCharacter = characters[i];
             eventActions.Add(currCharacter, new Queue<EventAction>());
@@ -56,7 +59,7 @@ public class GameEvent {
         return null;
     }
     public virtual EventAction PeekNextEventAction(Character character) {
-        if (eventActions[character].Count != 0) {
+        if (eventActions.ContainsKey(character) && eventActions[character].Count != 0) {
             return eventActions[character].Peek();
         }
         return null;

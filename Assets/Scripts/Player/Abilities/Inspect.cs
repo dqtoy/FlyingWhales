@@ -32,6 +32,9 @@ public class Inspect : PlayerAbility {
                 }
             }
         }
+        for (int i = 0; i < PlayerManager.Instance.player.allAbilities.Count; i++) {
+            PlayerManager.Instance.player.allAbilities[i].playerAbilityButton.UpdateThis(interactable);
+        }
         base.Activate(interactable);
     }
     public override bool CanBeDone(IInteractable interactable) {
@@ -39,6 +42,20 @@ public class Inspect : PlayerAbility {
             if (!interactable.isBeingInspected) {
                 return true;
             }
+        }
+        return false;
+    }
+    public override bool CanBeActivated(IInteractable interactable) {
+        int magicUsed = 0;
+        if (interactable is Character) {
+            magicUsed = PlayerManager.Instance.player.blueMagic;
+        } else if (interactable is BaseLandmark) {
+            magicUsed = PlayerManager.Instance.player.greenMagic;
+        } else if (interactable is Monster) {
+            magicUsed = PlayerManager.Instance.player.redMagic;
+        }
+        if (magicUsed >= _powerCost) {
+            return true;
         }
         return false;
     }

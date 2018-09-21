@@ -25,6 +25,9 @@ public class PlayerAbility {
     public ABILITY_TYPE type {
         get { return _type; }
     }
+    public PlayerAbilityButton playerAbilityButton {
+        get { return _playerAbilityButton; }
+    }
     #endregion
 
     public PlayerAbility(ABILITY_TYPE type) {
@@ -42,6 +45,22 @@ public class PlayerAbility {
     }
     public virtual bool CanBeDone(IInteractable interactable) {
         return CanBeActivated(interactable);
+    }
+    public virtual bool CanBeActivated(IInteractable interactable) {
+        if (interactable.isBeingInspected) {
+            int magicUsed = 0;
+            if (interactable is Character) {
+                magicUsed = PlayerManager.Instance.player.blueMagic;
+            } else if (interactable is BaseLandmark) {
+                magicUsed = PlayerManager.Instance.player.greenMagic;
+            } else if (interactable is Monster) {
+                magicUsed = PlayerManager.Instance.player.redMagic;
+            }
+            if (magicUsed >= _powerCost) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
@@ -80,20 +99,6 @@ public class PlayerAbility {
     }
     private void ThreatGain() {
         PlayerManager.Instance.player.AdjustThreatLevel(_threatGain);
-    }
-    public bool CanBeActivated(IInteractable interactable) {
-        int magicUsed = 0;
-        if (interactable is Character) {
-            magicUsed = PlayerManager.Instance.player.blueMagic;
-        } else if (interactable is BaseLandmark) {
-            magicUsed = PlayerManager.Instance.player.greenMagic;
-        } else if (interactable is Monster) {
-            magicUsed = PlayerManager.Instance.player.redMagic;
-        }
-        if(magicUsed >= _powerCost) {
-            return true;
-        }
-        return false;
     }
     #endregion
 

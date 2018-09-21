@@ -121,6 +121,7 @@ public class MonsterManager : MonoBehaviour {
                 Monster monster = CreateNewMonster(monsterName);
                 landmark.AddCharacterHomeOnLandmark(monster);
                 monster.SetOwnedParty(monsterParty);
+                monster.SetCurrentParty(monsterParty);
                 monsterParty.AddCharacter(monster);
             }
         }

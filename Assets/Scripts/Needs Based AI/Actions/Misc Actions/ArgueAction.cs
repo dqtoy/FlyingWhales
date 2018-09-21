@@ -30,9 +30,7 @@ public class ArgueAction : CharacterAction {
             if (icharacterObject.iparty is CharacterParty) {
                 CharacterParty targetParty = icharacterObject.iparty as CharacterParty;
                 Character targetCharacter = targetParty.mainCharacter as Character;
-
-                if (targetParty.actionData.currentAction.actionData.actionType != ACTION_TYPE.ARGUE) {
-                    targetParty.actionData.currentAction.EndAction(targetParty, targetParty.actionData.currentTargetObject);
+                if (targetParty.actionData.currentAction == null) {
                     ArgueAction actionToAssign = targetParty.mainCharacter.GetMiscAction(_actionData.actionType) as ArgueAction;
                     targetParty.actionData.AssignAction(actionToAssign, party.icharacterObject);
 
@@ -41,7 +39,20 @@ public class ArgueAction : CharacterAction {
                     log.AddToFillers(icharacterObject.iparty.mainCharacter, icharacterObject.iparty.mainCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     party.mainCharacter.AddHistory(log);
                     icharacterObject.iparty.mainCharacter.AddHistory(log);
+                } else {
+                    if (targetParty.actionData.currentAction.actionData.actionType != ACTION_TYPE.ARGUE) {
+                        targetParty.actionData.currentAction.EndAction(targetParty, targetParty.actionData.currentTargetObject);
+                        ArgueAction actionToAssign = targetParty.mainCharacter.GetMiscAction(_actionData.actionType) as ArgueAction;
+                        targetParty.actionData.AssignAction(actionToAssign, party.icharacterObject);
+
+                        Log log = new Log(GameManager.Instance.Today(), "CharacterActions", "ArgueAction", "start_argue");
+                        log.AddToFillers(party.mainCharacter, party.mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        log.AddToFillers(icharacterObject.iparty.mainCharacter, icharacterObject.iparty.mainCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                        party.mainCharacter.AddHistory(log);
+                        icharacterObject.iparty.mainCharacter.AddHistory(log);
+                    }
                 }
+                    
             }
         }
     }
@@ -63,7 +74,7 @@ public class ArgueAction : CharacterAction {
                         continue;
                     }
                     Relationship relationship = mainCharacter.GetRelationshipWith(targetMainCharacter);
-                    if (relationship.IsNegative()) {
+                    if (relationship != null && relationship.IsNegative()) {
                         targetCandidates.Add(targetParty as CharacterParty);
                     }
                 }

@@ -384,6 +384,10 @@ public class CharacterManager : MonoBehaviour {
         }
         return null;
 	}
+    public Sprite GetSpriteByMonsterType(MONSTER_TYPE monsterType) {
+        //TODO: Add different sprite for diff monster types
+        return beastSprite;
+    }
     #endregion
 
     #region Character Portraits

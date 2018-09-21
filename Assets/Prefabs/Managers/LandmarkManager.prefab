@@ -470,3 +470,4 @@ MonoBehaviour:
     type: 3}
   ancientRuinBlockerSprite: {fileID: 21300000, guid: 783f972861f61dd4fa6d5931ea433539,
     type: 3}
+  ruinedSprite: {fileID: 21300032, guid: 56a2c57009ed96c41b97b19cc3d6b340, type: 3}

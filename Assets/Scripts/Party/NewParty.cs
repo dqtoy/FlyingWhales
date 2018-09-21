@@ -256,6 +256,9 @@ public class NewParty : IParty {
     public void SetIsDefending(bool state) {
         _isDefending = state;
     }
+    public NewParty GetBase() {
+        return this;
+    }
     //public void GoToLocation(GameObject locationGO, PATHFINDING_MODE pathfindingMode, Action doneAction = null) {
     //    _icon.SetActionOnTargetReached(doneAction);
     //    _icon.SetTargetGO(locationGO);

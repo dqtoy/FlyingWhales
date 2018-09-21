@@ -177,12 +177,14 @@ public class Relationship {
     public void AddRelationshipStatus(CHARACTER_RELATIONSHIP relStat) {
         if (!_relationshipStatuses.Contains(relStat)) {
             _relationshipStatuses.Add(relStat);
+#if !WORLD_CREATION_TOOL
             if(relStat == CHARACTER_RELATIONSHIP.STALKER) {
                 Stalker stalker = targetCharacter.AddAttribute(ATTRIBUTE.STALKER) as Stalker;
                 if(stalker != null) {
                     stalker.SetStalkee(sourceCharacter);
                 }
             }
+#endif
         }
     }
     public void AddRelationshipStatus(List<CHARACTER_RELATIONSHIP> relStat) {

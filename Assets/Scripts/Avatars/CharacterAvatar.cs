@@ -62,9 +62,11 @@ public class CharacterAvatar : MonoBehaviour{
         this.smoothMovement.onMoveFinished += OnMoveFinished;
         _isInitialized = true;
         _hasArrived = true;
-		if(_party.mainCharacter.role != null){
+		if(_party.mainCharacter is Character){
 			SetSprite (_party.mainCharacter.role.roleType);
-		}
+        } else if (_party.mainCharacter is Monster) {
+            SetSprite((_party.mainCharacter as Monster).type);
+        }
 #if !WORLD_CREATION_TOOL
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
         characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
@@ -268,6 +270,12 @@ public class CharacterAvatar : MonoBehaviour{
 			_avatarSpriteRenderer.sprite = sprite;
 		}
 	}
+    public void SetSprite(MONSTER_TYPE monsterType) {
+        Sprite sprite = CharacterManager.Instance.GetSpriteByMonsterType(monsterType);
+        if (sprite != null) {
+            _avatarSpriteRenderer.sprite = sprite;
+        }
+    }
     public void SetMovementState(bool state) {
         smoothMovement.isHalted = state;
     }

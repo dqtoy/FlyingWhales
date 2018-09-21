@@ -35,6 +35,7 @@ public class MonsterInfoUI : UIMenu {
     //    //Messenger.AddListener(Signals.UPDATE_UI, UpdateMonsterInfo);
     //}
 
+    #region Overrides
     public override void OpenMenu() {
         base.OpenMenu();
         UpdateMonsterInfo();
@@ -50,6 +51,29 @@ public class MonsterInfoUI : UIMenu {
             UpdateMonsterInfo();
         }
     }
+    public override void ShowTooltip(GameObject objectHovered) {
+        base.ShowTooltip(objectHovered);
+        if (objectHovered == healthProgressBar.gameObject) {
+            UIManager.Instance.ShowSmallInfo(currentlyShowingMonster.currentHP + "/" + currentlyShowingMonster.maxHP);
+        } else if (objectHovered == manaProgressBar.gameObject) {
+            UIManager.Instance.ShowSmallInfo(currentlyShowingMonster.currentSP + "/" + currentlyShowingMonster.maxSP);
+        } 
+        //else if (objectHovered == overallProgressBar.gameObject) {
+        //    UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.happiness.ToString());
+        //} else if (objectHovered == energyProgressBar.gameObject) {
+        //    UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.energy.ToString());
+        //} else if (objectHovered == fullnessProgressBar.gameObject) {
+        //    UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.fullness.ToString());
+        //} else if (objectHovered == funProgressBar.gameObject) {
+        //    UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.fun.ToString());
+        //}
+        //else if (objectHovered == prestigeProgressBar.gameObject) {
+        //    UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.prestige.ToString());
+        //} else if (objectHovered == sanityProgressBar.gameObject) {
+        //    UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.sanity.ToString());
+        //}
+    }
+    #endregion
 
     public void UpdateMonsterInfo() {
         if (currentlyShowingMonster == null) {

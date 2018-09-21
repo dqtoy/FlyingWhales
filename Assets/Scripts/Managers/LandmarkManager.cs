@@ -25,6 +25,7 @@ public class LandmarkManager : MonoBehaviour {
 
     public Sprite ancientRuinTowerSprite;
     public Sprite ancientRuinBlockerSprite;
+    public Sprite ruinedSprite;
 
     #region Monobehaviours
     private void Awake() {

@@ -13,12 +13,13 @@ public class DefendAction : CharacterAction {
     public override void OnFirstEncounter(CharacterParty party, IObject targetObject) {
         base.OnFirstEncounter(party, targetObject);
         party.SetIsDefending(true);
-        DefendTheLand(party, targetObject);
+        //DefendTheLand(party, targetObject);
     }
     public override void PerformAction(CharacterParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
         GiveAllReward(party);
+        DefendTheLand(party, targetObject);
     }
     public override IObject GetTargetObject(CharacterParty sourceParty) {
         return null;
@@ -39,7 +40,9 @@ public class DefendAction : CharacterAction {
         if(defenderParty.owner.currentSide == combat.winningSide && !defenderParty.isDead) {
             DefendTheLand(defenderParty, targetObject);
         } else {
-            EndAction(defenderParty, targetObject);
+            if (!defenderParty.isDead) {
+                EndAction(defenderParty, targetObject);
+            }
         }
     }
 

@@ -31,7 +31,7 @@ public class DragonAttack : GameEvent {
         Combat combat = _dragonParty.StartCombatWith(_targetCharacter.currentParty);
         combat.AddAfterCombatAction(() => CheckCombatResults(combat));
         if(_dragonParty.specificLocation.tileLocation.landmarkOnTile != null) {
-            Messenger.Broadcast(Signals.LANDMARK_UNDER_ATTACK, _dragonParty, this);
+            Messenger.Broadcast(Signals.LANDMARK_UNDER_ATTACK, _dragonParty.GetBase(), this.GetBase());
         }
     }
     private void CheckCombatResults(Combat combat) {
