@@ -2560,6 +2560,9 @@ namespace ECS {
         }
         private void OnDestroyLandmark(BaseLandmark landmark) {
             if(specificLocation.tileLocation.landmarkOnTile != null && specificLocation.tileLocation.landmarkOnTile.id == landmark.id) {
+                if(!_isDead && _currentParty.icon.isTravelling) {
+                    return;
+                }
                 Death();
             }
         }

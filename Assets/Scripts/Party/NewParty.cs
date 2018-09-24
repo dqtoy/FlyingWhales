@@ -125,6 +125,9 @@ public class NewParty : IParty {
     #region Virtuals
     public virtual void CreateIcon() { }
     public virtual void PartyDeath() {
+        if (_isDead) {
+            return;
+        }
         _isDead = true;
         ILocation deathLocation = this.specificLocation;
         this.specificLocation.RemoveCharacterFromLocation(this);
@@ -219,8 +222,8 @@ public class NewParty : IParty {
             }
         }
     }
-    public void GoHome(Action doneAction = null) {
-        GoToLocation(mainCharacter.homeLandmark, PATHFINDING_MODE.PASSABLE, doneAction);
+    public void GoHome(Action doneAction = null, Action actionOnStartOfMovement = null) {
+        GoToLocation(mainCharacter.homeLandmark, PATHFINDING_MODE.PASSABLE, doneAction, null, actionOnStartOfMovement);
     }
     #endregion
 
@@ -234,9 +237,9 @@ public class NewParty : IParty {
     #endregion
 
     #region Utilities
-    public void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null) {
+    public void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null, ICharacter trackTarget = null, Action actionOnStartOfMovement = null) {
         if (_icon.isMovingToHex) {
-            _icon.SetQueuedAction(() => GoToLocation(targetLocation, pathfindingMode, doneAction));
+            _icon.SetQueuedAction(() => GoToLocation(targetLocation, pathfindingMode, doneAction, trackTarget, actionOnStartOfMovement));
             return;
         }
         if (specificLocation == targetLocation) {
@@ -247,7 +250,7 @@ public class NewParty : IParty {
         } else {
             //_icon.SetActionOnTargetReached(doneAction);
             _icon.SetTarget(targetLocation);
-            _icon.StartPath(PATHFINDING_MODE.PASSABLE, doneAction);
+            _icon.StartPath(PATHFINDING_MODE.PASSABLE, doneAction, trackTarget, actionOnStartOfMovement);
         }
     }
     public void SetIsAttacking(bool state) {
@@ -286,32 +289,49 @@ public class NewParty : IParty {
 
     #region Combat
     public Combat StartCombatWith(NewParty enemy) {
-        if(enemy.currentCombat != null && this.currentCombat != null && enemy.currentCombat == this.currentCombat) {
-            return this.currentCombat;
-        }
+
         //if(enemy is CharacterParty) {
         //    (enemy as CharacterParty).actionData.SetIsHalted(true);
         //}
         //if (this is CharacterParty) {
         //    (this as CharacterParty).actionData.SetIsHalted(true);
         //}
-        //If attack target is not yet in combat, start new combat, else, join the combat on the opposing side
-        Combat combat = this.currentCombat;
-        if (combat == null) {
-            combat = new Combat();
-            combat.AddParty(SIDES.A, enemy);
-            combat.AddParty(SIDES.B, this);
-            //MultiThreadPool.Instance.AddToThreadPool(combat);
-            Debug.Log("Starting combat between " + enemy.name + " and  " + this.name);
-            combat.CombatSimulation();
-        } else {
-            if (enemy.currentCombat != null && enemy.currentCombat == combat) {
-                return combat;
-            }
-            SIDES sideToJoin = CombatManager.Instance.GetOppositeSide(this.mainCharacter.currentSide);
-            combat.AddParty(sideToJoin, enemy);
-        }
 
+        Combat combat = null;
+        if (this.currentCombat != null) {
+            //If this party has current combat
+            if (enemy.currentCombat != null) {
+                //If the enemy has current combat
+                if (enemy.currentCombat == this.currentCombat) {
+                    //If they are already fighting with each other, return their combat
+                    return this.currentCombat;
+                } else {
+                    //If they are not fighting with each other, this should not happen at all cost, a party must not combat another party if they are both in different combats
+                    return null;
+                }
+            } else {
+                //If this party has current combat and enemy does not have, enemy will join this party's combat on the opposite side
+                combat = this.currentCombat;
+                SIDES sideToJoin = CombatManager.Instance.GetOppositeSide(this.mainCharacter.currentSide);
+                this.currentCombat.AddParty(sideToJoin, enemy);
+            }
+        } else {
+            //If this party doesn't have current combat
+            if (enemy.currentCombat != null) {
+                //If the enemy has current combat, this party will join the enemy's combat on the opposite side
+                combat = enemy.currentCombat;
+                SIDES sideToJoin = CombatManager.Instance.GetOppositeSide(enemy.mainCharacter.currentSide);
+                enemy.currentCombat.AddParty(sideToJoin, this);
+            } else {
+                //If both this party and the enemy don't have a combat, they will start a new combat
+                combat = new Combat();
+                combat.AddParty(SIDES.A, enemy);
+                combat.AddParty(SIDES.B, this);
+                //MultiThreadPool.Instance.AddToThreadPool(combat);
+                Debug.Log("Starting combat between " + enemy.name + " and  " + this.name);
+                combat.CombatSimulation();
+            }
+        }
         Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "start_combat");
         combatLog.AddToFillers(enemy, enemy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         combatLog.AddToFillers(combat, " fought with ", LOG_IDENTIFIER.COMBAT);

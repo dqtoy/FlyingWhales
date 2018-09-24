@@ -370,7 +370,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _isDead = true;
         Messenger.RemoveListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
         Messenger.Broadcast(Signals.MONSTER_DEATH, this);
-        _currentParty.RemoveCharacter(this);
+        if(_currentParty.id != _ownParty.id) {
+            _currentParty.RemoveCharacter(this);
+        }
         _ownParty.PartyDeath();
         MonsterManager.Instance.allMonsters.Remove(this);
 
@@ -545,7 +547,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         if (_ownParty != null) {
             _ownParty.RemoveCharacter(this);
         }
-        MonsterParty newParty = new MonsterParty();
+        MonsterParty newParty = new MonsterParty(this);
         SetOwnedParty(newParty);
         newParty.AddCharacter(this);
         return newParty;
@@ -773,7 +775,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         //}
     }
     public void SetCurrentParty(NewParty party) {
-        _currentParty = party as CharacterParty;
+        _currentParty = party;
     }
     public void OnRemovedFromParty() {
         SetCurrentParty(_ownParty); //set the character's party to it's own party
@@ -820,6 +822,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     #region Landmark
     private void OnDestroyLandmark(BaseLandmark landmark) {
         if (specificLocation.tileLocation.landmarkOnTile != null && specificLocation.tileLocation.landmarkOnTile.id == landmark.id) {
+            if (!_isDead && _currentParty.icon.isTravelling) {
+                return;
+            }
             Death();
         }
     }

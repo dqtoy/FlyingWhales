@@ -25,7 +25,7 @@ public interface IParty {
     ILocation specificLocation { get; }
     List<ICharacter> icharacters { get; }
 
-    void GoHome(Action action = null);
+    void GoHome(Action action = null, Action actionOnStartOfMovement = null);
     void AddCharacter(ICharacter icharacter);
     void RemoveCharacter(ICharacter icharacter);
     void AdvertiseSelf(ActionThread actionThread);

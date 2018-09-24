@@ -8,6 +8,7 @@ using ECS;
 public class CharacterAvatar : MonoBehaviour{
 
     private Action onPathFinished;
+    private Action onPathReceived;
 
     private PathFindingThread _currPathfindingRequest; //the current pathfinding request this avatar is waiting for
 
@@ -30,7 +31,9 @@ public class CharacterAvatar : MonoBehaviour{
     [SerializeField] private bool _isMovementPaused = false;
     [SerializeField] private bool _isTravelling = false;
     [SerializeField] private bool _isMovingToHex = false;
+    private ICharacter _trackTarget = null;
 	private Action queuedAction = null;
+    private PATHFINDING_MODE _pathfindingMode;
 
     public CharacterPortrait characterPortrait { get; private set; }
 
@@ -89,14 +92,17 @@ public class CharacterAvatar : MonoBehaviour{
     public void SetTarget(ILocation target) {
         targetLocation = target;
     }
-    public void StartPath(PATHFINDING_MODE pathFindingMode, Action actionOnPathFinished = null) {
+    public void StartPath(PATHFINDING_MODE pathFindingMode, Action actionOnPathFinished = null, ICharacter trackTarget = null, Action actionOnPathReceived = null) {
         //if (smoothMovement.isMoving) {
         //    smoothMovement.ForceStopMovement();
         //}
         Reset();
         if (this.targetLocation != null) {
             SetHasArrivedState(false);
+            _pathfindingMode = pathFindingMode;
+            _trackTarget = trackTarget;
             onPathFinished = actionOnPathFinished;
+            onPathReceived = actionOnPathReceived;
 			Faction faction = _party.faction;
 			_currPathfindingRequest = PathGenerator.Instance.CreatePath(this, _party.specificLocation.tileLocation, targetLocation.tileLocation, pathFindingMode, faction);
         }
@@ -124,6 +130,9 @@ public class CharacterAvatar : MonoBehaviour{
                 _party.specificLocation.tileLocation.landmarkOnTile.landmarkVisual.OnCharacterExitedLandmark(_party);
             }
             NewMove();
+            if(onPathReceived != null) {
+                onPathReceived();
+            }
         }
     }
     public virtual void NewMove() {
@@ -151,6 +160,12 @@ public class CharacterAvatar : MonoBehaviour{
 			Debug.LogError (GameManager.Instance.Today ().ToStringDate());
 			Debug.LogError ("Location: " + _party.specificLocation.locationName);
 		}
+        if (_trackTarget != null) {
+            if(_trackTarget.currentParty.specificLocation.tileLocation.id != targetLocation.tileLocation.id) {
+                _party.GoToLocation(_trackTarget.currentParty.specificLocation, _pathfindingMode, onPathFinished, _trackTarget, onPathReceived);
+                return;
+            }
+        }
         if (this.path.Count > 0) {
             RemoveCharactersFromLocation(_party.specificLocation);
             AddCharactersToLocation(this.path[0]);
@@ -162,6 +177,7 @@ public class CharacterAvatar : MonoBehaviour{
 		if (_party.specificLocation.tileLocation.id == targetLocation.tileLocation.id) {
             if (!this._hasArrived) {
                 _isTravelling = false;
+                _trackTarget = null;
                 SetHasArrivedState(true);
                 targetLocation.AddCharacterToLocation(_party);
                 Debug.Log(_party.name + " has arrived at " + targetLocation.locationName + " on " + GameManager.Instance.Today().GetDayAndTicksString());
@@ -318,11 +334,13 @@ public class CharacterAvatar : MonoBehaviour{
         //base.Reset();
         smoothMovement.Reset();
         onPathFinished = null;
+        onPathReceived = null;
         direction = DIRECTION.LEFT;
         //targetLocation = null;
         path = null;
         _isMovementPaused = false;
         _hasArrived = false;
+        _trackTarget = null;
         //_isInitialized = false;
         _currPathfindingRequest = null;
         SetHighlightState(false);
