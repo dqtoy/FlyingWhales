@@ -463,7 +463,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
 #if !WORLD_CREATION_TOOL
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, UIManager.Instance.characterPortraitsParent);
         _characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
-        _characterPortrait.GeneratePortrait(this, IMAGE_SIZE.X36, true);
+        _characterPortrait.GeneratePortrait(this, 36, true);
         portraitGO.SetActive(false);
 #endif
 

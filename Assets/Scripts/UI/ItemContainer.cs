@@ -19,8 +19,10 @@ public class ItemContainer : PooledObject, IPointerEnterHandler, IPointerExitHan
     private void UpdateVisual() {
         if (item == null) {
             itemIcon.sprite = null;
+            itemIcon.gameObject.SetActive(false);
         } else {
             itemIcon.sprite = ItemManager.Instance.GetIconSprite(item.iconName);
+            itemIcon.gameObject.SetActive(true);
         }
     }
 

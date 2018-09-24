@@ -793,12 +793,12 @@ public enum PASSABLE_TYPE {
     OPEN
 }
 
-public enum IMAGE_SIZE {
-    X64,
-    X256,
-    X72,
-    X36,
-}
+//public enum IMAGE_SIZE {
+//    X64,
+//    X256,
+//    X72,
+//    X36,
+//}
 
 public enum LEVEL {
     HIGH,

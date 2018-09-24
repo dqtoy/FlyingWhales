@@ -45,10 +45,10 @@ public class UIMenu : MonoBehaviour {
     public virtual void OpenMenu() {
         //UIManager.Instance.AddMenuToQueue(this, _data);
         isShowing = true;
-        UnifiedSelectableBehaviour usb = closeBtn.gameObject.GetComponent<UnifiedSelectableBehaviour>();
-        if (usb != null) {
-            usb.Reset();
-        }
+        //UnifiedSelectableBehaviour usb = closeBtn.gameObject.GetComponent<UnifiedSelectableBehaviour>();
+        //if (usb != null) {
+        //    usb.Reset();
+        //}
         this.gameObject.SetActive(true);
         //ShowMenu();
     }
@@ -113,10 +113,10 @@ public class UIMenu : MonoBehaviour {
         }
     }
 
-    private bool CanGoBack() {
-        if(UIManager.Instance.menuHistory.Count > 1) {
-            return true;
-        }
-        return false;
-    }
+    //private bool CanGoBack() {
+    //    if(UIManager.Instance.menuHistory.Count > 1) {
+    //        return true;
+    //    }
+    //    return false;
+    //}
 }

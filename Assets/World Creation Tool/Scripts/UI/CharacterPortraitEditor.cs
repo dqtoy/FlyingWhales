@@ -61,7 +61,7 @@ public class CharacterPortraitEditor : MonoBehaviour {
 
     #region Portrait Editor
     private void UpdateVisuals() {
-        portrait.GeneratePortrait(portraitSettings, IMAGE_SIZE.X256);
+        portrait.GeneratePortrait(portraitSettings, 256);
     }
     private void SetStepperValues() {
         headStepper.maximum = CharacterManager.Instance.GetHeadSpriteCount(chosenRace, chosenGender) - 1;

@@ -1,37 +1,37 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class FactionEmblem : MonoBehaviour {
+[RequireComponent(typeof(UIHoverHandler))]
+public class FactionEmblem : MonoBehaviour{
 
     private Faction faction;
 
-    //[SerializeField] private Image frameImage;
-    //[SerializeField] private Image tintImage;
-    //[SerializeField] private Image tintOutlineImage;
     [SerializeField] private Image emblemImage;
 
     public void SetFaction(Faction faction) {
         this.faction = faction;
-
-        emblemImage.sprite = faction.emblem;
-        //tintImage.sprite = faction.emblemBG.tint;
-        //tintOutlineImage.sprite = faction.emblemBG.outline;
-        //if (faction.emblemBG.outline == null) {
-        //    tintOutlineImage.gameObject.SetActive(false);
-        //} else {
-        //    tintOutlineImage.gameObject.SetActive(true);
-        //}
+        if (faction == null) {
+            this.gameObject.SetActive(false);
+        } else {
+            emblemImage.sprite = faction.emblem;
+            this.gameObject.SetActive(true);
+        }
         
-        //emblemImage.sprite = faction.emblemSymbol;
 
-        //Color tintColor = faction.factionColor;
-        ////tintColor.a = 145f/255f;
-        //tintImage.color = tintColor;
-
-        //Color emblemColor;
-        //ColorUtility.TryParseHtmlString("#333333", out emblemColor);
-        //emblemImage.color = emblemColor;
+    }
+    public void ShowFactionInfo() {
+        if (this.faction == null) {
+            return;
+        }
+        UIManager.Instance.ShowSmallInfo(this.faction.name);
+    }
+    public void HideSmallInfo() {
+        if (this.faction == null) {
+            return;
+        }
+        UIManager.Instance.HideSmallInfo();
     }
 }

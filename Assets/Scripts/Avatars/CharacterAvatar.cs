@@ -70,7 +70,7 @@ public class CharacterAvatar : MonoBehaviour{
 #if !WORLD_CREATION_TOOL
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
         characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
-        characterPortrait.GeneratePortrait(_party.mainCharacter, IMAGE_SIZE.X64, false);
+        characterPortrait.GeneratePortrait(_party.mainCharacter, 64, false);
         portraitGO.SetActive(false);
 
         CharacterManager.Instance.AddCharacterAvatar(this);
@@ -233,7 +233,7 @@ public class CharacterAvatar : MonoBehaviour{
     }
     protected void RemoveCharactersFromLocation(ILocation location) {
         location.RemoveCharacterFromLocation(_party);
-        UIManager.Instance.UpdateHexTileInfo();
+        //UIManager.Instance.UpdateHexTileInfo();
     }
 	protected void AddCharactersToLocation(ILocation location) {
         if(location.tileLocation.id == targetLocation.id) {
@@ -241,7 +241,7 @@ public class CharacterAvatar : MonoBehaviour{
         } else {
             location.AddCharacterToLocation(_party);
         }
-		UIManager.Instance.UpdateHexTileInfo();
+		//UIManager.Instance.UpdateHexTileInfo();
     }
     public void ReclaimPortrait() {
         characterPortrait.transform.SetParent(this.transform);
