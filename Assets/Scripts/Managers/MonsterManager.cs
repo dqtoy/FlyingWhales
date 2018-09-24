@@ -113,7 +113,7 @@ public class MonsterManager : MonoBehaviour {
 //        return newMonster;
 //    }
     public MonsterParty SpawnMonsterPartyOnLandmark(BaseLandmark landmark, MonsterPartyComponent monsterPartyComponent) {
-        MonsterParty monsterParty = new MonsterParty();
+        MonsterParty monsterParty = new MonsterParty(null);
         monsterParty.SetSetupName(monsterPartyComponent.name);
         for (int i = 0; i < monsterPartyComponent.monsters.Length; i++) {
             if (monsterPartyComponent.monsters[i] != null) {

@@ -25,7 +25,7 @@ public class MonsterParty : NewParty {
     }
     #endregion
 
-    public MonsterParty() : base(null) {
+    public MonsterParty(Monster monster) : base(monster) {
 #if !WORLD_CREATION_TOOL
         _monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
         _monsterObj.SetMonster(this);
@@ -51,6 +51,9 @@ public class MonsterParty : NewParty {
         //PathfindingManager.Instance.AddAgent(_icon.aiPath);
     }
     public override void PartyDeath() {
+        if (_isDead) {
+            return;
+        }
         base.PartyDeath();
         MonsterManager.Instance.allMonsterParties.Remove(this);
         Messenger.Broadcast(Signals.MONSTER_PARTY_DIED, this);
