@@ -415,19 +415,19 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Character Portraits
-    public PortraitAssetCollection GetPortraitAssets(RACE race, GENDER gender, IMAGE_SIZE imgSize = IMAGE_SIZE.X256) {
-        if (imgSize == IMAGE_SIZE.X64) {
-            for (int i = 0; i < portraitAssetsx64.Count; i++) {
-                RacePortraitAssets racePortraitAssets = portraitAssetsx64[i];
-                if (racePortraitAssets.race == race) {
-                    if (gender == GENDER.MALE) {
-                        return racePortraitAssets.maleAssets;
-                    } else {
-                        return racePortraitAssets.femaleAssets;
-                    }
-                }
-            }
-        } else {
+    public PortraitAssetCollection GetPortraitAssets(RACE race, GENDER gender) {
+        //if (imgSize == IMAGE_SIZE.X64) {
+        //    for (int i = 0; i < portraitAssetsx64.Count; i++) {
+        //        RacePortraitAssets racePortraitAssets = portraitAssetsx64[i];
+        //        if (racePortraitAssets.race == race) {
+        //            if (gender == GENDER.MALE) {
+        //                return racePortraitAssets.maleAssets;
+        //            } else {
+        //                return racePortraitAssets.femaleAssets;
+        //            }
+        //        }
+        //    }
+        //} else {
             for (int i = 0; i < portraitAssetsx256.Count; i++) {
                 RacePortraitAssets racePortraitAssets = portraitAssetsx256[i];
                 if (racePortraitAssets.race == race) {
@@ -438,7 +438,7 @@ public class CharacterManager : MonoBehaviour {
                     }
                 }
             }
-        }
+        //}
         throw new System.Exception("No portraits for " + race.ToString() + " " + gender.ToString());
     }
     public PortraitSettings GenerateRandomPortrait(RACE race, GENDER gender) {
@@ -466,39 +466,39 @@ public class CharacterManager : MonoBehaviour {
         GENDER randomGender = genderChoices[Random.Range(0, genderChoices.Length)];
         return GenerateRandomPortrait(randomRace, randomGender);
     }
-    public HairSetting GetHairSprite(int index,  IMAGE_SIZE imgSize, RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender, imgSize);
+    public HairSetting GetHairSprite(int index, RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
         return pac.hairAssets[index];
     }
-    public Sprite GetBodySprite(int index, IMAGE_SIZE imgSize, RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender, imgSize);
+    public Sprite GetBodySprite(int index, RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
         return pac.bodyAssets[index];
     }
-    public Sprite GetFacialHairSprite(int index, IMAGE_SIZE imgSize, RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender, imgSize);
+    public Sprite GetFacialHairSprite(int index, RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
         if (pac.facialHairAssets.Count <= 0) {
             return null;
         }
         return pac.facialHairAssets[index];
     }
-    public Sprite GetHeadSprite(int index, IMAGE_SIZE imgSize, RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender, imgSize);
+    public Sprite GetHeadSprite(int index, RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
         return pac.headAssets[index];
     }
-    public Sprite GetNoseSprite(int index, IMAGE_SIZE imgSize, RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender, imgSize);
+    public Sprite GetNoseSprite(int index, RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
         return pac.noseAssets[index];
     }
-    public Sprite GetMouthSprite(int index, IMAGE_SIZE imgSize, RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender, imgSize);
+    public Sprite GetMouthSprite(int index, RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
         return pac.mouthAssets[index];
     }
-    public Sprite GetEyeSprite(int index, IMAGE_SIZE imgSize, RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender, imgSize);
+    public Sprite GetEyeSprite(int index, RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
         return pac.eyeAssets[index];
     }
-    public Sprite GetEyebrowSprite(int index, IMAGE_SIZE imgSize, RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender, imgSize);
+    public Sprite GetEyebrowSprite(int index, RACE race, GENDER gender) {
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
         return pac.eyebrowAssets[index];
     }
     public int GetHairSpriteCount(RACE race, GENDER gender) {
@@ -595,10 +595,10 @@ public class CharacterManager : MonoBehaviour {
 
 #if UNITY_EDITOR
     #region Editor
-    public void LoadPortraitAssets(IMAGE_SIZE imgSize, string assetsPath) {
-        if (imgSize == IMAGE_SIZE.X64) {
+    public void LoadPortraitAssets(int imgSize, string assetsPath) {
+        if (imgSize == 64) {
             portraitAssetsx64.Clear();
-        } else if (imgSize == IMAGE_SIZE.X256) {
+        } else if (imgSize == 256) {
             portraitAssetsx256.Clear();
         }
 
@@ -619,9 +619,9 @@ public class CharacterManager : MonoBehaviour {
                 }
                 LoadSpritesToList(files, collectionToUse);
             }
-            if (imgSize == IMAGE_SIZE.X64) {
+            if (imgSize == 64) {
                 portraitAssetsx64.Add(currRaceAssets);
-            } else if (imgSize == IMAGE_SIZE.X256) {
+            } else if (imgSize == 256) {
                 portraitAssetsx256.Add(currRaceAssets);
             }
         }

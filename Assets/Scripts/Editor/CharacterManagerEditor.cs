@@ -24,8 +24,8 @@ public class CharacterManagerEditor : Editor {
         GUILayout.Label("256x256 Asset Path");
         x256AssetPath = EditorGUILayout.TextField(x256AssetPath);
         if (GUILayout.Button("Load Portrait Assets")) {
-            myTarget.LoadPortraitAssets(IMAGE_SIZE.X64, x64AssetPath);
-            myTarget.LoadPortraitAssets(IMAGE_SIZE.X256, x256AssetPath);
+            myTarget.LoadPortraitAssets(64, x64AssetPath);
+            myTarget.LoadPortraitAssets(256, x256AssetPath);
         }
     }
 }

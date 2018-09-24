@@ -13,7 +13,7 @@ public class CharacterSquadEditorItem : MonoBehaviour {
 
     public void SetCharacter(ECS.Character character) {
         this.character = character;
-        portrait.GeneratePortrait(character, IMAGE_SIZE.X64);
+        portrait.GeneratePortrait(character, 64);
     }
 
     private void Update() {

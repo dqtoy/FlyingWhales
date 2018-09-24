@@ -31,9 +31,9 @@ public class UIManager : MonoBehaviour {
     [Header("Prefabs")]
     [SerializeField] private GameObject notificationPrefab;
 
-    [Space(10)]
-    [Header("Main UI Objects")]
-    [SerializeField] private GameObject mainUIGO;
+    //[Space(10)]
+    //[Header("Main UI Objects")]
+    //[SerializeField] private GameObject mainUIGO;
 
 
     [Space(10)]
@@ -65,14 +65,14 @@ public class UIManager : MonoBehaviour {
     public RectTransform detailedInfoContentParent;
     public CharacterPortrait[] detailedInfoPortraits;
 
-    [Space(10)]
-    [Header("World Info Menu")]
-    [SerializeField] private GameObject worldInfoCharactersSelectedGO;
-    [SerializeField] private GameObject worldInfoQuestsSelectedGO;
-    [SerializeField] private GameObject worldInfoStorylinesSelectedGO;
-    [SerializeField] private GameObject worldInfoCharactersBtn;
-    [SerializeField] private GameObject worldInfoQuestsBtn;
-    [SerializeField] private GameObject worldInfoStorylinesBtn;
+    //[Space(10)]
+    //[Header("World Info Menu")]
+    //[SerializeField] private GameObject worldInfoCharactersSelectedGO;
+    //[SerializeField] private GameObject worldInfoQuestsSelectedGO;
+    //[SerializeField] private GameObject worldInfoStorylinesSelectedGO;
+    //[SerializeField] private GameObject worldInfoCharactersBtn;
+    //[SerializeField] private GameObject worldInfoQuestsBtn;
+    //[SerializeField] private GameObject worldInfoStorylinesBtn;
 
     [Space(10)]
     [Header("Popup Message Box")]
@@ -118,21 +118,21 @@ public class UIManager : MonoBehaviour {
 
     internal List<object> eventLogsQueue = new List<object>();
 
-    private List<UIMenuSettings> _menuHistory;
+    //private List<UIMenuSettings> _menuHistory;
 
     #region getters/setters
     //internal GameObject minimapTexture {
     //    get { return minimapTextureGO; }
     //}
-    internal List<UIMenuSettings> menuHistory {
-        get { return _menuHistory; }
-    }
+    //internal List<UIMenuSettings> menuHistory {
+    //    get { return _menuHistory; }
+    //}
     #endregion
 
     #region Monobehaviours
     private void Awake() {
         Instance = this;
-        _menuHistory = new List<UIMenuSettings>();
+        //_menuHistory = new List<UIMenuSettings>();
         Messenger.AddListener<bool>(Signals.PAUSED, UpdateSpeedToggles);
     }
     private void Start() {
@@ -190,12 +190,9 @@ public class UIManager : MonoBehaviour {
     internal void InitializeUI() {
         for (int i = 0; i < allMenus.Length; i++) {
             allMenus[i].Initialize();
-            allMenus[i].ApplyUnifiedSettings(settings);
+            //allMenus[i].ApplyUnifiedSettings(settings);
         }
-        UnifiedSelectableBehaviour[] selectables = this.GetComponentsInChildren<UnifiedSelectableBehaviour>(true);
-        for (int i = 0; i < selectables.Length; i++) {
-            selectables[i].Initialize();
-        }
+        UnifySelectables();
         //popupMessageBox.Initialize();
         Messenger.AddListener<HexTile>(Signals.TILE_RIGHT_CLICKED, ShowContextMenu);
         Messenger.AddListener<HexTile>(Signals.TILE_LEFT_CLICKED, HideContextMenu);
@@ -205,6 +202,12 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OUT, OnHoverOutTile);
 
         Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
+    }
+    public void UnifySelectables() {
+        UnifiedSelectableBehaviour[] selectables = this.GetComponentsInChildren<UnifiedSelectableBehaviour>(true);
+        for (int i = 0; i < selectables.Length; i++) {
+            selectables[i].Initialize();
+        }
     }
 
     #region Font Utilities
@@ -245,12 +248,12 @@ public class UIManager : MonoBehaviour {
 
         UpdateCharacterInfo();
         UpdateFactionInfo();
-        UpdateHexTileInfo();
+        //UpdateHexTileInfo();
         //UpdateLandmarkInfo();
         UpdateMonsterInfo();
         UpdatePartyInfo();
         UpdateCombatLogs();
-        UpdateQuestSummary();
+        //UpdateQuestSummary();
         PlayerUI.Instance.UpdateUI();
     }
 
@@ -402,8 +405,8 @@ public class UIManager : MonoBehaviour {
             ICharacter character = party.icharacters[i];
             GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterPortrait", Vector3.zero, Quaternion.identity, detailedInfoContentParent);
             CharacterPortrait portrait = portraitGO.GetComponent<CharacterPortrait>();
-            portrait.SetDimensions(48f);
-            portrait.GeneratePortrait(character, IMAGE_SIZE.X64, true, true);
+            //portrait.SetDimensions(48f);
+            portrait.GeneratePortrait(character, 48, true);
         }
         PositionTooltip(detailedInfoGO.transform as RectTransform);
     }
@@ -597,12 +600,12 @@ public class UIManager : MonoBehaviour {
     //}
     #endregion
 
-    private void HideMainUI() {
-        mainUIGO.SetActive(false);
-    }
-    public void ShowMainUI() {
-        mainUIGO.SetActive(true);
-    }
+    //private void HideMainUI() {
+    //    mainUIGO.SetActive(false);
+    //}
+    //public void ShowMainUI() {
+    //    mainUIGO.SetActive(true);
+    //}
 
     #region Landmark Info
     [Space(10)]
@@ -856,69 +859,6 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    #region Menu History
-    public void AddMenuToQueue(UIMenu menu, object data) {
-        UIMenuSettings latestSetting = _menuHistory.ElementAtOrDefault(0);
-        if (latestSetting != null) {
-            if (latestSetting.menu == menu && latestSetting.data == data) {
-                //the menu settings to be added are the same as the latest one, ignore.
-                return;
-            }
-        }
-        _menuHistory.Add(new UIMenuSettings(menu, data));
-        //string text = string.Empty;
-        //for (int i = 0; i < _menuHistory.Count; i++) {
-        //    UIMenuSettings currSetting = _menuHistory.ElementAt(i);
-        //    text += currSetting.menu.GetType().ToString();
-        //    if(currSetting.data is Faction) {
-        //        text += " - Faction " + (currSetting.data as Faction).name;
-        //    } else if(currSetting.data is Party) {
-        //        text += " - Party " + (currSetting.data as Party).name;
-        //    } else if (currSetting.data is HexTile) {
-        //        text += " - HexTile " + (currSetting.data as HexTile).name;
-        //    } else if (currSetting.data is BaseLandmark) {
-        //        text += " - Landmark " + (currSetting.data as BaseLandmark).landmarkName;
-        //    } else if (currSetting.data is Character) {
-        //        text += " - Character " + (currSetting.data as Character).name;
-        //    } else if (currSetting.data is OldQuest.Quest) {
-        //        text += " - OldQuest.Quest " + (currSetting.data as OldQuest.Quest).questType.ToString();
-        //    }
-        //    text += "\n";
-        //}
-        //Debug.Log(text);
-    }
-    public void ShowPreviousMenu() {
-        _menuHistory.RemoveAt(_menuHistory.Count - 1);
-        UIMenuSettings menuToShow = _menuHistory.ElementAt(_menuHistory.Count - 1);
-        //_menuHistory.Remove(menuToShow);
-        menuToShow.menu.OpenMenu();
-        menuToShow.menu.SetData(menuToShow.data);
-        //string text = string.Empty;
-        //for (int i = 0; i < _menuHistory.Count; i++) {
-        //    UIMenuSettings currSetting = _menuHistory.ElementAt(i);
-        //    text += currSetting.menu.GetType().ToString();
-        //    if (currSetting.data is Faction) {
-        //        text += " - Faction " + (currSetting.data as Faction).name;
-        //    } else if (currSetting.data is Party) {
-        //        text += " - Party " + (currSetting.data as Party).name;
-        //    } else if (currSetting.data is HexTile) {
-        //        text += " - HexTile " + (currSetting.data as HexTile).name;
-        //    } else if (currSetting.data is BaseLandmark) {
-        //        text += " - Landmark " + (currSetting.data as BaseLandmark).landmarkName;
-        //    } else if (currSetting.data is Character) {
-        //        text += " - Character " + (currSetting.data as Character).name;
-        //    } else if (currSetting.data is OldQuest.Quest) {
-        //        text += " - OldQuest.Quest " + (currSetting.data as OldQuest.Quest).questType.ToString();
-        //    }
-        //    text += "\n";
-        //}
-        //Debug.Log(text);
-    }
-    public void ClearMenuHistory() {
-        _menuHistory.Clear();
-    }
-    #endregion
-
     #region Console
     [Space(10)]
     [Header("Console")]
@@ -951,11 +891,11 @@ public class UIManager : MonoBehaviour {
     public void ShowCharactersSummary() {
         //HideQuestsSummary();
         //HideStorylinesSummary();
-        worldInfoCharactersSelectedGO.SetActive(true);
+        //worldInfoCharactersSelectedGO.SetActive(true);
         charactersSummaryMenu.OpenMenu();
     }
     public void HideCharactersSummary() {
-        worldInfoCharactersSelectedGO.SetActive(false);
+        //worldInfoCharactersSelectedGO.SetActive(false);
         charactersSummaryMenu.CloseMenu();
     }
     //public void UpdateCharacterSummary() {

@@ -66,7 +66,7 @@ public class CharacterIcon : MonoBehaviour {
 #if !WORLD_CREATION_TOOL
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
         characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
-        characterPortrait.GeneratePortrait(_iparty.mainCharacter, IMAGE_SIZE.X64, false);
+        characterPortrait.GeneratePortrait(_iparty.mainCharacter, 64, false);
         portraitGO.SetActive(false);
 #endif
 

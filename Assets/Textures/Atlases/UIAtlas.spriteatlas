@@ -33,7 +33,11 @@ SpriteAtlas:
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 9a9317c62f76a34428932da7bab9bd38, type: 3}
+  - {fileID: 21300000, guid: 57620e8c9d686d149b3b0b793ae57400, type: 3}
   - {fileID: 21300000, guid: 03e3bd48445a43a4ba4261e543505998, type: 3}
+  - {fileID: 21300000, guid: bc2758f006a1a424a894bbcd4c6c8229, type: 3}
+  - {fileID: 21300000, guid: 2f4ed850e8d6d81479d3d07a1fbb2a78, type: 3}
+  - {fileID: 21300000, guid: 5bb86cbcd11079a4696e51d7304648cb, type: 3}
   - {fileID: 21300000, guid: c1a6e50d0ccdd2043bbe00862f05a7c2, type: 3}
   - {fileID: 21300000, guid: fd93c6f70e8bb394da445de1541b7a4a, type: 3}
   - {fileID: 21300000, guid: fd9b1ed7f978dae4f85ebfa5eb14d230, type: 3}
@@ -98,6 +102,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 507d5cdd01db6b446a3bfa2e8581fb96, type: 3}
   - {fileID: 21300000, guid: c88a94c9d75bf554c947e3bce46c6248, type: 3}
   - {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+  - {fileID: 21300000, guid: b77cc3ee0b449b440a9dd563f39db05b, type: 3}
+  - {fileID: 21300006, guid: b77cc3ee0b449b440a9dd563f39db05b, type: 3}
   - {fileID: 21300000, guid: ce180f3998a1d374bb967f413236461e, type: 3}
   - {fileID: 21300000, guid: a5395f97de35aa84082b68504fff53a3, type: 3}
   - {fileID: 21300000, guid: febd7bc28a21ea044a06f7266d76b729, type: 3}
@@ -105,9 +111,15 @@ SpriteAtlas:
   - {fileID: 21300000, guid: aa22b1f7d082a954b89cee55568a8e0c, type: 3}
   - {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
   - {fileID: 21300000, guid: 93d2bb2383b7e9349a010d11a704343b, type: 3}
+  - {fileID: 21300004, guid: b77cc3ee0b449b440a9dd563f39db05b, type: 3}
+  - {fileID: 21300002, guid: b77cc3ee0b449b440a9dd563f39db05b, type: 3}
   m_PackedSpriteNamesToIndex:
   - Stampede_by_Kekai
+  - Character_-_Logs
   - calendar-page-empty
+  - Character_-_Info
+  - Character_-_Items
+  - Character_-_Stats
   - WhiteCircle
   - BottomMenuContainer
   - 09_demons03
@@ -172,6 +184,8 @@ SpriteAtlas:
   - ClickedBottomButton
   - Achievement_boss_skybreaker
   - StructureIcon
+  - UI Assets_0
+  - UI Assets_3
   - ClickedButton
   - DefaultButton
   - White_square
@@ -179,5 +193,7 @@ SpriteAtlas:
   - Varangian
   - Hungry
   - Kow_tow_travels
+  - UI Assets_2
+  - UI Assets_1
   m_Tag: UIAtlas
   m_IsVariant: 0

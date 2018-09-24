@@ -14,14 +14,14 @@ public class DragonAttack : GameEvent {
     public void Initialize(Character target, MonsterParty dragonParty) {
         _targetCharacter = target;
         _dragonParty = dragonParty;
-        _dragonParty.GoToLocation(_targetCharacter.specificLocation, PATHFINDING_MODE.PASSABLE, CheckIfTargetIsStillInLocation);
+        _dragonParty.GoToLocation(_targetCharacter.specificLocation, PATHFINDING_MODE.PASSABLE, CheckIfTargetIsStillInLocation, _targetCharacter);
     }
 
     private void CheckIfTargetIsStillInLocation() {
-        if(_targetCharacter.specificLocation.tileLocation.id == _dragonParty.specificLocation.tileLocation.id) {
+        if (_targetCharacter.specificLocation.tileLocation.id == _dragonParty.specificLocation.tileLocation.id && _dragonParty.specificLocation.tileLocation.landmarkOnTile != null) {
             CombatWithTarget();
         } else {
-            _dragonParty.GoToLocation(_targetCharacter.specificLocation, PATHFINDING_MODE.PASSABLE, CheckIfTargetIsStillInLocation);
+            _dragonParty.GoToLocation(_targetCharacter.specificLocation, PATHFINDING_MODE.PASSABLE, CheckIfTargetIsStillInLocation, _targetCharacter);
         }
     }
 
@@ -37,14 +37,16 @@ public class DragonAttack : GameEvent {
     private void CheckCombatResults(Combat combat) {
         if(_dragonParty.mainCharacter.currentSide == combat.winningSide && !_dragonParty.isDead) {
             _dragonParty.SetIsAttacking(false);
-            if(_dragonParty.specificLocation.tileLocation.landmarkOnTile != null) {
-                _dragonParty.specificLocation.tileLocation.landmarkOnTile.DestroyLandmark();
-            }
-            _dragonParty.GoHome(() => LayEggAndGoToSleep());
+            _dragonParty.GoHome(() => LayEggAndGoToSleep(), () => DestroyLandmarkOnLeaveOfDragon(_dragonParty.specificLocation.tileLocation.landmarkOnTile));
+            
         }
         EndEvent();
     }
-
+    private void DestroyLandmarkOnLeaveOfDragon(BaseLandmark landmark) {
+        if(landmark != null) {
+            landmark.DestroyLandmark();
+        }
+    }
     private void LayEggAndGoToSleep() {
         Item dragonEgg = ItemManager.Instance.CreateNewItemInstance("Dragon Egg");
         _dragonParty.homeLandmark.AddItem(dragonEgg);

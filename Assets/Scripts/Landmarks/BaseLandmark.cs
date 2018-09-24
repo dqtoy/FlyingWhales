@@ -1004,7 +1004,7 @@ public class BaseLandmark : ILocation, IInteractable {
         List<BaseLandmark> chosenLandmarks = new List<BaseLandmark>();
         for (int i = 0; i < tileLocation.areaOfTile.landmarks.Count; i++) {
             BaseLandmark landmark = tileLocation.areaOfTile.landmarks[i];
-            if (landmark != this && landmark.landmarkObj.specificObjectType == _landmarkObj.specificObjectType) {
+            if (landmark != this && landmark.landmarkObj.specificObjectType == _landmarkObj.specificObjectType && landmark.landmarkObj.currentState.stateName != "Ruined") {
                 chosenLandmarks.Add(landmark);
             }
         }
