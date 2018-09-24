@@ -20,9 +20,9 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI nameLbl;
     [SerializeField] private TextMeshProUGUI lvlClassLbl;
     [SerializeField] private TextMeshProUGUI phaseLbl;
-    [SerializeField] private AffiliationsObject affiliations;
+    [SerializeField] private FactionEmblem factionEmblem;
+    [SerializeField] private SquadEmblem squadEmblem;
     [SerializeField] private ActionIcon currentActionIcon;
-    [SerializeField] private ScrollRect actionQueueScrollView;
     [SerializeField] private GameObject actionIconPrefab;
     [SerializeField] private string actionIconPrefabName;
 
@@ -40,21 +40,20 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private ScrollRect tagsScrollView;
     [SerializeField] private GameObject characterTagPrefab;
 
-    [Space(10)]
-    [Header("Mood")]
-    [SerializeField] private GameObject moodMenuGO;
-    [SerializeField] private TextMeshProUGUI moodTabLbl;
-    [SerializeField] private Slider overallProgressBar;
-    [SerializeField] private Slider energyProgressBar;
-    [SerializeField] private Slider fullnessProgressBar;
-    [SerializeField] private Slider funProgressBar;
-    [SerializeField] private Slider prestigeProgressBar;
-    [SerializeField] private Slider sanityProgressBar;
+    //[Space(10)]
+    //[Header("Mood")]
+    //[SerializeField] private GameObject moodMenuGO;
+    //[SerializeField] private TextMeshProUGUI moodTabLbl;
+    //[SerializeField] private Slider overallProgressBar;
+    //[SerializeField] private Slider energyProgressBar;
+    //[SerializeField] private Slider fullnessProgressBar;
+    //[SerializeField] private Slider funProgressBar;
+    //[SerializeField] private Slider prestigeProgressBar;
+    //[SerializeField] private Slider sanityProgressBar;
 
     [Space(10)]
     [Header("Items")]
     [SerializeField] private GameObject itemsMenuGO;
-    [SerializeField] private TextMeshProUGUI itemsTabLbl;
     [SerializeField] private ItemContainer headArmorContainer;
     [SerializeField] private ItemContainer leftHandContainer;
     [SerializeField] private ItemContainer rightHandContainer;
@@ -67,7 +66,6 @@ public class CharacterInfoUI : UIMenu {
     [Space(10)]
     [Header("Relations")]
     [SerializeField] private GameObject relationsGO;
-    [SerializeField] private TextMeshProUGUI relationsTabLbl;
     [SerializeField] private ScrollRect relationsScrollView;
     [SerializeField] private GameObject relationshipItemPrefab;
     [SerializeField] private Color evenRelationshipColor;
@@ -84,7 +82,6 @@ public class CharacterInfoUI : UIMenu {
     [Space(10)]
     [Header("Logs")]
     [SerializeField] private GameObject logHistoryPrefab;
-    [SerializeField] private TextMeshProUGUI logsTabLbl;
     [SerializeField] private ScrollRect historyScrollView;
     [SerializeField] private Color evenLogColor;
     [SerializeField] private Color oddLogColor;
@@ -132,7 +129,7 @@ public class CharacterInfoUI : UIMenu {
         //Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
         Messenger.AddListener<Character, Attribute>(Signals.ATTRIBUTE_ADDED, OnCharacterAttributeAdded);
         Messenger.AddListener<Character, Attribute>(Signals.ATTRIBUTE_REMOVED, OnCharacterAttributeRemoved);
-        affiliations.Initialize();
+        //affiliations.Initialize();
         currentActionIcon.Initialize();
         //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         InititalizeLogsMenu();
@@ -179,17 +176,18 @@ public class CharacterInfoUI : UIMenu {
         base.ShowTooltip(objectHovered);
         if(objectHovered == healthProgressBar.gameObject) {
             UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.currentHP + "/" + currentlyShowingCharacter.maxHP);
-        }else if (objectHovered == manaProgressBar.gameObject) {
+        } else if (objectHovered == manaProgressBar.gameObject) {
             UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.currentSP + "/" + currentlyShowingCharacter.maxSP);
-        } else if (objectHovered == overallProgressBar.gameObject) {
-            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.happiness.ToString());
-        } else if (objectHovered == energyProgressBar.gameObject) {
-            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.energy.ToString());
-        } else if (objectHovered == fullnessProgressBar.gameObject) {
-            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.fullness.ToString());
-        } else if (objectHovered == funProgressBar.gameObject) {
-            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.fun.ToString());
         } 
+        //else if (objectHovered == overallProgressBar.gameObject) {
+        //    UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.happiness.ToString());
+        //} else if (objectHovered == energyProgressBar.gameObject) {
+        //    UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.energy.ToString());
+        //} else if (objectHovered == fullnessProgressBar.gameObject) {
+        //    UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.fullness.ToString());
+        //} else if (objectHovered == funProgressBar.gameObject) {
+        //    UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.fun.ToString());
+        //} 
         //else if (objectHovered == prestigeProgressBar.gameObject) {
         //    UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.prestige.ToString());
         //} else if (objectHovered == sanityProgressBar.gameObject) {
@@ -220,15 +218,16 @@ public class CharacterInfoUI : UIMenu {
         UpdateBasicInfo();
         //UpdateGeneralInfo();
         UpdateStatInfo();
-        UpdateMoodInfo();
+        //UpdateMoodInfo();
         UpdateItemsInfo();
-        UpdateActionQueue();
+        //UpdateActionQueue();
         //UpdateEquipmentInfo();
         //UpdateInventoryInfo();
         UpdateAllHistoryInfo();
     }
     private void UpdatePortrait() {
-        characterPortrait.GeneratePortrait(currentlyShowingCharacter, IMAGE_SIZE.X256, true, true);
+        characterPortrait.GeneratePortrait(currentlyShowingCharacter, 100, true);
+        characterPortrait.SetBGState(false);
     }
     private void UpdateBasicInfo() {
         nameLbl.text = currentlyShowingCharacter.name;
@@ -240,20 +239,22 @@ public class CharacterInfoUI : UIMenu {
             }
         }
         phaseLbl.text = currentlyShowingCharacter.dailySchedule.currentPhase.phaseName;
-        affiliations.SetCharacter(currentlyShowingCharacter);
+        squadEmblem.SetSquad(currentlyShowingCharacter.squad);
+        factionEmblem.SetFaction(currentlyShowingCharacter.faction);
+        //affiliations.SetCharacter(currentlyShowingCharacter);
     }
-    private void UpdateActionQueue() {
-        Utilities.DestroyChildren(actionQueueScrollView.content);
-        for (int i = 0; i < currentlyShowingCharacter.actionQueue.Count; i++) {
-            ActionQueueItem queueItem = currentlyShowingCharacter.actionQueue.GetBasedOnIndex(i);
-            GameObject actionItemGO = UIManager.Instance.InstantiateUIObject(actionIconPrefab.name, actionQueueScrollView.content);
-            ActionIcon actionItem = actionItemGO.GetComponent<ActionIcon>();
-            actionItem.Initialize();
-            actionItem.SetCharacter(currentlyShowingCharacter);
-            actionItem.SetAction(queueItem.action);
-            actionItem.SetAlpha(128f/255f);
-        }
-    }
+    //private void UpdateActionQueue() {
+    //    Utilities.DestroyChildren(actionQueueScrollView.content);
+    //    for (int i = 0; i < currentlyShowingCharacter.actionQueue.Count; i++) {
+    //        ActionQueueItem queueItem = currentlyShowingCharacter.actionQueue.GetBasedOnIndex(i);
+    //        GameObject actionItemGO = UIManager.Instance.InstantiateUIObject(actionIconPrefab.name, actionQueueScrollView.content);
+    //        ActionIcon actionItem = actionItemGO.GetComponent<ActionIcon>();
+    //        actionItem.Initialize();
+    //        actionItem.SetCharacter(currentlyShowingCharacter);
+    //        actionItem.SetAction(queueItem.action);
+    //        actionItem.SetAlpha(128f/255f);
+    //    }
+    //}
 
     private void UpdateStatInfo() {
         healthProgressBar.value = (float)currentlyShowingCharacter.currentHP / (float) currentlyShowingCharacter.maxHP;
@@ -263,14 +264,14 @@ public class CharacterInfoUI : UIMenu {
         intelligenceLbl.text = currentlyShowingCharacter.intelligence.ToString();
         vitalityLbl.text = currentlyShowingCharacter.vitality.ToString();
     }
-    private void UpdateMoodInfo() {
-        overallProgressBar.value = currentlyShowingCharacter.role.happiness;
-        energyProgressBar.value = currentlyShowingCharacter.role.energy;
-        fullnessProgressBar.value = currentlyShowingCharacter.role.fullness;
-        funProgressBar.value = currentlyShowingCharacter.role.fun;
-        //prestigeProgressBar.value = currentlyShowingCharacter.role.prestige;
-        //sanityProgressBar.value = currentlyShowingCharacter.role.sanity;
-    }
+    //private void UpdateMoodInfo() {
+    //    overallProgressBar.value = currentlyShowingCharacter.role.happiness;
+    //    energyProgressBar.value = currentlyShowingCharacter.role.energy;
+    //    fullnessProgressBar.value = currentlyShowingCharacter.role.fullness;
+    //    funProgressBar.value = currentlyShowingCharacter.role.fun;
+    //    //prestigeProgressBar.value = currentlyShowingCharacter.role.prestige;
+    //    //sanityProgressBar.value = currentlyShowingCharacter.role.sanity;
+    //}
     private void UpdateItemsInfo() {
         UpdateEquipmentInfo();
         UpdateInventoryInfo();
@@ -448,62 +449,62 @@ public class CharacterInfoUI : UIMenu {
     #endregion
 
     #region Utilities
-    public void UpdateMoodColor(bool isOn) {
-        if (isOn) {
-            moodTabLbl.color = oddLogColor;
-        } else {
-            moodTabLbl.color = Color.white;
-        }
-    }
-    public void UpdateItemsColor(bool isOn) {
-        if (isOn) {
-            itemsTabLbl.color = oddLogColor;
-        } else {
-            itemsTabLbl.color = Color.white;
-        }
-    }
-    public void UpdateRelationsColor(bool isOn) {
-        if (isOn) {
-            relationsTabLbl.color = oddLogColor;
-        } else {
-            relationsTabLbl.color = Color.white;
-        }
-    }
-    public void UpdateLogsColor(bool isOn) {
-        if (isOn) {
-            logsTabLbl.color = oddLogColor;
-        } else {
-            logsTabLbl.color = Color.white;
-        }
-    }
+    //public void UpdateMoodColor(bool isOn) {
+    //    if (isOn) {
+    //        moodTabLbl.color = oddLogColor;
+    //    } else {
+    //        moodTabLbl.color = Color.white;
+    //    }
+    //}
+    //public void UpdateItemsColor(bool isOn) {
+    //    if (isOn) {
+    //        itemsTabLbl.color = oddLogColor;
+    //    } else {
+    //        itemsTabLbl.color = Color.white;
+    //    }
+    //}
+    //public void UpdateRelationsColor(bool isOn) {
+    //    if (isOn) {
+    //        relationsTabLbl.color = oddLogColor;
+    //    } else {
+    //        relationsTabLbl.color = Color.white;
+    //    }
+    //}
+    //public void UpdateLogsColor(bool isOn) {
+    //    if (isOn) {
+    //        logsTabLbl.color = oddLogColor;
+    //    } else {
+    //        logsTabLbl.color = Color.white;
+    //    }
+    //}
     #endregion
 
     #region Action Queue
-    private void OnActionAddedToQueue(ActionQueueItem actionAdded, Character character) {
-        if (currentlyShowingCharacter != null && currentlyShowingCharacter.id == character.id) {
-            GameObject actionItemGO = UIManager.Instance.InstantiateUIObject(actionIconPrefabName, actionQueueScrollView.content);
-            ActionIcon actionItem = actionItemGO.GetComponent<ActionIcon>();
-            actionItem.Initialize();
-            actionItem.SetCharacter(currentlyShowingCharacter);
-            actionItem.SetAction(actionAdded.action);
-        }
-    }
-    private void OnActionRemovedFromQueue(ActionQueueItem actionAdded, Character character) {
-        if (currentlyShowingCharacter != null && currentlyShowingCharacter.id == character.id) {
-            ActionIcon icon = GetActionIcon(actionAdded.action);
-            ObjectPoolManager.Instance.DestroyObject(icon.gameObject);
-        }
-    }
-    private ActionIcon GetActionIcon(CharacterAction action) {
-        ActionIcon[] icons = Utilities.GetComponentsInDirectChildren<ActionIcon>(actionQueueScrollView.content.gameObject);
-        for (int i = 0; i < icons.Length; i++) {
-            ActionIcon currIcon = icons[i];
-            if (currIcon.action == action) {
-                return currIcon;
-            }
-        }
-        return null;
-    }
+    //private void OnActionAddedToQueue(ActionQueueItem actionAdded, Character character) {
+    //    if (currentlyShowingCharacter != null && currentlyShowingCharacter.id == character.id) {
+    //        GameObject actionItemGO = UIManager.Instance.InstantiateUIObject(actionIconPrefabName, actionQueueScrollView.content);
+    //        ActionIcon actionItem = actionItemGO.GetComponent<ActionIcon>();
+    //        actionItem.Initialize();
+    //        actionItem.SetCharacter(currentlyShowingCharacter);
+    //        actionItem.SetAction(actionAdded.action);
+    //    }
+    //}
+    //private void OnActionRemovedFromQueue(ActionQueueItem actionAdded, Character character) {
+    //    if (currentlyShowingCharacter != null && currentlyShowingCharacter.id == character.id) {
+    //        ActionIcon icon = GetActionIcon(actionAdded.action);
+    //        ObjectPoolManager.Instance.DestroyObject(icon.gameObject);
+    //    }
+    //}
+    //private ActionIcon GetActionIcon(CharacterAction action) {
+    //    ActionIcon[] icons = Utilities.GetComponentsInDirectChildren<ActionIcon>(actionQueueScrollView.content.gameObject);
+    //    for (int i = 0; i < icons.Length; i++) {
+    //        ActionIcon currIcon = icons[i];
+    //        if (currIcon.action == action) {
+    //            return currIcon;
+    //        }
+    //    }
+    //    return null;
+    //}
     //private void OnActionTaken(CharacterAction takenAction, CharacterParty party) {
     //    if (currentlyShowingCharacter != null && currentlyShowingCharacter.currentParty.id == party.id) {
     //        currentActionIcon.SetAction(takenAction);

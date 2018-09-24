@@ -33,8 +33,8 @@ public class CharacterSummaryEntry : PooledObject {
         affiliations.Initialize(character);
         actionIcon.SetCharacter(character);
         actionIcon.SetAction(character.currentParty.currentAction);
-        characterPortrait.SetDimensions(42f);
-        characterPortrait.GeneratePortrait(character, IMAGE_SIZE.X256, true, true);
+        //characterPortrait.SetDimensions(42f);
+        characterPortrait.GeneratePortrait(character, 42, true);
         UpdateCharacterInfo();
         UpdateAffiliations();
     }

@@ -977,7 +977,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: Candara SDF Material
   m_Shader: {fileID: 4800000, guid: dca26082f9cb439469295791d9f76fe5, type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords: UNDERLAY_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -1053,7 +1053,7 @@ Material:
     - _TextureHeight: 512
     - _TextureWidth: 512
     - _UnderlayDilate: 0
-    - _UnderlayOffsetX: 1
+    - _UnderlayOffsetX: -1
     - _UnderlayOffsetY: -1
     - _UnderlaySoftness: 0
     - _UseUIAlphaClip: 0
@@ -1073,7 +1073,7 @@ Material:
     - _ReflectOutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
-    - _UnderlayColor: {r: 0, g: 0, b: 0, a: 1}
+    - _UnderlayColor: {r: 0, g: 0, b: 0, a: 0.5019608}
 --- !u!28 &28837597433537132
 Texture2D:
   m_ObjectHideFlags: 0

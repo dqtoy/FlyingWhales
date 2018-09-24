@@ -20,7 +20,7 @@ public class CharacterDialogMenu : UIMenu {
     }
 
     public void ShowCharacterDialog(ECS.Character character, string message, List<CharacterDialogChoice> choices) {
-        characterPortrait.GeneratePortrait(character, IMAGE_SIZE.X256, true);
+        characterPortrait.GeneratePortrait(character, 256, true);
         characterDialogLbl.text = message;
         if (choices.Count > 3) {
             throw new System.Exception("There are too many choices provided!");

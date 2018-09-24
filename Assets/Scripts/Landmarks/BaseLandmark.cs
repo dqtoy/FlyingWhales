@@ -38,6 +38,7 @@ public class BaseLandmark : ILocation, IInteractable {
     public bool hasAdjacentCorruptedLandmark;
     private int _civilianCount;
     public QuestBoard questBoard { get; private set; }
+    public List<GameEvent> advertisedEvents { get; private set; } //events happening at this landmark, that other characters can partake in
 
     #region getters/setters
     public int id {
@@ -156,6 +157,7 @@ public class BaseLandmark : ILocation, IInteractable {
         //_horizontalTiles = new List<HexTile>();
         _wallTiles = new List<HexTile>();
         hasAdjacentCorruptedLandmark = false;
+        advertisedEvents = new List<GameEvent>();
         //_diagonalLeftBlocked = 0;
         //_diagonalRightBlocked = 0;
         //_horizontalBlocked = 0;
@@ -1010,6 +1012,25 @@ public class BaseLandmark : ILocation, IInteractable {
             chosenLandmarks = chosenLandmarks.OrderBy(x => x._charactersWithHomeOnLandmark.Count).ToList();
         }
         return chosenLandmarks;
+    }
+    #endregion
+
+    #region Events
+    public void AddAdvertisedEvent(GameEvent gameEvent){
+        if (!advertisedEvents.Contains(gameEvent)) {
+            advertisedEvents.Add(gameEvent);
+        }
+    }
+    public void RemoveAdvertisedEvent(GameEvent gameEvent) {
+        advertisedEvents.Remove(gameEvent);
+    }
+    public bool HasEventOfType(GAME_EVENT eventType) {
+        for (int i = 0; i < advertisedEvents.Count; i++) {
+            if (advertisedEvents[i].type == eventType) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 }

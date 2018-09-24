@@ -80,10 +80,10 @@ public class MapGenerator : MonoBehaviour {
         //CharacterManager.Instance.GenerateCharactersForTesting(8);
         CameraMove.Instance.UpdateMinimapTexture();
         QuestManager.Instance.Initialize();
+        EventManager.Instance.Initialize();
         if (SteamManager.Initialized) {
             AchievementManager.Instance.Initialize();
         }
-        EventManager.Instance.GenerateEventForTesting();
 
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
@@ -172,11 +172,10 @@ public class MapGenerator : MonoBehaviour {
 
         CameraMove.Instance.UpdateMinimapTexture();
         QuestManager.Instance.Initialize();
+        EventManager.Instance.Initialize();
         if (SteamManager.Initialized) {
             AchievementManager.Instance.Initialize();
         }
-
-        EventManager.Instance.GenerateEventForTesting();
 
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));

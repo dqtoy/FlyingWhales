@@ -17035,9 +17035,9 @@ MonoBehaviour:
   nameLbl: {fileID: 0}
   lvlClassLbl: {fileID: 0}
   phaseLbl: {fileID: 0}
-  affiliations: {fileID: 0}
+  factionEmblem: {fileID: 0}
+  squadEmblem: {fileID: 0}
   currentActionIcon: {fileID: 0}
-  actionQueueScrollView: {fileID: 0}
   actionIconPrefab: {fileID: 0}
   actionIconPrefabName: 
   healthProgressBar: {fileID: 0}
@@ -17048,16 +17048,7 @@ MonoBehaviour:
   vitalityLbl: {fileID: 0}
   tagsScrollView: {fileID: 0}
   characterTagPrefab: {fileID: 0}
-  moodMenuGO: {fileID: 0}
-  moodTabLbl: {fileID: 0}
-  overallProgressBar: {fileID: 0}
-  energyProgressBar: {fileID: 0}
-  fullnessProgressBar: {fileID: 0}
-  funProgressBar: {fileID: 0}
-  prestigeProgressBar: {fileID: 0}
-  sanityProgressBar: {fileID: 0}
   itemsMenuGO: {fileID: 0}
-  itemsTabLbl: {fileID: 0}
   headArmorContainer: {fileID: 0}
   leftHandContainer: {fileID: 0}
   rightHandContainer: {fileID: 0}
@@ -17067,14 +17058,12 @@ MonoBehaviour:
   rightFootArmorContainer: {fileID: 0}
   inventoryItemContainersParent: {fileID: 0}
   relationsGO: {fileID: 0}
-  relationsTabLbl: {fileID: 0}
   relationsScrollView: {fileID: 0}
   relationshipItemPrefab: {fileID: 0}
   evenRelationshipColor: {r: 0, g: 0, b: 0, a: 0}
   oddRelationshipColor: {r: 0, g: 0, b: 0, a: 0}
   logHistoryPrefab: {fileID: 1000010317409672, guid: 9c3df809898ed064ba174fb8c9970249,
     type: 2}
-  logsTabLbl: {fileID: 0}
   historyScrollView: {fileID: 0}
   evenLogColor: {r: 0.7647059, g: 0.7137255, b: 0.5882353, a: 1}
   oddLogColor: {r: 0.8784314, g: 0.8666667, b: 0.83137256, a: 0}
