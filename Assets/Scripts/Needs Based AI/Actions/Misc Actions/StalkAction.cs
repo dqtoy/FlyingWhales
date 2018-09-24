@@ -13,11 +13,13 @@ public class StalkAction : CharacterAction {
     }
 
     #region Overrides
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
 
         //give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige
-        GiveAllReward(party);
+        if (party is CharacterParty) {
+            GiveAllReward(party as CharacterParty);
+        }
     }
     public override IObject GetTargetObject(CharacterParty sourceParty) {
         Character stalker = sourceParty.mainCharacter as Character;

@@ -45,12 +45,12 @@ public class WaitForPartyAction : CharacterAction {
         }
         Debug.Log(iparty.name + " started waiting for their party mates. Will end wait on [" + today.GetDayAndTicksString() + "]");
     }
-    public override void DoneDuration(CharacterParty party, IObject targetObject) {
+    public override void DoneDuration(NewParty party, IObject targetObject) {
         base.DoneDuration(party, targetObject);
         //done waiting
         StartQuestAction(party);
     }
-    public override void EndAction(CharacterParty party, IObject targetObject) {
+    public override void EndAction(NewParty party, IObject targetObject) {
         base.EndAction(party, targetObject);
         if (waitingCharacter.IsSquadLeader()) {
             Messenger.RemoveListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);

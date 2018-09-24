@@ -35,9 +35,10 @@ public class RepairAction : CharacterAction {
     //        _resourceAmountToDecrease = Mathf.RoundToInt((float) _actionData.resourceAmountNeeded / (float) _actionData.duration);
     //    }
     //}
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
-        if(targetObject is StructureObj) {
+        if(party is CharacterParty && targetObject is StructureObj) {
+            CharacterParty characterParty = party as CharacterParty;
             StructureObj structure = targetObject as StructureObj;
             int resourceAmountToDecrease = Mathf.RoundToInt((float) _actionData.resourceAmountNeeded / (float) _actionData.duration);
             int amountToIncrease = Mathf.RoundToInt((float) structure.maxHP / (float) _actionData.duration);
@@ -45,12 +46,12 @@ public class RepairAction : CharacterAction {
             if(_actionData.resourceNeeded != RESOURCE.NONE) {
                 resourceNeeded = _actionData.resourceNeeded;
             }
-            GiveAllReward(party);
+            GiveAllReward(characterParty);
 
-            (party.characterObject as CharacterObj).AdjustResource(resourceNeeded, resourceAmountToDecrease);
+            (characterParty.characterObject as CharacterObj).AdjustResource(resourceNeeded, resourceAmountToDecrease);
             structure.AdjustHP(amountToIncrease);
-            if (structure.isHPFull || (party.characterObject as CharacterObj).resourceInventory[resourceNeeded] < resourceAmountToDecrease) {
-                EndAction(party, structure);
+            if (structure.isHPFull || (characterParty.characterObject as CharacterObj).resourceInventory[resourceNeeded] < resourceAmountToDecrease) {
+                EndAction(characterParty, structure);
             }
         }
         

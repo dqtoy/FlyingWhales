@@ -20,7 +20,7 @@ public class DestroyAction : CharacterAction {
         //    _amountToReduce = Mathf.RoundToInt((float) _structure.maxHP / (float) _actionData.duration);
         //}
     //}
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         if(targetObject is StructureObj) {
             StructureObj structure = targetObject as StructureObj;
@@ -31,7 +31,9 @@ public class DestroyAction : CharacterAction {
             int chance = UnityEngine.Random.Range(0, 100);
             if (chance < actionData.successRate) {
                 ActionSuccess(structure);
-                GiveAllReward(party);
+                if (party is CharacterParty) {
+                    GiveAllReward(party as CharacterParty);
+                }
 
                 int amountToReduce = Mathf.RoundToInt((float) structure.maxHP / (float) _actionData.duration); ;
                 structure.AdjustHP(-amountToReduce);
@@ -40,7 +42,9 @@ public class DestroyAction : CharacterAction {
                 }
             } else {
                 ActionFail(structure);
-                GiveReward(NEEDS.ENERGY, party);
+                if (party is CharacterParty) {
+                    GiveAllReward(party as CharacterParty);
+                }
             }
         }
 

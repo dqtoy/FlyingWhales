@@ -728,6 +728,7 @@ public enum ACTION_TYPE {
     DEFEND,
     RESEARCH,
     GIVE_ITEM,
+    ATTACK_LANDMARK,
 }
 public enum ACTION_CATEGORY {
     WORK,

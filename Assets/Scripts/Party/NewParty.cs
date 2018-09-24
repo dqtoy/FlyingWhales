@@ -6,6 +6,9 @@ using UnityEngine;
 using ECS;
 
 public class NewParty : IParty {
+    public delegate void DailyAction();
+    public DailyAction onDailyAction;
+
     protected int _id;
     protected int _numOfAttackers;
     protected bool _isDead;
@@ -107,6 +110,12 @@ public class NewParty : IParty {
     public virtual ICharacter owner {
         get { return _owner; }
     }
+    public virtual CharacterAction currentAction {
+        get { return null; }
+    }
+    public virtual int currentDay {
+        get { return 0; }
+    }
     #endregion
 
     public NewParty(ICharacter owner) {
@@ -149,6 +158,7 @@ public class NewParty : IParty {
         Messenger.RemoveListener<ActionThread>(Signals.LOOK_FOR_ACTION, AdvertiseSelf);
         //Messenger.RemoveListener<BuildStructureQuestData>(Signals.BUILD_STRUCTURE_LOOK_ACTION, BuildStructureLookingForAction);
     }
+    public virtual void EndAction() { }
     #endregion
 
     #region Interface

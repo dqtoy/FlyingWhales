@@ -17,10 +17,10 @@ public class GiveItemAction : CharacterAction {
         action.Initialize();
         return action;
     }
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
-        if (targetObject is CharacterObj) {
-            party.characterOwner.GiveItemsTo(itemsToGive, (targetObject as CharacterObj).party.characterOwner);
+        if (party is CharacterParty && targetObject is CharacterObj) {
+            (party as CharacterParty).characterOwner.GiveItemsTo(itemsToGive, (targetObject as CharacterObj).party.characterOwner);
         }
         EndAction(party, targetObject);
     }

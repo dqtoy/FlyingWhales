@@ -126,15 +126,19 @@ public class FormPartyAction : CharacterAction {
         iparty.GoToLocation(targetLocation, PATHFINDING_MODE.PASSABLE, () => InviteSquadMembers(iparty.mainCharacter)); //The character will move to the target tile and perform the action for Minimum Duration
         base.OnChooseAction(iparty, targetObject);
     }
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
-        GiveAllReward(party);
-        minimumDuration -= 1;
-        if (minimumDuration == 0) {
-            if (joiningCharacters.Count == 0) { //if not waiting for anyone, end, else wait for other characters
-                EndAction(party, targetObject);
+        if (party is CharacterParty) {
+            CharacterParty characterParty = party as CharacterParty;
+            GiveAllReward(characterParty);
+            minimumDuration -= 1;
+            if (minimumDuration == 0) {
+                if (joiningCharacters.Count == 0) { //if not waiting for anyone, end, else wait for other characters
+                    EndAction(characterParty, targetObject);
+                }
             }
         }
+        
     }
     //Give all provided needs to the character regardless of the amount
     public override void GiveAllReward(CharacterParty party) {
@@ -155,7 +159,7 @@ public class FormPartyAction : CharacterAction {
         }
 
     }
-    public override void EndAction(CharacterParty party, IObject targetObject) {
+    public override void EndAction(NewParty party, IObject targetObject) {
         base.EndAction(party, targetObject);
         if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_JOINED_PARTY)) {
             Messenger.RemoveListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);

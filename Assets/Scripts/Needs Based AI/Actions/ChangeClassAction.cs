@@ -15,11 +15,13 @@ public class ChangeClassAction : CharacterAction {
         base.OnChooseAction(iparty, targetObject);
         partyAssigned = iparty;
     }
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
-        GiveAllReward(party);
-        if(partyAssigned != null && partyAssigned.mainCharacter is Character) {
+        if (party is CharacterParty) {
+            GiveAllReward(party as CharacterParty);
+        }
+        if (partyAssigned != null && partyAssigned.mainCharacter is Character) {
             Character character = partyAssigned.mainCharacter as Character;
             character.ChangeClass(_advertisedClassName);
         }
@@ -30,8 +32,8 @@ public class ChangeClassAction : CharacterAction {
         }
         return base.CanBeDone(targetObject);
     }
-    public override bool CanBeDoneBy(CharacterParty party, IObject targetObject) {
-        if(party.mainCharacter.characterClass != null) {
+    public override bool CanBeDoneBy(NewParty party, IObject targetObject) {
+        if(party.mainCharacter is Character && party.mainCharacter.characterClass != null) {
             if(party.homeLandmark.tileLocation.areaOfTile.excessClasses.Contains(party.mainCharacter.characterClass.className)
                 && party.homeLandmark.tileLocation.areaOfTile.missingClasses.Contains(_advertisedClassName)) { //TODO: Subject for change
                 return true;
@@ -39,7 +41,7 @@ public class ChangeClassAction : CharacterAction {
         }
         return false;
     }
-    public override void EndAction(CharacterParty party, IObject targetObject) {
+    public override void EndAction(NewParty party, IObject targetObject) {
         base.EndAction(party, targetObject);
         partyAssigned = null;
     }

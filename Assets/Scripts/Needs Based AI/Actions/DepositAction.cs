@@ -10,35 +10,31 @@ public class DepositAction : CharacterAction {
 
     }
     #region Overrides
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
-        GiveAllReward(party);
-        RESOURCE resource = RESOURCE.NONE;
-        //if (party.actionData.questDataAssociatedWithCurrentAction is BuildStructureQuestData) {
-        //    resource = (party.actionData.questDataAssociatedWithCurrentAction as BuildStructureQuestData).currentDepositingResource;
-        //}
-        if(resource != RESOURCE.NONE) {
-            int deposit = depositingAmount;
-            if(party.characterObject.resourceInventory[resource] < deposit) {
-                deposit = party.characterObject.resourceInventory[resource];
+        if (party is CharacterParty) {
+            CharacterParty characterParty = party as CharacterParty;
+            GiveAllReward(characterParty);
+            RESOURCE resource = RESOURCE.NONE;
+            //if (party.actionData.questDataAssociatedWithCurrentAction is BuildStructureQuestData) {
+            //    resource = (party.actionData.questDataAssociatedWithCurrentAction as BuildStructureQuestData).currentDepositingResource;
+            //}
+            if (resource != RESOURCE.NONE) {
+                int deposit = depositingAmount;
+                if (characterParty.characterObject.resourceInventory[resource] < deposit) {
+                    deposit = characterParty.characterObject.resourceInventory[resource];
+                }
+                characterParty.characterObject.AdjustResource(resource, -deposit);
+                targetObject.AdjustResource(resource, deposit);
             }
-            party.characterObject.AdjustResource(resource, -deposit);
-            targetObject.AdjustResource(resource, deposit);
-        }
-        if(party.characterObject.resourceInventory[resource] <= 0) {
-            EndAction(party, targetObject);
+            if (characterParty.characterObject.resourceInventory[resource] <= 0) {
+                EndAction(characterParty, targetObject);
+            }
         }
     }
     public override bool CanBeDone(IObject targetObject) {
         return false;
-    }
-    public override void EndAction(CharacterParty party, IObject targetObject) {
-        base.EndAction(party, targetObject);
-        //if(party.actionData.questDataAssociatedWithCurrentAction.parentQuest is BuildStructureQuest) {
-        //    BuildStructureQuest buildStructureQuest = party.actionData.questDataAssociatedWithCurrentAction.parentQuest as BuildStructureQuest;
-        //    buildStructureQuest.UpdateLackingResources();
-        //}
     }
     public override CharacterAction Clone() {
         DepositAction depositAction = new DepositAction();

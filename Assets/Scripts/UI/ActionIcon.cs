@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandler {
 
     private CharacterAction _action;
-    private ECS.Character _character;
+    private ICharacter _character;
 
     [SerializeField] private Image progressBarImage;
     [SerializeField] private Image middleCircleImage;
@@ -25,10 +25,10 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
 
     public void Initialize() {
         Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_DAY_ADJUSTED, OnActionDayAdjusted);
-        Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
+        Messenger.AddListener<CharacterAction, NewParty>(Signals.ACTION_TAKEN, OnActionTaken);
         //Messenger.AddListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
     }
-    public void SetCharacter(ECS.Character character) {
+    public void SetCharacter(ICharacter character) {
         _character = character;
     }
     public void SetAction(CharacterAction action) {
@@ -43,10 +43,10 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
         if (_action.actionData.duration == 0) {
             progressBarImage.fillAmount = 1f;
         } else {
-            progressBarImage.fillAmount = (float)(_character.currentParty as CharacterParty).actionData.currentDay / (float)_action.actionData.duration;
+            progressBarImage.fillAmount = (float)_character.currentParty.currentDay / (float)_action.actionData.duration;
         }
     }
-    private void OnActionDayAdjusted(CharacterAction action, CharacterParty party) {
+    private void OnActionDayAdjusted(CharacterAction action, NewParty party) {
         if (_action == null || _character == null) {
             return;
         }
@@ -78,7 +78,7 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
         iconImage.color = color;
     }
 
-    private void OnActionTaken(CharacterAction action, CharacterParty party) {
+    private void OnActionTaken(CharacterAction action, NewParty party) {
         //if (_character != null && party.id == _character.ownParty.id) {
         //    SetAction(action);
         //}
@@ -102,7 +102,7 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
     public override void Reset() {
         base.Reset();
         Messenger.RemoveListener<CharacterAction, CharacterParty>(Signals.ACTION_DAY_ADJUSTED, OnActionDayAdjusted);
-        Messenger.RemoveListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
+        Messenger.RemoveListener<CharacterAction, NewParty>(Signals.ACTION_TAKEN, OnActionTaken);
         //Messenger.RemoveListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
         _action = null;
         _character = null;
@@ -115,7 +115,7 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
             if (_action != null) {
                 string summary = _action.actionData.actionName;
                 if (_action.actionData.duration != 0) {
-                    summary += " " + (_character.currentParty as CharacterParty).actionData.currentDay.ToString() + "/" + _action.actionData.duration.ToString();
+                    summary += " " + _character.currentParty.currentDay.ToString() + "/" + _action.actionData.duration.ToString();
                 }
                 UIManager.Instance.ShowSmallInfo(summary);
             } else {

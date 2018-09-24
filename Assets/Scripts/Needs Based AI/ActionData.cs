@@ -115,7 +115,7 @@ public class ActionData {
                 }
             }
         }
-        Messenger.Broadcast(Signals.ACTION_TAKEN, action, _party);
+        Messenger.Broadcast(Signals.ACTION_TAKEN, action, _party.GetBase());
     }
     public void DetachActionData() {
         _party.onDailyAction -= PerformCurrentAction;

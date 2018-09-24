@@ -25,7 +25,7 @@ public class WaitingInteractionAction : CharacterAction {
             EndAction(iparty as CharacterParty, targetObject);
         }
     }
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         GameDate today = GameManager.Instance.Today();
         if (IsWaitedCharacterHere(party) || today.IsSameDate(waitUntil)) {

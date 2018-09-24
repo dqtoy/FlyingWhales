@@ -10,21 +10,24 @@ public class DefendAction : CharacterAction {
 
 
     #region Overrides
-    public override void OnFirstEncounter(CharacterParty party, IObject targetObject) {
+    public override void OnFirstEncounter(NewParty party, IObject targetObject) {
         base.OnFirstEncounter(party, targetObject);
         party.SetIsDefending(true);
         //DefendTheLand(party, targetObject);
     }
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
-        GiveAllReward(party);
-        DefendTheLand(party, targetObject);
+        if (party is CharacterParty) {
+            CharacterParty characterParty = party as CharacterParty;
+            GiveAllReward(characterParty);
+            DefendTheLand(characterParty, targetObject);
+        }
     }
     public override IObject GetTargetObject(CharacterParty sourceParty) {
         return null;
     }
-    public override void EndAction(CharacterParty party, IObject targetObject) {
+    public override void EndAction(NewParty party, IObject targetObject) {
         base.EndAction(party, targetObject);
         party.SetIsDefending(false);
     }

@@ -35,11 +35,9 @@ public class LandmarkCharacterItem : PooledObject {
         UpdateVisuals();
         Messenger.AddListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
         Messenger.AddListener<ICharacter, NewParty>(Signals.CHARACTER_LEFT_PARTY, OnCharacterLeftParty);
-        if (party is CharacterParty) {
-            actionIcon.Initialize();
-            actionIcon.SetCharacter(party.owner as Character);
-            actionIcon.SetAction((party as CharacterParty).actionData.currentAction);
-        }
+        actionIcon.Initialize();
+        actionIcon.SetCharacter(party.mainCharacter);
+        actionIcon.SetAction(party.currentAction);
     }
 
     public void UpdateVisuals() {

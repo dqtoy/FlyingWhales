@@ -10,10 +10,12 @@ public class IdleAction : CharacterAction {
     }
     
     #region Overrides
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
-        GiveAllReward(party);
+        if (party is CharacterParty) {
+            GiveAllReward(party as CharacterParty);
+        }
     }
     public override CharacterAction Clone() {
         IdleAction idleAction = new IdleAction();
@@ -21,9 +23,9 @@ public class IdleAction : CharacterAction {
         idleAction.Initialize();
         return idleAction;
     }
-    public override bool CanBeDoneBy(CharacterParty party, IObject targetObject) {
+    public override bool CanBeDoneBy(NewParty party, IObject targetObject) {
         //if (character.characterObject.objectLocation == null || character.characterObject.objectLocation.id != _state.obj.objectLocation.id || character.homeStructure.objectLocation.id != _state.obj.objectLocation.id) {
-        if (party.characterObject.objectLocation == null || party.homeLandmark.id != targetObject.objectLocation.id) {
+        if (party.icharacterObject.objectLocation == null || party.homeLandmark.id != targetObject.objectLocation.id) {
             //the characters location is null or the object that this action belongs to is not the home of the character
             return false;
         }

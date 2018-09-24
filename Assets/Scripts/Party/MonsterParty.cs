@@ -9,6 +9,7 @@ public class MonsterParty : NewParty {
     private string _name;
     private MonsterObj _monsterObj;
     private string _setupName;
+    private MonsterActionData _actionData;
 
     #region getters/setters
     //public override string name {
@@ -20,17 +21,28 @@ public class MonsterParty : NewParty {
     public MonsterObj monsterObj {
         get { return _monsterObj; }
     }
+    public MonsterActionData actionData {
+        get { return _actionData; }
+    }
     public override ICharacter owner {
         get { return mainCharacter; }
     }
+    public override CharacterAction currentAction {
+        get { return _actionData.currentAction; }
+    }
+    public override int currentDay {
+        get { return _actionData.currentDay; }
+    }
     #endregion
 
-    public MonsterParty(Monster monster) : base(monster) {
+    public MonsterParty() : base(null) {
 #if !WORLD_CREATION_TOOL
         _monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
         _monsterObj.SetMonster(this);
         _icharacterObject = _monsterObj;
+        _actionData = new MonsterActionData(this);
         MonsterManager.Instance.allMonsterParties.Add(this);
+        Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
         //ConstructResourceInventory();
 #endif
     }
@@ -58,6 +70,13 @@ public class MonsterParty : NewParty {
         MonsterManager.Instance.allMonsterParties.Remove(this);
         Messenger.Broadcast(Signals.MONSTER_PARTY_DIED, this);
     }
+    public override void EndAction() {
+        _actionData.EndAction();
+    }
+    public override void RemoveListeners() {
+        base.RemoveListeners();
+        Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
+    }
     #endregion
 
     #region Utilities
@@ -67,5 +86,11 @@ public class MonsterParty : NewParty {
     public void SetSetupName(string setupName) {
         _setupName = setupName;
     }
+    private void EverydayAction() {
+        if (onDailyAction != null) {
+            onDailyAction();
+        }
+    }
     #endregion
+
 }

@@ -13,9 +13,11 @@ public class InPartyAction : CharacterAction {
         action.Initialize();
         return action;
     }
-    public override void EndAction(CharacterParty party, IObject targetObject) {
+    public override void EndAction(NewParty party, IObject targetObject) {
         base.EndAction(party, targetObject);
-        party.actionData.LookForAction();
+        if(party is CharacterParty) {
+            (party as CharacterParty).actionData.LookForAction();
+        }
     }
     #endregion
 }

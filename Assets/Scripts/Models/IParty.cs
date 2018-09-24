@@ -20,11 +20,13 @@ public interface IParty {
     Combat currentCombat { get; set; }
     BaseLandmark landmarkLocation { get; }
     BaseLandmark homeLandmark { get; }
+    CharacterAction currentAction { get; }
     ICharacter mainCharacter { get; }
     ICharacterObject icharacterObject { get; }
     ILocation specificLocation { get; }
     List<ICharacter> icharacters { get; }
 
+    void EndAction();
     void GoHome(Action action = null, Action actionOnStartOfMovement = null);
     void AddCharacter(ICharacter icharacter);
     void RemoveCharacter(ICharacter icharacter);

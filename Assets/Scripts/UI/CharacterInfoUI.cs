@@ -172,7 +172,7 @@ public class CharacterInfoUI : UIMenu {
         ShowReleaseButton();
         CheckShowSnatchButton();
         currentActionIcon.SetCharacter(currentlyShowingCharacter);
-        currentActionIcon.SetAction((currentlyShowingCharacter.currentParty as CharacterParty).actionData.currentAction);
+        currentActionIcon.SetAction(currentlyShowingCharacter.currentParty.currentAction);
         PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(currentlyShowingCharacter);
     }
     public override void ShowTooltip(GameObject objectHovered) {

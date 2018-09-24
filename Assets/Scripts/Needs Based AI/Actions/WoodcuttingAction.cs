@@ -9,14 +9,16 @@ public class WoodcuttingAction : CharacterAction {
     }
 
     #region Overrides
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
 
         //give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige
-        GiveAllReward(party);
+        if (party is CharacterParty) {
+            GiveAllReward(party as CharacterParty);
+        }
 
         int numOfResources = Random.Range(this.actionData.minResourceGiven, this.actionData.maxResourceGiven);
-        party.characterObject.AdjustResource(this.actionData.resourceGiven, numOfResources);
+        party.icharacterObject.AdjustResource(this.actionData.resourceGiven, numOfResources);
         ActionSuccess(targetObject);
     }
     public override CharacterAction Clone() {

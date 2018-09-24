@@ -544,13 +544,14 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         this._homeLandmark = newHomeLandmark;
     }
     public NewParty CreateOwnParty() {
-        if (_ownParty != null) {
-            _ownParty.RemoveCharacter(this);
-        }
-        MonsterParty newParty = new MonsterParty(this);
-        SetOwnedParty(newParty);
-        newParty.AddCharacter(this);
-        return newParty;
+        //if (_ownParty != null) {
+        //    _ownParty.RemoveCharacter(this);
+        //}
+        //MonsterParty newParty = new MonsterParty();
+        //SetOwnedParty(newParty);
+        //newParty.AddCharacter(this);
+        //return newParty;
+        return null;
     }
     public void SetOwnedParty(NewParty party) {
         _ownParty = party as MonsterParty;

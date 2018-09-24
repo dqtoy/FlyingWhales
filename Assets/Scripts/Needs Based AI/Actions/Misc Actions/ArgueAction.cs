@@ -20,7 +20,7 @@ public class ArgueAction : CharacterAction {
             arguer.SetDoNotDisturb(true);
         }
     }
-    public override void OnFirstEncounter(CharacterParty party, IObject targetObject) {
+    public override void OnFirstEncounter(NewParty party, IObject targetObject) {
         base.OnFirstEncounter(party, targetObject);
         if (targetObject == null) {
             return;
@@ -56,11 +56,13 @@ public class ArgueAction : CharacterAction {
             }
         }
     }
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
 
         //give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige
-        GiveAllReward(party);
+        if (party is CharacterParty) {
+            GiveAllReward(party as CharacterParty);
+        }
     }
     public override IObject GetTargetObject(CharacterParty sourceParty) {
         Character mainCharacter = sourceParty.mainCharacter as Character;
@@ -85,11 +87,15 @@ public class ArgueAction : CharacterAction {
         }
         return null;
     }
-    public override void EndAction(CharacterParty party, IObject targetObject) {
-        if (party.actionData.isDone) {
+    public override void EndAction(NewParty party, IObject targetObject) {
+        if(!(party is CharacterParty)) {
             return;
         }
-        Character arguer = party.mainCharacter as Character;
+        CharacterParty characterParty = party as CharacterParty;
+        if (characterParty.actionData.isDone) {
+            return;
+        }
+        Character arguer = characterParty.mainCharacter as Character;
         arguer.SetDoNotDisturb(false);
 
         if (targetObject is ICharacterObject) {

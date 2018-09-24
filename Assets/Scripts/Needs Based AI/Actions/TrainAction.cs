@@ -12,12 +12,12 @@ public class TrainAction : CharacterAction {
     }
 
     #region Overrides
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         //give exp per tick
         party.mainCharacter.AdjustExperience(_actionData.providedExp);
     }
-    public override void DoneDuration(CharacterParty party, IObject targetObject) {
+    public override void DoneDuration(NewParty party, IObject targetObject) {
         ResetCooldown();
         ActionSuccess(targetObject);
     }
@@ -30,7 +30,7 @@ public class TrainAction : CharacterAction {
     public override bool CanBeDone(IObject targetObject) {
         return false; //Change this to something more elegant, this is to prevent other characters that don't have the release character quest from releasing this character.
     }
-    public override bool CanBeDoneBy(CharacterParty party, IObject targetObject) {
+    public override bool CanBeDoneBy(NewParty party, IObject targetObject) {
         if (cooldown != 0) {
             return false; //action has not yet cooled down
         }

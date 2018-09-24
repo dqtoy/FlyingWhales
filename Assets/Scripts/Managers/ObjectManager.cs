@@ -349,6 +349,8 @@ public class ObjectManager : MonoBehaviour {
                 return new HousekeepingAction();
             case ACTION_TYPE.STALK:
                 return new StalkAction();
+            case ACTION_TYPE.ATTACK_LANDMARK:
+                return new AttackLandmarkAction();
         }
         return null;
     }

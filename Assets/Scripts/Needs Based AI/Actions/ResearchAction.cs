@@ -14,26 +14,29 @@ public class ResearchAction : CharacterAction {
         action.Initialize();
         return action;
     }
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
-        List<Item> researchedScrolls = new List<Item>();
-        for (int i = 0; i < party.characterOwner.inventory.Count; i++) {
-            Item currItem = party.characterOwner.inventory[i];
-            if (currItem.itemName.Contains("Scroll")) {
-                Debug.Log(party.characterOwner.name + " researched " + currItem.itemName);
-                if (currItem.itemName.Contains("Dispel")) {
-                    //end research scrolls quest
-                    QuestManager.Instance.RemoveQuestFromBoards((party.characterOwner.hiddenDesire as ResearchScrollDesire).surrenderScrollsQuest);
-                    //Awaken Skazi
-                    Debug.LogWarning(party.characterOwner.name + " has awakened the skazi!");
+        if (party is CharacterParty) {
+            CharacterParty characterParty = party as CharacterParty;
+            List<Item> researchedScrolls = new List<Item>();
+            for (int i = 0; i < characterParty.characterOwner.inventory.Count; i++) {
+                Item currItem = characterParty.characterOwner.inventory[i];
+                if (currItem.itemName.Contains("Scroll")) {
+                    Debug.Log(characterParty.characterOwner.name + " researched " + currItem.itemName);
+                    if (currItem.itemName.Contains("Dispel")) {
+                        //end research scrolls quest
+                        QuestManager.Instance.RemoveQuestFromBoards((characterParty.characterOwner.hiddenDesire as ResearchScrollDesire).surrenderScrollsQuest);
+                        //Awaken Skazi
+                        Debug.LogWarning(characterParty.characterOwner.name + " has awakened the skazi!");
+                    }
+                    researchedScrolls.Add(currItem);
                 }
-                researchedScrolls.Add(currItem);
             }
-        }
-        //remove researched scrolls from inventory
-        for (int i = 0; i < researchedScrolls.Count; i++) {
-            Item currScroll = researchedScrolls[i];
-            party.characterOwner.ThrowItem(currScroll, false);
+            //remove researched scrolls from inventory
+            for (int i = 0; i < researchedScrolls.Count; i++) {
+                Item currScroll = researchedScrolls[i];
+                characterParty.characterOwner.ThrowItem(currScroll, false);
+            }
         }
     }
     #endregion

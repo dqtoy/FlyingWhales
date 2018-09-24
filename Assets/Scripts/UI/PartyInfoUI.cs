@@ -53,7 +53,7 @@ public class PartyInfoUI : UIMenu {
         partyNameLbl.text = currentlyShowingParty.name;
         if (currentlyShowingParty is CharacterParty) {
             actionIcon.SetCharacter(currentlyShowingParty.owner as ECS.Character);
-            actionIcon.SetAction((currentlyShowingParty as CharacterParty).actionData.currentAction);
+            actionIcon.SetAction(currentlyShowingParty.currentAction);
             actionIcon.gameObject.SetActive(true);
         } else {
             actionIcon.gameObject.SetActive(false);

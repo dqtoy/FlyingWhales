@@ -6,10 +6,6 @@ using UnityEngine;
 using ECS;
 
 public class CharacterParty : NewParty {
-    public delegate void DailyAction();
-    public DailyAction onDailyAction;
-
-
     private bool _isIdle; //can't do action, needs will not deplete
     private CharacterObj _characterObj;
     private ActionData _actionData;
@@ -29,6 +25,12 @@ public class CharacterParty : NewParty {
     }
     public Character characterOwner {
         get { return owner as Character; }
+    }
+    public override CharacterAction currentAction {
+        get { return _actionData.currentAction; }
+    }
+    public override int currentDay {
+        get { return _actionData.currentDay; }
     }
     #endregion
 
@@ -158,6 +160,9 @@ public class CharacterParty : NewParty {
         Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
         Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
         Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+    }
+    public override void EndAction() {
+        _actionData.EndAction();
     }
     #endregion
 

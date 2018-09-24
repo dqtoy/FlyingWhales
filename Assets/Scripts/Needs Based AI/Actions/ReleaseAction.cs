@@ -15,7 +15,7 @@ public class ReleaseAction : CharacterAction {
     //        _characterObj = _state.obj as CharacterObj;
     //    }
     //}
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
     }
@@ -25,9 +25,11 @@ public class ReleaseAction : CharacterAction {
         releaseAction.Initialize();
         return releaseAction;
     }
-    public override void DoneDuration(CharacterParty party, IObject targetObject) {
+    public override void DoneDuration(NewParty party, IObject targetObject) {
         base.DoneDuration(party, targetObject);
-        GiveAllReward(party);
+        if(party is CharacterParty) {
+            GiveAllReward(party as CharacterParty);
+        }
         ReleaseCharacter(targetObject);
     }
     public override bool CanBeDone(IObject targetObject) {

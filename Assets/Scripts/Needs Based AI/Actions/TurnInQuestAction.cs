@@ -14,7 +14,7 @@ public class TurnInQuestAction : CharacterAction {
         action.Initialize();
         return action;
     }
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         Character mainCharacter = party.owner as Character;
         if (mainCharacter.currentQuest == null) {
@@ -30,11 +30,14 @@ public class TurnInQuestAction : CharacterAction {
             EndAction(party, targetObject);
         }
     }
-    public override void EndAction(CharacterParty party, IObject targetObject) {
+    public override void EndAction(NewParty party, IObject targetObject) {
         base.EndAction(party, targetObject);
-        if ((party.owner as Character).dailySchedule.currentPhase.phaseType != SCHEDULE_PHASE_TYPE.WORK) {
-            //the turn in quest action has reached another phase, disband party after doing this action
-            (party.owner as Character).AddActionToQueue(party.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), party.characterObject);
+        if(party is CharacterParty) {
+            CharacterParty characterParty = party as CharacterParty;
+            if ((characterParty.owner as Character).dailySchedule.currentPhase.phaseType != SCHEDULE_PHASE_TYPE.WORK) {
+                //the turn in quest action has reached another phase, disband party after doing this action
+                (characterParty.owner as Character).AddActionToQueue(characterParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), characterParty.characterObject);
+            }
         }
     }
     #endregion

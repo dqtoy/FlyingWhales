@@ -27,7 +27,7 @@ public class JoinPartyAction : CharacterAction {
     //    base.PerformAction(party, targetObject);
         
     //}
-    public override void EndAction(CharacterParty party, IObject targetObject) {
+    public override void EndAction(NewParty party, IObject targetObject) {
         base.EndAction(party, targetObject);
         party.icon.SetVisualState(false);
     }

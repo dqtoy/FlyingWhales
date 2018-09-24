@@ -7,10 +7,11 @@ public class QuestingAction : CharacterAction {
     public QuestingAction() : base(ACTION_TYPE.QUESTING) { }
 
     #region overrides
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
-        if (party.mainCharacter is Character) {
+        if (party is CharacterParty && party.mainCharacter is Character) {
             Character mainCharacter = party.mainCharacter as Character;
+            CharacterParty characterParty = party as CharacterParty;
             //check first if the character is part of a squad
             if (mainCharacter.squad != null) { //if the character is part of a squad
                 //check if he/she is the squad leader
@@ -31,21 +32,21 @@ public class QuestingAction : CharacterAction {
                     if (mainCharacter.squad.squadMembers.Count == mainCharacter.ownParty.icharacters.Count) {
                         //if the character's squad is already complete, do not wait
                         QuestAction questAction = mainCharacter.currentQuest.GetQuestAction(mainCharacter);
-                        party.actionData.ForceDoAction(questAction);
+                        characterParty.actionData.ForceDoAction(questAction);
                     } else {
                         //else, wait for 1 hour (6 ticks)
-                        party.actionData.ForceDoAction(party.characterObject.currentState.GetAction(ACTION_TYPE.WAIT_FOR_PARTY), party.characterObject);
+                        characterParty.actionData.ForceDoAction(characterParty.characterObject.currentState.GetAction(ACTION_TYPE.WAIT_FOR_PARTY), characterParty.characterObject);
                         InviteSquadMembersInLandmark(mainCharacter.squad, mainCharacter.workplace);
                     }
                 } else { //if character is a squad member
                     //check if squad leader is already waiting for party members
-                    if (party.specificLocation.IsCharacterAtLocation(mainCharacter.squad.squadLeader)) {
+                    if (characterParty.specificLocation.IsCharacterAtLocation(mainCharacter.squad.squadLeader)) {
                         //if yes, join the party leader's party, and set action to In Party indefinitely
-                        party.actionData.ForceDoAction(mainCharacter.squad.squadLeader.ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.JOIN_PARTY), mainCharacter.squad.squadLeader.ownParty.icharacterObject);
+                        characterParty.actionData.ForceDoAction(mainCharacter.squad.squadLeader.ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.JOIN_PARTY), mainCharacter.squad.squadLeader.ownParty.icharacterObject);
                     } else {
                         //if no, set action to waiting for party, then wait for squad leader to arrive.
                         //Once squad leader arrives, join party immediately then set action to In Party indefinitely
-                        party.actionData.ForceDoAction(party.characterObject.currentState.GetAction(ACTION_TYPE.WAIT_FOR_PARTY), party.characterObject);
+                        characterParty.actionData.ForceDoAction(characterParty.characterObject.currentState.GetAction(ACTION_TYPE.WAIT_FOR_PARTY), characterParty.characterObject);
                     }
                 }
             } else { //if the character is NOT part of a squad
@@ -63,10 +64,10 @@ public class QuestingAction : CharacterAction {
                 }
                 //if yes, get action from quest
                 QuestAction questAction = mainCharacter.currentQuest.GetQuestAction(mainCharacter);
-                party.actionData.ForceDoAction(questAction);
+                characterParty.actionData.ForceDoAction(questAction);
             }
             //give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige
-            GiveAllReward(party);
+            GiveAllReward(characterParty);
         }
     }
     public override CharacterAction Clone() {

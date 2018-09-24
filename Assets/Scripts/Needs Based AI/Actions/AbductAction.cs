@@ -17,13 +17,15 @@ public class AbductAction : CharacterAction {
         //    _structure = state.obj as StructureObj;
         //}
     //}
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         if (targetObject is StructureObj) {
             StructureObj structure = targetObject as StructureObj;
             structureResourceAmount = structure.resourceInventory[this.actionData.resourceGiven];
             if (structureResourceAmount > 0) {
-                GiveAllReward(party);
+                if (party is CharacterParty) {
+                    GiveAllReward(party as CharacterParty);
+                }
 
                 int minResourceAmount = this.actionData.minResourceGiven;
                 int maxResourceAmount = this.actionData.maxResourceGiven;

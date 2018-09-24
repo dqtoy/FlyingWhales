@@ -2,25 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DaydreamAction : CharacterAction {
+public class AttackLandmarkAction : CharacterAction {
 
-    public DaydreamAction() : base(ACTION_TYPE.DAYDREAM) {
-        _actionData.providedEnergy = -1f;
-        _actionData.providedFun = 1f;
+    public AttackLandmarkAction() : base(ACTION_TYPE.ATTACK_LANDMARK) {
 
-        _actionData.duration = 8;
     }
 
     #region Overrides
     public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
-        if (party is CharacterParty) {
-            GiveAllReward(party as CharacterParty);
+        if (targetObject is StructureObj) {
+            StructureObj structure = targetObject as StructureObj;
+            structure.AdjustHP(-10);
+            if (structure.currentHP <= 0) {
+                EndAction(party, targetObject);
+            }
         }
     }
     public override CharacterAction Clone() {
-        DaydreamAction action = new DaydreamAction();
+        AttackLandmarkAction action = new AttackLandmarkAction();
         SetCommonData(action);
         action.Initialize();
         return action;

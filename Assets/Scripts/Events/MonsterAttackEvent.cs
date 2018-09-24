@@ -6,10 +6,9 @@ public class MonsterAttackEvent : GameEvent {
 
     private BaseLandmark _targetLandmark;
     private MonsterParty _monsterPartySpawned;
-    private int _durationDays;
+    private AttackLandmarkAction _attackLandmarkAction;
 
     public MonsterAttackEvent() : base(GAME_EVENT.MONSTER_ATTACK) {
-        _durationDays = 1;
         Messenger.AddListener<MonsterParty>(Signals.MONSTER_PARTY_DIED, MonsterPartyDied);
     }
 
@@ -21,13 +20,9 @@ public class MonsterAttackEvent : GameEvent {
         if (_monsterPartySpawned.specificLocation.tileLocation.landmarkOnTile != null) {
             Messenger.Broadcast(Signals.LANDMARK_UNDER_ATTACK, _monsterPartySpawned.GetBase(), this.GetBase());
         }
-        ScheduleEnd();
-    }
-
-    public void ScheduleEnd() {
-        GameDate endDate = GameManager.Instance.Today();
-        endDate.AddDays(_durationDays);
-        SchedulingManager.Instance.AddEntry(endDate, () => EndTerrorization());
+        _attackLandmarkAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK) as AttackLandmarkAction;
+        _attackLandmarkAction.SetOnEndAction(() => EndTerrorization());
+        _monsterPartySpawned.actionData.AssignAction(_attackLandmarkAction, target.landmarkObj);
     }
     private void MonsterPartyDied(MonsterParty monsterParty) {
         if(_monsterPartySpawned.id == monsterParty.id) {

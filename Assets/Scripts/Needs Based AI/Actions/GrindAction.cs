@@ -14,7 +14,7 @@ public class GrindAction : CharacterAction {
         action.Initialize();
         return action;
     }
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         //This is an Action that a character may do to get more powerful. 
         //The character will attempt to find a Monster Group that is at least 15% weaker than him and attack it.
@@ -36,7 +36,9 @@ public class GrindAction : CharacterAction {
             //IObject obj = null;
             //party.mainCharacter.AddActionToQueue(party.mainCharacter.GetRandomDesperateAction(ref obj), obj);
         }
-        GiveAllReward(party);
+        if (party is CharacterParty) {
+            GiveAllReward(party as CharacterParty);
+        }
         EndAction(party, targetObject);
     }
     #endregion

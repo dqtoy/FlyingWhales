@@ -12,13 +12,15 @@ public class HousekeepingAction : CharacterAction {
     }
 
     #region Overrides
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
 
         //give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige
-        GiveAllReward(party);
+        if(party is CharacterParty) {
+            GiveAllReward(party as CharacterParty);
+        }
     }
-    public override void DoneDuration(CharacterParty party, IObject targetObject) {
+    public override void DoneDuration(NewParty party, IObject targetObject) {
         base.DoneDuration(party, targetObject);
         StructureObj structure = targetObject as StructureObj;
         structure.SetIsDirty(false);

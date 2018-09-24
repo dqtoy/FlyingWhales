@@ -9,15 +9,17 @@ public class RestAction : CharacterAction {
     }
 
     #region Overrides
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
-        GiveAllReward(party);
+        if (party is CharacterParty) {
+            GiveAllReward(party as CharacterParty);
+        }
         //if (party.IsFull(NEEDS.ENERGY)) {
         //    EndAction(party, targetObject);
         //}
     }
-    public override bool CanBeDoneBy(CharacterParty party, IObject targetObject) {
+    public override bool CanBeDoneBy(NewParty party, IObject targetObject) {
         //Filter: Residents of this Structure
         if (targetObject is StructureObj) {
             StructureObj structureObj = targetObject as StructureObj;

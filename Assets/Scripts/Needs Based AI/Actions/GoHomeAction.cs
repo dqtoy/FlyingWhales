@@ -8,10 +8,12 @@ public class GoHomeAction : CharacterAction {
 
     }
     #region Overrides
-    public override void PerformAction(CharacterParty party, IObject targetObject) {
+    public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
-        GiveAllReward(party);
+        if (party is CharacterParty) {
+            GiveAllReward(party as CharacterParty);
+        }
     }
     public override CharacterAction Clone() {
         GoHomeAction goHomeAction = new GoHomeAction();
@@ -19,7 +21,7 @@ public class GoHomeAction : CharacterAction {
         goHomeAction.Initialize();
         return goHomeAction;
     }
-    public override bool CanBeDoneBy(CharacterParty party, IObject targetObject) {
+    public override bool CanBeDoneBy(NewParty party, IObject targetObject) {
         if (party.homeLandmark == null || targetObject.objectLocation.tileLocation.areaOfTile.id != party.homeLandmark.tileLocation.areaOfTile.id) {
             return false;
         }

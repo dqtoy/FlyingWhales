@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 using UnityEngine.Events;
+using System;
 
 [System.Serializable]
 public class CharacterAction {
@@ -12,7 +13,7 @@ public class CharacterAction {
     protected int _weight;
     protected int _disableCounter; //if has at least 1 point, disable action
     protected int _enableCounter; //remove action from list if this has 0 point
-    protected UnityAction onEndAction;
+    protected Action onEndAction;
 
     #region getters/setters
     public ACTION_TYPE actionType {
@@ -48,7 +49,7 @@ public class CharacterAction {
     #region Virtuals
     public virtual void Initialize() { }
     public virtual void OnChooseAction(NewParty iparty, IObject targetObject) { }
-    public virtual void OnFirstEncounter(CharacterParty party, IObject targetObject) {
+    public virtual void OnFirstEncounter(NewParty party, IObject targetObject) {
         string arriveActionLog = GetArriveActionString();
         if (arriveActionLog != string.Empty && targetObject != null) {
             if (targetObject.objectLocation != null) {
@@ -70,7 +71,7 @@ public class CharacterAction {
             }
         }
     }
-    public virtual void PerformAction(CharacterParty party, IObject targetObject) { }
+    public virtual void PerformAction(NewParty party, IObject targetObject) { }
     public virtual void ActionSuccess(IObject targetObject) {
         if (_actionData.successFunction != null) {
             _actionData.successFunction.Invoke(targetObject);
@@ -90,29 +91,21 @@ public class CharacterAction {
     public virtual bool CanBeDone(IObject targetObject) {
         return true;
     }
-    public virtual bool CanBeDoneBy(CharacterParty party, IObject targetObject) {
+    public virtual bool CanBeDoneBy(NewParty party, IObject targetObject) {
         return true;
     }
-    public virtual void EndAction(CharacterParty party, IObject targetObject) {
-        party.actionData.EndAction();
+    public virtual void EndAction(NewParty party, IObject targetObject) {
+        party.EndAction();
         if (onEndAction != null) {
             onEndAction();
         }
     }
-    public virtual void DoneDuration(CharacterParty party, IObject targetObject) { }
-    public virtual void SuccessEndAction(CharacterParty party) {
+    public virtual void DoneDuration(NewParty party, IObject targetObject) { }
+    public virtual void SuccessEndAction(NewParty party) {
         Messenger.Broadcast(Signals.ACTION_SUCCESS, party, this);
     }
     public virtual bool ShouldGoToTargetObjectOnChoose() {
         return true;
-    }
-    public virtual void PartyPerformingActionChangedState(CharacterParty partyPerformer, IObject targetObject, ObjectState stateThatEnded) {
-        if (Messenger.eventTable.ContainsKey(Signals.STATE_ENDED)) {
-            Messenger.Broadcast(Signals.STATE_ENDED, partyPerformer, stateThatEnded);
-        }
-    }
-    public virtual void APartyHasEndedItsState(CharacterParty party, IObject targetObject, CharacterParty partyThatChangedState, ObjectState stateThatEnded) {
-
     }
     //Give all provided needs to the character regardless of the amount
     public virtual void GiveAllReward(CharacterParty party) {
@@ -239,7 +232,7 @@ public class CharacterAction {
     public void OnRemoveActionFromCharacter(Character character) {
 
     }
-    public void SetOnEndAction(UnityAction action) {
+    public void SetOnEndAction(Action action) {
         onEndAction = action;
     }
     #endregion
