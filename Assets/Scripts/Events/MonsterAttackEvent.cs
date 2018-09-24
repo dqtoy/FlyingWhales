@@ -16,7 +16,7 @@ public class MonsterAttackEvent : GameEvent {
     public void Initialize(BaseLandmark target) {
         _targetLandmark = target;
         MonsterPartyComponent chosenParty = MonsterManager.Instance.monsterAttackParties[UnityEngine.Random.Range(0, MonsterManager.Instance.monsterAttackParties.Count)];
-        _monsterPartySpawned = MonsterManager.Instance.SpawnMonsterPartyOnLandmark(_targetLandmark, chosenParty);
+        _monsterPartySpawned = MonsterManager.Instance.SpawnMonsterPartyOnLandmark(_targetLandmark, chosenParty, false);
         _monsterPartySpawned.SetIsAttacking(true);
         if (_monsterPartySpawned.specificLocation.tileLocation.landmarkOnTile != null) {
             Messenger.Broadcast(Signals.LANDMARK_UNDER_ATTACK, _monsterPartySpawned.GetBase(), this.GetBase());

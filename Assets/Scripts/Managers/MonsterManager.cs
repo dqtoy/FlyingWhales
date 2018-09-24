@@ -112,14 +112,16 @@ public class MonsterManager : MonoBehaviour {
 //        landmark.AddCharacterToLocation(monsterParty);
 //        return newMonster;
 //    }
-    public MonsterParty SpawnMonsterPartyOnLandmark(BaseLandmark landmark, MonsterPartyComponent monsterPartyComponent) {
+    public MonsterParty SpawnMonsterPartyOnLandmark(BaseLandmark landmark, MonsterPartyComponent monsterPartyComponent, bool makeMonsterResident = true) {
         MonsterParty monsterParty = new MonsterParty(null);
         monsterParty.SetSetupName(monsterPartyComponent.name);
         for (int i = 0; i < monsterPartyComponent.monsters.Length; i++) {
             if (monsterPartyComponent.monsters[i] != null) {
                 string monsterName = monsterPartyComponent.monsters[i].name;
                 Monster monster = CreateNewMonster(monsterName);
-                landmark.AddCharacterHomeOnLandmark(monster);
+                if (makeMonsterResident) {
+                    landmark.AddCharacterHomeOnLandmark(monster);
+                }
                 monster.SetOwnedParty(monsterParty);
                 monster.SetCurrentParty(monsterParty);
                 monsterParty.AddCharacter(monster);

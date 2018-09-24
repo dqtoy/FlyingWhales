@@ -449,6 +449,27 @@ MonoBehaviour:
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
+  - landmarkTypeString: Camp
+    landmarkType: 21
+    uniqueTags: 
+    itemData: []
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
+      tintSprite: {fileID: 0}
+    humansLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
+      tintSprite: {fileID: 0}
+    elvenLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
+      tintSprite: {fileID: 0}
+    possibleSpawnPoints: 01000000020000000600000007000000
+    startingMonsterSpawn: {fileID: 0}
+    isMonsterSpawner: 0
+    monsterSets: []
+    monsterSpawnCooldown: 0
   areaData:
   - areaType: 0
     baseAreaType: 0
