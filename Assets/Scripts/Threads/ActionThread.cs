@@ -390,6 +390,14 @@ public class ActionThread : Multithread {
         actionLog += "\n" + _party.name + "'s Need Action Advertisements: ";
         for (int i = 0; i < _party.owner.homeLandmark.tileLocation.areaOfTile.landmarks.Count; i++) { //get advertisements from home area only.
             BaseLandmark landmark = _party.owner.homeLandmark.tileLocation.areaOfTile.landmarks[i];
+            for (int j = 0; j < landmark.advertisedEvents.Count; j++) {
+                GameEvent advertisedEvent = landmark.advertisedEvents[j];
+                if (advertisedEvent.MeetsRequirements(_party.characterOwner)) {
+                    EventAction action = advertisedEvent.GetNextEventAction(_party.characterOwner);
+                    float happinessIncrease = _party.TotalHappinessIncrease(action.action, action.targetObject);
+                    PutToChoices(action.action, action.targetObject, happinessIncrease);
+                }
+            }
             StructureObj iobject = landmark.landmarkObj;
             if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
                 for (int k = 0; k < iobject.currentState.actions.Count; k++) {

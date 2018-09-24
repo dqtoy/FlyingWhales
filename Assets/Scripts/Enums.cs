@@ -911,6 +911,7 @@ public enum GAME_EVENT {
     DRAGON_ATTACK,
     SUICIDE,
     RESEARCH_SCROLLS,
+    PARTY_EVENT,
 }
 public enum EVENT_PHASE {
     PREPARATION,

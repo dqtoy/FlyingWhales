@@ -25,6 +25,10 @@ public class EventManager : MonoBehaviour {
         _pastEvents = new List<GameEvent>();
     }
 
+    public void Initialize() {
+        GeneratePartyEvent();
+    }
+
     public GameEvent AddNewEvent(GAME_EVENT eventType) {
         GameEvent gameEvent = CreateNewEvent(eventType);
         _activeEvents.Add(gameEvent);
@@ -55,15 +59,28 @@ public class EventManager : MonoBehaviour {
                 return new SuicideEvent();
             case GAME_EVENT.RESEARCH_SCROLLS:
                 return new ResearchScrollsEvent();
+            case GAME_EVENT.PARTY_EVENT:
+                return new PartyEvent();
         }
         return null;
     }
 
-    public void GenerateEventForTesting() {
-        return;
-        //if (CharacterManager.Instance.allCharacters.Count > 1) {
-        //    SecretMeeting secretMeetingEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.SECRET_MEETING) as SecretMeeting;
-        //    secretMeetingEvent.Initialize(CharacterManager.Instance.allCharacters[0], CharacterManager.Instance.allCharacters[1]);
-        //}
+    #region Random Events
+    private void GeneratePartyEvent() {
+        List<BaseLandmark> choices = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.INN);
+        BaseLandmark chosenLandmark = choices[Random.Range(0, choices.Count)];
+        PartyEvent partyEvent = AddNewEvent(GAME_EVENT.PARTY_EVENT) as PartyEvent;
+        partyEvent.SetLocation(chosenLandmark);
+        partyEvent.Initialize();
+        chosenLandmark.AddAdvertisedEvent(partyEvent);
+
+        GameDate endDate = GameManager.Instance.Today();
+        endDate.AddHours(partyEvent.GetEventDurationRoughEstimateInTicks());
+
+        //reschedule making party event 1 - 3 days from the end of this party event
+        int randomDays = Random.Range(1, 4);
+        endDate.AddDays(randomDays);
+        SchedulingManager.Instance.AddEntry(endDate, () => GeneratePartyEvent());
     }
+    #endregion
 }
