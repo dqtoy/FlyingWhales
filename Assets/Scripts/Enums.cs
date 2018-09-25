@@ -316,16 +316,16 @@ public enum LANDMARK_TAG {
 public enum LANDMARK_TYPE {
     NONE = 0,
     DEMONIC_PORTAL = 1,
-    ELVEN_SETTLEMENT = 2,
-    HUMAN_SETTLEMENT = 3,
+    //ELVEN_SETTLEMENT = 2,
+    //HUMAN_SETTLEMENT = 3,
     GARRISON = 4,
-    OAK_FORTIFICATION = 5,
-    IRON_FORTIFICATION = 6,
-    OAK_LUMBERYARD = 7,
+    //OAK_FORTIFICATION = 5,
+    //IRON_FORTIFICATION = 6,
+    //OAK_LUMBERYARD = 7,
     IRON_MINES = 8,
     INN = 9,
     //PUB = 9,
-    TEMPLE = 10,
+    //TEMPLE = 10,
     HUNTING_GROUNDS = 11,
     ELVEN_HOUSES = 12,
     HUMAN_HOUSES = 13,
@@ -341,6 +341,10 @@ public enum LANDMARK_TYPE {
     ABANDONED_MINE = 23,
     BANDIT_CAMP = 24,
     HERMIT_HUT = 25,
+    CATACOMB = 26,
+    PYRAMID = 27,
+    EXILE_CAMP = 28,
+    GIANT_SKELETON = 29,
 }
 public enum TECHNOLOGY {
     //Weapon Production

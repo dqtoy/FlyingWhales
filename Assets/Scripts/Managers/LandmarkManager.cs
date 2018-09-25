@@ -240,14 +240,14 @@ public class LandmarkManager : MonoBehaviour {
             LEVEL needProviders = RandomizeLevel(25, 60, 15);
             LEVEL might = RandomizeLevel(25, 60, 15);
             LEVEL characters = RandomizeLevel(25, 60, 15);
-            Dictionary<LANDMARK_TYPE, int> landmarkSettings = GetLandmarkSettings(wealth, population, might, needProviders, currFaction);
-            Dictionary<HexTile, LANDMARK_TYPE> landmarksToBeCreated = null;
-            while (landmarksToBeCreated == null) {
-                landmarksToBeCreated = GenerateLandmarksForFaction(landmarkSettings, currFaction);
-            }
-            foreach (KeyValuePair<HexTile, LANDMARK_TYPE> kvp in landmarksToBeCreated) {
-                CreateNewLandmarkOnTile(kvp.Key, kvp.Value);
-            }
+            //Dictionary<LANDMARK_TYPE, int> landmarkSettings = GetLandmarkSettings(wealth, population, might, needProviders, currFaction);
+            //Dictionary<HexTile, LANDMARK_TYPE> landmarksToBeCreated = null;
+            //while (landmarksToBeCreated == null) {
+            //    landmarksToBeCreated = GenerateLandmarksForFaction(landmarkSettings, currFaction);
+            //}
+            //foreach (KeyValuePair<HexTile, LANDMARK_TYPE> kvp in landmarksToBeCreated) {
+            //    CreateNewLandmarkOnTile(kvp.Key, kvp.Value);
+            //}
         }
         //return true;
     }
@@ -257,98 +257,98 @@ public class LandmarkManager : MonoBehaviour {
             LoadLandmarkOnTile(currentTile, save.hextiles[i].landmark);
         }
     }
-    private Dictionary<LANDMARK_TYPE, int> GetLandmarkSettings(LEVEL wealthLvl, LEVEL populationLvl, LEVEL mightLvl, LEVEL needLvl, Faction faction) {
-        Dictionary<LANDMARK_TYPE, int> landmarkSettings = new Dictionary<LANDMARK_TYPE, int>();
-        AddWealthSettings(wealthLvl, landmarkSettings);
-        AddPopulationSettings(populationLvl, landmarkSettings, faction);
-        AddNeedSettings(needLvl, landmarkSettings);
-        AddMightSettings(mightLvl, landmarkSettings);
-        return landmarkSettings;
-    }
-    private void AddWealthSettings(LEVEL level, Dictionary<LANDMARK_TYPE, int> landmarksSettings) {
-        switch (level) {
-            case LEVEL.HIGH:
-                landmarksSettings.Add(LANDMARK_TYPE.IRON_MINES, 2);
-                landmarksSettings.Add(LANDMARK_TYPE.OAK_LUMBERYARD, 2);
-                break;
-            case LEVEL.AVERAGE:
-                if (Random.Range(0, 2) == 0) {
-                    landmarksSettings.Add(LANDMARK_TYPE.IRON_MINES, 1);
-                    landmarksSettings.Add(LANDMARK_TYPE.OAK_LUMBERYARD, 2);
-                } else {
-                    landmarksSettings.Add(LANDMARK_TYPE.IRON_MINES, 2);
-                    landmarksSettings.Add(LANDMARK_TYPE.OAK_LUMBERYARD, 1);
-                }
-                break;
-            case LEVEL.LOW:
-                landmarksSettings.Add(LANDMARK_TYPE.IRON_MINES, 1);
-                landmarksSettings.Add(LANDMARK_TYPE.OAK_LUMBERYARD, 1);
-                break;
-            default:
-                break;
-        }
-    }
-    private void AddPopulationSettings(LEVEL level, Dictionary<LANDMARK_TYPE, int> landmarksSettings, Faction faction) {
-        LANDMARK_TYPE settlementTypeToUse = LANDMARK_TYPE.HUMAN_SETTLEMENT;
-        //if (faction.race == RACE.ELVES) {
-        //    settlementTypeToUse = LANDMARK_TYPE.ELVEN_SETTLEMENT;
-        //}
-        switch (level) {
-            case LEVEL.HIGH:
-                landmarksSettings.Add(settlementTypeToUse, 6);
-                break;
-            case LEVEL.AVERAGE:
-                landmarksSettings.Add(settlementTypeToUse, 4);
-                break;
-            case LEVEL.LOW:
-                landmarksSettings.Add(settlementTypeToUse, 2);
-                break;
-            default:
-                break;
-        }
-    }
-    private void AddMightSettings(LEVEL level, Dictionary<LANDMARK_TYPE, int> landmarksSettings) {
-        switch (level) {
-            case LEVEL.HIGH:
-                landmarksSettings.Add(LANDMARK_TYPE.OAK_FORTIFICATION, 8);
-                landmarksSettings.Add(LANDMARK_TYPE.IRON_FORTIFICATION, 5);
-                break;
-            case LEVEL.AVERAGE:
-                landmarksSettings.Add(LANDMARK_TYPE.OAK_FORTIFICATION, 6);
-                landmarksSettings.Add(LANDMARK_TYPE.IRON_FORTIFICATION, 4);
-                break;
-            case LEVEL.LOW:
-                landmarksSettings.Add(LANDMARK_TYPE.OAK_FORTIFICATION, 4);
-                landmarksSettings.Add(LANDMARK_TYPE.IRON_FORTIFICATION, 3);
-                break;
-            default:
-                break;
-        }
-    }
-    private void AddNeedSettings(LEVEL level, Dictionary<LANDMARK_TYPE, int> landmarksSettings) {
-        switch (level) {
-            case LEVEL.HIGH:
-                landmarksSettings.Add(LANDMARK_TYPE.INN, 2);
-                landmarksSettings.Add(LANDMARK_TYPE.HUNTING_GROUNDS, 2);
-                //landmarksSettings.Add(LANDMARK_TYPE.PUB, 2);
-                landmarksSettings.Add(LANDMARK_TYPE.TEMPLE, 2);
-                break;
-            case LEVEL.AVERAGE:
-                landmarksSettings.Add(LANDMARK_TYPE.INN, 2);
-                landmarksSettings.Add(LANDMARK_TYPE.HUNTING_GROUNDS, 2);
-                //landmarksSettings.Add(LANDMARK_TYPE.PUB, 1);
-                landmarksSettings.Add(LANDMARK_TYPE.TEMPLE, 1);
-                break;
-            case LEVEL.LOW:
-                landmarksSettings.Add(LANDMARK_TYPE.INN, 1);
-                landmarksSettings.Add(LANDMARK_TYPE.HUNTING_GROUNDS, 1);
-                //landmarksSettings.Add(LANDMARK_TYPE.PUB, 1);
-                landmarksSettings.Add(LANDMARK_TYPE.TEMPLE, 1);
-                break;
-            default:
-                break;
-        }
-    }
+    //private Dictionary<LANDMARK_TYPE, int> GetLandmarkSettings(LEVEL wealthLvl, LEVEL populationLvl, LEVEL mightLvl, LEVEL needLvl, Faction faction) {
+    //    Dictionary<LANDMARK_TYPE, int> landmarkSettings = new Dictionary<LANDMARK_TYPE, int>();
+    //    AddWealthSettings(wealthLvl, landmarkSettings);
+    //    AddPopulationSettings(populationLvl, landmarkSettings, faction);
+    //    AddNeedSettings(needLvl, landmarkSettings);
+    //    AddMightSettings(mightLvl, landmarkSettings);
+    //    return landmarkSettings;
+    //}
+    //private void AddWealthSettings(LEVEL level, Dictionary<LANDMARK_TYPE, int> landmarksSettings) {
+    //    switch (level) {
+    //        case LEVEL.HIGH:
+    //            landmarksSettings.Add(LANDMARK_TYPE.IRON_MINES, 2);
+    //            landmarksSettings.Add(LANDMARK_TYPE.OAK_LUMBERYARD, 2);
+    //            break;
+    //        case LEVEL.AVERAGE:
+    //            if (Random.Range(0, 2) == 0) {
+    //                landmarksSettings.Add(LANDMARK_TYPE.IRON_MINES, 1);
+    //                landmarksSettings.Add(LANDMARK_TYPE.OAK_LUMBERYARD, 2);
+    //            } else {
+    //                landmarksSettings.Add(LANDMARK_TYPE.IRON_MINES, 2);
+    //                landmarksSettings.Add(LANDMARK_TYPE.OAK_LUMBERYARD, 1);
+    //            }
+    //            break;
+    //        case LEVEL.LOW:
+    //            landmarksSettings.Add(LANDMARK_TYPE.IRON_MINES, 1);
+    //            landmarksSettings.Add(LANDMARK_TYPE.OAK_LUMBERYARD, 1);
+    //            break;
+    //        default:
+    //            break;
+    //    }
+    //}
+    //private void AddPopulationSettings(LEVEL level, Dictionary<LANDMARK_TYPE, int> landmarksSettings, Faction faction) {
+    //    LANDMARK_TYPE settlementTypeToUse = LANDMARK_TYPE.HUMAN_SETTLEMENT;
+    //    //if (faction.race == RACE.ELVES) {
+    //    //    settlementTypeToUse = LANDMARK_TYPE.ELVEN_SETTLEMENT;
+    //    //}
+    //    switch (level) {
+    //        case LEVEL.HIGH:
+    //            landmarksSettings.Add(settlementTypeToUse, 6);
+    //            break;
+    //        case LEVEL.AVERAGE:
+    //            landmarksSettings.Add(settlementTypeToUse, 4);
+    //            break;
+    //        case LEVEL.LOW:
+    //            landmarksSettings.Add(settlementTypeToUse, 2);
+    //            break;
+    //        default:
+    //            break;
+    //    }
+    //}
+    //private void AddMightSettings(LEVEL level, Dictionary<LANDMARK_TYPE, int> landmarksSettings) {
+    //    switch (level) {
+    //        case LEVEL.HIGH:
+    //            landmarksSettings.Add(LANDMARK_TYPE.OAK_FORTIFICATION, 8);
+    //            landmarksSettings.Add(LANDMARK_TYPE.IRON_FORTIFICATION, 5);
+    //            break;
+    //        case LEVEL.AVERAGE:
+    //            landmarksSettings.Add(LANDMARK_TYPE.OAK_FORTIFICATION, 6);
+    //            landmarksSettings.Add(LANDMARK_TYPE.IRON_FORTIFICATION, 4);
+    //            break;
+    //        case LEVEL.LOW:
+    //            landmarksSettings.Add(LANDMARK_TYPE.OAK_FORTIFICATION, 4);
+    //            landmarksSettings.Add(LANDMARK_TYPE.IRON_FORTIFICATION, 3);
+    //            break;
+    //        default:
+    //            break;
+    //    }
+    //}
+    //private void AddNeedSettings(LEVEL level, Dictionary<LANDMARK_TYPE, int> landmarksSettings) {
+    //    switch (level) {
+    //        case LEVEL.HIGH:
+    //            landmarksSettings.Add(LANDMARK_TYPE.INN, 2);
+    //            landmarksSettings.Add(LANDMARK_TYPE.HUNTING_GROUNDS, 2);
+    //            //landmarksSettings.Add(LANDMARK_TYPE.PUB, 2);
+    //            landmarksSettings.Add(LANDMARK_TYPE.TEMPLE, 2);
+    //            break;
+    //        case LEVEL.AVERAGE:
+    //            landmarksSettings.Add(LANDMARK_TYPE.INN, 2);
+    //            landmarksSettings.Add(LANDMARK_TYPE.HUNTING_GROUNDS, 2);
+    //            //landmarksSettings.Add(LANDMARK_TYPE.PUB, 1);
+    //            landmarksSettings.Add(LANDMARK_TYPE.TEMPLE, 1);
+    //            break;
+    //        case LEVEL.LOW:
+    //            landmarksSettings.Add(LANDMARK_TYPE.INN, 1);
+    //            landmarksSettings.Add(LANDMARK_TYPE.HUNTING_GROUNDS, 1);
+    //            //landmarksSettings.Add(LANDMARK_TYPE.PUB, 1);
+    //            landmarksSettings.Add(LANDMARK_TYPE.TEMPLE, 1);
+    //            break;
+    //        default:
+    //            break;
+    //    }
+    //}
     private LEVEL RandomizeLevel(int highPercent, int averagePercent, int lowPercent) {
         int chance = Random.Range(0, 100);
         if (chance <= lowPercent) {
@@ -524,8 +524,13 @@ public class LandmarkManager : MonoBehaviour {
         }
         return allLandmarks;
     }
-    public List<LandmarkStructureSprite> GetLandmarkTileSprites(LANDMARK_TYPE landmarkType, RACE race = RACE.NONE) {
+    public List<LandmarkStructureSprite> GetLandmarkTileSprites(HexTile tile, LANDMARK_TYPE landmarkType, RACE race = RACE.NONE) {
         LandmarkData data = GetLandmarkData(landmarkType);
+        if (data.biomeTileSprites.Count > 0) { //if the landmark type has a biome type tile sprite set, use that instead
+            if (data.biomeTileSprites.ContainsKey(tile.biomeType)) {
+                return data.biomeTileSprites[tile.biomeType]; //prioritize biome type sprites
+            }
+        }
         if (race == RACE.HUMANS) {
             return data.humansLandmarkTileSprites;
         } else if (race == RACE.ELVES) {
@@ -537,6 +542,7 @@ public class LandmarkManager : MonoBehaviour {
                 return null;
             }
         }
+        
     }
     #endregion
 

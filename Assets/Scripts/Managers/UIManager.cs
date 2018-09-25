@@ -195,7 +195,7 @@ public class UIManager : MonoBehaviour {
         UnifySelectables();
         //popupMessageBox.Initialize();
         Messenger.AddListener<HexTile>(Signals.TILE_RIGHT_CLICKED, ShowContextMenu);
-        Messenger.AddListener<HexTile>(Signals.TILE_LEFT_CLICKED, HideContextMenu);
+        Messenger.AddListener<HexTile>(Signals.TILE_LEFT_CLICKED, HideMenus);
         Messenger.AddListener<string, int, UnityAction>(Signals.SHOW_NOTIFICATION, ShowNotification);
 
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OVER, OnHoverOverTile);
@@ -208,6 +208,11 @@ public class UIManager : MonoBehaviour {
         for (int i = 0; i < selectables.Length; i++) {
             selectables[i].Initialize();
         }
+    }
+    private void HideMenus(HexTile tile) {
+        HideContextMenu();
+        characterInfoUI.CloseMenu();
+        landmarkInfoUI.CloseMenu();
     }
 
     #region Font Utilities
@@ -986,9 +991,6 @@ public class UIManager : MonoBehaviour {
     }
     public void HideContextMenu() {
         contextMenu.gameObject.SetActive(false);
-    }
-    public void HideContextMenu(HexTile tile) {
-        HideContextMenu();
     }
     #endregion
 

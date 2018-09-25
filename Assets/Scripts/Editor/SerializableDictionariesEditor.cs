@@ -6,11 +6,14 @@ using UnityEngine;
 
 [CustomPropertyDrawer(typeof(ScheduleTemplateDictionary))]
 public class ScheduleTemplateDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-
 [CustomPropertyDrawer(typeof(ActionCharacterTagListDictionary))]
 public class ActionCharacterTagDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(BiomeLandmarkSpriteListDictionary))]
+public class BiomeLandmarkSpriteListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 
 [CustomPropertyDrawer(typeof(CharacterTagListStorage))]
 public class CharacterTagListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
+[CustomPropertyDrawer(typeof(LandmarkSpriteListStorage))]
+public class LandmarkSpriteListStorageStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 #endif

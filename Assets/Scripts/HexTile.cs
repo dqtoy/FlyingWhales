@@ -283,17 +283,27 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     #region Landmarks
+    public void SetLandmarkOnTile(BaseLandmark landmarkOnTile) {
+        _landmarkOnTile = landmarkOnTile;
+    }
     public BaseLandmark CreateLandmarkOfType(LANDMARK_TYPE landmarkType) {
-        GameObject landmarkGO = null;
-        //Create Landmark Game Object on tile
-        landmarkGO = CreateLandmarkVisual(landmarkType);
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(landmarkType);
         if (data.isMonsterSpawner) {
-            _landmarkOnTile = new MonsterSpawnerLandmark(this, landmarkType);
+            SetLandmarkOnTile(new MonsterSpawnerLandmark(this, landmarkType));
         } else {
-            _landmarkOnTile = new BaseLandmark(this, landmarkType);
+            SetLandmarkOnTile(new BaseLandmark(this, landmarkType));
         }
-        
+        if (data.minimumTileCount > 1) {
+            if (neighbourDirections.ContainsKey(data.connectedTileDirection) && neighbourDirections[data.connectedTileDirection] != null) {
+                HexTile tileToConnect = neighbourDirections[data.connectedTileDirection];
+                _landmarkOnTile.SetConnectedTile(tileToConnect);
+                tileToConnect.SetElevation(ELEVATION.PLAIN);
+                tileToConnect.SetLandmarkOnTile(this.landmarkOnTile); //set the landmark of the connected tile to the same landmark on this tile
+                Biomes.Instance.UpdateTileVisuals(tileToConnect);
+            }
+        }
+        //Create Landmark Game Object on tile
+        GameObject landmarkGO = CreateLandmarkVisual(landmarkType, this.landmarkOnTile, data);
         if (landmarkGO != null) {
             landmarkGO.transform.localPosition = Vector3.zero;
             landmarkGO.transform.localScale = Vector3.one;
@@ -309,15 +319,23 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         return _landmarkOnTile;
     }
     public BaseLandmark CreateLandmarkOfType(LandmarkSaveData saveData) {
-        GameObject landmarkGO = null;
-        //Create Landmark Game Object on tile
-        landmarkGO = CreateLandmarkVisual(saveData.landmarkType);
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(saveData.landmarkType);
         if (landmarkData.isMonsterSpawner) {
-            _landmarkOnTile = new MonsterSpawnerLandmark(this, saveData);
+            SetLandmarkOnTile(new MonsterSpawnerLandmark(this, saveData));
         } else {
-            _landmarkOnTile = new BaseLandmark(this, saveData);
+            SetLandmarkOnTile(new BaseLandmark(this, saveData));
         }
+        if (landmarkData.minimumTileCount > 1) {
+            if (neighbourDirections.ContainsKey(landmarkData.connectedTileDirection) && neighbourDirections[landmarkData.connectedTileDirection] != null) {
+                HexTile tileToConnect = neighbourDirections[landmarkData.connectedTileDirection];
+                _landmarkOnTile.SetConnectedTile(tileToConnect);
+                tileToConnect.SetElevation(ELEVATION.PLAIN);
+                tileToConnect.SetLandmarkOnTile(this.landmarkOnTile); //set the landmark of the connected tile to the same landmark on this tile
+                Biomes.Instance.UpdateTileVisuals(tileToConnect);
+            }
+        }
+        //Create Landmark Game Object on tile
+        GameObject landmarkGO = CreateLandmarkVisual(saveData.landmarkType, this.landmarkOnTile, landmarkData);
         _landmarkOnTile.SetCivilianCount(saveData.civilianCount);
         if (landmarkGO != null) {
             landmarkGO.transform.localPosition = Vector3.zero;
@@ -333,7 +351,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
         return _landmarkOnTile;
     }
-    private GameObject CreateLandmarkVisual(LANDMARK_TYPE landmarkType) {
+    private GameObject CreateLandmarkVisual(LANDMARK_TYPE landmarkType, BaseLandmark landmark, LandmarkData data) {
 #if WORLD_CREATION_TOOL
         GameObject landmarkGO = GameObject.Instantiate(worldcreator.WorldCreatorManager.Instance.landmarkItemPrefab, structureParentGO.transform) as GameObject;
 #else
@@ -347,14 +365,20 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                 race = RACE.HUMANS;
             }
         }
-        List<LandmarkStructureSprite> landmarkTileSprites = LandmarkManager.Instance.GetLandmarkTileSprites(landmarkType, race);
-        if (landmarkTileSprites == null || landmarkTileSprites.Count == 0) {
-            //DeactivateCenterPiece();
-            HideLandmarkTileSprites();
-            landmarkGO.GetComponent<LandmarkVisual>().SetIconState(true);
-        } else {
-            SetLandmarkTileSprite(landmarkTileSprites[Random.Range(0, landmarkTileSprites.Count)]);
+        List<LandmarkStructureSprite> landmarkTileSprites = LandmarkManager.Instance.GetLandmarkTileSprites(this, landmarkType, race);
+        if (data.minimumTileCount > 1) {
+            SetLandmarkTileSprite(landmarkTileSprites[0]);
+            landmark.connectedTile.SetLandmarkTileSprite(landmarkTileSprites[1]);
             landmarkGO.GetComponent<LandmarkVisual>().SetIconState(false);
+        } else {
+            if (landmarkTileSprites == null || landmarkTileSprites.Count == 0) {
+                //DeactivateCenterPiece();
+                HideLandmarkTileSprites();
+                landmarkGO.GetComponent<LandmarkVisual>().SetIconState(true);
+            } else {
+                SetLandmarkTileSprite(landmarkTileSprites[Random.Range(0, landmarkTileSprites.Count)]);
+                landmarkGO.GetComponent<LandmarkVisual>().SetIconState(false);
+            }
         }
         return landmarkGO;
     }
@@ -474,15 +498,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (this.hasLandmark || !this.isPassable || landmarksToBeCreated.ContainsKey(this)) {
             return false; //this tile is not passable or already has a landmark
         }
-        if (landmarkToBuild == LANDMARK_TYPE.OAK_FORTIFICATION || landmarkToBuild == LANDMARK_TYPE.IRON_FORTIFICATION) {
-            if (this.PassableNeighbours.Where(x => x.hasLandmark || landmarksToBeCreated.ContainsKey(x)).Any()) {
-                return false; //check if this tile has any neighbours that are not fortifications
-            }
-        } else {
+        //if (landmarkToBuild == LANDMARK_TYPE.OAK_FORTIFICATION || landmarkToBuild == LANDMARK_TYPE.IRON_FORTIFICATION) {
+        //    if (this.PassableNeighbours.Where(x => x.hasLandmark || landmarksToBeCreated.ContainsKey(x)).Any()) {
+        //        return false; //check if this tile has any neighbours that are not fortifications
+        //    }
+        //} else {
             if (this.PassableNeighbours.Where(x => x.hasLandmark || landmarksToBeCreated.ContainsKey(x)).Any()) {
                 return false; //check if this tile has any neighbours that have landmarks
             }
-        }
+        //}
         if (!data.possibleSpawnPoints.Contains(this.passableType)) {
             return false; //check if this tiles' passable type meets the types the landmark can spawn on
         }

@@ -11,6 +11,7 @@ using ECS;
 public class BaseLandmark : ILocation, IInteractable {
     protected int _id;
     protected HexTile _location;
+    protected HexTile _connectedTile;
     protected LANDMARK_TYPE _specificLandmarkType;
     protected List<BaseLandmark> _connections;
     protected bool _canBeOccupied; //can the landmark be occupied?
@@ -98,6 +99,9 @@ public class BaseLandmark : ILocation, IInteractable {
 	public HexTile tileLocation{
 		get { return _location; }
 	}
+    public HexTile connectedTile {
+        get { return _connectedTile; }
+    }
 	public LOCATION_IDENTIFIER locIdentifier{
 		get { return LOCATION_IDENTIFIER.LANDMARK; }
 	}
@@ -196,6 +200,11 @@ public class BaseLandmark : ILocation, IInteractable {
         if (_landmarkVisual != null) {
             _landmarkVisual.UpdateName();
         }
+    }
+
+    public void SetConnectedTile(HexTile connectedTile) {
+        _connectedTile = connectedTile;
+        
     }
 
     #region Virtuals

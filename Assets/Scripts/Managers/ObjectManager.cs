@@ -362,35 +362,14 @@ public class ObjectManager : MonoBehaviour {
             case LANDMARK_TYPE.DEMONIC_PORTAL:
                 structureObj = new DemonicPortal();
                 break;
-            case LANDMARK_TYPE.ELVEN_SETTLEMENT:
-                structureObj = new ElvenSettlement();
-                break;
-            case LANDMARK_TYPE.HUMAN_SETTLEMENT:
-                structureObj = new HumanSettlement();
-                break;
             case LANDMARK_TYPE.GARRISON:
                 structureObj = new Garrison();
-                break;
-            case LANDMARK_TYPE.OAK_FORTIFICATION:
-                structureObj = new OakFortification();
-                break;
-            case LANDMARK_TYPE.IRON_FORTIFICATION:
-                structureObj = new IronFortification();
-                break;
-            case LANDMARK_TYPE.OAK_LUMBERYARD:
-                structureObj = new OakLumberyard();
                 break;
             case LANDMARK_TYPE.IRON_MINES:
                 structureObj = new IronMines();
                 break;
             case LANDMARK_TYPE.INN:
                 structureObj = new Inn();
-                break;
-            //case LANDMARK_TYPE.PUB:
-            //    structureObj = new Pub();
-                break;
-            case LANDMARK_TYPE.TEMPLE:
-                structureObj = new Temple();
                 break;
             case LANDMARK_TYPE.HUNTING_GROUNDS:
                 structureObj = new HuntingGrounds();
@@ -436,6 +415,18 @@ public class ObjectManager : MonoBehaviour {
                 break;
             case LANDMARK_TYPE.HERMIT_HUT:
                 structureObj = new HermitHut();
+                break;
+            case LANDMARK_TYPE.CATACOMB:
+                structureObj = new Catacomb();
+                break;
+            case LANDMARK_TYPE.PYRAMID:
+                structureObj = new Pyramid();
+                break;
+            case LANDMARK_TYPE.EXILE_CAMP:
+                structureObj = new ExileCamp();
+                break;
+            case LANDMARK_TYPE.GIANT_SKELETON:
+                structureObj = new GiantSkeleton();
                 break;
             default:
                 throw new System.Exception("No class for " + component.specificObjectType.ToString() + " has been created yet!");

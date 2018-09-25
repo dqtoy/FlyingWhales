@@ -28,15 +28,15 @@ public class StructureObjectComponent : ObjectComponent {
     #region General
     public void Repaired(IObject iobject) {
         string nextStateName = "Default";
-        if (iobject is StructureObj) {
+        //if (iobject is StructureObj) {
             //On hitpoints check, when switching from Ruined, check Resource Count to determine whether to switch to Default or Depleted state
-            StructureObj obj = (iobject as StructureObj);
-            if (obj.specificObjectType == LANDMARK_TYPE.ELVEN_SETTLEMENT || obj.specificObjectType == LANDMARK_TYPE.HUMAN_SETTLEMENT) {
-                if (obj.resourceInventory[obj.GetMainResource()] <= 0) {
-                    nextStateName = "Empty";
-                }
-            }
-        }
+            //StructureObj obj = (iobject as StructureObj);
+            //if (obj.specificObjectType == LANDMARK_TYPE.ELVEN_SETTLEMENT || obj.specificObjectType == LANDMARK_TYPE.HUMAN_SETTLEMENT) {
+            //    if (obj.resourceInventory[obj.GetMainResource()] <= 0) {
+            //        nextStateName = "Empty";
+            //    }
+            //}
+        //}
         ObjectState defaultState = iobject.GetState(nextStateName);
         iobject.ChangeState(defaultState);
     }
