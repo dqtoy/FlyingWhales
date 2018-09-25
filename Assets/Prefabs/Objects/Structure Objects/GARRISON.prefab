@@ -58,14 +58,88 @@ MonoBehaviour:
         m_Calls: []
       m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
         PublicKeyToken=null
-    _actions: []
+    _actions:
+    - _actionData:
+        actionType: 0
+        actionCategory: 0
+        actionName: 
+        filters: []
+        advertisedFullness: 0
+        advertisedFun: 0
+        advertisedEnergy: 160
+        advertisedPrestige: 0
+        advertisedSanity: 0
+        advertisedSafety: 64
+        advertisedResource: 0
+        providedFullness: 0
+        providedFun: 0
+        providedEnergy: 10
+        providedPrestige: 0
+        providedSanity: 0
+        providedSafety: 0
+        successRate: 0
+        duration: 16
+        hpRecoveredPercentage: 2
+        resourceGiven: 0
+        minResourceGiven: 0
+        maxResourceGiven: 0
+        resourceNeeded: 0
+        resourceAmountNeeded: 0
+        providedExp: 0
+        successFunction:
+          m_PersistentCalls:
+            m_Calls: []
+          m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+        failFunction:
+          m_PersistentCalls:
+            m_Calls: []
+          m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+            PublicKeyToken=null
   - _stateName: Ready
     _everydayAction:
       m_PersistentCalls:
         m_Calls: []
       m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
         PublicKeyToken=null
-    _actions: []
+    _actions:
+    - _actionData:
+        actionType: 0
+        actionCategory: 0
+        actionName: Rest
+        filters: []
+        advertisedFullness: 0
+        advertisedFun: 0
+        advertisedEnergy: 160
+        advertisedPrestige: 0
+        advertisedSanity: 0
+        advertisedSafety: 64
+        advertisedResource: 0
+        providedFullness: 0
+        providedFun: 0
+        providedEnergy: 10
+        providedPrestige: 0
+        providedSanity: 0
+        providedSafety: 0
+        successRate: 0
+        duration: 16
+        hpRecoveredPercentage: 2
+        resourceGiven: 0
+        minResourceGiven: 0
+        maxResourceGiven: 0
+        resourceNeeded: 0
+        resourceAmountNeeded: 0
+        providedExp: 0
+        successFunction:
+          m_PersistentCalls:
+            m_Calls: []
+          m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+        failFunction:
+          m_PersistentCalls:
+            m_Calls: []
+          m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+            PublicKeyToken=null
   - _stateName: Ruined
     _everydayAction:
       m_PersistentCalls:
@@ -127,7 +201,7 @@ MonoBehaviour:
     - _actionData:
         actionType: 28
         actionCategory: 0
-        actionName: Cleanse
+        actionName: Deposit
         filters: []
         advertisedFullness: 0
         advertisedFun: 0

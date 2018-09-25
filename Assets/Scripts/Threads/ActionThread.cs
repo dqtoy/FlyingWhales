@@ -120,7 +120,7 @@ public class ActionThread : Multithread {
                     actionLog += "\nGot civilian work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
                 }
             } else if (character.dailySchedule.currentPhase.phaseType == SCHEDULE_PHASE_TYPE.MISC) { //if misc phase
-                                                                                                        //first check if needs meet their thresholds (NOTE: Will this be changed to overall value?)
+                //first check if needs meet their thresholds (NOTE: Will this be changed to overall value?)
                 if (character.role.AreNeedsMet()) { //if needs are met
                     actionLog += "\nDetermining non need misc action...";
                     //Get action from misc actions based on the tags of this character and possibly some consistent actions that are present for everyone
@@ -556,9 +556,9 @@ public class ActionThread : Multithread {
         for (int i = 0; i < allChoices.Count; i++) {
             CharacterActionAdvertisement currChoice = allChoices[i];
             weightedAds.AddElement(currChoice, currChoice.advertisement);
-            if (weightedAds.Count == 3) {
-                break;
-            }
+            //if (weightedAds.Count == 3) {
+            //    break;
+            //}
         }
         //if (choices[0].action == null) {
         //    weightedAds.Add(choices[0], choices[0].advertisement);
