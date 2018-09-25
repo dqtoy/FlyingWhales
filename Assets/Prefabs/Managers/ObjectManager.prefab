@@ -53,20 +53,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   structureObjectComponents:
   - {fileID: 114012481577862306, guid: 4bb61550ae03f4340848dc3f8ff60b04, type: 2}
-  - {fileID: 114117863252302098, guid: 45ffd443695f4414e8d5119dddfa6025, type: 2}
-  - {fileID: 114230159527784920, guid: b58111cc4f67ff74ca750a11b3b7d1c8, type: 2}
   - {fileID: 114012481577862306, guid: fc26b3b3ee709fa46bfbf45421f318ea, type: 2}
-  - {fileID: 114012481577862306, guid: babe47ad81e0d95489d87760882f8240, type: 2}
-  - {fileID: 114012481577862306, guid: dcb5211691886e043911ff9fcaed9c19, type: 2}
-  - {fileID: 114012481577862306, guid: a26e67a516bdf014fba31dacdf4cf4be, type: 2}
   - {fileID: 114943314918187516, guid: 06a3289fc56c7794cac1d69fc84db447, type: 2}
   - {fileID: 114507616343566192, guid: a2f5f1eb66251a844add992c1821bcf3, type: 2}
-  - {fileID: 114012481577862306, guid: b382b5990d6081449986641e13ba6caf, type: 2}
   - {fileID: 114012481577862306, guid: fa268b3342cb4194faf7b589bcdc5708, type: 2}
   - {fileID: 114012481577862306, guid: 0e881475e10af9b4abb08f4ab6340dcd, type: 2}
   - {fileID: 114012481577862306, guid: 7fdb15867006a3c4082558236ffa6fe4, type: 2}
   - {fileID: 114012481577862306, guid: 359b5ae275b8dd64687b839c6d26e829, type: 2}
-  - {fileID: 114012481577862306, guid: d7999f1c9db6eb44187e6dbdde5bd3cf, type: 2}
   - {fileID: 114012481577862306, guid: 09e8c63725b832a4698a0cb1a56cfbb4, type: 2}
   - {fileID: 114012481577862306, guid: 99671459d9586734698dfbec47efc02b, type: 2}
   - {fileID: 114012481577862306, guid: 298a7e357b7e2d340b40a39c5503e338, type: 2}
@@ -77,6 +70,9 @@ MonoBehaviour:
   - {fileID: 114012481577862306, guid: 8787328d79ea72045b281afde9039892, type: 2}
   - {fileID: 114012481577862306, guid: 62c7fb471cfe9174489c62325ffbed00, type: 2}
   - {fileID: 114012481577862306, guid: b99c96cf73cdf234aa82153ad51b5f7e, type: 2}
+  - {fileID: 114012481577862306, guid: a5c27e38dde953a4d814f27821c10f08, type: 2}
+  - {fileID: 114012481577862306, guid: 4002bef8981115148a18797ec2557ce2, type: 2}
+  - {fileID: 114012481577862306, guid: 8564ce2b44d03cf47af8d655c42a4f05, type: 2}
   characterObjectComponents:
   - {fileID: 114023154591909926, guid: 8666de66ca65add4b8afeb5fc44cc68d, type: 2}
   - {fileID: 114023154591909926, guid: b6818289fed035c468a353046295094f, type: 2}

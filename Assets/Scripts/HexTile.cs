@@ -347,7 +347,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                 race = RACE.HUMANS;
             }
         }
-        List<LandmarkStructureSprite> landmarkTileSprites = LandmarkManager.Instance.GetLandmarkTileSprites(landmarkType, race);
+        List<LandmarkStructureSprite> landmarkTileSprites = LandmarkManager.Instance.GetLandmarkTileSprites(this, landmarkType, race);
         if (landmarkTileSprites == null || landmarkTileSprites.Count == 0) {
             //DeactivateCenterPiece();
             HideLandmarkTileSprites();
@@ -474,15 +474,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (this.hasLandmark || !this.isPassable || landmarksToBeCreated.ContainsKey(this)) {
             return false; //this tile is not passable or already has a landmark
         }
-        if (landmarkToBuild == LANDMARK_TYPE.OAK_FORTIFICATION || landmarkToBuild == LANDMARK_TYPE.IRON_FORTIFICATION) {
-            if (this.PassableNeighbours.Where(x => x.hasLandmark || landmarksToBeCreated.ContainsKey(x)).Any()) {
-                return false; //check if this tile has any neighbours that are not fortifications
-            }
-        } else {
+        //if (landmarkToBuild == LANDMARK_TYPE.OAK_FORTIFICATION || landmarkToBuild == LANDMARK_TYPE.IRON_FORTIFICATION) {
+        //    if (this.PassableNeighbours.Where(x => x.hasLandmark || landmarksToBeCreated.ContainsKey(x)).Any()) {
+        //        return false; //check if this tile has any neighbours that are not fortifications
+        //    }
+        //} else {
             if (this.PassableNeighbours.Where(x => x.hasLandmark || landmarksToBeCreated.ContainsKey(x)).Any()) {
                 return false; //check if this tile has any neighbours that have landmarks
             }
-        }
+        //}
         if (!data.possibleSpawnPoints.Contains(this.passableType)) {
             return false; //check if this tiles' passable type meets the types the landmark can spawn on
         }
