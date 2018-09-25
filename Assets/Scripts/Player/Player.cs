@@ -430,6 +430,15 @@ public class Player : ILeader{
 
         PlayerAbilitiesUI.Instance.ConstructAbilityButtons(_allAbilities);
     }
+    public PlayerAbility GetAbility(ABILITY_TYPE type) {
+        for (int i = 0; i < _allAbilities.Count; i++) {
+            PlayerAbility currAbility = _allAbilities[i];
+            if (currAbility.type == type) {
+                return currAbility;
+            }
+        }
+        return null;
+    }
     #endregion
 
     #region Character

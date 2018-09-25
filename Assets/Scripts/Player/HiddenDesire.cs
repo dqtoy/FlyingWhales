@@ -17,6 +17,9 @@ public class HiddenDesire {
     public bool isAwakened {
         get { return _isAwakened; }
     }
+    public string description {
+        get { return _description; }
+    }
     #endregion
 
     public HiddenDesire(HIDDEN_DESIRE type, Character host) {
@@ -34,6 +37,7 @@ public class HiddenDesire {
     }
 
     #region Virtuals
+    public virtual void Initialize() { }
     public virtual void Awaken() {
         _isAwakened = true;
         Debug.Log(GameManager.Instance.TodayLogString() + "Awakened " + _host.name + "'s hidden desire: " + name);

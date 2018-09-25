@@ -11,6 +11,10 @@ public class ResearchScrollDesire : HiddenDesire {
     }
 
     #region Overrides
+    public override void Initialize() {
+        base.Initialize();
+        _description = "Wants to research forbidden scrolls.";
+    }
     public override void Awaken() {
         base.Awaken();
         //when awakened, create a new quest to obtain scrolls,

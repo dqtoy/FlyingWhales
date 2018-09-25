@@ -90,9 +90,6 @@ public class CharacterManager : MonoBehaviour {
             for (int i = 0; i < data.charactersData.Count; i++) {
                 CharacterSaveData currData = data.charactersData[i];
                 ECS.Character currCharacter = CreateNewCharacter(currData);
-                CheckForHiddenDesire(currCharacter); //TODO: Remove this when setup for hidden desire in character editor is done
-                CheckForIntelActions(currCharacter); //TODO: Remove this when setup for hidden desire in character editor is done
-                CheckForIntelReactions(currCharacter);
                 Faction characterFaction = FactionManager.Instance.GetFactionBasedOnID(currData.factionID);
                 if (characterFaction != null) {
                     currCharacter.SetFaction(characterFaction);
@@ -113,6 +110,14 @@ public class CharacterManager : MonoBehaviour {
 #if WORLD_CREATION_TOOL
             worldcreator.WorldCreatorUI.Instance.editFactionsMenu.UpdateItems();
 #endif
+        }
+    }
+    public void LoadCharactersInfo() {
+        for (int i = 0; i < allCharacters.Count; i++) {
+            Character currCharacter = allCharacters[i];
+            CheckForHiddenDesire(currCharacter); //TODO: Remove this when setup for hidden desire in character editor is done
+            CheckForIntelActions(currCharacter); //TODO: Remove this when setup for intel in character editor is done
+            CheckForIntelReactions(currCharacter); //TODO: Remove this when setup for intel in character editor is done
         }
     }
     public void LoadRelationships(WorldSaveData data) {
@@ -738,6 +743,7 @@ public class CharacterManager : MonoBehaviour {
     }
     public void SetHiddenDesireForCharacter(HIDDEN_DESIRE hiddenDesire, Character character) {
         HiddenDesire desire = CreateHiddenDesire(hiddenDesire, character);
+        desire.Initialize();
         character.SetHiddenDesire(desire);
     }
     private HiddenDesire CreateHiddenDesire(HIDDEN_DESIRE hiddenDesire, Character host) {

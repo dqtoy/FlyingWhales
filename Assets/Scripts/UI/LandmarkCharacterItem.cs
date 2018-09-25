@@ -51,7 +51,7 @@ public class LandmarkCharacterItem : PooledObject {
                 //use character portrait
                 residentsParty.gameObject.SetActive(false);
                 residentsPortrait.gameObject.SetActive(true);
-                residentsPortrait.GeneratePortrait(party.owner, 64, true);
+                residentsPortrait.GeneratePortrait(party.owner, 42, true);
             }
             visitorParty.gameObject.SetActive(false);
             visitorPortrait.gameObject.SetActive(false);
@@ -65,7 +65,7 @@ public class LandmarkCharacterItem : PooledObject {
                 //use character portrait
                 visitorParty.gameObject.SetActive(false);
                 visitorPortrait.gameObject.SetActive(true);
-                visitorPortrait.GeneratePortrait(party.owner, 64, true);
+                visitorPortrait.GeneratePortrait(party.owner, 42, true);
             }
             residentsParty.gameObject.SetActive(false);
             residentsPortrait.gameObject.SetActive(false);

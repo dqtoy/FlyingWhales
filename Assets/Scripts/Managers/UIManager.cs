@@ -617,9 +617,9 @@ public class UIManager : MonoBehaviour {
         //if (factionInfoUI.isShowing) {
         //    factionInfoUI.HideMenu();
         //}
-        //if (characterInfoUI.isShowing) {
-        //    characterInfoUI.HideMenu();
-        //}
+        if (characterInfoUI.isShowing) {
+            characterInfoUI.CloseMenu();
+        }
         //if (hexTileInfoUI.isShowing) {
         //    hexTileInfoUI.HideMenu();
         //}
@@ -686,9 +686,9 @@ public class UIManager : MonoBehaviour {
     [SerializeField] internal CharacterInfoUI characterInfoUI;
     public void ShowCharacterInfo(Character character) {
         //HideMainUI();
-        //if (landmarkInfoUI.isShowing) {
-        //    landmarkInfoUI.HideMenu();
-        //}
+        if (landmarkInfoUI.isShowing) {
+            landmarkInfoUI.CloseMenu();
+        }
         //if (factionInfoUI.isShowing) {
         //    factionInfoUI.HideMenu();
         //}
@@ -705,11 +705,11 @@ public class UIManager : MonoBehaviour {
         //    monsterInfoUI.HideMenu();
         //}
         characterInfoUI.SetData(character);
-        if(character.role.roleType != CHARACTER_ROLE.PLAYER) {
-            characterInfoUI.OpenMenu();
-        } else {
-            characterInfoUI.CloseMenu();
-        }
+        //if(character.role.roleType != CHARACTER_ROLE.PLAYER) {
+        characterInfoUI.OpenMenu();
+        //} else {
+        //    characterInfoUI.CloseMenu();
+        //}
         character.CenterOnCharacter();
         //		playerActionsUI.ShowPlayerActionsUI ();
     }

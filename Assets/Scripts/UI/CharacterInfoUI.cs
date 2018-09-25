@@ -71,6 +71,12 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private Color evenRelationshipColor;
     [SerializeField] private Color oddRelationshipColor;
 
+    [Space(10)]
+    [Header("Info")]
+    [SerializeField] private SecretItem[] secretItems;
+    [SerializeField] private IntelItem[] intelItems;
+    [SerializeField] private HiddenDesireItem hiddenDesireItem;
+
     //[Space(10)]
     //[Header("Content")]
     //[SerializeField] private TextMeshProUGUI statInfoLbl;
@@ -217,6 +223,7 @@ public class CharacterInfoUI : UIMenu {
         UpdatePortrait();
         UpdateBasicInfo();
         //UpdateGeneralInfo();
+        UpdateInfoMenu();
         UpdateStatInfo();
         //UpdateMoodInfo();
         UpdateItemsInfo();
@@ -728,6 +735,38 @@ public class CharacterInfoUI : UIMenu {
         } else {
             daysConversionLbl.text = "Day Conversion: Invalid";
             scheduleManualBtn.interactable = false;
+        }
+    }
+    #endregion
+
+    #region Info
+    private void UpdateInfoMenu() {
+        for (int i = 0; i < secretItems.Length; i++) {
+            SecretItem currItem = secretItems[i];
+            Secret currSecret = currentlyShowingCharacter.secrets.ElementAtOrDefault(i);
+            if (currSecret == null) {
+                currItem.gameObject.SetActive(false);
+            } else {
+                currItem.SetSecret(currSecret);
+                currItem.gameObject.SetActive(true);
+            }
+        }
+        for (int i = 0; i < intelItems.Length; i++) {
+            IntelItem currItem = intelItems[i];
+            currItem.gameObject.SetActive(false);
+            //Intel currSecret = currentlyShowingCharacter.intelReactions.ElementAtOrDefault(i);
+            //if (currSecret == null) {
+            //    currItem.gameObject.SetActive(false);
+            //} else {
+            //    currItem.SetSecret(currSecret);
+            //    currItem.gameObject.SetActive(true);
+            //}
+        }
+        if (currentlyShowingCharacter.hiddenDesire == null) {
+            hiddenDesireItem.gameObject.SetActive(false);
+        } else {
+            hiddenDesireItem.SetHiddenDesire(currentlyShowingCharacter.hiddenDesire);
+            hiddenDesireItem.gameObject.SetActive(true);
         }
     }
     #endregion
