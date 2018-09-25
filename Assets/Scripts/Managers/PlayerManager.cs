@@ -108,6 +108,7 @@ public class PlayerManager : MonoBehaviour {
 
     public void AdjustTotalLifestones(int amount) {
         totalLifestonesInWorld += amount;
+        Debug.Log("Adjusted lifestones in world by " + amount + ". New total is " + totalLifestonesInWorld);
     }
 
     #region Snatch

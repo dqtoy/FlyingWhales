@@ -598,6 +598,9 @@ public class UIManager : MonoBehaviour {
     //public void ToggleTraderCamera() {
     //    CameraMove.Instance.ToggleTraderCamera();
     //}
+    public void AddLifestones() {
+        PlayerManager.Instance.AdjustTotalLifestones(10);
+    }
     #endregion
 
     //private void HideMainUI() {
