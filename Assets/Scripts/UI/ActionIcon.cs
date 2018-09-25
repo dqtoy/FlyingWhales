@@ -24,7 +24,7 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
     #endregion
 
     public void Initialize() {
-        Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_DAY_ADJUSTED, OnActionDayAdjusted);
+        Messenger.AddListener<CharacterAction, NewParty>(Signals.ACTION_DAY_ADJUSTED, OnActionDayAdjusted);
         Messenger.AddListener<CharacterAction, NewParty>(Signals.ACTION_TAKEN, OnActionTaken);
         //Messenger.AddListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
     }
@@ -101,7 +101,7 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
 
     public override void Reset() {
         base.Reset();
-        Messenger.RemoveListener<CharacterAction, CharacterParty>(Signals.ACTION_DAY_ADJUSTED, OnActionDayAdjusted);
+        Messenger.RemoveListener<CharacterAction, NewParty>(Signals.ACTION_DAY_ADJUSTED, OnActionDayAdjusted);
         Messenger.RemoveListener<CharacterAction, NewParty>(Signals.ACTION_TAKEN, OnActionTaken);
         //Messenger.RemoveListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
         _action = null;

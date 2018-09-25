@@ -49,15 +49,22 @@ public class LandmarkInfoUI : UIMenu {
     [SerializeField] private GameObject attackButtonGO;
     [SerializeField] private Toggle attackBtnToggle;
 
+    [Space(10)]
+    [Header("Others")]
+    [SerializeField] private GameObject[] notInspectedBGs;
+
     private LogHistoryItem[] logHistoryItems;
 
     internal BaseLandmark currentlyShowingLandmark {
         get { return _data as BaseLandmark; }
     }
 
+    private BaseLandmark _activeLandmark;
+
     internal override void Initialize() {
         base.Initialize();
         SetWaitingForAttackState(false);
+        healthProgressBar.minValue = 0f;
         //Messenger.AddListener("UpdateUI", UpdateLandmarkInfo);
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
 
@@ -83,17 +90,16 @@ public class LandmarkInfoUI : UIMenu {
     }
     public override void OpenMenu() {
         base.OpenMenu();
-        UpdateBasicInfo();
-        UpdateCharacters();
-        UpdateItems();
-        UpdateAllHistoryInfo();
+        _activeLandmark = _data as BaseLandmark;
+        UpdateLandmarkInfo();
         //ShowAttackButton();
-        if(currentlyShowingLandmark.specificLandmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
-            PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(currentlyShowingLandmark);
+        if(_activeLandmark.specificLandmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
+            PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeLandmark);
         }
     }
     public override void CloseMenu() {
         base.CloseMenu();
+        _activeLandmark = null;
         PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
     }
     //public override void SetData(object data) {
@@ -105,42 +111,54 @@ public class LandmarkInfoUI : UIMenu {
     //}
 
     public void UpdateLandmarkInfo() {
-        if (currentlyShowingLandmark == null) {
+        if (_activeLandmark == null) {
             return;
         }
-        UpdateHP();
+        UpdateBasicInfo();
+        if (!_activeLandmark.isBeingInspected) {
+            UpdateBGs(true);
+        } else {
+            UpdateBGs(false);
+        }
+        UpdateCharacters();
+        UpdateItems();
+        UpdateAllHistoryInfo();
+    }
+    private void UpdateBGs(bool state) {
+        for (int i = 0; i < notInspectedBGs.Length; i++) {
+            notInspectedBGs[i].SetActive(state);
+        }
     }
     private void UpdateBasicInfo() {
-        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(currentlyShowingLandmark.specificLandmarkType);
+        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_activeLandmark.specificLandmarkType);
         //structureIcon.sprite = data.landmarkTypeIcon;
-        structureTypeLbl.text = data.landmarkTypeString + "(" + currentlyShowingLandmark.locationName + ")";
+        structureTypeLbl.text = data.landmarkTypeString + "(" + _activeLandmark.locationName + ")";
         //if (currentlyShowingLandmark.tileLocation.areaOfTile == null) {
         //    areaIcon.gameObject.SetActive(false);
         //} else {
         //    areaIcon.gameObject.SetActive(true);
         //}
-        if (currentlyShowingLandmark.owner == null) {
+        if (_activeLandmark.owner == null) {
             factionEmblem.gameObject.SetActive(false);
         } else {
             factionEmblem.gameObject.SetActive(true);
-            factionEmblem.SetFaction(currentlyShowingLandmark.owner);
+            factionEmblem.SetFaction(_activeLandmark.owner);
         }
-        healthProgressBar.minValue = 0f;
-        healthProgressBar.maxValue = currentlyShowingLandmark.totalDurability;
         UpdateHP();
     }
     private void UpdateHP() {
-        healthProgressBar.value = currentlyShowingLandmark.currDurability;
+        healthProgressBar.maxValue = _activeLandmark.totalDurability;
+        healthProgressBar.value = _activeLandmark.currDurability;
     }
 
     #region Log History
     private void UpdateHistory(object obj) {
-        if (obj is BaseLandmark && currentlyShowingLandmark != null && (obj as BaseLandmark).id == currentlyShowingLandmark.id) {
+        if (obj is BaseLandmark && _activeLandmark != null && (obj as BaseLandmark).id == _activeLandmark.id) {
             UpdateAllHistoryInfo();
         }
     }
     private void UpdateAllHistoryInfo() {
-        List<Log> landmarkHistory = new List<Log>(currentlyShowingLandmark.history.OrderByDescending(x => x.id));
+        List<Log> landmarkHistory = new List<Log>(_activeLandmark.history.OrderByDescending(x => x.id));
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
             Log currLog = landmarkHistory.ElementAtOrDefault(i);
@@ -176,9 +194,12 @@ public class LandmarkInfoUI : UIMenu {
 
     #region Characters
     private void UpdateCharacters() {
+        if (!_activeLandmark.isBeingInspected) {
+            return;
+        }
         Utilities.DestroyChildren(charactersScrollView.content);
-        for (int i = 0; i < currentlyShowingLandmark.charactersAtLocation.Count; i++) {
-            NewParty currParty = currentlyShowingLandmark.charactersAtLocation[i];
+        for (int i = 0; i < _activeLandmark.charactersAtLocation.Count; i++) {
+            NewParty currParty = _activeLandmark.charactersAtLocation[i];
             CreateNewCharacterItem(currParty);
         }
     }
@@ -195,36 +216,44 @@ public class LandmarkInfoUI : UIMenu {
     private void CreateNewCharacterItem(NewParty party) {
         GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
         LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
-        item.SetParty(party, currentlyShowingLandmark);
+        item.SetParty(party, _activeLandmark);
     }
     private void OnPartyEnteredLandmark(NewParty party, BaseLandmark landmark) {
-        if (isShowing && currentlyShowingLandmark != null && currentlyShowingLandmark.id == landmark.id) {
+        if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id && _activeLandmark.isBeingInspected) {
             CreateNewCharacterItem(party);
         }
     }
     private void OnPartyExitedLandmark(NewParty party, BaseLandmark landmark) {
-        if (isShowing && currentlyShowingLandmark != null && currentlyShowingLandmark.id == landmark.id) {
+        if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id) {
             LandmarkCharacterItem item = GetItem(party);
-            ObjectPoolManager.Instance.DestroyObject(item.gameObject);
+            if(item != null) {
+                ObjectPoolManager.Instance.DestroyObject(item.gameObject);
+            }
         }
     }
     #endregion
     
     #region Items
     private void UpdateItems() {
+        if (!_activeLandmark.isBeingInspected && _activeLandmark.hasBeenInspected) {
+            return;
+        }
         for (int i = 0; i < itemContainers.Length; i++) {
             ItemContainer container = itemContainers[i];
-            Item item = currentlyShowingLandmark.itemsInLandmark.ElementAtOrDefault(i);
-            container.SetItem(item);
+            Item item = null;
+            if (i < _activeLandmark.itemsInLandmark.Count) {
+                item = _activeLandmark.itemsInLandmark[i];
+            }
+            container.SetItem(item, _activeLandmark.hasBeenInspected);
         }
     }
     private void OnItemAddedToLandmark(Item item, BaseLandmark landmark) {
-        if (isShowing && currentlyShowingLandmark != null && currentlyShowingLandmark.id == landmark.id) {
+        if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id) {
             UpdateItems();
         }
     }
     private void OnItemRemovedFromLandmark(Item item, BaseLandmark landmark) {
-        if (isShowing && currentlyShowingLandmark != null && currentlyShowingLandmark.id == landmark.id) {
+        if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id) {
             UpdateItems();
         }
     }
@@ -234,12 +263,12 @@ public class LandmarkInfoUI : UIMenu {
 		CloseMenu ();
 	}
     public void CenterOnLandmark() {
-        currentlyShowingLandmark.CenterOnLandmark();
+        _activeLandmark.CenterOnLandmark();
     }
 
     #region Attack Landmark
     private void ShowAttackButton() {
-        BaseLandmark landmark = currentlyShowingLandmark;
+        BaseLandmark landmark = _activeLandmark;
         if (!landmark.isAttackingAnotherLandmark) {
             if ((landmark.landmarkObj.specificObjectType == LANDMARK_TYPE.GARRISON || landmark.landmarkObj.specificObjectType == LANDMARK_TYPE.DEMONIC_PORTAL) && landmark.landmarkObj.currentState.stateName == "Ready") {
                 attackButtonGO.SetActive(true);
@@ -283,13 +312,13 @@ public class LandmarkInfoUI : UIMenu {
     #endregion
 
     private void OnStructureChangedState(StructureObj obj, ObjectState newState) {
-        if (currentlyShowingLandmark == null) {
+        if (_activeLandmark == null) {
             return;
         }
         if (obj.objectLocation == null) {
             return;
         }
-        if (obj.objectLocation.id == currentlyShowingLandmark.id) {
+        if (obj.objectLocation.id == _activeLandmark.id) {
             //if (newState.stateName.Equals("Ready")) {
             //    SetActiveAttackButtonGO(true);
             //} else {
@@ -306,15 +335,15 @@ public class LandmarkInfoUI : UIMenu {
     }
     private void TileHoverOver(HexTile tile) {
         if (tile.landmarkOnTile != null) {
-            currentlyShowingLandmark.landmarkVisual.DrawPathTo(tile.landmarkOnTile);
+            _activeLandmark.landmarkVisual.DrawPathTo(tile.landmarkOnTile);
         }
     }
     private void TileHoverOut(HexTile tile) {
-        currentlyShowingLandmark.landmarkVisual.HidePathVisual();
+        _activeLandmark.landmarkVisual.HidePathVisual();
     }
     private void OnAttackTargetSelected(BaseLandmark target) {
-        Debug.Log(currentlyShowingLandmark.landmarkName + " will attack " + target.landmarkName);
-        currentlyShowingLandmark.landmarkObj.AttackLandmark(target);
+        Debug.Log(_activeLandmark.landmarkName + " will attack " + target.landmarkName);
+        _activeLandmark.landmarkObj.AttackLandmark(target);
         SetWaitingForAttackState(false);
         SetActiveAttackButtonGO(false);
         Messenger.Broadcast(Signals.HIDE_POPUP_MESSAGE);
@@ -330,7 +359,7 @@ public class LandmarkInfoUI : UIMenu {
     }
     private void OnEndWaitingForAttack() {
         if (this.gameObject.activeSelf) {
-            currentlyShowingLandmark.landmarkVisual.HidePathVisual();
+            _activeLandmark.landmarkVisual.HidePathVisual();
             Messenger.RemoveListener<HexTile>(Signals.TILE_HOVERED_OVER, TileHoverOver);
             Messenger.RemoveListener<HexTile>(Signals.TILE_HOVERED_OUT, TileHoverOut);
             Messenger.RemoveListener<HexTile>(Signals.TILE_RIGHT_CLICKED, TileRightClicked);

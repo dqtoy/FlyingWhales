@@ -64,11 +64,12 @@ public class Inspect : PlayerAbility {
     #region Utilities
     private void ScheduleEndInspection(IInteractable interactable) {
         GameDate date = GameManager.Instance.Today();
-        date.AddDays(2);
+        date.AddDays(1);
         SchedulingManager.Instance.AddEntry(date, () => EndInspection(interactable));
     }
     private void EndInspection(IInteractable interactable) {
         interactable.SetIsBeingInspected(false);
+        _playerAbilityButton.UpdateThis(interactable);
     }
     private void UpdateInfoUI(IInteractable interactable) {
         if (interactable is Character) {

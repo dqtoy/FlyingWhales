@@ -20,7 +20,15 @@ public class Log {
 
     public string logCallStack;
 
-	public Log(int month, int day, int year, int hour, string category, string file, string key){
+    private bool _isInspected;
+
+    #region getters/setters
+    public bool isInspected {
+        get { return _isInspected; }
+    }
+    #endregion
+
+    public Log(int month, int day, int year, int hour, string category, string file, string key){
         this.id = Utilities.SetID<Log>(this);
 		this.month = (MONTH)month;
 		this.day = day;
@@ -52,4 +60,8 @@ public class Log {
 	internal void AddAllInvolvedObjects(object[] objects){
 		this.allInvolved = objects;
 	}
+
+    public void SetInspected(bool state) {
+        _isInspected = state;
+    }
 }

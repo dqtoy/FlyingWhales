@@ -487,7 +487,7 @@ public class BaseLandmark : ILocation, IInteractable {
         //        throw new System.Exception(text);
         //    }
         //}
-
+        log.SetInspected(_isBeingInspected);
         _history.Add(log);
         if (this._history.Count > 20) {
             this._history.RemoveAt(0);

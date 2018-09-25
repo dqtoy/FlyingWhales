@@ -14,6 +14,9 @@ public class ItemManager : MonoBehaviour {
         "Tier 1 Weapon Chest"
     };
 
+    [SerializeField] private List<ItemSprite> itemSprites;
+    public Sprite notInspectedSprite;
+
     private Dictionary<string, Item> _allItems;
 	private Dictionary<string, Weapon> _allWeapons;
 	private Dictionary<string, Armor> _allArmors;
@@ -28,8 +31,6 @@ public class ItemManager : MonoBehaviour {
 
     private Dictionary<ARMOR_PREFIX, ArmorPrefix> _armorPrefixes;
     private Dictionary<ARMOR_SUFFIX, ArmorSuffix> _armorSuffixes;
-
-    [SerializeField] private List<ItemSprite> itemSprites;
 
     private Dictionary<string, Sprite> _iconSprites;
 

@@ -10,15 +10,23 @@ public class LogHistoryItem : LogItem {
     [SerializeField] private Image logBG;
     [SerializeField] private EnvelopContentUnityUI envelopContent;
 
+    private bool _isInspected;
+
     public new void SetLog(Log log) {
         base.SetLog(log);
         //this.name = log.id.ToString();
-        dateLbl.text = "Day " + new GameDate((int)log.month, log.day, log.year, log.hour).GetDayAndTicksString();
-        if (_log.fillers.Count > 0) {
-            this.logLbl.text = Utilities.LogReplacer(_log);
+        if (log.isInspected) {
+            dateLbl.text = "Day " + new GameDate((int) log.month, log.day, log.year, log.hour).GetDayAndTicksString();
+            if (_log.fillers.Count > 0) {
+                this.logLbl.text = Utilities.LogReplacer(_log);
+            } else {
+                this.logLbl.text = LocalizationManager.Instance.GetLocalizedValue(_log.category, _log.file, _log.key);
+            }
         } else {
-            this.logLbl.text = LocalizationManager.Instance.GetLocalizedValue(_log.category, _log.file, _log.key);
+            dateLbl.text = "???";
+            this.logLbl.text = "???";
         }
+        
         //if (!this.gameObject.activeSelf) {
         //    throw new System.Exception("Log Item is not active!");
         //}

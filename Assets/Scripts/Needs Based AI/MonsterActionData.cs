@@ -108,7 +108,7 @@ public class MonsterActionData {
     }
     private void AdjustCurrentDay(int amount) {
         _currentDay += amount;
-        Messenger.Broadcast(Signals.ACTION_DAY_ADJUSTED, _currentAction, _party);
+        Messenger.Broadcast(Signals.ACTION_DAY_ADJUSTED, _currentAction, _party.GetBase());
         if (_currentDay >= _currentAction.actionData.duration) {
             _currentAction.DoneDuration(_party, _currentTargetObject);
             _currentAction.EndAction(_party, _currentTargetObject);

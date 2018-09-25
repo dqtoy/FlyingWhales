@@ -254,7 +254,7 @@ public class UIManager : MonoBehaviour {
         UpdateCharacterInfo();
         UpdateFactionInfo();
         //UpdateHexTileInfo();
-        //UpdateLandmarkInfo();
+        UpdateLandmarkInfo();
         UpdateMonsterInfo();
         UpdatePartyInfo();
         UpdateCombatLogs();

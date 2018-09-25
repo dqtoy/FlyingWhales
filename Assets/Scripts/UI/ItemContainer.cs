@@ -12,16 +12,20 @@ public class ItemContainer : PooledObject, IPointerEnterHandler, IPointerExitHan
 
     [SerializeField] private Image itemIcon;
 
-    public void SetItem(ECS.Item item) {
+    public void SetItem(ECS.Item item, bool hasBeenInspected = true) {
         this.item = item;
-        UpdateVisual();
+        UpdateVisual(hasBeenInspected);
     }
-    private void UpdateVisual() {
+    private void UpdateVisual(bool hasBeenInspected = true) {
         if (item == null) {
             itemIcon.sprite = null;
             itemIcon.gameObject.SetActive(false);
         } else {
-            itemIcon.sprite = ItemManager.Instance.GetIconSprite(item.iconName);
+            if (!hasBeenInspected) {
+                itemIcon.sprite = ItemManager.Instance.notInspectedSprite;
+            } else {
+                itemIcon.sprite = ItemManager.Instance.GetIconSprite(item.iconName);
+            }
             itemIcon.gameObject.SetActive(true);
         }
     }
@@ -44,7 +48,7 @@ public class ItemContainer : PooledObject, IPointerEnterHandler, IPointerExitHan
     }
 
     private void Update() {
-        if (isHovering) {
+        if (isHovering && itemIcon.sprite.name != ItemManager.Instance.notInspectedSprite.name) {
             UIManager.Instance.ShowSmallInfo(item.itemName);
         }
     }

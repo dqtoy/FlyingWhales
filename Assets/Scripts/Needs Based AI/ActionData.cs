@@ -178,7 +178,7 @@ public class ActionData {
     }
     private void AdjustCurrentDay(int amount) {
         this.currentDay += amount;
-        Messenger.Broadcast(Signals.ACTION_DAY_ADJUSTED, currentAction, _party);
+        Messenger.Broadcast(Signals.ACTION_DAY_ADJUSTED, currentAction, _party.GetBase());
         if(this.currentDay >= currentAction.actionData.duration) {
             currentAction.DoneDuration(_party, currentTargetObject);
             currentAction.EndAction(_party, currentTargetObject);

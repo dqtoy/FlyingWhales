@@ -190,6 +190,7 @@ MonoBehaviour:
     sprite: {fileID: 21300014, guid: 5cca1db87f9988d4ea2545b3f98ffb2f, type: 3}
   - itemName: SwordCiv
     sprite: {fileID: 21300018, guid: 5cca1db87f9988d4ea2545b3f98ffb2f, type: 3}
+  notInspectedSprite: {fileID: 21300450, guid: 5cca1db87f9988d4ea2545b3f98ffb2f, type: 3}
 --- !u!114 &114749049423832922
 MonoBehaviour:
   m_ObjectHideFlags: 1
