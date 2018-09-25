@@ -3118,9 +3118,10 @@ namespace ECS {
         #endregion
 
         #region Work
-        private void LookForNewWorkplace() {
+        public bool LookForNewWorkplace() {
             if (_characterClass.workActionType == ACTION_TYPE.WORKING) {
                 _workplace = _homeLandmark;
+                return true;
             } else {
                 List<BaseLandmark> workplaceChoices = new List<BaseLandmark>();
                 for (int i = 0; i < _homeLandmark.tileLocation.areaOfTile.landmarks.Count; i++) {
@@ -3132,11 +3133,13 @@ namespace ECS {
                         }
                     }
                 }
-                if (workplaceChoices.Count == 0) {
-                    throw new Exception("Could not find workplace for " + this.name);
+                if (workplaceChoices.Count != 0) {
+                    _workplace = workplaceChoices[UnityEngine.Random.Range(0, workplaceChoices.Count)];
+                    return true;
                 }
-                _workplace = workplaceChoices[UnityEngine.Random.Range(0, workplaceChoices.Count)];
+                //throw new Exception("Could not find workplace for " + this.name);
             }
+            return false;
         }
         #endregion
 

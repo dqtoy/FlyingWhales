@@ -72,6 +72,9 @@ public class StructureObj : IObject {
     public bool isDirty {
         get { return _isDirty; }
     }
+    public bool isRuined {
+        get { return currentState.stateName.Equals("Ruined"); }
+    }
     #endregion
 
     public StructureObj() {
@@ -102,7 +105,7 @@ public class StructureObj : IObject {
     }
     public virtual void StartState(ObjectState state) {
         if(state.stateName == "Ruined") {
-            Messenger.Broadcast(Signals.DESTROY_LANDMARK, this);
+            Messenger.Broadcast(Signals.DESTROY_LANDMARK, this.objectLocation);
             objectLocation.tileLocation.SetLandmarkTileSprite(new LandmarkStructureSprite(LandmarkManager.Instance.ruinedSprite, null));
             objectLocation.MigrateCharactersToAnotherLandmark();
         }

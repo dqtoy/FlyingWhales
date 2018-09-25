@@ -86,24 +86,41 @@ public class ActionThread : Multithread {
             if (character.dailySchedule.currentPhase.phaseType == SCHEDULE_PHASE_TYPE.WORK) { //if work phase
                 if (character.role.roleType == CHARACTER_ROLE.HERO) { //if character is hero
                     actionLog += "\nDetermining hero work action...";
+                    if (character.workplace == null || character.workplace.landmarkObj.isRuined) { //check first if the character has a workplace, or if their workplace is ruined
+                        //if it does not, look for a new workplace
+                        if (!character.LookForNewWorkplace()) {
+                            //if still, no workplace can be found, idle at home instead
+                            chosenObject = character.homeLandmark.landmarkObj;
+                            chosenAction = _party.characterObject.currentState.GetAction(ACTION_TYPE.IDLE);
+                            _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
+                            actionLog += "\nCould not find new workplace going to " + chosenAction.actionData.actionName + " at " + chosenObject.specificLocation.locationName + " instead.";
+                        }
+                    }
                     //check if he/she can reach his/her work on time or if the character is already working?
                     if (_party.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.WORK || character.CanReachWork()) {// if yes, go to work and perform work action
                         chosenObject = character.workplace.landmarkObj;
                         if (character.characterClass.workActionType == ACTION_TYPE.WORKING) {
                             chosenAction = character.genericWorkAction;
+                            actionLog += "\nGot hero work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
                         } else {
-                            chosenAction = character.workplace.landmarkObj.currentState.GetAction(character.characterClass.workActionType); //Hero work action is QUESTING.
+                            CharacterAction workplaceAction = character.workplace.landmarkObj.currentState.GetAction(character.characterClass.workActionType); //Hero work action is QUESTING.
+                            if (workplaceAction != null) { 
+                                chosenAction = workplaceAction;
+                                actionLog += "\nGot hero work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
+                            } else { //if the character could not get an action from it's workplace, idle at home instead
+                                chosenObject = character.homeLandmark.landmarkObj;
+                                chosenAction = _party.characterObject.currentState.GetAction(ACTION_TYPE.IDLE);
+                                _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
+                                actionLog += "\nCould not find new workplace action going to " + chosenAction.actionData.actionName + " at " + chosenObject.specificLocation.locationName + " instead.";
+                            }
                         }
                         _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
-                        //_party.actionData.SetQuestAssociatedWithAction(null);
-                        actionLog += "\nGot hero work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
                     } else { //if no, idle at home, until end of work phase
                         actionLog += "\nHero will be late for work, idle at home instead.";
                         actionLog += " Current location is " + _party.specificLocation.locationName;
                         chosenObject = character.homeLandmark.landmarkObj;
                         chosenAction = _party.characterObject.currentState.GetAction(ACTION_TYPE.IDLE);
                         _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
-                        //_party.actionData.SetQuestAssociatedWithAction(null);
                         actionLog += "\nGot hero work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
                     }
                 } else if (character.role.roleType == CHARACTER_ROLE.CIVILIAN) { //if character is civilian
@@ -112,15 +129,23 @@ public class ActionThread : Multithread {
                     chosenObject = character.workplace.landmarkObj;
                     if (character.characterClass.workActionType == ACTION_TYPE.WORKING) {
                         chosenAction = character.genericWorkAction;
+                        actionLog += "\nGot civilian work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
                     } else {
-                        chosenAction = character.workplace.landmarkObj.currentState.GetAction(character.characterClass.workActionType);
+                        CharacterAction workplaceAction = character.workplace.landmarkObj.currentState.GetAction(character.characterClass.workActionType);
+                        if (workplaceAction != null) {
+                            chosenAction = workplaceAction;
+                            actionLog += "\nGot civilian work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
+                        } else { //if the character could not get an action from it's workplace, idle at home instead
+                            chosenObject = character.homeLandmark.landmarkObj;
+                            chosenAction = _party.characterObject.currentState.GetAction(ACTION_TYPE.IDLE);
+                            _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
+                            actionLog += "\nCould not find new workplace action going to " + chosenAction.actionData.actionName + " at " + chosenObject.specificLocation.locationName + " instead.";
+                        }
                     }
                     _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
-                    //_party.actionData.SetQuestAssociatedWithAction(null);
-                    actionLog += "\nGot civilian work action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
                 }
             } else if (character.dailySchedule.currentPhase.phaseType == SCHEDULE_PHASE_TYPE.MISC) { //if misc phase
-                                                                                                        //first check if needs meet their thresholds (NOTE: Will this be changed to overall value?)
+                //first check if needs meet their thresholds (NOTE: Will this be changed to overall value?)
                 if (character.role.AreNeedsMet()) { //if needs are met
                     actionLog += "\nDetermining non need misc action...";
                     //Get action from misc actions based on the tags of this character and possibly some consistent actions that are present for everyone
@@ -128,7 +153,6 @@ public class ActionThread : Multithread {
                     chosenAction = character.GetWeightedMiscAction(ref targetObject, ref actionLog);
                     chosenObject = targetObject;
                     _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
-                    //_party.actionData.SetQuestAssociatedWithAction(null);
                     actionLog += "\nGot non-need misc action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
                 } else { //if not
                     actionLog += "\nDetermining need misc action...";
@@ -137,7 +161,6 @@ public class ActionThread : Multithread {
                     chosenAction = GetActionFromAdvertisements(ref targetObject);
                     chosenObject = targetObject;
                     _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
-                    //_party.actionData.SetQuestAssociatedWithAction(null);
                     actionLog += "\nGot need misc action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
                 }
             }
@@ -556,9 +579,9 @@ public class ActionThread : Multithread {
         for (int i = 0; i < allChoices.Count; i++) {
             CharacterActionAdvertisement currChoice = allChoices[i];
             weightedAds.AddElement(currChoice, currChoice.advertisement);
-            if (weightedAds.Count == 3) {
-                break;
-            }
+            //if (weightedAds.Count == 3) {
+            //    break;
+            //}
         }
         //if (choices[0].action == null) {
         //    weightedAds.Add(choices[0], choices[0].advertisement);

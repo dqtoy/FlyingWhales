@@ -48,6 +48,7 @@ public class ConsoleMenu : UIMenu {
             {"/awaken_desire", AwakenHiddenDesire },
             {"/share_intel", ShareIntel },
             {"/show_logs", ShowLogs },
+            {"/change_landmark_state", ChangeLandmarkState }
         };
     }
 
@@ -253,8 +254,43 @@ public class ConsoleMenu : UIMenu {
             AddErrorMessage("There was an error in the command format of " + parameters[0]);
             return;
         }
-        //UIManager.Instance.ShowLandmarkInfo(landmark);
+        UIManager.Instance.ShowLandmarkInfo(landmark);
         //character.CenterOnCharacter();
+    }
+    private void ChangeLandmarkState(string[] parameters) {
+        if (parameters.Length < 3) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+        string stateParameterString = parameters[1];
+        string landmarkParameterString = string.Empty;
+        for (int i = 2; i < parameters.Length; i++) {
+            landmarkParameterString += parameters[i];
+            if (i + 1 < parameters.Length) {
+                landmarkParameterString += " ";
+            }
+        }
+        int landmarkID;
+
+        bool isLandmarkParameterNumeric = int.TryParse(landmarkParameterString, out landmarkID);
+        BaseLandmark landmark = null;
+        if (isLandmarkParameterNumeric) {
+            landmark = LandmarkManager.Instance.GetLandmarkByID(landmarkID);
+        } else {
+            landmark = LandmarkManager.Instance.GetLandmarkByName(landmarkParameterString);
+        }
+
+        if (landmark == null) {
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+        ObjectState state = landmark.landmarkObj.GetState(stateParameterString);
+        if (state == null) {
+            AddErrorMessage(landmark.landmarkName + " has no " + stateParameterString + " state!");
+            return;
+        }
+        landmark.landmarkObj.ChangeState(state);
     }
     #endregion
 
