@@ -27,6 +27,7 @@ public class Lair : StructureObj {
         if(monsterPartyComponent != null) {
             MonsterParty monsterParty = MonsterManager.Instance.SpawnMonsterPartyOnLandmark(_objectLocation, monsterPartyComponent);
             if(monsterParty.mainCharacter.name == "Dragon") {
+                monsterParty.actionData.AssignAction(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.HIBERNATE), monsterParty.icharacterObject);
                 Item dragonEgg = ItemManager.Instance.CreateNewItemInstance("Dragon Egg");
                 _objectLocation.AddItem(dragonEgg);
             }

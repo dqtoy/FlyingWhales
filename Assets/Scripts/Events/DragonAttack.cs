@@ -14,6 +14,8 @@ public class DragonAttack : GameEvent {
     public void Initialize(Character target, MonsterParty dragonParty) {
         _targetCharacter = target;
         _dragonParty = dragonParty;
+        _dragonParty.EndAction();
+        _dragonParty.actionData.AssignAction(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK), null);
         _dragonParty.GoToLocation(_targetCharacter.specificLocation, PATHFINDING_MODE.PASSABLE, CheckIfTargetIsStillInLocation, _targetCharacter);
     }
 
@@ -38,7 +40,6 @@ public class DragonAttack : GameEvent {
         if(_dragonParty.mainCharacter.currentSide == combat.winningSide && !_dragonParty.isDead) {
             _dragonParty.SetIsAttacking(false);
             _dragonParty.GoHome(() => LayEggAndGoToSleep(), () => DestroyLandmarkOnLeaveOfDragon(_dragonParty.specificLocation.tileLocation.landmarkOnTile));
-            
         }
         EndEvent();
     }
@@ -50,6 +51,11 @@ public class DragonAttack : GameEvent {
     private void LayEggAndGoToSleep() {
         Item dragonEgg = ItemManager.Instance.CreateNewItemInstance("Dragon Egg");
         _dragonParty.homeLandmark.AddItem(dragonEgg);
-        (_dragonParty.mainCharacter as Monster).SetSleeping(true);
+        _dragonParty.EndAction();
+        Hibernate();
+    }
+    private void Hibernate() {
+        CharacterAction hibernateAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.HIBERNATE) as CharacterAction;
+        _dragonParty.actionData.AssignAction(hibernateAction, _dragonParty.icharacterObject);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class MonsterActionData {
     private MonsterParty _party;
@@ -37,7 +38,11 @@ public class MonsterActionData {
             return;
         }
         Reset();
-        actionHistory.Add("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + action.actionData.actionName + " - " + targetObject.objectName + "\n");
+        if(targetObject != null) {
+            actionHistory.Add("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + action.actionData.actionName + " - " + targetObject.objectName + "\n");
+        } else {
+            actionHistory.Add("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + action.actionData.actionName + "\n");
+        }
         _currentAction = action;
         _currentTargetObject = targetObject;
 
@@ -63,7 +68,7 @@ public class MonsterActionData {
                 } else {
                     ILocation characterLocation = _party.specificLocation;
                     if (characterLocation != null && _currentTargetObject.specificLocation != null
-                        && characterLocation.tileLocation.id == _currentTargetObject.specificLocation.tileLocation.id) {
+                        && characterLocation.tileLocation.id == _currentTargetObject.specificLocation.tileLocation.id && characterLocation.tileLocation.landmarkOnTile != null) {
                         //ValidateCurrentAction(); //If somehow the object has changed state while the character is on its way to perform action, check if there is an identical action in that state and if so, assign it to this character, if not, character will look for new action
                         DoAction();
                     } else {
