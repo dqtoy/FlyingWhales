@@ -15,8 +15,8 @@ public class LandmarkInfoUI : UIMenu {
     [Space(10)]
     [Header("Content")]
     [SerializeField] private TextMeshProUGUI structureTypeLbl;
-    [SerializeField] private Image structureIcon;
-    [SerializeField] private Image areaIcon;
+    //[SerializeField] private Image structureIcon;
+    //[SerializeField] private Image areaIcon;
     [SerializeField] private FactionEmblem factionEmblem;
     [SerializeField] private Slider healthProgressBar;
 
@@ -112,13 +112,13 @@ public class LandmarkInfoUI : UIMenu {
     }
     private void UpdateBasicInfo() {
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(currentlyShowingLandmark.specificLandmarkType);
-        structureIcon.sprite = data.landmarkTypeIcon;
+        //structureIcon.sprite = data.landmarkTypeIcon;
         structureTypeLbl.text = data.landmarkTypeString + "(" + currentlyShowingLandmark.locationName + ")";
-        if (currentlyShowingLandmark.tileLocation.areaOfTile == null) {
-            areaIcon.gameObject.SetActive(false);
-        } else {
-            areaIcon.gameObject.SetActive(true);
-        }
+        //if (currentlyShowingLandmark.tileLocation.areaOfTile == null) {
+        //    areaIcon.gameObject.SetActive(false);
+        //} else {
+        //    areaIcon.gameObject.SetActive(true);
+        //}
         if (currentlyShowingLandmark.owner == null) {
             factionEmblem.gameObject.SetActive(false);
         } else {

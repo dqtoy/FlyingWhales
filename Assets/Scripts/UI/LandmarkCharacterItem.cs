@@ -19,7 +19,7 @@ public class LandmarkCharacterItem : PooledObject {
     }
 
     [Header("Visitors")]
-    [SerializeField] private CharacterPortrait visitorPortrait;
+    [SerializeField] private CharacterPortrait[] visitorPortraits;
     [SerializeField] private Image visitorParty;
 
     [Header("Residents")]
@@ -41,35 +41,43 @@ public class LandmarkCharacterItem : PooledObject {
     }
 
     public void UpdateVisuals() {
-        if (_landmark.IsResident(party.owner)) {
-            //resident
-            if (party.icharacters.Count > 1) {
-                //use party icon
-                residentsParty.gameObject.SetActive(true);
-                residentsPortrait.gameObject.SetActive(false);
+        for (int i = 0; i < visitorPortraits.Length; i++) {
+            if(i < party.icharacters.Count) {
+                visitorPortraits[i].gameObject.SetActive(true);
+                visitorPortraits[i].GeneratePortrait(party.icharacters[i], 42, true);
             } else {
-                //use character portrait
-                residentsParty.gameObject.SetActive(false);
-                residentsPortrait.gameObject.SetActive(true);
-                residentsPortrait.GeneratePortrait(party.owner, 42, true);
+                visitorPortraits[i].gameObject.SetActive(false);
             }
-            visitorParty.gameObject.SetActive(false);
-            visitorPortrait.gameObject.SetActive(false);
-        } else {
-            //visitor
-            if (party.icharacters.Count > 1) {
-                //use party icon
-                visitorParty.gameObject.SetActive(true);
-                visitorPortrait.gameObject.SetActive(false);
-            } else {
-                //use character portrait
-                visitorParty.gameObject.SetActive(false);
-                visitorPortrait.gameObject.SetActive(true);
-                visitorPortrait.GeneratePortrait(party.owner, 42, true);
-            }
-            residentsParty.gameObject.SetActive(false);
-            residentsPortrait.gameObject.SetActive(false);
         }
+        //if (_landmark.IsResident(party.owner)) {
+        //    //resident
+        //    if (party.icharacters.Count > 1) {
+        //        //use party icon
+        //        residentsParty.gameObject.SetActive(true);
+        //        residentsPortrait.gameObject.SetActive(false);
+        //    } else {
+        //        //use character portrait
+        //        residentsParty.gameObject.SetActive(false);
+        //        residentsPortrait.gameObject.SetActive(true);
+        //        residentsPortrait.GeneratePortrait(party.owner, 42, true);
+        //    }
+        //    visitorParty.gameObject.SetActive(false);
+        //    visitorPortrait.gameObject.SetActive(false);
+        //} else {
+        //    //visitor
+        //    if (party.icharacters.Count > 1) {
+        //        //use party icon
+        //        visitorParty.gameObject.SetActive(true);
+        //        visitorPortrait.gameObject.SetActive(false);
+        //    } else {
+        //        //use character portrait
+        //        visitorParty.gameObject.SetActive(false);
+        //        visitorPortrait.gameObject.SetActive(true);
+        //        visitorPortrait1.GeneratePortrait(party.owner, 42, true);
+        //    }
+        //    residentsParty.gameObject.SetActive(false);
+        //    residentsPortrait.gameObject.SetActive(false);
+        //}
     }
 
     public void OnHoverPartyIcon() {
