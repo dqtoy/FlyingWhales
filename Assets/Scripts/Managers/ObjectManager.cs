@@ -425,7 +425,16 @@ public class ObjectManager : MonoBehaviour {
                 break;
             case LANDMARK_TYPE.LAIR:
                 structureObj = new Lair();
-            break;
+                break;
+            case LANDMARK_TYPE.ABANDONED_MINE:
+                structureObj = new AbandonedMine();
+                break;
+            case LANDMARK_TYPE.BANDIT_CAMP:
+                structureObj = new BanditCamp();
+                break;
+            case LANDMARK_TYPE.HERMIT_HUT:
+                structureObj = new HermitHut();
+                break;
             default:
                 throw new System.Exception("No class for " + component.specificObjectType.ToString() + " has been created yet!");
         }

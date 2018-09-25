@@ -338,6 +338,9 @@ public enum LANDMARK_TYPE {
     PALACE = 20,
     CAMP = 21,
     LAIR = 22,
+    ABANDONED_MINE = 23,
+    BANDIT_CAMP = 24,
+    HERMIT_HUT = 25,
 }
 public enum TECHNOLOGY {
     //Weapon Production

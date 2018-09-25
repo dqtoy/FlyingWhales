@@ -280,35 +280,11 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 63d253e0c6b317d4395379a46b5ad2f2, type: 3}
       tintSprite: {fileID: 0}
-    - mainSprite: {fileID: 21300000, guid: 65cd2e8691df5aa408946fb5b873bdd3, type: 3}
-      tintSprite: {fileID: 0}
-    - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
-      tintSprite: {fileID: 0}
-    - mainSprite: {fileID: 21300000, guid: 568e996242fb9a84b9028d668e263ef3, type: 3}
-      tintSprite: {fileID: 0}
-    - mainSprite: {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
-      tintSprite: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 63d253e0c6b317d4395379a46b5ad2f2, type: 3}
       tintSprite: {fileID: 0}
-    - mainSprite: {fileID: 21300000, guid: 65cd2e8691df5aa408946fb5b873bdd3, type: 3}
-      tintSprite: {fileID: 0}
-    - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
-      tintSprite: {fileID: 0}
-    - mainSprite: {fileID: 21300000, guid: 568e996242fb9a84b9028d668e263ef3, type: 3}
-      tintSprite: {fileID: 0}
-    - mainSprite: {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
-      tintSprite: {fileID: 0}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 63d253e0c6b317d4395379a46b5ad2f2, type: 3}
-      tintSprite: {fileID: 0}
-    - mainSprite: {fileID: 21300000, guid: 65cd2e8691df5aa408946fb5b873bdd3, type: 3}
-      tintSprite: {fileID: 0}
-    - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
-      tintSprite: {fileID: 0}
-    - mainSprite: {fileID: 21300000, guid: 568e996242fb9a84b9028d668e263ef3, type: 3}
-      tintSprite: {fileID: 0}
-    - mainSprite: {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
       tintSprite: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     startingMonsterSpawn: {fileID: 0}
@@ -470,6 +446,87 @@ MonoBehaviour:
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
+  - landmarkTypeString: Abandoned Mine
+    landmarkType: 23
+    uniqueTags: 
+    itemData: []
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 65cd2e8691df5aa408946fb5b873bdd3, type: 3}
+      tintSprite: {fileID: 0}
+    humansLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 65cd2e8691df5aa408946fb5b873bdd3, type: 3}
+      tintSprite: {fileID: 0}
+    elvenLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 65cd2e8691df5aa408946fb5b873bdd3, type: 3}
+      tintSprite: {fileID: 0}
+    possibleSpawnPoints: 01000000020000000600000007000000
+    startingMonsterSpawn: {fileID: 0}
+    isMonsterSpawner: 1
+    monsterSets:
+    - {fileID: 114946858911628526, guid: 336c4ebd4586d214b9190e8677feeb77, type: 2}
+    - {fileID: 114946858911628526, guid: 2ca6ece0a256b314ba9df3d026e69b32, type: 2}
+    - {fileID: 114946858911628526, guid: 80f722680a652974fbd83998a2e1df69, type: 2}
+    - {fileID: 114946858911628526, guid: 58b5ce8a0e15cdb40873470cbf51058d, type: 2}
+    - {fileID: 114946858911628526, guid: b009362f85c338a4cb7562d893989c55, type: 2}
+    - {fileID: 114946858911628526, guid: a0544bd14333e4f4fbdc419042f7be25, type: 2}
+    monsterSpawnCooldown: 15
+  - landmarkTypeString: Bandit Camp
+    landmarkType: 24
+    uniqueTags: 
+    itemData: []
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
+      tintSprite: {fileID: 0}
+    humansLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
+      tintSprite: {fileID: 0}
+    elvenLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
+      tintSprite: {fileID: 0}
+    possibleSpawnPoints: 01000000020000000600000007000000
+    startingMonsterSpawn: {fileID: 0}
+    isMonsterSpawner: 1
+    monsterSets:
+    - {fileID: 114946858911628526, guid: 336c4ebd4586d214b9190e8677feeb77, type: 2}
+    - {fileID: 114946858911628526, guid: 2ca6ece0a256b314ba9df3d026e69b32, type: 2}
+    - {fileID: 114946858911628526, guid: 80f722680a652974fbd83998a2e1df69, type: 2}
+    - {fileID: 114946858911628526, guid: 58b5ce8a0e15cdb40873470cbf51058d, type: 2}
+    - {fileID: 114946858911628526, guid: b009362f85c338a4cb7562d893989c55, type: 2}
+    - {fileID: 114946858911628526, guid: a0544bd14333e4f4fbdc419042f7be25, type: 2}
+    monsterSpawnCooldown: 15
+  - landmarkTypeString: Hermit Hut
+    landmarkType: 25
+    uniqueTags: 
+    itemData: []
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 568e996242fb9a84b9028d668e263ef3, type: 3}
+      tintSprite: {fileID: 0}
+    humansLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 568e996242fb9a84b9028d668e263ef3, type: 3}
+      tintSprite: {fileID: 0}
+    elvenLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 568e996242fb9a84b9028d668e263ef3, type: 3}
+      tintSprite: {fileID: 0}
+    possibleSpawnPoints: 01000000020000000600000007000000
+    startingMonsterSpawn: {fileID: 0}
+    isMonsterSpawner: 1
+    monsterSets:
+    - {fileID: 114946858911628526, guid: 336c4ebd4586d214b9190e8677feeb77, type: 2}
+    - {fileID: 114946858911628526, guid: 2ca6ece0a256b314ba9df3d026e69b32, type: 2}
+    - {fileID: 114946858911628526, guid: 80f722680a652974fbd83998a2e1df69, type: 2}
+    - {fileID: 114946858911628526, guid: 58b5ce8a0e15cdb40873470cbf51058d, type: 2}
+    - {fileID: 114946858911628526, guid: b009362f85c338a4cb7562d893989c55, type: 2}
+    - {fileID: 114946858911628526, guid: a0544bd14333e4f4fbdc419042f7be25, type: 2}
+    monsterSpawnCooldown: 15
   areaData:
   - areaType: 0
     baseAreaType: 0

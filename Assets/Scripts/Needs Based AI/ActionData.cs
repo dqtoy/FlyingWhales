@@ -28,9 +28,7 @@ public class ActionData {
     public bool isCurrentActionFromEvent { get { return eventAssociatedWithAction != null; } } //if the eventConnectedWithAction is not null, the current action is from an event
     public SCHEDULE_PHASE_TYPE currentActionPhaseType { get; private set; }
 
-    #if UNITY_EDITOR
     public List<string> actionHistory;
-    #endif
 
     #region getters/setters
     public float homeMultiplier {
@@ -61,9 +59,7 @@ public class ActionData {
         SchedulingManager.Instance.AddEntry(GameManager.Instance.EndOfTheMonth(), () => CheckDoneActionHome());
         //Messenger.AddListener<CharacterParty, ObjectState>(Signals.STATE_ENDED, APartyEndedState);
 #endif
-#if UNITY_EDITOR
         actionHistory = new List<string>();
-#endif
     }
 
     public void Reset() {
@@ -94,6 +90,7 @@ public class ActionData {
         //    action = chainAction.action;
         //}
         //this.currentChainAction = chainAction;
+
         actionHistory.Add("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + action.actionData.actionName + " - " + targetObject.objectName + "\n");
         SetCurrentAction(action);
         SetCurrentTargetObject(targetObject);

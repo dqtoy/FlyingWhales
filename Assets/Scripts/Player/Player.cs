@@ -311,6 +311,16 @@ public class Player : ILeader{
             }
         }
     }
+    public List<Intel> GetIntelConcerning(Character character) {
+        List<Intel> intel = new List<Intel>();
+        for (int i = 0; i < _intels.Count; i++) {
+            Intel currIntel = _intels[i];
+            if (currIntel.description.Contains(character.name) || currIntel.name.Contains(character.name)) {
+                intel.Add(currIntel);
+            }
+        }
+        return intel;
+    }
     #endregion
 
     #region Items
@@ -431,10 +441,10 @@ public class Player : ILeader{
 
         PlayerAbilitiesUI.Instance.ConstructAbilityButtons(_allAbilities);
     }
-    public PlayerAbility GetAbility(ABILITY_TYPE type) {
+    public PlayerAbility GetAbility(string abilityName) {
         for (int i = 0; i < _allAbilities.Count; i++) {
             PlayerAbility currAbility = _allAbilities[i];
-            if (currAbility.type == type) {
+            if (currAbility.name.Equals(abilityName)) {
                 return currAbility;
             }
         }

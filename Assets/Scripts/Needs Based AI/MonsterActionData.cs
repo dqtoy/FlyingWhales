@@ -12,9 +12,7 @@ public class MonsterActionData {
     private bool _cannotPerformAction;
     private bool _isNotFirstEncounter;
 
-#if UNITY_EDITOR
     public List<string> actionHistory;
-#endif
 
     #region getters/setters
     public CharacterAction currentAction {
@@ -32,9 +30,7 @@ public class MonsterActionData {
         _isHalted = false;
         _cannotPerformAction = false;
 
-#if UNITY_EDITOR
         actionHistory = new List<string>();
-#endif
     }
     public void AssignAction(CharacterAction action, IObject targetObject) {
         if (_party == null || _party.isDead) {

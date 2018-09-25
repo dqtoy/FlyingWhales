@@ -100,6 +100,16 @@ public class PlayerAbility {
     private void ThreatGain() {
         PlayerManager.Instance.player.AdjustThreatLevel(_threatGain);
     }
+    public string GetMagicCostString(IInteractable interactable) {
+        if (interactable is Character) {
+            return "Blue Magic: " + _powerCost;
+        } else if (interactable is BaseLandmark) {
+            return "Green Magic: " + _powerCost;
+        } else if (interactable is Monster) {
+            return "Red Magic: " + _powerCost;
+        }
+        return string.Empty;
+    }
     #endregion
 
     #region UI

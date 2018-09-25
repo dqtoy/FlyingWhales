@@ -751,16 +751,16 @@ public class CharacterInfoUI : UIMenu {
                 currItem.gameObject.SetActive(true);
             }
         }
+        List<Intel> intel = PlayerManager.Instance.player.GetIntelConcerning(currentlyShowingCharacter);
         for (int i = 0; i < intelItems.Length; i++) {
             IntelItem currItem = intelItems[i];
-            currItem.gameObject.SetActive(false);
-            //Intel currSecret = currentlyShowingCharacter.intelReactions.ElementAtOrDefault(i);
-            //if (currSecret == null) {
-            //    currItem.gameObject.SetActive(false);
-            //} else {
-            //    currItem.SetSecret(currSecret);
-            //    currItem.gameObject.SetActive(true);
-            //}
+            Intel currIntel = intel.ElementAtOrDefault(i);
+            if (currIntel == null) {
+                currItem.gameObject.SetActive(false);
+            } else {
+                currItem.SetIntel(currIntel);
+                currItem.gameObject.SetActive(true);
+            }
         }
         if (currentlyShowingCharacter.hiddenDesire == null) {
             hiddenDesireItem.gameObject.SetActive(false);
