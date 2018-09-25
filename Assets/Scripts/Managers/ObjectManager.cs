@@ -423,6 +423,9 @@ public class ObjectManager : MonoBehaviour {
             case LANDMARK_TYPE.EXILE_CAMP:
                 structureObj = new ExileCamp();
                 break;
+            case LANDMARK_TYPE.GIANT_SKELETON:
+                structureObj = new GiantSkeleton();
+                break;
             default:
                 throw new System.Exception("No class for " + component.specificObjectType.ToString() + " has been created yet!");
         }

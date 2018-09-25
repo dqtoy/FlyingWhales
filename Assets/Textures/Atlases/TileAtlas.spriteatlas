@@ -79,6 +79,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 568e996242fb9a84b9028d668e263ef3, type: 3}
   - {fileID: 21300000, guid: 03b9f985c5fc3c74b8f56977df17c459, type: 3}
   - {fileID: 21300000, guid: 6f8afbec51f86154285b90585d512c28, type: 3}
+  - {fileID: 21300000, guid: 1fbda9d0786a8e04caafa19bd1606c66, type: 3}
   - {fileID: 21300000, guid: 316ddb7009538c24fa9d92c1d957a0f9, type: 3}
   - {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
   - {fileID: 21300000, guid: 63d253e0c6b317d4395379a46b5ad2f2, type: 3}
@@ -99,6 +100,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: bc0fdc68227150c488e1d5988e09871d, type: 3}
   - {fileID: 21300000, guid: 8ed1ad880cfd34c4abb5cccc0c7f670a, type: 3}
   - {fileID: 21300000, guid: 0b1a6dfee21888942b79f0008084a2b8, type: 3}
+  - {fileID: 21300000, guid: 4aaa23b9987451d4e895396f62c8683e, type: 3}
   - {fileID: 21300000, guid: 2509d8d1c25f61343a7e20c936950617, type: 3}
   - {fileID: 21300000, guid: 35b94fc86fce4e04dbd3146122235cbc, type: 3}
   - {fileID: 21300000, guid: 561383c0a54c7cb4899dfa55b3a7f17f, type: 3}
@@ -319,6 +321,7 @@ SpriteAtlas:
   - hermit_hut
   - human_tavern_colour
   - human_tavern_colour
+  - giant_skeleton_left
   - demonic_mountains_desert1
   - bandit_camp
   - monster_lair
@@ -339,6 +342,7 @@ SpriteAtlas:
   - demon_pens
   - human_mine_iron
   - human_mine_iron
+  - giant_skeleton_right
   - human_palace_colour
   - human_palace_colour
   - human_item_shop

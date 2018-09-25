@@ -344,6 +344,7 @@ public enum LANDMARK_TYPE {
     CATACOMB = 26,
     PYRAMID = 27,
     EXILE_CAMP = 28,
+    GIANT_SKELETON = 29,
 }
 public enum TECHNOLOGY {
     //Weapon Production

@@ -7,6 +7,8 @@ public class LandmarkData {
     [Header("General Data")]
     public string landmarkTypeString;
     public LANDMARK_TYPE landmarkType;
+    public int minimumTileCount = 1; //how many tiles does this landmark need
+    public HEXTILE_DIRECTION connectedTileDirection;
     public List<LANDMARK_TAG> uniqueTags;
     public LandmarkItemData[] itemData;
     public Sprite landmarkObjectSprite;
