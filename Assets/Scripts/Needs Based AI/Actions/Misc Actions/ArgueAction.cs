@@ -21,7 +21,7 @@ public class ArgueAction : CharacterAction {
         }
     }
     public override void OnFirstEncounter(NewParty party, IObject targetObject) {
-        base.OnFirstEncounter(party, targetObject);
+        //base.OnFirstEncounter(party, targetObject);
         if (targetObject == null) {
             return;
         }
