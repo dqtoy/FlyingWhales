@@ -376,6 +376,7 @@ public class Player : ILeader{
     }
     public void AdjustLifestone(int amount) {
         _lifestones += amount;
+        Debug.Log("Adjusted player lifestones by: " + amount + ". New total is " + _lifestones);
     }
     #endregion
 

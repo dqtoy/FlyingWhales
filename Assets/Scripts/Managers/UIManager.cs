@@ -598,8 +598,13 @@ public class UIManager : MonoBehaviour {
     //public void ToggleTraderCamera() {
     //    CameraMove.Instance.ToggleTraderCamera();
     //}
-    public void AddLifestones() {
+    public void AddLifestonesToWorld() {
         PlayerManager.Instance.AdjustTotalLifestones(10);
+        PlayerUI.Instance.UpdateUI();
+    }
+    public void AddLifestonesToPlayer() {
+        PlayerManager.Instance.player.AdjustLifestone(10);
+        PlayerUI.Instance.UpdateUI();
     }
     #endregion
 
