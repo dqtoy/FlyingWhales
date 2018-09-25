@@ -351,6 +351,8 @@ public class ObjectManager : MonoBehaviour {
                 return new StalkAction();
             case ACTION_TYPE.ATTACK_LANDMARK:
                 return new AttackLandmarkAction();
+            case ACTION_TYPE.HIBERNATE:
+                return new HibernateAction();
         }
         return null;
     }

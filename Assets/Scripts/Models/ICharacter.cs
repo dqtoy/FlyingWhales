@@ -72,6 +72,8 @@ public interface ICharacter {
     void AddHistory(Log log); //Character only
     void SetSquad(Squad squad);
     void SetMode(MODE mode);
+    void AddMiscAction(CharacterAction characterAction);
+    void RemoveMiscAction(ACTION_TYPE actionType);
     bool InviteToParty(ICharacter inviter);
     bool IsInOwnParty();
     void Death();

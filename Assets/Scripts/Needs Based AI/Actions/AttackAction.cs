@@ -24,9 +24,9 @@ public class AttackAction : CharacterAction {
     //}
     public override void OnFirstEncounter(NewParty party, IObject targetObject) {
         base.OnFirstEncounter(party, targetObject);
-        if(targetObject is ICharacterObject) {
-            StartEncounter(party, targetObject as ICharacterObject);
-        }
+        //if(targetObject is ICharacterObject) {
+        //    StartEncounter(party, targetObject as ICharacterObject);
+        //}
     }
     public override void PerformAction(NewParty party, IObject targetObject) {
         base.PerformAction(party, targetObject);
@@ -51,31 +51,31 @@ public class AttackAction : CharacterAction {
         return base.CanBeDoneBy(party, targetObject);
     }
     public override void OnChooseAction(NewParty iparty, IObject targetObject) {
-        if(targetObject is ICharacterObject) {
-            ICharacterObject icharacterObject = targetObject as ICharacterObject;
-            icharacterObject.iparty.numOfAttackers++;
-            if (icharacterObject.iparty.attackedByFaction == null) {
-                icharacterObject.iparty.attackedByFaction = iparty.faction;
-            }
-        }
+        //if(targetObject is ICharacterObject) {
+        //    ICharacterObject icharacterObject = targetObject as ICharacterObject;
+        //    icharacterObject.iparty.numOfAttackers++;
+        //    if (icharacterObject.iparty.attackedByFaction == null) {
+        //        icharacterObject.iparty.attackedByFaction = iparty.faction;
+        //    }
+        //}
         base.OnChooseAction(iparty, targetObject);
     }
     public override void EndAction(NewParty party, IObject targetObject) {
-        if (targetObject is ICharacterObject) {
-            ICharacterObject icharacterObject = targetObject as ICharacterObject;
-            icharacterObject.iparty.numOfAttackers--;
-            if (icharacterObject.iparty.numOfAttackers <= 0) {
-                icharacterObject.iparty.numOfAttackers = 0;
-                icharacterObject.iparty.attackedByFaction = null;
-            }
-        }
+        //if (targetObject is ICharacterObject) {
+        //    ICharacterObject icharacterObject = targetObject as ICharacterObject;
+        //    icharacterObject.iparty.numOfAttackers--;
+        //    if (icharacterObject.iparty.numOfAttackers <= 0) {
+        //        icharacterObject.iparty.numOfAttackers = 0;
+        //        icharacterObject.iparty.attackedByFaction = null;
+        //    }
+        //}
         base.EndAction(party, targetObject);
     }
     public override void SuccessEndAction(NewParty party) {
         base.SuccessEndAction(party);
-        if(party is CharacterParty) {
-            GiveAllReward(party as CharacterParty);
-        }
+        //if(party is CharacterParty) {
+        //    GiveAllReward(party as CharacterParty);
+        //}
     }
     #endregion
     private void StartEncounter(NewParty enemy, ICharacterObject icharacterObject) {

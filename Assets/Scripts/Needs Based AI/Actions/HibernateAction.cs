@@ -2,15 +2,39 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HibernateAction : MonoBehaviour {
+public class HibernateAction : CharacterAction {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public HibernateAction() : base(ACTION_TYPE.HIBERNATE) {
+
+    }
+
+    #region Overrides
+    public override void OnFirstEncounter(NewParty party, IObject targetObject) {
+        base.OnFirstEncounter(party, targetObject);
+        for (int i = 0; i < party.icharacters.Count; i++) {
+            Monster monster = party.icharacters[i] as Monster;
+            monster.SetSleeping(true);
+        }
+    }
+    public override void PerformAction(NewParty party, IObject targetObject) {
+        base.PerformAction(party, targetObject);
+        ActionSuccess(targetObject);
+        //for (int i = 0; i < party.icharacters.Count; i++) {
+        //    party.icharacters[i].AdjustHP(5);
+        //}
+    }
+    public override void EndAction(NewParty party, IObject targetObject) {
+        base.EndAction(party, targetObject);
+        for (int i = 0; i < party.icharacters.Count; i++) {
+            Monster monster = party.icharacters[i] as Monster;
+            monster.SetSleeping(false);
+        }
+    }
+    public override CharacterAction Clone() {
+        HibernateAction action = new HibernateAction();
+        SetCommonData(action);
+        action.Initialize();
+        return action;
+    }
+    #endregion
 }

@@ -461,6 +461,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _currentSP = _maxSP;
         SetCharacterColor(Color.red);
         SetSleeping(_isSleepingOnSpawn);
+        //ConstructMiscActions();
 
 #if !WORLD_CREATION_TOOL
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, UIManager.Instance.characterPortraitsParent);
@@ -562,17 +563,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public void AddHistory(Log log) {
         //No history
-    }
-    public CharacterAction GetRandomMiscAction(ref IObject targetObject) {
-        return _miscActions[Utilities.rng.Next(0, _miscActions.Count)];
-    }
-    public CharacterAction GetMiscAction(ACTION_TYPE type) {
-        for (int i = 0; i < _miscActions.Count; i++) {
-            if (_miscActions[i].actionData.actionType == type) {
-                return _miscActions[i];
-            }
-        }
-        return null;
     }
     public void DeathSim() {
         _isDead = true;
@@ -827,6 +817,48 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
                 return;
             }
             Death();
+        }
+    }
+    #endregion
+
+    #region Action
+    private void ConstructMiscActions() {
+        CharacterAction hibernate = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.HIBERNATE);
+        CharacterAction attackLandmark = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+        CharacterAction attack = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK);
+        CharacterAction idle = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.IDLE);
+
+        hibernate.SetActionCategory(ACTION_CATEGORY.MISC);
+        attackLandmark.SetActionCategory(ACTION_CATEGORY.MISC);
+        attack.SetActionCategory(ACTION_CATEGORY.MISC);
+        idle.SetActionCategory(ACTION_CATEGORY.MISC);
+
+        AddMiscAction(hibernate);
+        AddMiscAction(attackLandmark);
+        AddMiscAction(attack);
+        AddMiscAction(idle);
+    }
+    public CharacterAction GetRandomMiscAction(ref IObject targetObject) {
+        return _miscActions[Utilities.rng.Next(0, _miscActions.Count)];
+    }
+    public CharacterAction GetMiscAction(ACTION_TYPE type) {
+        for (int i = 0; i < _miscActions.Count; i++) {
+            if (_miscActions[i].actionData.actionType == type) {
+                return _miscActions[i];
+            }
+        }
+        return null;
+    }
+    public void AddMiscAction(CharacterAction characterAction) {
+        CharacterAction sameAction = GetMiscAction(characterAction.actionType);
+        if (sameAction == null) {
+            _miscActions.Add(characterAction);
+        }
+    }
+    public void RemoveMiscAction(ACTION_TYPE actionType) {
+        CharacterAction sameAction = GetMiscAction(actionType);
+        if (sameAction != null) {
+            _miscActions.Remove(sameAction);
         }
     }
     #endregion
