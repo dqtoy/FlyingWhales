@@ -50,23 +50,31 @@ public class CharacterAction {
     public virtual void Initialize() { }
     public virtual void OnChooseAction(NewParty iparty, IObject targetObject) { }
     public virtual void OnFirstEncounter(NewParty party, IObject targetObject) {
-        string arriveActionLog = GetArriveActionString();
-        if (arriveActionLog != string.Empty && targetObject != null) {
+        //string startActionLog = GetStartActionString(party);
+        string startActionLog = GetStartActionString(party);
+        if (startActionLog != string.Empty && targetObject != null) {
+            //Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "start_action");
+            //arriveLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            //arriveLog.AddToFillers(null, startActionLog, LOG_IDENTIFIER.ACTION_DESCRIPTION);
+            //for (int i = 0; i < party.icharacters.Count; i++) {
+            //    party.icharacters[i].AddHistory(arriveLog);
+            //}
             if (targetObject.objectLocation != null) {
-                Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
-                arriveLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                arriveLog.AddToFillers(targetObject.objectLocation, targetObject.objectLocation.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-                arriveLog.AddToFillers(null, arriveActionLog, LOG_IDENTIFIER.ACTION_DESCRIPTION);
+                Log startLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "start_action");
+                startLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                startLog.AddToFillers(targetObject.objectLocation, targetObject.objectLocation.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+                startLog.AddToFillers(null, startActionLog, LOG_IDENTIFIER.ACTION_DESCRIPTION);
                 for (int i = 0; i < party.icharacters.Count; i++) {
-                    party.icharacters[i].AddHistory(arriveLog);
+                    party.icharacters[i].AddHistory(startLog);
                 }
+                targetObject.objectLocation.AddHistory(startLog);
             } else {
-                Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
-                arriveLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                arriveLog.AddToFillers(targetObject.specificLocation.tileLocation, targetObject.specificLocation.tileLocation.tileName, LOG_IDENTIFIER.LANDMARK_1);
-                arriveLog.AddToFillers(null, arriveActionLog, LOG_IDENTIFIER.ACTION_DESCRIPTION);
+                Log startLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "start_action");
+                startLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                startLog.AddToFillers(targetObject.specificLocation.tileLocation, targetObject.specificLocation.tileLocation.tileName, LOG_IDENTIFIER.LANDMARK_1);
+                startLog.AddToFillers(null, startActionLog, LOG_IDENTIFIER.ACTION_DESCRIPTION);
                 for (int i = 0; i < party.icharacters.Count; i++) {
-                    party.icharacters[i].AddHistory(arriveLog);
+                    party.icharacters[i].AddHistory(startLog);
                 }
             }
         }
@@ -274,14 +282,23 @@ public class CharacterAction {
     #endregion
 
     #region Logs
-    public virtual string GetArriveActionString() {
+    public virtual string GetStartActionString(NewParty party) {
+        string file = this.GetType().ToString();
+        if (LocalizationManager.Instance.localizedText["CharacterActions"].ContainsKey(file)) {
+            return LocalizationManager.Instance.GetLocalizedValue("CharacterActions", file, "start_action");
+        }
+        throw new Exception("No Localized text for action " + file);
+        //return string.Empty;
+    }
+    public virtual string GetArriveActionString(NewParty party = null) {
         string file = this.GetType().ToString();
         if (LocalizationManager.Instance.localizedText["CharacterActions"].ContainsKey(file)) {
             return LocalizationManager.Instance.GetLocalizedValue("CharacterActions", file, "arrive_action");
         }
-        return string.Empty;
+        throw new Exception("No Localized text for action " + file);
+        //return string.Empty;
     }
-    public virtual string GetLeaveActionString() {
+    public virtual string GetLeaveActionString(NewParty party = null) {
         string file = this.GetType().ToString();
         if (LocalizationManager.Instance.localizedText["CharacterActions"].ContainsKey(file)) {
             return LocalizationManager.Instance.GetLocalizedValue("CharacterActions", file, "leave_action");

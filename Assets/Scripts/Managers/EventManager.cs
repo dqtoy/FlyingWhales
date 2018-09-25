@@ -68,19 +68,21 @@ public class EventManager : MonoBehaviour {
     #region Random Events
     private void GeneratePartyEvent() {
         List<BaseLandmark> choices = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.INN);
-        BaseLandmark chosenLandmark = choices[Random.Range(0, choices.Count)];
-        PartyEvent partyEvent = AddNewEvent(GAME_EVENT.PARTY_EVENT) as PartyEvent;
-        partyEvent.SetLocation(chosenLandmark);
-        partyEvent.Initialize();
-        chosenLandmark.AddAdvertisedEvent(partyEvent);
+        if (choices.Count > 0) {
+            BaseLandmark chosenLandmark = choices[Random.Range(0, choices.Count)];
+            PartyEvent partyEvent = AddNewEvent(GAME_EVENT.PARTY_EVENT) as PartyEvent;
+            partyEvent.SetLocation(chosenLandmark);
+            partyEvent.Initialize();
+            chosenLandmark.AddAdvertisedEvent(partyEvent);
 
-        GameDate endDate = GameManager.Instance.Today();
-        endDate.AddHours(partyEvent.GetEventDurationRoughEstimateInTicks());
+            GameDate endDate = GameManager.Instance.Today();
+            endDate.AddHours(partyEvent.GetEventDurationRoughEstimateInTicks());
 
-        //reschedule making party event 1 - 3 days from the end of this party event
-        int randomDays = Random.Range(1, 4);
-        endDate.AddDays(randomDays);
-        SchedulingManager.Instance.AddEntry(endDate, () => GeneratePartyEvent());
+            //reschedule making party event 1 - 3 days from the end of this party event
+            int randomDays = Random.Range(1, 4);
+            endDate.AddDays(randomDays);
+            SchedulingManager.Instance.AddEntry(endDate, () => GeneratePartyEvent());
+        }
     }
     #endregion
 }

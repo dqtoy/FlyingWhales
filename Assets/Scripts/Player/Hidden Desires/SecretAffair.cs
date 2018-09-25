@@ -15,7 +15,7 @@ public class SecretAffair : HiddenDesire {
     public override void Initialize() {
         base.Initialize();
         affairWith = CharacterManager.Instance.GetCharacterByClass("Lady");
-        _description = "Wants to have an affair with " + affairWith.name;
+        _description = "Has an intense attraction towards " + affairWith.name + ".";
     }
     public override void Awaken() {
         base.Awaken();

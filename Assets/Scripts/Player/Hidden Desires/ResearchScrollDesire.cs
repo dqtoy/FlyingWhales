@@ -13,7 +13,7 @@ public class ResearchScrollDesire : HiddenDesire {
     #region Overrides
     public override void Initialize() {
         base.Initialize();
-        _description = "Wants to research forbidden scrolls.";
+        _description = "Craves forbidden knowledge.";
     }
     public override void Awaken() {
         base.Awaken();
