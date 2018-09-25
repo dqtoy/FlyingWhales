@@ -393,6 +393,7 @@ public class UIManager : MonoBehaviour {
         smallInfoGO.SetActive(true);
         smallInfoEnvelopContent.Execute();
         PositionTooltip(smallInfoRT);
+        //Debug.Log("Show small info " + info);
     }
     public void HideSmallInfo() {
         smallInfoGO.SetActive(false);

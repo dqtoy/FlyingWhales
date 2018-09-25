@@ -17,16 +17,15 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public void OnPointerExit(PointerEventData eventData) {
         isHovering = false;
+        if (onHoverExitAction != null) {
+            onHoverExitAction.Invoke();
+        }
     }
 
     private void Update() {
         if (isHovering) {
             if (onHoverOverAction != null) {
                 onHoverOverAction.Invoke();
-            }
-        } else {
-            if (onHoverExitAction != null) {
-                onHoverExitAction.Invoke();
             }
         }
     }
