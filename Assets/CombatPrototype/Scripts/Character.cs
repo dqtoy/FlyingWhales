@@ -2498,7 +2498,11 @@ namespace ECS {
 
         #region History
         public void AddHistory(Log log) {
+            log.SetInspected(_isBeingInspected);
             _history.Add(log);
+            //if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && this.id == UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id) {
+            //    Debug.Log("Added log to history of " + this.name + ". " + log.isInspected);
+            //}
             if (this._history.Count > 20) {
                 this._history.RemoveAt(0);
             }
