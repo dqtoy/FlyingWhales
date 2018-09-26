@@ -42,22 +42,28 @@ SpriteAtlas:
   - {fileID: 21300000, guid: bedc6d2ea2ac2de4eaba0afe3deecc66, type: 3}
   - {fileID: 21300000, guid: a0b496a2c6e6be543b520b7d2f456656, type: 3}
   - {fileID: 21300000, guid: dcabee784c4d1804181305382037de4a, type: 3}
+  - {fileID: 21300000, guid: f0bb285e50b7c2e4ba3d8b9df4663978, type: 3}
   - {fileID: 21300000, guid: be64a1ec7b8543a49abda954ba47586a, type: 3}
   - {fileID: 21300000, guid: 3a45dae052a768e45b88c6a722e03f8d, type: 3}
+  - {fileID: 21300000, guid: a41a24867a6731e4f9bf372de50136f4, type: 3}
   - {fileID: 21300000, guid: fcf1353cbcd1f08478171177da44e53a, type: 3}
   - {fileID: 21300000, guid: 65cd2e8691df5aa408946fb5b873bdd3, type: 3}
   - {fileID: 21300000, guid: ef09c80c77be9fd44b96fa5ee6f851e5, type: 3}
   - {fileID: 21300000, guid: 6e710b267b22bc148a31886e4347fe23, type: 3}
   - {fileID: 21300000, guid: 99997bff53b6d7042a70307d331e1d3f, type: 3}
+  - {fileID: 21300000, guid: 3c2c143b0f889194a91526a8068444c3, type: 3}
   - {fileID: 21300000, guid: 3f5f539ec1c81814e972d6b0b4903932, type: 3}
   - {fileID: 21300000, guid: 455f303fb578b4841ae48fd16107beb2, type: 3}
   - {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
+  - {fileID: 21300000, guid: acc889bc0bb3df849a1a42ac1261b064, type: 3}
   - {fileID: 21300000, guid: 59980d3c50e9c3c4e8c869029a0ccc2e, type: 3}
+  - {fileID: 21300000, guid: 671a2939fda30b34898a8299cebcfcd7, type: 3}
   - {fileID: 21300000, guid: 3bc5ae8edcf5dfc4ca9f51fdc0a28946, type: 3}
   - {fileID: 21300000, guid: 22c48310b47583145a8bc2ccc6845bfe, type: 3}
   - {fileID: 21300000, guid: 7828e545f69833d49a9b79ab03928852, type: 3}
   - {fileID: 21300000, guid: b5b83e78c3a48954fa35de29644bea69, type: 3}
   - {fileID: 21300000, guid: d7be314c435a53e4996c7ae583f3e955, type: 3}
+  - {fileID: 21300000, guid: 98dbae7ea4933304e99ce222fa122a1c, type: 3}
   - {fileID: 21300000, guid: 129f0031f6aa62d43a81479027f996a4, type: 3}
   - {fileID: 21300000, guid: 36bb9c87d942a0747a60b417b0cd79e2, type: 3}
   - {fileID: 21300000, guid: 6cb6c592c031ca945917b7754e0e1441, type: 3}
@@ -97,12 +103,16 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 0cc55ad4160b82149815af8dd703dca4, type: 3}
   - {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
   - {fileID: 21300000, guid: 92a121cdd7e46494e8802d75d1f0695b, type: 3}
+  - {fileID: 21300000, guid: 26a960b077921124b9e61433b11d623d, type: 3}
   - {fileID: 21300000, guid: bc0fdc68227150c488e1d5988e09871d, type: 3}
   - {fileID: 21300000, guid: 8ed1ad880cfd34c4abb5cccc0c7f670a, type: 3}
   - {fileID: 21300000, guid: 0b1a6dfee21888942b79f0008084a2b8, type: 3}
+  - {fileID: 21300000, guid: 6899b2833b4dd2e4ab31a5f2361aea7b, type: 3}
+  - {fileID: 21300000, guid: dce980df86557994483727bab006f16d, type: 3}
   - {fileID: 21300000, guid: 4aaa23b9987451d4e895396f62c8683e, type: 3}
   - {fileID: 21300000, guid: 2509d8d1c25f61343a7e20c936950617, type: 3}
   - {fileID: 21300000, guid: 35b94fc86fce4e04dbd3146122235cbc, type: 3}
+  - {fileID: 21300000, guid: a71eb5f8bfc5e6d45922bd4c922cee98, type: 3}
   - {fileID: 21300000, guid: 561383c0a54c7cb4899dfa55b3a7f17f, type: 3}
   - {fileID: 21300000, guid: 89966dd0fee7fab4abe474ffa1727756, type: 3}
   - {fileID: 21300026, guid: b691b436b68a75f46a376910267f4409, type: 3}
@@ -284,22 +294,28 @@ SpriteAtlas:
   - town_human3
   - town_human2
   - town_human1
+  - mountains_snow1_cave
   - elven_town2
   - elven_town3
+  - mountains_green3_cave
   - elven_town1
   - abandoned_mine
   - ancient_ruins_tower
   - human_tavern
   - human_tavern
+  - Ice Pit
   - human_lumberyard
   - human_farm_colour
   - ancient_ruins_temple
+  - mountains_desert3_cave
   - human_lumberyard_colour
+  - mountains_desert1_cave
   - exile_camp
   - human_item_shop_colour
   - human_item_shop_colour
   - demonic_mountains1
   - demonic_mountains_cold1
+  - mountains_green1_cave
   - human_garrison_colour
   - human_garrison_colour
   - catacombs_desert
@@ -339,12 +355,16 @@ SpriteAtlas:
   - human_mine_iron_colour
   - human_mine_iron_colour
   - pyramid_desert
+  - mountains_green2_cave
   - demon_pens
   - human_mine_iron
   - human_mine_iron
+  - mountains_snow3_cave
+  - mountains_desert2_cave
   - giant_skeleton_right
   - human_palace_colour
   - human_palace_colour
+  - mountains_snow2_cave
   - human_item_shop
   - human_item_shop
   - E_Capital_Base

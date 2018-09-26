@@ -316,6 +316,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString())) as StructureObj);
 #endif
         }
+        Biomes.Instance.UpdateTileVisuals(this);
         return _landmarkOnTile;
     }
     public BaseLandmark CreateLandmarkOfType(LandmarkSaveData saveData) {
@@ -720,10 +721,16 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     internal void UpdateSortingOrder() {
         int sortingOrder = spriteRenderer.sortingOrder;
-        mainStructure.sortingOrder = sortingOrder + 3;
-        structureTint.sortingOrder = sortingOrder + 4;
         _hoverHighlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
         highlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 7;
+
+        if (mainStructure.sprite != null && mainStructure.sprite.name.Contains("mountains")) {
+            Utilities.SetSpriteSortingLayer(mainStructure, spriteRenderer.sortingLayerName);
+            mainStructure.sortingOrder = spriteRenderer.sortingOrder + 1;
+        } else {
+            mainStructure.sortingOrder = sortingOrder + 3;
+            structureTint.sortingOrder = sortingOrder + 4;
+        }
     }
     internal SpriteRenderer ActivateBorder(HEXTILE_DIRECTION direction, Color color) {
         SpriteRenderer activatedBorder = null;
