@@ -1008,14 +1008,16 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     private List<BaseLandmark> GetNewHomeLandmarksFromArea() {
         List<BaseLandmark> chosenLandmarks = new List<BaseLandmark>();
-        for (int i = 0; i < tileLocation.areaOfTile.landmarks.Count; i++) {
-            BaseLandmark landmark = tileLocation.areaOfTile.landmarks[i];
-            if (landmark != this && landmark.landmarkObj.specificObjectType == _landmarkObj.specificObjectType && landmark.landmarkObj.currentState.stateName != "Ruined") {
-                chosenLandmarks.Add(landmark);
+        if (tileLocation.areaOfTile != null) {
+            for (int i = 0; i < tileLocation.areaOfTile.landmarks.Count; i++) {
+                BaseLandmark landmark = tileLocation.areaOfTile.landmarks[i];
+                if (landmark != this && landmark.landmarkObj.specificObjectType == _landmarkObj.specificObjectType && landmark.landmarkObj.currentState.stateName != "Ruined") {
+                    chosenLandmarks.Add(landmark);
+                }
             }
-        }
-        if(chosenLandmarks.Count > 1) {
-            chosenLandmarks = chosenLandmarks.OrderBy(x => x._charactersWithHomeOnLandmark.Count).ToList();
+            if (chosenLandmarks.Count > 1) {
+                chosenLandmarks = chosenLandmarks.OrderBy(x => x._charactersWithHomeOnLandmark.Count).ToList();
+            }
         }
         return chosenLandmarks;
     }

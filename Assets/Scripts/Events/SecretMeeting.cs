@@ -43,6 +43,11 @@ public class SecretMeeting : GameEvent {
 
         //List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks().Where(x => x.specificLandmarkType == LANDMARK_TYPE.IRON_MINES).ToList();
         BaseLandmark chosenMeetup = LandmarkManager.Instance.GetLandmarkByName("Haundiville");
+        if (chosenMeetup == null || chosenMeetup.landmarkObj.isRuined) {
+            //if the initial meetup landmark is ruined, set meetup at lady of the lake's home instead
+            chosenMeetup = _ladyOfTheLake.homeLandmark;
+        }
+
         WaitingInteractionAction char1WaitAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.WAITING) as WaitingInteractionAction;
         WaitingInteractionAction char2WaitAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.WAITING) as WaitingInteractionAction;
         char1WaitAction.SetWaitedCharacter(_ladyOfTheLake);
