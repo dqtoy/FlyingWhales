@@ -27,7 +27,7 @@ public class BaseLandmark : ILocation, IInteractable {
     protected int _combatHistoryID;
     protected Dictionary<int, Combat> _combatHistory;
     protected List<NewParty> _charactersAtLocation;
-    protected List<NewParty> _lastInspectedOfCharactersAtLocation;
+    protected List<LandmarkPartyData> _lastInspectedOfCharactersAtLocation;
     protected List<Item> _itemsInLandmark;
     protected List<Item> _lastInspectedItemsInLandmark;
     protected Dictionary<Character, GameDate> _characterTraces; //Lasts for 60 days
@@ -98,7 +98,7 @@ public class BaseLandmark : ILocation, IInteractable {
     public List<NewParty> charactersAtLocation {
         get { return _charactersAtLocation; }
     }
-    public List<NewParty> lastInspectedOfCharactersAtLocation {
+    public List<LandmarkPartyData> lastInspectedOfCharactersAtLocation {
         get { return _lastInspectedOfCharactersAtLocation; }
     }
     public HexTile tileLocation{
@@ -157,7 +157,7 @@ public class BaseLandmark : ILocation, IInteractable {
         _combatHistory = new Dictionary<int, Combat>();
         _combatHistoryID = 0;
         _charactersAtLocation = new List<NewParty>();
-        _lastInspectedOfCharactersAtLocation = new List<NewParty>();
+        _lastInspectedOfCharactersAtLocation = new List<LandmarkPartyData>();
         _itemsInLandmark = new List<Item>();
         _lastInspectedItemsInLandmark = new List<Item>();
         _characterTraces = new Dictionary<Character, GameDate>();
@@ -912,7 +912,14 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     private void UpdateLastInspection() {
         _lastInspectedOfCharactersAtLocation.Clear();
-        _lastInspectedOfCharactersAtLocation.AddRange(_charactersAtLocation);
+        for (int i = 0; i < _charactersAtLocation.Count; i++) {
+            LandmarkPartyData landmarkPartyData = new LandmarkPartyData {
+                partyMembers = new List<ICharacter>(_charactersAtLocation[i].icharacters),
+                action = _charactersAtLocation[i].currentAction,
+                currentDuration = _charactersAtLocation[i].currentDay
+            };
+            _lastInspectedOfCharactersAtLocation.Add(landmarkPartyData);
+        }
         _lastInspectedItemsInLandmark.Clear();
         _lastInspectedItemsInLandmark.AddRange(_itemsInLandmark);
     }

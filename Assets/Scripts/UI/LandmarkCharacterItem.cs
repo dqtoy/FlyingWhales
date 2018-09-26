@@ -39,6 +39,18 @@ public class LandmarkCharacterItem : PooledObject {
         actionIcon.SetCharacter(party.mainCharacter);
         actionIcon.SetAction(party.currentAction);
     }
+    public void SetPartyData(LandmarkPartyData partyData) {
+        for (int i = 0; i < visitorPortraits.Length; i++) {
+            if (i < partyData.partyMembers.Count) {
+                visitorPortraits[i].gameObject.SetActive(true);
+                visitorPortraits[i].GeneratePortrait(partyData.partyMembers[i], 42, true);
+            } else {
+                visitorPortraits[i].gameObject.SetActive(false);
+            }
+        }
+        actionIcon.SetCurrentDay(partyData.currentDuration);
+        actionIcon.SetAction(partyData.action);
+    }
 
     public void UpdateVisuals() {
         for (int i = 0; i < visitorPortraits.Length; i++) {
@@ -81,33 +93,33 @@ public class LandmarkCharacterItem : PooledObject {
     }
 
     public void OnHoverPartyIcon() {
-        isHovering = true;
-        hoveredObject = HoveredObject.Party;
+        //isHovering = true;
+        //hoveredObject = HoveredObject.Party;
     }
     public void OnHoverOverCharacter() {
-        isHovering = true;
-        hoveredObject = HoveredObject.Character;
+        //isHovering = true;
+        //hoveredObject = HoveredObject.Character;
     }
     public void OnHoverOut() {
-        isHovering = false;
-        hoveredObject = HoveredObject.None;
-        UIManager.Instance.HideSmallInfo();
-        UIManager.Instance.HideDetailedInfo();
+        //isHovering = false;
+        //hoveredObject = HoveredObject.None;
+        //UIManager.Instance.HideSmallInfo();
+        //UIManager.Instance.HideDetailedInfo();
     }
     public void OnClickParty() {
-        UIManager.Instance.ShowPartyInfo(party);
+        //UIManager.Instance.ShowPartyInfo(party);
     }
 
 
-    private void Update() {
-        if (isHovering) {
-            if (hoveredObject == HoveredObject.Party) {
-                UIManager.Instance.ShowDetailedInfo(party);
-            } else if (hoveredObject == HoveredObject.Character) {
-                UIManager.Instance.ShowSmallInfo(party.owner.name);
-            }
-        }
-    }
+    //private void Update() {
+    //    if (isHovering) {
+    //        if (hoveredObject == HoveredObject.Party) {
+    //            UIManager.Instance.ShowDetailedInfo(party);
+    //        } else if (hoveredObject == HoveredObject.Character) {
+    //            UIManager.Instance.ShowSmallInfo(party.owner.name);
+    //        }
+    //    }
+    //}
 
     #region Listeners
     private void OnCharacterJoinedParty(ICharacter character, NewParty affectedParty) {
