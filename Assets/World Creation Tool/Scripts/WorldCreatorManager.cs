@@ -94,11 +94,12 @@ namespace worldcreator {
 
             WorldCreatorUI.Instance.InitializeMenus();
             ECS.CombatManager.Instance.Initialize();
-            Biomes.Instance.UpdateTileVisuals(hexTiles);
+            
             //Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
             Biomes.Instance.LoadPassableStates(hexTiles);
             CreateNewRegion(hexTiles);
             GenerateOuterGrid();
+            Biomes.Instance.UpdateTileVisuals(hexTiles);
             WorldCreatorUI.Instance.OnDoneLoadingGrid();
         }
         public IEnumerator GenerateGrid(WorldSaveData data) {
@@ -136,7 +137,6 @@ namespace worldcreator {
                 }
             }
             hexTiles.ForEach(o => o.FindNeighbours(map));
-            Biomes.Instance.UpdateTileVisuals(hexTiles);
             //Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
             Biomes.Instance.LoadPassableStates(hexTiles);
 
@@ -152,6 +152,7 @@ namespace worldcreator {
             CharacterManager.Instance.LoadRelationships(data);
             MonsterManager.Instance.LoadMonsters(data);
             CharacterManager.Instance.LoadSquads(data);
+            Biomes.Instance.UpdateTileVisuals(hexTiles);
             //PathfindingManager.Instance.LoadSettings(data.pathfindingSettings);
 
             WorldCreatorUI.Instance.OnDoneLoadingGrid();

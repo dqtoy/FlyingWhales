@@ -428,6 +428,15 @@ public class ObjectManager : MonoBehaviour {
             case LANDMARK_TYPE.GIANT_SKELETON:
                 structureObj = new GiantSkeleton();
                 break;
+            case LANDMARK_TYPE.ANCIENT_TEMPLE:
+                structureObj = new AncientTemple();
+                break;
+            case LANDMARK_TYPE.CAVE:
+                structureObj = new Cave();
+                break;
+            case LANDMARK_TYPE.ICE_PIT:
+                structureObj = new IcePit();
+                break;
             default:
                 throw new System.Exception("No class for " + component.specificObjectType.ToString() + " has been created yet!");
         }

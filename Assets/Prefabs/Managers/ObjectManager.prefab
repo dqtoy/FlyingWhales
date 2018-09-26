@@ -74,6 +74,9 @@ MonoBehaviour:
   - {fileID: 114012481577862306, guid: 4002bef8981115148a18797ec2557ce2, type: 2}
   - {fileID: 114012481577862306, guid: 8564ce2b44d03cf47af8d655c42a4f05, type: 2}
   - {fileID: 114012481577862306, guid: 0f3a2ac1639e1d3448c33d73ec5e095d, type: 2}
+  - {fileID: 114012481577862306, guid: 65075b5f3a584f048852fa2718cafa7c, type: 2}
+  - {fileID: 114012481577862306, guid: f2c313c123b97aa48bb4e1cf691c0fc8, type: 2}
+  - {fileID: 114012481577862306, guid: e60827c2c80864f42a1e10545f2da149, type: 2}
   characterObjectComponents:
   - {fileID: 114023154591909926, guid: 8666de66ca65add4b8afeb5fc44cc68d, type: 2}
   - {fileID: 114023154591909926, guid: b6818289fed035c468a353046295094f, type: 2}
