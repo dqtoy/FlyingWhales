@@ -135,12 +135,14 @@ public class CharacterInfoUI : UIMenu {
         //Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
         Messenger.AddListener<Character, Attribute>(Signals.ATTRIBUTE_ADDED, OnCharacterAttributeAdded);
         Messenger.AddListener<Character, Attribute>(Signals.ATTRIBUTE_REMOVED, OnCharacterAttributeRemoved);
+        Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
         //affiliations.Initialize();
         currentActionIcon.Initialize();
         //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         InititalizeLogsMenu();
         InititalizeInventoryMenu();
         InitializeSchedulingMenu();
+        InitializeInfoMenu();
     }
     private void InititalizeLogsMenu() {
         logHistoryItems = new LogHistoryItem[MAX_HISTORY_LOGS];
@@ -740,6 +742,12 @@ public class CharacterInfoUI : UIMenu {
     #endregion
 
     #region Info
+    private void InitializeInfoMenu() {
+        for (int i = 0; i < secretItems.Length; i++) {
+            SecretItem currItem = secretItems[i];
+            currItem.Initialize();
+        }
+    }
     private void UpdateInfoMenu() {
         for (int i = 0; i < secretItems.Length; i++) {
             SecretItem currItem = secretItems[i];
@@ -747,7 +755,7 @@ public class CharacterInfoUI : UIMenu {
             if (currSecret == null) {
                 currItem.gameObject.SetActive(false);
             } else {
-                currItem.SetSecret(currSecret);
+                currItem.SetSecret(currSecret, currentlyShowingCharacter);
                 currItem.gameObject.SetActive(true);
             }
         }
@@ -768,6 +776,12 @@ public class CharacterInfoUI : UIMenu {
             hiddenDesireItem.SetHiddenDesire(currentlyShowingCharacter.hiddenDesire);
             hiddenDesireItem.gameObject.SetActive(true);
         }
+    }
+    private void OnIntelAdded(Intel intel) {
+        if (currentlyShowingCharacter == null) {
+            return;
+        }
+        UpdateInfoMenu();
     }
     #endregion
 }

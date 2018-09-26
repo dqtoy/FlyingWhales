@@ -643,9 +643,9 @@ public class UIManager : MonoBehaviour {
         //if (partyinfoUI.isShowing) {
         //    partyinfoUI.HideMenu();
         //}
-        //if (monsterInfoUI.isShowing) {
-        //    monsterInfoUI.HideMenu();
-        //}
+        if (monsterInfoUI.isShowing) {
+            monsterInfoUI.CloseMenu();
+        }
         landmarkInfoUI.SetData(landmark);
         landmarkInfoUI.OpenMenu();
         landmark.CenterOnLandmark();
@@ -715,9 +715,9 @@ public class UIManager : MonoBehaviour {
         //if (partyinfoUI.isShowing) {
         //    partyinfoUI.HideMenu();
         //}
-        //if (monsterInfoUI.isShowing) {
-        //    monsterInfoUI.HideMenu();
-        //}
+        if (monsterInfoUI.isShowing) {
+            monsterInfoUI.CloseMenu();
+        }
         characterInfoUI.SetData(character);
         //if(character.role.roleType != CHARACTER_ROLE.PLAYER) {
         characterInfoUI.OpenMenu();
@@ -810,9 +810,9 @@ public class UIManager : MonoBehaviour {
     internal MonsterInfoUI monsterInfoUI;
     public void ShowMonsterInfo(Monster monster) {
         //HideMainUI();
-        //if (landmarkInfoUI.isShowing) {
-        //    landmarkInfoUI.HideMenu();
-        //}
+        if (landmarkInfoUI.isShowing) {
+            landmarkInfoUI.CloseMenu();
+        }
         //if (factionInfoUI.isShowing) {
         //    factionInfoUI.HideMenu();
         //}
@@ -825,9 +825,9 @@ public class UIManager : MonoBehaviour {
         //if (partyinfoUI.isShowing) {
         //    partyinfoUI.HideMenu();
         //}
-        //if (characterInfoUI.isShowing) {
-        //    characterInfoUI.HideMenu();
-        //}
+        if (characterInfoUI.isShowing) {
+            characterInfoUI.CloseMenu();
+        }
         monsterInfoUI.SetData(monster);
         monsterInfoUI.OpenMenu();
         //		playerActionsUI.ShowPlayerActionsUI ();

@@ -10,11 +10,11 @@ public class LogHistoryItem : LogItem {
     [SerializeField] private Image logBG;
     [SerializeField] private EnvelopContentUnityUI envelopContent;
 
-    private bool _isInspected;
+    //private bool _isInspected;
 
-    public new void SetLog(Log log) {
+    public override void SetLog(Log log) {
         base.SetLog(log);
-        //this.name = log.id.ToString();
+        this.name = log.id.ToString();
         if (log.isInspected) {
             dateLbl.text = "Day " + new GameDate((int) log.month, log.day, log.year, log.hour).GetDayAndTicksString();
             if (_log.fillers.Count > 0) {
@@ -26,7 +26,7 @@ public class LogHistoryItem : LogItem {
             dateLbl.text = "???";
             this.logLbl.text = "???";
         }
-        
+
         //if (!this.gameObject.activeSelf) {
         //    throw new System.Exception("Log Item is not active!");
         //}

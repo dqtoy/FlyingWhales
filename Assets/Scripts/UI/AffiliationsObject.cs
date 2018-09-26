@@ -85,7 +85,7 @@ public class AffiliationsObject : MonoBehaviour {
         if (_character == null) {
             return;
         }
-        if (_character.isFactionless) {
+        if (_character.faction == null) {
             factionGO.SetActive(false);
         } else {
             factionGO.SetActive(true);

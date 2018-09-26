@@ -12,7 +12,7 @@ public class LogItem : MonoBehaviour{
     }
     #endregion
 
-    protected void SetLog(Log log) {
+    public virtual void SetLog(Log log) {
         _log = log;
     }
 }

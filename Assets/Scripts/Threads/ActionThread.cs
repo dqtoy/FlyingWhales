@@ -411,6 +411,12 @@ public class ActionThread : Multithread {
         allChoices.Clear();
 
         actionLog += "\n" + _party.name + "'s Need Action Advertisements: ";
+        //List<BaseLandmark> choices;
+        //if (_party.owner.homeLandmark.tileLocation.areaOfTile != null) {
+
+        //} else {
+
+        //}
         for (int i = 0; i < _party.owner.homeLandmark.tileLocation.areaOfTile.landmarks.Count; i++) { //get advertisements from home area only.
             BaseLandmark landmark = _party.owner.homeLandmark.tileLocation.areaOfTile.landmarks[i];
             for (int j = 0; j < landmark.advertisedEvents.Count; j++) {

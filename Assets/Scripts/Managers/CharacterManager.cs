@@ -118,6 +118,7 @@ public class CharacterManager : MonoBehaviour {
             CheckForHiddenDesire(currCharacter); //TODO: Remove this when setup for hidden desire in character editor is done
             CheckForIntelActions(currCharacter); //TODO: Remove this when setup for intel in character editor is done
             CheckForIntelReactions(currCharacter); //TODO: Remove this when setup for intel in character editor is done
+            CheckForSecrets(currCharacter); //TODO: Remove this when setup for secret in character editor is done
         }
     }
     public void LoadRelationships(WorldSaveData data) {
@@ -739,6 +740,18 @@ public class CharacterManager : MonoBehaviour {
     private void CheckForIntelReactions(Character character) {
         if (character.characterClass.className.Equals("Lady")) {
             character.AddIntelReaction(1, GAME_EVENT.SUICIDE);
+        }
+    }
+    /*
+     NOTE: THIS IS FOR TESTING ONLY!
+         */
+    private void CheckForSecrets(Character character) {
+        if (character.characterClass.className.Equals("Lady")) {
+            character.AddSecret(1);
+        } else if (character.characterClass.className.Equals("Exiled Guardian")) {
+            character.AddSecret(2);
+        } else if (character.characterClass.className.Equals("Thief")) {
+            character.AddSecret(3);
         }
     }
     public void SetHiddenDesireForCharacter(HIDDEN_DESIRE hiddenDesire, Character character) {

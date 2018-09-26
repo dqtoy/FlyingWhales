@@ -43,6 +43,11 @@ public class SecretMeeting : GameEvent {
 
         //List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks().Where(x => x.specificLandmarkType == LANDMARK_TYPE.IRON_MINES).ToList();
         BaseLandmark chosenMeetup = LandmarkManager.Instance.GetLandmarkByName("Haundiville");
+        if (chosenMeetup == null || chosenMeetup.landmarkObj.isRuined) {
+            //if the initial meetup landmark is ruined, set meetup at lady of the lake's home instead
+            chosenMeetup = _ladyOfTheLake.homeLandmark;
+        }
+
         WaitingInteractionAction char1WaitAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.WAITING) as WaitingInteractionAction;
         WaitingInteractionAction char2WaitAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.WAITING) as WaitingInteractionAction;
         char1WaitAction.SetWaitedCharacter(_ladyOfTheLake);
@@ -162,7 +167,9 @@ public class SecretMeeting : GameEvent {
                 if (generalMax.isDead) {
                     //check if lady of the lake is at same location as general max's death
                     if (generalMax.specificLocation.tileLocation.id == ladyOfTheLake.specificLocation.tileLocation.id) {
-                        // if yes, give intel to her immediately
+                        //if yes, give intel to her immediately
+                        //remove any reactions to general max's death (Explanation: Because General Max gave some last words to lady of the lake
+                        ladyOfTheLake.RemoveIntelReaction(1);
                         PlayerManager.Instance.player.GiveIntelToCharacter(IntelManager.Instance.GetIntel(1), ladyOfTheLake);
                     }
                 }

@@ -57,6 +57,7 @@ public static class Signals {
     public static string ITEM_OBTAINED = "OnObtainItem"; //Parameters (Item obtainedItem, Character characterThatObtainedItem)
     public static string ITEM_THROWN = "OnItemThrown"; //Parameters (Item unobtainedItem, ECS.Character character)
     public static string CHARACTER_MARKED = "OnCharacterMarked";
+    public static string CHARACTER_INSPECTED = "OnCharacterInspected"; //Parameters (Character inspectedCharacter)
     #endregion
 
     #region UI

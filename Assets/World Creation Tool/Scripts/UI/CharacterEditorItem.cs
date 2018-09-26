@@ -69,7 +69,7 @@ namespace worldcreator {
 
         #region Monobehaviours
         private void Update() {
-            if (WorldCreatorManager.Instance.selectionComponent.selectedAreas.Count == 0 || WorldCreatorManager.Instance.selectionComponent.selectedLandmarks.Count == 0) {
+            if (WorldCreatorManager.Instance.selectionComponent.selectedLandmarks.Count == 0) {
                 setHomeBtn.interactable = false;
             } else {
                 setHomeBtn.interactable = true;

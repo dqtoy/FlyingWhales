@@ -295,7 +295,13 @@ MonoBehaviour:
     biomeTileSprites:
       m_keys: 
       m_values: []
-    neutralTileSprites: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: fcf1353cbcd1f08478171177da44e53a, type: 3}
+      tintSprite: {fileID: 21300000, guid: ab7ea309573094a46aefe91b9d263e85, type: 3}
+    - mainSprite: {fileID: 21300000, guid: be64a1ec7b8543a49abda954ba47586a, type: 3}
+      tintSprite: {fileID: 21300000, guid: 85a0cd260bc3a304ea9c12fa4c06c78e, type: 3}
+    - mainSprite: {fileID: 21300000, guid: 3a45dae052a768e45b88c6a722e03f8d, type: 3}
+      tintSprite: {fileID: 21300000, guid: 9f89551edef6d6743a2486dea9f60a21, type: 3}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: fcf1353cbcd1f08478171177da44e53a, type: 3}
@@ -321,7 +327,13 @@ MonoBehaviour:
     biomeTileSprites:
       m_keys: 
       m_values: []
-    neutralTileSprites: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 6b15ab4e0c664d94f906a2b783906619, type: 3}
+      tintSprite: {fileID: 21300000, guid: d25eaa8dbe14ebb4e96d58aabf1b978f, type: 3}
+    - mainSprite: {fileID: 21300000, guid: 0f6fa99d125714942961d8e54adf43b1, type: 3}
+      tintSprite: {fileID: 21300000, guid: 59ba8e34d3c07e84784432fc9e1c45bb, type: 3}
+    - mainSprite: {fileID: 21300000, guid: 56d159c582f9df74381d04ab1e663d9c, type: 3}
+      tintSprite: {fileID: 21300000, guid: d17f26b8defdee446a0719c4630d3ef2, type: 3}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 6b15ab4e0c664d94f906a2b783906619, type: 3}
       tintSprite: {fileID: 21300000, guid: d25eaa8dbe14ebb4e96d58aabf1b978f, type: 3}
