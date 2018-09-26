@@ -28,6 +28,8 @@ GameObject:
   - component: {fileID: 114772719307118172}
   - component: {fileID: 114390514415618876}
   - component: {fileID: 114627080863034918}
+  - component: {fileID: 114678686139459876}
+  - component: {fileID: 114865565868612182}
   m_Layer: 0
   m_Name: Classes
   m_TagString: Untagged
@@ -147,6 +149,30 @@ MonoBehaviour:
   allowedWeaponTypes: 05000000
   harvestResources: 
   skillsPerLevel: []
+--- !u!114 &114678686139459876
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000014146110194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6229a52a7a71bf64b9cf230b86a03fcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  className: Exiled Guardian
+  strWeightAllocation: 0
+  intWeightAllocation: 0
+  agiWeightAllocation: 0
+  vitWeightAllocation: 0
+  baseHP: 0
+  hpPerLevel: 0
+  baseSP: 0
+  spPerLevel: 0
+  workActionType: 39
+  allowedWeaponTypes: 01000000
+  harvestResources: 
+  skillsPerLevel: []
 --- !u!114 &114772719307118172
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -218,6 +244,30 @@ MonoBehaviour:
   workActionType: 0
   allowedWeaponTypes: 01000000
   harvestResources: 04000000
+  skillsPerLevel: []
+--- !u!114 &114865565868612182
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000014146110194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6229a52a7a71bf64b9cf230b86a03fcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  className: Thief
+  strWeightAllocation: 0
+  intWeightAllocation: 0
+  agiWeightAllocation: 0
+  vitWeightAllocation: 0
+  baseHP: 0
+  hpPerLevel: 0
+  baseSP: 0
+  spPerLevel: 0
+  workActionType: 39
+  allowedWeaponTypes: 02000000
+  harvestResources: 
   skillsPerLevel: []
 --- !u!114 &114937885476597522
 MonoBehaviour:

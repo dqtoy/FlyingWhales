@@ -287,7 +287,7 @@ namespace ECS {
                 return _isInCombat;
             }
         }
-        public bool isFactionless {
+        public bool isFactionless { //is the character part of the neutral faction? or no faction?
             get {
                 if (FactionManager.Instance.neutralFaction == null) {
                     if (faction != null) {
@@ -3095,7 +3095,9 @@ namespace ECS {
 
             } else {
                 if (_homeLandmark != null) {
-                    _homeLandmark.tileLocation.areaOfTile.residents.Add(this);
+                    if (_homeLandmark.tileLocation.areaOfTile != null) {
+                        _homeLandmark.tileLocation.areaOfTile.residents.Add(this);
+                    }
 #if !WORLD_CREATION_TOOL
                     LookForNewWorkplace();
 #endif
@@ -3454,6 +3456,9 @@ namespace ECS {
         #region IInteractable
         public void SetIsBeingInspected(bool state) {
             _isBeingInspected = state;
+            if (_isBeingInspected) {
+                Messenger.Broadcast<Character>(Signals.CHARACTER_INSPECTED, this);
+            }
         }
         public void SetHasBeenInspected(bool state) {
             _hasBeenInspected = state;
@@ -3505,6 +3510,18 @@ namespace ECS {
             }
             //Remove intel reaction from character, even if he/she did not meet the requirements for the reaction?
             RemoveIntelReaction(intel);
+        }
+        #endregion
+
+        #region Secrets
+        public void AddSecret(Secret secret) {
+            if (!_secrets.Contains(secret)) {
+                _secrets.Add(secret);
+            }
+        }
+        public void AddSecret(int secretID) {
+            Secret secret = SecretManager.Instance.CreateNewSecret(secretID);
+            AddSecret(secret);
         }
         #endregion
     }
