@@ -778,6 +778,9 @@ public class CharacterInfoUI : UIMenu {
         }
     }
     private void OnIntelAdded(Intel intel) {
+        if (currentlyShowingCharacter == null) {
+            return;
+        }
         UpdateInfoMenu();
     }
     #endregion

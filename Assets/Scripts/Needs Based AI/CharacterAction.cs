@@ -293,22 +293,23 @@ public class CharacterAction {
         if (LocalizationManager.Instance.localizedText["CharacterActions"].ContainsKey(file)) {
             return LocalizationManager.Instance.GetLocalizedValue("CharacterActions", file, "start_action");
         }
-        throw new Exception("No Localized text for action " + file);
-        //return string.Empty;
+        Debug.LogWarning("No Localized text for action " + file);
+        return string.Empty;
     }
     public virtual string GetArriveActionString(NewParty party = null) {
         string file = this.GetType().ToString();
         if (LocalizationManager.Instance.localizedText["CharacterActions"].ContainsKey(file)) {
             return LocalizationManager.Instance.GetLocalizedValue("CharacterActions", file, "arrive_action");
         }
-        throw new Exception("No Localized text for action " + file);
-        //return string.Empty;
+       Debug.LogWarning("No Localized text for action " + file);
+        return string.Empty;
     }
     public virtual string GetLeaveActionString(NewParty party = null) {
         string file = this.GetType().ToString();
         if (LocalizationManager.Instance.localizedText["CharacterActions"].ContainsKey(file)) {
             return LocalizationManager.Instance.GetLocalizedValue("CharacterActions", file, "leave_action");
         }
+        Debug.LogWarning("No Localized text for action " + file);
         return string.Empty;
     }
     #endregion
