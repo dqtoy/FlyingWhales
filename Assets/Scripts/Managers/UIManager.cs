@@ -138,6 +138,7 @@ public class UIManager : MonoBehaviour {
     private void Start() {
         currentActivePlayerPickerButtons = new List<PlayerPickerButton>();
         Messenger.AddListener(Signals.UPDATE_UI, UpdateUI);
+        Messenger.AddListener(Signals.INSPECT_ALL, UpdateInteractableInfoUI);
         NormalizeFontSizes();
         ToggleBorders();
     }
@@ -251,15 +252,18 @@ public class UIManager : MonoBehaviour {
     private void UpdateUI() {
         dateLbl.SetText("Day " + GameManager.Instance.Today().GetDayAndTicksString());
 
-        UpdateCharacterInfo();
+        UpdateInteractableInfoUI();
         UpdateFactionInfo();
         //UpdateHexTileInfo();
-        UpdateLandmarkInfo();
-        UpdateMonsterInfo();
         UpdatePartyInfo();
         UpdateCombatLogs();
         //UpdateQuestSummary();
         PlayerUI.Instance.UpdateUI();
+    }
+    private void UpdateInteractableInfoUI() {
+        UpdateCharacterInfo();
+        UpdateLandmarkInfo();
+        UpdateMonsterInfo();
     }
 
     #region World Controls
