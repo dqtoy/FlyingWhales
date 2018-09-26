@@ -28,6 +28,7 @@ public interface ICharacter {
     float critChance { get; }
     float critDamage { get; }
     bool isDead { get; }
+    bool isBeingInspected { get; }
     GENDER gender { get; }
     ICHARACTER_TYPE icharacterType { get; }
     MODE currentMode { get; }

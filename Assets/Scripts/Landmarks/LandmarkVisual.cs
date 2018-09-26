@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
@@ -67,23 +68,21 @@ public class LandmarkVisual : MonoBehaviour {
         } else {
             portrait.transform.SetParent(hoverContent);
             portrait.ignoreInteractions = true;
-            AdjustCharCount(1);
+            UpdateCharCount();
         }
         portrait.transform.localScale = Vector3.one;
         //(portrait.transform as RectTransform).pivot = new Vector2(0.5f, 0f);
         (portrait.transform as RectTransform).sizeDelta = new Vector2(64, 64);
         //portrait.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
-        portrait.gameObject.SetActive(true);
-        //iparty.icon.gameObject.SetActive(false);
+        ShowPartyPortrait(iparty);
         iparty.icon.SetVisualState(false);
-        iparty.icon.characterPortrait.SetBorderState(true);
     }
     public void OnCharacterExitedLandmark(NewParty iparty) {
         //remove character portrait from grid
         //iparty.icon.gameObject.SetActive(true);
         if (!iparty.icon.avatarVisual.activeSelf) {
             iparty.icon.ReclaimPortrait();
-            AdjustCharCount(-1);
+            UpdateCharCount();
             //if (iparty.mainCharacter is ECS.Character && iparty.mainCharacter.role.roleType == CHARACTER_ROLE.PLAYER) {
             //    iparty.icon.ReclaimPortraitAsPlayer();
             //} else {
@@ -134,11 +133,41 @@ public class LandmarkVisual : MonoBehaviour {
         }
     }
     private void UpdateCharCount() {
-        charCountLbl.text = _landmark.charactersAtLocation.Count.ToString();
-        if(_landmark.charactersAtLocation.Count > 0) {
+        int charCount = _landmark.charactersAtLocation.Count;
+        if (!GameManager.Instance.allCharactersAreVisible && !_landmark.isBeingInspected) {
+            charCount = _landmark.GetInspectedCharactersCount();
+        }
+        charCountLbl.text = "" + charCount;
+        if(charCount > 0) {
             characterIndicatorGO.SetActive(true);
         } else {
             characterIndicatorGO.SetActive(false);
+        }
+    }
+    public void ShowPartyPortrait(NewParty party) {
+        CharacterPortrait portrait = party.icon.characterPortrait;
+        if (!GameManager.Instance.allCharactersAreVisible) {
+            if (_landmark.isBeingInspected) {
+                portrait.gameObject.SetActive(true);
+                portrait.SetBorderState(true);
+            } else {
+                if (party.IsPartyBeingInspected()) {
+                    portrait.gameObject.SetActive(true);
+                    portrait.SetBorderState(true);
+                } else {
+                    portrait.gameObject.SetActive(false);
+                    portrait.SetBorderState(false);
+                }
+            }
+        } else {
+            portrait.gameObject.SetActive(true);
+            portrait.SetBorderState(true);
+        }
+    }
+    public void ToggleCharactersVisibility() {
+        UpdateCharCount();
+        for (int i = 0; i < _landmark.charactersAtLocation.Count; i++) {
+            ShowPartyPortrait(_landmark.charactersAtLocation[i]);
         }
     }
     #region Monobehaviour

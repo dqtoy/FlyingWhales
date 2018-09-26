@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour {
     public bool initiallyHideRoads = false;
     public bool allowConsole = true;
     public bool displayFPS = true;
+    public bool allCharactersAreVisible = true;
 
     private const float X1_SPEED = 0.75f;
     private const float X2_SPEED = 0.5f;
@@ -170,6 +171,10 @@ public class GameManager : MonoBehaviour {
     #region Utilities
     private void LogCallback(string condition, string stackTrace, LogType type) {
         CharacterManager.Instance.CategorizeLog(condition, stackTrace, type);
+    }
+    public void ToggleCharactersVisibility(bool state) {
+        allCharactersAreVisible = state;
+        Messenger.Broadcast(Signals.TOGGLE_CHARACTERS_VISIBILITY);
     }
     #endregion
 }

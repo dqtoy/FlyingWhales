@@ -70,6 +70,7 @@ public class Inspect : PlayerAbility {
     private void EndInspection(IInteractable interactable) {
         interactable.SetIsBeingInspected(false);
         _playerAbilityButton.UpdateThis(interactable);
+        interactable.EndedInspection();
     }
     private void UpdateInfoUI(IInteractable interactable) {
         if (interactable is Character) {

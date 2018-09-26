@@ -194,10 +194,14 @@ public class LandmarkInfoUI : UIMenu {
 
     #region Characters
     private void UpdateCharacters() {
+        Utilities.DestroyChildren(charactersScrollView.content);
         if (!_activeLandmark.isBeingInspected) {
+            for (int i = 0; i < _activeLandmark.lastInspectedOfCharactersAtLocation.Count; i++) {
+                NewParty currParty = _activeLandmark.lastInspectedOfCharactersAtLocation[i];
+                CreateNewCharacterItem(currParty);
+            }
             return;
         }
-        Utilities.DestroyChildren(charactersScrollView.content);
         for (int i = 0; i < _activeLandmark.charactersAtLocation.Count; i++) {
             NewParty currParty = _activeLandmark.charactersAtLocation[i];
             CreateNewCharacterItem(currParty);
@@ -236,6 +240,14 @@ public class LandmarkInfoUI : UIMenu {
     #region Items
     private void UpdateItems() {
         if (!_activeLandmark.isBeingInspected && _activeLandmark.hasBeenInspected) {
+            for (int i = 0; i < itemContainers.Length; i++) {
+                ItemContainer container = itemContainers[i];
+                Item item = null;
+                if (i < _activeLandmark.lastInspectedItemsInLandmark.Count) {
+                    item = _activeLandmark.lastInspectedItemsInLandmark[i];
+                }
+                container.SetItem(item, _activeLandmark.hasBeenInspected);
+            }
             return;
         }
         for (int i = 0; i < itemContainers.Length; i++) {

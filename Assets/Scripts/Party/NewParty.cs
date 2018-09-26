@@ -272,6 +272,14 @@ public class NewParty : IParty {
     public NewParty GetBase() {
         return this;
     }
+    public bool IsPartyBeingInspected() {
+        for (int i = 0; i < _icharacters.Count; i++) {
+            if (_icharacters[i].isBeingInspected) {
+                return true;
+            }
+        }
+        return false;
+    }
     //public void GoToLocation(GameObject locationGO, PATHFINDING_MODE pathfindingMode, Action doneAction = null) {
     //    _icon.SetActionOnTargetReached(doneAction);
     //    _icon.SetTargetGO(locationGO);
