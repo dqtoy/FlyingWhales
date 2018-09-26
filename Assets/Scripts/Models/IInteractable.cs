@@ -9,4 +9,5 @@ public interface IInteractable {
 
     void SetIsBeingInspected(bool state);
     void SetHasBeenInspected(bool state);
+    void EndedInspection();
 }

@@ -571,12 +571,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public void SetMode(MODE mode) {
         _currentMode = mode;
     }
-    public void SetIsBeingInspected(bool state) {
-        _isBeingInspected = state;
-    }
-    public void SetHasBeenInspected(bool state) {
-        _hasBeenInspected = true;
-    }
     public void EnableDisableSkills(Combat combat) {
         //bool isAllAttacksInRange = true;
         //bool isAttackInRange = false;
@@ -860,6 +854,18 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         if (sameAction != null) {
             _miscActions.Remove(sameAction);
         }
+    }
+    #endregion
+
+    #region IInteractable
+    public void SetIsBeingInspected(bool state) {
+        _isBeingInspected = state;
+    }
+    public void SetHasBeenInspected(bool state) {
+        _hasBeenInspected = true;
+    }
+    public void EndedInspection() {
+
     }
     #endregion
 }

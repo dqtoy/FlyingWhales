@@ -34,6 +34,7 @@ public class CharacterAvatar : MonoBehaviour{
     private ICharacter _trackTarget = null;
 	private Action queuedAction = null;
     private PATHFINDING_MODE _pathfindingMode;
+    private bool _isVisualShowing;
 
     public CharacterPortrait characterPortrait { get; private set; }
 
@@ -52,6 +53,9 @@ public class CharacterAvatar : MonoBehaviour{
 	}
     public bool hasArrived {
         get { return _hasArrived; }
+    }
+    public bool isVisualShowing {
+        get { return _isVisualShowing; }
     }
     public GameObject avatarVisual {
         get { return _avatarVisual; }
@@ -78,10 +82,12 @@ public class CharacterAvatar : MonoBehaviour{
 
         CharacterManager.Instance.AddCharacterAvatar(this);
 #endif
+        Messenger.AddListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);
     }
 
     #region Monobehaviour
     private void OnDestroy() {
+        Messenger.RemoveListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);
 #if !WORLD_CREATION_TOOL
         CharacterManager.Instance.RemoveCharacterAvatar(this);
 #endif
@@ -126,9 +132,9 @@ public class CharacterAvatar : MonoBehaviour{
             this.path = path;
             _currPathfindingRequest = null;
             _isTravelling = true;
-            if(_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-                _party.specificLocation.tileLocation.landmarkOnTile.landmarkVisual.OnCharacterExitedLandmark(_party);
-            }
+            //if(_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+            //    _party.specificLocation.tileLocation.landmarkOnTile.landmarkVisual.OnCharacterExitedLandmark(_party);
+            //}
             NewMove();
             if(onPathReceived != null) {
                 onPathReceived();
@@ -139,7 +145,9 @@ public class CharacterAvatar : MonoBehaviour{
         if (this.targetLocation != null && this.path != null) {
             if (this.path.Count > 0) {
 				this.MakeCitizenMove(_party.specificLocation.tileLocation, this.path[0]);
-                //RemoveCharactersFromLocation(_party.specificLocation);
+                if(_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+                    RemoveCharactersFromLocation(_party.specificLocation);
+                }
                 //AddCharactersToLocation(this.path[0]);
                 //this.path.RemoveAt(0);
             }
@@ -167,7 +175,9 @@ public class CharacterAvatar : MonoBehaviour{
             }
         }
         if (this.path.Count > 0) {
-            RemoveCharactersFromLocation(_party.specificLocation);
+            if(_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.HEXTILE) {
+                RemoveCharactersFromLocation(_party.specificLocation);
+            }
             AddCharactersToLocation(this.path[0]);
             this.path.RemoveAt(0);
         }
@@ -265,7 +275,27 @@ public class CharacterAvatar : MonoBehaviour{
         characterPortrait.gameObject.SetActive(false);
     }
     public void SetVisualState(bool state) {
-        _avatarVisual.SetActive(state);
+        _isVisualShowing = state;
+        if (GameManager.Instance.allCharactersAreVisible) {
+            _avatarVisual.SetActive(_isVisualShowing);
+        } else {
+            if (_party.IsPartyBeingInspected()) {
+                _avatarVisual.SetActive(_isVisualShowing);
+            } else {
+                _avatarVisual.SetActive(false);
+            }
+        }
+    }
+    public void UpdateVisualState() {
+        if (GameManager.Instance.allCharactersAreVisible) {
+            _avatarVisual.SetActive(_isVisualShowing);
+        } else {
+            if (_party.IsPartyBeingInspected()) {
+                _avatarVisual.SetActive(_isVisualShowing);
+            } else {
+                _avatarVisual.SetActive(false);
+            }
+        }
     }
     public void SetQueuedAction(Action action){
 		queuedAction = action;
@@ -300,6 +330,9 @@ public class CharacterAvatar : MonoBehaviour{
     }
     public void SetCenterOrderLayer(int layer) {
         _centerSpriteRenderer.sortingOrder = layer;
+    }
+    private void OnToggleCharactersVisibility() {
+        UpdateVisualState();
     }
     #endregion
 

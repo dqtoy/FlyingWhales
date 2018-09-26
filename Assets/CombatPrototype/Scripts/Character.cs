@@ -3460,12 +3460,18 @@ namespace ECS {
         #region IInteractable
         public void SetIsBeingInspected(bool state) {
             _isBeingInspected = state;
-            if (_isBeingInspected) {
-                Messenger.Broadcast<Character>(Signals.CHARACTER_INSPECTED, this);
+            if(_currentParty.icon != null) {
+                _currentParty.icon.UpdateVisualState();
+            }
+            if (_currentParty.specificLocation != null && _currentParty.specificLocation.tileLocation.landmarkOnTile != null) {
+                _currentParty.specificLocation.tileLocation.landmarkOnTile.landmarkVisual.ToggleCharactersVisibility();
             }
         }
         public void SetHasBeenInspected(bool state) {
             _hasBeenInspected = state;
+        }
+        public void EndedInspection() {
+
         }
         #endregion
 
