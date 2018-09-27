@@ -96,6 +96,7 @@ public class LandmarkInfoUI : UIMenu {
         if(_activeLandmark.specificLandmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
             PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeLandmark);
         }
+        historyScrollView.verticalNormalizedPosition = 1;
     }
     public override void CloseMenu() {
         base.CloseMenu();

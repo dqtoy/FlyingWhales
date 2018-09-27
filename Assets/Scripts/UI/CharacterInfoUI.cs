@@ -187,6 +187,7 @@ public class CharacterInfoUI : UIMenu {
         currentActionIcon.SetCharacter(currentlyShowingCharacter);
         currentActionIcon.SetAction(currentlyShowingCharacter.currentParty.currentAction);
         PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(currentlyShowingCharacter);
+        historyScrollView.verticalNormalizedPosition = 1;
     }
     public override void ShowTooltip(GameObject objectHovered) {
         base.ShowTooltip(objectHovered);
