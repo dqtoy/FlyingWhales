@@ -11,6 +11,7 @@ public static class Signals {
     public static string FOUND_TRACE = "OnTraceFound"; //Parameters (Character characterThatFoundTrace, string traceFound)
     public static string GAME_LOADED = "OnGameLoaded";
     public static string TOGGLE_CHARACTERS_VISIBILITY = "OnToggleCharactersVisibility";
+    public static string INSPECT_ALL = "InspectAll";
 
     #region Tiles
     public static string TILE_LEFT_CLICKED = "OnTileLeftClicked"; //Parameters (HexTile clickedTile)

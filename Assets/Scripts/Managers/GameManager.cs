@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour {
     public bool allowConsole = true;
     public bool displayFPS = true;
     public bool allCharactersAreVisible = true;
+    public bool inspectAll = false;
 
     private const float X1_SPEED = 0.75f;
     private const float X2_SPEED = 0.5f;
@@ -175,6 +176,10 @@ public class GameManager : MonoBehaviour {
     public void ToggleCharactersVisibility(bool state) {
         allCharactersAreVisible = state;
         Messenger.Broadcast(Signals.TOGGLE_CHARACTERS_VISIBILITY);
+    }
+    public void ToggleInspectAll(bool state) {
+        inspectAll = state;
+        Messenger.Broadcast(Signals.INSPECT_ALL);
     }
     #endregion
 }

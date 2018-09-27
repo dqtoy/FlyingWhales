@@ -16,10 +16,14 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
     [SerializeField] private Image iconImage;
 
     private bool isHovering = false;
+    private int _currentDay;
 
     #region getters/setters
     public CharacterAction action {
         get { return _action; }
+    }
+    private int currentDay {
+        get { return (_character == null ? _currentDay : _character.currentParty.currentDay); }
     }
     #endregion
 
@@ -35,15 +39,18 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
         _action = action;
         UpdateProgress();
     }
+    public void SetCurrentDay(int amount) {
+        _currentDay = amount;
+    }
 
     public void UpdateProgress() {
-        if (_character == null || _action == null) {
+        if (_action == null) {
             return;
         }
         if (_action.actionData.duration == 0) {
             progressBarImage.fillAmount = 1f;
         } else {
-            progressBarImage.fillAmount = (float)_character.currentParty.currentDay / (float)_action.actionData.duration;
+            progressBarImage.fillAmount = (float)currentDay / (float)_action.actionData.duration;
         }
     }
     private void OnActionDayAdjusted(CharacterAction action, NewParty party) {
@@ -101,8 +108,12 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
 
     public override void Reset() {
         base.Reset();
-        Messenger.RemoveListener<CharacterAction, NewParty>(Signals.ACTION_DAY_ADJUSTED, OnActionDayAdjusted);
-        Messenger.RemoveListener<CharacterAction, NewParty>(Signals.ACTION_TAKEN, OnActionTaken);
+        if (Messenger.eventTable.ContainsKey(Signals.ACTION_DAY_ADJUSTED)) {
+            Messenger.RemoveListener<CharacterAction, NewParty>(Signals.ACTION_DAY_ADJUSTED, OnActionDayAdjusted);
+        }
+        if (Messenger.eventTable.ContainsKey(Signals.ACTION_TAKEN)) {
+            Messenger.RemoveListener<CharacterAction, NewParty>(Signals.ACTION_TAKEN, OnActionTaken);
+        }
         //Messenger.RemoveListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
         _action = null;
         _character = null;
@@ -115,7 +126,7 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
             if (_action != null) {
                 string summary = _action.actionData.actionName;
                 if (_action.actionData.duration != 0) {
-                    summary += " " + _character.currentParty.currentDay.ToString() + "/" + _action.actionData.duration.ToString();
+                    summary += " " + currentDay.ToString() + "/" + _action.actionData.duration.ToString();
                 }
                 UIManager.Instance.ShowSmallInfo(summary);
             } else {

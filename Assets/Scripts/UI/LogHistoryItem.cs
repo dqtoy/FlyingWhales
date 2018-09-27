@@ -15,7 +15,7 @@ public class LogHistoryItem : LogItem {
     public override void SetLog(Log log) {
         base.SetLog(log);
         this.name = log.id.ToString();
-        if (log.isInspected) {
+        if (log.isInspected || GameManager.Instance.inspectAll) {
             dateLbl.text = "Day " + new GameDate((int) log.month, log.day, log.year, log.hour).GetDayAndTicksString();
             if (_log.fillers.Count > 0) {
                 this.logLbl.text = Utilities.LogReplacer(_log);
