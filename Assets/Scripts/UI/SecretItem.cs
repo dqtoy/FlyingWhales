@@ -62,5 +62,6 @@ public class SecretItem : MonoBehaviour, IPointerClickHandler {
             return;
         }
         rs.Activate(owner, secret);
+        UpdateVisuals();
     }
 }

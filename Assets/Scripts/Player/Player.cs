@@ -322,6 +322,9 @@ public class Player : ILeader{
         }
         return intel;
     }
+    public bool HasIntel(Intel intel) {
+        return _intels.Contains(intel);
+    }
     #endregion
 
     #region Items

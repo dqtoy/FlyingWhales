@@ -101,6 +101,7 @@ namespace ECS {
         public CharacterSchedule dailySchedule { get; private set; }
         public Quest currentQuest { get; private set; }
         public CharacterEventSchedule eventSchedule { get; private set; }
+        public CharacterUIData uiData { get; private set; }
 
         #region getters / setters
         public string firstName {
@@ -504,6 +505,7 @@ namespace ECS {
             _inventory = new List<Item>();
             combatHistory = new Dictionary<int, Combat>();
             eventSchedule = new CharacterEventSchedule(this);
+            uiData = new CharacterUIData();
 
             GetRandomCharacterColor();
             ConstructDefaultMiscActions();
@@ -2503,7 +2505,7 @@ namespace ECS {
             //if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && this.id == UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id) {
             //    Debug.Log("Added log to history of " + this.name + ". " + log.isInspected);
             //}
-            if (this._history.Count > 20) {
+            if (this._history.Count > 60) {
                 this._history.RemoveAt(0);
             }
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
@@ -3471,7 +3473,7 @@ namespace ECS {
             _hasBeenInspected = state;
         }
         public void EndedInspection() {
-
+            uiData.UpdateData(this);
         }
         #endregion
 

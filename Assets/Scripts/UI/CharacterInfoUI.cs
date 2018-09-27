@@ -9,7 +9,7 @@ using System;
 
 public class CharacterInfoUI : UIMenu {
 
-    private const int MAX_HISTORY_LOGS = 20;
+    private const int MAX_HISTORY_LOGS = 60;
     private const int MAX_INVENTORY = 16;
     public bool isWaitingForAttackTarget;
     public bool isWaitingForJoinBattleTarget;
@@ -34,11 +34,9 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI agilityLbl;
     [SerializeField] private TextMeshProUGUI intelligenceLbl;
     [SerializeField] private TextMeshProUGUI vitalityLbl;
-
-    [Space(10)]
-    [Header("Tags")]
     [SerializeField] private ScrollRect tagsScrollView;
     [SerializeField] private GameObject characterTagPrefab;
+    [SerializeField] private GameObject statsMenuCover;
 
     //[Space(10)]
     //[Header("Mood")]
@@ -62,6 +60,7 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private ItemContainer leftFootArmorContainer;
     [SerializeField] private ItemContainer rightFootArmorContainer;
     [SerializeField] private RectTransform inventoryItemContainersParent;
+    [SerializeField] private GameObject itemsMenuCover;
 
     [Space(10)]
     [Header("Relations")]
@@ -70,12 +69,14 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private GameObject relationshipItemPrefab;
     [SerializeField] private Color evenRelationshipColor;
     [SerializeField] private Color oddRelationshipColor;
+    [SerializeField] private GameObject relationsMenuCover;
 
     [Space(10)]
     [Header("Info")]
     [SerializeField] private SecretItem[] secretItems;
     [SerializeField] private IntelItem[] intelItems;
     [SerializeField] private HiddenDesireItem hiddenDesireItem;
+    [SerializeField] private GameObject infoMenuCover;
 
     //[Space(10)]
     //[Header("Content")]
@@ -91,6 +92,7 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private ScrollRect historyScrollView;
     [SerializeField] private Color evenLogColor;
     [SerializeField] private Color oddLogColor;
+    [SerializeField] private GameObject logsMenuCover;
 
     [Space(10)]
     [Header("Character")]
@@ -133,8 +135,9 @@ public class CharacterInfoUI : UIMenu {
         //Messenger.AddListener<ActionQueueItem, Character>(Signals.ACTION_ADDED_TO_QUEUE, OnActionAddedToQueue);
         //Messenger.AddListener<ActionQueueItem, Character>(Signals.ACTION_REMOVED_FROM_QUEUE, OnActionRemovedFromQueue);
         //Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
-        Messenger.AddListener<Character, Attribute>(Signals.ATTRIBUTE_ADDED, OnCharacterAttributeAdded);
-        Messenger.AddListener<Character, Attribute>(Signals.ATTRIBUTE_REMOVED, OnCharacterAttributeRemoved);
+
+        //Messenger.AddListener<Character, Attribute>(Signals.ATTRIBUTE_ADDED, OnCharacterAttributeAdded);
+        //Messenger.AddListener<Character, Attribute>(Signals.ATTRIBUTE_REMOVED, OnCharacterAttributeRemoved);
         Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
         //affiliations.Initialize();
         currentActionIcon.Initialize();
@@ -171,8 +174,13 @@ public class CharacterInfoUI : UIMenu {
         base.OpenMenu();
         _activeCharacter = (Character)_data;
         UpdateCharacterInfo();
-        UpdateTagInfo();
-        UpdateRelationshipInfo();
+        //if (currentlyShowingCharacter.isBeingInspected) {
+        //    UpdateTagInfo(currentlyShowingCharacter.attributes);
+        //} else {
+        //    UpdateTagInfo(currentlyShowingCharacter.uiData.attributes);
+        //}
+        //UpdateTagInfo();
+        //UpdateRelationshipInfo();
         ShowAttackButton();
         ShowReleaseButton();
         CheckShowSnatchButton();
@@ -204,6 +212,63 @@ public class CharacterInfoUI : UIMenu {
     }
     #endregion
 
+    private void SetCoversState(bool state) {
+        infoMenuCover.SetActive(state);
+        statsMenuCover.SetActive(state);
+        itemsMenuCover.SetActive(state);
+        relationsMenuCover.SetActive(state);
+        logsMenuCover.SetActive(state);
+    }
+    private void ClearAllTabMenus() {
+        //stats
+        healthProgressBar.value = 0f;
+        manaProgressBar.value = 0f;
+        strengthLbl.text = "-";
+        agilityLbl.text = "-";
+        intelligenceLbl.text = "-";
+        vitalityLbl.text = "-";
+
+        //items
+        for (int i = 0; i < inventoryItemContainers.Length; i++) {
+            ItemContainer currContainer = inventoryItemContainers[i];
+            currContainer.SetItem(null);
+        }
+        headArmorContainer.SetItem(null);
+        leftHandContainer.SetItem(null);
+        rightHandContainer.SetItem(null);
+        chestArmorContainer.SetItem(null);
+        legArmorContainer.SetItem(null);
+        leftFootArmorContainer.SetItem(null);
+        rightFootArmorContainer.SetItem(null);
+
+        //tags
+        Utilities.DestroyChildren(tagsScrollView.content);
+
+        //relationships
+        Utilities.DestroyChildren(relationsScrollView.content);
+
+        //logs
+        for (int i = 0; i < logHistoryItems.Length; i++) {
+            LogHistoryItem currItem = logHistoryItems[i];
+            currItem.gameObject.SetActive(false);
+        }
+
+        //secrets
+        for (int i = 0; i < secretItems.Length; i++) {
+            SecretItem currItem = secretItems[i];
+            currItem.gameObject.SetActive(false);
+        }
+
+        //intel
+        for (int i = 0; i < intelItems.Length; i++) {
+            IntelItem currItem = intelItems[i];
+            currItem.gameObject.SetActive(false);
+        }
+
+        //hidden desire
+        hiddenDesireItem.gameObject.SetActive(false);
+    }
+
     //private void OnCharacterDied(ECS.Character deadCharacter) {
     //    if (isShowing && currentlyShowingCharacter != null && currentlyShowingCharacter.id == deadCharacter.id) {
     //        SetData(null);
@@ -222,13 +287,41 @@ public class CharacterInfoUI : UIMenu {
         if (currentlyShowingCharacter == null) {
             return;
         }
+        if (GameManager.Instance.inspectAll) {
+            SetCoversState(false);
+        } else {
+            //if the character has never been inspected
+            //activate all the tab menu covers
+            //else, disable all the tab menu covers
+            SetCoversState(!currentlyShowingCharacter.hasBeenInspected);
+        }
+
         UpdatePortrait();
         UpdateBasicInfo();
-        //UpdateGeneralInfo();
+        if (!currentlyShowingCharacter.hasBeenInspected && !GameManager.Instance.inspectAll) {
+            //if the character has never been inspected
+            //clear all menus and do not load any info
+            ClearAllTabMenus();
+            return;
+        }
+
         UpdateInfoMenu();
-        UpdateStatInfo();
+
+        if (currentlyShowingCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
+            UpdateStatInfo();
+            UpdateItemsInfo();
+            UpdateTagInfo(currentlyShowingCharacter.attributes);
+            UpdateRelationshipInfo(currentlyShowingCharacter.relationships.Values.ToList());
+        } else {
+            UpdateStatInfo(currentlyShowingCharacter.uiData);
+            UpdateItemsInfo(currentlyShowingCharacter.uiData);
+            UpdateTagInfo(currentlyShowingCharacter.uiData.attributes);
+            UpdateRelationshipInfo(currentlyShowingCharacter.uiData.relationships);
+        }
+
+        //UpdateGeneralInfo();
         //UpdateMoodInfo();
-        UpdateItemsInfo();
+        
         //UpdateActionQueue();
         //UpdateEquipmentInfo();
         //UpdateInventoryInfo();
@@ -240,10 +333,14 @@ public class CharacterInfoUI : UIMenu {
     }
     private void UpdateBasicInfo() {
         nameLbl.text = currentlyShowingCharacter.name;
-        if (currentlyShowingCharacter.isBeingInspected) {
+        if (currentlyShowingCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
+            nameLbl.text += " (Info State: Updated)"; 
             lvlClassLbl.text = "Lvl." + currentlyShowingCharacter.level.ToString() + " " + currentlyShowingCharacter.characterClass.className;
         } else {
-            if (!currentlyShowingCharacter.hasBeenInspected) {
+            if (currentlyShowingCharacter.hasBeenInspected) {
+                nameLbl.text += " (Info State: Old)";
+                lvlClassLbl.text = "Lvl." + currentlyShowingCharacter.uiData.level.ToString() + " " + currentlyShowingCharacter.uiData.className;
+            } else {
                 lvlClassLbl.text = "???";
             }
         }
@@ -265,14 +362,148 @@ public class CharacterInfoUI : UIMenu {
     //    }
     //}
 
+    #region Stats
     private void UpdateStatInfo() {
-        healthProgressBar.value = (float)currentlyShowingCharacter.currentHP / (float) currentlyShowingCharacter.maxHP;
-        manaProgressBar.value = (float) currentlyShowingCharacter.currentSP / (float) currentlyShowingCharacter.maxSP;
+        healthProgressBar.value = (float)currentlyShowingCharacter.currentHP / (float)currentlyShowingCharacter.maxHP;
+        manaProgressBar.value = (float)currentlyShowingCharacter.currentSP / (float)currentlyShowingCharacter.maxSP;
         strengthLbl.text = currentlyShowingCharacter.strength.ToString();
         agilityLbl.text = currentlyShowingCharacter.agility.ToString();
         intelligenceLbl.text = currentlyShowingCharacter.intelligence.ToString();
         vitalityLbl.text = currentlyShowingCharacter.vitality.ToString();
     }
+    private void UpdateStatInfo(CharacterUIData uiData) {
+        healthProgressBar.value = uiData.healthValue;
+        manaProgressBar.value = uiData.manaValue;
+        strengthLbl.text = uiData.strength.ToString();
+        agilityLbl.text = uiData.agility.ToString();
+        intelligenceLbl.text = uiData.intelligence.ToString();
+        vitalityLbl.text = uiData.vitality.ToString();
+    }
+    #endregion
+
+    #region Items
+    private void UpdateItemsInfo() {
+        UpdateEquipmentInfo(currentlyShowingCharacter.equippedItems);
+        UpdateInventoryInfo(currentlyShowingCharacter.inventory);
+    }
+    private void UpdateItemsInfo(CharacterUIData uiData) {
+        UpdateEquipmentInfo(uiData.equippedItems);
+        UpdateInventoryInfo(uiData.inventory);
+    }
+    private void UpdateEquipmentInfo(List<Item> equipment) {
+        headArmorContainer.SetItem(null);
+        chestArmorContainer.SetItem(null);
+        legArmorContainer.SetItem(null);
+        leftFootArmorContainer.SetItem(null);
+        rightFootArmorContainer.SetItem(null);
+        for (int i = 0; i < equipment.Count; i++) {
+            Item currItem = equipment[i];
+            if (currItem is Armor) {
+                IBodyPart equippedTo = (currItem as Armor).bodyPartAttached;
+                if (equippedTo.name.Equals("Head")) {
+                    headArmorContainer.SetItem(currItem);
+                } else if (equippedTo.name.Equals("Torso")) {
+                    chestArmorContainer.SetItem(currItem);
+                } else if (equippedTo.name.Equals("Hip")) {
+                    legArmorContainer.SetItem(currItem);
+                } else if (equippedTo.name.Equals("Left Foot")) {
+                    leftFootArmorContainer.SetItem(currItem);
+                } else if (equippedTo.name.Equals("Right Foot")) {
+                    rightFootArmorContainer.SetItem(currItem);
+                }
+            } else if (currItem is Weapon) {
+                List<IBodyPart> equippedTo = (currItem as Weapon).bodyPartsAttached;
+                for (int j = 0; j < equippedTo.Count; j++) {
+                    IBodyPart currBodyPart = equippedTo[j];
+                    if (currBodyPart.name.Equals("Left Hand")) {
+                        leftHandContainer.SetItem(currItem);
+                    } else if (currBodyPart.name.Equals("Right Hand")) {
+                        rightHandContainer.SetItem(currItem);
+                    }
+                }
+            }
+        }
+
+        ////Equipment
+        //IBodyPart head = currentlyShowingCharacter.GetBodyPart("Head");
+        //if (head != null) {
+        //    Item headArmor = head.GetArmor();
+        //    if (headArmor != null) {
+        //        headArmorContainer.SetItem(headArmor);
+        //    } else {
+        //        headArmorContainer.SetItem(null);
+        //    }
+        //}
+
+        //IBodyPart torso = currentlyShowingCharacter.GetBodyPart("Torso");
+        //if (torso != null) {
+        //    Item torsoArmor = torso.GetArmor();
+        //    if (torsoArmor != null) {
+        //        chestArmorContainer.SetItem(torsoArmor);
+        //    } else {
+        //        chestArmorContainer.SetItem(null);
+        //    }
+        //}
+
+        //IBodyPart leftHand = currentlyShowingCharacter.GetBodyPart("Left Hand");
+        //if (leftHand != null) {
+        //    Item leftHandWeapon = leftHand.GetWeapon();
+        //    if (leftHandWeapon != null) {
+        //        leftHandContainer.SetItem(leftHandWeapon);
+        //    } else {
+        //        leftHandContainer.SetItem(null);
+        //    }
+        //}
+
+        //IBodyPart rightHand = currentlyShowingCharacter.GetBodyPart("Right Hand");
+        //if (rightHand != null) {
+        //    Item rightHandWeapon = rightHand.GetWeapon();
+        //    if (rightHandWeapon != null) {
+        //        rightHandContainer.SetItem(rightHandWeapon);
+        //    } else {
+        //        rightHandContainer.SetItem(null);
+        //    }
+        //}
+
+        //IBodyPart hips = currentlyShowingCharacter.GetBodyPart("Hip");
+        //if (hips != null) {
+        //    Item hipArmor = hips.GetArmor();
+        //    if (hipArmor != null) {
+        //        legArmorContainer.SetItem(hipArmor);
+        //    } else {
+        //        legArmorContainer.SetItem(null);
+        //    }
+        //}
+
+        //IBodyPart leftFoot = currentlyShowingCharacter.GetBodyPart("Left Foot");
+        //if (leftFoot != null) {
+        //    Item footArmor = leftFoot.GetArmor();
+        //    if (footArmor != null) {
+        //        leftFootArmorContainer.SetItem(footArmor);
+        //    } else {
+        //        leftFootArmorContainer.SetItem(null);
+        //    }
+        //}
+
+        //IBodyPart rightFoot = currentlyShowingCharacter.GetBodyPart("Right Foot");
+        //if (leftFoot != null) {
+        //    Item footArmor = rightFoot.GetArmor();
+        //    if (footArmor != null) {
+        //        rightFootArmorContainer.SetItem(footArmor);
+        //    } else {
+        //        rightFootArmorContainer.SetItem(null);
+        //    }
+        //}
+    }
+    private void UpdateInventoryInfo(List<Item> inventory) {
+        for (int i = 0; i < inventoryItemContainers.Length; i++) {
+            ItemContainer currContainer = inventoryItemContainers[i];
+            Item currInventoryItem = inventory.ElementAtOrDefault(i);
+            currContainer.SetItem(currInventoryItem);
+        }
+    }
+    #endregion
+
     //private void UpdateMoodInfo() {
     //    overallProgressBar.value = currentlyShowingCharacter.role.happiness;
     //    energyProgressBar.value = currentlyShowingCharacter.role.energy;
@@ -281,89 +512,7 @@ public class CharacterInfoUI : UIMenu {
     //    //prestigeProgressBar.value = currentlyShowingCharacter.role.prestige;
     //    //sanityProgressBar.value = currentlyShowingCharacter.role.sanity;
     //}
-    private void UpdateItemsInfo() {
-        UpdateEquipmentInfo();
-        UpdateInventoryInfo();
-    }
-    private void UpdateEquipmentInfo() {
-        //Equipment
-        IBodyPart head = currentlyShowingCharacter.GetBodyPart("Head");
-        if (head != null) {
-            Item headArmor = head.GetArmor();
-            if (headArmor != null) {
-                headArmorContainer.SetItem(headArmor);
-            } else {
-                headArmorContainer.SetItem(null);
-            }
-        }
 
-        IBodyPart torso = currentlyShowingCharacter.GetBodyPart("Torso");
-        if (torso != null) {
-            Item torsoArmor = torso.GetArmor();
-            if (torsoArmor != null) {
-                chestArmorContainer.SetItem(torsoArmor);
-            } else {
-                chestArmorContainer.SetItem(null);
-            }
-        }
-
-        IBodyPart leftHand = currentlyShowingCharacter.GetBodyPart("Left Hand");
-        if (leftHand != null) {
-            Item leftHandWeapon = leftHand.GetWeapon();
-            if (leftHandWeapon != null) {
-                leftHandContainer.SetItem(leftHandWeapon);
-            } else {
-                leftHandContainer.SetItem(null);
-            }
-        }
-
-        IBodyPart rightHand = currentlyShowingCharacter.GetBodyPart("Right Hand");
-        if (rightHand != null) {
-            Item rightHandWeapon = rightHand.GetWeapon();
-            if (rightHandWeapon != null) {
-                rightHandContainer.SetItem(rightHandWeapon);
-            } else {
-                rightHandContainer.SetItem(null);
-            }
-        }
-
-        IBodyPart hips = currentlyShowingCharacter.GetBodyPart("Hip");
-        if (hips != null) {
-            Item hipArmor = hips.GetArmor();
-            if (hipArmor != null) {
-                legArmorContainer.SetItem(hipArmor);
-            } else {
-                legArmorContainer.SetItem(null);
-            }
-        }
-
-        IBodyPart leftFoot = currentlyShowingCharacter.GetBodyPart("Left Foot");
-        if (leftFoot != null) {
-            Item footArmor = leftFoot.GetArmor();
-            if (footArmor != null) {
-                leftFootArmorContainer.SetItem(footArmor);
-            } else {
-                leftFootArmorContainer.SetItem(null);
-            }
-        }
-
-        IBodyPart rightFoot = currentlyShowingCharacter.GetBodyPart("Right Foot");
-        if (leftFoot != null) {
-            Item footArmor = rightFoot.GetArmor();
-            if (footArmor != null) {
-                rightFootArmorContainer.SetItem(footArmor);
-            } else {
-                rightFootArmorContainer.SetItem(null);
-            }
-        }
-    }
-    private void UpdateInventoryInfo() {
-        for (int i = 0; i < inventoryItemContainers.Length; i++) {
-            ItemContainer currContainer = inventoryItemContainers[i];
-            Item currInventoryItem = currentlyShowingCharacter.inventory.ElementAtOrDefault(i);
-            currContainer.SetItem(currInventoryItem);
-        }
-    }
     //private void UpdateEquipmentInfo() {
     //    string text = string.Empty;
     //    if (currentlyShowingCharacter.equippedItems.Count > 0) {
@@ -406,86 +555,119 @@ public class CharacterInfoUI : UIMenu {
     //    inventoryInfoLbl.text = text;
     //}
 
-    private void UpdateRelationshipInfo() {
-        Utilities.DestroyChildren(relationsScrollView.content);
-        int counter = 0;
-        foreach (KeyValuePair<Character, Relationship> kvp in currentlyShowingCharacter.relationships) {
-            GameObject relItemGO = UIManager.Instance.InstantiateUIObject(relationshipItemPrefab.name, relationsScrollView.content);
-            CharacterRelationshipItem relItem = relItemGO.GetComponent<CharacterRelationshipItem>();
-            relItem.Initialize();
-            if (Utilities.IsEven(counter)) {
-                relItem.SetBGColor(evenRelationshipColor, oddRelationshipColor);
+    #region Relationships
+    List<CharacterRelationshipItem> shownRelationships = new List<CharacterRelationshipItem>();
+    private void UpdateRelationshipInfo(List<Relationship> relationships) {
+        List<Relationship> relationshipsToShow = new List<Relationship>(relationships);
+        List<CharacterRelationshipItem> relationshipsToRemove = new List<CharacterRelationshipItem>();
+        for (int i = 0; i < shownRelationships.Count; i++) {
+            CharacterRelationshipItem currRelItem = shownRelationships[i];
+            if (relationshipsToShow.Contains(currRelItem.rel)) {
+                relationshipsToShow.Remove(currRelItem.rel);
             } else {
-                relItem.SetBGColor(oddRelationshipColor, evenRelationshipColor);
+                relationshipsToRemove.Add(currRelItem);
             }
-            relItem.SetRelationship(kvp.Value);
-            counter++;
         }
+
+        for (int i = 0; i < relationshipsToRemove.Count; i++) {
+            RemoveRelationship(relationshipsToRemove[i]);
+        }
+
+        //Utilities.DestroyChildren(relationsScrollView.content);
+        for (int i = 0; i < relationshipsToShow.Count; i++) {
+            AddRelationship(relationshipsToShow[i], i);
+        }
+
+        //int counter = 0;
+        //foreach (KeyValuePair<Character, Relationship> kvp in currentlyShowingCharacter.relationships) {
+        //    GameObject relItemGO = UIManager.Instance.InstantiateUIObject(relationshipItemPrefab.name, relationsScrollView.content);
+        //    CharacterRelationshipItem relItem = relItemGO.GetComponent<CharacterRelationshipItem>();
+        //    relItem.Initialize();
+        //    if (Utilities.IsEven(counter)) {
+        //        relItem.SetBGColor(evenRelationshipColor, oddRelationshipColor);
+        //    } else {
+        //        relItem.SetBGColor(oddRelationshipColor, evenRelationshipColor);
+        //    }
+        //    relItem.SetRelationship(kvp.Value);
+        //    counter++;
+        //}
     }
+    private void AddRelationship(Relationship rel, int index) {
+        GameObject relItemGO = UIManager.Instance.InstantiateUIObject(relationshipItemPrefab.name, relationsScrollView.content);
+        CharacterRelationshipItem relItem = relItemGO.GetComponent<CharacterRelationshipItem>();
+        Relationship currRel = rel;
+        relItem.Initialize();
+        if (Utilities.IsEven(index)) {
+            relItem.SetBGColor(evenRelationshipColor, oddRelationshipColor);
+        } else {
+            relItem.SetBGColor(oddRelationshipColor, evenRelationshipColor);
+        }
+        relItem.SetRelationship(currRel);
+        shownRelationships.Add(relItem);
+    }
+    private void RemoveRelationship(CharacterRelationshipItem item) {
+        ObjectPoolManager.Instance.DestroyObject(item.gameObject);
+        shownRelationships.Remove(item);
+    }
+    #endregion
 
     #region Character Tags
-    private void UpdateTagInfo() {
-        Utilities.DestroyChildren(tagsScrollView.content);
-        for (int i = 0; i < currentlyShowingCharacter.attributes.Count; i++) {
-            Attribute currTag = currentlyShowingCharacter.attributes[i];
+    private List<CharacterAttributeIcon> shownAttributes = new List<CharacterAttributeIcon>();
+    private void UpdateTagInfo(List<Attribute> attributes) {
+        List<Attribute> attributesToShow = new List<Attribute>(attributes);
+        //Utilities.DestroyChildren(tagsScrollView.content);
+        List<CharacterAttributeIcon> iconsToRemove = new List<CharacterAttributeIcon>();
+        for (int i = 0; i < shownAttributes.Count; i++) {
+            CharacterAttributeIcon shownIcon = shownAttributes[i];
+            if (attributesToShow.Contains(shownIcon.attribute)) {
+                //remove the tag from the attributes list so it doesn't get loaded again later
+                attributesToShow.Remove(shownIcon.attribute);
+            } else {
+                //destroy the tag
+                iconsToRemove.Add(shownIcon);
+            }
+        }
+
+        for (int i = 0; i < iconsToRemove.Count; i++) {
+            CharacterAttributeIcon icon = iconsToRemove[i];
+            RemoveIcon(icon);
+        }
+
+        for (int i = 0; i < attributesToShow.Count; i++) { //show the remaining attributes
+            Attribute currTag = attributesToShow[i];
             AddTag(currTag);
         }
     }
     private void AddTag(Attribute tag) {
         GameObject tagGO = UIManager.Instance.InstantiateUIObject(characterTagPrefab.name, tagsScrollView.content);
-        tagGO.GetComponent<CharacterAttributeIcon>().SetTag(tag);
+        CharacterAttributeIcon icon = tagGO.GetComponent<CharacterAttributeIcon>();
+        icon.SetTag(tag);
+        shownAttributes.Add(icon);
     }
     private void RemoveTag(Attribute tag) {
         CharacterAttributeIcon[] icons = Utilities.GetComponentsInDirectChildren<CharacterAttributeIcon>(tagsScrollView.content.gameObject);
         for (int i = 0; i < icons.Length; i++) {
             CharacterAttributeIcon icon = icons[i];
             if (icon.attribute == tag) {
-                ObjectPoolManager.Instance.DestroyObject(icon.gameObject);
+                RemoveIcon(icon);
                 break;
             }
         }
     }
+    private void RemoveIcon(CharacterAttributeIcon icon) {
+        ObjectPoolManager.Instance.DestroyObject(icon.gameObject);
+        shownAttributes.Remove(icon);
+    }
     private void OnCharacterAttributeAdded(Character affectedCharacter, Attribute tag) {
-        if (currentlyShowingCharacter != null && currentlyShowingCharacter.id == affectedCharacter.id) {
+        if (currentlyShowingCharacter != null && currentlyShowingCharacter.id == affectedCharacter.id && currentlyShowingCharacter.isBeingInspected) {
             AddTag(tag);
         }
     }
     private void OnCharacterAttributeRemoved(Character affectedCharacter, Attribute tag) {
-        if (currentlyShowingCharacter != null && currentlyShowingCharacter.id == affectedCharacter.id) {
+        if (currentlyShowingCharacter != null && currentlyShowingCharacter.id == affectedCharacter.id && currentlyShowingCharacter.isBeingInspected) {
             RemoveTag(tag);
         }
     }
-    #endregion
-
-    #region Utilities
-    //public void UpdateMoodColor(bool isOn) {
-    //    if (isOn) {
-    //        moodTabLbl.color = oddLogColor;
-    //    } else {
-    //        moodTabLbl.color = Color.white;
-    //    }
-    //}
-    //public void UpdateItemsColor(bool isOn) {
-    //    if (isOn) {
-    //        itemsTabLbl.color = oddLogColor;
-    //    } else {
-    //        itemsTabLbl.color = Color.white;
-    //    }
-    //}
-    //public void UpdateRelationsColor(bool isOn) {
-    //    if (isOn) {
-    //        relationsTabLbl.color = oddLogColor;
-    //    } else {
-    //        relationsTabLbl.color = Color.white;
-    //    }
-    //}
-    //public void UpdateLogsColor(bool isOn) {
-    //    if (isOn) {
-    //        logsTabLbl.color = oddLogColor;
-    //    } else {
-    //        logsTabLbl.color = Color.white;
-    //    }
-    //}
     #endregion
 
     #region Action Queue
@@ -759,7 +941,7 @@ public class CharacterInfoUI : UIMenu {
                 currItem.gameObject.SetActive(true);
             }
         }
-        List<Intel> intel = PlayerManager.Instance.player.GetIntelConcerning(currentlyShowingCharacter);
+        List<Intel> intel = IntelManager.Instance.GetIntelConcerning(currentlyShowingCharacter);
         for (int i = 0; i < intelItems.Length; i++) {
             IntelItem currItem = intelItems[i];
             Intel currIntel = intel.ElementAtOrDefault(i);

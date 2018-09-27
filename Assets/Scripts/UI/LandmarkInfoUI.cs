@@ -8,7 +8,7 @@ using ECS;
 
 public class LandmarkInfoUI : UIMenu {
 
-    private const int MAX_HISTORY_LOGS = 20;
+    private const int MAX_HISTORY_LOGS = 60;
 
     public bool isWaitingForAttackTarget;
 

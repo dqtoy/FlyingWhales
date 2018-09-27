@@ -35,7 +35,7 @@ public class RestAction : CharacterAction {
                     }
                 }
                 //if this character has no home or this inn is not part of his home area, check for faction hostility
-                if (character.faction != null) {
+                if (character.faction != null && structureObj.objectLocation.tileLocation.areaOfTile != null) {
                     Faction landmarkFaction = structureObj.objectLocation.tileLocation.areaOfTile.owner;
                     if (landmarkFaction != null) {
                         Faction characterFaction = character.faction;
@@ -49,7 +49,7 @@ public class RestAction : CharacterAction {
                         }
                     }
                 } else {
-                    return true; //if factionless allow
+                    return true; //if factionless, or inn is not part of an area, allow.
                 }
             }
             

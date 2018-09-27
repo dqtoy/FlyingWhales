@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class CharacterRelationshipItem : PooledObject {
 
-    private Relationship rel;
+    public Relationship rel { get; private set; }
     private Color relStatItemBGColor;
 
     [SerializeField] private Image bg;

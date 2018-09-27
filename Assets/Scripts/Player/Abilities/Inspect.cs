@@ -65,6 +65,7 @@ public class Inspect : PlayerAbility {
     private void ScheduleEndInspection(IInteractable interactable) {
         GameDate date = GameManager.Instance.Today();
         date.AddDays(1);
+        //date.AddHours(10);
         SchedulingManager.Instance.AddEntry(date, () => EndInspection(interactable));
     }
     private void EndInspection(IInteractable interactable) {

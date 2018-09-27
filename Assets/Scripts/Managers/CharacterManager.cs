@@ -382,6 +382,9 @@ public class CharacterManager : MonoBehaviour {
             List<string> currLogs = kvp.Value;
             if (log.Contains(currCharacter.name)) {
                 currLogs.Add(log + " Stack Trace: \n" + stackTrace);
+                if (currLogs.Count > 50) {
+                    currLogs.RemoveAt(0);
+                }
             }
             //allCharacterLogs[currCharacter] = currLogs;
             modifiedLogs.Add(currCharacter, currLogs);
