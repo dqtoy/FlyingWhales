@@ -66,13 +66,13 @@ public class ArgueAction : CharacterAction {
     }
     public override IObject GetTargetObject(CharacterParty sourceParty) {
         Character mainCharacter = sourceParty.mainCharacter as Character;
-        if (mainCharacter.GetAttribute(ATTRIBUTE.INTROVERT) == null) {
+        if (mainCharacter.GetAttribute(ATTRIBUTE.INTROVERT) == null && mainCharacter.GetAttribute(ATTRIBUTE.BELLIGERENT) != null) {
             List<CharacterParty> targetCandidates = new List<CharacterParty>();
             for (int i = 0; i < mainCharacter.specificLocation.charactersAtLocation.Count; i++) {
                 NewParty targetParty = mainCharacter.specificLocation.charactersAtLocation[i];
                 if (targetParty != sourceParty && targetParty is CharacterParty) {
                     Character targetMainCharacter = targetParty.mainCharacter as Character;
-                    if (targetMainCharacter.doNotDisturb || targetMainCharacter.GetAttribute(ATTRIBUTE.BELLIGERENT) == null) {
+                    if (targetMainCharacter.doNotDisturb) {
                         continue;
                     }
                     Relationship relationship = mainCharacter.GetRelationshipWith(targetMainCharacter);
