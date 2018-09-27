@@ -380,7 +380,7 @@ public class CharacterManager : MonoBehaviour {
         foreach (KeyValuePair<Character, List<string>> kvp in allCharacterLogs) {
             Character currCharacter = kvp.Key;
             List<string> currLogs = kvp.Value;
-            if (log.Contains(currCharacter.name)) {
+            if (log.Contains(currCharacter.name) || log.Contains(currCharacter.name + "'s")) {
                 currLogs.Add(log + " Stack Trace: \n" + stackTrace);
                 if (currLogs.Count > 50) {
                     currLogs.RemoveAt(0);

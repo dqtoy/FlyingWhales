@@ -12,7 +12,13 @@ public class CharacterParty : NewParty {
 
     #region getters/setters
     public override string name {
-        get { return _owner.name + "'s Party"; }
+        get {
+            if (icharacters.Count > 1) {
+                return _owner.name + "'s Party";
+            } else {
+                return _owner.name;
+            }
+        }
     }
     public bool isIdle {
         get { return _isIdle; }
