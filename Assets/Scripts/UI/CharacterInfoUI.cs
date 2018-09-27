@@ -9,7 +9,7 @@ using System;
 
 public class CharacterInfoUI : UIMenu {
 
-    private const int MAX_HISTORY_LOGS = 20;
+    private const int MAX_HISTORY_LOGS = 60;
     private const int MAX_INVENTORY = 16;
     public bool isWaitingForAttackTarget;
     public bool isWaitingForJoinBattleTarget;
@@ -287,14 +287,18 @@ public class CharacterInfoUI : UIMenu {
         if (currentlyShowingCharacter == null) {
             return;
         }
-        //if the character has never been inspected
-        //activate all the tab menu covers
-        //else, disable all the tab menu covers
-        SetCoversState(!currentlyShowingCharacter.hasBeenInspected);
+        if (GameManager.Instance.inspectAll) {
+            SetCoversState(false);
+        } else {
+            //if the character has never been inspected
+            //activate all the tab menu covers
+            //else, disable all the tab menu covers
+            SetCoversState(!currentlyShowingCharacter.hasBeenInspected);
+        }
 
         UpdatePortrait();
         UpdateBasicInfo();
-        if (!currentlyShowingCharacter.hasBeenInspected) {
+        if (!currentlyShowingCharacter.hasBeenInspected && !GameManager.Instance.inspectAll) {
             //if the character has never been inspected
             //clear all menus and do not load any info
             ClearAllTabMenus();
@@ -303,16 +307,16 @@ public class CharacterInfoUI : UIMenu {
 
         UpdateInfoMenu();
 
-        if (currentlyShowingCharacter.isBeingInspected) {
+        if (currentlyShowingCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
             UpdateStatInfo();
             UpdateItemsInfo();
             UpdateTagInfo(currentlyShowingCharacter.attributes);
-            UpdateRelationshipInfo();
+            UpdateRelationshipInfo(currentlyShowingCharacter.relationships.Values.ToList());
         } else {
             UpdateStatInfo(currentlyShowingCharacter.uiData);
             UpdateItemsInfo(currentlyShowingCharacter.uiData);
             UpdateTagInfo(currentlyShowingCharacter.uiData.attributes);
-            UpdateRelationshipInfo();
+            UpdateRelationshipInfo(currentlyShowingCharacter.uiData.relationships);
         }
 
         //UpdateGeneralInfo();
@@ -329,7 +333,7 @@ public class CharacterInfoUI : UIMenu {
     }
     private void UpdateBasicInfo() {
         nameLbl.text = currentlyShowingCharacter.name;
-        if (currentlyShowingCharacter.isBeingInspected) {
+        if (currentlyShowingCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
             nameLbl.text += " (Info State: Updated)"; 
             lvlClassLbl.text = "Lvl." + currentlyShowingCharacter.level.ToString() + " " + currentlyShowingCharacter.characterClass.className;
         } else {
@@ -552,21 +556,58 @@ public class CharacterInfoUI : UIMenu {
     //}
 
     #region Relationships
-    private void UpdateRelationshipInfo() {
-        Utilities.DestroyChildren(relationsScrollView.content);
-        int counter = 0;
-        foreach (KeyValuePair<Character, Relationship> kvp in currentlyShowingCharacter.relationships) {
-            GameObject relItemGO = UIManager.Instance.InstantiateUIObject(relationshipItemPrefab.name, relationsScrollView.content);
-            CharacterRelationshipItem relItem = relItemGO.GetComponent<CharacterRelationshipItem>();
-            relItem.Initialize();
-            if (Utilities.IsEven(counter)) {
-                relItem.SetBGColor(evenRelationshipColor, oddRelationshipColor);
+    List<CharacterRelationshipItem> shownRelationships = new List<CharacterRelationshipItem>();
+    private void UpdateRelationshipInfo(List<Relationship> relationships) {
+        List<Relationship> relationshipsToShow = new List<Relationship>(relationships);
+        List<CharacterRelationshipItem> relationshipsToRemove = new List<CharacterRelationshipItem>();
+        for (int i = 0; i < shownRelationships.Count; i++) {
+            CharacterRelationshipItem currRelItem = shownRelationships[i];
+            if (relationshipsToShow.Contains(currRelItem.rel)) {
+                relationshipsToShow.Remove(currRelItem.rel);
             } else {
-                relItem.SetBGColor(oddRelationshipColor, evenRelationshipColor);
+                relationshipsToRemove.Add(currRelItem);
             }
-            relItem.SetRelationship(kvp.Value);
-            counter++;
         }
+
+        for (int i = 0; i < relationshipsToRemove.Count; i++) {
+            RemoveRelationship(relationshipsToRemove[i]);
+        }
+
+        //Utilities.DestroyChildren(relationsScrollView.content);
+        for (int i = 0; i < relationshipsToShow.Count; i++) {
+            AddRelationship(relationshipsToShow[i], i);
+        }
+
+        //int counter = 0;
+        //foreach (KeyValuePair<Character, Relationship> kvp in currentlyShowingCharacter.relationships) {
+        //    GameObject relItemGO = UIManager.Instance.InstantiateUIObject(relationshipItemPrefab.name, relationsScrollView.content);
+        //    CharacterRelationshipItem relItem = relItemGO.GetComponent<CharacterRelationshipItem>();
+        //    relItem.Initialize();
+        //    if (Utilities.IsEven(counter)) {
+        //        relItem.SetBGColor(evenRelationshipColor, oddRelationshipColor);
+        //    } else {
+        //        relItem.SetBGColor(oddRelationshipColor, evenRelationshipColor);
+        //    }
+        //    relItem.SetRelationship(kvp.Value);
+        //    counter++;
+        //}
+    }
+    private void AddRelationship(Relationship rel, int index) {
+        GameObject relItemGO = UIManager.Instance.InstantiateUIObject(relationshipItemPrefab.name, relationsScrollView.content);
+        CharacterRelationshipItem relItem = relItemGO.GetComponent<CharacterRelationshipItem>();
+        Relationship currRel = rel;
+        relItem.Initialize();
+        if (Utilities.IsEven(index)) {
+            relItem.SetBGColor(evenRelationshipColor, oddRelationshipColor);
+        } else {
+            relItem.SetBGColor(oddRelationshipColor, evenRelationshipColor);
+        }
+        relItem.SetRelationship(currRel);
+        shownRelationships.Add(relItem);
+    }
+    private void RemoveRelationship(CharacterRelationshipItem item) {
+        ObjectPoolManager.Instance.DestroyObject(item.gameObject);
+        shownRelationships.Remove(item);
     }
     #endregion
 

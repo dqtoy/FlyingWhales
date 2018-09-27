@@ -458,7 +458,7 @@ public class BaseLandmark : ILocation, IInteractable {
         //}
         log.SetInspected(_isBeingInspected);
         _history.Add(log);
-        if (this._history.Count > 20) {
+        if (this._history.Count > 60) {
             this._history.RemoveAt(0);
         }
         Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
