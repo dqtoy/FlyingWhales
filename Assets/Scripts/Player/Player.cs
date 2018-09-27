@@ -114,6 +114,7 @@ public class Player : ILeader{
     public void CreatePlayerArea(HexTile chosenCoreTile) {
         Area playerArea = LandmarkManager.Instance.CreateNewArea(chosenCoreTile, AREA_TYPE.DEMONIC_INTRUSION);
         BaseLandmark demonicPortal = LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenCoreTile, LANDMARK_TYPE.DEMONIC_PORTAL);
+        Biomes.Instance.CorruptTileVisuals(chosenCoreTile);
         chosenCoreTile.SetCorruption(true);
         SetPlayerArea(playerArea);
         ActivateMagicTransferToPlayer();
