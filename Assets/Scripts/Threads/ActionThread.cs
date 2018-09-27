@@ -146,7 +146,7 @@ public class ActionThread : Multithread {
                 }
             } else if (character.dailySchedule.currentPhase.phaseType == SCHEDULE_PHASE_TYPE.MISC) { //if misc phase
                 //first check if needs meet their thresholds (NOTE: Will this be changed to overall value?)
-                if (character.role.AreNeedsMet()) { //if needs are met
+                //if (character.role.AreNeedsMet()) { //if needs are met
                     actionLog += "\nDetermining non need misc action...";
                     //Get action from misc actions based on the tags of this character and possibly some consistent actions that are present for everyone
                     IObject targetObject = null;
@@ -154,15 +154,15 @@ public class ActionThread : Multithread {
                     chosenObject = targetObject;
                     _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
                     actionLog += "\nGot non-need misc action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
-                } else { //if not
-                    actionLog += "\nDetermining need misc action...";
-                    //Get action from needs advertisements
-                    IObject targetObject = null;
-                    chosenAction = GetActionFromAdvertisements(ref targetObject);
-                    chosenObject = targetObject;
-                    _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
-                    actionLog += "\nGot need misc action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
-                }
+                //} else { //if not
+                //    actionLog += "\nDetermining need misc action...";
+                //    //Get action from needs advertisements
+                //    IObject targetObject = null;
+                //    chosenAction = GetActionFromAdvertisements(ref targetObject);
+                //    chosenObject = targetObject;
+                //    _party.actionData.SetCurrentActionPhaseType(character.dailySchedule.currentPhase.phaseType);
+                //    actionLog += "\nGot need misc action " + chosenAction.actionData.actionName + " - " + chosenObject.specificLocation.locationName;
+                //}
             }
             Debug.Log(actionLog);
         }
