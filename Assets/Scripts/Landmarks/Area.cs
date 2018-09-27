@@ -150,10 +150,11 @@ public class Area {
         }
         //update tile visuals if necessary
         if (this.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
-            addedTile.SetBaseSprite(PlayerManager.Instance.playerAreaFloorSprites[Random.Range(0, PlayerManager.Instance.playerAreaFloorSprites.Length)]);
-            if (coreTile.id != addedTile.id) {
-                addedTile.SetLandmarkTileSprite(new LandmarkStructureSprite(PlayerManager.Instance.playerAreaDefaultStructureSprites[Random.Range(0, PlayerManager.Instance.playerAreaDefaultStructureSprites.Length)], null));
-            }
+            //addedTile.SetBaseSprite(PlayerManager.Instance.playerAreaFloorSprites[Random.Range(0, PlayerManager.Instance.playerAreaFloorSprites.Length)]);
+            //if (coreTile.id != addedTile.id) {
+            //    addedTile.SetLandmarkTileSprite(new LandmarkStructureSprite(PlayerManager.Instance.playerAreaDefaultStructureSprites[Random.Range(0, PlayerManager.Instance.playerAreaDefaultStructureSprites.Length)], null));
+            //}
+            Biomes.Instance.CorruptTileVisuals(addedTile);
         } else if (this.areaType == AREA_TYPE.ANCIENT_RUINS) {
             //addedTile.SetBaseSprite(Biomes.Instance.ancienctRuinTiles[Random.Range(0, Biomes.Instance.ancienctRuinTiles.Length)]);
             if (coreTile.id == addedTile.id) {

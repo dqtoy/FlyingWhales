@@ -92,6 +92,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9d1349113684fd348ab6dd814eaf5ae4, type: 3}
   - {fileID: 21300000, guid: 5c14662c5457f1747a70dba5cc0ee35e, type: 3}
   - {fileID: 21300000, guid: ab7ea309573094a46aefe91b9d263e85, type: 3}
+  - {fileID: 21300000, guid: 4863cf9566a190f4d9f38eaf4f122573, type: 3}
   - {fileID: 21300000, guid: d5a1f05924329334dadc9809969f8281, type: 3}
   - {fileID: 21300000, guid: 77dfb4508589550459da380c3de13832, type: 3}
   - {fileID: 21300000, guid: 25ad2f1445b44a44780267f577682fc6, type: 3}
@@ -344,6 +345,7 @@ SpriteAtlas:
   - human_mine_gold_colour
   - human_mine_gold_colour
   - elven_town1_colour
+  - demonic_forest_forest1
   - demonic_flat2
   - human_palace
   - human_palace
