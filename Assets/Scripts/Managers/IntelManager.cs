@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using ECS;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -34,5 +35,16 @@ public class IntelManager : MonoBehaviour {
 
     public Intel GetIntel(int id) {
         return _intelLookup[id];
+    }
+
+    public List<Intel> GetIntelConcerning(Character character) {
+        List<Intel> intel = new List<Intel>();
+        foreach (KeyValuePair<int, Intel> kvp in _intelLookup) {
+            Intel currIntel = kvp.Value;
+            if (currIntel.description.Contains(character.name) || currIntel.name.Contains(character.name)) {
+                intel.Add(currIntel);
+            }
+        }
+        return intel;
     }
 }

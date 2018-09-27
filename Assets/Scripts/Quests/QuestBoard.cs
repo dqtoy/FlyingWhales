@@ -55,7 +55,7 @@ public class QuestBoard : IQuestGiver {
         List<MonsterSpawnerLandmark> choices = new List<MonsterSpawnerLandmark>();
         for (int i = 0; i < tilesInRange.Count; i++) {
             HexTile currTile = tilesInRange[i];
-            if (currTile.landmarkOnTile != null && currTile.landmarkOnTile is MonsterSpawnerLandmark) {
+            if (currTile.landmarkOnTile != null && currTile.landmarkOnTile is MonsterSpawnerLandmark && (currTile.landmarkOnTile as MonsterSpawnerLandmark).monsterChoices != null) {
                 choices.Add(currTile.landmarkOnTile as MonsterSpawnerLandmark);
             }
         }
