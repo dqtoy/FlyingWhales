@@ -23,8 +23,12 @@ public class LogHistoryItem : LogItem {
                 this.logLbl.text = LocalizationManager.Instance.GetLocalizedValue(_log.category, _log.file, _log.key);
             }
         } else {
+            int numOfChars = LocalizationManager.Instance.GetLocalizedValue(_log.category, _log.file, _log.key).Length;
             dateLbl.text = "???";
             this.logLbl.text = "???";
+            for (int i = 0; i < numOfChars; i++) {
+                this.logLbl.text += " ";
+            }
         }
 
         //if (!this.gameObject.activeSelf) {

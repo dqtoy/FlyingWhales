@@ -21,6 +21,12 @@ public class LandmarkInfoUI : UIMenu {
     [SerializeField] private Slider healthProgressBar;
 
     [Space(10)]
+    [Header("Info")]
+    [SerializeField] private GameObject[] secrets;
+    [SerializeField] private GameObject[] intel;
+    [SerializeField] private GameObject[] encounters;
+
+    [Space(10)]
     [Header("Characters")]
     [SerializeField] private GameObject charactersGO;
     [SerializeField] private GameObject landmarkCharacterPrefab;
@@ -120,6 +126,7 @@ public class LandmarkInfoUI : UIMenu {
         } else {
             UpdateBGs(false);
         }
+        UpdateInfo();
         UpdateCharacters();
         UpdateItems();
         UpdateAllHistoryInfo();
@@ -285,6 +292,32 @@ public class LandmarkInfoUI : UIMenu {
     private void OnItemRemovedFromLandmark(Item item, BaseLandmark landmark) {
         if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id) {
             UpdateItems();
+        }
+    }
+    #endregion
+
+    #region Info
+    private void UpdateInfo() {
+        for (int i = 0; i < secrets.Length; i++) {
+            if(i < _activeLandmark.secrets.Count) {
+                secrets[i].SetActive(true);
+            } else {
+                secrets[i].SetActive(false);
+            }
+        }
+        for (int i = 0; i < intel.Length; i++) {
+            if (i < _activeLandmark.intels.Count) {
+                intel[i].SetActive(true);
+            } else {
+                intel[i].SetActive(false);
+            }
+        }
+        for (int i = 0; i < encounters.Length; i++) {
+            if (i < _activeLandmark.encounters.Count) {
+                encounters[i].SetActive(true);
+            } else {
+                encounters[i].SetActive(false);
+            }
         }
     }
     #endregion

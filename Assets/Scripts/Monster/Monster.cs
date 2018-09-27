@@ -440,8 +440,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _isSleeping = state;
     }
     public void TryToSleep() {
-        if (!_isSleeping && _currentParty.specificLocation.tileLocation.id == _homeLandmark.id) {
-            SetSleeping(true);
+        if (!_isSleeping && _currentParty.specificLocation.tileLocation.id == _homeLandmark.tileLocation.id) {
+            _currentParty.EndAction();
+            (_currentParty as MonsterParty).actionData.AssignAction(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.HIBERNATE), _ownParty.icharacterObject);
         }
     }
     #endregion

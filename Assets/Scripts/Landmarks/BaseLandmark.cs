@@ -10,36 +10,40 @@ using ECS;
 
 public class BaseLandmark : ILocation, IInteractable {
     protected int _id;
-    protected HexTile _location;
-    protected HexTile _connectedTile;
+    protected string _landmarkName;
     protected LANDMARK_TYPE _specificLandmarkType;
-    protected List<BaseLandmark> _connections;
     protected bool _canBeOccupied; //can the landmark be occupied?
     protected bool _isOccupied;
     protected bool _isBeingInspected;
     protected bool _hasBeenInspected;
-    protected string _landmarkName;
+    protected bool _hasBeenCorrupted;
+    protected bool _isAttackingAnotherLandmark;
+    protected int _combatHistoryID;
+    protected int _civilianCount;
+    protected HexTile _location;
+    protected HexTile _connectedTile;
     protected Faction _owner;
-    protected List<ICharacter> _charactersWithHomeOnLandmark;
+    protected StructureObj _landmarkObj;
     protected LandmarkVisual _landmarkVisual;
+    protected List<ICharacter> _charactersWithHomeOnLandmark;
+    protected List<BaseLandmark> _connections;
     protected List<Character> _prisoners; //list of prisoners on landmark
     protected List<Log> _history;
-    protected int _combatHistoryID;
-    protected Dictionary<int, Combat> _combatHistory;
     protected List<NewParty> _charactersAtLocation;
     protected List<LandmarkPartyData> _lastInspectedOfCharactersAtLocation;
     protected List<Item> _itemsInLandmark;
     protected List<Item> _lastInspectedItemsInLandmark;
-    protected Dictionary<Character, GameDate> _characterTraces; //Lasts for 60 days
     protected List<LANDMARK_TAG> _landmarkTags;
-    protected StructureObj _landmarkObj;
-    private Dictionary<RESOURCE, int> _resourceInventory;
-    private List<HexTile> _nextCorruptedTilesToCheck;
-    private bool _hasBeenCorrupted;
-    protected bool _isAttackingAnotherLandmark;
-    private List<HexTile> _wallTiles;
+    protected List<HexTile> _nextCorruptedTilesToCheck;
+    protected List<HexTile> _wallTiles;
+    protected List<Secret> _secrets;
+    protected List<Intel> _intels;
+    protected List<string> _encounters;
+    protected Dictionary<Character, GameDate> _characterTraces; //Lasts for 60 days
+    protected Dictionary<int, Combat> _combatHistory;
+    protected Dictionary<RESOURCE, int> _resourceInventory;
+
     public bool hasAdjacentCorruptedLandmark;
-    private int _civilianCount;
     public QuestBoard questBoard { get; private set; }
     public List<GameEvent> advertisedEvents { get; private set; } //events happening at this landmark, that other characters can partake in
 
@@ -116,6 +120,15 @@ public class BaseLandmark : ILocation, IInteractable {
     public List<Item> lastInspectedItemsInLandmark {
         get { return _lastInspectedItemsInLandmark; }
     }
+    public List<Secret> secrets {
+        get { return _secrets; }
+    }
+    public List<Intel> intels {
+        get { return _intels; }
+    }
+    public List<string> encounters {
+        get { return _encounters; }
+    }
     public int currDurability {
         get { return _landmarkObj.currentHP; }
     }
@@ -149,38 +162,27 @@ public class BaseLandmark : ILocation, IInteractable {
     #endregion
 
     public BaseLandmark() {
-        _connections = new List<BaseLandmark>();
         _owner = null; //landmark has no owner yet
+        _combatHistoryID = 0;
+        _hasBeenCorrupted = false;
+        hasAdjacentCorruptedLandmark = false;
+        _connections = new List<BaseLandmark>();
         _charactersWithHomeOnLandmark = new List<ICharacter>();
         _prisoners = new List<Character>();
         _history = new List<Log>();
-        _combatHistory = new Dictionary<int, Combat>();
-        _combatHistoryID = 0;
         _charactersAtLocation = new List<NewParty>();
         _lastInspectedOfCharactersAtLocation = new List<LandmarkPartyData>();
         _itemsInLandmark = new List<Item>();
         _lastInspectedItemsInLandmark = new List<Item>();
-        _characterTraces = new Dictionary<Character, GameDate>();
-        //_totalDurability = landmarkData.hitPoints;
-        //_currDurability = _totalDurability;
-        //_objects = new List<IObject>();
         _nextCorruptedTilesToCheck = new List<HexTile>();
-        _hasBeenCorrupted = false;
-        //_diagonalLeftTiles = new List<HexTile>();
-        //_diagonalRightTiles = new List<HexTile>();
-        //_horizontalTiles = new List<HexTile>();
         _wallTiles = new List<HexTile>();
-        hasAdjacentCorruptedLandmark = false;
         advertisedEvents = new List<GameEvent>();
+        _secrets = new List<Secret>();
+        _intels = new List<Intel>();
+        _encounters = new List<string>();
+        _combatHistory = new Dictionary<int, Combat>();
+        _characterTraces = new Dictionary<Character, GameDate>();
         Messenger.AddListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);
-        //_diagonalLeftBlocked = 0;
-        //_diagonalRightBlocked = 0;
-        //_horizontalBlocked = 0;
-        //_blockedLandmarkDirection = new Dictionary<BaseLandmark, string>();
-        //Messenger.AddListener<BaseLandmark>("StartCorruption", ALandmarkHasStartedCorruption);
-        //Messenger.AddListener<BaseLandmark>("StopCorruption", ALandmarkHasStoppedCorruption);
-
-        //ConstructResourceInventory();
     }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this(){
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);

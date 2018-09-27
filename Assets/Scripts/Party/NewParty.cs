@@ -32,7 +32,13 @@ public class NewParty : IParty {
         set { _numOfAttackers = value; }
     }
     public virtual string name {
-        get { return mainCharacter.name + "'s Party"; }
+        get {
+            if (icharacters.Count > 1) {
+                return mainCharacter.name + "'s Party";
+            } else {
+                return mainCharacter.name;
+            }
+        }
     }
     public string urlName {
         get {
