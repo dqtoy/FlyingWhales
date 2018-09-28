@@ -117,6 +117,11 @@ public class Biomes : MonoBehaviour {
 #else
         int sortingOrder = (((int)GridMap.Instance.height - 1) -  (currentHexTile.yCoordinate - 2)) * 2;
 #endif
+        if (PlayerManager.Instance.player != null &&  PlayerManager.Instance.player.playerArea != null 
+            && PlayerManager.Instance.player.playerArea.tiles.Contains(currentHexTile)) {
+            return;
+        }
+
         if (currentHexTile.elevationType == ELEVATION.PLAIN) {
             LoadPlainTileVisuals(currentHexTile, sortingOrder);
         } else if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
