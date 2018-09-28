@@ -186,7 +186,7 @@ public class ActionData {
     }
     public void SetIsDone(bool state) {
         this.isDone = state;
-        Debug.Log(_party.name + " Set is done to " + state.ToString());
+        //Debug.Log(_party.name + " Set is done to " + state.ToString());
     }
 
     public void PerformCurrentAction() {

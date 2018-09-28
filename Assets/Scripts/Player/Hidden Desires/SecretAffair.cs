@@ -19,8 +19,13 @@ public class SecretAffair : HiddenDesire {
     }
     public override void Awaken() {
         base.Awaken();
-        GameEvent secretMeetingEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.SECRET_MEETING);
-        secretMeetingEvent.Initialize(new List<Character>() { _host, affairWith });
+        if (_host.isDead || affairWith.isDead) {
+            Debug.Log(GameManager.Instance.TodayLogString() + "Secret meeting between " + _host.name + " and " + affairWith.name + " will not happen because 1 of them is already dead!");
+        } else {
+            GameEvent secretMeetingEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.SECRET_MEETING);
+            secretMeetingEvent.Initialize(new List<Character>() { _host, affairWith });
+        }
+        
     }
     #endregion
 }

@@ -536,6 +536,9 @@ namespace ECS {
             //Messenger.RemoveListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
             Messenger.RemoveListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
             //Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
+            if (Messenger.eventTable.ContainsKey(Signals.HOUR_ENDED)) {
+                Messenger.RemoveListener(Signals.HOUR_ENDED, EventEveryTick);
+            }
         }
         #endregion
 

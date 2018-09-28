@@ -17,6 +17,10 @@ public class AwakenDesire : PlayerAbility {
         interactable.hiddenDesire.Awaken();
         base.Activate(interactable);
     }
+    public void Activate(IInteractable interactable, ECS.Character character) {
+        character.hiddenDesire.Awaken();
+        base.Activate(interactable);
+    }
     public override bool CanBeDone(IInteractable interactable) {
         if (base.CanBeDone(interactable)) {
             if (interactable.hiddenDesire != null && !interactable.hiddenDesire.isAwakened) {

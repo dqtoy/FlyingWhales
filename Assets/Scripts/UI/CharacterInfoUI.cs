@@ -956,7 +956,7 @@ public class CharacterInfoUI : UIMenu {
         if (currentlyShowingCharacter.hiddenDesire == null) {
             hiddenDesireItem.gameObject.SetActive(false);
         } else {
-            hiddenDesireItem.SetHiddenDesire(currentlyShowingCharacter.hiddenDesire);
+            hiddenDesireItem.SetHiddenDesire(currentlyShowingCharacter.hiddenDesire, currentlyShowingCharacter);
             hiddenDesireItem.gameObject.SetActive(true);
         }
     }

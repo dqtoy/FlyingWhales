@@ -41,6 +41,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 036d7a8055ce87a4191e25f314a42c32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  desireImage: {fileID: 114701195785265318}
 --- !u!114 &114701195785265318
 MonoBehaviour:
   m_ObjectHideFlags: 1

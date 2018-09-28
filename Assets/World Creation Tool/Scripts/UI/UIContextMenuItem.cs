@@ -45,6 +45,7 @@ public class UIContextMenuItem : MonoBehaviour, IPointerEnterHandler, IPointerEx
         } else {
             nextArrowGO.gameObject.SetActive(false);
         }
+        HideSubMenu();
     }
 
     public void ShowSubMenu() {

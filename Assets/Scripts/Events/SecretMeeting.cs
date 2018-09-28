@@ -53,8 +53,8 @@ public class SecretMeeting : GameEvent {
         char1WaitAction.SetWaitedCharacter(_ladyOfTheLake);
         char2WaitAction.SetWaitedCharacter(_generalMax);
 
-        char1WaitAction.SetOnEndAction(() => SetCharactersAsLovers());
-        char2WaitAction.SetOnEndAction(() => SetCharactersAsLovers());
+        char1WaitAction.SetOnEndAction(() => OnWaitingActionDone());
+        char2WaitAction.SetOnEndAction(() => OnWaitingActionDone());
 
         EatAction char1EatAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.EAT) as EatAction;
         EatAction char2EatAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.EAT) as EatAction;
@@ -120,6 +120,25 @@ public class SecretMeeting : GameEvent {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
     }
 
+    private void OnWaitingActionDone() {
+        if (this.isDone) {
+            return; //the event is already done (possibly from both of them dying, ignore this)
+        }
+        //this is for actions once the waiting action of a character is done 
+        //this is ususally called, when the character has finished waiting and the other person has not arrived)
+        //(or the character has arrived and the character stopped waiting)
+        if (!generalMax.isDead && !ladyOfTheLake.isDead) {
+            SetCharactersAsLovers();
+        } else {
+            //check if both character's are still alive, if not this means that at least one character was not able to attend the meeting, 
+            //End the event for now, TBD if they should reschedule
+            base.EndEventForCharacter(generalMax);
+            base.EndEventForCharacter(ladyOfTheLake);
+            EndEvent();
+        }
+
+
+    }
     private void SetCharactersAsLovers() {
         if (generalMax.isDead || ladyOfTheLake.isDead) {
             return;
@@ -149,16 +168,20 @@ public class SecretMeeting : GameEvent {
     }
     private void OnCharacterDied(Character character) {
         if (generalMax.id == character.id || ladyOfTheLake.id == character.id) {
-            //if either of the characters died, end the event
-            base.EndEventForCharacter(generalMax);
-            base.EndEventForCharacter(ladyOfTheLake);
-            EndEvent();
+            ////if either of the characters died, end the event
+            //base.EndEventForCharacter(generalMax);
+            //base.EndEventForCharacter(ladyOfTheLake);
+            //EndEvent();
             if (!generalMax.isDead) {
                 if (generalMax.party.actionData.isCurrentActionFromEvent && generalMax.party.actionData.currentAction.actionType != ACTION_TYPE.WAITING && generalMax.party.actionData.eventAssociatedWithAction.id == this.id) {
                     //character1's current action is from this event, end it
                     generalMax.party.actionData.currentAction.EndAction(generalMax.party, generalMax.party.actionData.currentTargetObject);
                 }
+            } else {
+                //if dead
+                base.EndEventForCharacter(generalMax);
             }
+
             if (!ladyOfTheLake.isDead) {
                 if (ladyOfTheLake.party.actionData.isCurrentActionFromEvent && ladyOfTheLake.party.actionData.currentAction.actionType != ACTION_TYPE.WAITING && ladyOfTheLake.party.actionData.eventAssociatedWithAction.id == this.id) {
                     //character1's current action is from this event, end it
@@ -173,6 +196,9 @@ public class SecretMeeting : GameEvent {
                         PlayerManager.Instance.player.GiveIntelToCharacter(IntelManager.Instance.GetIntel(1), ladyOfTheLake);
                     }
                 }
+            } else {
+                //if dead
+                base.EndEventForCharacter(ladyOfTheLake);
             }
         }
     }

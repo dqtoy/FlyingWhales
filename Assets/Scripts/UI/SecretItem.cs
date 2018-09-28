@@ -53,7 +53,7 @@ public class SecretItem : MonoBehaviour, IPointerClickHandler {
         if (secret.isRevealed) {
             return; //secret is already revealed
         }
-        if (!owner.isBeingInspected) {
+        if (!owner.isBeingInspected && !GameManager.Instance.inspectAll) {
             return;
         }
         RevealSecret rs = PlayerManager.Instance.player.GetAbility("Reveal Secret") as RevealSecret;

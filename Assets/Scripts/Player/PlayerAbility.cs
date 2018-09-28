@@ -47,7 +47,7 @@ public class PlayerAbility {
         return CanBeActivated(interactable);
     }
     public virtual bool CanBeActivated(IInteractable interactable) {
-        if (interactable.isBeingInspected) {
+        if (interactable.isBeingInspected || GameManager.Instance.inspectAll) {
             int magicUsed = 0;
             if (interactable is Character) {
                 magicUsed = PlayerManager.Instance.player.blueMagic;

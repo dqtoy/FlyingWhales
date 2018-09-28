@@ -14,10 +14,10 @@ public class SuicideAction : CharacterAction {
         action.Initialize();
         return action;
     }
-    public override void OnChooseAction(NewParty iparty, IObject targetObject) {
-        base.OnChooseAction(iparty, targetObject);
-        Debug.Log(GameManager.Instance.TodayLogString() + iparty.owner.name + " committed suicide!");
-        iparty.owner.Death();
+    public override void PerformAction(NewParty party, IObject targetObject) {
+        base.PerformAction(party, targetObject);
+        Debug.Log(GameManager.Instance.TodayLogString() + party.owner.name + " committed suicide!");
+        party.owner.Death(); //this wll also end the action
     }
     public override bool ShouldGoToTargetObjectOnChoose() {
         return false;
