@@ -3538,6 +3538,33 @@ namespace ECS {
             Secret secret = SecretManager.Instance.CreateNewSecret(secretID);
             AddSecret(secret);
         }
+        public bool HasSecret(int secretID) {
+            for (int i = 0; i < _secrets.Count; i++) {
+                Secret secret = _secrets[i];
+                if (secret.id == secretID) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public Secret GetSecret(int secretID) {
+            for (int i = 0; i < _secrets.Count; i++) {
+                Secret secret = _secrets[i];
+                if (secret.id == secretID) {
+                    return secret;
+                }
+            }
+            return null;
+        }
+        public void RemoveSecret(int secretID) {
+            Secret secret = GetSecret(secretID);
+            if (secret != null) {
+                RemoveSecret(secret);
+            }
+        }
+        public void RemoveSecret(Secret secret) {
+            _secrets.Remove(secret);
+        }
         #endregion
     }
 }

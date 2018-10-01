@@ -52,6 +52,10 @@ namespace worldcreator {
         [Header("Hidden Desire")]
         [SerializeField] private Dropdown hiddenDesireChoicesDropdown;
 
+        [Header("Secrets")]
+        [SerializeField] private Dropdown secretChoicesDropdown;
+        [SerializeField] private Text secretsSummaryLbl;
+
         public Dictionary<string, PortraitSettings> portraitTemplates;
 
         public void Initialize() {
@@ -61,6 +65,7 @@ namespace worldcreator {
             LoadEquipmentChoices();
             LoadInventoryChoices();
             LoadHiddenDesireChoices();
+            LoadSecretChoices();
         }
 
         public void UpdateInfo() {
@@ -76,6 +81,7 @@ namespace worldcreator {
             //UpdatePortraitControls();
             UpdateBasicInfo();
             UpdateHiddenDesire();
+            UpdateSecrets();
             LoadRelationships();
             LoadCharacters();
             LoadEquipment();
@@ -389,6 +395,35 @@ namespace worldcreator {
                 hiddenDesireChoicesDropdown.value = Utilities.GetOptionIndex(hiddenDesireChoicesDropdown, "NONE");
             } else {
                 hiddenDesireChoicesDropdown.value = Utilities.GetOptionIndex(hiddenDesireChoicesDropdown, _character.hiddenDesire.type.ToString());
+            }
+        }
+        #endregion
+
+        #region Secrets
+        private void LoadSecretChoices() {
+            secretChoicesDropdown.ClearOptions();
+
+            List<string> secretsChoices = new List<string>();
+            foreach (KeyValuePair<int, Secret> kvp in SecretManager.Instance.secretLookup) {
+                secretsChoices.Add(kvp.Key + " - " + kvp.Value.name);
+            }
+            secretChoicesDropdown.AddOptions(secretsChoices);
+        }
+        public void AddRemoveSecrets() {
+            int choice = secretChoicesDropdown.value;
+            string chosen = secretChoicesDropdown.options[choice].text;
+            int secretID = Int32.Parse(chosen[0].ToString());
+            if (_character.HasSecret(secretID)) {
+                _character.RemoveSecret(secretID);
+            } else {
+                _character.AddSecret(secretID);
+            }
+            UpdateSecrets();
+        }
+        private void UpdateSecrets() {
+            secretsSummaryLbl.text = string.Empty;
+            for (int i = 0; i < _character.secrets.Count; i++) {
+                secretsSummaryLbl.text += _character.secrets[i].id + " - " +  _character.secrets[i].name + " - " + _character.secrets[i].description + "\n";
             }
         }
         #endregion

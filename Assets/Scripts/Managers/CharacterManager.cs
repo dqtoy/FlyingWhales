@@ -126,10 +126,17 @@ public class CharacterManager : MonoBehaviour {
             Character currCharacter = allCharacters[i];
             CharacterSaveData saveData = data.GetCharacterSaveData(currCharacter.id);
             SetHiddenDesireForCharacter(saveData.hiddenDesire, currCharacter);
+            if (saveData.secrets != null) {
+                for (int j = 0; j < saveData.secrets.Count; j++) {
+                    int secretID = saveData.secrets[j];
+                    currCharacter.AddSecret(secretID);
+                }
+            }
+
             //CheckForHiddenDesire(currCharacter); //TODO: Remove this when setup for hidden desire in character editor is done
             CheckForIntelActions(currCharacter); //TODO: Remove this when setup for intel in character editor is done
             CheckForIntelReactions(currCharacter); //TODO: Remove this when setup for intel in character editor is done
-            CheckForSecrets(currCharacter); //TODO: Remove this when setup for secret in character editor is done
+            //CheckForSecrets(currCharacter); //TODO: Remove this when setup for secret in character editor is done
         }
     }
     public void LoadRelationships(WorldSaveData data) {
