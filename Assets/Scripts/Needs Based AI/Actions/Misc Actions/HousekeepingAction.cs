@@ -9,6 +9,7 @@ public class HousekeepingAction : CharacterAction {
         _actionData.providedFun = 1f;
 
         _actionData.duration = 8;
+        _weight = 200;
     }
 
     #region Overrides
