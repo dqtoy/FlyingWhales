@@ -20,6 +20,7 @@ public class CharacterSaveData {
     public List<string> inventoryData;
     public List<RelationshipSaveData> relationshipsData;
     public List<ATTRIBUTE> attributes;
+    public HIDDEN_DESIRE hiddenDesire;
 
     public CharacterSaveData(ECS.Character character) {
         id = character.id;
@@ -77,5 +78,12 @@ public class CharacterSaveData {
         for (int i = 0; i < character.attributes.Count; i++) {
             attributes.Add(character.attributes[i].attribute);
         }
+
+        if (character.hiddenDesire == null) {
+            hiddenDesire = HIDDEN_DESIRE.NONE;
+        } else {
+            hiddenDesire = character.hiddenDesire.type;
+        }
+        
     }
 }

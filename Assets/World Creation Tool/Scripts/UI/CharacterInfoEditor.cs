@@ -49,6 +49,9 @@ namespace worldcreator {
         [SerializeField] private Dropdown attributeChoicesDropdown;
         [SerializeField] private Text attributeSummary;
 
+        [Header("Hidden Desire")]
+        [SerializeField] private Dropdown hiddenDesireChoicesDropdown;
+
         public Dictionary<string, PortraitSettings> portraitTemplates;
 
         public void Initialize() {
@@ -57,6 +60,7 @@ namespace worldcreator {
 
             LoadEquipmentChoices();
             LoadInventoryChoices();
+            LoadHiddenDesireChoices();
         }
 
         public void UpdateInfo() {
@@ -67,10 +71,11 @@ namespace worldcreator {
 
         public void ShowCharacterInfo(Character character) {
             _character = character;
-            portrait.GeneratePortrait(_character, 256);
+            portrait.GeneratePortrait(_character, 128);
             LoadDropdownOptions();
             //UpdatePortraitControls();
             UpdateBasicInfo();
+            UpdateHiddenDesire();
             LoadRelationships();
             LoadCharacters();
             LoadEquipment();
@@ -112,7 +117,7 @@ namespace worldcreator {
             string chosenTemplateName = templatesDropdown.options[choice].text;
             PortraitSettings chosenSettings = portraitTemplates[chosenTemplateName];
             _character.SetPortraitSettings(chosenSettings);
-            portrait.GeneratePortrait(_character, 256);
+            portrait.GeneratePortrait(_character, 128);
         }
         //public void ApplyPortraitTemplate() {
         //    string chosenTemplateName = templatesDropdown.options[templatesDropdown.value].text;
@@ -349,7 +354,7 @@ namespace worldcreator {
         #endregion
 
         #region Attribute Info
-       private void LoadAttributeSummary() {
+        private void LoadAttributeSummary() {
             attributeSummary.text = string.Empty;
             for (int i = 0; i < _character.attributes.Count; i++) {
                 Attribute currAttribute = _character.attributes[i];
@@ -367,6 +372,24 @@ namespace worldcreator {
                 _character.AddAttribute(attribute);
             }
             LoadAttributeSummary();
+        }
+        #endregion
+
+        #region Hidden Desire
+        private void LoadHiddenDesireChoices() {
+            hiddenDesireChoicesDropdown.ClearOptions();
+            hiddenDesireChoicesDropdown.AddOptions(Utilities.GetEnumChoices<HIDDEN_DESIRE>(true));
+        }
+        public void SetHiddenDesire(int choice) {
+            HIDDEN_DESIRE desire = (HIDDEN_DESIRE)Enum.Parse(typeof(HIDDEN_DESIRE), hiddenDesireChoicesDropdown.options[choice].text);
+            CharacterManager.Instance.SetHiddenDesireForCharacter(desire, _character);
+        }
+        private void UpdateHiddenDesire() {
+            if (_character.hiddenDesire == null) {
+                hiddenDesireChoicesDropdown.value = Utilities.GetOptionIndex(hiddenDesireChoicesDropdown, "NONE");
+            } else {
+                hiddenDesireChoicesDropdown.value = Utilities.GetOptionIndex(hiddenDesireChoicesDropdown, _character.hiddenDesire.type.ToString());
+            }
         }
         #endregion
     }

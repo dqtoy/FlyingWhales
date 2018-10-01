@@ -20,6 +20,9 @@ public class HiddenDesire {
     public string description {
         get { return _description; }
     }
+    public HIDDEN_DESIRE type {
+        get { return _type; }
+    }
     #endregion
 
     public HiddenDesire(HIDDEN_DESIRE type, Character host) {

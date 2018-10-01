@@ -115,7 +115,18 @@ public class CharacterManager : MonoBehaviour {
     public void LoadCharactersInfo() {
         for (int i = 0; i < allCharacters.Count; i++) {
             Character currCharacter = allCharacters[i];
-            CheckForHiddenDesire(currCharacter); //TODO: Remove this when setup for hidden desire in character editor is done
+            //CheckForHiddenDesire(currCharacter); //TODO: Remove this when setup for hidden desire in character editor is done
+            CheckForIntelActions(currCharacter); //TODO: Remove this when setup for intel in character editor is done
+            CheckForIntelReactions(currCharacter); //TODO: Remove this when setup for intel in character editor is done
+            CheckForSecrets(currCharacter); //TODO: Remove this when setup for secret in character editor is done
+        }
+    }
+    public void LoadCharactersInfo(WorldSaveData data) {
+        for (int i = 0; i < allCharacters.Count; i++) {
+            Character currCharacter = allCharacters[i];
+            CharacterSaveData saveData = data.GetCharacterSaveData(currCharacter.id);
+            SetHiddenDesireForCharacter(saveData.hiddenDesire, currCharacter);
+            //CheckForHiddenDesire(currCharacter); //TODO: Remove this when setup for hidden desire in character editor is done
             CheckForIntelActions(currCharacter); //TODO: Remove this when setup for intel in character editor is done
             CheckForIntelReactions(currCharacter); //TODO: Remove this when setup for intel in character editor is done
             CheckForSecrets(currCharacter); //TODO: Remove this when setup for secret in character editor is done
@@ -717,18 +728,18 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Hidden Desire
-    /*
-     NOTE: THIS IS FOR TESTING ONLY!
-         */
-    private void CheckForHiddenDesire(Character character) {
-        if (character.characterClass.className.Equals("General")) {
-            //general max
-            SetHiddenDesireForCharacter(HIDDEN_DESIRE.SECRET_AFFAIR, character);
-        } else if (character.characterClass.className.Equals("High Priest")) {
-            //High Priest
-            SetHiddenDesireForCharacter(HIDDEN_DESIRE.RESEARCH_SCROLL, character);
-        }
-    }
+    ///*
+    // NOTE: THIS IS FOR TESTING ONLY!
+    //     */
+    //private void CheckForHiddenDesire(Character character) {
+    //    if (character.characterClass.className.Equals("General")) {
+    //        //general max
+    //        SetHiddenDesireForCharacter(HIDDEN_DESIRE.SECRET_AFFAIR, character);
+    //    } else if (character.characterClass.className.Equals("High Priest")) {
+    //        //High Priest
+    //        SetHiddenDesireForCharacter(HIDDEN_DESIRE.RESEARCH_SCROLL, character);
+    //    }
+    //}
     /*
      NOTE: THIS IS FOR TESTING ONLY!
          */
@@ -759,8 +770,12 @@ public class CharacterManager : MonoBehaviour {
     }
     public void SetHiddenDesireForCharacter(HIDDEN_DESIRE hiddenDesire, Character character) {
         HiddenDesire desire = CreateHiddenDesire(hiddenDesire, character);
-        desire.Initialize();
         character.SetHiddenDesire(desire);
+#if !WORLD_CREATION_TOOL
+        if (desire != null) {
+            desire.Initialize();
+        }
+#endif
     }
     private HiddenDesire CreateHiddenDesire(HIDDEN_DESIRE hiddenDesire, Character host) {
         switch (hiddenDesire) {

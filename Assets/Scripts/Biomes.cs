@@ -116,11 +116,11 @@ public class Biomes : MonoBehaviour {
         int sortingOrder = (((int)worldcreator.WorldCreatorManager.Instance.height - 1) -  (currentHexTile.yCoordinate - 2)) * 2;
 #else
         int sortingOrder = (((int)GridMap.Instance.height - 1) -  (currentHexTile.yCoordinate - 2)) * 2;
-#endif
         if (PlayerManager.Instance.player != null &&  PlayerManager.Instance.player.playerArea != null 
             && PlayerManager.Instance.player.playerArea.tiles.Contains(currentHexTile)) {
             return;
         }
+#endif
 
         if (currentHexTile.elevationType == ELEVATION.PLAIN) {
             LoadPlainTileVisuals(currentHexTile, sortingOrder);
