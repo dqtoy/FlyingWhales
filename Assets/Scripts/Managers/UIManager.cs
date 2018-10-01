@@ -214,6 +214,7 @@ public class UIManager : MonoBehaviour {
         HideContextMenu();
         characterInfoUI.CloseMenu();
         landmarkInfoUI.CloseMenu();
+        monsterInfoUI.CloseMenu();
     }
 
     #region Font Utilities
