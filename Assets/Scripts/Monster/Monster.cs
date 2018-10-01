@@ -55,6 +55,8 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     private Dictionary<string, float> _itemDropsLookup;
     private Squad _squad;
     private NewParty _currentParty;
+    public CharacterUIData uiData { get; private set; }
+
 
     #region getters/setters
     public string name {
@@ -225,6 +227,18 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public List<ItemDrop> itemDrops {
         get { return _itemDrops; }
     }
+    public List<Item> equippedItems {
+        get { return null; }
+    }
+    public List<Item> inventory {
+        get { return null; }
+    }
+    public List<Attribute> attributes {
+        get { return null; }
+    }
+    public List<Log> history {
+        get { return null; }
+    }
     public Dictionary<ELEMENT, float> elementalWeaknesses {
         get { return _elementalWeaknesses; }
     }
@@ -233,6 +247,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public Dictionary<string, float> itemDropsLookup {
         get { return _itemDropsLookup; }
+    }
+    public Dictionary<Character, Relationship> relationships {
+        get { return null; }
     }
     public NewParty ownParty {
         get { return _ownParty; }
@@ -462,6 +479,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _currentSP = _maxSP;
         SetCharacterColor(Color.red);
         SetSleeping(_isSleepingOnSpawn);
+        uiData = new CharacterUIData();
         //ConstructMiscActions();
 
 #if !WORLD_CREATION_TOOL
@@ -564,6 +582,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public void AddHistory(Log log) {
         //No history
+        Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
     }
     public void DeathSim() {
         _isDead = true;
@@ -866,7 +885,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _hasBeenInspected = true;
     }
     public void EndedInspection() {
-
+        uiData.UpdateData(this);
     }
     #endregion
 }

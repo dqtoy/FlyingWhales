@@ -172,43 +172,43 @@ public class CharacterInfoUI : UIMenu {
     }
     public override void OpenMenu() {
         base.OpenMenu();
-        _activeCharacter = (Character)_data;
+        _activeCharacter = _data as Character;
         UpdateCharacterInfo();
-        //if (currentlyShowingCharacter.isBeingInspected) {
-        //    UpdateTagInfo(currentlyShowingCharacter.attributes);
+        //if (_activeCharacter.isBeingInspected) {
+        //    UpdateTagInfo(_activeCharacter.attributes);
         //} else {
-        //    UpdateTagInfo(currentlyShowingCharacter.uiData.attributes);
+        //    UpdateTagInfo(_activeCharacter.uiData.attributes);
         //}
         //UpdateTagInfo();
         //UpdateRelationshipInfo();
         ShowAttackButton();
         ShowReleaseButton();
         CheckShowSnatchButton();
-        currentActionIcon.SetCharacter(currentlyShowingCharacter);
-        currentActionIcon.SetAction(currentlyShowingCharacter.currentParty.currentAction);
-        PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(currentlyShowingCharacter);
+        currentActionIcon.SetCharacter(_activeCharacter);
+        currentActionIcon.SetAction(_activeCharacter.currentParty.currentAction);
+        PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeCharacter);
         historyScrollView.verticalNormalizedPosition = 1;
     }
     public override void ShowTooltip(GameObject objectHovered) {
         base.ShowTooltip(objectHovered);
         if(objectHovered == healthProgressBar.gameObject) {
-            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.currentHP + "/" + currentlyShowingCharacter.maxHP);
+            UIManager.Instance.ShowSmallInfo(_activeCharacter.currentHP + "/" + _activeCharacter.maxHP);
         } else if (objectHovered == manaProgressBar.gameObject) {
-            UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.currentSP + "/" + currentlyShowingCharacter.maxSP);
+            UIManager.Instance.ShowSmallInfo(_activeCharacter.currentSP + "/" + _activeCharacter.maxSP);
         } 
         //else if (objectHovered == overallProgressBar.gameObject) {
-        //    UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.happiness.ToString());
+        //    UIManager.Instance.ShowSmallInfo(_activeCharacter.role.happiness.ToString());
         //} else if (objectHovered == energyProgressBar.gameObject) {
-        //    UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.energy.ToString());
+        //    UIManager.Instance.ShowSmallInfo(_activeCharacter.role.energy.ToString());
         //} else if (objectHovered == fullnessProgressBar.gameObject) {
-        //    UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.fullness.ToString());
+        //    UIManager.Instance.ShowSmallInfo(_activeCharacter.role.fullness.ToString());
         //} else if (objectHovered == funProgressBar.gameObject) {
-        //    UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.fun.ToString());
+        //    UIManager.Instance.ShowSmallInfo(_activeCharacter.role.fun.ToString());
         //} 
         //else if (objectHovered == prestigeProgressBar.gameObject) {
-        //    UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.prestige.ToString());
+        //    UIManager.Instance.ShowSmallInfo(_activeCharacter.role.prestige.ToString());
         //} else if (objectHovered == sanityProgressBar.gameObject) {
-        //    UIManager.Instance.ShowSmallInfo(currentlyShowingCharacter.role.sanity.ToString());
+        //    UIManager.Instance.ShowSmallInfo(_activeCharacter.role.sanity.ToString());
         //}
     }
     #endregion
@@ -271,7 +271,7 @@ public class CharacterInfoUI : UIMenu {
     }
 
     //private void OnCharacterDied(ECS.Character deadCharacter) {
-    //    if (isShowing && currentlyShowingCharacter != null && currentlyShowingCharacter.id == deadCharacter.id) {
+    //    if (isShowing && _activeCharacter != null && _activeCharacter.id == deadCharacter.id) {
     //        SetData(null);
     //        CloseMenu();
     //    }
@@ -285,7 +285,7 @@ public class CharacterInfoUI : UIMenu {
     }
 
     public void UpdateCharacterInfo() {
-        if (currentlyShowingCharacter == null) {
+        if (_activeCharacter == null) {
             return;
         }
         if (GameManager.Instance.inspectAll) {
@@ -294,12 +294,12 @@ public class CharacterInfoUI : UIMenu {
             //if the character has never been inspected
             //activate all the tab menu covers
             //else, disable all the tab menu covers
-            SetCoversState(!currentlyShowingCharacter.hasBeenInspected);
+            SetCoversState(!_activeCharacter.hasBeenInspected);
         }
 
         UpdatePortrait();
         UpdateBasicInfo();
-        if (!currentlyShowingCharacter.hasBeenInspected && !GameManager.Instance.inspectAll) {
+        if (!_activeCharacter.hasBeenInspected && !GameManager.Instance.inspectAll) {
             //if the character has never been inspected
             //clear all menus and do not load any info
             ClearAllTabMenus();
@@ -308,16 +308,16 @@ public class CharacterInfoUI : UIMenu {
 
         UpdateInfoMenu();
 
-        if (currentlyShowingCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
+        if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
             UpdateStatInfo();
             UpdateItemsInfo();
-            UpdateTagInfo(currentlyShowingCharacter.attributes);
-            UpdateRelationshipInfo(currentlyShowingCharacter.relationships.Values.ToList());
+            UpdateTagInfo(_activeCharacter.attributes);
+            UpdateRelationshipInfo(_activeCharacter.relationships.Values.ToList());
         } else {
-            UpdateStatInfo(currentlyShowingCharacter.uiData);
-            UpdateItemsInfo(currentlyShowingCharacter.uiData);
-            UpdateTagInfo(currentlyShowingCharacter.uiData.attributes);
-            UpdateRelationshipInfo(currentlyShowingCharacter.uiData.relationships);
+            UpdateStatInfo(_activeCharacter.uiData);
+            UpdateItemsInfo(_activeCharacter.uiData);
+            UpdateTagInfo(_activeCharacter.uiData.attributes);
+            UpdateRelationshipInfo(_activeCharacter.uiData.relationships);
         }
 
         //UpdateGeneralInfo();
@@ -329,35 +329,35 @@ public class CharacterInfoUI : UIMenu {
         UpdateAllHistoryInfo();
     }
     private void UpdatePortrait() {
-        characterPortrait.GeneratePortrait(currentlyShowingCharacter, 100, true);
+        characterPortrait.GeneratePortrait(_activeCharacter, 100, true);
         characterPortrait.SetBGState(false);
     }
     private void UpdateBasicInfo() {
-        nameLbl.text = currentlyShowingCharacter.name;
-        if (currentlyShowingCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
+        nameLbl.text = _activeCharacter.name;
+        if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
             nameLbl.text += " (Info State: Updated)"; 
-            lvlClassLbl.text = "Lvl." + currentlyShowingCharacter.level.ToString() + " " + currentlyShowingCharacter.characterClass.className;
+            lvlClassLbl.text = "Lvl." + _activeCharacter.level.ToString() + " " + _activeCharacter.characterClass.className;
         } else {
-            if (currentlyShowingCharacter.hasBeenInspected) {
+            if (_activeCharacter.hasBeenInspected) {
                 nameLbl.text += " (Info State: Old)";
-                lvlClassLbl.text = "Lvl." + currentlyShowingCharacter.uiData.level.ToString() + " " + currentlyShowingCharacter.uiData.className;
+                lvlClassLbl.text = "Lvl." + _activeCharacter.uiData.level.ToString() + " " + _activeCharacter.uiData.className;
             } else {
                 lvlClassLbl.text = "???";
             }
         }
-        phaseLbl.text = currentlyShowingCharacter.dailySchedule.currentPhase.phaseName;
-        squadEmblem.SetSquad(currentlyShowingCharacter.squad);
-        factionEmblem.SetFaction(currentlyShowingCharacter.faction);
-        //affiliations.SetCharacter(currentlyShowingCharacter);
+        phaseLbl.text = _activeCharacter.dailySchedule.currentPhase.phaseName;
+        squadEmblem.SetSquad(_activeCharacter.squad);
+        factionEmblem.SetFaction(_activeCharacter.faction);
+        //affiliations.SetCharacter(_activeCharacter);
     }
     //private void UpdateActionQueue() {
     //    Utilities.DestroyChildren(actionQueueScrollView.content);
-    //    for (int i = 0; i < currentlyShowingCharacter.actionQueue.Count; i++) {
-    //        ActionQueueItem queueItem = currentlyShowingCharacter.actionQueue.GetBasedOnIndex(i);
+    //    for (int i = 0; i < _activeCharacter.actionQueue.Count; i++) {
+    //        ActionQueueItem queueItem = _activeCharacter.actionQueue.GetBasedOnIndex(i);
     //        GameObject actionItemGO = UIManager.Instance.InstantiateUIObject(actionIconPrefab.name, actionQueueScrollView.content);
     //        ActionIcon actionItem = actionItemGO.GetComponent<ActionIcon>();
     //        actionItem.Initialize();
-    //        actionItem.SetCharacter(currentlyShowingCharacter);
+    //        actionItem.SetCharacter(_activeCharacter);
     //        actionItem.SetAction(queueItem.action);
     //        actionItem.SetAlpha(128f/255f);
     //    }
@@ -365,12 +365,12 @@ public class CharacterInfoUI : UIMenu {
 
     #region Stats
     private void UpdateStatInfo() {
-        healthProgressBar.value = (float)currentlyShowingCharacter.currentHP / (float)currentlyShowingCharacter.maxHP;
-        manaProgressBar.value = (float)currentlyShowingCharacter.currentSP / (float)currentlyShowingCharacter.maxSP;
-        strengthLbl.text = currentlyShowingCharacter.strength.ToString();
-        agilityLbl.text = currentlyShowingCharacter.agility.ToString();
-        intelligenceLbl.text = currentlyShowingCharacter.intelligence.ToString();
-        vitalityLbl.text = currentlyShowingCharacter.vitality.ToString();
+        healthProgressBar.value = (float)_activeCharacter.currentHP / (float)_activeCharacter.maxHP;
+        manaProgressBar.value = (float)_activeCharacter.currentSP / (float)_activeCharacter.maxSP;
+        strengthLbl.text = _activeCharacter.strength.ToString();
+        agilityLbl.text = _activeCharacter.agility.ToString();
+        intelligenceLbl.text = _activeCharacter.intelligence.ToString();
+        vitalityLbl.text = _activeCharacter.vitality.ToString();
     }
     private void UpdateStatInfo(CharacterUIData uiData) {
         healthProgressBar.value = uiData.healthValue;
@@ -384,8 +384,8 @@ public class CharacterInfoUI : UIMenu {
 
     #region Items
     private void UpdateItemsInfo() {
-        UpdateEquipmentInfo(currentlyShowingCharacter.equippedItems);
-        UpdateInventoryInfo(currentlyShowingCharacter.inventory);
+        UpdateEquipmentInfo(_activeCharacter.equippedItems);
+        UpdateInventoryInfo(_activeCharacter.inventory);
     }
     private void UpdateItemsInfo(CharacterUIData uiData) {
         UpdateEquipmentInfo(uiData.equippedItems);
@@ -426,7 +426,7 @@ public class CharacterInfoUI : UIMenu {
         }
 
         ////Equipment
-        //IBodyPart head = currentlyShowingCharacter.GetBodyPart("Head");
+        //IBodyPart head = _activeCharacter.GetBodyPart("Head");
         //if (head != null) {
         //    Item headArmor = head.GetArmor();
         //    if (headArmor != null) {
@@ -436,7 +436,7 @@ public class CharacterInfoUI : UIMenu {
         //    }
         //}
 
-        //IBodyPart torso = currentlyShowingCharacter.GetBodyPart("Torso");
+        //IBodyPart torso = _activeCharacter.GetBodyPart("Torso");
         //if (torso != null) {
         //    Item torsoArmor = torso.GetArmor();
         //    if (torsoArmor != null) {
@@ -446,7 +446,7 @@ public class CharacterInfoUI : UIMenu {
         //    }
         //}
 
-        //IBodyPart leftHand = currentlyShowingCharacter.GetBodyPart("Left Hand");
+        //IBodyPart leftHand = _activeCharacter.GetBodyPart("Left Hand");
         //if (leftHand != null) {
         //    Item leftHandWeapon = leftHand.GetWeapon();
         //    if (leftHandWeapon != null) {
@@ -456,7 +456,7 @@ public class CharacterInfoUI : UIMenu {
         //    }
         //}
 
-        //IBodyPart rightHand = currentlyShowingCharacter.GetBodyPart("Right Hand");
+        //IBodyPart rightHand = _activeCharacter.GetBodyPart("Right Hand");
         //if (rightHand != null) {
         //    Item rightHandWeapon = rightHand.GetWeapon();
         //    if (rightHandWeapon != null) {
@@ -466,7 +466,7 @@ public class CharacterInfoUI : UIMenu {
         //    }
         //}
 
-        //IBodyPart hips = currentlyShowingCharacter.GetBodyPart("Hip");
+        //IBodyPart hips = _activeCharacter.GetBodyPart("Hip");
         //if (hips != null) {
         //    Item hipArmor = hips.GetArmor();
         //    if (hipArmor != null) {
@@ -476,7 +476,7 @@ public class CharacterInfoUI : UIMenu {
         //    }
         //}
 
-        //IBodyPart leftFoot = currentlyShowingCharacter.GetBodyPart("Left Foot");
+        //IBodyPart leftFoot = _activeCharacter.GetBodyPart("Left Foot");
         //if (leftFoot != null) {
         //    Item footArmor = leftFoot.GetArmor();
         //    if (footArmor != null) {
@@ -486,7 +486,7 @@ public class CharacterInfoUI : UIMenu {
         //    }
         //}
 
-        //IBodyPart rightFoot = currentlyShowingCharacter.GetBodyPart("Right Foot");
+        //IBodyPart rightFoot = _activeCharacter.GetBodyPart("Right Foot");
         //if (leftFoot != null) {
         //    Item footArmor = rightFoot.GetArmor();
         //    if (footArmor != null) {
@@ -506,19 +506,19 @@ public class CharacterInfoUI : UIMenu {
     #endregion
 
     //private void UpdateMoodInfo() {
-    //    overallProgressBar.value = currentlyShowingCharacter.role.happiness;
-    //    energyProgressBar.value = currentlyShowingCharacter.role.energy;
-    //    fullnessProgressBar.value = currentlyShowingCharacter.role.fullness;
-    //    funProgressBar.value = currentlyShowingCharacter.role.fun;
-    //    //prestigeProgressBar.value = currentlyShowingCharacter.role.prestige;
-    //    //sanityProgressBar.value = currentlyShowingCharacter.role.sanity;
+    //    overallProgressBar.value = _activeCharacter.role.happiness;
+    //    energyProgressBar.value = _activeCharacter.role.energy;
+    //    fullnessProgressBar.value = _activeCharacter.role.fullness;
+    //    funProgressBar.value = _activeCharacter.role.fun;
+    //    //prestigeProgressBar.value = _activeCharacter.role.prestige;
+    //    //sanityProgressBar.value = _activeCharacter.role.sanity;
     //}
 
     //private void UpdateEquipmentInfo() {
     //    string text = string.Empty;
-    //    if (currentlyShowingCharacter.equippedItems.Count > 0) {
-    //        for (int i = 0; i < currentlyShowingCharacter.equippedItems.Count; i++) {
-    //            Item item = currentlyShowingCharacter.equippedItems[i];
+    //    if (_activeCharacter.equippedItems.Count > 0) {
+    //        for (int i = 0; i < _activeCharacter.equippedItems.Count; i++) {
+    //            Item item = _activeCharacter.equippedItems[i];
     //            if (i > 0) {
     //                text += "\n";
     //            }
@@ -548,7 +548,7 @@ public class CharacterInfoUI : UIMenu {
 
     //private void UpdateInventoryInfo() {
     //    string text = string.Empty;
-    //    CharacterObj obj = currentlyShowingCharacter.party.characterObject as CharacterObj;
+    //    CharacterObj obj = _activeCharacter.party.characterObject as CharacterObj;
     //    foreach (RESOURCE resource in obj.resourceInventory.Keys) {
     //        text += resource.ToString() + ": " + obj.resourceInventory[resource];
     //        text += "\n";
@@ -580,7 +580,7 @@ public class CharacterInfoUI : UIMenu {
         }
 
         //int counter = 0;
-        //foreach (KeyValuePair<Character, Relationship> kvp in currentlyShowingCharacter.relationships) {
+        //foreach (KeyValuePair<Character, Relationship> kvp in _activeCharacter.relationships) {
         //    GameObject relItemGO = UIManager.Instance.InstantiateUIObject(relationshipItemPrefab.name, relationsScrollView.content);
         //    CharacterRelationshipItem relItem = relItemGO.GetComponent<CharacterRelationshipItem>();
         //    relItem.Initialize();
@@ -660,12 +660,12 @@ public class CharacterInfoUI : UIMenu {
         shownAttributes.Remove(icon);
     }
     private void OnCharacterAttributeAdded(Character affectedCharacter, Attribute tag) {
-        if (currentlyShowingCharacter != null && currentlyShowingCharacter.id == affectedCharacter.id && currentlyShowingCharacter.isBeingInspected) {
+        if (_activeCharacter != null && _activeCharacter.id == affectedCharacter.id && _activeCharacter.isBeingInspected) {
             AddTag(tag);
         }
     }
     private void OnCharacterAttributeRemoved(Character affectedCharacter, Attribute tag) {
-        if (currentlyShowingCharacter != null && currentlyShowingCharacter.id == affectedCharacter.id && currentlyShowingCharacter.isBeingInspected) {
+        if (_activeCharacter != null && _activeCharacter.id == affectedCharacter.id && _activeCharacter.isBeingInspected) {
             RemoveTag(tag);
         }
     }
@@ -673,16 +673,16 @@ public class CharacterInfoUI : UIMenu {
 
     #region Action Queue
     //private void OnActionAddedToQueue(ActionQueueItem actionAdded, Character character) {
-    //    if (currentlyShowingCharacter != null && currentlyShowingCharacter.id == character.id) {
+    //    if (_activeCharacter != null && _activeCharacter.id == character.id) {
     //        GameObject actionItemGO = UIManager.Instance.InstantiateUIObject(actionIconPrefabName, actionQueueScrollView.content);
     //        ActionIcon actionItem = actionItemGO.GetComponent<ActionIcon>();
     //        actionItem.Initialize();
-    //        actionItem.SetCharacter(currentlyShowingCharacter);
+    //        actionItem.SetCharacter(_activeCharacter);
     //        actionItem.SetAction(actionAdded.action);
     //    }
     //}
     //private void OnActionRemovedFromQueue(ActionQueueItem actionAdded, Character character) {
-    //    if (currentlyShowingCharacter != null && currentlyShowingCharacter.id == character.id) {
+    //    if (_activeCharacter != null && _activeCharacter.id == character.id) {
     //        ActionIcon icon = GetActionIcon(actionAdded.action);
     //        ObjectPoolManager.Instance.DestroyObject(icon.gameObject);
     //    }
@@ -698,7 +698,7 @@ public class CharacterInfoUI : UIMenu {
     //    return null;
     //}
     //private void OnActionTaken(CharacterAction takenAction, CharacterParty party) {
-    //    if (currentlyShowingCharacter != null && currentlyShowingCharacter.currentParty.id == party.id) {
+    //    if (_activeCharacter != null && _activeCharacter.currentParty.id == party.id) {
     //        currentActionIcon.SetAction(takenAction);
     //    }
     //}
@@ -706,12 +706,12 @@ public class CharacterInfoUI : UIMenu {
 
     #region History
     private void UpdateHistory(object obj) {
-        if (obj is Character && currentlyShowingCharacter != null && (obj as Character).id == currentlyShowingCharacter.id) {
+        if (obj is Character && _activeCharacter != null && (obj as Character).id == _activeCharacter.id) {
             UpdateAllHistoryInfo();
         }
     }
     private void UpdateAllHistoryInfo() {
-        List<Log> characterHistory = new List<Log>(currentlyShowingCharacter.history.OrderByDescending(x => x.id));
+        List<Log> characterHistory = new List<Log>(_activeCharacter.history.OrderByDescending(x => x.id));
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
             Log currLog = characterHistory.ElementAtOrDefault(i);
@@ -742,7 +742,7 @@ public class CharacterInfoUI : UIMenu {
     #endregion
 
     public bool IsCharacterInfoShowing(Character character) {
-        return (isShowing && currentlyShowingCharacter == character);
+        return (isShowing && _activeCharacter == character);
     }
 
     #region Attack Character
@@ -793,16 +793,16 @@ public class CharacterInfoUI : UIMenu {
 
     #region Release Character
     public void ShowReleaseButton() {
-        if (currentlyShowingCharacter.party != null && currentlyShowingCharacter.party.characterObject.currentState.stateName == "Imprisoned") {
+        if (_activeCharacter.party != null && _activeCharacter.party.characterObject.currentState.stateName == "Imprisoned") {
             releaseBtnGO.SetActive(true);
         } else {
             releaseBtnGO.SetActive(false);
         }
     }
     public void ReleaseCharacter() {
-        CharacterAction action = currentlyShowingCharacter.party.characterObject.currentState.GetAction(ACTION_TYPE.RELEASE);
+        CharacterAction action = _activeCharacter.party.characterObject.currentState.GetAction(ACTION_TYPE.RELEASE);
         ReleaseAction releaseAction = action as ReleaseAction;
-        releaseAction.ReleaseCharacter(currentlyShowingCharacter.party.characterObject);
+        releaseAction.ReleaseCharacter(_activeCharacter.party.characterObject);
     }
     #endregion
 
@@ -814,30 +814,30 @@ public class CharacterInfoUI : UIMenu {
 
     #region Snatch
     public void CheckShowSnatchButton() {
-        if (!PlayerManager.Instance.CanSnatch() || PlayerManager.Instance.player.IsCharacterSnatched(currentlyShowingCharacter)) {
+        if (!PlayerManager.Instance.CanSnatch() || PlayerManager.Instance.player.IsCharacterSnatched(_activeCharacter)) {
             snatchBtn.gameObject.SetActive(false);
         } else {
             snatchBtn.gameObject.SetActive(true);
         }
     }
     public void Snatch() {
-        PlayerManager.Instance.player.SnatchCharacter(currentlyShowingCharacter);
+        PlayerManager.Instance.player.SnatchCharacter(_activeCharacter);
         CheckShowSnatchButton();
     }
     #endregion
 
     #region Level Up
     public void LevelUpCharacter() {
-        currentlyShowingCharacter.LevelUp();
+        _activeCharacter.LevelUp();
     }
     #endregion
 
     #region Death
     public void DieCharacter() {
-        if(currentlyShowingCharacter.party.currentCombat != null) {
-            currentlyShowingCharacter.party.currentCombat.CharacterDeath(currentlyShowingCharacter, null);
+        if(_activeCharacter.party.currentCombat != null) {
+            _activeCharacter.party.currentCombat.CharacterDeath(_activeCharacter, null);
         }
-        currentlyShowingCharacter.Death();
+        _activeCharacter.Death();
     }
     #endregion
 
@@ -882,17 +882,17 @@ public class CharacterInfoUI : UIMenu {
         int year = Int32.Parse(yearField.text);
         int hour = Int32.Parse(tickField.text);
         TestEvent testEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.TEST_EVENT) as TestEvent;
-        testEvent.Initialize(new List<Character>() { currentlyShowingCharacter });
+        testEvent.Initialize(new List<Character>() { _activeCharacter });
         testEvent.ScheduleEvent(new GameDate(month, day, year, hour));
     }
     public void ScheduleAuto() {
         TestEvent testEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.TEST_EVENT) as TestEvent;
-        testEvent.Initialize(new List<Character>() { currentlyShowingCharacter });
+        testEvent.Initialize(new List<Character>() { _activeCharacter });
         testEvent.ScheduleEvent();
     }
     public void LogEventSchedule() {
-        string text = currentlyShowingCharacter.name + "'s Event Schedule: \n";
-        text += currentlyShowingCharacter.eventSchedule.GetEventScheduleSummary();
+        string text = _activeCharacter.name + "'s Event Schedule: \n";
+        text += _activeCharacter.eventSchedule.GetEventScheduleSummary();
         Debug.Log(text);
     }
     private void Update() {
@@ -934,15 +934,15 @@ public class CharacterInfoUI : UIMenu {
     private void UpdateInfoMenu() {
         for (int i = 0; i < secretItems.Length; i++) {
             SecretItem currItem = secretItems[i];
-            Secret currSecret = currentlyShowingCharacter.secrets.ElementAtOrDefault(i);
+            Secret currSecret = _activeCharacter.secrets.ElementAtOrDefault(i);
             if (currSecret == null) {
                 currItem.gameObject.SetActive(false);
             } else {
-                currItem.SetSecret(currSecret, currentlyShowingCharacter);
+                currItem.SetSecret(currSecret, _activeCharacter);
                 currItem.gameObject.SetActive(true);
             }
         }
-        List<Intel> intel = IntelManager.Instance.GetIntelConcerning(currentlyShowingCharacter);
+        List<Intel> intel = IntelManager.Instance.GetIntelConcerning(_activeCharacter);
         for (int i = 0; i < intelItems.Length; i++) {
             IntelItem currItem = intelItems[i];
             Intel currIntel = intel.ElementAtOrDefault(i);
@@ -953,15 +953,15 @@ public class CharacterInfoUI : UIMenu {
                 currItem.gameObject.SetActive(true);
             }
         }
-        if (currentlyShowingCharacter.hiddenDesire == null) {
+        if (_activeCharacter.hiddenDesire == null) {
             hiddenDesireItem.gameObject.SetActive(false);
         } else {
-            hiddenDesireItem.SetHiddenDesire(currentlyShowingCharacter.hiddenDesire, currentlyShowingCharacter);
+            hiddenDesireItem.SetHiddenDesire(_activeCharacter.hiddenDesire, _activeCharacter);
             hiddenDesireItem.gameObject.SetActive(true);
         }
     }
     private void OnIntelAdded(Intel intel) {
-        if (currentlyShowingCharacter == null) {
+        if (_activeCharacter == null) {
             return;
         }
         UpdateInfoMenu();

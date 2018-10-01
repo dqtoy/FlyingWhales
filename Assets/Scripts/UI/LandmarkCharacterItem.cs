@@ -57,6 +57,7 @@ public class LandmarkCharacterItem : PooledObject {
             if(i < party.icharacters.Count) {
                 visitorPortraits[i].gameObject.SetActive(true);
                 visitorPortraits[i].GeneratePortrait(party.icharacters[i], 42, true);
+                visitorPortraits[i].SetBGState(false);
             } else {
                 visitorPortraits[i].gameObject.SetActive(false);
             }

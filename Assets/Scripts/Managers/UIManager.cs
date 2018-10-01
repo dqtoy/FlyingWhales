@@ -226,7 +226,9 @@ public class UIManager : MonoBehaviour {
     }
     private void NormalizeFontSizeOfLabel(TextMeshProUGUI lbl) {
         string lblName = lbl.name;
-
+        if (lblName.Contains("NOTOUCH")) {
+            return;
+        }
         TextOverflowModes overflowMethod = TextOverflowModes.Truncate;
         if (lblName.Contains("HEADER")) {
             lbl.fontSize = HEADER_FONT_SIZE;
