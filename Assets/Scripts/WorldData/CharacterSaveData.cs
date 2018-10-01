@@ -22,6 +22,7 @@ public class CharacterSaveData {
     public List<ATTRIBUTE> attributes;
     public HIDDEN_DESIRE hiddenDesire;
     public List<int> secrets;
+    public List<IntelReaction> intelReactions;
 
     public CharacterSaveData(ECS.Character character) {
         id = character.id;
@@ -90,6 +91,11 @@ public class CharacterSaveData {
         for (int i = 0; i < character.secrets.Count; i++) {
             Secret secret = character.secrets[i];
             secrets.Add(secret.id);
+        }
+
+        intelReactions = new List<IntelReaction>();
+        foreach (KeyValuePair<int, GAME_EVENT> kvp in character.intelReactions) {
+            intelReactions.Add(new IntelReaction(kvp.Key, kvp.Value));
         }
     }
 }
