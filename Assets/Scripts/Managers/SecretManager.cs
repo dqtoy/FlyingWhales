@@ -8,9 +8,9 @@ public class SecretManager : MonoBehaviour {
     private Dictionary<int, Secret> _secretLookup;
 
     #region getters/setters
-    //public Dictionary<int, Secret> secretLookup {
-    //    get { return _secretLookup; }
-    //}
+    public Dictionary<int, Secret> secretLookup {
+        get { return _secretLookup; }
+    }
     #endregion
 
     void Awake() {
