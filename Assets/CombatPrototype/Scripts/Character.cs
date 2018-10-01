@@ -3498,6 +3498,8 @@ namespace ECS {
         public void AddIntelReaction(int intelID, GAME_EVENT reaction) {
             if (!_intelReactions.ContainsKey(intelID)) {
                 _intelReactions.Add(intelID, reaction);
+            } else {
+                _intelReactions[intelID] = reaction;
             }
         }
         public void AddIntelReaction(Intel intel, GAME_EVENT reaction) {
