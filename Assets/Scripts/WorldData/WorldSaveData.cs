@@ -170,5 +170,17 @@ public class WorldSaveData {
         return null;
     }
 
+    public CharacterSaveData GetCharacterSaveData(int characterID) {
+        if (charactersData != null) {
+            for (int i = 0; i < charactersData.Count; i++) {
+                CharacterSaveData data = charactersData[i];
+                if (data.id == characterID) {
+                    return data;
+                }
+            }
+        }
+        return null;
+    }
+
     
 }
