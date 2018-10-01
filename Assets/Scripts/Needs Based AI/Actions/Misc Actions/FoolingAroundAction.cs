@@ -31,10 +31,27 @@ public class FoolingAroundAction : CharacterAction {
                 CharacterParty targetParty = icharacterObject.iparty as CharacterParty;
                 Character targetCharacter = targetParty.mainCharacter as Character;
 
-                if (targetParty.actionData.currentAction.actionData.actionType != ACTION_TYPE.FOOLING_AROUND) {
-                    targetParty.actionData.currentAction.EndAction(targetParty, targetParty.actionData.currentTargetObject);
+                if (targetParty.actionData.currentAction == null) {
                     FoolingAroundAction actionToAssign = targetParty.mainCharacter.GetMiscAction(_actionData.actionType) as FoolingAroundAction;
                     targetParty.actionData.AssignAction(actionToAssign, party.icharacterObject);
+
+                    Log log = new Log(GameManager.Instance.Today(), "CharacterActions", "FoolingAroundAction", "start_fooling_around");
+                    log.AddToFillers(party.mainCharacter, party.mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(icharacterObject.iparty.mainCharacter, icharacterObject.iparty.mainCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    party.mainCharacter.AddHistory(log);
+                    icharacterObject.iparty.mainCharacter.AddHistory(log);
+                } else {
+                    if (targetParty.actionData.currentAction.actionData.actionType != ACTION_TYPE.FOOLING_AROUND) {
+                        targetParty.actionData.currentAction.EndAction(targetParty, targetParty.actionData.currentTargetObject);
+                        FoolingAroundAction actionToAssign = targetParty.mainCharacter.GetMiscAction(_actionData.actionType) as FoolingAroundAction;
+                        targetParty.actionData.AssignAction(actionToAssign, party.icharacterObject);
+
+                        Log log = new Log(GameManager.Instance.Today(), "CharacterActions", "FoolingAroundAction", "start_fooling_around");
+                        log.AddToFillers(party.mainCharacter, party.mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        log.AddToFillers(icharacterObject.iparty.mainCharacter, icharacterObject.iparty.mainCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                        party.mainCharacter.AddHistory(log);
+                        icharacterObject.iparty.mainCharacter.AddHistory(log);
+                    }
                 }
             }
         }
