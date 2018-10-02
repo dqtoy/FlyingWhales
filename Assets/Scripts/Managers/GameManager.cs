@@ -172,6 +172,7 @@ public class GameManager : MonoBehaviour {
         if(this.hour > hoursPerDay) {
             this.hour = 1;
             this.days += 1;
+            Messenger.Broadcast(Signals.DAY_START);
             this.continuousDays += 1;
             if (days > daysInMonth[this.month]) {
                 this.days = 1;

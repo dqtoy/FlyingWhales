@@ -51,17 +51,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77b88e226b4a4ed47bc080a2102e6581, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  schedule:
-    phases:
-    - phaseName: Misc
-      phaseType: 1
-      startTick: 1
-      endTick: 15
-    - phaseName: Work
-      phaseType: 0
-      startTick: 16
-      endTick: 80
-    - phaseName: Misc 2
-      phaseType: 1
-      startTick: 81
-      endTick: 144
+  phases:
+  - phaseName: Rest
+    category: 1
+    days: 3
+    mustBeConsecutive: 0
+  - phaseName: Work
+    category: 2
+    days: 2
+    mustBeConsecutive: 1

@@ -98,7 +98,7 @@ namespace ECS {
         private float _critChance;
         private float _critDamage;
 
-        public CharacterSchedule dailySchedule { get; private set; }
+        public CharacterSchedule schedule { get; private set; }
         public Quest currentQuest { get; private set; }
         public CharacterEventSchedule eventSchedule { get; private set; }
         public CharacterUIData uiData { get; private set; }
@@ -973,7 +973,7 @@ namespace ECS {
                 //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
                 //					Messenger.Broadcast ("CharacterDeath", this);
                 //				}
-                dailySchedule.OnOwnerDied();
+                schedule.OnOwnerDied();
                 if (onCharacterDeath != null){
 					onCharacterDeath();
 				}
@@ -3274,105 +3274,117 @@ namespace ECS {
         #endregion
 
         #region Schedule
-        public void SetDailySchedule(CharacterSchedule schedule) {
-            dailySchedule = schedule;
-            dailySchedule.Initialize(this);
+        public void SetSchedule(CharacterSchedule schedule) {
+            this.schedule = schedule;
+            schedule.Initialize();
         }
-        public void OnDailySchedulePhaseStarted(CharacterSchedulePhase phase) {
-            if (!this.IsInOwnParty()) {
-                return; //this character is not in it's owned party, that means he/she is just a member of the party, and shall not decide what action to do!
+        public void OnSchedulePhaseStarted(SCHEDULE_ACTION_CATEGORY startedPhase) {
+            Debug.Log(this.name + " started phase " + startedPhase.ToString());
+            //once a new phase has started
+            //check if it is a different phase from the one before it
+            if (schedule.previousPhase != SCHEDULE_ACTION_CATEGORY.NONE && startedPhase != schedule.previousPhase) {//if it is
+                _ownParty.actionData.EndAction(); //end the current action
+                _ownParty.actionData.LookForAction(); //then look for a new action that is part of the phase category (Work/Rest)
             }
-            Debug.Log(GameManager.Instance.Today().GetDayAndTicksString() + " " + this.name + " started phase " + phase.phaseName + "(" + phase.phaseType.ToString() + ")");
-            if (phase.phaseType == SCHEDULE_PHASE_TYPE.WORK) {
-                //if the started phase is work, the character will stop his/her current action (if not from event or also from work), and start doing work actions.
-                if (_ownParty.actionData.currentActionPhaseType != SCHEDULE_PHASE_TYPE.WORK && !_ownParty.actionData.isCurrentActionFromEvent) {
-                    _ownParty.actionData.LookForAction();
-                }
-            } 
-            //else if (phase.phaseType == SCHEDULE_PHASE_TYPE.MISC) {
-            //    //if the started phase is misc, the character will NOT stop his/her current action if his/her current action is a work action (unless that work action is unending), 
-            //    //he/she will instead, wait for the current action to end, then he/she will start doing misc actions.
-            //    if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.WORK) {
-            //        if (_ownParty.actionData.currentAction != null && _ownParty.actionData.currentAction.actionData.duration == 0) { //this includes idle action
-            //            ////current work action is unending, end it.
-            //            //_ownParty.actionData.EndAction();
-            //            //also disband the party. TODO: Add case for when to disband the party when the action is not unending
-            //            _ownParty.actionData.ForceDoAction(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
-            //        }
-            //    }
-            //}
+            //if it is not, do nothing (continue current action)
         }
-        public void OnDailySchedulePhaseEnded(CharacterSchedulePhase phase) {
-            if (!this.IsInOwnParty()) {
-                return; //this character is not in it's owned party, that means he/she is just a member of the party, and shall not decide what action to do!
-            }
-            Debug.Log(GameManager.Instance.Today().GetDayAndTicksString() + " " + this.name + " ended phase " + phase.phaseName + "(" + phase.phaseType.ToString() + ")");
-            if (phase.phaseType == SCHEDULE_PHASE_TYPE.MISC) {
-                //if the ended phase is misc, the character will stop his/her current action (if not from event), and start doing work actions.
-                if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.MISC) {
-                    //end current action, then look for a new one.
-                    _ownParty.actionData.EndAction();
-                }
-            } else if (phase.phaseType == SCHEDULE_PHASE_TYPE.WORK) {
-                //if the ended phase is work, the character will NOT stop his/her current action if his/her current action is a work action (unless that work action is unending), 
-                //he/she will instead, wait for the current action to end, then he/she will start doing misc actions.
-                if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.WORK) {
-                    if (_ownParty.actionData.currentAction != null && _ownParty.actionData.currentAction.actionData.duration == 0 
-                        && _ownParty.actionData.currentAction.actionData.actionType != ACTION_TYPE.TURN_IN_QUEST) {//TODO: Remove Special case for turn in quest when bug has been fixed //this includes idle action
-                        if (_ownParty.icon.isTravelling) {
-                            //if the characters action is unending, but he/she is still travelling to the target, then queue the disband party action instead
-                            //then end his/her current action when he/she arrives at their destination
-                            AddActionToQueue(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
-                            ownParty.icon.AddActionOnPathFinished(() => _ownParty.actionData.currentAction.EndAction(_ownParty, _ownParty.actionData.currentTargetObject));
-                        } else {
-                            //if the characters action is unending, and he/she is not travelling, end their action immediately then force them to disband party
-                            _ownParty.actionData.ForceDoAction(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
-                        }
+        //public void OnDailySchedulePhaseStarted(CharacterScheduleTemplatePhase phase) {
+        //if (!this.IsInOwnParty()) {
+        //    return; //this character is not in it's owned party, that means he/she is just a member of the party, and shall not decide what action to do!
+        //}
+        //Debug.Log(GameManager.Instance.Today().GetDayAndTicksString() + " " + this.name + " started phase " + phase.phaseName + "(" + phase.phaseType.ToString() + ")");
+        //if (phase.phaseType == SCHEDULE_PHASE_TYPE.WORK) {
+        //    //if the started phase is work, the character will stop his/her current action (if not from event or also from work), and start doing work actions.
+        //    if (_ownParty.actionData.currentActionPhaseType != SCHEDULE_PHASE_TYPE.WORK && !_ownParty.actionData.isCurrentActionFromEvent) {
+        //        _ownParty.actionData.LookForAction();
+        //    }
+        //} 
+        ////else if (phase.phaseType == SCHEDULE_PHASE_TYPE.MISC) {
+        ////    //if the started phase is misc, the character will NOT stop his/her current action if his/her current action is a work action (unless that work action is unending), 
+        ////    //he/she will instead, wait for the current action to end, then he/she will start doing misc actions.
+        ////    if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.WORK) {
+        ////        if (_ownParty.actionData.currentAction != null && _ownParty.actionData.currentAction.actionData.duration == 0) { //this includes idle action
+        ////            ////current work action is unending, end it.
+        ////            //_ownParty.actionData.EndAction();
+        ////            //also disband the party. TODO: Add case for when to disband the party when the action is not unending
+        ////            _ownParty.actionData.ForceDoAction(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
+        ////        }
+        ////    }
+        ////}
+        //}
+        //public void OnDailySchedulePhaseEnded(CharacterScheduleTemplatePhase phase) {
+        //if (!this.IsInOwnParty()) {
+        //    return; //this character is not in it's owned party, that means he/she is just a member of the party, and shall not decide what action to do!
+        //}
+        //Debug.Log(GameManager.Instance.Today().GetDayAndTicksString() + " " + this.name + " ended phase " + phase.phaseName + "(" + phase.phaseType.ToString() + ")");
+        //if (phase.phaseType == SCHEDULE_PHASE_TYPE.MISC) {
+        //    //if the ended phase is misc, the character will stop his/her current action (if not from event), and start doing work actions.
+        //    if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.MISC) {
+        //        //end current action, then look for a new one.
+        //        _ownParty.actionData.EndAction();
+        //    }
+        //} else if (phase.phaseType == SCHEDULE_PHASE_TYPE.WORK) {
+        //    //if the ended phase is work, the character will NOT stop his/her current action if his/her current action is a work action (unless that work action is unending), 
+        //    //he/she will instead, wait for the current action to end, then he/she will start doing misc actions.
+        //    if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.WORK) {
+        //        if (_ownParty.actionData.currentAction != null && _ownParty.actionData.currentAction.actionData.duration == 0 
+        //            && _ownParty.actionData.currentAction.actionData.actionType != ACTION_TYPE.TURN_IN_QUEST) {//TODO: Remove Special case for turn in quest when bug has been fixed //this includes idle action
+        //            if (_ownParty.icon.isTravelling) {
+        //                //if the characters action is unending, but he/she is still travelling to the target, then queue the disband party action instead
+        //                //then end his/her current action when he/she arrives at their destination
+        //                AddActionToQueue(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
+        //                ownParty.icon.AddActionOnPathFinished(() => _ownParty.actionData.currentAction.EndAction(_ownParty, _ownParty.actionData.currentTargetObject));
+        //            } else {
+        //                //if the characters action is unending, and he/she is not travelling, end their action immediately then force them to disband party
+        //                _ownParty.actionData.ForceDoAction(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
+        //            }
 
-                        ////current work action is unending, end it.
-                        ////also disband the party. TODO: Add case for when to disband the party when the action is not unending
-                        //_ownParty.actionData.ForceDoAction(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
-                    }
-                }
-            }
-        }
+        //            ////current work action is unending, end it.
+        //            ////also disband the party. TODO: Add case for when to disband the party when the action is not unending
+        //            //_ownParty.actionData.ForceDoAction(_ownParty.characterObject.currentState.GetAction(ACTION_TYPE.DISBAND_PARTY), _ownParty.characterObject);
+        //        }
+        //    }
+        //}
+        //}
         /*
          Can this character reach work, given it's current location.
          NOTE: Only call this during work phase.
              */
         public bool CanReachWork() {
-            if (this.dailySchedule.currentPhase.phaseType != SCHEDULE_PHASE_TYPE.WORK) {
-                throw new Exception(this.name + " is trying to use CanReachWork() while not in work phase!");
-            }
-            //check this character's work schedule
-            int deadlineTick = this.dailySchedule.currentPhase.startTick + 6; //start of work phase + 1 hour(6 ticks)
-            GameDate today = GameManager.Instance.Today();
-            if (today.hour > deadlineTick) {
-                if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.WORK && this.specificLocation.tileLocation.id == workplace.tileLocation.id) {
-                    return true; //the characters previous action phase type was from work and he/she is already at their workplace
-                } else {
-                    return false; //this character cannot reach work on time
-                }
-            } else {
-                List<HexTile> pathToWorkplace = PathGenerator.Instance.GetPath(this.specificLocation, this.workplace, PATHFINDING_MODE.PASSABLE);
-                if (pathToWorkplace == null) {
-                    return false; //there is no path to workplace
-                }
-                int tileDistance = pathToWorkplace.Count;
-                int travelTime = tileDistance * 3; //because it takes 3 ticks to reach the center of one tile to another
-                if (today.hour + travelTime > deadlineTick) {
-                    return false; //this character cannot reach work on time
-                } else {
-                    return true; //this character can reach work on time
-                }
-            }
+            return false;
+            //if (this.dailySchedule.currentPhase.phaseType != SCHEDULE_PHASE_TYPE.WORK) {
+            //    throw new Exception(this.name + " is trying to use CanReachWork() while not in work phase!");
+            //}
+            ////check this character's work schedule
+            //int deadlineTick = this.dailySchedule.currentPhase.startTick + 6; //start of work phase + 1 hour(6 ticks)
+            //GameDate today = GameManager.Instance.Today();
+            //if (today.hour > deadlineTick) {
+            //    if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.WORK && this.specificLocation.tileLocation.id == workplace.tileLocation.id) {
+            //        return true; //the characters previous action phase type was from work and he/she is already at their workplace
+            //    } else {
+            //        return false; //this character cannot reach work on time
+            //    }
+            //} else {
+            //    List<HexTile> pathToWorkplace = PathGenerator.Instance.GetPath(this.specificLocation, this.workplace, PATHFINDING_MODE.PASSABLE);
+            //    if (pathToWorkplace == null) {
+            //        return false; //there is no path to workplace
+            //    }
+            //    int tileDistance = pathToWorkplace.Count;
+            //    int travelTime = tileDistance * 3; //because it takes 3 ticks to reach the center of one tile to another
+            //    if (today.hour + travelTime > deadlineTick) {
+            //        return false; //this character cannot reach work on time
+            //    } else {
+            //        return true; //this character can reach work on time
+            //    }
+            //}
         }
         /*
          Determine at what tick the character has to be at work.
          NOTE: This is only accurate when used while in work phase
              */
         public int GetWorkDeadlineTick() {
-            return this.dailySchedule.currentPhase.startTick + 7; //start of work phase + 1 hour(6 ticks) + 1 tick (because if other character arrives at exactly the work deadline, he/she will not be included in party, even though they are technically not late)
+            return 0;
+            //return this.dailySchedule.currentPhase.startTick + 7; //start of work phase + 1 hour(6 ticks) + 1 tick (because if other character arrives at exactly the work deadline, he/she will not be included in party, even though they are technically not late)
         }
         #endregion
 

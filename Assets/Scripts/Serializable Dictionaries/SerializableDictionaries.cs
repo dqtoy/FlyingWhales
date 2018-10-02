@@ -5,6 +5,8 @@ using UnityEngine;
 [System.Serializable]
 public class ScheduleTemplateDictionary : SerializableDictionary<string, CharacterScheduleTemplate> { }
 [System.Serializable]
+public class PhaseItemDictionary : SerializableDictionary<SCHEDULE_ACTION_CATEGORY, int> { }
+[System.Serializable]
 public class ActionCharacterTagListDictionary : SerializableDictionary<ACTION_TYPE, List<CharacterActionTagRequirement>, CharacterTagListStorage> { }
 [System.Serializable]
 public class BiomeLandmarkSpriteListDictionary : SerializableDictionary<BIOMES, List<LandmarkStructureSprite>, LandmarkSpriteListStorage> { }

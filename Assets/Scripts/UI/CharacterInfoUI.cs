@@ -345,7 +345,7 @@ public class CharacterInfoUI : UIMenu {
                 lvlClassLbl.text = "???";
             }
         }
-        phaseLbl.text = _activeCharacter.dailySchedule.currentPhase.phaseName;
+        phaseLbl.text = _activeCharacter.schedule.currentPhase.ToString();
         squadEmblem.SetSquad(_activeCharacter.squad);
         factionEmblem.SetFaction(_activeCharacter.faction);
         //affiliations.SetCharacter(_activeCharacter);

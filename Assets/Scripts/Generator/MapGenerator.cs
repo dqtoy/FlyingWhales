@@ -52,6 +52,7 @@ public class MapGenerator : MonoBehaviour {
 
         UIManager.Instance.InitializeUI();
         ObjectManager.Instance.Initialize();
+        CharacterScheduleManager.Instance.Initialize();
 
         LevelLoaderManager.UpdateLoadingInfo("Generating Factions...");
         yield return null;
@@ -163,6 +164,7 @@ public class MapGenerator : MonoBehaviour {
         //Biomes.Instance.GenerateTileBiomeDetails(GridMap.Instance.hexTiles);
 
         LandmarkManager.Instance.InitializeLandmarks();
+        CharacterScheduleManager.Instance.Initialize();
         //CharacterManager.Instance.GenerateCharactersForTesting(1);
         CharacterManager.Instance.LoadCharacters(data);
         CharacterManager.Instance.LoadRelationships(data);

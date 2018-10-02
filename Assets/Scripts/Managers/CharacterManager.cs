@@ -46,10 +46,6 @@ public class CharacterManager : MonoBehaviour {
     [Header("Character Role Animators")]
     [SerializeField] private RuntimeAnimatorController[] characterAnimators;
 
-    public readonly int HAPPINESS_THRESHOLD = 20;
-    public readonly int MENTAL_THRESHOLD = -3;
-    public readonly int PHYSICAL_THRESHOLD = -3;
-
     public Dictionary<Character, List<string>> allCharacterLogs { get; private set; }
 
     #region getters/setters
@@ -180,7 +176,7 @@ public class CharacterManager : MonoBehaviour {
             }
 #if !WORLD_CREATION_TOOL
             if (charRole != CHARACTER_ROLE.PLAYER) {
-                newCharacter.SetDailySchedule(CharacterScheduleManager.Instance.GetScheduleForCharacter(newCharacter));
+                newCharacter.SetSchedule(CharacterScheduleManager.Instance.GetScheduleForCharacter(newCharacter));
             }
 #endif
         }
@@ -212,7 +208,7 @@ public class CharacterManager : MonoBehaviour {
         NewParty party = newCharacter.CreateOwnParty();
 #if !WORLD_CREATION_TOOL
         if (data.role != CHARACTER_ROLE.PLAYER) {
-            newCharacter.SetDailySchedule(CharacterScheduleManager.Instance.GetScheduleForCharacter(newCharacter));
+            newCharacter.SetSchedule(CharacterScheduleManager.Instance.GetScheduleForCharacter(newCharacter));
         }
 #endif
         if (data.locationID != -1) {
