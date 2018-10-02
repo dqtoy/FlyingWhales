@@ -29,6 +29,10 @@ public class GameManager : MonoBehaviour {
     public bool allCharactersAreVisible = true;
     public bool inspectAll = false;
 
+    public GameObject distanceLinePrefab;
+    public HexTile tile1;
+    public HexTile tile2;
+
     private const float X1_SPEED = 0.75f;
     private const float X2_SPEED = 0.5f;
     private const float X4_SPEED = 0.25f;
@@ -92,6 +96,33 @@ public class GameManager : MonoBehaviour {
         UIManager.Instance.SetProgressionSpeed1X();
 		SchedulingManager.Instance.StartScheduleCalls ();
 	}
+
+    [ContextMenu("Rotate Distance Line")]
+    public void RotateDistanceLine() {
+        GameObject go = GameObject.Instantiate(distanceLinePrefab);
+        go.transform.position = tile1.transform.position;
+        float angle = Mathf.Atan2(tile2.transform.position.y - tile1.transform.position.y, tile2.transform.position.x - tile1.transform.position.x) * Mathf.Rad2Deg;
+        go.transform.eulerAngles = new Vector3(go.transform.rotation.x, go.transform.rotation.y, angle);
+        float distance = Vector3.Distance(tile1.transform.position, tile2.transform.position);
+        float scale = distance * 0.143f;
+        go.transform.localScale = new Vector3(scale, go.transform.localScale.y, go.transform.localScale.z);
+
+        /*To get num of ticks to travel from one tile to another, get distance and divide it by 2.31588, round up the result then multiply by 6, such that,
+         * numOfTicks = (Math.Ceil(distance / 2.315188)) * 6
+         */
+    }
+
+    [ContextMenu("Get Distance")]
+    public void GetDistance() {
+        float distance = Vector3.Distance(tile1.transform.position, tile2.transform.position);
+        Debug.LogWarning("Distance: " + distance);
+    }
+
+    private float AngleBetweenVector2(Vector2 vec1, Vector2 vec2) {
+        Vector2 diference = vec2 - vec1;
+        float sign = (vec2.y < vec1.y) ? -1.0f : 1.0f;
+        return Vector2.Angle(Vector2.right, diference) * sign;
+    }
 
     public GameDate Today() {
         return new GameDate(this.month, this.days, this.year, this.hour);

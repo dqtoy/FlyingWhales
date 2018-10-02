@@ -19047,6 +19047,10 @@ MonoBehaviour:
   displayFPS: 1
   allCharactersAreVisible: 1
   inspectAll: 0
+  distanceLinePrefab: {fileID: 1818206060702910, guid: 11eeaabdf21494f43b753c71e75d5783,
+    type: 2}
+  tile1: {fileID: 0}
+  tile2: {fileID: 0}
   defaultCursorTexture: {fileID: 2800000, guid: 3b159dc765142944492cd69555358826,
     type: 3}
   targetCursorTexture: {fileID: 2800000, guid: 7357d53bb13f567458d4c9364c6fa54d, type: 3}

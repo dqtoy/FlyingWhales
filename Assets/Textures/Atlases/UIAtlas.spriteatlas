@@ -106,6 +106,7 @@ SpriteAtlas:
   - {fileID: 21300006, guid: b77cc3ee0b449b440a9dd563f39db05b, type: 3}
   - {fileID: 21300000, guid: ce180f3998a1d374bb967f413236461e, type: 3}
   - {fileID: 21300000, guid: a5395f97de35aa84082b68504fff53a3, type: 3}
+  - {fileID: 21300000, guid: a21626a1ed24a434298622bf02bd0e88, type: 3}
   - {fileID: 21300000, guid: febd7bc28a21ea044a06f7266d76b729, type: 3}
   - {fileID: 21300000, guid: ddad73fa0a9f6d14987b61071fa85f88, type: 3}
   - {fileID: 21300000, guid: aa22b1f7d082a954b89cee55568a8e0c, type: 3}
@@ -188,6 +189,7 @@ SpriteAtlas:
   - UI Assets_3
   - ClickedButton
   - DefaultButton
+  - DistanceLine
   - White_square
   - Horse
   - Varangian
