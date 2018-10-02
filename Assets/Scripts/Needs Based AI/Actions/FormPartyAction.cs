@@ -41,12 +41,12 @@ public class FormPartyAction : CharacterAction {
                 ECS.Character currCharacter = character as ECS.Character;
                 if (!currCharacter.IsSquadLeader()) {
                     //If below Happiness, Mental or Physical Point thresholds
-                    if (currCharacter.role.happiness < CharacterManager.Instance.HAPPINESS_THRESHOLD
-                        && currCharacter.mentalPoints < CharacterManager.Instance.MENTAL_THRESHOLD && currCharacter.mentalPoints < CharacterManager.Instance.PHYSICAL_THRESHOLD) {
-                        //end their In Party action and put them out of the party
-                        iparty.RemoveCharacter(currCharacter);
-                        //currCharacter.party.actionData.EndAction();
-                    }
+                    //if (currCharacter.role.happiness < CharacterManager.Instance.HAPPINESS_THRESHOLD
+                    //    && currCharacter.mentalPoints < CharacterManager.Instance.MENTAL_THRESHOLD && currCharacter.mentalPoints < CharacterManager.Instance.PHYSICAL_THRESHOLD) {
+                    //    //end their In Party action and put them out of the party
+                    //    iparty.RemoveCharacter(currCharacter);
+                    //    //currCharacter.party.actionData.EndAction();
+                    //}
                     //Otherwise, maintain existing In Party action
                 }
             }

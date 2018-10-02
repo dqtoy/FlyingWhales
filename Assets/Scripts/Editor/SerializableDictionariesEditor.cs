@@ -6,6 +6,8 @@ using UnityEngine;
 
 [CustomPropertyDrawer(typeof(ScheduleTemplateDictionary))]
 public class ScheduleTemplateDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(PhaseItemDictionary))]
+public class PhaseItemDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(ActionCharacterTagListDictionary))]
 public class ActionCharacterTagDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(BiomeLandmarkSpriteListDictionary))]

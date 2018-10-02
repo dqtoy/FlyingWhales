@@ -44,7 +44,7 @@ public class EditSquadsMenu : MonoBehaviour {
     public void OnCharacterRemovedFromSquad(ICharacter character, Squad squad) {
         if (character is ECS.Character) {
             CharacterSquadEditorItem item = GetCharacterSquadItem(character as ECS.Character);
-            if (item.transform.parent != charactersScrollView.content) {
+            if (item != null && item.transform.parent != charactersScrollView.content) {
                 item.transform.SetParent(charactersScrollView.content);
             }
         }

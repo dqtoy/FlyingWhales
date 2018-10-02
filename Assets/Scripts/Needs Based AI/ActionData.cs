@@ -134,14 +134,14 @@ public class ActionData {
     }
     public void SetCurrentAction(CharacterAction action) {
         this.currentAction = action;
-        Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() + "] Set current action of " + _party.name + " to " + this.currentAction.actionData.actionName);
+        Debug.Log(GameManager.Instance.TodayLogString() + "Set current action of " + _party.name + " to " + this.currentAction.actionData.actionName);
     }
     public void SetCurrentTargetObject(IObject targetObject) {
         this.currentTargetObject = targetObject;
         if (this.currentTargetObject == null) {
-            Debug.Log("Set current target object of " + _party.name + " to null.");
+            Debug.Log(GameManager.Instance.TodayLogString() + "Set current target object of " + _party.name + " to null.");
         } else {
-            Debug.Log("Set current target object of " + _party.name + " to " + this.currentTargetObject.objectName);
+            Debug.Log(GameManager.Instance.TodayLogString() + "Set current target object of " + _party.name + " to " + this.currentTargetObject.objectName);
         }
        
     }

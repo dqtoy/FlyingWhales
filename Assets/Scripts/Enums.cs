@@ -905,6 +905,11 @@ public enum SCHEDULE_PHASE_TYPE {
     MISC,
     SPECIAL,
 }
+public enum SCHEDULE_ACTION_CATEGORY {
+    NONE,
+    REST,
+    WORK,
+}
 public enum ABUNDANCE {
     NONE,
     HIGH,

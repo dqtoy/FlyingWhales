@@ -94,10 +94,10 @@ public class CharacterEventSchedule {
                 KeyValuePair<DateRange, GameEvent> nextElement = eventSchedule.ElementAt(counter + 1);
                 DateRange nextElementRange = nextElement.Key;
                 DateRange availableRange = new DateRange(currRange.endDate, nextElement.Key.startDate); //check this element's endDate and the next elements startDate
-                if (availableRange.rangeInTicks >= gameEvent.GetEventDurationRoughEstimateInTicks() + (GameManager.hoursPerDay/2)) {
-                    //if the distance between the 2 dates can fit the event (given it's duration) + 1/2 day woth of ticks, schedule the event in between the 2 dates
+                if (availableRange.rangeInTicks >= gameEvent.GetEventDurationRoughEstimateInTicks() + GameManager.hoursPerDay) {
+                    //if the distance between the 2 dates can fit the event (given it's duration) + 1 day worth of ticks, schedule the event in between the 2 dates
                     GameDate nextFreeDate = availableRange.startDate;
-                    nextFreeDate.AddHours(GameManager.hoursPerDay/2);
+                    nextFreeDate.AddHours(GameManager.hoursPerDay);
                     return nextFreeDate;
                 } else {
                     //if not, continue to the next element in the schedule.

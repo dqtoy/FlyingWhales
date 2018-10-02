@@ -7,16 +7,30 @@ public class CharacterScheduleManager : MonoBehaviour {
 
     public static CharacterScheduleManager Instance = null;
 
+    public static int MAX_DAYS_IN_SCHEDULE = 5;
+
     [SerializeField] private ScheduleTemplateDictionary scheduleTemplates;
 
     private void Awake() {
         Instance = this;
     }
 
+    public void Initialize() {
+        ValidateSchedules();
+    }
+
+    private void ValidateSchedules() {
+        foreach (KeyValuePair<string, CharacterScheduleTemplate> kvp in scheduleTemplates) {
+            if (!kvp.Value.IsValid()) {
+                throw new System.Exception("Schedule template for " + kvp.Key + " is invalid!");
+            }
+        }
+    }
+
     public CharacterSchedule GetScheduleForCharacter(Character character) {
         CharacterScheduleTemplate template = GetScheduleTemplate(character.characterClass.className); //get template for role
         if (template != null) {
-            return template.schedule.Clone();
+            return new CharacterSchedule(template, character);
         }
         return null;
     }

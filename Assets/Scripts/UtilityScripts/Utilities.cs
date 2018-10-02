@@ -928,6 +928,13 @@ public class Utilities : MonoBehaviour {
         }
         Debug.Log("Dictionary: " + log);
     }
+    public static T[] CreateCopyOfArray<T>(T[] sourceArray) {
+        T[] copy = new T[sourceArray.Length];
+        for (int i = 0; i < sourceArray.Length; i++) {
+            copy[i] = sourceArray[i];
+        }
+        return copy;
+    }
     #endregion
 
     #region Game Utilities
