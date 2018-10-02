@@ -15,9 +15,10 @@ public interface ICharacter {
     int level { get; }
     int currentHP { get; }
     int maxHP { get; }
+    int currentSP { get; }
+    int maxSP { get; }
     int currentRow { get; }
     int id { get; }
-    int currentSP { get; }
     int pFinalAttack { get; }
     int mFinalAttack { get; }
     int speed { get; }
@@ -43,9 +44,14 @@ public interface ICharacter {
     //Combat currentCombat { get; set; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }
+    Dictionary<Character, Relationship> relationships { get; }
     List<Skill> skills { get; }
     List<BodyPart> bodyParts { get; }
     List<CharacterAction> miscActions { get; }
+    List<Attribute> attributes { get; }
+    List<Item> equippedItems { get; }
+    List<Item> inventory { get; }
+    List<Log> history { get; }
     PortraitSettings portraitSettings { get; }
     NewParty ownParty { get; }
     NewParty currentParty { get; }

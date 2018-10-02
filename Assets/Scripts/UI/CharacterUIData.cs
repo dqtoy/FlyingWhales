@@ -27,9 +27,11 @@ public class CharacterUIData {
         relationships = new List<Relationship>();
     }
 
-    public void UpdateData(Character character) {
+    public void UpdateData(ICharacter character) {
         level = character.level;
-        className = character.characterClass.className;
+        if (character.characterClass != null) {
+            className = character.characterClass.className;
+        }
         healthValue = (float)character.currentHP / (float)character.maxHP;
         manaValue = (float)character.currentSP / (float)character.maxSP;
         strength = character.strength;
@@ -38,17 +40,25 @@ public class CharacterUIData {
         vitality = character.vitality;
 
         attributes.Clear();
-        attributes.AddRange(character.attributes);
+        if (character.attributes != null) {
+            attributes.AddRange(character.attributes);
+        }
 
         equippedItems.Clear();
-        equippedItems.AddRange(character.equippedItems);
+        if (character.equippedItems != null) {
+            equippedItems.AddRange(character.equippedItems);
+        }
 
         inventory.Clear();
-        inventory.AddRange(character.inventory);
+        if (character.inventory != null) {
+            inventory.AddRange(character.inventory);
+        }
 
         relationships.Clear();
-        for (int i = 0; i < character.relationships.Count; i++) {
-            relationships.Add(character.relationships.Values.ElementAt(i).CreateCopy()); //create copy instead of instance
+        if(character.relationships != null) {
+            for (int i = 0; i < character.relationships.Count; i++) {
+                relationships.Add(character.relationships.Values.ElementAt(i).CreateCopy()); //create copy instead of instance
+            }
         }
     }
 }
