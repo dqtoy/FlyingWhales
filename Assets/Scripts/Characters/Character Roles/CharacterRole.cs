@@ -104,14 +104,14 @@ public class CharacterRole {
     #region Virtuals
     public virtual void DeathRole(){
 		_isRemoved = true;
-        _character.onDailyAction -= StartDepletion;
+        //_character.onDailyAction -= StartDepletion;
     }
 	public virtual void ChangedRole(){
 		_isRemoved = true;
-        _character.onDailyAction -= StartDepletion;
+        //_character.onDailyAction -= StartDepletion;
     }
     public virtual void OnAssignRole() {
-        _character.onDailyAction += StartDepletion;
+        //_character.onDailyAction += StartDepletion;
     }
     #endregion
 

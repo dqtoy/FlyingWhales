@@ -186,6 +186,13 @@ public class ActionThread : Multithread {
                 actions.Add(new ActionThreadItem(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.REST), character.homeLandmark.landmarkObj));
                 break;
             case SCHEDULE_ACTION_CATEGORY.WORK:
+                if (character.workplace == null || character.workplace.landmarkObj.isRuined) { //check first if the character has a workplace, or if their workplace is ruined
+                    //if it does not, look for a new workplace
+                    if (!character.LookForNewWorkplace()) {
+                        //if still, no workplace can be found, idle at home instead
+                        actions.Add(new ActionThreadItem(_party.characterObject.currentState.GetAction(ACTION_TYPE.IDLE), character.homeLandmark.landmarkObj));
+                    }
+                }
                 if (character.characterClass.workActionType == ACTION_TYPE.WORKING) {
                     actions.Add(new ActionThreadItem(character.genericWorkAction, character.workplace.landmarkObj));
                 } else {
