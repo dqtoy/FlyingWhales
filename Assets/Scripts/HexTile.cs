@@ -22,6 +22,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [Space(10)]
     [Header("Pathfinding")]
     public GameObject unpassableGO;
+    public Transform goingToMarker;
+    public Transform comingFromMarker;
 
     [Space(10)]
     [Header("Tile Visuals")]
@@ -70,6 +72,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public List<HexTile> LandmarkConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> AllNeighbourRoadTiles { get { return AllNeighbours.Where(o => o.isRoad).ToList(); } }
     public List<HexTile> PassableNeighbours { get { return AllNeighbours.Where(o => o.isPassable).ToList(); } }
+
+    private List<HexTile> _tilesConnectedInGoingToMarker = new List<HexTile>();
+    private List<HexTile> _tilesConnectedInComingFromMarker = new List<HexTile>();
 
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
     public BaseLandmark corruptedLandmark = null;
@@ -1500,6 +1505,34 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
         if(_redMagicAmount <= 0 && _blueMagicAmount <= 0 && _greenMagicAmount <= 0) {
             DeactivateMagicTransferToPlayer();
+        }
+    }
+    #endregion
+
+    #region Pathfinding
+    public GameObject AddConnectionInGoingTo(HexTile tile) {
+        _tilesConnectedInGoingToMarker.Add(tile);
+        return BezierCurve.Instance.DrawCubicCurve(tile.transform.position, goingToMarker.position);
+    }
+    public void RemoveConnectionInGoingTo(HexTile tile) {
+        _tilesConnectedInGoingToMarker.Remove(tile);
+    }
+    public GameObject AddConnectionInComingFrom(HexTile tile) {
+        _tilesConnectedInComingFromMarker.Add(tile);
+        return BezierCurve.Instance.DrawCubicCurve(tile.transform.position, comingFromMarker.position);
+    }
+    public void RemoveConnectionInComingFrom(HexTile tile) {
+        _tilesConnectedInComingFromMarker.Remove(tile);
+    }
+    public GameObject ATileIsTryingToConnect(HexTile tile) {
+        if (!_tilesConnectedInGoingToMarker.Contains(tile)) {
+            if (!_tilesConnectedInComingFromMarker.Contains(tile)) {
+                return AddConnectionInGoingTo(tile);
+            } else {
+                return BezierCurve.Instance.DrawCubicCurve(tile.transform.position, comingFromMarker.position);
+            }
+        } else {
+            return BezierCurve.Instance.DrawCubicCurve(tile.transform.position, goingToMarker.position);
         }
     }
     #endregion

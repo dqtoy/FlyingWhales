@@ -4,24 +4,32 @@ using UnityEngine;
 using Pathfinding;
 
 public class BezierCurve : MonoBehaviour {
+    public static BezierCurve Instance;
 
     public int numOfInterpolations;
+    public GameObject curvePrefab;
     public LineRenderer lineRenderer;
     public Transform startPoint;
     public Transform endPoint;
     public Transform controlPoint1;
     public Transform controlPoint2;
 
-    private void Update() {
-        DrawCubicCurve(startPoint.position, endPoint.position, numOfInterpolations);
+    private void Awake() {
+        Instance = this;
     }
 
-    public void DrawCubicCurve(Vector3 startPoint, Vector3 endPoint, int numOfInterpolations) {
+    //private void Update() {
+    //    DrawCubicCurve(startPoint.position, endPoint.position, numOfInterpolations);
+    //}
+
+    public GameObject DrawCubicCurve(Vector3 startPoint, Vector3 endPoint) {
         Vector3 dir = endPoint - startPoint;
 
         if (dir == Vector3.zero) {
-            return;
+            return null;
         }
+        GameObject go = GameObject.Instantiate(curvePrefab, GridMap.Instance.gameObject.transform);
+        LineRenderer lineRenderer = go.GetComponent<LineRenderer>();
         lineRenderer.positionCount = numOfInterpolations;
 
         Vector3 normal = Vector3.Cross(Vector3.up, dir);
@@ -38,8 +46,8 @@ public class BezierCurve : MonoBehaviour {
 
         Vector3 p1c = startPoint + curveSharpness;
         Vector3 p2c = endPoint + curveSharpness;
-        controlPoint1.position = p1c;
-        controlPoint2.position = p2c;
+        //controlPoint1.position = p1c;
+        //controlPoint2.position = p2c;
 
 
         float timeDivisor = (float) numOfInterpolations;
@@ -49,6 +57,7 @@ public class BezierCurve : MonoBehaviour {
             Vector3 curvePoint = AstarSplines.CubicBezier(startPoint, p1c, p2c, endPoint, t);
             lineRenderer.SetPosition(i - 1, curvePoint);
         }
+        return go;
     }
     public void DrawCubicCurve(Vector3 startPoint, Vector3 endPoint, Vector3 controlPoint1, Vector3 controlPoint2, int numOfInterpolations) {
         lineRenderer.positionCount = numOfInterpolations;

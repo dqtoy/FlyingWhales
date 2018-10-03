@@ -35,6 +35,7 @@ public class CharacterAvatar : MonoBehaviour{
 	private Action queuedAction = null;
     private PATHFINDING_MODE _pathfindingMode;
     private bool _isVisualShowing;
+    private GameObject _curveGO;
 
     public CharacterPortrait characterPortrait { get; private set; }
 
@@ -102,16 +103,60 @@ public class CharacterAvatar : MonoBehaviour{
         //if (smoothMovement.isMoving) {
         //    smoothMovement.ForceStopMovement();
         //}
-        Reset();
-        if (this.targetLocation != null) {
-            SetHasArrivedState(false);
-            _pathfindingMode = pathFindingMode;
-            _trackTarget = trackTarget;
-            onPathFinished = actionOnPathFinished;
-            onPathReceived = actionOnPathReceived;
-			Faction faction = _party.faction;
-			_currPathfindingRequest = PathGenerator.Instance.CreatePath(this, _party.specificLocation.tileLocation, targetLocation.tileLocation, pathFindingMode, faction);
+        //     Reset();
+        //     if (this.targetLocation != null) {
+        //         SetHasArrivedState(false);
+        //         _pathfindingMode = pathFindingMode;
+        //         _trackTarget = trackTarget;
+        //         onPathFinished = actionOnPathFinished;
+        //         onPathReceived = actionOnPathReceived;
+        //Faction faction = _party.faction;
+        //_currPathfindingRequest = PathGenerator.Instance.CreatePath(this, _party.specificLocation.tileLocation, targetLocation.tileLocation, pathFindingMode, faction);
+        //     }
+        if (targetLocation != null) {
+            StartTravelling();
         }
+    }
+    private void StartTravelling() {
+        _isTravelling = true;
+        float distance = Vector3.Distance(_party.specificLocation.tileLocation.transform.position, targetLocation.tileLocation.transform.position);
+        int numOfTicks = (Mathf.CeilToInt(distance / 2.315188f)) * 6;
+        _curveGO = targetLocation.tileLocation.ATileIsTryingToConnect(_party.specificLocation.tileLocation);
+        GameDate arriveDate = GameManager.Instance.Today();
+        arriveDate.AddHours(numOfTicks);
+        SchedulingManager.Instance.AddEntry(arriveDate, () => ArriveAtLocation());
+    }
+    private void ArriveAtLocation() {
+        GameObject.Destroy(_curveGO);
+        _curveGO = null;
+        SetHasArrivedState(true);
+        _party.specificLocation.RemoveCharacterFromLocation(_party);
+        targetLocation.AddCharacterToLocation(_party);
+        Debug.Log(_party.name + " has arrived at " + targetLocation.locationName + " on " + GameManager.Instance.Today().GetDayAndTicksString());
+        //Every time the party arrives at home, check if it still not ruined
+        if (_party.mainCharacter is Character && _party.mainCharacter.homeLandmark.specificLandmarkType == LANDMARK_TYPE.CAMP && _party.mainCharacter.homeLandmark.landmarkObj.currentState.stateName == "Ruined") {
+            //Check if the location the character arrived at is the character's home landmark
+            if (targetLocation.tileLocation.id == _party.mainCharacter.homeLandmark.tileLocation.id) {
+                //Check if the current landmark in the location is a camp and it is not yet ruined
+                if (targetLocation.tileLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CAMP) {
+                    Character character = _party.mainCharacter as Character;
+                    if (targetLocation.tileLocation.landmarkOnTile.landmarkObj.currentState.stateName != "Ruined") {
+                        //Make it the character's new home landmark
+                        _party.mainCharacter.homeLandmark.RemoveCharacterHomeOnLandmark(character);
+                        targetLocation.tileLocation.landmarkOnTile.AddCharacterHomeOnLandmark(character);
+                    } else {
+                        //Create new camp
+                        BaseLandmark newCamp = targetLocation.tileLocation.areaOfTile.CreateCampOnTile(targetLocation.tileLocation);
+                        _party.mainCharacter.homeLandmark.RemoveCharacterHomeOnLandmark(character);
+                        newCamp.AddCharacterHomeOnLandmark(character);
+                    }
+                }
+            }
+        }
+        if (onPathFinished != null) {
+            onPathFinished();
+        }
+
     }
     public virtual void ReceivePath(List<HexTile> path, PathFindingThread fromThread) {
         if (!_isInitialized) {

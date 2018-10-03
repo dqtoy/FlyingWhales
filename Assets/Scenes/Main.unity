@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.22380279, g: 0.24376711, b: 0.26534963, a: 1}
+  m_IndirectSpecularColor: {r: 0.22380304, g: 0.24376729, b: 0.26534945, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -21182,7 +21182,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4806396052184288, guid: cf82a687d8874364180361091ecedab0, type: 2}
       propertyPath: m_RootOrder
-      value: 23
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 114770548558979960, guid: cf82a687d8874364180361091ecedab0,
         type: 2}
@@ -25623,7 +25623,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4000011853250314, guid: f6c4038d31ab7b44692f1aabeec26f6d, type: 2}
       propertyPath: m_RootOrder
-      value: 24
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 1000010161679106, guid: f6c4038d31ab7b44692f1aabeec26f6d, type: 2}
       propertyPath: m_Layer
@@ -52360,6 +52360,54 @@ RectTransform:
   m_PrefabParentObject: {fileID: 224404729254483228, guid: e2d243a395fd9384a8973709eb9bc9b9,
     type: 2}
   m_PrefabInternal: {fileID: 1488030755}
+--- !u!1 &1490449078
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1490449079}
+  - component: {fileID: 1490449080}
+  m_Layer: 5
+  m_Name: CurveManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1490449079
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1490449078}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2080112258}
+  m_RootOrder: 23
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1490449080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1490449078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a1cb278023ad6a499fc7ece2dc5ed91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  numOfInterpolations: 50
+  curvePrefab: {fileID: 1182213124877252, guid: 2c54062914798774eb5088e6b3432440,
+    type: 2}
+  lineRenderer: {fileID: 0}
+  startPoint: {fileID: 0}
+  endPoint: {fileID: 0}
+  controlPoint1: {fileID: 0}
+  controlPoint2: {fileID: 0}
 --- !u!1 &1491448547
 GameObject:
   m_ObjectHideFlags: 0
@@ -54508,7 +54556,7 @@ RectTransform:
   - {fileID: 1614811350}
   - {fileID: 1819999709}
   m_Father: {fileID: 2080112258}
-  m_RootOrder: 25
+  m_RootOrder: 26
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -74043,6 +74091,7 @@ Transform:
   - {fileID: 1687531015}
   - {fileID: 264907254}
   - {fileID: 108573173}
+  - {fileID: 1490449079}
   - {fileID: 610699933}
   - {fileID: 2062607232}
   - {fileID: 1538653384}
