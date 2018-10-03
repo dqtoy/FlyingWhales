@@ -122,7 +122,7 @@ public class GridMap : MonoBehaviour {
                 HexTile currHex = hex.GetComponent<HexTile>();
                 hexTiles.Add(currHex);
                 currHex.Initialize();
-                currHex.data = data.GetTileData(id);
+                currHex.SetData(data.GetTileData(id));
                 currHex.SetMagicAbundance();
                 map[x, y] = currHex;
                 id++;

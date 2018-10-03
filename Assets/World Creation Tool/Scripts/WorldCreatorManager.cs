@@ -129,7 +129,7 @@ namespace worldcreator {
                     HexTile currHex = hex.GetComponent<HexTile>();
                     hexTiles.Add(currHex);
                     currHex.Initialize();
-                    currHex.data = data.GetTileData(id);
+                    currHex.SetData(data.GetTileData(id));
                     map[x, y] = currHex;
                     id++;
                     WorldCreatorUI.Instance.UpdateLoading((float)hexTiles.Count / (float)totalTiles, "Loading tile " + id + "/" + totalTiles.ToString());
@@ -748,6 +748,15 @@ namespace worldcreator {
             for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                 Area currArea = LandmarkManager.Instance.allAreas[i];
                 currArea.UnhighlightArea();
+            }
+        }
+        #endregion
+
+        #region Tile Data
+        public void SetManaOnTiles(string amount) {
+            int value = Int32.Parse(amount);
+            for (int i = 0; i < selectionComponent.selection.Count; i++) {
+                selectionComponent.selection[i].SetManaOnTile(value);
             }
         }
         #endregion

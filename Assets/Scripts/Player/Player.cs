@@ -9,6 +9,7 @@ public class Player : ILeader{
     public Faction playerFaction { get; private set; }
     public Area playerArea { get; private set; }
     public int snatchCredits { get; private set; }
+    public int mana { get; private set; }
 
     private int _threatLevel;
     private int _redMagic;
