@@ -129,7 +129,7 @@ namespace worldcreator {
                     HexTile currHex = hex.GetComponent<HexTile>();
                     hexTiles.Add(currHex);
                     currHex.Initialize();
-                    currHex.data = data.GetTileData(id);
+                    currHex.SetData(data.GetTileData(id));
                     map[x, y] = currHex;
                     id++;
                     WorldCreatorUI.Instance.UpdateLoading((float)hexTiles.Count / (float)totalTiles, "Loading tile " + id + "/" + totalTiles.ToString());

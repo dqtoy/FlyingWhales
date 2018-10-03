@@ -33,6 +33,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private GameObject _hoverHighlightGO;
     [SerializeField] private GameObject _clickHighlightGO;
     [SerializeField] private GameObject _corruptionHighlightGO;
+    [SerializeField] private Sprite manaTileSprite;
 
     [Space(10)]
     [Header("Tile Borders")]
@@ -425,6 +426,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     #region Tile Utilities
+    public void SetData(HexTileData data) {
+        this.data = data;
+        UpdateManaVisual();
+    }
     public bool HasNeighbourThatIsLandmark() {
         return AllNeighbours.Where(x => x.hasLandmark).Any();
     }
@@ -1519,6 +1524,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void SetManaOnTile(int amount) {
         data.manaOnTile = amount;
         data.manaOnTile = Mathf.Max(data.manaOnTile, 0);
+        UpdateManaVisual();
     }
     public void SetManaOnTile(string amount) {
         int value = System.Int32.Parse(amount);
@@ -1527,6 +1533,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void AdjustManaOnTile(int amount) {
         data.manaOnTile += amount;
         data.manaOnTile = Mathf.Max(data.manaOnTile, 0);
+        UpdateManaVisual();
+    }
+    private void UpdateManaVisual() {
+        if (data.manaOnTile > 0) {
+            SetCenterSprite(manaTileSprite);
+        } else {
+            DeactivateCenterPiece();
+        }
     }
     #endregion
 }

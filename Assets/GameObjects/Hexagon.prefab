@@ -1359,7 +1359,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1562654379075156}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.52, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4000012103980794}
@@ -1495,6 +1495,7 @@ MonoBehaviour:
     temperature: 0
     biomeType: 0
     elevationType: 0
+    manaOnTile: 0
   spriteRenderer: {fileID: 212478927369850800}
   isRoad: 0
   isOccupied: 0
@@ -1507,6 +1508,7 @@ MonoBehaviour:
   _hoverHighlightGO: {fileID: 1000012997035730}
   _clickHighlightGO: {fileID: 1000012419481858}
   _corruptionHighlightGO: {fileID: 1000011520936892}
+  manaTileSprite: {fileID: 21300000, guid: 3a788b8ec8196be4db39f5f817bf9294, type: 3}
   topLeftBorder: {fileID: 212000012764572952}
   leftBorder: {fileID: 212000013628460690}
   botLeftBorder: {fileID: 212000012901328490}
@@ -3458,7 +3460,7 @@ SpriteRenderer:
   m_SortingLayerID: -2123166831
   m_SortingLayer: 3
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 31a0d6c8f751386419194511a8012b58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3a788b8ec8196be4db39f5f817bf9294, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
