@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using PathFind;
 using System.Linq;
 using ECS;
+using worldcreator;
 
 public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
@@ -1274,15 +1275,28 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #if WORLD_CREATION_TOOL
     public ContextMenuSettings GetContextMenuSettings() {
         ContextMenuSettings settings = new ContextMenuSettings();
+
+        if (WorldCreatorManager.Instance.selectionComponent.selection.Count > 0) {
+            ContextMenuItemSettings setMana = new ContextMenuItemSettings("Set Mana");
+            setMana.onClickAction = () => WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Set Mana", "Home much mana?", WorldCreatorManager.Instance.SetManaOnTiles, UnityEngine.UI.InputField.CharacterValidation.Integer);
+            settings.AddMenuItem(setMana);
+        } else {
+            ContextMenuItemSettings setMana = new ContextMenuItemSettings("Set Mana");
+            setMana.onClickAction = () => WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Set Mana", "Home much mana?", SetManaOnTile, UnityEngine.UI.InputField.CharacterValidation.Integer);
+            settings.AddMenuItem(setMana);
+        }
+
+
+
         if (this.areaOfTile != null) {
             ContextMenuItemSettings renameArea = new ContextMenuItemSettings("Rename Area");
-            renameArea.onClickAction = () => worldcreator.WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Rename Area", "Rename area to what?", this.areaOfTile.SetName, UnityEngine.UI.InputField.CharacterValidation.Name);
+            renameArea.onClickAction = () => WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Rename Area", "Rename area to what?", this.areaOfTile.SetName, UnityEngine.UI.InputField.CharacterValidation.Name);
             settings.AddMenuItem(renameArea);
         }
         if (this.landmarkOnTile != null) {
             //rename area
             ContextMenuItemSettings renameArea = new ContextMenuItemSettings("Rename Landmark");
-            renameArea.onClickAction = () => worldcreator.WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Rename Landmark", "Rename landmark to what?", this.landmarkOnTile.SetName, UnityEngine.UI.InputField.CharacterValidation.Name);
+            renameArea.onClickAction = () => WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Rename Landmark", "Rename landmark to what?", this.landmarkOnTile.SetName, UnityEngine.UI.InputField.CharacterValidation.Name);
             settings.AddMenuItem(renameArea);
             //end rename area
 
@@ -1501,6 +1515,18 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if(_redMagicAmount <= 0 && _blueMagicAmount <= 0 && _greenMagicAmount <= 0) {
             DeactivateMagicTransferToPlayer();
         }
+    }
+    public void SetManaOnTile(int amount) {
+        data.manaOnTile = amount;
+        data.manaOnTile = Mathf.Max(data.manaOnTile, 0);
+    }
+    public void SetManaOnTile(string amount) {
+        int value = System.Int32.Parse(amount);
+        SetManaOnTile(value);
+    }
+    public void AdjustManaOnTile(int amount) {
+        data.manaOnTile += amount;
+        data.manaOnTile = Mathf.Max(data.manaOnTile, 0);
     }
     #endregion
 }

@@ -751,6 +751,15 @@ namespace worldcreator {
             }
         }
         #endregion
+
+        #region Tile Data
+        public void SetManaOnTiles(string amount) {
+            int value = Int32.Parse(amount);
+            for (int i = 0; i < selectionComponent.selection.Count; i++) {
+                selectionComponent.selection[i].SetManaOnTile(value);
+            }
+        }
+        #endregion
     }
 
     public enum EDIT_MODE {

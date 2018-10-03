@@ -19,4 +19,7 @@ public class HexTileData {
     public float temperature;
     public BIOMES biomeType;
     public ELEVATION elevationType;
+
+    [Space(10)]
+    public int manaOnTile;
 }

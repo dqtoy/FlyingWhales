@@ -37,6 +37,7 @@ public class TileInfoUI : MonoBehaviour {
         string info = string.Empty;
         info = "<b>Basic Info</b>";
         info += "\nTile Name: [" + tile.id.ToString() + "] " + tile.ToString();
+        info += "\nMana: " + tile.data.manaOnTile.ToString();
         info += "\nBiome: " + tile.biomeType.ToString();
         info += "\nElevation Type: " + tile.elevationType.ToString();
         return info;
