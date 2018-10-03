@@ -6,6 +6,7 @@ public interface IInteractable {
     HiddenDesire hiddenDesire { get; }
     bool isBeingInspected { get; }
     bool hasBeenInspected { get; }
+    ILocation specificLocation { get; }
 
     void SetIsBeingInspected(bool state);
     void SetHasBeenInspected(bool state);

@@ -122,4 +122,9 @@ public class MonsterActionData {
         _isDone = false;
         _isNotFirstEncounter = false;
     }
+    public void DetachActionData() {
+        _party.onDailyAction -= PerformCurrentAction;
+        Reset();
+        _party = null;
+    }
 }

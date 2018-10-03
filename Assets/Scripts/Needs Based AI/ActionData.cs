@@ -190,7 +190,7 @@ public class ActionData {
     }
 
     public void PerformCurrentAction() {
-        if (!isWaiting && _party.icon.hasArrived) {
+        if (!isWaiting && !_party.icon.isTravelling) {
             if (!isDone && currentAction != null){
                 if (_isHalted || _cannotPerformAction) {
                     return;

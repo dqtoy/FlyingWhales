@@ -77,6 +77,9 @@ public class MonsterParty : NewParty {
         base.RemoveListeners();
         Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
     }
+    public override void DetachActionData() {
+        _actionData.DetachActionData();
+    }
     #endregion
 
     #region Utilities

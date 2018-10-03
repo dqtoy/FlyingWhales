@@ -22,7 +22,7 @@ public class BezierCurve : MonoBehaviour {
     //    DrawCubicCurve(startPoint.position, endPoint.position, numOfInterpolations);
     //}
 
-    public GameObject DrawCubicCurve(Vector3 startPoint, Vector3 endPoint) {
+    public GameObject DrawCubicCurve(Vector3 startPoint, Vector3 endPoint, int numOfTicks) {
         Vector3 dir = endPoint - startPoint;
 
         if (dir == Vector3.zero) {
@@ -50,7 +50,7 @@ public class BezierCurve : MonoBehaviour {
         //controlPoint2.position = p2c;
 
 
-        float timeDivisor = (float) numOfInterpolations;
+        float timeDivisor = (float) numOfInterpolations ;
         float t = 0;
         for (int i = 1; i <= numOfInterpolations; i++) {
             t = i / timeDivisor;

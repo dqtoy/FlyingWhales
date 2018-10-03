@@ -165,6 +165,7 @@ public class NewParty : IParty {
         //Messenger.RemoveListener<BuildStructureQuestData>(Signals.BUILD_STRUCTURE_LOOK_ACTION, BuildStructureLookingForAction);
     }
     public virtual void EndAction() { }
+    public virtual void DetachActionData() { }
     #endregion
 
     #region Interface

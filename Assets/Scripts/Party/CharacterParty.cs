@@ -170,6 +170,9 @@ public class CharacterParty : NewParty {
     public override void EndAction() {
         _actionData.EndAction();
     }
+    public override void DetachActionData() {
+        _actionData.DetachActionData();
+    }
     #endregion
 
     #region Outside Handlers

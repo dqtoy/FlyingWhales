@@ -104,14 +104,14 @@ public class FoolingAroundAction : CharacterAction {
     #region Utilities
     private IObject GetTargetObjectAsDefault(Character initiator) {
         Character partner = initiator.GetPartner();
-        if(partner != null && partner.ownParty.specificLocation == initiator.ownParty.specificLocation) {
+        if(partner != null && partner.ownParty.specificLocation == initiator.ownParty.specificLocation && !partner.ownParty.icon.isTravelling) {
             return partner.ownParty.icharacterObject;
         }
         return null;
     }
     private IObject GetTargetObjectAsLiberated(Character initiator) {
         Character partner = initiator.GetPartner();
-        if(partner != null && partner.ownParty.specificLocation == initiator.ownParty.specificLocation) {
+        if(partner != null && partner.ownParty.specificLocation == initiator.ownParty.specificLocation && !partner.ownParty.icon.isTravelling) {
             return partner.ownParty.icharacterObject;
         }
 
@@ -129,6 +129,9 @@ public class FoolingAroundAction : CharacterAction {
             WeightedDictionary<Character> characterCandidates = new WeightedDictionary<Character>();
             for (int i = 0; i < initiator.ownParty.specificLocation.charactersAtLocation.Count; i++) {
                 NewParty candidate = initiator.ownParty.specificLocation.charactersAtLocation[i];
+                if (candidate.icon.isTravelling) {
+                    continue;
+                }
                 if (candidate.mainCharacter is Character) {
                     Character characterCandidate = candidate.mainCharacter as Character;
                     if (characterCandidate == partner) {
@@ -159,7 +162,10 @@ public class FoolingAroundAction : CharacterAction {
         List<Character> potentialCandidates = new List<Character>();
         for (int i = 0; i < initiator.ownParty.specificLocation.charactersAtLocation.Count; i++) {
             NewParty candidate = initiator.ownParty.specificLocation.charactersAtLocation[i];
-            if(candidate.mainCharacter is Character) {
+            if (candidate.icon.isTravelling) {
+                continue;
+            }
+            if (candidate.mainCharacter is Character) {
                 Character characterCandidate = candidate.mainCharacter as Character;
                 Character candidatePartner = characterCandidate.GetPartner();
                 if(candidatePartner == null && characterCandidate.GetAttribute(ATTRIBUTE.LIBERATED) != null) {

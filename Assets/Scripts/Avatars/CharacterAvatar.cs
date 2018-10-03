@@ -113,7 +113,9 @@ public class CharacterAvatar : MonoBehaviour{
         //Faction faction = _party.faction;
         //_currPathfindingRequest = PathGenerator.Instance.CreatePath(this, _party.specificLocation.tileLocation, targetLocation.tileLocation, pathFindingMode, faction);
         //     }
+        Reset();
         if (targetLocation != null) {
+            onPathFinished = actionOnPathFinished;
             StartTravelling();
         }
     }
@@ -121,12 +123,13 @@ public class CharacterAvatar : MonoBehaviour{
         _isTravelling = true;
         float distance = Vector3.Distance(_party.specificLocation.tileLocation.transform.position, targetLocation.tileLocation.transform.position);
         int numOfTicks = (Mathf.CeilToInt(distance / 2.315188f)) * 6;
-        _curveGO = targetLocation.tileLocation.ATileIsTryingToConnect(_party.specificLocation.tileLocation);
+        _curveGO = targetLocation.tileLocation.ATileIsTryingToConnect(_party.specificLocation.tileLocation, numOfTicks);
         GameDate arriveDate = GameManager.Instance.Today();
         arriveDate.AddHours(numOfTicks);
         SchedulingManager.Instance.AddEntry(arriveDate, () => ArriveAtLocation());
     }
     private void ArriveAtLocation() {
+        _isTravelling = false;
         GameObject.Destroy(_curveGO);
         _curveGO = null;
         SetHasArrivedState(true);

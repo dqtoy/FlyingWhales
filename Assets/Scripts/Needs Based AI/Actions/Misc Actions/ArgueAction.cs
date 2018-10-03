@@ -72,7 +72,7 @@ public class ArgueAction : CharacterAction {
                 NewParty targetParty = mainCharacter.specificLocation.charactersAtLocation[i];
                 if (targetParty != sourceParty && targetParty is CharacterParty) {
                     Character targetMainCharacter = targetParty.mainCharacter as Character;
-                    if (targetMainCharacter.doNotDisturb) {
+                    if (targetMainCharacter.doNotDisturb || targetParty.icon.isTravelling) {
                         continue;
                     }
                     Relationship relationship = mainCharacter.GetRelationshipWith(targetMainCharacter);

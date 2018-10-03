@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using PathFind;
 using System.Linq;
 using ECS;
-using worldcreator;
 
 public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
@@ -35,7 +34,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private GameObject _hoverHighlightGO;
     [SerializeField] private GameObject _clickHighlightGO;
     [SerializeField] private GameObject _corruptionHighlightGO;
-    [SerializeField] private Sprite manaTileSprite;
 
     [Space(10)]
     [Header("Tile Borders")]
@@ -431,10 +429,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     #region Tile Utilities
-    public void SetData(HexTileData data) {
-        this.data = data;
-        UpdateManaVisual();
-    }
     public bool HasNeighbourThatIsLandmark() {
         return AllNeighbours.Where(x => x.hasLandmark).Any();
     }
@@ -1285,28 +1279,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #if WORLD_CREATION_TOOL
     public ContextMenuSettings GetContextMenuSettings() {
         ContextMenuSettings settings = new ContextMenuSettings();
-
-        if (WorldCreatorManager.Instance.selectionComponent.selection.Count > 0) {
-            ContextMenuItemSettings setMana = new ContextMenuItemSettings("Set Mana");
-            setMana.onClickAction = () => WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Set Mana", "Home much mana?", WorldCreatorManager.Instance.SetManaOnTiles, UnityEngine.UI.InputField.CharacterValidation.Integer);
-            settings.AddMenuItem(setMana);
-        } else {
-            ContextMenuItemSettings setMana = new ContextMenuItemSettings("Set Mana");
-            setMana.onClickAction = () => WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Set Mana", "Home much mana?", SetManaOnTile, UnityEngine.UI.InputField.CharacterValidation.Integer);
-            settings.AddMenuItem(setMana);
-        }
-
-
-
         if (this.areaOfTile != null) {
             ContextMenuItemSettings renameArea = new ContextMenuItemSettings("Rename Area");
-            renameArea.onClickAction = () => WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Rename Area", "Rename area to what?", this.areaOfTile.SetName, UnityEngine.UI.InputField.CharacterValidation.Name);
+            renameArea.onClickAction = () => worldcreator.WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Rename Area", "Rename area to what?", this.areaOfTile.SetName, UnityEngine.UI.InputField.CharacterValidation.Name);
             settings.AddMenuItem(renameArea);
         }
         if (this.landmarkOnTile != null) {
             //rename area
             ContextMenuItemSettings renameArea = new ContextMenuItemSettings("Rename Landmark");
-            renameArea.onClickAction = () => WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Rename Landmark", "Rename landmark to what?", this.landmarkOnTile.SetName, UnityEngine.UI.InputField.CharacterValidation.Name);
+            renameArea.onClickAction = () => worldcreator.WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Rename Landmark", "Rename landmark to what?", this.landmarkOnTile.SetName, UnityEngine.UI.InputField.CharacterValidation.Name);
             settings.AddMenuItem(renameArea);
             //end rename area
 
@@ -1526,53 +1507,31 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             DeactivateMagicTransferToPlayer();
         }
     }
-    public void SetManaOnTile(int amount) {
-        data.manaOnTile = amount;
-        data.manaOnTile = Mathf.Max(data.manaOnTile, 0);
-        UpdateManaVisual();
-    }
-    public void SetManaOnTile(string amount) {
-        int value = System.Int32.Parse(amount);
-        SetManaOnTile(value);
-    }
-    public void AdjustManaOnTile(int amount) {
-        data.manaOnTile += amount;
-        data.manaOnTile = Mathf.Max(data.manaOnTile, 0);
-        UpdateManaVisual();
-    }
-    private void UpdateManaVisual() {
-        if (data.manaOnTile > 0) {
-            SetCenterSprite(manaTileSprite);
-        } else {
-            DeactivateCenterPiece();
-        }
-    }
     #endregion
 
     #region Pathfinding
-    public GameObject AddConnectionInGoingTo(HexTile tile) {
+    public void AddConnectionInGoingTo(HexTile tile) {
         _tilesConnectedInGoingToMarker.Add(tile);
-        return BezierCurve.Instance.DrawCubicCurve(tile.transform.position, goingToMarker.position);
     }
     public void RemoveConnectionInGoingTo(HexTile tile) {
         _tilesConnectedInGoingToMarker.Remove(tile);
     }
-    public GameObject AddConnectionInComingFrom(HexTile tile) {
+    public void AddConnectionInComingFrom(HexTile tile) {
         _tilesConnectedInComingFromMarker.Add(tile);
-        return BezierCurve.Instance.DrawCubicCurve(tile.transform.position, comingFromMarker.position);
     }
     public void RemoveConnectionInComingFrom(HexTile tile) {
         _tilesConnectedInComingFromMarker.Remove(tile);
     }
-    public GameObject ATileIsTryingToConnect(HexTile tile) {
+    public GameObject ATileIsTryingToConnect(HexTile tile, int numOfTicks) {
         if (!_tilesConnectedInGoingToMarker.Contains(tile)) {
             if (!_tilesConnectedInComingFromMarker.Contains(tile)) {
-                return AddConnectionInGoingTo(tile);
+                AddConnectionInGoingTo(tile);
+                return BezierCurve.Instance.DrawCubicCurve(tile.transform.position, goingToMarker.position, numOfTicks);
             } else {
-                return BezierCurve.Instance.DrawCubicCurve(tile.transform.position, comingFromMarker.position);
+                return BezierCurve.Instance.DrawCubicCurve(tile.transform.position, comingFromMarker.position, numOfTicks);
             }
         } else {
-            return BezierCurve.Instance.DrawCubicCurve(tile.transform.position, goingToMarker.position);
+            return BezierCurve.Instance.DrawCubicCurve(tile.transform.position, goingToMarker.position, numOfTicks);
         }
     }
     #endregion
