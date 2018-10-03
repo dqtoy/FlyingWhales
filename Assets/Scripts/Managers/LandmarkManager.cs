@@ -508,6 +508,18 @@ public class LandmarkManager : MonoBehaviour {
         }
         return allLandmarksOfType;
     }
+    public BaseLandmark GetLandmarkOfType(LANDMARK_TYPE landmarkType) {
+        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+            Region currRegion = GridMap.Instance.allRegions[i];
+            for (int j = 0; j < currRegion.landmarks.Count; j++) {
+                BaseLandmark currLandmark = currRegion.landmarks[j];
+                if (currLandmark.specificLandmarkType == landmarkType) {
+                    return currLandmark;
+                }
+            }
+        }
+        return null;
+    }
     public List<BaseLandmark> GetAllLandmarks(List<Region> regions = null) {
         List<BaseLandmark> allLandmarks = new List<BaseLandmark>();
 #if WORLD_CREATION_TOOL

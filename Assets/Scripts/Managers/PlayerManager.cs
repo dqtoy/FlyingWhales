@@ -30,14 +30,21 @@ public class PlayerManager : MonoBehaviour {
     public void Initialize() {
 
     }
-
+    public void LoadStartingTile() {
+        BaseLandmark portal = LandmarkManager.Instance.GetLandmarkOfType(LANDMARK_TYPE.DEMONIC_PORTAL);
+        if (portal == null) {
+            //choose a starting tile
+            ChooseStartingTile();
+        } else {
+            OnLoadStartingTile(portal);
+        }
+    }
     public void ChooseStartingTile() {
         Messenger.Broadcast(Signals.SHOW_POPUP_MESSAGE, "Pick a starting tile", MESSAGE_BOX_MODE.MESSAGE_ONLY, false);
         isChoosingStartingTile = true;
         Messenger.AddListener<HexTile>(Signals.TILE_LEFT_CLICKED, OnChooseStartingTile);
         UIManager.Instance.SetTimeControlsState(false);
     }
-
     private void OnChooseStartingTile(HexTile tile) {
         if (tile.areaOfTile != null || tile.landmarkOnTile != null || !tile.isPassable) {
             Messenger.Broadcast(Signals.SHOW_POPUP_MESSAGE, "That is not a valid starting tile!", MESSAGE_BOX_MODE.MESSAGE_ONLY, false);
@@ -47,10 +54,6 @@ public class PlayerManager : MonoBehaviour {
         player.CreatePlayerFaction();
         player.CreatePlayerArea(tile);
         LandmarkManager.Instance.OwnArea(player.playerFaction, player.playerArea);
-        //playerCharacter = tile.landmarkOnTile.CreateNewCharacter(RACE.HUMANS, CHARACTER_ROLE.PLAYER, "Warrior");
-        //playerCharacter.party.actionData.SetCannotPerformAction(true);
-        //playerCharacter.party.RemoveListeners();
-        //playerCharacter.UnsubscribeSignals();
         Messenger.RemoveListener<HexTile>(Signals.TILE_LEFT_CLICKED, OnChooseStartingTile);
         Messenger.Broadcast(Signals.HIDE_POPUP_MESSAGE);
         GameManager.Instance.StartProgression();
@@ -58,6 +61,15 @@ public class PlayerManager : MonoBehaviour {
         UIManager.Instance.SetTimeControlsState(true);
         PlayerUI.Instance.UpdateUI();
         //LandmarkManager.Instance.CreateNewArea(tile, AREA_TYPE.DEMONIC_INTRUSION);
+    }
+    private void OnLoadStartingTile(BaseLandmark portal) {
+        player = new Player();
+        player.CreatePlayerFaction();
+        player.CreatePlayerArea(portal);
+        LandmarkManager.Instance.OwnArea(player.playerFaction, player.playerArea);
+        GameManager.Instance.StartProgression();
+        UIManager.Instance.SetTimeControlsState(true);
+        PlayerUI.Instance.UpdateUI();
     }
 
     public void PurchaseTile(HexTile tile) {

@@ -120,6 +120,13 @@ public class Player : ILeader{
         ActivateMagicTransferToPlayer();
         //OnTileAddedToPlayerArea(playerArea, chosenCoreTile);
     }
+    public void CreatePlayerArea(BaseLandmark portal) {
+        Area playerArea = LandmarkManager.Instance.CreateNewArea(portal.tileLocation, AREA_TYPE.DEMONIC_INTRUSION);
+        Biomes.Instance.CorruptTileVisuals(portal.tileLocation);
+        portal.tileLocation.SetCorruption(true);
+        SetPlayerArea(playerArea);
+        ActivateMagicTransferToPlayer();
+    }
     private void SetPlayerArea(Area area) {
         playerArea = area;
     }

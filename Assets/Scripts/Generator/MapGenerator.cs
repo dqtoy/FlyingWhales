@@ -188,7 +188,7 @@ public class MapGenerator : MonoBehaviour {
         Messenger.Broadcast(Signals.GAME_LOADED);
 
         yield return new WaitForSeconds(1f);
-        PlayerManager.Instance.ChooseStartingTile();
+        PlayerManager.Instance.LoadStartingTile();
         //GameManager.Instance.StartProgression();
     }
 
