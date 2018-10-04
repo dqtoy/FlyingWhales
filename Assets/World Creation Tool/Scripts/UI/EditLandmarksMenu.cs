@@ -25,15 +25,16 @@ namespace worldcreator {
 
         #region Edit Landmarks Menu
         private void LoadLandmarksDropDown() {
-            LANDMARK_TYPE[] landmarkTypes = Utilities.GetEnumValues<LANDMARK_TYPE>();
-            List<string> options = new List<string>();
-            for (int i = 0; i < landmarkTypes.Length; i++) {
-                LANDMARK_TYPE currType = landmarkTypes[i];
-                //if (currType == LANDMARK_TYPE.GARRISON || currType == LANDMARK_TYPE.HUMAN_HOUSES || currType == LANDMARK_TYPE.ELVEN_HOUSES) {
-                    options.Add(currType.ToString());
-                //}
-            }
-            landmarksDropDown.AddOptions(options);
+            //LANDMARK_TYPE[] landmarkTypes = Utilities.GetEnumValues<LANDMARK_TYPE>();
+            //List<string> options = new List<string>();
+            //for (int i = 0; i < landmarkTypes.Length; i++) {
+            //    LANDMARK_TYPE currType = landmarkTypes[i];
+            //    //if (currType == LANDMARK_TYPE.GARRISON || currType == LANDMARK_TYPE.HUMAN_HOUSES || currType == LANDMARK_TYPE.ELVEN_HOUSES) {
+            //        options.Add(currType.ToString());
+            //    //}
+            //}
+            landmarksDropDown.ClearOptions();
+            landmarksDropDown.AddOptions(Utilities.GetEnumChoices<LANDMARK_TYPE>());
         }
         
         public void OnClickSpawnLandmark() {

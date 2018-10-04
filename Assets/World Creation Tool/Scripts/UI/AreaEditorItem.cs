@@ -60,7 +60,7 @@ namespace worldcreator {
         #region Dropdown Data
         private void LoadAreaTypeChoices() {
             areaTypeDropdown.ClearOptions();
-            areaTypeDropdown.AddOptions(Utilities.GetEnumChoices<AREA_TYPE>());
+            areaTypeDropdown.AddOptions(Utilities.GetEnumChoices<AREA_TYPE>(false, new List<AREA_TYPE>() { AREA_TYPE.DEMONIC_INTRUSION }));
         }
         #endregion
 

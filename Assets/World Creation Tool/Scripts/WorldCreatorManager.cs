@@ -648,6 +648,16 @@ namespace worldcreator {
             if (outerGridList.Contains(tile)) {
                 return null;
             }
+            LandmarkData data = LandmarkManager.Instance.GetLandmarkData(landmarkType);
+            if (data.isUnique) { //check if the landmark must be unique
+                //if it is, check if there is already an existing landmark of that type
+                BaseLandmark uniqueLandmark = LandmarkManager.Instance.GetLandmarkOfType(landmarkType);
+                if (uniqueLandmark != null) {
+                    //if there is, notify the user, then do not spawn landmark
+                    WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Unique landmark", "There is already a " + landmarkType.ToString() + ", destroy that first.");
+                    return null;
+                }
+            }
             return LandmarkManager.Instance.CreateNewLandmarkOnTile(tile, landmarkType);
         }
         public void DestroyLandmarks(List<HexTile> tiles) {
