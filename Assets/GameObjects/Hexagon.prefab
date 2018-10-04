@@ -1559,8 +1559,8 @@ MonoBehaviour:
   isOccupied: 0
   _isPassable: 0
   unpassableGO: {fileID: 1000010578250918}
-  goingToMarker: {fileID: 4159133552976314}
-  comingFromMarker: {fileID: 4507938788093382}
+  goingToMarker: {fileID: 0}
+  comingFromMarker: {fileID: 0}
   _centerPiece: {fileID: 1562654379075156}
   _highlightGO: {fileID: 1259442886197530}
   UIParent: {fileID: 4000012500446420}

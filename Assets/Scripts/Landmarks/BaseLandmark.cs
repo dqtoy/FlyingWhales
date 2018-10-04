@@ -159,6 +159,9 @@ public class BaseLandmark : ILocation, IInteractable {
     public HiddenDesire hiddenDesire {
         get { return null; }
     }
+    public ILocation specificLocation {
+        get { return this; }
+    }
     #endregion
 
     public BaseLandmark() {
