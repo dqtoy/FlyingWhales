@@ -348,6 +348,7 @@ public enum LANDMARK_TYPE {
     ANCIENT_TEMPLE = 30,
     CAVE = 31,
     ICE_PIT = 32,
+    MANA_EXTRACTOR = 33,
 }
 public enum TECHNOLOGY {
     //Weapon Production

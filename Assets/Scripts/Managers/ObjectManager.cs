@@ -437,6 +437,9 @@ public class ObjectManager : MonoBehaviour {
             case LANDMARK_TYPE.ICE_PIT:
                 structureObj = new IcePit();
                 break;
+            case LANDMARK_TYPE.MANA_EXTRACTOR:
+                structureObj = new ManaExtractor();
+                break;
             default:
                 throw new System.Exception("No class for " + component.specificObjectType.ToString() + " has been created yet!");
         }

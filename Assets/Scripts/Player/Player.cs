@@ -274,6 +274,10 @@ public class Player : ILeader{
         _greenMagic += amount;
         _greenMagic = Mathf.Clamp(_greenMagic, 0, 100);
     }
+    public void AdjustMana(int amount) {
+        mana += amount;
+        mana = Mathf.Max(mana, 0); //maybe 999?
+    }
     #endregion
 
     #region Threat

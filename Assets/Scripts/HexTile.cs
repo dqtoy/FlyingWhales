@@ -1429,6 +1429,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             for (int i = 0; i < data.allowedLandmarkTypes.Count; i++) {
                 LANDMARK_TYPE landmarkType = data.allowedLandmarkTypes[i];
                 if (landmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
+                    if (landmarkType == LANDMARK_TYPE.MANA_EXTRACTOR) {
+                        if (this.data.manaOnTile <= 0) { //if this tile has no mana on it, do not allow mana extractor
+                            continue; //skip
+                        }
+                    }
                     ContextMenuItemSettings createLandmark = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString()));
                     createLandmark.onClickAction = () => PlayerManager.Instance.CreatePlayerLandmarkOnTile(this, landmarkType);
                     createLandmarkSettings.AddMenuItem(createLandmark);
