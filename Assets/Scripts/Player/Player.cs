@@ -10,6 +10,7 @@ public class Player : ILeader{
     public Area playerArea { get; private set; }
     public int snatchCredits { get; private set; }
     public int mana { get; private set; }
+    public int supplies { get; private set; }
 
     private int _threatLevel;
     private int _redMagic;
@@ -471,6 +472,13 @@ public class Player : ILeader{
     #region Character
     public void SetMarkedCharacter(Character character) {
         _markedCharacter = character;
+    }
+    #endregion
+
+    #region Supplies
+    public void AdjustSupplies(int amount) {
+        supplies += amount;
+        supplies = Mathf.Max(supplies, 0);
     }
     #endregion
 }

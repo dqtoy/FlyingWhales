@@ -54290,8 +54290,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1538653384}
   - component: {fileID: 1538653385}
-  - component: {fileID: 1538653388}
   - component: {fileID: 1538653387}
+  - component: {fileID: 1538653388}
   - component: {fileID: 1538653386}
   m_Layer: 5
   m_Name: New UI

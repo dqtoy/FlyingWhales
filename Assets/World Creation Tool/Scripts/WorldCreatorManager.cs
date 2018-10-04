@@ -622,6 +622,9 @@ namespace worldcreator {
                 }
             }
             tile.SetElevation(elevation);
+            if (elevation != ELEVATION.PLAIN) {
+                tile.SetManaOnTile(0);
+            }
             if (updateVisuals) {
                 Biomes.Instance.UpdateTileVisuals(tile);
                 Biomes.Instance.LoadPassableStates(tile);
@@ -756,7 +759,10 @@ namespace worldcreator {
         public void SetManaOnTiles(string amount) {
             int value = Int32.Parse(amount);
             for (int i = 0; i < selectionComponent.selection.Count; i++) {
-                selectionComponent.selection[i].SetManaOnTile(value);
+                HexTile currTile = selectionComponent.selection[i];
+                if (currTile.elevationType == ELEVATION.PLAIN) {
+                    currTile.SetManaOnTile(value);
+                }
             }
         }
         #endregion
