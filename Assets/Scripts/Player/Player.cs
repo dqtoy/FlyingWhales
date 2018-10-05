@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using ECS;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Player : ILeader{
 
@@ -11,6 +10,7 @@ public class Player : ILeader{
     public Area playerArea { get; private set; }
     public int snatchCredits { get; private set; }
     public int mana { get; private set; }
+    public int supplies { get; private set; }
 
     private int _threatLevel;
     private int _redMagic;
@@ -22,13 +22,11 @@ public class Player : ILeader{
     private IInteractable _currentTargetInteractable;
     private PlayerAbility _currentActiveAbility;
     private Character _markedCharacter;
-    private BaseLandmark _demonicPortal;
     private List<CharacterAction> _actions;
     private List<Character> _snatchedCharacters;
     private List<Intel> _intels;
     private List<Item> _items;
     private List<PlayerAbility> _allAbilities;
-    private List<Minion> _minions;
 
     //#region getters/setters
     //public Area playerArea {
@@ -66,9 +64,6 @@ public class Player : ILeader{
     }
     public Character markedCharacter {
         get { return _markedCharacter; }
-    }
-    public BaseLandmark demonicPortal {
-        get { return _demonicPortal; }
     }
     public IInteractable currentTargetInteractable {
         get { return _currentTargetInteractable; }
@@ -120,7 +115,7 @@ public class Player : ILeader{
     #region Area
     public void CreatePlayerArea(HexTile chosenCoreTile) {
         Area playerArea = LandmarkManager.Instance.CreateNewArea(chosenCoreTile, AREA_TYPE.DEMONIC_INTRUSION);
-        _demonicPortal = LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenCoreTile, LANDMARK_TYPE.DEMONIC_PORTAL);
+        BaseLandmark demonicPortal = LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenCoreTile, LANDMARK_TYPE.DEMONIC_PORTAL);
         Biomes.Instance.CorruptTileVisuals(chosenCoreTile);
         chosenCoreTile.SetCorruption(true);
         SetPlayerArea(playerArea);
@@ -128,7 +123,6 @@ public class Player : ILeader{
         //OnTileAddedToPlayerArea(playerArea, chosenCoreTile);
     }
     public void CreatePlayerArea(BaseLandmark portal) {
-        _demonicPortal = portal;
         Area playerArea = LandmarkManager.Instance.CreateNewArea(portal.tileLocation, AREA_TYPE.DEMONIC_INTRUSION);
         Biomes.Instance.CorruptTileVisuals(portal.tileLocation);
         portal.tileLocation.SetCorruption(true);
@@ -280,6 +274,10 @@ public class Player : ILeader{
     public void AdjustGreenMagic(int amount) {
         _greenMagic += amount;
         _greenMagic = Mathf.Clamp(_greenMagic, 0, 100);
+    }
+    public void AdjustMana(int amount) {
+        mana += amount;
+        mana = Mathf.Max(mana, 0); //maybe 999?
     }
     #endregion
 
@@ -477,22 +475,10 @@ public class Player : ILeader{
     }
     #endregion
 
-    #region Minions
-    public void CreateInitialMinions() {
-        _minions = new List<Minion>();
-        _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Inspect")));
-        _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Inspect")));
-        _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Reveal Secret")));
-        _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Spook")));
-        _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Assist")));
-        _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Mark")));
-        _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Awaken")));
-        _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Awaken Desire")));
-
-        for (int i = 0; i < _minions.Count; i++) {
-            GameObject go = GameObject.Instantiate(PlayerUI.Instance.minionPrefab, PlayerUI.Instance.minionsContentTransform);
-            go.GetComponent<MinionItem>().SetMinion(_minions[i]);
-        }
+    #region Supplies
+    public void AdjustSupplies(int amount) {
+        supplies += amount;
+        supplies = Mathf.Max(supplies, 0);
     }
     #endregion
 }

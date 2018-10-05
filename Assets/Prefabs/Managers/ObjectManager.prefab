@@ -78,6 +78,13 @@ MonoBehaviour:
   - {fileID: 114012481577862306, guid: f2c313c123b97aa48bb4e1cf691c0fc8, type: 2}
   - {fileID: 114012481577862306, guid: e60827c2c80864f42a1e10545f2da149, type: 2}
   - {fileID: 114012481577862306, guid: d7999f1c9db6eb44187e6dbdde5bd3cf, type: 2}
+  - {fileID: 114012481577862306, guid: 9c66773d0ced9ae4188f2ba9d4b805c2, type: 2}
+  - {fileID: 114012481577862306, guid: 170e364dc3e42ee419d3885adffd6287, type: 2}
+  - {fileID: 114012481577862306, guid: 079961d95187fe443868afcccf2a6b2f, type: 2}
+  - {fileID: 114012481577862306, guid: 29be40330b36250408069974cd69fa24, type: 2}
+  - {fileID: 114012481577862306, guid: 50fdec87dcd91d94abaf68e39755849a, type: 2}
+  - {fileID: 114012481577862306, guid: b133f87c24e543443a3a529feaa963bc, type: 2}
+  - {fileID: 114012481577862306, guid: 8da78af1c7b74d3488cfa884f951d502, type: 2}
   characterObjectComponents:
   - {fileID: 114023154591909926, guid: 8666de66ca65add4b8afeb5fc44cc68d, type: 2}
   - {fileID: 114023154591909926, guid: b6818289fed035c468a353046295094f, type: 2}

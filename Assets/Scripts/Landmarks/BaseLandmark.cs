@@ -46,6 +46,7 @@ public class BaseLandmark : ILocation, IInteractable {
     public bool hasAdjacentCorruptedLandmark;
     public QuestBoard questBoard { get; private set; }
     public List<GameEvent> advertisedEvents { get; private set; } //events happening at this landmark, that other characters can partake in
+    public int suppliesAtLandmark { get; private set; }
 
     #region getters/setters
     public int id {
@@ -1030,6 +1031,17 @@ public class BaseLandmark : ILocation, IInteractable {
             }
         }
         return false;
+    }
+    #endregion
+
+    #region Supplies
+    public void SetSupplies(int amount) {
+        suppliesAtLandmark = amount;
+        suppliesAtLandmark = Mathf.Max(suppliesAtLandmark, 0);
+    }
+    public void AdjustSupplies(int amount) {
+        suppliesAtLandmark += amount;
+        suppliesAtLandmark = Mathf.Max(suppliesAtLandmark, 0);
     }
     #endregion
 }

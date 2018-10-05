@@ -181,9 +181,30 @@ public class ActionThread : Multithread {
     private List<ActionThreadItem> GetActionsByCategory(SCHEDULE_ACTION_CATEGORY category) {
         List<ActionThreadItem> actions = new List<ActionThreadItem>();
         Character character = _party.characterOwner;
+
         switch (category) {
             case SCHEDULE_ACTION_CATEGORY.REST:
-                actions.Add(new ActionThreadItem(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.REST), character.homeLandmark.landmarkObj));
+                for (int i = 0; i < _party.owner.homeLandmark.tileLocation.areaOfTile.landmarks.Count; i++) { //get advertisements from home area only.
+                    BaseLandmark landmark = _party.owner.homeLandmark.tileLocation.areaOfTile.landmarks[i];
+                    //for (int j = 0; j < landmark.advertisedEvents.Count; j++) {
+                    //    GameEvent advertisedEvent = landmark.advertisedEvents[j];
+                    //    if (advertisedEvent.MeetsRequirements(_party.characterOwner)) {
+                    //        EventAction action = advertisedEvent.GetNextEventAction(_party.characterOwner);
+                    //        float happinessIncrease = _party.TotalHappinessIncrease(action.action, action.targetObject);
+                    //        PutToChoices(action.action, action.targetObject, happinessIncrease);
+                    //    }
+                    //}
+                    StructureObj iobject = landmark.landmarkObj;
+                    if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
+                        for (int j = 0; j < iobject.currentState.actions.Count; j++) {
+                            CharacterAction action = iobject.currentState.actions[j];
+                            if (action.GetSchedActionCategory() == category && action.MeetsRequirements(_party, landmark)
+                                && action.CanBeDone(iobject) && action.CanBeDoneBy(_party, iobject)) { //Filter
+                                actions.Add(new ActionThreadItem(action, iobject));
+                            }
+                        }
+                    }
+                }
                 break;
             case SCHEDULE_ACTION_CATEGORY.WORK:
                 if (character.workplace == null || character.workplace.landmarkObj.isRuined) { //check first if the character has a workplace, or if their workplace is ruined

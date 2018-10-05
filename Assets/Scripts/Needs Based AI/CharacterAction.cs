@@ -141,6 +141,9 @@ public class CharacterAction {
     public virtual IObject GetTargetObject(CharacterParty sourceParty) {
         return sourceParty.characterObject;
     }
+    public virtual SCHEDULE_ACTION_CATEGORY GetSchedActionCategory() {
+        return SCHEDULE_ACTION_CATEGORY.NONE;
+    }
     #endregion
 
     #region Filters

@@ -348,6 +348,13 @@ public enum LANDMARK_TYPE {
     ANCIENT_TEMPLE = 30,
     CAVE = 31,
     ICE_PIT = 32,
+    MANA_EXTRACTOR = 33,
+    BARRACKS = 34,
+    MINIONS_HOLD = 35,
+    DENS = 36,
+    RAMPART = 37,
+    NODE = 38,
+    SUMMONING_CIRCLE = 39,
 }
 public enum TECHNOLOGY {
     //Weapon Production

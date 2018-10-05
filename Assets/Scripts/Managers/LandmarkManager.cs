@@ -497,8 +497,13 @@ public class LandmarkManager : MonoBehaviour {
     }
     public List<BaseLandmark> GetLandmarksOfType(LANDMARK_TYPE landmarkType) {
         List<BaseLandmark> allLandmarksOfType = new List<BaseLandmark>();
-        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-            Region currRegion = GridMap.Instance.allRegions[i];
+#if WORLD_CREATION_TOOL
+        List<Region> allRegions = new List<Region>(worldcreator.WorldCreatorManager.Instance.allRegions);
+#else
+        List<Region> allRegions = new List<Region>(GridMap.Instance.allRegions);
+#endif
+        for (int i = 0; i < allRegions.Count; i++) {
+            Region currRegion = allRegions[i];
             for (int j = 0; j < currRegion.landmarks.Count; j++) {
                 BaseLandmark currLandmark = currRegion.landmarks[j];
                 if (currLandmark.specificLandmarkType == landmarkType) {
@@ -509,8 +514,13 @@ public class LandmarkManager : MonoBehaviour {
         return allLandmarksOfType;
     }
     public BaseLandmark GetLandmarkOfType(LANDMARK_TYPE landmarkType) {
-        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-            Region currRegion = GridMap.Instance.allRegions[i];
+#if WORLD_CREATION_TOOL
+        List<Region> allRegions = new List<Region>(worldcreator.WorldCreatorManager.Instance.allRegions);
+#else
+        List<Region> allRegions = new List<Region>(GridMap.Instance.allRegions);
+#endif
+        for (int i = 0; i < allRegions.Count; i++) {
+            Region currRegion = allRegions[i];
             for (int j = 0; j < currRegion.landmarks.Count; j++) {
                 BaseLandmark currLandmark = currRegion.landmarks[j];
                 if (currLandmark.specificLandmarkType == landmarkType) {

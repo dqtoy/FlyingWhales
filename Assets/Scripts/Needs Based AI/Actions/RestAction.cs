@@ -62,5 +62,8 @@ public class RestAction : CharacterAction {
         restAction.Initialize();
         return restAction;
     }
+    public override SCHEDULE_ACTION_CATEGORY GetSchedActionCategory() {
+        return SCHEDULE_ACTION_CATEGORY.REST;
+    }
     #endregion
 }

@@ -10,7 +10,6 @@ public class LandmarkData {
     public int minimumTileCount = 1; //how many tiles does this landmark need
     public HEXTILE_DIRECTION connectedTileDirection;
     public List<LANDMARK_TAG> uniqueTags;
-    public LandmarkItemData[] itemData;
     public Sprite landmarkObjectSprite;
     public Sprite landmarkTypeIcon;
     public BiomeLandmarkSpriteListDictionary biomeTileSprites;
@@ -18,35 +17,15 @@ public class LandmarkData {
     public List<LandmarkStructureSprite> humansLandmarkTileSprites;
     public List<LandmarkStructureSprite> elvenLandmarkTileSprites;
     public List<PASSABLE_TYPE> possibleSpawnPoints;
-    public MonsterPartyComponent startingMonsterSpawn;
-
+    public bool isUnique;
+    
     [Header("Monster Spawner")]
+    public MonsterPartyComponent startingMonsterSpawn;
     public bool isMonsterSpawner;
     public List<MonsterSet> monsterSets;
     public int monsterSpawnCooldown;
 
-    private WeightedDictionary<string> _itemWeights;
 
     #region getter/setters
-    public WeightedDictionary<string> itemWeights {
-        get {
-            if (_itemWeights == null) {
-                _itemWeights = GetItemWeights();
-            }
-            return _itemWeights;
-        }
-    }
     #endregion
-
-    private WeightedDictionary<string> GetItemWeights() {
-        WeightedDictionary<string> itemWeights = new WeightedDictionary<string>();
-        for (int i = 0; i < itemData.Length; i++) {
-            itemWeights.AddElement(itemData[i].itemName, itemData[i].exploreWeight);
-        }
-        return itemWeights;
-    }
-
-    public void RemoveItemFromWeights(string itemName) {
-        _itemWeights.RemoveElement(itemName);
-    }
 }

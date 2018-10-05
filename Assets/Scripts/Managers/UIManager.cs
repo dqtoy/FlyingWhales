@@ -430,6 +430,7 @@ public class UIManager : MonoBehaviour {
         detailedInfoLbl.text += "\nRed Magic: " + tile.redMagicAmount.ToString();
         detailedInfoLbl.text += "\nBlue Magic: " + tile.blueMagicAmount.ToString();
         detailedInfoLbl.text += "\nGreen Magic: " + tile.greenMagicAmount.ToString();
+        detailedInfoLbl.text += "\nMana: " + tile.data.manaOnTile.ToString();
         detailedInfoContentParent.gameObject.SetActive(false);
         if (tile.landmarkOnTile == null) {
             detailedInfoRect.sizeDelta = new Vector2(170f, 85f);

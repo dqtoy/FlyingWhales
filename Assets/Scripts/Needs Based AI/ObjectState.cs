@@ -47,14 +47,14 @@ public class ObjectState {
 
     #region Utilities
     public void OnStartState() {
-        Messenger.AddListener(Signals.HOUR_ENDED, EverydayEffect);
+        Messenger.AddListener(Signals.HOUR_ENDED, EveryTickEffect);
         _object.StartState(this);
     }
     public void OnEndState() {
-        Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayEffect);
+        Messenger.RemoveListener(Signals.HOUR_ENDED, EveryTickEffect);
         _object.EndState(this);
     }
-    public void EverydayEffect() {
+    public void EveryTickEffect() {
         if (_everydayAction != null) {
             _everydayAction.Invoke(_object);
         }

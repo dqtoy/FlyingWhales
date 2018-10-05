@@ -55,5 +55,8 @@ public class HarvestAction : CharacterAction {
         harvestAction.Initialize();
         return harvestAction;
     }
+    public override SCHEDULE_ACTION_CATEGORY GetSchedActionCategory() {
+        return SCHEDULE_ACTION_CATEGORY.WORK;
+    }
     #endregion
 }

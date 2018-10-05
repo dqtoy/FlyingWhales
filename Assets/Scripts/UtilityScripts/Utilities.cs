@@ -642,15 +642,18 @@ public class Utilities : MonoBehaviour {
         a[0] = char.ToUpper(a[0]);
         return new string(a);
     }
-    public static List<string> GetEnumChoices<T>(bool includeNone = false) {
+    public static List<string> GetEnumChoices<T>(bool includeNone = false, List<T> exclude = null) {
         List<string> options = new List<string>();
         T[] values = (T[]) Enum.GetValues(typeof(T));
         for (int i = 0; i < values.Length; i++) {
             T currOption = values[i];
-            if (!includeNone) {
+            if (!includeNone) { //do not include none
                 if (currOption.ToString().Equals("NONE")) {
                     continue;
                 }
+            }
+            if (exclude != null && exclude.Contains(currOption)) {
+                continue; //skip excluded items
             }
             options.Add(values[i].ToString());
         }

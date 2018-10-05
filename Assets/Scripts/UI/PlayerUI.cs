@@ -8,9 +8,7 @@ using TMPro;
 public class PlayerUI : MonoBehaviour {
     public static PlayerUI Instance;
 
-    public Text blueMagicText;
-    public Text redMagicText;
-    public Text greenMagicText;
+    public Text manaText;
     public Text lifestoneText;
 
     public Image threatFiller;
@@ -24,9 +22,9 @@ public class PlayerUI : MonoBehaviour {
     }
 
     public void UpdateUI() {
-        blueMagicText.text = "" + PlayerManager.Instance.player.blueMagic;
-        redMagicText.text = "" + PlayerManager.Instance.player.redMagic;
-        greenMagicText.text = "" + PlayerManager.Instance.player.greenMagic;
+        manaText.text = "" + PlayerManager.Instance.player.mana;
+        //redMagicText.text = "" + PlayerManager.Instance.player.redMagic;
+        //greenMagicText.text = "" + PlayerManager.Instance.player.greenMagic;
         lifestoneText.text = "" + PlayerManager.Instance.player.lifestones;
         threatFiller.fillAmount = (float) PlayerManager.Instance.player.threatLevel / 100f;
     }

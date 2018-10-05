@@ -27,5 +27,8 @@ public class MiningAction : CharacterAction {
         action.Initialize();
         return action;
     }
+    public override SCHEDULE_ACTION_CATEGORY GetSchedActionCategory() {
+        return SCHEDULE_ACTION_CATEGORY.WORK;
+    }
     #endregion
 }

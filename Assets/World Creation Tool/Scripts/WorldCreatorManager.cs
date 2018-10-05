@@ -622,6 +622,9 @@ namespace worldcreator {
                 }
             }
             tile.SetElevation(elevation);
+            if (elevation != ELEVATION.PLAIN) {
+                tile.SetManaOnTile(0);
+            }
             if (updateVisuals) {
                 Biomes.Instance.UpdateTileVisuals(tile);
                 Biomes.Instance.LoadPassableStates(tile);
@@ -644,6 +647,16 @@ namespace worldcreator {
         public BaseLandmark SpawnLandmark(HexTile tile, LANDMARK_TYPE landmarkType) {
             if (outerGridList.Contains(tile)) {
                 return null;
+            }
+            LandmarkData data = LandmarkManager.Instance.GetLandmarkData(landmarkType);
+            if (data.isUnique) { //check if the landmark must be unique
+                //if it is, check if there is already an existing landmark of that type
+                BaseLandmark uniqueLandmark = LandmarkManager.Instance.GetLandmarkOfType(landmarkType);
+                if (uniqueLandmark != null) {
+                    //if there is, notify the user, then do not spawn landmark
+                    WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Unique landmark", "There is already a " + landmarkType.ToString() + ", destroy that first.");
+                    return null;
+                }
             }
             return LandmarkManager.Instance.CreateNewLandmarkOnTile(tile, landmarkType);
         }
@@ -756,7 +769,10 @@ namespace worldcreator {
         public void SetManaOnTiles(string amount) {
             int value = Int32.Parse(amount);
             for (int i = 0; i < selectionComponent.selection.Count; i++) {
-                selectionComponent.selection[i].SetManaOnTile(value);
+                HexTile currTile = selectionComponent.selection[i];
+                if (currTile.elevationType == ELEVATION.PLAIN) {
+                    currTile.SetManaOnTile(value);
+                }
             }
         }
         #endregion
