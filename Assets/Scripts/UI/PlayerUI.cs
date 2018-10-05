@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UI.Extensions;
 using TMPro;
 
 public class PlayerUI : MonoBehaviour {
@@ -13,6 +14,9 @@ public class PlayerUI : MonoBehaviour {
     public Text lifestoneText;
 
     public Image threatFiller;
+
+    public GameObject minionPrefab;
+    public Transform minionsContentTransform;
 
 
     void Awake() {
@@ -49,5 +53,15 @@ public class PlayerUI : MonoBehaviour {
         UIManager.Instance.ShowPlayerPicker();
     }
     #endregion
+
+    public void MinionDragged(ReorderableList.ReorderableListEventStruct reorderableListEventStruct) {
+        MinionItem minionItem = reorderableListEventStruct.SourceObject.GetComponent<MinionItem>();
+        minionItem.portrait.SetBorderState(true);
+    }
+    public void MinionCancel(ReorderableList.ReorderableListEventStruct reorderableListEventStruct) {
+        MinionItem minionItem = reorderableListEventStruct.SourceObject.GetComponent<MinionItem>();
+        minionItem.portrait.SetBorderState(false);
+        //minionItem.SetEnabledState(false);
+    }
 
 }

@@ -161,7 +161,7 @@ public class CharacterManager : MonoBehaviour {
     /*
      Create a new character, given a role, class and race.
          */
-    public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race, GENDER gender, Faction faction = null) {
+    public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race, GENDER gender, Faction faction = null, ILocation initialLocation = null) {
 		if(className == "None"){
             className = "Classless";
 		}
@@ -180,6 +180,12 @@ public class CharacterManager : MonoBehaviour {
             }
 #endif
         }
+#if !WORLD_CREATION_TOOL
+        party.CreateIcon();
+        if(initialLocation != null) {
+            party.icon.SetPosition(initialLocation.tileLocation.transform.position);
+        }
+#endif
 
         _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);

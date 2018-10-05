@@ -10,7 +10,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
     private ICharacter _character;
     private int _imgSize;
     private bool _ignoreSize;
-    private bool _ignoreHover;
+    private bool _ignoreHover = true;
     //private bool _isNormalSize;
     private PortraitSettings _portraitSettings;
     private Vector2 normalSize;
@@ -61,6 +61,9 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
     public ECS.Character thisCharacter {
         get { return _character as ECS.Character; }
     }
+    public PortraitSettings portraitSettings {
+        get { return _portraitSettings; }
+    }
     #endregion
 
     public void GeneratePortrait(ICharacter character, int imgSize, bool ignoreHover = true, CHARACTER_ROLE role = CHARACTER_ROLE.NONE) {
@@ -89,6 +92,23 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
         //        return;
         //    }
         //}
+        if(character == null) {
+            body.gameObject.SetActive(false);
+            head.gameObject.SetActive(false);
+            eyes.gameObject.SetActive(false);
+            eyebrows.gameObject.SetActive(false);
+            nose.gameObject.SetActive(false);
+            mouth.gameObject.SetActive(false);
+            hair.gameObject.SetActive(false);
+            hairBack.gameObject.SetActive(false);
+            facialHair.gameObject.SetActive(false);
+            hairOverlay.gameObject.SetActive(false);
+            hairBackOverlay.gameObject.SetActive(false);
+            facialHairOverlay.gameObject.SetActive(false);
+            wholeImage.sprite = null;
+            wholeImage.gameObject.SetActive(true);
+            playerLocator.gameObject.SetActive(false);
+        }
         _portraitSettings = character.portraitSettings;
         if (character is ECS.Character) {
             SetBody(character.portraitSettings.bodyIndex);
@@ -126,6 +146,23 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
     public void GeneratePortrait(PortraitSettings portraitSettings, int imgSize, bool ignoreHover = true) {
         _ignoreHover = ignoreHover;
         _portraitSettings = portraitSettings;
+        if (portraitSettings == null) {
+            body.gameObject.SetActive(false);
+            head.gameObject.SetActive(false);
+            eyes.gameObject.SetActive(false);
+            eyebrows.gameObject.SetActive(false);
+            nose.gameObject.SetActive(false);
+            mouth.gameObject.SetActive(false);
+            hair.gameObject.SetActive(false);
+            hairBack.gameObject.SetActive(false);
+            facialHair.gameObject.SetActive(false);
+            hairOverlay.gameObject.SetActive(false);
+            hairBackOverlay.gameObject.SetActive(false);
+            facialHairOverlay.gameObject.SetActive(false);
+            wholeImage.sprite = null;
+            wholeImage.gameObject.SetActive(true);
+            playerLocator.gameObject.SetActive(false);
+        }
         SetImageSize(imgSize);
         SetBody(portraitSettings.bodyIndex);
         SetHead(portraitSettings.headIndex);
@@ -392,6 +429,9 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
 
     public void SetBGState(bool state) {
         bg.enabled = state;
+    }
+    public void SetIgnoreHoverState(bool state) {
+        _ignoreHover = state;
     }
     #region Monobehaviours
     //void OnDisable() {

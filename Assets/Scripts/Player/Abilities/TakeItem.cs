@@ -14,13 +14,13 @@ public class TakeItem : PlayerAbility {
     }
 
     #region Overrides
-    public override void Activate(IInteractable interactable) {
+    public override void Activate(IInteractable interactable, Minion assignedMinion) {
         BaseLandmark landmark = interactable as BaseLandmark;
         PlayerManager.Instance.player.PickItemToTakeFromLandmark(landmark, this);
     }
     #endregion
 
     public void HasTakenItem(IInteractable interactable) {
-        base.Activate(interactable);
+        //base.Activate(interactable);
     }
 }

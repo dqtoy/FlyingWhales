@@ -14,13 +14,13 @@ public class GiveItem : PlayerAbility {
     }
 
     #region Overrides
-    public override void Activate(IInteractable interactable) {
+    public override void Activate(IInteractable interactable, Minion assignedMinion) {
         Character character = interactable as Character;
         PlayerManager.Instance.player.PickItemToGiveToCharacter(character, this);
     }
     #endregion
 
     public void HasGivenItem(IInteractable interactable) {
-        base.Activate(interactable);
+        //base.Activate(interactable);
     }
 }

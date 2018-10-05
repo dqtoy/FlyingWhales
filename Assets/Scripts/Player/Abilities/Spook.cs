@@ -14,10 +14,11 @@ public class Spook : PlayerAbility {
     }
 
     #region Overrides
-    public override void Activate(IInteractable interactable) {
+    public override void DoAbility(IInteractable interactable) {
+        base.DoAbility(interactable);
         Character character = interactable as Character;
         character.AddAttribute(ATTRIBUTE.SPOOKED);
-        base.Activate(interactable);
+        RecallMinion();
     }
     public override bool CanBeDone(IInteractable interactable) {
         if (base.CanBeDone(interactable)) {

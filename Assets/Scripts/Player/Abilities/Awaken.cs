@@ -15,24 +15,6 @@ public class Awaken : PlayerAbility {
     }
 
     #region Overrides
-    public override void Activate(IInteractable interactable) {
-        monster = interactable as Monster;
-        Log log = new Log(GameManager.Instance.Today(), "PlayerAbilities", _name, "awaken");
-        log.AddToFillers(monster, monster.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        monster.AddHistory(log);
-        if (monster.name == "Dragon") {
-            monster.SetSleeping(false);
-            if(PlayerManager.Instance.player.markedCharacter != null) {
-                TriggerDragonAttack();
-            } else {
-                Messenger.AddListener(Signals.CHARACTER_MARKED, ReceivedMarkedCharacterSignal);
-                ScheduleSleep(monster);
-                monster.currentParty.EndAction();
-                (monster.currentParty as MonsterParty).actionData.AssignAction(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.IDLE), monster.currentParty.icharacterObject);
-            }
-            base.Activate(monster);
-        }
-    }
     public override bool CanBeDone(IInteractable interactable) {
         if (base.CanBeDone(interactable)) {
             Monster monster = interactable as Monster;
@@ -41,6 +23,25 @@ public class Awaken : PlayerAbility {
             }
         }
         return false;
+    }
+    public override void DoAbility(IInteractable interactable) {
+        base.DoAbility(interactable);
+        monster = interactable as Monster;
+        Log log = new Log(GameManager.Instance.Today(), "PlayerAbilities", _name, "awaken");
+        log.AddToFillers(monster, monster.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        monster.AddHistory(log);
+        if (monster.name == "Dragon") {
+            monster.SetSleeping(false);
+            if (PlayerManager.Instance.player.markedCharacter != null) {
+                TriggerDragonAttack();
+            } else {
+                Messenger.AddListener(Signals.CHARACTER_MARKED, ReceivedMarkedCharacterSignal);
+                ScheduleSleep(monster);
+                monster.currentParty.EndAction();
+                (monster.currentParty as MonsterParty).actionData.AssignAction(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.IDLE), monster.currentParty.icharacterObject);
+            }
+        }
+        RecallMinion();
     }
     #endregion
 

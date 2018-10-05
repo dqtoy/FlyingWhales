@@ -14,16 +14,17 @@ public class RevealSecret : PlayerAbility {
     }
 
     #region Overrides
-    public override void Activate(IInteractable interactable) {
+    public override void DoAbility(IInteractable interactable) {
         //Character character = interactable as Character;
         //character.currentlySelectedSecret.RevealSecret();
         //base.Activate(interactable);
         Character character = interactable as Character;
         Activate(interactable, character.currentlySelectedSecret);
+        RecallMinion();
     }
     public void Activate(IInteractable interactable, Secret secret) {
         secret.RevealSecret();
-        base.Activate(interactable);
+        //base.Activate(interactable);
     }
     public override bool CanBeDone(IInteractable interactable) {
         //if (base.CanBeDone(interactable)) {

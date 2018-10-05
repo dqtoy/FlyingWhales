@@ -53,6 +53,7 @@ public class PlayerManager : MonoBehaviour {
         player = new Player();
         player.CreatePlayerFaction();
         player.CreatePlayerArea(tile);
+        player.CreateInitialMinions();
         LandmarkManager.Instance.OwnArea(player.playerFaction, player.playerArea);
         Messenger.RemoveListener<HexTile>(Signals.TILE_LEFT_CLICKED, OnChooseStartingTile);
         Messenger.Broadcast(Signals.HIDE_POPUP_MESSAGE);
@@ -66,6 +67,7 @@ public class PlayerManager : MonoBehaviour {
         player = new Player();
         player.CreatePlayerFaction();
         player.CreatePlayerArea(portal);
+        player.CreateInitialMinions();
         LandmarkManager.Instance.OwnArea(player.playerFaction, player.playerArea);
         GameManager.Instance.StartProgression();
         UIManager.Instance.SetTimeControlsState(true);

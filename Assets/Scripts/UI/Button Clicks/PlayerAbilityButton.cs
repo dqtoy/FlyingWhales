@@ -29,12 +29,26 @@ public class PlayerAbilityButton : MonoBehaviour {
         _canBeDone = state;
     }
     public void OnClickPlayerAbility() {
-        _playerAbility.Activate(PlayerAbilitiesUI.Instance.currentlySelectedInteractable);
+        //_playerAbility.Activate(PlayerAbilitiesUI.Instance.currentlySelectedInteractable);
+
+        if(buttonText.text == "RECALL") {
+            _playerAbility.RecallMinion();
+            //Go back home, once home, let the 
+        } else {
+            //Open minion assignment ui
+            MinionAssignmentUI.Instance.SetCurrentAbility(_playerAbility);
+            MinionAssignmentUI.Instance.OpenUI();
+        }
     }
 
     public void EnableDisable() {
         if (_playerAbility.isEnabled) {
-            button.interactable = _canBeDone;
+            if (_playerAbility.assignedMinionsAndTarget.ContainsValue(PlayerAbilitiesUI.Instance.currentlySelectedInteractable)) {
+                ChangeToRecallState();
+            } else {
+                ChangeToActivateState();
+                button.interactable = _canBeDone;
+            }
         } else {
             button.interactable = false;
         }
@@ -44,5 +58,11 @@ public class PlayerAbilityButton : MonoBehaviour {
             SetCanBeDone(_playerAbility.CanBeDone(interactable));
             EnableDisable();
         }
+    }
+    public void ChangeToRecallState() {
+        buttonText.text = "RECALL";
+    }
+    public void ChangeToActivateState() {
+        buttonText.text = _playerAbility.name;
     }
 }

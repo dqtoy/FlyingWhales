@@ -29,6 +29,7 @@ namespace UnityEngine.UI.Extensions
         public ReorderableListHandler OnElementGrabbed = new ReorderableListHandler();
         public ReorderableListHandler OnElementRemoved = new ReorderableListHandler();
         public ReorderableListHandler OnElementAdded = new ReorderableListHandler();
+        public ReorderableListHandler OnCancelDrag = new ReorderableListHandler();
 
         private RectTransform _content;
         private ReorderableListContent _listContent;

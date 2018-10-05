@@ -19,6 +19,8 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("Can this element be dropped in space?")]
         public bool isDroppableInSpace = false;
 
+        public bool isDraggable = true;
+
 
         private readonly List<RaycastResult> _raycastResults = new List<RaycastResult>();
         private ReorderableList _currentReorderableListRaycasted;
@@ -37,6 +39,9 @@ namespace UnityEngine.UI.Extensions
 
         public void OnBeginDrag(PointerEventData eventData)
         {
+            if (!isDraggable) {
+                return;
+            }
             isValid = true;
             if (_reorderableList == null)
                 return;
@@ -297,6 +302,16 @@ namespace UnityEngine.UI.Extensions
             //Delete fake element
             if (_fakeElement != null)
                 Destroy(_fakeElement.gameObject);
+
+            if (_reorderableList.OnCancelDrag != null) {
+                _reorderableList.OnCancelDrag.Invoke(new ReorderableList.ReorderableListEventStruct {
+                    DroppedObject = _draggingObject.gameObject,
+                    IsAClone = _reorderableList.CloneDraggedObject,
+                    SourceObject = _reorderableList.CloneDraggedObject ? gameObject : _draggingObject.gameObject,
+                    FromList = _reorderableList,
+                    FromIndex = _fromIndex,
+                });
+            }
         }
 
         private void RefreshSizes()

@@ -14,6 +14,7 @@ public class PlayerAbility {
     protected bool _isEnabled;
     protected ABILITY_TYPE _type;
     protected PlayerAbilityButton _playerAbilityButton;
+    protected Dictionary<Minion, IInteractable> _assignedMinionsAndTarget;
 
     #region getters/setters
     public string name {
@@ -28,19 +29,28 @@ public class PlayerAbility {
     public PlayerAbilityButton playerAbilityButton {
         get { return _playerAbilityButton; }
     }
+    public Dictionary<Minion, IInteractable> assignedMinionsAndTarget {
+        get { return _assignedMinionsAndTarget; }
+    }
     #endregion
 
     public PlayerAbility(ABILITY_TYPE type) {
         _type = type;
         _isEnabled = true;
+        _assignedMinionsAndTarget = new Dictionary<Minion, IInteractable>();
     }
 
     #region Virtuals
-    public virtual void Activate(IInteractable interactable) {
+    public virtual void Activate(IInteractable interactable, Minion assignedMinion) {
+        _assignedMinionsAndTarget.Add(assignedMinion, interactable);
+        assignedMinion.SetEnabledState(false);
+        assignedMinion.SendMinionToPerformAbility(interactable);
+
         PayPowerCost(interactable);
         ThreatGain();
-        GoOnCooldown();
-        _playerAbilityButton.SetCanBeDone(CanBeDone(interactable));
+        //GoOnCooldown();
+        //_playerAbilityButton.SetCanBeDone(CanBeDone(interactable));
+        _playerAbilityButton.UpdateThis(interactable);
         PlayerUI.Instance.UpdateUI();
     }
     public virtual bool CanBeDone(IInteractable interactable) {
@@ -61,6 +71,12 @@ public class PlayerAbility {
             }
         }
         return false;
+    }
+    public virtual void DoAbility(IInteractable interactable) {
+        
+    }
+    public virtual void CancelAbility(IInteractable interactable) {
+
     }
     #endregion
 
@@ -109,6 +125,20 @@ public class PlayerAbility {
             return "Red Magic: " + _powerCost;
         }
         return string.Empty;
+    }
+    public void RecallMinion() {
+        Minion currentMinion = null;
+        foreach (Minion minion in _assignedMinionsAndTarget.Keys) {
+            if(_assignedMinionsAndTarget[minion] == PlayerAbilitiesUI.Instance.currentlySelectedInteractable) {
+                currentMinion = minion;
+                break;
+            }
+        }
+        _assignedMinionsAndTarget.Remove(currentMinion);
+        _playerAbilityButton.EnableDisable();
+        CancelAbility(PlayerAbilitiesUI.Instance.currentlySelectedInteractable);
+
+        //Go home minion, when reached home, enable the minion again
     }
     #endregion
 

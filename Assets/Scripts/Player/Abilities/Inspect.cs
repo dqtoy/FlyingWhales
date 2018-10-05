@@ -14,13 +14,14 @@ public class Inspect : PlayerAbility {
     }
 
     #region Overrides
-    public override void Activate(IInteractable interactable) {
+    public override void DoAbility(IInteractable interactable) {
+        base.DoAbility(interactable);
         interactable.SetIsBeingInspected(true);
         if (!interactable.hasBeenInspected) {
             interactable.SetHasBeenInspected(true);
         }
         UpdateInfoUI(interactable);
-        ScheduleEndInspection(interactable);
+        //ScheduleEndInspection(interactable);
 
         if(interactable is BaseLandmark) {
             if (PlayerManager.Instance.totalLifestonesInWorld > 0) {
@@ -35,7 +36,6 @@ public class Inspect : PlayerAbility {
         for (int i = 0; i < PlayerManager.Instance.player.allAbilities.Count; i++) {
             PlayerManager.Instance.player.allAbilities[i].playerAbilityButton.UpdateThis(interactable);
         }
-        base.Activate(interactable);
     }
     public override bool CanBeDone(IInteractable interactable) {
         if (base.CanBeDone(interactable)) {
@@ -58,6 +58,10 @@ public class Inspect : PlayerAbility {
             return true;
         }
         return false;
+    }
+    public override void CancelAbility(IInteractable interactable) {
+        base.CancelAbility(interactable);
+        EndInspection(interactable);
     }
     #endregion
 

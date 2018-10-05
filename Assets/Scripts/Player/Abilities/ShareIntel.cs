@@ -14,14 +14,14 @@ public class ShareIntel : PlayerAbility {
     }
 
     #region Overrides
-    public override void Activate(IInteractable interactable) {
+    public override void Activate(IInteractable interactable, Minion assignedMinion) {
         Character character = interactable as Character;
         PlayerManager.Instance.player.PickIntelToGiveToCharacter(character, this);
     }
     #endregion
 
     public void HasGivenIntel(IInteractable interactable) {
-        base.Activate(interactable);
+        //base.Activate(interactable);
     }
 
 

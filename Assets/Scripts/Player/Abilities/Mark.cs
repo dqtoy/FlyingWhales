@@ -14,12 +14,13 @@ public class Mark : PlayerAbility {
     }
 
     #region Overrides
-    public override void Activate(IInteractable interactable) {
+    public override void DoAbility(IInteractable interactable) {
+        base.DoAbility(interactable);
         Item dragonEgg = PlayerManager.Instance.player.GetItem("Dragon Egg");
         Character character = interactable as Character;
         character.AddAttribute(ATTRIBUTE.MARKED);
         PlayerManager.Instance.player.RemoveItem(dragonEgg);
-        base.Activate(interactable);
+        RecallMinion();
     }
     public override bool CanBeDone(IInteractable interactable) {
         if (base.CanBeDone(interactable)) {

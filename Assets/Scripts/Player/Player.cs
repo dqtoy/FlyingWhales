@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ECS;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : ILeader{
 
@@ -21,11 +22,13 @@ public class Player : ILeader{
     private IInteractable _currentTargetInteractable;
     private PlayerAbility _currentActiveAbility;
     private Character _markedCharacter;
+    private BaseLandmark _demonicPortal;
     private List<CharacterAction> _actions;
     private List<Character> _snatchedCharacters;
     private List<Intel> _intels;
     private List<Item> _items;
     private List<PlayerAbility> _allAbilities;
+    private List<Minion> _minions;
 
     //#region getters/setters
     //public Area playerArea {
@@ -63,6 +66,9 @@ public class Player : ILeader{
     }
     public Character markedCharacter {
         get { return _markedCharacter; }
+    }
+    public BaseLandmark demonicPortal {
+        get { return _demonicPortal; }
     }
     public IInteractable currentTargetInteractable {
         get { return _currentTargetInteractable; }
@@ -114,7 +120,7 @@ public class Player : ILeader{
     #region Area
     public void CreatePlayerArea(HexTile chosenCoreTile) {
         Area playerArea = LandmarkManager.Instance.CreateNewArea(chosenCoreTile, AREA_TYPE.DEMONIC_INTRUSION);
-        BaseLandmark demonicPortal = LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenCoreTile, LANDMARK_TYPE.DEMONIC_PORTAL);
+        _demonicPortal = LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenCoreTile, LANDMARK_TYPE.DEMONIC_PORTAL);
         Biomes.Instance.CorruptTileVisuals(chosenCoreTile);
         chosenCoreTile.SetCorruption(true);
         SetPlayerArea(playerArea);
@@ -122,6 +128,7 @@ public class Player : ILeader{
         //OnTileAddedToPlayerArea(playerArea, chosenCoreTile);
     }
     public void CreatePlayerArea(BaseLandmark portal) {
+        _demonicPortal = portal;
         Area playerArea = LandmarkManager.Instance.CreateNewArea(portal.tileLocation, AREA_TYPE.DEMONIC_INTRUSION);
         Biomes.Instance.CorruptTileVisuals(portal.tileLocation);
         portal.tileLocation.SetCorruption(true);
@@ -467,6 +474,25 @@ public class Player : ILeader{
     #region Character
     public void SetMarkedCharacter(Character character) {
         _markedCharacter = character;
+    }
+    #endregion
+
+    #region Minions
+    public void CreateInitialMinions() {
+        _minions = new List<Minion>();
+        _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Inspect")));
+        _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Inspect")));
+        _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Reveal Secret")));
+        _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Spook")));
+        _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Assist")));
+        _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Mark")));
+        _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Awaken")));
+        _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Awaken Desire")));
+
+        for (int i = 0; i < _minions.Count; i++) {
+            GameObject go = GameObject.Instantiate(PlayerUI.Instance.minionPrefab, PlayerUI.Instance.minionsContentTransform);
+            go.GetComponent<MinionItem>().SetMinion(_minions[i]);
+        }
     }
     #endregion
 }
