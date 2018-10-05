@@ -1,91 +1,48 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Pathfinding;
 
 public class BezierCurve : MonoBehaviour {
-    public static BezierCurve Instance;
+    public LineRenderer bgLineRenderer;
+    public LineRenderer progressMeter;
 
-    public int numOfInterpolations;
-    public GameObject curvePrefab;
-    public LineRenderer lineRenderer;
-    public Transform startPoint;
-    public Transform endPoint;
-    public Transform controlPoint1;
-    public Transform controlPoint2;
+    private int _progressAmount;
+    private Vector3[] _positions;
 
-    private void Awake() {
-        Instance = this;
+    private void Start() {
+        progressMeter.positionCount = 0;
     }
 
-    //private void Update() {
-    //    DrawCubicCurve(startPoint.position, endPoint.position, numOfInterpolations);
-    //}
-
-    public GameObject DrawCubicCurve(Vector3 startPoint, Vector3 endPoint, int numOfTicks) {
-        Vector3 dir = endPoint - startPoint;
-
-        if (dir == Vector3.zero) {
-            return null;
-        }
-        GameObject go = GameObject.Instantiate(curvePrefab, GridMap.Instance.gameObject.transform);
-        LineRenderer lineRenderer = go.GetComponent<LineRenderer>();
-        lineRenderer.positionCount = numOfInterpolations;
-
-        Vector3 normal = Vector3.Cross(Vector3.up, dir);
-        Vector3 normalUp = Vector3.Cross(dir, normal);
-
-        normalUp = normalUp.normalized;
-        float multiplier =  1f - (Vector3.Distance(startPoint, endPoint) * 0.1f);
-        multiplier = Mathf.Clamp(multiplier, 0.5f, 1f);
-        //normalUp *= dir.magnitude * 1f;
-       
-        //Vector3 controlPoint1 = new Vector3(normalUp.x + 0.5f, normalUp.y, normalUp.z);
-        //Vector3 controlPoint2 = new Vector3(normalUp.x - 0.5f, normalUp.y, normalUp.z);
-        Vector3 curveSharpness = normalUp * dir.magnitude * multiplier;
-
-        Vector3 p1c = startPoint + curveSharpness;
-        Vector3 p2c = endPoint + curveSharpness;
-        //controlPoint1.position = p1c;
-        //controlPoint2.position = p2c;
-
-
-        float timeDivisor = (float) numOfInterpolations ;
-        float t = 0;
-        for (int i = 1; i <= numOfInterpolations; i++) {
-            t = i / timeDivisor;
-            Vector3 curvePoint = AstarSplines.CubicBezier(startPoint, p1c, p2c, endPoint, t);
-            lineRenderer.SetPosition(i - 1, curvePoint);
-        }
-        return go;
+    public void SetPositions(Vector3[] positions) {
+        _positions = positions;
+        bgLineRenderer.positionCount = _positions.Length;
+        bgLineRenderer.SetPositions(_positions);
     }
-    public void DrawCubicCurve(Vector3 startPoint, Vector3 endPoint, Vector3 controlPoint1, Vector3 controlPoint2, int numOfInterpolations) {
-        lineRenderer.positionCount = numOfInterpolations;
-
-        float timeDivisor = (float) numOfInterpolations;
-        float t = 0;
-        for (int i = 1; i <= numOfInterpolations; i++) {
-            t = i / timeDivisor;
-            Vector3 curvePoint = AstarSplines.CubicBezier(startPoint, controlPoint1, controlPoint2, endPoint, t);
-            lineRenderer.SetPosition(i - 1, curvePoint);
-        }
+    public void SetProgressAmount(int amount) {
+        _progressAmount = amount;
     }
 
-    [ContextMenu("Get Variables")]
-    public void GetVariables() {
-        Vector3 dir = endPoint.position - startPoint.position;
-
-        Vector3 normal = Vector3.Cross(Vector3.up, dir);
-        Vector3 normalUp = Vector3.Cross(dir, normal);
-
-        normalUp = normalUp.normalized;
-        normalUp *= dir.magnitude * 0.1f;
-
-
-        Debug.LogWarning("Distance: " + Vector3.Distance(startPoint.position, endPoint.position));
-        Debug.LogWarning("Dir: " + dir);
-        Debug.LogWarning("Up: " + Vector3.up);
-        Debug.LogWarning("Normal: " + normal);
-        Debug.LogWarning("NormalUp: " + normalUp);
+    //Returns true if progress is complete
+    public bool AddProgress() {
+        if(progressMeter.positionCount >= _positions.Length) {
+            return true;
+        }
+        for (int i = 0; i < _progressAmount; i++) {
+            progressMeter.positionCount ++;
+            progressMeter.SetPosition(progressMeter.positionCount - 1, _positions[progressMeter.positionCount - 1]);
+        }
+        if(progressMeter.positionCount == _positions.Length) {
+            return true;
+        }
+        return false;
+    }
+    public void ReduceProgress() {
+        progressMeter.positionCount -= _progressAmount;
+        //for (int i = 0; i < _progressAmount; i++) {
+        //    progressMeter.positionCount--;
+        //    if (progressMeter.positionCount <= 0) {
+        //        break;
+        //    }
+        //}
     }
 }

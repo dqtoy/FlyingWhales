@@ -31,11 +31,14 @@ public class CharacterAvatar : MonoBehaviour{
     [SerializeField] private bool _isMovementPaused = false;
     [SerializeField] private bool _isTravelling = false;
     [SerializeField] private bool _isMovingToHex = false;
-    private ICharacter _trackTarget = null;
-	private Action queuedAction = null;
-    private PATHFINDING_MODE _pathfindingMode;
+    private int _distanceToTarget;
     private bool _isVisualShowing;
-    private GameObject _curveGO;
+    private PATHFINDING_MODE _pathfindingMode;
+    private ICharacter _trackTarget = null;
+    private BezierCurve _curve;
+    private Action queuedAction = null;
+
+
 
     public CharacterPortrait characterPortrait { get; private set; }
 
@@ -122,16 +125,20 @@ public class CharacterAvatar : MonoBehaviour{
     private void StartTravelling() {
         _isTravelling = true;
         float distance = Vector3.Distance(_party.specificLocation.tileLocation.transform.position, targetLocation.tileLocation.transform.position);
-        int numOfTicks = (Mathf.CeilToInt(distance / 2.315188f)) * 6;
-        _curveGO = targetLocation.tileLocation.ATileIsTryingToConnect(_party.specificLocation.tileLocation, numOfTicks);
-        GameDate arriveDate = GameManager.Instance.Today();
-        arriveDate.AddHours(numOfTicks);
-        SchedulingManager.Instance.AddEntry(arriveDate, () => ArriveAtLocation());
+        _distanceToTarget = (Mathf.CeilToInt(distance / 2.315188f)) * 6;
+        _curve = targetLocation.tileLocation.ATileIsTryingToConnect(_party.specificLocation.tileLocation, _distanceToTarget);
+        Messenger.AddListener(Signals.HOUR_STARTED, TraverseCurveLine);
+    }
+    private void TraverseCurveLine() {
+        if (_curve.AddProgress()) {
+            Messenger.RemoveListener(Signals.HOUR_STARTED, TraverseCurveLine);
+            ArriveAtLocation();
+        }        
     }
     private void ArriveAtLocation() {
         _isTravelling = false;
-        GameObject.Destroy(_curveGO);
-        _curveGO = null;
+        GameObject.Destroy(_curve.gameObject);
+        _curve = null;
         SetHasArrivedState(true);
         _party.specificLocation.RemoveCharacterFromLocation(_party);
         targetLocation.AddCharacterToLocation(_party);

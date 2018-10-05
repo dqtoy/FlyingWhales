@@ -1565,16 +1565,20 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void RemoveConnectionInComingFrom(HexTile tile) {
         _tilesConnectedInComingFromMarker.Remove(tile);
     }
-    public GameObject ATileIsTryingToConnect(HexTile tile, int numOfTicks) {
+    public BezierCurve ATileIsTryingToConnect(HexTile tile, int numOfTicks) {
         if (!_tilesConnectedInGoingToMarker.Contains(tile)) {
             if (!_tilesConnectedInComingFromMarker.Contains(tile)) {
+                if (tile._tilesConnectedInGoingToMarker.Contains(this)) {
+                    AddConnectionInComingFrom(tile);
+                    return BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, comingFromMarker.position, numOfTicks);
+                }
                 AddConnectionInGoingTo(tile);
-                return BezierCurve.Instance.DrawCubicCurve(tile.transform.position, goingToMarker.position, numOfTicks);
+                return BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, goingToMarker.position, numOfTicks);
             } else {
-                return BezierCurve.Instance.DrawCubicCurve(tile.transform.position, comingFromMarker.position, numOfTicks);
+                return BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, comingFromMarker.position, numOfTicks);
             }
         } else {
-            return BezierCurve.Instance.DrawCubicCurve(tile.transform.position, goingToMarker.position, numOfTicks);
+            return BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, goingToMarker.position, numOfTicks);
         }
     }
     #endregion

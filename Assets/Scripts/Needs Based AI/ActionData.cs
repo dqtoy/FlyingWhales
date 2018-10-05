@@ -123,7 +123,9 @@ public class ActionData {
     }
 
     public void EndAction() {
-        Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() +"] Ended " + _party.name + " action " + currentAction.actionData.actionName);
+        if (currentAction != null){
+            Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() + "] Ended " + _party.name + " action " + currentAction.actionData.actionName);
+        }
         SetIsDone(true);
     }
     public void EndCurrentAction() {
