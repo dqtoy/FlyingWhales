@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.22380279, g: 0.24376711, b: 0.26534963, a: 1}
+  m_IndirectSpecularColor: {r: 0.22380304, g: 0.24376729, b: 0.26534945, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -21487,9 +21487,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b78f9ebfd38b9ad48a4bea7c131dac2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blueMagicText: {fileID: 1047900411}
-  redMagicText: {fileID: 1794759258}
-  greenMagicText: {fileID: 268028601}
+  manaText: {fileID: 1047900411}
   lifestoneText: {fileID: 503220983}
   threatFiller: {fileID: 1249810454}
   minionPrefab: {fileID: 1632239326956908, guid: 6a3fbd7f8a25b814bb4c4e417caae8ec,
@@ -28635,7 +28633,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &802641564
 RectTransform:
   m_ObjectHideFlags: 0

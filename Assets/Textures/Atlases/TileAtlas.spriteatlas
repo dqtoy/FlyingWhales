@@ -121,6 +121,7 @@ SpriteAtlas:
   - {fileID: 21300084, guid: 301ddda5fde017644bab1ae01392d876, type: 3}
   - {fileID: 21300078, guid: 56a2c57009ed96c41b97b19cc3d6b340, type: 3}
   - {fileID: 21300086, guid: 301ddda5fde017644bab1ae01392d876, type: 3}
+  - {fileID: 21300000, guid: c9cfd19b999de28429f009befe899765, type: 3}
   - {fileID: 21300028, guid: b691b436b68a75f46a376910267f4409, type: 3}
   - {fileID: 21300094, guid: 301ddda5fde017644bab1ae01392d876, type: 3}
   - {fileID: 21300068, guid: b691b436b68a75f46a376910267f4409, type: 3}
@@ -374,6 +375,7 @@ SpriteAtlas:
   - H_Capital_Base
   - HumanStructuresRuined_12
   - H_Capital_Tint
+  - Elixir_Collector11
   - E_Capital_Tint
   - H_Mud_2
   - E_HuntingLodge_Base
