@@ -33,6 +33,7 @@ public class CharacterAvatar : MonoBehaviour{
     [SerializeField] private bool _isMovingToHex = false;
     private int _distanceToTarget;
     private bool _isVisualShowing;
+    private bool _isTravelCancelled;
     private PATHFINDING_MODE _pathfindingMode;
     private ICharacter _trackTarget = null;
     private BezierCurve _curve;
@@ -122,6 +123,13 @@ public class CharacterAvatar : MonoBehaviour{
             StartTravelling();
         }
     }
+    public void CancelTravel() {
+        if (_isTravelling && !_isTravelCancelled) {
+            _isTravelCancelled = true;
+            Messenger.RemoveListener(Signals.HOUR_STARTED, TraverseCurveLine);
+            Messenger.AddListener(Signals.HOUR_STARTED, ReduceCurveLine);
+        }
+    }
     private void StartTravelling() {
         _isTravelling = true;
         float distance = Vector3.Distance(_party.specificLocation.tileLocation.transform.position, targetLocation.tileLocation.transform.position);
@@ -134,6 +142,18 @@ public class CharacterAvatar : MonoBehaviour{
             Messenger.RemoveListener(Signals.HOUR_STARTED, TraverseCurveLine);
             ArriveAtLocation();
         }        
+    }
+    private void ReduceCurveLine() {
+        if (_curve.ReduceProgress()) {
+            Messenger.RemoveListener(Signals.HOUR_STARTED, ReduceCurveLine);
+            CancelledDeparture();
+        }
+    }
+    private void CancelledDeparture() {
+        _isTravelling = false;
+        _isTravelCancelled = false;
+        GameObject.Destroy(_curve.gameObject);
+        _curve = null;
     }
     private void ArriveAtLocation() {
         _isTravelling = false;
@@ -166,7 +186,6 @@ public class CharacterAvatar : MonoBehaviour{
         if (onPathFinished != null) {
             onPathFinished();
         }
-
     }
     public virtual void ReceivePath(List<HexTile> path, PathFindingThread fromThread) {
         if (!_isInitialized) {
@@ -428,6 +447,7 @@ public class CharacterAvatar : MonoBehaviour{
         path = null;
         _isMovementPaused = false;
         _hasArrived = false;
+        _isTravelCancelled = false;
         _trackTarget = null;
         //_isInitialized = false;
         _currPathfindingRequest = null;

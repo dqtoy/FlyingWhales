@@ -255,8 +255,11 @@ public class NewParty : IParty {
 
     #region Utilities
     public void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null, ICharacter trackTarget = null, Action actionOnStartOfMovement = null) {
-        if (_icon.isMovingToHex) {
-            _icon.SetQueuedAction(() => GoToLocation(targetLocation, pathfindingMode, doneAction, trackTarget, actionOnStartOfMovement));
+        //if (_icon.isMovingToHex) {
+        //    _icon.SetQueuedAction(() => GoToLocation(targetLocation, pathfindingMode, doneAction, trackTarget, actionOnStartOfMovement));
+        //    return;
+        //}
+        if (_icon.isTravelling) {
             return;
         }
         if (specificLocation == targetLocation) {
@@ -269,6 +272,9 @@ public class NewParty : IParty {
             _icon.SetTarget(targetLocation);
             _icon.StartPath(PATHFINDING_MODE.PASSABLE, doneAction, trackTarget, actionOnStartOfMovement);
         }
+    }
+    public void CancelTravel() {
+        _icon.CancelTravel();
     }
     public void SetIsAttacking(bool state) {
         _isAttacking = state;

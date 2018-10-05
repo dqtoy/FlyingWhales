@@ -36,8 +36,14 @@ public class BezierCurve : MonoBehaviour {
         }
         return false;
     }
-    public void ReduceProgress() {
+
+    //Returns true when progress reaches 0
+    public bool ReduceProgress() {
         progressMeter.positionCount -= _progressAmount;
+        if(progressMeter.positionCount <= 0) {
+            return true;
+        }
+        return false;
         //for (int i = 0; i < _progressAmount; i++) {
         //    progressMeter.positionCount--;
         //    if (progressMeter.positionCount <= 0) {
