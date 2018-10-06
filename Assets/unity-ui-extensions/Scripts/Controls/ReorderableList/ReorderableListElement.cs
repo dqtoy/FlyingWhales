@@ -252,7 +252,37 @@ namespace UnityEngine.UI.Extensions
                     }
                     else
                     {
-                        CancelDrag();
+                        List<RaycastResult> newRaycastResults = new List<RaycastResult>();
+                        CustomDropZone customDropzone = null;
+                        EventSystem.current.RaycastAll(eventData, newRaycastResults);
+                        for (int i = 0; i < newRaycastResults.Count; i++) {
+                            customDropzone = newRaycastResults[i].gameObject.GetComponent<CustomDropZone>();
+                            if (customDropzone != null) {
+                                break;
+                            }
+                        }
+
+                        if(customDropzone != null) {
+                            customDropzone.OnDrop(eventData);
+                            if (_reorderableList.CloneDraggedObject) {
+                                Destroy(_draggingObject.gameObject);
+                            }
+                            var args = new ReorderableList.ReorderableListEventStruct {
+                                DroppedObject = _draggingObject.gameObject,
+                                IsAClone = _reorderableList.CloneDraggedObject,
+                                SourceObject = _reorderableList.CloneDraggedObject ? gameObject : _draggingObject.gameObject,
+                                FromList = _reorderableList,
+                                FromIndex = _fromIndex,
+                                ToList = _currentReorderableListRaycasted,
+                                ToIndex = _fakeElement.GetSiblingIndex()
+                            };
+                            //Send OnelementDropped Event
+                            if (_reorderableList && _reorderableList.OnElementDropped != null) {
+                                _reorderableList.OnElementDropped.Invoke(args);
+                            }
+                        } else {
+                            CancelDrag();
+                        }
                     }
                 }
             }

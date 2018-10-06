@@ -138,6 +138,11 @@ public class PlayerAbility {
         _playerAbilityButton.EnableDisable();
         CancelAbility(PlayerAbilitiesUI.Instance.currentlySelectedInteractable);
 
+        if (currentMinion.icharacter.currentParty.icon.isTravelling) {
+            currentMinion.icharacter.currentParty.icon.CancelTravel(() => currentMinion.SetEnabledState(true));
+        } else {
+            currentMinion.icharacter.currentParty.GoToLocation(PlayerManager.Instance.player.demonicPortal, PATHFINDING_MODE.PASSABLE, () => currentMinion.SetEnabledState(true));
+        }
         //Go home minion, when reached home, enable the minion again
     }
     #endregion

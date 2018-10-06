@@ -108,6 +108,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
             wholeImage.sprite = null;
             wholeImage.gameObject.SetActive(true);
             playerLocator.gameObject.SetActive(false);
+            return;
         }
         _portraitSettings = character.portraitSettings;
         if (character is ECS.Character) {
@@ -146,6 +147,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
     public void GeneratePortrait(PortraitSettings portraitSettings, int imgSize, bool ignoreHover = true) {
         _ignoreHover = ignoreHover;
         _portraitSettings = portraitSettings;
+        SetImageSize(imgSize);
         if (portraitSettings == null) {
             body.gameObject.SetActive(false);
             head.gameObject.SetActive(false);
@@ -162,8 +164,8 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
             wholeImage.sprite = null;
             wholeImage.gameObject.SetActive(true);
             playerLocator.gameObject.SetActive(false);
+            return;
         }
-        SetImageSize(imgSize);
         SetBody(portraitSettings.bodyIndex);
         SetHead(portraitSettings.headIndex);
         SetEyes(portraitSettings.eyesIndex);
@@ -172,6 +174,8 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
         SetMouth(portraitSettings.mouthIndex);
         SetHair(portraitSettings.hairIndex);
         SetHairColor(portraitSettings.hairColor);
+        wholeImage.gameObject.SetActive(false);
+        playerLocator.gameObject.SetActive(false);
     }
 
     #region Pointer Actions

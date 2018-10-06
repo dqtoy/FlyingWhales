@@ -9,6 +9,7 @@ public class CharacterAvatar : MonoBehaviour{
 
     private Action onPathFinished;
     private Action onPathReceived;
+    private Action onPathCancelled;
 
     private PathFindingThread _currPathfindingRequest; //the current pathfinding request this avatar is waiting for
 
@@ -123,9 +124,10 @@ public class CharacterAvatar : MonoBehaviour{
             StartTravelling();
         }
     }
-    public void CancelTravel() {
+    public void CancelTravel(Action onCancelTravel = null) {
         if (_isTravelling && !_isTravelCancelled) {
             _isTravelCancelled = true;
+            onPathCancelled = onCancelTravel;
             Messenger.RemoveListener(Signals.HOUR_STARTED, TraverseCurveLine);
             Messenger.AddListener(Signals.HOUR_STARTED, ReduceCurveLine);
         }
@@ -154,6 +156,9 @@ public class CharacterAvatar : MonoBehaviour{
         _isTravelCancelled = false;
         GameObject.Destroy(_curve.gameObject);
         _curve = null;
+        if(onPathCancelled != null) {
+            onPathCancelled();
+        }
     }
     private void ArriveAtLocation() {
         _isTravelling = false;
