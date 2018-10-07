@@ -1570,15 +1570,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             if (!_tilesConnectedInComingFromMarker.Contains(tile)) {
                 if (tile._tilesConnectedInGoingToMarker.Contains(this)) {
                     AddConnectionInComingFrom(tile);
-                    return BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, comingFromMarker.position, numOfTicks);
+                    return BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, comingFromMarker.position, numOfTicks, DIRECTION.DOWN);
                 }
                 AddConnectionInGoingTo(tile);
-                return BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, goingToMarker.position, numOfTicks);
+                return BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, goingToMarker.position, numOfTicks, DIRECTION.UP);
             } else {
-                return BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, comingFromMarker.position, numOfTicks);
+                return BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, comingFromMarker.position, numOfTicks, DIRECTION.DOWN);
             }
         } else {
-            return BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, goingToMarker.position, numOfTicks);
+            return BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, goingToMarker.position, numOfTicks, DIRECTION.UP);
         }
     }
     #endregion

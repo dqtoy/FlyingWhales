@@ -18,11 +18,11 @@ public class BezierCurveManager : MonoBehaviour {
         Instance = this;
     }
 
-    private void Update() {
-        DrawCubicCurveTesting(startPoint.position, endPoint.position);
-    }
+    //private void Update() {
+    //    DrawCubicCurveTesting(startPoint.position, endPoint.position);
+    //}
 
-    public BezierCurve DrawCubicCurve(Vector3 startPoint, Vector3 endPoint, int numOfTicks) {
+    public BezierCurve DrawCubicCurve(Vector3 startPoint, Vector3 endPoint, int numOfTicks, DIRECTION direction) {
         Vector3 dir = endPoint - startPoint;
 
         if (dir == Vector3.zero) {
@@ -39,6 +39,9 @@ public class BezierCurveManager : MonoBehaviour {
         bezierCurve.SetProgressAmount(numOfPositionsMultiplier - 1);
 
         Vector3 normal = Vector3.Cross(Vector3.up, dir);
+        if (startPoint.x != endPoint.x && direction == DIRECTION.DOWN) {
+            normal = Vector3.Cross(Vector3.down, dir);
+        }
         Vector3 normalUp = Vector3.Cross(dir, normal);
 
         normalUp = normalUp.normalized;
