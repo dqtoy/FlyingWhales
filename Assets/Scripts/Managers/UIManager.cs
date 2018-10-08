@@ -139,7 +139,7 @@ public class UIManager : MonoBehaviour {
         currentActivePlayerPickerButtons = new List<PlayerPickerButton>();
         Messenger.AddListener(Signals.UPDATE_UI, UpdateUI);
         Messenger.AddListener(Signals.INSPECT_ALL, UpdateInteractableInfoUI);
-        NormalizeFontSizes();
+        //NormalizeFontSizes();
         ToggleBorders();
     }
     private void Update() {
