@@ -9,7 +9,7 @@ public class WoodcuttingAction : CharacterAction {
     }
 
     #region Overrides
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
 
         //give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige

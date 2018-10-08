@@ -17,7 +17,7 @@ public class DisbandPartyAction : CharacterAction {
     //    base.PerformAction(party, targetObject);
        
     //}
-    public override void OnChooseAction(NewParty iparty, IObject targetObject) {
+    public override void OnChooseAction(Party iparty, IObject targetObject) {
         base.OnChooseAction(iparty, targetObject);
         CharacterParty charParty = iparty as CharacterParty;
         charParty.DisbandPartyKeepOwner();

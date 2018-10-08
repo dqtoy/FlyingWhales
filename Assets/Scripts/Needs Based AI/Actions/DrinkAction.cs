@@ -8,14 +8,14 @@ public class DrinkAction : CharacterAction {
 
     }
     #region Overrides
-    public override void OnFirstEncounter(NewParty party, IObject targetObject) {
+    public override void OnFirstEncounter(Party party, IObject targetObject) {
         base.OnFirstEncounter(party, targetObject);
         //Add history log
         for (int i = 0; i < party.icharacters.Count; i++) {
             party.icharacters[i].AddAttribute(ATTRIBUTE.DRUNK);
         }
     }
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
         if (party is CharacterParty) {
@@ -25,7 +25,7 @@ public class DrinkAction : CharacterAction {
         //    EndAction(party, targetObject);
         //}
     }
-    public override bool CanBeDoneBy(NewParty party, IObject targetObject) {
+    public override bool CanBeDoneBy(Party party, IObject targetObject) {
         if (party.mainCharacter.faction != null) {
             if (targetObject is StructureObj) {
                 Faction landmarkFaction = (targetObject as StructureObj).objectLocation.tileLocation.areaOfTile.owner;

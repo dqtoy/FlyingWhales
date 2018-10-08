@@ -13,14 +13,14 @@ public class FoolingAroundAction : CharacterAction {
     }
 
     #region Overrides
-    public override void OnChooseAction(NewParty iparty, IObject targetObject) {
+    public override void OnChooseAction(Party iparty, IObject targetObject) {
         base.OnChooseAction(iparty, targetObject);
         if (iparty is CharacterParty) {
             Character character = iparty.mainCharacter as Character;
             character.SetDoNotDisturb(true);
         }
     }
-    public override void OnFirstEncounter(NewParty party, IObject targetObject) {
+    public override void OnFirstEncounter(Party party, IObject targetObject) {
         if (targetObject == null) {
             return;
         }
@@ -55,7 +55,7 @@ public class FoolingAroundAction : CharacterAction {
             }
         }
     }
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
 
         //give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige
@@ -63,7 +63,7 @@ public class FoolingAroundAction : CharacterAction {
             GiveAllReward(party as CharacterParty);
         }
     }
-    public override void EndAction(NewParty party, IObject targetObject) {
+    public override void EndAction(Party party, IObject targetObject) {
         if (!(party is CharacterParty)) {
             return;
         }
@@ -128,7 +128,7 @@ public class FoolingAroundAction : CharacterAction {
         if(partner != null) {
             WeightedDictionary<Character> characterCandidates = new WeightedDictionary<Character>();
             for (int i = 0; i < initiator.ownParty.specificLocation.charactersAtLocation.Count; i++) {
-                NewParty candidate = initiator.ownParty.specificLocation.charactersAtLocation[i];
+                Party candidate = initiator.ownParty.specificLocation.charactersAtLocation[i];
                 if (candidate.icon.isTravelling) {
                     continue;
                 }
@@ -161,7 +161,7 @@ public class FoolingAroundAction : CharacterAction {
     private IObject GetLiberatedNoPartnerTarget(Character initiator) {
         List<Character> potentialCandidates = new List<Character>();
         for (int i = 0; i < initiator.ownParty.specificLocation.charactersAtLocation.Count; i++) {
-            NewParty candidate = initiator.ownParty.specificLocation.charactersAtLocation[i];
+            Party candidate = initiator.ownParty.specificLocation.charactersAtLocation[i];
             if (candidate.icon.isTravelling) {
                 continue;
             }

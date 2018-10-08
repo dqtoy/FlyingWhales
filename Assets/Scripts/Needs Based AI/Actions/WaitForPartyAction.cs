@@ -31,7 +31,7 @@ public class WaitForPartyAction : CharacterAction {
         action.Initialize();
         return action;
     }
-    public override void OnChooseAction(NewParty iparty, IObject targetObject) {
+    public override void OnChooseAction(Party iparty, IObject targetObject) {
         base.OnChooseAction(iparty, targetObject);
         waitingCharacter = iparty.owner as Character;
         GameDate today = GameManager.Instance.Today();
@@ -41,24 +41,24 @@ public class WaitForPartyAction : CharacterAction {
         this._actionData.duration = deadlineTick - today.hour;
         today.AddHours(_actionData.duration);
         if (waitingCharacter.IsSquadLeader()) { //only listen for characters joining a party if this character is a squad leader
-            Messenger.AddListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
+            Messenger.AddListener<ICharacter, Party>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
         }
         Debug.Log(iparty.name + " started waiting for their party mates. Will end wait on [" + today.GetDayAndTicksString() + "]");
     }
-    public override void DoneDuration(NewParty party, IObject targetObject) {
+    public override void DoneDuration(Party party, IObject targetObject) {
         base.DoneDuration(party, targetObject);
         //done waiting
         StartQuestAction(party);
     }
-    public override void EndAction(NewParty party, IObject targetObject) {
+    public override void EndAction(Party party, IObject targetObject) {
         base.EndAction(party, targetObject);
         if (waitingCharacter.IsSquadLeader()) {
-            Messenger.RemoveListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
+            Messenger.RemoveListener<ICharacter, Party>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
         }
     }
     #endregion
 
-    private void OnCharacterJoinedParty(ICharacter character, NewParty party) {
+    private void OnCharacterJoinedParty(ICharacter character, Party party) {
         if (waitingCharacter.ownParty.id == party.id) {
             //the party that the character joined is the party of the character that is waiting
             if (waitingCharacter.squad.squadMembers.Count == waitingCharacter.ownParty.icharacters.Count) {
@@ -68,7 +68,7 @@ public class WaitForPartyAction : CharacterAction {
         }
         }
 
-    private void StartQuestAction(NewParty party) {
+    private void StartQuestAction(Party party) {
         Character mainCharacter = party.mainCharacter as Character;
         CharacterParty charParty = party as CharacterParty;
         if (mainCharacter.IsSquadLeader()) {

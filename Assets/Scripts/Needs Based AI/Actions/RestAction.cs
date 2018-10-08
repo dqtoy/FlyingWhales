@@ -9,7 +9,7 @@ public class RestAction : CharacterAction {
     }
 
     #region Overrides
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
         if (party is CharacterParty) {
@@ -19,7 +19,7 @@ public class RestAction : CharacterAction {
         //    EndAction(party, targetObject);
         //}
     }
-    public override bool CanBeDoneBy(NewParty party, IObject targetObject) {
+    public override bool CanBeDoneBy(Party party, IObject targetObject) {
         //Filter: Residents of this Structure
         if (targetObject is StructureObj) {
             StructureObj structureObj = targetObject as StructureObj;

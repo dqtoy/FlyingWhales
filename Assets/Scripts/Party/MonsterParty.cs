@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using ECS;
 
-public class MonsterParty : NewParty {
+public class MonsterParty : Party {
     private string _name;
     private MonsterObj _monsterObj;
     private string _setupName;

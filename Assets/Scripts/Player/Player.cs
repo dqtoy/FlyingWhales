@@ -4,7 +4,9 @@ using ECS;
 using UnityEngine;
 using System.Linq;
 
-public class Player : ILeader{
+public class Player : ILeader {
+
+    private const int MAX_IMPS = 5;
 
     private int _corruption;
     public Faction playerFaction { get; private set; }
@@ -12,6 +14,7 @@ public class Player : ILeader{
     public int snatchCredits { get; private set; }
     public int mana { get; private set; }
     public int supplies { get; private set; }
+    public int imps { get; private set; }
 
     private int _threatLevel;
     private int _redMagic;
@@ -532,6 +535,13 @@ public class Player : ILeader{
                 minionItem.SetMinion(null);
             }
         }
+    }
+    #endregion
+
+    #region Imps
+    public void AdjustImps(int amount) {
+        imps += amount;
+        imps = Mathf.Clamp(imps, 0, MAX_IMPS);
     }
     #endregion
 }

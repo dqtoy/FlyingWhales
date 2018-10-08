@@ -140,7 +140,7 @@ public class UIManager : MonoBehaviour {
         currentActivePlayerPickerButtons = new List<PlayerPickerButton>();
         Messenger.AddListener(Signals.UPDATE_UI, UpdateUI);
         Messenger.AddListener(Signals.INSPECT_ALL, UpdateInteractableInfoUI);
-        NormalizeFontSizes();
+        //NormalizeFontSizes();
         ToggleBorders();
     }
     private void Update() {
@@ -782,7 +782,7 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Party Info")]
     [SerializeField] internal PartyInfoUI partyinfoUI;
-    public void ShowPartyInfo(NewParty party) {
+    public void ShowPartyInfo(Party party) {
         //HideMainUI();
         //if (landmarkInfoUI.isShowing) {
         //    landmarkInfoUI.HideMenu();

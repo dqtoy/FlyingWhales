@@ -20,7 +20,7 @@ public class DestroyAction : CharacterAction {
         //    _amountToReduce = Mathf.RoundToInt((float) _structure.maxHP / (float) _actionData.duration);
         //}
     //}
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         if(targetObject is StructureObj) {
             StructureObj structure = targetObject as StructureObj;

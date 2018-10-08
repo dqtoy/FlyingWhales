@@ -35,7 +35,7 @@ public class RepairAction : CharacterAction {
     //        _resourceAmountToDecrease = Mathf.RoundToInt((float) _actionData.resourceAmountNeeded / (float) _actionData.duration);
     //    }
     //}
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         if(party is CharacterParty && targetObject is StructureObj) {
             CharacterParty characterParty = party as CharacterParty;

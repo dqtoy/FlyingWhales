@@ -16,7 +16,7 @@ public class MonsterObj : ICharacterObject {
     private BaseLandmark _objectLocation;
 
     #region getters/setters
-    public NewParty iparty {
+    public Party iparty {
         get { return _party; }
     }
     public string objectName {

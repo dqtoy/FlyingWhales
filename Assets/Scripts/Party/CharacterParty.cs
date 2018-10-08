@@ -5,7 +5,7 @@ using System;
 using UnityEngine;
 using ECS;
 
-public class CharacterParty : NewParty {
+public class CharacterParty : Party {
     private bool _isIdle; //can't do action, needs will not deplete
     private CharacterObj _characterObj;
     private ActionData _actionData;

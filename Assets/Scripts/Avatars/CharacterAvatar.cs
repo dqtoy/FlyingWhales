@@ -21,7 +21,7 @@ public class CharacterAvatar : MonoBehaviour{
     [SerializeField] protected SpriteRenderer _frameSpriteRenderer;
     [SerializeField] protected SpriteRenderer _centerSpriteRenderer;
 
-    protected NewParty _party;
+    protected Party _party;
 
     protected ILocation targetLocation;
 
@@ -45,7 +45,7 @@ public class CharacterAvatar : MonoBehaviour{
     public CharacterPortrait characterPortrait { get; private set; }
 
     #region getters/setters
-    public NewParty party {
+    public Party party {
         get { return _party; }
     }
     public bool isTravelling {
@@ -68,7 +68,7 @@ public class CharacterAvatar : MonoBehaviour{
     }
     #endregion
 
-    public virtual void Init(NewParty party) {
+    public virtual void Init(Party party) {
         _party = party;
         //SetPosition(_party.specificLocation.tileLocation.transform.position);
         this.smoothMovement.avatarGO = this.gameObject;

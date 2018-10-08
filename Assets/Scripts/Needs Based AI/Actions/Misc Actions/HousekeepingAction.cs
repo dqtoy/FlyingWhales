@@ -13,7 +13,7 @@ public class HousekeepingAction : CharacterAction {
     }
 
     #region Overrides
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
 
         //give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige
@@ -21,7 +21,7 @@ public class HousekeepingAction : CharacterAction {
             GiveAllReward(party as CharacterParty);
         }
     }
-    public override void DoneDuration(NewParty party, IObject targetObject) {
+    public override void DoneDuration(Party party, IObject targetObject) {
         base.DoneDuration(party, targetObject);
         StructureObj structure = targetObject as StructureObj;
         structure.SetIsDirty(false);
@@ -41,12 +41,12 @@ public class HousekeepingAction : CharacterAction {
         action.Initialize();
         return action;
     }
-    public override string GetArriveActionString(NewParty party = null) {
+    public override string GetArriveActionString(Party party = null) {
         Log arriveLog = new Log(GameManager.Instance.Today(), "CharacterActions", this.GetType().ToString(), "arrive_action");
         arriveLog.AddToFillers(party.owner as ECS.Character, (party.owner as ECS.Character).name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         return Utilities.LogReplacer(arriveLog);
     }
-    public override string GetLeaveActionString(NewParty party = null) {
+    public override string GetLeaveActionString(Party party = null) {
         Log arriveLog = new Log(GameManager.Instance.Today(), "CharacterActions", this.GetType().ToString(), "leave_action");
         arriveLog.AddToFillers(party.owner as ECS.Character, (party.owner as ECS.Character).name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         return Utilities.LogReplacer(arriveLog);

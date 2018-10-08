@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class LandmarkCharacterItem : PooledObject {
 
-    public NewParty party { get; private set; }
+    public Party party { get; private set; }
     private BaseLandmark _landmark;
 
     private bool isHovering = false;
@@ -29,12 +29,12 @@ public class LandmarkCharacterItem : PooledObject {
     [Header("Action")]
     [SerializeField] private ActionIcon actionIcon;
 
-    public void SetParty(NewParty party, BaseLandmark landmark) {
+    public void SetParty(Party party, BaseLandmark landmark) {
         this.party = party;
         _landmark = landmark;
         UpdateVisuals();
-        Messenger.AddListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
-        Messenger.AddListener<ICharacter, NewParty>(Signals.CHARACTER_LEFT_PARTY, OnCharacterLeftParty);
+        Messenger.AddListener<ICharacter, Party>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
+        Messenger.AddListener<ICharacter, Party>(Signals.CHARACTER_LEFT_PARTY, OnCharacterLeftParty);
         actionIcon.Initialize();
         actionIcon.SetCharacter(party.mainCharacter);
         actionIcon.SetAction(party.currentAction);
@@ -123,12 +123,12 @@ public class LandmarkCharacterItem : PooledObject {
     //}
 
     #region Listeners
-    private void OnCharacterJoinedParty(ICharacter character, NewParty affectedParty) {
+    private void OnCharacterJoinedParty(ICharacter character, Party affectedParty) {
         if (party.id == affectedParty.id) {
             UpdateVisuals();
         }
     }
-    private void OnCharacterLeftParty(ICharacter character, NewParty affectedParty) {
+    private void OnCharacterLeftParty(ICharacter character, Party affectedParty) {
         if (party.id == affectedParty.id) {
             UpdateVisuals();
         }
@@ -146,7 +146,7 @@ public class LandmarkCharacterItem : PooledObject {
         actionIcon.Reset();
         isHovering = false;
         hoveredObject = HoveredObject.None;
-        Messenger.RemoveListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
-        Messenger.RemoveListener<ICharacter, NewParty>(Signals.CHARACTER_LEFT_PARTY, OnCharacterLeftParty);
+        Messenger.RemoveListener<ICharacter, Party>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
+        Messenger.RemoveListener<ICharacter, Party>(Signals.CHARACTER_LEFT_PARTY, OnCharacterLeftParty);
     }
 }

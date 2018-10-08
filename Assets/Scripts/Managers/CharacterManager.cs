@@ -166,7 +166,7 @@ public class CharacterManager : MonoBehaviour {
             className = "Classless";
 		}
 		ECS.Character newCharacter = new ECS.Character(className, race, gender);
-        NewParty party = newCharacter.CreateOwnParty();
+        Party party = newCharacter.CreateOwnParty();
         if (faction != null) {
             newCharacter.SetFaction(faction);
         }
@@ -211,7 +211,7 @@ public class CharacterManager : MonoBehaviour {
         //    newCharacter.SetHome(homeLocation);
         //    //homeLocation.AddCharacterHomeOnLandmark(newCharacter);
         //}
-        NewParty party = newCharacter.CreateOwnParty();
+        Party party = newCharacter.CreateOwnParty();
 #if !WORLD_CREATION_TOOL
         if (data.role != CHARACTER_ROLE.PLAYER) {
             newCharacter.SetSchedule(CharacterScheduleManager.Instance.GetScheduleForCharacter(newCharacter));
@@ -380,7 +380,7 @@ public class CharacterManager : MonoBehaviour {
         }
         return false;
     }
-    public NewParty GetPartyByID(int id) {
+    public Party GetPartyByID(int id) {
         for (int i = 0; i < allCharacters.Count; i++) {
             Character currCharacter = allCharacters[i];
             if (currCharacter.ownParty.id == id) {

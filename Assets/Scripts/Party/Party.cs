@@ -5,7 +5,7 @@ using System;
 using UnityEngine;
 using ECS;
 
-public class NewParty : IParty {
+public class Party : IParty {
     public delegate void DailyAction();
     public DailyAction onDailyAction;
 
@@ -122,9 +122,18 @@ public class NewParty : IParty {
     public virtual int currentDay {
         get { return 0; }
     }
+    public COMBATANT_TYPE combatantType {
+        get {
+            if (icharacters.Count > 1) {
+                return COMBATANT_TYPE.ARMY; //if the party consists of 2 or more characters, it is considered an army
+            } else {
+                return COMBATANT_TYPE.CHARACTER;
+            }
+        }
+    }
     #endregion
 
-    public NewParty(ICharacter owner) {
+    public Party(ICharacter owner) {
         _owner = owner;
         _id = Utilities.SetID(this);
         _isDead = false;
@@ -282,7 +291,7 @@ public class NewParty : IParty {
     public void SetIsDefending(bool state) {
         _isDefending = state;
     }
-    public NewParty GetBase() {
+    public Party GetBase() {
         return this;
     }
     public bool IsPartyBeingInspected() {
@@ -306,12 +315,12 @@ public class NewParty : IParty {
 
     #region Berserk
     public void BerserkModeOn() {
-        Messenger.AddListener<NewParty, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, FindCombat);
+        Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, FindCombat);
     }
     public void BerserkModeOff() {
-        Messenger.RemoveListener<NewParty, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, FindCombat);
+        Messenger.RemoveListener<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, FindCombat);
     }
-    private void FindCombat(NewParty partyThatEntered, BaseLandmark landmark) {
+    private void FindCombat(Party partyThatEntered, BaseLandmark landmark) {
         if(partyThatEntered._specificLocation != null && this._specificLocation != null && this._specificLocation == partyThatEntered._specificLocation && partyThatEntered.id != this.id && this._currentCombat == null) {
             StartCombatWith(partyThatEntered);
         }
@@ -319,7 +328,7 @@ public class NewParty : IParty {
     #endregion
 
     #region Combat
-    public Combat StartCombatWith(NewParty enemy) {
+    public Combat StartCombatWith(Party enemy) {
 
         //if(enemy is CharacterParty) {
         //    (enemy as CharacterParty).actionData.SetIsHalted(true);
@@ -376,7 +385,7 @@ public class NewParty : IParty {
         }
         return combat;
     }
-    public void JoinCombatWith(NewParty friend) {
+    public void JoinCombatWith(Party friend) {
         if (friend.currentCombat != null) {
             //if (this is CharacterParty) {
             //    (this as CharacterParty).actionData.SetIsHalted(true);

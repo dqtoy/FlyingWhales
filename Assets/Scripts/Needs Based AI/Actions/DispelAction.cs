@@ -8,7 +8,7 @@ public class DispelAction : CharacterAction {
 
     }
     #region Overrides
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
         if (party is CharacterParty) {

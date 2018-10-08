@@ -28,8 +28,8 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
     #endregion
 
     public void Initialize() {
-        Messenger.AddListener<CharacterAction, NewParty>(Signals.ACTION_DAY_ADJUSTED, OnActionDayAdjusted);
-        Messenger.AddListener<CharacterAction, NewParty>(Signals.ACTION_TAKEN, OnActionTaken);
+        Messenger.AddListener<CharacterAction, Party>(Signals.ACTION_DAY_ADJUSTED, OnActionDayAdjusted);
+        Messenger.AddListener<CharacterAction, Party>(Signals.ACTION_TAKEN, OnActionTaken);
         //Messenger.AddListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
     }
     public void SetCharacter(ICharacter character) {
@@ -53,7 +53,7 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
             progressBarImage.fillAmount = (float)currentDay / (float)_action.actionData.duration;
         }
     }
-    private void OnActionDayAdjusted(CharacterAction action, NewParty party) {
+    private void OnActionDayAdjusted(CharacterAction action, Party party) {
         if (_action == null || _character == null) {
             return;
         }
@@ -85,7 +85,7 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
         iconImage.color = color;
     }
 
-    private void OnActionTaken(CharacterAction action, NewParty party) {
+    private void OnActionTaken(CharacterAction action, Party party) {
         //if (_character != null && party.id == _character.ownParty.id) {
         //    SetAction(action);
         //}
@@ -109,10 +109,10 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
     public override void Reset() {
         base.Reset();
         if (Messenger.eventTable.ContainsKey(Signals.ACTION_DAY_ADJUSTED)) {
-            Messenger.RemoveListener<CharacterAction, NewParty>(Signals.ACTION_DAY_ADJUSTED, OnActionDayAdjusted);
+            Messenger.RemoveListener<CharacterAction, Party>(Signals.ACTION_DAY_ADJUSTED, OnActionDayAdjusted);
         }
         if (Messenger.eventTable.ContainsKey(Signals.ACTION_TAKEN)) {
-            Messenger.RemoveListener<CharacterAction, NewParty>(Signals.ACTION_TAKEN, OnActionTaken);
+            Messenger.RemoveListener<CharacterAction, Party>(Signals.ACTION_TAKEN, OnActionTaken);
         }
         //Messenger.RemoveListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
         _action = null;

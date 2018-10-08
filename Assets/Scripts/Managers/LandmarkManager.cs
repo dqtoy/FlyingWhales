@@ -7,6 +7,8 @@ public class LandmarkManager : MonoBehaviour {
 
     public static LandmarkManager Instance = null;
 
+    public static readonly int MAX_DEFENDERS = 4;
+
     public List<CharacterProductionWeight> characterProductionWeights;
 	//public DungeonEncounterChances[] dungeonEncounterChances;
     public int initialResourceLandmarks;

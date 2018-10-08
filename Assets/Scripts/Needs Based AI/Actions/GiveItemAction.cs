@@ -17,7 +17,7 @@ public class GiveItemAction : CharacterAction {
         action.Initialize();
         return action;
     }
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         if (party is CharacterParty && targetObject is CharacterObj) {
             (party as CharacterParty).characterOwner.GiveItemsTo(itemsToGive, (targetObject as CharacterObj).party.characterOwner);

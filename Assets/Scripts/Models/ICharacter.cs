@@ -53,8 +53,8 @@ public interface ICharacter {
     List<Item> inventory { get; }
     List<Log> history { get; }
     PortraitSettings portraitSettings { get; }
-    NewParty ownParty { get; }
-    NewParty currentParty { get; }
+    Party ownParty { get; }
+    Party currentParty { get; }
     Squad squad { get; }
     CharacterActionQueue<ActionQueueItem> actionQueue { get; }
 
@@ -70,8 +70,8 @@ public interface ICharacter {
     void AdjustHP(int amount, ICharacter killer = null);
     void AdjustExperience(int amount);
     void EnableDisableSkills(Combat combat);
-    void SetOwnedParty(NewParty party);
-    void SetCurrentParty(NewParty party);
+    void SetOwnedParty(Party party);
+    void SetCurrentParty(Party party);
     void OnRemovedFromParty();
     void OnAddedToParty();
     void SetHomeLandmark(BaseLandmark newHomeLandmark);
@@ -85,7 +85,7 @@ public interface ICharacter {
     bool IsInOwnParty();
     void Death();
     int GetDef();
-    NewParty CreateOwnParty();
+    Party CreateOwnParty();
     CharacterAction GetRandomMiscAction(ref IObject targetObject);
     CharacterAction GetMiscAction(ACTION_TYPE type);
     Attribute AddAttribute(ATTRIBUTE tag); //Character only

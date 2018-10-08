@@ -53,20 +53,20 @@ public class Hero : CharacterRole {
         base.OnAssignRole();
         CharacterAction _defendAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DEFEND) as DefendAction;
         _character.AddMiscAction(_defendAction);
-        Messenger.AddListener<NewParty, GameEvent>(Signals.LANDMARK_UNDER_ATTACK, LandmarkUnderAttack);
+        Messenger.AddListener<Party, GameEvent>(Signals.LANDMARK_UNDER_ATTACK, LandmarkUnderAttack);
     }
     public override void DeathRole() {
         base.DeathRole();
         _character.RemoveMiscAction(ACTION_TYPE.DEFEND);
-        Messenger.RemoveListener<NewParty, GameEvent>(Signals.LANDMARK_UNDER_ATTACK, LandmarkUnderAttack);
+        Messenger.RemoveListener<Party, GameEvent>(Signals.LANDMARK_UNDER_ATTACK, LandmarkUnderAttack);
     }
     public override void ChangedRole() {
         base.ChangedRole();
-        Messenger.RemoveListener<NewParty, GameEvent>(Signals.LANDMARK_UNDER_ATTACK, LandmarkUnderAttack);
+        Messenger.RemoveListener<Party, GameEvent>(Signals.LANDMARK_UNDER_ATTACK, LandmarkUnderAttack);
     }
     #endregion
 
-    private void LandmarkUnderAttack(NewParty attacker, GameEvent associatedEvent) {
+    private void LandmarkUnderAttack(Party attacker, GameEvent associatedEvent) {
         if(_character.currentParty.currentCombat == null && attacker.specificLocation.tileLocation.landmarkOnTile != null && attacker.specificLocation.tileLocation.areaOfTile.id == _character.homeLandmark.tileLocation.areaOfTile.id) {
             DefendAction defendAction = _character.GetMiscAction(ACTION_TYPE.DEFEND) as DefendAction;
             if (!_character.IsInOwnParty()) {

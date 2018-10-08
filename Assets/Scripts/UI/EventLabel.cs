@@ -36,7 +36,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler {
                     //    UIManager.Instance.ShowLandmarkInfo(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.home);
                     //}
                 } else if (linkText.Contains("_party")) {
-                    NewParty party = CharacterManager.Instance.GetPartyByID(idToUse);
+                    Party party = CharacterManager.Instance.GetPartyByID(idToUse);
                     if (party != null) {
                         UIManager.Instance.ShowPartyInfo(party);
                     }
@@ -76,8 +76,8 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler {
                         UIManager.Instance.ShowLandmarkInfo(lf.obj as BaseLandmark);
                     } else if (lf.obj is Combat) {
                         UIManager.Instance.ShowCombatLog(lf.obj as Combat);
-                    } else if (lf.obj is NewParty) {
-                        NewParty party = lf.obj as NewParty;
+                    } else if (lf.obj is Party) {
+                        Party party = lf.obj as Party;
                         if(party.icharacters.Count > 1) {
                             UIManager.Instance.ShowPartyInfo(party);
                         } else if (party.icharacters.Count == 1) {

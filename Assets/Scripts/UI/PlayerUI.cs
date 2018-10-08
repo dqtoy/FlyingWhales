@@ -8,8 +8,8 @@ using TMPro;
 public class PlayerUI : MonoBehaviour {
     public static PlayerUI Instance;
 
-    public Text manaText;
-    public Text lifestoneText;
+    public TextMeshProUGUI manaText;
+    public TextMeshProUGUI suppliesText;
 
     public Image threatFiller;
     public ScrollRect minionsScrollRect;
@@ -28,8 +28,8 @@ public class PlayerUI : MonoBehaviour {
         manaText.text = "" + PlayerManager.Instance.player.mana;
         //redMagicText.text = "" + PlayerManager.Instance.player.redMagic;
         //greenMagicText.text = "" + PlayerManager.Instance.player.greenMagic;
-        lifestoneText.text = "" + PlayerManager.Instance.player.lifestones;
-        threatFiller.fillAmount = (float) PlayerManager.Instance.player.threatLevel / 100f;
+        suppliesText.text = "" + PlayerManager.Instance.player.supplies;
+        //threatFiller.fillAmount = (float) PlayerManager.Instance.player.threatLevel / 100f;
     }
 
     #region PlayerPicker

@@ -22,7 +22,7 @@ public class CharacterIcon : MonoBehaviour {
     public CharacterPortrait characterPortrait { get; private set; }
 
     private MOVEMENT_TYPE movementType;
-    private NewParty _iparty;
+    private Party _iparty;
 
     private ILocation _targetLocation;
     private bool _isIdle;
@@ -33,7 +33,7 @@ public class CharacterIcon : MonoBehaviour {
     private bool shouldScaleUp = false;
 
     #region getters/setters
-    public NewParty iparty {
+    public Party iparty {
         get { return _iparty; }
     }
     public CharacterAIPath aiPath {
@@ -50,7 +50,7 @@ public class CharacterIcon : MonoBehaviour {
     }
     #endregion
 
-    public void SetCharacter(NewParty iparty) {
+    public void SetCharacter(Party iparty) {
         _iparty = iparty;
         normalScale = _avatarGO.transform.localScale;
         //UpdateColor();

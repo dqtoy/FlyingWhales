@@ -7,7 +7,7 @@ public class QuestingAction : CharacterAction {
     public QuestingAction() : base(ACTION_TYPE.QUESTING) { }
 
     #region overrides
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         if (party is CharacterParty && party.mainCharacter is Character) {
             Character mainCharacter = party.mainCharacter as Character;
@@ -80,7 +80,7 @@ public class QuestingAction : CharacterAction {
 
     private void InviteSquadMembersInLandmark(Squad squad, BaseLandmark landmark) {
         for (int i = 0; i < landmark.charactersAtLocation.Count; i++) {
-            NewParty currParty = landmark.charactersAtLocation[i];
+            Party currParty = landmark.charactersAtLocation[i];
             if (currParty is CharacterParty) {
                 CharacterParty charParty = (currParty as CharacterParty);
                 Character partyOwner = charParty.characterOwner;
