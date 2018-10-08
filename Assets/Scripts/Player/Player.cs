@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ECS;
 using UnityEngine;
+using System.Linq;
 
 public class Player : ILeader{
 
@@ -495,17 +496,41 @@ public class Player : ILeader{
     public void CreateInitialMinions() {
         _minions = new List<Minion>();
         _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Inspect")));
-        _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Inspect")));
-        _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Reveal Secret")));
         _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Spook")));
-        _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Assist")));
         _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Mark")));
         _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Awaken")));
         _minions.Add(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal), GetAbility("Awaken Desire")));
 
-        for (int i = 0; i < _minions.Count; i++) {
-            GameObject go = GameObject.Instantiate(PlayerUI.Instance.minionPrefab, PlayerUI.Instance.minionsContentTransform);
-            go.GetComponent<MinionItem>().SetMinion(_minions[i]);
+        for (int i = 0; i < PlayerUI.Instance.minionItems.Length; i++) {
+            MinionItem minionItem = PlayerUI.Instance.minionItems[i];
+            if(i < _minions.Count) {
+                minionItem.SetMinion(_minions[i]);
+            } else {
+                minionItem.SetMinion(null);
+            }
+        }
+        PlayerUI.Instance.minionsScrollRect.verticalNormalizedPosition = 1f;
+    }
+    public void SortByLevel() {
+        _minions = _minions.OrderBy(x => x.lvl).ToList();
+        for (int i = 0; i < PlayerUI.Instance.minionItems.Length; i++) {
+            MinionItem minionItem = PlayerUI.Instance.minionItems[i];
+            if (i < _minions.Count) {
+                minionItem.SetMinion(_minions[i]);
+            } else {
+                minionItem.SetMinion(null);
+            }
+        }
+    }
+    public void SortByType() {
+        _minions = _minions.OrderBy(x => x.type.ToString()).ToList();
+        for (int i = 0; i < PlayerUI.Instance.minionItems.Length; i++) {
+            MinionItem minionItem = PlayerUI.Instance.minionItems[i];
+            if (i < _minions.Count) {
+                minionItem.SetMinion(_minions[i]);
+            } else {
+                minionItem.SetMinion(null);
+            }
         }
     }
     #endregion

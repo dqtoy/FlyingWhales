@@ -104,11 +104,13 @@ public class LandmarkInfoUI : UIMenu {
         }
         charactersScrollView.verticalNormalizedPosition = 1;
         historyScrollView.verticalNormalizedPosition = 1;
+        PlayerUI.Instance.UncollapseMinionHolder();
     }
     public override void CloseMenu() {
         base.CloseMenu();
         _activeLandmark = null;
         PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
+        PlayerUI.Instance.CollapseMinionHolder();
     }
     //public override void SetData(object data) {
     //base.SetData(data);

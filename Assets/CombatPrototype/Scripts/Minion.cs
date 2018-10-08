@@ -9,6 +9,10 @@ public class Minion {
     private PlayerAbility _ability;
     private ICharacter _icharacter;
     private IInteractable _target;
+    private DEMON_TYPE _type;
+    private string _strType;
+    private int _lvl;
+    private int _exp;
 
     private bool _isEnabled;
 
@@ -23,16 +27,34 @@ public class Minion {
     public bool isEnabled {
         get { return _isEnabled; }
     }
+    public int lvl {
+        get { return _lvl; }
+    }
+    public int exp {
+        get { return _exp; }
+    }
+    public DEMON_TYPE type {
+        get { return _type; }
+    }
+    public string strType {
+        get { return _strType; }
+    }
     #endregion
 
     public Minion(ICharacter icharacter, PlayerAbility ability) {
         _icharacter = icharacter;
         _ability = ability;
+        _lvl = 1;
+        _exp = 0;
+        _type = (DEMON_TYPE) UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(DEMON_TYPE)).Length);
+        _strType = Utilities.NormalizeString(_type.ToString());
         _icharacter.ownParty.DetachActionData();
         PlayerManager.Instance.player.demonicPortal.AddCharacterHomeOnLandmark(_icharacter);
         PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(_icharacter.ownParty);
     }
-
+    public void SetDemonType(DEMON_TYPE type) {
+        _type = type;
+    }
     public void SendMinionToPerformAbility(IInteractable target) {
         _target = target;
         _icharacter.ownParty.GoToLocation(target.specificLocation, PATHFINDING_MODE.PASSABLE, () => DoAbility());

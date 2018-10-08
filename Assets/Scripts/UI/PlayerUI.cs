@@ -12,9 +12,12 @@ public class PlayerUI : MonoBehaviour {
     public Text lifestoneText;
 
     public Image threatFiller;
+    public ScrollRect minionsScrollRect;
 
     public GameObject minionPrefab;
+    public GameObject minionsHolderGO;
     public Transform minionsContentTransform;
+    public MinionItem[] minionItems;
 
 
     void Awake() {
@@ -61,5 +64,31 @@ public class PlayerUI : MonoBehaviour {
         minionItem.portrait.SetBorderState(false);
         //minionItem.SetEnabledState(false);
     }
-
+    public void CollapseMinionHolder() {
+        minionsHolderGO.GetComponent<TweenPosition>().PlayReverse();
+    }
+    public void UncollapseMinionHolder() {
+        minionsHolderGO.GetComponent<TweenPosition>().PlayForward();
+    }
+    public void ScrollUp() {
+        float y = minionsContentTransform.localPosition.y - 90f;
+        if(y < 0f) {
+            y = 0f;
+        }
+        minionsContentTransform.localPosition = new Vector3(minionsContentTransform.localPosition.x, y, minionsContentTransform.localPosition.z);
+    }
+    public void ScrollDown() {
+        float y = minionsContentTransform.localPosition.y + 90f;
+        float height = minionItems.Length * 90f;
+        if (y > height) {
+            y = height;
+        }
+        minionsContentTransform.localPosition = new Vector3(minionsContentTransform.localPosition.x, y, minionsContentTransform.localPosition.z);
+    }
+    public void SortByLvlMinions() {
+        PlayerManager.Instance.player.SortByLevel();
+    }
+    public void SortByTypeMinions() {
+        PlayerManager.Instance.player.SortByType();
+    }
 }

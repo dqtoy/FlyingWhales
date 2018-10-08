@@ -96,6 +96,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private Transform playerPickerContentTransform;
     [SerializeField] private GameObject playerPickerGO;
     [SerializeField] private GameObject playerPickerButtonPrefab;
+
     private List<PlayerPickerButton> currentActivePlayerPickerButtons;
 
     public Color onToggleTextColor;
