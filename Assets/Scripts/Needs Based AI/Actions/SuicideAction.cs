@@ -14,7 +14,7 @@ public class SuicideAction : CharacterAction {
         action.Initialize();
         return action;
     }
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         Debug.Log(GameManager.Instance.TodayLogString() + party.owner.name + " committed suicide!");
         party.owner.Death(); //this wll also end the action

@@ -165,7 +165,7 @@ public class MonsterManager : MonoBehaviour {
 
     public bool HasMonsterOnLandmark(BaseLandmark landmark) {
         for (int i = 0; i < landmark.charactersAtLocation.Count; i++) {
-            NewParty currParty = landmark.charactersAtLocation[i];
+            Party currParty = landmark.charactersAtLocation[i];
             if (currParty is MonsterParty) {
                 return true;
             }

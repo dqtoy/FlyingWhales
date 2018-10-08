@@ -29,7 +29,7 @@ public class BaseLandmark : ILocation, IInteractable {
     protected List<BaseLandmark> _connections;
     protected List<Character> _prisoners; //list of prisoners on landmark
     protected List<Log> _history;
-    protected List<NewParty> _charactersAtLocation;
+    protected List<Party> _charactersAtLocation;
     protected List<LandmarkPartyData> _lastInspectedOfCharactersAtLocation;
     protected List<Item> _itemsInLandmark;
     protected List<Item> _lastInspectedItemsInLandmark;
@@ -47,7 +47,7 @@ public class BaseLandmark : ILocation, IInteractable {
     public QuestBoard questBoard { get; private set; }
     public List<GameEvent> advertisedEvents { get; private set; } //events happening at this landmark, that other characters can partake in
     public int suppliesAtLandmark { get; private set; }
-    public List<ICharacter> defenders { get; private set; }
+    public Party[] defenders { get; private set; }
 
     #region getters/setters
     public int id {
@@ -101,7 +101,7 @@ public class BaseLandmark : ILocation, IInteractable {
 	public Dictionary<int, Combat> combatHistory {
 		get { return _combatHistory; }
 	}
-    public List<NewParty> charactersAtLocation {
+    public List<Party> charactersAtLocation {
         get { return _charactersAtLocation; }
     }
     public List<LandmarkPartyData> lastInspectedOfCharactersAtLocation {
@@ -175,7 +175,7 @@ public class BaseLandmark : ILocation, IInteractable {
         _charactersWithHomeOnLandmark = new List<ICharacter>();
         _prisoners = new List<Character>();
         _history = new List<Log>();
-        _charactersAtLocation = new List<NewParty>();
+        _charactersAtLocation = new List<Party>();
         _lastInspectedOfCharactersAtLocation = new List<LandmarkPartyData>();
         _itemsInLandmark = new List<Item>();
         _lastInspectedItemsInLandmark = new List<Item>();
@@ -187,6 +187,7 @@ public class BaseLandmark : ILocation, IInteractable {
         _encounters = new List<string>();
         _combatHistory = new Dictionary<int, Combat>();
         _characterTraces = new Dictionary<Character, GameDate>();
+        defenders = new Party[LandmarkManager.MAX_DEFENDERS];
         Messenger.AddListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);
     }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this(){
@@ -351,7 +352,7 @@ public class BaseLandmark : ILocation, IInteractable {
     #endregion
 
     #region Location
-    public void AddCharacterToLocation(NewParty iparty) {
+    public void AddCharacterToLocation(Party iparty) {
         if (!_charactersAtLocation.Contains(iparty)) {
             _charactersAtLocation.Add(iparty);
             //this.tileLocation.RemoveCharacterFromLocation(iparty);
@@ -361,19 +362,19 @@ public class BaseLandmark : ILocation, IInteractable {
             iparty.SetSpecificLocation(this);
 #if !WORLD_CREATION_TOOL
             _landmarkVisual.OnCharacterEnteredLandmark(iparty);
-            Messenger.Broadcast<NewParty, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, iparty, this);
+            Messenger.Broadcast<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, iparty, this);
 #endif
         }
     }
-    public void RemoveCharacterFromLocation(NewParty iparty) {
+    public void RemoveCharacterFromLocation(Party iparty) {
         _charactersAtLocation.Remove(iparty);
         this.tileLocation.AddCharacterToLocation(iparty);
 #if !WORLD_CREATION_TOOL
         _landmarkVisual.OnCharacterExitedLandmark(iparty);
-        Messenger.Broadcast<NewParty, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, iparty, this);
+        Messenger.Broadcast<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, iparty, this);
 #endif
     }
-    public void ReplaceCharacterAtLocation(NewParty ipartyToReplace, NewParty ipartyToAdd) {
+    public void ReplaceCharacterAtLocation(Party ipartyToReplace, Party ipartyToAdd) {
         if (_charactersAtLocation.Contains(ipartyToReplace)) {
             int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(ipartyToReplace);
             _charactersAtLocation.Insert(indexOfCharacterToReplace, ipartyToAdd);
@@ -383,7 +384,7 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     public bool IsCharacterAtLocation(ICharacter character) {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            NewParty currParty = _charactersAtLocation[i];
+            Party currParty = _charactersAtLocation[i];
             if (currParty.icharacters.Contains(character)) {
                 return true;
             }
@@ -1043,6 +1044,27 @@ public class BaseLandmark : ILocation, IInteractable {
     public void AdjustSupplies(int amount) {
         suppliesAtLandmark += amount;
         suppliesAtLandmark = Mathf.Max(suppliesAtLandmark, 0);
+    }
+    #endregion
+
+    #region Defenders
+    public void AddDefender(Party newDefender) {
+        for (int i = 0; i < defenders.Length; i++) {
+            Party currDefender = defenders[i];
+            if (currDefender == null) {
+                defenders[i] = newDefender;
+                break;
+            }
+        }
+    }
+    public void RemoveDefender(Party defender) {
+        for (int i = 0; i < defenders.Length; i++) {
+            Party currDefender = defenders[i];
+            if (currDefender != null && currDefender.id == defender.id) {
+                defenders[i] = null;
+                break;
+            }
+        }
     }
     #endregion
 }

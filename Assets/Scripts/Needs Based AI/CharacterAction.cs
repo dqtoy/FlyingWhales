@@ -48,8 +48,8 @@ public class CharacterAction {
 
     #region Virtuals
     public virtual void Initialize() { }
-    public virtual void OnChooseAction(NewParty iparty, IObject targetObject) { }
-    public virtual void OnFirstEncounter(NewParty party, IObject targetObject) {
+    public virtual void OnChooseAction(Party iparty, IObject targetObject) { }
+    public virtual void OnFirstEncounter(Party party, IObject targetObject) {
         //string startActionLog = GetStartActionString(party);
         string startActionLog = GetStartActionString(party);
         if (startActionLog != string.Empty && targetObject != null) {
@@ -85,7 +85,7 @@ public class CharacterAction {
             }
         }
     }
-    public virtual void PerformAction(NewParty party, IObject targetObject) { }
+    public virtual void PerformAction(Party party, IObject targetObject) { }
     public virtual void ActionSuccess(IObject targetObject) {
         if (_actionData.successFunction != null) {
             _actionData.successFunction.Invoke(targetObject);
@@ -105,17 +105,17 @@ public class CharacterAction {
     public virtual bool CanBeDone(IObject targetObject) {
         return true;
     }
-    public virtual bool CanBeDoneBy(NewParty party, IObject targetObject) {
+    public virtual bool CanBeDoneBy(Party party, IObject targetObject) {
         return true;
     }
-    public virtual void EndAction(NewParty party, IObject targetObject) {
+    public virtual void EndAction(Party party, IObject targetObject) {
         party.EndAction();
         if (onEndAction != null) {
             onEndAction();
         }
     }
-    public virtual void DoneDuration(NewParty party, IObject targetObject) { }
-    public virtual void SuccessEndAction(NewParty party) {
+    public virtual void DoneDuration(Party party, IObject targetObject) { }
+    public virtual void SuccessEndAction(Party party) {
         Messenger.Broadcast(Signals.ACTION_SUCCESS, party, this);
     }
     public virtual bool ShouldGoToTargetObjectOnChoose() {
@@ -291,7 +291,7 @@ public class CharacterAction {
     #endregion
 
     #region Logs
-    public virtual string GetStartActionString(NewParty party) {
+    public virtual string GetStartActionString(Party party) {
         string file = this.GetType().ToString();
         if (LocalizationManager.Instance.localizedText["CharacterActions"].ContainsKey(file)) {
             return LocalizationManager.Instance.GetLocalizedValue("CharacterActions", file, "start_action");
@@ -299,7 +299,7 @@ public class CharacterAction {
         Debug.LogWarning("No Localized text for action " + file);
         return string.Empty;
     }
-    public virtual string GetArriveActionString(NewParty party = null) {
+    public virtual string GetArriveActionString(Party party = null) {
         string file = this.GetType().ToString();
         if (LocalizationManager.Instance.localizedText["CharacterActions"].ContainsKey(file)) {
             return LocalizationManager.Instance.GetLocalizedValue("CharacterActions", file, "arrive_action");
@@ -307,7 +307,7 @@ public class CharacterAction {
        Debug.LogWarning("No Localized text for action " + file);
         return string.Empty;
     }
-    public virtual string GetLeaveActionString(NewParty party = null) {
+    public virtual string GetLeaveActionString(Party party = null) {
         string file = this.GetType().ToString();
         if (LocalizationManager.Instance.localizedText["CharacterActions"].ContainsKey(file)) {
             return LocalizationManager.Instance.GetLocalizedValue("CharacterActions", file, "leave_action");

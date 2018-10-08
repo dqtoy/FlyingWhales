@@ -60,7 +60,7 @@ public class LandmarkVisual : MonoBehaviour {
     public void UpdateProgressBar() {
         hpProgressBar.value = (float) _landmark.landmarkObj.currentHP / (float) _landmark.landmarkObj.maxHP;
     }
-    public void OnCharacterEnteredLandmark(NewParty iparty) {
+    public void OnCharacterEnteredLandmark(Party iparty) {
         //add character portrait to grid
         CharacterPortrait portrait = iparty.icon.characterPortrait;
         if(iparty.mainCharacter is ECS.Character && iparty.mainCharacter.role.roleType == CHARACTER_ROLE.PLAYER) {
@@ -77,7 +77,7 @@ public class LandmarkVisual : MonoBehaviour {
         ShowPartyPortrait(iparty);
         iparty.icon.SetVisualState(false);
     }
-    public void OnCharacterExitedLandmark(NewParty iparty) {
+    public void OnCharacterExitedLandmark(Party iparty) {
         //remove character portrait from grid
         //iparty.icon.gameObject.SetActive(true);
         if (!iparty.icon.avatarVisual.activeSelf) {
@@ -144,7 +144,7 @@ public class LandmarkVisual : MonoBehaviour {
             characterIndicatorGO.SetActive(false);
         }
     }
-    public void ShowPartyPortrait(NewParty party) {
+    public void ShowPartyPortrait(Party party) {
         CharacterPortrait portrait = party.icon.characterPortrait;
         if (!GameManager.Instance.allCharactersAreVisible) {
             if (_landmark.isBeingInspected) {

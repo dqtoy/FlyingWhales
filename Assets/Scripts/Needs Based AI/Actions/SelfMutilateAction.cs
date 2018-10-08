@@ -10,7 +10,7 @@ public class SelfMutilateAction : CharacterAction {
     }
 
     #region Overrides
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
         if(party is CharacterParty) {
@@ -26,7 +26,7 @@ public class SelfMutilateAction : CharacterAction {
     }
     #endregion
 
-    private void Mutilate(NewParty party) {
+    private void Mutilate(Party party) {
         int hpReduction = (int)((float)party.mainCharacter.maxHP * 0.02f);
         party.mainCharacter.AdjustHP(-hpReduction);
     }

@@ -9,21 +9,21 @@ public class HibernateAction : CharacterAction {
     }
 
     #region Overrides
-    public override void OnFirstEncounter(NewParty party, IObject targetObject) {
+    public override void OnFirstEncounter(Party party, IObject targetObject) {
         base.OnFirstEncounter(party, targetObject);
         for (int i = 0; i < party.icharacters.Count; i++) {
             Monster monster = party.icharacters[i] as Monster;
             monster.SetSleeping(true);
         }
     }
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
         //for (int i = 0; i < party.icharacters.Count; i++) {
         //    party.icharacters[i].AdjustHP(5);
         //}
     }
-    public override void EndAction(NewParty party, IObject targetObject) {
+    public override void EndAction(Party party, IObject targetObject) {
         base.EndAction(party, targetObject);
         for (int i = 0; i < party.icharacters.Count; i++) {
             Monster monster = party.icharacters[i] as Monster;

@@ -146,13 +146,13 @@ namespace ECS {
         public Faction faction {
             get { return _faction; }
         }
-        public NewParty ownParty {
+        public Party ownParty {
             get { return _ownParty; }
         }
         public CharacterParty party {
             get { return _ownParty; }
         }
-        public NewParty currentParty {
+        public Party currentParty {
             get { return _currentParty; }
         }
         public CharacterAction genericWorkAction {
@@ -2116,7 +2116,7 @@ namespace ECS {
         /*
          Create a new Party with this character as the leader.
              */
-        public NewParty CreateOwnParty() {
+        public Party CreateOwnParty() {
             if(_ownParty != null) {
                 _ownParty.RemoveCharacter(this);
             }
@@ -2126,10 +2126,10 @@ namespace ECS {
             newParty.CreateCharacterObject();
             return newParty;
         }
-		public void SetOwnedParty(NewParty party) {
+		public void SetOwnedParty(Party party) {
 			_ownParty = party as CharacterParty;
 		}
-        public void SetCurrentParty(NewParty party) {
+        public void SetCurrentParty(Party party) {
             _currentParty = party as CharacterParty;
         }
         public void OnRemovedFromParty() {
@@ -2325,9 +2325,9 @@ namespace ECS {
         //public void SetIsIdle(bool state) {
         //    _isIdle = state;
         //}
-        public bool HasPathToParty(Party partyToJoin) {
-            return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.PASSABLE, _faction) != null;
-        }
+        //public bool HasPathToParty(Party partyToJoin) {
+        //    return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.PASSABLE, _faction) != null;
+        //}
         public void CenterOnCharacter() {
             if (!this.isDead) {
                 CameraMove.Instance.CenterCameraOn(currentParty.specificLocation.tileLocation.gameObject);

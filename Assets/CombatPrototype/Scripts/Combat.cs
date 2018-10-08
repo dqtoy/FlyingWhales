@@ -112,7 +112,7 @@ namespace ECS{
 				CombatPrototypeUI.Instance.UpdateCharactersList(side);
 			}
 		}
-        internal void AddParty(SIDES side, NewParty iparty) {
+        internal void AddParty(SIDES side, Party iparty) {
             for (int i = 0; i < iparty.icharacters.Count; i++) {
                 ICharacter currChar = iparty.icharacters[i];
                 AddCharacter(side, currChar);

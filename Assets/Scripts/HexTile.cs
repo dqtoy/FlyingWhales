@@ -62,7 +62,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     private int _greenMagicAmount;
     private BaseLandmark _landmarkOnTile = null;
 
-    protected List<NewParty> _charactersAtLocation = new List<NewParty>(); //List of characters/party on landmark
+    protected List<Party> _charactersAtLocation = new List<Party>(); //List of characters/party on landmark
 
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
 
@@ -122,7 +122,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public GameObject clickHighlightGO {
         get { return _clickHighlightGO; }
     }
-    public List<NewParty> charactersAtLocation {
+    public List<Party> charactersAtLocation {
         get { return _charactersAtLocation; }
     }
     public HexTile tileLocation {
@@ -1152,7 +1152,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     #region Characters
-	public void AddCharacterToLocation(NewParty iparty) {
+	public void AddCharacterToLocation(Party iparty) {
 		if (!_charactersAtLocation.Contains(iparty)) {
 			_charactersAtLocation.Add(iparty);
             iparty.SetSpecificLocation(this);
@@ -1168,7 +1168,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             //}
         }
 	}
-	public void RemoveCharacterFromLocation(NewParty iparty) {
+	public void RemoveCharacterFromLocation(Party iparty) {
 		_charactersAtLocation.Remove(iparty);
         iparty.SetSpecificLocation(null);
   //      if (character.icharacterType == ICHARACTER_TYPE.CHARACTER){
@@ -1182,7 +1182,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //    UnScheduleCombatCheck();
         //}
 	}
-    public void ReplaceCharacterAtLocation(NewParty ipartyToReplace, NewParty ipartyToAdd) {
+    public void ReplaceCharacterAtLocation(Party ipartyToReplace, Party ipartyToAdd) {
         if (_charactersAtLocation.Contains(ipartyToReplace)) {
             int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(ipartyToReplace);
             _charactersAtLocation.Insert(indexOfCharacterToReplace, ipartyToAdd);
@@ -1202,7 +1202,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public bool IsCharacterAtLocation(ICharacter character) {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            NewParty currParty = _charactersAtLocation[i];
+            Party currParty = _charactersAtLocation[i];
             if (currParty.icharacters.Contains(character)) {
                 return true;
             }

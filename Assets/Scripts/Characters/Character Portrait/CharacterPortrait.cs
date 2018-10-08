@@ -231,7 +231,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
                     return;
                 }
             }
-            NewParty iparty = _character.ownParty;
+            Party iparty = _character.ownParty;
             if (nameLbl.gameObject.activeSelf) {
                 if (_character is ECS.Character) {
                     UIManager.Instance.ShowCharacterInfo(_character as ECS.Character);

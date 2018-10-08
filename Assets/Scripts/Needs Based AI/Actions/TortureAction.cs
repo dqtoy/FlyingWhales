@@ -16,7 +16,7 @@ public class TortureAction : CharacterAction {
     //        _structure = _state.obj as StructureObj;
     //    }
     //}
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         //if (obj.GetTotalCivilians() > 0) {//check if there are civilians in the object
         //    //if yes, 

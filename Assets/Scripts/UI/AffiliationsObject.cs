@@ -33,16 +33,16 @@ public class AffiliationsObject : MonoBehaviour {
         Messenger.AddListener(Signals.UPDATE_UI, UpdateAffiliations);
         Messenger.AddListener<ICharacter, Squad>(Signals.SQUAD_MEMBER_ADDED, OnSquadEdited);
         Messenger.AddListener<ICharacter, Squad>(Signals.SQUAD_MEMBER_REMOVED, OnSquadEdited);
-        Messenger.AddListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnPartyEdited);
-        Messenger.AddListener<ICharacter, NewParty>(Signals.CHARACTER_LEFT_PARTY, OnPartyEdited);
+        Messenger.AddListener<ICharacter, Party>(Signals.CHARACTER_JOINED_PARTY, OnPartyEdited);
+        Messenger.AddListener<ICharacter, Party>(Signals.CHARACTER_LEFT_PARTY, OnPartyEdited);
         Messenger.AddListener<ECS.Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnFactionEdited);
         Messenger.AddListener<ECS.Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnFactionEdited);
     }
     public void Reset() {
         Messenger.RemoveListener<ICharacter, Squad>(Signals.SQUAD_MEMBER_ADDED, OnSquadEdited);
         Messenger.RemoveListener<ICharacter, Squad>(Signals.SQUAD_MEMBER_REMOVED, OnSquadEdited);
-        Messenger.RemoveListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnPartyEdited);
-        Messenger.RemoveListener<ICharacter, NewParty>(Signals.CHARACTER_LEFT_PARTY, OnPartyEdited);
+        Messenger.RemoveListener<ICharacter, Party>(Signals.CHARACTER_JOINED_PARTY, OnPartyEdited);
+        Messenger.RemoveListener<ICharacter, Party>(Signals.CHARACTER_LEFT_PARTY, OnPartyEdited);
         Messenger.RemoveListener<ECS.Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnFactionEdited);
         Messenger.RemoveListener<ECS.Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnFactionEdited);
         Messenger.RemoveListener(Signals.UPDATE_UI, UpdateAffiliations);
@@ -58,7 +58,7 @@ public class AffiliationsObject : MonoBehaviour {
             UpdateAffiliations();
         }
     }
-    private void OnPartyEdited(ICharacter character, NewParty affectedParty) {
+    private void OnPartyEdited(ICharacter character, Party affectedParty) {
         if (_character == null) {
             return;
         }

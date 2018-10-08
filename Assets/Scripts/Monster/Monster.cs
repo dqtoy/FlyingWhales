@@ -54,7 +54,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     private Dictionary<ELEMENT, float> _elementalResistances;
     private Dictionary<string, float> _itemDropsLookup;
     private Squad _squad;
-    private NewParty _currentParty;
+    private Party _currentParty;
     public CharacterUIData uiData { get; private set; }
 
 
@@ -251,7 +251,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public Dictionary<Character, Relationship> relationships {
         get { return null; }
     }
-    public NewParty ownParty {
+    public Party ownParty {
         get { return _ownParty; }
     }
     public List<CharacterAction> miscActions {
@@ -260,7 +260,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public Squad squad {
         get { return _squad; }
     }
-    public NewParty currentParty {
+    public Party currentParty {
         get { return _currentParty; }
     }
     public CharacterActionQueue<ActionQueueItem> actionQueue {
@@ -563,7 +563,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
         this._homeLandmark = newHomeLandmark;
     }
-    public NewParty CreateOwnParty() {
+    public Party CreateOwnParty() {
         //if (_ownParty != null) {
         //    _ownParty.RemoveCharacter(this);
         //}
@@ -573,7 +573,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         //return newParty;
         return null;
     }
-    public void SetOwnedParty(NewParty party) {
+    public void SetOwnedParty(Party party) {
         _ownParty = party as MonsterParty;
     }
     public Attribute AddAttribute(ATTRIBUTE tag) {
@@ -779,7 +779,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         //    }
         //}
     }
-    public void SetCurrentParty(NewParty party) {
+    public void SetCurrentParty(Party party) {
         _currentParty = party;
     }
     public void OnRemovedFromParty() {

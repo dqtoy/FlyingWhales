@@ -13,14 +13,14 @@ public class ArgueAction : CharacterAction {
     }
 
     #region Overrides
-    public override void OnChooseAction(NewParty iparty, IObject targetObject) {
+    public override void OnChooseAction(Party iparty, IObject targetObject) {
         base.OnChooseAction(iparty, targetObject);
         if (iparty is CharacterParty) {
             Character arguer = iparty.mainCharacter as Character;
             arguer.SetDoNotDisturb(true);
         }
     }
-    public override void OnFirstEncounter(NewParty party, IObject targetObject) {
+    public override void OnFirstEncounter(Party party, IObject targetObject) {
         //base.OnFirstEncounter(party, targetObject);
         if (targetObject == null) {
             return;
@@ -56,7 +56,7 @@ public class ArgueAction : CharacterAction {
             }
         }
     }
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
 
         //give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige
@@ -69,7 +69,7 @@ public class ArgueAction : CharacterAction {
         if (mainCharacter.GetAttribute(ATTRIBUTE.INTROVERT) == null && mainCharacter.GetAttribute(ATTRIBUTE.BELLIGERENT) != null) {
             List<CharacterParty> targetCandidates = new List<CharacterParty>();
             for (int i = 0; i < mainCharacter.specificLocation.charactersAtLocation.Count; i++) {
-                NewParty targetParty = mainCharacter.specificLocation.charactersAtLocation[i];
+                Party targetParty = mainCharacter.specificLocation.charactersAtLocation[i];
                 if (targetParty != sourceParty && targetParty is CharacterParty) {
                     Character targetMainCharacter = targetParty.mainCharacter as Character;
                     if (targetMainCharacter.doNotDisturb || targetParty.icon.isTravelling) {
@@ -87,7 +87,7 @@ public class ArgueAction : CharacterAction {
         }
         return null;
     }
-    public override void EndAction(NewParty party, IObject targetObject) {
+    public override void EndAction(Party party, IObject targetObject) {
         if(!(party is CharacterParty)) {
             return;
         }

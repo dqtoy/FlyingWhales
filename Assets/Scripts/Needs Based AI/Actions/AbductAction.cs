@@ -17,7 +17,7 @@ public class AbductAction : CharacterAction {
         //    _structure = state.obj as StructureObj;
         //}
     //}
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         if (targetObject is StructureObj) {
             StructureObj structure = targetObject as StructureObj;

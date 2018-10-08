@@ -20,7 +20,7 @@ public class BuildAction : CharacterAction {
         _structureObject = ObjectManager.Instance.GetNewStructureObject(_structureName);
         _amountToIncrease = Mathf.RoundToInt((float) _structureObject.maxHP / (float) _actionData.duration);
     }
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         //if (!_isStructureInLandmark) {
         //    _isStructureInLandmark = _state.obj.objectLocation.AddObject(_structureObject);

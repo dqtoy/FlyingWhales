@@ -21,13 +21,13 @@ public class JoinBattleAction : CharacterAction {
     //        _characterObj = _state.obj as CharacterObj;
     //    }
     //}
-    public override void OnFirstEncounter(NewParty party, IObject targetObject) {
+    public override void OnFirstEncounter(Party party, IObject targetObject) {
         base.OnFirstEncounter(party, targetObject);
         if(targetObject is CharacterObj) {
             StartEncounter(party, targetObject as CharacterObj);
         }
     }
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
         //What happens when performing join battle
@@ -47,7 +47,7 @@ public class JoinBattleAction : CharacterAction {
         }
         return base.CanBeDone(targetObject);
     }
-    public override bool CanBeDoneBy(NewParty party, IObject targetObject) {
+    public override bool CanBeDoneBy(Party party, IObject targetObject) {
         if(targetObject is CharacterObj) {
             CharacterObj characterObj = targetObject as CharacterObj;
             if (party.faction == null || characterObj.party.faction == null || party.faction.id != characterObj.party.faction.id) {
@@ -57,7 +57,7 @@ public class JoinBattleAction : CharacterAction {
         return base.CanBeDoneBy(party, targetObject);
     }
     #endregion
-    private void StartEncounter(NewParty friend, CharacterObj characterObj) {
+    private void StartEncounter(Party friend, CharacterObj characterObj) {
         friend.JoinCombatWith(characterObj.party);
     }
 }

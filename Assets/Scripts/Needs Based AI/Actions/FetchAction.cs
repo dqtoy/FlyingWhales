@@ -11,7 +11,7 @@ public class FetchAction : CharacterAction {
     public FetchAction() : base(ACTION_TYPE.FETCH) { }
 
     #region overrides
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         if (party is CharacterParty) {
             FetchQuest fetchQuest = ((party.owner as Character).currentQuest as FetchQuest);
@@ -56,7 +56,7 @@ public class FetchAction : CharacterAction {
         action.Initialize();
         return action;
     }
-    public override void OnChooseAction(NewParty iparty, IObject targetObject) {
+    public override void OnChooseAction(Party iparty, IObject targetObject) {
         base.OnChooseAction(iparty, targetObject);
         FetchQuest fetchQuest = ((iparty.owner as Character).currentQuest as FetchQuest);
         fetchQuest.SetFetchCooldown(GetFetchCooldown(iparty as CharacterParty));

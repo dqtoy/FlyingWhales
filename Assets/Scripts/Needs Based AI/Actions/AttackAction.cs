@@ -22,13 +22,13 @@ public class AttackAction : CharacterAction {
         //    _icharacterObj = _state.obj as ICharacterObject;
         //}
     //}
-    public override void OnFirstEncounter(NewParty party, IObject targetObject) {
+    public override void OnFirstEncounter(Party party, IObject targetObject) {
         base.OnFirstEncounter(party, targetObject);
         //if(targetObject is ICharacterObject) {
         //    StartEncounter(party, targetObject as ICharacterObject);
         //}
     }
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
         //What happens when performing attack
@@ -39,7 +39,7 @@ public class AttackAction : CharacterAction {
         attackAction.Initialize();
         return attackAction;
     }
-    public override bool CanBeDoneBy(NewParty party, IObject targetObject) {
+    public override bool CanBeDoneBy(Party party, IObject targetObject) {
         if(targetObject is ICharacterObject) {
             ICharacterObject icharacterObject = targetObject as ICharacterObject;
             if (icharacterObject.iparty.faction != null) {
@@ -50,7 +50,7 @@ public class AttackAction : CharacterAction {
         }
         return base.CanBeDoneBy(party, targetObject);
     }
-    public override void OnChooseAction(NewParty iparty, IObject targetObject) {
+    public override void OnChooseAction(Party iparty, IObject targetObject) {
         //if(targetObject is ICharacterObject) {
         //    ICharacterObject icharacterObject = targetObject as ICharacterObject;
         //    icharacterObject.iparty.numOfAttackers++;
@@ -60,7 +60,7 @@ public class AttackAction : CharacterAction {
         //}
         base.OnChooseAction(iparty, targetObject);
     }
-    public override void EndAction(NewParty party, IObject targetObject) {
+    public override void EndAction(Party party, IObject targetObject) {
         //if (targetObject is ICharacterObject) {
         //    ICharacterObject icharacterObject = targetObject as ICharacterObject;
         //    icharacterObject.iparty.numOfAttackers--;
@@ -71,14 +71,14 @@ public class AttackAction : CharacterAction {
         //}
         base.EndAction(party, targetObject);
     }
-    public override void SuccessEndAction(NewParty party) {
+    public override void SuccessEndAction(Party party) {
         base.SuccessEndAction(party);
         //if(party is CharacterParty) {
         //    GiveAllReward(party as CharacterParty);
         //}
     }
     #endregion
-    private void StartEncounter(NewParty enemy, ICharacterObject icharacterObject) {
+    private void StartEncounter(Party enemy, ICharacterObject icharacterObject) {
         icharacterObject.iparty.StartCombatWith(enemy);
     }
 

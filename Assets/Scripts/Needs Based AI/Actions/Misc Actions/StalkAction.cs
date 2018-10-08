@@ -13,7 +13,7 @@ public class StalkAction : CharacterAction {
     }
 
     #region Overrides
-    public override void OnChooseAction(NewParty iparty, IObject targetObject) {
+    public override void OnChooseAction(Party iparty, IObject targetObject) {
         base.OnChooseAction(iparty, targetObject);
 
         ICharacterObject characterObject = targetObject as ICharacterObject;
@@ -27,10 +27,10 @@ public class StalkAction : CharacterAction {
         stalkeeLog.AddToFillers(iparty.mainCharacter, iparty.mainCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         characterObject.iparty.mainCharacter.AddHistory(stalkeeLog);
     }
-    public override void OnFirstEncounter(NewParty party, IObject targetObject) {
+    public override void OnFirstEncounter(Party party, IObject targetObject) {
         //This is added so that it will not call the base of OnFirstEncounter
     }
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
 
         //give the character the Provided Hunger, Provided Energy, Provided Joy, Provided Prestige

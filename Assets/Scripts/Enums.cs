@@ -951,3 +951,7 @@ public enum QUEST_GIVER_TYPE {
     QUEST_BOARD,
     CHARACTER,
 }
+public enum COMBATANT_TYPE {
+    CHARACTER,
+    ARMY, //Party
+}

@@ -11,7 +11,7 @@ public class EnrollAction : CharacterAction {
     }
 
     #region Overrides
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         if (mentor == null) {
             if (targetObject is ICharacterObject) {
@@ -57,7 +57,7 @@ public class EnrollAction : CharacterAction {
         action.Initialize();
         return action;
     }
-    public override bool CanBeDoneBy(NewParty party, IObject targetObject) {
+    public override bool CanBeDoneBy(Party party, IObject targetObject) {
         if (targetObject is ICharacterObject) {
             ICharacterObject owner = targetObject as ICharacterObject;
             if (owner.iparty.mainCharacter is ECS.Character) {

@@ -11,6 +11,7 @@ public class LandmarkSaveData {
     public int civilianCount;
     public int chosenMonsterSet;
     public List<string> items;
+    public int[] defenders;
 
     public LandmarkSaveData(BaseLandmark landmark) {
         landmarkID = landmark.id;
@@ -34,6 +35,15 @@ public class LandmarkSaveData {
             }
         } else {
             chosenMonsterSet = -1;
+        }
+
+        defenders = new int[LandmarkManager.MAX_DEFENDERS];
+        for (int i = 0; i < defenders.Length; i++) {
+            if (landmark.defenders[i] == null) {
+                defenders[i] = -1;
+            } else {
+                defenders[i] = landmark.defenders[i].id;
+            }
         }
     }
 }

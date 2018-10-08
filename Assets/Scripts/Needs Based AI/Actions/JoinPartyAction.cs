@@ -14,7 +14,7 @@ public class JoinPartyAction : CharacterAction {
         return action;
     }
 
-    public override void OnChooseAction(NewParty iparty, IObject targetObject) {
+    public override void OnChooseAction(Party iparty, IObject targetObject) {
         base.OnChooseAction(iparty, targetObject);
         (iparty as CharacterParty).actionData.ForceDoAction(iparty.icharacterObject.currentState.GetAction(ACTION_TYPE.IN_PARTY), iparty.icharacterObject);
         if (targetObject is ICharacterObject) {
@@ -27,7 +27,7 @@ public class JoinPartyAction : CharacterAction {
     //    base.PerformAction(party, targetObject);
         
     //}
-    public override void EndAction(NewParty party, IObject targetObject) {
+    public override void EndAction(Party party, IObject targetObject) {
         base.EndAction(party, targetObject);
         party.icon.SetVisualState(false);
     }

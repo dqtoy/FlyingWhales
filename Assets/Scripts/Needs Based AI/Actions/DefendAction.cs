@@ -10,12 +10,12 @@ public class DefendAction : CharacterAction {
 
 
     #region Overrides
-    public override void OnFirstEncounter(NewParty party, IObject targetObject) {
+    public override void OnFirstEncounter(Party party, IObject targetObject) {
         base.OnFirstEncounter(party, targetObject);
         party.SetIsDefending(true);
         //DefendTheLand(party, targetObject);
     }
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
         if (party is CharacterParty) {
@@ -27,7 +27,7 @@ public class DefendAction : CharacterAction {
     public override IObject GetTargetObject(CharacterParty sourceParty) {
         return null;
     }
-    public override void EndAction(NewParty party, IObject targetObject) {
+    public override void EndAction(Party party, IObject targetObject) {
         base.EndAction(party, targetObject);
         party.SetIsDefending(false);
     }
@@ -52,7 +52,7 @@ public class DefendAction : CharacterAction {
     private void DefendTheLand(CharacterParty defenderParty, IObject targetObject) {
         bool engagedInCombat = false;
         for (int i = 0; i < targetObject.objectLocation.charactersAtLocation.Count; i++) {
-            NewParty newParty = targetObject.objectLocation.charactersAtLocation[i];
+            Party newParty = targetObject.objectLocation.charactersAtLocation[i];
             if (newParty.isAttacking) {
                 Combat combat = defenderParty.StartCombatWith(newParty);
                 combat.AddAfterCombatAction(() => CheckCombatResults(defenderParty, targetObject, combat));

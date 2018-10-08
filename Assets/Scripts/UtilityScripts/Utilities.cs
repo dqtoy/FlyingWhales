@@ -77,7 +77,7 @@ public class Utilities : MonoBehaviour {
         } else if (obj is Area) {
             lastAreaID += 1;
             return lastAreaID;
-        } else if (obj is NewParty) {
+        } else if (obj is Party) {
             lastPartyID += 1;
             return lastPartyID;
         } else if (obj is Quest) {
@@ -112,7 +112,7 @@ public class Utilities : MonoBehaviour {
             lastMonsterID = idToUse;
         } else if (obj is Area) {
             lastAreaID = idToUse;
-        } else if (obj is NewParty) {
+        } else if (obj is Party) {
             lastPartyID = idToUse;
         } else if (obj is Quest) {
             lastQuestID = idToUse;

@@ -8,11 +8,11 @@ public interface ILocation {
 	LOCATION_IDENTIFIER locIdentifier { get; }
 	HexTile tileLocation { get; }
     string locationName { get; }
-    List<NewParty> charactersAtLocation { get; }
+    List<Party> charactersAtLocation { get; }
 
-    void AddCharacterToLocation(NewParty iparty);
-	void RemoveCharacterFromLocation(NewParty iparty);
-    void ReplaceCharacterAtLocation(NewParty ipartyToReplace, NewParty ipartyToAdd);
+    void AddCharacterToLocation(Party iparty);
+	void RemoveCharacterFromLocation(Party iparty);
+    void ReplaceCharacterAtLocation(Party ipartyToReplace, Party ipartyToAdd);
 
     //void ScheduleCombatCheck();
     //void UnScheduleCombatCheck();

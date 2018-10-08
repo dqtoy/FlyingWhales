@@ -30,7 +30,7 @@ public class FormPartyAction : CharacterAction {
         base.Initialize();
     }
 
-    public override void OnChooseAction(NewParty iparty, IObject targetObject) {
+    public override void OnChooseAction(Party iparty, IObject targetObject) {
         joiningCharacters = new List<ICharacter>();
         party = iparty as CharacterParty;
         minimumDuration = 12;
@@ -126,7 +126,7 @@ public class FormPartyAction : CharacterAction {
         iparty.GoToLocation(targetLocation, PATHFINDING_MODE.PASSABLE, () => InviteSquadMembers(iparty.mainCharacter)); //The character will move to the target tile and perform the action for Minimum Duration
         base.OnChooseAction(iparty, targetObject);
     }
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         if (party is CharacterParty) {
             CharacterParty characterParty = party as CharacterParty;
@@ -159,10 +159,10 @@ public class FormPartyAction : CharacterAction {
         }
 
     }
-    public override void EndAction(NewParty party, IObject targetObject) {
+    public override void EndAction(Party party, IObject targetObject) {
         base.EndAction(party, targetObject);
         if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_JOINED_PARTY)) {
-            Messenger.RemoveListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
+            Messenger.RemoveListener<ICharacter, Party>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
         }
         if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_DEATH)) {
             Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
@@ -185,12 +185,12 @@ public class FormPartyAction : CharacterAction {
             Debug.Log(text);
         }
         if (joiningCharacters.Count > 0) {
-            Messenger.AddListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
+            Messenger.AddListener<ICharacter, Party>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         }
     }
 
-    private void OnCharacterJoinedParty(ICharacter character, NewParty affectedParty) {
+    private void OnCharacterJoinedParty(ICharacter character, Party affectedParty) {
         if (this.party.id == affectedParty.id) {
             if (joiningCharacters.Contains(character)) {
                 joiningCharacters.Remove(character);

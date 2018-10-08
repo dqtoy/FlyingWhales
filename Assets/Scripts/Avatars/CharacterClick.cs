@@ -34,9 +34,9 @@ public class CharacterClick : MonoBehaviour {
                 return;
             }
         }
-        NewParty iparty = icon.iparty;
+        Party iparty = icon.iparty;
         if (iparty.icharacters.Count > 1) {
-            UIManager.Instance.ShowPartyInfo(iparty as NewParty);
+            UIManager.Instance.ShowPartyInfo(iparty as Party);
         } else if (iparty.icharacters.Count == 1) {
             if (iparty.mainCharacter is ECS.Character) {
                 UIManager.Instance.ShowCharacterInfo(iparty.mainCharacter as ECS.Character);

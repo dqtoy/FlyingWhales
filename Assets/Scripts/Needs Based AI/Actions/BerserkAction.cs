@@ -12,18 +12,18 @@ public class BerserkAction : CharacterAction {
     }
 
     #region Overrides
-    public override void OnChooseAction(NewParty iparty, IObject targetObject) {
+    public override void OnChooseAction(Party iparty, IObject targetObject) {
         base.OnChooseAction(iparty, targetObject);
         iparty.BerserkModeOn();
     }
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
         if (party is CharacterParty) {
             GiveAllReward(party as CharacterParty);
         }
     }
-    public override void EndAction(NewParty party, IObject targetObject) {
+    public override void EndAction(Party party, IObject targetObject) {
         base.EndAction(party, targetObject);
         party.BerserkModeOff();
     }

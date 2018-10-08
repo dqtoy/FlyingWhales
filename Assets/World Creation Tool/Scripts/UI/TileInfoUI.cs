@@ -51,7 +51,7 @@ public class TileInfoUI : MonoBehaviour {
         info += "\nCivilians: " + landmark.civilianCount.ToString();
         info += "\nCharacters located here: ";
         for (int i = 0; i < landmark.charactersAtLocation.Count; i++) {
-            NewParty currChar = landmark.charactersAtLocation[i];
+            Party currChar = landmark.charactersAtLocation[i];
             info += "\n   - " + currChar.name;
         }
         info += "\nItems here: ";

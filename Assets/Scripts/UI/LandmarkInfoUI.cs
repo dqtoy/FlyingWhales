@@ -89,8 +89,8 @@ public class LandmarkInfoUI : UIMenu {
         //populate item containers
         itemContainers = itemsParent.GetComponentsInChildren<ItemContainer>();
         Messenger.AddListener<StructureObj, ObjectState>(Signals.STRUCTURE_STATE_CHANGED, OnStructureChangedState);
-        Messenger.AddListener<NewParty, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, OnPartyEnteredLandmark);
-        Messenger.AddListener<NewParty, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, OnPartyExitedLandmark);
+        Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, OnPartyEnteredLandmark);
+        Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, OnPartyExitedLandmark);
         Messenger.AddListener<Item, BaseLandmark>(Signals.ITEM_PLACED_AT_LANDMARK, OnItemAddedToLandmark);
         Messenger.AddListener<Item, BaseLandmark>(Signals.ITEM_REMOVED_FROM_LANDMARK, OnItemRemovedFromLandmark);
     }
@@ -206,7 +206,7 @@ public class LandmarkInfoUI : UIMenu {
         Utilities.DestroyChildren(charactersScrollView.content);
         if (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll) {
             for (int i = 0; i < _activeLandmark.charactersAtLocation.Count; i++) {
-                NewParty currParty = _activeLandmark.charactersAtLocation[i];
+                Party currParty = _activeLandmark.charactersAtLocation[i];
                 CreateNewCharacterItem(currParty);
             }
         } else {
@@ -216,7 +216,7 @@ public class LandmarkInfoUI : UIMenu {
             }
         }
     }
-    private LandmarkCharacterItem GetItem(NewParty party) {
+    private LandmarkCharacterItem GetItem(Party party) {
         LandmarkCharacterItem[] items = Utilities.GetComponentsInDirectChildren<LandmarkCharacterItem>(charactersScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
             LandmarkCharacterItem item = items[i];
@@ -228,7 +228,7 @@ public class LandmarkInfoUI : UIMenu {
         }
         return null;
     }
-    private void CreateNewCharacterItem(NewParty party) {
+    private void CreateNewCharacterItem(Party party) {
         GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
         LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
         item.SetParty(party, _activeLandmark);
@@ -238,12 +238,12 @@ public class LandmarkInfoUI : UIMenu {
         LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
         item.SetPartyData(partyData);
     }
-    private void OnPartyEnteredLandmark(NewParty party, BaseLandmark landmark) {
+    private void OnPartyEnteredLandmark(Party party, BaseLandmark landmark) {
         if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id && _activeLandmark.isBeingInspected) {
             CreateNewCharacterItem(party);
         }
     }
-    private void OnPartyExitedLandmark(NewParty party, BaseLandmark landmark) {
+    private void OnPartyExitedLandmark(Party party, BaseLandmark landmark) {
         if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id) {
             LandmarkCharacterItem item = GetItem(party);
             if(item != null) {

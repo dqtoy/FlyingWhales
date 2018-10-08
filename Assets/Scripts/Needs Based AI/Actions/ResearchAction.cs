@@ -14,7 +14,7 @@ public class ResearchAction : CharacterAction {
         action.Initialize();
         return action;
     }
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         if (party is CharacterParty) {
             CharacterParty characterParty = party as CharacterParty;

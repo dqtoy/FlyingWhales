@@ -19,8 +19,8 @@ public class PartyInfoUI : UIMenu {
     [SerializeField] private Color evenColor;
     [SerializeField] private Color oddColor;
 
-    internal NewParty currentlyShowingParty {
-        get { return _data as NewParty; }
+    internal Party currentlyShowingParty {
+        get { return _data as Party; }
     }
 
     internal override void Initialize() {

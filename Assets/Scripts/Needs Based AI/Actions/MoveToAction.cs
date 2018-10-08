@@ -14,7 +14,7 @@ public class MoveToAction : CharacterAction {
         action.Initialize();
         return action;
     }
-    public override void OnChooseAction(NewParty iparty, IObject targetObject) {
+    public override void OnChooseAction(Party iparty, IObject targetObject) {
         base.OnChooseAction(iparty, targetObject);
         iparty.GoToLocation(targetObject.objectLocation, PATHFINDING_MODE.PASSABLE, () => EndAction(iparty as CharacterParty, targetObject));
     }

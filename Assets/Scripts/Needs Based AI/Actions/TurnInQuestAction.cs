@@ -14,7 +14,7 @@ public class TurnInQuestAction : CharacterAction {
         action.Initialize();
         return action;
     }
-    public override void PerformAction(NewParty party, IObject targetObject) {
+    public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         Character mainCharacter = party.owner as Character;
         if (mainCharacter.currentQuest == null) {
@@ -30,7 +30,7 @@ public class TurnInQuestAction : CharacterAction {
             EndAction(party, targetObject);
         }
     }
-    public override void EndAction(NewParty party, IObject targetObject) {
+    public override void EndAction(Party party, IObject targetObject) {
         base.EndAction(party, targetObject);
         if(party is CharacterParty) {
             CharacterParty characterParty = party as CharacterParty;
