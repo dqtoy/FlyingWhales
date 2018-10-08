@@ -83,30 +83,12 @@ public class PlayerManager : MonoBehaviour {
     public void AddTileToPlayerArea(HexTile tile) {
         player.playerArea.AddTile(tile);
         tile.SetCorruption(true);
-        tile.ActivateMagicTransferToPlayer();
-        for (int i = 0; i < tile.AllNeighbours.Count; i++) {
-            HexTile neighbor = tile.AllNeighbours[i];
-            if (!neighbor.isCorrupted) {
-                if (neighbor.isPassable) {
-                    if (neighbor.landmarkOnTile != null) {
-                        //Flat tile with structure
-                        if(neighbor.GetCorruptedNeighborsCount() >= 4) {
-                            AddTileToPlayerArea(neighbor);
-                        }
-                    }
-                } else {
-                    //Non flat tile
-                    if (neighbor.GetCorruptedNeighborsCount() >= 3) {
-                        AddTileToPlayerArea(neighbor);
-                    }
-                }
-            }
-        }
+        //tile.ActivateMagicTransferToPlayer();
     }
-
     public void CreatePlayerLandmarkOnTile(HexTile location, LANDMARK_TYPE landmarkType) {
         BaseLandmark landmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(location, landmarkType);
         OnPlayerLandmarkCreated(landmark);
+        location.ScheduleCorruption();
     }
 
     private void OnPlayerLandmarkCreated(BaseLandmark newLandmark) {

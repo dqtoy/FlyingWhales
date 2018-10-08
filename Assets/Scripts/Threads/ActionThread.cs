@@ -212,6 +212,7 @@ public class ActionThread : Multithread {
                     if (!character.LookForNewWorkplace()) {
                         //if still, no workplace can be found, idle at home instead
                         actions.Add(new ActionThreadItem(_party.characterObject.currentState.GetAction(ACTION_TYPE.IDLE), character.homeLandmark.landmarkObj));
+                        return actions;
                     }
                 }
                 if (character.characterClass.workActionType == ACTION_TYPE.WORKING) {

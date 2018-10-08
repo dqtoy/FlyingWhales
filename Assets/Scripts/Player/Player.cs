@@ -125,7 +125,8 @@ public class Player : ILeader{
         Biomes.Instance.CorruptTileVisuals(chosenCoreTile);
         chosenCoreTile.SetCorruption(true);
         SetPlayerArea(playerArea);
-        ActivateMagicTransferToPlayer();
+        //ActivateMagicTransferToPlayer();
+        _demonicPortal.tileLocation.ScheduleCorruption();
         //OnTileAddedToPlayerArea(playerArea, chosenCoreTile);
     }
     public void CreatePlayerArea(BaseLandmark portal) {
@@ -134,7 +135,8 @@ public class Player : ILeader{
         Biomes.Instance.CorruptTileVisuals(portal.tileLocation);
         portal.tileLocation.SetCorruption(true);
         SetPlayerArea(playerArea);
-        ActivateMagicTransferToPlayer();
+        //ActivateMagicTransferToPlayer();
+        _demonicPortal.tileLocation.ScheduleCorruption();
     }
     private void SetPlayerArea(Area area) {
         playerArea = area;
