@@ -1221,26 +1221,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void SetCorruption(bool state, BaseLandmark landmark = null) {
         if(_isCorrupted != state) {
             _isCorrupted = state;
-            //if (_isCorrupted) {
-            //    corruptedLandmark = landmark;
-            //}
-            //this._corruptionHighlightGO.SetActive(_isCorrupted);
-            //if (landmarkOnTile != null) {
-            //    landmarkOnTile.ToggleCorruption(_isCorrupted);
-            //}
         }
     }
     public bool CanThisTileBeCorrupted() {
-        //if(landmarkNeighbor != null && (!landmarkNeighbor.tileLocation.isCorrupted || landmarkNeighbor.tileLocation.uncorruptibleLandmarkNeighbors > 0)) {
-        //    return false;
-        //}
-        //if(_landmarkDirection.Count > 0) {
-        //    foreach (BaseLandmark landmark in _landmarkDirection.Keys) {
-        //        if (landmark.IsDirectionBlocked(_landmarkDirection[landmark])) {
-        //            return false;
-        //        }
-        //    }
-        //}
         return true;
     }
     public void SetUncorruptibleLandmarkNeighbors(int amount) {
@@ -1263,6 +1246,21 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             }
         }
         return count;
+    }
+    public void SpreadCorruptionToNeighbors() {
+        for (int i = 0; i < AllNeighbours.Count; i++) {
+            HexTile neighbor = AllNeighbours[i];
+            if (!neighbor.isCorrupted) {
+                PlayerManager.Instance.AddTileToPlayerArea(neighbor);
+                ScheduleCorruption();
+                break;
+            }
+        }
+    }
+    public void ScheduleCorruption() {
+        GameDate nextCorruptionDate = GameManager.Instance.Today();
+        nextCorruptionDate.AddHours(24);
+        SchedulingManager.Instance.AddEntry(nextCorruptionDate, () => SpreadCorruptionToNeighbors());
     }
     #endregion
 
