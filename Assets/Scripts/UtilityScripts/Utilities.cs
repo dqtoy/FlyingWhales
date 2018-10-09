@@ -29,6 +29,7 @@ public class Utilities : MonoBehaviour {
     public static int lastSquadID = 0;
     public static int lastCharacterSimID = 0;
     public static int lastGameEventID = 0;
+    public static int lastInteractionID = 0;
 
     public static float defenseBuff = 1.20f;
     public static int defaultCityHP = 300;
@@ -92,6 +93,9 @@ public class Utilities : MonoBehaviour {
         } else if (obj is GameEvent) {
             lastGameEventID += 1;
             return lastGameEventID;
+        } else if (obj is Interaction) {
+            lastInteractionID += 1;
+            return lastInteractionID;
         }
         return 0;
     }
@@ -122,6 +126,8 @@ public class Utilities : MonoBehaviour {
             lastCharacterSimID = idToUse;
         } else if (obj is GameEvent) {
             lastGameEventID = idToUse;
+        } else if (obj is Interaction) {
+            lastInteractionID = idToUse;
         }
         return idToUse;
     }
@@ -976,6 +982,26 @@ public class Utilities : MonoBehaviour {
             return "Human";
             case RACE.ELVES:
             return "Elf";
+            case RACE.MINGONS:
+            return "Mingon";
+            case RACE.CROMADS:
+            return "Cromad";
+            case RACE.GOBLIN:
+            return "Goblin";
+            case RACE.TROLL:
+            return "Troll";
+            case RACE.DRAGON:
+            return "Dragon";
+            default:
+            return Utilities.NormalizeString(race.ToString());
+        }
+    }
+    public static string GetNormalizedRaceAdjective(RACE race) {
+        switch (race) {
+            case RACE.HUMANS:
+            return "Human";
+            case RACE.ELVES:
+            return "Elven";
             case RACE.MINGONS:
             return "Mingon";
             case RACE.CROMADS:

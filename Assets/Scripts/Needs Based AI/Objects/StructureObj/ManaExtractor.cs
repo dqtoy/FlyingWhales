@@ -38,7 +38,7 @@ public class ManaExtractor : StructureObj {
     private void ProduceMana() {
         //Provides the player 20 Mana Stones at the start of each day until the Mana Stones have been exhausted.
         if (this.objectLocation.tileLocation.data.manaOnTile > 0) {
-            PlayerManager.Instance.player.AdjustMana(MANA_PER_DAY);
+            PlayerManager.Instance.player.AdjustCurrency(CURRENCY.MANA, MANA_PER_DAY);
             this.objectLocation.tileLocation.AdjustManaOnTile(-MANA_PER_DAY);
         }
     }

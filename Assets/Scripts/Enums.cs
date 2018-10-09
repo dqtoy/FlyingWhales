@@ -964,3 +964,8 @@ public enum COMBATANT_TYPE {
     CHARACTER,
     ARMY, //Party
 }
+public enum CURRENCY {
+    SUPPLY,
+    MANA,
+    IMP,
+}
