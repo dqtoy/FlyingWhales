@@ -162,7 +162,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
             hairBackOverlay.gameObject.SetActive(false);
             facialHairOverlay.gameObject.SetActive(false);
             wholeImage.sprite = null;
-            wholeImage.gameObject.SetActive(true);
+            //wholeImage.gameObject.SetActive(true);
             playerLocator.gameObject.SetActive(false);
             return;
         }
@@ -173,6 +173,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
         SetNose(portraitSettings.noseIndex);
         SetMouth(portraitSettings.mouthIndex);
         SetHair(portraitSettings.hairIndex);
+        SetFacialHair(portraitSettings.facialHairIndex);
         SetHairColor(portraitSettings.hairColor);
         wholeImage.gameObject.SetActive(false);
         playerLocator.gameObject.SetActive(false);
