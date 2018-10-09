@@ -59,6 +59,16 @@ public class TileInfoUI : MonoBehaviour {
             Item currItem = landmark.itemsInLandmark[i];
             info += "\n   - " + currItem.itemName;
         }
+        info += "\nDefenders: ";
+        for (int i = 0; i < landmark.defenders.Length; i++) {
+            Party currItem = landmark.defenders[i];
+            if (currItem == null) {
+                info += "\n   - null";
+            } else {
+                info += "\n   - " + currItem.name;
+            }
+            
+        }
         if (landmark is MonsterSpawnerLandmark) {
             info += "\nMonster Set: ";
             MonsterSpawnerLandmark msl = landmark as MonsterSpawnerLandmark;

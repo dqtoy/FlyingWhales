@@ -536,6 +536,16 @@ public class Player : ILeader {
             }
         }
     }
+    public List<Party> GetMinionsAndArmies() {
+        List<Party> armies = new List<Party>();
+        for (int i = 0; i < _minions.Count; i++) {
+            Minion currMinion = _minions[i];
+            if (!armies.Contains(currMinion.icharacter.currentParty)) {
+                armies.Add(currMinion.icharacter.currentParty);
+            }
+        }
+        return armies;
+    }
     #endregion
 
     #region Imps

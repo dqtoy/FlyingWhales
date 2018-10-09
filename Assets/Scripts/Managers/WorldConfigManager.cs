@@ -12,7 +12,7 @@ public class WorldConfigManager : MonoBehaviour {
         if (Instance == null) {
             Instance = this;
         } else if (Instance != this) {
-            Destroy(this.gameObject);
+            Destroy(Instance.gameObject);
         }
         DontDestroyOnLoad(this.gameObject);
     }
