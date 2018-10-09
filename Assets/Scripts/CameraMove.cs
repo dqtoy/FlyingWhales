@@ -304,10 +304,10 @@ public class CameraMove : MonoBehaviour {
 #else
         int borderCount = GridMap.Instance._borderThickness;
 #endif
-        MIN_X = bounds.min.x + horzExtent - (halfOfHexagon * borderCount);
-        MAX_X = bounds.max.x - horzExtent + (halfOfHexagon * borderCount);
-        MIN_Y = bounds.min.y + vertExtent - (halfOfHexagon * borderCount);
-        MAX_Y = bounds.max.y - vertExtent + (halfOfHexagon * borderCount);
+        MIN_X = bounds.min.x + horzExtent - (halfOfHexagon * (borderCount - 1));
+        MAX_X = bounds.max.x - horzExtent + (halfOfHexagon * (borderCount - 1));
+        MIN_Y = bounds.min.y + vertExtent - (halfOfHexagon * (borderCount - 1));
+        MAX_Y = bounds.max.y - vertExtent + (halfOfHexagon * (borderCount - 1));
     }
 
     private Vector2[] GetCameraWorldCorners(Camera camera) {
