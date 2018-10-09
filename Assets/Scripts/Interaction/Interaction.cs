@@ -8,6 +8,14 @@ public class Interaction {
     protected Dictionary<string, InteractionState> _states;
     protected InteractionState _currentState;
 
+    #region getters/setters
+    public InteractionState currentState {
+        get { return _currentState; }
+    }
+    public IInteractable interactable {
+        get { return _interactable; }
+    }
+    #endregion
     public Interaction(IInteractable interactable) {
         _id = Utilities.SetID(this);
         _interactable = interactable;

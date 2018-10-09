@@ -11,6 +11,12 @@ public class InteractionState {
     public string name {
         get { return _name; }
     }
+    public string description {
+        get { return _description; }
+    }
+    public ActionOption[] actionOptions {
+        get { return _actionOptions; }
+    }
     #endregion
 
     public InteractionState(string name) {

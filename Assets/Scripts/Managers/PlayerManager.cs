@@ -13,6 +13,7 @@ public class PlayerManager : MonoBehaviour {
 
     [SerializeField] private Sprite[] _playerAreaFloorSprites;
     [SerializeField] private Sprite[] _playerAreaDefaultStructureSprites;
+    [SerializeField] private Sprite _supplySprite, _manaSprite, _impSprite;
 
     #region getters/setters
     public Sprite[] playerAreaFloorSprites {
@@ -107,6 +108,16 @@ public class PlayerManager : MonoBehaviour {
         Debug.Log("Adjusted lifestones in world by " + amount + ". New total is " + totalLifestonesInWorld);
     }
 
+    public Sprite GetSpriteByCurrency(CURRENCY currency) {
+        if(currency == CURRENCY.IMP) {
+            return _impSprite;
+        }else if (currency == CURRENCY.MANA) {
+            return _manaSprite;
+        }else if (currency == CURRENCY.SUPPLY) {
+            return _supplySprite;
+        }
+        return null;
+    }
     #region Snatch
     public bool CanSnatch() {
         if (player == null) {
