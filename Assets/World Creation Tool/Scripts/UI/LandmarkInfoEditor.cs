@@ -69,8 +69,8 @@ public class LandmarkInfoEditor : MonoBehaviour {
                     characterItem.transform.SetParent(defenderSlot.transform);
                     //(characterItem.transform as RectTransform).anchorMin = new Vector2(0f, 1f);
                     //(characterItem.transform as RectTransform).anchorMax = new Vector2(0f, 1f);
+                    //characterItem.GetComponent<Draggable>().parentToReturnTo = defenderSlot.transform;
                     characterItem.transform.localPosition = Vector3.zero;
-                    characterItem.GetComponent<Draggable>().parentToReturnTo = defenderSlot.transform;
                 }
             }
         }
