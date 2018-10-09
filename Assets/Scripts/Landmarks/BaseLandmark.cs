@@ -1053,6 +1053,9 @@ public class BaseLandmark : ILocation, IInteractable {
             Party currDefender = defenders[i];
             if (currDefender == null) {
                 defenders[i] = newDefender;
+#if !WORLD_CREATION_TOOL
+                (newDefender.owner as Character).OnSetAsDefender(this);
+#endif
                 break;
             }
         }

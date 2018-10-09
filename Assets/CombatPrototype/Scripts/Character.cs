@@ -102,6 +102,7 @@ namespace ECS {
         public Quest currentQuest { get; private set; }
         public CharacterEventSchedule eventSchedule { get; private set; }
         public CharacterUIData uiData { get; private set; }
+        public BaseLandmark defendingLandmark { get; private set; }
 
         #region getters / setters
         public string firstName {
@@ -3283,8 +3284,10 @@ namespace ECS {
             //once a new phase has started
             //check if it is a different phase from the one before it
             if (schedule.previousPhase != SCHEDULE_ACTION_CATEGORY.NONE && startedPhase != schedule.previousPhase) {//if it is
-                _ownParty.actionData.EndAction(); //end the current action
-                _ownParty.actionData.LookForAction(); //then look for a new action that is part of the phase category (Work/Rest)
+                if (_ownParty.actionData.currentAction != null && _ownParty.actionData.currentAction.actionType != ACTION_TYPE.DEFENDER) {
+                    _ownParty.actionData.EndAction(); //end the current action
+                    _ownParty.actionData.LookForAction(); //then look for a new action that is part of the phase category (Work/Rest)
+                }
             }
             //if it is not, do nothing (continue current action)
         }
@@ -3346,38 +3349,38 @@ namespace ECS {
         //    }
         //}
         //}
-        /*
-         Can this character reach work, given it's current location.
-         NOTE: Only call this during work phase.
-             */
-        public bool CanReachWork() {
-            return false;
-            //if (this.dailySchedule.currentPhase.phaseType != SCHEDULE_PHASE_TYPE.WORK) {
-            //    throw new Exception(this.name + " is trying to use CanReachWork() while not in work phase!");
-            //}
-            ////check this character's work schedule
-            //int deadlineTick = this.dailySchedule.currentPhase.startTick + 6; //start of work phase + 1 hour(6 ticks)
-            //GameDate today = GameManager.Instance.Today();
-            //if (today.hour > deadlineTick) {
-            //    if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.WORK && this.specificLocation.tileLocation.id == workplace.tileLocation.id) {
-            //        return true; //the characters previous action phase type was from work and he/she is already at their workplace
-            //    } else {
-            //        return false; //this character cannot reach work on time
-            //    }
-            //} else {
-            //    List<HexTile> pathToWorkplace = PathGenerator.Instance.GetPath(this.specificLocation, this.workplace, PATHFINDING_MODE.PASSABLE);
-            //    if (pathToWorkplace == null) {
-            //        return false; //there is no path to workplace
-            //    }
-            //    int tileDistance = pathToWorkplace.Count;
-            //    int travelTime = tileDistance * 3; //because it takes 3 ticks to reach the center of one tile to another
-            //    if (today.hour + travelTime > deadlineTick) {
-            //        return false; //this character cannot reach work on time
-            //    } else {
-            //        return true; //this character can reach work on time
-            //    }
-            //}
-        }
+        ///*
+        // Can this character reach work, given it's current location.
+        // NOTE: Only call this during work phase.
+        //     */
+        //public bool CanReachWork() {
+        //    return false;
+        //    //if (this.dailySchedule.currentPhase.phaseType != SCHEDULE_PHASE_TYPE.WORK) {
+        //    //    throw new Exception(this.name + " is trying to use CanReachWork() while not in work phase!");
+        //    //}
+        //    ////check this character's work schedule
+        //    //int deadlineTick = this.dailySchedule.currentPhase.startTick + 6; //start of work phase + 1 hour(6 ticks)
+        //    //GameDate today = GameManager.Instance.Today();
+        //    //if (today.hour > deadlineTick) {
+        //    //    if (_ownParty.actionData.currentActionPhaseType == SCHEDULE_PHASE_TYPE.WORK && this.specificLocation.tileLocation.id == workplace.tileLocation.id) {
+        //    //        return true; //the characters previous action phase type was from work and he/she is already at their workplace
+        //    //    } else {
+        //    //        return false; //this character cannot reach work on time
+        //    //    }
+        //    //} else {
+        //    //    List<HexTile> pathToWorkplace = PathGenerator.Instance.GetPath(this.specificLocation, this.workplace, PATHFINDING_MODE.PASSABLE);
+        //    //    if (pathToWorkplace == null) {
+        //    //        return false; //there is no path to workplace
+        //    //    }
+        //    //    int tileDistance = pathToWorkplace.Count;
+        //    //    int travelTime = tileDistance * 3; //because it takes 3 ticks to reach the center of one tile to another
+        //    //    if (today.hour + travelTime > deadlineTick) {
+        //    //        return false; //this character cannot reach work on time
+        //    //    } else {
+        //    //        return true; //this character can reach work on time
+        //    //    }
+        //    //}
+        //}
         /*
          Determine at what tick the character has to be at work.
          NOTE: This is only accurate when used while in work phase
@@ -3578,6 +3581,13 @@ namespace ECS {
         }
         public void RemoveSecret(Secret secret) {
             _secrets.Remove(secret);
+        }
+        #endregion
+
+        #region Defender
+        public void OnSetAsDefender(BaseLandmark defending) {
+            defendingLandmark = defending;
+            _ownParty.actionData.ForceDoAction(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DEFENDER), defending.landmarkObj);
         }
         #endregion
     }

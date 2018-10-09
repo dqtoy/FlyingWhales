@@ -747,6 +747,7 @@ public enum ACTION_TYPE {
     GIVE_ITEM,
     ATTACK_LANDMARK,
     HIBERNATE,
+    DEFENDER,
 }
 public enum ACTION_CATEGORY {
     WORK,
