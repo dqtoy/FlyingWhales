@@ -185,6 +185,11 @@ namespace worldcreator {
                 otherInfoLbl.text += "\nLocation: NONE";
             } else {
                 otherInfoLbl.text += "\nLocation: " + _character.party.specificLocation.ToString();
+                if (_character.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+                    if (_character.IsDefending(_character.specificLocation as BaseLandmark)) {
+                        otherInfoLbl.text += " (Defending)";
+                    }
+                }
             }
         }
         public void SetName(string newName) {

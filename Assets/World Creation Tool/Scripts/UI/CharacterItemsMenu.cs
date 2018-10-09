@@ -71,4 +71,17 @@ public class CharacterItemsMenu : MonoBehaviour {
         }
     }
 
+    public void OnlyShowCharacterItems(List<Character> characters) {
+        for (int i = 0; i < items.Count; i++) {
+            DraggableCharacterItem currItem = items[i];
+            currItem.gameObject.SetActive(characters.Contains(currItem.character));
+        }
+    }
+    public void HideCharacterItems(List<Character> characters) {
+        for (int i = 0; i < items.Count; i++) {
+            DraggableCharacterItem currItem = items[i];
+            currItem.gameObject.SetActive(!characters.Contains(currItem.character));
+        }
+    }
+
 }

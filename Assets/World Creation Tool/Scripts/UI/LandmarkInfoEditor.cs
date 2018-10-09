@@ -42,7 +42,21 @@ public class LandmarkInfoEditor : MonoBehaviour {
         landmarkName.text = landmark.landmarkName;
         landmarkType.text = landmark.specificLandmarkType.ToString();
         LoadDefenders();
+        List<Character> charactersToShow = new List<Character>();
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character currCharacter = CharacterManager.Instance.allCharacters[i];
+            if (currCharacter.isDefender) {
+                //if the character is defending a landamark
+                if (currCharacter.IsDefending(landmark)) { //check if it is defending the provided landmark
+                    charactersToShow.Add(currCharacter); //if it is, show the character
+                }
+            } else {
+                //show characters that are not yet defenders
+                charactersToShow.Add(currCharacter);
+            }
+        }
         WorldCreatorUI.Instance.characterItemsMenu.Show();
+        WorldCreatorUI.Instance.characterItemsMenu.OnlyShowCharacterItems(charactersToShow);
     }
 
     private void LoadDefenders() {
@@ -53,7 +67,9 @@ public class LandmarkInfoEditor : MonoBehaviour {
                 if (characterItem != null) {
                     CharacterSlot defenderSlot = defenderSlots[i];
                     characterItem.transform.SetParent(defenderSlot.transform);
-                    characterItem.transform.localPosition = new Vector3(300f, 45f, 0f);
+                    //(characterItem.transform as RectTransform).anchorMin = new Vector2(0f, 1f);
+                    //(characterItem.transform as RectTransform).anchorMax = new Vector2(0f, 1f);
+                    characterItem.transform.localPosition = Vector3.zero;
                     characterItem.GetComponent<Draggable>().parentToReturnTo = defenderSlot.transform;
                 }
             }

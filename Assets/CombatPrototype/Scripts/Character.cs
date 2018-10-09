@@ -403,6 +403,9 @@ namespace ECS {
         public QUEST_GIVER_TYPE questGiverType {
             get { return QUEST_GIVER_TYPE.CHARACTER; }
         }
+        public bool isDefender {
+            get { return defendingLandmark != null; }
+        }
         #endregion
 
         public Character(string className, RACE race, GENDER gender) : this() {
@@ -3587,8 +3590,25 @@ namespace ECS {
         #region Defender
         public void OnSetAsDefender(BaseLandmark defending) {
             defendingLandmark = defending;
+            defendingLandmark.RemoveCharacterFromLocation(this.ownParty, false);
+            _ownParty.SetSpecificLocation(defending);
+#if !WORLD_CREATION_TOOL
             _ownParty.actionData.ForceDoAction(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DEFENDER), defending.landmarkObj);
+#endif
         }
-        #endregion
+        public void OnRemoveAsDefender() {
+            defendingLandmark.AddCharacterToLocation(this.ownParty);
+            defendingLandmark = null;
+#if !WORLD_CREATION_TOOL
+            _ownParty.actionData.EndCurrentAction(); //end the defender action
+#endif
+        }
+        public bool IsDefending(BaseLandmark landmark) {
+            if (defendingLandmark != null && defendingLandmark.id == landmark.id) {
+                return true;
+            }
+            return false;
+        }
+#endregion
     }
 }

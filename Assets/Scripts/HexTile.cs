@@ -1168,7 +1168,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             //}
         }
 	}
-	public void RemoveCharacterFromLocation(Party iparty) {
+    public void RemoveCharacterFromLocation(Party iparty, bool addToTile = true) {
 		_charactersAtLocation.Remove(iparty);
         iparty.SetSpecificLocation(null);
   //      if (character.icharacterType == ICHARACTER_TYPE.CHARACTER){
