@@ -12,9 +12,6 @@ public class Player : ILeader {
     public Faction playerFaction { get; private set; }
     public Area playerArea { get; private set; }
     public int snatchCredits { get; private set; }
-    public int mana { get; private set; }
-    public int supplies { get; private set; }
-    public int imps { get; private set; }
 
     private int _threatLevel;
     private int _redMagic;
@@ -33,6 +30,7 @@ public class Player : ILeader {
     private List<Item> _items;
     private List<PlayerAbility> _allAbilities;
     private List<Minion> _minions;
+    private Dictionary<CURRENCY, int> _currencies;
 
 
     //#region getters/setters
@@ -66,6 +64,9 @@ public class Player : ILeader {
     public float currentLifestoneChance {
         get { return _currentLifestoneChance; }
     }
+    public RACE race {
+        get { return RACE.HUMANS; }
+    }
     public PlayerAbility currentActiveAbility {
         get { return _currentActiveAbility; }
     }
@@ -90,6 +91,9 @@ public class Player : ILeader {
     public List<PlayerAbility> allAbilities {
         get { return _allAbilities; }
     }
+    public Dictionary<CURRENCY, int> currencies {
+        get { return _currencies; }
+    }
     #endregion
 
     public Player() {
@@ -105,6 +109,7 @@ public class Player : ILeader {
         SetThreatLevel(20);
         SetCurrentLifestoneChance(25f);
         ConstructAbilities();
+        ConstructCurrencies();
         //Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_ADDED, OnTileAddedToPlayerArea);
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
         Messenger.AddListener<Character>(Signals.CHARACTER_RELEASED, OnCharacterReleased);
@@ -287,10 +292,6 @@ public class Player : ILeader {
     public void AdjustGreenMagic(int amount) {
         _greenMagic += amount;
         _greenMagic = Mathf.Clamp(_greenMagic, 0, 100);
-    }
-    public void AdjustMana(int amount) {
-        mana += amount;
-        mana = Mathf.Max(mana, 0); //maybe 999?
     }
     #endregion
 
@@ -488,13 +489,6 @@ public class Player : ILeader {
     }
     #endregion
 
-    #region Supplies
-    public void AdjustSupplies(int amount) {
-        supplies += amount;
-        supplies = Mathf.Max(supplies, 0);
-    }
-    #endregion
-
     #region Minions
     public void CreateInitialMinions() {
         _minions = new List<Minion>();
@@ -548,10 +542,22 @@ public class Player : ILeader {
     }
     #endregion
 
-    #region Imps
-    public void AdjustImps(int amount) {
-        imps += amount;
-        imps = Mathf.Clamp(imps, 0, MAX_IMPS);
+    #region Currencies
+    private void ConstructCurrencies() {
+        _currencies = new Dictionary<CURRENCY, int>();
+        _currencies.Add(CURRENCY.IMP, 0);
+        _currencies.Add(CURRENCY.MANA, 0);
+        _currencies.Add(CURRENCY.SUPPLY, 0);
+    }
+    public void AdjustCurrency(CURRENCY currency, int amount) {
+        _currencies[currency] += amount;
+        if(currency == CURRENCY.IMP) {
+            _currencies[currency] = Mathf.Clamp(_currencies[currency], 0, MAX_IMPS);
+        }else if (currency == CURRENCY.SUPPLY) {
+            _currencies[currency] = Mathf.Max(_currencies[currency], 0);
+        } else if (currency == CURRENCY.MANA) {
+            _currencies[currency] = Mathf.Max(_currencies[currency], 0); //maybe 999?
+        }
     }
     #endregion
 }

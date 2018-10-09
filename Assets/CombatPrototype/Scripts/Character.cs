@@ -129,6 +129,9 @@ namespace ECS {
         public MODE currentMode {
             get { return _currentMode; }
         }
+        public RACE race {
+            get { return _raceSetting.race; }
+        }
         public List<Attribute> attributes {
             get { return _attributes; }
         }
