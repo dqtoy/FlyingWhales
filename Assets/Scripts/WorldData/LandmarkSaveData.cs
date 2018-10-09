@@ -42,7 +42,7 @@ public class LandmarkSaveData {
             if (landmark.defenders[i] == null) {
                 defenders[i] = -1;
             } else {
-                defenders[i] = landmark.defenders[i].id;
+                defenders[i] = landmark.defenders[i].owner.id;
             }
         }
     }

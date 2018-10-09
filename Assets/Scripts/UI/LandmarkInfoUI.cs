@@ -105,6 +105,16 @@ public class LandmarkInfoUI : UIMenu {
         charactersScrollView.verticalNormalizedPosition = 1;
         historyScrollView.verticalNormalizedPosition = 1;
         PlayerUI.Instance.UncollapseMinionHolder();
+
+        string defendersLog = _activeLandmark.landmarkName + " Defenders: ";
+        for (int i = 0; i < _activeLandmark.defenders.Length; i++) {
+            if (_activeLandmark.defenders[i] == null) {
+                defendersLog += "\n Defender " + i + ": null";
+            } else {
+                defendersLog += "\n Defender " + i + ": " + _activeLandmark.defenders[i].name;
+            }
+        }
+        Debug.Log(defendersLog);
     }
     public override void CloseMenu() {
         base.CloseMenu();

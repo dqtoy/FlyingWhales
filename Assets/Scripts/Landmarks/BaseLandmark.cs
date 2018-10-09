@@ -354,7 +354,9 @@ public class BaseLandmark : ILocation, IInteractable {
     #region Location
     public void AddCharacterToLocation(Party iparty) {
         if (!_charactersAtLocation.Contains(iparty)) {
-            _charactersAtLocation.Add(iparty);
+            if (!IsDefenderOfLandmark(iparty)) {
+                _charactersAtLocation.Add(iparty); //only add to characters list if the party is not a defender of the landmark
+            }
             //this.tileLocation.RemoveCharacterFromLocation(iparty);
             if(iparty.specificLocation != null) {
                 iparty.specificLocation.RemoveCharacterFromLocation(iparty);
@@ -366,14 +368,24 @@ public class BaseLandmark : ILocation, IInteractable {
 #endif
         }
     }
-    public void RemoveCharacterFromLocation(Party iparty) {
+    public void RemoveCharacterFromLocation(Party iparty, bool addToTile = true) {
         _charactersAtLocation.Remove(iparty);
-        this.tileLocation.AddCharacterToLocation(iparty);
+        if (addToTile) {
+            this.tileLocation.AddCharacterToLocation(iparty);
+        }
 #if !WORLD_CREATION_TOOL
         _landmarkVisual.OnCharacterExitedLandmark(iparty);
         Messenger.Broadcast<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, iparty, this);
 #endif
     }
+    //public void RemoveCharacterFromLocationListOnly(Party iparty) {
+    //    _charactersAtLocation.Remove(iparty);
+    //}
+    //public void AddCharacterToLocationListOnly(Party iparty) {
+    //    if (!_charactersAtLocation.Contains(iparty)) {
+    //        _charactersAtLocation.Add(iparty);
+    //    }
+    //}
     public void ReplaceCharacterAtLocation(Party ipartyToReplace, Party ipartyToAdd) {
         if (_charactersAtLocation.Contains(ipartyToReplace)) {
             int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(ipartyToReplace);
@@ -1053,6 +1065,7 @@ public class BaseLandmark : ILocation, IInteractable {
             Party currDefender = defenders[i];
             if (currDefender == null) {
                 defenders[i] = newDefender;
+                (newDefender.owner as Character).OnSetAsDefender(this);
                 break;
             }
         }
@@ -1062,9 +1075,18 @@ public class BaseLandmark : ILocation, IInteractable {
             Party currDefender = defenders[i];
             if (currDefender != null && currDefender.id == defender.id) {
                 defenders[i] = null;
+                (currDefender.owner as Character).OnRemoveAsDefender();
                 break;
             }
         }
+    }
+    public bool IsDefenderOfLandmark(Party party) {
+        for (int i = 0; i < defenders.Length; i++) {
+            if (defenders[i] != null && defenders[i].id == party.id) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 }

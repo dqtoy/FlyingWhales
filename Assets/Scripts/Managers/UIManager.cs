@@ -16,7 +16,6 @@ public class UIManager : MonoBehaviour {
     public delegate void OnAddNewBattleLog();
     public OnAddNewBattleLog onAddNewBattleLog;
 
-    public Camera uiCamera;
     public RectTransform mainRT;
     [SerializeField] private EventSystem eventSystem;
 
@@ -40,13 +39,9 @@ public class UIManager : MonoBehaviour {
     [Header("Date Objects")]
     [SerializeField] private ToggleGroup speedToggleGroup;
     [SerializeField] private Toggle pauseBtn;
-    [SerializeField] private TextMeshProUGUI pauseBtnLbl;
     [SerializeField] private Toggle x1Btn;
-    [SerializeField] private TextMeshProUGUI x1BtnLbl;
     [SerializeField] private Toggle x2Btn;
-    [SerializeField] private TextMeshProUGUI x2BtnLbl;
     [SerializeField] private Toggle x4Btn;
-    [SerializeField] private TextMeshProUGUI x4BtnLbl;
     [SerializeField] private TextMeshProUGUI dateLbl;
 
     [Space(10)]
@@ -311,42 +306,6 @@ public class UIManager : MonoBehaviour {
         if (onPauseEventExpiration != null) {
             onPauseEventExpiration(false);
         }
-    }
-    public void UpdatePauseToggleColor(bool isOn) {
-        Color color = new Color();
-        if (isOn) {
-            ColorUtility.TryParseHtmlString("#495D6B", out color);
-        } else {
-            ColorUtility.TryParseHtmlString("#F7EED4", out color);
-        }
-        pauseBtnLbl.color = color;
-    }
-    public void Updatex1ToggleColor(bool isOn) {
-        Color color = new Color();
-        if (isOn) {
-            ColorUtility.TryParseHtmlString("#495D6B", out color);
-        } else {
-            ColorUtility.TryParseHtmlString("#F7EED4", out color);
-        }
-        x1BtnLbl.color = color;
-    }
-    public void Updatex2ToggleColor(bool isOn) {
-        Color color = new Color();
-        if (isOn) {
-            ColorUtility.TryParseHtmlString("#495D6B", out color);
-        } else {
-            ColorUtility.TryParseHtmlString("#F7EED4", out color);
-        }
-        x2BtnLbl.color = color;
-    }
-    public void Updatex4ToggleColor(bool isOn) {
-        Color color = new Color();
-        if (isOn) {
-            ColorUtility.TryParseHtmlString("#495D6B", out color);
-        } else {
-            ColorUtility.TryParseHtmlString("#F7EED4", out color);
-        }
-        x4BtnLbl.color = color;
     }
     public void ShowDateSummary() {
         ShowSmallInfo(GameManager.Instance.Today().ToStringDate());
@@ -1066,6 +1025,7 @@ public class UIManager : MonoBehaviour {
     }
     public void HidePlayerPicker() {
         playerPickerGO.SetActive(false);
+        //PlayerUI.Instance.SetBottomMenuTogglesState(false);
         PlayerManager.Instance.player.OnHidePlayerPicker();
     }
     public void OnClickOkPlayerPicker() {

@@ -11,7 +11,7 @@ public interface ILocation {
     List<Party> charactersAtLocation { get; }
 
     void AddCharacterToLocation(Party iparty);
-	void RemoveCharacterFromLocation(Party iparty);
+	void RemoveCharacterFromLocation(Party iparty, bool addToTile = true);
     void ReplaceCharacterAtLocation(Party ipartyToReplace, Party ipartyToAdd);
 
     //void ScheduleCombatCheck();

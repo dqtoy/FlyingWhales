@@ -1168,7 +1168,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             //}
         }
 	}
-	public void RemoveCharacterFromLocation(Party iparty) {
+    public void RemoveCharacterFromLocation(Party iparty, bool addToTile = true) {
 		_charactersAtLocation.Remove(iparty);
         iparty.SetSpecificLocation(null);
   //      if (character.icharacterType == ICHARACTER_TYPE.CHARACTER){
@@ -1300,11 +1300,17 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             settings.AddMenuItem(renameArea);
         }
         if (this.landmarkOnTile != null) {
-            //rename area
-            ContextMenuItemSettings renameArea = new ContextMenuItemSettings("Rename Landmark");
-            renameArea.onClickAction = () => worldcreator.WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Rename Landmark", "Rename landmark to what?", this.landmarkOnTile.SetName, UnityEngine.UI.InputField.CharacterValidation.Name);
-            settings.AddMenuItem(renameArea);
-            //end rename area
+            //edit landmark info
+            ContextMenuItemSettings editInfo = new ContextMenuItemSettings("Edit Landmark Info");
+            editInfo.onClickAction = () => worldcreator.WorldCreatorUI.Instance.ShowLandmarkInfoEditor(this.landmarkOnTile);
+            settings.AddMenuItem(editInfo);
+            //end edit landmark info
+
+            ////rename landmark
+            //ContextMenuItemSettings renameLandmark = new ContextMenuItemSettings("Rename Landmark");
+            //renameLandmark.onClickAction = () => worldcreator.WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Rename Landmark", "Rename landmark to what?", this.landmarkOnTile.SetName, UnityEngine.UI.InputField.CharacterValidation.Name);
+            //settings.AddMenuItem(renameLandmark);
+            ////end rename landmark
 
             //monster spawn set
             if (landmarkOnTile is MonsterSpawnerLandmark) {

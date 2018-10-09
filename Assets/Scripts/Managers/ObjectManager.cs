@@ -353,6 +353,8 @@ public class ObjectManager : MonoBehaviour {
                 return new AttackLandmarkAction();
             case ACTION_TYPE.HIBERNATE:
                 return new HibernateAction();
+            case ACTION_TYPE.DEFENDER:
+                return new DefenderAction();
         }
         return null;
     }

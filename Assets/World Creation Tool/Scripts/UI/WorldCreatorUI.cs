@@ -61,6 +61,7 @@ namespace worldcreator {
         [Header("Edit Landmarks Menu")]
         [SerializeField] private GameObject editLandmarksMenuGO;
         [SerializeField] private EditLandmarksMenu _editLandmarksMenu;
+        [SerializeField] private LandmarkInfoEditor _landmarkInfoEditor;
 
         [Space(10)]
         [Header("Edit Characters Menu")]
@@ -112,6 +113,10 @@ namespace worldcreator {
         public GameObject contextMenuItemPrefab;
         public UIContextMenu contextMenu;
 
+        [Space(10)]
+        [Header("Character Items")]
+        public CharacterItemsMenu characterItemsMenu;
+
         #region getters/setters
         public EditRegionsMenu editRegionsMenu {
             get { return _editRegionsMenu; }
@@ -134,6 +139,9 @@ namespace worldcreator {
         public MessageBox messageBox {
             get { return _messageBox; }
         }
+        public LandmarkInfoEditor landmarkInfoEditor {
+            get { return _landmarkInfoEditor; }
+        }
         #endregion
 
         private void Awake() {
@@ -149,10 +157,12 @@ namespace worldcreator {
         }
 
         public void InitializeMenus() {
+            characterItemsMenu.Initialize();
             editCharactersMenu.Initialize();
             tileInfo.Initialize();
             editAreasMenu.Initialize();
             editSquadsMenu.Initialize();
+            landmarkInfoEditor.Initialize();
         }
 
         #region Main Menu
@@ -220,6 +230,7 @@ namespace worldcreator {
             _editAreasMenu.HideMenu();
             editSquadsMenuGO.SetActive(false);
             editStoriesMenuGO.SetActive(false);
+            landmarkInfoEditor.CloseMenu();
 
             rectangleSelectionBtn.interactable = true;
             regionSelectionBtn.interactable = true;
@@ -236,6 +247,7 @@ namespace worldcreator {
             _editAreasMenu.HideMenu();
             editSquadsMenuGO.SetActive(false);
             editStoriesMenuGO.SetActive(false);
+            landmarkInfoEditor.CloseMenu();
 
             rectangleSelectionBtn.interactable = true;
             regionSelectionBtn.interactable = true;
@@ -251,6 +263,7 @@ namespace worldcreator {
             _editAreasMenu.HideMenu();
             editSquadsMenuGO.SetActive(false);
             editStoriesMenuGO.SetActive(false);
+            landmarkInfoEditor.CloseMenu();
 
             rectangleSelectionBtn.interactable = true;
             //rectangleSelectionBtn.isOn = true;
@@ -269,6 +282,7 @@ namespace worldcreator {
             editFactionsMenu.HideFactionInfo();
             editSquadsMenuGO.SetActive(false);
             editStoriesMenuGO.SetActive(false);
+            landmarkInfoEditor.CloseMenu();
 
             tileSelectionBtn.interactable = true;
             rectangleSelectionBtn.interactable = true;
@@ -286,6 +300,7 @@ namespace worldcreator {
             _editAreasMenu.HideMenu();
             editSquadsMenuGO.SetActive(false);
             editStoriesMenuGO.SetActive(false);
+            landmarkInfoEditor.CloseMenu();
 
             rectangleSelectionBtn.interactable = true;
             regionSelectionBtn.interactable = true;
@@ -304,6 +319,7 @@ namespace worldcreator {
             _editAreasMenu.HideMenu();
             editSquadsMenuGO.SetActive(false);
             editStoriesMenuGO.SetActive(false);
+            landmarkInfoEditor.CloseMenu();
 
             rectangleSelectionBtn.interactable = true;
             regionSelectionBtn.interactable = true;
@@ -319,6 +335,7 @@ namespace worldcreator {
             _editAreasMenu.ShowMenu();
             editSquadsMenuGO.SetActive(false);
             editStoriesMenuGO.SetActive(false);
+            landmarkInfoEditor.CloseMenu();
 
             rectangleSelectionBtn.interactable = true;
             regionSelectionBtn.interactable = true;
@@ -334,6 +351,7 @@ namespace worldcreator {
             _editAreasMenu.HideMenu();
             editSquadsMenuGO.SetActive(true);
             editStoriesMenuGO.SetActive(false);
+            landmarkInfoEditor.CloseMenu();
 
             rectangleSelectionBtn.interactable = true;
             regionSelectionBtn.interactable = true;
@@ -349,6 +367,7 @@ namespace worldcreator {
             _editAreasMenu.HideMenu();
             editSquadsMenuGO.SetActive(false);
             editStoriesMenuGO.SetActive(true);
+            landmarkInfoEditor.CloseMenu();
 
             rectangleSelectionBtn.interactable = false;
             regionSelectionBtn.interactable = false;
@@ -524,5 +543,11 @@ namespace worldcreator {
         }
         #endregion
 
+        #region Landmark Info Editor
+        public void ShowLandmarkInfoEditor(BaseLandmark landmark) {
+            OnClickEditLandmarks();
+            landmarkInfoEditor.ShowLandmarkInfo(landmark);
+        }
+        #endregion
     }
 }

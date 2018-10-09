@@ -354,6 +354,11 @@ public class CharacterAvatar : MonoBehaviour{
         characterPortrait.gameObject.SetActive(false);
     }
     public void SetVisualState(bool state) {
+        if (state) {
+            if (_party.owner is Character && (_party.owner as Character).isDefender) {
+                return;
+            }
+        }
         _isVisualShowing = state;
         if (GameManager.Instance.allCharactersAreVisible) {
             _avatarVisual.SetActive(_isVisualShowing);

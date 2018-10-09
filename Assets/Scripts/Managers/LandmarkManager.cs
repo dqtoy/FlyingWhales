@@ -146,6 +146,22 @@ public class LandmarkManager : MonoBehaviour {
     public void OccupyLandmark(HexTile hexTile, Faction occupant) {
         hexTile.landmarkOnTile.OccupyLandmark(occupant);
     }
+    public void LoadDefenders(WorldSaveData data) {
+        if (data.landmarksData != null) {
+            for (int i = 0; i < data.landmarksData.Count; i++) {
+                LandmarkSaveData landmarkData = data.landmarksData[i];
+                BaseLandmark landmark = GetLandmarkByID(landmarkData.landmarkID);
+                if (landmarkData.defenders != null) {
+                    for (int j = 0; j < landmarkData.defenders.Length; j++) {
+                        int defenderID = landmarkData.defenders[j];
+                        if (defenderID != -1) {
+                            landmark.AddDefender(CharacterManager.Instance.GetCharacterByID(defenderID).ownParty);
+                        }
+                    }
+                }
+            }
+        }
+    }
     #endregion
 
     #region Landmark Generation
