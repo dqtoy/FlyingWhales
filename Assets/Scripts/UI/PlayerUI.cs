@@ -19,6 +19,10 @@ public class PlayerUI : MonoBehaviour {
     public Transform minionsContentTransform;
     public MinionItem[] minionItems;
 
+    public Toggle goalsToggle;
+    public Toggle intelToggle;
+    public Toggle inventoryToggle;
+    public Toggle factionToggle;
 
     void Awake() {
         Instance = this;
@@ -52,6 +56,26 @@ public class PlayerUI : MonoBehaviour {
         PlayerManager.Instance.player.OnHidePlayerPicker();
         UIManager.Instance.PopulatePlayerItemsInPicker();
         UIManager.Instance.ShowPlayerPicker();
+    }
+    public void ToggleIntelMenu(bool isOn) {
+        if (isOn) {
+            ShowPlayerPickerIntel();
+        } else {
+            UIManager.Instance.HidePlayerPicker();
+        }
+    }
+    public void ToggleInventoryMenu(bool isOn) {
+        if (isOn) {
+            ShowPlayerPickerInventory();
+        } else {
+            UIManager.Instance.HidePlayerPicker();
+        }
+    }
+    public void SetBottomMenuTogglesState(bool isOn) {
+        goalsToggle.isOn = isOn;
+        intelToggle.isOn = isOn;
+        inventoryToggle.isOn = isOn;
+        factionToggle.isOn = isOn;
     }
     #endregion
 
