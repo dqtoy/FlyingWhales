@@ -22,6 +22,8 @@ public class LandmarkInfoUI : UIMenu {
     [SerializeField] private GameObject[] secrets;
     [SerializeField] private GameObject[] intel;
     [SerializeField] private GameObject[] encounters;
+    [SerializeField] private GameObject intelItemPrefab;
+    [SerializeField] private GameObject secretItemPrefab;
 
     [Space(10)]
     [Header("Characters")]

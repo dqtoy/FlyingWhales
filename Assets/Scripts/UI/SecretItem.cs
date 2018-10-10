@@ -11,7 +11,8 @@ public class SecretItem : MonoBehaviour, IPointerClickHandler {
     private Secret secret;
     private Character owner;
 
-    [SerializeField] private Image secretImage; 
+    [SerializeField] private Image secretImage;
+    [SerializeField] private GameObject lockedGO;
 
     public void Initialize() {
         //Messenger.AddListener<Character>(Signals.CHARACTER_INSPECTED, OnCharacterInspected);
@@ -31,9 +32,9 @@ public class SecretItem : MonoBehaviour, IPointerClickHandler {
 
     private void UpdateVisuals() {
         if (this.secret.isRevealed) {
-            secretImage.color = Color.white;
+            lockedGO.SetActive(false);
         } else {
-            secretImage.color = Color.gray;
+            lockedGO.SetActive(true);
         }
     }
 
