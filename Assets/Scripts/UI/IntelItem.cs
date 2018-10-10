@@ -8,6 +8,7 @@ public class IntelItem : MonoBehaviour {
     private Intel intel;
 
     [SerializeField] private Image intelImage;
+    [SerializeField] private GameObject lockedGO;
 
     public void SetIntel(Intel intel) {
         this.intel = intel;
@@ -16,9 +17,9 @@ public class IntelItem : MonoBehaviour {
 
     private void UpdateVisuals() {
         if (PlayerManager.Instance.player.HasIntel(intel)) {
-            intelImage.color = Color.white;
+            lockedGO.SetActive(false);
         } else {
-            intelImage.color = Color.gray;
+            lockedGO.SetActive(true);
         }
     }
     public void ShowIntelInfo() {
