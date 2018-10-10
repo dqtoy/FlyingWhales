@@ -970,3 +970,8 @@ public enum CURRENCY {
     MANA,
     IMP,
 }
+public enum STAT {
+    HP,
+    ATTACK,
+    SPEED,
+}

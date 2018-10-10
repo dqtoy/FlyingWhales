@@ -91,7 +91,7 @@ namespace worldcreator {
             UpdateIntelReactions();
             LoadRelationships();
             LoadCharacters();
-            LoadEquipment();
+            //LoadEquipment();
             LoadInventory();
             LoadAttributeSummary();
             LoadTemplateChoices();
@@ -298,13 +298,13 @@ namespace worldcreator {
 
             equipmentChoicesDropdown.AddOptions(choices);
         }
-        private void LoadEquipment() {
-            Utilities.DestroyChildren(equipmentScrollView.content);
-            for (int i = 0; i < _character.equippedItems.Count; i++) {
-                Item currItem = _character.equippedItems[i];
-                OnItemEquipped(currItem, _character);
-            }
-        }
+        //private void LoadEquipment() {
+        //    Utilities.DestroyChildren(equipmentScrollView.content);
+        //    for (int i = 0; i < _character.equippedItems.Count; i++) {
+        //        Item currItem = _character.equippedItems[i];
+        //        OnItemEquipped(currItem, _character);
+        //    }
+        //}
         public void AddEquipment() {
             string chosenItem = equipmentChoicesDropdown.options[equipmentChoicesDropdown.value].text;
             Item item = ItemManager.Instance.allItems[chosenItem].CreateNewCopy();

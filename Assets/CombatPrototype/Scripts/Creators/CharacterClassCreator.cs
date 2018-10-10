@@ -17,14 +17,14 @@ namespace ECS {
 			}
             GUILayout.Label("Class Creator ", EditorStyles.boldLabel);
             currCharacterClass.className = EditorGUILayout.TextField("Class Name: ", currCharacterClass.className);
-            currCharacterClass.strWeightAllocation = EditorGUILayout.FloatField("Strength Weight Allocation: ", currCharacterClass.strWeightAllocation);
-            currCharacterClass.intWeightAllocation = EditorGUILayout.FloatField("Intelligence Weight Allocation: ", currCharacterClass.intWeightAllocation);
-            currCharacterClass.agiWeightAllocation = EditorGUILayout.FloatField("Agility Weight Allocation: ", currCharacterClass.agiWeightAllocation);
-            currCharacterClass.vitWeightAllocation = EditorGUILayout.FloatField("Vitality Weight Allocation: ", currCharacterClass.vitWeightAllocation);
-            currCharacterClass.baseHP = EditorGUILayout.FloatField("Base HP: ", currCharacterClass.baseHP);
-            currCharacterClass.hpPerLevel = EditorGUILayout.FloatField("HP Per Level: ", currCharacterClass.hpPerLevel);
-            currCharacterClass.baseSP = EditorGUILayout.FloatField("Base SP: ", currCharacterClass.baseSP);
-            currCharacterClass.spPerLevel = EditorGUILayout.FloatField("SP Per Level: ", currCharacterClass.spPerLevel);
+            currCharacterClass.baseAttackPower = EditorGUILayout.FloatField("Base Attack Power: ", currCharacterClass.baseAttackPower);
+            currCharacterClass.attackPowerPerLevel = EditorGUILayout.FloatField("Attack Power Per Level: ", currCharacterClass.attackPowerPerLevel);
+            currCharacterClass.baseSpeed = EditorGUILayout.FloatField("Base Speed: ", currCharacterClass.baseSpeed);
+            currCharacterClass.speedPerLevel = EditorGUILayout.FloatField("Speed Per Level: ", currCharacterClass.speedPerLevel);
+            currCharacterClass.baseHP = EditorGUILayout.IntField("Base HP: ", currCharacterClass.baseHP);
+            currCharacterClass.hpPerLevel = EditorGUILayout.IntField("HP Per Level: ", currCharacterClass.hpPerLevel);
+            currCharacterClass.baseSP = EditorGUILayout.IntField("Base SP: ", currCharacterClass.baseSP);
+            currCharacterClass.spPerLevel = EditorGUILayout.IntField("SP Per Level: ", currCharacterClass.spPerLevel);
             currCharacterClass.workActionType = (ACTION_TYPE)EditorGUILayout.EnumPopup("Work Action: ", currCharacterClass.workActionType);
 
             //currCharacterClass.dodgeRate = EditorGUILayout.IntField("Dodge Rate: ", currCharacterClass.dodgeRate);

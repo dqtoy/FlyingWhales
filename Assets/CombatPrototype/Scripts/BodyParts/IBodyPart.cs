@@ -72,50 +72,6 @@ namespace ECS{
         }
 
         #region Items
-        internal bool AttachItem(Item item, IBodyPart.ATTRIBUTE req) {
-            if(item is Weapon) {
-                Weapon currItem = (Weapon)item;
-				BodyAttribute attribute = GetAttribute(req);
-				if(attribute != null){
-					attribute.SetAttributeAsUsed(true);
-					currItem.bodyPartsAttached.Add(this);
-                    itemsAttached.Add(item);
-                    return true;
-				}
-            } else if (item is Armor) {
-                Armor currItem = (Armor)item;
-				BodyAttribute currAttribute = GetAttribute(req);
-				if(currAttribute != null){
-					currAttribute.SetAttributeAsUsed(true);
-					currItem.bodyPartAttached = this;
-                    itemsAttached.Add(item);
-                    return true;
-				}
-            }
-			return false;
-        }
-		internal bool DettachItem(Item item, IBodyPart.ATTRIBUTE req) {
-            if (item is Weapon) {
-                Weapon currItem = (Weapon)item;
-				BodyAttribute attribute = GetAttribute(req, true);
-				if(attribute != null){
-					attribute.SetAttributeAsUsed(false);
-					currItem.bodyPartsAttached.Remove(this);
-                    itemsAttached.Remove(item);
-                    return true;
-				}
-            } else if (item is Armor) {
-                Armor currItem = (Armor)item;
-				BodyAttribute attribute = GetAttribute(req, true);
-				if(attribute != null){
-					attribute.SetAttributeAsUsed(false);
-					currItem.bodyPartAttached = null;
-                    itemsAttached.Remove(item);
-                    return true;
-				}
-            }
-			return false;
-        }
         internal List<Item> GetAttachedItemsOfType(ITEM_TYPE itemType) {
             List<Item> items = new List<Item>();
             for (int i = 0; i < itemsAttached.Count; i++) {
@@ -188,16 +144,6 @@ namespace ECS{
 
 		internal void RemoveStatusEffect(STATUS_EFFECT statusEffect){
 			this.statusEffects.Remove (statusEffect);
-		}
-
-		internal void DropWeapons(){
-			for (int i = 0; i < this.itemsAttached.Count; i++) {
-				Item item = this.itemsAttached [i];
-				if(item is Weapon){
-					item.owner.UnequipItem (item);
-					i--;
-				}
-			}
 		}
     }
 }

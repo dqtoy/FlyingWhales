@@ -18,13 +18,9 @@ public class CharacterPanelUI : MonoBehaviour {
     public Dropdown classOptions;
     public Dropdown genderOptions;
     public Dropdown weaponOptions;
-    public Dropdown headArmorOptions;
-    public Dropdown bodyArmorOptions;
-    public Dropdown legsArmorOptions;
-    public Dropdown leftHandArmorOptions;
-    public Dropdown rightHandArmorOptions;
-    public Dropdown leftFootArmorOptions;
-    public Dropdown rightFootArmorOptions;
+    public Dropdown armorOptions;
+    public Dropdown accessoryOptions;
+    public Dropdown consumableOptions;
 
     public InputField nameInput;
     public InputField levelInput;
@@ -34,45 +30,21 @@ public class CharacterPanelUI : MonoBehaviour {
     //public InputField dHandsInput;
     //public InputField dFeetInput;
 
-
-    public TextMeshProUGUI strBuildLbl;
-    public TextMeshProUGUI intBuildLbl;
-    public TextMeshProUGUI agiBuildLbl;
-    public TextMeshProUGUI vitBuildLbl;
-    public TextMeshProUGUI strAllocLbl;
-    public TextMeshProUGUI intAllocLbl;
-    public TextMeshProUGUI agiAllocLbl;
-    public TextMeshProUGUI vitAllocLbl;
     public TextMeshProUGUI hpLbl;
+    public TextMeshProUGUI attackPowerLbl;
+    public TextMeshProUGUI speedLbl;
     public TextMeshProUGUI spLbl;
     public TextMeshProUGUI skillsLbl;
-
-    private int _str;
-    private int _int;
-    private int _agi;
-    private int _vit;
-    private int _hp;
-    private int _sp;
-
-    private int _strBuild;
-    private int _intBuild;
-    private int _agiBuild;
-    private int _vitBuild;
-
     private List<string> _skillNames;
 
+    private int _hp;
+    private int _sp;
+    private float _attackPower;
+    private float _speed;
+
     #region getters/setters
-    public int str {
-        get { return _str; }
-    }
-    public int intl {
-        get { return _int; }
-    }
-    public int agi {
-        get { return _agi; }
-    }
-    public int vit {
-        get { return _vit; }
+    public List<string> skillNames {
+        get { return _skillNames; }
     }
     public int hp {
         get { return _hp; }
@@ -80,20 +52,11 @@ public class CharacterPanelUI : MonoBehaviour {
     public int sp {
         get { return _sp; }
     }
-    public int strBuild {
-        get { return _strBuild; }
+    public float speed {
+        get { return _speed; }
     }
-    public int intBuild {
-        get { return _intBuild; }
-    }
-    public int agiBuild {
-        get { return _agiBuild; }
-    }
-    public int vitBuild {
-        get { return _vitBuild; }
-    }
-    public List<string> skillNames {
-        get { return _skillNames; }
+    public float attackPower {
+        get { return _attackPower; }
     }
     #endregion
 
@@ -109,14 +72,9 @@ public class CharacterPanelUI : MonoBehaviour {
     private void LoadAllData() {
         genderOptions.ClearOptions();
         weaponOptions.ClearOptions();
-        headArmorOptions.ClearOptions();
-        bodyArmorOptions.ClearOptions();
-        legsArmorOptions.ClearOptions();
-        leftHandArmorOptions.ClearOptions();
-        rightHandArmorOptions.ClearOptions();
-        leftFootArmorOptions.ClearOptions();
-        rightFootArmorOptions.ClearOptions();
-
+        armorOptions.ClearOptions();
+        accessoryOptions.ClearOptions();
+        consumableOptions.ClearOptions();
         string[] genders = System.Enum.GetNames(typeof(GENDER));
 
         List<string> weapons = new List<string>();
@@ -134,62 +92,39 @@ public class CharacterPanelUI : MonoBehaviour {
 
         weaponOptions.AddOptions(weapons);
         genderOptions.AddOptions(genders.ToList());
-        headArmorOptions.AddOptions(armors);
-        bodyArmorOptions.AddOptions(armors);
-        legsArmorOptions.AddOptions(armors);
-        leftHandArmorOptions.AddOptions(armors);
-        rightHandArmorOptions.AddOptions(armors);
-        leftFootArmorOptions.AddOptions(armors);
-        rightFootArmorOptions.AddOptions(armors);
+        armorOptions.AddOptions(armors);
+        //accessoryOptions.AddOptions(armors);
+        //consumableOptions.AddOptions(armors);
     }
     public void UpdateClassOptions() {
         classOptions.ClearOptions();
         classOptions.AddOptions(ClassPanelUI.Instance.allClasses);
     }
     public void UpdateItemOptions() {
-        weaponOptions.ClearOptions();
-        weaponOptions.AddOptions(ItemPanelUI.Instance.allWeapons);
+        UpdateWeaponOptions();
         UpdateArmorOptions();
     }
+    private void UpdateWeaponOptions() {
+        weaponOptions.ClearOptions();
+        weaponOptions.AddOptions(ItemPanelUI.Instance.allWeapons);
+    }
     private void UpdateArmorOptions() {
-        headArmorOptions.ClearOptions();
-        bodyArmorOptions.ClearOptions();
-        legsArmorOptions.ClearOptions();
-        leftHandArmorOptions.ClearOptions();
-        rightHandArmorOptions.ClearOptions();
-        leftFootArmorOptions.ClearOptions();
-        rightFootArmorOptions.ClearOptions();
-        headArmorOptions.AddOptions(ItemPanelUI.Instance.allArmors);
-        bodyArmorOptions.AddOptions(ItemPanelUI.Instance.allArmors);
-        legsArmorOptions.AddOptions(ItemPanelUI.Instance.allArmors);
-        leftHandArmorOptions.AddOptions(ItemPanelUI.Instance.allArmors);
-        rightHandArmorOptions.AddOptions(ItemPanelUI.Instance.allArmors);
-        leftFootArmorOptions.AddOptions(ItemPanelUI.Instance.allArmors);
-        rightFootArmorOptions.AddOptions(ItemPanelUI.Instance.allArmors);
+        armorOptions.ClearOptions();
+        armorOptions.AddOptions(ItemPanelUI.Instance.allArmors);
     }
     private void ClearData() {
         classOptions.value = 0;
         genderOptions.value = 0;
         weaponOptions.value = 0;
-        headArmorOptions.value = 0;
-        bodyArmorOptions.value = 0;
-        legsArmorOptions.value = 0;
-        leftHandArmorOptions.value = 0;
-        rightHandArmorOptions.value = 0;
-        leftFootArmorOptions.value = 0;
-        rightFootArmorOptions.value = 0;
+        armorOptions.value = 0;
+        accessoryOptions.value = 0;
+        consumableOptions.value = 0;
 
         nameInput.text = string.Empty;
         levelInput.text = "1";
 
-        strBuildLbl.text = "0";
-        intBuildLbl.text = "0";
-        agiBuildLbl.text = "0";
-        vitBuildLbl.text = "0";
-        strAllocLbl.text = "0";
-        intAllocLbl.text = "0";
-        agiAllocLbl.text = "0";
-        vitAllocLbl.text = "0";
+        attackPowerLbl.text = "0";
+        speedLbl.text = "0";
         hpLbl.text = "0";
         spLbl.text = "0";
 
@@ -258,13 +193,9 @@ public class CharacterPanelUI : MonoBehaviour {
         classOptions.value = GetClassIndex(character.className);
         genderOptions.value = GetGenderIndex(character.gender);
         weaponOptions.value = GetWeaponIndex(character.weaponName);
-        headArmorOptions.value = GetArmorIndex(character.headArmorName, headArmorOptions);
-        bodyArmorOptions.value = GetArmorIndex(character.bodyArmorName, bodyArmorOptions);
-        legsArmorOptions.value = GetArmorIndex(character.legsArmorName, legsArmorOptions);
-        leftHandArmorOptions.value = GetArmorIndex(character.leftHandArmorName, leftHandArmorOptions);
-        rightHandArmorOptions.value = GetArmorIndex(character.rightHandArmorName, rightHandArmorOptions);
-        leftFootArmorOptions.value = GetArmorIndex(character.leftFootArmorName, leftFootArmorOptions);
-        rightFootArmorOptions.value = GetArmorIndex(character.rightFootArmorName, rightFootArmorOptions);
+        armorOptions.value = GetArmorIndex(character.armorName, armorOptions);
+        accessoryOptions.value = GetArmorIndex(character.accessoryName, accessoryOptions);
+        consumableOptions.value = GetArmorIndex(character.consumableName, consumableOptions);
 
         //dHeadInput.text = character.defHead.ToString();
         //dBodyInput.text = character.defBody.ToString();
@@ -272,16 +203,10 @@ public class CharacterPanelUI : MonoBehaviour {
         //dHandsInput.text = character.defHands.ToString();
         //dFeetInput.text = character.defFeet.ToString();
 
-        _strBuild = character.strBuild;
-        _intBuild = character.intBuild;
-        _agiBuild = character.agiBuild;
-        _vitBuild = character.vitBuild;
-        _str = character.strength;
-        _int = character.intelligence;
-        _agi = character.agility;
-        _vit = character.vitality;
         _hp = character.maxHP;
         _sp = character.maxSP;
+        _attackPower = character.attackPower;
+        _speed = character.speed;
 
         _skillNames.Clear();
         for (int i = 0; i < character.skillNames.Count; i++) {
@@ -328,50 +253,18 @@ public class CharacterPanelUI : MonoBehaviour {
         CharacterClass currentClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(path));
         return currentClass;
     }
-    private void AllocateStatPoints(int statAllocation, CharacterClass characterClass) {
-        _strBuild = 0;
-        _intBuild = 0;
-        _agiBuild = 0;
-        _vitBuild = 0;
-
-        WeightedDictionary<string> statWeights = new WeightedDictionary<string>();
-        statWeights.AddElement("strength", (int) characterClass.strWeightAllocation);
-        statWeights.AddElement("intelligence", (int) characterClass.intWeightAllocation);
-        statWeights.AddElement("agility", (int) characterClass.agiWeightAllocation);
-        statWeights.AddElement("vitality", (int) characterClass.vitWeightAllocation);
-
-        if (statWeights.GetTotalOfWeights() > 0) {
-            string chosenStat = string.Empty;
-            for (int i = 0; i < statAllocation; i++) {
-                chosenStat = statWeights.PickRandomElementGivenWeights();
-                if (chosenStat == "strength") {
-                    _strBuild += 1;
-                } else if (chosenStat == "intelligence") {
-                    _intBuild += 1;
-                } else if (chosenStat == "agility") {
-                    _agiBuild += 1;
-                } else if (chosenStat == "vitality") {
-                    _vitBuild += 1;
-                }
-            }
-        }
+    private void AllocateStats(CharacterClass characterClass) {
+        _attackPower = characterClass.baseAttackPower;
+        _speed = characterClass.baseSP;
+        _hp = characterClass.baseHP;
+        _sp = characterClass.baseSP;
     }
     private void LevelUp(int level, CharacterClass characterClass) {
-        _str = (level * _strBuild) + 1;
-        _int = (level * _intBuild) + 1;
-        _agi = (level * _agiBuild) + 1;
-        _vit = (level * _vitBuild) + 1;
-
-        RecomputeMaxHP(level, characterClass);
-        RecomputeMaxSP(level, characterClass);
-    }
-    private void RecomputeMaxHP(int level, CharacterClass characterClass) {
-        float vitality = (float) vit;
-        _hp = (int) ((characterClass.baseHP + (characterClass.hpPerLevel * (float) level)) * (1f + ((vitality / 5f) / 100f)) + (vitality * 2f)); //TODO: + passive hp bonus
-    }
-    private void RecomputeMaxSP(int level, CharacterClass characterClass) {
-        float intelligence = (float) intl;
-        _sp = (int) ((characterClass.baseSP + (characterClass.spPerLevel * (float) level)) * (1f + ((intelligence / 5f) / 100f)) + (intelligence * 2f)); //TODO: + passive sp bonus
+        float multiplier = (float)level - 1f;
+        _attackPower += (multiplier * characterClass.attackPowerPerLevel);
+        _speed += (multiplier * characterClass.speedPerLevel);
+        _hp += ((int)multiplier * characterClass.hpPerLevel);
+        _sp += ((int)multiplier * characterClass.spPerLevel);
     }
     private void UpdateSkills(int level, CharacterClass characterClass) {
         _skillNames.Clear();
@@ -392,16 +285,8 @@ public class CharacterPanelUI : MonoBehaviour {
         }
     }
     private void UpdateUI() {
-        strBuildLbl.text = _strBuild.ToString();
-        intBuildLbl.text = _intBuild.ToString();
-        agiBuildLbl.text = _agiBuild.ToString();
-        vitBuildLbl.text = _vitBuild.ToString();
-
-        strAllocLbl.text = _str.ToString();
-        intAllocLbl.text = _int.ToString();
-        agiAllocLbl.text = _agi.ToString();
-        vitAllocLbl.text = _vit.ToString();
-
+        attackPowerLbl.text = _attackPower.ToString();
+        speedLbl.text = _speed.ToString();
         hpLbl.text = _hp.ToString();
         spLbl.text = _sp.ToString();
 
@@ -421,7 +306,7 @@ public class CharacterPanelUI : MonoBehaviour {
         } else if (level > 100) {
             level = 100;
         }
-        AllocateStatPoints(10, characterClass);
+        AllocateStats(characterClass);
         LevelUp(level, characterClass);
         UpdateSkills(level, characterClass);
         UpdateUI();

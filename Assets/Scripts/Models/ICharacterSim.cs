@@ -6,25 +6,27 @@ using ECS;
 public interface ICharacterSim {
     string name { get; }
     string idName { get; }
-    int actRate { get; set; }
-    int speed { get; }
+    float actRate { get; set; }
+    float speed { get; }
     int currentRow { get; }
     int level { get; }
     int currentSP { get; }
     int currentHP { get; }
     int maxHP { get; }
-    int pFinalAttack { get; }
-    int mFinalAttack { get; }
-    int strength { get; }
-    int intelligence { get; }
-    float critChance { get; }
-    float critDamage { get; }
+    float attackPower { get; }
+    //int pFinalAttack { get; }
+    //int mFinalAttack { get; }
+    //int strength { get; }
+    //int intelligence { get; }
+    //float critChance { get; }
+    //float critDamage { get; }
     SIDES currentSide { get; }
     ICHARACTER_TYPE icharacterType { get; }
     GENDER gender { get; }
     CharacterBattleOnlyTracker battleOnlyTracker { get; }
     List<Skill> skills { get; }
-    List<BodyPart> bodyParts { get; }
+    List<CombatAttribute> combatAttributes { get; }
+    //List<BodyPart> bodyParts { get; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }
 
@@ -37,5 +39,6 @@ public interface ICharacterSim {
     void AdjustSP(int amount);
     void AdjustHP(int amount, ICharacter killer = null);
     void EnableDisableSkills(CombatSim combatSim);
-    int GetDef();
+    Attribute GetAttribute(string attribute);
+    //int GetDef();
 }

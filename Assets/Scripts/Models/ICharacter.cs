@@ -6,12 +6,7 @@ using ECS;
 public interface ICharacter {
     //getters
     SIDES currentSide { get; }
-    int actRate { get; set; }
-    int strength { get; }
-    int intelligence { get; }
-    int agility { get; }
-    int vitality { get; }
-    int baseAgility { get; } //Subject for removal
+    float actRate { get; set; }
     int level { get; }
     int currentHP { get; }
     int maxHP { get; }
@@ -19,15 +14,12 @@ public interface ICharacter {
     int maxSP { get; }
     int currentRow { get; }
     int id { get; }
-    int pFinalAttack { get; }
-    int mFinalAttack { get; }
-    int speed { get; }
+    float attackPower { get; }
+    float speed { get; }
     string coloredUrlName { get; }
     string urlName { get; }
     string name { get; }
     float computedPower { get; }
-    float critChance { get; }
-    float critDamage { get; }
     bool isDead { get; }
     bool isBeingInspected { get; }
     GENDER gender { get; }
@@ -41,17 +33,21 @@ public interface ICharacter {
     CharacterRole role { get; } //Character only
     CharacterClass characterClass { get; } //Character only
     CharacterPortrait characterPortrait { get; }
+    Weapon equippedWeapon { get; }
+    Armor equippedArmor { get; }
+    Item equippedAccessory { get; }
+    Item equippedConsumable { get; }
     //Combat currentCombat { get; set; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }
     Dictionary<Character, Relationship> relationships { get; }
     List<Skill> skills { get; }
-    List<BodyPart> bodyParts { get; }
+    //List<BodyPart> bodyParts { get; }
     List<CharacterAction> miscActions { get; }
     List<Attribute> attributes { get; }
-    List<Item> equippedItems { get; }
     List<Item> inventory { get; }
     List<Log> history { get; }
+    List<CombatAttribute> combatAttributes { get; }
     PortraitSettings portraitSettings { get; }
     Party ownParty { get; }
     Party currentParty { get; }
@@ -59,11 +55,12 @@ public interface ICharacter {
     CharacterActionQueue<ActionQueueItem> actionQueue { get; }
 
     //functions
-    void FaintOrDeath(ICharacter killer);
     void ResetToFullHP();
     void ResetToFullSP();
     void Initialize();
+    void Death();
     //void EverydayAction();
+    void FaintOrDeath(ICharacter killer);
     void SetSide(ECS.SIDES side);
     void SetRowNumber(int row);
     void AdjustSP(int amount);
@@ -83,9 +80,8 @@ public interface ICharacter {
     void RemoveMiscAction(ACTION_TYPE actionType);
     bool InviteToParty(ICharacter inviter);
     bool IsInOwnParty();
-    void Death();
-    int GetDef();
     Party CreateOwnParty();
+    Attribute GetAttribute(string attribute);
     CharacterAction GetRandomMiscAction(ref IObject targetObject);
     CharacterAction GetMiscAction(ACTION_TYPE type);
     Attribute AddAttribute(ATTRIBUTE tag); //Character only

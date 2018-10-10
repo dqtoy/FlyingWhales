@@ -14,9 +14,8 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     [SerializeField] private int _experienceDrop;
     [SerializeField] private int _maxHP;
     [SerializeField] private int _maxSP;
-    [SerializeField] private int _attackPower;
-    [SerializeField] private int _speed;
-    [SerializeField] private int _def;
+    [SerializeField] private float _attackPower;
+    [SerializeField] private float _speed;
     [SerializeField] private float _dodgeChance;
     [SerializeField] private float _hitChance;
     [SerializeField] private float _critChance;
@@ -31,7 +30,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     private int _id;
     private int _currentHP;
     private int _currentSP;
-    private int _actRate;
+    private float _actRate;
     private int _currentRow;
     private bool _isDead;
     private bool _isBeingInspected;
@@ -47,7 +46,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     private PortraitSettings _portraitSettings;
     //private Combat _currentCombat;
     private SIDES _currentSide;
-    private List<BodyPart> _bodyParts;
+    //private List<BodyPart> _bodyParts;
     private List<CharacterAction> _miscActions;
     private List<Skill> _skills;
     private Dictionary<ELEMENT, float> _elementalWeaknesses;
@@ -74,27 +73,12 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public int id {
         get { return _id; }
     }
-    public int attackPower {
+    public float attackPower {
         get { return _attackPower; }
     }
-    public int actRate {
+    public float actRate {
         get { return _actRate; }
         set { _actRate = value; }
-    }
-    public int strength {
-        get { return 0; }
-    }
-    public int intelligence {
-        get { return 0; }
-    }
-    public int vitality {
-        get { return 0; }
-    }
-    public int agility {
-        get { return _speed; }
-    }
-    public int baseAgility {
-        get { return _speed; }
     }
     public int level {
         get { return _level; }
@@ -117,21 +101,12 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public int experienceDrop {
         get { return _experienceDrop; }
     }
-    public int pFinalAttack {
-        get { return attackPower; }
-    }
-    public int mFinalAttack {
-        get { return attackPower; }
-    }
-    public int speed {
+    public float speed {
         get {
-            return agility;
+            return _speed;
             //float agi = (float) agility;
             //return (int) (100f * ((1f + ((agi / 5f) / 100f)) + (float) level + (agi / 3f)));
         }
-    }
-    public int def {
-        get { return _def; }
     }
     public float critChance {
         get { return _critChance; }
@@ -141,9 +116,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public float hitChance {
         get { return _hitChance; }
-    }
-    public float critDamage {
-        get { return 0f; }
     }
     public float computedPower {
         get { return GetComputedPower(); }
@@ -211,6 +183,18 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public HiddenDesire hiddenDesire {
         get { return null; }
     }
+    public Weapon equippedWeapon {
+        get { return null; }
+    }
+    public Armor equippedArmor {
+        get { return null; }
+    }
+    public Item equippedAccessory {
+        get { return null; }
+    }
+    public Item equippedConsumable {
+        get { return null; }
+    }
     //public Combat currentCombat {
     //    get { return _currentCombat; }
     //    set { _currentCombat = value; }
@@ -221,14 +205,8 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public List<string> skillNames {
         get { return _skillNames; }
     }
-    public List<BodyPart> bodyParts {
-        get { return _bodyParts; }
-    }
     public List<ItemDrop> itemDrops {
         get { return _itemDrops; }
-    }
-    public List<Item> equippedItems {
-        get { return null; }
     }
     public List<Item> inventory {
         get { return null; }
@@ -237,6 +215,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         get { return null; }
     }
     public List<Log> history {
+        get { return null; }
+    }
+    public List<CombatAttribute> combatAttributes {
         get { return null; }
     }
     public Dictionary<ELEMENT, float> elementalWeaknesses {
@@ -279,7 +260,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         newMonster._maxSP = this._maxSP;
         newMonster._attackPower = this._attackPower;
         newMonster._speed = this._speed;
-        newMonster._def = this._def;
         newMonster._dodgeChance = this._dodgeChance;
         newMonster._hitChance = this._hitChance;
         newMonster._critChance = this._critChance;
@@ -310,7 +290,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         this._maxSP = monsterComponent.maxSP;
         this._attackPower = monsterComponent.attackPower;
         this._speed = monsterComponent.speed;
-        this._def = monsterComponent.def;
         this._dodgeChance = monsterComponent.dodgeChance;
         this._hitChance = monsterComponent.hitChance;
         this._critChance = monsterComponent.critChance;
@@ -333,9 +312,8 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         }
         this._maxHP = int.Parse(MonsterPanelUI.Instance.hpInput.text);
         this._maxSP = int.Parse(MonsterPanelUI.Instance.spInput.text);
-        this._attackPower = int.Parse(MonsterPanelUI.Instance.powerInput.text);
-        this._speed = int.Parse(MonsterPanelUI.Instance.speedInput.text);
-        this._def = int.Parse(MonsterPanelUI.Instance.defInput.text);
+        this._attackPower = float.Parse(MonsterPanelUI.Instance.powerInput.text);
+        this._speed = float.Parse(MonsterPanelUI.Instance.speedInput.text);
         this._dodgeChance = float.Parse(MonsterPanelUI.Instance.dodgeInput.text);
         this._hitChance = float.Parse(MonsterPanelUI.Instance.hitInput.text);
         this._critChance = float.Parse(MonsterPanelUI.Instance.critInput.text);
@@ -397,12 +375,11 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _characterPortrait = null;
     }
     private float GetComputedPower() {
-        float totalAttack = (float) attackPower;
-        float maxHPFloat = (float) maxHP;
-        float maxSPFloat = (float) maxSP;
-        //TODO: totalAttack += final damage bonus
-        float compPower = (totalAttack + (float) GetDef() + (float) (speed - 100) + (maxHPFloat / 10f) + (maxSPFloat / 10f)) * ((((float) currentHP / maxHPFloat) + ((float) currentSP / maxSPFloat)) / 2f);
-        return compPower *= party.icharacters.Count;
+        float compPower = 0f;
+        for (int i = 0; i < currentParty.icharacters.Count; i++) {
+            compPower += currentParty.icharacters[i].attackPower;
+        }
+        return compPower;
     }
     private List<Skill> GetGeneralSkills() {
         List<Skill> allGeneralSkills = new List<Skill>();
@@ -470,7 +447,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _miscActions = new List<CharacterAction>();
         _raceSetting = RaceManager.Instance.racesDictionary[_type.ToString()].CreateNewCopy();
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
-        _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
         if (_skills == null) {
             _skills = new List<Skill>();
         }
@@ -496,7 +472,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _miscActions = new List<CharacterAction>();
         _raceSetting = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText(Utilities.dataPath + "RaceSettings/" + _type.ToString() +".json"));
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
-        _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
         _currentHP = _maxHP;
         _currentSP = _maxSP;
         ConstructSkills();
@@ -548,9 +523,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
             DeathSim();
         }
     }
-    public int GetDef() {
-        return _def;
-    }
     public void ResetToFullHP() {
         AdjustHP(_maxHP);
     }
@@ -601,183 +573,28 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
             skill.isEnabled = true;
 
             if (skill is FleeSkill) {
-                if (this.currentHP >= (this.maxHP / 2)) {
-                    skill.isEnabled = false;
-                    continue;
-                }
+                skill.isEnabled = false;
+                continue;
+                //if (this.currentHP >= (this.maxHP / 2)) {
+                //    skill.isEnabled = false;
+                //    continue;
+                //}
             }
-            //if (skill is AttackSkill) {
-            //    isAttackInRange = combat.HasTargetInRangeForSkill(skill, this);
-            //    if (!isAttackInRange) {
-            //        isAllAttacksInRange = false;
-            //        skill.isEnabled = false;
-            //        continue;
-            //    }
-            //} else 
         }
-
-        //for (int i = 0; i < this._skills.Count; i++) {
-        //    Skill skill = this._skills[i];
-        //    if (skill is MoveSkill) {
-        //        skill.isEnabled = true;
-        //        if (isAllAttacksInRange) {
-        //            skill.isEnabled = false;
-        //            continue;
-        //        }
-        //        if (skill.skillName == "MoveLeft") {
-        //            if (this._currentRow == 1) {
-        //                skill.isEnabled = false;
-        //                continue;
-        //            } else {
-        //                bool hasEnemyOnLeft = false;
-        //                if (combat.charactersSideA.Contains(this)) {
-        //                    for (int j = 0; j < combat.charactersSideB.Count; j++) {
-        //                        ICharacter enemy = combat.charactersSideB[j];
-        //                        if (enemy.currentRow < this._currentRow) {
-        //                            hasEnemyOnLeft = true;
-        //                            break;
-        //                        }
-        //                    }
-        //                } else {
-        //                    for (int j = 0; j < combat.charactersSideA.Count; j++) {
-        //                        ICharacter enemy = combat.charactersSideA[j];
-        //                        if (enemy.currentRow < this._currentRow) {
-        //                            hasEnemyOnLeft = true;
-        //                            break;
-        //                        }
-        //                    }
-        //                }
-        //                if (!hasEnemyOnLeft) {
-        //                    skill.isEnabled = false;
-        //                    continue;
-        //                }
-        //            }
-        //        } else if (skill.skillName == "MoveRight") {
-        //            if (this._currentRow == 5) {
-        //                skill.isEnabled = false;
-        //            } else {
-        //                bool hasEnemyOnRight = false;
-        //                if (combat.charactersSideA.Contains(this)) {
-        //                    for (int j = 0; j < combat.charactersSideB.Count; j++) {
-        //                        ICharacter enemy = combat.charactersSideB[j];
-        //                        if (enemy.currentRow > this._currentRow) {
-        //                            hasEnemyOnRight = true;
-        //                            break;
-        //                        }
-        //                    }
-        //                } else {
-        //                    for (int j = 0; j < combat.charactersSideA.Count; j++) {
-        //                        ICharacter enemy = combat.charactersSideA[j];
-        //                        if (enemy.currentRow > this._currentRow) {
-        //                            hasEnemyOnRight = true;
-        //                            break;
-        //                        }
-        //                    }
-        //                }
-        //                if (!hasEnemyOnRight) {
-        //                    skill.isEnabled = false;
-        //                    continue;
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
     }
     public void EnableDisableSkills(CombatSim combat) {
-        bool isAllAttacksInRange = true;
-        //bool isAttackInRange = false;
-
-        //Body part skills / general skills
         for (int i = 0; i < this._skills.Count; i++) {
             Skill skill = this._skills[i];
             skill.isEnabled = true;
-
-            //if (skill is AttackSkill) {
-            //    isAttackInRange = combat.HasTargetInRangeForSkill(skill, this);
-            //    if (!isAttackInRange) {
-            //        isAllAttacksInRange = false;
-            //        skill.isEnabled = false;
-            //        continue;
-            //    }
-            //} else
             if (skill is FleeSkill) {
-                if (this.currentHP >= (this.maxHP / 2)) {
-                    skill.isEnabled = false;
-                    continue;
-                }
-            } 
-            //else if (skill is MoveSkill) {
-            //    skill.isEnabled = false;
-            //    continue;
-            //}
+                skill.isEnabled = false;
+                continue;
+                //if (this.currentHP >= (this.maxHP / 2)) {
+                //    skill.isEnabled = false;
+                //    continue;
+                //}
+            }
         }
-
-        //for (int i = 0; i < this._skills.Count; i++) {
-        //    Skill skill = this._skills[i];
-        //    if (skill is MoveSkill) {
-        //        skill.isEnabled = true;
-        //        if (isAllAttacksInRange) {
-        //            skill.isEnabled = false;
-        //            continue;
-        //        }
-        //        if (skill.skillName == "MoveLeft") {
-        //            if (this._currentRow == 1) {
-        //                skill.isEnabled = false;
-        //                continue;
-        //            } else {
-        //                bool hasEnemyOnLeft = false;
-        //                if (combat.charactersSideA.Contains(this)) {
-        //                    for (int j = 0; j < combat.charactersSideB.Count; j++) {
-        //                        ICharacterSim enemy = combat.charactersSideB[j];
-        //                        if (enemy.currentRow < this._currentRow) {
-        //                            hasEnemyOnLeft = true;
-        //                            break;
-        //                        }
-        //                    }
-        //                } else {
-        //                    for (int j = 0; j < combat.charactersSideA.Count; j++) {
-        //                        ICharacterSim enemy = combat.charactersSideA[j];
-        //                        if (enemy.currentRow < this._currentRow) {
-        //                            hasEnemyOnLeft = true;
-        //                            break;
-        //                        }
-        //                    }
-        //                }
-        //                if (!hasEnemyOnLeft) {
-        //                    skill.isEnabled = false;
-        //                    continue;
-        //                }
-        //            }
-        //        } else if (skill.skillName == "MoveRight") {
-        //            if (this._currentRow == 5) {
-        //                skill.isEnabled = false;
-        //            } else {
-        //                bool hasEnemyOnRight = false;
-        //                if (combat.charactersSideA.Contains(this)) {
-        //                    for (int j = 0; j < combat.charactersSideB.Count; j++) {
-        //                        ICharacterSim enemy = combat.charactersSideB[j];
-        //                        if (enemy.currentRow > this._currentRow) {
-        //                            hasEnemyOnRight = true;
-        //                            break;
-        //                        }
-        //                    }
-        //                } else {
-        //                    for (int j = 0; j < combat.charactersSideA.Count; j++) {
-        //                        ICharacterSim enemy = combat.charactersSideA[j];
-        //                        if (enemy.currentRow > this._currentRow) {
-        //                            hasEnemyOnRight = true;
-        //                            break;
-        //                        }
-        //                    }
-        //                }
-        //                if (!hasEnemyOnRight) {
-        //                    skill.isEnabled = false;
-        //                    continue;
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
     }
     public void SetCurrentParty(Party party) {
         _currentParty = party;
@@ -798,6 +615,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public bool IsInOwnParty() {
         return true;
+    }
+    public Attribute GetAttribute(string attribute) {
+        return null;
     }
     #endregion
 

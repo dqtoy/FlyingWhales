@@ -22,8 +22,8 @@ public class MonsterCreator : Editor {
         monsterComponent.experienceDrop = EditorGUILayout.IntField("Exp Drop: ", monsterComponent.experienceDrop);
         monsterComponent.maxHP = EditorGUILayout.IntField("Max HP: ", monsterComponent.maxHP);
         monsterComponent.maxSP = EditorGUILayout.IntField("Max SP: ", monsterComponent.maxSP);
-        monsterComponent.attackPower = EditorGUILayout.IntField("Attack Power: ", monsterComponent.attackPower);
-        monsterComponent.speed = EditorGUILayout.IntField("Speed: ", monsterComponent.speed);
+        monsterComponent.attackPower = EditorGUILayout.FloatField("Attack Power: ", monsterComponent.attackPower);
+        monsterComponent.speed = EditorGUILayout.FloatField("Speed: ", monsterComponent.speed);
         monsterComponent.def = EditorGUILayout.IntField("Def: ", monsterComponent.def);
         monsterComponent.dodgeChance = EditorGUILayout.FloatField("Dodge Chance: ", monsterComponent.dodgeChance);
         monsterComponent.hitChance = EditorGUILayout.FloatField("Hit Chance: ", monsterComponent.hitChance);

@@ -5,14 +5,15 @@ using System.Collections.Generic;
 namespace ECS {
     public class CharacterClass : EntityComponent {
         [SerializeField] private string _className;
-        [SerializeField] private float _strWeightAllocation;
-        [SerializeField] private float _intWeightAllocation;
-        [SerializeField] private float _agiWeightAllocation;
-        [SerializeField] private float _vitWeightAllocation;
-        [SerializeField] private float _baseHP;
-        [SerializeField] private float _hpPerLevel;
-        [SerializeField] private float _baseSP;
-        [SerializeField] private float _spPerLevel;
+        [SerializeField] private int _baseHP;
+        [SerializeField] private int _hpPerLevel;
+        [SerializeField] private int _baseSP;
+        [SerializeField] private int _spPerLevel;
+        [SerializeField] private float _baseAttackPower;
+        [SerializeField] private float _attackPowerPerLevel;
+        [SerializeField] private float _baseSpeed;
+        [SerializeField] private float _speedPerLevel;
+
         [SerializeField] private List<WEAPON_TYPE> _allowedWeaponTypes;
         [SerializeField] private List<RESOURCE> _harvestResources;
         [SerializeField] private List<StringListWrapper> _skillsPerLevelNames;
@@ -28,34 +29,30 @@ namespace ECS {
             get { return _className; }
             //set { _className = value; }
         }
-        public float strWeightAllocation {
-            get { return _strWeightAllocation; }
-            //set { _strWeightAllocation = value; }
+        public float baseAttackPower {
+            get { return _baseAttackPower; }
         }
-        public float intWeightAllocation {
-            get { return _intWeightAllocation; }
-            //set { _intWeightAllocation = value; }
+        public float attackPowerPerLevel {
+            get { return _attackPowerPerLevel; }
         }
-        public float agiWeightAllocation {
-            get { return _agiWeightAllocation; }
-            //set { _agiWeightAllocation = value; }
+        public float baseSpeed {
+            get { return _baseSpeed; }
         }
-        public float vitWeightAllocation {
-            get { return _vitWeightAllocation; }
-            //set { _vitWeightAllocation = value; }
+        public float speedPerLevel {
+            get { return _speedPerLevel; }
         }
-        public float baseHP {
+        public int baseHP {
             get { return _baseHP; }
             //set { _hpModifier = value; }
         }
-        public float hpPerLevel {
+        public int hpPerLevel {
             get { return _hpPerLevel; }
         }
-        public float baseSP {
+        public int baseSP {
             get { return _baseSP; }
             //set { _spModifier = value; }
         }
-        public float spPerLevel {
+        public int spPerLevel {
             get { return _spPerLevel; }
         }
         public ACTION_TYPE workActionType {
@@ -89,10 +86,10 @@ namespace ECS {
         public CharacterClass CreateNewCopy() {
             CharacterClass newClass = new CharacterClass();
             newClass._className = this._className;
-			newClass._strWeightAllocation = this._strWeightAllocation;
-			newClass._intWeightAllocation = this._intWeightAllocation;
-			newClass._agiWeightAllocation = this._agiWeightAllocation;
-			newClass._vitWeightAllocation = this._vitWeightAllocation;
+			newClass._baseAttackPower = this._baseAttackPower;
+			newClass._attackPowerPerLevel = this._attackPowerPerLevel;
+			newClass._baseSpeed = this._baseSpeed;
+			newClass._speedPerLevel = this._speedPerLevel;
             newClass._baseHP = this._baseHP;
             newClass._hpPerLevel = this._hpPerLevel;
             newClass._baseSP = this._baseSP;
@@ -116,10 +113,10 @@ namespace ECS {
 
         public void SetData(ClassComponent classComponent) {
             this._className = classComponent.className;
-            this._strWeightAllocation = classComponent.strWeightAllocation;
-            this._intWeightAllocation = classComponent.intWeightAllocation;
-            this._agiWeightAllocation = classComponent.agiWeightAllocation;
-            this._vitWeightAllocation = classComponent.vitWeightAllocation;
+            this._baseAttackPower = classComponent.baseAttackPower;
+            this._attackPowerPerLevel = classComponent.attackPowerPerLevel;
+            this._baseSpeed = classComponent.baseSpeed;
+            this._speedPerLevel = classComponent.speedPerLevel;
             this._baseHP = classComponent.baseHP;
             this._hpPerLevel = classComponent.hpPerLevel;
             this._baseSP = classComponent.baseSP;
@@ -143,10 +140,10 @@ namespace ECS {
 
         public void SetDataFromClassPanelUI() {
             this._className = ClassPanelUI.Instance.classNameInput.text;
-            this._strWeightAllocation = int.Parse(ClassPanelUI.Instance.strWeightAllocInput.text);
-            this._intWeightAllocation = int.Parse(ClassPanelUI.Instance.intWeightAllocInput.text);
-            this._agiWeightAllocation = int.Parse(ClassPanelUI.Instance.agiWeightAllocInput.text);
-            this._vitWeightAllocation = int.Parse(ClassPanelUI.Instance.vitWeightAllocInput.text);
+            this._baseAttackPower = int.Parse(ClassPanelUI.Instance.baseAttackPowerInput.text);
+            this._attackPowerPerLevel = int.Parse(ClassPanelUI.Instance.attackPowerPerLevelInput.text);
+            this._baseSpeed = int.Parse(ClassPanelUI.Instance.baseSpeedInput.text);
+            this._speedPerLevel = int.Parse(ClassPanelUI.Instance.speedPerLevelInput.text);
             this._baseHP = int.Parse(ClassPanelUI.Instance.baseHPInput.text);
             this._hpPerLevel = int.Parse(ClassPanelUI.Instance.hpPerLevelInput.text);
             this._baseSP = int.Parse(ClassPanelUI.Instance.baseSPInput.text);

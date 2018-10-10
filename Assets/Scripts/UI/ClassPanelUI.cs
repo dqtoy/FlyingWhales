@@ -14,10 +14,10 @@ public class ClassPanelUI : MonoBehaviour {
     public static ClassPanelUI Instance;
 
     public InputField classNameInput;
-    public InputField strWeightAllocInput;
-    public InputField intWeightAllocInput;
-    public InputField agiWeightAllocInput;
-    public InputField vitWeightAllocInput;
+    public InputField baseAttackPowerInput;
+    public InputField attackPowerPerLevelInput;
+    public InputField baseSpeedInput;
+    public InputField speedPerLevelInput;
     public InputField baseHPInput;
     public InputField hpPerLevelInput;
     public InputField baseSPInput;
@@ -83,10 +83,10 @@ public class ClassPanelUI : MonoBehaviour {
         currentSelectedWeaponTypeButton = null;
         classNameInput.text = string.Empty;
 
-        strWeightAllocInput.text = "0";
-        intWeightAllocInput.text = "0";
-        agiWeightAllocInput.text = "0";
-        vitWeightAllocInput.text = "0";
+        baseAttackPowerInput.text = "0";
+        attackPowerPerLevelInput.text = "0";
+        baseSpeedInput.text = "0";
+        speedPerLevelInput.text = "0";
         baseHPInput.text = "0";
         hpPerLevelInput.text = "0";
         baseSPInput.text = "0";
@@ -158,10 +158,10 @@ public class ClassPanelUI : MonoBehaviour {
 
     private void LoadClassDataToUI(CharacterClass characterClass) {
         classNameInput.text = characterClass.className;
-        strWeightAllocInput.text = characterClass.strWeightAllocation.ToString();
-        intWeightAllocInput.text = characterClass.intWeightAllocation.ToString();
-        agiWeightAllocInput.text = characterClass.agiWeightAllocation.ToString();
-        vitWeightAllocInput.text = characterClass.vitWeightAllocation.ToString();
+        baseAttackPowerInput.text = characterClass.baseAttackPower.ToString();
+        attackPowerPerLevelInput.text = characterClass.attackPowerPerLevel.ToString();
+        baseSpeedInput.text = characterClass.baseSpeed.ToString();
+        speedPerLevelInput.text = characterClass.speedPerLevel.ToString();
         baseHPInput.text = characterClass.baseHP.ToString();
         hpPerLevelInput.text = characterClass.hpPerLevel.ToString();
         baseSPInput.text = characterClass.baseSP.ToString();

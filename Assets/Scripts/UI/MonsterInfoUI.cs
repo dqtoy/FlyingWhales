@@ -274,29 +274,29 @@ public class MonsterInfoUI : UIMenu {
     private void UpdateStatsInfo() {
         healthProgressBar.value = (float) _activeMonster.currentHP / (float) _activeMonster.maxHP;
         manaProgressBar.value = (float) _activeMonster.currentSP / (float) _activeMonster.maxSP;
-        strengthLbl.text = _activeMonster.strength.ToString();
-        agilityLbl.text = _activeMonster.agility.ToString();
-        intelligenceLbl.text = _activeMonster.intelligence.ToString();
-        vitalityLbl.text = _activeMonster.vitality.ToString();
+        //strengthLbl.text = _activeMonster.strength.ToString();
+        //agilityLbl.text = _activeMonster.agility.ToString();
+        //intelligenceLbl.text = _activeMonster.intelligence.ToString();
+        //vitalityLbl.text = _activeMonster.vitality.ToString();
         //expDropLbl.text = _activeMonster.experienceDrop.ToString();
     }
     private void UpdateStatsInfo(CharacterUIData uiData) {
         healthProgressBar.value = uiData.healthValue;
         manaProgressBar.value = uiData.manaValue;
-        strengthLbl.text = uiData.strength.ToString();
-        agilityLbl.text = uiData.agility.ToString();
-        intelligenceLbl.text = uiData.intelligence.ToString();
-        vitalityLbl.text = uiData.vitality.ToString();
+        //strengthLbl.text = uiData.strength.ToString();
+        //agilityLbl.text = uiData.agility.ToString();
+        //intelligenceLbl.text = uiData.intelligence.ToString();
+        //vitalityLbl.text = uiData.vitality.ToString();
     }
     #endregion
 
     #region Items
     private void UpdateItemsInfo() {
-        UpdateEquipmentInfo(_activeMonster.equippedItems);
+        //UpdateEquipmentInfo(_activeMonster.equippedItems);
         UpdateInventoryInfo(_activeMonster.inventory);
     }
     private void UpdateItemsInfo(CharacterUIData uiData) {
-        UpdateEquipmentInfo(uiData.equippedItems);
+        //UpdateEquipmentInfo(uiData.equippedItems);
         UpdateInventoryInfo(uiData.inventory);
     }
     private void UpdateEquipmentInfo(List<Item> equipment) {
@@ -305,35 +305,6 @@ public class MonsterInfoUI : UIMenu {
         legArmorContainer.SetItem(null);
         leftFootArmorContainer.SetItem(null);
         rightFootArmorContainer.SetItem(null);
-        if(equipment != null) {
-            for (int i = 0; i < equipment.Count; i++) {
-                Item currItem = equipment[i];
-                if (currItem is Armor) {
-                    IBodyPart equippedTo = (currItem as Armor).bodyPartAttached;
-                    if (equippedTo.name.Equals("Head")) {
-                        headArmorContainer.SetItem(currItem);
-                    } else if (equippedTo.name.Equals("Torso")) {
-                        chestArmorContainer.SetItem(currItem);
-                    } else if (equippedTo.name.Equals("Hip")) {
-                        legArmorContainer.SetItem(currItem);
-                    } else if (equippedTo.name.Equals("Left Foot")) {
-                        leftFootArmorContainer.SetItem(currItem);
-                    } else if (equippedTo.name.Equals("Right Foot")) {
-                        rightFootArmorContainer.SetItem(currItem);
-                    }
-                } else if (currItem is Weapon) {
-                    List<IBodyPart> equippedTo = (currItem as Weapon).bodyPartsAttached;
-                    for (int j = 0; j < equippedTo.Count; j++) {
-                        IBodyPart currBodyPart = equippedTo[j];
-                        if (currBodyPart.name.Equals("Left Hand")) {
-                            leftHandContainer.SetItem(currItem);
-                        } else if (currBodyPart.name.Equals("Right Hand")) {
-                            rightHandContainer.SetItem(currItem);
-                        }
-                    }
-                }
-            }
-        }
     }
     private void UpdateInventoryInfo(List<Item> inventory) {
         if(inventory == null) {

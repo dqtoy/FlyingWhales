@@ -14,7 +14,6 @@ namespace ECS{
 		//public float damageRange;
 		//public List<IBodyPart.ATTRIBUTE> attributes;
         //public List<IBodyPart.ATTRIBUTE> equipRequirements;
-		internal List<IBodyPart> bodyPartsAttached = new List<IBodyPart>();
 
         //public List<string> attackSkills = new List<string>();
         //public List<string> healSkills = new List<string>();
@@ -123,7 +122,6 @@ namespace ECS{
             copy._prefix = _prefix;
             copy._suffix = _suffix;
             copy.element = element;
-            copy.bodyPartsAttached = new List<IBodyPart>(bodyPartsAttached);
             SetCommonData(copy);
             return copy;
         }

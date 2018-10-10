@@ -59,11 +59,11 @@ public class CharacterSaveData {
         
         portraitSettings = character.portraitSettings;
 
-        equipmentData = new List<string>();
-        for (int i = 0; i < character.equippedItems.Count; i++) {
-            ECS.Item item = character.equippedItems[i];
-            equipmentData.Add(item.itemName);
-        }
+        //equipmentData = new List<string>();
+        //for (int i = 0; i < character.equippedItems.Count; i++) {
+        //    ECS.Item item = character.equippedItems[i];
+        //    equipmentData.Add(item.itemName);
+        //}
 
         inventoryData = new List<string>();
         for (int i = 0; i < character.inventory.Count; i++) {

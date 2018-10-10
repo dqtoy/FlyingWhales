@@ -5,14 +5,14 @@ using System.Collections.Generic;
 namespace ECS{
 	public class ClassComponent : MonoBehaviour {
 		public string className;
-		public float strWeightAllocation;
-		public float intWeightAllocation;
-		public float agiWeightAllocation;
-		public float vitWeightAllocation;
-        public float baseHP;
-        public float hpPerLevel;
-        public float baseSP;
-        public float spPerLevel;
+		public float baseAttackPower;
+		public float attackPowerPerLevel;
+		public float baseSpeed;
+		public float speedPerLevel;
+        public int baseHP;
+        public int hpPerLevel;
+        public int baseSP;
+        public int spPerLevel;
         public ACTION_TYPE workActionType;
         //public int dodgeRate;
         //public int parryRate;

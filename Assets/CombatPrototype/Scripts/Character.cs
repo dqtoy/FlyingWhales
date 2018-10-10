@@ -17,7 +17,7 @@ namespace ECS {
         private string _characterColorCode;
         private int _id;
         private int _gold;
-        private int _actRate;
+        private float _actRate;
         private bool _isDead;
         private bool _isFainted;
         private bool _isInCombat;
@@ -38,6 +38,9 @@ namespace ECS {
         private BaseLandmark _workplace;
         private Region _currentRegion;
         private Weapon _equippedWeapon;
+        private Armor _equippedArmor;
+        private Item _equippedAccessory;
+        private Item _equippedConsumable;
         private CharacterBattleTracker _battleTracker;
         private CharacterBattleOnlyTracker _battleOnlyTracker;
         private PortraitSettings _portraitSettings;
@@ -48,15 +51,16 @@ namespace ECS {
         private Secret _currentlySelectedSecret;
         private List<Secret> _secrets;
         private List<STATUS_EFFECT> _statusEffects;
-        private List<BodyPart> _bodyParts;
-        private Dictionary<string, IBodyPart> _bodyPartDict;
-        private List<Item> _equippedItems;
+        //private List<BodyPart> _bodyParts;
+        //private Dictionary<string, IBodyPart> _bodyPartDict;
+        //private List<Item> _equippedItems;
         private List<Item> _inventory;
         private List<Skill> _skills;
         private List<Attribute> _attributes;
         private List<Log> _history;
         //private List<CharacterQuestData> _questData;
         private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
+        private List<CombatAttribute> _combatAttributes;
         private CharacterActionQueue<ActionQueueItem> _actionQueue;
         private List<CharacterAction> _miscActions;
         private Dictionary<Character, Relationship> _relationships;
@@ -67,42 +71,27 @@ namespace ECS {
         private int _mentalPoints;
         private int _physicalPoints;
         private Squad _squad;
-        public Dictionary<int, Combat> combatHistory;
 
         //Stats
         private SIDES _currentSide;
         private int _currentHP;
         private int _maxHP;
-        private int _strength;
-        private int _intelligence;
-        private int _agility;
-        private int _vitality;
         private int _currentRow;
-        private int _baseMaxHP;
-        private int _baseStrength;
-        private int _baseIntelligence;
-        private int _baseAgility;
-        private int _baseVitality;
-        private int _fixedMaxHP;
-        private int _bonusStrength;
-        private int _bonusIntelligence;
-        private int _bonusAgility;
-        private int _bonusVitality;
         private int _level;
         private int _experience;
         private int _maxExperience;
         private int _sp;
         private int _maxSP;
-        private int _bonusDef;
-        private float _bonusDefPercent;
-        private float _critChance;
-        private float _critDamage;
+        private float _attackPower;
+        private float _speed;
 
         public CharacterSchedule schedule { get; private set; }
         public Quest currentQuest { get; private set; }
         public CharacterEventSchedule eventSchedule { get; private set; }
         public CharacterUIData uiData { get; private set; }
         public BaseLandmark defendingLandmark { get; private set; }
+
+        public Dictionary<int, Combat> combatHistory;
 
         #region getters / setters
         public string firstName {
@@ -171,12 +160,12 @@ namespace ECS {
         public ILocation specificLocation {
             get { return (_currentParty.specificLocation != null ? _currentParty.specificLocation : null); }
         }
-        public List<BodyPart> bodyParts {
-            get { return this._bodyParts; }
-        }
-        public List<Item> equippedItems {
-            get { return this._equippedItems; }
-        }
+        //public List<BodyPart> bodyParts {
+        //    get { return this._bodyParts; }
+        //}
+        //public List<Item> equippedItems {
+        //    get { return this._equippedItems; }
+        //}
         public List<Item> inventory {
             get { return this._inventory; }
         }
@@ -195,64 +184,11 @@ namespace ECS {
         public bool isFainted {
             get { return this._isFainted; }
         }
-        public int strength {
-            get { return _strength + _bonusStrength; }
-        }
-        public int baseStrength {
-            get { return _baseStrength; }
-        }
-        public int intelligence {
-            get { return _intelligence + _bonusIntelligence; }
-        }
-        public int baseIntelligence {
-            get { return _baseIntelligence; }
-        }
-        public int agility {
-            get { return _agility + _bonusAgility; }
-        }
-        public int baseAgility {
-            get { return _baseAgility; }
-        }
-        public int vitality {
-            get { return _vitality + _bonusVitality; }
-        }
-        public int baseVitality {
-            get { return _baseVitality; }
-        }
         public int currentHP {
             get { return this._currentHP; }
         }
         public int maxHP {
             get { return this._maxHP; }
-        }
-        public int baseMaxHP {
-            get { return _baseMaxHP; }
-        }
-        public int pFinalAttack {
-            get {
-                float weaponAttack = 0f;
-                float str = (float) strength;
-                if (_equippedWeapon != null) {
-                    weaponAttack = _equippedWeapon.attackPower;
-                }
-                return (int) (((weaponAttack + (str / 3f)) * (1f + ((str / 10f) / 100f))) + ((float)level * 4f)); //TODO: + passive bonus attack
-            }
-        }
-        public int mFinalAttack {
-            get {
-                float weaponAttack = 0f;
-                float intl = (float) intelligence;
-                if (_equippedWeapon != null) {
-                    weaponAttack = _equippedWeapon.attackPower;
-                }
-                return (int) (((weaponAttack + (intl / 3f)) * (1f + ((intl / 10f) / 100f))) + ((float) level * 4f)); //TODO: + passive bonus attack
-            }
-        }
-        public int speed {
-            get {
-                float agi = (float) agility;
-                return (int) ((100f * (1f + ((agi / 5f) / 100f))) + (float) level + (agi / 3f)); //TODO: + passive speed bonus
-            }
         }
         public Color characterColor {
             get { return _characterColor; }
@@ -333,11 +269,11 @@ namespace ECS {
         public int maxExperience {
             get { return _maxExperience; }
         }
-        public float critChance {
-            get { return _critChance; }
+        public float speed {
+            get { return _speed; }
         }
-        public float critDamage {
-            get { return _critDamage; }
+        public float attackPower {
+            get { return _attackPower; }
         }
         public Dictionary<ELEMENT, float> elementalWeaknesses {
             get { return _elementalWeaknesses; }
@@ -345,12 +281,21 @@ namespace ECS {
         public Dictionary<ELEMENT, float> elementalResistances {
             get { return _elementalResistances; }
         }
-        public int actRate {
+        public float actRate {
             get { return _actRate; }
             set { _actRate = value; }
         }
         public Weapon equippedWeapon {
             get { return _equippedWeapon; }
+        }
+        public Armor equippedArmor {
+            get { return _equippedArmor; }
+        }
+        public Item equippedAccessory {
+            get { return _equippedAccessory; }
+        }
+        public Item equippedConsumable {
+            get { return _equippedConsumable; }
         }
         public CharacterBattleTracker battleTracker {
             get { return _battleTracker; }
@@ -409,6 +354,9 @@ namespace ECS {
         public bool isDefender {
             get { return defendingLandmark != null; }
         }
+        public List<CombatAttribute> combatAttributes {
+            get { return _combatAttributes; }
+        }
         #endregion
 
         public Character(string className, RACE race, GENDER gender) : this() {
@@ -419,12 +367,12 @@ namespace ECS {
             _name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
             _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
             _skills = GetGeneralSkills();
-            _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
-            ConstructBodyPartDict(_raceSetting.bodyParts);
+            //_bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
+            //ConstructBodyPartDict(_raceSetting.bodyParts);
             GenerateRaceAttributes();
 
-            AllocateStatPoints(10);
-            LevelUp();
+            //AllocateStatPoints(10);
+            AllocateStats();
 
             CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(className);
             if(setup != null) {
@@ -452,8 +400,8 @@ namespace ECS {
             portraitGO.SetActive(false);
 #endif
 
-            _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
-            ConstructBodyPartDict(_raceSetting.bodyParts);
+            //_bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
+            //ConstructBodyPartDict(_raceSetting.bodyParts);
             _skills = GetGeneralSkills();
             //_skills.AddRange (GetBodyPartSkills ());
             if (data.attributes != null) {
@@ -462,8 +410,8 @@ namespace ECS {
             //GenerateSetupTags(baseSetup);
             GenerateRaceAttributes();
 
-            AllocateStatPoints(10);
-            LevelUp();
+            //AllocateStatPoints(10);
+            AllocateStats();
 
             //EquipPreEquippedItems(baseSetup);
             CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(data.className);
@@ -493,22 +441,19 @@ namespace ECS {
             //previousActions = new Dictionary<CharacterTask, string>();
             _relationships = new Dictionary<Character, Relationship>();
             _genericWorkAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.WORKING);
+            _combatAttributes = new List<CombatAttribute>();
             
             //_actionData = new ActionData(this);
 
 
             //RPG
-            _strength = 1;
-            _intelligence = 1;
-            _agility = 1;
-            _vitality = 1;
-            _level = 0;
+            _level = 1;
             _experience = 0;
             _elementalWeaknesses = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
             _elementalResistances = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
             _battleTracker = new CharacterBattleTracker();
             _battleOnlyTracker = new CharacterBattleOnlyTracker();
-            _equippedItems = new List<Item>();
+            //_equippedItems = new List<Item>();
             _inventory = new List<Item>();
             combatHistory = new Dictionary<int, Combat>();
             eventSchedule = new CharacterEventSchedule(this);
@@ -549,92 +494,40 @@ namespace ECS {
         }
         #endregion
 
-        private void AllocateStatPoints(int statAllocation){
-            _baseStrength = 0;
-            _baseIntelligence = 0;
-            _baseAgility = 0;
-            _baseVitality = 0;
-
-			WeightedDictionary<string> statWeights = new WeightedDictionary<string> ();
-			statWeights.AddElement ("strength", (int) _characterClass.strWeightAllocation);
-			statWeights.AddElement ("intelligence", (int) _characterClass.intWeightAllocation);
-			statWeights.AddElement ("agility", (int) _characterClass.agiWeightAllocation);
-			statWeights.AddElement ("vitality", (int) _characterClass.vitWeightAllocation);
-
-			if(statWeights.GetTotalOfWeights() > 0){
-				string chosenStat = string.Empty;
-				for (int i = 0; i < statAllocation; i++) {
-					chosenStat = statWeights.PickRandomElementGivenWeights ();
-					if (chosenStat == "strength") {
-						_baseStrength += 1;
-					}else if (chosenStat == "intelligence") {
-						_baseIntelligence += 1;
-					}else if (chosenStat == "agility") {
-						_baseAgility += 1;
-					}else if (chosenStat == "vitality") {
-						_baseVitality += 1;
-					}
-				}
-			}
-
-			//_baseMaxHP += (int)((float)_baseMaxHP * (_characterClass.hpPercentage / 100f));
-			//_baseStrength += (int)((float)_baseStrength * (_characterClass.strPercentage / 100f));
-			//_baseAgility += (int)((float)_baseAgility * (_characterClass.agiPercentage / 100f));
-			//_baseIntelligence += (int)((float)_baseIntelligence * (_characterClass.intPercentage / 100f));
-            
-		}
-		//Check if the body parts of this character has the attribute necessary and quantity
-		//internal bool HasAttribute(IBodyPart.ATTRIBUTE attribute, int quantity){
-		//	int count = 0;
-		//	for (int i = 0; i < this._bodyParts.Count; i++) {
-		//		BodyPart bodyPart = this._bodyParts [i];
-
-		//		if(bodyPart.statusEffects.Count <= 0){
-		//			if(bodyPart.HasAttribute(attribute)){
-		//				count += 1;
-		//				if(count >= quantity){
-		//					return true;
-		//				}
-		//			}
-		//		}
-
-		//		for (int j = 0; j < bodyPart.secondaryBodyParts.Count; j++) {
-		//			SecondaryBodyPart secondaryBodyPart = bodyPart.secondaryBodyParts [j];
-		//			if (secondaryBodyPart.statusEffects.Count <= 0) {
-		//				if (secondaryBodyPart.HasAttribute(attribute)) {
-		//					count += 1;
-		//					if (count >= quantity) {
-		//						return true;
-		//					}
-		//				}
-		//			}
-		//		}
-		//	}
-		//	return false;
-		//}
-		internal bool HasBodyPart(string bodyPartType){
-			for (int i = 0; i < this._bodyParts.Count; i++) {
-				BodyPart bodyPart = this._bodyParts [i];
-
-				if(bodyPart.name == bodyPartType){
-					return true;
-				}
-
-				for (int j = 0; j < bodyPart.secondaryBodyParts.Count; j++) {
-					SecondaryBodyPart secondaryBodyPart = bodyPart.secondaryBodyParts [j];
-					if(secondaryBodyPart.name == bodyPartType){
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-        internal IBodyPart GetBodyPart(string bodyPartType) {
-            if (_bodyPartDict.ContainsKey(bodyPartType)) {
-                return _bodyPartDict[bodyPartType];
-            }
-            return null;
+        private void AllocateStats() {
+            _attackPower = _characterClass.baseAttackPower;
+            _speed = _characterClass.baseSpeed;
+            _maxHP = _characterClass.baseHP;
+            _maxSP = _characterClass.baseSP;
         }
+        //      private void AllocateStatPoints(int statAllocation){
+        //          _baseStrength = 0;
+        //          _baseIntelligence = 0;
+        //          _baseAgility = 0;
+        //          _baseVitality = 0;
+
+        //	WeightedDictionary<string> statWeights = new WeightedDictionary<string> ();
+        //	statWeights.AddElement ("strength", (int) _characterClass.strWeightAllocation);
+        //	statWeights.AddElement ("intelligence", (int) _characterClass.intWeightAllocation);
+        //	statWeights.AddElement ("agility", (int) _characterClass.agiWeightAllocation);
+        //	statWeights.AddElement ("vitality", (int) _characterClass.vitWeightAllocation);
+
+        //	if(statWeights.GetTotalOfWeights() > 0){
+        //		string chosenStat = string.Empty;
+        //		for (int i = 0; i < statAllocation; i++) {
+        //			chosenStat = statWeights.PickRandomElementGivenWeights ();
+        //			if (chosenStat == "strength") {
+        //				_baseStrength += 1;
+        //			}else if (chosenStat == "intelligence") {
+        //				_baseIntelligence += 1;
+        //			}else if (chosenStat == "agility") {
+        //				_baseAgility += 1;
+        //			}else if (chosenStat == "vitality") {
+        //				_baseVitality += 1;
+        //			}
+        //		}
+        //	}
+        //}
         //Enables or Disables skills based on skill requirements
         public void EnableDisableSkills(Combat combat){
 			//bool isAllAttacksInRange = true;
@@ -645,34 +538,13 @@ namespace ECS {
 				Skill skill = this._skills [i];
 				skill.isEnabled = true;
 
-                //if(skill.skillRequirements != null) {
-                //    for (int j = 0; j < skill.skillRequirements.Length; j++) {
-                //        SkillRequirement skillRequirement = skill.skillRequirements[j];
-                //        if (!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)) {
-                //            skill.isEnabled = false;
-                //            break;
-                //        }
-                //    }
-                //    if (!skill.isEnabled) {
-                //        continue;
-                //    }
-                //}
-
                 if (skill is AttackSkill){
                     AttackSkill attackSkill = skill as AttackSkill;
                     if(attackSkill.spCost > _sp) {
                         skill.isEnabled = false;
                         continue;
                     }
-					//isAttackInRange = combat.HasTargetInRangeForSkill (skill, this);
-					//if(!isAttackInRange){
-					//	isAllAttacksInRange = false;
-					//	skill.isEnabled = false;
-					//	continue;
-					//}
 				} else if (skill is FleeSkill) {
-                    //					skill.isEnabled = false;
-                    //					continue;
                     if (this.currentHP >= (this.maxHP / 2)) {
                         skill.isEnabled = false;
                         continue;
@@ -699,28 +571,12 @@ namespace ECS {
                                     }
                                 }
 
-                                //for (int k = 0; k < skill.skillRequirements.Length; k++) {
-                                //    SkillRequirement skillRequirement = skill.skillRequirements[k];
-                                //    if (!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)) {
-                                //        skill.isEnabled = false;
-                                //        break;
-                                //    }
-                                //}
-                                //if (!skill.isEnabled) {
-                                //    continue;
-                                //}
                                 if (skill is AttackSkill) {
                                     AttackSkill attackSkill = skill as AttackSkill;
                                     if (attackSkill.spCost > _sp) {
                                         skill.isEnabled = false;
                                         continue;
                                     }
-                                    //isAttackInRange = combat.HasTargetInRangeForSkill(skill, this);
-                                    //if (!isAttackInRange) {
-                                    //    isAllAttacksInRange = false;
-                                    //    skill.isEnabled = false;
-                                    //    continue;
-                                    //}
                                 }
                             }
                         }
@@ -731,73 +587,6 @@ namespace ECS {
 
             }
 
-
-   //         for (int i = 0; i < this._skills.Count; i++) {
-			//	Skill skill = this._skills [i];
-			//	if(skill is MoveSkill){
-			//		skill.isEnabled = true;
-			//		if(isAllAttacksInRange){
-			//			skill.isEnabled = false;
-			//			continue;
-			//		}
-			//		if(skill.skillName == "MoveLeft"){
-			//			if (this._currentRow == 1) {
-			//				skill.isEnabled = false;
-			//				continue;
-			//			} else {
-			//				bool hasEnemyOnLeft = false;
-			//				if(combat.charactersSideA.Contains(this)){
-			//					for (int j = 0; j < combat.charactersSideB.Count; j++) {
-			//						ICharacter enemy = combat.charactersSideB [j];
-			//						if(enemy.currentRow < this._currentRow){
-			//							hasEnemyOnLeft = true;
-			//							break;
-			//						}
-			//					}
-			//				}else{
-			//					for (int j = 0; j < combat.charactersSideA.Count; j++) {
-   //                                 ICharacter enemy = combat.charactersSideA [j];
-			//						if(enemy.currentRow < this._currentRow){
-			//							hasEnemyOnLeft = true;
-			//							break;
-			//						}
-			//					}
-			//				}
-			//				if(!hasEnemyOnLeft){
-			//					skill.isEnabled = false;
-			//					continue;
-			//				}
-			//			}
-			//		}else if(skill.skillName == "MoveRight"){
-			//			if (this._currentRow == 5) {
-			//				skill.isEnabled = false;
-			//			} else {
-			//				bool hasEnemyOnRight = false;
-			//				if(combat.charactersSideA.Contains(this)){
-			//					for (int j = 0; j < combat.charactersSideB.Count; j++) {
-   //                                 ICharacter enemy = combat.charactersSideB [j];
-			//						if(enemy.currentRow > this._currentRow){
-			//							hasEnemyOnRight = true;
-			//							break;
-			//						}
-			//					}
-			//				}else{
-			//					for (int j = 0; j < combat.charactersSideA.Count; j++) {
-   //                                 ICharacter enemy = combat.charactersSideA [j];
-			//						if(enemy.currentRow > this._currentRow){
-			//							hasEnemyOnRight = true;
-			//							break;
-			//						}
-			//					}
-			//				}
-			//				if(!hasEnemyOnRight){
-			//					skill.isEnabled = false;
-			//					continue;
-			//				}
-			//			}
-			//		}
-			//	}
-			//}
 		}
         //Changes row number of this character
         public void SetRowNumber(int rowNumber){
@@ -917,9 +706,9 @@ namespace ECS {
 				}
                 
                 //Drop all Items
-                while (_equippedItems.Count > 0) {
-					ThrowItem (_equippedItems [0]);
-				}
+    //            while (_equippedItems.Count > 0) {
+				//	ThrowItem (_equippedItems [0]);
+				//}
 				while (_inventory.Count > 0) {
 					ThrowItem (_inventory [0]);
 				}
@@ -1008,115 +797,6 @@ namespace ECS {
             onCharacterDeath -= onDeathAction;
         }
 
-        #region Body Parts
-		/*
-     * Add new body parts here.
-     * */
-		internal void AddBodyPart(BodyPart bodyPart) {
-			bodyParts.Add(bodyPart);
-		}
-		//internal IBodyPart GetBodyPartForWeapon(Weapon weapon) {
-		//	List<IBodyPart> allBodyParts = new List<IBodyPart>();
-		//	for (int i = 0; i < bodyParts.Count; i++) {
-		//		BodyPart currBodyPart = bodyParts[i];
-		//		allBodyParts.Add(currBodyPart);
-		//		for (int j = 0; j < currBodyPart.secondaryBodyParts.Count; j++) {
-		//			allBodyParts.Add(currBodyPart.secondaryBodyParts[j]);
-		//		}
-		//	}
-		//	for (int i = 0; i < allBodyParts.Count; i++) {
-		//		IBodyPart currBodyPart = allBodyParts[i];
-		//		bool meetsRequirements = true;
-		//		//check if currBodyPart meets the weapons requirements
-		//		for (int j = 0; j < ItemManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements.Count; j++) {
-		//			IBodyPart.ATTRIBUTE currReq = ItemManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements[j];
-		//			if (!currBodyPart.HasUnusedAttribute(currReq)) {
-		//				meetsRequirements = false;
-		//				break;
-		//			}
-		//		}
-		//		if (meetsRequirements) {
-		//			return currBodyPart;
-		//		}
-		//	}
-		//	return null;
-		//}
-		internal IBodyPart GetBodyPartForArmor(Armor armor) {
-			IBodyPart.ATTRIBUTE neededAttribute = Utilities.GetNeededAttributeForArmor(armor);
-			for (int i = 0; i < bodyParts.Count; i++) {
-				BodyPart currBodyPart = bodyParts[i];
-				//check if currBodyPart can equip the armor
-				if (currBodyPart.HasUnusedAttribute(neededAttribute)) {
-					return currBodyPart;
-				}
-				for (int j = 0; j < currBodyPart.secondaryBodyParts.Count; j++) {
-					//check if currBodyPart can equip the armor
-					if (currBodyPart.secondaryBodyParts[j].HasUnusedAttribute(neededAttribute)) {
-						return currBodyPart.secondaryBodyParts[j];
-					}
-				}
-			}
-			return null;
-		}
-        private void ConstructBodyPartDict(List<BodyPart> parts) {
-            _bodyPartDict = new Dictionary<string, IBodyPart>();
-            for (int i = 0; i < parts.Count; i++) {
-                BodyPart bodyPart = parts[i];
-                _bodyPartDict.Add(bodyPart.name, bodyPart);
-                for (int j = 0; j < bodyPart.secondaryBodyParts.Count; j++) {
-                    SecondaryBodyPart secondaryBodyPart = bodyPart.secondaryBodyParts[j];
-                    _bodyPartDict.Add(secondaryBodyPart.name, secondaryBodyPart);
-                }
-            }
-        }
-		//internal bool HasActivatableBodyPartSkill(){
-		//	for (int i = 0; i < this._skills.Count; i++) {
-		//		Skill skill = this._skills [i];
-		//		if(skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.BODY_PART){
-		//			return true;
-		//		}
-		//	}
-  //          for (int i = 0; i < _level; i++) {
-  //              if (i < _characterClass.skillsPerLevel.Count) {
-  //                  if(_characterClass.skillsPerLevel[i] != null) {
-  //                      for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
-  //                          Skill skill = _characterClass.skillsPerLevel[i][j];
-  //                          if (skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.BODY_PART) {
-  //                              return true;
-  //                          }
-  //                      }
-  //                  }
-  //              } else {
-  //                  break;
-  //              }
-  //          }
-  //          return false;
-		//}
-		//internal bool HasActivatableWeaponSkill(){
-		//	for (int i = 0; i < this._skills.Count; i++) {
-		//		Skill skill = this._skills [i];
-		//		if(skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.WEAPON){
-		//			return true;
-		//		}
-		//	}
-  //          for (int i = 0; i < _level; i++) {
-  //              if (i < _characterClass.skillsPerLevel.Count) {
-  //                  if (_characterClass.skillsPerLevel[i] != null) {
-  //                      for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
-  //                          Skill skill = _characterClass.skillsPerLevel[i][j];
-  //                          if (skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.WEAPON) {
-  //                              return true;
-  //                          }
-  //                      }
-  //                  }
-  //              } else {
-  //                  break;
-  //              }
-  //          }
-  //          return false;
-		//}
-        #endregion
-
         #region Items
 		//If a character picks up an item, it is automatically added to his/her inventory
 		internal void PickupItem(Item item, bool broadcast = true){
@@ -1162,7 +842,7 @@ namespace ECS {
         internal void ThrowItem(string itemName, int quantity, bool addInLandmark = true) {
             for (int i = 0; i < quantity; i++) {
                 if (HasItem(itemName)) {
-                    ThrowItem(GetItemInAll(itemName), addInLandmark);
+                    ThrowItem(GetItemInInventory(itemName), addInLandmark);
                 }
             }
         }
@@ -1273,23 +953,15 @@ namespace ECS {
             return hasEquipped;
 		}
 		//Unequips an item of a character, whether it's a weapon, armor, etc.
-		internal void UnequipItem(Item item){
+		public void UnequipItem(Item item){
 			if(item is Weapon){
 				UnequipWeapon ((Weapon)item);
 			}else if(item is Armor){
 				UnequipArmor ((Armor)item);
 			}
-			RemoveEquippedItem(item);
+
             Messenger.Broadcast(Signals.ITEM_UNEQUIPPED, item, this);
         }
-		//Unown an item making the owner of it null, if successfully unowned, return true, otherwise, return false
-		internal bool UnownItem(Item item){
-			if(item.owner.id == this._id){
-				item.SetOwner (null);
-				return true;
-			}
-			return false;
-		}
 		//Own an Item
 		internal void OwnItem(Item item){
 			item.SetOwner (this);
@@ -1303,251 +975,36 @@ namespace ECS {
             if (!_characterClass.allowedWeaponTypes.Contains(weapon.weaponType)) {
                 return false;
             }
-			for (int j = 0; j < ItemManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements.Count; j++) {
-				IBodyPart.ATTRIBUTE currReq = ItemManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements[j];
-				if(!AttachWeaponToBodyPart(weapon, currReq)){
-					DetachWeaponFromBodyParts (weapon);
-					return false;
-				}
-			}
-			Weapon newWeapon = weapon;
-			AddEquippedItem(newWeapon);
-			//newWeapon.SetPossessor (this);
-			//newWeapon.ResetDurability();
-//			weapon.SetOwner(this);
-			if(newWeapon.owner == null){
-				OwnItem (newWeapon);
-			}
-            _equippedWeapon = newWeapon;
-			//for (int i = 0; i < newWeapon.skills.Count; i++) {
-			//	this._skills.Add (newWeapon.skills [i]);
-			//}
-
-			//          Debug.Log(this.name + " equipped " + weapon.itemName + " to " + bodyPart.bodyPart.ToString());
-			//StreamingAssetsUI.Instance.UpdateCharacterSummary(this);
-			return true;
-		}
-		private bool AttachWeaponToBodyPart(Weapon weapon, IBodyPart.ATTRIBUTE req){
-			for (int i = 0; i < this._bodyParts.Count; i++) {
-				BodyPart currBodyPart = this._bodyParts[i];
-				if(currBodyPart.AttachItem(weapon, req)){
-					return true;
-				}
-				for (int j = 0; j < currBodyPart.secondaryBodyParts.Count; j++) {
-					if(currBodyPart.secondaryBodyParts[j].AttachItem(weapon, req)){
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-		private void DetachWeaponFromBodyParts(Weapon weapon){
-			for (int i = 0; i < ItemManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements.Count; i++) {
-				IBodyPart.ATTRIBUTE req = ItemManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements[i];
-				for (int j = 0; j < weapon.bodyPartsAttached.Count; j++) {
-					if(weapon.bodyPartsAttached[j].DettachItem(weapon, req)){
-						break;
-					}
-				}
-			}
+            _equippedWeapon = weapon;
+            weapon.SetEquipped(true);
+            return true;
 		}
 		//Unequips weapon of a character
 		private void UnequipWeapon(Weapon weapon) {
-			DetachWeaponFromBodyParts (weapon);
-            //for (int i = 0; i < weapon.skills.Count; i++) {
-            //	this._skills.Remove (weapon.skills [i]);
-            //}
+            weapon.SetEquipped(false);
             _equippedWeapon = null;
 		}
 		//Try to equip an armor to a body part of this character and add it to the list of items this character have
 		internal bool TryEquipArmor(Armor armor){
-			IBodyPart bodyPartToEquip = GetBodyPartForArmor(armor);
-			if(bodyPartToEquip == null){
-				return false;
-			}
-			Armor newArmor = armor;
-			bodyPartToEquip.AttachItem(newArmor, Utilities.GetNeededAttributeForArmor(newArmor));
-			//			armor.bodyPartAttached = bodyPart;
-			AddEquippedItem(newArmor);
-			//newArmor.SetPossessor (this);
-			//newArmor.ResetDurability();
-//			armor.SetOwner(this);
-			if(newArmor.owner == null){
-				OwnItem (newArmor);
-			}
-			//Debug.Log(this.name + " equipped " + newArmor.itemName + " to " + bodyPartToEquip.name);
-            if(CombatPrototypeUI.Instance != null) {
-                CombatPrototypeUI.Instance.UpdateCharacterSummary(this);
-            }
-			return true;
+            armor.SetEquipped(true);
+            _equippedArmor = armor;
+            return true;
 		}
 		//Unequips armor of a character
 		private void UnequipArmor(Armor armor) {
-			armor.bodyPartAttached.DettachItem(armor, Utilities.GetNeededAttributeForArmor(armor));
+            armor.SetEquipped(false);
+            _equippedArmor = null;
 		}
-		internal void AddEquippedItem(Item newItem){
-			this._inventory.Remove (newItem);
-			this._equippedItems.Add (newItem);
-			newItem.SetEquipped (true);
-			AddItemBonuses (newItem);
-		}
-		internal void RemoveEquippedItem(Item newItem){
-            if (_inventory.Contains(newItem)) {
-                throw new Exception(this.name + " already has an instance of " + newItem.itemName);
-            }
-            this._inventory.Add (newItem);
-			this._equippedItems.Remove (newItem);
-			newItem.SetEquipped (false);
-			RemoveItemBonuses (newItem);
-		}
-		internal bool HasWeaponEquipped(){
-			for (int i = 0; i < equippedItems.Count; i++) {
-				Item currItem = equippedItems[i];
-				if(currItem.itemType == ITEM_TYPE.WEAPON) {
-					return true;
-				}
-			}
-			return false;
-		}
-		internal bool HasArmorEquipped(){
-			for (int i = 0; i < equippedItems.Count; i++) {
-				Item currItem = equippedItems[i];
-				if(currItem.itemType == ITEM_TYPE.ARMOR) {
-					return true;
-				}
-			}
-			return false;
-		}
-		internal List<Weapon> GetAllAttachedWeapons() {
-			List<Weapon> weapons = new List<Weapon>();
-			for (int i = 0; i < equippedItems.Count; i++) {
-				Item currItem = equippedItems[i];
-				if(currItem.itemType == ITEM_TYPE.WEAPON) {
-					weapons.Add((Weapon)currItem);
-				}
-			}
-			return weapons;
-		}
-		internal List<Armor> GetAllAttachedArmor() {
-			List<Armor> weapons = new List<Armor>();
-			for (int i = 0; i < equippedItems.Count; i++) {
-				Item currItem = equippedItems[i];
-				if (currItem.itemType == ITEM_TYPE.ARMOR) {
-					weapons.Add((Armor)currItem);
-				}
-			}
-			return weapons;
-		}
-		//internal bool HasEquipmentOfType(EQUIPMENT_TYPE equipmentType, IBodyPart.ATTRIBUTE attribute) {
-		//	for (int i = 0; i < equippedItems.Count; i++) {
-		//		Item currItem = equippedItems[i];
-		//		if(currItem.itemType == ITEM_TYPE.ARMOR) {
-		//			Armor armor = (Armor)currItem;
-		//			if ((EQUIPMENT_TYPE)armor.armorType == equipmentType && (armor.attributes.Contains(attribute) || attribute == IBodyPart.ATTRIBUTE.NONE)) {
-		//				return true;
-		//			}
-		//		} else if (currItem.itemType == ITEM_TYPE.WEAPON) {
-		//			Weapon weapon = (Weapon)currItem;
-		//			if ((EQUIPMENT_TYPE)weapon.weaponType == equipmentType && (weapon.attributes.Contains(attribute) || attribute == IBodyPart.ATTRIBUTE.NONE)) {
-		//				return true;
-		//			}
-		//		}
-		//	}
-		//	return false;
-		//}
-        internal bool HasEquipmentOfType(EQUIPMENT_TYPE equipmentType) {
-            for (int i = 0; i < equippedItems.Count; i++) {
-                Item currItem = equippedItems[i];
-                if (currItem.itemType == ITEM_TYPE.ARMOR) {
-                    Armor armor = (Armor)currItem;
-                    if ((EQUIPMENT_TYPE)armor.armorType == equipmentType) {
-                        return true;
-                    }
-                } else if (currItem.itemType == ITEM_TYPE.WEAPON) {
-                    Weapon weapon = (Weapon)currItem;
-                    if ((EQUIPMENT_TYPE)weapon.weaponType == equipmentType) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-        /*
-         Get the most needed armor type of this character,
-         if this returns NONE. That means that this character already
-         has all types of armor equipped.
-             */
-        internal ARMOR_TYPE GetNeededArmorType() {
-            for (int i = 0; i < Utilities.orderedArmorTypes.Count; i++) {
-                ARMOR_TYPE currArmorType = Utilities.orderedArmorTypes[i];
-                //Get the armor type that the character doesn't currently have
-                if (!this.HasEquipmentOfType((EQUIPMENT_TYPE)currArmorType)) {
-                    return currArmorType; //character has not yet equipped an armor of this type
-                }
-            }
-            return ARMOR_TYPE.NONE;
-        }
-        /*
-         Get armor types that this character has not equipped yet.
-             */
-        internal List<EQUIPMENT_TYPE> GetMissingArmorTypes() {
-            List<EQUIPMENT_TYPE> missingArmor = new List<EQUIPMENT_TYPE>();
-            for (int i = 0; i < Utilities.orderedArmorTypes.Count; i++) {
-                EQUIPMENT_TYPE currArmorType = (EQUIPMENT_TYPE)Utilities.orderedArmorTypes[i];
-                //Get the armor type that the character doesn't currently have
-                if (!this.HasEquipmentOfType((EQUIPMENT_TYPE)currArmorType)) {
-                    missingArmor.Add(currArmorType); //character has not yet equipped an armor of this type
-                }
-            }
-            return missingArmor;
-        }
-        /*
-        Get a random weapon type for a character
-        given its allowed weapon types.
-             */
-        internal WEAPON_TYPE GetWeaponTypeForCharacter() {
-            if (_characterClass.className.Equals("Classless")) {
-                return WEAPON_TYPE.NONE;
-            }
-            return this.characterClass.allowedWeaponTypes[UnityEngine.Random.Range(0, this.characterClass.allowedWeaponTypes.Count)];
-        }
-        //internal void AdjustGold(int amount) {
-        //    _gold += amount;
-        //    _gold = Mathf.Max(0, _gold);
-        //}
-        //internal void AdjustPrestige(int amount) {
-        //    _prestige += amount;
-        //    _prestige = Mathf.Max(0, _prestige);
-        //}
-        /*
-         Get the Item type that this character needs,
-         this is mainly used for upgrading gear at a settlement.
-             */
-        internal ITEM_TYPE GetNeededItemType() {
-            if (!HasWeaponEquipped()) {
-                return ITEM_TYPE.WEAPON;
-            }
-            return ITEM_TYPE.ARMOR;
-        }
-        /*
-         Get the list of equipment that
-         this character needs
-             */
-        internal List<EQUIPMENT_TYPE> GetNeededEquipmentTypes() {
-            List<EQUIPMENT_TYPE> neededEquipment = new List<EQUIPMENT_TYPE>();
-            if (!_characterClass.className.Equals("Classless") && !HasWeaponEquipped()) {
-                neededEquipment.Add((EQUIPMENT_TYPE)GetWeaponTypeForCharacter());
-            }
-            neededEquipment.AddRange(GetMissingArmorTypes());
-            return neededEquipment;
-        }
         internal bool HasItem(string itemName) {
-			for (int i = 0; i < _equippedItems.Count; i++) {
-				Item currItem = _equippedItems[i];
-				if (currItem.itemName.Equals(itemName)) {
-					return true;
-				}
-			}
+            if(_equippedWeapon != null && _equippedWeapon.itemName == itemName) {
+                return true;
+            } else if (_equippedArmor != null && _equippedArmor.itemName == itemName) {
+                return true;
+            } else if (_equippedAccessory != null && _equippedAccessory.itemName == itemName) {
+                return true;
+            } else if (_equippedConsumable != null && _equippedConsumable.itemName == itemName) {
+                return true;
+            }
             for (int i = 0; i < _inventory.Count; i++) {
                 Item currItem = _inventory[i];
                 if (currItem.itemName.Equals(itemName)) {
@@ -1556,28 +1013,17 @@ namespace ECS {
             }
             return false;
         }
-        internal bool HasItem(string itemName, int quantity) {
-            int counter = 0;
-            for (int i = 0; i < _equippedItems.Count; i++) {
-                Item currItem = _equippedItems[i];
-                if (currItem.itemName.Equals(itemName)) {
-                    counter++;
-                }
-            }
-            for (int i = 0; i < _inventory.Count; i++) {
-                Item currItem = _inventory[i];
-                if (currItem.itemName.Equals(itemName)) {
-                    counter++;
-                }
-            }
-            if (counter >= quantity) {
-                return true;
-            } else {
-                return false;
-            }
-        }
         internal bool HasItem(Item item) {
-            if (inventory.Contains(item) || equippedItems.Contains(item)) {
+            if (_equippedWeapon != null && _equippedWeapon.itemName == item.itemName) {
+                return true;
+            } else if (_equippedArmor != null && _equippedArmor.itemName == item.itemName) {
+                return true;
+            } else if (_equippedAccessory != null && _equippedAccessory.itemName == item.itemName) {
+                return true;
+            } else if (_equippedConsumable != null && _equippedConsumable.itemName == item.itemName) {
+                return true;
+            }
+            if (inventory.Contains(item)) {
                 return true;
             }
             return false;
@@ -1589,11 +1035,14 @@ namespace ECS {
              */
         internal bool HasItemLike(string itemName, int quantity) {
             int counter = 0;
-            for (int i = 0; i < _equippedItems.Count; i++) {
-                Item currItem = _equippedItems[i];
-                if (currItem.itemName.Contains(itemName)) {
-                    counter++;
-                }
+            if (_equippedWeapon != null && _equippedWeapon.itemName == itemName) {
+                counter++;
+            } else if (_equippedArmor != null && _equippedArmor.itemName == itemName) {
+                counter++;
+            } else if (_equippedAccessory != null && _equippedAccessory.itemName == itemName) {
+                counter++;
+            } else if (_equippedConsumable != null && _equippedConsumable.itemName == itemName) {
+                counter++;
             }
             for (int i = 0; i < _inventory.Count; i++) {
                 Item currItem = _inventory[i];
@@ -1609,11 +1058,14 @@ namespace ECS {
         }
         public List<Item> GetItemsLike(string itemName) {
             List<Item> items = new List<Item>();
-            for (int i = 0; i < _equippedItems.Count; i++) {
-                Item currItem = _equippedItems[i];
-                if (currItem.itemName.Contains(itemName)) {
-                    items.Add(currItem);
-                }
+            if (_equippedWeapon != null && _equippedWeapon.itemName == itemName) {
+                items.Add(_equippedWeapon);
+            } else if (_equippedArmor != null && _equippedArmor.itemName == itemName) {
+                items.Add(_equippedArmor);
+            } else if (_equippedAccessory != null && _equippedAccessory.itemName == itemName) {
+                items.Add(_equippedAccessory);
+            } else if (_equippedConsumable != null && _equippedConsumable.itemName == itemName) {
+                items.Add(_equippedConsumable);
             }
             for (int i = 0; i < _inventory.Count; i++) {
                 Item currItem = _inventory[i];
@@ -1632,46 +1084,6 @@ namespace ECS {
 			}
 			return null;
 		}
-		internal Item GetItemInEquipped(string itemName){
-			for (int i = 0; i < _equippedItems.Count; i++) {
-				Item currItem = _equippedItems[i];
-				if (currItem.itemName.Equals(itemName)) {
-					return currItem;
-				}
-			}
-			return null;
-		}
-		public Item GetItemInAll(string itemName){
-			if(_equippedItems.Count > 0){
-				for (int i = 0; i < _equippedItems.Count; i++) {
-					if(_equippedItems[i].itemName == itemName){
-						return _equippedItems [i];
-					}
-				}
-			}
-			if(_inventory.Count > 0){
-				for (int i = 0; i < _inventory.Count; i++) {
-					if(_inventory[i].itemName == itemName){
-						return _inventory [i];
-					}
-				}
-			}
-			return null;
-		}
-        private void AddItemBonuses(Item item) {
-            if(item.itemType == ITEM_TYPE.ARMOR) {
-                Armor armor = (Armor) item;
-                _bonusDef += armor.def;
-                _bonusDefPercent += (armor.prefix.bonusDefPercent + armor.suffix.bonusDefPercent);
-            }
-        }
-        private void RemoveItemBonuses(Item item) {
-            if (item.itemType == ITEM_TYPE.ARMOR) {
-                Armor armor = (Armor) item;
-                _bonusDef -= armor.def;
-                _bonusDefPercent -= (armor.prefix.bonusDefPercent + armor.suffix.bonusDefPercent);
-            }
-        }
         public void GiveItemsTo(List<Item> items, Character otherCharacter) {
             for (int i = 0; i < items.Count; i++) {
                 Item currItem = items[i];
@@ -1701,34 +1113,11 @@ namespace ECS {
 					i--;
 				}
 			}
-			for (int i = 0; i < this._bodyParts.Count; i++) {
-				BodyPart bodyPart = this._bodyParts [i];
-				if(bodyPart.statusEffects.Count > 0){
-					for (int j = 0; j < bodyPart.statusEffects.Count; j++) {
-						STATUS_EFFECT statusEffect = bodyPart.statusEffects [j];
-						if(statusEffect != STATUS_EFFECT.DECAPITATED){
-							int chance = Utilities.rng.Next (0, 100);
-							if(chance < 15){
-                                _ownParty.currentCombat.AddCombatLog(this.name + "'s " + bodyPart.name.ToLower () + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
-								bodyPart.RemoveStatusEffectOnSecondaryBodyParts (statusEffect);
-								bodyPart.statusEffects.RemoveAt (j);
-								j--;
-							}
-						}
-					}
-				}
-			}
 		}
         internal bool HasStatusEffect(STATUS_EFFECT statusEffect) {
 			if (_statusEffects.Contains(statusEffect)) {
 				return true;
 			}
-            for (int i = 0; i < this._bodyParts.Count; i++) {
-                BodyPart bodyPart = this._bodyParts[i];
-                if (bodyPart.statusEffects.Contains(statusEffect)) {
-                    return true;
-                }
-            }
             return false;
         }
         #endregion
@@ -2057,7 +1446,7 @@ namespace ECS {
         }
         public Attribute GetAttribute(string attribute) {
             for (int i = 0; i < _attributes.Count; i++) {
-                if (_attributes[i].name == attribute) {
+                if (_attributes[i].name.ToLower() == attribute.ToLower()) {
                     return _attributes[i];
                 }
             }
@@ -2706,40 +2095,23 @@ namespace ECS {
             if(_level < CharacterManager.Instance.maxLevel) {
                 _level += 1;
                 _experience = 0;
-                _strength += _baseStrength;
-                _agility += _baseAgility;
-                _intelligence += _baseIntelligence;
-                _vitality += _baseVitality;
-                RecomputeMaxHP();
                 RecomputeMaxExperience();
-                RecomputeMaxSP();
+                _attackPower += _characterClass.attackPowerPerLevel;
+                _speed += _characterClass.speedPerLevel;
+                _maxHP += _characterClass.hpPerLevel;
+                _maxSP += _characterClass.spPerLevel;
                 //Reset to full health and sp
                 _currentHP = _maxHP;
                 _sp = _maxSP;
             }
         }
         public void OnCharacterClassChange() {
-            AllocateStatPoints(10);
-            RecomputeMaxHP();
-            RecomputeMaxSP();
             if(_currentHP > _maxHP) {
                 _currentHP = _maxHP;
             }
             if (_sp > _maxSP) {
                 _sp = _maxSP;
             }
-        }
-        public void AdjustBonusStrength(int amount) {
-            _bonusStrength += amount;
-        }
-        public void AdjustBonusAgility(int amount) {
-            _bonusAgility += amount;
-        }
-        public void AdjustBonusIntelligence(int amount) {
-            _bonusIntelligence += amount;
-        }
-        public void AdjustBonusVitality(int amount) {
-            _bonusVitality += amount;
         }
         public void AdjustExperience(int amount) {
             _experience += amount;
@@ -2757,35 +2129,8 @@ namespace ECS {
             _sp += amount;
             _sp = Mathf.Clamp(_sp, 0, _maxSP);
         }
-        public void AdjustCritChance(float amount) {
-            _critChance += amount;
-            _critChance = Mathf.Clamp(_critChance, 0f, 100f);
-        }
-        public void AdjustCritDamage(float amount) {
-            _critDamage += amount;
-        }
-        private void RecomputeMaxHP() {
-            //this._fixedMaxHP = 10 + (Mathf.CeilToInt(_characterClass.hpModifier * ((Mathf.Pow((float) _level, 0.7f)) / 0.33f)));
-            float vit = (float) vitality;
-            this._fixedMaxHP = (int)((_characterClass.baseHP + (_characterClass.hpPerLevel * (float)level)) * (1f + ((vit / 5f) / 100f)) + (vit * 2f)); //TODO: + passive hp bonus
-            int previousMaxHP = this._maxHP;
-            this._maxHP = this._fixedMaxHP;
-            if (this._currentHP > this._maxHP || this._currentHP == previousMaxHP) {
-                this._currentHP = this._maxHP;
-            }
-        }
         private void RecomputeMaxExperience() {
             _maxExperience = Mathf.CeilToInt(100f * ((Mathf.Pow((float) _level, 1.25f)) / 1.1f));
-        }
-        private void RecomputeMaxSP() {
-            float intl = (float) intelligence;
-            _maxSP = (int) ((_characterClass.baseSP + (_characterClass.spPerLevel * (float) level)) * (1f + ((intl / 5f) / 100f)) + (intl * 2f)); //TODO: + passive sp bonus
-        }
-        public int GetDef() {
-            //float levelDiff = (float) (enemy.level - level);
-            //return (int)((((float) (_bonusPDef + (strength + (vitality * 2)))) * (1f + (_bonusPDefPercent / 100f))) * (1f + ((levelDiff < 0 ? 0: levelDiff) / 20f)));
-            float vit = (float) vitality;
-            return (int) ((((_bonusDef * (1f + ((vit / 5) / 100f)))) * (1f + (_bonusDefPercent / 100f))) + (vit / 4f)); //TODO: + passive skill def bonus
         }
         public void ResetToFullHP() {
             AdjustHP(_maxHP);
@@ -2794,18 +2139,11 @@ namespace ECS {
             AdjustSP(_maxSP);
         }
         private float GetComputedPower() {
-            ATTACK_CATEGORY attackCat = Utilities.GetAttackCategoryByClass(this);
-            float totalAttack = 0f;
-            if(attackCat == ATTACK_CATEGORY.PHYSICAL) {
-                totalAttack = (float)pFinalAttack;
-            }else if (attackCat == ATTACK_CATEGORY.MAGICAL) {
-                totalAttack = (float) mFinalAttack;
+            float compPower = 0f;
+            for (int i = 0; i < currentParty.icharacters.Count; i++) {
+                compPower += currentParty.icharacters[i].attackPower;
             }
-            float maxHPFloat = (float) maxHP;
-            float maxSPFloat = (float) maxSP;
-            //TODO: totalAttack += final damage bonus
-            float compPower = (totalAttack + (float) GetDef() + (float) (speed - 100) + (maxHPFloat / 10f) + (maxSPFloat / 10f)) * ((((float)currentHP / maxHPFloat) + ((float)currentSP / maxSPFloat)) / 2f);
-            return compPower *= party.icharacters.Count;
+            return compPower;
         }
         #endregion
 
@@ -3612,6 +2950,93 @@ namespace ECS {
             }
             return false;
         }
-#endregion
+        #endregion
+
+        #region Combat Attributes
+        public void AddCombatAttribute(CombatAttribute combatAttribute) {
+            if(GetCombatAttribute(combatAttribute.name).name == string.Empty) {
+                _combatAttributes.Add(combatAttribute);
+                ApplyCombatAttributeEffects(combatAttribute);
+            }
+        }
+        public bool RemoveCombatAttribute(CombatAttribute combatAttribute) {
+            for (int i = 0; i < _combatAttributes.Count; i++) {
+                if (_combatAttributes[i].name == combatAttribute.name) {
+                    _combatAttributes.RemoveAt(i);
+                    UnapplyCombatAttributeEffects(combatAttribute);
+                    return true;    
+                }
+            }
+            return false;
+        }
+        public CombatAttribute GetCombatAttribute(string attributeName) {
+            for (int i = 0; i < _combatAttributes.Count; i++) {
+                if(_combatAttributes[i].name == attributeName) {
+                    return _combatAttributes[i];
+                }
+            }
+            return new CombatAttribute();
+        }
+        private void ApplyCombatAttributeEffects(CombatAttribute combatAttribute) {
+            if(!combatAttribute.hasRequirement) {
+                if(combatAttribute.stat == STAT.ATTACK) {
+                    if (combatAttribute.isPercentage) {
+                        float result = _attackPower * (combatAttribute.amount / 100f);
+                        _attackPower += result;
+                    } else {
+                        _attackPower += combatAttribute.amount;
+                    }
+                }else if (combatAttribute.stat == STAT.HP) {
+                    int previousMaxHP = _maxHP;
+                    if (combatAttribute.isPercentage) {
+                        float result = _maxHP * (combatAttribute.amount / 100f);
+                        _maxHP += (int) result;
+                    } else {
+                        _maxHP += (int) combatAttribute.amount;
+                    }
+                    if(_currentHP > _maxHP || _currentHP == previousMaxHP) {
+                        _currentHP = _maxHP;
+                    }
+                } else if (combatAttribute.stat == STAT.SPEED) {
+                    if (combatAttribute.isPercentage) {
+                        float result = _speed * (combatAttribute.amount / 100f);
+                        _speed += (int) result;
+                    } else {
+                        _speed += (int) combatAttribute.amount;
+                    }
+                }
+            }
+        }
+        private void UnapplyCombatAttributeEffects(CombatAttribute combatAttribute) {
+            if (!combatAttribute.hasRequirement) {
+                if (combatAttribute.stat == STAT.ATTACK) {
+                    if (combatAttribute.isPercentage) {
+                        float result = _attackPower * (combatAttribute.amount / 100f);
+                        _attackPower -= result;
+                    } else {
+                        _attackPower -= combatAttribute.amount;
+                    }
+                } else if (combatAttribute.stat == STAT.HP) {
+                    int previousMaxHP = _maxHP;
+                    if (combatAttribute.isPercentage) {
+                        float result = _maxHP * (combatAttribute.amount / 100f);
+                        _maxHP -= (int) result;
+                    } else {
+                        _maxHP -= (int) combatAttribute.amount;
+                    }
+                    if (_currentHP > _maxHP || _currentHP == previousMaxHP) {
+                        _currentHP = _maxHP;
+                    }
+                } else if (combatAttribute.stat == STAT.SPEED) {
+                    if (combatAttribute.isPercentage) {
+                        float result = _speed * (combatAttribute.amount / 100f);
+                        _speed -= (int) result;
+                    } else {
+                        _speed -= (int) combatAttribute.amount;
+                    }
+                }
+            }
+        }
+        #endregion
     }
 }

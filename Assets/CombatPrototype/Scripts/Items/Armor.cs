@@ -15,7 +15,6 @@ namespace ECS{
         //public List<ATTACK_TYPE> ineffectiveAttackTypes;
         //public List<ATTACK_TYPE> effectiveAttackTypes;
         //public List<IBodyPart.ATTRIBUTE> attributes;
-        internal IBodyPart bodyPartAttached;
 
         #region getters/setters
         public ARMOR_TYPE armorType {
@@ -60,7 +59,6 @@ namespace ECS{
             copy._def = _def;
             copy._prefix = _prefix;
             copy._suffix = _suffix;
-            copy.bodyPartAttached = null;
             SetCommonData(copy);
             return copy;
         }

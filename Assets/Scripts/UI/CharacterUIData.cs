@@ -10,19 +10,21 @@ public class CharacterUIData {
     public string className { get; private set; }
     public float healthValue { get; private set; }
     public float manaValue { get; private set; }
-    public int strength { get; private set; }
-    public int intelligence { get; private set; }
-    public int agility { get; private set; }
-    public int vitality { get; private set; }
+    public float attackPower { get; private set; }
+    public float speed { get; private set; }
     public List<Attribute> attributes { get; private set; }
-    public List<Item> equippedItems { get; private set; }
+    public List<CombatAttribute> combatAttributes { get; private set; }
+    public Weapon equippedWeapon { get; private set; }
+    public Armor equippedArmor { get; private set; }
+    public Item equippedAccessory { get; private set; }
+    public Item equippedConsumable { get; private set; }
     public List<Item> inventory { get; private set; }
     public List<Relationship> relationships { get; private set; }
     public Faction faction;
 
     public CharacterUIData() {
         attributes = new List<Attribute>();
-        equippedItems = new List<Item>();
+        combatAttributes = new List<CombatAttribute>();
         inventory = new List<Item>();
         relationships = new List<Relationship>();
     }
@@ -34,20 +36,23 @@ public class CharacterUIData {
         }
         healthValue = (float)character.currentHP / (float)character.maxHP;
         manaValue = (float)character.currentSP / (float)character.maxSP;
-        strength = character.strength;
-        intelligence = character.intelligence;
-        agility = character.agility;
-        vitality = character.vitality;
+        attackPower = character.attackPower;
+        speed = character.speed;
 
         attributes.Clear();
         if (character.attributes != null) {
             attributes.AddRange(character.attributes);
         }
 
-        equippedItems.Clear();
-        if (character.equippedItems != null) {
-            equippedItems.AddRange(character.equippedItems);
+        combatAttributes.Clear();
+        if (character.combatAttributes != null) {
+            combatAttributes.AddRange(character.combatAttributes);
         }
+
+        equippedWeapon = character.equippedWeapon;
+        equippedArmor = character.equippedArmor;
+        equippedAccessory = character.equippedAccessory;
+        equippedConsumable = character.equippedConsumable;
 
         inventory.Clear();
         if (character.inventory != null) {

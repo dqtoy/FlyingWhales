@@ -369,28 +369,28 @@ public class CharacterInfoUI : UIMenu {
     private void UpdateStatInfo() {
         healthProgressBar.value = (float)_activeCharacter.currentHP / (float)_activeCharacter.maxHP;
         manaProgressBar.value = (float)_activeCharacter.currentSP / (float)_activeCharacter.maxSP;
-        strengthLbl.text = _activeCharacter.strength.ToString();
-        agilityLbl.text = _activeCharacter.agility.ToString();
-        intelligenceLbl.text = _activeCharacter.intelligence.ToString();
-        vitalityLbl.text = _activeCharacter.vitality.ToString();
+        //strengthLbl.text = _activeCharacter.strength.ToString();
+        //agilityLbl.text = _activeCharacter.agility.ToString();
+        //intelligenceLbl.text = _activeCharacter.intelligence.ToString();
+        //vitalityLbl.text = _activeCharacter.vitality.ToString();
     }
     private void UpdateStatInfo(CharacterUIData uiData) {
         healthProgressBar.value = uiData.healthValue;
         manaProgressBar.value = uiData.manaValue;
-        strengthLbl.text = uiData.strength.ToString();
-        agilityLbl.text = uiData.agility.ToString();
-        intelligenceLbl.text = uiData.intelligence.ToString();
-        vitalityLbl.text = uiData.vitality.ToString();
+        //strengthLbl.text = uiData.strength.ToString();
+        //agilityLbl.text = uiData.agility.ToString();
+        //intelligenceLbl.text = uiData.intelligence.ToString();
+        //vitalityLbl.text = uiData.vitality.ToString();
     }
     #endregion
 
     #region Items
     private void UpdateItemsInfo() {
-        UpdateEquipmentInfo(_activeCharacter.equippedItems);
+        //UpdateEquipmentInfo(_activeCharacter.equippedItems);
         UpdateInventoryInfo(_activeCharacter.inventory);
     }
     private void UpdateItemsInfo(CharacterUIData uiData) {
-        UpdateEquipmentInfo(uiData.equippedItems);
+        //UpdateEquipmentInfo(uiData.equippedItems);
         UpdateInventoryInfo(uiData.inventory);
     }
     private void UpdateEquipmentInfo(List<Item> equipment) {
@@ -399,34 +399,6 @@ public class CharacterInfoUI : UIMenu {
         legArmorContainer.SetItem(null);
         leftFootArmorContainer.SetItem(null);
         rightFootArmorContainer.SetItem(null);
-        for (int i = 0; i < equipment.Count; i++) {
-            Item currItem = equipment[i];
-            if (currItem is Armor) {
-                IBodyPart equippedTo = (currItem as Armor).bodyPartAttached;
-                if (equippedTo.name.Equals("Head")) {
-                    headArmorContainer.SetItem(currItem);
-                } else if (equippedTo.name.Equals("Torso")) {
-                    chestArmorContainer.SetItem(currItem);
-                } else if (equippedTo.name.Equals("Hip")) {
-                    legArmorContainer.SetItem(currItem);
-                } else if (equippedTo.name.Equals("Left Foot")) {
-                    leftFootArmorContainer.SetItem(currItem);
-                } else if (equippedTo.name.Equals("Right Foot")) {
-                    rightFootArmorContainer.SetItem(currItem);
-                }
-            } else if (currItem is Weapon) {
-                List<IBodyPart> equippedTo = (currItem as Weapon).bodyPartsAttached;
-                for (int j = 0; j < equippedTo.Count; j++) {
-                    IBodyPart currBodyPart = equippedTo[j];
-                    if (currBodyPart.name.Equals("Left Hand")) {
-                        leftHandContainer.SetItem(currItem);
-                    } else if (currBodyPart.name.Equals("Right Hand")) {
-                        rightHandContainer.SetItem(currItem);
-                    }
-                }
-            }
-        }
-
         ////Equipment
         //IBodyPart head = _activeCharacter.GetBodyPart("Head");
         //if (head != null) {

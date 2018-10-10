@@ -1496,17 +1496,6 @@ public class Utilities : MonoBehaviour {
             return ITEM_TYPE.WEAPON;
         }
     }
-    public static int GetStatByClass(ECS.Character character) {
-        switch (character.characterClass.className) {
-            case "Warrior":
-            case "Barbarian":
-            return character.strength;
-            case "Arcanist":
-            case "Mage":
-            return character.intelligence;
-        }
-        return character.strength;
-    }
     public static ATTACK_CATEGORY GetAttackCategoryByClass(ECS.Character character) {
         switch (character.characterClass.className) {
             case "Warrior":
