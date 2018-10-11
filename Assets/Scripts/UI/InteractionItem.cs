@@ -18,7 +18,9 @@ public class InteractionItem : MonoBehaviour {
 
     public void SetInteraction(Interaction interaction) {
         _interaction = interaction;
-        UpdateState();
+        if(_interaction != null) {
+            UpdateState();
+        }
     }
     public void UpdateState() {
         portrait.GeneratePortrait(null, 50, true);

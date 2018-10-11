@@ -796,6 +796,8 @@ GameObject:
   - component: {fileID: 224703605097113868}
   - component: {fileID: 222344880613294968}
   - component: {fileID: 114209028471626990}
+  - component: {fileID: 114459746864722662}
+  - component: {fileID: 114141975455791652}
   m_Layer: 5
   m_Name: InteractionPrefab
   m_TagString: Untagged
@@ -953,11 +955,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -1166,6 +1168,18 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &114141975455791652
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1993311309083568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1200242548, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ShowMaskGraphic: 1
 --- !u!114 &114148418646313604
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2090,6 +2104,27 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &114459746864722662
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1993311309083568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 899d8ca226d227b4fa4d4195333c91b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  portrait: {fileID: 114898489438757626}
+  descriptionText: {fileID: 114148418646313604}
+  actionOptionButtons:
+  - {fileID: 114825312208111866}
+  - {fileID: 114851738886115250}
+  - {fileID: 114706021412322310}
+  - {fileID: 114741153723041962}
+  confirmNoMinionButton: {fileID: 114210918634220392}
+  confirmMinionButton: {fileID: 114536826952341210}
+  confirmMinionGO: {fileID: 1964245154665764}
 --- !u!114 &114512748453331892
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4352,8 +4387,8 @@ RectTransform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 555, y: 561}
   m_Pivot: {x: 0.5, y: 0.5}
