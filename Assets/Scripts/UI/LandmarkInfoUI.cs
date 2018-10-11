@@ -202,11 +202,11 @@ public class LandmarkInfoUI : UIMenu {
         LandmarkCharacterItem[] items = Utilities.GetComponentsInDirectChildren<LandmarkCharacterItem>(charactersScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
             LandmarkCharacterItem item = items[i];
-            //if(item.party != null) {
-            //    if (item.party.id == party.id) {
-            //        return item;
-            //    }
-            //}
+            if (item.party != null) {
+                if (item.party.id == party.id) {
+                    return item;
+                }
+            }
         }
         return null;
     }
@@ -224,7 +224,7 @@ public class LandmarkInfoUI : UIMenu {
         item.SetParty(partyData.partyMembers[0].currentParty, _activeLandmark);
     }
     private void OnPartyEnteredLandmark(Party party, BaseLandmark landmark) {
-        if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id && _activeLandmark.isBeingInspected) {
+        if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id && (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll)) {
             CreateNewCharacterItem(party);
         }
     }
