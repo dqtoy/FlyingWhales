@@ -29,12 +29,31 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: f0faac4181dd6214997f8e797b8d45a8, type: 3}
+    - {fileID: 102900000, guid: 9e9fe6b04194c8048b975464dd3a5681, type: 3}
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
+  - {fileID: 21300000, guid: 367b9a81ccdf3d144af33afdd3e3ef5b, type: 3}
   - {fileID: 21300000, guid: 9a9317c62f76a34428932da7bab9bd38, type: 3}
   - {fileID: 21300000, guid: 03e3bd48445a43a4ba4261e543505998, type: 3}
   - {fileID: 21300000, guid: c1a6e50d0ccdd2043bbe00862f05a7c2, type: 3}
+  - {fileID: 21300000, guid: 32aeae6a47f36a04a8a907f56d88dba1, type: 3}
+  - {fileID: 21300000, guid: f376b0a4aebd01f4693f5056a5fb0b8b, type: 3}
+  - {fileID: 21300000, guid: 5cc90bcf42fd4974abaae59743b659cd, type: 3}
+  - {fileID: 21300000, guid: 63d54631d5396824a803db830e0e7b02, type: 3}
+  - {fileID: 21300000, guid: e1ddc440b90944a48a3228c70448fd39, type: 3}
+  - {fileID: 21300000, guid: 683795c9de78ff74f91fc16fe7030fca, type: 3}
+  - {fileID: 21300000, guid: a5dcbdca302a5144c89d2c39bada8400, type: 3}
+  - {fileID: 21300000, guid: 748fcc0f876895640a267cb4f8fec809, type: 3}
+  - {fileID: 21300000, guid: c99104d4f7e23ed49acd0e41e2e431e9, type: 3}
+  - {fileID: 21300000, guid: a721ff9fcabaf6a42bcdcf840db92afe, type: 3}
+  - {fileID: 21300000, guid: c21198c6045e0b241bc492042847a293, type: 3}
+  - {fileID: 21300000, guid: 98381b75e2162b84b949aba1a7d10260, type: 3}
+  - {fileID: 21300000, guid: 0acebfd69248e6343b311e437d61494d, type: 3}
+  - {fileID: 21300000, guid: 871688c1dd0f80e428130a38f3bbc722, type: 3}
+  - {fileID: 21300000, guid: 8c51d49239a169c4dbb6c48e21d9596a, type: 3}
+  - {fileID: 21300000, guid: bbc8aecbe28700a4dafe5188c53b2ee2, type: 3}
+  - {fileID: 21300000, guid: 0740052277773e24d896e5929351d05a, type: 3}
   - {fileID: 21300000, guid: fd93c6f70e8bb394da445de1541b7a4a, type: 3}
   - {fileID: 21300000, guid: fd9b1ed7f978dae4f85ebfa5eb14d230, type: 3}
   - {fileID: 21300000, guid: 5b6a9120e63507d4283bd6d9395709ad, type: 3}
@@ -98,6 +117,17 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 507d5cdd01db6b446a3bfa2e8581fb96, type: 3}
   - {fileID: 21300000, guid: c88a94c9d75bf554c947e3bce46c6248, type: 3}
   - {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+  - {fileID: 21300000, guid: 59687b70134453e47b8a5194bbaeb63c, type: 3}
+  - {fileID: 21300000, guid: 68b14393b6cb42d46a88285e2690fed2, type: 3}
+  - {fileID: 21300000, guid: 4732e2d6081d3f5438cfd307a7b3c3a3, type: 3}
+  - {fileID: 21300000, guid: 7981471fffc80e943bc4c94a1e748f60, type: 3}
+  - {fileID: 21300000, guid: 24bf27908ce1ff0488b85956c0c3c7f9, type: 3}
+  - {fileID: 21300000, guid: 044a10ffb7cf1ea4fa87052f5c9563f8, type: 3}
+  - {fileID: 21300000, guid: 6acb08cebcf86d04c97e40d6fff922e3, type: 3}
+  - {fileID: 21300000, guid: b931dd379df6ed74e9c970349deb8392, type: 3}
+  - {fileID: 21300000, guid: 93b34ec21c0450c49b3150771af2a182, type: 3}
+  - {fileID: 21300000, guid: f1e35c7ac3c7a2d4899058043305e0e3, type: 3}
+  - {fileID: 21300000, guid: c10d17c0ce04cac41a5743f733413e44, type: 3}
   - {fileID: 21300000, guid: b77cc3ee0b449b440a9dd563f39db05b, type: 3}
   - {fileID: 21300006, guid: b77cc3ee0b449b440a9dd563f39db05b, type: 3}
   - {fileID: 21300000, guid: ce180f3998a1d374bb967f413236461e, type: 3}
@@ -111,9 +141,27 @@ SpriteAtlas:
   - {fileID: 21300004, guid: b77cc3ee0b449b440a9dd563f39db05b, type: 3}
   - {fileID: 21300002, guid: b77cc3ee0b449b440a9dd563f39db05b, type: 3}
   m_PackedSpriteNamesToIndex:
+  - Tile_UI
   - Stampede_by_Kekai
   - calendar-page-empty
   - WhiteCircle
+  - widget_supplies_mana
+  - widget_speed
+  - widget_day_counter
+  - bottom_right_right_cap
+  - widget_system
+  - bottom_right_icon_holder_off
+  - bottom_intel1
+  - bottom_intel0
+  - bottom_goals1
+  - bottom_goals0
+  - bottom_right_icon_holder_on
+  - bottom_factions0
+  - bottom_factions1
+  - bottom_inventory1
+  - bottom_inventory0
+  - bottom_right_left_cap
+  - bottom_right_center_tile
   - BottomMenuContainer
   - 09_demons03
   - ge_cont-05B
@@ -177,6 +225,17 @@ SpriteAtlas:
   - ClickedBottomButton
   - Achievement_boss_skybreaker
   - StructureIcon
+  - button_system_off
+  - button_system_on
+  - decor_bar1
+  - button_speed3_off
+  - button_speed3_on
+  - button_pause_on
+  - button_pause_off
+  - button_speed2_off
+  - button_speed1_off
+  - button_speed2_on
+  - button_speed1_on
   - UI Assets_0
   - UI Assets_3
   - ClickedButton

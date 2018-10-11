@@ -130,8 +130,8 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: Day 1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 87210b79a31d3954a84cf3a167595bfb, type: 2}
-  m_sharedMaterial: {fileID: 21134644061579212, guid: 87210b79a31d3954a84cf3a167595bfb,
+  m_fontAsset: {fileID: 11400000, guid: 366654e726d56e94b968f080a125664b, type: 2}
+  m_sharedMaterial: {fileID: 21354955637117686, guid: 366654e726d56e94b968f080a125664b,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -156,13 +156,13 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 17.35
-  m_fontSizeBase: 18
+  m_fontSize: 17
+  m_fontSizeBase: 17
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 12
   m_fontSizeMax: 18
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_textAlignment: 257
   m_isAlignmentEnumConverted: 1
   m_characterSpacing: 0
@@ -257,8 +257,8 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: Zazas visited to investigate the city.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 87210b79a31d3954a84cf3a167595bfb, type: 2}
-  m_sharedMaterial: {fileID: 21134644061579212, guid: 87210b79a31d3954a84cf3a167595bfb,
+  m_fontAsset: {fileID: 11400000, guid: 366654e726d56e94b968f080a125664b, type: 2}
+  m_sharedMaterial: {fileID: 21354955637117686, guid: 366654e726d56e94b968f080a125664b,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -410,7 +410,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 238, y: -12.7}
+  m_AnchoredPosition: {x: 238, y: -10.06}
   m_SizeDelta: {x: 287.12, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224320613809129394
@@ -428,8 +428,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 47.44, y: -26}
-  m_SizeDelta: {x: 81.54, y: 30.91}
+  m_AnchoredPosition: {x: 48.32, y: -26}
+  m_SizeDelta: {x: 88.19, y: 30.91}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224867551862901034
 RectTransform:
