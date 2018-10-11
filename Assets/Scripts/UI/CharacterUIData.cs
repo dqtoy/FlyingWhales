@@ -7,6 +7,7 @@ using UnityEngine;
 public class CharacterUIData {
 
     public int level { get; private set; }
+    public float maxHP { get; private set; }
     public string className { get; private set; }
     public float healthValue { get; private set; }
     public float manaValue { get; private set; }
@@ -38,6 +39,7 @@ public class CharacterUIData {
         manaValue = (float)character.currentSP / (float)character.maxSP;
         attackPower = character.attackPower;
         speed = character.speed;
+        maxHP = character.maxHP;
 
         attributes.Clear();
         if (character.attributes != null) {

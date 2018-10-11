@@ -4,6 +4,7 @@ using UnityEngine;
 
 public struct CombatAttribute {
     public string name;
+    public string description;
     public STAT stat;
     public float amount;
     public bool hasRequirement;

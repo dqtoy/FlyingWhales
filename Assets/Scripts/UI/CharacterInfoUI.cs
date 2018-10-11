@@ -22,7 +22,7 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI phaseLbl;
     [SerializeField] private FactionEmblem factionEmblem;
     [SerializeField] private SquadEmblem squadEmblem;
-    [SerializeField] private ActionIcon currentActionIcon;
+    [SerializeField] private ActionIconCharacterInfoUI currentActionIcon;
     [SerializeField] private GameObject actionIconPrefab;
     [SerializeField] private string actionIconPrefabName;
 
@@ -112,6 +112,23 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI daysConversionLbl;
     [SerializeField] private Button scheduleManualBtn;
 
+    [Space(10)]
+    [Header("Stats")]
+    [SerializeField] private TextMeshProUGUI hpLbl;
+    [SerializeField] private TextMeshProUGUI attackLbl;
+    [SerializeField] private TextMeshProUGUI speedLbl;
+
+    [Space(10)]
+    [Header("Combat Attributes")]
+    [SerializeField] private Transform combatAttributeContentTransform;
+    [SerializeField] private GameObject combatAttributePrefab;
+
+    [Space(10)]
+    [Header("Equipment")]
+    [SerializeField] private Image weaponIcon;
+    [SerializeField] private Image armorIcon;
+    [SerializeField] private Image accessoryIcon;
+    [SerializeField] private Image consumableIcon;
 
     private LogHistoryItem[] logHistoryItems;
     private ItemContainer[] inventoryItemContainers;
@@ -175,6 +192,11 @@ public class CharacterInfoUI : UIMenu {
         base.OpenMenu();
         _activeCharacter = _data as Character;
         UpdateCharacterInfo();
+        if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
+            UpdateCombatAttributes();
+        } else {
+            UpdateCombatAttributes(_activeCharacter.uiData);
+        }
         //if (_activeCharacter.isBeingInspected) {
         //    UpdateTagInfo(_activeCharacter.attributes);
         //} else {
@@ -182,9 +204,9 @@ public class CharacterInfoUI : UIMenu {
         //}
         //UpdateTagInfo();
         //UpdateRelationshipInfo();
-        ShowAttackButton();
-        ShowReleaseButton();
-        CheckShowSnatchButton();
+        //ShowAttackButton();
+        //ShowReleaseButton();
+        //CheckShowSnatchButton();
         currentActionIcon.SetCharacter(_activeCharacter);
         currentActionIcon.SetAction(_activeCharacter.currentParty.currentAction);
         PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeCharacter);
@@ -312,14 +334,16 @@ public class CharacterInfoUI : UIMenu {
 
         if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
             UpdateStatInfo();
-            UpdateItemsInfo();
-            UpdateTagInfo(_activeCharacter.attributes);
-            UpdateRelationshipInfo(_activeCharacter.relationships.Values.ToList());
+            UpdateEquipmentInfo();
+            //UpdateItemsInfo();
+            //UpdateTagInfo(_activeCharacter.attributes);
+            //UpdateRelationshipInfo(_activeCharacter.relationships.Values.ToList());
         } else {
             UpdateStatInfo(_activeCharacter.uiData);
-            UpdateItemsInfo(_activeCharacter.uiData);
-            UpdateTagInfo(_activeCharacter.uiData.attributes);
-            UpdateRelationshipInfo(_activeCharacter.uiData.relationships);
+            UpdateEquipmentInfo(_activeCharacter.uiData);
+            //UpdateItemsInfo(_activeCharacter.uiData);
+            //UpdateTagInfo(_activeCharacter.uiData.attributes);
+            //UpdateRelationshipInfo(_activeCharacter.uiData.relationships);
         }
 
         //UpdateGeneralInfo();
@@ -369,6 +393,9 @@ public class CharacterInfoUI : UIMenu {
     private void UpdateStatInfo() {
         healthProgressBar.value = (float)_activeCharacter.currentHP / (float)_activeCharacter.maxHP;
         manaProgressBar.value = (float)_activeCharacter.currentSP / (float)_activeCharacter.maxSP;
+        hpLbl.text = _activeCharacter.maxHP.ToString();
+        attackLbl.text = _activeCharacter.attackPower.ToString();
+        speedLbl.text = _activeCharacter.speed.ToString();
         //strengthLbl.text = _activeCharacter.strength.ToString();
         //agilityLbl.text = _activeCharacter.agility.ToString();
         //intelligenceLbl.text = _activeCharacter.intelligence.ToString();
@@ -377,10 +404,94 @@ public class CharacterInfoUI : UIMenu {
     private void UpdateStatInfo(CharacterUIData uiData) {
         healthProgressBar.value = uiData.healthValue;
         manaProgressBar.value = uiData.manaValue;
+        hpLbl.text = uiData.maxHP.ToString();
+        attackLbl.text = uiData.attackPower.ToString();
+        speedLbl.text = uiData.speed.ToString();
         //strengthLbl.text = uiData.strength.ToString();
         //agilityLbl.text = uiData.agility.ToString();
         //intelligenceLbl.text = uiData.intelligence.ToString();
         //vitalityLbl.text = uiData.vitality.ToString();
+    }
+    #endregion
+
+    #region Equipment
+    private void UpdateEquipmentInfo() {
+        if(_activeCharacter.equippedWeapon != null) {
+            weaponIcon.gameObject.SetActive(true);
+            weaponIcon.sprite = ItemManager.Instance.GetIconSprite(_activeCharacter.equippedWeapon.iconName);
+        } else {
+            weaponIcon.gameObject.SetActive(false);
+        }
+
+        if (_activeCharacter.equippedArmor != null) {
+            armorIcon.gameObject.SetActive(true);
+            armorIcon.sprite = ItemManager.Instance.GetIconSprite(_activeCharacter.equippedArmor.iconName);
+        } else {
+            armorIcon.gameObject.SetActive(false);
+        }
+
+        if (_activeCharacter.equippedAccessory != null) {
+            accessoryIcon.gameObject.SetActive(true);
+            accessoryIcon.sprite = ItemManager.Instance.GetIconSprite(_activeCharacter.equippedAccessory.iconName);
+        } else {
+            accessoryIcon.gameObject.SetActive(false);
+        }
+
+        if (_activeCharacter.equippedConsumable != null) {
+            consumableIcon.gameObject.SetActive(true);
+            consumableIcon.sprite = ItemManager.Instance.GetIconSprite(_activeCharacter.equippedConsumable.iconName);
+        } else {
+            consumableIcon.gameObject.SetActive(false);
+        }
+    }
+    private void UpdateEquipmentInfo(CharacterUIData uiData) {
+        if (uiData.equippedWeapon != null) {
+            weaponIcon.gameObject.SetActive(true);
+            weaponIcon.sprite = ItemManager.Instance.GetIconSprite(uiData.equippedWeapon.iconName);
+        } else {
+            weaponIcon.gameObject.SetActive(false);
+        }
+
+        if (uiData.equippedArmor != null) {
+            armorIcon.gameObject.SetActive(true);
+            armorIcon.sprite = ItemManager.Instance.GetIconSprite(uiData.equippedArmor.iconName);
+        } else {
+            armorIcon.gameObject.SetActive(false);
+        }
+
+        if (uiData.equippedAccessory != null) {
+            accessoryIcon.gameObject.SetActive(true);
+            accessoryIcon.sprite = ItemManager.Instance.GetIconSprite(uiData.equippedAccessory.iconName);
+        } else {
+            accessoryIcon.gameObject.SetActive(false);
+        }
+
+        if (uiData.equippedConsumable != null) {
+            consumableIcon.gameObject.SetActive(true);
+            consumableIcon.sprite = ItemManager.Instance.GetIconSprite(uiData.equippedConsumable.iconName);
+        } else {
+            consumableIcon.gameObject.SetActive(false);
+        }
+    }
+    #endregion
+
+    #region Combat Attributes
+    private void UpdateCombatAttributes() {
+        combatAttributeContentTransform.DestroyChildren();
+        for (int i = 0; i < _activeCharacter.combatAttributes.Count; i++) {
+            CreateCombatAttributeGO(_activeCharacter.combatAttributes[i]);
+        }
+    }
+    private void UpdateCombatAttributes(CharacterUIData uiData) {
+        combatAttributeContentTransform.DestroyChildren();
+        for (int i = 0; i < uiData.combatAttributes.Count; i++) {
+            CreateCombatAttributeGO(uiData.combatAttributes[i]);
+        }
+    }
+    private void CreateCombatAttributeGO(CombatAttribute combatAttribute) {
+        GameObject go = GameObject.Instantiate(combatAttributePrefab, combatAttributeContentTransform);
+        CombatAttributeItem combatAttributeItem = go.GetComponent<CombatAttributeItem>();
+        combatAttributeItem.SetCombatAttribute(combatAttribute);
     }
     #endregion
 
@@ -393,12 +504,12 @@ public class CharacterInfoUI : UIMenu {
         //UpdateEquipmentInfo(uiData.equippedItems);
         UpdateInventoryInfo(uiData.inventory);
     }
-    private void UpdateEquipmentInfo(List<Item> equipment) {
-        headArmorContainer.SetItem(null);
-        chestArmorContainer.SetItem(null);
-        legArmorContainer.SetItem(null);
-        leftFootArmorContainer.SetItem(null);
-        rightFootArmorContainer.SetItem(null);
+    //private void UpdateEquipmentInfo(List<Item> equipment) {
+    //    headArmorContainer.SetItem(null);
+    //    chestArmorContainer.SetItem(null);
+    //    legArmorContainer.SetItem(null);
+    //    leftFootArmorContainer.SetItem(null);
+    //    rightFootArmorContainer.SetItem(null);
         ////Equipment
         //IBodyPart head = _activeCharacter.GetBodyPart("Head");
         //if (head != null) {
@@ -469,7 +580,7 @@ public class CharacterInfoUI : UIMenu {
         //        rightFootArmorContainer.SetItem(null);
         //    }
         //}
-    }
+    //}
     private void UpdateInventoryInfo(List<Item> inventory) {
         for (int i = 0; i < inventoryItemContainers.Length; i++) {
             ItemContainer currContainer = inventoryItemContainers[i];

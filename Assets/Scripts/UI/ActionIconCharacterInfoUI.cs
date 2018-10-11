@@ -5,16 +5,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 
-public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandler {
+public class ActionIconCharacterInfoUI : PooledObject, IPointerEnterHandler, IPointerExitHandler {
 
     private CharacterAction _action;
     private ICharacter _character;
 
     [SerializeField] private Image progressBarImage;
-    [SerializeField] private Image middleCircleImage;
-    [SerializeField] private Image iconImage;
-    private bool isHovering = false;
+    [SerializeField] private TextMeshProUGUI actionText;
+
     private int _currentDay;
 
     #region getters/setters
@@ -36,19 +36,20 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
     }
     public void SetAction(CharacterAction action) {
         _action = action;
+        actionText.text = _action.actionData.actionName;
         UpdateProgress();
     }
     public void SetCurrentDay(int amount) {
         _currentDay = amount;
     }
-
     public void UpdateProgress() {
         if (_action == null) {
             return;
         }
         if (_action.actionData.duration == 0) {
-            progressBarImage.fillAmount = 1f;
+            progressBarImage.gameObject.SetActive(false);
         } else {
+            progressBarImage.gameObject.SetActive(true);
             progressBarImage.fillAmount = (float)currentDay / (float)_action.actionData.duration;
         }
     }
@@ -62,12 +63,12 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
-        isHovering = true;
+        //isHovering = true;
     }
 
     public void OnPointerExit(PointerEventData eventData) {
-        isHovering = false;
-        UIManager.Instance.HideSmallInfo();
+        //isHovering = false;
+        //UIManager.Instance.HideSmallInfo();
     }
 
     public void SetAlpha(float alpha) {
@@ -75,36 +76,22 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
         color.a = alpha;
         progressBarImage.color = color;
 
-        color = middleCircleImage.color;
-        color.a = alpha;
-        middleCircleImage.color = color;
+        //color = middleCircleImage.color;
+        //color.a = alpha;
+        //middleCircleImage.color = color;
 
-        color = iconImage.color;
-        color.a = alpha;
-        iconImage.color = color;
+        //color = iconImage.color;
+        //color.a = alpha;
+        //iconImage.color = color;
     }
 
     private void OnActionTaken(CharacterAction action, Party party) {
-        //if (_character != null && party.id == _character.ownParty.id) {
-        //    SetAction(action);
-        //}
         if (party != null && _character != null) {
             if (party.id == _character.currentParty.id) {
                 SetAction(action);
             }
-            //if (party.icharacters.Contains(_character)) {
-            //    SetAction(action);
-            //}
         }
     }
-    //private void OnCharacterJoinedParty(ICharacter character, NewParty party) {
-    //    if (_character != null) {
-    //        if (character.id == this._character.id) {
-    //            SetAction((party as CharacterParty).actionData.currentAction);
-    //        }
-    //    }
-    //}
-
     public override void Reset() {
         base.Reset();
         if (Messenger.eventTable.ContainsKey(Signals.ACTION_DAY_ADJUSTED)) {
@@ -117,20 +104,20 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
         _action = null;
         _character = null;
         SetAlpha(255f/255f);
-        isHovering = false;
+        //isHovering = false;
     }
 
-    private void Update() {
-        if (isHovering) {
-            if (_action != null) {
-                string summary = _action.actionData.actionName;
-                if (_action.actionData.duration != 0) {
-                    summary += " " + currentDay.ToString() + "/" + _action.actionData.duration.ToString();
-                }
-                UIManager.Instance.ShowSmallInfo(summary);
-            } else {
-                UIManager.Instance.ShowSmallInfo("NONE");
-            }
-        }
-    }
+    //private void Update() {
+    //    if (isHovering) {
+    //        if (_action != null) {
+    //            string summary = _action.actionData.actionName;
+    //            if (_action.actionData.duration != 0) {
+    //                summary += " " + currentDay.ToString() + "/" + _action.actionData.duration.ToString();
+    //            }
+    //            UIManager.Instance.ShowSmallInfo(summary);
+    //        } else {
+    //            UIManager.Instance.ShowSmallInfo("NONE");
+    //        }
+    //    }
+    //}
 }
