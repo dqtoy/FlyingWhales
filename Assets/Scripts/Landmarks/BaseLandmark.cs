@@ -923,6 +923,9 @@ public class BaseLandmark : ILocation, IInteractable {
     public void SetIsBeingInspected(bool state) {
         _isBeingInspected = state;
         _landmarkVisual.ToggleCharactersVisibility();
+        if (_isBeingInspected) {
+            Messenger.Broadcast(Signals.LANDMARK_INSPECTED, this);
+        }
     }
     public void SetHasBeenInspected(bool state) {
         _hasBeenInspected = state;
