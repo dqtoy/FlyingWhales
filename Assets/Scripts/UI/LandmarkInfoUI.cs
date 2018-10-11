@@ -19,11 +19,10 @@ public class LandmarkInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Info")]
-    [SerializeField] private GameObject[] secrets;
-    [SerializeField] private GameObject[] intel;
-    [SerializeField] private GameObject[] encounters;
-    [SerializeField] private GameObject intelItemPrefab;
-    [SerializeField] private GameObject secretItemPrefab;
+    //[SerializeField] private GameObject[] secrets;
+    //[SerializeField] private GameObject[] intel;
+    //[SerializeField] private GameObject[] encounters;
+    [SerializeField] private IntelItem[] intelItems;
 
     [Space(10)]
     [Header("Characters")]
@@ -125,7 +124,6 @@ public class LandmarkInfoUI : UIMenu {
         healthProgressBar.value = _activeLandmark.currDurability;
     }
     #endregion
-
 
     #region Log History
     private void LoadLogItems() {
@@ -259,27 +257,40 @@ public class LandmarkInfoUI : UIMenu {
 
     #region Info
     private void UpdateInfo() {
-        for (int i = 0; i < secrets.Length; i++) {
-            if(i < _activeLandmark.secrets.Count) {
-                secrets[i].SetActive(true);
+        List<Intel> intels = new List<Intel>(_activeLandmark.intels);
+        intels.AddRange(IntelManager.Instance.GetIntelConcerning(_activeLandmark.charactersAtLocation));
+        for (int i = 0; i < intelItems.Length; i++) {
+            IntelItem currItem = intelItems[i];
+            currItem.Reset();
+            Intel currIntel = intels.ElementAtOrDefault(i);
+            if (currIntel == null) {
+                currItem.gameObject.SetActive(false);
             } else {
-                secrets[i].SetActive(false);
+                currItem.SetIntel(currIntel);
+                currItem.gameObject.SetActive(true);
             }
         }
-        for (int i = 0; i < intel.Length; i++) {
-            if (i < _activeLandmark.intels.Count) {
-                intel[i].SetActive(true);
-            } else {
-                intel[i].SetActive(false);
-            }
-        }
-        for (int i = 0; i < encounters.Length; i++) {
-            if (i < _activeLandmark.encounters.Count) {
-                encounters[i].SetActive(true);
-            } else {
-                encounters[i].SetActive(false);
-            }
-        }
+        //for (int i = 0; i < secrets.Length; i++) {
+        //    if(i < _activeLandmark.secrets.Count) {
+        //        secrets[i].SetActive(true);
+        //    } else {
+        //        secrets[i].SetActive(false);
+        //    }
+        //}
+        //for (int i = 0; i < intel.Length; i++) {
+        //    if (i < _activeLandmark.intels.Count) {
+        //        intel[i].SetActive(true);
+        //    } else {
+        //        intel[i].SetActive(false);
+        //    }
+        //}
+        //for (int i = 0; i < encounters.Length; i++) {
+        //    if (i < _activeLandmark.encounters.Count) {
+        //        encounters[i].SetActive(true);
+        //    } else {
+        //        encounters[i].SetActive(false);
+        //    }
+        //}
     }
     #endregion
 

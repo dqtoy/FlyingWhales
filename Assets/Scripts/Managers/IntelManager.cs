@@ -42,9 +42,47 @@ public class IntelManager : MonoBehaviour {
         foreach (KeyValuePair<int, Intel> kvp in _intelLookup) {
             Intel currIntel = kvp.Value;
             if (currIntel.description.Contains(character.name) || currIntel.name.Contains(character.name)) {
-                intel.Add(currIntel);
+                if (!intel.Contains(currIntel)) {
+                    intel.Add(currIntel);
+                }
             }
         }
+        return intel;
+    }
+
+    public List<Intel> GetIntelConcerning(List<Character> character) {
+        List<Intel> intel = new List<Intel>();
+        List<Intel> intelForCharacter = GetIntelConcerning(character);
+        for (int i = 0; i < intelForCharacter.Count; i++) {
+            Intel currIntelForCharacter = intelForCharacter[i];
+            if (!intel.Contains(currIntelForCharacter)) {
+                intel.Add(currIntelForCharacter);
+            }
+        }
+        return intel;
+    }
+
+    public List<Intel> GetIntelConcerning(List<Party> parties) {
+        List<Intel> intel = new List<Intel>();
+        for (int i = 0; i < parties.Count; i++) {
+            Party currParty = parties[i];
+            if (!(currParty is CharacterParty)) {
+                continue; //skip non character parties
+            }
+            for (int j = 0; j < currParty.icharacters.Count; j++) {
+                ICharacter currCharacter = currParty.icharacters[j];
+                if (currCharacter is Character) {
+                    List<Intel> intelForCharacter = GetIntelConcerning(currCharacter as Character);
+                    for (int k = 0; k < intelForCharacter.Count; k++) {
+                        Intel currIntelForCharacter = intelForCharacter[k];
+                        if (!intel.Contains(currIntelForCharacter)) {
+                            intel.Add(currIntelForCharacter);
+                        }
+                    }
+                }
+            }
+        }
+        
         return intel;
     }
 }

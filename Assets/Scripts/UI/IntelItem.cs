@@ -13,6 +13,7 @@ public class IntelItem : MonoBehaviour {
     public void SetIntel(Intel intel) {
         this.intel = intel;
         UpdateVisuals();
+        Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAddedToPlayer);
     }
 
     private void UpdateVisuals() {
@@ -29,5 +30,13 @@ public class IntelItem : MonoBehaviour {
     }
     public void HideIntelInfo() {
         UIManager.Instance.HideSmallInfo();
+    }
+
+    private void OnIntelAddedToPlayer(Intel intel) {
+        UpdateVisuals();
+    }
+
+    public void Reset() {
+        Messenger.RemoveListener<Intel>(Signals.INTEL_ADDED, OnIntelAddedToPlayer);
     }
 }
