@@ -129,10 +129,10 @@ public class Player : ILeader {
 
     #region Area
     public void CreatePlayerArea(HexTile chosenCoreTile) {
+        chosenCoreTile.SetCorruption(true);
         Area playerArea = LandmarkManager.Instance.CreateNewArea(chosenCoreTile, AREA_TYPE.DEMONIC_INTRUSION);
         _demonicPortal = LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenCoreTile, LANDMARK_TYPE.DEMONIC_PORTAL);
         Biomes.Instance.CorruptTileVisuals(chosenCoreTile);
-        chosenCoreTile.SetCorruption(true);
         SetPlayerArea(playerArea);
         //ActivateMagicTransferToPlayer();
         _demonicPortal.tileLocation.ScheduleCorruption();
@@ -548,6 +548,7 @@ public class Player : ILeader {
         _currencies.Add(CURRENCY.IMP, 0);
         _currencies.Add(CURRENCY.MANA, 0);
         _currencies.Add(CURRENCY.SUPPLY, 0);
+        AdjustCurrency(CURRENCY.IMP, 5);
     }
     public void AdjustCurrency(CURRENCY currency, int amount) {
         _currencies[currency] += amount;
@@ -558,6 +559,7 @@ public class Player : ILeader {
         } else if (currency == CURRENCY.MANA) {
             _currencies[currency] = Mathf.Max(_currencies[currency], 0); //maybe 999?
         }
+        Messenger.Broadcast(Signals.UPDATED_CURRENCIES);
     }
     #endregion
 }

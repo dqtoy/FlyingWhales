@@ -29,8 +29,9 @@ public class InteractionState {
     }
     public void AddActionOption(ActionOption option) {
         for (int i = 0; i < _actionOptions.Length; i++) {
-            if(_actionOptions[i].description == string.Empty) {
+            if(_actionOptions[i] == null) {
                 _actionOptions[i] = option;
+                break;
             }
         }
     }

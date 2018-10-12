@@ -31,6 +31,7 @@ public class Interaction {
     #region Utilities
     public void SetCurrentState(InteractionState state) {
         _currentState = state;
+        Messenger.Broadcast(Signals.UPDATED_INTERACTION_STATE, this);
     }
     #endregion
 }

@@ -49,6 +49,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     //private List<BodyPart> _bodyParts;
     private List<CharacterAction> _miscActions;
     private List<Skill> _skills;
+    private List<Interaction> _currentInteractions;
     private Dictionary<ELEMENT, float> _elementalWeaknesses;
     private Dictionary<ELEMENT, float> _elementalResistances;
     private Dictionary<string, float> _itemDropsLookup;
@@ -219,6 +220,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public List<CombatAttribute> combatAttributes {
         get { return null; }
+    }
+    public List<Interaction> currentInteractions {
+        get { return _currentInteractions; }
     }
     public Dictionary<ELEMENT, float> elementalWeaknesses {
         get { return _elementalWeaknesses; }
@@ -706,6 +710,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public void EndedInspection() {
         uiData.UpdateData(this);
+    }
+    public void AddInteraction(Interaction interaction) {
+        _currentInteractions.Add(interaction);
     }
     #endregion
 }

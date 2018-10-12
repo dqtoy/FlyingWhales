@@ -117,5 +117,10 @@ public static class Signals {
 
     #region Player
     public static string INTEL_ADDED = "OnIntelAdded"; //Parameters (Intel addedIntel)
+    public static string UPDATED_CURRENCIES = "OnUpdatesCurrencies";
+    #endregion
+
+    #region Interaction
+    public static string UPDATED_INTERACTION_STATE = "OnUpdatedInteractionState"; //Parameters (Interaction interaction)
     #endregion
 }

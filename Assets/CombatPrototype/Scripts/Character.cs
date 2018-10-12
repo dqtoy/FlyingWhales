@@ -63,6 +63,7 @@ namespace ECS {
         private List<CombatAttribute> _combatAttributes;
         private CharacterActionQueue<ActionQueueItem> _actionQueue;
         private List<CharacterAction> _miscActions;
+        private List<Interaction> _currentInteractions;
         private Dictionary<Character, Relationship> _relationships;
         private Dictionary<ELEMENT, float> _elementalWeaknesses;
         private Dictionary<ELEMENT, float> _elementalResistances;
@@ -357,6 +358,9 @@ namespace ECS {
         }
         public List<CombatAttribute> combatAttributes {
             get { return _combatAttributes; }
+        }
+        public List<Interaction> currentInteractions {
+            get { return _currentInteractions; }
         }
         #endregion
 
@@ -2838,6 +2842,9 @@ namespace ECS {
         }
         public void EndedInspection() {
             uiData.UpdateData(this);
+        }
+        public void AddInteraction(Interaction interaction) {
+            _currentInteractions.Add(interaction);
         }
         #endregion
 
