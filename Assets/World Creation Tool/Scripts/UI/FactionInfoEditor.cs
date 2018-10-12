@@ -18,6 +18,7 @@ public class FactionInfoEditor : MonoBehaviour {
     [SerializeField] private Image factionColor;
     [SerializeField] private ColorPickerControl factionColorPicker;
     [SerializeField] private Dropdown emblemDropdown;
+    [SerializeField] private Dropdown moralityDropdown;
 
     [Header("Relationships")]
     [SerializeField] private Text relationshipSummaryLbl;
@@ -30,6 +31,7 @@ public class FactionInfoEditor : MonoBehaviour {
         LoadLeaderChoices();
         LoadRelationshipChoices();
         LoadEmblemChoices();
+        LoadMoralityChoices();
         UpdateBasicInfo();
         UpdateAreas();
         UpdateRelationshipInfo();
@@ -38,26 +40,6 @@ public class FactionInfoEditor : MonoBehaviour {
 
     public void CloseMenu() {
         this.gameObject.SetActive(false);
-    }
-
-    private void UpdateBasicInfo() {
-        nameInputField.text = _faction.name;
-        descriptionInputField.text = _faction.description;
-        factionColor.color = _faction.factionColor;
-        factionColorPicker.CurrentColor = _faction.factionColor;
-        //characters
-        charactersSummaryLbl.text = string.Empty;
-        for (int i = 0; i < _faction.characters.Count; i++) {
-            ECS.Character currCharacter = _faction.characters[i];
-            charactersSummaryLbl.text += currCharacter.name + "\n";
-        }
-
-        if (_faction.leader != null) {
-            leadersDropdown.value = Utilities.GetOptionIndex(leadersDropdown, _faction.leader.name);
-            leadersDropdown.itemText.text = _faction.leader.name;
-        }
-
-        emblemDropdown.value = Utilities.GetOptionIndex(emblemDropdown, FactionManager.Instance.GetFactionEmblemIndex(_faction.emblem).ToString());
     }
 
     public void OnNewFactionCreated(Faction newFaction) {
@@ -76,6 +58,26 @@ public class FactionInfoEditor : MonoBehaviour {
     }
 
     #region Basic Info
+    private void UpdateBasicInfo() {
+        nameInputField.text = _faction.name;
+        descriptionInputField.text = _faction.description;
+        factionColor.color = _faction.factionColor;
+        factionColorPicker.CurrentColor = _faction.factionColor;
+        //characters
+        charactersSummaryLbl.text = string.Empty;
+        for (int i = 0; i < _faction.characters.Count; i++) {
+            ECS.Character currCharacter = _faction.characters[i];
+            charactersSummaryLbl.text += currCharacter.name + "\n";
+        }
+
+        if (_faction.leader != null) {
+            leadersDropdown.value = Utilities.GetOptionIndex(leadersDropdown, _faction.leader.name);
+            leadersDropdown.itemText.text = _faction.leader.name;
+        }
+
+        emblemDropdown.value = Utilities.GetOptionIndex(emblemDropdown, FactionManager.Instance.GetFactionEmblemIndex(_faction.emblem).ToString());
+        moralityDropdown.value = Utilities.GetOptionIndex(moralityDropdown, _faction.morality.ToString());
+    }
     public void ChangeFactionName(string newName) {
         _faction.SetName(newName);
     }
@@ -84,6 +86,15 @@ public class FactionInfoEditor : MonoBehaviour {
     }
     public void ChangeFactionColor(Color color) {
         _faction.SetFactionColor(color);
+    }
+    private void LoadMoralityChoices() {
+        moralityDropdown.ClearOptions();
+        moralityDropdown.AddOptions(Utilities.GetEnumChoices<MORALITY>());
+    }
+    public void ChangeMorality(int choice) {
+        string chosen = moralityDropdown.options[choice].text;
+        MORALITY morality = (MORALITY)System.Enum.Parse(typeof(MORALITY), chosen);
+        _faction.SetMorality(morality);
     }
     #endregion
 

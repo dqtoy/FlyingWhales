@@ -16,7 +16,9 @@ namespace worldcreator {
         public AreaInfoEditor infoEditor;
         
         public void HideMenu() {
-            Messenger.RemoveListener<HexTile>(Signals.TILE_LEFT_CLICKED, CreateNewArea);
+            if (Messenger.eventTable.ContainsKey(Signals.TILE_LEFT_CLICKED)) {
+                Messenger.RemoveListener<HexTile>(Signals.TILE_LEFT_CLICKED, CreateNewArea);
+            }
             createNewAreaBtn.interactable = true;
             this.gameObject.SetActive(false);
         }

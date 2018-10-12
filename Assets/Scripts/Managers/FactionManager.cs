@@ -151,20 +151,20 @@ public class FactionManager : MonoBehaviour {
         Messenger.Broadcast(Signals.FACTION_DELETED, faction);
         allFactions.Remove(faction);
     }
-    public void OccupyLandmarksInFactionRegions() {
-        for (int i = 0; i < allFactions.Count; i++) {
-            Faction currFaction = allFactions[i];
-            for (int j = 0; j < currFaction.ownedRegions.Count; j++) {
-                Region currRegion = currFaction.ownedRegions[j];
-                for (int k = 0; k < currRegion.landmarks.Count; k++) {
-                    BaseLandmark currLandmark = currRegion.landmarks[k];
-                    if (!currLandmark.isOccupied) { //currLandmark is Settlement &&
-                        currLandmark.OccupyLandmark(currFaction);
-                    }
-                }
-            }
-        }
-    }
+    //public void OccupyLandmarksInFactionRegions() {
+    //    for (int i = 0; i < allFactions.Count; i++) {
+    //        Faction currFaction = allFactions[i];
+    //        for (int j = 0; j < currFaction.ownedRegions.Count; j++) {
+    //            Region currRegion = currFaction.ownedRegions[j];
+    //            for (int k = 0; k < currRegion.landmarks.Count; k++) {
+    //                BaseLandmark currLandmark = currRegion.landmarks[k];
+    //                if (!currLandmark.isOccupied) { //currLandmark is Settlement &&
+    //                    currLandmark.OccupyLandmark(currFaction);
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
     #endregion
 
     #region Emblem

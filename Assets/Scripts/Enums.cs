@@ -975,3 +975,7 @@ public enum STAT {
     ATTACK,
     SPEED,
 }
+public enum MORALITY {
+    GOOD,
+    EVIL
+}

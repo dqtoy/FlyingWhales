@@ -29,6 +29,8 @@ public class LandmarkManager : MonoBehaviour {
     public Sprite ancientRuinBlockerSprite;
     public Sprite ruinedSprite;
 
+    [SerializeField] private GameObject landmarkGO;
+
     #region Monobehaviours
     private void Awake() {
         Instance = this;
@@ -161,6 +163,9 @@ public class LandmarkManager : MonoBehaviour {
                 }
             }
         }
+    }
+    public GameObject GetLandmarkGO() {
+        return this.landmarkGO;
     }
     #endregion
 

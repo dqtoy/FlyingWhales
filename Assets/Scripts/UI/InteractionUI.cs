@@ -17,7 +17,7 @@ public class InteractionUI : MonoBehaviour {
         _allInteractionItems = new List<InteractionItem>();
     }
     private void Start() {
-        RunExample();
+        //RunExample();
     }
     public void RunExample() {
         for (int i = 0; i < 10; i++) {

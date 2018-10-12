@@ -26,6 +26,7 @@ namespace worldcreator {
         [SerializeField] private Dropdown roleField;
         [SerializeField] private Dropdown classField;
         [SerializeField] private Dropdown factionField;
+        [SerializeField] private Dropdown moralityField;
         [SerializeField] private Text otherInfoLbl;
 
         [Header("Relationship Info")]
@@ -147,12 +148,14 @@ namespace worldcreator {
             roleField.ClearOptions();
             classField.ClearOptions();
             attributeChoicesDropdown.ClearOptions();
+            moralityField.ClearOptions();
 
             raceField.AddOptions(Utilities.GetEnumChoices<RACE>());
             genderField.AddOptions(Utilities.GetEnumChoices<GENDER>());
             roleField.AddOptions(Utilities.GetEnumChoices<CHARACTER_ROLE>());
             classField.AddOptions(Utilities.GetFileChoices(Utilities.dataPath + "CharacterClasses/", "*.json"));
             attributeChoicesDropdown.AddOptions(Utilities.GetEnumChoices<ATTRIBUTE>());
+            moralityField.AddOptions(Utilities.GetEnumChoices<MORALITY>());
             LoadFactionDropdownOptions();
         }
         public void LoadFactionDropdownOptions() {
@@ -167,6 +170,7 @@ namespace worldcreator {
             raceField.value = Utilities.GetOptionIndex(raceField, _character.raceSetting.race.ToString());
             genderField.value = Utilities.GetOptionIndex(genderField, _character.gender.ToString());
             roleField.value = Utilities.GetOptionIndex(roleField, _character.role.roleType.ToString());
+            moralityField.value = Utilities.GetOptionIndex(moralityField, _character.morality.ToString());
 
             classField.value = Utilities.GetOptionIndex(classField, _character.characterClass.className);
             string factionName = "Factionless";
@@ -223,6 +227,11 @@ namespace worldcreator {
                 faction.AddNewCharacter(_character);
             }
             WorldCreatorUI.Instance.editFactionsMenu.UpdateItems();
+        }
+        public void SetMorality(int choice) {
+            string moralityStr = moralityField.options[choice].text;
+            MORALITY morality = (MORALITY)Enum.Parse(typeof(MORALITY), moralityStr);
+            _character.SetMorality(morality);
         }
         #endregion
 
