@@ -56,11 +56,15 @@ public class LandmarkManager : MonoBehaviour {
         BaseLandmark newLandmark = location.CreateLandmarkOfType(landmarkType);
 #if !WORLD_CREATION_TOOL
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
+        if (!newLandmark.tileLocation.isCorrupted) {
+            InvestigateInteraction investigateInteraction = new InvestigateInteraction(newLandmark);
+            newLandmark.AddInteraction(investigateInteraction);
+        }
         //newLandmark.GenerateDiagonalLeftTiles();
         //newLandmark.GenerateDiagonalRightTiles();
         //newLandmark.GenerateHorizontalTiles();
-        newLandmark.GenerateWallTiles();
-        newLandmark.PutWallUp();
+        //newLandmark.GenerateWallTiles();
+        //newLandmark.PutWallUp();
         //for (int i = 0; i < location.AllNeighbours.Count; i++) {
         //    location.AllNeighbours[i].AdjustUncorruptibleLandmarkNeighbors(1);
         //}
@@ -86,17 +90,11 @@ public class LandmarkManager : MonoBehaviour {
         if (newLandmark.tileLocation.areaOfTile != null && newLandmark.tileLocation.areaOfTile.owner != null) {
             OccupyLandmark(newLandmark, newLandmark.tileLocation.areaOfTile.owner);
         }
+        if (!newLandmark.tileLocation.isCorrupted) {
+            InvestigateInteraction investigateInteraction = new InvestigateInteraction(newLandmark);
+            newLandmark.AddInteraction(investigateInteraction);
+        }
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
-        //newLandmark.GenerateDiagonalLeftTiles();
-        //newLandmark.GenerateDiagonalRightTiles();
-        //newLandmark.GenerateHorizontalTiles();
-        newLandmark.GenerateWallTiles();
-        newLandmark.PutWallUp();
-        //for (int i = 0; i < location.AllNeighbours.Count; i++) {
-        //    location.AllNeighbours[i].AdjustUncorruptibleLandmarkNeighbors(1);
-        //}
-        //ConstructLandmarkObjects(landmarkData, newLandmark);
-        //		AddInitialLandmarkItems (newLandmark);
 #endif
         if (saveData.items != null) {
             for (int i = 0; i < saveData.items.Count; i++) {

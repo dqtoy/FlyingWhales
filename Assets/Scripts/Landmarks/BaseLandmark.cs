@@ -39,6 +39,7 @@ public class BaseLandmark : ILocation, IInteractable {
     protected List<Secret> _secrets;
     protected List<Intel> _intels;
     protected List<string> _encounters;
+    protected List<Interaction> _currentInteractions;
     protected Dictionary<Character, GameDate> _characterTraces; //Lasts for 60 days
     protected Dictionary<int, Combat> _combatHistory;
     protected Dictionary<RESOURCE, int> _resourceInventory;
@@ -107,15 +108,6 @@ public class BaseLandmark : ILocation, IInteractable {
     public List<LandmarkPartyData> lastInspectedOfCharactersAtLocation {
         get { return _lastInspectedOfCharactersAtLocation; }
     }
-    public HexTile tileLocation{
-		get { return _location; }
-	}
-    public HexTile connectedTile {
-        get { return _connectedTile; }
-    }
-    public LOCATION_IDENTIFIER locIdentifier{
-		get { return LOCATION_IDENTIFIER.LANDMARK; }
-	}
 	public List<Item> itemsInLandmark {
 		get { return _itemsInLandmark; }
 	}
@@ -131,32 +123,44 @@ public class BaseLandmark : ILocation, IInteractable {
     public List<string> encounters {
         get { return _encounters; }
     }
+    public List<Interaction> currentInteractions {
+        get { return _currentInteractions; }
+    }
+    public Dictionary<Character, GameDate> characterTraces {
+		get { return _characterTraces; }
+	}
+    public List<HexTile> wallTiles {
+        get { return _wallTiles; }
+    }
     public int currDurability {
         get { return _landmarkObj.currentHP; }
     }
     public int totalDurability {
-		get { return _landmarkObj.maxHP; }
-    }
-	public Dictionary<Character, GameDate> characterTraces {
-		get { return _characterTraces; }
-	}
-    public StructureObj landmarkObj {
-        get { return _landmarkObj; }
-    }
-    public List<HexTile> wallTiles {
-        get { return _wallTiles; }
-    }
-    public bool isAttackingAnotherLandmark {
-        get { return _isAttackingAnotherLandmark; }
+        get { return _landmarkObj.maxHP; }
     }
     public int civilianCount {
         get { return _civilianCount; }
+    }
+    public bool isAttackingAnotherLandmark {
+        get { return _isAttackingAnotherLandmark; }
     }
     public bool isBeingInspected {
         get { return _isBeingInspected; }
     }
     public bool hasBeenInspected {
         get { return _hasBeenInspected; }
+    }
+    public LOCATION_IDENTIFIER locIdentifier {
+        get { return LOCATION_IDENTIFIER.LANDMARK; }
+    }
+    public HexTile tileLocation {
+        get { return _location; }
+    }
+    public HexTile connectedTile {
+        get { return _connectedTile; }
+    }
+    public StructureObj landmarkObj {
+        get { return _landmarkObj; }
     }
     public HiddenDesire hiddenDesire {
         get { return null; }
@@ -185,6 +189,7 @@ public class BaseLandmark : ILocation, IInteractable {
         _secrets = new List<Secret>();
         _intels = new List<Intel>();
         _encounters = new List<string>();
+        _currentInteractions = new List<Interaction>();
         _combatHistory = new Dictionary<int, Combat>();
         _characterTraces = new Dictionary<Character, GameDate>();
         defenders = new Party[LandmarkManager.MAX_DEFENDERS];
@@ -932,6 +937,9 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     public void EndedInspection() {
         UpdateLastInspection();
+    }
+    public void AddInteraction(Interaction interaction) {
+        _currentInteractions.Add(interaction);
     }
     private void UpdateLastInspection() {
         _lastInspectedOfCharactersAtLocation.Clear();

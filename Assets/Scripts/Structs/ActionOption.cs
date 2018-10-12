@@ -25,6 +25,12 @@ public class ActionOption {
             StartDuration();
         }
     }
+    public bool CanBeDone() {
+        if(PlayerManager.Instance.player.currencies[cost.currency] >= cost.amount) {
+            return true;
+        }
+        return false;
+    }
     private void StartDuration() {
         _currentDuration = 0;
         Messenger.AddListener(Signals.HOUR_STARTED, CheckDuration);

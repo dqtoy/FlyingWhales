@@ -16,10 +16,15 @@ public class InvestigateInteraction : Interaction {
         if(_interactable is BaseLandmark) {
             BaseLandmark landmark = _interactable as BaseLandmark;
             string landmarkType = Utilities.NormalizeStringUpperCaseFirstLetters(landmark.specificLandmarkType.ToString());
-            string landmarkOwner = Utilities.GetNormalizedRaceAdjective(landmark.owner.leader.race);
+            string uninvestigatedDesc = "This is a/an " + landmarkType.ToLower() + ". We must send an imp to gather further information about this place.";
+            string investigatedDesc = "This is a/an " + landmarkType.ToLower() + ". We have an imp observing the place. You may recall the imp at any moment.";
 
-            string uninvestigatedDesc = "This is a/an " + landmarkOwner.ToLower() + " " + landmarkType.ToLower() + ". We must send an imp to gather further information about this place.";
-            string investigatedDesc = "This is a/an " + landmarkOwner.ToLower() + " " + landmarkType.ToLower() + ". We have an imp observing the place. You may recall the imp at any moment.";
+            if (landmark.owner != null && landmark.owner.leader != null) {
+                string landmarkOwner = Utilities.GetNormalizedRaceAdjective(landmark.owner.leader.race);
+                uninvestigatedDesc = "This is a/an " + landmarkOwner.ToLower() + " " + landmarkType.ToLower() + ". We must send an imp to gather further information about this place.";
+                investigatedDesc = "This is a/an " + landmarkOwner.ToLower() + " " + landmarkType.ToLower() + ". We have an imp observing the place. You may recall the imp at any moment.";
+            }
+
             uninvestigatedState.SetDescription(uninvestigatedDesc);
             investigatedState.SetDescription(investigatedDesc);
 
@@ -28,6 +33,7 @@ public class InvestigateInteraction : Interaction {
         }
         _states.Add(uninvestigatedState.name, uninvestigatedState);
         _states.Add(investigatedState.name, investigatedState);
+        SetCurrentState(uninvestigatedState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if(state.name == "Uninvestigated") {
