@@ -36,7 +36,6 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI vitalityLbl;
     [SerializeField] private ScrollRect tagsScrollView;
     [SerializeField] private GameObject characterTagPrefab;
-    [SerializeField] private GameObject statsMenuCover;
 
     //[Space(10)]
     //[Header("Mood")]
@@ -187,6 +186,7 @@ public class CharacterInfoUI : UIMenu {
         _activeCharacter = null;
         PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
         PlayerUI.Instance.CollapseMinionHolder();
+        InteractionUI.Instance.HideInteractionUI();
     }
     public override void OpenMenu() {
         base.OpenMenu();
@@ -211,6 +211,7 @@ public class CharacterInfoUI : UIMenu {
         currentActionIcon.SetAction(_activeCharacter.currentParty.currentAction);
         PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeCharacter);
         PlayerUI.Instance.UncollapseMinionHolder();
+        InteractionUI.Instance.OpenInteractionUI(_activeCharacter);
         historyScrollView.verticalNormalizedPosition = 1;
     }
     public override void ShowTooltip(GameObject objectHovered) {
@@ -239,7 +240,6 @@ public class CharacterInfoUI : UIMenu {
 
     private void SetCoversState(bool state) {
         infoMenuCover.SetActive(state);
-        statsMenuCover.SetActive(state);
         itemsMenuCover.SetActive(state);
         relationsMenuCover.SetActive(state);
         logsMenuCover.SetActive(state);
@@ -248,10 +248,10 @@ public class CharacterInfoUI : UIMenu {
         //stats
         healthProgressBar.value = 0f;
         manaProgressBar.value = 0f;
-        strengthLbl.text = "-";
-        agilityLbl.text = "-";
-        intelligenceLbl.text = "-";
-        vitalityLbl.text = "-";
+        //strengthLbl.text = "-";
+        //agilityLbl.text = "-";
+        //intelligenceLbl.text = "-";
+        //vitalityLbl.text = "-";
 
         //items
         for (int i = 0; i < inventoryItemContainers.Length; i++) {
@@ -355,7 +355,7 @@ public class CharacterInfoUI : UIMenu {
         UpdateAllHistoryInfo();
     }
     private void UpdatePortrait() {
-        characterPortrait.GeneratePortrait(_activeCharacter, 100, true);
+        characterPortrait.GeneratePortrait(_activeCharacter, 80, true);
         characterPortrait.SetBGState(false);
     }
     private void UpdateBasicInfo() {

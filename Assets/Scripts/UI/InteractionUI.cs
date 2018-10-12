@@ -44,8 +44,10 @@ public class InteractionUI : MonoBehaviour {
         toggleGroup.transform.DestroyChildren();
 
         yield return null;
-        for (int i = 0; i < interactions.Count; i++) {
-            AddInteraction(interactions[i]);
+        if(interactions != null) {
+            for (int i = 0; i < interactions.Count; i++) {
+                AddInteraction(interactions[i]);
+            }
         }
     }
     public void AddInteraction(Interaction interaction) {
@@ -62,7 +64,7 @@ public class InteractionUI : MonoBehaviour {
     }
     public void OnScrollSnapToggle(bool state) {
         if (state) {
-            
+            //When the scroll bar toggle is clicked
         }
     }
 }
