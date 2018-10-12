@@ -18,9 +18,10 @@ public class Faction {
     internal Color factionColor;
     protected List<ECS.Character> _characters; //List of characters that are part of the faction
     protected Dictionary<Faction, FactionRelationship> _relationships;
-	protected int _warmongering;
     protected List<BaseLandmark> _landmarkInfo;
     protected List<Area> _ownedAreas;
+
+    public MORALITY morality { get; private set; }
 
     #region getters/setters
 	public int id {
@@ -50,9 +51,6 @@ public class Faction {
     public Dictionary<Faction, FactionRelationship> relationships {
         get { return _relationships; }
     }
-	public int warmongering {
-		get { return _warmongering; }
-	}
     public List<BaseLandmark> landmarkInfo {
         get { return _landmarkInfo; }
     }
@@ -69,14 +67,13 @@ public class Faction {
         SetName(RandomNameGenerator.Instance.GenerateKingdomName());
         SetEmblem(FactionManager.Instance.GenerateFactionEmblem(this));
         SetFactionColor (Utilities.GetColorForFaction());
+        SetMorality(MORALITY.GOOD);
         _characters = new List<ECS.Character>();
         _ownedLandmarks = new List<BaseLandmark>();
         _ownedRegions = new List<Region>();
         _relationships = new Dictionary<Faction, FactionRelationship>();
-		_warmongering = 0;
         _landmarkInfo = new List<BaseLandmark>();
         _ownedAreas = new List<Area>();
-
     }
 
     public Faction(FactionSaveData data) {
@@ -84,16 +81,12 @@ public class Faction {
         SetName(data.factionName);
         SetDescription(data.factionDescription);
         SetFactionColor(data.factionColor);
-        //if (data.emblemSymbolIndex != -1) {
-        //    SetEmblemSymbol(FactionManager.Instance.GetFactionEmblemSymbol(data.emblemSymbolIndex));
-        //}
-        //_emblem = FactionManager.Instance.GenerateFactionEmblem(this);
         SetEmblem(FactionManager.Instance.GetFactionEmblem(data.emblemIndex));
+        SetMorality(data.morality);
         _characters = new List<ECS.Character>();
         _ownedLandmarks = new List<BaseLandmark>();
         _ownedRegions = new List<Region>();
         _relationships = new Dictionary<Faction, FactionRelationship>();
-        _warmongering = 0;
         _landmarkInfo = new List<BaseLandmark>();
         _ownedAreas = new List<Area>();
     }
@@ -279,6 +272,12 @@ public class Faction {
     #region Emblems
     public void SetEmblem(Sprite sprite) {
         _emblem = sprite;
+    }
+    #endregion
+
+    #region Morality
+    public void SetMorality(MORALITY morality) {
+        this.morality = morality;
     }
     #endregion
 }

@@ -158,6 +158,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public int greenMagicAmount {
         get { return _greenMagicAmount; }
     }
+    public MORALITY morality {
+        get {
+            if (landmarkOnTile == null || landmarkOnTile.owner == null) {
+                return MORALITY.GOOD;
+            } else {
+                return landmarkOnTile.owner.morality;
+            }
+        }
+    }
     #endregion
 
     public void Initialize() {
@@ -363,7 +372,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #if WORLD_CREATION_TOOL
         GameObject landmarkGO = GameObject.Instantiate(worldcreator.WorldCreatorManager.Instance.landmarkItemPrefab, structureParentGO.transform) as GameObject;
 #else
-        GameObject landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+        GameObject landmarkGO = GameObject.Instantiate(LandmarkManager.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
 #endif
         RACE race = RACE.NONE;
         if (areaOfTile != null) {
@@ -393,7 +402,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public BaseLandmark LoadLandmark(BaseLandmark landmark) {
         GameObject landmarkGO = null;
         //Create Landmark Game Object on tile
-        landmarkGO = GameObject.Instantiate(CityGenerator.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
+        landmarkGO = GameObject.Instantiate(LandmarkManager.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
         landmarkGO.transform.localPosition = Vector3.zero;
         landmarkGO.transform.localScale = Vector3.one;
         _landmarkOnTile = landmark;

@@ -986,3 +986,7 @@ public enum COMBAT_ATTRIBUTE_REQUIREMENT {
     ELEMENT,
     ATTRIBUTE,
 }
+public enum MORALITY {
+    GOOD,
+    EVIL
+}

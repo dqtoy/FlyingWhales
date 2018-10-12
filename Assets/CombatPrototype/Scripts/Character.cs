@@ -91,6 +91,7 @@ namespace ECS {
         public CharacterEventSchedule eventSchedule { get; private set; }
         public CharacterUIData uiData { get; private set; }
         public BaseLandmark defendingLandmark { get; private set; }
+        public MORALITY morality { get; private set; }
 
         public Dictionary<int, Combat> combatHistory;
 
@@ -370,6 +371,7 @@ namespace ECS {
             _gender = gender;
             _name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
             _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
+            SetMorality(MORALITY.GOOD);
             _skills = GetGeneralSkills();
             //_bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
             //ConstructBodyPartDict(_raceSetting.bodyParts);
@@ -396,7 +398,7 @@ namespace ECS {
             _name = data.name;
             //LoadRelationships(data.relationshipsData);
             _portraitSettings = data.portraitSettings;
-
+            SetMorality(data.morality);
 #if !WORLD_CREATION_TOOL
             GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, UIManager.Instance.characterPortraitsParent);
             _characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
@@ -3043,6 +3045,12 @@ namespace ECS {
                     }
                 }
             }
+        }
+        #endregion
+
+        #region Morality
+        public void SetMorality(MORALITY morality) {
+            this.morality = morality;
         }
         #endregion
     }
