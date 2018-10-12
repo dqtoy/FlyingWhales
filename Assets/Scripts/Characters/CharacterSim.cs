@@ -130,6 +130,9 @@ public class CharacterSim : ICharacterSim {
     public GENDER gender {
         get { return _gender; }
     }
+    public RACE race {
+        get { return _raceSetting.race; }
+    }
     public CharacterClass characterClass {
         get { return _characterClass; }
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public struct CombatAttribute {
     public string name;
     public string description;
@@ -9,5 +10,7 @@ public struct CombatAttribute {
     public float amount;
     public bool hasRequirement;
     public bool isPercentage;
-    public string[] requirementNames;
+    public DAMAGE_IDENTIFIER damageIdentifier; //dealt or received
+    public COMBAT_ATTRIBUTE_REQUIREMENT requirementType;
+    public string requirement;
 }

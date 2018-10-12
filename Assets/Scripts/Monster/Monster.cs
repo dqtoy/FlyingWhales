@@ -151,6 +151,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public MODE currentMode {
         get { return _currentMode; }
     }
+    public RACE race {
+        get { return _raceSetting.race; }
+    }
     public ILocation specificLocation {
         get { return _currentParty.specificLocation; }
     }
@@ -451,6 +454,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _miscActions = new List<CharacterAction>();
         _raceSetting = RaceManager.Instance.racesDictionary[_type.ToString()].CreateNewCopy();
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
+        _currentInteractions = new List<Interaction>();
         if (_skills == null) {
             _skills = new List<Skill>();
         }
@@ -476,6 +480,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _miscActions = new List<CharacterAction>();
         _raceSetting = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText(Utilities.dataPath + "RaceSettings/" + _type.ToString() +".json"));
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
+        _currentInteractions = new List<Interaction>();
         _currentHP = _maxHP;
         _currentSP = _maxSP;
         ConstructSkills();

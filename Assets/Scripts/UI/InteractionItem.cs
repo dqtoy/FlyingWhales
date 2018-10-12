@@ -41,6 +41,7 @@ public class InteractionItem : MonoBehaviour {
     public void UpdateState() {
         portrait.GeneratePortrait(null, 50, true);
         descriptionText.text = _interaction.currentState.description;
+        ChangeStateAllButtons(true);
         for (int i = 0; i < actionOptionButtons.Length; i++) {
             if(_interaction.currentState.actionOptions[i] != null) {
                 actionOptionButtons[i].SetOption(_interaction.currentState.actionOptions[i]);
@@ -66,6 +67,14 @@ public class InteractionItem : MonoBehaviour {
     }
     public void OnClickConfirm() {
         _currentSelectedActionOption.ActivateOption(_interaction.interactable);
+        ChangeStateAllButtons(false);
+    }
+    private void ChangeStateAllButtons(bool state) {
+        confirmNoMinionButton.interactable = state;
+        confirmMinionButton.interactable = state;
+        for (int i = 0; i < actionOptionButtons.Length; i++) {
+            actionOptionButtons[i].button.interactable = state;
+        }
     }
     public void OnMinionDrop(Transform transform) {
         MinionItem minionItem = transform.GetComponent<MinionItem>();

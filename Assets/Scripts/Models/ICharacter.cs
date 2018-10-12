@@ -25,6 +25,7 @@ public interface ICharacter {
     GENDER gender { get; }
     ICHARACTER_TYPE icharacterType { get; }
     MODE currentMode { get; }
+    RACE race { get; }
     CharacterBattleOnlyTracker battleOnlyTracker { get; }
     Faction faction { get; }
     BaseLandmark homeLandmark { get; }

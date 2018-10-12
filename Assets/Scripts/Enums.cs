@@ -975,3 +975,14 @@ public enum STAT {
     ATTACK,
     SPEED,
 }
+public enum DAMAGE_IDENTIFIER {
+    DEALT,
+    RECEIVED,
+}
+public enum COMBAT_ATTRIBUTE_REQUIREMENT {
+    NONE,
+    RACE,
+    CLASS,
+    ELEMENT,
+    ATTRIBUTE,
+}

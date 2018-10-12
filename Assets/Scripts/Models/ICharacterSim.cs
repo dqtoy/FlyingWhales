@@ -23,7 +23,9 @@ public interface ICharacterSim {
     SIDES currentSide { get; }
     ICHARACTER_TYPE icharacterType { get; }
     GENDER gender { get; }
+    RACE race { get; }
     CharacterBattleOnlyTracker battleOnlyTracker { get; }
+    CharacterClass characterClass { get; }
     List<Skill> skills { get; }
     List<CombatAttribute> combatAttributes { get; }
     //List<BodyPart> bodyParts { get; }

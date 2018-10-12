@@ -622,26 +622,38 @@ namespace ECS{
             if(sourceCharacter.combatAttributes != null) {
                 //Apply all flat damage attack power modifier first
                 for (int i = 0; i < sourceCharacter.combatAttributes.Count; i++) {
-                    if(!sourceCharacter.combatAttributes[i].isPercentage && sourceCharacter.combatAttributes[i].stat == STAT.ATTACK && sourceCharacter.combatAttributes[i].hasRequirement) {
-                        for (int j = 0; j < sourceCharacter.combatAttributes[i].requirementNames.Length; j++) {
-                            string requirementName = sourceCharacter.combatAttributes[i].requirementNames[j];
-                            if (targetCharacter.GetAttribute(requirementName) != null) {
-                                attackPower += sourceCharacter.combatAttributes[i].amount;
-                                break;
-                            }
+                    if(!sourceCharacter.combatAttributes[i].isPercentage && sourceCharacter.combatAttributes[i].stat == STAT.ATTACK && sourceCharacter.combatAttributes[i].hasRequirement
+                        && sourceCharacter.combatAttributes[i].damageIdentifier == DAMAGE_IDENTIFIER.DEALT) {
+                        if(IsCombatAttributeApplicable(sourceCharacter.combatAttributes[i], targetCharacter, attackSkill)) {
+                            attackPower += sourceCharacter.combatAttributes[i].amount;
                         }
                     }
                 }
+                for (int i = 0; i < targetCharacter.combatAttributes.Count; i++) {
+                    if (!targetCharacter.combatAttributes[i].isPercentage && targetCharacter.combatAttributes[i].stat == STAT.ATTACK && targetCharacter.combatAttributes[i].hasRequirement
+                        && targetCharacter.combatAttributes[i].damageIdentifier == DAMAGE_IDENTIFIER.RECEIVED) {
+                        if (IsCombatAttributeApplicable(targetCharacter.combatAttributes[i], sourceCharacter, attackSkill)) {
+                            attackPower += targetCharacter.combatAttributes[i].amount;
+                        }
+                    }
+                }
+
                 //Then apply all percentage modifiers
                 for (int i = 0; i < sourceCharacter.combatAttributes.Count; i++) {
-                    if (sourceCharacter.combatAttributes[i].isPercentage && sourceCharacter.combatAttributes[i].stat == STAT.ATTACK && sourceCharacter.combatAttributes[i].hasRequirement) {
-                        for (int j = 0; j < sourceCharacter.combatAttributes[i].requirementNames.Length; j++) {
-                            string requirementName = sourceCharacter.combatAttributes[i].requirementNames[j];
-                            if (targetCharacter.GetAttribute(requirementName) != null) {
-                                float result = attackPower * (sourceCharacter.combatAttributes[i].amount / 100f);
-                                attackPower += result;
-                                break;
-                            }
+                    if (sourceCharacter.combatAttributes[i].isPercentage && sourceCharacter.combatAttributes[i].stat == STAT.ATTACK && sourceCharacter.combatAttributes[i].hasRequirement
+                        && sourceCharacter.combatAttributes[i].damageIdentifier == DAMAGE_IDENTIFIER.DEALT) {
+                        if (IsCombatAttributeApplicable(sourceCharacter.combatAttributes[i], targetCharacter, attackSkill)) {
+                            float result = attackPower * (sourceCharacter.combatAttributes[i].amount / 100f);
+                            attackPower += result;
+                        }
+                    }
+                }
+                for (int i = 0; i < targetCharacter.combatAttributes.Count; i++) {
+                    if (targetCharacter.combatAttributes[i].isPercentage && targetCharacter.combatAttributes[i].stat == STAT.ATTACK && targetCharacter.combatAttributes[i].hasRequirement
+                        && targetCharacter.combatAttributes[i].damageIdentifier == DAMAGE_IDENTIFIER.RECEIVED) {
+                        if (IsCombatAttributeApplicable(targetCharacter.combatAttributes[i], sourceCharacter, attackSkill)) {
+                            float result = attackPower * (targetCharacter.combatAttributes[i].amount / 100f);
+                            attackPower += result;
                         }
                     }
                 }
@@ -763,7 +775,26 @@ namespace ECS{
             //}
         }
 
-
+        private bool IsCombatAttributeApplicable(CombatAttribute combatAttribute, ICharacter targetCharacter, AttackSkill skill) {
+            if (combatAttribute.requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.CLASS) {
+                if (targetCharacter.characterClass != null && targetCharacter.characterClass.className.ToLower() == combatAttribute.requirement.ToLower()) {
+                    return true;
+                }
+            } else if (combatAttribute.requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.RACE) {
+                if (targetCharacter.race.ToString().ToLower() == combatAttribute.requirement.ToLower()) {
+                    return true;
+                }
+            } else if (combatAttribute.requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.ELEMENT) {
+                if (skill.element.ToString().ToLower() == combatAttribute.requirement.ToLower()) {
+                    return true;
+                }
+            } else if (combatAttribute.requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.ATTRIBUTE) {
+                if (targetCharacter.GetAttribute(combatAttribute.requirement) != null) {
+                    return true;
+                }
+            }
+            return false;
+        }
 		private string StatusEffectLog(ICharacter sourceCharacter, ICharacter targetCharacter, STATUS_EFFECT statusEffect){
 			string log = string.Empty;
 			if(statusEffect == STATUS_EFFECT.CONFUSED){
