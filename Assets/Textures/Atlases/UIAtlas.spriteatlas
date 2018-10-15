@@ -30,12 +30,17 @@ SpriteAtlas:
     packables:
     - {fileID: 102900000, guid: f0faac4181dd6214997f8e797b8d45a8, type: 3}
     - {fileID: 102900000, guid: 9e9fe6b04194c8048b975464dd3a5681, type: 3}
+    - {fileID: 102900000, guid: 309483fce0e9d4145b8fb9e67137f6bc, type: 3}
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 9a9317c62f76a34428932da7bab9bd38, type: 3}
   - {fileID: 21300000, guid: 03e3bd48445a43a4ba4261e543505998, type: 3}
   - {fileID: 21300000, guid: c1a6e50d0ccdd2043bbe00862f05a7c2, type: 3}
+  - {fileID: 21300000, guid: a2ee2c51a8a17304ba267b414caf8a8e, type: 3}
+  - {fileID: 21300000, guid: 7f60a0da614174b40abee29f21d3e439, type: 3}
+  - {fileID: 21300000, guid: 9ca172a8792b62e45a59950c177cd2bf, type: 3}
+  - {fileID: 21300000, guid: 1b4604932b89b3a46b3204f2eb3f340e, type: 3}
   - {fileID: 21300000, guid: 32aeae6a47f36a04a8a907f56d88dba1, type: 3}
   - {fileID: 21300000, guid: f376b0a4aebd01f4693f5056a5fb0b8b, type: 3}
   - {fileID: 21300000, guid: 5cc90bcf42fd4974abaae59743b659cd, type: 3}
@@ -116,6 +121,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 507d5cdd01db6b446a3bfa2e8581fb96, type: 3}
   - {fileID: 21300000, guid: c88a94c9d75bf554c947e3bce46c6248, type: 3}
   - {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+  - {fileID: 21300000, guid: 0c563a266f7fd074cafed68a72de02ad, type: 3}
+  - {fileID: 21300000, guid: 21c6516015ddc3745ba08bc85137c23f, type: 3}
   - {fileID: 21300000, guid: 59687b70134453e47b8a5194bbaeb63c, type: 3}
   - {fileID: 21300000, guid: 68b14393b6cb42d46a88285e2690fed2, type: 3}
   - {fileID: 21300000, guid: 4732e2d6081d3f5438cfd307a7b3c3a3, type: 3}
@@ -123,6 +130,10 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 24bf27908ce1ff0488b85956c0c3c7f9, type: 3}
   - {fileID: 21300000, guid: 044a10ffb7cf1ea4fa87052f5c9563f8, type: 3}
   - {fileID: 21300000, guid: 6acb08cebcf86d04c97e40d6fff922e3, type: 3}
+  - {fileID: 21300000, guid: 02943190e4ebd5144acf449db760b6aa, type: 3}
+  - {fileID: 21300000, guid: 4f40c3c15e0f556408c5756736c76476, type: 3}
+  - {fileID: 21300000, guid: 46cd0967539dfdd4884cf1e1c049b879, type: 3}
+  - {fileID: 21300000, guid: 08c8aa5cefd04bb4fb146c6dbbc937df, type: 3}
   - {fileID: 21300000, guid: b931dd379df6ed74e9c970349deb8392, type: 3}
   - {fileID: 21300000, guid: 93b34ec21c0450c49b3150771af2a182, type: 3}
   - {fileID: 21300000, guid: f1e35c7ac3c7a2d4899058043305e0e3, type: 3}
@@ -143,6 +154,10 @@ SpriteAtlas:
   - Stampede_by_Kekai
   - calendar-page-empty
   - WhiteCircle
+  - minion_widget_locked
+  - minion_widget
+  - minion_holder_top
+  - minion_holder_bottom
   - widget_supplies_mana
   - widget_speed
   - widget_day_counter
@@ -223,6 +238,8 @@ SpriteAtlas:
   - ClickedBottomButton
   - Achievement_boss_skybreaker
   - StructureIcon
+  - experience_bar_on
+  - experience_bar_off
   - button_system_off
   - button_system_on
   - decor_bar1
@@ -230,6 +247,10 @@ SpriteAtlas:
   - button_speed3_on
   - button_pause_on
   - button_pause_off
+  - minion_scroll_button_up_on
+  - minion_scroll_button_up_off
+  - minion_scroll_button_down_on
+  - minion_scroll_button_down_off
   - button_speed2_off
   - button_speed1_off
   - button_speed2_on

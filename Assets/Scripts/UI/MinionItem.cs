@@ -12,6 +12,9 @@ public class MinionItem : MonoBehaviour {
     public CharacterPortrait portrait;
     public GameObject grayedOutGO;
     public MinionDraggable minionDraggable;
+    public Image bgImage;
+    public Sprite lockedSprite;
+    public Sprite unlockedSprite;
 
     private Minion _minion;
 
@@ -26,10 +29,13 @@ public class MinionItem : MonoBehaviour {
         if(_minion != null) {
             _minion.SetMinionItem(this);
             portrait.GeneratePortrait(minion.icharacter.portraitSettings, (int) portrait.gameObject.GetComponent<RectTransform>().rect.width, true);
+            portrait.gameObject.SetActive(true);
+            bgImage.sprite = unlockedSprite;
             nameLbl.text = _minion.icharacter.name;
             minionDraggable.SetDraggable(true);
         } else {
-            portrait.GeneratePortrait(null, (int) portrait.gameObject.GetComponent<RectTransform>().rect.width, true);
+            portrait.gameObject.SetActive(false);
+            bgImage.sprite = lockedSprite;
             nameLbl.text = "???";
             minionDraggable.SetDraggable(false);
         }

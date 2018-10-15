@@ -13,16 +13,20 @@ public class PlayerUI : MonoBehaviour {
 
     public Image threatFiller;
     public ScrollRect minionsScrollRect;
+    public LayoutElement minionsScrollRectLE;
 
     public GameObject minionPrefab;
     public GameObject minionsHolderGO;
     public Transform minionsContentTransform;
+    public Button upScrollButton;
+    public Button downScrollButton;
     public MinionItem[] minionItems;
 
     public Toggle goalsToggle;
     public Toggle intelToggle;
     public Toggle inventoryToggle;
     public Toggle factionToggle;
+
 
     void Awake() {
         Instance = this;
@@ -79,6 +83,10 @@ public class PlayerUI : MonoBehaviour {
     }
     #endregion
 
+    #region Minions
+    public void OnStartMinionUI() {
+        OnScroll(Vector2.zero);
+    }
     public void MinionDragged(ReorderableList.ReorderableListEventStruct reorderableListEventStruct) {
         MinionItem minionItem = reorderableListEventStruct.SourceObject.GetComponent<MinionItem>();
         minionItem.portrait.SetBorderState(true);
@@ -95,15 +103,15 @@ public class PlayerUI : MonoBehaviour {
         minionsHolderGO.GetComponent<TweenPosition>().PlayForward();
     }
     public void ScrollUp() {
-        float y = minionsContentTransform.localPosition.y - 90f;
+        float y = minionsContentTransform.localPosition.y - 115f;
         if(y < 0f) {
             y = 0f;
         }
         minionsContentTransform.localPosition = new Vector3(minionsContentTransform.localPosition.x, y, minionsContentTransform.localPosition.z);
     }
     public void ScrollDown() {
-        float y = minionsContentTransform.localPosition.y + 90f;
-        float height = minionItems.Length * 90f;
+        float y = minionsContentTransform.localPosition.y + 115f;
+        float height = minionsScrollRectLE.preferredHeight;
         if (y > height) {
             y = height;
         }
@@ -115,4 +123,19 @@ public class PlayerUI : MonoBehaviour {
     public void SortByTypeMinions() {
         PlayerManager.Instance.player.SortByType();
     }
+    public void OnScroll(Vector2 vector2) {
+        if (minionsContentTransform.localPosition.y == 0f) {
+            //on top
+            upScrollButton.gameObject.SetActive(false);
+            downScrollButton.gameObject.SetActive(true);
+        } else if (minionsContentTransform.localPosition.y == minionsScrollRectLE.preferredHeight) {
+            //on bottom
+            upScrollButton.gameObject.SetActive(true);
+            downScrollButton.gameObject.SetActive(false);
+        } else {
+            upScrollButton.gameObject.SetActive(true);
+            downScrollButton.gameObject.SetActive(true);
+        }
+    }
+    #endregion
 }

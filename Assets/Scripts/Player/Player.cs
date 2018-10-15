@@ -507,6 +507,7 @@ public class Player : ILeader {
             }
         }
         PlayerUI.Instance.minionsScrollRect.verticalNormalizedPosition = 1f;
+        PlayerUI.Instance.OnStartMinionUI();
     }
     public void SortByLevel() {
         _minions = _minions.OrderBy(x => x.lvl).ToList();
