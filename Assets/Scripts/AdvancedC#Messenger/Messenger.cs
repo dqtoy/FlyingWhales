@@ -298,20 +298,20 @@ static internal class Messenger {
 public sealed class MessengerHelper : MonoBehaviour {
 	void Awake ()
 	{
-        SceneManager.activeSceneChanged += OnSceneChanged;
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        //SceneManager.activeSceneChanged += OnSceneChanged;
+        //SceneManager.sceneLoaded += OnSceneLoaded;
         DontDestroyOnLoad(gameObject);
     }
 
-    private void OnSceneChanged(Scene scene1, Scene scene2) {
-        Messenger.Cleanup();
-    }
-    private void OnSceneLoaded(Scene scene1, LoadSceneMode mode) {
-        Messenger.Cleanup();
-    }
+    //private void OnSceneChanged(Scene scene1, Scene scene2) {
+    //    Messenger.Cleanup();
+    //}
+    //private void OnSceneLoaded(Scene scene1, LoadSceneMode mode) {
+    //    Messenger.Cleanup();
+    //}
 
     private void OnDestroy() {
-        SceneManager.activeSceneChanged -= OnSceneChanged;
-        SceneManager.sceneLoaded -= OnSceneLoaded;
+        //SceneManager.activeSceneChanged -= OnSceneChanged;
+        //SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 }
