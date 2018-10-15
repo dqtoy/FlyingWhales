@@ -18,7 +18,7 @@ public class LandmarkManager : MonoBehaviour {
     public int initialLandmarkCount;
 
     //public List<BaseLandmarkData> baseLandmarkData;
-    public List<LandmarkData> landmarkData;
+    [SerializeField] private List<LandmarkData> landmarkData;
     public List<AreaData> areaData;
 
     public int corruptedLandmarksCount;
@@ -31,15 +31,25 @@ public class LandmarkManager : MonoBehaviour {
 
     [SerializeField] private GameObject landmarkGO;
 
+    private Dictionary<LANDMARK_TYPE, LandmarkData> landmarkDataDict;
+
     #region Monobehaviours
     private void Awake() {
         Instance = this;
         corruptedLandmarksCount = 0;
         allAreas = new List<Area>();
+        LoadLandmarkTypeDictionary();
     }
     #endregion
 
     #region Landmarks
+    private void LoadLandmarkTypeDictionary() {
+        landmarkDataDict = new Dictionary<LANDMARK_TYPE, LandmarkData>();
+        for (int i = 0; i < landmarkData.Count; i++) {
+            LandmarkData data = landmarkData[i];
+            landmarkDataDict.Add(data.landmarkType, data);
+        }
+    }
     public void LoadLandmarks(WorldSaveData data) {
         if (data.landmarksData != null) {
             for (int i = 0; i < data.landmarksData.Count; i++) {
@@ -416,11 +426,14 @@ public class LandmarkManager : MonoBehaviour {
         }
     }
     public LandmarkData GetLandmarkData(LANDMARK_TYPE landmarkType) {
-        for (int i = 0; i < landmarkData.Count; i++) {
-            LandmarkData currData = landmarkData[i];
-            if (currData.landmarkType == landmarkType) {
-                return currData;
-            }
+        //for (int i = 0; i < landmarkData.Count; i++) {
+        //    LandmarkData currData = landmarkData[i];
+        //    if (currData.landmarkType == landmarkType) {
+        //        return currData;
+        //    }
+        //}
+        if (landmarkDataDict.ContainsKey(landmarkType)) {
+            return landmarkDataDict[landmarkType];
         }
         throw new System.Exception("There is no landmark data for " + landmarkType.ToString());
     }

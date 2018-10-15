@@ -18,6 +18,7 @@ public class LandmarkData {
     public List<LandmarkStructureSprite> elvenLandmarkTileSprites;
     public List<PASSABLE_TYPE> possibleSpawnPoints;
     public bool isUnique;
+    public int dailySupplyProduction;
     
     [Header("Monster Spawner")]
     public MonsterPartyComponent startingMonsterSpawn;
