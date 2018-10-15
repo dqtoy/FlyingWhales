@@ -16,6 +16,7 @@ public class CharacterPanelUI : MonoBehaviour {
     public static CharacterPanelUI Instance;
 
     public Dropdown classOptions;
+    public Dropdown raceOptions;
     public Dropdown genderOptions;
     public Dropdown weaponOptions;
     public Dropdown armorOptions;
@@ -35,16 +36,16 @@ public class CharacterPanelUI : MonoBehaviour {
     public TextMeshProUGUI speedLbl;
     public TextMeshProUGUI spLbl;
     public TextMeshProUGUI skillsLbl;
-    private List<string> _skillNames;
 
     private int _hp;
     private int _sp;
     private float _attackPower;
     private float _speed;
+    private string _skillName;
 
     #region getters/setters
-    public List<string> skillNames {
-        get { return _skillNames; }
+    public string skillName {
+        get { return _skillName; }
     }
     public int hp {
         get { return _hp; }
@@ -64,12 +65,12 @@ public class CharacterPanelUI : MonoBehaviour {
         Instance = this;
     }
     void Start() {
-        _skillNames = new List<string>();
         LoadAllData();
     }
 
     #region Utilities
     private void LoadAllData() {
+        raceOptions.ClearOptions();
         genderOptions.ClearOptions();
         weaponOptions.ClearOptions();
         armorOptions.ClearOptions();
@@ -78,18 +79,29 @@ public class CharacterPanelUI : MonoBehaviour {
         string[] genders = System.Enum.GetNames(typeof(GENDER));
 
         List<string> weapons = new List<string>();
-        string path = Utilities.dataPath + "Items/WEAPON/";
-        foreach (string file in Directory.GetFiles(path, "*.json")) {
-            weapons.Add(Path.GetFileNameWithoutExtension(file));
-        }
-
         List<string> armors = new List<string>();
-        armors.Add("None");
-        string path2 = Utilities.dataPath + "Items/ARMOR/";
-        foreach (string file in Directory.GetFiles(path2, "*.json")) {
-            armors.Add(Path.GetFileNameWithoutExtension(file));
+        string path = Utilities.dataPath + "Items/";
+        string[] directories = Directory.GetDirectories(path);
+        for (int i = 0; i < directories.Length; i++) {
+            string folderName = new DirectoryInfo(directories[i]).Name;
+            string[] files = Directory.GetFiles(directories[i], "*.json");
+            for (int j = 0; j < files.Length; j++) {
+                string fileName = Path.GetFileNameWithoutExtension(files[j]);
+                if (folderName == "WEAPON") {
+                    weapons.Add(fileName);
+                } else if (folderName == "ARMOR") {
+                    armors.Add(fileName);
+                }
+            }
         }
 
+        List<string> races = new List<string>();
+        string path3 = Utilities.dataPath + "RaceSettings/";
+        foreach (string file in Directory.GetFiles(path3, "*.json")) {
+            races.Add(Path.GetFileNameWithoutExtension(file));
+        }
+
+        raceOptions.AddOptions(races);
         weaponOptions.AddOptions(weapons);
         genderOptions.AddOptions(genders.ToList());
         armorOptions.AddOptions(armors);
@@ -190,12 +202,12 @@ public class CharacterPanelUI : MonoBehaviour {
         nameInput.text = character.name;
         levelInput.text = character.level.ToString();
 
-        classOptions.value = GetClassIndex(character.className);
-        genderOptions.value = GetGenderIndex(character.gender);
-        weaponOptions.value = GetWeaponIndex(character.weaponName);
-        armorOptions.value = GetArmorIndex(character.armorName, armorOptions);
-        accessoryOptions.value = GetArmorIndex(character.accessoryName, accessoryOptions);
-        consumableOptions.value = GetArmorIndex(character.consumableName, consumableOptions);
+        classOptions.value = GetDropdownIndex(character.className, classOptions);
+        genderOptions.value = GetDropdownIndex(character.gender.ToString(), genderOptions);
+        weaponOptions.value = GetDropdownIndex(character.weaponName, weaponOptions);
+        armorOptions.value = GetDropdownIndex(character.armorName, armorOptions);
+        accessoryOptions.value = GetDropdownIndex(character.accessoryName, accessoryOptions);
+        consumableOptions.value = GetDropdownIndex(character.consumableName, consumableOptions);
 
         //dHeadInput.text = character.defHead.ToString();
         //dBodyInput.text = character.defBody.ToString();
@@ -208,39 +220,15 @@ public class CharacterPanelUI : MonoBehaviour {
         _attackPower = character.attackPower;
         _speed = character.speed;
 
-        _skillNames.Clear();
-        for (int i = 0; i < character.skillNames.Count; i++) {
-            string skillName = character.skillNames[i];
-            _skillNames.Add(skillName);
-        }
+        //_skillNames.Clear();
+        //for (int i = 0; i < character.skillNames.Count; i++) {
+        //    string skillName = character.skillNames[i];
+        //    _skillNames.Add(skillName);
+        //}
 
         UpdateUI();
     }
-    private int GetClassIndex(string className) {
-        for (int i = 0; i < classOptions.options.Count; i++) {
-            if (classOptions.options[i].text == className) {
-                return i;
-            }
-        }
-        return 0;
-    }
-    private int GetGenderIndex(GENDER gender) {
-        for (int i = 0; i < genderOptions.options.Count; i++) {
-            if (genderOptions.options[i].text == gender.ToString()) {
-                return i;
-            }
-        }
-        return 0;
-    }
-    private int GetWeaponIndex(string weaponName) {
-        for (int i = 0; i < weaponOptions.options.Count; i++) {
-            if (weaponOptions.options[i].text == weaponName) {
-                return i;
-            }
-        }
-        return 0;
-    }
-    private int GetArmorIndex(string armorName, Dropdown ddOptions) {
+    private int GetDropdownIndex(string armorName, Dropdown ddOptions) {
         for (int i = 0; i < ddOptions.options.Count; i++) {
             if (ddOptions.options[i].text == armorName) {
                 return i;
@@ -253,36 +241,39 @@ public class CharacterPanelUI : MonoBehaviour {
         CharacterClass currentClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(path));
         return currentClass;
     }
+    private RaceSetting GetRace(string raceName) {
+        string path = Utilities.dataPath + "RaceSettings/" + raceName + ".json";
+        RaceSetting currentRace = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText(path));
+        return currentRace;
+    }
     private void AllocateStats(CharacterClass characterClass) {
         _attackPower = characterClass.baseAttackPower;
-        _speed = characterClass.baseSP;
+        _speed = characterClass.baseSpeed;
         _hp = characterClass.baseHP;
         _sp = characterClass.baseSP;
     }
-    private void LevelUp(int level, CharacterClass characterClass) {
+    private void LevelUp(int level, CharacterClass characterClass, RaceSetting raceSetting) {
         float multiplier = (float)level - 1f;
+        if(multiplier < 0f) {
+            multiplier = 0f;
+        }
         _attackPower += (multiplier * characterClass.attackPowerPerLevel);
         _speed += (multiplier * characterClass.speedPerLevel);
         _hp += ((int)multiplier * characterClass.hpPerLevel);
         _sp += ((int)multiplier * characterClass.spPerLevel);
-    }
-    private void UpdateSkills(int level, CharacterClass characterClass) {
-        _skillNames.Clear();
-        for (int i = 0; i < level; i++) {
-            if (i < characterClass.skillsPerLevelNames.Count) {
-                StringListWrapper listWrapper = characterClass.skillsPerLevelNames[i];
-                if (listWrapper.list != null) {
-                    for (int j = 0; j < listWrapper.list.Count; j++) {
-                        string skillName = listWrapper.list[j];
-                        if (!_skillNames.Contains(skillName)) {
-                            _skillNames.Add(skillName);
-                        }
-                    }
-                }
-            } else {
-                break;
-            }
+        //Add stats per level from race
+        if(level > 0) {
+            int hpIndex = level % raceSetting.hpPerLevel.Length;
+            hpIndex = hpIndex == 0 ? raceSetting.hpPerLevel.Length : hpIndex;
+            int attackIndex = level % raceSetting.attackPerLevel.Length;
+            attackIndex = attackIndex == 0 ? raceSetting.attackPerLevel.Length : attackIndex;
+
+            _hp += raceSetting.hpPerLevel[hpIndex - 1];
+            _attackPower += raceSetting.attackPerLevel[attackIndex - 1];
         }
+    }
+    private void UpdateSkills(CharacterClass characterClass) {
+        _skillName = characterClass.skillName;
     }
     private void UpdateUI() {
         attackPowerLbl.text = _attackPower.ToString();
@@ -290,25 +281,42 @@ public class CharacterPanelUI : MonoBehaviour {
         hpLbl.text = _hp.ToString();
         spLbl.text = _sp.ToString();
 
-        skillsLbl.text = "None";
-        if (_skillNames.Count > 0) {
-            skillsLbl.text = _skillNames[0];
-            for (int i = 1; i < _skillNames.Count; i++) {
-                skillsLbl.text += ", " + _skillNames[i];
-            }
+        if(_skillName != string.Empty) {
+            skillsLbl.text = _skillName;
+        } else {
+            skillsLbl.text = "None";
         }
     }
     private void ClassChange(int index) {
         CharacterClass characterClass = GetClass(classOptions.options[index].text);
+        RaceSetting race = GetRace(raceOptions.options[raceOptions.value].text);
         int level = int.Parse(levelInput.text);
         if (level < 1) {
             level = 1;
+            levelInput.text = level.ToString();
         } else if (level > 100) {
             level = 100;
+            levelInput.text = level.ToString();
         }
         AllocateStats(characterClass);
-        LevelUp(level, characterClass);
-        UpdateSkills(level, characterClass);
+        LevelUp(level, characterClass, race);
+        UpdateSkills(characterClass);
+        UpdateUI();
+    }
+    private void RaceChange(int index) {
+        CharacterClass characterClass = GetClass(classOptions.options[classOptions.value].text);
+        RaceSetting race = GetRace(raceOptions.options[index].text);
+        int level = int.Parse(levelInput.text);
+        if (level < 1) {
+            level = 1;
+            levelInput.text = level.ToString();
+        } else if (level > 100) {
+            level = 100;
+            levelInput.text = level.ToString();
+        }
+        AllocateStats(characterClass);
+        LevelUp(level, characterClass, race);
+        UpdateSkills(characterClass);
         UpdateUI();
     }
     #endregion
@@ -316,6 +324,9 @@ public class CharacterPanelUI : MonoBehaviour {
     #region OnValueChanged
     public void OnClassChange(int index) {
         ClassChange(index);
+    }
+    public void OnRaceChange(int index) {
+        RaceChange(index);
     }
     #endregion
 

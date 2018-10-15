@@ -45,7 +45,7 @@ public class LevelCollapseUI : MonoBehaviour {
             skillsGO.SetActive(false);
             workAroundText.text = "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeereeeeeeee";
         }
-        ClassPanelUI.Instance.skillsScrollView.Rebuild(CanvasUpdate.PostLayout);
+        //ClassPanelUI.Instance.skillsScrollView.Rebuild(CanvasUpdate.PostLayout);
         //StartCoroutine(UpdateSkillsSrollView());
     }
 

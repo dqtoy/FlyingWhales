@@ -219,10 +219,7 @@ public class SkillPanelUI : MonoBehaviour {
             allSkills.Add(Path.GetFileNameWithoutExtension(file));
         }
 
-        foreach (Transform child in ClassPanelUI.Instance.skillsContentTransform) {
-            child.GetComponent<LevelCollapseUI>().UpdateSkillList();
-        }
-
+        ClassPanelUI.Instance.UpdateSkillOptions();
         MonsterPanelUI.Instance.UpdateSkillList();
     }
     #endregion

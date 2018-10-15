@@ -28,7 +28,7 @@ public class CharacterSim : ICharacterSim {
     //[SerializeField] private int _defHands;
     //[SerializeField] private int _defFeet;
     [SerializeField] private GENDER _gender;
-    [SerializeField] private List<string> _skillNames;
+    [SerializeField] private string _skillName;
 
     private int _id;
     private int _currentHP;
@@ -145,8 +145,8 @@ public class CharacterSim : ICharacterSim {
     public Weapon equippedWeapon {
         get { return _equippedWeapon; }
     }
-    public List<string> skillNames {
-        get { return _skillNames; }
+    public string skillName {
+        get { return _skillName; }
     }
     public List<Skill> skills {
         get { return _skills; }
@@ -191,14 +191,13 @@ public class CharacterSim : ICharacterSim {
         _maxSP = CharacterPanelUI.Instance.sp;
         _attackPower = CharacterPanelUI.Instance.attackPower;
         _speed = CharacterPanelUI.Instance.speed;
+        _skillName = CharacterPanelUI.Instance.skillName;
 
         //_defHead = int.Parse(CharacterPanelUI.Instance.dHeadInput.text);
         //_defBody = int.Parse(CharacterPanelUI.Instance.dBodyInput.text);
         //_defLegs = int.Parse(CharacterPanelUI.Instance.dLegsInput.text);
         //_defHands = int.Parse(CharacterPanelUI.Instance.dHandsInput.text);
         //_defFeet = int.Parse(CharacterPanelUI.Instance.dFeetInput.text);
-
-        _skillNames = CharacterPanelUI.Instance.skillNames;
     }
     private void EquipWeaponArmors() {
         if(_weaponName != string.Empty) {
@@ -210,7 +209,6 @@ public class CharacterSim : ICharacterSim {
             EquipItem(armor);
         }
     }
-
 
     #region Interface
     public void SetSide(SIDES side) {
@@ -249,19 +247,9 @@ public class CharacterSim : ICharacterSim {
         for (int i = 0; i < this._skills.Count; i++) {
             Skill skill = this._skills[i];
             skill.isEnabled = true;
-
-            if (skill is AttackSkill) {
-                AttackSkill attackSkill = skill as AttackSkill;
-                if (attackSkill.spCost > _currentSP) {
-                    skill.isEnabled = false;
-                    continue;
-                }
-            } else if (skill is FleeSkill) {
-                if (this.currentHP >= (this.maxHP / 2)) {
-                    skill.isEnabled = false;
-                    continue;
-                }
-            } 
+            if (skill is FleeSkill) {
+                skill.isEnabled = false;
+            }
         }
     }
     #endregion
@@ -273,42 +261,40 @@ public class CharacterSim : ICharacterSim {
     }
     private void ConstructSkills() {
         _skills = new List<Skill>();
-        string path = string.Empty;
-        path = Utilities.dataPath + "Skills/GENERAL/";
-        string[] directories = Directory.GetDirectories(path);
-        for (int i = 0; i < directories.Length; i++) {
-            string skillType = new DirectoryInfo(directories[i]).Name;
-            SKILL_TYPE currSkillType = (SKILL_TYPE) System.Enum.Parse(typeof(SKILL_TYPE), skillType);
-            string[] files = Directory.GetFiles(directories[i], "*.json");
-            for (int j = 0; j < files.Length; j++) {
-                string dataAsJson = File.ReadAllText(files[j]);
-                switch (currSkillType) {
-                    case SKILL_TYPE.ATTACK:
-                    AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill>(dataAsJson);
-                    _skills.Add(attackSkill);
-                    break;
-                    case SKILL_TYPE.HEAL:
-                    HealSkill healSkill = JsonUtility.FromJson<HealSkill>(dataAsJson);
-                    _skills.Add(healSkill);
-                    break;
-                    case SKILL_TYPE.OBTAIN_ITEM:
-                    ObtainSkill obtainSkill = JsonUtility.FromJson<ObtainSkill>(dataAsJson);
-                    _skills.Add(obtainSkill);
-                    break;
-                    case SKILL_TYPE.FLEE:
-                    break;
-                    case SKILL_TYPE.MOVE:
-                    MoveSkill moveSkill = JsonUtility.FromJson<MoveSkill>(dataAsJson);
-                    _skills.Add(moveSkill);
-                    break;
-                }
-            }
-        }
-        for (int i = 0; i < _skillNames.Count; i++) {
-            path = Utilities.dataPath + "Skills/CLASS/ATTACK/" + _skillNames[i] + ".json";
-            AttackSkill skill = JsonUtility.FromJson<AttackSkill>(System.IO.File.ReadAllText(path));
-            _skills.Add(skill);
-        }
+        string path = Utilities.dataPath + "Skills/CLASS/ATTACK/" + _skillName + ".json";
+        AttackSkill skill = JsonUtility.FromJson<AttackSkill>(System.IO.File.ReadAllText(path));
+        _skills.Add(skill);
+        //string path = string.Empty;
+        //path = Utilities.dataPath + "Skills/GENERAL/";
+        //string[] directories = Directory.GetDirectories(path);
+        //for (int i = 0; i < directories.Length; i++) {
+        //    string skillType = new DirectoryInfo(directories[i]).Name;
+        //    SKILL_TYPE currSkillType = (SKILL_TYPE) System.Enum.Parse(typeof(SKILL_TYPE), skillType);
+        //    string[] files = Directory.GetFiles(directories[i], "*.json");
+        //    for (int j = 0; j < files.Length; j++) {
+        //        string dataAsJson = File.ReadAllText(files[j]);
+        //        switch (currSkillType) {
+        //            case SKILL_TYPE.ATTACK:
+        //            AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill>(dataAsJson);
+        //            _skills.Add(attackSkill);
+        //            break;
+        //            case SKILL_TYPE.HEAL:
+        //            HealSkill healSkill = JsonUtility.FromJson<HealSkill>(dataAsJson);
+        //            _skills.Add(healSkill);
+        //            break;
+        //            case SKILL_TYPE.OBTAIN_ITEM:
+        //            ObtainSkill obtainSkill = JsonUtility.FromJson<ObtainSkill>(dataAsJson);
+        //            _skills.Add(obtainSkill);
+        //            break;
+        //            case SKILL_TYPE.FLEE:
+        //            break;
+        //            case SKILL_TYPE.MOVE:
+        //            MoveSkill moveSkill = JsonUtility.FromJson<MoveSkill>(dataAsJson);
+        //            _skills.Add(moveSkill);
+        //            break;
+        //        }
+        //    }
+        //}
     }
     #endregion
 
@@ -333,9 +319,6 @@ public class CharacterSim : ICharacterSim {
         }
     }
     public bool TryEquipWeapon(Weapon weapon) {
-        if (!_characterClass.allowedWeaponTypes.Contains(weapon.weaponType)) {
-            return false;
-        }
         _equippedWeapon = weapon;
         weapon.SetEquipped(true);
         return true;

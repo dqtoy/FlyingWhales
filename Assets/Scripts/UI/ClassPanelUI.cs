@@ -23,30 +23,43 @@ public class ClassPanelUI : MonoBehaviour {
     public InputField baseSPInput;
     public InputField spPerLevelInput;
 
-    public Dropdown allowedWeaponsOptions;
+    public Dropdown weaponsOptions;
+    public Dropdown armorsOptions;
+    public Dropdown accessoriesOptions;
+
     public Dropdown workActionOptions;
+    public Dropdown skillOptions;
 
-    public GameObject allowedWeaponsGO;
-    public GameObject skillsGO;
+    public GameObject weaponsGO;
+    public GameObject armorsGO;
+    public GameObject accessoriesGO;
+
     public GameObject weaponTypeBtnGO;
-    public GameObject skillsPerLevelGO;
 
-    public Transform allowedWeaponsContentTransform;
-    public Transform skillsContentTransform;
+    public Transform weaponsContentTransform;
+    public Transform armorsContentTransform;
+    public Transform accessoriesContentTransform;
 
-    public ScrollRect skillsScrollView;
-
-    [NonSerialized] public WeaponTypeButton currentSelectedWeaponTypeButton;
+    [NonSerialized] public WeaponTypeButton currentSelectedWeaponButton;
+    [NonSerialized] public WeaponTypeButton currentSelectedArmorButton;
+    [NonSerialized] public WeaponTypeButton currentSelectedAccessoryButton;
     [NonSerialized] public int latestLevel;
     [NonSerialized] public List<string> allClasses;
 
-    private List<string> _allowedWeaponTypes;
+    private List<string> _weaponTiers;
+    private List<string> _armorTiers;
+    private List<string> _accessoryTiers;
 
     #region getters/setters
-    public List<string> allowedWeaponTypes {
-        get { return _allowedWeaponTypes; }
+    public List<string> weaponTiers {
+        get { return _weaponTiers; }
     }
-
+    public List<string> armorTiers {
+        get { return _armorTiers; }
+    }
+    public List<string> accessoryTiers {
+        get { return _accessoryTiers; }
+    }
     #endregion
 
     void Awake() {
@@ -54,7 +67,9 @@ public class ClassPanelUI : MonoBehaviour {
     }
     void Start() {
         allClasses = new List<string>();
-        _allowedWeaponTypes = new List<string>();
+        _weaponTiers = new List<string>();
+        _armorTiers = new List<string>();
+        _accessoryTiers = new List<string>();
         LoadAllData();
     }
 
@@ -67,20 +82,57 @@ public class ClassPanelUI : MonoBehaviour {
         }
         CharacterPanelUI.Instance.UpdateClassOptions();
     }
-    private void LoadAllData() {
-        allowedWeaponsOptions.ClearOptions();
-        workActionOptions.ClearOptions();
+    public void UpdateSkillOptions() {
+        skillOptions.ClearOptions();
+        skillOptions.AddOptions(SkillPanelUI.Instance.allSkills);
+    }
+    public void UpdateItemOptions() {
+        weaponsOptions.ClearOptions();
+        armorsOptions.ClearOptions();
+        accessoriesOptions.ClearOptions();
 
-        string[] weaponTypes = System.Enum.GetNames(typeof(WEAPON_TYPE));
+        weaponsOptions.AddOptions(ItemPanelUI.Instance.allWeapons);
+        armorsOptions.AddOptions(ItemPanelUI.Instance.allArmors);
+        accessoriesOptions.AddOptions(ItemPanelUI.Instance.allItems);
+    }
+    private void LoadAllData() {
+        workActionOptions.ClearOptions();
+        weaponsOptions.ClearOptions();
+        armorsOptions.ClearOptions();
+        accessoriesOptions.ClearOptions();
+
         string[] workActions = System.Enum.GetNames(typeof(ACTION_TYPE));
 
-        allowedWeaponsOptions.AddOptions(weaponTypes.ToList());
+        List<string> weapons = new List<string>();
+        List<string> armors = new List<string>();
+        List<string> accessories = new List<string>();
+        string path = Utilities.dataPath + "Items/";
+        string[] directories = Directory.GetDirectories(path);
+        for (int i = 0; i < directories.Length; i++) {
+            string folderName = new DirectoryInfo(directories[i]).Name;
+            string[] files = Directory.GetFiles(directories[i], "*.json");
+            for (int j = 0; j < files.Length; j++) {
+                string fileName = Path.GetFileNameWithoutExtension(files[j]);
+                if (folderName == "WEAPON") {
+                    weapons.Add(fileName);
+                } else if (folderName == "ARMOR") {
+                    armors.Add(fileName);
+                }
+                accessories.Add(fileName);
+            }
+        }
+
+        weaponsOptions.AddOptions(weapons);
+        armorsOptions.AddOptions(armors);
+        accessoriesOptions.AddOptions(accessories);
         workActionOptions.AddOptions(workActions.ToList());
         UpdateClassList();
     }
     private void ClearData() {
         latestLevel = 0;
-        currentSelectedWeaponTypeButton = null;
+        currentSelectedWeaponButton = null;
+        currentSelectedArmorButton = null;
+        currentSelectedAccessoryButton = null;
         classNameInput.text = string.Empty;
 
         baseAttackPowerInput.text = "0";
@@ -92,14 +144,22 @@ public class ClassPanelUI : MonoBehaviour {
         baseSPInput.text = "0";
         spPerLevelInput.text = "0";
 
-        allowedWeaponsOptions.value = 0;
+        weaponsOptions.value = 0;
+        armorsOptions.value = 0;
+        accessoriesOptions.value = 0;
         workActionOptions.value = 0;
+        skillOptions.value = 0;
 
-        _allowedWeaponTypes.Clear();
-        foreach (Transform child in allowedWeaponsContentTransform) {
+        _weaponTiers.Clear();
+        foreach (Transform child in weaponsContentTransform) {
             GameObject.Destroy(child.gameObject);
         }
-        foreach (Transform child in skillsContentTransform) {
+        _armorTiers.Clear();
+        foreach (Transform child in armorsContentTransform) {
+            GameObject.Destroy(child.gameObject);
+        }
+        _accessoryTiers.Clear();
+        foreach (Transform child in accessoriesContentTransform) {
             GameObject.Destroy(child.gameObject);
         }
     }
@@ -167,30 +227,32 @@ public class ClassPanelUI : MonoBehaviour {
         baseSPInput.text = characterClass.baseSP.ToString();
         spPerLevelInput.text = characterClass.spPerLevel.ToString();
         workActionOptions.value = GetDropdownIndex(workActionOptions, characterClass.workActionType.ToString());
+        skillOptions.value = GetDropdownIndex(skillOptions, characterClass.skillName.ToString());
 
-        for (int i = 0; i < characterClass.allowedWeaponTypes.Count; i++) {
-            string weaponType = characterClass.allowedWeaponTypes[i].ToString();
-            _allowedWeaponTypes.Add(weaponType);
-            GameObject go = GameObject.Instantiate(weaponTypeBtnGO, allowedWeaponsContentTransform);
-            go.GetComponent<WeaponTypeButton>().buttonText.text = weaponType;
+        for (int i = 0; i < characterClass.weaponTierNames.Count; i++) {
+            string weaponName = characterClass.weaponTierNames[i];
+            _weaponTiers.Add(weaponName);
+            GameObject go = GameObject.Instantiate(weaponTypeBtnGO, weaponsContentTransform);
+            go.GetComponent<WeaponTypeButton>().buttonText.text = weaponName;
             go.GetComponent<WeaponTypeButton>().panelName = "class";
+            go.GetComponent<WeaponTypeButton>().categoryName = "weapon";
         }
-
-        for (int i = 0; i < characterClass.skillsPerLevelNames.Count; i++) {
-            StringListWrapper listWrapper = characterClass.skillsPerLevelNames[i];
-            GameObject go = AddLevel();
-            go.GetComponent<LevelCollapseUI>().SetSkills(listWrapper.list);
+        for (int i = 0; i < characterClass.armorTierNames.Count; i++) {
+            string armorName = characterClass.armorTierNames[i];
+            _armorTiers.Add(armorName);
+            GameObject go = GameObject.Instantiate(weaponTypeBtnGO, armorsContentTransform);
+            go.GetComponent<WeaponTypeButton>().buttonText.text = armorName;
+            go.GetComponent<WeaponTypeButton>().panelName = "class";
+            go.GetComponent<WeaponTypeButton>().categoryName = "armor";
         }
-    }
-
-    private GameObject AddLevel() {
-        if (latestLevel < 100) {
-            latestLevel++;
-            GameObject go = GameObject.Instantiate(skillsPerLevelGO, skillsContentTransform);
-            go.GetComponent<LevelCollapseUI>().lvlText.text = latestLevel.ToString();
-            return go;
+        for (int i = 0; i < characterClass.accessoryTierNames.Count; i++) {
+            string accessoryName = characterClass.accessoryTierNames[i];
+            _accessoryTiers.Add(accessoryName);
+            GameObject go = GameObject.Instantiate(weaponTypeBtnGO, accessoriesContentTransform);
+            go.GetComponent<WeaponTypeButton>().buttonText.text = accessoryName;
+            go.GetComponent<WeaponTypeButton>().panelName = "class";
+            go.GetComponent<WeaponTypeButton>().categoryName = "accessory";
         }
-        return null;
     }
     private int GetDropdownIndex(Dropdown options, string name) {
         for (int i = 0; i < options.options.Count; i++) {
@@ -206,21 +268,60 @@ public class ClassPanelUI : MonoBehaviour {
     public void OnAddNewClass() {
         ClearData();
     }
-    public void OnAddWeaponType() {
-        string weaponTypeToAdd = allowedWeaponsOptions.options[allowedWeaponsOptions.value].text;
-        if (weaponTypeToAdd != "NONE" && !_allowedWeaponTypes.Contains(weaponTypeToAdd)) {
-            _allowedWeaponTypes.Add(weaponTypeToAdd);
-            GameObject go = GameObject.Instantiate(weaponTypeBtnGO, allowedWeaponsContentTransform);
+    public void OnAddWeapon() {
+        string weaponTypeToAdd = weaponsOptions.options[weaponsOptions.value].text;
+        if (!_weaponTiers.Contains(weaponTypeToAdd)) {
+            _weaponTiers.Add(weaponTypeToAdd);
+            GameObject go = GameObject.Instantiate(weaponTypeBtnGO, weaponsContentTransform);
             go.GetComponent<WeaponTypeButton>().buttonText.text = weaponTypeToAdd;
             go.GetComponent<WeaponTypeButton>().panelName = "class";
+            go.GetComponent<WeaponTypeButton>().categoryName = "weapon";
         }
     }
-    public void OnRemoveWeaponType() {
-        if (currentSelectedWeaponTypeButton != null) {
-            string weaponTypeToRemove = currentSelectedWeaponTypeButton.buttonText.text;
-            if (_allowedWeaponTypes.Remove(weaponTypeToRemove)) {
-                GameObject.Destroy(currentSelectedWeaponTypeButton.gameObject);
-                currentSelectedWeaponTypeButton = null;
+    public void OnRemoveWeapon() {
+        if (currentSelectedWeaponButton != null) {
+            string weaponTypeToRemove = currentSelectedWeaponButton.buttonText.text;
+            if (_weaponTiers.Remove(weaponTypeToRemove)) {
+                GameObject.Destroy(currentSelectedWeaponButton.gameObject);
+                currentSelectedWeaponButton = null;
+            }
+        }
+    }
+    public void OnAddArmor() {
+        string armorToAdd = armorsOptions.options[armorsOptions.value].text;
+        if (!_armorTiers.Contains(armorToAdd)) {
+            _armorTiers.Add(armorToAdd);
+            GameObject go = GameObject.Instantiate(weaponTypeBtnGO, armorsContentTransform);
+            go.GetComponent<WeaponTypeButton>().buttonText.text = armorToAdd;
+            go.GetComponent<WeaponTypeButton>().panelName = "class";
+            go.GetComponent<WeaponTypeButton>().categoryName = "armor";
+        }
+    }
+    public void OnRemoveArmor() {
+        if (currentSelectedArmorButton != null) {
+            string armorToRemove = currentSelectedArmorButton.buttonText.text;
+            if (_armorTiers.Remove(armorToRemove)) {
+                GameObject.Destroy(currentSelectedArmorButton.gameObject);
+                currentSelectedArmorButton = null;
+            }
+        }
+    }
+    public void OnAddAccessory() {
+        string accessoryToAdd = accessoriesOptions.options[accessoriesOptions.value].text;
+        if (!_accessoryTiers.Contains(accessoryToAdd)) {
+            _accessoryTiers.Add(accessoryToAdd);
+            GameObject go = GameObject.Instantiate(weaponTypeBtnGO, accessoriesContentTransform);
+            go.GetComponent<WeaponTypeButton>().buttonText.text = accessoryToAdd;
+            go.GetComponent<WeaponTypeButton>().panelName = "class";
+            go.GetComponent<WeaponTypeButton>().categoryName = "accessory";
+        }
+    }
+    public void OnRemoveAccessory() {
+        if (currentSelectedAccessoryButton != null) {
+            string accessoryToRemove = currentSelectedAccessoryButton.buttonText.text;
+            if (_accessoryTiers.Remove(accessoryToRemove)) {
+                GameObject.Destroy(currentSelectedAccessoryButton.gameObject);
+                currentSelectedAccessoryButton = null;
             }
         }
     }
@@ -230,22 +331,20 @@ public class ClassPanelUI : MonoBehaviour {
     public void OnEditClass() {
         LoadClass();
     }
-    public void OnClickAllowedWeaponsTab() {
-        allowedWeaponsGO.SetActive(true);
-        skillsGO.SetActive(false);
+    public void OnClickWeaponsTab() {
+        weaponsGO.SetActive(true);
+        armorsGO.SetActive(false);
+        accessoriesGO.SetActive(false);
     }
-    public void OnClickSkillsTab() {
-        allowedWeaponsGO.SetActive(false);
-        skillsGO.SetActive(true);
+    public void OnClickArmorsTab() {
+        weaponsGO.SetActive(false);
+        armorsGO.SetActive(true);
+        accessoriesGO.SetActive(false);
     }
-    public void OnClickAddLevel() {
-        AddLevel();
-    }
-    public void OnClickRemoveLevel() {
-        if(latestLevel > 0) {
-            latestLevel--;
-            GameObject.Destroy(skillsContentTransform.GetChild(latestLevel).gameObject);
-        }
+    public void OnClickAccessoriesTab() {
+        weaponsGO.SetActive(false);
+        armorsGO.SetActive(false);
+        accessoriesGO.SetActive(true);
     }
     #endregion
 }

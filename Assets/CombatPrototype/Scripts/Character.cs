@@ -372,7 +372,9 @@ namespace ECS {
             _name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
             _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
             SetMorality(MORALITY.GOOD);
-            _skills = GetGeneralSkills();
+            //_skills = GetGeneralSkills();
+            _skills = new List<Skill>();
+            _skills.Add(_characterClass.skill);
             //_bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
             //ConstructBodyPartDict(_raceSetting.bodyParts);
             GenerateRaceAttributes();
@@ -408,7 +410,9 @@ namespace ECS {
 
             //_bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
             //ConstructBodyPartDict(_raceSetting.bodyParts);
-            _skills = GetGeneralSkills();
+            //_skills = GetGeneralSkills();
+            _skills = new List<Skill>();
+            _skills.Add(_characterClass.skill);
             //_skills.AddRange (GetBodyPartSkills ());
             if (data.attributes != null) {
                 AddAttributes(data.attributes);
@@ -544,54 +548,56 @@ namespace ECS {
 				Skill skill = this._skills [i];
 				skill.isEnabled = true;
 
-                if (skill is AttackSkill){
-                    AttackSkill attackSkill = skill as AttackSkill;
-                    if(attackSkill.spCost > _sp) {
-                        skill.isEnabled = false;
-                        continue;
-                    }
-				} else if (skill is FleeSkill) {
-                    if (this.currentHP >= (this.maxHP / 2)) {
-                        skill.isEnabled = false;
-                        continue;
-                    }
+    //            if (skill is AttackSkill){
+    //                AttackSkill attackSkill = skill as AttackSkill;
+    //                if(attackSkill.spCost > _sp) {
+    //                    skill.isEnabled = false;
+    //                    continue;
+    //                }
+				//} else 
+                if (skill is FleeSkill) {
+                    skill.isEnabled = false;
+                    //if (this.currentHP >= (this.maxHP / 2)) {
+                    //    skill.isEnabled = false;
+                    //    continue;
+                    //}
                 }
             }
 
             //Character class skills
-            if(_equippedWeapon != null) {
-                for (int i = 0; i < _level; i++) {
-                    if(i < _characterClass.skillsPerLevel.Count) {
-                        if (_characterClass.skillsPerLevel[i] != null) {
-                            for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
-                                Skill skill = _characterClass.skillsPerLevel[i][j];
-                                skill.isEnabled = true;
+            //if(_equippedWeapon != null) {
+            //    for (int i = 0; i < _level; i++) {
+            //        if(i < _characterClass.skillsPerLevel.Count) {
+            //            if (_characterClass.skillsPerLevel[i] != null) {
+            //                for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
+            //                    Skill skill = _characterClass.skillsPerLevel[i][j];
+            //                    skill.isEnabled = true;
 
-                                //Check for allowed weapon types
-                                if (skill.allowedWeaponTypes != null) {
-                                    for (int k = 0; k < skill.allowedWeaponTypes.Length; k++) {
-                                        if (!skill.allowedWeaponTypes.Contains(_equippedWeapon.weaponType)) {
-                                            skill.isEnabled = false;
-                                            continue;
-                                        }
-                                    }
-                                }
+            //                    //Check for allowed weapon types
+            //                    if (skill.allowedWeaponTypes != null) {
+            //                        for (int k = 0; k < skill.allowedWeaponTypes.Length; k++) {
+            //                            if (!skill.allowedWeaponTypes.Contains(_equippedWeapon.weaponType)) {
+            //                                skill.isEnabled = false;
+            //                                continue;
+            //                            }
+            //                        }
+            //                    }
 
-                                if (skill is AttackSkill) {
-                                    AttackSkill attackSkill = skill as AttackSkill;
-                                    if (attackSkill.spCost > _sp) {
-                                        skill.isEnabled = false;
-                                        continue;
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        break;
-                    }
-                }
+            //                    if (skill is AttackSkill) {
+            //                        AttackSkill attackSkill = skill as AttackSkill;
+            //                        if (attackSkill.spCost > _sp) {
+            //                            skill.isEnabled = false;
+            //                            continue;
+            //                        }
+            //                    }
+            //                }
+            //            }
+            //        } else {
+            //            break;
+            //        }
+            //    }
 
-            }
+            //}
 
 		}
         //Changes row number of this character
@@ -978,9 +984,9 @@ namespace ECS {
 		}
 		//Try to equip a weapon to a body part of this character and add it to the list of items this character have
 		internal bool TryEquipWeapon(Weapon weapon){
-            if (!_characterClass.allowedWeaponTypes.Contains(weapon.weaponType)) {
-                return false;
-            }
+            //if (!_characterClass.allowedWeaponTypes.Contains(weapon.weaponType)) {
+            //    return false;
+            //}
             _equippedWeapon = weapon;
             weapon.SetEquipped(true);
             return true;
@@ -1136,36 +1142,36 @@ namespace ECS {
             }
             return allGeneralSkills;
 		}
-        public List<Skill> GetClassSkills() {
-            List<Skill> skills = new List<Skill>();
-            for (int i = 0; i < level; i++) {
-                if (i < characterClass.skillsPerLevel.Count) {
-                    if (characterClass.skillsPerLevel[i] != null) {
-                        for (int j = 0; j < characterClass.skillsPerLevel[i].Length; j++) {
-                            Skill skill = characterClass.skillsPerLevel[i][j];
-                            skills.Add(skill);
-                        }
-                    }
-                }
-            }
-            return skills;
-        }
-        public List<AttackSkill> GetClassAttackSkills() {
-            List<AttackSkill> skills = new List<AttackSkill>();
-            for (int i = 0; i < level; i++) {
-                if (i < characterClass.skillsPerLevel.Count) {
-                    if (characterClass.skillsPerLevel[i] != null) {
-                        for (int j = 0; j < characterClass.skillsPerLevel[i].Length; j++) {
-                            Skill skill = characterClass.skillsPerLevel[i][j];
-                            if(skill is AttackSkill) {
-                                skills.Add(skill as AttackSkill);
-                            }
-                        }
-                    }
-                }
-            }
-            return skills;
-        }
+        //public List<Skill> GetClassSkills() {
+        //    List<Skill> skills = new List<Skill>();
+        //    for (int i = 0; i < level; i++) {
+        //        if (i < characterClass.skillsPerLevel.Count) {
+        //            if (characterClass.skillsPerLevel[i] != null) {
+        //                for (int j = 0; j < characterClass.skillsPerLevel[i].Length; j++) {
+        //                    Skill skill = characterClass.skillsPerLevel[i][j];
+        //                    skills.Add(skill);
+        //                }
+        //            }
+        //        }
+        //    }
+        //    return skills;
+        //}
+        //public List<AttackSkill> GetClassAttackSkills() {
+        //    List<AttackSkill> skills = new List<AttackSkill>();
+        //    for (int i = 0; i < level; i++) {
+        //        if (i < characterClass.skillsPerLevel.Count) {
+        //            if (characterClass.skillsPerLevel[i] != null) {
+        //                for (int j = 0; j < characterClass.skillsPerLevel[i].Length; j++) {
+        //                    Skill skill = characterClass.skillsPerLevel[i][j];
+        //                    if(skill is AttackSkill) {
+        //                        skills.Add(skill as AttackSkill);
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    return skills;
+        //}
         //private List<Skill> GetBodyPartSkills(){
         //	List<Skill> allBodyPartSkills = new List<Skill>();
         //	foreach (Skill skill in SkillManager.Instance.bodyPartSkills.Values) {
@@ -2102,10 +2108,20 @@ namespace ECS {
                 _level += 1;
                 _experience = 0;
                 RecomputeMaxExperience();
+                //Add stats per level from class
                 _attackPower += _characterClass.attackPowerPerLevel;
                 _speed += _characterClass.speedPerLevel;
                 _maxHP += _characterClass.hpPerLevel;
                 _maxSP += _characterClass.spPerLevel;
+                //Add stats per level from race
+                int hpIndex = _level % _raceSetting.hpPerLevel.Length;
+                hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
+                int attackIndex = _level % _raceSetting.attackPerLevel.Length;
+                attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
+
+                _maxHP += _raceSetting.hpPerLevel[hpIndex - 1];
+                _attackPower += _raceSetting.attackPerLevel[attackIndex - 1];
+
                 //Reset to full health and sp
                 _currentHP = _maxHP;
                 _sp = _maxSP;

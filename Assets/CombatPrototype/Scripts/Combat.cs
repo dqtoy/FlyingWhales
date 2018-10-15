@@ -504,21 +504,21 @@ namespace ECS{
                         return HasTargetInRangeForSkill(skill, sourceCharacter);
                     }
                 }
-                if (sourceCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
-                    Character character = sourceCharacter as Character;
-                    for (int i = 0; i < character.level; i++) {
-                        if (i < character.characterClass.skillsPerLevel.Count) {
-                            if (character.characterClass.skillsPerLevel[i] != null) {
-                                for (int j = 0; j < character.characterClass.skillsPerLevel[i].Length; j++) {
-                                    Skill skill = character.characterClass.skillsPerLevel[i][j];
-                                    if (skill is AttackSkill) {
-                                        return HasTargetInRangeForSkill(skill, sourceCharacter);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                //if (sourceCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
+                //    Character character = sourceCharacter as Character;
+                //    for (int i = 0; i < character.level; i++) {
+                //        if (i < character.characterClass.skillsPerLevel.Count) {
+                //            if (character.characterClass.skillsPerLevel[i] != null) {
+                //                for (int j = 0; j < character.characterClass.skillsPerLevel[i].Length; j++) {
+                //                    Skill skill = character.characterClass.skillsPerLevel[i][j];
+                //                    if (skill is AttackSkill) {
+                //                        return HasTargetInRangeForSkill(skill, sourceCharacter);
+                //                    }
+                //                }
+                //            }
+                //        }
+                //    }
+                //}
             }
             return true;
         }

@@ -13,16 +13,18 @@ namespace ECS {
         [SerializeField] private float _attackPowerPerLevel;
         [SerializeField] private float _baseSpeed;
         [SerializeField] private float _speedPerLevel;
+        [SerializeField] private string _skillName;
 
-        [SerializeField] private List<WEAPON_TYPE> _allowedWeaponTypes;
         [SerializeField] private List<RESOURCE> _harvestResources;
-        [SerializeField] private List<StringListWrapper> _skillsPerLevelNames;
+        [SerializeField] private List<string> _weaponTierNames;
+        [SerializeField] private List<string> _armorTierNames;
+        [SerializeField] private List<string> _accessoryTierNames;
         [SerializeField] private ACTION_TYPE _workActionType;
 
         //private int _dodgeRate;
         //private int _parryRate;
         //private int _blockRate;
-        private List<Skill[]> _skillsPerLevel;
+        private Skill _skill;
 
         #region getters/setters
         public string className {
@@ -58,6 +60,9 @@ namespace ECS {
         public ACTION_TYPE workActionType {
             get { return _workActionType; }
         }
+        public string skillName {
+            get { return _skillName; }
+        }
         //public int dodgeRate {
         //    get { return _dodgeRate; }
         //}
@@ -67,16 +72,25 @@ namespace ECS {
         //public int blockRate {
         //    get { return _blockRate; }
         //}
-        public List<WEAPON_TYPE> allowedWeaponTypes {
-            get { return _allowedWeaponTypes; }
-            //set { _allowedWeaponTypes = value; }
+        //public List<WEAPON_TYPE> allowedWeaponTypes {
+        //    get { return _allowedWeaponTypes; }
+        //    //set { _allowedWeaponTypes = value; }
+        //}
+        public Skill skill {
+            get { return _skill; }
         }
-        public List<Skill[]> skillsPerLevel {
-            get { return _skillsPerLevel; }
+        //public List<StringListWrapper> skillsPerLevelNames {
+        //    get { return _skillsPerLevelNames; }
+        //    //set { _skillsPerLevelNames = value; }
+        //}
+        public List<string> weaponTierNames {
+            get { return _weaponTierNames; }
         }
-        public List<StringListWrapper> skillsPerLevelNames {
-            get { return _skillsPerLevelNames; }
-            //set { _skillsPerLevelNames = value; }
+        public List<string> armorTierNames {
+            get { return _armorTierNames; }
+        }
+        public List<string> accessoryTierNames {
+            get { return _accessoryTierNames; }
         }
         public List<RESOURCE> harvestResources {
             get { return _harvestResources; }
@@ -98,16 +112,11 @@ namespace ECS {
             //newClass._dodgeRate = this._dodgeRate;
             //newClass._parryRate = this._parryRate;                        
             //newClass._blockRate = this._blockRate;
-            newClass._allowedWeaponTypes = new List<WEAPON_TYPE>(this._allowedWeaponTypes);
             newClass._harvestResources = new List<RESOURCE>(this._harvestResources);
-            newClass._skillsPerLevel = new List<Skill[]>();
-            for (int i = 0; i < this._skillsPerLevel.Count; i++) {
-                Skill[] skillsArray = new Skill[this._skillsPerLevel[i].Length];
-                for (int j = 0; j < this._skillsPerLevel[i].Length; j++) {
-                    skillsArray[j] = this._skillsPerLevel[i][j].CreateNewCopy();
-                }
-                newClass._skillsPerLevel.Add(skillsArray);
-            }
+            newClass._skill = this._skill.CreateNewCopy();
+            newClass._weaponTierNames = new List<string>(this._weaponTierNames);
+            newClass._armorTierNames = new List<string>(this._armorTierNames);
+            newClass._accessoryTierNames = new List<string>(this._accessoryTierNames);
             return newClass;
         }
 
@@ -125,16 +134,20 @@ namespace ECS {
             //this._dodgeRate = classComponent.dodgeRate;
             //this._parryRate = classComponent.parryRate;
             //this._blockRate = classComponent.blockRate;
-            this._allowedWeaponTypes = classComponent.allowedWeaponTypes;
             this._harvestResources = classComponent.harvestResources;
-            this._skillsPerLevelNames = new List<StringListWrapper>();
-            for (int i = 0; i < classComponent.skillsPerLevel.Count; i++) {
-                StringListWrapper skillNames = new StringListWrapper();
-                skillNames.list = new List<string>();
-                for (int j = 0; j < classComponent.skillsPerLevel[i].list.Count; j++) {
-                    skillNames.list.Add(classComponent.skillsPerLevel[i].list[j].name);
-                }
-                _skillsPerLevelNames.Add(skillNames);
+            this._skillName = classComponent.skill.name;
+
+            this._weaponTierNames = new List<string>();
+            for (int i = 0; i < classComponent.weaponTiers.Count; i++) {
+                this._weaponTierNames.Add(classComponent.weaponTiers[i].name);
+            }
+            this._armorTierNames = new List<string>();
+            for (int i = 0; i < classComponent.armorTiers.Count; i++) {
+                this._armorTierNames.Add(classComponent.armorTiers[i].name);
+            }
+            this._accessoryTierNames = new List<string>();
+            for (int i = 0; i < classComponent.accessoryTiers.Count; i++) {
+                this._accessoryTierNames.Add(classComponent.accessoryTiers[i].name);
             }
         }
 
@@ -149,33 +162,17 @@ namespace ECS {
             this._baseSP = int.Parse(ClassPanelUI.Instance.baseSPInput.text);
             this._spPerLevel = int.Parse(ClassPanelUI.Instance.spPerLevelInput.text);
             this._workActionType = (ACTION_TYPE)System.Enum.Parse(typeof(ACTION_TYPE), ClassPanelUI.Instance.workActionOptions.options[ClassPanelUI.Instance.workActionOptions.value].text);
-
-            this._allowedWeaponTypes = new List<WEAPON_TYPE>();
-            for (int i = 0; i < ClassPanelUI.Instance.allowedWeaponTypes.Count; i++) {
-                this._allowedWeaponTypes.Add((WEAPON_TYPE) System.Enum.Parse(typeof(WEAPON_TYPE), ClassPanelUI.Instance.allowedWeaponTypes[i]));
-            }
-
-            this._skillsPerLevelNames = new List<StringListWrapper>();
-            foreach (Transform child in ClassPanelUI.Instance.skillsContentTransform) {
-                LevelCollapseUI collapseUI = child.GetComponent<LevelCollapseUI>();
-                StringListWrapper skillNames = new StringListWrapper();
-                skillNames.list = collapseUI.skills;
-                this._skillsPerLevelNames.Add(skillNames);
-            }
+            this._skillName = ClassPanelUI.Instance.skillOptions.options[ClassPanelUI.Instance.skillOptions.value].text;
+            this._weaponTierNames = ClassPanelUI.Instance.weaponTiers;
+            this._armorTierNames = ClassPanelUI.Instance.armorTiers;
+            this._accessoryTierNames = ClassPanelUI.Instance.accessoryTiers;
         }
 
         public void ConstructData() {
             ConstructSkills();
         }
         private void ConstructSkills() {
-            _skillsPerLevel = new List<Skill[]>();
-            for (int i = 0; i < _skillsPerLevelNames.Count; i++) {
-                Skill[] skillArray = new Skill[_skillsPerLevelNames[i].list.Count];
-                for (int j = 0; j < _skillsPerLevelNames[i].list.Count; j++) {
-                    skillArray[j] = SkillManager.Instance.allSkills[_skillsPerLevelNames[i].list[j]];
-                }
-                _skillsPerLevel.Add(skillArray);
-            }
+            _skill = SkillManager.Instance.allSkills[_skillName];
         }
     }
 }

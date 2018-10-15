@@ -6,7 +6,8 @@ using System.IO;
 namespace ECS {
     public class RaceSetting {
         public RACE race;
-        public List<BodyPart> bodyParts;
+        public int[] hpPerLevel;
+        public int[] attackPerLevel;
 
         public int restRegenAmount;
         public List<ATTRIBUTE> tags;
@@ -14,11 +15,13 @@ namespace ECS {
         internal RaceSetting CreateNewCopy() {
             RaceSetting newRaceSetting = new RaceSetting();
             newRaceSetting.race = this.race;
-            newRaceSetting.bodyParts = new List<BodyPart>();
-            for (int i = 0; i < this.bodyParts.Count; i++) {
-                BodyPart currBodyPart = this.bodyParts[i];
-                newRaceSetting.bodyParts.Add(currBodyPart.CreateNewCopy());
-            }
+            newRaceSetting.hpPerLevel = this.hpPerLevel;
+            newRaceSetting.attackPerLevel = this.attackPerLevel;
+            //newRaceSetting.bodyParts = new List<BodyPart>();
+            //for (int i = 0; i < this.bodyParts.Count; i++) {
+            //    BodyPart currBodyPart = this.bodyParts[i];
+            //    newRaceSetting.bodyParts.Add(currBodyPart.CreateNewCopy());
+            //}
    //         newRaceSetting.baseStr = this.baseStr;
    //         newRaceSetting.baseInt = this.baseInt;
    //         newRaceSetting.baseAgi = this.baseAgi;
