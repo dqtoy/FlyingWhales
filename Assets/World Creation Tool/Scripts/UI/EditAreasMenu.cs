@@ -72,7 +72,7 @@ namespace worldcreator {
         }
         private void LoadAreaTypeChoices() {
             areaTypeDropdown.ClearOptions();
-            areaTypeDropdown.AddOptions(Utilities.GetEnumChoices<AREA_TYPE>(false, new List<AREA_TYPE>() { AREA_TYPE.DEMONIC_INTRUSION }));
+            areaTypeDropdown.AddOptions(Utilities.GetEnumChoices<AREA_TYPE>());
         }
 
         //public void UpdateAreaInfo(Area area) {

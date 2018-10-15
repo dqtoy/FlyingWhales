@@ -289,18 +289,18 @@ public class StructureObj : IObject {
 
     #region Attack Landmark
     public void AttackLandmark(BaseLandmark targetLandmark) {
-        int armyCount = 0;
-        if (this is Garrison) {
-            armyCount = (this as Garrison).armyStrength;
-        } else if (this is DemonicPortal) {
-            //armyCount = (this as DemonicPortal).armyStrength;
-            armyCount = 100;
-        }
-        if (armyCount > 0) {
-            this.objectLocation.SetIsAttackingAnotherLandmarkState(true);
-            Army newArmy = new Army(this.objectLocation, armyCount);
-            newArmy.SetTarget(targetLandmark);
-        }
+        //int armyCount = 0;
+        //if (this is Garrison) {
+        //    armyCount = (this as Garrison).armyStrength;
+        //} else if (this is DemonicPortal) {
+        //    //armyCount = (this as DemonicPortal).armyStrength;
+        //    armyCount = 100;
+        //}
+        //if (armyCount > 0) {
+        //    this.objectLocation.SetIsAttackingAnotherLandmarkState(true);
+        //    Army newArmy = new Army(this.objectLocation, armyCount);
+        //    newArmy.SetTarget(targetLandmark);
+        //}
 
     }
     public bool CanAttack(BaseLandmark landmark) {

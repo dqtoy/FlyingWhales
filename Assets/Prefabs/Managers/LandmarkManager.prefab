@@ -33,8 +33,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1497639810564476}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 8.383208, y: 6.2957954, z: -90.109886}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -78,6 +78,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 0600000007000000
     isUnique: 1
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -99,6 +100,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 0600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -122,6 +124,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 300
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -145,6 +148,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -165,6 +169,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -197,6 +202,7 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: 9f89551edef6d6743a2486dea9f60a21, type: 3}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -229,6 +235,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -255,6 +262,7 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -281,6 +289,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -303,6 +312,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -327,6 +337,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 200
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -351,6 +362,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 500
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -375,6 +387,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 300
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -397,6 +410,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -423,6 +437,7 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 114870140623750678, guid: 5eff0dfec87dc444ba512bdf201ce2c9,
       type: 2}
     isMonsterSpawner: 0
@@ -450,6 +465,7 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -476,6 +492,7 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -508,6 +525,7 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -540,6 +558,7 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -587,6 +606,7 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -628,6 +648,7 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -660,6 +681,7 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -698,6 +720,7 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -733,6 +756,7 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -800,6 +824,7 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -838,6 +863,7 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -870,6 +896,7 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -890,6 +917,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -910,6 +938,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -932,6 +961,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -952,6 +982,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -972,6 +1003,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -992,6 +1024,7 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
+    dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []

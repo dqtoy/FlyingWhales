@@ -47,7 +47,7 @@ public class BaseLandmark : ILocation, IInteractable {
     public bool hasAdjacentCorruptedLandmark;
     public QuestBoard questBoard { get; private set; }
     public List<GameEvent> advertisedEvents { get; private set; } //events happening at this landmark, that other characters can partake in
-    public int suppliesAtLandmark { get; private set; }
+    //public int suppliesAtLandmark { get; private set; }
     public Party[] defenders { get; private set; }
 
     #region getters/setters
@@ -202,8 +202,6 @@ public class BaseLandmark : ILocation, IInteractable {
         _specificLandmarkType = specificLandmarkType;
         SetName(RandomNameGenerator.Instance.GetLandmarkName(specificLandmarkType));
         ConstructTags(landmarkData);
-        //ConstructCiviliansDictionary();
-        //GenerateCivilians();
         SpawnInitialLandmarkItems();
     }
     public BaseLandmark(HexTile location, LandmarkSaveData data) : this(){
@@ -214,8 +212,6 @@ public class BaseLandmark : ILocation, IInteractable {
 
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
         ConstructTags(landmarkData);
-        //ConstructCiviliansDictionary();
-        //GenerateCivilians();
         SpawnInitialLandmarkItems();
     }
 
@@ -234,6 +230,7 @@ public class BaseLandmark : ILocation, IInteractable {
 	public virtual void DestroyLandmark(){
         ObjectState ruined = landmarkObj.GetState("Ruined");
         landmarkObj.ChangeState(ruined);
+        //RemoveListeners();
     }
     /*
      What should happen when a character searches this landmark
@@ -308,31 +305,6 @@ public class BaseLandmark : ILocation, IInteractable {
     #endregion
 
     #region Characters
-    /*
-     Create a new character, given a role and class.
-     This will also subtract from the civilian population.
-         */
-    //public Character CreateNewCharacter(RACE raceOfChar, CHARACTER_ROLE charRole, string className, bool determineAction = true) {
-    //    //RACE raceOfChar = GetRaceBasedOnProportion();
-    //    Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar, Utilities.GetRandomGender(), _owner);
-    //    newCharacter.SetHome(this.tileLocation.areaOfTile);
-    //    //if (reduceCivilians) {
-    //    //    AdjustCivilians(raceOfChar, -1);
-    //    //}
-    //    //NewParty party = newCharacter.CreateNewParty();
-    //    newCharacter.party.CreateIcon();
-    //    this.tileLocation.areaOfTile.owner.AddNewCharacter(newCharacter);
-    //    this.AddCharacterToLocation(newCharacter.party);
-    //    this.AddCharacterHomeOnLandmark(newCharacter);
-    //    newCharacter.party.icon.SetPosition(this.tileLocation.transform.position);
-    //    //if (charRole != CHARACTER_ROLE.FOLLOWER) {
-    //    //    //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
-    //    //    if (determineAction) {
-    //    //        newCharacter.DetermineAction();
-    //    //    }
-    //    //}
-    //    return newCharacter;
-    //}
     public void AddCharacterHomeOnLandmark(ICharacter character) {
         if (!_charactersWithHomeOnLandmark.Contains(character)) {
             _charactersWithHomeOnLandmark.Add(character);
@@ -383,14 +355,6 @@ public class BaseLandmark : ILocation, IInteractable {
         Messenger.Broadcast<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, iparty, this);
 #endif
     }
-    //public void RemoveCharacterFromLocationListOnly(Party iparty) {
-    //    _charactersAtLocation.Remove(iparty);
-    //}
-    //public void AddCharacterToLocationListOnly(Party iparty) {
-    //    if (!_charactersAtLocation.Contains(iparty)) {
-    //        _charactersAtLocation.Add(iparty);
-    //    }
-    //}
     public void ReplaceCharacterAtLocation(Party ipartyToReplace, Party ipartyToAdd) {
         if (_charactersAtLocation.Contains(ipartyToReplace)) {
             int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(ipartyToReplace);
@@ -458,6 +422,9 @@ public class BaseLandmark : ILocation, IInteractable {
     private void OnToggleCharactersVisibility() {
         _landmarkVisual.ToggleCharactersVisibility();
     }
+    //private void RemoveListeners() {
+        //Messenger.RemoveListener(Signals.DAY_START, DailySupplyProduction);
+    //}
     #endregion
 
     #region Prisoner
@@ -813,7 +780,6 @@ public class BaseLandmark : ILocation, IInteractable {
         //AdjustDirectionBlocked(direction, 1);
         //_blockedLandmarkDirection.Add(corruptedLandmark, direction);
     }
-
     public void PutWallUp() {
         //_wallDirection = direction;
         //List<HexTile> wallTiles = _horizontalTiles;
@@ -1059,16 +1025,30 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     #endregion
 
-    #region Supplies
-    public void SetSupplies(int amount) {
-        suppliesAtLandmark = amount;
-        suppliesAtLandmark = Mathf.Max(suppliesAtLandmark, 0);
-    }
-    public void AdjustSupplies(int amount) {
-        suppliesAtLandmark += amount;
-        suppliesAtLandmark = Mathf.Max(suppliesAtLandmark, 0);
-    }
-    #endregion
+    //#region Supplies
+    //private void StartSupplyProduction(LandmarkData landmarkData) {
+    //    if (landmarkData.dailySupplyProduction > 0) {
+    //        Messenger.AddListener(Signals.DAY_START, DailySupplyProduction);
+    //    }
+    //}
+    //private void DailySupplyProduction() {
+    //    LandmarkData data = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
+    //    if (tileLocation.areaOfTile != null) {
+    //        //give supplies to area immediately
+    //        tileLocation.areaOfTile.AdjustSuppliesInBank(data.dailySupplyProduction);
+    //    } else {
+    //        AdjustSupplies(data.dailySupplyProduction);
+    //    }
+    //}
+    //public void SetSupplies(int amount) {
+    //    suppliesAtLandmark = amount;
+    //    suppliesAtLandmark = Mathf.Max(suppliesAtLandmark, 0);
+    //}
+    //public void AdjustSupplies(int amount) {
+    //    suppliesAtLandmark += amount;
+    //    suppliesAtLandmark = Mathf.Max(suppliesAtLandmark, 0);
+    //}
+    //#endregion
 
     #region Defenders
     public void AddDefender(Party newDefender) {

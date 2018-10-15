@@ -15,7 +15,7 @@ public class Area {
     public Faction owner { get; private set; }
     public List<string> orderClasses { get; private set; }
     public List<StructurePriority> orderStructures { get; private set; }
-
+    public int suppliesInBank { get; private set; }
     public List<BaseLandmark> landmarks { get { return tiles.Where(x => x.landmarkOnTile != null).Select(x => x.landmarkOnTile).ToList(); } }
     public int totalCivilians { get { return landmarks.Sum(x => x.civilianCount); } }
 
@@ -362,6 +362,30 @@ public class Area {
         }
         chosenTile = potentialCampsites[UnityEngine.Random.Range(0, potentialCampsites.Count)];
         return chosenTile;
+    }
+    #endregion
+
+    #region Supplies
+    private void StartSupplyLine() {
+        Messenger.AddListener(Signals.DAY_START, ExecuteSupplyLine);
+    }
+    private void ExecuteSupplyLine() {
+        CollectDailySupplies();
+        PayMaintenance();
+    }
+    private void CollectDailySupplies() {
+        for (int i = 0; i < landmarks.Count; i++) {
+            BaseLandmark currLandmark = landmarks[i];
+            LandmarkData data = LandmarkManager.Instance.GetLandmarkData(currLandmark.specificLandmarkType);
+            AdjustSuppliesInBank(data.dailySupplyProduction);
+        }
+    }
+    private void PayMaintenance() {
+        //reduce supply per 1 unit in defenders
+    }
+    public void AdjustSuppliesInBank(int amount) {
+        suppliesInBank += amount;
+        suppliesInBank = Mathf.Max(0, suppliesInBank);
     }
     #endregion
 }
