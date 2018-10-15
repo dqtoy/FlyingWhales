@@ -1193,7 +1193,7 @@ public class Utilities : MonoBehaviour {
             rels.Add(CHARACTER_RELATIONSHIP.ENEMY);
             rels.Add(CHARACTER_RELATIONSHIP.RIVAL);
             rels.Add(CHARACTER_RELATIONSHIP.STALKER);
-            if (gender2 != GENDER.FEMALE) {
+            if (gender1 != GENDER.FEMALE) {
                 rels.Add(CHARACTER_RELATIONSHIP.LOVER);
                 rels.Add(CHARACTER_RELATIONSHIP.WIFE);
             }
