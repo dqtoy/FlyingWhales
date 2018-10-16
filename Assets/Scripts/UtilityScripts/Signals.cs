@@ -122,5 +122,6 @@ public static class Signals {
 
     #region Interaction
     public static string UPDATED_INTERACTION_STATE = "OnUpdatedInteractionState"; //Parameters (Interaction interaction)
+    public static string CHANGED_ACTIVATED_STATE = "OnChangedInteractionState"; //Parameters (Interaction interaction)
     #endregion
 }

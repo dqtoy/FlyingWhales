@@ -7,6 +7,7 @@ public class Interaction {
     protected IInteractable _interactable;
     protected Dictionary<string, InteractionState> _states;
     protected InteractionState _currentState;
+    protected bool _isActivated;
 
     #region getters/setters
     public InteractionState currentState {
@@ -14,6 +15,9 @@ public class Interaction {
     }
     public IInteractable interactable {
         get { return _interactable; }
+    }
+    public bool isActivated {
+        get { return _isActivated; }
     }
     #endregion
     public Interaction(IInteractable interactable) {
@@ -32,6 +36,10 @@ public class Interaction {
     public void SetCurrentState(InteractionState state) {
         _currentState = state;
         Messenger.Broadcast(Signals.UPDATED_INTERACTION_STATE, this);
+    }
+    public void SetActivatedState(bool state) {
+        _isActivated = state;
+        Messenger.Broadcast(Signals.CHANGED_ACTIVATED_STATE, this);
     }
     #endregion
 }

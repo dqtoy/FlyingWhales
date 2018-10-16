@@ -38,15 +38,17 @@ public class InvestigateInteraction : Interaction {
     public override void CreateActionOptions(InteractionState state) {
         if(state.name == "Uninvestigated") {
             ActionOption actionOption = new ActionOption {
+                interaction = this,
                 cost = new ActionOptionCost { amount = 1, currency = CURRENCY.IMP },
                 description = "Send an Imp",
-                duration = 1,
+                duration = 5,
                 needsMinion = false,
                 effect = () => ChangeToInvestigatedState()
             };
             state.AddActionOption(actionOption);
         }else if (state.name == "Investigated") {
             ActionOption actionOption = new ActionOption {
+                interaction = this,
                 cost = new ActionOptionCost { amount = 0, currency = CURRENCY.IMP },
                 description = "Recall an Imp",
                 duration = 1,

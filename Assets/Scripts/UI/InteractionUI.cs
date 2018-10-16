@@ -14,6 +14,12 @@ public class InteractionUI : MonoBehaviour {
     public GameObject interactionHolder;
     public ToggleGroup toggleGroup;
 
+    public Sprite toggleActiveUnselected;
+    public Sprite toggleActiveSelected;
+    public Sprite toggleInactiveUnselected;
+    public Sprite toggleInactiveSelected;
+
+
     private IInteractable _interactable;
     private List<InteractionItem> _allInteractionItems;
 
@@ -44,7 +50,8 @@ public class InteractionUI : MonoBehaviour {
         toggleGroup.transform.DestroyChildren();
 
         yield return null;
-        if(interactions != null) {
+        //RunExample();
+        if (interactions != null) {
             for (int i = 0; i < interactions.Count; i++) {
                 AddInteraction(interactions[i]);
             }
@@ -56,11 +63,18 @@ public class InteractionUI : MonoBehaviour {
         interactionItem.SetInteraction(interaction);
         _allInteractionItems.Add(interactionItem);
 
+
         GameObject toggleGO = GameObject.Instantiate(togglePrefab, toggleGroup.transform);
         Toggle toggle = toggleGO.GetComponent<Toggle>();
         toggleGroup.RegisterToggle(toggle);
+        toggle.group = toggleGroup;
+
+        interactionItem.SetToggle(toggle);
 
         scrollSnap.UpdateLayout();
+    }
+    public int GetIndexOfInteraction(InteractionItem item) {
+        return _allInteractionItems.IndexOf(item);
     }
     public void OnScrollSnapToggle(bool state) {
         if (state) {
