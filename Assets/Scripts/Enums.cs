@@ -529,6 +529,7 @@ public enum ITEM_TYPE{
 	CONSUMABLE,
 	KEY,
     JUNK,
+    ACCESSORY,
 }
 
 public enum EQUIPMENT_TYPE {

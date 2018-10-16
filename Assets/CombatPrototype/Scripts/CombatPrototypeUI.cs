@@ -143,7 +143,7 @@ namespace ECS{
         public void EquipItem() {
             string itemType = itemTypePopupList.value;
             string equipmentType = equipmentPopupList.value;
-			currSelectedCharacter.EquipItem (itemType, equipmentType);
+			currSelectedCharacter.EquipItem (equipmentType);
         }
         #endregion
 

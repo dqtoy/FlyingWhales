@@ -385,7 +385,6 @@ namespace ECS {
             CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(className);
             if(setup != null) {
                 GenerateSetupAttributes(setup);
-                EquipPreEquippedItems(setup);
                 if(setup.optionalRole != CHARACTER_ROLE.NONE) {
                     AssignRole(setup.optionalRole);
                 }
@@ -427,7 +426,6 @@ namespace ECS {
             CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(data.className);
             if (setup != null) {
                 GenerateSetupAttributes(setup);
-                EquipPreEquippedItems(setup);
                 if (setup.optionalRole != CHARACTER_ROLE.NONE) {
                     AssignRole(setup.optionalRole);
                 }
@@ -896,49 +894,13 @@ namespace ECS {
                 }
             }
         }
-        //If character set up has pre equipped items, equip it here evey time a character is made
-        internal void EquipPreEquippedItems(CharacterSetup charSetup){
-			if(charSetup.preEquippedItems.Count > 0){
-				for (int i = 0; i < charSetup.preEquippedItems.Count; i++) {
-					EquipItem (charSetup.preEquippedItems [i].itemType, charSetup.preEquippedItems [i].itemName);
-				}
-			}
-		}
-		//For prototype only, in reality, an instance of an Item must be passed as parameter
-		//Equip generic item, can be a weapon, armor, etc.
-		public void EquipItem(ITEM_TYPE itemType, string itemName) {
-			if(ItemManager.Instance.allItems.ContainsKey(itemName)){
-				if (itemType == ITEM_TYPE.WEAPON) {
-					Weapon weapon = ItemManager.Instance.CreateNewItemInstance(itemName) as Weapon;
-					//weapon.ConstructSkillsList ();
-                    if(weapon != null) {
-                        TryEquipWeapon(weapon);
-                    }
-                } else if (itemType == ITEM_TYPE.ARMOR) {
-                    Armor armor = ItemManager.Instance.CreateNewItemInstance(itemName) as Armor;
-                    if (armor != null) {
-                        TryEquipArmor(armor);
-                    }
-				}
-			}
-		}
-		public void EquipItem(string itemType, string itemName) {
-            if (ItemManager.Instance.allItems.ContainsKey(itemName)) {
-                if (itemType.ToLower() == "weapon") {
-                    Weapon weapon = ItemManager.Instance.CreateNewItemInstance(itemName) as Weapon;
-                    //weapon.ConstructSkillsList();
-                    if (weapon != null) {
-                        TryEquipWeapon(weapon);
-                    }
-                }
-                else if (itemType.ToLower() == "armor") {
-                    Armor armor = ItemManager.Instance.CreateNewItemInstance(itemName) as Armor;
-                    if (armor != null) {
-                        TryEquipArmor(armor);
-                    }
-                }
+		public void EquipItem(string itemName) {
+            Item item = ItemManager.Instance.CreateNewItemInstance(itemName);
+            if (item != null) {
+                EquipItem(item);
             }
         }
+
         /*
          this is the real way to equip an item
          this will return a boolean whether the character successfully equipped
@@ -946,13 +908,17 @@ namespace ECS {
              */
         internal bool EquipItem(Item item){
 			bool hasEquipped = false;
-			if (item is Weapon) {
-				Weapon weapon = (Weapon)item;
+			if (item.itemType == ITEM_TYPE.WEAPON) {
+				Weapon weapon = item as Weapon;
 				hasEquipped = TryEquipWeapon(weapon);
-			} else if (item is Armor) {
-				Armor armor = (Armor)item;
+			} else if (item.itemType == ITEM_TYPE.ARMOR) {
+				Armor armor = item as Armor;
 				hasEquipped = TryEquipArmor(armor);
-			}
+			} else if (item.itemType == ITEM_TYPE.ACCESSORY) {
+                hasEquipped = TryEquipAccessory(item);
+            } else if (item.itemType == ITEM_TYPE.CONSUMABLE) {
+                hasEquipped = TryEquipConsumable(item);
+            }
             if (hasEquipped) {
 #if !WORLD_CREATION_TOOL
                 Log equipLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "equip_item");
@@ -966,12 +932,15 @@ namespace ECS {
 		}
 		//Unequips an item of a character, whether it's a weapon, armor, etc.
 		public void UnequipItem(Item item){
-			if(item is Weapon){
-				UnequipWeapon ((Weapon)item);
-			}else if(item is Armor){
-				UnequipArmor ((Armor)item);
-			}
-
+			if (item.itemType == ITEM_TYPE.WEAPON) {
+                UnequipWeapon(item as Weapon);
+			} else if (item.itemType == ITEM_TYPE.ARMOR) {
+                UnequipArmor(item as Armor);
+            } else if (item.itemType == ITEM_TYPE.ACCESSORY) {
+                UnequipAccessory(item);
+            } else if (item.itemType == ITEM_TYPE.CONSUMABLE) {
+                UnequipConsumable(item);
+            }
             Messenger.Broadcast(Signals.ITEM_UNEQUIPPED, item, this);
         }
 		//Own an Item
@@ -1007,6 +976,28 @@ namespace ECS {
             armor.SetEquipped(false);
             _equippedArmor = null;
 		}
+        //Try to equip an accessory
+        internal bool TryEquipAccessory(Item accessory) {
+            accessory.SetEquipped(true);
+            _equippedAccessory = accessory;
+            return true;
+        }
+        //Unequips accessory of a character
+        private void UnequipAccessory(Item accessory) {
+            accessory.SetEquipped(false);
+            _equippedAccessory = null;
+        }
+        //Try to equip an accessory
+        internal bool TryEquipConsumable(Item consumable) {
+            consumable.SetEquipped(true);
+            _equippedConsumable = consumable;
+            return true;
+        }
+        //Unequips accessory of a character
+        private void UnequipConsumable(Item consumable) {
+            consumable.SetEquipped(false);
+            _equippedConsumable = null;
+        }
         internal bool HasItem(string itemName) {
             if(_equippedWeapon != null && _equippedWeapon.itemName == itemName) {
                 return true;
@@ -1103,6 +1094,73 @@ namespace ECS {
                     this.ThrowItem(currItem, false);
                     otherCharacter.PickupItem(currItem);
                     Debug.Log(this.name + " gave item " + currItem.itemName + " to " + otherCharacter.name);
+                }
+            }
+        }
+        private void EquipItemsByClass() {
+            if(_characterClass != null) {
+                if(_characterClass.weaponTierNames != null && _characterClass.weaponTierNames.Count > 0) {
+                    EquipItem(_characterClass.weaponTierNames[0]);
+                }
+                if (_characterClass.armorTierNames != null && _characterClass.armorTierNames.Count > 0) {
+                    EquipItem(_characterClass.armorTierNames[0]);
+                }
+                if (_characterClass.accessoryTierNames != null && _characterClass.accessoryTierNames.Count > 0) {
+                    EquipItem(_characterClass.accessoryTierNames[0]);
+                }
+            }
+        }
+        public void UpgradeWeapon() {
+            if (_characterClass != null && _equippedWeapon != null) {
+                if (_characterClass.weaponTierNames != null && _characterClass.weaponTierNames.Count > 0) {
+                    bool foundEquipped = false;
+                    for (int i = 0; i < _characterClass.weaponTierNames.Count; i++) {
+                        if (foundEquipped) {
+                            //Found equipped item, now equip next on the list for upgrade
+                            EquipItem(_characterClass.weaponTierNames[i]);
+                            break;
+                        } else {
+                            if (_equippedWeapon.itemName == _characterClass.weaponTierNames[i]) {
+                                foundEquipped = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        public void UpgradeArmor() {
+            if (_characterClass != null && _equippedArmor != null) {
+                if (_characterClass.armorTierNames != null && _characterClass.armorTierNames.Count > 0) {
+                    bool foundEquipped = false;
+                    for (int i = 0; i < _characterClass.armorTierNames.Count; i++) {
+                        if (foundEquipped) {
+                            //Found equipped item, now equip next on the list for upgrade
+                            EquipItem(_characterClass.armorTierNames[i]);
+                            break;
+                        } else {
+                            if (_equippedArmor.itemName == _characterClass.armorTierNames[i]) {
+                                foundEquipped = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        public void UpgradeAccessory() {
+            if (_characterClass != null && _equippedAccessory != null) {
+                if (_characterClass.accessoryTierNames != null && _characterClass.accessoryTierNames.Count > 0) {
+                    bool foundEquipped = false;
+                    for (int i = 0; i < _characterClass.accessoryTierNames.Count; i++) {
+                        if (foundEquipped) {
+                            //Found equipped weapon, now equip next on the list for upgrade
+                            EquipItem(_characterClass.accessoryTierNames[i]);
+                            break;
+                        } else {
+                            if (_equippedAccessory.itemName == _characterClass.accessoryTierNames[i]) {
+                                foundEquipped = true;
+                            }
+                        }
+                    }
                 }
             }
         }

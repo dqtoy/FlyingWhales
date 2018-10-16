@@ -18,9 +18,6 @@ public class CharacterPanelUI : MonoBehaviour {
     public Dropdown classOptions;
     public Dropdown raceOptions;
     public Dropdown genderOptions;
-    public Dropdown weaponOptions;
-    public Dropdown armorOptions;
-    public Dropdown accessoryOptions;
     public Dropdown consumableOptions;
 
     public InputField nameInput;
@@ -72,28 +69,28 @@ public class CharacterPanelUI : MonoBehaviour {
     private void LoadAllData() {
         raceOptions.ClearOptions();
         genderOptions.ClearOptions();
-        weaponOptions.ClearOptions();
-        armorOptions.ClearOptions();
-        accessoryOptions.ClearOptions();
+        //weaponOptions.ClearOptions();
+        //armorOptions.ClearOptions();
+        //accessoryOptions.ClearOptions();
         consumableOptions.ClearOptions();
         string[] genders = System.Enum.GetNames(typeof(GENDER));
 
-        List<string> weapons = new List<string>();
-        List<string> armors = new List<string>();
-        string path = Utilities.dataPath + "Items/";
-        string[] directories = Directory.GetDirectories(path);
-        for (int i = 0; i < directories.Length; i++) {
-            string folderName = new DirectoryInfo(directories[i]).Name;
-            string[] files = Directory.GetFiles(directories[i], "*.json");
-            for (int j = 0; j < files.Length; j++) {
-                string fileName = Path.GetFileNameWithoutExtension(files[j]);
-                if (folderName == "WEAPON") {
-                    weapons.Add(fileName);
-                } else if (folderName == "ARMOR") {
-                    armors.Add(fileName);
-                }
-            }
-        }
+        //List<string> weapons = new List<string>();
+        //List<string> armors = new List<string>();
+        //string path = Utilities.dataPath + "Items/";
+        //string[] directories = Directory.GetDirectories(path);
+        //for (int i = 0; i < directories.Length; i++) {
+        //    string folderName = new DirectoryInfo(directories[i]).Name;
+        //    string[] files = Directory.GetFiles(directories[i], "*.json");
+        //    for (int j = 0; j < files.Length; j++) {
+        //        string fileName = Path.GetFileNameWithoutExtension(files[j]);
+        //        if (folderName == "WEAPON") {
+        //            weapons.Add(fileName);
+        //        } else if (folderName == "ARMOR") {
+        //            armors.Add(fileName);
+        //        }
+        //    }
+        //}
 
         List<string> races = new List<string>();
         string path3 = Utilities.dataPath + "RaceSettings/";
@@ -102,9 +99,9 @@ public class CharacterPanelUI : MonoBehaviour {
         }
 
         raceOptions.AddOptions(races);
-        weaponOptions.AddOptions(weapons);
+        //weaponOptions.AddOptions(weapons);
         genderOptions.AddOptions(genders.ToList());
-        armorOptions.AddOptions(armors);
+        //armorOptions.AddOptions(armors);
         //accessoryOptions.AddOptions(armors);
         //consumableOptions.AddOptions(armors);
     }
@@ -113,23 +110,23 @@ public class CharacterPanelUI : MonoBehaviour {
         classOptions.AddOptions(ClassPanelUI.Instance.allClasses);
     }
     public void UpdateItemOptions() {
-        UpdateWeaponOptions();
-        UpdateArmorOptions();
+        //UpdateWeaponOptions();
+        //UpdateArmorOptions();
     }
-    private void UpdateWeaponOptions() {
-        weaponOptions.ClearOptions();
-        weaponOptions.AddOptions(ItemPanelUI.Instance.allWeapons);
-    }
-    private void UpdateArmorOptions() {
-        armorOptions.ClearOptions();
-        armorOptions.AddOptions(ItemPanelUI.Instance.allArmors);
-    }
+    //private void UpdateWeaponOptions() {
+    //    weaponOptions.ClearOptions();
+    //    weaponOptions.AddOptions(ItemPanelUI.Instance.allWeapons);
+    //}
+    //private void UpdateArmorOptions() {
+    //    armorOptions.ClearOptions();
+    //    armorOptions.AddOptions(ItemPanelUI.Instance.allArmors);
+    //}
     private void ClearData() {
         classOptions.value = 0;
         genderOptions.value = 0;
-        weaponOptions.value = 0;
-        armorOptions.value = 0;
-        accessoryOptions.value = 0;
+        //weaponOptions.value = 0;
+        //armorOptions.value = 0;
+        //accessoryOptions.value = 0;
         consumableOptions.value = 0;
 
         nameInput.text = string.Empty;
@@ -204,9 +201,9 @@ public class CharacterPanelUI : MonoBehaviour {
 
         classOptions.value = GetDropdownIndex(character.className, classOptions);
         genderOptions.value = GetDropdownIndex(character.gender.ToString(), genderOptions);
-        weaponOptions.value = GetDropdownIndex(character.weaponName, weaponOptions);
-        armorOptions.value = GetDropdownIndex(character.armorName, armorOptions);
-        accessoryOptions.value = GetDropdownIndex(character.accessoryName, accessoryOptions);
+        //weaponOptions.value = GetDropdownIndex(character.weaponName, weaponOptions);
+        //armorOptions.value = GetDropdownIndex(character.armorName, armorOptions);
+        //accessoryOptions.value = GetDropdownIndex(character.accessoryName, accessoryOptions);
         consumableOptions.value = GetDropdownIndex(character.consumableName, consumableOptions);
 
         //dHeadInput.text = character.defHead.ToString();

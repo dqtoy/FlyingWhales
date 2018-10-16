@@ -7,9 +7,7 @@ using System.IO;
 public class CharacterSim : ICharacterSim {
     [SerializeField] private string _name;
     [SerializeField] private string _className;
-    [SerializeField] private string _weaponName;
-    [SerializeField] private string _armorName;
-    [SerializeField] private string _accessoryName;
+
     [SerializeField] private string _consumableName;
     [SerializeField] private int _level;
     //[SerializeField] private int _strBuild;
@@ -38,6 +36,9 @@ public class CharacterSim : ICharacterSim {
     private float _attackPower;
     private float _speed;
     private bool _isDead;
+    private string _weaponName;
+    private string _armorName;
+    private string _accessoryName;
     private SIDES _currentSide;
     private RaceSetting _raceSetting;
     private CharacterClass _characterClass;
@@ -180,9 +181,9 @@ public class CharacterSim : ICharacterSim {
     public void SetDataFromCharacterPanelUI() {
         _name = CharacterPanelUI.Instance.nameInput.text;
         _className = CharacterPanelUI.Instance.classOptions.options[CharacterPanelUI.Instance.classOptions.value].text;
-        _weaponName = CharacterPanelUI.Instance.weaponOptions.options[CharacterPanelUI.Instance.weaponOptions.value].text;
-        _armorName = CharacterPanelUI.Instance.armorOptions.options[CharacterPanelUI.Instance.armorOptions.value].text;
-        _accessoryName = CharacterPanelUI.Instance.accessoryOptions.options[CharacterPanelUI.Instance.accessoryOptions.value].text;
+        //_weaponName = CharacterPanelUI.Instance.weaponOptions.options[CharacterPanelUI.Instance.weaponOptions.value].text;
+        //_armorName = CharacterPanelUI.Instance.armorOptions.options[CharacterPanelUI.Instance.armorOptions.value].text;
+        //_accessoryName = CharacterPanelUI.Instance.accessoryOptions.options[CharacterPanelUI.Instance.accessoryOptions.value].text;
         _consumableName = CharacterPanelUI.Instance.consumableOptions.options[CharacterPanelUI.Instance.consumableOptions.value].text;
 
         _gender = (GENDER) System.Enum.Parse(typeof(GENDER), CharacterPanelUI.Instance.genderOptions.options[CharacterPanelUI.Instance.genderOptions.value].text);
