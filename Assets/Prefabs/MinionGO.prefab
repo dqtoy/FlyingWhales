@@ -414,6 +414,7 @@ GameObject:
   - component: {fileID: 222191841257858680}
   - component: {fileID: 114890676374244592}
   - component: {fileID: 114849022214626898}
+  - component: {fileID: 114368996406035592}
   m_Layer: 5
   m_Name: MinionGO
   m_TagString: Untagged
@@ -829,6 +830,58 @@ MonoBehaviour:
   m_FillAmount: 0
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114368996406035592
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1632239326956908}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d166255cacf07b4292b8402b3ddefc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  method: 0
+  style: 0
+  animationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  ignoreTimeScale: 1
+  delay: 0
+  duration: 0.2
+  steeperCurves: 0
+  tweenGroup: 0
+  onFinished:
+  - mTarget: {fileID: 114653178162327752}
+    mMethodName: OnFinishRearrange
+    mParameters: []
+    oneShot: 0
+  eventReceiver: {fileID: 0}
+  callWhenFinished: 
+  from: {x: 0, y: 0, z: 0}
+  to: {x: 0, y: 0, z: 0}
+  worldSpace: 0
 --- !u!114 &114371584251781198
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -916,6 +969,8 @@ MonoBehaviour:
   bgImage: {fileID: 114854178231227398}
   lockedSprite: {fileID: 21300000, guid: a2ee2c51a8a17304ba267b414caf8a8e, type: 3}
   unlockedSprite: {fileID: 21300000, guid: 7f60a0da614174b40abee29f21d3e439, type: 3}
+  tweenPos: {fileID: 114368996406035592}
+  supposedIndex: 0
 --- !u!114 &114686097501918002
 MonoBehaviour:
   m_ObjectHideFlags: 1

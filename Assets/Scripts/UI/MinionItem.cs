@@ -15,6 +15,8 @@ public class MinionItem : MonoBehaviour {
     public Image bgImage;
     public Sprite lockedSprite;
     public Sprite unlockedSprite;
+    public TweenPosition tweenPos;
+    public int supposedIndex;
 
     private Minion _minion;
 
@@ -54,5 +56,8 @@ public class MinionItem : MonoBehaviour {
     public void SetEnabledState(bool state) {
         minionDraggable.SetDraggable(state);
         grayedOutGO.SetActive(!state);
+    }
+    public void OnFinishRearrange() {
+        this.transform.SetSiblingIndex(supposedIndex);
     }
 }

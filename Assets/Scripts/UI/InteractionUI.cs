@@ -27,9 +27,10 @@ public class InteractionUI : MonoBehaviour {
         Instance = this;
         _allInteractionItems = new List<InteractionItem>();
     }
-    //private void Start() {
-    //    RunExample();
-    //}
+    private void Start() {
+        Messenger.AddListener<IInteractable, Interaction>(Signals.ADDED_INTERACTION, OnReceiveAddInteractionSignal);
+        Messenger.AddListener<IInteractable, Interaction>(Signals.REMOVED_INTERACTION, OnReceiveRemoveInteractionSignal);
+    }
     public void RunExample() {
         for (int i = 0; i < 10; i++) {
             AddInteraction(null);
@@ -57,6 +58,16 @@ public class InteractionUI : MonoBehaviour {
             }
         }
     }
+    public void OnReceiveAddInteractionSignal(IInteractable interactable, Interaction interaction) {
+        if (interactionHolder.activeSelf && _interactable == interactable) {
+            AddInteraction(interaction);
+        }
+    }
+    public void OnReceiveRemoveInteractionSignal(IInteractable interactable, Interaction interaction) {
+        if (interactionHolder.activeSelf && _interactable == interactable) {
+            RemoveInteraction(interaction);
+        }
+    }
     public void AddInteraction(Interaction interaction) {
         GameObject go = GameObject.Instantiate(interactionPrefab, scrollSnapContentTransform);
         InteractionItem interactionItem = go.GetComponent<InteractionItem>();
@@ -72,6 +83,17 @@ public class InteractionUI : MonoBehaviour {
         interactionItem.SetToggle(toggle);
 
         scrollSnap.UpdateLayout();
+    }
+    public void RemoveInteraction(Interaction interaction) {
+        for (int i = 0; i < _allInteractionItems.Count; i++) {
+            InteractionItem interactionItem = _allInteractionItems[i];
+            if(interactionItem.interaction == interaction) {
+                _allInteractionItems.RemoveAt(i);
+                GameObject.Destroy(interactionItem.gameObject);
+                scrollSnap.UpdateLayout();
+                break;
+            }
+        }
     }
     public int GetIndexOfInteraction(InteractionItem item) {
         return _allInteractionItems.IndexOf(item);

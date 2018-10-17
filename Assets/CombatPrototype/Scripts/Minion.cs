@@ -13,6 +13,7 @@ public class Minion {
     private string _strType;
     private int _lvl;
     private int _exp;
+    private int _indexDefaultSort;
 
     private bool _isEnabled;
 
@@ -20,6 +21,9 @@ public class Minion {
     #region getters/setters
     public PlayerAbility ability {
         get { return _ability; }
+    }
+    public MinionItem minionItem {
+        get { return _minionItem; }
     }
     public ICharacter icharacter {
         get { return _icharacter; }
@@ -32,6 +36,9 @@ public class Minion {
     }
     public int exp {
         get { return _exp; }
+    }
+    public int indexDefaultSort {
+        get { return _indexDefaultSort; }
     }
     public DEMON_TYPE type {
         get { return _type; }
@@ -72,5 +79,20 @@ public class Minion {
     }
     public void SetMinionItem(MinionItem minionItem) {
         _minionItem = minionItem;
+    }
+    public void AdjustExp(int amount) {
+        _exp += amount;
+        if(_exp >= 100) {
+            LevelUp();
+            _exp = 0;
+        }else if (_exp < 0) {
+            _exp = 0;
+        }
+    }
+    public void LevelUp() {
+        _lvl += 1;
+    }
+    public void SetIndexDefaultSort(int index) {
+        _indexDefaultSort = index;
     }
 }

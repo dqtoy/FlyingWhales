@@ -21,6 +21,12 @@ public class InteractionItem : MonoBehaviour {
 
     private bool _isToggled;
 
+    #region getters/setters
+    public Interaction interaction {
+        get { return _interaction; }
+    }
+    #endregion
+
     private void Start() {
         Messenger.AddListener<Interaction>(Signals.UPDATED_INTERACTION_STATE, OnUpdatedInteractionState);
         Messenger.AddListener<Interaction>(Signals.CHANGED_ACTIVATED_STATE, OnChangedActivatedState);
@@ -28,6 +34,7 @@ public class InteractionItem : MonoBehaviour {
     private void OnDestroy() {
         Messenger.RemoveListener<Interaction>(Signals.UPDATED_INTERACTION_STATE, OnUpdatedInteractionState);
         Messenger.RemoveListener<Interaction>(Signals.CHANGED_ACTIVATED_STATE, OnChangedActivatedState);
+        GameObject.Destroy(_toggle.gameObject);
     }
     private void OnUpdatedInteractionState(Interaction interaction) {
         if(_interaction != null && _interaction == interaction) {
@@ -88,7 +95,11 @@ public class InteractionItem : MonoBehaviour {
         }
     }
     public void OnClickConfirm() {
-        _currentSelectedActionOption.ActivateOption(_interaction.interactable);
+        if (!_interaction.currentState.isEnd) {
+            _currentSelectedActionOption.ActivateOption(_interaction.interactable);
+        } else {
+            _interaction.currentState.EndResult();
+        }
     }
     private void ChangeStateAllButtons(bool state) {
         confirmNoMinionButton.interactable = state;

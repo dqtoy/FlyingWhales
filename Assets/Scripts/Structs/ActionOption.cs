@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 
 public class ActionOption {
-    public Interaction interaction;
+    public InteractionState interactionState;
     public string description;
     public ActionOptionCost cost;
     public int duration;
@@ -19,12 +19,13 @@ public class ActionOption {
         if(needsMinion) {
             if(assignedMinion != null) {
                 assignedMinion.icharacter.currentParty.GoToLocation(interactable.specificLocation, PATHFINDING_MODE.PASSABLE, () => StartDuration());
-                interaction.SetActivatedState(true);
+                interactionState.SetAssignedMinion(assignedMinion);
+                interactionState.interaction.SetActivatedState(true);
             } else {
                 //Can't go, no minion assigned
             }
         } else {
-            interaction.SetActivatedState(true);
+            interactionState.interaction.SetActivatedState(true);
             StartDuration();
         }
     }
@@ -41,7 +42,7 @@ public class ActionOption {
     private void CheckDuration() {
         _currentDuration++;
         if(_currentDuration >= duration) {
-            interaction.SetActivatedState(false);
+            interactionState.interaction.SetActivatedState(false);
             Messenger.RemoveListener(Signals.HOUR_STARTED, CheckDuration);
             if (effect != null) {
                 effect();

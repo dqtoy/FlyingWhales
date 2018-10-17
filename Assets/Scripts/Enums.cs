@@ -991,3 +991,8 @@ public enum MORALITY {
     GOOD,
     EVIL
 }
+public enum MINIONS_SORT_TYPE {
+    DEFAULT,
+    LEVEL,
+    TYPE,
+}

@@ -906,6 +906,12 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     public void AddInteraction(Interaction interaction) {
         _currentInteractions.Add(interaction);
+        Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
+    }
+    public void RemoveInteraction(Interaction interaction) {
+        if (_currentInteractions.Remove(interaction)) {
+            Messenger.Broadcast(Signals.REMOVED_INTERACTION, this, interaction);
+        }
     }
     private void UpdateLastInspection() {
         _lastInspectedOfCharactersAtLocation.Clear();

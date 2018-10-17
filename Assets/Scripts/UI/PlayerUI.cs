@@ -18,6 +18,7 @@ public class PlayerUI : MonoBehaviour {
     public GameObject minionPrefab;
     public GameObject minionsHolderGO;
     public Transform minionsContentTransform;
+    public TweenPosition minionContentTweenPos;
     public Button upScrollButton;
     public Button downScrollButton;
     public MinionItem[] minionItems;
@@ -26,8 +27,15 @@ public class PlayerUI : MonoBehaviour {
     public Toggle intelToggle;
     public Toggle inventoryToggle;
     public Toggle factionToggle;
+    public ToggleGroup minionSortingToggleGroup;
 
+    private MINIONS_SORT_TYPE _minionSortType;
 
+    #region getters/setters
+    public MINIONS_SORT_TYPE minionSortType {
+        get { return _minionSortType; }
+    }
+    #endregion
     void Awake() {
         Instance = this;
     }
@@ -107,7 +115,11 @@ public class PlayerUI : MonoBehaviour {
         if(y < 0f) {
             y = 0f;
         }
-        minionsContentTransform.localPosition = new Vector3(minionsContentTransform.localPosition.x, y, minionsContentTransform.localPosition.z);
+        //minionsContentTransform.localPosition = new Vector3(minionsContentTransform.localPosition.x, y, minionsContentTransform.localPosition.z);
+        minionContentTweenPos.from = minionsContentTransform.localPosition;
+        minionContentTweenPos.to = new Vector3(minionsContentTransform.localPosition.x, y, minionsContentTransform.localPosition.z);
+        minionContentTweenPos.ResetToBeginning();
+        minionContentTweenPos.PlayForward();
     }
     public void ScrollDown() {
         float y = minionsContentTransform.localPosition.y + 115f;
@@ -115,13 +127,41 @@ public class PlayerUI : MonoBehaviour {
         if (y > height) {
             y = height;
         }
-        minionsContentTransform.localPosition = new Vector3(minionsContentTransform.localPosition.x, y, minionsContentTransform.localPosition.z);
+        //minionsContentTransform.localPosition = new Vector3(minionsContentTransform.localPosition.x, y, minionsContentTransform.localPosition.z);
+        minionContentTweenPos.from = minionsContentTransform.localPosition;
+        minionContentTweenPos.to = new Vector3(minionsContentTransform.localPosition.x, y, minionsContentTransform.localPosition.z);
+        minionContentTweenPos.ResetToBeginning();
+        minionContentTweenPos.PlayForward();
     }
     public void SortByLvlMinions() {
+        _minionSortType = MINIONS_SORT_TYPE.LEVEL;
         PlayerManager.Instance.player.SortByLevel();
     }
     public void SortByTypeMinions() {
+        _minionSortType = MINIONS_SORT_TYPE.TYPE;
         PlayerManager.Instance.player.SortByType();
+    }
+    public void SortByDefaultMinions() {
+        _minionSortType = MINIONS_SORT_TYPE.DEFAULT;
+        PlayerManager.Instance.player.SortByDefault();
+    }
+    public void OnToggleSortLvlMinions(bool state) {
+        if (state) {
+            SortByLvlMinions();
+        } else {
+            if (!minionSortingToggleGroup.AnyTogglesOn()) {
+                SortByDefaultMinions();
+            }
+        }
+    }
+    public void OnToggleSortTypeMinions(bool state) {
+        if (state) {
+            SortByTypeMinions();
+        } else {
+            if (!minionSortingToggleGroup.AnyTogglesOn()) {
+                SortByDefaultMinions();
+            }
+        }
     }
     public void OnScroll(Vector2 vector2) {
         if (minionsContentTransform.localPosition.y == 0f) {
@@ -135,6 +175,11 @@ public class PlayerUI : MonoBehaviour {
         } else {
             upScrollButton.gameObject.SetActive(true);
             downScrollButton.gameObject.SetActive(true);
+        }
+    }
+    public void ResetAllMinionItems() {
+        for (int i = 0; i < minionItems.Length; i++) {
+            minionItems[i].SetMinion(null);
         }
     }
     #endregion

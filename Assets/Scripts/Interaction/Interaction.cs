@@ -8,6 +8,7 @@ public class Interaction {
     protected Dictionary<string, InteractionState> _states;
     protected InteractionState _currentState;
     protected bool _isActivated;
+    protected bool _isDone;
 
     #region getters/setters
     public InteractionState currentState {
@@ -30,6 +31,10 @@ public class Interaction {
     #region Virtuals
     public virtual void CreateStates() { }
     public virtual void CreateActionOptions(InteractionState state) { }
+    public virtual void EndInteraction() {
+        _isDone = true;
+        _interactable.RemoveInteraction(this);
+    }
     #endregion
 
     #region Utilities

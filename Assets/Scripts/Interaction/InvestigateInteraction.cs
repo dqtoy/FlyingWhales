@@ -10,8 +10,8 @@ public class InvestigateInteraction : Interaction {
 
     #region Overrides
     public override void CreateStates() {
-        InteractionState uninvestigatedState = new InteractionState("Uninvestigated");
-        InteractionState investigatedState = new InteractionState("Investigated");
+        InteractionState uninvestigatedState = new InteractionState("Uninvestigated", this);
+        InteractionState investigatedState = new InteractionState("Investigated", this);
 
         if(_interactable is BaseLandmark) {
             BaseLandmark landmark = _interactable as BaseLandmark;
@@ -38,17 +38,17 @@ public class InvestigateInteraction : Interaction {
     public override void CreateActionOptions(InteractionState state) {
         if(state.name == "Uninvestigated") {
             ActionOption actionOption = new ActionOption {
-                interaction = this,
+                interactionState = state,
                 cost = new ActionOptionCost { amount = 1, currency = CURRENCY.IMP },
                 description = "Send an Imp",
-                duration = 5,
+                duration = 1,
                 needsMinion = false,
                 effect = () => ChangeToInvestigatedState()
             };
             state.AddActionOption(actionOption);
         }else if (state.name == "Investigated") {
             ActionOption actionOption = new ActionOption {
-                interaction = this,
+                interactionState = state,
                 cost = new ActionOptionCost { amount = 0, currency = CURRENCY.IMP },
                 description = "Recall an Imp",
                 duration = 1,

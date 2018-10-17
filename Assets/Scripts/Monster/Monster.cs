@@ -718,6 +718,12 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public void AddInteraction(Interaction interaction) {
         _currentInteractions.Add(interaction);
+        Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
+    }
+    public void RemoveInteraction(Interaction interaction) {
+        if (_currentInteractions.Remove(interaction)) {
+            Messenger.Broadcast(Signals.REMOVED_INTERACTION, this, interaction);
+        }
     }
     #endregion
 }
