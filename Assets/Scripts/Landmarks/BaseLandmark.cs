@@ -904,9 +904,6 @@ public class BaseLandmark : ILocation, IInteractable {
     public void EndedInspection() {
         UpdateLastInspection();
     }
-    public void AddInteraction(Interaction interaction) {
-        _currentInteractions.Add(interaction);
-    }
     private void UpdateLastInspection() {
         _lastInspectedOfCharactersAtLocation.Clear();
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
@@ -1074,6 +1071,22 @@ public class BaseLandmark : ILocation, IInteractable {
     public bool IsDefenderOfLandmark(Party party) {
         for (int i = 0; i < defenders.Length; i++) {
             if (defenders[i] != null && defenders[i].id == party.id) {
+                return true;
+            }
+        }
+        return false;
+    }
+    #endregion
+
+    #region Interactions
+    public void AddInteraction(Interaction interaction) {
+        _currentInteractions.Add(interaction);
+    }
+    public bool HasActiveInteraction() {
+        //if this landmark already has a landmark other than investigate
+        for (int i = 0; i < _currentInteractions.Count; i++) {
+            Interaction currInteraction = _currentInteractions[i];
+            if (!(currInteraction is InvestigateInteraction)) {
                 return true;
             }
         }

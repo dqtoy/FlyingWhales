@@ -991,3 +991,6 @@ public enum MORALITY {
     GOOD,
     EVIL
 }
+public enum INTERACTION_TYPE {
+    BANDIT_RAID,
+}

@@ -136,6 +136,20 @@ public class StructureObj : IObject {
             }
         }
     }
+    public virtual void GenerateDailyInteraction() {
+        if (_objectLocation.HasActiveInteraction()) {
+            return; //the landmark already has an active interaction, other than investigate
+        }
+        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_objectLocation.specificLandmarkType);
+        if (data.eventTriggerWeights.GetTotalOfWeights() > 0) {
+            if (data.eventTriggerWeights.PickRandomElementGivenWeights()) { //if event trigger weights return true
+                if (data.interactionWeights.GetTotalOfWeights() > 0) {
+                    INTERACTION_TYPE chosenInteraction = data.interactionWeights.PickRandomElementGivenWeights();
+                    //create interaction of type;
+                }
+            }
+        }
+    }
     #endregion
 
     #region Interface Requirements
