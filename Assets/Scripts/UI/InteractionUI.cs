@@ -37,9 +37,11 @@ public class InteractionUI : MonoBehaviour {
         }
     }
     public void OpenInteractionUI(IInteractable interactable) {
-        _interactable = interactable;
-        StartCoroutine(UpdateInteractions(interactable.currentInteractions));
-        interactionHolder.SetActive(true);
+        if (interactable.currentInteractions != null && interactable.currentInteractions.Count > 0) {
+            _interactable = interactable;
+            StartCoroutine(UpdateInteractions(interactable.currentInteractions));
+            interactionHolder.SetActive(true);
+        }
     }
     public void HideInteractionUI() {
         _interactable = null;
