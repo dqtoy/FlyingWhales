@@ -88,6 +88,7 @@ public class Minion {
         }else if (_exp < 0) {
             _exp = 0;
         }
+        _minionItem.UpdateMinionItem();
     }
     public void LevelUp() {
         _lvl += 1;
