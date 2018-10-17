@@ -17,11 +17,11 @@ public class Garrison : StructureObj {
     }
     public override void StartDayAction() {
         base.StartDayAction();
-        CreateDefenderUnits();
+        ReplenishDefenderUnits();
     }
     #endregion
 
-    private void CreateDefenderUnits() {
+    private void ReplenishDefenderUnits() {
         string replenishSummary = GameManager.Instance.TodayLogString() + "Replenishing defender units for " + _objectLocation.locationName + ": ";
         for (int j = 0; j < _objectLocation.defenders.Length; j++) {
             Party currParty = _objectLocation.defenders[j];
@@ -31,7 +31,7 @@ public class Garrison : StructureObj {
                     if (currCharacter is CharacterArmyUnit) {
                         CharacterArmyUnit armyUnit = currCharacter as CharacterArmyUnit;
                         int productionCost = armyUnit.GetProductionCost();
-                        if (_objectLocation.tileLocation.areaOfTile.HasEnoughSupplies(productionCost)) {
+                        if (!armyUnit.isCapped() && _objectLocation.tileLocation.areaOfTile.HasEnoughSupplies(productionCost)) {
                             armyUnit.AdjustArmyCount(1);
                             _objectLocation.tileLocation.areaOfTile.AdjustSuppliesInBank(-productionCost);
                             replenishSummary += "\nReplensihed 1 " + armyUnit.characterClass.className + " for " + productionCost;

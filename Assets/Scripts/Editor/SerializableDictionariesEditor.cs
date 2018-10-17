@@ -12,6 +12,8 @@ public class PhaseItemDictionaryPropertyDrawer : SerializableDictionaryPropertyD
 public class StringIntDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(LandmarkDefenderWeightDictionary))]
 public class LandmarkDefenderWeightDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(InteractionWeightDictionary))]
+public class InteractionWeightDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(ActionCharacterTagListDictionary))]
 public class ActionCharacterTagDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(BiomeLandmarkSpriteListDictionary))]

@@ -11,6 +11,8 @@ public class StringIntDictionary : SerializableDictionary<string, int> { }
 [System.Serializable]
 public class LandmarkDefenderWeightDictionary : SerializableDictionary<LandmarkDefender, int> { }
 [System.Serializable]
+public class InteractionWeightDictionary : SerializableDictionary<INTERACTION_TYPE, int> { }
+[System.Serializable]
 public class ActionCharacterTagListDictionary : SerializableDictionary<ACTION_TYPE, List<CharacterActionTagRequirement>, CharacterTagListStorage> { }
 [System.Serializable]
 public class BiomeLandmarkSpriteListDictionary : SerializableDictionary<BIOMES, List<LandmarkStructureSprite>, LandmarkSpriteListStorage> { }

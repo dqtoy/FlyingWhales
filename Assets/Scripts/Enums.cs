@@ -996,3 +996,6 @@ public enum MINIONS_SORT_TYPE {
     LEVEL,
     TYPE,
 }
+public enum INTERACTION_TYPE {
+    BANDIT_RAID,
+}

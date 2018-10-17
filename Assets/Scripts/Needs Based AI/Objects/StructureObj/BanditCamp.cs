@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class BanditCamp : StructureObj {
 
-    private const int INITIAL_DEFENDERS = 3;
-
     public BanditCamp() : base() {
         _specificObjectType = LANDMARK_TYPE.BANDIT_CAMP;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
@@ -38,4 +36,29 @@ public class BanditCamp : StructureObj {
     //    }
     //}
     #endregion
+
+    private void ReplenishDefenderUnits() {
+        string replenishSummary = GameManager.Instance.TodayLogString() + "Replenishing defender units for " + _objectLocation.locationName + ": ";
+        for (int j = 0; j < _objectLocation.defenders.Length; j++) {
+            Party currParty = _objectLocation.defenders[j];
+            if (currParty != null) {
+                for (int k = 0; k < currParty.icharacters.Count; k++) {
+                    ICharacter currCharacter = currParty.icharacters[k];
+                    if (currCharacter is CharacterArmyUnit) {
+                        CharacterArmyUnit armyUnit = currCharacter as CharacterArmyUnit;
+                        if (!armyUnit.isCapped()) {
+                            armyUnit.AdjustArmyCount(1);
+                            replenishSummary += "\nReplensihed 1 " + armyUnit.characterClass.className;
+                        }
+                    } else if (currCharacter is MonsterArmyUnit) {
+                        MonsterArmyUnit armyUnit = currCharacter as MonsterArmyUnit;
+                        //if (!armyUnit.isCapped()) {
+                            armyUnit.AdjustArmyCount(1);
+                        //}
+                    }
+                }
+            }
+        }
+        Debug.Log(replenishSummary);
+    }
 }

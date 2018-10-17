@@ -53,11 +53,11 @@ public class CharacterParty : Party {
 
     public void CreateCharacterObject() {
 #if !WORLD_CREATION_TOOL
-        if (mainCharacter.characterClass != null && mainCharacter.characterClass.className == "Retired Hero") {
-            _characterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.CHARACTER, "RetiredHeroObject") as CharacterObj;
-        } else {
+        //if (mainCharacter.characterClass != null && mainCharacter.characterClass.className == "Retired Hero") {
+        //    _characterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.CHARACTER, "RetiredHeroObject") as CharacterObj;
+        //} else {
             _characterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.CHARACTER, "CharacterObject") as CharacterObj;
-        }
+        //}
         _characterObj.SetCharacter(this);
         _icharacterObject = _characterObj;
 #endif

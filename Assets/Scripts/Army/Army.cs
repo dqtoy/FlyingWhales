@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class Army : Party {
 
-    public Army(ICharacter owner) : base(owner) {
+    public ArmyActionData actionData { get; private set; }
 
+    public Army(ICharacter owner) : base(owner) {
+        actionData = new ArmyActionData(this);
     }
 
     #region overrides

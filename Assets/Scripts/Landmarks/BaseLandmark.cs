@@ -1086,4 +1086,20 @@ public class BaseLandmark : ILocation, IInteractable {
         return false;
     }
     #endregion
+
+    #region Interactions
+    public void AddInteraction(Interaction interaction) {
+        _currentInteractions.Add(interaction);
+    }
+    public bool HasActiveInteraction() {
+        //if this landmark already has a landmark other than investigate
+        for (int i = 0; i < _currentInteractions.Count; i++) {
+            Interaction currInteraction = _currentInteractions[i];
+            if (!(currInteraction is InvestigateInteraction)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    #endregion
 }
