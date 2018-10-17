@@ -377,11 +377,14 @@ public class Area {
         LandmarkStartDayActions();
     }
     private void CollectDailySupplies() {
+        int totalCollectedSupplies = 0;
         for (int i = 0; i < landmarks.Count; i++) {
             BaseLandmark currLandmark = landmarks[i];
             LandmarkData data = LandmarkManager.Instance.GetLandmarkData(currLandmark.specificLandmarkType);
+            totalCollectedSupplies += data.dailySupplyProduction;
             AdjustSuppliesInBank(data.dailySupplyProduction);
         }
+        Debug.Log(this.name + " collected supplies " + totalCollectedSupplies);
     }
     private void PayMaintenance() {
         //consumes Supply per existing unit

@@ -82,6 +82,7 @@ MonoBehaviour:
     possibleSpawnPoints: 0600000007000000
     isUnique: 1
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -102,11 +103,33 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: 36bb9c87d942a0747a60b417b0cd79e2, type: 3}
     elvenLandmarkTileSprites: []
     defenderWeightsDict:
-      m_keys: []
-      m_values: 
+      m_keys:
+      - className: Knight
+        armyCount: 20
+        includeInFirstWeight: 1
+      - className: Wind Mage
+        armyCount: 20
+        includeInFirstWeight: 1
+      - className: Fire Mage
+        armyCount: 20
+        includeInFirstWeight: 1
+      - className: Water Mage
+        armyCount: 20
+        includeInFirstWeight: 1
+      - className: Earth Mage
+        armyCount: 20
+        includeInFirstWeight: 1
+      - className: Cleric
+        armyCount: 20
+        includeInFirstWeight: 0
+      - className: Archer
+        armyCount: 20
+        includeInFirstWeight: 0
+      m_values: 1e0000000a0000000a0000000a0000000a0000000f00000014000000
     possibleSpawnPoints: 0600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 4
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -134,6 +157,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 300
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -161,6 +185,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -185,6 +210,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -221,6 +247,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -252,11 +279,33 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: d17f26b8defdee446a0719c4630d3ef2, type: 3}
     elvenLandmarkTileSprites: []
     defenderWeightsDict:
-      m_keys: []
-      m_values: 
+      m_keys:
+      - className: Knight
+        armyCount: 20
+        includeInFirstWeight: 1
+      - className: Wind Mage
+        armyCount: 20
+        includeInFirstWeight: 1
+      - className: Fire Mage
+        armyCount: 20
+        includeInFirstWeight: 1
+      - className: Water Mage
+        armyCount: 20
+        includeInFirstWeight: 1
+      - className: Earth Mage
+        armyCount: 20
+        includeInFirstWeight: 1
+      - className: Cleric
+        armyCount: 20
+        includeInFirstWeight: 0
+      - className: Archer
+        armyCount: 20
+        includeInFirstWeight: 1
+      m_values: 1e0000000a0000000a0000000a0000000a0000000f00000014000000
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -287,6 +336,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -317,6 +367,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -343,6 +394,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -366,11 +418,33 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: 455f303fb578b4841ae48fd16107beb2, type: 3}
     elvenLandmarkTileSprites: []
     defenderWeightsDict:
-      m_keys: []
-      m_values: 
+      m_keys:
+      - className: Knight
+        armyCount: 20
+        includeInFirstWeight: 1
+      - className: Wind Mage
+        armyCount: 20
+        includeInFirstWeight: 1
+      - className: Fire Mage
+        armyCount: 20
+        includeInFirstWeight: 1
+      - className: Water Mage
+        armyCount: 20
+        includeInFirstWeight: 1
+      - className: Earth Mage
+        armyCount: 20
+        includeInFirstWeight: 1
+      - className: Cleric
+        armyCount: 20
+        includeInFirstWeight: 0
+      - className: Archer
+        armyCount: 20
+        includeInFirstWeight: 1
+      m_values: 1e0000000a0000000a0000000a0000000a0000000f00000014000000
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 200
+    initialDefenderCount: 2
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -399,6 +473,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 500
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -427,6 +502,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 300
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -453,6 +529,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -483,6 +560,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 114870140623750678, guid: 5eff0dfec87dc444ba512bdf201ce2c9,
       type: 2}
     isMonsterSpawner: 0
@@ -514,6 +592,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -544,6 +623,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -589,6 +669,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 3
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets:
@@ -625,6 +706,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -676,6 +758,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -721,6 +804,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -757,6 +841,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -799,6 +884,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -838,6 +924,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -909,6 +996,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -951,6 +1039,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -987,6 +1076,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -1011,6 +1101,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -1035,6 +1126,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -1061,6 +1153,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -1085,6 +1178,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -1109,6 +1203,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -1133,6 +1228,7 @@ MonoBehaviour:
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
+    initialDefenderCount: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []

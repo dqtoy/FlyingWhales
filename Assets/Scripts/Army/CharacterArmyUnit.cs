@@ -30,7 +30,7 @@ public class CharacterArmyUnit : Character {
 
     #region Army Management
     public void AdjustArmyCount(int adjustment) {
-        armyCount -= adjustment;
+        armyCount += adjustment;
         if (armyCap == -1) {
             armyCount = Mathf.Max(0, armyCount);
         } else {
@@ -42,7 +42,7 @@ public class CharacterArmyUnit : Character {
             return 25;
         } else if (this.characterClass.className.Equals("Archer")) {
             return 20;
-        } else if (this.characterClass.className.Equals("Bard")) {
+        } else if (this.characterClass.className.Contains("Mage")) {
             return 15;
         } else if (this.characterClass.className.Equals("Cleric")) {
             return 15;
@@ -59,7 +59,7 @@ public class CharacterArmyUnit : Character {
     public int GetProductionCost() {
         if (this.characterClass.className.Equals("Knight")) {
             return 20;
-        } else if (this.characterClass.className.Equals("Mage")) {
+        } else if (this.characterClass.className.Contains("Mage")) {
             return 30;
         } else if (this.characterClass.className.Equals("Archer")) {
             return 40;

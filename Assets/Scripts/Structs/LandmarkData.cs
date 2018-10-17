@@ -20,6 +20,7 @@ public class LandmarkData {
     public List<PASSABLE_TYPE> possibleSpawnPoints;
     public bool isUnique;
     public int dailySupplyProduction;
+    public int initialDefenderCount;
     
     [Header("Monster Spawner")]
     public MonsterPartyComponent startingMonsterSpawn;

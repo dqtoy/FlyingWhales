@@ -22,7 +22,7 @@ public class Garrison : StructureObj {
     #endregion
 
     private void CreateDefenderUnits() {
-        Debug.Log("Creating defender units for " + _objectLocation.locationName);
+        string replenishSummary = GameManager.Instance.TodayLogString() + "Replenishing defender units for " + _objectLocation.locationName + ": ";
         for (int j = 0; j < _objectLocation.defenders.Length; j++) {
             Party currParty = _objectLocation.defenders[j];
             if (currParty != null) {
@@ -34,6 +34,7 @@ public class Garrison : StructureObj {
                         if (_objectLocation.tileLocation.areaOfTile.HasEnoughSupplies(productionCost)) {
                             armyUnit.AdjustArmyCount(1);
                             _objectLocation.tileLocation.areaOfTile.AdjustSuppliesInBank(-productionCost);
+                            replenishSummary += "\nReplensihed 1 " + armyUnit.characterClass.className + " for " + productionCost;
                         }
                     } else if (currCharacter is MonsterArmyUnit) {
                         MonsterArmyUnit armyUnit = currCharacter as MonsterArmyUnit;
@@ -46,6 +47,7 @@ public class Garrison : StructureObj {
                 }
             }
         }
+        Debug.Log(replenishSummary);
     }
 
 }
