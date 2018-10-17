@@ -75,7 +75,11 @@ public class CharacterAvatar : MonoBehaviour{
         this.smoothMovement.onMoveFinished += OnMoveFinished;
         _isInitialized = true;
         _hasArrived = true;
-		if(_party.mainCharacter is Character){
+        if (_party.mainCharacter is CharacterArmyUnit) {
+            _avatarSpriteRenderer.sprite = CharacterManager.Instance.villainSprite;
+        } else if (_party.mainCharacter is MonsterArmyUnit) {
+            _avatarSpriteRenderer.sprite = CharacterManager.Instance.villainSprite;
+        } else if(_party.mainCharacter is Character){
 			SetSprite (_party.mainCharacter.role.roleType);
         } else if (_party.mainCharacter is Monster) {
             SetSprite((_party.mainCharacter as Monster).type);

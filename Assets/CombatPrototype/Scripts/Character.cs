@@ -13,65 +13,57 @@ namespace ECS {
         public delegate void DailyAction();
         public DailyAction onDailyAction;
 
-        private string _name;
-        private string _characterColorCode;
-        private int _id;
-        private int _gold;
-        private float _actRate;
-        private bool _isDead;
-        private bool _isFainted;
-        private bool _isInCombat;
-        private bool _doNotDisturb;
-        private bool _isBeingInspected;
-        private bool _hasBeenInspected;
-        private GENDER _gender;
-        private MODE _currentMode;
-        private CharacterClass _characterClass;
-        private RaceSetting _raceSetting;
-        private CharacterRole _role;
-        private Faction _faction;
-        private CharacterParty _ownParty;
-        private CharacterParty _currentParty;
-        //private Area _home;
-        private BaseLandmark _homeLandmark;
-        //private StructureObj _homeStructure;
-        private BaseLandmark _workplace;
+        protected string _name;
+        protected string _characterColorCode;
+        protected int _id;
+        protected int _gold;
+        protected float _actRate;
+        protected bool _isDead;
+        protected bool _isFainted;
+        protected bool _isInCombat;
+        protected bool _doNotDisturb;
+        protected bool _isBeingInspected;
+        protected bool _hasBeenInspected;
+        protected GENDER _gender;
+        protected MODE _currentMode;
+        protected CharacterClass _characterClass;
+        protected RaceSetting _raceSetting;
+        protected CharacterRole _role;
+        protected Faction _faction;
+        protected CharacterParty _ownParty;
+        protected CharacterParty _currentParty;
+        protected BaseLandmark _homeLandmark;
+        protected BaseLandmark _workplace;
         private Region _currentRegion;
-        private Weapon _equippedWeapon;
-        private Armor _equippedArmor;
-        private Item _equippedAccessory;
-        private Item _equippedConsumable;
-        private CharacterBattleTracker _battleTracker;
-        private CharacterBattleOnlyTracker _battleOnlyTracker;
-        private PortraitSettings _portraitSettings;
-        private CharacterPortrait _characterPortrait;
-        private Color _characterColor;
-        private CharacterAction _genericWorkAction;
-        private HiddenDesire _hiddenDesire;
-        private Secret _currentlySelectedSecret;
-        private List<Secret> _secrets;
-        private List<STATUS_EFFECT> _statusEffects;
-        //private List<BodyPart> _bodyParts;
-        //private Dictionary<string, IBodyPart> _bodyPartDict;
-        //private List<Item> _equippedItems;
-        private List<Item> _inventory;
-        private List<Skill> _skills;
-        private List<Attribute> _attributes;
-        private List<Log> _history;
-        //private List<CharacterQuestData> _questData;
-        private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
-        private List<CombatAttribute> _combatAttributes;
-        private CharacterActionQueue<ActionQueueItem> _actionQueue;
-        private List<CharacterAction> _miscActions;
-        private List<Interaction> _currentInteractions;
-        private Dictionary<Character, Relationship> _relationships;
-        private Dictionary<ELEMENT, float> _elementalWeaknesses;
-        private Dictionary<ELEMENT, float> _elementalResistances;
-        private Dictionary<Character, List<string>> _traceInfo;
-        private Dictionary<int, GAME_EVENT> _intelReactions; //int = intel id
-        private int _mentalPoints;
-        private int _physicalPoints;
-        private Squad _squad;
+        protected Weapon _equippedWeapon;
+        protected Armor _equippedArmor;
+        protected Item _equippedAccessory;
+        protected Item _equippedConsumable;
+        protected CharacterBattleTracker _battleTracker;
+        protected CharacterBattleOnlyTracker _battleOnlyTracker;
+        protected PortraitSettings _portraitSettings;
+        protected CharacterPortrait _characterPortrait;
+        protected Color _characterColor;
+        protected CharacterAction _genericWorkAction;
+        protected HiddenDesire _hiddenDesire;
+        protected Secret _currentlySelectedSecret;
+        protected List<Secret> _secrets;
+        protected List<STATUS_EFFECT> _statusEffects;
+        protected List<Item> _inventory;
+        protected List<Skill> _skills;
+        protected List<Attribute> _attributes;
+        protected List<Log> _history;
+        protected List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
+        protected List<CombatAttribute> _combatAttributes;
+        protected CharacterActionQueue<ActionQueueItem> _actionQueue;
+        protected List<CharacterAction> _miscActions;
+        protected List<Interaction> _currentInteractions;
+        protected Dictionary<Character, Relationship> _relationships;
+        protected Dictionary<ELEMENT, float> _elementalWeaknesses;
+        protected Dictionary<ELEMENT, float> _elementalResistances;
+        protected Dictionary<Character, List<string>> _traceInfo;
+        protected Dictionary<int, GAME_EVENT> _intelReactions; //int = intel id
+        protected Squad _squad;
 
         //Stats
         private SIDES _currentSide;
@@ -99,7 +91,7 @@ namespace ECS {
         public string firstName {
             get { return name.Split(' ')[0]; }
         }
-        public string name {
+        public virtual string name {
             get { return this._name; }
         }
         public string coloredName {
@@ -141,13 +133,13 @@ namespace ECS {
         public Faction faction {
             get { return _faction; }
         }
-        public Party ownParty {
+        public virtual Party ownParty {
             get { return _ownParty; }
         }
         public CharacterParty party {
             get { return _ownParty; }
         }
-        public Party currentParty {
+        public virtual Party currentParty {
             get { return _currentParty; }
         }
         public CharacterAction genericWorkAction {
@@ -314,12 +306,6 @@ namespace ECS {
         public List<CharacterAction> miscActions {
             get { return _miscActions; }
         }
-        public int mentalPoints {
-            get { return _mentalPoints; }
-        }
-        public int physicalPoints {
-            get { return _physicalPoints; }
-        }
         public Squad squad {
             get { return _squad; }
         }
@@ -370,7 +356,11 @@ namespace ECS {
 			_raceSetting = RaceManager.Instance.racesDictionary[race.ToString()].CreateNewCopy();
             _gender = gender;
             _name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
-            _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
+            if (this is CharacterArmyUnit) {
+                _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(RACE.HUMANS, GENDER.MALE);
+            } else {
+                _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
+            }
             SetMorality(MORALITY.GOOD);
             //_skills = GetGeneralSkills();
             _skills = new List<Skill>();
@@ -389,7 +379,6 @@ namespace ECS {
                     AssignRole(setup.optionalRole);
                 }
             }
-            //DetermineAllowedMiscActions();
         }
         public Character(CharacterSaveData data) : this(){
             _id = Utilities.SetID(this, data.id);
@@ -478,7 +467,6 @@ namespace ECS {
         private void SubscribeToSignals() {
             //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
             Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
-            Messenger.AddListener<Region>("RegionDeath", RegionDeath);
             //Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
             //Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
@@ -489,7 +477,6 @@ namespace ECS {
         public void UnsubscribeSignals() {
             //Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
             Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
-            Messenger.RemoveListener<Region>("RegionDeath", RegionDeath);
             //Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
             //Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
             Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
@@ -694,12 +681,6 @@ namespace ECS {
 		public void Death(){
 			if(!_isDead){
 				_isDead = true;
-                
-    //            Messenger.RemoveListener<Region> ("RegionDeath", RegionDeath);
-				////Messenger.RemoveListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
-    //            Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
-    //            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
-    //            Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
                 UnsubscribeSignals();
 
                 CombatManager.Instance.ReturnCharacterColorToPool (_characterColor);
@@ -742,14 +723,8 @@ namespace ECS {
                 //}
 
                 if (this._faction != null){
-					//if(this._faction.leader != null && this._faction.leader.id == this.id) {
-					//	//If this character is the leader of a faction, set that factions leader as null
-					//	this._faction.SetLeader(null);
-					//}
 					this._faction.RemoveCharacter(this); //remove this character from it's factions list of characters
 				}
-
-                //CheckForInternationalIncident();
 
                 //if (_specificLocation != null) {
                 //    _specificLocation.RemoveCharacterFromLocation(this);
@@ -1582,7 +1557,7 @@ namespace ECS {
         /*
          Create a new Party with this character as the leader.
              */
-        public Party CreateOwnParty() {
+        public virtual Party CreateOwnParty() {
             if(_ownParty != null) {
                 _ownParty.RemoveCharacter(this);
             }
@@ -1592,22 +1567,24 @@ namespace ECS {
             newParty.CreateCharacterObject();
             return newParty;
         }
-		public void SetOwnedParty(Party party) {
+		public virtual void SetOwnedParty(Party party) {
 			_ownParty = party as CharacterParty;
 		}
-        public void SetCurrentParty(Party party) {
+        public virtual void SetCurrentParty(Party party) {
             _currentParty = party as CharacterParty;
         }
         public void OnRemovedFromParty() {
-            SetCurrentParty(_ownParty); //set the character's party to it's own party
-            _ownParty.actionData.currentAction.EndAction(_ownParty, _ownParty.actionData.currentTargetObject);
+            SetCurrentParty(ownParty); //set the character's party to it's own party
+            if (ownParty is CharacterParty) {
+                (ownParty as CharacterParty).actionData.currentAction.EndAction(ownParty, (ownParty as CharacterParty).actionData.currentTargetObject);
+            }
         }
         public void OnAddedToParty() {
-            if (this.currentParty.id != _ownParty.id) {
-                if (_ownParty.specificLocation is BaseLandmark) {
-                    _ownParty.specificLocation.RemoveCharacterFromLocation(_ownParty);
+            if (currentParty.id != ownParty.id) {
+                if (ownParty.specificLocation is BaseLandmark) {
+                    ownParty.specificLocation.RemoveCharacterFromLocation(ownParty);
                 }
-                _ownParty.icon.SetVisualState(false);
+                ownParty.icon.SetVisualState(false);
             }
         }
         public bool IsInParty() {
@@ -1799,12 +1776,6 @@ namespace ECS {
                 CameraMove.Instance.CenterCameraOn(currentParty.specificLocation.tileLocation.gameObject);
             }
         }
-		//Death of this character if he/she is in the region specified
-		private void RegionDeath(Region region){
-			if(_ownParty.currentRegion.id == region.id){
-				Death ();
-			}
-		}
         private void GetRandomCharacterColor() {
             _characterColor = CombatManager.Instance.UseRandomCharacterColor();
             _characterColorCode = ColorUtility.ToHtmlStringRGBA(_characterColor).Substring(0, 6);
@@ -2579,54 +2550,6 @@ namespace ECS {
         }
         #endregion
 
-        #region Mental Points
-        public void AdjustMentalPoints(int adjustment) {
-            _mentalPoints += adjustment;
-            _mentalPoints = Mathf.Min(0, mentalPoints);
-        }
-        public void SetMentalPoints(int points) {
-            _mentalPoints = points;
-            _mentalPoints = Mathf.Min(0, mentalPoints);
-        }
-        #endregion
-
-        #region Physical Points
-        public void AdjustPhysicalPoints(int adjustment) {
-            _physicalPoints += adjustment;
-            _physicalPoints = Mathf.Min(0, physicalPoints);
-        }
-        public void SetPhysicalPoints(int points) {
-            _physicalPoints = points;
-            _physicalPoints = Mathf.Min(0, physicalPoints);
-        }
-        //private void CheckForPPDeath() {
-        //    if (this.physicalPoints <= -5) {
-        //        //If the character has -5 or lower Physical Points, he has a 0.5% chance to die per tick. 
-        //        float deathChance = 0.5f;
-        //        int difference = Mathf.Abs(this.physicalPoints + 5);
-        //        deathChance += difference * 0.5f; //For every point lower than -5, add 0.5% to chance to die per tick.
-        //        if (UnityEngine.Random.Range(0f, 100f) < deathChance) {
-        //            List<string> deathCauses = new List<string>();
-        //            if (HasAttributes(new ATTRIBUTE[] { ATTRIBUTE.TIRED, ATTRIBUTE.EXHAUSTED})) {
-        //                deathCauses.Add("exhaustion");
-        //            }
-        //            if (HasAttributes(new ATTRIBUTE[] { ATTRIBUTE.HUNGRY, ATTRIBUTE.STARVING })) {
-        //                deathCauses.Add("starvation");
-        //            }
-        //            if (HasAttributes(new ATTRIBUTE[] { ATTRIBUTE.WOUNDED, ATTRIBUTE.WRECKED })) {
-        //                deathCauses.Add("injury");
-        //            }
-
-        //            Log deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "pp_death");
-        //            deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //            deathLog.AddToFillers(null, deathCauses[UnityEngine.Random.Range(0, deathCauses.Count)], LOG_IDENTIFIER.OTHER);
-        //            AddHistory(deathLog);
-        //            this.Death(true);
-        //        }
-        //    }
-        //}
-        #endregion
-
         #region Squads
         public void SetSquad(Squad squad) {
             _squad = squad;
@@ -3015,9 +2938,11 @@ namespace ECS {
         public void OnSetAsDefender(BaseLandmark defending) {
             defendingLandmark = defending;
             defendingLandmark.RemoveCharacterFromLocation(this.ownParty, false);
-            _ownParty.SetSpecificLocation(defending);
+            ownParty.SetSpecificLocation(defending);
 #if !WORLD_CREATION_TOOL
-            _ownParty.actionData.ForceDoAction(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DEFENDER), defending.landmarkObj);
+            if (ownParty is CharacterParty) {
+                (ownParty as CharacterParty).actionData.ForceDoAction(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DEFENDER), defending.landmarkObj);
+            }
 #endif
         }
         public void OnRemoveAsDefender() {

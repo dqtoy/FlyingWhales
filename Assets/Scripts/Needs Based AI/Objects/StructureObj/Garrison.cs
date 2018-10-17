@@ -4,12 +4,6 @@ using UnityEngine;
 
 public class Garrison : StructureObj {
 
-    //public int cooldown;
-
-    public int armyStrength { //Army Strength is 25% of the linked Settlement's Civilian Count
-        get { return this.objectLocation.tileLocation.areaOfTile == null ? 0 : (int)(this.objectLocation.tileLocation.areaOfTile.totalCivilians * 0.25f); }
-    }
-
     public Garrison() {
         _specificObjectType = LANDMARK_TYPE.GARRISON;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
@@ -21,34 +15,37 @@ public class Garrison : StructureObj {
         SetCommonData(clone);
         return clone;
     }
-    public override void StartState(ObjectState state) {
-        base.StartState(state);
-        if (state.stateName == "Corrupted") { //When state changes to Corrupted, add 100 Corruption Value.
-            //ScheduleDoneTraining();
-        }else if (state.stateName == "Training") {
-            ScheduleDoneTraining();
-        }
+    public override void StartDayAction() {
+        base.StartDayAction();
+        CreateDefenderUnits();
     }
     #endregion
 
-    #region Utilities
-    private void ScheduleDoneTraining() {
-        GameDate readyDate = GameManager.Instance.Today();
-        readyDate.AddHours(336); // 1 week
-        SchedulingManager.Instance.AddEntry(readyDate, DoneTraining);
-    }
-    private void DoneTraining() {
-        if (_currentState.stateName == "Training") {
-            ObjectState readyState = GetState("Ready");
-            ChangeState(readyState);
+    private void CreateDefenderUnits() {
+        Debug.Log("Creating defender units for " + _objectLocation.locationName);
+        for (int j = 0; j < _objectLocation.defenders.Length; j++) {
+            Party currParty = _objectLocation.defenders[j];
+            if (currParty != null) {
+                for (int k = 0; k < currParty.icharacters.Count; k++) {
+                    ICharacter currCharacter = currParty.icharacters[k];
+                    if (currCharacter is CharacterArmyUnit) {
+                        CharacterArmyUnit armyUnit = currCharacter as CharacterArmyUnit;
+                        int productionCost = armyUnit.GetProductionCost();
+                        if (_objectLocation.tileLocation.areaOfTile.HasEnoughSupplies(productionCost)) {
+                            armyUnit.AdjustArmyCount(1);
+                            _objectLocation.tileLocation.areaOfTile.AdjustSuppliesInBank(-productionCost);
+                        }
+                    } else if (currCharacter is MonsterArmyUnit) {
+                        MonsterArmyUnit armyUnit = currCharacter as MonsterArmyUnit;
+                        int productionCost = armyUnit.GetProductionCost();
+                        if (_objectLocation.tileLocation.areaOfTile.HasEnoughSupplies(productionCost)) {
+                            armyUnit.AdjustArmyCount(1);
+                            _objectLocation.tileLocation.areaOfTile.AdjustSuppliesInBank(-productionCost);
+                        }
+                    }
+                }
+            }
         }
     }
-    public void CommenceTraining() {
-        if (_currentState.stateName == "Ready") {
-            ObjectState trainingState = GetState("Training");
-            ChangeState(trainingState);
-        }
-    }
-    #endregion
 
 }

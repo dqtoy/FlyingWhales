@@ -11,6 +11,7 @@ public class Faction {
 	protected int _id;
     protected string _name;
     protected string _description;
+    protected RACE _race;
     protected ILeader _leader;
     private Sprite _emblem;
     protected List<Region> _ownedRegions;
@@ -32,6 +33,9 @@ public class Faction {
     }
     public string description {
         get { return _description; }
+    }
+    public RACE race {
+        get { return _race; }
     }
     public string urlName {
 		get { return "<link=" + '"' + this._id.ToString() + "_faction" + '"' +">" + this._name + "</link>"; }
@@ -67,6 +71,7 @@ public class Faction {
         SetName(RandomNameGenerator.Instance.GenerateKingdomName());
         SetEmblem(FactionManager.Instance.GenerateFactionEmblem(this));
         SetFactionColor (Utilities.GetColorForFaction());
+        SetRace(RACE.HUMANS);
         SetMorality(MORALITY.GOOD);
         _characters = new List<ECS.Character>();
         _ownedLandmarks = new List<BaseLandmark>();
@@ -83,6 +88,7 @@ public class Faction {
         SetFactionColor(data.factionColor);
         SetEmblem(FactionManager.Instance.GetFactionEmblem(data.emblemIndex));
         SetMorality(data.morality);
+        SetRace(data.race);
         _characters = new List<ECS.Character>();
         _ownedLandmarks = new List<BaseLandmark>();
         _ownedRegions = new List<Region>();
@@ -93,6 +99,10 @@ public class Faction {
 
     private void AddListeners() {
         Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveCharacter);
+    }
+
+    public void SetRace(RACE race) {
+        _race = race;
     }
 
     #region virtuals

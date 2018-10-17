@@ -802,4 +802,31 @@ public class CharacterManager : MonoBehaviour {
         }
     }
     #endregion
+
+    #region Armies
+    public CharacterArmyUnit CreateCharacterArmyUnit(string className, RACE race, int armyCount, Faction faction = null, ILocation initialLocation = null) {
+        CharacterArmyUnit armyUnit = new CharacterArmyUnit(className, race, armyCount);
+
+        Party party = armyUnit.CreateOwnParty();
+        if (faction != null) {
+            armyUnit.SetFaction(faction);
+        }
+#if !WORLD_CREATION_TOOL
+        party.CreateIcon();
+        if (initialLocation != null) {
+            party.icon.SetPosition(initialLocation.tileLocation.transform.position);
+
+            if (initialLocation is BaseLandmark) {
+                initialLocation.AddCharacterToLocation(party);
+            }
+        }
+#endif
+        //_allCharacters.Add(armyUnit);
+        //Messenger.Broadcast(Signals.CHARACTER_CREATED, armyUnit);
+        return armyUnit;
+    }
+    public CharacterArmyUnit CreateCharacterArmyUnit(RACE race, LandmarkDefender defender, Faction faction = null, ILocation initialLocation = null) {
+        return CreateCharacterArmyUnit(defender.className, race, defender.armyCount, faction, initialLocation);
+    }
+    #endregion
 }

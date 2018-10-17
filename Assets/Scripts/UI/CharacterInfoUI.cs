@@ -371,7 +371,13 @@ public class CharacterInfoUI : UIMenu {
                 lvlClassLbl.text = "???";
             }
         }
-        phaseLbl.text = _activeCharacter.schedule.currentPhase.ToString();
+        if (_activeCharacter.schedule != null) {
+            phaseLbl.text = _activeCharacter.schedule.currentPhase.ToString();
+            phaseLbl.gameObject.SetActive(true);
+        } else {
+            phaseLbl.gameObject.SetActive(false);
+        }
+        
         squadEmblem.SetSquad(_activeCharacter.squad);
         factionEmblem.SetFaction(_activeCharacter.faction);
         //affiliations.SetCharacter(_activeCharacter);

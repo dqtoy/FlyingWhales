@@ -8,6 +8,7 @@ public class FactionSaveData {
     public int factionID;
     public string factionName;
     public string factionDescription;
+    public RACE race;
     public ColorSave factionColor;
     public List<int> ownedAreas;
     public Dictionary<int, FACTION_RELATIONSHIP_STATUS> relationships;
@@ -20,6 +21,7 @@ public class FactionSaveData {
         factionName = faction.name;
         factionDescription = faction.description;
         factionColor = new ColorSave(faction.factionColor);
+        race = faction.race;
         ConstructOwnedAreas(faction);
         ConstructRelationships(faction);
 

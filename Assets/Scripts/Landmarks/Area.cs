@@ -38,6 +38,7 @@ public class Area {
         AddTile(coreTile);
 #if !WORLD_CREATION_TOOL
         ScheduleFirstAction();
+        StartSupplyLine();
 #endif
     }
     public Area(AreaSaveData data) {
@@ -65,6 +66,7 @@ public class Area {
 #else
         SetCoreTile(GridMap.Instance.GetHexTile(data.coreTileID));
         ScheduleFirstAction();
+        StartSupplyLine();
 #endif
         AddTile(Utilities.GetTilesFromIDs(data.tileData));
     }
@@ -372,6 +374,7 @@ public class Area {
     private void ExecuteSupplyLine() {
         CollectDailySupplies();
         PayMaintenance();
+        LandmarkStartDayActions();
     }
     private void CollectDailySupplies() {
         for (int i = 0; i < landmarks.Count; i++) {
@@ -381,11 +384,40 @@ public class Area {
         }
     }
     private void PayMaintenance() {
-        //reduce supply per 1 unit in defenders
+        //consumes Supply per existing unit
+        for (int i = 0; i < landmarks.Count; i++) {
+            BaseLandmark currLandmark = landmarks[i];
+            for (int j = 0; j < currLandmark.defenders.Length; j++) {
+                Party currDefenderParty = currLandmark.defenders[j];
+                if (currDefenderParty != null) {
+                    for (int k = 0; k < currDefenderParty.icharacters.Count; k++) {
+                        ICharacter currCharacter = currDefenderParty.icharacters[k];
+                        if (currCharacter is CharacterArmyUnit) {
+                            CharacterArmyUnit armyUnit = currCharacter as CharacterArmyUnit;
+                            AdjustSuppliesInBank(-armyUnit.armyCount);
+                        } else if (currCharacter is MonsterArmyUnit) {
+                            MonsterArmyUnit armyUnit = currCharacter as MonsterArmyUnit;
+                            AdjustSuppliesInBank(-armyUnit.armyCount);
+                        } else {
+                            AdjustSuppliesInBank(-1); //if just a single character or monster
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private void LandmarkStartDayActions() {
+        for (int i = 0; i < landmarks.Count; i++) {
+            BaseLandmark currLandmark = landmarks[i];
+            currLandmark.landmarkObj.StartDayAction();
+        }
     }
     public void AdjustSuppliesInBank(int amount) {
         suppliesInBank += amount;
         suppliesInBank = Mathf.Max(0, suppliesInBank);
+    }
+    public bool HasEnoughSupplies(int neededSupplies) {
+        return suppliesInBank >= neededSupplies;
     }
     #endregion
 }

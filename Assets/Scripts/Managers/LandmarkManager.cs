@@ -38,11 +38,18 @@ public class LandmarkManager : MonoBehaviour {
         Instance = this;
         corruptedLandmarksCount = 0;
         allAreas = new List<Area>();
+        ConstructLandmarkData();
         LoadLandmarkTypeDictionary();
     }
     #endregion
 
     #region Landmarks
+    private void ConstructLandmarkData() {
+        for (int i = 0; i < landmarkData.Count; i++) {
+            LandmarkData data = landmarkData[i];
+            data.ConstructData();
+        }
+    }
     private void LoadLandmarkTypeDictionary() {
         landmarkDataDict = new Dictionary<LANDMARK_TYPE, LandmarkData>();
         for (int i = 0; i < landmarkData.Count; i++) {
@@ -82,6 +89,7 @@ public class LandmarkManager : MonoBehaviour {
         //}
         //ConstructLandmarkObjects(landmarkData, newLandmark);
         //		AddInitialLandmarkItems (newLandmark);
+        newLandmark.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(newLandmark.specificLandmarkType.ToString())) as StructureObj);
 #endif
         return newLandmark;
     }
@@ -107,6 +115,7 @@ public class LandmarkManager : MonoBehaviour {
             newLandmark.AddInteraction(investigateInteraction);
         }
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
+        newLandmark.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(newLandmark.specificLandmarkType.ToString())) as StructureObj);
 #endif
         if (saveData.items != null) {
             for (int i = 0; i < saveData.items.Count; i++) {

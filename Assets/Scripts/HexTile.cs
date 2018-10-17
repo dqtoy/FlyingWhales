@@ -328,9 +328,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         _region.AddLandmarkToRegion(_landmarkOnTile);
         if (_landmarkOnTile != null) {
             SetPassableState(true);
-#if !WORLD_CREATION_TOOL
-            _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString())) as StructureObj);
-#endif
+//#if !WORLD_CREATION_TOOL
+//            _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString())) as StructureObj);
+//#endif
         }
         Biomes.Instance.UpdateTileVisuals(this);
         return _landmarkOnTile;
@@ -362,9 +362,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         _region.AddLandmarkToRegion(_landmarkOnTile);
         if (_landmarkOnTile != null) {
             SetPassableState(true);
-#if !WORLD_CREATION_TOOL
-            _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(_landmarkOnTile.specificLandmarkType.ToString())) as StructureObj);
-#endif
+//#if !WORLD_CREATION_TOOL
+//            _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(_landmarkOnTile.specificLandmarkType.ToString())) as StructureObj);
+//#endif
         }
         return _landmarkOnTile;
     }

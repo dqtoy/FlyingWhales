@@ -76,6 +76,9 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 0600000007000000
     isUnique: 1
     dailySupplyProduction: 0
@@ -98,6 +101,9 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 97be908950d991c49b0092d3a14acceb, type: 3}
       tintSprite: {fileID: 21300000, guid: 36bb9c87d942a0747a60b417b0cd79e2, type: 3}
     elvenLandmarkTileSprites: []
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 0600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -122,6 +128,9 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 0b1a6dfee21888942b79f0008084a2b8, type: 3}
       tintSprite: {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
     elvenLandmarkTileSprites: []
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 300
@@ -146,6 +155,9 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 99997bff53b6d7042a70307d331e1d3f, type: 3}
       tintSprite: {fileID: 21300000, guid: 03b9f985c5fc3c74b8f56977df17c459, type: 3}
     elvenLandmarkTileSprites: []
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -167,6 +179,9 @@ MonoBehaviour:
     neutralTileSprites: []
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -200,6 +215,9 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: 85a0cd260bc3a304ea9c12fa4c06c78e, type: 3}
     - mainSprite: {fileID: 21300000, guid: 3a45dae052a768e45b88c6a722e03f8d, type: 3}
       tintSprite: {fileID: 21300000, guid: 9f89551edef6d6743a2486dea9f60a21, type: 3}
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -233,6 +251,9 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 56d159c582f9df74381d04ab1e663d9c, type: 3}
       tintSprite: {fileID: 21300000, guid: d17f26b8defdee446a0719c4630d3ef2, type: 3}
     elvenLandmarkTileSprites: []
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -260,6 +281,9 @@ MonoBehaviour:
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 63d253e0c6b317d4395379a46b5ad2f2, type: 3}
       tintSprite: {fileID: 0}
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -287,6 +311,9 @@ MonoBehaviour:
     neutralTileSprites: []
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -310,6 +337,9 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 89966dd0fee7fab4abe474ffa1727756, type: 3}
       tintSprite: {fileID: 21300000, guid: 7828e545f69833d49a9b79ab03928852, type: 3}
     elvenLandmarkTileSprites: []
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -335,6 +365,9 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 897345c9564591c4697a148359e3dc3b, type: 3}
       tintSprite: {fileID: 21300000, guid: 455f303fb578b4841ae48fd16107beb2, type: 3}
     elvenLandmarkTileSprites: []
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 200
@@ -360,6 +393,9 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 6b1f2c8a016859143b61f1cb6005250e, type: 3}
       tintSprite: {fileID: 21300000, guid: 9d1349113684fd348ab6dd814eaf5ae4, type: 3}
     elvenLandmarkTileSprites: []
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 500
@@ -385,6 +421,9 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 3f5f539ec1c81814e972d6b0b4903932, type: 3}
       tintSprite: {fileID: 21300000, guid: 59980d3c50e9c3c4e8c869029a0ccc2e, type: 3}
     elvenLandmarkTileSprites: []
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 300
@@ -408,6 +447,9 @@ MonoBehaviour:
     - mainSprite: {fileID: 21300000, guid: 25ad2f1445b44a44780267f577682fc6, type: 3}
       tintSprite: {fileID: 21300000, guid: 2509d8d1c25f61343a7e20c936950617, type: 3}
     elvenLandmarkTileSprites: []
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -435,6 +477,9 @@ MonoBehaviour:
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: ef09c80c77be9fd44b96fa5ee6f851e5, type: 3}
       tintSprite: {fileID: 0}
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -463,6 +508,9 @@ MonoBehaviour:
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
       tintSprite: {fileID: 0}
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -490,6 +538,9 @@ MonoBehaviour:
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 65cd2e8691df5aa408946fb5b873bdd3, type: 3}
       tintSprite: {fileID: 0}
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -523,11 +574,23 @@ MonoBehaviour:
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
       tintSprite: {fileID: 0}
+    defenderWeightsDict:
+      m_keys:
+      - className: Marauder
+        armyCount: 25
+        includeInFirstWeight: 1
+      - className: Bowman
+        armyCount: 15
+        includeInFirstWeight: 1
+      - className: Healer
+        armyCount: 15
+        includeInFirstWeight: 0
+      m_values: 1e0000000f00000005000000
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     startingMonsterSpawn: {fileID: 0}
-    isMonsterSpawner: 1
+    isMonsterSpawner: 0
     monsterSets:
     - {fileID: 114946858911628526, guid: 336c4ebd4586d214b9190e8677feeb77, type: 2}
     - {fileID: 114946858911628526, guid: 2ca6ece0a256b314ba9df3d026e69b32, type: 2}
@@ -556,6 +619,9 @@ MonoBehaviour:
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 568e996242fb9a84b9028d668e263ef3, type: 3}
       tintSprite: {fileID: 0}
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -604,6 +670,9 @@ MonoBehaviour:
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 6debf8113ebc504409044d47f4163ba5, type: 3}
       tintSprite: {fileID: 0}
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -646,6 +715,9 @@ MonoBehaviour:
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 92a121cdd7e46494e8802d75d1f0695b, type: 3}
       tintSprite: {fileID: 0}
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -679,6 +751,9 @@ MonoBehaviour:
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 3bc5ae8edcf5dfc4ca9f51fdc0a28946, type: 3}
       tintSprite: {fileID: 0}
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -718,6 +793,9 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
     - mainSprite: {fileID: 21300000, guid: 4aaa23b9987451d4e895396f62c8683e, type: 3}
       tintSprite: {fileID: 0}
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -754,6 +832,9 @@ MonoBehaviour:
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
       tintSprite: {fileID: 0}
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -822,6 +903,9 @@ MonoBehaviour:
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 98dbae7ea4933304e99ce222fa122a1c, type: 3}
       tintSprite: {fileID: 0}
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -861,6 +945,9 @@ MonoBehaviour:
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 3c2c143b0f889194a91526a8068444c3, type: 3}
       tintSprite: {fileID: 0}
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -894,6 +981,9 @@ MonoBehaviour:
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: c9cfd19b999de28429f009befe899765, type: 3}
       tintSprite: {fileID: 0}
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -915,6 +1005,9 @@ MonoBehaviour:
     neutralTileSprites: []
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -936,6 +1029,9 @@ MonoBehaviour:
     neutralTileSprites: []
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -959,6 +1055,9 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -980,6 +1079,9 @@ MonoBehaviour:
     neutralTileSprites: []
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -1001,6 +1103,9 @@ MonoBehaviour:
     neutralTileSprites: []
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
@@ -1022,6 +1127,9 @@ MonoBehaviour:
     neutralTileSprites: []
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+    defenderWeightsDict:
+      m_keys: []
+      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0

@@ -83,6 +83,7 @@ public class StructureObj : IObject {
         SetIsDirty(true);
         ConstructResourceInventory();
     }
+
     #region Virtuals
     public virtual IObject Clone() {
         StructureObj clone = new StructureObj();
@@ -102,6 +103,7 @@ public class StructureObj : IObject {
     }
     public virtual void OnAddToLandmark(BaseLandmark newLocation) {
         SetObjectLocation(newLocation);
+        GenerateInitialDefenders();
     }
     public virtual void StartState(ObjectState state) {
         if(state.stateName == "Ruined") {
@@ -111,6 +113,10 @@ public class StructureObj : IObject {
         }
     }
     public virtual void EndState(ObjectState state) {
+
+    }
+    public virtual void StartDayAction() { }
+    public virtual void GenerateInitialDefenders() {
 
     }
     #endregion

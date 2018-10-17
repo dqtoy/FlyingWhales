@@ -8,10 +8,10 @@ public class Depressed : Attribute {
     }
     public override void OnAddAttribute(Character character) {
         base.OnAddAttribute(character);
-        _character.AdjustMentalPoints(-3);
+        //_character.AdjustMentalPoints(-3);
     }
     public override void OnRemoveAttribute() {
         base.OnRemoveAttribute();
-        _character.AdjustMentalPoints(3);
+        //_character.AdjustMentalPoints(3);
     }
 }

@@ -19,6 +19,7 @@ public class FactionInfoEditor : MonoBehaviour {
     [SerializeField] private ColorPickerControl factionColorPicker;
     [SerializeField] private Dropdown emblemDropdown;
     [SerializeField] private Dropdown moralityDropdown;
+    [SerializeField] private Dropdown raceDropdown;
 
     [Header("Relationships")]
     [SerializeField] private Text relationshipSummaryLbl;
@@ -32,6 +33,7 @@ public class FactionInfoEditor : MonoBehaviour {
         LoadRelationshipChoices();
         LoadEmblemChoices();
         LoadMoralityChoices();
+        LoadRaceChoices();
         UpdateBasicInfo();
         UpdateAreas();
         UpdateRelationshipInfo();
@@ -77,6 +79,7 @@ public class FactionInfoEditor : MonoBehaviour {
 
         emblemDropdown.value = Utilities.GetOptionIndex(emblemDropdown, FactionManager.Instance.GetFactionEmblemIndex(_faction.emblem).ToString());
         moralityDropdown.value = Utilities.GetOptionIndex(moralityDropdown, _faction.morality.ToString());
+        raceDropdown.value = Utilities.GetOptionIndex(raceDropdown, _faction.race.ToString());
     }
     public void ChangeFactionName(string newName) {
         _faction.SetName(newName);
@@ -95,6 +98,15 @@ public class FactionInfoEditor : MonoBehaviour {
         string chosen = moralityDropdown.options[choice].text;
         MORALITY morality = (MORALITY)System.Enum.Parse(typeof(MORALITY), chosen);
         _faction.SetMorality(morality);
+    }
+    private void LoadRaceChoices() {
+        raceDropdown.ClearOptions();
+        raceDropdown.AddOptions(Utilities.GetEnumChoices<RACE>());
+    }
+    public void ChangeRace(int choice) {
+        string chosen = raceDropdown.options[choice].text;
+        RACE race = (RACE)System.Enum.Parse(typeof(RACE), chosen);
+        _faction.SetRace(race);
     }
     #endregion
 
