@@ -29,8 +29,6 @@ public interface ICharacter {
     CharacterBattleOnlyTracker battleOnlyTracker { get; }
     Faction faction { get; }
     BaseLandmark homeLandmark { get; }
-    //StructureObj homeStructure { get; }
-    //Area home { get; } //Character only
     CharacterRole role { get; } //Character only
     CharacterClass characterClass { get; } //Character only
     CharacterPortrait characterPortrait { get; }
@@ -38,12 +36,10 @@ public interface ICharacter {
     Armor equippedArmor { get; }
     Item equippedAccessory { get; }
     Item equippedConsumable { get; }
-    //Combat currentCombat { get; set; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }
     Dictionary<Character, Relationship> relationships { get; }
     List<Skill> skills { get; }
-    //List<BodyPart> bodyParts { get; }
     List<CharacterAction> miscActions { get; }
     List<Attribute> attributes { get; }
     List<Item> inventory { get; }
@@ -60,7 +56,6 @@ public interface ICharacter {
     void ResetToFullSP();
     void Initialize();
     void Death();
-    //void EverydayAction();
     void FaintOrDeath(ICharacter killer);
     void SetSide(ECS.SIDES side);
     void SetRowNumber(int row);
@@ -73,7 +68,6 @@ public interface ICharacter {
     void OnRemovedFromParty();
     void OnAddedToParty();
     void SetHomeLandmark(BaseLandmark newHomeLandmark);
-    //void SetHomeStructure(StructureObj newHomeStructure);
     void AddHistory(Log log); //Character only
     void SetSquad(Squad squad);
     void SetMode(MODE mode);

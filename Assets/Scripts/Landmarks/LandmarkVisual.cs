@@ -63,13 +63,13 @@ public class LandmarkVisual : MonoBehaviour {
     public void OnCharacterEnteredLandmark(Party iparty) {
         //add character portrait to grid
         CharacterPortrait portrait = iparty.icon.characterPortrait;
-        if(iparty.mainCharacter is ECS.Character && iparty.mainCharacter.role.roleType == CHARACTER_ROLE.PLAYER) {
-            portrait.transform.SetParent(playerContent);
-        } else {
+        //if(iparty.mainCharacter is ECS.Character && iparty.mainCharacter.role.roleType == CHARACTER_ROLE.PLAYER) {
+        //    portrait.transform.SetParent(playerContent);
+        //} else {
             portrait.transform.SetParent(hoverContent);
             portrait.ignoreInteractions = true;
             UpdateCharCount();
-        }
+        //}
         portrait.transform.localScale = Vector3.one;
         //(portrait.transform as RectTransform).pivot = new Vector2(0.5f, 0f);
         (portrait.transform as RectTransform).sizeDelta = new Vector2(64, 64);

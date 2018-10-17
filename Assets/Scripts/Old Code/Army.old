@@ -89,7 +89,7 @@ public class Army {
         //    (_originLandmark.landmarkObj as ElvenSettlement).CommenceTraining();
         //} else 
         if (_originLandmark.landmarkObj.specificObjectType == LANDMARK_TYPE.GARRISON) {
-            (_originLandmark.landmarkObj as Garrison).CommenceTraining();
+            //(_originLandmark.landmarkObj as Garrison).CommenceTraining();
         } else if (_originLandmark.landmarkObj.specificObjectType == LANDMARK_TYPE.DEMONIC_PORTAL) {
             (_originLandmark.landmarkObj as DemonicPortal).CommenceTraining();
         }

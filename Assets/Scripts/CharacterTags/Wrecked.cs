@@ -8,10 +8,10 @@ public class Wrecked : Attribute {
     }
     public override void OnAddAttribute(Character character) {
         base.OnAddAttribute(character);
-        _character.AdjustPhysicalPoints(-3);
+        //_character.AdjustPhysicalPoints(-3);
     }
     public override void OnRemoveAttribute() {
         base.OnRemoveAttribute();
-        _character.AdjustPhysicalPoints(3);
+        //_character.AdjustPhysicalPoints(3);
     }
 }

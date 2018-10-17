@@ -1,0 +1,24 @@
+{
+  "_className": "Marauder",
+  "_strWeightAllocation": 35.0,
+  "_intWeightAllocation": 5.0,
+  "_agiWeightAllocation": 25.0,
+  "_vitWeightAllocation": 35.0,
+  "_baseHP": 0.0,
+  "_hpPerLevel": 0.0,
+  "_baseSP": 0.0,
+  "_spPerLevel": 0.0,
+  "_allowedWeaponTypes": [
+    1
+  ],
+  "_harvestResources": [],
+  "_skillsPerLevelNames": [
+    {
+      "list": [
+        "Normal Attack",
+        "Bash"
+      ]
+    }
+  ],
+  "_workActionType": 49
+}
