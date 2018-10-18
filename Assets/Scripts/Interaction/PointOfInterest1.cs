@@ -8,10 +8,10 @@ public class PointOfInterest1 : Interaction {
     #region Overrides
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
-        InteractionState supplyRewardState = new InteractionState("Supply Reward", this);
-        InteractionState manaRewardState = new InteractionState("Mana Reward", this);
-        InteractionState demonDisappearsRewardState = new InteractionState("Demon Disappears Reward", this);
-        InteractionState demonBonusExpRewardState = new InteractionState("Demon Bonus Exp Reward", this);
+        InteractionState supplyState = new InteractionState("Supply", this);
+        InteractionState manaState = new InteractionState("Mana", this);
+        InteractionState demonDisappearsState = new InteractionState("Demon Disappears", this);
+        InteractionState demonBonusExpState = new InteractionState("Demon Bonus Exp", this);
 
         if (_interactable is BaseLandmark) {
             BaseLandmark landmark = _interactable as BaseLandmark;
@@ -19,17 +19,17 @@ public class PointOfInterest1 : Interaction {
             startState.SetDescription(startStateDesc);
             CreateActionOptions(startState);
 
-            supplyRewardState.SetEndEffect(() => SupplyRewardEffect(supplyRewardState));
-            manaRewardState.SetEndEffect(() => ManaRewardEffect(manaRewardState));
-            demonDisappearsRewardState.SetEndEffect(() => DemonDisappearsRewardEffect(demonDisappearsRewardState));
-            demonBonusExpRewardState.SetEndEffect(() => DemonBonusExpRewardEffect(demonBonusExpRewardState));
+            supplyState.SetEndEffect(() => supplyStateEffect(supplyState));
+            manaState.SetEndEffect(() => ManaRewardEffect(manaState));
+            demonDisappearsState.SetEndEffect(() => DemonDisappearsRewardEffect(demonDisappearsState));
+            demonBonusExpState.SetEndEffect(() => DemonBonusExpRewardEffect(demonBonusExpState));
 
         }
         _states.Add(startState.name, startState);
-        _states.Add(supplyRewardState.name, supplyRewardState);
-        _states.Add(manaRewardState.name, manaRewardState);
-        _states.Add(demonDisappearsRewardState.name, demonDisappearsRewardState);
-        _states.Add(demonBonusExpRewardState.name, demonBonusExpRewardState);
+        _states.Add(supplyState.name, supplyState);
+        _states.Add(manaState.name, manaState);
+        _states.Add(demonDisappearsState.name, demonDisappearsState);
+        _states.Add(demonBonusExpState.name, demonBonusExpState);
 
         SetCurrentState(startState);
     }
@@ -43,8 +43,7 @@ public class PointOfInterest1 : Interaction {
                 needsMinion = true,
                 effect = () => SendOutDemonEffect(state),
             };
-
-            ActionOption leaveAlonOption = new ActionOption {
+            ActionOption leaveAloneOption = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
                 description = "Leave it alone.",
@@ -52,32 +51,35 @@ public class PointOfInterest1 : Interaction {
                 needsMinion = false,
                 effect = () => LeaveAloneEffect(state),
             };
+
+            state.AddActionOption(sendOutDemonOption);
+            state.AddActionOption(leaveAloneOption);
         }
     }
     #endregion
 
     private void SendOutDemonEffect(InteractionState state) {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement("Supply Reward", 15);
-        effectWeights.AddElement("Mana Reward", 10);
-        effectWeights.AddElement("Demon Disappears Reward", 5);
-        effectWeights.AddElement("Demon Bonus Exp Reward", 10);
+        effectWeights.AddElement("Supply", 15);
+        effectWeights.AddElement("Mana", 10);
+        effectWeights.AddElement("Demon Disappears", 5);
+        effectWeights.AddElement("Demon Bonus Exp", 10);
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
-        if(chosenEffect == "Supply Reward") {
-            SupplyReward(state, chosenEffect);
-        }else if (chosenEffect == "Mana Reward") {
+        if(chosenEffect == "Supply") {
+            supplyState(state, chosenEffect);
+        }else if (chosenEffect == "Mana") {
             ManaReward(state, chosenEffect);
-        }else if (chosenEffect == "Demon Disappears Reward") {
+        }else if (chosenEffect == "Demon Disappears") {
             DemonDisappearsReward(state, chosenEffect);
-        }else if (chosenEffect == "Demon Bonus Exp Reward") {
+        }else if (chosenEffect == "Demon Bonus Exp") {
             DemonBonusExpReward(state, chosenEffect);
         }
     }
     private void LeaveAloneEffect(InteractionState state) {
         state.EndResult();
     }
-    private void SupplyReward(InteractionState state, string effectName) {
+    private void supplyState(InteractionState state, string effectName) {
         _states[effectName].SetDescription(state.assignedMinion.icharacter.name + " discovered a small cache of Supplies.");
         SetCurrentState(_states[effectName]);
     }
@@ -93,7 +95,7 @@ public class PointOfInterest1 : Interaction {
         _states[effectName].SetDescription(state.assignedMinion.icharacter.name + " has returned with nothing but there seems to be a newfound strength within it.");
         SetCurrentState(_states[effectName]);
     }
-    private void SupplyRewardEffect(InteractionState state) {
+    private void supplyStateEffect(InteractionState state) {
         PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, 40);
         state.assignedMinion.AdjustExp(1);
     }

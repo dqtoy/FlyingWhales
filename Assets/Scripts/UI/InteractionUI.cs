@@ -91,7 +91,11 @@ public class InteractionUI : MonoBehaviour {
             InteractionItem interactionItem = _allInteractionItems[i];
             if(interactionItem.interaction == interaction) {
                 _allInteractionItems.RemoveAt(i);
-                GameObject.Destroy(interactionItem.gameObject);
+                GameObject removedChild = null;
+                scrollSnap.RemoveChild(i, out removedChild);
+                if (removedChild != null) {
+                    GameObject.Destroy(removedChild);
+                }
                 scrollSnap.UpdateLayout();
                 break;
             }

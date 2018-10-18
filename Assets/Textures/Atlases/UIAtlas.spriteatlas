@@ -59,11 +59,11 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 871688c1dd0f80e428130a38f3bbc722, type: 3}
   - {fileID: 21300000, guid: 8c51d49239a169c4dbb6c48e21d9596a, type: 3}
   - {fileID: 21300000, guid: bbc8aecbe28700a4dafe5188c53b2ee2, type: 3}
-  - {fileID: 21300000, guid: 165146342d129374ba18d5b3bf969df6, type: 3}
   - {fileID: 21300000, guid: 6a4d7fe63a2ddce45a6389b32e22e2d4, type: 3}
   - {fileID: 21300000, guid: 64c0c27a3a5a0b7419e7b96952268b8a, type: 3}
   - {fileID: 21300000, guid: 0740052277773e24d896e5929351d05a, type: 3}
   - {fileID: 21300000, guid: fd93c6f70e8bb394da445de1541b7a4a, type: 3}
+  - {fileID: 21300000, guid: 165146342d129374ba18d5b3bf969df6, type: 3}
   - {fileID: 21300000, guid: fd9b1ed7f978dae4f85ebfa5eb14d230, type: 3}
   - {fileID: 21300000, guid: 5b6a9120e63507d4283bd6d9395709ad, type: 3}
   - {fileID: 21300000, guid: 68536d9a0f3e0ae49affc11b074194df, type: 3}
@@ -162,6 +162,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 93b34ec21c0450c49b3150771af2a182, type: 3}
   - {fileID: 21300000, guid: f1e35c7ac3c7a2d4899058043305e0e3, type: 3}
   - {fileID: 21300000, guid: c10d17c0ce04cac41a5743f733413e44, type: 3}
+  - {fileID: 21300000, guid: 0ce3a47e10b8335448b1cf88d71e1732, type: 3}
   - {fileID: 21300000, guid: c9308036dbc926241861e76bf65adc5b, type: 3}
   - {fileID: 21300000, guid: 12143706cced450468790025e798d4c8, type: 3}
   - {fileID: 21300000, guid: 62cc391ddf5e0c54b90366603efc2e32, type: 3}
@@ -204,11 +205,11 @@ SpriteAtlas:
   - bottom_inventory1
   - bottom_inventory0
   - bottom_right_left_cap
-  - interaction_tab_bg
   - interaction_minion_slot_glow
   - interaction_minion_slot
   - bottom_right_center_tile
   - BottomMenuContainer
+  - interaction_tab_bg
   - 09_demons03
   - ge_cont-05B
   - ge_cont-05C
@@ -307,6 +308,7 @@ SpriteAtlas:
   - button_speed1_off
   - button_speed2_on
   - button_speed1_on
+  - interaction_tab_selected_done
   - interaction_tab_invalid
   - interaction_tab_selected
   - interaction_tab_unselected

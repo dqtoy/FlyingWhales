@@ -16,6 +16,9 @@ public class ActionOptionButton : MonoBehaviour {
     public void Initialize() {
         Messenger.AddListener(Signals.UPDATED_CURRENCIES, UpdateButton);
     }
+    private void OnDestroy() {
+        Messenger.RemoveListener(Signals.UPDATED_CURRENCIES, UpdateButton);
+    }
     private void UpdateButton() {
         if(_actionOption != null) {
             button.interactable = _actionOption.CanBeDone();

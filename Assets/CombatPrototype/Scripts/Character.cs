@@ -2846,7 +2846,7 @@ namespace ECS {
         }
         public void RemoveInteraction(Interaction interaction) {
             if (_currentInteractions.Remove(interaction)) {
-                Messenger.Broadcast(Signals.REMOVED_INTERACTION, this, interaction);
+                Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
             }
         }
         #endregion

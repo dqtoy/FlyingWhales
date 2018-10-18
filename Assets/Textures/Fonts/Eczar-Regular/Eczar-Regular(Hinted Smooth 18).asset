@@ -11,19 +11,19 @@ MonoBehaviour:
   m_Script: {fileID: -667331979, guid: 89f0137620f6af44b9ba852b4190e64e, type: 3}
   m_Name: Eczar-Regular(Hinted Smooth 18)
   m_EditorClassIdentifier: 
-  hashCode: 0
+  hashCode: -2026919160
   material: {fileID: 21189737157306288}
-  materialHashCode: 0
+  materialHashCode: -355610749
   fontAssetType: 2
   m_fontInfo:
     Name: Eczar
     PointSize: 18
-    Scale: 0
+    Scale: 1
     CharacterCount: 97
     LineHeight: 32
     Baseline: 0
     Ascender: 21
-    CapHeight: 0
+    CapHeight: 12
     Descender: -12
     CenterLine: 0
     SuperscriptOffset: 21
@@ -33,7 +33,7 @@ MonoBehaviour:
     UnderlineThickness: 1.26
     strikethrough: 3.2727273
     strikethroughThickness: 1.26
-    TabWidth: 0
+    TabWidth: 50
     Padding: 5
     AtlasWidth: 512
     AtlasHeight: 512
@@ -42,10 +42,10 @@ MonoBehaviour:
   - id: 32
     x: 5
     y: 507
-    width: 0
-    height: 0
+    width: 5
+    height: 33
     xOffset: 0
-    yOffset: 0
+    yOffset: 21
     xAdvance: 5
     scale: 1
   - id: 33
@@ -976,7 +976,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Eczar-Regular(Hinted Smooth 18) Material
-  m_Shader: {fileID: 4800000, guid: edfcf888cd11d9245b91d2883049a57e, type: 3}
+  m_Shader: {fileID: 4800000, guid: d1cf17907700cb647aa3ea423ba38f2e, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -997,6 +997,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _ColorMask: 15
+    - _DiffusePower: 1
     - _MaskSoftnessX: 0
     - _MaskSoftnessY: 0
     - _Padding: 0
@@ -1009,6 +1010,7 @@ Material:
     - _VertexOffsetY: 0
     m_Colors:
     - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!28 &28160295710765464
 Texture2D:

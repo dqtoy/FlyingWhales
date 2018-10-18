@@ -904,15 +904,6 @@ public class BaseLandmark : ILocation, IInteractable {
     public void EndedInspection() {
         UpdateLastInspection();
     }
-    public void AddInteraction(Interaction interaction) {
-        _currentInteractions.Add(interaction);
-        Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
-    }
-    public void RemoveInteraction(Interaction interaction) {
-        if (_currentInteractions.Remove(interaction)) {
-            Messenger.Broadcast(Signals.REMOVED_INTERACTION, this, interaction);
-        }
-    }
     private void UpdateLastInspection() {
         _lastInspectedOfCharactersAtLocation.Clear();
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
@@ -1088,8 +1079,22 @@ public class BaseLandmark : ILocation, IInteractable {
     #endregion
 
     #region Interactions
+    public void ConstructInitialInteractions() {
+        InvestigateInteraction investigateInteraction = new InvestigateInteraction(this);
+        PointOfInterest1 pointOfInterest1 = new PointOfInterest1(this);
+        PointOfInterest2 pointOfInterest2 = new PointOfInterest2(this);
+        AddInteraction(investigateInteraction);
+        AddInteraction(pointOfInterest1);
+        AddInteraction(pointOfInterest2);
+    }
     public void AddInteraction(Interaction interaction) {
         _currentInteractions.Add(interaction);
+        Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
+    }
+    public void RemoveInteraction(Interaction interaction) {
+        if (_currentInteractions.Remove(interaction)) {
+            Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
+        }
     }
     public bool HasActiveInteraction() {
         //if this landmark already has a landmark other than investigate
