@@ -19,7 +19,7 @@ public class PointOfInterest1 : Interaction {
             startState.SetDescription(startStateDesc);
             CreateActionOptions(startState);
 
-            supplyState.SetEndEffect(() => supplyStateEffect(supplyState));
+            supplyState.SetEndEffect(() => SupplyRewardEffect(supplyState));
             manaState.SetEndEffect(() => ManaRewardEffect(manaState));
             demonDisappearsState.SetEndEffect(() => DemonDisappearsRewardEffect(demonDisappearsState));
             demonBonusExpState.SetEndEffect(() => DemonBonusExpRewardEffect(demonBonusExpState));
@@ -67,7 +67,7 @@ public class PointOfInterest1 : Interaction {
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         if(chosenEffect == "Supply") {
-            supplyState(state, chosenEffect);
+            SupplyReward(state, chosenEffect);
         }else if (chosenEffect == "Mana") {
             ManaReward(state, chosenEffect);
         }else if (chosenEffect == "Demon Disappears") {
@@ -79,23 +79,23 @@ public class PointOfInterest1 : Interaction {
     private void LeaveAloneEffect(InteractionState state) {
         state.EndResult();
     }
-    private void supplyState(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.assignedMinion.icharacter.name + " discovered a small cache of Supplies.");
+    private void SupplyReward(InteractionState state, string effectName) {
+        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " discovered a small cache of Supplies.");
         SetCurrentState(_states[effectName]);
     }
     private void ManaReward(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.assignedMinion.icharacter.name + " discovered a source of magical energy. We have converted it into a small amount of Mana.");
+        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " discovered a source of magical energy. We have converted it into a small amount of Mana.");
         SetCurrentState(_states[effectName]);
     }
     private void DemonDisappearsReward(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.assignedMinion.icharacter.name + " has not returned. We can only assume the worst.");
+        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " has not returned. We can only assume the worst.");
         SetCurrentState(_states[effectName]);
     }
     private void DemonBonusExpReward(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.assignedMinion.icharacter.name + " has returned with nothing but there seems to be a newfound strength within it.");
+        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " has returned with nothing but there seems to be a newfound strength within it.");
         SetCurrentState(_states[effectName]);
     }
-    private void supplyStateEffect(InteractionState state) {
+    private void SupplyRewardEffect(InteractionState state) {
         PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, 40);
         state.assignedMinion.AdjustExp(1);
     }
@@ -104,6 +104,7 @@ public class PointOfInterest1 : Interaction {
         state.assignedMinion.AdjustExp(1);
     }
     private void DemonDisappearsRewardEffect(InteractionState state) {
+        state.assignedMinion.icharacter.Death();
         PlayerManager.Instance.player.RemoveMinion(state.assignedMinion);
     }
     private void DemonBonusExpRewardEffect(InteractionState state) {

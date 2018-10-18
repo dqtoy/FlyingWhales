@@ -113,7 +113,11 @@ public class LandmarkInfoUI : UIMenu {
     private void UpdateBasicInfo() {
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_activeLandmark.specificLandmarkType);
         landmarkNameLbl.text = _activeLandmark.landmarkName;
-        suppliesNameLbl.text = _activeLandmark.tileLocation.areaOfTile.suppliesInBank.ToString();
+        if(_activeLandmark.tileLocation.areaOfTile != null) {
+            suppliesNameLbl.text = _activeLandmark.tileLocation.areaOfTile.suppliesInBank.ToString();
+        } else {
+            suppliesNameLbl.text = "0";
+        }
 
         if (_activeLandmark.owner == null) {
             factionEmblem.gameObject.SetActive(false);

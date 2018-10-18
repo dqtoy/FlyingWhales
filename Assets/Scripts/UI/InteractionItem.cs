@@ -51,6 +51,7 @@ public class InteractionItem : MonoBehaviour {
         if(_interaction != null) {
             InitializeActionButtons();
             UpdateState();
+            ChangedActivatedState();
         }
     }
     private void InitializeActionButtons() {
@@ -59,18 +60,37 @@ public class InteractionItem : MonoBehaviour {
         }
     }
     public void UpdateState() {
-        portrait.GeneratePortrait(null, 50, true);
         descriptionText.text = _interaction.currentState.description;
+        confirmNoMinionButton.gameObject.SetActive(false);
+        confirmMinionGO.SetActive(false);
         for (int i = 0; i < actionOptionButtons.Length; i++) {
-            if(_interaction.currentState.actionOptions[i] != null) {
+            if (_interaction.currentState.actionOptions[i] != null) {
                 actionOptionButtons[i].SetOption(_interaction.currentState.actionOptions[i]);
                 actionOptionButtons[i].gameObject.SetActive(true);
             } else {
                 actionOptionButtons[i].gameObject.SetActive(false);
             }
         }
-        confirmNoMinionButton.gameObject.SetActive(false);
-        confirmMinionGO.SetActive(false);
+        if (_interaction.isActivated && !_interaction.currentState.isEnd) {
+            ActionOption actionOption = _interaction.currentState.chosenOption;
+            if (actionOption != null) {
+                if (actionOption.assignedMinion != null) {
+                    portrait.GeneratePortrait(actionOption.assignedMinion.icharacter.portraitSettings, 95, true);
+                } else {
+                    portrait.GeneratePortrait(null, 95, true);
+                }
+                if (actionOption.needsMinion) {
+                    confirmMinionGO.SetActive(true);
+                } else {
+                    confirmNoMinionButton.gameObject.SetActive(true);
+                }
+            }
+        } else {
+            portrait.GeneratePortrait(null, 95, true);
+            if (_interaction.currentState.isEnd) {
+                confirmNoMinionButton.gameObject.SetActive(true);
+            }
+        }
     }
     private void ChangedActivatedState() {
         ChangeStateAllButtons(!_interaction.isActivated);
@@ -85,7 +105,7 @@ public class InteractionItem : MonoBehaviour {
     public void SetCurrentSelectedActionOption(ActionOption actionOption) {
         _currentSelectedActionOption = actionOption;
         if (_currentSelectedActionOption.needsMinion) {
-            portrait.GeneratePortrait(null, 50, true);
+            portrait.GeneratePortrait(null, 95, true);
             confirmMinionGO.SetActive(true);
             confirmMinionButton.interactable = false;
             confirmNoMinionButton.gameObject.SetActive(false);
@@ -109,9 +129,12 @@ public class InteractionItem : MonoBehaviour {
         }
     }
     public void OnMinionDrop(Transform transform) {
+        if (_interaction.isActivated) {
+            return;
+        }
         MinionItem minionItem = transform.GetComponent<MinionItem>();
         _currentSelectedActionOption.assignedMinion = minionItem.minion;
-        portrait.GeneratePortrait(minionItem.portrait.portraitSettings, 50, true);
+        portrait.GeneratePortrait(minionItem.portrait.portraitSettings, 95, true);
         if (_currentSelectedActionOption.assignedMinion != null) {
             confirmMinionButton.interactable = true;
         }

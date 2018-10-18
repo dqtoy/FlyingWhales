@@ -9,8 +9,9 @@ public class InteractionState {
     private string _description;
     private bool _isEnd;
     private Action _endEffect;
-    private ActionOption[] _actionOptions;
     private Minion _assignedMinion;
+    private ActionOption _chosenOption;
+    private ActionOption[] _actionOptions;
 
     #region getters/setters
     public string name {
@@ -21,6 +22,9 @@ public class InteractionState {
     }
     public bool isEnd {
         get { return _isEnd; }
+    }
+    public ActionOption chosenOption {
+        get { return _chosenOption; }
     }
     public Interaction interaction {
         get { return _interaction; }
@@ -36,6 +40,7 @@ public class InteractionState {
     public InteractionState(string name, Interaction interaction) {
         _interaction = interaction;
         _name = name;
+        _chosenOption = null;
         _actionOptions = new ActionOption[4];
     }
     public void SetDescription(string desc) {
@@ -60,9 +65,15 @@ public class InteractionState {
         }
         _endEffect = endEffect;
     }
+    public void SetChosenOption(ActionOption option) {
+        _chosenOption = option;
+    }
     public void EndResult() {
         if(_endEffect != null) {
             _endEffect();
+        }
+        if(_assignedMinion != null && !_assignedMinion.icharacter.isDead) {
+            _assignedMinion.GoBackFromAssignment();
         }
         interaction.EndInteraction();
     }

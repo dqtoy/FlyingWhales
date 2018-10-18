@@ -99,38 +99,39 @@ public class PointOfInterest2 : Interaction {
         state.EndResult();
     }
     private void SupplyReward(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.assignedMinion.icharacter.name + " discovered a small cache of Supplies.");
+        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " discovered a small cache of Supplies.");
         SetCurrentState(_states[effectName]);
     }
     private void ManaReward(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.assignedMinion.icharacter.name + " discovered a source of magical energy. We have converted it into a small amount of Mana.");
+        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " discovered a source of magical energy. We have converted it into a small amount of Mana.");
         SetCurrentState(_states[effectName]);
     }
     private void DemonDisappearsReward(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.assignedMinion.icharacter.name + " has not returned. We can only assume the worst.");
+        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " has not returned. We can only assume the worst.");
         SetCurrentState(_states[effectName]);
     }
     private void DemonWeaponUpgradeReward(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.assignedMinion.icharacter.name + " has returned with an improved Weapon.");
+        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " has returned with an improved Weapon.");
         SetCurrentState(_states[effectName]);
     }
     private void DemonArmorUpgradeReward(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.assignedMinion.icharacter.name + " has returned with an improved Armor.");
+        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " has returned with an improved Armor.");
         SetCurrentState(_states[effectName]);
     }
     private void UnleashedMonsterReward(InteractionState state, string effectName) {
         if(_interactable is BaseLandmark) {
             BaseLandmark landmark = _interactable as BaseLandmark;
             if(landmark.charactersWithHomeOnLandmark.Count > 0) {
-                _states[effectName].SetDescription(state.assignedMinion.icharacter.name + " has awakened a " + landmark.charactersWithHomeOnLandmark[0].name + ". It now defends the cave from intruders.");
+                _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " has awakened a " + landmark.charactersWithHomeOnLandmark[0].name + ". It now defends the cave from intruders.");
                 SetCurrentState(_states[effectName]);
             }
         }
     }
     private void NothingReward(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.assignedMinion.icharacter.name + " has returned with nothing to report.");
+        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " has returned with nothing to report.");
         SetCurrentState(_states[effectName]);
     }
+
     private void SupplyRewardEffect(InteractionState state) {
         PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, 40);
         state.assignedMinion.AdjustExp(1);

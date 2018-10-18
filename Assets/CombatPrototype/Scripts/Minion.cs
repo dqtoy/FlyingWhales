@@ -96,4 +96,14 @@ public class Minion {
     public void SetIndexDefaultSort(int index) {
         _indexDefaultSort = index;
     }
+    public void GoToAssignment(IInteractable interactable) {
+        SetEnabledState(false);
+        icharacter.currentParty.specificLocation.RemoveCharacterFromLocation(icharacter.currentParty);
+        interactable.specificLocation.AddCharacterToLocation(icharacter.currentParty);
+    }
+    public void GoBackFromAssignment() {
+        SetEnabledState(true);
+        icharacter.currentParty.specificLocation.RemoveCharacterFromLocation(icharacter.currentParty);
+        PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(icharacter.currentParty);
+    }
 }

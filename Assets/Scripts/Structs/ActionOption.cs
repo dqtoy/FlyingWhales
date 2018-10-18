@@ -18,8 +18,9 @@ public class ActionOption {
         PlayerManager.Instance.player.AdjustCurrency(cost.currency, -cost.amount);
         if(needsMinion) {
             if(assignedMinion != null) {
-                assignedMinion.icharacter.currentParty.GoToLocation(interactable.specificLocation, PATHFINDING_MODE.PASSABLE, () => StartDuration());
-                interactionState.SetAssignedMinion(assignedMinion);
+                assignedMinion.GoToAssignment(interactable);
+                StartDuration();
+                //assignedMinion.icharacter.currentParty.GoToLocation(interactable.specificLocation, PATHFINDING_MODE.PASSABLE, () => StartDuration());
                 interactionState.interaction.SetActivatedState(true);
             } else {
                 //Can't go, no minion assigned
@@ -28,6 +29,7 @@ public class ActionOption {
             interactionState.interaction.SetActivatedState(true);
             StartDuration();
         }
+        interactionState.SetChosenOption(this);
     }
     public bool CanBeDone() {
         if(PlayerManager.Instance.player.currencies[cost.currency] >= cost.amount) {

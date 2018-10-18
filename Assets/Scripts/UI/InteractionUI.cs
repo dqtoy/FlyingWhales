@@ -73,7 +73,6 @@ public class InteractionUI : MonoBehaviour {
     public void AddInteraction(Interaction interaction) {
         GameObject go = GameObject.Instantiate(interactionPrefab, scrollSnapContentTransform);
         InteractionItem interactionItem = go.GetComponent<InteractionItem>();
-        interactionItem.SetInteraction(interaction);
         _allInteractionItems.Add(interactionItem);
 
 
@@ -83,6 +82,7 @@ public class InteractionUI : MonoBehaviour {
         toggle.group = toggleGroup;
 
         interactionItem.SetToggle(toggle);
+        interactionItem.SetInteraction(interaction);
 
         StartCoroutine(scrollSnap.UpdateLayoutCoroutine());
     }

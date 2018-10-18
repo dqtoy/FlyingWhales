@@ -40,7 +40,7 @@ public class InvestigateInteraction : Interaction {
             ActionOption actionOption = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 1, currency = CURRENCY.IMP },
-                description = "Send an Imp",
+                description = "Send an Imp.",
                 duration = 1,
                 needsMinion = false,
                 effect = () => ChangeToInvestigatedState()
@@ -50,7 +50,7 @@ public class InvestigateInteraction : Interaction {
             ActionOption actionOption = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 0, currency = CURRENCY.IMP },
-                description = "Recall an Imp",
+                description = "Recall an Imp.",
                 duration = 1,
                 needsMinion = false,
                 effect = () => ChangeToUninvestigatedState()

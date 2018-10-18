@@ -39,11 +39,17 @@ public class Interaction {
 
     #region Utilities
     public void SetCurrentState(InteractionState state) {
+        if(_currentState != null && _currentState.chosenOption != null) {
+            state.SetAssignedMinion(_currentState.chosenOption.assignedMinion);
+        }
         _currentState = state;
         Messenger.Broadcast(Signals.UPDATED_INTERACTION_STATE, this);
     }
     public void SetActivatedState(bool state) {
         _isActivated = state;
+        //if (!state) {
+        //    _currentState.SetChosenOption(null);
+        //}
         Messenger.Broadcast(Signals.CHANGED_ACTIVATED_STATE, this);
     }
     #endregion
