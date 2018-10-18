@@ -4,7 +4,7 @@ using UnityEngine;
 using ECS;
 
 public class PointOfInterest2 : Interaction {
-    public PointOfInterest2(IInteractable interactable) : base(interactable) {
+    public PointOfInterest2(IInteractable interactable) : base(interactable, INTERACTION_TYPE.POI_2) {
     }
     #region Overrides
     public override void CreateStates() {

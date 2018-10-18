@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Interaction {
     protected int _id;
+    protected INTERACTION_TYPE _type;
     protected IInteractable _interactable;
     protected Dictionary<string, InteractionState> _states;
     protected InteractionState _currentState;
@@ -21,8 +22,9 @@ public class Interaction {
         get { return _isActivated; }
     }
     #endregion
-    public Interaction(IInteractable interactable) {
+    public Interaction(IInteractable interactable, INTERACTION_TYPE type) {
         _id = Utilities.SetID(this);
+        _type = type;
         _interactable = interactable;
         _states = new Dictionary<string, InteractionState>();
         CreateStates();

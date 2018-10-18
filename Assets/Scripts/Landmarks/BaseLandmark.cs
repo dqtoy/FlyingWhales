@@ -1080,9 +1080,9 @@ public class BaseLandmark : ILocation, IInteractable {
 
     #region Interactions
     public void ConstructInitialInteractions() {
-        InvestigateInteraction investigateInteraction = new InvestigateInteraction(this);
-        PointOfInterest1 pointOfInterest1 = new PointOfInterest1(this);
-        PointOfInterest2 pointOfInterest2 = new PointOfInterest2(this);
+        Interaction investigateInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.INVESTIGATE, this);
+        Interaction pointOfInterest1 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.INVESTIGATE, this);
+        Interaction pointOfInterest2 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.INVESTIGATE, this);
         AddInteraction(investigateInteraction);
         AddInteraction(pointOfInterest1);
         AddInteraction(pointOfInterest2);

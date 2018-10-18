@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class InvestigateInteraction : Interaction {
 
-    public InvestigateInteraction(IInteractable interactable) : base(interactable) {
+    public InvestigateInteraction(IInteractable interactable) : base(interactable, INTERACTION_TYPE.INVESTIGATE) {
 
     }
 
