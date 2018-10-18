@@ -3,6 +3,7 @@
 /// Updated by ddreaper - removed dependency on a custom ScrollRect script. Now implements drag interfaces and standard Scroll Rect.
 
 using UnityEngine.EventSystems;
+using System.Collections;
 
 namespace UnityEngine.UI.Extensions
 {
@@ -197,6 +198,10 @@ namespace UnityEngine.UI.Extensions
             OnCurrentScreenChange(_currentPage);
         }
 
+        public IEnumerator UpdateLayoutCoroutine() {
+            yield return null;
+            UpdateLayout();
+        }
         /// <summary>
         /// used for changing / updating between screen resolutions
         /// </summary>

@@ -84,7 +84,7 @@ public class InteractionUI : MonoBehaviour {
 
         interactionItem.SetToggle(toggle);
 
-        scrollSnap.UpdateLayout();
+        StartCoroutine(scrollSnap.UpdateLayoutCoroutine());
     }
     public void RemoveInteraction(Interaction interaction) {
         for (int i = 0; i < _allInteractionItems.Count; i++) {
@@ -96,7 +96,7 @@ public class InteractionUI : MonoBehaviour {
                 if (removedChild != null) {
                     GameObject.Destroy(removedChild);
                 }
-                scrollSnap.UpdateLayout();
+                StartCoroutine(scrollSnap.UpdateLayoutCoroutine());
                 break;
             }
         }
