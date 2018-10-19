@@ -13,11 +13,7 @@ public class CharacterParty : Party {
     #region getters/setters
     public override string name {
         get {
-            if (icharacters.Count > 1) {
-                return _owner.name + "'s Party";
-            } else {
-                return _owner.name;
-            }
+            return GetPartyName();
         }
     }
     public bool isIdle {
@@ -64,6 +60,25 @@ public class CharacterParty : Party {
     }
 
     #region Utilities
+    private string GetPartyName() {
+        if (owner is CharacterArmyUnit) {
+            if (icharacters.Count > 1) {
+                string name = "Army of:";
+                for (int i = 0; i < icharacters.Count; i++) {
+                    name += "\n" + icharacters[i].name;
+                }
+                return name;
+            } else {
+                return owner.name;
+            }
+        } else {
+            if (icharacters.Count > 1) {
+                return _owner.name + "'s Party";
+            } else {
+                return _owner.name;
+            }
+        }
+    }
     private void EverydayAction() {
         if (!_isIdle) {
             if (!this.owner.IsInOwnParty()) {
@@ -142,7 +157,6 @@ public class CharacterParty : Party {
             }
         }
     }
-
     /*
         Create a new icon for this character.
         Each character owns 1 icon.

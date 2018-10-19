@@ -304,12 +304,12 @@ public class LandmarkInfoUI : UIMenu {
     private void UpdateDefenders() {
         if (_activeLandmark.defenders == null) {
             for (int i = 0; i < defenderSlots.Length; i++) {
-                defenderSlots[i].SetParty(null, _activeLandmark);
+                defenderSlots[i].SetParty(null, _activeLandmark, true);
             }
         } else {
-            for (int i = 0; i < _activeLandmark.defenders.icharacters.Count; i++) {
-                ICharacter defender = _activeLandmark.defenders.icharacters[i];
-                defenderSlots[i].SetParty(defender, _activeLandmark);
+            for (int i = 0; i < defenderSlots.Length; i++) {
+                ICharacter defender = _activeLandmark.defenders.icharacters.ElementAtOrDefault(i);
+                defenderSlots[i].SetParty(defender, _activeLandmark, true);
             }
         }
     }

@@ -13,7 +13,7 @@ public class InteractionManager : MonoBehaviour {
     public Interaction CreateNewInteraction(INTERACTION_TYPE interactionType, IInteractable interactable) {
         switch (interactionType) {
             case INTERACTION_TYPE.BANDIT_RAID:
-                return null;
+                return new BanditRaid(interactable);
             case INTERACTION_TYPE.INVESTIGATE:
                 return new InvestigateInteraction(interactable);
             case INTERACTION_TYPE.POI_1:

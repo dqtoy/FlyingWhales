@@ -28,6 +28,7 @@ public class Interaction {
         _interactable = interactable;
         _states = new Dictionary<string, InteractionState>();
         CreateStates();
+        Debug.Log("Created new interaction " + type.ToString() + " at " + interactable.name);
     }
 
     #region Virtuals

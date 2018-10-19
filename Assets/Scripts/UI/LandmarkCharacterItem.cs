@@ -9,11 +9,13 @@ public class LandmarkCharacterItem : PooledObject {
 
     public ICharacter character { get; private set; }
     private BaseLandmark _landmark;
+    private bool isDefender;
 
     [SerializeField] private CharacterPortrait portrait;
 
-    public void SetParty(ICharacter character, BaseLandmark landmark) {
+    public void SetParty(ICharacter character, BaseLandmark landmark, bool isDefender = false) {
         this.character = character;
+        this.isDefender = isDefender;
         _landmark = landmark;
         if (character != null) {
             portrait.gameObject.SetActive(true);
@@ -35,11 +37,15 @@ public class LandmarkCharacterItem : PooledObject {
         if (character == null) {
             return;
         }
-        //if (character.currentParty.icharacters.Count > 1) {
-        //    UIManager.Instance.ShowSmallInfo(character.currentParty.name);
-        //} else {
+        if (isDefender) {
             UIManager.Instance.ShowSmallInfo(character.name);
-        //}
+        } else {
+            if (character.currentParty.icharacters.Count > 1) {
+                UIManager.Instance.ShowSmallInfo(character.currentParty.name);
+            } else {
+                UIManager.Instance.ShowSmallInfo(character.name);
+            }
+        }
     }
     public void HideItemInfo() {
         UIManager.Instance.HideSmallInfo();

@@ -54,6 +54,9 @@ public class BaseLandmark : ILocation, IInteractable {
     public int id {
         get { return _id; }
     }
+    public string name {
+        get { return landmarkName; }
+    }
     public string locationName {
         get { return landmarkName + " " + tileLocation.locationName; }
     }
@@ -1053,10 +1056,10 @@ public class BaseLandmark : ILocation, IInteractable {
             //set the defenders party as the party of the new defender
             defenders = newDefender.ownParty;
         }
-        defenders.AddCharacter(newDefender);
         if (newDefender is Character) {
             (newDefender as Character).OnSetAsDefender(this);
         }
+        defenders.AddCharacter(newDefender);
         //for (int i = 0; i < defenders.Length; i++) {
         //    Party currDefender = defenders[i];
         //    if (currDefender == null) {
@@ -1098,8 +1101,8 @@ public class BaseLandmark : ILocation, IInteractable {
         Interaction pointOfInterest1 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.POI_1, this);
         Interaction pointOfInterest2 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.POI_2, this);
         AddInteraction(investigateInteraction);
-        AddInteraction(pointOfInterest1);
-        AddInteraction(pointOfInterest2);
+        //AddInteraction(pointOfInterest1);
+        //AddInteraction(pointOfInterest2);
     }
     public void AddInteraction(Interaction interaction) {
         _currentInteractions.Add(interaction);

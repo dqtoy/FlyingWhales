@@ -2487,28 +2487,29 @@ namespace ECS {
         public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
             BaseLandmark previousHome = _homeLandmark;
             this._homeLandmark = newHomeLandmark;
-            if (previousHome != null) {
-                previousHome.tileLocation.areaOfTile.residents.Remove(this);
-                if(_homeLandmark != null) {
-                    _homeLandmark.tileLocation.areaOfTile.residents.Add(this);
-                    if (_homeLandmark.tileLocation.areaOfTile.id != previousHome.tileLocation.areaOfTile.id) {
+            if (!(this is CharacterArmyUnit)) {
+                if (previousHome != null) {
+                    previousHome.tileLocation.areaOfTile.residents.Remove(this);
+                    if (_homeLandmark != null) {
+                        _homeLandmark.tileLocation.areaOfTile.residents.Add(this);
+                        if (_homeLandmark.tileLocation.areaOfTile.id != previousHome.tileLocation.areaOfTile.id) {
+#if !WORLD_CREATION_TOOL
+                            LookForNewWorkplace();
+#endif
+                        }
+                    }
+
+                } else {
+                    if (_homeLandmark != null) {
+                        if (_homeLandmark.tileLocation.areaOfTile != null) {
+                            _homeLandmark.tileLocation.areaOfTile.residents.Add(this);
+                        }
 #if !WORLD_CREATION_TOOL
                         LookForNewWorkplace();
 #endif
                     }
                 }
-
-            } else {
-                if (_homeLandmark != null) {
-                    if (_homeLandmark.tileLocation.areaOfTile != null) {
-                        _homeLandmark.tileLocation.areaOfTile.residents.Add(this);
-                    }
-#if !WORLD_CREATION_TOOL
-                    LookForNewWorkplace();
-#endif
-                }
             }
-            
         }
         //public void SetHomeStructure(StructureObj newHomeStructure) {
         //    if (_homeStructure != null) {

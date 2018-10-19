@@ -16,8 +16,8 @@ public class Garrison : StructureObj {
         return clone;
     }
     public override void StartDayAction() {
-        base.StartDayAction();
         ReplenishDefenderUnits();
+        base.StartDayAction();
     }
     #endregion
 

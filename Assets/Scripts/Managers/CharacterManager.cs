@@ -818,6 +818,7 @@ public class CharacterManager : MonoBehaviour {
 
             if (initialLocation is BaseLandmark) {
                 initialLocation.AddCharacterToLocation(party);
+                armyUnit.SetHomeLandmark(initialLocation as BaseLandmark);
             }
         }
 #endif

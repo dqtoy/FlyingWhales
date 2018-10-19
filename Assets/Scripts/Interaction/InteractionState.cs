@@ -37,6 +37,9 @@ public class InteractionState {
     public ActionOption[] actionOptions {
         get { return _actionOptions; }
     }
+    public int timeLimit {
+        get { return _timeLimit; }
+    }
     #endregion
 
     public InteractionState(string name, Interaction interaction) {
@@ -49,7 +52,7 @@ public class InteractionState {
 
     public void OnSetAsCurrentState() {
         if (_timeLimit != -1) {
-
+            StartTimeLimit();
         }
     }
     public void SetDescription(string desc) {
@@ -76,6 +79,11 @@ public class InteractionState {
     }
     public void SetChosenOption(ActionOption option) {
         _chosenOption = option;
+        if (_timeLimit != -1) {
+            //if (_chosenOption != actionOptions[_defaultActionOptionIndex]) {
+            Messenger.RemoveListener(Signals.HOUR_ENDED, CheckForTimeLimit);
+            //}
+        }
     }
     public void EndResult() {
         if(_endEffect != null) {

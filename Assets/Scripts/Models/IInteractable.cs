@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public interface IInteractable {
+    string name { get; }
     HiddenDesire hiddenDesire { get; }
     bool isBeingInspected { get; }
     bool hasBeenInspected { get; }

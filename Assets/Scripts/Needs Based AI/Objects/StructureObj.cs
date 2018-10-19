@@ -115,7 +115,9 @@ public class StructureObj : IObject {
     public virtual void EndState(ObjectState state) {
 
     }
-    public virtual void StartDayAction() { }
+    public virtual void StartDayAction() {
+        GenerateDailyInteraction();
+    }
     public virtual void GenerateInitialDefenders() {
         if (_objectLocation.owner == null) {
             return;
@@ -131,7 +133,7 @@ public class StructureObj : IObject {
             }
             if (defenderWeights.GetTotalOfWeights() > 0) {
                 LandmarkDefender chosenDefender = defenderWeights.PickRandomElementGivenWeights();
-                CharacterArmyUnit defenderUnit = CharacterManager.Instance.CreateCharacterArmyUnit(RACE.HUMANS, chosenDefender, _objectLocation.owner, _objectLocation); //_objectLocation.owner.race
+                CharacterArmyUnit defenderUnit = CharacterManager.Instance.CreateCharacterArmyUnit(_objectLocation.owner.race, chosenDefender, _objectLocation.owner, _objectLocation); //_objectLocation.owner.race
                 _objectLocation.AddDefender(defenderUnit);
             }
         }
