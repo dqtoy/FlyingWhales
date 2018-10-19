@@ -184,6 +184,11 @@ public class ActionThread : Multithread {
 
         switch (category) {
             case SCHEDULE_ACTION_CATEGORY.REST:
+                if (character.homeLandmark.landmarkObj.currentState.GetAction(ACTION_TYPE.REST) == null) {
+                    CharacterAction restAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.REST);
+                    restAction.SetDuration(16);
+                    actions.Add(new ActionThreadItem(restAction, character.homeLandmark.landmarkObj));
+                }
                 for (int i = 0; i < _party.owner.homeLandmark.tileLocation.areaOfTile.landmarks.Count; i++) { //get advertisements from home area only.
                     BaseLandmark landmark = _party.owner.homeLandmark.tileLocation.areaOfTile.landmarks[i];
                     //for (int j = 0; j < landmark.advertisedEvents.Count; j++) {
