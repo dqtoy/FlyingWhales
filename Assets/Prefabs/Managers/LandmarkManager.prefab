@@ -492,8 +492,8 @@ MonoBehaviour:
         includeInFirstWeight: 1
       m_values: 1e0000000a0000000a0000000a0000000a0000000f00000014000000
     interactionWeightsDict:
-      m_keys: 05000000
-      m_values: 32000000
+      m_keys: 0500000002000000
+      m_values: 320000001e000000
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 200
