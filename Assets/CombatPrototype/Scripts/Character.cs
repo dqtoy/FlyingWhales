@@ -34,7 +34,7 @@ namespace ECS {
         protected CharacterParty _currentParty;
         protected BaseLandmark _homeLandmark;
         protected BaseLandmark _workplace;
-        private Region _currentRegion;
+        protected Region _currentRegion;
         protected Weapon _equippedWeapon;
         protected Armor _equippedArmor;
         protected Item _equippedAccessory;
@@ -47,6 +47,8 @@ namespace ECS {
         protected CharacterAction _genericWorkAction;
         protected HiddenDesire _hiddenDesire;
         protected Secret _currentlySelectedSecret;
+        protected Squad _squad;
+        protected Minion _minion;
         protected List<Secret> _secrets;
         protected List<STATUS_EFFECT> _statusEffects;
         protected List<Item> _inventory;
@@ -63,7 +65,6 @@ namespace ECS {
         protected Dictionary<ELEMENT, float> _elementalResistances;
         protected Dictionary<Character, List<string>> _traceInfo;
         protected Dictionary<int, GAME_EVENT> _intelReactions; //int = intel id
-        protected Squad _squad;
 
         //Stats
         private SIDES _currentSide;
@@ -308,6 +309,9 @@ namespace ECS {
         }
         public Squad squad {
             get { return _squad; }
+        }
+        public Minion minion {
+            get { return _minion; }
         }
         public CharacterActionQueue<ActionQueueItem> actionQueue {
             get { return _actionQueue; }
@@ -3056,6 +3060,12 @@ namespace ECS {
         #region Morality
         public void SetMorality(MORALITY morality) {
             this.morality = morality;
+        }
+        #endregion
+
+        #region Minion
+        public void SetMinion(Minion minion) {
+            _minion = minion;
         }
         #endregion
     }

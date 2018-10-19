@@ -122,6 +122,9 @@ public class Party : IParty {
     public virtual int currentDay {
         get { return 0; }
     }
+    public virtual IActionData iactionData {
+        get { return null; }
+    }
     public COMBATANT_TYPE combatantType {
         get {
             if (icharacters.Count > 1) {
@@ -157,6 +160,7 @@ public class Party : IParty {
         this.specificLocation.RemoveCharacterFromLocation(this);
         SetSpecificLocation(deathLocation); //set the specific location of this party, to the location it died at
         RemoveListeners();
+        DetachActionData();
         ObjectState deadState = _icharacterObject.GetState("Dead");
         _icharacterObject.ChangeState(deadState);
         GameObject.Destroy(_icon.gameObject);

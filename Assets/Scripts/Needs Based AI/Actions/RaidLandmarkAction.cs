@@ -2,32 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AttackLandmarkAction : CharacterAction {
-
-    public AttackLandmarkAction() : base(ACTION_TYPE.ATTACK_LANDMARK) {
-
+public class RaidLandmarkAction : CharacterAction {
+    public RaidLandmarkAction() : base(ACTION_TYPE.RAID_LANDMARK) {
+        _actionData.duration = 5;
     }
 
     #region Overrides
     public override void OnFirstEncounter(Party party, IObject targetObject) {
         base.OnFirstEncounter(party, targetObject);
-        BaseLandmark landmarkToAttack = targetObject.objectLocation;
+        BaseLandmark landmarkToRaid = targetObject.objectLocation;
+        landmarkToRaid.SetRaidedState(true);
         //Party defenderParty = null; //TODO
         //party.StartCombatWith(defenderParty);
     }
     public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         ActionSuccess(targetObject);
-        if (targetObject is StructureObj) {
-            StructureObj structure = targetObject as StructureObj;
-            structure.AdjustHP(-10);
-            if (structure.currentHP <= 0) {
-                EndAction(party, targetObject);
-            }
+        Area areaToRaid = targetObject.objectLocation.tileLocation.areaOfTile;
+        if(areaToRaid != null) {
+            int amountToRaid = (int)((float)areaToRaid.suppliesInBank * ((float)(UnityEngine.Random.Range(5, 16)) / 100f));
+            areaToRaid.AdjustSuppliesInBank(-amountToRaid);
         }
     }
     public override CharacterAction Clone() {
-        AttackLandmarkAction action = new AttackLandmarkAction();
+        RaidLandmarkAction action = new RaidLandmarkAction();
         SetCommonData(action);
         action.Initialize();
         return action;

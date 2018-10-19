@@ -36,6 +36,7 @@ public interface ICharacter {
     Armor equippedArmor { get; }
     Item equippedAccessory { get; }
     Item equippedConsumable { get; }
+    Minion minion { get; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }
     Dictionary<Character, Relationship> relationships { get; }
@@ -73,6 +74,7 @@ public interface ICharacter {
     void SetMode(MODE mode);
     void AddMiscAction(CharacterAction characterAction);
     void RemoveMiscAction(ACTION_TYPE actionType);
+    void SetMinion(Minion minion);
     bool InviteToParty(ICharacter inviter);
     bool IsInOwnParty();
     Party CreateOwnParty();

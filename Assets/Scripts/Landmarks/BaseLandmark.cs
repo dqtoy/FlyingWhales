@@ -15,6 +15,7 @@ public class BaseLandmark : ILocation, IInteractable {
     protected bool _canBeOccupied; //can the landmark be occupied?
     protected bool _isOccupied;
     protected bool _isBeingInspected;
+    protected bool _isRaided;
     protected bool _hasBeenInspected;
     protected bool _hasBeenCorrupted;
     protected bool _isAttackingAnotherLandmark;
@@ -1105,6 +1106,22 @@ public class BaseLandmark : ILocation, IInteractable {
             }
         }
         return false;
+    }
+    #endregion
+
+    #region Raid
+    public void SetRaidedState(bool state) {
+        if (_isRaided != state) {
+            _isRaided = state;
+            if (state) {
+                StartRaidedState();
+            }
+        }
+    }
+    private void StartRaidedState() {
+        GameDate endRaidedDate = GameManager.Instance.Today();
+        endRaidedDate.AddDays(5);
+        SchedulingManager.Instance.AddEntry(endRaidedDate, () => SetRaidedState(false));
     }
     #endregion
 }

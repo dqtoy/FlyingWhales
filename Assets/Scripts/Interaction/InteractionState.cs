@@ -8,9 +8,12 @@ public class InteractionState {
     private string _name;
     private string _description;
     private bool _isEnd;
+    private bool _isTimed;
     private Action _endEffect;
+    private GameDate _timeDate;
     private Minion _assignedMinion;
     private ActionOption _chosenOption;
+    private ActionOption _defaultOption;
     private ActionOption[] _actionOptions;
 
     #region getters/setters
@@ -23,8 +26,14 @@ public class InteractionState {
     public bool isEnd {
         get { return _isEnd; }
     }
+    public bool isTimed {
+        get { return _isTimed; }
+    }
     public ActionOption chosenOption {
         get { return _chosenOption; }
+    }
+    public ActionOption defaultOption {
+        get { return _defaultOption; }
     }
     public Interaction interaction {
         get { return _interaction; }
@@ -65,16 +74,42 @@ public class InteractionState {
         }
         _endEffect = endEffect;
     }
+    public void OnStartState() {
+        if(_isTimed && _defaultOption != null) {
+            SchedulingManager.Instance.AddEntry(_timeDate, () => ActivateDefault());
+        }
+    }
+    public void OnEndState() {
+        AssignedMinionGoesBack();
+    }
     public void SetChosenOption(ActionOption option) {
         _chosenOption = option;
     }
+    public void SetTimeSchedule(ActionOption defaultOption, GameDate timeSched) {
+        _isTimed = true;
+        _timeDate = timeSched;
+        SetDefaultOption(defaultOption);
+    }
+    public void SetDefaultOption(ActionOption defaultOption) {
+        _defaultOption = defaultOption;
+    }
     public void EndResult() {
-        if(_endEffect != null) {
-            _endEffect();
-        }
-        if(_assignedMinion != null && !_assignedMinion.icharacter.isDead) {
-            _assignedMinion.GoBackFromAssignment();
-        }
+        _endEffect();
+        AssignedMinionGoesBack();
         interaction.EndInteraction();
+    }
+    public void AssignedMinionGoesBack() {
+        if (_assignedMinion != null) {
+            if (_assignedMinion.icharacter.currentParty.currentAction == null || _assignedMinion.icharacter.currentParty.iactionData.isDoneAction) {
+                _assignedMinion.GoBackFromAssignment();
+            } else {
+                _assignedMinion.icharacter.currentParty.currentAction.SetOnEndAction(() => _assignedMinion.GoBackFromAssignment());
+            }
+        }
+    }
+    public void ActivateDefault() {
+        if(_interaction.currentState == this) {
+            _defaultOption.ActivateOption(_interaction.interactable);
+        }
     }
 }

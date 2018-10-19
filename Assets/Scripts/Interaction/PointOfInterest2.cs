@@ -80,45 +80,33 @@ public class PointOfInterest2 : Interaction {
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         if(chosenEffect == "Supply") {
-            SupplyReward(state, chosenEffect);
+            SupplyRewardState(state, chosenEffect);
         }else if (chosenEffect == "Mana") {
-            ManaReward(state, chosenEffect);
+            ManaRewardState(state, chosenEffect);
         }else if (chosenEffect == "Demon Disappears") {
-            DemonDisappearsReward(state, chosenEffect);
+            DemonDisappearsRewardState(state, chosenEffect);
         }else if (chosenEffect == "Demon Weapon Upgrade") {
-            DemonWeaponUpgradeReward(state, chosenEffect);
+            DemonWeaponUpgradeRewardState(state, chosenEffect);
         }else if (chosenEffect == "Demon Armor Upgrade") {
-            DemonArmorUpgradeReward(state, chosenEffect);
+            DemonArmorUpgradeRewardState(state, chosenEffect);
         }else if (chosenEffect == "Unleashed Monster") {
-            UnleashedMonsterReward(state, chosenEffect);
+            UnleashedMonsterRewardState(state, chosenEffect);
         }else if (chosenEffect == "Nothing") {
-            NothingReward(state, chosenEffect);
+            NothingRewardState(state, chosenEffect);
         }
     }
     private void LeaveAloneEffect(InteractionState state) {
         state.EndResult();
     }
-    private void SupplyReward(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " discovered a small cache of Supplies.");
-        SetCurrentState(_states[effectName]);
-    }
-    private void ManaReward(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " discovered a source of magical energy. We have converted it into a small amount of Mana.");
-        SetCurrentState(_states[effectName]);
-    }
-    private void DemonDisappearsReward(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " has not returned. We can only assume the worst.");
-        SetCurrentState(_states[effectName]);
-    }
-    private void DemonWeaponUpgradeReward(InteractionState state, string effectName) {
+    private void DemonWeaponUpgradeRewardState(InteractionState state, string effectName) {
         _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " has returned with an improved Weapon.");
         SetCurrentState(_states[effectName]);
     }
-    private void DemonArmorUpgradeReward(InteractionState state, string effectName) {
+    private void DemonArmorUpgradeRewardState(InteractionState state, string effectName) {
         _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " has returned with an improved Armor.");
         SetCurrentState(_states[effectName]);
     }
-    private void UnleashedMonsterReward(InteractionState state, string effectName) {
+    private void UnleashedMonsterRewardState(InteractionState state, string effectName) {
         if(_interactable is BaseLandmark) {
             BaseLandmark landmark = _interactable as BaseLandmark;
             if(landmark.charactersWithHomeOnLandmark.Count > 0) {
@@ -126,22 +114,6 @@ public class PointOfInterest2 : Interaction {
                 SetCurrentState(_states[effectName]);
             }
         }
-    }
-    private void NothingReward(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " has returned with nothing to report.");
-        SetCurrentState(_states[effectName]);
-    }
-
-    private void SupplyRewardEffect(InteractionState state) {
-        PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, 40);
-        state.assignedMinion.AdjustExp(1);
-    }
-    private void ManaRewardEffect(InteractionState state) {
-        PlayerManager.Instance.player.AdjustCurrency(CURRENCY.MANA, 40);
-        state.assignedMinion.AdjustExp(1);
-    }
-    private void DemonDisappearsRewardEffect(InteractionState state) {
-        PlayerManager.Instance.player.RemoveMinion(state.assignedMinion);
     }
     private void DemonWeaponUpgradeEffect(InteractionState state) {
         if(state.assignedMinion.icharacter is Character) {
@@ -157,8 +129,5 @@ public class PointOfInterest2 : Interaction {
     }
     private void UnleashedMonsterEffect(InteractionState state) {
         //TODO: awaken monster and put it in defenders list
-    }
-    private void NothingEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1);
     }
 }
