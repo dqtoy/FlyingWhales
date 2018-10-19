@@ -221,37 +221,39 @@ namespace ECS{
             while (this.charactersSideA.Count > 0 && this.charactersSideB.Count > 0) {
                 Debug.Log("========== Round " + rounds.ToString() + " ==========");
                 ICharacter characterThatWillAct = GetCharacterThatWillAct(this.charactersSideA, this.charactersSideB);
-                ICharacter targetCharacter = GetTargetCharacter(characterThatWillAct, null);
+                if(characterThatWillAct != null) {
+                    ICharacter targetCharacter = GetTargetCharacter(characterThatWillAct, null);
 
-                Character actingCharacter = null;
-                if (characterThatWillAct.icharacterType == ICHARACTER_TYPE.CHARACTER) {
-                    actingCharacter = characterThatWillAct as Character;
-                }
-                Debug.Log((actingCharacter != null ? actingCharacter.characterClass.className : "") + characterThatWillAct.name + " will act. (hp lost: " + characterThatWillAct.battleOnlyTracker.hpLostPercent
-                    + ", last damage taken: " + characterThatWillAct.battleOnlyTracker.lastDamageTaken);
-                Debug.Log((targetCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER ? (targetCharacter as Character).characterClass.className : "") + targetCharacter.name + " is the target. (hp lost: " + targetCharacter.battleOnlyTracker.hpLostPercent
-                    + ", last damage taken: " + targetCharacter.battleOnlyTracker.lastDamageTaken);
-
-                characterThatWillAct.EnableDisableSkills(this);
-                //Debug.Log("Available Skills: ");
-                //for (int i = 0; i < characterThatWillAct.skills.Count; i++) {
-                //    Skill currSkill = characterThatWillAct.skills[i];
-                //    if (currSkill.isEnabled) {
-                //        Debug.Log(currSkill.skillName);
-                //    }
-                //}
-                Skill skillToUse = GetSkillToUse(characterThatWillAct, targetCharacter);
-                if (skillToUse != null) {
-                    Debug.Log(characterThatWillAct.name + " decides to use " + skillToUse.skillName);
-                    if (actingCharacter != null) {
-                        actingCharacter.CureStatusEffects();
+                    Character actingCharacter = null;
+                    if (characterThatWillAct.icharacterType == ICHARACTER_TYPE.CHARACTER) {
+                        actingCharacter = characterThatWillAct as Character;
                     }
-                    //ICharacter targetCharacter = GetTargetCharacter(characterThatWillAct, skillToUse);
-                    Debug.Log(characterThatWillAct.name + " decides to use it on " + targetCharacter.name);
-                    DoSkill(skillToUse, characterThatWillAct, targetCharacter);
-                }
-                if (CombatPrototypeUI.Instance != null) {
-                    CombatPrototypeUI.Instance.UpdateCharacterSummary();
+                    Debug.Log((actingCharacter != null ? actingCharacter.characterClass.className : "") + characterThatWillAct.name + " will act. (hp lost: " + characterThatWillAct.battleOnlyTracker.hpLostPercent
+                        + ", last damage taken: " + characterThatWillAct.battleOnlyTracker.lastDamageTaken);
+                    Debug.Log((targetCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER ? (targetCharacter as Character).characterClass.className : "") + targetCharacter.name + " is the target. (hp lost: " + targetCharacter.battleOnlyTracker.hpLostPercent
+                        + ", last damage taken: " + targetCharacter.battleOnlyTracker.lastDamageTaken);
+
+                    characterThatWillAct.EnableDisableSkills(this);
+                    //Debug.Log("Available Skills: ");
+                    //for (int i = 0; i < characterThatWillAct.skills.Count; i++) {
+                    //    Skill currSkill = characterThatWillAct.skills[i];
+                    //    if (currSkill.isEnabled) {
+                    //        Debug.Log(currSkill.skillName);
+                    //    }
+                    //}
+                    Skill skillToUse = GetSkillToUse(characterThatWillAct, targetCharacter);
+                    if (skillToUse != null) {
+                        Debug.Log(characterThatWillAct.name + " decides to use " + skillToUse.skillName);
+                        if (actingCharacter != null) {
+                            actingCharacter.CureStatusEffects();
+                        }
+                        //ICharacter targetCharacter = GetTargetCharacter(characterThatWillAct, skillToUse);
+                        Debug.Log(characterThatWillAct.name + " decides to use it on " + targetCharacter.name);
+                        DoSkill(skillToUse, characterThatWillAct, targetCharacter);
+                    }
+                    if (CombatPrototypeUI.Instance != null) {
+                        CombatPrototypeUI.Instance.UpdateCharacterSummary();
+                    }
                 }
                 Debug.Log("========== End Round " + rounds.ToString() + " ==========");
                 rounds++;
@@ -328,9 +330,6 @@ namespace ECS{
                 return chosenCharacter;
             }
             return null;
-        }
-        private void PickCharacterToAct(List<ICharacter> charactersSideA, List<ICharacter> charactersSideB) {
-
         }
 
         //Get a random character from the opposite side to be the target

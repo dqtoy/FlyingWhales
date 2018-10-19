@@ -154,6 +154,9 @@ public class BaseLandmark : ILocation, IInteractable {
     public bool hasBeenInspected {
         get { return _hasBeenInspected; }
     }
+    public bool isRaided {
+        get { return _isRaided; }
+    }
     public LOCATION_IDENTIFIER locIdentifier {
         get { return LOCATION_IDENTIFIER.LANDMARK; }
     }

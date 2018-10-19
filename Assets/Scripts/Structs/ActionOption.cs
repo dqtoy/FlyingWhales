@@ -11,6 +11,7 @@ public class ActionOption {
     public bool needsMinion;
     public Action effect;
     public Action onStartDurationAction;
+    public Func<bool> canBeDoneAction;
     public Minion assignedMinion;
 
     private int _currentDuration;
@@ -33,8 +34,14 @@ public class ActionOption {
         interactionState.SetChosenOption(this);
     }
     public bool CanBeDone() {
-        if(PlayerManager.Instance.player.currencies[cost.currency] >= cost.amount) {
-            return true;
+        if(canBeDoneAction != null) {
+            if (canBeDoneAction() && PlayerManager.Instance.player.currencies[cost.currency] >= cost.amount) {
+                return true;
+            }
+        } else {
+            if (PlayerManager.Instance.player.currencies[cost.currency] >= cost.amount) {
+                return true;
+            }
         }
         return false;
     }

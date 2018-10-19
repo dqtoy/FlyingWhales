@@ -13,7 +13,7 @@ public class RaidLandmarkAction : CharacterAction {
         BaseLandmark landmarkToRaid = targetObject.objectLocation;
         landmarkToRaid.SetRaidedState(true);
         //Party defenderParty = null; //TODO
-        //party.StartCombatWith(defenderParty);
+        //party.StartCombatWith(landmarkToRaid.defenders);
     }
     public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);

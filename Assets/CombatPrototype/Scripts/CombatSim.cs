@@ -58,31 +58,33 @@ public class CombatSim {
         while (this.charactersSideA.Count > 0 && this.charactersSideB.Count > 0) {
             Debug.Log("========== Round " + rounds.ToString() + " ==========");
             ICharacterSim characterThatWillAct = GetCharacterThatWillAct(this.charactersSideA, this.charactersSideB);
-            ICharacterSim targetCharacter = GetTargetCharacter(characterThatWillAct, null);
+            if (characterThatWillAct != null) {
+                ICharacterSim targetCharacter = GetTargetCharacter(characterThatWillAct, null);
 
-            CharacterSim actingCharacter = null;
-            if (characterThatWillAct.icharacterType == ICHARACTER_TYPE.CHARACTER) {
-                actingCharacter = characterThatWillAct as CharacterSim;
-            }
-            Debug.Log((actingCharacter != null ? actingCharacter.characterClass.className : "") + characterThatWillAct.name + " will act. (hp lost: " + characterThatWillAct.battleOnlyTracker.hpLostPercent
-                    + ", last damage taken: " + characterThatWillAct.battleOnlyTracker.lastDamageTaken);
-            Debug.Log((targetCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER ? (targetCharacter as CharacterSim).characterClass.className : "") + targetCharacter.name + " is the target. (hp lost: " + targetCharacter.battleOnlyTracker.hpLostPercent
-                    + ", last damage taken: " + targetCharacter.battleOnlyTracker.lastDamageTaken);
+                CharacterSim actingCharacter = null;
+                if (characterThatWillAct.icharacterType == ICHARACTER_TYPE.CHARACTER) {
+                    actingCharacter = characterThatWillAct as CharacterSim;
+                }
+                Debug.Log((actingCharacter != null ? actingCharacter.characterClass.className : "") + characterThatWillAct.name + " will act. (hp lost: " + characterThatWillAct.battleOnlyTracker.hpLostPercent
+                        + ", last damage taken: " + characterThatWillAct.battleOnlyTracker.lastDamageTaken);
+                Debug.Log((targetCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER ? (targetCharacter as CharacterSim).characterClass.className : "") + targetCharacter.name + " is the target. (hp lost: " + targetCharacter.battleOnlyTracker.hpLostPercent
+                        + ", last damage taken: " + targetCharacter.battleOnlyTracker.lastDamageTaken);
 
-            characterThatWillAct.EnableDisableSkills(this);
-            //Debug.Log("Available Skills: ");
-            //for (int i = 0; i < characterThatWillAct.skills.Count; i++) {
-            //    Skill currSkill = characterThatWillAct.skills[i];
-            //    if (currSkill.isEnabled) {
-            //        Debug.Log(currSkill.skillName);
-            //    }
-            //}
-            Skill skillToUse = GetSkillToUse(characterThatWillAct, targetCharacter);
-            if (skillToUse != null) {
-                Debug.Log(characterThatWillAct.name + " decides to use " + skillToUse.skillName);
-                //ICharacter targetCharacter = GetTargetCharacter(characterThatWillAct, skillToUse);
-                Debug.Log(characterThatWillAct.name + " decides to use it on " + targetCharacter.name);
-                DoSkill(skillToUse, characterThatWillAct, targetCharacter);
+                characterThatWillAct.EnableDisableSkills(this);
+                //Debug.Log("Available Skills: ");
+                //for (int i = 0; i < characterThatWillAct.skills.Count; i++) {
+                //    Skill currSkill = characterThatWillAct.skills[i];
+                //    if (currSkill.isEnabled) {
+                //        Debug.Log(currSkill.skillName);
+                //    }
+                //}
+                Skill skillToUse = GetSkillToUse(characterThatWillAct, targetCharacter);
+                if (skillToUse != null) {
+                    Debug.Log(characterThatWillAct.name + " decides to use " + skillToUse.skillName);
+                    //ICharacter targetCharacter = GetTargetCharacter(characterThatWillAct, skillToUse);
+                    Debug.Log(characterThatWillAct.name + " decides to use it on " + targetCharacter.name);
+                    DoSkill(skillToUse, characterThatWillAct, targetCharacter);
+                }
             }
             Debug.Log("========== End Round " + rounds.ToString() + " ==========");
             rounds++;

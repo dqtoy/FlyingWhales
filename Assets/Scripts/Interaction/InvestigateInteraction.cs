@@ -67,7 +67,8 @@ public class InvestigateInteraction : Interaction {
                 description = "Raid it.",
                 duration = 10,
                 needsMinion = true,
-                effect = () => RaidItState(state)
+                effect = () => RaidItState(state),
+                canBeDoneAction = CanBeRaided,
             };
             state.AddActionOption(investigateOption);
             state.AddActionOption(attackOption);
@@ -95,7 +96,9 @@ public class InvestigateInteraction : Interaction {
                 description = "Raid it.",
                 duration = 10,
                 needsMinion = true,
-                effect = () => RaidItState(state)
+                effect = () => RaidItState(state),
+                canBeDoneAction = CanBeRaided,
+
             };
             state.AddActionOption(uninvestigateOption);
             state.AddActionOption(attackOption);
@@ -118,7 +121,7 @@ public class InvestigateInteraction : Interaction {
                 description = "Okay.",
                 duration = 1,
                 needsMinion = false,
-                effect = () => OkayState(state)
+                effect = () => OkayState(state),
             };
             state.AddActionOption(okayOption);
             state.SetDefaultOption(okayOption);
@@ -179,5 +182,12 @@ public class InvestigateInteraction : Interaction {
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
         state.assignedMinion.icharacter.currentParty.iactionData.AssignAction(characterAction, _interactable.specificLocation.tileLocation.landmarkOnTile.landmarkObj);
         state.assignedMinion.icharacter.currentParty.currentAction.SetOnEndAction(() => state.ActivateDefault());
+    }
+    private bool CanBeRaided() {
+        if (_interactable is BaseLandmark) {
+            BaseLandmark landmark = _interactable as BaseLandmark;
+            return !landmark.isRaided;
+        }
+        return false;
     }
 }

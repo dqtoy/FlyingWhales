@@ -758,7 +758,9 @@ namespace ECS {
                 //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
                 //					Messenger.Broadcast ("CharacterDeath", this);
                 //				}
-                schedule.OnOwnerDied();
+                if (schedule != null) {
+                    schedule.OnOwnerDied();
+                }
                 if (onCharacterDeath != null){
 					onCharacterDeath();
 				}
@@ -767,9 +769,10 @@ namespace ECS {
                 //if (killer != null) {
                 //    Messenger.Broadcast(Signals.CHARACTER_KILLED, killer, this);
                 //}
-
-                GameObject.Destroy(_characterPortrait.gameObject);
-                _characterPortrait = null;
+                if(_characterPortrait != null) {
+                    GameObject.Destroy(_characterPortrait.gameObject);
+                    _characterPortrait = null;
+                }
                 //ObjectState deadState = _characterObject.GetState("Dead");
                 //_characterObject.ChangeState(deadState);
 
@@ -3067,6 +3070,7 @@ namespace ECS {
         #region Minion
         public void SetMinion(Minion minion) {
             _minion = minion;
+            UnsubscribeSignals();
         }
         #endregion
     }
