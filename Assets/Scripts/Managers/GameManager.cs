@@ -134,7 +134,25 @@ public class GameManager : MonoBehaviour {
     public GameDate EndOfTheMonth() {
         return new GameDate(this.month, daysInMonth[this.month], this.year, hoursPerDay);
     }
-	public GameDate FirstDayOfTheMonth() {
+    public int GetTicksDifferenceOfTwoDates(GameDate fromDate, GameDate toDate) {
+        int date1DaysDiff = fromDate.day;
+        for (int i = 1; i < fromDate.month; i++) {
+            date1DaysDiff += daysInMonth[i];
+        }
+        int date2DaysDiff = toDate.day;
+        for (int i = 1; i < toDate.month; i++) {
+            date2DaysDiff += daysInMonth[i];
+        }
+        int daysDiff = date2DaysDiff - date1DaysDiff;
+        int yearDiff = toDate.year - fromDate.year;
+        if(fromDate.year > toDate.year) {
+            yearDiff = fromDate.year - toDate.year;
+        }
+
+        int tickDifference = (daysDiff + (yearDiff * 365)) * hoursPerDay;
+        return tickDifference;
+    }
+    public GameDate FirstDayOfTheMonth() {
 		return new GameDate(this.month, 1, this.year, 1);
 	}
     public void SetPausedState(bool isPaused){
