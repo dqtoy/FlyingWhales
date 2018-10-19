@@ -355,6 +355,10 @@ public enum LANDMARK_TYPE {
     RAMPART = 37,
     NODE = 38,
     SUMMONING_CIRCLE = 39,
+    DRAGON_CAVE = 40,
+    SKELETON_CEMETERY = 41,
+    SPIDER_HIVE_LAIR = 42,
+    ZOMBIE_PYRAMID = 43,
 }
 public enum TECHNOLOGY {
     //Weapon Production

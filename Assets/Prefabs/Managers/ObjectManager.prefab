@@ -85,6 +85,10 @@ MonoBehaviour:
   - {fileID: 114012481577862306, guid: 50fdec87dcd91d94abaf68e39755849a, type: 2}
   - {fileID: 114012481577862306, guid: b133f87c24e543443a3a529feaa963bc, type: 2}
   - {fileID: 114012481577862306, guid: 8da78af1c7b74d3488cfa884f951d502, type: 2}
+  - {fileID: 114507616343566192, guid: 6226a0444f4f76646b3909209be6c070, type: 2}
+  - {fileID: 114507616343566192, guid: a8bbfa0ca3671804eb352a19ad731476, type: 2}
+  - {fileID: 114507616343566192, guid: b4ac07907515f4f4db9735d90b56264a, type: 2}
+  - {fileID: 114507616343566192, guid: c5ac40196ad890345881bf31e9105cff, type: 2}
   characterObjectComponents:
   - {fileID: 114023154591909926, guid: 8666de66ca65add4b8afeb5fc44cc68d, type: 2}
   - {fileID: 114023154591909926, guid: b6818289fed035c468a353046295094f, type: 2}
