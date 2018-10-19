@@ -450,29 +450,19 @@ public class CharacterManager : MonoBehaviour {
 
     #region Character Portraits
     public PortraitAssetCollection GetPortraitAssets(RACE race, GENDER gender) {
-        //if (imgSize == IMAGE_SIZE.X64) {
-        //    for (int i = 0; i < portraitAssetsx64.Count; i++) {
-        //        RacePortraitAssets racePortraitAssets = portraitAssetsx64[i];
-        //        if (racePortraitAssets.race == race) {
-        //            if (gender == GENDER.MALE) {
-        //                return racePortraitAssets.maleAssets;
-        //            } else {
-        //                return racePortraitAssets.femaleAssets;
-        //            }
-        //        }
-        //    }
-        //} else {
-            for (int i = 0; i < portraitAssetsx256.Count; i++) {
-                RacePortraitAssets racePortraitAssets = portraitAssetsx256[i];
-                if (racePortraitAssets.race == race) {
-                    if (gender == GENDER.MALE) {
-                        return racePortraitAssets.maleAssets;
-                    } else {
-                        return racePortraitAssets.femaleAssets;
-                    }
+        if (race == RACE.GOBLIN) {
+            race = RACE.ELVES; //TODO: Change this when goblin assets arrive
+        }
+        for (int i = 0; i < portraitAssetsx256.Count; i++) {
+            RacePortraitAssets racePortraitAssets = portraitAssetsx256[i];
+            if (racePortraitAssets.race == race) {
+                if (gender == GENDER.MALE) {
+                    return racePortraitAssets.maleAssets;
+                } else {
+                    return racePortraitAssets.femaleAssets;
                 }
             }
-        //}
+        }
         throw new System.Exception("No portraits for " + race.ToString() + " " + gender.ToString());
     }
     public PortraitSettings GenerateRandomPortrait(RACE race, GENDER gender) {
@@ -818,6 +808,7 @@ public class CharacterManager : MonoBehaviour {
 
             if (initialLocation is BaseLandmark) {
                 initialLocation.AddCharacterToLocation(party);
+                armyUnit.SetHomeLandmark(initialLocation as BaseLandmark);
             }
         }
 #endif

@@ -49,11 +49,14 @@ public class BaseLandmark : ILocation, IInteractable {
     public QuestBoard questBoard { get; private set; }
     public List<GameEvent> advertisedEvents { get; private set; } //events happening at this landmark, that other characters can partake in
     //public int suppliesAtLandmark { get; private set; }
-    public Party[] defenders { get; private set; }
+    public Party defenders { get; private set; }
 
     #region getters/setters
     public int id {
         get { return _id; }
+    }
+    public string name {
+        get { return landmarkName; }
     }
     public string locationName {
         get { return landmarkName + " " + tileLocation.locationName; }
@@ -193,7 +196,7 @@ public class BaseLandmark : ILocation, IInteractable {
         _currentInteractions = new List<Interaction>();
         _combatHistory = new Dictionary<int, Combat>();
         _characterTraces = new Dictionary<Character, GameDate>();
-        defenders = new Party[LandmarkManager.MAX_DEFENDERS];
+        //defenders = new Party[LandmarkManager.MAX_DEFENDERS];
         Messenger.AddListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);
     }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this(){
@@ -1049,31 +1052,45 @@ public class BaseLandmark : ILocation, IInteractable {
     //#endregion
 
     #region Defenders
-    public void AddDefender(Party newDefender) {
-        for (int i = 0; i < defenders.Length; i++) {
-            Party currDefender = defenders[i];
-            if (currDefender == null) {
-                defenders[i] = newDefender;
-                (newDefender.owner as Character).OnSetAsDefender(this);
-                break;
-            }
+    public void AddDefender(ICharacter newDefender) {
+        if (defenders == null) {
+            //set the defenders party as the party of the new defender
+            defenders = newDefender.ownParty;
         }
+        if (newDefender is Character) {
+            (newDefender as Character).OnSetAsDefender(this);
+        }
+        defenders.AddCharacter(newDefender);
+        //for (int i = 0; i < defenders.Length; i++) {
+        //    Party currDefender = defenders[i];
+        //    if (currDefender == null) {
+        //        defenders[i] = newDefender;
+        //        (newDefender.owner as Character).OnSetAsDefender(this);
+        //        break;
+        //    }
+        //}
     }
-    public void RemoveDefender(Party defender) {
-        for (int i = 0; i < defenders.Length; i++) {
-            Party currDefender = defenders[i];
-            if (currDefender != null && currDefender.id == defender.id) {
-                defenders[i] = null;
-                (currDefender.owner as Character).OnRemoveAsDefender();
-                break;
+    public void RemoveDefender(ICharacter defender) {
+        if (defenders != null) {
+            if (!defenders.icharacters.Contains(defender)) {
+                defenders.RemoveCharacter(defender);
+                if (defender is Character) {
+                    (defender as Character).OnRemoveAsDefender();
+                }
             }
         }
+        //for (int i = 0; i < defenders.Length; i++) {
+        //    Party currDefender = defenders[i];
+        //    if (currDefender != null && currDefender.id == defender.id) {
+        //        defenders[i] = null;
+        //        (currDefender.owner as Character).OnRemoveAsDefender();
+        //        break;
+        //    }
+        //}
     }
     public bool IsDefenderOfLandmark(Party party) {
-        for (int i = 0; i < defenders.Length; i++) {
-            if (defenders[i] != null && defenders[i].id == party.id) {
-                return true;
-            }
+        if (defenders != null) {
+            return defenders.id == party.id;
         }
         return false;
     }
@@ -1081,12 +1098,12 @@ public class BaseLandmark : ILocation, IInteractable {
 
     #region Interactions
     public void ConstructInitialInteractions() {
-        InvestigateInteraction investigateInteraction = new InvestigateInteraction(this);
-        PointOfInterest1 pointOfInterest1 = new PointOfInterest1(this);
-        PointOfInterest2 pointOfInterest2 = new PointOfInterest2(this);
+        Interaction investigateInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.INVESTIGATE, this);
+        Interaction pointOfInterest1 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.POI_1, this);
+        Interaction pointOfInterest2 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.POI_2, this);
         AddInteraction(investigateInteraction);
-        AddInteraction(pointOfInterest1);
-        AddInteraction(pointOfInterest2);
+        //AddInteraction(pointOfInterest1);
+        //AddInteraction(pointOfInterest2);
     }
     public void AddInteraction(Interaction interaction) {
         _currentInteractions.Add(interaction);

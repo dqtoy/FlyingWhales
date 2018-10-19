@@ -39,10 +39,10 @@ public class LandmarkSaveData {
 
         defenders = new int[LandmarkManager.MAX_DEFENDERS];
         for (int i = 0; i < defenders.Length; i++) {
-            if (landmark.defenders[i] == null) {
+            if (landmark.defenders == null || landmark.defenders.icharacters.ElementAtOrDefault(i) == null) {
                 defenders[i] = -1;
             } else {
-                defenders[i] = landmark.defenders[i].owner.id;
+                defenders[i] = landmark.defenders.icharacters[i].id;
             }
         }
     }

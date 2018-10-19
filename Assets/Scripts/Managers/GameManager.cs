@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour {
 	public int year;
     public int hour;
     public int continuousDays;
-    public const int hoursPerDay = 144;
+    public const int hoursPerDay = 100;
 
     public int startYear;
 
@@ -95,7 +95,8 @@ public class GameManager : MonoBehaviour {
         //SetPausedState(false);
         UIManager.Instance.SetProgressionSpeed1X();
 		SchedulingManager.Instance.StartScheduleCalls ();
-	}
+        Messenger.Broadcast(Signals.DAY_START); //for the first day
+    }
 
     [ContextMenu("Rotate Distance Line")]
     public void RotateDistanceLine() {

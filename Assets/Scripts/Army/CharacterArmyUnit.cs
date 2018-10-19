@@ -8,19 +8,19 @@ public class CharacterArmyUnit : Character {
 	public int armyCount { get; private set; }
     private int armyCap;
 
-    protected new Army _ownParty;
-    protected new Army _currentParty;
+    //protected new Army _ownParty;
+    //protected new Army _currentParty;
 
     #region getters/setters
     public override string name {
         get { return armyCount + " " + Utilities.GetNormalizedSingularRace(_raceSetting.race) + " " + characterClass.className; }
     }
-    public override Party ownParty {
-        get { return _ownParty; }
-    }
-    public override Party currentParty {
-        get { return _currentParty; }
-    }
+    //public override Party ownParty {
+    //    get { return _ownParty; }
+    //}
+    //public override Party currentParty {
+    //    get { return _currentParty; }
+    //}
     #endregion
 
     public CharacterArmyUnit(string className, RACE race, int armyCount) : base(className, race, GENDER.MALE) {
@@ -70,26 +70,26 @@ public class CharacterArmyUnit : Character {
     }
     #endregion
 
-    #region overrides
-    /*
-    Create a new Party with this character as the leader.
-     */
-    public override Party CreateOwnParty() {
-        if (_ownParty != null) {
-            _ownParty.RemoveCharacter(this);
-        }
-        Army newParty = new Army(this);
-        SetOwnedParty(newParty);
-        newParty.AddCharacter(this);
-        //newParty.CreateCharacterObject();
-        return newParty;
-    }
-    public override void SetOwnedParty(Party party) {
-        _ownParty = party as Army;
-    }
-    public override void SetCurrentParty(Party party) {
-        _currentParty = party as Army;
-    }
-    #endregion
+    //#region overrides
+    ///*
+    //Create a new Party with this character as the leader.
+    // */
+    //public override Party CreateOwnParty() {
+    //    if (_ownParty != null) {
+    //        _ownParty.RemoveCharacter(this);
+    //    }
+    //    Army newParty = new Army(this);
+    //    SetOwnedParty(newParty);
+    //    newParty.AddCharacter(this);
+    //    //newParty.CreateCharacterObject();
+    //    return newParty;
+    //}
+    //public override void SetOwnedParty(Party party) {
+    //    _ownParty = party as Army;
+    //}
+    //public override void SetCurrentParty(Party party) {
+    //    _currentParty = party as Army;
+    //}
+    //#endregion
 
 }

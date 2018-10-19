@@ -7,17 +7,19 @@ using UnityEngine.UI;
 
 public class LandmarkCharacterItem : PooledObject {
 
-    public Party party { get; private set; }
+    public ICharacter character { get; private set; }
     private BaseLandmark _landmark;
+    private bool isDefender;
 
     [SerializeField] private CharacterPortrait portrait;
 
-    public void SetParty(Party party, BaseLandmark landmark) {
-        this.party = party;
+    public void SetParty(ICharacter character, BaseLandmark landmark, bool isDefender = false) {
+        this.character = character;
+        this.isDefender = isDefender;
         _landmark = landmark;
-        if (party != null) {
+        if (character != null) {
             portrait.gameObject.SetActive(true);
-            portrait.GeneratePortrait(party.mainCharacter, 100);
+            portrait.GeneratePortrait(character, 100);
             portrait.SetBGState(false);
         } else {
             portrait.gameObject.SetActive(false);
@@ -32,10 +34,18 @@ public class LandmarkCharacterItem : PooledObject {
     }
 
     public void ShowItemInfo() {
-        if (party == null) {
+        if (character == null) {
             return;
         }
-        UIManager.Instance.ShowSmallInfo(party.name);
+        if (isDefender) {
+            UIManager.Instance.ShowSmallInfo(character.name);
+        } else {
+            if (character.currentParty.icharacters.Count > 1) {
+                UIManager.Instance.ShowSmallInfo(character.currentParty.name);
+            } else {
+                UIManager.Instance.ShowSmallInfo(character.name);
+            }
+        }
     }
     public void HideItemInfo() {
         UIManager.Instance.HideSmallInfo();

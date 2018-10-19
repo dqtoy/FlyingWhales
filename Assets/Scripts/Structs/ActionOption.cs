@@ -10,6 +10,7 @@ public class ActionOption {
     public int duration;
     public bool needsMinion;
     public Action effect;
+    public Action onStartDurationAction;
     public Minion assignedMinion;
 
     private int _currentDuration;
@@ -39,6 +40,9 @@ public class ActionOption {
     }
     private void StartDuration() {
         _currentDuration = 0;
+        if (onStartDurationAction != null) {
+            onStartDurationAction();
+        }
         Messenger.AddListener(Signals.HOUR_STARTED, CheckDuration);
     }
     private void CheckDuration() {

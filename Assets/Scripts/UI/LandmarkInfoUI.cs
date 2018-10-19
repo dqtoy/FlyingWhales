@@ -195,7 +195,7 @@ public class LandmarkInfoUI : UIMenu {
         if (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll) {
             for (int i = 0; i < _activeLandmark.charactersAtLocation.Count; i++) {
                 Party currParty = _activeLandmark.charactersAtLocation[i];
-                CreateNewCharacterItem(currParty);
+                CreateNewCharacterItem(currParty.owner);
             }
         } else {
             for (int i = 0; i < _activeLandmark.lastInspectedOfCharactersAtLocation.Count; i++) {
@@ -208,18 +208,18 @@ public class LandmarkInfoUI : UIMenu {
         LandmarkCharacterItem[] items = Utilities.GetComponentsInDirectChildren<LandmarkCharacterItem>(charactersScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
             LandmarkCharacterItem item = items[i];
-            if (item.party != null) {
-                if (item.party.id == party.id) {
+            if (item.character != null) {
+                if (item.character.id == party.id) {
                     return item;
                 }
             }
         }
         return null;
     }
-    private LandmarkCharacterItem CreateNewCharacterItem(Party party) {
+    private LandmarkCharacterItem CreateNewCharacterItem(ICharacter character) {
         GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
         LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
-        item.SetParty(party, _activeLandmark);
+        item.SetParty(character, _activeLandmark);
         characterItems.Add(item);
         CheckScrollers();
         return item;
@@ -227,11 +227,11 @@ public class LandmarkInfoUI : UIMenu {
     private void CreateNewCharacterItem(LandmarkPartyData partyData) {
         GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
         LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
-        item.SetParty(partyData.partyMembers[0].currentParty, _activeLandmark);
+        item.SetParty(partyData.partyMembers[0], _activeLandmark);
     }
     private void OnPartyEnteredLandmark(Party party, BaseLandmark landmark) {
         if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id && (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll)) {
-            CreateNewCharacterItem(party);
+            CreateNewCharacterItem(party.owner);
         }
     }
     private void OnPartyExitedLandmark(Party party, BaseLandmark landmark) {
@@ -302,9 +302,15 @@ public class LandmarkInfoUI : UIMenu {
 
     #region Defenders
     private void UpdateDefenders() {
-        for (int i = 0; i < _activeLandmark.defenders.Length; i++) {
-            Party defender = _activeLandmark.defenders[i];
-            defenderSlots[i].SetParty(defender, _activeLandmark);
+        if (_activeLandmark.defenders == null) {
+            for (int i = 0; i < defenderSlots.Length; i++) {
+                defenderSlots[i].SetParty(null, _activeLandmark, true);
+            }
+        } else {
+            for (int i = 0; i < defenderSlots.Length; i++) {
+                ICharacter defender = _activeLandmark.defenders.icharacters.ElementAtOrDefault(i);
+                defenderSlots[i].SetParty(defender, _activeLandmark, true);
+            }
         }
     }
     #endregion

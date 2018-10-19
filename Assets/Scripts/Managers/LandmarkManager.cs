@@ -172,7 +172,7 @@ public class LandmarkManager : MonoBehaviour {
                     for (int j = 0; j < landmarkData.defenders.Length; j++) {
                         int defenderID = landmarkData.defenders[j];
                         if (defenderID != -1) {
-                            landmark.AddDefender(CharacterManager.Instance.GetCharacterByID(defenderID).ownParty);
+                            landmark.AddDefender(CharacterManager.Instance.GetCharacterByID(defenderID));
                         }
                     }
                 }

@@ -999,4 +999,8 @@ public enum MINIONS_SORT_TYPE {
 }
 public enum INTERACTION_TYPE {
     BANDIT_RAID,
+    INVESTIGATE,
+    POI_1,
+    POI_2,
+    BANDIT_REINFORCEMENT,
 }
