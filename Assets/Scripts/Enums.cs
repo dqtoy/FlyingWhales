@@ -355,6 +355,10 @@ public enum LANDMARK_TYPE {
     RAMPART = 37,
     NODE = 38,
     SUMMONING_CIRCLE = 39,
+    DRAGON_CAVE = 40,
+    SKELETON_CEMETERY = 41,
+    SPIDER_HIVE_LAIR = 42,
+    ZOMBIE_PYRAMID = 43,
 }
 public enum TECHNOLOGY {
     //Weapon Production
@@ -449,7 +453,8 @@ public enum QUEST_TYPE {
 }
 public enum FACTION_RELATIONSHIP_STATUS {
     NON_HOSTILE,
-    HOSTILE
+    HOSTILE,
+    AT_WAR,
 }
 //---------------------------------------- ENTITY COMPONENT SYSTEM ---------------------------------------//
 //public enum BODY_PART{
@@ -1004,4 +1009,9 @@ public enum INTERACTION_TYPE {
     POI_2,
     BANDIT_REINFORCEMENT,
     HARVEST_SEASON,
+}
+public enum REWARD {
+    SUPPLY,
+    MANA,
+    EXP,
 }

@@ -339,5 +339,9 @@ public class FactionManager : MonoBehaviour {
         }
         return factions;
     }
+    public void DeclareWarBetween(Faction faction1, Faction faction2) {
+        FactionRelationship rel = GetRelationshipBetween(faction1, faction2);
+        rel.ChangeRelationshipStatus(FACTION_RELATIONSHIP_STATUS.AT_WAR);
+    }
     #endregion
 }

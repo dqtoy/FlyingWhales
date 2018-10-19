@@ -462,6 +462,18 @@ public class ObjectManager : MonoBehaviour {
             case LANDMARK_TYPE.SUMMONING_CIRCLE:
                 structureObj = new SummoningCircle();
                 break;
+            case LANDMARK_TYPE.DRAGON_CAVE:
+                structureObj = new DragonCave();
+                break;
+            case LANDMARK_TYPE.SKELETON_CEMETERY:
+                structureObj = new SkeletonCemetery();
+                break;
+            case LANDMARK_TYPE.SPIDER_HIVE_LAIR:
+                structureObj = new SpiderHiveLair();
+                break;
+            case LANDMARK_TYPE.ZOMBIE_PYRAMID:
+                structureObj = new ZombiePyramid();
+                break;
             default:
                 throw new System.Exception("No class for " + component.specificObjectType.ToString() + " has been created yet!");
         }
