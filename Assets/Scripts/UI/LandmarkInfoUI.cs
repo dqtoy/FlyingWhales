@@ -209,7 +209,7 @@ public class LandmarkInfoUI : UIMenu {
         for (int i = 0; i < items.Length; i++) {
             LandmarkCharacterItem item = items[i];
             if (item.character != null) {
-                if (item.character.id == party.id) {
+                if (item.character.ownParty.id == party.id) {
                     return item;
                 }
             }

@@ -25,7 +25,9 @@ public class BanditRaid : Interaction {
             string startStateDesc = "The bandits are preparing to raid " + chosenLandmarkToRaid.landmarkName;
             startState.SetDescription(startStateDesc);
             CreateActionOptions(startState);
-            startState.SetTimeLimit(10, 2); //default is do nothing
+            GameDate dueDate = GameManager.Instance.Today();
+            dueDate.AddHours(200);
+            startState.SetTimeSchedule(startState.actionOptions[2], dueDate); //default is do nothing
 
             //action option states
             InteractionState endResult1State = new InteractionState("End Result 1", this); //raid
@@ -116,6 +118,7 @@ public class BanditRaid : Interaction {
         effectWeights.AddElement("End Result 4", 5);
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
+        //chosenEffect = "End Result 4";
         if (chosenEffect == "End Result 2") {
             SuccessfullyCancelledRaid(state, chosenEffect);
         } else if (chosenEffect == "End Result 3") {
@@ -164,9 +167,14 @@ public class BanditRaid : Interaction {
         state.assignedMinion.AdjustExp(1); //**Reward**: Demon gains Exp 1
     }
     private void CriticalFailToCancelRaid(InteractionState state, string effectName) {
-        //TODO: Get Tile to attack from the player's area
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " [Demon Name] failed to stop the bandits from proceeding with their raid. Worse, they were so riled up by the demon that they decided to attack you instead. A group of bandits have left " + originLandmark.landmarkName + " to raid [Location Name].");
+        BaseLandmark targetLandmark = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
+        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " failed to stop the bandits from proceeding with their raid. Worse, they were so riled up by the demon that they decided to attack you instead. A group of bandits have left " + originLandmark.landmarkName + " to attack " + targetLandmark.name + ".");
         SetCurrentState(_states[effectName]);
+        //create a 3 army attack unit from Assault Spawn Weights 1. Change target to your area instead.
+        CharacterParty army = CreateAssaultArmy(3);
+        //force spawned army to raid target
+        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+        army.iactionData.AssignAction(characterAction, targetLandmark.landmarkObj);
     }
     private void CriticalFailToCancelRaidEffect(InteractionState state) {
         state.assignedMinion.AdjustExp(1); //**Reward**: Demon gains Exp 1
@@ -177,7 +185,9 @@ public class BanditRaid : Interaction {
         SetCurrentState(_states[effectName]);
         //create a 4 army attack unit from Assault Spawn Weights 1.
         CharacterParty army = CreateAssaultArmy(4);
-        //TODO: force spawned army to raid target
+        //force spawned army to raid target
+        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
+        army.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
     }
     private void EmpoweredRaidEffect(InteractionState state) {
         state.assignedMinion.AdjustExp(1); //**Reward**: Demon gains Exp 1
@@ -185,9 +195,11 @@ public class BanditRaid : Interaction {
     private void MisusedFunds(InteractionState state, string effectName) {
         _states[effectName].SetDescription("We provided the bandits with more supplies but it doesn't look they used it for the attack. They have now left " + originLandmark.landmarkName + " to raid " + chosenLandmarkToRaid.landmarkName + " but with a smaller group than we anticipated.");
         SetCurrentState(_states[effectName]);
-        //TODO: Spawn attackers create a 3 army attack unit from Assault Spawn Weights 1.
+        //Spawn attackers create a 3 army attack unit from Assault Spawn Weights 1.
         CharacterParty army = CreateAssaultArmy(3);
-        //TODO: force spawned army to raid target
+        //force spawned army to raid target
+        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
+        army.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
     }
     private void MisusedFundsEffect(InteractionState state) {
         state.assignedMinion.AdjustExp(1); //**Reward**: Demon gains Exp 1
@@ -208,7 +220,9 @@ public class BanditRaid : Interaction {
         SetCurrentState(_states[effectName]);
         //create a 3 army attack unit from Assault Spawn Weights 1
         CharacterParty army = CreateAssaultArmy(3);
-        //TODO: force spawned army to raid target
+        //force spawned army to raid target
+        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
+        army.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
     }
     private void RaidEffect(InteractionState state) {
         //Debug.Log("Raid Effect");
@@ -218,7 +232,8 @@ public class BanditRaid : Interaction {
 
     private void SetDefaultActionDuration() {
         ActionOption doNothingOption = _states["State 1"].actionOptions[2];
-        doNothingOption.duration = _states["State 1"].timeLimit;
+        int remainingTicks = Utilities.GetRangeInTicks(GameManager.Instance.Today(), _states["State 1"].timeDate);
+        doNothingOption.duration = remainingTicks;
         Debug.Log("Bandit Raid Set Do Nothing Option to " + doNothingOption.duration);
     }
     private void ConstructAssaultSpawnWeights() {

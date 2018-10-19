@@ -696,5 +696,11 @@ public class LandmarkManager : MonoBehaviour {
         }
         area.SetOwner(null);
     }
+    public void LoadAdditionalAreaData() {
+        for (int i = 0; i < allAreas.Count; i++) {
+            Area currArea = allAreas[i];
+            currArea.LoadAdditionalData();
+        }
+    }
     #endregion
 }

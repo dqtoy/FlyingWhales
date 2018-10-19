@@ -164,6 +164,7 @@ public class MapGenerator : MonoBehaviour {
         //Biomes.Instance.GenerateTileBiomeDetails(GridMap.Instance.hexTiles);
 
         LandmarkManager.Instance.InitializeLandmarks();
+        LandmarkManager.Instance.LoadAdditionalAreaData();
         CharacterScheduleManager.Instance.Initialize();
         //CharacterManager.Instance.GenerateCharactersForTesting(1);
         CharacterManager.Instance.LoadCharacters(data);
