@@ -18,6 +18,7 @@ public class Area {
     public int suppliesInBank { get; private set; }
     public List<BaseLandmark> landmarks { get { return tiles.Where(x => x.landmarkOnTile != null).Select(x => x.landmarkOnTile).ToList(); } }
     public int totalCivilians { get { return landmarks.Sum(x => x.civilianCount); } }
+    private List<BaseLandmark> exposedTiles;
 
     public List<string> excessClasses;
     public List<string> missingClasses;
@@ -68,7 +69,7 @@ public class Area {
         ScheduleFirstAction();
         StartSupplyLine();
 #endif
-        AddTile(Utilities.GetTilesFromIDs(data.tileData));
+        AddTile(Utilities.GetTilesFromIDs(data.tileData), false); //exposed tiles will be determined after loading landmarks at MapGeneration
     }
 
     public void SetRecommendedPower(float power) {
@@ -83,41 +84,49 @@ public class Area {
     public void SetCoreTile(HexTile tile) {
         coreTile = tile;
     }
-    public void AddTile(List<HexTile> tiles, bool revalidateTiles = true) {
+    public void AddTile(List<HexTile> tiles, bool determineExposedTiles = true) {
         for (int i = 0; i < tiles.Count; i++) {
             AddTile(tiles[i], false);
         }
-        //if (revalidateTiles) {
-        //    RevalidateTiles();
-        //}
+#if !WORLD_CREATION_TOOL
+        if (determineExposedTiles) {
+            DetermineExposedTiles();
+        }
+#endif
     }
-    public void AddTile(HexTile tile, bool revalidateTiles = true) {
+    public void AddTile(HexTile tile, bool determineExposedTiles = true) {
         if (!tiles.Contains(tile)) {
             tiles.Add(tile);
             tile.SetArea(this);
             tile.SetMinimapTileColor(areaColor);
-            //if (revalidateTiles) {
-            //    RevalidateTiles();
-            //}
+#if !WORLD_CREATION_TOOL
+            if (determineExposedTiles) {
+                DetermineExposedTiles();
+            }
+#endif
             OnTileAddedToArea(tile);
             Messenger.Broadcast(Signals.AREA_TILE_ADDED, this, tile);
         }
     }
-    public void RemoveTile(List<HexTile> tiles, bool revalidateTiles = true) {
+    public void RemoveTile(List<HexTile> tiles, bool determineExposedTiles = true) {
         for (int i = 0; i < tiles.Count; i++) {
             RemoveTile(tiles[i], false);
         }
-        //if (revalidateTiles) {
-        //    RevalidateTiles();
-        //}
+#if !WORLD_CREATION_TOOL
+        if (determineExposedTiles) {
+            DetermineExposedTiles();
+        }
+#endif
     }
-    public void RemoveTile(HexTile tile, bool revalidateTiles = true) {
+    public void RemoveTile(HexTile tile, bool determineExposedTiles = true) {
         tiles.Remove(tile);
         tile.SetArea(null);
-        //if (revalidateTiles) {
-        //    RevalidateTiles();
-        //}
         OnTileRemovedFromArea(tile);
+#if !WORLD_CREATION_TOOL
+        if (determineExposedTiles) {
+            DetermineExposedTiles();
+        }
+#endif
         Messenger.Broadcast(Signals.AREA_TILE_REMOVED, this, tile);
     }
     private void RevalidateTiles() {
@@ -190,6 +199,31 @@ public class Area {
         //    }
         //}
     }
+    private void DetermineExposedTiles() {
+        exposedTiles = new List<BaseLandmark>();
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile currTile = tiles[i];
+            if (currTile.landmarkOnTile == null || currTile.landmarkOnTile.landmarkObj.isRuined) {
+                continue; //if there is no landmark on the tile, or it's landmark is already ruined, do not count as exposed
+            }
+            //check if the tile has a flat empty tile as a neighbour
+            //if it does, it is an exposed tile
+            for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
+                HexTile currNeighbour = currTile.AllNeighbours[j];
+                if ((currNeighbour.landmarkOnTile == null || currNeighbour.landmarkOnTile.landmarkObj.isRuined) 
+                    && currNeighbour.elevationType == ELEVATION.PLAIN) {
+                    exposedTiles.Add(currTile.landmarkOnTile);
+                    break;
+                }
+            }
+        }
+    }
+    public BaseLandmark GetRandomExposedLandmark() {
+        if (exposedTiles.Count > 0) {
+            return exposedTiles[Random.Range(0, exposedTiles.Count)];
+        }
+        return null;
+    }
     #endregion
 
     #region Area Type
@@ -251,6 +285,10 @@ public class Area {
     #endregion
 
     #region Utilities
+    public void LoadAdditionalData() {
+        DetermineExposedTiles();
+        Messenger.AddListener<StructureObj, ObjectState>(Signals.STRUCTURE_STATE_CHANGED, OnStructureStateChanged);
+    }
     public bool HasLandmarkOfType(LANDMARK_TYPE type) {
         return landmarks.Where(x => x.specificLandmarkType == type).Any();
     }
@@ -269,6 +307,13 @@ public class Area {
     private void ScheduleFirstAction() {
         GameDate gameDate = new GameDate(1, 1, GameManager.Instance.year, 1);
         SchedulingManager.Instance.AddEntry(gameDate, () => StartOfMonth());
+    }
+    private void OnStructureStateChanged(StructureObj structureObj, ObjectState state) {
+        if (tiles.Contains(structureObj.objectLocation.tileLocation)) {
+            if (state.stateName.Equals("Ruined")) {
+                DetermineExposedTiles();
+            }
+        }
     }
     #endregion
 
