@@ -390,21 +390,19 @@ public class Area {
         //consumes Supply per existing unit
         for (int i = 0; i < landmarks.Count; i++) {
             BaseLandmark currLandmark = landmarks[i];
-            for (int j = 0; j < currLandmark.defenders.Length; j++) {
-                Party currDefenderParty = currLandmark.defenders[j];
-                if (currDefenderParty != null) {
-                    for (int k = 0; k < currDefenderParty.icharacters.Count; k++) {
-                        ICharacter currCharacter = currDefenderParty.icharacters[k];
-                        if (currCharacter is CharacterArmyUnit) {
-                            CharacterArmyUnit armyUnit = currCharacter as CharacterArmyUnit;
-                            AdjustSuppliesInBank(-armyUnit.armyCount);
-                        } else if (currCharacter is MonsterArmyUnit) {
-                            MonsterArmyUnit armyUnit = currCharacter as MonsterArmyUnit;
-                            AdjustSuppliesInBank(-armyUnit.armyCount);
-                        } else {
-                            AdjustSuppliesInBank(-1); //if just a single character or monster
-                        }
-                    }
+            if (currLandmark.defenders == null) {
+                continue;
+            }
+            for (int j = 0; j < currLandmark.defenders.icharacters.Count; j++) {
+                ICharacter currDefender = currLandmark.defenders.icharacters[j];
+                if (currDefender is CharacterArmyUnit) {
+                    CharacterArmyUnit armyUnit = currDefender as CharacterArmyUnit;
+                    AdjustSuppliesInBank(-armyUnit.armyCount);
+                } else if (currDefender is MonsterArmyUnit) {
+                    MonsterArmyUnit armyUnit = currDefender as MonsterArmyUnit;
+                    AdjustSuppliesInBank(-armyUnit.armyCount);
+                } else {
+                    AdjustSuppliesInBank(-1); //if just a single character or monster
                 }
             }
         }

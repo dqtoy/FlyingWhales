@@ -60,32 +60,35 @@ public class LandmarkInfoEditor : MonoBehaviour {
     }
 
     private void LoadDefenders() {
-        for (int i = 0; i < this.landmark.defenders.Length; i++) {
-            Party currDefender = this.landmark.defenders[i];
-            if (currDefender != null) {
-                DraggableCharacterItem characterItem = WorldCreatorUI.Instance.characterItemsMenu.GetCharacterItem(currDefender.owner as Character);
-                if (characterItem != null) {
-                    CharacterSlot defenderSlot = defenderSlots[i];
-                    characterItem.transform.SetParent(defenderSlot.transform);
-                    //(characterItem.transform as RectTransform).anchorMin = new Vector2(0f, 1f);
-                    //(characterItem.transform as RectTransform).anchorMax = new Vector2(0f, 1f);
-                    //characterItem.GetComponent<Draggable>().parentToReturnTo = defenderSlot.transform;
-                    characterItem.transform.localPosition = Vector3.zero;
+        if (this.landmark.defenders != null) {
+            for (int i = 0; i < this.landmark.defenders.icharacters.Count; i++) {
+                ICharacter currDefender = this.landmark.defenders.icharacters[i];
+                if (currDefender != null) {
+                    DraggableCharacterItem characterItem = WorldCreatorUI.Instance.characterItemsMenu.GetCharacterItem(currDefender as Character);
+                    if (characterItem != null) {
+                        CharacterSlot defenderSlot = defenderSlots[i];
+                        characterItem.transform.SetParent(defenderSlot.transform);
+                        //(characterItem.transform as RectTransform).anchorMin = new Vector2(0f, 1f);
+                        //(characterItem.transform as RectTransform).anchorMax = new Vector2(0f, 1f);
+                        //characterItem.GetComponent<Draggable>().parentToReturnTo = defenderSlot.transform;
+                        characterItem.transform.localPosition = Vector3.zero;
+                    }
                 }
             }
         }
+        
     }
 
     private void OnCharacterItemDraggedBack(Character character) {
-        this.landmark.RemoveDefender(character.party);
+        this.landmark.RemoveDefender(character);
         Debug.Log("Removed " + character.party.name + " to " + this.landmark.landmarkName + "'s defenders");
     }
 
     private void OnDefenderDropped(Transform characterItem) {
         DraggableCharacterItem item = characterItem.gameObject.GetComponent<DraggableCharacterItem>();
         if (item != null) {
-            this.landmark.AddDefender(item.character.party);
-            Debug.Log("Added " + item.character.party.name + " to " + this.landmark.landmarkName + "'s defenders");
+            this.landmark.AddDefender(item.character);
+            Debug.Log("Added " + item.character.name + " to " + this.landmark.landmarkName + "'s defenders");
         }
     }
 

@@ -12,6 +12,8 @@ public class InteractionState {
     private Minion _assignedMinion;
     private ActionOption _chosenOption;
     private ActionOption[] _actionOptions;
+    private int _timeLimit;
+    private int _defaultActionOptionIndex;
 
     #region getters/setters
     public string name {
@@ -42,6 +44,13 @@ public class InteractionState {
         _name = name;
         _chosenOption = null;
         _actionOptions = new ActionOption[4];
+        _timeLimit = -1;
+    }
+
+    public void OnSetAsCurrentState() {
+        if (_timeLimit != -1) {
+
+        }
     }
     public void SetDescription(string desc) {
         _description = desc;
@@ -77,4 +86,24 @@ public class InteractionState {
         }
         interaction.EndInteraction();
     }
+
+    #region Time Limit
+    public void SetTimeLimit(int timeLimit, int defaultActionOptionIndex) {
+        _timeLimit = timeLimit;
+        _defaultActionOptionIndex = defaultActionOptionIndex;
+    }
+    private void StartTimeLimit() {
+        Messenger.AddListener(Signals.HOUR_ENDED, CheckForTimeLimit);
+    }
+    private void CheckForTimeLimit() {
+        if (_timeLimit > 0) {
+            _timeLimit -= 1;
+        }
+        if (_timeLimit == 0) {
+            //execute default option
+            Messenger.RemoveListener(Signals.HOUR_ENDED, CheckForTimeLimit);
+            actionOptions[_defaultActionOptionIndex].ActivateOption(_interaction.interactable);
+        }
+    }
+    #endregion
 }

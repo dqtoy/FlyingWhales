@@ -45,6 +45,7 @@ public class Interaction {
             state.SetAssignedMinion(_currentState.chosenOption.assignedMinion);
         }
         _currentState = state;
+        _currentState.OnSetAsCurrentState();
         Messenger.Broadcast(Signals.UPDATED_INTERACTION_STATE, this);
     }
     public void SetActivatedState(bool state) {

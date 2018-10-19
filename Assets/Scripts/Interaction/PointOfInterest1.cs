@@ -5,6 +5,7 @@ using UnityEngine;
 public class PointOfInterest1 : Interaction {
     public PointOfInterest1(IInteractable interactable) : base(interactable, INTERACTION_TYPE.POI_1) {
     }
+
     #region Overrides
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
