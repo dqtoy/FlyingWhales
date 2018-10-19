@@ -37,6 +37,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     private bool _hasBeenInspected;
     private bool _isSleeping;
     private MODE _currentMode;
+    private SIDES _currentSide;
     private Color _characterColor;
     private CharacterBattleOnlyTracker _battleOnlyTracker;
     private BaseLandmark _homeLandmark;
@@ -44,8 +45,8 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     private MonsterParty _ownParty;
     private CharacterPortrait _characterPortrait;
     private PortraitSettings _portraitSettings;
+    private Minion _minion;
     //private Combat _currentCombat;
-    private SIDES _currentSide;
     //private List<BodyPart> _bodyParts;
     private List<CharacterAction> _miscActions;
     private List<Skill> _skills;
@@ -198,6 +199,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public Item equippedConsumable {
         get { return null; }
+    }
+    public Minion minion {
+        get { return _minion; }
     }
     //public Combat currentCombat {
     //    get { return _currentCombat; }
@@ -724,6 +728,12 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         if (_currentInteractions.Remove(interaction)) {
             Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
         }
+    }
+    #endregion
+
+    #region Minion
+    public void SetMinion(Minion minion) {
+        _minion = minion;
     }
     #endregion
 }

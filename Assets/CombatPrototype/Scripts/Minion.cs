@@ -55,9 +55,9 @@ public class Minion {
         _exp = 0;
         _type = (DEMON_TYPE) UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(DEMON_TYPE)).Length);
         _strType = Utilities.NormalizeString(_type.ToString());
-        _icharacter.ownParty.DetachActionData();
         PlayerManager.Instance.player.demonicPortal.AddCharacterHomeOnLandmark(_icharacter);
         PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(_icharacter.ownParty);
+        _icharacter.SetMinion(this);
     }
     public void SetDemonType(DEMON_TYPE type) {
         _type = type;
@@ -102,6 +102,9 @@ public class Minion {
         interactable.specificLocation.AddCharacterToLocation(icharacter.currentParty);
     }
     public void GoBackFromAssignment() {
+        if (icharacter.isDead) {
+            return;
+        }
         SetEnabledState(true);
         icharacter.currentParty.specificLocation.RemoveCharacterFromLocation(icharacter.currentParty);
         PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(icharacter.currentParty);

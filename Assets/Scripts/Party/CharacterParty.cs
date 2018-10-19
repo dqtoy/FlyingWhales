@@ -31,6 +31,9 @@ public class CharacterParty : Party {
     public override CharacterAction currentAction {
         get { return _actionData.currentAction; }
     }
+    public override IActionData iactionData {
+        get { return _actionData; }
+    }
     public override int currentDay {
         get { return _actionData.currentDay; }
     }
@@ -138,14 +141,6 @@ public class CharacterParty : Party {
     #endregion
 
     #region Overrides
-    public override void PartyDeath() {
-        if (_isDead) {
-            return;
-        }
-        base.PartyDeath();
-        Debug.Log(this.name + " detached its action data");
-        actionData.DetachActionData();
-    }
     public void DisbandPartyKeepOwner() {
         while (icharacters.Count != 1) {
             for (int i = 0; i < icharacters.Count; i++) {

@@ -4,7 +4,7 @@ using UnityEngine;
 using ECS;
 using System;
 
-public class ActionData {
+public class ActionData : IActionData {
     private CharacterParty _party;
     public CharacterAction currentAction;
     public Quest questAssociatedWithCurrentAction { get; private set; }
@@ -36,6 +36,9 @@ public class ActionData {
     }
     public bool isHalted {
         get { return _isHalted; }
+    }
+    public bool isDoneAction {
+        get { return isDone; }
     }
     public bool isNotFirstEncounter {
         get { return _isNotFirstEncounter; }
@@ -228,20 +231,10 @@ public class ActionData {
                 //    Debug.Log(_party.name + " can't perform " + currentAction.actionData.actionName + " because he is not in the same location!");
                 //}
             } else {
-                LookForAction();
-                //if (currentChainAction != null && currentChainAction.parentChainAction != null) {
-                //    if(currentChainAction.IsPrerequisiteFinished(_party, currentChainAction)) {
-                //        if(currentChainAction.parentChainAction.satisfiedPrerequisites.Count > 0) {
-                //            AssignAction(currentChainAction.parentChainAction.satisfiedPrerequisites[0].action, currentChainAction.parentChainAction.satisfiedPrerequisites[0]);
-                //        } else {
-                //            AssignAction(currentChainAction.parentChainAction.action, currentChainAction.parentChainAction);
-                //        }
-                //    } else {
-                //        LookForAction();
-                //    }
-                //} else {
-                //    LookForAction();
-                //}
+                //DO NOT LOOK FOR ACTION IF MINION
+                if(_party.owner.minion == null) {
+                    LookForAction();
+                }
             }
         }
     }

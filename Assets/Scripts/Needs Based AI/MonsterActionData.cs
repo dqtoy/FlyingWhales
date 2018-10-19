@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class MonsterActionData {
+public class MonsterActionData : IActionData {
     private MonsterParty _party;
     private CharacterAction _currentAction;
     private IObject _currentTargetObject;
@@ -22,6 +22,12 @@ public class MonsterActionData {
     public int currentDay {
         get { return _currentDay; }
     }
+    public bool isHalted {
+        get { return _isHalted; }
+    }
+    public bool isDoneAction {
+        get { return _isDone; }
+    }
     #endregion
 
     public MonsterActionData(MonsterParty party) {
@@ -33,7 +39,7 @@ public class MonsterActionData {
 
         actionHistory = new List<string>();
     }
-    public void AssignAction(CharacterAction action, IObject targetObject) {
+    public void AssignAction(CharacterAction action, IObject targetObject, Quest associatedQuest = null, GameEvent associatedEvent = null) {
         if (_party == null || _party.isDead) {
             return;
         }
@@ -126,5 +132,11 @@ public class MonsterActionData {
         _party.onDailyAction -= PerformCurrentAction;
         Reset();
         _party = null;
+    }
+    public void SetIsHalted(bool state) {
+        if (_isHalted != state) {
+            _isHalted = state;
+            _party.icon.SetMovementState(state);
+        }
     }
 }

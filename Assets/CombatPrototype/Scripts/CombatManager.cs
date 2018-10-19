@@ -109,9 +109,8 @@ namespace ECS {
                     //        characterParty.DisbandPartyKeepOwner();
                     //    }
                     //}
-                    CharacterParty ownParty = icharacter.ownParty as CharacterParty;
-                    if (ownParty.actionData.isHalted) {
-                        ownParty.actionData.SetIsHalted(false);
+                    if (icharacter.ownParty.iactionData.isHalted) {
+                        icharacter.ownParty.iactionData.SetIsHalted(false);
                     }
                 }
                 //icharacter.ResetToFullHP();
@@ -130,9 +129,8 @@ namespace ECS {
                     //        characterParty.DisbandPartyKeepOwner();
                     //    }
                     //}
-                    CharacterParty ownParty = icharacter.ownParty as CharacterParty;
-                    if (ownParty.actionData.isHalted) {
-                        ownParty.actionData.SetIsHalted(false);
+                    if (icharacter.ownParty.iactionData.isHalted) {
+                        icharacter.ownParty.iactionData.SetIsHalted(false);
                     }
                 }
                 //icharacter.ResetToFullHP();

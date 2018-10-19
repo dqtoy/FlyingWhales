@@ -24,6 +24,7 @@ public interface IParty {
     ICharacter mainCharacter { get; }
     ICharacterObject icharacterObject { get; }
     ILocation specificLocation { get; }
+    IActionData iactionData { get; }
     List<ICharacter> icharacters { get; }
 
     void EndAction();

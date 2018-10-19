@@ -30,6 +30,9 @@ public class MonsterParty : Party {
     public override CharacterAction currentAction {
         get { return _actionData.currentAction; }
     }
+    public override IActionData iactionData {
+        get { return _actionData; }
+    }
     public override int currentDay {
         get { return _actionData.currentDay; }
     }

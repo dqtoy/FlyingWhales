@@ -65,9 +65,7 @@ namespace ECS{
                 if (character is Character) {
                     (character as Character).SetDoNotDisturb(true);
                 }
-                if (character.ownParty is CharacterParty) {
-                    (character.ownParty as CharacterParty).actionData.SetIsHalted(true);
-                }
+                character.ownParty.iactionData.SetIsHalted(true);
                 character.ownParty.currentCombat = this;
                 character.SetSide(side);
                 //character.currentCombat = this;
@@ -832,18 +830,15 @@ namespace ECS{
                 if (targetCharacter.IsInOwnParty()) { // the fled character is in his own party
                     if (targetCharacter.ownParty is CharacterParty) {
                         CharacterParty party = targetCharacter.ownParty as CharacterParty;
-                        if (party.actionData.isHalted) {
-                            party.actionData.SetIsHalted(false);
-                        }
                         party.DisbandPartyKeepOwner(); //leave the other party members
                         //CombatManager.Instance.PartyContinuesActionAfterCombat(targetCharacter.ownParty as CharacterParty, false);
                     }
+                    if (targetCharacter.ownParty.iactionData.isHalted) {
+                        targetCharacter.ownParty.iactionData.SetIsHalted(false);
+                    }
                 } else {
-                    if (targetCharacter.ownParty is CharacterParty) {
-                        CharacterParty party = targetCharacter.ownParty as CharacterParty;
-                        if (party.actionData.isHalted) {
-                            party.actionData.SetIsHalted(false);
-                        }
+                    if (targetCharacter.ownParty.iactionData.isHalted) {
+                        targetCharacter.ownParty.iactionData.SetIsHalted(false);
                     }
                     if (targetCharacter.currentParty is CharacterParty) {
                         //the fled character is in another character's party, leave the party
