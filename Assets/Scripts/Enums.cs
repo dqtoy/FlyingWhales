@@ -449,7 +449,8 @@ public enum QUEST_TYPE {
 }
 public enum FACTION_RELATIONSHIP_STATUS {
     NON_HOSTILE,
-    HOSTILE
+    HOSTILE,
+    AT_WAR,
 }
 //---------------------------------------- ENTITY COMPONENT SYSTEM ---------------------------------------//
 //public enum BODY_PART{
@@ -1004,4 +1005,9 @@ public enum INTERACTION_TYPE {
     POI_2,
     BANDIT_REINFORCEMENT,
     HARVEST_SEASON,
+}
+public enum REWARD {
+    SUPPLY,
+    MANA,
+    EXP,
 }

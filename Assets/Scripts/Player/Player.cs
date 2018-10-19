@@ -618,4 +618,22 @@ public class Player : ILeader {
         Messenger.Broadcast(Signals.UPDATED_CURRENCIES);
     }
     #endregion
+
+    #region Rewards
+    public void ClaimReward(InteractionState state, Reward reward) {
+        switch (reward.rewardType) {
+            case REWARD.SUPPLY:
+                AdjustCurrency(CURRENCY.SUPPLY, reward.amount);
+                break;
+            case REWARD.MANA:
+                AdjustCurrency(CURRENCY.MANA, reward.amount);
+                break;
+            case REWARD.EXP:
+                state.assignedMinion.AdjustExp(reward.amount);
+                break;
+            default:
+                break;
+        }
+    }
+    #endregion
 }

@@ -48,8 +48,8 @@ public class BaseLandmark : ILocation, IInteractable {
     public bool hasAdjacentCorruptedLandmark;
     public QuestBoard questBoard { get; private set; }
     public List<GameEvent> advertisedEvents { get; private set; } //events happening at this landmark, that other characters can partake in
-    //public int suppliesAtLandmark { get; private set; }
     public Party defenders { get; private set; }
+    public bool canProduceSupplies { get; private set; }
 
     #region getters/setters
     public int id {
@@ -196,6 +196,7 @@ public class BaseLandmark : ILocation, IInteractable {
         _currentInteractions = new List<Interaction>();
         _combatHistory = new Dictionary<int, Combat>();
         _characterTraces = new Dictionary<Character, GameDate>();
+        SetSupplyProductionState(true);
         //defenders = new Party[LandmarkManager.MAX_DEFENDERS];
         Messenger.AddListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);
     }
@@ -330,6 +331,21 @@ public class BaseLandmark : ILocation, IInteractable {
 		}
 		return null;
 	}
+    public List<Character> GetCharactersOfType(string className) {
+        List<Character> characters = new List<Character>();
+        for (int i = 0; i < charactersAtLocation.Count; i++) {
+            Party currParty = charactersAtLocation[i];
+            if (currParty is CharacterParty) {
+                for (int j = 0; j < currParty.icharacters.Count; j++) {
+                    Character character = currParty.icharacters[j] as Character;
+                    if (character.characterClass.className.Contains(className)) {
+                        characters.Add(character);
+                    }
+                }
+            }
+        }
+        return characters;
+    }
     #endregion
 
     #region Location
@@ -1026,30 +1042,15 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     #endregion
 
-    //#region Supplies
-    //private void StartSupplyProduction(LandmarkData landmarkData) {
-    //    if (landmarkData.dailySupplyProduction > 0) {
-    //        Messenger.AddListener(Signals.DAY_START, DailySupplyProduction);
-    //    }
-    //}
-    //private void DailySupplyProduction() {
-    //    LandmarkData data = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
-    //    if (tileLocation.areaOfTile != null) {
-    //        //give supplies to area immediately
-    //        tileLocation.areaOfTile.AdjustSuppliesInBank(data.dailySupplyProduction);
-    //    } else {
-    //        AdjustSupplies(data.dailySupplyProduction);
-    //    }
-    //}
-    //public void SetSupplies(int amount) {
-    //    suppliesAtLandmark = amount;
-    //    suppliesAtLandmark = Mathf.Max(suppliesAtLandmark, 0);
-    //}
-    //public void AdjustSupplies(int amount) {
-    //    suppliesAtLandmark += amount;
-    //    suppliesAtLandmark = Mathf.Max(suppliesAtLandmark, 0);
-    //}
-    //#endregion
+    #region Supplies
+    public void DisableSupplyProductionUntil(GameDate dueDate) {
+        SetSupplyProductionState(false);
+        SchedulingManager.Instance.AddEntry(dueDate, () => SetSupplyProductionState(true));
+    }
+    public void SetSupplyProductionState(bool state) {
+        canProduceSupplies = state;
+    }
+    #endregion
 
     #region Defenders
     public void AddDefender(ICharacter newDefender) {
@@ -1102,8 +1103,8 @@ public class BaseLandmark : ILocation, IInteractable {
         Interaction pointOfInterest1 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.POI_1, this);
         Interaction pointOfInterest2 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.POI_2, this);
         AddInteraction(investigateInteraction);
-        AddInteraction(pointOfInterest1);
-        AddInteraction(pointOfInterest2);
+        //AddInteraction(pointOfInterest1);
+        //AddInteraction(pointOfInterest2);
     }
     public void AddInteraction(Interaction interaction) {
         _currentInteractions.Add(interaction);

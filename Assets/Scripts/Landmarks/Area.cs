@@ -38,7 +38,6 @@ public class Area {
         SetCoreTile(coreTile);
         AddTile(coreTile);
 #if !WORLD_CREATION_TOOL
-        ScheduleFirstAction();
         StartSupplyLine();
 #endif
     }
@@ -66,7 +65,6 @@ public class Area {
         SetCoreTile(worldcreator.WorldCreatorManager.Instance.GetHexTile(data.coreTileID));
 #else
         SetCoreTile(GridMap.Instance.GetHexTile(data.coreTileID));
-        ScheduleFirstAction();
         StartSupplyLine();
 #endif
         AddTile(Utilities.GetTilesFromIDs(data.tileData), false); //exposed tiles will be determined after loading landmarks at MapGeneration
@@ -292,22 +290,22 @@ public class Area {
     public bool HasLandmarkOfType(LANDMARK_TYPE type) {
         return landmarks.Where(x => x.specificLandmarkType == type).Any();
     }
-    private void StartOfMonth() {
-        if(orderClasses.Count > 0) {
-            UpdateExcessAndMissingClasses();
-            ScheduleStartOfMonthActions();
-        }
-    }
-    private void ScheduleStartOfMonthActions() {
-        GameDate gameDate = GameManager.Instance.Today();
-        gameDate.SetHours(1);
-        gameDate.AddDays(1);
-        SchedulingManager.Instance.AddEntry(gameDate, () => StartOfMonth());
-    }
-    private void ScheduleFirstAction() {
-        GameDate gameDate = new GameDate(1, 1, GameManager.Instance.year, 1);
-        SchedulingManager.Instance.AddEntry(gameDate, () => StartOfMonth());
-    }
+    //private void StartOfMonth() {
+    //    if(orderClasses.Count > 0) {
+    //        UpdateExcessAndMissingClasses();
+    //        ScheduleStartOfMonthActions();
+    //    }
+    //}
+    //private void ScheduleStartOfMonthActions() {
+    //    GameDate gameDate = GameManager.Instance.Today();
+    //    gameDate.SetHours(1);
+    //    gameDate.AddDays(1);
+    //    SchedulingManager.Instance.AddEntry(gameDate, () => StartOfMonth());
+    //}
+    //private void ScheduleFirstAction() {
+    //    GameDate gameDate = new GameDate(1, 1, GameManager.Instance.year, 1);
+    //    SchedulingManager.Instance.AddEntry(gameDate, () => StartOfMonth());
+    //}
     private void OnStructureStateChanged(StructureObj structureObj, ObjectState state) {
         if (tiles.Contains(structureObj.objectLocation.tileLocation)) {
             if (state.stateName.Equals("Ruined")) {
@@ -318,33 +316,22 @@ public class Area {
     #endregion
 
     #region Classes
-    private void UpdateExcessAndMissingClasses() {
-        missingClasses.Clear();
-        excessClasses.Clear();
-        List<ICharacter> newResidents = new List<ICharacter>(residents);
-        //int count = newResidents.Count;
-        for (int i = 0; i < orderClasses.Count; i++) {
-            string prioClass = orderClasses[i];
-            ICharacter resident = ResidentsHasClass(prioClass, newResidents);
-            if (resident != null) {
-                newResidents.Remove(resident);
-            } else {
-                missingClasses.Add(prioClass);
-            }
-        }
-        for (int i = 0; i < newResidents.Count; i++) {
-            if(newResidents[i].characterClass != null) {
-                excessClasses.Add(newResidents[i].characterClass.className);
-            }
-        }
-    }
-    private ICharacter ResidentsHasClass(string className, List<ICharacter> residents) {
+    public bool HasResidentWithClass(string className) {
         for (int i = 0; i < residents.Count; i++) {
             if(residents[i].characterClass != null && residents[i].characterClass.className == className) {
-                return residents[i];
+                return true;
             }
         }
-        return null;
+        return false;
+    }
+    public List<ICharacter> GetResidentsWithClass(string className) {
+        List<ICharacter> characters = new List<ICharacter>();
+        for (int i = 0; i < residents.Count; i++) {
+            if (residents[i].characterClass != null && residents[i].characterClass.className == className) {
+                characters.Add(residents[i]);
+            }
+        }
+        return characters;
     }
     public void AddClassPriority(string newPrio) {
         orderClasses.Add(newPrio);
@@ -424,13 +411,19 @@ public class Area {
     }
     private void CollectDailySupplies() {
         int totalCollectedSupplies = 0;
+        string supplySummary = string.Empty;
         for (int i = 0; i < landmarks.Count; i++) {
             BaseLandmark currLandmark = landmarks[i];
-            LandmarkData data = LandmarkManager.Instance.GetLandmarkData(currLandmark.specificLandmarkType);
-            totalCollectedSupplies += data.dailySupplyProduction;
-            AdjustSuppliesInBank(data.dailySupplyProduction);
+            if (currLandmark.canProduceSupplies || !currLandmark.landmarkObj.isRuined) {
+                LandmarkData data = LandmarkManager.Instance.GetLandmarkData(currLandmark.specificLandmarkType);
+                totalCollectedSupplies += data.dailySupplyProduction;
+                AdjustSuppliesInBank(data.dailySupplyProduction);
+                supplySummary += currLandmark.name + "(" + currLandmark.specificLandmarkType.ToString() + ") - " + data.dailySupplyProduction.ToString() + "\n";
+            } else {
+                supplySummary += currLandmark.name + "(" + currLandmark.specificLandmarkType.ToString() + ") - Cannot Produce\n";
+            }
         }
-        Debug.Log(this.name + " collected supplies " + totalCollectedSupplies);
+        Debug.Log(this.name + " collected supplies " + totalCollectedSupplies + " Summary: \n" + supplySummary);
     }
     private void PayMaintenance() {
         //consumes Supply per existing unit
@@ -465,6 +458,11 @@ public class Area {
     }
     public bool HasEnoughSupplies(int neededSupplies) {
         return suppliesInBank >= neededSupplies;
+    }
+    public void PayForReward(Reward reward) {
+        if (reward.rewardType == REWARD.SUPPLY) {
+            AdjustSuppliesInBank(-reward.amount);
+        }
     }
     #endregion
 }

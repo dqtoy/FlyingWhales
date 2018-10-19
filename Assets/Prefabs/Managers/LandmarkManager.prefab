@@ -492,8 +492,8 @@ MonoBehaviour:
         includeInFirstWeight: 1
       m_values: 1e0000000a0000000a0000000a0000000a0000000f00000014000000
     interactionWeightsDict:
-      m_keys: 0500000002000000
-      m_values: 320000001e000000
+      m_keys: 05000000
+      m_values: 32000000
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 200
@@ -752,14 +752,14 @@ MonoBehaviour:
         includeInFirstWeight: 0
       m_values: 1e0000000f00000005000000
     interactionWeightsDict:
-      m_keys: 00000000
-      m_values: 32000000
+      m_keys: 0000000004000000
+      m_values: 3200000050000000
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 3
     eventTriggerRate: 200
-    noEventTriggerRate: 0
+    noEventTriggerRate: 1000
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets:
