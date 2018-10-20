@@ -107,6 +107,7 @@ public class PlayerManager : MonoBehaviour {
             default:
                 break;
         }
+        player.playerArea.DetermineExposedTiles();
         Messenger.Broadcast(Signals.PLAYER_LANDMARK_CREATED, newLandmark);
     }
 

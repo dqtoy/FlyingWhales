@@ -10,6 +10,7 @@ public class PlayerUI : MonoBehaviour {
 
     public TextMeshProUGUI manaText;
     public TextMeshProUGUI suppliesText;
+    public TextMeshProUGUI impsText;
 
     public Image threatFiller;
     public ScrollRect minionsScrollRect;
@@ -41,10 +42,11 @@ public class PlayerUI : MonoBehaviour {
     }
 
     public void UpdateUI() {
-        manaText.text = "" + PlayerManager.Instance.player.currencies[CURRENCY.MANA];
+        manaText.text = PlayerManager.Instance.player.currencies[CURRENCY.MANA].ToString();
         //redMagicText.text = "" + PlayerManager.Instance.player.redMagic;
         //greenMagicText.text = "" + PlayerManager.Instance.player.greenMagic;
-        suppliesText.text = "" + PlayerManager.Instance.player.currencies[CURRENCY.SUPPLY];
+        suppliesText.text = PlayerManager.Instance.player.currencies[CURRENCY.SUPPLY].ToString();
+        impsText.text = "Imps: " + PlayerManager.Instance.player.currencies[CURRENCY.IMP].ToString() + "/" + PlayerManager.Instance.player.maxImps.ToString();
         //threatFiller.fillAmount = (float) PlayerManager.Instance.player.threatLevel / 100f;
     }
 

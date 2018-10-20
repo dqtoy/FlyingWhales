@@ -197,7 +197,7 @@ public class Area {
         //    }
         //}
     }
-    private void DetermineExposedTiles() {
+    public void DetermineExposedTiles() {
         exposedTiles = new List<BaseLandmark>();
         for (int i = 0; i < tiles.Count; i++) {
             HexTile currTile = tiles[i];
@@ -307,6 +307,9 @@ public class Area {
     //    SchedulingManager.Instance.AddEntry(gameDate, () => StartOfMonth());
     //}
     private void OnStructureStateChanged(StructureObj structureObj, ObjectState state) {
+        if (structureObj.objectLocation == null) {
+            return;
+        }
         if (tiles.Contains(structureObj.objectLocation.tileLocation)) {
             if (state.stateName.Equals("Ruined")) {
                 DetermineExposedTiles();
