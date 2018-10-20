@@ -450,8 +450,8 @@ public class CharacterManager : MonoBehaviour {
 
     #region Character Portraits
     public PortraitAssetCollection GetPortraitAssets(RACE race, GENDER gender) {
-        if (race == RACE.GOBLIN) {
-            race = RACE.ELVES; //TODO: Change this when goblin assets arrive
+        if (race == RACE.GOBLIN || race == RACE.SKELETON) {
+            race = RACE.ELVES; //TODO: Change this when needed assets arrive
         }
         for (int i = 0; i < portraitAssetsx256.Count; i++) {
             RacePortraitAssets racePortraitAssets = portraitAssetsx256[i];

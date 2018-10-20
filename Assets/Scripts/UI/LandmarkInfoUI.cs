@@ -64,8 +64,8 @@ public class LandmarkInfoUI : UIMenu {
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_INSPECTED, OnLandmarkInspected);
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
-        Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, OnPartyEnteredLandmark);
-        Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, OnPartyExitedLandmark);
+        //Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, OnPartyEnteredLandmark);
+        //Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, OnPartyExitedLandmark);
     }
     public override void OpenMenu() {
         base.OpenMenu();
@@ -193,16 +193,17 @@ public class LandmarkInfoUI : UIMenu {
         characterItems.Clear();
         CheckScrollers();
         if (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll) {
-            for (int i = 0; i < _activeLandmark.charactersAtLocation.Count; i++) {
-                Party currParty = _activeLandmark.charactersAtLocation[i];
+            for (int i = 0; i < _activeLandmark.charactersWithHomeOnLandmark.Count; i++) {
+                Party currParty = _activeLandmark.charactersWithHomeOnLandmark[i].ownParty;
                 CreateNewCharacterItem(currParty.owner);
             }
-        } else {
-            for (int i = 0; i < _activeLandmark.lastInspectedOfCharactersAtLocation.Count; i++) {
-                LandmarkPartyData partyData = _activeLandmark.lastInspectedOfCharactersAtLocation[i];
-                CreateNewCharacterItem(partyData);
-            }
         }
+        //else {
+        //    for (int i = 0; i < _activeLandmark.lastInspectedOfCharactersAtLocation.Count; i++) {
+        //        LandmarkPartyData partyData = _activeLandmark.lastInspectedOfCharactersAtLocation[i];
+        //        CreateNewCharacterItem(partyData);
+        //    }
+        //}
     }
     private LandmarkCharacterItem GetItem(Party party) {
         LandmarkCharacterItem[] items = Utilities.GetComponentsInDirectChildren<LandmarkCharacterItem>(charactersScrollView.content.gameObject);
