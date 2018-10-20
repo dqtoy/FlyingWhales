@@ -51,6 +51,7 @@ public interface ICharacter {
     Party currentParty { get; }
     Squad squad { get; }
     CharacterActionQueue<ActionQueueItem> actionQueue { get; }
+    Dictionary<STAT, float> buffs { get; }
 
     //functions
     void ResetToFullHP();
@@ -84,4 +85,7 @@ public interface ICharacter {
     Attribute AddAttribute(ATTRIBUTE tag); //Character only
     void AddActionToQueue(CharacterAction action, IObject targetObject, Quest associatedQuest = null, int position = -1);
     void RemoveActionFromQueue(ActionQueueItem item);
+    void ConstructBuffs();
+    void AddBuff(Buff buff);
+    void RemoveBuff(Buff buff);
 }

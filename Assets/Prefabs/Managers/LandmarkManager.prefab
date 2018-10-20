@@ -1477,18 +1477,27 @@ MonoBehaviour:
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     defenderWeightsDict:
-      m_keys: []
-      m_values: 
+      m_keys:
+      - className: Knight
+        armyCount: 25
+        includeInFirstWeight: 0
+      - className: Archer
+        armyCount: 25
+        includeInFirstWeight: 0
+      - className: Wind Mage
+        armyCount: 25
+        includeInFirstWeight: 0
+      m_values: 1e000000140000000a000000
     interactionWeightsDict:
-      m_keys: 
-      m_values: 
+      m_keys: 02000000
+      m_values: 32000000
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
-    initialDefenderCount: 0
-    maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
+    initialDefenderCount: 3
+    maxDefenderCount: 3
+    eventTriggerRate: 200
+    noEventTriggerRate: 1000
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []

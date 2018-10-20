@@ -85,6 +85,7 @@ namespace ECS {
         public CharacterUIData uiData { get; private set; }
         public BaseLandmark defendingLandmark { get; private set; }
         public MORALITY morality { get; private set; }
+        private Dictionary<STAT, float> _buffs;
 
         public Dictionary<int, Combat> combatHistory;
 
@@ -180,10 +181,10 @@ namespace ECS {
             get { return this._isFainted; }
         }
         public int currentHP {
-            get { return this._currentHP; }
+            get { return this._currentHP + (int)(this._currentHP * _buffs[STAT.HP]); }
         }
         public int maxHP {
-            get { return this._maxHP; }
+            get { return this._maxHP + (int)(this._maxHP * _buffs[STAT.HP]); }
         }
         public Color characterColor {
             get { return _characterColor; }
@@ -352,6 +353,9 @@ namespace ECS {
         public List<Interaction> currentInteractions {
             get { return _currentInteractions; }
         }
+        public Dictionary<STAT, float> buffs {
+            get { return _buffs; }
+        }
         #endregion
 
         public Character(string className, RACE race, GENDER gender) : this() {
@@ -460,6 +464,7 @@ namespace ECS {
             eventSchedule = new CharacterEventSchedule(this);
             uiData = new CharacterUIData();
 
+            ConstructBuffs();
             GetRandomCharacterColor();
             ConstructDefaultMiscActions();
             //_combatHistoryID = 0;
@@ -3071,6 +3076,26 @@ namespace ECS {
         public void SetMinion(Minion minion) {
             _minion = minion;
             UnsubscribeSignals();
+        }
+        #endregion
+
+        #region Buffs
+        public void ConstructBuffs() {
+            _buffs = new Dictionary<STAT, float>();
+            STAT[] stats = Utilities.GetEnumValues<STAT>();
+            for (int i = 0; i < stats.Length; i++) {
+                _buffs.Add(stats[i], 0f);
+            }
+        }
+        public void AddBuff(Buff buff) {
+            if (_buffs.ContainsKey(buff.buffedStat)) {
+                _buffs[buff.buffedStat] += buff.percentage;
+            }
+        }
+        public void RemoveBuff(Buff buff) {
+            if (_buffs.ContainsKey(buff.buffedStat)) {
+                _buffs[buff.buffedStat] -= buff.percentage;
+            }
         }
         #endregion
     }

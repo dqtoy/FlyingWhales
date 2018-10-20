@@ -29,6 +29,7 @@ GameObject:
   - component: {fileID: 114000012320214124}
   - component: {fileID: 114594468415750412}
   - component: {fileID: 114483477996051026}
+  - component: {fileID: 114990611539521902}
   m_Layer: 0
   m_Name: Races
   m_TagString: Untagged
@@ -1263,6 +1264,74 @@ MonoBehaviour:
     attributes: []
     secondaryBodyParts:
     - name: Stomach
+      importance: 1
+      attributes: []
+  restRegenAmount: 0
+  tags: 
+--- !u!114 &114990611539521902
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012243156884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c73ea8b3fe56a941a9e55d74220c1e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  race: 13
+  bodyParts:
+  - name: Head
+    importance: 0
+    attributes: []
+    secondaryBodyParts:
+    - name: Left Eye
+      importance: 1
+      attributes: []
+    - name: Right Eye
+      importance: 1
+      attributes: []
+    - name: Left Ear
+      importance: 1
+      attributes: []
+    - name: Right Ear
+      importance: 1
+      attributes: []
+    - name: Fangs
+      importance: 1
+      attributes: []
+    - name: Mouth
+      importance: 1
+      attributes: []
+  - name: Body
+    importance: 1
+    attributes: []
+    secondaryBodyParts:
+    - name: Front Right Leg
+      importance: 1
+      attributes: []
+    - name: Front Left Leg
+      importance: 1
+      attributes: []
+    - name: Back Right Leg
+      importance: 1
+      attributes: []
+    - name: Back Left Leg
+      importance: 1
+      attributes: []
+    - name: Tail
+      importance: 1
+      attributes: []
+    - name: Balls
+      importance: 1
+      attributes: []
+    - name: Genitals
+      importance: 1
+      attributes: []
+    - name: Asshole
+      importance: 1
+      attributes: []
+    - name: Boobies
       importance: 1
       attributes: []
   restRegenAmount: 0

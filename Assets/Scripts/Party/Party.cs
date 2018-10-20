@@ -22,6 +22,7 @@ public class Party : IParty {
     protected ILocation _specificLocation;
     protected ICharacterObject _icharacterObject;
     protected ICharacter _owner;
+    protected List<Buff> _partyBuffs;
 
     #region getters/setters
     public int id {
@@ -141,6 +142,7 @@ public class Party : IParty {
         _id = Utilities.SetID(this);
         _isDead = false;
         _icharacters = new List<ICharacter>();
+        _partyBuffs = new List<Buff>();
 #if !WORLD_CREATION_TOOL
         Messenger.AddListener<ActionThread>(Signals.LOOK_FOR_ACTION, AdvertiseSelf);
         //Messenger.AddListener<BuildStructureQuestData>(Signals.BUILD_STRUCTURE_LOOK_ACTION, BuildStructureLookingForAction);
@@ -217,6 +219,7 @@ public class Party : IParty {
             _icharacters.Add(icharacter);
             icharacter.SetCurrentParty(this);
             icharacter.OnAddedToParty();
+            ApplyCurrentBuffsToCharacter(icharacter);
             if (icharacter is ECS.Character) {
                 Messenger.Broadcast(Signals.CHARACTER_JOINED_PARTY, icharacter, this);
             }
@@ -232,6 +235,7 @@ public class Party : IParty {
         }
         if (_icharacters.Remove(icharacter)) {
             icharacter.OnRemovedFromParty();
+            RemoveCurrentBuffsFromCharacter(icharacter);
             icharacter.ownParty.icon.transform.position = this.specificLocation.tileLocation.transform.position;
             if (this.specificLocation is BaseLandmark) {
                 this.specificLocation.AddCharacterToLocation(icharacter.ownParty);
@@ -407,6 +411,45 @@ public class Party : IParty {
             for (int i = 0; i < friend.icharacters.Count; i++) {
                 friend.icharacters[i].AddHistory(combatLog);
             }
+        }
+    }
+    #endregion
+
+    #region Buffs
+    public void AddBuff(Buff buff) {
+        _partyBuffs.Add(buff);
+        ApplyBuffToPartyMembers(icharacters, buff);
+    }
+    public void RemoveBuff(Buff buff) {
+        if (_partyBuffs.Contains(buff)) {
+            _partyBuffs.Remove(buff);
+            RemoveBuffFromPartyMembers(icharacters, buff);
+        }
+    }
+    private void ApplyBuffToPartyMembers(List<ICharacter> characters, Buff buff) {
+        for (int i = 0; i < characters.Count; i++) {
+            ApplyBuffToPartyMember(characters[i], buff);
+        }
+    }
+    private void ApplyBuffToPartyMember(ICharacter member, Buff buff) {
+        member.AddBuff(buff);
+    }
+    private void RemoveBuffFromPartyMembers(List<ICharacter> characters, Buff buff) {
+        for (int i = 0; i < characters.Count; i++) {
+            RemoveBuffFromPartyMember(characters[i], buff);
+        }
+    }
+    private void RemoveBuffFromPartyMember(ICharacter member, Buff buff) {
+        member.RemoveBuff(buff);
+    }
+    private void ApplyCurrentBuffsToCharacter(ICharacter character) {
+        for (int i = 0; i < _partyBuffs.Count; i++) {
+            ApplyBuffToPartyMember(character, _partyBuffs[i]);
+        }
+    }
+    private void RemoveCurrentBuffsFromCharacter(ICharacter character) {
+        for (int i = 0; i < _partyBuffs.Count; i++) {
+            RemoveBuffFromPartyMember(character, _partyBuffs[i]);
         }
     }
     #endregion

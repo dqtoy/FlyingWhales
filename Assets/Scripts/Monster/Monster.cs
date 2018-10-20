@@ -56,6 +56,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     private Dictionary<string, float> _itemDropsLookup;
     private Squad _squad;
     private Party _currentParty;
+    private Dictionary<STAT, float> _buffs;
     public CharacterUIData uiData { get; private set; }
 
 
@@ -257,6 +258,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public CharacterActionQueue<ActionQueueItem> actionQueue {
         get { return null; }
+    }
+    public Dictionary<STAT, float> buffs {
+        get { return _buffs; }
     }
     #endregion
 
@@ -468,6 +472,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         SetCharacterColor(Color.red);
         SetSleeping(_isSleepingOnSpawn);
         uiData = new CharacterUIData();
+        ConstructBuffs();
         //ConstructMiscActions();
 
 #if !WORLD_CREATION_TOOL
@@ -734,6 +739,26 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     #region Minion
     public void SetMinion(Minion minion) {
         _minion = minion;
+    }
+    #endregion
+
+    #region Buffs
+    public void ConstructBuffs() {
+        _buffs = new Dictionary<STAT, float>();
+        STAT[] stats = Utilities.GetEnumValues<STAT>();
+        for (int i = 0; i < stats.Length; i++) {
+            _buffs.Add(stats[i], 0f);
+        }
+    }
+    public void AddBuff(Buff buff) {
+        if (_buffs.ContainsKey(buff.buffedStat)) {
+            _buffs[buff.buffedStat] += buff.percentage;
+        }
+    }
+    public void RemoveBuff(Buff buff) {
+        if (_buffs.ContainsKey(buff.buffedStat)) {
+            _buffs[buff.buffedStat] -= buff.percentage;
+        }
     }
     #endregion
 }
