@@ -131,7 +131,7 @@ MonoBehaviour:
       - className: Archer
         armyCount: 20
         includeInFirstWeight: 0
-      m_values: 1e0000000a0000000a0000000a0000000a0000000f00000014000000
+      m_values: 320000000a0000000a0000000a0000000a0000000f00000014000000
     interactionWeightsDict:
       m_keys: 
       m_values: 
