@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 using TMPro;
+using System.Linq;
 
 public class PlayerUI : MonoBehaviour {
     public static PlayerUI Instance;
@@ -39,6 +40,7 @@ public class PlayerUI : MonoBehaviour {
     #endregion
     void Awake() {
         Instance = this;
+        minionItems = new List<MinionItem>();
     }
 
     public void UpdateUI() {
@@ -186,18 +188,54 @@ public class PlayerUI : MonoBehaviour {
     }
     public void OnMaxMinionsChanged() {
         //load the number of minion slots the player has
-        //if the current number of minion items is greater than the slots that the player has
-            //check the number of excess items
-            //check the number of items that are unoccupied
-            //if there are unoccupied items
-            //loop through the number of excess items, then destroy any unoccupied items
-        //if the current number of minion items is less than the slots the player has, instantiate the new slots
+        if (minionItems.Count > PlayerManager.Instance.player.maxMinions) {
+            //if the current number of minion items is greater than the slots that the player has
+            int excess = minionItems.Count - PlayerManager.Instance.player.maxMinions; //check the number of excess items
+            List<MinionItem> unoccupiedItems = GetUnoccupiedMinionItems(); //check the number of items that are unoccupied
+            if (excess > 0 && unoccupiedItems.Count > 0) { //if there are unoccupied items
+                for (int i = 0; i < excess; i++) { //loop through the number of excess items, then destroy any unoccupied items
+                    MinionItem item = unoccupiedItems.ElementAtOrDefault(i);
+                    if (item != null) {
+                        RemoveMinionItem(item);
+                    }
+                }
+            }
+        } else {
+            //if the current number of minion items is less than the slots the player has, instantiate the new slots
+            int remainingSlots = PlayerManager.Instance.player.maxMinions - minionItems.Count;
+            for (int i = 0; i < remainingSlots; i++) {
+                CreateMinionItem().SetMinion(null);
+            }
+        }
+    }
+    public MinionItem GetUnoccupiedMinionItem() {
+        for (int i = 0; i < minionItems.Count; i++) {
+            MinionItem item = minionItems[i];
+            if (item.minion == null) {
+                return item;
+            }
+        }
+        return null;
     }
     private MinionItem CreateMinionItem() {
         GameObject minionItemGO = UIManager.Instance.InstantiateUIObject(minionPrefab.name, minionsContentTransform);
         MinionItem minionItem = minionItemGO.GetComponent<MinionItem>();
         minionItems.Add(minionItem);
         return minionItem;
+    }
+    public void RemoveMinionItem(MinionItem item) {
+        minionItems.Remove(item);
+        ObjectPoolManager.Instance.DestroyObject(item.gameObject);
+    }
+    private List<MinionItem> GetUnoccupiedMinionItems() {
+        List<MinionItem> items = new List<MinionItem>();
+        for (int i = 0; i < minionItems.Count; i++) {
+            MinionItem item = minionItems[i];
+            if (item.minion == null) {
+                items.Add(item);
+            }
+        }
+        return items;
     }
     #endregion
 }

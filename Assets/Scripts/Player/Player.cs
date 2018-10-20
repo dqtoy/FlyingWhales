@@ -46,6 +46,9 @@ public class Player : ILeader {
     public int lifestones {
         get { return _lifestones; }
     }
+    public int maxMinions {
+        get { return _maxMinions; }
+    }
     public float currentLifestoneChance {
         get { return _currentLifestoneChance; }
     }
@@ -87,7 +90,7 @@ public class Player : ILeader {
         _snatchedCharacters = new List<ECS.Character>();
         _intels = new List<Intel>();
         _items = new List<Item>();
-        _maxMinions = PlayerUI.Instance.minionItems.Count;
+        //_maxMinions = PlayerUI.Instance.minionItems.Count;
         maxImps = 5;
         SetCurrentLifestoneChance(25f);
         ConstructAbilities();
@@ -107,6 +110,7 @@ public class Player : ILeader {
     public void CreatePlayerArea(HexTile chosenCoreTile) {
         chosenCoreTile.SetCorruption(true);
         Area playerArea = LandmarkManager.Instance.CreateNewArea(chosenCoreTile, AREA_TYPE.DEMONIC_INTRUSION);
+        playerArea.LoadAdditionalData();
         _demonicPortal = LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenCoreTile, LANDMARK_TYPE.DEMONIC_PORTAL);
         Biomes.Instance.CorruptTileVisuals(chosenCoreTile);
         SetPlayerArea(playerArea);
@@ -117,6 +121,7 @@ public class Player : ILeader {
     public void CreatePlayerArea(BaseLandmark portal) {
         _demonicPortal = portal;
         Area playerArea = LandmarkManager.Instance.CreateNewArea(portal.tileLocation, AREA_TYPE.DEMONIC_INTRUSION);
+        playerArea.LoadAdditionalData();
         Biomes.Instance.CorruptTileVisuals(portal.tileLocation);
         portal.tileLocation.SetCorruption(true);
         SetPlayerArea(playerArea);
@@ -486,7 +491,8 @@ public class Player : ILeader {
     public void AddMinion(Minion minion) {
         if(_minions.Count < _maxMinions) {
             minion.SetIndexDefaultSort(_minions.Count);
-            MinionItem minionItem = PlayerUI.Instance.minionItems[_minions.Count];
+            //MinionItem minionItem = PlayerUI.Instance.minionItems[_minions.Count];
+            MinionItem minionItem = PlayerUI.Instance.GetUnoccupiedMinionItem();
             minionItem.SetMinion(minion);
 
             if (PlayerUI.Instance.minionSortType == MINIONS_SORT_TYPE.LEVEL) {
@@ -516,16 +522,19 @@ public class Player : ILeader {
     public void RemoveMinion(Minion minion) {
         if(_minions.Remove(minion)){
             minion.minionItem.transform.SetAsLastSibling();
-            minion.minionItem.SetMinion(null);
+            PlayerUI.Instance.RemoveMinionItem(minion.minionItem);
+            //minion.minionItem.SetMinion(null);
         }
     }
     public void AdjustMaxMinions(int adjustment) {
         _maxMinions += adjustment;
         _maxMinions = Mathf.Max(0, _maxMinions);
+        PlayerUI.Instance.OnMaxMinionsChanged();
     }
     public void SetMaxMinions(int value) {
         _maxMinions = value;
         _maxMinions = Mathf.Max(0, _maxMinions);
+        PlayerUI.Instance.OnMaxMinionsChanged();
     }
     #endregion
 

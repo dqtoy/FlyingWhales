@@ -54,6 +54,7 @@ public class PlayerManager : MonoBehaviour {
         player = new Player();
         player.CreatePlayerFaction();
         player.CreatePlayerArea(tile);
+        player.SetMaxMinions(9);
         player.CreateInitialMinions();
         LandmarkManager.Instance.OwnArea(player.playerFaction, player.playerArea);
         Messenger.RemoveListener<HexTile>(Signals.TILE_LEFT_CLICKED, OnChooseStartingTile);
@@ -68,6 +69,7 @@ public class PlayerManager : MonoBehaviour {
         player = new Player();
         player.CreatePlayerFaction();
         player.CreatePlayerArea(portal);
+        player.SetMaxMinions(9);
         player.CreateInitialMinions();
         LandmarkManager.Instance.OwnArea(player.playerFaction, player.playerArea);
         GameManager.Instance.StartProgression();
@@ -99,6 +101,7 @@ public class PlayerManager : MonoBehaviour {
                 break;
             case LANDMARK_TYPE.DWELLINGS:
                 //add 2 minion slots
+                player.AdjustMaxMinions(2);
                 break;
             case LANDMARK_TYPE.IMP_KENNEL:
                 //adds 1 Imp capacity
@@ -109,6 +112,20 @@ public class PlayerManager : MonoBehaviour {
         }
         player.playerArea.DetermineExposedTiles();
         Messenger.Broadcast(Signals.PLAYER_LANDMARK_CREATED, newLandmark);
+    }
+    public void OnPlayerLandmarkRuined(BaseLandmark landmark) {
+        switch (landmark.specificLandmarkType) {
+            case LANDMARK_TYPE.DWELLINGS:
+                //add 2 minion slots
+                player.AdjustMaxMinions(-2);
+                break;
+            case LANDMARK_TYPE.IMP_KENNEL:
+                //adds 1 Imp capacity
+                player.AdjustMaxImps(-1);
+                break;
+            default:
+                break;
+        }
     }
 
     public void AdjustTotalLifestones(int amount) {

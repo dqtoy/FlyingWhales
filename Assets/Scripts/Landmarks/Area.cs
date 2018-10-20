@@ -127,18 +127,18 @@ public class Area {
 #endif
         Messenger.Broadcast(Signals.AREA_TILE_REMOVED, this, tile);
     }
-    private void RevalidateTiles() {
-        List<HexTile> tilesToCheck = new List<HexTile>(tiles);
-        tilesToCheck.Remove(coreTile);
-        while (tilesToCheck.Count != 0) {
-            HexTile currTile = tilesToCheck[0];
-            if (PathGenerator.Instance.GetPath(currTile, coreTile, PATHFINDING_MODE.AREA_ONLY, this) == null) {
-                RemoveTile(currTile); //Remove tile from area
-                currTile.UnHighlightTile();
-            }
-            tilesToCheck.Remove(currTile);
-        }
-    }
+    //private void RevalidateTiles() {
+    //    List<HexTile> tilesToCheck = new List<HexTile>(tiles);
+    //    tilesToCheck.Remove(coreTile);
+    //    while (tilesToCheck.Count != 0) {
+    //        HexTile currTile = tilesToCheck[0];
+    //        if (PathGenerator.Instance.GetPath(currTile, coreTile, PATHFINDING_MODE.AREA_ONLY, this) == null) {
+    //            RemoveTile(currTile); //Remove tile from area
+    //            currTile.UnHighlightTile();
+    //        }
+    //        tilesToCheck.Remove(currTile);
+    //    }
+    //}
     public List<HexTile> GetAdjacentBuildableTiles() {
         List<HexTile> elligibleTiles = new List<HexTile>();
         for (int i = 0; i < tiles.Count; i++) {
@@ -313,6 +313,9 @@ public class Area {
         if (tiles.Contains(structureObj.objectLocation.tileLocation)) {
             if (state.stateName.Equals("Ruined")) {
                 DetermineExposedTiles();
+                if (this.areaType == AREA_TYPE.DEMONIC_INTRUSION) { //if player area
+                    PlayerManager.Instance.OnPlayerLandmarkRuined(structureObj.objectLocation);
+                }
             }
         }
     }
