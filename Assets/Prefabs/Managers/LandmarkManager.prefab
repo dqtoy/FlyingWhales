@@ -1607,7 +1607,7 @@ MonoBehaviour:
     allowedLandmarkTypes: 0b0000000e000000
   - areaType: 3
     baseAreaType: 2
-    allowedLandmarkTypes: 010000000f000000210000002200000023000000240000002500000026000000270000002c000000
+    allowedLandmarkTypes: 01000000210000002400000025000000260000002c000000
   - areaType: 4
     baseAreaType: 1
     allowedLandmarkTypes: 0b0000000e000000
