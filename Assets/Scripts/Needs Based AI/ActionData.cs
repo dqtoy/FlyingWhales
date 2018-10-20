@@ -231,7 +231,10 @@ public class ActionData : IActionData {
                 //    Debug.Log(_party.name + " can't perform " + currentAction.actionData.actionName + " because he is not in the same location!");
                 //}
             } else {
-                //DO NOT LOOK FOR ACTION IF MINION
+                //DO NOT LOOK FOR ACTION IF MINION OR IF ARMY
+                if (_party.owner is CharacterArmyUnit || _party.owner is MonsterArmyUnit) { //TODO: Make this more elegant!
+                    return;
+                }
                 if(_party.owner.minion == null) {
                     LookForAction();
                 }

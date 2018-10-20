@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SpiderHiveLair : StructureObj {
-    public SpiderHiveLair() {
+    public SpiderHiveLair() : base() {
         _specificObjectType = LANDMARK_TYPE.SPIDER_HIVE_LAIR;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
     }

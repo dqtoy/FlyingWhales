@@ -21,7 +21,7 @@ public class PlayerUI : MonoBehaviour {
     public TweenPosition minionContentTweenPos;
     public Button upScrollButton;
     public Button downScrollButton;
-    public MinionItem[] minionItems;
+    public List<MinionItem> minionItems;
 
     public Toggle goalsToggle;
     public Toggle intelToggle;
@@ -178,9 +178,24 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     public void ResetAllMinionItems() {
-        for (int i = 0; i < minionItems.Length; i++) {
+        for (int i = 0; i < minionItems.Count; i++) {
             minionItems[i].SetMinion(null);
         }
+    }
+    public void OnMaxMinionsChanged() {
+        //load the number of minion slots the player has
+        //if the current number of minion items is greater than the slots that the player has
+            //check the number of excess items
+            //check the number of items that are unoccupied
+            //if there are unoccupied items
+            //loop through the number of excess items, then destroy any unoccupied items
+        //if the current number of minion items is less than the slots the player has, instantiate the new slots
+    }
+    private MinionItem CreateMinionItem() {
+        GameObject minionItemGO = UIManager.Instance.InstantiateUIObject(minionPrefab.name, minionsContentTransform);
+        MinionItem minionItem = minionItemGO.GetComponent<MinionItem>();
+        minionItems.Add(minionItem);
+        return minionItem;
     }
     #endregion
 }

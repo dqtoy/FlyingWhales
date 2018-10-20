@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SkeletonCemetery : StructureObj {
-    public SkeletonCemetery() {
+    public SkeletonCemetery() : base() {
         _specificObjectType = LANDMARK_TYPE.SKELETON_CEMETERY;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
     }

@@ -8,15 +8,11 @@ public class Player : ILeader {
 
     private const int MAX_IMPS = 5;
 
-    private int _corruption;
     public Faction playerFaction { get; private set; }
     public Area playerArea { get; private set; }
     public int snatchCredits { get; private set; }
+    public int maxImps { get; private set; }
 
-    private int _threatLevel;
-    private int _redMagic;
-    private int _blueMagic;
-    private int _greenMagic;
     private int _lifestones;
     private int _maxMinions;
     private float _currentLifestoneChance;
@@ -46,18 +42,6 @@ public class Player : ILeader {
     }
     public string name {
         get { return "Player"; }
-    }
-    public int redMagic {
-        get { return _redMagic; }
-    }
-    public int blueMagic {
-        get { return _blueMagic; }
-    }
-    public int greenMagic {
-        get { return _greenMagic; }
-    }
-    public int threatLevel {
-        get { return _threatLevel; }
     }
     public int lifestones {
         get { return _lifestones; }
@@ -98,17 +82,13 @@ public class Player : ILeader {
     #endregion
 
     public Player() {
-        _corruption = 0;
         playerArea = null;
         snatchCredits = 0;
         _snatchedCharacters = new List<ECS.Character>();
         _intels = new List<Intel>();
         _items = new List<Item>();
-        _maxMinions = PlayerUI.Instance.minionItems.Length;
-        SetRedMagic(50);
-        SetBlueMagic(50);
-        SetGreenMagic(50);
-        SetThreatLevel(20);
+        _maxMinions = PlayerUI.Instance.minionItems.Count;
+        maxImps = 5;
         SetCurrentLifestoneChance(25f);
         ConstructAbilities();
         ConstructCurrencies();
@@ -120,14 +100,8 @@ public class Player : ILeader {
     }
 
     private void EverydayAction() {
-        DepleteThreatLevel();
+        //DepleteThreatLevel();
     }
-
-    #region Corruption
-    public void AdjustCorruption(int adjustment) {
-        _corruption += adjustment;
-    }
-    #endregion
 
     #region Area
     public void CreatePlayerArea(HexTile chosenCoreTile) {
@@ -152,11 +126,6 @@ public class Player : ILeader {
     private void SetPlayerArea(Area area) {
         playerArea = area;
     }
-    //private void OnTileAddedToPlayerArea(Area affectedArea, HexTile addedTile) {
-    //    if (playerArea != null && affectedArea.id == playerArea.id) {
-    //        addedTile.SetBaseSprite(PlayerManager.Instance.playerAreaFloorSprites[Random.Range(0, PlayerManager.Instance.playerAreaFloorSprites.Length)]);
-    //    }
-    //}
     private void OnTileRemovedFromPlayerArea(Area affectedArea, HexTile removedTile) {
         if (playerArea != null && affectedArea.id == playerArea.id) {
             Biomes.Instance.UpdateTileVisuals(removedTile);
@@ -262,51 +231,6 @@ public class Player : ILeader {
             GameObject go = GameObject.Instantiate(UIManager.Instance.playerActionsUI.playerActionsBtnPrefab, UIManager.Instance.playerActionsUI.playerActionsContentTransform);
             go.GetComponent<PlayerActionBtn>().SetAction(_actions[i]);
         }
-    }
-    #endregion
-
-    #region Magic
-    private void ActivateMagicTransferToPlayer() {
-        Messenger.AddListener(Signals.HOUR_STARTED, TransferMagicToPlayer);
-    }
-    private void TransferMagicToPlayer() {
-        AdjustRedMagic(1);
-        AdjustBlueMagic(1);
-        AdjustGreenMagic(1);
-    }
-    public void SetRedMagic(int amount) {
-        _redMagic = amount;
-    }
-    public void SetBlueMagic(int amount) {
-        _blueMagic = amount;
-    }
-    public void SetGreenMagic(int amount) {
-        _greenMagic = amount;
-    }
-    public void AdjustRedMagic(int amount) {
-        _redMagic += amount;
-        _redMagic = Mathf.Clamp(_redMagic, 0, 100);
-    }
-    public void AdjustBlueMagic(int amount) {
-        _blueMagic += amount;
-        _blueMagic = Mathf.Clamp(_blueMagic, 0, 100);
-    }
-    public void AdjustGreenMagic(int amount) {
-        _greenMagic += amount;
-        _greenMagic = Mathf.Clamp(_greenMagic, 0, 100);
-    }
-    #endregion
-
-    #region Threat
-    public void SetThreatLevel(int amount) {
-        _threatLevel = amount;
-    }
-    public void AdjustThreatLevel(int amount) {
-        _threatLevel += amount;
-        _threatLevel = Mathf.Clamp(_threatLevel, 0, 100);
-    }
-    private void DepleteThreatLevel() {
-        AdjustThreatLevel(-1);
     }
     #endregion
 
@@ -595,6 +519,14 @@ public class Player : ILeader {
             minion.minionItem.SetMinion(null);
         }
     }
+    public void AdjustMaxMinions(int adjustment) {
+        _maxMinions += adjustment;
+        _maxMinions = Mathf.Max(0, _maxMinions);
+    }
+    public void SetMaxMinions(int value) {
+        _maxMinions = value;
+        _maxMinions = Mathf.Max(0, _maxMinions);
+    }
     #endregion
 
     #region Currencies
@@ -603,19 +535,27 @@ public class Player : ILeader {
         _currencies.Add(CURRENCY.IMP, 0);
         _currencies.Add(CURRENCY.MANA, 0);
         _currencies.Add(CURRENCY.SUPPLY, 0);
-        AdjustCurrency(CURRENCY.IMP, 5);
+        AdjustCurrency(CURRENCY.IMP, maxImps);
         AdjustCurrency(CURRENCY.SUPPLY, 100);
     }
     public void AdjustCurrency(CURRENCY currency, int amount) {
         _currencies[currency] += amount;
         if(currency == CURRENCY.IMP) {
-            _currencies[currency] = Mathf.Clamp(_currencies[currency], 0, MAX_IMPS);
+            _currencies[currency] = Mathf.Clamp(_currencies[currency], 0, maxImps);
         }else if (currency == CURRENCY.SUPPLY) {
             _currencies[currency] = Mathf.Max(_currencies[currency], 0);
         } else if (currency == CURRENCY.MANA) {
             _currencies[currency] = Mathf.Max(_currencies[currency], 0); //maybe 999?
         }
         Messenger.Broadcast(Signals.UPDATED_CURRENCIES);
+    }
+    public void SetMaxImps(int imps) {
+        maxImps = imps;
+        _currencies[CURRENCY.IMP] = Mathf.Clamp(_currencies[CURRENCY.IMP], 0, maxImps);
+    }
+    public void AdjustMaxImps(int adjustment) {
+        maxImps += adjustment;
+        AdjustCurrency(CURRENCY.IMP, adjustment);
     }
     #endregion
 

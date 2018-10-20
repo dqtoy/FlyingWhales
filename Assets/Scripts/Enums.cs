@@ -351,7 +351,7 @@ public enum LANDMARK_TYPE {
     MANA_EXTRACTOR = 33,
     BARRACKS = 34,
     MINIONS_HOLD = 35,
-    DENS = 36,
+    DWELLINGS = 36,
     RAMPART = 37,
     NODE = 38,
     SUMMONING_CIRCLE = 39,
@@ -359,6 +359,7 @@ public enum LANDMARK_TYPE {
     SKELETON_CEMETERY = 41,
     SPIDER_HIVE_LAIR = 42,
     ZOMBIE_PYRAMID = 43,
+    IMP_KENNEL = 44,
 }
 public enum TECHNOLOGY {
     //Weapon Production

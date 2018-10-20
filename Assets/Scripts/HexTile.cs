@@ -57,9 +57,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private SpriteRenderer minimapHexSprite;
 
     private PASSABLE_TYPE _passableType;
-    private int _redMagicAmount;
-    private int _blueMagicAmount;
-    private int _greenMagicAmount;
+    //private int _redMagicAmount;
+    //private int _blueMagicAmount;
+    //private int _greenMagicAmount;
     private BaseLandmark _landmarkOnTile = null;
 
     protected List<Party> _charactersAtLocation = new List<Party>(); //List of characters/party on landmark
@@ -149,15 +149,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public int uncorruptibleLandmarkNeighbors {
         get { return _uncorruptibleLandmarkNeighbors; }
     }
-    public int redMagicAmount {
-        get { return _redMagicAmount; }
-    }
-    public int blueMagicAmount {
-        get { return _blueMagicAmount; }
-    }
-    public int greenMagicAmount {
-        get { return _greenMagicAmount; }
-    }
     public MORALITY morality {
         get {
             if (landmarkOnTile == null || landmarkOnTile.owner == null) {
@@ -171,7 +162,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     public void Initialize() {
         //spriteRenderer = this.GetComponent<SpriteRenderer>();
-        SetMagicAbundance();
+        //SetMagicAbundance();
     }
 
     #region Region Functions
@@ -270,32 +261,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #region Biome Functions
     internal void SetBiome(BIOMES biome) {
         data.biomeType = biome;
-        SetMagicAbundance();
-        //if(elevationType == ELEVATION.WATER) {
-        //    SetMinimapTileColor(new Color(64f/255f, 164f/255f, 223f/255f));
-        //} else {
-        //    SetMinimapTileColor(Utilities.biomeColor[biome]);
-        //}
-        //biomeColor = minimapHexSprite.color;
-
     }
-    //internal void AddBiomeDetailToTile(GameObject detailPrefab) {
-    //    Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(biomeDetailParentGO);
-    //    if (children != null) {
-    //        for (int i = 0; i < children.Length; i++) {
-    //            Transform currChild = children[i];
-    //            GameObject.Destroy(currChild.gameObject);
-    //        }
-    //    }
-    //    if (detailPrefab != null) {
-    //        GameObject detailGO = GameObject.Instantiate(detailPrefab, biomeDetailParentGO.transform) as GameObject;
-    //        detailGO.transform.localScale = Vector3.one;
-    //        detailGO.transform.localPosition = Vector3.zero;
-    //    }
-    //}
-    //internal void SetBiomeDetailState(bool state) {
-    //    biomeDetailParentGO.SetActive(state);
-    //}
     #endregion
 
     #region Landmarks
@@ -1444,14 +1410,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             for (int i = 0; i < data.allowedLandmarkTypes.Count; i++) {
                 LANDMARK_TYPE landmarkType = data.allowedLandmarkTypes[i];
                 if (landmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
-                    if (landmarkType == LANDMARK_TYPE.MANA_EXTRACTOR) {
-                        if (this.data.manaOnTile <= 0) { //if this tile has no mana on it, do not allow mana extractor
-                            continue; //skip
-                        }
+                    if (PlayerManager.Instance.CanCreateLandmarkOnTile(landmarkType, this)) {
+                        ContextMenuItemSettings createLandmark = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString()));
+                        createLandmark.onClickAction = () => PlayerManager.Instance.CreatePlayerLandmarkOnTile(this, landmarkType);
+                        createLandmarkSettings.AddMenuItem(createLandmark);
                     }
-                    ContextMenuItemSettings createLandmark = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString()));
-                    createLandmark.onClickAction = () => PlayerManager.Instance.CreatePlayerLandmarkOnTile(this, landmarkType);
-                    createLandmarkSettings.AddMenuItem(createLandmark);
                 }
             }
         }
@@ -1485,63 +1448,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     #region Magic
-    public void ActivateMagicTransferToPlayer() {
-        Messenger.AddListener(Signals.HOUR_STARTED, TransferMagicToPlayer);
-    }
-    public void DeactivateMagicTransferToPlayer() {
-        Messenger.RemoveListener(Signals.HOUR_STARTED, TransferMagicToPlayer);
-    }
-    public void SetMagicAbundance() {
-        switch (data.biomeType) {
-            case BIOMES.DESERT:
-            _redMagicAmount = Utilities.GetMagicAmountByAbundance(ABUNDANCE.MED);
-            _blueMagicAmount = Utilities.GetMagicAmountByAbundance(ABUNDANCE.NONE);
-            _greenMagicAmount = Utilities.GetMagicAmountByAbundance(ABUNDANCE.NONE);
-            break;
-            case BIOMES.GRASSLAND:
-            _redMagicAmount = Utilities.GetMagicAmountByAbundance(ABUNDANCE.NONE);
-            _blueMagicAmount = Utilities.GetMagicAmountByAbundance(ABUNDANCE.HIGH);
-            _greenMagicAmount = Utilities.GetMagicAmountByAbundance(ABUNDANCE.LOW);
-            break;
-            case BIOMES.FOREST:
-            _redMagicAmount = Utilities.GetMagicAmountByAbundance(ABUNDANCE.LOW);
-            _blueMagicAmount = Utilities.GetMagicAmountByAbundance(ABUNDANCE.NONE);
-            _greenMagicAmount = Utilities.GetMagicAmountByAbundance(ABUNDANCE.HIGH);
-            break;
-            case BIOMES.SNOW:
-            _redMagicAmount = Utilities.GetMagicAmountByAbundance(ABUNDANCE.NONE);
-            _blueMagicAmount = Utilities.GetMagicAmountByAbundance(ABUNDANCE.MED);
-            _greenMagicAmount = Utilities.GetMagicAmountByAbundance(ABUNDANCE.NONE);
-            break;
-            case BIOMES.TUNDRA:
-            _redMagicAmount = Utilities.GetMagicAmountByAbundance(ABUNDANCE.LOW);
-            _blueMagicAmount = Utilities.GetMagicAmountByAbundance(ABUNDANCE.NONE);
-            _greenMagicAmount = Utilities.GetMagicAmountByAbundance(ABUNDANCE.LOW);
-            break;
-            case BIOMES.ANCIENT_RUIN:
-            _redMagicAmount = Utilities.GetMagicAmountByAbundance(ABUNDANCE.LOW);
-            _blueMagicAmount = Utilities.GetMagicAmountByAbundance(ABUNDANCE.LOW);
-            _greenMagicAmount = Utilities.GetMagicAmountByAbundance(ABUNDANCE.NONE);
-            break;
-        }
-    }
-    private void TransferMagicToPlayer() {
-        if(_redMagicAmount > 0) {
-            PlayerManager.Instance.player.AdjustRedMagic(1);
-            _redMagicAmount--;
-        }
-        if (_blueMagicAmount > 0) {
-            PlayerManager.Instance.player.AdjustBlueMagic(1);
-            _blueMagicAmount--;
-        }
-        if (_greenMagicAmount > 0) {
-            PlayerManager.Instance.player.AdjustGreenMagic(1);
-            _greenMagicAmount--;
-        }
-        if(_redMagicAmount <= 0 && _blueMagicAmount <= 0 && _greenMagicAmount <= 0) {
-            DeactivateMagicTransferToPlayer();
-        }
-    }
     public void SetManaOnTile(int amount) {
         data.manaOnTile = amount;
         data.manaOnTile = Mathf.Max(data.manaOnTile, 0);

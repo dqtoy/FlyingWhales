@@ -387,9 +387,6 @@ public class UIManager : MonoBehaviour {
         detailedInfoGO.SetActive(true);
         detailedInfoLbl.alignment = TextAlignmentOptions.TopLeft;
         detailedInfoLbl.text = Utilities.NormalizeString(tile.biomeType.ToString()) + "(" + Utilities.NormalizeString(tile.elevationType.ToString()) + ")";
-        detailedInfoLbl.text += "\nRed Magic: " + tile.redMagicAmount.ToString();
-        detailedInfoLbl.text += "\nBlue Magic: " + tile.blueMagicAmount.ToString();
-        detailedInfoLbl.text += "\nGreen Magic: " + tile.greenMagicAmount.ToString();
         detailedInfoLbl.text += "\nMana: " + tile.data.manaOnTile.ToString();
         detailedInfoContentParent.gameObject.SetActive(false);
         if (tile.landmarkOnTile == null) {

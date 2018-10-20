@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Dens : StructureObj {
+public class Dwellings : StructureObj {
 
-    public Dens() : base() {
-        _specificObjectType = LANDMARK_TYPE.DENS;
+    public Dwellings() : base() {
+        _specificObjectType = LANDMARK_TYPE.DWELLINGS;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
     }
 
     #region Overrides
     public override IObject Clone() {
-        Dens clone = new Dens();
+        Dwellings clone = new Dwellings();
         SetCommonData(clone);
         return clone;
     }

@@ -97,6 +97,13 @@ public class PlayerManager : MonoBehaviour {
             case LANDMARK_TYPE.SNATCHER_DEMONS_LAIR:
                 player.AdjustSnatchCredits(1);
                 break;
+            case LANDMARK_TYPE.DWELLINGS:
+                //add 2 minion slots
+                break;
+            case LANDMARK_TYPE.IMP_KENNEL:
+                //adds 1 Imp capacity
+                player.AdjustMaxImps(1);
+                break;
             default:
                 break;
         }
@@ -118,12 +125,24 @@ public class PlayerManager : MonoBehaviour {
         }
         return null;
     }
+
     #region Snatch
     public bool CanSnatch() {
         if (player == null) {
             return false;
         }
         return player.snatchCredits > 0;
+    }
+    #endregion
+
+    #region Utilities
+    public bool CanCreateLandmarkOnTile(LANDMARK_TYPE type, HexTile tile) {
+        switch (type) {
+            case LANDMARK_TYPE.MANA_EXTRACTOR:
+                return tile.data.manaOnTile > 0;
+            default:
+                return true;
+        }
     }
     #endregion
 }

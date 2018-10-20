@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ZombiePyramid : StructureObj {
-    public ZombiePyramid() : base() {
-        _specificObjectType = LANDMARK_TYPE.ZOMBIE_PYRAMID;
+public class ImpKennel : StructureObj {
+    public ImpKennel() : base() {
+        _specificObjectType = LANDMARK_TYPE.IMP_KENNEL;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
     }
 

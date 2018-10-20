@@ -450,8 +450,8 @@ public class ObjectManager : MonoBehaviour {
             case LANDMARK_TYPE.MINIONS_HOLD:
                 structureObj = new MinionsHold();
                 break;
-            case LANDMARK_TYPE.DENS:
-                structureObj = new Dens();
+            case LANDMARK_TYPE.DWELLINGS:
+                structureObj = new Dwellings();
                 break;
             case LANDMARK_TYPE.RAMPART:
                 structureObj = new Rampart();
@@ -473,6 +473,9 @@ public class ObjectManager : MonoBehaviour {
                 break;
             case LANDMARK_TYPE.ZOMBIE_PYRAMID:
                 structureObj = new ZombiePyramid();
+                break;
+            case LANDMARK_TYPE.IMP_KENNEL:
+                structureObj = new ImpKennel();
                 break;
             default:
                 throw new System.Exception("No class for " + component.specificObjectType.ToString() + " has been created yet!");

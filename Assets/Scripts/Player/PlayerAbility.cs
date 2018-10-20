@@ -59,13 +59,13 @@ public class PlayerAbility {
     public virtual bool CanBeActivated(IInteractable interactable) {
         if (interactable.isBeingInspected || GameManager.Instance.inspectAll) {
             int magicUsed = 0;
-            if (interactable is Character) {
-                magicUsed = PlayerManager.Instance.player.blueMagic;
-            } else if (interactable is BaseLandmark) {
-                magicUsed = PlayerManager.Instance.player.greenMagic;
-            } else if (interactable is Monster) {
-                magicUsed = PlayerManager.Instance.player.redMagic;
-            }
+            //if (interactable is Character) {
+            //    magicUsed = PlayerManager.Instance.player.blueMagic;
+            //} else if (interactable is BaseLandmark) {
+            //    magicUsed = PlayerManager.Instance.player.greenMagic;
+            //} else if (interactable is Monster) {
+            //    magicUsed = PlayerManager.Instance.player.redMagic;
+            //}
             if (magicUsed >= _powerCost) {
                 return true;
             }
@@ -105,16 +105,16 @@ public class PlayerAbility {
         _playerAbilityButton.EnableDisable();
     }
     private void PayPowerCost(IInteractable interactable) {
-        if(interactable is Character) {
-            PlayerManager.Instance.player.AdjustBlueMagic(-_powerCost);
-        }else if (interactable is BaseLandmark) {
-            PlayerManager.Instance.player.AdjustGreenMagic(-_powerCost);
-        }else if (interactable is Monster) {
-            PlayerManager.Instance.player.AdjustRedMagic(-_powerCost);
-        }
+        //if(interactable is Character) {
+        //    PlayerManager.Instance.player.AdjustBlueMagic(-_powerCost);
+        //}else if (interactable is BaseLandmark) {
+        //    PlayerManager.Instance.player.AdjustGreenMagic(-_powerCost);
+        //}else if (interactable is Monster) {
+        //    PlayerManager.Instance.player.AdjustRedMagic(-_powerCost);
+        //}
     }
     private void ThreatGain() {
-        PlayerManager.Instance.player.AdjustThreatLevel(_threatGain);
+        //PlayerManager.Instance.player.AdjustThreatLevel(_threatGain);
     }
     public string GetMagicCostString(IInteractable interactable) {
         if (interactable is Character) {

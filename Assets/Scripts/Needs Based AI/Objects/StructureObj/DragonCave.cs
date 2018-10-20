@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DragonCave : StructureObj {
-    public DragonCave() {
+    public DragonCave() : base() {
         _specificObjectType = LANDMARK_TYPE.DRAGON_CAVE;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
     }

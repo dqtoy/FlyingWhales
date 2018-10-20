@@ -1057,9 +1057,17 @@ public class BaseLandmark : ILocation, IInteractable {
 
     #region Defenders
     public void AddDefender(ICharacter newDefender) {
+        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
+        if (data.maxDefenderCount <= 0) {
+            return; //no defender slots
+        }
         if (defenders == null) {
             //set the defenders party as the party of the new defender
             defenders = newDefender.ownParty;
+        }
+        
+        if (defenders.icharacters.Count >= data.maxDefenderCount) {
+            return; //if the current defender party members is more or equal to the maximum defenders allowed for the landmark type
         }
         if (newDefender is Character) {
             (newDefender as Character).OnSetAsDefender(this);

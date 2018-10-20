@@ -47,13 +47,13 @@ public class Inspect : PlayerAbility {
     }
     public override bool CanBeActivated(IInteractable interactable) {
         int magicUsed = 0;
-        if (interactable is Character) {
-            magicUsed = PlayerManager.Instance.player.blueMagic;
-        } else if (interactable is BaseLandmark) {
-            magicUsed = PlayerManager.Instance.player.greenMagic;
-        } else if (interactable is Monster) {
-            magicUsed = PlayerManager.Instance.player.redMagic;
-        }
+        //if (interactable is Character) {
+        //    magicUsed = PlayerManager.Instance.player.blueMagic;
+        //} else if (interactable is BaseLandmark) {
+        //    magicUsed = PlayerManager.Instance.player.greenMagic;
+        //} else if (interactable is Monster) {
+        //    magicUsed = PlayerManager.Instance.player.redMagic;
+        //}
         if (magicUsed >= _powerCost) {
             return true;
         }

@@ -4,8 +4,9 @@ using UnityEngine;
 using UnityEngine.UI.Extensions;
 using UnityEngine.UI;
 using TMPro;
+using EZObjectPools;
 
-public class MinionItem : MonoBehaviour {
+public class MinionItem : PooledObject {
     public TextMeshProUGUI nameLbl;
     public TextMeshProUGUI lvlLbl;
     public Slider expSlider;

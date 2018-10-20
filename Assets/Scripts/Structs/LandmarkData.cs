@@ -22,6 +22,7 @@ public class LandmarkData {
     public bool isUnique;
     public int dailySupplyProduction;
     public int initialDefenderCount;
+    public int maxDefenderCount;
     public int eventTriggerRate;
     public int noEventTriggerRate;
 
