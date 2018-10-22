@@ -174,19 +174,16 @@ public class CharacterManager : MonoBehaviour {
             if (charRole != CHARACTER_ROLE.NONE) {
                 newCharacter.AssignRole(charRole);
             }
-#if !WORLD_CREATION_TOOL
-            if (charRole != CHARACTER_ROLE.PLAYER) {
-                newCharacter.SetSchedule(CharacterScheduleManager.Instance.GetScheduleForCharacter(newCharacter));
-            }
-#endif
         }
 #if !WORLD_CREATION_TOOL
         party.CreateIcon();
         if(initialLocation != null) {
             party.icon.SetPosition(initialLocation.tileLocation.transform.position);
         }
+        if (charRole != CHARACTER_ROLE.PLAYER) {
+            newCharacter.SetSchedule(CharacterScheduleManager.Instance.GetScheduleForCharacter(newCharacter));
+        }
 #endif
-
         _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
@@ -198,25 +195,11 @@ public class CharacterManager : MonoBehaviour {
         if (data.role != CHARACTER_ROLE.NONE) {
             newCharacter.AssignRole(data.role);
         }
-        //newCharacter.AssignRole(data.role);
         if (data.homeLandmarkID != -1) {
             BaseLandmark homeLandmark = LandmarkManager.Instance.GetLandmarkByID(data.homeLandmarkID);
-            //newCharacter.SetHomeLandmark(homeLandmark);
-//#if !WORLD_CREATION_TOOL
             homeLandmark.AddCharacterHomeOnLandmark(newCharacter);
-//#endif
         }
-        //if (data.homeID != -1) {
-        //    Area homeLocation = LandmarkManager.Instance.GetAreaByID(data.homeID);
-        //    newCharacter.SetHome(homeLocation);
-        //    //homeLocation.AddCharacterHomeOnLandmark(newCharacter);
-        //}
         Party party = newCharacter.CreateOwnParty();
-#if !WORLD_CREATION_TOOL
-        if (data.role != CHARACTER_ROLE.PLAYER) {
-            newCharacter.SetSchedule(CharacterScheduleManager.Instance.GetScheduleForCharacter(newCharacter));
-        }
-#endif
         if (data.locationID != -1) {
             ILocation currentLocation = LandmarkManager.Instance.GetLocationBasedOnID(data.locationType, data.locationID);
 #if !WORLD_CREATION_TOOL
@@ -232,6 +215,11 @@ public class CharacterManager : MonoBehaviour {
             }
 #endif
         }
+#if !WORLD_CREATION_TOOL
+        if (data.role != CHARACTER_ROLE.PLAYER) {
+            newCharacter.SetSchedule(CharacterScheduleManager.Instance.GetScheduleForCharacter(newCharacter));
+        }
+#endif
 
         if (data.equipmentData != null) {
             for (int i = 0; i < data.equipmentData.Count; i++) {
