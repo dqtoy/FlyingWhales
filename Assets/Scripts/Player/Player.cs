@@ -250,36 +250,36 @@ public class Player : ILeader {
     public bool RemoveIntel(Intel intel) {
         return _intels.Remove(intel);
     }
-    public void PickIntelToGiveToCharacter(Character character, ShareIntel shareIntelAbility) {
-        //TODO
-        _currentTargetInteractable = character;
-        _currentActiveAbility = shareIntelAbility;
-        PlayerUI.Instance.ShowPlayerPickerAndPopulate();
-    }
-    private void GiveIntelToCharacter() {
-        Intel intel = _currentlySelectedPlayerPicker as Intel;
-        ShareIntel shareIntel = _currentActiveAbility as ShareIntel;
-        Character character = _currentTargetInteractable as Character;
-        GiveIntelToCharacter(intel, character, shareIntel);
-    }
-    public void GiveIntelToCharacter(Intel intel, Character character, ShareIntel shareIntel = null) {
-        if (character.intelReactions.ContainsKey(intel.id)) {
-            character.OnIntelGiven(intel);
-            if (shareIntel != null) {
-                shareIntel.HasGivenIntel(character);
-            }
-        }
-    }
-    public List<Intel> GetIntelConcerning(Character character) {
-        List<Intel> intel = new List<Intel>();
-        for (int i = 0; i < _intels.Count; i++) {
-            Intel currIntel = _intels[i];
-            if (currIntel.description.Contains(character.name) || currIntel.name.Contains(character.name)) {
-                intel.Add(currIntel);
-            }
-        }
-        return intel;
-    }
+    //public void PickIntelToGiveToCharacter(Character character, ShareIntel shareIntelAbility) {
+    //    //TODO
+    //    _currentTargetInteractable = character;
+    //    _currentActiveAbility = shareIntelAbility;
+    //    PlayerUI.Instance.ShowPlayerPickerAndPopulate();
+    //}
+    //private void GiveIntelToCharacter() {
+    //    Intel intel = _currentlySelectedPlayerPicker as Intel;
+    //    ShareIntel shareIntel = _currentActiveAbility as ShareIntel;
+    //    Character character = _currentTargetInteractable as Character;
+    //    GiveIntelToCharacter(intel, character, shareIntel);
+    //}
+    //public void GiveIntelToCharacter(Intel intel, Character character, ShareIntel shareIntel = null) {
+    //    if (character.intelReactions.ContainsKey(intel.id)) {
+    //        character.OnIntelGiven(intel);
+    //        if (shareIntel != null) {
+    //            shareIntel.HasGivenIntel(character);
+    //        }
+    //    }
+    //}
+    //public List<Intel> GetIntelConcerning(Character character) {
+    //    List<Intel> intel = new List<Intel>();
+    //    for (int i = 0; i < _intels.Count; i++) {
+    //        Intel currIntel = _intels[i];
+            //if (currIntel.description.Contains(character.name) || currIntel.name.Contains(character.name)) {
+            //    intel.Add(currIntel);
+            //}
+    //    }
+    //    return intel;
+    //}
     public bool HasIntel(Intel intel) {
         return _intels.Contains(intel);
     }
@@ -361,7 +361,7 @@ public class Player : ILeader {
             if(_currentActiveAbility is GiveItem) {
                 GiveItemToCharacter();
             }else if (_currentActiveAbility is ShareIntel) {
-                GiveIntelToCharacter();
+                //GiveIntelToCharacter();
             } else if (_currentActiveAbility is TakeItem) {
                 TakeItemFromLandmark();
             }

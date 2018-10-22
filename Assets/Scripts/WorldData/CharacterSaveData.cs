@@ -22,7 +22,7 @@ public class CharacterSaveData {
     public List<ATTRIBUTE> attributes;
     public HIDDEN_DESIRE hiddenDesire;
     public List<int> secrets;
-    public List<IntelReaction> intelReactions;
+    //public List<IntelReaction> intelReactions;
     public MORALITY morality;
 
     public CharacterSaveData(ECS.Character character) {
@@ -94,10 +94,10 @@ public class CharacterSaveData {
             secrets.Add(secret.id);
         }
 
-        intelReactions = new List<IntelReaction>();
-        foreach (KeyValuePair<int, GAME_EVENT> kvp in character.intelReactions) {
-            intelReactions.Add(new IntelReaction(kvp.Key, kvp.Value));
-        }
+        //intelReactions = new List<IntelReaction>();
+        //foreach (KeyValuePair<int, GAME_EVENT> kvp in character.intelReactions) {
+        //    intelReactions.Add(new IntelReaction(kvp.Key, kvp.Value));
+        //}
 
         morality = character.morality;
     }

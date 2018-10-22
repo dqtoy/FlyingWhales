@@ -128,12 +128,12 @@ public class CharacterManager : MonoBehaviour {
                     currCharacter.AddSecret(secretID);
                 }
             }
-            if (saveData.intelReactions != null) { //intel reactions
-                for (int j = 0; j < saveData.intelReactions.Count; j++) {
-                    IntelReaction reaction = saveData.intelReactions[j];
-                    currCharacter.AddIntelReaction(reaction.intelID, reaction.reaction);
-                }
-            }
+            //if (saveData.intelReactions != null) { //intel reactions
+            //    for (int j = 0; j < saveData.intelReactions.Count; j++) {
+            //        IntelReaction reaction = saveData.intelReactions[j];
+            //        currCharacter.AddIntelReaction(reaction.intelID, reaction.reaction);
+            //    }
+            //}
             //CheckForHiddenDesire(currCharacter); //TODO: Remove this when setup for hidden desire in character editor is done
             CheckForIntelActions(currCharacter); //TODO: Remove this when setup for intel in character editor is done
             //CheckForIntelReactions(currCharacter); //TODO: Remove this when setup for intel in character editor is done
@@ -736,9 +736,9 @@ public class CharacterManager : MonoBehaviour {
      NOTE: THIS IS FOR TESTING ONLY!
          */
     private void CheckForIntelActions(Character character) {
-        if (character.characterClass.className.Equals("General")) {
-            character.onCharacterDeath += () => PlayerManager.Instance.player.AddIntel(IntelManager.Instance.GetIntel(1));
-        }
+        //if (character.characterClass.className.Equals("General")) {
+            //character.onCharacterDeath += () => PlayerManager.Instance.player.AddIntel(IntelManager.Instance.GetIntel(1));
+        //}
     }
     ///*
     // NOTE: THIS IS FOR TESTING ONLY!

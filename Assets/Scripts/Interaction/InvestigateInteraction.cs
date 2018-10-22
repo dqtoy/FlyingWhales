@@ -5,7 +5,7 @@ using UnityEngine;
 public class InvestigateInteraction : Interaction {
 
     public InvestigateInteraction(IInteractable interactable) : base(interactable, INTERACTION_TYPE.INVESTIGATE) {
-
+        _name = "Investigate";
     }
 
     #region Overrides

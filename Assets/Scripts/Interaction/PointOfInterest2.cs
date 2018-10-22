@@ -5,6 +5,7 @@ using ECS;
 
 public class PointOfInterest2 : Interaction {
     public PointOfInterest2(IInteractable interactable) : base(interactable, INTERACTION_TYPE.POI_2) {
+        _name = "Point of Interest 2";
     }
     #region Overrides
     public override void CreateStates() {

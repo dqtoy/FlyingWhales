@@ -777,7 +777,7 @@ MonoBehaviour:
     initialDefenderCount: 3
     maxDefenderCount: 4
     eventTriggerRate: 200
-    noEventTriggerRate: 1000
+    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets:

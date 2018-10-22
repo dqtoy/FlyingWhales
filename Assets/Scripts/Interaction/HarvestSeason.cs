@@ -8,6 +8,7 @@ public class HarvestSeason : Interaction {
     private BaseLandmark farm;
 
     public HarvestSeason(IInteractable interactable) : base(interactable, INTERACTION_TYPE.HARVEST_SEASON) {
+        _name = "Harvest Season";
     }
 
     #region Overrides

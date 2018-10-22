@@ -972,14 +972,14 @@ public class CharacterInfoUI : UIMenu {
         int day = Int32.Parse(dayDropdown.options[dayDropdown.value].text);
         int year = Int32.Parse(yearField.text);
         int hour = Int32.Parse(tickField.text);
-        TestEvent testEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.TEST_EVENT) as TestEvent;
-        testEvent.Initialize(new List<Character>() { _activeCharacter });
-        testEvent.ScheduleEvent(new GameDate(month, day, year, hour));
+        //TestEvent testEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.TEST_EVENT) as TestEvent;
+        //testEvent.Initialize(new List<Character>() { _activeCharacter });
+        //testEvent.ScheduleEvent(new GameDate(month, day, year, hour));
     }
     public void ScheduleAuto() {
-        TestEvent testEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.TEST_EVENT) as TestEvent;
-        testEvent.Initialize(new List<Character>() { _activeCharacter });
-        testEvent.ScheduleEvent();
+        //TestEvent testEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.TEST_EVENT) as TestEvent;
+        //testEvent.Initialize(new List<Character>() { _activeCharacter });
+        //testEvent.ScheduleEvent();
     }
     public void LogEventSchedule() {
         string text = _activeCharacter.name + "'s Event Schedule: \n";
@@ -1033,16 +1033,16 @@ public class CharacterInfoUI : UIMenu {
                 currItem.gameObject.SetActive(true);
             }
         }
-        List<Intel> intel = IntelManager.Instance.GetIntelConcerning(_activeCharacter);
+        //List<Intel> intel = IntelManager.Instance.GetIntelConcerning(_activeCharacter);
         for (int i = 0; i < intelItems.Length; i++) {
             IntelItem currItem = intelItems[i];
-            Intel currIntel = intel.ElementAtOrDefault(i);
-            if (currIntel == null) {
+            //Intel currIntel = intel.ElementAtOrDefault(i);
+            //if (currIntel == null) {
                 currItem.gameObject.SetActive(false);
-            } else {
-                currItem.SetIntel(currIntel);
-                currItem.gameObject.SetActive(true);
-            }
+            //} else {
+            //    currItem.SetIntel(currIntel);
+            //    currItem.gameObject.SetActive(true);
+            //}
         }
         if (_activeCharacter.hiddenDesire == null) {
             hiddenDesireItem.gameObject.SetActive(false);

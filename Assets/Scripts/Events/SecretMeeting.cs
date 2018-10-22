@@ -192,8 +192,8 @@ public class SecretMeeting : GameEvent {
                     if (generalMax.specificLocation.tileLocation.id == ladyOfTheLake.specificLocation.tileLocation.id) {
                         //if yes, give intel to her immediately
                         //remove any reactions to general max's death (Explanation: Because General Max gave some last words to lady of the lake
-                        ladyOfTheLake.RemoveIntelReaction(1);
-                        PlayerManager.Instance.player.GiveIntelToCharacter(IntelManager.Instance.GetIntel(1), ladyOfTheLake);
+                        //ladyOfTheLake.RemoveIntelReaction(1);
+                        //PlayerManager.Instance.player.GiveIntelToCharacter(IntelManager.Instance.GetIntel(1), ladyOfTheLake);
                     }
                 }
             } else {
