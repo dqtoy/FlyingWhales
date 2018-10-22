@@ -63,7 +63,7 @@ public class BanditRaid : Interaction {
             ActionOption stopThemFromAttacking = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
-                description = "Stop them from attacking.",
+                name = "Stop them from attacking.",
                 duration = 10,
                 needsMinion = true,
                 effect = () => StopThemFromAttackingEffect(state),
@@ -71,7 +71,7 @@ public class BanditRaid : Interaction {
             ActionOption provideSomeAssistance = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 100, currency = CURRENCY.SUPPLY },
-                description = "Provide them some assistance.",
+                name = "Provide them some assistance.",
                 duration = 10,
                 needsMinion = true,
                 effect = () => ProvideThemSomeAssistanceEffect(state),
@@ -79,7 +79,7 @@ public class BanditRaid : Interaction {
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
                 //cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
-                description = "Do nothing.",
+                name = "Do nothing.",
                 duration = 0,
                 needsMinion = false,
                 effect = () => DoNothingEffect(state),

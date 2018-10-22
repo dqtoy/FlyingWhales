@@ -39,7 +39,8 @@ public class PointOfInterest1 : Interaction {
             ActionOption sendOutDemonOption = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
-                description = "Send out a Demon.",
+                name = "Send out a Demon.",
+                description = "We have sent %minion% to explore the interesting location.",
                 duration = 15,
                 needsMinion = true,
                 effect = () => SendOutDemonEffect(state),
@@ -47,7 +48,7 @@ public class PointOfInterest1 : Interaction {
             ActionOption leaveAloneOption = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
-                description = "Leave it alone.",
+                name = "Leave it alone.",
                 duration = 1,
                 needsMinion = false,
                 effect = () => LeaveAloneEffect(state),

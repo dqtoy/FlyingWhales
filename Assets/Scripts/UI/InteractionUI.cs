@@ -75,7 +75,6 @@ public class InteractionUI : MonoBehaviour {
         InteractionItem interactionItem = go.GetComponent<InteractionItem>();
         _allInteractionItems.Add(interactionItem);
 
-
         GameObject toggleGO = GameObject.Instantiate(togglePrefab, toggleGroup.transform);
         Toggle toggle = toggleGO.GetComponent<Toggle>();
         toggleGroup.RegisterToggle(toggle);

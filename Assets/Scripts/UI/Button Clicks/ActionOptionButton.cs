@@ -10,7 +10,7 @@ public class ActionOptionButton : MonoBehaviour {
     public TextMeshProUGUI buttonText;
     public TextMeshProUGUI costText;
     public Image costImage;
-    public Button button;
+    public Toggle toggle;
     public InteractionItem interactionItem;
 
     public void Initialize() {
@@ -21,17 +21,27 @@ public class ActionOptionButton : MonoBehaviour {
     }
     private void UpdateButton() {
         if(_actionOption != null) {
-            button.interactable = _actionOption.CanBeDone();
+            toggle.interactable = _actionOption.CanBeDone();
         }
     }
     public void SetOption(ActionOption actionOption) {
         _actionOption = actionOption;
-        buttonText.text = _actionOption.description;
+        buttonText.text = _actionOption.name;
         costText.text = _actionOption.cost.amount.ToString();
         costImage.sprite = PlayerManager.Instance.GetSpriteByCurrency(_actionOption.cost.currency);
         UpdateButton();
     }
-    public void OnClickThis() {
-        interactionItem.SetCurrentSelectedActionOption(_actionOption);
+    public void OnClickThis(bool state) {
+        if (state) {
+            interactionItem.SetCurrentSelectedActionOption(_actionOption);
+        } else {
+            if(!toggle.group.AnyTogglesOn()){
+                interactionItem.confirmNoMinionButton.gameObject.SetActive(false);
+                if (interactionItem.confirmMinionGO.activeSelf) {
+                    interactionItem.confirmMinionGO.SetActive(false);
+                    interactionItem.portrait.GeneratePortrait(null, 95, true);
+                }
+            }
+        }
     }
 }

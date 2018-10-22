@@ -53,14 +53,14 @@ public class HarvestSeason : Interaction {
             ActionOption sendOutDemon = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 30, currency = CURRENCY.SUPPLY },
-                description = "Send out a demon.",
+                name = "Send out a demon.",
                 duration = 10,
                 needsMinion = true,
                 effect = () => SendOutDemonEffect(state),
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
-                description = "Do nothing.",
+                name = "Do nothing.",
                 duration = 10,
                 needsMinion = false,
                 effect = () => DoNothingEffect(state),
