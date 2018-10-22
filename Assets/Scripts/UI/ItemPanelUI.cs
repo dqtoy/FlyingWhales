@@ -178,7 +178,7 @@ public class ItemPanelUI : MonoBehaviour {
     }
     private void SaveItem() {
 #if UNITY_EDITOR
-        if (nameInput.text == string.Empty) {
+        if (string.IsNullOrEmpty(nameInput.text)) {
             EditorUtility.DisplayDialog("Error", "Please specify an Item Name", "OK");
             return;
         }
@@ -386,7 +386,7 @@ public class ItemPanelUI : MonoBehaviour {
     }
     public void UpdateAttributeOptions() {
         attributeOptions.ClearOptions();
-        attributeOptions.AddOptions(AttributePanelUI.Instance.allItemAttributes);
+        attributeOptions.AddOptions(CombatAttributePanelUI.Instance.allCombatAttributes);
     }
     #endregion
 

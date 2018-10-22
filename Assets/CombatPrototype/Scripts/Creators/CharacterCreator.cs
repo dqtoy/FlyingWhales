@@ -26,7 +26,7 @@ namespace ECS {
 				//	}
 				//}
 
-				if(characterComponent.characterClassName != string.Empty){
+				if(!string.IsNullOrEmpty(characterComponent.characterClassName)){
 					for (int i = 0; i < characterComponent.characterClassChoices.Count; i++) {
 						if(characterComponent.characterClassName == characterComponent.characterClassChoices[i]){
 							characterComponent.currCharacterSelectedIndex = i;

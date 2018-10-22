@@ -7,9 +7,17 @@ using System.IO;
 public class CharacterSim : ICharacterSim {
     [SerializeField] private string _name;
     [SerializeField] private string _className;
-
+    [SerializeField] private string _raceName;
+    [SerializeField] private string _weaponName;
+    [SerializeField] private string _armorName;
+    [SerializeField] private string _accessoryName;
     [SerializeField] private string _consumableName;
+    [SerializeField] private string _skillName;
     [SerializeField] private int _level;
+    [SerializeField] private int _armyCount;
+    [SerializeField] private bool _isArmy;
+    [SerializeField] private GENDER _gender;
+
     //[SerializeField] private int _strBuild;
     //[SerializeField] private int _intBuild;
     //[SerializeField] private int _agiBuild;
@@ -18,27 +26,25 @@ public class CharacterSim : ICharacterSim {
     //[SerializeField] private int _int;
     //[SerializeField] private int _agi;
     //[SerializeField] private int _vit;
-    [SerializeField] private int _maxHP;
-    [SerializeField] private int _maxSP;
     //[SerializeField] private int _defHead;
     //[SerializeField] private int _defBody;
     //[SerializeField] private int _defLegs;
     //[SerializeField] private int _defHands;
     //[SerializeField] private int _defFeet;
-    [SerializeField] private GENDER _gender;
-    [SerializeField] private string _skillName;
 
     private int _id;
     private int _currentHP;
     private int _currentSP;
     private int _currentRow;
+    private int _singleMaxHP;
+    private int _maxSP;
+    private int _singleAttackPower;
+    private int _singleSpeed;
+    private int _attackPower;
+    private int _speed;
+    private int _maxHP;
     private float _actRate;
-    private float _attackPower;
-    private float _speed;
     private bool _isDead;
-    private string _weaponName;
-    private string _armorName;
-    private string _accessoryName;
     private SIDES _currentSide;
     private RaceSetting _raceSetting;
     private CharacterClass _characterClass;
@@ -46,6 +52,8 @@ public class CharacterSim : ICharacterSim {
     private CharacterBattleOnlyTracker _battleOnlyTracker;
     private Weapon _equippedWeapon;
     private Armor _equippedArmor;
+    private Item _equippedAccessory;
+    private Item _equippedConsumable;
     private List<Skill> _skills;
     private List<CombatAttribute> _combatAttributes;
     private List<Attribute> _attributes;
@@ -63,6 +71,9 @@ public class CharacterSim : ICharacterSim {
     }
     public string className {
         get { return _className; }
+    }
+    public string raceName {
+        get { return _raceName; }
     }
     public string weaponName {
         get { return _weaponName; }
@@ -110,17 +121,32 @@ public class CharacterSim : ICharacterSim {
         get { return _actRate; }
         set { _actRate = value; }
     }
-    public float speed {
+    public int speed {
         get { return _speed; }
     }
-    public float attackPower {
+    public int attackPower {
         get { return _attackPower; }
+    }
+    public int singleAttackPower {
+        get { return _singleAttackPower; }
+    }
+    public int singleSpeed {
+        get { return _singleSpeed; }
+    }
+    public int singleMaxHP {
+        get { return _singleMaxHP; }
     }
     public int currentHP {
         get { return _currentHP; }
     }
     public int currentSP {
         get { return _currentSP; }
+    }
+    public int armyCount {
+        get { return _armyCount; }
+    }
+    public bool isArmy {
+        get { return _isArmy; }
     }
     public SIDES currentSide {
         get { return _currentSide; }
@@ -167,32 +193,35 @@ public class CharacterSim : ICharacterSim {
         _id = Utilities.SetID(this);
         ConstructClass();
         ConstructSkills();
-        ResetToFullHP();
-        ResetToFullSP();
-        _raceSetting = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText(Utilities.dataPath + "RaceSettings/HUMANS.json"));
+        _raceSetting = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText(Utilities.dataPath + "RaceSettings/" + _raceName + ".json"));
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
         _battleTracker = new CharacterBattleTracker();
         _elementalWeaknesses = new Dictionary<ELEMENT, float>(CombatSimManager.Instance.elementsChanceDictionary);
         _elementalResistances = new Dictionary<ELEMENT, float>(CombatSimManager.Instance.elementsChanceDictionary);
         _attributes = new List<Attribute>();
         _combatAttributes = new List<CombatAttribute>();
+        AllocateStats();
+        LevelUp();
+        ArmyModifier();
+        ResetToFullHP();
+        ResetToFullSP();
         EquipWeaponArmors();
     }
     public void SetDataFromCharacterPanelUI() {
         _name = CharacterPanelUI.Instance.nameInput.text;
         _className = CharacterPanelUI.Instance.classOptions.options[CharacterPanelUI.Instance.classOptions.value].text;
-        //_weaponName = CharacterPanelUI.Instance.weaponOptions.options[CharacterPanelUI.Instance.weaponOptions.value].text;
-        //_armorName = CharacterPanelUI.Instance.armorOptions.options[CharacterPanelUI.Instance.armorOptions.value].text;
-        //_accessoryName = CharacterPanelUI.Instance.accessoryOptions.options[CharacterPanelUI.Instance.accessoryOptions.value].text;
-        _consumableName = CharacterPanelUI.Instance.consumableOptions.options[CharacterPanelUI.Instance.consumableOptions.value].text;
+        _raceName = CharacterPanelUI.Instance.raceOptions.options[CharacterPanelUI.Instance.raceOptions.value].text;
+        _weaponName = CharacterPanelUI.Instance.weaponName;
+        _armorName = CharacterPanelUI.Instance.armorName;
+        _accessoryName = CharacterPanelUI.Instance.accessoryName;
+        //_consumableName = CharacterPanelUI.Instance.consumableOptions.options[CharacterPanelUI.Instance.consumableOptions.value].text;
 
         _gender = (GENDER) System.Enum.Parse(typeof(GENDER), CharacterPanelUI.Instance.genderOptions.options[CharacterPanelUI.Instance.genderOptions.value].text);
         _level = int.Parse(CharacterPanelUI.Instance.levelInput.text);
-        _maxHP = CharacterPanelUI.Instance.hp;
-        _maxSP = CharacterPanelUI.Instance.sp;
-        _attackPower = CharacterPanelUI.Instance.attackPower;
-        _speed = CharacterPanelUI.Instance.speed;
         _skillName = CharacterPanelUI.Instance.skillName;
+
+        _isArmy = CharacterPanelUI.Instance.toggleArmy.isOn;
+        _armyCount = int.Parse(CharacterPanelUI.Instance.armyInput.text);
 
         //_defHead = int.Parse(CharacterPanelUI.Instance.dHeadInput.text);
         //_defBody = int.Parse(CharacterPanelUI.Instance.dBodyInput.text);
@@ -201,13 +230,21 @@ public class CharacterSim : ICharacterSim {
         //_defFeet = int.Parse(CharacterPanelUI.Instance.dFeetInput.text);
     }
     private void EquipWeaponArmors() {
-        if(_weaponName != string.Empty) {
+        if(!string.IsNullOrEmpty(_weaponName)) {
             Weapon weapon = JsonUtility.FromJson<Weapon>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/WEAPON/" + _weaponName + ".json"));
             EquipItem(weapon);
         }
-        if (_armorName != string.Empty) {
+        if (!string.IsNullOrEmpty(_armorName)) {
             Armor armor = JsonUtility.FromJson<Armor>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/ARMOR/" + _armorName + ".json"));
             EquipItem(armor);
+        }
+        if (!string.IsNullOrEmpty(_accessoryName)) {
+            Item item = JsonUtility.FromJson<Item>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/ACCESSORY/" + _accessoryName + ".json"));
+            EquipItem(item);
+        }
+        if (!string.IsNullOrEmpty(_consumableName)) {
+            Item item = JsonUtility.FromJson<Item>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/CONSUMABLE/" + _consumableName + ".json"));
+            EquipItem(item);
         }
     }
 
@@ -219,7 +256,7 @@ public class CharacterSim : ICharacterSim {
         _currentRow = row;
     }
     public void ResetToFullHP() {
-        AdjustHP(_maxHP);
+        AdjustHP(_singleMaxHP);
         _isDead = false;
     }
     public void ResetToFullSP() {
@@ -297,26 +334,87 @@ public class CharacterSim : ICharacterSim {
         //    }
         //}
     }
+    private void AllocateStats() {
+        _singleAttackPower = _raceSetting.baseAttackPower;
+        _singleSpeed = _raceSetting.baseSpeed;
+        _singleMaxHP = _raceSetting.baseHP;
+        //_sp = characterClass.baseSP;
+    }
+    private void LevelUp() {
+        int multiplier = _level - 1;
+        if (multiplier < 0) {
+            multiplier = 0;
+        }
+        _singleAttackPower += (multiplier * (int) ((characterClass.attackPowerPerLevel / 100f) * (float) _raceSetting.baseAttackPower));
+        _singleSpeed += (multiplier * (int) ((characterClass.speedPerLevel / 100f) * (float) _raceSetting.baseSpeed));
+        _singleMaxHP += (multiplier * (int) ((characterClass.hpPerLevel / 100f) * (float) _raceSetting.baseHP));
+        //_sp += ((int)multiplier * characterClass.spPerLevel);
+
+        //Add stats per level from race
+        if (level > 1) {
+            int hpIndex = level % _raceSetting.hpPerLevel.Length;
+            hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
+            int attackIndex = level % _raceSetting.attackPerLevel.Length;
+            attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
+
+            _singleMaxHP += _raceSetting.hpPerLevel[hpIndex - 1];
+            _singleAttackPower += _raceSetting.attackPerLevel[attackIndex - 1];
+        }
+    }
+    private void ArmyModifier() {
+        if (_isArmy) {
+            _attackPower = _singleAttackPower * _armyCount;
+            _speed = _singleSpeed * _armyCount;
+            _maxHP = _singleMaxHP * _armyCount;
+        } else {
+            _attackPower = _singleAttackPower;
+            _speed = _singleSpeed;
+            _maxHP = _singleMaxHP;
+        }
+        _currentHP = _maxHP;
+    }
     #endregion
 
     #region Equipment
     public bool EquipItem(Item item) {
         bool hasEquipped = false;
-        if (item is Weapon) {
-            Weapon weapon = (Weapon) item;
+        if (item.itemType == ITEM_TYPE.WEAPON) {
+            Weapon weapon = item as Weapon;
             hasEquipped = TryEquipWeapon(weapon);
-        } else if (item is Armor) {
-            Armor armor = (Armor) item;
+        } else if (item.itemType == ITEM_TYPE.ARMOR) {
+            Armor armor = item as Armor;
             hasEquipped = TryEquipArmor(armor);
+        } else if (item.itemType == ITEM_TYPE.ACCESSORY) {
+            hasEquipped = TryEquipAccessory(item);
+        } else if (item.itemType == ITEM_TYPE.CONSUMABLE) {
+            hasEquipped = TryEquipConsumable(item);
+        }
+        if (hasEquipped) {
+            if (item.attributeNames != null) {
+                for (int i = 0; i < item.attributeNames.Count; i++) {
+                    CombatAttribute newCombatAttribute = AttributeManager.Instance.allCombatAttributes[item.attributeNames[i]];
+                    AddCombatAttribute(newCombatAttribute);
+                }
+            }
         }
         return hasEquipped;
     }
     //Unequips an item of a character, whether it's a weapon, armor, etc.
     public void UnequipItem(Item item) {
-        if (item is Weapon) {
-            UnequipWeapon((Weapon) item);
-        } else if (item is Armor) {
-            UnequipArmor((Armor) item);
+        if (item.itemType == ITEM_TYPE.WEAPON) {
+            UnequipWeapon(item as Weapon);
+        } else if (item.itemType == ITEM_TYPE.ARMOR) {
+            UnequipArmor(item as Armor);
+        } else if (item.itemType == ITEM_TYPE.ACCESSORY) {
+            UnequipAccessory(item);
+        } else if (item.itemType == ITEM_TYPE.CONSUMABLE) {
+            UnequipConsumable(item);
+        }
+        if (item.attributeNames != null) {
+            for (int i = 0; i < item.attributeNames.Count; i++) {
+                CombatAttribute newCombatAttribute = AttributeManager.Instance.allCombatAttributes[item.attributeNames[i]];
+                RemoveCombatAttribute(newCombatAttribute);
+            }
         }
     }
     public bool TryEquipWeapon(Weapon weapon) {
@@ -329,6 +427,18 @@ public class CharacterSim : ICharacterSim {
         armor.SetEquipped(true);
         return true;
     }
+    //Try to equip an accessory
+    internal bool TryEquipAccessory(Item accessory) {
+        accessory.SetEquipped(true);
+        _equippedAccessory = accessory;
+        return true;
+    }
+    //Try to equip an consumable
+    internal bool TryEquipConsumable(Item consumable) {
+        consumable.SetEquipped(true);
+        _equippedConsumable = consumable;
+        return true;
+    }
     private void UnequipWeapon(Weapon weapon) {
         _equippedWeapon = null;
         weapon.SetEquipped(false);
@@ -336,6 +446,16 @@ public class CharacterSim : ICharacterSim {
     private void UnequipArmor(Armor armor) {
         _equippedArmor = null;
         armor.SetEquipped(false);
+    }
+    //Unequips accessory of a character
+    private void UnequipAccessory(Item accessory) {
+        accessory.SetEquipped(false);
+        _equippedAccessory = null;
+    }
+    //Unequips consumable of a character
+    private void UnequipConsumable(Item consumable) {
+        consumable.SetEquipped(false);
+        _equippedConsumable = null;
     }
     #endregion
 
@@ -347,6 +467,92 @@ public class CharacterSim : ICharacterSim {
             }
         }
         return null;
+    }
+    public void AddCombatAttribute(CombatAttribute combatAttribute) {
+        if (string.IsNullOrEmpty(GetCombatAttribute(combatAttribute.name).name)) {
+            _combatAttributes.Add(combatAttribute);
+            ApplyCombatAttributeEffects(combatAttribute);
+        }
+    }
+    public bool RemoveCombatAttribute(CombatAttribute combatAttribute) {
+        for (int i = 0; i < _combatAttributes.Count; i++) {
+            if (_combatAttributes[i].name == combatAttribute.name) {
+                _combatAttributes.RemoveAt(i);
+                UnapplyCombatAttributeEffects(combatAttribute);
+                return true;
+            }
+        }
+        return false;
+    }
+    public CombatAttribute GetCombatAttribute(string attributeName) {
+        for (int i = 0; i < _combatAttributes.Count; i++) {
+            if (_combatAttributes[i].name == attributeName) {
+                return _combatAttributes[i];
+            }
+        }
+        return new CombatAttribute();
+    }
+    private void ApplyCombatAttributeEffects(CombatAttribute combatAttribute) {
+        if (!combatAttribute.hasRequirement) {
+            if (combatAttribute.stat == STAT.ATTACK) {
+                if (combatAttribute.isPercentage) {
+                    float result = _singleAttackPower * (combatAttribute.amount / 100f);
+                    _singleAttackPower += (int) result;
+                } else {
+                    _singleAttackPower += (int) combatAttribute.amount;
+                }
+            } else if (combatAttribute.stat == STAT.HP) {
+                int previousMaxHP = _singleMaxHP;
+                if (combatAttribute.isPercentage) {
+                    float result = _singleMaxHP * (combatAttribute.amount / 100f);
+                    _singleMaxHP += (int) result;
+                } else {
+                    _singleMaxHP += (int) combatAttribute.amount;
+                }
+                //if (_currentHP > _maxHP || _currentHP == previousMaxHP) {
+                //    _currentHP = _singleMaxHP;
+                //}
+            } else if (combatAttribute.stat == STAT.SPEED) {
+                if (combatAttribute.isPercentage) {
+                    float result = _singleSpeed * (combatAttribute.amount / 100f);
+                    _singleSpeed += (int) result;
+                } else {
+                    _singleSpeed += (int) combatAttribute.amount;
+                }
+            }
+            ArmyModifier();
+        }
+    }
+    private void UnapplyCombatAttributeEffects(CombatAttribute combatAttribute) {
+        if (!combatAttribute.hasRequirement) {
+            if (combatAttribute.stat == STAT.ATTACK) {
+                if (combatAttribute.isPercentage) {
+                    float result = _singleAttackPower * (combatAttribute.amount / 100f);
+                    _singleAttackPower -= (int) result;
+                } else {
+                    _singleAttackPower -= (int) combatAttribute.amount;
+                }
+            } else if (combatAttribute.stat == STAT.HP) {
+                int previousMaxHP = _singleMaxHP;
+                if (combatAttribute.isPercentage) {
+                    float result = _singleMaxHP * (combatAttribute.amount / 100f);
+                    _singleMaxHP -= (int) result;
+                } else {
+                    _singleMaxHP -= (int) combatAttribute.amount;
+                }
+                if (_currentHP > _singleMaxHP || _currentHP == previousMaxHP) {
+                    _currentHP = _singleMaxHP;
+                }
+            } else if (combatAttribute.stat == STAT.SPEED) {
+                if (combatAttribute.isPercentage) {
+                    float result = _singleSpeed * (combatAttribute.amount / 100f);
+                    _singleSpeed -= (int) result;
+                } else {
+                    _singleSpeed -= (int) combatAttribute.amount;
+                }
+            }
+            ArmyModifier();
+        }
     }
     #endregion
 }

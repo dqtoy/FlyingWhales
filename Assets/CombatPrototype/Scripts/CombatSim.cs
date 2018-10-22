@@ -114,7 +114,7 @@ public class CombatSim {
         }
         for (int i = 0; i < charactersSideB.Count; i++) {
             charactersSideB[i].actRate += charactersSideB[i].speed;
-            if (charactersSideA[i].actRate >= 1000f) {
+            if (charactersSideB[i].actRate >= 1000f) {
                 candidates.Add(charactersSideB[i]);
             }
         }

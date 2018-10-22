@@ -12,6 +12,7 @@ public class AttributeManager : MonoBehaviour {
     private List<Attribute> _allCharacterAttributes;
     private List<Attribute> _allItemAttributes;
     private List<Attribute> _allStructureAttributes;
+    private Dictionary<string, CombatAttribute> _allCombatAttributes;
 
     #region getters/setters
     public List<Attribute> allAttributes {
@@ -26,6 +27,9 @@ public class AttributeManager : MonoBehaviour {
     public List<Attribute> allStructureAttributes {
         get { return _allStructureAttributes; }
     }
+    public Dictionary<string, CombatAttribute> allCombatAttributes {
+        get { return _allCombatAttributes; }
+    }
     #endregion
 
     void Awake() {
@@ -33,7 +37,13 @@ public class AttributeManager : MonoBehaviour {
     }
 
     public void Initialize() {
-        //_allAttributes = new List<Attribute>();
+        _allCombatAttributes = new Dictionary<string, CombatAttribute>();
+        string path = Utilities.dataPath + "CombatAttributes/";
+        string[] files = Directory.GetFiles(path, "*.json");
+        for (int i = 0; i < files.Length; i++) {
+            CombatAttribute attribute = JsonUtility.FromJson<CombatAttribute>(System.IO.File.ReadAllText(files[i]));
+            _allCombatAttributes.Add(attribute.name, attribute);
+        }
         //_allCharacterAttributes = new List<Attribute>();
         //_allItemAttributes = new List<Attribute>();
         //_allStructureAttributes = new List<Attribute>();
@@ -66,7 +76,7 @@ public class AttributeManager : MonoBehaviour {
         //        }
         //    }
         //}
-    }
+        }
 
     public Action<Character> GetBehavior(ATTRIBUTE_BEHAVIOR type) {
         switch (type) {

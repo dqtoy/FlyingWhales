@@ -19,9 +19,11 @@ public class CharacterPanelUI : MonoBehaviour {
     public Dropdown raceOptions;
     public Dropdown genderOptions;
     public Dropdown consumableOptions;
+    public Dropdown combatAttributeOptions;
 
     public InputField nameInput;
     public InputField levelInput;
+    public InputField armyInput;
     //public InputField dHeadInput;
     //public InputField dBodyInput;
     //public InputField dLegsInput;
@@ -33,28 +35,53 @@ public class CharacterPanelUI : MonoBehaviour {
     public TextMeshProUGUI speedLbl;
     public TextMeshProUGUI spLbl;
     public TextMeshProUGUI skillsLbl;
+    public TextMeshProUGUI combatAttributesLbl;
+    public TextMeshProUGUI weaponLbl;
+    public TextMeshProUGUI armorLbl;
+    public TextMeshProUGUI accessoryLbl;
 
-    private int _hp;
+    public Toggle toggleArmy;
+
+    private int _singleHP;
     private int _sp;
-    private float _attackPower;
-    private float _speed;
+    private int _singleAttackPower;
+    private int _singleSpeed;
+    private int _attackPower;
+    private int _speed;
+    private int _hp;
     private string _skillName;
+    private string _weaponName;
+    private string _armorName;
+    private string _accessoryName;
+    private List<string> _allCombatAttributeNames;
 
     #region getters/setters
     public string skillName {
         get { return _skillName; }
     }
+    public string weaponName {
+        get { return _weaponName; }
+    }
+    public string armorName {
+        get { return _armorName; }
+    }
+    public string accessoryName {
+        get { return _accessoryName; }
+    }
     public int hp {
-        get { return _hp; }
+        get { return _singleHP; }
     }
     public int sp {
         get { return _sp; }
     }
-    public float speed {
-        get { return _speed; }
+    public int speed {
+        get { return _singleSpeed; }
     }
-    public float attackPower {
-        get { return _attackPower; }
+    public int attackPower {
+        get { return _singleAttackPower; }
+    }
+    public List<string> allCombatAttributeNames {
+        get { return _allCombatAttributeNames; }
     }
     #endregion
 
@@ -67,14 +94,23 @@ public class CharacterPanelUI : MonoBehaviour {
 
     #region Utilities
     private void LoadAllData() {
+        _allCombatAttributeNames = new List<string>();
+        levelInput.text = "1";
+        armyInput.text = "1";
         raceOptions.ClearOptions();
         genderOptions.ClearOptions();
+        combatAttributeOptions.ClearOptions();
         //weaponOptions.ClearOptions();
         //armorOptions.ClearOptions();
         //accessoryOptions.ClearOptions();
-        consumableOptions.ClearOptions();
+        //consumableOptions.ClearOptions();
         string[] genders = System.Enum.GetNames(typeof(GENDER));
 
+        List<string> combatAttributes = new List<string>();
+        string path = Utilities.dataPath + "CombatAttributes/";
+        foreach (string file in Directory.GetFiles(path, "*.json")) {
+            combatAttributes.Add(Path.GetFileNameWithoutExtension(file));
+        }
         //List<string> weapons = new List<string>();
         //List<string> armors = new List<string>();
         //string path = Utilities.dataPath + "Items/";
@@ -99,6 +135,7 @@ public class CharacterPanelUI : MonoBehaviour {
         }
 
         raceOptions.AddOptions(races);
+        combatAttributeOptions.AddOptions(combatAttributes);
         //weaponOptions.AddOptions(weapons);
         genderOptions.AddOptions(genders.ToList());
         //armorOptions.AddOptions(armors);
@@ -108,6 +145,10 @@ public class CharacterPanelUI : MonoBehaviour {
     public void UpdateClassOptions() {
         classOptions.ClearOptions();
         classOptions.AddOptions(ClassPanelUI.Instance.allClasses);
+    }
+    public void UpdateCombatAttributeOptions() {
+        combatAttributeOptions.ClearOptions();
+        combatAttributeOptions.AddOptions(CombatAttributePanelUI.Instance.allCombatAttributes);
     }
     public void UpdateItemOptions() {
         //UpdateWeaponOptions();
@@ -127,10 +168,11 @@ public class CharacterPanelUI : MonoBehaviour {
         //weaponOptions.value = 0;
         //armorOptions.value = 0;
         //accessoryOptions.value = 0;
-        consumableOptions.value = 0;
+        //consumableOptions.value = 0;
 
         nameInput.text = string.Empty;
         levelInput.text = "1";
+        armyInput.text = "1";
 
         attackPowerLbl.text = "0";
         speedLbl.text = "0";
@@ -138,6 +180,12 @@ public class CharacterPanelUI : MonoBehaviour {
         spLbl.text = "0";
 
         skillsLbl.text = "None";
+        combatAttributesLbl.text = "None";
+        weaponLbl.text = "None";
+        armorLbl.text = "None";
+        accessoryLbl.text = "None";
+
+        toggleArmy.isOn = false;
 
         //dHeadInput.text = "0";
         //dBodyInput.text = "0";
@@ -147,7 +195,7 @@ public class CharacterPanelUI : MonoBehaviour {
     }
     private void SaveCharacter() {
 #if UNITY_EDITOR
-        if (nameInput.text == string.Empty) {
+        if (string.IsNullOrEmpty(nameInput.text)) {
             EditorUtility.DisplayDialog("Error", "Please specify a Character Name", "OK");
             return;
         }
@@ -198,13 +246,17 @@ public class CharacterPanelUI : MonoBehaviour {
     private void LoadCharacterDataToUI(CharacterSim character) {
         nameInput.text = character.name;
         levelInput.text = character.level.ToString();
+        armyInput.text = character.armyCount.ToString();
 
         classOptions.value = GetDropdownIndex(character.className, classOptions);
         genderOptions.value = GetDropdownIndex(character.gender.ToString(), genderOptions);
+        raceOptions.value = GetDropdownIndex(character.raceName, raceOptions);
+
+        toggleArmy.isOn = character.isArmy;
         //weaponOptions.value = GetDropdownIndex(character.weaponName, weaponOptions);
         //armorOptions.value = GetDropdownIndex(character.armorName, armorOptions);
         //accessoryOptions.value = GetDropdownIndex(character.accessoryName, accessoryOptions);
-        consumableOptions.value = GetDropdownIndex(character.consumableName, consumableOptions);
+        //consumableOptions.value = GetDropdownIndex(character.consumableName, consumableOptions);
 
         //dHeadInput.text = character.defHead.ToString();
         //dBodyInput.text = character.defBody.ToString();
@@ -212,10 +264,10 @@ public class CharacterPanelUI : MonoBehaviour {
         //dHandsInput.text = character.defHands.ToString();
         //dFeetInput.text = character.defFeet.ToString();
 
-        _hp = character.maxHP;
-        _sp = character.maxSP;
-        _attackPower = character.attackPower;
-        _speed = character.speed;
+        //_singleHP = character.maxHP;
+        //_sp = character.maxSP;
+        //_singleAttackPower = character.attackPower;
+        //_singleSpeed = character.speed;
 
         //_skillNames.Clear();
         //for (int i = 0; i < character.skillNames.Count; i++) {
@@ -243,45 +295,135 @@ public class CharacterPanelUI : MonoBehaviour {
         RaceSetting currentRace = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText(path));
         return currentRace;
     }
-    private void AllocateStats(CharacterClass characterClass) {
-        _attackPower = characterClass.baseAttackPower;
-        _speed = characterClass.baseSpeed;
-        _hp = characterClass.baseHP;
-        _sp = characterClass.baseSP;
+    private void AllocateStats(RaceSetting raceSetting) {
+        _singleAttackPower = raceSetting.baseAttackPower;
+        _singleSpeed = raceSetting.baseSpeed;
+        _singleHP = raceSetting.baseHP;
+        //_sp = characterClass.baseSP;
     }
     private void LevelUp(int level, CharacterClass characterClass, RaceSetting raceSetting) {
-        float multiplier = (float)level - 1f;
-        if(multiplier < 0f) {
-            multiplier = 0f;
+        int multiplier = level - 1;
+        if(multiplier < 0) {
+            multiplier = 0;
         }
-        _attackPower += (multiplier * characterClass.attackPowerPerLevel);
-        _speed += (multiplier * characterClass.speedPerLevel);
-        _hp += ((int)multiplier * characterClass.hpPerLevel);
-        _sp += ((int)multiplier * characterClass.spPerLevel);
+        _singleAttackPower += (multiplier * (int)((characterClass.attackPowerPerLevel / 100f) * (float)raceSetting.baseAttackPower));
+        _singleSpeed += (multiplier * (int) ((characterClass.speedPerLevel / 100f) * (float) raceSetting.baseSpeed));
+        _singleHP += (multiplier * (int) ((characterClass.hpPerLevel / 100f) * (float) raceSetting.baseHP));
+        //_sp += ((int)multiplier * characterClass.spPerLevel);
+
         //Add stats per level from race
-        if(level > 0) {
+        if(level > 1) {
             int hpIndex = level % raceSetting.hpPerLevel.Length;
             hpIndex = hpIndex == 0 ? raceSetting.hpPerLevel.Length : hpIndex;
             int attackIndex = level % raceSetting.attackPerLevel.Length;
             attackIndex = attackIndex == 0 ? raceSetting.attackPerLevel.Length : attackIndex;
 
-            _hp += raceSetting.hpPerLevel[hpIndex - 1];
-            _attackPower += raceSetting.attackPerLevel[attackIndex - 1];
+            _singleHP += raceSetting.hpPerLevel[hpIndex - 1];
+            _singleAttackPower += raceSetting.attackPerLevel[attackIndex - 1];
+        }
+    }
+    private void ArmyModifier(bool state) {
+        if (state) {
+            _attackPower = _singleAttackPower * int.Parse(armyInput.text);
+            _speed = _singleSpeed * int.Parse(armyInput.text);
+            _hp = _singleHP * int.Parse(armyInput.text);
+        } else {
+            _attackPower = _singleAttackPower;
+            _speed = _singleSpeed;
+            _hp = _singleHP;
         }
     }
     private void UpdateSkills(CharacterClass characterClass) {
         _skillName = characterClass.skillName;
+    }
+    private void UpdateEquipment(CharacterClass characterClass) {
+        if(characterClass.weaponTierNames != null && characterClass.weaponTierNames.Count > 0) {
+            _weaponName = characterClass.weaponTierNames[0];
+        } else {
+            _weaponName = string.Empty;
+        }
+        if (characterClass.armorTierNames != null && characterClass.armorTierNames.Count > 0) {
+            _armorName = characterClass.armorTierNames[0];
+        } else {
+            _armorName = string.Empty;
+        }
+        if (characterClass.accessoryTierNames != null && characterClass.accessoryTierNames.Count > 0) {
+            _accessoryName = characterClass.accessoryTierNames[0];
+        } else {
+            _accessoryName = string.Empty;
+        }
     }
     private void UpdateUI() {
         attackPowerLbl.text = _attackPower.ToString();
         speedLbl.text = _speed.ToString();
         hpLbl.text = _hp.ToString();
         spLbl.text = _sp.ToString();
+        weaponLbl.text = _weaponName;
+        armorLbl.text = _armorName;
+        accessoryLbl.text = _accessoryName;
 
-        if(_skillName != string.Empty) {
+        if(!string.IsNullOrEmpty(_skillName)) {
             skillsLbl.text = _skillName;
         } else {
             skillsLbl.text = "None";
+        }
+        UpdateCombatAttributesUI();
+    }
+    private void UpdateCombatAttributesUI() {
+        combatAttributesLbl.text = string.Empty;
+        if (_allCombatAttributeNames != null && _allCombatAttributeNames.Count > 0) {
+            combatAttributesLbl.text += _allCombatAttributeNames[0];
+            for (int i = 1; i < _allCombatAttributeNames.Count; i++) {
+                combatAttributesLbl.text +=  ", " + _allCombatAttributeNames[i];
+            }
+        }
+        if (!string.IsNullOrEmpty(_weaponName)) {
+            Weapon weapon = JsonUtility.FromJson<Weapon>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/WEAPON/" + _weaponName + ".json"));
+            if(weapon.attributeNames != null && weapon.attributeNames.Count > 0) {
+                if(string.IsNullOrEmpty(combatAttributesLbl.text)) {
+                    combatAttributesLbl.text += weapon.attributeNames[0];
+                    for (int i = 1; i < weapon.attributeNames.Count; i++) {
+                        combatAttributesLbl.text += ", " + weapon.attributeNames[i];
+                    }
+                } else {
+                    for (int i = 0; i < weapon.attributeNames.Count; i++) {
+                        combatAttributesLbl.text += ", " + weapon.attributeNames[i];
+                    }
+                }
+            }
+        }
+        if (!string.IsNullOrEmpty(_armorName)) {
+            Armor armor = JsonUtility.FromJson<Armor>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/ARMOR/" + _armorName + ".json"));
+            if (armor.attributeNames != null && armor.attributeNames.Count > 0) {
+                if (string.IsNullOrEmpty(combatAttributesLbl.text)) {
+                    combatAttributesLbl.text += armor.attributeNames[0];
+                    for (int i = 1; i < armor.attributeNames.Count; i++) {
+                        combatAttributesLbl.text += ", " + armor.attributeNames[i];
+                    }
+                } else {
+                    for (int i = 0; i < armor.attributeNames.Count; i++) {
+                        combatAttributesLbl.text += ", " + armor.attributeNames[i];
+                    }
+                }
+            }
+        }
+        if (!string.IsNullOrEmpty(_accessoryName)) {
+            Item item = JsonUtility.FromJson<Item>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/ACCESSORY/" + _accessoryName + ".json"));
+            if (item.attributeNames != null && item.attributeNames.Count > 0) {
+                if (string.IsNullOrEmpty(combatAttributesLbl.text)) {
+                    combatAttributesLbl.text += item.attributeNames[0];
+                    for (int i = 1; i < item.attributeNames.Count; i++) {
+                        combatAttributesLbl.text += ", " + item.attributeNames[i];
+                    }
+                } else {
+                    for (int i = 0; i < item.attributeNames.Count; i++) {
+                        combatAttributesLbl.text += ", " + item.attributeNames[i];
+                    }
+                }
+            }
+        }
+        if(string.IsNullOrEmpty(combatAttributesLbl.text)) {
+            combatAttributesLbl.text = "None";
         }
     }
     private void ClassChange(int index) {
@@ -295,9 +437,11 @@ public class CharacterPanelUI : MonoBehaviour {
             level = 100;
             levelInput.text = level.ToString();
         }
-        AllocateStats(characterClass);
+        AllocateStats(race);
         LevelUp(level, characterClass, race);
+        ArmyModifier(toggleArmy.isOn);
         UpdateSkills(characterClass);
+        UpdateEquipment(characterClass);
         UpdateUI();
     }
     private void RaceChange(int index) {
@@ -311,9 +455,11 @@ public class CharacterPanelUI : MonoBehaviour {
             level = 100;
             levelInput.text = level.ToString();
         }
-        AllocateStats(characterClass);
+        AllocateStats(race);
         LevelUp(level, characterClass, race);
+        ArmyModifier(toggleArmy.isOn);
         UpdateSkills(characterClass);
+        UpdateEquipment(characterClass);
         UpdateUI();
     }
     #endregion
@@ -324,6 +470,10 @@ public class CharacterPanelUI : MonoBehaviour {
     }
     public void OnRaceChange(int index) {
         RaceChange(index);
+    }
+    public void OnToggleArmy(bool state) {
+        armyInput.gameObject.SetActive(state);
+        ArmyModifier(state);
     }
     #endregion
 
@@ -339,6 +489,17 @@ public class CharacterPanelUI : MonoBehaviour {
     }
     public void OnClickApply() {
         ClassChange(classOptions.value);
+    }
+    public void OnAddCombatAttribute() {
+        if (combatAttributeOptions.options.Count > 0 && !_allCombatAttributeNames.Contains(combatAttributeOptions.options[combatAttributeOptions.value].text)) {
+            _allCombatAttributeNames.Add(combatAttributeOptions.options[combatAttributeOptions.value].text);
+        }
+        UpdateCombatAttributesUI();
+    }
+    public void OnRemoveCombatAttribute() {
+        if (combatAttributeOptions.options.Count > 0 && _allCombatAttributeNames.Remove(combatAttributeOptions.options[combatAttributeOptions.value].text)) {
+            UpdateCombatAttributesUI();
+        }
     }
     #endregion
 }

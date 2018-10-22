@@ -18,20 +18,27 @@ namespace ECS {
             GUILayout.Label("Race Editor ", EditorStyles.boldLabel);
 			raceComponent.race = (RACE)EditorGUILayout.EnumPopup("Race: ", raceComponent.race);
 
-			//raceComponent.baseStr = EditorGUILayout.IntField("Base Strength: ", raceComponent.baseStr);
-			//raceComponent.baseInt = EditorGUILayout.IntField("Base Intelligence: ", raceComponent.baseInt);
-			//raceComponent.baseAgi = EditorGUILayout.IntField("Base Agility: ", raceComponent.baseAgi);
-			//raceComponent.baseHP = EditorGUILayout.IntField("Base HP: ", raceComponent.baseHP);
-			//raceComponent.statAllocationPoints = EditorGUILayout.IntField("Stat Allocation Points: ", raceComponent.statAllocationPoints);
-			//raceComponent.strWeightAllocation = EditorGUILayout.IntField("Strength Weight Allocation: ", raceComponent.strWeightAllocation);
-			//raceComponent.intWeightAllocation = EditorGUILayout.IntField("Intelligence Weight Allocation: ", raceComponent.intWeightAllocation);
-			//raceComponent.agiWeightAllocation = EditorGUILayout.IntField("Agility Weight Allocation: ", raceComponent.agiWeightAllocation);
-			//raceComponent.hpWeightAllocation = EditorGUILayout.IntField("HP Weight Allocation: ", raceComponent.hpWeightAllocation);
+            //raceComponent.baseStr = EditorGUILayout.IntField("Base Strength: ", raceComponent.baseStr);
+            //raceComponent.baseInt = EditorGUILayout.IntField("Base Intelligence: ", raceComponent.baseInt);
+            //raceComponent.baseAgi = EditorGUILayout.IntField("Base Agility: ", raceComponent.baseAgi);
+            //raceComponent.baseHP = EditorGUILayout.IntField("Base HP: ", raceComponent.baseHP);
+            //raceComponent.statAllocationPoints = EditorGUILayout.IntField("Stat Allocation Points: ", raceComponent.statAllocationPoints);
+            //raceComponent.strWeightAllocation = EditorGUILayout.IntField("Strength Weight Allocation: ", raceComponent.strWeightAllocation);
+            //raceComponent.intWeightAllocation = EditorGUILayout.IntField("Intelligence Weight Allocation: ", raceComponent.intWeightAllocation);
+            //raceComponent.agiWeightAllocation = EditorGUILayout.IntField("Agility Weight Allocation: ", raceComponent.agiWeightAllocation);
+            //raceComponent.hpWeightAllocation = EditorGUILayout.IntField("HP Weight Allocation: ", raceComponent.hpWeightAllocation);
+            raceComponent.baseHP = EditorGUILayout.IntField("Base HP: ", raceComponent.baseHP);
+            raceComponent.baseAttackPower = EditorGUILayout.IntField("Base Attack: ", raceComponent.baseAttackPower);
+            raceComponent.baseSpeed = EditorGUILayout.IntField("Base Speed: ", raceComponent.baseSpeed);
+
             raceComponent.restRegenAmount = EditorGUILayout.IntField("Rest Regeneration Amount: ", raceComponent.restRegenAmount);
 
-            SerializedProperty serializedProperty = serializedObject.FindProperty("bodyParts");
-            EditorGUILayout.PropertyField(serializedProperty, true);
+            SerializedProperty serializeHP= serializedObject.FindProperty("hpPerLevel");
+            EditorGUILayout.PropertyField(serializeHP, true);
             //serializedObject.ApplyModifiedProperties();
+
+            SerializedProperty serializedAtk = serializedObject.FindProperty("attackPerLevel");
+            EditorGUILayout.PropertyField(serializedAtk, true);
 
             SerializedProperty serializedTags = serializedObject.FindProperty("tags");
 			EditorGUILayout.PropertyField(serializedTags, true);

@@ -57,7 +57,7 @@ public class Palace : StructureObj {
                     break;
                 }
             }
-            if (highestPriorityMissingRole != string.Empty) {
+            if (!string.IsNullOrEmpty(string.Empty)) {
                 changeClassAction.SetAdvertisedClass(highestPriorityMissingRole);
             }
         }

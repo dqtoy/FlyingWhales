@@ -47,7 +47,7 @@ public class LandmarkVisual : MonoBehaviour {
     public void UpdateName() {
         if (landmarkLbl != null) {
             //Landmark object is an empty city
-            if (_landmark.landmarkName != string.Empty) {
+            if (!string.IsNullOrEmpty(_landmark.landmarkName)) {
                 landmarkLbl.text = Utilities.NormalizeString(_landmark.landmarkName);
             } else {
                 landmarkLbl.text = Utilities.NormalizeString(_landmark.specificLandmarkType.ToString());
