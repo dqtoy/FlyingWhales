@@ -111,9 +111,10 @@ public class PlayerManager : MonoBehaviour {
                 //bonus 25% HP to all Defenders
                 for (int i = 0; i < player.playerArea.landmarks.Count; i++) {
                     BaseLandmark currLandmark = player.playerArea.landmarks[i];
-                    if (currLandmark.defenders != null) {
-                        currLandmark.defenders.AddBuff(new Buff() { buffedStat = STAT.HP, percentage = 0.25f });
-                    }
+                    currLandmark.AddDefenderBuff(new Buff() { buffedStat = STAT.HP, percentage = 0.25f });
+                    //if (currLandmark.defenders != null) {
+                    //    currLandmark.defenders.AddBuff(new Buff() { buffedStat = STAT.HP, percentage = 0.25f });
+                    //}
                 }
                 break;
             default:
@@ -139,9 +140,10 @@ public class PlayerManager : MonoBehaviour {
                 //remove bonus 25% HP to all Defenders
                 for (int i = 0; i < player.playerArea.landmarks.Count; i++) {
                     BaseLandmark currLandmark = player.playerArea.landmarks[i];
-                    if (currLandmark.defenders != null) {
-                        currLandmark.defenders.RemoveBuff(new Buff() { buffedStat = STAT.HP, percentage = 0.25f });
-                    }
+                    currLandmark.RemoveDefenderBuff(new Buff() { buffedStat = STAT.HP, percentage = 0.25f });
+                    //if (currLandmark.defenders != null) {
+                    //    currLandmark.defenders.RemoveBuff(new Buff() { buffedStat = STAT.HP, percentage = 0.25f });
+                    //}
                 }
                 break;
             default:

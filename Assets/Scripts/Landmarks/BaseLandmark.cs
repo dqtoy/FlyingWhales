@@ -50,6 +50,7 @@ public class BaseLandmark : ILocation, IInteractable {
     public List<GameEvent> advertisedEvents { get; private set; } //events happening at this landmark, that other characters can partake in
     public Party defenders { get; private set; }
     public bool canProduceSupplies { get; private set; }
+    private List<Buff> defenderBuffs;
 
     #region getters/setters
     public int id {
@@ -200,6 +201,7 @@ public class BaseLandmark : ILocation, IInteractable {
         _combatHistory = new Dictionary<int, Combat>();
         _characterTraces = new Dictionary<Character, GameDate>();
         SetSupplyProductionState(true);
+        defenderBuffs = new List<Buff>();
         //defenders = new Party[LandmarkManager.MAX_DEFENDERS];
         Messenger.AddListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);
     }
@@ -1064,6 +1066,11 @@ public class BaseLandmark : ILocation, IInteractable {
         if (defenders == null) {
             //set the defenders party as the party of the new defender
             defenders = newDefender.ownParty;
+            //apply buffs, if any, to new defender party
+            for (int i = 0; i < defenderBuffs.Count; i++) {
+                Buff currBuff = defenderBuffs[i];
+                defenders.AddBuff(currBuff);
+            }
         }
         
         if (defenders.icharacters.Count >= data.maxDefenderCount) {
@@ -1151,6 +1158,26 @@ public class BaseLandmark : ILocation, IInteractable {
         GameDate endRaidedDate = GameManager.Instance.Today();
         endRaidedDate.AddDays(5);
         SchedulingManager.Instance.AddEntry(endRaidedDate, () => SetRaidedState(false));
+    }
+    #endregion
+
+    #region Buffs
+    public void AddDefenderBuff(Buff buff) {
+        defenderBuffs.Add(buff);
+        //apply buff to current defender
+        if (defenders != null) {
+            defenders.AddBuff(buff);
+        }
+    }
+    public void RemoveDefenderBuff(Buff buff) {
+        if (defenderBuffs.Contains(buff)) {
+            defenderBuffs.Remove(buff);
+            //apply debuff to current defender
+            if (defenders != null) {
+                defenders.RemoveBuff(buff);
+            }
+        }
+        
     }
     #endregion
 }
