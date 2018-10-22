@@ -1285,7 +1285,9 @@ MonoBehaviour:
     biomeTileSprites:
       m_keys: 
       m_values: []
-    neutralTileSprites: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: bc0fdc68227150c488e1d5988e09871d, type: 3}
+      tintSprite: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     defenderWeightsDict:
@@ -1349,7 +1351,9 @@ MonoBehaviour:
     biomeTileSprites:
       m_keys: 
       m_values: []
-    neutralTileSprites: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: bc0fdc68227150c488e1d5988e09871d, type: 3}
+      tintSprite: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     defenderWeightsDict:
@@ -1380,7 +1384,9 @@ MonoBehaviour:
     biomeTileSprites:
       m_keys: 
       m_values: []
-    neutralTileSprites: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: bc0fdc68227150c488e1d5988e09871d, type: 3}
+      tintSprite: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     defenderWeightsDict:
@@ -1440,8 +1446,43 @@ MonoBehaviour:
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
     biomeTileSprites:
-      m_keys: 
-      m_values: []
+      m_keys: 0000000003000000010000000200000004000000
+      m_values:
+      - data:
+        - mainSprite: {fileID: 21300000, guid: 98dbae7ea4933304e99ce222fa122a1c, type: 3}
+          tintSprite: {fileID: 0}
+        - mainSprite: {fileID: 21300000, guid: 26a960b077921124b9e61433b11d623d, type: 3}
+          tintSprite: {fileID: 0}
+        - mainSprite: {fileID: 21300000, guid: a41a24867a6731e4f9bf372de50136f4, type: 3}
+          tintSprite: {fileID: 0}
+      - data:
+        - mainSprite: {fileID: 21300000, guid: 671a2939fda30b34898a8299cebcfcd7, type: 3}
+          tintSprite: {fileID: 0}
+        - mainSprite: {fileID: 21300000, guid: dce980df86557994483727bab006f16d, type: 3}
+          tintSprite: {fileID: 0}
+        - mainSprite: {fileID: 21300000, guid: acc889bc0bb3df849a1a42ac1261b064, type: 3}
+          tintSprite: {fileID: 0}
+      - data:
+        - mainSprite: {fileID: 21300000, guid: f0bb285e50b7c2e4ba3d8b9df4663978, type: 3}
+          tintSprite: {fileID: 0}
+        - mainSprite: {fileID: 21300000, guid: a71eb5f8bfc5e6d45922bd4c922cee98, type: 3}
+          tintSprite: {fileID: 0}
+        - mainSprite: {fileID: 21300000, guid: 6899b2833b4dd2e4ab31a5f2361aea7b, type: 3}
+          tintSprite: {fileID: 0}
+      - data:
+        - mainSprite: {fileID: 21300000, guid: f0bb285e50b7c2e4ba3d8b9df4663978, type: 3}
+          tintSprite: {fileID: 0}
+        - mainSprite: {fileID: 21300000, guid: a71eb5f8bfc5e6d45922bd4c922cee98, type: 3}
+          tintSprite: {fileID: 0}
+        - mainSprite: {fileID: 21300000, guid: 6899b2833b4dd2e4ab31a5f2361aea7b, type: 3}
+          tintSprite: {fileID: 0}
+      - data:
+        - mainSprite: {fileID: 21300000, guid: 98dbae7ea4933304e99ce222fa122a1c, type: 3}
+          tintSprite: {fileID: 0}
+        - mainSprite: {fileID: 21300000, guid: 26a960b077921124b9e61433b11d623d, type: 3}
+          tintSprite: {fileID: 0}
+        - mainSprite: {fileID: 21300000, guid: a41a24867a6731e4f9bf372de50136f4, type: 3}
+          tintSprite: {fileID: 0}
     neutralTileSprites: []
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
@@ -1473,7 +1514,9 @@ MonoBehaviour:
     biomeTileSprites:
       m_keys: 
       m_values: []
-    neutralTileSprites: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
+      tintSprite: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     defenderWeightsDict:
@@ -1513,7 +1556,9 @@ MonoBehaviour:
     biomeTileSprites:
       m_keys: 
       m_values: []
-    neutralTileSprites: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 63d253e0c6b317d4395379a46b5ad2f2, type: 3}
+      tintSprite: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     defenderWeightsDict:
@@ -1544,7 +1589,9 @@ MonoBehaviour:
     biomeTileSprites:
       m_keys: 
       m_values: []
-    neutralTileSprites: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 1b9c2e3866c9dcc46ba88340a11eb721, type: 3}
+      tintSprite: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     defenderWeightsDict:
@@ -1575,7 +1622,9 @@ MonoBehaviour:
     biomeTileSprites:
       m_keys: 
       m_values: []
-    neutralTileSprites: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: bc0fdc68227150c488e1d5988e09871d, type: 3}
+      tintSprite: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     defenderWeightsDict:
