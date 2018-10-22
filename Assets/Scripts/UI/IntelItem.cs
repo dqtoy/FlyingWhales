@@ -25,7 +25,7 @@ public class IntelItem : MonoBehaviour {
     }
     public void ShowIntelInfo() {
         if (PlayerManager.Instance.player.HasIntel(intel)) {
-            UIManager.Instance.ShowSmallInfo(intel.description);
+            //UIManager.Instance.ShowSmallInfo(intel.description);
         }
     }
     public void HideIntelInfo() {

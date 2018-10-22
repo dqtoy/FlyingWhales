@@ -26,8 +26,8 @@ public class ResearchScrollDesire : HiddenDesire {
         //also check if character already has scrolls in inventory
         if (_host.HasItemLike("Scroll", 1)) {
             //if they do, schedule reseach event
-            GameEvent researchScrolls = EventManager.Instance.AddNewEvent(GAME_EVENT.RESEARCH_SCROLLS);
-            researchScrolls.Initialize(new List<Character>() { _host });
+            //GameEvent researchScrolls = EventManager.Instance.AddNewEvent(GAME_EVENT.RESEARCH_SCROLLS);
+            //researchScrolls.Initialize(new List<Character>() { _host });
         }
         //also activate a listener for when the character obtains a new scroll
         Messenger.AddListener<Item, Character>(Signals.ITEM_OBTAINED, OnItemObtained);
@@ -45,8 +45,8 @@ public class ResearchScrollDesire : HiddenDesire {
             //the priest obtained a scroll!
             if (!_host.HasEventScheduled(GAME_EVENT.RESEARCH_SCROLLS)) { //check if the character already has an event to research his/her scrolls
                 //schedule a research scrolls event
-                GameEvent researchScrolls = EventManager.Instance.AddNewEvent(GAME_EVENT.RESEARCH_SCROLLS);
-                researchScrolls.Initialize(new List<Character>() { _host });
+                //GameEvent researchScrolls = EventManager.Instance.AddNewEvent(GAME_EVENT.RESEARCH_SCROLLS);
+                //researchScrolls.Initialize(new List<Character>() { _host });
             }
         }
     }

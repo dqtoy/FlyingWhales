@@ -264,19 +264,19 @@ public class LandmarkInfoUI : UIMenu {
 
     #region Info
     private void UpdateInfo() {
-        List<Intel> intels = new List<Intel>(_activeLandmark.intels);
-        intels.AddRange(IntelManager.Instance.GetIntelConcerning(_activeLandmark.charactersAtLocation));
-        for (int i = 0; i < intelItems.Length; i++) {
-            IntelItem currItem = intelItems[i];
-            currItem.Reset();
-            Intel currIntel = intels.ElementAtOrDefault(i);
-            if (currIntel == null) {
-                currItem.gameObject.SetActive(false);
-            } else {
-                currItem.SetIntel(currIntel);
-                currItem.gameObject.SetActive(true);
-            }
-        }
+        //List<Intel> intels = new List<Intel>(_activeLandmark.intels);
+        //intels.AddRange(IntelManager.Instance.GetIntelConcerning(_activeLandmark.charactersAtLocation));
+        //for (int i = 0; i < intelItems.Length; i++) {
+        //    IntelItem currItem = intelItems[i];
+        //    currItem.Reset();
+        //    Intel currIntel = intels.ElementAtOrDefault(i);
+        //    if (currIntel == null) {
+        //        currItem.gameObject.SetActive(false);
+        //    } else {
+        //        currItem.SetIntel(currIntel);
+        //        currItem.gameObject.SetActive(true);
+        //    }
+        //}
         //for (int i = 0; i < secrets.Length; i++) {
         //    if(i < _activeLandmark.secrets.Count) {
         //        secrets[i].SetActive(true);

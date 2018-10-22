@@ -45,13 +45,13 @@ public class IntelCreator : Editor {
     }
     private void SaveIntelJson(IntelComponent currentComponent, string path) {
         Intel intel = new Intel();
-        intel.SetData(currentComponent);
-        string jsonString = JsonUtility.ToJson(intel);
-        System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
-        writer.WriteLine(jsonString);
-        writer.Close();
-        UnityEditor.AssetDatabase.ImportAsset(path);
-        Debug.Log("Successfully saved intel " + currentComponent.id + " at " + path);
+        //intel.SetData(currentComponent);
+        //string jsonString = JsonUtility.ToJson(intel);
+        //System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
+        //writer.WriteLine(jsonString);
+        //writer.Close();
+        //UnityEditor.AssetDatabase.ImportAsset(path);
+        //Debug.Log("Successfully saved intel " + currentComponent.id + " at " + path);
     }
     private bool AlreadyHasIntelID(string path, string id, ref string detailedPath) {
         foreach (string file in Directory.GetFiles(path, "*.json")) {

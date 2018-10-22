@@ -56,8 +56,8 @@ public class Awaken : PlayerAbility {
         TriggerDragonAttack();
     }
     private void TriggerDragonAttack() {
-        DragonAttack dragonAttack = EventManager.Instance.AddNewEvent(GAME_EVENT.DRAGON_ATTACK) as DragonAttack;
-        dragonAttack.Initialize(PlayerManager.Instance.player.markedCharacter, monster.party);
+        //DragonAttack dragonAttack = EventManager.Instance.AddNewEvent(GAME_EVENT.DRAGON_ATTACK) as DragonAttack;
+        //dragonAttack.Initialize(PlayerManager.Instance.player.markedCharacter, monster.party);
     }
     private void MonsterWillSleep() {
         if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_MARKED)) {

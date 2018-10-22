@@ -16,7 +16,7 @@ public class ShareIntel : PlayerAbility {
     #region Overrides
     public override void Activate(IInteractable interactable, Minion assignedMinion) {
         Character character = interactable as Character;
-        PlayerManager.Instance.player.PickIntelToGiveToCharacter(character, this);
+        //PlayerManager.Instance.player.PickIntelToGiveToCharacter(character, this);
     }
     #endregion
 

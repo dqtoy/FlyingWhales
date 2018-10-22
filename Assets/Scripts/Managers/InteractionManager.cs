@@ -25,20 +25,25 @@ public class InteractionManager : MonoBehaviour {
     }
 
     public Interaction CreateNewInteraction(INTERACTION_TYPE interactionType, IInteractable interactable) {
+        Interaction createdInteraction = null;
         switch (interactionType) {
             case INTERACTION_TYPE.BANDIT_RAID:
-                return new BanditRaid(interactable);
+                createdInteraction = new BanditRaid(interactable);
+                break;
             case INTERACTION_TYPE.INVESTIGATE:
-                return new InvestigateInteraction(interactable);
+                createdInteraction = new InvestigateInteraction(interactable);
+                break;
             case INTERACTION_TYPE.POI_1:
-                return new PointOfInterest1(interactable);
+                createdInteraction = new PointOfInterest1(interactable);
+                break;
             case INTERACTION_TYPE.POI_2:
-                return new PointOfInterest2(interactable);
+                createdInteraction = new PointOfInterest2(interactable);
+                break;
             case INTERACTION_TYPE.HARVEST_SEASON:
-                return new HarvestSeason(interactable);
-            default:
-                return null;
+                createdInteraction = new HarvestSeason(interactable);
+                break;
         }
+        return createdInteraction;
     }
 
     public Reward GetReward(string rewardName) {

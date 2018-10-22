@@ -658,7 +658,7 @@ public class ConsoleMenu : UIMenu {
         Intel intel = null;
         bool isIntelParameterNumeric = int.TryParse(intelIDParameterString, out intelID);
         if (isIntelParameterNumeric) {
-            intel = IntelManager.Instance.GetIntel(intelID);
+            //intel = IntelManager.Instance.GetIntel(intelID);
         }
 
         if (character == null || intel == null) {
@@ -666,8 +666,8 @@ public class ConsoleMenu : UIMenu {
             return;
         }
 
-        PlayerManager.Instance.player.GiveIntelToCharacter(intel, character);
-        AddSuccessMessage("Gave intel that " + intel.description + " to " + character.name);
+        //PlayerManager.Instance.player.GiveIntelToCharacter(intel, character);
+        //AddSuccessMessage("Gave intel that " + intel.description + " to " + character.name);
     }
     private void ShowLogs(string[] parameters) {
         if (parameters.Length < 2) {

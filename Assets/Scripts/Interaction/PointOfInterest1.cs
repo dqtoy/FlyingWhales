@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PointOfInterest1 : Interaction {
     public PointOfInterest1(IInteractable interactable) : base(interactable, INTERACTION_TYPE.POI_1) {
+        _name = "Point of Interest 1";
     }
 
     #region Overrides

@@ -15,8 +15,8 @@ public class MonsterAttack : PlayerAbility {
     #region Overrides
     public override void DoAbility(IInteractable interactable) {
         base.DoAbility(interactable);
-        MonsterAttackEvent gameEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.MONSTER_ATTACK) as MonsterAttackEvent;
-        gameEvent.Initialize(interactable as BaseLandmark);
+        //MonsterAttackEvent gameEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.MONSTER_ATTACK) as MonsterAttackEvent;
+        //gameEvent.Initialize(interactable as BaseLandmark);
         RecallMinion();
     }
     public override bool CanBeDone(IInteractable interactable) {

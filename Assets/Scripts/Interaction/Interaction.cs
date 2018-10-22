@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Interaction {
     protected int _id;
+    protected string _name;
     protected INTERACTION_TYPE _type;
     protected IInteractable _interactable;
     protected Dictionary<string, InteractionState> _states;
@@ -13,6 +14,12 @@ public class Interaction {
     protected bool _isDone;
 
     #region getters/setters
+    public INTERACTION_TYPE type {
+        get { return _type; }
+    }
+    public string name {
+        get { return _name; }
+    }
     public InteractionState currentState {
         get { return _currentState; }
     }

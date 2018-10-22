@@ -455,9 +455,9 @@ namespace worldcreator {
             intelEventsChoicesDropdown.ClearOptions();
 
             List<string> intelChoices = new List<string>();
-            foreach (KeyValuePair<int, Intel> kvp in IntelManager.Instance.intelLookup) {
-                intelChoices.Add(kvp.Key.ToString() + " - " + kvp.Value.name);
-            }
+            //foreach (KeyValuePair<int, Intel> kvp in IntelManager.Instance.intelLookup) {
+            //    intelChoices.Add(kvp.Key.ToString() + " - " + kvp.Value.name);
+            //}
 
             intelChoicesDropdown.AddOptions(intelChoices);
             intelEventsChoicesDropdown.AddOptions(Utilities.GetEnumChoices<GAME_EVENT>());
@@ -466,21 +466,21 @@ namespace worldcreator {
             string chosenIntelID = secretChoicesDropdown.options[intelChoicesDropdown.value].text;
             int intelID = Int32.Parse(chosenIntelID[0].ToString());
             GAME_EVENT chosenEvent = (GAME_EVENT)Enum.Parse(typeof(GAME_EVENT), intelEventsChoicesDropdown.options[intelEventsChoicesDropdown.value].text);
-            _character.AddIntelReaction(intelID, chosenEvent);
+            //_character.AddIntelReaction(intelID, chosenEvent);
             UpdateIntelReactions();
         }
         public void RemoveIntelReaction() {
             string chosenIntelID = secretChoicesDropdown.options[intelChoicesDropdown.value].text;
             int intelID = Int32.Parse(chosenIntelID[0].ToString());
-            _character.RemoveIntelReaction(intelID);
+            //_character.RemoveIntelReaction(intelID);
             UpdateIntelReactions();
         }
         private void UpdateIntelReactions() {
             intelReactionSummaryLbl.text = string.Empty;
-            foreach (KeyValuePair<int, GAME_EVENT> kvp in _character.intelReactions) {
-                Intel intel = IntelManager.Instance.GetIntel(kvp.Key);
-                intelReactionSummaryLbl.text += kvp.Key + "(" + intel.name + ") - " + kvp.Value.ToString() + "\n";
-            }
+            //foreach (KeyValuePair<int, GAME_EVENT> kvp in _character.intelReactions) {
+            //    Intel intel = IntelManager.Instance.GetIntel(kvp.Key);
+            //    intelReactionSummaryLbl.text += kvp.Key + "(" + intel.name + ") - " + kvp.Value.ToString() + "\n";
+            //}
         }
         #endregion
     }

@@ -199,6 +199,7 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OUT, OnHoverOutTile);
 
         Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
+        Messenger.AddListener<IInteractable, Interaction>(Signals.ADDED_INTERACTION, OnInteractionAdded);
     }
     public void UnifySelectables() {
         UnifiedSelectableBehaviour[] selectables = this.GetComponentsInChildren<UnifiedSelectableBehaviour>(true);
@@ -465,6 +466,11 @@ public class UIManager : MonoBehaviour {
     #region Notifications Area
     private void ShowNotification(string text, int expirationTicks, UnityAction onClickAction) {
         notificationArea.ShowNotification(text, expirationTicks, onClickAction);
+    }
+    private void OnInteractionAdded(IInteractable interactable, Interaction interaction) {
+        if (GameManager.Instance.inspectAll || interactable.isBeingInspected) {
+            ShowNotification("New <color=\"red\">" + interaction.name + "</color> interaction at <color=\"red\">" + interactable.name + "</color>", 50, () => ShowInteractableInfo(interactable));
+        }
     }
     #endregion
 
@@ -1059,10 +1065,10 @@ public class UIManager : MonoBehaviour {
             if (i >= intels.Count) {
                 currentActivePlayerPickerButtons[i].gameObject.SetActive(false);
             } else if (i >= currentActivePlayerPickerButtons.Count) {
-                CreatePlayerPickerButton(intels[i]);
+                //CreatePlayerPickerButton(intels[i]);
             } else {
                 currentActivePlayerPickerButtons[i].gameObject.SetActive(true);
-                currentActivePlayerPickerButtons[i].SetPlayerPicker(intels[i]);
+                //currentActivePlayerPickerButtons[i].SetPlayerPicker(intels[i]);
             }
         }
     }
@@ -1092,6 +1098,16 @@ public class UIManager : MonoBehaviour {
     }
     private void OnIntelAdded(Intel intel) {
         ShowNotification("New Intel Obtained!", 5, () => PlayerUI.Instance.ShowPlayerPickerIntel());
+    }
+    #endregion
+
+    #region Interaction
+    public void ShowInteractableInfo(IInteractable interactable) {
+        if (interactable is BaseLandmark) {
+            ShowLandmarkInfo(interactable as BaseLandmark);
+        } else if (interactable is Character) {
+            ShowCharacterInfo(interactable as Character);
+        }
     }
     #endregion
 }
