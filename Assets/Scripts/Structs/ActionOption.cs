@@ -5,6 +5,7 @@ using System;
 
 public class ActionOption {
     public InteractionState interactionState;
+    public string name;
     public string description;
     public ActionOptionCost cost;
     public int duration;
@@ -32,6 +33,7 @@ public class ActionOption {
             StartDuration();
         }
         interactionState.SetChosenOption(this);
+        SetDescription();
     }
     public bool CanBeDone() {
         if(canBeDoneAction != null) {
@@ -61,5 +63,13 @@ public class ActionOption {
                 effect();
             }
         }
+    }
+    private void SetDescription() {
+        if(description != string.Empty) {
+            if (description.Contains("%minion%") && assignedMinion != null) {
+                description = description.Replace("%minion%", assignedMinion.icharacter.name);
+            }
+        }
+        interactionState.interaction.interactionItem.SetDescription(description);
     }
 }

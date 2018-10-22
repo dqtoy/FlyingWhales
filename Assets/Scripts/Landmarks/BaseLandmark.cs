@@ -1121,8 +1121,8 @@ public class BaseLandmark : ILocation, IInteractable {
         Interaction pointOfInterest1 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.POI_1, this);
         Interaction pointOfInterest2 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.POI_2, this);
         AddInteraction(investigateInteraction);
-        //AddInteraction(pointOfInterest1);
-        //AddInteraction(pointOfInterest2);
+        AddInteraction(pointOfInterest1);
+        AddInteraction(pointOfInterest2);
     }
     public void AddInteraction(Interaction interaction) {
         _currentInteractions.Add(interaction);

@@ -49,6 +49,7 @@ public class InteractionItem : MonoBehaviour {
     public void SetInteraction(Interaction interaction) {
         _interaction = interaction;
         if(_interaction != null) {
+            _interaction.SetInteractionItem(this);
             InitializeActionButtons();
             UpdateState();
             ChangedActivatedState();
@@ -60,7 +61,7 @@ public class InteractionItem : MonoBehaviour {
         }
     }
     public void UpdateState() {
-        descriptionText.text = _interaction.currentState.description;
+        SetDescription(_interaction.currentState.description);
         confirmNoMinionButton.gameObject.SetActive(false);
         confirmMinionGO.SetActive(false);
         for (int i = 0; i < actionOptionButtons.Length; i++) {
@@ -91,6 +92,9 @@ public class InteractionItem : MonoBehaviour {
                 confirmNoMinionButton.gameObject.SetActive(true);
             }
         }
+    }
+    public void SetDescription(string text) {
+        descriptionText.text = text;
     }
     private void ChangedActivatedState() {
         ChangeStateAllButtons(!_interaction.isActivated);
@@ -126,7 +130,7 @@ public class InteractionItem : MonoBehaviour {
         confirmMinionButton.interactable = state;
         if (!state) {
             for (int i = 0; i < actionOptionButtons.Length; i++) {
-                actionOptionButtons[i].button.interactable = state;
+                actionOptionButtons[i].toggle.interactable = state;
             }
         }
     }

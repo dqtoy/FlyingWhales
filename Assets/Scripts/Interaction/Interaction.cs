@@ -9,6 +9,7 @@ public class Interaction {
     protected IInteractable _interactable;
     protected Dictionary<string, InteractionState> _states;
     protected InteractionState _currentState;
+    protected InteractionItem _interactionItem;
     protected bool _isActivated;
     protected bool _isDone;
 
@@ -21,6 +22,9 @@ public class Interaction {
     }
     public InteractionState currentState {
         get { return _currentState; }
+    }
+    public InteractionItem interactionItem {
+        get { return _interactionItem; }
     }
     public IInteractable interactable {
         get { return _interactable; }
@@ -63,6 +67,9 @@ public class Interaction {
         //    _currentState.SetChosenOption(null);
         //}
         Messenger.Broadcast(Signals.CHANGED_ACTIVATED_STATE, this);
+    }
+    public void SetInteractionItem(InteractionItem interactionItem) {
+        _interactionItem = interactionItem;
     }
     #endregion
 

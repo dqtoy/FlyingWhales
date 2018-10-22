@@ -48,7 +48,7 @@ public class InvestigateInteraction : Interaction {
             ActionOption investigateOption = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 1, currency = CURRENCY.IMP },
-                description = "Send an Imp.",
+                name = "Send an Imp.",
                 duration = 1,
                 needsMinion = false,
                 effect = () => InvestigatedState()
@@ -56,7 +56,7 @@ public class InvestigateInteraction : Interaction {
             ActionOption attackOption = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
-                description = "Attack it.",
+                name = "Attack it.",
                 duration = 10,
                 needsMinion = true,
                 effect = () => AttackItState(state)
@@ -64,7 +64,7 @@ public class InvestigateInteraction : Interaction {
             ActionOption raidOption = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
-                description = "Raid it.",
+                name = "Raid it.",
                 duration = 10,
                 needsMinion = true,
                 effect = () => RaidItState(state),
@@ -77,7 +77,7 @@ public class InvestigateInteraction : Interaction {
             ActionOption uninvestigateOption = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 0, currency = CURRENCY.IMP },
-                description = "Recall an Imp.",
+                name = "Recall an Imp.",
                 duration = 1,
                 needsMinion = false,
                 effect = () => UninvestigatedState()
@@ -85,7 +85,7 @@ public class InvestigateInteraction : Interaction {
             ActionOption attackOption = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
-                description = "Attack it.",
+                name = "Attack it.",
                 duration = 10,
                 needsMinion = true,
                 effect = () => AttackItState(state)
@@ -93,7 +93,7 @@ public class InvestigateInteraction : Interaction {
             ActionOption raidOption = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
-                description = "Raid it.",
+                name = "Raid it.",
                 duration = 10,
                 needsMinion = true,
                 effect = () => RaidItState(state),
@@ -107,7 +107,7 @@ public class InvestigateInteraction : Interaction {
             ActionOption okayOption = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
-                description = "Okay.",
+                name = "Okay.",
                 duration = 1,
                 needsMinion = false,
                 effect = () => OkayState(state)
@@ -118,7 +118,7 @@ public class InvestigateInteraction : Interaction {
             ActionOption okayOption = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
-                description = "Okay.",
+                name = "Okay.",
                 duration = 1,
                 needsMinion = false,
                 effect = () => OkayState(state),
