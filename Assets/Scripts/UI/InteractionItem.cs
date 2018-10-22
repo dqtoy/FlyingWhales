@@ -124,8 +124,10 @@ public class InteractionItem : MonoBehaviour {
     private void ChangeStateAllButtons(bool state) {
         confirmNoMinionButton.interactable = state;
         confirmMinionButton.interactable = state;
-        for (int i = 0; i < actionOptionButtons.Length; i++) {
-            actionOptionButtons[i].button.interactable = state;
+        if (!state) {
+            for (int i = 0; i < actionOptionButtons.Length; i++) {
+                actionOptionButtons[i].button.interactable = state;
+            }
         }
     }
     public void OnMinionDrop(Transform transform) {
