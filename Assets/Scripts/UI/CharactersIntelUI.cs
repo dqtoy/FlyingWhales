@@ -5,7 +5,7 @@ using System;
 using UnityEngine.UI;
 using System.Linq;
 
-public class CharactersSummaryUI : UIMenu {
+public class CharactersIntelUI : UIMenu {
 
     [SerializeField] private GameObject characterEntryPrefab;
     [SerializeField] private ScrollRect charactersScrollRect;
@@ -15,12 +15,12 @@ public class CharactersSummaryUI : UIMenu {
     [SerializeField] private EasyTween tweener;
     [SerializeField] private AnimationCurve curve;
 
-    private Dictionary<ECS.Character, CharacterSummaryEntry> characterEntries;
+    private Dictionary<ECS.Character, CharacterIntelItem> characterEntries;
 
 
     internal override void Initialize() {
         base.Initialize();
-        characterEntries = new Dictionary<ECS.Character, CharacterSummaryEntry>();
+        characterEntries = new Dictionary<ECS.Character, CharacterIntelItem>();
         Messenger.AddListener<ECS.Character>(Signals.CHARACTER_CREATED, AddCharacterEntry);
         //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveCharacterEntry);
         Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, UpdateCharacterEntry);
@@ -47,14 +47,14 @@ public class CharactersSummaryUI : UIMenu {
         }
         GameObject newEntryGO = UIManager.Instance.InstantiateUIObject(characterEntryPrefab.name, charactersScrollRect.content);
         newEntryGO.transform.localScale = Vector3.one;
-        CharacterSummaryEntry newEntry = newEntryGO.GetComponent<CharacterSummaryEntry>();
-        newEntry.SetCharacter(character);
+        CharacterIntelItem newEntry = newEntryGO.GetComponent<CharacterIntelItem>();
+        newEntry.SetCharacter(character.characterIntel);
         newEntry.Initialize();
         newEntry.gameObject.SetActive(false);
         characterEntries.Add(character, newEntry);
     }
     private void RemoveCharacterEntry(ECS.Character character) {
-        CharacterSummaryEntry characterEntry = GetCharacterEntry(character);
+        CharacterIntelItem characterEntry = GetCharacterEntry(character);
         if (characterEntry != null) {
             characterEntries.Remove(character);
             ObjectPoolManager.Instance.DestroyObject(characterEntry.gameObject);
@@ -65,14 +65,14 @@ public class CharactersSummaryUI : UIMenu {
         //}
         //sortingAction();
     }
-    private CharacterSummaryEntry GetCharacterEntry(ECS.Character character) {
+    private CharacterIntelItem GetCharacterEntry(ECS.Character character) {
         if (characterEntries.ContainsKey(character)) {
             return characterEntries[character];
         }
         return null;
     }
     private void UpdateCharacterEntry(ECS.Character character) {
-        CharacterSummaryEntry charEntry = GetCharacterEntry(character);
+        CharacterIntelItem charEntry = GetCharacterEntry(character);
         if (charEntry != null) {
             charEntry.UpdateCharacterInfo();
         }
@@ -107,7 +107,7 @@ public class CharactersSummaryUI : UIMenu {
         if (intel is CharacterIntel) {
             CharacterIntel charIntel = (intel as CharacterIntel);
             if (charIntel.character is ECS.Character) {
-                CharacterSummaryEntry item = GetCharacterEntry(charIntel.character as ECS.Character);
+                CharacterIntelItem item = GetCharacterEntry(charIntel.character as ECS.Character);
                 if (item != null) {
                     item.gameObject.SetActive(true);
                 }

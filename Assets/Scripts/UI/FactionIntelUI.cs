@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FactionSummaryUI : UIMenu {
+public class FactionIntelUI : UIMenu {
 
     [SerializeField] private ScrollRect factionsScrollView;
     [SerializeField] private GameObject factionItemPrefab;

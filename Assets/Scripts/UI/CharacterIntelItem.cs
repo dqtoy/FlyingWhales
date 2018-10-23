@@ -5,9 +5,9 @@ using TMPro;
 using UnityEngine.EventSystems;
 using EZObjectPools;
 
-public class CharacterSummaryEntry : PooledObject {
+public class CharacterIntelItem : PooledObject {
 
-    private ECS.Character _character;
+    private CharacterIntel _characterIntel;
 
     [SerializeField] private TextMeshProUGUI characterNameLbl;
     [SerializeField] private TextMeshProUGUI characterLvlClassLbl;
@@ -15,7 +15,7 @@ public class CharacterSummaryEntry : PooledObject {
 
     #region getters/setters
     public ECS.Character character {
-        get { return _character; }
+        get { return _characterIntel.character as ECS.Character; }
     }
     #endregion
 
@@ -25,13 +25,13 @@ public class CharacterSummaryEntry : PooledObject {
         //actionIcon.Initialize();
     }
 
-    public void SetCharacter(ECS.Character character) {
-        _character = character;
+    public void SetCharacter(CharacterIntel characterIntel) {
+        _characterIntel = characterIntel;
         //affiliations.Initialize(character);
         //actionIcon.SetCharacter(character);
         //actionIcon.SetAction(character.currentParty.currentAction);
         //characterPortrait.SetDimensions(42f);
-        characterPortrait.GeneratePortrait(character, 95, true);
+        characterPortrait.GeneratePortrait(characterIntel.character, 95, true);
         UpdateCharacterInfo();
         //UpdateAffiliations();
     }
@@ -69,7 +69,7 @@ public class CharacterSummaryEntry : PooledObject {
     public override void Reset() {
         base.Reset();
         //RemoveListeners();
-        _character = null;
+        _characterIntel = null;
         //actionIcon.Reset();
     }
 }

@@ -929,6 +929,9 @@ public class BaseLandmark : ILocation, IInteractable {
             if (owner != null) {
                 PlayerManager.Instance.player.AddIntel(owner.factionIntel);
             }
+            if (tileLocation.areaOfTile != null) {
+                PlayerManager.Instance.player.AddIntel(tileLocation.areaOfTile.locationIntel);
+            }
         }
     }
     public void EndedInspection() {

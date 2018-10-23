@@ -872,7 +872,7 @@ public class UIManager : MonoBehaviour {
     [Header("Characters Summary")]
     [SerializeField] private GameObject charactersSummaryGO;
     [SerializeField] private Toggle charactersToggleBtn;
-    public CharactersSummaryUI charactersSummaryMenu;
+    public CharactersIntelUI charactersSummaryMenu;
     public void ShowCharactersSummary() {
         //HideQuestsSummary();
         //HideStorylinesSummary();
@@ -919,7 +919,7 @@ public class UIManager : MonoBehaviour {
     #region Faction Summary
     [Space(10)]
     [Header("Factions Summary")]
-    public FactionSummaryUI factionsSummaryMenu;
+    public FactionIntelUI factionsSummaryMenu;
     [SerializeField] private Toggle factionsToggleBtn;
     public void ShowFactionsSummary() {
         factionsSummaryMenu.OpenMenu();
