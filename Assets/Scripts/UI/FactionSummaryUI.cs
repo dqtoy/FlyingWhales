@@ -36,7 +36,7 @@ public class FactionSummaryUI : UIMenu {
         GameObject factionItemGO = UIManager.Instance.InstantiateUIObject(factionItemPrefab.name, factionsScrollView.content);
         FactionIntelItem factionItem = factionItemGO.GetComponent<FactionIntelItem>();
         factionItem.SetFactionIntel(createdFaction.factionIntel);
-        //factionItem.gameObject.SetActive(false);
+        factionItem.gameObject.SetActive(false);
         items.Add(createdFaction, factionItem);
         //UpdateColors();
     }

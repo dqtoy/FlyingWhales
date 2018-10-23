@@ -78,11 +78,11 @@ public class FactionInfoUI : UIMenu {
             CharacterSummaryEntry characterEntry = characterEntryGO.GetComponent<CharacterSummaryEntry>();
             characterEntry.SetCharacter(currCharacter);
             characterEntry.Initialize();
-            if (Utilities.IsEven(i)) {
-                characterEntry.SetBGColor(evenColor);
-            } else {
-                characterEntry.SetBGColor(oddColor);
-            }
+            //if (Utilities.IsEven(i)) {
+            //    characterEntry.SetBGColor(evenColor);
+            //} else {
+            //    characterEntry.SetBGColor(oddColor);
+            //}
         }
     }
     public void UpdateFactionAreas() {

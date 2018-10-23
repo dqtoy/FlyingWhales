@@ -52,7 +52,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UIPrefabs:
-  - {fileID: 1231918821044632, guid: a9057d326864f1d488dd411e969ca51d, type: 2}
+  - {fileID: 1667677566377938, guid: a9057d326864f1d488dd411e969ca51d, type: 2}
   - {fileID: 1169224389995412, guid: 098b2e337fdaee74d8c8e6db791778ce, type: 2}
   - {fileID: 1995387493181358, guid: cdfed07929227104599994075478446b, type: 2}
   - {fileID: 1404552397919108, guid: 44606a74032cb404ca32744b5b0b1489, type: 2}
