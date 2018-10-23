@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 
-public class Cleaner : Attribute {
+public class Cleaner : CharacterAttribute {
 
     public Cleaner() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.CLEANER) {
 

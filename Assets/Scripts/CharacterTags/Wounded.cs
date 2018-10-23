@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using ECS;
 using UnityEngine;
 
-public class Wounded : Attribute {
+public class Wounded : CharacterAttribute {
     public Wounded() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.WOUNDED) {
     }
 

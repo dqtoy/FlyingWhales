@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 
-public class Meditator : Attribute {
+public class Meditator : CharacterAttribute {
 
     public Meditator() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.MEDITATOR) {
 

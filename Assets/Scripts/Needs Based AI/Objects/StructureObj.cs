@@ -20,7 +20,7 @@ public class StructureObj : IObject {
     protected BaseLandmark _objectLocation;
     [NonSerialized] protected ObjectState _currentState;
     protected List<ObjectState> _states;
-    protected List<Attribute> _attributes;
+    protected List<CharacterAttribute> _attributes;
     protected Dictionary<RESOURCE, int> _resourceInventory;
 
     #region getters/setters
@@ -36,7 +36,7 @@ public class StructureObj : IObject {
     public List<ObjectState> states {
         get { return _states; }
     }
-    public List<Attribute> attributes {
+    public List<CharacterAttribute> attributes {
         get { return _attributes; }
     }
     public ObjectState currentState {
@@ -79,7 +79,7 @@ public class StructureObj : IObject {
 
     public StructureObj() {
         _objectType = OBJECT_TYPE.STRUCTURE;
-        _attributes = new List<Attribute>();
+        _attributes = new List<CharacterAttribute>();
         SetIsDirty(true);
         ConstructResourceInventory();
     }
@@ -302,7 +302,7 @@ public class StructureObj : IObject {
     public void SetIsMadeOf(RESOURCE resource) {
         _madeOf = resource;
     }
-    public Attribute GetAttribute(ATTRIBUTE attribute) {
+    public CharacterAttribute GetAttribute(ATTRIBUTE attribute) {
         for (int i = 0; i < _attributes.Count; i++) {
             if (_attributes[i].attribute == attribute) {
                 return _attributes[i];
@@ -319,7 +319,7 @@ public class StructureObj : IObject {
         }
         return false;
     }
-    public bool RemoveAttribute(Attribute attribute) {
+    public bool RemoveAttribute(CharacterAttribute attribute) {
         return _attributes.Remove(attribute);
     }
     public void SetIsDirty(bool state) {

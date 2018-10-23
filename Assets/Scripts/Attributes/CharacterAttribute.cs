@@ -4,7 +4,7 @@ using System;
 using UnityEngine;
 using ECS;
 
-public class Attribute {
+public class CharacterAttribute {
     protected string _name;
     protected bool _isHidden;
     protected ATTRIBUTE _attribute;
@@ -64,7 +64,7 @@ public class Attribute {
     }
     #endregion
 
-    public Attribute(ATTRIBUTE_CATEGORY category, ATTRIBUTE attribute) {
+    public CharacterAttribute(ATTRIBUTE_CATEGORY category, ATTRIBUTE attribute) {
         _attribute = attribute;
         _category = category;
         _name = Utilities.NormalizeStringUpperCaseFirstLetters(_attribute.ToString());

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 
-public class Singer : Attribute {
+public class Singer : CharacterAttribute {
 
     CharacterAction sing;
     public Singer() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.SINGER) {

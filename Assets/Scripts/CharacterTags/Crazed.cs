@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using ECS;
 using UnityEngine;
 
-public class Crazed : Attribute {
+public class Crazed : CharacterAttribute {
     public Crazed() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.CRAZED) {
     }
 

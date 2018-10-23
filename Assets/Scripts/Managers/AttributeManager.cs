@@ -8,23 +8,23 @@ using ECS;
 public class AttributeManager : MonoBehaviour {
     public static AttributeManager Instance;
 
-    private List<Attribute> _allAttributes;
-    private List<Attribute> _allCharacterAttributes;
-    private List<Attribute> _allItemAttributes;
-    private List<Attribute> _allStructureAttributes;
+    private List<CharacterAttribute> _allAttributes;
+    private List<CharacterAttribute> _allCharacterAttributes;
+    private List<CharacterAttribute> _allItemAttributes;
+    private List<CharacterAttribute> _allStructureAttributes;
     private Dictionary<string, CombatAttribute> _allCombatAttributes;
 
     #region getters/setters
-    public List<Attribute> allAttributes {
+    public List<CharacterAttribute> allAttributes {
         get { return _allAttributes; }
     }
-    public List<Attribute> allCharacterAttributes {
+    public List<CharacterAttribute> allCharacterAttributes {
         get { return _allCharacterAttributes; }
     }
-    public List<Attribute> allItemAttributes {
+    public List<CharacterAttribute> allItemAttributes {
         get { return _allItemAttributes; }
     }
-    public List<Attribute> allStructureAttributes {
+    public List<CharacterAttribute> allStructureAttributes {
         get { return _allStructureAttributes; }
     }
     public Dictionary<string, CombatAttribute> allCombatAttributes {

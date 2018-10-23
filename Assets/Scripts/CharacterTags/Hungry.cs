@@ -2,7 +2,7 @@
 using System.Collections;
 using ECS;
 
-public class Hungry : Attribute {
+public class Hungry : CharacterAttribute {
 
 
     public Hungry() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.HUNGRY) {

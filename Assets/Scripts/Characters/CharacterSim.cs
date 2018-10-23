@@ -56,7 +56,7 @@ public class CharacterSim : ICharacterSim {
     private Item _equippedConsumable;
     private List<Skill> _skills;
     private List<CombatAttribute> _combatAttributes;
-    private List<Attribute> _attributes;
+    private List<CharacterAttribute> _attributes;
     //private List<BodyPart> _bodyParts;
     //private List<Item> _equippedItems;
     private Dictionary<ELEMENT, float> _elementalWeaknesses;
@@ -198,7 +198,7 @@ public class CharacterSim : ICharacterSim {
         _battleTracker = new CharacterBattleTracker();
         _elementalWeaknesses = new Dictionary<ELEMENT, float>(CombatSimManager.Instance.elementsChanceDictionary);
         _elementalResistances = new Dictionary<ELEMENT, float>(CombatSimManager.Instance.elementsChanceDictionary);
-        _attributes = new List<Attribute>();
+        _attributes = new List<CharacterAttribute>();
         _combatAttributes = new List<CombatAttribute>();
         AllocateStats();
         LevelUp();
@@ -460,7 +460,7 @@ public class CharacterSim : ICharacterSim {
     #endregion
 
     #region Attributes
-    public Attribute GetAttribute(string attribute) {
+    public CharacterAttribute GetAttribute(string attribute) {
         for (int i = 0; i < _attributes.Count; i++) {
             if (_attributes[i].name.ToLower() == attribute.ToLower()) {
                 return _attributes[i];

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 
-public class Mute : Attribute {
+public class Mute : CharacterAttribute {
 
     CharacterAction sing;
     public Mute() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.MUTE) {

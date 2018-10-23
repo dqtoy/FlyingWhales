@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Belligerent : Attribute {
+public class Belligerent : CharacterAttribute {
     
     public Belligerent() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.BELLIGERENT) {
 

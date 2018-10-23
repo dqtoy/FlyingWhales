@@ -7,12 +7,12 @@ using UnityEngine.UI;
 
 public class CharacterAttributeIcon : PooledObject, IPointerEnterHandler, IPointerExitHandler {
 
-    public Attribute attribute { get; private set; }
+    public CharacterAttribute attribute { get; private set; }
     [SerializeField] private Image icon;
 
     private bool isHovering = false;
 
-    public void SetTag(Attribute attribute) {
+    public void SetTag(CharacterAttribute attribute) {
         this.attribute = attribute;
         LoadIcon(attribute.attribute);
     }

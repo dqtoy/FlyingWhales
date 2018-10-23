@@ -220,7 +220,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public List<Item> inventory {
         get { return null; }
     }
-    public List<Attribute> attributes {
+    public List<CharacterAttribute> attributes {
         get { return null; }
     }
     public List<Log> history {
@@ -566,7 +566,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public void SetOwnedParty(Party party) {
         _ownParty = party as MonsterParty;
     }
-    public Attribute AddAttribute(ATTRIBUTE tag) {
+    public CharacterAttribute AddAttribute(ATTRIBUTE tag) {
         //No tag assignment
         return null;
     }
@@ -634,7 +634,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public bool IsInOwnParty() {
         return true;
     }
-    public Attribute GetAttribute(string attribute) {
+    public CharacterAttribute GetAttribute(string attribute) {
         return null;
     }
     #endregion

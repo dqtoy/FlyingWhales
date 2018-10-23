@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 
-public class Deafened : Attribute {
+public class Deafened : CharacterAttribute {
 
     CharacterAction sing;
     CharacterAction playInstrument;

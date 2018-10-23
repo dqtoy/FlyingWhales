@@ -151,13 +151,13 @@ public class AttributePanelUI : MonoBehaviour {
         string filePath = EditorUtility.OpenFilePanel("Select Attribute", Utilities.dataPath + "Attributes/", "json");
         if (!string.IsNullOrEmpty(filePath)) {
             string dataAsJson = File.ReadAllText(filePath);
-            Attribute attribute = JsonUtility.FromJson<Attribute>(dataAsJson);
+            CharacterAttribute attribute = JsonUtility.FromJson<CharacterAttribute>(dataAsJson);
             ClearData();
             LoadAttributeDataToUI(attribute);
         }
 #endif
     }
-    private void LoadAttributeDataToUI(Attribute attribute) {
+    private void LoadAttributeDataToUI(CharacterAttribute attribute) {
         nameInput.text = attribute.name;
         hiddenToggle.isOn = attribute.isHidden;
         categoryOptions.value = GetCategoryIndex(attribute.category.ToString());

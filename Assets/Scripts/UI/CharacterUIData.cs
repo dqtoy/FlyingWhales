@@ -13,7 +13,7 @@ public class CharacterUIData {
     public float manaValue { get; private set; }
     public float attackPower { get; private set; }
     public float speed { get; private set; }
-    public List<Attribute> attributes { get; private set; }
+    public List<CharacterAttribute> attributes { get; private set; }
     public List<CombatAttribute> combatAttributes { get; private set; }
     public Weapon equippedWeapon { get; private set; }
     public Armor equippedArmor { get; private set; }
@@ -24,7 +24,7 @@ public class CharacterUIData {
     public Faction faction;
 
     public CharacterUIData() {
-        attributes = new List<Attribute>();
+        attributes = new List<CharacterAttribute>();
         combatAttributes = new List<CombatAttribute>();
         inventory = new List<Item>();
         relationships = new List<Relationship>();

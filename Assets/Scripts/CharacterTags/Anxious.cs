@@ -2,7 +2,7 @@
 using System.Collections;
 using ECS;
 
-public class Anxious : Attribute {
+public class Anxious : CharacterAttribute {
     public Anxious() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.ANXIOUS) {
 
     }

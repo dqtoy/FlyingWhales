@@ -384,7 +384,7 @@ namespace worldcreator {
         private void LoadAttributeSummary() {
             attributeSummary.text = string.Empty;
             for (int i = 0; i < _character.attributes.Count; i++) {
-                Attribute currAttribute = _character.attributes[i];
+                CharacterAttribute currAttribute = _character.attributes[i];
                 attributeSummary.text += currAttribute.attribute.ToString() + "\n";
             }
         }

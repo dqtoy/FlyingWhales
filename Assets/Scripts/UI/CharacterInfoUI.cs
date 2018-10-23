@@ -705,8 +705,8 @@ public class CharacterInfoUI : UIMenu {
 
     #region Character Tags
     private List<CharacterAttributeIcon> shownAttributes = new List<CharacterAttributeIcon>();
-    private void UpdateTagInfo(List<Attribute> attributes) {
-        List<Attribute> attributesToShow = new List<Attribute>(attributes);
+    private void UpdateTagInfo(List<CharacterAttribute> attributes) {
+        List<CharacterAttribute> attributesToShow = new List<CharacterAttribute>(attributes);
         //Utilities.DestroyChildren(tagsScrollView.content);
         List<CharacterAttributeIcon> iconsToRemove = new List<CharacterAttributeIcon>();
         for (int i = 0; i < shownAttributes.Count; i++) {
@@ -726,17 +726,17 @@ public class CharacterInfoUI : UIMenu {
         }
 
         for (int i = 0; i < attributesToShow.Count; i++) { //show the remaining attributes
-            Attribute currTag = attributesToShow[i];
+            CharacterAttribute currTag = attributesToShow[i];
             AddTag(currTag);
         }
     }
-    private void AddTag(Attribute tag) {
+    private void AddTag(CharacterAttribute tag) {
         GameObject tagGO = UIManager.Instance.InstantiateUIObject(characterTagPrefab.name, tagsScrollView.content);
         CharacterAttributeIcon icon = tagGO.GetComponent<CharacterAttributeIcon>();
         icon.SetTag(tag);
         shownAttributes.Add(icon);
     }
-    private void RemoveTag(Attribute tag) {
+    private void RemoveTag(CharacterAttribute tag) {
         CharacterAttributeIcon[] icons = Utilities.GetComponentsInDirectChildren<CharacterAttributeIcon>(tagsScrollView.content.gameObject);
         for (int i = 0; i < icons.Length; i++) {
             CharacterAttributeIcon icon = icons[i];
@@ -750,12 +750,12 @@ public class CharacterInfoUI : UIMenu {
         ObjectPoolManager.Instance.DestroyObject(icon.gameObject);
         shownAttributes.Remove(icon);
     }
-    private void OnCharacterAttributeAdded(Character affectedCharacter, Attribute tag) {
+    private void OnCharacterAttributeAdded(Character affectedCharacter, CharacterAttribute tag) {
         if (_activeCharacter != null && _activeCharacter.id == affectedCharacter.id && _activeCharacter.isBeingInspected) {
             AddTag(tag);
         }
     }
-    private void OnCharacterAttributeRemoved(Character affectedCharacter, Attribute tag) {
+    private void OnCharacterAttributeRemoved(Character affectedCharacter, CharacterAttribute tag) {
         if (_activeCharacter != null && _activeCharacter.id == affectedCharacter.id && _activeCharacter.isBeingInspected) {
             RemoveTag(tag);
         }
