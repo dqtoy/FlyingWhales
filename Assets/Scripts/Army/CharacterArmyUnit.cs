@@ -15,6 +15,15 @@ public class CharacterArmyUnit : Character {
     public override string name {
         get { return armyCount + " " + Utilities.GetNormalizedSingularRace(_raceSetting.race) + " " + characterClass.className; }
     }
+    public override int attackPower {
+        get { return _attackPower * armyCount; }
+    }
+    public override int speed {
+        get { return _speed * armyCount; }
+    }
+    public override int maxHP {
+        get { return _maxHP * armyCount; }
+    }
     //public override Party ownParty {
     //    get { return _ownParty; }
     //}
@@ -70,26 +79,22 @@ public class CharacterArmyUnit : Character {
     }
     #endregion
 
-    //#region overrides
-    ///*
-    //Create a new Party with this character as the leader.
-    // */
-    //public override Party CreateOwnParty() {
-    //    if (_ownParty != null) {
-    //        _ownParty.RemoveCharacter(this);
-    //    }
-    //    Army newParty = new Army(this);
-    //    SetOwnedParty(newParty);
-    //    newParty.AddCharacter(this);
-    //    //newParty.CreateCharacterObject();
-    //    return newParty;
-    //}
-    //public override void SetOwnedParty(Party party) {
-    //    _ownParty = party as Army;
-    //}
-    //public override void SetCurrentParty(Party party) {
-    //    _currentParty = party as Army;
-    //}
-    //#endregion
+    #region Overrides
+    public override void AdjustHP(int amount, ICharacter killer = null) {
+        int previous = this._currentHP;
+        this._currentHP += amount;
+        this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
+        int diff = previous - _currentHP;
+        if(diff > 0) {
+            int armyLoss = diff / _maxHP;
+            AdjustArmyCount(-armyLoss);
+        }
+        if (previous != this._currentHP) {
+            if (this._currentHP == 0) {
+                FaintOrDeath(killer);
+            }
+        }
+    }
+    #endregion
 
 }

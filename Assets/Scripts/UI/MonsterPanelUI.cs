@@ -24,6 +24,7 @@ public class MonsterPanelUI : MonoBehaviour {
     public InputField hitInput;
     public InputField critInput;
     public InputField itemDropRateInput;
+    public InputField armyCountInput;
 
     public Dropdown typeOptions;
     public Dropdown skillOptions;
@@ -105,6 +106,7 @@ public class MonsterPanelUI : MonoBehaviour {
         hitInput.text = "0";
         critInput.text = "0";
         itemDropRateInput.text = "0";
+        armyCountInput.text = "1";
 
         typeOptions.value = 0;
         skillOptions.value = 0;
@@ -182,6 +184,7 @@ public class MonsterPanelUI : MonoBehaviour {
         dodgeInput.text = monster.dodgeChance.ToString();
         hitInput.text = monster.hitChance.ToString();
         critInput.text = monster.critChance.ToString();
+        armyCountInput.text = monster.startingArmyCount.ToString();
         isSleepingOnSpawnToggle.isOn = monster.isSleepingOnSpawn;
 
         for (int i = 0; i < monster.skillNames.Count; i++) {
