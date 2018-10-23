@@ -97,9 +97,6 @@ public class PointOfInterest2 : Interaction {
             NothingRewardState(state, chosenEffect);
         }
     }
-    private void LeaveAloneEffect(InteractionState state) {
-        state.EndResult();
-    }
     private void DemonWeaponUpgradeRewardState(InteractionState state, string effectName) {
         _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " has returned with an improved Weapon.");
         SetCurrentState(_states[effectName]);

@@ -74,6 +74,9 @@ public class Interaction {
     #endregion
 
     #region Shared States and Effects
+    protected void LeaveAloneEffect(InteractionState state) {
+        state.EndResult();
+    }
     protected void SupplyRewardState(InteractionState state, string effectName) {
         _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " discovered a small cache of Supplies.");
         SetCurrentState(_states[effectName]);

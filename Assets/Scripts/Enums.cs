@@ -1011,6 +1011,7 @@ public enum INTERACTION_TYPE {
     POI_2,
     BANDIT_REINFORCEMENT,
     HARVEST_SEASON,
+    MYSTERY_HUM,
 }
 public enum REWARD {
     SUPPLY,
