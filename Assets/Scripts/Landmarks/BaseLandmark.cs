@@ -925,6 +925,11 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     public void SetHasBeenInspected(bool state) {
         _hasBeenInspected = state;
+        if (state) {
+            if (owner != null) {
+                PlayerManager.Instance.player.AddIntel(owner.factionIntel);
+            }
+        }
     }
     public void EndedInspection() {
         UpdateLastInspection();

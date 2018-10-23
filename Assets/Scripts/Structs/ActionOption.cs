@@ -65,7 +65,7 @@ public class ActionOption {
         }
     }
     private void SetDescription() {
-        if(description != string.Empty) {
+        if(!string.IsNullOrEmpty(description)) {
             if (description.Contains("%minion%") && assignedMinion != null) {
                 description = description.Replace("%minion%", assignedMinion.icharacter.name);
             }

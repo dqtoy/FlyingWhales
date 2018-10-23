@@ -23,9 +23,10 @@ public class Faction {
     protected List<Area> _ownedAreas;
 
     public MORALITY morality { get; private set; }
+    public FactionIntel factionIntel { get; private set; }
 
     #region getters/setters
-	public int id {
+    public int id {
 		get { return _id; }
 	}
     public string name {
@@ -79,6 +80,7 @@ public class Faction {
         _relationships = new Dictionary<Faction, FactionRelationship>();
         _landmarkInfo = new List<BaseLandmark>();
         _ownedAreas = new List<Area>();
+        factionIntel = new FactionIntel(this);
     }
 
     public Faction(FactionSaveData data) {
@@ -95,6 +97,7 @@ public class Faction {
         _relationships = new Dictionary<Faction, FactionRelationship>();
         _landmarkInfo = new List<BaseLandmark>();
         _ownedAreas = new List<Area>();
+        factionIntel = new FactionIntel(this);
     }
 
     private void AddListeners() {

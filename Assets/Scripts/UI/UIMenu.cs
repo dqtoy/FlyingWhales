@@ -4,15 +4,7 @@ using UnityEngine.UI;
 
 public class UIMenu : MonoBehaviour {
 
-    //[Header("Header")]
-    //[SerializeField] protected Image innerHeader;
-    //[SerializeField] protected Image outerHeader;
-    //[SerializeField] protected Button closeBtn;
-
-    //[Header("Backgound")]
-    //[SerializeField] protected Image bgImage;
-    //[SerializeField] protected Image outlineImage;
-    internal bool isShowing;
+    public bool isShowing;
 
     protected object _data;
 
@@ -24,10 +16,12 @@ public class UIMenu : MonoBehaviour {
     public virtual void OpenMenu() {
         isShowing = true;
         this.gameObject.SetActive(true);
+        Messenger.Broadcast(Signals.MENU_OPENED, this);
     }
     public virtual void CloseMenu() {
         isShowing = false;
         this.gameObject.SetActive(false);
+        Messenger.Broadcast(Signals.MENU_CLOSED, this);
     }
     public virtual void GoBack() {
         CloseMenu();
@@ -37,6 +31,13 @@ public class UIMenu : MonoBehaviour {
     }
     public virtual void ShowTooltip(GameObject objectHovered) {
 
+    }
+    public void ToggleMenu(bool state) {
+        if (state) {
+            OpenMenu();
+        } else {
+            CloseMenu();
+        }
     }
     #endregion
 

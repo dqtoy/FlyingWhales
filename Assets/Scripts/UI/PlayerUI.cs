@@ -24,12 +24,19 @@ public class PlayerUI : MonoBehaviour {
     public Button upScrollButton;
     public Button downScrollButton;
     public List<MinionItem> minionItems;
+    public bool isMinionsMenuShowing;
 
     public Toggle goalsToggle;
     public Toggle intelToggle;
     public Toggle inventoryToggle;
     public Toggle factionToggle;
     public ToggleGroup minionSortingToggleGroup;
+
+    [SerializeField] private Vector3 openPosition;
+    [SerializeField] private Vector3 closePosition;
+    [SerializeField] private Vector3 halfPosition;
+    [SerializeField] private EasyTween tweener;
+    [SerializeField] private AnimationCurve curve;
 
     private MINIONS_SORT_TYPE _minionSortType;
 
@@ -41,6 +48,8 @@ public class PlayerUI : MonoBehaviour {
     void Awake() {
         Instance = this;
         minionItems = new List<MinionItem>();
+        Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
+        Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
     }
 
     public void UpdateUI() {
@@ -109,10 +118,10 @@ public class PlayerUI : MonoBehaviour {
         //minionItem.SetEnabledState(false);
     }
     public void CollapseMinionHolder() {
-        minionsHolderGO.GetComponent<TweenPosition>().PlayReverse();
+        //minionsHolderGO.GetComponent<TweenPosition>().PlayReverse();
     }
     public void UncollapseMinionHolder() {
-        minionsHolderGO.GetComponent<TweenPosition>().PlayForward();
+        //minionsHolderGO.GetComponent<TweenPosition>().PlayForward();
     }
     public void ScrollUp() {
         float y = minionsContentTransform.localPosition.y - 115f;
@@ -238,4 +247,33 @@ public class PlayerUI : MonoBehaviour {
         return items;
     }
     #endregion
+
+    public void SetMinionsMenuShowing(bool state) {
+        isMinionsMenuShowing = state;
+    }
+
+    private void OnInteractionMenuOpened() {
+        if (this.isMinionsMenuShowing) {
+            //if the menu is showing update it's open position
+            //only open halfway
+            tweener.SetAnimationPosition(openPosition, halfPosition, curve, curve);
+            tweener.ChangeSetState(false);
+            tweener.TriggerOpenClose();
+            tweener.SetAnimationPosition(closePosition, halfPosition, curve, curve);
+        } else {
+            //only open halfway
+            tweener.SetAnimationPosition(closePosition, halfPosition, curve, curve);
+        }
+    }
+    private void OnInteractionMenuClosed() {
+        if (this.isMinionsMenuShowing) {
+            tweener.SetAnimationPosition(halfPosition, openPosition, curve, curve);
+            tweener.ChangeSetState(false);
+            tweener.TriggerOpenClose();
+            tweener.SetAnimationPosition(closePosition, openPosition, curve, curve);
+        } else {
+            //reset positions to normal
+            tweener.SetAnimationPosition(closePosition, openPosition, curve, curve);
+        }
+    }
 }

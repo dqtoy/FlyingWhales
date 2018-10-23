@@ -1097,7 +1097,7 @@ public class UIManager : MonoBehaviour {
         currentActivePlayerPickerButtons.Add(playerPickerButton);
     }
     private void OnIntelAdded(Intel intel) {
-        ShowNotification("New Intel Obtained!", 5, () => PlayerUI.Instance.ShowPlayerPickerIntel());
+        ShowNotification("New Intel Obtained!", 5, null);
     }
     #endregion
 

@@ -41,11 +41,15 @@ public class InteractionUI : MonoBehaviour {
             _interactable = interactable;
             StartCoroutine(UpdateInteractions(interactable.currentInteractions));
             interactionHolder.SetActive(true);
+            Messenger.Broadcast(Signals.INTERACTION_MENU_OPENED);
         }
     }
     public void HideInteractionUI() {
-        _interactable = null;
-        interactionHolder.SetActive(false);
+        if (interactionHolder.activeSelf) { //only if the menu is showing
+            _interactable = null;
+            interactionHolder.SetActive(false);
+            Messenger.Broadcast(Signals.INTERACTION_MENU_CLOSED);
+        }
     }
     public IEnumerator UpdateInteractions(List<Interaction> interactions) {
         _allInteractionItems.Clear();
