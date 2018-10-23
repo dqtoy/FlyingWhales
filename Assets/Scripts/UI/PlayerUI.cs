@@ -117,12 +117,12 @@ public class PlayerUI : MonoBehaviour {
         minionItem.portrait.SetBorderState(false);
         //minionItem.SetEnabledState(false);
     }
-    public void CollapseMinionHolder() {
-        //minionsHolderGO.GetComponent<TweenPosition>().PlayReverse();
-    }
-    public void UncollapseMinionHolder() {
-        //minionsHolderGO.GetComponent<TweenPosition>().PlayForward();
-    }
+    //public void CollapseMinionHolder() {
+    //    //minionsHolderGO.GetComponent<TweenPosition>().PlayReverse();
+    //}
+    //public void UncollapseMinionHolder() {
+    //    //minionsHolderGO.GetComponent<TweenPosition>().PlayForward();
+    //}
     public void ScrollUp() {
         float y = minionsContentTransform.localPosition.y - 115f;
         if(y < 0f) {

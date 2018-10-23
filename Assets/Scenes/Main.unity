@@ -34408,6 +34408,7 @@ GameObject:
   - component: {fileID: 938466921}
   - component: {fileID: 938466924}
   - component: {fileID: 938466923}
+  - component: {fileID: 938466925}
   m_Layer: 5
   m_Name: Scroll View
   m_TagString: Untagged
@@ -34430,7 +34431,7 @@ MonoBehaviour:
   m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 2
-  m_Elasticity: 0.1
+  m_Elasticity: 0.5
   m_Inertia: 0
   m_DecelerationRate: 0.135
   m_ScrollSensitivity: 30
@@ -34444,7 +34445,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 606078598}
+      - m_Target: {fileID: 938466925}
         m_MethodName: OnScroll
         m_Mode: 0
         m_Arguments:
@@ -34501,6 +34502,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 938466920}
+--- !u!114 &938466925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 938466920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af7ca4b450bcea244b50d89bbea322d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scrollUpBtn: {fileID: 1551504116}
+  scrollDownBtn: {fileID: 1295251637}
+  elementHeight: 115
 --- !u!1 &939821325
 GameObject:
   m_ObjectHideFlags: 0
@@ -49033,7 +49048,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 606078598}
+      - m_Target: {fileID: 938466925}
         m_MethodName: ScrollDown
         m_Mode: 1
         m_Arguments:
@@ -58831,7 +58846,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 606078598}
+      - m_Target: {fileID: 938466925}
         m_MethodName: ScrollUp
         m_Mode: 1
         m_Arguments:
