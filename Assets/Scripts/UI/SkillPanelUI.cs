@@ -93,7 +93,7 @@ public class SkillPanelUI : MonoBehaviour {
     }
     private void SaveSkill() {
 #if UNITY_EDITOR
-        if (skillNameInput.text == string.Empty) {
+        if (string.IsNullOrEmpty(skillNameInput.text)) {
             EditorUtility.DisplayDialog("Error", "Please specify a Skill Name", "OK");
             return;
         }

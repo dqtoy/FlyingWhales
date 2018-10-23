@@ -14,11 +14,11 @@ public class ClassPanelUI : MonoBehaviour {
     public static ClassPanelUI Instance;
 
     public InputField classNameInput;
-    public InputField baseAttackPowerInput;
+    //public InputField baseAttackPowerInput;
     public InputField attackPowerPerLevelInput;
-    public InputField baseSpeedInput;
+    //public InputField baseSpeedInput;
     public InputField speedPerLevelInput;
-    public InputField baseHPInput;
+    //public InputField baseHPInput;
     public InputField hpPerLevelInput;
     public InputField baseSPInput;
     public InputField spPerLevelInput;
@@ -135,11 +135,11 @@ public class ClassPanelUI : MonoBehaviour {
         currentSelectedAccessoryButton = null;
         classNameInput.text = string.Empty;
 
-        baseAttackPowerInput.text = "0";
+        //baseAttackPowerInput.text = "0";
         attackPowerPerLevelInput.text = "0";
-        baseSpeedInput.text = "0";
+        //baseSpeedInput.text = "0";
         speedPerLevelInput.text = "0";
-        baseHPInput.text = "0";
+        //baseHPInput.text = "0";
         hpPerLevelInput.text = "0";
         baseSPInput.text = "0";
         spPerLevelInput.text = "0";
@@ -164,7 +164,7 @@ public class ClassPanelUI : MonoBehaviour {
         }
     }
     private void SaveClass() {
-        if (classNameInput.text == string.Empty) {
+        if (string.IsNullOrEmpty(classNameInput.text)) {
 #if UNTIY_EDITOR
             EditorUtility.DisplayDialog("Error", "Please specify a Class Name", "OK");
             return;
@@ -218,11 +218,11 @@ public class ClassPanelUI : MonoBehaviour {
 
     private void LoadClassDataToUI(CharacterClass characterClass) {
         classNameInput.text = characterClass.className;
-        baseAttackPowerInput.text = characterClass.baseAttackPower.ToString();
+        //baseAttackPowerInput.text = characterClass.baseAttackPower.ToString();
         attackPowerPerLevelInput.text = characterClass.attackPowerPerLevel.ToString();
-        baseSpeedInput.text = characterClass.baseSpeed.ToString();
+        //baseSpeedInput.text = characterClass.baseSpeed.ToString();
         speedPerLevelInput.text = characterClass.speedPerLevel.ToString();
-        baseHPInput.text = characterClass.baseHP.ToString();
+        //baseHPInput.text = characterClass.baseHP.ToString();
         hpPerLevelInput.text = characterClass.hpPerLevel.ToString();
         baseSPInput.text = characterClass.baseSP.ToString();
         spPerLevelInput.text = characterClass.spPerLevel.ToString();

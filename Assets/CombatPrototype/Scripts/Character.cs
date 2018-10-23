@@ -76,8 +76,8 @@ namespace ECS {
         private int _maxExperience;
         private int _sp;
         private int _maxSP;
-        private float _attackPower;
-        private float _speed;
+        private int _attackPower;
+        private int _speed;
 
         public CharacterSchedule schedule { get; private set; }
         public Quest currentQuest { get; private set; }
@@ -265,10 +265,10 @@ namespace ECS {
         public int maxExperience {
             get { return _maxExperience; }
         }
-        public float speed {
+        public int speed {
             get { return _speed; }
         }
-        public float attackPower {
+        public int attackPower {
             get { return _attackPower; }
         }
         public Dictionary<ELEMENT, float> elementalWeaknesses {
@@ -378,7 +378,7 @@ namespace ECS {
             GenerateRaceAttributes();
 
             //AllocateStatPoints(10);
-            AllocateStats();
+            //AllocateStats();
 
             CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(className);
             if(setup != null) {
@@ -417,7 +417,7 @@ namespace ECS {
             GenerateRaceAttributes();
 
             //AllocateStatPoints(10);
-            AllocateStats();
+            //AllocateStats();
 
             //EquipPreEquippedItems(baseSetup);
             CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(data.className);
@@ -463,7 +463,8 @@ namespace ECS {
             combatHistory = new Dictionary<int, Combat>();
             eventSchedule = new CharacterEventSchedule(this);
             uiData = new CharacterUIData();
-
+            AllocateStats();
+            EquipItemsByClass();
             ConstructBuffs();
             GetRandomCharacterColor();
             ConstructDefaultMiscActions();
@@ -499,9 +500,9 @@ namespace ECS {
         #endregion
 
         private void AllocateStats() {
-            _attackPower = _characterClass.baseAttackPower;
-            _speed = _characterClass.baseSpeed;
-            _maxHP = _characterClass.baseHP;
+            _attackPower = _raceSetting.baseAttackPower;
+            _speed = _raceSetting.baseSpeed;
+            _maxHP = _raceSetting.baseHP;
             _maxSP = _characterClass.baseSP;
         }
         //      private void AllocateStatPoints(int statAllocation){
@@ -907,6 +908,12 @@ namespace ECS {
                 hasEquipped = TryEquipConsumable(item);
             }
             if (hasEquipped) {
+                if (item.attributeNames != null) {
+                    for (int i = 0; i < item.attributeNames.Count; i++) {
+                        CombatAttribute newCombatAttribute = AttributeManager.Instance.allCombatAttributes[item.attributeNames[i]];
+                        AddCombatAttribute(newCombatAttribute);
+                    }
+                }
 #if !WORLD_CREATION_TOOL
                 Log equipLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "equip_item");
                 equipLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -927,6 +934,12 @@ namespace ECS {
                 UnequipAccessory(item);
             } else if (item.itemType == ITEM_TYPE.CONSUMABLE) {
                 UnequipConsumable(item);
+            }
+            if(item.attributeNames != null) {
+                for (int i = 0; i < item.attributeNames.Count; i++) {
+                    CombatAttribute newCombatAttribute = AttributeManager.Instance.allCombatAttributes[item.attributeNames[i]];
+                    RemoveCombatAttribute(newCombatAttribute);
+                }
             }
             Messenger.Broadcast(Signals.ITEM_UNEQUIPPED, item, this);
         }
@@ -974,13 +987,13 @@ namespace ECS {
             accessory.SetEquipped(false);
             _equippedAccessory = null;
         }
-        //Try to equip an accessory
+        //Try to equip an consumable
         internal bool TryEquipConsumable(Item consumable) {
             consumable.SetEquipped(true);
             _equippedConsumable = consumable;
             return true;
         }
-        //Unequips accessory of a character
+        //Unequips consumable of a character
         private void UnequipConsumable(Item consumable) {
             consumable.SetEquipped(false);
             _equippedConsumable = null;
@@ -2150,18 +2163,20 @@ namespace ECS {
                 _experience = 0;
                 RecomputeMaxExperience();
                 //Add stats per level from class
-                _attackPower += _characterClass.attackPowerPerLevel;
-                _speed += _characterClass.speedPerLevel;
-                _maxHP += _characterClass.hpPerLevel;
+                _attackPower += (int) ((_characterClass.attackPowerPerLevel / 100f) * (float) _raceSetting.baseAttackPower);
+                _speed += (int) ((_characterClass.speedPerLevel / 100f) * (float) _raceSetting.baseSpeed);
+                _maxHP += (int) ((_characterClass.hpPerLevel / 100f) * (float) _raceSetting.baseHP);
                 _maxSP += _characterClass.spPerLevel;
                 //Add stats per level from race
-                int hpIndex = _level % _raceSetting.hpPerLevel.Length;
-                hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
-                int attackIndex = _level % _raceSetting.attackPerLevel.Length;
-                attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
+                if(_level > 1) {
+                    int hpIndex = _level % _raceSetting.hpPerLevel.Length;
+                    hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
+                    int attackIndex = _level % _raceSetting.attackPerLevel.Length;
+                    attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
 
-                _maxHP += _raceSetting.hpPerLevel[hpIndex - 1];
-                _attackPower += _raceSetting.attackPerLevel[attackIndex - 1];
+                    _maxHP += _raceSetting.hpPerLevel[hpIndex - 1];
+                    _attackPower += _raceSetting.attackPerLevel[attackIndex - 1];
+                }
 
                 //Reset to full health and sp
                 _currentHP = _maxHP;
@@ -2888,7 +2903,7 @@ namespace ECS {
 
         #region Combat Attributes
         public void AddCombatAttribute(CombatAttribute combatAttribute) {
-            if(GetCombatAttribute(combatAttribute.name).name == string.Empty) {
+            if(string.IsNullOrEmpty(GetCombatAttribute(combatAttribute.name).name)) {
                 _combatAttributes.Add(combatAttribute);
                 ApplyCombatAttributeEffects(combatAttribute);
             }
@@ -2916,9 +2931,9 @@ namespace ECS {
                 if(combatAttribute.stat == STAT.ATTACK) {
                     if (combatAttribute.isPercentage) {
                         float result = _attackPower * (combatAttribute.amount / 100f);
-                        _attackPower += result;
+                        _attackPower += (int) result;
                     } else {
-                        _attackPower += combatAttribute.amount;
+                        _attackPower += (int) combatAttribute.amount;
                     }
                 }else if (combatAttribute.stat == STAT.HP) {
                     int previousMaxHP = _maxHP;
@@ -2946,9 +2961,9 @@ namespace ECS {
                 if (combatAttribute.stat == STAT.ATTACK) {
                     if (combatAttribute.isPercentage) {
                         float result = _attackPower * (combatAttribute.amount / 100f);
-                        _attackPower -= result;
+                        _attackPower -= (int) result;
                     } else {
-                        _attackPower -= combatAttribute.amount;
+                        _attackPower -= (int) combatAttribute.amount;
                     }
                 } else if (combatAttribute.stat == STAT.HP) {
                     int previousMaxHP = _maxHP;

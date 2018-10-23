@@ -14,8 +14,8 @@ public interface ICharacter {
     int maxSP { get; }
     int currentRow { get; }
     int id { get; }
-    float attackPower { get; }
-    float speed { get; }
+    int attackPower { get; }
+    int speed { get; }
     string coloredUrlName { get; }
     string urlName { get; }
     string name { get; }

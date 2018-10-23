@@ -5,14 +5,11 @@ using System.Collections.Generic;
 namespace ECS {
     public class CharacterClass : EntityComponent {
         [SerializeField] private string _className;
-        [SerializeField] private int _baseHP;
-        [SerializeField] private int _hpPerLevel;
         [SerializeField] private int _baseSP;
         [SerializeField] private int _spPerLevel;
-        [SerializeField] private float _baseAttackPower;
         [SerializeField] private float _attackPowerPerLevel;
-        [SerializeField] private float _baseSpeed;
         [SerializeField] private float _speedPerLevel;
+        [SerializeField] private float _hpPerLevel;
         [SerializeField] private string _skillName;
 
         [SerializeField] private List<RESOURCE> _harvestResources;
@@ -31,23 +28,22 @@ namespace ECS {
             get { return _className; }
             //set { _className = value; }
         }
-        public float baseAttackPower {
-            get { return _baseAttackPower; }
-        }
+        //public float baseAttackPower {
+        //    get { return _baseAttackPower; }
+        //}
         public float attackPowerPerLevel {
             get { return _attackPowerPerLevel; }
         }
-        public float baseSpeed {
-            get { return _baseSpeed; }
-        }
+        //public float baseSpeed {
+        //    get { return _baseSpeed; }
+        //}
         public float speedPerLevel {
             get { return _speedPerLevel; }
         }
-        public int baseHP {
-            get { return _baseHP; }
-            //set { _hpModifier = value; }
-        }
-        public int hpPerLevel {
+        //public int baseHP {
+        //    get { return _baseHP; }
+        //}
+        public float hpPerLevel {
             get { return _hpPerLevel; }
         }
         public int baseSP {
@@ -100,11 +96,11 @@ namespace ECS {
         public CharacterClass CreateNewCopy() {
             CharacterClass newClass = new CharacterClass();
             newClass._className = this._className;
-			newClass._baseAttackPower = this._baseAttackPower;
+			//newClass._baseAttackPower = this._baseAttackPower;
 			newClass._attackPowerPerLevel = this._attackPowerPerLevel;
-			newClass._baseSpeed = this._baseSpeed;
+			//newClass._baseSpeed = this._baseSpeed;
 			newClass._speedPerLevel = this._speedPerLevel;
-            newClass._baseHP = this._baseHP;
+            //newClass._baseHP = this._baseHP;
             newClass._hpPerLevel = this._hpPerLevel;
             newClass._baseSP = this._baseSP;
             newClass._spPerLevel = this._spPerLevel;
@@ -122,12 +118,12 @@ namespace ECS {
 
         public void SetData(ClassComponent classComponent) {
             this._className = classComponent.className;
-            this._baseAttackPower = classComponent.baseAttackPower;
+            //this._baseAttackPower = classComponent.baseAttackPower;
             this._attackPowerPerLevel = classComponent.attackPowerPerLevel;
-            this._baseSpeed = classComponent.baseSpeed;
+            //this._baseSpeed = classComponent.baseSpeed;
             this._speedPerLevel = classComponent.speedPerLevel;
-            this._baseHP = classComponent.baseHP;
-            this._hpPerLevel = classComponent.hpPerLevel;
+            //this._baseHP = classComponent.baseHP;
+            this._hpPerLevel = (float)classComponent.hpPerLevel;
             this._baseSP = classComponent.baseSP;
             this._spPerLevel = classComponent.spPerLevel;
             this._workActionType = classComponent.workActionType;
@@ -153,12 +149,12 @@ namespace ECS {
 
         public void SetDataFromClassPanelUI() {
             this._className = ClassPanelUI.Instance.classNameInput.text;
-            this._baseAttackPower = int.Parse(ClassPanelUI.Instance.baseAttackPowerInput.text);
-            this._attackPowerPerLevel = int.Parse(ClassPanelUI.Instance.attackPowerPerLevelInput.text);
-            this._baseSpeed = int.Parse(ClassPanelUI.Instance.baseSpeedInput.text);
-            this._speedPerLevel = int.Parse(ClassPanelUI.Instance.speedPerLevelInput.text);
-            this._baseHP = int.Parse(ClassPanelUI.Instance.baseHPInput.text);
-            this._hpPerLevel = int.Parse(ClassPanelUI.Instance.hpPerLevelInput.text);
+            //this._baseAttackPower = int.Parse(ClassPanelUI.Instance.baseAttackPowerInput.text);
+            this._attackPowerPerLevel = float.Parse(ClassPanelUI.Instance.attackPowerPerLevelInput.text);
+            //this._baseSpeed = int.Parse(ClassPanelUI.Instance.baseSpeedInput.text);
+            this._speedPerLevel = float.Parse(ClassPanelUI.Instance.speedPerLevelInput.text);
+            //this._baseHP = int.Parse(ClassPanelUI.Instance.baseHPInput.text);
+            this._hpPerLevel = float.Parse(ClassPanelUI.Instance.hpPerLevelInput.text);
             this._baseSP = int.Parse(ClassPanelUI.Instance.baseSPInput.text);
             this._spPerLevel = int.Parse(ClassPanelUI.Instance.spPerLevelInput.text);
             this._workActionType = (ACTION_TYPE)System.Enum.Parse(typeof(ACTION_TYPE), ClassPanelUI.Instance.workActionOptions.options[ClassPanelUI.Instance.workActionOptions.value].text);

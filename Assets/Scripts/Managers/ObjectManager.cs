@@ -102,7 +102,7 @@ public class ObjectManager : MonoBehaviour {
         }
     }
     private void SetInitialDataOfObjects(ObjectComponent objComp, IObject iobject, string objectName = "") {
-        if(objectName != string.Empty) {
+        if(!string.IsNullOrEmpty(objectName)) {
             iobject.SetObjectName(objectName);
         }
         for (int i = 0; i < objComp.states.Count; i++) {

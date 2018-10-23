@@ -123,7 +123,7 @@ public class MonsterPanelUI : MonoBehaviour {
     }
     private void SaveMonster() {
 #if UNITY_EDITOR
-        if (nameInput.text == string.Empty) {
+        if (string.IsNullOrEmpty(nameInput.text)) {
             EditorUtility.DisplayDialog("Error", "Please specify a Monster Name", "OK");
             return;
         }

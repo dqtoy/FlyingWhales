@@ -6,6 +6,9 @@ using System.IO;
 namespace ECS {
     public class RaceSetting {
         public RACE race;
+        public int baseAttackPower;
+        public int baseSpeed;
+        public int baseHP;
         public int[] hpPerLevel;
         public int[] attackPerLevel;
 
@@ -15,6 +18,9 @@ namespace ECS {
         internal RaceSetting CreateNewCopy() {
             RaceSetting newRaceSetting = new RaceSetting();
             newRaceSetting.race = this.race;
+            newRaceSetting.baseAttackPower = this.baseAttackPower;
+            newRaceSetting.baseSpeed = this.baseSpeed;
+            newRaceSetting.baseHP = this.baseHP;
             newRaceSetting.hpPerLevel = this.hpPerLevel;
             newRaceSetting.attackPerLevel = this.attackPerLevel;
             //newRaceSetting.bodyParts = new List<BodyPart>();

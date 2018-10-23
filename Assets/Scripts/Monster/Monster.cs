@@ -14,8 +14,8 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     [SerializeField] private int _experienceDrop;
     [SerializeField] private int _maxHP;
     [SerializeField] private int _maxSP;
-    [SerializeField] private float _attackPower;
-    [SerializeField] private float _speed;
+    [SerializeField] private int _attackPower;
+    [SerializeField] private int _speed;
     [SerializeField] private float _dodgeChance;
     [SerializeField] private float _hitChance;
     [SerializeField] private float _critChance;
@@ -76,7 +76,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public int id {
         get { return _id; }
     }
-    public float attackPower {
+    public int attackPower {
         get { return _attackPower; }
     }
     public float actRate {
@@ -104,7 +104,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public int experienceDrop {
         get { return _experienceDrop; }
     }
-    public float speed {
+    public int speed {
         get {
             return _speed;
             //float agi = (float) agility;
@@ -303,8 +303,8 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         this._level = monsterComponent.level;
         this._maxHP = monsterComponent.maxHP;
         this._maxSP = monsterComponent.maxSP;
-        this._attackPower = monsterComponent.attackPower;
-        this._speed = monsterComponent.speed;
+        //this._attackPower = monsterComponent.attackPower;
+        //this._speed = monsterComponent.speed;
         this._dodgeChance = monsterComponent.dodgeChance;
         this._hitChance = monsterComponent.hitChance;
         this._critChance = monsterComponent.critChance;
@@ -327,8 +327,8 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         }
         this._maxHP = int.Parse(MonsterPanelUI.Instance.hpInput.text);
         this._maxSP = int.Parse(MonsterPanelUI.Instance.spInput.text);
-        this._attackPower = float.Parse(MonsterPanelUI.Instance.powerInput.text);
-        this._speed = float.Parse(MonsterPanelUI.Instance.speedInput.text);
+        this._attackPower = int.Parse(MonsterPanelUI.Instance.powerInput.text);
+        this._speed = int.Parse(MonsterPanelUI.Instance.speedInput.text);
         this._dodgeChance = float.Parse(MonsterPanelUI.Instance.dodgeInput.text);
         this._hitChance = float.Parse(MonsterPanelUI.Instance.hitInput.text);
         this._critChance = float.Parse(MonsterPanelUI.Instance.critInput.text);

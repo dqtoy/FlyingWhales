@@ -7,13 +7,13 @@ public interface ICharacterSim {
     string name { get; }
     string idName { get; }
     float actRate { get; set; }
-    float speed { get; }
+    int speed { get; }
     int currentRow { get; }
     int level { get; }
     int currentSP { get; }
     int currentHP { get; }
     int maxHP { get; }
-    float attackPower { get; }
+    int attackPower { get; }
     //int pFinalAttack { get; }
     //int mFinalAttack { get; }
     //int strength { get; }

@@ -24,11 +24,28 @@ public class CombatAttributePanelUI : MonoBehaviour {
     public Toggle percentageToggle;
     public Toggle hasRequirementToggle;
 
+    private List<string> _allCombatAttributes;
+
+    #region getters/setters
+    public List<string> allCombatAttributes {
+        get { return _allCombatAttributes; }
+    }
+    #endregion
     private void Awake() {
         Instance = this;
+        _allCombatAttributes = new List<string>();
     }
     private void Start() {
         LoadAllData();
+    }
+    private void UpdateCombatAttributes() {
+        _allCombatAttributes.Clear();
+        string path = Utilities.dataPath + "CombatAttributes/";
+        foreach (string file in Directory.GetFiles(path, "*.json")) {
+            _allCombatAttributes.Add(Path.GetFileNameWithoutExtension(file));
+        }
+        ItemPanelUI.Instance.UpdateAttributeOptions();
+        CharacterPanelUI.Instance.UpdateCombatAttributeOptions();
     }
     private void LoadAllData() {
         statOptions.ClearOptions();
@@ -44,6 +61,8 @@ public class CombatAttributePanelUI : MonoBehaviour {
         damageIdentifierOptions.AddOptions(damageIdentifier.ToList());
         requirementTypeOptions.AddOptions(requirementTypes.ToList());
         requirementTypeOptions.value = 0;
+
+        UpdateCombatAttributes();
     }
     private void ClearData() {
         statOptions.value = 0;
@@ -61,7 +80,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
 
     private void SaveCombatAttribute() {
 #if UNITY_EDITOR
-        if (nameInput.text == string.Empty) {
+        if (string.IsNullOrEmpty(nameInput.text)) {
             EditorUtility.DisplayDialog("Error", "Please specify a Combat Attribute Name", "OK");
             return;
         }
@@ -105,6 +124,8 @@ public class CombatAttributePanelUI : MonoBehaviour {
         UnityEditor.AssetDatabase.ImportAsset(path);
 #endif
         Debug.Log("Successfully saved combat attribute at " + path);
+
+        UpdateCombatAttributes();
     }
 
     private void LoadCombatAttribute() {

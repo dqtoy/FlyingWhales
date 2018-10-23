@@ -113,7 +113,7 @@ public class AttributePanelUI : MonoBehaviour {
     }
     private void SaveAttribute() {
 #if UNITY_EDITOR
-        if (nameInput.text == string.Empty) {
+        if (string.IsNullOrEmpty(nameInput.text)) {
             EditorUtility.DisplayDialog("Error", "Please specify an Attribute Name", "OK");
             return;
         }

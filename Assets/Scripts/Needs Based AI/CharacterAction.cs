@@ -52,7 +52,7 @@ public class CharacterAction {
     public virtual void OnFirstEncounter(Party party, IObject targetObject) {
         //string startActionLog = GetStartActionString(party);
         string startActionLog = GetStartActionString(party);
-        if (startActionLog != string.Empty && targetObject != null) {
+        if (!string.IsNullOrEmpty(startActionLog) && targetObject != null) {
             //Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "start_action");
             //arriveLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             //arriveLog.AddToFillers(null, startActionLog, LOG_IDENTIFIER.ACTION_DESCRIPTION);
