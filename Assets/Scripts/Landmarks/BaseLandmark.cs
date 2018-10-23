@@ -925,6 +925,14 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     public void SetHasBeenInspected(bool state) {
         _hasBeenInspected = state;
+        if (state) {
+            if (owner != null) {
+                PlayerManager.Instance.player.AddIntel(owner.factionIntel);
+            }
+            if (tileLocation.areaOfTile != null) {
+                PlayerManager.Instance.player.AddIntel(tileLocation.areaOfTile.locationIntel);
+            }
+        }
     }
     public void EndedInspection() {
         UpdateLastInspection();

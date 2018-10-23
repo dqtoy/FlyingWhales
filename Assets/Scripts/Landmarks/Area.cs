@@ -18,6 +18,7 @@ public class Area {
     public int suppliesInBank { get; private set; }
     public List<BaseLandmark> landmarks { get { return tiles.Where(x => x.landmarkOnTile != null).Select(x => x.landmarkOnTile).ToList(); } }
     public int totalCivilians { get { return landmarks.Sum(x => x.civilianCount); } }
+    public LocationIntel locationIntel { get; private set; }
     private List<BaseLandmark> exposedTiles;
 
     public List<string> excessClasses;
@@ -34,6 +35,7 @@ public class Area {
         missingClasses = new List<string>();
         orderStructures = new List<StructurePriority>();
         areaColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        locationIntel = new LocationIntel(this);
         SetAreaType(areaType);
         SetCoreTile(coreTile);
         AddTile(coreTile);
@@ -61,6 +63,7 @@ public class Area {
         }
         areaColor = data.areaColor;
         SetAreaType(data.areaType);
+        locationIntel = new LocationIntel(this);
 #if WORLD_CREATION_TOOL
         SetCoreTile(worldcreator.WorldCreatorManager.Instance.GetHexTile(data.coreTileID));
 #else

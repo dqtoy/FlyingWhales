@@ -11,7 +11,7 @@ public class FactionInfoUI : UIMenu {
     [Header("Content")]
     [SerializeField] private TextMeshProUGUI factionNameLbl;
     [SerializeField] private TextMeshProUGUI factionDescriptionLbl;
-    [SerializeField] private CharacterSummaryEntry leaderEntry;
+    [SerializeField] private CharacterIntelItem leaderEntry;
     [SerializeField] private ScrollRect charactersScrollView;
     [SerializeField] private ScrollRect propertiesScrollView;
     [SerializeField] private GameObject characterEntryPrefab;
@@ -59,7 +59,7 @@ public class FactionInfoUI : UIMenu {
         if (currentlyShowingFaction.leader != null && currentlyShowingFaction.leader is ECS.Character) {
             leaderEntry.gameObject.SetActive(true);
             leaderEntry.Initialize();
-            leaderEntry.SetCharacter(currentlyShowingFaction.leader as ECS.Character);
+            leaderEntry.SetCharacter((currentlyShowingFaction.leader as ECS.Character).characterIntel);
         } else {
             leaderEntry.gameObject.SetActive(false);
             leaderEntry.Reset();
@@ -75,14 +75,14 @@ public class FactionInfoUI : UIMenu {
         for (int i = 0; i < characters.Count; i++) {
             ECS.Character currCharacter = characters[i];
             GameObject characterEntryGO = UIManager.Instance.InstantiateUIObject(characterEntryPrefab.name, charactersScrollView.content);
-            CharacterSummaryEntry characterEntry = characterEntryGO.GetComponent<CharacterSummaryEntry>();
-            characterEntry.SetCharacter(currCharacter);
+            CharacterIntelItem characterEntry = characterEntryGO.GetComponent<CharacterIntelItem>();
+            characterEntry.SetCharacter(currCharacter.characterIntel);
             characterEntry.Initialize();
-            if (Utilities.IsEven(i)) {
-                characterEntry.SetBGColor(evenColor);
-            } else {
-                characterEntry.SetBGColor(oddColor);
-            }
+            //if (Utilities.IsEven(i)) {
+            //    characterEntry.SetBGColor(evenColor);
+            //} else {
+            //    characterEntry.SetBGColor(oddColor);
+            //}
         }
     }
     public void UpdateFactionAreas() {
@@ -94,10 +94,10 @@ public class FactionInfoUI : UIMenu {
             property.SetArea(currArea);
         }
     }
-    private CharacterSummaryEntry GetCharacterSummary(ECS.Character character) {
-        CharacterSummaryEntry[] entries = Utilities.GetComponentsInDirectChildren<CharacterSummaryEntry>(charactersScrollView.content.gameObject);
+    private CharacterIntelItem GetCharacterSummary(ECS.Character character) {
+        CharacterIntelItem[] entries = Utilities.GetComponentsInDirectChildren<CharacterIntelItem>(charactersScrollView.content.gameObject);
         for (int i = 0; i < entries.Length; i++) {
-            CharacterSummaryEntry currEntry = entries[i];
+            CharacterIntelItem currEntry = entries[i];
             if (currEntry.character.id == character.id) {
                 return currEntry;
             }
@@ -119,7 +119,7 @@ public class FactionInfoUI : UIMenu {
                     return;
                 }
             }
-            CharacterSummaryEntry entry = GetCharacterSummary(characterThatDied);
+            CharacterIntelItem entry = GetCharacterSummary(characterThatDied);
             if (entry != null) {
                 ObjectPoolManager.Instance.DestroyObject(entry.gameObject);
             }

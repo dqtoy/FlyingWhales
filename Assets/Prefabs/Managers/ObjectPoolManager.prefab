@@ -52,7 +52,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UIPrefabs:
-  - {fileID: 1231918821044632, guid: a9057d326864f1d488dd411e969ca51d, type: 2}
+  - {fileID: 1667677566377938, guid: a9057d326864f1d488dd411e969ca51d, type: 2}
   - {fileID: 1169224389995412, guid: 098b2e337fdaee74d8c8e6db791778ce, type: 2}
   - {fileID: 1995387493181358, guid: cdfed07929227104599994075478446b, type: 2}
   - {fileID: 1404552397919108, guid: 44606a74032cb404ca32744b5b0b1489, type: 2}
@@ -66,6 +66,8 @@ MonoBehaviour:
   - {fileID: 1367640640183718, guid: f0c29c4565ca9044ea599abe7365f27c, type: 2}
   - {fileID: 1618945397602768, guid: 2975c486214c95b4ab5eed6af62fba90, type: 2}
   - {fileID: 1632239326956908, guid: 6a3fbd7f8a25b814bb4c4e417caae8ec, type: 2}
+  - {fileID: 1960029943899900, guid: 40796bb49d293324490f615d012de961, type: 2}
+  - {fileID: 1059898416166788, guid: 3f5d886336cd4e3428717b21e20b2772, type: 2}
   otherPrefabs:
   - {fileID: 1000012712350628, guid: 5372250d22a51bc40a200236eee58ac2, type: 2}
   UIObjectPoolParent: {fileID: 0}

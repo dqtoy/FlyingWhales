@@ -30,6 +30,10 @@ public class FactionIntel : Intel{
     public FactionIntel(Faction faction) {
         this.faction = faction;
     }
+
+    public override string ToString() {
+        return faction.name + " Intel";
+    }
 }
 
 public class LocationIntel : Intel {
@@ -38,6 +42,10 @@ public class LocationIntel : Intel {
     public LocationIntel(Area location) {
         this.location = location;
     }
+
+    public override string ToString() {
+        return location.name + " Intel";
+    }
 }
 
 public class CharacterIntel : Intel {
@@ -45,5 +53,8 @@ public class CharacterIntel : Intel {
 
     public CharacterIntel(ICharacter character) {
         this.character = character;
+    }
+    public override string ToString() {
+        return character.name + " Intel";
     }
 }

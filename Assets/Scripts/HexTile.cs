@@ -965,14 +965,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     private void OnMouseExit() {
         MouseExit();
     }
-    private void OnMouseDown() {
-        //if (Input.GetMouseButtonDown(0)) {
-        //    LeftClick();
-        //}
-        //if (Input.GetMouseButtonDown(1)) {
-        //    RightClick();
-        //}
-    }
     public void LeftClick() {
 #if !WORLD_CREATION_TOOL
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
@@ -984,25 +976,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
 
         if (this.landmarkOnTile != null) {
-            //    if (UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark != null) {
-            //        if (UIManager.Instance.landmarkInfoUI.isWaitingForAttackTarget && !UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.isAttackingAnotherLandmark) {
-            //            if (UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.landmarkObj.CanAttack(this.landmarkOnTile)) {
-            //                Messenger.Broadcast(Signals.SHOW_POPUP_MESSAGE, "Confirm attack of " + UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.landmarkName + " at " + this.landmarkOnTile.landmarkName,
-            //                    MESSAGE_BOX_MODE.YES_NO, false);
-            //                PopupMessageBox.Instance.SetYesAction(() => Messenger.Broadcast(Signals.LANDMARK_ATTACK_TARGET_SELECTED, this.landmarkOnTile));
-            //                ////Attack landmark;
-            //                //Debug.Log(UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.landmarkName + " will attack " + this.landmarkOnTile.landmarkName);
-            //                //UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.landmarkObj.AttackLandmark(this.landmarkOnTile);
-            //                //UIManager.Instance.landmarkInfoUI.SetWaitingForAttackState(false);
-            //                //UIManager.Instance.landmarkInfoUI.SetActiveAttackButtonGO(false);
-            //                //Messenger.Broadcast(Signals.LANDMARK_ATTACK_TARGET_SELECTED, this.landmarkOnTile);
-            //                return;
-            //            } else {
-            //                Debug.Log("Cannot attack " + landmarkOnTile.landmarkName + "! Same faction!");
-            //                return;
-            //            }
-            //        }
-            //    }
             UIManager.Instance.ShowLandmarkInfo(this.landmarkOnTile);
         }
         UIManager.Instance.playerActionsUI.CloseMenu();

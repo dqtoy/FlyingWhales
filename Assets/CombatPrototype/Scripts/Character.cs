@@ -85,6 +85,7 @@ namespace ECS {
         public CharacterUIData uiData { get; private set; }
         public BaseLandmark defendingLandmark { get; private set; }
         public MORALITY morality { get; private set; }
+        public CharacterIntel characterIntel { get; private set; }
         private Dictionary<STAT, float> _buffs;
 
         public Dictionary<int, Combat> combatHistory;
@@ -380,6 +381,9 @@ namespace ECS {
             //AllocateStatPoints(10);
             //AllocateStats();
 
+            //AllocateStats();
+            //EquipItemsByClass();
+
             CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(className);
             if(setup != null) {
                 GenerateSetupAttributes(setup);
@@ -418,6 +422,9 @@ namespace ECS {
 
             //AllocateStatPoints(10);
             //AllocateStats();
+
+            //AllocateStats();
+            //EquipItemsByClass();
 
             //EquipPreEquippedItems(baseSetup);
             CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(data.className);
@@ -463,6 +470,8 @@ namespace ECS {
             combatHistory = new Dictionary<int, Combat>();
             eventSchedule = new CharacterEventSchedule(this);
             uiData = new CharacterUIData();
+            characterIntel = new CharacterIntel(this);
+
             AllocateStats();
             EquipItemsByClass();
             //ConstructBuffs();

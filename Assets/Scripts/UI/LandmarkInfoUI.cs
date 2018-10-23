@@ -76,14 +76,14 @@ public class LandmarkInfoUI : UIMenu {
             PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeLandmark);
         }
         ResetScrollPositions();
-        PlayerUI.Instance.UncollapseMinionHolder();
+        //PlayerUI.Instance.UncollapseMinionHolder();
         InteractionUI.Instance.OpenInteractionUI(_activeLandmark);
     }
     public override void CloseMenu() {
         base.CloseMenu();
         _activeLandmark = null;
         PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
-        PlayerUI.Instance.CollapseMinionHolder();
+        //PlayerUI.Instance.CollapseMinionHolder();
         InteractionUI.Instance.HideInteractionUI();
     }
 
