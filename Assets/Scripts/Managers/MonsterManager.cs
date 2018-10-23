@@ -50,6 +50,7 @@ public class MonsterManager : MonoBehaviour {
 
     private void ConstructAllMonsters() {
         _monstersDictionary = new Dictionary<string, Monster>();
+        _monsterArmyUnitsDictionary = new Dictionary<string, MonsterArmyUnit>();
         string path = Utilities.dataPath + "Monsters/";
         string[] monsters = System.IO.Directory.GetFiles(path, "*.json");
         for (int i = 0; i < monsters.Length; i++) {
