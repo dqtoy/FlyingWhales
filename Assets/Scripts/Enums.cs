@@ -906,7 +906,7 @@ public enum MOVEMENT_TYPE {
 
 public enum TARGET_TYPE {
     SINGLE,
-    ROW,
+    PARTY,
 }
 public enum ATTRIBUTE_CATEGORY {
     CHARACTER,

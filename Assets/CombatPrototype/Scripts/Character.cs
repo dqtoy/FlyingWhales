@@ -1199,13 +1199,13 @@ namespace ECS {
         #endregion
 
         #region Skills
-		private List<Skill> GetGeneralSkills(){
-            List<Skill> allGeneralSkills = new List<Skill>();
-            foreach (Skill skill in SkillManager.Instance.generalSkills.Values) {
-                allGeneralSkills.Add(skill.CreateNewCopy());
-            }
-            return allGeneralSkills;
-		}
+		//private List<Skill> GetGeneralSkills(){
+  //          List<Skill> allGeneralSkills = new List<Skill>();
+  //          foreach (Skill skill in SkillManager.Instance.generalSkills.Values) {
+  //              allGeneralSkills.Add(skill.CreateNewCopy());
+  //          }
+  //          return allGeneralSkills;
+		//}
         //public List<Skill> GetClassSkills() {
         //    List<Skill> skills = new List<Skill>();
         //    for (int i = 0; i < level; i++) {
