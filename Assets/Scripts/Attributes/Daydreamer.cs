@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 
-public class Daydreamer : Attribute {
+public class Daydreamer : CharacterAttribute {
 
     public Daydreamer() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.DAYDREAMER) {
 

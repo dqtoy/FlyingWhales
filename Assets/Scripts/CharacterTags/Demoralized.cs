@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using ECS;
 using UnityEngine;
 
-public class Demoralized : Attribute {
+public class Demoralized : CharacterAttribute {
     public Demoralized() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.DEMORALIZED) {
     }
     public override void OnAddAttribute(Character character) {

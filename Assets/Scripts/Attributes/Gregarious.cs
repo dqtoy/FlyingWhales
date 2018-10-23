@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using ECS;
 using UnityEngine;
 
-public class Gregarious : Attribute {
+public class Gregarious : CharacterAttribute {
 
     public Gregarious() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.GREGARIOUS) {
 

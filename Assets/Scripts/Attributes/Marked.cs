@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 
-public class Marked : Attribute {
+public class Marked : CharacterAttribute {
 
     public Marked() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.MARKED) {
 

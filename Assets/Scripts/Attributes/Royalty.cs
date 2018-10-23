@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 
-public class Royalty : Attribute {
+public class Royalty : CharacterAttribute {
 
     public Royalty() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.ROYALTY) {
 

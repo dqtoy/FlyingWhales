@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class CharacterAttribute {
+public class CharacterTag {
 	protected ECS.Character _character;
 	protected string _name;
 	protected ATTRIBUTE _attribute;
@@ -31,7 +31,7 @@ public class CharacterAttribute {
 	}
 	#endregion
 
-	public CharacterAttribute(ECS.Character character, ATTRIBUTE attribute) {
+	public CharacterTag(ECS.Character character, ATTRIBUTE attribute) {
 		_character = character;
         _attribute = attribute;
         _name = Utilities.NormalizeStringUpperCaseFirstLetters (_attribute.ToString ());

@@ -2,7 +2,7 @@
 using System.Collections;
 using ECS;
 
-public class Tired : Attribute {
+public class Tired : CharacterAttribute {
     public Tired() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.TIRED) {
 
     }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using ECS;
 using UnityEngine;
 
-public class Wrecked : Attribute {
+public class Wrecked : CharacterAttribute {
     public Wrecked() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.WRECKED) {
     }
     public override void OnAddAttribute(Character character) {

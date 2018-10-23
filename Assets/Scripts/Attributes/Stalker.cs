@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 
-public class Stalker : Attribute {
+public class Stalker : CharacterAttribute {
 
     private Character _stalkee;
 

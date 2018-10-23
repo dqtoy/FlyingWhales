@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using ECS;
 using UnityEngine;
 
-public class Starving : Attribute {
+public class Starving : CharacterAttribute {
     public Starving() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.STARVING) {
     }
 

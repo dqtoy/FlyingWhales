@@ -753,6 +753,32 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
         return activatedBorder;
     }
+    public SpriteRenderer GetBorder(HEXTILE_DIRECTION direction) {
+        SpriteRenderer border = null;
+        switch (direction) {
+            case HEXTILE_DIRECTION.NORTH_WEST:
+                border = topLeftBorder;
+                break;
+            case HEXTILE_DIRECTION.NORTH_EAST:
+                border = topRightBorder;
+                break;
+            case HEXTILE_DIRECTION.EAST:
+                border = rightBorder;
+                break;
+            case HEXTILE_DIRECTION.SOUTH_EAST:
+                border = botRightBorder;
+                break;
+            case HEXTILE_DIRECTION.SOUTH_WEST:
+                border = botLeftBorder;
+                break;
+            case HEXTILE_DIRECTION.WEST:
+                border = leftBorder;
+                break;
+            default:
+                break;
+        }
+        return border;
+    }
     internal void DeactivateCenterPiece() {
         centerPiece.SetActive(false);
     }

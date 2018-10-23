@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using ECS;
 using UnityEngine;
 
-public class Betrayed : Attribute {
+public class Betrayed : CharacterAttribute {
     public Betrayed() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.BETRAYED) {
     }
 

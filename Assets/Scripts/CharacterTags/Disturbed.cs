@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using ECS;
 using UnityEngine;
 
-public class Disturbed : Attribute {
+public class Disturbed : CharacterAttribute {
     public Disturbed() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.DISTURBED) {
     }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 
-public class Spooked : Attribute {
+public class Spooked : CharacterAttribute {
 
     public Spooked() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.SPOOKED) {
 

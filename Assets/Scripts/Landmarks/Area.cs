@@ -19,7 +19,9 @@ public class Area {
     public List<BaseLandmark> landmarks { get { return tiles.Where(x => x.landmarkOnTile != null).Select(x => x.landmarkOnTile).ToList(); } }
     public int totalCivilians { get { return landmarks.Sum(x => x.civilianCount); } }
     public LocationIntel locationIntel { get; private set; }
+    private List<HexTile> outerTiles;
     private List<BaseLandmark> exposedTiles;
+    private List<SpriteRenderer> outline;
 
     public List<string> excessClasses;
     public List<string> missingClasses;
@@ -85,17 +87,20 @@ public class Area {
     public void SetCoreTile(HexTile tile) {
         coreTile = tile;
     }
-    public void AddTile(List<HexTile> tiles, bool determineExposedTiles = true) {
+    public void AddTile(List<HexTile> tiles, bool determineExposedTiles = true, bool determineOuterTiles = true) {
         for (int i = 0; i < tiles.Count; i++) {
-            AddTile(tiles[i], false);
+            AddTile(tiles[i], false, false);
         }
 #if !WORLD_CREATION_TOOL
         if (determineExposedTiles) {
             DetermineExposedTiles();
         }
+        if (determineOuterTiles) {
+            UpdateOuterTiles();
+        }
 #endif
     }
-    public void AddTile(HexTile tile, bool determineExposedTiles = true) {
+    public void AddTile(HexTile tile, bool determineExposedTiles = true, bool determineOuterTiles = true) {
         if (!tiles.Contains(tile)) {
             tiles.Add(tile);
             tile.SetArea(this);
@@ -104,28 +109,37 @@ public class Area {
             if (determineExposedTiles) {
                 DetermineExposedTiles();
             }
+            if (determineOuterTiles) {
+                UpdateOuterTiles();
+            }
 #endif
             OnTileAddedToArea(tile);
             Messenger.Broadcast(Signals.AREA_TILE_ADDED, this, tile);
         }
     }
-    public void RemoveTile(List<HexTile> tiles, bool determineExposedTiles = true) {
+    public void RemoveTile(List<HexTile> tiles, bool determineExposedTiles = true, bool determineOuterTiles = true) {
         for (int i = 0; i < tiles.Count; i++) {
-            RemoveTile(tiles[i], false);
+            RemoveTile(tiles[i], false, false);
         }
 #if !WORLD_CREATION_TOOL
         if (determineExposedTiles) {
             DetermineExposedTiles();
         }
+        if (determineOuterTiles) {
+            UpdateOuterTiles();
+        }
 #endif
     }
-    public void RemoveTile(HexTile tile, bool determineExposedTiles = true) {
+    public void RemoveTile(HexTile tile, bool determineExposedTiles = true, bool determineOuterTiles = true) {
         tiles.Remove(tile);
         tile.SetArea(null);
         OnTileRemovedFromArea(tile);
 #if !WORLD_CREATION_TOOL
         if (determineExposedTiles) {
             DetermineExposedTiles();
+        }
+        if (determineOuterTiles) {
+            UpdateOuterTiles();
         }
 #endif
         Messenger.Broadcast(Signals.AREA_TILE_REMOVED, this, tile);
@@ -225,6 +239,22 @@ public class Area {
         }
         return null;
     }
+    private void UpdateOuterTiles() {
+        outerTiles = new List<HexTile>();
+        outline = new List<SpriteRenderer>();
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile currTile = tiles[i];
+            for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
+                HexTile currNeighbour = currTile.AllNeighbours[j];
+                if (currNeighbour.areaOfTile == null || currNeighbour.areaOfTile.id != this.id) {
+                    if (!outerTiles.Contains(currTile)) {
+                        outerTiles.Add(currTile);
+                    }
+                    outline.Add(currTile.GetBorder(currTile.GetNeighbourDirection(currNeighbour)));
+                }
+            }
+        }
+    }
     #endregion
 
     #region Area Type
@@ -275,6 +305,12 @@ public class Area {
     public void TintStructuresInArea(Color color) {
         for (int i = 0; i < tiles.Count; i++) {
             tiles[i].SetStructureTint(color);
+        }
+    }
+    public void SetOutlineState(bool state) {
+        for (int i = 0; i < outline.Count; i++) {
+            SpriteRenderer renderer = outline[i];
+            renderer.gameObject.SetActive(state);
         }
     }
     #endregion

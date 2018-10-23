@@ -53,7 +53,7 @@ namespace ECS {
         protected List<STATUS_EFFECT> _statusEffects;
         protected List<Item> _inventory;
         protected List<Skill> _skills;
-        protected List<Attribute> _attributes;
+        protected List<CharacterAttribute> _attributes;
         protected List<Log> _history;
         protected List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
         protected List<CombatAttribute> _combatAttributes;
@@ -118,7 +118,7 @@ namespace ECS {
         public RACE race {
             get { return _raceSetting.race; }
         }
-        public List<Attribute> attributes {
+        public List<CharacterAttribute> attributes {
             get { return _attributes; }
         }
         public Dictionary<Character, Relationship> relationships {
@@ -437,7 +437,7 @@ namespace ECS {
             //DetermineAllowedMiscActions();
         }
         public Character() {
-            _attributes = new List<Attribute>();
+            _attributes = new List<CharacterAttribute>();
             _exploredLandmarks = new List<BaseLandmark>();
             _statusEffects = new List<STATUS_EFFECT>();
             _secrets = new List<Secret>();
@@ -1397,7 +1397,7 @@ namespace ECS {
 		//	}
   //          return charTag;
 		//}
-        public Attribute CreateAttribute(ATTRIBUTE type) {
+        public CharacterAttribute CreateAttribute(ATTRIBUTE type) {
             switch (type) {
                 case ATTRIBUTE.GREGARIOUS:
                 return new Gregarious();
@@ -1512,7 +1512,7 @@ namespace ECS {
 			}
 			return false;
 		}
-        public Attribute GetAttribute(ATTRIBUTE attribute) {
+        public CharacterAttribute GetAttribute(ATTRIBUTE attribute) {
             for (int i = 0; i < _attributes.Count; i++) {
                 if (_attributes[i].attribute == attribute) {
                     return _attributes[i];
@@ -1520,7 +1520,7 @@ namespace ECS {
             }
             return null;
         }
-        public Attribute GetAttribute(string attribute) {
+        public CharacterAttribute GetAttribute(string attribute) {
             for (int i = 0; i < _attributes.Count; i++) {
                 if (_attributes[i].name.ToLower() == attribute.ToLower()) {
                     return _attributes[i];
@@ -1528,14 +1528,14 @@ namespace ECS {
             }
             return null;
         }
-        public Attribute AddAttribute(ATTRIBUTE attribute) {
+        public CharacterAttribute AddAttribute(ATTRIBUTE attribute) {
             if(GetAttribute(attribute) == null) {
-                Attribute newAttribute = CreateAttribute(attribute);
+                CharacterAttribute newAttribute = CreateAttribute(attribute);
                 _attributes.Add(newAttribute);
 #if !WORLD_CREATION_TOOL
                 newAttribute.OnAddAttribute(this);
 #endif
-                Messenger.Broadcast<Character, Attribute>(Signals.ATTRIBUTE_ADDED, this, newAttribute);
+                Messenger.Broadcast<Character, CharacterAttribute>(Signals.ATTRIBUTE_ADDED, this, newAttribute);
                 return newAttribute;
             }
             return null;
@@ -1553,24 +1553,24 @@ namespace ECS {
         public bool RemoveAttribute(ATTRIBUTE attribute) {
             for (int i = 0; i < _attributes.Count; i++) {
                 if(_attributes[i].attribute == attribute) {
-                    Attribute removedAttribute = _attributes[i];
+                    CharacterAttribute removedAttribute = _attributes[i];
 #if !WORLD_CREATION_TOOL
                     removedAttribute.OnRemoveAttribute();
 #endif
                     _attributes.RemoveAt(i);
-                    Messenger.Broadcast<Character, Attribute>(Signals.ATTRIBUTE_REMOVED, this, removedAttribute);
+                    Messenger.Broadcast<Character, CharacterAttribute>(Signals.ATTRIBUTE_REMOVED, this, removedAttribute);
                     return true;
                 }
             }
             return false;
         }
-        public bool RemoveAttribute(Attribute attribute) {
-            Attribute attributeToBeRemoved = attribute;
+        public bool RemoveAttribute(CharacterAttribute attribute) {
+            CharacterAttribute attributeToBeRemoved = attribute;
             if (_attributes.Remove(attribute)) {
 #if !WORLD_CREATION_TOOL
                 attributeToBeRemoved.OnRemoveAttribute();
 #endif
-                Messenger.Broadcast<Character, Attribute>(Signals.ATTRIBUTE_REMOVED, this, attributeToBeRemoved);
+                Messenger.Broadcast<Character, CharacterAttribute>(Signals.ATTRIBUTE_REMOVED, this, attributeToBeRemoved);
                 return true;
             }
             return false;

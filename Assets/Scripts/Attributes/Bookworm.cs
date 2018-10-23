@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 
-public class Bookworm : Attribute {
+public class Bookworm : CharacterAttribute {
 
     CharacterAction readAction;
     public Bookworm() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.BOOKWORM) {

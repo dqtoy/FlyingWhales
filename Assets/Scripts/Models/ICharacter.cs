@@ -42,7 +42,7 @@ public interface ICharacter {
     Dictionary<Character, Relationship> relationships { get; }
     List<Skill> skills { get; }
     List<CharacterAction> miscActions { get; }
-    List<Attribute> attributes { get; }
+    List<CharacterAttribute> attributes { get; }
     List<Item> inventory { get; }
     List<Log> history { get; }
     List<CombatAttribute> combatAttributes { get; }
@@ -79,10 +79,10 @@ public interface ICharacter {
     bool InviteToParty(ICharacter inviter);
     bool IsInOwnParty();
     Party CreateOwnParty();
-    Attribute GetAttribute(string attribute);
+    CharacterAttribute GetAttribute(string attribute);
     CharacterAction GetRandomMiscAction(ref IObject targetObject);
     CharacterAction GetMiscAction(ACTION_TYPE type);
-    Attribute AddAttribute(ATTRIBUTE tag); //Character only
+    CharacterAttribute AddAttribute(ATTRIBUTE tag); //Character only
     void AddActionToQueue(CharacterAction action, IObject targetObject, Quest associatedQuest = null, int position = -1);
     void RemoveActionFromQueue(ActionQueueItem item);
     void ConstructBuffs();

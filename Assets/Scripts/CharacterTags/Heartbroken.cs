@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using ECS;
 using UnityEngine;
 
-public class Heartbroken : Attribute {
+public class Heartbroken : CharacterAttribute {
     public Heartbroken() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.HEARTBROKEN) {
     }
 
