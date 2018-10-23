@@ -424,52 +424,52 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         }
         return compPower;
     }
-    private List<Skill> GetGeneralSkills() {
-        List<Skill> allGeneralSkills = new List<Skill>();
-        foreach (Skill skill in SkillManager.Instance.generalSkills.Values) {
-            if(skill is FleeSkill) {
-                continue;
-            }
-            allGeneralSkills.Add(skill.CreateNewCopy());
-        }
-        return allGeneralSkills;
-    }
+    //private List<Skill> GetGeneralSkills() {
+    //    List<Skill> allGeneralSkills = new List<Skill>();
+    //    foreach (Skill skill in SkillManager.Instance.generalSkills.Values) {
+    //        if(skill is FleeSkill) {
+    //            continue;
+    //        }
+    //        allGeneralSkills.Add(skill.CreateNewCopy());
+    //    }
+    //    return allGeneralSkills;
+    //}
     private void ConstructSkills() {
         _skills = new List<Skill>();
         string path = string.Empty;
-        path = Utilities.dataPath + "Skills/GENERAL/";
-        string[] directories = Directory.GetDirectories(path);
-        for (int i = 0; i < directories.Length; i++) {
-            string skillType = new DirectoryInfo(directories[i]).Name;
-            SKILL_TYPE currSkillType = (SKILL_TYPE) System.Enum.Parse(typeof(SKILL_TYPE), skillType);
-            string[] files = Directory.GetFiles(directories[i], "*.json");
-            for (int j = 0; j < files.Length; j++) {
-                string dataAsJson = File.ReadAllText(files[j]);
-                switch (currSkillType) {
-                    case SKILL_TYPE.ATTACK:
-                    AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill>(dataAsJson);
-                    _skills.Add(attackSkill);
-                    break;
-                    case SKILL_TYPE.HEAL:
-                    HealSkill healSkill = JsonUtility.FromJson<HealSkill>(dataAsJson);
-                    _skills.Add(healSkill);
-                    break;
-                    case SKILL_TYPE.OBTAIN_ITEM:
-                    ObtainSkill obtainSkill = JsonUtility.FromJson<ObtainSkill>(dataAsJson);
-                    _skills.Add(obtainSkill);
-                    break;
-                    case SKILL_TYPE.FLEE:
-                    break;
-                    case SKILL_TYPE.MOVE:
-                    MoveSkill moveSkill = JsonUtility.FromJson<MoveSkill>(dataAsJson);
-                    _skills.Add(moveSkill);
-                    break;
-                }
-            }
-        }
+        //path = Utilities.dataPath + "Skills/GENERAL/";
+        //string[] directories = Directory.GetDirectories(path);
+        //for (int i = 0; i < directories.Length; i++) {
+        //    string skillType = new DirectoryInfo(directories[i]).Name;
+        //    SKILL_TYPE currSkillType = (SKILL_TYPE) System.Enum.Parse(typeof(SKILL_TYPE), skillType);
+        //    string[] files = Directory.GetFiles(directories[i], "*.json");
+        //    for (int j = 0; j < files.Length; j++) {
+        //        string dataAsJson = File.ReadAllText(files[j]);
+        //        switch (currSkillType) {
+        //            case SKILL_TYPE.ATTACK:
+        //            AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill>(dataAsJson);
+        //            _skills.Add(attackSkill);
+        //            break;
+        //            case SKILL_TYPE.HEAL:
+        //            HealSkill healSkill = JsonUtility.FromJson<HealSkill>(dataAsJson);
+        //            _skills.Add(healSkill);
+        //            break;
+        //            case SKILL_TYPE.OBTAIN_ITEM:
+        //            ObtainSkill obtainSkill = JsonUtility.FromJson<ObtainSkill>(dataAsJson);
+        //            _skills.Add(obtainSkill);
+        //            break;
+        //            case SKILL_TYPE.FLEE:
+        //            break;
+        //            case SKILL_TYPE.MOVE:
+        //            MoveSkill moveSkill = JsonUtility.FromJson<MoveSkill>(dataAsJson);
+        //            _skills.Add(moveSkill);
+        //            break;
+        //        }
+        //    }
+        //}
         for (int i = 0; i < _skillNames.Count; i++) {
-            path = Utilities.dataPath + "Skills/CLASS/ATTACK/" + _skillNames[i] + ".json";
-            AttackSkill skill = JsonUtility.FromJson<AttackSkill>(System.IO.File.ReadAllText(path));
+            path = Utilities.dataPath + "Skills/" + _skillNames[i] + ".json";
+            Skill skill = JsonUtility.FromJson<Skill>(System.IO.File.ReadAllText(path));
             _skills.Add(skill);
         }
     }
@@ -494,7 +494,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         if (_skills == null) {
             _skills = new List<Skill>();
         }
-        _skills.AddRange(GetGeneralSkills());
+        //_skills.AddRange(GetGeneralSkills());
         ResetToFullHP();
         //ResetToFullSP();
         SetCharacterColor(Color.red);

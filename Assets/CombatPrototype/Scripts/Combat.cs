@@ -467,58 +467,42 @@ namespace ECS{
         //}
 
         //Check if there are targets in range for the specific skill so that the character can know if the skill can be activated 
-        internal bool HasTargetInRangeForSkill(Skill skill, ICharacter sourceCharacter) {
-            if (skill is AttackSkill) {
-                if (sourceCharacter.currentSide == SIDES.A) {
-                    for (int i = 0; i < this.charactersSideB.Count; i++) {
-                        ICharacter targetCharacter = this.charactersSideB[i];
-                        int rowDistance = GetRowDistanceBetweenTwoCharacters(sourceCharacter, targetCharacter);
-                        if (skill.range >= rowDistance) {
-                            return true;
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < this.charactersSideA.Count; i++) {
-                        ICharacter targetCharacter = this.charactersSideA[i];
-                        int rowDistance = GetRowDistanceBetweenTwoCharacters(sourceCharacter, targetCharacter);
-                        if (skill.range >= rowDistance) {
-                            return true;
-                        }
-                    }
-                }
-                return false;
-            } else {
-                return true;
-            }
+        //internal bool HasTargetInRangeForSkill(Skill skill, ICharacter sourceCharacter) {
+        //    if (skill is AttackSkill) {
+        //        if (sourceCharacter.currentSide == SIDES.A) {
+        //            for (int i = 0; i < this.charactersSideB.Count; i++) {
+        //                ICharacter targetCharacter = this.charactersSideB[i];
+        //                int rowDistance = GetRowDistanceBetweenTwoCharacters(sourceCharacter, targetCharacter);
+        //                if (skill.range >= rowDistance) {
+        //                    return true;
+        //                }
+        //            }
+        //        } else {
+        //            for (int i = 0; i < this.charactersSideA.Count; i++) {
+        //                ICharacter targetCharacter = this.charactersSideA[i];
+        //                int rowDistance = GetRowDistanceBetweenTwoCharacters(sourceCharacter, targetCharacter);
+        //                if (skill.range >= rowDistance) {
+        //                    return true;
+        //                }
+        //            }
+        //        }
+        //        return false;
+        //    } else {
+        //        return true;
+        //    }
+        //}
 
-        }
-
-        internal bool HasTargetInRangeForSkill(SKILL_TYPE skillType, ICharacter sourceCharacter) {
-            if (skillType == SKILL_TYPE.ATTACK) {
-                for (int i = 0; i < sourceCharacter.skills.Count; i++) {
-                    Skill skill = sourceCharacter.skills[i];
-                    if (skill is AttackSkill) {
-                        return HasTargetInRangeForSkill(skill, sourceCharacter);
-                    }
-                }
-                //if (sourceCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
-                //    Character character = sourceCharacter as Character;
-                //    for (int i = 0; i < character.level; i++) {
-                //        if (i < character.characterClass.skillsPerLevel.Count) {
-                //            if (character.characterClass.skillsPerLevel[i] != null) {
-                //                for (int j = 0; j < character.characterClass.skillsPerLevel[i].Length; j++) {
-                //                    Skill skill = character.characterClass.skillsPerLevel[i][j];
-                //                    if (skill is AttackSkill) {
-                //                        return HasTargetInRangeForSkill(skill, sourceCharacter);
-                //                    }
-                //                }
-                //            }
-                //        }
-                //    }
-                //}
-            }
-            return true;
-        }
+        //internal bool HasTargetInRangeForSkill(SKILL_TYPE skillType, ICharacter sourceCharacter) {
+        //    if (skillType == SKILL_TYPE.ATTACK) {
+        //        for (int i = 0; i < sourceCharacter.skills.Count; i++) {
+        //            Skill skill = sourceCharacter.skills[i];
+        //            if (skill is AttackSkill) {
+        //                return HasTargetInRangeForSkill(skill, sourceCharacter);
+        //            }
+        //        }
+        //    }
+        //    return true;
+        //}
 
         //Returns the row distance/difference of two characters
         private int GetRowDistanceBetweenTwoCharacters(ICharacter sourceCharacter, ICharacter targetCharacter) {
@@ -531,28 +515,29 @@ namespace ECS{
         //ICharacter will do the skill specified, but its success will be determined by the skill's accuracy
         private void DoSkill(Skill skill, ICharacter sourceCharacter, ICharacter targetCharacter) {
             //If skill is attack, reduce sp
-            if (skill.skillType == SKILL_TYPE.ATTACK) {
-                AttackSkill attackSkill = skill as AttackSkill;
-                sourceCharacter.AdjustSP(-attackSkill.spCost);
-            }
+            //if (skill.skillType == SKILL_TYPE.ATTACK) {
+            //    AttackSkill attackSkill = skill as AttackSkill;
+            //    sourceCharacter.AdjustSP(-attackSkill.spCost);
+            //}
             SuccessfulSkill(skill, sourceCharacter, targetCharacter);
         }
 
         //Go here if skill is accurate and is successful
         private void SuccessfulSkill(Skill skill, ICharacter sourceCharacter, ICharacter targetCharacter) {
-            if (skill is AttackSkill) {
-                AttackSkill(skill, sourceCharacter, targetCharacter);
-            } else if (skill is HealSkill) {
-                HealSkill(skill, sourceCharacter, targetCharacter);
-            } else if (skill is FleeSkill) {
-                targetCharacter = sourceCharacter;
-                FleeSkill(sourceCharacter, targetCharacter);
-            } else if (skill is ObtainSkill) {
-                ObtainItemSkill(sourceCharacter, targetCharacter);
-            } else if (skill is MoveSkill) {
-                targetCharacter = sourceCharacter;
-                MoveSkill(skill, sourceCharacter, targetCharacter);
-            }
+            AttackSkill(skill, sourceCharacter, targetCharacter);
+            //if (skill is AttackSkill) {
+            //    AttackSkill(skill, sourceCharacter, targetCharacter);
+            //} else if (skill is HealSkill) {
+            //    HealSkill(skill, sourceCharacter, targetCharacter);
+            //} else if (skill is FleeSkill) {
+            //    targetCharacter = sourceCharacter;
+            //    FleeSkill(sourceCharacter, targetCharacter);
+            //} else if (skill is ObtainSkill) {
+            //    ObtainItemSkill(sourceCharacter, targetCharacter);
+            //} else if (skill is MoveSkill) {
+            //    targetCharacter = sourceCharacter;
+            //    MoveSkill(skill, sourceCharacter, targetCharacter);
+            //}
         }
 
         //Skill is not accurate and therefore has failed to execute
@@ -607,12 +592,12 @@ namespace ECS{
 
         #region Attack Skill
         private void AttackSkill(Skill skill, ICharacter sourceCharacter, ICharacter targetCharacter) {
-            AttackSkill attackSkill = skill as AttackSkill;
-            HitTargetCharacter(attackSkill, sourceCharacter, targetCharacter);
+            //AttackSkill attackSkill = skill as AttackSkill;
+            HitTargetCharacter(skill, sourceCharacter, targetCharacter);
         }
 
         //Hits the target with an attack skill
-        private void HitTargetCharacter(AttackSkill attackSkill, ICharacter sourceCharacter, ICharacter targetCharacter) {
+        private void HitTargetCharacter(Skill attackSkill, ICharacter sourceCharacter, ICharacter targetCharacter) {
             //Total Damage = [Weapon Power + (Int or Str)] - [Base Damage Mitigation] - [Bonus Attack Type Mitigation] + [Bonus Attack Type Weakness]
             string log = string.Empty;
             float attackPower = sourceCharacter.attackPower;
@@ -772,7 +757,7 @@ namespace ECS{
             //}
         }
 
-        private bool IsCombatAttributeApplicable(CombatAttribute combatAttribute, ICharacter targetCharacter, AttackSkill skill) {
+        private bool IsCombatAttributeApplicable(CombatAttribute combatAttribute, ICharacter targetCharacter, Skill skill) {
             if (combatAttribute.requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.CLASS) {
                 if (targetCharacter.characterClass != null && targetCharacter.characterClass.className.ToLower() == combatAttribute.requirement.ToLower()) {
                     return true;

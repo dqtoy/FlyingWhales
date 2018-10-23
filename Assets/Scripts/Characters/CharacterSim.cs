@@ -299,8 +299,8 @@ public class CharacterSim : ICharacterSim {
     }
     private void ConstructSkills() {
         _skills = new List<Skill>();
-        string path = Utilities.dataPath + "Skills/CLASS/ATTACK/" + _skillName + ".json";
-        AttackSkill skill = JsonUtility.FromJson<AttackSkill>(System.IO.File.ReadAllText(path));
+        string path = Utilities.dataPath + "Skills/" + _skillName + ".json";
+        Skill skill = JsonUtility.FromJson<Skill>(System.IO.File.ReadAllText(path));
         _skills.Add(skill);
         //string path = string.Empty;
         //path = Utilities.dataPath + "Skills/GENERAL/";

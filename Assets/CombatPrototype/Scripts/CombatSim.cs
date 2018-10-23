@@ -141,42 +141,42 @@ public class CombatSim {
         }
         return oppositeTargets[Utilities.rng.Next(0, oppositeTargets.Count)];
     }
-    public bool HasTargetInRangeForSkill(Skill skill, ICharacterSim sourceCharacter) {
-        if (skill is AttackSkill) {
-            if (sourceCharacter.currentSide == SIDES.A) {
-                for (int i = 0; i < this.charactersSideB.Count; i++) {
-                    ICharacterSim targetCharacter = this.charactersSideB[i];
-                    int rowDistance = GetRowDistanceBetweenTwoCharacters(sourceCharacter, targetCharacter);
-                    if (skill.range >= rowDistance) {
-                        return true;
-                    }
-                }
-            } else {
-                for (int i = 0; i < this.charactersSideA.Count; i++) {
-                    ICharacterSim targetCharacter = this.charactersSideA[i];
-                    int rowDistance = GetRowDistanceBetweenTwoCharacters(sourceCharacter, targetCharacter);
-                    if (skill.range >= rowDistance) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        } else {
-            return true;
-        }
+    //public bool HasTargetInRangeForSkill(Skill skill, ICharacterSim sourceCharacter) {
+    //    if (skill is AttackSkill) {
+    //        if (sourceCharacter.currentSide == SIDES.A) {
+    //            for (int i = 0; i < this.charactersSideB.Count; i++) {
+    //                ICharacterSim targetCharacter = this.charactersSideB[i];
+    //                int rowDistance = GetRowDistanceBetweenTwoCharacters(sourceCharacter, targetCharacter);
+    //                if (skill.range >= rowDistance) {
+    //                    return true;
+    //                }
+    //            }
+    //        } else {
+    //            for (int i = 0; i < this.charactersSideA.Count; i++) {
+    //                ICharacterSim targetCharacter = this.charactersSideA[i];
+    //                int rowDistance = GetRowDistanceBetweenTwoCharacters(sourceCharacter, targetCharacter);
+    //                if (skill.range >= rowDistance) {
+    //                    return true;
+    //                }
+    //            }
+    //        }
+    //        return false;
+    //    } else {
+    //        return true;
+    //    }
 
-    }
-    public bool HasTargetInRangeForSkill(SKILL_TYPE skillType, ICharacterSim sourceCharacter) {
-        if (skillType == SKILL_TYPE.ATTACK) {
-            for (int i = 0; i < sourceCharacter.skills.Count; i++) {
-                Skill skill = sourceCharacter.skills[i];
-                if (skill is AttackSkill) {
-                    return HasTargetInRangeForSkill(skill, sourceCharacter);
-                }
-            }
-        }
-        return true;
-    }
+    //}
+    //public bool HasTargetInRangeForSkill(SKILL_TYPE skillType, ICharacterSim sourceCharacter) {
+    //    if (skillType == SKILL_TYPE.ATTACK) {
+    //        for (int i = 0; i < sourceCharacter.skills.Count; i++) {
+    //            Skill skill = sourceCharacter.skills[i];
+    //            if (skill is AttackSkill) {
+    //                return HasTargetInRangeForSkill(skill, sourceCharacter);
+    //            }
+    //        }
+    //    }
+    //    return true;
+    //}
     private int GetRowDistanceBetweenTwoCharacters(ICharacterSim sourceCharacter, ICharacterSim targetCharacter) {
         int distance = targetCharacter.currentRow - sourceCharacter.currentRow;
         if (distance < 0) {
@@ -190,38 +190,39 @@ public class CombatSim {
     }
     private void DoSkill(Skill skill, ICharacterSim sourceCharacter, ICharacterSim targetCharacter) {
         //If skill is attack, reduce sp
-        if (skill.skillType == SKILL_TYPE.ATTACK) {
-            AttackSkill attackSkill = skill as AttackSkill;
-            sourceCharacter.AdjustSP(-attackSkill.spCost);
-        }
+        //if (skill.skillType == SKILL_TYPE.ATTACK) {
+        //    AttackSkill attackSkill = skill as AttackSkill;
+        //    sourceCharacter.AdjustSP(-attackSkill.spCost);
+        //}
         SuccessfulSkill(skill, sourceCharacter, targetCharacter);
     }
 
     //Go here if skill is accurate and is successful
     private void SuccessfulSkill(Skill skill, ICharacterSim sourceCharacter, ICharacterSim targetCharacter) {
-        if (skill is AttackSkill) {
-            AttackSkill(skill, sourceCharacter, targetCharacter);
-        } else if (skill is HealSkill) {
-            HealSkill(skill, sourceCharacter, targetCharacter);
-        } else if (skill is FleeSkill) {
-            targetCharacter = sourceCharacter;
-            FleeSkill(sourceCharacter, targetCharacter);
-        } else if (skill is ObtainSkill) {
-            ObtainItemSkill(sourceCharacter, targetCharacter);
-        } else if (skill is MoveSkill) {
-            targetCharacter = sourceCharacter;
-            MoveSkill(skill, sourceCharacter, targetCharacter);
-        }
+        AttackSkill(skill, sourceCharacter, targetCharacter);
+        //if (skill is AttackSkill) {
+        //    AttackSkill(skill, sourceCharacter, targetCharacter);
+        //} else if (skill is HealSkill) {
+        //    HealSkill(skill, sourceCharacter, targetCharacter);
+        //} else if (skill is FleeSkill) {
+        //    targetCharacter = sourceCharacter;
+        //    FleeSkill(sourceCharacter, targetCharacter);
+        //} else if (skill is ObtainSkill) {
+        //    ObtainItemSkill(sourceCharacter, targetCharacter);
+        //} else if (skill is MoveSkill) {
+        //    targetCharacter = sourceCharacter;
+        //    MoveSkill(skill, sourceCharacter, targetCharacter);
+        //}
     }
 
     #region Attack Skill
     private void AttackSkill(Skill skill, ICharacterSim sourceCharacter, ICharacterSim targetCharacter) {
-        AttackSkill attackSkill = skill as AttackSkill;
-        HitTargetCharacter(attackSkill, sourceCharacter, targetCharacter);
+        //AttackSkill attackSkill = skill as AttackSkill;
+        HitTargetCharacter(skill, sourceCharacter, targetCharacter);
     }
 
     //Hits the target with an attack skill
-    private void HitTargetCharacter(AttackSkill attackSkill, ICharacterSim sourceCharacter, ICharacterSim targetCharacter) {
+    private void HitTargetCharacter(Skill attackSkill, ICharacterSim sourceCharacter, ICharacterSim targetCharacter) {
         string log = string.Empty;
         float attackPower = sourceCharacter.attackPower;
         if (sourceCharacter.combatAttributes != null) {
@@ -379,7 +380,7 @@ public class CombatSim {
         //    attacker.battleTracker.SetLastDamageDealt(targetCharacter.name, damage);
         //}
     }
-    private bool IsCombatAttributeApplicable(CombatAttribute combatAttribute, ICharacterSim targetCharacter, AttackSkill skill) {
+    private bool IsCombatAttributeApplicable(CombatAttribute combatAttribute, ICharacterSim targetCharacter, Skill skill) {
         if (combatAttribute.requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.CLASS) {
             if (targetCharacter.characterClass != null && targetCharacter.characterClass.className.ToLower() == combatAttribute.requirement.ToLower()) {
                 return true;

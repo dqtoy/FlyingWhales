@@ -6,68 +6,67 @@ using System;
 namespace ECS {
     public class Skill {
         public string skillName;
-		public SKILL_TYPE skillType;
-		public string description;
-		public SKILL_CATEGORY skillCategory;
+        public string description;
+        public SKILL_TYPE skillType;
+		//public SKILL_CATEGORY skillCategory;
         //public ACTIVATION_WEIGHT_TYPE actWeightType;
-        public int activationWeight;
+        //public int activationWeight;
         //public float accuracy;
-        public int range;
+        //public int range;
         public TARGET_TYPE targetType;
-        public int numOfRowsHit;
-        public WEAPON_TYPE[] allowedWeaponTypes;
+        public ELEMENT element;
+        //public int numOfRowsHit;
+        //public WEAPON_TYPE[] allowedWeaponTypes;
 
         //Not part of skill creator
         public bool isEnabled;
 
         public Skill CreateNewCopy(){
-			if (this is AttackSkill) {
-				AttackSkill attackSkill = this as AttackSkill;
-				AttackSkill newAttackSkill = new AttackSkill ();
-                //newAttackSkill.attackType = attackSkill.attackType;
-                //newAttackSkill.durabilityDamage = attackSkill.durabilityDamage;
-                //newAttackSkill.durabilityCost = attackSkill.durabilityCost;
-                //newAttackSkill.statusEffectRates = attackSkill.statusEffectRates;
-                newAttackSkill.power = attackSkill.power;
-                newAttackSkill.spCost = attackSkill.spCost;
-                newAttackSkill.element = attackSkill.element;
-				SetCommonData (newAttackSkill);
-				return newAttackSkill;
-			} else if(this is HealSkill){
-				HealSkill healSkill = this as HealSkill;
-				HealSkill newHealSkill = new HealSkill ();
-				newHealSkill.healPower = healSkill.healPower;
-				//newHealSkill.durabilityCost = healSkill.durabilityCost;
-				SetCommonData (newHealSkill);
-				return newHealSkill;
-            } else if (this is MoveSkill) {
-                MoveSkill newSkill = new MoveSkill();
-                SetCommonData(newSkill);
-                return newSkill;
-            } else if (this is FleeSkill) {
-                FleeSkill newSkill = new FleeSkill();
-                SetCommonData(newSkill);
-                return newSkill;
-            }
-            return null;
+            Skill newSkill = new Skill();
+            SetCommonData(newSkill);
+			//if (this is AttackSkill) {
+			//	AttackSkill attackSkill = this as AttackSkill;
+			//	AttackSkill newAttackSkill = new AttackSkill ();
+   //             newAttackSkill.power = attackSkill.power;
+   //             newAttackSkill.spCost = attackSkill.spCost;
+   //             newAttackSkill.element = attackSkill.element;
+			//	SetCommonData (newAttackSkill);
+			//	return newAttackSkill;
+			//} else if(this is HealSkill){
+			//	HealSkill healSkill = this as HealSkill;
+			//	HealSkill newHealSkill = new HealSkill ();
+			//	newHealSkill.healPower = healSkill.healPower;
+			//	SetCommonData (newHealSkill);
+			//	return newHealSkill;
+   //         } else if (this is MoveSkill) {
+   //             MoveSkill newSkill = new MoveSkill();
+   //             SetCommonData(newSkill);
+   //             return newSkill;
+   //         } else if (this is FleeSkill) {
+   //             FleeSkill newSkill = new FleeSkill();
+   //             SetCommonData(newSkill);
+   //             return newSkill;
+   //         }
+            return newSkill;
 		}
 		public void SetCommonData(Skill skill){
 			skill.skillType = this.skillType;
 			skill.skillName = this.skillName;
 			skill.description = this.description;
-			skill.skillCategory = this.skillCategory;
+			//skill.skillCategory = this.skillCategory;
 			//skill.actWeightType = this.actWeightType;
-			skill.activationWeight = this.activationWeight;
+			//skill.activationWeight = this.activationWeight;
 			//skill.accuracy = this.accuracy;
-			skill.range = this.range;
+			//skill.range = this.range;
             skill.targetType = this.targetType;
-            skill.numOfRowsHit = this.numOfRowsHit;
+            skill.element = this.element;
+            //skill.numOfRowsHit = this.numOfRowsHit;
 
             skill.isEnabled = this.isEnabled;
-            if(this.allowedWeaponTypes != null && this.allowedWeaponTypes.Length > 0) {
-                skill.allowedWeaponTypes = new WEAPON_TYPE[this.allowedWeaponTypes.Length];
-                Array.Copy(this.allowedWeaponTypes, skill.allowedWeaponTypes, this.allowedWeaponTypes.Length);
-            }
+            //if(this.allowedWeaponTypes != null && this.allowedWeaponTypes.Length > 0) {
+            //    skill.allowedWeaponTypes = new WEAPON_TYPE[this.allowedWeaponTypes.Length];
+            //    Array.Copy(this.allowedWeaponTypes, skill.allowedWeaponTypes, this.allowedWeaponTypes.Length);
+            //}
             //if(this.skillRequirements != null && this.skillRequirements.Length > 0) {
             //    skill.skillRequirements = new SkillRequirement[this.skillRequirements.Length];
             //    for (int i = 0; i < this.skillRequirements.Length; i++) {

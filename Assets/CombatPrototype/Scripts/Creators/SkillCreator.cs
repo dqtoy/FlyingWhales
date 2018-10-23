@@ -94,9 +94,9 @@ namespace ECS {
             //Nothing yet
         }
         private void ShowTargetTypeFields() {
-            if(skillComponent.targetType == TARGET_TYPE.ROW) {
-                skillComponent.numOfRowsHit = EditorGUILayout.IntField("Cell Amount: ", skillComponent.numOfRowsHit);
-            }
+            //if(skillComponent.targetType == TARGET_TYPE.ROW) {
+            //    skillComponent.numOfRowsHit = EditorGUILayout.IntField("Cell Amount: ", skillComponent.numOfRowsHit);
+            //}
         }
 
         #region Saving
@@ -135,19 +135,19 @@ namespace ECS {
         private void SetCommonData(Skill newSkill) {
 			newSkill.skillType = skillComponent.skillType;
 			newSkill.skillName = skillComponent.skillName;
-			newSkill.skillCategory = skillComponent.skillCategory;
+			//newSkill.skillCategory = skillComponent.skillCategory;
 			newSkill.description = skillComponent.description;
-			//newSkill.actWeightType = skillComponent.actWeightType;
-			newSkill.activationWeight = skillComponent.activationWeight;
-			//newSkill.accuracy = skillComponent.accuracy;
-			newSkill.range = skillComponent.range;
+            //newSkill.actWeightType = skillComponent.actWeightType;
+            //newSkill.activationWeight = skillComponent.activationWeight;
+            //newSkill.accuracy = skillComponent.accuracy;
+            //newSkill.range = skillComponent.range;
             newSkill.targetType = skillComponent.targetType;
-            newSkill.numOfRowsHit = skillComponent.numOfRowsHit;
-            if (newSkill.numOfRowsHit <= 0) {
-                newSkill.numOfRowsHit = 1;
-            }
+            //newSkill.numOfRowsHit = skillComponent.numOfRowsHit;
+            //if (newSkill.numOfRowsHit <= 0) {
+            //    newSkill.numOfRowsHit = 1;
+            //}
             //newSkill.skillRequirements = skillComponent.skillRequirements;
-            newSkill.allowedWeaponTypes = skillComponent.allowedWeaponTypes;
+            //newSkill.allowedWeaponTypes = skillComponent.allowedWeaponTypes;
         }
         private void SaveAttackSkill(string path) {
             AttackSkill newSkill = new AttackSkill();
