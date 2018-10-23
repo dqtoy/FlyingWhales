@@ -67,17 +67,17 @@ namespace ECS {
         protected Dictionary<int, GAME_EVENT> _intelReactions; //int = intel id
 
         //Stats
-        private SIDES _currentSide;
-        private int _currentHP;
-        private int _maxHP;
-        private int _currentRow;
-        private int _level;
-        private int _experience;
-        private int _maxExperience;
-        private int _sp;
-        private int _maxSP;
-        private int _attackPower;
-        private int _speed;
+        protected SIDES _currentSide;
+        protected int _currentHP;
+        protected int _maxHP;
+        protected int _currentRow;
+        protected int _level;
+        protected int _experience;
+        protected int _maxExperience;
+        protected int _sp;
+        protected int _maxSP;
+        protected int _attackPower;
+        protected int _speed;
 
         public CharacterSchedule schedule { get; private set; }
         public Quest currentQuest { get; private set; }
@@ -181,12 +181,6 @@ namespace ECS {
         public bool isFainted {
             get { return this._isFainted; }
         }
-        public int currentHP {
-            get { return this._currentHP + (int)(this._currentHP * _buffs[STAT.HP]); }
-        }
-        public int maxHP {
-            get { return this._maxHP + (int)(this._maxHP * _buffs[STAT.HP]); }
-        }
         public Color characterColor {
             get { return _characterColor; }
         }
@@ -266,11 +260,17 @@ namespace ECS {
         public int maxExperience {
             get { return _maxExperience; }
         }
-        public int speed {
+        public virtual int speed {
             get { return _speed; }
         }
-        public int attackPower {
+        public virtual int attackPower {
             get { return _attackPower; }
+        }
+        public virtual int maxHP {
+            get { return this._maxHP; }
+        }
+        public int currentHP {
+            get { return this._currentHP; }
         }
         public Dictionary<ELEMENT, float> elementalWeaknesses {
             get { return _elementalWeaknesses; }
@@ -474,7 +474,7 @@ namespace ECS {
 
             AllocateStats();
             EquipItemsByClass();
-            ConstructBuffs();
+            //ConstructBuffs();
             GetRandomCharacterColor();
             ConstructDefaultMiscActions();
             //_combatHistoryID = 0;
@@ -511,7 +511,7 @@ namespace ECS {
         private void AllocateStats() {
             _attackPower = _raceSetting.baseAttackPower;
             _speed = _raceSetting.baseSpeed;
-            _maxHP = _raceSetting.baseHP;
+            SetMaxHP(_raceSetting.baseHP);
             _maxSP = _characterClass.baseSP;
         }
         //      private void AllocateStatPoints(int statAllocation){
@@ -613,20 +613,17 @@ namespace ECS {
 			this._currentSide = side;
 		}
         //Adjust current HP based on specified paramater, but HP must not go below 0
-        public void AdjustHP(int amount, ICharacter killer = null) {
+        public virtual void AdjustHP(int amount, ICharacter killer = null) {
             int previous = this._currentHP;
 			this._currentHP += amount;
-			this._currentHP = Mathf.Clamp(this._currentHP, 0, _maxHP);
+			this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
             if(previous != this._currentHP) {
-                //if(_role != null) {
-                //    _role.UpdateSafety();
-                //}
                 if (this._currentHP == 0) {
                     FaintOrDeath(killer);
                 }
             }
 		}
-		internal void SetHP(int amount){
+		public void SetHP(int amount){
 			this._currentHP = amount;
 		}
 		private string GetFaintOrDeath(){
@@ -1755,7 +1752,7 @@ namespace ECS {
 
         #region HP
         public bool IsHealthFull() {
-            return _currentHP >= _maxHP;
+            return _currentHP >= maxHP;
         }
         #endregion
 
@@ -2174,7 +2171,7 @@ namespace ECS {
                 //Add stats per level from class
                 _attackPower += (int) ((_characterClass.attackPowerPerLevel / 100f) * (float) _raceSetting.baseAttackPower);
                 _speed += (int) ((_characterClass.speedPerLevel / 100f) * (float) _raceSetting.baseSpeed);
-                _maxHP += (int) ((_characterClass.hpPerLevel / 100f) * (float) _raceSetting.baseHP);
+                AdjustMaxHP((int) ((_characterClass.hpPerLevel / 100f) * (float) _raceSetting.baseHP));
                 _maxSP += _characterClass.spPerLevel;
                 //Add stats per level from race
                 if(_level > 1) {
@@ -2183,13 +2180,13 @@ namespace ECS {
                     int attackIndex = _level % _raceSetting.attackPerLevel.Length;
                     attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
 
-                    _maxHP += _raceSetting.hpPerLevel[hpIndex - 1];
+                    AdjustMaxHP(_raceSetting.hpPerLevel[hpIndex - 1]);
                     _attackPower += _raceSetting.attackPerLevel[attackIndex - 1];
                 }
 
                 //Reset to full health and sp
-                _currentHP = _maxHP;
-                _sp = _maxSP;
+                ResetToFullHP();
+                ResetToFullSP();
             }
         }
         public void OnCharacterClassChange() {
@@ -2220,7 +2217,7 @@ namespace ECS {
             _maxExperience = Mathf.CeilToInt(100f * ((Mathf.Pow((float) _level, 1.25f)) / 1.1f));
         }
         public void ResetToFullHP() {
-            AdjustHP(_maxHP);
+            SetHP(maxHP);
         }
         public void ResetToFullSP() {
             AdjustSP(_maxSP);
@@ -2231,6 +2228,22 @@ namespace ECS {
                 compPower += currentParty.icharacters[i].attackPower;
             }
             return compPower;
+        }
+        public void SetMaxHP(int amount) {
+            int previousMaxHP = maxHP;
+            _maxHP = amount;
+            int currentMaxHP = maxHP;
+            if(_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
+                _currentHP = currentMaxHP;
+            }
+        }
+        public void AdjustMaxHP(int amount) {
+            int previousMaxHP = maxHP;
+            _maxHP += amount;
+            int currentMaxHP = maxHP;
+            if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
+                _currentHP = currentMaxHP;
+            }
         }
         #endregion
 
@@ -2948,12 +2961,9 @@ namespace ECS {
                     int previousMaxHP = _maxHP;
                     if (combatAttribute.isPercentage) {
                         float result = _maxHP * (combatAttribute.amount / 100f);
-                        _maxHP += (int) result;
+                        AdjustMaxHP((int) result);
                     } else {
-                        _maxHP += (int) combatAttribute.amount;
-                    }
-                    if(_currentHP > _maxHP || _currentHP == previousMaxHP) {
-                        _currentHP = _maxHP;
+                        AdjustMaxHP((int) combatAttribute.amount);
                     }
                 } else if (combatAttribute.stat == STAT.SPEED) {
                     if (combatAttribute.isPercentage) {
@@ -2978,12 +2988,9 @@ namespace ECS {
                     int previousMaxHP = _maxHP;
                     if (combatAttribute.isPercentage) {
                         float result = _maxHP * (combatAttribute.amount / 100f);
-                        _maxHP -= (int) result;
+                        AdjustMaxHP(-(int) result);
                     } else {
-                        _maxHP -= (int) combatAttribute.amount;
-                    }
-                    if (_currentHP > _maxHP || _currentHP == previousMaxHP) {
-                        _currentHP = _maxHP;
+                        AdjustMaxHP(-(int) combatAttribute.amount);
                     }
                 } else if (combatAttribute.stat == STAT.SPEED) {
                     if (combatAttribute.isPercentage) {

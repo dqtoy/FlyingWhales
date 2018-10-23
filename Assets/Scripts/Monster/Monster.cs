@@ -7,56 +7,57 @@ using System.IO;
 
 public class Monster : ICharacter, ICharacterSim, IInteractable {
     //Serialized fields
-    [SerializeField] private string _name;
-    [SerializeField] private MONSTER_TYPE _type;
-    [SerializeField] private MONSTER_CATEGORY _category;
-    [SerializeField] private int _level;
-    [SerializeField] private int _experienceDrop;
-    [SerializeField] private int _maxHP;
-    [SerializeField] private int _maxSP;
-    [SerializeField] private int _attackPower;
-    [SerializeField] private int _speed;
-    [SerializeField] private float _dodgeChance;
-    [SerializeField] private float _hitChance;
-    [SerializeField] private float _critChance;
-    [SerializeField] private bool _isSleepingOnSpawn;
-    [SerializeField] private List<string> _skillNames;
-    [SerializeField] private List<ElementChance> _elementChanceWeaknesses;
-    [SerializeField] private List<ElementChance> _elementChanceResistances;
-    [SerializeField] private List<ItemDrop> _itemDrops;
+    [SerializeField] protected string _name;
+    [SerializeField] protected MONSTER_TYPE _type;
+    [SerializeField] protected MONSTER_CATEGORY _category;
+    [SerializeField] protected int _level;
+    [SerializeField] protected int _experienceDrop;
+    [SerializeField] protected int _maxHP;
+    [SerializeField] protected int _maxSP;
+    [SerializeField] protected int _attackPower;
+    [SerializeField] protected int _speed;
+    [SerializeField] protected int _startingArmyCount;
+    [SerializeField] protected float _dodgeChance;
+    [SerializeField] protected float _hitChance;
+    [SerializeField] protected float _critChance;
+    [SerializeField] protected bool _isSleepingOnSpawn;
+    [SerializeField] protected List<string> _skillNames;
+    [SerializeField] protected List<ElementChance> _elementChanceWeaknesses;
+    [SerializeField] protected List<ElementChance> _elementChanceResistances;
+    [SerializeField] protected List<ItemDrop> _itemDrops;
 
     //To add item drops and their chances
-    private string _characterColorCode;
-    private int _id;
-    private int _currentHP;
-    private int _currentSP;
-    private float _actRate;
-    private int _currentRow;
-    private bool _isDead;
-    private bool _isBeingInspected;
-    private bool _hasBeenInspected;
-    private bool _isSleeping;
-    private MODE _currentMode;
-    private SIDES _currentSide;
-    private Color _characterColor;
-    private CharacterBattleOnlyTracker _battleOnlyTracker;
-    private BaseLandmark _homeLandmark;
-    private RaceSetting _raceSetting;
-    private MonsterParty _ownParty;
-    private CharacterPortrait _characterPortrait;
-    private PortraitSettings _portraitSettings;
-    private Minion _minion;
+    protected string _characterColorCode;
+    protected int _id;
+    protected int _currentHP;
+    protected int _currentSP;
+    protected float _actRate;
+    protected int _currentRow;
+    protected bool _isDead;
+    protected bool _isBeingInspected;
+    protected bool _hasBeenInspected;
+    protected bool _isSleeping;
+    protected MODE _currentMode;
+    protected SIDES _currentSide;
+    protected Color _characterColor;
+    protected CharacterBattleOnlyTracker _battleOnlyTracker;
+    protected BaseLandmark _homeLandmark;
+    protected RaceSetting _raceSetting;
+    protected MonsterParty _ownParty;
+    protected CharacterPortrait _characterPortrait;
+    protected PortraitSettings _portraitSettings;
+    protected Minion _minion;
     //private Combat _currentCombat;
     //private List<BodyPart> _bodyParts;
-    private List<CharacterAction> _miscActions;
-    private List<Skill> _skills;
-    private List<Interaction> _currentInteractions;
-    private Dictionary<ELEMENT, float> _elementalWeaknesses;
-    private Dictionary<ELEMENT, float> _elementalResistances;
-    private Dictionary<string, float> _itemDropsLookup;
-    private Squad _squad;
-    private Party _currentParty;
-    private Dictionary<STAT, float> _buffs;
+    protected List<CharacterAction> _miscActions;
+    protected List<Skill> _skills;
+    protected List<Interaction> _currentInteractions;
+    protected Dictionary<ELEMENT, float> _elementalWeaknesses;
+    protected Dictionary<ELEMENT, float> _elementalResistances;
+    protected Dictionary<string, float> _itemDropsLookup;
+    protected Squad _squad;
+    protected Party _currentParty;
+    protected Dictionary<STAT, float> _buffs;
     public CharacterUIData uiData { get; private set; }
 
 
@@ -76,7 +77,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public int id {
         get { return _id; }
     }
-    public int attackPower {
+    public virtual int attackPower {
         get { return _attackPower; }
     }
     public float actRate {
@@ -89,7 +90,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public int currentHP {
         get { return _currentHP; }
     }
-    public int maxHP {
+    public virtual int maxHP {
         get { return _maxHP; }
     }
     public int currentRow {
@@ -104,12 +105,11 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public int experienceDrop {
         get { return _experienceDrop; }
     }
-    public int speed {
-        get {
-            return _speed;
-            //float agi = (float) agility;
-            //return (int) (100f * ((1f + ((agi / 5f) / 100f)) + (float) level + (agi / 3f)));
-        }
+    public virtual int speed {
+        get { return _speed; }
+    }
+    public int startingArmyCount {
+        get { return _startingArmyCount; }
     }
     public float critChance {
         get { return _critChance; }
@@ -137,6 +137,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public bool isSleepingOnSpawn {
         get { return _isSleepingOnSpawn; }
+    }
+    public MONSTER_CATEGORY category {
+        get { return _category; }
     }
     public MONSTER_TYPE type {
         get { return _type; }
@@ -264,6 +267,26 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     #endregion
 
+    //public Monster (Monster data): this() {
+    //    _name = data.name;
+    //    _type = data.type;
+    //    _category = data.category;
+    //    _level = data.level;
+    //    _experienceDrop = data.experienceDrop;
+    //    _maxHP = data._maxHP;
+    //    _maxSP = data.maxSP;
+    //    _attackPower = data._attackPower;
+    //    _speed = data._speed;
+    //    _dodgeChance = data.dodgeChance;
+    //    _hitChance = data.hitChance;
+    //    _critChance = data.critChance;
+    //    _isSleepingOnSpawn = data.isSleepingOnSpawn;
+        
+    //}
+    //public Monster() {
+
+    //}
+
     public Monster CreateNewCopy() {
         Monster newMonster = new Monster();
         newMonster._name = this._name;
@@ -279,7 +302,8 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         newMonster._hitChance = this._hitChance;
         newMonster._critChance = this._critChance;
         newMonster._isSleepingOnSpawn = this._isSleepingOnSpawn;
-        newMonster._portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(RACE.HUMANS, GENDER.MALE);
+        newMonster._startingArmyCount = this._startingArmyCount;
+        newMonster._portraitSettings = this._portraitSettings.CreateNewCopy();
 //#if !WORLD_CREATION_TOOL
 //        newMonster._monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
 //        newMonster._monsterObj.SetMonster(newMonster);
@@ -332,6 +356,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         this._dodgeChance = float.Parse(MonsterPanelUI.Instance.dodgeInput.text);
         this._hitChance = float.Parse(MonsterPanelUI.Instance.hitInput.text);
         this._critChance = float.Parse(MonsterPanelUI.Instance.critInput.text);
+        this._startingArmyCount = int.Parse(MonsterPanelUI.Instance.armyCountInput.text);
         this._isSleepingOnSpawn = MonsterPanelUI.Instance.isSleepingOnSpawnToggle.isOn;
         this._skillNames = MonsterPanelUI.Instance.allSkills;
         this._elementChanceWeaknesses = new List<ElementChance>();
@@ -339,7 +364,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         this._itemDrops = MonsterPanelUI.Instance.itemDrops;
     }
 
-    public void ConstructMonsterData() {
+    public virtual void ConstructMonsterData() {
         if(SkillManager.Instance != null) {
             this._skills = new List<Skill>();
             for (int i = 0; i < _skillNames.Count; i++) {
@@ -355,6 +380,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         for (int i = 0; i < _elementChanceResistances.Count; i++) {
             ElementChance elementChance = _elementChanceResistances[i];
             this._elementalResistances.Add(elementChance.element, elementChance.chance);
+        }
+        if (CharacterManager.Instance != null) {
+            _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(RACE.HUMANS, GENDER.MALE);
         }
 
         _skillNames.Clear();
@@ -467,12 +495,12 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
             _skills = new List<Skill>();
         }
         _skills.AddRange(GetGeneralSkills());
-        _currentHP = _maxHP;
-        _currentSP = _maxSP;
+        ResetToFullHP();
+        //ResetToFullSP();
         SetCharacterColor(Color.red);
         SetSleeping(_isSleepingOnSpawn);
         uiData = new CharacterUIData();
-        ConstructBuffs();
+        //ConstructBuffs();
         //ConstructMiscActions();
 
 #if !WORLD_CREATION_TOOL
@@ -490,8 +518,8 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _raceSetting = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText(Utilities.dataPath + "RaceSettings/" + _type.ToString() +".json"));
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
         _currentInteractions = new List<Interaction>();
-        _currentHP = _maxHP;
-        _currentSP = _maxSP;
+        ResetToFullHP();
+        //ResetToFullSP();
         ConstructSkills();
         SetCharacterColor(Color.red);
     }
@@ -521,14 +549,33 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _currentSP += amount;
         _currentSP = Mathf.Clamp(_currentSP, 0, _maxSP);
     }
-    public void AdjustHP(int amount, ICharacter killer = null) {
+    public virtual void AdjustHP(int amount, ICharacter killer = null) {
         int previous = this._currentHP;
         this._currentHP += amount;
-        this._currentHP = Mathf.Clamp(this._currentHP, 0, _maxHP);
+        this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
         if (previous != this._currentHP) {
             if (this._currentHP == 0) {
                 FaintOrDeath(killer);
             }
+        }
+    }
+    public void SetHP(int amount) {
+        _currentHP = amount;
+    }
+    public void SetMaxHP(int amount) {
+        int previousMaxHP = maxHP;
+        _maxHP = amount;
+        int currentMaxHP = maxHP; 
+        if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
+            _currentHP = currentMaxHP;
+        }
+    }
+    public void AdjustMaxHP(int amount) {
+        int previousMaxHP = maxHP;
+        _maxHP += amount;
+        int currentMaxHP = maxHP;
+        if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
+            _currentHP = currentMaxHP;
         }
     }
     public void FaintOrDeath(ICharacter killer) {
@@ -542,7 +589,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         }
     }
     public void ResetToFullHP() {
-        AdjustHP(_maxHP);
+        SetHP(maxHP);
     }
     public void ResetToFullSP() {
         AdjustSP(_maxSP);
