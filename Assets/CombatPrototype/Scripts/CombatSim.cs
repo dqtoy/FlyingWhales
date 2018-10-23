@@ -59,16 +59,14 @@ public class CombatSim {
             Debug.Log("========== Round " + rounds.ToString() + " ==========");
             ICharacterSim characterThatWillAct = GetCharacterThatWillAct(this.charactersSideA, this.charactersSideB);
             if (characterThatWillAct != null) {
-                ICharacterSim targetCharacter = GetTargetCharacter(characterThatWillAct, null);
-
                 CharacterSim actingCharacter = null;
                 if (characterThatWillAct.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                     actingCharacter = characterThatWillAct as CharacterSim;
                 }
-                Debug.Log((actingCharacter != null ? actingCharacter.characterClass.className : "") + characterThatWillAct.name + " will act. (hp lost: " + characterThatWillAct.battleOnlyTracker.hpLostPercent
-                        + ", last damage taken: " + characterThatWillAct.battleOnlyTracker.lastDamageTaken);
-                Debug.Log((targetCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER ? (targetCharacter as CharacterSim).characterClass.className : "") + targetCharacter.name + " is the target. (hp lost: " + targetCharacter.battleOnlyTracker.hpLostPercent
-                        + ", last damage taken: " + targetCharacter.battleOnlyTracker.lastDamageTaken);
+                Debug.Log((actingCharacter != null ? actingCharacter.characterClass.className : "") + characterThatWillAct.name + " will act.");
+
+                //Debug.Log((targetCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER ? (targetCharacter as CharacterSim).characterClass.className : "") + targetCharacter.name + " is the target. (hp lost: " + targetCharacter.battleOnlyTracker.hpLostPercent
+                //        + ", last damage taken: " + targetCharacter.battleOnlyTracker.lastDamageTaken);
 
                 characterThatWillAct.EnableDisableSkills(this);
                 //Debug.Log("Available Skills: ");
@@ -78,11 +76,15 @@ public class CombatSim {
                 //        Debug.Log(currSkill.skillName);
                 //    }
                 //}
-                Skill skillToUse = GetSkillToUse(characterThatWillAct, targetCharacter);
+                Skill skillToUse = GetSkillToUse(characterThatWillAct);
                 if (skillToUse != null) {
+                    List<ICharacterSim> targetCharacter = GetTargetCharacter(characterThatWillAct, skillToUse);
                     Debug.Log(characterThatWillAct.name + " decides to use " + skillToUse.skillName);
-                    //ICharacter targetCharacter = GetTargetCharacter(characterThatWillAct, skillToUse);
-                    Debug.Log(characterThatWillAct.name + " decides to use it on " + targetCharacter.name);
+                    if(targetCharacter.Count > 1) {
+                        Debug.Log(characterThatWillAct.name + " decides to use it on all enemies");
+                    } else {
+                        Debug.Log(characterThatWillAct.name + " decides to use it on " + targetCharacter[0].name);
+                    }
                     DoSkill(skillToUse, characterThatWillAct, targetCharacter);
                 }
             }
@@ -134,12 +136,26 @@ public class CombatSim {
         }
         return null;
     }
-    private ICharacterSim GetTargetCharacter(ICharacterSim sourceCharacter, Skill skill) {
-        List<ICharacterSim> oppositeTargets = this.charactersSideB;
-        if (sourceCharacter.currentSide == SIDES.B) {
-            oppositeTargets = this.charactersSideA;
+    private List<ICharacterSim> GetTargetCharacter(ICharacterSim sourceCharacter, Skill skill) {
+        List<ICharacterSim> targets = null;
+        if(skill.skillType == SKILL_TYPE.ATTACK) {
+            if (sourceCharacter.currentSide == SIDES.B) {
+                targets = this.charactersSideA;
+            } else {
+                targets = this.charactersSideB;
+            }
+        }else if (skill.skillType == SKILL_TYPE.HEAL) {
+            if (sourceCharacter.currentSide == SIDES.B) {
+                targets = this.charactersSideB;
+            } else {
+                targets = this.charactersSideA;
+            }
         }
-        return oppositeTargets[Utilities.rng.Next(0, oppositeTargets.Count)];
+
+        if (skill.targetType == TARGET_TYPE.PARTY) {
+            return targets;
+        }
+        return new List<ICharacterSim>() { targets[Utilities.rng.Next(0, targets.Count)] };
     }
     //public bool HasTargetInRangeForSkill(Skill skill, ICharacterSim sourceCharacter) {
     //    if (skill is AttackSkill) {
@@ -188,7 +204,7 @@ public class CombatSim {
         Debug.Log("Available Skills: " + sourceCharacter.skills[0].skillName);
         return sourceCharacter.skills[0];
     }
-    private void DoSkill(Skill skill, ICharacterSim sourceCharacter, ICharacterSim targetCharacter) {
+    private void DoSkill(Skill skill, ICharacterSim sourceCharacter, List<ICharacterSim> targetCharacter) {
         //If skill is attack, reduce sp
         //if (skill.skillType == SKILL_TYPE.ATTACK) {
         //    AttackSkill attackSkill = skill as AttackSkill;
@@ -198,7 +214,7 @@ public class CombatSim {
     }
 
     //Go here if skill is accurate and is successful
-    private void SuccessfulSkill(Skill skill, ICharacterSim sourceCharacter, ICharacterSim targetCharacter) {
+    private void SuccessfulSkill(Skill skill, ICharacterSim sourceCharacter, List<ICharacterSim> targetCharacter) {
         AttackSkill(skill, sourceCharacter, targetCharacter);
         //if (skill is AttackSkill) {
         //    AttackSkill(skill, sourceCharacter, targetCharacter);
@@ -216,59 +232,79 @@ public class CombatSim {
     }
 
     #region Attack Skill
-    private void AttackSkill(Skill skill, ICharacterSim sourceCharacter, ICharacterSim targetCharacter) {
+    private void AttackSkill(Skill skill, ICharacterSim sourceCharacter, List<ICharacterSim> targetCharacter) {
         //AttackSkill attackSkill = skill as AttackSkill;
         HitTargetCharacter(skill, sourceCharacter, targetCharacter);
     }
 
     //Hits the target with an attack skill
-    private void HitTargetCharacter(Skill attackSkill, ICharacterSim sourceCharacter, ICharacterSim targetCharacter) {
-        string log = string.Empty;
-        float attackPower = sourceCharacter.attackPower;
-        if (sourceCharacter.combatAttributes != null) {
-            //Apply all flat damage attack power modifier first
-            for (int i = 0; i < sourceCharacter.combatAttributes.Count; i++) {
-                if (!sourceCharacter.combatAttributes[i].isPercentage && sourceCharacter.combatAttributes[i].stat == STAT.ATTACK && sourceCharacter.combatAttributes[i].hasRequirement
-                    && sourceCharacter.combatAttributes[i].damageIdentifier == DAMAGE_IDENTIFIER.DEALT) {
-                    if (IsCombatAttributeApplicable(sourceCharacter.combatAttributes[i], targetCharacter, attackSkill)) {
-                        attackPower += sourceCharacter.combatAttributes[i].amount;
+    private void HitTargetCharacter(Skill attackSkill, ICharacterSim sourceCharacter, List<ICharacterSim> targetCharacters) {
+        for (int j = 0; j < targetCharacters.Count; j++) {
+            ICharacterSim targetCharacter = targetCharacters[j];
+            string log = string.Empty;
+            float attackPower = sourceCharacter.attackPower;
+            if (sourceCharacter.combatAttributes != null) {
+                //Apply all flat damage attack power modifier first
+                for (int i = 0; i < sourceCharacter.combatAttributes.Count; i++) {
+                    if (!sourceCharacter.combatAttributes[i].isPercentage && sourceCharacter.combatAttributes[i].stat == STAT.ATTACK && sourceCharacter.combatAttributes[i].hasRequirement
+                        && sourceCharacter.combatAttributes[i].damageIdentifier == DAMAGE_IDENTIFIER.DEALT) {
+                        if(attackSkill.skillType == SKILL_TYPE.HEAL && sourceCharacter.combatAttributes[i].requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.ELEMENT) {
+                            continue;
+                        }
+                        if (IsCombatAttributeApplicable(sourceCharacter.combatAttributes[i], targetCharacter, attackSkill)) {
+                            attackPower += sourceCharacter.combatAttributes[i].amount;
+                        }
                     }
                 }
-            }
-            for (int i = 0; i < targetCharacter.combatAttributes.Count; i++) {
-                if (!targetCharacter.combatAttributes[i].isPercentage && targetCharacter.combatAttributes[i].stat == STAT.ATTACK && targetCharacter.combatAttributes[i].hasRequirement
-                    && targetCharacter.combatAttributes[i].damageIdentifier == DAMAGE_IDENTIFIER.RECEIVED) {
-                    if (IsCombatAttributeApplicable(targetCharacter.combatAttributes[i], sourceCharacter, attackSkill)) {
-                        attackPower += targetCharacter.combatAttributes[i].amount;
+                for (int i = 0; i < targetCharacter.combatAttributes.Count; i++) {
+                    if (!targetCharacter.combatAttributes[i].isPercentage && targetCharacter.combatAttributes[i].stat == STAT.ATTACK && targetCharacter.combatAttributes[i].hasRequirement
+                        && targetCharacter.combatAttributes[i].damageIdentifier == DAMAGE_IDENTIFIER.RECEIVED) {
+                        if (attackSkill.skillType == SKILL_TYPE.HEAL && sourceCharacter.combatAttributes[i].requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.ELEMENT) {
+                            continue;
+                        }
+                        if (IsCombatAttributeApplicable(targetCharacter.combatAttributes[i], sourceCharacter, attackSkill)) {
+                            attackPower += targetCharacter.combatAttributes[i].amount;
+                        }
                     }
                 }
-            }
 
-            //Then apply all percentage modifiers
-            for (int i = 0; i < sourceCharacter.combatAttributes.Count; i++) {
-                if (sourceCharacter.combatAttributes[i].isPercentage && sourceCharacter.combatAttributes[i].stat == STAT.ATTACK && sourceCharacter.combatAttributes[i].hasRequirement
-                    && sourceCharacter.combatAttributes[i].damageIdentifier == DAMAGE_IDENTIFIER.DEALT) {
-                    if (IsCombatAttributeApplicable(sourceCharacter.combatAttributes[i], targetCharacter, attackSkill)) {
-                        float result = attackPower * (sourceCharacter.combatAttributes[i].amount / 100f);
-                        attackPower += result;
+                //Then apply all percentage modifiers
+                for (int i = 0; i < sourceCharacter.combatAttributes.Count; i++) {
+                    if (sourceCharacter.combatAttributes[i].isPercentage && sourceCharacter.combatAttributes[i].stat == STAT.ATTACK && sourceCharacter.combatAttributes[i].hasRequirement
+                        && sourceCharacter.combatAttributes[i].damageIdentifier == DAMAGE_IDENTIFIER.DEALT) {
+                        if (attackSkill.skillType == SKILL_TYPE.HEAL && sourceCharacter.combatAttributes[i].requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.ELEMENT) {
+                            continue;
+                        }
+                        if (IsCombatAttributeApplicable(sourceCharacter.combatAttributes[i], targetCharacter, attackSkill)) {
+                            float result = attackPower * (sourceCharacter.combatAttributes[i].amount / 100f);
+                            attackPower += result;
+                        }
+                    }
+                }
+                for (int i = 0; i < targetCharacter.combatAttributes.Count; i++) {
+                    if (targetCharacter.combatAttributes[i].isPercentage && targetCharacter.combatAttributes[i].stat == STAT.ATTACK && targetCharacter.combatAttributes[i].hasRequirement
+                        && targetCharacter.combatAttributes[i].damageIdentifier == DAMAGE_IDENTIFIER.RECEIVED) {
+                        if (attackSkill.skillType == SKILL_TYPE.HEAL && sourceCharacter.combatAttributes[i].requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.ELEMENT) {
+                            continue;
+                        }
+                        if (IsCombatAttributeApplicable(targetCharacter.combatAttributes[i], sourceCharacter, attackSkill)) {
+                            float result = attackPower * (targetCharacter.combatAttributes[i].amount / 100f);
+                            attackPower += result;
+                        }
                     }
                 }
             }
-            for (int i = 0; i < targetCharacter.combatAttributes.Count; i++) {
-                if (targetCharacter.combatAttributes[i].isPercentage && targetCharacter.combatAttributes[i].stat == STAT.ATTACK && targetCharacter.combatAttributes[i].hasRequirement
-                    && targetCharacter.combatAttributes[i].damageIdentifier == DAMAGE_IDENTIFIER.RECEIVED) {
-                    if (IsCombatAttributeApplicable(targetCharacter.combatAttributes[i], sourceCharacter, attackSkill)) {
-                        float result = attackPower * (targetCharacter.combatAttributes[i].amount / 100f);
-                        attackPower += result;
-                    }
-                }
+            int damage = (int) attackPower;
+            log += sourceCharacter.idName + " " + attackSkill.skillName.ToLower() + " " + targetCharacter.idName + "(" + damage.ToString() + ")"; ;
+            AddCombatLog(log, sourceCharacter.currentSide);
+
+            if(attackSkill.skillType == SKILL_TYPE.ATTACK) {
+                targetCharacter.AdjustHP(-damage);
+            } else if (attackSkill.skillType == SKILL_TYPE.HEAL) {
+                targetCharacter.AdjustHP(damage);
             }
         }
-        int damage = (int) attackPower;
-        log += sourceCharacter.idName + " " + attackSkill.skillName.ToLower() + " " + targetCharacter.idName + "(" + damage.ToString() + ")"; ;
-        AddCombatLog(log, sourceCharacter.currentSide);
-
-        targetCharacter.AdjustHP(-damage);
+       
 
         ////Reset attack miss
         //sourceCharacter.battleOnlyTracker.ResetAttackMiss(attackSkill.skillName);
