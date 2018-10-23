@@ -79,9 +79,6 @@ public class PointOfInterest1 : Interaction {
             DemonBonusExpRewardState(state, chosenEffect);
         }
     }
-    private void LeaveAloneEffect(InteractionState state) {
-        state.EndResult();
-    }
     private void DemonBonusExpRewardState(InteractionState state, string effectName) {
         _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " has returned with nothing but there seems to be a newfound strength within it.");
         SetCurrentState(_states[effectName]);
