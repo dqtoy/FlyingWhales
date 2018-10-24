@@ -116,4 +116,13 @@ public class InteractionState {
             _defaultOption.ActivateOption(_interaction.interactable);
         }
     }
+    public ActionOption GetOption(string optionName) {
+        for (int i = 0; i < actionOptions.Length; i++) {
+            ActionOption option = actionOptions[i];
+            if (option.name.Contains(optionName)) {
+                return option;
+            }
+        }
+        return null;
+    }
 }

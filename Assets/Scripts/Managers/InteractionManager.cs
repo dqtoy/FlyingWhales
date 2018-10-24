@@ -42,6 +42,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.HARVEST_SEASON:
                 createdInteraction = new HarvestSeason(interactable);
                 break;
+            case INTERACTION_TYPE.SPIDER_QUEEN:
+                createdInteraction = new TheSpiderQueen(interactable);
+                break;
+            case INTERACTION_TYPE.BANDIT_REINFORCEMENT:
+                createdInteraction = new BanditReinforcement(interactable);
+                break;
         }
         return createdInteraction;
     }
