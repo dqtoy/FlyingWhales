@@ -29,8 +29,8 @@ public interface IParty {
 
     void EndAction();
     void GoHome(Action action = null, Action actionOnStartOfMovement = null);
-    void AddCharacter(ICharacter icharacter);
     void RemoveCharacter(ICharacter icharacter);
     void AdvertiseSelf(ActionThread actionThread);
     void SetSpecificLocation(ILocation location);
+    bool AddCharacter(ICharacter icharacter);
 }

@@ -214,8 +214,8 @@ public class Party : IParty {
             _currentRegion = _specificLocation.tileLocation.region;
         }
     }
-    public void AddCharacter(ICharacter icharacter) {
-        if (!_icharacters.Contains(icharacter)) {
+    public bool AddCharacter(ICharacter icharacter) {
+        if (icharacters.Count < 4 && !_icharacters.Contains(icharacter)) {
             _icharacters.Add(icharacter);
             icharacter.SetCurrentParty(this);
             icharacter.OnAddedToParty();
@@ -223,7 +223,9 @@ public class Party : IParty {
             if (icharacter is ECS.Character) {
                 Messenger.Broadcast(Signals.CHARACTER_JOINED_PARTY, icharacter, this);
             }
+            return true;
         }
+        return false;
     }
     public void RemoveCharacter(ICharacter icharacter) {
         //bool isCharacterMain = false;

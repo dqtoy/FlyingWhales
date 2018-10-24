@@ -19,8 +19,9 @@ public class Area {
     public List<BaseLandmark> landmarks { get { return tiles.Where(x => x.landmarkOnTile != null).Select(x => x.landmarkOnTile).ToList(); } }
     public int totalCivilians { get { return landmarks.Sum(x => x.civilianCount); } }
     public LocationIntel locationIntel { get; private set; }
+    public List<BaseLandmark> exposedTiles { get; private set; }
+    public List<BaseLandmark> unexposedTiles { get; private set; }
     private List<HexTile> outerTiles;
-    private List<BaseLandmark> exposedTiles;
     private List<SpriteRenderer> outline;
 
     public List<string> excessClasses;
@@ -35,6 +36,8 @@ public class Area {
         orderClasses = new List<string>();
         excessClasses = new List<string>();
         missingClasses = new List<string>();
+        exposedTiles = new List<BaseLandmark>();
+        unexposedTiles = new List<BaseLandmark>();
         orderStructures = new List<StructurePriority>();
         areaColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         locationIntel = new LocationIntel(this);
@@ -87,28 +90,26 @@ public class Area {
     public void SetCoreTile(HexTile tile) {
         coreTile = tile;
     }
-    public void AddTile(List<HexTile> tiles, bool determineExposedTiles = true, bool determineOuterTiles = true) {
+    public void AddTile(List<HexTile> tiles, bool determineOuterTiles = true) {
         for (int i = 0; i < tiles.Count; i++) {
-            AddTile(tiles[i], false, false);
+            AddTile(tiles[i], false);
         }
 #if !WORLD_CREATION_TOOL
-        if (determineExposedTiles) {
-            DetermineExposedTiles();
-        }
+        //if (determineExposedTiles) {
+        //    DetermineExposedTiles();
+        //}
         if (determineOuterTiles) {
             UpdateOuterTiles();
         }
 #endif
     }
-    public void AddTile(HexTile tile, bool determineExposedTiles = true, bool determineOuterTiles = true) {
+    public void AddTile(HexTile tile, bool determineOuterTiles = true) {
         if (!tiles.Contains(tile)) {
             tiles.Add(tile);
             tile.SetArea(this);
             tile.SetMinimapTileColor(areaColor);
 #if !WORLD_CREATION_TOOL
-            if (determineExposedTiles) {
-                DetermineExposedTiles();
-            }
+            DetermineIfTileIsExposed(tile);
             if (determineOuterTiles) {
                 UpdateOuterTiles();
             }
@@ -117,32 +118,35 @@ public class Area {
             Messenger.Broadcast(Signals.AREA_TILE_ADDED, this, tile);
         }
     }
-    public void RemoveTile(List<HexTile> tiles, bool determineExposedTiles = true, bool determineOuterTiles = true) {
+    public void RemoveTile(List<HexTile> tiles, bool determineOuterTiles = true) {
         for (int i = 0; i < tiles.Count; i++) {
             RemoveTile(tiles[i], false, false);
         }
 #if !WORLD_CREATION_TOOL
-        if (determineExposedTiles) {
-            DetermineExposedTiles();
-        }
+        //if (determineExposedTiles) {
+        //    DetermineExposedTiles();
+        //}
         if (determineOuterTiles) {
             UpdateOuterTiles();
         }
 #endif
     }
     public void RemoveTile(HexTile tile, bool determineExposedTiles = true, bool determineOuterTiles = true) {
-        tiles.Remove(tile);
-        tile.SetArea(null);
-        OnTileRemovedFromArea(tile);
+        if (tiles.Remove(tile)) {
+            tile.SetArea(null);
+            OnTileRemovedFromArea(tile);
 #if !WORLD_CREATION_TOOL
-        if (determineExposedTiles) {
-            DetermineExposedTiles();
-        }
-        if (determineOuterTiles) {
-            UpdateOuterTiles();
-        }
+            if(tile.landmarkOnTile != null) {
+                if (!exposedTiles.Remove(tile.landmarkOnTile)) {
+                    unexposedTiles.Remove(tile.landmarkOnTile);
+                }
+            }
+            if (determineOuterTiles) {
+                UpdateOuterTiles();
+            }
 #endif
-        Messenger.Broadcast(Signals.AREA_TILE_REMOVED, this, tile);
+            Messenger.Broadcast(Signals.AREA_TILE_REMOVED, this, tile);
+        }
     }
     //private void RevalidateTiles() {
     //    List<HexTile> tilesToCheck = new List<HexTile>(tiles);
@@ -214,22 +218,64 @@ public class Area {
         //    }
         //}
     }
-    public void DetermineExposedTiles() {
-        exposedTiles = new List<BaseLandmark>();
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile currTile = tiles[i];
-            if (currTile.landmarkOnTile == null || currTile.landmarkOnTile.landmarkObj.isRuined) {
-                continue; //if there is no landmark on the tile, or it's landmark is already ruined, do not count as exposed
-            }
-            //check if the tile has a flat empty tile as a neighbour
-            //if it does, it is an exposed tile
-            for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
-                HexTile currNeighbour = currTile.AllNeighbours[j];
-                if ((currNeighbour.landmarkOnTile == null || currNeighbour.landmarkOnTile.landmarkObj.isRuined) 
-                    && currNeighbour.elevationType == ELEVATION.PLAIN) {
+    public void DetermineIfTileIsExposed(HexTile currTile) {
+        if (currTile.landmarkOnTile == null || currTile.landmarkOnTile.landmarkObj.isRuined) {
+            return; //if there is no landmark on the tile, or it's landmark is already ruined, do not count as exposed
+        }
+        //check if the tile has a flat empty tile as a neighbour
+        //if it does, it is an exposed tile
+        bool isExposed = false;
+        for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
+            HexTile currNeighbour = currTile.AllNeighbours[j];
+            if (!isExposed && (currNeighbour.landmarkOnTile == null || currNeighbour.landmarkOnTile.landmarkObj.isRuined)
+                && currNeighbour.elevationType == ELEVATION.PLAIN) {
+                unexposedTiles.Remove(currTile.landmarkOnTile);
+                if (!exposedTiles.Contains(currTile.landmarkOnTile)) {
                     exposedTiles.Add(currTile.landmarkOnTile);
-                    break;
+                    currTile.SetExternalState(true);
+                    currTile.SetInternalState(false);
                 }
+                isExposed = true;
+            }
+            DetermineIfNeighborTileIsExposed(currNeighbour);
+        }
+        if (!isExposed) {
+            exposedTiles.Remove(currTile.landmarkOnTile);
+            if (!unexposedTiles.Contains(currTile.landmarkOnTile)) {
+                unexposedTiles.Add(currTile.landmarkOnTile);
+                currTile.SetExternalState(false);
+                currTile.SetInternalState(true);
+            }
+        }
+    }
+    public void DetermineIfNeighborTileIsExposed(HexTile currTile) {
+        if (currTile.landmarkOnTile == null || currTile.landmarkOnTile.landmarkObj.isRuined || currTile.areaOfTile == null || (currTile.areaOfTile != null && currTile.areaOfTile != this)) {
+            return; //if there is no landmark on the tile, or it's landmark is already ruined, do not count as exposed
+        }
+        //check if the tile has a flat empty tile as a neighbour
+        //if it does, it is an exposed tile
+        bool isExposed = false;
+        for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
+            HexTile currNeighbour = currTile.AllNeighbours[j];
+            if ((currNeighbour.landmarkOnTile == null || currNeighbour.landmarkOnTile.landmarkObj.isRuined)
+                && currNeighbour.elevationType == ELEVATION.PLAIN) {
+                unexposedTiles.Remove(currTile.landmarkOnTile);
+                if (!exposedTiles.Contains(currTile.landmarkOnTile)) {
+                    exposedTiles.Add(currTile.landmarkOnTile);
+                    currTile.SetExternalState(true);
+                    currTile.SetInternalState(false);
+                }
+                isExposed = true;
+                break;
+            }
+
+        }
+        if (!isExposed) {
+            exposedTiles.Remove(currTile.landmarkOnTile);
+            if (!unexposedTiles.Contains(currTile.landmarkOnTile)) {
+                unexposedTiles.Add(currTile.landmarkOnTile);
+                currTile.SetExternalState(false);
+                currTile.SetInternalState(true);
             }
         }
     }
@@ -323,7 +369,7 @@ public class Area {
 
     #region Utilities
     public void LoadAdditionalData() {
-        DetermineExposedTiles();
+        //DetermineExposedTiles();
         Messenger.AddListener<StructureObj, ObjectState>(Signals.STRUCTURE_STATE_CHANGED, OnStructureStateChanged);
     }
     public bool HasLandmarkOfType(LANDMARK_TYPE type) {
@@ -351,7 +397,7 @@ public class Area {
         }
         if (tiles.Contains(structureObj.objectLocation.tileLocation)) {
             if (state.stateName.Equals("Ruined")) {
-                DetermineExposedTiles();
+                DetermineIfTileIsExposed(structureObj.objectLocation.tileLocation);
                 if (this.areaType == AREA_TYPE.DEMONIC_INTRUSION) { //if player area
                     PlayerManager.Instance.OnPlayerLandmarkRuined(structureObj.objectLocation);
                 }
@@ -409,8 +455,8 @@ public class Area {
 
     #region Camp
     public BaseLandmark CreateCampOnTile(HexTile tile) {
+        tile.SetArea(this);
         BaseLandmark camp = LandmarkManager.Instance.CreateNewLandmarkOnTile(tile, LANDMARK_TYPE.CAMP);
-        camp.tileLocation.SetArea(this);
         return camp;
     }
     public BaseLandmark CreateCampForHouse(HexTile houseTile) {

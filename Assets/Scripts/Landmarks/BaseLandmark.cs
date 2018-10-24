@@ -31,6 +31,7 @@ public class BaseLandmark : ILocation, IInteractable {
     protected List<Character> _prisoners; //list of prisoners on landmark
     protected List<Log> _history;
     protected List<Party> _charactersAtLocation;
+    protected List<Party> _assaultParties;
     protected List<LandmarkPartyData> _lastInspectedOfCharactersAtLocation;
     protected List<Item> _itemsInLandmark;
     protected List<Item> _lastInspectedItemsInLandmark;
@@ -134,11 +135,14 @@ public class BaseLandmark : ILocation, IInteractable {
     public List<Interaction> currentInteractions {
         get { return _currentInteractions; }
     }
-    public Dictionary<Character, GameDate> characterTraces {
-        get { return _characterTraces; }
-    }
     public List<HexTile> wallTiles {
         get { return _wallTiles; }
+    }
+    public List<Party> assaultParties {
+        get { return _assaultParties; }
+    }
+    public Dictionary<Character, GameDate> characterTraces {
+        get { return _characterTraces; }
     }
     public int currDurability {
         get { return _landmarkObj.currentHP; }
@@ -203,6 +207,7 @@ public class BaseLandmark : ILocation, IInteractable {
         _currentInteractions = new List<Interaction>();
         _combatHistory = new Dictionary<int, Combat>();
         _characterTraces = new Dictionary<Character, GameDate>();
+        _assaultParties = new List<Party>();
         SetSupplyProductionState(true);
         defenderBuffs = new List<Buff>();
         //defenders = new Party[LandmarkManager.MAX_DEFENDERS];
@@ -1198,6 +1203,57 @@ public class BaseLandmark : ILocation, IInteractable {
             }
         }
         
+    }
+    #endregion
+
+    #region Mobilization
+    public void StartMobilization() {
+        List<ICharacter> charactersNotAssigned = new List<ICharacter>();
+        for (int i = 0; i < _charactersWithHomeOnLandmark.Count; i++) {
+            if(_charactersWithHomeOnLandmark[i].currentParty.icharacters.Count == 1 && _charactersWithHomeOnLandmark[i].currentParty.specificLocation == this) {
+                charactersNotAssigned.Add(_charactersWithHomeOnLandmark[i]);
+            }
+        }
+
+        //Assign characters or army units to external tiles of area
+        for (int i = 0; i < tileLocation.areaOfTile.exposedTiles.Count; i++) {
+            BaseLandmark exposedTile = tileLocation.areaOfTile.exposedTiles[i];
+            if (exposedTile.defenders.icharacters.Count < 4) {
+                if(charactersNotAssigned.Count > 0) {
+                    charactersNotAssigned[0].currentParty.specificLocation.RemoveCharacterFromLocation(charactersNotAssigned[0].currentParty);
+                    exposedTile.AddCharacterToLocation(charactersNotAssigned[0].currentParty);
+                    exposedTile.defenders.AddCharacter(charactersNotAssigned[0]);
+                    charactersNotAssigned.RemoveAt(0);
+                }
+            }
+        }
+
+        if(charactersNotAssigned.Count > 0) {
+            bool alreadyHasLegitAssaultParty = false;
+            for (int i = 0; i < _assaultParties.Count; i++) {
+                if(_assaultParties[i].icharacters.Count >= 3) {
+                    alreadyHasLegitAssaultParty = true;
+                    break;
+                }
+            }
+            if (!alreadyHasLegitAssaultParty) {
+                //Do this only once?
+                bool canFillAssaultParty = false;
+                for (int i = 0; i < _assaultParties.Count; i++) {
+                    if (_assaultParties[i].icharacters.Count < 4) {
+                        canFillAssaultParty = true;
+                        if (charactersNotAssigned.Count > 0) {
+                            _assaultParties[i].AddCharacter(charactersNotAssigned[0]);
+                            charactersNotAssigned.RemoveAt(0);
+                        }
+                        break;
+                    }
+                }
+                if (!canFillAssaultParty) {
+                    //Create Assault party
+                }
+            }
+        }
     }
     #endregion
 }

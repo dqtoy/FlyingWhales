@@ -19,6 +19,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public bool isOccupied = false;
     [SerializeField] private bool _isPassable = false;
     private bool _isCorrupted = false;
+    private bool _isExternal = false;
+    private bool _isInternal = false;
 
     [Space(10)]
     [Header("Pathfinding")]
@@ -142,6 +144,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public bool isCorrupted {
         get { return _isCorrupted; }
+    }
+    public bool isInternal {
+        get { return _isInternal; }
+    }
+    public bool isExternal {
+        get { return _isExternal; }
     }
     public PASSABLE_TYPE passableType {
         get { return _passableType; }
@@ -1241,6 +1249,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #region Areas
     public void SetArea(Area area) {
         _areaOfTile = area;
+        if (_areaOfTile == null) {
+            SetExternalState(false);
+            SetInternalState(false);
+        }
     }
     private bool IsAdjacentToPlayerArea() {
         for (int i = 0; i < AllNeighbours.Count; i++) {
@@ -1250,6 +1262,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             }
         }
         return false;
+    }
+    public void SetExternalState(bool state) {
+        _isExternal = state;
+    }
+    public void SetInternalState(bool state) {
+        _isInternal = state;
     }
     #endregion
 

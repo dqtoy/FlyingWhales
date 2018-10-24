@@ -78,6 +78,9 @@ public class LandmarkManager : MonoBehaviour {
         if (!newLandmark.tileLocation.isCorrupted) {
             newLandmark.ConstructInitialInteractions();
         }
+        if(newLandmark.tileLocation.areaOfTile != null) {
+            newLandmark.tileLocation.areaOfTile.DetermineIfTileIsExposed(newLandmark.tileLocation);
+        }
         //newLandmark.GenerateDiagonalLeftTiles();
         //newLandmark.GenerateDiagonalRightTiles();
         //newLandmark.GenerateHorizontalTiles();
