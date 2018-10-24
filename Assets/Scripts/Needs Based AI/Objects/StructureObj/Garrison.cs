@@ -17,6 +17,7 @@ public class Garrison : StructureObj {
     }
     public override void StartDayAction() {
         ReplenishDefenderUnits();
+        ArmyTraining();
         base.StartDayAction();
     }
     #endregion
@@ -47,5 +48,24 @@ public class Garrison : StructureObj {
         }
         Debug.Log(replenishSummary);
     }
+    private void ArmyTraining() {
+        if(_objectLocation.tileLocation.areaOfTile.suppliesInBank >= 100 && _objectLocation.GetInteractionOfType(INTERACTION_TYPE.ARMY_UNIT_TRAINING) == null) {
+            bool hasArmyPartyWithAtLeast3Members = false;
+            for (int i = 0; i < _objectLocation.charactersWithHomeOnLandmark.Count; i++) {
+                if (_objectLocation.charactersWithHomeOnLandmark[i].currentParty.icharacters.Count >= 3) {
+                    hasArmyPartyWithAtLeast3Members = true;
+                    break;
+                }
+            }
 
+            if (hasArmyPartyWithAtLeast3Members) {
+                int chance = UnityEngine.Random.Range(0, 200);
+                if(chance < 75) {
+                    //Trigger Army Training
+                    Interaction armyUnitTrainingInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ARMY_UNIT_TRAINING, _objectLocation);
+                    _objectLocation.AddInteraction(armyUnitTrainingInteraction);
+                }
+            }
+        }
+    }
 }

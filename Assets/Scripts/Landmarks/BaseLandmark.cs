@@ -63,11 +63,11 @@ public class BaseLandmark : ILocation, IInteractable {
         get { return landmarkName + " " + tileLocation.locationName; }
     }
     public string landmarkName {
-		get { return _landmarkName; }
-	}
-	public string urlName {
-		get { return "<link=" + '"' + this._id.ToString() + "_landmark" + '"' + ">" + _landmarkName + "</link>"; }
-	}
+        get { return _landmarkName; }
+    }
+    public string urlName {
+        get { return "<link=" + '"' + this._id.ToString() + "_landmark" + '"' + ">" + _landmarkName + "</link>"; }
+    }
     public LANDMARK_TYPE specificLandmarkType {
         get { return _specificLandmarkType; }
     }
@@ -89,36 +89,36 @@ public class BaseLandmark : ILocation, IInteractable {
     public List<ICharacter> charactersWithHomeOnLandmark {
         get { return _charactersWithHomeOnLandmark; }
     }
-  //  public virtual int totalPopulation {
-  //get { return civilians + CharactersCount(); }
-  //  }
-  //public int civilians {
-  //	get { return _civiliansByRace.Sum(x => x.Value); }
-  //   }
-  //   public Dictionary<RACE, int> civiliansByRace {
-  //       get { return _civiliansByRace; }
-  //   }
+    //  public virtual int totalPopulation {
+    //get { return civilians + CharactersCount(); }
+    //  }
+    //public int civilians {
+    //	get { return _civiliansByRace.Sum(x => x.Value); }
+    //   }
+    //   public Dictionary<RACE, int> civiliansByRace {
+    //       get { return _civiliansByRace; }
+    //   }
     public LandmarkVisual landmarkVisual {
         get { return _landmarkVisual; }
     }
-	public List<Character> prisoners {
-		get { return _prisoners; }
-	}
-	public List<Log> history{
-		get { return this._history; }
-	}
-	public Dictionary<int, Combat> combatHistory {
-		get { return _combatHistory; }
-	}
+    public List<Character> prisoners {
+        get { return _prisoners; }
+    }
+    public List<Log> history {
+        get { return this._history; }
+    }
+    public Dictionary<int, Combat> combatHistory {
+        get { return _combatHistory; }
+    }
     public List<Party> charactersAtLocation {
         get { return _charactersAtLocation; }
     }
     public List<LandmarkPartyData> lastInspectedOfCharactersAtLocation {
         get { return _lastInspectedOfCharactersAtLocation; }
     }
-	public List<Item> itemsInLandmark {
-		get { return _itemsInLandmark; }
-	}
+    public List<Item> itemsInLandmark {
+        get { return _itemsInLandmark; }
+    }
     public List<Item> lastInspectedItemsInLandmark {
         get { return _lastInspectedItemsInLandmark; }
     }
@@ -135,8 +135,8 @@ public class BaseLandmark : ILocation, IInteractable {
         get { return _currentInteractions; }
     }
     public Dictionary<Character, GameDate> characterTraces {
-		get { return _characterTraces; }
-	}
+        get { return _characterTraces; }
+    }
     public List<HexTile> wallTiles {
         get { return _wallTiles; }
     }
@@ -208,7 +208,7 @@ public class BaseLandmark : ILocation, IInteractable {
         //defenders = new Party[LandmarkManager.MAX_DEFENDERS];
         Messenger.AddListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);
     }
-    public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this(){
+    public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this() {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
         _id = Utilities.SetID(this);
         _location = location;
@@ -217,7 +217,7 @@ public class BaseLandmark : ILocation, IInteractable {
         ConstructTags(landmarkData);
         SpawnInitialLandmarkItems();
     }
-    public BaseLandmark(HexTile location, LandmarkSaveData data) : this(){
+    public BaseLandmark(HexTile location, LandmarkSaveData data) : this() {
         _id = Utilities.SetID(this, data.landmarkID);
         _location = location;
         _specificLandmarkType = data.landmarkType;
@@ -239,8 +239,8 @@ public class BaseLandmark : ILocation, IInteractable {
     }
 
     #region Virtuals
-    public virtual void Initialize() {}
-	public virtual void DestroyLandmark(){
+    public virtual void Initialize() { }
+    public virtual void DestroyLandmark() {
         ObjectState ruined = landmarkObj.GetState("Ruined");
         landmarkObj.ChangeState(ruined);
         //RemoveListeners();
@@ -249,7 +249,7 @@ public class BaseLandmark : ILocation, IInteractable {
      What should happen when a character searches this landmark
          */
     public virtual void SearchLandmark(Character character) { }
-	#endregion
+    #endregion
 
     #region Connections
     public void AddConnection(BaseLandmark connection) {
@@ -303,18 +303,18 @@ public class BaseLandmark : ILocation, IInteractable {
         _owner.OwnLandmark(this);
     }
     public virtual void UnoccupyLandmark() {
-        if(_owner == null) {
+        if (_owner == null) {
             throw new System.Exception("Landmark doesn't have an owner but something is trying to unoccupy it!");
         }
         _isOccupied = false;
         _location.Unoccupy();
         _owner = null;
     }
-	public void ChangeOwner(Faction newOwner){
-		_owner = newOwner;
-		_isOccupied = true;
-		_location.Occupy();
-	}
+    public void ChangeOwner(Faction newOwner) {
+        _owner = newOwner;
+        _isOccupied = true;
+        _location.Occupy();
+    }
     #endregion
 
     #region Characters
@@ -331,14 +331,14 @@ public class BaseLandmark : ILocation, IInteractable {
     public bool IsResident(ICharacter character) {
         return _charactersWithHomeOnLandmark.Contains(character);
     }
-	public Character GetPrisonerByID(int id){
-		for (int i = 0; i < _prisoners.Count; i++) {
-			if (_prisoners [i].id == id){
-				return _prisoners [i];
-			}
-		}
-		return null;
-	}
+    public Character GetPrisonerByID(int id) {
+        for (int i = 0; i < _prisoners.Count; i++) {
+            if (_prisoners[i].id == id) {
+                return _prisoners[i];
+            }
+        }
+        return null;
+    }
     public List<Character> GetCharactersOfType(string className) {
         List<Character> characters = new List<Character>();
         for (int i = 0; i < charactersAtLocation.Count; i++) {
@@ -363,7 +363,7 @@ public class BaseLandmark : ILocation, IInteractable {
                 _charactersAtLocation.Add(iparty); //only add to characters list if the party is not a defender of the landmark
             }
             //this.tileLocation.RemoveCharacterFromLocation(iparty);
-            if(iparty.specificLocation != null) {
+            if (iparty.specificLocation != null) {
                 iparty.specificLocation.RemoveCharacterFromLocation(iparty);
             }
             iparty.SetSpecificLocation(this);
@@ -434,12 +434,12 @@ public class BaseLandmark : ILocation, IInteractable {
         _landmarkVisual = obj;
         _landmarkVisual.SetLandmark(this);
     }
-	internal void ChangeLandmarkType(LANDMARK_TYPE newLandmarkType){
-		_specificLandmarkType = newLandmarkType;
-		Initialize ();
-	}
+    internal void ChangeLandmarkType(LANDMARK_TYPE newLandmarkType) {
+        _specificLandmarkType = newLandmarkType;
+        Initialize();
+    }
     public void CenterOnLandmark() {
-		CameraMove.Instance.CenterCameraOn(this.tileLocation.gameObject);
+        CameraMove.Instance.CenterCameraOn(this.tileLocation.gameObject);
     }
     public override string ToString() {
         return this.landmarkName;
@@ -451,20 +451,20 @@ public class BaseLandmark : ILocation, IInteractable {
         _landmarkVisual.ToggleCharactersVisibility();
     }
     //private void RemoveListeners() {
-        //Messenger.RemoveListener(Signals.DAY_START, DailySupplyProduction);
+    //Messenger.RemoveListener(Signals.DAY_START, DailySupplyProduction);
     //}
     #endregion
 
     #region Prisoner
-    internal void AddPrisoner(Character character){
-		_prisoners.Add (character);
-	}
-	internal void RemovePrisoner(Character character){
-		_prisoners.Remove (character);
-	}
-	#endregion
+    internal void AddPrisoner(Character character) {
+        _prisoners.Add(character);
+    }
+    internal void RemovePrisoner(Character character) {
+        _prisoners.Remove(character);
+    }
+    #endregion
 
-	#region History
+    #region History
     internal void AddHistory(Log log) {
         ////check if the new log is a duplicate of the latest log
         //Log latestLog = history.ElementAtOrDefault(history.Count - 1);
@@ -486,11 +486,11 @@ public class BaseLandmark : ILocation, IInteractable {
     #endregion
 
     #region Materials
-    public void AdjustDurability(int amount){
+    public void AdjustDurability(int amount) {
         _landmarkObj.AdjustHP(amount);
-		//_currDurability += amount;
-		//_currDurability = Mathf.Clamp (_currDurability, 0, _totalDurability);
-	}
+        //_currDurability += amount;
+        //_currDurability = Mathf.Clamp (_currDurability, 0, _totalDurability);
+    }
     #endregion
 
     #region Items
@@ -527,21 +527,21 @@ public class BaseLandmark : ILocation, IInteractable {
         }
         return QUALITY.NORMAL;
     }
-    public void AddItem(Item item){
+    public void AddItem(Item item) {
         if (_itemsInLandmark.Contains(item)) {
             throw new System.Exception(this.landmarkName + " already has an instance of " + item.itemName);
         }
-		_itemsInLandmark.Add (item);
-		//item.SetPossessor (this);
+        _itemsInLandmark.Add(item);
+        //item.SetPossessor (this);
         item.OnItemPlacedOnLandmark(this);
-	}
-	public void AddItem(List<Item> item){
+    }
+    public void AddItem(List<Item> item) {
         for (int i = 0; i < item.Count; i++) {
             AddItem(item[i]);
         }
-		//_itemsInLandmark.AddRange (item);
-	}
-	public void RemoveItemInLandmark(Item item){
+        //_itemsInLandmark.AddRange (item);
+    }
+    public void RemoveItemInLandmark(Item item) {
         _itemsInLandmark.Remove(item);
         Messenger.Broadcast(Signals.ITEM_REMOVED_FROM_LANDMARK, item, this);
     }
@@ -554,35 +554,35 @@ public class BaseLandmark : ILocation, IInteractable {
             }
         }
     }
-	public bool HasItem(string itemName){
-		for (int i = 0; i < _itemsInLandmark.Count; i++) {
-			if (_itemsInLandmark [i].itemName == itemName) {
-				return true;
-			}
-		}
-		return false;
-	}
+    public bool HasItem(string itemName) {
+        for (int i = 0; i < _itemsInLandmark.Count; i++) {
+            if (_itemsInLandmark[i].itemName == itemName) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
-	#region Traces
-	public void AddTrace(Character character){
-		GameDate expDate = GameManager.Instance.Today ();
-		expDate.AddDays (90);
-		if(!_characterTraces.ContainsKey(character)){
-			_characterTraces.Add (character, expDate);
-		}else{
-			SchedulingManager.Instance.RemoveSpecificEntry (_characterTraces[character], () => RemoveTrace (character));
-			_characterTraces [character] = expDate;
-		}
-		SchedulingManager.Instance.AddEntry (expDate, () => RemoveTrace (character));
-	}
-	public void RemoveTrace(Character character){
-		if(_characterTraces.ContainsKey(character)){
-			if(GameManager.Instance.Today().IsSameDate(_characterTraces[character])){
-				_characterTraces.Remove (character);
-			}
-		}
-	}
+    #region Traces
+    public void AddTrace(Character character) {
+        GameDate expDate = GameManager.Instance.Today();
+        expDate.AddDays(90);
+        if (!_characterTraces.ContainsKey(character)) {
+            _characterTraces.Add(character, expDate);
+        } else {
+            SchedulingManager.Instance.RemoveSpecificEntry(_characterTraces[character], () => RemoveTrace(character));
+            _characterTraces[character] = expDate;
+        }
+        SchedulingManager.Instance.AddEntry(expDate, () => RemoveTrace(character));
+    }
+    public void RemoveTrace(Character character) {
+        if (_characterTraces.ContainsKey(character)) {
+            if (GameManager.Instance.Today().IsSameDate(_characterTraces[character])) {
+                _characterTraces.Remove(character);
+            }
+        }
+    }
     #endregion
 
     #region Tags
@@ -629,7 +629,7 @@ public class BaseLandmark : ILocation, IInteractable {
         if (!hasAdjacentCorruptedLandmark && LandmarkManager.Instance.corruptedLandmarksCount > 1) {
             HexTile chosenTile = null;
             int range = 3;
-            while(chosenTile == null) {
+            while (chosenTile == null) {
                 List<HexTile> tilesToCheck = tileLocation.GetTilesInRange(range, true);
                 for (int i = 0; i < tilesToCheck.Count; i++) {
                     if (tilesToCheck[i].corruptedLandmark != null && tilesToCheck[i].corruptedLandmark.id != this.id) {
@@ -646,7 +646,7 @@ public class BaseLandmark : ILocation, IInteractable {
         //Messenger.Broadcast<BaseLandmark>("StopCorruption", this);
     }
     private void DoCorruption() {
-        if(_nextCorruptedTilesToCheck.Count > 0) {
+        if (_nextCorruptedTilesToCheck.Count > 0) {
             int index = UnityEngine.Random.Range(0, _nextCorruptedTilesToCheck.Count);
             HexTile currentCorruptedTileToCheck = _nextCorruptedTilesToCheck[index];
             _nextCorruptedTilesToCheck.RemoveAt(index);
@@ -674,8 +674,8 @@ public class BaseLandmark : ILocation, IInteractable {
                 }
             }
             //else {
-                //if cannot be corrupted it means that it has a landmark still owned by a kingdom
-                //neighbor.landmarkOnTile.CreateWall();
+            //if cannot be corrupted it means that it has a landmark still owned by a kingdom
+            //neighbor.landmarkOnTile.CreateWall();
             //}
         }
     }
@@ -844,7 +844,7 @@ public class BaseLandmark : ILocation, IInteractable {
         //}
     }
     public void ReceivePath(List<HexTile> pathTiles) {
-        if(pathTiles != null) {
+        if (pathTiles != null) {
             ConnectCorruption(pathTiles);
         }
     }
@@ -882,7 +882,7 @@ public class BaseLandmark : ILocation, IInteractable {
                 return;
             }
             HexTile directionTile = originTile.tileLocation.neighbourDirections[direction].neighbourDirections[direction];
-            if(directionTile.landmarkOnTile == null) { //directionTile.region.id == originTile.region.id
+            if (directionTile.landmarkOnTile == null) { //directionTile.region.id == originTile.region.id
                 //string strDirection = "diagonalleft";
                 //if (direction == HEXTILE_DIRECTION.NORTH_WEST || direction == HEXTILE_DIRECTION.SOUTH_EAST) {
                 //    _diagonalLeftTiles.Add(directionTile);
@@ -958,9 +958,9 @@ public class BaseLandmark : ILocation, IInteractable {
     #region Camp
     public void MigrateCharactersToAnotherLandmark() {
         List<BaseLandmark> homeLandmarks = GetNewHomeLandmarksFromArea();
-        if(homeLandmarks.Count > 0) {
+        if (homeLandmarks.Count > 0) {
             BaseLandmark chosenLandmark = homeLandmarks[0];
-            while(_charactersWithHomeOnLandmark.Count > 0) {
+            while (_charactersWithHomeOnLandmark.Count > 0) {
                 ICharacter character = _charactersWithHomeOnLandmark[0];
                 RemoveCharacterHomeOnLandmark(character);
                 chosenLandmark.AddCharacterHomeOnLandmark(character);
@@ -974,13 +974,13 @@ public class BaseLandmark : ILocation, IInteractable {
             SetCivilianCount(0);
         } else {
             //Camp
-            if(_specificLandmarkType == LANDMARK_TYPE.CAMP) {
+            if (_specificLandmarkType == LANDMARK_TYPE.CAMP) {
                 //If this is the last camp, cannot be migrated anymore, kill all civilians, characters will make a camp on their own
                 SetCivilianCount(0);
                 return;
             }
             int numOfCamps = 0;
-            if(_charactersWithHomeOnLandmark.Count > 0) {
+            if (_charactersWithHomeOnLandmark.Count > 0) {
                 numOfCamps = _charactersWithHomeOnLandmark.Count / 3;
                 if (numOfCamps <= 0) {
                     numOfCamps = 1;
@@ -991,7 +991,7 @@ public class BaseLandmark : ILocation, IInteractable {
                     numOfCamps = 1;
                 }
             }
-            if(numOfCamps > 0) {
+            if (numOfCamps > 0) {
                 int civiliansPerCamp = _civilianCount / numOfCamps;
                 int civiliansRemainder = _civilianCount % numOfCamps;
                 for (int i = 0; i < numOfCamps; i++) {
@@ -1040,7 +1040,7 @@ public class BaseLandmark : ILocation, IInteractable {
     #endregion
 
     #region Events
-    public void AddAdvertisedEvent(GameEvent gameEvent){
+    public void AddAdvertisedEvent(GameEvent gameEvent) {
         if (!advertisedEvents.Contains(gameEvent)) {
             advertisedEvents.Add(gameEvent);
         }
@@ -1083,7 +1083,7 @@ public class BaseLandmark : ILocation, IInteractable {
                 defenders.AddBuff(currBuff);
             }
         }
-        
+
         if (defenders.icharacters.Count >= data.maxDefenderCount) {
             return; //if the current defender party members is more or equal to the maximum defenders allowed for the landmark type
         }
@@ -1144,11 +1144,20 @@ public class BaseLandmark : ILocation, IInteractable {
             Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
         }
     }
+    public Interaction GetInteractionOfType(INTERACTION_TYPE type) {
+        for (int i = 0; i < _currentInteractions.Count; i++) {
+            Interaction currInteraction = _currentInteractions[i];
+            if (currInteraction.type == type) {
+                return currInteraction;
+            }
+        }
+        return null;
+    }
     public bool HasActiveInteraction() {
         //if this landmark already has a landmark other than investigate
         for (int i = 0; i < _currentInteractions.Count; i++) {
             Interaction currInteraction = _currentInteractions[i];
-            if (!(currInteraction is InvestigateInteraction)) {
+            if (currInteraction.type != INTERACTION_TYPE.INVESTIGATE) {
                 return true;
             }
         }

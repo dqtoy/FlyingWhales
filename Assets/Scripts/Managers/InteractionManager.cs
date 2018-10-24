@@ -48,6 +48,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.BANDIT_REINFORCEMENT:
                 createdInteraction = new BanditReinforcement(interactable);
                 break;
+            case INTERACTION_TYPE.MYSTERY_HUM:
+                createdInteraction = new MysteryHum(interactable);
+                break;
+            case INTERACTION_TYPE.ARMY_UNIT_TRAINING:
+                createdInteraction = new ArmyUnitTraining(interactable);
+                break;
         }
         return createdInteraction;
     }
