@@ -82,9 +82,10 @@ public class MysteryHum : Interaction {
         SetCurrentState(_states[effectName]);
     }
     private void DemonAttacksRewardEffect(InteractionState state) {
-        //TODO
+        //TODO: Demon attacks a player tile
     }
     private void ArmyRecruitedRewardEffect(InteractionState state) {
-        //TODO
+        //TODO: Gain Zombie Earthbinder army
+        state.assignedMinion.AdjustExp(1);
     }
 }

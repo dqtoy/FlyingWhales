@@ -83,6 +83,9 @@ public class BaseLandmark : ILocation, IInteractable {
     public Faction owner {
         get { return _owner; }
     }
+    public Faction faction {
+        get { return _owner; }
+    }
     public List<ICharacter> charactersWithHomeOnLandmark {
         get { return _charactersWithHomeOnLandmark; }
     }

@@ -55,8 +55,8 @@ public class Minion {
         _exp = 0;
         _type = (DEMON_TYPE) UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(DEMON_TYPE)).Length);
         _strType = Utilities.NormalizeString(_type.ToString());
-        PlayerManager.Instance.player.demonicPortal.AddCharacterHomeOnLandmark(_icharacter);
-        PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(_icharacter.ownParty);
+        //PlayerManager.Instance.player.demonicPortal.AddCharacterHomeOnLandmark(_icharacter);
+        //PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(_icharacter.ownParty);
         _icharacter.SetMinion(this);
     }
     public Minion(ICharacter icharacter, PlayerAbility ability, DEMON_TYPE demonType) {
@@ -65,9 +65,9 @@ public class Minion {
         _lvl = 1;
         _exp = 0;
         _type = demonType;
-        _strType = Utilities.NormalizeString(_type.ToString());
-        PlayerManager.Instance.player.demonicPortal.AddCharacterHomeOnLandmark(_icharacter);
-        PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(_icharacter.ownParty);
+        //_strType = Utilities.NormalizeString(_type.ToString());
+        //PlayerManager.Instance.player.demonicPortal.AddCharacterHomeOnLandmark(_icharacter);
+        //PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(_icharacter.ownParty);
         _icharacter.SetMinion(this);
     }
     public void SetDemonType(DEMON_TYPE type) {

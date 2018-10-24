@@ -1013,6 +1013,7 @@ public enum INTERACTION_TYPE {
     HARVEST_SEASON,
     MYSTERY_HUM,
     SPIDER_QUEEN,
+    ARMY_UNIT_TRAINING,
 }
 public enum REWARD {
     SUPPLY,

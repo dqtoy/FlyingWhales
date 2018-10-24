@@ -379,10 +379,8 @@ namespace ECS {
             GenerateRaceAttributes();
 
             //AllocateStatPoints(10);
-            //AllocateStats();
-
-            //AllocateStats();
-            //EquipItemsByClass();
+            AllocateStats();
+            EquipItemsByClass();
 
             CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(className);
             if(setup != null) {
@@ -421,10 +419,8 @@ namespace ECS {
             GenerateRaceAttributes();
 
             //AllocateStatPoints(10);
-            //AllocateStats();
-
-            //AllocateStats();
-            //EquipItemsByClass();
+            AllocateStats();
+            EquipItemsByClass();
 
             //EquipPreEquippedItems(baseSetup);
             CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(data.className);
@@ -472,8 +468,8 @@ namespace ECS {
             uiData = new CharacterUIData();
             characterIntel = new CharacterIntel(this);
 
-            AllocateStats();
-            EquipItemsByClass();
+            //AllocateStats();
+            //EquipItemsByClass();
             //ConstructBuffs();
             GetRandomCharacterColor();
             ConstructDefaultMiscActions();

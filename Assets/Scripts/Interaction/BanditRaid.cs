@@ -232,7 +232,7 @@ public class BanditRaid : Interaction {
 
     private void SetDefaultActionDuration() {
         ActionOption doNothingOption = _states["State 1"].actionOptions[2];
-        int remainingTicks = Utilities.GetRangeInTicks(GameManager.Instance.Today(), _states["State 1"].timeDate);
+        int remainingTicks = GameManager.Instance.GetTicksDifferenceOfTwoDates(GameManager.Instance.Today(), _states["State 1"].timeDate);
         doNothingOption.duration = remainingTicks;
         Debug.Log("Bandit Raid Set Do Nothing Option to " + doNothingOption.duration);
     }

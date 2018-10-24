@@ -161,7 +161,7 @@ public class CharacterManager : MonoBehaviour {
     /*
      Create a new character, given a role, class and race.
          */
-    public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race, GENDER gender, Faction faction = null, ILocation initialLocation = null) {
+    public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race, GENDER gender, Faction faction = null, ILocation homeLocation = null) {
 		if(className == "None"){
             className = "Classless";
 		}
@@ -177,8 +177,13 @@ public class CharacterManager : MonoBehaviour {
         }
 #if !WORLD_CREATION_TOOL
         party.CreateIcon();
-        if(initialLocation != null) {
-            party.icon.SetPosition(initialLocation.tileLocation.transform.position);
+        if(homeLocation != null) {
+            party.icon.SetPosition(homeLocation.tileLocation.transform.position);
+            if (homeLocation is BaseLandmark) {
+                BaseLandmark homeLandmark = homeLocation as BaseLandmark;
+                homeLandmark.AddCharacterToLocation(party);
+                homeLandmark.AddCharacterHomeOnLandmark(newCharacter);
+            }
         }
         if (charRole != CHARACTER_ROLE.PLAYER) {
             newCharacter.SetSchedule(CharacterScheduleManager.Instance.GetScheduleForCharacter(newCharacter));
@@ -782,7 +787,7 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Armies
-    public CharacterArmyUnit CreateCharacterArmyUnit(string className, RACE race, int armyCount, Faction faction = null, ILocation initialLocation = null) {
+    public CharacterArmyUnit CreateCharacterArmyUnit(string className, RACE race, int armyCount, Faction faction = null, ILocation homeLocation = null) {
         CharacterArmyUnit armyUnit = new CharacterArmyUnit(className, race, armyCount);
 
         Party party = armyUnit.CreateOwnParty();
@@ -791,12 +796,13 @@ public class CharacterManager : MonoBehaviour {
         }
 #if !WORLD_CREATION_TOOL
         party.CreateIcon();
-        if (initialLocation != null) {
-            party.icon.SetPosition(initialLocation.tileLocation.transform.position);
+        if (homeLocation != null) {
+            party.icon.SetPosition(homeLocation.tileLocation.transform.position);
 
-            if (initialLocation is BaseLandmark) {
-                initialLocation.AddCharacterToLocation(party);
-                armyUnit.SetHomeLandmark(initialLocation as BaseLandmark);
+            if (homeLocation is BaseLandmark) {
+                BaseLandmark landmark = homeLocation as BaseLandmark;
+                landmark.AddCharacterToLocation(party);
+                landmark.AddCharacterHomeOnLandmark(armyUnit);
             }
         }
 #endif
