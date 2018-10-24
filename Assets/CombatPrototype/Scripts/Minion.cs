@@ -59,6 +59,17 @@ public class Minion {
         PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(_icharacter.ownParty);
         _icharacter.SetMinion(this);
     }
+    public Minion(ICharacter icharacter, PlayerAbility ability, DEMON_TYPE demonType) {
+        _icharacter = icharacter;
+        _ability = ability;
+        _lvl = 1;
+        _exp = 0;
+        _type = demonType;
+        _strType = Utilities.NormalizeString(_type.ToString());
+        PlayerManager.Instance.player.demonicPortal.AddCharacterHomeOnLandmark(_icharacter);
+        PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(_icharacter.ownParty);
+        _icharacter.SetMinion(this);
+    }
     public void SetDemonType(DEMON_TYPE type) {
         _type = type;
     }
@@ -90,8 +101,14 @@ public class Minion {
         }
         _minionItem.UpdateMinionItem();
     }
+    public void SetLevel(int level) {
+        _lvl = level;
+    }
+    public void AdjustLevel(int amount) {
+        _lvl += amount;
+    }
     public void LevelUp() {
-        _lvl += 1;
+        AdjustLevel(1);
     }
     public void SetIndexDefaultSort(int index) {
         _indexDefaultSort = index;

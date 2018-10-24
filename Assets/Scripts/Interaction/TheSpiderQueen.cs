@@ -6,6 +6,7 @@ public class TheSpiderQueen : Interaction {
 
     private ICharacter spiderQueen;
     private BaseLandmark landmark;
+    private WeightedDictionary<LandmarkDefender> assaultSpawnWeights;
 
     public TheSpiderQueen(IInteractable interactable) : base(interactable, INTERACTION_TYPE.SPIDER_QUEEN) {
         _name = "The Spider Queen";
@@ -15,7 +16,9 @@ public class TheSpiderQueen : Interaction {
     public override void CreateStates() {
         if (_interactable is BaseLandmark) {
             landmark = _interactable as BaseLandmark;
-            //TODO: Spawn spider queen
+            //Spawn spider queen
+            SpawnSpiderQueen();
+            ConstructAssaultSpawnWeights();
 
             InteractionState startState = new InteractionState("State 1", this);
             string startStateDesc = "Our Imp reported that the Spider Queen has been spotted out of the heavily protected hive core. Should we do something before it gets back in?";
@@ -91,6 +94,18 @@ public class TheSpiderQueen : Interaction {
     }
     #endregion
 
+    private void SpawnSpiderQueen() {
+        MonsterParty monsterParty = new MonsterParty();
+        spiderQueen = MonsterManager.Instance.CreateNewMonster("Spider Queen");
+        landmark.AddCharacterHomeOnLandmark(spiderQueen);
+        spiderQueen.SetOwnedParty(monsterParty);
+        spiderQueen.SetCurrentParty(monsterParty);
+        monsterParty.AddCharacter(spiderQueen);
+        monsterParty.CreateIcon();
+        monsterParty.icon.SetPosition(landmark.tileLocation.transform.position);
+        landmark.AddCharacterToLocation(monsterParty);
+    }
+
     private void AttemptToKillItEffect(InteractionState state) {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
         effectWeights.AddElement("Attack Location", 15);
@@ -146,6 +161,7 @@ public class TheSpiderQueen : Interaction {
     }
     private void TransformRitualSuccessEffect(InteractionState state) {
         //**Reward**: Gain a new Level 10 Sloth Demon
+        PlayerManager.Instance.player.AddMinion(PlayerManager.Instance.CreateNewMinion(DEMON_TYPE.SLOTH, 10));
     }
     private void TransformRitualFailure(InteractionState state, string effectName) {
         _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " performed the Transform Ritual but the Queen's protectors discovered him at the last minute, forcing him to flee before the ritual is complete.");
@@ -187,12 +203,50 @@ public class TheSpiderQueen : Interaction {
         _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " was discovered while he was sneaking into the Spider Lair. The Spiders have sent out an army to attack us in retaliation.");
         SetCurrentState(_states[effectName]);
         //**Mechanics**: create a 4 army attack unit from Assault Spawn Weights 1.
-        //CharacterParty army = CreateAssaultArmy(3);
-        ////force spawned army to raid target
-        //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
-        //army.iactionData.AssignAction(characterAction, targetLandmark.landmarkObj);
+        MonsterParty army = CreateAssaultArmy(4);
+        //attack player area
+        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+        army.iactionData.AssignAction(characterAction, PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark().landmarkObj);
     }
     private void SpidersAttackEffect(InteractionState state) {
         state.assignedMinion.AdjustExp(1); //**Reward**: Demon gains Exp 1
+    }
+
+    private void ConstructAssaultSpawnWeights() {
+        assaultSpawnWeights = new WeightedDictionary<LandmarkDefender>();
+
+        LandmarkDefender striker = new LandmarkDefender() {
+            className = "Striker",
+            armyCount = 25
+        };
+        LandmarkDefender spinner = new LandmarkDefender() {
+            className = "Spinner",
+            armyCount = 25
+        };
+        LandmarkDefender guardian = new LandmarkDefender() {
+            className = "Guardian",
+            armyCount = 25
+        };
+
+
+        assaultSpawnWeights.AddElement(striker, 30);
+        assaultSpawnWeights.AddElement(striker, 60);
+        assaultSpawnWeights.AddElement(spinner, 20);
+        assaultSpawnWeights.AddElement(spinner, 40);
+        assaultSpawnWeights.AddElement(guardian, 10);
+        assaultSpawnWeights.AddElement(guardian, 30);
+    }
+    private MonsterParty CreateAssaultArmy(int unitCount) {
+        MonsterParty monsterParty = new MonsterParty();
+        monsterParty.CreateIcon();
+        monsterParty.icon.SetPosition(landmark.tileLocation.transform.position);
+        landmark.AddCharacterToLocation(monsterParty);
+        for (int i = 0; i < unitCount; i++) {
+            LandmarkDefender chosenDefender = assaultSpawnWeights.PickRandomElementGivenWeights();
+            MonsterArmyUnit armyUnit = MonsterManager.Instance.CreateNewMonsterArmyUnit(chosenDefender.className);
+            landmark.AddCharacterHomeOnLandmark(armyUnit);
+            monsterParty.AddCharacter(armyUnit);
+        }
+        return monsterParty;
     }
 }
