@@ -195,7 +195,9 @@ public class LandmarkInfoUI : UIMenu {
         if (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll) {
             for (int i = 0; i < _activeLandmark.charactersWithHomeOnLandmark.Count; i++) {
                 Party currParty = _activeLandmark.charactersWithHomeOnLandmark[i].ownParty;
-                CreateNewCharacterItem(currParty.owner);
+                if (!_activeLandmark.IsDefenderOfLandmark(currParty)) {
+                    CreateNewCharacterItem(currParty.owner);
+                }
             }
         }
         //else {
