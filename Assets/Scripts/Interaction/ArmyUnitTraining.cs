@@ -50,6 +50,7 @@ public class ArmyUnitTraining : Interaction {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
+                description = "The garrison is producing another army unit.",
                 duration = 0,
                 needsMinion = false,
                 effect = () => DoNothingOption(state),
@@ -127,12 +128,11 @@ public class ArmyUnitTraining : Interaction {
         state.assignedMinion.AdjustExp(1);
     }
     private void FailedCancelTrainingRewardEffect(InteractionState state) {
-        CharacterManager.Instance.CreateCharacterArmyUnit(_chosenClassName, interactable.faction.race, 25, interactable.faction, interactable as BaseLandmark);
-        state.assignedMinion.AdjustExp(1);
+        ArmyProducedRewardEffect(state);
     }
     private void ArmyProducedRewardEffect(InteractionState state) {
-        CharacterManager.Instance.CreateCharacterArmyUnit(_chosenClassName, interactable.faction.race, 25, interactable.faction, interactable as BaseLandmark);
         state.assignedMinion.AdjustExp(1);
+        CharacterManager.Instance.CreateCharacterArmyUnit(_chosenClassName, interactable.faction.race, 25, interactable.faction, interactable as BaseLandmark);
     }
     #endregion
 }

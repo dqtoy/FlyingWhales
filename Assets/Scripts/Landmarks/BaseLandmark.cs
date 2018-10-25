@@ -1206,53 +1206,115 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     #endregion
 
+    #region Assault Army Party
+    public void AddAssaultArmyParty(Party party) {
+        _assaultParties.Add(party);
+    }
+    public void RemoveAssaultArmyParty(Party party) {
+        _assaultParties.Remove(party);
+    }
+    #endregion
+
     #region Mobilization
     public void StartMobilization() {
         List<ICharacter> charactersNotAssigned = new List<ICharacter>();
         for (int i = 0; i < _charactersWithHomeOnLandmark.Count; i++) {
-            if(_charactersWithHomeOnLandmark[i].currentParty.icharacters.Count == 1 && _charactersWithHomeOnLandmark[i].currentParty.specificLocation == this) {
+            if((_charactersWithHomeOnLandmark[i] is CharacterArmyUnit || _charactersWithHomeOnLandmark[i] is MonsterArmyUnit) && _charactersWithHomeOnLandmark[i].currentParty.icharacters.Count == 1 && _charactersWithHomeOnLandmark[i].currentParty.specificLocation == this) {
                 charactersNotAssigned.Add(_charactersWithHomeOnLandmark[i]);
             }
         }
 
-        //Assign characters or army units to external tiles of area
+        //Assign army units to external tiles of area
         for (int i = 0; i < tileLocation.areaOfTile.exposedTiles.Count; i++) {
             BaseLandmark exposedTile = tileLocation.areaOfTile.exposedTiles[i];
             if (exposedTile.defenders.icharacters.Count < 4) {
                 if(charactersNotAssigned.Count > 0) {
                     charactersNotAssigned[0].currentParty.specificLocation.RemoveCharacterFromLocation(charactersNotAssigned[0].currentParty);
+                    charactersNotAssigned[0].homeLandmark.RemoveCharacterHomeOnLandmark(charactersNotAssigned[0]);
                     exposedTile.AddCharacterToLocation(charactersNotAssigned[0].currentParty);
+                    exposedTile.AddCharacterHomeOnLandmark(charactersNotAssigned[0]);
                     exposedTile.defenders.AddCharacter(charactersNotAssigned[0]);
                     charactersNotAssigned.RemoveAt(0);
                 }
             }
         }
 
+        //Form or fill an assault party
         if(charactersNotAssigned.Count > 0) {
-            bool alreadyHasLegitAssaultParty = false;
-            for (int i = 0; i < _assaultParties.Count; i++) {
-                if(_assaultParties[i].icharacters.Count >= 3) {
-                    alreadyHasLegitAssaultParty = true;
-                    break;
-                }
-            }
-            if (!alreadyHasLegitAssaultParty) {
-                //Do this only once?
-                bool canFillAssaultParty = false;
+            if(_assaultParties.Count > 0) {
+                bool alreadyHasLegitAssaultParty = false;
                 for (int i = 0; i < _assaultParties.Count; i++) {
-                    if (_assaultParties[i].icharacters.Count < 4) {
-                        canFillAssaultParty = true;
-                        if (charactersNotAssigned.Count > 0) {
-                            _assaultParties[i].AddCharacter(charactersNotAssigned[0]);
-                            charactersNotAssigned.RemoveAt(0);
-                        }
+                    if (_assaultParties[i].icharacters.Count >= 4) {
+                        alreadyHasLegitAssaultParty = true;
                         break;
                     }
                 }
-                if (!canFillAssaultParty) {
-                    //Create Assault party
+                if (!alreadyHasLegitAssaultParty) {
+                    //Do this only once?
+                    bool canFillAssaultParty = false;
+                    for (int i = 0; i < _assaultParties.Count; i++) {
+                        while (_assaultParties[i].icharacters.Count < 4) {
+                            canFillAssaultParty = true;
+                            if (charactersNotAssigned.Count > 0) {
+                                _assaultParties[i].AddCharacter(charactersNotAssigned[0]);
+                                charactersNotAssigned.RemoveAt(0);
+                            } else {
+                                break;
+                            }
+                        }
+                        if (canFillAssaultParty) {
+                            break;
+                        }
+                    }
+                }
+            } else {
+                //Create an Assault party
+                if (charactersNotAssigned.Count > 1) {
+                    Party partyToBeFormed = charactersNotAssigned[0].currentParty;
+                    charactersNotAssigned.RemoveAt(0);
+                    while (partyToBeFormed.icharacters.Count < 4) {
+                        if (charactersNotAssigned.Count > 0) {
+                            partyToBeFormed.AddCharacter(charactersNotAssigned[0]);
+                            charactersNotAssigned.RemoveAt(0);
+                        } else {
+                            break;
+                        }
+                    }
+                    AddAssaultArmyParty(partyToBeFormed);
                 }
             }
+        }
+
+        //Assign army units to internal tiles of area
+        if (charactersNotAssigned.Count > 0) {
+            for (int i = 0; i < tileLocation.areaOfTile.unexposedTiles.Count; i++) {
+                BaseLandmark unexposedTile = tileLocation.areaOfTile.unexposedTiles[i];
+                if (unexposedTile.defenders.icharacters.Count < 4) {
+                    if (charactersNotAssigned.Count > 0) {
+                        charactersNotAssigned[0].currentParty.specificLocation.RemoveCharacterFromLocation(charactersNotAssigned[0].currentParty);
+                        charactersNotAssigned[0].homeLandmark.RemoveCharacterHomeOnLandmark(charactersNotAssigned[0]);
+                        unexposedTile.AddCharacterToLocation(charactersNotAssigned[0].currentParty);
+                        unexposedTile.AddCharacterHomeOnLandmark(charactersNotAssigned[0]);
+                        unexposedTile.defenders.AddCharacter(charactersNotAssigned[0]);
+                        charactersNotAssigned.RemoveAt(0);
+                    }
+                }
+            }
+        }
+
+        //Form additional assault units
+        while (charactersNotAssigned.Count > 1) {
+            Party partyToBeFormed = charactersNotAssigned[0].currentParty;
+            charactersNotAssigned.RemoveAt(0);
+            while (partyToBeFormed.icharacters.Count < 4) {
+                if (charactersNotAssigned.Count > 0) {
+                    partyToBeFormed.AddCharacter(charactersNotAssigned[0]);
+                    charactersNotAssigned.RemoveAt(0);
+                } else {
+                    break;
+                }
+            }
+            AddAssaultArmyParty(partyToBeFormed);
         }
     }
     #endregion

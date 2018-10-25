@@ -18,6 +18,7 @@ public class Garrison : StructureObj {
     public override void StartDayAction() {
         ReplenishDefenderUnits();
         ArmyTraining();
+        ArmyMobilize();
         base.StartDayAction();
     }
     #endregion
@@ -64,6 +65,28 @@ public class Garrison : StructureObj {
                     //Trigger Army Training
                     Interaction armyUnitTrainingInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ARMY_UNIT_TRAINING, _objectLocation);
                     _objectLocation.AddInteraction(armyUnitTrainingInteraction);
+                }
+            }
+        }
+    }
+    private void ArmyMobilize() {
+        if(_objectLocation.GetInteractionOfType(INTERACTION_TYPE.ARMY_MOBILIZATION) == null) {
+            int armyUnitCount = 0;
+            for (int i = 0; i < _objectLocation.charactersWithHomeOnLandmark.Count; i++) {
+                if (_objectLocation.charactersWithHomeOnLandmark[i] is CharacterArmyUnit || _objectLocation.charactersWithHomeOnLandmark[i] is MonsterArmyUnit) {
+                    armyUnitCount++;
+                    if(armyUnitCount >= 3) {
+                        break;
+                    }
+                }
+            }
+
+            if(armyUnitCount >= 3) {
+                int chance = UnityEngine.Random.Range(0, 200);
+                if (chance < 75) {
+                    //Trigger Army Mobilization
+                    Interaction armyMobilizationInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ARMY_MOBILIZATION, _objectLocation);
+                    _objectLocation.AddInteraction(armyMobilizationInteraction);
                 }
             }
         }

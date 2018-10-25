@@ -169,6 +169,8 @@ public class Party : IParty {
         _icon = null;
 
         _currentCombat = null;
+
+        _owner.homeLandmark.RemoveAssaultArmyParty(this);
     }
     //public virtual void DisbandParty() {
     //    while (icharacters.Count != 0) {
