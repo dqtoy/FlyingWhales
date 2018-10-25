@@ -388,8 +388,9 @@ public class StructureObj : IObject {
             return; //the landmark already has an active interaction, other than investigate
         }
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_objectLocation.specificLandmarkType);
-        if (data.interactionWeights.GetTotalOfWeights() > 0) {
-            INTERACTION_TYPE chosenInteraction = data.interactionWeights.PickRandomElementGivenWeights();
+        WeightedDictionary<INTERACTION_TYPE> interactionWeights = data.GetInteractionWeights(_objectLocation);
+        if (interactionWeights.GetTotalOfWeights() > 0) {
+            INTERACTION_TYPE chosenInteraction = interactionWeights.PickRandomElementGivenWeights();
             //create interaction of type;
             Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, _objectLocation);
             if (createdInteraction != null) {

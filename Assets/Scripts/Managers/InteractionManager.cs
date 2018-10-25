@@ -57,6 +57,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.UNFINISHED_CURSE:
                 createdInteraction = new UnfinishedCurse(interactable);
                 break;
+            case INTERACTION_TYPE.ARMY_ATTACKS:
+                createdInteraction = new ArmyAttacks(interactable);
+                break;
         }
         return createdInteraction;
     }
