@@ -75,7 +75,7 @@ public class Area {
         SetCoreTile(GridMap.Instance.GetHexTile(data.coreTileID));
         StartSupplyLine();
 #endif
-        AddTile(Utilities.GetTilesFromIDs(data.tileData), false); //exposed tiles will be determined after loading landmarks at MapGeneration
+        AddTile(Utilities.GetTilesFromIDs(data.tileData)); //exposed tiles will be determined after loading landmarks at MapGeneration
     }
 
     public void SetRecommendedPower(float power) {

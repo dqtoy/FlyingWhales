@@ -64,7 +64,7 @@ public class BanditReinforcement : Interaction {
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Do Nothing.",
+                name = "Do nothing.",
                 description = "The bandits are increasing their defensive army.",
                 duration = 0,
                 needsMinion = false,
