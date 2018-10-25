@@ -56,6 +56,8 @@ public class Area {
         residents = new List<ICharacter>();
         excessClasses = new List<string>();
         missingClasses = new List<string>();
+        exposedTiles = new List<BaseLandmark>();
+        unexposedTiles = new List<BaseLandmark>();
         if (data.orderClasses != null) {
             orderClasses = data.orderClasses;
         } else {

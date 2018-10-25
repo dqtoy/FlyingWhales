@@ -110,10 +110,10 @@ public class ArmyMobilization : Interaction {
         state.assignedMinion.AdjustExp(1);
     }
     private void FailedCancelMobilizationRewardEffect(InteractionState state) {
+        state.assignedMinion.AdjustExp(1);
         ArmyMobilizedRewardEffect(state);
     }
     private void ArmyMobilizedRewardEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1);
         if (_interactable is BaseLandmark) {
             (_interactable as BaseLandmark).StartMobilization();
         }

@@ -128,10 +128,10 @@ public class ArmyUnitTraining : Interaction {
         state.assignedMinion.AdjustExp(1);
     }
     private void FailedCancelTrainingRewardEffect(InteractionState state) {
+        state.assignedMinion.AdjustExp(1);
         ArmyProducedRewardEffect(state);
     }
     private void ArmyProducedRewardEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1);
         CharacterManager.Instance.CreateCharacterArmyUnit(_chosenClassName, interactable.faction.race, 25, interactable.faction, interactable as BaseLandmark);
     }
     #endregion
