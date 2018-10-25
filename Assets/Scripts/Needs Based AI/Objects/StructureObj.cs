@@ -362,4 +362,27 @@ public class StructureObj : IObject {
     //    return Mathf.CeilToInt((0.25f * (float) GetTotalCivilians()));
     //}
     #endregion
+
+    #region For Testing: Imp Triggered Events
+    public void StartImpTriggeredEvent() {
+        GameDate impEventDate = GameManager.Instance.Today();
+        int ticksToTriggerEvent = UnityEngine.Random.Range(10, 31);
+        impEventDate.AddHours(ticksToTriggerEvent);
+        SchedulingManager.Instance.AddEntry(impEventDate, () => ImpTriggeredEvent());
+    }
+    private void ImpTriggeredEvent() {
+        if (_objectLocation.HasActiveInteraction()) {
+            return; //the landmark already has an active interaction, other than investigate
+        }
+        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_objectLocation.specificLandmarkType);
+        if (data.interactionWeights.GetTotalOfWeights() > 0) {
+            INTERACTION_TYPE chosenInteraction = data.interactionWeights.PickRandomElementGivenWeights();
+            //create interaction of type;
+            Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, _objectLocation);
+            if (createdInteraction != null) {
+                _objectLocation.AddInteraction(createdInteraction);
+            }
+        }
+    }
+    #endregion
 }

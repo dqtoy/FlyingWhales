@@ -67,6 +67,7 @@ public class InteractionItem : MonoBehaviour {
         for (int i = 0; i < actionOptionButtons.Length; i++) {
             if (_interaction.currentState.actionOptions[i] != null) {
                 actionOptionButtons[i].SetOption(_interaction.currentState.actionOptions[i]);
+                actionOptionButtons[i].toggle.isOn = false;
                 actionOptionButtons[i].gameObject.SetActive(true);
             } else {
                 actionOptionButtons[i].gameObject.SetActive(false);

@@ -956,26 +956,26 @@ public class Utilities : MonoBehaviour {
     public static string GetDateString(GameDate date) {
         return date.month + "/" + date.day + "/" + date.year;
     }
-    public static int GetRangeInTicks(GameDate startDate, GameDate endDate) {
-        //TODO: Change this to use maths
-        int range = 0;
-        GameDate lowerDate;
-        GameDate higherDate;
-        if (startDate.IsBefore(endDate)) {
-            lowerDate = startDate;
-            higherDate = endDate;
-        } else {
-            lowerDate = endDate;
-            higherDate = startDate;
-        }
-        //GameDate startDate = this.startDate;
-        //GameDate endDate = this.endDate;
-        while (!lowerDate.IsSameDate(higherDate)) {
-            lowerDate.AddHours(1);
-            range++;
-        }
-        return range;
-    }
+    //public static int GetRangeInTicks(GameDate startDate, GameDate endDate) {
+    //    //TODO: Change this to use maths
+    //    int range = 0;
+    //    GameDate lowerDate;
+    //    GameDate higherDate;
+    //    if (startDate.IsBefore(endDate)) {
+    //        lowerDate = startDate;
+    //        higherDate = endDate;
+    //    } else {
+    //        lowerDate = endDate;
+    //        higherDate = startDate;
+    //    }
+    //    //GameDate startDate = this.startDate;
+    //    //GameDate endDate = this.endDate;
+    //    while (!lowerDate.IsSameDate(higherDate)) {
+    //        lowerDate.AddHours(1);
+    //        range++;
+    //    }
+    //    return range;
+    //}
     /*
      * <summary>
      * Get a random integer given a minimum and maximum range and a minimum and maximum 

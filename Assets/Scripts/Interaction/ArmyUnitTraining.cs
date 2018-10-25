@@ -53,7 +53,7 @@ public class ArmyUnitTraining : Interaction {
                 duration = 0,
                 needsMinion = false,
                 effect = () => DoNothingOption(state),
-                onStartDurationAction = () => SetDefaultActionDuration()
+                onStartDurationAction = () => SetDefaultActionDurationAsRemainingTicks("Do nothing.", state)
             };
 
             state.AddActionOption(stopThemOption);
@@ -65,12 +65,6 @@ public class ArmyUnitTraining : Interaction {
         }
     }
     #endregion
-
-    private void SetDefaultActionDuration() {
-        ActionOption doNothingOption = _states["Start"].actionOptions[1];
-        int remainingTicks = GameManager.Instance.GetTicksDifferenceOfTwoDates(GameManager.Instance.Today(), _states["Start"].timeDate);
-        doNothingOption.duration = remainingTicks;
-    }
 
     private void StopThemOption(InteractionState state) {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
@@ -106,7 +100,7 @@ public class ArmyUnitTraining : Interaction {
         classesWeights.AddElement("Earth Bard", 10);
         classesWeights.AddElement("Wind Bard", 10);
         classesWeights.AddElement("Archer", 20);
-        //classesWeights.AddElement("Healer", 50);
+        classesWeights.AddElement("Healer", 15);
 
         _chosenClassName = classesWeights.PickRandomElementGivenWeights();
     }

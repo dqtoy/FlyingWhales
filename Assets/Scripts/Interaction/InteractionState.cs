@@ -112,14 +112,14 @@ public class InteractionState {
         }
     }
     public void ActivateDefault() {
-        if(_interaction.currentState == this) {
+        if(_interaction.currentState == this && !_interaction.isActivated) {
             _defaultOption.ActivateOption(_interaction.interactable);
         }
     }
     public ActionOption GetOption(string optionName) {
         for (int i = 0; i < actionOptions.Length; i++) {
             ActionOption option = actionOptions[i];
-            if (option.name.Contains(optionName)) {
+            if (option.name == optionName) {
                 return option;
             }
         }

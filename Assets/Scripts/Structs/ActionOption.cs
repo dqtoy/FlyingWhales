@@ -65,11 +65,11 @@ public class ActionOption {
         }
     }
     private void SetDescription() {
-        if(!string.IsNullOrEmpty(description)) {
+        if(!string.IsNullOrEmpty(description) && interactionState.interaction.interactionItem != null) {
             if (description.Contains("%minion%") && assignedMinion != null) {
                 description = description.Replace("%minion%", assignedMinion.icharacter.name);
             }
+            interactionState.interaction.interactionItem.SetDescription(description);
         }
-        interactionState.interaction.interactionItem.SetDescription(description);
     }
 }

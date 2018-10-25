@@ -72,11 +72,11 @@ public class Interaction {
         _interactionItem = interactionItem;
     }
     protected int GetRemainingDurationFromState(InteractionState state) {
-        return Utilities.GetRangeInTicks(GameManager.Instance.Today(), state.timeDate);
+        return GameManager.Instance.GetTicksDifferenceOfTwoDates(GameManager.Instance.Today(), state.timeDate);
     }
-    protected void SetDefaultActionDuration(string optionName, InteractionState stateFrom) {
+    protected void SetDefaultActionDurationAsRemainingTicks(string optionName, InteractionState stateFrom) {
         ActionOption option = stateFrom.GetOption(optionName);
-        int remainingTicks = Utilities.GetRangeInTicks(GameManager.Instance.Today(), stateFrom.timeDate);
+        int remainingTicks = GameManager.Instance.GetTicksDifferenceOfTwoDates(GameManager.Instance.Today(), stateFrom.timeDate);
         option.duration = remainingTicks;
     }
     #endregion

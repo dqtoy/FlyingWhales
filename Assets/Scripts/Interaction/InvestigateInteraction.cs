@@ -135,6 +135,10 @@ public class InvestigateInteraction : Interaction {
         if (!_interactable.hasBeenInspected) {
             _interactable.SetHasBeenInspected(true);
         }
+        if(_interactable is BaseLandmark) {
+            BaseLandmark landmark = _interactable as BaseLandmark;
+            landmark.landmarkObj.StartImpTriggeredEvent();
+        }
     }
     private void UninvestigatedState() {
         SetCurrentState(_states["Uninvestigated"]);
