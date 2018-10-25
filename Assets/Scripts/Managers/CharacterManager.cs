@@ -161,7 +161,7 @@ public class CharacterManager : MonoBehaviour {
     /*
      Create a new character, given a role, class and race.
          */
-    public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race, GENDER gender, Faction faction = null, ILocation homeLocation = null) {
+    public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race, GENDER gender, Faction faction = null, ILocation homeLocation = null, bool createSchedule = true) {
 		if(className == "None"){
             className = "Classless";
 		}
@@ -185,7 +185,7 @@ public class CharacterManager : MonoBehaviour {
                 homeLandmark.AddCharacterHomeOnLandmark(newCharacter);
             }
         }
-        if (charRole != CHARACTER_ROLE.PLAYER) {
+        if (createSchedule && charRole != CHARACTER_ROLE.PLAYER) {
             newCharacter.SetSchedule(CharacterScheduleManager.Instance.GetScheduleForCharacter(newCharacter));
         }
 #endif
