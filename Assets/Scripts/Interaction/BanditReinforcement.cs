@@ -21,7 +21,7 @@ public class BanditReinforcement : Interaction {
             CreateActionOptions(startState);
             GameDate dueDate = GameManager.Instance.Today();
             dueDate.AddHours(50);
-            startState.SetTimeSchedule(startState.GetOption("Do Nothing"), dueDate); //default is do nothing
+            startState.SetTimeSchedule(startState.GetOption("Do Nothing."), dueDate); //default is do nothing
 
             //action option states
             InteractionState successCancelState = new InteractionState("Successfully Cancelled Reinforcement", this);
@@ -65,7 +65,7 @@ public class BanditReinforcement : Interaction {
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Do nothing.",
+                name = "Do Nothing.",
                 description = "The bandits are increasing their defensive army.",
                 duration = 0,
                 needsMinion = true,

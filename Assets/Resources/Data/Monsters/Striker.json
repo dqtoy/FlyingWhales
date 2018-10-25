@@ -1,0 +1,29 @@
+{
+  "_name": "Striker",
+  "_type": 3,
+  "_category": 0,
+  "_level": 14,
+  "_experienceDrop": 80,
+  "_maxHP": 400,
+  "_maxSP": 0,
+  "_attackPower": 65,
+  "_speed": 105,
+  "_def": 10,
+  "_dodgeChance": 0.0,
+  "_hitChance": 0.0,
+  "_critChance": 0.0,
+  "_startingArmyCount": 20,
+  "_isSleepingOnSpawn": false,
+  "_skillNames": [
+    "Normal Attack",
+    "Skill150"
+  ],
+  "_elementChanceWeaknesses": [],
+  "_elementChanceResistances": [],
+  "_itemDrops": [
+    {
+      "itemName": "Junk1",
+      "dropRate": 100.0
+    }
+  ]
+}

@@ -1082,6 +1082,7 @@ public class BaseLandmark : ILocation, IInteractable {
         if (defenders == null) {
             //set the defenders party as the party of the new defender
             defenders = newDefender.ownParty;
+            defenders.SetMaxCharacters(data.maxDefenderCount);
             //apply buffs, if any, to new defender party
             for (int i = 0; i < defenderBuffs.Count; i++) {
                 Buff currBuff = defenderBuffs[i];
@@ -1129,16 +1130,22 @@ public class BaseLandmark : ILocation, IInteractable {
         }
         return false;
     }
+    public bool HasEmptyDefenderSlot() {
+        if (defenders == null || !defenders.isFull) {
+            return true;
+        }
+        return false;
+    }
     #endregion
 
     #region Interactions
     public void ConstructInitialInteractions() {
         Interaction investigateInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.INVESTIGATE, this);
-        Interaction pointOfInterest1 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.POI_1, this);
-        Interaction pointOfInterest2 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.POI_2, this);
+        //Interaction pointOfInterest1 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.POI_1, this);
+        //Interaction pointOfInterest2 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.POI_2, this);
         AddInteraction(investigateInteraction);
-        AddInteraction(pointOfInterest1);
-        AddInteraction(pointOfInterest2);
+        //AddInteraction(pointOfInterest1);
+        //AddInteraction(pointOfInterest2);
     }
     public void AddInteraction(Interaction interaction) {
         _currentInteractions.Add(interaction);

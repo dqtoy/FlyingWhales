@@ -119,7 +119,7 @@ public class InteractionState {
     public ActionOption GetOption(string optionName) {
         for (int i = 0; i < actionOptions.Length; i++) {
             ActionOption option = actionOptions[i];
-            if (option.name.Contains(optionName)) {
+            if (option != null && option.name == optionName) {
                 return option;
             }
         }

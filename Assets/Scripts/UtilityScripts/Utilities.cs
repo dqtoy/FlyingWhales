@@ -799,11 +799,6 @@ public class Utilities : MonoBehaviour {
         foreach (KeyValuePair<T, int> kvp in weights) {
             T key = kvp.Key;
             int value = kvp.Value;
-            //if(key is Kingdom) {
-            //    actionWeightsSummary += "\n" + ((Kingdom)((object)key)).name + " - " + kvp.Value.ToString();
-            //} else if(key is AlliancePool) {
-            //    actionWeightsSummary += "\n" + ((AlliancePool)((object)key)).name + " - " + kvp.Value.ToString();
-            //} else 
             if (key is ECS.Character) {
                 actionWeightsSummary += "\n" + (key as ECS.Character).name + " - " + kvp.Value.ToString();
             } else if (key is BaseLandmark) {

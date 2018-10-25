@@ -54,10 +54,32 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.ARMY_UNIT_TRAINING:
                 createdInteraction = new ArmyUnitTraining(interactable);
                 break;
+            case INTERACTION_TYPE.UNFINISHED_CURSE:
+                createdInteraction = new UnfinishedCurse(interactable);
+                break;
         }
         return createdInteraction;
     }
-
+    public bool CanCreateInteraction(INTERACTION_TYPE interactionType, BaseLandmark landmark) {
+        switch (interactionType) {
+            case INTERACTION_TYPE.BANDIT_REINFORCEMENT:
+                //Random event that may show up in Bandit Camp tiles. 
+                //Only triggers if the Bandit Camp has an empty Tile Defender Slot
+                if (landmark.HasEmptyDefenderSlot()) {
+                    return true;
+                }
+                return false;
+            case INTERACTION_TYPE.POI_1:
+            case INTERACTION_TYPE.POI_2:
+            case INTERACTION_TYPE.SPIDER_QUEEN:
+            case INTERACTION_TYPE.MYSTERY_HUM:
+            case INTERACTION_TYPE.UNFINISHED_CURSE:
+                //Requires actively Investigating Imp.
+                return landmark.isBeingInspected;
+            default:
+                return true;
+        }
+    }
     public Reward GetReward(string rewardName) {
         if (rewardConfig.ContainsKey(rewardName)) {
             RewardConfig config = rewardConfig[rewardName];
