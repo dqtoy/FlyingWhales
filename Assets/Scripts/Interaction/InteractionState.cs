@@ -98,7 +98,9 @@ public class InteractionState {
         _defaultOption = defaultOption;
     }
     public void EndResult() {
-        _endEffect();
+        if(_endEffect != null) {
+            _endEffect();
+        }
         AssignedMinionGoesBack();
         interaction.EndInteraction();
     }
