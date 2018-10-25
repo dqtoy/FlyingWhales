@@ -70,23 +70,51 @@ public class Garrison : StructureObj {
         }
     }
     private void ArmyMobilize() {
-        if(_objectLocation.GetInteractionOfType(INTERACTION_TYPE.ARMY_MOBILIZATION) == null) {
+        if (_objectLocation.GetInteractionOfType(INTERACTION_TYPE.ARMY_MOBILIZATION) == null) {
             int armyUnitCount = 0;
             for (int i = 0; i < _objectLocation.charactersWithHomeOnLandmark.Count; i++) {
                 if (_objectLocation.charactersWithHomeOnLandmark[i] is CharacterArmyUnit || _objectLocation.charactersWithHomeOnLandmark[i] is MonsterArmyUnit) {
                     armyUnitCount++;
-                    if(armyUnitCount >= 3) {
+                    if (armyUnitCount >= 3) {
                         break;
                     }
                 }
             }
-
-            if(armyUnitCount >= 3) {
+            if (armyUnitCount >= 3) {
                 int chance = UnityEngine.Random.Range(0, 200);
                 if (chance < 75) {
                     //Trigger Army Mobilization
                     Interaction armyMobilizationInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ARMY_MOBILIZATION, _objectLocation);
                     _objectLocation.AddInteraction(armyMobilizationInteraction);
+                }
+            }
+        }
+    }
+    /*
+     Random event that may show up in Garrison tiles. Sends out army units to attack enemy factions. Only triggers if:
+    - there is an Army Party residing in the location with at least 3 occupied slots
+    - the faction owner is at war with another faction
+    - no other active Army Attacks event in the tile
+
+    Trigger rate at the start of each day that conditions are met:
+    75 out of 200
+         */
+    private void ArmyAttacks() {
+        if (_objectLocation.GetInteractionOfType(INTERACTION_TYPE.ARMY_ATTACKS) == null && _objectLocation.owner.HasRelationshipStatus(FACTION_RELATIONSHIP_STATUS.AT_WAR)) {
+            bool hasArmyPartyWithAtLeast3Members = false;
+            for (int i = 0; i < _objectLocation.charactersWithHomeOnLandmark.Count; i++) {
+                if (_objectLocation.charactersWithHomeOnLandmark[i].currentParty.icharacters.Count >= 3) {
+                    hasArmyPartyWithAtLeast3Members = true;
+                    break;
+                }
+            }
+
+            if (hasArmyPartyWithAtLeast3Members) {
+                int chance = UnityEngine.Random.Range(0, 200);
+                if (chance < 75) {
+                    //Trigger Army Attacks
+                    Interaction armyUnitTrainingInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ARMY_ATTACKS, _objectLocation);
+                    _objectLocation.AddInteraction(armyUnitTrainingInteraction);
                 }
             }
         }

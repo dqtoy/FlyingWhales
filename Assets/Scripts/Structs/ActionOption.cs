@@ -14,6 +14,7 @@ public class ActionOption {
     public Action onStartDurationAction;
     public Func<bool> canBeDoneAction;
     public Minion assignedMinion;
+    public List<System.Type> neededObjects;
 
     private int _currentDuration;
 

@@ -34,13 +34,11 @@ public class LandmarkData {
 
     public WeightedDictionary<LandmarkDefender> defenderWeights { get; private set; }
     public WeightedDictionary<LandmarkDefender> firstElementDefenderWeights { get; private set; }
-    public WeightedDictionary<INTERACTION_TYPE> interactionWeights { get; private set; }
     public WeightedDictionary<bool> eventTriggerWeights { get; private set; } //true - trigger event, false - do not trigger event
 
     public void ConstructData() {
         defenderWeights = GetDefenderWeights();
         firstElementDefenderWeights = GetFirstDefenderWeights();
-        interactionWeights = GetInteractionWeights();
         eventTriggerWeights = GetEventTriggerWeights();
     }
 
@@ -60,10 +58,12 @@ public class LandmarkData {
         }
         return weights;
     }
-    private WeightedDictionary<INTERACTION_TYPE> GetInteractionWeights() {
+    public WeightedDictionary<INTERACTION_TYPE> GetInteractionWeights(BaseLandmark landmark) {
         WeightedDictionary<INTERACTION_TYPE> weights = new WeightedDictionary<INTERACTION_TYPE>();
         foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in interactionWeightsDict) {
-            weights.AddElement(kvp.Key, kvp.Value);
+            if (InteractionManager.Instance.CanCreateInteraction(kvp.Key, landmark)) {
+                weights.AddElement(kvp.Key, kvp.Value);
+            }
         }
         return weights;
     }

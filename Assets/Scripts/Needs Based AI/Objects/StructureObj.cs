@@ -139,22 +139,35 @@ public class StructureObj : IObject {
         }
     }
     public virtual void GenerateDailyInteraction() {
+        string interactionLog = GameManager.Instance.TodayLogString() + "Generating daily interaction for " + _objectLocation.landmarkName + "(" + _objectLocation.specificLandmarkType.ToString() + ")";
         if (_objectLocation.HasActiveInteraction()) {
+            interactionLog += "\nAlready has active interaction, not generating a new interaction";
+            Debug.Log(interactionLog);
             return; //the landmark already has an active interaction, other than investigate
         }
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_objectLocation.specificLandmarkType);
         if (data.eventTriggerWeights.GetTotalOfWeights() > 0) {
             if (data.eventTriggerWeights.PickRandomElementGivenWeights()) { //if event trigger weights return true
-                if (data.interactionWeights.GetTotalOfWeights() > 0) {
-                    INTERACTION_TYPE chosenInteraction = data.interactionWeights.PickRandomElementGivenWeights();
-                    //create interaction of type;
+                WeightedDictionary<INTERACTION_TYPE> interactionWeights = data.GetInteractionWeights(_objectLocation);
+                interactionLog += "\n" + interactionWeights.GetWeightsSummary("Generating interaction:");
+                if (interactionWeights.GetTotalOfWeights() > 0) {
+                    INTERACTION_TYPE chosenInteraction = interactionWeights.PickRandomElementGivenWeights();
+                    //create interaction of type
                     Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, _objectLocation);
                     if (createdInteraction != null) {
+                        interactionLog += "\nCreated interaction " + createdInteraction.type.ToString();
                         _objectLocation.AddInteraction(createdInteraction);
                     }
+                } else {
+                    interactionLog += "\nCannot generate interaction because of weights";
                 }
+            } else {
+                interactionLog += "\nDid not create new event because of event trigger weights";
             }
+        } else {
+            interactionLog += "\nDid not create new event because of event trigger weights";
         }
+        Debug.Log(interactionLog);
     }
     #endregion
 
@@ -375,8 +388,9 @@ public class StructureObj : IObject {
             return; //the landmark already has an active interaction, other than investigate
         }
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_objectLocation.specificLandmarkType);
-        if (data.interactionWeights.GetTotalOfWeights() > 0) {
-            INTERACTION_TYPE chosenInteraction = data.interactionWeights.PickRandomElementGivenWeights();
+        WeightedDictionary<INTERACTION_TYPE> interactionWeights = data.GetInteractionWeights(_objectLocation);
+        if (interactionWeights.GetTotalOfWeights() > 0) {
+            INTERACTION_TYPE chosenInteraction = interactionWeights.PickRandomElementGivenWeights();
             //create interaction of type;
             Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, _objectLocation);
             if (createdInteraction != null) {

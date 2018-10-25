@@ -67,6 +67,7 @@ public class TheSpiderQueen : Interaction {
                 description = "We have sent %minion% to kill the Spider Queen while it is vulnerable.",
                 duration = 10,
                 needsMinion = true,
+                neededObjects = new List<System.Type>() { typeof(CharacterArmyUnit) },
                 effect = () => AttemptToKillItEffect(state),
             };
             ActionOption attemptToCorrupt = new ActionOption {
@@ -76,6 +77,7 @@ public class TheSpiderQueen : Interaction {
                 description = "We have sent %minion% to transform the Spider Queen into a Demon minion while it is out in the open.",
                 duration = 10,
                 needsMinion = true,
+                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => AttemptToCorruptItEffect(state),
             };
             ActionOption lootLair = new ActionOption {
@@ -85,6 +87,7 @@ public class TheSpiderQueen : Interaction {
                 description = "We have sent %minion% to loot the hive core while the Spider Queen and its defenders are away.",
                 duration = 10,
                 needsMinion = true,
+                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => LootLairEffect(state),
             };
             state.AddActionOption(attemptToKill);
@@ -227,7 +230,6 @@ public class TheSpiderQueen : Interaction {
             className = "Guardian",
             armyCount = 25
         };
-
 
         assaultSpawnWeights.AddElement(striker, 30);
         assaultSpawnWeights.AddElement(striker, 60);

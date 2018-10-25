@@ -48,6 +48,7 @@ public class BanditReinforcement : Interaction {
                 name = "Stop Them.",
                 duration = 0,
                 needsMinion = true,
+                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => StopThemEffect(state),
                 onStartDurationAction = () => SetDefaultActionDurationAsRemainingTicks("Stop Them.", state),
             };
@@ -57,15 +58,16 @@ public class BanditReinforcement : Interaction {
                 name = "Provide your own unit instead.",
                 duration = 5,
                 needsMinion = true,
+                neededObjects = new List<System.Type>() { typeof(CharacterArmyUnit) },
                 effect = () => ProvideOwnUnitEffect(state),
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Do nothing.",
+                name = "Do Nothing.",
                 description = "The bandits are increasing their defensive army.",
                 duration = 0,
-                needsMinion = true,
+                needsMinion = false,
                 effect = () => DoNothingEffect(state),
                 onStartDurationAction = () => SetDefaultActionDurationAsRemainingTicks("Do nothing.", state),
             };

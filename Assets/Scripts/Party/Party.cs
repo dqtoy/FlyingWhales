@@ -23,6 +23,7 @@ public class Party : IParty {
     protected ICharacterObject _icharacterObject;
     protected ICharacter _owner;
     protected List<Buff> _partyBuffs;
+    protected int _maxCharacters;
 
     #region getters/setters
     public int id {
@@ -135,6 +136,12 @@ public class Party : IParty {
             }
         }
     }
+    public int maxCharacters {
+        get { return _maxCharacters; }
+    }
+    public bool isFull {
+        get { return icharacters.Count >= maxCharacters; }
+    }
     #endregion
 
     public Party(ICharacter owner) {
@@ -143,12 +150,17 @@ public class Party : IParty {
         _isDead = false;
         _icharacters = new List<ICharacter>();
         _partyBuffs = new List<Buff>();
+        SetMaxCharacters(4);
 #if !WORLD_CREATION_TOOL
         Messenger.AddListener<ActionThread>(Signals.LOOK_FOR_ACTION, AdvertiseSelf);
         //Messenger.AddListener<BuildStructureQuestData>(Signals.BUILD_STRUCTURE_LOOK_ACTION, BuildStructureLookingForAction);
 
         //ConstructResourceInventory();
 #endif
+    }
+
+    public void SetMaxCharacters(int max) {
+        _maxCharacters = max;
     }
 
     #region Virtuals
@@ -217,7 +229,7 @@ public class Party : IParty {
         }
     }
     public bool AddCharacter(ICharacter icharacter) {
-        if (icharacters.Count < 4 && !_icharacters.Contains(icharacter)) {
+        if (!isFull && !_icharacters.Contains(icharacter)) {
             _icharacters.Add(icharacter);
             icharacter.SetCurrentParty(this);
             icharacter.OnAddedToParty();

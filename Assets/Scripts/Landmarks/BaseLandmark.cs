@@ -1082,6 +1082,7 @@ public class BaseLandmark : ILocation, IInteractable {
         if (defenders == null) {
             //set the defenders party as the party of the new defender
             defenders = newDefender.ownParty;
+            defenders.SetMaxCharacters(data.maxDefenderCount);
             //apply buffs, if any, to new defender party
             for (int i = 0; i < defenderBuffs.Count; i++) {
                 Buff currBuff = defenderBuffs[i];
@@ -1126,6 +1127,12 @@ public class BaseLandmark : ILocation, IInteractable {
     public bool IsDefenderOfLandmark(Party party) {
         if (defenders != null) {
             return defenders.id == party.id;
+        }
+        return false;
+    }
+    public bool HasEmptyDefenderSlot() {
+        if (defenders == null || !defenders.isFull) {
+            return true;
         }
         return false;
     }
