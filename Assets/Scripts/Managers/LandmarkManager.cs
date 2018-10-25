@@ -78,9 +78,6 @@ public class LandmarkManager : MonoBehaviour {
         if (!newLandmark.tileLocation.isCorrupted) {
             newLandmark.ConstructInitialInteractions();
         }
-        if(newLandmark.tileLocation.areaOfTile != null) {
-            newLandmark.tileLocation.areaOfTile.DetermineIfTileIsExposed(newLandmark.tileLocation);
-        }
         //newLandmark.GenerateDiagonalLeftTiles();
         //newLandmark.GenerateDiagonalRightTiles();
         //newLandmark.GenerateHorizontalTiles();
@@ -92,6 +89,9 @@ public class LandmarkManager : MonoBehaviour {
         //ConstructLandmarkObjects(landmarkData, newLandmark);
         //		AddInitialLandmarkItems (newLandmark);
         newLandmark.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(newLandmark.specificLandmarkType.ToString())) as StructureObj);
+        if (newLandmark.tileLocation.areaOfTile != null) {
+            newLandmark.tileLocation.areaOfTile.DetermineIfTileIsExposed(newLandmark.tileLocation);
+        }
 #endif
         return newLandmark;
     }
@@ -115,8 +115,12 @@ public class LandmarkManager : MonoBehaviour {
         if (!newLandmark.tileLocation.isCorrupted) {
             newLandmark.ConstructInitialInteractions();
         }
+
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
         newLandmark.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(newLandmark.specificLandmarkType.ToString())) as StructureObj);
+        if (newLandmark.tileLocation.areaOfTile != null) {
+            newLandmark.tileLocation.areaOfTile.DetermineIfTileIsExposed(newLandmark.tileLocation);
+        }
 #endif
         if (saveData.items != null) {
             for (int i = 0; i < saveData.items.Count; i++) {

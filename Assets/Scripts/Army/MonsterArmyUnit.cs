@@ -77,7 +77,7 @@ public class MonsterArmyUnit : Monster {
         int previous = this._currentHP;
         this._currentHP += amount;
         this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
-        int diff = previous - _currentHP;
+        int diff = maxHP - _currentHP;
         if (diff > 0) {
             int armyLoss = diff / _maxHP;
             AdjustArmyCount(-armyLoss);
