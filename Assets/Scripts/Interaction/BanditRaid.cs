@@ -78,12 +78,12 @@ public class BanditRaid : Interaction {
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
-                //cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
                 needsMinion = false,
                 effect = () => DoNothingEffect(state),
-                onStartDurationAction = () => SetDefaultActionDuration(),
+                onStartDurationAction = () => SetDefaultActionDurationAsRemainingTicks("Do nothing.", state),
             };
 
             state.AddActionOption(stopThemFromAttacking);
@@ -230,12 +230,6 @@ public class BanditRaid : Interaction {
         //PlayerManager.Instance.player.RemoveMinion(state.assignedMinion);
     }
 
-    private void SetDefaultActionDuration() {
-        ActionOption doNothingOption = _states["State 1"].actionOptions[2];
-        int remainingTicks = GameManager.Instance.GetTicksDifferenceOfTwoDates(GameManager.Instance.Today(), _states["State 1"].timeDate);
-        doNothingOption.duration = remainingTicks;
-        Debug.Log("Bandit Raid Set Do Nothing Option to " + doNothingOption.duration);
-    }
     private void ConstructAssaultSpawnWeights() {
         assaultSpawnWeights = new WeightedDictionary<LandmarkDefender>();
         firstElementAssaultSpawnWeights = new WeightedDictionary<LandmarkDefender>();

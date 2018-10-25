@@ -112,7 +112,7 @@ public class InteractionState {
         }
     }
     public void ActivateDefault() {
-        if(_interaction.currentState == this) {
+        if(_interaction.currentState == this && !_interaction.isActivated) {
             _defaultOption.ActivateOption(_interaction.interactable);
         }
     }

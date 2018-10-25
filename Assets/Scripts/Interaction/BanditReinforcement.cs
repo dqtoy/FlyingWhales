@@ -19,9 +19,6 @@ public class BanditReinforcement : Interaction {
             string startStateDesc = "The bandits are increasing their defensive army.";
             startState.SetDescription(startStateDesc);
             CreateActionOptions(startState);
-            GameDate dueDate = GameManager.Instance.Today();
-            dueDate.AddHours(50);
-            startState.SetTimeSchedule(startState.GetOption("Do Nothing."), dueDate); //default is do nothing
 
             //action option states
             InteractionState successCancelState = new InteractionState("Successfully Cancelled Reinforcement", this);
@@ -52,7 +49,7 @@ public class BanditReinforcement : Interaction {
                 duration = 0,
                 needsMinion = true,
                 effect = () => StopThemEffect(state),
-                onStartDurationAction = () => SetDefaultActionDuration("Stop Them", state),
+                onStartDurationAction = () => SetDefaultActionDurationAsRemainingTicks("Stop Them.", state),
             };
             ActionOption provideOwnUnit = new ActionOption {
                 interactionState = state,
@@ -70,11 +67,15 @@ public class BanditReinforcement : Interaction {
                 duration = 0,
                 needsMinion = true,
                 effect = () => DoNothingEffect(state),
-                onStartDurationAction = () => SetDefaultActionDuration("Do Nothing", state),
+                onStartDurationAction = () => SetDefaultActionDurationAsRemainingTicks("Do nothing.", state),
             };
             state.AddActionOption(stopThem);
             state.AddActionOption(provideOwnUnit);
             state.AddActionOption(doNothing);
+
+            GameDate dueDate = GameManager.Instance.Today();
+            dueDate.AddHours(50);
+            state.SetTimeSchedule(doNothing, dueDate); //default is do nothing
         }
     }
     #endregion
