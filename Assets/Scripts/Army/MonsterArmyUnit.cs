@@ -12,9 +12,9 @@ public class MonsterArmyUnit : Monster {
     public override int attackPower {
         get { return _attackPower * armyCount; }
     }
-    public override int speed {
-        get { return _speed * armyCount; }
-    }
+    //public override int speed {
+    //    get { return _speed * armyCount; }
+    //}
     public override int maxHP {
         get { return _maxHP * armyCount; }
     }

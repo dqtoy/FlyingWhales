@@ -41,6 +41,8 @@ public enum RACE{
     SLIME,
     BEAST,
     SKELETON,
+    DEMON,
+    ZOMBIE,
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
@@ -1017,6 +1019,7 @@ public enum INTERACTION_TYPE {
     ARMY_MOBILIZATION,
     UNFINISHED_CURSE,
     ARMY_ATTACKS,
+    SUSPICIOUS_SOLDIER_MEETING,
 }
 public enum REWARD {
     SUPPLY,

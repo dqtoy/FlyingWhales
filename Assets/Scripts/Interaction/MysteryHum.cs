@@ -82,10 +82,20 @@ public class MysteryHum : Interaction {
         SetCurrentState(_states[effectName]);
     }
     private void DemonAttacksRewardEffect(InteractionState state) {
-        //TODO: Demon attacks a player tile
+        PlayerManager.Instance.player.RemoveMinion(state.assignedMinion);
+        state.assignedMinion.SetEnabledState(true);
+
+        List<BaseLandmark> playerLandmarks = PlayerManager.Instance.player.demonicPortal.tileLocation.areaOfTile.landmarks;
+        BaseLandmark playerLandmarkToAttack = playerLandmarks[UnityEngine.Random.Range(0, playerLandmarks.Count)];
+        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+        state.assignedMinion.icharacter.currentParty.iactionData.AssignAction(characterAction, playerLandmarkToAttack.landmarkObj);
     }
     private void ArmyRecruitedRewardEffect(InteractionState state) {
-        //TODO: Gain Zombie Earthbinder army
+        if (!PlayerManager.Instance.player.areMinionsMaxed) {
+            CharacterArmyUnit zombieEarthbinders = CharacterManager.Instance.CreateCharacterArmyUnit("Earthbinder", RACE.ZOMBIE, PlayerManager.Instance.player.playerFaction, PlayerManager.Instance.player.demonicPortal);
+            zombieEarthbinders.LevelUp(5);
+            PlayerManager.Instance.player.AddMinion(new Minion(zombieEarthbinders, PlayerManager.Instance.player.GetAbility("Inspect")));
+        }
         state.assignedMinion.AdjustExp(1);
     }
 }

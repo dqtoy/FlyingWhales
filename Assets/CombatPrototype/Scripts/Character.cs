@@ -2185,6 +2185,41 @@ namespace ECS {
                 ResetToFullSP();
             }
         }
+        public void LevelUp(int amount) {
+            _level = amount;
+            if(_level < 1) {
+                _level = 1;
+            }
+            AllocateStats();
+            int multiplier = _level - 1;
+
+            //Add stats per level from class
+            _attackPower += (multiplier * (int) ((_characterClass.attackPowerPerLevel / 100f) * (float) _raceSetting.baseAttackPower));
+            _speed += (multiplier * (int) ((_characterClass.speedPerLevel / 100f) * (float) _raceSetting.baseSpeed));
+            AdjustMaxHP((multiplier * (int) ((_characterClass.hpPerLevel / 100f) * (float) _raceSetting.baseHP)));
+            _maxSP += _characterClass.spPerLevel;
+            //Add stats per level from race
+            if (_level > 1) {
+                if(_raceSetting.hpPerLevel.Length > 0) {
+                    int hpIndex = _level % _raceSetting.hpPerLevel.Length;
+                    hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
+                    AdjustMaxHP(_raceSetting.hpPerLevel[hpIndex - 1]);
+                }
+                if (_raceSetting.attackPerLevel.Length > 0) {
+                    int attackIndex = _level % _raceSetting.attackPerLevel.Length;
+                    attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
+                    _attackPower += _raceSetting.attackPerLevel[attackIndex - 1];
+                }
+            }
+
+            //Reset to full health and sp
+            ResetToFullHP();
+            ResetToFullSP();
+
+            //Reset Experience
+            _experience = 0;
+            RecomputeMaxExperience();
+        }
         public void OnCharacterClassChange() {
             if(_currentHP > _maxHP) {
                 _currentHP = _maxHP;

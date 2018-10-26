@@ -18,9 +18,9 @@ public class CharacterArmyUnit : Character {
     public override int attackPower {
         get { return _attackPower * armyCount; }
     }
-    public override int speed {
-        get { return _speed * armyCount; }
-    }
+    //public override int speed {
+    //    get { return _speed * armyCount; }
+    //}
     public override int maxHP {
         get { return _maxHP * armyCount; }
     }
@@ -32,9 +32,9 @@ public class CharacterArmyUnit : Character {
     //}
     #endregion
 
-    public CharacterArmyUnit(string className, RACE race, int armyCount) : base(className, race, GENDER.MALE) {
+    public CharacterArmyUnit(string className, RACE race) : base(className, race, GENDER.MALE) {
         this.armyCap = GetArmyCap();
-        this.armyCount = armyCount;
+        this.armyCount = _characterClass.armyCount;
     }
 
     #region Army Management
