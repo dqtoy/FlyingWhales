@@ -5,17 +5,21 @@ using TMPro;
 using UnityEngine.EventSystems;
 using EZObjectPools;
 
-public class CharacterIntelItem : PooledObject {
+public class CharacterIntelItem : PooledObject, IDragParentItem {
 
     private CharacterIntel _characterIntel;
 
     [SerializeField] private TextMeshProUGUI characterNameLbl;
     [SerializeField] private TextMeshProUGUI characterLvlClassLbl;
-    [SerializeField] private CharacterPortrait characterPortrait;
+    [SerializeField] private DraggableItem draggable;
+    public CharacterPortrait characterPortrait;
 
     #region getters/setters
     public ECS.Character character {
         get { return _characterIntel.character as ECS.Character; }
+    }
+    public object associatedObj {
+        get { return _characterIntel; }
     }
     #endregion
 
@@ -33,6 +37,7 @@ public class CharacterIntelItem : PooledObject {
         //characterPortrait.SetDimensions(42f);
         characterPortrait.GeneratePortrait(characterIntel.character, 95, true);
         UpdateCharacterInfo();
+        draggable.SetAssociatedObject(characterIntel);
         //UpdateAffiliations();
     }
     //public void UpdateAffiliations() {

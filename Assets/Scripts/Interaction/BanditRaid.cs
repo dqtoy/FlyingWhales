@@ -66,6 +66,7 @@ public class BanditRaid : Interaction {
                 name = "Stop them from attacking.",
                 duration = 10,
                 needsMinion = true,
+                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => StopThemFromAttackingEffect(state),
             };
             ActionOption provideSomeAssistance = new ActionOption {
@@ -74,6 +75,7 @@ public class BanditRaid : Interaction {
                 name = "Provide them some assistance.",
                 duration = 10,
                 needsMinion = true,
+                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => ProvideThemSomeAssistanceEffect(state),
             };
             ActionOption doNothing = new ActionOption {
@@ -82,6 +84,7 @@ public class BanditRaid : Interaction {
                 name = "Do nothing.",
                 duration = 0,
                 needsMinion = false,
+                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => DoNothingEffect(state),
                 onStartDurationAction = () => SetDefaultActionDurationAsRemainingTicks("Do nothing.", state),
             };

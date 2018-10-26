@@ -13,10 +13,20 @@ public class ActionOption {
     public Action effect;
     public Action onStartDurationAction;
     public Func<bool> canBeDoneAction;
-    public Minion assignedMinion;
     public List<System.Type> neededObjects;
+    public List<object> assignedObjects; //NOTE: assigned objects must be accurate with needed objects list, TODO: Change the 2 lists to use a dictionary instead
 
     private int _currentDuration;
+
+    #region getters/setters
+    public Minion assignedMinion {
+        get { return GetAssignedObjectOfType(typeof(Minion)) as Minion; }
+    }
+    #endregion
+
+    public ActionOption() {
+        assignedObjects = new List<object>();
+    }
 
     public void ActivateOption(IInteractable interactable) {
         PlayerManager.Instance.player.AdjustCurrency(cost.currency, -cost.amount);
@@ -28,6 +38,7 @@ public class ActionOption {
                 interactionState.interaction.SetActivatedState(true);
             } else {
                 //Can't go, no minion assigned
+                Debug.LogWarning("Can't go, no minion assigned");
             }
         } else {
             interactionState.interaction.SetActivatedState(true);
@@ -72,5 +83,30 @@ public class ActionOption {
             }
             interactionState.interaction.interactionItem.SetDescription(description);
         }
+    }
+
+    public void ClearAssignedObjects() {
+        assignedObjects.Clear();
+    }
+
+    public void AddAssignedObject(object obj) {
+        int index = assignedObjects.Count;
+        assignedObjects.Add(obj);
+        string summary = "Assigned object to option " + obj.GetType().ToString() + " at index " + index.ToString();
+        summary += "\nNeeded object types are ";
+        for (int i = 0; i < neededObjects.Count; i++) {
+            summary += neededObjects[i].ToString() + ", ";
+        }
+        Debug.Log(summary);
+    }
+
+    public object GetAssignedObjectOfType(System.Type type) {
+        for (int i = 0; i < assignedObjects.Count; i++) {
+            object currObject = assignedObjects[i];
+            if (currObject.GetType() == type) {
+                return currObject;
+            }
+        }
+        return null;
     }
 }

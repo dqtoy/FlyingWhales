@@ -7,7 +7,7 @@ public class ArmyUnitTraining : Interaction {
 
     private string _chosenClassName;
 
-    public ArmyUnitTraining(IInteractable interactable) : base(interactable, INTERACTION_TYPE.MYSTERY_HUM) {
+    public ArmyUnitTraining(IInteractable interactable) : base(interactable, INTERACTION_TYPE.ARMY_UNIT_TRAINING) {
         _name = "Army Unit Training";
     }
 
@@ -44,6 +44,7 @@ public class ArmyUnitTraining : Interaction {
                 name = "Stop them.",
                 duration = 5,
                 needsMinion = true,
+                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => StopThemOption(state),
             };
             ActionOption doNothingOption = new ActionOption {

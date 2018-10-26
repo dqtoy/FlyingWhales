@@ -57,6 +57,7 @@ public class UnfinishedCurse : Interaction {
                 name = "Attempt to complete the curse.",
                 duration = 10,
                 needsMinion = true,
+                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => CompleteCurseEffect(state),
             };
             ActionOption harnessMagic = new ActionOption {
@@ -65,6 +66,7 @@ public class UnfinishedCurse : Interaction {
                 name = "Harness its magic into Mana.",
                 duration = 10,
                 needsMinion = true,
+                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => HarnessMagicEffect(state),
             };
             ActionOption leaveAlone = new ActionOption {
@@ -147,6 +149,9 @@ public class UnfinishedCurse : Interaction {
         SetCurrentState(_states[effectName]);
     }
     private void ObtainManaEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1); //**Reward**: Demon gains Exp 1
+        //**Reward**: Mana Cache 1, Demon gains Exp 1
+        state.assignedMinion.AdjustExp(1);
+        Reward reward = InteractionManager.Instance.GetReward(InteractionManager.Mana_Cache_Reward_1);
+        PlayerManager.Instance.player.ClaimReward(state, reward);
     }
 }

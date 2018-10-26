@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using EZObjectPools;
 
-public class MinionItem : PooledObject {
+public class MinionItem : PooledObject, IDragParentItem {
     public TextMeshProUGUI nameLbl;
     public TextMeshProUGUI lvlLbl;
     public Slider expSlider;
@@ -25,6 +25,9 @@ public class MinionItem : PooledObject {
     public Minion minion {
         get { return _minion; }
     }
+    public object associatedObj {
+        get { return _minion; }
+    }
     #endregion
 
     public void SetMinion(Minion minion) {
@@ -36,11 +39,13 @@ public class MinionItem : PooledObject {
             bgImage.sprite = unlockedSprite;
             nameLbl.text = _minion.icharacter.name;
             minionDraggable.SetDraggable(true);
+            minionDraggable.SetAssociatedObject(_minion);
         } else {
             portrait.gameObject.SetActive(false);
             bgImage.sprite = lockedSprite;
             nameLbl.text = "???";
             minionDraggable.SetDraggable(false);
+            minionDraggable.SetAssociatedObject(null);
         }
         UpdateMinionItem();
     }

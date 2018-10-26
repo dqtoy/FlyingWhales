@@ -59,6 +59,7 @@ public class InvestigateInteraction : Interaction {
                 name = "Attack it.",
                 duration = 10,
                 needsMinion = true,
+                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => AttackItState(state)
             };
             ActionOption raidOption = new ActionOption {
@@ -67,6 +68,7 @@ public class InvestigateInteraction : Interaction {
                 name = "Raid it.",
                 duration = 10,
                 needsMinion = true,
+                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => RaidItState(state),
                 canBeDoneAction = CanBeRaided,
             };
@@ -88,6 +90,7 @@ public class InvestigateInteraction : Interaction {
                 name = "Attack it.",
                 duration = 10,
                 needsMinion = true,
+                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => AttackItState(state)
             };
             ActionOption raidOption = new ActionOption {
@@ -96,6 +99,7 @@ public class InvestigateInteraction : Interaction {
                 name = "Raid it.",
                 duration = 10,
                 needsMinion = true,
+                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => RaidItState(state),
                 canBeDoneAction = CanBeRaided,
 

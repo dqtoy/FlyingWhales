@@ -77,6 +77,7 @@ public class InteractionUI : MonoBehaviour {
     public void AddInteraction(Interaction interaction) {
         GameObject go = GameObject.Instantiate(interactionPrefab, scrollSnapContentTransform);
         InteractionItem interactionItem = go.GetComponent<InteractionItem>();
+        interactionItem.Initialize();
         _allInteractionItems.Add(interactionItem);
 
         GameObject toggleGO = GameObject.Instantiate(togglePrefab, toggleGroup.transform);
