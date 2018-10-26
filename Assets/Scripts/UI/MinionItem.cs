@@ -46,6 +46,7 @@ public class MinionItem : PooledObject, IDragParentItem {
             nameLbl.text = "???";
             minionDraggable.SetDraggable(false);
             minionDraggable.SetAssociatedObject(null);
+            grayedOutGO.SetActive(false);
         }
         UpdateMinionItem();
     }

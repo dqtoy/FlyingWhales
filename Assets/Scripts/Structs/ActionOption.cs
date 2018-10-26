@@ -109,8 +109,14 @@ public class ActionOption {
     public object GetAssignedObjectOfType(System.Type type) {
         for (int i = 0; i < assignedObjects.Count; i++) {
             object currObject = assignedObjects[i];
-            if (currObject.GetType() == type) {
-                return currObject;
+            if (type == typeof(IUnit)) {
+                if (currObject is IUnit) { //TODO: Make this more elegant!
+                    return currObject;
+                }
+            } else {
+                if (currObject.GetType() == type) {
+                    return currObject;
+                }
             }
         }
         return null;

@@ -6,6 +6,9 @@ public class BanditReinforcement : Interaction {
 
     private BaseLandmark landmark;
 
+    private WeightedDictionary<LandmarkDefender> assaultSpawnWeights;
+    private WeightedDictionary<LandmarkDefender> firstElementAssaultSpawnWeights; //TODO: Make this more elegant!
+
     public BanditReinforcement(IInteractable interactable) : base(interactable, INTERACTION_TYPE.BANDIT_REINFORCEMENT) {
         _name = "Bandit Reinforcement";
     }
@@ -14,7 +17,8 @@ public class BanditReinforcement : Interaction {
     public override void CreateStates() {
         if (_interactable is BaseLandmark) {
             landmark = _interactable as BaseLandmark;
-            
+            ConstructDefenseSpawnWeights();
+
             InteractionState startState = new InteractionState("State 1", this);
             string startStateDesc = "The bandits are increasing their defensive army.";
             startState.SetDescription(startStateDesc);
@@ -60,7 +64,7 @@ public class BanditReinforcement : Interaction {
                 description = "We offered %minion% to join the bandits.",
                 duration = 5,
                 needsMinion = true,
-                neededObjects = new List<System.Type>() { typeof(CharacterArmyUnit) },
+                neededObjects = new List<System.Type>() { typeof(IUnit) },
                 effect = () => ProvideOwnUnitEffect(state),
             };
             ActionOption doNothing = new ActionOption {
@@ -84,6 +88,49 @@ public class BanditReinforcement : Interaction {
     }
     #endregion
 
+    private void ConstructDefenseSpawnWeights() {
+        assaultSpawnWeights = new WeightedDictionary<LandmarkDefender>();
+        firstElementAssaultSpawnWeights = new WeightedDictionary<LandmarkDefender>();
+
+        LandmarkDefender marauder = new LandmarkDefender() {
+            className = "Marauder",
+            armyCount = 25
+        };
+        LandmarkDefender bowman = new LandmarkDefender() {
+            className = "Bowman",
+            armyCount = 25
+        };
+        LandmarkDefender healer = new LandmarkDefender() {
+            className = "Healer",
+            armyCount = 25
+        };
+
+        firstElementAssaultSpawnWeights.AddElement(marauder, 35);
+        firstElementAssaultSpawnWeights.AddElement(bowman, 20);
+
+        assaultSpawnWeights.AddElement(marauder, 35);
+        assaultSpawnWeights.AddElement(bowman, 20);
+        assaultSpawnWeights.AddElement(healer, 10);
+    }
+    private CharacterParty CreateAssaultArmy(int unitCount) {
+        CharacterParty army = null;
+        for (int i = 0; i < unitCount; i++) {
+            LandmarkDefender chosenDefender;
+            if (i == 0) {
+                chosenDefender = firstElementAssaultSpawnWeights.PickRandomElementGivenWeights();
+            } else {
+                chosenDefender = assaultSpawnWeights.PickRandomElementGivenWeights();
+            }
+            CharacterArmyUnit armyUnit = CharacterManager.Instance.CreateCharacterArmyUnit(landmark.owner.race, chosenDefender, landmark.owner, landmark);
+            if (army == null) {
+                army = armyUnit.party as CharacterParty;
+            } else {
+                army.AddCharacter(armyUnit);
+            }
+        }
+        return army;
+    }
+
     private void StopThemEffect(InteractionState state) {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
         effectWeights.AddElement("Successfully Cancelled Reinforcement", 25);
@@ -98,13 +145,13 @@ public class BanditReinforcement : Interaction {
     }
     private void ProvideOwnUnitEffect(InteractionState state) {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement("Gift accepted", 25);
-        effectWeights.AddElement("Gift rejected", 5);
+        effectWeights.AddElement("Gift Accepted", 25);
+        effectWeights.AddElement("Gift Rejected", 5);
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
-        if (chosenEffect == "Gift accepted") {
+        if (chosenEffect == "Gift Accepted") {
             GiftAccepted(state, chosenEffect);
-        } else if (chosenEffect == "Gift rejected") {
+        } else if (chosenEffect == "Gift Rejected") {
             GiftRejected(state, chosenEffect);
         }
     }
@@ -127,9 +174,11 @@ public class BanditReinforcement : Interaction {
         state.assignedMinion.AdjustExp(1);
     }
     private void FailedToCancelReinforcement(InteractionState state, string effectName) {
-        //TODO: **Mechanics**: create an Army Unit from Defense Spawn Weights and add it to the Tile Defenders
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " failed to distract the bandits. A new [Race] [Army Role] have been formed to defend the camp.");
+        //**Mechanics**: create an Army Unit from Defense Spawn Weights and add it to the Tile Defenders
+        CharacterArmyUnit createdUnit = CreateAssaultArmy(1).owner as CharacterArmyUnit;
+        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " failed to distract the bandits. A new " + Utilities.NormalizeString(createdUnit.race.ToString()) + " " + createdUnit.characterClass.className + " have been formed to defend the camp.");
         SetCurrentState(_states[effectName]);
+        landmark.AddDefender(createdUnit);
     }
     private void FailedToCancelReinforcementEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
@@ -137,11 +186,17 @@ public class BanditReinforcement : Interaction {
     }
 
     private void GiftAccepted(InteractionState state, string effectName) {
-        _states[effectName].SetDescription("You gave them " + state.chosenOption.assignedMinion.icharacter.name + " to aid in their defenses and they have graciously accepted.");
+        _states[effectName].SetDescription("You gave them " + state.chosenOption.assignedUnit.name + " to aid in their defenses and they have graciously accepted.");
         SetCurrentState(_states[effectName]);
+        //remove assigned unit and add it to the Bandit faction and to their Tile Defenders
+        if (state.chosenOption.assignedUnit is Minion) {
+            PlayerManager.Instance.player.RemoveMinion(state.chosenOption.assignedUnit as Minion);
+            landmark.AddDefender((state.chosenOption.assignedUnit as Minion).icharacter);
+        }
     }
     private void GiftAcceptedEffect(InteractionState state) {
-        //remove assigned unit and add it to the Bandit faction and to their Tile Defenders
+        
+        
     }
     private void GiftRejected(InteractionState state, string effectName) {
         _states[effectName].SetDescription("You gave them " + state.chosenOption.assignedMinion.icharacter.name + " to aid in their defenses but they are suspicious of your intentions and have rejected your offer.");
@@ -157,4 +212,5 @@ public class BanditReinforcement : Interaction {
     private void BanditReinforcementEffect(InteractionState state) {
 
     }
+
 }
