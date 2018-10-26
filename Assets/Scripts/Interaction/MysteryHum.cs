@@ -35,7 +35,7 @@ public class MysteryHum : Interaction {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 30, currency = CURRENCY.SUPPLY },
                 name = "Send out a Demon.",
-                description = "We have sent %minion% to explore the interesting location.",
+                description = "We have sent %minion% to investigate the source of the mysterious humming.",
                 duration = 10,
                 needsMinion = true,
                 neededObjects = new List<System.Type>() { typeof(Minion) },
