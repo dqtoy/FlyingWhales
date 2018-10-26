@@ -269,7 +269,7 @@ public class BanditRaid : Interaction {
             }
             CharacterArmyUnit armyUnit = CharacterManager.Instance.CreateCharacterArmyUnit(originLandmark.owner.race, chosenDefender, originLandmark.owner, originLandmark);
             if (army == null) {
-                army = armyUnit.party;
+                army = armyUnit.party as CharacterParty;
             } else {
                 army.AddCharacter(armyUnit);
             }

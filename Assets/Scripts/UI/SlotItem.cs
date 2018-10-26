@@ -27,7 +27,7 @@ public class SlotItem : MonoBehaviour {
     public void OnDropItemAtDropZone(Transform trans) { //this is used to filter if the dragged object is valid for this slot
         IDragParentItem parentItem = trans.gameObject.GetComponent<IDragParentItem>();
         if (parentItem != null) {
-            if (parentItem.associatedObj.GetType() == neededType) {
+            if (parentItem.associatedObj.GetType() == neededType || parentItem.associatedObj.GetType().BaseType == neededType) {
                 if (onItemDropped != null) {
                     onItemDropped.Invoke(parentItem);
                 }

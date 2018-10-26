@@ -67,7 +67,7 @@ public class TheSpiderQueen : Interaction {
                 description = "We have sent %minion% to kill the Spider Queen while it is vulnerable.",
                 duration = 10,
                 needsMinion = true,
-                neededObjects = new List<System.Type>() { typeof(CharacterArmyUnit) },
+                neededObjects = new List<System.Type>() { typeof(IUnit) },
                 effect = () => AttemptToKillItEffect(state),
             };
             ActionOption attemptToCorrupt = new ActionOption {
@@ -150,9 +150,13 @@ public class TheSpiderQueen : Interaction {
     }
 
     private void AttackLocation(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " has been sent to attack " + spiderQueen.name + " at " + landmark.landmarkName + ".");
+        _states[effectName].SetDescription(state.chosenOption.assignedUnit.name + " has been sent to attack " + spiderQueen.name + " at " + landmark.landmarkName + ".");
         SetCurrentState(_states[effectName]);
         //**Note**: Queen should join combat.
+
+        //force spawned army to raid target
+        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+        state.chosenOption.assignedUnit.party.iactionData.AssignAction(characterAction, landmark.landmarkObj);
     }
     private void AttackLocationEffect(InteractionState state) {
         
@@ -172,7 +176,7 @@ public class TheSpiderQueen : Interaction {
     }
     private void TransformRitualFailureEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        state.chosenOption.assignedMinion.AdjustExp(1);
+        state.assignedMinion.AdjustExp(1);
     }
     private void TransformRitualCriticalFailure(InteractionState state, string effectName) {
         _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " performed the Transform Ritual but the Queen's protectors discovered him at the last minute and killed him before he was able to complete the ritual.");
@@ -180,7 +184,7 @@ public class TheSpiderQueen : Interaction {
     }
     private void TransformRitualCriticalFailureEffect(InteractionState state) {
         //**Effect**: Demon is removed from Minion List
-        PlayerManager.Instance.player.RemoveMinion(state.chosenOption.assignedMinion);
+        PlayerManager.Instance.player.RemoveMinion(state.assignedMinion);
     }
 
     private void GainSupplies(InteractionState state, string effectName) {
@@ -189,7 +193,7 @@ public class TheSpiderQueen : Interaction {
     }
     private void GainSuppliesEffect(InteractionState state) {
         //**Reward**: Supply Cache Reward 1, Demon gains Exp 1
-        state.chosenOption.assignedMinion.AdjustExp(1);
+        state.assignedMinion.AdjustExp(1);
         Reward reward = InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1);
         PlayerManager.Instance.player.ClaimReward(state, reward);
         landmark.tileLocation.areaOfTile.PayForReward(reward);
@@ -200,7 +204,7 @@ public class TheSpiderQueen : Interaction {
     }
     private void DemonDiesEffect(InteractionState state) {
         //**Effect**: Demon is removed from Minion List
-        PlayerManager.Instance.player.RemoveMinion(state.chosenOption.assignedMinion);
+        PlayerManager.Instance.player.RemoveMinion(state.assignedMinion);
     }
     private void SpidersAttack(InteractionState state, string effectName) {
         _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " was discovered while he was sneaking into the Spider Lair. The Spiders have sent out an army to attack us in retaliation.");

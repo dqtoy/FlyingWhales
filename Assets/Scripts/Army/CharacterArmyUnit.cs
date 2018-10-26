@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterArmyUnit : Character {
+public class CharacterArmyUnit : Character, IUnit {
 
 	public int armyCount { get; private set; }
     private int armyCap;
@@ -30,6 +30,9 @@ public class CharacterArmyUnit : Character {
     //public override Party currentParty {
     //    get { return _currentParty; }
     //}
+    public new Party party {
+        get { return base.party; }
+    }
     #endregion
 
     public CharacterArmyUnit(string className, RACE race) : base(className, race, GENDER.MALE) {
@@ -97,4 +100,9 @@ public class CharacterArmyUnit : Character {
     }
     #endregion
 
+}
+
+public interface IUnit {
+    string name { get; }
+    Party party { get; }
 }

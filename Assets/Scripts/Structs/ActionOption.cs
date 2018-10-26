@@ -19,6 +19,9 @@ public class ActionOption {
     private int _currentDuration;
 
     #region getters/setters
+    public IUnit assignedUnit {
+        get { return GetAssignedObjectOfType(typeof(IUnit)) as IUnit; }
+    }
     public Minion assignedMinion {
         get { return GetAssignedObjectOfType(typeof(Minion)) as Minion; }
     }

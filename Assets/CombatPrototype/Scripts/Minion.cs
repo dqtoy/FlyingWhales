@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 
-public class Minion {
+public class Minion : IUnit {
 
     private MinionItem _minionItem;
     private PlayerAbility _ability;
@@ -19,6 +19,9 @@ public class Minion {
 
 
     #region getters/setters
+    public string name {
+        get { return icharacter.name; }
+    }
     public PlayerAbility ability {
         get { return _ability; }
     }
@@ -45,6 +48,9 @@ public class Minion {
     }
     public string strType {
         get { return _strType; }
+    }
+    public Party party {
+        get { return icharacter.ownParty; }
     }
     #endregion
 
