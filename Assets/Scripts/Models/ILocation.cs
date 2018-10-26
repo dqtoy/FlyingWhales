@@ -8,6 +8,7 @@ public interface ILocation {
 	LOCATION_IDENTIFIER locIdentifier { get; }
 	HexTile tileLocation { get; }
     string locationName { get; }
+    string thisName { get; }
     List<Party> charactersAtLocation { get; }
 
     void AddCharacterToLocation(Party iparty);

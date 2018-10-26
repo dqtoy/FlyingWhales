@@ -65,6 +65,7 @@ public class Minion {
         _lvl = 1;
         _exp = 0;
         _type = demonType;
+        _strType = Utilities.NormalizeString(_type.ToString());
         //_strType = Utilities.NormalizeString(_type.ToString());
         //PlayerManager.Instance.player.demonicPortal.AddCharacterHomeOnLandmark(_icharacter);
         //PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(_icharacter.ownParty);

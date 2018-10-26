@@ -88,6 +88,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public int xCoordinate { get { return data.xCoordinate; } }
     public int yCoordinate { get { return data.yCoordinate; } }
     public string tileName { get { return data.tileName; } }
+    public string thisName { get { return data.tileName; } }
     public float elevationNoise { get { return data.elevationNoise; } }
     public float moistureNoise { get { return data.moistureNoise; } }
     public float temperature { get { return data.temperature; } }

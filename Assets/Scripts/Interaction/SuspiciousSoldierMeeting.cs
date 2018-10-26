@@ -117,7 +117,7 @@ public class SuspiciousSoldierMeeting : Interaction {
 
     #region State Effects
     private void ReduceDefendersRewardEffect(InteractionState state) {
-        //TODO: Each Defender slot in the Garrison loses a random percentage between 15% to 50%
+        //Each Defender slot in the Garrison loses a random percentage between 15% to 50%
         if(_interactable is BaseLandmark) {
             BaseLandmark landmark = _interactable as BaseLandmark;
             if(landmark.defenders != null) {
@@ -141,10 +141,12 @@ public class SuspiciousSoldierMeeting : Interaction {
         state.assignedMinion.AdjustExp(1);
     }
     private void WarDeclaredRewardEffect(InteractionState state) {
+        //Tile owner faction will declare war on player
         state.assignedMinion.AdjustExp(1);
         FactionManager.Instance.DeclareWarBetween(_interactable.faction, PlayerManager.Instance.player.playerFaction);
     }
     private void GeneralDiesRewardEffect(InteractionState state) {
+        //Resident General dies by assassination
         state.assignedMinion.AdjustExp(1);
         if (_interactable is BaseLandmark) {
             BaseLandmark landmark = _interactable as BaseLandmark;

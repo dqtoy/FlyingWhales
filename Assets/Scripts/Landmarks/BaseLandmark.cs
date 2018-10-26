@@ -60,6 +60,9 @@ public class BaseLandmark : ILocation, IInteractable {
     public string name {
         get { return landmarkName; }
     }
+    public string thisName {
+        get { return landmarkName; }
+    }
     public string locationName {
         get { return landmarkName + " " + tileLocation.locationName; }
     }

@@ -427,15 +427,33 @@ public class Player : ILeader {
     public void CreateInitialMinions() {
         PlayerUI.Instance.ResetAllMinionItems();
         _minions = new List<Minion>();
-        AddMinion(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal, false), GetAbility("Inspect")));
-        AddMinion(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal, false), GetAbility("Spook")));
-        AddMinion(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal, false), GetAbility("Mark")));
-        AddMinion(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal, false), GetAbility("Awaken")));
-        AddMinion(new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, "Farmer", RACE.HUMANS, GENDER.MALE, playerFaction, _demonicPortal, false), GetAbility("Awaken Desire")));
+        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Inspect", false));
+        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Spook", false));
+        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Mark", false));
+        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Awaken", false));
+        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Awaken Desire", false));
 
         //UpdateMinions();
         PlayerUI.Instance.minionsScrollRect.verticalNormalizedPosition = 1f;
         PlayerUI.Instance.OnStartMinionUI();
+    }
+    public Minion CreateNewMinion(string className, RACE race, DEMON_TYPE demonType, string abilityName, bool isArmy) {
+        Minion minion = null;
+        if (isArmy) {
+            minion = new Minion(CharacterManager.Instance.CreateCharacterArmyUnit(className, race, playerFaction, _demonicPortal), GetAbility(abilityName), demonType);
+        } else {
+            minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, className, race, GENDER.MALE, playerFaction, _demonicPortal, false), GetAbility(abilityName), demonType);
+        }
+        return minion;
+    }
+    public Minion CreateNewMinion(string className, RACE race, string abilityName, bool isArmy) {
+        Minion minion = null;
+        if (isArmy) {
+            minion = new Minion(CharacterManager.Instance.CreateCharacterArmyUnit(className, race, playerFaction, _demonicPortal), GetAbility(abilityName));
+        } else {
+            minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, className, race, GENDER.MALE, playerFaction, _demonicPortal, false), GetAbility(abilityName));
+        }
+        return minion;
     }
     public void UpdateMinions() {
         for (int i = 0; i < _minions.Count; i++) {
