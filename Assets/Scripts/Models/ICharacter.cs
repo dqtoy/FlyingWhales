@@ -58,6 +58,9 @@ public interface ICharacter {
     void ResetToFullSP();
     void Initialize();
     void Death();
+    void UpgradeWeapon();
+    void UpgradeArmor();
+    void UpgradeAccessory();
     void FaintOrDeath(ICharacter killer);
     void SetSide(ECS.SIDES side);
     void SetRowNumber(int row);

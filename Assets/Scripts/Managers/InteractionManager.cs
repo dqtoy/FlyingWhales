@@ -69,6 +69,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.KILLER_ON_THE_LOOSE:
                 createdInteraction = new KillerOnTheLoose(interactable);
                 break;
+            case INTERACTION_TYPE.MYSTERIOUS_SARCOPHAGUS:
+                createdInteraction = new MysteriousSarcophagus(interactable);
+                break;
         }
         return createdInteraction;
     }
