@@ -70,9 +70,16 @@ public class SuspiciousSoldierMeeting : Interaction {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
         effectWeights.AddElement("Reduce Defenders", 30);
         effectWeights.AddElement("Demon Disappears", 5);
-        effectWeights.AddElement("War Declared", 5);
-        effectWeights.AddElement("General Dies", 5);
         effectWeights.AddElement("Nothing Happens", 15);
+        if (_interactable.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+            effectWeights.AddElement("War Declared", 5);
+        }
+        if (_interactable is BaseLandmark) {
+            BaseLandmark landmark = _interactable as BaseLandmark;
+            if (landmark.GetResidentCharacterOfClass("General") != null) {
+                effectWeights.AddElement("General Dies", 5);
+            }
+        }
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         if (chosenEffect == "Reduce Defenders") {
@@ -90,27 +97,64 @@ public class SuspiciousSoldierMeeting : Interaction {
 
     #region States
     private void ReduceDefendersRewardState(InteractionState state, string stateName) {
-
+        _states[stateName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " was able to tempt the disgruntled soldiers to abandon their posts. A significant amount of defenders are now missing from the Garrison!");
+        SetCurrentState(_states[stateName]);
     }
     private void WarDeclaredRewardState(InteractionState state, string stateName) {
-
+        _states[stateName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " was discovered by the soldiers! He managed to run away unscathed but " + _interactable.faction.name + " is now aware of our sabotage attempts and have declared war upon us.");
+        SetCurrentState(_states[stateName]);
     }
     private void GeneralDiesRewardState(InteractionState state, string stateName) {
-
+        _states[stateName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " discovered that the soldiers were planning a surprise party for the General's birthday. Knowing that the General is alone now, he slipped in and assassinated him successfully.");
+        SetCurrentState(_states[stateName]);
     }
     private void NothingHappensRewardState(InteractionState state, string stateName) {
-
+        _states[stateName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " followed the soldiers and found that they were merely having a drunken party away from their superiors.");
+        SetCurrentState(_states[stateName]);
     }
     #endregion
 
     #region State Effects
     private void ReduceDefendersRewardEffect(InteractionState state) {
+        //TODO: Each Defender slot in the Garrison loses a random percentage between 15% to 50%
+        if(_interactable is BaseLandmark) {
+            BaseLandmark landmark = _interactable as BaseLandmark;
+            if(landmark.defenders != null) {
+                for (int i = 0; i < landmark.defenders.icharacters.Count; i++) {
+                    if(landmark.defenders.icharacters[i] is CharacterArmyUnit) {
+                        CharacterArmyUnit defenderArmy = landmark.defenders.icharacters[i] as CharacterArmyUnit;
+                        int percentageLoss = UnityEngine.Random.Range(15, 51);
+                        float percentage = percentageLoss / 100f;
+                        int loss = (int)(defenderArmy.armyCount * percentage);
+                        defenderArmy.AdjustArmyCount(-loss);
+                    } else if (landmark.defenders.icharacters[i] is MonsterArmyUnit) {
+                        MonsterArmyUnit defenderArmy = landmark.defenders.icharacters[i] as MonsterArmyUnit;
+                        int percentageLoss = UnityEngine.Random.Range(15, 51);
+                        float percentage = percentageLoss / 100f;
+                        int loss = (int) (defenderArmy.armyCount * percentage);
+                        defenderArmy.AdjustArmyCount(-loss);
+                    }
+                }
+            }
+        }
+        state.assignedMinion.AdjustExp(1);
     }
     private void WarDeclaredRewardEffect(InteractionState state) {
+        state.assignedMinion.AdjustExp(1);
+        FactionManager.Instance.DeclareWarBetween(_interactable.faction, PlayerManager.Instance.player.playerFaction);
     }
     private void GeneralDiesRewardEffect(InteractionState state) {
+        state.assignedMinion.AdjustExp(1);
+        if (_interactable is BaseLandmark) {
+            BaseLandmark landmark = _interactable as BaseLandmark;
+            ICharacter icharacter = landmark.GetResidentCharacterOfClass("General");
+            if (icharacter != null) {
+                icharacter.Assassinate(state.assignedMinion.icharacter);
+            }
+        }
     }
     private void NothingHappensRewardEffect(InteractionState state) {
+        state.assignedMinion.AdjustExp(1);
     }
     #endregion
 }

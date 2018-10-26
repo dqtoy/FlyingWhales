@@ -790,12 +790,17 @@ namespace ECS {
                 Debug.Log(this.name + " died!");
             }
 		}
+        public void Assassinate(ICharacter assassin) {
+            Debug.Log(assassin.name + " assassinated " + name);
+            Death();
+        }
         internal void AddActionOnDeath(OnCharacterDeath onDeathAction) {
             onCharacterDeath += onDeathAction;
         }
         internal void RemoveActionOnDeath(OnCharacterDeath onDeathAction) {
             onCharacterDeath -= onDeathAction;
         }
+        
 
         #region Items
 		//If a character picks up an item, it is automatically added to his/her inventory

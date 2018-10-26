@@ -684,6 +684,10 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public CharacterAttribute GetAttribute(string attribute) {
         return null;
     }
+    public void Assassinate(ICharacter assassin) {
+        Debug.Log(assassin.name + " assassinated " + name);
+        Death();
+    }
     #endregion
 
     #region Squads

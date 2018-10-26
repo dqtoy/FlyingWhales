@@ -76,6 +76,7 @@ public interface ICharacter {
     void AddMiscAction(CharacterAction characterAction);
     void RemoveMiscAction(ACTION_TYPE actionType);
     void SetMinion(Minion minion);
+    void Assassinate(ICharacter assassin);
     bool InviteToParty(ICharacter inviter);
     bool IsInOwnParty();
     Party CreateOwnParty();
