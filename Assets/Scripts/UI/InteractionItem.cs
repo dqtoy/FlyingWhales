@@ -47,7 +47,6 @@ public class InteractionItem : MonoBehaviour {
     }
 
     private void Start() {
-        neededObjectSlots = new List<CustomDropZone>();
         Messenger.AddListener<Interaction>(Signals.UPDATED_INTERACTION_STATE, OnUpdatedInteractionState);
         Messenger.AddListener<Interaction>(Signals.CHANGED_ACTIVATED_STATE, OnChangedActivatedState);
     }
@@ -114,7 +113,13 @@ public class InteractionItem : MonoBehaviour {
                         currItem.gameObject.SetActive(true);
                         currItem.PlaceObject(assignedObject);
                     }
-                    
+                }
+                if (actionOption.neededObjects == null || actionOption.neededObjects.Count == 0) {
+                    //no needed slots
+                    confirmBtnRect.anchoredPosition = confirmBtnPosNoSlot;
+                } else {
+                    //needs slots
+                    confirmBtnRect.anchoredPosition = confirmBtnPosWithSlot;
                 }
                 //if (actionOption.assignedMinion != null) {
                 //    portrait.GeneratePortrait(actionOption.assignedMinion.icharacter.portraitSettings, 95, true);
@@ -125,6 +130,7 @@ public class InteractionItem : MonoBehaviour {
         } else {
             if (_interaction.currentState.isEnd) {
                 confirmBtn.gameObject.SetActive(true);
+                confirmBtnRect.anchoredPosition = confirmBtnPosNoSlot;
             }
             //portrait.GeneratePortrait(null, 95, true);
         }
@@ -148,24 +154,26 @@ public class InteractionItem : MonoBehaviour {
         }
         _currentSelectedActionOption = actionOption;
         currentNeededObjectIndex = 0; //reset index
-        confirmBtn.gameObject.SetActive(true);
-        if (actionOption.neededObjects == null || actionOption.neededObjects.Count == 0) {
-            //no needed slots
-            confirmBtnRect.anchoredPosition = confirmBtnPosNoSlot;
-            for (int i = 0; i < slotItems.Length; i++) {
-                slotItems[i].gameObject.SetActive(false);
+        if (actionOption != null) {
+            confirmBtn.gameObject.SetActive(true);
+            if (actionOption.neededObjects == null || actionOption.neededObjects.Count == 0) {
+                //no needed slots
+                confirmBtnRect.anchoredPosition = confirmBtnPosNoSlot;
+                for (int i = 0; i < slotItems.Length; i++) {
+                    slotItems[i].gameObject.SetActive(false);
+                }
+                confirmBtn.interactable = true;
+            } else {
+                //needs slots
+                confirmBtnRect.anchoredPosition = confirmBtnPosWithSlot;
+                slotItems[0].gameObject.SetActive(true);
+                for (int i = 1; i < slotItems.Length; i++) {
+                    slotItems[i].gameObject.SetActive(false);
+                }
+                LoadSlotData();
+                confirmBtn.interactable = false;
+                UpdateSideMenu();
             }
-            confirmBtn.interactable = true;
-        } else {
-            //needs slots
-            confirmBtnRect.anchoredPosition = confirmBtnPosWithSlot;
-            slotItems[0].gameObject.SetActive(true);
-            for (int i = 1; i < slotItems.Length; i++) {
-                slotItems[i].gameObject.SetActive(false);
-            }
-            LoadSlotData();
-            confirmBtn.interactable = false;
-            UpdateSideMenu();
         }
     }
     private void LoadSlotData() {
@@ -178,7 +186,7 @@ public class InteractionItem : MonoBehaviour {
     }
 
     public void OnClickConfirm() {
-        if (_currentSelectedActionOption.neededObjects == null || _currentSelectedActionOption.neededObjects.Count <= 0) {
+        if (_currentSelectedActionOption == null || _currentSelectedActionOption.neededObjects == null || _currentSelectedActionOption.neededObjects.Count <= 0) {
             if (!_interaction.currentState.isEnd) {
                 _currentSelectedActionOption.ActivateOption(_interaction.interactable);
             } else {
@@ -250,10 +258,11 @@ public class InteractionItem : MonoBehaviour {
     }
 
     public void ClearNeededObjectSlots() {
-        for (int i = 0; i < neededObjectSlots.Count; i++) {
-            ObjectPoolManager.Instance.DestroyObject(neededObjectSlots[i].gameObject);
+        for (int i = 0; i < slotItems.Length; i++) {
+            SlotItem currItem = slotItems[i];
+            currItem.ClearSlot();
+            currItem.gameObject.SetActive(false);
         }
-        neededObjectSlots.Clear();
     }
 
     private void UpdateSideMenu() {
