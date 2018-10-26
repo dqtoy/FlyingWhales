@@ -38,7 +38,6 @@ public class CharactersIntelUI : UIMenu {
     public override void CloseMenu() {
         //base.CloseMenu();
         isShowing = false;
-        UIManager.Instance.OnCloseCharacterSummary();
     }
 
     private void AddCharacterEntry(ECS.Character character) {
@@ -50,7 +49,7 @@ public class CharactersIntelUI : UIMenu {
         CharacterIntelItem newEntry = newEntryGO.GetComponent<CharacterIntelItem>();
         newEntry.SetCharacter(character.characterIntel);
         newEntry.Initialize();
-        newEntry.gameObject.SetActive(false);
+        //newEntry.gameObject.SetActive(false);
         characterEntries.Add(character, newEntry);
     }
     private void RemoveCharacterEntry(ECS.Character character) {

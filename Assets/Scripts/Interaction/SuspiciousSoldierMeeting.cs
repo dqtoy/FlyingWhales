@@ -45,6 +45,7 @@ public class SuspiciousSoldierMeeting : Interaction {
                 description = "We have sent %minion% to watch the soldiers and follow them on their next secret meeting.",
                 duration = 10,
                 needsMinion = true,
+                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => SendOutDemonOption(state),
             };
             ActionOption doNothingOption = new ActionOption {

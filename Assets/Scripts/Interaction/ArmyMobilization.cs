@@ -41,6 +41,7 @@ public class ArmyMobilization : Interaction {
                 name = "Stop them.",
                 duration = 5,
                 needsMinion = true,
+                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => StopThemOption(state),
             };
             ActionOption doNothingOption = new ActionOption {

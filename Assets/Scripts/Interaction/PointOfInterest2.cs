@@ -53,6 +53,7 @@ public class PointOfInterest2 : Interaction {
                 description = "We have sent %minion% to explore the interesting location.",
                 duration = 15,
                 needsMinion = true,
+                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => SendOutDemonEffect(state),
             };
 

@@ -91,6 +91,10 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private Transform playerPickerContentTransform;
     [SerializeField] private GameObject playerPickerGO;
     [SerializeField] private GameObject playerPickerButtonPrefab;
+    [SerializeField] private Toggle minionsMenuToggle;
+    [SerializeField] private Toggle charactersMenuToggle;
+    [SerializeField] private Toggle locationsMenuToggle;
+    [SerializeField] private Toggle factionsMenuToggle;
 
     private List<PlayerPickerButton> currentActivePlayerPickerButtons;
 
@@ -113,8 +117,6 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private int SMALLEST_FONT_SIZE = 12;
 
     internal List<object> eventLogsQueue = new List<object>();
-
-    //private List<UIMenuSettings> _menuHistory;
 
     #region getters/setters
     //internal GameObject minimapTexture {
@@ -595,8 +597,7 @@ public class UIManager : MonoBehaviour {
     #region Landmark Info
     [Space(10)]
     [Header("Landmark Info")]
-    [SerializeField]
-    internal LandmarkInfoUI landmarkInfoUI;
+    [SerializeField] internal LandmarkInfoUI landmarkInfoUI;
     public void ShowLandmarkInfo(BaseLandmark landmark) {
         //HideMainUI();
         //if (factionInfoUI.isShowing) {
@@ -777,8 +778,7 @@ public class UIManager : MonoBehaviour {
     #region Monster Info
     [Space(10)]
     [Header("Monster Info")]
-    [SerializeField]
-    internal MonsterInfoUI monsterInfoUI;
+    [SerializeField] internal MonsterInfoUI monsterInfoUI;
     public void ShowMonsterInfo(Monster monster) {
         //HideMainUI();
         if (landmarkInfoUI.isShowing) {
@@ -813,8 +813,7 @@ public class UIManager : MonoBehaviour {
     #region Player Actions
     [Space(10)]
     [Header("Player Actions")]
-    [SerializeField]
-    internal PlayerActionsUI playerActionsUI;
+    [SerializeField] internal PlayerActionsUI playerActionsUI;
     public void ShowPlayerActions(BaseLandmark landmark) {
         playerActionsUI.SetData(landmark);
         playerActionsUI.OpenMenu();
@@ -871,7 +870,6 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Characters Summary")]
     [SerializeField] private GameObject charactersSummaryGO;
-    [SerializeField] private Toggle charactersToggleBtn;
     public CharactersIntelUI charactersSummaryMenu;
     public void ShowCharactersSummary() {
         //HideQuestsSummary();
@@ -883,27 +881,6 @@ public class UIManager : MonoBehaviour {
         //worldInfoCharactersSelectedGO.SetActive(false);
         charactersSummaryMenu.CloseMenu();
     }
-    //public void UpdateCharacterSummary() {
-    //    string questSummary = string.Empty;
-    //    questSummary += "[b]Available Quests: [/b]";
-    //    for (int i = 0; i < QuestManager.Instance.availableQuests.Count; i++) {
-    //        Quest currentQuest = QuestManager.Instance.availableQuests[i];
-    //        if (!currentQuest.isDone) {
-    //            questSummary += "\n" + currentQuest.questURLName;
-    //            questSummary += "\n   Characters on Quest: ";
-    //            if (currentQuest.acceptedCharacters.Count > 0) {
-    //                for (int j = 0; j < currentQuest.acceptedCharacters.Count; j++) {
-    //                    Character currCharacter = currentQuest.acceptedCharacters[j];
-    //                    questSummary += "\n" + currCharacter.urlName + " (" + currCharacter.currentQuestPhase.phaseName + ")";
-    //                }
-    //            } else {
-    //                questSummary += "NONE";
-    //            }
-    //        }
-    //    }
-    //    questsSummaryLbl.text = questSummary;
-    //    questsSummaryLbl.ResizeCollider();
-    //}
     public void ToggleCharacterSummary() {
         if (charactersSummaryMenu.isShowing) {
             HideCharactersSummary();
@@ -911,16 +888,12 @@ public class UIManager : MonoBehaviour {
             ShowCharactersSummary();
         }
     }
-    public void OnCloseCharacterSummary() {
-        charactersToggleBtn.isOn = false;
-    }
     #endregion
 
     #region Faction Summary
     [Space(10)]
     [Header("Factions Summary")]
     public FactionIntelUI factionsSummaryMenu;
-    [SerializeField] private Toggle factionsToggleBtn;
     public void ShowFactionsSummary() {
         factionsSummaryMenu.OpenMenu();
     }
@@ -933,9 +906,6 @@ public class UIManager : MonoBehaviour {
         } else {
             ShowFactionsSummary();
         }
-    }
-    public void OnCloseFactionSummary() {
-        factionsToggleBtn.isOn = false;
     }
     #endregion
 
@@ -1110,6 +1080,19 @@ public class UIManager : MonoBehaviour {
         }
     }
     #endregion
+
+    public void ShowMinionsMenu() {
+        minionsMenuToggle.isOn = true;
+    }
+    public void ShowCharacterIntelMenu() {
+        charactersMenuToggle.isOn = true;
+    }
+    public void ShowLocationIntelMenu() {
+        locationsMenuToggle.isOn = true;
+    }
+    public void ShowFactionIntelMenu() {
+        factionsMenuToggle.isOn = true;
+    }
 }
 
 [System.Serializable]

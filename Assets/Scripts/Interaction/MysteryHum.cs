@@ -38,6 +38,7 @@ public class MysteryHum : Interaction {
                 description = "We have sent %minion% to explore the interesting location.",
                 duration = 10,
                 needsMinion = true,
+                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => SendOutDemonEffect(state),
             };
             ActionOption doNothingOption = new ActionOption {

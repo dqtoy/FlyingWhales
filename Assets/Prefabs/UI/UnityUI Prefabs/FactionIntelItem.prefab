@@ -110,6 +110,7 @@ GameObject:
   - component: {fileID: 222146358748846100}
   - component: {fileID: 114282303582911546}
   - component: {fileID: 114893980020872244}
+  - component: {fileID: 114973392349004422}
   m_Layer: 5
   m_Name: FactionIntelItem
   m_TagString: Untagged
@@ -403,6 +404,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   factionNameLbl: {fileID: 114078526339365618}
+  draggable: {fileID: 114973392349004422}
   factionEmblem: {fileID: 114336897296176614}
 --- !u!114 &114336897296176614
 MonoBehaviour:
@@ -508,7 +510,7 @@ MonoBehaviour:
   m_Sprite: {fileID: 21300000, guid: febd7bc28a21ea044a06f7266d76b729, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
-  m_FillCenter: 1
+  m_FillCenter: 0
   m_FillMethod: 4
   m_FillAmount: 1
   m_FillClockwise: 1
@@ -540,6 +542,17 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114973392349004422
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1960029943899900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05415175b0ee8d74ebafa0c896157e33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!222 &222074524817178788
 CanvasRenderer:
   m_ObjectHideFlags: 1

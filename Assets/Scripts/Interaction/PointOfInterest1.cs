@@ -44,6 +44,7 @@ public class PointOfInterest1 : Interaction {
                 description = "We have sent %minion% to explore the interesting location.",
                 duration = 15,
                 needsMinion = true,
+                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => SendOutDemonEffect(state),
             };
             ActionOption leaveAloneOption = new ActionOption {
@@ -52,6 +53,7 @@ public class PointOfInterest1 : Interaction {
                 name = "Leave it alone.",
                 duration = 1,
                 needsMinion = false,
+                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => LeaveAloneEffect(state),
             };
 

@@ -36,11 +36,12 @@ public class ActionOptionButton : MonoBehaviour {
             interactionItem.SetCurrentSelectedActionOption(_actionOption);
         } else {
             if(!toggle.group.AnyTogglesOn()){
-                interactionItem.confirmNoMinionButton.gameObject.SetActive(false);
-                if (interactionItem.confirmMinionGO.activeSelf) {
-                    interactionItem.confirmMinionGO.SetActive(false);
-                    interactionItem.portrait.GeneratePortrait(null, 95, true);
-                }
+                interactionItem.confirmBtn.gameObject.SetActive(false);
+                interactionItem.ClearNeededObjectSlots();
+                //if (interactionItem.confirmMinionGO.activeSelf) {
+                //    interactionItem.confirmMinionGO.SetActive(false);
+                //    interactionItem.portrait.GeneratePortrait(null, 95, true);
+                //}
             }
         }
     }

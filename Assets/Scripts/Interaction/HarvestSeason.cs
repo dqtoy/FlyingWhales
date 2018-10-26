@@ -57,6 +57,7 @@ public class HarvestSeason : Interaction {
                 name = "Send out a demon.",
                 duration = 10,
                 needsMinion = true,
+                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => SendOutDemonEffect(state),
             };
             ActionOption doNothing = new ActionOption {
