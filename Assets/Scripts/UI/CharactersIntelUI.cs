@@ -49,7 +49,7 @@ public class CharactersIntelUI : UIMenu {
         CharacterIntelItem newEntry = newEntryGO.GetComponent<CharacterIntelItem>();
         newEntry.SetCharacter(character.characterIntel);
         newEntry.Initialize();
-        //newEntry.gameObject.SetActive(false);
+        newEntry.gameObject.SetActive(false);
         characterEntries.Add(character, newEntry);
     }
     private void RemoveCharacterEntry(ECS.Character character) {

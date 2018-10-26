@@ -35,7 +35,7 @@ public class LocationIntelUI : UIMenu {
         GameObject locationItemGO = UIManager.Instance.InstantiateUIObject(locationItemPrefab.name, locationsScrollView.content);
         LocationIntelItem locationItem = locationItemGO.GetComponent<LocationIntelItem>();
         locationItem.SetLocation(createdArea.locationIntel);
-        //locationItem.gameObject.SetActive(false);
+        locationItem.gameObject.SetActive(false);
         items.Add(createdArea, locationItem);
     }
     private void OnAreanDeleted(Area deletedArea) {

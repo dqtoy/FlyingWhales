@@ -1067,7 +1067,15 @@ public class UIManager : MonoBehaviour {
         currentActivePlayerPickerButtons.Add(playerPickerButton);
     }
     private void OnIntelAdded(Intel intel) {
-        ShowNotification("New Intel Obtained!", 5, null);
+        UnityAction action = null;
+        if (intel is FactionIntel) {
+            action = () => ShowFactionIntelMenu();
+        } else if (intel is LocationIntel) {
+            action = () => ShowLocationIntelMenu();
+        } else if (intel is CharacterIntel) {
+            action = () => ShowCharacterIntelMenu();
+        }
+        ShowNotification("New Intel Obtained!", 5, action);
     }
     #endregion
 
