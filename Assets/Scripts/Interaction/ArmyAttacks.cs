@@ -130,18 +130,30 @@ public class ArmyAttacks : Interaction {
         state.chosenOption.assignedMinion.AdjustExp(1);
     }
     private void StopFailure(InteractionState state, string effectName) {
-        //TODO: **Mechanics**: Army Unit with most occupied slots will Attack the selected enemy location.
+        Faction enemyFaction = landmark.owner.GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS.AT_WAR);
+        Area targetArea = enemyFaction.ownedAreas[Random.Range(0, enemyFaction.ownedAreas.Count)];
+        BaseLandmark target = targetArea.GetRandomExposedLandmark();
+        //**Mechanics**: Army Unit with most occupied slots will Attack the selected enemy location.
         _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " disguised himself and talked to the Army General, but was unable to convince him to cancel their attack.");
         SetCurrentState(_states[effectName]);
+
+        CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
+        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+        army.iactionData.AssignAction(characterAction, target.landmarkObj);
     }
     private void StopFailureEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
         state.chosenOption.assignedMinion.AdjustExp(1);
     }
     private void StopCriticalFailure(InteractionState state, string effectName) {
-        //TODO: **Mechanics**: Army Unit with most occupied slots will Attack a player location.
+        //**Mechanics**: Army Unit with most occupied slots will Attack a player location.
+        BaseLandmark target = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
         _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " disguised himself and talked to the Army General, but was unable to convince him to cancel their attack. Annoyed with the demon, the General redirected the attack to us!");
         SetCurrentState(_states[effectName]);
+
+        CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
+        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+        army.iactionData.AssignAction(characterAction, target.landmarkObj);
     }
     private void StopCriticalFailureEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
@@ -149,18 +161,28 @@ public class ArmyAttacks : Interaction {
     }
 
     private void RedirectionSuccessful(InteractionState state, string effectName) {
-        //TODO: **Mechanics**: Army Unit with most occupied slots will Attack assigned Location Intel.
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " disguised himself and talked to the Army General, eventually convincing him to redirect their attack to " + landmark.name + ".");
+        //**Mechanics**: Army Unit with most occupied slots will Attack assigned Location Intel.
+        BaseLandmark target = state.chosenOption.assignedLocation.location.GetRandomExposedLandmark();
+        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " disguised himself and talked to the Army General, eventually convincing him to redirect their attack to " + target.name + ".");
         SetCurrentState(_states[effectName]);
+
+        CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
+        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+        army.iactionData.AssignAction(characterAction, target.landmarkObj);
     }
     private void RedirectionSuccessfulEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
         state.chosenOption.assignedMinion.AdjustExp(1);
     }
     private void RedirectionFailure(InteractionState state, string effectName) {
-        //TODO: **Mechanics**: Army Unit with most occupied slots will Attack a player location.
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " disguised himself and talked to the Army General, but failed to convince him to redirect their attack to " + landmark.name + ".");
+        //**Mechanics**: Army Unit with most occupied slots will Attack a player location.
+        BaseLandmark target = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
+        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " disguised himself and talked to the Army General, but failed to convince him to redirect their attack to " + target.name + ".");
         SetCurrentState(_states[effectName]);
+
+        CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
+        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+        army.iactionData.AssignAction(characterAction, target.landmarkObj);
     }
     private void RedirectionFailureEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1

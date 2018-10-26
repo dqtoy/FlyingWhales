@@ -251,6 +251,14 @@ public class Faction {
         }
         return false;
     }
+    public Faction GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS stat) {
+        foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
+            if (kvp.Value.relationshipStatus == stat) {
+                return kvp.Key;
+            }
+        }
+        return null;
+    }
     #endregion
 
     #region Death

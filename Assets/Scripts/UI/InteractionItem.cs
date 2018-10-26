@@ -123,6 +123,9 @@ public class InteractionItem : MonoBehaviour {
                 //}
             }
         } else {
+            if (_interaction.currentState.isEnd) {
+                confirmBtn.gameObject.SetActive(true);
+            }
             //portrait.GeneratePortrait(null, 95, true);
         }
     }
