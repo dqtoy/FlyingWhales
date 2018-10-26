@@ -431,6 +431,19 @@ public class BaseLandmark : ILocation, IInteractable {
         }
         return count;
     }
+    public CharacterParty GetArmyWithMostOccupiedSlots() {
+        CharacterParty mostArmy = null;
+        for (int i = 0; i < charactersWithHomeOnLandmark.Count; i++) {
+            ICharacter currCharacter = charactersWithHomeOnLandmark[i];
+            if (currCharacter is CharacterArmyUnit) {
+                CharacterArmyUnit currUnit = (currCharacter as CharacterArmyUnit);
+                if (mostArmy == null || mostArmy.icharacters.Count > currUnit.currentParty.icharacters.Count) {
+                    mostArmy = currUnit.currentParty as CharacterParty;
+                }
+            }
+        }
+        return mostArmy;
+    }
     #endregion
 
     #region Combat
@@ -1134,7 +1147,13 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     public bool IsDefenderOfLandmark(Party party) {
         if (defenders != null) {
-            return defenders.id == party.id;
+            if (defenders.id == party.id) {
+                return true;
+            } else {
+                if (defenders.icharacters.Contains(party.owner)) {
+                    return true;
+                }
+            }
         }
         return false;
     }
