@@ -63,6 +63,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.ARMY_ATTACKS:
                 createdInteraction = new ArmyAttacks(interactable);
                 break;
+            case INTERACTION_TYPE.SUSPICIOUS_SOLDIER_MEETING:
+                createdInteraction = new SuspiciousSoldierMeeting(interactable);
+                break;
+            case INTERACTION_TYPE.KILLER_ON_THE_LOOSE:
+                createdInteraction = new KillerOnTheLoose(interactable);
+                break;
         }
         return createdInteraction;
     }
