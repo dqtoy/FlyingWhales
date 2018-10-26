@@ -1,1 +1,0 @@
-{"_name":"Slime 2","_type":0,"_category":0,"_level":3,"_experienceDrop":30,"_maxHP":100,"_maxSP":0,"_attackPower":22,"_speed":105,"_def":5,"_dodgeChance":0.0,"_hitChance":0.0,"_critChance":0.0,"_isSleepingOnSpawn":false,"_skillNames":["Normal Attack"],"_elementChanceWeaknesses":[],"_elementChanceResistances":[],"_itemDrops":[{"itemName":"Junk1","dropRate":100.0}]}

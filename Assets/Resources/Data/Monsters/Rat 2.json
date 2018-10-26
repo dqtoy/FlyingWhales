@@ -1,1 +1,0 @@
-{"_name":"Rat 2","_type":0,"_category":0,"_level":13,"_experienceDrop":90,"_maxHP":330,"_maxSP":10,"_attackPower":45,"_speed":110,"_def":35,"_dodgeChance":0.0,"_hitChance":0.0,"_critChance":2.0,"_isSleepingOnSpawn":false,"_skillNames":["Normal Attack","Skill150"],"_elementChanceWeaknesses":[],"_elementChanceResistances":[],"_itemDrops":[{"itemName":"Junk1","dropRate":100.0}]}

@@ -1,1 +1,0 @@
-{"_name":"Golem 2","_type":0,"_category":0,"_level":15,"_experienceDrop":110,"_maxHP":600,"_maxSP":10,"_attackPower":83,"_speed":120,"_def":50,"_dodgeChance":0.0,"_hitChance":0.0,"_critChance":2.0,"_isSleepingOnSpawn":false,"_skillNames":["Normal Attack","Golem AOE"],"_elementChanceWeaknesses":[],"_elementChanceResistances":[],"_itemDrops":[{"itemName":"Junk1","dropRate":100.0}]}
