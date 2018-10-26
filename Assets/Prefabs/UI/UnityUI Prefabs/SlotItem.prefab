@@ -919,8 +919,8 @@ MonoBehaviour:
   onDropItem:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: OnMinionDrop
+      - m_Target: {fileID: 114698373371233428}
+        m_MethodName: OnDropItemAtDropZone
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -55,6 +55,7 @@ public class HarvestSeason : Interaction {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 30, currency = CURRENCY.SUPPLY },
                 name = "Send out a demon.",
+                description = "We have sent %minion% to disrupt the harvest. It should take him a short time to execute the task.",
                 duration = 10,
                 needsMinion = true,
                 neededObjects = new List<System.Type>() { typeof(Minion) },
