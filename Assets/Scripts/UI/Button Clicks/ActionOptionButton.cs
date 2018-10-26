@@ -38,6 +38,7 @@ public class ActionOptionButton : MonoBehaviour {
             if(!toggle.group.AnyTogglesOn()){
                 interactionItem.confirmBtn.gameObject.SetActive(false);
                 interactionItem.ClearNeededObjectSlots();
+                interactionItem.SetCurrentSelectedActionOption(null);
                 //if (interactionItem.confirmMinionGO.activeSelf) {
                 //    interactionItem.confirmMinionGO.SetActive(false);
                 //    interactionItem.portrait.GeneratePortrait(null, 95, true);
