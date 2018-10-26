@@ -359,6 +359,14 @@ public class BaseLandmark : ILocation, IInteractable {
         }
         return characters;
     }
+    public ICharacter GetResidentCharacterOfClass(string className) {
+        for (int i = 0; i < _charactersWithHomeOnLandmark.Count; i++) {
+            if(_charactersWithHomeOnLandmark[i].characterClass != null && _charactersWithHomeOnLandmark[i].characterClass.className == className && _charactersWithHomeOnLandmark[i].currentParty.specificLocation == this) {
+                return _charactersWithHomeOnLandmark[i];
+            }
+        }
+        return null;
+    }
     #endregion
 
     #region Location
