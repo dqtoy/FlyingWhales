@@ -688,6 +688,15 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         Debug.Log(assassin.name + " assassinated " + name);
         Death();
     }
+    public void UpgradeWeapon() {
+        //Not applicable
+    }
+    public void UpgradeArmor() {
+        //Not applicable
+    }
+    public void UpgradeAccessory() {
+        //Not applicable
+    }
     #endregion
 
     #region Squads
