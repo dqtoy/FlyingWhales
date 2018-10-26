@@ -43,6 +43,7 @@ public class ArmyUnitTraining : Interaction {
                 cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Stop them.",
                 duration = 5,
+                description = "We have sent %minion% to persuade the garrison general to stop their current plan of raising a new army unit.",
                 needsMinion = true,
                 neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => StopThemOption(state),

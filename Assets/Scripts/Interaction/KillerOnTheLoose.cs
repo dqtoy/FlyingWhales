@@ -38,6 +38,7 @@ public class KillerOnTheLoose : Interaction {
                 description = "We have sent %minion% to search for the killer.",
                 duration = 10,
                 needsMinion = true,
+                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => SearchKillerOption(state),
             };
             ActionOption doNothingOption = new ActionOption {
