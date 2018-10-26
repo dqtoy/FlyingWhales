@@ -132,7 +132,7 @@ public class ArmyUnitTraining : Interaction {
         ArmyProducedRewardEffect(state);
     }
     private void ArmyProducedRewardEffect(InteractionState state) {
-        CharacterManager.Instance.CreateCharacterArmyUnit(_chosenClassName, interactable.faction.race, 25, interactable.faction, interactable as BaseLandmark);
+        CharacterManager.Instance.CreateCharacterArmyUnit(_chosenClassName, interactable.faction.race, interactable.faction, interactable as BaseLandmark);
     }
     #endregion
 }

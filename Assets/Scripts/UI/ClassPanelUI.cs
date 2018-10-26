@@ -22,6 +22,7 @@ public class ClassPanelUI : MonoBehaviour {
     public InputField hpPerLevelInput;
     public InputField baseSPInput;
     public InputField spPerLevelInput;
+    public InputField armyCountInput;
 
     public Dropdown weaponsOptions;
     public Dropdown armorsOptions;
@@ -96,6 +97,7 @@ public class ClassPanelUI : MonoBehaviour {
         accessoriesOptions.AddOptions(ItemPanelUI.Instance.allItems);
     }
     private void LoadAllData() {
+        armyCountInput.text = "1";
         workActionOptions.ClearOptions();
         weaponsOptions.ClearOptions();
         armorsOptions.ClearOptions();
@@ -143,6 +145,7 @@ public class ClassPanelUI : MonoBehaviour {
         hpPerLevelInput.text = "0";
         baseSPInput.text = "0";
         spPerLevelInput.text = "0";
+        armyCountInput.text = "1";
 
         weaponsOptions.value = 0;
         armorsOptions.value = 0;
@@ -222,6 +225,7 @@ public class ClassPanelUI : MonoBehaviour {
         attackPowerPerLevelInput.text = characterClass.attackPowerPerLevel.ToString();
         //baseSpeedInput.text = characterClass.baseSpeed.ToString();
         speedPerLevelInput.text = characterClass.speedPerLevel.ToString();
+        armyCountInput.text = characterClass.armyCount.ToString();
         //baseHPInput.text = characterClass.baseHP.ToString();
         hpPerLevelInput.text = characterClass.hpPerLevel.ToString();
         baseSPInput.text = characterClass.baseSP.ToString();

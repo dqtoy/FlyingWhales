@@ -233,8 +233,14 @@ public class PlayerUI : MonoBehaviour {
         return minionItem;
     }
     public void RemoveMinionItem(MinionItem item) {
-        minionItems.Remove(item);
-        ObjectPoolManager.Instance.DestroyObject(item.gameObject);
+        if(minionItems.Count <= PlayerManager.Instance.player.maxMinions) {
+            item.transform.SetAsLastSibling();
+            item.SetMinion(null);
+        } else {
+            minionItems.Remove(item);
+            ObjectPoolManager.Instance.DestroyObject(item.gameObject);
+        }
+
     }
     private List<MinionItem> GetUnoccupiedMinionItems() {
         List<MinionItem> items = new List<MinionItem>();

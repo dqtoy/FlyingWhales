@@ -126,9 +126,9 @@ public class CharacterSim : ICharacterSim {
     }
     public int speed {
         get {
-            if (isArmy) {
-                return singleSpeed * armyCount;
-            }
+            //if (isArmy) {
+            //    return singleSpeed * armyCount;
+            //}
             return singleSpeed;
         }
     }
@@ -372,18 +372,21 @@ public class CharacterSim : ICharacterSim {
         }
         _singleAttackPower += (multiplier * (int) ((characterClass.attackPowerPerLevel / 100f) * (float) _raceSetting.baseAttackPower));
         _singleSpeed += (multiplier * (int) ((characterClass.speedPerLevel / 100f) * (float) _raceSetting.baseSpeed));
-        _singleMaxHP += (multiplier * (int) ((characterClass.hpPerLevel / 100f) * (float) _raceSetting.baseHP));
+        AdjustMaxHP((multiplier * (int) ((characterClass.hpPerLevel / 100f) * (float) _raceSetting.baseHP)));
         //_sp += ((int)multiplier * characterClass.spPerLevel);
 
         //Add stats per level from race
         if (level > 1) {
-            int hpIndex = level % _raceSetting.hpPerLevel.Length;
-            hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
-            int attackIndex = level % _raceSetting.attackPerLevel.Length;
-            attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
-
-            _singleMaxHP += _raceSetting.hpPerLevel[hpIndex - 1];
-            _singleAttackPower += _raceSetting.attackPerLevel[attackIndex - 1];
+            if(_raceSetting.hpPerLevel.Length > 0) {
+                int hpIndex = level % _raceSetting.hpPerLevel.Length;
+                hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
+                AdjustMaxHP(_raceSetting.hpPerLevel[hpIndex - 1]);
+            }
+            if (_raceSetting.attackPerLevel.Length > 0) {
+                int attackIndex = level % _raceSetting.attackPerLevel.Length;
+                attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
+                _singleAttackPower += _raceSetting.attackPerLevel[attackIndex - 1];
+            }
         }
     }
     //private void ArmyModifier() {

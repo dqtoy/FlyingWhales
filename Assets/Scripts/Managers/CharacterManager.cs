@@ -787,8 +787,8 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Armies
-    public CharacterArmyUnit CreateCharacterArmyUnit(string className, RACE race, int armyCount, Faction faction = null, ILocation homeLocation = null) {
-        CharacterArmyUnit armyUnit = new CharacterArmyUnit(className, race, armyCount);
+    public CharacterArmyUnit CreateCharacterArmyUnit(string className, RACE race, Faction faction = null, ILocation homeLocation = null) {
+        CharacterArmyUnit armyUnit = new CharacterArmyUnit(className, race);
 
         Party party = armyUnit.CreateOwnParty();
         if (faction != null) {
@@ -811,7 +811,7 @@ public class CharacterManager : MonoBehaviour {
         return armyUnit;
     }
     public CharacterArmyUnit CreateCharacterArmyUnit(RACE race, LandmarkDefender defender, Faction faction = null, ILocation initialLocation = null) {
-        return CreateCharacterArmyUnit(defender.className, race, defender.armyCount, faction, initialLocation);
+        return CreateCharacterArmyUnit(defender.className, race, faction, initialLocation);
     }
     #endregion
 }

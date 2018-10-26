@@ -7,6 +7,7 @@ namespace ECS {
         [SerializeField] private string _className;
         [SerializeField] private int _baseSP;
         [SerializeField] private int _spPerLevel;
+        [SerializeField] private int _armyCount;
         [SerializeField] private float _attackPowerPerLevel;
         [SerializeField] private float _speedPerLevel;
         [SerializeField] private float _hpPerLevel;
@@ -49,6 +50,9 @@ namespace ECS {
         public int baseSP {
             get { return _baseSP; }
             //set { _spModifier = value; }
+        }
+        public int armyCount {
+            get { return _armyCount; }
         }
         public int spPerLevel {
             get { return _spPerLevel; }
@@ -104,6 +108,7 @@ namespace ECS {
             newClass._hpPerLevel = this._hpPerLevel;
             newClass._baseSP = this._baseSP;
             newClass._spPerLevel = this._spPerLevel;
+            newClass._armyCount = this._armyCount;
             newClass._workActionType = this._workActionType;
             //newClass._dodgeRate = this._dodgeRate;
             //newClass._parryRate = this._parryRate;                        
@@ -157,6 +162,7 @@ namespace ECS {
             this._hpPerLevel = float.Parse(ClassPanelUI.Instance.hpPerLevelInput.text);
             this._baseSP = int.Parse(ClassPanelUI.Instance.baseSPInput.text);
             this._spPerLevel = int.Parse(ClassPanelUI.Instance.spPerLevelInput.text);
+            this._armyCount = int.Parse(ClassPanelUI.Instance.armyCountInput.text);
             this._workActionType = (ACTION_TYPE)System.Enum.Parse(typeof(ACTION_TYPE), ClassPanelUI.Instance.workActionOptions.options[ClassPanelUI.Instance.workActionOptions.value].text);
             this._skillName = ClassPanelUI.Instance.skillOptions.options[ClassPanelUI.Instance.skillOptions.value].text;
             this._weaponTierNames = ClassPanelUI.Instance.weaponTiers;

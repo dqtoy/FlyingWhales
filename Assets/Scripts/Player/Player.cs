@@ -52,6 +52,9 @@ public class Player : ILeader {
     public float currentLifestoneChance {
         get { return _currentLifestoneChance; }
     }
+    public bool areMinionsMaxed {
+        get { return _minions.Count >= maxMinions; }
+    }
     public RACE race {
         get { return RACE.HUMANS; }
     }
@@ -521,7 +524,6 @@ public class Player : ILeader {
     }
     public void RemoveMinion(Minion minion) {
         if(_minions.Remove(minion)){
-            minion.minionItem.transform.SetAsLastSibling();
             PlayerUI.Instance.RemoveMinionItem(minion.minionItem);
             //minion.minionItem.SetMinion(null);
         }

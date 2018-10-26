@@ -13,7 +13,9 @@ public class AttackLandmarkAction : CharacterAction {
         base.OnFirstEncounter(party, targetObject);
         BaseLandmark landmarkToAttack = targetObject.objectLocation;
         //Party defenderParty = null; //TODO
-        //party.StartCombatWith(landmarkToAttack.defenders);
+        if (landmarkToAttack.defenders != null) {
+            party.StartCombatWith(landmarkToAttack.defenders);
+        }
     }
     public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
