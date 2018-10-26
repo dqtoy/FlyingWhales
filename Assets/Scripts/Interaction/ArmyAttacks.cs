@@ -22,7 +22,7 @@ public class ArmyAttacks : Interaction {
             landmark = _interactable as BaseLandmark;
 
             InteractionState startState = new InteractionState("State 1", this);
-            string startStateDesc = "The bandits are increasing their defensive army.";
+            string startStateDesc = "The Garrison is preparing to attack " + landmark.name + ".";
             startState.SetDescription(startStateDesc);
             CreateActionOptions(startState);
 
@@ -55,7 +55,6 @@ public class ArmyAttacks : Interaction {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Stop Them.",
-                description = "The Garrison is preparing to attack " + landmark.name + ".",
                 duration = 10,
                 needsMinion = true,
                 neededObjects = new List<System.Type>() { typeof(Minion) },
