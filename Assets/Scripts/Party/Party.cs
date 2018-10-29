@@ -25,6 +25,10 @@ public class Party : IParty {
     protected List<Buff> _partyBuffs;
     protected int _maxCharacters;
 
+    public EmblemBG emblemBG { get; private set; }
+    public Sprite emblem { get; private set; }
+    public Color partyColor { get; private set; }
+
     #region getters/setters
     public int id {
         get { return _id; }
@@ -150,6 +154,9 @@ public class Party : IParty {
         _isDead = false;
         _icharacters = new List<ICharacter>();
         _partyBuffs = new List<Buff>();
+        emblemBG = CharacterManager.Instance.GetRandomEmblemBG();
+        emblem = CharacterManager.Instance.GetRandomEmblem();
+        partyColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         SetMaxCharacters(4);
 #if !WORLD_CREATION_TOOL
         Messenger.AddListener<ActionThread>(Signals.LOOK_FOR_ACTION, AdvertiseSelf);

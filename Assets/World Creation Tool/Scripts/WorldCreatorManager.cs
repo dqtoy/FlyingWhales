@@ -151,7 +151,7 @@ namespace worldcreator {
             CharacterManager.Instance.LoadCharacters(data);
             //CharacterManager.Instance.LoadRelationships(data);
             MonsterManager.Instance.LoadMonsters(data);
-            CharacterManager.Instance.LoadSquads(data);
+            //CharacterManager.Instance.LoadSquads(data);
             LandmarkManager.Instance.LoadDefenders(data);
             CharacterManager.Instance.LoadCharactersInfo(data);
             Biomes.Instance.UpdateTileVisuals(hexTiles);
@@ -699,8 +699,8 @@ namespace worldcreator {
             worldData.OccupyFactionData(FactionManager.Instance.allFactions);
             worldData.OccupyLandmarksData(LandmarkManager.Instance.GetAllLandmarks());
             worldData.OccupyCharactersData(CharacterManager.Instance.allCharacters);
-            worldData.OccupyAreaData(LandmarkManager.Instance.allAreas);
-            worldData.OccupySquadData(CharacterManager.Instance.allSquads);
+            worldData.OccupyAreaData(LandmarkManager.Instance.allAreas);    
+            //worldData.OccupySquadData(CharacterManager.Instance.allSquads);
             worldData.OccupyMonstersData(MonsterManager.Instance.allMonsterParties);
             worldData.OccupyPathfindingSettings(map, width, height);
             if (!saveName.Contains(Utilities.worldConfigFileExt)) {

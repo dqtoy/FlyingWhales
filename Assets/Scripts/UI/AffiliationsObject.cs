@@ -9,16 +9,14 @@ public class AffiliationsObject : MonoBehaviour {
     private enum HoveredObject {
         None,
         Faction,
-        Squad,
         Party,
     }
 
     [SerializeField] private GameObject factionGO;
-    [SerializeField] private GameObject squadGO;
     [SerializeField] private GameObject partyGO;
 
     [SerializeField] private FactionEmblem factionEmblem;
-    [SerializeField] private SquadEmblem squadEmblem;
+    //[SerializeField] private SquadEmblem squadEmblem;
 
     private bool disableParty;
     private bool isHovering = false;
@@ -94,12 +92,12 @@ public class AffiliationsObject : MonoBehaviour {
             }
         }
 
-        if (_character.squad == null) {
-            squadGO.SetActive(false);
-        } else {
-            squadGO.SetActive(true);
-            squadEmblem.SetSquad(_character.squad);
-        }
+        //if (_character.squad == null) {
+        //    squadGO.SetActive(false);
+        //} else {
+        //    squadGO.SetActive(true);
+        //    squadEmblem.SetSquad(_character.squad);
+        //}
 
         if (disableParty || _character.currentParty.icharacters.Count <= 1) {
             partyGO.SetActive(false);
@@ -118,10 +116,10 @@ public class AffiliationsObject : MonoBehaviour {
         isHovering = true;
         hoveredObject = HoveredObject.Faction;
     }
-    public void ShowSquadInfo() {
-        isHovering = true;
-        hoveredObject = HoveredObject.Squad;
-    }
+    //public void ShowSquadInfo() {
+    //    isHovering = true;
+        //hoveredObject = HoveredObject.Squad;
+    //}
     public void ShowPartyInfo() {
         isHovering = true;
         hoveredObject = HoveredObject.Party;
@@ -146,9 +144,9 @@ public class AffiliationsObject : MonoBehaviour {
                 case HoveredObject.Faction:
                     UIManager.Instance.ShowSmallInfo(_character.faction.name);
                     break;
-                case HoveredObject.Squad:
-                    UIManager.Instance.ShowSmallInfo(_character.squad.name);
-                    break;
+                //case HoveredObject.Squad:
+                //    UIManager.Instance.ShowSmallInfo(_character.squad.name);
+                //    break;
                 case HoveredObject.Party:
                     UIManager.Instance.ShowSmallInfo(_character.currentParty.name);
                     break;

@@ -49,7 +49,6 @@ public interface ICharacter {
     PortraitSettings portraitSettings { get; }
     Party ownParty { get; }
     Party currentParty { get; }
-    Squad squad { get; }
     CharacterActionQueue<ActionQueueItem> actionQueue { get; }
     Dictionary<STAT, float> buffs { get; }
 
@@ -75,7 +74,6 @@ public interface ICharacter {
     void OnAddedToParty();
     void SetHomeLandmark(BaseLandmark newHomeLandmark);
     void AddHistory(Log log); //Character only
-    void SetSquad(Squad squad);
     void SetMode(MODE mode);
     void AddMiscAction(CharacterAction characterAction);
     void RemoveMiscAction(ACTION_TYPE actionType);

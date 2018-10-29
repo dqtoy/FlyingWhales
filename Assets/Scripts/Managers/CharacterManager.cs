@@ -149,15 +149,14 @@ public class CharacterManager : MonoBehaviour {
     //        }
     //    }
     //}
-    public void LoadSquads(WorldSaveData data) {
-        if (data.squadData != null) {
-            for (int i = 0; i < data.squadData.Count; i++) {
-                SquadSaveData currData = data.squadData[i];
-                CreateNewSquad(currData);
-            }
-        }
-    
-    }
+    //public void LoadSquads(WorldSaveData data) {
+    //    if (data.squadData != null) {
+    //        for (int i = 0; i < data.squadData.Count; i++) {
+    //            SquadSaveData currData = data.squadData[i];
+    //            CreateNewSquad(currData);
+    //        }
+    //    }
+    //}
     /*
      Create a new character, given a role, class and race.
          */
@@ -562,42 +561,42 @@ public class CharacterManager : MonoBehaviour {
     }
     #endregion
 
-    #region Squads
-    public Squad CreateNewSquad() {
-        Squad newSquad = new Squad();
-        AddSquad(newSquad);
-        Messenger.Broadcast(Signals.SQUAD_CREATED, newSquad);
-        return newSquad;
-    }
-    public void CreateNewSquad(SquadSaveData data) {
-        Squad newSquad = new Squad(data);
-        AddSquad(newSquad);
-        Messenger.Broadcast(Signals.SQUAD_CREATED, newSquad);
-        foreach (KeyValuePair<int, ICHARACTER_TYPE> kvp in data.memberIDs) {
-            if (kvp.Value == ICHARACTER_TYPE.CHARACTER) {
-                Character character = GetCharacterByID(kvp.Key);
-                if (kvp.Key == data.leaderID) {
-                    newSquad.SetLeader(character);
-                } else {
-                    newSquad.AddMember(character);
-                }
-            }
-        }
-    }
-    public void DeleteSquad(Squad squad) {
-        squad.Disband();
-        RemoveSquad(squad);
-        Messenger.Broadcast(Signals.SQUAD_DELETED, squad);
-    }
-    public void AddSquad(Squad squad) {
-        if (!allSquads.Contains(squad)) {
-            allSquads.Add(squad);
-        }
-    }
-    public void RemoveSquad(Squad squad) {
-        allSquads.Remove(squad);
-    }
-    #endregion
+    //#region Squads
+    //public Squad CreateNewSquad() {
+    //    Squad newSquad = new Squad();
+    //    AddSquad(newSquad);
+    //    Messenger.Broadcast(Signals.SQUAD_CREATED, newSquad);
+    //    return newSquad;
+    //}
+    //public void CreateNewSquad(SquadSaveData data) {
+    //    Squad newSquad = new Squad(data);
+    //    AddSquad(newSquad);
+    //    Messenger.Broadcast(Signals.SQUAD_CREATED, newSquad);
+    //    foreach (KeyValuePair<int, ICHARACTER_TYPE> kvp in data.memberIDs) {
+    //        if (kvp.Value == ICHARACTER_TYPE.CHARACTER) {
+    //            Character character = GetCharacterByID(kvp.Key);
+    //            if (kvp.Key == data.leaderID) {
+    //                newSquad.SetLeader(character);
+    //            } else {
+    //                newSquad.AddMember(character);
+    //            }
+    //        }
+    //    }
+    //}
+    //public void DeleteSquad(Squad squad) {
+    //    squad.Disband();
+    //    RemoveSquad(squad);
+    //    Messenger.Broadcast(Signals.SQUAD_DELETED, squad);
+    //}
+    //public void AddSquad(Squad squad) {
+    //    if (!allSquads.Contains(squad)) {
+    //        allSquads.Add(squad);
+    //    }
+    //}
+    //public void RemoveSquad(Squad squad) {
+    //    allSquads.Remove(squad);
+    //}
+    //#endregion
 
     #region Animator
     public RuntimeAnimatorController GetAnimatorByRole(CHARACTER_ROLE role) {

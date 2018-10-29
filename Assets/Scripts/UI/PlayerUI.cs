@@ -282,4 +282,10 @@ public class PlayerUI : MonoBehaviour {
             tweener.SetAnimationPosition(closePosition, openPosition, curve, curve);
         }
     }
+
+    public void CreateNewParty() {
+        if (!UIManager.Instance.partyinfoUI.isShowing) {
+            UIManager.Instance.partyinfoUI.ShowCreatePartyUI();
+        }
+    }
 }

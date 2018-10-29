@@ -59,7 +59,7 @@ public class SecretItem : MonoBehaviour, IPointerClickHandler {
         }
         RevealSecret rs = PlayerManager.Instance.player.GetAbility("Reveal Secret") as RevealSecret;
         if (!rs.CanBeActivated(owner)) {
-            Messenger.Broadcast<string, MESSAGE_BOX_MODE, bool>(Signals.SHOW_POPUP_MESSAGE, "You do not have enough magic!", MESSAGE_BOX_MODE.MESSAGE_ONLY, true);
+            Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE, "You do not have enough magic!", true);
             return;
         }
         rs.Activate(owner, secret);

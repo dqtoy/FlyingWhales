@@ -39,7 +39,7 @@ public class FormPartyAction : CharacterAction {
             ICharacter character = iparty.icharacters[i];
             if (character is ECS.Character) {
                 ECS.Character currCharacter = character as ECS.Character;
-                if (!currCharacter.IsSquadLeader()) {
+                //if (!currCharacter.IsSquadLeader()) {
                     //If below Happiness, Mental or Physical Point thresholds
                     //if (currCharacter.role.happiness < CharacterManager.Instance.HAPPINESS_THRESHOLD
                     //    && currCharacter.mentalPoints < CharacterManager.Instance.MENTAL_THRESHOLD && currCharacter.mentalPoints < CharacterManager.Instance.PHYSICAL_THRESHOLD) {
@@ -48,18 +48,18 @@ public class FormPartyAction : CharacterAction {
                     //    //currCharacter.party.actionData.EndAction();
                     //}
                     //Otherwise, maintain existing In Party action
-                }
+                //}
             }
         }
         //Then, the character will select a safe spot within 3 tile radius of his current location. To determine this, this is the order of priority:
         //check first if the party's current location is already fine
-        if (party.specificLocation.tileLocation.areaOfTile == null || party.specificLocation.tileLocation.areaOfTile.owner == null) {
-            InviteSquadMembers(iparty.mainCharacter);
-            return;
-        } else if(party.specificLocation.tileLocation.areaOfTile.owner.id == party.faction.id) {
-            InviteSquadMembers(iparty.mainCharacter);
-            return;
-        }
+        //if (party.specificLocation.tileLocation.areaOfTile == null || party.specificLocation.tileLocation.areaOfTile.owner == null) {
+        //    InviteSquadMembers(iparty.mainCharacter);
+        //    return;
+        //} else if(party.specificLocation.tileLocation.areaOfTile.owner.id == party.faction.id) {
+        //    InviteSquadMembers(iparty.mainCharacter);
+        //    return;
+        //}
 
         ILocation targetLocation = null;
         Dictionary<TileType, List<HexTile>> locationChoices = new Dictionary<TileType, List<HexTile>>() {
@@ -123,7 +123,7 @@ public class FormPartyAction : CharacterAction {
             throw new System.Exception("Target location for form party of " + iparty.mainCharacter.name + " is null!");
         }
 
-        iparty.GoToLocation(targetLocation, PATHFINDING_MODE.PASSABLE, () => InviteSquadMembers(iparty.mainCharacter)); //The character will move to the target tile and perform the action for Minimum Duration
+        //iparty.GoToLocation(targetLocation, PATHFINDING_MODE.PASSABLE, () => InviteSquadMembers(iparty.mainCharacter)); //The character will move to the target tile and perform the action for Minimum Duration
         base.OnChooseAction(iparty, targetObject);
     }
     public override void PerformAction(Party party, IObject targetObject) {
@@ -172,23 +172,23 @@ public class FormPartyAction : CharacterAction {
         return false;
     }
 
-    private void InviteSquadMembers(ICharacter squadLeader) {
-        for (int i = 0; i < squadLeader.squad.squadFollowers.Count; i++) {
-            ICharacter follower = squadLeader.squad.squadFollowers[i];
-            string text = follower.name + " is invited to join " + squadLeader.name + "'s party";
-            if (follower.InviteToParty(squadLeader)) {
-                joiningCharacters.Add(follower);
-                text += "\n" + follower.name + " accepted the invitation!";
-            } else {
-                text += "\n" + follower.name + " declined the invitation!";
-            }
-            Debug.Log(text);
-        }
-        if (joiningCharacters.Count > 0) {
-            Messenger.AddListener<ICharacter, Party>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
-            Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        }
-    }
+    //private void InviteSquadMembers(ICharacter squadLeader) {
+        //for (int i = 0; i < squadLeader.squad.squadFollowers.Count; i++) {
+        //    ICharacter follower = squadLeader.squad.squadFollowers[i];
+        //    string text = follower.name + " is invited to join " + squadLeader.name + "'s party";
+        //    if (follower.InviteToParty(squadLeader)) {
+        //        joiningCharacters.Add(follower);
+        //        text += "\n" + follower.name + " accepted the invitation!";
+        //    } else {
+        //        text += "\n" + follower.name + " declined the invitation!";
+        //    }
+        //    Debug.Log(text);
+        //}
+        //if (joiningCharacters.Count > 0) {
+        //    Messenger.AddListener<ICharacter, Party>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
+        //    Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        //}
+    //}
 
     private void OnCharacterJoinedParty(ICharacter character, Party affectedParty) {
         if (this.party.id == affectedParty.id) {

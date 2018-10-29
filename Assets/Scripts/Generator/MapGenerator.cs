@@ -172,7 +172,7 @@ public class MapGenerator : MonoBehaviour {
 
         MonsterManager.Instance.LoadMonsters(data);
 
-        CharacterManager.Instance.LoadSquads(data);
+        //CharacterManager.Instance.LoadSquads(data);
         LandmarkManager.Instance.LoadDefenders(data);
 
         CameraMove.Instance.UpdateMinimapTexture();

@@ -32,14 +32,16 @@ public class SlotItem : MonoBehaviour {
                     SuccessfulDropZoneDrop(parentItem);
                 } else {
                     //dragged object is not of needed type
-                    Debug.Log("Dragged invalid object");
+                    //Debug.Log("Dragged invalid object");
+                    Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE, "Dragged invalid object", true);
                 }
             } else {
                 if (parentItem.associatedObj.GetType() == neededType || parentItem.associatedObj.GetType().BaseType == neededType) {
                     SuccessfulDropZoneDrop(parentItem);
                 } else {
                     //dragged object is not of needed type
-                    Debug.Log("Dragged invalid object");
+                    //Debug.Log("Dragged invalid object");
+                    Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE, "Dragged invalid object", true);
                 }
             }
         }
@@ -75,6 +77,11 @@ public class SlotItem : MonoBehaviour {
             areaEmblem.gameObject.SetActive(false);
             portrait.gameObject.SetActive(true);
             portrait.GeneratePortrait((associatedObj as Minion).icharacter, 95, true);
+        } else if (associatedObj is ICharacter) {
+            factionEmblem.gameObject.SetActive(false);
+            areaEmblem.gameObject.SetActive(false);
+            portrait.gameObject.SetActive(true);
+            portrait.GeneratePortrait((associatedObj as ICharacter), 95, true);
         }
     }
 

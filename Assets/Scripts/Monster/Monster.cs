@@ -55,7 +55,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     protected Dictionary<ELEMENT, float> _elementalWeaknesses;
     protected Dictionary<ELEMENT, float> _elementalResistances;
     protected Dictionary<string, float> _itemDropsLookup;
-    protected Squad _squad;
     protected Party _currentParty;
     protected Dictionary<STAT, float> _buffs;
     public CharacterUIData uiData { get; private set; }
@@ -252,9 +251,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public List<CharacterAction> miscActions {
         get { return _miscActions; }
-    }
-    public Squad squad {
-        get { return _squad; }
     }
     public Party currentParty {
         get { return _currentParty; }
@@ -699,12 +695,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public void UpgradeAccessory() {
         //Not applicable
-    }
-    #endregion
-
-    #region Squads
-    public void SetSquad(Squad squad) {
-        _squad = squad;
     }
     #endregion
 

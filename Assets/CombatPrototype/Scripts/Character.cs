@@ -47,7 +47,6 @@ namespace ECS {
         protected CharacterAction _genericWorkAction;
         protected HiddenDesire _hiddenDesire;
         protected Secret _currentlySelectedSecret;
-        protected Squad _squad;
         protected Minion _minion;
         protected List<Secret> _secrets;
         protected List<STATUS_EFFECT> _statusEffects;
@@ -308,9 +307,6 @@ namespace ECS {
         }
         public List<CharacterAction> miscActions {
             get { return _miscActions; }
-        }
-        public Squad squad {
-            get { return _squad; }
         }
         public Minion minion {
             get { return _minion; }
@@ -2634,44 +2630,6 @@ namespace ECS {
             }
             return false;
         }
-        #endregion
-
-        #region Squads
-        public void SetSquad(Squad squad) {
-            _squad = squad;
-        }
-        public bool IsSquadLeader() {
-            if (_squad == null) {
-                return false;
-            } else {
-                if (_squad.squadLeader != null && _squad.squadLeader.id == this.id) {
-                    return true;
-                }
-                return false;
-            }
-        }
-        public bool IsSquadMember() {
-            if (_squad == null) {
-                return false;
-            } else {
-                if (_squad.squadLeader != null && _squad.squadLeader.id != this.id) {
-                    return true;
-                }
-                return false;
-            }
-        }
-        //public List<Quest> GetElligibleQuests() {
-        //    List<Quest> quests = new List<Quest>();
-        //    if (this.IsSquadLeader()) {
-        //        quests.AddRange(this.GetAcceptedQuestsByGroup(GROUP_TYPE.SOLO));
-        //        quests.AddRange(squad.GetSquadQuests());
-        //    } else if (this.IsSquadMember()) {
-        //        quests.AddRange(this.GetAcceptedQuestsByGroup(GROUP_TYPE.SOLO));
-        //    } else if (squad == null) {
-        //        quests.AddRange(this.GetAcceptedQuestsByGroup(GROUP_TYPE.SOLO));
-        //    }
-        //    return quests;
-        //}
         #endregion
 
         #region Action Queue

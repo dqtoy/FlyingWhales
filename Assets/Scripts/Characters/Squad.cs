@@ -62,14 +62,14 @@ public class Squad {
     public void AddMember(ICharacter member) {
         if (!squadMembers.Contains(member)) {
             squadMembers.Add(member);
-            member.SetSquad(this);
+            //member.SetSquad(this);
             Messenger.Broadcast(Signals.SQUAD_MEMBER_ADDED, member, this);
         }
     }
     public void RemoveMember(ICharacter member) {
         if (squadMembers.Remove(member)) {
             Messenger.Broadcast(Signals.SQUAD_MEMBER_REMOVED, member, this);
-            member.SetSquad(null);
+            //member.SetSquad(null);
         }
     }
     #endregion

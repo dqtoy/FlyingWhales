@@ -21,7 +21,7 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI lvlClassLbl;
     [SerializeField] private TextMeshProUGUI phaseLbl;
     [SerializeField] private FactionEmblem factionEmblem;
-    [SerializeField] private SquadEmblem squadEmblem;
+    [SerializeField] private PartyEmblem squadEmblem;
     [SerializeField] private ActionIconCharacterInfoUI currentActionIcon;
     [SerializeField] private GameObject actionIconPrefab;
     [SerializeField] private string actionIconPrefabName;
@@ -378,7 +378,7 @@ public class CharacterInfoUI : UIMenu {
             phaseLbl.gameObject.SetActive(false);
         }
         
-        squadEmblem.SetSquad(_activeCharacter.squad);
+        //squadEmblem.SetSquad(_activeCharacter.squad);
         factionEmblem.SetFaction(_activeCharacter.faction);
         //affiliations.SetCharacter(_activeCharacter);
     }
