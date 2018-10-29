@@ -1264,13 +1264,13 @@ public class BaseLandmark : ILocation, IInteractable {
         //Assign army units to external tiles of area
         for (int i = 0; i < tileLocation.areaOfTile.exposedTiles.Count; i++) {
             BaseLandmark exposedTile = tileLocation.areaOfTile.exposedTiles[i];
-            if (exposedTile.defenders.icharacters.Count < 4) {
+            if (exposedTile.defenders == null || exposedTile.defenders.icharacters.Count < 4) {
                 if(charactersNotAssigned.Count > 0) {
                     charactersNotAssigned[0].currentParty.specificLocation.RemoveCharacterFromLocation(charactersNotAssigned[0].currentParty);
                     charactersNotAssigned[0].homeLandmark.RemoveCharacterHomeOnLandmark(charactersNotAssigned[0]);
                     exposedTile.AddCharacterToLocation(charactersNotAssigned[0].currentParty);
                     exposedTile.AddCharacterHomeOnLandmark(charactersNotAssigned[0]);
-                    exposedTile.defenders.AddCharacter(charactersNotAssigned[0]);
+                    exposedTile.AddDefender(charactersNotAssigned[0]);
                     charactersNotAssigned.RemoveAt(0);
                 }
             }
@@ -1326,13 +1326,13 @@ public class BaseLandmark : ILocation, IInteractable {
         if (charactersNotAssigned.Count > 0) {
             for (int i = 0; i < tileLocation.areaOfTile.unexposedTiles.Count; i++) {
                 BaseLandmark unexposedTile = tileLocation.areaOfTile.unexposedTiles[i];
-                if (unexposedTile.defenders.icharacters.Count < 4) {
+                if (unexposedTile.defenders == null || unexposedTile.defenders.icharacters.Count < 4) {
                     if (charactersNotAssigned.Count > 0) {
                         charactersNotAssigned[0].currentParty.specificLocation.RemoveCharacterFromLocation(charactersNotAssigned[0].currentParty);
                         charactersNotAssigned[0].homeLandmark.RemoveCharacterHomeOnLandmark(charactersNotAssigned[0]);
                         unexposedTile.AddCharacterToLocation(charactersNotAssigned[0].currentParty);
                         unexposedTile.AddCharacterHomeOnLandmark(charactersNotAssigned[0]);
-                        unexposedTile.defenders.AddCharacter(charactersNotAssigned[0]);
+                        unexposedTile.AddDefender(charactersNotAssigned[0]);
                         charactersNotAssigned.RemoveAt(0);
                     }
                 }
