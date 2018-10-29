@@ -13,6 +13,7 @@ public class LandmarkInfoUI : UIMenu {
     [Space(10)]
     [Header("Content")]
     [SerializeField] private TextMeshProUGUI landmarkNameLbl;
+    [SerializeField] private TextMeshProUGUI landmarkTypeLbl;
     [SerializeField] private TextMeshProUGUI suppliesNameLbl;
     [SerializeField] private FactionEmblem factionEmblem;
     [SerializeField] private Slider healthProgressBar;
@@ -116,7 +117,12 @@ public class LandmarkInfoUI : UIMenu {
     #region Basic Info
     private void UpdateBasicInfo() {
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_activeLandmark.specificLandmarkType);
-        landmarkNameLbl.text = _activeLandmark.landmarkName;
+        if (_activeLandmark.tileLocation.areaOfTile != null) {
+            landmarkNameLbl.text = _activeLandmark.tileLocation.areaOfTile.name;
+        } else {
+            landmarkNameLbl.text = _activeLandmark.landmarkName;
+        }
+        landmarkTypeLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(_activeLandmark.specificLandmarkType.ToString());
         if(_activeLandmark.tileLocation.areaOfTile != null) {
             suppliesNameLbl.text = _activeLandmark.tileLocation.areaOfTile.suppliesInBank.ToString();
         } else {
