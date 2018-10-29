@@ -78,9 +78,13 @@ public class LandmarkInfoUI : UIMenu {
         ResetScrollPositions();
         //PlayerUI.Instance.UncollapseMinionHolder();
         InteractionUI.Instance.OpenInteractionUI(_activeLandmark);
+        _activeLandmark.tileLocation.SetBordersState(true);
     }
     public override void CloseMenu() {
         base.CloseMenu();
+        if (_activeLandmark != null) {
+            _activeLandmark.tileLocation.SetBordersState(false);
+        }
         _activeLandmark = null;
         PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
         //PlayerUI.Instance.CollapseMinionHolder();

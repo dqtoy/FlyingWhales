@@ -39,7 +39,7 @@ public interface ICharacter {
     Minion minion { get; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }
-    Dictionary<Character, Relationship> relationships { get; }
+    //Dictionary<Character, Relationship> relationships { get; }
     List<Skill> skills { get; }
     List<CharacterAction> miscActions { get; }
     List<CharacterAttribute> attributes { get; }

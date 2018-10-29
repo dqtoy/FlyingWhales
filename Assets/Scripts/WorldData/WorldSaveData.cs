@@ -6,6 +6,7 @@ using UnityEngine;
 public class WorldSaveData {
     public int width;
     public int height;
+    public int borderThickness;
     public List<HexTileData> tilesData;
     public List<HexTileData> outerGridTilesData;
     public List<RegionSaveData> regionsData;
@@ -20,9 +21,10 @@ public class WorldSaveData {
     private Dictionary<int, HexTileData> tileDictionary;
     private Dictionary<int, HexTileData> outerTileDictionary;
 
-    public WorldSaveData(int width, int height) {
+    public WorldSaveData(int width, int height, int borderThickness) {
         this.width = width;
         this.height = height;
+        this.borderThickness = borderThickness;
     }
 
     public void OccupyTileData(List<HexTile> tiles) {

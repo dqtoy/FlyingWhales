@@ -22,14 +22,13 @@ public class SuicideEvent : GameEvent {
     }
 
     public override bool MeetsRequirements(Character character) {
-        //TODO: Change this to be unspecific for lady of the lake
-        Character generalMax = CharacterManager.Instance.GetCharacterByClass("General");
-        if (!character.HasRelationshipWith(generalMax)) {
-            return false; //Lady of the lake does not have relationship with general max
-        }
-        if (!character.HasRelationshipStatusWith(generalMax, CHARACTER_RELATIONSHIP.LOVER)) {
-            return false; //Lady of the lake and general max are not lovers
-        }
+        //Character generalMax = CharacterManager.Instance.GetCharacterByClass("General");
+        //if (!character.HasRelationshipWith(generalMax)) {
+        //    return false; //Lady of the lake does not have relationship with general max
+        //}
+        //if (!character.HasRelationshipStatusWith(generalMax, CHARACTER_RELATIONSHIP.LOVER)) {
+        //    return false; //Lady of the lake and general max are not lovers
+        //}
         return base.MeetsRequirements(character);
         
     }

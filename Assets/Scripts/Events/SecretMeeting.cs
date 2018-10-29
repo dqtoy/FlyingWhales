@@ -145,26 +145,26 @@ public class SecretMeeting : GameEvent {
         }
         Relationship char1Rel;
         Relationship char2Rel;
-        if (!generalMax.HasRelationshipWith(ladyOfTheLake)) {
-            //create relationship
-            char1Rel = CharacterManager.Instance.CreateNewRelationshipTowards(generalMax, ladyOfTheLake);
-        } else {
-            char1Rel = _generalMax.GetRelationshipWith(ladyOfTheLake);
-        }
-        if (!ladyOfTheLake.HasRelationshipWith(generalMax)) {
-            //create relationship
-            char2Rel = CharacterManager.Instance.CreateNewRelationshipTowards(ladyOfTheLake, generalMax);
-        } else {
-            char2Rel = _ladyOfTheLake.GetRelationshipWith(generalMax);
-        }
+        //if (!generalMax.HasRelationshipWith(ladyOfTheLake)) {
+        //    //create relationship
+        //    char1Rel = CharacterManager.Instance.CreateNewRelationshipTowards(generalMax, ladyOfTheLake);
+        //} else {
+        //    char1Rel = _generalMax.GetRelationshipWith(ladyOfTheLake);
+        //}
+        //if (!ladyOfTheLake.HasRelationshipWith(generalMax)) {
+        //    //create relationship
+        //    char2Rel = CharacterManager.Instance.CreateNewRelationshipTowards(ladyOfTheLake, generalMax);
+        //} else {
+        //    char2Rel = _ladyOfTheLake.GetRelationshipWith(generalMax);
+        //}
 
         //Add Relationship status if none yet
-        if (!char1Rel.HasStatus(CHARACTER_RELATIONSHIP.LOVER)) {
-            char1Rel.AddRelationshipStatus(CHARACTER_RELATIONSHIP.LOVER);
-        }
-        if (!char2Rel.HasStatus(CHARACTER_RELATIONSHIP.LOVER)) {
-            char2Rel.AddRelationshipStatus(CHARACTER_RELATIONSHIP.LOVER);
-        }
+        //if (!char1Rel.HasStatus(CHARACTER_RELATIONSHIP.LOVER)) {
+        //    char1Rel.AddRelationshipStatus(CHARACTER_RELATIONSHIP.LOVER);
+        //}
+        //if (!char2Rel.HasStatus(CHARACTER_RELATIONSHIP.LOVER)) {
+        //    char2Rel.AddRelationshipStatus(CHARACTER_RELATIONSHIP.LOVER);
+        //}
     }
     private void OnCharacterDied(Character character) {
         if (generalMax.id == character.id || ladyOfTheLake.id == character.id) {

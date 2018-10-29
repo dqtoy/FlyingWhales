@@ -35,8 +35,8 @@ public class CameraMove : MonoBehaviour {
     //[SerializeField] private BoundDrawer boundDrawer;
     [SerializeField] private Bounds bounds;
 
-    [SerializeField] private bool allowVerticalMovement;
-    [SerializeField] private bool allowHorizontalMovement;
+    //[SerializeField] private bool allowVerticalMovement;
+    //[SerializeField] private bool allowHorizontalMovement;
 
     private float previousCameraFOV;
 
@@ -66,29 +66,29 @@ public class CameraMove : MonoBehaviour {
         float zAxisValue = Input.GetAxis("Vertical");
 #if WORLD_CREATION_TOOL
         if (!worldcreator.WorldCreatorUI.Instance.IsUserOnUI()) {
-            if (allowVerticalMovement) {
+            //if (allowVerticalMovement) {
                 if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
                     iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("y", Camera.main.transform.position.y + zAxisValue, "time", 0.1f));
                 }
-            }
-            if (allowHorizontalMovement) {
+            //}
+            //if (allowHorizontalMovement) {
                 if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) {
                     iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("x", Camera.main.transform.position.x + xAxisValue, "time", 0.1f));
                 }
-            }
+            //}
         }
 #else
         if (!UIManager.Instance.IsConsoleShowing()) {
-            if (allowVerticalMovement) {
+            //if (allowVerticalMovement) {
                 if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
                     iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("y", Camera.main.transform.position.y + zAxisValue, "time", 0.1f));
                 }
-            }
-            if (allowHorizontalMovement) {
+            //}
+            //if (allowHorizontalMovement) {
                 if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) {
                     iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("x", Camera.main.transform.position.x + xAxisValue, "time", 0.1f));
                 }
-            }
+            //}
         }
 #endif
 
@@ -210,22 +210,26 @@ public class CameraMove : MonoBehaviour {
         float horzExtent = vertExtent * Screen.width / Screen.height;
 
         Bounds newBounds = new Bounds();
-        newBounds.extents = new Vector3(Mathf.Abs(rightMostTile.transform.position.x) + (1.28f * 2f), Mathf.Abs(topMostTile.transform.position.y) + (1.28f * 2f), 0f);
+#if WORLD_CREATION_TOOL
+        newBounds.extents = new Vector3(Mathf.Abs(rightMostTile.transform.position.x) + (1.28f * (float)(worldcreator.WorldCreatorManager.Instance._borderThickness + 2f)), Mathf.Abs(topMostTile.transform.position.y) + (1.28f * 4f), 0f);
+#else
+        newBounds.extents = new Vector3(Mathf.Abs(rightMostTile.transform.position.x) + (1.28f * (float)(GridMap.Instance._borderThickness + 2f)), Mathf.Abs(topMostTile.transform.position.y) + (1.28f * 4f), 0f);
+#endif
         SetCameraBounds(newBounds, horzExtent, vertExtent);
 
-        if (Utilities.IsVisibleFrom(leftMostTile.gameObject.GetComponentInChildren<Renderer>(), Camera.main)
-            && Utilities.IsVisibleFrom(rightMostTile.gameObject.GetComponentInChildren<Renderer>(), Camera.main)) {
-            allowHorizontalMovement = false;
-        } else {
-            allowHorizontalMovement = true;
-        }
+        //if (Utilities.IsVisibleFrom(leftMostTile.gameObject.GetComponentInChildren<Renderer>(), Camera.main)
+        //    && Utilities.IsVisibleFrom(rightMostTile.gameObject.GetComponentInChildren<Renderer>(), Camera.main)) {
+        //    allowHorizontalMovement = false;
+        //} else {
+        //    allowHorizontalMovement = true;
+        //}
 
-        if (Utilities.IsVisibleFrom(topMostTile.gameObject.GetComponentInChildren<Renderer>(), Camera.main)
-            && Utilities.IsVisibleFrom(botMostTile.gameObject.GetComponentInChildren<Renderer>(), Camera.main)) {
-            allowVerticalMovement = false;
-        } else {
-            allowVerticalMovement = true;
-        }
+        //if (Utilities.IsVisibleFrom(topMostTile.gameObject.GetComponentInChildren<Renderer>(), Camera.main)
+        //    && Utilities.IsVisibleFrom(botMostTile.gameObject.GetComponentInChildren<Renderer>(), Camera.main)) {
+        //    allowVerticalMovement = false;
+        //} else {
+        //    allowVerticalMovement = true;
+        //}
     }
     public void ConstrainCameraBounds() {
         float xLowerBound = MIN_X;
@@ -243,12 +247,12 @@ public class CameraMove : MonoBehaviour {
         float xCoord = Mathf.Clamp(transform.position.x, xLowerBound, xUpperBound);
         float yCoord = Mathf.Clamp(transform.position.y, yLowerBound, yUpperBound);
         float zCoord = Mathf.Clamp(transform.position.z, MIN_Z, MAX_Z);
-        if (!allowHorizontalMovement) {
-            xCoord = 0f;
-        }
-        if (!allowVerticalMovement) {
-            yCoord = 0f;
-        }
+        //if (!allowHorizontalMovement) {
+        //    xCoord = 0f;
+        //}
+        //if (!allowVerticalMovement) {
+        //    yCoord = 0f;
+        //}
         //if (!allowVerticalMovement && !allowHorizontalMovement) {
         //    xCoord = 0f;
         //    yCoord = 0f;

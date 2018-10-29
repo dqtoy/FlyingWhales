@@ -78,6 +78,7 @@ public class Area {
         StartSupplyLine();
 #endif
         AddTile(Utilities.GetTilesFromIDs(data.tileData)); //exposed tiles will be determined after loading landmarks at MapGeneration
+        UpdateBorderColors();
     }
 
     public void SetRecommendedPower(float power) {
@@ -292,15 +293,29 @@ public class Area {
         outline = new List<SpriteRenderer>();
         for (int i = 0; i < tiles.Count; i++) {
             HexTile currTile = tiles[i];
-            for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
-                HexTile currNeighbour = currTile.AllNeighbours[j];
-                if (currNeighbour.areaOfTile == null || currNeighbour.areaOfTile.id != this.id) {
+            HEXTILE_DIRECTION[] neighbourDirections = Utilities.GetEnumValues<HEXTILE_DIRECTION>();
+            for (int j = 0; j < neighbourDirections.Length; j++) {
+                HEXTILE_DIRECTION currDirection = neighbourDirections[j];
+                HexTile currNeighbour = currTile.GetNeighbour(currDirection);
+                if (currNeighbour == null || currNeighbour.areaOfTile == null || currNeighbour.areaOfTile.id != this.id) {
                     if (!outerTiles.Contains(currTile)) {
                         outerTiles.Add(currTile);
                     }
-                    outline.Add(currTile.GetBorder(currTile.GetNeighbourDirection(currNeighbour)));
+                    SpriteRenderer border = currTile.GetBorder(currDirection);
+                    if (border != null) {
+                        outline.Add(border);
+                    }
                 }
             }
+            //for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
+            //    HexTile currNeighbour = currTile.AllNeighbours[j];
+            //    if (currNeighbour.areaOfTile == null || currNeighbour.areaOfTile.id != this.id) {
+            //        if (!outerTiles.Contains(currTile)) {
+            //            outerTiles.Add(currTile);
+            //        }
+            //        outline.Add(currTile.GetBorder(currTile.GetNeighbourDirection(currNeighbour)));
+            //    }
+            //}
         }
     }
     #endregion
@@ -366,6 +381,7 @@ public class Area {
     #region Owner
     public void SetOwner(Faction owner) {
         this.owner = owner;
+        UpdateBorderColors();
     }
     #endregion
 
@@ -403,6 +419,17 @@ public class Area {
                 if (this.areaType == AREA_TYPE.DEMONIC_INTRUSION) { //if player area
                     PlayerManager.Instance.OnPlayerLandmarkRuined(structureObj.objectLocation);
                 }
+            }
+        }
+    }
+    private void UpdateBorderColors() {
+        for (int i = 0; i < tiles.Count; i++) {
+            if (owner == null) {
+                Color defaultColor = Color.gray;
+                defaultColor.a = 128f/255f;
+                tiles[i].SetBorderColor(defaultColor);
+            } else {
+                tiles[i].SetBorderColor(owner.factionColor);
             }
         }
     }

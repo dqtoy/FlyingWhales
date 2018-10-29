@@ -140,15 +140,15 @@ public class CharacterManager : MonoBehaviour {
             //CheckForSecrets(currCharacter); //TODO: Remove this when setup for secret in character editor is done
         }
     }
-    public void LoadRelationships(WorldSaveData data) {
-        if (data.charactersData != null) {
-            for (int i = 0; i < data.charactersData.Count; i++) {
-                CharacterSaveData currData = data.charactersData[i];
-                ECS.Character currCharacter = CharacterManager.Instance.GetCharacterByID(currData.id);
-                currCharacter.LoadRelationships(currData.relationshipsData);
-            }
-        }
-    }
+    //public void LoadRelationships(WorldSaveData data) {
+    //    if (data.charactersData != null) {
+    //        for (int i = 0; i < data.charactersData.Count; i++) {
+    //            CharacterSaveData currData = data.charactersData[i];
+    //            ECS.Character currCharacter = CharacterManager.Instance.GetCharacterByID(currData.id);
+    //            currCharacter.LoadRelationships(currData.relationshipsData);
+    //        }
+    //    }
+    //}
     public void LoadSquads(WorldSaveData data) {
         if (data.squadData != null) {
             for (int i = 0; i < data.squadData.Count; i++) {
@@ -286,29 +286,29 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Relationships
-    public Relationship CreateNewRelationshipTowards(ECS.Character sourceCharacter, ECS.Character targetCharacter) {
-        Relationship newRel = new Relationship(sourceCharacter, targetCharacter);
-        sourceCharacter.AddNewRelationship(targetCharacter, newRel);
-        return newRel;
-    }
-    /*
-     Utility Function for getting the relationship between 2 characters,
-     this just adds a checking for data consistency if, the 2 characters have the
-     same reference to their relationship.
-     NOTE: This is probably more performance intensive because of the additional checking.
-     User can opt to use each characters GetRelationshipWith() instead.
-         */
-    public Relationship GetRelationshipBetween(ECS.Character character1, ECS.Character character2) {
-        if(character1 == null || character2 == null) {
-            return null;
-        }
-        Relationship char1Rel = character1.GetRelationshipWith(character2);
-        Relationship char2Rel = character2.GetRelationshipWith(character1);
-        if(char1Rel == char2Rel) {
-            return char1Rel;
-        }
-        throw new System.Exception(character1.name + " does not have the same relationship object as " + character2.name + "!");
-    }
+    //public Relationship CreateNewRelationshipTowards(ECS.Character sourceCharacter, ECS.Character targetCharacter) {
+    //    Relationship newRel = new Relationship(sourceCharacter, targetCharacter);
+    //    sourceCharacter.AddNewRelationship(targetCharacter, newRel);
+    //    return newRel;
+    //}
+    ///*
+    // Utility Function for getting the relationship between 2 characters,
+    // this just adds a checking for data consistency if, the 2 characters have the
+    // same reference to their relationship.
+    // NOTE: This is probably more performance intensive because of the additional checking.
+    // User can opt to use each characters GetRelationshipWith() instead.
+    //     */
+    //public Relationship GetRelationshipBetween(ECS.Character character1, ECS.Character character2) {
+    //    if(character1 == null || character2 == null) {
+    //        return null;
+    //    }
+    //    Relationship char1Rel = character1.GetRelationshipWith(character2);
+    //    Relationship char2Rel = character2.GetRelationshipWith(character1);
+    //    if(char1Rel == char2Rel) {
+    //        return char1Rel;
+    //    }
+    //    throw new System.Exception(character1.name + " does not have the same relationship object as " + character2.name + "!");
+    //}
     #endregion
 
     #region Utilities

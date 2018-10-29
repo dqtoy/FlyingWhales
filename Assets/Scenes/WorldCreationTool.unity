@@ -57447,7 +57447,7 @@ MonoBehaviour:
   selectionComponent: {fileID: 605996956}
   outerGridList: []
   _borderParent: {fileID: 145712290}
-  _borderThickness: 2
+  _borderThickness: 10
 --- !u!4 &1372300545
 Transform:
   m_ObjectHideFlags: 0
@@ -85731,8 +85731,6 @@ MonoBehaviour:
   bounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
-  allowVerticalMovement: 0
-  allowHorizontalMovement: 0
 --- !u!4 &2068808520
 Transform:
   m_ObjectHideFlags: 0

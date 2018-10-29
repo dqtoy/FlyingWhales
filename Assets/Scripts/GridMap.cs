@@ -225,6 +225,7 @@ public class GridMap : MonoBehaviour {
             GenerateOuterGrid(); //generate default outer grid
             return;
         }
+        _borderThickness = data.borderThickness;
         int newWidth = (int)width + (_borderThickness * 2);
         int newHeight = (int)height + (_borderThickness * 2);
 

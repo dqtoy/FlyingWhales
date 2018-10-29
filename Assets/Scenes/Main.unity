@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.22380279, g: 0.24376711, b: 0.26534963, a: 1}
+  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -34189,8 +34189,6 @@ MonoBehaviour:
   bounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
-  allowVerticalMovement: 0
-  allowHorizontalMovement: 0
 --- !u!1 &933836537
 GameObject:
   m_ObjectHideFlags: 0
@@ -48699,7 +48697,7 @@ MonoBehaviour:
   width: 35
   height: 45
   _borderParent: {fileID: 1771222031}
-  _borderThickness: 2
+  _borderThickness: 10
   xOffset: 2.56
   yOffset: 1.93
   tileSize: 1
@@ -59197,10 +59195,8 @@ MonoBehaviour:
   combatLogUI: {fileID: 1297442069}
   consoleUI: {fileID: 1614811351}
   charactersSummaryGO: {fileID: 215701892}
-  charactersToggleBtn: {fileID: 0}
   charactersSummaryMenu: {fileID: 215701896}
   factionsSummaryMenu: {fileID: 1117973113}
-  factionsToggleBtn: {fileID: 0}
   contextMenuPrefab: {fileID: 1018278314661498, guid: b2755c072ea3a4849b851e62bdc86755,
     type: 2}
   contextMenuItemPrefab: {fileID: 1404552397919108, guid: 44606a74032cb404ca32744b5b0b1489,

@@ -53,13 +53,13 @@ public class RelationshipEditorItem : MonoBehaviour, IPointerEnterHandler, IPoin
         }
     }
     private bool IsRelationshipStatusValid(CHARACTER_RELATIONSHIP relStat) {
-        if (Utilities.IsRelationshipStatusUnique(relStat) && _relationship.sourceCharacter.AlreadyHasRelationshipStatus(relStat)) { //check if a relationship status is unique, and if the source character already has a relationship status of that type
-            return false;
-        }
-        Relationship targetRelWithSource = _relationship.targetCharacter.GetRelationshipWith(_relationship.sourceCharacter);
-        if (Utilities.IsRelationshipStatusMutuallyExclusive(relStat, _relationship, targetRelWithSource)) {
-            return false;
-        }
+        //if (Utilities.IsRelationshipStatusUnique(relStat) && _relationship.sourceCharacter.AlreadyHasRelationshipStatus(relStat)) { //check if a relationship status is unique, and if the source character already has a relationship status of that type
+        //    return false;
+        //}
+        //Relationship targetRelWithSource = _relationship.targetCharacter.GetRelationshipWith(_relationship.sourceCharacter);
+        //if (Utilities.IsRelationshipStatusMutuallyExclusive(relStat, _relationship, targetRelWithSource)) {
+        //    return false;
+        //}
         return true;
     }
     public void RemoveRelationshipStatus() {
@@ -68,7 +68,7 @@ public class RelationshipEditorItem : MonoBehaviour, IPointerEnterHandler, IPoin
         UpdateStatusSummary();
     }
     public void RemoveRelationship() {
-        _relationship.sourceCharacter.RemoveRelationshipWith(_relationship.targetCharacter);
+        //_relationship.sourceCharacter.RemoveRelationshipWith(_relationship.targetCharacter);
     }
     private void OnCharacterChangedGender(ECS.Character character, GENDER newGender) {
         if (_relationship.sourceCharacter.id == character.id || _relationship.targetCharacter.id == character.id) {
