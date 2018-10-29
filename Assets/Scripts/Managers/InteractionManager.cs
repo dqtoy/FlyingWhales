@@ -98,7 +98,7 @@ public class InteractionManager : MonoBehaviour {
     public Reward GetReward(string rewardName) {
         if (rewardConfig.ContainsKey(rewardName)) {
             RewardConfig config = rewardConfig[rewardName];
-            return new Reward { rewardType = config.rewardType, amount = Random.Range(config.lowerRange, config.higherRange) };
+            return new Reward { rewardType = config.rewardType, amount = Random.Range(config.lowerRange, config.higherRange + 1) };
         }
         throw new System.Exception("There is no reward configuration with name " + rewardName);
     }

@@ -86,6 +86,6 @@ public class PointOfInterest1 : Interaction {
         SetCurrentState(_states[effectName]);
     }
     private void DemonBonusExpRewardEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(2);
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));
     }
 }

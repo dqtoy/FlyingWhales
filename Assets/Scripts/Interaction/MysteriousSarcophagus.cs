@@ -122,21 +122,21 @@ public class MysteriousSarcophagus : Interaction {
 
     #region State Effects
     private void CursedRewardEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1);
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //TODO: all of your units gain a random negative Trait (same negative Trait for all)
     }
     private void AccessoryUpgradeRewardEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1);
-        if(state.assignedMinion.icharacter.equippedAccessory != null) {
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        if (state.assignedMinion.icharacter.equippedAccessory != null) {
             state.assignedMinion.icharacter.UpgradeAccessory();
         }
     }
     private void GainManaRewardEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1);
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         PlayerManager.Instance.player.AdjustCurrency(CURRENCY.MANA, 50);
     }
     private void GainSuppliesRewardEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1);
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, 50);
     }
     private void AwakenUndeadHeroRewardEffect(InteractionState state) {
@@ -148,7 +148,7 @@ public class MysteriousSarcophagus : Interaction {
         }
     }
     private void GainPositiveTraitRewardEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1);
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //TODO: Positive Trait Reward 1
     }
     #endregion

@@ -138,16 +138,16 @@ public class SuspiciousSoldierMeeting : Interaction {
                 }
             }
         }
-        state.assignedMinion.AdjustExp(1);
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
     private void WarDeclaredRewardEffect(InteractionState state) {
         //Tile owner faction will declare war on player
-        state.assignedMinion.AdjustExp(1);
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         FactionManager.Instance.DeclareWarBetween(_interactable.faction, PlayerManager.Instance.player.playerFaction);
     }
     private void GeneralDiesRewardEffect(InteractionState state) {
         //Resident General dies by assassination
-        state.assignedMinion.AdjustExp(1);
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         if (_interactable is BaseLandmark) {
             BaseLandmark landmark = _interactable as BaseLandmark;
             ICharacter icharacter = landmark.GetResidentCharacterOfClass("General");
@@ -157,7 +157,7 @@ public class SuspiciousSoldierMeeting : Interaction {
         }
     }
     private void NothingHappensRewardEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1);
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
     #endregion
 }

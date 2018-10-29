@@ -585,4 +585,16 @@ public class Area {
         }
     }
     #endregion
+
+    #region Rewards
+    public void ClaimReward(Reward reward) {
+        switch (reward.rewardType) {
+            case REWARD.SUPPLY:
+            AdjustSuppliesInBank(reward.amount);
+            break;
+            default:
+            break;
+        }
+    }
+    #endregion
 }

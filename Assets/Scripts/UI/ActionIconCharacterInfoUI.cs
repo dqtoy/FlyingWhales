@@ -36,8 +36,12 @@ public class ActionIconCharacterInfoUI : PooledObject, IPointerEnterHandler, IPo
     }
     public void SetAction(CharacterAction action) {
         _action = action;
-        actionText.text = _action.actionData.actionName;
-        UpdateProgress();
+        if (_action != null) {
+            actionText.text = _action.actionData.actionName;
+            UpdateProgress();
+        } else {
+            actionText.text = "None";
+        }
     }
     public void SetCurrentDay(int amount) {
         _currentDay = amount;

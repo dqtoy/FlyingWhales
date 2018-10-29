@@ -118,7 +118,7 @@ public class HarvestSeason : Interaction {
         farm.DisableSupplyProductionUntil(dueDate);
     }
     private void PoisonedHarvestEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1); //**Reward**: Demon gains Exp 1
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     #endregion
 
@@ -131,7 +131,7 @@ public class HarvestSeason : Interaction {
         chosenFarmer.Death();
     }
     private void FarmerKilledEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1); //**Reward**: Demon gains Exp 1
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     #endregion
 
@@ -141,9 +141,9 @@ public class HarvestSeason : Interaction {
         SetCurrentState(_states[effectName]);
     }
     private void ObtainHarvestEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1); //**Reward**: Demon gains Exp 1
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
         Reward reward = InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1);
-        PlayerManager.Instance.player.ClaimReward(state, reward);
+        PlayerManager.Instance.player.ClaimReward(reward);
         farm.tileLocation.areaOfTile.PayForReward(reward);
     }
     #endregion
@@ -156,7 +156,7 @@ public class HarvestSeason : Interaction {
         FactionManager.Instance.DeclareWarBetween(farm.tileLocation.areaOfTile.owner, PlayerManager.Instance.player.playerFaction);
     }
     private void DemonDiscoveredEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1); //**Reward**: Demon gains Exp 1
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     #endregion
 

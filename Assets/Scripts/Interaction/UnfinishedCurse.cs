@@ -120,28 +120,28 @@ public class UnfinishedCurse : Interaction {
         SetCurrentState(_states[effectName]);
     }
     private void Curse1CompletedEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1); //**Reward**: Demon gains Exp 1
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     private void Curse2Completed(InteractionState state, string effectName) {
         _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " tried a couple of chants to complete the curse. After the latest one, a violent thunderstrike sounded from the distance.");
         SetCurrentState(_states[effectName]);
     }
     private void Curse2CompletedEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1); //**Reward**: Demon gains Exp 1
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     private void Curse3Completed(InteractionState state, string effectName) {
         _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " tried a couple of chants to complete the curse. After the latest one, a violent thunderstrike sounded from the distance.");
         SetCurrentState(_states[effectName]);
     }
     private void Curse3CompletedEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1); //**Reward**: Demon gains Exp 1
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     private void CurseFailedToComplete(InteractionState state, string effectName) {
         _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " attempted to complete the ancient curse but failed to figure out the proper chant to make it work.");
         SetCurrentState(_states[effectName]);
     }
     private void CurseFailedToCompleteEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1); //**Reward**: Demon gains Exp 1
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }
 
     private void ObtainMana(InteractionState state, string effectName) {
@@ -150,8 +150,8 @@ public class UnfinishedCurse : Interaction {
     }
     private void ObtainManaEffect(InteractionState state) {
         //**Reward**: Mana Cache 1, Demon gains Exp 1
-        state.assignedMinion.AdjustExp(1);
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         Reward reward = InteractionManager.Instance.GetReward(InteractionManager.Mana_Cache_Reward_1);
-        PlayerManager.Instance.player.ClaimReward(state, reward);
+        PlayerManager.Instance.player.ClaimReward(reward);
     }
 }

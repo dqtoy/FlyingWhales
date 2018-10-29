@@ -91,7 +91,7 @@ public class Interaction {
     }
     protected void SupplyRewardEffect(InteractionState state) {
         PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, 40);
-        state.assignedMinion.AdjustExp(1);
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
 
     protected void ManaRewardState(InteractionState state, string effectName) {
@@ -100,7 +100,7 @@ public class Interaction {
     }
     protected void ManaRewardEffect(InteractionState state) {
         PlayerManager.Instance.player.AdjustCurrency(CURRENCY.MANA, 40);
-        state.assignedMinion.AdjustExp(1);
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
 
     protected void DemonDisappearsRewardState(InteractionState state, string effectName) {
@@ -117,7 +117,7 @@ public class Interaction {
         SetCurrentState(_states[effectName]);
     }
     protected void NothingEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1);
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
     #endregion
 }

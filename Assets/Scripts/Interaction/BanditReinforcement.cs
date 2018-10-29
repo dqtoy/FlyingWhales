@@ -171,7 +171,7 @@ public class BanditReinforcement : Interaction {
     }
     private void SuccessfullyCalledReinforcementEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        state.assignedMinion.AdjustExp(1);
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
     private void FailedToCancelReinforcement(InteractionState state, string effectName) {
         //**Mechanics**: create an Army Unit from Defense Spawn Weights and add it to the Tile Defenders
@@ -182,7 +182,7 @@ public class BanditReinforcement : Interaction {
     }
     private void FailedToCancelReinforcementEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        state.assignedMinion.AdjustExp(1);
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
 
     private void GiftAccepted(InteractionState state, string effectName) {

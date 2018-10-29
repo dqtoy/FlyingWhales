@@ -96,11 +96,11 @@ public class KillerOnTheLoose : Interaction {
         PlayerManager.Instance.player.AddMinion(PlayerManager.Instance.player.CreateNewMinion("Farmer", RACE.DEMON, DEMON_TYPE.ENVY, "Inspect", false));
     }
     private void GainSupplyRewardEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1);
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         _interactable.specificLocation.tileLocation.areaOfTile.AdjustSuppliesInBank(50);
     }
     private void NothingHappensRewardEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1);
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
     #endregion
 }
