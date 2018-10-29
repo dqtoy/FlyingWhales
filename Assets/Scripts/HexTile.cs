@@ -1235,14 +1235,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             HexTile neighbor = AllNeighbours[i];
             if (!neighbor.isCorrupted) {
                 PlayerManager.Instance.AddTileToPlayerArea(neighbor);
-                ScheduleCorruption();
-                break;
+                //ScheduleCorruption();
+                //break;
             }
         }
     }
     public void ScheduleCorruption() {
         GameDate nextCorruptionDate = GameManager.Instance.Today();
-        nextCorruptionDate.AddHours(24);
+        nextCorruptionDate.AddHours(GameManager.hoursPerDay);
         SchedulingManager.Instance.AddEntry(nextCorruptionDate, () => SpreadCorruptionToNeighbors());
     }
     #endregion
