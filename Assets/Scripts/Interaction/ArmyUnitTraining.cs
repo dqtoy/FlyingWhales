@@ -127,10 +127,10 @@ public class ArmyUnitTraining : Interaction {
 
     #region State Effects
     private void CancelledTrainingRewardEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1);
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
     private void FailedCancelTrainingRewardEffect(InteractionState state) {
-        state.assignedMinion.AdjustExp(1);
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         ArmyProducedRewardEffect(state);
     }
     private void ArmyProducedRewardEffect(InteractionState state) {

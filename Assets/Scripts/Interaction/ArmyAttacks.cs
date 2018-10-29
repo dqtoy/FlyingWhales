@@ -127,7 +127,7 @@ public class ArmyAttacks : Interaction {
     }
     private void StopSuccessfulEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        state.chosenOption.assignedMinion.AdjustExp(1);
+        state.chosenOption.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
     private void StopFailure(InteractionState state, string effectName) {
         Faction enemyFaction = landmark.owner.GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS.AT_WAR);
@@ -143,7 +143,7 @@ public class ArmyAttacks : Interaction {
     }
     private void StopFailureEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        state.chosenOption.assignedMinion.AdjustExp(1);
+        state.chosenOption.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
     private void StopCriticalFailure(InteractionState state, string effectName) {
         //**Mechanics**: Army Unit with most occupied slots will Attack a player location.
@@ -157,7 +157,7 @@ public class ArmyAttacks : Interaction {
     }
     private void StopCriticalFailureEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        state.chosenOption.assignedMinion.AdjustExp(1);
+        state.chosenOption.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
 
     private void RedirectionSuccessful(InteractionState state, string effectName) {
@@ -172,7 +172,7 @@ public class ArmyAttacks : Interaction {
     }
     private void RedirectionSuccessfulEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        state.chosenOption.assignedMinion.AdjustExp(1);
+        state.chosenOption.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
     private void RedirectionFailure(InteractionState state, string effectName) {
         //**Mechanics**: Army Unit with most occupied slots will Attack a player location.
@@ -186,6 +186,6 @@ public class ArmyAttacks : Interaction {
     }
     private void RedirectionFailureEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        state.chosenOption.assignedMinion.AdjustExp(1);
+        state.chosenOption.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
 }

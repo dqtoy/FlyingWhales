@@ -589,7 +589,7 @@ public class Player : ILeader {
     #endregion
 
     #region Rewards
-    public void ClaimReward(InteractionState state, Reward reward) {
+    public void ClaimReward(Reward reward) {
         switch (reward.rewardType) {
             case REWARD.SUPPLY:
                 AdjustCurrency(CURRENCY.SUPPLY, reward.amount);
@@ -597,9 +597,9 @@ public class Player : ILeader {
             case REWARD.MANA:
                 AdjustCurrency(CURRENCY.MANA, reward.amount);
                 break;
-            case REWARD.EXP:
-                state.assignedMinion.AdjustExp(reward.amount);
-                break;
+            //case REWARD.EXP:
+            //    state.assignedMinion.AdjustExp(reward.amount);
+            //    break;
             default:
                 break;
         }

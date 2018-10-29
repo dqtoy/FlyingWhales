@@ -133,4 +133,16 @@ public class Minion : IUnit {
         icharacter.currentParty.specificLocation.RemoveCharacterFromLocation(icharacter.currentParty);
         PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(icharacter.currentParty);
     }
+
+    #region Rewards
+    public void ClaimReward(Reward reward) {
+        switch (reward.rewardType) {
+            case REWARD.EXP:
+            AdjustExp(reward.amount);
+            break;
+            default:
+            break;
+        }
+    }
+    #endregion
 }
