@@ -64,6 +64,7 @@ public class Minion : IUnit {
         //PlayerManager.Instance.player.demonicPortal.AddCharacterHomeOnLandmark(_icharacter);
         //PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(_icharacter.ownParty);
         _icharacter.SetMinion(this);
+        _icharacter.SetName(RandomNameGenerator.Instance.GenerateMinionName());
     }
     public Minion(ICharacter icharacter, PlayerAbility ability, DEMON_TYPE demonType) {
         _icharacter = icharacter;

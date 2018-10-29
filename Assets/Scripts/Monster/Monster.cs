@@ -485,6 +485,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     #endregion
 
     #region Interface
+    public void SetName(string name) {
+        _name = name;
+    }
     private void BaseInitialize() {
         _isDead = false;
         _miscActions = new List<CharacterAction>();

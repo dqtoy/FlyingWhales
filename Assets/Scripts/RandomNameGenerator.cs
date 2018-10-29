@@ -97,6 +97,16 @@ public class RandomNameGenerator : MonoBehaviour {
         "Parañaque", "Pasay", "Pasig", "Quezon", "San Juan", "Taguig", "Valenzuela"
     };
 
+    private string[] minionNames = new string[] {
+        "Abraxas", "Agares", "Aim", "Alloces", "Amdusias", "Amon", "Amy", "Andras", "Andrealphus", "Adromalius", "Asmodeus",
+        "Astaroth", "Azazel", "Baal", "Baphomet", "Barbatos", "Barong", "Bathin", "Balam", "Beleth", "Belial", "Belphegor",
+        "Berith", "Bifrons", "Botis", "Buer", "Bune", "Caim", "Choronzon", "Crocell", "Dantalion", "Decarabia", "Demogorgon", "Eligos",
+        "Flauros", "Focalor", "Foras", "Forneus", "Furcas", "Furfur", "Gaap", "Gremory", "Glasya-labolas", "Gusion", "Haagenti",
+        "Halphas", "Ipos", "Kimaris", "Leraje", "Lucifer", "Malphas", "Marax", "Marbas", "Marchosias", "Murmur", "Naberius", "Orias",
+        "Orobas", "Ose", "Paimon", "Phenex", "Purson", "Raum", "Ronove", "Sabnock", "Samigina", "Sallos", "Seere", "Shax", "Sitri", "Stolas",
+        "Valac", "Vapula", "Vassago", "Valefor", "Vepar", "Vine", "Vual", "Zepar", "Zagan"
+    };
+
 	#region Alliance
 	private string[] allianceType = new string[]{
 		"Alliance", "League", "Coalition", "Axis", "Union", "Entente", "Accord"
@@ -251,7 +261,11 @@ public class RandomNameGenerator : MonoBehaviour {
         //generatedElvenMaleNames = new MarkovNameGenerator(baseElvenMaleNames, 3, 4);
     }
 
-	public string GenerateRandomName(RACE race, GENDER gender){
+    public string GenerateMinionName() {
+        return minionNames[Random.Range(0, minionNames.Length)];
+    }
+
+    public string GenerateRandomName(RACE race, GENDER gender){
 		if (race == RACE.HUMANS) {
 			return GenerateWholeHumanName(gender);
 		} else if(race == RACE.ELVES) {

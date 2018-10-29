@@ -54,6 +54,7 @@ public interface ICharacter {
     Dictionary<STAT, float> buffs { get; }
 
     //functions
+    void SetName(string name);
     void ResetToFullHP();
     void ResetToFullSP();
     void Initialize();
