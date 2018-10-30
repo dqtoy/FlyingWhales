@@ -13,6 +13,8 @@ public class PartyInfoUI : UIMenu {
     [SerializeField] private TMP_InputField partyField;
     [SerializeField] private SlotItem[] partySlots;
     [SerializeField] private Button confirmBtn;
+    [SerializeField] private GameObject locationGO;
+    [SerializeField] private TextMeshProUGUI locationLbl;
 
     internal Party currentlyShowingParty {
         get { return _data as Party; }
@@ -51,6 +53,7 @@ public class PartyInfoUI : UIMenu {
 		if(!currentlyShowingParty.isDead){
             UpdateGeneralInfo();
             UpdatePartyCharacters();
+            UpdateLocation();
             confirmBtn.gameObject.SetActive(false);
         }
     }
@@ -89,7 +92,15 @@ public class PartyInfoUI : UIMenu {
             currSlot.dropZone.SetEnabledState(false);
         }
     }
-
+    private void UpdateLocation() {
+        locationGO.SetActive(true);
+        if (currentlyShowingParty.specificLocation is BaseLandmark) {
+            locationLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters((currentlyShowingParty.specificLocation as BaseLandmark).specificLandmarkType.ToString());
+        } else {
+            locationLbl.text = currentlyShowingParty.specificLocation.locationName;
+        }
+        
+    }
     #region Create/Edit Party
     private PartyHolder partyHolder;
     public void ShowCreatePartyUI() {
@@ -103,7 +114,7 @@ public class PartyInfoUI : UIMenu {
             currSlot.itemDroppedOutCallback = new ItemDroppedOutCallback();
             currSlot.itemDroppedOutCallback.AddListener(OnItemDroppedOutOfSlot);
         }
-        
+        locationGO.SetActive(false);
         confirmBtn.gameObject.SetActive(false);
         UIManager.Instance.ShowMinionsMenu();
         partyHolder = new PartyHolder();
@@ -204,7 +215,7 @@ public class PartyInfoUI : UIMenu {
             ICharacter currCharacter = partyHolder.characters[i];
             partyToUse.AddCharacter(currCharacter);
         }
-        base.SetData(partyToUse);
+        SetData(partyToUse);
         OnChangesMade();
         Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE, "Saved party!", true);
     }

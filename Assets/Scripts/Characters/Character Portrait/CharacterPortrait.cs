@@ -217,21 +217,21 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
             return;
         }
         if (_character != null) {
-            if (UIManager.Instance.characterInfoUI.isWaitingForAttackTarget) {
-                CharacterAction attackAction = _character.ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
-                if (attackAction.CanBeDone(_character.ownParty.icharacterObject) && attackAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party, _character.ownParty.icharacterObject)) { //TODO: Change this checker to relationship status checking instead of just faction
-                    UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party.actionData.AssignAction(attackAction, _character.ownParty.icharacterObject);
-                    UIManager.Instance.characterInfoUI.SetAttackButtonState(false);
-                    return;
-                }
-            } else if (UIManager.Instance.characterInfoUI.isWaitingForJoinBattleTarget) {
-                CharacterAction joinBattleAction = _character.ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.JOIN_BATTLE);
-                if (joinBattleAction.CanBeDone(_character.ownParty.icharacterObject) && joinBattleAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party, _character.ownParty.icharacterObject)) { //TODO: Change this checker to relationship status checking instead of just faction
-                    UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party.actionData.AssignAction(joinBattleAction, _character.ownParty.icharacterObject);
-                    UIManager.Instance.characterInfoUI.SetJoinBattleButtonState(false);
-                    return;
-                }
-            }
+            //if (UIManager.Instance.characterInfoUI.isWaitingForAttackTarget) {
+            //    CharacterAction attackAction = _character.ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
+            //    if (attackAction.CanBeDone(_character.ownParty.icharacterObject) && attackAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party, _character.ownParty.icharacterObject)) { //TODO: Change this checker to relationship status checking instead of just faction
+            //        UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party.actionData.AssignAction(attackAction, _character.ownParty.icharacterObject);
+            //        UIManager.Instance.characterInfoUI.SetAttackButtonState(false);
+            //        return;
+            //    }
+            //} else if (UIManager.Instance.characterInfoUI.isWaitingForJoinBattleTarget) {
+            //    CharacterAction joinBattleAction = _character.ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.JOIN_BATTLE);
+            //    if (joinBattleAction.CanBeDone(_character.ownParty.icharacterObject) && joinBattleAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party, _character.ownParty.icharacterObject)) { //TODO: Change this checker to relationship status checking instead of just faction
+            //        UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party.actionData.AssignAction(joinBattleAction, _character.ownParty.icharacterObject);
+            //        UIManager.Instance.characterInfoUI.SetJoinBattleButtonState(false);
+            //        return;
+            //    }
+            //}
             Party iparty = _character.ownParty;
             if (nameLbl.gameObject.activeSelf) {
                 if (_character is ECS.Character) {
