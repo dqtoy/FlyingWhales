@@ -677,6 +677,12 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public bool InviteToParty(ICharacter inviter) {
         return false;
     }
+    public bool IsInParty() {
+        if (currentParty.icharacters.Count > 1) {
+            return true; //if the character is in a party that has more than 1 characters
+        }
+        return false;
+    }
     public bool IsInOwnParty() {
         return true;
     }

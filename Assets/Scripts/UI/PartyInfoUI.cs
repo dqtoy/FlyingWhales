@@ -151,7 +151,11 @@ public class PartyInfoUI : UIMenu {
             item.ClearSlot(true);
         }
         if (characterToAdd != null) {
-            if (partyHolder.characters.Contains(characterToAdd)) {
+            if (characterToAdd.IsInParty()) {
+                //if the character is not in his/her own party (means he/she is already in another party)
+                item.ClearSlot(true);
+                Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE, characterToAdd.name + " is already part of another party!", true);
+            } else if (partyHolder.characters.Contains(characterToAdd)) {
                 item.ClearSlot(true);
                 Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE, characterToAdd.name + " is already part of this party!", true);
             } else {
@@ -181,12 +185,15 @@ public class PartyInfoUI : UIMenu {
                     charactersToRemove.Add(currCharacter);
                 }
             }
-            //if (charactersToRemove.Contains(currentlyShowingParty.owner)) {
-            //the party owner was removed from the party
+            if (charactersToRemove.Contains(currentlyShowingParty.owner)) {
+                //the party owner was removed from the party
+                //remove all other characters instead
+                charactersToRemove = new List<ICharacter>(currentlyShowingParty.icharacters);
+                charactersToRemove.Remove(currentlyShowingParty.owner);
+            }
             for (int i = 0; i < charactersToRemove.Count; i++) {
                 currentlyShowingParty.RemoveCharacter(charactersToRemove[i]);
             }
-            //}
         }
         
 
