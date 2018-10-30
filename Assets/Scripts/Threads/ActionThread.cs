@@ -422,9 +422,9 @@ public class ActionThread : Multithread {
                 }
             }
         }
-        if (Messenger.eventTable.ContainsKey(Signals.LOOK_FOR_ACTION)) {
-            Messenger.Broadcast<ActionThread>(Signals.LOOK_FOR_ACTION, this);
-        }
+        //if (Messenger.eventTable.ContainsKey(Signals.LOOK_FOR_ACTION)) {
+        //    Messenger.Broadcast<ActionThread>(Signals.LOOK_FOR_ACTION, this);
+        //}
         //if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id == _party.id) {
         //    Debug.Log(actionLog);
         //}

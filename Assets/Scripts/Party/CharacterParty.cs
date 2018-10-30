@@ -39,6 +39,10 @@ public class CharacterParty : Party {
     }
     #endregion
 
+    public CharacterParty() : base (null){
+
+    }
+
     public CharacterParty(ICharacter owner): base(owner) {
         _isIdle = false;
         _actionData = new ActionData(this);
@@ -75,11 +79,7 @@ public class CharacterParty : Party {
                 return owner.name;
             }
         } else {
-            if (icharacters.Count > 1) {
-                return _owner.name + "'s Party";
-            } else {
-                return _owner.name;
-            }
+            return base.name;
         }
     }
     private void EverydayAction() {

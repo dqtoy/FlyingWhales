@@ -429,7 +429,7 @@ public class Player : ILeader {
         _minions = new List<Minion>();
         AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Inspect", false));
         AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Spook", false));
-        //AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Mark", false));
+        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Mark", false));
         //AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Awaken", false));
         //AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Awaken Desire", false));
 

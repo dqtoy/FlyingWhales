@@ -415,6 +415,7 @@ GameObject:
   - component: {fileID: 114890676374244592}
   - component: {fileID: 114849022214626898}
   - component: {fileID: 114368996406035592}
+  - component: {fileID: 114251359819464800}
   m_Layer: 5
   m_Name: MinionGO
   m_TagString: Untagged
@@ -784,6 +785,36 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114251359819464800
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1632239326956908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 114653178162327752}
+          m_MethodName: PointerClicked
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
+        Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  delegates: []
 --- !u!114 &114296046733071760
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -960,6 +991,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baa61083530c7d746a3f9e75d105b032, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ParentPool: {fileID: 0}
   nameLbl: {fileID: 114829108271754132}
   lvlLbl: {fileID: 114721096411327582}
   expSlider: {fileID: 114751775542224532}

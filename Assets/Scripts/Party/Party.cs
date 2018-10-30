@@ -10,6 +10,7 @@ public class Party : IParty {
     public DailyAction onDailyAction;
 
     protected int _id;
+    protected string _partyName;
     protected int _numOfAttackers;
     protected bool _isDead;
     protected bool _isAttacking;
@@ -37,10 +38,13 @@ public class Party : IParty {
         get { return _numOfAttackers; }
         set { _numOfAttackers = value; }
     }
+    public string partyName {
+        get { return _partyName; }
+    }
     public virtual string name {
         get {
             if (icharacters.Count > 1) {
-                return mainCharacter.name + "'s Party";
+                return _partyName;
             } else {
                 return mainCharacter.name;
             }
@@ -150,16 +154,19 @@ public class Party : IParty {
 
     public Party(ICharacter owner) {
         _owner = owner;
+        if (owner != null) {
+            _partyName = owner.name + "'s Party";
+        }
         _id = Utilities.SetID(this);
         _isDead = false;
         _icharacters = new List<ICharacter>();
         _partyBuffs = new List<Buff>();
-        emblemBG = CharacterManager.Instance.GetRandomEmblemBG();
-        emblem = CharacterManager.Instance.GetRandomEmblem();
-        partyColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        SetEmblemSettings(CharacterManager.Instance.GetRandomEmblemBG(),
+                            CharacterManager.Instance.GetRandomEmblem(),
+                            UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f));
         SetMaxCharacters(4);
 #if !WORLD_CREATION_TOOL
-        Messenger.AddListener<ActionThread>(Signals.LOOK_FOR_ACTION, AdvertiseSelf);
+        //Messenger.AddListener<ActionThread>(Signals.LOOK_FOR_ACTION, AdvertiseSelf);
         //Messenger.AddListener<BuildStructureQuestData>(Signals.BUILD_STRUCTURE_LOOK_ACTION, BuildStructureLookingForAction);
 
         //ConstructResourceInventory();
@@ -197,7 +204,7 @@ public class Party : IParty {
     //    }
     //}
     public virtual void RemoveListeners() {
-        Messenger.RemoveListener<ActionThread>(Signals.LOOK_FOR_ACTION, AdvertiseSelf);
+        //Messenger.RemoveListener<ActionThread>(Signals.LOOK_FOR_ACTION, AdvertiseSelf);
         //Messenger.RemoveListener<BuildStructureQuestData>(Signals.BUILD_STRUCTURE_LOOK_ACTION, BuildStructureLookingForAction);
     }
     public virtual void EndAction() { }
@@ -205,9 +212,9 @@ public class Party : IParty {
     #endregion
 
     #region Interface
-    public void AdvertiseSelf(ActionThread actionThread) {
-        actionThread.AddToChoices(_icharacterObject);
-    }
+    //public void AdvertiseSelf(ActionThread actionThread) {
+    //    actionThread.AddToChoices(_icharacterObject);
+    //}
     private ILocation GetSpecificLocation() {
         return _specificLocation;
         //if (_specificLocation != null) {
@@ -294,6 +301,14 @@ public class Party : IParty {
     #endregion
 
     #region Utilities
+    public void SetPartyName(string name) {
+        _partyName = name;
+    }
+    public void SetEmblemSettings(EmblemBG emblemBG, Sprite emblem, Color partyColor) {
+        this.emblemBG = emblemBG;
+        this.emblem = emblem;
+        this.partyColor = partyColor;
+    }
     public void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null, ICharacter trackTarget = null, Action actionOnStartOfMovement = null) {
         //if (_icon.isMovingToHex) {
         //    _icon.SetQueuedAction(() => GoToLocation(targetLocation, pathfindingMode, doneAction, trackTarget, actionOnStartOfMovement));

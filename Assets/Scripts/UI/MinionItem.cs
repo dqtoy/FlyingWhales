@@ -5,6 +5,7 @@ using UnityEngine.UI.Extensions;
 using UnityEngine.UI;
 using TMPro;
 using EZObjectPools;
+using UnityEngine.EventSystems;
 
 public class MinionItem : PooledObject, IDragParentItem {
     public TextMeshProUGUI nameLbl;
@@ -66,5 +67,15 @@ public class MinionItem : PooledObject, IDragParentItem {
     }
     public void OnFinishRearrange() {
         this.transform.SetSiblingIndex(supposedIndex);
+    }
+
+    public void PointerClicked(BaseEventData data) {
+        PointerEventData ped = (PointerEventData)data;
+        if (ped.button == PointerEventData.InputButton.Right) {
+            //Debug.Log("Right click");
+            if (minion.icharacter.currentParty.icharacters.Count > 1) {
+                UIManager.Instance.ShowPartyInfo(minion.icharacter.currentParty);
+            }
+        }
     }
 }

@@ -30,7 +30,7 @@ public interface IParty {
     void EndAction();
     void GoHome(Action action = null, Action actionOnStartOfMovement = null);
     void RemoveCharacter(ICharacter icharacter);
-    void AdvertiseSelf(ActionThread actionThread);
+    //void AdvertiseSelf(ActionThread actionThread);
     void SetSpecificLocation(ILocation location);
     bool AddCharacter(ICharacter icharacter);
 }

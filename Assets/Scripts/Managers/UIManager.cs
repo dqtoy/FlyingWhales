@@ -214,6 +214,7 @@ public class UIManager : MonoBehaviour {
         characterInfoUI.CloseMenu();
         landmarkInfoUI.CloseMenu();
         monsterInfoUI.CloseMenu();
+        partyinfoUI.CloseMenu();
     }
 
     #region Font Utilities
@@ -539,6 +540,14 @@ public class UIManager : MonoBehaviour {
         //}
         //return false;
     }
+    public bool IsMouseOnInput() {
+        if (EventSystem.current.currentSelectedGameObject == null ||
+            (EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() == null &&
+            EventSystem.current.currentSelectedGameObject.GetComponent<InputField>() == null)) {
+            return false;
+        }
+        return true;
+    }
     #endregion
 
     #region Object Pooling
@@ -612,9 +621,9 @@ public class UIManager : MonoBehaviour {
         //if (questInfoUI.isShowing) {
         //    questInfoUI.HideMenu();
         //}
-        //if (partyinfoUI.isShowing) {
-        //    partyinfoUI.HideMenu();
-        //}
+        if (partyinfoUI.isShowing) {
+            partyinfoUI.CloseMenu();
+        }
         if (monsterInfoUI.isShowing) {
             monsterInfoUI.CloseMenu();
         }
@@ -649,9 +658,9 @@ public class UIManager : MonoBehaviour {
         //if (questInfoUI.isShowing) {
         //    questInfoUI.HideMenu();
         //}
-        //if (partyinfoUI.isShowing) {
-        //    partyinfoUI.HideMenu();
-        //}
+        if (partyinfoUI.isShowing) {
+            partyinfoUI.CloseMenu();
+        }
         //if (monsterInfoUI.isShowing) {
         //    monsterInfoUI.HideMenu();
         //}
@@ -685,7 +694,7 @@ public class UIManager : MonoBehaviour {
         //    questInfoUI.HideMenu();
         //}
         //if (partyinfoUI.isShowing) {
-        //    partyinfoUI.HideMenu();
+        //    partyinfoUI.CloseMenu();
         //}
         if (monsterInfoUI.isShowing) {
             monsterInfoUI.CloseMenu();
@@ -724,9 +733,9 @@ public class UIManager : MonoBehaviour {
         //if (questInfoUI.isShowing) {
         //    questInfoUI.HideMenu();
         //}
-        //if (partyinfoUI.isShowing) {
-        //    partyinfoUI.HideMenu();
-        //}
+        if (partyinfoUI.isShowing) {
+            partyinfoUI.CloseMenu();
+        }
         //if (monsterInfoUI.isShowing) {
         //    monsterInfoUI.HideMenu();
         //}
@@ -747,14 +756,14 @@ public class UIManager : MonoBehaviour {
     [SerializeField] internal PartyInfoUI partyinfoUI;
     public void ShowPartyInfo(Party party) {
         //HideMainUI();
-        //if (landmarkInfoUI.isShowing) {
-        //    landmarkInfoUI.HideMenu();
-        //}
+        if (landmarkInfoUI.isShowing) {
+            landmarkInfoUI.CloseMenu();
+        }
         //if (factionInfoUI.isShowing) {
         //    factionInfoUI.HideMenu();
         //}
         //if (characterInfoUI.isShowing) {
-        //    characterInfoUI.HideMenu();
+        //    characterInfoUI.CloseMenu();
         //}
         //if (questInfoUI.isShowing) {
         //	questInfoUI.HideMenu();
@@ -762,9 +771,9 @@ public class UIManager : MonoBehaviour {
         //if (hexTileInfoUI.isShowing) {
         //    hexTileInfoUI.HideMenu();
         //}
-        //if (monsterInfoUI.isShowing) {
-        //    monsterInfoUI.HideMenu();
-        //}
+        if (monsterInfoUI.isShowing) {
+            monsterInfoUI.CloseMenu();
+        }
         partyinfoUI.SetData(party);
         partyinfoUI.OpenMenu();
     }
@@ -793,9 +802,9 @@ public class UIManager : MonoBehaviour {
         //if (questInfoUI.isShowing) {
         //    questInfoUI.HideMenu();
         //}
-        //if (partyinfoUI.isShowing) {
-        //    partyinfoUI.HideMenu();
-        //}
+        if (partyinfoUI.isShowing) {
+            partyinfoUI.CloseMenu();
+        }
         if (characterInfoUI.isShowing) {
             characterInfoUI.CloseMenu();
         }

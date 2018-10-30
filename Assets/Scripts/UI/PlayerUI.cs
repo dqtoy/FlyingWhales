@@ -286,6 +286,8 @@ public class PlayerUI : MonoBehaviour {
     public void CreateNewParty() {
         if (!UIManager.Instance.partyinfoUI.isShowing) {
             UIManager.Instance.partyinfoUI.ShowCreatePartyUI();
+        } else {
+            UIManager.Instance.partyinfoUI.CloseMenu();
         }
     }
 }

@@ -21,7 +21,6 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI lvlClassLbl;
     [SerializeField] private TextMeshProUGUI phaseLbl;
     [SerializeField] private FactionEmblem factionEmblem;
-    [SerializeField] private PartyEmblem squadEmblem;
     [SerializeField] private ActionIconCharacterInfoUI currentActionIcon;
     [SerializeField] private GameObject actionIconPrefab;
     [SerializeField] private string actionIconPrefabName;
@@ -246,8 +245,8 @@ public class CharacterInfoUI : UIMenu {
     }
     private void ClearAllTabMenus() {
         //stats
-        healthProgressBar.value = 0f;
-        manaProgressBar.value = 0f;
+        //healthProgressBar.value = 0f;
+        //manaProgressBar.value = 0f;
         //strengthLbl.text = "-";
         //agilityLbl.text = "-";
         //intelligenceLbl.text = "-";
@@ -266,8 +265,8 @@ public class CharacterInfoUI : UIMenu {
         leftFootArmorContainer.SetItem(null);
         rightFootArmorContainer.SetItem(null);
 
-        //tags
-        Utilities.DestroyChildren(tagsScrollView.content);
+        ////tags
+        //Utilities.DestroyChildren(tagsScrollView.content);
 
         //relationships
         Utilities.DestroyChildren(relationsScrollView.content);

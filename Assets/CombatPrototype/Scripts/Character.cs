@@ -1604,7 +1604,9 @@ namespace ECS {
         public void OnRemovedFromParty() {
             SetCurrentParty(ownParty); //set the character's party to it's own party
             if (ownParty is CharacterParty) {
-                (ownParty as CharacterParty).actionData.currentAction.EndAction(ownParty, (ownParty as CharacterParty).actionData.currentTargetObject);
+                if ((ownParty as CharacterParty).actionData.currentAction != null) {
+                    (ownParty as CharacterParty).actionData.currentAction.EndAction(ownParty, (ownParty as CharacterParty).actionData.currentTargetObject);
+                }
             }
         }
         public void OnAddedToParty() {
