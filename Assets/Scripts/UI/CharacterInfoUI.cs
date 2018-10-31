@@ -331,19 +331,19 @@ public class CharacterInfoUI : UIMenu {
             //if the character has never been inspected
             //clear all menus and do not load any info
             ClearAllTabMenus();
-            return;
         }
 
         UpdateInfoMenu();
+        UpdateStatInfo();
 
         if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
-            UpdateStatInfo();
+            //UpdateStatInfo();
             UpdateEquipmentInfo();
             //UpdateItemsInfo();
             //UpdateTagInfo(_activeCharacter.attributes);
             //UpdateRelationshipInfo(_activeCharacter.relationships.Values.ToList());
         } else {
-            UpdateStatInfo(_activeCharacter.uiData);
+            //UpdateStatInfo(_activeCharacter.uiData);
             UpdateEquipmentInfo(_activeCharacter.uiData);
             //UpdateItemsInfo(_activeCharacter.uiData);
             //UpdateTagInfo(_activeCharacter.uiData.attributes);
@@ -392,19 +392,33 @@ public class CharacterInfoUI : UIMenu {
 
     #region Stats
     private void UpdateStatInfo() {
-        //healthProgressBar.value = (float)_activeCharacter.currentHP / (float)_activeCharacter.maxHP;
-        //manaProgressBar.value = (float)_activeCharacter.currentSP / (float)_activeCharacter.maxSP;
-        hpLbl.text = _activeCharacter.maxHP.ToString();
-        attackLbl.text = _activeCharacter.attackPower.ToString();
-        speedLbl.text = _activeCharacter.speed.ToString();
-        //strengthLbl.text = _activeCharacter.strength.ToString();
-        //agilityLbl.text = _activeCharacter.agility.ToString();
-        //intelligenceLbl.text = _activeCharacter.intelligence.ToString();
-        //vitalityLbl.text = _activeCharacter.vitality.ToString();
+        if (_activeCharacter.hasBeenInspected || GameManager.Instance.inspectAll) {
+            if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
+                hpLbl.text = _activeCharacter.maxHP.ToString();
+                attackLbl.text = _activeCharacter.attackPower.ToString();
+                speedLbl.text = _activeCharacter.speed.ToString();
+            } else {
+                UpdateStatInfo(_activeCharacter.uiData);
+            }
+        } else {
+            hpLbl.text = "???";
+            attackLbl.text = "???";
+            speedLbl.text = "???";
+        }
+
+        ////healthProgressBar.value = (float)_activeCharacter.currentHP / (float)_activeCharacter.maxHP;
+        ////manaProgressBar.value = (float)_activeCharacter.currentSP / (float)_activeCharacter.maxSP;
+        //hpLbl.text = _activeCharacter.maxHP.ToString();
+        //attackLbl.text = _activeCharacter.attackPower.ToString();
+        //speedLbl.text = _activeCharacter.speed.ToString();
+        ////strengthLbl.text = _activeCharacter.strength.ToString();
+        ////agilityLbl.text = _activeCharacter.agility.ToString();
+        ////intelligenceLbl.text = _activeCharacter.intelligence.ToString();
+        ////vitalityLbl.text = _activeCharacter.vitality.ToString();
     }
     private void UpdateStatInfo(CharacterUIData uiData) {
-        healthProgressBar.value = uiData.healthValue;
-        manaProgressBar.value = uiData.manaValue;
+        //healthProgressBar.value = uiData.healthValue;
+        //manaProgressBar.value = uiData.manaValue;
         hpLbl.text = uiData.maxHP.ToString();
         attackLbl.text = uiData.attackPower.ToString();
         speedLbl.text = uiData.speed.ToString();
