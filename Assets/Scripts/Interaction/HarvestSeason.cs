@@ -14,10 +14,11 @@ public class HarvestSeason : Interaction {
     #region Overrides
     public override void CreateStates() {
         if (_interactable is BaseLandmark) {
+            CreateExploreStates();
             farm = interactable as BaseLandmark;
 
             InteractionState startState = new InteractionState("State 1", this);
-            string startStateDesc = "%minion% has reported that the farmers will soon be able to harvest their crops. A sizable amount of the harvest will be given to their troops, providing them with needed Supplies.";
+            string startStateDesc = _interactable.explorerMinion + " has reported that the farmers will soon be able to harvest their crops. A sizable amount of the harvest will be given to their troops, providing them with needed Supplies.";
             startState.SetDescription(startStateDesc);
             CreateActionOptions(startState);
 
@@ -27,20 +28,12 @@ public class HarvestSeason : Interaction {
             InteractionState obtainHarvestState = new InteractionState("Obtain Harvest", this); 
             InteractionState demonDiscoveredState = new InteractionState("Demon Discovered", this);
             InteractionState demonKilledState = new InteractionState("Demon Killed", this);
-            //InteractionState whatToDoNextState = new InteractionState("What To Do Next", this);
-            InteractionState exploreContinuesState = new InteractionState("Explore Continues", this);
-            InteractionState exploreEndsState = new InteractionState("Explore Ends", this);
+            CreateWhatToDoNextState("What do you want " + _interactable.explorerMinion.name + " to do next?");
 
-
-            //poisonedHarvestState.SetEndEffect(() => PoisonedHarvestEffect(poisonedHarvestState));
-            farmerKilledState.SetEndEffect(() => FarmerKilledEffect(farmerKilledState));
+            //farmerKilledState.SetEndEffect(() => FarmerKilledEffect(farmerKilledState));
             obtainHarvestState.SetEndEffect(() => ObtainHarvestEffect(obtainHarvestState));
             demonDiscoveredState.SetEndEffect(() => DemonDiscoveredEffect(demonDiscoveredState));
             demonKilledState.SetEndEffect(() => DemonKilledEffect(demonKilledState));
-            exploreContinuesState.SetEndEffect(() => ExploreContinuesEffect(exploreContinuesState));
-            exploreEndsState.SetEndEffect(() => ExploreEndsEffect(exploreEndsState));
-            //whatToDoNextState.SetEndEffect(() => WhatToDoNextEffect(demonKilledState));
-
 
             _states.Add(startState.name, startState);
             _states.Add(poisonedHarvestState.name, poisonedHarvestState);
@@ -48,9 +41,6 @@ public class HarvestSeason : Interaction {
             _states.Add(obtainHarvestState.name, obtainHarvestState);
             _states.Add(demonDiscoveredState.name, demonDiscoveredState);
             _states.Add(demonKilledState.name, demonKilledState);
-            //_states.Add(whatToDoNextState.name, whatToDoNextState);
-            _states.Add(exploreContinuesState.name, exploreContinuesState);
-            _states.Add(exploreEndsState.name, exploreEndsState);
 
             SetCurrentState(startState);
         }
@@ -62,47 +52,41 @@ public class HarvestSeason : Interaction {
                 cost = new ActionOptionCost { amount = 30, currency = CURRENCY.SUPPLY },
                 name = "Send out a Demon to disrupt the harvest.",
                 description = "We have sent %minion% to disrupt the harvest. It should take him a short time to execute the task.",
-                duration = 10,
+                duration = 0,
                 needsMinion = true,
                 effect = () => SendOutDemonEffect(state),
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
                 name = "Do nothing.",
-                duration = 10,
+                duration = 0,
                 needsMinion = false,
-                effect = () => DoNothingEffect(state),
+                effect = () => WhatToDoNextState(),
             };
 
             state.AddActionOption(sendOutDemon);
             state.AddActionOption(doNothing);
-
-            //GameDate dueDate = GameManager.Instance.Today();
-            //dueDate.AddHours(70);
-            //state.SetTimeSchedule(state.actionOptions[1], dueDate); //default is do nothing
+            state.SetDefaultOption(doNothing);
         } else if (state.name == "Poisoned Harvest" || state.name == "Farmer Killed" || state.name == "Obtain Harvest" ||
-            state.name == "Demon Discovered" || state.name == "What To Do Next") {
+            state.name == "Demon Discovered") {
             ActionOption continueSurveillance = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Continue surveillance of the area.",
-                duration = 10,
+                duration = 0,
                 needsMinion = true,
                 neededObjects = new List<System.Type>() { typeof(Minion) },
-                effect = () => ContinueSurveillanceEffect(state),
+                effect = () => ExploreContinuesOption(state),
             };
             ActionOption returnToMe = new ActionOption {
                 interactionState = state,
                 name = "Return to me.",
-                duration = 10,
+                duration = 0,
                 needsMinion = false,
-                effect = () => ReturnToMeEffect(state),
+                effect = () => ExploreEndsOption(state),
             };
             state.AddActionOption(continueSurveillance);
             state.AddActionOption(returnToMe);
-            if (state.name == "What To Do Next") {
-                state.SetDefaultOption(returnToMe); //default is do nothing
-            }
         }
     }
     #endregion
@@ -137,42 +121,15 @@ public class HarvestSeason : Interaction {
             DemonKilled(state, chosenEffect);
         }
     }
-    private void DoNothingEffect(InteractionState state) {
-        WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement("What To Do Next", 15);
-
-        string chosenEffect = effectWeights.PickRandomElementGivenWeights();
-        if (chosenEffect == "What To Do Next") {
-            WhatToDoNext(state, chosenEffect);
-        }
-    }
-    private void ContinueSurveillanceEffect(InteractionState state) {
-        WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement("Explore Continues", 15);
-
-        string chosenEffect = effectWeights.PickRandomElementGivenWeights();
-        if (chosenEffect == "Explore Continues") {
-            ExploreContinues(state, chosenEffect);
-        }
-    }
-    private void ReturnToMeEffect(InteractionState state) {
-        WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement("Explore Ends", 15);
-
-        string chosenEffect = effectWeights.PickRandomElementGivenWeights();
-        if (chosenEffect == "Explore Ends") {
-            ExploreEnds(state, chosenEffect);
-        }
-    }
     #endregion
 
     #region Poisoned Harvest
     private void PoisonedHarvest(InteractionState state, string effectName) {
         _states[effectName]
-            .SetDescription("After a significant amount of stealthy effort, " + state.chosenOption.assignedMinion.name + 
+            .SetDescription("After a significant amount of stealthy effort, " + _interactable.explorerMinion.name + 
             " managed to secretly poison the crops. The farmers will not be able to provide extra Supply to the city. " +
             "Furthermore, the poison has rendered the soil toxic, preventing the Farm from producing more Supplies for 5 days. " +
-            "What do you want " + state.chosenOption.assignedMinion.name + " to do next?");
+            "What do you want " + _interactable.explorerMinion.name + " to do next?");
         SetCurrentState(_states[effectName]);
         //Farm stops producing Supply for 5 days
         GameDate dueDate = GameManager.Instance.Today();
@@ -188,7 +145,7 @@ public class HarvestSeason : Interaction {
     private void FarmerKilled(InteractionState state, string effectName) {
         List<ICharacter> farmers = farm.tileLocation.areaOfTile.GetResidentsWithClass("Farmer");
         ICharacter chosenFarmer = farmers[Random.Range(0, farmers.Count)];
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.name + " entered the farm at night and was about to poison " +
+        _states[effectName].SetDescription(_interactable.explorerMinion.name + " entered the farm at night and was about to poison " +
             "the crops when a farmer named [Character Name] discovered him. He managed to slay the farmer before being forced to flee. " +
             "What do you want him to do next?");
         SetCurrentState(_states[effectName]);
@@ -236,36 +193,6 @@ public class HarvestSeason : Interaction {
     private void DemonKilledEffect(InteractionState state) {
         //**Effect**: Demon is removed from Minion List
         PlayerManager.Instance.player.RemoveMinion(state.assignedMinion);
-    }
-    #endregion
-
-    #region What To Do Next
-    private void WhatToDoNext(InteractionState state, string effectName) {
-        _states[effectName].SetDescription("What do you want " + state.chosenOption.assignedMinion.name + " to do next?");
-        SetCurrentState(_states[effectName]);
-    }
-    private void WhatToDoNextEffect(InteractionState state) {
-        
-    }
-    #endregion
-
-    #region Explore Continues
-    private void ExploreContinues(InteractionState state, string effectName) {
-        _states[effectName].SetDescription("We've instructed " + state.chosenOption.assignedMinion.name + " to continue its surveillance of the area.");
-        SetCurrentState(_states[effectName]);
-    }
-    private void ExploreContinuesEffect(InteractionState state) {
-        //**Mechanics**: Explore resets, any other extra Minions will travel back to Portal
-    }
-    #endregion
-
-    #region Explore Ends
-    private void ExploreEnds(InteractionState state, string effectName) {
-        _states[effectName].SetDescription("We've instructed " + state.chosenOption.assignedMinion.name + " to return.");
-        SetCurrentState(_states[effectName]);
-    }
-    private void ExploreEndsEffect(InteractionState state) {
-        //**Mechanics**: Demon Minion travels back to Portal
     }
     #endregion
 
