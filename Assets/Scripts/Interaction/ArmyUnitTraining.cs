@@ -7,7 +7,7 @@ public class ArmyUnitTraining : Interaction {
 
     private string _chosenClassName;
 
-    public ArmyUnitTraining(IInteractable interactable) : base(interactable, INTERACTION_TYPE.ARMY_UNIT_TRAINING) {
+    public ArmyUnitTraining(IInteractable interactable) : base(interactable, INTERACTION_TYPE.ARMY_UNIT_TRAINING, 50) {
         _name = "Army Unit Training";
     }
 
@@ -56,15 +56,15 @@ public class ArmyUnitTraining : Interaction {
                 duration = 0,
                 needsMinion = false,
                 effect = () => DoNothingOption(state),
-                onStartDurationAction = () => SetDefaultActionDurationAsRemainingTicks("Do nothing.", state)
+                //onStartDurationAction = () => SetDefaultActionDurationAsRemainingTicks("Do nothing.", state)
             };
 
             state.AddActionOption(stopThemOption);
             state.AddActionOption(doNothingOption);
 
-            GameDate scheduleDate = GameManager.Instance.Today();
-            scheduleDate.AddHours(50);
-            state.SetTimeSchedule(doNothingOption, scheduleDate);
+            //GameDate scheduleDate = GameManager.Instance.Today();
+            //scheduleDate.AddHours(50);
+            //state.SetTimeSchedule(doNothingOption, scheduleDate);
         }
     }
     #endregion

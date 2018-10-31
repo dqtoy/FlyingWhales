@@ -9,7 +9,7 @@ public class BanditReinforcement : Interaction {
     private WeightedDictionary<LandmarkDefender> assaultSpawnWeights;
     private WeightedDictionary<LandmarkDefender> firstElementAssaultSpawnWeights; //TODO: Make this more elegant!
 
-    public BanditReinforcement(IInteractable interactable) : base(interactable, INTERACTION_TYPE.BANDIT_REINFORCEMENT) {
+    public BanditReinforcement(IInteractable interactable) : base(interactable, INTERACTION_TYPE.BANDIT_REINFORCEMENT, 50) {
         _name = "Bandit Reinforcement";
     }
 
@@ -55,7 +55,7 @@ public class BanditReinforcement : Interaction {
                 needsMinion = true,
                 neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => StopThemEffect(state),
-                onStartDurationAction = () => SetDefaultActionDurationAsRemainingTicks("Stop Them.", state),
+                //onStartDurationAction = () => SetDefaultActionDurationAsRemainingTicks("Stop Them.", state),
             };
             ActionOption provideOwnUnit = new ActionOption {
                 interactionState = state,
@@ -75,15 +75,15 @@ public class BanditReinforcement : Interaction {
                 duration = 0,
                 needsMinion = false,
                 effect = () => DoNothingEffect(state),
-                onStartDurationAction = () => SetDefaultActionDurationAsRemainingTicks("Do nothing.", state),
+                //onStartDurationAction = () => SetDefaultActionDurationAsRemainingTicks("Do nothing.", state),
             };
             state.AddActionOption(stopThem);
             state.AddActionOption(provideOwnUnit);
             state.AddActionOption(doNothing);
 
-            GameDate dueDate = GameManager.Instance.Today();
-            dueDate.AddHours(50);
-            state.SetTimeSchedule(doNothing, dueDate); //default is do nothing
+            //GameDate dueDate = GameManager.Instance.Today();
+            //dueDate.AddHours(50);
+            //state.SetTimeSchedule(doNothing, dueDate); //default is do nothing
         }
     }
     #endregion

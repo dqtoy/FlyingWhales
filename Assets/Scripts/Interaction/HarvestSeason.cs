@@ -7,7 +7,7 @@ public class HarvestSeason : Interaction {
 
     private BaseLandmark farm;
 
-    public HarvestSeason(IInteractable interactable) : base(interactable, INTERACTION_TYPE.HARVEST_SEASON) {
+    public HarvestSeason(IInteractable interactable) : base(interactable, INTERACTION_TYPE.HARVEST_SEASON, 70) {
         _name = "Harvest Season";
     }
 
@@ -77,9 +77,9 @@ public class HarvestSeason : Interaction {
             state.AddActionOption(sendOutDemon);
             state.AddActionOption(doNothing);
 
-            GameDate dueDate = GameManager.Instance.Today();
-            dueDate.AddHours(70);
-            state.SetTimeSchedule(state.actionOptions[1], dueDate); //default is do nothing
+            //GameDate dueDate = GameManager.Instance.Today();
+            //dueDate.AddHours(70);
+            //state.SetTimeSchedule(state.actionOptions[1], dueDate); //default is do nothing
         } else if (state.name == "Poisoned Harvest" || state.name == "Farmer Killed" || state.name == "Obtain Harvest" ||
             state.name == "Demon Discovered" || state.name == "What To Do Next") {
             ActionOption continueSurveillance = new ActionOption {

@@ -12,7 +12,7 @@ public class ArmyAttacks : Interaction {
     private const string endResult4Name = "Redirection Successful";
     private const string endResult5Name = "Redirection Failure";
 
-    public ArmyAttacks(IInteractable interactable) : base(interactable, INTERACTION_TYPE.ARMY_ATTACKS) {
+    public ArmyAttacks(IInteractable interactable) : base(interactable, INTERACTION_TYPE.ARMY_ATTACKS, 150) {
         _name = "Army Attacks";
     }
 
@@ -77,15 +77,15 @@ public class ArmyAttacks : Interaction {
                 duration = 0,
                 needsMinion = false,
                 effect = () => DoNothingEffect(state),
-                onStartDurationAction = () => SetDefaultActionDurationAsRemainingTicks("Do nothing.", state),
+                //onStartDurationAction = () => SetDefaultActionDurationAsRemainingTicks("Do nothing.", state),
             };
             state.AddActionOption(stopThem);
             state.AddActionOption(redirectAttack);
             state.AddActionOption(doNothing);
 
-            GameDate dueDate = GameManager.Instance.Today();
-            dueDate.AddHours(50);
-            state.SetTimeSchedule(doNothing, dueDate); //default is do nothing
+            //GameDate dueDate = GameManager.Instance.Today();
+            //dueDate.AddHours(50);
+            //state.SetTimeSchedule(doNothing, dueDate); //default is do nothing
         }
     }
     #endregion

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SuspiciousSoldierMeeting : Interaction {
 
-    public SuspiciousSoldierMeeting(IInteractable interactable) : base(interactable, INTERACTION_TYPE.SUSPICIOUS_SOLDIER_MEETING) {
+    public SuspiciousSoldierMeeting(IInteractable interactable) : base(interactable, INTERACTION_TYPE.SUSPICIOUS_SOLDIER_MEETING, 60) {
         _name = "Suspicious Soldier Meeting";
     }
 
@@ -60,9 +60,9 @@ public class SuspiciousSoldierMeeting : Interaction {
             state.AddActionOption(sendOutDemonOption);
             state.AddActionOption(doNothingOption);
 
-            GameDate scheduleDate = GameManager.Instance.Today();
-            scheduleDate.AddHours(60);
-            state.SetTimeSchedule(doNothingOption, scheduleDate);
+            //GameDate scheduleDate = GameManager.Instance.Today();
+            //scheduleDate.AddHours(60);
+            //state.SetTimeSchedule(doNothingOption, scheduleDate);
         }
     }
     #endregion

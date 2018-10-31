@@ -20,12 +20,15 @@ public class PartyInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI partyNameErrorLbl;
     [SerializeField] private TextMeshProUGUI partyMembersErrorLbl;
 
+    private PartyHolder partyHolder;
+
     internal Party currentlyShowingParty {
         get { return _data as Party; }
     }
 
     internal override void Initialize() {
         base.Initialize();
+        partyHolder = new PartyHolder();
         for (int i = 0; i < partySlots.Length; i++) {
             SlotItem currSlot = partySlots[i];
             currSlot.SetNeededType(typeof(IUnit));
@@ -123,7 +126,6 @@ public class PartyInfoUI : UIMenu {
     }
 
     #region Create/Edit Party
-    private PartyHolder partyHolder;
     public void ShowCreatePartyUI() {
         base.OpenMenu();
         for (int i = 0; i < partySlots.Length; i++) {

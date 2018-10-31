@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class KillerOnTheLoose : Interaction {
 
-    public KillerOnTheLoose(IInteractable interactable) : base(interactable, INTERACTION_TYPE.SUSPICIOUS_SOLDIER_MEETING) {
+    public KillerOnTheLoose(IInteractable interactable) : base(interactable, INTERACTION_TYPE.SUSPICIOUS_SOLDIER_MEETING, 150) {
         _name = "Killer On The Loose";
     }
     #region Overrides
@@ -53,9 +53,9 @@ public class KillerOnTheLoose : Interaction {
             state.AddActionOption(searchKillerOption);
             state.AddActionOption(doNothingOption);
 
-            GameDate scheduleDate = GameManager.Instance.Today();
-            scheduleDate.AddHours(300);
-            state.SetTimeSchedule(doNothingOption, scheduleDate);
+            //GameDate scheduleDate = GameManager.Instance.Today();
+            //scheduleDate.AddHours(300);
+            //state.SetTimeSchedule(doNothingOption, scheduleDate);
         }
     }
     #endregion

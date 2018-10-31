@@ -10,7 +10,7 @@ public class UnfinishedCurse : Interaction {
     private const string endResult4Name = "Curse Failed To Complete";
     private const string endResult5Name = "Obtain Mana";
 
-    public UnfinishedCurse(IInteractable interactable) : base(interactable, INTERACTION_TYPE.UNFINISHED_CURSE) {
+    public UnfinishedCurse(IInteractable interactable) : base(interactable, INTERACTION_TYPE.UNFINISHED_CURSE, 70) {
         _name = "Unfinished Curse";
     }
 
@@ -22,9 +22,9 @@ public class UnfinishedCurse : Interaction {
             string startStateDesc = "Our imp has reported what appears to be an ancient unfinished curse placed within one of the cemetery mausoleums. We may be able to complete the curse but we aren't aware of what it's actual effect would be, if any.";
             startState.SetDescription(startStateDesc);
             CreateActionOptions(startState);
-            GameDate dueDate = GameManager.Instance.Today();
-            dueDate.AddHours(100);
-            startState.SetTimeSchedule(startState.actionOptions[2], dueDate); //default is do nothing
+            //GameDate dueDate = GameManager.Instance.Today();
+            //dueDate.AddHours(100);
+            //startState.SetTimeSchedule(startState.actionOptions[2], dueDate); //default is do nothing
 
             //action option states
             InteractionState endResult1State = new InteractionState(endResult1Name, this); //raid
