@@ -4,8 +4,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
+using EZObjectPools;
 
-public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler {
+public class CharacterPortrait : PooledObject, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler {
 
     private ICharacter _character;
     private int _imgSize;
@@ -15,7 +16,7 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
     private PortraitSettings _portraitSettings;
     private Vector2 normalSize;
 
-    public bool ignoreInteractions;
+    public bool ignoreInteractions = false;
 
     [Header("BG")]
     [SerializeField] private Image bg;
@@ -216,42 +217,17 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
         if (ignoreInteractions) {
             return;
         }
-        if (_character != null) {
-            //if (UIManager.Instance.characterInfoUI.isWaitingForAttackTarget) {
-            //    CharacterAction attackAction = _character.ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK);
-            //    if (attackAction.CanBeDone(_character.ownParty.icharacterObject) && attackAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party, _character.ownParty.icharacterObject)) { //TODO: Change this checker to relationship status checking instead of just faction
-            //        UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party.actionData.AssignAction(attackAction, _character.ownParty.icharacterObject);
-            //        UIManager.Instance.characterInfoUI.SetAttackButtonState(false);
-            //        return;
-            //    }
-            //} else if (UIManager.Instance.characterInfoUI.isWaitingForJoinBattleTarget) {
-            //    CharacterAction joinBattleAction = _character.ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.JOIN_BATTLE);
-            //    if (joinBattleAction.CanBeDone(_character.ownParty.icharacterObject) && joinBattleAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party, _character.ownParty.icharacterObject)) { //TODO: Change this checker to relationship status checking instead of just faction
-            //        UIManager.Instance.characterInfoUI.currentlyShowingCharacter.party.actionData.AssignAction(joinBattleAction, _character.ownParty.icharacterObject);
-            //        UIManager.Instance.characterInfoUI.SetJoinBattleButtonState(false);
-            //        return;
-            //    }
-            //}
-            Party iparty = _character.ownParty;
-            if (nameLbl.gameObject.activeSelf) {
+        if (eventData.button == PointerEventData.InputButton.Right) {
+            Debug.Log("Right clicked character portrait!");
+            if (_character != null) {
                 if (_character is ECS.Character) {
                     UIManager.Instance.ShowCharacterInfo(_character as ECS.Character);
                 } else if (_character is Monster) {
                     UIManager.Instance.ShowMonsterInfo(_character as Monster);
                 }
-            } else {
-                //if (iparty.icharacters.Count > 1) {
-                //    UIManager.Instance.ShowPartyInfo(iparty);
-                //} else  {
-                if (_character is ECS.Character) {
-                    UIManager.Instance.ShowCharacterInfo(_character as ECS.Character);
-                } else if (_character is Monster) {
-                    UIManager.Instance.ShowMonsterInfo(_character as Monster);
-                }
-                //}
             }
-            
         }
+        
 #endif
     }
     public void OnClick(BaseEventData eventData) {
@@ -446,4 +422,8 @@ public class CharacterPortrait : MonoBehaviour, IPointerClickHandler, IPointerEn
     //    NormalizeSize();
     //}
     #endregion
+    public override void Reset() {
+        base.Reset();
+        ignoreInteractions = false;
+    }
 }

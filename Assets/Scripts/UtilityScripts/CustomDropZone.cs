@@ -15,7 +15,7 @@ public class CustomDropZone : MonoBehaviour, IDropHandler {
         if (!isEnabled) {
             return;
         }
-        Debug.Log(eventData.pointerDrag.name + " dropped on " + gameObject.name);
+        //Debug.Log(eventData.pointerDrag.name + " dropped on " + gameObject.name);
         Transform trans = eventData.pointerDrag.GetComponent<Transform>();
         if (trans != null) {
             droppedItem = trans;

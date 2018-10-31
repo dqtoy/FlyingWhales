@@ -35,7 +35,7 @@ public class MinionItem : PooledObject, IDragParentItem {
         _minion = minion;
         if(_minion != null) {
             _minion.SetMinionItem(this);
-            portrait.GeneratePortrait(minion.icharacter.portraitSettings, (int) portrait.gameObject.GetComponent<RectTransform>().rect.width, true);
+            portrait.GeneratePortrait(minion.icharacter, (int) portrait.gameObject.GetComponent<RectTransform>().rect.width, true);
             portrait.gameObject.SetActive(true);
             bgImage.sprite = unlockedSprite;
             nameLbl.text = _minion.icharacter.name;
@@ -69,13 +69,13 @@ public class MinionItem : PooledObject, IDragParentItem {
         this.transform.SetSiblingIndex(supposedIndex);
     }
 
-    public void PointerClicked(BaseEventData data) {
-        PointerEventData ped = (PointerEventData)data;
-        if (ped.button == PointerEventData.InputButton.Right) {
-            //Debug.Log("Right click");
-            if (minion.icharacter.currentParty.icharacters.Count > 1) {
-                UIManager.Instance.ShowPartyInfo(minion.icharacter.currentParty);
-            }
-        }
-    }
+    //public void PointerClicked(BaseEventData data) {
+    //    PointerEventData ped = (PointerEventData)data;
+    //    if (ped.button == PointerEventData.InputButton.Right) {
+    //        //Debug.Log("Right click");
+    //        if (minion.icharacter.currentParty.icharacters.Count > 1) {
+    //            UIManager.Instance.ShowPartyInfo(minion.icharacter.currentParty);
+    //        }
+    //    }
+    //}
 }

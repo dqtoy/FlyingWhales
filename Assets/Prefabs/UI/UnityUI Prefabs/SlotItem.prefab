@@ -1111,6 +1111,7 @@ MonoBehaviour:
   areaEmblem: {fileID: 114211273760785478}
   factionEmblem: {fileID: 114968603218357402}
   dropZone: {fileID: 114521995925260068}
+  draggable: {fileID: 114361908676454436}
 --- !u!114 &114716908214852614
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1895,7 +1896,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -85, y: -285}
+  m_AnchoredPosition: {x: -1045, y: -825}
   m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224769823483861768

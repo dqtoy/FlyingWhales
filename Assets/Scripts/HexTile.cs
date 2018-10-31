@@ -176,6 +176,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             }
         }
     }
+    public SpriteRenderer mainStructureSprite {
+        get { return mainStructure; }
+    }
     #endregion
 
     public void Initialize() {

@@ -17,6 +17,7 @@ public class SlotItem : MonoBehaviour {
     public AreaEmblem areaEmblem;
     public FactionEmblem factionEmblem;
     public CustomDropZone dropZone;
+    public SlotItemDraggableItem draggable;
 
     public int slotIndex { get; private set; }
 

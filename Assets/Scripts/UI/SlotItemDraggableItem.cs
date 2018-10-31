@@ -8,7 +8,7 @@ public class SlotItemDraggableItem : DraggableItem {
     [SerializeField] private SlotItem slot;
 
     public override void OnBeginDrag(PointerEventData eventData) {
-        if (slot.placedObject == null) {
+        if (slot.placedObject == null || !_isDraggable) {
             return; //do not allow drag if the slot does not have an item on it
         }
         base.OnBeginDrag(eventData);
@@ -35,7 +35,7 @@ public class SlotItemDraggableItem : DraggableItem {
     }
 
     public override void OnDrag(PointerEventData eventData) {
-        if (slot.placedObject == null) {
+        if (slot.placedObject == null || !_isDraggable) {
             return; //do not allow drag if the slot does not have an item on it
         }
         base.OnDrag(eventData);

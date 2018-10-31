@@ -21,6 +21,7 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI lvlClassLbl;
     [SerializeField] private TextMeshProUGUI phaseLbl;
     [SerializeField] private FactionEmblem factionEmblem;
+    [SerializeField] private PartyEmblem partyEmblem;
     [SerializeField] private ActionIconCharacterInfoUI currentActionIcon;
     [SerializeField] private GameObject actionIconPrefab;
     [SerializeField] private string actionIconPrefabName;
@@ -86,6 +87,7 @@ public class CharacterInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Logs")]
+    [SerializeField] private GameObject logParentGO;
     [SerializeField] private GameObject logHistoryPrefab;
     [SerializeField] private ScrollRect historyScrollView;
     [SerializeField] private Color evenLogColor;
@@ -154,6 +156,8 @@ public class CharacterInfoUI : UIMenu {
         //Messenger.AddListener<Character, Attribute>(Signals.ATTRIBUTE_ADDED, OnCharacterAttributeAdded);
         //Messenger.AddListener<Character, Attribute>(Signals.ATTRIBUTE_REMOVED, OnCharacterAttributeRemoved);
         Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
+        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         //affiliations.Initialize();
         currentActionIcon.Initialize();
         //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
@@ -212,6 +216,7 @@ public class CharacterInfoUI : UIMenu {
         //PlayerUI.Instance.UncollapseMinionHolder();
         InteractionUI.Instance.OpenInteractionUI(_activeCharacter);
         historyScrollView.verticalNormalizedPosition = 1;
+        CheckIfMenuShouldBeHidden();
     }
     public override void ShowTooltip(GameObject objectHovered) {
         base.ShowTooltip(objectHovered);
@@ -376,28 +381,19 @@ public class CharacterInfoUI : UIMenu {
         } else {
             phaseLbl.gameObject.SetActive(false);
         }
-        
-        //squadEmblem.SetSquad(_activeCharacter.squad);
-        factionEmblem.SetFaction(_activeCharacter.faction);
+        if (_activeCharacter.IsInParty()) { //if was added to prevent showing the emblem if the character is only in a party with 1 character
+            partyEmblem.SetParty(_activeCharacter.currentParty);
+        } else {
+            partyEmblem.SetParty(null);
+        }
+                factionEmblem.SetFaction(_activeCharacter.faction);
         //affiliations.SetCharacter(_activeCharacter);
     }
-    //private void UpdateActionQueue() {
-    //    Utilities.DestroyChildren(actionQueueScrollView.content);
-    //    for (int i = 0; i < _activeCharacter.actionQueue.Count; i++) {
-    //        ActionQueueItem queueItem = _activeCharacter.actionQueue.GetBasedOnIndex(i);
-    //        GameObject actionItemGO = UIManager.Instance.InstantiateUIObject(actionIconPrefab.name, actionQueueScrollView.content);
-    //        ActionIcon actionItem = actionItemGO.GetComponent<ActionIcon>();
-    //        actionItem.Initialize();
-    //        actionItem.SetCharacter(_activeCharacter);
-    //        actionItem.SetAction(queueItem.action);
-    //        actionItem.SetAlpha(128f/255f);
-    //    }
-    //}
 
     #region Stats
     private void UpdateStatInfo() {
-        healthProgressBar.value = (float)_activeCharacter.currentHP / (float)_activeCharacter.maxHP;
-        manaProgressBar.value = (float)_activeCharacter.currentSP / (float)_activeCharacter.maxSP;
+        //healthProgressBar.value = (float)_activeCharacter.currentHP / (float)_activeCharacter.maxHP;
+        //manaProgressBar.value = (float)_activeCharacter.currentSP / (float)_activeCharacter.maxSP;
         hpLbl.text = _activeCharacter.maxHP.ToString();
         attackLbl.text = _activeCharacter.attackPower.ToString();
         speedLbl.text = _activeCharacter.speed.ToString();
@@ -761,39 +757,6 @@ public class CharacterInfoUI : UIMenu {
     }
     #endregion
 
-    #region Action Queue
-    //private void OnActionAddedToQueue(ActionQueueItem actionAdded, Character character) {
-    //    if (_activeCharacter != null && _activeCharacter.id == character.id) {
-    //        GameObject actionItemGO = UIManager.Instance.InstantiateUIObject(actionIconPrefabName, actionQueueScrollView.content);
-    //        ActionIcon actionItem = actionItemGO.GetComponent<ActionIcon>();
-    //        actionItem.Initialize();
-    //        actionItem.SetCharacter(_activeCharacter);
-    //        actionItem.SetAction(actionAdded.action);
-    //    }
-    //}
-    //private void OnActionRemovedFromQueue(ActionQueueItem actionAdded, Character character) {
-    //    if (_activeCharacter != null && _activeCharacter.id == character.id) {
-    //        ActionIcon icon = GetActionIcon(actionAdded.action);
-    //        ObjectPoolManager.Instance.DestroyObject(icon.gameObject);
-    //    }
-    //}
-    //private ActionIcon GetActionIcon(CharacterAction action) {
-    //    ActionIcon[] icons = Utilities.GetComponentsInDirectChildren<ActionIcon>(actionQueueScrollView.content.gameObject);
-    //    for (int i = 0; i < icons.Length; i++) {
-    //        ActionIcon currIcon = icons[i];
-    //        if (currIcon.action == action) {
-    //            return currIcon;
-    //        }
-    //    }
-    //    return null;
-    //}
-    //private void OnActionTaken(CharacterAction takenAction, CharacterParty party) {
-    //    if (_activeCharacter != null && _activeCharacter.currentParty.id == party.id) {
-    //        currentActionIcon.SetAction(takenAction);
-    //    }
-    //}
-    #endregion
-
     #region History
     private void UpdateHistory(object obj) {
         if (obj is Character && _activeCharacter != null && (obj as Character).id == _activeCharacter.id) {
@@ -1057,4 +1020,26 @@ public class CharacterInfoUI : UIMenu {
         UpdateInfoMenu();
     }
     #endregion
+
+    private void CheckIfMenuShouldBeHidden() {
+        if (UIManager.Instance.partyinfoUI.isShowing) {
+            logParentGO.SetActive(false);
+        } else {
+            logParentGO.SetActive(true);
+        }
+    }
+    private void OnMenuOpened(UIMenu openedMenu) {
+        if (this.isShowing) {
+            if (openedMenu is PartyInfoUI) {
+                CheckIfMenuShouldBeHidden();
+            }
+        }
+    }
+    private void OnMenuClosed(UIMenu closedMenu) {
+        if (this.isShowing) {
+            if (closedMenu is PartyInfoUI) {
+                CheckIfMenuShouldBeHidden();
+            }
+        }
+    }
 }
