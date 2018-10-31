@@ -38,7 +38,7 @@ public class HarvestSeason : Interaction {
             //farmerKilledState.SetEndEffect(() => FarmerKilledEffect(farmerKilledState));
             //obtainHarvestState.SetEndEffect(() => ObtainHarvestEffect(obtainHarvestState));
             //demonDiscoveredState.SetEndEffect(() => DemonDiscoveredEffect(demonDiscoveredState));
-            demonKilledState.SetEndEffect(() => DemonKilledEffect(demonKilledState));
+            demonKilledState.SetEndEffect(() => DemonKilledRewardEffect(demonKilledState));
 
             _states.Add(startState.name, startState);
             _states.Add(poisonedHarvestState.name, poisonedHarvestState);
@@ -58,7 +58,7 @@ public class HarvestSeason : Interaction {
                 name = "Send out a Demon to disrupt the harvest.",
                 description = "We have sent %minion% to disrupt the harvest. It should take him a short time to execute the task.",
                 duration = 0,
-                needsMinion = true,
+                needsMinion = false,
                 effect = () => SendOutDemonEffect(state),
             };
             ActionOption doNothing = new ActionOption {
@@ -72,15 +72,13 @@ public class HarvestSeason : Interaction {
             state.AddActionOption(sendOutDemon);
             state.AddActionOption(doNothing);
             state.SetDefaultOption(doNothing);
-        } else if (state.name == "Poisoned Harvest" || state.name == "Farmer Killed" || state.name == "Obtain Harvest" ||
-            state.name == "Demon Discovered") {
+        } else {
             ActionOption continueSurveillance = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Continue surveillance of the area.",
                 duration = 0,
-                needsMinion = true,
-                neededObjects = new List<System.Type>() { typeof(Minion) },
+                needsMinion = false,
                 effect = () => ExploreContinuesOption(state),
             };
             ActionOption returnToMe = new ActionOption {
@@ -140,9 +138,10 @@ public class HarvestSeason : Interaction {
         GameDate dueDate = GameManager.Instance.Today();
         dueDate.AddDays(5);
         farm.DisableSupplyProductionUntil(dueDate);
+        PoisonedHarvestRewardEffect(_states[effectName]);
     }
-    private void PoisonedHarvestEffect(InteractionState state) {
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
+    private void PoisonedHarvestRewardEffect(InteractionState state) {
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     #endregion
 
@@ -155,21 +154,23 @@ public class HarvestSeason : Interaction {
             "What do you want him to do next?");
         SetCurrentState(_states[effectName]);
         chosenFarmer.Death();
+        FarmerKilledRewardEffect(_states[effectName]);
     }
-    private void FarmerKilledEffect(InteractionState state) {
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
+    private void FarmerKilledRewardEffect(InteractionState state) {
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     #endregion
 
     #region Obtain Harvest
     private void ObtainHarvest(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " stole the harvest in the dead of night, " +
+        _states[effectName].SetDescription(_interactable.explorerMinion.name + " stole the harvest in the dead of night, " +
             "providing us with much needed Supply. What do you want him to do next?");
         SetCurrentState(_states[effectName]);
+        ObtainHarvestRewardEffect(_states[effectName]);
     }
-    private void ObtainHarvestEffect(InteractionState state) {
+    private void ObtainHarvestRewardEffect(InteractionState state) {
         //**Reward**: Supply Cache 1, Demon gains Exp 1
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         Reward reward = InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1);
         PlayerManager.Instance.player.ClaimReward(reward);
         farm.tileLocation.areaOfTile.PayForReward(reward);
@@ -178,26 +179,28 @@ public class HarvestSeason : Interaction {
 
     #region Demon Discovered
     private void DemonDiscovered(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " was discovered by some farmers! " +
+        _states[effectName].SetDescription(_interactable.explorerMinion.name + " was discovered by some farmers! " +
             "He managed to run away unscathed but " + farm.tileLocation.areaOfTile.owner.name + " is now aware of our sabotage " +
             "attempts and have declared war upon us. What do you want him to do next?");
         SetCurrentState(_states[effectName]);
         //**Effect**: Faction declares war vs player
         FactionManager.Instance.DeclareWarBetween(farm.tileLocation.areaOfTile.owner, PlayerManager.Instance.player.playerFaction);
+        DemonDiscoveredRewardEffect(_states[effectName]);
     }
-    private void DemonDiscoveredEffect(InteractionState state) {
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
+    private void DemonDiscoveredRewardEffect(InteractionState state) {
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     #endregion
 
     #region Demon Killed
     private void DemonKilled(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " was caught by some guards and was slain in combat. What a weakling. He deserved that.");
+        _states[effectName].SetDescription(_interactable.explorerMinion.name + " was caught by some guards and was slain in combat. What a weakling. He deserved that.");
         SetCurrentState(_states[effectName]);
+        DemonKilledRewardEffect(_states[effectName]);
     }
-    private void DemonKilledEffect(InteractionState state) {
+    private void DemonKilledRewardEffect(InteractionState state) {
         //**Effect**: Demon is removed from Minion List
-        PlayerManager.Instance.player.RemoveMinion(state.assignedMinion);
+        PlayerManager.Instance.player.RemoveMinion(_interactable.explorerMinion);
     }
     #endregion
 
