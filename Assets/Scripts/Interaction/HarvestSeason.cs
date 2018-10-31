@@ -15,6 +15,7 @@ public class HarvestSeason : Interaction {
     public override void CreateStates() {
         if (_interactable is BaseLandmark) {
             CreateExploreStates();
+            CreateWhatToDoNextState("What do you want %minion% to do next?");
             farm = interactable as BaseLandmark;
 
             InteractionState startState = new InteractionState("State 1", this);
@@ -28,7 +29,7 @@ public class HarvestSeason : Interaction {
             InteractionState obtainHarvestState = new InteractionState("Obtain Harvest", this); 
             InteractionState demonDiscoveredState = new InteractionState("Demon Discovered", this);
             InteractionState demonKilledState = new InteractionState("Demon Killed", this);
-            CreateWhatToDoNextState("What do you want %minion% to do next?");
+            
 
             CreateActionOptions(poisonedHarvestState);
             CreateActionOptions(farmerKilledState);

@@ -19,14 +19,15 @@ public class ArmyAttacks : Interaction {
     #region Overrides
     public override void CreateStates() {
         if (_interactable is BaseLandmark) {
-            CreateExploreStates();
             landmark = _interactable as BaseLandmark;
+            CreateExploreStates();
+            CreateWhatToDoNextState("%minion% will not intervene with the Garrison's planned attack. Do you want him to continue surveillance of " + landmark.landmarkName + "?");
 
             InteractionState startState = new InteractionState("State 1", this);
             string startStateDesc = "The Garrison is preparing to attack " + landmark.name + ".";
             startState.SetDescription(startStateDesc);
             CreateActionOptions(startState);
-            CreateWhatToDoNextState(_interactable.explorerMinion.name + " will not intervene with the Garrison's planned attack. Do you want him to continue surveillance of " + landmark.landmarkName + "?");
+            
 
             //action option states
             InteractionState stopSuccessfulState = new InteractionState(stopSuccessful, this);

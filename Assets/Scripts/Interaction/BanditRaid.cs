@@ -18,6 +18,7 @@ public class BanditRaid : Interaction {
     public override void CreateStates() {
         if (_interactable is BaseLandmark) {
             CreateExploreStates();
+            CreateWhatToDoNextState("What do you want %minion% to do next?");
             originLandmark = interactable as BaseLandmark;
             ConstructAssaultSpawnWeights();
             chosenLandmarkToRaid = GetLandmarkToRaid(originLandmark);
@@ -35,7 +36,7 @@ public class BanditRaid : Interaction {
             InteractionState endResult5State = new InteractionState("Empowered Raid", this); //empowered raid
             InteractionState endResult6State = new InteractionState("Misused Funds", this); //misused funds
             InteractionState endResult7State = new InteractionState("Demon Dies", this); //demon dies
-            CreateWhatToDoNextState("What do you want %minion% to do next?");
+            
 
             endResult7State.SetEndEffect(() => DemonDiesRewardEffect(endResult7State));
 
