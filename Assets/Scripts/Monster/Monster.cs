@@ -207,6 +207,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public Minion minion {
         get { return _minion; }
     }
+    public Minion explorerMinion {
+        get { return null; }
+    }
     //public Combat currentCombat {
     //    get { return _currentCombat; }
     //    set { _currentCombat = value; }
@@ -787,11 +790,12 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public void AddInteraction(Interaction interaction) {
         _currentInteractions.Add(interaction);
-        Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
+        interaction.Initialize();
+        //Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
     }
     public void RemoveInteraction(Interaction interaction) {
         if (_currentInteractions.Remove(interaction)) {
-            Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
+            //Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
         }
     }
     #endregion

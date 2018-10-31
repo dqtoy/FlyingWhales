@@ -186,7 +186,7 @@ public class CharacterInfoUI : UIMenu {
         _activeCharacter = null;
         PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
         //PlayerUI.Instance.CollapseMinionHolder();
-        InteractionUI.Instance.HideInteractionUI();
+        //InteractionUI.Instance.HideInteractionUI();
     }
     public override void OpenMenu() {
         base.OpenMenu();
@@ -211,7 +211,7 @@ public class CharacterInfoUI : UIMenu {
         currentActionIcon.SetAction(_activeCharacter.currentParty.currentAction);
         PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeCharacter);
         //PlayerUI.Instance.UncollapseMinionHolder();
-        InteractionUI.Instance.OpenInteractionUI(_activeCharacter);
+        //InteractionUI.Instance.OpenInteractionUI(_activeCharacter);
         historyScrollView.verticalNormalizedPosition = 1;
     }
     public override void ShowTooltip(GameObject objectHovered) {

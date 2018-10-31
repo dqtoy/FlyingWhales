@@ -8,9 +8,9 @@ public class InteractionState {
     private string _name;
     private string _description;
     private bool _isEnd;
-    private bool _isTimed;
+    //private bool _isTimed;
     private Action _endEffect;
-    private GameDate _timeDate;
+    //private GameDate _timeDate;
     private Minion _assignedMinion;
     private ActionOption _chosenOption;
     private ActionOption _defaultOption;
@@ -26,9 +26,9 @@ public class InteractionState {
     public bool isEnd {
         get { return _isEnd; }
     }
-    public bool isTimed {
-        get { return _isTimed; }
-    }
+    //public bool isTimed {
+    //    get { return _isTimed; }
+    //}
     public ActionOption chosenOption {
         get { return _chosenOption; }
     }
@@ -44,9 +44,9 @@ public class InteractionState {
     public ActionOption[] actionOptions {
         get { return _actionOptions; }
     }
-    public GameDate timeDate {
-        get { return _timeDate; }
-    }
+    //public GameDate timeDate {
+    //    get { return _timeDate; }
+    //}
     #endregion
 
     public InteractionState(string name, Interaction interaction) {
@@ -79,9 +79,9 @@ public class InteractionState {
         _endEffect = endEffect;
     }
     public void OnStartState() {
-        if(_isTimed && _defaultOption != null) {
-            SchedulingManager.Instance.AddEntry(_timeDate, () => ActivateDefault());
-        }
+        //if(_isTimed && _defaultOption != null) {
+        //    SchedulingManager.Instance.AddEntry(_timeDate, () => ActivateDefault());
+        //}
     }
     public void OnEndState() {
         AssignedMinionGoesBack();
@@ -89,11 +89,11 @@ public class InteractionState {
     public void SetChosenOption(ActionOption option) {
         _chosenOption = option;
     }
-    public void SetTimeSchedule(ActionOption defaultOption, GameDate timeSched) {
-        _isTimed = true;
-        _timeDate = timeSched;
-        SetDefaultOption(defaultOption);
-    }
+    //public void SetTimeSchedule(ActionOption defaultOption, GameDate timeSched) {
+        //_isTimed = true;
+        //_timeDate = timeSched;
+        //SetDefaultOption(defaultOption);
+    //}
     public void SetDefaultOption(ActionOption defaultOption) {
         _defaultOption = defaultOption;
     }
@@ -115,7 +115,11 @@ public class InteractionState {
     }
     public void ActivateDefault() {
         if(_interaction.currentState == this && !_interaction.isActivated) {
-            _defaultOption.ActivateOption(_interaction.interactable);
+            if (_isEnd) {
+                EndResult();
+            } else {
+                _defaultOption.ActivateOption(_interaction.interactable);
+            }
         }
     }
     public ActionOption GetOption(string optionName) {

@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using Pathfinding;
+using System;
 
 public class LandmarkVisual : MonoBehaviour {
 
@@ -26,6 +27,7 @@ public class LandmarkVisual : MonoBehaviour {
     [SerializeField] private Seeker seeker;
     [SerializeField] private AIDestinationSetter destinationSetter;
     [SerializeField] private LineRenderer lineRenderer;
+    [SerializeField] private InteractionTimer interactionTimer;
     public GameObject landmarkHPGO;
 
     private int _charCount;
@@ -207,6 +209,34 @@ public class LandmarkVisual : MonoBehaviour {
     #region Pointer Actions
     public void ShowCharactersInLandmark(bool state) {
         hoverContent.gameObject.SetActive(state);
+    }
+    #endregion
+
+    #region Interaction
+    public void ShowInteractionTimer() {
+        interactionTimer.gameObject.SetActive(true);
+    }
+    public void HideInteractionTimer() {
+        interactionTimer.gameObject.SetActive(false);
+    }
+    public void SetAndStartInteractionTimer(int ticks, InteractionTimer.OnStopTimer stopTimerAction = null) {
+        if(stopTimerAction != null) {
+            interactionTimer.onStopTimer += stopTimerAction;
+        }
+        interactionTimer.SetTimer(ticks);
+        interactionTimer.StartTimer();
+    }
+    public void StopInteractionTimer() {
+        interactionTimer.StopTimer();
+    }
+    public void ResetInteractionTimer() {
+        interactionTimer.ResetTimer();
+    }
+    public void SetInteractionTimerButtonState(bool state) {
+        interactionTimer.interactionButton.interactable = state;
+    }
+    public void OnClickInteractionButton() {
+        Messenger.Broadcast(Signals.CLICKED_INTERACTION_BUTTON, _landmark);
     }
     #endregion
 }

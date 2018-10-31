@@ -26,6 +26,7 @@ public class BaseLandmark : ILocation, IInteractable {
     protected Faction _owner;
     protected StructureObj _landmarkObj;
     protected LandmarkVisual _landmarkVisual;
+    protected LandmarkInvestigation _landmarkInvestigation;
     protected List<ICharacter> _charactersWithHomeOnLandmark;
     protected List<BaseLandmark> _connections;
     protected List<Character> _prisoners; //list of prisoners on landmark
@@ -104,6 +105,9 @@ public class BaseLandmark : ILocation, IInteractable {
     //   }
     public LandmarkVisual landmarkVisual {
         get { return _landmarkVisual; }
+    }
+    public LandmarkInvestigation landmarkInvestigation {
+        get { return _landmarkInvestigation; }
     }
     public List<Character> prisoners {
         get { return _prisoners; }
@@ -186,6 +190,9 @@ public class BaseLandmark : ILocation, IInteractable {
     public ILocation specificLocation {
         get { return this; }
     }
+    public Minion explorerMinion {
+        get { return _landmarkInvestigation.assignedMinion; }
+    }
     #endregion
 
     public BaseLandmark() {
@@ -251,6 +258,9 @@ public class BaseLandmark : ILocation, IInteractable {
     public virtual void DestroyLandmark() {
         ObjectState ruined = landmarkObj.GetState("Ruined");
         landmarkObj.ChangeState(ruined);
+        if(_landmarkInvestigation != null) {
+            _landmarkInvestigation.OnDestroyLandmark();
+        }
         //RemoveListeners();
     }
     /*
@@ -1170,20 +1180,22 @@ public class BaseLandmark : ILocation, IInteractable {
 
     #region Interactions
     public void ConstructInitialInteractions() {
-        Interaction investigateInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.INVESTIGATE, this);
+        _landmarkInvestigation = new LandmarkInvestigation(this);
+        //Interaction investigateInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.INVESTIGATE, this);
         //Interaction pointOfInterest1 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.POI_1, this);
         //Interaction pointOfInterest2 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.POI_2, this);
-        AddInteraction(investigateInteraction);
+        //AddInteraction(investigateInteraction);
         //AddInteraction(pointOfInterest1);
         //AddInteraction(pointOfInterest2);
     }
     public void AddInteraction(Interaction interaction) {
         _currentInteractions.Add(interaction);
-        Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
+        interaction.Initialize();
+        //Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
     }
     public void RemoveInteraction(Interaction interaction) {
         if (_currentInteractions.Remove(interaction)) {
-            Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
+            //Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
         }
     }
     public Interaction GetInteractionOfType(INTERACTION_TYPE type) {

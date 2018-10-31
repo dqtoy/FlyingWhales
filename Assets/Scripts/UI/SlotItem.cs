@@ -16,6 +16,7 @@ public class SlotItem : MonoBehaviour {
     [SerializeField] private FactionEmblem factionEmblem;
 
     public int slotIndex { get; private set; }
+    public object associatedObject { get; private set; }
 
     public void SetNeededType(System.Type neededType) {
         this.neededType = neededType;
@@ -56,6 +57,7 @@ public class SlotItem : MonoBehaviour {
     }
 
     public void PlaceObject(object associatedObj) {
+        associatedObject = associatedObj;
         if (associatedObj is FactionIntel) {
             factionEmblem.gameObject.SetActive(true);
             areaEmblem.gameObject.SetActive(false);

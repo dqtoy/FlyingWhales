@@ -11,25 +11,30 @@ using UnityEngine.Events;
 public class InteractionItem : MonoBehaviour {
     private Interaction _interaction;
     private ActionOption _currentSelectedActionOption;
-    private Toggle _toggle;
+    //private Toggle _toggle;
 
     //public CharacterPortrait portrait;
     public TextMeshProUGUI descriptionText;
     public ActionOptionButton[] actionOptionButtons;
     public Button confirmBtn;
     public RectTransform confirmBtnRect;
+    public GameObject assignmentGO;
 
-    [SerializeField] private GameObject slotItemPrefab;
+    [SerializeField] private SlotItem slotItem;
+    [SerializeField] private SlotItem defaultAssignedSlotItem;
+    [SerializeField] private GameObject interactionAssignedSlotPrefab;
+    [SerializeField] private ScrollRect interactionAssignedScrollView;
+    [SerializeField] private TextMeshProUGUI descriptionAssignment;
     [SerializeField] private Vector3 confirmBtnPosNoSlot;
     [SerializeField] private Vector3 confirmBtnPosWithSlot;
-    [SerializeField] private SlotItem[] slotItems;
+    //[SerializeField] private SlotItem[] slotItems;
 
-    private List<CustomDropZone> neededObjectSlots;
+    //private List<CustomDropZone> neededObjectSlots;
 
     private bool _isToggled;
 
     private int currentNeededObjectIndex;
-    private object lastAssignedObject;
+    //private object lastAssignedObject;
 
     #region getters/setters
     public Interaction interaction {
@@ -38,22 +43,26 @@ public class InteractionItem : MonoBehaviour {
     #endregion
 
     public void Initialize() {
-        for (int i = 0; i < slotItems.Length; i++) {
-            SlotItem currItem = slotItems[i];
-            currItem.SetSlotIndex(i);
-            currItem.itemDroppedCallback = new ItemDroppedCallback();
-            currItem.itemDroppedCallback.AddListener(OnItemDroppedInSlot);
-        }
+        slotItem.SetSlotIndex(0);
+        slotItem.itemDroppedCallback = new ItemDroppedCallback();
+        slotItem.itemDroppedCallback.AddListener(OnItemDroppedInSlot);
+        //for (int i = 0; i < slotItems.Length; i++) {
+        //    SlotItem currItem = slotItems[i];
+        //    currItem.SetSlotIndex(i);
+        //    currItem.itemDroppedCallback = new ItemDroppedCallback();
+        //    currItem.itemDroppedCallback.AddListener(OnItemDroppedInSlot);
+        //}
     }
 
     private void Start() {
+        InitializeActionButtons();
         Messenger.AddListener<Interaction>(Signals.UPDATED_INTERACTION_STATE, OnUpdatedInteractionState);
         Messenger.AddListener<Interaction>(Signals.CHANGED_ACTIVATED_STATE, OnChangedActivatedState);
     }
     private void OnDestroy() {
         Messenger.RemoveListener<Interaction>(Signals.UPDATED_INTERACTION_STATE, OnUpdatedInteractionState);
         Messenger.RemoveListener<Interaction>(Signals.CHANGED_ACTIVATED_STATE, OnChangedActivatedState);
-        GameObject.Destroy(_toggle.gameObject);
+        //GameObject.Destroy(_toggle.gameObject);
     }
     private void OnUpdatedInteractionState(Interaction interaction) {
         if(_interaction != null && _interaction == interaction) {
@@ -68,8 +77,8 @@ public class InteractionItem : MonoBehaviour {
     public void SetInteraction(Interaction interaction) {
         _interaction = interaction;
         if(_interaction != null) {
-            _interaction.SetInteractionItem(this);
-            InitializeActionButtons();
+            //_interaction.SetInteractionItem(this);
+            defaultAssignedSlotItem.PlaceObject(_interaction.interactable.explorerMinion);
             UpdateState();
             ChangedActivatedState();
         }
@@ -81,15 +90,18 @@ public class InteractionItem : MonoBehaviour {
     }
     public void UpdateState() {
         SetDescription(_interaction.currentState.description);
-        confirmBtn.gameObject.SetActive(false);
-        for (int i = 0; i < slotItems.Length; i++) {
-            slotItems[i].gameObject.SetActive(false);
-            slotItems[i].ClearSlot();
-        }
+        //confirmBtn.gameObject.SetActive(false);
+        assignmentGO.SetActive(false);
+        slotItem.ClearSlot();
+
         for (int i = 0; i < actionOptionButtons.Length; i++) {
+            actionOptionButtons[i].SetOption(_interaction.currentState.actionOptions[i]);
             if (_interaction.currentState.actionOptions[i] != null) {
-                actionOptionButtons[i].SetOption(_interaction.currentState.actionOptions[i]);
-                actionOptionButtons[i].toggle.isOn = false;
+                if(_interaction.currentState.chosenOption != null && _interaction.currentState.chosenOption == actionOptionButtons[i].actionOption) {
+                    actionOptionButtons[i].toggle.isOn = true;
+                } else {
+                    actionOptionButtons[i].toggle.isOn = false;
+                }
                 actionOptionButtons[i].gameObject.SetActive(true);
             } else {
                 actionOptionButtons[i].gameObject.SetActive(false);
@@ -99,28 +111,35 @@ public class InteractionItem : MonoBehaviour {
             //this is to load any objects already assigned to the option
             //all needed slots will always be occupied since the interaction has already been activated
             //meaning that all needed objects were already assigned beforehand.
-            confirmBtn.gameObject.SetActive(true);
-            confirmBtn.interactable = false ;
+            //assignmentGO.SetActive(true);
+            //confirmBtn.interactable = false;
+            //confirmBtn.gameObject.SetActive(true);
+            //descriptionAssignment.gameObject.SetActive(false);
             ActionOption actionOption = _interaction.currentState.chosenOption;
             if (actionOption != null) {
-                for (int i = 0; i < actionOption.assignedObjects.Count; i++) {
-                    object assignedObject = actionOption.assignedObjects[i];
-                    SlotItem currItem = slotItems.ElementAtOrDefault(i);
-                    if (currItem == null) {
-                        Debug.LogWarning("Not enough slots for an option!");
-                        break; //no more slots
-                    } else {
-                        currItem.gameObject.SetActive(true);
-                        currItem.PlaceObject(assignedObject);
+                if(actionOption.assignedObjects.Count > 0) {
+                    for (int i = 0; i < actionOption.assignedObjects.Count; i++) {
+                        object assignedObject = actionOption.assignedObjects[i];
+                        AddAssignedObject(assignedObject);
+                        //SlotItem currItem = slotItems.ElementAtOrDefault(i);
+                        //if (currItem == null) {
+                        //    Debug.LogWarning("Not enough slots for an option!");
+                        //    break; //no more slots
+                        //} else {
+                        //    currItem.gameObject.SetActive(true);
+                        //    currItem.PlaceObject(assignedObject);
+                        //}
                     }
+                    slotItem.ClearSlot();
                 }
-                if (actionOption.neededObjects == null || actionOption.neededObjects.Count == 0) {
-                    //no needed slots
-                    confirmBtnRect.anchoredPosition = confirmBtnPosNoSlot;
-                } else {
-                    //needs slots
-                    confirmBtnRect.anchoredPosition = confirmBtnPosWithSlot;
-                }
+                ShowConfirmButtonOnly(false);
+                //if (actionOption.neededObjects == null || actionOption.neededObjects.Count == 0) {
+                //    //no needed slots
+                //    confirmBtnRect.anchoredPosition = confirmBtnPosNoSlot;
+                //} else {
+                //    //needs slots
+                //    confirmBtnRect.anchoredPosition = confirmBtnPosWithSlot;
+                //}
                 //if (actionOption.assignedMinion != null) {
                 //    portrait.GeneratePortrait(actionOption.assignedMinion.icharacter.portraitSettings, 95, true);
                 //} else {
@@ -129,8 +148,8 @@ public class InteractionItem : MonoBehaviour {
             }
         } else {
             if (_interaction.currentState.isEnd) {
-                confirmBtn.gameObject.SetActive(true);
-                confirmBtnRect.anchoredPosition = confirmBtnPosNoSlot;
+                //assignmentGO.SetActive(true);
+                ShowConfirmButtonOnly(confirmBtn.interactable);
             }
             //portrait.GeneratePortrait(null, 95, true);
         }
@@ -140,13 +159,13 @@ public class InteractionItem : MonoBehaviour {
     }
     private void ChangedActivatedState() {
         ChangeStateAllButtons(!_interaction.isActivated);
-        if (_interaction.isActivated) {
-            _toggle.targetGraphic.GetComponent<Image>().sprite = InteractionUI.Instance.toggleInactiveUnselected;
-            _toggle.graphic.GetComponent<Image>().sprite = InteractionUI.Instance.toggleInactiveSelected;
-        } else {
-            _toggle.targetGraphic.GetComponent<Image>().sprite = InteractionUI.Instance.toggleActiveUnselected;
-            _toggle.graphic.GetComponent<Image>().sprite = InteractionUI.Instance.toggleActiveSelected;
-        }
+        //if (_interaction.isActivated) {
+        //    _toggle.targetGraphic.GetComponent<Image>().sprite = InteractionUI.Instance.toggleInactiveUnselected;
+        //    _toggle.graphic.GetComponent<Image>().sprite = InteractionUI.Instance.toggleInactiveSelected;
+        //} else {
+        //    _toggle.targetGraphic.GetComponent<Image>().sprite = InteractionUI.Instance.toggleActiveUnselected;
+        //    _toggle.graphic.GetComponent<Image>().sprite = InteractionUI.Instance.toggleActiveSelected;
+        //}
     }
     public void SetCurrentSelectedActionOption(ActionOption actionOption) {
         if (_currentSelectedActionOption != null) {
@@ -155,34 +174,51 @@ public class InteractionItem : MonoBehaviour {
         _currentSelectedActionOption = actionOption;
         currentNeededObjectIndex = 0; //reset index
         if (actionOption != null) {
-            confirmBtn.gameObject.SetActive(true);
             if (actionOption.neededObjects == null || actionOption.neededObjects.Count == 0) {
                 //no needed slots
-                confirmBtnRect.anchoredPosition = confirmBtnPosNoSlot;
-                for (int i = 0; i < slotItems.Length; i++) {
-                    slotItems[i].gameObject.SetActive(false);
-                }
-                confirmBtn.interactable = true;
+                //assignmentGO.SetActive(true);
+                ShowConfirmButtonOnly(true);
+                //confirmBtnRect.anchoredPosition = confirmBtnPosNoSlot;
+                //slotItem.gameObject.SetActive(false);
+                ////for (int i = 0; i < slotItems.Length; i++) {
+                ////    slotItems[i].gameObject.SetActive(false);
+                ////}
+                //confirmBtn.interactable = true;
             } else {
                 //needs slots
-                confirmBtnRect.anchoredPosition = confirmBtnPosWithSlot;
-                slotItems[0].gameObject.SetActive(true);
-                for (int i = 1; i < slotItems.Length; i++) {
-                    slotItems[i].gameObject.SetActive(false);
-                }
+                //assignmentGO.SetActive(true);
+                ShowDescriptionAssignment();
+                //confirmBtnRect.anchoredPosition = confirmBtnPosWithSlot;
+                //slotItem.gameObject.SetActive(true);
+                //slotItems[0].gameObject.SetActive(true);
+                //for (int i = 1; i < slotItems.Length; i++) {
+                //    slotItems[i].gameObject.SetActive(false);
+                //}
                 LoadSlotData();
-                confirmBtn.interactable = false;
+                //confirmBtn.interactable = false;
                 UpdateSideMenu();
             }
         }
     }
     private void LoadSlotData() {
-        for (int i = 0; i < slotItems.Length; i++) {
-            SlotItem currItem = slotItems[i];
-            System.Type neededType = _currentSelectedActionOption.neededObjects.ElementAtOrDefault(i);
-            currItem.ClearSlot();
-            currItem.SetNeededType(neededType);
+        slotItem.ClearSlot();
+        System.Type neededType = _currentSelectedActionOption.neededObjects[currentNeededObjectIndex];
+        slotItem.SetNeededType(neededType);
+        if (neededType == typeof(FactionIntel)) {
+            descriptionAssignment.text = "Requires a Faction Intel to be dragged from the list.";
+        } else if (neededType == typeof(LocationIntel)) {
+            descriptionAssignment.text = "Requires a Location Intel to be dragged from the list.";
+        } else if (neededType == typeof(CharacterIntel)) {
+            descriptionAssignment.text = "Requires a Character Intel to be dragged from the list.";
+        } else if (neededType == typeof(Minion)) {
+            descriptionAssignment.text = "Requires a Demon Minion to be dragged from the list.";
         }
+        //for (int i = 0; i < slotItems.Length; i++) {
+        //    SlotItem currItem = slotItems[i];
+        //    System.Type neededType = _currentSelectedActionOption.neededObjects.ElementAtOrDefault(i);
+        //    currItem.ClearSlot();
+        //    currItem.SetNeededType(neededType);
+        //}
     }
 
     public void OnClickConfirm() {
@@ -193,14 +229,15 @@ public class InteractionItem : MonoBehaviour {
                 _interaction.currentState.EndResult();
             }
         } else {
-            _currentSelectedActionOption.AddAssignedObject(lastAssignedObject);
+            _currentSelectedActionOption.AddAssignedObject(slotItem.associatedObject);
             //check if needed objects are done
             if (_currentSelectedActionOption.neededObjects.Count > currentNeededObjectIndex + 1) {
                 //there are still needed objects
-                SlotItem currentSlotItem = slotItems[currentNeededObjectIndex];
-                SlotItem nextSlotItem = slotItems[currentNeededObjectIndex + 1];
-                nextSlotItem.gameObject.SetActive(true);
+                //SlotItem currentSlotItem = slotItems[currentNeededObjectIndex];
+                //SlotItem nextSlotItem = slotItems[currentNeededObjectIndex + 1];
+                //nextSlotItem.gameObject.SetActive(true);
                 currentNeededObjectIndex++;
+                LoadSlotData();
                 UpdateSideMenu();
             } else {
                 //no more needed objects
@@ -233,36 +270,37 @@ public class InteractionItem : MonoBehaviour {
     //}
 
     private void OnItemDroppedInSlot(object droppedObject, int slotIndex) {
-        confirmBtn.interactable = true;
-        lastAssignedObject = droppedObject;
+        ShowConfirmButtonWithSlot(true);
+        //lastAssignedObject = droppedObject;
     }
-    public void SetToggle(Toggle toggle) {
-        _toggle = toggle;
-        _toggle.onValueChanged.AddListener(OnToggle);
-    }
-    private void OnToggle(bool state) {
-        if(_isToggled != state) {
-            _isToggled = state;
-            _toggle.targetGraphic.enabled = !state;
-            _toggle.interactable = !state;
-            if (state) {
-                GoToThisPage();
-            }
-        } 
-    }
-    private void GoToThisPage() {
-        int index = InteractionUI.Instance.GetIndexOfInteraction(this);
-        if (InteractionUI.Instance.scrollSnap.CurrentPage != index) {
-            InteractionUI.Instance.scrollSnap.ChangePage(index);
-        }
-    }
+    //public void SetToggle(Toggle toggle) {
+    //    _toggle = toggle;
+    //    _toggle.onValueChanged.AddListener(OnToggle);
+    //}
+    //private void OnToggle(bool state) {
+    //    if(_isToggled != state) {
+    //        _isToggled = state;
+    //        _toggle.targetGraphic.enabled = !state;
+    //        _toggle.interactable = !state;
+    //        if (state) {
+    //            GoToThisPage();
+    //        }
+    //    } 
+    //}
+    //private void GoToThisPage() {
+    //    int index = InteractionUI.Instance.GetIndexOfInteraction(this);
+    //    if (InteractionUI.Instance.scrollSnap.CurrentPage != index) {
+    //        InteractionUI.Instance.scrollSnap.ChangePage(index);
+    //    }
+    //}
 
     public void ClearNeededObjectSlots() {
-        for (int i = 0; i < slotItems.Length; i++) {
-            SlotItem currItem = slotItems[i];
-            currItem.ClearSlot();
-            currItem.gameObject.SetActive(false);
-        }
+        slotItem.ClearSlot();
+        //for (int i = 0; i < slotItems.Length; i++) {
+        //    SlotItem currItem = slotItems[i];
+        //    currItem.ClearSlot();
+        //    currItem.gameObject.SetActive(false);
+        //}
     }
 
     private void UpdateSideMenu() {
@@ -276,5 +314,38 @@ public class InteractionItem : MonoBehaviour {
         } else if (neededObject == typeof(LocationIntel)) {
             UIManager.Instance.ShowLocationIntelMenu();
         }
+    }
+    public void AddAssignedObject(object obj) {
+        GameObject go = GameObject.Instantiate(interactionAssignedSlotPrefab, interactionAssignedScrollView.content);
+        SlotItem slot = go.GetComponent<SlotItem>();
+        slot.PlaceObject(obj);
+    }
+    public void ClearAssignedObjects() {
+        for (int i = 1; i < interactionAssignedScrollView.content.childCount; i++) {
+            GameObject.Destroy(interactionAssignedScrollView.content.GetChild(i));
+            i--;
+        }
+    }
+    private void ShowConfirmButtonOnly(bool isInteractable) {
+        assignmentGO.SetActive(true);
+        confirmBtn.gameObject.SetActive(true);
+        confirmBtn.interactable = isInteractable;
+        confirmBtnRect.anchoredPosition = confirmBtnPosNoSlot;
+        slotItem.gameObject.SetActive(false);
+        descriptionAssignment.gameObject.SetActive(false);
+    }
+    private void ShowConfirmButtonWithSlot(bool isInteractable) {
+        assignmentGO.SetActive(true);
+        confirmBtn.gameObject.SetActive(true);
+        confirmBtn.interactable = isInteractable;
+        confirmBtnRect.anchoredPosition = confirmBtnPosWithSlot;
+        slotItem.gameObject.SetActive(true);
+        descriptionAssignment.gameObject.SetActive(false);
+    }
+    private void ShowDescriptionAssignment() {
+        assignmentGO.SetActive(true);
+        confirmBtn.gameObject.SetActive(false);
+        descriptionAssignment.gameObject.SetActive(false);
+        slotItem.gameObject.SetActive(true);
     }
 }

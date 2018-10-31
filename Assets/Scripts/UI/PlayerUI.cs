@@ -48,8 +48,8 @@ public class PlayerUI : MonoBehaviour {
     void Awake() {
         Instance = this;
         minionItems = new List<MinionItem>();
-        Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
-        Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
+        //Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
+        //Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
     }
 
     public void UpdateUI() {

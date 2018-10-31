@@ -13,6 +13,11 @@ public class ActionOptionButton : MonoBehaviour {
     public Toggle toggle;
     public InteractionItem interactionItem;
 
+    #region getters/setters
+    public ActionOption actionOption {
+        get { return _actionOption; }
+    }
+    #endregion
     public void Initialize() {
         Messenger.AddListener(Signals.UPDATED_CURRENCIES, UpdateButton);
     }
@@ -26,18 +31,20 @@ public class ActionOptionButton : MonoBehaviour {
     }
     public void SetOption(ActionOption actionOption) {
         _actionOption = actionOption;
-        buttonText.text = _actionOption.name;
-        costText.text = _actionOption.cost.amount.ToString();
-        costImage.sprite = PlayerManager.Instance.GetSpriteByCurrency(_actionOption.cost.currency);
-        UpdateButton();
+        if(_actionOption != null) {
+            buttonText.text = _actionOption.name;
+            costText.text = _actionOption.cost.amount.ToString();
+            costImage.sprite = PlayerManager.Instance.GetSpriteByCurrency(_actionOption.cost.currency);
+            UpdateButton();
+        }
     }
     public void OnClickThis(bool state) {
         if (state) {
             interactionItem.SetCurrentSelectedActionOption(_actionOption);
         } else {
             if(!toggle.group.AnyTogglesOn()){
-                interactionItem.confirmBtn.gameObject.SetActive(false);
-                interactionItem.ClearNeededObjectSlots();
+                interactionItem.assignmentGO.SetActive(false);
+                interactionItem.ClearNeededObjectSlots ();
                 interactionItem.SetCurrentSelectedActionOption(null);
                 //if (interactionItem.confirmMinionGO.activeSelf) {
                 //    interactionItem.confirmMinionGO.SetActive(false);

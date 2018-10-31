@@ -315,6 +315,9 @@ namespace ECS {
         public Minion minion {
             get { return _minion; }
         }
+        public Minion explorerMinion {
+            get { return null; }
+        }
         public CharacterActionQueue<ActionQueueItem> actionQueue {
             get { return _actionQueue; }
         }
@@ -2835,11 +2838,12 @@ namespace ECS {
         }
         public void AddInteraction(Interaction interaction) {
             _currentInteractions.Add(interaction);
-            Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
+            interaction.Initialize();
+            //Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
         }
         public void RemoveInteraction(Interaction interaction) {
             if (_currentInteractions.Remove(interaction)) {
-                Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
+                //Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
             }
         }
         #endregion
