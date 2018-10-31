@@ -18,7 +18,7 @@ public class HarvestSeason : Interaction {
             farm = interactable as BaseLandmark;
 
             InteractionState startState = new InteractionState("State 1", this);
-            string startStateDesc = _interactable.explorerMinion.name + " has reported that the farmers will soon be able to harvest their crops. A sizable amount of the harvest will be given to their troops, providing them with needed Supplies.";
+            string startStateDesc = "%minion% has reported that the farmers will soon be able to harvest their crops. A sizable amount of the harvest will be given to their troops, providing them with needed Supplies.";
             startState.SetDescription(startStateDesc);
             CreateActionOptions(startState);
 
@@ -28,7 +28,7 @@ public class HarvestSeason : Interaction {
             InteractionState obtainHarvestState = new InteractionState("Obtain Harvest", this); 
             InteractionState demonDiscoveredState = new InteractionState("Demon Discovered", this);
             InteractionState demonKilledState = new InteractionState("Demon Killed", this);
-            CreateWhatToDoNextState("What do you want " + _interactable.explorerMinion.name + " to do next?");
+            CreateWhatToDoNextState("What do you want %minion% to do next?");
 
             CreateActionOptions(poisonedHarvestState);
             CreateActionOptions(farmerKilledState);
@@ -90,6 +90,7 @@ public class HarvestSeason : Interaction {
             };
             state.AddActionOption(continueSurveillance);
             state.AddActionOption(returnToMe);
+            state.SetDefaultOption(returnToMe);
         }
     }
     #endregion

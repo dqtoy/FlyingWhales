@@ -35,7 +35,7 @@ public class BanditRaid : Interaction {
             InteractionState endResult5State = new InteractionState("Empowered Raid", this); //empowered raid
             InteractionState endResult6State = new InteractionState("Misused Funds", this); //misused funds
             InteractionState endResult7State = new InteractionState("Demon Dies", this); //demon dies
-            CreateWhatToDoNextState("What do you want " + _interactable.explorerMinion.name + " to do next?");
+            CreateWhatToDoNextState("What do you want %minion% to do next?");
 
             endResult7State.SetEndEffect(() => DemonDiesRewardEffect(endResult7State));
 
@@ -114,6 +114,7 @@ public class BanditRaid : Interaction {
             };
             state.AddActionOption(continueSurveillance);
             state.AddActionOption(returnToMe);
+            state.SetDefaultOption(returnToMe);
         }
     }
     #endregion

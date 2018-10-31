@@ -107,6 +107,7 @@ public class ArmyAttacks : Interaction {
             };
             state.AddActionOption(yes);
             state.AddActionOption(no);
+            state.SetDefaultOption(no);
         } else  {
             ActionOption yes = new ActionOption {
                 interactionState = state,
@@ -126,6 +127,7 @@ public class ArmyAttacks : Interaction {
             };
             state.AddActionOption(yes);
             state.AddActionOption(no);
+            state.SetDefaultOption(no);
         }
     }
     #endregion

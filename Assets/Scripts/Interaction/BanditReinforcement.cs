@@ -16,6 +16,8 @@ public class BanditReinforcement : Interaction {
     #region Overrides
     public override void CreateStates() {
         if (_interactable is BaseLandmark) {
+            CreateExploreStates();
+            CreateWhatToDoNextState("What do you want %minion% to do next?");
             landmark = _interactable as BaseLandmark;
             ConstructDefenseSpawnWeights();
 
@@ -100,6 +102,7 @@ public class BanditReinforcement : Interaction {
             };
             state.AddActionOption(continueSurveillance);
             state.AddActionOption(returnToMe);
+            state.SetDefaultOption(returnToMe);
         }
     }
     #endregion

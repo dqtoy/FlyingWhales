@@ -139,7 +139,7 @@ public class CharacterAvatar : MonoBehaviour{
     private void StartTravelling() {
         _isTravelling = true;
         float distance = Vector3.Distance(_party.specificLocation.tileLocation.transform.position, targetLocation.tileLocation.transform.position);
-        _distanceToTarget = (Mathf.CeilToInt(distance / 2.315188f)) * 6;
+        _distanceToTarget = (Mathf.CeilToInt(distance / 2.315188f)) * 2; //6
         _curve = targetLocation.tileLocation.ATileIsTryingToConnect(_party.specificLocation.tileLocation, _distanceToTarget);
         Messenger.AddListener(Signals.HOUR_STARTED, TraverseCurveLine);
     }
