@@ -37,8 +37,9 @@ public class ActionOption {
     public void ActivateOption(IInteractable interactable) {
         PlayerManager.Instance.player.AdjustCurrency(cost.currency, -cost.amount);
         if(needsMinion) {
-            if(assignedMinion != null) {
-                assignedMinion.GoToAssignment(interactable);
+            Minion minion = assignedMinion;
+            if(minion != null) {
+                minion.GoToAssignment(interactable);
                 StartDuration();
                 //assignedMinion.icharacter.currentParty.GoToLocation(interactable.specificLocation, PATHFINDING_MODE.PASSABLE, () => StartDuration());
                 interactionState.interaction.SetActivatedState(true);
@@ -70,7 +71,14 @@ public class ActionOption {
         if (onStartDurationAction != null) {
             onStartDurationAction();
         }
-        Messenger.AddListener(Signals.HOUR_STARTED, CheckDuration);
+        if(duration == 0) {
+            interactionState.interaction.SetActivatedState(false);
+            if (effect != null) {
+                effect();
+            }
+        } else {
+            Messenger.AddListener(Signals.HOUR_STARTED, CheckDuration);
+        }
     }
     private void CheckDuration() {
         _currentDuration++;
@@ -83,21 +91,23 @@ public class ActionOption {
         }
     }
     private void SetDescription() {
-        if(!string.IsNullOrEmpty(description) && interactionState.interaction.interactionItem != null) {
+        if(!string.IsNullOrEmpty(description) && interactionState.interaction == InteractionUI.Instance.interactionItem.interaction) {
             if (description.Contains("%minion%") && assignedMinion != null) {
                 description = description.Replace("%minion%", assignedMinion.icharacter.name);
             }
-            interactionState.interaction.interactionItem.SetDescription(description);
+            InteractionUI.Instance.interactionItem.SetDescription(description);
         }
     }
 
     public void ClearAssignedObjects() {
         assignedObjects.Clear();
+        InteractionUI.Instance.interactionItem.ClearAssignedObjects();
     }
 
     public void AddAssignedObject(object obj) {
         int index = assignedObjects.Count;
         assignedObjects.Add(obj);
+        InteractionUI.Instance.interactionItem.AddAssignedObject(obj);
         string summary = "Assigned object to option " + obj.GetType().ToString() + " at index " + index.ToString();
         summary += "\nNeeded object types are ";
         for (int i = 0; i < neededObjects.Count; i++) {

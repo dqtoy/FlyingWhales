@@ -5,13 +5,19 @@ using UnityEngine;
 public class Interaction {
     protected int _id;
     protected string _name;
+    protected int _timeOutTicks;
+    protected GameDate _timeDate;
     protected INTERACTION_TYPE _type;
     protected IInteractable _interactable;
     protected Dictionary<string, InteractionState> _states;
     protected InteractionState _currentState;
-    protected InteractionItem _interactionItem;
+    //protected InteractionItem _interactionItem;
     protected bool _isActivated;
     protected bool _isDone;
+    protected bool _isFirstTimeOutCancelled;
+    protected bool _isSecondTimeOutCancelled;
+
+    public const int secondTimeOutTicks = 30;
 
     #region getters/setters
     public INTERACTION_TYPE type {
@@ -20,12 +26,15 @@ public class Interaction {
     public string name {
         get { return _name; }
     }
+    public GameDate timeDate {
+        get { return _timeDate; }
+    }
     public InteractionState currentState {
         get { return _currentState; }
     }
-    public InteractionItem interactionItem {
-        get { return _interactionItem; }
-    }
+    //public InteractionItem interactionItem {
+    //    get { return _interactionItem; }
+    //}
     public IInteractable interactable {
         get { return _interactable; }
     }
@@ -33,21 +42,28 @@ public class Interaction {
         get { return _isActivated; }
     }
     #endregion
-    public Interaction(IInteractable interactable, INTERACTION_TYPE type) {
+    public Interaction(IInteractable interactable, INTERACTION_TYPE type, int timeOutTicks) {
         _id = Utilities.SetID(this);
         _type = type;
         _interactable = interactable;
+        _timeOutTicks = timeOutTicks;
+        _isFirstTimeOutCancelled = false;
+        _isSecondTimeOutCancelled = false;
         _states = new Dictionary<string, InteractionState>();
         CreateStates();
         //Debug.Log("Created new interaction " + type.ToString() + " at " + interactable.name);
     }
 
     #region Virtuals
+    public virtual void Initialize() {
+        ScheduleFirstTimeOut();
+    }
     public virtual void CreateStates() { }
     public virtual void CreateActionOptions(InteractionState state) { }
     public virtual void EndInteraction() {
         _isDone = true;
         _interactable.RemoveInteraction(this);
+        InteractionUI.Instance.HideInteractionUI();
     }
     #endregion
 
@@ -68,9 +84,27 @@ public class Interaction {
         //}
         Messenger.Broadcast(Signals.CHANGED_ACTIVATED_STATE, this);
     }
-    public void SetInteractionItem(InteractionItem interactionItem) {
-        _interactionItem = interactionItem;
+    public void CancelFirstTimeOut() {
+        _isFirstTimeOutCancelled = true;
     }
+    public void CancelSecondTimeOut() {
+        _isSecondTimeOutCancelled = true;
+    }
+    public void ScheduleFirstTimeOut() {
+        GameDate timeOutDate = GameManager.Instance.Today();
+        timeOutDate.AddHours(_timeOutTicks);
+        _timeDate = timeOutDate;
+        SchedulingManager.Instance.AddEntry(_timeDate, () => FirstTimeOut());
+    }
+    public void ScheduleSecondTimeOut() {
+        GameDate timeOutDate = GameManager.Instance.Today();
+        timeOutDate.AddHours(secondTimeOutTicks);
+        _timeDate = timeOutDate;
+        SchedulingManager.Instance.AddEntry(_timeDate, () => SecondTimeOut());
+    }
+    //public void SetInteractionItem(InteractionItem interactionItem) {
+    //    _interactionItem = interactionItem;
+    //}
     protected int GetRemainingDurationFromState(InteractionState state) {
         return GameManager.Instance.GetTicksDifferenceOfTwoDates(GameManager.Instance.Today(), state.timeDate);
     }
@@ -78,6 +112,21 @@ public class Interaction {
         ActionOption option = stateFrom.GetOption(optionName);
         int remainingTicks = GameManager.Instance.GetTicksDifferenceOfTwoDates(GameManager.Instance.Today(), stateFrom.timeDate);
         option.duration = remainingTicks;
+    }
+    protected void FirstTimeOut() {
+        if (!_isFirstTimeOutCancelled) {
+            TimedOutRunDefault();
+        }
+    }
+    protected void SecondTimeOut() {
+        if (!_isSecondTimeOutCancelled) {
+            TimedOutRunDefault();
+        }
+    }
+    protected void TimedOutRunDefault() {
+        while (!_isDone) {
+            _currentState.ActivateDefault();
+        }
     }
     #endregion
 

@@ -30,9 +30,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.BANDIT_RAID:
                 createdInteraction = new BanditRaid(interactable);
                 break;
-            case INTERACTION_TYPE.INVESTIGATE:
-                createdInteraction = new InvestigateInteraction(interactable);
-                break;
+            //case INTERACTION_TYPE.INVESTIGATE:
+            //    createdInteraction = new InvestigateInteraction(interactable);
+            //    break;
             case INTERACTION_TYPE.POI_1:
                 createdInteraction = new PointOfInterest1(interactable);
                 break;
@@ -71,6 +71,9 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.MYSTERIOUS_SARCOPHAGUS:
                 createdInteraction = new MysteriousSarcophagus(interactable);
+                break;
+            case INTERACTION_TYPE.NOTHING_HAPPENED:
+                createdInteraction = new NothingHappened(interactable);
                 break;
         }
         return createdInteraction;

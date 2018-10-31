@@ -8,6 +8,7 @@ public interface IInteractable {
     bool hasBeenInspected { get; }
     HiddenDesire hiddenDesire { get; }
     Faction faction { get; }
+    Minion explorerMinion { get; }
     ILocation specificLocation { get; }
     List<Interaction> currentInteractions { get; }
 

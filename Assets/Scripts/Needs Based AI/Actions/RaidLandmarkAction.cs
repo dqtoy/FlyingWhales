@@ -24,6 +24,7 @@ public class RaidLandmarkAction : CharacterAction {
         if(areaToRaid != null) {
             int amountToRaid = (int)((float)areaToRaid.suppliesInBank * ((float)(UnityEngine.Random.Range(5, 16)) / 100f));
             areaToRaid.AdjustSuppliesInBank(-amountToRaid);
+            PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, amountToRaid);
         }
     }
     public override CharacterAction Clone() {

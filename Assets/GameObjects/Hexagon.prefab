@@ -2143,6 +2143,7 @@ MonoBehaviour:
   seeker: {fileID: 0}
   destinationSetter: {fileID: 0}
   lineRenderer: {fileID: 0}
+  interactionTimer: {fileID: 0}
   landmarkHPGO: {fileID: 0}
 --- !u!114 &114000014244225468
 MonoBehaviour:

@@ -201,7 +201,7 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OUT, OnHoverOutTile);
 
         Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
-        Messenger.AddListener<IInteractable, Interaction>(Signals.ADDED_INTERACTION, OnInteractionAdded);
+        //Messenger.AddListener<IInteractable, Interaction>(Signals.ADDED_INTERACTION, OnInteractionAdded);
     }
     public void UnifySelectables() {
         UnifiedSelectableBehaviour[] selectables = this.GetComponentsInChildren<UnifiedSelectableBehaviour>(true);
