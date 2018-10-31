@@ -23,27 +23,27 @@ public class EnrollAction : CharacterAction {
         }
 
         int enrollChance = 100;
-        int studentCount = mentor.GetCharactersWithRelationshipStatus(CHARACTER_RELATIONSHIP.STUDENT).Count;
-        for (int i = 0; i < studentCount; i++) {
-            enrollChance -= 20;
-            if (enrollChance <= 0) {
-                break;
-            }
-        }
+        //int studentCount = mentor.GetCharactersWithRelationshipStatus(CHARACTER_RELATIONSHIP.STUDENT).Count;
+        //for (int i = 0; i < studentCount; i++) {
+        //    enrollChance -= 20;
+        //    if (enrollChance <= 0) {
+        //        break;
+        //    }
+        //}
 
         if (Random.Range(0, 100) < enrollChance) {
             ECS.Character student = party.mainCharacter as ECS.Character;
             //success
-            Relationship mentorRel = mentor.GetRelationshipWith(student);
-            Relationship studentRel = student.GetRelationshipWith(mentor);
-            if (mentorRel == null) {
-                mentorRel = CharacterManager.Instance.CreateNewRelationshipTowards(mentor, student);
-            }
-            if (studentRel == null) {
-                studentRel = CharacterManager.Instance.CreateNewRelationshipTowards(student, mentor);
-            }
-            mentorRel.AddRelationshipStatus(CHARACTER_RELATIONSHIP.STUDENT);
-            studentRel.AddRelationshipStatus(CHARACTER_RELATIONSHIP.MENTOR);
+            //Relationship mentorRel = mentor.GetRelationshipWith(student);
+            //Relationship studentRel = student.GetRelationshipWith(mentor);
+            //if (mentorRel == null) {
+            //    mentorRel = CharacterManager.Instance.CreateNewRelationshipTowards(mentor, student);
+            //}
+            //if (studentRel == null) {
+            //    studentRel = CharacterManager.Instance.CreateNewRelationshipTowards(student, mentor);
+            //}
+            //mentorRel.AddRelationshipStatus(CHARACTER_RELATIONSHIP.STUDENT);
+            //studentRel.AddRelationshipStatus(CHARACTER_RELATIONSHIP.MENTOR);
         }
 
         //ActionSuccess();
@@ -67,10 +67,10 @@ public class EnrollAction : CharacterAction {
         ICharacter currCharacter = party.mainCharacter;
         if (currCharacter is ECS.Character) {
             ECS.Character character = currCharacter as ECS.Character;
-            Relationship rel = mentor.GetRelationshipWith(character);
-            if (rel == null || !rel.HasStatus(CHARACTER_RELATIONSHIP.STUDENT)) {
-                return true;
-            }
+            //Relationship rel = mentor.GetRelationshipWith(character);
+            //if (rel == null || !rel.HasStatus(CHARACTER_RELATIONSHIP.STUDENT)) {
+            //    return true;
+            //}
         }
         return base.CanBeDoneBy(party, targetObject);
     }

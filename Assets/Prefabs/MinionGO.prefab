@@ -549,6 +549,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 987f7b0067646c7428824d6518a3d363, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ParentPool: {fileID: 0}
   ignoreInteractions: 0
   bg: {fileID: 114709753345858724}
   head: {fileID: 114630818137758648}
@@ -960,6 +961,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baa61083530c7d746a3f9e75d105b032, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ParentPool: {fileID: 0}
   nameLbl: {fileID: 114829108271754132}
   lvlLbl: {fileID: 114721096411327582}
   expSlider: {fileID: 114751775542224532}

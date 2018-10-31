@@ -37,7 +37,14 @@ public class CharacterParty : Party {
     public override int currentDay {
         get { return _actionData.currentDay; }
     }
+    public bool isBusy { //if the party's current action is not null and their action is not rest, they are busy
+        get { return IsBusy(); }
+    }
     #endregion
+
+    public CharacterParty() : base (null){
+
+    }
 
     public CharacterParty(ICharacter owner): base(owner) {
         _isIdle = false;
@@ -75,11 +82,7 @@ public class CharacterParty : Party {
                 return owner.name;
             }
         } else {
-            if (icharacters.Count > 1) {
-                return _owner.name + "'s Party";
-            } else {
-                return _owner.name;
-            }
+            return base.name;
         }
     }
     private void EverydayAction() {
@@ -137,6 +140,17 @@ public class CharacterParty : Party {
     }
     public bool IsOwnerDead() {
         return _owner.isDead;
+    }
+    private bool IsBusy() {
+        if (owner.minion != null) {
+            //if the owner of the party is a minion, just check if it is enabled
+            //if it is not enabled, means that the minion currently has an action
+            return !owner.minion.isEnabled;
+        }
+        if (_actionData.currentAction != null && _actionData.currentAction.actionData.actionType != ACTION_TYPE.REST) {
+            return true;
+        }
+        return false;
     }
     #endregion
 

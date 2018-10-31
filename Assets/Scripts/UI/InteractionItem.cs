@@ -229,7 +229,7 @@ public class InteractionItem : MonoBehaviour {
                 _interaction.currentState.EndResult();
             }
         } else {
-            _currentSelectedActionOption.AddAssignedObject(slotItem.associatedObject);
+            _currentSelectedActionOption.AddAssignedObject(slotItem.placedObject);
             //check if needed objects are done
             if (_currentSelectedActionOption.neededObjects.Count > currentNeededObjectIndex + 1) {
                 //there are still needed objects

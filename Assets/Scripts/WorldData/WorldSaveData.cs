@@ -6,6 +6,7 @@ using UnityEngine;
 public class WorldSaveData {
     public int width;
     public int height;
+    public int borderThickness;
     public List<HexTileData> tilesData;
     public List<HexTileData> outerGridTilesData;
     public List<RegionSaveData> regionsData;
@@ -14,15 +15,15 @@ public class WorldSaveData {
     public List<CharacterSaveData> charactersData;
     public List<MonsterSaveData> monstersData;
     public List<AreaSaveData> areaData;
-    public List<SquadSaveData> squadData;
     public byte[] pathfindingSettings;
 
     private Dictionary<int, HexTileData> tileDictionary;
     private Dictionary<int, HexTileData> outerTileDictionary;
 
-    public WorldSaveData(int width, int height) {
+    public WorldSaveData(int width, int height, int borderThickness) {
         this.width = width;
         this.height = height;
+        this.borderThickness = borderThickness;
     }
 
     public void OccupyTileData(List<HexTile> tiles) {
@@ -79,14 +80,14 @@ public class WorldSaveData {
             areaData.Add(currData);
         }
     }
-    public void OccupySquadData(List<Squad> squads) {
-        squadData = new List<SquadSaveData>();
-        for (int i = 0; i < squads.Count; i++) {
-            Squad currSquad = squads[i];
-            SquadSaveData data = new SquadSaveData(currSquad);
-            squadData.Add(data);
-        }
-    }
+    //public void OccupySquadData(List<Squad> squads) {
+    //    squadData = new List<SquadSaveData>();
+    //    for (int i = 0; i < squads.Count; i++) {
+    //        Squad currSquad = squads[i];
+    //        SquadSaveData data = new SquadSaveData(currSquad);
+    //        squadData.Add(data);
+    //    }
+    //}
     public void OccupyMonstersData(List<MonsterParty> monsters) {
         monstersData = new List<MonsterSaveData>();
         for (int i = 0; i < monsters.Count; i++) {

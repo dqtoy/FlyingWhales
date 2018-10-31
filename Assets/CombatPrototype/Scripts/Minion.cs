@@ -61,9 +61,11 @@ public class Minion : IUnit {
         _exp = 0;
         _type = (DEMON_TYPE) UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(DEMON_TYPE)).Length);
         _strType = Utilities.NormalizeString(_type.ToString());
+        _isEnabled = true;
         //PlayerManager.Instance.player.demonicPortal.AddCharacterHomeOnLandmark(_icharacter);
         //PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(_icharacter.ownParty);
         _icharacter.SetMinion(this);
+        _icharacter.SetName(RandomNameGenerator.Instance.GenerateMinionName());
     }
     public Minion(ICharacter icharacter, PlayerAbility ability, DEMON_TYPE demonType) {
         _icharacter = icharacter;
@@ -72,6 +74,7 @@ public class Minion : IUnit {
         _exp = 0;
         _type = demonType;
         _strType = Utilities.NormalizeString(_type.ToString());
+        _isEnabled = true;
         //_strType = Utilities.NormalizeString(_type.ToString());
         //PlayerManager.Instance.player.demonicPortal.AddCharacterHomeOnLandmark(_icharacter);
         //PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(_icharacter.ownParty);
@@ -92,6 +95,15 @@ public class Minion : IUnit {
     }
 
     public void SetEnabledState(bool state) {
+        if (icharacter.IsInOwnParty()) {
+            //also set enabled state of other party members
+            for (int i = 0; i < icharacter.ownParty.icharacters.Count; i++) {
+                ICharacter otherChar = icharacter.ownParty.icharacters[i];
+                if (otherChar.id != icharacter.id && otherChar.minion != null) {
+                    otherChar.minion.SetEnabledState(state);
+                }
+            }
+        }
         _isEnabled = state;
         _minionItem.SetEnabledState(state);
     }

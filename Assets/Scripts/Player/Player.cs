@@ -163,15 +163,15 @@ public class Player : ILeader {
         if (IsSnatchSuccess(character)) {
             if (!_snatchedCharacters.Contains(character)) {
                 _snatchedCharacters.Add(character);
-                character.OnThisCharacterSnatched();
+                //character.OnThisCharacterSnatched();
                 //ReleaseCharacterQuest rcq = new ReleaseCharacterQuest(character); //create quest
                 //QuestManager.Instance.CreateQuest(QUEST_TYPE.RELEASE_CHARACTER, character);
-                Messenger.Broadcast(Signals.SHOW_POPUP_MESSAGE, "Successfully snatched " + character.name, MESSAGE_BOX_MODE.MESSAGE_ONLY, true);
-                Debug.Log("Snatched " + character.name);
-                Messenger.Broadcast(Signals.CHARACTER_SNATCHED, character);
+                //Messenger.Broadcast(Signals.SHOW_POPUP_MESSAGE, "Successfully snatched " + character.name, MESSAGE_BOX_MODE.MESSAGE_ONLY, true);
+                //Debug.Log("Snatched " + character.name);
+                //Messenger.Broadcast(Signals.CHARACTER_SNATCHED, character);
             }
         } else {
-            Messenger.Broadcast(Signals.SHOW_POPUP_MESSAGE, "Failed to snatch " + character.name, MESSAGE_BOX_MODE.MESSAGE_ONLY, true);
+            //Messenger.Broadcast(Signals.SHOW_POPUP_MESSAGE, "Failed to snatch " + character.name, MESSAGE_BOX_MODE.MESSAGE_ONLY, true);
             Debug.Log("Failed to snatch " + character.name);
         }
         
@@ -429,9 +429,9 @@ public class Player : ILeader {
         _minions = new List<Minion>();
         AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Inspect", false));
         AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Spook", false));
-        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Mark", false));
-        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Awaken", false));
-        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Awaken Desire", false));
+        //AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Mark", false));
+        //AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Awaken", false));
+        //AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Awaken Desire", false));
 
         //UpdateMinions();
         PlayerUI.Instance.minionsScrollRect.verticalNormalizedPosition = 1f;

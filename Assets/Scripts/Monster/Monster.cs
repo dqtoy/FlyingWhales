@@ -55,7 +55,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     protected Dictionary<ELEMENT, float> _elementalWeaknesses;
     protected Dictionary<ELEMENT, float> _elementalResistances;
     protected Dictionary<string, float> _itemDropsLookup;
-    protected Squad _squad;
     protected Party _currentParty;
     protected Dictionary<STAT, float> _buffs;
     public CharacterUIData uiData { get; private set; }
@@ -255,9 +254,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public List<CharacterAction> miscActions {
         get { return _miscActions; }
-    }
-    public Squad squad {
-        get { return _squad; }
     }
     public Party currentParty {
         get { return _currentParty; }
@@ -488,6 +484,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     #endregion
 
     #region Interface
+    public void SetName(string name) {
+        _name = name;
+    }
     private void BaseInitialize() {
         _isDead = false;
         _miscActions = new List<CharacterAction>();
@@ -681,6 +680,12 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public bool InviteToParty(ICharacter inviter) {
         return false;
     }
+    public bool IsInParty() {
+        if (currentParty.icharacters.Count > 1) {
+            return true; //if the character is in a party that has more than 1 characters
+        }
+        return false;
+    }
     public bool IsInOwnParty() {
         return true;
     }
@@ -699,12 +704,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public void UpgradeAccessory() {
         //Not applicable
-    }
-    #endregion
-
-    #region Squads
-    public void SetSquad(Squad squad) {
-        _squad = squad;
     }
     #endregion
 

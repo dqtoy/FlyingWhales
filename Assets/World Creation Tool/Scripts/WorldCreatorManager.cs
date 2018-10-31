@@ -149,9 +149,9 @@ namespace worldcreator {
             OccupyRegions(data);
             GenerateOuterGrid(data);
             CharacterManager.Instance.LoadCharacters(data);
-            CharacterManager.Instance.LoadRelationships(data);
+            //CharacterManager.Instance.LoadRelationships(data);
             MonsterManager.Instance.LoadMonsters(data);
-            CharacterManager.Instance.LoadSquads(data);
+            //CharacterManager.Instance.LoadSquads(data);
             LandmarkManager.Instance.LoadDefenders(data);
             CharacterManager.Instance.LoadCharactersInfo(data);
             Biomes.Instance.UpdateTileVisuals(hexTiles);
@@ -249,6 +249,7 @@ namespace worldcreator {
                 GenerateOuterGrid(); //generate default outer grid
                 return;
             }
+            _borderThickness = data.borderThickness;
             int newWidth = (int)width + (_borderThickness * 2);
             int newHeight = (int)height + (_borderThickness * 2);
 
@@ -276,7 +277,13 @@ namespace worldcreator {
                     hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
                     HexTile currHex = hex.GetComponent<HexTile>();
                     currHex.Initialize();
-                    currHex.data = data.GetOuterTileData(id);
+                    HexTileData existingData = data.GetOuterTileData(id);
+                    if (existingData != null) {
+                        currHex.data = existingData;
+                    } else {
+                        currHex.data.id = id;
+                        currHex.data.tileName = hex.name;
+                    }
                     currHex.data.xCoordinate = x - _borderThickness;
                     currHex.data.yCoordinate = y - _borderThickness;
 
@@ -685,15 +692,15 @@ namespace worldcreator {
 
         #region Saving
         public void SaveWorld(string saveName) {
-            WorldSaveData worldData = new WorldSaveData(width, height);
+            WorldSaveData worldData = new WorldSaveData(width, height, _borderThickness);
             worldData.OccupyTileData(hexTiles);
             worldData.OccupyOuterTileData(outerGridList);
             worldData.OccupyRegionData(allRegions);
             worldData.OccupyFactionData(FactionManager.Instance.allFactions);
             worldData.OccupyLandmarksData(LandmarkManager.Instance.GetAllLandmarks());
             worldData.OccupyCharactersData(CharacterManager.Instance.allCharacters);
-            worldData.OccupyAreaData(LandmarkManager.Instance.allAreas);
-            worldData.OccupySquadData(CharacterManager.Instance.allSquads);
+            worldData.OccupyAreaData(LandmarkManager.Instance.allAreas);    
+            //worldData.OccupySquadData(CharacterManager.Instance.allSquads);
             worldData.OccupyMonstersData(MonsterManager.Instance.allMonsterParties);
             worldData.OccupyPathfindingSettings(map, width, height);
             if (!saveName.Contains(Utilities.worldConfigFileExt)) {

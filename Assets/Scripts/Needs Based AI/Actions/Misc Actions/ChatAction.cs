@@ -176,10 +176,10 @@ public class ChatAction : CharacterAction {
                     if (targetMainCharacter.doNotDisturb || targetParty.icon.isTravelling) {
                         continue;
                     }
-                    Relationship relationship = mainCharacter.GetRelationshipWith(targetMainCharacter);
-                    if(relationship != null && !relationship.IsNegative()) {
-                        targetCandidates.Add(targetParty as CharacterParty);
-                    }
+                    //Relationship relationship = mainCharacter.GetRelationshipWith(targetMainCharacter);
+                    //if(relationship != null && !relationship.IsNegative()) {
+                    //    targetCandidates.Add(targetParty as CharacterParty);
+                    //}
                 }
             }
         } else {
@@ -190,10 +190,10 @@ public class ChatAction : CharacterAction {
                     if (targetMainCharacter.doNotDisturb) {
                         continue;
                     }
-                    Relationship relationship = mainCharacter.GetRelationshipWith(targetMainCharacter);
-                    if (relationship == null || !relationship.IsNegative()) {
-                        targetCandidates.Add(targetParty as CharacterParty);
-                    }
+                    //Relationship relationship = mainCharacter.GetRelationshipWith(targetMainCharacter);
+                    //if (relationship == null || !relationship.IsNegative()) {
+                    //    targetCandidates.Add(targetParty as CharacterParty);
+                    //}
                 }
             }
         }

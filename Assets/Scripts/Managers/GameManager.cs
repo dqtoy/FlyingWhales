@@ -74,7 +74,7 @@ public class GameManager : MonoBehaviour {
         }
     }
     private void Update() {
-        if (!UIManager.Instance.IsConsoleShowing() && !PlayerManager.Instance.isChoosingStartingTile) {
+        if (!UIManager.Instance.IsConsoleShowing() && !UIManager.Instance.IsMouseOnInput() && !PlayerManager.Instance.isChoosingStartingTile) {
             if (Input.GetKeyDown(KeyCode.Space)) {
                 if (isPaused) {
                     SetProgressionSpeed(currProgressionSpeed);

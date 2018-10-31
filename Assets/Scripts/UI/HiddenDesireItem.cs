@@ -47,7 +47,7 @@ public class HiddenDesireItem : MonoBehaviour, IPointerClickHandler {
         }
         AwakenDesire ad = PlayerManager.Instance.player.GetAbility("Awaken Hidden Desire") as AwakenDesire;
         if (!ad.CanBeActivated(owner)) {
-            Messenger.Broadcast<string, MESSAGE_BOX_MODE, bool>(Signals.SHOW_POPUP_MESSAGE, "You do not have enough magic!", MESSAGE_BOX_MODE.MESSAGE_ONLY, true);
+            Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE, "You do not have enough magic!", true);
             return;
         }
         ad.Activate(owner, owner);

@@ -62,10 +62,10 @@ public class CharacterUIData {
         }
 
         relationships.Clear();
-        if(character.relationships != null) {
-            for (int i = 0; i < character.relationships.Count; i++) {
-                relationships.Add(character.relationships.Values.ElementAt(i).CreateCopy()); //create copy instead of instance
-            }
-        }
+        //if(character.relationships != null) {
+        //    for (int i = 0; i < character.relationships.Count; i++) {
+        //        relationships.Add(character.relationships.Values.ElementAt(i).CreateCopy()); //create copy instead of instance
+        //    }
+        //}
     }
 }

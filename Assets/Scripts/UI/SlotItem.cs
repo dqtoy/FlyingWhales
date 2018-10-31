@@ -6,17 +6,22 @@ using UnityEngine.EventSystems;
 
 public class SlotItem : MonoBehaviour {
 
-    private System.Type neededType;
+    public object placedObject { get; private set; }
+    public System.Type neededType { get; private set; }
 
     public SlotItemDropEvent onItemDropped;
     public ItemDroppedCallback itemDroppedCallback;
+    public ItemDroppedOutCallback itemDroppedOutCallback;
 
-    [SerializeField] private CharacterPortrait portrait;
-    [SerializeField] private AreaEmblem areaEmblem;
-    [SerializeField] private FactionEmblem factionEmblem;
+    public CharacterPortrait portrait;
+    public AreaEmblem areaEmblem;
+    public FactionEmblem factionEmblem;
+    public CustomDropZone dropZone;
+    public SlotItemDraggableItem draggable;
 
     public int slotIndex { get; private set; }
-    public object associatedObject { get; private set; }
+
+    private string hoverInfo;
 
     public void SetNeededType(System.Type neededType) {
         this.neededType = neededType;
@@ -33,14 +38,16 @@ public class SlotItem : MonoBehaviour {
                     SuccessfulDropZoneDrop(parentItem);
                 } else {
                     //dragged object is not of needed type
-                    Debug.Log("Dragged invalid object");
+                    //Debug.Log("Dragged invalid object");
+                    Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE, "This slot requires a " + GetTypeString(neededType), true);
                 }
             } else {
                 if (parentItem.associatedObj.GetType() == neededType || parentItem.associatedObj.GetType().BaseType == neededType) {
                     SuccessfulDropZoneDrop(parentItem);
                 } else {
                     //dragged object is not of needed type
-                    Debug.Log("Dragged invalid object");
+                    //Debug.Log("Dragged invalid object");
+                    Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE, "This slot requires a " + GetTypeString(neededType), true);
                 }
             }
         }
@@ -50,50 +57,99 @@ public class SlotItem : MonoBehaviour {
             onItemDropped.Invoke(parentItem);
         }
     }
-
     public void OnDropItemSlotItem(IDragParentItem item) {
         PlaceObject(item.associatedObj);
-        itemDroppedCallback.Invoke(item.associatedObj, slotIndex);
+        if (itemDroppedCallback != null) {
+            itemDroppedCallback.Invoke(item.associatedObj, slotIndex);
+        }
     }
-
     public void PlaceObject(object associatedObj) {
-        associatedObject = associatedObj;
+        placedObject = associatedObj;
         if (associatedObj is FactionIntel) {
             factionEmblem.gameObject.SetActive(true);
             areaEmblem.gameObject.SetActive(false);
             portrait.gameObject.SetActive(false);
             factionEmblem.SetFaction((associatedObj as FactionIntel).faction);
+            hoverInfo = (associatedObj as FactionIntel).faction.name;
         } else if (associatedObj is LocationIntel) {
             factionEmblem.gameObject.SetActive(false);
             areaEmblem.gameObject.SetActive(true);
             portrait.gameObject.SetActive(false);
+            hoverInfo = (associatedObj as LocationIntel).location.name;
         } else if (associatedObj is CharacterIntel) {
             factionEmblem.gameObject.SetActive(false);
             areaEmblem.gameObject.SetActive(false);
             portrait.gameObject.SetActive(true);
             portrait.GeneratePortrait((associatedObj as CharacterIntel).character, 95, true);
+            hoverInfo = (associatedObj as CharacterIntel).character.name;
         } else if (associatedObj is Minion) {
             factionEmblem.gameObject.SetActive(false);
             areaEmblem.gameObject.SetActive(false);
             portrait.gameObject.SetActive(true);
             portrait.GeneratePortrait((associatedObj as Minion).icharacter, 95, true);
+            hoverInfo = (associatedObj as Minion).name;
+        } else if (associatedObj is ICharacter) {
+            factionEmblem.gameObject.SetActive(false);
+            areaEmblem.gameObject.SetActive(false);
+            portrait.gameObject.SetActive(true);
+            portrait.GeneratePortrait((associatedObj as ICharacter), 95, true);
+            hoverInfo = (associatedObj as ICharacter).name;
         }
     }
-
-    public void ClearSlot() {
-        neededType = null;
+    public void ClearSlot(bool keepType = false) {
+        if (!keepType) {
+            neededType = null;
+        }
+        placedObject = null;
         factionEmblem.gameObject.SetActive(false);
         areaEmblem.gameObject.SetActive(false);
         portrait.gameObject.SetActive(false);
     }
+    private string GetTypeString(System.Type type) {
+        if (type == null) {
+            return "null";
+        }
+        if (type == typeof(FactionIntel)) {
+            return "Faction";
+        } else if (type == typeof(LocationIntel)) {
+            return "Location";
+        } else if (type == typeof(CharacterIntel)) {
+            return "Character";
+        } else if (type == typeof(Minion)) {
+            return "Minion";
+        } else if (type == typeof(ICharacter)) {
+            return "Character";
+        } else if (type == typeof(IUnit)) {
+            return "Army/Minion";
+        } else {
+            return type.ToString();
+        }
+    }
+    public void OnItemDroppedOut() {
+        if (itemDroppedOutCallback != null) {
+            itemDroppedOutCallback.Invoke(placedObject, slotIndex);
+        }
+    }
+    public void HideVisuals() {
+        portrait.gameObject.SetActive(false);
+        factionEmblem.gameObject.SetActive(false);
+        areaEmblem.gameObject.SetActive(false);
+    }
 
-
+    public void ShowObjectInfo() {
+        if (placedObject != null) {
+            UIManager.Instance.ShowSmallInfo(hoverInfo);
+        }
+    }
+    public void HideObjectInfo() {
+        if (placedObject != null) {
+            UIManager.Instance.HideSmallInfo();
+        }
+    }
 }
 
 [System.Serializable]
-public class SlotItemDropEvent : UnityEvent<IDragParentItem> {
-}
+public class SlotItemDropEvent : UnityEvent<IDragParentItem> { }
 
-public class ItemDroppedCallback : UnityEvent<object, int> {
-
-}
+public class ItemDroppedCallback : UnityEvent<object, int> { }
+public class ItemDroppedOutCallback : UnityEvent<object, int> { }

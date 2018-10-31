@@ -241,20 +241,20 @@ namespace worldcreator {
             for (int i = 0; i < children.Length; i++) {
                 GameObject.Destroy(children[i].gameObject);
             }
-            foreach (KeyValuePair<Character, Relationship> kvp in _character.relationships) {
-                GameObject relItemGO = GameObject.Instantiate(relationshipItemPrefab, relationshipScrollView.content);
-                RelationshipEditorItem relItem = relItemGO.GetComponent<RelationshipEditorItem>();
-                relItem.SetRelationship(kvp.Value);
-            }
+            //foreach (KeyValuePair<Character, Relationship> kvp in _character.relationships) {
+            //    GameObject relItemGO = GameObject.Instantiate(relationshipItemPrefab, relationshipScrollView.content);
+            //    RelationshipEditorItem relItem = relItemGO.GetComponent<RelationshipEditorItem>();
+            //    relItem.SetRelationship(kvp.Value);
+            //}
         }
         public void LoadCharacters() {
             List<string> options = new List<string>();
             charactersRelationshipDropdown.ClearOptions();
             for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
                 Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                if (currCharacter.id != _character.id && _character.GetRelationshipWith(currCharacter) == null) {
-                    options.Add(currCharacter.name);
-                }
+                //if (currCharacter.id != _character.id && _character.GetRelationshipWith(currCharacter) == null) {
+                //    options.Add(currCharacter.name);
+                //}
             }
             charactersRelationshipDropdown.AddOptions(options);
             if (charactersRelationshipDropdown.options.Count == 0) {
@@ -266,7 +266,7 @@ namespace worldcreator {
         public void CreateRelationship() {
             string chosenCharacterName = charactersRelationshipDropdown.options[charactersRelationshipDropdown.value].text;
             Character chosenCharacter = CharacterManager.Instance.GetCharacterByName(chosenCharacterName);
-            CharacterManager.Instance.CreateNewRelationshipTowards(_character, chosenCharacter);
+            //CharacterManager.Instance.CreateNewRelationshipTowards(_character, chosenCharacter);
         }
         private void OnRelationshipCreated(Relationship newRel) {
             if (_character == null) {

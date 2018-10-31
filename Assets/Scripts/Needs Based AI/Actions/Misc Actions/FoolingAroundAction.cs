@@ -103,17 +103,17 @@ public class FoolingAroundAction : CharacterAction {
 
     #region Utilities
     private IObject GetTargetObjectAsDefault(Character initiator) {
-        Character partner = initiator.GetPartner();
-        if(partner != null && partner.ownParty.specificLocation == initiator.ownParty.specificLocation && !partner.ownParty.icon.isTravelling) {
-            return partner.ownParty.icharacterObject;
-        }
+        //Character partner = initiator.GetPartner();
+        //if(partner != null && partner.ownParty.specificLocation == initiator.ownParty.specificLocation && !partner.ownParty.icon.isTravelling) {
+        //    return partner.ownParty.icharacterObject;
+        //}
         return null;
     }
     private IObject GetTargetObjectAsLiberated(Character initiator) {
-        Character partner = initiator.GetPartner();
-        if(partner != null && partner.ownParty.specificLocation == initiator.ownParty.specificLocation && !partner.ownParty.icon.isTravelling) {
-            return partner.ownParty.icharacterObject;
-        }
+        //Character partner = initiator.GetPartner();
+        //if(partner != null && partner.ownParty.specificLocation == initiator.ownParty.specificLocation && !partner.ownParty.icon.isTravelling) {
+        //    return partner.ownParty.icharacterObject;
+        //}
 
         //Initiator has no partner
         IObject target = GetLiberatedNoPartnerTarget(initiator);
@@ -123,39 +123,39 @@ public class FoolingAroundAction : CharacterAction {
         return null;
     }
     private IObject GetTargetObjectAsUnfaithful(Character initiator) {
-        Character partner = initiator.GetPartner();
+        //Character partner = initiator.GetPartner();
 
-        if(partner != null) {
-            WeightedDictionary<Character> characterCandidates = new WeightedDictionary<Character>();
-            for (int i = 0; i < initiator.ownParty.specificLocation.charactersAtLocation.Count; i++) {
-                Party candidate = initiator.ownParty.specificLocation.charactersAtLocation[i];
-                if (candidate.icon.isTravelling) {
-                    continue;
-                }
-                if (candidate.mainCharacter is Character) {
-                    Character characterCandidate = candidate.mainCharacter as Character;
-                    if (characterCandidate == partner) {
-                        characterCandidates.AddElement(partner, 100);
-                    } else {
-                        if(characterCandidate.GetAttribute(ATTRIBUTE.UNFAITHFUL) != null) {
-                            characterCandidates.AddElement(characterCandidate, 10);
-                        }
-                    }
-                }
-            }
-            if(characterCandidates.Count > 0) {
-                Character chosen = characterCandidates.PickRandomElementGivenWeights();
-                return chosen.ownParty.icharacterObject;
-            }
-        } else {
-            if(initiator.GetAttribute(ATTRIBUTE.LIBERATED) != null) {
-                //Initiator has no partner
-                IObject target = GetLiberatedNoPartnerTarget(initiator);
-                if (target != null) {
-                    return target;
-                }
-            }
-        }
+        //if(partner != null) {
+        //    WeightedDictionary<Character> characterCandidates = new WeightedDictionary<Character>();
+        //    for (int i = 0; i < initiator.ownParty.specificLocation.charactersAtLocation.Count; i++) {
+        //        Party candidate = initiator.ownParty.specificLocation.charactersAtLocation[i];
+        //        if (candidate.icon.isTravelling) {
+        //            continue;
+        //        }
+        //        if (candidate.mainCharacter is Character) {
+        //            Character characterCandidate = candidate.mainCharacter as Character;
+        //            if (characterCandidate == partner) {
+        //                characterCandidates.AddElement(partner, 100);
+        //            } else {
+        //                if(characterCandidate.GetAttribute(ATTRIBUTE.UNFAITHFUL) != null) {
+        //                    characterCandidates.AddElement(characterCandidate, 10);
+        //                }
+        //            }
+        //        }
+        //    }
+        //    if(characterCandidates.Count > 0) {
+        //        Character chosen = characterCandidates.PickRandomElementGivenWeights();
+        //        return chosen.ownParty.icharacterObject;
+        //    }
+        //} else {
+        //    if(initiator.GetAttribute(ATTRIBUTE.LIBERATED) != null) {
+        //        //Initiator has no partner
+        //        IObject target = GetLiberatedNoPartnerTarget(initiator);
+        //        if (target != null) {
+        //            return target;
+        //        }
+        //    }
+        //}
         return null;
     }
     private IObject GetLiberatedNoPartnerTarget(Character initiator) {
@@ -167,10 +167,10 @@ public class FoolingAroundAction : CharacterAction {
             }
             if (candidate.mainCharacter is Character) {
                 Character characterCandidate = candidate.mainCharacter as Character;
-                Character candidatePartner = characterCandidate.GetPartner();
-                if(candidatePartner == null && characterCandidate.GetAttribute(ATTRIBUTE.LIBERATED) != null) {
-                    potentialCandidates.Add(characterCandidate);
-                }
+                //Character candidatePartner = characterCandidate.GetPartner();
+                //if(candidatePartner == null && characterCandidate.GetAttribute(ATTRIBUTE.LIBERATED) != null) {
+                //    potentialCandidates.Add(characterCandidate);
+                //}
             }
         }
         if(potentialCandidates.Count > 0) {

@@ -7,10 +7,15 @@ using UnityEngine.Events;
 public class CustomDropZone : MonoBehaviour, IDropHandler {
     public DropEvent onDropItem;
 
+    public bool isEnabled = true;
+
     public Transform droppedItem { get; private set; }
 
     public void OnDrop(PointerEventData eventData) {
-        Debug.Log(eventData.pointerDrag.name + " dropped on " + gameObject.name);
+        if (!isEnabled) {
+            return;
+        }
+        //Debug.Log(eventData.pointerDrag.name + " dropped on " + gameObject.name);
         Transform trans = eventData.pointerDrag.GetComponent<Transform>();
         if (trans != null) {
             droppedItem = trans;
@@ -20,7 +25,7 @@ public class CustomDropZone : MonoBehaviour, IDropHandler {
         }
     }
 
-    public void ReturnDropped() {
-
+    public void SetEnabledState(bool state) {
+        isEnabled = state;
     }
 }

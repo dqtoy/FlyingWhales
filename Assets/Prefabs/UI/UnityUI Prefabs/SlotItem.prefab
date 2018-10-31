@@ -142,6 +142,7 @@ GameObject:
   - component: {fileID: 114486072611401514}
   - component: {fileID: 114521995925260068}
   - component: {fileID: 114698373371233428}
+  - component: {fileID: 114361908676454436}
   m_Layer: 5
   m_Name: SlotItem
   m_TagString: Untagged
@@ -824,6 +825,18 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114361908676454436
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1342436754265580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0108c528341e5a542bfe1b13bba92a35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slot: {fileID: 114698373371233428}
 --- !u!114 &114405004910500218
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -931,6 +944,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: DropEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  isEnabled: 1
 --- !u!114 &114544783928557936
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1096,6 +1110,8 @@ MonoBehaviour:
   portrait: {fileID: 114838171462300788}
   areaEmblem: {fileID: 114211273760785478}
   factionEmblem: {fileID: 114968603218357402}
+  dropZone: {fileID: 114521995925260068}
+  draggable: {fileID: 114361908676454436}
 --- !u!114 &114716908214852614
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1880,7 +1896,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -85, y: -285}
+  m_AnchoredPosition: {x: -1045, y: -825}
   m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224769823483861768

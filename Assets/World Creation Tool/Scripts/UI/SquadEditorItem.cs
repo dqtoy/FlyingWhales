@@ -46,9 +46,9 @@ public class SquadEditorItem : MonoBehaviour {
         squad.SetName(newName);
     }
 
-    public void DeleteSquad() {
-        CharacterManager.Instance.DeleteSquad(squad);
-    }
+    //public void DeleteSquad() {
+    //    CharacterManager.Instance.DeleteSquad(squad);
+    //}
 
     #region Emblem
     private void LoadEmblemChoices() {

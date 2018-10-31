@@ -47,7 +47,6 @@ namespace ECS {
         protected CharacterAction _genericWorkAction;
         protected HiddenDesire _hiddenDesire;
         protected Secret _currentlySelectedSecret;
-        protected Squad _squad;
         protected Minion _minion;
         protected List<Secret> _secrets;
         protected List<STATUS_EFFECT> _statusEffects;
@@ -60,7 +59,7 @@ namespace ECS {
         protected CharacterActionQueue<ActionQueueItem> _actionQueue;
         protected List<CharacterAction> _miscActions;
         protected List<Interaction> _currentInteractions;
-        protected Dictionary<Character, Relationship> _relationships;
+        //protected Dictionary<Character, Relationship> _relationships;
         protected Dictionary<ELEMENT, float> _elementalWeaknesses;
         protected Dictionary<ELEMENT, float> _elementalResistances;
         protected Dictionary<Character, List<string>> _traceInfo;
@@ -121,9 +120,9 @@ namespace ECS {
         public List<CharacterAttribute> attributes {
             get { return _attributes; }
         }
-        public Dictionary<Character, Relationship> relationships {
-            get { return _relationships; }
-        }
+        //public Dictionary<Character, Relationship> relationships {
+        //    get { return _relationships; }
+        //}
         public CharacterClass characterClass {
             get { return this._characterClass; }
         }
@@ -309,9 +308,6 @@ namespace ECS {
         public List<CharacterAction> miscActions {
             get { return _miscActions; }
         }
-        public Squad squad {
-            get { return _squad; }
-        }
         public Minion minion {
             get { return _minion; }
         }
@@ -450,7 +446,7 @@ namespace ECS {
             //_questData = new List<CharacterQuestData>();
             _actionQueue = new CharacterActionQueue<ActionQueueItem>(this);
             //previousActions = new Dictionary<CharacterTask, string>();
-            _relationships = new Dictionary<Character, Relationship>();
+            //_relationships = new Dictionary<Character, Relationship>();
             _genericWorkAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.WORKING);
             _combatAttributes = new List<CombatAttribute>();
             
@@ -484,20 +480,20 @@ namespace ECS {
         #region Signals
         private void SubscribeToSignals() {
             //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
-            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
+            //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
             //Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
             //Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
-            Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
+            //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
             //Messenger.AddListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
             Messenger.AddListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
             //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         }
         public void UnsubscribeSignals() {
             //Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
+            //Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
             //Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
             //Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
-            Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
+            //Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
             //Messenger.RemoveListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
             Messenger.RemoveListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
             //Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
@@ -1611,7 +1607,12 @@ namespace ECS {
         public void OnRemovedFromParty() {
             SetCurrentParty(ownParty); //set the character's party to it's own party
             if (ownParty is CharacterParty) {
-                (ownParty as CharacterParty).actionData.currentAction.EndAction(ownParty, (ownParty as CharacterParty).actionData.currentTargetObject);
+                if ((ownParty as CharacterParty).actionData.currentAction != null) {
+                    (ownParty as CharacterParty).actionData.currentAction.EndAction(ownParty, (ownParty as CharacterParty).actionData.currentTargetObject);
+                }
+            }
+            if (this.minion != null) {
+                this.minion.SetEnabledState(true); //reenable this minion, since it could've been disabled because it was part of another party
             }
         }
         public void OnAddedToParty() {
@@ -1860,34 +1861,34 @@ namespace ECS {
             }
             return false;
         }
-        private void OnOtherCharacterDied(Character character) {
-            if (character.id != this.id) {
-                if (IsCharacterLovedOne(character)) { //A character gains heartbroken tag for 15 days when a family member or a loved one dies.
-                    AddAttribute(ATTRIBUTE.HEARTBROKEN);
-                }
-                //RemoveRelationshipWith(character);
-            }
-        }
-        public bool IsCharacterLovedOne(Character otherCharacter) {
-            Relationship rel = GetRelationshipWith(otherCharacter);
-            if (rel != null) {
-                CHARACTER_RELATIONSHIP[] lovedOneStatuses = new CHARACTER_RELATIONSHIP[] {
-                    CHARACTER_RELATIONSHIP.FATHER,
-                    CHARACTER_RELATIONSHIP.MOTHER,
-                    CHARACTER_RELATIONSHIP.BROTHER,
-                    CHARACTER_RELATIONSHIP.SISTER,
-                    CHARACTER_RELATIONSHIP.SON,
-                    CHARACTER_RELATIONSHIP.DAUGHTER,
-                    CHARACTER_RELATIONSHIP.LOVER,
-                    CHARACTER_RELATIONSHIP.HUSBAND,
-                    CHARACTER_RELATIONSHIP.WIFE,
-                };
-                if (rel.HasAnyStatus(lovedOneStatuses)) {
-                    return true;
-                }
-            }
-            return false;
-        }
+        //private void OnOtherCharacterDied(Character character) {
+        //    if (character.id != this.id) {
+        //        if (IsCharacterLovedOne(character)) { //A character gains heartbroken tag for 15 days when a family member or a loved one dies.
+        //            AddAttribute(ATTRIBUTE.HEARTBROKEN);
+        //        }
+        //        //RemoveRelationshipWith(character);
+        //    }
+        //}
+        //public bool IsCharacterLovedOne(Character otherCharacter) {
+        //    Relationship rel = GetRelationshipWith(otherCharacter);
+        //    if (rel != null) {
+        //        CHARACTER_RELATIONSHIP[] lovedOneStatuses = new CHARACTER_RELATIONSHIP[] {
+        //            CHARACTER_RELATIONSHIP.FATHER,
+        //            CHARACTER_RELATIONSHIP.MOTHER,
+        //            CHARACTER_RELATIONSHIP.BROTHER,
+        //            CHARACTER_RELATIONSHIP.SISTER,
+        //            CHARACTER_RELATIONSHIP.SON,
+        //            CHARACTER_RELATIONSHIP.DAUGHTER,
+        //            CHARACTER_RELATIONSHIP.LOVER,
+        //            CHARACTER_RELATIONSHIP.HUSBAND,
+        //            CHARACTER_RELATIONSHIP.WIFE,
+        //        };
+        //        if (rel.HasAnyStatus(lovedOneStatuses)) {
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
         public void SetMode(MODE mode) {
             _currentMode = mode;
         }
@@ -1897,80 +1898,80 @@ namespace ECS {
         #endregion
 
         #region Relationships
-        public void AddNewRelationship(Character relWith, Relationship relationship) {
-            if (!_relationships.ContainsKey(relWith)) {
-                _relationships.Add(relWith, relationship);
-                Messenger.Broadcast<Relationship>(Signals.RELATIONSHIP_CREATED, relationship);
-            } else {
-                throw new Exception(this.name + " already has a relationship with " + relWith.name + ", but something is trying to create a new one!");
-            }
-        }
-        public void RemoveRelationshipWith(Character relWith) {
-            if (_relationships.ContainsKey(relWith)) {
-                Relationship rel = _relationships[relWith];
-                _relationships.Remove(relWith);
-                Messenger.Broadcast<Relationship>(Signals.RELATIONSHIP_REMOVED, rel);
-            }
-        }
-        public Relationship GetRelationshipWith(Character character) {
-            if (_relationships.ContainsKey(character)) {
-                return _relationships[character];
-            }
-            return null;
-        }
-        public bool AlreadyHasRelationshipStatus(CHARACTER_RELATIONSHIP relStat) {
-            foreach (KeyValuePair<Character, Relationship> kvp in relationships) {
-                if (kvp.Value.HasStatus(relStat)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        public Character GetCharacterWithRelationshipStatus(CHARACTER_RELATIONSHIP relStat) {
-            foreach (KeyValuePair<Character, Relationship> kvp in relationships) {
-                if (kvp.Value.HasStatus(relStat)) {
-                    return kvp.Key;
-                }
-            }
-            return null;
-        }
-        public List<Character> GetCharactersWithRelationshipStatus(CHARACTER_RELATIONSHIP relStat) {
-            List<Character> characters = new List<Character>();
-            foreach (KeyValuePair<Character, Relationship> kvp in relationships) {
-                if (kvp.Value.HasStatus(relStat) && characters.Contains(kvp.Key)) {
-                    characters.Add(kvp.Key);
-                }
-            }
-            return characters;
-        }
-        public void LoadRelationships(List<RelationshipSaveData> data) {
-            _relationships = new Dictionary<Character, Relationship>();
-            for (int i = 0; i < data.Count; i++) {
-                RelationshipSaveData currData = data[i];
-                Character otherCharacter = CharacterManager.Instance.GetCharacterByID(currData.targetCharacterID);
-                Relationship rel = new Relationship(this, otherCharacter);
-                rel.AddRelationshipStatus(currData.relationshipStatuses);
-                _relationships.Add(otherCharacter, rel);
+        //public void AddNewRelationship(Character relWith, Relationship relationship) {
+        //    if (!_relationships.ContainsKey(relWith)) {
+        //        _relationships.Add(relWith, relationship);
+        //        Messenger.Broadcast<Relationship>(Signals.RELATIONSHIP_CREATED, relationship);
+        //    } else {
+        //        throw new Exception(this.name + " already has a relationship with " + relWith.name + ", but something is trying to create a new one!");
+        //    }
+        //}
+        //public void RemoveRelationshipWith(Character relWith) {
+        //    if (_relationships.ContainsKey(relWith)) {
+        //        Relationship rel = _relationships[relWith];
+        //        _relationships.Remove(relWith);
+        //        Messenger.Broadcast<Relationship>(Signals.RELATIONSHIP_REMOVED, rel);
+        //    }
+        //}
+        //public Relationship GetRelationshipWith(Character character) {
+        //    if (_relationships.ContainsKey(character)) {
+        //        return _relationships[character];
+        //    }
+        //    return null;
+        //}
+        //public bool AlreadyHasRelationshipStatus(CHARACTER_RELATIONSHIP relStat) {
+        //    foreach (KeyValuePair<Character, Relationship> kvp in relationships) {
+        //        if (kvp.Value.HasStatus(relStat)) {
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
+        //public Character GetCharacterWithRelationshipStatus(CHARACTER_RELATIONSHIP relStat) {
+        //    foreach (KeyValuePair<Character, Relationship> kvp in relationships) {
+        //        if (kvp.Value.HasStatus(relStat)) {
+        //            return kvp.Key;
+        //        }
+        //    }
+        //    return null;
+        //}
+        //public List<Character> GetCharactersWithRelationshipStatus(CHARACTER_RELATIONSHIP relStat) {
+        //    List<Character> characters = new List<Character>();
+        //    foreach (KeyValuePair<Character, Relationship> kvp in relationships) {
+        //        if (kvp.Value.HasStatus(relStat) && characters.Contains(kvp.Key)) {
+        //            characters.Add(kvp.Key);
+        //        }
+        //    }
+        //    return characters;
+        //}
+        //public void LoadRelationships(List<RelationshipSaveData> data) {
+        //    _relationships = new Dictionary<Character, Relationship>();
+        //    for (int i = 0; i < data.Count; i++) {
+        //        RelationshipSaveData currData = data[i];
+        //        Character otherCharacter = CharacterManager.Instance.GetCharacterByID(currData.targetCharacterID);
+        //        Relationship rel = new Relationship(this, otherCharacter);
+        //        rel.AddRelationshipStatus(currData.relationshipStatuses);
+        //        _relationships.Add(otherCharacter, rel);
 
-            }
-        }
-        public Character GetPartner() {
-            foreach (KeyValuePair<Character, Relationship> kvp in _relationships) {
-                for (int i = 0; i < kvp.Value.relationshipStatuses.Count; i++) {
-                    CHARACTER_RELATIONSHIP status = kvp.Value.relationshipStatuses[i];
-                    if (status == CHARACTER_RELATIONSHIP.HUSBAND || status == CHARACTER_RELATIONSHIP.WIFE) {
-                        return kvp.Key;
-                    }
-                }
-            }
-            return null;
-        }
-        public bool HasRelationshipWith(Character otherCharacter) {
-            return _relationships.ContainsKey(otherCharacter);
-        }
-        public bool HasRelationshipStatusWith(Character otherCharacter, CHARACTER_RELATIONSHIP relStat) {
-            return _relationships[otherCharacter].HasStatus(relStat);
-        }
+        //    }
+        //}
+        //public Character GetPartner() {
+        //    foreach (KeyValuePair<Character, Relationship> kvp in _relationships) {
+        //        for (int i = 0; i < kvp.Value.relationshipStatuses.Count; i++) {
+        //            CHARACTER_RELATIONSHIP status = kvp.Value.relationshipStatuses[i];
+        //            if (status == CHARACTER_RELATIONSHIP.HUSBAND || status == CHARACTER_RELATIONSHIP.WIFE) {
+        //                return kvp.Key;
+        //            }
+        //        }
+        //    }
+        //    return null;
+        //}
+        //public bool HasRelationshipWith(Character otherCharacter) {
+        //    return _relationships.ContainsKey(otherCharacter);
+        //}
+        //public bool HasRelationshipStatusWith(Character otherCharacter, CHARACTER_RELATIONSHIP relStat) {
+        //    return _relationships[otherCharacter].HasStatus(relStat);
+        //}
         #endregion
 
         #region History
@@ -2637,44 +2638,6 @@ namespace ECS {
             }
             return false;
         }
-        #endregion
-
-        #region Squads
-        public void SetSquad(Squad squad) {
-            _squad = squad;
-        }
-        public bool IsSquadLeader() {
-            if (_squad == null) {
-                return false;
-            } else {
-                if (_squad.squadLeader != null && _squad.squadLeader.id == this.id) {
-                    return true;
-                }
-                return false;
-            }
-        }
-        public bool IsSquadMember() {
-            if (_squad == null) {
-                return false;
-            } else {
-                if (_squad.squadLeader != null && _squad.squadLeader.id != this.id) {
-                    return true;
-                }
-                return false;
-            }
-        }
-        //public List<Quest> GetElligibleQuests() {
-        //    List<Quest> quests = new List<Quest>();
-        //    if (this.IsSquadLeader()) {
-        //        quests.AddRange(this.GetAcceptedQuestsByGroup(GROUP_TYPE.SOLO));
-        //        quests.AddRange(squad.GetSquadQuests());
-        //    } else if (this.IsSquadMember()) {
-        //        quests.AddRange(this.GetAcceptedQuestsByGroup(GROUP_TYPE.SOLO));
-        //    } else if (squad == null) {
-        //        quests.AddRange(this.GetAcceptedQuestsByGroup(GROUP_TYPE.SOLO));
-        //    }
-        //    return quests;
-        //}
         #endregion
 
         #region Action Queue

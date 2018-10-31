@@ -39,7 +39,7 @@ public interface ICharacter {
     Minion minion { get; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }
-    Dictionary<Character, Relationship> relationships { get; }
+    //Dictionary<Character, Relationship> relationships { get; }
     List<Skill> skills { get; }
     List<CharacterAction> miscActions { get; }
     List<CharacterAttribute> attributes { get; }
@@ -49,11 +49,11 @@ public interface ICharacter {
     PortraitSettings portraitSettings { get; }
     Party ownParty { get; }
     Party currentParty { get; }
-    Squad squad { get; }
     CharacterActionQueue<ActionQueueItem> actionQueue { get; }
     Dictionary<STAT, float> buffs { get; }
 
     //functions
+    void SetName(string name);
     void ResetToFullHP();
     void ResetToFullSP();
     void Initialize();
@@ -74,12 +74,12 @@ public interface ICharacter {
     void OnAddedToParty();
     void SetHomeLandmark(BaseLandmark newHomeLandmark);
     void AddHistory(Log log); //Character only
-    void SetSquad(Squad squad);
     void SetMode(MODE mode);
     void AddMiscAction(CharacterAction characterAction);
     void RemoveMiscAction(ACTION_TYPE actionType);
     void SetMinion(Minion minion);
     void Assassinate(ICharacter assassin);
+    bool IsInParty();
     bool InviteToParty(ICharacter inviter);
     bool IsInOwnParty();
     Party CreateOwnParty();

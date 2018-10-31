@@ -5200,6 +5200,7 @@ MonoBehaviour:
   loadedData:
     width: 0
     height: 0
+    borderThickness: 0
     tilesData: []
     outerGridTilesData: []
     regionsData: []

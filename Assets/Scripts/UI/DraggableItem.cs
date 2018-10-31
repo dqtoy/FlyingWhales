@@ -28,7 +28,7 @@ public class DraggableItem : MonoBehaviour, IDragHandler, IBeginDragHandler, IEn
     #endregion
 
     #region IDragHandler Members
-    public void OnDrag(PointerEventData eventData) {
+    public virtual void OnDrag(PointerEventData eventData) {
         if (!_isDragging) {
             return;
         }
@@ -42,7 +42,7 @@ public class DraggableItem : MonoBehaviour, IDragHandler, IBeginDragHandler, IEn
     #endregion
 
     #region IEndDragHandler Members
-    public void OnEndDrag(PointerEventData eventData) {
+    public virtual void OnEndDrag(PointerEventData eventData) {
         _isDragging = false;
 
         if (_draggingObject != null) {

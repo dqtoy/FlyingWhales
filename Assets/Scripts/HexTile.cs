@@ -5,6 +5,7 @@ using PathFind;
 using System.Linq;
 using ECS;
 using worldcreator;
+using SpriteGlow;
 
 public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
@@ -47,6 +48,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private SpriteRenderer botRightBorder;
     [SerializeField] private SpriteRenderer rightBorder;
     [SerializeField] private SpriteRenderer topRightBorder;
+
+    [SerializeField] private SpriteGlowEffect topLeftBorderSGE;
+    [SerializeField] private SpriteGlowEffect leftBorderSGE;
+    [SerializeField] private SpriteGlowEffect botLeftBorderSGE;
+    [SerializeField] private SpriteGlowEffect botRightBorderSGE;
+    [SerializeField] private SpriteGlowEffect rightBorderSGE;
+    [SerializeField] private SpriteGlowEffect topRightBorderSGE;
+
 
     [Space(10)]
     [Header("Structure Objects")]
@@ -166,6 +175,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                 return landmarkOnTile.owner.morality;
             }
         }
+    }
+    public SpriteRenderer mainStructureSprite {
+        get { return mainStructure; }
     }
     #endregion
 
@@ -631,6 +643,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
         return HEXTILE_DIRECTION.NONE;
     }
+    public HexTile GetNeighbour(HEXTILE_DIRECTION direction) {
+        if (neighbourDirections.ContainsKey(direction)) {
+            return neighbourDirections[direction];
+        }
+        return null;
+    }
     #endregion
 
     #region Roads
@@ -903,6 +921,29 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void UnHighlightTile() {
             _highlightGO.SetActive(false);
         }
+    public void SetBordersState(bool stat) {
+        topLeftBorder.gameObject.SetActive(stat);
+        botLeftBorder.gameObject.SetActive(stat);
+        topRightBorder.gameObject.SetActive(stat);
+        botRightBorder.gameObject.SetActive(stat);
+        leftBorder.gameObject.SetActive(stat);
+        rightBorder.gameObject.SetActive(stat);
+    }
+    public void SetBorderColor(Color color) {
+        topLeftBorder.color = color;
+        botLeftBorder.color = color;
+        topRightBorder.color = color;
+        botRightBorder.color = color;
+        leftBorder.color = color;
+        rightBorder.color = color;
+
+        topLeftBorderSGE.GlowColor = color;
+        botLeftBorderSGE.GlowColor = color;
+        topRightBorderSGE.GlowColor = color;
+        botRightBorderSGE.GlowColor = color;
+        leftBorderSGE.GlowColor = color;
+        rightBorderSGE.GlowColor = color;
+    }
     #endregion
 
     #region Tile Functions
@@ -1022,9 +1063,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             return;
         }
         Messenger.Broadcast(Signals.TILE_RIGHT_CLICKED, this);
-        if (landmarkOnTile != null && (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.role.roleType == CHARACTER_ROLE.PLAYER)) {
-            UIManager.Instance.ShowPlayerActions(this.landmarkOnTile);
-        }
+        //if (landmarkOnTile != null && (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.role.roleType == CHARACTER_ROLE.PLAYER)) {
+        //    UIManager.Instance.ShowPlayerActions(this.landmarkOnTile);
+        //}
 #endif
     }
     public void MouseOver() {

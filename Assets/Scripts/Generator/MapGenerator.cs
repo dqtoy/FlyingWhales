@@ -106,7 +106,6 @@ public class MapGenerator : MonoBehaviour {
         yield return null;
         GridMap.Instance.GenerateGrid(data);
         CameraMove.Instance.Initialize();
-        CameraMove.Instance.CalculateCameraBounds();
         ObjectPoolManager.Instance.InitializeObjectPools();
         CameraMove.Instance.SetWholemapCameraValues();
         //Minimap.Instance.Initialize(); TODO: Uncomment When minimap is put back
@@ -123,6 +122,7 @@ public class MapGenerator : MonoBehaviour {
         st.Stop();
 
         GridMap.Instance.GenerateOuterGrid(data);
+        CameraMove.Instance.CalculateCameraBounds();
         //GridMap.Instance.DivideOuterGridRegions();
 
         Biomes.Instance.LoadPassableStates(GridMap.Instance.hexTiles, GridMap.Instance.outerGridList);
@@ -168,11 +168,11 @@ public class MapGenerator : MonoBehaviour {
         CharacterScheduleManager.Instance.Initialize();
         //CharacterManager.Instance.GenerateCharactersForTesting(1);
         CharacterManager.Instance.LoadCharacters(data);
-        CharacterManager.Instance.LoadRelationships(data);
+        //CharacterManager.Instance.LoadRelationships(data);
 
         MonsterManager.Instance.LoadMonsters(data);
 
-        CharacterManager.Instance.LoadSquads(data);
+        //CharacterManager.Instance.LoadSquads(data);
         LandmarkManager.Instance.LoadDefenders(data);
 
         CameraMove.Instance.UpdateMinimapTexture();

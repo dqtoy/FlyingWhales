@@ -99,9 +99,9 @@ public class EditSquadsMenu : MonoBehaviour {
         GameObject.Destroy(squadItem.gameObject);
     }
 
-    public void CreateNewSquad() {
-        CharacterManager.Instance.CreateNewSquad();
-    }
+    //public void CreateNewSquad() {
+    //    CharacterManager.Instance.CreateNewSquad();
+    //}
 
     public void OnItemDraggedBack(Transform transform) {
         CharacterSquadEditorItem item = transform.GetComponent<CharacterSquadEditorItem>();
