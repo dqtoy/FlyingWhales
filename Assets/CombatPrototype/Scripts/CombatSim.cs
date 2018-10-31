@@ -90,7 +90,7 @@ public class CombatSim {
             }
             Debug.Log("========== End Round " + rounds.ToString() + " ==========");
             rounds++;
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.05f);
         }
         SIDES winner = SIDES.A;
         List<ICharacterSim> winnerCharacters = CombatSimManager.Instance.sideAList;

@@ -176,11 +176,14 @@ public class Interaction {
             CreateExploreStates();
         }
     }
+    protected void WhatToDoNextState() {
+        SetCurrentState(_states["What To Do Next"]);
+    }
     protected void LeaveAloneEffect(InteractionState state) {
         state.EndResult();
     }
     protected void SupplyRewardState(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " discovered a small cache of Supplies.");
+        _states[effectName].SetDescription(_interactable.explorerMinion.name + " discovered a small cache of Supplies.");
         SetCurrentState(_states[effectName]);
     }
     protected void SupplyRewardEffect(InteractionState state) {
@@ -189,7 +192,7 @@ public class Interaction {
     }
 
     protected void ManaRewardState(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " discovered a source of magical energy. We have converted it into a small amount of Mana.");
+        _states[effectName].SetDescription(_interactable.explorerMinion.name + " discovered a source of magical energy. We have converted it into a small amount of Mana.");
         SetCurrentState(_states[effectName]);
     }
     protected void ManaRewardEffect(InteractionState state) {
@@ -198,7 +201,7 @@ public class Interaction {
     }
 
     protected void DemonDisappearsRewardState(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " has not returned. We can only assume the worst.");
+        _states[effectName].SetDescription(_interactable.explorerMinion.name + " has not returned. We can only assume the worst.");
         SetCurrentState(_states[effectName]);
     }
     protected void DemonDisappearsRewardEffect(InteractionState state) {
@@ -207,7 +210,7 @@ public class Interaction {
     }
 
     protected void NothingRewardState(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " has returned with nothing to report.");
+        _states[effectName].SetDescription(_interactable.explorerMinion.name + " has returned with nothing to report.");
         SetCurrentState(_states[effectName]);
     }
     protected void NothingEffect(InteractionState state) {
