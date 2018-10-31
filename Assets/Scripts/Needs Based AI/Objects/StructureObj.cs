@@ -83,8 +83,6 @@ public class StructureObj : IObject {
         _attributes = new List<CharacterAttribute>();
         SetIsDirty(true);
         ConstructResourceInventory();
-        SetDailyInteractionGenerationTick();
-        Messenger.AddListener(Signals.HOUR_STARTED, DailyInteractionGeneration);
     }
 
     #region Virtuals
@@ -107,6 +105,8 @@ public class StructureObj : IObject {
     public virtual void OnAddToLandmark(BaseLandmark newLocation) {
         SetObjectLocation(newLocation);
         GenerateInitialDefenders();
+        SetDailyInteractionGenerationTick();
+        Messenger.AddListener(Signals.HOUR_STARTED, DailyInteractionGeneration);
     }
     public virtual void StartState(ObjectState state) {
         if(state.stateName == "Ruined") {

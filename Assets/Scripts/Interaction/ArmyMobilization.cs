@@ -10,6 +10,9 @@ public class ArmyMobilization : Interaction {
 
     #region Overrides
     public override void CreateStates() {
+        CreateExploreStates();
+        //CreateWhatToDoNextState(_interactable.explorerMinion.name + " just watches while the army is being mobilized. Do you want him to continue surveillance of " + _interactable.specificLocation.thisName + "?");
+
         InteractionState startState = new InteractionState("Start", this);
         InteractionState cancelledMobilizationState = new InteractionState("Cancelled Mobilization", this);
         InteractionState failCancelledMobilizationState = new InteractionState("Failed Cancel Mobilization", this);
@@ -18,12 +21,16 @@ public class ArmyMobilization : Interaction {
 
         string startStateDesc = "The garrison is mobilizing its forces. They are planning to assign some reserved units to defensive positions in the city.";
         startState.SetDescription(startStateDesc);
-        CreateActionOptions(startState);
 
-        cancelledMobilizationState.SetEndEffect(() => CancelledMobilizationRewardEffect(cancelledMobilizationState));
-        failCancelledMobilizationState.SetEndEffect(() => FailedCancelMobilizationRewardEffect(failCancelledMobilizationState));
+        CreateActionOptions(startState);
+        CreateActionOptions(cancelledMobilizationState);
+        CreateActionOptions(failCancelledMobilizationState);
+        CreateActionOptions(armyMobilizedState);
+
+        //cancelledMobilizationState.SetEndEffect(() => CancelledMobilizationRewardEffect(cancelledMobilizationState));
+        //failCancelledMobilizationState.SetEndEffect(() => FailedCancelMobilizationRewardEffect(failCancelledMobilizationState));
         demonDisappearsState.SetEndEffect(() => DemonDisappearsRewardEffect(demonDisappearsState));
-        armyMobilizedState.SetEndEffect(() => ArmyMobilizedRewardEffect(armyMobilizedState));
+        //armyMobilizedState.SetEndEffect(() => ArmyMobilizedRewardEffect(armyMobilizedState));
 
         _states.Add(startState.name, startState);
         _states.Add(cancelledMobilizationState.name, cancelledMobilizationState);
@@ -39,10 +46,9 @@ public class ArmyMobilization : Interaction {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Stop them.",
-                duration = 5,
+                duration = 0,
                 description = "We have sent %minion% to persuade the garrison general to stop army mobilization.",
-                needsMinion = true,
-                neededObjects = new List<System.Type>() { typeof(Minion) },
+                needsMinion = false,
                 effect = () => StopThemOption(state),
             };
             ActionOption doNothingOption = new ActionOption {
@@ -58,10 +64,31 @@ public class ArmyMobilization : Interaction {
 
             state.AddActionOption(stopThemOption);
             state.AddActionOption(doNothingOption);
-
+            state.SetDefaultOption(doNothingOption);
             //GameDate scheduleDate = GameManager.Instance.Today();
             //scheduleDate.AddHours(50);
             //state.SetTimeSchedule(doNothingOption, scheduleDate);
+        } else {
+            ActionOption continueSurveillanceOption = new ActionOption {
+                interactionState = state,
+                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                name = "Continue surveillance of the area.",
+                duration = 0,
+                needsMinion = false,
+                effect = () => ExploreContinuesOption(state),
+            };
+            ActionOption returnToMeOption = new ActionOption {
+                interactionState = state,
+                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                name = "Return to me.",
+                duration = 0,
+                needsMinion = false,
+                effect = () => ExploreEndsOption(state),
+            };
+
+            state.AddActionOption(continueSurveillanceOption);
+            state.AddActionOption(returnToMeOption);
+            state.SetDefaultOption(returnToMeOption);
         }
     }
     #endregion
@@ -94,25 +121,28 @@ public class ArmyMobilization : Interaction {
 
     #region States
     private void CancelledMobilizationRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " disguised himself and talked to the Army General, eventually convincing him to delay their mobilization.");
+        _states[stateName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, eventually convincing him to delay their mobilization.");
         SetCurrentState(_states[stateName]);
+        CancelledMobilizationRewardEffect(_states[stateName]);
     }
     private void FailedCancelMobilizationRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " disguised himself and talked to the Army General, but was unable to convince him to delay their mobilization.");
+        _states[stateName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, but was unable to convince him to delay their mobilization.");
         SetCurrentState(_states[stateName]);
+        FailedCancelMobilizationRewardEffect(_states[stateName]);
     }
     private void ArmyMobilizedRewardState(InteractionState state, string stateName) {
         _states[stateName].SetDescription("The garrison has now mobilized its reserved forces.");
         SetCurrentState(_states[stateName]);
+        ArmyMobilizedRewardEffect(_states[stateName]);
     }
     #endregion
 
     #region State Effects
     private void CancelledMobilizationRewardEffect(InteractionState state) {
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
     private void FailedCancelMobilizationRewardEffect(InteractionState state) {
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         ArmyMobilizedRewardEffect(state);
     }
     private void ArmyMobilizedRewardEffect(InteractionState state) {

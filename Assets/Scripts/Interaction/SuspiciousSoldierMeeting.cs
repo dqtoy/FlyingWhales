@@ -10,6 +10,8 @@ public class SuspiciousSoldierMeeting : Interaction {
 
     #region Overrides
     public override void CreateStates() {
+        CreateExploreStates();
+        CreateWhatToDoNextState(_interactable.explorerMinion.name + " stopped keeping track of the soldiers' whereabouts. Do you want him to continue surveillance of " + _interactable.specificLocation.thisName +"?");
         InteractionState startState = new InteractionState("Start", this);
         InteractionState reduceDefendersState = new InteractionState("Reduce Defenders", this);
         InteractionState warDeclaredState = new InteractionState("War Declared", this);
@@ -17,15 +19,20 @@ public class SuspiciousSoldierMeeting : Interaction {
         InteractionState generalDiesState = new InteractionState("General Dies", this);
         InteractionState nothingHappensState = new InteractionState("Nothing Happens", this);
 
-        string startStateDesc = "Our Imp has discovered a group of soldiers leaving the Garrison and meeting in secret.";
+        string startStateDesc = _interactable.explorerMinion.name + " has discovered a group of soldiers leaving the Garrison and meeting in secret.";
         startState.SetDescription(startStateDesc);
-        CreateActionOptions(startState);
 
-        reduceDefendersState.SetEndEffect(() => ReduceDefendersRewardEffect(reduceDefendersState));
-        warDeclaredState.SetEndEffect(() => WarDeclaredRewardEffect(warDeclaredState));
+        CreateActionOptions(startState);
+        CreateActionOptions(reduceDefendersState);
+        CreateActionOptions(warDeclaredState);
+        CreateActionOptions(generalDiesState);
+        CreateActionOptions(nothingHappensState);
+
+        //reduceDefendersState.SetEndEffect(() => ReduceDefendersRewardEffect(reduceDefendersState));
+        //warDeclaredState.SetEndEffect(() => WarDeclaredRewardEffect(warDeclaredState));
         demonDisappearsState.SetEndEffect(() => DemonDisappearsRewardEffect(demonDisappearsState));
-        generalDiesState.SetEndEffect(() => GeneralDiesRewardEffect(generalDiesState));
-        nothingHappensState.SetEndEffect(() => NothingHappensRewardEffect(nothingHappensState));
+        //generalDiesState.SetEndEffect(() => GeneralDiesRewardEffect(generalDiesState));
+        //nothingHappensState.SetEndEffect(() => NothingHappensRewardEffect(nothingHappensState));
 
         _states.Add(startState.name, startState);
         _states.Add(reduceDefendersState.name, reduceDefendersState);
@@ -43,9 +50,8 @@ public class SuspiciousSoldierMeeting : Interaction {
                 cost = new ActionOptionCost { amount = 30, currency = CURRENCY.SUPPLY },
                 name = "Send out a Demon.",
                 description = "We have sent %minion% to watch the soldiers and follow them on their next secret meeting.",
-                duration = 10,
-                needsMinion = true,
-                neededObjects = new List<System.Type>() { typeof(Minion) },
+                duration = 0,
+                needsMinion = false,
                 effect = () => SendOutDemonOption(state),
             };
             ActionOption doNothingOption = new ActionOption {
@@ -54,15 +60,36 @@ public class SuspiciousSoldierMeeting : Interaction {
                 name = "Do nothing.",
                 duration = 0,
                 needsMinion = false,
-                effect = () => LeaveAloneEffect(state),
+                effect = () => WhatToDoNextState(),
             };
 
             state.AddActionOption(sendOutDemonOption);
             state.AddActionOption(doNothingOption);
-
+            state.SetDefaultOption(doNothingOption);
             //GameDate scheduleDate = GameManager.Instance.Today();
             //scheduleDate.AddHours(60);
             //state.SetTimeSchedule(doNothingOption, scheduleDate);
+        } else {
+            ActionOption continueSurveillanceOption = new ActionOption {
+                interactionState = state,
+                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                name = "Continue surveillance of the area.",
+                duration = 0,
+                needsMinion = false,
+                effect = () => ExploreContinuesOption(state),
+            };
+            ActionOption returnToMeOption = new ActionOption {
+                interactionState = state,
+                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                name = "Return to me.",
+                duration = 0,
+                needsMinion = false,
+                effect = () => ExploreEndsOption(state),
+            };
+
+            state.AddActionOption(continueSurveillanceOption);
+            state.AddActionOption(returnToMeOption);
+            state.SetDefaultOption(returnToMeOption);
         }
     }
     #endregion
@@ -98,20 +125,24 @@ public class SuspiciousSoldierMeeting : Interaction {
 
     #region States
     private void ReduceDefendersRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " was able to tempt the disgruntled soldiers to abandon their posts. A significant amount of defenders are now missing from the Garrison!");
+        _states[stateName].SetDescription(_interactable.explorerMinion.name + " was able to tempt the disgruntled soldiers to abandon their posts. A significant amount of defenders are now missing from the Garrison!");
         SetCurrentState(_states[stateName]);
+        ReduceDefendersRewardEffect(_states[stateName]);
     }
     private void WarDeclaredRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " was discovered by the soldiers! He managed to run away unscathed but " + _interactable.faction.name + " is now aware of our sabotage attempts and have declared war upon us.");
+        _states[stateName].SetDescription(_interactable.explorerMinion.name + " was discovered by the soldiers! He managed to run away unscathed but " + _interactable.faction.name + " is now aware of our sabotage attempts and have declared war upon us.");
         SetCurrentState(_states[stateName]);
+        WarDeclaredRewardEffect(_states[stateName]);
     }
     private void GeneralDiesRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " discovered that the soldiers were planning a surprise party for the General's birthday. Knowing that the General is alone now, he slipped in and assassinated him successfully.");
+        _states[stateName].SetDescription(_interactable.explorerMinion.name + " discovered that the soldiers were planning a surprise party for the General's birthday. Knowing that the General is alone now, he slipped in and assassinated him successfully.");
         SetCurrentState(_states[stateName]);
+        GeneralDiesRewardEffect(_states[stateName]);
     }
     private void NothingHappensRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " followed the soldiers and found that they were merely having a drunken party away from their superiors.");
+        _states[stateName].SetDescription(_interactable.explorerMinion.name + " followed the soldiers and found that they were merely having a drunken party away from their superiors.");
         SetCurrentState(_states[stateName]);
+        NothingHappensRewardEffect(_states[stateName]);
     }
     #endregion
 
@@ -138,26 +169,26 @@ public class SuspiciousSoldierMeeting : Interaction {
                 }
             }
         }
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
     private void WarDeclaredRewardEffect(InteractionState state) {
         //Tile owner faction will declare war on player
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         FactionManager.Instance.DeclareWarBetween(_interactable.faction, PlayerManager.Instance.player.playerFaction);
     }
     private void GeneralDiesRewardEffect(InteractionState state) {
         //Resident General dies by assassination
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         if (_interactable is BaseLandmark) {
             BaseLandmark landmark = _interactable as BaseLandmark;
             ICharacter icharacter = landmark.GetResidentCharacterOfClass("General");
             if (icharacter != null) {
-                icharacter.Assassinate(state.assignedMinion.icharacter);
+                icharacter.Assassinate(_interactable.explorerMinion.icharacter);
             }
         }
     }
     private void NothingHappensRewardEffect(InteractionState state) {
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
     #endregion
 }

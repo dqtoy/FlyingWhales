@@ -11,6 +11,9 @@ public class MysteriousSarcophagus : Interaction {
 
     #region Overrides
     public override void CreateStates() {
+        CreateExploreStates();
+        CreateWhatToDoNextState(_interactable.explorerMinion.name + " left the sarcophagus alone. Do you want him to continue surveillance of " + _interactable.specificLocation.thisName + "?");
+
         InteractionState startState = new InteractionState("Start", this);
         InteractionState cursedState = new InteractionState("Cursed", this);
         InteractionState accessoryUpgradeState = new InteractionState("Accessory Upgrade", this);
@@ -19,16 +22,23 @@ public class MysteriousSarcophagus : Interaction {
         InteractionState awakenUndeadHeroState = new InteractionState("Awaken Undead Hero", this);
         InteractionState gainPositiveState = new InteractionState("Gain Positive Trait", this);
 
-        string startStateDesc = "Our Imp has discovered an unopened sarcophagus in a hidden alcove. Should we open it?";
+        string startStateDesc = _interactable.explorerMinion.name + " has discovered an unopened sarcophagus in a hidden alcove. Should we open it?";
         startState.SetDescription(startStateDesc);
-        CreateActionOptions(startState);
 
-        cursedState.SetEndEffect(() => CursedRewardEffect(cursedState));
-        accessoryUpgradeState.SetEndEffect(() => AccessoryUpgradeRewardEffect(accessoryUpgradeState));
-        gainManaState.SetEndEffect(() => GainManaRewardEffect(gainManaState));
-        gainSuppliesState.SetEndEffect(() => GainSuppliesRewardEffect(gainSuppliesState));
-        awakenUndeadHeroState.SetEndEffect(() => AwakenUndeadHeroRewardEffect(awakenUndeadHeroState));
-        gainPositiveState.SetEndEffect(() => GainPositiveTraitRewardEffect(gainPositiveState));
+        CreateActionOptions(startState);
+        CreateActionOptions(cursedState);
+        CreateActionOptions(accessoryUpgradeState);
+        CreateActionOptions(gainManaState);
+        CreateActionOptions(gainSuppliesState);
+        CreateActionOptions(awakenUndeadHeroState);
+        CreateActionOptions(gainPositiveState);
+
+        //cursedState.SetEndEffect(() => CursedRewardEffect(cursedState));
+        //accessoryUpgradeState.SetEndEffect(() => AccessoryUpgradeRewardEffect(accessoryUpgradeState));
+        //gainManaState.SetEndEffect(() => GainManaRewardEffect(gainManaState));
+        //gainSuppliesState.SetEndEffect(() => GainSuppliesRewardEffect(gainSuppliesState));
+        //awakenUndeadHeroState.SetEndEffect(() => AwakenUndeadHeroRewardEffect(awakenUndeadHeroState));
+        //gainPositiveState.SetEndEffect(() => GainPositiveTraitRewardEffect(gainPositiveState));
 
         _states.Add(startState.name, startState);
         _states.Add(cursedState.name, cursedState);
@@ -47,9 +57,8 @@ public class MysteriousSarcophagus : Interaction {
                 cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Of course.",
                 description = "We have sent %minion% to open the sarcophagus.",
-                duration = 6,
-                needsMinion = true,
-                neededObjects = new List<System.Type>() { typeof(Minion) },
+                duration = 0,
+                needsMinion = false,
                 effect = () => OfCourseOption(state),
             };
             ActionOption ofCourseNotOption = new ActionOption {
@@ -58,12 +67,33 @@ public class MysteriousSarcophagus : Interaction {
                 name = "Of couse not.",
                 duration = 0,
                 needsMinion = false,
-                effect = () => LeaveAloneEffect(state),
+                effect = () => WhatToDoNextState(),
             };
 
             state.AddActionOption(ofCourseOption);
             state.AddActionOption(ofCourseNotOption);
             state.SetDefaultOption(ofCourseNotOption);
+        } else {
+            ActionOption continueSurveillanceOption = new ActionOption {
+                interactionState = state,
+                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                name = "Continue surveillance of the area.",
+                duration = 0,
+                needsMinion = false,
+                effect = () => ExploreContinuesOption(state),
+            };
+            ActionOption returnToMeOption = new ActionOption {
+                interactionState = state,
+                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                name = "Return to me.",
+                duration = 0,
+                needsMinion = false,
+                effect = () => ExploreEndsOption(state),
+            };
+
+            state.AddActionOption(continueSurveillanceOption);
+            state.AddActionOption(returnToMeOption);
+            state.SetDefaultOption(returnToMeOption);
         }
     }
     #endregion
@@ -76,7 +106,6 @@ public class MysteriousSarcophagus : Interaction {
         effectWeights.AddElement("Gain Supplies", 5);
         effectWeights.AddElement("Awaken Undead Hero", 5);
         effectWeights.AddElement("Gain Positive Trait", 5);
-
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         if (chosenEffect == "Cursed") {
@@ -96,48 +125,54 @@ public class MysteriousSarcophagus : Interaction {
 
     #region States
     private void CursedRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " opened the sarcophagus and found nothing inside. But everyone felt a strange heaviness in the air and suddenly all of your followers have been cursed with a strange affliction.");
+        _states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and found nothing inside. But everyone felt a strange heaviness in the air and suddenly all of your followers have been cursed with a strange affliction.");
         SetCurrentState(_states[stateName]);
+        CursedRewardEffect(_states[stateName]);
     }
     private void AccessoryUpgradeRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " opened the sarcophagus and found a powerful accessory that it can use.");
+        _states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and found a powerful accessory that it can use.");
         SetCurrentState(_states[stateName]);
+        AccessoryUpgradeRewardEffect(_states[stateName]);
     }
     private void GainManaRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " opened the sarcophagus and found a small magical source. We have converted it into an ample amount of mana.");
+        _states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and found a small magical source. We have converted it into an ample amount of mana.");
         SetCurrentState(_states[stateName]);
+        GainManaRewardEffect(_states[stateName]);
     }
     private void GainSuppliesRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " opened the sarcophagus and found a small amount of ancient treasures that we have added to our Supplies.");
+        _states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and found a small amount of ancient treasures that we have added to our Supplies.");
         SetCurrentState(_states[stateName]);
+        GainSuppliesRewardEffect(_states[stateName]);
     }
     private void AwakenUndeadHeroRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " opened the sarcophagus and unleashed a powerful mummy. The mummy now guards " + _interactable.specificLocation.thisName + ". " + state.chosenOption.assignedMinion.icharacter.name + " managed to escape");
+        _states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and unleashed a powerful mummy. The mummy now guards " + _interactable.specificLocation.thisName + ". " + _interactable.explorerMinion.name + " managed to escape");
         SetCurrentState(_states[stateName]);
+        AwakenUndeadHeroRewardEffect(_states[stateName]);
     }
     private void GainPositiveTraitRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " opened the sarcophagus and found it empty. As " + state.chosenOption.assignedMinion.icharacter.name + " leaves, a wisp of sand blows through him and a strange power awakened within.");
+        _states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and found it empty. As " + _interactable.explorerMinion.name + " leaves, a wisp of sand blows through him and a strange power awakened within.");
         SetCurrentState(_states[stateName]);
+        GainPositiveTraitRewardEffect(_states[stateName]);
     }
     #endregion
 
     #region State Effects
     private void CursedRewardEffect(InteractionState state) {
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //TODO: all of your units gain a random negative Trait (same negative Trait for all)
     }
     private void AccessoryUpgradeRewardEffect(InteractionState state) {
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
-        if (state.assignedMinion.icharacter.equippedAccessory != null) {
-            state.assignedMinion.icharacter.UpgradeAccessory();
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        if (_interactable.explorerMinion.icharacter.equippedAccessory != null) {
+            _interactable.explorerMinion.icharacter.UpgradeAccessory();
         }
     }
     private void GainManaRewardEffect(InteractionState state) {
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         PlayerManager.Instance.player.AdjustCurrency(CURRENCY.MANA, 50);
     }
     private void GainSuppliesRewardEffect(InteractionState state) {
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, 50);
     }
     private void AwakenUndeadHeroRewardEffect(InteractionState state) {
@@ -149,7 +184,7 @@ public class MysteriousSarcophagus : Interaction {
         }
     }
     private void GainPositiveTraitRewardEffect(InteractionState state) {
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //TODO: Positive Trait Reward 1
     }
     #endregion

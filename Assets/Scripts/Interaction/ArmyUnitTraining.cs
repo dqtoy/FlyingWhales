@@ -13,6 +13,8 @@ public class ArmyUnitTraining : Interaction {
 
     #region Overrides
     public override void CreateStates() {
+        CreateExploreStates();
+
         InteractionState startState = new InteractionState("Start", this);
         InteractionState cancelledTrainingState = new InteractionState("Cancelled Training", this);
         InteractionState failCancelledTrainingState = new InteractionState("Failed Cancel Training", this);
@@ -21,12 +23,16 @@ public class ArmyUnitTraining : Interaction {
 
         string startStateDesc = "The garrison is producing another army unit.";
         startState.SetDescription(startStateDesc);
-        CreateActionOptions(startState);
 
-        cancelledTrainingState.SetEndEffect(() => CancelledTrainingRewardEffect(cancelledTrainingState));
-        failCancelledTrainingState.SetEndEffect(() => FailedCancelTrainingRewardEffect(failCancelledTrainingState));
+        CreateActionOptions(startState);
+        CreateActionOptions(cancelledTrainingState);
+        CreateActionOptions(failCancelledTrainingState);
+        CreateActionOptions(armyProducedState);
+
+        //cancelledTrainingState.SetEndEffect(() => CancelledTrainingRewardEffect(cancelledTrainingState));
+        //failCancelledTrainingState.SetEndEffect(() => FailedCancelTrainingRewardEffect(failCancelledTrainingState));
         demonDisappearsState.SetEndEffect(() => DemonDisappearsRewardEffect(demonDisappearsState));
-        armyProducedState.SetEndEffect(() => ArmyProducedRewardEffect(armyProducedState));
+        //armyProducedState.SetEndEffect(() => ArmyProducedRewardEffect(armyProducedState));
 
         _states.Add(startState.name, startState);
         _states.Add(cancelledTrainingState.name, cancelledTrainingState);
@@ -42,10 +48,9 @@ public class ArmyUnitTraining : Interaction {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Stop them.",
-                duration = 5,
+                duration = 0,
                 description = "We have sent %minion% to persuade the garrison general to stop their current plan of raising a new army unit.",
-                needsMinion = true,
-                neededObjects = new List<System.Type>() { typeof(Minion) },
+                needsMinion = false,
                 effect = () => StopThemOption(state),
             };
             ActionOption doNothingOption = new ActionOption {
@@ -61,10 +66,31 @@ public class ArmyUnitTraining : Interaction {
 
             state.AddActionOption(stopThemOption);
             state.AddActionOption(doNothingOption);
-
+            state.SetDefaultOption(doNothingOption);
             //GameDate scheduleDate = GameManager.Instance.Today();
             //scheduleDate.AddHours(50);
             //state.SetTimeSchedule(doNothingOption, scheduleDate);
+        } else {
+            ActionOption continueSurveillanceOption = new ActionOption {
+                interactionState = state,
+                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                name = "Continue surveillance of the area.",
+                duration = 0,
+                needsMinion = false,
+                effect = () => ExploreContinuesOption(state),
+            };
+            ActionOption returnToMeOption = new ActionOption {
+                interactionState = state,
+                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                name = "Return to me.",
+                duration = 0,
+                needsMinion = false,
+                effect = () => ExploreEndsOption(state),
+            };
+
+            state.AddActionOption(continueSurveillanceOption);
+            state.AddActionOption(returnToMeOption);
+            state.SetDefaultOption(returnToMeOption);
         }
     }
     #endregion
@@ -110,27 +136,30 @@ public class ArmyUnitTraining : Interaction {
 
     #region States
     private void CancelledTrainingRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " distracted the soldiers with liquor so they end up forgetting that they were supposed to form a new defensive army unit.");
+        _states[stateName].SetDescription(_interactable.explorerMinion.name + " distracted the soldiers with liquor so they end up forgetting that they were supposed to form a new defensive army unit.");
         SetCurrentState(_states[stateName]);
+        CancelledTrainingRewardEffect(_states[stateName]);
     }
     private void FailedCancelTrainingRewardState(InteractionState state, string stateName) {
         SetArmyClassNameToBeCreated();
-        _states[stateName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " failed to distract the soldiers. A new " + Utilities.NormalizeString(interactable.faction.race.ToString()) + " " + _chosenClassName + " unit has been formed at the garrison.");
+        _states[stateName].SetDescription(_interactable.explorerMinion.name + " failed to distract the soldiers. A new " + Utilities.NormalizeString(interactable.faction.race.ToString()) + " " + _chosenClassName + " unit has been formed at the garrison.");
         SetCurrentState(_states[stateName]);
+        FailedCancelTrainingRewardEffect(_states[stateName]);
     }
     private void ArmyProducedRewardState(InteractionState state, string stateName) {
         SetArmyClassNameToBeCreated();
         _states[stateName].SetDescription("A new " + Utilities.NormalizeString(interactable.faction.race.ToString()) + " " + _chosenClassName + " unit has been formed at the garrison.");
         SetCurrentState(_states[stateName]);
+        ArmyProducedRewardEffect(_states[stateName]);
     }
     #endregion
 
     #region State Effects
     private void CancelledTrainingRewardEffect(InteractionState state) {
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
     private void FailedCancelTrainingRewardEffect(InteractionState state) {
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         ArmyProducedRewardEffect(state);
     }
     private void ArmyProducedRewardEffect(InteractionState state) {
