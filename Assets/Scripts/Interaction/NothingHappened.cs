@@ -10,20 +10,14 @@ public class NothingHappened : Interaction {
 
     #region Overrides
     public override void CreateStates() {
+        base.CreateStates();
         InteractionState startState = new InteractionState("Start", this);
-        InteractionState exploreContinuesState = new InteractionState("Explore Continues", this);
-        InteractionState exploreEndsState = new InteractionState("Explore Ends", this);
 
         string startStateDesc = _interactable.explorerMinion.name + " did not find anything worth reporting.";
         startState.SetDescription(startStateDesc);
         CreateActionOptions(startState);
 
-        exploreContinuesState.SetEndEffect(() => ExploreContinuesRewardEffect(exploreContinuesState));
-        exploreEndsState.SetEndEffect(() => ExploreEndsRewardEffect(exploreEndsState));
-
         _states.Add(startState.name, startState);
-        _states.Add(exploreContinuesState.name, exploreContinuesState);
-        _states.Add(exploreEndsState.name, exploreEndsState);
 
         SetCurrentState(startState);
     }
@@ -35,7 +29,7 @@ public class NothingHappened : Interaction {
                 name = "Keep looking.",
                 duration = 0,
                 needsMinion = false,
-                effect = () => KeepLookingOption(state),
+                effect = () => ExploreContinuesOption(state),
             };
             ActionOption okOption = new ActionOption {
                 interactionState = state,
@@ -43,60 +37,15 @@ public class NothingHappened : Interaction {
                 name = "OK.",
                 duration = 0,
                 needsMinion = false,
-                effect = () => OkOption(state),
+                effect = () => ExploreEndsOption(state),
             };
 
             state.AddActionOption(keepLookingOption);
             state.AddActionOption(okOption);
-
-            GameDate scheduleDate = GameManager.Instance.Today();
-            scheduleDate.AddHours(70);
             state.SetDefaultOption(okOption);
         }
     }
     #endregion
 
-    private void KeepLookingOption(InteractionState state) {
-        WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement("Explore Continues", 15);
-
-        string chosenEffect = effectWeights.PickRandomElementGivenWeights();
-        if (chosenEffect == "Explore Continues") {
-            ExploreContinuesRewardState(state, chosenEffect);
-        }
-    }
-    private void OkOption(InteractionState state) {
-        WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement("Explore Ends", 15);
-
-        string chosenEffect = effectWeights.PickRandomElementGivenWeights();
-        if (chosenEffect == "Explore Ends") {
-            ExploreEndsRewardState(state, chosenEffect);
-        }
-    }
-    #region States
-    private void ExploreContinuesRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription("We've instructed " + _interactable.explorerMinion.name + " to continue its surveillance of the area.");
-        SetCurrentState(_states[stateName]);
-    }
-    private void ExploreEndsRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription("We've instructed " + _interactable.explorerMinion.name + " to return.");
-        SetCurrentState(_states[stateName]);
-    }
-    #endregion
-
-    #region State Effects
-    private void ExploreContinuesRewardEffect(InteractionState state) {
-        if(_interactable is BaseLandmark) {
-            BaseLandmark landmark = _interactable as BaseLandmark;
-            landmark.landmarkInvestigation.ExploreLandmark();
-        }
-    }
-    private void ExploreEndsRewardEffect(InteractionState state) {
-        if (_interactable is BaseLandmark) {
-            BaseLandmark landmark = _interactable as BaseLandmark;
-            landmark.landmarkInvestigation.MinionGoBackFromAssignment(landmark.landmarkInvestigation.UnexploreLandmark);
-        }
-    }
-    #endregion
+    
 }

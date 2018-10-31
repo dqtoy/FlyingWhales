@@ -5,7 +5,7 @@ using ECS;
 
 public class MysteriousSarcophagus : Interaction {
 
-    public MysteriousSarcophagus(IInteractable interactable) : base(interactable, INTERACTION_TYPE.MYSTERIOUS_SARCOPHAGUS) {
+    public MysteriousSarcophagus(IInteractable interactable) : base(interactable, INTERACTION_TYPE.MYSTERIOUS_SARCOPHAGUS, 110) {
         _name = "Mysterious Sarcophagus";
     }
 
@@ -63,6 +63,7 @@ public class MysteriousSarcophagus : Interaction {
 
             state.AddActionOption(ofCourseOption);
             state.AddActionOption(ofCourseNotOption);
+            state.SetDefaultOption(ofCourseNotOption);
         }
     }
     #endregion
