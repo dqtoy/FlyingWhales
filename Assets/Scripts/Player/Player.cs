@@ -85,6 +85,9 @@ public class Player : ILeader {
     public Dictionary<CURRENCY, int> currencies {
         get { return _currencies; }
     }
+    public List<Minion> minions {
+        get { return _minions; }
+    }
     #endregion
 
     public Player() {
@@ -565,7 +568,7 @@ public class Player : ILeader {
         _currencies.Add(CURRENCY.MANA, 0);
         _currencies.Add(CURRENCY.SUPPLY, 0);
         AdjustCurrency(CURRENCY.IMP, maxImps);
-        AdjustCurrency(CURRENCY.SUPPLY, 100);
+        AdjustCurrency(CURRENCY.SUPPLY, 5000);
     }
     public void AdjustCurrency(CURRENCY currency, int amount) {
         _currencies[currency] += amount;

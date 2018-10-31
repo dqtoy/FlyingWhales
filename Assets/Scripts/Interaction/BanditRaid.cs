@@ -17,17 +17,16 @@ public class BanditRaid : Interaction {
     #region Overrides
     public override void CreateStates() {
         if (_interactable is BaseLandmark) {
+            originLandmark = interactable as BaseLandmark;
             CreateExploreStates();
             CreateWhatToDoNextState("What do you want %minion% to do next?");
-            originLandmark = interactable as BaseLandmark;
             ConstructAssaultSpawnWeights();
             chosenLandmarkToRaid = GetLandmarkToRaid(originLandmark);
             
             InteractionState startState = new InteractionState("State 1", this);
             string startStateDesc = "The bandits are preparing to raid " + chosenLandmarkToRaid.landmarkName;
             startState.SetDescription(startStateDesc);
-            CreateActionOptions(startState);
-
+            
             //action option states
             InteractionState endResult1State = new InteractionState("Raid", this); //raid
             InteractionState endResult2State = new InteractionState("Successfully Cancelled Raid", this); //successfully cancelled raid
@@ -36,16 +35,16 @@ public class BanditRaid : Interaction {
             InteractionState endResult5State = new InteractionState("Empowered Raid", this); //empowered raid
             InteractionState endResult6State = new InteractionState("Misused Funds", this); //misused funds
             InteractionState endResult7State = new InteractionState("Demon Dies", this); //demon dies
-            
 
-            endResult7State.SetEndEffect(() => DemonDiesRewardEffect(endResult7State));
-
+            CreateActionOptions(startState);
             CreateActionOptions(endResult1State);
             CreateActionOptions(endResult2State);
             CreateActionOptions(endResult3State);
             CreateActionOptions(endResult4State);
             CreateActionOptions(endResult5State);
             CreateActionOptions(endResult6State);
+
+            endResult7State.SetEndEffect(() => DemonDiesRewardEffect(endResult7State));
 
             _states.Add(startState.name, startState);
             _states.Add(endResult1State.name, endResult1State);
@@ -66,9 +65,8 @@ public class BanditRaid : Interaction {
                 cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Stop them from attacking.",
                 //description = "We have sent %minion% to prevent the bandits from raiding " + chosenLandmarkToRaid.landmarkName + ".",
-                duration = 10,
-                needsMinion = true,
-                neededObjects = new List<System.Type>() { typeof(Minion) },
+                duration = 0,
+                needsMinion = false,
                 effect = () => StopThemFromAttackingEffect(state),
             };
             ActionOption provideSomeAssistance = new ActionOption {
@@ -76,9 +74,9 @@ public class BanditRaid : Interaction {
                 cost = new ActionOptionCost { amount = 100, currency = CURRENCY.SUPPLY },
                 name = "Provide them some assistance.",
                 //description = "We have sent %minion% to send the bandits some Supplies to aid their upcoming raid of " + chosenLandmarkToRaid.landmarkName + ".",
-                duration = 10,
-                needsMinion = true,
-                neededObjects = new List<System.Type>() { typeof(Minion) },
+                duration = 0,
+                needsMinion = false,
+                neededObjects = new List<System.Type>() { typeof(IUnit) },
                 effect = () => ProvideThemSomeAssistanceEffect(state),
             };
             ActionOption doNothing = new ActionOption {
@@ -88,7 +86,6 @@ public class BanditRaid : Interaction {
                 //description = "The bandits are preparing to raid " + chosenLandmarkToRaid.landmarkName + ".",
                 duration = 0,
                 needsMinion = false,
-                neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => WhatToDoNextState(),
             };
 
@@ -180,27 +177,27 @@ public class BanditRaid : Interaction {
     }
 
     private void SuccessfullyCancelledRaid(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " intimidated the bandits into stopping their attack. " +
+        _states[effectName].SetDescription(_interactable.explorerMinion.name + " intimidated the bandits into stopping their attack. " +
             "What do you want " + _interactable.explorerMinion.name + " to do next?");
         SetCurrentState(_states[effectName]);
         SuccessfullyCancelledRaidRewardEffect(_states[effectName]);
     }
     private void SuccessfullyCancelledRaidRewardEffect(InteractionState state) {
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     private void FailedToCancelRaid(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " failed to stop the bandits from proceeding with their raid. " +
+        _states[effectName].SetDescription(_interactable.explorerMinion.name + " failed to stop the bandits from proceeding with their raid. " +
             "A group of bandits have left " + originLandmark.landmarkName + " " +
             "to raid " + chosenLandmarkToRaid.landmarkName + ". What do you want " + _interactable.explorerMinion.name + " to do next?");
         SetCurrentState(_states[effectName]);
         FailedToCancelRaidRewardEffect(_states[effectName]);
     }
     private void FailedToCancelRaidRewardEffect(InteractionState state) {
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     private void CriticalFailToCancelRaid(InteractionState state, string effectName) {
         BaseLandmark targetLandmark = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " failed to stop the bandits from proceeding with their raid. " +
+        _states[effectName].SetDescription(_interactable.explorerMinion.name + " failed to stop the bandits from proceeding with their raid. " +
             "Worse, they were so riled up by the demon that they decided to attack you instead. A group of bandits have left " + 
             originLandmark.landmarkName + " to attack " + targetLandmark.name + ". What do you want " + _interactable.explorerMinion.name + " to do next?");
         SetCurrentState(_states[effectName]);
@@ -212,7 +209,7 @@ public class BanditRaid : Interaction {
         CriticalFailToCancelRaidRewardEffect(_states[effectName]);
     }
     private void CriticalFailToCancelRaidRewardEffect(InteractionState state) {
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }
 
     private void EmpoweredRaid(InteractionState state, string effectName) {
@@ -228,7 +225,7 @@ public class BanditRaid : Interaction {
         EmpoweredRaidRewardEffect(_states[effectName]);
     }
     private void EmpoweredRaidRewardEffect(InteractionState state) {
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     private void MisusedFunds(InteractionState state, string effectName) {
         _states[effectName].SetDescription("We provided the bandits with more supplies but it doesn't look they used it for the " +
@@ -243,15 +240,15 @@ public class BanditRaid : Interaction {
         MisusedFundsRewardEffect(_states[effectName]);
     }
     private void MisusedFundsRewardEffect(InteractionState state) {
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
+        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     private void DemonDies(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " has not returned. We can only assume the worst.");
+        _states[effectName].SetDescription(_interactable.explorerMinion.name + " has not returned. We can only assume the worst.");
         SetCurrentState(_states[effectName]);
     }
     private void DemonDiesRewardEffect(InteractionState state) {
         //**Effect**: Demon is removed from Minion List
-        PlayerManager.Instance.player.RemoveMinion(state.assignedMinion);
+        PlayerManager.Instance.player.RemoveMinion(_interactable.explorerMinion);
     }
 
     private void Raid(InteractionState state, string effectName) {

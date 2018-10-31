@@ -24,22 +24,22 @@ public class BanditReinforcement : Interaction {
             InteractionState startState = new InteractionState("State 1", this);
             string startStateDesc = "The bandits are increasing their defensive army.";
             startState.SetDescription(startStateDesc);
-            CreateActionOptions(startState);
-
+            
             //action option states
             InteractionState successCancelState = new InteractionState("Successfully Cancelled Reinforcement", this);
             InteractionState failedCancelState = new InteractionState("Failed to Cancel Reinforcement", this);
             InteractionState giftAcceptedState = new InteractionState("Gift Accepted", this);
             InteractionState giftRejectedState = new InteractionState("Gift Rejected", this);
 
+            CreateActionOptions(startState);
+            CreateActionOptions(successCancelState);
+            CreateActionOptions(failedCancelState);
+            CreateActionOptions(giftRejectedState);
+
             //successCancelState.SetEndEffect(() => SuccessfullyCalledReinforcementEffect(successCancelState));
             //failedCancelState.SetEndEffect(() => FailedToCancelReinforcementEffect(failedCancelState));
             giftAcceptedState.SetEndEffect(() => GiftAcceptedRewardEffect(giftAcceptedState));
             //giftRejectedState.SetEndEffect(() => GiftRejectedEffect(giftRejectedState));
-
-            CreateActionOptions(successCancelState);
-            CreateActionOptions(failedCancelState);
-            CreateActionOptions(giftRejectedState);
 
             _states.Add(startState.name, startState);
             _states.Add(successCancelState.name, successCancelState);
@@ -164,7 +164,7 @@ public class BanditReinforcement : Interaction {
     }
     private void ProvideOwnUnitEffect(InteractionState state) {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement("Gift Accepted", 25);
+        //effectWeights.AddElement("Gift Accepted", 25);
         effectWeights.AddElement("Gift Rejected", 5);
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
