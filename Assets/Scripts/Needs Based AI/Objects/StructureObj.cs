@@ -15,6 +15,7 @@ public class StructureObj : IObject {
 
     protected string _objectName;
     protected int _currentHP;
+    protected int _currentInteractionTick;
     protected bool _isDirty;
     protected RESOURCE _madeOf;
     protected BaseLandmark _objectLocation;
@@ -82,6 +83,8 @@ public class StructureObj : IObject {
         _attributes = new List<CharacterAttribute>();
         SetIsDirty(true);
         ConstructResourceInventory();
+        SetDailyInteractionGenerationTick();
+        Messenger.AddListener(Signals.HOUR_STARTED, DailyInteractionGeneration);
     }
 
     #region Virtuals
@@ -110,13 +113,14 @@ public class StructureObj : IObject {
             Messenger.Broadcast(Signals.DESTROY_LANDMARK, this.objectLocation);
             objectLocation.tileLocation.SetLandmarkTileSprite(new LandmarkStructureSprite(LandmarkManager.Instance.ruinedSprite, null));
             objectLocation.MigrateCharactersToAnotherLandmark();
+            Messenger.RemoveListener(Signals.HOUR_STARTED, DailyInteractionGeneration);
         }
     }
     public virtual void EndState(ObjectState state) {
 
     }
     public virtual void StartDayAction() {
-        GenerateDailyInteraction();
+        //GenerateDailyInteraction();
     }
     public virtual void GenerateInitialDefenders() {
         if (_objectLocation.owner == null) {
@@ -407,6 +411,18 @@ public class StructureObj : IObject {
             if (createdInteraction != null) {
                 _objectLocation.AddInteraction(createdInteraction);
             }
+        }
+    }
+    #endregion
+
+    #region Interaction
+    private void SetDailyInteractionGenerationTick() {
+        _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.hoursPerDay + 1);
+    }
+    private void DailyInteractionGeneration() {
+        if(_currentInteractionTick == GameManager.Instance.hour) {
+            GenerateDailyInteraction();
+            SetDailyInteractionGenerationTick();
         }
     }
     #endregion
