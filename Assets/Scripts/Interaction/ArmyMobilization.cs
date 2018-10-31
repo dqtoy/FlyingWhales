@@ -47,7 +47,7 @@ public class ArmyMobilization : Interaction {
                 cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Stop them.",
                 duration = 0,
-                description = "We have sent %minion% to persuade the garrison general to stop army mobilization.",
+                //description = "We have sent %minion% to persuade the garrison general to stop army mobilization.",
                 needsMinion = false,
                 effect = () => StopThemOption(state),
             };
@@ -55,7 +55,7 @@ public class ArmyMobilization : Interaction {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
-                description = "The garrison is mobilizing its forces. They are planning to assign some reserved units to defensive positions in the city.",
+                //description = "The garrison is mobilizing its forces. They are planning to assign some reserved units to defensive positions in the city.",
                 duration = 0,
                 needsMinion = false,
                 effect = () => DoNothingOption(state),

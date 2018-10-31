@@ -4,11 +4,14 @@ using UnityEngine;
 using ECS;
 
 public class PointOfInterest2 : Interaction {
-    public PointOfInterest2(IInteractable interactable) : base(interactable, INTERACTION_TYPE.POI_2, 70) {
+    public PointOfInterest2(IInteractable interactable) : base(interactable, INTERACTION_TYPE.POI_2, 30) {
         _name = "Point of Interest 2";
     }
     #region Overrides
     public override void CreateStates() {
+        CreateExploreStates();
+        CreateWhatToDoNextState("%minion% ignored the point of interest in the location. Do you want him to continue surveillance of " + _interactable.specificLocation.thisName + "?");
+
         InteractionState startState = new InteractionState("Start", this);
         InteractionState supplyState = new InteractionState("Supply", this);
         InteractionState manaState = new InteractionState("Mana", this);
@@ -18,21 +21,25 @@ public class PointOfInterest2 : Interaction {
         InteractionState unleashedMonsterState = new InteractionState("Unleashed Monster", this);
         InteractionState nothingState = new InteractionState("Nothing", this);
 
-        if (_interactable is BaseLandmark) {
-            BaseLandmark landmark = _interactable as BaseLandmark;
-            string startStateDesc = "Our imp has discovered a previously unexplored cave. We can send out a minion to explore further.";
-            startState.SetDescription(startStateDesc);
-            CreateActionOptions(startState);
+        string startStateDesc = "%minion% has discovered a previously unexplored cave. We can send out a minion to explore further.";
+        startState.SetDescription(startStateDesc);
 
-            supplyState.SetEndEffect(() => SupplyRewardEffect(supplyState));
-            manaState.SetEndEffect(() => ManaRewardEffect(manaState));
-            demonDisappearsState.SetEndEffect(() => DemonDisappearsRewardEffect(demonDisappearsState));
-            demonWeaponUpgradeState.SetEndEffect(() => DemonWeaponUpgradeEffect(demonWeaponUpgradeState));
-            demonArmorUpgradeState.SetEndEffect(() => DemonArmorUpgradeEffect(demonArmorUpgradeState));
-            unleashedMonsterState.SetEndEffect(() => UnleashedMonsterEffect(unleashedMonsterState));
-            nothingState.SetEndEffect(() => NothingEffect(nothingState));
+        CreateActionOptions(startState);
+        CreateActionOptions(supplyState);
+        CreateActionOptions(manaState);
+        CreateActionOptions(demonWeaponUpgradeState);
+        CreateActionOptions(demonArmorUpgradeState);
+        CreateActionOptions(unleashedMonsterState);
+        CreateActionOptions(nothingState);
 
-        }
+        //supplyState.SetEndEffect(() => SupplyRewardEffect(supplyState));
+        //manaState.SetEndEffect(() => ManaRewardEffect(manaState));
+        demonDisappearsState.SetEndEffect(() => DemonDisappearsRewardEffect(demonDisappearsState));
+        //demonWeaponUpgradeState.SetEndEffect(() => DemonWeaponUpgradeEffect(demonWeaponUpgradeState));
+        //demonArmorUpgradeState.SetEndEffect(() => DemonArmorUpgradeEffect(demonArmorUpgradeState));
+        //unleashedMonsterState.SetEndEffect(() => UnleashedMonsterEffect(unleashedMonsterState));
+        //nothingState.SetEndEffect(() => NothingEffect(nothingState));
+
         _states.Add(startState.name, startState);
         _states.Add(supplyState.name, supplyState);
         _states.Add(manaState.name, manaState);
@@ -50,10 +57,9 @@ public class PointOfInterest2 : Interaction {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Send out a Demon.",
-                description = "We have sent %minion% to explore the interesting location.",
-                duration = 15,
-                needsMinion = true,
-                neededObjects = new List<System.Type>() { typeof(Minion) },
+                //description = "We have sent %minion% to explore the interesting location.",
+                duration = 0,
+                needsMinion = false,
                 effect = () => SendOutDemonEffect(state),
             };
 
@@ -61,12 +67,34 @@ public class PointOfInterest2 : Interaction {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Leave it alone.",
-                duration = 1,
+                duration = 0,
                 needsMinion = false,
-                effect = () => LeaveAloneEffect(state),
+                effect = () => WhatToDoNextState(),
             };
             state.AddActionOption(sendOutDemonOption);
             state.AddActionOption(leaveAloneOption);
+            state.SetDefaultOption(leaveAloneOption);
+        } else {
+            ActionOption continueSurveillanceOption = new ActionOption {
+                interactionState = state,
+                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                name = "Continue surveillance of the area.",
+                duration = 0,
+                needsMinion = false,
+                effect = () => ExploreContinuesOption(state),
+            };
+            ActionOption returnToMeOption = new ActionOption {
+                interactionState = state,
+                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                name = "Return to me.",
+                duration = 0,
+                needsMinion = false,
+                effect = () => ExploreEndsOption(state),
+            };
+
+            state.AddActionOption(continueSurveillanceOption);
+            state.AddActionOption(returnToMeOption);
+            state.SetDefaultOption(returnToMeOption);
         }
     }
     #endregion
@@ -99,31 +127,34 @@ public class PointOfInterest2 : Interaction {
         }
     }
     private void DemonWeaponUpgradeRewardState(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " has returned with an improved Weapon.");
+        _states[effectName].SetDescription(_interactable.explorerMinion.name + " has returned with an improved Weapon.");
         SetCurrentState(_states[effectName]);
+        DemonWeaponUpgradeEffect(_states[effectName]);
     }
     private void DemonArmorUpgradeRewardState(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " has returned with an improved Armor.");
+        _states[effectName].SetDescription(_interactable.explorerMinion.name + " has returned with an improved Armor.");
         SetCurrentState(_states[effectName]);
+        DemonArmorUpgradeEffect(_states[effectName]);
     }
     private void UnleashedMonsterRewardState(InteractionState state, string effectName) {
         if(_interactable is BaseLandmark) {
             BaseLandmark landmark = _interactable as BaseLandmark;
             if(landmark.charactersWithHomeOnLandmark.Count > 0) {
-                _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " has awakened a " + landmark.charactersWithHomeOnLandmark[0].name + ". It now defends the cave from intruders.");
+                _states[effectName].SetDescription(_interactable.explorerMinion.name + " has awakened a " + landmark.charactersWithHomeOnLandmark[0].name + ". It now defends the cave from intruders.");
                 SetCurrentState(_states[effectName]);
+                UnleashedMonsterEffect(_states[effectName]);
             }
         }
     }
     private void DemonWeaponUpgradeEffect(InteractionState state) {
-        if(state.assignedMinion.icharacter is Character) {
-            Character character = state.assignedMinion.icharacter as Character;
+        if(_interactable.explorerMinion.icharacter is Character) {
+            Character character = _interactable.explorerMinion.icharacter as Character;
             character.UpgradeWeapon();
         }
     }
     private void DemonArmorUpgradeEffect(InteractionState state) {
-        if (state.assignedMinion.icharacter is Character) {
-            Character character = state.assignedMinion.icharacter as Character;
+        if (_interactable.explorerMinion.icharacter is Character) {
+            Character character = _interactable.explorerMinion.icharacter as Character;
             character.UpgradeArmor();
         }
     }

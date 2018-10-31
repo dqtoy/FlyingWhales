@@ -79,12 +79,21 @@ public class InteractionState {
         _endEffect = endEffect;
     }
     public void OnStartState() {
+        SetDescription();
         //if(_isTimed && _defaultOption != null) {
         //    SchedulingManager.Instance.AddEntry(_timeDate, () => ActivateDefault());
         //}
     }
     public void OnEndState() {
         AssignedMinionGoesBack();
+    }
+    private void SetDescription() {
+        if (!string.IsNullOrEmpty(description) && interaction.interactable.explorerMinion != null) {
+            if (description.Contains("%minion%")) {
+                SetDescription(description.Replace("%minion%", interaction.interactable.explorerMinion.name));
+            }
+            InteractionUI.Instance.interactionItem.SetDescription(description);
+        }
     }
     public void SetChosenOption(ActionOption option) {
         _chosenOption = option;

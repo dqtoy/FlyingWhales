@@ -10,14 +10,14 @@ public class KillerOnTheLoose : Interaction {
     #region Overrides
     public override void CreateStates() {
         CreateExploreStates();
-        CreateWhatToDoNextState(_interactable.explorerMinion.name + " did not care about whether there is a serial killer on the loose. Do you want him to continue surveillance of " + _interactable.specificLocation.thisName + "?");
+        CreateWhatToDoNextState("%minion% did not care about whether there is a serial killer on the loose. Do you want him to continue surveillance of " + _interactable.specificLocation.thisName + "?");
 
         InteractionState startState = new InteractionState("Start", this);
         InteractionState convertDemonState = new InteractionState("Convert Demon", this);
         InteractionState nothingHappensState = new InteractionState("Nothing Happens", this);
         InteractionState gainSupplyState = new InteractionState("Gain Supply", this);
 
-        string startStateDesc = _interactable.explorerMinion.name + " reported rumors of a serial killer on the loose in " + _interactable.specificLocation.thisName + ". If there is truth to the rumor, a hardened criminal like that is a great candidate for a Demonic Conversion.";
+        string startStateDesc = "%minion% reported rumors of a serial killer on the loose in " + _interactable.specificLocation.thisName + ". If there is truth to the rumor, a hardened criminal like that is a great candidate for a Demonic Conversion.";
         startState.SetDescription(startStateDesc);
 
         CreateActionOptions(startState);
@@ -42,7 +42,7 @@ public class KillerOnTheLoose : Interaction {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Search for the killer.",
-                description = "We have sent %minion% to search for the killer.",
+                //description = "We have sent %minion% to search for the killer.",
                 duration = 0,
                 needsMinion = false,
                 effect = () => SearchKillerOption(state),

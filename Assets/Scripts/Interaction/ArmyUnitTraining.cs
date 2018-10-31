@@ -49,7 +49,7 @@ public class ArmyUnitTraining : Interaction {
                 cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Stop them.",
                 duration = 0,
-                description = "We have sent %minion% to persuade the garrison general to stop their current plan of raising a new army unit.",
+                //description = "We have sent %minion% to persuade the garrison general to stop their current plan of raising a new army unit.",
                 needsMinion = false,
                 effect = () => StopThemOption(state),
             };
@@ -57,7 +57,7 @@ public class ArmyUnitTraining : Interaction {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
-                description = "The garrison is producing another army unit.",
+                //description = "The garrison is producing another army unit.",
                 duration = 0,
                 needsMinion = false,
                 effect = () => DoNothingOption(state),

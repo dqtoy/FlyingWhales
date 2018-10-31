@@ -35,12 +35,18 @@ SpriteAtlas:
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
+  - {fileID: 21300000, guid: fbfd33b220ecfc6488a446d87e7285a2, type: 3}
   - {fileID: 21300000, guid: 9a9317c62f76a34428932da7bab9bd38, type: 3}
   - {fileID: 21300000, guid: 3e18a3e9bf482e8488e8495210704150, type: 3}
   - {fileID: 21300000, guid: 03e3bd48445a43a4ba4261e543505998, type: 3}
+  - {fileID: 21300000, guid: 8fdd06c4ca82199459a8145f73a1a5ad, type: 3}
+  - {fileID: 21300000, guid: 56753c0128a92f142bbf69052218b3d7, type: 3}
+  - {fileID: 21300000, guid: defbe3380eec93a469004ccc9b14f200, type: 3}
   - {fileID: 21300000, guid: c1a6e50d0ccdd2043bbe00862f05a7c2, type: 3}
   - {fileID: 21300000, guid: a2ee2c51a8a17304ba267b414caf8a8e, type: 3}
   - {fileID: 21300000, guid: 7f60a0da614174b40abee29f21d3e439, type: 3}
+  - {fileID: 21300000, guid: 46983d8f82e9dae40b91ad284015968c, type: 3}
+  - {fileID: 21300000, guid: d023f0d3d22c1ec49ac2ffd08e0b6b77, type: 3}
   - {fileID: 21300000, guid: 9ca172a8792b62e45a59950c177cd2bf, type: 3}
   - {fileID: 21300000, guid: 1b4604932b89b3a46b3204f2eb3f340e, type: 3}
   - {fileID: 21300000, guid: 32aeae6a47f36a04a8a907f56d88dba1, type: 3}
@@ -61,9 +67,12 @@ SpriteAtlas:
   - {fileID: 21300000, guid: bbc8aecbe28700a4dafe5188c53b2ee2, type: 3}
   - {fileID: 21300000, guid: 6a4d7fe63a2ddce45a6389b32e22e2d4, type: 3}
   - {fileID: 21300000, guid: 64c0c27a3a5a0b7419e7b96952268b8a, type: 3}
+  - {fileID: 21300000, guid: f6387ee2f8881994f98b423c7f36f320, type: 3}
   - {fileID: 21300000, guid: 0740052277773e24d896e5929351d05a, type: 3}
   - {fileID: 21300000, guid: fd93c6f70e8bb394da445de1541b7a4a, type: 3}
+  - {fileID: 21300000, guid: 64bc17278d4066b419c756ddcf6c216d, type: 3}
   - {fileID: 21300000, guid: 165146342d129374ba18d5b3bf969df6, type: 3}
+  - {fileID: 21300000, guid: 658e054bda22c0a4c976ef2344240399, type: 3}
   - {fileID: 21300000, guid: fd9b1ed7f978dae4f85ebfa5eb14d230, type: 3}
   - {fileID: 21300000, guid: 5b6a9120e63507d4283bd6d9395709ad, type: 3}
   - {fileID: 21300000, guid: 68536d9a0f3e0ae49affc11b074194df, type: 3}
@@ -181,11 +190,17 @@ SpriteAtlas:
   - {fileID: 21300004, guid: b77cc3ee0b449b440a9dd563f39db05b, type: 3}
   - {fileID: 21300002, guid: b77cc3ee0b449b440a9dd563f39db05b, type: 3}
   m_PackedSpriteNamesToIndex:
+  - Create_View_Party_UI
   - Stampede_by_Kekai
   - interaction_background
   - calendar-page-empty
+  - tile_character_list_bottom_widget
+  - tile_character_list_top_widget
+  - tile_defender_slot_widget
   - WhiteCircle
   - minion_widget_locked
+  - minion_widget
+  - minion_widget_empty
   - minion_widget
   - minion_holder_top
   - minion_holder_bottom
@@ -207,9 +222,12 @@ SpriteAtlas:
   - bottom_right_left_cap
   - interaction_minion_slot_glow
   - interaction_minion_slot
+  - minion_container_flat
   - bottom_right_center_tile
   - BottomMenuContainer
+  - transparent_bg
   - interaction_tab_bg
+  - minion_container_draggable
   - 09_demons03
   - ge_cont-05B
   - ge_cont-05C

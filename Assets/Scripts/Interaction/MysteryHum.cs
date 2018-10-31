@@ -10,14 +10,14 @@ public class MysteryHum : Interaction {
     #region Overrides
     public override void CreateStates() {
         CreateExploreStates();
-        CreateWhatToDoNextState(_interactable.explorerMinion.name + " ignored the humming in the area. Do you want him to continue surveillance of " + _interactable.specificLocation.thisName + "?");
+        CreateWhatToDoNextState("%minion% ignored the humming in the area. Do you want him to continue surveillance of " + _interactable.specificLocation.thisName + "?");
 
         InteractionState startState = new InteractionState("Start", this);
         InteractionState demonDisappearsState = new InteractionState("Demon Disappears", this);
         InteractionState demonAttacksState = new InteractionState("Demon Attacks", this);
         InteractionState armyRecruitedState = new InteractionState("Army Recruited", this);
 
-        string startStateDesc = interactable.explorerMinion.name + " reports of some mysterious humming coming from within the caves.";
+        string startStateDesc = "%minion% reports of some mysterious humming coming from within the caves.";
         startState.SetDescription(startStateDesc);
 
         CreateActionOptions(startState);
@@ -41,7 +41,7 @@ public class MysteryHum : Interaction {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 30, currency = CURRENCY.SUPPLY },
                 name = "Send out a Demon.",
-                description = "We have sent %minion% to investigate the source of the mysterious humming.",
+                //description = "We have sent %minion% to investigate the source of the mysterious humming.",
                 duration = 0,
                 needsMinion = true,
                 effect = () => SendOutDemonEffect(state),

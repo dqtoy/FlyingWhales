@@ -69,7 +69,7 @@ public class LandmarkInvestigation {
         if (!_landmark.hasBeenInspected) {
             _landmark.SetHasBeenInspected(true);
         }
-        _duration = 10;
+        _duration = 30;
         _currentTick = 0;
         Messenger.AddListener(Signals.HOUR_STARTED, OnExploreTick);
         _landmark.landmarkVisual.SetAndStartInteractionTimer(_duration);
@@ -104,14 +104,14 @@ public class LandmarkInvestigation {
     private void ExploreDoneCheckForExistingEvents() {
         _landmark.landmarkVisual.StopInteractionTimer();
         if(_landmark.currentInteractions.Count > 0) {
-            _currentInteraction = ShowNothingHappenedInteraction();
+            _currentInteraction = GetRandomInteraction();
         } else {
-            _currentInteraction = ShowNothingHappenedInteraction();
+            _currentInteraction = GetNothingHappenedInteraction();
         }
         _landmark.landmarkVisual.SetAndStartInteractionTimer(Interaction.secondTimeOutTicks, new InteractionTimer.OnStopTimer(_landmark.landmarkVisual.HideInteractionTimer));
         _landmark.landmarkVisual.SetInteractionTimerButtonState(true);
     }
-    private Interaction ShowRandomInteraction() {
+    private Interaction GetRandomInteraction() {
         //GameManager.Instance.SetPausedState(true);
         Interaction chosenInteraction = _landmark.currentInteractions[UnityEngine.Random.Range(0, _landmark.currentInteractions.Count)];
         chosenInteraction.CancelFirstTimeOut();
@@ -119,7 +119,7 @@ public class LandmarkInvestigation {
         return chosenInteraction;
         //Popup interaction
     }
-    private Interaction ShowNothingHappenedInteraction() {
+    private Interaction GetNothingHappenedInteraction() {
         Interaction chosenInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.NOTHING_HAPPENED, _landmark);
         chosenInteraction.CancelFirstTimeOut();
         chosenInteraction.ScheduleSecondTimeOut();

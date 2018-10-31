@@ -12,7 +12,7 @@ public class MysteriousSarcophagus : Interaction {
     #region Overrides
     public override void CreateStates() {
         CreateExploreStates();
-        CreateWhatToDoNextState(_interactable.explorerMinion.name + " left the sarcophagus alone. Do you want him to continue surveillance of " + _interactable.specificLocation.thisName + "?");
+        CreateWhatToDoNextState("%minion% left the sarcophagus alone. Do you want him to continue surveillance of " + _interactable.specificLocation.thisName + "?");
 
         InteractionState startState = new InteractionState("Start", this);
         InteractionState cursedState = new InteractionState("Cursed", this);
@@ -22,7 +22,7 @@ public class MysteriousSarcophagus : Interaction {
         InteractionState awakenUndeadHeroState = new InteractionState("Awaken Undead Hero", this);
         InteractionState gainPositiveState = new InteractionState("Gain Positive Trait", this);
 
-        string startStateDesc = _interactable.explorerMinion.name + " has discovered an unopened sarcophagus in a hidden alcove. Should we open it?";
+        string startStateDesc = "%minion% has discovered an unopened sarcophagus in a hidden alcove. Should we open it?";
         startState.SetDescription(startStateDesc);
 
         CreateActionOptions(startState);
@@ -56,7 +56,7 @@ public class MysteriousSarcophagus : Interaction {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Of course.",
-                description = "We have sent %minion% to open the sarcophagus.",
+                //description = "We have sent %minion% to open the sarcophagus.",
                 duration = 0,
                 needsMinion = false,
                 effect = () => OfCourseOption(state),

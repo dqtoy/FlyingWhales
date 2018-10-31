@@ -11,7 +11,7 @@ public class SuspiciousSoldierMeeting : Interaction {
     #region Overrides
     public override void CreateStates() {
         CreateExploreStates();
-        CreateWhatToDoNextState(_interactable.explorerMinion.name + " stopped keeping track of the soldiers' whereabouts. Do you want him to continue surveillance of " + _interactable.specificLocation.thisName +"?");
+        CreateWhatToDoNextState("%minion% stopped keeping track of the soldiers' whereabouts. Do you want him to continue surveillance of " + _interactable.specificLocation.thisName +"?");
         InteractionState startState = new InteractionState("Start", this);
         InteractionState reduceDefendersState = new InteractionState("Reduce Defenders", this);
         InteractionState warDeclaredState = new InteractionState("War Declared", this);
@@ -19,7 +19,7 @@ public class SuspiciousSoldierMeeting : Interaction {
         InteractionState generalDiesState = new InteractionState("General Dies", this);
         InteractionState nothingHappensState = new InteractionState("Nothing Happens", this);
 
-        string startStateDesc = _interactable.explorerMinion.name + " has discovered a group of soldiers leaving the Garrison and meeting in secret.";
+        string startStateDesc = "%minion% has discovered a group of soldiers leaving the Garrison and meeting in secret.";
         startState.SetDescription(startStateDesc);
 
         CreateActionOptions(startState);
@@ -49,7 +49,7 @@ public class SuspiciousSoldierMeeting : Interaction {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 30, currency = CURRENCY.SUPPLY },
                 name = "Send out a Demon.",
-                description = "We have sent %minion% to watch the soldiers and follow them on their next secret meeting.",
+                //description = "We have sent %minion% to watch the soldiers and follow them on their next secret meeting.",
                 duration = 0,
                 needsMinion = false,
                 effect = () => SendOutDemonOption(state),

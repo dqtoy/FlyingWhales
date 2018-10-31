@@ -10,7 +10,7 @@ public class NothingHappened : Interaction {
 
     #region Overrides
     public override void CreateStates() {
-        base.CreateStates();
+        CreateExploreStates();
         InteractionState startState = new InteractionState("Start", this);
 
         string startStateDesc = _interactable.explorerMinion.name + " did not find anything worth reporting.";
