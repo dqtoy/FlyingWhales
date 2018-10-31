@@ -8,7 +8,7 @@ public class TheSpiderQueen : Interaction {
     private BaseLandmark landmark;
     private WeightedDictionary<LandmarkDefender> assaultSpawnWeights;
 
-    public TheSpiderQueen(IInteractable interactable) : base(interactable, INTERACTION_TYPE.SPIDER_QUEEN) {
+    public TheSpiderQueen(IInteractable interactable) : base(interactable, INTERACTION_TYPE.SPIDER_QUEEN, 70) {
         _name = "The Spider Queen";
     }
 
@@ -24,9 +24,9 @@ public class TheSpiderQueen : Interaction {
             string startStateDesc = "Our Imp reported that the Spider Queen has been spotted out of the heavily protected hive core. Should we do something before it gets back in?";
             startState.SetDescription(startStateDesc);
             CreateActionOptions(startState);
-            GameDate dueDate = GameManager.Instance.Today();
-            dueDate.AddHours(100);
-            startState.SetTimeSchedule(startState.actionOptions[3], dueDate); //default is do nothing
+            //GameDate dueDate = GameManager.Instance.Today();
+            //dueDate.AddHours(100);
+            //startState.SetTimeSchedule(startState.actionOptions[3], dueDate); //default is do nothing
 
             //action option states
             InteractionState attackLocationState = new InteractionState("Attack Location", this);

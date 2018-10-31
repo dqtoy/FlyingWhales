@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ArmyMobilization : Interaction {
 
-    public ArmyMobilization(IInteractable interactable) : base(interactable, INTERACTION_TYPE.ARMY_MOBILIZATION) {
+    public ArmyMobilization(IInteractable interactable) : base(interactable, INTERACTION_TYPE.ARMY_MOBILIZATION, 50) {
         _name = "Army Mobilization";
     }
 
@@ -53,15 +53,15 @@ public class ArmyMobilization : Interaction {
                 duration = 0,
                 needsMinion = false,
                 effect = () => DoNothingOption(state),
-                onStartDurationAction = () => SetDefaultActionDurationAsRemainingTicks("Do nothing.", state)
+                //onStartDurationAction = () => SetDefaultActionDurationAsRemainingTicks("Do nothing.", state)
             };
 
             state.AddActionOption(stopThemOption);
             state.AddActionOption(doNothingOption);
 
-            GameDate scheduleDate = GameManager.Instance.Today();
-            scheduleDate.AddHours(50);
-            state.SetTimeSchedule(doNothingOption, scheduleDate);
+            //GameDate scheduleDate = GameManager.Instance.Today();
+            //scheduleDate.AddHours(50);
+            //state.SetTimeSchedule(doNothingOption, scheduleDate);
         }
     }
     #endregion

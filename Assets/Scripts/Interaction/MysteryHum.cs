@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MysteryHum : Interaction {
-    public MysteryHum(IInteractable interactable) : base(interactable, INTERACTION_TYPE.MYSTERY_HUM) {
+    public MysteryHum(IInteractable interactable) : base(interactable, INTERACTION_TYPE.MYSTERY_HUM, 150) {
         _name = "Mystery Hum";
     }
 
@@ -53,9 +53,9 @@ public class MysteryHum : Interaction {
             state.AddActionOption(sendOutDemonOption);
             state.AddActionOption(doNothingOption);
 
-            GameDate scheduleDate = GameManager.Instance.Today();
-            scheduleDate.AddHours(150);
-            state.SetTimeSchedule(doNothingOption, scheduleDate);
+            //GameDate scheduleDate = GameManager.Instance.Today();
+            //scheduleDate.AddHours(150);
+            //state.SetTimeSchedule(doNothingOption, scheduleDate);
         }
     }
     #endregion

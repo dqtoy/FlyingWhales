@@ -105,14 +105,14 @@ public class Interaction {
     //public void SetInteractionItem(InteractionItem interactionItem) {
     //    _interactionItem = interactionItem;
     //}
-    protected int GetRemainingDurationFromState(InteractionState state) {
-        return GameManager.Instance.GetTicksDifferenceOfTwoDates(GameManager.Instance.Today(), state.timeDate);
-    }
-    protected void SetDefaultActionDurationAsRemainingTicks(string optionName, InteractionState stateFrom) {
-        ActionOption option = stateFrom.GetOption(optionName);
-        int remainingTicks = GameManager.Instance.GetTicksDifferenceOfTwoDates(GameManager.Instance.Today(), stateFrom.timeDate);
-        option.duration = remainingTicks;
-    }
+    //protected int GetRemainingDurationFromState(InteractionState state) {
+    //    return GameManager.Instance.GetTicksDifferenceOfTwoDates(GameManager.Instance.Today(), state.timeDate);
+    //}
+    //protected void SetDefaultActionDurationAsRemainingTicks(string optionName, InteractionState stateFrom) {
+    //    ActionOption option = stateFrom.GetOption(optionName);
+    //    int remainingTicks = GameManager.Instance.GetTicksDifferenceOfTwoDates(GameManager.Instance.Today(), stateFrom.timeDate);
+    //    option.duration = remainingTicks;
+    //}
     protected void FirstTimeOut() {
         if (!_isFirstTimeOutCancelled) {
             TimedOutRunDefault();

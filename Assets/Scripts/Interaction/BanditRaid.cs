@@ -10,7 +10,7 @@ public class BanditRaid : Interaction {
     private WeightedDictionary<LandmarkDefender> assaultSpawnWeights;
     private WeightedDictionary<LandmarkDefender> firstElementAssaultSpawnWeights; //TODO: Make this more elegant!
 
-    public BanditRaid(IInteractable interactable) : base(interactable, INTERACTION_TYPE.BANDIT_RAID) {
+    public BanditRaid(IInteractable interactable) : base(interactable, INTERACTION_TYPE.BANDIT_RAID, 200) {
         _name = "Bandit Raid";
     }
 
@@ -25,9 +25,9 @@ public class BanditRaid : Interaction {
             string startStateDesc = "The bandits are preparing to raid " + chosenLandmarkToRaid.landmarkName;
             startState.SetDescription(startStateDesc);
             CreateActionOptions(startState);
-            GameDate dueDate = GameManager.Instance.Today();
-            dueDate.AddHours(200);
-            startState.SetTimeSchedule(startState.actionOptions[2], dueDate); //default is do nothing
+            //GameDate dueDate = GameManager.Instance.Today();
+            //dueDate.AddHours(200);
+            //startState.SetTimeSchedule(startState.actionOptions[2], dueDate); //default is do nothing
 
             //action option states
             InteractionState endResult1State = new InteractionState("End Result 1", this); //raid
@@ -89,7 +89,7 @@ public class BanditRaid : Interaction {
                 needsMinion = false,
                 neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => DoNothingEffect(state),
-                onStartDurationAction = () => SetDefaultActionDurationAsRemainingTicks("Do nothing.", state),
+                //onStartDurationAction = () => SetDefaultActionDurationAsRemainingTicks("Do nothing.", state),
             };
 
             state.AddActionOption(stopThemFromAttacking);
