@@ -801,7 +801,7 @@ public class CharacterManager : MonoBehaviour {
             if (homeLocation is BaseLandmark) {
                 BaseLandmark landmark = homeLocation as BaseLandmark;
                 landmark.AddCharacterToLocation(party);
-                landmark.AddCharacterHomeOnLandmark(armyUnit);
+                landmark.AddCharacterHomeOnLandmark(armyUnit, false);
             }
         }
 #endif

@@ -1608,6 +1608,9 @@ namespace ECS {
                     (ownParty as CharacterParty).actionData.currentAction.EndAction(ownParty, (ownParty as CharacterParty).actionData.currentTargetObject);
                 }
             }
+            if (this.minion != null) {
+                this.minion.SetEnabledState(true); //reenable this minion, since it could've been disabled because it was part of another party
+            }
         }
         public void OnAddedToParty() {
             if (currentParty.id != ownParty.id) {

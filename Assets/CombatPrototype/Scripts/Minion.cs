@@ -95,6 +95,15 @@ public class Minion : IUnit {
     }
 
     public void SetEnabledState(bool state) {
+        if (icharacter.IsInOwnParty()) {
+            //also set enabled state of other party members
+            for (int i = 0; i < icharacter.ownParty.icharacters.Count; i++) {
+                ICharacter otherChar = icharacter.ownParty.icharacters[i];
+                if (otherChar.id != icharacter.id && otherChar.minion != null) {
+                    otherChar.minion.SetEnabledState(state);
+                }
+            }
+        }
         _isEnabled = state;
         _minionItem.SetEnabledState(state);
     }

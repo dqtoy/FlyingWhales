@@ -67,6 +67,8 @@ public class LandmarkInfoUI : UIMenu {
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
         //Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, OnPartyEnteredLandmark);
         //Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, OnPartyExitedLandmark);
+        Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_ADDED, OnResidentAddedToLandmark);
+        Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_REMOVED, OnResidentRemovedFromLandmark);
     }
     public override void OpenMenu() {
         base.OpenMenu();
@@ -229,6 +231,18 @@ public class LandmarkInfoUI : UIMenu {
         }
         return null;
     }
+    private LandmarkCharacterItem GetItem(ICharacter character) {
+        LandmarkCharacterItem[] items = Utilities.GetComponentsInDirectChildren<LandmarkCharacterItem>(charactersScrollView.content.gameObject);
+        for (int i = 0; i < items.Length; i++) {
+            LandmarkCharacterItem item = items[i];
+            if (item.character != null) {
+                if (item.character.id == character.id) {
+                    return item;
+                }
+            }
+        }
+        return null;
+    }
     private LandmarkCharacterItem CreateNewCharacterItem(ICharacter character) {
         GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
         LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
@@ -251,6 +265,21 @@ public class LandmarkInfoUI : UIMenu {
         if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id) {
             LandmarkCharacterItem item = GetItem(party);
             if(item != null) {
+                characterItems.Remove(item);
+                ObjectPoolManager.Instance.DestroyObject(item.gameObject);
+                CheckScrollers();
+            }
+        }
+    }
+    private void OnResidentAddedToLandmark(BaseLandmark landmark, ICharacter character) {
+        if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id && (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll)) {
+            CreateNewCharacterItem(character);
+        }
+    }
+    private void OnResidentRemovedFromLandmark(BaseLandmark landmark, ICharacter character) {
+        if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id) {
+            LandmarkCharacterItem item = GetItem(character);
+            if (item != null) {
                 characterItems.Remove(item);
                 ObjectPoolManager.Instance.DestroyObject(item.gameObject);
                 CheckScrollers();

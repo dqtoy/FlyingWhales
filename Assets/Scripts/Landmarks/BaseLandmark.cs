@@ -326,14 +326,19 @@ public class BaseLandmark : ILocation, IInteractable {
     #endregion
 
     #region Characters
-    public void AddCharacterHomeOnLandmark(ICharacter character) {
+    public void AddCharacterHomeOnLandmark(ICharacter character, bool broadcast = true) {
         if (!_charactersWithHomeOnLandmark.Contains(character)) {
             _charactersWithHomeOnLandmark.Add(character);
             character.SetHomeLandmark(this);
+            if (broadcast) {
+                Messenger.Broadcast(Signals.LANDMARK_RESIDENT_ADDED, this, character);
+            }
         }
     }
     public void RemoveCharacterHomeOnLandmark(ICharacter character) {
-        _charactersWithHomeOnLandmark.Remove(character);
+        if (_charactersWithHomeOnLandmark.Remove(character)) {
+            Messenger.Broadcast(Signals.LANDMARK_RESIDENT_REMOVED, this, character);
+        }
         character.SetHomeLandmark(null);
     }
     public bool IsResident(ICharacter character) {

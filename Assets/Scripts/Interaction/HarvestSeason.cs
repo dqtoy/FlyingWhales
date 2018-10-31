@@ -27,7 +27,7 @@ public class HarvestSeason : Interaction {
             InteractionState obtainHarvestState = new InteractionState("Obtain Harvest", this); 
             InteractionState demonDiscoveredState = new InteractionState("Demon Discovered", this);
             InteractionState demonKilledState = new InteractionState("Demon Killed", this);
-            InteractionState whatToDoNextState = new InteractionState("What To Do Next", this);
+            //InteractionState whatToDoNextState = new InteractionState("What To Do Next", this);
             InteractionState exploreContinuesState = new InteractionState("Explore Continues", this);
             InteractionState exploreEndsState = new InteractionState("Explore Ends", this);
 
@@ -48,7 +48,7 @@ public class HarvestSeason : Interaction {
             _states.Add(obtainHarvestState.name, obtainHarvestState);
             _states.Add(demonDiscoveredState.name, demonDiscoveredState);
             _states.Add(demonKilledState.name, demonKilledState);
-            _states.Add(whatToDoNextState.name, whatToDoNextState);
+            //_states.Add(whatToDoNextState.name, whatToDoNextState);
             _states.Add(exploreContinuesState.name, exploreContinuesState);
             _states.Add(exploreEndsState.name, exploreEndsState);
 
