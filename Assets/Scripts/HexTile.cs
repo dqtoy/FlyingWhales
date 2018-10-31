@@ -1063,9 +1063,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             return;
         }
         Messenger.Broadcast(Signals.TILE_RIGHT_CLICKED, this);
-        if (landmarkOnTile != null && (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.role.roleType == CHARACTER_ROLE.PLAYER)) {
-            UIManager.Instance.ShowPlayerActions(this.landmarkOnTile);
-        }
+        //if (landmarkOnTile != null && (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && UIManager.Instance.characterInfoUI.currentlyShowingCharacter.role.roleType == CHARACTER_ROLE.PLAYER)) {
+        //    UIManager.Instance.ShowPlayerActions(this.landmarkOnTile);
+        //}
 #endif
     }
     public void MouseOver() {

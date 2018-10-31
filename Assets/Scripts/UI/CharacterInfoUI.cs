@@ -365,11 +365,11 @@ public class CharacterInfoUI : UIMenu {
     private void UpdateBasicInfo() {
         nameLbl.text = _activeCharacter.name;
         if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
-            nameLbl.text += " (Info State: Updated)"; 
+            nameLbl.text += " (Updated)"; 
             lvlClassLbl.text = "Lvl." + _activeCharacter.level.ToString() + " " + _activeCharacter.characterClass.className;
         } else {
             if (_activeCharacter.hasBeenInspected) {
-                nameLbl.text += " (Info State: Old)";
+                nameLbl.text += " (Old)";
                 lvlClassLbl.text = "Lvl." + _activeCharacter.uiData.level.ToString() + " " + _activeCharacter.uiData.className;
             } else {
                 lvlClassLbl.text = "???";

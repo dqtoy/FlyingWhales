@@ -21,6 +21,8 @@ public class SlotItem : MonoBehaviour {
 
     public int slotIndex { get; private set; }
 
+    private string hoverInfo;
+
     public void SetNeededType(System.Type neededType) {
         this.neededType = neededType;
     }
@@ -68,25 +70,30 @@ public class SlotItem : MonoBehaviour {
             areaEmblem.gameObject.SetActive(false);
             portrait.gameObject.SetActive(false);
             factionEmblem.SetFaction((associatedObj as FactionIntel).faction);
+            hoverInfo = (associatedObj as FactionIntel).faction.name;
         } else if (associatedObj is LocationIntel) {
             factionEmblem.gameObject.SetActive(false);
             areaEmblem.gameObject.SetActive(true);
             portrait.gameObject.SetActive(false);
+            hoverInfo = (associatedObj as LocationIntel).location.name;
         } else if (associatedObj is CharacterIntel) {
             factionEmblem.gameObject.SetActive(false);
             areaEmblem.gameObject.SetActive(false);
             portrait.gameObject.SetActive(true);
             portrait.GeneratePortrait((associatedObj as CharacterIntel).character, 95, true);
+            hoverInfo = (associatedObj as CharacterIntel).character.name;
         } else if (associatedObj is Minion) {
             factionEmblem.gameObject.SetActive(false);
             areaEmblem.gameObject.SetActive(false);
             portrait.gameObject.SetActive(true);
             portrait.GeneratePortrait((associatedObj as Minion).icharacter, 95, true);
+            hoverInfo = (associatedObj as Minion).name;
         } else if (associatedObj is ICharacter) {
             factionEmblem.gameObject.SetActive(false);
             areaEmblem.gameObject.SetActive(false);
             portrait.gameObject.SetActive(true);
             portrait.GeneratePortrait((associatedObj as ICharacter), 95, true);
+            hoverInfo = (associatedObj as ICharacter).name;
         }
     }
     public void ClearSlot(bool keepType = false) {
@@ -127,6 +134,17 @@ public class SlotItem : MonoBehaviour {
         portrait.gameObject.SetActive(false);
         factionEmblem.gameObject.SetActive(false);
         areaEmblem.gameObject.SetActive(false);
+    }
+
+    public void ShowObjectInfo() {
+        if (placedObject != null) {
+            UIManager.Instance.ShowSmallInfo(hoverInfo);
+        }
+    }
+    public void HideObjectInfo() {
+        if (placedObject != null) {
+            UIManager.Instance.HideSmallInfo();
+        }
     }
 }
 

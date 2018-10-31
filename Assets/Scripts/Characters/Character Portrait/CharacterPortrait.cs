@@ -218,7 +218,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler, IPointerEnt
             return;
         }
         if (eventData.button == PointerEventData.InputButton.Right) {
-            Debug.Log("Right clicked character portrait!");
+            //Debug.Log("Right clicked character portrait!");
             if (_character != null) {
                 if (_character is ECS.Character) {
                     UIManager.Instance.ShowCharacterInfo(_character as ECS.Character);
