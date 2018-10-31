@@ -311,7 +311,8 @@ public class PartyInfoUI : UIMenu {
         return true;
     }
     private void CopyValues(Party party) {
-        partyHolder = new PartyHolder();
+        partyHolder.characters.Clear();
+        partyHolder.SetEmblemSettings(party.emblemBG, party.emblem, party.partyColor);
         partyHolder.SetName(party.partyName);
         for (int i = 0; i < party.icharacters.Count; i++) {
             partyHolder.AddCharacter(party.icharacters[i]);
@@ -332,13 +333,18 @@ public class PartyHolder {
     public PartyHolder() {
         name = string.Empty;
         characters = new List<ICharacter>();
-        emblemBG = CharacterManager.Instance.GetRandomEmblemBG();
-        emblem = CharacterManager.Instance.GetRandomEmblem();
-        partyColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        SetEmblemSettings(CharacterManager.Instance.GetRandomEmblemBG(), 
+            CharacterManager.Instance.GetRandomEmblem(), 
+            UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f));
     }
 
     public void SetName(string name) {
         this.name = name;
+    }
+    public void SetEmblemSettings(EmblemBG emblemBG, Sprite emblem, Color partyColor) {
+        this.emblemBG = emblemBG;
+        this.emblem = emblem;
+        this.partyColor = partyColor;
     }
     public void AddCharacter(ICharacter character) {
         if (!characters.Contains(character)) {
