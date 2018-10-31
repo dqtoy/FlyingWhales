@@ -18,7 +18,7 @@ public class HarvestSeason : Interaction {
             farm = interactable as BaseLandmark;
 
             InteractionState startState = new InteractionState("State 1", this);
-            string startStateDesc = _interactable.explorerMinion + " has reported that the farmers will soon be able to harvest their crops. A sizable amount of the harvest will be given to their troops, providing them with needed Supplies.";
+            string startStateDesc = _interactable.explorerMinion.name + " has reported that the farmers will soon be able to harvest their crops. A sizable amount of the harvest will be given to their troops, providing them with needed Supplies.";
             startState.SetDescription(startStateDesc);
             CreateActionOptions(startState);
 
@@ -30,9 +30,14 @@ public class HarvestSeason : Interaction {
             InteractionState demonKilledState = new InteractionState("Demon Killed", this);
             CreateWhatToDoNextState("What do you want " + _interactable.explorerMinion.name + " to do next?");
 
+            CreateActionOptions(poisonedHarvestState);
+            CreateActionOptions(farmerKilledState);
+            CreateActionOptions(obtainHarvestState);
+            CreateActionOptions(demonDiscoveredState);
+
             //farmerKilledState.SetEndEffect(() => FarmerKilledEffect(farmerKilledState));
-            obtainHarvestState.SetEndEffect(() => ObtainHarvestEffect(obtainHarvestState));
-            demonDiscoveredState.SetEndEffect(() => DemonDiscoveredEffect(demonDiscoveredState));
+            //obtainHarvestState.SetEndEffect(() => ObtainHarvestEffect(obtainHarvestState));
+            //demonDiscoveredState.SetEndEffect(() => DemonDiscoveredEffect(demonDiscoveredState));
             demonKilledState.SetEndEffect(() => DemonKilledEffect(demonKilledState));
 
             _states.Add(startState.name, startState);
@@ -146,7 +151,7 @@ public class HarvestSeason : Interaction {
         List<ICharacter> farmers = farm.tileLocation.areaOfTile.GetResidentsWithClass("Farmer");
         ICharacter chosenFarmer = farmers[Random.Range(0, farmers.Count)];
         _states[effectName].SetDescription(_interactable.explorerMinion.name + " entered the farm at night and was about to poison " +
-            "the crops when a farmer named [Character Name] discovered him. He managed to slay the farmer before being forced to flee. " +
+            "the crops when a farmer named " + chosenFarmer.name + " discovered him. He managed to slay the farmer before being forced to flee. " +
             "What do you want him to do next?");
         SetCurrentState(_states[effectName]);
         chosenFarmer.Death();

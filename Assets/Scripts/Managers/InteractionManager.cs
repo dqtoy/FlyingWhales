@@ -92,6 +92,7 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.SPIDER_QUEEN:
             case INTERACTION_TYPE.MYSTERY_HUM:
             case INTERACTION_TYPE.UNFINISHED_CURSE:
+            case INTERACTION_TYPE.HARVEST_SEASON:
                 //Requires actively Investigating Imp.
                 return landmark.isBeingInspected;
             default:
