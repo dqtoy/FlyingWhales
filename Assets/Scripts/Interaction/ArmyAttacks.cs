@@ -79,7 +79,7 @@ public class ArmyAttacks : Interaction {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
-                description = "The bandits are increasing their defensive army.",
+                //description = "The bandits are increasing their defensive army.",
                 duration = 0,
                 needsMinion = false,
                 effect = () => WhatToDoNextState(),

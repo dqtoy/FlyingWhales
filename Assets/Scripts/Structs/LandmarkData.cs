@@ -69,7 +69,7 @@ public class LandmarkData {
     }
     private WeightedDictionary<bool> GetEventTriggerWeights() {
         WeightedDictionary<bool> weights = new WeightedDictionary<bool>();
-        weights.AddElement(true, eventTriggerRate);
+        weights.AddElement(true, eventTriggerRate + 800);
         weights.AddElement(false, noEventTriggerRate);
         return weights;
     }

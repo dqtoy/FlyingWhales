@@ -349,7 +349,7 @@ public class InteractionItem : MonoBehaviour {
     private void ShowDescriptionAssignment() {
         assignmentGO.SetActive(true);
         confirmBtn.gameObject.SetActive(false);
-        descriptionAssignment.gameObject.SetActive(false);
+        descriptionAssignment.gameObject.SetActive(true);
         slotItem.gameObject.SetActive(true);
     }
 }
