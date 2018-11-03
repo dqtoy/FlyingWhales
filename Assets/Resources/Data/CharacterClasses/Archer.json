@@ -1,1 +1,1 @@
-{"_className":"Archer","_baseSP":0,"_spPerLevel":0,"_armyCount":25,"_attackPowerPerLevel":40.0,"_speedPerLevel":1.0,"_hpPerLevel":3.0,"_skillName":"Normal Attack","_harvestResources":[],"_weaponTierNames":["Sword 2"],"_armorTierNames":["Boots 1"],"_accessoryTierNames":[],"_workActionType":49}
+{"_className":"Archer","_baseSP":0,"_spPerLevel":0,"_armyCount":15,"_attackPowerPerLevel":35.0,"_speedPerLevel":3.0,"_hpPerLevel":1.5,"_skillName":"Normal Attack","_harvestResources":[],"_weaponTierNames":[],"_armorTierNames":[],"_accessoryTierNames":[],"_workActionType":0}
