@@ -477,6 +477,9 @@ public class ObjectManager : MonoBehaviour {
             case LANDMARK_TYPE.IMP_KENNEL:
                 structureObj = new ImpKennel();
                 break;
+            case LANDMARK_TYPE.CEMETERY:
+                structureObj = new Cemetery();
+                break;
             default:
                 throw new System.Exception("No class for " + component.specificObjectType.ToString() + " has been created yet!");
         }

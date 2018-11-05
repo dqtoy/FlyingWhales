@@ -535,10 +535,10 @@ public class Area {
         for (int i = 0; i < landmarks.Count; i++) {
             BaseLandmark currLandmark = landmarks[i];
             if (currLandmark.canProduceSupplies || !currLandmark.landmarkObj.isRuined) {
-                LandmarkData data = LandmarkManager.Instance.GetLandmarkData(currLandmark.specificLandmarkType);
-                totalCollectedSupplies += data.dailySupplyProduction;
-                AdjustSuppliesInBank(data.dailySupplyProduction);
-                supplySummary += currLandmark.name + "(" + currLandmark.specificLandmarkType.ToString() + ") - " + data.dailySupplyProduction.ToString() + "\n";
+                int providedSupplies = Random.Range(currLandmark.minDailySupplyProduction, currLandmark.maxDailySupplyProduction);
+                totalCollectedSupplies += providedSupplies;
+                AdjustSuppliesInBank(providedSupplies);
+                supplySummary += currLandmark.name + "(" + currLandmark.specificLandmarkType.ToString() + ") - " + providedSupplies.ToString() + "\n";
             } else {
                 supplySummary += currLandmark.name + "(" + currLandmark.specificLandmarkType.ToString() + ") - Cannot Produce\n";
             }

@@ -1143,13 +1143,13 @@ public class BaseLandmark : ILocation, IInteractable {
     #region Defenders
     public void AddDefender(ICharacter newDefender) {
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
-        if (data.maxDefenderCount <= 0) {
+        if (maxDefenderCount <= 0) {
             return; //no defender slots
         }
         if (defenders == null) {
             //set the defenders party as the party of the new defender
             defenders = newDefender.ownParty;
-            defenders.SetMaxCharacters(data.maxDefenderCount);
+            defenders.SetMaxCharacters(maxDefenderCount);
             //apply buffs, if any, to new defender party
             for (int i = 0; i < defenderBuffs.Count; i++) {
                 Buff currBuff = defenderBuffs[i];
@@ -1157,7 +1157,7 @@ public class BaseLandmark : ILocation, IInteractable {
             }
         }
 
-        if (defenders.icharacters.Count >= data.maxDefenderCount) {
+        if (defenders.icharacters.Count >= maxDefenderCount) {
             return; //if the current defender party members is more or equal to the maximum defenders allowed for the landmark type
         }
         if (newDefender is Character) {
@@ -1214,6 +1214,15 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     public void SetMaxDefenderCount(int count) {
         this.maxDefenderCount = count;
+    }
+    public WeightedDictionary<LandmarkDefender> GetFirstDefenderWeights() {
+        WeightedDictionary<LandmarkDefender> weights = new WeightedDictionary<LandmarkDefender>();
+        foreach (KeyValuePair<LandmarkDefender, int> kvp in defenderWeights.dictionary) {
+            if (kvp.Key.includeInFirstWeight) {
+                weights.AddElement(kvp.Key, kvp.Value);
+            }
+        }
+        return weights;
     }
     #endregion
 

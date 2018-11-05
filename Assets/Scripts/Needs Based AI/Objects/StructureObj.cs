@@ -127,13 +127,12 @@ public class StructureObj : IObject {
             return;
         }
         Debug.Log("Generating initial defenders for " + _specificObjectType.ToString());
-        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_specificObjectType);
-        for (int i = 0; i < data.initialDefenderCount; i++) {
+        for (int i = 0; i < _objectLocation.initialDefenderCount; i++) {
             WeightedDictionary<LandmarkDefender> defenderWeights;
             if (i == 0) {
-                defenderWeights = data.firstElementDefenderWeights;
+                defenderWeights = _objectLocation.GetFirstDefenderWeights();
             } else {
-                defenderWeights = data.defenderWeights;
+                defenderWeights = _objectLocation.defenderWeights;
             }
             if (defenderWeights.GetTotalOfWeights() > 0) {
                 LandmarkDefender chosenDefender = defenderWeights.PickRandomElementGivenWeights();
@@ -294,17 +293,6 @@ public class StructureObj : IObject {
     #endregion
 
     #region Utilities
-    public CharacterArmyUnit CreateNewDefenderUnit() {
-        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_specificObjectType);
-        WeightedDictionary<LandmarkDefender> defenderWeights = data.defenderWeights;
-        if (defenderWeights.GetTotalOfWeights() > 0) {
-            LandmarkDefender chosenDefender = defenderWeights.PickRandomElementGivenWeights();
-            CharacterArmyUnit defenderUnit = CharacterManager.Instance.CreateCharacterArmyUnit(_objectLocation.owner.race, chosenDefender, _objectLocation.owner, _objectLocation); //_objectLocation.owner.race
-            _objectLocation.AddDefender(defenderUnit);
-            return defenderUnit;
-        }
-        return null;
-    }
     public void SetCommonData(StructureObj clone) {
         clone.SetObjectName(this._objectName);
         clone._specificObjectType = this._specificObjectType;

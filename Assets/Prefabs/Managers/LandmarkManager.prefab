@@ -33,8 +33,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1497639810564476}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 8.383208, y: 6.2957954, z: -90.109886}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -79,16 +79,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 0600000007000000
     isUnique: 1
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 4
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -132,16 +127,11 @@ MonoBehaviour:
         armyCount: 20
         includeInFirstWeight: 0
       m_values: 320000000a0000000a0000000a0000000a0000000f00000014000000
-    interactionWeightsDict:
-      m_keys: 0c000000
-      m_values: 32000000
     possibleSpawnPoints: 0600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 4
     maxDefenderCount: 4
-    eventTriggerRate: 200
-    noEventTriggerRate: 1000
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -166,16 +156,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 300
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -200,16 +185,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -231,16 +211,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -274,16 +249,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 0d000000
-      m_values: 32000000
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 200
-    noEventTriggerRate: 1000
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -338,16 +308,11 @@ MonoBehaviour:
         armyCount: 20
         includeInFirstWeight: 1
       m_values: 1e0000000a0000000a0000000a0000000a0000000f00000014000000
-    interactionWeightsDict:
-      m_keys: 0d000000
-      m_values: 32000000
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 2
     maxDefenderCount: 2
-    eventTriggerRate: 200
-    noEventTriggerRate: 1000
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -375,16 +340,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -412,16 +372,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -445,16 +400,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -501,16 +451,11 @@ MonoBehaviour:
         armyCount: 20
         includeInFirstWeight: 1
       m_values: 1e0000000a0000000a0000000a0000000a0000000f00000014000000
-    interactionWeightsDict:
-      m_keys: 0500000002000000
-      m_values: 320000001e000000
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 200
     initialDefenderCount: 2
     maxDefenderCount: 2
-    eventTriggerRate: 200
-    noEventTriggerRate: 1000
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -536,16 +481,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 500
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -571,16 +511,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 300
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -604,16 +539,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -641,16 +571,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 114870140623750678, guid: 5eff0dfec87dc444ba512bdf201ce2c9,
       type: 2}
     isMonsterSpawner: 0
@@ -679,16 +604,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -716,16 +636,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -768,16 +683,11 @@ MonoBehaviour:
         armyCount: 15
         includeInFirstWeight: 0
       m_values: 1e0000000f00000005000000
-    interactionWeightsDict:
-      m_keys: 0000000004000000
-      m_values: 3200000050000000
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 3
     maxDefenderCount: 4
-    eventTriggerRate: 200
-    noEventTriggerRate: 1000
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets:
@@ -811,16 +721,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -869,16 +774,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -921,16 +821,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 0e000000
-      m_values: 32000000
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 200
-    noEventTriggerRate: 1000
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -964,16 +859,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -1013,16 +903,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -1059,16 +944,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -1137,16 +1017,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 020000000300000006000000
-      m_values: 1e000000140000000a000000
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 200
-    noEventTriggerRate: 1000
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets:
@@ -1186,16 +1061,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 1
     monsterSets:
@@ -1229,16 +1099,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 2
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -1260,16 +1125,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -1293,16 +1153,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -1326,16 +1181,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 2
     maxDefenderCount: 2
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -1359,16 +1209,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 4
     maxDefenderCount: 4
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -1392,16 +1237,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 3
     maxDefenderCount: 3
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -1423,16 +1263,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 
-      m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -1489,16 +1324,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 020000000300000006000000
-      m_values: 1e000000140000000a000000
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 3
-    eventTriggerRate: 200
-    noEventTriggerRate: 1000
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -1531,16 +1361,11 @@ MonoBehaviour:
         armyCount: 25
         includeInFirstWeight: 0
       m_values: 1e000000140000000a000000
-    interactionWeightsDict:
-      m_keys: 02000000
-      m_values: 32000000
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 3
     maxDefenderCount: 3
-    eventTriggerRate: 200
-    noEventTriggerRate: 1000
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -1573,16 +1398,11 @@ MonoBehaviour:
         armyCount: 25
         includeInFirstWeight: 0
       m_values: 1e0000000f0000000a000000
-    interactionWeightsDict:
-      m_keys: 07000000
-      m_values: 32000000
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 3
-    eventTriggerRate: 200
-    noEventTriggerRate: 1000
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -1606,16 +1426,11 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
-      m_keys: 0e000000
-      m_values: 32000000
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 0
     maxDefenderCount: 0
-    eventTriggerRate: 200
-    noEventTriggerRate: 1000
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
@@ -1639,16 +1454,39 @@ MonoBehaviour:
     defenderWeightsDict:
       m_keys: []
       m_values: 
-    interactionWeightsDict:
+    possibleSpawnPoints: 01000000020000000600000007000000
+    isUnique: 0
+    dailySupplyProduction: 0
+    initialDefenderCount: 2
+    maxDefenderCount: 2
+    startingMonsterSpawn: {fileID: 0}
+    isMonsterSpawner: 0
+    monsterSets: []
+    monsterSpawnCooldown: 0
+  - landmarkTypeString: Cemetery
+    landmarkType: 45
+    minimumTileCount: 1
+    connectedTileDirection: 6
+    uniqueTags: 
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    biomeTileSprites:
       m_keys: 
+      m_values: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
+      tintSprite: {fileID: 0}
+    humansLandmarkTileSprites: []
+    elvenLandmarkTileSprites: []
+    defenderWeightsDict:
+      m_keys: []
       m_values: 
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     dailySupplyProduction: 0
     initialDefenderCount: 2
     maxDefenderCount: 2
-    eventTriggerRate: 0
-    noEventTriggerRate: 0
     startingMonsterSpawn: {fileID: 0}
     isMonsterSpawner: 0
     monsterSets: []
