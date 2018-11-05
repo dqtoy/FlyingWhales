@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour {
     public bool displayFPS = true;
     public bool allCharactersAreVisible = true;
     public bool inspectAll = false;
+    public bool ignoreEventTriggerWeights = true;
 
     public GameObject distanceLinePrefab;
     public HexTile tile1;
@@ -231,6 +232,9 @@ public class GameManager : MonoBehaviour {
     public void ToggleInspectAll(bool state) {
         inspectAll = state;
         Messenger.Broadcast(Signals.INSPECT_ALL);
+    }
+    public void ToggleIgnoreEventTriggerWeights(bool state) {
+        ignoreEventTriggerWeights = state;
     }
     #endregion
 }

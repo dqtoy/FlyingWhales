@@ -143,13 +143,13 @@ public class StructureObj : IObject {
     }
     public virtual void GenerateDailyInteraction() {
         string interactionLog = GameManager.Instance.TodayLogString() + "Generating daily interaction for " + _objectLocation.landmarkName + "(" + _objectLocation.specificLandmarkType.ToString() + ")";
-        if (_objectLocation.HasActiveInteraction()) {
-            interactionLog += "\nAlready has active interaction, not generating a new interaction";
-            Debug.Log(interactionLog);
-            return; //the landmark already has an active interaction, other than investigate
-        }
-        if (_objectLocation.eventTriggerWeights.GetTotalOfWeights() > 0) {
-            if (_objectLocation.eventTriggerWeights.PickRandomElementGivenWeights()) { //if event trigger weights return true
+        //if (_objectLocation.HasActiveInteraction()) {
+        //    interactionLog += "\nAlready has active interaction, not generating a new interaction";
+        //    Debug.Log(interactionLog);
+        //    return; //the landmark already has an active interaction, other than investigate
+        //}
+        if (GameManager.Instance.ignoreEventTriggerWeights || _objectLocation.eventTriggerWeights.GetTotalOfWeights() > 0) {
+            if (GameManager.Instance.ignoreEventTriggerWeights || _objectLocation.eventTriggerWeights.PickRandomElementGivenWeights()) { //if event trigger weights return true
                 WeightedDictionary<INTERACTION_TYPE> interactionWeights = _objectLocation.GetInteractionWeights(_objectLocation);
                 interactionLog += "\n" + interactionWeights.GetWeightsSummary("Generating interaction:");
                 if (interactionWeights.GetTotalOfWeights() > 0) {
