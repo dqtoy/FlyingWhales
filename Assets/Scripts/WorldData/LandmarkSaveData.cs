@@ -11,7 +11,8 @@ public class LandmarkSaveData {
     public int civilianCount;
     public int chosenMonsterSet;
     public List<string> items;
-    public int[] defenders;
+    public Dictionary<INTERACTION_TYPE, int> scenarioWeights;
+    //public int[] defenders;
 
     public LandmarkSaveData(BaseLandmark landmark) {
         landmarkID = landmark.id;
@@ -37,13 +38,14 @@ public class LandmarkSaveData {
             chosenMonsterSet = -1;
         }
 
-        defenders = new int[LandmarkManager.MAX_DEFENDERS];
-        for (int i = 0; i < defenders.Length; i++) {
-            if (landmark.defenders == null || landmark.defenders.icharacters.ElementAtOrDefault(i) == null) {
-                defenders[i] = -1;
-            } else {
-                defenders[i] = landmark.defenders.icharacters[i].id;
-            }
-        }
+        scenarioWeights = landmark.scenarios.dictionary;
+        //defenders = new int[LandmarkManager.MAX_DEFENDERS];
+        //for (int i = 0; i < defenders.Length; i++) {
+        //    if (landmark.defenders == null || landmark.defenders.icharacters.ElementAtOrDefault(i) == null) {
+        //        defenders[i] = -1;
+        //    } else {
+        //        defenders[i] = landmark.defenders.icharacters[i].id;
+        //    }
+        //}
     }
 }

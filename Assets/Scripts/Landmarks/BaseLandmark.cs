@@ -52,6 +52,7 @@ public class BaseLandmark : ILocation, IInteractable {
     public List<GameEvent> advertisedEvents { get; private set; } //events happening at this landmark, that other characters can partake in
     public Party defenders { get; private set; }
     public bool canProduceSupplies { get; private set; }
+    public WeightedDictionary<INTERACTION_TYPE> scenarios { get; private set; }
     private List<Buff> defenderBuffs;
 
     #region getters/setters
@@ -218,6 +219,7 @@ public class BaseLandmark : ILocation, IInteractable {
         _combatHistory = new Dictionary<int, Combat>();
         _characterTraces = new Dictionary<Character, GameDate>();
         _assaultParties = new List<Party>();
+        scenarios = new WeightedDictionary<INTERACTION_TYPE>();
         SetSupplyProductionState(true);
         defenderBuffs = new List<Buff>();
         //defenders = new Party[LandmarkManager.MAX_DEFENDERS];
@@ -237,10 +239,14 @@ public class BaseLandmark : ILocation, IInteractable {
         _location = location;
         _specificLandmarkType = data.landmarkType;
         SetName(data.landmarkName);
-
+        
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
         ConstructTags(landmarkData);
         SpawnInitialLandmarkItems();
+
+        if (data.scenarioWeights != null) {
+            scenarios = new WeightedDictionary<INTERACTION_TYPE>(data.scenarioWeights);
+        }
     }
 
     public void SetName(string name) {
