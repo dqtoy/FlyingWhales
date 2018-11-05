@@ -11,6 +11,13 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     [SerializeField] private UnityEvent onHoverOverAction;
     [SerializeField] private UnityEvent onHoverExitAction;
 
+    private void OnDisable() {
+        isHovering = false;
+        if (onHoverExitAction != null) {
+            onHoverExitAction.Invoke();
+        }
+    }
+
     public void OnPointerEnter(PointerEventData eventData) {
         isHovering = true;
     }
