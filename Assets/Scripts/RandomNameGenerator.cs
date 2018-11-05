@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ECS;
 
 public class RandomNameGenerator : MonoBehaviour {
 
@@ -167,6 +168,7 @@ public class RandomNameGenerator : MonoBehaviour {
 	private List<string> ancientRuinNames;
 	private List<string> tileNames;
     private List<string> regionNames;
+    private List<string> availableMinionNames;
 
     void Awake(){
 		Instance = this;
@@ -253,16 +255,33 @@ public class RandomNameGenerator : MonoBehaviour {
         }
         regionNames = Utilities.Shuffle(regionNames);
 
+        availableMinionNames = new List<string>(minionNames);
+
         //generatedHumanSurnames = new MarkovNameGenerator(baseHumanSurnames, 3, 5);
         //      generatedHumanKingdomNames = new MarkovNameGenerator(baseHumanKingdomNames, 3, 5);
         //generatedElvenKingdomNames = new MarkovNameGenerator(baseElvenKingdomNames, 3, 6);
         //generatedElvenCityNames = new MarkovNameGenerator(baseElvenKingdomNames, 2, 5);
         //generatedElvenFemaleNames = new MarkovNameGenerator(baseElvenFemaleNames, 3, 4);
         //generatedElvenMaleNames = new MarkovNameGenerator(baseElvenMaleNames, 3, 4);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
     }
 
     public string GenerateMinionName() {
-        return minionNames[Random.Range(0, minionNames.Length)];
+        string chosenName = availableMinionNames[Random.Range(0, availableMinionNames.Count)];
+        availableMinionNames.Remove(chosenName);
+        //if (availableMinionNames.Count == 0) {
+        //    availableMinionNames.AddRange(minionNames);
+        //}
+        return chosenName;
+    }
+
+    private void OnCharacterDied(Character characterThatDied) {
+        if (characterThatDied.minion != null) {
+            //minion that died
+            if (!availableMinionNames.Contains(characterThatDied.minion.name)) {
+                availableMinionNames.Add(characterThatDied.minion.name); //return name to pool
+            }
+        }
     }
 
     public string GenerateRandomName(RACE race, GENDER gender){

@@ -56,14 +56,19 @@ public class WeightedDictionary<T> {
         AddElements(otherDictionary._dictionary);
     }
 
-	internal void ChangeElement(T element, int newWeight){
+	internal void ChangeElementWeight(T element, int newWeight){
 		if (_dictionary.ContainsKey(element)) {
 			_dictionary[element] = newWeight;
 		}else{
 			_dictionary.Add(element, newWeight);
 		}
 	}
-
+    internal void ReplaceElement(T element, T newElement) {
+        if (_dictionary.ContainsKey(element)) {
+            AddElement(newElement, _dictionary[element]);
+            RemoveElement(element);
+        }
+    }
     /*
      * This will remove an element with a specific key
      * */

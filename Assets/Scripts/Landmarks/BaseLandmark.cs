@@ -46,12 +46,16 @@ public class BaseLandmark : ILocation, IInteractable {
     protected Dictionary<Character, GameDate> _characterTraces; //Lasts for 60 days
     protected Dictionary<int, Combat> _combatHistory;
     protected Dictionary<RESOURCE, int> _resourceInventory;
-
+    
     public bool hasAdjacentCorruptedLandmark;
     public QuestBoard questBoard { get; private set; }
     public List<GameEvent> advertisedEvents { get; private set; } //events happening at this landmark, that other characters can partake in
     public Party defenders { get; private set; }
     public bool canProduceSupplies { get; private set; }
+    public WeightedDictionary<INTERACTION_TYPE> scenarios { get; private set; }
+    public WeightedDictionary<bool> eventTrigger { get; private set; }
+    public int eventTriggerWeight { get; private set; }
+    public int noEventTriggerWeight { get; private set; }
     private List<Buff> defenderBuffs;
 
     #region getters/setters
@@ -218,6 +222,8 @@ public class BaseLandmark : ILocation, IInteractable {
         _combatHistory = new Dictionary<int, Combat>();
         _characterTraces = new Dictionary<Character, GameDate>();
         _assaultParties = new List<Party>();
+        scenarios = new WeightedDictionary<INTERACTION_TYPE>();
+        eventTrigger = new WeightedDictionary<bool>();
         SetSupplyProductionState(true);
         defenderBuffs = new List<Buff>();
         //defenders = new Party[LandmarkManager.MAX_DEFENDERS];
@@ -237,10 +243,19 @@ public class BaseLandmark : ILocation, IInteractable {
         _location = location;
         _specificLandmarkType = data.landmarkType;
         SetName(data.landmarkName);
-
+        
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
         ConstructTags(landmarkData);
         SpawnInitialLandmarkItems();
+
+        if (data.scenarioWeights != null) {
+            scenarios = new WeightedDictionary<INTERACTION_TYPE>(data.scenarioWeights);
+        }
+
+        SetEventTriggerWeight(data.eventTriggerWeight);
+        SetNoEventTriggerWeight(data.noEventTriggerWeight);
+        eventTrigger.AddElement(true, eventTriggerWeight);
+        eventTrigger.AddElement(false, noEventTriggerWeight);
     }
 
     public void SetName(string name) {
@@ -1221,6 +1236,12 @@ public class BaseLandmark : ILocation, IInteractable {
             }
         }
         return false;
+    }
+    public void SetEventTriggerWeight(int weight) {
+        this.eventTriggerWeight = weight;
+    }
+    public void SetNoEventTriggerWeight(int weight) {
+        this.noEventTriggerWeight = weight;
     }
     #endregion
 
