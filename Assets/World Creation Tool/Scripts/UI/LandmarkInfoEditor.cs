@@ -19,6 +19,8 @@ public class LandmarkInfoEditor : MonoBehaviour {
     [SerializeField] private InputField scenarioWeightField;
     [SerializeField] private ScrollRect scenariosScrollView;
     [SerializeField] private GameObject scenarioItemPrefab;
+    [SerializeField] private InputField eventTriggerField;
+    [SerializeField] private InputField noEventTriggerField;
 
     public void Initialize() {
         interactionTypesDropdown.ClearOptions();
@@ -44,6 +46,8 @@ public class LandmarkInfoEditor : MonoBehaviour {
             ScenarioWeightItem item = scenarioGO.GetComponent<ScenarioWeightItem>();
             item.SetData(landmark, kvp.Key, kvp.Value);
         }
+        eventTriggerField.text = landmark.eventTriggerWeight.ToString();
+        noEventTriggerField.text = landmark.noEventTriggerWeight.ToString();
     }
     public void AddInteraction() {
         INTERACTION_TYPE type = (INTERACTION_TYPE)System.Enum.Parse(typeof(INTERACTION_TYPE), interactionTypesDropdown.options[interactionTypesDropdown.value].text);
@@ -65,6 +69,14 @@ public class LandmarkInfoEditor : MonoBehaviour {
     #region Change Handlers
     public void SetName(string newName) {
         landmark.SetName(newName);
+    }
+    public void SetEventTriggerWeight(string newWeight) {
+        int weight = System.Int32.Parse(newWeight);
+        landmark.SetEventTriggerWeight(weight);
+    }
+    public void SetNoEventTriggerWeight(string newWeight) {
+        int weight = System.Int32.Parse(newWeight);
+        landmark.SetNoEventTriggerWeight(weight);
     }
     #endregion
 }

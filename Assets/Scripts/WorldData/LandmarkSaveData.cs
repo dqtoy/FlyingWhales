@@ -12,6 +12,8 @@ public class LandmarkSaveData {
     public int chosenMonsterSet;
     public List<string> items;
     public Dictionary<INTERACTION_TYPE, int> scenarioWeights;
+    public int eventTriggerWeight;
+    public int noEventTriggerWeight;
     //public int[] defenders;
 
     public LandmarkSaveData(BaseLandmark landmark) {
@@ -39,6 +41,8 @@ public class LandmarkSaveData {
         }
 
         scenarioWeights = landmark.scenarios.dictionary;
+        eventTriggerWeight = landmark.eventTriggerWeight;
+        noEventTriggerWeight = landmark.noEventTriggerWeight;
         //defenders = new int[LandmarkManager.MAX_DEFENDERS];
         //for (int i = 0; i < defenders.Length; i++) {
         //    if (landmark.defenders == null || landmark.defenders.icharacters.ElementAtOrDefault(i) == null) {
