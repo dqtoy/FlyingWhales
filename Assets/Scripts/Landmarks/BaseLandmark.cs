@@ -53,9 +53,14 @@ public class BaseLandmark : ILocation, IInteractable {
     public Party defenders { get; private set; }
     public bool canProduceSupplies { get; private set; }
     public WeightedDictionary<INTERACTION_TYPE> scenarios { get; private set; }
-    public WeightedDictionary<bool> eventTrigger { get; private set; }
+    public WeightedDictionary<bool> eventTriggerWeights { get; private set; }
     public int eventTriggerWeight { get; private set; }
     public int noEventTriggerWeight { get; private set; }
+    public int dailySupplyProduction { get; private set; }
+    public int initialDefenderCount { get; private set; }
+    public int maxDefenderCount { get; private set; }
+    public WeightedDictionary<LandmarkDefender> defenderWeights { get; private set; }
+
     private List<Buff> defenderBuffs;
 
     #region getters/setters
@@ -223,7 +228,8 @@ public class BaseLandmark : ILocation, IInteractable {
         _characterTraces = new Dictionary<Character, GameDate>();
         _assaultParties = new List<Party>();
         scenarios = new WeightedDictionary<INTERACTION_TYPE>();
-        eventTrigger = new WeightedDictionary<bool>();
+        eventTriggerWeights = new WeightedDictionary<bool>();
+        defenderWeights = new WeightedDictionary<LandmarkDefender>();
         SetSupplyProductionState(true);
         defenderBuffs = new List<Buff>();
         //defenders = new Party[LandmarkManager.MAX_DEFENDERS];
@@ -251,11 +257,17 @@ public class BaseLandmark : ILocation, IInteractable {
         if (data.scenarioWeights != null) {
             scenarios = new WeightedDictionary<INTERACTION_TYPE>(data.scenarioWeights);
         }
-
         SetEventTriggerWeight(data.eventTriggerWeight);
         SetNoEventTriggerWeight(data.noEventTriggerWeight);
-        eventTrigger.AddElement(true, eventTriggerWeight);
-        eventTrigger.AddElement(false, noEventTriggerWeight);
+        eventTriggerWeights.AddElement(true, eventTriggerWeight);
+        eventTriggerWeights.AddElement(false, noEventTriggerWeight);
+
+        if (data.defenderWeights != null) {
+            defenderWeights = new WeightedDictionary<LandmarkDefender>(data.defenderWeights);
+        }
+        SetDailySupplyProductionAmount(data.dailySupplyAmount);
+        SetInitialDefenderCount(data.initialDefenderCount);
+        SetMaxDefenderCount(data.maxDefenderCount);
     }
 
     public void SetName(string name) {
@@ -1196,6 +1208,12 @@ public class BaseLandmark : ILocation, IInteractable {
         }
         return false;
     }
+    public void SetInitialDefenderCount(int count) {
+        this.initialDefenderCount = count;
+    }
+    public void SetMaxDefenderCount(int count) {
+        this.maxDefenderCount = count;
+    }
     #endregion
 
     #region Interactions
@@ -1242,6 +1260,18 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     public void SetNoEventTriggerWeight(int weight) {
         this.noEventTriggerWeight = weight;
+    }
+    public WeightedDictionary<INTERACTION_TYPE> GetInteractionWeights(BaseLandmark landmark) {
+        WeightedDictionary<INTERACTION_TYPE> weights = new WeightedDictionary<INTERACTION_TYPE>();
+        foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in scenarios.dictionary) {
+            if (InteractionManager.Instance.CanCreateInteraction(kvp.Key, landmark)) {
+                weights.AddElement(kvp.Key, kvp.Value);
+            }
+        }
+        return weights;
+    }
+    public void SetDailySupplyProductionAmount(int amount) {
+        this.dailySupplyProduction = amount;
     }
     #endregion
 

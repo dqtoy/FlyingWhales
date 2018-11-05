@@ -14,6 +14,10 @@ public class LandmarkSaveData {
     public Dictionary<INTERACTION_TYPE, int> scenarioWeights;
     public int eventTriggerWeight;
     public int noEventTriggerWeight;
+    public Dictionary<LandmarkDefender, int> defenderWeights;
+    public int dailySupplyAmount;
+    public int initialDefenderCount;
+    public int maxDefenderCount;
     //public int[] defenders;
 
     public LandmarkSaveData(BaseLandmark landmark) {
@@ -43,6 +47,11 @@ public class LandmarkSaveData {
         scenarioWeights = landmark.scenarios.dictionary;
         eventTriggerWeight = landmark.eventTriggerWeight;
         noEventTriggerWeight = landmark.noEventTriggerWeight;
+
+        defenderWeights = landmark.defenderWeights.dictionary;
+        dailySupplyAmount = landmark.dailySupplyProduction;
+        initialDefenderCount = landmark.initialDefenderCount;
+        maxDefenderCount = landmark.maxDefenderCount;
         //defenders = new int[LandmarkManager.MAX_DEFENDERS];
         //for (int i = 0; i < defenders.Length; i++) {
         //    if (landmark.defenders == null || landmark.defenders.icharacters.ElementAtOrDefault(i) == null) {

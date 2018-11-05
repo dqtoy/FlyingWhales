@@ -17,14 +17,14 @@ public class LandmarkData {
     public List<LandmarkStructureSprite> humansLandmarkTileSprites;
     public List<LandmarkStructureSprite> elvenLandmarkTileSprites;
     public LandmarkDefenderWeightDictionary defenderWeightsDict;
-    public InteractionWeightDictionary interactionWeightsDict;
+    //public InteractionWeightDictionary interactionWeightsDict;
     public List<PASSABLE_TYPE> possibleSpawnPoints;
     public bool isUnique;
     public int dailySupplyProduction;
     public int initialDefenderCount;
     public int maxDefenderCount;
-    public int eventTriggerRate;
-    public int noEventTriggerRate;
+    //public int eventTriggerRate;
+    //public int noEventTriggerRate;
 
     [Header("Monster Spawner")]
     public MonsterPartyComponent startingMonsterSpawn;
@@ -34,12 +34,12 @@ public class LandmarkData {
 
     public WeightedDictionary<LandmarkDefender> defenderWeights { get; private set; }
     public WeightedDictionary<LandmarkDefender> firstElementDefenderWeights { get; private set; }
-    public WeightedDictionary<bool> eventTriggerWeights { get; private set; } //true - trigger event, false - do not trigger event
+    //public WeightedDictionary<bool> eventTriggerWeights { get; private set; } //true - trigger event, false - do not trigger event
 
     public void ConstructData() {
         defenderWeights = GetDefenderWeights();
         firstElementDefenderWeights = GetFirstDefenderWeights();
-        eventTriggerWeights = GetEventTriggerWeights();
+        //eventTriggerWeights = GetEventTriggerWeights();
     }
 
     private WeightedDictionary<LandmarkDefender> GetDefenderWeights() {
@@ -58,19 +58,19 @@ public class LandmarkData {
         }
         return weights;
     }
-    public WeightedDictionary<INTERACTION_TYPE> GetInteractionWeights(BaseLandmark landmark) {
-        WeightedDictionary<INTERACTION_TYPE> weights = new WeightedDictionary<INTERACTION_TYPE>();
-        foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in interactionWeightsDict) {
-            if (InteractionManager.Instance.CanCreateInteraction(kvp.Key, landmark)) {
-                weights.AddElement(kvp.Key, kvp.Value);
-            }
-        }
-        return weights;
-    }
-    private WeightedDictionary<bool> GetEventTriggerWeights() {
-        WeightedDictionary<bool> weights = new WeightedDictionary<bool>();
-        weights.AddElement(true, eventTriggerRate + 800);
-        weights.AddElement(false, noEventTriggerRate);
-        return weights;
-    }
+    //public WeightedDictionary<INTERACTION_TYPE> GetInteractionWeights(BaseLandmark landmark) {
+    //    WeightedDictionary<INTERACTION_TYPE> weights = new WeightedDictionary<INTERACTION_TYPE>();
+    //    foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in interactionWeightsDict) {
+    //        if (InteractionManager.Instance.CanCreateInteraction(kvp.Key, landmark)) {
+    //            weights.AddElement(kvp.Key, kvp.Value);
+    //        }
+    //    }
+    //    return weights;
+    //}
+    //private WeightedDictionary<bool> GetEventTriggerWeights() {
+    //    WeightedDictionary<bool> weights = new WeightedDictionary<bool>();
+    //    weights.AddElement(true, eventTriggerRate + 800);
+    //    weights.AddElement(false, noEventTriggerRate);
+    //    return weights;
+    //}
 }
