@@ -125,6 +125,7 @@ public class Interaction {
     protected void SecondTimeOut() {
         if (!_isSecondTimeOutCancelled) {
             TimedOutRunDefault();
+            _interactable.specificLocation.tileLocation.landmarkOnTile.landmarkInvestigation.ExploreLandmark();
         }
     }
     protected void TimedOutRunDefault() {

@@ -9,30 +9,33 @@ public class KillerOnTheLoose : Interaction {
     }
     #region Overrides
     public override void CreateStates() {
-        CreateExploreStates();
-        CreateWhatToDoNextState("%minion% did not care about whether there is a serial killer on the loose. Do you want him to continue surveillance of " + _interactable.specificLocation.thisName + "?");
+        //CreateExploreStates();
+        //CreateWhatToDoNextState("%minion% did not care about whether there is a serial killer on the loose. Do you want him to continue surveillance of " + _interactable.specificLocation.thisName + "?");
 
         InteractionState startState = new InteractionState("Start", this);
         InteractionState convertDemonState = new InteractionState("Convert Demon", this);
         InteractionState nothingHappensState = new InteractionState("Nothing Happens", this);
         InteractionState gainSupplyState = new InteractionState("Gain Supply", this);
+        InteractionState doNothingState = new InteractionState("Do Nothing", this);
 
         //string startStateDesc = "%minion% reported rumors of a serial killer on the loose in " + _interactable.specificLocation.thisName + ". If there is truth to the rumor, a hardened criminal like that is a great candidate for a Demonic Conversion.";
         //startState.SetDescription(startStateDesc);
 
         CreateActionOptions(startState);
-        CreateActionOptions(convertDemonState);
-        CreateActionOptions(nothingHappensState);
-        CreateActionOptions(gainSupplyState);
+        //CreateActionOptions(convertDemonState);
+        //CreateActionOptions(nothingHappensState);
+        //CreateActionOptions(gainSupplyState);
 
-        //convertDemonState.SetEndEffect(() => ConvertToDemonRewardEffect(convertDemonState));
-        //gainSupplyState.SetEndEffect(() => GainSupplyRewardEffect(gainSupplyState));
-        //nothingHappensState.SetEndEffect(() => NothingHappensRewardEffect(nothingHappensState));
+        convertDemonState.SetEndEffect(() => ConvertToDemonRewardEffect(convertDemonState));
+        gainSupplyState.SetEndEffect(() => GainSupplyRewardEffect(gainSupplyState));
+        nothingHappensState.SetEndEffect(() => NothingHappensRewardEffect(nothingHappensState));
+        doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
 
         _states.Add(startState.name, startState);
         _states.Add(convertDemonState.name, convertDemonState);
         _states.Add(gainSupplyState.name, gainSupplyState);
         _states.Add(nothingHappensState.name, nothingHappensState);
+        _states.Add(doNothingState.name, doNothingState);
 
         SetCurrentState(startState);
     }
@@ -53,7 +56,7 @@ public class KillerOnTheLoose : Interaction {
                 name = "Do nothing.",
                 duration = 0,
                 needsMinion = false,
-                effect = () => WhatToDoNextState(),
+                effect = () => DoNothingOption(state),
             };
 
             state.AddActionOption(searchKillerOption);
@@ -94,13 +97,26 @@ public class KillerOnTheLoose : Interaction {
         effectWeights.AddElement("Gain Supply", 15);
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
-        if (chosenEffect == "Convert Demon") {
-            ConvertToDemonRewardState(state, chosenEffect);
-        } else if (chosenEffect == "Gain Supply") {
-            GainSupplyRewardState(state, chosenEffect);
-        } else if (chosenEffect == "Nothing Happens") {
-            NothingHappensRewardState(state, chosenEffect);
-        }
+        SetCurrentState(_states[chosenEffect]);
+
+        //if (chosenEffect == "Convert Demon") {
+        //    ConvertToDemonRewardState(state, chosenEffect);
+        //} else if (chosenEffect == "Gain Supply") {
+        //    GainSupplyRewardState(state, chosenEffect);
+        //} else if (chosenEffect == "Nothing Happens") {
+        //    NothingHappensRewardState(state, chosenEffect);
+        //}
+    }
+    private void DoNothingOption(InteractionState state) {
+        WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
+        effectWeights.AddElement("Do Nothing", 15);
+
+        string chosenEffect = effectWeights.PickRandomElementGivenWeights();
+        SetCurrentState(_states[chosenEffect]);
+
+        //if (chosenEffect == "Left Alone") {
+        //    LeftAloneRewardState(state, chosenEffect);
+        //}
     }
 
     #region States
@@ -131,6 +147,9 @@ public class KillerOnTheLoose : Interaction {
     }
     private void NothingHappensRewardEffect(InteractionState state) {
         _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+    }
+    private void DoNothingRewardEffect(InteractionState state) {
+        //_interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));
     }
     #endregion
 }

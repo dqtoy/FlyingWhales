@@ -231,6 +231,7 @@ public class InteractionItem : MonoBehaviour {
                 _currentSelectedActionOption.ActivateOption(_interaction.interactable);
             } else {
                 _interaction.currentState.EndResult();
+                _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.landmarkInvestigation.ExploreLandmark();
             }
         } else {
             _currentSelectedActionOption.AddAssignedObject(slotItem.placedObject);
@@ -249,6 +250,7 @@ public class InteractionItem : MonoBehaviour {
                     _currentSelectedActionOption.ActivateOption(_interaction.interactable);
                 } else {
                     _interaction.currentState.EndResult();
+                    _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.landmarkInvestigation.ExploreLandmark();
                 }
             }
         }

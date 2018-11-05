@@ -35,7 +35,7 @@ public class Minion : IUnit {
         get { return _isEnabled; }
     }
     public int lvl {
-        get { return _lvl; }
+        get { return _icharacter.level; }
     }
     public int exp {
         get { return _exp; }

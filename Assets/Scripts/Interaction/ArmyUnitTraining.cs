@@ -41,6 +41,7 @@ public class ArmyUnitTraining : Interaction {
         _states.Add(armyProducedState.name, armyProducedState);
 
         SetCurrentState(startState);
+        SetArmyClassNameToBeCreated();
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {
@@ -102,13 +103,14 @@ public class ArmyUnitTraining : Interaction {
         effectWeights.AddElement("Demon Disappears", 5);
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
-        if (chosenEffect == "Cancelled Training") {
-            CancelledTrainingRewardState(state, chosenEffect);
-        } else if (chosenEffect == "Failed Cancel Training") {
-            FailedCancelTrainingRewardState(state, chosenEffect);
-        } else if (chosenEffect == "Demon Disappears") {
-            DemonDisappearsRewardState(state, chosenEffect);
-        }
+        SetCurrentState(_states[chosenEffect]);
+        //if (chosenEffect == "Cancelled Training") {
+        //    CancelledTrainingRewardState(state, chosenEffect);
+        //} else if (chosenEffect == "Failed Cancel Training") {
+        //    FailedCancelTrainingRewardState(state, chosenEffect);
+        //} else if (chosenEffect == "Demon Disappears") {
+        //    DemonDisappearsRewardState(state, chosenEffect);
+        //}
     }
 
     private void DoNothingOption(InteractionState state) {
@@ -116,9 +118,11 @@ public class ArmyUnitTraining : Interaction {
         effectWeights.AddElement("Army Produced", 25);
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
-        if (chosenEffect == "Army Produced") {
-            ArmyProducedRewardState(state, chosenEffect);
-        }
+        SetCurrentState(_states[chosenEffect]);
+
+        //if (chosenEffect == "Army Produced") {
+        //    ArmyProducedRewardState(state, chosenEffect);
+        //}
     }
 
     private void SetArmyClassNameToBeCreated() {

@@ -10,7 +10,7 @@ public class ArmyMobilization : Interaction {
 
     #region Overrides
     public override void CreateStates() {
-        CreateExploreStates();
+        //CreateExploreStates();
         //CreateWhatToDoNextState(_interactable.explorerMinion.name + " just watches while the army is being mobilized. Do you want him to continue surveillance of " + _interactable.specificLocation.thisName + "?");
 
         InteractionState startState = new InteractionState("Start", this);
@@ -23,14 +23,14 @@ public class ArmyMobilization : Interaction {
         //startState.SetDescription(startStateDesc);
 
         CreateActionOptions(startState);
-        CreateActionOptions(cancelledMobilizationState);
-        CreateActionOptions(failCancelledMobilizationState);
-        CreateActionOptions(armyMobilizedState);
+        //CreateActionOptions(cancelledMobilizationState);
+        //CreateActionOptions(failCancelledMobilizationState);
+        //CreateActionOptions(armyMobilizedState);
 
-        //cancelledMobilizationState.SetEndEffect(() => CancelledMobilizationRewardEffect(cancelledMobilizationState));
-        //failCancelledMobilizationState.SetEndEffect(() => FailedCancelMobilizationRewardEffect(failCancelledMobilizationState));
+        cancelledMobilizationState.SetEndEffect(() => CancelledMobilizationRewardEffect(cancelledMobilizationState));
+        failCancelledMobilizationState.SetEndEffect(() => FailedCancelMobilizationRewardEffect(failCancelledMobilizationState));
         demonDisappearsState.SetEndEffect(() => DemonDisappearsRewardEffect(demonDisappearsState));
-        //armyMobilizedState.SetEndEffect(() => ArmyMobilizedRewardEffect(armyMobilizedState));
+        armyMobilizedState.SetEndEffect(() => ArmyMobilizedRewardEffect(armyMobilizedState));
 
         _states.Add(startState.name, startState);
         _states.Add(cancelledMobilizationState.name, cancelledMobilizationState);
@@ -100,13 +100,14 @@ public class ArmyMobilization : Interaction {
         effectWeights.AddElement("Demon Disappears", 5);
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
-        if (chosenEffect == "Cancelled Mobilization") {
-            CancelledMobilizationRewardState(state, chosenEffect);
-        } else if (chosenEffect == "Failed Cancel Mobilization") {
-            FailedCancelMobilizationRewardState(state, chosenEffect);
-        } else if (chosenEffect == "Demon Disappears") {
-            DemonDisappearsRewardState(state, chosenEffect);
-        }
+        SetCurrentState(_states[chosenEffect]);
+        //if (chosenEffect == "Cancelled Mobilization") {
+        //    CancelledMobilizationRewardState(state, chosenEffect);
+        //} else if (chosenEffect == "Failed Cancel Mobilization") {
+        //    FailedCancelMobilizationRewardState(state, chosenEffect);
+        //} else if (chosenEffect == "Demon Disappears") {
+        //    DemonDisappearsRewardState(state, chosenEffect);
+        //}
     }
 
     private void DoNothingOption(InteractionState state) {
@@ -114,9 +115,11 @@ public class ArmyMobilization : Interaction {
         effectWeights.AddElement("Army Mobilized", 25);
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
-        if (chosenEffect == "Army Mobilized") {
-            ArmyMobilizedRewardState(state, chosenEffect);
-        }
+        SetCurrentState(_states[chosenEffect]);
+
+        //if (chosenEffect == "Army Mobilized") {
+        //    ArmyMobilizedRewardState(state, chosenEffect);
+        //}
     }
 
     #region States
