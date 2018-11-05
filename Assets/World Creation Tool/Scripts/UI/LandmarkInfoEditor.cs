@@ -25,7 +25,8 @@ public class LandmarkInfoEditor : MonoBehaviour {
     [Space(10)]
     [Header("Defenders")]
     [SerializeField] private ScrollRect defendersScrollView;
-    [SerializeField] private InputField dailySuppliesField;
+    [SerializeField] private InputField maxDailySuppliesField;
+    [SerializeField] private InputField minDailySuppliesField;
     [SerializeField] private InputField initialDefendersField;
     [SerializeField] private InputField maxDefendersField;
     [SerializeField] private GameObject defenderWeightItemPrefab;
@@ -88,7 +89,8 @@ public class LandmarkInfoEditor : MonoBehaviour {
             item.SetDefender(landmark, kvp.Key, kvp.Value);
         }
 
-        dailySuppliesField.text = landmark.dailySupplyProduction.ToString();
+        maxDailySuppliesField.text = landmark.maxDailySupplyProduction.ToString();
+        minDailySuppliesField.text = landmark.minDailySupplyProduction.ToString();
         initialDefendersField.text = landmark.initialDefenderCount.ToString();
         maxDefendersField.text = landmark.maxDefenderCount.ToString();
     }
@@ -127,9 +129,13 @@ public class LandmarkInfoEditor : MonoBehaviour {
         int weight = System.Int32.Parse(newWeight);
         landmark.SetNoEventTriggerWeight(weight);
     }
-    public void SetDailySupplyProductionAmount(string amountStr) {
+    public void SetMaxDailySupplyProductionAmount(string amountStr) {
         int amount = System.Int32.Parse(amountStr);
-        landmark.SetDailySupplyProductionAmount(amount);
+        landmark.SetMaxDailySupplyProductionAmount(amount);
+    }
+    public void SetMinDailySupplyProductionAmount(string amountStr) {
+        int amount = System.Int32.Parse(amountStr);
+        landmark.SetMinDailySupplyProductionAmount(amount);
     }
     public void SetInitialDefenderCount(string countStr) {
         int count = System.Int32.Parse(countStr);

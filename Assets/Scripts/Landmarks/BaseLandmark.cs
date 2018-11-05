@@ -56,7 +56,8 @@ public class BaseLandmark : ILocation, IInteractable {
     public WeightedDictionary<bool> eventTriggerWeights { get; private set; }
     public int eventTriggerWeight { get; private set; }
     public int noEventTriggerWeight { get; private set; }
-    public int dailySupplyProduction { get; private set; }
+    public int maxDailySupplyProduction { get; private set; }
+    public int minDailySupplyProduction { get; private set; }
     public int initialDefenderCount { get; private set; }
     public int maxDefenderCount { get; private set; }
     public WeightedDictionary<LandmarkDefender> defenderWeights { get; private set; }
@@ -265,7 +266,7 @@ public class BaseLandmark : ILocation, IInteractable {
         if (data.defenderWeights != null) {
             defenderWeights = new WeightedDictionary<LandmarkDefender>(data.defenderWeights);
         }
-        SetDailySupplyProductionAmount(data.dailySupplyAmount);
+        SetMaxDailySupplyProductionAmount(data.maxDailySupplyAmount);
         SetInitialDefenderCount(data.initialDefenderCount);
         SetMaxDefenderCount(data.maxDefenderCount);
     }
@@ -1270,8 +1271,11 @@ public class BaseLandmark : ILocation, IInteractable {
         }
         return weights;
     }
-    public void SetDailySupplyProductionAmount(int amount) {
-        this.dailySupplyProduction = amount;
+    public void SetMaxDailySupplyProductionAmount(int amount) {
+        this.maxDailySupplyProduction = amount;
+    }
+    public void SetMinDailySupplyProductionAmount(int amount) {
+        this.minDailySupplyProduction = amount;
     }
     #endregion
 
