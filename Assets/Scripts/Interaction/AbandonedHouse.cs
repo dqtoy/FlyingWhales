@@ -115,9 +115,11 @@ public class AbandonedHouse : Interaction {
         effectWeights.AddElement("Left Alone", 15);
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
-        if (chosenEffect == "Left Alone") {
-            LeftAloneRewardState(state, chosenEffect);
-        }
+        SetCurrentState(_states[chosenEffect]);
+
+        //if (chosenEffect == "Left Alone") {
+        //    LeftAloneRewardState(state, chosenEffect);
+        //}
     }
     private void DemonBonusExpRewardState(InteractionState state, string effectName) {
         //_states[effectName].SetDescription(_interactable.explorerMinion.name + " has returned with nothing but there seems to be a newfound strength within it.");

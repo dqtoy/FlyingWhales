@@ -127,11 +127,12 @@ public class LandmarkInvestigation {
         _landmark.landmarkVisual.StopInteractionTimer();
         if(_landmark.currentInteractions.Count > 0) {
             _currentInteraction = GetRandomInteraction();
+            _landmark.landmarkVisual.SetAndStartInteractionTimer(Interaction.secondTimeOutTicks, new InteractionTimer.OnStopTimer(_landmark.landmarkVisual.HideInteractionTimer));
+            _landmark.landmarkVisual.SetInteractionTimerButtonState(true);
         } else {
-            _currentInteraction = GetNothingHappenedInteraction();
+            ExploreLandmark();
         }
-        _landmark.landmarkVisual.SetAndStartInteractionTimer(Interaction.secondTimeOutTicks, new InteractionTimer.OnStopTimer(_landmark.landmarkVisual.HideInteractionTimer));
-        _landmark.landmarkVisual.SetInteractionTimerButtonState(true);
+
     }
     private Interaction GetRandomInteraction() {
         //GameManager.Instance.SetPausedState(true);
