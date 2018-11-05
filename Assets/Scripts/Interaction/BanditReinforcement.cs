@@ -22,8 +22,8 @@ public class BanditReinforcement : Interaction {
             ConstructDefenseSpawnWeights();
 
             InteractionState startState = new InteractionState("State 1", this);
-            string startStateDesc = "The bandits are increasing their defensive army.";
-            startState.SetDescription(startStateDesc);
+            //string startStateDesc = "The bandits are increasing their defensive army.";
+            //startState.SetDescription(startStateDesc);
             
             //action option states
             InteractionState successCancelState = new InteractionState("Successfully Cancelled Reinforcement", this);
@@ -185,8 +185,8 @@ public class BanditReinforcement : Interaction {
     }
 
     private void SuccessfullyCalledReinforcement(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(_interactable.explorerMinion.name + " distracted the bandits with liquor so they ended up " +
-            "forgetting that they were supposed to form a new defensive army unit. What do you want " + _interactable.explorerMinion.name + " to do next?");
+        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " distracted the bandits with liquor so they ended up " +
+        //    "forgetting that they were supposed to form a new defensive army unit. What do you want " + _interactable.explorerMinion.name + " to do next?");
         SetCurrentState(_states[effectName]);
         SuccessfullyCalledReinforcementRewardEffect(_states[effectName]);
     }
@@ -197,9 +197,9 @@ public class BanditReinforcement : Interaction {
     private void FailedToCancelReinforcement(InteractionState state, string effectName) {
         //**Mechanics**: create an Army Unit from Defense Spawn Weights and add it to the Tile Defenders
         CharacterArmyUnit createdUnit = CreateAssaultArmy(1).owner as CharacterArmyUnit;
-        _states[effectName].SetDescription(_interactable.explorerMinion.name + " failed to distract the bandits. " +
-            "A new " + Utilities.NormalizeString(createdUnit.race.ToString()) + " " + createdUnit.characterClass.className + " have been formed " +
-            "to defend the camp. What do you want " + _interactable.explorerMinion.name + " to do next?");
+        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " failed to distract the bandits. " +
+        //    "A new " + Utilities.NormalizeString(createdUnit.race.ToString()) + " " + createdUnit.characterClass.className + " have been formed " +
+        //    "to defend the camp. What do you want " + _interactable.explorerMinion.name + " to do next?");
         SetCurrentState(_states[effectName]);
         landmark.AddDefender(createdUnit);
         FailedToCancelReinforcementRewardEffect(_states[effectName]);
@@ -210,7 +210,7 @@ public class BanditReinforcement : Interaction {
     }
 
     private void GiftAccepted(InteractionState state, string effectName) {
-        _states[effectName].SetDescription("You gave them " + state.chosenOption.assignedUnit.name + " to aid in their defenses and they have graciously accepted.");
+        //_states[effectName].SetDescription("You gave them " + state.chosenOption.assignedUnit.name + " to aid in their defenses and they have graciously accepted.");
         SetCurrentState(_states[effectName]);
         //remove assigned unit and add it to the Bandit faction and to their Tile Defenders
         if (state.chosenOption.assignedUnit is Minion) {
@@ -223,9 +223,9 @@ public class BanditReinforcement : Interaction {
         
     }
     private void GiftRejected(InteractionState state, string effectName) {
-        _states[effectName].SetDescription("You gave them " + _interactable.explorerMinion.name + " to aid in their defenses " +
-            "but they are suspicious of your intentions and have rejected your offer. " +
-            "What do you want " + _interactable.explorerMinion.name + " to do next?");
+        //_states[effectName].SetDescription("You gave them " + _interactable.explorerMinion.name + " to aid in their defenses " +
+        //    "but they are suspicious of your intentions and have rejected your offer. " +
+        //    "What do you want " + _interactable.explorerMinion.name + " to do next?");
         SetCurrentState(_states[effectName]);
     }
     private void GiftRejectedEffect(InteractionState state) {

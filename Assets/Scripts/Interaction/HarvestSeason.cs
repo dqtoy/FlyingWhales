@@ -19,8 +19,8 @@ public class HarvestSeason : Interaction {
             farm = interactable as BaseLandmark;
 
             InteractionState startState = new InteractionState("State 1", this);
-            string startStateDesc = "%minion% has reported that the farmers will soon be able to harvest their crops. A sizable amount of the harvest will be given to their troops, providing them with needed Supplies.";
-            startState.SetDescription(startStateDesc);
+            //string startStateDesc = "%minion% has reported that the farmers will soon be able to harvest their crops. A sizable amount of the harvest will be given to their troops, providing them with needed Supplies.";
+            //startState.SetDescription(startStateDesc);
             CreateActionOptions(startState);
 
             //action option states
@@ -130,11 +130,11 @@ public class HarvestSeason : Interaction {
 
     #region Poisoned Harvest
     private void PoisonedHarvest(InteractionState state, string effectName) {
-        _states[effectName]
-            .SetDescription("After a significant amount of stealthy effort, " + _interactable.explorerMinion.name + 
-            " managed to secretly poison the crops. The farmers will not be able to provide extra Supply to the city. " +
-            "Furthermore, the poison has rendered the soil toxic, preventing the Farm from producing more Supplies for 5 days. " +
-            "What do you want " + _interactable.explorerMinion.name + " to do next?");
+        //_states[effectName]
+        //    .SetDescription("After a significant amount of stealthy effort, " + _interactable.explorerMinion.name + 
+        //    " managed to secretly poison the crops. The farmers will not be able to provide extra Supply to the city. " +
+        //    "Furthermore, the poison has rendered the soil toxic, preventing the Farm from producing more Supplies for 5 days. " +
+        //    "What do you want " + _interactable.explorerMinion.name + " to do next?");
         SetCurrentState(_states[effectName]);
         //Farm stops producing Supply for 5 days
         GameDate dueDate = GameManager.Instance.Today();
@@ -151,9 +151,9 @@ public class HarvestSeason : Interaction {
     private void FarmerKilled(InteractionState state, string effectName) {
         List<ICharacter> farmers = farm.tileLocation.areaOfTile.GetResidentsWithClass("Farmer");
         ICharacter chosenFarmer = farmers[Random.Range(0, farmers.Count)];
-        _states[effectName].SetDescription(_interactable.explorerMinion.name + " entered the farm at night and was about to poison " +
-            "the crops when a farmer named " + chosenFarmer.name + " discovered him. He managed to slay the farmer before being forced to flee. " +
-            "What do you want him to do next?");
+        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " entered the farm at night and was about to poison " +
+        //    "the crops when a farmer named " + chosenFarmer.name + " discovered him. He managed to slay the farmer before being forced to flee. " +
+        //    "What do you want him to do next?");
         SetCurrentState(_states[effectName]);
         chosenFarmer.Death();
         FarmerKilledRewardEffect(_states[effectName]);
@@ -165,8 +165,8 @@ public class HarvestSeason : Interaction {
 
     #region Obtain Harvest
     private void ObtainHarvest(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(_interactable.explorerMinion.name + " stole the harvest in the dead of night, " +
-            "providing us with much needed Supply. What do you want him to do next?");
+        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " stole the harvest in the dead of night, " +
+        //    "providing us with much needed Supply. What do you want him to do next?");
         SetCurrentState(_states[effectName]);
         ObtainHarvestRewardEffect(_states[effectName]);
     }
@@ -181,9 +181,9 @@ public class HarvestSeason : Interaction {
 
     #region Demon Discovered
     private void DemonDiscovered(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(_interactable.explorerMinion.name + " was discovered by some farmers! " +
-            "He managed to run away unscathed but " + farm.tileLocation.areaOfTile.owner.name + " is now aware of our sabotage " +
-            "attempts and have declared war upon us. What do you want him to do next?");
+        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " was discovered by some farmers! " +
+        //    "He managed to run away unscathed but " + farm.tileLocation.areaOfTile.owner.name + " is now aware of our sabotage " +
+        //    "attempts and have declared war upon us. What do you want him to do next?");
         SetCurrentState(_states[effectName]);
         //**Effect**: Faction declares war vs player
         FactionManager.Instance.DeclareWarBetween(farm.tileLocation.areaOfTile.owner, PlayerManager.Instance.player.playerFaction);
@@ -196,7 +196,7 @@ public class HarvestSeason : Interaction {
 
     #region Demon Killed
     private void DemonKilled(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(_interactable.explorerMinion.name + " was caught by some guards and was slain in combat. What a weakling. He deserved that.");
+        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " was caught by some guards and was slain in combat. What a weakling. He deserved that.");
         SetCurrentState(_states[effectName]);
         DemonKilledRewardEffect(_states[effectName]);
     }

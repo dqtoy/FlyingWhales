@@ -19,8 +19,8 @@ public class SuspiciousSoldierMeeting : Interaction {
         InteractionState generalDiesState = new InteractionState("General Dies", this);
         InteractionState nothingHappensState = new InteractionState("Nothing Happens", this);
 
-        string startStateDesc = "%minion% has discovered a group of soldiers leaving the Garrison and meeting in secret.";
-        startState.SetDescription(startStateDesc);
+        //string startStateDesc = "%minion% has discovered a group of soldiers leaving the Garrison and meeting in secret.";
+        //startState.SetDescription(startStateDesc);
 
         CreateActionOptions(startState);
         CreateActionOptions(reduceDefendersState);
@@ -125,22 +125,22 @@ public class SuspiciousSoldierMeeting : Interaction {
 
     #region States
     private void ReduceDefendersRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(_interactable.explorerMinion.name + " was able to tempt the disgruntled soldiers to abandon their posts. A significant amount of defenders are now missing from the Garrison!");
+        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " was able to tempt the disgruntled soldiers to abandon their posts. A significant amount of defenders are now missing from the Garrison!");
         SetCurrentState(_states[stateName]);
         ReduceDefendersRewardEffect(_states[stateName]);
     }
     private void WarDeclaredRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(_interactable.explorerMinion.name + " was discovered by the soldiers! He managed to run away unscathed but " + _interactable.faction.name + " is now aware of our sabotage attempts and have declared war upon us.");
+        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " was discovered by the soldiers! He managed to run away unscathed but " + _interactable.faction.name + " is now aware of our sabotage attempts and have declared war upon us.");
         SetCurrentState(_states[stateName]);
         WarDeclaredRewardEffect(_states[stateName]);
     }
     private void GeneralDiesRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(_interactable.explorerMinion.name + " discovered that the soldiers were planning a surprise party for the General's birthday. Knowing that the General is alone now, he slipped in and assassinated him successfully.");
+        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " discovered that the soldiers were planning a surprise party for the General's birthday. Knowing that the General is alone now, he slipped in and assassinated him successfully.");
         SetCurrentState(_states[stateName]);
         GeneralDiesRewardEffect(_states[stateName]);
     }
     private void NothingHappensRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(_interactable.explorerMinion.name + " followed the soldiers and found that they were merely having a drunken party away from their superiors.");
+        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " followed the soldiers and found that they were merely having a drunken party away from their superiors.");
         SetCurrentState(_states[stateName]);
         NothingHappensRewardEffect(_states[stateName]);
     }

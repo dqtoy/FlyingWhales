@@ -13,7 +13,7 @@ public class ArmyUnitTraining : Interaction {
 
     #region Overrides
     public override void CreateStates() {
-        CreateExploreStates();
+        //CreateExploreStates();
 
         InteractionState startState = new InteractionState("Start", this);
         InteractionState cancelledTrainingState = new InteractionState("Cancelled Training", this);
@@ -21,18 +21,18 @@ public class ArmyUnitTraining : Interaction {
         InteractionState demonDisappearsState = new InteractionState("Demon Disappears", this);
         InteractionState armyProducedState = new InteractionState("Army Produced", this);
 
-        string startStateDesc = "The garrison is producing another army unit.";
-        startState.SetDescription(startStateDesc);
+        //string startStateDesc = "The garrison is producing another army unit.";
+        //startState.SetDescription(startStateDesc);
 
         CreateActionOptions(startState);
-        CreateActionOptions(cancelledTrainingState);
-        CreateActionOptions(failCancelledTrainingState);
-        CreateActionOptions(armyProducedState);
+        //CreateActionOptions(cancelledTrainingState);
+        //CreateActionOptions(failCancelledTrainingState);
+        //CreateActionOptions(armyProducedState);
 
-        //cancelledTrainingState.SetEndEffect(() => CancelledTrainingRewardEffect(cancelledTrainingState));
-        //failCancelledTrainingState.SetEndEffect(() => FailedCancelTrainingRewardEffect(failCancelledTrainingState));
+        cancelledTrainingState.SetEndEffect(() => CancelledTrainingRewardEffect(cancelledTrainingState));
+        failCancelledTrainingState.SetEndEffect(() => FailedCancelTrainingRewardEffect(failCancelledTrainingState));
         demonDisappearsState.SetEndEffect(() => DemonDisappearsRewardEffect(demonDisappearsState));
-        //armyProducedState.SetEndEffect(() => ArmyProducedRewardEffect(armyProducedState));
+        armyProducedState.SetEndEffect(() => ArmyProducedRewardEffect(armyProducedState));
 
         _states.Add(startState.name, startState);
         _states.Add(cancelledTrainingState.name, cancelledTrainingState);
@@ -136,21 +136,21 @@ public class ArmyUnitTraining : Interaction {
 
     #region States
     private void CancelledTrainingRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(_interactable.explorerMinion.name + " distracted the soldiers with liquor so they end up forgetting that they were supposed to form a new defensive army unit.");
+        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " distracted the soldiers with liquor so they end up forgetting that they were supposed to form a new defensive army unit.");
         SetCurrentState(_states[stateName]);
-        CancelledTrainingRewardEffect(_states[stateName]);
+        //CancelledTrainingRewardEffect(_states[stateName]);
     }
     private void FailedCancelTrainingRewardState(InteractionState state, string stateName) {
         SetArmyClassNameToBeCreated();
-        _states[stateName].SetDescription(_interactable.explorerMinion.name + " failed to distract the soldiers. A new " + Utilities.NormalizeString(interactable.faction.race.ToString()) + " " + _chosenClassName + " unit has been formed at the garrison.");
+        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " failed to distract the soldiers. A new " + Utilities.NormalizeString(interactable.faction.race.ToString()) + " " + _chosenClassName + " unit has been formed at the garrison.");
         SetCurrentState(_states[stateName]);
-        FailedCancelTrainingRewardEffect(_states[stateName]);
+        //FailedCancelTrainingRewardEffect(_states[stateName]);
     }
     private void ArmyProducedRewardState(InteractionState state, string stateName) {
         SetArmyClassNameToBeCreated();
-        _states[stateName].SetDescription("A new " + Utilities.NormalizeString(interactable.faction.race.ToString()) + " " + _chosenClassName + " unit has been formed at the garrison.");
+        //_states[stateName].SetDescription("A new " + Utilities.NormalizeString(interactable.faction.race.ToString()) + " " + _chosenClassName + " unit has been formed at the garrison.");
         SetCurrentState(_states[stateName]);
-        ArmyProducedRewardEffect(_states[stateName]);
+        //ArmyProducedRewardEffect(_states[stateName]);
     }
     #endregion
 

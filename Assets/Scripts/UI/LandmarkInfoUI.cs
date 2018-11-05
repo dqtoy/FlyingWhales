@@ -54,6 +54,7 @@ public class LandmarkInfoUI : UIMenu {
     [SerializeField] private GameObject minionAssignmentGO;
     [SerializeField] private CharacterPortrait minionAssignmentPortrait;
     [SerializeField] private Button minionAssignmentConfirmButton;
+    [SerializeField] private Button minionAssignmentRecallButton;
     [SerializeField] private TextMeshProUGUI minionAssignmentDescription;
     [SerializeField] private TweenPosition minionAssignmentTween;
     [SerializeField] private Toggle[] investigateToggles;
@@ -413,6 +414,7 @@ public class LandmarkInfoUI : UIMenu {
                     investigateToggles[i].isOn = false;
                 }
             }
+            OnUpdateLandmarkInvestigationState();
             ChangeStateAllButtons(!_activeLandmark.landmarkInvestigation.isActivated);
             investigationGO.SetActive(true);
         } else {
@@ -420,7 +422,12 @@ public class LandmarkInfoUI : UIMenu {
         }
     }
     private void ChangeStateAllButtons(bool state) {
-        minionAssignmentConfirmButton.interactable = state;
+        //if (minionAssignmentConfirmButton.gameObject.activeSelf) {
+        //    minionAssignmentConfirmButton.interactable = state;
+        //}
+        //if (minionAssignmentRecallButton.gameObject.activeSelf) {
+        //    minionAssignmentRecallButton.interactable = state;
+        //}
         for (int i = 0; i < investigateToggles.Length; i++) {
             investigateToggles[i].interactable = state;
         }
@@ -437,6 +444,7 @@ public class LandmarkInfoUI : UIMenu {
         minionAssignmentPortrait.GeneratePortrait(null, 95, true);
         minionAssignmentDescription.gameObject.SetActive(true);
         minionAssignmentConfirmButton.gameObject.SetActive(false);
+        minionAssignmentRecallButton.gameObject.SetActive(false);
     }
     private void ShowMinionAssignment() {
         if (_activeLandmark.landmarkInvestigation.isActivated) {
@@ -450,6 +458,22 @@ public class LandmarkInfoUI : UIMenu {
         ResetMinionAssignment();
         minionAssignmentTween.PlayReverse();
     }
+    private void OnSetLandmarkInvestigationState(BaseLandmark landmark) {
+        if(_activeLandmark == landmark) {
+            OnUpdateLandmarkInvestigationState();
+        }
+    }
+    private void OnUpdateLandmarkInvestigationState() {
+        if (_activeLandmark.landmarkInvestigation.isActivated) {
+            minionAssignmentConfirmButton.gameObject.SetActive(false);
+            minionAssignmentRecallButton.gameObject.SetActive(true);
+        } else {
+            minionAssignmentConfirmButton.gameObject.SetActive(true);
+            minionAssignmentRecallButton.gameObject.SetActive(false);
+        }
+        minionAssignmentRecallButton.interactable = !_activeLandmark.landmarkInvestigation.isActivated;
+        minionAssignmentRecallButton.interactable = !_activeLandmark.landmarkInvestigation.isMinionRecalled;
+    }
     public void OnMinionDrop(Transform transform) {
         MinionItem minionItem = transform.GetComponent<MinionItem>();
         if(minionItem != null) {
@@ -461,6 +485,7 @@ public class LandmarkInfoUI : UIMenu {
         if(minion != null) {
             minionAssignmentPortrait.GeneratePortrait(minion.icharacter.portraitSettings, 95, true);
             minionAssignmentDescription.gameObject.SetActive(false);
+            minionAssignmentRecallButton.gameObject.SetActive(false);
             minionAssignmentConfirmButton.gameObject.SetActive(true);
             minionAssignmentConfirmButton.interactable = !_activeLandmark.landmarkInvestigation.isActivated;
         } else {
@@ -469,6 +494,12 @@ public class LandmarkInfoUI : UIMenu {
     }
     public void OnClickConfirmInvestigation() {
         _activeLandmark.landmarkInvestigation.InvestigateLandmark(_currentSelectedInvestigateButton.actionName);
+        OnUpdateLandmarkInvestigationState();
+        ChangeStateAllButtons(!_activeLandmark.landmarkInvestigation.isActivated);
+    }
+    public void OnClickRecall() {
+        _activeLandmark.landmarkInvestigation.RecallMinion();
+        OnUpdateLandmarkInvestigationState();
         ChangeStateAllButtons(!_activeLandmark.landmarkInvestigation.isActivated);
     }
     #endregion

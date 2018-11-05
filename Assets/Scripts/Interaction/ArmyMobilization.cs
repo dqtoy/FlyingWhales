@@ -19,8 +19,8 @@ public class ArmyMobilization : Interaction {
         InteractionState demonDisappearsState = new InteractionState("Demon Disappears", this);
         InteractionState armyMobilizedState = new InteractionState("Army Mobilized", this);
 
-        string startStateDesc = "The garrison is mobilizing its forces. They are planning to assign some reserved units to defensive positions in the city.";
-        startState.SetDescription(startStateDesc);
+        //string startStateDesc = "The garrison is mobilizing its forces. They are planning to assign some reserved units to defensive positions in the city.";
+        //startState.SetDescription(startStateDesc);
 
         CreateActionOptions(startState);
         CreateActionOptions(cancelledMobilizationState);
@@ -121,17 +121,17 @@ public class ArmyMobilization : Interaction {
 
     #region States
     private void CancelledMobilizationRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, eventually convincing him to delay their mobilization.");
+        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, eventually convincing him to delay their mobilization.");
         SetCurrentState(_states[stateName]);
         CancelledMobilizationRewardEffect(_states[stateName]);
     }
     private void FailedCancelMobilizationRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, but was unable to convince him to delay their mobilization.");
+        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, but was unable to convince him to delay their mobilization.");
         SetCurrentState(_states[stateName]);
         FailedCancelMobilizationRewardEffect(_states[stateName]);
     }
     private void ArmyMobilizedRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription("The garrison has now mobilized its reserved forces.");
+        //_states[stateName].SetDescription("The garrison has now mobilized its reserved forces.");
         SetCurrentState(_states[stateName]);
         ArmyMobilizedRewardEffect(_states[stateName]);
     }

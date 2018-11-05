@@ -1220,8 +1220,8 @@ public class BaseLandmark : ILocation, IInteractable {
     public void ConstructInitialInteractions() {
         _landmarkInvestigation = new LandmarkInvestigation(this);
         //Interaction investigateInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.INVESTIGATE, this);
-        //Interaction pointOfInterest1 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.POI_1, this);
-        //Interaction pointOfInterest2 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.POI_2, this);
+        //Interaction pointOfInterest1 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ABANDONED_HOUSE, this);
+        //Interaction pointOfInterest2 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.UNEXPLORED_CAVE, this);
         //AddInteraction(investigateInteraction);
         //AddInteraction(pointOfInterest1);
         //AddInteraction(pointOfInterest2);

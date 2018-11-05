@@ -40,6 +40,7 @@ public static class Signals {
     public static string LANDMARK_INSPECTED = "OnLandmarkInspected"; //Parameters (BaseLandmark inspectedLandmark)
     public static string LANDMARK_RESIDENT_ADDED = "OnLandmarkResidentAdded"; //Parameters (BaseLandmark affectedLandmark, ICharacter character)
     public static string LANDMARK_RESIDENT_REMOVED = "OnLandmarkResidentRemoved"; //Parameters (BaseLandmark affectedLandmark, ICharacter character)
+    public static string LANDMARK_INVESTIGATION_ACTIVATED = "OnLandmarkInvestigationActivated"; //Parameters (BaseLandmark investigatedLandmark)
     #endregion
 
     #region Character

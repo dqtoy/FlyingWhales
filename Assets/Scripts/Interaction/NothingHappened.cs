@@ -13,8 +13,8 @@ public class NothingHappened : Interaction {
         CreateExploreStates();
         InteractionState startState = new InteractionState("Start", this);
 
-        string startStateDesc = _interactable.explorerMinion.name + " did not find anything worth reporting.";
-        startState.SetDescription(startStateDesc);
+        //string startStateDesc = _interactable.explorerMinion.name + " did not find anything worth reporting.";
+        //startState.SetDescription(startStateDesc);
         CreateActionOptions(startState);
 
         _states.Add(startState.name, startState);

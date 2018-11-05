@@ -21,8 +21,8 @@ public class TheSpiderQueen : Interaction {
             ConstructAssaultSpawnWeights();
 
             InteractionState startState = new InteractionState("State 1", this);
-            string startStateDesc = "Our Imp reported that the Spider Queen has been spotted out of the heavily protected hive core. Should we do something before it gets back in?";
-            startState.SetDescription(startStateDesc);
+            //string startStateDesc = "Our Imp reported that the Spider Queen has been spotted out of the heavily protected hive core. Should we do something before it gets back in?";
+            //startState.SetDescription(startStateDesc);
             CreateActionOptions(startState);
             //GameDate dueDate = GameManager.Instance.Today();
             //dueDate.AddHours(100);
@@ -150,7 +150,7 @@ public class TheSpiderQueen : Interaction {
     }
 
     private void AttackLocation(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedUnit.name + " has been sent to attack " + spiderQueen.name + " at " + landmark.landmarkName + ".");
+        //_states[effectName].SetDescription(state.chosenOption.assignedUnit.name + " has been sent to attack " + spiderQueen.name + " at " + landmark.landmarkName + ".");
         SetCurrentState(_states[effectName]);
         //**Note**: Queen should join combat.
 
@@ -163,7 +163,7 @@ public class TheSpiderQueen : Interaction {
     }
 
     private void TransformRitualSuccess(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " performed the Transform Ritual perfectly, even managing to hide from the Queen's protectors. The Queen was successfully corrupted and became a vessel of a powerful demon.");
+        //_states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " performed the Transform Ritual perfectly, even managing to hide from the Queen's protectors. The Queen was successfully corrupted and became a vessel of a powerful demon.");
         SetCurrentState(_states[effectName]);
     }
     private void TransformRitualSuccessEffect(InteractionState state) {
@@ -171,7 +171,7 @@ public class TheSpiderQueen : Interaction {
         PlayerManager.Instance.player.AddMinion(PlayerManager.Instance.CreateNewMinion(DEMON_TYPE.SLOTH, 10));
     }
     private void TransformRitualFailure(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " performed the Transform Ritual but the Queen's protectors discovered him at the last minute, forcing him to flee before the ritual is complete.");
+        //_states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " performed the Transform Ritual but the Queen's protectors discovered him at the last minute, forcing him to flee before the ritual is complete.");
         SetCurrentState(_states[effectName]);
     }
     private void TransformRitualFailureEffect(InteractionState state) {
@@ -179,7 +179,7 @@ public class TheSpiderQueen : Interaction {
         state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
     private void TransformRitualCriticalFailure(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " performed the Transform Ritual but the Queen's protectors discovered him at the last minute and killed him before he was able to complete the ritual.");
+        //_states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " performed the Transform Ritual but the Queen's protectors discovered him at the last minute and killed him before he was able to complete the ritual.");
         SetCurrentState(_states[effectName]);
     }
     private void TransformRitualCriticalFailureEffect(InteractionState state) {
@@ -188,7 +188,7 @@ public class TheSpiderQueen : Interaction {
     }
 
     private void GainSupplies(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " snuck into the lair while the Spiders are busy guarding the Queen. It was able to obtain a small amount of Supplies.");
+        //_states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " snuck into the lair while the Spiders are busy guarding the Queen. It was able to obtain a small amount of Supplies.");
         SetCurrentState(_states[effectName]);
     }
     private void GainSuppliesEffect(InteractionState state) {
@@ -199,7 +199,7 @@ public class TheSpiderQueen : Interaction {
         landmark.tileLocation.areaOfTile.PayForReward(reward);
     }
     private void DemonDies(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " snuck into the lair expecting light defense while the Spiders are busy guarding the Queen. It was surprised to find a group of Spinners. They killed him rather quickly.");
+        //_states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " snuck into the lair expecting light defense while the Spiders are busy guarding the Queen. It was surprised to find a group of Spinners. They killed him rather quickly.");
         SetCurrentState(_states[effectName]);
     }
     private void DemonDiesEffect(InteractionState state) {
@@ -207,7 +207,7 @@ public class TheSpiderQueen : Interaction {
         PlayerManager.Instance.player.RemoveMinion(state.assignedMinion);
     }
     private void SpidersAttack(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " was discovered while he was sneaking into the Spider Lair. The Spiders have sent out an army to attack us in retaliation.");
+        //_states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " was discovered while he was sneaking into the Spider Lair. The Spiders have sent out an army to attack us in retaliation.");
         SetCurrentState(_states[effectName]);
         //**Mechanics**: create a 4 army attack unit from Assault Spawn Weights 1.
         MonsterParty army = CreateAssaultArmy(4);
