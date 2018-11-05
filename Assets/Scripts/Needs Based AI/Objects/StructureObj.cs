@@ -127,13 +127,12 @@ public class StructureObj : IObject {
             return;
         }
         Debug.Log("Generating initial defenders for " + _specificObjectType.ToString());
-        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_specificObjectType);
-        for (int i = 0; i < data.initialDefenderCount; i++) {
+        for (int i = 0; i < _objectLocation.initialDefenderCount; i++) {
             WeightedDictionary<LandmarkDefender> defenderWeights;
             if (i == 0) {
-                defenderWeights = data.firstElementDefenderWeights;
+                defenderWeights = _objectLocation.GetFirstDefenderWeights();
             } else {
-                defenderWeights = data.defenderWeights;
+                defenderWeights = _objectLocation.defenderWeights;
             }
             if (defenderWeights.GetTotalOfWeights() > 0) {
                 LandmarkDefender chosenDefender = defenderWeights.PickRandomElementGivenWeights();
@@ -149,10 +148,9 @@ public class StructureObj : IObject {
             Debug.Log(interactionLog);
             return; //the landmark already has an active interaction, other than investigate
         }
-        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_objectLocation.specificLandmarkType);
-        if (data.eventTriggerWeights.GetTotalOfWeights() > 0) {
-            if (data.eventTriggerWeights.PickRandomElementGivenWeights()) { //if event trigger weights return true
-                WeightedDictionary<INTERACTION_TYPE> interactionWeights = data.GetInteractionWeights(_objectLocation);
+        if (_objectLocation.eventTriggerWeights.GetTotalOfWeights() > 0) {
+            if (_objectLocation.eventTriggerWeights.PickRandomElementGivenWeights()) { //if event trigger weights return true
+                WeightedDictionary<INTERACTION_TYPE> interactionWeights = _objectLocation.GetInteractionWeights(_objectLocation);
                 interactionLog += "\n" + interactionWeights.GetWeightsSummary("Generating interaction:");
                 if (interactionWeights.GetTotalOfWeights() > 0) {
                     INTERACTION_TYPE chosenInteraction = interactionWeights.PickRandomElementGivenWeights();
@@ -295,17 +293,6 @@ public class StructureObj : IObject {
     #endregion
 
     #region Utilities
-    public CharacterArmyUnit CreateNewDefenderUnit() {
-        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_specificObjectType);
-        WeightedDictionary<LandmarkDefender> defenderWeights = data.defenderWeights;
-        if (defenderWeights.GetTotalOfWeights() > 0) {
-            LandmarkDefender chosenDefender = defenderWeights.PickRandomElementGivenWeights();
-            CharacterArmyUnit defenderUnit = CharacterManager.Instance.CreateCharacterArmyUnit(_objectLocation.owner.race, chosenDefender, _objectLocation.owner, _objectLocation); //_objectLocation.owner.race
-            _objectLocation.AddDefender(defenderUnit);
-            return defenderUnit;
-        }
-        return null;
-    }
     public void SetCommonData(StructureObj clone) {
         clone.SetObjectName(this._objectName);
         clone._specificObjectType = this._specificObjectType;
@@ -391,29 +378,29 @@ public class StructureObj : IObject {
     //}
     #endregion
 
-    #region For Testing: Imp Triggered Events
-    public void StartImpTriggeredEvent() {
-        GameDate impEventDate = GameManager.Instance.Today();
-        int ticksToTriggerEvent = UnityEngine.Random.Range(10, 31);
-        impEventDate.AddHours(ticksToTriggerEvent);
-        SchedulingManager.Instance.AddEntry(impEventDate, () => ImpTriggeredEvent());
-    }
-    private void ImpTriggeredEvent() {
-        if (_objectLocation.HasActiveInteraction()) {
-            return; //the landmark already has an active interaction, other than investigate
-        }
-        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_objectLocation.specificLandmarkType);
-        WeightedDictionary<INTERACTION_TYPE> interactionWeights = data.GetInteractionWeights(_objectLocation);
-        if (interactionWeights.GetTotalOfWeights() > 0) {
-            INTERACTION_TYPE chosenInteraction = interactionWeights.PickRandomElementGivenWeights();
-            //create interaction of type;
-            Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, _objectLocation);
-            if (createdInteraction != null) {
-                _objectLocation.AddInteraction(createdInteraction);
-            }
-        }
-    }
-    #endregion
+    //#region For Testing: Imp Triggered Events
+    //public void StartImpTriggeredEvent() {
+    //    GameDate impEventDate = GameManager.Instance.Today();
+    //    int ticksToTriggerEvent = UnityEngine.Random.Range(10, 31);
+    //    impEventDate.AddHours(ticksToTriggerEvent);
+    //    SchedulingManager.Instance.AddEntry(impEventDate, () => ImpTriggeredEvent());
+    //}
+    //private void ImpTriggeredEvent() {
+    //    if (_objectLocation.HasActiveInteraction()) {
+    //        return; //the landmark already has an active interaction, other than investigate
+    //    }
+    //    LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_objectLocation.specificLandmarkType);
+    //    WeightedDictionary<INTERACTION_TYPE> interactionWeights = data.GetInteractionWeights(_objectLocation);
+    //    if (interactionWeights.GetTotalOfWeights() > 0) {
+    //        INTERACTION_TYPE chosenInteraction = interactionWeights.PickRandomElementGivenWeights();
+    //        //create interaction of type;
+    //        Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, _objectLocation);
+    //        if (createdInteraction != null) {
+    //            _objectLocation.AddInteraction(createdInteraction);
+    //        }
+    //    }
+    //}
+    //#endregion
 
     #region Interaction
     private void SetDailyInteractionGenerationTick() {

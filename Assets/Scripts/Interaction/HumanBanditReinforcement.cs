@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BanditReinforcement : Interaction {
+public class HumanBanditReinforcement : Interaction {
 
     private BaseLandmark landmark;
 
     private WeightedDictionary<LandmarkDefender> assaultSpawnWeights;
     private WeightedDictionary<LandmarkDefender> firstElementAssaultSpawnWeights; //TODO: Make this more elegant!
 
-    public BanditReinforcement(IInteractable interactable) : base(interactable, INTERACTION_TYPE.BANDIT_REINFORCEMENT, 50) {
-        _name = "Bandit Reinforcement";
+    public HumanBanditReinforcement(IInteractable interactable) : base(interactable, INTERACTION_TYPE.HUMAN_BANDIT_REINFORCEMENT, 50) {
+        _name = "Human Bandit Reinforcement";
     }
 
     #region Overrides
