@@ -328,8 +328,8 @@ public class Party : IParty {
             _icon.StartPath(PATHFINDING_MODE.PASSABLE, doneAction, trackTarget, actionOnStartOfMovement);
         }
     }
-    public void CancelTravel() {
-        _icon.CancelTravel();
+    public void CancelTravel(Action onCancelTravel = null) {
+        _icon.CancelTravel(onCancelTravel);
     }
     public void SetIsAttacking(bool state) {
         _isAttacking = state;

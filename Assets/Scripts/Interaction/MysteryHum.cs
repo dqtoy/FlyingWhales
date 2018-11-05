@@ -17,8 +17,8 @@ public class MysteryHum : Interaction {
         InteractionState demonAttacksState = new InteractionState("Demon Attacks", this);
         InteractionState armyRecruitedState = new InteractionState("Army Recruited", this);
 
-        string startStateDesc = "%minion% reports of some mysterious humming coming from within the caves.";
-        startState.SetDescription(startStateDesc);
+        //string startStateDesc = "%minion% reports of some mysterious humming coming from within the caves.";
+        //startState.SetDescription(startStateDesc);
 
         CreateActionOptions(startState);
         //CreateActionOptions(demonAttacksState);
@@ -101,11 +101,11 @@ public class MysteryHum : Interaction {
         }
     }
     private void DemonAttacksRewardState(InteractionState state, string effectName) {
-        _states[effectName].SetDescription("After " + _interactable.explorerMinion.name + " investigated the hum, it returned with a strange glow in its eyes. It is now attacking us!");
+        //_states[effectName].SetDescription("After " + _interactable.explorerMinion.name + " investigated the hum, it returned with a strange glow in its eyes. It is now attacking us!");
         SetCurrentState(_states[effectName]);
     }
     private void ArmyRecruitedRewardState(InteractionState state, string effectName) {
-        _states[effectName].SetDescription("The mysterious hum came from a group of Zombie Earthbinders staying within a hidden section of the cave. We have bent them to our will and they now join our army.");
+        //_states[effectName].SetDescription("The mysterious hum came from a group of Zombie Earthbinders staying within a hidden section of the cave. We have bent them to our will and they now join our army.");
         SetCurrentState(_states[effectName]);
         ArmyRecruitedRewardEffect(_states[effectName]);
     }

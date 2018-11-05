@@ -19,8 +19,8 @@ public class UnfinishedCurse : Interaction {
         if (_interactable is BaseLandmark) {
 
             InteractionState startState = new InteractionState("State 1", this);
-            string startStateDesc = "Our imp has reported what appears to be an ancient unfinished curse placed within one of the cemetery mausoleums. We may be able to complete the curse but we aren't aware of what it's actual effect would be, if any.";
-            startState.SetDescription(startStateDesc);
+            //string startStateDesc = "Our imp has reported what appears to be an ancient unfinished curse placed within one of the cemetery mausoleums. We may be able to complete the curse but we aren't aware of what it's actual effect would be, if any.";
+            //startState.SetDescription(startStateDesc);
             CreateActionOptions(startState);
             //GameDate dueDate = GameManager.Instance.Today();
             //dueDate.AddHours(100);
@@ -116,28 +116,28 @@ public class UnfinishedCurse : Interaction {
     }
 
     private void Curse1Completed(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " tried a couple of chants to complete the curse. After the latest one, a violent thunderstrike sounded from the distance.");
+        //_states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " tried a couple of chants to complete the curse. After the latest one, a violent thunderstrike sounded from the distance.");
         SetCurrentState(_states[effectName]);
     }
     private void Curse1CompletedEffect(InteractionState state) {
         state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     private void Curse2Completed(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " tried a couple of chants to complete the curse. After the latest one, a violent thunderstrike sounded from the distance.");
+        //_states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " tried a couple of chants to complete the curse. After the latest one, a violent thunderstrike sounded from the distance.");
         SetCurrentState(_states[effectName]);
     }
     private void Curse2CompletedEffect(InteractionState state) {
         state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     private void Curse3Completed(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " tried a couple of chants to complete the curse. After the latest one, a violent thunderstrike sounded from the distance.");
+        //_states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " tried a couple of chants to complete the curse. After the latest one, a violent thunderstrike sounded from the distance.");
         SetCurrentState(_states[effectName]);
     }
     private void Curse3CompletedEffect(InteractionState state) {
         state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     private void CurseFailedToComplete(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " attempted to complete the ancient curse but failed to figure out the proper chant to make it work.");
+        //_states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " attempted to complete the ancient curse but failed to figure out the proper chant to make it work.");
         SetCurrentState(_states[effectName]);
     }
     private void CurseFailedToCompleteEffect(InteractionState state) {
@@ -145,7 +145,7 @@ public class UnfinishedCurse : Interaction {
     }
 
     private void ObtainMana(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " discovered a source of magical energy. We have converted it into a small amount of Mana.");
+        //_states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " discovered a source of magical energy. We have converted it into a small amount of Mana.");
         SetCurrentState(_states[effectName]);
     }
     private void ObtainManaEffect(InteractionState state) {

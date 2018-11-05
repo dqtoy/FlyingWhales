@@ -9,6 +9,7 @@ public class LandmarkInvestigation {
     private BaseLandmark _landmark;
     private Minion _assignedMinion;
     private bool _isActivated;
+    private bool _isMinionRecalled;
     private string _whatToDo;
 
     //Explore
@@ -25,6 +26,9 @@ public class LandmarkInvestigation {
     }
     public bool isActivated {
         get { return _isActivated; }
+    }
+    public bool isMinionRecalled {
+        get { return _isMinionRecalled; }
     }
     public string whatToDo {
         get { return _whatToDo; }
@@ -49,18 +53,36 @@ public class LandmarkInvestigation {
             MinionGoToAssignment(RaidLandmark);
         }
         _whatToDo = whatTodo;
-        _isActivated = true;
+        SetActivatedState(true);
     }
     public void UninvestigateLandmark() {
         _assignedMinion.SetEnabledState(true);
-        _isActivated = false;
+        SetAssignedMinion(null);
+        _isMinionRecalled = false;
+        SetActivatedState(false);
         _whatToDo = string.Empty;
     }
     private void MinionGoToAssignment(Action action) {
         _assignedMinion.icharacter.currentParty.GoToLocation(_landmark, PATHFINDING_MODE.PASSABLE, () => action());
     }
     public void MinionGoBackFromAssignment(Action action) {
-        _assignedMinion.icharacter.currentParty.GoToLocation(PlayerManager.Instance.player.demonicPortal, PATHFINDING_MODE.PASSABLE, () => action());
+        if (_assignedMinion.icharacter.currentParty.icon.isTravelling) {
+            _assignedMinion.icharacter.currentParty.CancelTravel(() => action());
+        } else {
+            _assignedMinion.icharacter.currentParty.GoToLocation(PlayerManager.Instance.player.demonicPortal, PATHFINDING_MODE.PASSABLE, () => action());
+        }
+    }
+    public void RecallMinion() {
+        if (_landmark.isBeingInspected) {
+            MinionGoBackFromAssignment(UnexploreLandmark);
+        } else {
+            MinionGoBackFromAssignment(UninvestigateLandmark);
+        }
+        _isMinionRecalled = true;
+    }
+    public void SetActivatedState(bool state) {
+        _isActivated = state;
+        Messenger.Broadcast(Signals.LANDMARK_INVESTIGATION_ACTIVATED, _landmark);
     }
 
     #region Explore

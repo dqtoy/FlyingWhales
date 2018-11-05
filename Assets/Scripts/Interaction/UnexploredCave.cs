@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 
-public class PointOfInterest2 : Interaction {
-    public PointOfInterest2(IInteractable interactable) : base(interactable, INTERACTION_TYPE.POI_2, 30) {
-        _name = "Point of Interest 2";
+public class UnexploredCave : Interaction {
+    public UnexploredCave(IInteractable interactable) : base(interactable, INTERACTION_TYPE.UNEXPLORED_CAVE, 30) {
+        _name = "Unexplored Cave";
     }
     #region Overrides
     public override void CreateStates() {
@@ -21,8 +21,8 @@ public class PointOfInterest2 : Interaction {
         InteractionState unleashedMonsterState = new InteractionState("Unleashed Monster", this);
         InteractionState nothingState = new InteractionState("Nothing", this);
 
-        string startStateDesc = "%minion% has discovered a previously unexplored cave. We can send out a minion to explore further.";
-        startState.SetDescription(startStateDesc);
+        //string startStateDesc = "%minion% has discovered a previously unexplored cave. We can send out a minion to explore further.";
+        //startState.SetDescription(startStateDesc);
 
         CreateActionOptions(startState);
         CreateActionOptions(supplyState);
@@ -127,12 +127,12 @@ public class PointOfInterest2 : Interaction {
         }
     }
     private void DemonWeaponUpgradeRewardState(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(_interactable.explorerMinion.name + " has returned with an improved Weapon.");
+        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " has returned with an improved Weapon.");
         SetCurrentState(_states[effectName]);
         DemonWeaponUpgradeEffect(_states[effectName]);
     }
     private void DemonArmorUpgradeRewardState(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(_interactable.explorerMinion.name + " has returned with an improved Armor.");
+        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " has returned with an improved Armor.");
         SetCurrentState(_states[effectName]);
         DemonArmorUpgradeEffect(_states[effectName]);
     }
@@ -140,7 +140,7 @@ public class PointOfInterest2 : Interaction {
         if(_interactable is BaseLandmark) {
             BaseLandmark landmark = _interactable as BaseLandmark;
             if(landmark.charactersWithHomeOnLandmark.Count > 0) {
-                _states[effectName].SetDescription(_interactable.explorerMinion.name + " has awakened a " + landmark.charactersWithHomeOnLandmark[0].name + ". It now defends the cave from intruders.");
+                //_states[effectName].SetDescription(_interactable.explorerMinion.name + " has awakened a " + landmark.charactersWithHomeOnLandmark[0].name + ". It now defends the cave from intruders.");
                 SetCurrentState(_states[effectName]);
                 UnleashedMonsterEffect(_states[effectName]);
             }

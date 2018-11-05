@@ -151,7 +151,7 @@ public class Interaction {
     }
     protected void CreateWhatToDoNextState(string description) {
         InteractionState whatToDoNextState = new InteractionState("What To Do Next", this);
-        whatToDoNextState.SetDescription(description);
+        //whatToDoNextState.SetDescription(description);
 
         ActionOption yesPleaseOption = new ActionOption {
             interactionState = whatToDoNextState,
@@ -187,26 +187,26 @@ public class Interaction {
         state.EndResult();
     }
     protected void SupplyRewardState(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(_interactable.explorerMinion.name + " discovered a small cache of Supplies.");
+        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " discovered a small cache of Supplies.");
         SetCurrentState(_states[effectName]);
         SupplyRewardEffect(_states[effectName]);
     }
     protected void SupplyRewardEffect(InteractionState state) {
-        PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, 40);
+        PlayerManager.Instance.player.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
         _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
 
     protected void ManaRewardState(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(_interactable.explorerMinion.name + " discovered a source of magical energy. We have converted it into a small amount of Mana.");
+        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " discovered a source of magical energy. We have converted it into a small amount of Mana.");
         SetCurrentState(_states[effectName]);
         ManaRewardEffect(_states[effectName]);
     }
     protected void ManaRewardEffect(InteractionState state) {
-        PlayerManager.Instance.player.AdjustCurrency(CURRENCY.MANA, 40);
+        PlayerManager.Instance.player.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Mana_Cache_Reward_1));
         _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
     protected void NothingRewardState(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(_interactable.explorerMinion.name + " has returned with nothing to report.");
+        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " has returned with nothing to report.");
         SetCurrentState(_states[effectName]);
         NothingEffect(_states[effectName]);
     }
@@ -216,7 +216,7 @@ public class Interaction {
 
     #region End Result Share States and Effects
     protected void DemonDisappearsRewardState(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(_interactable.explorerMinion.name + " has not returned. We can only assume the worst.");
+        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " has not returned. We can only assume the worst.");
         SetCurrentState(_states[effectName]);
     }
     protected void DemonDisappearsRewardEffect(InteractionState state) {
@@ -224,7 +224,7 @@ public class Interaction {
         PlayerManager.Instance.player.RemoveMinion(_interactable.explorerMinion);
     }
     protected void ExploreContinuesRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription("We've instructed " + _interactable.explorerMinion.name + " to continue its surveillance of the area.");
+        //_states[stateName].SetDescription("We've instructed " + _interactable.explorerMinion.name + " to continue its surveillance of the area.");
         SetCurrentState(_states[stateName]);
     }
     protected void ExploreContinuesRewardEffect(InteractionState state) {
@@ -235,7 +235,7 @@ public class Interaction {
     }
     protected void ExploreEndsRewardState(InteractionState state, string stateName) {
         if (_interactable.explorerMinion != null) {
-            _states[stateName].SetDescription("We've instructed " + _interactable.explorerMinion.name + " to return.");
+            //_states[stateName].SetDescription("We've instructed " + _interactable.explorerMinion.name + " to return.");
         }
         SetCurrentState(_states[stateName]);
     }

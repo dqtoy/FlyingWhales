@@ -33,11 +33,11 @@ public class InteractionManager : MonoBehaviour {
             //case INTERACTION_TYPE.INVESTIGATE:
             //    createdInteraction = new InvestigateInteraction(interactable);
             //    break;
-            case INTERACTION_TYPE.POI_1:
-                createdInteraction = new PointOfInterest1(interactable);
+            case INTERACTION_TYPE.ABANDONED_HOUSE:
+                createdInteraction = new AbandonedHouse(interactable);
                 break;
-            case INTERACTION_TYPE.POI_2:
-                createdInteraction = new PointOfInterest2(interactable);
+            case INTERACTION_TYPE.UNEXPLORED_CAVE:
+                createdInteraction = new UnexploredCave(interactable);
                 break;
             case INTERACTION_TYPE.HARVEST_SEASON:
                 createdInteraction = new HarvestSeason(interactable);
@@ -87,8 +87,8 @@ public class InteractionManager : MonoBehaviour {
                     return true;
                 }
                 return false;
-            case INTERACTION_TYPE.POI_1:
-            case INTERACTION_TYPE.POI_2:
+            case INTERACTION_TYPE.ABANDONED_HOUSE:
+            case INTERACTION_TYPE.UNEXPLORED_CAVE:
             case INTERACTION_TYPE.SPIDER_QUEEN:
             case INTERACTION_TYPE.MYSTERY_HUM:
             case INTERACTION_TYPE.UNFINISHED_CURSE:

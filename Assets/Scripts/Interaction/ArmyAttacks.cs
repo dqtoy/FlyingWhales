@@ -24,8 +24,8 @@ public class ArmyAttacks : Interaction {
             CreateWhatToDoNextState("%minion% will not intervene with the Garrison's planned attack. Do you want him to continue surveillance of " + landmark.landmarkName + "?");
 
             InteractionState startState = new InteractionState("State 1", this);
-            string startStateDesc = "The Garrison is preparing to attack " + landmark.name + ".";
-            startState.SetDescription(startStateDesc);
+            //string startStateDesc = "The Garrison is preparing to attack " + landmark.name + ".";
+            //startState.SetDescription(startStateDesc);
             CreateActionOptions(startState);
             
 
@@ -162,9 +162,9 @@ public class ArmyAttacks : Interaction {
     }
 
     private void StopSuccessful(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, " +
-            "eventually convincing him to cancel their attack. With that done, we can have him maintain surveillance " +
-            "of the area if you want.");
+        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, " +
+        //    "eventually convincing him to cancel their attack. With that done, we can have him maintain surveillance " +
+        //    "of the area if you want.");
         SetCurrentState(_states[effectName]);
         StopSuccessfulRewardEffect(_states[effectName]);
     }
@@ -177,7 +177,7 @@ public class ArmyAttacks : Interaction {
         Area targetArea = enemyFaction.ownedAreas[Random.Range(0, enemyFaction.ownedAreas.Count)];
         BaseLandmark target = targetArea.GetRandomExposedLandmark();
         //**Mechanics**: Army Unit with most occupied slots will Attack the selected enemy location.
-        _states[effectName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, but was unable to convince him to cancel their attack. What do you want him to do next?");
+        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, but was unable to convince him to cancel their attack. What do you want him to do next?");
         SetCurrentState(_states[effectName]);
 
         CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
@@ -192,9 +192,9 @@ public class ArmyAttacks : Interaction {
     private void StopCriticalFailure(InteractionState state, string effectName) {
         //**Mechanics**: Army Unit with most occupied slots will Attack a player location. Demon ends Explore and must return to Portal.
         BaseLandmark target = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
-        _states[effectName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, " +
-            "but was unable to convince him to cancel their attack. Annoyed with the demon, the General redirected the attack to us! " +
-            _interactable.explorerMinion.name + " was also forced to flee the area.");
+        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, " +
+        //    "but was unable to convince him to cancel their attack. Annoyed with the demon, the General redirected the attack to us! " +
+        //    _interactable.explorerMinion.name + " was also forced to flee the area.");
         SetCurrentState(_states[effectName]);
 
         CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
@@ -210,8 +210,8 @@ public class ArmyAttacks : Interaction {
     private void RedirectionSuccessful(InteractionState state, string effectName) {
         //**Mechanics**: Army Unit with most occupied slots will Attack assigned Location Intel.
         BaseLandmark target = state.chosenOption.assignedLocation.location.GetRandomExposedLandmark();
-        _states[effectName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General," +
-            " eventually convincing him to redirect their attack to " + target.name + ". What do you want him to do next?");
+        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General," +
+        //    " eventually convincing him to redirect their attack to " + target.name + ". What do you want him to do next?");
         SetCurrentState(_states[effectName]);
 
         CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
@@ -226,8 +226,8 @@ public class ArmyAttacks : Interaction {
     private void RedirectionFailure(InteractionState state, string effectName) {
         //**Mechanics**: Army Unit with most occupied slots will Attack a player location.
         BaseLandmark target = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
-        _states[effectName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, " +
-            "but failed to convince him to redirect their attack to " + target.name + ". What do you want him to do next?");
+        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, " +
+        //    "but failed to convince him to redirect their attack to " + target.name + ". What do you want him to do next?");
         SetCurrentState(_states[effectName]);
 
         CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();

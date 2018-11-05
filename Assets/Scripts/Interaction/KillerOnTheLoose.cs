@@ -17,8 +17,8 @@ public class KillerOnTheLoose : Interaction {
         InteractionState nothingHappensState = new InteractionState("Nothing Happens", this);
         InteractionState gainSupplyState = new InteractionState("Gain Supply", this);
 
-        string startStateDesc = "%minion% reported rumors of a serial killer on the loose in " + _interactable.specificLocation.thisName + ". If there is truth to the rumor, a hardened criminal like that is a great candidate for a Demonic Conversion.";
-        startState.SetDescription(startStateDesc);
+        //string startStateDesc = "%minion% reported rumors of a serial killer on the loose in " + _interactable.specificLocation.thisName + ". If there is truth to the rumor, a hardened criminal like that is a great candidate for a Demonic Conversion.";
+        //startState.SetDescription(startStateDesc);
 
         CreateActionOptions(startState);
         CreateActionOptions(convertDemonState);
@@ -105,17 +105,17 @@ public class KillerOnTheLoose : Interaction {
 
     #region States
     private void ConvertToDemonRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(_interactable.explorerMinion.name + " was able to find the killer and restrain him. After a lengthy Transform Ritual, we have summoned a new Envy Demon into his corrupted body.");
+        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " was able to find the killer and restrain him. After a lengthy Transform Ritual, we have summoned a new Envy Demon into his corrupted body.");
         SetCurrentState(_states[stateName]);
         ConvertToDemonRewardEffect(_states[stateName]);
     }
     private void GainSupplyRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(_interactable.explorerMinion.name + " managed to track the killer to his hideout but just as he was about to restrain him, guards arrived forcing him to retreat. They killed the criminal and obtained some supplies from his hideout.");
+        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " managed to track the killer to his hideout but just as he was about to restrain him, guards arrived forcing him to retreat. They killed the criminal and obtained some supplies from his hideout.");
         SetCurrentState(_states[stateName]);
         GainSupplyRewardEffect(_states[stateName]);
     }
     private void NothingHappensRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription("After hours of searching, " + _interactable.explorerMinion.name + " was still unable to find any trace of the killer. It has returned empty handed.");
+        //_states[stateName].SetDescription("After hours of searching, " + _interactable.explorerMinion.name + " was still unable to find any trace of the killer. It has returned empty handed.");
         SetCurrentState(_states[stateName]);
         NothingHappensRewardEffect(_states[stateName]);
     }

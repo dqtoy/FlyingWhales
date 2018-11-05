@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using ECS;
 
 public class InteractionState {
     private Interaction _interaction;
@@ -56,9 +57,9 @@ public class InteractionState {
         _actionOptions = new ActionOption[4];
     }
 
-    public void SetDescription(string desc) {
-        _description = desc;
-    }
+    //public void SetDescription(string desc) {
+    //    _description = desc;
+    //}
     public void SetAssignedMinion(Minion minion) {
         _assignedMinion = minion;
     }
@@ -80,6 +81,9 @@ public class InteractionState {
     }
     public void OnStartState() {
         SetDescription();
+        if (_isEnd && _endEffect != null) {
+            _endEffect();
+        }
         //if(_isTimed && _defaultOption != null) {
         //    SchedulingManager.Instance.AddEntry(_timeDate, () => ActivateDefault());
         //}
@@ -88,12 +92,36 @@ public class InteractionState {
         AssignedMinionGoesBack();
     }
     private void SetDescription() {
-        if (!string.IsNullOrEmpty(description) && interaction.interactable.explorerMinion != null) {
-            if (description.Contains("%minion%")) {
-                SetDescription(description.Replace("%minion%", interaction.interactable.explorerMinion.name));
-            }
-            InteractionUI.Instance.interactionItem.SetDescription(description);
+        //TODO: make this more performant
+        Log descriptionLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_description");
+        if (interaction.interactable.explorerMinion != null) {
+            descriptionLog.AddToFillers(_interaction.interactable.explorerMinion, _interaction.interactable.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
         }
+        descriptionLog.AddToFillers(_interaction.interactable.specificLocation.tileLocation.landmarkOnTile, _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
+
+        _description = Utilities.LogReplacer(descriptionLog);
+        InteractionUI.Instance.interactionItem.SetDescription(_description);
+
+        //Minion Log
+        if (!string.IsNullOrEmpty(LocalizationManager.Instance.GetLocalizedValue("Events", _interaction.GetType().ToString(), _name.ToLower() + "_logminion"))) {
+            if (interaction.interactable.explorerMinion != null) {
+                Log minionLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_logminion");
+                minionLog.AddToFillers(_interaction.interactable.explorerMinion, _interaction.interactable.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
+                minionLog.AddToFillers(_interaction.interactable.specificLocation.tileLocation.landmarkOnTile, _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
+                interaction.interactable.explorerMinion.icharacter.AddHistory(minionLog);
+            }
+        }
+
+        //Landmark Log
+        if (!string.IsNullOrEmpty(LocalizationManager.Instance.GetLocalizedValue("Events", _interaction.GetType().ToString(), _name.ToLower() + "_loglandmark"))) {
+            Log landmarkLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_loglandmark");
+            if (interaction.interactable.explorerMinion != null) {
+                landmarkLog.AddToFillers(_interaction.interactable.explorerMinion, _interaction.interactable.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
+            }
+            landmarkLog.AddToFillers(_interaction.interactable.specificLocation.tileLocation.landmarkOnTile, _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
+            _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.AddHistory(landmarkLog);
+        }
+
     }
     public void SetChosenOption(ActionOption option) {
         _chosenOption = option;
@@ -107,9 +135,6 @@ public class InteractionState {
         _defaultOption = defaultOption;
     }
     public void EndResult() {
-        if(_endEffect != null) {
-            _endEffect();
-        }
         AssignedMinionGoesBack();
         interaction.EndInteraction();
     }

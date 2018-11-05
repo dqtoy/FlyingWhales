@@ -22,8 +22,8 @@ public class MysteriousSarcophagus : Interaction {
         InteractionState awakenUndeadHeroState = new InteractionState("Awaken Undead Hero", this);
         InteractionState gainPositiveState = new InteractionState("Gain Positive Trait", this);
 
-        string startStateDesc = "%minion% has discovered an unopened sarcophagus in a hidden alcove. Should we open it?";
-        startState.SetDescription(startStateDesc);
+        //string startStateDesc = "%minion% has discovered an unopened sarcophagus in a hidden alcove. Should we open it?";
+        //startState.SetDescription(startStateDesc);
 
         CreateActionOptions(startState);
         CreateActionOptions(cursedState);
@@ -125,32 +125,32 @@ public class MysteriousSarcophagus : Interaction {
 
     #region States
     private void CursedRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and found nothing inside. But everyone felt a strange heaviness in the air and suddenly all of your followers have been cursed with a strange affliction.");
+        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and found nothing inside. But everyone felt a strange heaviness in the air and suddenly all of your followers have been cursed with a strange affliction.");
         SetCurrentState(_states[stateName]);
         CursedRewardEffect(_states[stateName]);
     }
     private void AccessoryUpgradeRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and found a powerful accessory that it can use.");
+        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and found a powerful accessory that it can use.");
         SetCurrentState(_states[stateName]);
         AccessoryUpgradeRewardEffect(_states[stateName]);
     }
     private void GainManaRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and found a small magical source. We have converted it into an ample amount of mana.");
+        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and found a small magical source. We have converted it into an ample amount of mana.");
         SetCurrentState(_states[stateName]);
         GainManaRewardEffect(_states[stateName]);
     }
     private void GainSuppliesRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and found a small amount of ancient treasures that we have added to our Supplies.");
+        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and found a small amount of ancient treasures that we have added to our Supplies.");
         SetCurrentState(_states[stateName]);
         GainSuppliesRewardEffect(_states[stateName]);
     }
     private void AwakenUndeadHeroRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and unleashed a powerful mummy. The mummy now guards " + _interactable.specificLocation.thisName + ". " + _interactable.explorerMinion.name + " managed to escape");
+        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and unleashed a powerful mummy. The mummy now guards " + _interactable.specificLocation.thisName + ". " + _interactable.explorerMinion.name + " managed to escape");
         SetCurrentState(_states[stateName]);
         AwakenUndeadHeroRewardEffect(_states[stateName]);
     }
     private void GainPositiveTraitRewardState(InteractionState state, string stateName) {
-        _states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and found it empty. As " + _interactable.explorerMinion.name + " leaves, a wisp of sand blows through him and a strange power awakened within.");
+        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and found it empty. As " + _interactable.explorerMinion.name + " leaves, a wisp of sand blows through him and a strange power awakened within.");
         SetCurrentState(_states[stateName]);
         GainPositiveTraitRewardEffect(_states[stateName]);
     }

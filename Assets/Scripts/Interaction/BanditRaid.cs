@@ -24,8 +24,8 @@ public class BanditRaid : Interaction {
             chosenLandmarkToRaid = GetLandmarkToRaid(originLandmark);
             
             InteractionState startState = new InteractionState("State 1", this);
-            string startStateDesc = "The bandits are preparing to raid " + chosenLandmarkToRaid.landmarkName;
-            startState.SetDescription(startStateDesc);
+            //string startStateDesc = "The bandits are preparing to raid " + chosenLandmarkToRaid.landmarkName;
+            //startState.SetDescription(startStateDesc);
             
             //action option states
             InteractionState endResult1State = new InteractionState("Raid", this); //raid
@@ -177,8 +177,8 @@ public class BanditRaid : Interaction {
     }
 
     private void SuccessfullyCancelledRaid(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(_interactable.explorerMinion.name + " intimidated the bandits into stopping their attack. " +
-            "What do you want " + _interactable.explorerMinion.name + " to do next?");
+        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " intimidated the bandits into stopping their attack. " +
+        //    "What do you want " + _interactable.explorerMinion.name + " to do next?");
         SetCurrentState(_states[effectName]);
         SuccessfullyCancelledRaidRewardEffect(_states[effectName]);
     }
@@ -186,9 +186,9 @@ public class BanditRaid : Interaction {
         _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     private void FailedToCancelRaid(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(_interactable.explorerMinion.name + " failed to stop the bandits from proceeding with their raid. " +
-            "A group of bandits have left " + originLandmark.landmarkName + " " +
-            "to raid " + chosenLandmarkToRaid.landmarkName + ". What do you want " + _interactable.explorerMinion.name + " to do next?");
+        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " failed to stop the bandits from proceeding with their raid. " +
+        //    "A group of bandits have left " + originLandmark.landmarkName + " " +
+        //    "to raid " + chosenLandmarkToRaid.landmarkName + ". What do you want " + _interactable.explorerMinion.name + " to do next?");
         SetCurrentState(_states[effectName]);
         FailedToCancelRaidRewardEffect(_states[effectName]);
     }
@@ -197,9 +197,9 @@ public class BanditRaid : Interaction {
     }
     private void CriticalFailToCancelRaid(InteractionState state, string effectName) {
         BaseLandmark targetLandmark = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
-        _states[effectName].SetDescription(_interactable.explorerMinion.name + " failed to stop the bandits from proceeding with their raid. " +
-            "Worse, they were so riled up by the demon that they decided to attack you instead. A group of bandits have left " + 
-            originLandmark.landmarkName + " to attack " + targetLandmark.name + ". What do you want " + _interactable.explorerMinion.name + " to do next?");
+        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " failed to stop the bandits from proceeding with their raid. " +
+        //    "Worse, they were so riled up by the demon that they decided to attack you instead. A group of bandits have left " + 
+        //    originLandmark.landmarkName + " to attack " + targetLandmark.name + ". What do you want " + _interactable.explorerMinion.name + " to do next?");
         SetCurrentState(_states[effectName]);
         //create a 3 army attack unit from Assault Spawn Weights 1. Change target to your area instead.
         CharacterParty army = CreateAssaultArmy(3);
@@ -213,9 +213,9 @@ public class BanditRaid : Interaction {
     }
 
     private void EmpoweredRaid(InteractionState state, string effectName) {
-        _states[effectName].SetDescription("We provided the bandits with more supplies which they have gladly used to build a " +
-            "bigger raid group than they initially planned. They have now left " +  originLandmark.landmarkName + " to raid " + 
-            chosenLandmarkToRaid.name + ". What do you want " + _interactable.explorerMinion.name + " to do next?");
+        //_states[effectName].SetDescription("We provided the bandits with more supplies which they have gladly used to build a " +
+        //    "bigger raid group than they initially planned. They have now left " +  originLandmark.landmarkName + " to raid " + 
+        //    chosenLandmarkToRaid.name + ". What do you want " + _interactable.explorerMinion.name + " to do next?");
         SetCurrentState(_states[effectName]);
         //create a 4 army attack unit from Assault Spawn Weights 1.
         CharacterParty army = CreateAssaultArmy(4);
@@ -228,9 +228,9 @@ public class BanditRaid : Interaction {
         _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     private void MisusedFunds(InteractionState state, string effectName) {
-        _states[effectName].SetDescription("We provided the bandits with more supplies but it doesn't look they used it for the " +
-            "attack. They have now left " + originLandmark.landmarkName + " to raid " + chosenLandmarkToRaid.landmarkName +
-            " but with a smaller group than we anticipated. What do you want " + _interactable.explorerMinion.name + " to do next?");
+        //_states[effectName].SetDescription("We provided the bandits with more supplies but it doesn't look they used it for the " +
+        //    "attack. They have now left " + originLandmark.landmarkName + " to raid " + chosenLandmarkToRaid.landmarkName +
+        //    " but with a smaller group than we anticipated. What do you want " + _interactable.explorerMinion.name + " to do next?");
         SetCurrentState(_states[effectName]);
         //Spawn attackers create a 3 army attack unit from Assault Spawn Weights 1.
         CharacterParty army = CreateAssaultArmy(3);
@@ -243,7 +243,7 @@ public class BanditRaid : Interaction {
         _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     private void DemonDies(InteractionState state, string effectName) {
-        _states[effectName].SetDescription(_interactable.explorerMinion.name + " has not returned. We can only assume the worst.");
+        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " has not returned. We can only assume the worst.");
         SetCurrentState(_states[effectName]);
     }
     private void DemonDiesRewardEffect(InteractionState state) {
@@ -252,9 +252,9 @@ public class BanditRaid : Interaction {
     }
 
     private void Raid(InteractionState state, string effectName) {
-        _states[effectName].SetDescription("A group of bandits have left " + 
-            originLandmark.landmarkName + " to raid " + chosenLandmarkToRaid.landmarkName + 
-            ". What do you want " + _interactable.explorerMinion.name + " to do next?");
+        //_states[effectName].SetDescription("A group of bandits have left " + 
+        //    originLandmark.landmarkName + " to raid " + chosenLandmarkToRaid.landmarkName + 
+        //    ". What do you want " + _interactable.explorerMinion.name + " to do next?");
         SetCurrentState(_states[effectName]);
         //create a 3 army attack unit from Assault Spawn Weights 1
         CharacterParty army = CreateAssaultArmy(3);
