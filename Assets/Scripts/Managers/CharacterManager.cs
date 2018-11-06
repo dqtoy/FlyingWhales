@@ -39,8 +39,7 @@ public class CharacterManager : MonoBehaviour {
 
     [Header("Character Portrait Assets")]
     public GameObject characterPortraitPrefab;
-    [SerializeField] private List<RacePortraitAssets> portraitAssetsx64;
-    [SerializeField] private List<RacePortraitAssets> portraitAssetsx256;
+    [SerializeField] private List<RacePortraitAssets> portraitAssets;
     public List<Color> hairColors;
 
     [Header("Character Role Animators")]
@@ -448,11 +447,11 @@ public class CharacterManager : MonoBehaviour {
 
     #region Character Portraits
     public PortraitAssetCollection GetPortraitAssets(RACE race, GENDER gender) {
-        if (race == RACE.GOBLIN || race == RACE.SKELETON) {
+        if (race != RACE.HUMANS) {
             race = RACE.ELVES; //TODO: Change this when needed assets arrive
         }
-        for (int i = 0; i < portraitAssetsx256.Count; i++) {
-            RacePortraitAssets racePortraitAssets = portraitAssetsx256[i];
+        for (int i = 0; i < portraitAssets.Count; i++) {
+            RacePortraitAssets racePortraitAssets = portraitAssets[i];
             if (racePortraitAssets.race == race) {
                 if (gender == GENDER.MALE) {
                     return racePortraitAssets.maleAssets;
@@ -617,34 +616,28 @@ public class CharacterManager : MonoBehaviour {
 
 #if UNITY_EDITOR
     #region Editor
-    public void LoadPortraitAssets(int imgSize, string assetsPath) {
-        if (imgSize == 64) {
-            portraitAssetsx64.Clear();
-        } else if (imgSize == 256) {
-            portraitAssetsx256.Clear();
-        }
+    public void LoadPortraitAssets(string assetsPath) {
+        portraitAssets.Clear();
 
         string[] subdirectories = System.IO.Directory.GetDirectories(assetsPath); //races
         for (int i = 0; i < subdirectories.Length; i++) {
             string fullSubDirPath = subdirectories[i];
             string dirFileName = System.IO.Path.GetFileName(fullSubDirPath);
-            RACE currRace = (RACE)System.Enum.Parse(typeof(RACE), dirFileName);
-            RacePortraitAssets currRaceAssets = new RacePortraitAssets(currRace);
-            string[] genderDirs = System.IO.Directory.GetDirectories(fullSubDirPath);
-            for (int j = 0; j < genderDirs.Length; j++) {
-                string fullGenderPath = genderDirs[j];
-                GENDER currGender = (GENDER)System.Enum.Parse(typeof(GENDER), System.IO.Path.GetFileName(fullGenderPath));
-                string[] files = System.IO.Directory.GetFiles(fullGenderPath, "*.png");
-                PortraitAssetCollection collectionToUse = currRaceAssets.maleAssets;
-                if (currGender == GENDER.FEMALE) {
-                    collectionToUse = currRaceAssets.femaleAssets;
+            RACE currRace;
+            if (System.Enum.TryParse(dirFileName, out currRace)) {
+                RacePortraitAssets currRaceAssets = new RacePortraitAssets(currRace);
+                string[] genderDirs = System.IO.Directory.GetDirectories(fullSubDirPath);
+                for (int j = 0; j < genderDirs.Length; j++) {
+                    string fullGenderPath = genderDirs[j];
+                    GENDER currGender = (GENDER)System.Enum.Parse(typeof(GENDER), System.IO.Path.GetFileName(fullGenderPath));
+                    string[] files = System.IO.Directory.GetFiles(fullGenderPath, "*.png");
+                    PortraitAssetCollection collectionToUse = currRaceAssets.maleAssets;
+                    if (currGender == GENDER.FEMALE) {
+                        collectionToUse = currRaceAssets.femaleAssets;
+                    }
+                    LoadSpritesToList(files, collectionToUse);
                 }
-                LoadSpritesToList(files, collectionToUse);
-            }
-            if (imgSize == 64) {
-                portraitAssetsx64.Add(currRaceAssets);
-            } else if (imgSize == 256) {
-                portraitAssetsx256.Add(currRaceAssets);
+                portraitAssets.Add(currRaceAssets);
             }
         }
     }

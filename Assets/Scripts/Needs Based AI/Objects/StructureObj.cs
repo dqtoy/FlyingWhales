@@ -136,7 +136,7 @@ public class StructureObj : IObject {
             }
             if (defenderWeights.GetTotalOfWeights() > 0) {
                 LandmarkDefender chosenDefender = defenderWeights.PickRandomElementGivenWeights();
-                CharacterArmyUnit defenderUnit = CharacterManager.Instance.CreateCharacterArmyUnit(_objectLocation.owner.race, chosenDefender, _objectLocation.owner, _objectLocation); //_objectLocation.owner.race
+                Character defenderUnit = CharacterManager.Instance.CreateNewCharacter(chosenDefender.className, _objectLocation.owner.race, GENDER.MALE, _objectLocation.owner, _objectLocation); //_objectLocation.owner.race
                 _objectLocation.AddDefender(defenderUnit);
             }
         }

@@ -41,7 +41,7 @@ public class CharactersIntelUI : UIMenu {
     }
 
     private void AddCharacterEntry(ECS.Character character) {
-        if(character.role.roleType == CHARACTER_ROLE.PLAYER) {
+        if(character.role != null && character.role.roleType == CHARACTER_ROLE.PLAYER) {
             return;
         }
         GameObject newEntryGO = UIManager.Instance.InstantiateUIObject(characterEntryPrefab.name, charactersScrollRect.content);

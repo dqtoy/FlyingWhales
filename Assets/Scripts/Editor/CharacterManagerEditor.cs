@@ -7,8 +7,7 @@ using UnityEngine;
 [CustomEditor(typeof(CharacterManager))]
 public class CharacterManagerEditor : Editor {
 
-    string x64AssetPath = "Assets/Resources/Portraits/64x64/";
-    string x256AssetPath = "Assets/Resources/Portraits/256x256/";
+    string assetPath = "Assets/Textures/Portraits/";
 
     public override void OnInspectorGUI() {
         CharacterManager myTarget = (CharacterManager)target;
@@ -19,13 +18,10 @@ public class CharacterManagerEditor : Editor {
         // Show default inspector property editor
         DrawDefaultInspector();
 
-        GUILayout.Label("64x64 Asset Path");
-        x64AssetPath = EditorGUILayout.TextField(x64AssetPath);
-        GUILayout.Label("256x256 Asset Path");
-        x256AssetPath = EditorGUILayout.TextField(x256AssetPath);
+        GUILayout.Label("Asset Path");
+        assetPath = EditorGUILayout.TextField(assetPath);
         if (GUILayout.Button("Load Portrait Assets")) {
-            myTarget.LoadPortraitAssets(64, x64AssetPath);
-            myTarget.LoadPortraitAssets(256, x256AssetPath);
+            myTarget.LoadPortraitAssets(assetPath);
         }
     }
 }
