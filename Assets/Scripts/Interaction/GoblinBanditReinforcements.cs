@@ -170,7 +170,7 @@ public class GoblinBanditReinforcements : Interaction {
         //**Reward**: Demon gains Exp 1
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //**Mechanics**: create an Army Unit from Defense Spawn Weights and add it to the Tile Defenders if not yet full or Character List if already full
-        CharacterArmyUnit createdUnit = CreateAssaultArmy(1).owner as CharacterArmyUnit;
+        ICharacter createdUnit = CreateAssaultArmy(1).owner;
         if (!landmark.defenders.isFull) {
             landmark.AddDefender(createdUnit);
         }
@@ -197,7 +197,7 @@ public class GoblinBanditReinforcements : Interaction {
     //}
     private void UnitStolenRewardEffect(InteractionState state) {
         //**Mechanics**: create an Army Unit from Defense Spawn Weights and add it to the player's Minion List.
-        CharacterArmyUnit createdUnit = CreateAssaultArmy(1).owner as CharacterArmyUnit;
+        ICharacter createdUnit = CreateAssaultArmy(1).owner;
         //TODO: Add unit to players minion list
         //**Reward**: Demon gains Exp 1
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
@@ -208,7 +208,7 @@ public class GoblinBanditReinforcements : Interaction {
     //}
     private void DoNothingRewardEffect(InteractionState state) {
         //**Mechanics**: create an Army Unit from Defense Spawn Weights and add it to the Tile Defenders if not yet full or Character List if already full
-        CharacterArmyUnit createdUnit = CreateAssaultArmy(1).owner as CharacterArmyUnit;
+        ICharacter createdUnit = CreateAssaultArmy(1).owner;
         if (!landmark.defenders.isFull) {
             landmark.AddDefender(createdUnit);
         }
