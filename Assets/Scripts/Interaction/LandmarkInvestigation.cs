@@ -102,6 +102,9 @@ public class LandmarkInvestigation {
 
     #region Explore
     public void ExploreLandmark() {
+        if(_assignedMinion == null) {
+            return;
+        }
         _landmark.SetIsBeingInspected(true);
         if (!_landmark.hasBeenInspected) {
             _landmark.SetHasBeenInspected(true);
