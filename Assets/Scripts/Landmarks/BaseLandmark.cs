@@ -1252,16 +1252,16 @@ public class BaseLandmark : ILocation, IInteractable {
         }
         return null;
     }
-    public bool HasActiveInteraction() {
-        //if this landmark already has a landmark other than investigate
-        for (int i = 0; i < _currentInteractions.Count; i++) {
-            Interaction currInteraction = _currentInteractions[i];
-            if (currInteraction.type != INTERACTION_TYPE.INVESTIGATE) {
-                return true;
-            }
-        }
-        return false;
-    }
+    //public bool HasActiveInteraction() {
+    //    //if this landmark already has a landmark other than investigate
+    //    for (int i = 0; i < _currentInteractions.Count; i++) {
+    //        Interaction currInteraction = _currentInteractions[i];
+    //        if (currInteraction.type != INTERACTION_TYPE.INVESTIGATE) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
     public void SetEventTriggerWeight(int weight) {
         this.eventTriggerWeight = weight;
     }
@@ -1271,7 +1271,7 @@ public class BaseLandmark : ILocation, IInteractable {
     public WeightedDictionary<INTERACTION_TYPE> GetInteractionWeights(BaseLandmark landmark) {
         WeightedDictionary<INTERACTION_TYPE> weights = new WeightedDictionary<INTERACTION_TYPE>();
         foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in scenarios.dictionary) {
-            if (InteractionManager.Instance.CanCreateInteraction(kvp.Key, landmark)) {
+            if (GetInteractionOfType(kvp.Key) == null && InteractionManager.Instance.CanCreateInteraction(kvp.Key, landmark)) {
                 weights.AddElement(kvp.Key, kvp.Value);
             }
         }

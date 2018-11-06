@@ -9,7 +9,7 @@ public class HumanBanditReinforcement : Interaction {
     private WeightedDictionary<LandmarkDefender> assaultSpawnWeights;
     private WeightedDictionary<LandmarkDefender> firstElementAssaultSpawnWeights; //TODO: Make this more elegant!
 
-    public HumanBanditReinforcement(IInteractable interactable) : base(interactable, INTERACTION_TYPE.HUMAN_BANDIT_REINFORCEMENT, 50) {
+    public HumanBanditReinforcement(IInteractable interactable) : base(interactable, INTERACTION_TYPE.HUMAN_BANDIT_REINFORCEMENTS, 50) {
         _name = "Human Bandit Reinforcement";
     }
 
