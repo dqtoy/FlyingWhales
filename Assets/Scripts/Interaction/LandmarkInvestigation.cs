@@ -74,6 +74,9 @@ public class LandmarkInvestigation {
     }
     public void RecallMinion() {
         if (_landmark.isBeingInspected) {
+            _landmark.landmarkVisual.StopInteractionTimer();
+            _landmark.landmarkVisual.HideInteractionTimer();
+            Messenger.RemoveListener(Signals.HOUR_STARTED, OnExploreTick);
             MinionGoBackFromAssignment(UnexploreLandmark);
         } else {
             MinionGoBackFromAssignment(UninvestigateLandmark);

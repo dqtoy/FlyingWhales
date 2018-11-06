@@ -142,6 +142,10 @@ public class Interaction {
     }
     public void SetExplorerMinion(Minion minion) {
         _explorerMinion = minion;
+        if(_explorerMinion != null) {
+            _currentState.CreateLogs();
+            _currentState.SetDescription();
+        }
     }
     #endregion
 

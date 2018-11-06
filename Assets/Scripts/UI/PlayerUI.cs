@@ -51,7 +51,9 @@ public class PlayerUI : MonoBehaviour {
         //Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
         //Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
     }
-
+    void Start() {
+        Messenger.AddListener(Signals.UPDATED_CURRENCIES, UpdateUI);
+    }
     public void UpdateUI() {
         manaText.text = PlayerManager.Instance.player.currencies[CURRENCY.MANA].ToString();
         //redMagicText.text = "" + PlayerManager.Instance.player.redMagic;

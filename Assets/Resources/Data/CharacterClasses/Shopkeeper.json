@@ -1,1 +1,1 @@
-{"_className":"Shopkeeper","_strWeightAllocation":0.0,"_intWeightAllocation":0.0,"_agiWeightAllocation":0.0,"_vitWeightAllocation":0.0,"_hpModifier":0.0,"_spModifier":0.0,"_allowedWeaponTypes":[1],"_harvestResources":[],"_skillsPerLevelNames":[]}
+{"_className":"Shopkeeper","_baseSP":0,"_spPerLevel":0,"_armyCount":0,"_attackPowerPerLevel":0.0,"_speedPerLevel":0.0,"_hpPerLevel":0.0,"_skillName":"Heal","_harvestResources":[],"_weaponTierNames":[],"_armorTierNames":[],"_accessoryTierNames":[],"_workActionType":0,"_roleType":3}

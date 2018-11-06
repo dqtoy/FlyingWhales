@@ -104,7 +104,7 @@ public class InteractionState {
     public void OnEndState() {
         AssignedMinionGoesBack();
     }
-    private void CreateLogs() {
+    public void CreateLogs() {
         if (_interaction.explorerMinion != null) {
             _descriptionLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_description");
             if (!string.IsNullOrEmpty(LocalizationManager.Instance.GetLocalizedValue("Events", _interaction.GetType().ToString(), _name.ToLower() + "_logminion"))) {
@@ -115,7 +115,7 @@ public class InteractionState {
             }
         }
     }
-    private void SetDescription() {
+    public void SetDescription() {
         //TODO: make this more performant
         if(_descriptionLog != null) {
             _descriptionLog.AddToFillers(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
