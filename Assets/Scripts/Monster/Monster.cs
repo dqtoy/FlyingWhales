@@ -206,9 +206,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public Minion minion {
         get { return _minion; }
     }
-    public Minion explorerMinion {
-        get { return null; }
-    }
     //public Combat currentCombat {
     //    get { return _currentCombat; }
     //    set { _currentCombat = value; }
@@ -704,6 +701,16 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public void UpgradeAccessory() {
         //Not applicable
+    }
+    public void LevelUp(int amount) {
+        //Not applicable
+    }
+    public void AddCombatAttribute(CombatAttribute combatAttribute) {
+        //Not applicable
+    }
+    public bool RemoveCombatAttribute(CombatAttribute combatAttribute) {
+        //Not applicable
+        return false;
     }
     #endregion
 

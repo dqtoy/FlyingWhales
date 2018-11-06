@@ -311,9 +311,6 @@ namespace ECS {
         public Minion minion {
             get { return _minion; }
         }
-        public Minion explorerMinion {
-            get { return null; }
-        }
         public CharacterActionQueue<ActionQueueItem> actionQueue {
             get { return _actionQueue; }
         }
@@ -369,6 +366,9 @@ namespace ECS {
             } else {
                 _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
             }
+            if(_characterClass.roleType != CHARACTER_ROLE.NONE) {
+                AssignRole(_characterClass.roleType);
+            }
             SetMorality(MORALITY.GOOD);
             //_skills = GetGeneralSkills();
             _skills = new List<Skill>();
@@ -381,13 +381,13 @@ namespace ECS {
             AllocateStats();
             EquipItemsByClass();
 
-            CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(className);
-            if(setup != null) {
-                GenerateSetupAttributes(setup);
-                if(setup.optionalRole != CHARACTER_ROLE.NONE) {
-                    AssignRole(setup.optionalRole);
-                }
-            }
+            //CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(className);
+            //if(setup != null) {
+            //    GenerateSetupAttributes(setup);
+            //    if(setup.optionalRole != CHARACTER_ROLE.NONE) {
+            //        AssignRole(setup.optionalRole);
+            //    }
+            //}
         }
         public Character(CharacterSaveData data) : this(){
             _id = Utilities.SetID(this, data.id);
@@ -397,6 +397,9 @@ namespace ECS {
             _name = data.name;
             //LoadRelationships(data.relationshipsData);
             _portraitSettings = data.portraitSettings;
+            if (_characterClass.roleType != CHARACTER_ROLE.NONE) {
+                AssignRole(_characterClass.roleType);
+            }
             SetMorality(data.morality);
 #if !WORLD_CREATION_TOOL
             GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, UIManager.Instance.characterPortraitsParent);

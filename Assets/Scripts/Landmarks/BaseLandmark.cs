@@ -200,9 +200,6 @@ public class BaseLandmark : ILocation, IInteractable {
     public ILocation specificLocation {
         get { return this; }
     }
-    public Minion explorerMinion {
-        get { return _landmarkInvestigation.assignedMinion; }
-    }
     #endregion
 
     public BaseLandmark() {

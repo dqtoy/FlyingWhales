@@ -153,6 +153,7 @@ public class LandmarkInvestigation {
             _landmark.landmarkVisual.StopInteractionTimer();
             //_landmark.landmarkVisual.HideInteractionTimer();
             _currentInteraction.CancelSecondTimeOut();
+            _currentInteraction.SetExplorerMinion(_assignedMinion);
             InteractionUI.Instance.OpenInteractionUI(_currentInteraction);
         }
     }

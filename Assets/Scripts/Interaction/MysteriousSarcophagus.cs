@@ -141,32 +141,32 @@ public class MysteriousSarcophagus : Interaction {
 
     #region States
     private void CursedRewardState(InteractionState state, string stateName) {
-        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and found nothing inside. But everyone felt a strange heaviness in the air and suddenly all of your followers have been cursed with a strange affliction.");
+        //_states[stateName].SetDescription(explorerMinion.name + " opened the sarcophagus and found nothing inside. But everyone felt a strange heaviness in the air and suddenly all of your followers have been cursed with a strange affliction.");
         SetCurrentState(_states[stateName]);
         CursedRewardEffect(_states[stateName]);
     }
     private void AccessoryUpgradeRewardState(InteractionState state, string stateName) {
-        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and found a powerful accessory that it can use.");
+        //_states[stateName].SetDescription(explorerMinion.name + " opened the sarcophagus and found a powerful accessory that it can use.");
         SetCurrentState(_states[stateName]);
         AccessoryUpgradeRewardEffect(_states[stateName]);
     }
     private void GainManaRewardState(InteractionState state, string stateName) {
-        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and found a small magical source. We have converted it into an ample amount of mana.");
+        //_states[stateName].SetDescription(explorerMinion.name + " opened the sarcophagus and found a small magical source. We have converted it into an ample amount of mana.");
         SetCurrentState(_states[stateName]);
         GainManaRewardEffect(_states[stateName]);
     }
     private void GainSuppliesRewardState(InteractionState state, string stateName) {
-        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and found a small amount of ancient treasures that we have added to our Supplies.");
+        //_states[stateName].SetDescription(explorerMinion.name + " opened the sarcophagus and found a small amount of ancient treasures that we have added to our Supplies.");
         SetCurrentState(_states[stateName]);
         GainSuppliesRewardEffect(_states[stateName]);
     }
     private void AwakenUndeadHeroRewardState(InteractionState state, string stateName) {
-        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and unleashed a powerful mummy. The mummy now guards " + _interactable.specificLocation.thisName + ". " + _interactable.explorerMinion.name + " managed to escape");
+        //_states[stateName].SetDescription(explorerMinion.name + " opened the sarcophagus and unleashed a powerful mummy. The mummy now guards " + _interactable.specificLocation.thisName + ". " + explorerMinion.name + " managed to escape");
         SetCurrentState(_states[stateName]);
         AwakenUndeadHeroRewardEffect(_states[stateName]);
     }
     private void GainPositiveTraitRewardState(InteractionState state, string stateName) {
-        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " opened the sarcophagus and found it empty. As " + _interactable.explorerMinion.name + " leaves, a wisp of sand blows through him and a strange power awakened within.");
+        //_states[stateName].SetDescription(explorerMinion.name + " opened the sarcophagus and found it empty. As " + explorerMinion.name + " leaves, a wisp of sand blows through him and a strange power awakened within.");
         SetCurrentState(_states[stateName]);
         GainPositiveTraitRewardEffect(_states[stateName]);
     }
@@ -174,37 +174,61 @@ public class MysteriousSarcophagus : Interaction {
 
     #region State Effects
     private void CursedRewardEffect(InteractionState state) {
-        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //TODO: all of your units gain a random negative Trait (same negative Trait for all)
+        WeightedDictionary<string> negativeTraitsWeights = new WeightedDictionary<string>();
+        negativeTraitsWeights.AddElement("Negative Trait 1", 35);
+        negativeTraitsWeights.AddElement("Negative Trait 2", 10);
+        negativeTraitsWeights.AddElement("Negative Trait 3", 5);
+
+        string chosenTrait = negativeTraitsWeights.PickRandomElementGivenWeights();
+        CombatAttribute negativeTrait = AttributeManager.Instance.allCombatAttributes[chosenTrait];
+        for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
+            PlayerManager.Instance.player.minions[i].icharacter.AddCombatAttribute(negativeTrait);
+        }
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(null, chosenTrait, LOG_IDENTIFIER.STRING_1);
+        }
     }
     private void AccessoryUpgradeRewardEffect(InteractionState state) {
-        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
-        if (_interactable.explorerMinion.icharacter.equippedAccessory != null) {
-            _interactable.explorerMinion.icharacter.UpgradeAccessory();
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        if (explorerMinion.icharacter.equippedAccessory != null) {
+            explorerMinion.icharacter.UpgradeAccessory();
         }
     }
     private void GainManaRewardEffect(InteractionState state) {
-        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         PlayerManager.Instance.player.AdjustCurrency(CURRENCY.MANA, 50);
     }
     private void GainSuppliesRewardEffect(InteractionState state) {
-        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, 50);
     }
     private void AwakenUndeadHeroRewardEffect(InteractionState state) {
         if(_interactable is BaseLandmark) {
             BaseLandmark landmark = _interactable as BaseLandmark;
-            Character zombieEarthbinderHero = CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.HERO, "Earthbinder", RACE.ZOMBIE, GENDER.MALE, PlayerManager.Instance.player.playerFaction, PlayerManager.Instance.player.demonicPortal, false);
+            Character zombieEarthbinderHero = CharacterManager.Instance.CreateNewCharacter("Earthbinder", RACE.ZOMBIE, GENDER.MALE, PlayerManager.Instance.player.playerFaction, PlayerManager.Instance.player.demonicPortal, false);
             zombieEarthbinderHero.LevelUp(15);
             landmark.AddDefender(zombieEarthbinderHero);
         }
     }
     private void GainPositiveTraitRewardEffect(InteractionState state) {
-        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //TODO: Positive Trait Reward 1
+        WeightedDictionary<string> positiveTraitsWeights = new WeightedDictionary<string>();
+        positiveTraitsWeights.AddElement("Positive Trait 1", 35);
+        positiveTraitsWeights.AddElement("Positive Trait 2", 10);
+        positiveTraitsWeights.AddElement("Positive Trait 3", 5);
+
+        string chosenTrait = positiveTraitsWeights.PickRandomElementGivenWeights();
+        CombatAttribute positiveTrait = AttributeManager.Instance.allCombatAttributes[chosenTrait];
+        explorerMinion.icharacter.AddCombatAttribute(positiveTrait);
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(null, chosenTrait, LOG_IDENTIFIER.STRING_1);
+        }
     }
     private void DoNothingRewardEffect(InteractionState state) {
-        //_interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));
+        //explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));
     }
     #endregion
 }

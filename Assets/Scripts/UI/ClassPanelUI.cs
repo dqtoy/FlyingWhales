@@ -29,6 +29,7 @@ public class ClassPanelUI : MonoBehaviour {
     public Dropdown accessoriesOptions;
 
     public Dropdown workActionOptions;
+    public Dropdown roleOptions;
     public Dropdown skillOptions;
 
     public GameObject weaponsGO;
@@ -102,8 +103,10 @@ public class ClassPanelUI : MonoBehaviour {
         weaponsOptions.ClearOptions();
         armorsOptions.ClearOptions();
         accessoriesOptions.ClearOptions();
+        roleOptions.ClearOptions();
 
         string[] workActions = System.Enum.GetNames(typeof(ACTION_TYPE));
+        string[] roles = System.Enum.GetNames(typeof(CHARACTER_ROLE));
 
         List<string> weapons = new List<string>();
         List<string> armors = new List<string>();
@@ -128,6 +131,7 @@ public class ClassPanelUI : MonoBehaviour {
         armorsOptions.AddOptions(armors);
         accessoriesOptions.AddOptions(accessories);
         workActionOptions.AddOptions(workActions.ToList());
+        roleOptions.AddOptions(roles.ToList());
         UpdateClassList();
     }
     private void ClearData() {
@@ -152,6 +156,7 @@ public class ClassPanelUI : MonoBehaviour {
         accessoriesOptions.value = 0;
         workActionOptions.value = 0;
         skillOptions.value = 0;
+        roleOptions.value = 0;
 
         _weaponTiers.Clear();
         foreach (Transform child in weaponsContentTransform) {
@@ -231,6 +236,7 @@ public class ClassPanelUI : MonoBehaviour {
         baseSPInput.text = characterClass.baseSP.ToString();
         spPerLevelInput.text = characterClass.spPerLevel.ToString();
         workActionOptions.value = GetDropdownIndex(workActionOptions, characterClass.workActionType.ToString());
+        roleOptions.value = GetDropdownIndex(roleOptions, characterClass.roleType.ToString());
         skillOptions.value = GetDropdownIndex(skillOptions, characterClass.skillName.ToString());
 
         for (int i = 0; i < characterClass.weaponTierNames.Count; i++) {

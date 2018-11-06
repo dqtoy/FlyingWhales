@@ -44,6 +44,7 @@ public enum RACE{
     DEMON,
     ZOMBIE,
     INSECT,
+    SPIDER,
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,

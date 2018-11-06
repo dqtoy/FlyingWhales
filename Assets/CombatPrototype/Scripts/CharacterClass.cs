@@ -18,6 +18,7 @@ namespace ECS {
         [SerializeField] private List<string> _armorTierNames;
         [SerializeField] private List<string> _accessoryTierNames;
         [SerializeField] private ACTION_TYPE _workActionType;
+        [SerializeField] private CHARACTER_ROLE _roleType;
 
         //private int _dodgeRate;
         //private int _parryRate;
@@ -59,6 +60,9 @@ namespace ECS {
         }
         public ACTION_TYPE workActionType {
             get { return _workActionType; }
+        }
+        public CHARACTER_ROLE roleType {
+            get { return _roleType; }
         }
         public string skillName {
             get { return _skillName; }
@@ -110,6 +114,7 @@ namespace ECS {
             newClass._spPerLevel = this._spPerLevel;
             newClass._armyCount = this._armyCount;
             newClass._workActionType = this._workActionType;
+            newClass._roleType = this._roleType;
             //newClass._dodgeRate = this._dodgeRate;
             //newClass._parryRate = this._parryRate;                        
             //newClass._blockRate = this._blockRate;
@@ -164,6 +169,7 @@ namespace ECS {
             this._spPerLevel = int.Parse(ClassPanelUI.Instance.spPerLevelInput.text);
             this._armyCount = int.Parse(ClassPanelUI.Instance.armyCountInput.text);
             this._workActionType = (ACTION_TYPE)System.Enum.Parse(typeof(ACTION_TYPE), ClassPanelUI.Instance.workActionOptions.options[ClassPanelUI.Instance.workActionOptions.value].text);
+            this._roleType = (CHARACTER_ROLE) System.Enum.Parse(typeof(CHARACTER_ROLE), ClassPanelUI.Instance.roleOptions.options[ClassPanelUI.Instance.roleOptions.value].text);
             this._skillName = ClassPanelUI.Instance.skillOptions.options[ClassPanelUI.Instance.skillOptions.value].text;
             this._weaponTierNames = ClassPanelUI.Instance.weaponTiers;
             this._armorTierNames = ClassPanelUI.Instance.armorTiers;

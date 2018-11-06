@@ -117,7 +117,7 @@ public class MysteryHum : Interaction {
         //}
     }
     private void DemonAttacksRewardState(InteractionState state, string effectName) {
-        //_states[effectName].SetDescription("After " + _interactable.explorerMinion.name + " investigated the hum, it returned with a strange glow in its eyes. It is now attacking us!");
+        //_states[effectName].SetDescription("After " + explorerMinion.name + " investigated the hum, it returned with a strange glow in its eyes. It is now attacking us!");
         SetCurrentState(_states[effectName]);
     }
     private void ArmyRecruitedRewardState(InteractionState state, string effectName) {
@@ -126,23 +126,23 @@ public class MysteryHum : Interaction {
         ArmyRecruitedRewardEffect(_states[effectName]);
     }
     private void DemonAttacksRewardEffect(InteractionState state) {
-        PlayerManager.Instance.player.RemoveMinion(_interactable.explorerMinion);
-        _interactable.explorerMinion.SetEnabledState(true);
+        PlayerManager.Instance.player.RemoveMinion(explorerMinion);
+        explorerMinion.SetEnabledState(true);
 
         List<BaseLandmark> playerLandmarks = PlayerManager.Instance.player.demonicPortal.tileLocation.areaOfTile.landmarks;
         BaseLandmark playerLandmarkToAttack = playerLandmarks[UnityEngine.Random.Range(0, playerLandmarks.Count)];
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
-        _interactable.explorerMinion.icharacter.currentParty.iactionData.AssignAction(characterAction, playerLandmarkToAttack.landmarkObj);
+        explorerMinion.icharacter.currentParty.iactionData.AssignAction(characterAction, playerLandmarkToAttack.landmarkObj);
     }
     private void ArmyRecruitedRewardEffect(InteractionState state) {
         if (!PlayerManager.Instance.player.areMinionsMaxed) {
-            CharacterArmyUnit zombieEarthbinders = CharacterManager.Instance.CreateCharacterArmyUnit("Earthbinder", RACE.ZOMBIE, PlayerManager.Instance.player.playerFaction, PlayerManager.Instance.player.demonicPortal);
-            zombieEarthbinders.LevelUp(5);
-            PlayerManager.Instance.player.AddMinion(new Minion(zombieEarthbinders, PlayerManager.Instance.player.GetAbility("Inspect")));
+            Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Earthbinders", RACE.ZOMBIE, "Inspect", false);
+            newMinion.icharacter.LevelUp(5);
+            PlayerManager.Instance.player.AddMinion(newMinion);
         }
-        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
     private void DoNothingRewardEffect(InteractionState state) {
-        //_interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));
+        //explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));
     }
 }

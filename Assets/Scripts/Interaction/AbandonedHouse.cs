@@ -122,17 +122,17 @@ public class AbandonedHouse : Interaction {
         //}
     }
     private void DemonBonusExpRewardState(InteractionState state, string effectName) {
-        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " has returned with nothing but there seems to be a newfound strength within it.");
+        //_states[effectName].SetDescription(explorerMinion.name + " has returned with nothing but there seems to be a newfound strength within it.");
         SetCurrentState(_states[effectName]);
     }
     private void DemonBonusExpRewardEffect(InteractionState state) {
-        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));
     }
     private void LeftAloneRewardState(InteractionState state, string effectName) {
         //_states[effectName].SetDescription("We left the abandoned mansion alone.");
         SetCurrentState(_states[effectName]);
     }
     private void LeftAloneRewardEffect(InteractionState state) {
-        //_interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));
+        //explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));
     }
 }

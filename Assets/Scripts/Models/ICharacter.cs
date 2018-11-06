@@ -79,9 +79,12 @@ public interface ICharacter {
     void RemoveMiscAction(ACTION_TYPE actionType);
     void SetMinion(Minion minion);
     void Assassinate(ICharacter assassin);
+    void LevelUp(int amount);
+    void AddCombatAttribute(CombatAttribute combatAttribute);
     bool IsInParty();
-    bool InviteToParty(ICharacter inviter);
     bool IsInOwnParty();
+    bool InviteToParty(ICharacter inviter);
+    bool RemoveCombatAttribute(CombatAttribute combatAttribute);
     Party CreateOwnParty();
     CharacterAttribute GetAttribute(string attribute);
     CharacterAction GetRandomMiscAction(ref IObject targetObject);
