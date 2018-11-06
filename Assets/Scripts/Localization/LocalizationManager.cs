@@ -82,13 +82,13 @@ public class LocalizationManager : MonoBehaviour {
                 throw new System.Exception("Localization error! " + category + "/" + file + "/");
             }
         }
-            result = this._localizedText[category][file][key];
-            //throw new System.Exception("Localization error! " + category + "/" + file + "/" + key);
-        }
+        result = this._localizedText[category][file][key];
+        //throw new System.Exception("Localization error! " + category + "/" + file + "/" + key);
+        //}
         //else {
         //    throw new System.Exception("Localization error! " + category + "/" + file + "/" + key);
         //}
-		return result;
+        return result;
 
 	}
 	public string GetRandomLocalizedValue(string category, string file){
