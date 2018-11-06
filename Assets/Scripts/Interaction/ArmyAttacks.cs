@@ -11,6 +11,7 @@ public class ArmyAttacks : Interaction {
     private const string stopCriticalFailure = "Stop Critical Failure";
     private const string redirectionSuccessful = "Redirection Successful";
     private const string redirectionFailure = "Redirection Failure";
+    private const string doNothing = "Do nothing";
 
     public ArmyAttacks(IInteractable interactable) : base(interactable, INTERACTION_TYPE.ARMY_ATTACKS, 150) {
         _name = "Army Attacks";
@@ -20,10 +21,10 @@ public class ArmyAttacks : Interaction {
     public override void CreateStates() {
         if (_interactable is BaseLandmark) {
             landmark = _interactable as BaseLandmark;
-            CreateExploreStates();
-            CreateWhatToDoNextState("%minion% will not intervene with the Garrison's planned attack. Do you want him to continue surveillance of " + landmark.landmarkName + "?");
+            //CreateExploreStates();
+            //CreateWhatToDoNextState("%minion% will not intervene with the Garrison's planned attack. Do you want him to continue surveillance of " + landmark.landmarkName + "?");
 
-            InteractionState startState = new InteractionState("State 1", this);
+            InteractionState startState = new InteractionState("Start", this);
             //string startStateDesc = "The Garrison is preparing to attack " + landmark.name + ".";
             //startState.SetDescription(startStateDesc);
             CreateActionOptions(startState);
@@ -35,17 +36,19 @@ public class ArmyAttacks : Interaction {
             InteractionState stopCriticalFailureState = new InteractionState(stopCriticalFailure, this);
             InteractionState redirectionSuccessfulState = new InteractionState(redirectionSuccessful, this);
             InteractionState redirectionFailureState = new InteractionState(redirectionFailure, this);
+            InteractionState doNothingState = new InteractionState(doNothing, this);
 
-            //stopSuccessfulState.SetEndEffect(() => StopSuccessfulEffect(stopSuccessfulState));
-            //stopFailureState.SetEndEffect(() => StopFailureEffect(stopFailureState));
+            stopSuccessfulState.SetEndEffect(() => StopSuccessfulRewardEffect(stopSuccessfulState));
+            stopFailureState.SetEndEffect(() => StopFailureRewardEffect(stopFailureState));
             stopCriticalFailureState.SetEndEffect(() => StopCriticalFailureRewardEffect(stopCriticalFailureState));
-            //redirectionSuccessfulState.SetEndEffect(() => RedirectionSuccessfulEffect(redirectionSuccessfulState));
-            //redirectionFailureState.SetEndEffect(() => RedirectionFailureEffect(redirectionFailureState));
+            redirectionSuccessfulState.SetEndEffect(() => RedirectionSuccessfulRewardEffect(redirectionSuccessfulState));
+            redirectionFailureState.SetEndEffect(() => RedirectionFailureRewardEffect(redirectionFailureState));
+            doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
 
-            CreateActionOptions(stopSuccessfulState);
-            CreateActionOptions(stopFailureState);
-            CreateActionOptions(redirectionSuccessfulState);
-            CreateActionOptions(redirectionFailureState);
+            //CreateActionOptions(stopSuccessfulState);
+            //CreateActionOptions(stopFailureState);
+            //CreateActionOptions(redirectionSuccessfulState);
+            //CreateActionOptions(redirectionFailureState);
 
             _states.Add(startState.name, startState);
             _states.Add(stopSuccessfulState.name, stopSuccessfulState);
@@ -53,12 +56,13 @@ public class ArmyAttacks : Interaction {
             _states.Add(stopCriticalFailureState.name, stopCriticalFailureState);
             _states.Add(redirectionSuccessfulState.name, redirectionSuccessfulState);
             _states.Add(redirectionFailureState.name, redirectionFailureState);
+            _states.Add(doNothingState.name, doNothingState);
 
             SetCurrentState(startState);
         }
     }
     public override void CreateActionOptions(InteractionState state) {
-        if (state.name == "State 1") {
+        if (state.name == "Start") {
             ActionOption stopThem = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
@@ -83,52 +87,12 @@ public class ArmyAttacks : Interaction {
                 //description = "The bandits are increasing their defensive army.",
                 duration = 0,
                 needsMinion = false,
-                effect = () => WhatToDoNextState(),
+                effect = () => DoNothingEffect(state),
             };
             state.AddActionOption(stopThem);
             state.AddActionOption(redirectAttack);
             state.AddActionOption(doNothing);
             state.SetDefaultOption(doNothing);
-        } else if (state.name == stopSuccessful) {
-            ActionOption yes = new ActionOption {
-                interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Yes, please.",
-                duration = 0,
-                needsMinion = false,
-                effect = () => ExploreContinuesOption(state),
-            };
-            ActionOption no = new ActionOption {
-                interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Send him back to us",
-                duration = 0,
-                needsMinion = false,
-                effect = () => ExploreEndsOption(state),
-            };
-            state.AddActionOption(yes);
-            state.AddActionOption(no);
-            state.SetDefaultOption(no);
-        } else  {
-            ActionOption yes = new ActionOption {
-                interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Continue surveillance of the area.",
-                duration = 0,
-                needsMinion = false,
-                effect = () => ExploreContinuesOption(state),
-            };
-            ActionOption no = new ActionOption {
-                interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Return to me.",
-                duration = 0,
-                needsMinion = false,
-                effect = () => ExploreEndsOption(state),
-            };
-            state.AddActionOption(yes);
-            state.AddActionOption(no);
-            state.SetDefaultOption(no);
         }
     }
     #endregion
@@ -140,13 +104,7 @@ public class ArmyAttacks : Interaction {
         effectWeights.AddElement(stopCriticalFailure, 5);
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
-        if (chosenEffect == stopSuccessful) {
-            StopSuccessful(state, chosenEffect);
-        } else if (chosenEffect == stopFailure) {
-            StopFailure(state, chosenEffect);
-        } else if (chosenEffect == stopCriticalFailure) {
-            StopCriticalFailure(state, chosenEffect);
-        }
+        SetCurrentState(_states[chosenEffect]);
     }
     private void RedirectAttackEffect(InteractionState state) {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
@@ -154,89 +112,120 @@ public class ArmyAttacks : Interaction {
         effectWeights.AddElement(redirectionFailure, 10);
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
-        if (chosenEffect == redirectionSuccessful) {
-            RedirectionSuccessful(state, chosenEffect);
-        } else if (chosenEffect == redirectionFailure) {
-            RedirectionFailure(state, chosenEffect);
-        }
+        SetCurrentState(_states[chosenEffect]);
+    }
+    private void DoNothingEffect(InteractionState state) {
+        SetCurrentState(_states[doNothing]);
     }
 
-    private void StopSuccessful(InteractionState state, string effectName) {
-        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, " +
-        //    "eventually convincing him to cancel their attack. With that done, we can have him maintain surveillance " +
-        //    "of the area if you want.");
-        SetCurrentState(_states[effectName]);
-        StopSuccessfulRewardEffect(_states[effectName]);
-    }
+    //private void StopSuccessful(InteractionState state, string effectName) {
+    //    //_states[effectName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, " +
+    //    //    "eventually convincing him to cancel their attack. With that done, we can have him maintain surveillance " +
+    //    //    "of the area if you want.");
+    //    SetCurrentState(_states[effectName]);
+    //    StopSuccessfulRewardEffect(_states[effectName]);
+    //}
     private void StopSuccessfulRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
         _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
-    private void StopFailure(InteractionState state, string effectName) {
-        Faction enemyFaction = landmark.owner.GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS.AT_WAR);
-        Area targetArea = enemyFaction.ownedAreas[Random.Range(0, enemyFaction.ownedAreas.Count)];
-        BaseLandmark target = targetArea.GetRandomExposedLandmark();
-        //**Mechanics**: Army Unit with most occupied slots will Attack the selected enemy location.
-        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, but was unable to convince him to cancel their attack. What do you want him to do next?");
-        SetCurrentState(_states[effectName]);
+    //private void StopFailure(InteractionState state, string effectName) {
+    //    //Faction enemyFaction = landmark.owner.GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS.AT_WAR);
+    //    //Area targetArea = enemyFaction.ownedAreas[Random.Range(0, enemyFaction.ownedAreas.Count)];
+    //    //BaseLandmark target = targetArea.GetRandomExposedLandmark();
+    //    ////**Mechanics**: Army Unit with most occupied slots will Attack the selected enemy location.
+    //    //_states[effectName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, but was unable to convince him to cancel their attack. What do you want him to do next?");
+    //    SetCurrentState(_states[effectName]);
 
-        CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
-        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
-        army.iactionData.AssignAction(characterAction, target.landmarkObj);
-        StopFailureRewardEffect(_states[effectName]);
-    }
+    //    //CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
+    //    //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+    //    //army.iactionData.AssignAction(characterAction, target.landmarkObj);
+    //    StopFailureRewardEffect(_states[effectName]);
+    //}
     private void StopFailureRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
         _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        //**Mechanics**: Army Unit with most occupied slots will Attack the selected enemy location.
+        Faction enemyFaction = landmark.owner.GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS.AT_WAR);
+        Area targetArea = enemyFaction.ownedAreas[Random.Range(0, enemyFaction.ownedAreas.Count)];
+        BaseLandmark target = targetArea.GetRandomExposedLandmark();
+        CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
+        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+        army.iactionData.AssignAction(characterAction, target.landmarkObj);
     }
-    private void StopCriticalFailure(InteractionState state, string effectName) {
+    //private void StopCriticalFailure(InteractionState state, string effectName) {
+    //    ////**Mechanics**: Army Unit with most occupied slots will Attack a player location. Demon ends Explore and must return to Portal.
+    //    //BaseLandmark target = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
+    //    //_states[effectName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, " +
+    //    //    "but was unable to convince him to cancel their attack. Annoyed with the demon, the General redirected the attack to us! " +
+    //    //    _interactable.explorerMinion.name + " was also forced to flee the area.");
+    //    SetCurrentState(_states[effectName]);
+
+    //    //CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
+    //    //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+    //    //army.iactionData.AssignAction(characterAction, target.landmarkObj);
+    //    //landmark.landmarkInvestigation.MinionGoBackFromAssignment(null);
+    //}
+    private void StopCriticalFailureRewardEffect(InteractionState state) {
         //**Mechanics**: Army Unit with most occupied slots will Attack a player location. Demon ends Explore and must return to Portal.
         BaseLandmark target = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
-        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, " +
-        //    "but was unable to convince him to cancel their attack. Annoyed with the demon, the General redirected the attack to us! " +
-        //    _interactable.explorerMinion.name + " was also forced to flee the area.");
-        SetCurrentState(_states[effectName]);
-
         CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
         army.iactionData.AssignAction(characterAction, target.landmarkObj);
         landmark.landmarkInvestigation.MinionGoBackFromAssignment(null);
-    }
-    private void StopCriticalFailureRewardEffect(InteractionState state) {
+
         //**Reward**: Demon gains Exp 1
         _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
 
-    private void RedirectionSuccessful(InteractionState state, string effectName) {
-        //**Mechanics**: Army Unit with most occupied slots will Attack assigned Location Intel.
-        BaseLandmark target = state.chosenOption.assignedLocation.location.GetRandomExposedLandmark();
-        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General," +
-        //    " eventually convincing him to redirect their attack to " + target.name + ". What do you want him to do next?");
-        SetCurrentState(_states[effectName]);
+    //private void RedirectionSuccessful(InteractionState state, string effectName) {
+    //    ////**Mechanics**: Army Unit with most occupied slots will Attack assigned Location Intel.
+    //    //BaseLandmark target = state.chosenOption.assignedLocation.location.GetRandomExposedLandmark();
+    //    //_states[effectName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General," +
+    //    //    " eventually convincing him to redirect their attack to " + target.name + ". What do you want him to do next?");
+    //    SetCurrentState(_states[effectName]);
 
-        CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
-        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
-        army.iactionData.AssignAction(characterAction, target.landmarkObj);
-        RedirectionSuccessfulRewardEffect(_states[effectName]);
-    }
+    //    //CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
+    //    //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+    //    //army.iactionData.AssignAction(characterAction, target.landmarkObj);
+    //    RedirectionSuccessfulRewardEffect(_states[effectName]);
+    //}
     private void RedirectionSuccessfulRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
         _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
-    }
-    private void RedirectionFailure(InteractionState state, string effectName) {
-        //**Mechanics**: Army Unit with most occupied slots will Attack a player location.
-        BaseLandmark target = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
-        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, " +
-        //    "but failed to convince him to redirect their attack to " + target.name + ". What do you want him to do next?");
-        SetCurrentState(_states[effectName]);
-
+        //**Mechanics**: Army Unit with most occupied slots will Attack assigned Location Intel.
+        BaseLandmark target = state.chosenOption.assignedLocation.location.GetRandomExposedLandmark();
         CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
         army.iactionData.AssignAction(characterAction, target.landmarkObj);
-        RedirectionFailureRewardEffect(_states[effectName]);
     }
+    //private void RedirectionFailure(InteractionState state, string effectName) {
+    //    ////**Mechanics**: Army Unit with most occupied slots will Attack a player location.
+    //    //BaseLandmark target = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
+    //    //_states[effectName].SetDescription(_interactable.explorerMinion.name + " disguised himself and talked to the Army General, " +
+    //    //    "but failed to convince him to redirect their attack to " + target.name + ". What do you want him to do next?");
+    //    SetCurrentState(_states[effectName]);
+
+    //    //CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
+    //    //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+    //    //army.iactionData.AssignAction(characterAction, target.landmarkObj);
+    //    RedirectionFailureRewardEffect(_states[effectName]);
+    //}
     private void RedirectionFailureRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
         _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        //**Mechanics**: Army Unit with most occupied slots will Attack a player location.
+        BaseLandmark target = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
+        CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
+        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+        army.iactionData.AssignAction(characterAction, target.landmarkObj);
+    }
+
+    private void DoNothingRewardEffect(InteractionState state) {
+        //**Mechanics**: Army Unit with most occupied slots will Attack the selected enemy location.
+        BaseLandmark target = state.chosenOption.assignedLocation.location.GetRandomExposedLandmark();
+        CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
+        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+        army.iactionData.AssignAction(characterAction, target.landmarkObj);
     }
 }

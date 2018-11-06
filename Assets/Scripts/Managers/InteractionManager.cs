@@ -45,11 +45,11 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.SPIDER_QUEEN:
                 createdInteraction = new TheSpiderQueen(interactable);
                 break;
-            case INTERACTION_TYPE.HUMAN_BANDIT_REINFORCEMENT:
-                createdInteraction = new HumanBanditReinforcement(interactable);
+            case INTERACTION_TYPE.HUMAN_BANDIT_REINFORCEMENTS:
+                createdInteraction = new HumanBanditReinforcements(interactable);
                 break;
-            case INTERACTION_TYPE.GOBLIN_BANDIT_REINFORCEMENT:
-                createdInteraction = new GoblinBanditReinforcement(interactable);
+            case INTERACTION_TYPE.GOBLIN_BANDIT_REINFORCEMENTS:
+                createdInteraction = new GoblinBanditReinforcements(interactable);
                 break;
             case INTERACTION_TYPE.MYSTERY_HUM:
                 createdInteraction = new MysteryHum(interactable);
@@ -83,8 +83,8 @@ public class InteractionManager : MonoBehaviour {
     }
     public bool CanCreateInteraction(INTERACTION_TYPE interactionType, BaseLandmark landmark) {
         switch (interactionType) {
-            case INTERACTION_TYPE.HUMAN_BANDIT_REINFORCEMENT:
-            case INTERACTION_TYPE.GOBLIN_BANDIT_REINFORCEMENT:
+            case INTERACTION_TYPE.HUMAN_BANDIT_REINFORCEMENTS:
+            case INTERACTION_TYPE.GOBLIN_BANDIT_REINFORCEMENTS:
                 //Random event that may show up in Bandit Camp tiles. 
                 //Only triggers if the Bandit Camp has an empty Tile Defender Slot
                 if (landmark.HasEmptyDefenderSlot()) {
