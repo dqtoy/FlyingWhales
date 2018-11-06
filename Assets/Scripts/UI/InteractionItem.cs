@@ -176,9 +176,11 @@ public class InteractionItem : MonoBehaviour {
         currentNeededObjectIndex = 0; //reset index
         if (actionOption != null) {
             if (actionOption.neededObjects == null || actionOption.neededObjects.Count == 0) {
+                _currentSelectedActionOption.ActivateOption(_interaction.interactable);
+                //ShowConfirmButtonOnly(true);
                 //no needed slots
                 //assignmentGO.SetActive(true);
-                ShowConfirmButtonOnly(true);
+                //ShowConfirmButtonOnly(true);
                 //confirmBtnRect.anchoredPosition = confirmBtnPosNoSlot;
                 //slotItem.gameObject.SetActive(false);
                 ////for (int i = 0; i < slotItems.Length; i++) {
@@ -231,8 +233,8 @@ public class InteractionItem : MonoBehaviour {
             if (!_interaction.currentState.isEnd) {
                 _currentSelectedActionOption.ActivateOption(_interaction.interactable);
             } else {
-                _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.landmarkInvestigation.ExploreLandmark();
                 _interaction.currentState.EndResult();
+                _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.landmarkInvestigation.ExploreLandmark();
             }
         } else {
             _currentSelectedActionOption.AddAssignedObject(slotItem.placedObject);
