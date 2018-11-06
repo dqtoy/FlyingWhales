@@ -7,6 +7,7 @@ public class Minion : IUnit {
 
     private MinionItem _minionItem;
     private PlayerAbility _ability;
+    private BaseLandmark _currentlyExploringLandmark;
     private ICharacter _icharacter;
     private IInteractable _target;
     private DEMON_TYPE _type;
@@ -24,6 +25,9 @@ public class Minion : IUnit {
     }
     public PlayerAbility ability {
         get { return _ability; }
+    }
+    public BaseLandmark currentlyExploringLandmark {
+        get { return _currentlyExploringLandmark; }
     }
     public MinionItem minionItem {
         get { return _minionItem; }
@@ -109,6 +113,9 @@ public class Minion : IUnit {
     }
     public void SetMinionItem(MinionItem minionItem) {
         _minionItem = minionItem;
+    }
+    public void SetExploringLandmark(BaseLandmark landmark) {
+        _currentlyExploringLandmark = landmark;
     }
     public void AdjustExp(int amount) {
         _exp += amount;

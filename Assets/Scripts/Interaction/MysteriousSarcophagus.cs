@@ -198,11 +198,11 @@ public class MysteriousSarcophagus : Interaction {
     }
     private void GainManaRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
-        PlayerManager.Instance.player.AdjustCurrency(CURRENCY.MANA, 50);
+        PlayerManager.Instance.player.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Mana_Cache_Reward_2));
     }
     private void GainSuppliesRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
-        PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, 50);
+        PlayerManager.Instance.player.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
     }
     private void AwakenUndeadHeroRewardEffect(InteractionState state) {
         if(_interactable is BaseLandmark) {

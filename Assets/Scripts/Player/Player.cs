@@ -546,6 +546,9 @@ public class Player : ILeader {
     public void RemoveMinion(Minion minion) {
         if(_minions.Remove(minion)){
             PlayerUI.Instance.RemoveMinionItem(minion.minionItem);
+            if(minion.currentlyExploringLandmark != null) {
+                minion.currentlyExploringLandmark.landmarkInvestigation.CancelInvestigation();
+            }
             //minion.minionItem.SetMinion(null);
         }
     }
