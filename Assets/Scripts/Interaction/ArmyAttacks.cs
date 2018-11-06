@@ -5,6 +5,7 @@ using UnityEngine;
 public class ArmyAttacks : Interaction {
 
     private BaseLandmark landmark;
+    private Area targetArea;
 
     private const string stopSuccessful = "Stop Successful";
     private const string stopFailure = "Stop Failure";
@@ -21,6 +22,8 @@ public class ArmyAttacks : Interaction {
     public override void CreateStates() {
         if (_interactable is BaseLandmark) {
             landmark = _interactable as BaseLandmark;
+            Faction targetFaction = landmark.owner.GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS.AT_WAR);
+            targetArea = targetFaction.ownedAreas[Random.Range(0, targetFaction.ownedAreas.Count)];
             //CreateExploreStates();
             //CreateWhatToDoNextState("%minion% will not intervene with the Garrison's planned attack. Do you want him to continue surveillance of " + landmark.landmarkName + "?");
 
@@ -79,6 +82,7 @@ public class ArmyAttacks : Interaction {
                 needsMinion = false,
                 neededObjects = new List<System.Type>() { typeof(LocationIntel) },
                 effect = () => RedirectAttackEffect(state),
+                canBeDoneAction = () => AssignedMinionIsOfType(DEMON_TYPE.GREED), //Needs greed minion
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -146,8 +150,6 @@ public class ArmyAttacks : Interaction {
         //**Reward**: Demon gains Exp 1
         _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //**Mechanics**: Army Unit with most occupied slots will Attack the selected enemy location.
-        Faction enemyFaction = landmark.owner.GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS.AT_WAR);
-        Area targetArea = enemyFaction.ownedAreas[Random.Range(0, enemyFaction.ownedAreas.Count)];
         BaseLandmark target = targetArea.GetRandomExposedLandmark();
         CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
@@ -223,7 +225,7 @@ public class ArmyAttacks : Interaction {
 
     private void DoNothingRewardEffect(InteractionState state) {
         //**Mechanics**: Army Unit with most occupied slots will Attack the selected enemy location.
-        BaseLandmark target = state.chosenOption.assignedLocation.location.GetRandomExposedLandmark();
+        BaseLandmark target = targetArea.GetRandomExposedLandmark();
         CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
         army.iactionData.AssignAction(characterAction, target.landmarkObj);

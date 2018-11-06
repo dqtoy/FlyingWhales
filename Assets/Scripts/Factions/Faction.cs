@@ -243,16 +243,22 @@ public class Faction {
         }
         return null;
     }
-    public bool HasRelationshipStatus(FACTION_RELATIONSHIP_STATUS stat) {
+    public bool HasRelationshipStatus(FACTION_RELATIONSHIP_STATUS stat, bool excludePlayer = true) {
         foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
+            if (excludePlayer && kvp.Key.id == PlayerManager.Instance.player.playerFaction.id) {
+                continue; //exclude player faction
+            }
             if (kvp.Value.relationshipStatus == stat) {
                 return true;
             }
         }
         return false;
     }
-    public Faction GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS stat) {
+    public Faction GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS stat, bool excludePlayer = true) {
         foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
+            if (excludePlayer && kvp.Key.id == PlayerManager.Instance.player.playerFaction.id) {
+                continue; //exclude player faction
+            }
             if (kvp.Value.relationshipStatus == stat) {
                 return kvp.Key;
             }
