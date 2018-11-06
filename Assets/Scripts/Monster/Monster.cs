@@ -674,6 +674,12 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         //    _ownParty.icon.SetVisualState(false);
         //}
     }
+    public void OnAddedToPlayer() {
+        if (ownParty.specificLocation is BaseLandmark) {
+            ownParty.specificLocation.RemoveCharacterFromLocation(ownParty);
+        }
+        PlayerManager.Instance.player.playerArea.coreTile.landmarkOnTile.AddCharacterToLocation(ownParty);
+    }
     public bool InviteToParty(ICharacter inviter) {
         return false;
     }

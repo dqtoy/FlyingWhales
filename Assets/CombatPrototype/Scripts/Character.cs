@@ -1639,6 +1639,12 @@ namespace ECS {
                 ownParty.icon.SetVisualState(false);
             }
         }
+        public void OnAddedToPlayer() {
+            if (ownParty.specificLocation is BaseLandmark) {
+                ownParty.specificLocation.RemoveCharacterFromLocation(ownParty);
+            }
+            PlayerManager.Instance.player.playerArea.coreTile.landmarkOnTile.AddCharacterToLocation(ownParty);
+        }
         public bool IsInParty() {
             if (currentParty.icharacters.Count > 1) {
                 return true; //if the character is in a party that has more than 1 characters

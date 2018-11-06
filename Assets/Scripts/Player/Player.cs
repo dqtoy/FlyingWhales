@@ -29,6 +29,7 @@ public class Player : ILeader {
     private List<Minion> _minions;
     private Dictionary<CURRENCY, int> _currencies;
 
+    public List<ICharacter> otherCharacters;
 
     //#region getters/setters
     //public Area playerArea {
@@ -96,6 +97,7 @@ public class Player : ILeader {
         _snatchedCharacters = new List<ECS.Character>();
         _intels = new List<Intel>();
         _items = new List<Item>();
+        otherCharacters = new List<ICharacter>();
         //_maxMinions = PlayerUI.Instance.minionItems.Count;
         maxImps = 5;
         SetCurrentLifestoneChance(25f);
@@ -440,6 +442,9 @@ public class Player : ILeader {
         PlayerUI.Instance.minionsScrollRect.verticalNormalizedPosition = 1f;
         PlayerUI.Instance.OnStartMinionUI();
     }
+    public Minion CreateNewMinion(ICharacter character, string abilityName) {
+        return new Minion(character, GetAbility(abilityName));
+    }
     public Minion CreateNewMinion(string className, RACE race, DEMON_TYPE demonType, string abilityName, bool isArmy) {
         Minion minion = null;
         if (isArmy) {
@@ -609,6 +614,18 @@ public class Player : ILeader {
             default:
                 break;
         }
+    }
+    #endregion
+
+    #region Other Characters/Units
+    public void AddNewCharacter(ICharacter character) {
+        if (!otherCharacters.Contains(character)) {
+            otherCharacters.Add(character);
+            character.OnAddedToPlayer();
+        }
+    }
+    public void RemoveCharacter(ICharacter character) {
+        otherCharacters.Remove(character);
     }
     #endregion
 }

@@ -72,6 +72,7 @@ public interface ICharacter {
     void SetCurrentParty(Party party);
     void OnRemovedFromParty();
     void OnAddedToParty();
+    void OnAddedToPlayer();
     void SetHomeLandmark(BaseLandmark newHomeLandmark);
     void AddHistory(Log log); //Character only
     void SetMode(MODE mode);
