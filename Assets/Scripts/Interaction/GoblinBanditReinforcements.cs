@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using ECS;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -101,9 +102,9 @@ public class GoblinBanditReinforcements : Interaction {
         CharacterParty army = null;
         for (int i = 0; i < unitCount; i++) {
             LandmarkDefender chosenDefender = assaultSpawnWeights.PickRandomElementGivenWeights();
-            CharacterArmyUnit armyUnit = CharacterManager.Instance.CreateCharacterArmyUnit(landmark.owner.race, chosenDefender, landmark.owner, landmark);
+            Character armyUnit = CharacterManager.Instance.CreateNewCharacter(chosenDefender.className, landmark.owner.race, GENDER.MALE, landmark.owner, landmark);
             if (army == null) {
-                army = armyUnit.party as CharacterParty;
+                army = armyUnit.party;
             } else {
                 army.AddCharacter(armyUnit);
             }

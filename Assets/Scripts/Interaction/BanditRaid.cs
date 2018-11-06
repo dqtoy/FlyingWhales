@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using ECS;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,8 +8,8 @@ public class BanditRaid : Interaction {
     private BaseLandmark chosenLandmarkToRaid;
     private BaseLandmark originLandmark;
 
-    private WeightedDictionary<LandmarkDefender> assaultSpawnWeights;
-    private WeightedDictionary<LandmarkDefender> firstElementAssaultSpawnWeights; //TODO: Make this more elegant!
+    //private WeightedDictionary<LandmarkDefender> assaultSpawnWeights;
+    //private WeightedDictionary<LandmarkDefender> firstElementAssaultSpawnWeights; //TODO: Make this more elegant!
 
     public BanditRaid(IInteractable interactable) : base(interactable, INTERACTION_TYPE.BANDIT_RAID, 70) {
         _name = "Bandit Raid";
@@ -20,7 +21,7 @@ public class BanditRaid : Interaction {
             originLandmark = interactable as BaseLandmark;
             //CreateExploreStates();
             //CreateWhatToDoNextState("What do you want %minion% to do next?");
-            ConstructAssaultSpawnWeights();
+            //ConstructAssaultSpawnWeights();
             chosenLandmarkToRaid = GetLandmarkToRaid(originLandmark);
             
             InteractionState startState = new InteractionState("Start", this);
@@ -180,6 +181,9 @@ public class BanditRaid : Interaction {
     private void FailedToCancelRaidRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target
+        Party createdParty = CombineCharacters(4);
+        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
+        createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
     }
     //private void CriticalFailToCancelRaid(InteractionState state, string effectName) {
     //    BaseLandmark targetLandmark = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
@@ -197,6 +201,9 @@ public class BanditRaid : Interaction {
     private void CriticalFailToCancelRaidRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target
+        Party createdParty = CombineCharacters(4);
+        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
+        createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
     }
 
     //private void EmpoweredRaid(InteractionState state, string effectName) {
@@ -214,6 +221,13 @@ public class BanditRaid : Interaction {
     private void EmpoweredRaidRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target, all raiding units gain "Empowered" buff
+        Party createdParty = CombineCharacters(4);
+        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
+        createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
+        CombatAttribute empoweredTrait = AttributeManager.Instance.allCombatAttributes["Empowered"];
+        for (int i = 0; i < createdParty.icharacters.Count; i++) {
+            createdParty.icharacters[i].AddCombatAttribute(empoweredTrait);
+        }
     }
     //private void MisusedFunds(InteractionState state, string effectName) {
     //    //_states[effectName].SetDescription("We provided the bandits with more supplies but it doesn't look they used it for the " +
@@ -230,6 +244,10 @@ public class BanditRaid : Interaction {
     private void MisusedFundsRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target, add 100 Supply to Bandit Camp
+        Party createdParty = CombineCharacters(4);
+        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
+        createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
+        originLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(100);
     }
     //private void DemonDies(InteractionState state, string effectName) {
     //    //_states[effectName].SetDescription(explorerMinion.name + " has not returned. We can only assume the worst.");
@@ -253,48 +271,84 @@ public class BanditRaid : Interaction {
     //}
     private void DoNothingRewardEffect(InteractionState state) {
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target
+        Party createdParty = CombineCharacters(4);
+        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
+        createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
     }
 
-    private void ConstructAssaultSpawnWeights() {
-        assaultSpawnWeights = new WeightedDictionary<LandmarkDefender>();
-        firstElementAssaultSpawnWeights = new WeightedDictionary<LandmarkDefender>();
+    //private void ConstructAssaultSpawnWeights() {
+    //    assaultSpawnWeights = new WeightedDictionary<LandmarkDefender>();
+    //    firstElementAssaultSpawnWeights = new WeightedDictionary<LandmarkDefender>();
 
-        LandmarkDefender marauder = new LandmarkDefender() {
-            className = "Marauder",
-            armyCount = 25
-        };
-        LandmarkDefender bowman = new LandmarkDefender() {
-            className = "Bowman",
-            armyCount = 25
-        };
-        LandmarkDefender healer = new LandmarkDefender() {
-            className = "Healer",
-            armyCount = 25
-        };
+    //    LandmarkDefender marauder = new LandmarkDefender() {
+    //        className = "Marauder",
+    //        armyCount = 25
+    //    };
+    //    LandmarkDefender bowman = new LandmarkDefender() {
+    //        className = "Bowman",
+    //        armyCount = 25
+    //    };
+    //    LandmarkDefender healer = new LandmarkDefender() {
+    //        className = "Healer",
+    //        armyCount = 25
+    //    };
 
-        firstElementAssaultSpawnWeights.AddElement(marauder, 35);
-        firstElementAssaultSpawnWeights.AddElement(bowman, 20);
+    //    firstElementAssaultSpawnWeights.AddElement(marauder, 35);
+    //    firstElementAssaultSpawnWeights.AddElement(bowman, 20);
 
-        assaultSpawnWeights.AddElement(marauder, 35);
-        assaultSpawnWeights.AddElement(bowman, 20);
-        assaultSpawnWeights.AddElement(healer, 10);
-    }
-    private CharacterParty CreateAssaultArmy(int unitCount) {
-        CharacterParty army = null;
-        for (int i = 0; i < unitCount; i++) {
-            LandmarkDefender chosenDefender;
-            if (i == 0) {
-                chosenDefender = firstElementAssaultSpawnWeights.PickRandomElementGivenWeights();
-            } else {
-                chosenDefender = assaultSpawnWeights.PickRandomElementGivenWeights();
+    //    assaultSpawnWeights.AddElement(marauder, 35);
+    //    assaultSpawnWeights.AddElement(bowman, 20);
+    //    assaultSpawnWeights.AddElement(healer, 10);
+    //}
+    //private CharacterParty CreateAssaultArmy(int unitCount) {
+    //    CharacterParty army = null;
+    //    for (int i = 0; i < unitCount; i++) {
+    //        LandmarkDefender chosenDefender;
+    //        if (i == 0) {
+    //            chosenDefender = firstElementAssaultSpawnWeights.PickRandomElementGivenWeights();
+    //        } else {
+    //            chosenDefender = assaultSpawnWeights.PickRandomElementGivenWeights();
+    //        }
+    //        Character armyUnit = CharacterManager.Instance.CreateNewCharacter(chosenDefender.className, originLandmark.owner.race, GENDER.MALE, originLandmark.owner, originLandmark);
+    //        if (army == null) {
+    //            army = armyUnit.party;
+    //        } else {
+    //            army.AddCharacter(armyUnit);
+    //        }
+    //    }
+    //    return army;
+    //}
+
+    private Party CombineCharacters(int upTo) {
+        Party partyToUse = null;
+        for (int i = 0; i < originLandmark.charactersWithHomeOnLandmark.Count; i++) {
+            ICharacter currCharacter = originLandmark.charactersWithHomeOnLandmark[i];
+            if (currCharacter is Character && (currCharacter as Character).isDefender) {
+                continue; //skip characters that are defending
             }
-            CharacterArmyUnit armyUnit = CharacterManager.Instance.CreateCharacterArmyUnit(originLandmark.owner.race, chosenDefender, originLandmark.owner, originLandmark);
-            if (army == null) {
-                army = armyUnit.party as CharacterParty;
-            } else {
-                army.AddCharacter(armyUnit);
+            Party currCharacterParty = currCharacter.ownParty;
+            if (currCharacterParty == null ||
+                (currCharacterParty != null && currCharacterParty.icharacters.Count > partyToUse.icharacters.Count)) {
+                partyToUse = currCharacterParty;
             }
         }
-        return army;
+        if (partyToUse != null) {
+            if (partyToUse.icharacters.Count < upTo) {
+                for (int i = 0; i < originLandmark.charactersWithHomeOnLandmark.Count; i++) {
+                    ICharacter currCharacter = originLandmark.charactersWithHomeOnLandmark[i];
+                    if (currCharacter is Character && (currCharacter as Character).isDefender) {
+                        continue; //skip characters that are defending
+                    }
+                    if (partyToUse.owner.id != currCharacter.id && !currCharacter.IsInParty()) { //the current character is not the owner of the party
+                        partyToUse.AddCharacter(currCharacter);
+                        if (partyToUse.icharacters.Count >= upTo) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return partyToUse;
     }
 }
