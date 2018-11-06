@@ -83,14 +83,6 @@ public class InteractionManager : MonoBehaviour {
     }
     public bool CanCreateInteraction(INTERACTION_TYPE interactionType, BaseLandmark landmark) {
         switch (interactionType) {
-            case INTERACTION_TYPE.HUMAN_BANDIT_REINFORCEMENTS:
-            case INTERACTION_TYPE.GOBLIN_BANDIT_REINFORCEMENTS:
-                //Random event that may show up in Bandit Camp tiles. 
-                //Only triggers if the Bandit Camp has an empty Tile Defender Slot
-                if (landmark.HasEmptyDefenderSlot()) {
-                    return true;
-                }
-                return false;
             case INTERACTION_TYPE.ABANDONED_HOUSE:
             case INTERACTION_TYPE.UNEXPLORED_CAVE:
             case INTERACTION_TYPE.SPIDER_QUEEN:
@@ -99,6 +91,10 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.HARVEST_SEASON:
                 //Requires actively Investigating Imp.
                 return landmark.isBeingInspected;
+            case INTERACTION_TYPE.BANDIT_RAID:
+                //Random event that occurs on Bandit Camps. Requires at least 3 characters or army units in the Bandit Camp 
+                //character list owned by the Faction owner.
+                return landmark.GetIdleResidents().Count >= 3;
             default:
                 return true;
         }

@@ -1300,6 +1300,7 @@ namespace ECS {
                     break;
                 case CHARACTER_ROLE.ARMY:
                     _role = new Army(this);
+                    SetName(this.characterClass.className);
                     break;
                 default:
 		            break;
