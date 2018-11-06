@@ -435,6 +435,10 @@ public enum CHARACTER_ROLE {
     KING,
     PLAYER,
     GUARDIAN,
+    BANDIT,
+    LEADER,
+    BEAST,
+    ARMY,
 }
 public enum CHARACTER_CLASS {
     WARRIOR,

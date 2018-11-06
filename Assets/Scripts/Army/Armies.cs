@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Army : Party {
+public class Armies : Party {
 
     public ArmyActionData actionData { get; private set; }
 
-    public Army(ICharacter owner) : base(owner) {
+    public Armies(ICharacter owner) : base(owner) {
         actionData = new ArmyActionData(this);
     }
 

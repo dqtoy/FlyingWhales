@@ -1289,6 +1289,18 @@ namespace ECS {
                 case CHARACTER_ROLE.GUARDIAN:
                     _role = new Guardian(this);
                     break;
+                case CHARACTER_ROLE.BEAST:
+                    _role = new Beast(this);
+                    break;
+                case CHARACTER_ROLE.LEADER:
+                    _role = new Leader(this);
+                    break;
+                case CHARACTER_ROLE.BANDIT:
+                    _role = new Bandit(this);
+                    break;
+                case CHARACTER_ROLE.ARMY:
+                    _role = new Army(this);
+                    break;
                 default:
 		            break;
 			}

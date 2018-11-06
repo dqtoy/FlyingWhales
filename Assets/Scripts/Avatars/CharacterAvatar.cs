@@ -80,7 +80,7 @@ public class CharacterAvatar : MonoBehaviour{
         } else if (_party.mainCharacter is MonsterArmyUnit) {
             _avatarSpriteRenderer.sprite = CharacterManager.Instance.villainSprite;
         } else if(_party.mainCharacter is Character){
-			SetSprite (_party.mainCharacter.role.roleType);
+            SetSprite(_party.mainCharacter.role.roleType);
         } else if (_party.mainCharacter is Monster) {
             SetSprite((_party.mainCharacter as Monster).type);
         }

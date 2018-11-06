@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 
 public class ArmyActionData {
-    private Army _party;
+    private Armies _party;
     private CharacterAction _currentAction;
     private IObject _currentTargetObject;
     private int _currentDay;
@@ -24,7 +24,7 @@ public class ArmyActionData {
     }
     #endregion
 
-    public ArmyActionData(Army party) {
+    public ArmyActionData(Armies party) {
         _party = party;
         Reset();
         _party.onDailyAction += PerformCurrentAction;

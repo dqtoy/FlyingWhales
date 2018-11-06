@@ -423,14 +423,20 @@ public class CharacterManager : MonoBehaviour {
 			return heroSprite;
 		case CHARACTER_ROLE.VILLAIN:
 			return villainSprite;
-                //case CHARACTER_ROLE.HERMIT:
-                //	return hermitSprite;
-                //case CHARACTER_ROLE.BEAST:
-                //	return beastSprite;
-                //case CHARACTER_ROLE.BANDIT:
-                //	return banditSprite;
-                //case CHARACTER_ROLE.CHIEFTAIN:
-                //	return chieftainSprite;
+        case CHARACTER_ROLE.BEAST:
+            return beastSprite;
+        case CHARACTER_ROLE.BANDIT:
+            return banditSprite;
+        case CHARACTER_ROLE.LEADER:
+            return chieftainSprite;
+            //case CHARACTER_ROLE.HERMIT:
+            //	return hermitSprite;
+            //case CHARACTER_ROLE.BEAST:
+            //	return beastSprite;
+            //case CHARACTER_ROLE.BANDIT:
+            //	return banditSprite;
+            //case CHARACTER_ROLE.CHIEFTAIN:
+            //	return chieftainSprite;
         }
         return null;
 	}
