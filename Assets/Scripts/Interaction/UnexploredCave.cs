@@ -109,7 +109,7 @@ public class UnexploredCave : Interaction {
         effectWeights.AddElement("Demon Disappears", 5);
         //effectWeights.AddElement("Demon Weapon Upgrade", 10);
         //effectWeights.AddElement("Demon Armor Upgrade", 10);
-        //effectWeights.AddElement("Unleashed Monster", 5);
+        effectWeights.AddElement("Unleashed Monster", 5);
         effectWeights.AddElement("Nothing", 5);
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
@@ -143,12 +143,12 @@ public class UnexploredCave : Interaction {
         //}
     }
     private void DemonWeaponUpgradeRewardState(InteractionState state, string effectName) {
-        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " has returned with an improved Weapon.");
+        //_states[effectName].SetDescription(explorerMinion.name + " has returned with an improved Weapon.");
         SetCurrentState(_states[effectName]);
         DemonWeaponUpgradeEffect(_states[effectName]);
     }
     private void DemonArmorUpgradeRewardState(InteractionState state, string effectName) {
-        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " has returned with an improved Armor.");
+        //_states[effectName].SetDescription(explorerMinion.name + " has returned with an improved Armor.");
         SetCurrentState(_states[effectName]);
         DemonArmorUpgradeEffect(_states[effectName]);
     }
@@ -156,29 +156,58 @@ public class UnexploredCave : Interaction {
         if(_interactable is BaseLandmark) {
             BaseLandmark landmark = _interactable as BaseLandmark;
             if(landmark.charactersWithHomeOnLandmark.Count > 0) {
-                //_states[effectName].SetDescription(_interactable.explorerMinion.name + " has awakened a " + landmark.charactersWithHomeOnLandmark[0].name + ". It now defends the cave from intruders.");
+                //_states[effectName].SetDescription(explorerMinion.name + " has awakened a " + landmark.charactersWithHomeOnLandmark[0].name + ". It now defends the cave from intruders.");
                 SetCurrentState(_states[effectName]);
                 UnleashedMonsterEffect(_states[effectName]);
             }
         }
     }
     private void DemonWeaponUpgradeEffect(InteractionState state) {
-        if(_interactable.explorerMinion.icharacter is Character) {
-            Character character = _interactable.explorerMinion.icharacter as Character;
+        if(explorerMinion.icharacter is Character) {
+            Character character = explorerMinion.icharacter as Character;
             character.UpgradeWeapon();
         }
     }
     private void DemonArmorUpgradeEffect(InteractionState state) {
-        if (_interactable.explorerMinion.icharacter is Character) {
-            Character character = _interactable.explorerMinion.icharacter as Character;
+        if (explorerMinion.icharacter is Character) {
+            Character character = explorerMinion.icharacter as Character;
             character.UpgradeArmor();
         }
     }
     private void UnleashedMonsterEffect(InteractionState state) {
         //TODO: awaken monster and put it in defenders list
+        WeightedDictionary<string> monsterWeights = new WeightedDictionary<string>();
+        monsterWeights.AddElement("Spider Spinner", 10);
+        monsterWeights.AddElement("Wolf Ravager", 10);
+
+        string chosenMonster = monsterWeights.PickRandomElementGivenWeights();
+        RACE chosenRace = RACE.HUMANS;
+        string chosenClass = string.Empty;
+        if(chosenMonster == "Spider Spinner") {
+            chosenRace = RACE.SPIDER;
+            chosenClass = "Spinner";
+        }else if (chosenMonster == "Wolf Ravager") {
+            chosenRace = RACE.WOLF;
+            chosenClass = "Ravager";
+        }
+
+        if(chosenClass != string.Empty) {
+            Character newDefender = CharacterManager.Instance.CreateNewCharacter(chosenClass, chosenRace, GENDER.MALE, null, _interactable.specificLocation, false);
+            BaseLandmark landmark = _interactable as BaseLandmark;
+            landmark.AddDefender(newDefender);
+
+            if (state.descriptionLog != null) {
+                state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenRace), LOG_IDENTIFIER.STRING_1);
+                state.descriptionLog.AddToFillers(null, chosenClass, LOG_IDENTIFIER.STRING_2);
+            }
+            if (state.minionLog != null) {
+                state.minionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenRace), LOG_IDENTIFIER.STRING_1);
+                state.minionLog.AddToFillers(null, chosenClass, LOG_IDENTIFIER.STRING_2);
+            }
+        }
     }
 
     private void LeftAloneRewardEffect(InteractionState state) {
-        //_interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));
+        //explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));
     }
 }

@@ -140,13 +140,13 @@ public class ArmyUnitTraining : Interaction {
 
     #region States
     private void CancelledTrainingRewardState(InteractionState state, string stateName) {
-        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " distracted the soldiers with liquor so they end up forgetting that they were supposed to form a new defensive army unit.");
+        //_states[stateName].SetDescription(explorerMinion.name + " distracted the soldiers with liquor so they end up forgetting that they were supposed to form a new defensive army unit.");
         SetCurrentState(_states[stateName]);
         //CancelledTrainingRewardEffect(_states[stateName]);
     }
     private void FailedCancelTrainingRewardState(InteractionState state, string stateName) {
         SetArmyClassNameToBeCreated();
-        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " failed to distract the soldiers. A new " + Utilities.NormalizeString(interactable.faction.race.ToString()) + " " + _chosenClassName + " unit has been formed at the garrison.");
+        //_states[stateName].SetDescription(explorerMinion.name + " failed to distract the soldiers. A new " + Utilities.NormalizeString(interactable.faction.race.ToString()) + " " + _chosenClassName + " unit has been formed at the garrison.");
         SetCurrentState(_states[stateName]);
         //FailedCancelTrainingRewardEffect(_states[stateName]);
     }
@@ -160,14 +160,37 @@ public class ArmyUnitTraining : Interaction {
 
     #region State Effects
     private void CancelledTrainingRewardEffect(InteractionState state) {
-        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        if(state.minionLog != null) {
+            state.minionLog.AddToFillers(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1);
+        }
     }
     private void FailedCancelTrainingRewardEffect(InteractionState state) {
-        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         ArmyProducedRewardEffect(state);
+
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(_interactable.faction.race), LOG_IDENTIFIER.STRING_1);
+            state.descriptionLog.AddToFillers(null, _chosenClassName, LOG_IDENTIFIER.STRING_2);
+        }
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1);
+            state.minionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(_interactable.faction.race), LOG_IDENTIFIER.STRING_1);
+            state.minionLog.AddToFillers(null, _chosenClassName, LOG_IDENTIFIER.STRING_2);
+        }
     }
     private void ArmyProducedRewardEffect(InteractionState state) {
-        CharacterManager.Instance.CreateCharacterArmyUnit(_chosenClassName, interactable.faction.race, interactable.faction, interactable as BaseLandmark);
+        CharacterManager.Instance.CreateNewCharacter(_chosenClassName, interactable.faction.race, GENDER.MALE, interactable.faction, interactable as BaseLandmark);
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(_interactable.faction.race), LOG_IDENTIFIER.STRING_1);
+            state.descriptionLog.AddToFillers(null, _chosenClassName, LOG_IDENTIFIER.STRING_2);
+        }
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1);
+            state.minionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(_interactable.faction.race), LOG_IDENTIFIER.STRING_1);
+            state.minionLog.AddToFillers(null, _chosenClassName, LOG_IDENTIFIER.STRING_2);
+        }
+
     }
     #endregion
 }

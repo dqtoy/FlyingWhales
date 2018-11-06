@@ -160,7 +160,7 @@ public class CharacterManager : MonoBehaviour {
     /*
      Create a new character, given a role, class and race.
          */
-    public ECS.Character CreateNewCharacter(CHARACTER_ROLE charRole, string className, RACE race, GENDER gender, Faction faction = null, ILocation homeLocation = null, bool createSchedule = true) {
+    public ECS.Character CreateNewCharacter(string className, RACE race, GENDER gender, Faction faction = null, ILocation homeLocation = null, bool createSchedule = true) {
 		if(className == "None"){
             className = "Classless";
 		}
@@ -169,11 +169,11 @@ public class CharacterManager : MonoBehaviour {
         if (faction != null) {
             newCharacter.SetFaction(faction);
         }
-        if (newCharacter.role == null) {
-            if (charRole != CHARACTER_ROLE.NONE) {
-                newCharacter.AssignRole(charRole);
-            }
-        }
+        //if (newCharacter.role == null) {
+        //    if (charRole != CHARACTER_ROLE.NONE) {
+        //        newCharacter.AssignRole(charRole);
+        //    }
+        //}
 #if !WORLD_CREATION_TOOL
         party.CreateIcon();
         if(homeLocation != null) {
@@ -184,7 +184,7 @@ public class CharacterManager : MonoBehaviour {
                 homeLandmark.AddCharacterHomeOnLandmark(newCharacter);
             }
         }
-        if (createSchedule && charRole != CHARACTER_ROLE.PLAYER) {
+        if (createSchedule && newCharacter.role != null && newCharacter.role.roleType != CHARACTER_ROLE.PLAYER) {
             newCharacter.SetSchedule(CharacterScheduleManager.Instance.GetScheduleForCharacter(newCharacter));
         }
 #endif

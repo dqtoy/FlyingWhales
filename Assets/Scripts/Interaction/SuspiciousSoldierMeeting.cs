@@ -142,22 +142,22 @@ public class SuspiciousSoldierMeeting : Interaction {
 
     #region States
     private void ReduceDefendersRewardState(InteractionState state, string stateName) {
-        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " was able to tempt the disgruntled soldiers to abandon their posts. A significant amount of defenders are now missing from the Garrison!");
+        //_states[stateName].SetDescription(explorerMinion.name + " was able to tempt the disgruntled soldiers to abandon their posts. A significant amount of defenders are now missing from the Garrison!");
         SetCurrentState(_states[stateName]);
         ReduceDefendersRewardEffect(_states[stateName]);
     }
     private void WarDeclaredRewardState(InteractionState state, string stateName) {
-        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " was discovered by the soldiers! He managed to run away unscathed but " + _interactable.faction.name + " is now aware of our sabotage attempts and have declared war upon us.");
+        //_states[stateName].SetDescription(explorerMinion.name + " was discovered by the soldiers! He managed to run away unscathed but " + _interactable.faction.name + " is now aware of our sabotage attempts and have declared war upon us.");
         SetCurrentState(_states[stateName]);
         WarDeclaredRewardEffect(_states[stateName]);
     }
     private void GeneralDiesRewardState(InteractionState state, string stateName) {
-        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " discovered that the soldiers were planning a surprise party for the General's birthday. Knowing that the General is alone now, he slipped in and assassinated him successfully.");
+        //_states[stateName].SetDescription(explorerMinion.name + " discovered that the soldiers were planning a surprise party for the General's birthday. Knowing that the General is alone now, he slipped in and assassinated him successfully.");
         SetCurrentState(_states[stateName]);
         ArmyGainedRewardEffect(_states[stateName]);
     }
     private void NothingHappensRewardState(InteractionState state, string stateName) {
-        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " followed the soldiers and found that they were merely having a drunken party away from their superiors.");
+        //_states[stateName].SetDescription(explorerMinion.name + " followed the soldiers and found that they were merely having a drunken party away from their superiors.");
         SetCurrentState(_states[stateName]);
         NothingHappensRewardEffect(_states[stateName]);
     }
@@ -169,49 +169,96 @@ public class SuspiciousSoldierMeeting : Interaction {
         if(_interactable is BaseLandmark) {
             BaseLandmark landmark = _interactable as BaseLandmark;
             if(landmark.defenders != null) {
-                for (int i = 0; i < landmark.defenders.icharacters.Count; i++) {
-                    if(landmark.defenders.icharacters[i] is CharacterArmyUnit) {
-                        CharacterArmyUnit defenderArmy = landmark.defenders.icharacters[i] as CharacterArmyUnit;
-                        int percentageLoss = UnityEngine.Random.Range(15, 51);
-                        float percentage = percentageLoss / 100f;
-                        int loss = (int)(defenderArmy.armyCount * percentage);
-                        defenderArmy.AdjustArmyCount(-loss);
-                    } else if (landmark.defenders.icharacters[i] is MonsterArmyUnit) {
-                        MonsterArmyUnit defenderArmy = landmark.defenders.icharacters[i] as MonsterArmyUnit;
-                        int percentageLoss = UnityEngine.Random.Range(15, 51);
-                        float percentage = percentageLoss / 100f;
-                        int loss = (int) (defenderArmy.armyCount * percentage);
-                        defenderArmy.AdjustArmyCount(-loss);
+                if(landmark.defenders.icharacters.Count >= 2) {
+                    int numOfDeserters = UnityEngine.Random.Range(1, 3);
+                    if (numOfDeserters == 1) {
+                        ICharacter deserter = landmark.defenders.icharacters[UnityEngine.Random.Range(0, landmark.defenders.icharacters.Count)];
+                        landmark.RemoveDefender(deserter);
+                        if (state.minionLog != null) {
+                            state.minionLog.AddToFillers(deserter, deserter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        }
+                    } else {
+                        List<ICharacter> icharacters = new List<ICharacter>(landmark.defenders.icharacters);
+                        int deserter1Index = UnityEngine.Random.Range(0, icharacters.Count);
+                        ICharacter deserter1 = icharacters[deserter1Index];
+                        icharacters.RemoveAt(deserter1Index);
+                        ICharacter deserter2 = icharacters[UnityEngine.Random.Range(0, icharacters.Count)];
+
+                        landmark.RemoveDefender(deserter1);
+                        landmark.RemoveDefender(deserter2);
+
+                        if (state.minionLog != null) {
+                            state.minionLog.AddToFillers(deserter1, deserter1.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+
+                            Log newMinionLog = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), _name.ToLower() + "_logminion");
+                            newMinionLog.AddToFillers(explorerMinion, explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
+                            newMinionLog.AddToFillers(interactable.specificLocation.tileLocation.landmarkOnTile, interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
+                            newMinionLog.AddToFillers(deserter2, deserter2.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                            explorerMinion.icharacter.AddHistory(newMinionLog);
+                        }
+                    }
+                } else if(landmark.defenders.icharacters.Count == 1) {
+                    ICharacter deserter = landmark.defenders.icharacters[0];
+                    landmark.RemoveDefender(deserter);
+                    if (state.minionLog != null) {
+                        state.minionLog.AddToFillers(deserter, deserter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     }
                 }
+                
+                //for (int i = 0; i < landmark.defenders.icharacters.Count; i++) {
+                    
+                    //if(landmark.defenders.icharacters[i] is CharacterArmyUnit) {
+                    //    CharacterArmyUnit defenderArmy = landmark.defenders.icharacters[i] as CharacterArmyUnit;
+                    //    int percentageLoss = UnityEngine.Random.Range(15, 51);
+                    //    float percentage = percentageLoss / 100f;
+                    //    int loss = (int)(defenderArmy.armyCount * percentage);
+                    //    defenderArmy.AdjustArmyCount(-loss);
+                    //} else if (landmark.defenders.icharacters[i] is MonsterArmyUnit) {
+                    //    MonsterArmyUnit defenderArmy = landmark.defenders.icharacters[i] as MonsterArmyUnit;
+                    //    int percentageLoss = UnityEngine.Random.Range(15, 51);
+                    //    float percentage = percentageLoss / 100f;
+                    //    int loss = (int) (defenderArmy.armyCount * percentage);
+                    //    defenderArmy.AdjustArmyCount(-loss);
+                    //}
+                //}
             }
         }
-        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+
+
     }
     private void WarDeclaredRewardEffect(InteractionState state) {
         //Tile owner faction will declare war on player
-        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         FactionManager.Instance.DeclareWarBetween(_interactable.faction, PlayerManager.Instance.player.playerFaction);
+        if(state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1);
+        }
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1);
+        }
     }
     private void ArmyGainedRewardEffect(InteractionState state) {
-        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
-        Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Knights", RACE.HUMANS, "Inspect", false);
-        Character character = newMinion.icharacter as Character;
-        character.LevelUp(UnityEngine.Random.Range(5, 9));
-        PlayerManager.Instance.player.AddMinion(newMinion);
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        if (!PlayerManager.Instance.player.areMinionsMaxed) {
+            Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Knights", RACE.HUMANS, "Inspect", false);
+            newMinion.icharacter.LevelUp(UnityEngine.Random.Range(5, 9));
+            PlayerManager.Instance.player.AddMinion(newMinion);
+        }
+
         //if (_interactable is BaseLandmark) {
         //    BaseLandmark landmark = _interactable as BaseLandmark;
         //    ICharacter icharacter = landmark.GetResidentCharacterOfClass("General");
         //    if (icharacter != null) {
-        //        icharacter.Assassinate(_interactable.explorerMinion.icharacter);
+        //        icharacter.Assassinate(explorerMinion.icharacter);
         //    }
         //}
     }
     private void NothingHappensRewardEffect(InteractionState state) {
-        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
     private void DoNothingRewardEffect(InteractionState state) {
-        //_interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));
+        //explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));
     }
     #endregion
 }

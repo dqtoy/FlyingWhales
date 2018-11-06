@@ -40,7 +40,7 @@ namespace worldcreator {
             string className = classDropdown.options[classDropdown.value].text;
 
             ECS.CharacterSetup setup = ECS.CombatManager.Instance.GetBaseCharacterSetup(className);
-            ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(role, className, race, gender);
+            ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(className, race, gender);
             //Debug.Log("Created new character " + newCharacter.name + "")
         }
         private void OnCreateNewCharacter(Character newCharacter) {

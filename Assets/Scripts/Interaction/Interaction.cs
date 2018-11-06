@@ -10,12 +10,13 @@ public class Interaction {
     protected INTERACTION_TYPE _type;
     protected IInteractable _interactable;
     protected Dictionary<string, InteractionState> _states;
-    protected InteractionState _currentState;
     //protected InteractionItem _interactionItem;
     protected bool _isActivated;
     protected bool _isDone;
     protected bool _isFirstTimeOutCancelled;
     protected bool _isSecondTimeOutCancelled;
+    protected InteractionState _currentState;
+    protected Minion _explorerMinion;
 
     private bool _hasUsedBaseCreateStates;
 
@@ -33,6 +34,9 @@ public class Interaction {
     }
     public InteractionState currentState {
         get { return _currentState; }
+    }
+    public Minion explorerMinion {
+        get { return _explorerMinion; }
     }
     //public InteractionItem interactionItem {
     //    get { return _interactionItem; }
@@ -136,6 +140,9 @@ public class Interaction {
             _currentState.ActivateDefault();
         }
     }
+    public void SetExplorerMinion(Minion minion) {
+        _explorerMinion = minion;
+    }
     #endregion
 
     #region Shared States and Effects
@@ -188,44 +195,44 @@ public class Interaction {
         state.EndResult();
     }
     protected void SupplyRewardState(InteractionState state, string effectName) {
-        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " discovered a small cache of Supplies.");
+        //_states[effectName].SetDescription(explorerMinion.name + " discovered a small cache of Supplies.");
         SetCurrentState(_states[effectName]);
         SupplyRewardEffect(_states[effectName]);
     }
     protected void SupplyRewardEffect(InteractionState state) {
         PlayerManager.Instance.player.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
-        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
 
     protected void ManaRewardState(InteractionState state, string effectName) {
-        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " discovered a source of magical energy. We have converted it into a small amount of Mana.");
+        //_states[effectName].SetDescription(explorerMinion.name + " discovered a source of magical energy. We have converted it into a small amount of Mana.");
         SetCurrentState(_states[effectName]);
         ManaRewardEffect(_states[effectName]);
     }
     protected void ManaRewardEffect(InteractionState state) {
         PlayerManager.Instance.player.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Mana_Cache_Reward_1));
-        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
     protected void NothingRewardState(InteractionState state, string effectName) {
-        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " has returned with nothing to report.");
+        //_states[effectName].SetDescription(explorerMinion.name + " has returned with nothing to report.");
         SetCurrentState(_states[effectName]);
         NothingEffect(_states[effectName]);
     }
     protected void NothingEffect(InteractionState state) {
-        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
 
     #region End Result Share States and Effects
     protected void DemonDisappearsRewardState(InteractionState state, string effectName) {
-        //_states[effectName].SetDescription(_interactable.explorerMinion.name + " has not returned. We can only assume the worst.");
+        //_states[effectName].SetDescription(explorerMinion.name + " has not returned. We can only assume the worst.");
         SetCurrentState(_states[effectName]);
     }
     protected void DemonDisappearsRewardEffect(InteractionState state) {
-        _interactable.explorerMinion.icharacter.Death();
-        PlayerManager.Instance.player.RemoveMinion(_interactable.explorerMinion);
+        explorerMinion.icharacter.Death();
+        PlayerManager.Instance.player.RemoveMinion(explorerMinion);
     }
     protected void ExploreContinuesRewardState(InteractionState state, string stateName) {
-        //_states[stateName].SetDescription("We've instructed " + _interactable.explorerMinion.name + " to continue its surveillance of the area.");
+        //_states[stateName].SetDescription("We've instructed " + explorerMinion.name + " to continue its surveillance of the area.");
         SetCurrentState(_states[stateName]);
     }
     protected void ExploreContinuesRewardEffect(InteractionState state) {
@@ -235,13 +242,13 @@ public class Interaction {
         }
     }
     protected void ExploreEndsRewardState(InteractionState state, string stateName) {
-        if (_interactable.explorerMinion != null) {
-            //_states[stateName].SetDescription("We've instructed " + _interactable.explorerMinion.name + " to return.");
+        if (explorerMinion != null) {
+            //_states[stateName].SetDescription("We've instructed " + explorerMinion.name + " to return.");
         }
         SetCurrentState(_states[stateName]);
     }
     protected void ExploreEndsRewardEffect(InteractionState state) {
-        if(_interactable.explorerMinion == null) {
+        if(explorerMinion == null) {
             return;
         }
         if (_interactable is BaseLandmark) {

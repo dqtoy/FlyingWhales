@@ -146,28 +146,28 @@ public class GoblinBanditReinforcements : Interaction {
     }
 
     //private void SuccessfullyCalledReinforcement(InteractionState state, string effectName) {
-    //    //_states[effectName].SetDescription(_interactable.explorerMinion.name + " distracted the bandits with liquor so they ended up " +
-    //    //    "forgetting that they were supposed to form a new defensive army unit. What do you want " + _interactable.explorerMinion.name + " to do next?");
+    //    //_states[effectName].SetDescription(explorerMinion.name + " distracted the bandits with liquor so they ended up " +
+    //    //    "forgetting that they were supposed to form a new defensive army unit. What do you want " + explorerMinion.name + " to do next?");
     //    SetCurrentState(_states[effectName]);
     //    SuccessfullyCalledReinforcementRewardEffect(_states[effectName]);
     //}
     private void SuccessfullyCalledReinforcementRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
     //private void FailedToCancelReinforcement(InteractionState state, string effectName) {
     //    ////**Mechanics**: create an Army Unit from Defense Spawn Weights and add it to the Tile Defenders
     //    //CharacterArmyUnit createdUnit = CreateAssaultArmy(1).owner as CharacterArmyUnit;
-    //    //_states[effectName].SetDescription(_interactable.explorerMinion.name + " failed to distract the bandits. " +
+    //    //_states[effectName].SetDescription(explorerMinion.name + " failed to distract the bandits. " +
     //    //    "A new " + Utilities.NormalizeString(createdUnit.race.ToString()) + " " + createdUnit.characterClass.className + " have been formed " +
-    //    //    "to defend the camp. What do you want " + _interactable.explorerMinion.name + " to do next?");
+    //    //    "to defend the camp. What do you want " + explorerMinion.name + " to do next?");
     //    SetCurrentState(_states[effectName]);
     //    //landmark.AddDefender(createdUnit);
     //    FailedToCancelReinforcementRewardEffect(_states[effectName]);
     //}
     private void FailedToCancelReinforcementRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //**Mechanics**: create an Army Unit from Defense Spawn Weights and add it to the Tile Defenders if not yet full or Character List if already full
         CharacterArmyUnit createdUnit = CreateAssaultArmy(1).owner as CharacterArmyUnit;
         if (!landmark.defenders.isFull) {
@@ -189,9 +189,9 @@ public class GoblinBanditReinforcements : Interaction {
         
     //}
     //private void UnitStolen(InteractionState state, string effectName) {
-    //    //_states[effectName].SetDescription("You gave them " + _interactable.explorerMinion.name + " to aid in their defenses " +
+    //    //_states[effectName].SetDescription("You gave them " + explorerMinion.name + " to aid in their defenses " +
     //    //    "but they are suspicious of your intentions and have rejected your offer. " +
-    //    //    "What do you want " + _interactable.explorerMinion.name + " to do next?");
+    //    //    "What do you want " + explorerMinion.name + " to do next?");
     //    SetCurrentState(_states[effectName]);
     //}
     private void UnitStolenRewardEffect(InteractionState state) {
@@ -199,7 +199,7 @@ public class GoblinBanditReinforcements : Interaction {
         CharacterArmyUnit createdUnit = CreateAssaultArmy(1).owner as CharacterArmyUnit;
         //TODO: Add unit to players minion list
         //**Reward**: Demon gains Exp 1
-        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
 
     //private void Reinforcement(InteractionState state, string effectName) {

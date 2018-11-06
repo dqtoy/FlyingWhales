@@ -121,17 +121,17 @@ public class KillerOnTheLoose : Interaction {
 
     #region States
     private void ConvertToDemonRewardState(InteractionState state, string stateName) {
-        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " was able to find the killer and restrain him. After a lengthy Transform Ritual, we have summoned a new Envy Demon into his corrupted body.");
+        //_states[stateName].SetDescription(explorerMinion.name + " was able to find the killer and restrain him. After a lengthy Transform Ritual, we have summoned a new Envy Demon into his corrupted body.");
         SetCurrentState(_states[stateName]);
         ConvertToDemonRewardEffect(_states[stateName]);
     }
     private void GainSupplyRewardState(InteractionState state, string stateName) {
-        //_states[stateName].SetDescription(_interactable.explorerMinion.name + " managed to track the killer to his hideout but just as he was about to restrain him, guards arrived forcing him to retreat. They killed the criminal and obtained some supplies from his hideout.");
+        //_states[stateName].SetDescription(explorerMinion.name + " managed to track the killer to his hideout but just as he was about to restrain him, guards arrived forcing him to retreat. They killed the criminal and obtained some supplies from his hideout.");
         SetCurrentState(_states[stateName]);
         GainSupplyRewardEffect(_states[stateName]);
     }
     private void NothingHappensRewardState(InteractionState state, string stateName) {
-        //_states[stateName].SetDescription("After hours of searching, " + _interactable.explorerMinion.name + " was still unable to find any trace of the killer. It has returned empty handed.");
+        //_states[stateName].SetDescription("After hours of searching, " + explorerMinion.name + " was still unable to find any trace of the killer. It has returned empty handed.");
         SetCurrentState(_states[stateName]);
         NothingHappensRewardEffect(_states[stateName]);
     }
@@ -142,14 +142,14 @@ public class KillerOnTheLoose : Interaction {
         PlayerManager.Instance.player.AddMinion(PlayerManager.Instance.player.CreateNewMinion("Farmer", RACE.DEMON, DEMON_TYPE.ENVY, "Inspect", false));
     }
     private void GainSupplyRewardEffect(InteractionState state) {
-        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         _interactable.specificLocation.tileLocation.areaOfTile.AdjustSuppliesInBank(50);
     }
     private void NothingHappensRewardEffect(InteractionState state) {
-        _interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
     }
     private void DoNothingRewardEffect(InteractionState state) {
-        //_interactable.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));
+        //explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));
     }
     #endregion
 }

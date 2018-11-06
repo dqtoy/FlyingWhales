@@ -78,7 +78,7 @@ public class InteractionItem : MonoBehaviour {
         _interaction = interaction;
         if(_interaction != null) {
             //_interaction.SetInteractionItem(this);
-            defaultAssignedSlotItem.PlaceObject(_interaction.interactable.explorerMinion);
+            defaultAssignedSlotItem.PlaceObject(_interaction.explorerMinion);
             UpdateState();
             ChangedActivatedState();
         }

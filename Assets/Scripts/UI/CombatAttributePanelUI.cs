@@ -97,10 +97,14 @@ public class CombatAttributePanelUI : MonoBehaviour {
     }
 
     private void SaveCombatAttributeJson(string path) {
+        float amountInp = 0f;
+        if (!string.IsNullOrEmpty(amountInput.text)) {
+            amountInp = float.Parse(amountInput.text);
+        }
         CombatAttribute combatAttribute = new CombatAttribute {
             name = nameInput.text,
             description = descriptionInput.text,
-            amount = float.Parse(amountInput.text),
+            amount = amountInp,
             stat = (STAT) System.Enum.Parse(typeof(STAT), statOptions.options[statOptions.value].text),
             damageIdentifier = (DAMAGE_IDENTIFIER) System.Enum.Parse(typeof(DAMAGE_IDENTIFIER), damageIdentifierOptions.options[damageIdentifierOptions.value].text),
             requirementType = (COMBAT_ATTRIBUTE_REQUIREMENT) System.Enum.Parse(typeof(COMBAT_ATTRIBUTE_REQUIREMENT), requirementTypeOptions.options[requirementTypeOptions.value].text),

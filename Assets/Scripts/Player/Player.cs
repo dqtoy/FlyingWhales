@@ -445,7 +445,7 @@ public class Player : ILeader {
         if (isArmy) {
             minion = new Minion(CharacterManager.Instance.CreateCharacterArmyUnit(className, race, playerFaction, _demonicPortal), GetAbility(abilityName), demonType);
         } else {
-            minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, className, race, GENDER.MALE, playerFaction, _demonicPortal, false), GetAbility(abilityName), demonType);
+            minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, race, GENDER.MALE, playerFaction, _demonicPortal, false), GetAbility(abilityName), demonType);
         }
         return minion;
     }
@@ -454,7 +454,7 @@ public class Player : ILeader {
         if (isArmy) {
             minion = new Minion(CharacterManager.Instance.CreateCharacterArmyUnit(className, race, playerFaction, _demonicPortal), GetAbility(abilityName));
         } else {
-            minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CHARACTER_ROLE.CIVILIAN, className, race, GENDER.MALE, playerFaction, _demonicPortal, false), GetAbility(abilityName));
+            minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, race, GENDER.MALE, playerFaction, _demonicPortal, false), GetAbility(abilityName));
         }
         return minion;
     }

@@ -15,6 +15,9 @@ public class InteractionState {
     private Minion _assignedMinion;
     private ActionOption _chosenOption;
     private ActionOption _defaultOption;
+    private Log _descriptionLog;
+    private Log _minionLog;
+    private Log _landmarkLog;
     private ActionOption[] _actionOptions;
 
     #region getters/setters
@@ -41,6 +44,15 @@ public class InteractionState {
     }
     public Minion assignedMinion {
         get { return _assignedMinion; }
+    }
+    public Log descriptionLog {
+        get { return _descriptionLog; }
+    }
+    public Log minionLog {
+        get { return _minionLog; }
+    }
+    public Log landmarkLog {
+        get { return _landmarkLog; }
     }
     public ActionOption[] actionOptions {
         get { return _actionOptions; }
@@ -80,10 +92,11 @@ public class InteractionState {
         _endEffect = endEffect;
     }
     public void OnStartState() {
-        SetDescription();
+        CreateLogs();
         if (_isEnd && _endEffect != null) {
             _endEffect();
         }
+        SetDescription();
         //if(_isTimed && _defaultOption != null) {
         //    SchedulingManager.Instance.AddEntry(_timeDate, () => ActivateDefault());
         //}
@@ -91,35 +104,38 @@ public class InteractionState {
     public void OnEndState() {
         AssignedMinionGoesBack();
     }
+    private void CreateLogs() {
+        if (_interaction.explorerMinion != null) {
+            _descriptionLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_description");
+            if (!string.IsNullOrEmpty(LocalizationManager.Instance.GetLocalizedValue("Events", _interaction.GetType().ToString(), _name.ToLower() + "_logminion"))) {
+                _minionLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_logminion");
+            }
+            if (!string.IsNullOrEmpty(LocalizationManager.Instance.GetLocalizedValue("Events", _interaction.GetType().ToString(), _name.ToLower() + "_loglandmark"))) {
+                _landmarkLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_loglandmark");
+            }
+        }
+    }
     private void SetDescription() {
         //TODO: make this more performant
-        Log descriptionLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_description");
-        if (interaction.interactable.explorerMinion != null) {
-            descriptionLog.AddToFillers(_interaction.interactable.explorerMinion, _interaction.interactable.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
+        if(_descriptionLog != null) {
+            _descriptionLog.AddToFillers(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
+            _descriptionLog.AddToFillers(_interaction.interactable.specificLocation.tileLocation.landmarkOnTile, _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
+            _description = Utilities.LogReplacer(descriptionLog);
+            InteractionUI.Instance.interactionItem.SetDescription(_description);
         }
-        descriptionLog.AddToFillers(_interaction.interactable.specificLocation.tileLocation.landmarkOnTile, _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
-
-        _description = Utilities.LogReplacer(descriptionLog);
-        InteractionUI.Instance.interactionItem.SetDescription(_description);
 
         //Minion Log
-        if (!string.IsNullOrEmpty(LocalizationManager.Instance.GetLocalizedValue("Events", _interaction.GetType().ToString(), _name.ToLower() + "_logminion"))) {
-            if (interaction.interactable.explorerMinion != null) {
-                Log minionLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_logminion");
-                minionLog.AddToFillers(_interaction.interactable.explorerMinion, _interaction.interactable.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
-                minionLog.AddToFillers(_interaction.interactable.specificLocation.tileLocation.landmarkOnTile, _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
-                interaction.interactable.explorerMinion.icharacter.AddHistory(minionLog);
-            }
+        if (_minionLog != null) {
+            _minionLog.AddToFillers(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
+            _minionLog.AddToFillers(_interaction.interactable.specificLocation.tileLocation.landmarkOnTile, _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
+            interaction.explorerMinion.icharacter.AddHistory(_minionLog);
         }
 
         //Landmark Log
-        if (!string.IsNullOrEmpty(LocalizationManager.Instance.GetLocalizedValue("Events", _interaction.GetType().ToString(), _name.ToLower() + "_loglandmark"))) {
-            Log landmarkLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_loglandmark");
-            if (interaction.interactable.explorerMinion != null) {
-                landmarkLog.AddToFillers(_interaction.interactable.explorerMinion, _interaction.interactable.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
-            }
-            landmarkLog.AddToFillers(_interaction.interactable.specificLocation.tileLocation.landmarkOnTile, _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
-            _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.AddHistory(landmarkLog);
+        if (_landmarkLog != null) {
+            _landmarkLog.AddToFillers(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
+            _landmarkLog.AddToFillers(_interaction.interactable.specificLocation.tileLocation.landmarkOnTile, _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
+            _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.AddHistory(_landmarkLog);
         }
 
     }

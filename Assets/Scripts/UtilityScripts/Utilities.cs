@@ -487,6 +487,7 @@ public class Utilities : MonoBehaviour {
         {"111", LOG_IDENTIFIER.STRING_1},
         {"112", LOG_IDENTIFIER.STRING_2},
         {"113", LOG_IDENTIFIER.MINION_NAME},
+
 		//{"111", LOG_IDENTIFIER.PARTY_NAME},
 	};
 
