@@ -67,6 +67,7 @@ public class HumanBanditReinforcements : Interaction {
                 needsMinion = false,
                 neededObjects = new List<System.Type>() { typeof(IUnit) },
                 effect = () => TakeUnitEffect(state),
+                canBeDoneAction = () => AssignedMinionIsOfType(new List<DEMON_TYPE>() { DEMON_TYPE.GREED, DEMON_TYPE.ENVY }),
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,

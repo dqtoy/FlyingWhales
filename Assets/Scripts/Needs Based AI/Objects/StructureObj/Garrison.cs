@@ -19,6 +19,7 @@ public class Garrison : StructureObj {
         ReplenishDefenderUnits();
         ArmyTraining();
         ArmyMobilize();
+        ArmyAttacks();
         base.StartDayAction();
     }
     #endregion
@@ -110,12 +111,12 @@ public class Garrison : StructureObj {
             }
 
             if (hasArmyPartyWithAtLeast3Members) {
-                int chance = UnityEngine.Random.Range(0, 200);
-                if (chance < 75) {
+                //int chance = UnityEngine.Random.Range(0, 200);
+                //if (chance < 75) {
                     //Trigger Army Attacks
-                    Interaction armyUnitTrainingInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ARMY_ATTACKS, _objectLocation);
-                    _objectLocation.AddInteraction(armyUnitTrainingInteraction);
-                }
+                    Interaction armyAttacksInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ARMY_ATTACKS, _objectLocation);
+                    _objectLocation.AddInteraction(armyAttacksInteraction);
+                //}
             }
         }
     }

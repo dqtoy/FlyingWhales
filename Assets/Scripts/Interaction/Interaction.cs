@@ -279,4 +279,14 @@ public class Interaction {
         }
     }
     #endregion
+
+    #region Utilities
+    public bool AssignedMinionIsOfType(DEMON_TYPE type) {
+        return this.explorerMinion != null && this.explorerMinion.type == type;
+    }
+    public bool AssignedMinionIsOfType(List<DEMON_TYPE> allowedTypes) {
+        return this.explorerMinion != null && allowedTypes.Contains(this.explorerMinion.type);
+    }
+    #endregion
+
 }
