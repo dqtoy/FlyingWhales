@@ -120,11 +120,13 @@ public class CharacterManager : MonoBehaviour {
         for (int i = 0; i < allCharacters.Count; i++) {
             Character currCharacter = allCharacters[i];
             CharacterSaveData saveData = data.GetCharacterSaveData(currCharacter.id);
-            SetHiddenDesireForCharacter(saveData.hiddenDesire, currCharacter); //hidden desire
-            if (saveData.secrets != null) { //secrets
-                for (int j = 0; j < saveData.secrets.Count; j++) {
-                    int secretID = saveData.secrets[j];
-                    currCharacter.AddSecret(secretID);
+            if (saveData != null) {
+                SetHiddenDesireForCharacter(saveData.hiddenDesire, currCharacter); //hidden desire
+                if (saveData.secrets != null) { //secrets
+                    for (int j = 0; j < saveData.secrets.Count; j++) {
+                        int secretID = saveData.secrets[j];
+                        currCharacter.AddSecret(secretID);
+                    }
                 }
             }
             //if (saveData.intelReactions != null) { //intel reactions

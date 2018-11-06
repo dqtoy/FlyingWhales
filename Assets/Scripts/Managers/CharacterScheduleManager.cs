@@ -39,8 +39,8 @@ public class CharacterScheduleManager : MonoBehaviour {
         if (scheduleTemplates.ContainsKey(className)) {
             return scheduleTemplates[className];
         }
-        //return null; //change to error message, when all roles are expected to have a schedule
-        throw new System.Exception("There is no schedule template for " + className.ToString());
+        return null; //change to error message, when all roles are expected to have a schedule
+        //throw new System.Exception("There is no schedule template for " + className.ToString());
     }
 
 

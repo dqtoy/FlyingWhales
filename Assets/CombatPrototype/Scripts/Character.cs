@@ -2691,7 +2691,9 @@ namespace ECS {
         #region Schedule
         public void SetSchedule(CharacterSchedule schedule) {
             this.schedule = schedule;
-            schedule.Initialize();
+            if (schedule != null) {
+                schedule.Initialize();
+            }
         }
         public void OnSchedulePhaseStarted(SCHEDULE_ACTION_CATEGORY startedPhase) {
             return; //disable scheduled movement

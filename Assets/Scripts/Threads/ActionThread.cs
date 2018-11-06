@@ -86,6 +86,7 @@ public class ActionThread : Multithread {
             chosenAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.REST);
             chosenObject = character.homeLandmark.landmarkObj;
 
+            return;
             List<ActionThreadItem> actionChoices = GetActionsByCategory(character.schedule.currentPhase);
             if (actionChoices.Count > 0) {
                 ActionThreadItem chosenItem = actionChoices[Utilities.rng.Next(0, actionChoices.Count)];
