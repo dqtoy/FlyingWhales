@@ -45,6 +45,7 @@ public class LandmarkInvestigation {
     }
     public void InvestigateLandmark(string whatTodo) {
         _assignedMinion.SetEnabledState(false);
+        _assignedMinion.SetExploringLandmark(_landmark);
         if (whatTodo == "explore") {
             MinionGoToAssignment(ExploreLandmark);
         } else if (whatTodo == "attack") {
@@ -57,6 +58,7 @@ public class LandmarkInvestigation {
     }
     public void UninvestigateLandmark() {
         _assignedMinion.SetEnabledState(true);
+        _assignedMinion.SetExploringLandmark(null);
         SetAssignedMinion(null);
         _isMinionRecalled = false;
         SetActivatedState(false);
@@ -82,6 +84,16 @@ public class LandmarkInvestigation {
             MinionGoBackFromAssignment(UninvestigateLandmark);
         }
         _isMinionRecalled = true;
+    }
+    public void CancelInvestigation() {
+        if (_landmark.isBeingInspected) {
+            _landmark.landmarkVisual.StopInteractionTimer();
+            _landmark.landmarkVisual.HideInteractionTimer();
+            Messenger.RemoveListener(Signals.HOUR_STARTED, OnExploreTick);
+            UnexploreLandmark();
+        } else {
+            UninvestigateLandmark();
+        }
     }
     public void SetActivatedState(bool state) {
         _isActivated = state;
