@@ -32,22 +32,33 @@ SpriteAtlas:
     - {fileID: 102900000, guid: 9e9fe6b04194c8048b975464dd3a5681, type: 3}
     - {fileID: 102900000, guid: 309483fce0e9d4145b8fb9e67137f6bc, type: 3}
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
+    - {fileID: 102900000, guid: 2039e560d791d154bb4af5c6f5b149d3, type: 3}
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: fbfd33b220ecfc6488a446d87e7285a2, type: 3}
   - {fileID: 21300000, guid: 9a9317c62f76a34428932da7bab9bd38, type: 3}
   - {fileID: 21300000, guid: 3e18a3e9bf482e8488e8495210704150, type: 3}
+  - {fileID: 21300000, guid: bde6d27bee41a9544a90739147fb9246, type: 3}
+  - {fileID: 21300000, guid: d350991e61ac06a4d8568e9add0a0a79, type: 3}
   - {fileID: 21300000, guid: 03e3bd48445a43a4ba4261e543505998, type: 3}
+  - {fileID: 21300000, guid: 7c84c1516188866438148428c354ff01, type: 3}
   - {fileID: 21300000, guid: 8fdd06c4ca82199459a8145f73a1a5ad, type: 3}
   - {fileID: 21300000, guid: 56753c0128a92f142bbf69052218b3d7, type: 3}
+  - {fileID: 21300000, guid: af58d662fea9bdc43a9a1a25e0eef7bb, type: 3}
   - {fileID: 21300000, guid: defbe3380eec93a469004ccc9b14f200, type: 3}
+  - {fileID: 21300000, guid: cbba3d8eb51349d4db64320e45c68fe1, type: 3}
+  - {fileID: 21300000, guid: 1e80ac21ed4b41c43a8acefcd19459ee, type: 3}
   - {fileID: 21300000, guid: c1a6e50d0ccdd2043bbe00862f05a7c2, type: 3}
+  - {fileID: 21300000, guid: c25a3ca9fbd78ca45b6f29ebaa9d86af, type: 3}
+  - {fileID: 21300000, guid: 2f08afd963d78c348b2c2bdb1a223f32, type: 3}
   - {fileID: 21300000, guid: a2ee2c51a8a17304ba267b414caf8a8e, type: 3}
   - {fileID: 21300000, guid: 7f60a0da614174b40abee29f21d3e439, type: 3}
   - {fileID: 21300000, guid: 46983d8f82e9dae40b91ad284015968c, type: 3}
   - {fileID: 21300000, guid: d023f0d3d22c1ec49ac2ffd08e0b6b77, type: 3}
+  - {fileID: 21300000, guid: fc88b9930d98b394d804f3946526150d, type: 3}
   - {fileID: 21300000, guid: 9ca172a8792b62e45a59950c177cd2bf, type: 3}
+  - {fileID: 21300000, guid: 4de91c900d7f65c4685277ad83db497a, type: 3}
   - {fileID: 21300000, guid: 1b4604932b89b3a46b3204f2eb3f340e, type: 3}
   - {fileID: 21300000, guid: 32aeae6a47f36a04a8a907f56d88dba1, type: 3}
   - {fileID: 21300000, guid: f376b0a4aebd01f4693f5056a5fb0b8b, type: 3}
@@ -131,10 +142,25 @@ SpriteAtlas:
   - {fileID: 21300000, guid: dfcdc9affebb42f40b589a0b2040aa2e, type: 3}
   - {fileID: 21300000, guid: 3eb28a04324abd547a200406c98fcd13, type: 3}
   - {fileID: 21300000, guid: dd9696dee86226a4c9290ee4eedd3dec, type: 3}
+  - {fileID: 21300000, guid: 54b41a92ce8f4f94186617b400766e81, type: 3}
+  - {fileID: 21300000, guid: fcf2046e149873243a9ce67f185a3acc, type: 3}
+  - {fileID: 21300000, guid: f2ac9bf6dafda074d82b58ccf14585c0, type: 3}
+  - {fileID: 21300000, guid: 5767b2c2db928c446b1558b601f40b9f, type: 3}
+  - {fileID: 21300000, guid: 276870770cad95e4583fd7d81613ee9f, type: 3}
+  - {fileID: 21300000, guid: b5da86a2551e2e743ad07951e8718429, type: 3}
   - {fileID: 21300000, guid: 37d78dea7a98af64f9d5e2e65a562410, type: 3}
   - {fileID: 21300000, guid: 507d5cdd01db6b446a3bfa2e8581fb96, type: 3}
   - {fileID: 21300000, guid: c88a94c9d75bf554c947e3bce46c6248, type: 3}
   - {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+  - {fileID: 21300000, guid: be4ce15dc4f7c6349939c5b30dedb120, type: 3}
+  - {fileID: 21300000, guid: a71d2184e4d63df45a06011aba4280aa, type: 3}
+  - {fileID: 21300000, guid: 9e762da25c798184ba4d3cb38041cd51, type: 3}
+  - {fileID: 21300000, guid: 3805c7d26203895429a4484ecc602457, type: 3}
+  - {fileID: 21300000, guid: 41d1214e1e4244f4087d458278c56f84, type: 3}
+  - {fileID: 21300000, guid: 0aa65ad085759b14380dd1b91aafe0b7, type: 3}
+  - {fileID: 21300000, guid: 0247fa3e3c752a74c828b3976a50eb45, type: 3}
+  - {fileID: 21300000, guid: 61ba33c0c78490a44ae703787570e1a4, type: 3}
+  - {fileID: 21300000, guid: 82aad88d7d996dd43a2a668bf682beaf, type: 3}
   - {fileID: 21300000, guid: 0c563a266f7fd074cafed68a72de02ad, type: 3}
   - {fileID: 21300000, guid: 21c6516015ddc3745ba08bc85137c23f, type: 3}
   - {fileID: 21300000, guid: 2fb3e9472179d114f90b5ab9b3246177, type: 3}
@@ -180,6 +206,7 @@ SpriteAtlas:
   - {fileID: 21300006, guid: b77cc3ee0b449b440a9dd563f39db05b, type: 3}
   - {fileID: 21300000, guid: ce180f3998a1d374bb967f413236461e, type: 3}
   - {fileID: 21300000, guid: a5395f97de35aa84082b68504fff53a3, type: 3}
+  - {fileID: 21300000, guid: 6a9a19027c5b24f408e35e7ef73d0996, type: 3}
   - {fileID: 21300000, guid: a21626a1ed24a434298622bf02bd0e88, type: 3}
   - {fileID: 21300000, guid: febd7bc28a21ea044a06f7266d76b729, type: 3}
   - {fileID: 21300000, guid: 1f589b68222dcea4fa1e1d129cd7cbf5, type: 3}
@@ -193,16 +220,26 @@ SpriteAtlas:
   - Create_View_Party_UI
   - Stampede_by_Kekai
   - interaction_background
+  - tile_log_widget
+  - tile_log_decor
   - calendar-page-empty
   - tile_character_list_bottom_widget
+  - tile_character_list_bottom_widget
+  - tile_character_list_top_widget
   - tile_character_list_top_widget
   - tile_defender_slot_widget
+  - tile_defender_slot_widget
+  - tile_info_widget
   - WhiteCircle
+  - tile_actions_slider
+  - tile_decor_3
   - minion_widget_locked
   - minion_widget
   - minion_widget_empty
   - minion_widget
+  - tile_actions_widget
   - minion_holder_top
+  - tile_decor_1
   - minion_holder_bottom
   - widget_supplies_mana
   - widget_speed
@@ -286,10 +323,25 @@ SpriteAtlas:
   - ge_icon-19
   - ge_icon-18
   - TopMenuContainer
+  - tile_info_hp_bar
+  - tile_decor_2
+  - event_active_button_meter
+  - event_active_button_clicked
+  - event_active_button_enabled
+  - event_timer_button_disabled
   - DefaultBottomButton
   - ClickedBottomButton
   - Achievement_boss_skybreaker
   - StructureIcon
+  - tile_explore_button_clicked
+  - tile_raid_button_disabled
+  - tile_raid_button_enabled
+  - tile_explore_button_enabled
+  - tile_explore_button_disabled
+  - tile_raid_button_clicked
+  - tile_attack_button_enabled
+  - tile_attack_button_disabled
+  - tile_attack_button_clicked
   - experience_bar_on
   - experience_bar_off
   - button1_invalid
@@ -335,6 +387,7 @@ SpriteAtlas:
   - UI Assets_3
   - ClickedButton
   - DefaultButton
+  - tile_log_divider
   - DistanceLine
   - White_square
   - text_scroll_thumb
