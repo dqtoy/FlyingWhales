@@ -1012,10 +1012,10 @@ public class BaseLandmark : ILocation, IInteractable {
     public void SetHasBeenInspected(bool state) {
         _hasBeenInspected = state;
         if (state) {
-            if (owner != null) {
+            if (owner != null && owner.id != PlayerManager.Instance.player.playerFaction.id) {
                 PlayerManager.Instance.player.AddIntel(owner.factionIntel);
             }
-            if (tileLocation.areaOfTile != null) {
+            if (tileLocation.areaOfTile != null && tileLocation.areaOfTile.id != PlayerManager.Instance.player.playerArea.id) {
                 PlayerManager.Instance.player.AddIntel(tileLocation.areaOfTile.locationIntel);
             }
         }

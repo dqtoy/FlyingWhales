@@ -105,10 +105,10 @@ public class LandmarkInvestigation {
         if(_assignedMinion == null) {
             return;
         }
-        _landmark.SetIsBeingInspected(true);
         if (!_landmark.hasBeenInspected) {
             _landmark.SetHasBeenInspected(true);
         }
+        _landmark.SetIsBeingInspected(true);
         _duration = 30;
         _currentTick = 0;
         Messenger.AddListener(Signals.HOUR_STARTED, OnExploreTick);
