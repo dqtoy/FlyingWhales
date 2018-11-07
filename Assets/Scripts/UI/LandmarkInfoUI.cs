@@ -89,7 +89,7 @@ public class LandmarkInfoUI : UIMenu {
     public override void OpenMenu() {
         base.OpenMenu();
         _activeLandmark = _data as BaseLandmark;
-        CheckIntelForLandmarkUI();
+        UpdateHiddenUI();
         UpdateLandmarkInfo();
         UpdateCharacters();
         UpdateInvestigation();
@@ -134,7 +134,7 @@ public class LandmarkInfoUI : UIMenu {
             notInspectedBGs[i].SetActive(state);
         }
     }
-    private void CheckIntelForLandmarkUI() {
+    private void UpdateHiddenUI() {
         if (_activeLandmark.tileLocation.areaOfTile.locationIntel.isObtained) {
             ShowIntelTriggeredUI();
         } else {
