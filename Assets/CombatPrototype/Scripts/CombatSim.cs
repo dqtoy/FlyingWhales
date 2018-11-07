@@ -68,7 +68,7 @@ public class CombatSim {
                 //Debug.Log((targetCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER ? (targetCharacter as CharacterSim).characterClass.className : "") + targetCharacter.name + " is the target. (hp lost: " + targetCharacter.battleOnlyTracker.hpLostPercent
                 //        + ", last damage taken: " + targetCharacter.battleOnlyTracker.lastDamageTaken);
 
-                characterThatWillAct.EnableDisableSkills(this);
+                //characterThatWillAct.EnableDisableSkills(this);
                 //Debug.Log("Available Skills: ");
                 //for (int i = 0; i < characterThatWillAct.skills.Count; i++) {
                 //    Skill currSkill = characterThatWillAct.skills[i];

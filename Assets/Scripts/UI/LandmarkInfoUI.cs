@@ -93,9 +93,9 @@ public class LandmarkInfoUI : UIMenu {
         UpdateLandmarkInfo();
         UpdateCharacters();
         UpdateInvestigation();
-        if (_activeLandmark.specificLandmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
-            PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeLandmark);
-        }
+        //if (_activeLandmark.specificLandmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
+        //    PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeLandmark);
+        //}
         ResetScrollPositions();
         //PlayerUI.Instance.UncollapseMinionHolder();
         //InteractionUI.Instance.OpenInteractionUI(_activeLandmark);
@@ -108,7 +108,7 @@ public class LandmarkInfoUI : UIMenu {
             _activeLandmark.tileLocation.SetBordersState(false);
         }
         _activeLandmark = null;
-        PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
+        //PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
         //PlayerUI.Instance.CollapseMinionHolder();
         //InteractionUI.Instance.HideInteractionUI();
     }

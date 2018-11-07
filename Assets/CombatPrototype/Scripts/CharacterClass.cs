@@ -115,11 +115,12 @@ namespace ECS {
             newClass._armyCount = this._armyCount;
             newClass._workActionType = this._workActionType;
             newClass._roleType = this._roleType;
+            newClass._skillName = this._skillName;
             //newClass._dodgeRate = this._dodgeRate;
             //newClass._parryRate = this._parryRate;                        
             //newClass._blockRate = this._blockRate;
             newClass._harvestResources = new List<RESOURCE>(this._harvestResources);
-            //newClass._skill = this._skill.CreateNewCopy();
+            newClass._skill = this._skill; //.CreateNewCopy()
             newClass._weaponTierNames = new List<string>(this._weaponTierNames);
             newClass._armorTierNames = new List<string>(this._armorTierNames);
             newClass._accessoryTierNames = new List<string>(this._accessoryTierNames);
@@ -177,7 +178,7 @@ namespace ECS {
         }
 
         public void ConstructData() {
-            //ConstructSkills();
+            ConstructSkills();
         }
         private void ConstructSkills() {
             _skill = SkillManager.Instance.allSkills[_skillName];

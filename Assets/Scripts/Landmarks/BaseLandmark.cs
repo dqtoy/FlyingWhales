@@ -1201,7 +1201,7 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     public void RemoveDefender(ICharacter defender) {
         if (defenders != null) {
-            if (!defenders.icharacters.Contains(defender)) {
+            if (defenders.icharacters.Contains(defender)) {
                 defenders.RemoveCharacter(defender);
                 if (defender is Character) {
                     (defender as Character).OnRemoveAsDefender();

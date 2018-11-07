@@ -775,6 +775,9 @@ namespace ECS {
                 if (schedule != null) {
                     schedule.OnOwnerDied();
                 }
+                if (_minion != null) {
+                    PlayerManager.Instance.player.RemoveMinion(_minion);
+                }
                 if (onCharacterDeath != null){
 					onCharacterDeath();
 				}
@@ -787,6 +790,8 @@ namespace ECS {
                     GameObject.Destroy(_characterPortrait.gameObject);
                     _characterPortrait = null;
                 }
+
+
                 //ObjectState deadState = _characterObject.GetState("Dead");
                 //_characterObject.ChangeState(deadState);
 

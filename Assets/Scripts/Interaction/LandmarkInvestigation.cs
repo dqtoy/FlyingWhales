@@ -188,8 +188,10 @@ public class LandmarkInvestigation {
         }
     }
     private void AttackCombatResult(Combat combat) {
-        if(combat.winningSide == _assignedMinion.icharacter.currentSide) {
-            _landmark.DestroyLandmark();
+        if (_isActivated) { //when the minion dies, isActivated will become false, hence, it must not go through the result
+            if (combat.winningSide == _assignedMinion.icharacter.currentSide) {
+                _landmark.DestroyLandmark();
+            }
         }
     }
     #endregion
@@ -204,8 +206,10 @@ public class LandmarkInvestigation {
         }
     }
     private void RaidCombatResult(Combat combat) {
-        if (combat.winningSide == _assignedMinion.icharacter.currentSide) {
-            RaidAndGoBack();
+        if (_isActivated) { //when the minion dies, isActivated will become false, hence, it must not go through the result
+            if (combat.winningSide == _assignedMinion.icharacter.currentSide) {
+                RaidAndGoBack();
+            }
         }
     }
     private void RaidAndGoBack() {
