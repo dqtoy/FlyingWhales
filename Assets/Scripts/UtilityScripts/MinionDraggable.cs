@@ -12,7 +12,7 @@ public class MinionDraggable : DraggableItem {
         if (!_isDraggable) {
             return;
         }
-        CharacterPortrait portrait = gameObject.GetComponent<MinionItem>().portrait;
+        CharacterPortrait portrait = gameObject.GetComponent<PlayerCharacterItem>().portrait;
         GameObject clone = (GameObject)Instantiate(portrait.gameObject);
         _draggingObject = clone.GetComponent<RectTransform>();
 

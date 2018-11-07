@@ -475,7 +475,7 @@ public class LandmarkInfoUI : UIMenu {
         minionAssignmentRecallButton.interactable = !_activeLandmark.landmarkInvestigation.isMinionRecalled;
     }
     public void OnMinionDrop(Transform transform) {
-        MinionItem minionItem = transform.GetComponent<MinionItem>();
+        PlayerCharacterItem minionItem = transform.GetComponent<PlayerCharacterItem>();
         if(minionItem != null) {
             _activeLandmark.landmarkInvestigation.SetAssignedMinion(minionItem.minion);
             AssignMinionToInvestigate(minionItem.minion);

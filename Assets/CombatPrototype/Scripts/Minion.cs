@@ -5,7 +5,7 @@ using ECS;
 
 public class Minion : IUnit {
 
-    private MinionItem _minionItem;
+    private PlayerCharacterItem _characterItem;
     private PlayerAbility _ability;
     private BaseLandmark _currentlyExploringLandmark;
     private ICharacter _icharacter;
@@ -29,8 +29,8 @@ public class Minion : IUnit {
     public BaseLandmark currentlyExploringLandmark {
         get { return _currentlyExploringLandmark; }
     }
-    public MinionItem minionItem {
-        get { return _minionItem; }
+    public PlayerCharacterItem minionItem {
+        get { return _characterItem; }
     }
     public ICharacter icharacter {
         get { return _icharacter; }
@@ -109,10 +109,10 @@ public class Minion : IUnit {
             }
         }
         _isEnabled = state;
-        _minionItem.SetEnabledState(state);
+        _characterItem.SetEnabledState(state);
     }
-    public void SetMinionItem(MinionItem minionItem) {
-        _minionItem = minionItem;
+    public void SetPlayerCharacterItem(PlayerCharacterItem item) {
+        _characterItem = item;
     }
     public void SetExploringLandmark(BaseLandmark landmark) {
         _currentlyExploringLandmark = landmark;
@@ -125,7 +125,7 @@ public class Minion : IUnit {
         }else if (_exp < 0) {
             _exp = 0;
         }
-        _minionItem.UpdateMinionItem();
+        _characterItem.UpdateMinionItem();
     }
     public void SetLevel(int level) {
         _lvl = level;

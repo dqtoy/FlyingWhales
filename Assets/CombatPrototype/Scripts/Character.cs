@@ -64,6 +64,7 @@ namespace ECS {
         protected Dictionary<ELEMENT, float> _elementalResistances;
         protected Dictionary<Character, List<string>> _traceInfo;
         protected Dictionary<int, GAME_EVENT> _intelReactions; //int = intel id
+        protected PlayerCharacterItem _playerCharacterItem;
 
         //Stats
         protected SIDES _currentSide;
@@ -352,6 +353,9 @@ namespace ECS {
         }
         public Dictionary<STAT, float> buffs {
             get { return _buffs; }
+        }
+        public PlayerCharacterItem playerCharacterItem {
+            get { return _playerCharacterItem; }
         }
         #endregion
 
@@ -803,7 +807,6 @@ namespace ECS {
             onCharacterDeath -= onDeathAction;
         }
         
-
         #region Items
 		//If a character picks up an item, it is automatically added to his/her inventory
 		internal void PickupItem(Item item, bool broadcast = true){
@@ -1644,6 +1647,10 @@ namespace ECS {
                 ownParty.specificLocation.RemoveCharacterFromLocation(ownParty);
             }
             PlayerManager.Instance.player.playerArea.coreTile.landmarkOnTile.AddCharacterToLocation(ownParty);
+            if (this.homeLandmark != null) {
+                this.homeLandmark.RemoveCharacterHomeOnLandmark(this);
+            }
+            PlayerManager.Instance.player.playerArea.coreTile.landmarkOnTile.AddCharacterHomeOnLandmark(this);
         }
         public bool IsInParty() {
             if (currentParty.icharacters.Count > 1) {
@@ -3063,5 +3070,9 @@ namespace ECS {
             }
         }
         #endregion
+
+        public void SetPlayerCharacterItem(PlayerCharacterItem item) {
+            _playerCharacterItem = item;
+        }
     }
 }

@@ -468,7 +468,7 @@ public class Player : ILeader {
             RearrangeMinionItem(_minions[i].minionItem, i);
         }
     }
-    private void RearrangeMinionItem(MinionItem minionItem, int index) {
+    private void RearrangeMinionItem(PlayerCharacterItem minionItem, int index) {
         if (minionItem.transform.GetSiblingIndex() != index) {
             Vector3 to = PlayerUI.Instance.minionsContentTransform.GetChild(index).transform.localPosition;
             Vector3 from = minionItem.transform.localPosition;
@@ -521,14 +521,14 @@ public class Player : ILeader {
         if(_minions.Count < _maxMinions) {
             minion.SetIndexDefaultSort(_minions.Count);
             //MinionItem minionItem = PlayerUI.Instance.minionItems[_minions.Count];
-            MinionItem minionItem = PlayerUI.Instance.GetUnoccupiedMinionItem();
-            minionItem.SetMinion(minion);
+            PlayerCharacterItem item = PlayerUI.Instance.GetUnoccupiedCharacterItem();
+            item.SetCharacter(minion.icharacter);
 
             if (PlayerUI.Instance.minionSortType == MINIONS_SORT_TYPE.LEVEL) {
                 for (int i = 0; i < _minions.Count; i++) {
                     if(minion.lvl <= _minions[i].lvl) {
                         _minions.Insert(i, minion);
-                        minionItem.transform.SetSiblingIndex(i);
+                        item.transform.SetSiblingIndex(i);
                         break;
                     }
                 }
@@ -538,7 +538,7 @@ public class Player : ILeader {
                     int compareResult = string.Compare(strMinionType, _minions[i].type.ToString());
                     if (compareResult == -1 || compareResult == 0) {
                         _minions.Insert(i, minion);
-                        minionItem.transform.SetSiblingIndex(i);
+                        item.transform.SetSiblingIndex(i);
                         break;
                     }
                 }
@@ -550,7 +550,7 @@ public class Player : ILeader {
     }
     public void RemoveMinion(Minion minion) {
         if(_minions.Remove(minion)){
-            PlayerUI.Instance.RemoveMinionItem(minion.minionItem);
+            PlayerUI.Instance.RemoveCharacterItem(minion.minionItem);
             if(minion.currentlyExploringLandmark != null) {
                 minion.currentlyExploringLandmark.landmarkInvestigation.CancelInvestigation();
             }
@@ -622,10 +622,14 @@ public class Player : ILeader {
         if (!otherCharacters.Contains(character)) {
             otherCharacters.Add(character);
             character.OnAddedToPlayer();
+            PlayerCharacterItem item = PlayerUI.Instance.GetUnoccupiedCharacterItem();
+            item.SetCharacter(character);
         }
     }
     public void RemoveCharacter(ICharacter character) {
-        otherCharacters.Remove(character);
+        if (otherCharacters.Remove(character)) {
+            PlayerUI.Instance.RemoveCharacterItem(character.playerCharacterItem);
+        }
     }
     #endregion
 }
