@@ -501,6 +501,21 @@ public class BaseLandmark : ILocation, IInteractable {
         }
         return idleResidents;
     }
+    public bool HasResidentAtHome() {
+        for (int i = 0; i < charactersWithHomeOnLandmark.Count; i++) {
+            ICharacter currCharacter = charactersWithHomeOnLandmark[i];
+            if (currCharacter is Character && (currCharacter as Character).isDefender) {
+                continue; //skip
+            }
+            //if (currCharacter.ownParty is CharacterParty && (currCharacter.ownParty as CharacterParty).isBusy) {
+            //    continue; //skip
+            //}
+            if (currCharacter.ownParty.specificLocation.id == this.id) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Combat

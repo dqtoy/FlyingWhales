@@ -78,6 +78,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.NOTHING_HAPPENED:
                 createdInteraction = new NothingHappened(interactable);
                 break;
+            case INTERACTION_TYPE.CHARACTER_EXPLORES:
+                createdInteraction = new CharacterExplores(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -95,6 +98,13 @@ public class InteractionManager : MonoBehaviour {
                 //Random event that occurs on Bandit Camps. Requires at least 3 characters or army units in the Bandit Camp 
                 //character list owned by the Faction owner.
                 return landmark.GetIdleResidents().Count >= 3;
+            case INTERACTION_TYPE.CHARACTER_EXPLORES:
+                List<RACE> allowedRaces = new List<RACE>() { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN };
+                //Random event that may show up in any tile with a Human, Elven or Goblin character that is currently staying at its Home.
+                if (landmark.owner != null && allowedRaces.Contains(landmark.owner.race)) {
+                    return landmark.HasResidentAtHome();
+                }
+                return false;
             default:
                 return true;
         }
