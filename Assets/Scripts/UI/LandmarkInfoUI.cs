@@ -16,11 +16,21 @@ public class LandmarkInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI landmarkTypeLbl;
     [SerializeField] private TextMeshProUGUI suppliesNameLbl;
     [SerializeField] private FactionEmblem factionEmblem;
-    [SerializeField] private Slider healthProgressBar;
+    [SerializeField] private Image healthProgressBar;
+    [SerializeField] private GameObject defendersGO;
+    [SerializeField] private GameObject charactersGO;
+    [SerializeField] private GameObject logsGO;
+    [SerializeField] private GameObject[] connectorsGO;
+
+    [Space(10)]
+    [Header("Info")]
+    //[SerializeField] private GameObject[] secrets;
+    //[SerializeField] private GameObject[] intel;
+    //[SerializeField] private GameObject[] encounters;
+    [SerializeField] private IntelItem[] intelItems;
 
     [Space(10)]
     [Header("Characters")]
-    [SerializeField] private GameObject charactersGO;
     [SerializeField] private GameObject landmarkCharacterPrefab;
     [SerializeField] private ScrollRect charactersScrollView;
     [SerializeField] private GameObject scrollLeftArrowGO;
@@ -29,7 +39,6 @@ public class LandmarkInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Logs")]
-    [SerializeField] private GameObject logsGO;
     [SerializeField] private GameObject logHistoryPrefab;
     [SerializeField] private ScrollRect historyScrollView;
     [SerializeField] private Color evenLogColor;
@@ -37,8 +46,11 @@ public class LandmarkInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Defenders")]
-    [SerializeField] private GameObject defendersGO;
     [SerializeField] private LandmarkCharacterItem[] defenderSlots;
+
+    [Space(10)]
+    [Header("Others")]
+    [SerializeField] private GameObject[] notInspectedBGs;
 
     [Space(10)]
     [Header("Investigation")]
@@ -64,7 +76,6 @@ public class LandmarkInfoUI : UIMenu {
     internal override void Initialize() {
         base.Initialize();
         characterItems = new List<LandmarkCharacterItem>();
-        healthProgressBar.minValue = 0f;
         LoadLogItems();
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_INSPECTED, OnLandmarkInspected);
@@ -73,6 +84,7 @@ public class LandmarkInfoUI : UIMenu {
         //Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, OnPartyExitedLandmark);
         Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_ADDED, OnResidentAddedToLandmark);
         Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_REMOVED, OnResidentRemovedFromLandmark);
+        Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
     }
     public override void OpenMenu() {
         base.OpenMenu();
@@ -85,6 +97,8 @@ public class LandmarkInfoUI : UIMenu {
             PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeLandmark);
         }
         ResetScrollPositions();
+        //PlayerUI.Instance.UncollapseMinionHolder();
+        //InteractionUI.Instance.OpenInteractionUI(_activeLandmark);
         _activeLandmark.tileLocation.SetBordersState(true);
 
     }
@@ -95,6 +109,8 @@ public class LandmarkInfoUI : UIMenu {
         }
         _activeLandmark = null;
         PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
+        //PlayerUI.Instance.CollapseMinionHolder();
+        //InteractionUI.Instance.HideInteractionUI();
     }
 
     public void UpdateLandmarkInfo() {
@@ -102,15 +118,48 @@ public class LandmarkInfoUI : UIMenu {
             return;
         }
         UpdateBasicInfo();
+        //if (!_activeLandmark.isBeingInspected) {
+        //    UpdateBGs(true);
+        //} else {
+        //    UpdateBGs(false);
+        //}
+        //UpdateInfo();
+        //UpdateCharacters();
         UpdateDefenders();
+        //UpdateItems();
         UpdateAllHistoryInfo();
     }
-
+    private void UpdateBGs(bool state) {
+        for (int i = 0; i < notInspectedBGs.Length; i++) {
+            notInspectedBGs[i].SetActive(state);
+        }
+    }
     private void UpdateHiddenUI() {
-        if (_activeLandmark != null) {
-            charactersGO.SetActive(_activeLandmark.hasBeenInspected);
-            logsGO.SetActive(_activeLandmark.hasBeenInspected);
-            defendersGO.SetActive(_activeLandmark.hasBeenInspected);
+        if (_activeLandmark.tileLocation.areaOfTile.locationIntel.isObtained) {
+            ShowIntelTriggeredUI();
+        } else {
+            HideIntelTriggeredUI();
+        }
+    }
+    private void OnIntelAdded(Intel intel) {
+        if(_activeLandmark != null && _activeLandmark.tileLocation.areaOfTile.locationIntel == intel) {
+            ShowIntelTriggeredUI();
+        }
+    }
+    private void ShowIntelTriggeredUI() {
+        defendersGO.SetActive(true);
+        charactersGO.SetActive(true);
+        logsGO.SetActive(true);
+        for (int i = 0; i < connectorsGO.Length; i++) {
+            connectorsGO[i].SetActive(true);
+        }
+    }
+    private void HideIntelTriggeredUI() {
+        defendersGO.SetActive(false);
+        charactersGO.SetActive(false);
+        logsGO.SetActive(false);
+        for (int i = 0; i < connectorsGO.Length; i++) {
+            connectorsGO[i].SetActive(false);
         }
     }
 
@@ -138,8 +187,7 @@ public class LandmarkInfoUI : UIMenu {
         UpdateHP();
     }
     private void UpdateHP() {
-        healthProgressBar.maxValue = _activeLandmark.totalDurability;
-        healthProgressBar.value = _activeLandmark.currDurability;
+        healthProgressBar.fillAmount = _activeLandmark.currDurability / (float)_activeLandmark.totalDurability;
     }
     #endregion
 
@@ -202,12 +250,21 @@ public class LandmarkInfoUI : UIMenu {
         Utilities.DestroyChildren(charactersScrollView.content);
         characterItems.Clear();
         CheckScrollers();
-        for (int i = 0; i < _activeLandmark.charactersWithHomeOnLandmark.Count; i++) {
-            Party currParty = _activeLandmark.charactersWithHomeOnLandmark[i].ownParty;
-            if (!_activeLandmark.IsDefenderOfLandmark(currParty)) {
-                CreateNewCharacterItem(currParty.owner);
+
+        //if (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll) {
+            for (int i = 0; i < _activeLandmark.charactersWithHomeOnLandmark.Count; i++) {
+                Party currParty = _activeLandmark.charactersWithHomeOnLandmark[i].ownParty;
+                if (!_activeLandmark.IsDefenderOfLandmark(currParty)) {
+                    CreateNewCharacterItem(currParty.owner);
+                }
             }
-        }
+        //}
+        //else {
+        //    for (int i = 0; i < _activeLandmark.lastInspectedOfCharactersAtLocation.Count; i++) {
+        //        LandmarkPartyData partyData = _activeLandmark.lastInspectedOfCharactersAtLocation[i];
+        //        CreateNewCharacterItem(partyData);
+        //    }
+        //}
     }
     private LandmarkCharacterItem GetItem(Party party) {
         LandmarkCharacterItem[] items = Utilities.GetComponentsInDirectChildren<LandmarkCharacterItem>(charactersScrollView.content.gameObject);
@@ -247,7 +304,7 @@ public class LandmarkInfoUI : UIMenu {
         item.SetParty(partyData.partyMembers[0], _activeLandmark);
     }
     private void OnPartyEnteredLandmark(Party party, BaseLandmark landmark) {
-        if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id) {
+        if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id) { //&& (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll)
             CreateNewCharacterItem(party.owner);
         }
     }
@@ -262,7 +319,7 @@ public class LandmarkInfoUI : UIMenu {
         }
     }
     private void OnResidentAddedToLandmark(BaseLandmark landmark, ICharacter character) {
-        if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id) {
+        if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id) { // && (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll)
             CreateNewCharacterItem(character);
         }
     }
@@ -293,6 +350,45 @@ public class LandmarkInfoUI : UIMenu {
     }
     #endregion
 
+    #region Info
+    private void UpdateInfo() {
+        //List<Intel> intels = new List<Intel>(_activeLandmark.intels);
+        //intels.AddRange(IntelManager.Instance.GetIntelConcerning(_activeLandmark.charactersAtLocation));
+        //for (int i = 0; i < intelItems.Length; i++) {
+        //    IntelItem currItem = intelItems[i];
+        //    currItem.Reset();
+        //    Intel currIntel = intels.ElementAtOrDefault(i);
+        //    if (currIntel == null) {
+        //        currItem.gameObject.SetActive(false);
+        //    } else {
+        //        currItem.SetIntel(currIntel);
+        //        currItem.gameObject.SetActive(true);
+        //    }
+        //}
+        //for (int i = 0; i < secrets.Length; i++) {
+        //    if(i < _activeLandmark.secrets.Count) {
+        //        secrets[i].SetActive(true);
+        //    } else {
+        //        secrets[i].SetActive(false);
+        //    }
+        //}
+        //for (int i = 0; i < intel.Length; i++) {
+        //    if (i < _activeLandmark.intels.Count) {
+        //        intel[i].SetActive(true);
+        //    } else {
+        //        intel[i].SetActive(false);
+        //    }
+        //}
+        //for (int i = 0; i < encounters.Length; i++) {
+        //    if (i < _activeLandmark.encounters.Count) {
+        //        encounters[i].SetActive(true);
+        //    } else {
+        //        encounters[i].SetActive(false);
+        //    }
+        //}
+    }
+    #endregion
+
     #region Defenders
     private void UpdateDefenders() {
         if (_activeLandmark.defenders == null) {
@@ -320,10 +416,9 @@ public class LandmarkInfoUI : UIMenu {
         historyScrollView.verticalNormalizedPosition = 1;
     }
     private void OnLandmarkInspected(BaseLandmark landmark) {
-        //if (_activeLandmark != null && _activeLandmark.id == landmark.id) {
-        //    UpdateCharacters();
-        //}
-        UpdateHiddenUI();
+        if (_activeLandmark != null && _activeLandmark.id == landmark.id) {
+            UpdateCharacters();
+        }
     }
     private void OnInspectAll() {
         if (isShowing && _activeLandmark != null) {
@@ -379,7 +474,7 @@ public class LandmarkInfoUI : UIMenu {
         }
     }
     private void ResetMinionAssignment() {
-        minionAssignmentPortrait.GeneratePortrait(null, 95, true);
+        minionAssignmentPortrait.GeneratePortrait(null, 100, true);
         minionAssignmentDescription.gameObject.SetActive(true);
         minionAssignmentConfirmButton.gameObject.SetActive(false);
         minionAssignmentRecallButton.gameObject.SetActive(false);
@@ -421,7 +516,7 @@ public class LandmarkInfoUI : UIMenu {
     }
     public void AssignMinionToInvestigate(Minion minion) {
         if(minion != null) {
-            minionAssignmentPortrait.GeneratePortrait(minion.icharacter.portraitSettings, 95, true);
+            minionAssignmentPortrait.GeneratePortrait(minion.icharacter.portraitSettings, 100, true);
             minionAssignmentDescription.gameObject.SetActive(false);
             minionAssignmentRecallButton.gameObject.SetActive(false);
             minionAssignmentConfirmButton.gameObject.SetActive(true);

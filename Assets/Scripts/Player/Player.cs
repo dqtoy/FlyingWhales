@@ -251,6 +251,7 @@ public class Player : ILeader {
     public void AddIntel(Intel intel) {
         if (!_intels.Contains(intel)) {
             _intels.Add(intel);
+            intel.SetObtainedState(true);
             Debug.Log("Added intel " + intel.ToString());
             Messenger.Broadcast(Signals.INTEL_ADDED, intel);
         }

@@ -7,8 +7,8 @@ public class InteractionTimer : MonoBehaviour {
     public delegate void OnStopTimer();
 
     public Image progressImage;
-    public Image foregroundImage;
-    public Button interactionButton;
+    public GameObject noInteractionForegroundGO;
+    public GameObject interactionForegroundGO;
     public OnStopTimer onStopTimer;
 
     private int _timer;
@@ -45,5 +45,13 @@ public class InteractionTimer : MonoBehaviour {
         progressImage.fillAmount = 1f;
         _currentTimerTick = _timer;
         _isStopped = false;
+    }
+    public void ShowInteractionForeground() {
+        interactionForegroundGO.SetActive(true);
+        noInteractionForegroundGO.SetActive(false);
+    }
+    public void ShowNoInteractionForeground() {
+        interactionForegroundGO.SetActive(false);
+        noInteractionForegroundGO.SetActive(true);
     }
 }
