@@ -6,7 +6,7 @@ using UnityEngine;
 public class CharacterExplores : Interaction {
 
     private BaseLandmark landmark;
-    private ICharacter chosenCharacter;
+    private Character chosenCharacter;
     private BaseLandmark targetLandmark;
 
     private const string characterExploreCancelled = "Character Explore Cancelled";
@@ -40,6 +40,9 @@ public class CharacterExplores : Interaction {
             chosenCharacter = GetCharacterToMove();
             //Select a different random location not owned by a Hostile faction and set it as the target location.
             targetLandmark = GetTargetLandmark();
+
+            //If you dont have it yet, gain Intel of selected character
+            PlayerManager.Instance.player.AddIntel(chosenCharacter.characterIntel);
 
             InteractionState startState = new InteractionState("Start", this);
 
@@ -154,8 +157,8 @@ public class CharacterExplores : Interaction {
     }
 
 
-    private ICharacter GetCharacterToMove() {
-        List<ICharacter> choices = new List<ICharacter>();
+    private Character GetCharacterToMove() {
+        List<Character> choices = new List<Character>();
         for (int i = 0; i < landmark.charactersWithHomeOnLandmark.Count; i++) {
             ICharacter currCharacter = landmark.charactersWithHomeOnLandmark[i];
             if (currCharacter is Character) {
