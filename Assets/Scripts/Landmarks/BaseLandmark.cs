@@ -1342,6 +1342,16 @@ public class BaseLandmark : ILocation, IInteractable {
     public void SetMinDailySupplyProductionAmount(int amount) {
         this.minDailySupplyProduction = amount;
     }
+    public List<Interaction> GetAllInteractionsInLandmark() { //this includes all characters at this landmark
+        List<Interaction> interactions = new List<Interaction>();
+        for (int i = 0; i < _charactersAtLocation.Count; i++) {
+            Party currParty = _charactersAtLocation[i];
+            if (currParty.owner is Character) {
+                interactions.AddRange((currParty.owner as Character).currentInteractions);
+            }
+        }
+        return interactions;
+    }
     #endregion
 
     #region Raid

@@ -464,6 +464,7 @@ namespace ECS {
             //_equippedItems = new List<Item>();
             _inventory = new List<Item>();
             combatHistory = new Dictionary<int, Combat>();
+            _currentInteractions = new List<Interaction>();
             eventSchedule = new CharacterEventSchedule(this);
             uiData = new CharacterUIData();
             characterIntel = new CharacterIntel(this);
@@ -2905,22 +2906,32 @@ namespace ECS {
             if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling) {
                 return; //if this character is not in own party, is a defender or is travelling, do not generate interaction
             }
-            if (eventTriggerWeights.PickRandomElementGivenWeights()) {
+            if (GameManager.Instance.ignoreEventTriggerWeights || eventTriggerWeights.PickRandomElementGivenWeights()) {
                 WeightedDictionary<INTERACTION_TYPE> validInteractions = GetValidInteractionWeights();
                 if (validInteractions.GetTotalOfWeights() > 0) {
                     INTERACTION_TYPE chosenInteraction = validInteractions.PickRandomElementGivenWeights();
                     //create interaction of type
                     Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, this);
-                    if (createdInteraction != null) {
-                        (this.specificLocation as BaseLandmark).AddInteraction(createdInteraction);
-                    }
+                    AddInteraction(createdInteraction);
+                    //if (createdInteraction != null) {
+                    //    (this.specificLocation as BaseLandmark).AddInteraction(createdInteraction);
+                    //}
                 }
             }
+        }
+        public Interaction GetInteractionOfType(INTERACTION_TYPE type) {
+            for (int i = 0; i < _currentInteractions.Count; i++) {
+                Interaction currInteraction = _currentInteractions[i];
+                if (currInteraction.type == type) {
+                    return currInteraction;
+                }
+            }
+            return null;
         }
         private WeightedDictionary<INTERACTION_TYPE> GetValidInteractionWeights() {
             WeightedDictionary<INTERACTION_TYPE> weights = new WeightedDictionary<INTERACTION_TYPE>();
             foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in interactionWeights.dictionary) {
-                if (InteractionManager.Instance.CanCreateInteraction(kvp.Key, this)) {
+                if (GetInteractionOfType(kvp.Key) == null && InteractionManager.Instance.CanCreateInteraction(kvp.Key, this)) {
                     weights.AddElement(kvp.Key, kvp.Value);
                 }
             }
