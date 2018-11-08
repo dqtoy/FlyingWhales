@@ -174,7 +174,7 @@ public class ArmyAttacks : Interaction {
         CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
         army.iactionData.AssignAction(characterAction, target.landmarkObj);
-        landmark.landmarkInvestigation.MinionGoBackFromAssignment(null);
+        landmark.landmarkInvestigation.RecallMinion();
 
         //**Reward**: Demon gains Exp 1
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));

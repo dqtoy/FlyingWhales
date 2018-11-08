@@ -257,7 +257,7 @@ public class Interaction {
         }
         if (_interactable is BaseLandmark) {
             BaseLandmark landmark = _interactable as BaseLandmark;
-            landmark.landmarkInvestigation.MinionGoBackFromAssignment(landmark.landmarkInvestigation.UnexploreLandmark);
+            landmark.landmarkInvestigation.RecallMinion();
         }
     }
     #endregion

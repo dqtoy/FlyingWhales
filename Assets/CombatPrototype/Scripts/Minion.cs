@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ECS;
+using System;
 
 public class Minion : IUnit {
 
@@ -153,6 +154,16 @@ public class Minion : IUnit {
         SetEnabledState(true);
         icharacter.currentParty.specificLocation.RemoveCharacterFromLocation(icharacter.currentParty);
         PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(icharacter.currentParty);
+    }
+    public void TravelToAssignment(BaseLandmark target, Action action) {
+        _icharacter.currentParty.GoToLocation(target, PATHFINDING_MODE.PASSABLE, () => action());
+    }
+    public void TravelBackFromAssignment() {
+        if (_icharacter.currentParty.icon.isTravelling) {
+            _icharacter.currentParty.CancelTravel(() => SetEnabledState(true));
+        } else {
+            _icharacter.currentParty.GoToLocation(PlayerManager.Instance.player.demonicPortal, PATHFINDING_MODE.PASSABLE, () => SetEnabledState(true));
+        }
     }
 
     #region Rewards

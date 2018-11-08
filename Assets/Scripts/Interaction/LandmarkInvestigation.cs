@@ -43,7 +43,8 @@ public class LandmarkInvestigation {
     public void SetAssignedMinion(Minion minion) {
         _assignedMinion = minion;
     }
-    public void InvestigateLandmark(string whatTodo) {
+    public void InvestigateLandmark(string whatTodo, Minion minion) {
+        SetAssignedMinion(minion);
         _assignedMinion.SetEnabledState(false);
         _assignedMinion.SetExploringLandmark(_landmark);
         if (whatTodo == "explore") {
@@ -57,35 +58,26 @@ public class LandmarkInvestigation {
         SetActivatedState(true);
     }
     public void UninvestigateLandmark() {
-        _assignedMinion.SetEnabledState(true);
+        //_assignedMinion.SetEnabledState(true);
         _assignedMinion.SetExploringLandmark(null);
         SetAssignedMinion(null);
         _isMinionRecalled = false;
         SetActivatedState(false);
         _whatToDo = string.Empty;
+        UIManager.Instance.landmarkInfoUI.UpdateInvestigation();
     }
     private void MinionGoToAssignment(Action action) {
-        _assignedMinion.icharacter.currentParty.GoToLocation(_landmark, PATHFINDING_MODE.PASSABLE, () => action());
+        _assignedMinion.TravelToAssignment(_landmark, action);
     }
-    public void MinionGoBackFromAssignment(Action action) {
-        if (_assignedMinion.icharacter.currentParty.icon.isTravelling) {
-            _assignedMinion.icharacter.currentParty.CancelTravel(() => action());
-        } else {
-            _assignedMinion.icharacter.currentParty.GoToLocation(PlayerManager.Instance.player.demonicPortal, PATHFINDING_MODE.PASSABLE, () => action());
-        }
-    }
+    //private void MinionGoBackFromAssignment(Action action) {
+    //    if (_assignedMinion.icharacter.currentParty.icon.isTravelling) {
+    //        _assignedMinion.icharacter.currentParty.CancelTravel(() => action());
+    //    } else {
+    //        _assignedMinion.icharacter.currentParty.GoToLocation(PlayerManager.Instance.player.demonicPortal, PATHFINDING_MODE.PASSABLE, () => action());
+    //    }
+    //}
     public void RecallMinion() {
-        if (_landmark.isBeingInspected) {
-            _landmark.landmarkVisual.StopInteractionTimer();
-            _landmark.landmarkVisual.HideInteractionTimer();
-            Messenger.RemoveListener(Signals.HOUR_STARTED, OnExploreTick);
-            MinionGoBackFromAssignment(UnexploreLandmark);
-        } else {
-            MinionGoBackFromAssignment(UninvestigateLandmark);
-        }
-        _isMinionRecalled = true;
-    }
-    public void CancelInvestigation() {
+        _assignedMinion.TravelBackFromAssignment();
         if (_landmark.isBeingInspected) {
             _landmark.landmarkVisual.StopInteractionTimer();
             _landmark.landmarkVisual.HideInteractionTimer();
@@ -94,10 +86,25 @@ public class LandmarkInvestigation {
         } else {
             UninvestigateLandmark();
         }
+        _isMinionRecalled = true;
+        //UIManager.Instance.landmarkInfoUI.OnUpdateLandmarkInvestigationState();
+    }
+    public void CancelInvestigation() {
+        if (_isActivated) {
+            _assignedMinion.SetEnabledState(true);
+            if (_landmark.isBeingInspected) {
+                _landmark.landmarkVisual.StopInteractionTimer();
+                _landmark.landmarkVisual.HideInteractionTimer();
+                Messenger.RemoveListener(Signals.HOUR_STARTED, OnExploreTick);
+                UnexploreLandmark();
+            } else {
+                UninvestigateLandmark();
+            }
+        }
     }
     public void SetActivatedState(bool state) {
         _isActivated = state;
-        Messenger.Broadcast(Signals.LANDMARK_INVESTIGATION_ACTIVATED, _landmark);
+        //Messenger.Broadcast(Signals.LANDMARK_INVESTIGATION_ACTIVATED, _landmark);
     }
 
     #region Explore
@@ -133,13 +140,17 @@ public class LandmarkInvestigation {
         //Update Timer Progress
     }
     public void OnDestroyLandmark() {
-        if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
-            Messenger.RemoveListener(Signals.HOUR_STARTED, OnExploreTick);
+        if (_isActivated) {
+            if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
+                Messenger.RemoveListener(Signals.HOUR_STARTED, OnExploreTick);
+            }
+            _landmark.landmarkVisual.StopInteractionTimer();
+            _landmark.landmarkVisual.HideInteractionTimer();
+            if(InteractionUI.Instance.interactionItem.interaction != null && InteractionUI.Instance.interactionItem.interaction.interactable == _landmark) {
+                InteractionUI.Instance.HideInteractionUI();
+            }
+            RecallMinion();
         }
-        _landmark.landmarkVisual.StopInteractionTimer();
-        _landmark.landmarkVisual.HideInteractionTimer();
-        InteractionUI.Instance.HideInteractionUI();
-        MinionGoBackFromAssignment(UnexploreLandmark);
     }
     private void ExploreDoneCheckForExistingEvents() {
         _landmark.landmarkVisual.StopInteractionTimer();
@@ -217,7 +228,7 @@ public class LandmarkInvestigation {
         int amountToRaid = (int) (_landmark.tileLocation.areaOfTile.suppliesInBank * ((UnityEngine.Random.Range(25, 76)) / 100f));
         _landmark.tileLocation.areaOfTile.AdjustSuppliesInBank(-amountToRaid);
         PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, amountToRaid);
-        MinionGoBackFromAssignment(UninvestigateLandmark);
+        RecallMinion();
     }
     #endregion
 
