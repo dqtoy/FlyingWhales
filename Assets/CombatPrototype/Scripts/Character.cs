@@ -65,6 +65,7 @@ namespace ECS {
         protected Dictionary<Character, List<string>> _traceInfo;
         protected Dictionary<int, GAME_EVENT> _intelReactions; //int = intel id
         protected PlayerCharacterItem _playerCharacterItem;
+        protected int _currentInteractionTick;
 
         //Stats
         protected SIDES _currentSide;
@@ -86,6 +87,8 @@ namespace ECS {
         public BaseLandmark defendingLandmark { get; private set; }
         public MORALITY morality { get; private set; }
         public CharacterIntel characterIntel { get; private set; }
+        public WeightedDictionary<INTERACTION_TYPE> interactionWeights { get; private set; }
+        public WeightedDictionary<bool> eventTriggerWeights { get; private set; }
         private Dictionary<STAT, float> _buffs;
 
         public Dictionary<int, Combat> combatHistory;
@@ -148,9 +151,6 @@ namespace ECS {
         public CharacterAction genericWorkAction {
             get { return _genericWorkAction; }
         }
-        //public List<CharacterQuestData> questData {
-        //    get { return _questData; }
-        //}
         public HexTile currLocation {
             get { return (_currentParty.specificLocation != null ? _currentParty.specificLocation.tileLocation : null); }
         }
@@ -187,23 +187,17 @@ namespace ECS {
         public string characterColorCode {
             get { return _characterColorCode; }
         }
-        //public Area home {
-        //    get { return _home; }
-        //}
         public BaseLandmark homeLandmark {
             get { return _homeLandmark; }
         }
-        //public StructureObj homeStructure {
-        //    get { return _homeStructure; }
-        //}
         public BaseLandmark workplace {
             get { return _workplace; }
         }
         public float remainingHP { //Percentage of remaining HP this character has
-            get { return (float) currentHP / (float) maxHP; }
+            get { return (float)currentHP / (float)maxHP; }
         }
         public int remainingHPPercent {
-            get { return (int) (remainingHP * 100); }
+            get { return (int)(remainingHP * 100); }
         }
         public List<Log> history {
             get { return this._history; }
@@ -361,8 +355,8 @@ namespace ECS {
 
         public Character(string className, RACE race, GENDER gender) : this() {
             _id = Utilities.SetID(this);
-			_characterClass = CharacterManager.Instance.classesDictionary[className].CreateNewCopy();
-			_raceSetting = RaceManager.Instance.racesDictionary[race.ToString()].CreateNewCopy();
+            _characterClass = CharacterManager.Instance.classesDictionary[className].CreateNewCopy();
+            _raceSetting = RaceManager.Instance.racesDictionary[race.ToString()].CreateNewCopy();
             _gender = gender;
             _name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
             if (this is CharacterArmyUnit) {
@@ -370,7 +364,7 @@ namespace ECS {
             } else {
                 _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
             }
-            if(_characterClass.roleType != CHARACTER_ROLE.NONE) {
+            if (_characterClass.roleType != CHARACTER_ROLE.NONE) {
                 AssignRole(_characterClass.roleType);
             }
             SetMorality(MORALITY.GOOD);
@@ -393,7 +387,7 @@ namespace ECS {
             //    }
             //}
         }
-        public Character(CharacterSaveData data) : this(){
+        public Character(CharacterSaveData data) : this() {
             _id = Utilities.SetID(this, data.id);
             _characterClass = CharacterManager.Instance.classesDictionary[data.className].CreateNewCopy();
             _raceSetting = RaceManager.Instance.racesDictionary[data.race.ToString()].CreateNewCopy();
@@ -432,9 +426,9 @@ namespace ECS {
             CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(data.className);
             if (setup != null) {
                 GenerateSetupAttributes(setup);
-                if (setup.optionalRole != CHARACTER_ROLE.NONE) {
-                    AssignRole(setup.optionalRole);
-                }
+                //if (setup.optionalRole != CHARACTER_ROLE.NONE) {
+                //    AssignRole(setup.optionalRole);
+                //}
             }
             //DetermineAllowedMiscActions();
         }
@@ -456,7 +450,7 @@ namespace ECS {
             //_relationships = new Dictionary<Character, Relationship>();
             _genericWorkAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.WORKING);
             _combatAttributes = new List<CombatAttribute>();
-            
+
             //_actionData = new ActionData(this);
 
 
@@ -473,6 +467,10 @@ namespace ECS {
             eventSchedule = new CharacterEventSchedule(this);
             uiData = new CharacterUIData();
             characterIntel = new CharacterIntel(this);
+            interactionWeights = new WeightedDictionary<INTERACTION_TYPE>();
+            eventTriggerWeights = new WeightedDictionary<bool>();
+            eventTriggerWeights.AddElement(true, 200); //Hard coded for now
+            eventTriggerWeights.AddElement(false, 1000);
 
             //AllocateStats();
             //EquipItemsByClass();
@@ -480,6 +478,7 @@ namespace ECS {
             GetRandomCharacterColor();
             ConstructDefaultMiscActions();
             //_combatHistoryID = 0;
+            SetDailyInteractionGenerationTick();
             SubscribeToSignals();
         }
         public void Initialize() { }
@@ -493,6 +492,7 @@ namespace ECS {
             //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
             //Messenger.AddListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
             Messenger.AddListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
+            Messenger.AddListener(Signals.HOUR_STARTED, DailyInteractionGeneration);
             //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         }
         public void UnsubscribeSignals() {
@@ -503,6 +503,7 @@ namespace ECS {
             //Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
             //Messenger.RemoveListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
             Messenger.RemoveListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
+            Messenger.RemoveListener(Signals.HOUR_STARTED, DailyInteractionGeneration);
             //Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
             if (Messenger.eventTable.ContainsKey(Signals.HOUR_ENDED)) {
                 Messenger.RemoveListener(Signals.HOUR_ENDED, EventEveryTick);
@@ -545,22 +546,22 @@ namespace ECS {
         //	}
         //}
         //Enables or Disables skills based on skill requirements
-        public void EnableDisableSkills(Combat combat){
-			//bool isAllAttacksInRange = true;
-			//bool isAttackInRange = false;
+        public void EnableDisableSkills(Combat combat) {
+            //bool isAllAttacksInRange = true;
+            //bool isAttackInRange = false;
 
             //Body part skills / general skills
-			for (int i = 0; i < this._skills.Count; i++) {
-				Skill skill = this._skills [i];
-				skill.isEnabled = true;
+            for (int i = 0; i < this._skills.Count; i++) {
+                Skill skill = this._skills[i];
+                skill.isEnabled = true;
 
-    //            if (skill is AttackSkill){
-    //                AttackSkill attackSkill = skill as AttackSkill;
-    //                if(attackSkill.spCost > _sp) {
-    //                    skill.isEnabled = false;
-    //                    continue;
-    //                }
-				//} else 
+                //            if (skill is AttackSkill){
+                //                AttackSkill attackSkill = skill as AttackSkill;
+                //                if(attackSkill.spCost > _sp) {
+                //                    skill.isEnabled = false;
+                //                    continue;
+                //                }
+                //} else 
                 if (skill is FleeSkill) {
                     skill.isEnabled = false;
                     //if (this.currentHP >= (this.maxHP / 2)) {
@@ -605,89 +606,89 @@ namespace ECS {
 
             //}
 
-		}
+        }
         //Changes row number of this character
-        public void SetRowNumber(int rowNumber){
-			this._currentRow = rowNumber;
-		}
-		//Changes character's side
-		public void SetSide(SIDES side){
-			this._currentSide = side;
-		}
+        public void SetRowNumber(int rowNumber) {
+            this._currentRow = rowNumber;
+        }
+        //Changes character's side
+        public void SetSide(SIDES side) {
+            this._currentSide = side;
+        }
         //Adjust current HP based on specified paramater, but HP must not go below 0
         public virtual void AdjustHP(int amount, ICharacter killer = null) {
             int previous = this._currentHP;
-			this._currentHP += amount;
-			this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
-            if(previous != this._currentHP) {
+            this._currentHP += amount;
+            this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
+            if (previous != this._currentHP) {
                 if (this._currentHP == 0) {
                     FaintOrDeath(killer);
                 }
             }
-		}
-		public void SetHP(int amount){
-			this._currentHP = amount;
-		}
-		private string GetFaintOrDeath(){
+        }
+        public void SetHP(int amount) {
+            this._currentHP = amount;
+        }
+        private string GetFaintOrDeath() {
             return "die";
-			//WeightedDictionary<string> faintDieDict = new WeightedDictionary<string> ();
-			//int faintWeight = 100;
-			//int dieWeight = 50;
-			//if(HasTrait(TRAIT.GRITTY)){
-			//	faintWeight += 50;
-			//}
-			//if(HasTrait(TRAIT.ROBUST)){
-			//	faintWeight += 50;
-			//}
-			//if(HasTrait(TRAIT.FRAGILE)){
-			//	dieWeight += 50;
-			//}
-			//faintDieDict.AddElement ("faint", 100);
-			//faintDieDict.AddElement ("die", 50);
+            //WeightedDictionary<string> faintDieDict = new WeightedDictionary<string> ();
+            //int faintWeight = 100;
+            //int dieWeight = 50;
+            //if(HasTrait(TRAIT.GRITTY)){
+            //	faintWeight += 50;
+            //}
+            //if(HasTrait(TRAIT.ROBUST)){
+            //	faintWeight += 50;
+            //}
+            //if(HasTrait(TRAIT.FRAGILE)){
+            //	dieWeight += 50;
+            //}
+            //faintDieDict.AddElement ("faint", 100);
+            //faintDieDict.AddElement ("die", 50);
 
-			//return faintDieDict.PickRandomElementGivenWeights ();
-		}
-		public void FaintOrDeath(ICharacter killer){
-			string pickedWeight = GetFaintOrDeath ();
-			if(pickedWeight == "faint"){
-				if(currentParty.currentCombat == null){
-					Faint ();
-				}else{
+            //return faintDieDict.PickRandomElementGivenWeights ();
+        }
+        public void FaintOrDeath(ICharacter killer) {
+            string pickedWeight = GetFaintOrDeath();
+            if (pickedWeight == "faint") {
+                if (currentParty.currentCombat == null) {
+                    Faint();
+                } else {
                     currentParty.currentCombat.CharacterFainted(this);
                 }
-			}else if(pickedWeight == "die"){
+            } else if (pickedWeight == "die") {
                 if (currentParty.currentCombat != null) {
                     currentParty.currentCombat.CharacterDeath(this, killer);
                 }
                 Death();
-    //            if (this.currentCombat == null){
-				//	Death ();
-				//}else{
-				//	this.currentCombat.CharacterDeath (this);
-				//}
-			}
-		}
-		//When character will faint
-		internal void Faint(){
-			if(!_isFainted){
-				_isFainted = true;
-				SetHP (1);
+                //            if (this.currentCombat == null){
+                //	Death ();
+                //}else{
+                //	this.currentCombat.CharacterDeath (this);
+                //}
+            }
+        }
+        //When character will faint
+        internal void Faint() {
+            if (!_isFainted) {
+                _isFainted = true;
+                SetHP(1);
                 ////Set Task to Fainted
                 //Faint faintTask = new Faint(this);
                 //faintTask.OnChooseTask(this)
-;			}
-		}
-		internal void Unfaint(){
-			if (_isFainted) {
-				_isFainted = false;
-				SetHP (1);
-			}
-		}
+                ; }
+        }
+        internal void Unfaint() {
+            if (_isFainted) {
+                _isFainted = false;
+                SetHP(1);
+            }
+        }
         public void Imprison() {
             //if(_ownParty.icharacters.Count > 1) {
             //    CreateOwnParty();
             //}
-            if(_ownParty.characterObject.currentState.stateName != "Imprisoned") {
+            if (_ownParty.characterObject.currentState.stateName != "Imprisoned") {
                 ObjectState imprisonedState = _ownParty.characterObject.GetState("Imprisoned");
                 _ownParty.characterObject.ChangeState(imprisonedState);
 
@@ -695,34 +696,34 @@ namespace ECS {
                 //Do other things when imprisoned
             }
         }
-		//Character's death
-		public void Death(){
-			if(!_isDead){
-				_isDead = true;
+        //Character's death
+        public void Death() {
+            if (!_isDead) {
+                _isDead = true;
                 UnsubscribeSignals();
 
-                CombatManager.Instance.ReturnCharacterColorToPool (_characterColor);
+                CombatManager.Instance.ReturnCharacterColorToPool(_characterColor);
 
                 if (currentParty.specificLocation == null) {
                     throw new Exception("Specific location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
                 }
 
-				if(currentParty.specificLocation != null && currentParty.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
+                if (currentParty.specificLocation != null && currentParty.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
                     Log deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death");
                     deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     AddHistory(deathLog);
                     (currentParty.specificLocation as BaseLandmark).AddHistory(deathLog);
-				}
-                
-                //Drop all Items
-    //            while (_equippedItems.Count > 0) {
-				//	ThrowItem (_equippedItems [0]);
-				//}
-				while (_inventory.Count > 0) {
-					ThrowItem (_inventory [0]);
-				}
+                }
 
-                if(IsInOwnParty()) {
+                //Drop all Items
+                //            while (_equippedItems.Count > 0) {
+                //	ThrowItem (_equippedItems [0]);
+                //}
+                while (_inventory.Count > 0) {
+                    ThrowItem(_inventory[0]);
+                }
+
+                if (IsInOwnParty()) {
                     if (_ownParty.actionData.currentAction != null) {
                         _ownParty.actionData.currentAction.EndAction(_ownParty, _ownParty.actionData.currentTargetObject);
                     }
@@ -740,9 +741,9 @@ namespace ECS {
                 //	_home.RemoveCharacterHomeOnLandmark (this);
                 //}
 
-                if (this._faction != null){
-					this._faction.RemoveCharacter(this); //remove this character from it's factions list of characters
-				}
+                if (this._faction != null) {
+                    this._faction.RemoveCharacter(this); //remove this character from it's factions list of characters
+                }
 
                 //if (_specificLocation != null) {
                 //    _specificLocation.RemoveCharacterFromLocation(this);
@@ -757,10 +758,10 @@ namespace ECS {
                 //if (_isPrisoner){
                 //	PrisonerDeath ();
                 //}
-                if (_role != null){
-					_role.DeathRole ();
-				}
-                if(_homeLandmark != null) {
+                if (_role != null) {
+                    _role.DeathRole();
+                }
+                if (_homeLandmark != null) {
                     _homeLandmark.RemoveCharacterHomeOnLandmark(this);
                 }
                 //while(_tags.Count > 0){
@@ -778,15 +779,15 @@ namespace ECS {
                 if (_minion != null) {
                     PlayerManager.Instance.player.RemoveMinion(_minion);
                 }
-                if (onCharacterDeath != null){
-					onCharacterDeath();
-				}
+                if (onCharacterDeath != null) {
+                    onCharacterDeath();
+                }
                 onCharacterDeath = null;
                 Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
                 //if (killer != null) {
                 //    Messenger.Broadcast(Signals.CHARACTER_KILLED, killer, this);
                 //}
-                if(_characterPortrait != null) {
+                if (_characterPortrait != null) {
                     GameObject.Destroy(_characterPortrait.gameObject);
                     _characterPortrait = null;
                 }
@@ -800,7 +801,7 @@ namespace ECS {
 
                 Debug.Log(this.name + " died!");
             }
-		}
+        }
         public void Assassinate(ICharacter assassin) {
             Debug.Log(assassin.name + " assassinated " + name);
             Death();
@@ -811,25 +812,25 @@ namespace ECS {
         internal void RemoveActionOnDeath(OnCharacterDeath onDeathAction) {
             onCharacterDeath -= onDeathAction;
         }
-        
+
         #region Items
-		//If a character picks up an item, it is automatically added to his/her inventory
-		internal void PickupItem(Item item, bool broadcast = true){
-			Item newItem = item;
+        //If a character picks up an item, it is automatically added to his/her inventory
+        internal void PickupItem(Item item, bool broadcast = true) {
+            Item newItem = item;
             if (_inventory.Contains(newItem)) {
                 throw new Exception(this.name + " already has an instance of " + newItem.itemName);
             }
-			this._inventory.Add (newItem);
-			//newItem.SetPossessor (this);
-			if(newItem.owner == null){
-				OwnItem (newItem);
-			}
+            this._inventory.Add(newItem);
+            //newItem.SetPossessor (this);
+            if (newItem.owner == null) {
+                OwnItem(newItem);
+            }
 #if !WORLD_CREATION_TOOL
             Log obtainLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "obtain_item");
             obtainLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             obtainLog.AddToFillers(null, item.itemName, LOG_IDENTIFIER.ITEM_1);
             AddHistory(obtainLog);
-			if (_ownParty.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+            if (_ownParty.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
                 (_ownParty.specificLocation as BaseLandmark).AddHistory(obtainLog);
             }
 #endif
@@ -838,20 +839,20 @@ namespace ECS {
             }
             newItem.OnItemPutInInventory(this);
         }
-		internal void ThrowItem(Item item, bool addInLandmark = true){
-			if(item.isEquipped){
-				UnequipItem (item);
-			}
-			//item.SetPossessor (null);
-			this._inventory.Remove (item);
-			//item.exploreWeight = 15;
-			if(addInLandmark){
-				ILocation location = _ownParty.specificLocation;
-				if(location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
-					BaseLandmark landmark = location as BaseLandmark;
-					landmark.AddItem(item);
-				}
-			}
+        internal void ThrowItem(Item item, bool addInLandmark = true) {
+            if (item.isEquipped) {
+                UnequipItem(item);
+            }
+            //item.SetPossessor (null);
+            this._inventory.Remove(item);
+            //item.exploreWeight = 15;
+            if (addInLandmark) {
+                ILocation location = _ownParty.specificLocation;
+                if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+                    BaseLandmark landmark = location as BaseLandmark;
+                    landmark.AddItem(item);
+                }
+            }
             Messenger.Broadcast(Signals.ITEM_THROWN, item, this);
         }
         internal void ThrowItem(string itemName, int quantity, bool addInLandmark = true) {
@@ -864,8 +865,8 @@ namespace ECS {
         internal void DropItem(Item item) {
             ThrowItem(item);
             ILocation location = _ownParty.specificLocation;
-			if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-				//BaseLandmark landmark = location as BaseLandmark;
+            if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+                //BaseLandmark landmark = location as BaseLandmark;
                 Log dropLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "drop_item");
                 dropLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 dropLog.AddToFillers(null, item.itemName, LOG_IDENTIFIER.ITEM_1);
@@ -899,7 +900,7 @@ namespace ECS {
                 }
             }
         }
-		public void EquipItem(string itemName) {
+        public void EquipItem(string itemName) {
             Item item = ItemManager.Instance.CreateNewItemInstance(itemName);
             if (item != null) {
                 EquipItem(item);
@@ -911,15 +912,15 @@ namespace ECS {
          this will return a boolean whether the character successfully equipped
          the item or not.
              */
-        internal bool EquipItem(Item item){
-			bool hasEquipped = false;
-			if (item.itemType == ITEM_TYPE.WEAPON) {
-				Weapon weapon = item as Weapon;
-				hasEquipped = TryEquipWeapon(weapon);
-			} else if (item.itemType == ITEM_TYPE.ARMOR) {
-				Armor armor = item as Armor;
-				hasEquipped = TryEquipArmor(armor);
-			} else if (item.itemType == ITEM_TYPE.ACCESSORY) {
+        internal bool EquipItem(Item item) {
+            bool hasEquipped = false;
+            if (item.itemType == ITEM_TYPE.WEAPON) {
+                Weapon weapon = item as Weapon;
+                hasEquipped = TryEquipWeapon(weapon);
+            } else if (item.itemType == ITEM_TYPE.ARMOR) {
+                Armor armor = item as Armor;
+                hasEquipped = TryEquipArmor(armor);
+            } else if (item.itemType == ITEM_TYPE.ACCESSORY) {
                 hasEquipped = TryEquipAccessory(item);
             } else if (item.itemType == ITEM_TYPE.CONSUMABLE) {
                 hasEquipped = TryEquipConsumable(item);
@@ -940,19 +941,19 @@ namespace ECS {
                 Messenger.Broadcast(Signals.ITEM_EQUIPPED, item, this);
             }
             return hasEquipped;
-		}
-		//Unequips an item of a character, whether it's a weapon, armor, etc.
-		public void UnequipItem(Item item){
-			if (item.itemType == ITEM_TYPE.WEAPON) {
+        }
+        //Unequips an item of a character, whether it's a weapon, armor, etc.
+        public void UnequipItem(Item item) {
+            if (item.itemType == ITEM_TYPE.WEAPON) {
                 UnequipWeapon(item as Weapon);
-			} else if (item.itemType == ITEM_TYPE.ARMOR) {
+            } else if (item.itemType == ITEM_TYPE.ARMOR) {
                 UnequipArmor(item as Armor);
             } else if (item.itemType == ITEM_TYPE.ACCESSORY) {
                 UnequipAccessory(item);
             } else if (item.itemType == ITEM_TYPE.CONSUMABLE) {
                 UnequipConsumable(item);
             }
-            if(item.attributeNames != null) {
+            if (item.attributeNames != null) {
                 for (int i = 0; i < item.attributeNames.Count; i++) {
                     CombatAttribute newCombatAttribute = AttributeManager.Instance.allCombatAttributes[item.attributeNames[i]];
                     RemoveCombatAttribute(newCombatAttribute);
@@ -960,39 +961,39 @@ namespace ECS {
             }
             Messenger.Broadcast(Signals.ITEM_UNEQUIPPED, item, this);
         }
-		//Own an Item
-		internal void OwnItem(Item item){
-			item.SetOwner (this);
-		}
-		//Transfer item ownership
-		internal void TransferItemOwnership(Item item, Character newOwner){
-			newOwner.OwnItem (item);
-		}
-		//Try to equip a weapon to a body part of this character and add it to the list of items this character have
-		internal bool TryEquipWeapon(Weapon weapon){
+        //Own an Item
+        internal void OwnItem(Item item) {
+            item.SetOwner(this);
+        }
+        //Transfer item ownership
+        internal void TransferItemOwnership(Item item, Character newOwner) {
+            newOwner.OwnItem(item);
+        }
+        //Try to equip a weapon to a body part of this character and add it to the list of items this character have
+        internal bool TryEquipWeapon(Weapon weapon) {
             //if (!_characterClass.allowedWeaponTypes.Contains(weapon.weaponType)) {
             //    return false;
             //}
             _equippedWeapon = weapon;
             weapon.SetEquipped(true);
             return true;
-		}
-		//Unequips weapon of a character
-		private void UnequipWeapon(Weapon weapon) {
+        }
+        //Unequips weapon of a character
+        private void UnequipWeapon(Weapon weapon) {
             weapon.SetEquipped(false);
             _equippedWeapon = null;
-		}
-		//Try to equip an armor to a body part of this character and add it to the list of items this character have
-		internal bool TryEquipArmor(Armor armor){
+        }
+        //Try to equip an armor to a body part of this character and add it to the list of items this character have
+        internal bool TryEquipArmor(Armor armor) {
             armor.SetEquipped(true);
             _equippedArmor = armor;
             return true;
-		}
-		//Unequips armor of a character
-		private void UnequipArmor(Armor armor) {
+        }
+        //Unequips armor of a character
+        private void UnequipArmor(Armor armor) {
             armor.SetEquipped(false);
             _equippedArmor = null;
-		}
+        }
         //Try to equip an accessory
         internal bool TryEquipAccessory(Item accessory) {
             accessory.SetEquipped(true);
@@ -1016,7 +1017,7 @@ namespace ECS {
             _equippedConsumable = null;
         }
         internal bool HasItem(string itemName) {
-            if(_equippedWeapon != null && _equippedWeapon.itemName == itemName) {
+            if (_equippedWeapon != null && _equippedWeapon.itemName == itemName) {
                 return true;
             } else if (_equippedArmor != null && _equippedArmor.itemName == itemName) {
                 return true;
@@ -1095,15 +1096,15 @@ namespace ECS {
             }
             return items;
         }
-        internal Item GetItemInInventory(string itemName){
-			for (int i = 0; i < _inventory.Count; i++) {
-				Item currItem = _inventory[i];
-				if (currItem.itemName.Equals(itemName)) {
-					return currItem;
-				}
-			}
-			return null;
-		}
+        internal Item GetItemInInventory(string itemName) {
+            for (int i = 0; i < _inventory.Count; i++) {
+                Item currItem = _inventory[i];
+                if (currItem.itemName.Equals(itemName)) {
+                    return currItem;
+                }
+            }
+            return null;
+        }
         public void GiveItemsTo(List<Item> items, Character otherCharacter) {
             for (int i = 0; i < items.Count; i++) {
                 Item currItem = items[i];
@@ -1115,8 +1116,8 @@ namespace ECS {
             }
         }
         private void EquipItemsByClass() {
-            if(_characterClass != null) {
-                if(_characterClass.weaponTierNames != null && _characterClass.weaponTierNames.Count > 0) {
+            if (_characterClass != null) {
+                if (_characterClass.weaponTierNames != null && _characterClass.weaponTierNames.Count > 0) {
                     EquipItem(_characterClass.weaponTierNames[0]);
                 }
                 if (_characterClass.armorTierNames != null && _characterClass.armorTierNames.Count > 0) {
@@ -1184,39 +1185,39 @@ namespace ECS {
         #endregion
 
         #region Status Effects
-        internal void AddStatusEffect(STATUS_EFFECT statusEffect){
-			this._statusEffects.Add (statusEffect);
-		}
-		internal void RemoveStatusEffect(STATUS_EFFECT statusEffect){
-			this._statusEffects.Remove (statusEffect);
-		}
-        internal void CureStatusEffects(){
-			for (int i = 0; i < _statusEffects.Count; i++) {
-				STATUS_EFFECT statusEffect = _statusEffects[i];
-				int chance = Utilities.rng.Next (0, 100);
-				if (chance < 15) {
-                    _ownParty.currentCombat.AddCombatLog(this.name + " is cured from " + statusEffect.ToString ().ToLower () + ".", this.currentSide);
-					RemoveStatusEffect (statusEffect);
-					i--;
-				}
-			}
-		}
+        internal void AddStatusEffect(STATUS_EFFECT statusEffect) {
+            this._statusEffects.Add(statusEffect);
+        }
+        internal void RemoveStatusEffect(STATUS_EFFECT statusEffect) {
+            this._statusEffects.Remove(statusEffect);
+        }
+        internal void CureStatusEffects() {
+            for (int i = 0; i < _statusEffects.Count; i++) {
+                STATUS_EFFECT statusEffect = _statusEffects[i];
+                int chance = Utilities.rng.Next(0, 100);
+                if (chance < 15) {
+                    _ownParty.currentCombat.AddCombatLog(this.name + " is cured from " + statusEffect.ToString().ToLower() + ".", this.currentSide);
+                    RemoveStatusEffect(statusEffect);
+                    i--;
+                }
+            }
+        }
         internal bool HasStatusEffect(STATUS_EFFECT statusEffect) {
-			if (_statusEffects.Contains(statusEffect)) {
-				return true;
-			}
+            if (_statusEffects.Contains(statusEffect)) {
+                return true;
+            }
             return false;
         }
         #endregion
 
         #region Skills
-		//private List<Skill> GetGeneralSkills(){
-  //          List<Skill> allGeneralSkills = new List<Skill>();
-  //          foreach (Skill skill in SkillManager.Instance.generalSkills.Values) {
-  //              allGeneralSkills.Add(skill.CreateNewCopy());
-  //          }
-  //          return allGeneralSkills;
-		//}
+        //private List<Skill> GetGeneralSkills(){
+        //          List<Skill> allGeneralSkills = new List<Skill>();
+        //          foreach (Skill skill in SkillManager.Instance.generalSkills.Values) {
+        //              allGeneralSkills.Add(skill.CreateNewCopy());
+        //          }
+        //          return allGeneralSkills;
+        //}
         //public List<Skill> GetClassSkills() {
         //    List<Skill> skills = new List<Skill>();
         //    for (int i = 0; i < level; i++) {
@@ -1269,8 +1270,8 @@ namespace ECS {
         #region Roles
         public void AssignRole(CHARACTER_ROLE role) {
             bool wasRoleChanged = false;
-			if(_role != null){
-				_role.ChangedRole ();
+            if (_role != null) {
+                _role.ChangedRole();
 #if !WORLD_CREATION_TOOL
                 Log roleChangeLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "change_role");
                 roleChangeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -1278,13 +1279,13 @@ namespace ECS {
 #endif
                 wasRoleChanged = true;
             }
-			switch (role) {
-		        case CHARACTER_ROLE.HERO:
-			        _role = new Hero(this);
-			        break;
-		        case CHARACTER_ROLE.VILLAIN:
-			        _role = new Villain(this);
-			        break;
+            switch (role) {
+                case CHARACTER_ROLE.HERO:
+                    _role = new Hero(this);
+                    break;
+                case CHARACTER_ROLE.VILLAIN:
+                    _role = new Villain(this);
+                    break;
                 case CHARACTER_ROLE.CIVILIAN:
                     _role = new Civilian(this);
                     break;
@@ -1311,37 +1312,24 @@ namespace ECS {
                     SetName(this.characterClass.className);
                     break;
                 default:
-		            break;
-			}
+                    break;
+            }
             if (_role != null) {
                 _role.OnAssignRole();
+#if !WORLD_CREATION_TOOL
+                AddDefaultInteractions();
+#endif
             }
             if (wasRoleChanged) {
                 Messenger.Broadcast(Signals.ROLE_CHANGED, this);
             }
-		}
-		public void ChangeRole(){
-			//TODO: Things to do when a character changes role
-
-//			AssignRole(role);
-			if(_raceSetting.tags.Contains(ATTRIBUTE.SAPIENT)){
-				CHARACTER_ROLE roleToCreate = CHARACTER_ROLE.HERO;
-				WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary();
-				if (characterRoleProductionDictionary.GetTotalOfWeights () > 0) {
-					roleToCreate = characterRoleProductionDictionary.PickRandomElementGivenWeights ();
-				}
-				AssignRole(roleToCreate);
-			}
-   //         else{
-			//	AssignRole (CHARACTER_ROLE.TAMED_BEAST);
-			//}
-		}
+        }
         #endregion
 
         #region Character Class
-		public void AssignClass(CharacterClass charClass) {
-			_characterClass = charClass;
-		}
+        public void AssignClass(CharacterClass charClass) {
+            _characterClass = charClass;
+        }
         #endregion
 
         #region Character Tags
@@ -1355,106 +1343,106 @@ namespace ECS {
         //        }
         //    }
         //}
-  //      public CharacterAttribute AddAttribute(ATTRIBUTE tag) {
-		//	if(HasAttribute(tag)){
-		//		return null;
-		//	}
-		//	CharacterAttribute charTag = null;
-		//	switch (tag) {
-  //          case ATTRIBUTE.HUNGRY:
-  //              charTag = new Hungry(this);
-  //              break;
-  //          case ATTRIBUTE.FAMISHED:
-  //              charTag = new Famished(this);
-  //              break;
-  //          case ATTRIBUTE.TIRED:
-  //              charTag = new Tired(this);
-  //              break;
-  //          case ATTRIBUTE.EXHAUSTED:
-  //              charTag = new Exhausted(this);
-  //              break;
-  //          case ATTRIBUTE.SAD:
-  //              charTag = new Sad(this);
-  //              break;
-  //          case ATTRIBUTE.DEPRESSED:
-  //              charTag = new Depressed(this);
-  //              break;
-  //          case ATTRIBUTE.ANXIOUS:
-  //              charTag = new Anxious(this);
-  //              break;
-  //          case ATTRIBUTE.INSECURE:
-  //              charTag = new Insecure(this);
-  //              break;
-  //          case ATTRIBUTE.DRUNK:
-  //              charTag = new Drunk(this);
-  //              break;
-  //          case ATTRIBUTE.DISTURBED:
-  //              charTag = new Disturbed(this);
-  //              break;
-  //          case ATTRIBUTE.CRAZED:
-  //              charTag = new Crazed(this);
-  //              break;
-  //          case ATTRIBUTE.DEMORALIZED:
-  //              charTag = new Demoralized(this);
-  //              break;
-  //          case ATTRIBUTE.STARVING:
-  //              charTag = new Starving(this);
-  //              break;
-  //          case ATTRIBUTE.WOUNDED:
-  //              charTag = new Wounded(this);
-  //              break;
-  //          case ATTRIBUTE.WRECKED:
-  //              charTag = new Wrecked(this);
-  //              break;
-  //          case ATTRIBUTE.IMPULSIVE:
-  //              charTag = new Impulsive(this);
-  //              break;
-  //          case ATTRIBUTE.BETRAYED:
-  //              charTag = new Betrayed(this);
-  //              break;
-  //          case ATTRIBUTE.HEARTBROKEN:
-  //              charTag = new Heartbroken(this);
-  //              break;
-  //          }
-		//	if(charTag != null){
-		//		AddCharacterAttribute (charTag);
-		//	}
-  //          return charTag;
-		//}
+        //      public CharacterAttribute AddAttribute(ATTRIBUTE tag) {
+        //	if(HasAttribute(tag)){
+        //		return null;
+        //	}
+        //	CharacterAttribute charTag = null;
+        //	switch (tag) {
+        //          case ATTRIBUTE.HUNGRY:
+        //              charTag = new Hungry(this);
+        //              break;
+        //          case ATTRIBUTE.FAMISHED:
+        //              charTag = new Famished(this);
+        //              break;
+        //          case ATTRIBUTE.TIRED:
+        //              charTag = new Tired(this);
+        //              break;
+        //          case ATTRIBUTE.EXHAUSTED:
+        //              charTag = new Exhausted(this);
+        //              break;
+        //          case ATTRIBUTE.SAD:
+        //              charTag = new Sad(this);
+        //              break;
+        //          case ATTRIBUTE.DEPRESSED:
+        //              charTag = new Depressed(this);
+        //              break;
+        //          case ATTRIBUTE.ANXIOUS:
+        //              charTag = new Anxious(this);
+        //              break;
+        //          case ATTRIBUTE.INSECURE:
+        //              charTag = new Insecure(this);
+        //              break;
+        //          case ATTRIBUTE.DRUNK:
+        //              charTag = new Drunk(this);
+        //              break;
+        //          case ATTRIBUTE.DISTURBED:
+        //              charTag = new Disturbed(this);
+        //              break;
+        //          case ATTRIBUTE.CRAZED:
+        //              charTag = new Crazed(this);
+        //              break;
+        //          case ATTRIBUTE.DEMORALIZED:
+        //              charTag = new Demoralized(this);
+        //              break;
+        //          case ATTRIBUTE.STARVING:
+        //              charTag = new Starving(this);
+        //              break;
+        //          case ATTRIBUTE.WOUNDED:
+        //              charTag = new Wounded(this);
+        //              break;
+        //          case ATTRIBUTE.WRECKED:
+        //              charTag = new Wrecked(this);
+        //              break;
+        //          case ATTRIBUTE.IMPULSIVE:
+        //              charTag = new Impulsive(this);
+        //              break;
+        //          case ATTRIBUTE.BETRAYED:
+        //              charTag = new Betrayed(this);
+        //              break;
+        //          case ATTRIBUTE.HEARTBROKEN:
+        //              charTag = new Heartbroken(this);
+        //              break;
+        //          }
+        //	if(charTag != null){
+        //		AddCharacterAttribute (charTag);
+        //	}
+        //          return charTag;
+        //}
         public CharacterAttribute CreateAttribute(ATTRIBUTE type) {
             switch (type) {
                 case ATTRIBUTE.GREGARIOUS:
-                return new Gregarious();
+                    return new Gregarious();
                 case ATTRIBUTE.BOOKWORM:
-                return new Bookworm();
+                    return new Bookworm();
                 case ATTRIBUTE.SINGER:
-                return new Singer();
+                    return new Singer();
                 case ATTRIBUTE.DAYDREAMER:
-                return new Daydreamer();
+                    return new Daydreamer();
                 case ATTRIBUTE.MEDITATOR:
-                return new Meditator();
+                    return new Meditator();
                 case ATTRIBUTE.CLEANER:
-                return new Cleaner();
+                    return new Cleaner();
                 case ATTRIBUTE.INTROVERT:
-                return new Introvert();
+                    return new Introvert();
                 case ATTRIBUTE.EXTROVERT:
-                return new Extrovert();
+                    return new Extrovert();
                 case ATTRIBUTE.BELLIGERENT:
-                return new Belligerent();
+                    return new Belligerent();
                 case ATTRIBUTE.LIBERATED:
-                return new Liberated();
+                    return new Liberated();
                 case ATTRIBUTE.UNFAITHFUL:
-                return new Unfaithful();
+                    return new Unfaithful();
                 case ATTRIBUTE.DEAFENED:
-                return new Deafened();
+                    return new Deafened();
                 case ATTRIBUTE.MUTE:
-                return new Mute();
+                    return new Mute();
                 case ATTRIBUTE.ROYALTY:
-                return new Royalty();
+                    return new Royalty();
                 case ATTRIBUTE.STALKER:
-                return new Stalker();
+                    return new Stalker();
                 case ATTRIBUTE.SPOOKED:
-                return new Spooked();
+                    return new Spooked();
                 case ATTRIBUTE.HUMAN:
                     return new Human();
                 case ATTRIBUTE.HUNGRY:
@@ -1494,48 +1482,48 @@ namespace ECS {
                 case ATTRIBUTE.HEARTBROKEN:
                     return new Heartbroken();
                 case ATTRIBUTE.MARKED:
-                return new Marked();
+                    return new Marked();
             }
             return null;
         }
-        private void GenerateRaceAttributes(){
-			for (int i = 0; i < _raceSetting.tags.Count; i++) {
-				AddAttribute (_raceSetting.tags [i]);
-			}
-		}
+        private void GenerateRaceAttributes() {
+            for (int i = 0; i < _raceSetting.tags.Count; i++) {
+                AddAttribute(_raceSetting.tags[i]);
+            }
+        }
         private void GenerateSetupAttributes(CharacterSetup setup) {
             for (int i = 0; i < setup.tags.Count; i++) {
                 AddAttribute(setup.tags[i]);
             }
         }
-        public bool HasAttributes(ATTRIBUTE[] tagsToHave, bool mustHaveAll = false){
-			return DoesHaveAttributes (this, tagsToHave, mustHaveAll);
-		}
-		private bool DoesHaveAttributes(Character currCharacter, ATTRIBUTE[] tagsToHave, bool mustHaveAll = false){
-			if(mustHaveAll){
-				int tagsCount = 0;
-				for (int i = 0; i < currCharacter.attributes.Count; i++) {
-					for (int j = 0; j < tagsToHave.Length; j++) {
-						if(tagsToHave[j] == currCharacter.attributes[i].attribute) {
-							tagsCount++;
-							break;
-						}
-					}
-					if(tagsCount >= tagsToHave.Length){
-						return true;
-					}
-				}
-			}else{
-				for (int i = 0; i < currCharacter.attributes.Count; i++) {
-					for (int j = 0; j < tagsToHave.Length; j++) {
-						if(tagsToHave[j] == currCharacter.attributes[i].attribute) {
-							return true;
-						}
-					}
-				}
-			}
-			return false;
-		}
+        public bool HasAttributes(ATTRIBUTE[] tagsToHave, bool mustHaveAll = false) {
+            return DoesHaveAttributes(this, tagsToHave, mustHaveAll);
+        }
+        private bool DoesHaveAttributes(Character currCharacter, ATTRIBUTE[] tagsToHave, bool mustHaveAll = false) {
+            if (mustHaveAll) {
+                int tagsCount = 0;
+                for (int i = 0; i < currCharacter.attributes.Count; i++) {
+                    for (int j = 0; j < tagsToHave.Length; j++) {
+                        if (tagsToHave[j] == currCharacter.attributes[i].attribute) {
+                            tagsCount++;
+                            break;
+                        }
+                    }
+                    if (tagsCount >= tagsToHave.Length) {
+                        return true;
+                    }
+                }
+            } else {
+                for (int i = 0; i < currCharacter.attributes.Count; i++) {
+                    for (int j = 0; j < tagsToHave.Length; j++) {
+                        if (tagsToHave[j] == currCharacter.attributes[i].attribute) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
         public CharacterAttribute GetAttribute(ATTRIBUTE attribute) {
             for (int i = 0; i < _attributes.Count; i++) {
                 if (_attributes[i].attribute == attribute) {
@@ -1553,7 +1541,7 @@ namespace ECS {
             return null;
         }
         public CharacterAttribute AddAttribute(ATTRIBUTE attribute) {
-            if(GetAttribute(attribute) == null) {
+            if (GetAttribute(attribute) == null) {
                 CharacterAttribute newAttribute = CreateAttribute(attribute);
                 _attributes.Add(newAttribute);
 #if !WORLD_CREATION_TOOL
@@ -1576,7 +1564,7 @@ namespace ECS {
         }
         public bool RemoveAttribute(ATTRIBUTE attribute) {
             for (int i = 0; i < _attributes.Count; i++) {
-                if(_attributes[i].attribute == attribute) {
+                if (_attributes[i].attribute == attribute) {
                     CharacterAttribute removedAttribute = _attributes[i];
 #if !WORLD_CREATION_TOOL
                     removedAttribute.OnRemoveAttribute();
@@ -1603,9 +1591,9 @@ namespace ECS {
 
         #region Faction
         public void SetFaction(Faction faction) {
-			_faction = faction;
+            _faction = faction;
             Messenger.Broadcast<Character>(Signals.FACTION_SET, this);
-		}
+        }
         #endregion
 
         #region Party
@@ -1613,7 +1601,7 @@ namespace ECS {
          Create a new Party with this character as the leader.
              */
         public virtual Party CreateOwnParty() {
-            if(_ownParty != null) {
+            if (_ownParty != null) {
                 _ownParty.RemoveCharacter(this);
             }
             CharacterParty newParty = new CharacterParty(this);
@@ -1622,9 +1610,9 @@ namespace ECS {
             newParty.CreateCharacterObject();
             return newParty;
         }
-		public virtual void SetOwnedParty(Party party) {
-			_ownParty = party as CharacterParty;
-		}
+        public virtual void SetOwnedParty(Party party) {
+            _ownParty = party as CharacterParty;
+        }
         public virtual void SetCurrentParty(Party party) {
             _currentParty = party as CharacterParty;
         }
@@ -1687,96 +1675,17 @@ namespace ECS {
         #endregion
 
         #region Location
-		public bool IsCharacterInAdjacentRegionOfThis(Character targetCharacter){
-			for (int i = 0; i < _currentRegion.adjacentRegionsViaRoad.Count; i++) {
-				if(targetCharacter.party.currentRegion.id == _currentRegion.adjacentRegionsViaRoad[i].id){
-					return true;
-				}
-			}
-			return false;
-		}
+        public bool IsCharacterInAdjacentRegionOfThis(Character targetCharacter) {
+            for (int i = 0; i < _currentRegion.adjacentRegionsViaRoad.Count; i++) {
+                if (targetCharacter.party.currentRegion.id == _currentRegion.adjacentRegionsViaRoad[i].id) {
+                    return true;
+                }
+            }
+            return false;
+        }
         #endregion
 
         #region Quests
-        //public void AddQuestData(CharacterQuestData questData) {
-        //    if (!_questData.Contains(questData)) {
-        //        _questData.Add(questData);
-        //    }
-        //}
-        //public void RemoveQuestData(CharacterQuestData questData) {
-        //    _questData.Remove(questData);
-        //}
-        //public bool HasQuest(Quest quest) {
-        //    for (int i = 0; i < questData.Count; i++) {
-        //        if (questData[i].parentQuest.id == quest.id) {
-        //            return true;
-        //        }
-        //    }
-        //    return false;
-        //}
-        //public CharacterQuestData GetDataForQuest(Quest quest) {
-        //    for (int i = 0; i < questData.Count; i++) {
-        //        CharacterQuestData data = questData[i];
-        //        if (data.parentQuest.id == quest.id) {
-        //            return data;
-        //        }
-        //    }
-        //    return null;
-        //}
-        //public CharacterQuestData GetSquadDataForQuest(Quest quest) {
-        //    //get quest data for quest that can come from a squad member
-        //    if (IsSquadLeader() && quest.groupType == GROUP_TYPE.PARTY) {
-        //        for (int i = 0; i < squad.squadMembers.Count; i++) {
-        //            ICharacter currMember = squad.squadMembers[i];
-        //            if (currMember is Character) {
-        //                Character member = currMember as Character;
-        //                CharacterQuestData questData = member.GetDataForQuest(quest);
-        //                if (questData != null) {
-        //                    return questData;
-        //                }
-        //            }
-        //        }
-        //    }
-        //    return null;
-        //}
-        //public List<Quest> GetAcceptedQuestsByGroup(GROUP_TYPE groupType) {
-        //    List<Quest> quests = new List<Quest>();
-        //    for (int i = 0; i < questData.Count; i++) {
-        //        CharacterQuestData data = questData[i];
-        //        if (data.parentQuest.groupType == groupType) {
-        //            quests.Add(data.parentQuest);
-        //        }
-        //    }
-        //    return quests;
-        //}
-        //public void OnTakeQuest(Quest takenQuest) {
-            //if (takenQuest.groupType == GROUP_TYPE.PARTY && this.squad == null) { //When a character gains a Party Type Quest and he isnt a part of a Squad yet,
-            //    if (this.role == null) {
-            //        return;
-            //    }
-            //    if (this.role.roleType == CHARACTER_ROLE.CIVILIAN) { //If he is a Civilian-type
-            //        if (this.mentalPoints <= -6) {
-            //            //if Mental Points is -6 or below, the character will request to chat with the Player and ask for his help
-            //        } else if (this.HasTag(ATTRIBUTE.IMPULSIVE)) {
-            //            //else, if character has impulsive trait, a change action to a randomized Hero class will be added at the end of his Action Queue.
-            //            ChangeClassAction changeClassAction = ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.CHANGE_CLASS) as ChangeClassAction;
-            //            string[] choices = new string[] { "Warrior" };
-            //            changeClassAction.SetAdvertisedClass(choices[UnityEngine.Random.Range(0, choices.Length)]);
-            //            AddActionToQueue(changeClassAction, ownParty.icharacterObject);
-            //        } else {
-            //            //else, character will advertise his Quest for other people to take
-            //        }
-            //    } else if (this.role.roleType == CHARACTER_ROLE.HERO) { //If he is a Hero-type
-            //        if (this.mentalPoints <= -6) {
-            //            //if Mental Points is -6 or below, the character will request to chat with the Player and ask for his help
-            //        } else if (this.HasTag(ATTRIBUTE.IMPULSIVE)) {
-            //            //else, if character has impulsive trait, he will attempt the quest without any other people's help
-            //        } else {
-            //            //else, character will create a new Squad and become its Squad Leader and will perform a Recruit Squadmates action
-            //        }
-            //    }
-            //}
-        //}
         public bool HasQuest() {
             return currentQuest != null;
         }
@@ -1831,9 +1740,9 @@ namespace ECS {
 #endif
 
         }
-        public void SetName(string newName){
-			_name = newName;
-		}
+        public void SetName(string newName) {
+            _name = newName;
+        }
         //If true, character can't do daily action (onDailyAction), i.e. actions, needs
         //public void SetIsIdle(bool state) {
         //    _isIdle = state;
@@ -2023,7 +1932,7 @@ namespace ECS {
         #endregion
 
         #region Character
-		public bool IsHostileWith(Character character){
+        public bool IsHostileWith(Character character) {
             if (this.faction == null) {
                 return true; //this character has no faction
             }
@@ -2032,51 +1941,51 @@ namespace ECS {
             //}
             //Check here if the combatInitializer is hostile with this character, if yes, return true
             Faction factionOfEnemy = character.faction;
-            
+
             //if (combatInitializer.icharacterType == ICHARACTER_TYPE.CHARACTER) {
             //    factionOfEnemy = (combatInitializer as Character).faction;
             //}else if(combatInitializer is Party) {
             //    factionOfEnemy = (combatInitializer as Party).faction;
             //}
-            if(factionOfEnemy != null) {
-                if(factionOfEnemy.id == this.faction.id) {
+            if (factionOfEnemy != null) {
+                if (factionOfEnemy.id == this.faction.id) {
                     return false; //characters are of same faction
                 }
                 FactionRelationship rel = this.faction.GetRelationshipWith(factionOfEnemy);
-                if(rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+                if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
                     return true; //factions of combatants are hostile
                 }
                 return false;
             } else {
                 return true; //enemy has no faction
             }
-			
-		}
+
+        }
         public STANCE GetCurrentStance() {
             return STANCE.NEUTRAL;
         }
         #endregion
 
         #region Combat Handlers
-		public void SetIsInCombat (bool state){
-			_isInCombat = state;
-		}
+        public void SetIsInCombat(bool state) {
+            _isInCombat = state;
+        }
         #endregion
 
         #region Landmarks
-        public void AddExploredLandmark(BaseLandmark landmark){
-			_exploredLandmarks.Add(landmark); //did not add checking if landmark is already in list, since I want to allow duplicates
+        public void AddExploredLandmark(BaseLandmark landmark) {
+            _exploredLandmarks.Add(landmark); //did not add checking if landmark is already in list, since I want to allow duplicates
             //schedule removal of landmark after 6 months
             GameDate expiration = GameManager.Instance.Today();
             expiration.AddMonths(6);
             SchedulingManager.Instance.AddEntry(expiration, () => RemoveLandmarkAsExplored(landmark));
-		}
+        }
         private void RemoveLandmarkAsExplored(BaseLandmark landmark) {
             _exploredLandmarks.Remove(landmark);
         }
         private void OnDestroyLandmark(BaseLandmark landmark) {
-            if(specificLocation.tileLocation.landmarkOnTile != null && specificLocation.tileLocation.landmarkOnTile.id == landmark.id) {
-                if(!_isDead && _currentParty.icon.isTravelling) {
+            if (specificLocation.tileLocation.landmarkOnTile != null && specificLocation.tileLocation.landmarkOnTile.id == landmark.id) {
+                if (!_isDead && _currentParty.icon.isTravelling) {
                     return;
                 }
                 Death();
@@ -2084,97 +1993,70 @@ namespace ECS {
         }
         #endregion
 
-        //#region Psytoxin
-		//private void RegionPsytoxin(List<Region> regions){
-		//	for (int i = 0; i < regions.Count; i++) {
-		//		if(_party.currentRegion.id == regions[i].id){
-		//			InfectedByPsytoxin ();
-		//			break;
-		//		}
-		//	}
-		//}
-		//private void InfectedByPsytoxin(){
-		//	if(HasTag(ATTRIBUTE.SEVERE_PSYTOXIN)){
-		//		return;	
-		//	}
-		//	ModeratePsytoxin modPsytoxin = (ModeratePsytoxin)GetTag (ATTRIBUTE.MODERATE_PSYTOXIN);
-		//	if(modPsytoxin != null){
-		//		modPsytoxin.TriggerWorsenCase ();
-		//	}else{
-		//		MildPsytoxin mildPsytoxin = (MildPsytoxin)GetTag (ATTRIBUTE.MILD_PSYTOXIN);
-		//		if(mildPsytoxin != null){
-		//			mildPsytoxin.TriggerWorsenCase ();
-		//		}else{
-		//			AssignTag (ATTRIBUTE.MILD_PSYTOXIN);
-		//		}
-		//	}
-		//}
-        //#endregion
-
         #region Traces
-		public void LeaveTraceOnLandmark(){
-			ILocation location = _ownParty.specificLocation;
-			if(location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
-				BaseLandmark landmark = location as BaseLandmark;
-				int chance = UnityEngine.Random.Range (0, 100);
-				int value = GetLeaveTraceChance ();
-				if(chance < value){
+        public void LeaveTraceOnLandmark() {
+            ILocation location = _ownParty.specificLocation;
+            if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+                BaseLandmark landmark = location as BaseLandmark;
+                int chance = UnityEngine.Random.Range(0, 100);
+                int value = GetLeaveTraceChance();
+                if (chance < value) {
                     landmark.AddTrace(this);
                 }
-			}
-		}
-		private int GetLeaveTraceChance(){
-			STANCE stance = GetCurrentStance ();
-			switch(stance){
-			case STANCE.COMBAT:
-				return 100;
-			case STANCE.NEUTRAL:
-				return 50;
-			case STANCE.STEALTHY:
-				return 25;
-			}
-			return 0;
-		}
-		public void AddTraceInfo(Character character, string identifier, bool isUnique){
-			if(isUnique){
-				Character previousTrace = GetCharacterFromTraceInfo (identifier);
-				if(previousTrace != null){ //If there is an existing trace of the item, replace it with this new trace
-					if(previousTrace.id != character.id){
-						_traceInfo [previousTrace].Remove (identifier);
-						if(_traceInfo[previousTrace].Count <= 0){
-							_traceInfo.Remove (previousTrace);
-						}
-						Debug.Log (this.name +  " REMOVED TRACE INFO OF " + previousTrace.name + " FOR " + identifier);
-					}else{
-						return;
-					}
-				}
-			}
-			if(_traceInfo.ContainsKey(character)){
-				if(!_traceInfo [character].Contains(identifier)){
-					_traceInfo [character].Add (identifier);
-					Debug.Log (this.name +  " ADDED TRACE INFO OF " + character.name + " FOR " + identifier);
-				}
-			}else{
-				_traceInfo.Add (character, new List<string> (){ identifier });
-				Debug.Log (this.name +  " ADDED TRACE INFO OF " + character.name + " FOR " + identifier);
-			}
-		}
-		public Character GetCharacterFromTraceInfo(string info){
-			foreach (Character character in _traceInfo.Keys) {
-				if(_traceInfo[character].Contains(info)){
-					return character;
-				}
-			}
-			return null;
-		}
+            }
+        }
+        private int GetLeaveTraceChance() {
+            STANCE stance = GetCurrentStance();
+            switch (stance) {
+                case STANCE.COMBAT:
+                    return 100;
+                case STANCE.NEUTRAL:
+                    return 50;
+                case STANCE.STEALTHY:
+                    return 25;
+            }
+            return 0;
+        }
+        public void AddTraceInfo(Character character, string identifier, bool isUnique) {
+            if (isUnique) {
+                Character previousTrace = GetCharacterFromTraceInfo(identifier);
+                if (previousTrace != null) { //If there is an existing trace of the item, replace it with this new trace
+                    if (previousTrace.id != character.id) {
+                        _traceInfo[previousTrace].Remove(identifier);
+                        if (_traceInfo[previousTrace].Count <= 0) {
+                            _traceInfo.Remove(previousTrace);
+                        }
+                        Debug.Log(this.name +  " REMOVED TRACE INFO OF " + previousTrace.name + " FOR " + identifier);
+                    } else {
+                        return;
+                    }
+                }
+            }
+            if (_traceInfo.ContainsKey(character)) {
+                if (!_traceInfo[character].Contains(identifier)) {
+                    _traceInfo[character].Add(identifier);
+                    Debug.Log(this.name +  " ADDED TRACE INFO OF " + character.name + " FOR " + identifier);
+                }
+            } else {
+                _traceInfo.Add(character, new List<string>() { identifier });
+                Debug.Log(this.name +  " ADDED TRACE INFO OF " + character.name + " FOR " + identifier);
+            }
+        }
+        public Character GetCharacterFromTraceInfo(string info) {
+            foreach (Character character in _traceInfo.Keys) {
+                if (_traceInfo[character].Contains(info)) {
+                    return character;
+                }
+            }
+            return null;
+        }
         #endregion
 
         #region Action Queue
         public bool DoesSatisfiesPrerequisite(IPrerequisite prerequisite) {
-            if(prerequisite.prerequisiteType == PREREQUISITE.RESOURCE) {
+            if (prerequisite.prerequisiteType == PREREQUISITE.RESOURCE) {
                 ResourcePrerequisite resourcePrerequisite = prerequisite as ResourcePrerequisite;
-                if(resourcePrerequisite.resourceType != RESOURCE.NONE && _ownParty.characterObject.resourceInventory[resourcePrerequisite.resourceType] >= resourcePrerequisite.amount) {
+                if (resourcePrerequisite.resourceType != RESOURCE.NONE && _ownParty.characterObject.resourceInventory[resourcePrerequisite.resourceType] >= resourcePrerequisite.amount) {
                     return true;
                 }
             }
@@ -2203,17 +2085,17 @@ namespace ECS {
 
         #region RPG
         public void LevelUp() {
-            if(_level < CharacterManager.Instance.maxLevel) {
+            if (_level < CharacterManager.Instance.maxLevel) {
                 _level += 1;
                 _experience = 0;
                 RecomputeMaxExperience();
                 //Add stats per level from class
-                _attackPower += (int) ((_characterClass.attackPowerPerLevel / 100f) * (float) _raceSetting.baseAttackPower);
-                _speed += (int) ((_characterClass.speedPerLevel / 100f) * (float) _raceSetting.baseSpeed);
-                AdjustMaxHP((int) ((_characterClass.hpPerLevel / 100f) * (float) _raceSetting.baseHP));
+                _attackPower += (int)((_characterClass.attackPowerPerLevel / 100f) * (float)_raceSetting.baseAttackPower);
+                _speed += (int)((_characterClass.speedPerLevel / 100f) * (float)_raceSetting.baseSpeed);
+                AdjustMaxHP((int)((_characterClass.hpPerLevel / 100f) * (float)_raceSetting.baseHP));
                 _maxSP += _characterClass.spPerLevel;
                 //Add stats per level from race
-                if(_level > 1) {
+                if (_level > 1) {
                     int hpIndex = _level % _raceSetting.hpPerLevel.Length;
                     hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
                     int attackIndex = _level % _raceSetting.attackPerLevel.Length;
@@ -2230,20 +2112,20 @@ namespace ECS {
         }
         public void LevelUp(int amount) {
             _level = amount;
-            if(_level < 1) {
+            if (_level < 1) {
                 _level = 1;
             }
             AllocateStats();
             int multiplier = _level - 1;
 
             //Add stats per level from class
-            _attackPower += (multiplier * (int) ((_characterClass.attackPowerPerLevel / 100f) * (float) _raceSetting.baseAttackPower));
-            _speed += (multiplier * (int) ((_characterClass.speedPerLevel / 100f) * (float) _raceSetting.baseSpeed));
-            AdjustMaxHP((multiplier * (int) ((_characterClass.hpPerLevel / 100f) * (float) _raceSetting.baseHP)));
+            _attackPower += (multiplier * (int)((_characterClass.attackPowerPerLevel / 100f) * (float)_raceSetting.baseAttackPower));
+            _speed += (multiplier * (int)((_characterClass.speedPerLevel / 100f) * (float)_raceSetting.baseSpeed));
+            AdjustMaxHP((multiplier * (int)((_characterClass.hpPerLevel / 100f) * (float)_raceSetting.baseHP)));
             _maxSP += _characterClass.spPerLevel;
             //Add stats per level from race
             if (_level > 1) {
-                if(_raceSetting.hpPerLevel.Length > 0) {
+                if (_raceSetting.hpPerLevel.Length > 0) {
                     int hpIndex = _level % _raceSetting.hpPerLevel.Length;
                     hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
                     AdjustMaxHP(_raceSetting.hpPerLevel[hpIndex - 1]);
@@ -2264,7 +2146,7 @@ namespace ECS {
             RecomputeMaxExperience();
         }
         public void OnCharacterClassChange() {
-            if(_currentHP > _maxHP) {
+            if (_currentHP > _maxHP) {
                 _currentHP = _maxHP;
             }
             if (_sp > _maxSP) {
@@ -2273,7 +2155,7 @@ namespace ECS {
         }
         public void AdjustExperience(int amount) {
             _experience += amount;
-            if(_experience >= _maxExperience) {
+            if (_experience >= _maxExperience) {
                 LevelUp();
             }
         }
@@ -2288,7 +2170,7 @@ namespace ECS {
             _sp = Mathf.Clamp(_sp, 0, _maxSP);
         }
         private void RecomputeMaxExperience() {
-            _maxExperience = Mathf.CeilToInt(100f * ((Mathf.Pow((float) _level, 1.25f)) / 1.1f));
+            _maxExperience = Mathf.CeilToInt(100f * ((Mathf.Pow((float)_level, 1.25f)) / 1.1f));
         }
         public void ResetToFullHP() {
             SetHP(maxHP);
@@ -2307,7 +2189,7 @@ namespace ECS {
             int previousMaxHP = maxHP;
             _maxHP = amount;
             int currentMaxHP = maxHP;
-            if(_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
+            if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
                 _currentHP = currentMaxHP;
             }
         }
@@ -2322,25 +2204,6 @@ namespace ECS {
         #endregion
 
         #region Player/Character Actions
-        public void OnThisCharacterSnatched() {
-            BaseLandmark snatcherLair = PlayerManager.Instance.player.GetAvailableSnatcherLair();
-            if (snatcherLair == null) {
-                throw new Exception("There is not available snatcher lair!");
-            } else {
-                Imprison();
-                if (IsInOwnParty()) {
-                    //character is in his/her own party
-                    ILocation location = currentParty.specificLocation;
-                    if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) { //if character is at a landmark
-                        location.RemoveCharacterFromLocation(currentParty);
-                    }
-                } else {
-                    //character is in another party
-                    this.currentParty.RemoveCharacter(this);
-                }
-                snatcherLair.AddCharacterToLocation(ownParty);
-            }
-        }
         private void ConstructDefaultMiscActions() {
             _miscActions = new List<CharacterAction>();
             CharacterAction read = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.READ);
@@ -2367,7 +2230,7 @@ namespace ECS {
             if (chosenAction is ChatAction) {
                 List<CharacterParty> partyPool = new List<CharacterParty>();
                 CharacterParty chosenParty = GetPriority1TargetChatAction(partyPool);
-                if(chosenParty == null) {
+                if (chosenParty == null) {
                     chosenParty = GetPriority2TargetChatAction(partyPool);
                     if (chosenParty == null) {
                         chosenParty = GetPriority3TargetChatAction(partyPool);
@@ -2376,7 +2239,7 @@ namespace ECS {
                         }
                     }
                 }
-                if(chosenParty == null) {
+                if (chosenParty == null) {
                     _miscActions.Remove(chosenAction);
                     CharacterAction newChosenAction = _miscActions[Utilities.rng.Next(0, _miscActions.Count)];
                     _miscActions.Add(chosenAction);
@@ -2391,9 +2254,9 @@ namespace ECS {
             WeightedDictionary<ActionAndTarget> miscActionOptions = new WeightedDictionary<ActionAndTarget>();
             for (int i = 0; i < _miscActions.Count; i++) {
                 CharacterAction currentAction = _miscActions[i];
-                if(currentAction.disableCounter <= 0 && currentAction.enableCounter > 0) {
+                if (currentAction.disableCounter <= 0 && currentAction.enableCounter > 0) {
                     IObject currentTarget = currentAction.GetTargetObject(_ownParty);
-                    if(currentTarget != null) {
+                    if (currentTarget != null) {
                         ActionAndTarget actionAndTarget = new ActionAndTarget() {
                             action = currentAction,
                             target = currentTarget
@@ -2409,7 +2272,7 @@ namespace ECS {
         }
         public CharacterAction GetMiscAction(ACTION_TYPE type) {
             for (int i = 0; i < _miscActions.Count; i++) {
-                if(_miscActions[i].actionData.actionType == type) {
+                if (_miscActions[i].actionData.actionType == type) {
                     return _miscActions[i];
                 }
             }
@@ -2447,7 +2310,7 @@ namespace ECS {
                     partyPool.Add(party);
                 }
             }
-            if(partyPool.Count > 0) {
+            if (partyPool.Count > 0) {
                 return partyPool[Utilities.rng.Next(0, partyPool.Count)];
             }
             return null;
@@ -2455,7 +2318,7 @@ namespace ECS {
         private CharacterParty GetPriority2TargetChatAction(List<CharacterParty> partyPool) {
             //random parties within non-hostile factions within settlements
             partyPool.Clear();
-            List<Faction> nonHostileFactions = FactionManager.Instance.GetFactionsWithByStatus(faction, FACTION_RELATIONSHIP_STATUS.NON_HOSTILE); 
+            List<Faction> nonHostileFactions = FactionManager.Instance.GetFactionsWithByStatus(faction, FACTION_RELATIONSHIP_STATUS.NON_HOSTILE);
             for (int i = 0; i < nonHostileFactions.Count; i++) {
                 Faction nonHostileFaction = nonHostileFactions[i];
                 for (int k = 0; k < nonHostileFaction.characters.Count; k++) {
@@ -2475,8 +2338,8 @@ namespace ECS {
             partyPool.Clear();
             for (int i = 0; i < faction.characters.Count; i++) {
                 CharacterParty party = faction.characters[i].party;
-                if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && party.landmarkLocation != null 
-                    && !faction.ownedAreas.Contains(party.landmarkLocation.tileLocation.areaOfTile) && !partyPool.Contains(party) 
+                if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && party.landmarkLocation != null
+                    && !faction.ownedAreas.Contains(party.landmarkLocation.tileLocation.areaOfTile) && !partyPool.Contains(party)
                     && party.actionData.currentAction != null && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.MISC) {
                     partyPool.Add(party);
                 }
@@ -2494,8 +2357,8 @@ namespace ECS {
                 Faction nonHostileFaction = nonHostileFactions[i];
                 for (int k = 0; k < nonHostileFaction.characters.Count; k++) {
                     CharacterParty party = nonHostileFaction.characters[k].party;
-                    if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && party.landmarkLocation != null 
-                        && !faction.ownedAreas.Contains(party.landmarkLocation.tileLocation.areaOfTile) && !partyPool.Contains(party) 
+                    if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && party.landmarkLocation != null
+                        && !faction.ownedAreas.Contains(party.landmarkLocation.tileLocation.areaOfTile) && !partyPool.Contains(party)
                         && party.actionData.currentAction != null && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.MISC) {
                         partyPool.Add(party);
                     }
@@ -2506,52 +2369,6 @@ namespace ECS {
             }
             return null;
         }
-        #endregion
-
-        #region Snatch
-        /*
-         When the player successfully snatches a character, other characters with relation to 
-         the snatched one would all be sent signals to check whether they should react or not. 
-         Other character reaction would depend on their relationship, happiness and traits.
-             */
-        //private void OnCharacterSnatched(ECS.Character otherCharacter) {
-        //    if (otherCharacter.id != this.id && this.party.characterObject.currentState.stateName != "Imprisoned") {
-        //        if (relationships.ContainsKey(otherCharacter)) { //if this character has a relationship with the one that was snatched
-        //            Debug.Log(this.name + " will react to " + otherCharacter.name + " being snatched!");
-        //            //For now make all characters that have relationship with the snatched character, react.
-        //            if (UnityEngine.Random.Range(0, 1) == 0) {
-        //                //obtain release character questline
-        //                Debug.Log(this.name + " decided to release " + otherCharacter.name + " by himself");
-        //                //QuestManager.Instance.TakeQuest(QUEST_TYPE.RELEASE_CHARACTER, this, otherCharacter);
-        //            } else {
-        //                //bargain with player
-        //                Debug.Log(this.name + " will bargain for " + otherCharacter.name + "'s freedom!");
-        //                TriggerBargain(otherCharacter);
-        //            }
-        //        }
-        //    }
-        //}
-        //private void TriggerBargain(ECS.Character bargainingFor) {
-        //    List<CharacterDialogChoice> dialogChoices = new List<CharacterDialogChoice>();
-        //    CharacterDialogChoice killYourselfChoice = new CharacterDialogChoice("Kill yourself!", () => this.Death());
-        //    List<Character> otherCharacters = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => x.party.characterObject.currentState.stateName != "Imprisoned"));
-        //    otherCharacters.Remove(this);
-        //    dialogChoices.Add(killYourselfChoice);
-        //    if (otherCharacters.Count > 0) {
-        //        ECS.Character characterToAttack = otherCharacters[UnityEngine.Random.Range(0, otherCharacters.Count)];
-        //        CharacterDialogChoice attackCharacterChoice = new CharacterDialogChoice("Attack " + characterToAttack.name, 
-        //            () => party.actionData.ForceDoAction(characterToAttack.party.characterObject.currentState.GetAction(ACTION_TYPE.ATTACK)
-        //            , characterToAttack.party.characterObject));
-        //        dialogChoices.Add(attackCharacterChoice);
-        //    }
-
-        //    UnityEngine.Events.UnityAction onClickAction = () => Messenger.Broadcast(Signals.SHOW_CHARACTER_DIALOG, this, "Please release " + bargainingFor.name + "!", dialogChoices);
-
-        //    Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>
-        //        (Signals.SHOW_NOTIFICATION, this.name + " wants to bargain for " + bargainingFor.name + "'s freedom!",
-        //        144,
-        //        onClickAction);
-        //}
         #endregion
 
         #region Home
@@ -2604,9 +2421,6 @@ namespace ECS {
             }
             return chosenLandmark;
         }
-        //public void SetHome(Area newHome) {
-        //    _home = newHome;
-        //}
         public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
             BaseLandmark previousHome = _homeLandmark;
             this._homeLandmark = newHomeLandmark;
@@ -2634,18 +2448,6 @@ namespace ECS {
                 }
             }
         }
-        //public void SetHomeStructure(StructureObj newHomeStructure) {
-        //    if (_homeStructure != null) {
-        //        _homeStructure.AdjustNumOfResidents(-1);
-        //    }
-        //    _homeStructure = newHomeStructure;
-        //    newHomeStructure.AdjustNumOfResidents(1);
-        //}
-        //private void OnAreaDeleted(Area deletedArea) {
-        //    if (_home.id == deletedArea.id) {
-        //        SetHome(null);
-        //    }
-        //}
         #endregion
 
         #region Work
@@ -2658,7 +2460,7 @@ namespace ECS {
                 for (int i = 0; i < _homeLandmark.tileLocation.areaOfTile.landmarks.Count; i++) {
                     StructureObj structure = _homeLandmark.tileLocation.areaOfTile.landmarks[i].landmarkObj;
                     for (int j = 0; j < structure.currentState.actions.Count; j++) {
-                        if(structure.currentState.actions[j].actionType == _characterClass.workActionType) {
+                        if (structure.currentState.actions[j].actionType == _characterClass.workActionType) {
                             workplaceChoices.Add(_homeLandmark.tileLocation.areaOfTile.landmarks[i]);
                             break;
                         }
@@ -2699,7 +2501,7 @@ namespace ECS {
         public void RemoveActionFromQueue(CharacterAction action) {
             for (int i = 0; i < _actionQueue.Count; i++) {
                 ActionQueueItem queueItem = _actionQueue.GetBasedOnIndex(i);
-                if(queueItem.action == action) {
+                if (queueItem.action == action) {
                     _actionQueue.RemoveAt(i);
                     break;
                 }
@@ -2807,7 +2609,7 @@ namespace ECS {
                 if (party.actionData.isCurrentActionFromEvent) { //if this character's current action is from an event, do not perform the action from the next scheduled event.
                     Debug.LogWarning(this.name + " did not perform the next event action, since their current action is already from an event");
                 } else { //else if this character's action is not from an event
-                        //leave now and do the event action
+                         //leave now and do the event action
                     AddActionToQueue(nextScheduledEvent.GetNextEventAction(this), nextScheduledEvent); //queue the event action
                     _ownParty.actionData.EndCurrentAction();  //then end their current action
                 }
@@ -2822,7 +2624,7 @@ namespace ECS {
         #region IInteractable
         public void SetIsBeingInspected(bool state) {
             _isBeingInspected = state;
-            if(_currentParty.icon != null) {
+            if (_currentParty.icon != null) {
                 _currentParty.icon.UpdateVisualState();
             }
             if (_currentParty.specificLocation != null && _currentParty.specificLocation.tileLocation.landmarkOnTile != null) {
@@ -2964,7 +2766,7 @@ namespace ECS {
 
         #region Combat Attributes
         public void AddCombatAttribute(CombatAttribute combatAttribute) {
-            if(string.IsNullOrEmpty(GetCombatAttribute(combatAttribute.name).name)) {
+            if (string.IsNullOrEmpty(GetCombatAttribute(combatAttribute.name).name)) {
                 _combatAttributes.Add(combatAttribute);
                 ApplyCombatAttributeEffects(combatAttribute);
             }
@@ -2974,42 +2776,42 @@ namespace ECS {
                 if (_combatAttributes[i].name == combatAttribute.name) {
                     _combatAttributes.RemoveAt(i);
                     UnapplyCombatAttributeEffects(combatAttribute);
-                    return true;    
+                    return true;
                 }
             }
             return false;
         }
         public CombatAttribute GetCombatAttribute(string attributeName) {
             for (int i = 0; i < _combatAttributes.Count; i++) {
-                if(_combatAttributes[i].name == attributeName) {
+                if (_combatAttributes[i].name == attributeName) {
                     return _combatAttributes[i];
                 }
             }
             return new CombatAttribute();
         }
         private void ApplyCombatAttributeEffects(CombatAttribute combatAttribute) {
-            if(!combatAttribute.hasRequirement) {
-                if(combatAttribute.stat == STAT.ATTACK) {
+            if (!combatAttribute.hasRequirement) {
+                if (combatAttribute.stat == STAT.ATTACK) {
                     if (combatAttribute.isPercentage) {
                         float result = _attackPower * (combatAttribute.amount / 100f);
-                        _attackPower += (int) result;
+                        _attackPower += (int)result;
                     } else {
-                        _attackPower += (int) combatAttribute.amount;
+                        _attackPower += (int)combatAttribute.amount;
                     }
-                }else if (combatAttribute.stat == STAT.HP) {
+                } else if (combatAttribute.stat == STAT.HP) {
                     int previousMaxHP = _maxHP;
                     if (combatAttribute.isPercentage) {
                         float result = _maxHP * (combatAttribute.amount / 100f);
-                        AdjustMaxHP((int) result);
+                        AdjustMaxHP((int)result);
                     } else {
-                        AdjustMaxHP((int) combatAttribute.amount);
+                        AdjustMaxHP((int)combatAttribute.amount);
                     }
                 } else if (combatAttribute.stat == STAT.SPEED) {
                     if (combatAttribute.isPercentage) {
                         float result = _speed * (combatAttribute.amount / 100f);
-                        _speed += (int) result;
+                        _speed += (int)result;
                     } else {
-                        _speed += (int) combatAttribute.amount;
+                        _speed += (int)combatAttribute.amount;
                     }
                 }
             }
@@ -3019,24 +2821,24 @@ namespace ECS {
                 if (combatAttribute.stat == STAT.ATTACK) {
                     if (combatAttribute.isPercentage) {
                         float result = _attackPower * (combatAttribute.amount / 100f);
-                        _attackPower -= (int) result;
+                        _attackPower -= (int)result;
                     } else {
-                        _attackPower -= (int) combatAttribute.amount;
+                        _attackPower -= (int)combatAttribute.amount;
                     }
                 } else if (combatAttribute.stat == STAT.HP) {
                     int previousMaxHP = _maxHP;
                     if (combatAttribute.isPercentage) {
                         float result = _maxHP * (combatAttribute.amount / 100f);
-                        AdjustMaxHP(-(int) result);
+                        AdjustMaxHP(-(int)result);
                     } else {
-                        AdjustMaxHP(-(int) combatAttribute.amount);
+                        AdjustMaxHP(-(int)combatAttribute.amount);
                     }
                 } else if (combatAttribute.stat == STAT.SPEED) {
                     if (combatAttribute.isPercentage) {
                         float result = _speed * (combatAttribute.amount / 100f);
-                        _speed -= (int) result;
+                        _speed -= (int)result;
                     } else {
-                        _speed -= (int) combatAttribute.amount;
+                        _speed -= (int)combatAttribute.amount;
                     }
                 }
             }
@@ -3079,5 +2881,61 @@ namespace ECS {
         public void SetPlayerCharacterItem(PlayerCharacterItem item) {
             _playerCharacterItem = item;
         }
+
+        #region Interaction Generation
+        public void DisableInteractionGeneration() {
+            Messenger.RemoveListener(Signals.HOUR_STARTED, DailyInteractionGeneration);
+        }
+        public void AddInteractionWeight(INTERACTION_TYPE type, int weight) {
+            interactionWeights.AddElement(type, weight);
+        }
+        public void RemoveInteractionFromWeights(INTERACTION_TYPE type, int weight) {
+            interactionWeights.RemoveElement(type);
+        }
+        public void SetDailyInteractionGenerationTick() {
+            _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.hoursPerDay + 1);
+        }
+        public void DailyInteractionGeneration() {
+            if (_currentInteractionTick == GameManager.Instance.hour) {
+                GenerateDailyInteraction();
+                SetDailyInteractionGenerationTick();
+            }
+        }
+        public void GenerateDailyInteraction() {
+            if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling) {
+                return; //if this character is not in own party, is a defender or is travelling, do not generate interaction
+            }
+            if (eventTriggerWeights.PickRandomElementGivenWeights()) {
+                WeightedDictionary<INTERACTION_TYPE> validInteractions = GetValidInteractionWeights();
+                if (validInteractions.GetTotalOfWeights() > 0) {
+                    INTERACTION_TYPE chosenInteraction = validInteractions.PickRandomElementGivenWeights();
+                    //create interaction of type
+                    Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, this.specificLocation as BaseLandmark);
+                    if (createdInteraction != null) {
+                        (this.specificLocation as BaseLandmark).AddInteraction(createdInteraction);
+                    }
+                }
+            }
+        }
+        private WeightedDictionary<INTERACTION_TYPE> GetValidInteractionWeights() {
+            WeightedDictionary<INTERACTION_TYPE> weights = new WeightedDictionary<INTERACTION_TYPE>();
+            foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in interactionWeights.dictionary) {
+                if (InteractionManager.Instance.CanCreateInteraction(kvp.Key, this)) {
+                    weights.AddElement(kvp.Key, kvp.Value);
+                }
+            }
+            return weights;
+        }
+        private void AddDefaultInteractions() {
+            List<CharacterInteractionWeight> defaultInteractions = InteractionManager.Instance.GetDefauInteractionWeightsForRole(this.role.roleType);
+            if (defaultInteractions != null) {
+                for (int i = 0; i < defaultInteractions.Count; i++) {
+                    CharacterInteractionWeight currWeight = defaultInteractions[i];
+                    interactionWeights.AddElement(currWeight.interactionType, currWeight.weight);
+                }
+            }
+        }
+        #endregion
+
     }
 }

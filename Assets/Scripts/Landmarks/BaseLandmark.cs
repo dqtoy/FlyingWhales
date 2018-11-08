@@ -507,9 +507,9 @@ public class BaseLandmark : ILocation, IInteractable {
             if (currCharacter is Character && (currCharacter as Character).isDefender) {
                 continue; //skip
             }
-            //if (currCharacter.ownParty is CharacterParty && (currCharacter.ownParty as CharacterParty).isBusy) {
-            //    continue; //skip
-            //}
+            if (currCharacter.ownParty.icon.isTravelling) {
+                continue; //skip
+            }
             if (currCharacter.ownParty.specificLocation.id == this.id) {
                 return true;
             }
