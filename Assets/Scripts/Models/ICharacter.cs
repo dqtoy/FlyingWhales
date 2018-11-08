@@ -54,6 +54,7 @@ public interface ICharacter {
     CharacterActionQueue<ActionQueueItem> actionQueue { get; }
     Dictionary<STAT, float> buffs { get; }
     PlayerCharacterItem playerCharacterItem { get; }
+    WeightedDictionary<INTERACTION_TYPE> interactionWeights { get; }
 
     //functions
     void SetName(string name);
@@ -100,4 +101,10 @@ public interface ICharacter {
     void AddBuff(Buff buff);
     void RemoveBuff(Buff buff);
     void SetPlayerCharacterItem(PlayerCharacterItem item);
+    void DisableInteractionGeneration();
+    void AddInteractionWeight(INTERACTION_TYPE type, int weight);
+    void RemoveInteractionFromWeights(INTERACTION_TYPE type, int weight);
+    void SetDailyInteractionGenerationTick();
+    void DailyInteractionGeneration();
+    void GenerateDailyInteraction();
 }

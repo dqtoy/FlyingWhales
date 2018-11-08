@@ -147,7 +147,7 @@ public class CharacterParty : Party {
             //if it is not enabled, means that the minion currently has an action
             return !owner.minion.isEnabled;
         }
-        if (_actionData.currentAction != null && _actionData.currentAction.actionData.actionType != ACTION_TYPE.REST) {
+        if (this.icon.isTravelling || (_actionData.currentAction != null && _actionData.currentAction.actionData.actionType != ACTION_TYPE.REST)) {
             return true;
         }
         return false;

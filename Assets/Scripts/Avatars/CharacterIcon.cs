@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Obsolete("Use Character Avatar Instead")]
 public class CharacterIcon : MonoBehaviour {
 
     [SerializeField] private SpriteRenderer _icon;

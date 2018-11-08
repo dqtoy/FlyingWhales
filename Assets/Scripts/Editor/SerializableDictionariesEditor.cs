@@ -18,10 +18,14 @@ public class InteractionWeightDictionaryPropertyDrawer : SerializableDictionaryP
 public class ActionCharacterTagDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(BiomeLandmarkSpriteListDictionary))]
 public class BiomeLandmarkSpriteListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(RoleInteractionsListDictionary))]
+public class RoleInteractionsListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 
 [CustomPropertyDrawer(typeof(CharacterTagListStorage))]
 public class CharacterTagListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 [CustomPropertyDrawer(typeof(LandmarkSpriteListStorage))]
 public class LandmarkSpriteListStorageStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
+[CustomPropertyDrawer(typeof(CharacterInteractionWeightListStorage))]
+public class CharacterInteractionWeightListStorageStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 #endif

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using ECS;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +12,8 @@ public class InteractionManager : MonoBehaviour {
     public static readonly string Mana_Cache_Reward_2 = "ManaCacheReward2";
     public static readonly string Exp_Reward_1 = "ExpReward1";
     public static readonly string Exp_Reward_2 = "ExpReward2";
+
+    [SerializeField] private RoleInteractionsListDictionary roleDefaultInteractions;
 
     public Dictionary<string, RewardConfig> rewardConfig = new Dictionary<string, RewardConfig>(){
         { Supply_Cache_Reward_1, new RewardConfig(){ rewardType = REWARD.SUPPLY, lowerRange = 50, higherRange = 250 } },
@@ -109,12 +112,25 @@ public class InteractionManager : MonoBehaviour {
                 return true;
         }
     }
+    public bool CanCreateInteraction(INTERACTION_TYPE interactionType, ICharacter character) {
+        switch (interactionType) {
+            default:
+                return true;
+        }
+    }
     public Reward GetReward(string rewardName) {
         if (rewardConfig.ContainsKey(rewardName)) {
             RewardConfig config = rewardConfig[rewardName];
             return new Reward { rewardType = config.rewardType, amount = Random.Range(config.lowerRange, config.higherRange + 1) };
         }
         throw new System.Exception("There is no reward configuration with name " + rewardName);
+    }
+
+    public List<CharacterInteractionWeight> GetDefauInteractionWeightsForRole(CHARACTER_ROLE role) {
+        if (roleDefaultInteractions.ContainsKey(role)) {
+            return roleDefaultInteractions[role];
+        }
+        return null;
     }
 }
 
@@ -126,4 +142,9 @@ public struct RewardConfig {
 public struct Reward {
     public REWARD rewardType;
     public int amount;
+}
+[System.Serializable]
+public struct CharacterInteractionWeight {
+    public INTERACTION_TYPE interactionType;
+    public int weight;
 }

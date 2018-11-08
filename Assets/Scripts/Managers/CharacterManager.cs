@@ -197,9 +197,9 @@ public class CharacterManager : MonoBehaviour {
         ECS.Character newCharacter = new ECS.Character(data);
         allCharacterLogs.Add(newCharacter, new List<string>());
 
-        if (data.role != CHARACTER_ROLE.NONE) {
-            newCharacter.AssignRole(data.role);
-        }
+        //if (data.role != CHARACTER_ROLE.NONE) {
+        //    newCharacter.AssignRole(data.role);
+        //}
         if (data.homeLandmarkID != -1) {
             BaseLandmark homeLandmark = LandmarkManager.Instance.GetLandmarkByID(data.homeLandmarkID);
             homeLandmark.AddCharacterHomeOnLandmark(newCharacter);

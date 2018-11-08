@@ -58,8 +58,11 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     protected Party _currentParty;
     protected Dictionary<STAT, float> _buffs;
     protected PlayerCharacterItem _playerCharacterItem;
-    public CharacterUIData uiData { get; private set; }
+    protected int _currentInteractionTick;
 
+    public CharacterUIData uiData { get; private set; }
+    public WeightedDictionary<INTERACTION_TYPE> interactionWeights { get; private set; }
+    public WeightedDictionary<bool> eventTriggerWeights { get; private set; }
 
     #region getters/setters
     public string name {
@@ -851,4 +854,50 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public void SetPlayerCharacterItem(PlayerCharacterItem item) {
         _playerCharacterItem = item;
     }
+
+    #region Interaction Generation
+    public void DisableInteractionGeneration() {
+        Messenger.RemoveListener(Signals.HOUR_STARTED, DailyInteractionGeneration);
+    }
+    public void AddInteractionWeight(INTERACTION_TYPE type, int weight) {
+        interactionWeights.AddElement(type, weight);
+    }
+    public void RemoveInteractionFromWeights(INTERACTION_TYPE type, int weight) {
+        interactionWeights.RemoveElement(type);
+    }
+    public void SetDailyInteractionGenerationTick() {
+        _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.hoursPerDay + 1);
+    }
+    public void DailyInteractionGeneration() {
+        if (_currentInteractionTick == GameManager.Instance.hour) {
+            GenerateDailyInteraction();
+            SetDailyInteractionGenerationTick();
+        }
+    }
+    public void GenerateDailyInteraction() {
+        if (!IsInOwnParty() || ownParty.icon.isTravelling) {
+            return; //if this character is not in own party, is a defender or is travelling, do not generate interaction
+        }
+        if (eventTriggerWeights.PickRandomElementGivenWeights()) {
+            WeightedDictionary<INTERACTION_TYPE> validInteractions = GetValidInteractionWeights();
+            if (validInteractions.GetTotalOfWeights() > 0) {
+                INTERACTION_TYPE chosenInteraction = validInteractions.PickRandomElementGivenWeights();
+                //create interaction of type
+                Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, this);
+                if (createdInteraction != null) {
+                    (this.specificLocation as BaseLandmark).AddInteraction(createdInteraction);
+                }
+            }
+        }
+    }
+    private WeightedDictionary<INTERACTION_TYPE> GetValidInteractionWeights() {
+        WeightedDictionary<INTERACTION_TYPE> weights = new WeightedDictionary<INTERACTION_TYPE>();
+        foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in interactionWeights.dictionary) {
+            if (InteractionManager.Instance.CanCreateInteraction(kvp.Key, this)) {
+                weights.AddElement(kvp.Key, kvp.Value);
+            }
+        }
+        return weights;
+    }
+    #endregion
 }
