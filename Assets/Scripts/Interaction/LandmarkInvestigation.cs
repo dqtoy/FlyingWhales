@@ -105,15 +105,15 @@ public class LandmarkInvestigation {
         if(_assignedMinion == null) {
             return;
         }
-        _landmark.SetIsBeingInspected(true);
         if (!_landmark.hasBeenInspected) {
             _landmark.SetHasBeenInspected(true);
         }
+        _landmark.SetIsBeingInspected(true);
         _duration = 30;
         _currentTick = 0;
         Messenger.AddListener(Signals.HOUR_STARTED, OnExploreTick);
         _landmark.landmarkVisual.SetAndStartInteractionTimer(_duration);
-        _landmark.landmarkVisual.SetInteractionTimerButtonState(false);
+        _landmark.landmarkVisual.ShowNoInteractionForeground();
         _landmark.landmarkVisual.ShowInteractionTimer();
     }
     public void UnexploreLandmark() {
@@ -146,7 +146,7 @@ public class LandmarkInvestigation {
         if(_landmark.currentInteractions.Count > 0) {
             _currentInteraction = GetRandomInteraction();
             _landmark.landmarkVisual.SetAndStartInteractionTimer(Interaction.secondTimeOutTicks, new InteractionTimer.OnStopTimer(_landmark.landmarkVisual.HideInteractionTimer));
-            _landmark.landmarkVisual.SetInteractionTimerButtonState(true);
+            _landmark.landmarkVisual.ShowInteractionForeground();
         } else {
             ExploreLandmark();
         }
@@ -188,8 +188,10 @@ public class LandmarkInvestigation {
         }
     }
     private void AttackCombatResult(Combat combat) {
-        if(combat.winningSide == _assignedMinion.icharacter.currentSide) {
-            _landmark.DestroyLandmark();
+        if (_isActivated) { //when the minion dies, isActivated will become false, hence, it must not go through the result
+            if (combat.winningSide == _assignedMinion.icharacter.currentSide) {
+                _landmark.DestroyLandmark();
+            }
         }
     }
     #endregion
@@ -204,8 +206,10 @@ public class LandmarkInvestigation {
         }
     }
     private void RaidCombatResult(Combat combat) {
-        if (combat.winningSide == _assignedMinion.icharacter.currentSide) {
-            RaidAndGoBack();
+        if (_isActivated) { //when the minion dies, isActivated will become false, hence, it must not go through the result
+            if (combat.winningSide == _assignedMinion.icharacter.currentSide) {
+                RaidAndGoBack();
+            }
         }
     }
     private void RaidAndGoBack() {

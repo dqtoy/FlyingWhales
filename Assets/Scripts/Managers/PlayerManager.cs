@@ -72,6 +72,8 @@ public class PlayerManager : MonoBehaviour {
         player.SetMaxMinions(9);
         player.CreateInitialMinions();
         LandmarkManager.Instance.OwnArea(player.playerFaction, player.playerArea);
+        portal.SetIsBeingInspected(true);
+        portal.SetHasBeenInspected(true);
         GameManager.Instance.StartProgression();
         UIManager.Instance.SetTimeControlsState(true);
         PlayerUI.Instance.UpdateUI();
@@ -95,6 +97,8 @@ public class PlayerManager : MonoBehaviour {
     }
 
     private void OnPlayerLandmarkCreated(BaseLandmark newLandmark) {
+        newLandmark.SetIsBeingInspected(true);
+        newLandmark.SetHasBeenInspected(true);
         switch (newLandmark.specificLandmarkType) {
             case LANDMARK_TYPE.SNATCHER_DEMONS_LAIR:
                 player.AdjustSnatchCredits(1);

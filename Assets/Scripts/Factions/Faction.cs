@@ -265,6 +265,18 @@ public class Faction {
         }
         return null;
     }
+    public List<Faction> GetFactionsWithRelationship(FACTION_RELATIONSHIP_STATUS stat, bool excludePlayer = true) {
+        List<Faction> factions = new List<Faction>();
+        foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
+            if (excludePlayer && kvp.Key.id == PlayerManager.Instance.player.playerFaction.id) {
+                continue; //exclude player faction
+            }
+            if (kvp.Value.relationshipStatus == stat) {
+                factions.Add(kvp.Key);
+            }
+        }
+        return factions;
+    }
     #endregion
 
     #region Death

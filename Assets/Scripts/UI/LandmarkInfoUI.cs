@@ -16,7 +16,11 @@ public class LandmarkInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI landmarkTypeLbl;
     [SerializeField] private TextMeshProUGUI suppliesNameLbl;
     [SerializeField] private FactionEmblem factionEmblem;
-    [SerializeField] private Slider healthProgressBar;
+    [SerializeField] private Image healthProgressBar;
+    [SerializeField] private GameObject defendersGO;
+    [SerializeField] private GameObject charactersGO;
+    [SerializeField] private GameObject logsGO;
+    [SerializeField] private GameObject[] connectorsGO;
 
     [Space(10)]
     [Header("Info")]
@@ -72,7 +76,6 @@ public class LandmarkInfoUI : UIMenu {
     internal override void Initialize() {
         base.Initialize();
         characterItems = new List<LandmarkCharacterItem>();
-        healthProgressBar.minValue = 0f;
         LoadLogItems();
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_INSPECTED, OnLandmarkInspected);
@@ -81,16 +84,18 @@ public class LandmarkInfoUI : UIMenu {
         //Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, OnPartyExitedLandmark);
         Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_ADDED, OnResidentAddedToLandmark);
         Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_REMOVED, OnResidentRemovedFromLandmark);
+        Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
     }
     public override void OpenMenu() {
         base.OpenMenu();
         _activeLandmark = _data as BaseLandmark;
+        UpdateHiddenUI();
         UpdateLandmarkInfo();
         UpdateCharacters();
         UpdateInvestigation();
-        if (_activeLandmark.specificLandmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
-            PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeLandmark);
-        }
+        //if (_activeLandmark.specificLandmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
+        //    PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeLandmark);
+        //}
         ResetScrollPositions();
         //PlayerUI.Instance.UncollapseMinionHolder();
         //InteractionUI.Instance.OpenInteractionUI(_activeLandmark);
@@ -103,7 +108,7 @@ public class LandmarkInfoUI : UIMenu {
             _activeLandmark.tileLocation.SetBordersState(false);
         }
         _activeLandmark = null;
-        PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
+        //PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
         //PlayerUI.Instance.CollapseMinionHolder();
         //InteractionUI.Instance.HideInteractionUI();
     }
@@ -118,7 +123,7 @@ public class LandmarkInfoUI : UIMenu {
         //} else {
         //    UpdateBGs(false);
         //}
-        UpdateInfo();
+        //UpdateInfo();
         //UpdateCharacters();
         UpdateDefenders();
         //UpdateItems();
@@ -127,6 +132,34 @@ public class LandmarkInfoUI : UIMenu {
     private void UpdateBGs(bool state) {
         for (int i = 0; i < notInspectedBGs.Length; i++) {
             notInspectedBGs[i].SetActive(state);
+        }
+    }
+    private void UpdateHiddenUI() {
+        if (_activeLandmark.tileLocation.areaOfTile.locationIntel.isObtained) {
+            ShowIntelTriggeredUI();
+        } else {
+            HideIntelTriggeredUI();
+        }
+    }
+    private void OnIntelAdded(Intel intel) {
+        if(_activeLandmark != null && _activeLandmark.tileLocation.areaOfTile.locationIntel == intel) {
+            ShowIntelTriggeredUI();
+        }
+    }
+    private void ShowIntelTriggeredUI() {
+        defendersGO.SetActive(true);
+        charactersGO.SetActive(true);
+        logsGO.SetActive(true);
+        for (int i = 0; i < connectorsGO.Length; i++) {
+            connectorsGO[i].SetActive(true);
+        }
+    }
+    private void HideIntelTriggeredUI() {
+        defendersGO.SetActive(false);
+        charactersGO.SetActive(false);
+        logsGO.SetActive(false);
+        for (int i = 0; i < connectorsGO.Length; i++) {
+            connectorsGO[i].SetActive(false);
         }
     }
 
@@ -154,8 +187,7 @@ public class LandmarkInfoUI : UIMenu {
         UpdateHP();
     }
     private void UpdateHP() {
-        healthProgressBar.maxValue = _activeLandmark.totalDurability;
-        healthProgressBar.value = _activeLandmark.currDurability;
+        healthProgressBar.fillAmount = _activeLandmark.currDurability / (float)_activeLandmark.totalDurability;
     }
     #endregion
 
@@ -218,14 +250,15 @@ public class LandmarkInfoUI : UIMenu {
         Utilities.DestroyChildren(charactersScrollView.content);
         characterItems.Clear();
         CheckScrollers();
-        if (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll) {
+
+        //if (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll) {
             for (int i = 0; i < _activeLandmark.charactersWithHomeOnLandmark.Count; i++) {
                 Party currParty = _activeLandmark.charactersWithHomeOnLandmark[i].ownParty;
                 if (!_activeLandmark.IsDefenderOfLandmark(currParty)) {
                     CreateNewCharacterItem(currParty.owner);
                 }
             }
-        }
+        //}
         //else {
         //    for (int i = 0; i < _activeLandmark.lastInspectedOfCharactersAtLocation.Count; i++) {
         //        LandmarkPartyData partyData = _activeLandmark.lastInspectedOfCharactersAtLocation[i];
@@ -271,7 +304,7 @@ public class LandmarkInfoUI : UIMenu {
         item.SetParty(partyData.partyMembers[0], _activeLandmark);
     }
     private void OnPartyEnteredLandmark(Party party, BaseLandmark landmark) {
-        if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id && (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll)) {
+        if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id) { //&& (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll)
             CreateNewCharacterItem(party.owner);
         }
     }
@@ -286,7 +319,7 @@ public class LandmarkInfoUI : UIMenu {
         }
     }
     private void OnResidentAddedToLandmark(BaseLandmark landmark, ICharacter character) {
-        if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id && (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll)) {
+        if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id) { // && (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll)
             CreateNewCharacterItem(character);
         }
     }
@@ -441,7 +474,7 @@ public class LandmarkInfoUI : UIMenu {
         }
     }
     private void ResetMinionAssignment() {
-        minionAssignmentPortrait.GeneratePortrait(null, 95, true);
+        minionAssignmentPortrait.GeneratePortrait(null, 100, true);
         minionAssignmentDescription.gameObject.SetActive(true);
         minionAssignmentConfirmButton.gameObject.SetActive(false);
         minionAssignmentRecallButton.gameObject.SetActive(false);
@@ -475,7 +508,7 @@ public class LandmarkInfoUI : UIMenu {
         minionAssignmentRecallButton.interactable = !_activeLandmark.landmarkInvestigation.isMinionRecalled;
     }
     public void OnMinionDrop(Transform transform) {
-        MinionItem minionItem = transform.GetComponent<MinionItem>();
+        PlayerCharacterItem minionItem = transform.GetComponent<PlayerCharacterItem>();
         if(minionItem != null) {
             _activeLandmark.landmarkInvestigation.SetAssignedMinion(minionItem.minion);
             AssignMinionToInvestigate(minionItem.minion);
@@ -483,7 +516,7 @@ public class LandmarkInfoUI : UIMenu {
     }
     public void AssignMinionToInvestigate(Minion minion) {
         if(minion != null) {
-            minionAssignmentPortrait.GeneratePortrait(minion.icharacter.portraitSettings, 95, true);
+            minionAssignmentPortrait.GeneratePortrait(minion.icharacter.portraitSettings, 100, true);
             minionAssignmentDescription.gameObject.SetActive(false);
             minionAssignmentRecallButton.gameObject.SetActive(false);
             minionAssignmentConfirmButton.gameObject.SetActive(true);

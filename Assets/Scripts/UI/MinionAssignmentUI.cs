@@ -34,7 +34,7 @@ public class MinionAssignmentUI : MonoBehaviour {
     }
 
     public void OnMinionDrop(Transform transform) {
-        MinionItem minionItem = transform.GetComponent<MinionItem>();
+        PlayerCharacterItem minionItem = transform.GetComponent<PlayerCharacterItem>();
         _currentAssignedMinion = minionItem.minion;
         characterPortrait.GeneratePortrait(minionItem.portrait.portraitSettings, 100, true);
         if(_currentAssignedMinion != null) {

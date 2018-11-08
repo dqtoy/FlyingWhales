@@ -22,6 +22,8 @@ public interface ICharacter {
     float computedPower { get; }
     bool isDead { get; }
     bool isBeingInspected { get; }
+    int experience { get; }
+    int maxExperience { get; }
     GENDER gender { get; }
     ICHARACTER_TYPE icharacterType { get; }
     MODE currentMode { get; }
@@ -51,6 +53,7 @@ public interface ICharacter {
     Party currentParty { get; }
     CharacterActionQueue<ActionQueueItem> actionQueue { get; }
     Dictionary<STAT, float> buffs { get; }
+    PlayerCharacterItem playerCharacterItem { get; }
 
     //functions
     void SetName(string name);
@@ -72,6 +75,7 @@ public interface ICharacter {
     void SetCurrentParty(Party party);
     void OnRemovedFromParty();
     void OnAddedToParty();
+    void OnAddedToPlayer();
     void SetHomeLandmark(BaseLandmark newHomeLandmark);
     void AddHistory(Log log); //Character only
     void SetMode(MODE mode);
@@ -95,4 +99,5 @@ public interface ICharacter {
     void ConstructBuffs();
     void AddBuff(Buff buff);
     void RemoveBuff(Buff buff);
+    void SetPlayerCharacterItem(PlayerCharacterItem item);
 }

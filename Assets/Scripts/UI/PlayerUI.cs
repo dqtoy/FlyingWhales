@@ -23,7 +23,7 @@ public class PlayerUI : MonoBehaviour {
     public TweenPosition minionContentTweenPos;
     public Button upScrollButton;
     public Button downScrollButton;
-    public List<MinionItem> minionItems;
+    public List<PlayerCharacterItem> minionItems;
     public bool isMinionsMenuShowing;
 
     public Toggle goalsToggle;
@@ -47,7 +47,7 @@ public class PlayerUI : MonoBehaviour {
     #endregion
     void Awake() {
         Instance = this;
-        minionItems = new List<MinionItem>();
+        minionItems = new List<PlayerCharacterItem>();
         //Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
         //Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
     }
@@ -114,11 +114,11 @@ public class PlayerUI : MonoBehaviour {
         OnScroll(Vector2.zero);
     }
     public void MinionDragged(ReorderableList.ReorderableListEventStruct reorderableListEventStruct) {
-        MinionItem minionItem = reorderableListEventStruct.SourceObject.GetComponent<MinionItem>();
+        PlayerCharacterItem minionItem = reorderableListEventStruct.SourceObject.GetComponent<PlayerCharacterItem>();
         minionItem.portrait.SetBorderState(true);
     }
     public void MinionCancel(ReorderableList.ReorderableListEventStruct reorderableListEventStruct) {
-        MinionItem minionItem = reorderableListEventStruct.SourceObject.GetComponent<MinionItem>();
+        PlayerCharacterItem minionItem = reorderableListEventStruct.SourceObject.GetComponent<PlayerCharacterItem>();
         minionItem.portrait.SetBorderState(false);
         //minionItem.SetEnabledState(false);
     }
@@ -197,7 +197,7 @@ public class PlayerUI : MonoBehaviour {
     }
     public void ResetAllMinionItems() {
         for (int i = 0; i < minionItems.Count; i++) {
-            minionItems[i].SetMinion(null);
+            minionItems[i].SetCharacter(null);
         }
     }
     public void OnMaxMinionsChanged() {
@@ -205,12 +205,12 @@ public class PlayerUI : MonoBehaviour {
         if (minionItems.Count > PlayerManager.Instance.player.maxMinions) {
             //if the current number of minion items is greater than the slots that the player has
             int excess = minionItems.Count - PlayerManager.Instance.player.maxMinions; //check the number of excess items
-            List<MinionItem> unoccupiedItems = GetUnoccupiedMinionItems(); //check the number of items that are unoccupied
+            List<PlayerCharacterItem> unoccupiedItems = GetUnoccupiedCharacterItems(); //check the number of items that are unoccupied
             if (excess > 0 && unoccupiedItems.Count > 0) { //if there are unoccupied items
                 for (int i = 0; i < excess; i++) { //loop through the number of excess items, then destroy any unoccupied items
-                    MinionItem item = unoccupiedItems.ElementAtOrDefault(i);
+                    PlayerCharacterItem item = unoccupiedItems.ElementAtOrDefault(i);
                     if (item != null) {
-                        RemoveMinionItem(item);
+                        RemoveCharacterItem(item);
                     }
                 }
             }
@@ -218,44 +218,44 @@ public class PlayerUI : MonoBehaviour {
             //if the current number of minion items is less than the slots the player has, instantiate the new slots
             int remainingSlots = PlayerManager.Instance.player.maxMinions - minionItems.Count;
             for (int i = 0; i < remainingSlots; i++) {
-                CreateMinionItem().SetMinion(null);
+                CreateMinionItem().SetCharacter(null);
             }
         }
     }
-    public MinionItem GetUnoccupiedMinionItem() {
+    public PlayerCharacterItem GetUnoccupiedCharacterItem() {
         for (int i = 0; i < minionItems.Count; i++) {
-            MinionItem item = minionItems[i];
-            if (item.minion == null) {
+            PlayerCharacterItem item = minionItems[i];
+            if (item.character == null) {
                 return item;
             }
         }
         return null;
     }
-    private MinionItem CreateMinionItem() {
+    private List<PlayerCharacterItem> GetUnoccupiedCharacterItems() {
+        List<PlayerCharacterItem> items = new List<PlayerCharacterItem>();
+        for (int i = 0; i < minionItems.Count; i++) {
+            PlayerCharacterItem item = minionItems[i];
+            if (item.character == null) {
+                items.Add(item);
+            }
+        }
+        return items;
+    }
+    private PlayerCharacterItem CreateMinionItem() {
         GameObject minionItemGO = UIManager.Instance.InstantiateUIObject(minionPrefab.name, minionsContentTransform);
-        MinionItem minionItem = minionItemGO.GetComponent<MinionItem>();
+        PlayerCharacterItem minionItem = minionItemGO.GetComponent<PlayerCharacterItem>();
         minionItems.Add(minionItem);
         return minionItem;
     }
-    public void RemoveMinionItem(MinionItem item) {
+    public void RemoveCharacterItem(PlayerCharacterItem item) {
         if(minionItems.Count <= PlayerManager.Instance.player.maxMinions) {
             item.transform.SetAsLastSibling();
-            item.SetMinion(null);
+            item.SetCharacter(null);
         } else {
             minionItems.Remove(item);
             ObjectPoolManager.Instance.DestroyObject(item.gameObject);
         }
 
-    }
-    private List<MinionItem> GetUnoccupiedMinionItems() {
-        List<MinionItem> items = new List<MinionItem>();
-        for (int i = 0; i < minionItems.Count; i++) {
-            MinionItem item = minionItems[i];
-            if (item.minion == null) {
-                items.Add(item);
-            }
-        }
-        return items;
     }
     #endregion
 

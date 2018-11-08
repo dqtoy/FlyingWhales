@@ -4,6 +4,20 @@ using UnityEngine;
 using ECS;
 
 public class Intel {
+    protected bool _isObtained;
+
+    #region getters/setters
+    public bool isObtained {
+        get { return _isObtained; }
+    }
+    #endregion
+
+    public Intel() {
+        _isObtained = false;
+    }
+    public void SetObtainedState(bool state) {
+        _isObtained = state;
+    }
     //public int id;
     //public string name;
     //public string description;
@@ -27,7 +41,7 @@ public class Intel {
 public class FactionIntel : Intel{
     public Faction faction;
 
-    public FactionIntel(Faction faction) {
+    public FactionIntel(Faction faction) : base() {
         this.faction = faction;
     }
 
@@ -39,7 +53,7 @@ public class FactionIntel : Intel{
 public class LocationIntel : Intel {
     public Area location;
 
-    public LocationIntel(Area location) {
+    public LocationIntel(Area location) : base() {
         this.location = location;
     }
 
@@ -51,7 +65,7 @@ public class LocationIntel : Intel {
 public class CharacterIntel : Intel {
     public ICharacter character;
 
-    public CharacterIntel(ICharacter character) {
+    public CharacterIntel(ICharacter character) : base() {
         this.character = character;
     }
     public override string ToString() {

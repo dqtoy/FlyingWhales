@@ -233,7 +233,7 @@ public class Interaction {
     }
     protected void DemonDisappearsRewardEffect(InteractionState state) {
         explorerMinion.icharacter.Death();
-        PlayerManager.Instance.player.RemoveMinion(explorerMinion);
+        //PlayerManager.Instance.player.RemoveMinion(explorerMinion);
     }
     protected void ExploreContinuesRewardState(InteractionState state, string stateName) {
         //_states[stateName].SetDescription("We've instructed " + explorerMinion.name + " to continue its surveillance of the area.");

@@ -128,6 +128,8 @@ public class FactionManager : MonoBehaviour {
         CreateRelationshipsForFaction(newFaction);
         if (!isPlayerFaction) {
             Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
+        } else {
+            newFaction.SetName("Player faction");
         }
         return newFaction;
     }

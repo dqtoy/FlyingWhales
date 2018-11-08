@@ -232,8 +232,11 @@ public class LandmarkVisual : MonoBehaviour {
     public void ResetInteractionTimer() {
         interactionTimer.ResetTimer();
     }
-    public void SetInteractionTimerButtonState(bool state) {
-        interactionTimer.interactionButton.interactable = state;
+    public void ShowInteractionForeground() {
+        interactionTimer.ShowInteractionForeground();
+    }
+    public void ShowNoInteractionForeground() {
+        interactionTimer.ShowNoInteractionForeground();
     }
     public void OnClickInteractionButton() {
         Messenger.Broadcast(Signals.CLICKED_INTERACTION_BUTTON, _landmark);

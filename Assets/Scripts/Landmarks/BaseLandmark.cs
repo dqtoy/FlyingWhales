@@ -501,6 +501,21 @@ public class BaseLandmark : ILocation, IInteractable {
         }
         return idleResidents;
     }
+    public bool HasResidentAtHome() {
+        for (int i = 0; i < charactersWithHomeOnLandmark.Count; i++) {
+            ICharacter currCharacter = charactersWithHomeOnLandmark[i];
+            if (currCharacter is Character && (currCharacter as Character).isDefender) {
+                continue; //skip
+            }
+            //if (currCharacter.ownParty is CharacterParty && (currCharacter.ownParty as CharacterParty).isBusy) {
+            //    continue; //skip
+            //}
+            if (currCharacter.ownParty.specificLocation.id == this.id) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Combat
@@ -1012,10 +1027,10 @@ public class BaseLandmark : ILocation, IInteractable {
     public void SetHasBeenInspected(bool state) {
         _hasBeenInspected = state;
         if (state) {
-            if (owner != null) {
+            if (owner != null && owner.id != PlayerManager.Instance.player.playerFaction.id) {
                 PlayerManager.Instance.player.AddIntel(owner.factionIntel);
             }
-            if (tileLocation.areaOfTile != null) {
+            if (tileLocation.areaOfTile != null && tileLocation.areaOfTile.id != PlayerManager.Instance.player.playerArea.id) {
                 PlayerManager.Instance.player.AddIntel(tileLocation.areaOfTile.locationIntel);
             }
         }
@@ -1186,7 +1201,7 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     public void RemoveDefender(ICharacter defender) {
         if (defenders != null) {
-            if (!defenders.icharacters.Contains(defender)) {
+            if (defenders.icharacters.Contains(defender)) {
                 defenders.RemoveCharacter(defender);
                 if (defender is Character) {
                     (defender as Character).OnRemoveAsDefender();

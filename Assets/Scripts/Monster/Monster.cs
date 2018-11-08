@@ -57,6 +57,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     protected Dictionary<string, float> _itemDropsLookup;
     protected Party _currentParty;
     protected Dictionary<STAT, float> _buffs;
+    protected PlayerCharacterItem _playerCharacterItem;
     public CharacterUIData uiData { get; private set; }
 
 
@@ -121,6 +122,12 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public float computedPower {
         get { return GetComputedPower(); }
+    }
+    public int experience {
+        get { return 0; }
+    }
+    public int maxExperience {
+        get { return 0; }
     }
     public bool isDead {
         get { return _isDead; }
@@ -261,6 +268,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public Dictionary<STAT, float> buffs {
         get { return _buffs; }
     }
+    public PlayerCharacterItem playerCharacterItem {
+        get { return _playerCharacterItem; }
+    }
     #endregion
 
     //public Monster (Monster data): this() {
@@ -277,7 +287,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     //    _hitChance = data.hitChance;
     //    _critChance = data.critChance;
     //    _isSleepingOnSpawn = data.isSleepingOnSpawn;
-        
+
     //}
     //public Monster() {
 
@@ -674,6 +684,12 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         //    _ownParty.icon.SetVisualState(false);
         //}
     }
+    public void OnAddedToPlayer() {
+        if (ownParty.specificLocation is BaseLandmark) {
+            ownParty.specificLocation.RemoveCharacterFromLocation(ownParty);
+        }
+        PlayerManager.Instance.player.playerArea.coreTile.landmarkOnTile.AddCharacterToLocation(ownParty);
+    }
     public bool InviteToParty(ICharacter inviter) {
         return false;
     }
@@ -831,4 +847,8 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         }
     }
     #endregion
+
+    public void SetPlayerCharacterItem(PlayerCharacterItem item) {
+        _playerCharacterItem = item;
+    }
 }
