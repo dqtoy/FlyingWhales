@@ -1201,13 +1201,43 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     public void RemoveDefender(ICharacter defender) {
         if (defenders != null) {
-            if (defenders.icharacters.Contains(defender)) {
-                defenders.RemoveCharacter(defender);
+            if (defenders.owner.id == defender.id) {
+                //if the character that needs to be removed is the owner of the defender party
+                //check if there are any other characters left in the defender party
+                List<ICharacter> otherCharacters = new List<ICharacter>();
+                for (int i = 0; i < defenders.icharacters.Count; i++) {
+                    ICharacter currCharacter = defenders.icharacters[i];
+                    if (defenders.owner.id != currCharacter.id) {
+                        otherCharacters.Add(currCharacter);
+                    }
+                }
+                if (otherCharacters.Count > 0) {
+                    //if there are other characters left
+                    //set the defender party to the party of the first remaining character, 
+                    //then add all other characters to that party
+                    Party partyToUse = otherCharacters[0].ownParty;
+                    defenders = partyToUse;
+                    for (int i = 1; i < otherCharacters.Count; i++) {
+                        partyToUse.AddCharacter(otherCharacters[i]);
+                    }
+                } else {
+                    //there are no more other characters other than the owner
+                    //set the defenders to null
+                    defenders = null;
+                }
                 if (defender is Character) {
                     (defender as Character).OnRemoveAsDefender();
                 }
+            } else {
+                if (defenders.icharacters.Contains(defender)) {
+                    defenders.RemoveCharacter(defender);
+                    if (defender is Character) {
+                        (defender as Character).OnRemoveAsDefender();
+                    }
+                }
             }
         }
+        
         //for (int i = 0; i < defenders.Length; i++) {
         //    Party currDefender = defenders[i];
         //    if (currDefender != null && currDefender.id == defender.id) {
