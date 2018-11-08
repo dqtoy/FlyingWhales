@@ -175,12 +175,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c73ea8b3fe56a941a9e55d74220c1e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  race: 3
-  baseAttackPower: 0
-  baseSpeed: 0
-  baseHP: 0
-  hpPerLevel: 
-  attackPerLevel: 
+  race: 17
+  baseAttackPower: 20
+  baseSpeed: 70
+  baseHP: 110
+  hpPerLevel: 0400000004000000040000000400000028000000040000000400000004000000040000004b000000
+  attackPerLevel: 01000000010000000100000001000000030000000100000001000000010000000100000009000000
   restRegenAmount: 20
   tags: 
 --- !u!114 &114000013746610890
@@ -194,13 +194,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c73ea8b3fe56a941a9e55d74220c1e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  race: 9
-  baseAttackPower: 0
-  baseSpeed: 0
-  baseHP: 0
-  hpPerLevel: 
-  attackPerLevel: 
-  restRegenAmount: 0
+  race: 10
+  baseAttackPower: 20
+  baseSpeed: 70
+  baseHP: 110
+  hpPerLevel: 0400000004000000040000000400000028000000040000000400000004000000040000004b000000
+  attackPerLevel: 01000000010000000100000001000000030000000100000001000000010000000100000009000000
+  restRegenAmount: 20
   tags: 
 --- !u!114 &114483477996051026
 MonoBehaviour:
