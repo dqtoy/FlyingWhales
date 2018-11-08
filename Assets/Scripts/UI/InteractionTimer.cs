@@ -35,11 +35,14 @@ public class InteractionTimer : MonoBehaviour {
         }
     }
     private void RunTimer() {
+        iTween.ValueTo(gameObject, iTween.Hash("from", (float) _currentTimerTick, "to", (float)(_currentTimerTick - 1), "time", GameManager.Instance.progressionSpeed, "onupdate", "ChangeProgressFillAmount"));
         _currentTimerTick--;
-        progressImage.fillAmount = (float) _currentTimerTick / (float) _timer;
         if (_currentTimerTick <= 0) {
             StopTimer();
         }
+    }
+    private void ChangeProgressFillAmount(float value) {
+        progressImage.fillAmount = value / (float) _timer;
     }
     public void ResetTimer() {
         progressImage.fillAmount = 1f;

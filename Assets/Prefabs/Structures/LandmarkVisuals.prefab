@@ -102,7 +102,7 @@ GameObject:
   - component: {fileID: 224355521305423932}
   - component: {fileID: 222983329338438652}
   - component: {fileID: 114303291575405310}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: EyeBrows
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -119,7 +119,7 @@ GameObject:
   - component: {fileID: 224171029001271012}
   - component: {fileID: 222423328274238360}
   - component: {fileID: 114429692421285792}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -185,7 +185,7 @@ GameObject:
   - component: {fileID: 222251302889230790}
   - component: {fileID: 114543707962896078}
   - component: {fileID: 114850567807441634}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: InteractionForeground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -202,7 +202,7 @@ GameObject:
   - component: {fileID: 224911554873270116}
   - component: {fileID: 222112168769521470}
   - component: {fileID: 114731745943314144}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: FacialHair
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -253,7 +253,7 @@ GameObject:
   - component: {fileID: 224367872991999198}
   - component: {fileID: 222614277201236790}
   - component: {fileID: 114652391752448522}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -304,7 +304,7 @@ GameObject:
   - component: {fileID: 224368779900659262}
   - component: {fileID: 222831993537393842}
   - component: {fileID: 114698562771588360}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: Top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -341,7 +341,7 @@ GameObject:
   - component: {fileID: 222331642590770866}
   - component: {fileID: 114334261486353248}
   - component: {fileID: 114511033837715264}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: NameLbl_NO
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -358,7 +358,7 @@ GameObject:
   - component: {fileID: 224577038319829184}
   - component: {fileID: 222145162409654650}
   - component: {fileID: 114497135295136324}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: Eyes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -426,7 +426,7 @@ GameObject:
   - component: {fileID: 224103945176696492}
   - component: {fileID: 222572385980653512}
   - component: {fileID: 114204235822645252}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: Mouth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -443,7 +443,7 @@ GameObject:
   - component: {fileID: 224102027204931102}
   - component: {fileID: 222753346730250484}
   - component: {fileID: 114079743392622970}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: HairOverlay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -460,7 +460,7 @@ GameObject:
   - component: {fileID: 224859696759294934}
   - component: {fileID: 222516304587464226}
   - component: {fileID: 114548362477364422}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: FacialHairOverlay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -476,7 +476,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224792496118023878}
   - component: {fileID: 114325175078119444}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: InteractionTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -526,7 +526,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224155968100217124}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: Borders
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -575,7 +575,7 @@ GameObject:
   - component: {fileID: 224443053131942824}
   - component: {fileID: 222554306697615772}
   - component: {fileID: 114219217355590072}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: WholeImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -607,7 +607,7 @@ GameObject:
   - component: {fileID: 224480270583827038}
   - component: {fileID: 222650796658947446}
   - component: {fileID: 114403426340807044}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: HairBackOverlay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -640,7 +640,7 @@ GameObject:
   - component: {fileID: 224758025075595028}
   - component: {fileID: 222100712616486962}
   - component: {fileID: 114040897469940896}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: HairBack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -657,7 +657,7 @@ GameObject:
   - component: {fileID: 224116542244016398}
   - component: {fileID: 222592841695328504}
   - component: {fileID: 114356309859119744}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: Progress
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -674,7 +674,7 @@ GameObject:
   - component: {fileID: 224259829084702094}
   - component: {fileID: 222424965398522104}
   - component: {fileID: 114547912958684234}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -691,7 +691,7 @@ GameObject:
   - component: {fileID: 224074083224595448}
   - component: {fileID: 222177314702645600}
   - component: {fileID: 114820087261125628}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: Hair
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -709,7 +709,7 @@ GameObject:
   - component: {fileID: 114807224048967438}
   - component: {fileID: 222350727839013912}
   - component: {fileID: 114044494226294616}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: CharacterPortrait
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -778,7 +778,7 @@ GameObject:
   - component: {fileID: 224206799464085138}
   - component: {fileID: 222733141130195510}
   - component: {fileID: 114902595953647770}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: Nose
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -828,7 +828,7 @@ GameObject:
   - component: {fileID: 224342800817120152}
   - component: {fileID: 222098250914683904}
   - component: {fileID: 114876825243284308}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -845,7 +845,7 @@ GameObject:
   - component: {fileID: 224235959056245642}
   - component: {fileID: 222592311159320928}
   - component: {fileID: 114296202373121032}
-  m_Layer: 5
+  m_Layer: 28
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -862,7 +862,8 @@ GameObject:
   - component: {fileID: 224564755923635672}
   - component: {fileID: 222080156995277308}
   - component: {fileID: 114618439862649716}
-  m_Layer: 5
+  - component: {fileID: 114167006845197322}
+  m_Layer: 28
   m_Name: NoInteractionForeground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1076,6 +1077,7 @@ MonoBehaviour:
   destinationSetter: {fileID: 114791186481678256}
   lineRenderer: {fileID: 120479142476340232}
   interactionTimer: {fileID: 114325175078119444}
+  interactionTimerTween: {fileID: 114167006845197322}
   landmarkHPGO: {fileID: 1094328930522268}
 --- !u!114 &114001316787090586
 MonoBehaviour:
@@ -1233,6 +1235,54 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 2
+--- !u!114 &114167006845197322
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1971331108761120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04d1b7c9e9a19a24ab67123a43c6544b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  method: 0
+  style: 2
+  animationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  ignoreTimeScale: 1
+  delay: 0
+  duration: 0.3
+  steeperCurves: 0
+  tweenGroup: 0
+  onFinished: []
+  eventReceiver: {fileID: 0}
+  callWhenFinished: 
+  from: {x: -0, y: 0, z: 0}
+  to: {x: -0, y: 0, z: 45}
+  quaternionLerp: 0
 --- !u!114 &114191374931649504
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3791,7 +3841,7 @@ RectTransform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1971331108761120}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 0}
   m_Children: []
