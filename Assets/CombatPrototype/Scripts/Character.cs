@@ -2910,7 +2910,7 @@ namespace ECS {
                 if (validInteractions.GetTotalOfWeights() > 0) {
                     INTERACTION_TYPE chosenInteraction = validInteractions.PickRandomElementGivenWeights();
                     //create interaction of type
-                    Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, this.specificLocation as BaseLandmark);
+                    Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, this);
                     if (createdInteraction != null) {
                         (this.specificLocation as BaseLandmark).AddInteraction(createdInteraction);
                     }

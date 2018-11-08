@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class CharacterExplores : Interaction {
 
-    private BaseLandmark landmark;
-    private Character chosenCharacter;
+    private ILocation landmark;
+    private ICharacter chosenCharacter;
     private BaseLandmark targetLandmark;
 
     private const string characterExploreCancelled = "Character Explore Cancelled";
@@ -34,39 +34,39 @@ public class CharacterExplores : Interaction {
 
     #region Overrides
     public override void CreateStates() {
-        if (_interactable is BaseLandmark) {
-            landmark = _interactable as BaseLandmark;
-            //**Mechanics**: Select a random Human, Elven or Goblin character in the tile. 
-            chosenCharacter = GetCharacterToMove();
-            //Select a different random location not owned by a Hostile faction and set it as the target location.
-            targetLandmark = GetTargetLandmark();
+        //**Mechanics**: Select a random Human, Elven or Goblin character in the tile. 
+        chosenCharacter = _interactable as ICharacter;
+        landmark = chosenCharacter.ownParty.specificLocation;
+        //Select a different random location not owned by a Hostile faction and set it as the target location.
+        targetLandmark = GetTargetLandmark();
 
-            //If you dont have it yet, gain Intel of selected character
-            PlayerManager.Instance.player.AddIntel(chosenCharacter.characterIntel);
-
-            InteractionState startState = new InteractionState("Start", this);
-
-            //action option states
-            InteractionState characterExploreCancelledState = new InteractionState(characterExploreCancelled, this);
-            InteractionState characterExploreContinuesState = new InteractionState(characterExploreContinues, this);
-            InteractionState characterExploreRedirectedState = new InteractionState(characterExploreRedirected, this);
-            InteractionState doNothingState = new InteractionState(doNothing, this);
-
-            CreateActionOptions(startState);
-
-            characterExploreCancelledState.SetEndEffect(() => CharacterExploreCancelledRewardEffect(characterExploreCancelledState));
-            characterExploreContinuesState.SetEndEffect(() => CharacterExploreContinuesRewardEffect(characterExploreContinuesState));
-            characterExploreRedirectedState.SetEndEffect(() => CharacterExploreRedirectedRewardEffect(characterExploreRedirectedState));
-            doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
-
-            _states.Add(startState.name, startState);
-            _states.Add(characterExploreCancelledState.name, characterExploreCancelledState);
-            _states.Add(characterExploreContinuesState.name, characterExploreContinuesState);
-            _states.Add(characterExploreRedirectedState.name, characterExploreRedirectedState);
-            _states.Add(doNothingState.name, doNothingState);
-
-            SetCurrentState(startState);
+        //If you dont have it yet, gain Intel of selected character
+        if (chosenCharacter is Character) {
+            PlayerManager.Instance.player.AddIntel((chosenCharacter as Character).characterIntel);
         }
+
+        InteractionState startState = new InteractionState("Start", this);
+
+        //action option states
+        InteractionState characterExploreCancelledState = new InteractionState(characterExploreCancelled, this);
+        InteractionState characterExploreContinuesState = new InteractionState(characterExploreContinues, this);
+        InteractionState characterExploreRedirectedState = new InteractionState(characterExploreRedirected, this);
+        InteractionState doNothingState = new InteractionState(doNothing, this);
+
+        CreateActionOptions(startState);
+
+        characterExploreCancelledState.SetEndEffect(() => CharacterExploreCancelledRewardEffect(characterExploreCancelledState));
+        characterExploreContinuesState.SetEndEffect(() => CharacterExploreContinuesRewardEffect(characterExploreContinuesState));
+        characterExploreRedirectedState.SetEndEffect(() => CharacterExploreRedirectedRewardEffect(characterExploreRedirectedState));
+        doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
+
+        _states.Add(startState.name, startState);
+        _states.Add(characterExploreCancelledState.name, characterExploreCancelledState);
+        _states.Add(characterExploreContinuesState.name, characterExploreContinuesState);
+        _states.Add(characterExploreRedirectedState.name, characterExploreRedirectedState);
+        _states.Add(doNothingState.name, doNothingState);
+
+        SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {
@@ -157,22 +157,22 @@ public class CharacterExplores : Interaction {
     }
 
 
-    private Character GetCharacterToMove() {
-        List<Character> choices = new List<Character>();
-        for (int i = 0; i < landmark.charactersWithHomeOnLandmark.Count; i++) {
-            ICharacter currCharacter = landmark.charactersWithHomeOnLandmark[i];
-            if (currCharacter is Character) {
-                Character character = currCharacter as Character;
-                if (allowedRoles.Contains(character.characterClass.className)) {
-                    choices.Add(character);
-                }
-            }
-        }
-        if (choices.Count > 0) {
-            return choices[Random.Range(0, choices.Count)];
-        }
-        return null;
-    }
+    //private Character GetCharacterToMove() {
+    //    List<Character> choices = new List<Character>();
+    //    for (int i = 0; i < landmark.charactersWithHomeOnLandmark.Count; i++) {
+    //        ICharacter currCharacter = landmark.charactersWithHomeOnLandmark[i];
+    //        if (currCharacter is Character) {
+    //            Character character = currCharacter as Character;
+    //            if (allowedRoles.Contains(character.characterClass.className)) {
+    //                choices.Add(character);
+    //            }
+    //        }
+    //    }
+    //    if (choices.Count > 0) {
+    //        return choices[Random.Range(0, choices.Count)];
+    //    }
+    //    return null;
+    //}
 
     private BaseLandmark GetTargetLandmark() {
         List<BaseLandmark> choices = new List<BaseLandmark>();
