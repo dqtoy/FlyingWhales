@@ -19,6 +19,7 @@ public class InteractionState {
     private Log _minionLog;
     private Log _landmarkLog;
     private ActionOption[] _actionOptions;
+    private List<object> _assignedObjects;
 
     #region getters/setters
     public string name {
@@ -60,6 +61,15 @@ public class InteractionState {
     //public GameDate timeDate {
     //    get { return _timeDate; }
     //}
+    public IUnit assignedUnit {
+        get { return (_assignedObjects == null ? null : GetAssignedObjectOfType(typeof(IUnit)) as IUnit); }
+    }
+    public LocationIntel assignedLocation {
+        get { return (_assignedObjects == null ? null : GetAssignedObjectOfType(typeof(LocationIntel)) as LocationIntel); }
+    }
+    public CharacterIntel assignedCharacter {
+        get { return (_assignedObjects == null ? null : GetAssignedObjectOfType(typeof(CharacterIntel)) as CharacterIntel); }
+    }
     #endregion
 
     public InteractionState(string name, Interaction interaction) {
@@ -74,6 +84,9 @@ public class InteractionState {
     //}
     public void SetAssignedMinion(Minion minion) {
         _assignedMinion = minion;
+    }
+    public void SetAssignedObjects(List<object> objects) {
+        _assignedObjects = new List<object>(objects);
     }
     public void AddActionOption(ActionOption option) {
         for (int i = 0; i < _actionOptions.Length; i++) {
@@ -177,6 +190,21 @@ public class InteractionState {
             ActionOption option = actionOptions[i];
             if (option != null && option.name == optionName) {
                 return option;
+            }
+        }
+        return null;
+    }
+    public object GetAssignedObjectOfType(System.Type type) {
+        for (int i = 0; i < _assignedObjects.Count; i++) {
+            object currObject = _assignedObjects[i];
+            if (type == typeof(IUnit)) {
+                if (currObject is IUnit) { //TODO: Make this more elegant!
+                    return currObject;
+                }
+            } else {
+                if (currObject.GetType() == type) {
+                    return currObject;
+                }
             }
         }
         return null;

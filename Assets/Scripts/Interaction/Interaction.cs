@@ -79,6 +79,7 @@ public class Interaction {
     public void SetCurrentState(InteractionState state) {
         if(_currentState != null && _currentState.chosenOption != null) {
             state.SetAssignedMinion(_currentState.chosenOption.assignedMinion);
+            state.SetAssignedObjects(_currentState.chosenOption.assignedObjects);
             _currentState.OnEndState();
         }
         _currentState = state;
