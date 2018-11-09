@@ -32,11 +32,11 @@ public class BezierCurve : MonoBehaviour {
             progressMeter.SetPosition(0, _positions[0]);
         } else {
             for (int i = 0; i < _progressAmount; i++) {
-                Vector3 prevPos = _positions[progressMeter.positionCount - 1];
+                //Vector3 prevPos = _positions[progressMeter.positionCount - 1];
                 progressMeter.positionCount++;
-                float time = 0f;
-                StartCoroutine(TweenPath(prevPos, time));
-                //progressMeter.SetPosition(progressMeter.positionCount - 1, _positions[progressMeter.positionCount - 1]);
+                //float time = 0f;
+                //StartCoroutine(TweenPath(prevPos, time));
+                progressMeter.SetPosition(progressMeter.positionCount - 1, _positions[progressMeter.positionCount - 1]);
             }
         }
         
