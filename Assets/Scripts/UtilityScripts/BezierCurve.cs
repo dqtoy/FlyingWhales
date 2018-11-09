@@ -36,7 +36,9 @@ public class BezierCurve : MonoBehaviour {
         }
         return false;
     }
+    private void TweenLineRenderer() {
 
+    }
     //Returns true when progress reaches 0
     public bool ReduceProgress() {
         progressMeter.positionCount -= _progressAmount;

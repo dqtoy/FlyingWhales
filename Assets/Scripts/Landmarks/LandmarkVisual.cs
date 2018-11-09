@@ -28,6 +28,7 @@ public class LandmarkVisual : MonoBehaviour {
     [SerializeField] private AIDestinationSetter destinationSetter;
     [SerializeField] private LineRenderer lineRenderer;
     [SerializeField] private InteractionTimer interactionTimer;
+    [SerializeField] private TweenRotation interactionTimerTween;
     public GameObject landmarkHPGO;
 
     private int _charCount;
@@ -44,6 +45,12 @@ public class LandmarkVisual : MonoBehaviour {
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_landmark.specificLandmarkType);
         if (data.landmarkObjectSprite != null) {
             iconSprite.sprite = data.landmarkObjectSprite;
+        }
+        Messenger.AddListener<bool>(Signals.PAUSED, OnPauseGame);
+    }
+    private void OnPauseGame(bool state) {
+        if (interactionTimer.gameObject.activeSelf) {
+            interactionTimerTween.enabled = !state;
         }
     }
     public void UpdateName() {
