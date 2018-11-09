@@ -51,39 +51,39 @@ public class CharacterAction {
     public virtual void OnChooseAction(Party iparty, IObject targetObject) { }
     public virtual void OnFirstEncounter(Party party, IObject targetObject) {
         //string startActionLog = GetStartActionString(party);
-        string startActionLog = GetStartActionString(party);
-        if (!string.IsNullOrEmpty(startActionLog) && targetObject != null) {
-            //Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "start_action");
-            //arriveLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            //arriveLog.AddToFillers(null, startActionLog, LOG_IDENTIFIER.ACTION_DESCRIPTION);
-            //for (int i = 0; i < party.icharacters.Count; i++) {
-            //    party.icharacters[i].AddHistory(arriveLog);
-            //}
-            if (targetObject.objectLocation != null) {
-                for (int i = 0; i < party.icharacters.Count; i++) {
-                    ICharacter currCharacter = party.icharacters[i];
-                    Log startLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "start_action");
-                    startLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    startLog.AddToFillers(targetObject.objectLocation, targetObject.objectLocation.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-                    startLog.AddToFillers(null, startActionLog, LOG_IDENTIFIER.ACTION_DESCRIPTION);
-                    currCharacter.AddHistory(startLog);
-                }
-                Log landmarkLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "start_action");
-                landmarkLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                landmarkLog.AddToFillers(targetObject.objectLocation, targetObject.objectLocation.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-                landmarkLog.AddToFillers(null, startActionLog, LOG_IDENTIFIER.ACTION_DESCRIPTION);
-                targetObject.objectLocation.AddHistory(landmarkLog);
-            } else {
-                for (int i = 0; i < party.icharacters.Count; i++) {
-                    ICharacter currCharacter = party.icharacters[i];
-                    Log startLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "start_action");
-                    startLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    startLog.AddToFillers(targetObject.specificLocation.tileLocation, targetObject.specificLocation.tileLocation.tileName, LOG_IDENTIFIER.LANDMARK_1);
-                    startLog.AddToFillers(null, startActionLog, LOG_IDENTIFIER.ACTION_DESCRIPTION);
-                    currCharacter.AddHistory(startLog);
-                }
-            }
-        }
+        //string startActionLog = GetStartActionString(party);
+        //if (!string.IsNullOrEmpty(startActionLog) && targetObject != null) {
+        //    //Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "start_action");
+        //    //arriveLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //    //arriveLog.AddToFillers(null, startActionLog, LOG_IDENTIFIER.ACTION_DESCRIPTION);
+        //    //for (int i = 0; i < party.icharacters.Count; i++) {
+        //    //    party.icharacters[i].AddHistory(arriveLog);
+        //    //}
+        //    if (targetObject.objectLocation != null) {
+        //        for (int i = 0; i < party.icharacters.Count; i++) {
+        //            ICharacter currCharacter = party.icharacters[i];
+        //            Log startLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "start_action");
+        //            startLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //            startLog.AddToFillers(targetObject.objectLocation, targetObject.objectLocation.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        //            startLog.AddToFillers(null, startActionLog, LOG_IDENTIFIER.ACTION_DESCRIPTION);
+        //            currCharacter.AddHistory(startLog);
+        //        }
+        //        Log landmarkLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "start_action");
+        //        landmarkLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //        landmarkLog.AddToFillers(targetObject.objectLocation, targetObject.objectLocation.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        //        landmarkLog.AddToFillers(null, startActionLog, LOG_IDENTIFIER.ACTION_DESCRIPTION);
+        //        targetObject.objectLocation.AddHistory(landmarkLog);
+        //    } else {
+        //        for (int i = 0; i < party.icharacters.Count; i++) {
+        //            ICharacter currCharacter = party.icharacters[i];
+        //            Log startLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "start_action");
+        //            startLog.AddToFillers(party, party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //            startLog.AddToFillers(targetObject.specificLocation.tileLocation, targetObject.specificLocation.tileLocation.tileName, LOG_IDENTIFIER.LANDMARK_1);
+        //            startLog.AddToFillers(null, startActionLog, LOG_IDENTIFIER.ACTION_DESCRIPTION);
+        //            currCharacter.AddHistory(startLog);
+        //        }
+        //    }
+        //}
     }
     public virtual void PerformAction(Party party, IObject targetObject) { }
     public virtual void ActionSuccess(IObject targetObject) {

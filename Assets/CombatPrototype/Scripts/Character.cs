@@ -98,16 +98,21 @@ namespace ECS {
             get { return name.Split(' ')[0]; }
         }
         public virtual string name {
-            get { return this._name; }
+            get {
+                //if(_minion != null) {
+                //    return _minion.name;
+                //}
+                return this._name;
+            }
         }
         public string coloredName {
-            get { return "<color=#" + this._characterColorCode  + ">" + this._name + "</color>"; }
+            get { return "<color=#" + this._characterColorCode  + ">" + name + "</color>"; }
         }
         public string urlName {
-            get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + this._name + "</link>"; }
+            get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + name + "</link>"; }
         }
         public string coloredUrlName {
-            get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + "<color=#" + this._characterColorCode + ">" + this._name + "</color></link>"; }
+            get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + "<color=#" + this._characterColorCode + ">" + name + "</color></link>"; }
         }
         public int id {
             get { return _id; }
