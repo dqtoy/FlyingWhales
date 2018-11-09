@@ -141,7 +141,7 @@ public class CharacterExplores : Interaction {
         //**Reward**: Demon gains Exp 1
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //**Mechanics**: Character will start its travel to Location Intel assigned by the player
-        BaseLandmark targetLandmarkFromArea = GetTargetLandmark(state.chosenOption.assignedLocation.location);
+        BaseLandmark targetLandmarkFromArea = GetTargetLandmark(state.assignedLocation.location);
         CharacterTravelToLocation(targetLandmarkFromArea);
     }
     private void DoNothingRewardEffect(InteractionState state) {
