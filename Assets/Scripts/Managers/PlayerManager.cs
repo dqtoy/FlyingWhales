@@ -68,7 +68,12 @@ public class PlayerManager : MonoBehaviour {
     private void OnLoadStartingTile(BaseLandmark portal) {
         player = new Player();
         player.CreatePlayerFaction();
-        player.CreatePlayerArea(portal);
+        Area existingPlayerArea = LandmarkManager.Instance.GetAreaByName("Player Area");
+        if (existingPlayerArea == null) {
+            player.CreatePlayerArea(portal);
+        } else {
+            player.LoadPlayerArea(existingPlayerArea);
+        }
         player.SetMaxMinions(9);
         player.CreateInitialMinions();
         LandmarkManager.Instance.OwnArea(player.playerFaction, player.playerArea);

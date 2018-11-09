@@ -34,16 +34,10 @@ public class CharacterExplores : Interaction {
 
     #region Overrides
     public override void CreateStates() {
-        //**Mechanics**: Select a random Human, Elven or Goblin character in the tile. 
         chosenCharacter = _interactable as ICharacter;
         landmark = chosenCharacter.ownParty.specificLocation;
         //Select a different random location not owned by a Hostile faction and set it as the target location.
         targetLandmark = GetTargetLandmark();
-
-        //If you dont have it yet, gain Intel of selected character (Check if minion is exploring)
-        if (chosenCharacter is Character && this.explorerMinion != null) {
-            PlayerManager.Instance.player.AddIntel((chosenCharacter as Character).characterIntel);
-        }
 
         InteractionState startState = new InteractionState("Start", this);
 
@@ -98,6 +92,13 @@ public class CharacterExplores : Interaction {
             state.AddActionOption(prevent);
             state.AddActionOption(takeUnit);
             state.AddActionOption(doNothing);
+        }
+    }
+    public override void OnInteractionActive() {
+        base.OnInteractionActive();
+        //If you dont have it yet, gain Intel of selected character (Check if minion is exploring)
+        if (chosenCharacter is Character) {
+            PlayerManager.Instance.player.AddIntel((chosenCharacter as Character).characterIntel);
         }
     }
     #endregion

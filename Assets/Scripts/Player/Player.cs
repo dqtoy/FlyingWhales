@@ -136,6 +136,14 @@ public class Player : ILeader {
         //ActivateMagicTransferToPlayer();
         _demonicPortal.tileLocation.ScheduleCorruption();
     }
+    public void LoadPlayerArea(Area area) {
+        _demonicPortal = area.coreTile.landmarkOnTile;
+        Biomes.Instance.CorruptTileVisuals(_demonicPortal.tileLocation);
+        _demonicPortal.tileLocation.SetCorruption(true);
+        SetPlayerArea(area);
+        _demonicPortal.tileLocation.ScheduleCorruption();
+
+    }
     private void SetPlayerArea(Area area) {
         playerArea = area;
     }
