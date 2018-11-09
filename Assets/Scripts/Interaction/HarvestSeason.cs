@@ -165,6 +165,15 @@ public class HarvestSeason : Interaction {
         //**Effect**: Kill a random Farmer staying at that farm, City gains Supply Cache 1
         List<ICharacter> farmers = farm.tileLocation.areaOfTile.GetResidentsWithClass("Farmer");
         ICharacter chosenFarmer = farmers[Random.Range(0, farmers.Count)];
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(chosenFarmer, chosenFarmer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        }
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(chosenFarmer, chosenFarmer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(chosenFarmer, chosenFarmer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        }
         chosenFarmer.Death();
         farm.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
@@ -203,6 +212,15 @@ public class HarvestSeason : Interaction {
         FactionManager.Instance.DeclareWarBetween(farm.tileLocation.areaOfTile.owner, PlayerManager.Instance.player.playerFaction);
         farm.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(farm.tileLocation.areaOfTile.owner, farm.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+        }
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(farm.tileLocation.areaOfTile.owner, farm.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(farm.tileLocation.areaOfTile.owner, farm.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+        }
     }
     #endregion
 

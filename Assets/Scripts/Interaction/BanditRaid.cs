@@ -162,62 +162,58 @@ public class BanditRaid : Interaction {
         //}
     }
 
-    //private void SuccessfullyCancelledRaid(InteractionState state, string effectName) {
-    //    //_states[effectName].SetDescription(explorerMinion.name + " intimidated the bandits into stopping their attack. " +
-    //    //    "What do you want " + explorerMinion.name + " to do next?");
-    //    SetCurrentState(_states[effectName]);
-    //    SuccessfullyCancelledRaidRewardEffect(_states[effectName]);
-    //}
     private void SuccessfullyCancelledRaidRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.minionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        }
+        if (state.landmarkLog != null) {
+            state.minionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.minionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        }
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.descriptionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        }
     }
-    //private void FailedToCancelRaid(InteractionState state, string effectName) {
-    //    //_states[effectName].SetDescription(explorerMinion.name + " failed to stop the bandits from proceeding with their raid. " +
-    //    //    "A group of bandits have left " + originLandmark.landmarkName + " " +
-    //    //    "to raid " + chosenLandmarkToRaid.landmarkName + ". What do you want " + explorerMinion.name + " to do next?");
-    //    SetCurrentState(_states[effectName]);
-    //    FailedToCancelRaidRewardEffect(_states[effectName]);
-    //}
     private void FailedToCancelRaidRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target
         Party createdParty = CombineCharacters(4);
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
         createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(originLandmark, originLandmark.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_2);
+        }
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.minionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.landmarkLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        }
     }
-    //private void CriticalFailToCancelRaid(InteractionState state, string effectName) {
-    //    BaseLandmark targetLandmark = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
-    //    //_states[effectName].SetDescription(explorerMinion.name + " failed to stop the bandits from proceeding with their raid. " +
-    //    //    "Worse, they were so riled up by the demon that they decided to attack you instead. A group of bandits have left " + 
-    //    //    originLandmark.landmarkName + " to attack " + targetLandmark.name + ". What do you want " + explorerMinion.name + " to do next?");
-    //    SetCurrentState(_states[effectName]);
-    //    //create a 3 army attack unit from Assault Spawn Weights 1. Change target to your area instead.
-    //    CharacterParty army = CreateAssaultArmy(3);
-    //    //force spawned army to raid target
-    //    CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
-    //    army.iactionData.AssignAction(characterAction, targetLandmark.landmarkObj);
-    //    CriticalFailToCancelRaidRewardEffect(_states[effectName]);
-    //}
     private void CriticalFailToCancelRaidRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target
         Party createdParty = CombineCharacters(4);
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
         createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(originLandmark, originLandmark.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_2);
+        }
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+        }
     }
 
-    //private void EmpoweredRaid(InteractionState state, string effectName) {
-    //    //_states[effectName].SetDescription("We provided the bandits with more supplies which they have gladly used to build a " +
-    //    //    "bigger raid group than they initially planned. They have now left " +  originLandmark.landmarkName + " to raid " + 
-    //    //    chosenLandmarkToRaid.name + ". What do you want " + explorerMinion.name + " to do next?");
-    //    SetCurrentState(_states[effectName]);
-    //    //create a 4 army attack unit from Assault Spawn Weights 1.
-    //    CharacterParty army = CreateAssaultArmy(4);
-    //    //force spawned army to raid target
-    //    CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
-    //    army.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
-    //    EmpoweredRaidRewardEffect(_states[effectName]);
-    //}
     private void EmpoweredRaidRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target, all raiding units gain "Empowered" buff
@@ -228,19 +224,19 @@ public class BanditRaid : Interaction {
         for (int i = 0; i < createdParty.icharacters.Count; i++) {
             createdParty.icharacters[i].AddCombatAttribute(empoweredTrait);
         }
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(originLandmark, originLandmark.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_2);
+        }
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.minionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.landmarkLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        }
     }
-    //private void MisusedFunds(InteractionState state, string effectName) {
-    //    //_states[effectName].SetDescription("We provided the bandits with more supplies but it doesn't look they used it for the " +
-    //    //    "attack. They have now left " + originLandmark.landmarkName + " to raid " + chosenLandmarkToRaid.landmarkName +
-    //    //    " but with a smaller group than we anticipated. What do you want " + explorerMinion.name + " to do next?");
-    //    SetCurrentState(_states[effectName]);
-    //    //Spawn attackers create a 3 army attack unit from Assault Spawn Weights 1.
-    //    CharacterParty army = CreateAssaultArmy(3);
-    //    //force spawned army to raid target
-    //    CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
-    //    army.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
-    //    MisusedFundsRewardEffect(_states[effectName]);
-    //}
     private void MisusedFundsRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target, add 100 Supply to Bandit Camp
@@ -248,76 +244,44 @@ public class BanditRaid : Interaction {
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
         createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
         originLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(100);
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(originLandmark, originLandmark.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_2);
+        }
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.landmarkLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        }
     }
-    //private void DemonDies(InteractionState state, string effectName) {
-    //    //_states[effectName].SetDescription(explorerMinion.name + " has not returned. We can only assume the worst.");
-    //    SetCurrentState(_states[effectName]);
-    //}
     private void DemonDiesRewardEffect(InteractionState state) {
         //**Effect**: Demon is removed from Minion List
         PlayerManager.Instance.player.RemoveMinion(explorerMinion);
+        //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target
+        Party createdParty = CombineCharacters(4);
+        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
+        createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.landmarkLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        }
     }
-
-    //private void DoNothing(InteractionState state, string effectName) {
-    //    //_states[effectName].SetDescription("A group of bandits have left " + 
-    //    //    originLandmark.landmarkName + " to raid " + chosenLandmarkToRaid.landmarkName + 
-    //    //    ". What do you want " + explorerMinion.name + " to do next?");
-    //    SetCurrentState(_states[effectName]);
-    //    //create a 3 army attack unit from Assault Spawn Weights 1
-    //    CharacterParty army = CreateAssaultArmy(3);
-    //    //force spawned army to raid target
-    //    CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
-    //    army.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
-    //}
     private void DoNothingRewardEffect(InteractionState state) {
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target
         Party createdParty = CombineCharacters(4);
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
         createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.minionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.landmarkLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        }
     }
-
-    //private void ConstructAssaultSpawnWeights() {
-    //    assaultSpawnWeights = new WeightedDictionary<LandmarkDefender>();
-    //    firstElementAssaultSpawnWeights = new WeightedDictionary<LandmarkDefender>();
-
-    //    LandmarkDefender marauder = new LandmarkDefender() {
-    //        className = "Marauder",
-    //        armyCount = 25
-    //    };
-    //    LandmarkDefender bowman = new LandmarkDefender() {
-    //        className = "Bowman",
-    //        armyCount = 25
-    //    };
-    //    LandmarkDefender healer = new LandmarkDefender() {
-    //        className = "Healer",
-    //        armyCount = 25
-    //    };
-
-    //    firstElementAssaultSpawnWeights.AddElement(marauder, 35);
-    //    firstElementAssaultSpawnWeights.AddElement(bowman, 20);
-
-    //    assaultSpawnWeights.AddElement(marauder, 35);
-    //    assaultSpawnWeights.AddElement(bowman, 20);
-    //    assaultSpawnWeights.AddElement(healer, 10);
-    //}
-    //private CharacterParty CreateAssaultArmy(int unitCount) {
-    //    CharacterParty army = null;
-    //    for (int i = 0; i < unitCount; i++) {
-    //        LandmarkDefender chosenDefender;
-    //        if (i == 0) {
-    //            chosenDefender = firstElementAssaultSpawnWeights.PickRandomElementGivenWeights();
-    //        } else {
-    //            chosenDefender = assaultSpawnWeights.PickRandomElementGivenWeights();
-    //        }
-    //        Character armyUnit = CharacterManager.Instance.CreateNewCharacter(chosenDefender.className, originLandmark.owner.race, GENDER.MALE, originLandmark.owner, originLandmark);
-    //        if (army == null) {
-    //            army = armyUnit.party;
-    //        } else {
-    //            army.AddCharacter(armyUnit);
-    //        }
-    //    }
-    //    return army;
-    //}
 
     private Party CombineCharacters(int upTo) {
         Party partyToUse = null;

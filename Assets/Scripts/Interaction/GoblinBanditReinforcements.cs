@@ -66,7 +66,6 @@ public class GoblinBanditReinforcements : Interaction {
                 name = "Take the unit they will produce.",
                 duration = 0,
                 needsMinion = false,
-                neededObjects = new List<System.Type>() { typeof(IUnit) },
                 effect = () => TakeUnitEffect(state),
                 canBeDoneAction = () => AssignedMinionIsOfType(new List<DEMON_TYPE>() { DEMON_TYPE.WRATH, DEMON_TYPE.PRIDE })
             };
@@ -155,6 +154,12 @@ public class GoblinBanditReinforcements : Interaction {
     private void SuccessfullyCalledReinforcementRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+        }
     }
     //private void FailedToCancelReinforcement(InteractionState state, string effectName) {
     //    ////**Mechanics**: create an Army Unit from Defense Spawn Weights and add it to the Tile Defenders
@@ -173,6 +178,16 @@ public class GoblinBanditReinforcements : Interaction {
         ICharacter createdUnit = CreateAssaultArmy(1).owner;
         if (!landmark.defenders.isFull) {
             landmark.AddDefender(createdUnit);
+        }
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.minionLog.AddToFillers(null, createdUnit.race.ToString(), LOG_IDENTIFIER.STRING_1);
+            state.minionLog.AddToFillers(null, createdUnit.role.roleType.ToString(), LOG_IDENTIFIER.STRING_2);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.landmarkLog.AddToFillers(null, createdUnit.race.ToString(), LOG_IDENTIFIER.STRING_1);
+            state.landmarkLog.AddToFillers(null, createdUnit.role.roleType.ToString(), LOG_IDENTIFIER.STRING_2);
         }
     }
 
@@ -202,6 +217,16 @@ public class GoblinBanditReinforcements : Interaction {
         PlayerManager.Instance.player.AddNewCharacter(createdUnit);
         //**Reward**: Demon gains Exp 1
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.minionLog.AddToFillers(null, createdUnit.race.ToString(), LOG_IDENTIFIER.STRING_1);
+            state.minionLog.AddToFillers(null, createdUnit.role.roleType.ToString(), LOG_IDENTIFIER.STRING_2);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.landmarkLog.AddToFillers(null, createdUnit.race.ToString(), LOG_IDENTIFIER.STRING_1);
+            state.landmarkLog.AddToFillers(null, createdUnit.role.roleType.ToString(), LOG_IDENTIFIER.STRING_2);
+        }
     }
 
     //private void Reinforcement(InteractionState state, string effectName) {
@@ -212,6 +237,16 @@ public class GoblinBanditReinforcements : Interaction {
         ICharacter createdUnit = CreateAssaultArmy(1).owner;
         if (!landmark.defenders.isFull) {
             landmark.AddDefender(createdUnit);
+        }
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.minionLog.AddToFillers(null, createdUnit.race.ToString(), LOG_IDENTIFIER.STRING_1);
+            state.minionLog.AddToFillers(null, createdUnit.role.roleType.ToString(), LOG_IDENTIFIER.STRING_2);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.landmarkLog.AddToFillers(null, createdUnit.race.ToString(), LOG_IDENTIFIER.STRING_1);
+            state.landmarkLog.AddToFillers(null, createdUnit.role.roleType.ToString(), LOG_IDENTIFIER.STRING_2);
         }
     }
 

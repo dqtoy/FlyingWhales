@@ -130,12 +130,28 @@ public class CharacterExplores : Interaction {
         //**Reward**: Demon gains Exp 1
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //**Mechanics**: Character will no longer leave.
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.minionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.landmarkLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
     }
     private void CharacterExploreContinuesRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //**Mechanics**: Character will start its travel to selected location
         CharacterTravelToLocation(targetLandmark);
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.minionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.landmarkLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
     }
     private void CharacterExploreRedirectedRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
@@ -143,12 +159,28 @@ public class CharacterExplores : Interaction {
         //**Mechanics**: Character will start its travel to Location Intel assigned by the player
         BaseLandmark targetLandmarkFromArea = GetTargetLandmark(state.assignedLocation.location);
         CharacterTravelToLocation(targetLandmarkFromArea);
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.minionLog.AddToFillers(targetLandmarkFromArea.tileLocation.areaOfTile, targetLandmarkFromArea.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.landmarkLog.AddToFillers(targetLandmarkFromArea.tileLocation.areaOfTile, targetLandmarkFromArea.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
     }
     private void DoNothingRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //**Mechanics**: Character will start its travel to selected location
         CharacterTravelToLocation(targetLandmark);
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.minionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.landmarkLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
     }
     #endregion
 

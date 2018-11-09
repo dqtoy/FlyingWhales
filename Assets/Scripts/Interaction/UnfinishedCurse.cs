@@ -10,6 +10,8 @@ public class UnfinishedCurse : Interaction {
     private const string obtainMana = "Obtain Mana";
     private const string doNothing = "Do nothing";
 
+    private ICharacter chosenCharacter;
+
     private WeightedDictionary<string> curseWeights;
 
     public UnfinishedCurse(IInteractable interactable) : base(interactable, INTERACTION_TYPE.UNFINISHED_CURSE, 100) {
@@ -21,6 +23,7 @@ public class UnfinishedCurse : Interaction {
         if (_interactable is BaseLandmark) {
             ConstructCurseWeights();
             InteractionState startState = new InteractionState("Start", this);
+            chosenCharacter = _interactable as ICharacter;
             //string startStateDesc = "Our imp has reported what appears to be an ancient unfinished curse placed within one of the cemetery mausoleums. We may be able to complete the curse but we aren't aware of what it's actual effect would be, if any.";
             //startState.SetDescription(startStateDesc);
             CreateActionOptions(startState);
@@ -127,17 +130,38 @@ public class UnfinishedCurse : Interaction {
         state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Effect**: Character should gain a random curse from the Curse checklist below
         string chosenCurse = curseWeights.PickRandomElementGivenWeights();
-        state.assignedCharacter.character.AddCombatAttribute(AttributeManager.Instance.allCombatAttributes[chosenCurse]);
+        CombatAttribute chosenAttribute = AttributeManager.Instance.allCombatAttributes[chosenCurse];
+        state.assignedCharacter.character.AddCombatAttribute(chosenAttribute);
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(state.assignedCharacter.character, state.assignedCharacter.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.minionLog.AddToFillers(null, chosenAttribute.name, LOG_IDENTIFIER.STRING_1);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(state.assignedCharacter.character, state.assignedCharacter.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.landmarkLog.AddToFillers(null, chosenAttribute.name, LOG_IDENTIFIER.STRING_1);
+        }
     }
     private void CurseFailedToCompleteRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
         state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        }
     }
     private void CurseBackfiresRewardEffect(InteractionState state) {
         state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Effect**: Demon Minion should gain a random curse from the Curse checklist below
         string chosenCurse = curseWeights.PickRandomElementGivenWeights();
         state.assignedMinion.icharacter.AddCombatAttribute(AttributeManager.Instance.allCombatAttributes[chosenCurse]);
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        }
     }
     private void ObtainManaRewardEffect(InteractionState state) {
         //**Reward**: Mana Cache 1, Demon gains Exp 1

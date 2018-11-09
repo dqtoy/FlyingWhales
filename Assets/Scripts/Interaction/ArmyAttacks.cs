@@ -6,6 +6,7 @@ public class ArmyAttacks : Interaction {
 
     private BaseLandmark landmark;
     private Area targetArea;
+    private BaseLandmark target;
 
     private const string stopSuccessful = "Stop Successful";
     private const string stopFailure = "Stop Failure";
@@ -24,6 +25,7 @@ public class ArmyAttacks : Interaction {
             landmark = _interactable as BaseLandmark;
             Faction targetFaction = landmark.owner.GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS.AT_WAR);
             targetArea = targetFaction.ownedAreas[Random.Range(0, targetFaction.ownedAreas.Count)];
+            target = targetArea.GetRandomExposedLandmark();
             //CreateExploreStates();
             //CreateWhatToDoNextState("%minion% will not intervene with the Garrison's planned attack. Do you want him to continue surveillance of " + landmark.landmarkName + "?");
 
@@ -122,52 +124,34 @@ public class ArmyAttacks : Interaction {
         SetCurrentState(_states[doNothing]);
     }
 
-    //private void StopSuccessful(InteractionState state, string effectName) {
-    //    //_states[effectName].SetDescription(explorerMinion.name + " disguised himself and talked to the Army General, " +
-    //    //    "eventually convincing him to cancel their attack. With that done, we can have him maintain surveillance " +
-    //    //    "of the area if you want.");
-    //    SetCurrentState(_states[effectName]);
-    //    StopSuccessfulRewardEffect(_states[effectName]);
-    //}
     private void StopSuccessfulRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.minionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.landmarkLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
     }
-    //private void StopFailure(InteractionState state, string effectName) {
-    //    //Faction enemyFaction = landmark.owner.GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS.AT_WAR);
-    //    //Area targetArea = enemyFaction.ownedAreas[Random.Range(0, enemyFaction.ownedAreas.Count)];
-    //    //BaseLandmark target = targetArea.GetRandomExposedLandmark();
-    //    ////**Mechanics**: Army Unit with most occupied slots will Attack the selected enemy location.
-    //    //_states[effectName].SetDescription(explorerMinion.name + " disguised himself and talked to the Army General, but was unable to convince him to cancel their attack. What do you want him to do next?");
-    //    SetCurrentState(_states[effectName]);
-
-    //    //CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
-    //    //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
-    //    //army.iactionData.AssignAction(characterAction, target.landmarkObj);
-    //    StopFailureRewardEffect(_states[effectName]);
-    //}
     private void StopFailureRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //**Mechanics**: Army Unit with most occupied slots will Attack the selected enemy location.
-        BaseLandmark target = targetArea.GetRandomExposedLandmark();
         CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
         army.iactionData.AssignAction(characterAction, target.landmarkObj);
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.minionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.landmarkLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
     }
-    //private void StopCriticalFailure(InteractionState state, string effectName) {
-    //    ////**Mechanics**: Army Unit with most occupied slots will Attack a player location. Demon ends Explore and must return to Portal.
-    //    //BaseLandmark target = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
-    //    //_states[effectName].SetDescription(explorerMinion.name + " disguised himself and talked to the Army General, " +
-    //    //    "but was unable to convince him to cancel their attack. Annoyed with the demon, the General redirected the attack to us! " +
-    //    //    explorerMinion.name + " was also forced to flee the area.");
-    //    SetCurrentState(_states[effectName]);
-
-    //    //CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
-    //    //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
-    //    //army.iactionData.AssignAction(characterAction, target.landmarkObj);
-    //    //landmark.landmarkInvestigation.MinionGoBackFromAssignment(null);
-    //}
     private void StopCriticalFailureRewardEffect(InteractionState state) {
         //**Mechanics**: Army Unit with most occupied slots will Attack a player location. Demon ends Explore and must return to Portal.
         BaseLandmark target = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
@@ -175,23 +159,15 @@ public class ArmyAttacks : Interaction {
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
         army.iactionData.AssignAction(characterAction, target.landmarkObj);
         landmark.landmarkInvestigation.RecallMinion();
-
         //**Reward**: Demon gains Exp 1
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+        }
     }
-
-    //private void RedirectionSuccessful(InteractionState state, string effectName) {
-    //    ////**Mechanics**: Army Unit with most occupied slots will Attack assigned Location Intel.
-    //    //BaseLandmark target = state.chosenOption.assignedLocation.location.GetRandomExposedLandmark();
-    //    //_states[effectName].SetDescription(explorerMinion.name + " disguised himself and talked to the Army General," +
-    //    //    " eventually convincing him to redirect their attack to " + target.name + ". What do you want him to do next?");
-    //    SetCurrentState(_states[effectName]);
-
-    //    //CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
-    //    //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
-    //    //army.iactionData.AssignAction(characterAction, target.landmarkObj);
-    //    RedirectionSuccessfulRewardEffect(_states[effectName]);
-    //}
     private void RedirectionSuccessfulRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
@@ -200,19 +176,17 @@ public class ArmyAttacks : Interaction {
         CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
         army.iactionData.AssignAction(characterAction, target.landmarkObj);
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.minionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+            state.minionLog.AddToFillers(target, targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.landmarkLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+            state.landmarkLog.AddToFillers(target, targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
+        }
     }
-    //private void RedirectionFailure(InteractionState state, string effectName) {
-    //    ////**Mechanics**: Army Unit with most occupied slots will Attack a player location.
-    //    //BaseLandmark target = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
-    //    //_states[effectName].SetDescription(explorerMinion.name + " disguised himself and talked to the Army General, " +
-    //    //    "but failed to convince him to redirect their attack to " + target.name + ". What do you want him to do next?");
-    //    SetCurrentState(_states[effectName]);
-
-    //    //CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
-    //    //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
-    //    //army.iactionData.AssignAction(characterAction, target.landmarkObj);
-    //    RedirectionFailureRewardEffect(_states[effectName]);
-    //}
     private void RedirectionFailureRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
@@ -221,13 +195,30 @@ public class ArmyAttacks : Interaction {
         CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
         army.iactionData.AssignAction(characterAction, target.landmarkObj);
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.minionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+            state.minionLog.AddToFillers(target, targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.landmarkLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+            state.landmarkLog.AddToFillers(target, targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
+        }
     }
 
     private void DoNothingRewardEffect(InteractionState state) {
         //**Mechanics**: Army Unit with most occupied slots will Attack the selected enemy location.
-        BaseLandmark target = targetArea.GetRandomExposedLandmark();
         CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
         army.iactionData.AssignAction(characterAction, target.landmarkObj);
+        if (state.minionLog != null) {
+            state.minionLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.minionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
+        if (state.landmarkLog != null) {
+            state.landmarkLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.landmarkLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
     }
 }
