@@ -42,6 +42,7 @@ public class HarvestSeason : Interaction {
             demonDiscoveredState.SetEndEffect(() => DemonDiscoveredRewardEffect(demonDiscoveredState));
             demonKilledState.SetEndEffect(() => DemonKilledRewardEffect(demonKilledState));
             doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
+            poisonedHarvestState.SetEndEffect(() => PoisonedHarvestRewardEffect(poisonedHarvestState));
 
             _states.Add(startState.name, startState);
             _states.Add(poisonedHarvestState.name, poisonedHarvestState);
