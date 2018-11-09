@@ -40,8 +40,8 @@ public class CharacterExplores : Interaction {
         //Select a different random location not owned by a Hostile faction and set it as the target location.
         targetLandmark = GetTargetLandmark();
 
-        //If you dont have it yet, gain Intel of selected character
-        if (chosenCharacter is Character) {
+        //If you dont have it yet, gain Intel of selected character (Check if minion is exploring)
+        if (chosenCharacter is Character && this.explorerMinion != null) {
             PlayerManager.Instance.player.AddIntel((chosenCharacter as Character).characterIntel);
         }
 
