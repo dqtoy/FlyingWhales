@@ -246,7 +246,7 @@ public class CharacterInfoUI : UIMenu {
         infoMenuCover.SetActive(state);
         itemsMenuCover.SetActive(state);
         relationsMenuCover.SetActive(state);
-        logsMenuCover.SetActive(state);
+        //logsMenuCover.SetActive(state);
     }
     private void ClearAllTabMenus() {
         //stats
@@ -359,7 +359,7 @@ public class CharacterInfoUI : UIMenu {
         UpdateAllHistoryInfo();
     }
     private void UpdatePortrait() {
-        characterPortrait.GeneratePortrait(_activeCharacter, 80, true);
+        characterPortrait.GeneratePortrait(_activeCharacter, 100, true);
         characterPortrait.SetBGState(false);
     }
     private void UpdateBasicInfo() {

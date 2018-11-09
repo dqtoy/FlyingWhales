@@ -92,7 +92,7 @@ public class SlotItem : MonoBehaviour {
             factionEmblem.gameObject.SetActive(false);
             areaEmblem.gameObject.SetActive(false);
             portrait.gameObject.SetActive(true);
-            portrait.GeneratePortrait((associatedObj as ICharacter), 95, true);
+            portrait.GeneratePortrait((associatedObj as ICharacter), 100, true);
             hoverInfo = (associatedObj as ICharacter).name;
         }
     }

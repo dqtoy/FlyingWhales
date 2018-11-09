@@ -485,7 +485,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 64c0c27a3a5a0b7419e7b96952268b8a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f6387ee2f8881994f98b423c7f36f320, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -761,6 +761,8 @@ MonoBehaviour:
   portrait: {fileID: 114952228508930528}
   areaEmblem: {fileID: 114223367753017342}
   factionEmblem: {fileID: 114778580917405662}
+  dropZone: {fileID: 0}
+  draggable: {fileID: 0}
 --- !u!114 &114515742188819074
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1234,6 +1236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 987f7b0067646c7428824d6518a3d363, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ParentPool: {fileID: 0}
   ignoreInteractions: 0
   bg: {fileID: 114227523538485220}
   head: {fileID: 114330819059614030}
@@ -1619,10 +1622,10 @@ RectTransform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 120, y: 120}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 82.6, y: -56}
+  m_SizeDelta: {x: 110, y: 112}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224337272851293012
 RectTransform:
