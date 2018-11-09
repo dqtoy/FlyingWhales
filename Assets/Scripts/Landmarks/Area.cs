@@ -382,8 +382,10 @@ public class Area {
     public void SetOwner(Faction owner) {
         this.owner = owner;
         UpdateBorderColors();
-        for (int i = 0; i < landmarks.Count; i++) {
-            landmarks[i].OccupyLandmark(owner);
+        if (owner != null) {
+            for (int i = 0; i < landmarks.Count; i++) {
+                landmarks[i].OccupyLandmark(owner);
+            }
         }
     }
     #endregion

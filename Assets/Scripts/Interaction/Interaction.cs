@@ -73,6 +73,7 @@ public class Interaction {
         _interactable.RemoveInteraction(this);
         InteractionUI.Instance.HideInteractionUI();
     }
+    public virtual void OnInteractionActive() { } //this is called when the player clicks the "exclamation point" button and this interaction was chosen
     #endregion
 
     #region Utilities

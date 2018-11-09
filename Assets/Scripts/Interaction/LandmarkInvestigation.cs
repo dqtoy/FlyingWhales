@@ -166,7 +166,7 @@ public class LandmarkInvestigation {
     private Interaction GetRandomInteraction() {
         //GameManager.Instance.SetPausedState(true);
         List<Interaction> choices = _landmark.GetAllInteractionsInLandmark();
-        Interaction chosenInteraction = choices[UnityEngine.Random.Range(0, _landmark.currentInteractions.Count)];
+        Interaction chosenInteraction = choices[UnityEngine.Random.Range(0, choices.Count)];
         chosenInteraction.CancelFirstTimeOut();
         chosenInteraction.ScheduleSecondTimeOut();
         return chosenInteraction;
@@ -184,6 +184,7 @@ public class LandmarkInvestigation {
             //_landmark.landmarkVisual.HideInteractionTimer();
             _currentInteraction.CancelSecondTimeOut();
             _currentInteraction.SetExplorerMinion(_assignedMinion);
+            _currentInteraction.OnInteractionActive();
             InteractionUI.Instance.OpenInteractionUI(_currentInteraction);
         }
     }
