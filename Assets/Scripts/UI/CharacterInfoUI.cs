@@ -246,7 +246,7 @@ public class CharacterInfoUI : UIMenu {
         infoMenuCover.SetActive(state);
         itemsMenuCover.SetActive(state);
         relationsMenuCover.SetActive(state);
-        logsMenuCover.SetActive(state);
+        //logsMenuCover.SetActive(state);
     }
     private void ClearAllTabMenus() {
         //stats
