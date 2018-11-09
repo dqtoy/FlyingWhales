@@ -89,14 +89,14 @@ public class InteractionManager : MonoBehaviour {
     }
     public bool CanCreateInteraction(INTERACTION_TYPE interactionType, BaseLandmark landmark) {
         switch (interactionType) {
-            case INTERACTION_TYPE.ABANDONED_HOUSE:
-            case INTERACTION_TYPE.UNEXPLORED_CAVE:
-            case INTERACTION_TYPE.SPIDER_QUEEN:
-            case INTERACTION_TYPE.MYSTERY_HUM:
-            case INTERACTION_TYPE.UNFINISHED_CURSE:
-            case INTERACTION_TYPE.HARVEST_SEASON:
-                //Requires actively Investigating Imp.
-                return landmark.isBeingInspected;
+            //case INTERACTION_TYPE.ABANDONED_HOUSE:
+            //case INTERACTION_TYPE.UNEXPLORED_CAVE:
+            //case INTERACTION_TYPE.SPIDER_QUEEN:
+            //case INTERACTION_TYPE.MYSTERY_HUM:
+            //case INTERACTION_TYPE.UNFINISHED_CURSE:
+            //case INTERACTION_TYPE.HARVEST_SEASON:
+            //    //Requires actively Investigating Imp.
+            //    return landmark.isBeingInspected;
             case INTERACTION_TYPE.BANDIT_RAID:
                 //Random event that occurs on Bandit Camps. Requires at least 3 characters or army units in the Bandit Camp 
                 //character list owned by the Faction owner.

@@ -1343,7 +1343,7 @@ public class BaseLandmark : ILocation, IInteractable {
         this.minDailySupplyProduction = amount;
     }
     public List<Interaction> GetAllInteractionsInLandmark() { //this includes all characters at this landmark
-        List<Interaction> interactions = new List<Interaction>();
+        List<Interaction> interactions = new List<Interaction>(_currentInteractions);
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
             Party currParty = _charactersAtLocation[i];
             if (currParty.owner is Character) {
