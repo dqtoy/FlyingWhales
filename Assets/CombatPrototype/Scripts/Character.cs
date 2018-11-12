@@ -407,7 +407,7 @@ namespace ECS {
 #if !WORLD_CREATION_TOOL
             GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, UIManager.Instance.characterPortraitsParent);
             _characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
-            _characterPortrait.GeneratePortrait(this, 36, true, data.role);
+            _characterPortrait.GeneratePortrait(this, 36, data.role);
             portraitGO.SetActive(false);
 #endif
 

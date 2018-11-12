@@ -37,7 +37,7 @@ public class CharacterRelationshipItem : PooledObject {
 
     public void UpdateInfo() {
         //portrait.SetDimensions(42f);
-        portrait.GeneratePortrait(rel.targetCharacter, 42, true);
+        portrait.GeneratePortrait(rel.targetCharacter, 42);
         characterNameLbl.text = rel.targetCharacter.name;
         affiliations.SetCharacter(rel.targetCharacter);
         affiliations.UpdateAffiliations();

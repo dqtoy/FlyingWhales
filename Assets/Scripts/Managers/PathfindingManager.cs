@@ -70,9 +70,9 @@ public class PathfindingManager : MonoBehaviour {
         for (int i = 0; i < _allAgents.Count; i++) {
             AIPath currentAI = _allAgents[i];
             currentAI.UpdateMe();
-            if (currentAI is CharacterAIPath && (currentAI as CharacterAIPath).icon.pathfinder.isWaitingForPathCalculation) {
-                (currentAI as CharacterAIPath).icon.pathfinder.UpdateMe();
-            }
+            //if (currentAI is CharacterAIPath && (currentAI as CharacterAIPath).icon.pathfinder.isWaitingForPathCalculation) {
+            //    (currentAI as CharacterAIPath).icon.pathfinder.UpdateMe();
+            //}
         }
     }
 #endif

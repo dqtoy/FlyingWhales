@@ -195,11 +195,11 @@ public class CharacterInfoUI : UIMenu {
         base.OpenMenu();
         _activeCharacter = _data as Character;
         UpdateCharacterInfo();
-        if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
+        //if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
             UpdateCombatAttributes();
-        } else {
-            UpdateCombatAttributes(_activeCharacter.uiData);
-        }
+        //} else {
+        //    UpdateCombatAttributes(_activeCharacter.uiData);
+        //}
         //if (_activeCharacter.isBeingInspected) {
         //    UpdateTagInfo(_activeCharacter.attributes);
         //} else {
@@ -248,55 +248,6 @@ public class CharacterInfoUI : UIMenu {
         relationsMenuCover.SetActive(state);
         //logsMenuCover.SetActive(state);
     }
-    private void ClearAllTabMenus() {
-        //stats
-        //healthProgressBar.value = 0f;
-        //manaProgressBar.value = 0f;
-        //strengthLbl.text = "-";
-        //agilityLbl.text = "-";
-        //intelligenceLbl.text = "-";
-        //vitalityLbl.text = "-";
-
-        //items
-        for (int i = 0; i < inventoryItemContainers.Length; i++) {
-            ItemContainer currContainer = inventoryItemContainers[i];
-            currContainer.SetItem(null);
-        }
-        headArmorContainer.SetItem(null);
-        leftHandContainer.SetItem(null);
-        rightHandContainer.SetItem(null);
-        chestArmorContainer.SetItem(null);
-        legArmorContainer.SetItem(null);
-        leftFootArmorContainer.SetItem(null);
-        rightFootArmorContainer.SetItem(null);
-
-        ////tags
-        //Utilities.DestroyChildren(tagsScrollView.content);
-
-        //relationships
-        Utilities.DestroyChildren(relationsScrollView.content);
-
-        //logs
-        for (int i = 0; i < logHistoryItems.Length; i++) {
-            LogHistoryItem currItem = logHistoryItems[i];
-            currItem.gameObject.SetActive(false);
-        }
-
-        //secrets
-        for (int i = 0; i < secretItems.Length; i++) {
-            SecretItem currItem = secretItems[i];
-            currItem.gameObject.SetActive(false);
-        }
-
-        //intel
-        for (int i = 0; i < intelItems.Length; i++) {
-            IntelItem currItem = intelItems[i];
-            currItem.gameObject.SetActive(false);
-        }
-
-        //hidden desire
-        hiddenDesireItem.gameObject.SetActive(false);
-    }
 
     //private void OnCharacterDied(ECS.Character deadCharacter) {
     //    if (isShowing && _activeCharacter != null && _activeCharacter.id == deadCharacter.id) {
@@ -316,39 +267,33 @@ public class CharacterInfoUI : UIMenu {
         if (_activeCharacter == null) {
             return;
         }
-        if (GameManager.Instance.inspectAll) {
+        //if (GameManager.Instance.inspectAll) {
             SetCoversState(false);
-        } else {
-            //if the character has never been inspected
-            //activate all the tab menu covers
-            //else, disable all the tab menu covers
-            SetCoversState(!_activeCharacter.hasBeenInspected);
-        }
+        //} else {
+        //    //if the character has never been inspected
+        //    //activate all the tab menu covers
+        //    //else, disable all the tab menu covers
+        //    SetCoversState(!_activeCharacter.hasBeenInspected);
+        //}
 
         UpdatePortrait();
         UpdateBasicInfo();
-        if (!_activeCharacter.hasBeenInspected && !GameManager.Instance.inspectAll) {
-            //if the character has never been inspected
-            //clear all menus and do not load any info
-            ClearAllTabMenus();
-        }
-
         UpdateInfoMenu();
         UpdateStatInfo();
 
-        if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
+        //if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
             //UpdateStatInfo();
             UpdateEquipmentInfo();
             //UpdateItemsInfo();
             //UpdateTagInfo(_activeCharacter.attributes);
             //UpdateRelationshipInfo(_activeCharacter.relationships.Values.ToList());
-        } else {
-            //UpdateStatInfo(_activeCharacter.uiData);
-            UpdateEquipmentInfo(_activeCharacter.uiData);
-            //UpdateItemsInfo(_activeCharacter.uiData);
-            //UpdateTagInfo(_activeCharacter.uiData.attributes);
-            //UpdateRelationshipInfo(_activeCharacter.uiData.relationships);
-        }
+        //} else {
+        //    //UpdateStatInfo(_activeCharacter.uiData);
+        //    UpdateEquipmentInfo(_activeCharacter.uiData);
+        //    //UpdateItemsInfo(_activeCharacter.uiData);
+        //    //UpdateTagInfo(_activeCharacter.uiData.attributes);
+        //    //UpdateRelationshipInfo(_activeCharacter.uiData.relationships);
+        //}
 
         //UpdateGeneralInfo();
         //UpdateMoodInfo();
@@ -359,22 +304,22 @@ public class CharacterInfoUI : UIMenu {
         UpdateAllHistoryInfo();
     }
     private void UpdatePortrait() {
-        characterPortrait.GeneratePortrait(_activeCharacter, 100, true);
+        characterPortrait.GeneratePortrait(_activeCharacter, 97);
         characterPortrait.SetBGState(false);
     }
     private void UpdateBasicInfo() {
         nameLbl.text = _activeCharacter.name;
-        if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
+        //if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
             nameLbl.text += " (Updated)"; 
             lvlClassLbl.text = "Lvl." + _activeCharacter.level.ToString() + " " + _activeCharacter.characterClass.className;
-        } else {
-            if (_activeCharacter.hasBeenInspected) {
-                nameLbl.text += " (Old)";
-                lvlClassLbl.text = "Lvl." + _activeCharacter.uiData.level.ToString() + " " + _activeCharacter.uiData.className;
-            } else {
-                lvlClassLbl.text = "???";
-            }
-        }
+        //} else {
+        //    if (_activeCharacter.hasBeenInspected) {
+        //        nameLbl.text += " (Old)";
+        //        lvlClassLbl.text = "Lvl." + _activeCharacter.uiData.level.ToString() + " " + _activeCharacter.uiData.className;
+        //    } else {
+        //        lvlClassLbl.text = "???";
+        //    }
+        //}
         if (_activeCharacter.schedule != null) {
             phaseLbl.text = _activeCharacter.schedule.currentPhase.ToString();
             phaseLbl.gameObject.SetActive(true);
@@ -392,19 +337,19 @@ public class CharacterInfoUI : UIMenu {
 
     #region Stats
     private void UpdateStatInfo() {
-        if (_activeCharacter.hasBeenInspected || GameManager.Instance.inspectAll) {
-            if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
+        //if (_activeCharacter.hasBeenInspected || GameManager.Instance.inspectAll) {
+        //    if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
                 hpLbl.text = _activeCharacter.maxHP.ToString();
                 attackLbl.text = _activeCharacter.attackPower.ToString();
                 speedLbl.text = _activeCharacter.speed.ToString();
-            } else {
-                UpdateStatInfo(_activeCharacter.uiData);
-            }
-        } else {
-            hpLbl.text = "???";
-            attackLbl.text = "???";
-            speedLbl.text = "???";
-        }
+            //} else {
+            //    UpdateStatInfo(_activeCharacter.uiData);
+            //}
+        //} else {
+        //    hpLbl.text = "???";
+        //    attackLbl.text = "???";
+        //    speedLbl.text = "???";
+        //}
 
         ////healthProgressBar.value = (float)_activeCharacter.currentHP / (float)_activeCharacter.maxHP;
         ////manaProgressBar.value = (float)_activeCharacter.currentSP / (float)_activeCharacter.maxSP;
@@ -416,17 +361,17 @@ public class CharacterInfoUI : UIMenu {
         ////intelligenceLbl.text = _activeCharacter.intelligence.ToString();
         ////vitalityLbl.text = _activeCharacter.vitality.ToString();
     }
-    private void UpdateStatInfo(CharacterUIData uiData) {
-        //healthProgressBar.value = uiData.healthValue;
-        //manaProgressBar.value = uiData.manaValue;
-        hpLbl.text = uiData.maxHP.ToString();
-        attackLbl.text = uiData.attackPower.ToString();
-        speedLbl.text = uiData.speed.ToString();
-        //strengthLbl.text = uiData.strength.ToString();
-        //agilityLbl.text = uiData.agility.ToString();
-        //intelligenceLbl.text = uiData.intelligence.ToString();
-        //vitalityLbl.text = uiData.vitality.ToString();
-    }
+    //private void UpdateStatInfo(CharacterUIData uiData) {
+    //    //healthProgressBar.value = uiData.healthValue;
+    //    //manaProgressBar.value = uiData.manaValue;
+    //    hpLbl.text = uiData.maxHP.ToString();
+    //    attackLbl.text = uiData.attackPower.ToString();
+    //    speedLbl.text = uiData.speed.ToString();
+    //    //strengthLbl.text = uiData.strength.ToString();
+    //    //agilityLbl.text = uiData.agility.ToString();
+    //    //intelligenceLbl.text = uiData.intelligence.ToString();
+    //    //vitalityLbl.text = uiData.vitality.ToString();
+    //}
     #endregion
 
     #region Equipment
@@ -459,35 +404,35 @@ public class CharacterInfoUI : UIMenu {
             consumableIcon.gameObject.SetActive(false);
         }
     }
-    private void UpdateEquipmentInfo(CharacterUIData uiData) {
-        if (uiData.equippedWeapon != null) {
-            weaponIcon.gameObject.SetActive(true);
-            weaponIcon.sprite = ItemManager.Instance.GetIconSprite(uiData.equippedWeapon.iconName);
-        } else {
-            weaponIcon.gameObject.SetActive(false);
-        }
+    //private void UpdateEquipmentInfo(CharacterUIData uiData) {
+    //    if (uiData.equippedWeapon != null) {
+    //        weaponIcon.gameObject.SetActive(true);
+    //        weaponIcon.sprite = ItemManager.Instance.GetIconSprite(uiData.equippedWeapon.iconName);
+    //    } else {
+    //        weaponIcon.gameObject.SetActive(false);
+    //    }
 
-        if (uiData.equippedArmor != null) {
-            armorIcon.gameObject.SetActive(true);
-            armorIcon.sprite = ItemManager.Instance.GetIconSprite(uiData.equippedArmor.iconName);
-        } else {
-            armorIcon.gameObject.SetActive(false);
-        }
+    //    if (uiData.equippedArmor != null) {
+    //        armorIcon.gameObject.SetActive(true);
+    //        armorIcon.sprite = ItemManager.Instance.GetIconSprite(uiData.equippedArmor.iconName);
+    //    } else {
+    //        armorIcon.gameObject.SetActive(false);
+    //    }
 
-        if (uiData.equippedAccessory != null) {
-            accessoryIcon.gameObject.SetActive(true);
-            accessoryIcon.sprite = ItemManager.Instance.GetIconSprite(uiData.equippedAccessory.iconName);
-        } else {
-            accessoryIcon.gameObject.SetActive(false);
-        }
+    //    if (uiData.equippedAccessory != null) {
+    //        accessoryIcon.gameObject.SetActive(true);
+    //        accessoryIcon.sprite = ItemManager.Instance.GetIconSprite(uiData.equippedAccessory.iconName);
+    //    } else {
+    //        accessoryIcon.gameObject.SetActive(false);
+    //    }
 
-        if (uiData.equippedConsumable != null) {
-            consumableIcon.gameObject.SetActive(true);
-            consumableIcon.sprite = ItemManager.Instance.GetIconSprite(uiData.equippedConsumable.iconName);
-        } else {
-            consumableIcon.gameObject.SetActive(false);
-        }
-    }
+    //    if (uiData.equippedConsumable != null) {
+    //        consumableIcon.gameObject.SetActive(true);
+    //        consumableIcon.sprite = ItemManager.Instance.GetIconSprite(uiData.equippedConsumable.iconName);
+    //    } else {
+    //        consumableIcon.gameObject.SetActive(false);
+    //    }
+    //}
     #endregion
 
     #region Combat Attributes

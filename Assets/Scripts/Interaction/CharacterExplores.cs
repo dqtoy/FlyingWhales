@@ -40,6 +40,7 @@ public class CharacterExplores : Interaction {
         targetLandmark = GetTargetLandmark();
 
         InteractionState startState = new InteractionState("Start", this);
+        
 
         //action option states
         InteractionState characterExploreCancelledState = new InteractionState(characterExploreCancelled, this);
@@ -61,6 +62,13 @@ public class CharacterExplores : Interaction {
         _states.Add(doNothingState.name, doNothingState);
 
         SetCurrentState(startState);
+
+        if (startState.descriptionLog != null) {
+            startState.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenCharacter.race), LOG_IDENTIFIER.STRING_1);
+            startState.descriptionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            startState.descriptionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
+        startState.SetDescription();
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {
@@ -92,6 +100,7 @@ public class CharacterExplores : Interaction {
             state.AddActionOption(prevent);
             state.AddActionOption(takeUnit);
             state.AddActionOption(doNothing);
+            state.SetDefaultOption(doNothing);
         }
     }
     public override void OnInteractionActive() {
@@ -130,6 +139,10 @@ public class CharacterExplores : Interaction {
         //**Reward**: Demon gains Exp 1
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //**Mechanics**: Character will no longer leave.
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.descriptionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
         if (state.minionLog != null) {
             state.minionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             state.minionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
@@ -144,6 +157,10 @@ public class CharacterExplores : Interaction {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //**Mechanics**: Character will start its travel to selected location
         CharacterTravelToLocation(targetLandmark);
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.descriptionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
         if (state.minionLog != null) {
             state.minionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             state.minionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
@@ -159,6 +176,10 @@ public class CharacterExplores : Interaction {
         //**Mechanics**: Character will start its travel to Location Intel assigned by the player
         BaseLandmark targetLandmarkFromArea = GetTargetLandmark(state.assignedLocation.location);
         CharacterTravelToLocation(targetLandmarkFromArea);
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.descriptionLog.AddToFillers(targetLandmarkFromArea.tileLocation.areaOfTile, targetLandmarkFromArea.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
         if (state.minionLog != null) {
             state.minionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             state.minionLog.AddToFillers(targetLandmarkFromArea.tileLocation.areaOfTile, targetLandmarkFromArea.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
@@ -173,6 +194,10 @@ public class CharacterExplores : Interaction {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //**Mechanics**: Character will start its travel to selected location
         CharacterTravelToLocation(targetLandmark);
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.descriptionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
         if (state.minionLog != null) {
             state.minionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             state.minionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);

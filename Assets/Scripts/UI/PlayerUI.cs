@@ -115,11 +115,11 @@ public class PlayerUI : MonoBehaviour {
     }
     public void MinionDragged(ReorderableList.ReorderableListEventStruct reorderableListEventStruct) {
         PlayerCharacterItem minionItem = reorderableListEventStruct.SourceObject.GetComponent<PlayerCharacterItem>();
-        minionItem.portrait.SetBorderState(true);
+        //minionItem.portrait.SetBorderState(true);
     }
     public void MinionCancel(ReorderableList.ReorderableListEventStruct reorderableListEventStruct) {
         PlayerCharacterItem minionItem = reorderableListEventStruct.SourceObject.GetComponent<PlayerCharacterItem>();
-        minionItem.portrait.SetBorderState(false);
+        //minionItem.portrait.SetBorderState(false);
         //minionItem.SetEnabledState(false);
     }
     //public void CollapseMinionHolder() {

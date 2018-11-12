@@ -55,6 +55,7 @@ public interface ICharacter {
     Dictionary<STAT, float> buffs { get; }
     PlayerCharacterItem playerCharacterItem { get; }
     WeightedDictionary<INTERACTION_TYPE> interactionWeights { get; }
+    CharacterIntel characterIntel { get; }
 
     //functions
     void SetName(string name);

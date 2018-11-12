@@ -5,17 +5,17 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 using EZObjectPools;
+using ECS;
 
-public class CharacterPortrait : PooledObject, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler {
+public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
     private ICharacter _character;
     private int _imgSize;
     private bool _ignoreSize;
-    private bool _ignoreHover = true;
-    //private bool _isNormalSize;
     private PortraitSettings _portraitSettings;
     private Vector2 normalSize;
 
+    public bool forceShowPortrait = false;
     public bool ignoreInteractions = false;
 
     [Header("BG")]
@@ -51,9 +51,8 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler, IPointerEnt
     [Header("Name")]
     [SerializeField] private TextMeshProUGUI nameLbl;
 
-    [Header("Borders")]
-    [SerializeField] private GameObject borders;
-    [SerializeField] private GameObject borderParent;
+    [Header("Other")]
+    [SerializeField] private GameObject unknownGO;
 
     #region getters/setters
     public ECS.Character thisCharacter {
@@ -62,26 +61,21 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler, IPointerEnt
     public PortraitSettings portraitSettings {
         get { return _portraitSettings; }
     }
+    public bool isLocked {
+        get { return unknownGO.activeSelf; }
+    }
     #endregion
 
-    public void GeneratePortrait(ICharacter character, int imgSize, bool ignoreHover = true, CHARACTER_ROLE role = CHARACTER_ROLE.NONE) {
+    public void Initialize() {
+        Messenger.AddListener<CharacterIntel>(Signals.CHARACTER_INTEL_ADDED, OnCharacterIntelObtained);
+    }
+
+    public void GeneratePortrait(ICharacter character, int imgSize, CHARACTER_ROLE role = CHARACTER_ROLE.NONE) {
         _character = character;
-        _ignoreHover = ignoreHover;
         SetImageSize(imgSize);
         if(character == null) {
-            body.gameObject.SetActive(false);
-            head.gameObject.SetActive(false);
-            eyes.gameObject.SetActive(false);
-            eyebrows.gameObject.SetActive(false);
-            nose.gameObject.SetActive(false);
-            mouth.gameObject.SetActive(false);
-            hair.gameObject.SetActive(false);
-            hairBack.gameObject.SetActive(false);
-            facialHair.gameObject.SetActive(false);
-            hairOverlay.gameObject.SetActive(false);
-            hairBackOverlay.gameObject.SetActive(false);
-            facialHairOverlay.gameObject.SetActive(false);
-            wholeImage.sprite = null;
+            SetBodyPartsState(false);
+            SetWholeImageSprite(null);
             wholeImage.gameObject.SetActive(true);
             return;
         }
@@ -96,46 +90,23 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler, IPointerEnt
             SetHair(character.portraitSettings.hairIndex);
             SetFacialHair(character.portraitSettings.facialHairIndex);
             SetHairColor(character.portraitSettings.hairColor);
-            wholeImage.gameObject.SetActive(false);
+            SetWholeImageSprite(null);
         } else if (character is Monster) {
-            body.gameObject.SetActive(false);
-            head.gameObject.SetActive(false);
-            eyes.gameObject.SetActive(false);
-            eyebrows.gameObject.SetActive(false);
-            nose.gameObject.SetActive(false);
-            mouth.gameObject.SetActive(false);
-            hair.gameObject.SetActive(false);
-            hairBack.gameObject.SetActive(false);
-            facialHair.gameObject.SetActive(false);
-            hairOverlay.gameObject.SetActive(false);
-            hairBackOverlay.gameObject.SetActive(false);
-            facialHairOverlay.gameObject.SetActive(false);
-            wholeImage.sprite = MonsterManager.Instance.GetMonsterSprite(character.name);
-            wholeImage.gameObject.SetActive(true);
+            SetBodyPartsState(false);
+            SetWholeImageSprite(MonsterManager.Instance.GetMonsterSprite(character.name));
         }
-        bg.enabled = true;
-        borderParent.SetActive(true);
+        SetBGState(true);
         nameLbl.text = character.urlName;
+        UpdateUnknownVisual();
     }
-    public void GeneratePortrait(PortraitSettings portraitSettings, int imgSize, bool ignoreHover = true) {
-        _ignoreHover = ignoreHover;
+    public void GeneratePortrait(PortraitSettings portraitSettings, int imgSize) {
         _portraitSettings = portraitSettings;
         SetImageSize(imgSize);
         if (portraitSettings == null) {
-            body.gameObject.SetActive(false);
-            head.gameObject.SetActive(false);
-            eyes.gameObject.SetActive(false);
-            eyebrows.gameObject.SetActive(false);
-            nose.gameObject.SetActive(false);
-            mouth.gameObject.SetActive(false);
-            hair.gameObject.SetActive(false);
-            hairBack.gameObject.SetActive(false);
-            facialHair.gameObject.SetActive(false);
-            hairOverlay.gameObject.SetActive(false);
-            hairBackOverlay.gameObject.SetActive(false);
-            facialHairOverlay.gameObject.SetActive(false);
-            wholeImage.sprite = null;
+            SetBodyPartsState(false);
+            //wholeImage.sprite = null;
             //wholeImage.gameObject.SetActive(true);
+            SetWholeImageSprite(null);
             return;
         }
         SetBody(portraitSettings.bodyIndex);
@@ -147,44 +118,183 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler, IPointerEnt
         SetHair(portraitSettings.hairIndex);
         SetFacialHair(portraitSettings.facialHairIndex);
         SetHairColor(portraitSettings.hairColor);
-        wholeImage.gameObject.SetActive(false);
+        SetWholeImageSprite(null);
+        //wholeImage.gameObject.SetActive(false);
     }
 
-    #region Pointer Actions
-    public void OnPointerEnter(PointerEventData eventData) {
-#if !WORLD_CREATION_TOOL
-        if (_ignoreHover || ignoreInteractions) {
-            return;
+    #region Utilities
+    private void SetBodyPartsState(bool state) {
+        body.gameObject.SetActive(state);
+        head.gameObject.SetActive(state);
+        eyes.gameObject.SetActive(state);
+        eyebrows.gameObject.SetActive(state);
+        nose.gameObject.SetActive(state);
+        mouth.gameObject.SetActive(state);
+        if (hair.sprite == null) {
+            hair.gameObject.SetActive(false);
+        } else {
+            hair.gameObject.SetActive(state);
         }
-        Vector2 currentSize = (this.transform as RectTransform).sizeDelta;
-        Vector2 newSize = new Vector2(currentSize.x + (currentSize.x * 0.5f), currentSize.y + (currentSize.y * 0.5f));
-        (this.transform as RectTransform).sizeDelta = newSize;
-        RectTransform[] rt = Utilities.GetComponentsInDirectChildren<RectTransform>(this.gameObject);
-        for (int i = 0; i < rt.Length; i++) {
-            if (rt[i] == borders.transform) {
-                continue;
-            }
-            rt[i].sizeDelta = newSize;
+        if (hairBack.sprite == null) {
+            hairBack.gameObject.SetActive(false);
+        } else {
+            hairBack.gameObject.SetActive(state);
         }
-        //_isNormalSize = false;
-#endif
+
+        if (facialHair.sprite == null) {
+            facialHair.gameObject.SetActive(false);
+        } else {
+            facialHair.gameObject.SetActive(state);
+        }
+
+        if (hairOverlay.sprite == null) {
+            hairOverlay.gameObject.SetActive(false);
+        } else {
+            hairOverlay.gameObject.SetActive(state);
+        }
+
+        if (hairBackOverlay.sprite == null) {
+            hairBackOverlay.gameObject.SetActive(false);
+        } else {
+            hairBackOverlay.gameObject.SetActive(state);
+        }
+
+        if (facialHairOverlay.sprite == null) {
+            facialHairOverlay.gameObject.SetActive(false);
+        } else {
+            facialHairOverlay.gameObject.SetActive(state);
+        }
     }
-    public void OnPointerExit(PointerEventData eventData) {
-#if !WORLD_CREATION_TOOL
-        if (_ignoreHover || ignoreInteractions) {
-            return;
+    private void SetWholeImageSprite(Sprite sprite) {
+        wholeImage.sprite = sprite;
+        SetWholeImageState(sprite != null);
+    }
+    private void SetWholeImageState(bool state) {
+        wholeImage.gameObject.SetActive(state);
+    }
+    public Color GetHairColor() {
+        return hair.color;
+    }
+    public void ToggleNameLabel(bool state) {
+        if (nameLbl.gameObject.activeSelf != state) {
+            nameLbl.gameObject.SetActive(state);
         }
-        NormalizeSize();
-        //LandmarkVisual lv = this.gameObject.GetComponentInParent<LandmarkVisual>();
-        //if (lv != null) {
-        //    lv.SnapTo(this.transform as RectTransform);
+    }
+    public void SetImageSize(int imgSize) {
+        //if (ignoreSize) {
+        //    return;
         //}
-        //this.transform.localScale = Vector3.one;
-#endif
+        _imgSize = imgSize;
+        SetDimensions(imgSize);
+        normalSize = (this.transform as RectTransform).sizeDelta;
+        //float size = 0f;
+        //if (!ignoreSize) {
+        //RectTransform[] rt = Utilities.GetComponentsInDirectChildren<RectTransform>(this.gameObject);
+        //switch (imgSize) {
+        //    case IMAGE_SIZE.X64:
+        //        size = 64f;
+        //        break;
+        //    case IMAGE_SIZE.X256:
+        //        size = 256f;
+        //        break;
+        //    case IMAGE_SIZE.X72:
+        //        size = 72f;
+        //        break;
+        //    case IMAGE_SIZE.X36:
+        //        size = 36f;
+        //        break;
+        //    default:
+        //        break;
+        //}
+        //SetDimensions(size);
+        //for (int i = 0; i < rt.Length; i++) {
+        //    rt[i].sizeDelta = new Vector2(size, size);
+        //}
+        //}
+
     }
+    public void SetDimensions(float size) {
+        (this.transform as RectTransform).sizeDelta = new Vector2(size, size);
+        //head.rectTransform.sizeDelta = new Vector2(size, size);
+        //eyes.rectTransform.sizeDelta = new Vector2(size, size);
+        //eyebrows.rectTransform.sizeDelta = new Vector2(size, size);
+        //nose.rectTransform.sizeDelta = new Vector2(size, size);
+        //mouth.rectTransform.sizeDelta = new Vector2(size, size);
+        //hair.rectTransform.sizeDelta = new Vector2(size, size);
+        //hairBack.rectTransform.sizeDelta = new Vector2(size, size);
+        //hairOverlay.rectTransform.sizeDelta = new Vector2(size, size);
+        //hairBackOverlay.rectTransform.sizeDelta = new Vector2(size, size);
+        //facialHair.rectTransform.sizeDelta = new Vector2(size, size);
+        //facialHairOverlay.rectTransform.sizeDelta = new Vector2(size, size);
+        //body.rectTransform.sizeDelta = new Vector2(size, size);
+        //wholeImage.rectTransform.sizeDelta = new Vector2(size, size);
+    }
+    public void SetBGState(bool state) {
+        bg.enabled = state;
+    }
+    private void UpdateUnknownVisual() {
+        if (_character != null) {
+            CharacterIntel characterIntel = _character.characterIntel;
+            if (_character is Character) {
+                if (forceShowPortrait) {
+                    unknownGO.SetActive(false);
+                    SetBodyPartsState(true);
+                } else {
+                    unknownGO.SetActive(!characterIntel.isObtained);
+                    SetBodyPartsState(characterIntel.isObtained);
+                }
+            } else if (_character is Monster) {
+                if (forceShowPortrait) {
+                    unknownGO.SetActive(false);
+                    SetBodyPartsState(true);
+                } else {
+                    unknownGO.SetActive(!characterIntel.isObtained);
+                    SetWholeImageState(characterIntel.isObtained);
+                }
+            }
+        }
+    }
+    public void SetForceShowPortraitState(bool state) {
+        forceShowPortrait = state;
+        UpdateUnknownVisual();
+    }
+    #endregion
+
+    #region Pointer Actions
+    //    public void OnPointerEnter(PointerEventData eventData) {
+    //#if !WORLD_CREATION_TOOL
+    //        if (ignoreInteractions) {
+    //            return;
+    //        }
+    //        Vector2 currentSize = (this.transform as RectTransform).sizeDelta;
+    //        Vector2 newSize = new Vector2(currentSize.x + (currentSize.x * 0.5f), currentSize.y + (currentSize.y * 0.5f));
+    //        (this.transform as RectTransform).sizeDelta = newSize;
+    //        RectTransform[] rt = Utilities.GetComponentsInDirectChildren<RectTransform>(this.gameObject);
+    //        for (int i = 0; i < rt.Length; i++) {
+    //            if (rt[i] == borders.transform) {
+    //                continue;
+    //            }
+    //            rt[i].sizeDelta = newSize;
+    //        }
+    //        //_isNormalSize = false;
+    //#endif
+    //    }
+    //    public void OnPointerExit(PointerEventData eventData) {
+    //#if !WORLD_CREATION_TOOL
+    //        if (ignoreInteractions) {
+    //            return;
+    //        }
+    //        NormalizeSize();
+    //        //LandmarkVisual lv = this.gameObject.GetComponentInParent<LandmarkVisual>();
+    //        //if (lv != null) {
+    //        //    lv.SnapTo(this.transform as RectTransform);
+    //        //}
+    //        //this.transform.localScale = Vector3.one;
+    //#endif
+    //    }
     public void OnPointerClick(PointerEventData eventData) {
 #if !WORLD_CREATION_TOOL
-        if (ignoreInteractions) {
+        if (ignoreInteractions || isLocked) {
             return;
         }
         if (eventData.button == PointerEventData.InputButton.Right) {
@@ -208,18 +318,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler, IPointerEnt
     }
     #endregion
 
-    public void NormalizeSize() {
-        (this.transform as RectTransform).sizeDelta = normalSize;
-        RectTransform[] rt = Utilities.GetComponentsInDirectChildren<RectTransform>(this.gameObject);
-        for (int i = 0; i < rt.Length; i++) {
-            if (rt[i] == borders.transform) {
-                continue;
-            }
-            rt[i].sizeDelta = normalSize;
-        }
-        //_isNormalSize = true;
-    }
-
+    #region Body Parts
     public void SetHair(int index) {
         HairSetting chosenHairSettings = CharacterManager.Instance.GetHairSprite(index, _portraitSettings.race, _portraitSettings.gender);
         //Sprite hairSprite = CharacterManager.Instance.GetHairSprite(index, _imgSize, _character.);
@@ -234,7 +333,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler, IPointerEnt
             hairBack.gameObject.SetActive(true);
             hairBackOverlay.gameObject.SetActive(true);
         }
-           
+
         //if (!_ignoreSize) {
         //    hair.SetNativeSize();
         //    hairBack.SetNativeSize();
@@ -316,77 +415,27 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler, IPointerEnt
         hairBackOverlay.color = newColor;
         facialHairOverlay.color = newColor;
     }
-    public Color GetHairColor() {
-        return hair.color;
-    }
-    public void ToggleNameLabel(bool state) {
-        if(nameLbl.gameObject.activeSelf != state) {
-            nameLbl.gameObject.SetActive(state);
+    #endregion
+
+    #region Listeners
+    private void OnCharacterIntelObtained(CharacterIntel intel) {
+        if (_character != null && _character.characterIntel == intel) {
+            UpdateUnknownVisual();
         }
     }
+    private void RemoveListeners() {
+        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_INTEL_ADDED)) {
+            Messenger.RemoveListener<CharacterIntel>(Signals.CHARACTER_INTEL_ADDED, OnCharacterIntelObtained);
+        }
+    }
+    #endregion
 
-    public void SetImageSize(int imgSize) {
-        //if (ignoreSize) {
-        //    return;
-        //}
-        _imgSize = imgSize;
-        SetDimensions(imgSize);
-        normalSize = (this.transform as RectTransform).sizeDelta;
-        //float size = 0f;
-        //if (!ignoreSize) {
-        //RectTransform[] rt = Utilities.GetComponentsInDirectChildren<RectTransform>(this.gameObject);
-        //switch (imgSize) {
-        //    case IMAGE_SIZE.X64:
-        //        size = 64f;
-        //        break;
-        //    case IMAGE_SIZE.X256:
-        //        size = 256f;
-        //        break;
-        //    case IMAGE_SIZE.X72:
-        //        size = 72f;
-        //        break;
-        //    case IMAGE_SIZE.X36:
-        //        size = 36f;
-        //        break;
-        //    default:
-        //        break;
-        //}
-        //SetDimensions(size);
-        //for (int i = 0; i < rt.Length; i++) {
-        //    rt[i].sizeDelta = new Vector2(size, size);
-        //}
-        //}
-
-    }
-    public void SetDimensions(float size) {
-        (this.transform as RectTransform).sizeDelta = new Vector2(size, size);
-        head.rectTransform.sizeDelta = new Vector2(size, size);
-        eyes.rectTransform.sizeDelta = new Vector2(size, size);
-        eyebrows.rectTransform.sizeDelta = new Vector2(size, size);
-        nose.rectTransform.sizeDelta = new Vector2(size, size);
-        mouth.rectTransform.sizeDelta = new Vector2(size, size);
-        hair.rectTransform.sizeDelta = new Vector2(size, size);
-        hairBack.rectTransform.sizeDelta = new Vector2(size, size);
-        hairOverlay.rectTransform.sizeDelta = new Vector2(size, size);
-        hairBackOverlay.rectTransform.sizeDelta = new Vector2(size, size);
-        facialHair.rectTransform.sizeDelta = new Vector2(size, size);
-        facialHairOverlay.rectTransform.sizeDelta = new Vector2(size, size);
-        body.rectTransform.sizeDelta = new Vector2(size, size);
-        wholeImage.rectTransform.sizeDelta = new Vector2(size, size);
-    }
-    public void SetBorderState(bool state) {
-        borders.SetActive(state);
-    }
-
-    public void SetBGState(bool state) {
-        bg.enabled = state;
-    }
-    public void SetIgnoreHoverState(bool state) {
-        _ignoreHover = state;
-    }
-
+    #region Pooled Object
     public override void Reset() {
         base.Reset();
+        _character = null;
         ignoreInteractions = false;
+        RemoveListeners();
     }
+    #endregion
 }

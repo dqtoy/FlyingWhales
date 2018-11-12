@@ -72,6 +72,7 @@ public class Minion : IUnit {
         _icharacter.SetMinion(this);
         _icharacter.SetName(RandomNameGenerator.Instance.GenerateMinionName());
         _icharacter.DisableInteractionGeneration();
+        _icharacter.characterIntel.SetObtainedState(true);
     }
     public Minion(ICharacter icharacter, PlayerAbility ability, DEMON_TYPE demonType) {
         _icharacter = icharacter;
@@ -86,6 +87,7 @@ public class Minion : IUnit {
         //PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(_icharacter.ownParty);
         _icharacter.SetMinion(this);
         _icharacter.DisableInteractionGeneration();
+        _icharacter.characterIntel.SetObtainedState(true);
     }
     public void SetDemonType(DEMON_TYPE type) {
         _type = type;

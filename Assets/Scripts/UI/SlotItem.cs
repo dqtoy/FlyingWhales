@@ -80,19 +80,19 @@ public class SlotItem : MonoBehaviour {
             factionEmblem.gameObject.SetActive(false);
             areaEmblem.gameObject.SetActive(false);
             portrait.gameObject.SetActive(true);
-            portrait.GeneratePortrait((associatedObj as CharacterIntel).character, 95, true);
+            portrait.GeneratePortrait((associatedObj as CharacterIntel).character, 97);
             hoverInfo = (associatedObj as CharacterIntel).character.name;
         } else if (associatedObj is Minion) {
             factionEmblem.gameObject.SetActive(false);
             areaEmblem.gameObject.SetActive(false);
             portrait.gameObject.SetActive(true);
-            portrait.GeneratePortrait((associatedObj as Minion).icharacter, 95, true);
+            portrait.GeneratePortrait((associatedObj as Minion).icharacter, 97);
             hoverInfo = (associatedObj as Minion).name;
         } else if (associatedObj is ICharacter) {
             factionEmblem.gameObject.SetActive(false);
             areaEmblem.gameObject.SetActive(false);
             portrait.gameObject.SetActive(true);
-            portrait.GeneratePortrait((associatedObj as ICharacter), 100, true);
+            portrait.GeneratePortrait((associatedObj as ICharacter), 97);
             hoverInfo = (associatedObj as ICharacter).name;
         }
     }

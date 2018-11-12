@@ -63,6 +63,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public CharacterUIData uiData { get; private set; }
     public WeightedDictionary<INTERACTION_TYPE> interactionWeights { get; private set; }
     public WeightedDictionary<bool> eventTriggerWeights { get; private set; }
+    public CharacterIntel characterIntel { get; private set; }
 
     #region getters/setters
     public string name {
@@ -503,6 +504,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _raceSetting = RaceManager.Instance.racesDictionary[_type.ToString()].CreateNewCopy();
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
         _currentInteractions = new List<Interaction>();
+        characterIntel = new CharacterIntel(this);
         if (_skills == null) {
             _skills = new List<Skill>();
         }
@@ -518,7 +520,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
 #if !WORLD_CREATION_TOOL
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, UIManager.Instance.characterPortraitsParent);
         _characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
-        _characterPortrait.GeneratePortrait(this, 36, true);
+        _characterPortrait.GeneratePortrait(this, 36);
         portraitGO.SetActive(false);
 #endif
 

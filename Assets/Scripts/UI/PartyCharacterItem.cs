@@ -17,7 +17,7 @@ public class PartyCharacterItem : PooledObject {
 
     public void SetCharacter(ICharacter character) {
         this.character = character;
-        portrait.GeneratePortrait(character, 64, true);
+        portrait.GeneratePortrait(character, 64);
         nameLbl.text = character.name;
         if (character is ECS.Character) {
             lvlClassLbl.text = "Lvl." + character.level.ToString() + " " + character.characterClass.className;

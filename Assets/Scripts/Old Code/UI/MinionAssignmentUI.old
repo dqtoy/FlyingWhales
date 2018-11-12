@@ -18,7 +18,7 @@ public class MinionAssignmentUI : MonoBehaviour {
 	}
 	
 	public void OpenUI() {
-        characterPortrait.GeneratePortrait(null, 100, true);
+        characterPortrait.GeneratePortrait(null, 100);
         minionAssignmentGO.SetActive(true);
         activateBtn.interactable = false;
     }
@@ -36,7 +36,7 @@ public class MinionAssignmentUI : MonoBehaviour {
     public void OnMinionDrop(Transform transform) {
         PlayerCharacterItem minionItem = transform.GetComponent<PlayerCharacterItem>();
         _currentAssignedMinion = minionItem.minion;
-        characterPortrait.GeneratePortrait(minionItem.portrait.portraitSettings, 100, true);
+        characterPortrait.GeneratePortrait(minionItem.portrait.portraitSettings, 100);
         if(_currentAssignedMinion != null) {
             activateBtn.interactable = true;
         }

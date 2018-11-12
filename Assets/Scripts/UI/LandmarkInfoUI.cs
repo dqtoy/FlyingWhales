@@ -401,6 +401,7 @@ public class LandmarkInfoUI : UIMenu {
             for (int i = 0; i < defenderSlots.Length; i++) {
                 ICharacter defender = _activeLandmark.defenders.icharacters.ElementAtOrDefault(i);
                 defenderSlots[i].SetParty(defender, _activeLandmark, true);
+                defenderSlots[i].portrait.SetForceShowPortraitState(true);
             }
         }
     }
@@ -530,7 +531,7 @@ public class LandmarkInfoUI : UIMenu {
         _assignedMinion = minion;
         if (minion != null) {
             minionAssignmentPortrait.gameObject.SetActive(true);
-            minionAssignmentPortrait.GeneratePortrait(minion.icharacter.portraitSettings, 100, true);
+            minionAssignmentPortrait.GeneratePortrait(minion.icharacter, 100);
             minionAssignmentDescription.gameObject.SetActive(false);
             minionAssignmentRecallButton.gameObject.SetActive(false);
             minionAssignmentConfirmButton.gameObject.SetActive(true);

@@ -125,6 +125,7 @@ public static class Signals {
 
     #region Player
     public static string INTEL_ADDED = "OnIntelAdded"; //Parameters (Intel addedIntel)
+    public static string CHARACTER_INTEL_ADDED = "OnCharacterIntelAdded"; //Parameters (CharacterIntel characterIntel)
     public static string UPDATED_CURRENCIES = "OnUpdatesCurrencies";
     #endregion
 

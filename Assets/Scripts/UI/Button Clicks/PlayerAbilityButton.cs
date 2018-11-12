@@ -36,8 +36,8 @@ public class PlayerAbilityButton : MonoBehaviour {
             //Go back home, once home, let the 
         } else {
             //Open minion assignment ui
-            MinionAssignmentUI.Instance.SetCurrentAbility(_playerAbility);
-            MinionAssignmentUI.Instance.OpenUI();
+            //MinionAssignmentUI.Instance.SetCurrentAbility(_playerAbility);
+            //MinionAssignmentUI.Instance.OpenUI();
         }
     }
 

@@ -10,7 +10,7 @@ public class SmallCharacterInfo : MonoBehaviour {
     [SerializeField] private Text characterInfoLbl;
 
     public void ShowCharacterInfo(Character character) {
-        portrait.GeneratePortrait(character, 130, true);
+        portrait.GeneratePortrait(character, 130);
         characterInfoLbl.text = string.Empty;
         characterInfoLbl.text += "Name: " + character.name;
         characterInfoLbl.text += "\nRace: " + character.raceSetting.race.ToString();

@@ -87,7 +87,7 @@ public class CharacterAvatar : MonoBehaviour{
 #if !WORLD_CREATION_TOOL
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
         characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
-        characterPortrait.GeneratePortrait(_party.mainCharacter, 64, false);
+        characterPortrait.GeneratePortrait(_party.mainCharacter, 64);
         portraitGO.SetActive(false);
 
         CharacterManager.Instance.AddCharacterAvatar(this);

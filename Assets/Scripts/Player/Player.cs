@@ -262,6 +262,9 @@ public class Player : ILeader {
             intel.SetObtainedState(true);
             Debug.Log("Added intel " + intel.ToString());
             Messenger.Broadcast(Signals.INTEL_ADDED, intel);
+            if (intel is CharacterIntel) {
+                Messenger.Broadcast(Signals.CHARACTER_INTEL_ADDED, intel as CharacterIntel);
+            }
         }
     }
     public bool RemoveIntel(Intel intel) {
