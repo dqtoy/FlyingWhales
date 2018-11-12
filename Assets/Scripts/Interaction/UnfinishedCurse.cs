@@ -170,8 +170,7 @@ public class UnfinishedCurse : Interaction {
         PlayerManager.Instance.player.ClaimReward(reward);
     }
     private void DoNothingRewardEffect(InteractionState state) {
-        //**Reward**: Demon gains Exp 1
-        this.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        
     }
 
     private void ConstructCurseWeights() {

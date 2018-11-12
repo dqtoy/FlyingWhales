@@ -190,8 +190,6 @@ public class CharacterExplores : Interaction {
         }
     }
     private void DoNothingRewardEffect(InteractionState state) {
-        //**Reward**: Demon gains Exp 1
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //**Mechanics**: Character will start its travel to selected location
         CharacterTravelToLocation(targetLandmark);
         if (state.descriptionLog != null) {
