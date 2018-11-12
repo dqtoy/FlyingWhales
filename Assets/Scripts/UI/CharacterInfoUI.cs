@@ -310,7 +310,7 @@ public class CharacterInfoUI : UIMenu {
     private void UpdateBasicInfo() {
         nameLbl.text = _activeCharacter.name;
         //if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
-            nameLbl.text += " (Updated)"; 
+            //nameLbl.text += " (Updated)"; 
             lvlClassLbl.text = "Lvl." + _activeCharacter.level.ToString() + " " + _activeCharacter.characterClass.className;
         //} else {
         //    if (_activeCharacter.hasBeenInspected) {
