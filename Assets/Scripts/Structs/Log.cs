@@ -64,4 +64,14 @@ public class Log {
     public void SetInspected(bool state) {
         _isInspected = state;
     }
+
+    public bool HasFillerForIdentifier(LOG_IDENTIFIER identifier) {
+        for (int i = 0; i < fillers.Count; i++) {
+            LogFiller currFiller = fillers[i];
+            if (currFiller.identifier == identifier) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

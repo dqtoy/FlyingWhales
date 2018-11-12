@@ -26,8 +26,8 @@ public class CharactersIntelUI : UIMenu {
         Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, UpdateCharacterEntry);
         Messenger.AddListener<ECS.Character>(Signals.ROLE_CHANGED, UpdateCharacterEntry);
         Messenger.AddListener<ECS.Character>(Signals.FACTION_SET, UpdateCharacterEntry);
-        Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
-        Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
+        //Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
+        //Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
         Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
     }
 

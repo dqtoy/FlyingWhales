@@ -20,8 +20,8 @@ public class FactionIntelUI : UIMenu {
         Messenger.AddListener<Faction>(Signals.FACTION_CREATED, OnFactionCreated);
         Messenger.AddListener<Faction>(Signals.FACTION_DELETED, OnFactionDeleted);
         Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
-        Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
-        Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
+        //Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
+        //Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
         items = new Dictionary<Faction, FactionIntelItem>();
     }
     public override void CloseMenu() {

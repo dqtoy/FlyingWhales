@@ -20,8 +20,8 @@ public class LocationIntelUI : UIMenu {
         Messenger.AddListener<Area>(Signals.AREA_CREATED, OnAreaCreated);
         Messenger.AddListener<Area>(Signals.AREA_DELETED, OnAreanDeleted);
         Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
-        Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
-        Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
+        //Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
+        //Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
         items = new Dictionary<Area, LocationIntelItem>();
     }
     public override void CloseMenu() {

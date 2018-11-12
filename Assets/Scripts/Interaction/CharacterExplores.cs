@@ -40,7 +40,13 @@ public class CharacterExplores : Interaction {
         targetLandmark = GetTargetLandmark();
 
         InteractionState startState = new InteractionState("Start", this);
-        
+
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        startStateDescriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenCharacter.race), LOG_IDENTIFIER.STRING_1);
+        startStateDescriptionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        startStateDescriptionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+        startState.OverrideDescriptionLog(startStateDescriptionLog);
+
 
         //action option states
         InteractionState characterExploreCancelledState = new InteractionState(characterExploreCancelled, this);
@@ -62,13 +68,6 @@ public class CharacterExplores : Interaction {
         _states.Add(doNothingState.name, doNothingState);
 
         SetCurrentState(startState);
-
-        if (startState.descriptionLog != null) {
-            startState.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenCharacter.race), LOG_IDENTIFIER.STRING_1);
-            startState.descriptionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            startState.descriptionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-        }
-        startState.SetDescription();
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

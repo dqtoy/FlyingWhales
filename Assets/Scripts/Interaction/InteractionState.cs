@@ -119,7 +119,9 @@ public class InteractionState {
     }
     public void CreateLogs() {
         if (_interaction.explorerMinion != null) {
-            _descriptionLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_description");
+            if (_descriptionLog == null) {
+                _descriptionLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_description");
+            }
             if (!string.IsNullOrEmpty(LocalizationManager.Instance.GetLocalizedValue("Events", _interaction.GetType().ToString(), _name.ToLower() + "_logminion"))) {
                 _minionLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_logminion");
             }
@@ -128,11 +130,18 @@ public class InteractionState {
             }
         }
     }
+    public void OverrideDescriptionLog(Log descriptionLog) {
+        _descriptionLog = descriptionLog;
+    }
     public void SetDescription() {
         //TODO: make this more performant
         if(_descriptionLog != null) {
-            _descriptionLog.AddToFillers(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
-            _descriptionLog.AddToFillers(_interaction.interactable.specificLocation.tileLocation.landmarkOnTile, _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
+            if (_interaction.explorerMinion != null) {
+                _descriptionLog.AddToFillers(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
+            }
+            if (!_descriptionLog.HasFillerForIdentifier(LOG_IDENTIFIER.LANDMARK_1)) {
+                _descriptionLog.AddToFillers(_interaction.interactable.specificLocation.tileLocation.landmarkOnTile, _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
+            }
             _description = Utilities.LogReplacer(descriptionLog);
             InteractionUI.Instance.interactionItem.SetDescription(_description);
         }
