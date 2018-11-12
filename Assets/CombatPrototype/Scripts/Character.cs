@@ -2633,9 +2633,9 @@ namespace ECS {
             if (_currentParty.icon != null) {
                 _currentParty.icon.UpdateVisualState();
             }
-            if (_currentParty.specificLocation != null && _currentParty.specificLocation.tileLocation.landmarkOnTile != null) {
-                _currentParty.specificLocation.tileLocation.landmarkOnTile.landmarkVisual.ToggleCharactersVisibility();
-            }
+            //if (_currentParty.specificLocation != null && _currentParty.specificLocation.tileLocation.landmarkOnTile != null) {
+            //    _currentParty.specificLocation.tileLocation.landmarkOnTile.landmarkVisual.ToggleCharactersVisibility();
+            //}
         }
         public void SetHasBeenInspected(bool state) {
             _hasBeenInspected = state;

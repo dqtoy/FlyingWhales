@@ -9630,7 +9630,6 @@ MonoBehaviour:
   facialHairOverlay: {fileID: 1490952973}
   body: {fileID: 309438773}
   wholeImage: {fileID: 1469323664}
-  playerLocator: {fileID: 1393940955}
   nameLbl: {fileID: 2137014092}
   borders: {fileID: 1958610795}
   borderParent: {fileID: 1626207506}
@@ -17048,7 +17047,6 @@ MonoBehaviour:
   facialHairOverlay: {fileID: 1436257024}
   body: {fileID: 1153918986}
   wholeImage: {fileID: 886263093}
-  playerLocator: {fileID: 804018388}
   nameLbl: {fileID: 868243905}
   borders: {fileID: 809856043}
   borderParent: {fileID: 623415359}
@@ -66129,7 +66127,6 @@ MonoBehaviour:
   facialHairOverlay: {fileID: 2089673210}
   body: {fileID: 338272194}
   wholeImage: {fileID: 489241657}
-  playerLocator: {fileID: 605104853}
   nameLbl: {fileID: 1996813653}
   borders: {fileID: 1822077812}
   borderParent: {fileID: 836375537}

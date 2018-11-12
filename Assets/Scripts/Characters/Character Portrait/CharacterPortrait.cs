@@ -48,9 +48,6 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler, IPointerEnt
     [Header("Monster")]
     [SerializeField] private Image wholeImage;
 
-    [Header("Player")]
-    [SerializeField] private Image playerLocator;
-
     [Header("Name")]
     [SerializeField] private TextMeshProUGUI nameLbl;
 
@@ -71,28 +68,6 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler, IPointerEnt
         _character = character;
         _ignoreHover = ignoreHover;
         SetImageSize(imgSize);
-        //if (character is ECS.Character) {
-        //    if (role == CHARACTER_ROLE.PLAYER || (character.role != null && character.role.roleType == CHARACTER_ROLE.PLAYER)) {
-        //        _ignoreHover = true;
-        //        _ignoreSize = true;
-        //        body.gameObject.SetActive(false);
-        //        head.gameObject.SetActive(false);
-        //        eyes.gameObject.SetActive(false);
-        //        eyebrows.gameObject.SetActive(false);
-        //        nose.gameObject.SetActive(false);
-        //        mouth.gameObject.SetActive(false);
-        //        hair.gameObject.SetActive(false);
-        //        hairBack.gameObject.SetActive(false);
-        //        facialHair.gameObject.SetActive(false);
-        //        hairOverlay.gameObject.SetActive(false);
-        //        hairBackOverlay.gameObject.SetActive(false);
-        //        facialHairOverlay.gameObject.SetActive(false);
-        //        playerLocator.gameObject.SetActive(true);
-        //        bg.enabled = false;
-        //        borderParent.SetActive(false);
-        //        return;
-        //    }
-        //}
         if(character == null) {
             body.gameObject.SetActive(false);
             head.gameObject.SetActive(false);
@@ -108,7 +83,6 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler, IPointerEnt
             facialHairOverlay.gameObject.SetActive(false);
             wholeImage.sprite = null;
             wholeImage.gameObject.SetActive(true);
-            playerLocator.gameObject.SetActive(false);
             return;
         }
         _portraitSettings = character.portraitSettings;
@@ -123,7 +97,6 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler, IPointerEnt
             SetFacialHair(character.portraitSettings.facialHairIndex);
             SetHairColor(character.portraitSettings.hairColor);
             wholeImage.gameObject.SetActive(false);
-            playerLocator.gameObject.SetActive(false);
         } else if (character is Monster) {
             body.gameObject.SetActive(false);
             head.gameObject.SetActive(false);
@@ -139,7 +112,6 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler, IPointerEnt
             facialHairOverlay.gameObject.SetActive(false);
             wholeImage.sprite = MonsterManager.Instance.GetMonsterSprite(character.name);
             wholeImage.gameObject.SetActive(true);
-            playerLocator.gameObject.SetActive(false);
         }
         bg.enabled = true;
         borderParent.SetActive(true);
@@ -164,7 +136,6 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler, IPointerEnt
             facialHairOverlay.gameObject.SetActive(false);
             wholeImage.sprite = null;
             //wholeImage.gameObject.SetActive(true);
-            playerLocator.gameObject.SetActive(false);
             return;
         }
         SetBody(portraitSettings.bodyIndex);
@@ -177,7 +148,6 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler, IPointerEnt
         SetFacialHair(portraitSettings.facialHairIndex);
         SetHairColor(portraitSettings.hairColor);
         wholeImage.gameObject.SetActive(false);
-        playerLocator.gameObject.SetActive(false);
     }
 
     #region Pointer Actions
@@ -414,14 +384,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler, IPointerEnt
     public void SetIgnoreHoverState(bool state) {
         _ignoreHover = state;
     }
-    #region Monobehaviours
-    //void OnDisable() {
-    //    if (_isNormalSize) {
-    //        return;
-    //    }
-    //    NormalizeSize();
-    //}
-    #endregion
+
     public override void Reset() {
         base.Reset();
         ignoreInteractions = false;

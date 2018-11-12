@@ -546,7 +546,7 @@ public class BaseLandmark : ILocation, IInteractable {
         _isAttackingAnotherLandmark = state;
     }
     private void OnToggleCharactersVisibility() {
-        _landmarkVisual.ToggleCharactersVisibility();
+        //_landmarkVisual.ToggleCharactersVisibility();
     }
     //private void RemoveListeners() {
     //Messenger.RemoveListener(Signals.DAY_START, DailySupplyProduction);
@@ -1019,7 +1019,7 @@ public class BaseLandmark : ILocation, IInteractable {
     #region IInteractable
     public void SetIsBeingInspected(bool state) {
         _isBeingInspected = state;
-        _landmarkVisual.ToggleCharactersVisibility();
+        //_landmarkVisual.ToggleCharactersVisibility();
         if (_isBeingInspected) {
             Messenger.Broadcast(Signals.LANDMARK_INSPECTED, this);
         }
