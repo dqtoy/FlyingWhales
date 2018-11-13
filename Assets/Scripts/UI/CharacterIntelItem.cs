@@ -35,7 +35,7 @@ public class CharacterIntelItem : PooledObject, IDragParentItem {
         //actionIcon.SetCharacter(character);
         //actionIcon.SetAction(character.currentParty.currentAction);
         //characterPortrait.SetDimensions(42f);
-        characterPortrait.GeneratePortrait(characterIntel.character, 95);
+        characterPortrait.GeneratePortrait(characterIntel.character);
         UpdateCharacterInfo();
         draggable.SetAssociatedObject(characterIntel);
         //UpdateAffiliations();

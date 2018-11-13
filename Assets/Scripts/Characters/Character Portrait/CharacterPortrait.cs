@@ -70,7 +70,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         Messenger.AddListener<CharacterIntel>(Signals.CHARACTER_INTEL_ADDED, OnCharacterIntelObtained);
     }
 
-    public void GeneratePortrait(ICharacter character, int imgSize, CHARACTER_ROLE role = CHARACTER_ROLE.NONE) {
+    public void GeneratePortrait(ICharacter character, int imgSize = 97, CHARACTER_ROLE role = CHARACTER_ROLE.NONE) {
         _character = character;
         SetImageSize(imgSize);
         if(character == null) {
@@ -99,7 +99,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         nameLbl.text = character.urlName;
         UpdateUnknownVisual();
     }
-    public void GeneratePortrait(PortraitSettings portraitSettings, int imgSize) {
+    public void GeneratePortrait(PortraitSettings portraitSettings, int imgSize = 97) {
         _portraitSettings = portraitSettings;
         SetImageSize(imgSize);
         if (portraitSettings == null) {

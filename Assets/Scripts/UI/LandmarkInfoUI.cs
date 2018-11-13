@@ -531,7 +531,7 @@ public class LandmarkInfoUI : UIMenu {
         _assignedMinion = minion;
         if (minion != null) {
             minionAssignmentPortrait.gameObject.SetActive(true);
-            minionAssignmentPortrait.GeneratePortrait(minion.icharacter, 100);
+            minionAssignmentPortrait.GeneratePortrait(minion.icharacter);
             minionAssignmentDescription.gameObject.SetActive(false);
             minionAssignmentRecallButton.gameObject.SetActive(false);
             minionAssignmentConfirmButton.gameObject.SetActive(true);

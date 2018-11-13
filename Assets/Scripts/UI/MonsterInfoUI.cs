@@ -266,7 +266,7 @@ public class MonsterInfoUI : UIMenu {
         //affiliations.SetCharacter(_activeCharacter);
     }
     private void UpdatePortrait() {
-        characterPortrait.GeneratePortrait(_activeMonster, 100);
+        characterPortrait.GeneratePortrait(_activeMonster);
         characterPortrait.SetBGState(false);
     }
 

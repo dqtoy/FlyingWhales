@@ -20,7 +20,7 @@ public class LandmarkCharacterItem : PooledObject {
         if (character != null) {
             portrait.gameObject.SetActive(true);
             portrait.Initialize();
-            portrait.GeneratePortrait(character, 97);
+            portrait.GeneratePortrait(character);
             portrait.SetBGState(false);
         } else {
             portrait.gameObject.SetActive(false);

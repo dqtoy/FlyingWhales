@@ -1077,14 +1077,18 @@ public class UIManager : MonoBehaviour {
     }
     private void OnIntelAdded(Intel intel) {
         UnityAction action = null;
+        string notificationText = string.Empty;
         if (intel is FactionIntel) {
             action = () => ShowFactionIntelMenu();
+            notificationText = "Obtained intel about faction: <color=\"green\"><b>" + (intel as FactionIntel).faction.name;
         } else if (intel is LocationIntel) {
             action = () => ShowLocationIntelMenu();
+            notificationText = "Obtained intel about location: <color=\"green\"><b>" + (intel as LocationIntel).location.name;
         } else if (intel is CharacterIntel) {
             action = () => ShowCharacterIntelMenu();
+            notificationText = "Obtained intel about character: <color=\"green\"><b>" + (intel as CharacterIntel).character.name;
         }
-        ShowNotification("New Intel Obtained!", 5, action);
+        ShowNotification(notificationText, 5, action);
     }
     #endregion
 

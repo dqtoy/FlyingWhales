@@ -304,7 +304,7 @@ public class CharacterInfoUI : UIMenu {
         UpdateAllHistoryInfo();
     }
     private void UpdatePortrait() {
-        characterPortrait.GeneratePortrait(_activeCharacter, 97);
+        characterPortrait.GeneratePortrait(_activeCharacter);
         characterPortrait.SetBGState(false);
     }
     private void UpdateBasicInfo() {
