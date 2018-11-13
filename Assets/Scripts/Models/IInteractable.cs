@@ -6,7 +6,6 @@ public interface IInteractable {
     string name { get; }
     bool isBeingInspected { get; }
     bool hasBeenInspected { get; }
-    HiddenDesire hiddenDesire { get; }
     Faction faction { get; }
     ILocation specificLocation { get; }
     List<Interaction> currentInteractions { get; }

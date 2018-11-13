@@ -45,10 +45,7 @@ namespace ECS {
         protected CharacterPortrait _characterPortrait;
         protected Color _characterColor;
         protected CharacterAction _genericWorkAction;
-        protected HiddenDesire _hiddenDesire;
-        protected Secret _currentlySelectedSecret;
         protected Minion _minion;
-        protected List<Secret> _secrets;
         protected List<STATUS_EFFECT> _statusEffects;
         protected List<Item> _inventory;
         protected List<Skill> _skills;
@@ -63,7 +60,6 @@ namespace ECS {
         protected Dictionary<ELEMENT, float> _elementalWeaknesses;
         protected Dictionary<ELEMENT, float> _elementalResistances;
         protected Dictionary<Character, List<string>> _traceInfo;
-        protected Dictionary<int, GAME_EVENT> _intelReactions; //int = intel id
         protected PlayerCharacterItem _playerCharacterItem;
         protected int _currentInteractionTick;
 
@@ -323,18 +319,6 @@ namespace ECS {
         public bool hasBeenInspected {
             get { return _hasBeenInspected; }
         }
-        public HiddenDesire hiddenDesire {
-            get { return _hiddenDesire; }
-        }
-        public Secret currentlySelectedSecret {
-            get { return _currentlySelectedSecret; }
-        }
-        public List<Secret> secrets {
-            get { return _secrets; }
-        }
-        public Dictionary<int, GAME_EVENT> intelReactions {
-            get { return _intelReactions; }
-        }
         public IObject questGiverObj {
             get { return currentParty.icharacterObject; }
         }
@@ -441,8 +425,6 @@ namespace ECS {
             _attributes = new List<CharacterAttribute>();
             _exploredLandmarks = new List<BaseLandmark>();
             _statusEffects = new List<STATUS_EFFECT>();
-            _secrets = new List<Secret>();
-            _intelReactions = new Dictionary<int, GAME_EVENT>();
             _isDead = false;
             _isFainted = false;
             //_isDefeated = false;
@@ -2652,95 +2634,6 @@ namespace ECS {
             if (_currentInteractions.Remove(interaction)) {
                 //Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
             }
-        }
-        #endregion
-
-        #region Hidden Desire
-        public void SetHiddenDesire(HiddenDesire hiddenDesire) {
-            _hiddenDesire = hiddenDesire;
-        }
-        public void AwakenHiddenDesire() {
-            if (_hiddenDesire == null || _hiddenDesire.isAwakened) {
-                //if the character does not have a hidden desire
-                //or the hidden desire is already awakened
-                return;
-            }
-            _hiddenDesire.Awaken();
-        }
-        #endregion
-
-        //#region Intel
-        //public void AddIntelReaction(int intelID, GAME_EVENT reaction) {
-        //    if (!_intelReactions.ContainsKey(intelID)) {
-        //        _intelReactions.Add(intelID, reaction);
-        //    } else {
-        //        _intelReactions[intelID] = reaction;
-        //    }
-        //}
-        //public void AddIntelReaction(Intel intel, GAME_EVENT reaction) {
-        //    AddIntelReaction(intel.id, reaction);
-        //}
-        //public void RemoveIntelReaction(Intel intel) {
-        //    RemoveIntelReaction(intel.id);
-        //}
-        //public void RemoveIntelReaction(int intelID) {
-        //    _intelReactions.Remove(intelID);
-        //}
-        //public void OnIntelGiven(Intel intel) {
-        //    Debug.Log(GameManager.Instance.TodayLogString() + this.name + " was given intel that " + intel.description);
-        //    GameEvent gameEvent = EventManager.Instance.AddNewEvent(this.intelReactions[intel.id]);
-        //    if (gameEvent.MeetsRequirements(this)) {
-        //        List<Character> characters = new List<Character>();
-        //        switch (gameEvent.type) {
-        //            case GAME_EVENT.SUICIDE:
-        //                characters.Add(this);
-        //                break;
-        //            default:
-        //                break;
-        //        }
-        //        gameEvent.Initialize(characters);
-        //    }
-        //    //Remove intel reaction from character, even if he/she did not meet the requirements for the reaction?
-        //    RemoveIntelReaction(intel);
-        //}
-        //#endregion
-
-        #region Secrets
-        public void AddSecret(Secret secret) {
-            if (!_secrets.Contains(secret)) {
-                _secrets.Add(secret);
-            }
-        }
-        public void AddSecret(int secretID) {
-            Secret secret = SecretManager.Instance.CreateNewSecret(secretID);
-            AddSecret(secret);
-        }
-        public bool HasSecret(int secretID) {
-            for (int i = 0; i < _secrets.Count; i++) {
-                Secret secret = _secrets[i];
-                if (secret.id == secretID) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        public Secret GetSecret(int secretID) {
-            for (int i = 0; i < _secrets.Count; i++) {
-                Secret secret = _secrets[i];
-                if (secret.id == secretID) {
-                    return secret;
-                }
-            }
-            return null;
-        }
-        public void RemoveSecret(int secretID) {
-            Secret secret = GetSecret(secretID);
-            if (secret != null) {
-                RemoveSecret(secret);
-            }
-        }
-        public void RemoveSecret(Secret secret) {
-            _secrets.Remove(secret);
         }
         #endregion
 

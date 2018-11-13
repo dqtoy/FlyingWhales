@@ -45,7 +45,6 @@ public class ConsoleMenu : UIMenu {
             {"/set_need", SetCharacterNeedsValue},
             {"/add_tag", AddCharacterAttribute},
             {"/log_event_schedule", LogEventSchedule },
-            {"/awaken_desire", AwakenHiddenDesire },
             {"/share_intel", ShareIntel },
             {"/show_logs", ShowLogs },
             {"/change_landmark_state", ChangeLandmarkState }
@@ -597,40 +596,6 @@ public class ConsoleMenu : UIMenu {
 
         character.AddAttribute(tag);
         AddSuccessMessage("Added " + tag.ToString() + " tag to " + character.name);
-    }
-    private void AwakenHiddenDesire(string[] parameters) {
-        if (parameters.Length < 2) {
-            AddCommandHistory(consoleLbl.text);
-            AddErrorMessage("There was an error in the command format of " + parameters[0]);
-            return;
-        }
-        string characterParameterString = string.Empty;
-        for (int i = 1; i < parameters.Length; i++) {
-            characterParameterString += parameters[i] + " ";
-        }
-        characterParameterString = characterParameterString.Trim();
-        int characterID;
-
-        bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
-        ECS.Character character = null;
-        if (isCharacterParameterNumeric) {
-            character = CharacterManager.Instance.GetCharacterByID(characterID);
-        } else {
-            character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
-        }
-
-        if (character == null) {
-            AddErrorMessage("There was an error in the command format of " + parameters[0]);
-            return;
-        }
-
-        if (character.hiddenDesire != null) {
-            character.AwakenHiddenDesire();
-            AddSuccessMessage("Awakened " + character.name + "'s hidden desire: " + character.hiddenDesire.name);
-        } else {
-            AddErrorMessage(character.name + " does not have a hidden desire!");
-        }
-        
     }
     private void ShareIntel(string[] parameters) {
         if (parameters.Length < 3) {
