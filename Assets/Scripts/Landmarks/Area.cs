@@ -386,6 +386,10 @@ public class Area {
             for (int i = 0; i < landmarks.Count; i++) {
                 landmarks[i].OccupyLandmark(owner);
             }
+        } else {
+            for (int i = 0; i < landmarks.Count; i++) {
+                landmarks[i].UnoccupyLandmark();
+            }
         }
     }
     #endregion
@@ -422,7 +426,7 @@ public class Area {
             if (state.stateName.Equals("Ruined")) {
                 DetermineIfTileIsExposed(structureObj.objectLocation.tileLocation);
                 if (this.areaType == AREA_TYPE.DEMONIC_INTRUSION) { //if player area
-                    PlayerManager.Instance.OnPlayerLandmarkRuined(structureObj.objectLocation);
+                    PlayerManager.Instance.player.OnPlayerLandmarkRuined(structureObj.objectLocation);
                 }
             }
         }
@@ -539,7 +543,7 @@ public class Area {
         string supplySummary = string.Empty;
         for (int i = 0; i < landmarks.Count; i++) {
             BaseLandmark currLandmark = landmarks[i];
-            if (currLandmark.canProduceSupplies || !currLandmark.landmarkObj.isRuined) {
+            if (currLandmark.canProduceSupplies && !currLandmark.landmarkObj.isRuined && currLandmark.MeetsSupplyProductionRequirements()) {
                 int providedSupplies = Random.Range(currLandmark.minDailySupplyProduction, currLandmark.maxDailySupplyProduction);
                 totalCollectedSupplies += providedSupplies;
                 AdjustSuppliesInBank(providedSupplies);

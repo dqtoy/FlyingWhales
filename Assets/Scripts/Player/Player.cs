@@ -108,6 +108,7 @@ public class Player : ILeader {
         Messenger.AddListener<Character>(Signals.CHARACTER_RELEASED, OnCharacterReleased);
         Messenger.AddListener(Signals.HOUR_STARTED, EverydayAction);
         //ConstructPlayerActions();
+        AddWinListener();
     }
 
     private void EverydayAction() {
@@ -641,6 +642,46 @@ public class Player : ILeader {
     public void RemoveCharacter(ICharacter character) {
         if (otherCharacters.Remove(character)) {
             PlayerUI.Instance.RemoveCharacterItem(character.playerCharacterItem);
+        }
+    }
+    #endregion
+
+    #region Win/Lose Conditions
+    private void AddWinListener() {
+        Messenger.AddListener<Faction>(Signals.FACTION_LEADER_DIED, OnFactionLeaderDied);
+    }
+    private void OnFactionLeaderDied(Faction faction) {
+        Faction fyn = FactionManager.Instance.GetFactionBasedOnName("Fyn");
+        Faction orelia = FactionManager.Instance.GetFactionBasedOnName("Orelia");
+        if (fyn.isDestroyed && orelia.isDestroyed) {
+            Debug.LogError("Fyn and Orelia factions are destroyed! Player won!");
+        }
+    }
+    public void OnPlayerLandmarkRuined(BaseLandmark landmark) {
+        switch (landmark.specificLandmarkType) {
+            case LANDMARK_TYPE.DWELLINGS:
+                //add 2 minion slots
+                AdjustMaxMinions(-2);
+                break;
+            case LANDMARK_TYPE.IMP_KENNEL:
+                //adds 1 Imp capacity
+                AdjustMaxImps(-1);
+                break;
+            case LANDMARK_TYPE.DEMONIC_PORTAL:
+                //player loses if the Portal is destroyed
+                throw new System.Exception("Demonic Portal Was Destroyed! Game Over!");
+            case LANDMARK_TYPE.RAMPART:
+                //remove bonus 25% HP to all Defenders
+                for (int i = 0; i < playerArea.landmarks.Count; i++) {
+                    BaseLandmark currLandmark = playerArea.landmarks[i];
+                    currLandmark.RemoveDefenderBuff(new Buff() { buffedStat = STAT.HP, percentage = 0.25f });
+                    //if (currLandmark.defenders != null) {
+                    //    currLandmark.defenders.RemoveBuff(new Buff() { buffedStat = STAT.HP, percentage = 0.25f });
+                    //}
+                }
+                break;
+            default:
+                break;
         }
     }
     #endregion

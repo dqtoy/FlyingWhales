@@ -686,6 +686,7 @@ public class LandmarkManager : MonoBehaviour {
             area.owner.UnownArea(area);
         }
         area.SetOwner(null);
+        area.TintStructuresInArea(Color.white);
     }
     public void LoadAdditionalAreaData() {
         for (int i = 0; i < allAreas.Count; i++) {

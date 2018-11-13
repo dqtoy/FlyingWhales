@@ -132,33 +132,6 @@ public class PlayerManager : MonoBehaviour {
         //player.playerArea.DetermineExposedTiles();
         Messenger.Broadcast(Signals.PLAYER_LANDMARK_CREATED, newLandmark);
     }
-    public void OnPlayerLandmarkRuined(BaseLandmark landmark) {
-        switch (landmark.specificLandmarkType) {
-            case LANDMARK_TYPE.DWELLINGS:
-                //add 2 minion slots
-                player.AdjustMaxMinions(-2);
-                break;
-            case LANDMARK_TYPE.IMP_KENNEL:
-                //adds 1 Imp capacity
-                player.AdjustMaxImps(-1);
-                break;
-            case LANDMARK_TYPE.DEMONIC_PORTAL:
-                //player loses if the Portal is destroyed
-                throw new System.Exception("Demonic Portal Was Destroyed! Game Over!");
-            case LANDMARK_TYPE.RAMPART:
-                //remove bonus 25% HP to all Defenders
-                for (int i = 0; i < player.playerArea.landmarks.Count; i++) {
-                    BaseLandmark currLandmark = player.playerArea.landmarks[i];
-                    currLandmark.RemoveDefenderBuff(new Buff() { buffedStat = STAT.HP, percentage = 0.25f });
-                    //if (currLandmark.defenders != null) {
-                    //    currLandmark.defenders.RemoveBuff(new Buff() { buffedStat = STAT.HP, percentage = 0.25f });
-                    //}
-                }
-                break;
-            default:
-                break;
-        }
-    }
 
     public void AdjustTotalLifestones(int amount) {
         totalLifestonesInWorld += amount;
