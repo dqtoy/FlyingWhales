@@ -737,7 +737,6 @@ namespace worldcreator {
         public void LoadWorld(WorldSaveData data) {
             StartCoroutine(GenerateGrid(data));
         }
-
         public WorldSaveData GetWorldData(string saveName) {
             FileInfo saveFile = GetSaveFile(saveName);
             WorldSaveData saveData = SaveGame.Load<WorldSaveData>(Utilities.worldConfigsSavePath + saveName);

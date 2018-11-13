@@ -86,7 +86,7 @@ public class FactionInfoEditor : MonoBehaviour {
 
         if (_faction.leader != null) {
             leadersDropdown.value = Utilities.GetOptionIndex(leadersDropdown, _faction.leader.name);
-            leadersDropdown.itemText.text = _faction.leader.name;
+            //leadersDropdown.itemText.text = _faction.leader.name;
         }
 
         emblemDropdown.value = Utilities.GetOptionIndex(emblemDropdown, FactionManager.Instance.GetFactionEmblemIndex(_faction.emblem).ToString());
