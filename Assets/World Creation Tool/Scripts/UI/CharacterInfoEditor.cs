@@ -27,6 +27,7 @@ namespace worldcreator {
         [SerializeField] private Dropdown classField;
         [SerializeField] private Dropdown factionField;
         [SerializeField] private Dropdown moralityField;
+        [SerializeField] private InputField levelField;
         [SerializeField] private Text otherInfoLbl;
 
         [Header("Relationship Info")]
@@ -50,18 +51,6 @@ namespace worldcreator {
         [SerializeField] private Dropdown attributeChoicesDropdown;
         [SerializeField] private Text attributeSummary;
 
-        [Header("Hidden Desire")]
-        [SerializeField] private Dropdown hiddenDesireChoicesDropdown;
-
-        [Header("Secrets")]
-        [SerializeField] private Dropdown secretChoicesDropdown;
-        [SerializeField] private Text secretsSummaryLbl;
-
-        [Header("Intel Reactions")]
-        [SerializeField] private Dropdown intelChoicesDropdown;
-        [SerializeField] private Dropdown intelEventsChoicesDropdown;
-        [SerializeField] private Text intelReactionSummaryLbl;
-
         public Dictionary<string, PortraitSettings> portraitTemplates;
 
         public void Initialize() {
@@ -70,9 +59,6 @@ namespace worldcreator {
 
             LoadEquipmentChoices();
             LoadInventoryChoices();
-            LoadHiddenDesireChoices();
-            LoadSecretChoices();
-            LoadIntelReactionChoices();
         }
 
         public void UpdateInfo() {
@@ -87,9 +73,6 @@ namespace worldcreator {
             LoadDropdownOptions();
             //UpdatePortraitControls();
             UpdateBasicInfo();
-            UpdateHiddenDesire();
-            UpdateSecrets();
-            UpdateIntelReactions();
             LoadRelationships();
             LoadCharacters();
             //LoadEquipment();
@@ -178,6 +161,7 @@ namespace worldcreator {
                 factionName = _character.faction.name;
             }
             factionField.value = Utilities.GetOptionIndex(factionField, factionName);
+            levelField.text = _character.level.ToString();
             otherInfoLbl.text = string.Empty;
             if (_character.homeLandmark == null) {
                 otherInfoLbl.text += "Home: NONE";
@@ -232,6 +216,12 @@ namespace worldcreator {
             string moralityStr = moralityField.options[choice].text;
             MORALITY morality = (MORALITY)Enum.Parse(typeof(MORALITY), moralityStr);
             _character.SetMorality(morality);
+        }
+        public void SetLevel(string levelStr) {
+            int newLevel;
+            if (Int32.TryParse(levelStr, out newLevel)) {
+                _character.LevelUp(newLevel);
+            }
         }
         #endregion
 
@@ -399,88 +389,6 @@ namespace worldcreator {
                 _character.AddAttribute(attribute);
             }
             LoadAttributeSummary();
-        }
-        #endregion
-
-        #region Hidden Desire
-        private void LoadHiddenDesireChoices() {
-            hiddenDesireChoicesDropdown.ClearOptions();
-            hiddenDesireChoicesDropdown.AddOptions(Utilities.GetEnumChoices<HIDDEN_DESIRE>(true));
-        }
-        public void SetHiddenDesire(int choice) {
-            HIDDEN_DESIRE desire = (HIDDEN_DESIRE)Enum.Parse(typeof(HIDDEN_DESIRE), hiddenDesireChoicesDropdown.options[choice].text);
-            CharacterManager.Instance.SetHiddenDesireForCharacter(desire, _character);
-        }
-        private void UpdateHiddenDesire() {
-            if (_character.hiddenDesire == null) {
-                hiddenDesireChoicesDropdown.value = Utilities.GetOptionIndex(hiddenDesireChoicesDropdown, "NONE");
-            } else {
-                hiddenDesireChoicesDropdown.value = Utilities.GetOptionIndex(hiddenDesireChoicesDropdown, _character.hiddenDesire.type.ToString());
-            }
-        }
-        #endregion
-
-        #region Secrets
-        private void LoadSecretChoices() {
-            secretChoicesDropdown.ClearOptions();
-
-            List<string> secretsChoices = new List<string>();
-            foreach (KeyValuePair<int, Secret> kvp in SecretManager.Instance.secretLookup) {
-                secretsChoices.Add(kvp.Key + " - " + kvp.Value.name);
-            }
-            secretChoicesDropdown.AddOptions(secretsChoices);
-        }
-        public void AddRemoveSecrets() {
-            int choice = secretChoicesDropdown.value;
-            string chosen = secretChoicesDropdown.options[choice].text;
-            int secretID = Int32.Parse(chosen[0].ToString());
-            if (_character.HasSecret(secretID)) {
-                _character.RemoveSecret(secretID);
-            } else {
-                _character.AddSecret(secretID);
-            }
-            UpdateSecrets();
-        }
-        private void UpdateSecrets() {
-            secretsSummaryLbl.text = string.Empty;
-            for (int i = 0; i < _character.secrets.Count; i++) {
-                secretsSummaryLbl.text += _character.secrets[i].id + " - " +  _character.secrets[i].name + " - " + _character.secrets[i].description + "\n";
-            }
-        }
-        #endregion
-
-        #region Intel Reactions
-        private void LoadIntelReactionChoices() {
-            intelChoicesDropdown.ClearOptions();
-            intelEventsChoicesDropdown.ClearOptions();
-
-            List<string> intelChoices = new List<string>();
-            //foreach (KeyValuePair<int, Intel> kvp in IntelManager.Instance.intelLookup) {
-            //    intelChoices.Add(kvp.Key.ToString() + " - " + kvp.Value.name);
-            //}
-
-            intelChoicesDropdown.AddOptions(intelChoices);
-            intelEventsChoicesDropdown.AddOptions(Utilities.GetEnumChoices<GAME_EVENT>());
-        }
-        public void AddEditIntelReaction() {
-            string chosenIntelID = secretChoicesDropdown.options[intelChoicesDropdown.value].text;
-            int intelID = Int32.Parse(chosenIntelID[0].ToString());
-            GAME_EVENT chosenEvent = (GAME_EVENT)Enum.Parse(typeof(GAME_EVENT), intelEventsChoicesDropdown.options[intelEventsChoicesDropdown.value].text);
-            //_character.AddIntelReaction(intelID, chosenEvent);
-            UpdateIntelReactions();
-        }
-        public void RemoveIntelReaction() {
-            string chosenIntelID = secretChoicesDropdown.options[intelChoicesDropdown.value].text;
-            int intelID = Int32.Parse(chosenIntelID[0].ToString());
-            //_character.RemoveIntelReaction(intelID);
-            UpdateIntelReactions();
-        }
-        private void UpdateIntelReactions() {
-            intelReactionSummaryLbl.text = string.Empty;
-            //foreach (KeyValuePair<int, GAME_EVENT> kvp in _character.intelReactions) {
-            //    Intel intel = IntelManager.Instance.GetIntel(kvp.Key);
-            //    intelReactionSummaryLbl.text += kvp.Key + "(" + intel.name + ") - " + kvp.Value.ToString() + "\n";
-            //}
         }
         #endregion
     }

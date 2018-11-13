@@ -1164,6 +1164,13 @@ public class BaseLandmark : ILocation, IInteractable {
     public void SetSupplyProductionState(bool state) {
         canProduceSupplies = state;
     }
+    public bool MeetsSupplyProductionRequirements() {
+        switch (specificLandmarkType) {
+            case LANDMARK_TYPE.FARM:
+                return charactersWithHomeOnLandmark.Where(x => x.characterClass.className == "Farmer").Count() > 0; //(Requires at least 1 Farmer)
+        }
+        return true;
+    }
     #endregion
 
     #region Defenders

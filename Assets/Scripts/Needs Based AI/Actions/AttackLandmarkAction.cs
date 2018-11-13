@@ -16,6 +16,11 @@ public class AttackLandmarkAction : CharacterAction {
         if (landmarkToAttack.defenders != null) {
             party.StartCombatWith(landmarkToAttack.defenders);
         }
+        //Attack their area: -3 Favor Count
+        Faction attackedFaction = landmarkToAttack.owner;
+        if (attackedFaction != null && party.faction != null) {
+            attackedFaction.AdjustFavorFor(party.faction, -3);
+        }
     }
     public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);

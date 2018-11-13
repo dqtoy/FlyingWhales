@@ -47,6 +47,7 @@ public class FactionManager : MonoBehaviour {
 #else
             }
 #endif
+            LoadAdditionalFactionInfo(data);
         }
 #if !WORLD_CREATION_TOOL
         //if (data.HasFactionlessCharacter()) {
@@ -62,6 +63,7 @@ public class FactionManager : MonoBehaviour {
         allFactions.Add(newFaction);
         neutralFaction = newFaction;
         CreateRelationshipsForFaction(newFaction);
+        CreateFavorsForFaction(newFaction);
         Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
     }
     /*
@@ -126,6 +128,7 @@ public class FactionManager : MonoBehaviour {
         Faction newFaction = new Faction();
         allFactions.Add(newFaction);
         CreateRelationshipsForFaction(newFaction);
+        CreateFavorsForFaction(newFaction);
         if (!isPlayerFaction) {
             Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
         } else {
@@ -136,7 +139,8 @@ public class FactionManager : MonoBehaviour {
     public Faction CreateNewFaction(FactionSaveData data) {
         Faction newFaction = new Faction(data);
         allFactions.Add(newFaction);
-        CreateRelationshipsForFaction(newFaction, data);
+        LoadRelationshipsForFaction(newFaction, data);
+        //LoadFavorsForFaction(newFaction, data);
         Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
         return newFaction;
     }
@@ -167,6 +171,14 @@ public class FactionManager : MonoBehaviour {
     //        }
     //    }
     //}
+    public void LoadAdditionalFactionInfo(WorldSaveData data) {
+        for (int i = 0; i < data.factionsData.Count; i++) {
+            FactionSaveData currData = data.factionsData[i];
+            Faction faction = GetFactionBasedOnID(currData.factionID);
+            //LoadRelationshipsForFaction(faction, currData);
+            LoadFavorsForFaction(faction, currData);
+        }
+    }
     #endregion
 
     #region Emblem
@@ -284,7 +296,16 @@ public class FactionManager : MonoBehaviour {
             }
         }
     }
-    public void CreateRelationshipsForFaction(Faction faction, FactionSaveData data) {
+    public void CreateFavorsForFaction(Faction faction) {
+        for (int i = 0; i < allFactions.Count; i++) {
+            Faction otherFaction = allFactions[i];
+            if (otherFaction.id != faction.id) {
+                faction.AddNewFactionFavor(otherFaction);
+                otherFaction.AddNewFactionFavor(faction);
+            }
+        }
+    }
+    public void LoadRelationshipsForFaction(Faction faction, FactionSaveData data) {
         for (int i = 0; i < allFactions.Count; i++) {
             Faction otherFaction = allFactions[i];
             if (otherFaction.id != faction.id) {
@@ -294,6 +315,22 @@ public class FactionManager : MonoBehaviour {
                 }
             }
         }
+    }
+    
+    public void LoadFavorsForFaction(Faction faction, FactionSaveData data) {
+        if (data.favor == null) {
+            CreateFavorsForFaction(faction);
+        } else {
+            for (int i = 0; i < allFactions.Count; i++) {
+                Faction otherFaction = allFactions[i];
+                if (otherFaction.id != faction.id) {
+                    if (data.favor.ContainsKey(otherFaction.id)) {
+                        faction.AddNewFactionFavor(otherFaction, data.favor[otherFaction.id]);
+                    }
+                }
+            }
+        }
+        
     }
     public void RemoveRelationshipsWith(Faction faction) {
         for (int i = 0; i < allFactions.Count; i++) {

@@ -45,18 +45,14 @@ namespace ECS {
         protected CharacterPortrait _characterPortrait;
         protected Color _characterColor;
         protected CharacterAction _genericWorkAction;
-        protected HiddenDesire _hiddenDesire;
-        protected Secret _currentlySelectedSecret;
         protected Minion _minion;
-        protected ILocation _specificLocation;
-        protected List<Secret> _secrets;
         protected List<STATUS_EFFECT> _statusEffects;
         protected List<Item> _inventory;
         protected List<Skill> _skills;
         protected List<CharacterAttribute> _attributes;
         protected List<Log> _history;
         protected List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
-        protected List<Trait> _combatAttributes;
+        protected List<CombatAttribute> _combatAttributes;
         protected CharacterActionQueue<ActionQueueItem> _actionQueue;
         protected List<CharacterAction> _miscActions;
         protected List<Interaction> _currentInteractions;
@@ -64,13 +60,13 @@ namespace ECS {
         protected Dictionary<ELEMENT, float> _elementalWeaknesses;
         protected Dictionary<ELEMENT, float> _elementalResistances;
         protected Dictionary<Character, List<string>> _traceInfo;
-        protected Dictionary<int, GAME_EVENT> _intelReactions; //int = intel id
         protected PlayerCharacterItem _playerCharacterItem;
         protected int _currentInteractionTick;
 
         //Stats
         protected SIDES _currentSide;
         protected int _currentHP;
+        protected int _maxHP;
         protected int _currentRow;
         protected int _level;
         protected int _experience;
@@ -79,10 +75,6 @@ namespace ECS {
         protected int _maxSP;
         protected int _attackPower;
         protected int _speed;
-        protected int _maxHP;
-        protected int _combatHP;
-        protected int _combatAttackPower;
-        protected int _combatSpeed;
 
         public CharacterSchedule schedule { get; private set; }
         public Quest currentQuest { get; private set; }
@@ -202,12 +194,12 @@ namespace ECS {
         public BaseLandmark workplace {
             get { return _workplace; }
         }
-        //public float remainingHP { //Percentage of remaining HP this character has
-        //    get { return (float)currentHP / (float)maxHP; }
-        //}
-        //public int remainingHPPercent {
-        //    get { return (int)(remainingHP * 100); }
-        //}
+        public float remainingHP { //Percentage of remaining HP this character has
+            get { return (float)currentHP / (float)maxHP; }
+        }
+        public int remainingHPPercent {
+            get { return (int)(remainingHP * 100); }
+        }
         public List<Log> history {
             get { return this._history; }
         }
@@ -263,30 +255,15 @@ namespace ECS {
         public int maxExperience {
             get { return _maxExperience; }
         }
-        public int speed {
-            get { return _speed + GetModifiedSpeed(); }
+        public virtual int speed {
+            get { return _speed; }
         }
-        public int attackPower {
-            get { return _attackPower + GetModifiedAttack(); }
+        public virtual int attackPower {
+            get { return _attackPower; }
         }
-        public int hp {
-            get { return _maxHP + GetModifiedHP(); }
+        public virtual int maxHP {
+            get { return this._maxHP; }
         }
-        public int combatSpeed {
-            get { return _combatSpeed; }
-            set { _combatSpeed = value; }
-        }
-        public int combatAttackPower {
-            get { return _combatAttackPower; }
-            set { _combatAttackPower = value; }
-        }
-        public int combatHP {
-            get { return _combatHP; }
-            set { _combatHP = value; }
-        }
-        //public int maxHP {
-        //    get { return this._maxHP; }
-        //}
         public int currentHP {
             get { return this._currentHP; }
         }
@@ -342,18 +319,6 @@ namespace ECS {
         public bool hasBeenInspected {
             get { return _hasBeenInspected; }
         }
-        public HiddenDesire hiddenDesire {
-            get { return _hiddenDesire; }
-        }
-        public Secret currentlySelectedSecret {
-            get { return _currentlySelectedSecret; }
-        }
-        public List<Secret> secrets {
-            get { return _secrets; }
-        }
-        public Dictionary<int, GAME_EVENT> intelReactions {
-            get { return _intelReactions; }
-        }
         public IObject questGiverObj {
             get { return currentParty.icharacterObject; }
         }
@@ -363,7 +328,7 @@ namespace ECS {
         public bool isDefender {
             get { return defendingLandmark != null; }
         }
-        public List<Trait> combatAttributes {
+        public List<CombatAttribute> combatAttributes {
             get { return _combatAttributes; }
         }
         public List<Interaction> currentInteractions {
@@ -460,8 +425,6 @@ namespace ECS {
             _attributes = new List<CharacterAttribute>();
             _exploredLandmarks = new List<BaseLandmark>();
             _statusEffects = new List<STATUS_EFFECT>();
-            _secrets = new List<Secret>();
-            _intelReactions = new Dictionary<int, GAME_EVENT>();
             _isDead = false;
             _isFainted = false;
             //_isDefeated = false;
@@ -473,7 +436,7 @@ namespace ECS {
             //previousActions = new Dictionary<CharacterTask, string>();
             //_relationships = new Dictionary<Character, Relationship>();
             _genericWorkAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.WORKING);
-            _combatAttributes = new List<Trait>();
+            _combatAttributes = new List<CombatAttribute>();
 
             //_actionData = new ActionData(this);
 
@@ -539,7 +502,7 @@ namespace ECS {
         private void AllocateStats() {
             _attackPower = _raceSetting.baseAttackPower;
             _speed = _raceSetting.baseSpeed;
-            _maxHP = _raceSetting.baseHP;
+            SetMaxHP(_raceSetting.baseHP);
             _maxSP = _characterClass.baseSP;
         }
         //      private void AllocateStatPoints(int statAllocation){
@@ -639,21 +602,18 @@ namespace ECS {
         //Changes character's side
         public void SetSide(SIDES side) {
             this._currentSide = side;
-            combatAttackPower = attackPower;
-            combatSpeed = speed;
-            combatHP = hp;
         }
         //Adjust current HP based on specified paramater, but HP must not go below 0
-        //public virtual void AdjustHP(int amount, ICharacter killer = null) {
-        //    int previous = this._currentHP;
-        //    this._currentHP += amount;
-        //    this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
-        //    if (previous != this._currentHP) {
-        //        if (this._currentHP == 0) {
-        //            FaintOrDeath(killer);
-        //        }
-        //    }
-        //}
+        public virtual void AdjustHP(int amount, ICharacter killer = null) {
+            int previous = this._currentHP;
+            this._currentHP += amount;
+            this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
+            if (previous != this._currentHP) {
+                if (this._currentHP == 0) {
+                    FaintOrDeath(killer);
+                }
+            }
+        }
         public void SetHP(int amount) {
             this._currentHP = amount;
         }
@@ -676,26 +636,26 @@ namespace ECS {
 
             //return faintDieDict.PickRandomElementGivenWeights ();
         }
-        //public void FaintOrDeath(ICharacter killer) {
-        //    string pickedWeight = GetFaintOrDeath();
-        //    if (pickedWeight == "faint") {
-        //        if (currentParty.currentCombat == null) {
-        //            Faint();
-        //        } else {
-        //            currentParty.currentCombat.CharacterFainted(this);
-        //        }
-        //    } else if (pickedWeight == "die") {
-        //        if (currentParty.currentCombat != null) {
-        //            currentParty.currentCombat.CharacterDeath(this, killer);
-        //        }
-        //        Death();
-        //        //            if (this.currentCombat == null){
-        //        //	Death ();
-        //        //}else{
-        //        //	this.currentCombat.CharacterDeath (this);
-        //        //}
-        //    }
-        //}
+        public void FaintOrDeath(ICharacter killer) {
+            string pickedWeight = GetFaintOrDeath();
+            if (pickedWeight == "faint") {
+                if (currentParty.currentCombat == null) {
+                    Faint();
+                } else {
+                    currentParty.currentCombat.CharacterFainted(this);
+                }
+            } else if (pickedWeight == "die") {
+                if (currentParty.currentCombat != null) {
+                    currentParty.currentCombat.CharacterDeath(this, killer);
+                }
+                Death();
+                //            if (this.currentCombat == null){
+                //	Death ();
+                //}else{
+                //	this.currentCombat.CharacterDeath (this);
+                //}
+            }
+        }
         //When character will faint
         internal void Faint() {
             if (!_isFainted) {
@@ -730,7 +690,7 @@ namespace ECS {
                 _isDead = true;
                 UnsubscribeSignals();
 
-                //CombatManager.Instance.ReturnCharacterColorToPool(_characterColor);
+                CombatManager.Instance.ReturnCharacterColorToPool(_characterColor);
 
                 if (currentParty.specificLocation == null) {
                     throw new Exception("Specific location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
@@ -956,7 +916,7 @@ namespace ECS {
             if (hasEquipped) {
                 if (item.attributeNames != null) {
                     for (int i = 0; i < item.attributeNames.Count; i++) {
-                        Trait newCombatAttribute = AttributeManager.Instance.allCombatAttributes[item.attributeNames[i]];
+                        CombatAttribute newCombatAttribute = AttributeManager.Instance.allCombatAttributes[item.attributeNames[i]];
                         AddCombatAttribute(newCombatAttribute);
                     }
                 }
@@ -983,7 +943,7 @@ namespace ECS {
             }
             if (item.attributeNames != null) {
                 for (int i = 0; i < item.attributeNames.Count; i++) {
-                    Trait newCombatAttribute = AttributeManager.Instance.allCombatAttributes[item.attributeNames[i]];
+                    CombatAttribute newCombatAttribute = AttributeManager.Instance.allCombatAttributes[item.attributeNames[i]];
                     RemoveCombatAttribute(newCombatAttribute);
                 }
             }
@@ -1209,6 +1169,32 @@ namespace ECS {
                     }
                 }
             }
+        }
+        #endregion
+
+        #region Status Effects
+        internal void AddStatusEffect(STATUS_EFFECT statusEffect) {
+            this._statusEffects.Add(statusEffect);
+        }
+        internal void RemoveStatusEffect(STATUS_EFFECT statusEffect) {
+            this._statusEffects.Remove(statusEffect);
+        }
+        internal void CureStatusEffects() {
+            for (int i = 0; i < _statusEffects.Count; i++) {
+                STATUS_EFFECT statusEffect = _statusEffects[i];
+                int chance = Utilities.rng.Next(0, 100);
+                if (chance < 15) {
+                    _ownParty.currentCombat.AddCombatLog(this.name + " is cured from " + statusEffect.ToString().ToLower() + ".", this.currentSide);
+                    RemoveStatusEffect(statusEffect);
+                    i--;
+                }
+            }
+        }
+        internal bool HasStatusEffect(STATUS_EFFECT statusEffect) {
+            if (_statusEffects.Contains(statusEffect)) {
+                return true;
+            }
+            return false;
         }
         #endregion
 
@@ -1685,12 +1671,6 @@ namespace ECS {
             }
             return false;
         }
-        public void SetSpecificLocation(ILocation location) {
-            _specificLocation = location;
-            if (_specificLocation != null) {
-                _currentRegion = _specificLocation.tileLocation.region;
-            }
-        }
         #endregion
 
         #region Quests
@@ -1703,6 +1683,12 @@ namespace ECS {
                 currentQuest.OnAcceptQuest(this);
                 Debug.Log("Set " + this.name + "'s quest to " + currentQuest.name);
             }
+        }
+        #endregion
+
+        #region HP
+        public bool IsHealthFull() {
+            return _currentHP >= maxHP;
         }
         #endregion
 
@@ -2107,6 +2093,9 @@ namespace ECS {
                     _attackPower += _raceSetting.attackPerLevel[attackIndex - 1];
                 }
 
+                //Reset to full health and sp
+                ResetToFullHP();
+                ResetToFullSP();
             }
         }
         public void LevelUp(int amount) {
@@ -2137,8 +2126,8 @@ namespace ECS {
             }
 
             //Reset to full health and sp
-            //ResetToFullHP();
-            //ResetToFullSP();
+            ResetToFullHP();
+            ResetToFullSP();
 
             //Reset Experience
             _experience = 0;
@@ -2171,34 +2160,34 @@ namespace ECS {
         private void RecomputeMaxExperience() {
             _maxExperience = Mathf.CeilToInt(100f * ((Mathf.Pow((float)_level, 1.25f)) / 1.1f));
         }
-        //public void ResetToFullHP() {
-        //    //SetHP(maxHP);
-        //}
-        //public void ResetToFullSP() {
-        //    AdjustSP(_maxSP);
-        //}
+        public void ResetToFullHP() {
+            SetHP(maxHP);
+        }
+        public void ResetToFullSP() {
+            AdjustSP(_maxSP);
+        }
         private float GetComputedPower() {
             float compPower = 0f;
-            //for (int i = 0; i < currentParty.icharacters.Count; i++) {
-            //    compPower += currentParty.icharacters[i].attackPower;
-            //}
+            for (int i = 0; i < currentParty.icharacters.Count; i++) {
+                compPower += currentParty.icharacters[i].attackPower;
+            }
             return compPower;
         }
-        //public void SetMaxHP(int amount) {
-            //int previousMaxHP = maxHP;
-            //_maxHP = amount;
-            //int currentMaxHP = maxHP;
-            //if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
-            //    _currentHP = currentMaxHP;
-            //}
-        //}
+        public void SetMaxHP(int amount) {
+            int previousMaxHP = maxHP;
+            _maxHP = amount;
+            int currentMaxHP = maxHP;
+            if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
+                _currentHP = currentMaxHP;
+            }
+        }
         public void AdjustMaxHP(int amount) {
+            int previousMaxHP = maxHP;
             _maxHP += amount;
-            //int previousMaxHP = maxHP;
-            //int currentMaxHP = maxHP;
-            //if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
-            //    _currentHP = currentMaxHP;
-            //}
+            int currentMaxHP = maxHP;
+            if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
+                _currentHP = currentMaxHP;
+            }
         }
         #endregion
 
@@ -2648,95 +2637,6 @@ namespace ECS {
         }
         #endregion
 
-        #region Hidden Desire
-        public void SetHiddenDesire(HiddenDesire hiddenDesire) {
-            _hiddenDesire = hiddenDesire;
-        }
-        public void AwakenHiddenDesire() {
-            if (_hiddenDesire == null || _hiddenDesire.isAwakened) {
-                //if the character does not have a hidden desire
-                //or the hidden desire is already awakened
-                return;
-            }
-            _hiddenDesire.Awaken();
-        }
-        #endregion
-
-        //#region Intel
-        //public void AddIntelReaction(int intelID, GAME_EVENT reaction) {
-        //    if (!_intelReactions.ContainsKey(intelID)) {
-        //        _intelReactions.Add(intelID, reaction);
-        //    } else {
-        //        _intelReactions[intelID] = reaction;
-        //    }
-        //}
-        //public void AddIntelReaction(Intel intel, GAME_EVENT reaction) {
-        //    AddIntelReaction(intel.id, reaction);
-        //}
-        //public void RemoveIntelReaction(Intel intel) {
-        //    RemoveIntelReaction(intel.id);
-        //}
-        //public void RemoveIntelReaction(int intelID) {
-        //    _intelReactions.Remove(intelID);
-        //}
-        //public void OnIntelGiven(Intel intel) {
-        //    Debug.Log(GameManager.Instance.TodayLogString() + this.name + " was given intel that " + intel.description);
-        //    GameEvent gameEvent = EventManager.Instance.AddNewEvent(this.intelReactions[intel.id]);
-        //    if (gameEvent.MeetsRequirements(this)) {
-        //        List<Character> characters = new List<Character>();
-        //        switch (gameEvent.type) {
-        //            case GAME_EVENT.SUICIDE:
-        //                characters.Add(this);
-        //                break;
-        //            default:
-        //                break;
-        //        }
-        //        gameEvent.Initialize(characters);
-        //    }
-        //    //Remove intel reaction from character, even if he/she did not meet the requirements for the reaction?
-        //    RemoveIntelReaction(intel);
-        //}
-        //#endregion
-
-        #region Secrets
-        public void AddSecret(Secret secret) {
-            if (!_secrets.Contains(secret)) {
-                _secrets.Add(secret);
-            }
-        }
-        public void AddSecret(int secretID) {
-            Secret secret = SecretManager.Instance.CreateNewSecret(secretID);
-            AddSecret(secret);
-        }
-        public bool HasSecret(int secretID) {
-            for (int i = 0; i < _secrets.Count; i++) {
-                Secret secret = _secrets[i];
-                if (secret.id == secretID) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        public Secret GetSecret(int secretID) {
-            for (int i = 0; i < _secrets.Count; i++) {
-                Secret secret = _secrets[i];
-                if (secret.id == secretID) {
-                    return secret;
-                }
-            }
-            return null;
-        }
-        public void RemoveSecret(int secretID) {
-            Secret secret = GetSecret(secretID);
-            if (secret != null) {
-                RemoveSecret(secret);
-            }
-        }
-        public void RemoveSecret(Secret secret) {
-            _secrets.Remove(secret);
-        }
-        #endregion
-
         #region Defender
         public void OnSetAsDefender(BaseLandmark defending) {
             defendingLandmark = defending;
@@ -2764,93 +2664,80 @@ namespace ECS {
         #endregion
 
         #region Combat Attributes
-        public void AddCombatAttribute(Trait combatAttribute) {
-            if (GetCombatAttribute(combatAttribute.name) != null) {
+        public void AddCombatAttribute(CombatAttribute combatAttribute) {
+            if (string.IsNullOrEmpty(GetCombatAttribute(combatAttribute.name).name)) {
                 _combatAttributes.Add(combatAttribute);
-                ApplyFlatCombatAttributeEffects(combatAttribute);
+                ApplyCombatAttributeEffects(combatAttribute);
             }
         }
-        public bool RemoveCombatAttribute(Trait combatAttribute) {
+        public bool RemoveCombatAttribute(CombatAttribute combatAttribute) {
             for (int i = 0; i < _combatAttributes.Count; i++) {
                 if (_combatAttributes[i].name == combatAttribute.name) {
                     _combatAttributes.RemoveAt(i);
-                    UnapplyFlatCombatAttributeEffects(combatAttribute);
+                    UnapplyCombatAttributeEffects(combatAttribute);
                     return true;
                 }
             }
             return false;
         }
-        public Trait GetCombatAttribute(string name) {
+        public CombatAttribute GetCombatAttribute(string attributeName) {
             for (int i = 0; i < _combatAttributes.Count; i++) {
-                if (_combatAttributes[i].name.ToLower() == name.ToLower()) {
+                if (_combatAttributes[i].name == attributeName) {
                     return _combatAttributes[i];
                 }
             }
-            return null;
+            return new CombatAttribute();
         }
-        private int GetModifiedAttack() {
-            int modifiedAttack = _attackPower;
-            for (int i = 0; i < _combatAttributes.Count; i++) {
-                for (int j = 0; j < _combatAttributes[i].effects.Count; j++) {
-                    TraitEffect traitEffect = _combatAttributes[i].effects[j];
-                    if (!traitEffect.hasRequirement && traitEffect.stat == STAT.ATTACK && traitEffect.isPercentage) {
-                        float result = modifiedAttack * (traitEffect.amount / 100f);
-                        modifiedAttack += (int) result;
+        private void ApplyCombatAttributeEffects(CombatAttribute combatAttribute) {
+            if (!combatAttribute.hasRequirement) {
+                if (combatAttribute.stat == STAT.ATTACK) {
+                    if (combatAttribute.isPercentage) {
+                        float result = _attackPower * (combatAttribute.amount / 100f);
+                        _attackPower += (int)result;
+                    } else {
+                        _attackPower += (int)combatAttribute.amount;
                     }
-                }
-            }
-            return modifiedAttack;
-        }
-        private int GetModifiedHP() {
-            int modifiedHP = _maxHP;
-            for (int i = 0; i < _combatAttributes.Count; i++) {
-                for (int j = 0; j < _combatAttributes[i].effects.Count; j++) {
-                    TraitEffect traitEffect = _combatAttributes[i].effects[j];
-                    if (!traitEffect.hasRequirement && traitEffect.stat == STAT.HP && traitEffect.isPercentage) {
-                        float result = modifiedHP * (traitEffect.amount / 100f);
-                        modifiedHP += (int) result;
+                } else if (combatAttribute.stat == STAT.HP) {
+                    int previousMaxHP = _maxHP;
+                    if (combatAttribute.isPercentage) {
+                        float result = _maxHP * (combatAttribute.amount / 100f);
+                        AdjustMaxHP((int)result);
+                    } else {
+                        AdjustMaxHP((int)combatAttribute.amount);
                     }
-                }
-            }
-            return modifiedHP;
-        }
-        private int GetModifiedSpeed() {
-            int modifiedSpeed = _speed;
-            for (int i = 0; i < _combatAttributes.Count; i++) {
-                for (int j = 0; j < _combatAttributes[i].effects.Count; j++) {
-                    TraitEffect traitEffect = _combatAttributes[i].effects[j];
-                    if (!traitEffect.hasRequirement && traitEffect.stat == STAT.SPEED && traitEffect.isPercentage) {
-                        float result = modifiedSpeed * (traitEffect.amount / 100f);
-                        modifiedSpeed += (int) result;
-                    }
-                }
-            }
-            return modifiedSpeed;
-        }
-        private void ApplyFlatCombatAttributeEffects(Trait trait) {
-            for (int i = 0; i < trait.effects.Count; i++) {
-                TraitEffect traitEffect = trait.effects[i];
-                if (!traitEffect.hasRequirement && !traitEffect.isPercentage) {
-                    if (traitEffect.stat == STAT.ATTACK) {
-                        _attackPower += (int) traitEffect.amount;
-                    } else if (traitEffect.stat == STAT.HP) {
-                        AdjustMaxHP((int) traitEffect.amount);
-                    } else if (traitEffect.stat == STAT.SPEED) {
-                        _speed += (int) traitEffect.amount;
+                } else if (combatAttribute.stat == STAT.SPEED) {
+                    if (combatAttribute.isPercentage) {
+                        float result = _speed * (combatAttribute.amount / 100f);
+                        _speed += (int)result;
+                    } else {
+                        _speed += (int)combatAttribute.amount;
                     }
                 }
             }
         }
-        private void UnapplyFlatCombatAttributeEffects(Trait trait) {
-            for (int i = 0; i < trait.effects.Count; i++) {
-                TraitEffect traitEffect = trait.effects[i];
-                if (!traitEffect.hasRequirement && !traitEffect.isPercentage) {
-                    if (traitEffect.stat == STAT.ATTACK) {
-                        _attackPower -= (int) traitEffect.amount;
-                    } else if (traitEffect.stat == STAT.HP) {
-                        AdjustMaxHP(-(int) traitEffect.amount);
-                    } else if (traitEffect.stat == STAT.SPEED) {
-                        _speed -= (int) traitEffect.amount;
+        private void UnapplyCombatAttributeEffects(CombatAttribute combatAttribute) {
+            if (!combatAttribute.hasRequirement) {
+                if (combatAttribute.stat == STAT.ATTACK) {
+                    if (combatAttribute.isPercentage) {
+                        float result = _attackPower * (combatAttribute.amount / 100f);
+                        _attackPower -= (int)result;
+                    } else {
+                        _attackPower -= (int)combatAttribute.amount;
+                    }
+                } else if (combatAttribute.stat == STAT.HP) {
+                    int previousMaxHP = _maxHP;
+                    if (combatAttribute.isPercentage) {
+                        float result = _maxHP * (combatAttribute.amount / 100f);
+                        AdjustMaxHP(-(int)result);
+                    } else {
+                        AdjustMaxHP(-(int)combatAttribute.amount);
+                    }
+                } else if (combatAttribute.stat == STAT.SPEED) {
+                    if (combatAttribute.isPercentage) {
+                        float result = _speed * (combatAttribute.amount / 100f);
+                        _speed -= (int)result;
+                    } else {
+                        _speed -= (int)combatAttribute.amount;
                     }
                 }
             }

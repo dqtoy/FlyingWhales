@@ -19,7 +19,7 @@ public class RevealSecret : PlayerAbility {
         //character.currentlySelectedSecret.RevealSecret();
         //base.Activate(interactable);
         Character character = interactable as Character;
-        Activate(interactable, character.currentlySelectedSecret);
+        //Activate(interactable, character.currentlySelectedSecret);
         RecallMinion();
     }
     public void Activate(IInteractable interactable, Secret secret) {
@@ -28,13 +28,14 @@ public class RevealSecret : PlayerAbility {
     }
     public override bool CanBeDone(IInteractable interactable) {
         //if (base.CanBeDone(interactable)) {
-            //Character character = interactable as Character;
-            //if (character.currentlySelectedSecret != null && !character.currentlySelectedSecret.isRevealed) {
-            //    return true;
-            //}
+        //Character character = interactable as Character;
+        //if (character.currentlySelectedSecret != null && !character.currentlySelectedSecret.isRevealed) {
+        //    return true;
         //}
-        Character character = interactable as Character;
-        return CanBeDone(interactable, character.currentlySelectedSecret);
+        //}
+        //Character character = interactable as Character;
+        //return CanBeDone(interactable, character.currentlySelectedSecret);
+        return true;
     }
     public bool CanBeDone(IInteractable interactable, Secret secret) {
         if (base.CanBeDone(interactable)) {

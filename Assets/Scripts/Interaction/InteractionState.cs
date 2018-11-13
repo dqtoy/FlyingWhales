@@ -20,6 +20,8 @@ public class InteractionState {
     private Log _landmarkLog;
     private ActionOption[] _actionOptions;
     private List<object> _assignedObjects;
+    private List<LogFiller> logFillers;
+    private List<Log> otherLogs;
 
     #region getters/setters
     public string name {
@@ -77,6 +79,7 @@ public class InteractionState {
         _name = name;
         _chosenOption = null;
         _actionOptions = new ActionOption[4];
+        logFillers = new List<LogFiller>();
     }
 
     //public void SetDescription(string desc) {

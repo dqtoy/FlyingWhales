@@ -99,6 +99,7 @@ public static class Signals {
     public static string CHARACTER_ADDED_TO_FACTION = "OnCharacterAddedToFaction"; //Parameters (Character addedCharacter, Faction affectedFaction)
     public static string CHARACTER_REMOVED_FROM_FACTION = "OnCharacterRemovedFromFaction"; //Parameters (Character addedCharacter, Faction affectedFaction)
     public static string FACTION_SET = "OnFactionSet"; //Parameters (Character characterThatSetFaction)
+    public static string FACTION_LEADER_DIED = "OnFactionLeaderDied"; //Parameters (Faction affectedFaction)
     #endregion
 
     #region Actions

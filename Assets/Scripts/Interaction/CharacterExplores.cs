@@ -250,6 +250,9 @@ public class CharacterExplores : Interaction {
 
     private BaseLandmark GetTargetLandmark(Area currArea) {
         List<BaseLandmark> choices = new List<BaseLandmark>(currArea.landmarks);
+        if (chosenCharacter.ownParty.specificLocation is BaseLandmark) {
+            choices.Remove(chosenCharacter.ownParty.specificLocation as BaseLandmark);
+        }
         if (choices.Count > 0) {
             return choices[Random.Range(0, choices.Count)];
         }

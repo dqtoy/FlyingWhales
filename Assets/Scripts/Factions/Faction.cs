@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using ECS;
 
 public class Faction {
 	protected int _id;
@@ -24,6 +25,7 @@ public class Faction {
 
     public MORALITY morality { get; private set; }
     public FactionIntel factionIntel { get; private set; }
+    public Dictionary<Faction, int> favor { get; private set; }
 
     #region getters/setters
     public int id {
@@ -65,6 +67,9 @@ public class Faction {
     public List<Area> ownedAreas {
         get { return _ownedAreas; }
     }
+    public bool isDestroyed {
+        get { return _leader == null; }
+    }
     #endregion
 
     public Faction() {
@@ -81,6 +86,10 @@ public class Faction {
         _landmarkInfo = new List<BaseLandmark>();
         _ownedAreas = new List<Area>();
         factionIntel = new FactionIntel(this);
+        favor = new Dictionary<Faction, int>();
+#if !WORLD_CREATION_TOOL
+        AddListeners();
+#endif
     }
 
     public Faction(FactionSaveData data) {
@@ -98,10 +107,15 @@ public class Faction {
         _landmarkInfo = new List<BaseLandmark>();
         _ownedAreas = new List<Area>();
         factionIntel = new FactionIntel(this);
+        favor = new Dictionary<Faction, int>();
+#if !WORLD_CREATION_TOOL
+        AddListeners();
+#endif
     }
 
     private void AddListeners() {
         Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveCharacter);
+        Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
     }
 
     public void SetRace(RACE race) {
@@ -222,6 +236,25 @@ public class Faction {
     public override string ToString() {
         return name;
     }
+    private void OnCharacterDied(Character characterThatDied) {
+        if (leader != null && leader is Character && leader.id == characterThatDied.id) {
+            OnLeaderDied();
+        }
+    }
+    private void OnLeaderDied() {
+        Debug.Log(this.name + "'s leader died");
+        SetLeader(null);
+        //kill all characters in faction and un own all areas
+        List<Character> remainingCharacters = new List<Character>(characters);
+        for (int i = 0; i < remainingCharacters.Count; i++) {
+            remainingCharacters[i].Death();
+        }
+        List<Area> areasToUnown = new List<Area>(ownedAreas);
+        for (int i = 0; i < areasToUnown.Count; i++) {
+            LandmarkManager.Instance.UnownArea(areasToUnown[i]);
+        }
+        Messenger.Broadcast(Signals.FACTION_LEADER_DIED, this);
+    }
     #endregion
 
     #region Relationships
@@ -325,6 +358,23 @@ public class Faction {
     #region Morality
     public void SetMorality(MORALITY morality) {
         this.morality = morality;
+    }
+    #endregion
+
+    #region Favor
+    public void AddNewFactionFavor(Faction faction, int value = 0) {
+        if (favor.ContainsKey(faction)) {
+            favor[faction] = value;
+        } else {
+            favor.Add(faction, value);
+        }
+    }
+    public void AdjustFavorFor(Faction otherFaction, int adjustment) {
+        if (favor.ContainsKey(otherFaction)) {
+            favor[otherFaction] += adjustment;
+        } else {
+            Debug.LogWarning("There is no favor key for " + otherFaction.name + " in " + this.name + "'s favor dictionary");
+        }
     }
     #endregion
 }

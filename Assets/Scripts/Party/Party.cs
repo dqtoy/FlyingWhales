@@ -85,7 +85,7 @@ public class Party : IParty {
         set { _attackedByFaction = value; }
     }
     public Faction faction {
-        get { return mainCharacter.faction; }
+        get { return owner.faction; }
     }
     public CharacterAvatar icon {
         get { return _icon; }

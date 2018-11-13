@@ -155,7 +155,6 @@ public class CharacterInfoUI : UIMenu {
 
         //Messenger.AddListener<Character, Attribute>(Signals.ATTRIBUTE_ADDED, OnCharacterAttributeAdded);
         //Messenger.AddListener<Character, Attribute>(Signals.ATTRIBUTE_REMOVED, OnCharacterAttributeRemoved);
-        Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         //affiliations.Initialize();
@@ -164,7 +163,6 @@ public class CharacterInfoUI : UIMenu {
         InititalizeLogsMenu();
         InititalizeInventoryMenu();
         InitializeSchedulingMenu();
-        InitializeInfoMenu();
     }
     private void InititalizeLogsMenu() {
         logHistoryItems = new LogHistoryItem[MAX_HISTORY_LOGS];
@@ -278,7 +276,7 @@ public class CharacterInfoUI : UIMenu {
 
         UpdatePortrait();
         UpdateBasicInfo();
-        UpdateInfoMenu();
+        //UpdateInfoMenu();
         UpdateStatInfo();
 
         //if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
@@ -933,50 +931,6 @@ public class CharacterInfoUI : UIMenu {
             daysConversionLbl.text = "Day Conversion: Invalid";
             scheduleManualBtn.interactable = false;
         }
-    }
-    #endregion
-
-    #region Info
-    private void InitializeInfoMenu() {
-        for (int i = 0; i < secretItems.Length; i++) {
-            SecretItem currItem = secretItems[i];
-            currItem.Initialize();
-        }
-    }
-    private void UpdateInfoMenu() {
-        for (int i = 0; i < secretItems.Length; i++) {
-            SecretItem currItem = secretItems[i];
-            Secret currSecret = _activeCharacter.secrets.ElementAtOrDefault(i);
-            if (currSecret == null) {
-                currItem.gameObject.SetActive(false);
-            } else {
-                currItem.SetSecret(currSecret, _activeCharacter);
-                currItem.gameObject.SetActive(true);
-            }
-        }
-        //List<Intel> intel = IntelManager.Instance.GetIntelConcerning(_activeCharacter);
-        for (int i = 0; i < intelItems.Length; i++) {
-            IntelItem currItem = intelItems[i];
-            //Intel currIntel = intel.ElementAtOrDefault(i);
-            //if (currIntel == null) {
-                currItem.gameObject.SetActive(false);
-            //} else {
-            //    currItem.SetIntel(currIntel);
-            //    currItem.gameObject.SetActive(true);
-            //}
-        }
-        if (_activeCharacter.hiddenDesire == null) {
-            hiddenDesireItem.gameObject.SetActive(false);
-        } else {
-            hiddenDesireItem.SetHiddenDesire(_activeCharacter.hiddenDesire, _activeCharacter);
-            hiddenDesireItem.gameObject.SetActive(true);
-        }
-    }
-    private void OnIntelAdded(Intel intel) {
-        if (_activeCharacter == null) {
-            return;
-        }
-        UpdateInfoMenu();
     }
     #endregion
 

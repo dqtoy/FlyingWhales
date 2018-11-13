@@ -96,6 +96,23 @@ public class LocalizationManager : MonoBehaviour {
         return result;
 
 	}
+    public List<string> GetKeysLike(string category, string file, string keyLike) {
+        List<string> keys = new List<string>();
+        if (!this._localizedText.ContainsKey(category)) {
+            Debug.LogWarning("Localization error! " + category + "/");
+            //throw new System.Exception("Localization error! " + category + "/");
+        } else if (!this._localizedText[category].ContainsKey(file)) {
+            Debug.LogWarning("Localization error! " + category + "/" + file + "/");
+            //throw new System.Exception("Localization error! " + category + "/" + file + "/");
+        }
+        Dictionary<string, string> logs = this.localizedText[category][file];
+        foreach (KeyValuePair<string, string> kvp in logs) {
+            if (kvp.Key.Contains(keyLike)) {
+                keys.Add(kvp.Key);
+            }
+        }
+        return keys;
+    }
 	public string GetRandomLocalizedValue(string category, string file){
 		string result = string.Empty;
 		int count = this._localizedText [category] [file].Keys.Count;

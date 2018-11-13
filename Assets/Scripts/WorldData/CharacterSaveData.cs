@@ -24,6 +24,7 @@ public class CharacterSaveData {
     public List<int> secrets;
     //public List<IntelReaction> intelReactions;
     public MORALITY morality;
+    public int level;
 
     public CharacterSaveData(ECS.Character character) {
         id = character.id;
@@ -82,23 +83,7 @@ public class CharacterSaveData {
             attributes.Add(character.attributes[i].attribute);
         }
 
-        if (character.hiddenDesire == null) {
-            hiddenDesire = HIDDEN_DESIRE.NONE;
-        } else {
-            hiddenDesire = character.hiddenDesire.type;
-        }
-
-        secrets = new List<int>();
-        for (int i = 0; i < character.secrets.Count; i++) {
-            Secret secret = character.secrets[i];
-            secrets.Add(secret.id);
-        }
-
-        //intelReactions = new List<IntelReaction>();
-        //foreach (KeyValuePair<int, GAME_EVENT> kvp in character.intelReactions) {
-        //    intelReactions.Add(new IntelReaction(kvp.Key, kvp.Value));
-        //}
-
         morality = character.morality;
+        level = character.level;
     }
 }
