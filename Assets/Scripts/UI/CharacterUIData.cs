@@ -14,7 +14,7 @@ public class CharacterUIData {
     public float attackPower { get; private set; }
     public float speed { get; private set; }
     public List<CharacterAttribute> attributes { get; private set; }
-    public List<CombatAttribute> combatAttributes { get; private set; }
+    public List<Trait> combatAttributes { get; private set; }
     public Weapon equippedWeapon { get; private set; }
     public Armor equippedArmor { get; private set; }
     public Item equippedAccessory { get; private set; }
@@ -25,7 +25,7 @@ public class CharacterUIData {
 
     public CharacterUIData() {
         attributes = new List<CharacterAttribute>();
-        combatAttributes = new List<CombatAttribute>();
+        combatAttributes = new List<Trait>();
         inventory = new List<Item>();
         relationships = new List<Relationship>();
     }

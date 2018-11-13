@@ -94,7 +94,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public int currentHP {
         get { return _currentHP; }
     }
-    public virtual int maxHP {
+    public int hp {
         get { return _maxHP; }
     }
     public int currentRow {
@@ -239,7 +239,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public List<Log> history {
         get { return null; }
     }
-    public List<CombatAttribute> combatAttributes {
+    public List<Trait> combatAttributes {
         get { return null; }
     }
     public List<Interaction> currentInteractions {
@@ -429,9 +429,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     private float GetComputedPower() {
         float compPower = 0f;
-        for (int i = 0; i < currentParty.icharacters.Count; i++) {
-            compPower += currentParty.icharacters[i].attackPower;
-        }
+        //for (int i = 0; i < currentParty.icharacters.Count; i++) {
+        //    compPower += currentParty.icharacters[i].attackPower;
+        //}
         return compPower;
     }
     //private List<Skill> GetGeneralSkills() {
@@ -566,7 +566,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public virtual void AdjustHP(int amount, ICharacter killer = null) {
         int previous = this._currentHP;
         this._currentHP += amount;
-        this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
+        this._currentHP = Mathf.Clamp(this._currentHP, 0, hp);
         if (previous != this._currentHP) {
             if (this._currentHP == 0) {
                 FaintOrDeath(killer);
@@ -577,33 +577,33 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _currentHP = amount;
     }
     public void SetMaxHP(int amount) {
-        int previousMaxHP = maxHP;
+        //int previousMaxHP = maxHP;
         _maxHP = amount;
-        int currentMaxHP = maxHP; 
-        if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
-            _currentHP = currentMaxHP;
-        }
+        //int currentMaxHP = maxHP; 
+        //if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
+        //    _currentHP = currentMaxHP;
+        //}
     }
     public void AdjustMaxHP(int amount) {
-        int previousMaxHP = maxHP;
+        //int previousMaxHP = maxHP;
         _maxHP += amount;
-        int currentMaxHP = maxHP;
-        if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
-            _currentHP = currentMaxHP;
-        }
+        //int currentMaxHP = maxHP;
+        //if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
+        //    _currentHP = currentMaxHP;
+        //}
     }
     public void FaintOrDeath(ICharacter killer) {
         if (CombatSimManager.Instance == null) {
-            if (_ownParty.currentCombat != null) {
-                _ownParty.currentCombat.CharacterDeath(this, killer);
-            }
+            //if (_ownParty.currentCombat != null) {
+            //    _ownParty.currentCombat.CharacterDeath(this, killer);
+            //}
             Death();
         } else {
             DeathSim();
         }
     }
     public void ResetToFullHP() {
-        SetHP(maxHP);
+        //SetHP(maxHP);
     }
     public void ResetToFullSP() {
         AdjustSP(_maxSP);
@@ -726,13 +726,17 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public void LevelUp(int amount) {
         //Not applicable
     }
-    public void AddCombatAttribute(CombatAttribute combatAttribute) {
+    public void AddCombatAttribute(Trait combatAttribute) {
         //Not applicable
     }
-    public bool RemoveCombatAttribute(CombatAttribute combatAttribute) {
+    public bool RemoveCombatAttribute(Trait combatAttribute) {
         //Not applicable
         return false;
     }
+    public Trait GetCombatAttribute(string name) {
+        return null;
+    }
+
     #endregion
 
     #region Action Queue

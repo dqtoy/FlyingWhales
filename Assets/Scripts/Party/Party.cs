@@ -375,14 +375,6 @@ public class Party : IParty {
 
     #region Combat
     public Combat StartCombatWith(Party enemy) {
-
-        //if(enemy is CharacterParty) {
-        //    (enemy as CharacterParty).actionData.SetIsHalted(true);
-        //}
-        //if (this is CharacterParty) {
-        //    (this as CharacterParty).actionData.SetIsHalted(true);
-        //}
-
         Combat combat = null;
         if (this.currentCombat != null) {
             //If this party has current combat
@@ -414,10 +406,11 @@ public class Party : IParty {
                 combat.AddParty(SIDES.A, enemy);
                 combat.AddParty(SIDES.B, this);
                 //MultiThreadPool.Instance.AddToThreadPool(combat);
-                Debug.Log("Starting combat between " + enemy.name + " and  " + this.name);
                 combat.CombatSimulation();
             }
         }
+        Debug.Log("Starting combat between " + enemy.name + " and  " + this.name);
+
         Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "start_combat");
         combatLog.AddToFillers(enemy, enemy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         combatLog.AddToFillers(combat, " fought with ", LOG_IDENTIFIER.COMBAT);

@@ -12,7 +12,7 @@ public class AttributeManager : MonoBehaviour {
     private List<CharacterAttribute> _allCharacterAttributes;
     private List<CharacterAttribute> _allItemAttributes;
     private List<CharacterAttribute> _allStructureAttributes;
-    private Dictionary<string, CombatAttribute> _allCombatAttributes;
+    private Dictionary<string, Trait> _allCombatAttributes;
 
     #region getters/setters
     public List<CharacterAttribute> allAttributes {
@@ -27,7 +27,7 @@ public class AttributeManager : MonoBehaviour {
     public List<CharacterAttribute> allStructureAttributes {
         get { return _allStructureAttributes; }
     }
-    public Dictionary<string, CombatAttribute> allCombatAttributes {
+    public Dictionary<string, Trait> allCombatAttributes {
         get { return _allCombatAttributes; }
     }
     #endregion
@@ -37,11 +37,11 @@ public class AttributeManager : MonoBehaviour {
     }
 
     public void Initialize() {
-        _allCombatAttributes = new Dictionary<string, CombatAttribute>();
+        _allCombatAttributes = new Dictionary<string, Trait>();
         string path = Utilities.dataPath + "CombatAttributes/";
         string[] files = Directory.GetFiles(path, "*.json");
         for (int i = 0; i < files.Length; i++) {
-            CombatAttribute attribute = JsonUtility.FromJson<CombatAttribute>(System.IO.File.ReadAllText(files[i]));
+            Trait attribute = JsonUtility.FromJson<Trait>(System.IO.File.ReadAllText(files[i]));
             _allCombatAttributes.Add(attribute.name, attribute);
         }
         //_allCharacterAttributes = new List<Attribute>();

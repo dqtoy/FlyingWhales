@@ -9,13 +9,24 @@ public interface ICharacter {
     float actRate { get; set; }
     int level { get; }
     int currentHP { get; }
-    int maxHP { get; }
     int currentSP { get; }
     int maxSP { get; }
     int currentRow { get; }
     int id { get; }
+    int hp { get; }
     int attackPower { get; }
     int speed { get; }
+    int combatAttackPower { get; set; }
+    int combatSpeed { get; set; }
+    int combatHP { get; set; }
+    int combatAttackFlat { get; set; }
+    int combatAttackMultiplier { get; set; }
+    int combatSpeedFlat { get; set; }
+    int combatSpeedMultiplier { get; set; }
+    int combatHPFlat { get; set; }
+    int combatHPMultiplier { get; set; }
+    int combatPowerFlat { get; set; }
+    int combatPowerMultiplier { get; set; }
     string coloredUrlName { get; }
     string urlName { get; }
     string name { get; }
@@ -28,6 +39,7 @@ public interface ICharacter {
     ICHARACTER_TYPE icharacterType { get; }
     MODE currentMode { get; }
     RACE race { get; }
+    ILocation specificLocation { get; }
     CharacterBattleOnlyTracker battleOnlyTracker { get; }
     Faction faction { get; }
     BaseLandmark homeLandmark { get; }
@@ -47,7 +59,7 @@ public interface ICharacter {
     List<CharacterAttribute> attributes { get; }
     List<Item> inventory { get; }
     List<Log> history { get; }
-    List<CombatAttribute> combatAttributes { get; }
+    List<Trait> combatAttributes { get; }
     PortraitSettings portraitSettings { get; }
     Party ownParty { get; }
     Party currentParty { get; }
@@ -59,18 +71,18 @@ public interface ICharacter {
 
     //functions
     void SetName(string name);
-    void ResetToFullHP();
-    void ResetToFullSP();
+    //void ResetToFullHP();
+    //void ResetToFullSP();
     void Initialize();
     void Death();
     void UpgradeWeapon();
     void UpgradeArmor();
     void UpgradeAccessory();
-    void FaintOrDeath(ICharacter killer);
+    //void FaintOrDeath(ICharacter killer);
     void SetSide(ECS.SIDES side);
     void SetRowNumber(int row);
     void AdjustSP(int amount);
-    void AdjustHP(int amount, ICharacter killer = null);
+    //void AdjustHP(int amount, ICharacter killer = null);
     void AdjustExperience(int amount);
     void EnableDisableSkills(Combat combat);
     void SetOwnedParty(Party party);
@@ -86,16 +98,17 @@ public interface ICharacter {
     void SetMinion(Minion minion);
     void Assassinate(ICharacter assassin);
     void LevelUp(int amount);
-    void AddCombatAttribute(CombatAttribute combatAttribute);
+    void AddCombatAttribute(Trait combatAttribute);
     bool IsInParty();
     bool IsInOwnParty();
     bool InviteToParty(ICharacter inviter);
-    bool RemoveCombatAttribute(CombatAttribute combatAttribute);
+    bool RemoveCombatAttribute(Trait combatAttribute);
     Party CreateOwnParty();
     CharacterAttribute GetAttribute(string attribute);
     CharacterAction GetRandomMiscAction(ref IObject targetObject);
     CharacterAction GetMiscAction(ACTION_TYPE type);
     CharacterAttribute AddAttribute(ATTRIBUTE tag); //Character only
+    Trait GetCombatAttribute(string name);
     void AddActionToQueue(CharacterAction action, IObject targetObject, Quest associatedQuest = null, int position = -1);
     void RemoveActionFromQueue(ActionQueueItem item);
     void ConstructBuffs();

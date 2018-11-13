@@ -993,17 +993,15 @@ public enum STAT {
     HP,
     ATTACK,
     SPEED,
+    POWER,
 }
 public enum DAMAGE_IDENTIFIER {
     DEALT,
     RECEIVED,
 }
-public enum COMBAT_ATTRIBUTE_REQUIREMENT {
-    NONE,
+public enum TRAIT_REQUIREMENT {
     RACE,
-    CLASS,
-    ELEMENT,
-    ATTRIBUTE,
+    TRAIT,
 }
 public enum MORALITY {
     GOOD,
@@ -1038,4 +1036,25 @@ public enum REWARD {
     SUPPLY,
     MANA,
     EXP,
+}
+public enum TRAIT_TYPE {
+    NEUTRAL,
+    POSITIVE,
+    NEGATIVE,
+}
+public enum TRAIT_REQUIREMENT_SEPARATOR {
+    OR,
+    AND,
+}
+public enum TRAIT_REQUIREMENT_TARGET {
+    SELF,
+    ENEMY,
+    OTHER_PARTY_MEMBERS,
+    ALL_PARTY_MEMBERS,
+    ALL_IN_COMBAT,
+    ALL_ENEMIES,
+    SELF_OTHER_PARTY_MEMBERS,
+    SELF_ALL_PARTY_MEMBERS,
+    SELF_ALL_IN_COMBAT,
+    SELF_ALL_ENEMIES,
 }

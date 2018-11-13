@@ -36,10 +36,10 @@ public class CharacterSim : ICharacterSim {
     private int _currentHP;
     private int _currentSP;
     private int _currentRow;
-    private int _singleMaxHP;
+    private int _hp;
     private int _maxSP;
-    private int _singleAttackPower;
-    private int _singleSpeed;
+    private int _attackPower;
+    private int _speed;
     private int _army;
     private float _actRate;
     private bool _isDead;
@@ -53,7 +53,7 @@ public class CharacterSim : ICharacterSim {
     private Item _equippedAccessory;
     private Item _equippedConsumable;
     private List<Skill> _skills;
-    private List<CombatAttribute> _combatAttributes;
+    private List<Trait> _combatAttributes;
     private List<CharacterAttribute> _attributes;
     //private List<BodyPart> _bodyParts;
     //private List<Item> _equippedItems;
@@ -91,14 +91,6 @@ public class CharacterSim : ICharacterSim {
     public int level {
         get { return _level; }
     }
-    public int maxHP {
-        get {
-            if (isArmy) {
-                return singleMaxHP * armyCount;
-            }
-            return singleMaxHP;
-        }
-    }
     public int maxSP {
         get { return _maxSP; }
     }
@@ -124,30 +116,14 @@ public class CharacterSim : ICharacterSim {
         get { return _actRate; }
         set { _actRate = value; }
     }
-    public int speed {
-        get {
-            //if (isArmy) {
-            //    return singleSpeed * armyCount;
-            //}
-            return singleSpeed;
-        }
-    }
     public int attackPower {
-        get {
-            if (isArmy) {
-                return singleAttackPower * armyCount;
-            }
-            return singleAttackPower;
-        }
+        get { return _attackPower; }
     }
-    public int singleAttackPower {
-        get { return _singleAttackPower; }
+    public int speed {
+        get { return _speed; }
     }
-    public int singleSpeed {
-        get { return _singleSpeed; }
-    }
-    public int singleMaxHP {
-        get { return _singleMaxHP; }
+    public int hp {
+        get { return _hp; }
     }
     public int currentHP {
         get { return _currentHP; }
@@ -191,7 +167,7 @@ public class CharacterSim : ICharacterSim {
     public List<Skill> skills {
         get { return _skills; }
     }
-    public List<CombatAttribute> combatAttributes {
+    public List<Trait> combatAttributes {
         get { return _combatAttributes; }
     }
     public Dictionary<ELEMENT, float> elementalWeaknesses {
@@ -212,7 +188,7 @@ public class CharacterSim : ICharacterSim {
         _elementalWeaknesses = new Dictionary<ELEMENT, float>(CombatSimManager.Instance.elementsChanceDictionary);
         _elementalResistances = new Dictionary<ELEMENT, float>(CombatSimManager.Instance.elementsChanceDictionary);
         _attributes = new List<CharacterAttribute>();
-        _combatAttributes = new List<CombatAttribute>();
+        _combatAttributes = new List<Trait>();
         _army = _armyCount;
         AllocateStats();
         LevelUp();
@@ -270,7 +246,7 @@ public class CharacterSim : ICharacterSim {
         _currentRow = row;
     }
     public void ResetToFullHP() {
-        _currentHP = _singleMaxHP * _armyCount;
+        _currentHP = _hp * _armyCount;
         _isDead = false;
     }
     public void ResetToFullSP() {
@@ -279,11 +255,11 @@ public class CharacterSim : ICharacterSim {
     public void AdjustHP(int amount, ICharacter killer = null) {
         int previous = this._currentHP;
         this._currentHP += amount;
-        this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
+        this._currentHP = Mathf.Clamp(this._currentHP, 0, hp);
         if (isArmy) {
-            int diff = maxHP - _currentHP;
+            int diff = hp - _currentHP;
             if (diff > 0) {
-                int armyLoss = diff / _singleMaxHP;
+                int armyLoss = diff / _hp;
                 AdjustArmyCount(-armyLoss);
             }
         }
@@ -360,9 +336,9 @@ public class CharacterSim : ICharacterSim {
         //}
     }
     private void AllocateStats() {
-        _singleAttackPower = _raceSetting.baseAttackPower;
-        _singleSpeed = _raceSetting.baseSpeed;
-        _singleMaxHP = _raceSetting.baseHP;
+        _attackPower = _raceSetting.baseAttackPower;
+        _speed = _raceSetting.baseSpeed;
+        _hp = _raceSetting.baseHP;
         //_sp = characterClass.baseSP;
     }
     private void LevelUp() {
@@ -370,9 +346,9 @@ public class CharacterSim : ICharacterSim {
         if (multiplier < 0) {
             multiplier = 0;
         }
-        _singleAttackPower += (multiplier * (int) ((characterClass.attackPowerPerLevel / 100f) * (float) _raceSetting.baseAttackPower));
-        _singleSpeed += (multiplier * (int) ((characterClass.speedPerLevel / 100f) * (float) _raceSetting.baseSpeed));
-        AdjustMaxHP((multiplier * (int) ((characterClass.hpPerLevel / 100f) * (float) _raceSetting.baseHP)));
+        _attackPower += (multiplier * (int) ((characterClass.attackPowerPerLevel / 100f) * (float) _raceSetting.baseAttackPower));
+        _speed += (multiplier * (int) ((characterClass.speedPerLevel / 100f) * (float) _raceSetting.baseSpeed));
+        _hp += (multiplier * (int) ((characterClass.hpPerLevel / 100f) * (float) _raceSetting.baseHP));
         //_sp += ((int)multiplier * characterClass.spPerLevel);
 
         //Add stats per level from race
@@ -380,24 +356,24 @@ public class CharacterSim : ICharacterSim {
             if(_raceSetting.hpPerLevel.Length > 0) {
                 int hpIndex = level % _raceSetting.hpPerLevel.Length;
                 hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
-                AdjustMaxHP(_raceSetting.hpPerLevel[hpIndex - 1]);
+                _hp += _raceSetting.hpPerLevel[hpIndex - 1];
             }
             if (_raceSetting.attackPerLevel.Length > 0) {
                 int attackIndex = level % _raceSetting.attackPerLevel.Length;
                 attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
-                _singleAttackPower += _raceSetting.attackPerLevel[attackIndex - 1];
+                _attackPower += _raceSetting.attackPerLevel[attackIndex - 1];
             }
         }
     }
     //private void ArmyModifier() {
     //    if (_isArmy) {
-    //        _attackPower = _singleAttackPower * _armyCount;
-    //        _speed = _singleSpeed * _armyCount;
-    //        _maxHP = _singleMaxHP * _armyCount;
+    //        _attackPower = _attackPower * _armyCount;
+    //        _speed = _speed * _armyCount;
+    //        _maxHP = _hp * _armyCount;
     //    } else {
-    //        _attackPower = _singleAttackPower;
-    //        _speed = _singleSpeed;
-    //        _maxHP = _singleMaxHP;
+    //        _attackPower = _attackPower;
+    //        _speed = _speed;
+    //        _maxHP = _hp;
     //    }
     //    _currentHP = _maxHP;
     //}
@@ -420,7 +396,7 @@ public class CharacterSim : ICharacterSim {
         if (hasEquipped) {
             if (item.attributeNames != null) {
                 for (int i = 0; i < item.attributeNames.Count; i++) {
-                    CombatAttribute newCombatAttribute = AttributeManager.Instance.allCombatAttributes[item.attributeNames[i]];
+                    Trait newCombatAttribute = AttributeManager.Instance.allCombatAttributes[item.attributeNames[i]];
                     AddCombatAttribute(newCombatAttribute);
                 }
             }
@@ -440,7 +416,7 @@ public class CharacterSim : ICharacterSim {
         }
         if (item.attributeNames != null) {
             for (int i = 0; i < item.attributeNames.Count; i++) {
-                CombatAttribute newCombatAttribute = AttributeManager.Instance.allCombatAttributes[item.attributeNames[i]];
+                Trait newCombatAttribute = AttributeManager.Instance.allCombatAttributes[item.attributeNames[i]];
                 RemoveCombatAttribute(newCombatAttribute);
             }
         }
@@ -496,107 +472,57 @@ public class CharacterSim : ICharacterSim {
         }
         return null;
     }
-    public void AddCombatAttribute(CombatAttribute combatAttribute) {
+    public void AddCombatAttribute(Trait combatAttribute) {
         if (string.IsNullOrEmpty(GetCombatAttribute(combatAttribute.name).name)) {
             _combatAttributes.Add(combatAttribute);
-            ApplyCombatAttributeEffects(combatAttribute);
+            ApplyFlatCombatAttributeEffects(combatAttribute);
         }
     }
-    public bool RemoveCombatAttribute(CombatAttribute combatAttribute) {
+    public bool RemoveCombatAttribute(Trait combatAttribute) {
         for (int i = 0; i < _combatAttributes.Count; i++) {
             if (_combatAttributes[i].name == combatAttribute.name) {
                 _combatAttributes.RemoveAt(i);
-                UnapplyCombatAttributeEffects(combatAttribute);
+                UnapplyFlatCombatAttributeEffects(combatAttribute);
                 return true;
             }
         }
         return false;
     }
-    public CombatAttribute GetCombatAttribute(string attributeName) {
+    public Trait GetCombatAttribute(string attributeName) {
         for (int i = 0; i < _combatAttributes.Count; i++) {
             if (_combatAttributes[i].name == attributeName) {
                 return _combatAttributes[i];
             }
         }
-        return new CombatAttribute();
+        return new Trait();
     }
-    private void ApplyCombatAttributeEffects(CombatAttribute combatAttribute) {
-        if (!combatAttribute.hasRequirement) {
-            if (combatAttribute.stat == STAT.ATTACK) {
-                if (combatAttribute.isPercentage) {
-                    float result = _singleAttackPower * (combatAttribute.amount / 100f);
-                    _singleAttackPower += (int) result;
-                } else {
-                    _singleAttackPower += (int) combatAttribute.amount;
-                }
-            } else if (combatAttribute.stat == STAT.HP) {
-                int previousMaxHP = _singleMaxHP;
-                if (combatAttribute.isPercentage) {
-                    float result = _singleMaxHP * (combatAttribute.amount / 100f);
-                    AdjustMaxHP((int) result);
-                } else {
-                    AdjustMaxHP((int) combatAttribute.amount);
-                }
-                //if (_currentHP > _maxHP || _currentHP == previousMaxHP) {
-                //    _currentHP = _singleMaxHP;
-                //}
-            } else if (combatAttribute.stat == STAT.SPEED) {
-                if (combatAttribute.isPercentage) {
-                    float result = _singleSpeed * (combatAttribute.amount / 100f);
-                    _singleSpeed += (int) result;
-                } else {
-                    _singleSpeed += (int) combatAttribute.amount;
+    private void ApplyFlatCombatAttributeEffects(Trait trait) {
+        for (int i = 0; i < trait.effects.Count; i++) {
+            TraitEffect traitEffect = trait.effects[i];
+            if (!traitEffect.hasRequirement && !traitEffect.isPercentage) {
+                if (traitEffect.stat == STAT.ATTACK) {
+                    _attackPower += (int) traitEffect.amount;
+                } else if (traitEffect.stat == STAT.HP) {
+                    _hp += (int) traitEffect.amount;
+                } else if (traitEffect.stat == STAT.SPEED) {
+                    _speed += (int) traitEffect.amount;
                 }
             }
-            //ArmyModifier();
         }
     }
-    private void UnapplyCombatAttributeEffects(CombatAttribute combatAttribute) {
-        if (!combatAttribute.hasRequirement) {
-            if (combatAttribute.stat == STAT.ATTACK) {
-                if (combatAttribute.isPercentage) {
-                    float result = _singleAttackPower * (combatAttribute.amount / 100f);
-                    _singleAttackPower -= (int) result;
-                } else {
-                    _singleAttackPower -= (int) combatAttribute.amount;
-                }
-            } else if (combatAttribute.stat == STAT.HP) {
-                int previousMaxHP = _singleMaxHP;
-                if (combatAttribute.isPercentage) {
-                    float result = _singleMaxHP * (combatAttribute.amount / 100f);
-                    AdjustMaxHP(-(int) result);
-                } else {
-                    AdjustMaxHP(-(int) combatAttribute.amount);
-                }
-                if (_currentHP > _singleMaxHP || _currentHP == previousMaxHP) {
-                    _currentHP = _singleMaxHP;
-                }
-            } else if (combatAttribute.stat == STAT.SPEED) {
-                if (combatAttribute.isPercentage) {
-                    float result = _singleSpeed * (combatAttribute.amount / 100f);
-                    _singleSpeed -= (int) result;
-                } else {
-                    _singleSpeed -= (int) combatAttribute.amount;
+    private void UnapplyFlatCombatAttributeEffects(Trait trait) {
+        for (int i = 0; i < trait.effects.Count; i++) {
+            TraitEffect traitEffect = trait.effects[i];
+            if (!traitEffect.hasRequirement && !traitEffect.isPercentage) {
+                if (traitEffect.stat == STAT.ATTACK) {
+                    _attackPower -= (int) traitEffect.amount;
+                } else if (traitEffect.stat == STAT.HP) {
+                    _hp -= (int) traitEffect.amount;
+                } else if (traitEffect.stat == STAT.SPEED) {
+                    _speed -= (int) traitEffect.amount;
                 }
             }
-            //ArmyModifier();
         }
     }
     #endregion
-    public void SetMaxHP(int amount) {
-        int previousMaxHP = maxHP;
-        _singleMaxHP = amount;
-        int currentMaxHP = maxHP;
-        if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
-            _currentHP = currentMaxHP;
-        }
-    }
-    public void AdjustMaxHP(int amount) {
-        int previousMaxHP = maxHP;
-        _singleMaxHP += amount;
-        int currentMaxHP = maxHP;
-        if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
-            _currentHP = currentMaxHP;
-        }
-    }
 }

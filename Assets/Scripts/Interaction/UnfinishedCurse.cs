@@ -130,7 +130,7 @@ public class UnfinishedCurse : Interaction {
         this.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Effect**: Character should gain a random curse from the Curse checklist below
         string chosenCurse = curseWeights.PickRandomElementGivenWeights();
-        CombatAttribute chosenAttribute = AttributeManager.Instance.allCombatAttributes[chosenCurse];
+        Trait chosenAttribute = AttributeManager.Instance.allCombatAttributes[chosenCurse];
         state.assignedCharacter.character.AddCombatAttribute(chosenAttribute);
         if (state.minionLog != null) {
             state.minionLog.AddToFillers(state.assignedCharacter.character, state.assignedCharacter.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

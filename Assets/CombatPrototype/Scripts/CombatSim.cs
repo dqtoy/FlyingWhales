@@ -248,7 +248,7 @@ public class CombatSim {
                 for (int i = 0; i < sourceCharacter.combatAttributes.Count; i++) {
                     if (!sourceCharacter.combatAttributes[i].isPercentage && sourceCharacter.combatAttributes[i].stat == STAT.ATTACK && sourceCharacter.combatAttributes[i].hasRequirement
                         && sourceCharacter.combatAttributes[i].damageIdentifier == DAMAGE_IDENTIFIER.DEALT) {
-                        if(attackSkill.skillType == SKILL_TYPE.HEAL && sourceCharacter.combatAttributes[i].requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.ELEMENT) {
+                        if(attackSkill.skillType == SKILL_TYPE.HEAL && sourceCharacter.combatAttributes[i].requirementType == TRAIT_REQUIREMENT.ELEMENT) {
                             continue;
                         }
                         if (IsCombatAttributeApplicable(sourceCharacter.combatAttributes[i], targetCharacter, attackSkill)) {
@@ -259,7 +259,7 @@ public class CombatSim {
                 for (int i = 0; i < targetCharacter.combatAttributes.Count; i++) {
                     if (!targetCharacter.combatAttributes[i].isPercentage && targetCharacter.combatAttributes[i].stat == STAT.ATTACK && targetCharacter.combatAttributes[i].hasRequirement
                         && targetCharacter.combatAttributes[i].damageIdentifier == DAMAGE_IDENTIFIER.RECEIVED) {
-                        if (attackSkill.skillType == SKILL_TYPE.HEAL && sourceCharacter.combatAttributes[i].requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.ELEMENT) {
+                        if (attackSkill.skillType == SKILL_TYPE.HEAL && sourceCharacter.combatAttributes[i].requirementType == TRAIT_REQUIREMENT.ELEMENT) {
                             continue;
                         }
                         if (IsCombatAttributeApplicable(targetCharacter.combatAttributes[i], sourceCharacter, attackSkill)) {
@@ -272,7 +272,7 @@ public class CombatSim {
                 for (int i = 0; i < sourceCharacter.combatAttributes.Count; i++) {
                     if (sourceCharacter.combatAttributes[i].isPercentage && sourceCharacter.combatAttributes[i].stat == STAT.ATTACK && sourceCharacter.combatAttributes[i].hasRequirement
                         && sourceCharacter.combatAttributes[i].damageIdentifier == DAMAGE_IDENTIFIER.DEALT) {
-                        if (attackSkill.skillType == SKILL_TYPE.HEAL && sourceCharacter.combatAttributes[i].requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.ELEMENT) {
+                        if (attackSkill.skillType == SKILL_TYPE.HEAL && sourceCharacter.combatAttributes[i].requirementType == TRAIT_REQUIREMENT.ELEMENT) {
                             continue;
                         }
                         if (IsCombatAttributeApplicable(sourceCharacter.combatAttributes[i], targetCharacter, attackSkill)) {
@@ -284,7 +284,7 @@ public class CombatSim {
                 for (int i = 0; i < targetCharacter.combatAttributes.Count; i++) {
                     if (targetCharacter.combatAttributes[i].isPercentage && targetCharacter.combatAttributes[i].stat == STAT.ATTACK && targetCharacter.combatAttributes[i].hasRequirement
                         && targetCharacter.combatAttributes[i].damageIdentifier == DAMAGE_IDENTIFIER.RECEIVED) {
-                        if (attackSkill.skillType == SKILL_TYPE.HEAL && sourceCharacter.combatAttributes[i].requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.ELEMENT) {
+                        if (attackSkill.skillType == SKILL_TYPE.HEAL && sourceCharacter.combatAttributes[i].requirementType == TRAIT_REQUIREMENT.ELEMENT) {
                             continue;
                         }
                         if (IsCombatAttributeApplicable(targetCharacter.combatAttributes[i], sourceCharacter, attackSkill)) {
@@ -416,20 +416,20 @@ public class CombatSim {
         //    attacker.battleTracker.SetLastDamageDealt(targetCharacter.name, damage);
         //}
     }
-    private bool IsCombatAttributeApplicable(CombatAttribute combatAttribute, ICharacterSim targetCharacter, Skill skill) {
-        if (combatAttribute.requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.CLASS) {
+    private bool IsCombatAttributeApplicable(Trait combatAttribute, ICharacterSim targetCharacter, Skill skill) {
+        if (combatAttribute.requirementType == TRAIT_REQUIREMENT.CLASS) {
             if (targetCharacter.characterClass != null && targetCharacter.characterClass.className.ToLower() == combatAttribute.requirement.ToLower()) {
                 return true;
             }
-        } else if (combatAttribute.requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.RACE) {
+        } else if (combatAttribute.requirementType == TRAIT_REQUIREMENT.RACE) {
             if (targetCharacter.race.ToString().ToLower() == combatAttribute.requirement.ToLower()) {
                 return true;
             }
-        } else if (combatAttribute.requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.ELEMENT) {
+        } else if (combatAttribute.requirementType == TRAIT_REQUIREMENT.ELEMENT) {
             if (skill.element.ToString().ToLower() == combatAttribute.requirement.ToLower()) {
                 return true;
             }
-        } else if (combatAttribute.requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.ATTRIBUTE) {
+        } else if (combatAttribute.requirementType == TRAIT_REQUIREMENT.ATTRIBUTE) {
             if (targetCharacter.GetAttribute(combatAttribute.requirement) != null) {
                 return true;
             }

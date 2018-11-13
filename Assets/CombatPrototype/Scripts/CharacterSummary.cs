@@ -38,7 +38,7 @@ namespace ECS{
             basicInfoLbl.text += "[b]Name:[/b] " + character.name + "\n";
             basicInfoLbl.text += "[b]Class:[/b] " + character.characterClass.className + "\n";
             basicInfoLbl.text += "[b]Race:[/b] " + character.raceSetting.race.ToString() + "\n";
-            basicInfoLbl.text += "[b]HP:[/b] " + character.currentHP.ToString() + "/" + character.maxHP.ToString() + "\n";
+            basicInfoLbl.text += "[b]HP:[/b] " + character.currentHP.ToString() + "/" + character.hp.ToString() + "\n";
             //basicInfoLbl.text += "[b]Strength:[/b] " + character.strength.ToString() + "\n";
             //basicInfoLbl.text += "[b]Intelligence:[/b] " + character.intelligence.ToString() + "\n";
             //basicInfoLbl.text += "[b]Agility:[/b] " + character.agility.ToString() + "\n";

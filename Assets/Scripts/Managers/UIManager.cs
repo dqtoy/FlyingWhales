@@ -370,7 +370,7 @@ public class UIManager : MonoBehaviour {
         smallInfoGO.SetActive(false);
         //smallInfoGO.transform.parent = this.transform;
     }
-    public void ShowDetailedInfo(IParty party) {
+    public void ShowDetailedInfo(Party party) {
         detailedInfoGO.SetActive(true);
         detailedInfoRect.sizeDelta = new Vector2(226f, 80f);
         detailedInfoLbl.alignment = TextAlignmentOptions.Center;

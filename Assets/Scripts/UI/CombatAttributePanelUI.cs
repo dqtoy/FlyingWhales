@@ -55,7 +55,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
 
         string[] stats = System.Enum.GetNames(typeof(STAT));
         string[] damageIdentifier = System.Enum.GetNames(typeof(DAMAGE_IDENTIFIER));
-        string[] requirementTypes = System.Enum.GetNames(typeof(COMBAT_ATTRIBUTE_REQUIREMENT));
+        string[] requirementTypes = System.Enum.GetNames(typeof(TRAIT_REQUIREMENT));
 
         statOptions.AddOptions(stats.ToList());
         damageIdentifierOptions.AddOptions(damageIdentifier.ToList());
@@ -101,20 +101,20 @@ public class CombatAttributePanelUI : MonoBehaviour {
         if (!string.IsNullOrEmpty(amountInput.text)) {
             amountInp = float.Parse(amountInput.text);
         }
-        CombatAttribute combatAttribute = new CombatAttribute {
+        Trait combatAttribute = new Trait {
             name = nameInput.text,
             description = descriptionInput.text,
-            amount = amountInp,
-            stat = (STAT) System.Enum.Parse(typeof(STAT), statOptions.options[statOptions.value].text),
-            damageIdentifier = (DAMAGE_IDENTIFIER) System.Enum.Parse(typeof(DAMAGE_IDENTIFIER), damageIdentifierOptions.options[damageIdentifierOptions.value].text),
-            requirementType = (COMBAT_ATTRIBUTE_REQUIREMENT) System.Enum.Parse(typeof(COMBAT_ATTRIBUTE_REQUIREMENT), requirementTypeOptions.options[requirementTypeOptions.value].text),
-            hasRequirement = hasRequirementToggle.isOn,
-            isPercentage = percentageToggle.isOn
+            //amount = amountInp,
+            //stat = (STAT) System.Enum.Parse(typeof(STAT), statOptions.options[statOptions.value].text),
+            //damageIdentifier = (DAMAGE_IDENTIFIER) System.Enum.Parse(typeof(DAMAGE_IDENTIFIER), damageIdentifierOptions.options[damageIdentifierOptions.value].text),
+            //requirementType = (TRAIT_REQUIREMENT) System.Enum.Parse(typeof(TRAIT_REQUIREMENT), requirementTypeOptions.options[requirementTypeOptions.value].text),
+            //hasRequirement = hasRequirementToggle.isOn,
+            //isPercentage = percentageToggle.isOn
         };
 
         if (hasRequirementToggle.isOn) {
-            CombatAttribute newCombatAtt = combatAttribute;
-            newCombatAtt.requirement = requirementOptions.options[requirementOptions.value].text;
+            Trait newCombatAtt = combatAttribute;
+            //newCombatAtt.requirement = requirementOptions.options[requirementOptions.value].text;
             combatAttribute = newCombatAtt;
         }
         string jsonString = JsonUtility.ToJson(combatAttribute);
@@ -137,32 +137,26 @@ public class CombatAttributePanelUI : MonoBehaviour {
         string filePath = EditorUtility.OpenFilePanel("Select Combat Attribute", Utilities.dataPath + "CombatAttributes/", "json");
         if (!string.IsNullOrEmpty(filePath)) {
             string dataAsJson = File.ReadAllText(filePath);
-            CombatAttribute attribute = JsonUtility.FromJson<CombatAttribute>(dataAsJson);
+            Trait attribute = JsonUtility.FromJson<Trait>(dataAsJson);
             ClearData();
             LoadCombatAttributeDataToUI(attribute);
         }
 #endif
     }
-    private void LoadCombatAttributeDataToUI(CombatAttribute attribute) {
+    private void LoadCombatAttributeDataToUI(Trait attribute) {
         nameInput.text = attribute.name;
         descriptionInput.text = attribute.description;
-        amountInput.text = attribute.amount.ToString();
+        //amountInput.text = attribute.amount.ToString();
 
-        percentageToggle.isOn = attribute.isPercentage;
-        hasRequirementToggle.isOn = attribute.hasRequirement;
+        //percentageToggle.isOn = attribute.isPercentage;
+        //hasRequirementToggle.isOn = attribute.hasRequirement;
 
-        statOptions.value = GetOptionIndex(attribute.stat.ToString(), statOptions);
-        damageIdentifierOptions.value = GetOptionIndex(attribute.damageIdentifier.ToString(), damageIdentifierOptions);
-        requirementTypeOptions.value = GetOptionIndex(attribute.requirementType.ToString(), requirementTypeOptions);
+        //statOptions.value = GetOptionIndex(attribute.stat.ToString(), statOptions);
+        //damageIdentifierOptions.value = GetOptionIndex(attribute.damageIdentifier.ToString(), damageIdentifierOptions);
+        //requirementTypeOptions.value = GetOptionIndex(attribute.requirementType.ToString(), requirementTypeOptions);
 
-        if (requirementOptions.transform.parent.gameObject.activeSelf) {
-            requirementOptions.value = GetOptionIndex(attribute.requirement, requirementOptions);
-        }
-        //if (attribute.hasRequirement) {
-        //    List<string> requirements = GetCombatRequirementsByType(attribute.requirementType);
-        //    PopulateRequirements(requirements);
-        //} else {
-        //    requirementOptions.gameObject.SetActive(false);
+        //if (requirementOptions.transform.parent.gameObject.activeSelf) {
+        //    requirementOptions.value = GetOptionIndex(attribute.requirement, requirementOptions);
         //}
     }
     private void PopulateRequirements(List<string> requirements) {
@@ -182,21 +176,21 @@ public class CombatAttributePanelUI : MonoBehaviour {
         }
         return 0;
     }
-    private List<string> GetCombatRequirementsByType(COMBAT_ATTRIBUTE_REQUIREMENT requirementType) {
-        if (requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.ATTRIBUTE) {
-            return System.Enum.GetNames(typeof(ATTRIBUTE)).ToList();
-        } else if (requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.CLASS) {
-            return ClassPanelUI.Instance.allClasses;
-        } else if (requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.ELEMENT) {
-            return System.Enum.GetNames(typeof(ELEMENT)).ToList();
-        } else if (requirementType == COMBAT_ATTRIBUTE_REQUIREMENT.RACE) {
-            return System.Enum.GetNames(typeof(RACE)).ToList();
-        }
+    private List<string> GetCombatRequirementsByType(TRAIT_REQUIREMENT requirementType) {
+        //if (requirementType == TRAIT_REQUIREMENT.ATTRIBUTE) {
+        //    return System.Enum.GetNames(typeof(ATTRIBUTE)).ToList();
+        //} else if (requirementType == TRAIT_REQUIREMENT.CLASS) {
+        //    return ClassPanelUI.Instance.allClasses;
+        //} else if (requirementType == TRAIT_REQUIREMENT.ELEMENT) {
+        //    return System.Enum.GetNames(typeof(ELEMENT)).ToList();
+        //} else if (requirementType == TRAIT_REQUIREMENT.RACE) {
+        //    return System.Enum.GetNames(typeof(RACE)).ToList();
+        //}
         return null;
     }
 
     public void OnRequirementTypeChange(int index) {
-        COMBAT_ATTRIBUTE_REQUIREMENT requirementType = (COMBAT_ATTRIBUTE_REQUIREMENT) System.Enum.Parse(typeof(COMBAT_ATTRIBUTE_REQUIREMENT), requirementTypeOptions.options[index].text);
+        TRAIT_REQUIREMENT requirementType = (TRAIT_REQUIREMENT) System.Enum.Parse(typeof(TRAIT_REQUIREMENT), requirementTypeOptions.options[index].text);
         List<string> requirements = GetCombatRequirementsByType(requirementType);
         PopulateRequirements(requirements);
     }

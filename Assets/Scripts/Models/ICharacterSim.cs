@@ -12,7 +12,7 @@ public interface ICharacterSim {
     int level { get; }
     int currentSP { get; }
     int currentHP { get; }
-    int maxHP { get; }
+    int hp { get; }
     int attackPower { get; }
     //int pFinalAttack { get; }
     //int mFinalAttack { get; }
@@ -27,7 +27,7 @@ public interface ICharacterSim {
     CharacterBattleOnlyTracker battleOnlyTracker { get; }
     CharacterClass characterClass { get; }
     List<Skill> skills { get; }
-    List<CombatAttribute> combatAttributes { get; }
+    List<Trait> combatAttributes { get; }
     //List<BodyPart> bodyParts { get; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }
