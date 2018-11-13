@@ -16,6 +16,11 @@ public class RaidLandmarkAction : CharacterAction {
         if(landmarkToRaid.defenders != null) {
             party.StartCombatWith(landmarkToRaid.defenders);
         }
+        //Raid their area: -1 Favor Count
+        Faction raidedFaction = landmarkToRaid.owner;
+        if (raidedFaction != null && party.faction != null) {
+            raidedFaction.AdjustFavorFor(party.faction, -1);
+        }
     }
     public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);

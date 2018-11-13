@@ -24,6 +24,7 @@ public class Faction {
 
     public MORALITY morality { get; private set; }
     public FactionIntel factionIntel { get; private set; }
+    public Dictionary<Faction, int> favor { get; private set; }
 
     #region getters/setters
     public int id {
@@ -81,6 +82,7 @@ public class Faction {
         _landmarkInfo = new List<BaseLandmark>();
         _ownedAreas = new List<Area>();
         factionIntel = new FactionIntel(this);
+        favor = new Dictionary<Faction, int>();
     }
 
     public Faction(FactionSaveData data) {
@@ -98,6 +100,7 @@ public class Faction {
         _landmarkInfo = new List<BaseLandmark>();
         _ownedAreas = new List<Area>();
         factionIntel = new FactionIntel(this);
+        favor = new Dictionary<Faction, int>();
     }
 
     private void AddListeners() {
@@ -325,6 +328,23 @@ public class Faction {
     #region Morality
     public void SetMorality(MORALITY morality) {
         this.morality = morality;
+    }
+    #endregion
+
+    #region Favor
+    public void AddNewFactionFavor(Faction faction, int value = 0) {
+        if (favor.ContainsKey(faction)) {
+            favor[faction] = value;
+        } else {
+            favor.Add(faction, value);
+        }
+    }
+    public void AdjustFavorFor(Faction otherFaction, int adjustment) {
+        if (favor.ContainsKey(otherFaction)) {
+            favor[otherFaction] += adjustment;
+        } else {
+            Debug.LogWarning("There is no favor key for " + otherFaction.name + " in " + this.name + "'s favor dictionary");
+        }
     }
     #endregion
 }
