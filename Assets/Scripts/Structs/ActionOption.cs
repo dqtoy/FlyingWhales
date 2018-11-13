@@ -107,6 +107,7 @@ public class ActionOption {
     public void AddAssignedObject(object obj) {
         int index = assignedObjects.Count;
         assignedObjects.Add(obj);
+        interactionState.SetAssignedObjects(assignedObjects);
         InteractionUI.Instance.interactionItem.AddAssignedObject(obj);
         string summary = "Assigned object to option " + obj.GetType().ToString() + " at index " + index.ToString();
         summary += "\nNeeded object types are ";
