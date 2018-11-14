@@ -168,12 +168,7 @@ public class HarvestSeason : Interaction {
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(chosenFarmer, chosenFarmer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         }
-        if (state.minionLog != null) {
-            state.minionLog.AddToFillers(chosenFarmer, chosenFarmer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        }
-        if (state.landmarkLog != null) {
-            state.landmarkLog.AddToFillers(chosenFarmer, chosenFarmer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        }
+        state.AddLogFiller(new LogFiller(chosenFarmer, chosenFarmer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
         chosenFarmer.Death();
         farm.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
@@ -215,12 +210,7 @@ public class HarvestSeason : Interaction {
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(farm.tileLocation.areaOfTile.owner, farm.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
         }
-        if (state.minionLog != null) {
-            state.minionLog.AddToFillers(farm.tileLocation.areaOfTile.owner, farm.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
-        }
-        if (state.landmarkLog != null) {
-            state.landmarkLog.AddToFillers(farm.tileLocation.areaOfTile.owner, farm.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
-        }
+        state.AddLogFiller(new LogFiller(farm.tileLocation.areaOfTile.owner, farm.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
     }
     #endregion
 

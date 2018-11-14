@@ -27,7 +27,11 @@ public class BanditRaid : Interaction {
             InteractionState startState = new InteractionState("Start", this);
             //string startStateDesc = "The bandits are preparing to raid " + chosenLandmarkToRaid.landmarkName;
             //startState.SetDescription(startStateDesc);
-            
+
+            Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+            startStateDescriptionLog.AddToFillers(chosenLandmarkToRaid.tileLocation.areaOfTile, chosenLandmarkToRaid.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+            startState.OverrideDescriptionLog(startStateDescriptionLog);
+
             //action option states
             InteractionState doNothingState = new InteractionState("Do nothing", this); //raid
             InteractionState successfullyCancelledRaidState = new InteractionState("Successfully Cancelled Raid", this); //successfully cancelled raid
@@ -164,18 +168,20 @@ public class BanditRaid : Interaction {
 
     private void SuccessfullyCancelledRaidRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
-        if (state.minionLog != null) {
-            state.minionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
-            state.minionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-        }
-        if (state.landmarkLog != null) {
-            state.minionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
-            state.minionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-        }
+        //if (state.minionLog != null) {
+        //    state.minionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+        //    state.minionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        //}
+        //if (state.landmarkLog != null) {
+        //    state.minionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+        //    state.minionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        //}
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
             state.descriptionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
         }
+        state.AddLogFiller(new LogFiller(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void FailedToCancelRaidRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
@@ -187,14 +193,16 @@ public class BanditRaid : Interaction {
             state.descriptionLog.AddToFillers(originLandmark, originLandmark.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
             state.descriptionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_2);
         }
-        if (state.minionLog != null) {
-            state.minionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
-            state.minionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-        }
-        if (state.landmarkLog != null) {
-            state.landmarkLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
-            state.landmarkLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-        }
+        //if (state.minionLog != null) {
+        //    state.minionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+        //    state.minionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        //}
+        //if (state.landmarkLog != null) {
+        //    state.landmarkLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+        //    state.landmarkLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        //}
+        state.AddLogFiller(new LogFiller(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void CriticalFailToCancelRaidRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
@@ -206,12 +214,13 @@ public class BanditRaid : Interaction {
             state.descriptionLog.AddToFillers(originLandmark, originLandmark.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
             state.descriptionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_2);
         }
-        if (state.minionLog != null) {
-            state.minionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
-        }
-        if (state.landmarkLog != null) {
-            state.landmarkLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
-        }
+        //if (state.minionLog != null) {
+        //    state.minionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+        //}
+        //if (state.landmarkLog != null) {
+        //    state.landmarkLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+        //}
+        state.AddLogFiller(new LogFiller(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1));
     }
 
     private void EmpoweredRaidRewardEffect(InteractionState state) {
@@ -228,14 +237,16 @@ public class BanditRaid : Interaction {
             state.descriptionLog.AddToFillers(originLandmark, originLandmark.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
             state.descriptionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_2);
         }
-        if (state.minionLog != null) {
-            state.minionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
-            state.minionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-        }
-        if (state.landmarkLog != null) {
-            state.landmarkLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
-            state.landmarkLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-        }
+        //if (state.minionLog != null) {
+        //    state.minionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+        //    state.minionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        //}
+        //if (state.landmarkLog != null) {
+        //    state.landmarkLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+        //    state.landmarkLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        //}
+        state.AddLogFiller(new LogFiller(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void MisusedFundsRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
@@ -248,13 +259,15 @@ public class BanditRaid : Interaction {
             state.descriptionLog.AddToFillers(originLandmark, originLandmark.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
             state.descriptionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_2);
         }
-        if (state.minionLog != null) {
-            state.minionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
-        }
-        if (state.landmarkLog != null) {
-            state.landmarkLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
-            state.landmarkLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-        }
+        //if (state.minionLog != null) {
+        //    state.minionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+        //}
+        //if (state.landmarkLog != null) {
+        //    state.landmarkLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+        //    state.landmarkLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        //}
+        state.AddLogFiller(new LogFiller(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void DemonDiesRewardEffect(InteractionState state) {
         //**Effect**: Demon is removed from Minion List
@@ -263,24 +276,28 @@ public class BanditRaid : Interaction {
         Party createdParty = CombineCharacters(4);
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
         createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
-        if (state.landmarkLog != null) {
-            state.landmarkLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
-            state.landmarkLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-        }
+        //if (state.landmarkLog != null) {
+        //    state.landmarkLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+        //    state.landmarkLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        //}
+        state.AddLogFiller(new LogFiller(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void DoNothingRewardEffect(InteractionState state) {
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target
         Party createdParty = CombineCharacters(4);
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
         createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
-        if (state.minionLog != null) {
-            state.minionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
-            state.minionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-        }
-        if (state.landmarkLog != null) {
-            state.landmarkLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
-            state.landmarkLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-        }
+        //if (state.minionLog != null) {
+        //    state.minionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+        //    state.minionLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        //}
+        //if (state.landmarkLog != null) {
+        //    state.landmarkLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
+        //    state.landmarkLog.AddToFillers(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        //}
+        state.AddLogFiller(new LogFiller(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(chosenLandmarkToRaid, chosenLandmarkToRaid.landmarkName, LOG_IDENTIFIER.LANDMARK_1));
     }
 
     private Party CombineCharacters(int upTo) {

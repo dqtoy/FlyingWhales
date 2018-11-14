@@ -174,9 +174,10 @@ public class SuspiciousSoldierMeeting : Interaction {
                     if (numOfDeserters == 1) {
                         ICharacter deserter = landmark.defenders.icharacters[UnityEngine.Random.Range(0, landmark.defenders.icharacters.Count)];
                         landmark.RemoveDefender(deserter);
-                        if (state.minionLog != null) {
-                            state.minionLog.AddToFillers(deserter, deserter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        }
+                        //if (state.minionLog != null) {
+                        //    state.minionLog.AddToFillers(deserter, deserter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        //}
+                        state.AddLogFiller(new LogFiller(deserter, deserter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
                     } else {
                         List<ICharacter> icharacters = new List<ICharacter>(landmark.defenders.icharacters);
                         int deserter1Index = UnityEngine.Random.Range(0, icharacters.Count);
@@ -187,22 +188,32 @@ public class SuspiciousSoldierMeeting : Interaction {
                         landmark.RemoveDefender(deserter1);
                         landmark.RemoveDefender(deserter2);
 
-                        if (state.minionLog != null) {
-                            state.minionLog.AddToFillers(deserter1, deserter1.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        state.AddLogFiller(new LogFiller(deserter1, deserter1.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
 
-                            Log newMinionLog = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), _name.ToLower() + "_logminion");
-                            newMinionLog.AddToFillers(explorerMinion, explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
-                            newMinionLog.AddToFillers(interactable.specificLocation.tileLocation.landmarkOnTile, interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
-                            newMinionLog.AddToFillers(deserter2, deserter2.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                            explorerMinion.icharacter.AddHistory(newMinionLog);
-                        }
+                        //this is for deserter2
+                        Log newMinionLog = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), _name.ToLower() + "_log1");
+                        newMinionLog.AddToFillers(explorerMinion, explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
+                        newMinionLog.AddToFillers(interactable.specificLocation.tileLocation.landmarkOnTile, interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
+                        newMinionLog.AddToFillers(deserter2, deserter2.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        newMinionLog.AddLogToInvolvedObjects();
+
+                        //if (state.minionLog != null) {
+                        //    state.minionLog.AddToFillers(deserter1, deserter1.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+
+                        //    Log newMinionLog = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), _name.ToLower() + "_logminion");
+                        //    newMinionLog.AddToFillers(explorerMinion, explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
+                        //    newMinionLog.AddToFillers(interactable.specificLocation.tileLocation.landmarkOnTile, interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
+                        //    newMinionLog.AddToFillers(deserter2, deserter2.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        //    explorerMinion.icharacter.AddHistory(newMinionLog);
+                        //}
                     }
                 } else if(landmark.defenders.icharacters.Count == 1) {
                     ICharacter deserter = landmark.defenders.icharacters[0];
                     landmark.RemoveDefender(deserter);
-                    if (state.minionLog != null) {
-                        state.minionLog.AddToFillers(deserter, deserter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    }
+                    //if (state.minionLog != null) {
+                    //    state.minionLog.AddToFillers(deserter, deserter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    //}
+                    state.AddLogFiller(new LogFiller(deserter, deserter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
                 }
                 
                 //for (int i = 0; i < landmark.defenders.icharacters.Count; i++) {
@@ -231,12 +242,13 @@ public class SuspiciousSoldierMeeting : Interaction {
         //Tile owner faction will declare war on player
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         FactionManager.Instance.DeclareWarBetween(_interactable.faction, PlayerManager.Instance.player.playerFaction);
-        if(state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1);
-        }
-        if (state.minionLog != null) {
-            state.minionLog.AddToFillers(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1);
-        }
+        //if(state.descriptionLog != null) {
+        //    state.descriptionLog.AddToFillers(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1);
+        //}
+        //if (state.minionLog != null) {
+        //    state.minionLog.AddToFillers(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1);
+        //}
+        state.AddLogFiller(new LogFiller(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void ArmyGainedRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));

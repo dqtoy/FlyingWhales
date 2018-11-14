@@ -121,16 +121,28 @@ public class InteractionState {
         AssignedMinionGoesBack();
     }
     public void CreateLogs() {
+        if (_descriptionLog == null) {
+            _descriptionLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_description");
+        }
+
+        otherLogs = new List<Log>();
+        List<string> keysForState = LocalizationManager.Instance.GetKeysLike("Events", _interaction.GetType().ToString(), _name.ToLower(), "_description");
+        for (int i = 0; i < keysForState.Count; i++) {
+            string currentKey = keysForState[i];
+            otherLogs.Add(new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), currentKey));
+        }
+
         if (_interaction.explorerMinion != null) {
-            if (_descriptionLog == null) {
-                _descriptionLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_description");
-            }
-            if (!string.IsNullOrEmpty(LocalizationManager.Instance.GetLocalizedValue("Events", _interaction.GetType().ToString(), _name.ToLower() + "_logminion"))) {
-                _minionLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_logminion");
-            }
-            if (!string.IsNullOrEmpty(LocalizationManager.Instance.GetLocalizedValue("Events", _interaction.GetType().ToString(), _name.ToLower() + "_loglandmark"))) {
-                _landmarkLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_loglandmark");
-            }
+            logFillers.Add(new LogFiller(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME));
+            //if (_descriptionLog == null) {
+            //    _descriptionLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_description");
+            //}
+            //if (!string.IsNullOrEmpty(LocalizationManager.Instance.GetLocalizedValue("Events", _interaction.GetType().ToString(), _name.ToLower() + "_logminion"))) {
+            //    _minionLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_logminion");
+            //}
+            //if (!string.IsNullOrEmpty(LocalizationManager.Instance.GetLocalizedValue("Events", _interaction.GetType().ToString(), _name.ToLower() + "_loglandmark"))) {
+            //    _landmarkLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_loglandmark");
+            //}
         }
     }
     public void OverrideDescriptionLog(Log descriptionLog) {
@@ -149,19 +161,29 @@ public class InteractionState {
             InteractionUI.Instance.interactionItem.SetDescription(_description);
         }
 
-        //Minion Log
-        if (_minionLog != null) {
-            _minionLog.AddToFillers(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
-            _minionLog.AddToFillers(_interaction.interactable.specificLocation.tileLocation.landmarkOnTile, _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
-            interaction.explorerMinion.icharacter.AddHistory(_minionLog);
+        for (int i = 0; i < otherLogs.Count; i++) {
+            Log currLog = otherLogs[i];
+            currLog.SetFillers(logFillers);
+            _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.AddHistory(currLog);
+            if (_interaction.explorerMinion != null) {
+                _interaction.explorerMinion.icharacter.AddHistory(currLog);
+            }
+            currLog.AddLogToInvolvedObjects();
         }
 
-        //Landmark Log
-        if (_landmarkLog != null) {
-            _landmarkLog.AddToFillers(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
-            _landmarkLog.AddToFillers(_interaction.interactable.specificLocation.tileLocation.landmarkOnTile, _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
-            _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.AddHistory(_landmarkLog);
-        }
+        ////Minion Log
+        //if (_minionLog != null) {
+        //    _minionLog.AddToFillers(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
+        //    _minionLog.AddToFillers(_interaction.interactable.specificLocation.tileLocation.landmarkOnTile, _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
+        //    interaction.explorerMinion.icharacter.AddHistory(_minionLog);
+        //}
+
+        ////Landmark Log
+        //if (_landmarkLog != null) {
+        //    _landmarkLog.AddToFillers(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
+        //    _landmarkLog.AddToFillers(_interaction.interactable.specificLocation.tileLocation.landmarkOnTile, _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
+        //    _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.AddHistory(_landmarkLog);
+        //}
 
     }
     public void SetChosenOption(ActionOption option) {
@@ -221,4 +243,10 @@ public class InteractionState {
         }
         return null;
     }
+
+    #region Log Fillers
+    public void AddLogFiller(LogFiller filler) {
+        logFillers.Add(filler);
+    }
+    #endregion
 }

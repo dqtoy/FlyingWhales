@@ -432,7 +432,7 @@ public class LandmarkInfoUI : UIMenu {
 
     #region Investigation
     public void UpdateInvestigation() {
-        if(_activeLandmark.landmarkInvestigation != null) {
+        if(_activeLandmark != null && _activeLandmark.landmarkInvestigation != null) {
             if (!investigationGO.activeSelf) {
                 minionAssignmentTween.ResetToBeginning();
             }

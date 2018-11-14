@@ -200,10 +200,12 @@ public class UnexploredCave : Interaction {
                 state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenRace), LOG_IDENTIFIER.STRING_1);
                 state.descriptionLog.AddToFillers(null, chosenClass, LOG_IDENTIFIER.STRING_2);
             }
-            if (state.minionLog != null) {
-                state.minionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenRace), LOG_IDENTIFIER.STRING_1);
-                state.minionLog.AddToFillers(null, chosenClass, LOG_IDENTIFIER.STRING_2);
-            }
+            state.AddLogFiller(new LogFiller(null, Utilities.GetNormalizedSingularRace(chosenRace), LOG_IDENTIFIER.STRING_1));
+            state.AddLogFiller(new LogFiller(null, chosenClass, LOG_IDENTIFIER.STRING_2));
+            //if (state.minionLog != null) {
+            //    state.minionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenRace), LOG_IDENTIFIER.STRING_1);
+            //    state.minionLog.AddToFillers(null, chosenClass, LOG_IDENTIFIER.STRING_2);
+            //}
         }
     }
 

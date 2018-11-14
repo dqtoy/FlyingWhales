@@ -696,12 +696,12 @@ namespace ECS {
                     throw new Exception("Specific location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
                 }
 
-                if (currentParty.specificLocation != null && currentParty.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-                    Log deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death");
-                    deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    AddHistory(deathLog);
-                    (currentParty.specificLocation as BaseLandmark).AddHistory(deathLog);
-                }
+                //if (currentParty.specificLocation != null && currentParty.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+                //    Log deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death");
+                //    deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                //    AddHistory(deathLog);
+                //    (currentParty.specificLocation as BaseLandmark).AddHistory(deathLog);
+                //}
 
                 //Drop all Items
                 //            while (_equippedItems.Count > 0) {
@@ -1907,15 +1907,17 @@ namespace ECS {
 
         #region History
         public void AddHistory(Log log) {
-            log.SetInspected(_isBeingInspected);
-            _history.Add(log);
-            //if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && this.id == UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id) {
-            //    Debug.Log("Added log to history of " + this.name + ". " + log.isInspected);
-            //}
-            if (this._history.Count > 60) {
-                this._history.RemoveAt(0);
+            if (!_history.Contains(log)) {
+                _history.Add(log);
+                //if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && this.id == UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id) {
+                //    Debug.Log("Added log to history of " + this.name + ". " + log.isInspected);
+                //}
+                if (this._history.Count > 60) {
+                    this._history.RemoveAt(0);
+                }
+                Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
             }
-            Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
+            
         }
         #endregion
 

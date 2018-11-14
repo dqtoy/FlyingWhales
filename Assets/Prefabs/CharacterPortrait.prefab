@@ -630,6 +630,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
+  forceShowPortrait: 0
   ignoreInteractions: 0
   bg: {fileID: 114960841937585306}
   head: {fileID: 114373078714275012}

@@ -186,9 +186,10 @@ public class MysteriousSarcophagus : Interaction {
         for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
             PlayerManager.Instance.player.minions[i].icharacter.AddCombatAttribute(negativeTrait);
         }
-        if (state.minionLog != null) {
-            state.minionLog.AddToFillers(null, chosenTrait, LOG_IDENTIFIER.STRING_1);
-        }
+        state.AddLogFiller(new LogFiller(null, chosenTrait, LOG_IDENTIFIER.STRING_1));
+        //if (state.minionLog != null) {
+        //    state.minionLog.AddToFillers(null, chosenTrait, LOG_IDENTIFIER.STRING_1);
+        //}
     }
     private void AccessoryUpgradeRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
@@ -223,9 +224,10 @@ public class MysteriousSarcophagus : Interaction {
         string chosenTrait = positiveTraitsWeights.PickRandomElementGivenWeights();
         CombatAttribute positiveTrait = AttributeManager.Instance.allCombatAttributes[chosenTrait];
         explorerMinion.icharacter.AddCombatAttribute(positiveTrait);
-        if (state.minionLog != null) {
-            state.minionLog.AddToFillers(null, chosenTrait, LOG_IDENTIFIER.STRING_1);
-        }
+        state.AddLogFiller(new LogFiller(null, chosenTrait, LOG_IDENTIFIER.STRING_1));
+        //if (state.minionLog != null) {
+        //    state.minionLog.AddToFillers(null, chosenTrait, LOG_IDENTIFIER.STRING_1);
+        //}
     }
     private void DoNothingRewardEffect(InteractionState state) {
         //explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));

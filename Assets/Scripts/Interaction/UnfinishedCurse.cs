@@ -132,36 +132,40 @@ public class UnfinishedCurse : Interaction {
         string chosenCurse = curseWeights.PickRandomElementGivenWeights();
         CombatAttribute chosenAttribute = AttributeManager.Instance.allCombatAttributes[chosenCurse];
         state.assignedCharacter.character.AddCombatAttribute(chosenAttribute);
-        if (state.minionLog != null) {
-            state.minionLog.AddToFillers(state.assignedCharacter.character, state.assignedCharacter.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            state.minionLog.AddToFillers(null, chosenAttribute.name, LOG_IDENTIFIER.STRING_1);
-        }
-        if (state.landmarkLog != null) {
-            state.landmarkLog.AddToFillers(state.assignedCharacter.character, state.assignedCharacter.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            state.landmarkLog.AddToFillers(null, chosenAttribute.name, LOG_IDENTIFIER.STRING_1);
-        }
+        //if (state.minionLog != null) {
+        //    state.minionLog.AddToFillers(state.assignedCharacter.character, state.assignedCharacter.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //    state.minionLog.AddToFillers(null, chosenAttribute.name, LOG_IDENTIFIER.STRING_1);
+        //}
+        //if (state.landmarkLog != null) {
+        //    state.landmarkLog.AddToFillers(state.assignedCharacter.character, state.assignedCharacter.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //    state.landmarkLog.AddToFillers(null, chosenAttribute.name, LOG_IDENTIFIER.STRING_1);
+        //}
+        state.AddLogFiller(new LogFiller(state.assignedCharacter.character, state.assignedCharacter.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        state.AddLogFiller(new LogFiller(null, chosenAttribute.name, LOG_IDENTIFIER.STRING_1));
     }
     private void CurseFailedToCompleteRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
         this.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
-        if (state.minionLog != null) {
-            state.minionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        }
-        if (state.landmarkLog != null) {
-            state.landmarkLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        }
+        //if (state.minionLog != null) {
+        //    state.minionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //}
+        //if (state.landmarkLog != null) {
+        //    state.landmarkLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //}
+        state.AddLogFiller(new LogFiller(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
     }
     private void CurseBackfiresRewardEffect(InteractionState state) {
         this.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Effect**: Demon Minion should gain a random curse from the Curse checklist below
         string chosenCurse = curseWeights.PickRandomElementGivenWeights();
         state.assignedMinion.icharacter.AddCombatAttribute(AttributeManager.Instance.allCombatAttributes[chosenCurse]);
-        if (state.minionLog != null) {
-            state.minionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        }
-        if (state.landmarkLog != null) {
-            state.landmarkLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        }
+        //if (state.minionLog != null) {
+        //    state.minionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //}
+        //if (state.landmarkLog != null) {
+        //    state.landmarkLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //}
+        state.AddLogFiller(new LogFiller(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
     }
     private void ObtainManaRewardEffect(InteractionState state) {
         //**Reward**: Mana Cache 1, Demon gains Exp 1

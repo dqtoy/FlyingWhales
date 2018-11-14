@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -66771,11 +66771,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roleDefaultInteractions:
-    m_keys: 01000000
-    m_values:
-    - data:
-      - interactionType: 17
-        weight: 50
+    m_keys: 
+    m_values: []
 --- !u!1001 &1680592839
 Prefab:
   m_ObjectHideFlags: 0
@@ -72749,7 +72746,7 @@ Prefab:
     - target: {fileID: 224197028340486728, guid: b2755c072ea3a4849b851e62bdc86755,
         type: 2}
       propertyPath: m_RootOrder
-      value: 25
+      value: 21
       objectReference: {fileID: 0}
     - target: {fileID: 224197028340486728, guid: b2755c072ea3a4849b851e62bdc86755,
         type: 2}
@@ -73105,7 +73102,6 @@ MonoBehaviour:
     type: 2}
   openPosition: {x: -153, y: 35, z: 0}
   closePosition: {x: 166, y: 35, z: 0}
-  halfPosition: {x: 30, y: 35, z: 0}
   tweener: {fileID: 1821077715}
   curve:
     serializedVersion: 2

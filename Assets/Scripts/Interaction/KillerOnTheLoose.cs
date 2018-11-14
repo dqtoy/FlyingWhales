@@ -139,11 +139,14 @@ public class KillerOnTheLoose : Interaction {
 
     #region State Effects
     private void ConvertToDemonRewardEffect(InteractionState state) {
-        PlayerManager.Instance.player.AddMinion(PlayerManager.Instance.player.CreateNewMinion("Farmer", RACE.DEMON, DEMON_TYPE.ENVY, "Inspect", false));
+        Minion createdMinion = PlayerManager.Instance.player.CreateNewMinion("Farmer", RACE.DEMON, DEMON_TYPE.ENVY, "Inspect", false);
+        PlayerManager.Instance.player.AddMinion(createdMinion);
+        state.AddLogFiller(new LogFiller(createdMinion, createdMinion.name, LOG_IDENTIFIER.STRING_1));
     }
     private void GainSupplyRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         _interactable.specificLocation.tileLocation.areaOfTile.AdjustSuppliesInBank(50);
+        state.AddLogFiller(new LogFiller(_interactable.specificLocation.tileLocation.landmarkOnTile.owner, _interactable.specificLocation.tileLocation.landmarkOnTile.owner.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void NothingHappensRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));

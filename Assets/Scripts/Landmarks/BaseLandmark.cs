@@ -564,22 +564,13 @@ public class BaseLandmark : ILocation, IInteractable {
 
     #region History
     internal void AddHistory(Log log) {
-        ////check if the new log is a duplicate of the latest log
-        //Log latestLog = history.ElementAtOrDefault(history.Count - 1);
-        //if (latestLog != null) {
-        //    if (Utilities.AreLogsTheSame(log, latestLog)) {
-        //        string text = landmarkName + " has duplicate logs!";
-        //        text += "\n" + log.id + Utilities.LogReplacer(log) + " ST:" + log.logCallStack;
-        //        text += "\n" + latestLog.id + Utilities.LogReplacer(latestLog) + " ST:" + latestLog.logCallStack;
-        //        throw new System.Exception(text);
-        //    }
-        //}
-        log.SetInspected(_isBeingInspected);
-        _history.Add(log);
-        if (this._history.Count > 60) {
-            this._history.RemoveAt(0);
+        if (!_history.Contains(log)) {
+            _history.Add(log);
+            if (this._history.Count > 60) {
+                this._history.RemoveAt(0);
+            }
+            Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
         }
-        Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
     }
     #endregion
 
