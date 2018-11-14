@@ -219,7 +219,7 @@ public class CharacterInfoUI : UIMenu {
     public override void ShowTooltip(GameObject objectHovered) {
         base.ShowTooltip(objectHovered);
         if(objectHovered == healthProgressBar.gameObject) {
-            UIManager.Instance.ShowSmallInfo(_activeCharacter.currentHP + "/" + _activeCharacter.maxHP);
+            UIManager.Instance.ShowSmallInfo(_activeCharacter.currentHP + "/" + _activeCharacter.hp);
         } else if (objectHovered == manaProgressBar.gameObject) {
             UIManager.Instance.ShowSmallInfo(_activeCharacter.currentSP + "/" + _activeCharacter.maxSP);
         } 
@@ -337,7 +337,7 @@ public class CharacterInfoUI : UIMenu {
     private void UpdateStatInfo() {
         //if (_activeCharacter.hasBeenInspected || GameManager.Instance.inspectAll) {
         //    if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
-                hpLbl.text = _activeCharacter.maxHP.ToString();
+                hpLbl.text = _activeCharacter.hp.ToString();
                 attackLbl.text = _activeCharacter.attackPower.ToString();
                 speedLbl.text = _activeCharacter.speed.ToString();
             //} else {
@@ -446,7 +446,7 @@ public class CharacterInfoUI : UIMenu {
             CreateCombatAttributeGO(uiData.combatAttributes[i]);
         }
     }
-    private void CreateCombatAttributeGO(CombatAttribute combatAttribute) {
+    private void CreateCombatAttributeGO(Trait combatAttribute) {
         GameObject go = GameObject.Instantiate(combatAttributePrefab, combatAttributeContentTransform);
         CombatAttributeItem combatAttributeItem = go.GetComponent<CombatAttributeItem>();
         combatAttributeItem.SetCombatAttribute(combatAttribute);
@@ -844,9 +844,9 @@ public class CharacterInfoUI : UIMenu {
 
     #region Death
     public void DieCharacter() {
-        if(_activeCharacter.party.currentCombat != null) {
-            _activeCharacter.party.currentCombat.CharacterDeath(_activeCharacter, null);
-        }
+        //if(_activeCharacter.party.currentCombat != null) {
+        //    _activeCharacter.party.currentCombat.CharacterDeath(_activeCharacter, null);
+        //}
         _activeCharacter.Death();
     }
     #endregion

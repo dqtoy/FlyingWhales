@@ -182,7 +182,7 @@ public class MysteriousSarcophagus : Interaction {
         negativeTraitsWeights.AddElement("Negative Trait 3", 5);
 
         string chosenTrait = negativeTraitsWeights.PickRandomElementGivenWeights();
-        CombatAttribute negativeTrait = AttributeManager.Instance.allCombatAttributes[chosenTrait];
+        Trait negativeTrait = AttributeManager.Instance.allCombatAttributes[chosenTrait];
         for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
             PlayerManager.Instance.player.minions[i].icharacter.AddCombatAttribute(negativeTrait);
         }
@@ -222,7 +222,7 @@ public class MysteriousSarcophagus : Interaction {
         positiveTraitsWeights.AddElement("Positive Trait 3", 5);
 
         string chosenTrait = positiveTraitsWeights.PickRandomElementGivenWeights();
-        CombatAttribute positiveTrait = AttributeManager.Instance.allCombatAttributes[chosenTrait];
+        Trait positiveTrait = AttributeManager.Instance.allCombatAttributes[chosenTrait];
         explorerMinion.icharacter.AddCombatAttribute(positiveTrait);
         state.AddLogFiller(new LogFiller(null, chosenTrait, LOG_IDENTIFIER.STRING_1));
         //if (state.minionLog != null) {

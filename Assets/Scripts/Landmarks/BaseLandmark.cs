@@ -1401,9 +1401,9 @@ public class BaseLandmark : ILocation, IInteractable {
     public void StartMobilization() {
         List<ICharacter> charactersNotAssigned = new List<ICharacter>();
         for (int i = 0; i < _charactersWithHomeOnLandmark.Count; i++) {
-            if((_charactersWithHomeOnLandmark[i] is CharacterArmyUnit || _charactersWithHomeOnLandmark[i] is MonsterArmyUnit) && _charactersWithHomeOnLandmark[i].currentParty.icharacters.Count == 1 && _charactersWithHomeOnLandmark[i].currentParty.specificLocation == this) {
-                charactersNotAssigned.Add(_charactersWithHomeOnLandmark[i]);
-            }
+            charactersNotAssigned.Add(_charactersWithHomeOnLandmark[i]);
+            //if((_charactersWithHomeOnLandmark[i] is CharacterArmyUnit || _charactersWithHomeOnLandmark[i] is MonsterArmyUnit) && _charactersWithHomeOnLandmark[i].currentParty.icharacters.Count == 1 && _charactersWithHomeOnLandmark[i].currentParty.specificLocation == this) {
+            //}
         }
 
         //Assign army units to external tiles of area

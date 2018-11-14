@@ -3,14 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public struct CombatAttribute {
+public class Trait {
     public string name;
     public string description;
+    public TRAIT_TYPE type;
+    public int daysDuration;
+    public List<TraitEffect> effects;
+}
+
+[System.Serializable]
+public class TraitEffect {
     public STAT stat;
     public float amount;
-    public bool hasRequirement;
     public bool isPercentage;
-    public DAMAGE_IDENTIFIER damageIdentifier; //dealt or received
-    public COMBAT_ATTRIBUTE_REQUIREMENT requirementType;
-    public string requirement;
+    public TRAIT_REQUIREMENT_TARGET target;
+
+    public bool hasRequirement;
+    public bool isNot;
+    public TRAIT_REQUIREMENT requirementType;
+    public TRAIT_REQUIREMENT_SEPARATOR requirementSeparator;
+    public List<string> requirements;
 }

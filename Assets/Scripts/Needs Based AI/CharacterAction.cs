@@ -131,9 +131,9 @@ public class CharacterAction {
             //icharacter.role.AdjustPrestige(_actionData.providedPrestige);
             //icharacter.role.AdjustSanity(_actionData.providedSanity);
             //icharacter.role.AdjustSafety(_actionData.providedSafety);
-            if (_actionData.hpRecoveredPercentage != 0f && icharacter.currentHP < icharacter.maxHP) {
-                float hpRecovery = (_actionData.hpRecoveredPercentage / 100f) * (float) icharacter.maxHP;
-                icharacter.AdjustHP((int) hpRecovery);
+            if (_actionData.hpRecoveredPercentage != 0f && icharacter.currentHP < icharacter.hp) {
+                float hpRecovery = (_actionData.hpRecoveredPercentage / 100f) * (float) icharacter.hp;
+                //icharacter.AdjustHP((int) hpRecovery);
             }
         }
 

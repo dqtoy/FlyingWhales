@@ -7,9 +7,9 @@ public class CombatAttributeItem : MonoBehaviour {
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI descriptionText;
 
-    private CombatAttribute _combatAttribute;
+    private Trait _combatAttribute;
 
-    public void SetCombatAttribute(CombatAttribute combatAttribute) {
+    public void SetCombatAttribute(Trait combatAttribute) {
         _combatAttribute = combatAttribute;
         nameText.text = _combatAttribute.name;
         descriptionText.text = _combatAttribute.description;

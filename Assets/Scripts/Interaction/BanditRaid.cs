@@ -229,7 +229,7 @@ public class BanditRaid : Interaction {
         Party createdParty = CombineCharacters(4);
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
         createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
-        CombatAttribute empoweredTrait = AttributeManager.Instance.allCombatAttributes["Empowered"];
+        Trait empoweredTrait = AttributeManager.Instance.allCombatAttributes["Empowered"];
         for (int i = 0; i < createdParty.icharacters.Count; i++) {
             createdParty.icharacters[i].AddCombatAttribute(empoweredTrait);
         }

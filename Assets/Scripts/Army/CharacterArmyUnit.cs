@@ -15,15 +15,15 @@ public class CharacterArmyUnit : Character, IUnit {
     public override string name {
         get { return armyCount + " " + Utilities.GetNormalizedSingularRace(_raceSetting.race) + " " + characterClass.className; }
     }
-    public override int attackPower {
-        get { return _attackPower * armyCount; }
-    }
+    //public override int attackPower {
+    //    get { return _attackPower * armyCount; }
+    //}
     //public override int speed {
     //    get { return _speed * armyCount; }
     //}
-    public override int maxHP {
-        get { return _maxHP * armyCount; }
-    }
+    //public override int maxHP {
+    //    get { return _maxHP * armyCount; }
+    //}
     //public override Party ownParty {
     //    get { return _ownParty; }
     //}
@@ -83,18 +83,18 @@ public class CharacterArmyUnit : Character, IUnit {
     #endregion
 
     #region Overrides
-    public override void AdjustHP(int amount, ICharacter killer = null) {
+    public void AdjustHP(int amount, ICharacter killer = null) {
         int previous = this._currentHP;
         this._currentHP += amount;
-        this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
-        int diff = maxHP - _currentHP;
+        this._currentHP = Mathf.Clamp(this._currentHP, 0, hp);
+        int diff = hp - _currentHP;
         if(diff > 0) {
             int armyLoss = diff / _maxHP;
             AdjustArmyCount(-armyLoss);
         }
         if (previous != this._currentHP) {
             if (this._currentHP == 0) {
-                FaintOrDeath(killer);
+                Death();
             }
         }
     }
