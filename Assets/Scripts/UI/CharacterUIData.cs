@@ -35,11 +35,11 @@ public class CharacterUIData {
         if (character.characterClass != null) {
             className = character.characterClass.className;
         }
-        healthValue = (float)character.currentHP / (float)character.maxHP;
+        healthValue = (float)character.currentHP / (float)character.hp;
         manaValue = (float)character.currentSP / (float)character.maxSP;
         attackPower = character.attackPower;
         speed = character.speed;
-        maxHP = character.maxHP;
+        maxHP = character.hp;
 
         attributes.Clear();
         if (character.attributes != null) {

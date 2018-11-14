@@ -202,7 +202,7 @@ public class CharacterManager : MonoBehaviour {
             party.icon.SetPosition(currentLocation.tileLocation.transform.position);            
 #endif
             if (currentLocation is BaseLandmark) {
-                currentLocation.AddCharacterToLocation(newCharacter);
+                currentLocation.AddCharacterToLocation(party);
             }
 #if WORLD_CREATION_TOOL
             else{

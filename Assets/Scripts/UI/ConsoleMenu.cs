@@ -34,7 +34,7 @@ public class ConsoleMenu : UIMenu {
             //{"/adjust_resources", AdjustResources}
             {"/center_character", CenterOnCharacter},
             {"/center_landmark", CenterOnLandmark },
-            {"/l_combat_rooms", LogCombatRooms },
+            //{"/l_combat_rooms", LogCombatRooms },
             {"/l_character_location_history", LogCharacterLocationHistory },
             {"/get_path", GetPath },
             {"/get_all_paths", GetAllPaths },
@@ -132,35 +132,6 @@ public class ConsoleMenu : UIMenu {
         for (int i = 0; i < _consoleActions.Count; i++) {
             AddCommandHistory(_consoleActions.Keys.ElementAt(i));
         }
-    }
-    private void LogCombatRooms(string[] parameters) {
-        if (parameters.Length > 1) {
-            AddCommandHistory(consoleLbl.text);
-            AddErrorMessage("There was an error in the command format of " + parameters[0]);
-            return;
-        }
-        string log = "All Active Combat Rooms: ";
-
-        List<CombatRoom> allCombatRooms = CombatManager.Instance.GetAllRoadCombats();
-        if (allCombatRooms.Count > 0) {
-            for (int i = 0; i < allCombatRooms.Count; i++) {
-                CombatRoom currRoom = allCombatRooms[i];
-                log += "\n Room at " + currRoom.location.locationName + ": ";
-                for (int j = 0; j < currRoom.combatants.Count; j++) {
-                    Character currCombatant = currRoom.combatants[j];
-                    log += "\n" + currCombatant.name;
-                    //if (currCombatant is Party) {
-                    //    log += "\n" + (currCombatant as Party).name;
-                    //} else if (currCombatant.icharacterType == ICHARACTER_TYPE.CHARACTER) {
-                    //    log += "\n" + (currCombatant as Character).name;
-                    //}
-                }
-                log += "\n";
-            }
-        } else {
-            log += "\n NONE";
-        }
-        AddSuccessMessage(log);
     }
     public void AddText(string text) {
         consoleInputField.text += " " + text;

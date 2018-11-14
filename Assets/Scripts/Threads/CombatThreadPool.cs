@@ -30,12 +30,12 @@ public class CombatThreadPool : MonoBehaviour {
 		newThread.Start ();
 	}
 	
-	void Update () {
-		if(this.functionsToBeResolved.Count > 0){
-			ECS.Combat combat = this.functionsToBeResolved.Dequeue ();
-			combat.ReturnCombatResults ();
-		}
-	}
+	//void Update () {
+	//	if(this.functionsToBeResolved.Count > 0){
+	//		ECS.Combat combat = this.functionsToBeResolved.Dequeue ();
+	//		combat.ReturnCombatResults ();
+	//	}
+	//}
 
 	public void AddToThreadPool(ECS.Combat combat){
 		lock (THREAD_LOCKER) {
@@ -44,22 +44,22 @@ public class CombatThreadPool : MonoBehaviour {
 	}
 
 	private void RunThread(){
-		while(isRunning){
-			if(this.functionsToBeRunInThread.Count > 0){
-				Thread.Sleep (2);
-				ECS.Combat newFunction = null;
-				lock(THREAD_LOCKER){
-					newFunction = this.functionsToBeRunInThread.Dequeue ();
-				}
-				if(newFunction != null){
-					newFunction.CombatSimulation();
-				}
-				lock (THREAD_LOCKER) {
-					this.functionsToBeResolved.Enqueue (newFunction);
-				}
+		//while(isRunning){
+		//	if(this.functionsToBeRunInThread.Count > 0){
+		//		Thread.Sleep (2);
+		//		ECS.Combat newFunction = null;
+		//		lock(THREAD_LOCKER){
+		//			newFunction = this.functionsToBeRunInThread.Dequeue ();
+		//		}
+		//		//if(newFunction != null){
+		//		//	newFunction.CombatSimulation();
+		//		//}
+		//		lock (THREAD_LOCKER) {
+		//			this.functionsToBeResolved.Enqueue (newFunction);
+		//		}
 
-			}
-		}
+		//	}
+		//}
 	}
 
 	void OnDestroy(){

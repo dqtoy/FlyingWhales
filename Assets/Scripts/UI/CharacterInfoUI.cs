@@ -844,9 +844,9 @@ public class CharacterInfoUI : UIMenu {
 
     #region Death
     public void DieCharacter() {
-        if(_activeCharacter.party.currentCombat != null) {
-            _activeCharacter.party.currentCombat.CharacterDeath(_activeCharacter, null);
-        }
+        //if(_activeCharacter.party.currentCombat != null) {
+        //    _activeCharacter.party.currentCombat.CharacterDeath(_activeCharacter, null);
+        //}
         _activeCharacter.Death();
     }
     #endregion

@@ -49,41 +49,41 @@ public class CombatLogsUI : UIMenu {
     }
 	private void SideACharacters(){
 		string text = string.Empty;
-		for (int i = 0; i < _currentlyShowingCombat.characterSideACopy.Count; i++) {
-			if(i > 0){
-				text += "\n";
-			}
-			ICharacter icharacter = _currentlyShowingCombat.characterSideACopy [i];
-            string currLog = string.Empty;
-            if(icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
-                Character character = icharacter as Character;
-                currLog = character.urlName + "(" + (character.characterClass != null ? character.characterClass.className : "NONE") + "-" + (character.role != null ? character.role.roleType.ToString() : "NONE") + ")";
-            } else {
-                Monster monster = icharacter as Monster;
-                currLog = monster.name;
-            }
-            text += currLog;
-		}
+		//for (int i = 0; i < _currentlyShowingCombat.characterSideACopy.Count; i++) {
+		//	if(i > 0){
+		//		text += "\n";
+		//	}
+		//	ICharacter icharacter = _currentlyShowingCombat.characterSideACopy [i];
+  //          string currLog = string.Empty;
+  //          if(icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
+  //              Character character = icharacter as Character;
+  //              currLog = character.urlName + "(" + (character.characterClass != null ? character.characterClass.className : "NONE") + "-" + (character.role != null ? character.role.roleType.ToString() : "NONE") + ")";
+  //          } else {
+  //              Monster monster = icharacter as Monster;
+  //              currLog = monster.name;
+  //          }
+  //          text += currLog;
+		//}
 		sideALbl.text = text;
 		//sideAScrollView.ResetPosition();
 	}
 	private void SideBCharacters(){
 		string text = string.Empty;
-		for (int i = 0; i < _currentlyShowingCombat.characterSideBCopy.Count; i++) {
-			if(i > 0){
-				text += "\n";
-			}
-            ICharacter icharacter = _currentlyShowingCombat.characterSideBCopy [i];
-            string currLog = string.Empty;
-            if (icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
-                Character character = icharacter as Character;
-                currLog = character.urlName + "(" + (character.characterClass != null ? character.characterClass.className : "NONE") + "-" + (character.role != null ? character.role.roleType.ToString() : "NONE") + ")";
-            } else {
-                Monster monster = icharacter as Monster;
-                currLog = monster.name;
-            }
-            text += currLog;
-		}
+		//for (int i = 0; i < _currentlyShowingCombat.characterSideBCopy.Count; i++) {
+		//	if(i > 0){
+		//		text += "\n";
+		//	}
+  //          ICharacter icharacter = _currentlyShowingCombat.characterSideBCopy [i];
+  //          string currLog = string.Empty;
+  //          if (icharacter.icharacterType == ICHARACTER_TYPE.CHARACTER) {
+  //              Character character = icharacter as Character;
+  //              currLog = character.urlName + "(" + (character.characterClass != null ? character.characterClass.className : "NONE") + "-" + (character.role != null ? character.role.roleType.ToString() : "NONE") + ")";
+  //          } else {
+  //              Monster monster = icharacter as Monster;
+  //              currLog = monster.name;
+  //          }
+  //          text += currLog;
+		//}
 		sideBLbl.text = text;
 		//sideBScrollView.ResetPosition();
 	}

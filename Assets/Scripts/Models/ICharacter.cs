@@ -8,6 +8,7 @@ public interface ICharacter {
     SIDES currentSide { get; }
     float actRate { get; set; }
     int level { get; }
+    //int maxHP { get; }
     int currentHP { get; }
     int currentSP { get; }
     int maxSP { get; }
@@ -16,9 +17,9 @@ public interface ICharacter {
     int hp { get; }
     int attackPower { get; }
     int speed { get; }
-    int combatAttackPower { get; set; }
-    int combatSpeed { get; set; }
-    int combatHP { get; set; }
+    int combatBaseAttack { get; set; }
+    int combatBaseSpeed { get; set; }
+    int combatBaseHP { get; set; }
     int combatAttackFlat { get; set; }
     int combatAttackMultiplier { get; set; }
     int combatSpeedFlat { get; set; }
@@ -51,6 +52,7 @@ public interface ICharacter {
     Item equippedAccessory { get; }
     Item equippedConsumable { get; }
     Minion minion { get; }
+    PairCombatStats[] pairCombatStats { get; set; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }
     //Dictionary<Character, Relationship> relationships { get; }

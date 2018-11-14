@@ -33,139 +33,28 @@ namespace ECS{
         }
 
         public void Fight() {
-            for (int i = 0; i < charactersSideA.Count; i++) {
-                for (int j = 0; j < charactersSideA[i].combatAttributes.Count; j++) {
+            int sideAWeight = 0;
+            int sideBWeight = 0;
+            CombatManager.Instance.GetCombatWeightsOfTwoLists(charactersSideA, charactersSideB, out sideAWeight, out sideBWeight);
+            int totalWeight = sideAWeight + sideBWeight;
 
-                }
-            }
-        }
+            float sideAChance = sideAWeight / (float)totalWeight;
+            float sideBChance = sideBWeight / (float)totalWeight;
 
-        private void ApplyTraitEffectPrePairing(ICharacter icharacter, TraitEffect traitEffect) {
-            List<ICharacter> enemies = GetEnemyCharacters(icharacter.currentSide);
-            List<ICharacter> allies = GetAllyCharacters(icharacter.currentSide);
+            int chance = UnityEngine.Random.Range(0, 101);
+            if(chance < sideAChance) {
 
-            if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF_ALL_ENEMIES) {
-                if (traitEffect.hasRequirement) {
-                    for (int i = 0; i < enemies.Count; i++) {
-                        if(CharacterFitsTraitCriteria(enemies[i], traitEffect)) {
-                            ModifyStat(icharacter, traitEffect);
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < enemies.Count; i++) {
-                        ModifyStat(icharacter, traitEffect);
-                    }
-                }
-            }else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF_ALL_IN_COMBAT) {
-                if (traitEffect.hasRequirement) {
-                    for (int i = 0; i < enemies.Count; i++) {
-                        if (CharacterFitsTraitCriteria(enemies[i], traitEffect)) {
-                            ModifyStat(icharacter, traitEffect);
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < enemies.Count; i++) {
-                        ModifyStat(icharacter, traitEffect);
-                    }
-                }
-            }
-        }
-        private void AddFlatStat(ICharacter icharacter, TraitEffect traitEffect) {
-            if (traitEffect.stat == STAT.ATTACK) {
-                icharacter.combatAttackFlat += (int) traitEffect.amount;
-            } else if (traitEffect.stat == STAT.SPEED) {
-                icharacter.combatSpeedFlat += (int) traitEffect.amount;
-            } else if (traitEffect.stat == STAT.HP) {
-                icharacter.combatHPFlat += (int) traitEffect.amount;
-            }
-        }
-        private void AddPercentStat(ICharacter icharacter, TraitEffect traitEffect) {
-            if (traitEffect.stat == STAT.ATTACK) {
-                icharacter.combatAttackMultiplier += (int) traitEffect.amount;
-            } else if (traitEffect.stat == STAT.SPEED) {
-                icharacter.combatSpeedMultiplier += (int) traitEffect.amount;
-            } else if (traitEffect.stat == STAT.HP) {
-                icharacter.combatHPMultiplier += (int) traitEffect.amount;
-            }
-        }
-        private bool CharacterFitsTraitCriteria(ICharacter icharacter, TraitEffect traitEffect) {
-            if (traitEffect.requirementType == TRAIT_REQUIREMENT.RACE) {
-                if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.AND) {
-                    //if there is one mismatch, return false already because the separator is AND, otherwise, return true
-                    if (traitEffect.isNot) {
-                        for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                            if (icharacter.GetCombatAttribute(traitEffect.requirements[i]) != null) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    } else {
-                        for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                            if (icharacter.GetCombatAttribute(traitEffect.requirements[i]) == null) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    }
-                } else if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.OR) {
-                    //if there is one match, return true already because the separator is OR, otherwise, return false   
-                    if (traitEffect.isNot) {
-                        for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                            if (icharacter.GetCombatAttribute(traitEffect.requirements[i]) == null) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    } else {
-                        for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                            if (icharacter.GetCombatAttribute(traitEffect.requirements[i]) != null) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-                }
-            } else if (traitEffect.requirementType == TRAIT_REQUIREMENT.TRAIT) {
-                if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.AND) {
-                    //if there is one mismatch, return false already because the separator is AND, otherwise, return true
-                    if (traitEffect.isNot) {
-                        for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                            if (traitEffect.requirements[i].ToLower() == icharacter.race.ToString().ToLower()) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    } else {
-                        for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                            if (traitEffect.requirements[i].ToLower() != icharacter.race.ToString().ToLower()) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    }
-                } else if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.OR) {
-                    //if there is one match, return true already because the separator is OR, otherwise, return false   
-                    if (traitEffect.isNot) {
-                        for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                            if (traitEffect.requirements[i].ToLower() != icharacter.race.ToString().ToLower()) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    } else {
-                        for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                            if (traitEffect.requirements[i].ToLower() == icharacter.race.ToString().ToLower()) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-                }
-            }
-            return false;
-        }
-        private void ApplyTraitEffectToOther(TraitEffect traitEffect) {
+            } else {
 
+            }
+        }
+        public void Fight(float sideAChance, float sideBChance) {
+            int chance = UnityEngine.Random.Range(0, 101);
+            if (chance < sideAChance) {
+
+            } else {
+
+            }
         }
 
         private List<ICharacter> GetEnemyCharacters(SIDES side) {

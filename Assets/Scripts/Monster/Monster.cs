@@ -133,6 +133,54 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public int maxExperience {
         get { return 0; }
     }
+    public int combatBaseAttack {
+        get { return 0; }
+        set { }
+    }
+    public int combatBaseSpeed {
+        get { return 0; }
+        set { }
+    }
+    public int combatBaseHP {
+        get { return 0; }
+        set { }
+    }
+    public int combatAttackFlat {
+        get { return 0; }
+        set { }
+    }
+    public int combatAttackMultiplier {
+        get { return 0; }
+        set { }
+    }
+    public int combatSpeedFlat {
+        get { return 0; }
+        set { }
+    }
+    public int combatSpeedMultiplier {
+        get { return 0; }
+        set { }
+    }
+    public int combatHPFlat {
+        get { return 0; }
+        set { }
+    }
+    public int combatHPMultiplier {
+        get { return 0; }
+        set { }
+    }
+    public int combatPowerFlat {
+        get { return 0; }
+        set { }
+    }
+    public int combatPowerMultiplier {
+        get { return 0; }
+        set { }
+    }
+    public PairCombatStats[] pairCombatStats {
+        get { return null; }
+        set { }
+    }
     public bool isDead {
         get { return _isDead; }
     }
