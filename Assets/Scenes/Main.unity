@@ -66771,8 +66771,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roleDefaultInteractions:
-    m_keys: 
-    m_values: []
+    m_keys: 01000000
+    m_values:
+    - data:
+      - interactionType: 17
+        weight: 50
 --- !u!1001 &1680592839
 Prefab:
   m_ObjectHideFlags: 0
