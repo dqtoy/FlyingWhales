@@ -72,6 +72,9 @@ public class InteractionState {
     public CharacterIntel assignedCharacter {
         get { return (_assignedObjects == null ? null : GetAssignedObjectOfType(typeof(CharacterIntel)) as CharacterIntel); }
     }
+    public List<object> assignedObjects {
+        get { return _assignedObjects; }
+    }
     #endregion
 
     public InteractionState(string name, Interaction interaction) {
@@ -89,7 +92,7 @@ public class InteractionState {
         _assignedMinion = minion;
     }
     public void SetAssignedObjects(List<object> objects) {
-        _assignedObjects = new List<object>(objects);
+        _assignedObjects = objects;
     }
     public void AddActionOption(ActionOption option) {
         for (int i = 0; i < _actionOptions.Length; i++) {

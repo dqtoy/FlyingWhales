@@ -123,7 +123,7 @@ public class CharacterExplores : Interaction {
     private void ConvinceToVisitElsewhere(InteractionState state) {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
         effectWeights.AddElement(characterExploreRedirected, 15);
-        effectWeights.AddElement(characterExploreContinues, 5);
+        //effectWeights.AddElement(characterExploreContinues, 5);
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
