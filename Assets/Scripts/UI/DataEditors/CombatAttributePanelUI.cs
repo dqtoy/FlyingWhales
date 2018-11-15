@@ -49,10 +49,6 @@ public class CombatAttributePanelUI : MonoBehaviour {
     #endregion
     private void Awake() {
         Instance = this;
-        _allCombatAttributes = new List<string>();
-    }
-    private void Start() {
-        LoadAllData();
     }
     private void UpdateCombatAttributes() {
         _allCombatAttributes.Clear();
@@ -62,8 +58,11 @@ public class CombatAttributePanelUI : MonoBehaviour {
         }
         ItemPanelUI.Instance.UpdateAttributeOptions();
         CharacterPanelUI.Instance.UpdateCombatAttributeOptions();
+        ClassPanelUI.Instance.UpdateTraitOptions();
+        RacePanelUI.Instance.UpdateTraitOptions();
     }
-    private void LoadAllData() {
+    public void LoadAllData() {
+        _allCombatAttributes = new List<string>();
         _requirements = new List<string>();
         _effects = new List<TraitEffect>();
 
@@ -92,6 +91,9 @@ public class CombatAttributePanelUI : MonoBehaviour {
         UpdateCombatAttributes();
     }
     private void ClearData() {
+        currentSelectedTraitEffectButton = null;
+        currentSelectedRequirementButton = null;
+
         statOptions.value = 0;
         traitTypeOptions.value = 0;
         requirementTypeOptions.value = 0;

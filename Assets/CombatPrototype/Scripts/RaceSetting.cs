@@ -11,11 +11,9 @@ namespace ECS {
         public int baseHP;
         public int[] hpPerLevel;
         public int[] attackPerLevel;
+        public string[] traitNames;
 
-        public int restRegenAmount;
-        public List<ATTRIBUTE> tags;
-
-        internal RaceSetting CreateNewCopy() {
+        public RaceSetting CreateNewCopy() {
             RaceSetting newRaceSetting = new RaceSetting();
             newRaceSetting.race = this.race;
             newRaceSetting.baseAttackPower = this.baseAttackPower;
@@ -23,23 +21,18 @@ namespace ECS {
             newRaceSetting.baseHP = this.baseHP;
             newRaceSetting.hpPerLevel = this.hpPerLevel;
             newRaceSetting.attackPerLevel = this.attackPerLevel;
-            //newRaceSetting.bodyParts = new List<BodyPart>();
-            //for (int i = 0; i < this.bodyParts.Count; i++) {
-            //    BodyPart currBodyPart = this.bodyParts[i];
-            //    newRaceSetting.bodyParts.Add(currBodyPart.CreateNewCopy());
-            //}
-   //         newRaceSetting.baseStr = this.baseStr;
-   //         newRaceSetting.baseInt = this.baseInt;
-   //         newRaceSetting.baseAgi = this.baseAgi;
-   //         newRaceSetting.baseHP = this.baseHP;
-			//newRaceSetting.statAllocationPoints = this.statAllocationPoints;
-			//newRaceSetting.strWeightAllocation = this.strWeightAllocation;
-			//newRaceSetting.intWeightAllocation = this.intWeightAllocation;
-			//newRaceSetting.agiWeightAllocation = this.agiWeightAllocation;
-			//newRaceSetting.hpWeightAllocation = this.hpWeightAllocation;
-            newRaceSetting.restRegenAmount = this.restRegenAmount;
-            newRaceSetting.tags = new List<ATTRIBUTE>(this.tags);
+            newRaceSetting.traitNames = this.traitNames;
             return newRaceSetting;
+        }
+
+        public void SetDataFromRacePanelUI() {
+            this.race = (RACE) System.Enum.Parse(typeof(RACE), RacePanelUI.Instance.raceOptions.options[RacePanelUI.Instance.raceOptions.value].text);
+            this.baseAttackPower = int.Parse(RacePanelUI.Instance.baseAttackInput.text);
+            this.baseSpeed = int.Parse(RacePanelUI.Instance.baseSpeedInput.text);
+            this.baseHP = int.Parse(RacePanelUI.Instance.baseHPInput.text);
+            this.hpPerLevel = RacePanelUI.Instance.hpPerLevel.ToArray();
+            this.attackPerLevel = RacePanelUI.Instance.attackPerLevel.ToArray();
+            this.traitNames = RacePanelUI.Instance.traitNames.ToArray();
         }
     }
 }

@@ -54,9 +54,6 @@ public class AttributePanelUI : MonoBehaviour {
     void Awake() {
         Instance = this;
     }
-    void Start() {
-        LoadAllData();
-    }
 
     #region Utilities
     private void UpdateItemAttributes() {
@@ -67,7 +64,7 @@ public class AttributePanelUI : MonoBehaviour {
         }
         ItemPanelUI.Instance.UpdateAttributeOptions();
     }
-    private void LoadAllData() {
+    public void LoadAllData() {
         _allItemAttributes = new List<string>();
         _tickBehaviors = new List<string>();
         _addBehaviors = new List<string>();

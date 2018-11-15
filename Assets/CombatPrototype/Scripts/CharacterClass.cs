@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 namespace ECS {
     public class CharacterClass : EntityComponent {
@@ -17,6 +18,7 @@ namespace ECS {
         [SerializeField] private List<string> _weaponTierNames;
         [SerializeField] private List<string> _armorTierNames;
         [SerializeField] private List<string> _accessoryTierNames;
+        [SerializeField] private string[] _traitNames;
         [SerializeField] private ACTION_TYPE _workActionType;
         [SerializeField] private CHARACTER_ROLE _roleType;
 
@@ -96,6 +98,9 @@ namespace ECS {
         public List<string> accessoryTierNames {
             get { return _accessoryTierNames; }
         }
+        public string[] traitNames {
+            get { return _traitNames; }
+        }
         public List<RESOURCE> harvestResources {
             get { return _harvestResources; }
         }
@@ -104,11 +109,8 @@ namespace ECS {
         public CharacterClass CreateNewCopy() {
             CharacterClass newClass = new CharacterClass();
             newClass._className = this._className;
-			//newClass._baseAttackPower = this._baseAttackPower;
 			newClass._attackPowerPerLevel = this._attackPowerPerLevel;
-			//newClass._baseSpeed = this._baseSpeed;
 			newClass._speedPerLevel = this._speedPerLevel;
-            //newClass._baseHP = this._baseHP;
             newClass._hpPerLevel = this._hpPerLevel;
             newClass._baseSP = this._baseSP;
             newClass._spPerLevel = this._spPerLevel;
@@ -116,14 +118,13 @@ namespace ECS {
             newClass._workActionType = this._workActionType;
             newClass._roleType = this._roleType;
             newClass._skillName = this._skillName;
-            //newClass._dodgeRate = this._dodgeRate;
-            //newClass._parryRate = this._parryRate;                        
-            //newClass._blockRate = this._blockRate;
             newClass._harvestResources = new List<RESOURCE>(this._harvestResources);
             newClass._skill = this._skill; //.CreateNewCopy()
             newClass._weaponTierNames = new List<string>(this._weaponTierNames);
             newClass._armorTierNames = new List<string>(this._armorTierNames);
             newClass._accessoryTierNames = new List<string>(this._accessoryTierNames);
+            newClass._traitNames = this._traitNames;
+            //Array.Copy(this._traitNames, newClass._traitNames, this._traitNames.Length);
             return newClass;
         }
 
@@ -175,6 +176,7 @@ namespace ECS {
             this._weaponTierNames = ClassPanelUI.Instance.weaponTiers;
             this._armorTierNames = ClassPanelUI.Instance.armorTiers;
             this._accessoryTierNames = ClassPanelUI.Instance.accessoryTiers;
+            this._traitNames = ClassPanelUI.Instance.traitNames.ToArray();
         }
 
         public void ConstructData() {

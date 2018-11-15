@@ -44,15 +44,9 @@ public class SkillPanelUI : MonoBehaviour {
     void Awake() {
         Instance = this;
     }
-    // Use this for initialization
-    void Start () {
-        //_allowedWeaponTypes = new List<string>();
-        allSkills = new List<string>();
-        LoadAllData();
-	}
 
     #region Utilities
-    private void LoadAllData() {
+    public void LoadAllData() {
         //attackTypeOptions.ClearOptions();
         elementOptions.ClearOptions();
         targetTypeOptions.ClearOptions();

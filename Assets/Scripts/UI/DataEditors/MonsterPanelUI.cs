@@ -58,9 +58,6 @@ public class MonsterPanelUI : MonoBehaviour {
     void Awake() {
         Instance = this;
     }
-    void Start() {
-        LoadAllData();
-    }
 
     #region Utilities
     public void UpdateSkillList() {
@@ -71,25 +68,25 @@ public class MonsterPanelUI : MonoBehaviour {
         itemDropOptions.ClearOptions();
         itemDropOptions.AddOptions(ItemPanelUI.Instance.allItems);
     }
-    private void LoadAllData() {
+    public void LoadAllData() {
         _allSkills = new List<string>();
         _itemDrops = new List<ItemDrop>();
         typeOptions.ClearOptions();
-        itemDropOptions.ClearOptions();
+        //itemDropOptions.ClearOptions();
 
         string[] monsterTypes = System.Enum.GetNames(typeof(MONSTER_TYPE));
 
-        List<string> allItems = new List<string>();
-        string path = Utilities.dataPath + "Items/";
-        string[] directories = Directory.GetDirectories(path);
-        for (int i = 0; i < directories.Length; i++) {
-            string[] files = Directory.GetFiles(directories[i], "*.json");
-            for (int j = 0; j < files.Length; j++) {
-                allItems.Add(Path.GetFileNameWithoutExtension(files[j]));
-            }
-        }
+        //List<string> allItems = new List<string>();
+        //string path = Utilities.dataPath + "Items/";
+        //string[] directories = Directory.GetDirectories(path);
+        //for (int i = 0; i < directories.Length; i++) {
+        //    string[] files = Directory.GetFiles(directories[i], "*.json");
+        //    for (int j = 0; j < files.Length; j++) {
+        //        allItems.Add(Path.GetFileNameWithoutExtension(files[j]));
+        //    }
+        //}
 
-        itemDropOptions.AddOptions(allItems);
+        //itemDropOptions.AddOptions(allItems);
         typeOptions.AddOptions(monsterTypes.ToList());
     }
     private void ClearData() {

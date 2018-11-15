@@ -424,12 +424,12 @@ namespace ECS {
             _skills.Add(_characterClass.skill);
             //_bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
             //ConstructBodyPartDict(_raceSetting.bodyParts);
-            GenerateRaceAttributes();
 
             //AllocateStatPoints(10);
             AllocateStats();
             EquipItemsByClass();
-
+            SetTraitsFromClass();
+            SetTraitsFromRace();
             //CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(className);
             //if(setup != null) {
             //    GenerateSetupAttributes(setup);
@@ -467,12 +467,12 @@ namespace ECS {
                 AddAttributes(data.attributes);
             }
             //GenerateSetupTags(baseSetup);
-            GenerateRaceAttributes();
 
             //AllocateStatPoints(10);
             AllocateStats();
             EquipItemsByClass();
-
+            SetTraitsFromClass();
+            SetTraitsFromRace();
             //EquipPreEquippedItems(baseSetup);
             CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(data.className);
             if (setup != null) {
@@ -1535,11 +1535,6 @@ namespace ECS {
             }
             return null;
         }
-        private void GenerateRaceAttributes() {
-            for (int i = 0; i < _raceSetting.tags.Count; i++) {
-                AddAttribute(_raceSetting.tags[i]);
-            }
-        }
         private void GenerateSetupAttributes(CharacterSetup setup) {
             for (int i = 0; i < setup.tags.Count; i++) {
                 AddAttribute(setup.tags[i]);
@@ -1762,12 +1757,8 @@ namespace ECS {
             if (_raceSetting.race == race) {
                 return; //current race is already the new race, no change
             }
-            if (_raceSetting.tags != null) {
-                RemoveAttributes(_raceSetting.tags);
-            }
             RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
             _raceSetting = raceSetting.CreateNewCopy();
-            GenerateRaceAttributes(); //regenerate attributes from new race
         }
         public void ChangeClass(string className) {
             //TODO: Change data as needed
@@ -2728,7 +2719,7 @@ namespace ECS {
 
         #region Combat Attributes
         public void AddCombatAttribute(Trait combatAttribute) {
-            if (string.IsNullOrEmpty(GetCombatAttribute(combatAttribute.name).name)) {
+            if (GetCombatAttribute(combatAttribute.name) == null) {
                 _combatAttributes.Add(combatAttribute);
                 ApplyFlatCombatAttributeEffects(combatAttribute);
             }
@@ -2749,7 +2740,7 @@ namespace ECS {
                     return _combatAttributes[i];
                 }
             }
-            return new Trait();
+            return null;
         }
         private void ApplyFlatCombatAttributeEffects(Trait trait) {
             for (int i = 0; i < trait.effects.Count; i++) {
@@ -2814,6 +2805,22 @@ namespace ECS {
                 }
             }
             return (int) (_maxHP * (modifier / 100f));
+        }
+        private void SetTraitsFromClass() {
+            if(_characterClass.traitNames != null) {
+                for (int i = 0; i < _characterClass.traitNames.Length; i++) {
+                    Trait trait = AttributeManager.Instance.allCombatAttributes[_characterClass.traitNames[i]];
+                    AddCombatAttribute(trait);
+                }
+            }
+        }
+        private void SetTraitsFromRace() {
+            if (_raceSetting.traitNames != null) {
+                for (int i = 0; i < _raceSetting.traitNames.Length; i++) {
+                    Trait trait = AttributeManager.Instance.allCombatAttributes[_raceSetting.traitNames[i]];
+                    AddCombatAttribute(trait);
+                }
+            }
         }
         #endregion
 
