@@ -138,7 +138,26 @@ namespace ECS {
   //      }
 
         #region Chance Combat
+        public void GetCombatChanceOfTwoLists(List<ICharacter> allies, List<ICharacter> enemies, out float allyChance, out float enemyChance) {
+            int sideAWeight = 0;
+            int sideBWeight = 0;
+            CombatManager.Instance.GetCombatWeightsOfTwoLists(allies, enemies, out sideAWeight, out sideBWeight);
+            int totalWeight = sideAWeight + sideBWeight;
+
+            allyChance = (sideAWeight / (float) totalWeight) * 100f;
+            enemyChance = (sideBWeight / (float) totalWeight) * 100f;
+        }
         public void GetCombatWeightsOfTwoLists(List<ICharacter> allies, List<ICharacter> enemies, out int allyWeight, out int enemyWeight) {
+            if(allies == null) {
+                allyWeight = 0;
+                enemyWeight = 1;
+                return;
+            }
+            if (enemies == null) {
+                allyWeight = 1;
+                enemyWeight = 0;
+                return;
+            }
             int pairCombatCount = allies.Count;
             if (enemies.Count > allies.Count) {
                 pairCombatCount = enemies.Count;

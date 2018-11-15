@@ -6,9 +6,13 @@ using UnityEngine.EventSystems;
 public class InvestigationMinionDraggableItem : DraggableItem {
 
     [SerializeField] private CharacterPortrait _portrait;
+    [SerializeField] private int _index;
 
     public override void OnBeginDrag(PointerEventData eventData) {
         if (!_isDraggable) {
+            return;
+        }
+        if (!_portrait.gameObject.activeSelf) {
             return;
         }
         GameObject clone = (GameObject) Instantiate(_portrait.gameObject);
@@ -37,7 +41,11 @@ public class InvestigationMinionDraggableItem : DraggableItem {
             Destroy(_draggingObject.gameObject);
             if (customDropzone == null) {
                 _portrait.gameObject.SetActive(false);
-                UIManager.Instance.landmarkInfoUI.AssignMinionToInvestigate(null);
+                if(_index == -1) {
+                    UIManager.Instance.landmarkInfoUI.AssignMinionToInvestigate(null);
+                } else {
+                    UIManager.Instance.landmarkInfoUI.AssignPartyMinionToInvestigate(null, _index);
+                }
             }
         }
     }

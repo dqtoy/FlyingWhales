@@ -79,7 +79,9 @@ public class AttackAction : CharacterAction {
     }
     #endregion
     private void StartEncounter(Party enemy, ICharacterObject icharacterObject) {
-        icharacterObject.iparty.StartCombatWith(enemy);
+        Combat combat = icharacterObject.iparty.CreateCombatWith(enemy);
+        combat.Fight();
+
     }
 
     public bool CanBeDoneByTesting(CharacterParty party, ICharacterObject icharacterObject) {

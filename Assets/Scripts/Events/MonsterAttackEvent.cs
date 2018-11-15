@@ -33,10 +33,10 @@ public class MonsterAttackEvent : GameEvent {
         if (_isDone) {
             return;
         }
-        if(_monsterPartySpawned.currentCombat != null) {
-            _monsterPartySpawned.currentCombat.AddAfterCombatAction(() => WaitForCombatToFinish());
-            return;
-        }
+        //if(_monsterPartySpawned.currentCombat != null) {
+        //    _monsterPartySpawned.currentCombat.AddAfterCombatAction(() => WaitForCombatToFinish());
+        //    return;
+        //}
         _monsterPartySpawned.SetIsAttacking(false);
         if (!_monsterPartySpawned.isDead) {
             _targetLandmark.DestroyLandmark();

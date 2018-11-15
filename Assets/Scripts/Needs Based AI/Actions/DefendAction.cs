@@ -54,8 +54,8 @@ public class DefendAction : CharacterAction {
         for (int i = 0; i < targetObject.objectLocation.charactersAtLocation.Count; i++) {
             Party newParty = targetObject.objectLocation.charactersAtLocation[i];
             if (newParty.isAttacking) {
-                Combat combat = defenderParty.StartCombatWith(newParty);
-                combat.AddAfterCombatAction(() => CheckCombatResults(defenderParty, targetObject, combat));
+                //Combat combat = defenderParty.StartCombatWith(newParty, () => CheckCombatResults(defenderParty, targetObject, combat));
+                //combat.AddAfterCombatAction(() => CheckCombatResults(defenderParty, targetObject, combat));
                 engagedInCombat = true;
                 break;
             }

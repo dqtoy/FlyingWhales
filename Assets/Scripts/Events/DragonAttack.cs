@@ -30,8 +30,9 @@ public class DragonAttack : GameEvent {
     private void CombatWithTarget() {
         //Make sure that the target character will not leave
         _dragonParty.SetIsAttacking(true);
-        Combat combat = _dragonParty.StartCombatWith(_targetCharacter.currentParty);
-        combat.AddAfterCombatAction(() => CheckCombatResults(combat));
+        Combat combat = _dragonParty.CreateCombatWith(_targetCharacter.currentParty);
+        combat.Fight(() => CheckCombatResults(combat));
+        //combat.AddAfterCombatAction(() => CheckCombatResults(combat));
         if(_dragonParty.specificLocation.tileLocation.landmarkOnTile != null) {
             Messenger.Broadcast(Signals.LANDMARK_UNDER_ATTACK, _dragonParty.GetBase(), this.GetBase());
         }

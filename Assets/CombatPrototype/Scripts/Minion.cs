@@ -110,17 +110,34 @@ public class Minion : IUnit {
                 ICharacter otherChar = icharacter.ownParty.icharacters[i];
                 if (otherChar.id != icharacter.id && otherChar.minion != null) {
                     otherChar.minion.SetEnabledState(state);
+                    if (state) {
+                        //Since the otherChar will be removed from the party when he is not the owner and state is true, reduce loop count so no argument exception error will be called
+                        i--;
+                    }
                 }
+            }
+        } else {
+            //If character is not own party and is enabled, automatically put him in his own party so he can be used again
+            if (state) {
+                icharacter.currentParty.RemoveCharacter(icharacter);
             }
         }
         _isEnabled = state;
         _characterItem.SetEnabledState(state);
     }
-    public void SetPlayerCharacterItem(PlayerCharacterItem item) {
-        _characterItem = item;
-    }
     public void SetExploringLandmark(BaseLandmark landmark) {
         _currentlyExploringLandmark = landmark;
+        if (icharacter.IsInOwnParty()) {
+            for (int i = 0; i < icharacter.currentParty.icharacters.Count; i++) {
+                ICharacter otherChar = icharacter.ownParty.icharacters[i];
+                if (otherChar.id != icharacter.id) {
+                    icharacter.currentParty.icharacters[i].minion.SetExploringLandmark(landmark);
+                }
+            }
+        }
+    }
+    public void SetPlayerCharacterItem(PlayerCharacterItem item) {
+        _characterItem = item;
     }
     public void AdjustExp(int amount) {
         _exp += amount;

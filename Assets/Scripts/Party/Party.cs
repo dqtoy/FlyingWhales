@@ -367,48 +367,15 @@ public class Party : IParty {
         Messenger.RemoveListener<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, FindCombat);
     }
     private void FindCombat(Party partyThatEntered, BaseLandmark landmark) {
-        if(partyThatEntered._specificLocation != null && this._specificLocation != null && this._specificLocation == partyThatEntered._specificLocation && partyThatEntered.id != this.id && this._currentCombat == null) {
-            StartCombatWith(partyThatEntered);
-        }
+        //if(partyThatEntered._specificLocation != null && this._specificLocation != null && this._specificLocation == partyThatEntered._specificLocation && partyThatEntered.id != this.id && this._currentCombat == null) {
+        //    StartCombatWith(partyThatEntered);
+        //}
     }
     #endregion
 
     #region Combat
-    public Combat StartCombatWith(Party enemy) {
-        //Combat combat = null;
-        //if (this.currentCombat != null) {
-        //    //If this party has current combat
-        //    if (enemy.currentCombat != null) {
-        //        //If the enemy has current combat
-        //        if (enemy.currentCombat == this.currentCombat) {
-        //            //If they are already fighting with each other, return their combat
-        //            return this.currentCombat;
-        //        } else {
-        //            //If they are not fighting with each other, this should not happen at all cost, a party must not combat another party if they are both in different combats
-        //            return null;
-        //        }
-        //    } else {
-        //        //If this party has current combat and enemy does not have, enemy will join this party's combat on the opposite side
-        //        combat = this.currentCombat;
-        //        SIDES sideToJoin = CombatManager.Instance.GetOppositeSide(this.mainCharacter.currentSide);
-        //        this.currentCombat.AddParty(sideToJoin, enemy);
-        //    }
-        //} else {
-        //    //If this party doesn't have current combat
-        //    if (enemy.currentCombat != null) {
-        //        //If the enemy has current combat, this party will join the enemy's combat on the opposite side
-        //        combat = enemy.currentCombat;
-        //        SIDES sideToJoin = CombatManager.Instance.GetOppositeSide(enemy.mainCharacter.currentSide);
-        //        enemy.currentCombat.AddParty(sideToJoin, this);
-        //    } else {
-        //        //If both this party and the enemy don't have a combat, they will start a new combat
-        //        combat = new Combat();
-        //        combat.AddParty(SIDES.A, enemy);
-        //        combat.AddParty(SIDES.B, this);
-        //        //MultiThreadPool.Instance.AddToThreadPool(combat);
-        //        combat.CombatSimulation();
-        //    }
-        //}
+    public Combat CreateCombatWith(Party enemy) {
+        Combat combat = new Combat(this, enemy);
         Debug.Log("Starting combat between " + enemy.name + " and  " + this.name);
 
         Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "start_combat");
@@ -422,8 +389,13 @@ public class Party : IParty {
         for (int i = 0; i < this.icharacters.Count; i++) {
             this.icharacters[i].AddHistory(combatLog);
         }
-        return null;
+        return combat;
     }
+    //public void StartCombatWith(Combat combat, Action afterCombatAction = null) {
+    //    combat.AssignAfterCombatAction(afterCombatAction);
+    //    combat.Fight();
+    //    //return combat;
+    //}
     public void JoinCombatWith(Party friend) {
         if (friend.currentCombat != null) {
             //if (this is CharacterParty) {

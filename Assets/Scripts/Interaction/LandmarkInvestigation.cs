@@ -8,6 +8,7 @@ public class LandmarkInvestigation {
 
     private BaseLandmark _landmark;
     private Minion _assignedMinion;
+    //private Party _assignedPartyMinion;
     private bool _isActivated;
     private bool _isMinionRecalled;
     private string _whatToDo;
@@ -24,6 +25,9 @@ public class LandmarkInvestigation {
     public Minion assignedMinion {
         get { return _assignedMinion; }
     }
+    //public Party assignedPartyMinion {
+    //    get { return _assignedPartyMinion; }
+    //}
     public bool isActivated {
         get { return _isActivated; }
     }
@@ -37,19 +41,48 @@ public class LandmarkInvestigation {
 
     public LandmarkInvestigation(BaseLandmark landmark) {
         _landmark = landmark;
+        //_assignedPartyMinion = null;
         Messenger.AddListener<BaseLandmark>(Signals.CLICKED_INTERACTION_BUTTON, ClickedInteractionTimerButton);
     }
 
     public void SetAssignedMinion(Minion minion) {
         _assignedMinion = minion;
     }
+    //public void SetAssignedMinionParty(Party party) {
+    //    _assignedPartyMinion = party;
+    //}
     public void InvestigateLandmark(string whatTodo, Minion minion) {
         SetAssignedMinion(minion);
         _assignedMinion.SetEnabledState(false);
         _assignedMinion.SetExploringLandmark(_landmark);
         if (whatTodo == "explore") {
             MinionGoToAssignment(ExploreLandmark);
-        } else if (whatTodo == "attack") {
+        } 
+        //else if (whatTodo == "attack") {
+        //    MinionGoToAssignment(AttackLandmark);
+        //} else if (whatTodo == "raid") {
+        //    MinionGoToAssignment(RaidLandmark);
+        //}
+        _whatToDo = whatTodo;
+        SetActivatedState(true);
+    }
+    public void InvestigateLandmark(string whatTodo, Minion[] minion) {
+        _assignedMinion = null;
+        for (int i = 0; i < minion.Length; i++) {
+            if (minion[i] != null) {
+                if (_assignedMinion == null) {
+                    SetAssignedMinion(minion[i]);
+                } else {
+                    _assignedMinion.icharacter.ownParty.AddCharacter(minion[i].icharacter);
+                }
+            }
+        }
+        _assignedMinion.SetEnabledState(false);
+        _assignedMinion.SetExploringLandmark(_landmark);
+        //if (whatTodo == "explore") {
+        //    MinionGoToAssignment(ExploreLandmark);
+        //}
+        if (whatTodo == "attack") {
             MinionGoToAssignment(AttackLandmark);
         } else if (whatTodo == "raid") {
             MinionGoToAssignment(RaidLandmark);
@@ -194,8 +227,9 @@ public class LandmarkInvestigation {
     #region Attack
     private void AttackLandmark() {
         if (_landmark.defenders != null) {
-            Combat combat = _assignedMinion.icharacter.currentParty.StartCombatWith(_landmark.defenders);
-            combat.AddAfterCombatAction(() => AttackCombatResult(combat));
+            Combat combat = _assignedMinion.icharacter.currentParty.CreateCombatWith(_landmark.defenders);
+            combat.Fight(() => AttackCombatResult(combat));
+            //combat.AddAfterCombatAction(() => AttackCombatResult(combat));
         } else {
             _landmark.DestroyLandmark();
         }
@@ -212,8 +246,9 @@ public class LandmarkInvestigation {
     #region Raid
     private void RaidLandmark() {
         if (_landmark.defenders != null) {
-            Combat combat = _assignedMinion.icharacter.currentParty.StartCombatWith(_landmark.defenders);
-            combat.AddAfterCombatAction(() => RaidCombatResult(combat));
+            Combat combat = _assignedMinion.icharacter.currentParty.CreateCombatWith(_landmark.defenders);
+            combat.Fight(() => RaidCombatResult(combat));
+            //combat.AddAfterCombatAction(() => RaidCombatResult(combat));
         } else {
             RaidAndGoBack();
         }

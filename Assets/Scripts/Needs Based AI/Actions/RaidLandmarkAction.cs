@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ECS;
 
 public class RaidLandmarkAction : CharacterAction {
     public RaidLandmarkAction() : base(ACTION_TYPE.RAID_LANDMARK) {
@@ -14,7 +15,8 @@ public class RaidLandmarkAction : CharacterAction {
         landmarkToRaid.SetRaidedState(true);
         //Party defenderParty = null; //TODO
         if(landmarkToRaid.defenders != null) {
-            party.StartCombatWith(landmarkToRaid.defenders);
+            Combat combat = party.CreateCombatWith(landmarkToRaid.defenders);
+            combat.Fight();
         }
         //Raid their area: -1 Favor Count
         Faction raidedFaction = landmarkToRaid.owner;

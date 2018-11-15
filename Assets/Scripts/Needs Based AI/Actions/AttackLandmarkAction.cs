@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ECS;
 
 public class AttackLandmarkAction : CharacterAction {
 
@@ -14,7 +15,8 @@ public class AttackLandmarkAction : CharacterAction {
         BaseLandmark landmarkToAttack = targetObject.objectLocation;
         //Party defenderParty = null; //TODO
         if (landmarkToAttack.defenders != null) {
-            party.StartCombatWith(landmarkToAttack.defenders);
+            Combat combat = party.CreateCombatWith(landmarkToAttack.defenders);
+            combat.Fight();
         }
         //Attack their area: -3 Favor Count
         Faction attackedFaction = landmarkToAttack.owner;
