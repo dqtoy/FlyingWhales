@@ -65,9 +65,6 @@ public class ItemPanelUI : MonoBehaviour {
     void Awake() {
         Instance = this;
     }
-    void Start() {
-        LoadAllData();
-    }
 
     #region Utilities
     private void UpdateAllItems() {
@@ -95,7 +92,7 @@ public class ItemPanelUI : MonoBehaviour {
         CharacterPanelUI.Instance.UpdateItemOptions();
         ClassPanelUI.Instance.UpdateItemOptions();
     }
-    private void LoadAllData() {
+    public void LoadAllData() {
         _attributes = new List<string>();
         _allItems = new List<string>();
         _allWeapons = new List<string>();

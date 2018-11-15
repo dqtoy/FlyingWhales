@@ -88,29 +88,26 @@ public class CharacterPanelUI : MonoBehaviour {
     void Awake() {
         Instance = this;
     }
-    void Start() {
-        LoadAllData();
-    }
 
     #region Utilities
-    private void LoadAllData() {
+    public void LoadAllData() {
         _allCombatAttributeNames = new List<string>();
         levelInput.text = "1";
         armyInput.text = "1";
         raceOptions.ClearOptions();
         genderOptions.ClearOptions();
-        combatAttributeOptions.ClearOptions();
+        //combatAttributeOptions.ClearOptions();
         //weaponOptions.ClearOptions();
         //armorOptions.ClearOptions();
         //accessoryOptions.ClearOptions();
         //consumableOptions.ClearOptions();
         string[] genders = System.Enum.GetNames(typeof(GENDER));
 
-        List<string> combatAttributes = new List<string>();
-        string path = Utilities.dataPath + "CombatAttributes/";
-        foreach (string file in Directory.GetFiles(path, "*.json")) {
-            combatAttributes.Add(Path.GetFileNameWithoutExtension(file));
-        }
+        //List<string> combatAttributes = new List<string>();
+        //string path = Utilities.dataPath + "CombatAttributes/";
+        //foreach (string file in Directory.GetFiles(path, "*.json")) {
+        //    combatAttributes.Add(Path.GetFileNameWithoutExtension(file));
+        //}
         //List<string> weapons = new List<string>();
         //List<string> armors = new List<string>();
         //string path = Utilities.dataPath + "Items/";
@@ -135,7 +132,7 @@ public class CharacterPanelUI : MonoBehaviour {
         }
 
         raceOptions.AddOptions(races);
-        combatAttributeOptions.AddOptions(combatAttributes);
+        //combatAttributeOptions.AddOptions(combatAttributes);
         //weaponOptions.AddOptions(weapons);
         genderOptions.AddOptions(genders.ToList());
         //armorOptions.AddOptions(armors);

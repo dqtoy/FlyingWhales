@@ -27,6 +27,7 @@ public class ClassPanelUI : MonoBehaviour {
     public Dropdown weaponsOptions;
     public Dropdown armorsOptions;
     public Dropdown accessoriesOptions;
+    public Dropdown traitOptions;
 
     public Dropdown workActionOptions;
     public Dropdown roleOptions;
@@ -35,22 +36,27 @@ public class ClassPanelUI : MonoBehaviour {
     public GameObject weaponsGO;
     public GameObject armorsGO;
     public GameObject accessoriesGO;
+    public GameObject traitsGO;
 
     public GameObject weaponTypeBtnGO;
+    public GameObject traitBtnGO;
 
     public Transform weaponsContentTransform;
     public Transform armorsContentTransform;
     public Transform accessoriesContentTransform;
+    public ScrollRect traitsScrollRect;
 
     [NonSerialized] public WeaponTypeButton currentSelectedWeaponButton;
     [NonSerialized] public WeaponTypeButton currentSelectedArmorButton;
     [NonSerialized] public WeaponTypeButton currentSelectedAccessoryButton;
+    [NonSerialized] public ClassTraitButton currentSelectedClassTraitButton;
     [NonSerialized] public int latestLevel;
     [NonSerialized] public List<string> allClasses;
 
     private List<string> _weaponTiers;
     private List<string> _armorTiers;
     private List<string> _accessoryTiers;
+    private List<string> _traitNames;
 
     #region getters/setters
     public List<string> weaponTiers {
@@ -62,17 +68,13 @@ public class ClassPanelUI : MonoBehaviour {
     public List<string> accessoryTiers {
         get { return _accessoryTiers; }
     }
+    public List<string> traitNames {
+        get { return _traitNames; }
+    }
     #endregion
 
     void Awake() {
         Instance = this;
-    }
-    void Start() {
-        allClasses = new List<string>();
-        _weaponTiers = new List<string>();
-        _armorTiers = new List<string>();
-        _accessoryTiers = new List<string>();
-        LoadAllData();
     }
 
     #region Utilities
@@ -97,39 +99,50 @@ public class ClassPanelUI : MonoBehaviour {
         armorsOptions.AddOptions(ItemPanelUI.Instance.allArmors);
         accessoriesOptions.AddOptions(ItemPanelUI.Instance.allItems);
     }
-    private void LoadAllData() {
+    public void UpdateTraitOptions() {
+        traitOptions.ClearOptions();
+        traitOptions.AddOptions(CombatAttributePanelUI.Instance.allCombatAttributes);
+    }
+    public void LoadAllData() {
+        allClasses = new List<string>();
+        _weaponTiers = new List<string>();
+        _armorTiers = new List<string>();
+        _accessoryTiers = new List<string>();
+        _traitNames = new List<string>();
+
         armyCountInput.text = "1";
         workActionOptions.ClearOptions();
-        weaponsOptions.ClearOptions();
-        armorsOptions.ClearOptions();
-        accessoriesOptions.ClearOptions();
+        //weaponsOptions.ClearOptions();
+        //armorsOptions.ClearOptions();
+        //accessoriesOptions.ClearOptions();
+        //traitOptions.ClearOptions();
         roleOptions.ClearOptions();
 
         string[] workActions = System.Enum.GetNames(typeof(ACTION_TYPE));
         string[] roles = System.Enum.GetNames(typeof(CHARACTER_ROLE));
 
-        List<string> weapons = new List<string>();
-        List<string> armors = new List<string>();
-        List<string> accessories = new List<string>();
-        string path = Utilities.dataPath + "Items/";
-        string[] directories = Directory.GetDirectories(path);
-        for (int i = 0; i < directories.Length; i++) {
-            string folderName = new DirectoryInfo(directories[i]).Name;
-            string[] files = Directory.GetFiles(directories[i], "*.json");
-            for (int j = 0; j < files.Length; j++) {
-                string fileName = Path.GetFileNameWithoutExtension(files[j]);
-                if (folderName == "WEAPON") {
-                    weapons.Add(fileName);
-                } else if (folderName == "ARMOR") {
-                    armors.Add(fileName);
-                }
-                accessories.Add(fileName);
-            }
-        }
+        //List<string> weapons = new List<string>();
+        //List<string> armors = new List<string>();
+        //List<string> accessories = new List<string>();
+        //string path = Utilities.dataPath + "Items/";
+        //string[] directories = Directory.GetDirectories(path);
+        //for (int i = 0; i < directories.Length; i++) {
+        //    string folderName = new DirectoryInfo(directories[i]).Name;
+        //    string[] files = Directory.GetFiles(directories[i], "*.json");
+        //    for (int j = 0; j < files.Length; j++) {
+        //        string fileName = Path.GetFileNameWithoutExtension(files[j]);
+        //        if (folderName == "WEAPON") {
+        //            weapons.Add(fileName);
+        //        } else if (folderName == "ARMOR") {
+        //            armors.Add(fileName);
+        //        }
+        //        accessories.Add(fileName);
+        //    }
+        //}
 
-        weaponsOptions.AddOptions(weapons);
-        armorsOptions.AddOptions(armors);
-        accessoriesOptions.AddOptions(accessories);
+        //weaponsOptions.AddOptions(weapons);
+        //armorsOptions.AddOptions(armors);
+        //accessoriesOptions.AddOptions(accessories);
         workActionOptions.AddOptions(workActions.ToList());
         roleOptions.AddOptions(roles.ToList());
         UpdateClassList();
@@ -139,6 +152,8 @@ public class ClassPanelUI : MonoBehaviour {
         currentSelectedWeaponButton = null;
         currentSelectedArmorButton = null;
         currentSelectedAccessoryButton = null;
+        currentSelectedClassTraitButton = null;
+
         classNameInput.text = string.Empty;
 
         //baseAttackPowerInput.text = "0";
@@ -154,22 +169,19 @@ public class ClassPanelUI : MonoBehaviour {
         weaponsOptions.value = 0;
         armorsOptions.value = 0;
         accessoriesOptions.value = 0;
+        traitOptions.value = 0;
         workActionOptions.value = 0;
         skillOptions.value = 0;
         roleOptions.value = 0;
 
         _weaponTiers.Clear();
-        foreach (Transform child in weaponsContentTransform) {
-            GameObject.Destroy(child.gameObject);
-        }
         _armorTiers.Clear();
-        foreach (Transform child in armorsContentTransform) {
-            GameObject.Destroy(child.gameObject);
-        }
         _accessoryTiers.Clear();
-        foreach (Transform child in accessoriesContentTransform) {
-            GameObject.Destroy(child.gameObject);
-        }
+        _traitNames.Clear();
+        weaponsContentTransform.DestroyChildren();
+        armorsContentTransform.DestroyChildren();
+        accessoriesContentTransform.DestroyChildren();
+        traitsScrollRect.content.DestroyChildren();
     }
     private void SaveClass() {
         if (string.IsNullOrEmpty(classNameInput.text)) {
@@ -263,6 +275,12 @@ public class ClassPanelUI : MonoBehaviour {
             go.GetComponent<WeaponTypeButton>().panelName = "class";
             go.GetComponent<WeaponTypeButton>().categoryName = "accessory";
         }
+        for (int i = 0; i < characterClass.traitNames.Length; i++) {
+            string traitName = characterClass.traitNames[i];
+            _traitNames.Add(traitName);
+            GameObject go = GameObject.Instantiate(traitBtnGO, traitsScrollRect.content);
+            go.GetComponent<ClassTraitButton>().SetTraitName(traitName);
+        }
     }
     private int GetDropdownIndex(Dropdown options, string name) {
         for (int i = 0; i < options.options.Count; i++) {
@@ -277,6 +295,12 @@ public class ClassPanelUI : MonoBehaviour {
     #region Button Clicks
     public void OnAddNewClass() {
         ClearData();
+    }
+    public void OnSaveClass() {
+        SaveClass();
+    }
+    public void OnEditClass() {
+        LoadClass();
     }
     public void OnAddWeapon() {
         string weaponTypeToAdd = weaponsOptions.options[weaponsOptions.value].text;
@@ -335,26 +359,46 @@ public class ClassPanelUI : MonoBehaviour {
             }
         }
     }
-    public void OnSaveClass() {
-        SaveClass();
+    public void OnAddTrait() {
+        string traitToAdd = traitOptions.options[traitOptions.value].text;
+        if (!_traitNames.Contains(traitToAdd)) {
+            _traitNames.Add(traitToAdd);
+            GameObject go = GameObject.Instantiate(traitBtnGO, traitsScrollRect.content);
+            go.GetComponent<ClassTraitButton>().SetTraitName(traitToAdd);
+        }
     }
-    public void OnEditClass() {
-        LoadClass();
+    public void OnRemoveTrait() {
+        if (currentSelectedClassTraitButton != null) {
+            string traitToRemove = currentSelectedClassTraitButton.buttonText.text;
+            if (_traitNames.Remove(traitToRemove)) {
+                GameObject.Destroy(currentSelectedClassTraitButton.gameObject);
+                currentSelectedClassTraitButton = null;
+            }
+        }
     }
     public void OnClickWeaponsTab() {
         weaponsGO.SetActive(true);
         armorsGO.SetActive(false);
         accessoriesGO.SetActive(false);
+        traitsGO.SetActive(false);
     }
     public void OnClickArmorsTab() {
         weaponsGO.SetActive(false);
         armorsGO.SetActive(true);
         accessoriesGO.SetActive(false);
+        traitsGO.SetActive(false);
     }
     public void OnClickAccessoriesTab() {
         weaponsGO.SetActive(false);
         armorsGO.SetActive(false);
         accessoriesGO.SetActive(true);
+        traitsGO.SetActive(false);
+    }
+    public void OnClickTraitsTab() {
+        weaponsGO.SetActive(false);
+        armorsGO.SetActive(false);
+        accessoriesGO.SetActive(false);
+        traitsGO.SetActive(true);
     }
     #endregion
 }
