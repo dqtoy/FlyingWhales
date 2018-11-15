@@ -151,6 +151,25 @@ public class UIManager : MonoBehaviour {
                 HideContextMenu();
             }
         }
+        //if (!IsConsoleShowing() && !IsMouseOnInput() && !PlayerManager.Instance.isChoosingStartingTile) {
+        //    if (Input.GetKeyDown(KeyCode.Space)) {
+        //        if (GameManager.Instance.isPaused) {
+        //            //SetProgressionSpeed(currProgressionSpeed);
+        //            //SetPausedState(false);
+        //            if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X1) {
+        //                SetProgressionSpeed1X();
+        //            } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
+        //                SetProgressionSpeed2X();
+        //            } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
+        //                SetProgressionSpeed4X();
+        //            }
+        //        } else {
+        //            //pause
+        //            //SetPausedState(true);
+        //            Pause();
+        //        }
+        //    }
+        //}
         UpdateSpeedToggles(GameManager.Instance.isPaused);
         if (currentTileHovered != null) {
             if (previousTileHovered == null || currentTileHovered.id != previousTileHovered.id) {
@@ -286,7 +305,7 @@ public class UIManager : MonoBehaviour {
                 speedToggleGroup.NotifyToggleOn(x4Btn);
             }
         }
-        }
+    }
     public void SetProgressionSpeed1X() {
         GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X1);
         Unpause();
