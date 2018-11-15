@@ -244,17 +244,17 @@ public class Player : ILeader {
     }
     #endregion
 
-    #region Actions
-    private void ConstructPlayerActions() {
-        _actions = new List<CharacterAction>();
-        _actions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.MOVE_TO));
-        for (int i = 0; i < _actions.Count; i++) {
-            _actions[i].Initialize();
-            GameObject go = GameObject.Instantiate(UIManager.Instance.playerActionsUI.playerActionsBtnPrefab, UIManager.Instance.playerActionsUI.playerActionsContentTransform);
-            go.GetComponent<PlayerActionBtn>().SetAction(_actions[i]);
-        }
-    }
-    #endregion
+    //#region Actions
+    //private void ConstructPlayerActions() {
+    //    _actions = new List<CharacterAction>();
+    //    _actions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.MOVE_TO));
+    //    for (int i = 0; i < _actions.Count; i++) {
+    //        _actions[i].Initialize();
+    //        GameObject go = GameObject.Instantiate(UIManager.Instance.playerActionsUI.playerActionsBtnPrefab, UIManager.Instance.playerActionsUI.playerActionsContentTransform);
+    //        go.GetComponent<PlayerActionBtn>().SetAction(_actions[i]);
+    //    }
+    //}
+    //#endregion
 
     #region Intel
     public void AddIntel(Intel intel) {

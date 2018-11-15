@@ -1054,7 +1054,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (this.landmarkOnTile != null) {
             UIManager.Instance.ShowLandmarkInfo(this.landmarkOnTile);
         }
-        UIManager.Instance.playerActionsUI.CloseMenu();
+        //UIManager.Instance.playerActionsUI.CloseMenu();
 #endif
     }
     public void RightClick() {

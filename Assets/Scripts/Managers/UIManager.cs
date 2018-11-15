@@ -19,9 +19,9 @@ public class UIManager : MonoBehaviour {
     public RectTransform mainRT;
     [SerializeField] private EventSystem eventSystem;
 
-    [Space(10)]
-    [Header("Unified Settings")]
-    public UnifiedUISettings settings;
+    //[Space(10)]
+    //[Header("Unified Settings")]
+    //public UnifiedUISettings settings;
 
     [Space(10)]
     [SerializeField] UIMenu[] allMenus;
@@ -77,9 +77,9 @@ public class UIManager : MonoBehaviour {
     [Header("Notification Area")]
     [SerializeField] private PlayerNotificationArea notificationArea;
 
-    [Space(10)]
-    [Header("Character Dialog Menu")]
-    [SerializeField] private CharacterDialogMenu characterDialogMenu;
+    //[Space(10)]
+    //[Header("Character Dialog Menu")]
+    //[SerializeField] private CharacterDialogMenu characterDialogMenu;
 
     [Space(10)]
     [Header("Portraits")]
@@ -191,7 +191,7 @@ public class UIManager : MonoBehaviour {
             allMenus[i].Initialize();
             //allMenus[i].ApplyUnifiedSettings(settings);
         }
-        UnifySelectables();
+        //UnifySelectables();
         //popupMessageBox.Initialize();
         Messenger.AddListener<HexTile>(Signals.TILE_RIGHT_CLICKED, ShowContextMenu);
         Messenger.AddListener<HexTile>(Signals.TILE_LEFT_CLICKED, HideMenus);
@@ -203,12 +203,12 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
         //Messenger.AddListener<IInteractable, Interaction>(Signals.ADDED_INTERACTION, OnInteractionAdded);
     }
-    public void UnifySelectables() {
-        UnifiedSelectableBehaviour[] selectables = this.GetComponentsInChildren<UnifiedSelectableBehaviour>(true);
-        for (int i = 0; i < selectables.Length; i++) {
-            selectables[i].Initialize();
-        }
-    }
+    //public void UnifySelectables() {
+    //    UnifiedSelectableBehaviour[] selectables = this.GetComponentsInChildren<UnifiedSelectableBehaviour>(true);
+    //    for (int i = 0; i < selectables.Length; i++) {
+    //        selectables[i].Initialize();
+    //    }
+    //}
     private void HideMenus(HexTile tile) {
         HideContextMenu();
         characterInfoUI.CloseMenu();
@@ -715,40 +715,40 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    #region HexTile Info
-    [Space(10)]
-    [Header("HexTile Info")]
-    [SerializeField] internal HextileInfoUI hexTileInfoUI;
-    public void ShowHexTileInfo(HexTile hexTile) {
-        //HideMainUI();
-        //if (landmarkInfoUI.isShowing) {
-        //    landmarkInfoUI.HideMenu();
-        //}
-        //if (factionInfoUI.isShowing) {
-        //    factionInfoUI.HideMenu();
-        //}
-        //if (characterInfoUI.isShowing) {
-        //    characterInfoUI.HideMenu();
-        //}
-        //if (questInfoUI.isShowing) {
-        //    questInfoUI.HideMenu();
-        //}
-        if (partyinfoUI.isShowing) {
-            partyinfoUI.CloseMenu();
-        }
-        //if (monsterInfoUI.isShowing) {
-        //    monsterInfoUI.HideMenu();
-        //}
-        hexTileInfoUI.SetData(hexTile);
-        hexTileInfoUI.OpenMenu();
-        //		playerActionsUI.ShowPlayerActionsUI ();
-    }
-    public void UpdateHexTileInfo() {
-        if (hexTileInfoUI.isShowing) {
-            hexTileInfoUI.UpdateHexTileInfo();
-        }
-    }
-    #endregion
+    //#region HexTile Info
+    //[Space(10)]
+    //[Header("HexTile Info")]
+    //[SerializeField] internal HextileInfoUI hexTileInfoUI;
+    //public void ShowHexTileInfo(HexTile hexTile) {
+    //    //HideMainUI();
+    //    //if (landmarkInfoUI.isShowing) {
+    //    //    landmarkInfoUI.HideMenu();
+    //    //}
+    //    //if (factionInfoUI.isShowing) {
+    //    //    factionInfoUI.HideMenu();
+    //    //}
+    //    //if (characterInfoUI.isShowing) {
+    //    //    characterInfoUI.HideMenu();
+    //    //}
+    //    //if (questInfoUI.isShowing) {
+    //    //    questInfoUI.HideMenu();
+    //    //}
+    //    if (partyinfoUI.isShowing) {
+    //        partyinfoUI.CloseMenu();
+    //    }
+    //    //if (monsterInfoUI.isShowing) {
+    //    //    monsterInfoUI.HideMenu();
+    //    //}
+    //    hexTileInfoUI.SetData(hexTile);
+    //    hexTileInfoUI.OpenMenu();
+    //    //		playerActionsUI.ShowPlayerActionsUI ();
+    //}
+    //public void UpdateHexTileInfo() {
+    //    if (hexTileInfoUI.isShowing) {
+    //        hexTileInfoUI.UpdateHexTileInfo();
+    //    }
+    //}
+    //#endregion
 
     #region Party Info
     [Space(10)]
@@ -819,20 +819,20 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    #region Player Actions
-    [Space(10)]
-    [Header("Player Actions")]
-    [SerializeField] internal PlayerActionsUI playerActionsUI;
-    public void ShowPlayerActions(BaseLandmark landmark) {
-        playerActionsUI.SetData(landmark);
-        playerActionsUI.OpenMenu();
-    }
-    public void UpdatePlayerActions() {
-        if (playerActionsUI.isShowing) {
-            playerActionsUI.UpdatePlayerActions();
-        }
-    }
-    #endregion
+    //#region Player Actions
+    //[Space(10)]
+    //[Header("Player Actions")]
+    //[SerializeField] internal PlayerActionsUI playerActionsUI;
+    //public void ShowPlayerActions(BaseLandmark landmark) {
+    //    playerActionsUI.SetData(landmark);
+    //    playerActionsUI.OpenMenu();
+    //}
+    //public void UpdatePlayerActions() {
+    //    if (playerActionsUI.isShowing) {
+    //        playerActionsUI.UpdatePlayerActions();
+    //    }
+    //}
+    //#endregion
 
     #region Combat Info
     [Space(10)]
@@ -961,31 +961,31 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    #region Quest Summary
-    [Space(10)]
-    [Header("Quest Summary")]
-    [SerializeField] private TextMeshProUGUI questSummaryLbl;
-    public void UpdateQuestSummary() {
-        string questSummary = string.Empty;
-        //foreach (KeyValuePair<QUEST_TYPE, List<Quest>> kvp in QuestManager.Instance.availableQuests) {
-        //    for (int i = 0; i < kvp.Value.Count; i++) {
-        //        Quest currQuest = kvp.Value[i];
-        //        questSummary += "<b>" + currQuest.name + "</b>\n";
-        //        //if (currQuest is BuildStructureQuest) {
-        //        //    List<Resource> neededResources = (currQuest as BuildStructureQuest).GetNeededResources();
-        //        //    questSummary += "Needed Resources: ";
-        //        //    neededResources.ForEach(x => questSummary += x.resource.ToString() + " - " + x.amount.ToString() + "\n");
-        //        //}
-        //        //List<Character> characters = currQuest.GetAcceptedCharacters();
-        //        //for (int j = 0; j < characters.Count; j++) {
-        //        //    questSummary += "       " + characters[j].urlName + "\n";
-        //        //}
-        //    }
+    //#region Quest Summary
+    //[Space(10)]
+    //[Header("Quest Summary")]
+    //[SerializeField] private TextMeshProUGUI questSummaryLbl;
+    //public void UpdateQuestSummary() {
+    //    string questSummary = string.Empty;
+    //    //foreach (KeyValuePair<QUEST_TYPE, List<Quest>> kvp in QuestManager.Instance.availableQuests) {
+    //    //    for (int i = 0; i < kvp.Value.Count; i++) {
+    //    //        Quest currQuest = kvp.Value[i];
+    //    //        questSummary += "<b>" + currQuest.name + "</b>\n";
+    //    //        //if (currQuest is BuildStructureQuest) {
+    //    //        //    List<Resource> neededResources = (currQuest as BuildStructureQuest).GetNeededResources();
+    //    //        //    questSummary += "Needed Resources: ";
+    //    //        //    neededResources.ForEach(x => questSummary += x.resource.ToString() + " - " + x.amount.ToString() + "\n");
+    //    //        //}
+    //    //        //List<Character> characters = currQuest.GetAcceptedCharacters();
+    //    //        //for (int j = 0; j < characters.Count; j++) {
+    //    //        //    questSummary += "       " + characters[j].urlName + "\n";
+    //    //        //}
+    //    //    }
            
-        //}
-        questSummaryLbl.text = questSummary;
-    }
-    #endregion
+    //    //}
+    //    questSummaryLbl.text = questSummary;
+    //}
+    //#endregion
 
     #region Tile Hover
     private HexTile previousTileHovered;

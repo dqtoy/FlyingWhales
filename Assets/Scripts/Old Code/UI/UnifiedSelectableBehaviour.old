@@ -39,8 +39,8 @@ public class UnifiedSelectableBehaviour : MonoBehaviour, IPointerEnterHandler, I
     }
 
     public void Reset() {
-        selectable.image.sprite = UIManager.Instance.settings.hoverOutSprite;
-        text.color = UIManager.Instance.settings.hoverOutTextColor;
+        //selectable.image.sprite = UIManager.Instance.settings.hoverOutSprite;
+        //text.color = UIManager.Instance.settings.hoverOutTextColor;
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
@@ -50,8 +50,8 @@ public class UnifiedSelectableBehaviour : MonoBehaviour, IPointerEnterHandler, I
                 return;
             }
         }
-        selectable.image.sprite = UIManager.Instance.settings.hoverOverSprite;
-        text.color = UIManager.Instance.settings.hoverOverTextColor;
+        //selectable.image.sprite = UIManager.Instance.settings.hoverOverSprite;
+        //text.color = UIManager.Instance.settings.hoverOverTextColor;
     }
 
     public void OnPointerExit(PointerEventData eventData) {
@@ -61,8 +61,8 @@ public class UnifiedSelectableBehaviour : MonoBehaviour, IPointerEnterHandler, I
                 return;
             }
         }
-        selectable.image.sprite = UIManager.Instance.settings.hoverOutSprite;
-        text.color = UIManager.Instance.settings.hoverOutTextColor;
+        //selectable.image.sprite = UIManager.Instance.settings.hoverOutSprite;
+        //text.color = UIManager.Instance.settings.hoverOutTextColor;
     }
 
     #region Toggle Specific
@@ -70,13 +70,13 @@ public class UnifiedSelectableBehaviour : MonoBehaviour, IPointerEnterHandler, I
         if (isHovering) {
             return;
         }
-        if (isOn) {
-            selectable.image.sprite = UIManager.Instance.settings.hoverOverSprite;
-            text.color = UIManager.Instance.settings.toggleOnTextColor;
-        } else {
-            selectable.image.sprite = UIManager.Instance.settings.hoverOutSprite;
-            text.color = UIManager.Instance.settings.toggleOffTextColor;
-        }
+        //if (isOn) {
+        //    selectable.image.sprite = UIManager.Instance.settings.hoverOverSprite;
+        //    text.color = UIManager.Instance.settings.toggleOnTextColor;
+        //} else {
+        //    selectable.image.sprite = UIManager.Instance.settings.hoverOutSprite;
+        //    text.color = UIManager.Instance.settings.toggleOffTextColor;
+        //}
     }
     #endregion
 
