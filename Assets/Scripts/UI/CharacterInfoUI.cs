@@ -185,7 +185,7 @@ public class CharacterInfoUI : UIMenu {
     public override void CloseMenu() {
         base.CloseMenu();
         _activeCharacter = null;
-        PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
+        //PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
         //PlayerUI.Instance.CollapseMinionHolder();
         //InteractionUI.Instance.HideInteractionUI();
     }
@@ -210,7 +210,7 @@ public class CharacterInfoUI : UIMenu {
         //CheckShowSnatchButton();
         currentActionIcon.SetCharacter(_activeCharacter);
         currentActionIcon.SetAction(_activeCharacter.currentParty.currentAction);
-        PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeCharacter);
+        //PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeCharacter);
         //PlayerUI.Instance.UncollapseMinionHolder();
         //InteractionUI.Instance.OpenInteractionUI(_activeCharacter);
         historyScrollView.verticalNormalizedPosition = 1;

@@ -13,6 +13,6 @@ public class PlayerPickerButton : MonoBehaviour {
     }
 
     public void OnClickPlayerPicker() {
-        PlayerManager.Instance.player.SetCurrentlySelectedPlayerPicker(_playerPicker);
+        //PlayerManager.Instance.player.SetCurrentlySelectedPlayerPicker(_playerPicker);
     }
 }

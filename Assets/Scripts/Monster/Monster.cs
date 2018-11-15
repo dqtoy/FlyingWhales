@@ -247,9 +247,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public CharacterPortrait characterPortrait {
         get { return _characterPortrait; }
     }
-    public HiddenDesire hiddenDesire {
-        get { return null; }
-    }
+    //public HiddenDesire hiddenDesire {
+    //    get { return null; }
+    //}
     public Weapon equippedWeapon {
         get { return null; }
     }

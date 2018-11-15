@@ -22,12 +22,12 @@ public class LandmarkInfoUI : UIMenu {
     [SerializeField] private GameObject logsGO;
     [SerializeField] private GameObject[] connectorsGO;
 
-    [Space(10)]
-    [Header("Info")]
-    //[SerializeField] private GameObject[] secrets;
-    //[SerializeField] private GameObject[] intel;
-    //[SerializeField] private GameObject[] encounters;
-    [SerializeField] private IntelItem[] intelItems;
+    //[Space(10)]
+    //[Header("Info")]
+    ////[SerializeField] private GameObject[] secrets;
+    ////[SerializeField] private GameObject[] intel;
+    ////[SerializeField] private GameObject[] encounters;
+    //[SerializeField] private IntelItem[] intelItems;
 
     [Space(10)]
     [Header("Characters")]
@@ -48,9 +48,9 @@ public class LandmarkInfoUI : UIMenu {
     [Header("Defenders")]
     [SerializeField] private LandmarkCharacterItem[] defenderSlots;
 
-    [Space(10)]
-    [Header("Others")]
-    [SerializeField] private GameObject[] notInspectedBGs;
+    //[Space(10)]
+    //[Header("Others")]
+    //[SerializeField] private GameObject[] notInspectedBGs;
 
     [Space(10)]
     [Header("Investigation")]
@@ -131,11 +131,11 @@ public class LandmarkInfoUI : UIMenu {
         //UpdateItems();
         UpdateAllHistoryInfo();
     }
-    private void UpdateBGs(bool state) {
-        for (int i = 0; i < notInspectedBGs.Length; i++) {
-            notInspectedBGs[i].SetActive(state);
-        }
-    }
+    //private void UpdateBGs(bool state) {
+    //    for (int i = 0; i < notInspectedBGs.Length; i++) {
+    //        notInspectedBGs[i].SetActive(state);
+    //    }
+    //}
     private void UpdateHiddenUI() {
         if (_activeLandmark.tileLocation.areaOfTile.locationIntel.isObtained) {
             ShowIntelTriggeredUI();
