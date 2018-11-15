@@ -17,6 +17,7 @@ public class TraitEffect {
     public float amount;
     public bool isPercentage;
     public TRAIT_REQUIREMENT_TARGET target;
+    public string description;
 
     public bool hasRequirement;
     public bool isNot;

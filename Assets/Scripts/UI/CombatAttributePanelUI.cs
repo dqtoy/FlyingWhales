@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 using System.IO;
+using System;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -12,19 +13,34 @@ using UnityEditor;
 public class CombatAttributePanelUI : MonoBehaviour {
     public static CombatAttributePanelUI Instance;
 
+    //General
     public InputField nameInput;
     public InputField descriptionInput;
+    public InputField durationInput;
+    public Dropdown traitTypeOptions;
+
+    //Effects
     public InputField amountInput;
-
+    public InputField traitEffectDescriptionInput;
     public Dropdown statOptions;
-    public Dropdown damageIdentifierOptions;
+    public Dropdown requirementTargetOptions;
     public Dropdown requirementTypeOptions;
+    public Dropdown requirementSeparatorOptions;
     public Dropdown requirementOptions;
-
     public Toggle percentageToggle;
     public Toggle hasRequirementToggle;
+    public Toggle isNotToggle;
+    public ScrollRect requirementsScrollRect;
+    public ScrollRect effectsScrollRect;
+    public GameObject traitEffectBtnGO;
+    public GameObject requirementBtnGO;
+    public GameObject requirementsParentGO;
+    [NonSerialized] public TraitEffectButton currentSelectedTraitEffectButton;
+    [NonSerialized] public RequirementButton currentSelectedRequirementButton;
 
     private List<string> _allCombatAttributes;
+    private List<TraitEffect> _effects;
+    private List<string> _requirements;
 
     #region getters/setters
     public List<string> allCombatAttributes {
@@ -48,34 +64,55 @@ public class CombatAttributePanelUI : MonoBehaviour {
         CharacterPanelUI.Instance.UpdateCombatAttributeOptions();
     }
     private void LoadAllData() {
+        _requirements = new List<string>();
+        _effects = new List<TraitEffect>();
+
         statOptions.ClearOptions();
-        damageIdentifierOptions.ClearOptions();
+        traitTypeOptions.ClearOptions();
         requirementTypeOptions.ClearOptions();
         requirementOptions.ClearOptions();
+        requirementTargetOptions.ClearOptions();
+        requirementSeparatorOptions.ClearOptions();
 
         string[] stats = System.Enum.GetNames(typeof(STAT));
-        string[] damageIdentifier = System.Enum.GetNames(typeof(DAMAGE_IDENTIFIER));
+        string[] traitTypes = System.Enum.GetNames(typeof(TRAIT_TYPE));
         string[] requirementTypes = System.Enum.GetNames(typeof(TRAIT_REQUIREMENT));
+        string[] requirementTargets = System.Enum.GetNames(typeof(TRAIT_REQUIREMENT_TARGET));
+        string[] requirementSeparators = System.Enum.GetNames(typeof(TRAIT_REQUIREMENT_SEPARATOR));
 
         statOptions.AddOptions(stats.ToList());
-        damageIdentifierOptions.AddOptions(damageIdentifier.ToList());
+        traitTypeOptions.AddOptions(traitTypes.ToList());
         requirementTypeOptions.AddOptions(requirementTypes.ToList());
-        requirementTypeOptions.value = 0;
+        requirementTargetOptions.AddOptions(requirementTargets.ToList());
+        requirementSeparatorOptions.AddOptions(requirementSeparators.ToList());
+
+        //requirementTypeOptions.value = 0;
+        OnRequirementTypeChange(requirementTypeOptions.value);
 
         UpdateCombatAttributes();
     }
     private void ClearData() {
         statOptions.value = 0;
-        damageIdentifierOptions.value = 0;
+        traitTypeOptions.value = 0;
         requirementTypeOptions.value = 0;
         requirementOptions.value = 0;
+        requirementTargetOptions.value = 0;
+        requirementSeparatorOptions.value = 0;
 
         nameInput.text = string.Empty;
         descriptionInput.text = string.Empty;
-        amountInput.text = string.Empty;
+        traitEffectDescriptionInput.text = string.Empty;
+        amountInput.text = "0";
+        durationInput.text = "0";
 
         percentageToggle.isOn = false;
         hasRequirementToggle.isOn = false;
+        isNotToggle.isOn = false;
+
+        _effects.Clear();
+        _requirements.Clear();
+        effectsScrollRect.content.DestroyChildren();
+        requirementsScrollRect.content.DestroyChildren();
     }
 
     private void SaveCombatAttribute() {
@@ -101,23 +138,14 @@ public class CombatAttributePanelUI : MonoBehaviour {
         if (!string.IsNullOrEmpty(amountInput.text)) {
             amountInp = float.Parse(amountInput.text);
         }
-        Trait combatAttribute = new Trait {
+        Trait newTrait = new Trait {
             name = nameInput.text,
             description = descriptionInput.text,
-            //amount = amountInp,
-            //stat = (STAT) System.Enum.Parse(typeof(STAT), statOptions.options[statOptions.value].text),
-            //damageIdentifier = (DAMAGE_IDENTIFIER) System.Enum.Parse(typeof(DAMAGE_IDENTIFIER), damageIdentifierOptions.options[damageIdentifierOptions.value].text),
-            //requirementType = (TRAIT_REQUIREMENT) System.Enum.Parse(typeof(TRAIT_REQUIREMENT), requirementTypeOptions.options[requirementTypeOptions.value].text),
-            //hasRequirement = hasRequirementToggle.isOn,
-            //isPercentage = percentageToggle.isOn
+            type = (TRAIT_TYPE) System.Enum.Parse(typeof(TRAIT_TYPE), traitTypeOptions.options[traitTypeOptions.value].text),
+            daysDuration = int.Parse(durationInput.text),
+            effects = _effects
         };
-
-        if (hasRequirementToggle.isOn) {
-            Trait newCombatAtt = combatAttribute;
-            //newCombatAtt.requirement = requirementOptions.options[requirementOptions.value].text;
-            combatAttribute = newCombatAtt;
-        }
-        string jsonString = JsonUtility.ToJson(combatAttribute);
+        string jsonString = JsonUtility.ToJson(newTrait);
 
         System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
         writer.WriteLine(jsonString);
@@ -127,14 +155,14 @@ public class CombatAttributePanelUI : MonoBehaviour {
         //Re-import the file to update the reference in the editor
         UnityEditor.AssetDatabase.ImportAsset(path);
 #endif
-        Debug.Log("Successfully saved combat attribute at " + path);
+        Debug.Log("Successfully saved trait at " + path);
 
         UpdateCombatAttributes();
     }
 
     private void LoadCombatAttribute() {
 #if UNITY_EDITOR
-        string filePath = EditorUtility.OpenFilePanel("Select Combat Attribute", Utilities.dataPath + "CombatAttributes/", "json");
+        string filePath = EditorUtility.OpenFilePanel("Select Trait", Utilities.dataPath + "CombatAttributes/", "json");
         if (!string.IsNullOrEmpty(filePath)) {
             string dataAsJson = File.ReadAllText(filePath);
             Trait attribute = JsonUtility.FromJson<Trait>(dataAsJson);
@@ -143,29 +171,23 @@ public class CombatAttributePanelUI : MonoBehaviour {
         }
 #endif
     }
-    private void LoadCombatAttributeDataToUI(Trait attribute) {
-        nameInput.text = attribute.name;
-        descriptionInput.text = attribute.description;
-        //amountInput.text = attribute.amount.ToString();
+    private void LoadCombatAttributeDataToUI(Trait trait) {
+        nameInput.text = trait.name;
+        descriptionInput.text = trait.description;
+        traitTypeOptions.value = GetOptionIndex(trait.type.ToString(), traitTypeOptions);
+        durationInput.text = trait.daysDuration.ToString();
 
-        //percentageToggle.isOn = attribute.isPercentage;
-        //hasRequirementToggle.isOn = attribute.hasRequirement;
-
-        //statOptions.value = GetOptionIndex(attribute.stat.ToString(), statOptions);
-        //damageIdentifierOptions.value = GetOptionIndex(attribute.damageIdentifier.ToString(), damageIdentifierOptions);
-        //requirementTypeOptions.value = GetOptionIndex(attribute.requirementType.ToString(), requirementTypeOptions);
-
-        //if (requirementOptions.transform.parent.gameObject.activeSelf) {
-        //    requirementOptions.value = GetOptionIndex(attribute.requirement, requirementOptions);
-        //}
+        for (int i = 0; i < trait.effects.Count; i++) {
+            TraitEffect traitEffect = trait.effects[i];
+            _effects.Add(traitEffect);
+            GameObject go = GameObject.Instantiate(traitEffectBtnGO, effectsScrollRect.content);
+            go.GetComponent<TraitEffectButton>().SetTraitEffect(traitEffect);
+        }
     }
     private void PopulateRequirements(List<string> requirements) {
         if(requirements != null) {
             requirementOptions.ClearOptions();
             requirementOptions.AddOptions(requirements);
-            requirementOptions.transform.parent.gameObject.SetActive(true);
-        } else {
-            requirementOptions.transform.parent.gameObject.SetActive(false);
         }
     }
     private int GetOptionIndex(string identifier, Dropdown options) {
@@ -183,9 +205,12 @@ public class CombatAttributePanelUI : MonoBehaviour {
         //    return ClassPanelUI.Instance.allClasses;
         //} else if (requirementType == TRAIT_REQUIREMENT.ELEMENT) {
         //    return System.Enum.GetNames(typeof(ELEMENT)).ToList();
-        //} else if (requirementType == TRAIT_REQUIREMENT.RACE) {
-        //    return System.Enum.GetNames(typeof(RACE)).ToList();
         //}
+        if (requirementType == TRAIT_REQUIREMENT.RACE) {
+            return System.Enum.GetNames(typeof(RACE)).ToList();
+        }else if (requirementType == TRAIT_REQUIREMENT.TRAIT) {
+            return _allCombatAttributes;
+        }
         return null;
     }
 
@@ -198,10 +223,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
         RequirementOptionsActivation(state);
     }
     private void RequirementOptionsActivation(bool state) {
-        requirementTypeOptions.transform.parent.gameObject.SetActive(state);
-        if (!state) {
-            requirementOptions.transform.parent.gameObject.SetActive(false);
-        }
+        requirementsParentGO.SetActive(state);
     }
     #region Button Clicks
     public void OnClickAddNewAttribute() {
@@ -212,6 +234,49 @@ public class CombatAttributePanelUI : MonoBehaviour {
     }
     public void OnClickSaveAttribute() {
         SaveCombatAttribute();
+    }
+    public void OnClickAddRequirement() {
+        string requirementToAdd = requirementOptions.options[requirementOptions.value].text;
+        if (!_requirements.Contains(requirementToAdd)) {
+            _requirements.Add(requirementToAdd);
+            GameObject go = GameObject.Instantiate(requirementBtnGO, requirementsScrollRect.content);
+            go.GetComponent<RequirementButton>().SetRequirement(requirementToAdd);
+        }
+    }
+    public void OnClickRemoveRequirement() {
+        if (currentSelectedRequirementButton != null) {
+            string requirementToRemove = currentSelectedRequirementButton.requirement;
+            if (_requirements.Remove(requirementToRemove)) {
+                GameObject.Destroy(currentSelectedRequirementButton.gameObject);
+                currentSelectedRequirementButton = null;
+            }
+        }
+    }
+    public void OnClickAddTraitEffect() {
+        TraitEffect traitEffect = new TraitEffect {
+            stat = (STAT) System.Enum.Parse(typeof(STAT), statOptions.options[statOptions.value].text),
+            amount = float.Parse(amountInput.text),
+            isPercentage = percentageToggle.isOn,
+            target = (TRAIT_REQUIREMENT_TARGET) System.Enum.Parse(typeof(TRAIT_REQUIREMENT_TARGET), requirementTargetOptions.options[requirementTargetOptions.value].text),
+            description = traitEffectDescriptionInput.text,
+            hasRequirement = hasRequirementToggle.isOn,
+            isNot = isNotToggle.isOn,
+            requirementType = (TRAIT_REQUIREMENT) System.Enum.Parse(typeof(TRAIT_REQUIREMENT), requirementTypeOptions.options[requirementTypeOptions.value].text),
+            requirementSeparator = (TRAIT_REQUIREMENT_SEPARATOR) System.Enum.Parse(typeof(TRAIT_REQUIREMENT_SEPARATOR), requirementSeparatorOptions.options[requirementSeparatorOptions.value].text),
+            requirements = new List<string>(_requirements)
+        };
+        _effects.Add(traitEffect);
+        GameObject go = GameObject.Instantiate(traitEffectBtnGO, effectsScrollRect.content);
+        go.GetComponent<TraitEffectButton>().SetTraitEffect(traitEffect);
+    }
+    public void OnClickRemoveTraitEffect() {
+        if (currentSelectedTraitEffectButton != null) {
+            TraitEffect traitEffectToRemove = currentSelectedTraitEffectButton.traitEffect;
+            if (_effects.Remove(traitEffectToRemove)) {
+                GameObject.Destroy(currentSelectedTraitEffectButton.gameObject);
+                currentSelectedTraitEffectButton = null;
+            }
+        }
     }
     #endregion
 }
