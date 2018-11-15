@@ -1008,10 +1008,10 @@ public class UIManager : MonoBehaviour {
     public void HidePlayerPicker() {
         playerPickerGO.SetActive(false);
         //PlayerUI.Instance.SetBottomMenuTogglesState(false);
-        PlayerManager.Instance.player.OnHidePlayerPicker();
+        //PlayerManager.Instance.player.OnHidePlayerPicker();
     }
     public void OnClickOkPlayerPicker() {
-        PlayerManager.Instance.player.OnOkPlayerPicker();
+        //PlayerManager.Instance.player.OnOkPlayerPicker();
         HidePlayerPicker();
     }
     public void OnClickClosePlayerPicker() {

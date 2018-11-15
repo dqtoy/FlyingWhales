@@ -139,7 +139,7 @@ public class KillerOnTheLoose : Interaction {
 
     #region State Effects
     private void ConvertToDemonRewardEffect(InteractionState state) {
-        Minion createdMinion = PlayerManager.Instance.player.CreateNewMinion("Farmer", RACE.DEMON, DEMON_TYPE.ENVY, "Inspect", false);
+        Minion createdMinion = PlayerManager.Instance.player.CreateNewMinion("Farmer", RACE.DEMON, DEMON_TYPE.ENVY, false);
         PlayerManager.Instance.player.AddMinion(createdMinion);
         state.AddLogFiller(new LogFiller(createdMinion, createdMinion.name, LOG_IDENTIFIER.STRING_1));
     }

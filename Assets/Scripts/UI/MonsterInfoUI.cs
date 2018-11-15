@@ -101,13 +101,13 @@ public class MonsterInfoUI : UIMenu {
         UpdateMonsterInfo();
         currentActionIcon.SetCharacter(_activeMonster);
         currentActionIcon.SetAction(_activeMonster.currentParty.currentAction);
-        PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeMonster);
+        //PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeMonster);
         historyScrollView.verticalNormalizedPosition = 1;
     }
     public override void CloseMenu() {
         base.CloseMenu();
         _activeMonster = null;
-        PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
+        //PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
     }
     public override void SetData(object data) {
         base.SetData(data);

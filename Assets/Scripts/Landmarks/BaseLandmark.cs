@@ -39,7 +39,7 @@ public class BaseLandmark : ILocation, IInteractable {
     protected List<LANDMARK_TAG> _landmarkTags;
     protected List<HexTile> _nextCorruptedTilesToCheck;
     protected List<HexTile> _wallTiles;
-    protected List<Secret> _secrets;
+    //protected List<Secret> _secrets;
     protected List<Intel> _intels;
     protected List<string> _encounters;
     protected List<Interaction> _currentInteractions;
@@ -140,9 +140,9 @@ public class BaseLandmark : ILocation, IInteractable {
     public List<Item> lastInspectedItemsInLandmark {
         get { return _lastInspectedItemsInLandmark; }
     }
-    public List<Secret> secrets {
-        get { return _secrets; }
-    }
+    //public List<Secret> secrets {
+    //    get { return _secrets; }
+    //}
     public List<Intel> intels {
         get { return _intels; }
     }
@@ -194,9 +194,9 @@ public class BaseLandmark : ILocation, IInteractable {
     public StructureObj landmarkObj {
         get { return _landmarkObj; }
     }
-    public HiddenDesire hiddenDesire {
-        get { return null; }
-    }
+    //public HiddenDesire hiddenDesire {
+    //    get { return null; }
+    //}
     public ILocation specificLocation {
         get { return this; }
     }
@@ -218,7 +218,7 @@ public class BaseLandmark : ILocation, IInteractable {
         _nextCorruptedTilesToCheck = new List<HexTile>();
         _wallTiles = new List<HexTile>();
         advertisedEvents = new List<GameEvent>();
-        _secrets = new List<Secret>();
+        //_secrets = new List<Secret>();
         _intels = new List<Intel>();
         _encounters = new List<string>();
         _currentInteractions = new List<Interaction>();

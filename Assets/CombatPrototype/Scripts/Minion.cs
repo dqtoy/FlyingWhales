@@ -7,7 +7,7 @@ using System;
 public class Minion : IUnit {
 
     private PlayerCharacterItem _characterItem;
-    private PlayerAbility _ability;
+    //private PlayerAbility _ability;
     private BaseLandmark _currentlyExploringLandmark;
     private ICharacter _icharacter;
     private IInteractable _target;
@@ -24,9 +24,9 @@ public class Minion : IUnit {
     public string name {
         get { return icharacter.name; }
     }
-    public PlayerAbility ability {
-        get { return _ability; }
-    }
+    //public PlayerAbility ability {
+    //    get { return _ability; }
+    //}
     public BaseLandmark currentlyExploringLandmark {
         get { return _currentlyExploringLandmark; }
     }
@@ -59,9 +59,9 @@ public class Minion : IUnit {
     }
     #endregion
 
-    public Minion(ICharacter icharacter, PlayerAbility ability) {
+    public Minion(ICharacter icharacter) {
         _icharacter = icharacter;
-        _ability = ability;
+        //_ability = ability;
         _lvl = 1;
         _exp = 0;
         _type = (DEMON_TYPE) UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(DEMON_TYPE)).Length);
@@ -74,9 +74,9 @@ public class Minion : IUnit {
         _icharacter.DisableInteractionGeneration();
         _icharacter.characterIntel.SetObtainedState(true);
     }
-    public Minion(ICharacter icharacter, PlayerAbility ability, DEMON_TYPE demonType) {
+    public Minion(ICharacter icharacter, DEMON_TYPE demonType) {
         _icharacter = icharacter;
-        _ability = ability;
+        //_ability = ability;
         _lvl = 1;
         _exp = 0;
         _type = demonType;
@@ -94,14 +94,14 @@ public class Minion : IUnit {
     }
     public void SendMinionToPerformAbility(IInteractable target) {
         _target = target;
-        _icharacter.ownParty.GoToLocation(target.specificLocation, PATHFINDING_MODE.PASSABLE, () => DoAbility());
+        _icharacter.ownParty.GoToLocation(target.specificLocation, PATHFINDING_MODE.PASSABLE);
     }
 
-    private void DoAbility() {
-        _ability.DoAbility(_target);
+    //private void DoAbility() {
+    //    _ability.DoAbility(_target);
 
-        //Change activate button to recall button
-    }
+    //    //Change activate button to recall button
+    //}
 
     public void SetEnabledState(bool state) {
         if (icharacter.IsInOwnParty()) {

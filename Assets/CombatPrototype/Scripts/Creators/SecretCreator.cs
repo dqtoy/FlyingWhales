@@ -45,14 +45,14 @@ public class SecretCreator : Editor {
         }
     }
     private void SaveSecretJson(SecretComponent currentComponent, string path) {
-        Secret secret = new Secret();
-        secret.SetData(currentComponent);
-        string jsonString = JsonUtility.ToJson(secret);
-        System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
-        writer.WriteLine(jsonString);
-        writer.Close();
-        UnityEditor.AssetDatabase.ImportAsset(path);
-        Debug.Log("Successfully saved secret " + currentComponent.id + " at " + path);
+        //Secret secret = new Secret();
+        //secret.SetData(currentComponent);
+        //string jsonString = JsonUtility.ToJson(secret);
+        //System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
+        //writer.WriteLine(jsonString);
+        //writer.Close();
+        //UnityEditor.AssetDatabase.ImportAsset(path);
+        //Debug.Log("Successfully saved secret " + currentComponent.id + " at " + path);
     }
     private bool AlreadyHasSecretID(string path, string id, ref string detailedPath) {
         foreach (string file in Directory.GetFiles(path, "*.json")) {

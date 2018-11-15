@@ -172,7 +172,7 @@ public class PlayerManager : MonoBehaviour {
     #region Minion
     public Minion CreateNewMinion(DEMON_TYPE type, int level = 1) {
         Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter("Farmer", RACE.HUMANS, GENDER.MALE,
-            player.playerFaction, player.demonicPortal, false), player.GetAbility("Inspect"), type);
+            player.playerFaction, player.demonicPortal, false), type);
         minion.SetLevel(level);
         return minion;
     }

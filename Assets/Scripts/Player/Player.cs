@@ -18,14 +18,14 @@ public class Player : ILeader {
     private float _currentLifestoneChance;
     private IPlayerPicker _currentlySelectedPlayerPicker;
     private IInteractable _currentTargetInteractable;
-    private PlayerAbility _currentActiveAbility;
+    //private PlayerAbility _currentActiveAbility;
     private Character _markedCharacter;
     private BaseLandmark _demonicPortal;
     private List<CharacterAction> _actions;
     private List<Character> _snatchedCharacters;
     private List<Intel> _intels;
     private List<Item> _items;
-    private List<PlayerAbility> _allAbilities;
+    //private List<PlayerAbility> _allAbilities;
     private List<Minion> _minions;
     private Dictionary<CURRENCY, int> _currencies;
 
@@ -59,9 +59,9 @@ public class Player : ILeader {
     public RACE race {
         get { return RACE.HUMANS; }
     }
-    public PlayerAbility currentActiveAbility {
-        get { return _currentActiveAbility; }
-    }
+    //public PlayerAbility currentActiveAbility {
+    //    get { return _currentActiveAbility; }
+    //}
     public Character markedCharacter {
         get { return _markedCharacter; }
     }
@@ -80,9 +80,9 @@ public class Player : ILeader {
     public List<Item> items {
         get { return _items; }
     }
-    public List<PlayerAbility> allAbilities {
-        get { return _allAbilities; }
-    }
+    //public List<PlayerAbility> allAbilities {
+    //    get { return _allAbilities; }
+    //}
     public Dictionary<CURRENCY, int> currencies {
         get { return _currencies; }
     }
@@ -101,7 +101,7 @@ public class Player : ILeader {
         //_maxMinions = PlayerUI.Instance.minionItems.Count;
         maxImps = 5;
         SetCurrentLifestoneChance(25f);
-        ConstructAbilities();
+        //ConstructAbilities();
         ConstructCurrencies();
         //Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_ADDED, OnTileAddedToPlayerArea);
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
@@ -321,34 +321,34 @@ public class Player : ILeader {
         }
         return null;
     }
-    public void PickItemToGiveToCharacter(Character character, GiveItem giveItemAbility) {
-        //TODO
-        _currentTargetInteractable = character;
-        _currentActiveAbility = giveItemAbility;
-        PlayerUI.Instance.ShowPlayerPickerAndPopulate();
-    }
-    private void GiveItemToCharacter() {
-        Item item = _currentlySelectedPlayerPicker as Item;
-        GiveItem giveItem = _currentActiveAbility as GiveItem;
-        Character character = _currentTargetInteractable as Character;
-        character.PickupItem(item);
-        RemoveItem(item);
-        giveItem.HasGivenItem(character);
-    }
-    public void PickItemToTakeFromLandmark(BaseLandmark landmark, TakeItem takeItem) {
-        //TODO
-        _currentTargetInteractable = landmark;
-        _currentActiveAbility = takeItem;
-        PlayerUI.Instance.ShowPlayerPickerAndPopulate();
-    }
-    private void TakeItemFromLandmark() {
-        Item item = _currentlySelectedPlayerPicker as Item;
-        TakeItem takeItem = _currentActiveAbility as TakeItem;
-        BaseLandmark landmark = _currentTargetInteractable as BaseLandmark;
-        AddItem(item);
-        landmark.RemoveItemInLandmark(item);
-        takeItem.HasTakenItem(landmark);
-    }
+    //public void PickItemToGiveToCharacter(Character character, GiveItem giveItemAbility) {
+    //    //TODO
+    //    _currentTargetInteractable = character;
+    //    _currentActiveAbility = giveItemAbility;
+    //    PlayerUI.Instance.ShowPlayerPickerAndPopulate();
+    //}
+    //private void GiveItemToCharacter() {
+    //    Item item = _currentlySelectedPlayerPicker as Item;
+    //    GiveItem giveItem = _currentActiveAbility as GiveItem;
+    //    Character character = _currentTargetInteractable as Character;
+    //    character.PickupItem(item);
+    //    RemoveItem(item);
+    //    giveItem.HasGivenItem(character);
+    //}
+    //public void PickItemToTakeFromLandmark(BaseLandmark landmark, TakeItem takeItem) {
+    //    //TODO
+    //    _currentTargetInteractable = landmark;
+    //    _currentActiveAbility = takeItem;
+    //    PlayerUI.Instance.ShowPlayerPickerAndPopulate();
+    //}
+    //private void TakeItemFromLandmark() {
+    //    Item item = _currentlySelectedPlayerPicker as Item;
+    //    TakeItem takeItem = _currentActiveAbility as TakeItem;
+    //    BaseLandmark landmark = _currentTargetInteractable as BaseLandmark;
+    //    AddItem(item);
+    //    landmark.RemoveItemInLandmark(item);
+    //    takeItem.HasTakenItem(landmark);
+    //}
     #endregion
 
     #region Lifestone
@@ -373,67 +373,67 @@ public class Player : ILeader {
     }
     #endregion
 
-    #region PlayerPicker
-    public void SetCurrentlySelectedPlayerPicker(IPlayerPicker playerPicker) {
-        _currentlySelectedPlayerPicker = playerPicker;
-    }
-    public void OnOkPlayerPicker() {
-        if(_currentlySelectedPlayerPicker != null && _currentTargetInteractable != null && _currentActiveAbility != null) {
-            if(_currentActiveAbility is GiveItem) {
-                GiveItemToCharacter();
-            }else if (_currentActiveAbility is ShareIntel) {
-                //GiveIntelToCharacter();
-            } else if (_currentActiveAbility is TakeItem) {
-                TakeItemFromLandmark();
-            }
-        }
-    }
-    public void OnHidePlayerPicker() {
-        _currentlySelectedPlayerPicker = null;
-        _currentTargetInteractable = null;
-        _currentActiveAbility = null;
-    }
-    #endregion
+    //#region PlayerPicker
+    //public void SetCurrentlySelectedPlayerPicker(IPlayerPicker playerPicker) {
+    //    _currentlySelectedPlayerPicker = playerPicker;
+    //}
+    //public void OnOkPlayerPicker() {
+    //    if(_currentlySelectedPlayerPicker != null && _currentTargetInteractable != null && _currentActiveAbility != null) {
+    //        if(_currentActiveAbility is GiveItem) {
+    //            GiveItemToCharacter();
+    //        }else if (_currentActiveAbility is ShareIntel) {
+    //            //GiveIntelToCharacter();
+    //        } else if (_currentActiveAbility is TakeItem) {
+    //            TakeItemFromLandmark();
+    //        }
+    //    }
+    //}
+    //public void OnHidePlayerPicker() {
+    //    _currentlySelectedPlayerPicker = null;
+    //    _currentTargetInteractable = null;
+    //    _currentActiveAbility = null;
+    //}
+    //#endregion
 
-    #region Abilities
-    private void ConstructAbilities() {
-        _allAbilities = new List<PlayerAbility>();
-        Inspect inspect = new Inspect();
-        RevealSecret revealSecret = new RevealSecret();
-        Spook spook = new Spook();
-        Assist assist = new Assist();
-        GiveItem giveItem = new GiveItem();
-        ShareIntel shareIntel = new ShareIntel();
-        TakeItem takeItem = new TakeItem();
-        MonsterAttack monsterAttack = new MonsterAttack();
-        Mark mark = new Mark();
-        Awaken awaken = new Awaken();
-        AwakenDesire awakenDesire = new AwakenDesire();
+    //#region Abilities
+    //private void ConstructAbilities() {
+    //    _allAbilities = new List<PlayerAbility>();
+    //    Inspect inspect = new Inspect();
+    //    RevealSecret revealSecret = new RevealSecret();
+    //    Spook spook = new Spook();
+    //    Assist assist = new Assist();
+    //    GiveItem giveItem = new GiveItem();
+    //    ShareIntel shareIntel = new ShareIntel();
+    //    TakeItem takeItem = new TakeItem();
+    //    MonsterAttack monsterAttack = new MonsterAttack();
+    //    Mark mark = new Mark();
+    //    Awaken awaken = new Awaken();
+    //    AwakenDesire awakenDesire = new AwakenDesire();
 
-        _allAbilities.Add(inspect);
-        _allAbilities.Add(revealSecret);
-        _allAbilities.Add(spook);
-        _allAbilities.Add(assist);
-        _allAbilities.Add(giveItem);
-        _allAbilities.Add(shareIntel);
-        _allAbilities.Add(takeItem);
-        _allAbilities.Add(monsterAttack);
-        _allAbilities.Add(mark);
-        _allAbilities.Add(awaken);
-        _allAbilities.Add(awakenDesire);
+    //    _allAbilities.Add(inspect);
+    //    _allAbilities.Add(revealSecret);
+    //    _allAbilities.Add(spook);
+    //    _allAbilities.Add(assist);
+    //    _allAbilities.Add(giveItem);
+    //    _allAbilities.Add(shareIntel);
+    //    _allAbilities.Add(takeItem);
+    //    _allAbilities.Add(monsterAttack);
+    //    _allAbilities.Add(mark);
+    //    _allAbilities.Add(awaken);
+    //    _allAbilities.Add(awakenDesire);
 
-        PlayerAbilitiesUI.Instance.ConstructAbilityButtons(_allAbilities);
-    }
-    public PlayerAbility GetAbility(string abilityName) {
-        for (int i = 0; i < _allAbilities.Count; i++) {
-            PlayerAbility currAbility = _allAbilities[i];
-            if (currAbility.name.Equals(abilityName)) {
-                return currAbility;
-            }
-        }
-        return null;
-    }
-    #endregion
+    //    PlayerAbilitiesUI.Instance.ConstructAbilityButtons(_allAbilities);
+    //}
+    //public PlayerAbility GetAbility(string abilityName) {
+    //    for (int i = 0; i < _allAbilities.Count; i++) {
+    //        PlayerAbility currAbility = _allAbilities[i];
+    //        if (currAbility.name.Equals(abilityName)) {
+    //            return currAbility;
+    //        }
+    //    }
+    //    return null;
+    //}
+    //#endregion
 
     #region Character
     public void SetMarkedCharacter(Character character) {
@@ -445,34 +445,34 @@ public class Player : ILeader {
     public void CreateInitialMinions() {
         PlayerUI.Instance.ResetAllMinionItems();
         _minions = new List<Minion>();
-        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Inspect", false));
-        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Spook", false));
-        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Mark", false));
-        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Awaken", false));
-        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, "Awaken Desire", false));
+        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, false));
+        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, false));
+        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, false));
+        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, false));
+        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, false));
 
         //UpdateMinions();
         PlayerUI.Instance.minionsScrollRect.verticalNormalizedPosition = 1f;
         PlayerUI.Instance.OnStartMinionUI();
     }
-    public Minion CreateNewMinion(ICharacter character, string abilityName) {
-        return new Minion(character, GetAbility(abilityName));
+    public Minion CreateNewMinion(ICharacter character) {
+        return new Minion(character);
     }
-    public Minion CreateNewMinion(string className, RACE race, DEMON_TYPE demonType, string abilityName, bool isArmy) {
+    public Minion CreateNewMinion(string className, RACE race, DEMON_TYPE demonType, bool isArmy) {
         Minion minion = null;
         if (isArmy) {
-            minion = new Minion(CharacterManager.Instance.CreateCharacterArmyUnit(className, race, playerFaction, _demonicPortal), GetAbility(abilityName), demonType);
+            minion = new Minion(CharacterManager.Instance.CreateCharacterArmyUnit(className, race, playerFaction, _demonicPortal), demonType);
         } else {
-            minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, race, GENDER.MALE, playerFaction, _demonicPortal, false), GetAbility(abilityName), demonType);
+            minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, race, GENDER.MALE, playerFaction, _demonicPortal, false), demonType);
         }
         return minion;
     }
-    public Minion CreateNewMinion(string className, RACE race, string abilityName, bool isArmy) {
+    public Minion CreateNewMinion(string className, RACE race, bool isArmy) {
         Minion minion = null;
         if (isArmy) {
-            minion = new Minion(CharacterManager.Instance.CreateCharacterArmyUnit(className, race, playerFaction, _demonicPortal), GetAbility(abilityName));
+            minion = new Minion(CharacterManager.Instance.CreateCharacterArmyUnit(className, race, playerFaction, _demonicPortal));
         } else {
-            minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, race, GENDER.MALE, playerFaction, _demonicPortal, false), GetAbility(abilityName));
+            minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, race, GENDER.MALE, playerFaction, _demonicPortal, false));
         }
         return minion;
     }
