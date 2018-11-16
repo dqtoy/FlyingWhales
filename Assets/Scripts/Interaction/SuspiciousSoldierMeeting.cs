@@ -101,12 +101,12 @@ public class SuspiciousSoldierMeeting : Interaction {
     private void SendOutDemonOption(InteractionState state) {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
         effectWeights.AddElement("Reduce Defenders", 30);
-        //effectWeights.AddElement("Demon Disappears", 5);
-        //effectWeights.AddElement("Nothing Happens", 15);
-        //effectWeights.AddElement("Army Gained", 5);
-        //if (_interactable.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
-        //    effectWeights.AddElement("War Declared", 5);
-        //}
+        effectWeights.AddElement("Demon Disappears", 5);
+        effectWeights.AddElement("Nothing Happens", 15);
+        effectWeights.AddElement("Army Gained", 5);
+        if (_interactable.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+            effectWeights.AddElement("War Declared", 5);
+        }
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
         //if (chosenEffect == "Reduce Defenders") {

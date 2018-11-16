@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class KillerOnTheLoose : Interaction {
 
-    public KillerOnTheLoose(IInteractable interactable) : base(interactable, INTERACTION_TYPE.SUSPICIOUS_SOLDIER_MEETING, 70) {
+    public KillerOnTheLoose(IInteractable interactable) : base(interactable, INTERACTION_TYPE.KILLER_ON_THE_LOOSE, 70) {
         _name = "Killer On The Loose";
     }
     #region Overrides

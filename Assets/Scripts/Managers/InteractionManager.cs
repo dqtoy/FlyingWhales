@@ -87,6 +87,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.CHARACTER_TRACKING:
                 createdInteraction = new CharacterTracking(interactable);
                 break;
+            case INTERACTION_TYPE.RETURN_HOME:
+                createdInteraction = new ReturnHome(interactable);
+                break;
         }
         return createdInteraction;
     }
