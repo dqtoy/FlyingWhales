@@ -67,7 +67,7 @@ public class GameManager : MonoBehaviour {
             if (this.timeElapsed == 0f) {
                 this.HourStarted();
             }
-            this.timeElapsed += Time.deltaTime * 1f;
+            this.timeElapsed += Time.deltaTime;
             if (this.timeElapsed >= this.progressionSpeed) {
                 this.timeElapsed = 0f;
                 this.HourEnded();
