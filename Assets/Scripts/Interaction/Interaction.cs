@@ -70,8 +70,8 @@ public class Interaction {
     }
 
     #region Virtuals
-    public virtual void Initialize(Character characterInvolved = null) {
-        SetCharacterInvolved(characterInvolved);
+    public virtual void Initialize() {
+        //SetCharacterInvolved(characterInvolved);
         CreateStates();
         ScheduleFirstTimeOut();
     }

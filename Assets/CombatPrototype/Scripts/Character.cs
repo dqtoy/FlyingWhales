@@ -2681,8 +2681,9 @@ namespace ECS {
         }
         public void AddInteraction(Interaction interaction) {
             _currentInteractions.Add(interaction);
+            interaction.SetCharacterInvolved(this);
             interaction.interactable.AddInteraction(interaction);
-            interaction.Initialize(this);
+            //interaction.Initialize(this);
             //Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
         }
         public void RemoveInteraction(Interaction interaction) {
