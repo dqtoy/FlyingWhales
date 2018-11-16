@@ -113,6 +113,8 @@ public class InteractionManager : MonoBehaviour {
     }
     public bool CanCreateInteraction(INTERACTION_TYPE interactionType, ICharacter character) {
         switch (interactionType) {
+            case INTERACTION_TYPE.RETURN_HOME:
+            return character.specificLocation != character.homeLandmark;
             default:
                 return true;
         }

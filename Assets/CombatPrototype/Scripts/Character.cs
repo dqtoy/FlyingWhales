@@ -167,7 +167,7 @@ namespace ECS {
             get { return (_currentParty.specificLocation != null ? _currentParty.specificLocation.tileLocation : null); }
         }
         public ILocation specificLocation {
-            get { return (_currentParty.specificLocation != null ? _currentParty.specificLocation : null); }
+            get { return _currentParty.specificLocation; }
         }
         //public List<BodyPart> bodyParts {
         //    get { return this._bodyParts; }
