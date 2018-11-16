@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ECS;
 
 public class Interaction {
     protected int _id;
@@ -18,6 +19,7 @@ public class Interaction {
     protected InteractionState _previousState;
     protected InteractionState _currentState;
     protected Minion _explorerMinion;
+    protected Character _characterInvolved;
 
     private bool _hasUsedBaseCreateStates;
 
@@ -42,6 +44,9 @@ public class Interaction {
     public Minion explorerMinion {
         get { return _explorerMinion; }
     }
+    public Character characterInvolved {
+        get { return _characterInvolved; }
+    }
     //public InteractionItem interactionItem {
     //    get { return _interactionItem; }
     //}
@@ -61,12 +66,13 @@ public class Interaction {
         _isSecondTimeOutCancelled = false;
         _hasUsedBaseCreateStates = false;
         _states = new Dictionary<string, InteractionState>();
-        CreateStates();
         //Debug.Log("Created new interaction " + type.ToString() + " at " + interactable.name);
     }
 
     #region Virtuals
-    public virtual void Initialize() {
+    public virtual void Initialize(Character characterInvolved = null) {
+        SetCharacterInvolved(characterInvolved);
+        CreateStates();
         ScheduleFirstTimeOut();
     }
     public virtual void CreateStates() {
@@ -155,6 +161,9 @@ public class Interaction {
             _currentState.CreateLogs();
             _currentState.SetDescription();
         }
+    }
+    public void SetCharacterInvolved(Character character) {
+        _characterInvolved = character;
     }
     #endregion
 

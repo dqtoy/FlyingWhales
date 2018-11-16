@@ -2681,11 +2681,13 @@ namespace ECS {
         }
         public void AddInteraction(Interaction interaction) {
             _currentInteractions.Add(interaction);
-            interaction.Initialize();
+            interaction.interactable.AddInteraction(interaction);
+            interaction.Initialize(this);
             //Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
         }
         public void RemoveInteraction(Interaction interaction) {
             if (_currentInteractions.Remove(interaction)) {
+                interaction.interactable.RemoveInteraction(interaction);
                 //Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
             }
         }
@@ -2891,7 +2893,7 @@ namespace ECS {
                     interactionLog += "\n" + validInteractions.GetWeightsSummary("Generating interaction:");
                     INTERACTION_TYPE chosenInteraction = validInteractions.PickRandomElementGivenWeights();
                     //create interaction of type
-                    Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, this);
+                    Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, specificLocation as BaseLandmark);
                     AddInteraction(createdInteraction);
                     //if (createdInteraction != null) {
                     //    (this.specificLocation as BaseLandmark).AddInteraction(createdInteraction);
