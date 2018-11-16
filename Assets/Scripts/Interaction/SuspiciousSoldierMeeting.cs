@@ -254,7 +254,7 @@ public class SuspiciousSoldierMeeting : Interaction {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         if (!PlayerManager.Instance.player.areMinionsMaxed) {
             Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Knights", RACE.HUMANS, false);
-            newMinion.icharacter.LevelUp(UnityEngine.Random.Range(5, 9));
+            newMinion.icharacter.SetLevel(UnityEngine.Random.Range(5, 9));
             PlayerManager.Instance.player.AddMinion(newMinion);
         }
 

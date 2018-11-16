@@ -13,7 +13,7 @@ public class Minion : IUnit {
     private IInteractable _target;
     private DEMON_TYPE _type;
     private string _strType;
-    private int _lvl;
+    //private int _lvl;
     private int _exp;
     private int _indexDefaultSort;
 
@@ -62,7 +62,7 @@ public class Minion : IUnit {
     public Minion(ICharacter icharacter) {
         _icharacter = icharacter;
         //_ability = ability;
-        _lvl = 1;
+        //_lvl = 1;
         _exp = 0;
         _type = (DEMON_TYPE) UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(DEMON_TYPE)).Length);
         _strType = Utilities.NormalizeString(_type.ToString());
@@ -77,7 +77,7 @@ public class Minion : IUnit {
     public Minion(ICharacter icharacter, DEMON_TYPE demonType) {
         _icharacter = icharacter;
         //_ability = ability;
-        _lvl = 1;
+        //_lvl = 1;
         _exp = 0;
         _type = demonType;
         _strType = Utilities.NormalizeString(_type.ToString());
@@ -150,13 +150,10 @@ public class Minion : IUnit {
         _characterItem.UpdateMinionItem();
     }
     public void SetLevel(int level) {
-        _lvl = level;
-    }
-    public void AdjustLevel(int amount) {
-        _lvl += amount;
+        icharacter.SetLevel(level);
     }
     public void LevelUp() {
-        AdjustLevel(1);
+        icharacter.LevelUp();
     }
     public void SetIndexDefaultSort(int index) {
         _indexDefaultSort = index;

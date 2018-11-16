@@ -209,7 +209,7 @@ public class MysteriousSarcophagus : Interaction {
         if(_interactable is BaseLandmark) {
             BaseLandmark landmark = _interactable as BaseLandmark;
             Character zombieEarthbinderHero = CharacterManager.Instance.CreateNewCharacter("Earthbinder", RACE.ZOMBIE, GENDER.MALE, PlayerManager.Instance.player.playerFaction, PlayerManager.Instance.player.demonicPortal, false);
-            zombieEarthbinderHero.LevelUp(15);
+            zombieEarthbinderHero.SetLevel(15);
             landmark.AddDefender(zombieEarthbinderHero);
         }
     }

@@ -137,7 +137,7 @@ public class MysteryHum : Interaction {
     private void ArmyRecruitedRewardEffect(InteractionState state) {
         if (!PlayerManager.Instance.player.areMinionsMaxed) {
             Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Earthbinders", RACE.ZOMBIE, false);
-            newMinion.icharacter.LevelUp(5);
+            newMinion.icharacter.SetLevel(5);
             PlayerManager.Instance.player.AddMinion(newMinion);
         }
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));

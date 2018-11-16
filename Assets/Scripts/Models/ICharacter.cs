@@ -80,6 +80,7 @@ public interface ICharacter {
     void UpgradeWeapon();
     void UpgradeArmor();
     void UpgradeAccessory();
+    void LevelUp();
     //void FaintOrDeath(ICharacter killer);
     void SetSide(ECS.SIDES side);
     void SetRowNumber(int row);
@@ -99,7 +100,7 @@ public interface ICharacter {
     void RemoveMiscAction(ACTION_TYPE actionType);
     void SetMinion(Minion minion);
     void Assassinate(ICharacter assassin);
-    void LevelUp(int amount);
+    void SetLevel(int amount);
     void AddCombatAttribute(Trait combatAttribute);
     bool IsInParty();
     bool IsInOwnParty();
