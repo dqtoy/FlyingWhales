@@ -101,19 +101,12 @@ public class SuspiciousSoldierMeeting : Interaction {
     private void SendOutDemonOption(InteractionState state) {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
         effectWeights.AddElement("Reduce Defenders", 30);
-        effectWeights.AddElement("Demon Disappears", 5);
-        effectWeights.AddElement("Nothing Happens", 15);
-        effectWeights.AddElement("Army Gained", 5);
-        if (_interactable.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
-            effectWeights.AddElement("War Declared", 5);
-        }
-        //if (_interactable is BaseLandmark) {
-        //    BaseLandmark landmark = _interactable as BaseLandmark;
-        //    if (landmark.GetResidentCharacterOfClass("General") != null) {
-        //        effectWeights.AddElement("General Dies", 5);
-        //    }
+        //effectWeights.AddElement("Demon Disappears", 5);
+        //effectWeights.AddElement("Nothing Happens", 15);
+        //effectWeights.AddElement("Army Gained", 5);
+        //if (_interactable.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+        //    effectWeights.AddElement("War Declared", 5);
         //}
-
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
         //if (chosenEffect == "Reduce Defenders") {
@@ -191,7 +184,7 @@ public class SuspiciousSoldierMeeting : Interaction {
                         state.AddLogFiller(new LogFiller(deserter1, deserter1.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
 
                         //this is for deserter2
-                        Log newMinionLog = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), _name.ToLower() + "_log1");
+                        Log newMinionLog = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_log1");
                         newMinionLog.AddToFillers(explorerMinion, explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
                         newMinionLog.AddToFillers(interactable.specificLocation.tileLocation.landmarkOnTile, interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
                         newMinionLog.AddToFillers(deserter2, deserter2.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

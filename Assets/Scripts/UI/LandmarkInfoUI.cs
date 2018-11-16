@@ -148,7 +148,7 @@ public class LandmarkInfoUI : UIMenu {
     //    }
     //}
     private void UpdateHiddenUI() {
-        if (_activeLandmark.tileLocation.areaOfTile.locationIntel.isObtained) {
+        if (_activeLandmark.tileLocation.areaOfTile.locationIntel.isObtained || GameManager.Instance.inspectAll) {
             ShowIntelTriggeredUI();
         } else {
             HideIntelTriggeredUI();
@@ -437,6 +437,7 @@ public class LandmarkInfoUI : UIMenu {
     private void OnInspectAll() {
         if (isShowing && _activeLandmark != null) {
             UpdateCharacters();
+            UpdateHiddenUI();
         }
     }
     #endregion

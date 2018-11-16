@@ -269,7 +269,12 @@ public class Player : ILeader {
         }
     }
     public bool RemoveIntel(Intel intel) {
-        return _intels.Remove(intel);
+        if (_intels.Remove(intel)) {
+            intel.SetObtainedState(false);
+            Debug.Log("Removed intel " + intel.ToString());
+            return true;
+        }
+        return false;
     }
     //public void PickIntelToGiveToCharacter(Character character, ShareIntel shareIntelAbility) {
     //    //TODO
