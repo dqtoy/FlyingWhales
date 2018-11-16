@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class CharacterTracking : Interaction {
 
-    private ICharacter chosenCharacter;
     private Area targetArea;
 
     private const string Successfully_Found_Out_Location = "Successfully Found Out Location";
@@ -22,16 +21,15 @@ public class CharacterTracking : Interaction {
 
     #region Overrides
     public override void CreateStates() {
-        chosenCharacter = _interactable as ICharacter;
         //Select a random area other than the character's home
         targetArea = GetTargetArea();
 
         InteractionState startState = new InteractionState("Start", this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenCharacter.race), LOG_IDENTIFIER.STRING_1);
-        startStateDescriptionLog.AddToFillers(null, Utilities.NormalizeString(chosenCharacter.role.roleType.ToString()), LOG_IDENTIFIER.STRING_2);
-        startStateDescriptionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        startStateDescriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(characterInvolved.race), LOG_IDENTIFIER.STRING_1);
+        startStateDescriptionLog.AddToFillers(null, Utilities.NormalizeString(characterInvolved.role.roleType.ToString()), LOG_IDENTIFIER.STRING_2);
+        startStateDescriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
 
@@ -64,7 +62,7 @@ public class CharacterTracking : Interaction {
     }
     public override void CreateActionOptions(InteractionState state) {
         string subjectivePronoun = "him";
-        if (chosenCharacter.gender == GENDER.FEMALE) {
+        if (characterInvolved.gender == GENDER.FEMALE) {
             subjectivePronoun = "her";
         }
         if (state.name == "Start") {
@@ -79,7 +77,7 @@ public class CharacterTracking : Interaction {
             ActionOption getAhead = new ActionOption {
                 interactionState = state,
                 cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
-                name = "Attempt to get ahead of " + chosenCharacter.name + ".",
+                name = "Attempt to get ahead of " + characterInvolved.name + ".",
                 duration = 0,
                 needsMinion = false,
                 effect = () => GetAheadEffect(state),
@@ -101,9 +99,7 @@ public class CharacterTracking : Interaction {
     public override void OnInteractionActive() {
         base.OnInteractionActive();
         //If you dont have it yet, gain Intel of selected character (Check if minion is exploring)
-        if (chosenCharacter is Character) {
-            PlayerManager.Instance.player.AddIntel((chosenCharacter as Character).characterIntel);
-        }
+        PlayerManager.Instance.player.AddIntel(characterInvolved.characterIntel);
     }
     #endregion
 
@@ -138,10 +134,10 @@ public class CharacterTracking : Interaction {
         PlayerManager.Instance.player.AddIntel(targetArea.locationIntel);
 
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             state.descriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         }
-        state.AddLogFiller(new LogFiller(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
         state.AddLogFiller(new LogFiller(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void MinionCaughtTailingRewardEffect(InteractionState state) {
@@ -149,15 +145,15 @@ public class CharacterTracking : Interaction {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //TODO: **Mechanics**: Start combat between Character and Demon
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
     }
     private void LostTheCharacterRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
     }
     private void SuccessfullyGotAheadOfCharacterRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
@@ -166,38 +162,38 @@ public class CharacterTracking : Interaction {
         PlayerManager.Instance.player.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Mana_Cache_Reward_1));
         PlayerManager.Instance.player.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             state.descriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         }
-        state.AddLogFiller(new LogFiller(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
         state.AddLogFiller(new LogFiller(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void MinionMisdirectedRewardEffect(InteractionState state) {
         //**Mechanics**: Remove minion from player
         PlayerManager.Instance.player.RemoveMinion(_explorerMinion);
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
     }
     private void DoNothingRewardEffect(InteractionState state) {
         //**Mechanics**: Characters home area will gain Supply Cache Reward 1
-        if (chosenCharacter.homeLandmark != null && chosenCharacter.homeLandmark.tileLocation.areaOfTile != null) {
-            chosenCharacter.homeLandmark.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
+        if (characterInvolved.homeLandmark != null && characterInvolved.homeLandmark.tileLocation.areaOfTile != null) {
+            characterInvolved.homeLandmark.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
         }
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             state.descriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         }
-        state.AddLogFiller(new LogFiller(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
         state.AddLogFiller(new LogFiller(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     #endregion
 
     private Area GetTargetArea() {
         List<Area> choices = new List<Area>(LandmarkManager.Instance.allAreas);
-        if (chosenCharacter.homeLandmark != null && chosenCharacter.homeLandmark.tileLocation.areaOfTile != null) {
-            choices.Remove(chosenCharacter.homeLandmark.tileLocation.areaOfTile);
+        if (characterInvolved.homeLandmark != null && characterInvolved.homeLandmark.tileLocation.areaOfTile != null) {
+            choices.Remove(characterInvolved.homeLandmark.tileLocation.areaOfTile);
         }
         if (choices.Count > 0) {
             return choices[Random.Range(0, choices.Count)];

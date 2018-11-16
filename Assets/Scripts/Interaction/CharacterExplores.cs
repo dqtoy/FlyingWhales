@@ -6,7 +6,6 @@ using UnityEngine;
 public class CharacterExplores : Interaction {
 
     private ILocation landmark;
-    private ICharacter chosenCharacter;
     private BaseLandmark targetLandmark;
 
     private const string characterExploreCancelled = "Character Explore Cancelled";
@@ -34,16 +33,15 @@ public class CharacterExplores : Interaction {
 
     #region Overrides
     public override void CreateStates() {
-        chosenCharacter = _interactable as ICharacter;
-        landmark = chosenCharacter.ownParty.specificLocation;
+        landmark = characterInvolved.ownParty.specificLocation;
         //Select a different random location not owned by a Hostile faction and set it as the target location.
         targetLandmark = GetTargetLandmark();
 
         InteractionState startState = new InteractionState("Start", this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenCharacter.race), LOG_IDENTIFIER.STRING_1);
-        startStateDescriptionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        startStateDescriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(characterInvolved.race), LOG_IDENTIFIER.STRING_1);
+        startStateDescriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         startStateDescriptionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
@@ -105,9 +103,7 @@ public class CharacterExplores : Interaction {
     public override void OnInteractionActive() {
         base.OnInteractionActive();
         //If you dont have it yet, gain Intel of selected character (Check if minion is exploring)
-        if (chosenCharacter is Character) {
-            PlayerManager.Instance.player.AddIntel((chosenCharacter as Character).characterIntel);
-        }
+        PlayerManager.Instance.player.AddIntel(characterInvolved.characterIntel);
     }
     #endregion
 
@@ -139,7 +135,7 @@ public class CharacterExplores : Interaction {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //**Mechanics**: Character will no longer leave.
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             state.descriptionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
         }
         //if (state.minionLog != null) {
@@ -150,7 +146,7 @@ public class CharacterExplores : Interaction {
         //    state.landmarkLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         //    state.landmarkLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
         //}
-        state.AddLogFiller(new LogFiller(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
         state.AddLogFiller(new LogFiller(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void CharacterExploreContinuesRewardEffect(InteractionState state) {
@@ -159,7 +155,7 @@ public class CharacterExplores : Interaction {
         //**Mechanics**: Character will start its travel to selected location
         CharacterTravelToLocation(targetLandmark);
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             state.descriptionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
         }
         //if (state.minionLog != null) {
@@ -170,7 +166,7 @@ public class CharacterExplores : Interaction {
         //    state.landmarkLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         //    state.landmarkLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
         //}
-        state.AddLogFiller(new LogFiller(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
         state.AddLogFiller(new LogFiller(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void CharacterExploreRedirectedRewardEffect(InteractionState state) {
@@ -180,7 +176,7 @@ public class CharacterExplores : Interaction {
         BaseLandmark targetLandmarkFromArea = GetTargetLandmark(this.previousState.assignedLocation.location);
         CharacterTravelToLocation(targetLandmarkFromArea);
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             state.descriptionLog.AddToFillers(targetLandmarkFromArea.tileLocation.areaOfTile, targetLandmarkFromArea.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
         }
         //if (state.minionLog != null) {
@@ -191,14 +187,14 @@ public class CharacterExplores : Interaction {
         //    state.landmarkLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         //    state.landmarkLog.AddToFillers(targetLandmarkFromArea.tileLocation.areaOfTile, targetLandmarkFromArea.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
         //}
-        state.AddLogFiller(new LogFiller(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
         state.AddLogFiller(new LogFiller(targetLandmarkFromArea.tileLocation.areaOfTile, targetLandmarkFromArea.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void DoNothingRewardEffect(InteractionState state) {
         //**Mechanics**: Character will start its travel to selected location
         CharacterTravelToLocation(targetLandmark);
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             state.descriptionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
         }
         //if (state.minionLog != null) {
@@ -209,14 +205,14 @@ public class CharacterExplores : Interaction {
         //    state.landmarkLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         //    state.landmarkLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
         //}
-        state.AddLogFiller(new LogFiller(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
         state.AddLogFiller(new LogFiller(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     #endregion
 
     private void CharacterTravelToLocation(BaseLandmark target) {
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.REST);
-        (chosenCharacter.ownParty as CharacterParty).iactionData.AssignAction(characterAction, target.landmarkObj);
+        (characterInvolved.ownParty as CharacterParty).iactionData.AssignAction(characterAction, target.landmarkObj);
     }
 
 
@@ -239,13 +235,13 @@ public class CharacterExplores : Interaction {
 
     private BaseLandmark GetTargetLandmark() {
         List<BaseLandmark> choices = new List<BaseLandmark>();
-        List<Faction> nonHostileFactions = chosenCharacter.faction.GetFactionsWithRelationship(FACTION_RELATIONSHIP_STATUS.NON_HOSTILE);
-        nonHostileFactions.Add(chosenCharacter.faction);
+        List<Faction> nonHostileFactions = characterInvolved.faction.GetFactionsWithRelationship(FACTION_RELATIONSHIP_STATUS.NON_HOSTILE);
+        nonHostileFactions.Add(characterInvolved.faction);
         for (int i = 0; i < nonHostileFactions.Count; i++) {
             Faction currFaction = nonHostileFactions[i];
             for (int j = 0; j < currFaction.ownedAreas.Count; j++) {
                 Area currArea = currFaction.ownedAreas[j];
-                if (chosenCharacter.ownParty.specificLocation.tileLocation.areaOfTile == null || currArea.id != chosenCharacter.ownParty.specificLocation.tileLocation.areaOfTile.id) {
+                if (characterInvolved.ownParty.specificLocation.tileLocation.areaOfTile == null || currArea.id != characterInvolved.ownParty.specificLocation.tileLocation.areaOfTile.id) {
                     choices.AddRange(currArea.landmarks);
                 }
             }
@@ -258,8 +254,8 @@ public class CharacterExplores : Interaction {
 
     private BaseLandmark GetTargetLandmark(Area currArea) {
         List<BaseLandmark> choices = new List<BaseLandmark>(currArea.landmarks);
-        if (chosenCharacter.ownParty.specificLocation is BaseLandmark) {
-            choices.Remove(chosenCharacter.ownParty.specificLocation as BaseLandmark);
+        if (characterInvolved.ownParty.specificLocation is BaseLandmark) {
+            choices.Remove(characterInvolved.ownParty.specificLocation as BaseLandmark);
         }
         if (choices.Count > 0) {
             return choices[Random.Range(0, choices.Count)];
