@@ -308,7 +308,7 @@ public class BanditRaid : Interaction {
                 continue; //skip characters that are defending
             }
             Party currCharacterParty = currCharacter.ownParty;
-            if (currCharacterParty == null ||
+            if (partyToUse == null || currCharacterParty == null ||
                 (currCharacterParty != null && currCharacterParty.icharacters.Count > partyToUse.icharacters.Count)) {
                 partyToUse = currCharacterParty;
             }
