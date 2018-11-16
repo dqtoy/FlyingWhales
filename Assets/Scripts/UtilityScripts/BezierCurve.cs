@@ -9,6 +9,15 @@ public class BezierCurve : MonoBehaviour {
     private int _progressAmount;
     private Vector3[] _positions;
 
+    #region getters/setters
+    public bool isDone {
+        get { return progressMeter.positionCount >= _positions.Length; }
+    }
+    public bool isNoMorePositions {
+        get { return progressMeter.positionCount <= 1; }
+    }
+    #endregion
+
     private void Start() {
         progressMeter.positionCount = 0;
     }
@@ -21,61 +30,45 @@ public class BezierCurve : MonoBehaviour {
     public void SetProgressAmount(int amount) {
         _progressAmount = amount;
     }
-
     //Returns true if progress is complete
-    public bool AddProgress() {
-        if(progressMeter.positionCount >= _positions.Length) {
-            return true;
-        }
-        //if(progressMeter.positionCount == 0) {
-        //    progressMeter.positionCount++;
-        //    progressMeter.SetPosition(0, _positions[0]);
-        //    _progressAmount -= 1;
-        //}
+    public IEnumerator AddProgress() {
         Vector3 prevPos = _positions[0];
         for (int i = 0; i < _progressAmount; i++) {
             if(progressMeter.positionCount > 0) {
                 prevPos = _positions[progressMeter.positionCount - 1];
             }
             progressMeter.positionCount++;
-            float time = 0f;
-            StartCoroutine(TweenPath(prevPos, time));
-            //progressMeter.SetPosition(progressMeter.positionCount - 1, _positions[progressMeter.positionCount - 1]);
+            float secs = GameManager.Instance.progressionSpeed / (float) _progressAmount;
+            progressMeter.SetPosition(progressMeter.positionCount - 1, prevPos);
+            iTween.ValueTo(gameObject, iTween.Hash("from", prevPos, "to", _positions[progressMeter.positionCount - 1], "time", secs, "onupdate", "TraverseLineRenderer"));
+            yield return new WaitForSeconds(secs);
         }
-
-        if (progressMeter.positionCount == _positions.Length) {
-            return true;
-        }
-        return false;
-    }
-    private IEnumerator TweenPath(Vector3 prevPos, float time) {
-        float secs = GameManager.Instance.progressionSpeed / (float)_progressAmount;
-        //float t = 0f;
-        Vector3 orig2 = _positions[progressMeter.positionCount - 1];
-        progressMeter.SetPosition(progressMeter.positionCount - 1, prevPos);
-        Vector3 newpos;
-        for (; time < secs; time += Time.deltaTime) {
-            newpos = Vector3.Lerp(prevPos, orig2, time / secs);
-            progressMeter.SetPosition(progressMeter.positionCount - 1, newpos);
-            yield return null;
-        }
-        progressMeter.SetPosition(progressMeter.positionCount - 1, orig2);
     }
     private void TraverseLineRenderer(Vector3 vector3) {
         progressMeter.SetPosition(progressMeter.positionCount - 1, vector3);
     }
     //Returns true when progress reaches 0
-    public bool ReduceProgress() {
-        progressMeter.positionCount -= _progressAmount;
-        if(progressMeter.positionCount <= 0) {
-            return true;
+    public IEnumerator ReduceProgress() {
+        for (int i = 0; i < _progressAmount; i++) {
+            //if (progressMeter.positionCount > 0) {
+            //    prevPos = _positions[progressMeter.positionCount - 1];
+            //}
+            if (progressMeter.positionCount <= 1) {
+                break;
+            } else {
+                Vector3 currentPos = progressMeter.GetPosition(progressMeter.positionCount - 1);
+                progressMeter.positionCount--;
+                float secs = GameManager.Instance.progressionSpeed / (float) _progressAmount;
+                progressMeter.SetPosition(progressMeter.positionCount - 1, currentPos);
+                iTween.ValueTo(gameObject, iTween.Hash("from", currentPos, "to", _positions[progressMeter.positionCount - 1], "time", secs, "onupdate", "TraverseLineRenderer"));
+                yield return new WaitForSeconds(secs);
+            }
+
         }
-        return false;
-        //for (int i = 0; i < _progressAmount; i++) {
-        //    progressMeter.positionCount--;
-        //    if (progressMeter.positionCount <= 0) {
-        //        break;
-        //    }
+        //progressMeter.positionCount -= _progressAmount;
+        //if(progressMeter.positionCount <= 0) {
+        //    return true;
         //}
+        //return false;
     }
 }

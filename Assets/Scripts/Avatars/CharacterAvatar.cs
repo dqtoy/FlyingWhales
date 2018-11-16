@@ -144,16 +144,20 @@ public class CharacterAvatar : MonoBehaviour{
         Messenger.AddListener(Signals.HOUR_STARTED, TraverseCurveLine);
     }
     private void TraverseCurveLine() {
-        if (_curve.AddProgress()) {
+        if (_curve.isDone) {
             Messenger.RemoveListener(Signals.HOUR_STARTED, TraverseCurveLine);
             ArriveAtLocation();
-        }        
+            return;
+        }
+        StartCoroutine(_curve.AddProgress());
     }
     private void ReduceCurveLine() {
-        if (_curve.ReduceProgress()) {
+        if (_curve.isNoMorePositions) {
             Messenger.RemoveListener(Signals.HOUR_STARTED, ReduceCurveLine);
             CancelledDeparture();
+            return;
         }
+        StartCoroutine(_curve.ReduceProgress());
     }
     private void CancelledDeparture() {
         _isTravelling = false;
