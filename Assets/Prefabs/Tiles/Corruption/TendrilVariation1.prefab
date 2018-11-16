@@ -27,7 +27,7 @@ GameObject:
   m_TagString: Hextile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1 &1107980010258414
 GameObject:
@@ -45,7 +45,7 @@ GameObject:
   m_TagString: Hextile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1 &1110338482494364
 GameObject:
@@ -63,7 +63,7 @@ GameObject:
   m_TagString: Hextile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1 &1254711069570702
 GameObject:
@@ -81,7 +81,7 @@ GameObject:
   m_TagString: Hextile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1 &1256855242280760
 GameObject:
@@ -99,7 +99,7 @@ GameObject:
   m_TagString: Hextile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1 &1301533180347234
 GameObject:
@@ -117,7 +117,7 @@ GameObject:
   m_TagString: Hextile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1 &1328833929241230
 GameObject:
@@ -135,7 +135,7 @@ GameObject:
   m_TagString: Hextile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1 &1333945586710530
 GameObject:
@@ -145,12 +145,12 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4738084470193582}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: TendrilVariation1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1 &1367229356845282
 GameObject:
@@ -168,7 +168,7 @@ GameObject:
   m_TagString: Hextile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1 &1465260701766524
 GameObject:
@@ -186,7 +186,7 @@ GameObject:
   m_TagString: Hextile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1 &1490672681239766
 GameObject:
@@ -204,7 +204,7 @@ GameObject:
   m_TagString: Hextile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1 &1629802686453580
 GameObject:
@@ -222,7 +222,7 @@ GameObject:
   m_TagString: Hextile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1 &1708976022424826
 GameObject:
@@ -240,7 +240,7 @@ GameObject:
   m_TagString: Hextile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1 &1947774727786186
 GameObject:
@@ -258,7 +258,7 @@ GameObject:
   m_TagString: Hextile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &4087700209344474
 Transform:
