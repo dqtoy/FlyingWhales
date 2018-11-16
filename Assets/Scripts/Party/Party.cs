@@ -272,7 +272,7 @@ public class Party : IParty {
             } else {
                 //icharacter.ownParty.icon.SetAIPathPosition(this.specificLocation.tileLocation.transform.position);
                 icharacter.ownParty.SetSpecificLocation(this.specificLocation);
-                icharacter.ownParty.icon.SetVisualState(true);
+                //icharacter.ownParty.icon.SetVisualState(true);
             }
             if (icharacter is ECS.Character) {
                 Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, icharacter, this);

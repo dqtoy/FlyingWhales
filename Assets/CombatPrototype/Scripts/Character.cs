@@ -1676,7 +1676,7 @@ namespace ECS {
                 if (ownParty.specificLocation is BaseLandmark) {
                     ownParty.specificLocation.RemoveCharacterFromLocation(ownParty);
                 }
-                ownParty.icon.SetVisualState(false);
+                //ownParty.icon.SetVisualState(false);
             }
         }
         public void OnAddedToPlayer() {

@@ -73,6 +73,7 @@ public class Minion : IUnit {
         _icharacter.SetName(RandomNameGenerator.Instance.GenerateMinionName());
         _icharacter.DisableInteractionGeneration();
         _icharacter.characterIntel.SetObtainedState(true);
+        _icharacter.ownParty.icon.SetVisualState(true);
     }
     public Minion(ICharacter icharacter, DEMON_TYPE demonType) {
         _icharacter = icharacter;
@@ -88,6 +89,7 @@ public class Minion : IUnit {
         _icharacter.SetMinion(this);
         _icharacter.DisableInteractionGeneration();
         _icharacter.characterIntel.SetObtainedState(true);
+        _icharacter.ownParty.icon.SetVisualState(true);
     }
     public void SetDemonType(DEMON_TYPE type) {
         _type = type;

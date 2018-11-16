@@ -76,7 +76,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1000012878068422
 GameObject:
   m_ObjectHideFlags: 1
@@ -272,6 +272,12 @@ MonoBehaviour:
   _avatarSpriteRenderer: {fileID: 212000010099633022}
   _frameSpriteRenderer: {fileID: 212000010405879966}
   _centerSpriteRenderer: {fileID: 212000010099633022}
+  path: []
+  _hasArrived: 0
+  _isInitialized: 0
+  _isMovementPaused: 0
+  _isTravelling: 0
+  _isMovingToHex: 0
 --- !u!114 &114000013110971602
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -29,7 +29,7 @@ public class JoinPartyAction : CharacterAction {
     //}
     public override void EndAction(Party party, IObject targetObject) {
         base.EndAction(party, targetObject);
-        party.icon.SetVisualState(false);
+        //party.icon.SetVisualState(false);
     }
     public override bool ShouldGoToTargetObjectOnChoose() {
         return false; //assumes that the party that invited the character is already at the same location

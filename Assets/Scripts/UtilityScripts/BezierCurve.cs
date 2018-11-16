@@ -5,6 +5,7 @@ using UnityEngine;
 public class BezierCurve : MonoBehaviour {
     public LineRenderer bgLineRenderer;
     public LineRenderer progressMeter;
+    public GameObject holder;
 
     private int _progressAmount;
     private Vector3[] _positions;

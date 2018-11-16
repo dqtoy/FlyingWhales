@@ -40,8 +40,6 @@ public class CharacterAvatar : MonoBehaviour{
     private BezierCurve _curve;
     private Action queuedAction = null;
 
-
-
     public CharacterPortrait characterPortrait { get; private set; }
 
     #region getters/setters
@@ -75,6 +73,7 @@ public class CharacterAvatar : MonoBehaviour{
         this.smoothMovement.onMoveFinished += OnMoveFinished;
         _isInitialized = true;
         _hasArrived = true;
+        SetVisualState(false);
         if (_party.mainCharacter is CharacterArmyUnit) {
             _avatarSpriteRenderer.sprite = CharacterManager.Instance.villainSprite;
         } else if (_party.mainCharacter is MonsterArmyUnit) {
@@ -92,12 +91,16 @@ public class CharacterAvatar : MonoBehaviour{
 
         CharacterManager.Instance.AddCharacterAvatar(this);
 #endif
-        Messenger.AddListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);
+        //Messenger.AddListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);
+        Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
+        Messenger.AddListener<CharacterIntel>(Signals.CHARACTER_INTEL_ADDED, OnCharacterIntelObtained);
     }
 
     #region Monobehaviour
     private void OnDestroy() {
-        Messenger.RemoveListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);
+        Messenger.RemoveListener(Signals.INSPECT_ALL, OnInspectAll);
+        Messenger.RemoveListener<CharacterIntel>(Signals.CHARACTER_INTEL_ADDED, OnCharacterIntelObtained);
+        //Messenger.RemoveListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);
 #if !WORLD_CREATION_TOOL
         CharacterManager.Instance.RemoveCharacterAvatar(this);
 #endif
@@ -141,6 +144,7 @@ public class CharacterAvatar : MonoBehaviour{
         float distance = Vector3.Distance(_party.specificLocation.tileLocation.transform.position, targetLocation.tileLocation.transform.position);
         _distanceToTarget = (Mathf.CeilToInt(distance / 2.315188f)) * 2; //6
         _curve = targetLocation.tileLocation.ATileIsTryingToConnect(_party.specificLocation.tileLocation, _distanceToTarget);
+        _curve.holder.SetActive(_isVisualShowing);
         Messenger.AddListener(Signals.HOUR_STARTED, TraverseCurveLine);
     }
     private void TraverseCurveLine() {
@@ -362,20 +366,9 @@ public class CharacterAvatar : MonoBehaviour{
         characterPortrait.gameObject.SetActive(false);
     }
     public void SetVisualState(bool state) {
-        if (state) {
-            if (_party.owner is Character && (_party.owner as Character).isDefender) {
-                return;
-            }
-        }
         _isVisualShowing = state;
-        if (GameManager.Instance.allCharactersAreVisible) {
-            _avatarVisual.SetActive(_isVisualShowing);
-        } else {
-            if (_party.IsPartyBeingInspected()) {
-                _avatarVisual.SetActive(_isVisualShowing);
-            } else {
-                _avatarVisual.SetActive(false);
-            }
+        if(_curve != null) {
+            _curve.holder.SetActive(_isVisualShowing);
         }
     }
     public void UpdateVisualState() {
@@ -428,32 +421,6 @@ public class CharacterAvatar : MonoBehaviour{
     }
     #endregion
 
-    //#region Traces
-    //private void LeaveCharacterTrace() {
-    //    if (_characters[0].party == null) {
-    //        _characters[0].LeaveTraceOnLandmark();
-    //    } else {
-    //        if (_characters[0].party.mainCharacter is Character) {
-    //            Character character = _characters[0].party.mainCharacter as Character;
-    //            character.LeaveTraceOnLandmark();
-    //        }
-    //    }
-    //}
-    //#endregion
-
-    //#region Items
-    //private void CheckForItemDrop() {
-    //    if (_characters[0].party == null) {
-    //        _characters[0].CheckForItemDrop();
-    //    } else {
-    //        if (_characters[0].party.mainCharacter is Character) {
-    //            Character character = _characters[0].party.mainCharacter as Character;
-    //            character.LeaveTraceOnLandmark();
-    //        }
-    //    }
-    //}
-    //#endregion
-
     #region overrides
     public void Reset() {
         //base.Reset();
@@ -470,6 +437,25 @@ public class CharacterAvatar : MonoBehaviour{
         //_isInitialized = false;
         _currPathfindingRequest = null;
         SetHighlightState(false);
+    }
+    #endregion
+
+    #region Listeners
+    private void OnCharacterIntelObtained(CharacterIntel intel) {
+        if (_party.owner != null && _party.owner.characterIntel == intel) {
+            SetVisualState(true);
+        }
+    }
+    private void OnInspectAll() {
+        if (GameManager.Instance.inspectAll) {
+            SetVisualState(true);
+        } else {
+            if(_party.owner.minion != null || PlayerManager.Instance.player.HasIntel(_party.owner.characterIntel)) {
+                SetVisualState(true);
+            } else {
+                SetVisualState(false);
+            }
+        }
     }
     #endregion
 

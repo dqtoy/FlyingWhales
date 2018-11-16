@@ -76,17 +76,17 @@ public class LandmarkVisual : MonoBehaviour {
         //portrait.transform.localScale = Vector3.one;
         //(portrait.transform as RectTransform).sizeDelta = new Vector2(64, 64);
         //ShowPartyPortrait(iparty);
-        iparty.icon.SetVisualState(false);
+        //iparty.icon.SetVisualState(false);
     }
     public void OnCharacterExitedLandmark(Party iparty) {
         //remove character portrait from grid
         //iparty.icon.gameObject.SetActive(true);
-        if (!iparty.icon.avatarVisual.activeSelf) {
+        //if (!iparty.icon.avatarVisual.activeSelf) {
             //iparty.icon.ReclaimPortrait();
             //UpdateCharCount();
-            iparty.icon.SetVisualState(true);
+            //iparty.icon.SetVisualState(true);
             //iparty.icon.characterPortrait.SetBorderState(false);
-        }
+        //}
     }
     //public void SnapTo(RectTransform target) {
     //    Canvas.ForceUpdateCanvases();
