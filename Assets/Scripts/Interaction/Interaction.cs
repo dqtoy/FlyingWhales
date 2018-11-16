@@ -15,6 +15,7 @@ public class Interaction {
     protected bool _isDone;
     protected bool _isFirstTimeOutCancelled;
     protected bool _isSecondTimeOutCancelled;
+    protected InteractionState _previousState;
     protected InteractionState _currentState;
     protected Minion _explorerMinion;
 
@@ -34,6 +35,9 @@ public class Interaction {
     }
     public InteractionState currentState {
         get { return _currentState; }
+    }
+    public InteractionState previousState {
+        get { return _previousState; }
     }
     public Minion explorerMinion {
         get { return _explorerMinion; }
@@ -78,12 +82,13 @@ public class Interaction {
 
     #region Utilities
     public void SetCurrentState(InteractionState state) {
-        if(_currentState != null) {
-            state.SetAssignedObjects(_currentState.assignedObjects);
-            if (_currentState.chosenOption != null) {
+        _previousState = _currentState;
+        if(_currentState != null && _currentState.chosenOption != null) {
+            //state.SetAssignedObjects(_currentState.assignedObjects);
+            //if (_currentState.chosenOption != null) {
                 state.SetAssignedMinion(_currentState.chosenOption.assignedMinion);
                 _currentState.OnEndState();
-            }
+            //}
         }
         _currentState = state;
         _currentState.OnStartState();
