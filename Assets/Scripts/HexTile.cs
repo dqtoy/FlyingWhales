@@ -67,6 +67,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [Header("Minimap Objects")]
     [SerializeField] private SpriteRenderer minimapHexSprite;
 
+    [Space(10)]
+    [Header("Biome Details")]
+    [SerializeField] private Transform biomeDetailsParent;
+
+    [Space(10)]
+    [Header("Corruption")]
+    [SerializeField] private GameObject[] tendrils;
+
     private PASSABLE_TYPE _passableType;
     //private int _redMagicAmount;
     //private int _blueMagicAmount;
@@ -91,6 +99,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
     public BaseLandmark corruptedLandmark = null;
+    private GameObject _spawnedTendril = null;
 
     #region getters/setters
     public int id { get { return data.id; } }
@@ -184,6 +193,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void Initialize() {
         //spriteRenderer = this.GetComponent<SpriteRenderer>();
         //SetMagicAbundance();
+        //StartCorruptionAnimation();
     }
 
     #region Region Functions
@@ -1276,15 +1286,30 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             HexTile neighbor = AllNeighbours[i];
             if (!neighbor.isCorrupted) {
                 PlayerManager.Instance.AddTileToPlayerArea(neighbor);
-                //ScheduleCorruption();
-                //break;
             }
         }
     }
     public void ScheduleCorruption() {
+        for (int i = 0; i < AllNeighbours.Count; i++) {
+            HexTile neighbor = AllNeighbours[i];
+            if (!neighbor.isCorrupted) {
+                neighbor.StartCorruptionAnimation();
+            }
+        }
+
         GameDate nextCorruptionDate = GameManager.Instance.Today();
         nextCorruptionDate.AddHours(GameManager.hoursPerDay);
         SchedulingManager.Instance.AddEntry(nextCorruptionDate, () => SpreadCorruptionToNeighbors());
+    }
+    public void StartCorruptionAnimation() {
+        GameObject tendril = tendrils[UnityEngine.Random.Range(0, tendrils.Length)];
+        _spawnedTendril = GameObject.Instantiate(tendril, biomeDetailsParent);
+    }
+    public void StopCorruptionAnimation() {
+        if(_spawnedTendril != null) {
+            GameObject.Destroy(_spawnedTendril);
+            _spawnedTendril = null;
+        }
     }
     #endregion
 

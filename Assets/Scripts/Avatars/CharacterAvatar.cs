@@ -99,7 +99,9 @@ public class CharacterAvatar : MonoBehaviour{
     #region Monobehaviour
     private void OnDestroy() {
         Messenger.RemoveListener(Signals.INSPECT_ALL, OnInspectAll);
-        Messenger.RemoveListener<CharacterIntel>(Signals.CHARACTER_INTEL_ADDED, OnCharacterIntelObtained);
+        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_INTEL_ADDED)) {
+            Messenger.RemoveListener<CharacterIntel>(Signals.CHARACTER_INTEL_ADDED, OnCharacterIntelObtained);
+        }
         //Messenger.RemoveListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);
 #if !WORLD_CREATION_TOOL
         CharacterManager.Instance.RemoveCharacterAvatar(this);

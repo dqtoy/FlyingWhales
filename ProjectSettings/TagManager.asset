@@ -91,6 +91,9 @@ TagManager:
   - name: Structures Highest Layer
     uniqueID: 1766849815
     locked: 0
+  - name: Corruption
+    uniqueID: 3540404821
+    locked: 0
   - name: CityNames
     uniqueID: 1504590825
     locked: 0

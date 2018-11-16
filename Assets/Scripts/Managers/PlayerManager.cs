@@ -93,7 +93,7 @@ public class PlayerManager : MonoBehaviour {
     public void AddTileToPlayerArea(HexTile tile) {
         player.playerArea.AddTile(tile);
         tile.SetCorruption(true);
-        //tile.ActivateMagicTransferToPlayer();
+        tile.StopCorruptionAnimation();
     }
     public void CreatePlayerLandmarkOnTile(HexTile location, LANDMARK_TYPE landmarkType) {
         BaseLandmark landmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(location, landmarkType);

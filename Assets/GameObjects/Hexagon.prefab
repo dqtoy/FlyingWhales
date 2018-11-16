@@ -1591,6 +1591,11 @@ MonoBehaviour:
   mainStructure: {fileID: 212526057221491962}
   structureTint: {fileID: 212000010679973332}
   minimapHexSprite: {fileID: 212000011571301836}
+  biomeDetailsParent: {fileID: 4000010271148564}
+  tendrils:
+  - {fileID: 1333945586710530, guid: 8a952344c596b4a459ef55a9a53ccc8a, type: 2}
+  - {fileID: 1140917571844010, guid: 354120d1a043ff5408f1f5fa61268c30, type: 2}
+  - {fileID: 1257068715179384, guid: e4f030633cfd13a46a6acebc7b758c15, type: 2}
   allNeighbourRoads: []
   range: 0
 --- !u!114 &114000010974686576
@@ -2128,22 +2133,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   landmarkLbl: {fileID: 0}
-  charCountLbl: {fileID: 0}
   topSprite: {fileID: 212000013826377234}
   botSprite: {fileID: 212000010539593988}
   exploredGO: {fileID: 1000012935631484}
   landmarkNameplateGO: {fileID: 0}
-  characterIndicatorGO: {fileID: 0}
   iconSprite: {fileID: 0}
   hpProgressBar: {fileID: 0}
-  charactersScrollView: {fileID: 0}
-  hoverContent: {fileID: 0}
-  playerContent: {fileID: 0}
-  aiPath: {fileID: 0}
-  seeker: {fileID: 0}
-  destinationSetter: {fileID: 0}
-  lineRenderer: {fileID: 0}
   interactionTimer: {fileID: 0}
+  interactionTimerTween: {fileID: 0}
   landmarkHPGO: {fileID: 0}
 --- !u!114 &114000014244225468
 MonoBehaviour:
@@ -2598,7 +2595,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1379102825
-  m_SortingLayer: 12
+  m_SortingLayer: 13
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 5a0610074b4ce4442a9cecc67b473644, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 0.6392157}
