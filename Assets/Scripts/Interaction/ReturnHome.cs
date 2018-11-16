@@ -77,7 +77,9 @@ public class ReturnHome : Interaction {
         state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.STRING_1));
     }
     private void ContinuesRewardEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        if (explorerMinion != null) {
+            explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        }
         state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.STRING_1));
 
         characterInvolved.currentParty.GoHome();

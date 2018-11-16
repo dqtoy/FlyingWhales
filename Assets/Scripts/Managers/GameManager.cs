@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviour {
     public bool displayFPS = true;
     public bool allCharactersAreVisible = true;
     public bool inspectAll = false;
-    public bool ignoreEventTriggerWeights = true;
+    public bool ignoreEventTriggerWeights = false;
 
     public GameObject distanceLinePrefab;
     public HexTile tile1;

@@ -1359,6 +1359,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
+  forceShowPortrait: 1
   ignoreInteractions: 0
   bg: {fileID: 114231423438735640}
   head: {fileID: 114585714365265352}

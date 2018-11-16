@@ -168,6 +168,10 @@ public class HumanBanditReinforcements : Interaction {
         if (!landmark.defenders.isFull) {
             landmark.AddDefender(createdUnit);
         }
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(createdUnit.race), LOG_IDENTIFIER.STRING_1);
+            state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(createdUnit.role.roleType.ToString()), LOG_IDENTIFIER.STRING_2);
+        }
         //if (state.minionLog != null) {
         //    state.minionLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
         //    state.minionLog.AddToFillers(null, createdUnit.race.ToString(), LOG_IDENTIFIER.STRING_1);
@@ -189,6 +193,10 @@ public class HumanBanditReinforcements : Interaction {
         PlayerManager.Instance.player.AddNewCharacter(createdUnit);
         //**Reward**: Demon gains Exp 1
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(createdUnit.race), LOG_IDENTIFIER.STRING_1);
+            state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(createdUnit.role.roleType.ToString()), LOG_IDENTIFIER.STRING_2);
+        }
         //if (state.minionLog != null) {
         //    state.minionLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
         //    state.minionLog.AddToFillers(null, createdUnit.race.ToString(), LOG_IDENTIFIER.STRING_1);
