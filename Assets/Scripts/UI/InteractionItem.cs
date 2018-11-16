@@ -330,10 +330,14 @@ public class InteractionItem : MonoBehaviour {
         slot.PlaceObject(obj);
     }
     public void ClearAssignedObjects() {
-        for (int i = 1; i < interactionAssignedScrollView.content.childCount; i++) {
-            GameObject.Destroy(interactionAssignedScrollView.content.GetChild(i));
-            i--;
+        Transform[] objects = Utilities.GetComponentsInDirectChildren<Transform>(interactionAssignedScrollView.content.gameObject);
+        for (int i = 1; i < objects.Length; i++) {
+            GameObject.Destroy(objects[i].gameObject);
         }
+        //for (int i = 1; i < interactionAssignedScrollView.content.childCount; i++) {
+        //    GameObject.Destroy(interactionAssignedScrollView.content.GetChild(i));
+        //    i--;
+        //}
     }
     private void ShowConfirmButtonOnly(bool isInteractable) {
         assignmentGO.SetActive(true);
