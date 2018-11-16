@@ -38,11 +38,16 @@ public class BezierCurve : MonoBehaviour {
             if(progressMeter.positionCount > 0) {
                 prevPos = _positions[progressMeter.positionCount - 1];
             }
-            progressMeter.positionCount++;
-            float secs = GameManager.Instance.progressionSpeed / (float) _progressAmount;
-            progressMeter.SetPosition(progressMeter.positionCount - 1, prevPos);
-            iTween.ValueTo(gameObject, iTween.Hash("from", prevPos, "to", _positions[progressMeter.positionCount - 1], "time", secs, "onupdate", "TraverseLineRenderer"));
-            yield return new WaitForSeconds(secs);
+            if(progressMeter.positionCount >= _positions.Length) {
+                break;
+            } else {
+                progressMeter.positionCount++;
+                float secs = GameManager.Instance.progressionSpeed / (float) _progressAmount;
+                progressMeter.SetPosition(progressMeter.positionCount - 1, prevPos);
+                iTween.ValueTo(gameObject, iTween.Hash("from", prevPos, "to", _positions[progressMeter.positionCount - 1], "time", secs, "onupdate", "TraverseLineRenderer"));
+                yield return new WaitForSeconds(secs);
+            }
+
         }
     }
     private void TraverseLineRenderer(Vector3 vector3) {
