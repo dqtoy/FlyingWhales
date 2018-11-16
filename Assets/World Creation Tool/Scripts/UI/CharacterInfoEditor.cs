@@ -220,7 +220,7 @@ namespace worldcreator {
         public void SetLevel(string levelStr) {
             int newLevel;
             if (Int32.TryParse(levelStr, out newLevel)) {
-                _character.LevelUp(newLevel);
+                _character.SetLevel(newLevel);
             }
         }
         #endregion

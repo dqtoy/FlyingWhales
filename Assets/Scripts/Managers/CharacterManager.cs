@@ -237,7 +237,7 @@ public class CharacterManager : MonoBehaviour {
         }
 
         if (data.level != 0) {
-            newCharacter.LevelUp(data.level);
+            newCharacter.SetLevel(data.level);
         }
 
         _allCharacters.Add(newCharacter);

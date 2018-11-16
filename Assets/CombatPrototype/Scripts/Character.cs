@@ -2152,7 +2152,7 @@ namespace ECS {
                 ResetToFullSP();
             }
         }
-        public void LevelUp(int amount) {
+        public void SetLevel(int amount) {
             _level = amount;
             if (_level < 1) {
                 _level = 1;
