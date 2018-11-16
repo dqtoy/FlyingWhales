@@ -450,7 +450,7 @@ public class CharacterAvatar : MonoBehaviour{
         if (GameManager.Instance.inspectAll) {
             SetVisualState(true);
         } else {
-            if(_party.owner.minion != null || PlayerManager.Instance.player.HasIntel(_party.owner.characterIntel)) {
+            if(_party.owner.minion != null || _party.owner.characterIntel.isObtained) {
                 SetVisualState(true);
             } else {
                 SetVisualState(false);

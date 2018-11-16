@@ -17,14 +17,14 @@ public class IntelItem : MonoBehaviour {
     }
 
     private void UpdateVisuals() {
-        if (PlayerManager.Instance.player.HasIntel(intel)) {
+        if (intel.isObtained) {
             lockedGO.SetActive(false);
         } else {
             lockedGO.SetActive(true);
         }
     }
     public void ShowIntelInfo() {
-        if (PlayerManager.Instance.player.HasIntel(intel)) {
+        if (intel.isObtained) {
             //UIManager.Instance.ShowSmallInfo(intel.description);
         }
     }
