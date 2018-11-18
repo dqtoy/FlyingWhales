@@ -36,7 +36,6 @@ public class ReturnHome : Interaction {
                 name = "Prevent him/her from leaving.",
                 //description = "We have sent %minion% to watch the soldiers and follow them on their next secret meeting.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => PreventOption(state),
             };
             ActionOption doNothingOption = new ActionOption {
@@ -44,7 +43,6 @@ public class ReturnHome : Interaction {
                 cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => DoNothingOption(state),
             };
 
