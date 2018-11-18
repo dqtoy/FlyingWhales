@@ -17,6 +17,12 @@ public class FactionAttacks : Interaction {
     #region Overrides
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        startStateDescriptionLog.AddToFillers(null, interactable.name, LOG_IDENTIFIER.STRING_1);
+        startStateDescriptionLog.AddToFillers(null, _targetArea.name, LOG_IDENTIFIER.STRING_2);
+        startState.OverrideDescriptionLog(startStateDescriptionLog);
+
+
         InteractionState attackStoppedState = new InteractionState("Attack Stopped", this);
         InteractionState attackContinuesState = new InteractionState("Attack Continues", this);
         InteractionState successfulEmpowermentState = new InteractionState("Successful Empowerment", this);
@@ -114,8 +120,8 @@ public class FactionAttacks : Interaction {
     #region State Effects
     private void AttackStoppedEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
-        state.AddLogFiller(new LogFiller(interactable.faction, interactable.faction.name, LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.STRING_2));
+        state.AddLogFiller(new LogFiller(interactable.faction, interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.STRING_1));
     }
     private void AttackContinuesEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
@@ -129,7 +135,7 @@ public class FactionAttacks : Interaction {
         interactable.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);
         //Add Empowered Trait to Attacking Units - just one attacking unit or all?
 
-        state.AddLogFiller(new LogFiller(interactable.faction, interactable.faction.name, LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(interactable.faction, interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
 
         AttackTargetArea();
     }
@@ -148,19 +154,20 @@ public class FactionAttacks : Interaction {
     private void RedirectedEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         SetTargetArea(state.assignedLocation.location);
+        state.AddLogFiller(new LogFiller(interactable.faction, interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.STRING_1));
         AttackTargetArea();
     }
     private void DoNothingEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
-        state.AddLogFiller(new LogFiller(interactable.faction, interactable.faction.name, LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(interactable.faction, interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
         AttackTargetArea();
     }
 
 
     #endregion
     private void WeakenedUnits(InteractionState state) {
-        state.AddLogFiller(new LogFiller(interactable.faction, interactable.faction.name, LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(interactable.faction, interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
 
         interactable.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -3);
         //Add Weakened Trait to Attacking Units - just one attacking unit or all?
