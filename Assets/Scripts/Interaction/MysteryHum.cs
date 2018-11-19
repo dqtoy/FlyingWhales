@@ -90,20 +90,12 @@ public class MysteryHum : Interaction {
     #endregion
     private void SendOutDemonOption(InteractionState state) {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement("Demon Disappears", 10);
-        effectWeights.AddElement("Demon Attacks", 10);
+        //effectWeights.AddElement("Demon Disappears", 10);
+        //effectWeights.AddElement("Demon Attacks", 10);
         effectWeights.AddElement("Army Recruited", 30);
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
-
-        //if (chosenEffect == "Demon Disappears") {
-        //    DemonDisappearsRewardState(state, chosenEffect);
-        //} else if (chosenEffect == "Demon Attacks") {
-        //    DemonAttacksRewardState(state, chosenEffect);
-        //} else if (chosenEffect == "Army Recruited") {
-        //    ArmyRecruitedRewardState(state, chosenEffect);
-        //}
     }
     private void DoNothingOption(InteractionState state) {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();

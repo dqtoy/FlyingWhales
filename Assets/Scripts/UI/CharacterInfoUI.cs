@@ -324,11 +324,11 @@ public class CharacterInfoUI : UIMenu {
         } else {
             phaseLbl.gameObject.SetActive(false);
         }
-        if (_activeCharacter.IsInParty()) { //if was added to prevent showing the emblem if the character is only in a party with 1 character
-            partyEmblem.SetParty(_activeCharacter.currentParty);
-        } else {
-            partyEmblem.SetParty(null);
-        }
+        //if (_activeCharacter.IsInParty()) { //if was added to prevent showing the emblem if the character is only in a party with 1 character
+        //    partyEmblem.SetParty(_activeCharacter.currentParty);
+        //} else {
+        //    partyEmblem.SetParty(null);
+        //}
                 factionEmblem.SetFaction(_activeCharacter.faction);
         //affiliations.SetCharacter(_activeCharacter);
     }

@@ -4,23 +4,23 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
 
-public class CustomDropZone : MonoBehaviour, IDropHandler {
-    public DropEvent onDropItem;
+public class CustomDropZone : MonoBehaviour {
+    public CustomDropEvent onDropItem;
 
     public bool isEnabled = true;
 
-    public Transform droppedItem { get; private set; }
+    public GameObject droppedItem { get; private set; }
 
-    public void OnDrop(PointerEventData eventData) {
+    public void OnDrop(GameObject go) {
         if (!isEnabled) {
             return;
         }
         //Debug.Log(eventData.pointerDrag.name + " dropped on " + gameObject.name);
-        Transform trans = eventData.pointerDrag.GetComponent<Transform>();
-        if (trans != null) {
-            droppedItem = trans;
+        //Transform trans = eventData.pointerDrag.GetComponent<Transform>();
+        if (go != null) {
+            droppedItem = go;
             if (onDropItem != null) {
-                onDropItem.Invoke(trans);
+                onDropItem.Invoke(go);
             }
         }
     }
@@ -28,4 +28,9 @@ public class CustomDropZone : MonoBehaviour, IDropHandler {
     public void SetEnabledState(bool state) {
         isEnabled = state;
     }
+}
+
+
+[System.Serializable]
+public class CustomDropEvent : UnityEvent<GameObject> {
 }

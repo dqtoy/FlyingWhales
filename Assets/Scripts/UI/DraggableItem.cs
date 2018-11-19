@@ -57,12 +57,16 @@ public class DraggableItem : MonoBehaviour, IDragHandler, IBeginDragHandler, IEn
             }
 
             if (customDropzone != null) {
-                customDropzone.OnDrop(eventData);
+                customDropzone.OnDrop(_draggingObject.gameObject);
                 Destroy(_draggingObject.gameObject);
             } else {
                 CancelDrag();
             }
         }
+    }
+    public virtual void CancelDrag() {
+        _isDragging = false;
+        Destroy(_draggingObject.gameObject);
     }
     #endregion
 
@@ -70,8 +74,5 @@ public class DraggableItem : MonoBehaviour, IDragHandler, IBeginDragHandler, IEn
         _isDraggable = state;
     }
 
-    private void CancelDrag() {
-        _isDragging = false;
-        Destroy(_draggingObject.gameObject);
-    }
+    
 }

@@ -64,7 +64,7 @@ public class Minion : IUnit {
         //_ability = ability;
         //_lvl = 1;
         _exp = 0;
-        _type = (DEMON_TYPE) UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(DEMON_TYPE)).Length);
+        _type = DEMON_TYPE.NONE;
         _strType = Utilities.NormalizeString(_type.ToString());
         _isEnabled = true;
         //PlayerManager.Instance.player.demonicPortal.AddCharacterHomeOnLandmark(_icharacter);

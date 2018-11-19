@@ -263,7 +263,7 @@ namespace UnityEngine.UI.Extensions
                         }
 
                         if(customDropzone != null) {
-                            customDropzone.OnDrop(eventData);
+                            customDropzone.OnDrop(_draggingObject.gameObject);
                             if (_reorderableList.CloneDraggedObject) {
                                 Destroy(_draggingObject.gameObject);
                             }
