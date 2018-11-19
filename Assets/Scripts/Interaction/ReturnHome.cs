@@ -11,12 +11,17 @@ public class ReturnHome : Interaction {
     #region Overrides
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        startStateDescriptionLog.AddToFillers(null, Utilities.NormalizeString(characterInvolved.race.ToString()), LOG_IDENTIFIER.STRING_1);
+        startState.OverrideDescriptionLog(startStateDescriptionLog);
+
         InteractionState cancelledState = new InteractionState("Cancelled", this);
         InteractionState continuesState = new InteractionState("Continues", this);
         InteractionState doNothingState = new InteractionState("Do Nothing", this);
 
         CreateActionOptions(startState);
 
+        startState.SetEndEffect(() => StartEffect(startState));
         cancelledState.SetEndEffect(() => CancelledRewardEffect(cancelledState));
         continuesState.SetEndEffect(() => ContinuesRewardEffect(continuesState));
         doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
@@ -70,16 +75,18 @@ public class ReturnHome : Interaction {
     }
 
     #region State Effects
+    private void StartEffect(InteractionState state) {
+        if (!characterInvolved.characterIntel.isObtained) {
+            PlayerManager.Instance.player.AddIntel(characterInvolved.characterIntel);
+        }
+    }
     private void CancelledRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
-        state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.STRING_1));
     }
     private void ContinuesRewardEffect(InteractionState state) {
         if (explorerMinion != null) {
             explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         }
-        state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.STRING_1));
-
         characterInvolved.currentParty.GoHome();
     }
     private void DoNothingRewardEffect(InteractionState state) {
