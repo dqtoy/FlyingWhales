@@ -16,8 +16,6 @@ public class InteractionState {
     private ActionOption _chosenOption;
     private ActionOption _defaultOption;
     private Log _descriptionLog;
-    private Log _minionLog;
-    private Log _landmarkLog;
     private ActionOption[] _actionOptions;
     private List<object> _assignedObjects;
     private List<LogFiller> logFillers;
@@ -50,12 +48,6 @@ public class InteractionState {
     }
     public Log descriptionLog {
         get { return _descriptionLog; }
-    }
-    public Log minionLog {
-        get { return _minionLog; }
-    }
-    public Log landmarkLog {
-        get { return _landmarkLog; }
     }
     public ActionOption[] actionOptions {
         get { return _actionOptions; }
@@ -170,21 +162,6 @@ public class InteractionState {
             }
             currLog.AddLogToInvolvedObjects();
         }
-
-        ////Minion Log
-        //if (_minionLog != null) {
-        //    _minionLog.AddToFillers(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
-        //    _minionLog.AddToFillers(_interaction.interactable.specificLocation.tileLocation.landmarkOnTile, _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
-        //    interaction.explorerMinion.icharacter.AddHistory(_minionLog);
-        //}
-
-        ////Landmark Log
-        //if (_landmarkLog != null) {
-        //    _landmarkLog.AddToFillers(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
-        //    _landmarkLog.AddToFillers(_interaction.interactable.specificLocation.tileLocation.landmarkOnTile, _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
-        //    _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.AddHistory(_landmarkLog);
-        //}
-
     }
     public void SetChosenOption(ActionOption option) {
         _chosenOption = option;

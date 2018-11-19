@@ -166,9 +166,9 @@ public class HarvestSeason : Interaction {
         List<ICharacter> farmers = farm.tileLocation.areaOfTile.GetResidentsWithClass("Farmer");
         ICharacter chosenFarmer = farmers[Random.Range(0, farmers.Count)];
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(chosenFarmer, chosenFarmer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.descriptionLog.AddToFillers(chosenFarmer, chosenFarmer.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(chosenFarmer, chosenFarmer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        state.AddLogFiller(new LogFiller(chosenFarmer, chosenFarmer.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         chosenFarmer.Death();
         farm.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1

@@ -92,8 +92,8 @@ public class LandmarkInfoUI : UIMenu {
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_INSPECTED, OnLandmarkInspected);
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
-        //Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, OnPartyEnteredLandmark);
-        //Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, OnPartyExitedLandmark);
+        Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, OnPartyEnteredLandmark);
+        Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, OnPartyExitedLandmark);
         Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_ADDED, OnResidentAddedToLandmark);
         Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_REMOVED, OnResidentRemovedFromLandmark);
         Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
@@ -265,10 +265,10 @@ public class LandmarkInfoUI : UIMenu {
         CheckScrollers();
 
         //if (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll) {
-            for (int i = 0; i < _activeLandmark.charactersWithHomeOnLandmark.Count; i++) {
+            for (int i = 0; i < _activeLandmark.charactersAtLocation.Count; i++) {
                 //Party currParty = _activeLandmark.charactersWithHomeOnLandmark[i].ownParty;
-                if (!_activeLandmark.IsDefenderOfLandmark(_activeLandmark.charactersWithHomeOnLandmark[i].currentParty)) {
-                    CreateNewCharacterItem(_activeLandmark.charactersWithHomeOnLandmark[i]);
+                if (!_activeLandmark.IsDefenderOfLandmark(_activeLandmark.charactersAtLocation[i])) {
+                    CreateNewCharacterItem(_activeLandmark.charactersAtLocation[i].owner);
                 }
             }
         //}

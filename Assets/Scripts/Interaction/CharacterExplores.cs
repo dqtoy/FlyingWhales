@@ -41,7 +41,7 @@ public class CharacterExplores : Interaction {
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(characterInvolved.race), LOG_IDENTIFIER.STRING_1);
-        startStateDescriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //startStateDescriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         startStateDescriptionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
@@ -135,18 +135,10 @@ public class CharacterExplores : Interaction {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //**Mechanics**: Character will no longer leave.
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            //state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             state.descriptionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
         }
-        //if (state.minionLog != null) {
-        //    state.minionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //    state.minionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-        //}
-        //if (state.landmarkLog != null) {
-        //    state.landmarkLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //    state.landmarkLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-        //}
-        state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        //state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
         state.AddLogFiller(new LogFiller(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void CharacterExploreContinuesRewardEffect(InteractionState state) {
@@ -155,18 +147,10 @@ public class CharacterExplores : Interaction {
         //**Mechanics**: Character will start its travel to selected location
         CharacterTravelToLocation(targetLandmark);
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            //state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             state.descriptionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
         }
-        //if (state.minionLog != null) {
-        //    state.minionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //    state.minionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-        //}
-        //if (state.landmarkLog != null) {
-        //    state.landmarkLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //    state.landmarkLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-        //}
-        state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        //state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
         state.AddLogFiller(new LogFiller(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void CharacterExploreRedirectedRewardEffect(InteractionState state) {
@@ -176,36 +160,18 @@ public class CharacterExplores : Interaction {
         BaseLandmark targetLandmarkFromArea = GetTargetLandmark(this.previousState.assignedLocation.location);
         CharacterTravelToLocation(targetLandmarkFromArea);
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             state.descriptionLog.AddToFillers(targetLandmarkFromArea.tileLocation.areaOfTile, targetLandmarkFromArea.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
         }
-        //if (state.minionLog != null) {
-        //    state.minionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //    state.minionLog.AddToFillers(targetLandmarkFromArea.tileLocation.areaOfTile, targetLandmarkFromArea.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-        //}
-        //if (state.landmarkLog != null) {
-        //    state.landmarkLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //    state.landmarkLog.AddToFillers(targetLandmarkFromArea.tileLocation.areaOfTile, targetLandmarkFromArea.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-        //}
-        state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
         state.AddLogFiller(new LogFiller(targetLandmarkFromArea.tileLocation.areaOfTile, targetLandmarkFromArea.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void DoNothingRewardEffect(InteractionState state) {
         //**Mechanics**: Character will start its travel to selected location
         CharacterTravelToLocation(targetLandmark);
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            //state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             state.descriptionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
         }
-        //if (state.minionLog != null) {
-        //    state.minionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //    state.minionLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-        //}
-        //if (state.landmarkLog != null) {
-        //    state.landmarkLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //    state.landmarkLog.AddToFillers(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-        //}
-        state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        //state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
         state.AddLogFiller(new LogFiller(targetLandmark.tileLocation.areaOfTile, targetLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     #endregion
@@ -214,24 +180,6 @@ public class CharacterExplores : Interaction {
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.REST);
         (characterInvolved.ownParty as CharacterParty).iactionData.AssignAction(characterAction, target.landmarkObj);
     }
-
-
-    //private Character GetCharacterToMove() {
-    //    List<Character> choices = new List<Character>();
-    //    for (int i = 0; i < landmark.charactersWithHomeOnLandmark.Count; i++) {
-    //        ICharacter currCharacter = landmark.charactersWithHomeOnLandmark[i];
-    //        if (currCharacter is Character) {
-    //            Character character = currCharacter as Character;
-    //            if (allowedRoles.Contains(character.characterClass.className)) {
-    //                choices.Add(character);
-    //            }
-    //        }
-    //    }
-    //    if (choices.Count > 0) {
-    //        return choices[Random.Range(0, choices.Count)];
-    //    }
-    //    return null;
-    //}
 
     private BaseLandmark GetTargetLandmark() {
         List<BaseLandmark> choices = new List<BaseLandmark>();
@@ -251,7 +199,6 @@ public class CharacterExplores : Interaction {
         }
         return null;
     }
-
     private BaseLandmark GetTargetLandmark(Area currArea) {
         List<BaseLandmark> choices = new List<BaseLandmark>(currArea.landmarks);
         if (characterInvolved.ownParty.specificLocation is BaseLandmark) {
