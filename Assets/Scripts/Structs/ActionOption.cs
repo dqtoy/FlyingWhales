@@ -36,6 +36,7 @@ public class ActionOption {
 
     public void ActivateOption(IInteractable interactable) {
         PlayerManager.Instance.player.AdjustCurrency(cost.currency, -cost.amount);
+        //Remove needsMinion, handle needed objects and assigned objects properly, transfer this needsMinion logic to assignedObjects
         if(needsMinion) {
             Minion minion = assignedMinion;
             if(minion != null) {

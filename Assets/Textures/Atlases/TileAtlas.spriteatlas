@@ -59,8 +59,12 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 59980d3c50e9c3c4e8c869029a0ccc2e, type: 3}
   - {fileID: 21300000, guid: 671a2939fda30b34898a8299cebcfcd7, type: 3}
   - {fileID: 21300000, guid: 3bc5ae8edcf5dfc4ca9f51fdc0a28946, type: 3}
+  - {fileID: 21300000, guid: ed34e02c04299d14f9a09c902a8829bf, type: 3}
+  - {fileID: 21300000, guid: 1d396e785152633488dabf689958074b, type: 3}
   - {fileID: 21300000, guid: 22c48310b47583145a8bc2ccc6845bfe, type: 3}
   - {fileID: 21300000, guid: 7828e545f69833d49a9b79ab03928852, type: 3}
+  - {fileID: 21300000, guid: d4263d60451febd43b63d7d81b1589f0, type: 3}
+  - {fileID: 21300000, guid: d43124d75ece70a4bb727137082ded72, type: 3}
   - {fileID: 21300000, guid: b5b83e78c3a48954fa35de29644bea69, type: 3}
   - {fileID: 21300000, guid: d7be314c435a53e4996c7ae583f3e955, type: 3}
   - {fileID: 21300000, guid: 98dbae7ea4933304e99ce222fa122a1c, type: 3}
@@ -88,6 +92,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 1fbda9d0786a8e04caafa19bd1606c66, type: 3}
   - {fileID: 21300000, guid: 316ddb7009538c24fa9d92c1d957a0f9, type: 3}
   - {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
+  - {fileID: 21300000, guid: e103af882f6b64d41bed8a5d88b799fd, type: 3}
+  - {fileID: 21300000, guid: 3a483e59b0478124ba17069bee5078b6, type: 3}
   - {fileID: 21300000, guid: 63d253e0c6b317d4395379a46b5ad2f2, type: 3}
   - {fileID: 21300000, guid: 9d1349113684fd348ab6dd814eaf5ae4, type: 3}
   - {fileID: 21300000, guid: 5c14662c5457f1747a70dba5cc0ee35e, type: 3}
@@ -225,6 +231,7 @@ SpriteAtlas:
   - {fileID: 21300106, guid: 56a2c57009ed96c41b97b19cc3d6b340, type: 3}
   - {fileID: 21300052, guid: b691b436b68a75f46a376910267f4409, type: 3}
   - {fileID: 21300030, guid: 56a2c57009ed96c41b97b19cc3d6b340, type: 3}
+  - {fileID: 21300000, guid: 09ae2603ebabe1848afd5f6fe31c6cd9, type: 3}
   - {fileID: 21300020, guid: 301ddda5fde017644bab1ae01392d876, type: 3}
   - {fileID: 21300080, guid: 301ddda5fde017644bab1ae01392d876, type: 3}
   - {fileID: 21300060, guid: 301ddda5fde017644bab1ae01392d876, type: 3}
@@ -240,6 +247,12 @@ SpriteAtlas:
   - {fileID: 21300002, guid: 56a2c57009ed96c41b97b19cc3d6b340, type: 3}
   - {fileID: 21300082, guid: 56a2c57009ed96c41b97b19cc3d6b340, type: 3}
   - {fileID: 21300012, guid: 301ddda5fde017644bab1ae01392d876, type: 3}
+  - {fileID: 21300008, guid: 938271b667c4f454086c021f00b461bd, type: 3}
+  - {fileID: 21300010, guid: 938271b667c4f454086c021f00b461bd, type: 3}
+  - {fileID: 21300000, guid: 938271b667c4f454086c021f00b461bd, type: 3}
+  - {fileID: 21300002, guid: 938271b667c4f454086c021f00b461bd, type: 3}
+  - {fileID: 21300004, guid: 938271b667c4f454086c021f00b461bd, type: 3}
+  - {fileID: 21300006, guid: 938271b667c4f454086c021f00b461bd, type: 3}
   - {fileID: 21300092, guid: b691b436b68a75f46a376910267f4409, type: 3}
   - {fileID: 21300072, guid: 301ddda5fde017644bab1ae01392d876, type: 3}
   - {fileID: 21300008, guid: 56a2c57009ed96c41b97b19cc3d6b340, type: 3}
@@ -261,6 +274,7 @@ SpriteAtlas:
   - {fileID: 21300006, guid: 301ddda5fde017644bab1ae01392d876, type: 3}
   - {fileID: 21300042, guid: b691b436b68a75f46a376910267f4409, type: 3}
   - {fileID: 21300056, guid: b691b436b68a75f46a376910267f4409, type: 3}
+  - {fileID: 21300000, guid: 6fabc41f2e03a5043999cdfc622fcdc8, type: 3}
   - {fileID: 21300106, guid: b691b436b68a75f46a376910267f4409, type: 3}
   - {fileID: 21300008, guid: b691b436b68a75f46a376910267f4409, type: 3}
   - {fileID: 21300034, guid: 56a2c57009ed96c41b97b19cc3d6b340, type: 3}
@@ -313,8 +327,12 @@ SpriteAtlas:
   - human_lumberyard_colour
   - mountains_desert1_cave
   - exile_camp
+  - demonic_mountains_cold2
+  - demonic_mountains3
   - human_item_shop_colour
   - human_item_shop_colour
+  - demonic_mountains_cold3
+  - demonic_mountains2
   - demonic_mountains1
   - demonic_mountains_cold1
   - mountains_green1_cave
@@ -342,6 +360,8 @@ SpriteAtlas:
   - giant_skeleton_left
   - demonic_mountains_desert1
   - bandit_camp
+  - demonic_mountains_desert3
+  - demonic_mountains_desert2
   - monster_lair
   - human_mine_gold_colour
   - human_mine_gold_colour
@@ -479,6 +499,7 @@ SpriteAtlas:
   - HumanStructuresRuined_26
   - E_TallTreeHouse1_Tint
   - H_SmallHouse3_R
+  - mote1
   - H_WallHouse3_Base
   - H_SmallHouse4_Base
   - H_SmallHouse3_Base
@@ -494,6 +515,12 @@ SpriteAtlas:
   - H_SmallHouse2_R
   - HumanStructuresRuined_14
   - H_WallHouse1_Base
+  - tendril_4
+  - tendril_5
+  - tendril_0
+  - tendril_1
+  - tendril_2
+  - tendril_3
   - E_Mine_Tint
   - H_Wall3_Base
   - H_Wall1_R
@@ -515,6 +542,7 @@ SpriteAtlas:
   - H_SmallHouse1_Tint
   - E_SmallTreeHouse1_Tint
   - E_House2_Tint
+  - mote2
   - E_SmallHall2_Tint
   - E_TriHouse2_Tint
   - H_Ruin1

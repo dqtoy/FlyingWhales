@@ -165,6 +165,12 @@ public class Interaction {
     public void SetCharacterInvolved(Character character) {
         _characterInvolved = character;
     }
+    public bool AssignedMinionIsOfType(DEMON_TYPE type) {
+        return this.explorerMinion != null && this.explorerMinion.type == type;
+    }
+    public bool AssignedMinionIsOfType(List<DEMON_TYPE> allowedTypes) {
+        return this.explorerMinion != null && allowedTypes.Contains(this.explorerMinion.type);
+    }
     #endregion
 
     #region Shared States and Effects
@@ -301,14 +307,4 @@ public class Interaction {
         }
     }
     #endregion
-
-    #region Utilities
-    public bool AssignedMinionIsOfType(DEMON_TYPE type) {
-        return this.explorerMinion != null && this.explorerMinion.type == type;
-    }
-    public bool AssignedMinionIsOfType(List<DEMON_TYPE> allowedTypes) {
-        return this.explorerMinion != null && allowedTypes.Contains(this.explorerMinion.type);
-    }
-    #endregion
-
 }

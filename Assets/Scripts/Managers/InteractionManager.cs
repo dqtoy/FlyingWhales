@@ -90,6 +90,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.RETURN_HOME:
                 createdInteraction = new ReturnHome(interactable);
                 break;
+            case INTERACTION_TYPE.FACTION_ATTACKS:
+                createdInteraction = new FactionAttacks(interactable);
+                break;
         }
         return createdInteraction;
     }
