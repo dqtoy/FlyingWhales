@@ -10,7 +10,6 @@ public class UnfinishedCurse : Interaction {
     private const string obtainMana = "Obtain Mana";
     private const string doNothing = "Do nothing";
 
-    private ICharacter chosenCharacter;
 
     private WeightedDictionary<string> curseWeights;
 
@@ -20,40 +19,37 @@ public class UnfinishedCurse : Interaction {
 
     #region Overrides
     public override void CreateStates() {
-        if (_interactable is BaseLandmark) {
-            ConstructCurseWeights();
-            InteractionState startState = new InteractionState("Start", this);
-            chosenCharacter = _interactable as ICharacter;
-            //string startStateDesc = "Our imp has reported what appears to be an ancient unfinished curse placed within one of the cemetery mausoleums. We may be able to complete the curse but we aren't aware of what it's actual effect would be, if any.";
-            //startState.SetDescription(startStateDesc);
-            CreateActionOptions(startState);
-            //GameDate dueDate = GameManager.Instance.Today();
-            //dueDate.AddHours(100);
-            //startState.SetTimeSchedule(startState.actionOptions[2], dueDate); //default is do nothing
+        ConstructCurseWeights();
+        InteractionState startState = new InteractionState("Start", this);
+        //string startStateDesc = "Our imp has reported what appears to be an ancient unfinished curse placed within one of the cemetery mausoleums. We may be able to complete the curse but we aren't aware of what it's actual effect would be, if any.";
+        //startState.SetDescription(startStateDesc);
+        CreateActionOptions(startState);
+        //GameDate dueDate = GameManager.Instance.Today();
+        //dueDate.AddHours(100);
+        //startState.SetTimeSchedule(startState.actionOptions[2], dueDate); //default is do nothing
 
-            //action option states
-            InteractionState curseCompletedState = new InteractionState(curseCompleted, this);
-            InteractionState curseFailedToCompleteState = new InteractionState(curseFailedToComplete, this);
-            InteractionState curseBackfiresState = new InteractionState(curseBackfires, this);
-            InteractionState obtainManaState = new InteractionState(obtainMana, this);
-            InteractionState doNothingState = new InteractionState(doNothing, this);
+        //action option states
+        InteractionState curseCompletedState = new InteractionState(curseCompleted, this);
+        InteractionState curseFailedToCompleteState = new InteractionState(curseFailedToComplete, this);
+        InteractionState curseBackfiresState = new InteractionState(curseBackfires, this);
+        InteractionState obtainManaState = new InteractionState(obtainMana, this);
+        InteractionState doNothingState = new InteractionState(doNothing, this);
             
-            curseCompletedState.SetEndEffect(() => CurseCompletedRewardEffect(curseCompletedState));
-            curseFailedToCompleteState.SetEndEffect(() => CurseFailedToCompleteRewardEffect(curseFailedToCompleteState));
-            curseBackfiresState.SetEndEffect(() => CurseBackfiresRewardEffect(curseBackfiresState));
-            obtainManaState.SetEndEffect(() => ObtainManaRewardEffect(obtainManaState));
-            doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
+        curseCompletedState.SetEndEffect(() => CurseCompletedRewardEffect(curseCompletedState));
+        curseFailedToCompleteState.SetEndEffect(() => CurseFailedToCompleteRewardEffect(curseFailedToCompleteState));
+        curseBackfiresState.SetEndEffect(() => CurseBackfiresRewardEffect(curseBackfiresState));
+        obtainManaState.SetEndEffect(() => ObtainManaRewardEffect(obtainManaState));
+        doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
             
 
-            _states.Add(startState.name, startState);
-            _states.Add(curseCompletedState.name, curseCompletedState);
-            _states.Add(curseBackfiresState.name, curseBackfiresState);
-            _states.Add(doNothingState.name, doNothingState);
-            _states.Add(curseFailedToCompleteState.name, curseFailedToCompleteState);
-            _states.Add(obtainManaState.name, obtainManaState);
+        _states.Add(startState.name, startState);
+        _states.Add(curseCompletedState.name, curseCompletedState);
+        _states.Add(curseBackfiresState.name, curseBackfiresState);
+        _states.Add(doNothingState.name, doNothingState);
+        _states.Add(curseFailedToCompleteState.name, curseFailedToCompleteState);
+        _states.Add(obtainManaState.name, obtainManaState);
 
-            SetCurrentState(startState);
-        }
+        SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {
@@ -132,40 +128,20 @@ public class UnfinishedCurse : Interaction {
         string chosenCurse = curseWeights.PickRandomElementGivenWeights();
         Trait chosenAttribute = AttributeManager.Instance.allCombatAttributes[chosenCurse];
         state.assignedCharacter.character.AddCombatAttribute(chosenAttribute);
-        //if (state.minionLog != null) {
-        //    state.minionLog.AddToFillers(state.assignedCharacter.character, state.assignedCharacter.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //    state.minionLog.AddToFillers(null, chosenAttribute.name, LOG_IDENTIFIER.STRING_1);
-        //}
-        //if (state.landmarkLog != null) {
-        //    state.landmarkLog.AddToFillers(state.assignedCharacter.character, state.assignedCharacter.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //    state.landmarkLog.AddToFillers(null, chosenAttribute.name, LOG_IDENTIFIER.STRING_1);
-        //}
-        state.AddLogFiller(new LogFiller(state.assignedCharacter.character, state.assignedCharacter.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        state.AddLogFiller(new LogFiller(state.assignedCharacter.character, state.assignedCharacter.character.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(null, chosenAttribute.name, LOG_IDENTIFIER.STRING_1));
     }
     private void CurseFailedToCompleteRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
         this.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
-        //if (state.minionLog != null) {
-        //    state.minionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //}
-        //if (state.landmarkLog != null) {
-        //    state.landmarkLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //}
-        state.AddLogFiller(new LogFiller(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        //state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
     }
     private void CurseBackfiresRewardEffect(InteractionState state) {
         this.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Effect**: Demon Minion should gain a random curse from the Curse checklist below
         string chosenCurse = curseWeights.PickRandomElementGivenWeights();
         state.assignedMinion.icharacter.AddCombatAttribute(AttributeManager.Instance.allCombatAttributes[chosenCurse]);
-        //if (state.minionLog != null) {
-        //    state.minionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //}
-        //if (state.landmarkLog != null) {
-        //    state.landmarkLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //}
-        state.AddLogFiller(new LogFiller(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        //state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
     }
     private void ObtainManaRewardEffect(InteractionState state) {
         //**Reward**: Mana Cache 1, Demon gains Exp 1

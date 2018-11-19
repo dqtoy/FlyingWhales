@@ -103,6 +103,7 @@ public class GameManager : MonoBehaviour {
         _gameHasStarted = true;
         //SetPausedState(false);
         UIManager.Instance.SetProgressionSpeed1X();
+        UIManager.Instance.Pause();
 		SchedulingManager.Instance.StartScheduleCalls ();
         Messenger.Broadcast(Signals.DAY_START); //for the first day
     }

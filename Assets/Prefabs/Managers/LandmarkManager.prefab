@@ -605,13 +605,16 @@ MonoBehaviour:
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
     biomeTileSprites:
-      m_keys: 040000000300000000000000
+      m_keys: 04000000030000000000000007000000
       m_values:
       - data:
         - mainSprite: {fileID: 21300000, guid: 1b9c2e3866c9dcc46ba88340a11eb721, type: 3}
           tintSprite: {fileID: 0}
       - data:
         - mainSprite: {fileID: 21300000, guid: 92a121cdd7e46494e8802d75d1f0695b, type: 3}
+          tintSprite: {fileID: 0}
+      - data:
+        - mainSprite: {fileID: 21300000, guid: 1b9c2e3866c9dcc46ba88340a11eb721, type: 3}
           tintSprite: {fileID: 0}
       - data:
         - mainSprite: {fileID: 21300000, guid: 1b9c2e3866c9dcc46ba88340a11eb721, type: 3}

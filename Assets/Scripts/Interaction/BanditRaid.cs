@@ -85,7 +85,7 @@ public class BanditRaid : Interaction {
                 name = "Provide them some assistance.",
                 duration = 0,
                 needsMinion = false,
-                neededObjects = new List<System.Type>() { typeof(ICharacter) },
+                //neededObjects = new List<System.Type>() { typeof(ICharacter) },
                 effect = () => ProvideThemSomeAssistanceEffect(state),
             };
             ActionOption doNothing = new ActionOption {
