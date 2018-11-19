@@ -213,7 +213,7 @@ public class UIManager : MonoBehaviour {
         //UnifySelectables();
         //popupMessageBox.Initialize();
         Messenger.AddListener<HexTile>(Signals.TILE_RIGHT_CLICKED, ShowContextMenu);
-        Messenger.AddListener<HexTile>(Signals.TILE_LEFT_CLICKED, HideMenus);
+        Messenger.AddListener(Signals.HIDE_MENUS, HideMenus);
         Messenger.AddListener<string, int, UnityAction>(Signals.SHOW_NOTIFICATION, ShowNotification);
 
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OVER, OnHoverOverTile);
@@ -228,12 +228,20 @@ public class UIManager : MonoBehaviour {
     //        selectables[i].Initialize();
     //    }
     //}
-    private void HideMenus(HexTile tile) {
+    private void HideMenus() {
         HideContextMenu();
-        characterInfoUI.CloseMenu();
-        landmarkInfoUI.CloseMenu();
-        monsterInfoUI.CloseMenu();
-        partyinfoUI.CloseMenu();
+        if (characterInfoUI.isShowing) {
+            characterInfoUI.CloseMenu();
+        }
+        if (landmarkInfoUI.isShowing) {
+            landmarkInfoUI.CloseMenu();
+        }
+        if (monsterInfoUI.isShowing) {
+            monsterInfoUI.CloseMenu();
+        }
+        if (partyinfoUI.isShowing) {
+            partyinfoUI.CloseMenu();
+        }
     }
 
     #region Font Utilities
@@ -1132,6 +1140,33 @@ public class UIManager : MonoBehaviour {
     }
     public void ShowFactionIntelMenu() {
         factionsMenuToggle.isOn = true;
+    }
+    public void HideRightMenus() {
+        minionsMenuToggle.isOn = false;
+        charactersMenuToggle.isOn = false;
+        locationsMenuToggle.isOn = false;
+        factionsMenuToggle.isOn = false;
+    }
+
+    public void OnMinionsMenuToggled(bool state) {
+        if (!state) {
+            PlayerUI.Instance.previousMenu = "minion";
+        }
+    }
+    public void OnCharacterIntelMenuToggled(bool state) {
+        if (!state) {
+            PlayerUI.Instance.previousMenu = "character";
+        }
+    }
+    public void OnLocationIntelMenuToggled(bool state) {
+        if (!state) {
+            PlayerUI.Instance.previousMenu = "location";
+        }
+    }
+    public void OnFactionIntelMenuToggled(bool state) {
+        if (!state) {
+            PlayerUI.Instance.previousMenu = "faction";
+        }
     }
 }
 

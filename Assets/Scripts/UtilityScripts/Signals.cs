@@ -79,6 +79,7 @@ public static class Signals {
     public static string INTERACTION_MENU_OPENED = "OnInteractionMenuOpened"; //Parameters ()
     public static string INTERACTION_MENU_CLOSED = "OnInteractionMenuClosed"; //Parameters ()
     public static string CLICKED_INTERACTION_BUTTON = "OnClickedInteractionButton";
+    public static string HIDE_MENUS = "HideMenus";
     #endregion
 
     #region Quest Signals

@@ -101,6 +101,7 @@ public class LandmarkInfoUI : UIMenu {
     }
     public override void OpenMenu() {
         base.OpenMenu();
+        SetLandmarkBorderState(false);
         _activeLandmark = _data as BaseLandmark;
         UpdateHiddenUI();
         UpdateLandmarkInfo();
@@ -112,18 +113,18 @@ public class LandmarkInfoUI : UIMenu {
         ResetScrollPositions();
         //PlayerUI.Instance.UncollapseMinionHolder();
         //InteractionUI.Instance.OpenInteractionUI(_activeLandmark);
-        _activeLandmark.tileLocation.SetBordersState(true);
-
+        SetLandmarkBorderState(true);
     }
     public override void CloseMenu() {
         base.CloseMenu();
-        if (_activeLandmark != null) {
-            _activeLandmark.tileLocation.SetBordersState(false);
-        }
+        SetLandmarkBorderState(false);
         _activeLandmark = null;
         //PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
         //PlayerUI.Instance.CollapseMinionHolder();
         //InteractionUI.Instance.HideInteractionUI();
+    }
+    public override void SetData(object data) {
+        base.SetData(data);
     }
 
     public void UpdateLandmarkInfo() {
@@ -142,11 +143,6 @@ public class LandmarkInfoUI : UIMenu {
         //UpdateItems();
         UpdateAllHistoryInfo();
     }
-    //private void UpdateBGs(bool state) {
-    //    for (int i = 0; i < notInspectedBGs.Length; i++) {
-    //        notInspectedBGs[i].SetActive(state);
-    //    }
-    //}
     private void UpdateHiddenUI() {
         if (_activeLandmark.tileLocation.areaOfTile.locationIntel.isObtained || GameManager.Instance.inspectAll) {
             ShowIntelTriggeredUI();
@@ -438,6 +434,11 @@ public class LandmarkInfoUI : UIMenu {
         if (isShowing && _activeLandmark != null) {
             UpdateCharacters();
             UpdateHiddenUI();
+        }
+    }
+    private void SetLandmarkBorderState(bool state) {
+        if (_activeLandmark != null) {
+            _activeLandmark.tileLocation.SetBordersState(state);
         }
     }
     #endregion

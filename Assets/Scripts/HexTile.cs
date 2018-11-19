@@ -1063,6 +1063,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
         if (this.landmarkOnTile != null) {
             UIManager.Instance.ShowLandmarkInfo(this.landmarkOnTile);
+        } else {
+            Messenger.Broadcast(Signals.HIDE_MENUS);
         }
         //UIManager.Instance.playerActionsUI.CloseMenu();
 #endif
