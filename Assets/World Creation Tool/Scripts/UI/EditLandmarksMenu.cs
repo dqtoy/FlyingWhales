@@ -67,10 +67,10 @@ namespace worldcreator {
         }
         private void OnSpawnLandmark(LANDMARK_TYPE landmarkType) {
             switch (landmarkType) {
-                case LANDMARK_TYPE.ELVEN_HOUSES:
-                case LANDMARK_TYPE.HUMAN_HOUSES:
-                    WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Input Civilians", "Input number of civilians (per settlement)", SetHousesCivilians);
-                    break;
+                //case LANDMARK_TYPE.HOUSES:
+                //case LANDMARK_TYPE.HUMAN_HOUSES:
+                //    WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Input Civilians", "Input number of civilians (per settlement)", SetHousesCivilians);
+                //    break;
                 default:
                     break;
             }

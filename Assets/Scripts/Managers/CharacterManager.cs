@@ -192,7 +192,9 @@ public class CharacterManager : MonoBehaviour {
         //}
         if (data.homeLandmarkID != -1) {
             BaseLandmark homeLandmark = LandmarkManager.Instance.GetLandmarkByID(data.homeLandmarkID);
-            homeLandmark.AddCharacterHomeOnLandmark(newCharacter);
+            if (homeLandmark != null) {
+                homeLandmark.AddCharacterHomeOnLandmark(newCharacter);
+            }
         }
         Party party = newCharacter.CreateOwnParty();
         if (data.locationID != -1) {

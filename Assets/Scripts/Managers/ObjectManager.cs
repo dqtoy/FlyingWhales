@@ -378,11 +378,8 @@ public class ObjectManager : MonoBehaviour {
             case LANDMARK_TYPE.HUNTING_GROUNDS:
                 structureObj = new HuntingGrounds();
                 break;
-            case LANDMARK_TYPE.ELVEN_HOUSES:
-                structureObj = new ElvenHouses();
-                break;
-            case LANDMARK_TYPE.HUMAN_HOUSES:
-                structureObj = new HumanHouses();
+            case LANDMARK_TYPE.HOUSES:
+                structureObj = new Houses();
                 break;
             case LANDMARK_TYPE.MONSTER_DEN:
                 structureObj = new MonsterDen();

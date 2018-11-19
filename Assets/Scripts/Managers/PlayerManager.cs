@@ -15,6 +15,16 @@ public class PlayerManager : MonoBehaviour {
     [SerializeField] private Sprite[] _playerAreaDefaultStructureSprites;
     [SerializeField] private Sprite _supplySprite, _manaSprite, _impSprite;
 
+    public List<LANDMARK_TYPE> playerStructureTypes = new List<LANDMARK_TYPE>() {
+        LANDMARK_TYPE.MANA_EXTRACTOR,
+        LANDMARK_TYPE.BARRACKS,
+        LANDMARK_TYPE.MINIONS_HOLD,
+        LANDMARK_TYPE.DWELLINGS,
+        LANDMARK_TYPE.RAMPART,
+        LANDMARK_TYPE.NODE,
+        LANDMARK_TYPE.SUMMONING_CIRCLE,
+    };
+
     #region getters/setters
     public Sprite[] playerAreaFloorSprites {
         get { return _playerAreaFloorSprites; }

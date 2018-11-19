@@ -22,7 +22,7 @@ public class EatAction : CharacterAction {
         //Filter: Residents of this Structure
         if (targetObject is StructureObj) {
             StructureObj structureObj = targetObject as StructureObj;
-            if (structureObj.specificObjectType == LANDMARK_TYPE.ELVEN_HOUSES || structureObj.specificObjectType == LANDMARK_TYPE.HUMAN_HOUSES) {
+            if (structureObj.specificObjectType == LANDMARK_TYPE.HOUSES) {
                 BaseLandmark landmark = structureObj.objectLocation;
                 if (landmark.charactersWithHomeOnLandmark.Contains(party.mainCharacter as ECS.Character)) {
                     return true;

@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ElvenHouses : StructureObj {
+public class Houses : StructureObj {
 
-    public ElvenHouses() : base() {
-        _specificObjectType = LANDMARK_TYPE.ELVEN_HOUSES;
+    public Houses() : base() {
+        _specificObjectType = LANDMARK_TYPE.HOUSES;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
     }
 
     #region Overrides
     public override IObject Clone() {
-        ElvenHouses clone = new ElvenHouses();
+        Houses clone = new Houses();
         SetCommonData(clone);
         return clone;
     }

@@ -169,7 +169,7 @@ MonoBehaviour:
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
-  - landmarkTypeString: Elven Houses
+  - landmarkTypeString: Houses
     landmarkType: 12
     minimumTileCount: 1
     connectedTileDirection: 0
@@ -187,38 +187,6 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: 85a0cd260bc3a304ea9c12fa4c06c78e, type: 3}
     - mainSprite: {fileID: 21300000, guid: 3a45dae052a768e45b88c6a722e03f8d, type: 3}
       tintSprite: {fileID: 21300000, guid: 9f89551edef6d6743a2486dea9f60a21, type: 3}
-    humansLandmarkTileSprites: []
-    elvenLandmarkTileSprites:
-    - mainSprite: {fileID: 21300000, guid: fcf1353cbcd1f08478171177da44e53a, type: 3}
-      tintSprite: {fileID: 21300000, guid: ab7ea309573094a46aefe91b9d263e85, type: 3}
-    - mainSprite: {fileID: 21300000, guid: be64a1ec7b8543a49abda954ba47586a, type: 3}
-      tintSprite: {fileID: 21300000, guid: 85a0cd260bc3a304ea9c12fa4c06c78e, type: 3}
-    - mainSprite: {fileID: 21300000, guid: 3a45dae052a768e45b88c6a722e03f8d, type: 3}
-      tintSprite: {fileID: 21300000, guid: 9f89551edef6d6743a2486dea9f60a21, type: 3}
-    possibleSpawnPoints: 01000000020000000600000007000000
-    isUnique: 0
-    startingMonsterSpawn: {fileID: 0}
-    isMonsterSpawner: 0
-    monsterSets: []
-    monsterSpawnCooldown: 0
-  - landmarkTypeString: Human Houses
-    landmarkType: 13
-    minimumTileCount: 1
-    connectedTileDirection: 0
-    uniqueTags: 
-    landmarkObjectSprite: {fileID: 21300064, guid: be352ea3d46036640bb6df35b7b4dc2b,
-      type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    biomeTileSprites:
-      m_keys: 
-      m_values: []
-    neutralTileSprites:
-    - mainSprite: {fileID: 21300000, guid: 6b15ab4e0c664d94f906a2b783906619, type: 3}
-      tintSprite: {fileID: 21300000, guid: d25eaa8dbe14ebb4e96d58aabf1b978f, type: 3}
-    - mainSprite: {fileID: 21300000, guid: 0f6fa99d125714942961d8e54adf43b1, type: 3}
-      tintSprite: {fileID: 21300000, guid: 59ba8e34d3c07e84784432fc9e1c45bb, type: 3}
-    - mainSprite: {fileID: 21300000, guid: 56d159c582f9df74381d04ab1e663d9c, type: 3}
-      tintSprite: {fileID: 21300000, guid: d17f26b8defdee446a0719c4630d3ef2, type: 3}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 6b15ab4e0c664d94f906a2b783906619, type: 3}
       tintSprite: {fileID: 21300000, guid: d25eaa8dbe14ebb4e96d58aabf1b978f, type: 3}
@@ -226,7 +194,13 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: 59ba8e34d3c07e84784432fc9e1c45bb, type: 3}
     - mainSprite: {fileID: 21300000, guid: 56d159c582f9df74381d04ab1e663d9c, type: 3}
       tintSprite: {fileID: 21300000, guid: d17f26b8defdee446a0719c4630d3ef2, type: 3}
-    elvenLandmarkTileSprites: []
+    elvenLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: fcf1353cbcd1f08478171177da44e53a, type: 3}
+      tintSprite: {fileID: 21300000, guid: ab7ea309573094a46aefe91b9d263e85, type: 3}
+    - mainSprite: {fileID: 21300000, guid: be64a1ec7b8543a49abda954ba47586a, type: 3}
+      tintSprite: {fileID: 21300000, guid: 85a0cd260bc3a304ea9c12fa4c06c78e, type: 3}
+    - mainSprite: {fileID: 21300000, guid: 3a45dae052a768e45b88c6a722e03f8d, type: 3}
+      tintSprite: {fileID: 21300000, guid: 9f89551edef6d6743a2486dea9f60a21, type: 3}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}
@@ -1172,19 +1146,14 @@ MonoBehaviour:
   areaData:
   - areaType: 0
     baseAreaType: 0
-    allowedLandmarkTypes: 0c00000009000000040000001000000014000000
   - areaType: 1
     baseAreaType: 0
-    allowedLandmarkTypes: 0d00000009000000040000001000000014000000
   - areaType: 2
     baseAreaType: 1
-    allowedLandmarkTypes: 0b0000000e000000
   - areaType: 3
     baseAreaType: 2
-    allowedLandmarkTypes: 01000000210000002400000025000000260000002c000000
   - areaType: 4
     baseAreaType: 1
-    allowedLandmarkTypes: 0b0000000e000000
   corruptedLandmarksCount: 0
   ancientRuinTowerSprite: {fileID: 21300000, guid: ef09c80c77be9fd44b96fa5ee6f851e5,
     type: 3}

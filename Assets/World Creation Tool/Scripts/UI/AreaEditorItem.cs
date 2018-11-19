@@ -54,7 +54,7 @@ namespace worldcreator {
         public void OnChangeAreaTypeDropdownValue(int choice) {
             AREA_TYPE areaType = (AREA_TYPE)Enum.Parse(typeof(AREA_TYPE), areaTypeDropdown.options[choice].text);
             _area.SetAreaType(areaType);
-            ValidateLandmarks();
+            //ValidateLandmarks();
         }
 
         #region Dropdown Data
@@ -104,20 +104,20 @@ namespace worldcreator {
         }
 
         #region Utilities
-        private void ValidateLandmarks() {
-            AreaData data = LandmarkManager.Instance.GetAreaData(_area.areaType);
-            List<BaseLandmark> invalidLandmarks = new List<BaseLandmark>();
-            for (int i = 0; i < _area.landmarks.Count; i++) {
-                BaseLandmark landmark = _area.landmarks[i];
-                if (!data.allowedLandmarkTypes.Contains(landmark.specificLandmarkType)) {
-                    invalidLandmarks.Add(landmark);
-                }
-            }
+        //private void ValidateLandmarks() {
+        //    AreaData data = LandmarkManager.Instance.GetAreaData(_area.areaType);
+        //    List<BaseLandmark> invalidLandmarks = new List<BaseLandmark>();
+        //    for (int i = 0; i < _area.landmarks.Count; i++) {
+        //        BaseLandmark landmark = _area.landmarks[i];
+        //        if (!data.allowedLandmarkTypes.Contains(landmark.specificLandmarkType)) {
+        //            invalidLandmarks.Add(landmark);
+        //        }
+        //    }
 
-            for (int i = 0; i < invalidLandmarks.Count; i++) {
-                LandmarkManager.Instance.DestroyLandmarkOnTile(invalidLandmarks[i].tileLocation);
-            }
-        }
+        //    for (int i = 0; i < invalidLandmarks.Count; i++) {
+        //        LandmarkManager.Instance.DestroyLandmarkOnTile(invalidLandmarks[i].tileLocation);
+        //    }
+        //}
         #endregion
     }
 }

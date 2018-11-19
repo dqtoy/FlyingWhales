@@ -21,7 +21,7 @@ public class Spooked : CharacterAttribute {
                 BaseLandmark landmark = _character.ownParty.specificLocation.tileLocation.areaOfTile.landmarks[i];
                 if (landmark.landmarkObj.specificObjectType == LANDMARK_TYPE.INN) {
                     inns.Add(landmark);
-                } else if ((landmark.landmarkObj.specificObjectType == LANDMARK_TYPE.HUMAN_HOUSES || landmark.landmarkObj.specificObjectType == LANDMARK_TYPE.ELVEN_HOUSES)
+                } else if (landmark.landmarkObj.specificObjectType == LANDMARK_TYPE.HOUSES
                     && _character.homeLandmark.id != landmark.id) {
                     houses.Add(landmark);
                 }
