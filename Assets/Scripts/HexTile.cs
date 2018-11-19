@@ -1063,6 +1063,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
         if (this.landmarkOnTile != null) {
             UIManager.Instance.ShowLandmarkInfo(this.landmarkOnTile);
+        } else {
+            Messenger.Broadcast(Signals.HIDE_MENUS);
         }
         //UIManager.Instance.playerActionsUI.CloseMenu();
 #endif
@@ -1424,9 +1426,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
                 ContextMenuSettings createLandmarkSettings = new ContextMenuSettings();
                 createLandmarkItem.SetSubMenu(createLandmarkSettings);
+                LANDMARK_TYPE[] types = Utilities.GetEnumValues<LANDMARK_TYPE>();
 
-                for (int i = 0; i < areaData.allowedLandmarkTypes.Count; i++) {
-                    LANDMARK_TYPE landmarkType = areaData.allowedLandmarkTypes[i];
+                for (int i = 0; i < types.Length; i++) {
+                    LANDMARK_TYPE landmarkType = types[i];
                     ContextMenuItemSettings createLandmark = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString()));
                     createLandmark.onClickAction = () => worldcreator.WorldCreatorUI.Instance.editLandmarksMenu.SpawnLandmark(landmarkType, this);
                     createLandmarkSettings.AddMenuItem(createLandmark);
@@ -1490,9 +1493,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             createLandmarkItem.SetSubMenu(createLandmarkSettings);
             settings.AddMenuItem(createLandmarkItem);
 
-            AreaData data = LandmarkManager.Instance.GetAreaData(AREA_TYPE.DEMONIC_INTRUSION);
-            for (int i = 0; i < data.allowedLandmarkTypes.Count; i++) {
-                LANDMARK_TYPE landmarkType = data.allowedLandmarkTypes[i];
+            for (int i = 0; i < PlayerManager.Instance.playerStructureTypes.Count; i++) {
+                LANDMARK_TYPE landmarkType = PlayerManager.Instance.playerStructureTypes[i];
                 if (landmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
                     if (PlayerManager.Instance.CanCreateLandmarkOnTile(landmarkType, this)) {
                         ContextMenuItemSettings createLandmark = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString()));

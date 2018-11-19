@@ -45,11 +45,12 @@ public class PlayerUI : MonoBehaviour {
         get { return _minionSortType; }
     }
     #endregion
+
     void Awake() {
         Instance = this;
         minionItems = new List<PlayerCharacterItem>();
-        //Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
-        //Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
+        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
     }
     void Start() {
         Messenger.AddListener(Signals.UPDATED_CURRENCIES, UpdateUI);
@@ -122,12 +123,6 @@ public class PlayerUI : MonoBehaviour {
         //minionItem.portrait.SetBorderState(false);
         //minionItem.SetEnabledState(false);
     }
-    //public void CollapseMinionHolder() {
-    //    //minionsHolderGO.GetComponent<TweenPosition>().PlayReverse();
-    //}
-    //public void UncollapseMinionHolder() {
-    //    //minionsHolderGO.GetComponent<TweenPosition>().PlayForward();
-    //}
     public void ScrollUp() {
         float y = minionsContentTransform.localPosition.y - 115f;
         if(y < 0f) {
@@ -263,36 +258,33 @@ public class PlayerUI : MonoBehaviour {
         isMinionsMenuShowing = state;
     }
 
-    private void OnInteractionMenuOpened() {
-        if (this.isMinionsMenuShowing) {
-            //if the menu is showing update it's open position
-            //only open halfway
-            tweener.SetAnimationPosition(openPosition, halfPosition, curve, curve);
-            tweener.ChangeSetState(false);
-            tweener.TriggerOpenClose();
-            tweener.SetAnimationPosition(closePosition, halfPosition, curve, curve);
-        } else {
-            //only open halfway
-            tweener.SetAnimationPosition(closePosition, halfPosition, curve, curve);
-        }
-    }
-    private void OnInteractionMenuClosed() {
-        if (this.isMinionsMenuShowing) {
-            tweener.SetAnimationPosition(halfPosition, openPosition, curve, curve);
-            tweener.ChangeSetState(false);
-            tweener.TriggerOpenClose();
-            tweener.SetAnimationPosition(closePosition, openPosition, curve, curve);
-        } else {
-            //reset positions to normal
-            tweener.SetAnimationPosition(closePosition, openPosition, curve, curve);
-        }
-    }
-
     public void CreateNewParty() {
         if (!UIManager.Instance.partyinfoUI.isShowing) {
             UIManager.Instance.partyinfoUI.ShowCreatePartyUI();
         } else {
             UIManager.Instance.partyinfoUI.CloseMenu();
+        }
+    }
+
+    public string previousMenu;
+    private void OnMenuOpened(UIMenu menu) {
+        if (menu is LandmarkInfoUI) {
+            UIManager.Instance.ShowMinionsMenu();
+        }
+    }
+    private void OnMenuClosed(UIMenu menu) {
+        if (menu is LandmarkInfoUI) {
+            if (string.IsNullOrEmpty(previousMenu)) {
+                UIManager.Instance.HideRightMenus();
+            } else if (previousMenu.Equals("minion")) {
+                UIManager.Instance.ShowMinionsMenu();
+            } else if (previousMenu.Equals("character")) {
+                UIManager.Instance.ShowCharacterIntelMenu();
+            } else if (previousMenu.Equals("location")) {
+                UIManager.Instance.ShowLocationIntelMenu();
+            } else if (previousMenu.Equals("faction")) {
+                UIManager.Instance.ShowFactionIntelMenu();
+            }
         }
     }
 }
