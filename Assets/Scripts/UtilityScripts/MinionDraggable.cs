@@ -6,13 +6,17 @@ using UnityEngine.UI;
 
 public class MinionDraggable : DraggableItem {
 
+    private PlayerCharacterItem _characterItem;
+
     #region Overrides
     public override void OnBeginDrag(PointerEventData eventData) {
-        base.OnBeginDrag(eventData);
+        //base.OnBeginDrag(eventData);
+        _characterItem = null;
         if (!_isDraggable) {
             return;
         }
-        CharacterPortrait portrait = gameObject.GetComponent<PlayerCharacterItem>().portrait;
+        _characterItem = gameObject.GetComponent<PlayerCharacterItem>();
+        CharacterPortrait portrait = _characterItem.portrait;
         GameObject clone = (GameObject)Instantiate(portrait.gameObject);
         _draggingObject = clone.GetComponent<RectTransform>();
 
@@ -21,20 +25,31 @@ public class MinionDraggable : DraggableItem {
         _draggingObject.SetParent(UIManager.Instance.gameObject.GetComponent<RectTransform>(), true);
         _isDragging = true;
     }
+    public override void OnEndDrag(PointerEventData eventData) {
+        _isDragging = false;
+
+        if (_characterItem != null && _draggingObject != null) {
+            List<RaycastResult> newRaycastResults = new List<RaycastResult>();
+            CustomDropZone customDropzone = null;
+            EventSystem.current.RaycastAll(eventData, newRaycastResults);
+            for (int i = 0; i < newRaycastResults.Count; i++) {
+                customDropzone = newRaycastResults[i].gameObject.GetComponent<CustomDropZone>();
+                if (customDropzone != null) {
+                    break;
+                }
+            }
+
+            if (customDropzone != null) {
+                customDropzone.OnDrop(_characterItem.gameObject);
+                Destroy(_draggingObject.gameObject);
+            } else {
+                CancelDrag();
+            }
+        }
+    }
+    public override void CancelDrag() {
+        base.CancelDrag();
+        _characterItem = null;
+    }
     #endregion
-
-    //private void RefreshSizes() {
-    //    Vector2 size = _draggingObjectOriginalSize;
-
-    //    if (_currentReorderableListRaycasted != null && _currentReorderableListRaycasted.IsDropable && _currentReorderableListRaycasted.Content.childCount > 0) {
-    //        var firstChild = _currentReorderableListRaycasted.Content.GetChild(0);
-    //        if (firstChild != null) {
-    //            size = firstChild.GetComponent<RectTransform>().rect.size;
-    //        }
-    //    }
-
-    //    _draggingObject.sizeDelta = size;
-    //    _fakeElementLE.preferredHeight = _draggingObjectLE.preferredHeight = size.y;
-    //    _fakeElementLE.preferredWidth = _draggingObjectLE.preferredWidth = size.x;
-    //}
 }

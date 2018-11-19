@@ -597,32 +597,32 @@ public class LandmarkInfoUI : UIMenu {
             }
         }
     }
-    public void OnMinionDrop(Transform transform) {
-        PlayerCharacterItem minionItem = transform.GetComponent<PlayerCharacterItem>();
+    public void OnMinionDrop(GameObject go) {
+        PlayerCharacterItem minionItem = go.GetComponent<PlayerCharacterItem>();
         if(minionItem != null) {
             AssignMinionToInvestigate(minionItem.minion);
         }
     }
-    public void OnPartyMinionDrop1(Transform transform) {
-        PlayerCharacterItem minionItem = transform.GetComponent<PlayerCharacterItem>();
+    public void OnPartyMinionDrop1(GameObject go) {
+        PlayerCharacterItem minionItem = go.GetComponent<PlayerCharacterItem>();
         if (minionItem != null) {
             AssignPartyMinionToInvestigate(minionItem.minion, 0);
         }
     }
-    public void OnPartyMinionDrop2(Transform transform) {
-        PlayerCharacterItem minionItem = transform.GetComponent<PlayerCharacterItem>();
+    public void OnPartyMinionDrop2(GameObject go) {
+        PlayerCharacterItem minionItem = go.GetComponent<PlayerCharacterItem>();
         if (minionItem != null) {
             AssignPartyMinionToInvestigate(minionItem.minion, 1);
         }
     }
-    public void OnPartyMinionDrop3(Transform transform) {
-        PlayerCharacterItem minionItem = transform.GetComponent<PlayerCharacterItem>();
+    public void OnPartyMinionDrop3(GameObject go) {
+        PlayerCharacterItem minionItem = go.GetComponent<PlayerCharacterItem>();
         if (minionItem != null) {
             AssignPartyMinionToInvestigate(minionItem.minion, 2);
         }
     }
-    public void OnPartyMinionDrop4(Transform transform) {
-        PlayerCharacterItem minionItem = transform.GetComponent<PlayerCharacterItem>();
+    public void OnPartyMinionDrop4(GameObject go) {
+        PlayerCharacterItem minionItem = go.GetComponent<PlayerCharacterItem>();
         if (minionItem != null) {
             AssignPartyMinionToInvestigate(minionItem.minion, 3);
         }
