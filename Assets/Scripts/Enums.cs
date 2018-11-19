@@ -972,6 +972,7 @@ public enum QUEST_GIVER_TYPE {
     CHARACTER,
 }
 public enum DEMON_TYPE {
+    NONE,
     LUST,
     GLUTTONY,
     GREED,
