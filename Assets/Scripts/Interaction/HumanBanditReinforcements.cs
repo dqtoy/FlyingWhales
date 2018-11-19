@@ -173,8 +173,8 @@ public class HumanBanditReinforcements : Interaction {
             state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(createdUnit.role.roleType.ToString()), LOG_IDENTIFIER.STRING_2);
         }
         state.AddLogFiller(new LogFiller(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(null, createdUnit.race.ToString(), LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(null, createdUnit.role.roleType.ToString(), LOG_IDENTIFIER.STRING_2));
+        state.AddLogFiller(new LogFiller(null, Utilities.GetNormalizedSingularRace(createdUnit.race), LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(createdUnit.role.roleType.ToString()), LOG_IDENTIFIER.STRING_2));
     }
     private void UnitStolenRewardEffect(InteractionState state) {
         //**Mechanics**: create an Army Unit from Defense Spawn Weights and add it to the player's Minion List.
@@ -202,8 +202,8 @@ public class HumanBanditReinforcements : Interaction {
             state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(createdUnit.role.roleType.ToString()), LOG_IDENTIFIER.STRING_2);
         }
         state.AddLogFiller(new LogFiller(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(null, createdUnit.race.ToString(), LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(null, createdUnit.role.roleType.ToString(), LOG_IDENTIFIER.STRING_2));
+        state.AddLogFiller(new LogFiller(null, Utilities.GetNormalizedSingularRace(createdUnit.race), LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(createdUnit.role.roleType.ToString()), LOG_IDENTIFIER.STRING_2));
     }
 
 }
