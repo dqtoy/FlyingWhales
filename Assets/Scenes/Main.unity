@@ -30075,7 +30075,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &902346884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30923,31 +30923,30 @@ MonoBehaviour:
   - {fileID: 1512454349}
   investigationGO: {fileID: 1044067739}
   minionAssignmentGO: {fileID: 1734725569}
-  minionAssignmentPartyGO: {fileID: 1445692628}
   minionAssignmentPortrait: {fileID: 1033307594}
+  minionAssignmentConfirmButton: {fileID: 1217593665}
+  minionAssignmentRecallButton: {fileID: 862754804}
+  minionAssignmentDescription: {fileID: 423221430}
+  minionAssignmentTween: {fileID: 1734725571}
+  minionAssignmentDraggableItem: {fileID: 1703611622}
+  investigateToggles:
+  - {fileID: 1430984259}
+  - {fileID: 927774314}
+  minionAssignmentPartyGO: {fileID: 1445692628}
   minionAssignmentPartyPortraits:
   - {fileID: 1225785889}
   - {fileID: 575724465}
   - {fileID: 2109110190}
   - {fileID: 94584508}
-  minionAssignmentConfirmButton: {fileID: 1217593665}
-  minionAssignmentRecallButton: {fileID: 862754804}
   minionAssignmentPartyConfirmButton: {fileID: 382456710}
   minionAssignmentPartyRecallButton: {fileID: 283936271}
-  minionAssignmentDescription: {fileID: 423221430}
   minionAssignmentPartyWinChance: {fileID: 459455797}
-  minionAssignmentTween: {fileID: 1734725571}
   minionAssignmentPartyTween: {fileID: 1445692630}
-  minionAssignmentDraggableItem: {fileID: 1703611622}
   minionAssignmentPartyDraggableItem:
   - {fileID: 1996453130}
   - {fileID: 1060542475}
   - {fileID: 455062894}
   - {fileID: 1440396142}
-  investigateToggles:
-  - {fileID: 1430984259}
-  - {fileID: 927774314}
-  - {fileID: 902346884}
 --- !u!1 &917215499
 GameObject:
   m_ObjectHideFlags: 0

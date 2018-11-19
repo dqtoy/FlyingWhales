@@ -16,9 +16,7 @@ public class Minion : IUnit {
     //private int _lvl;
     private int _exp;
     private int _indexDefaultSort;
-
     private bool _isEnabled;
-
 
     #region getters/setters
     public string name {

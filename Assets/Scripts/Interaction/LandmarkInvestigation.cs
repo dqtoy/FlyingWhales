@@ -10,7 +10,11 @@ public class LandmarkInvestigation {
     private Minion _assignedMinion;
     //private Party _assignedPartyMinion;
     private bool _isActivated;
-    private bool _isMinionRecalled;
+    private bool _isExploring;
+    private bool _isAttacking;
+
+    private bool _isMinionRecalledAttack;
+    private bool _isMinionRecalledExplore;
     private string _whatToDo;
 
     //Explore
@@ -31,8 +35,17 @@ public class LandmarkInvestigation {
     public bool isActivated {
         get { return _isActivated; }
     }
-    public bool isMinionRecalled {
-        get { return _isMinionRecalled; }
+    public bool isExploring {
+        get { return _isExploring; }
+    }
+    public bool isAttacking {
+        get { return _isAttacking; }
+    }
+    public bool isMinionRecalledAttack {
+        get { return _isMinionRecalledAttack; }
+    }
+    public bool isMinionRecalledExplore {
+        get { return _isMinionRecalledExplore; }
     }
     public string whatToDo {
         get { return _whatToDo; }
@@ -51,22 +64,22 @@ public class LandmarkInvestigation {
     //public void SetAssignedMinionParty(Party party) {
     //    _assignedPartyMinion = party;
     //}
-    public void InvestigateLandmark(string whatTodo, Minion minion) {
+    public void InvestigateLandmark(Minion minion) {
         SetAssignedMinion(minion);
         _assignedMinion.SetEnabledState(false);
         _assignedMinion.SetExploringLandmark(_landmark);
-        if (whatTodo == "explore") {
+        //if (whatTodo == "explore") {
             MinionGoToAssignment(ExploreLandmark);
-        } 
+        //} 
         //else if (whatTodo == "attack") {
         //    MinionGoToAssignment(AttackLandmark);
         //} else if (whatTodo == "raid") {
         //    MinionGoToAssignment(RaidLandmark);
         //}
-        _whatToDo = whatTodo;
+        _isExploring = true;
         SetActivatedState(true);
     }
-    public void InvestigateLandmark(string whatTodo, Minion[] minion) {
+    public void AttackRaidLandmark(string whatTodo, Minion[] minion) {
         _assignedMinion = null;
         for (int i = 0; i < minion.Length; i++) {
             if (minion[i] != null) {
@@ -82,19 +95,21 @@ public class LandmarkInvestigation {
         //if (whatTodo == "explore") {
         //    MinionGoToAssignment(ExploreLandmark);
         //}
-        if (whatTodo == "attack") {
-            MinionGoToAssignment(AttackLandmark);
-        } else if (whatTodo == "raid") {
-            MinionGoToAssignment(RaidLandmark);
-        }
-        _whatToDo = whatTodo;
+        //if (whatTodo == "attack") {
+        MinionGoToAssignment(AttackLandmark);
+        //} 
+        //else if (whatTodo == "raid") {
+        //    MinionGoToAssignment(RaidLandmark);
+        //}
+        _isAttacking = true;
         SetActivatedState(true);
     }
     public void UninvestigateLandmark() {
         //_assignedMinion.SetEnabledState(true);
+        _isAttacking = false;
         _assignedMinion.SetExploringLandmark(null);
         SetAssignedMinion(null);
-        _isMinionRecalled = false;
+        //_isMinionRecalledAttack = false;
         SetActivatedState(false);
         _whatToDo = string.Empty;
         UIManager.Instance.landmarkInfoUI.UpdateInvestigation();
@@ -116,10 +131,11 @@ public class LandmarkInvestigation {
             _landmark.landmarkVisual.HideInteractionTimer();
             Messenger.RemoveListener(Signals.HOUR_STARTED, OnExploreTick);
             UnexploreLandmark();
+            _isMinionRecalledExplore = true;
         } else {
             UninvestigateLandmark();
+            _isMinionRecalledAttack = true;
         }
-        _isMinionRecalled = true;
         //UIManager.Instance.landmarkInfoUI.OnUpdateLandmarkInvestigationState();
     }
     public void CancelInvestigation() {
@@ -161,6 +177,7 @@ public class LandmarkInvestigation {
             _landmark.SetIsBeingInspected(false);
             _landmark.EndedInspection();
         }
+        _isExploring = false;
         UninvestigateLandmark();
     }
     private void OnExploreTick() {
