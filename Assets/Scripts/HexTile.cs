@@ -75,6 +75,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [Header("Corruption")]
     [SerializeField] private GameObject[] tendrils;
 
+    [Space(10)]
+    [Header("Beaches")]
+    [SerializeField] private SpriteRenderer topLeftBeach;
+    [SerializeField] private SpriteRenderer leftBeach;
+    [SerializeField] private SpriteRenderer botLeftBeach;
+    [SerializeField] private SpriteRenderer botRightBeach;
+    [SerializeField] private SpriteRenderer rightBeach;
+    [SerializeField] private SpriteRenderer topRightBeach;
+
     private PASSABLE_TYPE _passableType;
     //private int _redMagicAmount;
     //private int _blueMagicAmount;
@@ -746,6 +755,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         int sortingOrder = spriteRenderer.sortingOrder;
         _hoverHighlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
         highlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 7;
+
+        topLeftBeach.sortingOrder = sortingOrder + 7;
+        leftBeach.sortingOrder = sortingOrder + 7;
+        botLeftBeach.sortingOrder = sortingOrder + 7;
+        botRightBeach.sortingOrder = sortingOrder + 7;
+        rightBeach.sortingOrder = sortingOrder + 7;
+        topRightBeach.sortingOrder = sortingOrder + 7;
+
 
         if (mainStructure.sprite != null && mainStructure.sprite.name.Contains("mountains")) {
             Utilities.SetSpriteSortingLayer(mainStructure, spriteRenderer.sortingLayerName);
@@ -1598,6 +1615,49 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
 
         return curve;
+    }
+    #endregion
+
+    #region Beaches
+    public void LoadBeaches() {
+        if (_neighbourDirections == null) {
+            return;
+        }
+        if (this.elevationType != ELEVATION.WATER) {
+            return;
+        }
+        foreach (KeyValuePair<HEXTILE_DIRECTION, HexTile> kvp in _neighbourDirections) {
+            bool beachState;
+            if (kvp.Value != null && kvp.Value.elevationType != ELEVATION.WATER) {
+                beachState = true;
+            } else {
+                beachState = false;
+            }
+            switch (kvp.Key) {
+                case HEXTILE_DIRECTION.NORTH_WEST:
+                    topLeftBeach.gameObject.SetActive(beachState);
+                    break;
+                case HEXTILE_DIRECTION.NORTH_EAST:
+                    topRightBeach.gameObject.SetActive(beachState);
+                    break;
+                case HEXTILE_DIRECTION.EAST:
+                    rightBeach.gameObject.SetActive(beachState);
+                    break;
+                case HEXTILE_DIRECTION.SOUTH_EAST:
+                    botRightBeach.gameObject.SetActive(beachState);
+                    break;
+                case HEXTILE_DIRECTION.SOUTH_WEST:
+                    botLeftBeach.gameObject.SetActive(beachState);
+                    break;
+                case HEXTILE_DIRECTION.WEST:
+                    leftBeach.gameObject.SetActive(beachState);
+                    break;
+                case HEXTILE_DIRECTION.NONE:
+                    break;
+                default:
+                    break;
+            }
+        }
     }
     #endregion
 }

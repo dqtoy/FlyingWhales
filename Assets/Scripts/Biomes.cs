@@ -122,6 +122,7 @@ public class Biomes : MonoBehaviour {
         }
 #endif
 
+        LoadBeachVisuals(currentHexTile);
         if (currentHexTile.elevationType == ELEVATION.PLAIN) {
             LoadPlainTileVisuals(currentHexTile, sortingOrder);
         } else if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
@@ -327,6 +328,9 @@ public class Biomes : MonoBehaviour {
         tile.spriteRenderer.sprite = waterSpriteToUse;
         tile.DeactivateCenterPiece();
         return;
+    }
+    private void LoadBeachVisuals(HexTile tile) {
+        tile.LoadBeaches();
     }
 	internal void GenerateElevation(List<HexTile> tiles, int mapWidth, int mapHeight) {
 		CalculateElevationAndMoisture(tiles, mapWidth, mapHeight);

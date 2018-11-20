@@ -100,8 +100,10 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 0f6fa99d125714942961d8e54adf43b1, type: 3}
   - {fileID: 21300000, guid: 6b15ab4e0c664d94f906a2b783906619, type: 3}
   - {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
+  - {fileID: 21300000, guid: 24721027853fdc643b1b4fe0c8c1d5cd, type: 3}
   - {fileID: 21300000, guid: f61b2142ebedad34682d4e8452e00507, type: 3}
   - {fileID: 21300000, guid: 97be908950d991c49b0092d3a14acceb, type: 3}
+  - {fileID: 21300000, guid: e05e2e554b638b14b85ab59342c8e0b0, type: 3}
   - {fileID: 21300000, guid: 1b9c2e3866c9dcc46ba88340a11eb721, type: 3}
   - {fileID: 21300000, guid: 897345c9564591c4697a148359e3dc3b, type: 3}
   - {fileID: 21300000, guid: da3f895abdb43f7488143527579636af, type: 3}
@@ -440,8 +442,10 @@ SpriteAtlas:
   - human_town2
   - human_town1
   - catacombs_snow
+  - elven_lumberyard_colour
   - human_garrison
   - human_garrison
+  - elven_lumberyard
   - pyramid_jungle
   - human_farm
   - forest_floor1
