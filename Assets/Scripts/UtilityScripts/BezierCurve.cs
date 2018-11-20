@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BezierCurve : MonoBehaviour {
-    public LineRenderer bgLineRenderer;
+    //public LineRenderer bgLineRenderer;
     public LineRenderer progressMeter;
     public GameObject holder;
 
     private int _progressAmount;
     private Vector3[] _positions;
+    private Vector3 _startPos, _endPos;
+    private BezierCurveParent _curveParent;
 
     #region getters/setters
     public bool isDone {
@@ -17,19 +19,41 @@ public class BezierCurve : MonoBehaviour {
     public bool isNoMorePositions {
         get { return progressMeter.positionCount <= 1; }
     }
+    public Vector3 startPos {
+        get { return _startPos; }
+    }
+    public Vector3 endPos {
+        get { return _endPos; }
+    }
+    public Vector3[] positions {
+        get { return _positions; }
+    }
+    public BezierCurveParent curveParent {
+        get { return _curveParent; }
+    }
     #endregion
 
     private void Start() {
         progressMeter.positionCount = 0;
     }
-
+    public void Initialize(Vector3 startPos, Vector3 endPos) {
+        _startPos = startPos;
+        _endPos = endPos;
+    }
+    public void SetCurveParent(BezierCurveParent curveParent) {
+        _curveParent = curveParent;
+    }
     public void SetPositions(Vector3[] positions) {
         _positions = positions;
-        bgLineRenderer.positionCount = _positions.Length;
-        bgLineRenderer.SetPositions(_positions);
+        //bgLineRenderer.positionCount = _positions.Length;
+        //bgLineRenderer.SetPositions(_positions);
     }
     public void SetProgressAmount(int amount) {
         _progressAmount = amount;
+    }
+    public void SetActiveMeter(bool state) {
+        holder.SetActive(state);
+        curveParent.SetActiveBG(state);
     }
     //Returns true if progress is complete
     public IEnumerator AddProgress() {
