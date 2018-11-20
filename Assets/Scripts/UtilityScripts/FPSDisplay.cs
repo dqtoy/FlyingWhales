@@ -24,9 +24,10 @@ public class FPSDisplay : MonoBehaviour {
             style.normal.textColor = Color.white;
             float msec = deltaTime * 1000.0f;
             float fps = 1.0f / deltaTime;
+      
             string text = string.Format("{0:0.0} ms ({1:0.} fps)", msec, fps);
-            text += " Agents: " + PathfindingManager.Instance.allAgents.Count.ToString();
-            text += " Characters: " + CharacterManager.Instance.allCharacters.Count.ToString();
+            text += "\nAgents: " + PathfindingManager.Instance.allAgents.Count.ToString();
+            text += "\nCharacters: " + CharacterManager.Instance.allCharacters.Count.ToString();
             if (SteamManager.Initialized) {
                 string name = SteamFriends.GetPersonaName();
                 text += "\nSteam Name: " + name;
