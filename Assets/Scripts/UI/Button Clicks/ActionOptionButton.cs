@@ -33,8 +33,18 @@ public class ActionOptionButton : MonoBehaviour {
         _actionOption = actionOption;
         if(_actionOption != null) {
             buttonText.text = _actionOption.name;
-            costText.text = _actionOption.cost.amount.ToString();
-            costImage.sprite = PlayerManager.Instance.GetSpriteByCurrency(_actionOption.cost.currency);
+            if (actionOption.cost.amount > 0) {
+                costText.gameObject.SetActive(true);
+                costImage.gameObject.SetActive(true);
+                costText.text = _actionOption.cost.amount.ToString();
+                costImage.sprite = PlayerManager.Instance.GetSpriteByCurrency(_actionOption.cost.currency);
+            } else {
+                costText.gameObject.SetActive(false);
+                costImage.gameObject.SetActive(false);
+                //costText.text = _actionOption.cost.amount.ToString();
+                //costImage.sprite = PlayerManager.Instance.GetSpriteByCurrency(_actionOption.cost.currency);
+            }
+            
             UpdateButton();
         }
     }

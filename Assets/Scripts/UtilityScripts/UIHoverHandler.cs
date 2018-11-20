@@ -36,4 +36,11 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             }
         }
     }
+
+    public void ShowSmallInfoString(string message) {
+        UIManager.Instance.ShowSmallInfo(message);
+    }
+    public void HideSmallInfoString() {
+        UIManager.Instance.HideSmallInfo();
+    }
 }

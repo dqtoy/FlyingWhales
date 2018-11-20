@@ -181,12 +181,15 @@ SpriteAtlas:
   - {fileID: 21300000, guid: a71d2184e4d63df45a06011aba4280aa, type: 3}
   - {fileID: 21300000, guid: 9e762da25c798184ba4d3cb38041cd51, type: 3}
   - {fileID: 21300000, guid: 3805c7d26203895429a4484ecc602457, type: 3}
+  - {fileID: 21300000, guid: 90f151acc07381c4a86fed8a6c5328f3, type: 3}
+  - {fileID: 21300000, guid: a3c5acadfff08b645977705702bd9ffe, type: 3}
   - {fileID: 21300000, guid: 41d1214e1e4244f4087d458278c56f84, type: 3}
   - {fileID: 21300000, guid: 0aa65ad085759b14380dd1b91aafe0b7, type: 3}
   - {fileID: 21300000, guid: 0247fa3e3c752a74c828b3976a50eb45, type: 3}
   - {fileID: 21300000, guid: 61ba33c0c78490a44ae703787570e1a4, type: 3}
   - {fileID: 21300016, guid: 4d0d62edf3d94ca47abf569d951db9f9, type: 3}
   - {fileID: 21300000, guid: 82aad88d7d996dd43a2a668bf682beaf, type: 3}
+  - {fileID: 21300000, guid: b0b0bdd00d719864da920d4c105e3970, type: 3}
   - {fileID: 21300008, guid: 67d668b8729fffa42b7861583184420c, type: 3}
   - {fileID: 21300000, guid: 0c563a266f7fd074cafed68a72de02ad, type: 3}
   - {fileID: 21300000, guid: 21c6516015ddc3745ba08bc85137c23f, type: 3}
@@ -293,6 +296,7 @@ SpriteAtlas:
   - {fileID: 21300074, guid: 81ffe2b26e4cc334891e1f27496e4200, type: 3}
   - {fileID: 21300002, guid: fceff61e7f3789b4d86796e7f7724b2f, type: 3}
   - {fileID: 21300028, guid: 3ff924b5b29a92c4b8cfc91ebdc1958d, type: 3}
+  - {fileID: 21300000, guid: 7fc27e0c5ebfeb0459dbb660ee50ac3f, type: 3}
   - {fileID: 21300082, guid: 81ffe2b26e4cc334891e1f27496e4200, type: 3}
   - {fileID: 21300000, guid: 1f589b68222dcea4fa1e1d129cd7cbf5, type: 3}
   - {fileID: 21300010, guid: 3ff924b5b29a92c4b8cfc91ebdc1958d, type: 3}
@@ -518,12 +522,15 @@ SpriteAtlas:
   - tile_raid_button_disabled
   - tile_raid_button_enabled
   - tile_explore_button_enabled
+  - tile_explore_button_disabled 1
+  - tile_explore_button_enabled 1
   - tile_explore_button_disabled
   - tile_raid_button_clicked
   - tile_attack_button_enabled
   - tile_attack_button_disabled
   - World UI_11
   - tile_attack_button_clicked
+  - tile_explore_button_clicked 1
   - Citizen UI_4
   - experience_bar_on
   - experience_bar_off
@@ -630,6 +637,7 @@ SpriteAtlas:
   - UI2_37
   - Events UI_1
   - City UI_14
+  - supply_icon
   - UI2_41
   - text_scroll_thumb
   - City UI_5

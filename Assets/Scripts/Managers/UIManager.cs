@@ -171,31 +171,31 @@ public class UIManager : MonoBehaviour {
         //    }
         //}
         UpdateSpeedToggles(GameManager.Instance.isPaused);
-        if (currentTileHovered != null) {
-            if (previousTileHovered == null || currentTileHovered.id != previousTileHovered.id) {
-                //tile hovered changed, reset timer
-                timeHovered = 0f;
-            } else {
-                //previous tile hovered is same as current tile hovered, increment time hovered
-                timeHovered += Time.deltaTime;
-            }
-            if (IsMouseOnUI()) {
-                timeHovered = 0f;
-                HideDetailedInfo();
-            } else {
-                if (timeHovered >= hoverThreshold) {
-                    //show tile info
-                    ShowDetailedInfo(currentTileHovered);
-                } else {
-                    //hide Tile info
-                    HideDetailedInfo();
-                }
-            }
+        //if (currentTileHovered != null) {
+        //    if (previousTileHovered == null || currentTileHovered.id != previousTileHovered.id) {
+        //        //tile hovered changed, reset timer
+        //        timeHovered = 0f;
+        //    } else {
+        //        //previous tile hovered is same as current tile hovered, increment time hovered
+        //        timeHovered += Time.deltaTime;
+        //    }
+        //    if (IsMouseOnUI()) {
+        //        timeHovered = 0f;
+        //        HideDetailedInfo();
+        //    } else {
+        //        if (timeHovered >= hoverThreshold) {
+        //            //show tile info
+        //            ShowDetailedInfo(currentTileHovered);
+        //        } else {
+        //            //hide Tile info
+        //            HideDetailedInfo();
+        //        }
+        //    }
            
-        }
-        if (IsMouseOnUI()) {
-            currentTileHovered = null;
-        }
+        //}
+        //if (IsMouseOnUI()) {
+        //    currentTileHovered = null;
+        //}
     }
     #endregion
 
