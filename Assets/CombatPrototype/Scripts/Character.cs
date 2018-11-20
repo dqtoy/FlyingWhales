@@ -2884,8 +2884,8 @@ namespace ECS {
             }
         }
         public void GenerateDailyInteraction() {
-            if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling) {
-                return; //if this character is not in own party, is a defender or is travelling, do not generate interaction
+            if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb) {
+                return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
             }
             string interactionLog = GameManager.Instance.TodayLogString() + "Generating daily interaction for " + this.name;
             if (GameManager.Instance.ignoreEventTriggerWeights || eventTriggerWeights.PickRandomElementGivenWeights()) {

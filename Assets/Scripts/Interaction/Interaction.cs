@@ -80,6 +80,9 @@ public class Interaction {
     public virtual void CreateActionOptions(InteractionState state) { }
     public virtual void EndInteraction() {
         _isDone = true;
+        if(_characterInvolved != null) {
+            _characterInvolved.SetDoNotDisturb(false);
+        }
         _interactable.RemoveInteraction(this);
         InteractionUI.Instance.HideInteractionUI();
     }
@@ -164,6 +167,9 @@ public class Interaction {
     }
     public void SetCharacterInvolved(Character character) {
         _characterInvolved = character;
+        if(_characterInvolved != null) {
+            _characterInvolved.SetDoNotDisturb(true);
+        }
     }
     public bool AssignedMinionIsOfType(DEMON_TYPE type) {
         return this.explorerMinion != null && this.explorerMinion.type == type;
