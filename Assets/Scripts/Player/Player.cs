@@ -556,12 +556,12 @@ public class Player : ILeader {
     public void RemoveMinion(Minion minion) {
         if(_minions.Remove(minion)){
             PlayerUI.Instance.RemoveCharacterItem(minion.minionItem);
-            if(minion.currentlyExploringLandmark != null) {
-                minion.currentlyExploringLandmark.landmarkInvestigation.CancelInvestigation("explore");
-            }
-            if (minion.currentlyAttackingLandmark != null) {
-                minion.currentlyAttackingLandmark.landmarkInvestigation.CancelInvestigation("attack");
-            }
+            //if(minion.currentlyExploringArea != null) {
+            //    minion.currentlyExploringArea.landmarkInvestigation.CancelInvestigation("explore");
+            //}
+            //if (minion.currentlyAttackingArea != null) {
+            //    minion.currentlyAttackingArea.landmarkInvestigation.CancelInvestigation("attack");
+            //}
             //minion.minionItem.SetMinion(null);
         }
     }

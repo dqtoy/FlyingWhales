@@ -8,8 +8,8 @@ public class Minion : IUnit {
 
     private PlayerCharacterItem _characterItem;
     //private PlayerAbility _ability;
-    private BaseLandmark _currentlyExploringLandmark;
-    private BaseLandmark _currentlyAttackingLandmark;
+    private Area _currentlyExploringArea;
+    private Area _currentlyAttackingArea;
 
     private ICharacter _icharacter;
     private IInteractable _target;
@@ -28,11 +28,11 @@ public class Minion : IUnit {
     //public PlayerAbility ability {
     //    get { return _ability; }
     //}
-    public BaseLandmark currentlyExploringLandmark {
-        get { return _currentlyExploringLandmark; }
+    public Area currentlyExploringArea {
+        get { return _currentlyExploringArea; }
     }
-    public BaseLandmark currentlyAttackingLandmark {
-        get { return _currentlyAttackingLandmark; }
+    public Area currentlyAttackingArea {
+        get { return _currentlyAttackingArea; }
     }
     public PlayerCharacterItem minionItem {
         get { return _characterItem; }
@@ -131,24 +131,24 @@ public class Minion : IUnit {
         _isEnabled = state;
         _characterItem.SetEnabledState(state);
     }
-    public void SetExploringLandmark(BaseLandmark landmark) {
-        _currentlyExploringLandmark = landmark;
+    public void SetExploringArea(Area area) {
+        _currentlyExploringArea = area;
         if (icharacter.IsInOwnParty()) {
             for (int i = 0; i < icharacter.currentParty.icharacters.Count; i++) {
                 ICharacter otherChar = icharacter.ownParty.icharacters[i];
                 if (otherChar.id != icharacter.id) {
-                    icharacter.currentParty.icharacters[i].minion.SetExploringLandmark(landmark);
+                    icharacter.currentParty.icharacters[i].minion.SetExploringArea(area);
                 }
             }
         }
     }
-    public void SetAttackingLandmark(BaseLandmark landmark) {
-        _currentlyAttackingLandmark = landmark;
+    public void SetAttackingArea(Area area) {
+        _currentlyAttackingArea = area;
         if (icharacter.IsInOwnParty()) {
             for (int i = 0; i < icharacter.currentParty.icharacters.Count; i++) {
                 ICharacter otherChar = icharacter.ownParty.icharacters[i];
                 if (otherChar.id != icharacter.id) {
-                    icharacter.currentParty.icharacters[i].minion.SetAttackingLandmark(landmark);
+                    icharacter.currentParty.icharacters[i].minion.SetAttackingArea(area);
                 }
             }
         }

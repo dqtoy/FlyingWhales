@@ -21,6 +21,7 @@ public class Area {
     public LocationIntel locationIntel { get; private set; }
     public List<BaseLandmark> exposedTiles { get; private set; }
     public List<BaseLandmark> unexposedTiles { get; private set; }
+    public bool isHighlighted { get; private set; }
     private List<HexTile> outerTiles;
     private List<SpriteRenderer> outline;
 
@@ -371,6 +372,7 @@ public class Area {
         }
     }
     public void SetOutlineState(bool state) {
+        isHighlighted = state;
         for (int i = 0; i < outline.Count; i++) {
             SpriteRenderer renderer = outline[i];
             renderer.gameObject.SetActive(state);

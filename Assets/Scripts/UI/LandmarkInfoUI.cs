@@ -117,11 +117,24 @@ public class LandmarkInfoUI : UIMenu {
         ResetScrollPositions();
         //PlayerUI.Instance.UncollapseMinionHolder();
         //InteractionUI.Instance.OpenInteractionUI(_activeLandmark);
-        SetLandmarkBorderState(true);
+        if(_activeLandmark.tileLocation.areaOfTile != null) {
+            if (!_activeLandmark.tileLocation.areaOfTile.isHighlighted) {
+                _activeLandmark.tileLocation.areaOfTile.SetOutlineState(true);
+            }
+        } else {
+            SetLandmarkBorderState(true);
+        }
     }
     public override void CloseMenu() {
         base.CloseMenu();
         SetLandmarkBorderState(false);
+        if (_activeLandmark.tileLocation.areaOfTile != null) {
+            if (_activeLandmark.tileLocation.areaOfTile.isHighlighted) {
+                _activeLandmark.tileLocation.areaOfTile.SetOutlineState(false);
+            }
+        } else {
+            SetLandmarkBorderState(false);
+        }
         _activeLandmark = null;
         //PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
         //PlayerUI.Instance.CollapseMinionHolder();
@@ -547,6 +560,9 @@ public class LandmarkInfoUI : UIMenu {
         minionAssignmentPartyTween.PlayReverse();
     }
     public void OnUpdateLandmarkInvestigationState(string whatToDo) {
+        if(_activeLandmark == null) {
+            return;
+        }
         if(whatToDo == "explore") {
             if (_activeLandmark.landmarkInvestigation.isExploring) {
                 minionAssignmentConfirmButton.gameObject.SetActive(false);
