@@ -74,7 +74,7 @@ public class LandmarkInvestigation {
     public void InvestigateLandmark(Minion minion) {
         SetAssignedMinion(minion);
         _assignedMinion.SetEnabledState(false);
-        _assignedMinion.SetExploringLandmark(_landmark);
+        //_assignedMinion.SetExploringLandmark(_landmark);
         
         MinionGoToAssignment(ExploreLandmark, "explore");
 
@@ -93,7 +93,7 @@ public class LandmarkInvestigation {
             }
         }
         _assignedMinionAttack.SetEnabledState(false);
-        _assignedMinionAttack.SetExploringLandmark(_landmark);
+        //_assignedMinionAttack.SetExploringLandmark(_landmark);
         MinionGoToAssignment(AttackLandmark, "attack");
         _isAttacking = true;
         SetActivatedState(true);
