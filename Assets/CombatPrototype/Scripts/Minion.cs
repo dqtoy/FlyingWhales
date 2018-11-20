@@ -9,6 +9,8 @@ public class Minion : IUnit {
     private PlayerCharacterItem _characterItem;
     //private PlayerAbility _ability;
     private BaseLandmark _currentlyExploringLandmark;
+    private BaseLandmark _currentlyAttackingLandmark;
+
     private ICharacter _icharacter;
     private IInteractable _target;
     private DEMON_TYPE _type;
@@ -17,6 +19,7 @@ public class Minion : IUnit {
     private int _exp;
     private int _indexDefaultSort;
     private bool _isEnabled;
+    private Action _travelBackAction;
 
     #region getters/setters
     public string name {
@@ -27,6 +30,9 @@ public class Minion : IUnit {
     //}
     public BaseLandmark currentlyExploringLandmark {
         get { return _currentlyExploringLandmark; }
+    }
+    public BaseLandmark currentlyAttackingLandmark {
+        get { return _currentlyAttackingLandmark; }
     }
     public PlayerCharacterItem minionItem {
         get { return _characterItem; }
@@ -136,6 +142,17 @@ public class Minion : IUnit {
             }
         }
     }
+    public void SetAttackingLandmark(BaseLandmark landmark) {
+        _currentlyAttackingLandmark = landmark;
+        if (icharacter.IsInOwnParty()) {
+            for (int i = 0; i < icharacter.currentParty.icharacters.Count; i++) {
+                ICharacter otherChar = icharacter.ownParty.icharacters[i];
+                if (otherChar.id != icharacter.id) {
+                    icharacter.currentParty.icharacters[i].minion.SetAttackingLandmark(landmark);
+                }
+            }
+        }
+    }
     public void SetPlayerCharacterItem(PlayerCharacterItem item) {
         _characterItem = item;
     }
@@ -174,11 +191,19 @@ public class Minion : IUnit {
     public void TravelToAssignment(BaseLandmark target, Action action) {
         _icharacter.currentParty.GoToLocation(target, PATHFINDING_MODE.PASSABLE, () => action());
     }
-    public void TravelBackFromAssignment() {
+    public void TravelBackFromAssignment(Action action = null) {
+        _travelBackAction = action;
         if (_icharacter.currentParty.icon.isTravelling) {
-            _icharacter.currentParty.CancelTravel(() => SetEnabledState(true));
+            _icharacter.currentParty.CancelTravel(() => TravelBackFromAssignmentComplete());
         } else {
-            _icharacter.currentParty.GoToLocation(PlayerManager.Instance.player.demonicPortal, PATHFINDING_MODE.PASSABLE, () => SetEnabledState(true));
+            _icharacter.currentParty.GoToLocation(PlayerManager.Instance.player.demonicPortal, PATHFINDING_MODE.PASSABLE, () => TravelBackFromAssignmentComplete());
+        }
+    }
+    private void TravelBackFromAssignmentComplete() {
+        SetEnabledState(true);
+        if(_travelBackAction != null) {
+            _travelBackAction();
+            _travelBackAction = null;
         }
     }
 

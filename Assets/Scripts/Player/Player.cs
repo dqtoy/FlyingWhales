@@ -557,7 +557,10 @@ public class Player : ILeader {
         if(_minions.Remove(minion)){
             PlayerUI.Instance.RemoveCharacterItem(minion.minionItem);
             if(minion.currentlyExploringLandmark != null) {
-                minion.currentlyExploringLandmark.landmarkInvestigation.CancelInvestigation();
+                minion.currentlyExploringLandmark.landmarkInvestigation.CancelInvestigation("explore");
+            }
+            if (minion.currentlyAttackingLandmark != null) {
+                minion.currentlyAttackingLandmark.landmarkInvestigation.CancelInvestigation("attack");
             }
             //minion.minionItem.SetMinion(null);
         }
