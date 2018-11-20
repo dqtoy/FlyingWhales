@@ -608,7 +608,7 @@ public class LandmarkInfoUI : UIMenu {
                 minionAssignmentDraggableItem.SetDraggable(true);
                 minionAssignmentConfirmButton.interactable = true;
             }
-            minionAssignmentRecallButton.interactable = !_activeLandmark.landmarkInvestigation.isMinionRecalled;
+            //minionAssignmentRecallButton.interactable = !_activeLandmark.landmarkInvestigation.isMinionRecalled;
         } else {
             if (_activeLandmark.landmarkInvestigation.isAttacking) {
                 minionAssignmentPartyConfirmButton.gameObject.SetActive(false);
@@ -624,7 +624,7 @@ public class LandmarkInfoUI : UIMenu {
                     minionAssignmentPartyDraggableItem[i].SetDraggable(true);
                 }
             }
-            minionAssignmentPartyRecallButton.interactable = !_activeLandmark.landmarkInvestigation.isMinionRecalled;
+            //minionAssignmentPartyRecallButton.interactable = !_activeLandmark.landmarkInvestigation.isMinionRecalled;
         }
         //if (_activeLandmark.landmarkInvestigation.isActivated) {
         //    minionAssignmentConfirmButton.gameObject.SetActive(false);
