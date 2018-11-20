@@ -46739,6 +46739,7 @@ MonoBehaviour:
   _supplySprite: {fileID: 21300288, guid: 5cca1db87f9988d4ea2545b3f98ffb2f, type: 3}
   _manaSprite: {fileID: 21300122, guid: 5cca1db87f9988d4ea2545b3f98ffb2f, type: 3}
   _impSprite: {fileID: 21300266, guid: 5cca1db87f9988d4ea2545b3f98ffb2f, type: 3}
+  playerStructureTypes: 21000000220000002300000024000000250000002600000027000000
 --- !u!1 &1403238844
 GameObject:
   m_ObjectHideFlags: 0
