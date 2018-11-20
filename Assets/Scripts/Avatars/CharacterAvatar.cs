@@ -146,7 +146,7 @@ public class CharacterAvatar : MonoBehaviour{
         float distance = Vector3.Distance(_party.specificLocation.tileLocation.transform.position, targetLocation.tileLocation.transform.position);
         _distanceToTarget = (Mathf.CeilToInt(distance / 2.315188f)) * 2; //6
         _curve = targetLocation.tileLocation.ATileIsTryingToConnect(_party.specificLocation.tileLocation, _distanceToTarget);
-        _curve.holder.SetActive(_isVisualShowing);
+        _curve.SetActiveMeter(_isVisualShowing);
         Messenger.AddListener(Signals.HOUR_STARTED, TraverseCurveLine);
     }
     private void TraverseCurveLine() {
@@ -168,6 +168,7 @@ public class CharacterAvatar : MonoBehaviour{
     private void CancelledDeparture() {
         _isTravelling = false;
         _isTravelCancelled = false;
+        _curve.curveParent.RemoveChild(_curve);
         GameObject.Destroy(_curve.gameObject);
         _curve = null;
         if(onPathCancelled != null) {
@@ -176,6 +177,7 @@ public class CharacterAvatar : MonoBehaviour{
     }
     private void ArriveAtLocation() {
         _isTravelling = false;
+        _curve.curveParent.RemoveChild(_curve);
         GameObject.Destroy(_curve.gameObject);
         _curve = null;
         SetHasArrivedState(true);
@@ -370,7 +372,7 @@ public class CharacterAvatar : MonoBehaviour{
     public void SetVisualState(bool state) {
         _isVisualShowing = state;
         if(_curve != null) {
-            _curve.holder.SetActive(_isVisualShowing);
+            _curve.SetActiveMeter(_isVisualShowing);
         }
     }
     public void UpdateVisualState() {

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.22380279, g: 0.24376711, b: 0.26534963, a: 1}
+  m_IndirectSpecularColor: {r: 0.22380304, g: 0.24376729, b: 0.26534945, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -50958,6 +50958,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   numOfInterpolations: 50
   curvePrefab: {fileID: 1755606953913220, guid: 2c54062914798774eb5088e6b3432440,
+    type: 2}
+  curveParentPrefab: {fileID: 1881499458925664, guid: 344a74766ee54a54ab4598f6e926cb0f,
     type: 2}
   lineRenderer: {fileID: 0}
   startPoint: {fileID: 0}

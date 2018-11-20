@@ -1589,20 +1589,32 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         _tilesConnectedInComingFromMarker.Remove(tile);
     }
     public BezierCurve ATileIsTryingToConnect(HexTile tile, int numOfTicks) {
+        BezierCurve curve = null;
         if (!_tilesConnectedInGoingToMarker.Contains(tile)) {
             if (!_tilesConnectedInComingFromMarker.Contains(tile)) {
                 if (tile._tilesConnectedInGoingToMarker.Contains(this)) {
                     AddConnectionInComingFrom(tile);
-                    return BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, comingFromMarker.position, numOfTicks, DIRECTION.DOWN);
+                    curve = BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, comingFromMarker.position, numOfTicks, DIRECTION.DOWN);
+                } else {
+                    AddConnectionInGoingTo(tile);
+                    curve = BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, goingToMarker.position, numOfTicks, DIRECTION.UP);
                 }
-                AddConnectionInGoingTo(tile);
-                return BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, goingToMarker.position, numOfTicks, DIRECTION.UP);
             } else {
-                return BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, comingFromMarker.position, numOfTicks, DIRECTION.DOWN);
+                curve = BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, comingFromMarker.position, numOfTicks, DIRECTION.DOWN);
             }
         } else {
-            return BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, goingToMarker.position, numOfTicks, DIRECTION.UP);
+            curve = BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, goingToMarker.position, numOfTicks, DIRECTION.UP);
         }
+        BezierCurveParent curveParent = BezierCurveManager.Instance.GetCurveParent(curve.startPos, curve.endPos);
+        if(curveParent != null) {
+            curveParent.AddChild(curve);
+        } else {
+            curveParent = BezierCurveManager.Instance.CreateNewCurveParent(curve.startPos, curve.endPos);
+            curveParent.AddChild(curve);
+            BezierCurveManager.Instance.AddCurveParent(curveParent);
+        }
+
+        return curve;
     }
     #endregion
 

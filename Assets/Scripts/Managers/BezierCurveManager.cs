@@ -8,16 +8,21 @@ public class BezierCurveManager : MonoBehaviour {
 
     public int numOfInterpolations;
     public GameObject curvePrefab;
+    public GameObject curveParentPrefab;
     public LineRenderer lineRenderer;
     public Transform startPoint;
     public Transform endPoint;
     public Transform controlPoint1;
     public Transform controlPoint2;
 
+    private List<BezierCurveParent> _curveParents;
+
     private void Awake() {
         Instance = this;
     }
-
+    private void Start() {
+        _curveParents = new List<BezierCurveParent>();
+    }
     //private void Update() {
     //    DrawCubicCurveTesting(startPoint.position, endPoint.position);
     //}
@@ -30,6 +35,7 @@ public class BezierCurveManager : MonoBehaviour {
         }
         GameObject go = GameObject.Instantiate(curvePrefab, GridMap.Instance.gameObject.transform);
         BezierCurve bezierCurve = go.GetComponent<BezierCurve>();
+        bezierCurve.Initialize(startPoint, endPoint);
         int numOfPositions = numOfTicks;
         int numOfPositionsMultiplier = 2;
         while (numOfPositions < numOfInterpolations) {
@@ -113,6 +119,27 @@ public class BezierCurveManager : MonoBehaviour {
             Vector3 curvePoint = AstarSplines.CubicBezier(startPoint, controlPoint1, controlPoint2, endPoint, t);
             lineRenderer.SetPosition(i - 1, curvePoint);
         }
+    }
+    public BezierCurveParent GetCurveParent(Vector3 startPos, Vector3 endPos) {
+        for (int i = 0; i < _curveParents.Count; i++) {
+            if(_curveParents[i].startPos == startPos && _curveParents[i].endPos == endPos) {
+                return _curveParents[i];
+            }
+        }
+        return null;
+    }
+    public BezierCurveParent CreateNewCurveParent(Vector3 startPos, Vector3 endPos) {
+        GameObject go = GameObject.Instantiate(curveParentPrefab, GridMap.Instance.gameObject.transform);
+        BezierCurveParent bezierCurveParent = go.GetComponent<BezierCurveParent>();
+        bezierCurveParent.SetStartAndEndPositions(startPos, endPos);
+        return bezierCurveParent;
+    }
+    public void AddCurveParent(BezierCurveParent curveParent) {
+        _curveParents.Add(curveParent);
+    }
+    public void RemoveCurveParent(BezierCurveParent curveParent) {
+        _curveParents.Remove(curveParent);
+        GameObject.Destroy(curveParent.gameObject);
     }
 
     [ContextMenu("Get Variables")]
