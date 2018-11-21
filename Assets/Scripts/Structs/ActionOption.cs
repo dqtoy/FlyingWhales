@@ -96,7 +96,7 @@ public class ActionOption {
             if (description.Contains("%minion%") && assignedMinion != null) {
                 description = description.Replace("%minion%", assignedMinion.icharacter.name);
             }
-            InteractionUI.Instance.interactionItem.SetDescription(description);
+            InteractionUI.Instance.interactionItem.SetDescription(description, null);
         }
     }
 

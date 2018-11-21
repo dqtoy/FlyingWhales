@@ -115,7 +115,7 @@ public class Biomes : MonoBehaviour {
 #if WORLD_CREATION_TOOL
         int sortingOrder = (((int)worldcreator.WorldCreatorManager.Instance.height - 1) -  (currentHexTile.yCoordinate - 2)) * 2;
 #else
-        int sortingOrder = (((int)GridMap.Instance.height - 1) -  (currentHexTile.yCoordinate - 2)) * 2;
+        int sortingOrder = (((int)GridMap.Instance.height - 1) -  (currentHexTile.yCoordinate - 2)) * 5;
         if (PlayerManager.Instance.player != null &&  PlayerManager.Instance.player.playerArea != null 
             && PlayerManager.Instance.player.playerArea.tiles.Contains(currentHexTile)) {
             return;

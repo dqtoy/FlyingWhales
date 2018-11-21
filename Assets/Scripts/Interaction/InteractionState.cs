@@ -150,7 +150,7 @@ public class InteractionState {
                 _descriptionLog.AddToFillers(_interaction.interactable.specificLocation.tileLocation.landmarkOnTile, _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
             }
             _description = Utilities.LogReplacer(descriptionLog);
-            InteractionUI.Instance.interactionItem.SetDescription(_description);
+            InteractionUI.Instance.interactionItem.SetDescription(_description, descriptionLog);
         }
 
         for (int i = 0; i < otherLogs.Count; i++) {
