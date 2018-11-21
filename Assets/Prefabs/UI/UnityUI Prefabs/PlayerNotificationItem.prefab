@@ -123,7 +123,7 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: New <color="red">Notification</color> asdsd
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: c3002a16d75dbb14ba70296a0a340a66, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: f8d165fc58518da4b871ca2551648bf9, type: 2}
   m_sharedMaterial: {fileID: 21354955637117686, guid: 366654e726d56e94b968f080a125664b,
     type: 2}
   m_fontSharedMaterials: []

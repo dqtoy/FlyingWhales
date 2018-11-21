@@ -7,6 +7,7 @@ using TMPro;
 using System.Linq;
 using System;
 using UnityEngine.Events;
+using ECS;
 
 public class InteractionItem : MonoBehaviour {
     private Interaction _interaction;
@@ -15,6 +16,7 @@ public class InteractionItem : MonoBehaviour {
 
     //public CharacterPortrait portrait;
     public TextMeshProUGUI descriptionText;
+    public EventLabel descriptionEventLbl;
     public ActionOptionButton[] actionOptionButtons;
     public Button confirmBtn;
     public RectTransform confirmBtnRect;
@@ -30,6 +32,22 @@ public class InteractionItem : MonoBehaviour {
     //[SerializeField] private SlotItem[] slotItems;
 
     //private List<CustomDropZone> neededObjectSlots;
+
+    [Space(10)]
+    [Header("Landmark Info")]
+    [SerializeField] private GameObject landmarkInfoGO;
+    [SerializeField] private TextMeshProUGUI locationNameLbl;
+    [SerializeField] private TextMeshProUGUI locationTypeLbl;
+    [SerializeField] private TextMeshProUGUI locationSuppliesLbl;
+    [SerializeField] private FactionEmblem locationOwnerEmblem;
+
+    [Space(10)]
+    [Header("Character Info")]
+    [SerializeField] private GameObject characterInfoGO;
+    [SerializeField] private TextMeshProUGUI characterNameLbl;
+    [SerializeField] private TextMeshProUGUI characterLvlLbl;
+    [SerializeField] private CharacterPortrait characterPortrait;
+    [SerializeField] private FactionEmblem characterFactionEmblem;
 
     private bool _isToggled;
 
@@ -77,7 +95,8 @@ public class InteractionItem : MonoBehaviour {
     public void SetInteraction(Interaction interaction) {
         _interaction = interaction;
         if(_interaction != null) {
-            
+            landmarkInfoGO.SetActive(false);
+            characterInfoGO.SetActive(false);
             //_interaction.SetInteractionItem(this);
             defaultAssignedSlotItem.PlaceObject(_interaction.explorerMinion);
             UpdateState();
@@ -90,7 +109,7 @@ public class InteractionItem : MonoBehaviour {
         }
     }
     public void UpdateState() {
-        SetDescription(_interaction.currentState.description);
+        SetDescription(_interaction.currentState.description, _interaction.currentState.descriptionLog);
         //confirmBtn.gameObject.SetActive(false);
         assignmentGO.SetActive(false);
         slotItem.ClearSlot();
@@ -155,8 +174,9 @@ public class InteractionItem : MonoBehaviour {
             //portrait.GeneratePortrait(null, 95, true);
         }
     }
-    public void SetDescription(string text) {
+    public void SetDescription(string text, Log log) {
         descriptionText.text = text;
+        descriptionEventLbl.SetLog(log);
     }
     private void ChangedActivatedState() {
         ChangeStateAllButtons(!_interaction.isActivated);
@@ -360,5 +380,73 @@ public class InteractionItem : MonoBehaviour {
         confirmBtn.gameObject.SetActive(false);
         descriptionAssignment.gameObject.SetActive(true);
         slotItem.gameObject.SetActive(true);
+    }
+
+    public void ShowObjectInfo(object obj) {
+        if (obj is BaseLandmark) {
+            ShowLandmarkInfo(obj as BaseLandmark);
+        } else if (obj is Area) {
+            ShowAreaInfo(obj as Area);
+        } else if (obj is ICharacter) {
+            ShowCharacterInfo(obj as ICharacter);
+        } else if (obj is Minion) {
+            ShowCharacterInfo((obj as Minion).icharacter);
+        }
+    }
+    public void HideObjectInfo() {
+        landmarkInfoGO.SetActive(false);
+        characterInfoGO.SetActive(false);
+    }
+
+    private void ShowLandmarkInfo(BaseLandmark landmark) {
+        if (landmarkInfoGO.activeSelf) {
+            return;
+        }
+        if (landmark.tileLocation.areaOfTile != null) {
+            locationNameLbl.text = landmark.tileLocation.areaOfTile.name;
+            locationSuppliesLbl.text = landmark.tileLocation.areaOfTile.suppliesInBank.ToString();
+        } else {
+            locationNameLbl.text = landmark.landmarkName;
+            locationSuppliesLbl.text = "0";
+        }
+
+        if (landmark.owner != null) {
+            locationTypeLbl.text = Utilities.GetNormalizedSingularRace(landmark.owner.race) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(landmark.specificLandmarkType.ToString());
+            locationOwnerEmblem.gameObject.SetActive(true);
+            locationOwnerEmblem.SetFaction(landmark.owner);
+        } else {
+            locationTypeLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(landmark.specificLandmarkType.ToString());
+            locationOwnerEmblem.gameObject.SetActive(false);
+        }
+        landmarkInfoGO.SetActive(true);
+    }
+    private void ShowAreaInfo(Area area) {
+        if (landmarkInfoGO.activeSelf) {
+            return;
+        }
+        locationNameLbl.text = area.name;
+        locationSuppliesLbl.text = area.suppliesInBank.ToString();
+
+        locationTypeLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(area.areaType.ToString());
+
+        if (area.owner != null) {
+            locationOwnerEmblem.gameObject.SetActive(true);
+            locationOwnerEmblem.SetFaction(area.owner);
+        } else {
+            locationOwnerEmblem.gameObject.SetActive(false);
+        }
+        landmarkInfoGO.SetActive(true);
+    }
+
+    private void ShowCharacterInfo(ICharacter character) {
+        if (characterInfoGO.activeSelf) {
+            return;
+        }
+
+        characterNameLbl.text = character.name;
+        characterLvlLbl.text = "Lvl." + character.level.ToString() + " " + character.characterClass.className;
+        characterPortrait.GeneratePortrait(character);
+        characterFactionEmblem.SetFaction(character.faction);
+        characterInfoGO.SetActive(true);
     }
 }

@@ -1150,52 +1150,38 @@ public class UIManager : MonoBehaviour {
 
     public void OnMinionsMenuToggled(bool state) {
         if (!state) {
-            PlayerUI.Instance.previousMenu = "minion";
+            if (!AreAllSideMenusAreClosed()) {
+                PlayerUI.Instance.previousMenu = "minion";
+            }
         }
     }
     public void OnCharacterIntelMenuToggled(bool state) {
         if (!state) {
-            PlayerUI.Instance.previousMenu = "character";
+            if (!AreAllSideMenusAreClosed()) {
+                PlayerUI.Instance.previousMenu = "character";
+            }
         }
     }
     public void OnLocationIntelMenuToggled(bool state) {
         if (!state) {
-            PlayerUI.Instance.previousMenu = "location";
+            if (!AreAllSideMenusAreClosed()) {
+                PlayerUI.Instance.previousMenu = "location";
+            }
         }
     }
     public void OnFactionIntelMenuToggled(bool state) {
         if (!state) {
-            PlayerUI.Instance.previousMenu = "faction";
+            if (!AreAllSideMenusAreClosed()) {
+                PlayerUI.Instance.previousMenu = "faction";
+            }
         }
     }
-}
-
-[System.Serializable]
-public class UnifiedUISettings {
-    [Header("Frame Settings")]
-    public Color bgColor;
-    public Color outlineColor;
-    public Color innerHeaderColor;
-    public Color outerHeaderColor;
-    public float outlineThickness;
-    public float headerHeight;
-    public float closeBtnSize;
-
-    [Header("ScrollView Settings")]
-    public ScrollRect.MovementType scrollMovementType;
-    public float scrollSensitivity;
-    public ScrollRect.ScrollbarVisibility scrollbarVisibility;
-
-    [Header("ScrollView Element Settings")]
-    public Color evenColor;
-    public Color oddColor;
-
-    [Header("Selectable Settings")]
-    public Sprite hoverOverSprite;
-    public Sprite hoverOutSprite;
-    public Color hoverOverTextColor;
-    public Color hoverOutTextColor;
-    public Color toggleOnTextColor = new Color(73f/255f, 93f/255f, 107f/255f, 255f/255f);
-    public Color toggleOffTextColor = new Color(247f/255f, 238f/255f, 212f/255f, 255f/255f);
-
+    private bool AreAllSideMenusAreClosed() {
+        if (!minionsMenuToggle.isOn && !charactersMenuToggle.isOn 
+            && !locationsMenuToggle.isOn && !factionsMenuToggle.isOn) {
+            PlayerUI.Instance.previousMenu = string.Empty;
+            return true;
+        }
+        return false;
+    }
 }
