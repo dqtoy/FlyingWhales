@@ -233,7 +233,7 @@ public class InteractionItem : MonoBehaviour {
             if (!_interaction.currentState.isEnd) {
                 _currentSelectedActionOption.ActivateOption(_interaction.interactable);
             } else {
-                _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.landmarkInvestigation.ExploreLandmark();
+                _interaction.interactable.specificLocation.tileLocation.areaOfTile.areaInvestigation.ExploreArea();
                 _interaction.currentState.EndResult();
             }
         } else {
@@ -252,7 +252,7 @@ public class InteractionItem : MonoBehaviour {
                 if (!_interaction.currentState.isEnd) {
                     _currentSelectedActionOption.ActivateOption(_interaction.interactable);
                 } else {
-                    _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.landmarkInvestigation.ExploreLandmark();
+                    _interaction.interactable.specificLocation.tileLocation.areaOfTile.areaInvestigation.ExploreArea();
                     _interaction.currentState.EndResult();
                 }
             }

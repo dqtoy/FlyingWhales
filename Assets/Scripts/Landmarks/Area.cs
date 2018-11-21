@@ -22,6 +22,9 @@ public class Area {
     public List<BaseLandmark> exposedTiles { get; private set; }
     public List<BaseLandmark> unexposedTiles { get; private set; }
     public bool isHighlighted { get; private set; }
+    public bool hasBeenInspected { get; private set; }
+    public bool areAllLandmarksDead { get; private set; }
+    public AreaInvestigation areaInvestigation { get; private set; }
     private List<HexTile> outerTiles;
     private List<SpriteRenderer> outline;
 
@@ -42,6 +45,7 @@ public class Area {
         orderStructures = new List<StructurePriority>();
         areaColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         locationIntel = new LocationIntel(this);
+        areaInvestigation = new AreaInvestigation(this); 
         SetAreaType(areaType);
         SetCoreTile(coreTile);
         AddTile(coreTile);
@@ -72,6 +76,7 @@ public class Area {
         areaColor = data.areaColor;
         SetAreaType(data.areaType);
         locationIntel = new LocationIntel(this);
+        areaInvestigation = new AreaInvestigation(this);
 #if WORLD_CREATION_TOOL
         SetCoreTile(worldcreator.WorldCreatorManager.Instance.GetHexTile(data.coreTileID));
 #else
@@ -120,6 +125,7 @@ public class Area {
 #endif
             OnTileAddedToArea(tile);
             Messenger.Broadcast(Signals.AREA_TILE_ADDED, this, tile);
+            CheckDeath();
         }
     }
     public void RemoveTile(List<HexTile> tiles, bool determineOuterTiles = true) {
@@ -443,6 +449,26 @@ public class Area {
                 tiles[i].SetBorderColor(owner.factionColor);
             }
         }
+    }
+    public void SetHasBeenInspected(bool state) {
+        hasBeenInspected = state;
+        if (state) {
+            if (owner != null && owner.id != PlayerManager.Instance.player.playerFaction.id) {
+                PlayerManager.Instance.player.AddIntel(owner.factionIntel);
+            }
+            if (id != PlayerManager.Instance.player.playerArea.id) {
+                PlayerManager.Instance.player.AddIntel(locationIntel);
+            }
+        }
+    }
+    public void CheckDeath() {
+        for (int i = 0; i < tiles.Count; i++) {
+            if (tiles[i].landmarkOnTile != null && !tiles[i].landmarkOnTile.landmarkObj.isRuined) {
+                areAllLandmarksDead = false;
+                return;
+            }
+        }
+        areAllLandmarksDead = true;
     }
     #endregion
 

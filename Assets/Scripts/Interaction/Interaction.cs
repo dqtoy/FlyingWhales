@@ -147,7 +147,7 @@ public class Interaction {
     protected void SecondTimeOut() {
         if (!_isSecondTimeOutCancelled) {
             TimedOutRunDefault();
-            _interactable.specificLocation.tileLocation.landmarkOnTile.landmarkInvestigation.ExploreLandmark();
+            _interactable.specificLocation.tileLocation.areaOfTile.areaInvestigation.ExploreArea();
         }
     }
     protected void TimedOutRunDefault() {
@@ -272,7 +272,7 @@ public class Interaction {
     protected void ExploreContinuesRewardEffect(InteractionState state) {
         if (_interactable is BaseLandmark) {
             BaseLandmark landmark = _interactable as BaseLandmark;
-            landmark.landmarkInvestigation.ExploreLandmark();
+            landmark.tileLocation.areaOfTile.areaInvestigation.ExploreArea();
         }
     }
     protected void ExploreEndsRewardState(InteractionState state, string stateName) {
@@ -287,7 +287,7 @@ public class Interaction {
         }
         if (_interactable is BaseLandmark) {
             BaseLandmark landmark = _interactable as BaseLandmark;
-            landmark.landmarkInvestigation.RecallMinion("explore");
+            //landmark.landmarkInvestigation.RecallMinion("explore");
         }
     }
     #endregion

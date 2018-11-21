@@ -94,7 +94,7 @@ public class LandmarkInfoUI : UIMenu {
         characterItems = new List<LandmarkCharacterItem>();
         LoadLogItems();
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
-        Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_INSPECTED, OnLandmarkInspected);
+        //Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_INSPECTED, OnLandmarkInspected);
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
         Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, OnPartyEnteredLandmark);
         Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, OnPartyExitedLandmark);
@@ -106,7 +106,12 @@ public class LandmarkInfoUI : UIMenu {
     public override void OpenMenu() {
         base.OpenMenu();
         SetLandmarkBorderState(false);
+        BaseLandmark previousLandmark = _activeLandmark;
         _activeLandmark = _data as BaseLandmark;
+        if(previousLandmark == null || (previousLandmark != null && previousLandmark.tileLocation.areaOfTile != _activeLandmark.tileLocation.areaOfTile)) {
+            ResetMinionAssignment();
+            ResetMinionAssignmentParty();
+        }
         UpdateHiddenUI();
         UpdateLandmarkInfo();
         UpdateCharacters();
@@ -118,9 +123,9 @@ public class LandmarkInfoUI : UIMenu {
         //PlayerUI.Instance.UncollapseMinionHolder();
         //InteractionUI.Instance.OpenInteractionUI(_activeLandmark);
         if(_activeLandmark.tileLocation.areaOfTile != null) {
-            if (!_activeLandmark.tileLocation.areaOfTile.isHighlighted) {
-                _activeLandmark.tileLocation.areaOfTile.SetOutlineState(true);
-            }
+            _activeLandmark.tileLocation.areaOfTile.SetOutlineState(true);
+            //if (!_activeLandmark.tileLocation.areaOfTile.isHighlighted) {
+            //}
         } else {
             SetLandmarkBorderState(true);
         }
@@ -129,9 +134,9 @@ public class LandmarkInfoUI : UIMenu {
         base.CloseMenu();
         SetLandmarkBorderState(false);
         if (_activeLandmark.tileLocation.areaOfTile != null) {
-            if (_activeLandmark.tileLocation.areaOfTile.isHighlighted) {
-                _activeLandmark.tileLocation.areaOfTile.SetOutlineState(false);
-            }
+            _activeLandmark.tileLocation.areaOfTile.SetOutlineState(false);
+            //if (_activeLandmark.tileLocation.areaOfTile.isHighlighted) {
+            //}
         } else {
             SetLandmarkBorderState(false);
         }
@@ -467,9 +472,7 @@ public class LandmarkInfoUI : UIMenu {
 
     #region Investigation
     public void UpdateInvestigation() {
-        if(_activeLandmark != null && _activeLandmark.landmarkInvestigation != null) {
-            ResetMinionAssignment();
-            ResetMinionAssignmentParty();
+        if(_activeLandmark != null && _activeLandmark.tileLocation.areaOfTile.areaInvestigation != null) {
             if (!investigationGO.activeSelf) {
                 minionAssignmentTween.ResetToBeginning();
                 minionAssignmentPartyTween.ResetToBeginning();
@@ -524,8 +527,8 @@ public class LandmarkInfoUI : UIMenu {
 
     }
     public void ShowMinionAssignment() {
-        if (_activeLandmark.landmarkInvestigation.isExploring) {
-            AssignMinionToInvestigate(_activeLandmark.landmarkInvestigation.assignedMinion);
+        if (_activeLandmark.tileLocation.areaOfTile.areaInvestigation.isExploring) {
+            AssignMinionToInvestigate(_activeLandmark.tileLocation.areaOfTile.areaInvestigation.assignedMinion);
         } else {
             AssignMinionToInvestigate(_assignedMinion);
         }
@@ -539,10 +542,10 @@ public class LandmarkInfoUI : UIMenu {
         minionAssignmentTween.PlayReverse();
     }
     public void ShowMinionAssignmentParty() {
-        if (_activeLandmark.landmarkInvestigation.isAttacking) {
+        if (_activeLandmark.tileLocation.areaOfTile.areaInvestigation.isAttacking) {
             for (int i = 0; i < _assignedParty.Length; i++) {
-                if (i < _activeLandmark.landmarkInvestigation.assignedMinionAttack.icharacter.currentParty.icharacters.Count) {
-                    AssignPartyMinionToInvestigate(_activeLandmark.landmarkInvestigation.assignedMinionAttack.icharacter.currentParty.icharacters[i].minion, i, false);
+                if (i < _activeLandmark.tileLocation.areaOfTile.areaInvestigation.assignedMinionAttack.icharacter.currentParty.icharacters.Count) {
+                    AssignPartyMinionToInvestigate(_activeLandmark.tileLocation.areaOfTile.areaInvestigation.assignedMinionAttack.icharacter.currentParty.icharacters[i].minion, i, false);
                 } else {
                     AssignPartyMinionToInvestigate(null, i, false);
                 }
@@ -564,14 +567,14 @@ public class LandmarkInfoUI : UIMenu {
             return;
         }
         if(whatToDo == "explore") {
-            if (_activeLandmark.landmarkInvestigation.isExploring) {
+            if (_activeLandmark.tileLocation.areaOfTile.areaInvestigation.isExploring) {
                 minionAssignmentConfirmButton.gameObject.SetActive(false);
                 minionAssignmentRecallButton.gameObject.SetActive(true);
                 minionAssignmentDraggableItem.SetDraggable(false);
                 minionAssignmentConfirmButton.interactable = false;
                 minionAssignmentRecallButton.interactable = true;
             } else {
-                if (_activeLandmark.landmarkInvestigation.isMinionRecalledExplore) {
+                if (_activeLandmark.tileLocation.areaOfTile.areaInvestigation.isMinionRecalledExplore) {
                     minionAssignmentConfirmButton.gameObject.SetActive(false);
                     minionAssignmentRecallButton.gameObject.SetActive(true);
                     minionAssignmentDraggableItem.SetDraggable(false);
@@ -586,7 +589,7 @@ public class LandmarkInfoUI : UIMenu {
                 }
             }
         } else {
-            if (_activeLandmark.landmarkInvestigation.isAttacking) {
+            if (_activeLandmark.tileLocation.areaOfTile.areaInvestigation.isAttacking) {
                 minionAssignmentPartyConfirmButton.gameObject.SetActive(false);
                 minionAssignmentPartyRecallButton.gameObject.SetActive(true);
                 minionAssignmentPartyConfirmButton.interactable = false;
@@ -595,7 +598,7 @@ public class LandmarkInfoUI : UIMenu {
                     minionAssignmentPartyDraggableItem[i].SetDraggable(false);
                 }
             } else {
-                if (_activeLandmark.landmarkInvestigation.isMinionRecalledAttack) {
+                if (_activeLandmark.tileLocation.areaOfTile.areaInvestigation.isMinionRecalledAttack) {
                     minionAssignmentPartyConfirmButton.gameObject.SetActive(false);
                     minionAssignmentPartyRecallButton.gameObject.SetActive(true);
                     minionAssignmentPartyConfirmButton.interactable = true;
@@ -696,28 +699,28 @@ public class LandmarkInfoUI : UIMenu {
             //minionAssignmentPartyRecallButton.gameObject.SetActive(false);
             //minionAssignmentPartyConfirmButton.gameObject.SetActive(true);
             //minionAssignmentDraggableItem.SetDraggable(true);
-            minionAssignmentConfirmButton.interactable = !_activeLandmark.landmarkInvestigation.isAttacking;
+            minionAssignmentConfirmButton.interactable = !_activeLandmark.tileLocation.areaOfTile.areaInvestigation.isAttacking;
             OnUpdateLandmarkInvestigationState("attack");
         } else {
             _assignedParty[index] = null;
             ResetMinionAssignmentParty(index);
         }
 
-        List<ICharacter> assignedCharacters = new List<ICharacter>();
-        for (int i = 0; i < _assignedParty.Length; i++) {
-            if(_assignedParty[i] != null) {
-                assignedCharacters.Add(_assignedParty[i].icharacter);
-            }
-        }
+        //List<ICharacter> assignedCharacters = new List<ICharacter>();
+        //for (int i = 0; i < _assignedParty.Length; i++) {
+        //    if(_assignedParty[i] != null) {
+        //        assignedCharacters.Add(_assignedParty[i].icharacter);
+        //    }
+        //}
         
-        float chance = 0f;
-        float enemyChance = 0f;
-        if(_activeLandmark.defenders != null) {
-            CombatManager.Instance.GetCombatChanceOfTwoLists(assignedCharacters, _activeLandmark.defenders.icharacters, out chance, out enemyChance);
-        } else {
-            CombatManager.Instance.GetCombatChanceOfTwoLists(assignedCharacters, null, out chance, out enemyChance);
-        }
-        SetWinChance(chance);
+        //float chance = 0f;
+        //float enemyChance = 0f;
+        //if(_activeLandmark.defenders != null) {
+        //    CombatManager.Instance.GetCombatChanceOfTwoLists(assignedCharacters, _activeLandmark.defenders.icharacters, out chance, out enemyChance);
+        //} else {
+        //    CombatManager.Instance.GetCombatChanceOfTwoLists(assignedCharacters, null, out chance, out enemyChance);
+        //}
+        //SetWinChance(chance);
     }
     private void SetWinChance(float chance) {
         iTween.ValueTo(this.gameObject, iTween.Hash("from", _currentWinChance, "to", chance, "time", 0.3f, "onupdate", "OnUpdateWinChance"));
@@ -727,22 +730,22 @@ public class LandmarkInfoUI : UIMenu {
         minionAssignmentPartyWinChance.text = _currentWinChance.ToString("F2") + "%";
     }
     public void OnClickConfirmInvestigation() {
-        _activeLandmark.landmarkInvestigation.InvestigateLandmark(_assignedMinion);
+        _activeLandmark.tileLocation.areaOfTile.areaInvestigation.InvestigateLandmark(_assignedMinion);
         OnUpdateLandmarkInvestigationState("explore");
         //ChangeStateAllButtons(!_activeLandmark.landmarkInvestigation.isActivated);
     }
     public void OnClickRecall() {
-        _activeLandmark.landmarkInvestigation.RecallMinion("explore");
+        _activeLandmark.tileLocation.areaOfTile.areaInvestigation.RecallMinion("explore");
         //OnUpdateLandmarkInvestigationState();
         //ChangeStateAllButtons(!_activeLandmark.landmarkInvestigation.isActivated);
     }
     public void OnClickConfirmPartyInvestigation() {
-        _activeLandmark.landmarkInvestigation.AttackRaidLandmark(_currentSelectedInvestigateButton.actionName, _assignedParty);
+        _activeLandmark.tileLocation.areaOfTile.areaInvestigation.AttackRaidLandmark(_currentSelectedInvestigateButton.actionName, _assignedParty);
         OnUpdateLandmarkInvestigationState("attack");
         //ChangeStateAllButtons(!_activeLandmark.landmarkInvestigation.isActivated);
     }
     public void OnClickPartyRecall() {
-        _activeLandmark.landmarkInvestigation.RecallMinion("attack");
+        _activeLandmark.tileLocation.areaOfTile.areaInvestigation.RecallMinion("attack");
         //OnUpdateLandmarkInvestigationState();
         //ChangeStateAllButtons(!_activeLandmark.landmarkInvestigation.isActivated);
     }

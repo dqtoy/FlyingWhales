@@ -26,7 +26,7 @@ public class BaseLandmark : ILocation, IInteractable {
     protected Faction _owner;
     protected StructureObj _landmarkObj;
     protected LandmarkVisual _landmarkVisual;
-    protected LandmarkInvestigation _landmarkInvestigation;
+    //protected LandmarkInvestigation _landmarkInvestigation;
     protected List<ICharacter> _charactersWithHomeOnLandmark;
     protected List<BaseLandmark> _connections;
     protected List<Character> _prisoners; //list of prisoners on landmark
@@ -116,9 +116,9 @@ public class BaseLandmark : ILocation, IInteractable {
     public LandmarkVisual landmarkVisual {
         get { return _landmarkVisual; }
     }
-    public LandmarkInvestigation landmarkInvestigation {
-        get { return _landmarkInvestigation; }
-    }
+    //public LandmarkInvestigation landmarkInvestigation {
+    //    get { return _landmarkInvestigation; }
+    //}
     public List<Character> prisoners {
         get { return _prisoners; }
     }
@@ -283,8 +283,9 @@ public class BaseLandmark : ILocation, IInteractable {
     public virtual void DestroyLandmark() {
         ObjectState ruined = landmarkObj.GetState("Ruined");
         landmarkObj.ChangeState(ruined);
-        if(_landmarkInvestigation != null) {
-            _landmarkInvestigation.OnDestroyLandmark();
+        tileLocation.areaOfTile.CheckDeath();
+        if (tileLocation.areaOfTile.areaInvestigation != null) {
+            tileLocation.areaOfTile.areaInvestigation.OnDestroyLandmark(this);
         }
         //RemoveListeners();
     }
@@ -1011,9 +1012,9 @@ public class BaseLandmark : ILocation, IInteractable {
     public void SetIsBeingInspected(bool state) {
         _isBeingInspected = state;
         //_landmarkVisual.ToggleCharactersVisibility();
-        if (_isBeingInspected) {
-            Messenger.Broadcast(Signals.LANDMARK_INSPECTED, this);
-        }
+        //if (_isBeingInspected) {
+        //    Messenger.Broadcast(Signals.LANDMARK_INSPECTED, this);
+        //}
     }
     public void SetHasBeenInspected(bool state) {
         _hasBeenInspected = state;
@@ -1282,7 +1283,7 @@ public class BaseLandmark : ILocation, IInteractable {
 
     #region Interactions
     public void ConstructInitialInteractions() {
-        _landmarkInvestigation = new LandmarkInvestigation(this);
+        //_landmarkInvestigation = new LandmarkInvestigation(this);
         //Interaction investigateInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.INVESTIGATE, this);
         //Interaction pointOfInterest1 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ABANDONED_HOUSE, this);
         //Interaction pointOfInterest2 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.UNEXPLORED_CAVE, this);
