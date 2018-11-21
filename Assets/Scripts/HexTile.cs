@@ -34,7 +34,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private GameObject _centerPiece;
     [SerializeField] private GameObject _highlightGO;
     [SerializeField] internal Transform UIParent;
-    [SerializeField] private GameObject _emptyCityGO;
     [SerializeField] private GameObject _hoverHighlightGO;
     [SerializeField] private GameObject _clickHighlightGO;
     [SerializeField] private GameObject _corruptionHighlightGO;
@@ -142,9 +141,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     internal Dictionary<HEXTILE_DIRECTION, HexTile> neighbourDirections {
         get { return _neighbourDirections; }
-    }
-    public GameObject emptyCityGO {
-        get { return this._emptyCityGO; }
     }
     public BaseLandmark landmarkOnTile {
         get { return _landmarkOnTile; }
@@ -753,24 +749,24 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     internal void UpdateSortingOrder() {
         int sortingOrder = spriteRenderer.sortingOrder;
-        _hoverHighlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
-        highlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 7;
+        _hoverHighlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+        highlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
 
-        topLeftBeach.sortingOrder = sortingOrder + 7;
-        leftBeach.sortingOrder = sortingOrder + 7;
-        botLeftBeach.sortingOrder = sortingOrder + 7;
-        botRightBeach.sortingOrder = sortingOrder + 7;
-        rightBeach.sortingOrder = sortingOrder + 7;
-        topRightBeach.sortingOrder = sortingOrder + 7;
+        topLeftBeach.sortingOrder = sortingOrder + 1;
+        leftBeach.sortingOrder = sortingOrder + 1;
+        botLeftBeach.sortingOrder = sortingOrder + 1;
+        botRightBeach.sortingOrder = sortingOrder + 1;
+        rightBeach.sortingOrder = sortingOrder + 1;
+        topRightBeach.sortingOrder = sortingOrder + 1;
 
 
-        if (mainStructure.sprite != null && mainStructure.sprite.name.Contains("mountains")) {
-            Utilities.SetSpriteSortingLayer(mainStructure, spriteRenderer.sortingLayerName);
-            mainStructure.sortingOrder = spriteRenderer.sortingOrder + 1;
-        } else {
-            mainStructure.sortingOrder = sortingOrder + 3;
-            structureTint.sortingOrder = sortingOrder + 4;
-        }
+        //if (mainStructure.sprite != null && mainStructure.sprite.name.Contains("mountains")) {
+        //    Utilities.SetSpriteSortingLayer(mainStructure, spriteRenderer.sortingLayerName);
+        //    mainStructure.sortingOrder = spriteRenderer.sortingOrder + 1;
+        //} else {
+        mainStructure.sortingOrder = sortingOrder + 2;
+        structureTint.sortingOrder = sortingOrder + 3;
+        //}
     }
     internal SpriteRenderer ActivateBorder(HEXTILE_DIRECTION direction, Color color) {
         SpriteRenderer activatedBorder = null;
