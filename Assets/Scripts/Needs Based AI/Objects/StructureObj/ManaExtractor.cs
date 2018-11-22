@@ -10,6 +10,7 @@ public class ManaExtractor : StructureObj {
         _specificObjectType = LANDMARK_TYPE.MANA_EXTRACTOR;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
         _effectCost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY };
+        _needsMinionAssignment = true;
     }
 
     #region Overrides
@@ -42,6 +43,7 @@ public class ManaExtractor : StructureObj {
             _assignedCharacter.minion.GoBackFromAssignment();
             Messenger.RemoveListener(Signals.HOUR_STARTED, ProduceMana);
         }
+        OnEndStructureEffect();
     }
     private void ProduceMana() {
         ////Provides the player 20 Mana Stones at the start of each day until the Mana Stones have been exhausted.

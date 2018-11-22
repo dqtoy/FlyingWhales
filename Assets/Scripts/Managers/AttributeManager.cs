@@ -42,6 +42,7 @@ public class AttributeManager : MonoBehaviour {
 
     public void Initialize() {
         _allTraits = new Dictionary<string, Trait>();
+        _allPositiveTraits = new Dictionary<string, Trait>();
         string path = Utilities.dataPath + "CombatAttributes/";
         string[] files = Directory.GetFiles(path, "*.json");
         for (int i = 0; i < files.Length; i++) {

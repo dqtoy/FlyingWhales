@@ -243,6 +243,9 @@ public class UIManager : MonoBehaviour {
         if (partyinfoUI.isShowing) {
             partyinfoUI.CloseMenu();
         }
+        if (playerLandmarkInfoUI.isShowing) {
+            playerLandmarkInfoUI.CloseMenu();
+        }
     }
 
     #region Font Utilities
@@ -655,6 +658,9 @@ public class UIManager : MonoBehaviour {
         if (monsterInfoUI.isShowing) {
             monsterInfoUI.CloseMenu();
         }
+        if (playerLandmarkInfoUI.isShowing) {
+            playerLandmarkInfoUI.CloseMenu();
+        }
         landmarkInfoUI.SetData(landmark);
         landmarkInfoUI.OpenMenu();
         landmark.CenterOnLandmark();
@@ -665,6 +671,35 @@ public class UIManager : MonoBehaviour {
             landmarkInfoUI.UpdateLandmarkInfo();
         }
     }
+    #endregion
+
+    #region Player Landmark Info
+    [Space(10)]
+    [Header("Player Landmark Info")]
+    public PlayerLandmarkInfoUI playerLandmarkInfoUI;
+    public void ShowPlayerLandmarkInfo(BaseLandmark landmark) {
+        if (characterInfoUI.isShowing) {
+            characterInfoUI.CloseMenu();
+        }
+        if (partyinfoUI.isShowing) {
+            partyinfoUI.CloseMenu();
+        }
+        if (monsterInfoUI.isShowing) {
+            monsterInfoUI.CloseMenu();
+        }
+        if (landmarkInfoUI.isShowing) {
+            landmarkInfoUI.CloseMenu();
+        }
+        playerLandmarkInfoUI.SetData(landmark);
+        playerLandmarkInfoUI.OpenMenu();
+        playerLandmarkInfoUI.CenterOnLandmark();
+        //		playerActionsUI.ShowPlayerActionsUI ();
+    }
+    //public void UpdatePlayerLandmarkInfo() {
+    //    if (playerLandmarkInfoUI.isShowing) {
+    //        playerLandmarkInfoUI.UpdateLandmarkInfo();
+    //    }
+    //}
     #endregion
 
     #region Faction Info
@@ -712,6 +747,9 @@ public class UIManager : MonoBehaviour {
         if (landmarkInfoUI.isShowing) {
             landmarkInfoUI.CloseMenu();
         }
+        if (playerLandmarkInfoUI.isShowing) {
+            playerLandmarkInfoUI.CloseMenu();
+        }
         //if (factionInfoUI.isShowing) {
         //    factionInfoUI.HideMenu();
         //}
@@ -727,6 +765,7 @@ public class UIManager : MonoBehaviour {
         if (monsterInfoUI.isShowing) {
             monsterInfoUI.CloseMenu();
         }
+
         characterInfoUI.SetData(character);
         //if(character.role.roleType != CHARACTER_ROLE.PLAYER) {
         characterInfoUI.OpenMenu();
@@ -743,41 +782,6 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    //#region HexTile Info
-    //[Space(10)]
-    //[Header("HexTile Info")]
-    //[SerializeField] internal HextileInfoUI hexTileInfoUI;
-    //public void ShowHexTileInfo(HexTile hexTile) {
-    //    //HideMainUI();
-    //    //if (landmarkInfoUI.isShowing) {
-    //    //    landmarkInfoUI.HideMenu();
-    //    //}
-    //    //if (factionInfoUI.isShowing) {
-    //    //    factionInfoUI.HideMenu();
-    //    //}
-    //    //if (characterInfoUI.isShowing) {
-    //    //    characterInfoUI.HideMenu();
-    //    //}
-    //    //if (questInfoUI.isShowing) {
-    //    //    questInfoUI.HideMenu();
-    //    //}
-    //    if (partyinfoUI.isShowing) {
-    //        partyinfoUI.CloseMenu();
-    //    }
-    //    //if (monsterInfoUI.isShowing) {
-    //    //    monsterInfoUI.HideMenu();
-    //    //}
-    //    hexTileInfoUI.SetData(hexTile);
-    //    hexTileInfoUI.OpenMenu();
-    //    //		playerActionsUI.ShowPlayerActionsUI ();
-    //}
-    //public void UpdateHexTileInfo() {
-    //    if (hexTileInfoUI.isShowing) {
-    //        hexTileInfoUI.UpdateHexTileInfo();
-    //    }
-    //}
-    //#endregion
-
     #region Party Info
     [Space(10)]
     [Header("Party Info")]
@@ -786,6 +790,9 @@ public class UIManager : MonoBehaviour {
         //HideMainUI();
         if (landmarkInfoUI.isShowing) {
             landmarkInfoUI.CloseMenu();
+        }
+        if (playerLandmarkInfoUI.isShowing) {
+            playerLandmarkInfoUI.CloseMenu();
         }
         //if (factionInfoUI.isShowing) {
         //    factionInfoUI.HideMenu();
@@ -820,6 +827,9 @@ public class UIManager : MonoBehaviour {
         //HideMainUI();
         if (landmarkInfoUI.isShowing) {
             landmarkInfoUI.CloseMenu();
+        }
+        if (playerLandmarkInfoUI.isShowing) {
+            playerLandmarkInfoUI.CloseMenu();
         }
         //if (factionInfoUI.isShowing) {
         //    factionInfoUI.HideMenu();

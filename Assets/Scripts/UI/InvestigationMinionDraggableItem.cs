@@ -42,10 +42,15 @@ public class InvestigationMinionDraggableItem : DraggableItem {
             Destroy(_draggingObject.gameObject);
             if (customDropzone == null) {
                 _portrait.gameObject.SetActive(false);
-                if(_index == -1) {
-                    UIManager.Instance.landmarkInfoUI.AssignMinionToInvestigate(null);
-                } else {
-                    UIManager.Instance.landmarkInfoUI.AssignPartyMinionToInvestigate(null, _index);
+                if (UIManager.Instance.playerLandmarkInfoUI.isShowing) {
+                    UIManager.Instance.playerLandmarkInfoUI.AssignMinionToInvestigate(null);
+                }
+                if (UIManager.Instance.landmarkInfoUI.isShowing) {
+                    if (_index == -1) {
+                        UIManager.Instance.landmarkInfoUI.AssignMinionToInvestigate(null);
+                    } else {
+                        UIManager.Instance.landmarkInfoUI.AssignPartyMinionToInvestigate(null, _index);
+                    }
                 }
             }
         }

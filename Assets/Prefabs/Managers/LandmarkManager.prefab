@@ -942,7 +942,7 @@ MonoBehaviour:
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
-  - landmarkTypeString: Node
+  - landmarkTypeString: Corruption Node
     landmarkType: 38
     minimumTileCount: 1
     connectedTileDirection: 6
@@ -964,7 +964,7 @@ MonoBehaviour:
     isMonsterSpawner: 0
     monsterSets: []
     monsterSpawnCooldown: 0
-  - landmarkTypeString: Summoning Circle
+  - landmarkTypeString: Ritual Circle
     landmarkType: 39
     minimumTileCount: 1
     connectedTileDirection: 6
@@ -1129,6 +1129,50 @@ MonoBehaviour:
     monsterSpawnCooldown: 0
   - landmarkTypeString: Cemetery
     landmarkType: 45
+    minimumTileCount: 1
+    connectedTileDirection: 6
+    uniqueTags: 
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    biomeTileSprites:
+      m_keys: 
+      m_values: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
+      tintSprite: {fileID: 0}
+    humansLandmarkTileSprites: []
+    elvenLandmarkTileSprites: []
+    possibleSpawnPoints: 01000000020000000600000007000000
+    isUnique: 0
+    startingMonsterSpawn: {fileID: 0}
+    isMonsterSpawner: 0
+    monsterSets: []
+    monsterSpawnCooldown: 0
+  - landmarkTypeString: Training Arena
+    landmarkType: 46
+    minimumTileCount: 1
+    connectedTileDirection: 6
+    uniqueTags: 
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    biomeTileSprites:
+      m_keys: 
+      m_values: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
+      tintSprite: {fileID: 0}
+    humansLandmarkTileSprites: []
+    elvenLandmarkTileSprites: []
+    possibleSpawnPoints: 01000000020000000600000007000000
+    isUnique: 0
+    startingMonsterSpawn: {fileID: 0}
+    isMonsterSpawner: 0
+    monsterSets: []
+    monsterSpawnCooldown: 0
+  - landmarkTypeString: Penance Temple
+    landmarkType: 47
     minimumTileCount: 1
     connectedTileDirection: 6
     uniqueTags: 

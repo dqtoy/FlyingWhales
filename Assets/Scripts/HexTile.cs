@@ -1081,7 +1081,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             if (!this.landmarkOnTile.tileLocation.isCorrupted) {
                 UIManager.Instance.ShowLandmarkInfo(this.landmarkOnTile);
             } else {
-
+                UIManager.Instance.ShowPlayerLandmarkInfo(this.landmarkOnTile);
             }
         } else {
             Messenger.Broadcast(Signals.HIDE_MENUS);

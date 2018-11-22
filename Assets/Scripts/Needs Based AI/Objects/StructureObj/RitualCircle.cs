@@ -10,6 +10,7 @@ public class RitualCircle : StructureObj {
         _specificObjectType = LANDMARK_TYPE.RITUAL_CIRCLE;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
         _effectCost = new CurrenyCost { amount = 100, currency = CURRENCY.MANA };
+        _needsMinionAssignment = true;
     }
 
     #region Overrides
@@ -41,6 +42,7 @@ public class RitualCircle : StructureObj {
             _assignedCharacter.minion.GoBackFromAssignment();
             lockedTrait = string.Empty;
         }
+        OnEndStructureEffect();
     }
     #endregion
 }

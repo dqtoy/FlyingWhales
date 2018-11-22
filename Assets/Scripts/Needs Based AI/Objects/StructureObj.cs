@@ -9,6 +9,7 @@ public class StructureObj : IObject {
     protected OBJECT_TYPE _objectType;
     protected LANDMARK_TYPE _specificObjectType;
     protected bool _isInvisible;
+    protected bool _needsMinionAssignment;
     protected int _maxHP;
     protected ActionEvent _onHPReachedZero;
     protected ActionEvent _onHPReachedFull;
@@ -30,38 +31,8 @@ public class StructureObj : IObject {
     public string objectName {
         get { return _objectName; }
     }
-    public OBJECT_TYPE objectType {
-        get { return _objectType; }
-    }
-    public LANDMARK_TYPE specificObjectType {
-        get { return _specificObjectType; }
-    }
-    public List<ObjectState> states {
-        get { return _states; }
-    }
-    public List<CharacterAttribute> attributes {
-        get { return _attributes; }
-    }
-    public ObjectState currentState {
-        get { return _currentState; }
-    }
     public bool isInvisible {
         get { return _isInvisible; }
-    }
-    public int maxHP {
-        get { return _maxHP; }
-    }
-    public int currentHP {
-        get { return _currentHP; }
-    }
-    public BaseLandmark objectLocation {
-        get { return _objectLocation; }
-    }
-    public ILocation specificLocation {
-        get { return objectLocation; }
-    }
-    public Dictionary<RESOURCE, int> resourceInventory {
-        get { return _resourceInventory; }
     }
     public bool isHPFull {
         get { return _currentHP >= _maxHP; }
@@ -69,14 +40,50 @@ public class StructureObj : IObject {
     public bool isHPZero {
         get { return _currentHP == 0; }
     }
-    public RESOURCE madeOf {
-        get { return _madeOf; }
-    }
     public bool isDirty {
         get { return _isDirty; }
     }
     public bool isRuined {
         get { return currentState.stateName.Equals("Ruined"); }
+    }
+    public bool needsMinionAssignment {
+        get { return _needsMinionAssignment; }
+    }
+    public int maxHP {
+        get { return _maxHP; }
+    }
+    public int currentHP {
+        get { return _currentHP; }
+    }
+    public RESOURCE madeOf {
+        get { return _madeOf; }
+    }
+    public OBJECT_TYPE objectType {
+        get { return _objectType; }
+    }
+    public LANDMARK_TYPE specificObjectType {
+        get { return _specificObjectType; }
+    }
+    public ILocation specificLocation {
+        get { return objectLocation; }
+    }
+    public ObjectState currentState {
+        get { return _currentState; }
+    }
+    public BaseLandmark objectLocation {
+        get { return _objectLocation; }
+    }
+    public Character assignedCharacter {
+        get { return _assignedCharacter; }
+    }
+    public List<ObjectState> states {
+        get { return _states; }
+    }
+    public List<CharacterAttribute> attributes {
+        get { return _attributes; }
+    }
+    public Dictionary<RESOURCE, int> resourceInventory {
+        get { return _resourceInventory; }
     }
     #endregion
 
@@ -178,6 +185,10 @@ public class StructureObj : IObject {
     }
     public virtual void OnAssignCharacter() {
         ApplyEffectCostToPlayer();
+    }
+    public virtual void OnEndStructureEffect() {
+        _assignedCharacter = null;
+        UIManager.Instance.playerLandmarkInfoUI.UpdateInvestigation();
     }
     #endregion
 
@@ -353,6 +364,7 @@ public class StructureObj : IObject {
     public void SetAssignedCharacter(Character character) {
         _assignedCharacter = character;
         if(_assignedCharacter != null) {
+            _assignedCharacter.minion.GoToAssignment(_objectLocation);
             OnAssignCharacter();
         }
     }

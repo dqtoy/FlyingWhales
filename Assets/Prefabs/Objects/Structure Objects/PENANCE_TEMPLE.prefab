@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4000638828236798}
   - component: {fileID: 114012481577862306}
   m_Layer: 0
-  m_Name: SUMMONING_CIRCLE
+  m_Name: PENANCE_TEMPLE
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -66,7 +66,7 @@ MonoBehaviour:
       m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
         PublicKeyToken=null
     _actions: []
-  specificObjectType: 39
+  specificObjectType: 47
   isInvisible: 0
   maxHP: 500
   onHPReachedZero:

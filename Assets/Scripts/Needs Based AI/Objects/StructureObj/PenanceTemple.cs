@@ -8,6 +8,7 @@ public class PenanceTemple : StructureObj {
         _specificObjectType = LANDMARK_TYPE.PENANCE_TEMPLE;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
         _effectCost = new CurrenyCost { amount = 50, currency = CURRENCY.MANA };
+        _needsMinionAssignment = true;
     }
 
     #region Overrides
@@ -36,6 +37,7 @@ public class PenanceTemple : StructureObj {
             }
             _assignedCharacter.minion.GoBackFromAssignment();
         }
+        OnEndStructureEffect();
     }
     #endregion
 }

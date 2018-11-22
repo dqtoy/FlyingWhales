@@ -8,6 +8,7 @@ public class TrainingArena : StructureObj {
         _specificObjectType = LANDMARK_TYPE.TRAINING_ARENA;
         SetObjectName(Utilities.NormalizeStringUpperCaseFirstLetters(_specificObjectType.ToString()));
         _effectCost = new CurrenyCost { amount = 50, currency = CURRENCY.SUPPLY };
+        _needsMinionAssignment = true;
     }
 
     #region Overrides
@@ -33,6 +34,7 @@ public class TrainingArena : StructureObj {
             _assignedCharacter.minion.AdjustExp(100);
             _assignedCharacter.minion.GoBackFromAssignment();
         }
+        OnEndStructureEffect();
     }
     #endregion
 }
