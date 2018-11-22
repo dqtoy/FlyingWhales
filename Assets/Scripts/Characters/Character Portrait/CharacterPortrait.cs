@@ -95,7 +95,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             SetBodyPartsState(false);
             SetWholeImageSprite(MonsterManager.Instance.GetMonsterSprite(character.name));
         }
-        SetBGState(true);
+        //SetBGState(true);
         nameLbl.text = character.urlName;
         UpdateUnknownVisual();
     }

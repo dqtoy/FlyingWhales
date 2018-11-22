@@ -5,15 +5,15 @@ using UnityEngine.EventSystems;
 
 public class DraggableItem : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler {
 
-    protected bool _isDraggable;
-    protected bool _isDragging;
+    [SerializeField] protected bool _isDraggable;
+    [SerializeField] protected bool _isDragging;
     protected Vector2 _draggingObjectOriginalSize;
 
     protected RectTransform _draggingObject;
 
     protected object associatedObj;
 
-    void Start() {
+    private void Awake() {
         SetDraggable(true);
     }
 
@@ -75,4 +75,9 @@ public class DraggableItem : MonoBehaviour, IDragHandler, IBeginDragHandler, IEn
     }
 
     
+}
+
+public class DragObject : MonoBehaviour {
+
+    public IDragParentItem parentItem;
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class SlotItem : MonoBehaviour {
 
@@ -13,6 +14,8 @@ public class SlotItem : MonoBehaviour {
     public ItemDroppedCallback itemDroppedCallback;
     public ItemDroppedOutCallback itemDroppedOutCallback;
 
+    [Space(10)]
+    [Header("Slot Elements")]
     public CharacterPortrait portrait;
     public AreaEmblem areaEmblem;
     public FactionEmblem factionEmblem;
@@ -31,7 +34,11 @@ public class SlotItem : MonoBehaviour {
     }
 
     public void OnDropItemAtDropZone(GameObject go) { //this is used to filter if the dragged object is valid for this slot
-        IDragParentItem parentItem = go.GetComponent<IDragParentItem>();
+        DragObject dragObj = go.GetComponent<DragObject>();
+        if (dragObj == null) {
+            return;
+        }
+        IDragParentItem parentItem = dragObj.parentItem;
         if (parentItem != null) {
             if (neededType == typeof(IUnit)) {
                 if (parentItem.associatedObj is IUnit) { //TODO: Make this more elegant!

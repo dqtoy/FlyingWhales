@@ -16,6 +16,8 @@ public class LocationDraggable : DraggableItem {
         GameObject clone = (GameObject)Instantiate(emblem.gameObject);
         _draggingObject = clone.GetComponent<RectTransform>();
 
+        _draggingObject.gameObject.AddComponent<DragObject>().parentItem = gameObject.GetComponent<LocationIntelItem>();
+
         //Put _dragging object into the dragging area
         _draggingObject.sizeDelta = emblem.gameObject.GetComponent<RectTransform>().rect.size;
         _draggingObject.SetParent(UIManager.Instance.gameObject.GetComponent<RectTransform>(), true);

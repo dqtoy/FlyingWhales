@@ -18,6 +18,7 @@ public class InvestigationMinionDraggableItem : DraggableItem {
         GameObject clone = (GameObject) Instantiate(_portrait.gameObject);
         clone.GetComponent<CharacterPortrait>().SetBGState(true);
         _draggingObject = clone.GetComponent<RectTransform>();
+        _draggingObject.gameObject.AddComponent<DragObject>().parentItem = gameObject.GetComponent<PlayerCharacterItem>();
 
         //Put _dragging object into the dragging area
         _draggingObject.sizeDelta = _portrait.gameObject.GetComponent<RectTransform>().rect.size;

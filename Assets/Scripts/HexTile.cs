@@ -73,6 +73,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [Space(10)]
     [Header("Corruption")]
     [SerializeField] private GameObject[] tendrils;
+    [SerializeField] private GameObject[] desertTendrils;
 
     [Space(10)]
     [Header("Beaches")]
@@ -1330,7 +1331,19 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         SchedulingManager.Instance.AddEntry(nextCorruptionDate, () => SpreadCorruptionToNeighbors());
     }
     public void StartCorruptionAnimation() {
-        GameObject tendril = tendrils[UnityEngine.Random.Range(0, tendrils.Length)];
+        GameObject tendril = null;
+        if (this.biomeType == BIOMES.DESERT && spriteRenderer.sprite.name.Contains("mountains")) {
+            tendril = desertTendrils[0];
+            //if (spriteRenderer.sprite.name.Contains("1")) {
+            //    tendril = desertTendrils[0];
+            //} else if (spriteRenderer.sprite.name.Contains("2")) {
+            //    tendril = desertTendrils[1];
+            //} else if (spriteRenderer.sprite.name.Contains("3")) {
+            //    tendril = desertTendrils[2];
+            //}
+        } else {
+            tendril = tendrils[Random.Range(0, tendrils.Length)];
+        }
         _spawnedTendril = GameObject.Instantiate(tendril, biomeDetailsParent);
     }
     public void StopCorruptionAnimation() {

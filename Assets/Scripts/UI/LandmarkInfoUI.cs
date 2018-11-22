@@ -329,7 +329,7 @@ public class LandmarkInfoUI : UIMenu {
     private LandmarkCharacterItem CreateNewCharacterItem(ICharacter character) {
         GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
         LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
-        item.SetParty(character, _activeLandmark);
+        item.SetCharacter(character, _activeLandmark);
         characterItems.Add(item);
         CheckScrollers();
         return item;
@@ -337,7 +337,7 @@ public class LandmarkInfoUI : UIMenu {
     private void CreateNewCharacterItem(LandmarkPartyData partyData) {
         GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
         LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
-        item.SetParty(partyData.partyMembers[0], _activeLandmark);
+        item.SetCharacter(partyData.partyMembers[0], _activeLandmark);
     }
     private void OnPartyEnteredLandmark(Party party, BaseLandmark landmark) {
         if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id) { //&& (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll)
@@ -429,13 +429,17 @@ public class LandmarkInfoUI : UIMenu {
     private void UpdateDefenders() {
         if (_activeLandmark.defenders == null) {
             for (int i = 0; i < defenderSlots.Length; i++) {
-                defenderSlots[i].SetParty(null, _activeLandmark, true);
+                LandmarkCharacterItem currSlot = defenderSlots[i];
+                currSlot.SetCharacter(null, _activeLandmark, true);
+                currSlot.slotItem.dropZone.SetEnabledState(false);
             }
         } else {
             for (int i = 0; i < defenderSlots.Length; i++) {
+                LandmarkCharacterItem currSlot = defenderSlots[i];
                 ICharacter defender = _activeLandmark.defenders.icharacters.ElementAtOrDefault(i);
-                defenderSlots[i].SetParty(defender, _activeLandmark, true);
-                defenderSlots[i].portrait.SetForceShowPortraitState(true);
+                currSlot.SetCharacter(defender, _activeLandmark, true);
+                currSlot.slotItem.dropZone.SetEnabledState(false);
+                //defenderSlots[i].portrait.SetForceShowPortraitState(true);
             }
         }
     }

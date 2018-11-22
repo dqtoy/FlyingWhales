@@ -1486,9 +1486,13 @@ MonoBehaviour:
   minimapHexSprite: {fileID: 212000011571301836}
   biomeDetailsParent: {fileID: 4000010271148564}
   tendrils:
-  - {fileID: 1333945586710530, guid: 8a952344c596b4a459ef55a9a53ccc8a, type: 2}
-  - {fileID: 1140917571844010, guid: 354120d1a043ff5408f1f5fa61268c30, type: 2}
-  - {fileID: 1257068715179384, guid: e4f030633cfd13a46a6acebc7b758c15, type: 2}
+  - {fileID: 1561093659890704, guid: c11ffea34223287429f1c2d6f08c9f4e, type: 2}
+  - {fileID: 1721715218598132, guid: fafcf6faa9c3b0449a80ddda96b66e91, type: 2}
+  - {fileID: 1653041248215110, guid: 2a628833045f89642af2da7f9aaafae0, type: 2}
+  desertTendrils:
+  - {fileID: 1599636771382164, guid: 438da550191f77247b36fe20d6c1370b, type: 2}
+  - {fileID: 1107952052556648, guid: a09f7c5584cd37a4cb06ff08ba1ad725, type: 2}
+  - {fileID: 1451613633590294, guid: 2ed42c5eb12c90848bc1cdc80d27e9a6, type: 2}
   topLeftBeach: {fileID: 212865743258119026}
   leftBeach: {fileID: 212481725939569994}
   botLeftBeach: {fileID: 212064271762183792}

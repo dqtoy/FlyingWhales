@@ -87,6 +87,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 64c0c27a3a5a0b7419e7b96952268b8a, type: 3}
   - {fileID: 21300000, guid: f6387ee2f8881994f98b423c7f36f320, type: 3}
   - {fileID: 21300000, guid: 0740052277773e24d896e5929351d05a, type: 3}
+  - {fileID: 21300000, guid: 2893f0ba151f16840aaf43bc571100b7, type: 3}
   - {fileID: 21300000, guid: 64bc17278d4066b419c756ddcf6c216d, type: 3}
   - {fileID: 21300000, guid: 165146342d129374ba18d5b3bf969df6, type: 3}
   - {fileID: 21300000, guid: 658e054bda22c0a4c976ef2344240399, type: 3}
@@ -298,6 +299,7 @@ SpriteAtlas:
   - interaction_minion_slot
   - minion_container_flat
   - bottom_right_center_tile
+  - portrait_container_locked
   - transparent_bg
   - interaction_tab_bg
   - minion_container_draggable
