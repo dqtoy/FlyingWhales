@@ -19,6 +19,7 @@ public class MinionDraggable : DraggableItem {
         CharacterPortrait portrait = _characterItem.portrait;
         GameObject clone = (GameObject)Instantiate(portrait.gameObject);
         _draggingObject = clone.GetComponent<RectTransform>();
+        _draggingObject.gameObject.AddComponent<DragObject>().parentItem = _characterItem;
 
         //Put _dragging object into the dragging area
         _draggingObject.sizeDelta = portrait.gameObject.GetComponent<RectTransform>().rect.size;
