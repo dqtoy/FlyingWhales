@@ -1491,6 +1491,8 @@ MonoBehaviour:
   - {fileID: 1653041248215110, guid: 2a628833045f89642af2da7f9aaafae0, type: 2}
   desertTendrils:
   - {fileID: 1599636771382164, guid: 438da550191f77247b36fe20d6c1370b, type: 2}
+  - {fileID: 1107952052556648, guid: a09f7c5584cd37a4cb06ff08ba1ad725, type: 2}
+  - {fileID: 1451613633590294, guid: 2ed42c5eb12c90848bc1cdc80d27e9a6, type: 2}
   topLeftBeach: {fileID: 212865743258119026}
   leftBeach: {fileID: 212481725939569994}
   botLeftBeach: {fileID: 212064271762183792}
