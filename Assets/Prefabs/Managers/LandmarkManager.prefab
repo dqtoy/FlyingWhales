@@ -96,7 +96,9 @@ MonoBehaviour:
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 97be908950d991c49b0092d3a14acceb, type: 3}
       tintSprite: {fileID: 21300000, guid: 36bb9c87d942a0747a60b417b0cd79e2, type: 3}
-    elvenLandmarkTileSprites: []
+    elvenLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: a35ec4294aacc5d45a5062db0a45d55d, type: 3}
+      tintSprite: {fileID: 21300000, guid: 2676d8f62a64675408e6e640dfdf1a5c, type: 3}
     possibleSpawnPoints: 0600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}
@@ -370,7 +372,9 @@ MonoBehaviour:
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 25ad2f1445b44a44780267f577682fc6, type: 3}
       tintSprite: {fileID: 21300000, guid: 2509d8d1c25f61343a7e20c936950617, type: 3}
-    elvenLandmarkTileSprites: []
+    elvenLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 8b326c962728b624abba32e9ef63bc02, type: 3}
+      tintSprite: {fileID: 21300000, guid: 66e430c20799c3848917240b6ef2dd7c, type: 3}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}
