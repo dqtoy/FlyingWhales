@@ -74,6 +74,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [Header("Corruption")]
     [SerializeField] private GameObject[] tendrils;
     [SerializeField] private GameObject[] desertTendrils;
+    [SerializeField] private GameObject[] particleEffects;
 
     [Space(10)]
     [Header("Beaches")]
@@ -1341,6 +1342,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             tendril = tendrils[Random.Range(0, tendrils.Length)];
         }
         _spawnedTendril = GameObject.Instantiate(tendril, biomeDetailsParent);
+        for (int i = 0; i < particleEffects.Length; i++) {
+            particleEffects[i].gameObject.SetActive(true);
+        }
     }
     public void StopCorruptionAnimation() {
         if(_spawnedTendril != null) {
