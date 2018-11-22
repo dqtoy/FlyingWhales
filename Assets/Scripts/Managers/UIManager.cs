@@ -220,6 +220,7 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OUT, OnHoverOutTile);
 
         Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
+        Messenger.AddListener<Combat>(Signals.COMBAT_DONE, OnCombatDone);
         //Messenger.AddListener<IInteractable, Interaction>(Signals.ADDED_INTERACTION, OnInteractionAdded);
     }
     //public void UnifySelectables() {
@@ -286,7 +287,7 @@ public class UIManager : MonoBehaviour {
         UpdateFactionInfo();
         //UpdateHexTileInfo();
         UpdatePartyInfo();
-        UpdateCombatLogs();
+        //UpdateCombatLogs();
         //UpdateQuestSummary();
         PlayerUI.Instance.UpdateUI();
     }
@@ -870,13 +871,12 @@ public class UIManager : MonoBehaviour {
         //	questLogUI.HideQuestLogs ();
         //}
         combatLogUI.ShowCombatLogs(combat);
-        combatLogUI.UpdateCombatLogs();
     }
-    public void UpdateCombatLogs() {
-        if (combatLogUI.isShowing) {
-            combatLogUI.UpdateCombatLogs();
-        }
-    }
+    //public void UpdateCombatLogs() {
+    //    if (combatLogUI.isShowing) {
+    //        combatLogUI.UpdateCombatLogs();
+    //    }
+    //}
     #endregion
 
     #region Console
@@ -1116,6 +1116,9 @@ public class UIManager : MonoBehaviour {
             notificationText = "Obtained intel about character: <color=\"green\"><b>" + (intel as CharacterIntel).character.name;
         }
         ShowNotification(notificationText, 5, action);
+    }
+    private void OnCombatDone(Combat combat) {
+        ShowNotification("Combat at <b>" + combat.location.name + "</b>!", 5, () => ShowCombatLog(combat));
     }
     #endregion
 
