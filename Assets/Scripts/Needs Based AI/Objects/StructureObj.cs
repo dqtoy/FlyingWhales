@@ -19,6 +19,8 @@ public class StructureObj : IObject {
     protected bool _isDirty;
     protected RESOURCE _madeOf;
     protected BaseLandmark _objectLocation;
+    protected Character _assignedCharacter;
+    protected CurrenyCost _effectCost;
     [NonSerialized] protected ObjectState _currentState;
     protected List<ObjectState> _states;
     protected List<CharacterAttribute> _attributes;
@@ -114,6 +116,9 @@ public class StructureObj : IObject {
             objectLocation.tileLocation.SetLandmarkTileSprite(new LandmarkStructureSprite(LandmarkManager.Instance.ruinedSprite, null));
             objectLocation.MigrateCharactersToAnotherLandmark();
             Messenger.RemoveListener(Signals.HOUR_STARTED, DailyInteractionGeneration);
+            if(_assignedCharacter != null) {
+                _assignedCharacter.minion.GoBackFromAssignment();
+            }
         }
     }
     public virtual void EndState(ObjectState state) {
@@ -170,6 +175,9 @@ public class StructureObj : IObject {
             interactionLog += "\nDid not create new event because of event trigger weights";
         }
         Debug.Log(interactionLog);
+    }
+    public virtual void OnAssignCharacter() {
+        ApplyEffectCostToPlayer();
     }
     #endregion
 
@@ -342,6 +350,15 @@ public class StructureObj : IObject {
             _isDirty = state;
         //}
     }
+    public void SetAssignedCharacter(Character character) {
+        _assignedCharacter = character;
+        if(_assignedCharacter != null) {
+            OnAssignCharacter();
+        }
+    }
+    public void ApplyEffectCostToPlayer() {
+        PlayerManager.Instance.player.AdjustCurrency(_effectCost.currency, _effectCost.amount);
+    }
     #endregion
 
     #region Attack Landmark
@@ -377,30 +394,6 @@ public class StructureObj : IObject {
     //    return Mathf.CeilToInt((0.25f * (float) GetTotalCivilians()));
     //}
     #endregion
-
-    //#region For Testing: Imp Triggered Events
-    //public void StartImpTriggeredEvent() {
-    //    GameDate impEventDate = GameManager.Instance.Today();
-    //    int ticksToTriggerEvent = UnityEngine.Random.Range(10, 31);
-    //    impEventDate.AddHours(ticksToTriggerEvent);
-    //    SchedulingManager.Instance.AddEntry(impEventDate, () => ImpTriggeredEvent());
-    //}
-    //private void ImpTriggeredEvent() {
-    //    if (_objectLocation.HasActiveInteraction()) {
-    //        return; //the landmark already has an active interaction, other than investigate
-    //    }
-    //    LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_objectLocation.specificLandmarkType);
-    //    WeightedDictionary<INTERACTION_TYPE> interactionWeights = data.GetInteractionWeights(_objectLocation);
-    //    if (interactionWeights.GetTotalOfWeights() > 0) {
-    //        INTERACTION_TYPE chosenInteraction = interactionWeights.PickRandomElementGivenWeights();
-    //        //create interaction of type;
-    //        Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, _objectLocation);
-    //        if (createdInteraction != null) {
-    //            _objectLocation.AddInteraction(createdInteraction);
-    //        }
-    //    }
-    //}
-    //#endregion
 
     #region Interaction
     private void SetDailyInteractionGenerationTick() {

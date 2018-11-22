@@ -61,7 +61,7 @@ public interface ICharacter {
     List<CharacterAttribute> attributes { get; }
     List<Item> inventory { get; }
     List<Log> history { get; }
-    List<Trait> combatAttributes { get; }
+    List<Trait> traits { get; }
     PortraitSettings portraitSettings { get; }
     Party ownParty { get; }
     Party currentParty { get; }
@@ -101,17 +101,17 @@ public interface ICharacter {
     void SetMinion(Minion minion);
     void Assassinate(ICharacter assassin);
     void SetLevel(int amount);
-    void AddCombatAttribute(Trait combatAttribute);
+    void AddTrait(Trait combatAttribute);
     bool IsInParty();
     bool IsInOwnParty();
     bool InviteToParty(ICharacter inviter);
-    bool RemoveCombatAttribute(Trait combatAttribute);
+    bool RemoveTrait(Trait combatAttribute);
     Party CreateOwnParty();
     CharacterAttribute GetAttribute(string attribute);
     CharacterAction GetRandomMiscAction(ref IObject targetObject);
     CharacterAction GetMiscAction(ACTION_TYPE type);
     CharacterAttribute AddAttribute(ATTRIBUTE tag); //Character only
-    Trait GetCombatAttribute(string name);
+    Trait GetTrait(string name);
     void AddActionToQueue(CharacterAction action, IObject targetObject, Quest associatedQuest = null, int position = -1);
     void RemoveActionFromQueue(ActionQueueItem item);
     void ConstructBuffs();

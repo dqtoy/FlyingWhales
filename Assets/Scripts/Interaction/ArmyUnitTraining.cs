@@ -47,7 +47,7 @@ public class ArmyUnitTraining : Interaction {
         if (state.name == "Start") {
             ActionOption stopThemOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Stop them.",
                 duration = 0,
                 //description = "We have sent %minion% to persuade the garrison general to stop their current plan of raising a new army unit.",
@@ -56,7 +56,7 @@ public class ArmyUnitTraining : Interaction {
             };
             ActionOption doNothingOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 //description = "The garrison is producing another army unit.",
                 duration = 0,
@@ -74,7 +74,7 @@ public class ArmyUnitTraining : Interaction {
         } else {
             ActionOption continueSurveillanceOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Continue surveillance of the area.",
                 duration = 0,
                 needsMinion = false,
@@ -82,7 +82,7 @@ public class ArmyUnitTraining : Interaction {
             };
             ActionOption returnToMeOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Return to me.",
                 duration = 0,
                 needsMinion = false,

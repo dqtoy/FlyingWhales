@@ -195,28 +195,28 @@ public class PlayerUI : MonoBehaviour {
             minionItems[i].SetCharacter(null);
         }
     }
-    public void OnMaxMinionsChanged() {
-        //load the number of minion slots the player has
-        if (minionItems.Count > PlayerManager.Instance.player.maxMinions) {
-            //if the current number of minion items is greater than the slots that the player has
-            int excess = minionItems.Count - PlayerManager.Instance.player.maxMinions; //check the number of excess items
-            List<PlayerCharacterItem> unoccupiedItems = GetUnoccupiedCharacterItems(); //check the number of items that are unoccupied
-            if (excess > 0 && unoccupiedItems.Count > 0) { //if there are unoccupied items
-                for (int i = 0; i < excess; i++) { //loop through the number of excess items, then destroy any unoccupied items
-                    PlayerCharacterItem item = unoccupiedItems.ElementAtOrDefault(i);
-                    if (item != null) {
-                        RemoveCharacterItem(item);
-                    }
-                }
-            }
-        } else {
-            //if the current number of minion items is less than the slots the player has, instantiate the new slots
-            int remainingSlots = PlayerManager.Instance.player.maxMinions - minionItems.Count;
-            for (int i = 0; i < remainingSlots; i++) {
-                CreateMinionItem().SetCharacter(null);
-            }
-        }
-    }
+    //public void OnMaxMinionsChanged() {
+    //    //load the number of minion slots the player has
+    //    if (minionItems.Count > PlayerManager.Instance.player.maxMinions) {
+    //        //if the current number of minion items is greater than the slots that the player has
+    //        int excess = minionItems.Count - PlayerManager.Instance.player.maxMinions; //check the number of excess items
+    //        List<PlayerCharacterItem> unoccupiedItems = GetUnoccupiedCharacterItems(); //check the number of items that are unoccupied
+    //        if (excess > 0 && unoccupiedItems.Count > 0) { //if there are unoccupied items
+    //            for (int i = 0; i < excess; i++) { //loop through the number of excess items, then destroy any unoccupied items
+    //                PlayerCharacterItem item = unoccupiedItems.ElementAtOrDefault(i);
+    //                if (item != null) {
+    //                    RemoveCharacterItem(item);
+    //                }
+    //            }
+    //        }
+    //    } else {
+    //        //if the current number of minion items is less than the slots the player has, instantiate the new slots
+    //        int remainingSlots = PlayerManager.Instance.player.maxMinions - minionItems.Count;
+    //        for (int i = 0; i < remainingSlots; i++) {
+    //            CreateMinionItem().SetCharacter(null);
+    //        }
+    //    }
+    //}
     public PlayerCharacterItem GetUnoccupiedCharacterItem() {
         for (int i = 0; i < minionItems.Count; i++) {
             PlayerCharacterItem item = minionItems[i];
@@ -236,21 +236,15 @@ public class PlayerUI : MonoBehaviour {
         }
         return items;
     }
-    private PlayerCharacterItem CreateMinionItem() {
+    public PlayerCharacterItem CreateMinionItem() {
         GameObject minionItemGO = UIManager.Instance.InstantiateUIObject(minionPrefab.name, minionsContentTransform);
         PlayerCharacterItem minionItem = minionItemGO.GetComponent<PlayerCharacterItem>();
         minionItems.Add(minionItem);
         return minionItem;
     }
     public void RemoveCharacterItem(PlayerCharacterItem item) {
-        if(minionItems.Count <= PlayerManager.Instance.player.maxMinions) {
-            item.transform.SetAsLastSibling();
-            item.SetCharacter(null);
-        } else {
-            minionItems.Remove(item);
-            ObjectPoolManager.Instance.DestroyObject(item.gameObject);
-        }
-
+        minionItems.Remove(item);
+        ObjectPoolManager.Instance.DestroyObject(item.gameObject);
     }
     #endregion
 

@@ -1076,7 +1076,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
 
         if (this.landmarkOnTile != null) {
-            UIManager.Instance.ShowLandmarkInfo(this.landmarkOnTile);
+            if (!this.landmarkOnTile.tileLocation.isCorrupted) {
+                UIManager.Instance.ShowLandmarkInfo(this.landmarkOnTile);
+            } else {
+
+            }
         } else {
             Messenger.Broadcast(Signals.HIDE_MENUS);
         }
@@ -1515,8 +1519,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             createLandmarkItem.SetSubMenu(createLandmarkSettings);
             settings.AddMenuItem(createLandmarkItem);
 
-            for (int i = 0; i < PlayerManager.Instance.playerStructureTypes.Count; i++) {
-                LANDMARK_TYPE landmarkType = PlayerManager.Instance.playerStructureTypes[i];
+            foreach (LANDMARK_TYPE landmarkType in PlayerManager.Instance.playerStructureTypes.Keys) {
                 if (landmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
                     if (PlayerManager.Instance.CanCreateLandmarkOnTile(landmarkType, this)) {
                         ContextMenuItemSettings createLandmark = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString()));

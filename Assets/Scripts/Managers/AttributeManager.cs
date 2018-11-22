@@ -12,7 +12,8 @@ public class AttributeManager : MonoBehaviour {
     private List<CharacterAttribute> _allCharacterAttributes;
     private List<CharacterAttribute> _allItemAttributes;
     private List<CharacterAttribute> _allStructureAttributes;
-    private Dictionary<string, Trait> _allCombatAttributes;
+    private Dictionary<string, Trait> _allTraits;
+    private Dictionary<string, Trait> _allPositiveTraits;
 
     #region getters/setters
     public List<CharacterAttribute> allAttributes {
@@ -27,8 +28,11 @@ public class AttributeManager : MonoBehaviour {
     public List<CharacterAttribute> allStructureAttributes {
         get { return _allStructureAttributes; }
     }
-    public Dictionary<string, Trait> allCombatAttributes {
-        get { return _allCombatAttributes; }
+    public Dictionary<string, Trait> allTraits {
+        get { return _allTraits; }
+    }
+    public Dictionary<string, Trait> allPositiveTraits {
+        get { return _allPositiveTraits; }
     }
     #endregion
 
@@ -37,52 +41,33 @@ public class AttributeManager : MonoBehaviour {
     }
 
     public void Initialize() {
-        _allCombatAttributes = new Dictionary<string, Trait>();
+        _allTraits = new Dictionary<string, Trait>();
         string path = Utilities.dataPath + "CombatAttributes/";
         string[] files = Directory.GetFiles(path, "*.json");
         for (int i = 0; i < files.Length; i++) {
             Trait attribute = JsonUtility.FromJson<Trait>(System.IO.File.ReadAllText(files[i]));
-            _allCombatAttributes.Add(attribute.name, attribute);
+            _allTraits.Add(attribute.name, attribute);
+            if(attribute.type == TRAIT_TYPE.POSITIVE) {
+                _allPositiveTraits.Add(attribute.name, attribute);
+            }
         }
-        //_allCharacterAttributes = new List<Attribute>();
-        //_allItemAttributes = new List<Attribute>();
-        //_allStructureAttributes = new List<Attribute>();
-
-        //string path = Utilities.dataPath + "Attributes/";
-        //string[] directories = Directory.GetDirectories(path);
-        //for (int i = 0; i < directories.Length; i++) {
-        //    string folderName = new DirectoryInfo(directories[i]).Name;
-        //    string[] files = Directory.GetFiles(directories[i], "*.json");
-        //    if (folderName == "CHARACTER") {
-        //        for (int j = 0; j < files.Length; j++) {
-        //            Attribute attribute = JsonUtility.FromJson<Attribute>(System.IO.File.ReadAllText(files[j]));
-        //            attribute.Initialize();
-        //            _allCharacterAttributes.Add(attribute);
-        //            _allAttributes.Add(attribute);
-        //        }
-        //    } else if (folderName == "ITEM") {
-        //        for (int j = 0; j < files.Length; j++) {
-        //            Attribute attribute = JsonUtility.FromJson<Attribute>(System.IO.File.ReadAllText(files[j]));
-        //            attribute.Initialize();
-        //            _allItemAttributes.Add(attribute);
-        //            _allAttributes.Add(attribute);
-        //        }
-        //    } else if (folderName == "STRUCTURE") {
-        //        for (int j = 0; j < files.Length; j++) {
-        //            Attribute attribute = JsonUtility.FromJson<Attribute>(System.IO.File.ReadAllText(files[j]));
-        //            attribute.Initialize();
-        //            _allStructureAttributes.Add(attribute);
-        //            _allAttributes.Add(attribute);
-        //        }
-        //    }
-        //}
-        }
-
+    }
     public Action<Character> GetBehavior(ATTRIBUTE_BEHAVIOR type) {
         switch (type) {
             case ATTRIBUTE_BEHAVIOR.NONE:
             return null;
         }
         return null;
+    }
+    public string GetRandomPositiveTrait() {
+        int random = UnityEngine.Random.Range(0, _allPositiveTraits.Count);
+        int count = 0;
+        foreach (string traitName in _allPositiveTraits.Keys) {
+            if (count == random) {
+                return traitName;
+            }
+            count++;
+        }
+        return string.Empty;
     }
 }

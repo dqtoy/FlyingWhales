@@ -7,7 +7,7 @@ public class ActionOption {
     public InteractionState interactionState;
     public string name;
     public string description;
-    public ActionOptionCost cost;
+    public CurrenyCost cost;
     public int duration;
     public bool needsMinion;
     public Action effect;

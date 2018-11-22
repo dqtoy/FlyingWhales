@@ -287,7 +287,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public List<Log> history {
         get { return null; }
     }
-    public List<Trait> combatAttributes {
+    public List<Trait> traits {
         get { return null; }
     }
     public List<Interaction> currentInteractions {
@@ -777,14 +777,14 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public void LevelUp() {
         //Not applicable
     }
-    public void AddCombatAttribute(Trait combatAttribute) {
+    public void AddTrait(Trait combatAttribute) {
         //Not applicable
     }
-    public bool RemoveCombatAttribute(Trait combatAttribute) {
+    public bool RemoveTrait(Trait combatAttribute) {
         //Not applicable
         return false;
     }
-    public Trait GetCombatAttribute(string name) {
+    public Trait GetTrait(string name) {
         return null;
     }
 

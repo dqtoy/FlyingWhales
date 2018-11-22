@@ -62,7 +62,7 @@ public class TheSpiderQueen : Interaction {
         if (state.name == "State 1") {
             ActionOption attemptToKill = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Attempt to kill it.",
                 description = "We have sent %minion% to kill the Spider Queen while it is vulnerable.",
                 duration = 10,
@@ -72,7 +72,7 @@ public class TheSpiderQueen : Interaction {
             };
             ActionOption attemptToCorrupt = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 40, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 40, currency = CURRENCY.SUPPLY },
                 name = "Attempt to corrupt it.",
                 description = "We have sent %minion% to transform the Spider Queen into a Demon minion while it is out in the open.",
                 duration = 10,
@@ -82,7 +82,7 @@ public class TheSpiderQueen : Interaction {
             };
             ActionOption lootLair = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Quietly loot the lair while it is busy.",
                 description = "We have sent %minion% to loot the hive core while the Spider Queen and its defenders are away.",
                 duration = 10,

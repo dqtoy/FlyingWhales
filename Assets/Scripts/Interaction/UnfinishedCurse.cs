@@ -55,7 +55,7 @@ public class UnfinishedCurse : Interaction {
         if (state.name == "Start") {
             ActionOption completeCurse = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 5, currency = CURRENCY.MANA },
+                cost = new CurrenyCost { amount = 5, currency = CURRENCY.MANA },
                 name = "Attempt to complete the ritual.",
                 duration = 0,
                 needsMinion = false,
@@ -64,7 +64,7 @@ public class UnfinishedCurse : Interaction {
             };
             ActionOption harnessMagic = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Harness its magic into Mana.",
                 duration = 0,
                 needsMinion = false,
@@ -73,7 +73,7 @@ public class UnfinishedCurse : Interaction {
             };
             ActionOption leaveAlone = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Leave it alone.",
                 duration = 0,
                 needsMinion = false,
@@ -126,8 +126,8 @@ public class UnfinishedCurse : Interaction {
         this.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Effect**: Character should gain a random curse from the Curse checklist below
         string chosenCurse = curseWeights.PickRandomElementGivenWeights();
-        Trait chosenAttribute = AttributeManager.Instance.allCombatAttributes[chosenCurse];
-        state.assignedCharacter.character.AddCombatAttribute(chosenAttribute);
+        Trait chosenAttribute = AttributeManager.Instance.allTraits[chosenCurse];
+        state.assignedCharacter.character.AddTrait(chosenAttribute);
         state.AddLogFiller(new LogFiller(state.assignedCharacter.character, state.assignedCharacter.character.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(null, chosenAttribute.name, LOG_IDENTIFIER.STRING_1));
     }
@@ -140,7 +140,7 @@ public class UnfinishedCurse : Interaction {
         this.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Effect**: Demon Minion should gain a random curse from the Curse checklist below
         string chosenCurse = curseWeights.PickRandomElementGivenWeights();
-        state.assignedMinion.icharacter.AddCombatAttribute(AttributeManager.Instance.allCombatAttributes[chosenCurse]);
+        state.assignedMinion.icharacter.AddTrait(AttributeManager.Instance.allTraits[chosenCurse]);
         //state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
     }
     private void ObtainManaRewardEffect(InteractionState state) {

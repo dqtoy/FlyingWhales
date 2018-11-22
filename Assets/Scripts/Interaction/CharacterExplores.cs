@@ -71,7 +71,7 @@ public class CharacterExplores : Interaction {
         if (state.name == "Start") {
             ActionOption prevent = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Prevent him/her from leaving.",
                 duration = 0,
                 needsMinion = false,
@@ -79,7 +79,7 @@ public class CharacterExplores : Interaction {
             };
             ActionOption takeUnit = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Convince him/her to visit elsewhere.",
                 duration = 0,
                 needsMinion = false,
@@ -88,7 +88,7 @@ public class CharacterExplores : Interaction {
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
                 needsMinion = false,

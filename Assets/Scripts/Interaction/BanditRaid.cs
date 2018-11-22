@@ -73,7 +73,7 @@ public class BanditRaid : Interaction {
         if (state.name == "Start") {
             ActionOption stopThemFromAttacking = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Stop them from attacking.",
                 duration = 0,
                 needsMinion = false,
@@ -81,7 +81,7 @@ public class BanditRaid : Interaction {
             };
             ActionOption provideSomeAssistance = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 100, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 100, currency = CURRENCY.SUPPLY },
                 name = "Provide them some assistance.",
                 duration = 0,
                 needsMinion = false,
@@ -90,7 +90,7 @@ public class BanditRaid : Interaction {
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
                 needsMinion = false,
@@ -208,9 +208,9 @@ public class BanditRaid : Interaction {
         Party createdParty = CombineCharacters(4);
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
         createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
-        Trait empoweredTrait = AttributeManager.Instance.allCombatAttributes["Empowered"];
+        Trait empoweredTrait = AttributeManager.Instance.allTraits["Empowered"];
         for (int i = 0; i < createdParty.icharacters.Count; i++) {
-            createdParty.icharacters[i].AddCombatAttribute(empoweredTrait);
+            createdParty.icharacters[i].AddTrait(empoweredTrait);
         }
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(originLandmark, originLandmark.landmarkName, LOG_IDENTIFIER.LANDMARK_1);

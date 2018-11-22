@@ -453,11 +453,11 @@ public class ObjectManager : MonoBehaviour {
             case LANDMARK_TYPE.RAMPART:
                 structureObj = new Rampart();
                 break;
-            case LANDMARK_TYPE.NODE:
-                structureObj = new NodeStructure();
+            case LANDMARK_TYPE.CORRUPTION_NODE:
+                structureObj = new CorruptionNode();
                 break;
-            case LANDMARK_TYPE.SUMMONING_CIRCLE:
-                structureObj = new SummoningCircle();
+            case LANDMARK_TYPE.RITUAL_CIRCLE:
+                structureObj = new RitualCircle();
                 break;
             case LANDMARK_TYPE.DRAGON_CAVE:
                 structureObj = new DragonCave();
@@ -477,8 +477,14 @@ public class ObjectManager : MonoBehaviour {
             case LANDMARK_TYPE.CEMETERY:
                 structureObj = new Cemetery();
                 break;
+            case LANDMARK_TYPE.TRAINING_ARENA:
+                structureObj = new TrainingArena();
+                break;
+            case LANDMARK_TYPE.PENANCE_TEMPLE:
+                structureObj = new PenanceTemple();
+                break;
             default:
-                throw new System.Exception("No class for " + component.specificObjectType.ToString() + " has been created yet!");
+                throw new System.Exception("No structure for " + component.specificObjectType.ToString() + " has been created yet!");
         }
         component.CopyDataToStructureObject(structureObj);
         return structureObj;

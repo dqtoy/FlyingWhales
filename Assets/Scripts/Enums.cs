@@ -359,14 +359,16 @@ public enum LANDMARK_TYPE {
     MINIONS_HOLD = 35,
     DWELLINGS = 36,
     RAMPART = 37,
-    NODE = 38,
-    SUMMONING_CIRCLE = 39,
+    CORRUPTION_NODE = 38,
+    RITUAL_CIRCLE = 39,
     DRAGON_CAVE = 40,
     SKELETON_CEMETERY = 41,
     SPIDER_HIVE_LAIR = 42,
     ZOMBIE_PYRAMID = 43,
     IMP_KENNEL = 44,
     CEMETERY = 45,
+    TRAINING_ARENA = 46,
+    PENANCE_TEMPLE = 47,
 }
 public enum TECHNOLOGY {
     //Weapon Production

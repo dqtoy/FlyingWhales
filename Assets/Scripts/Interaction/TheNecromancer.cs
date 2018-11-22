@@ -88,7 +88,7 @@ public class TheNecromancer : Interaction {
         if (state.name == "Start") {
             ActionOption inflame = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Inflame " + pronoun + " resentment.",
                 duration = 0,
                 needsMinion = false,
@@ -97,7 +97,7 @@ public class TheNecromancer : Interaction {
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
                 needsMinion = false,
@@ -109,7 +109,7 @@ public class TheNecromancer : Interaction {
         } else if (state.name == Inflamed_Resentment) {
             ActionOption preformRitual = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Perform the ritual.",
                 duration = 0,
                 needsMinion = false,
@@ -117,7 +117,7 @@ public class TheNecromancer : Interaction {
             };
             ActionOption drainResentment = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Drain " + pronoun + " resentment for Mana.",
                 duration = 0,
                 needsMinion = false,
@@ -125,7 +125,7 @@ public class TheNecromancer : Interaction {
             };
             ActionOption leaveAlone = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Leave " + pronoun + " alone.",
                 duration = 0,
                 needsMinion = false,
@@ -138,7 +138,7 @@ public class TheNecromancer : Interaction {
         } else if (state.name == Ritual_Success || state.name == Ritual_Critical_Success) {
             ActionOption provideSupplies = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Provide " + pronoun + " with some Supplies.",
                 duration = 0,
                 needsMinion = false,
@@ -146,7 +146,7 @@ public class TheNecromancer : Interaction {
             };
             ActionOption provideMinion = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Provide " + pronoun + " with your Minion.",
                 duration = 0,
                 needsMinion = false,
@@ -154,7 +154,7 @@ public class TheNecromancer : Interaction {
             };
             ActionOption leaveAlone = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Leave " + pronoun + " alone.",
                 duration = 0,
                 needsMinion = false,

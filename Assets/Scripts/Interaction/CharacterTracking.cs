@@ -68,7 +68,7 @@ public class CharacterTracking : Interaction {
         if (state.name == "Start") {
             ActionOption follow = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Follow " + subjectivePronoun + " closely",
                 duration = 0,
                 needsMinion = false,
@@ -76,7 +76,7 @@ public class CharacterTracking : Interaction {
             };
             ActionOption getAhead = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Attempt to get ahead of " + characterInvolved.name + ".",
                 duration = 0,
                 needsMinion = false,
@@ -84,7 +84,7 @@ public class CharacterTracking : Interaction {
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
                 needsMinion = false,

@@ -70,7 +70,7 @@ public class ArmyAttacks : Interaction {
         if (state.name == "Start") {
             ActionOption stopThem = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Stop Them.",
                 duration = 0,
                 needsMinion = false,
@@ -78,7 +78,7 @@ public class ArmyAttacks : Interaction {
             };
             ActionOption redirectAttack = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 30, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 30, currency = CURRENCY.SUPPLY },
                 name = "Redirect their attack.",
                 duration = 0,
                 needsMinion = false,
@@ -88,7 +88,7 @@ public class ArmyAttacks : Interaction {
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 //description = "The bandits are increasing their defensive army.",
                 duration = 0,
