@@ -51,7 +51,7 @@ public class SuspiciousSoldierMeeting : Interaction {
         if (state.name == "Start") {
             ActionOption sendOutDemonOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 30, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 30, currency = CURRENCY.SUPPLY },
                 name = "Send out a Demon.",
                 //description = "We have sent %minion% to watch the soldiers and follow them on their next secret meeting.",
                 duration = 0,
@@ -60,7 +60,7 @@ public class SuspiciousSoldierMeeting : Interaction {
             };
             ActionOption doNothingOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
                 needsMinion = false,
@@ -76,7 +76,7 @@ public class SuspiciousSoldierMeeting : Interaction {
         } else {
             ActionOption continueSurveillanceOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Continue surveillance of the area.",
                 duration = 0,
                 needsMinion = false,
@@ -84,7 +84,7 @@ public class SuspiciousSoldierMeeting : Interaction {
             };
             ActionOption returnToMeOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Return to me.",
                 duration = 0,
                 needsMinion = false,
@@ -245,11 +245,9 @@ public class SuspiciousSoldierMeeting : Interaction {
     }
     private void ArmyGainedRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
-        if (!PlayerManager.Instance.player.areMinionsMaxed) {
-            Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Knights", RACE.HUMANS, false);
-            newMinion.icharacter.SetLevel(UnityEngine.Random.Range(5, 9));
-            PlayerManager.Instance.player.AddMinion(newMinion);
-        }
+        Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Knights", RACE.HUMANS, false);
+        newMinion.icharacter.SetLevel(UnityEngine.Random.Range(5, 9));
+        PlayerManager.Instance.player.AddMinion(newMinion);
 
         //if (_interactable is BaseLandmark) {
         //    BaseLandmark landmark = _interactable as BaseLandmark;

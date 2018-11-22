@@ -43,7 +43,7 @@ public class KillerOnTheLoose : Interaction {
         if (state.name == "Start") {
             ActionOption searchKillerOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Search for the killer.",
                 //description = "We have sent %minion% to search for the killer.",
                 duration = 0,
@@ -52,7 +52,7 @@ public class KillerOnTheLoose : Interaction {
             };
             ActionOption doNothingOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
                 needsMinion = false,
@@ -68,7 +68,7 @@ public class KillerOnTheLoose : Interaction {
         } else {
             ActionOption continueSurveillanceOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Continue surveillance of the area.",
                 duration = 0,
                 needsMinion = false,
@@ -76,7 +76,7 @@ public class KillerOnTheLoose : Interaction {
             };
             ActionOption returnToMeOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Return to me.",
                 duration = 0,
                 needsMinion = false,
@@ -139,7 +139,7 @@ public class KillerOnTheLoose : Interaction {
 
     #region State Effects
     private void ConvertToDemonRewardEffect(InteractionState state) {
-        Minion createdMinion = PlayerManager.Instance.player.CreateNewMinion("Farmer", RACE.DEMON, DEMON_TYPE.ENVY, false);
+        Minion createdMinion = PlayerManager.Instance.player.CreateNewMinion(CharacterManager.Instance.GetRandomClassName(), RACE.DEMON, DEMON_TYPE.ENVY, false);
         PlayerManager.Instance.player.AddMinion(createdMinion);
         state.AddLogFiller(new LogFiller(createdMinion, createdMinion.name, LOG_IDENTIFIER.STRING_1));
     }

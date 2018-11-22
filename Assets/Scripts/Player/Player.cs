@@ -14,7 +14,7 @@ public class Player : ILeader {
     public int maxImps { get; private set; }
 
     private int _lifestones;
-    private int _maxMinions;
+    //private int _maxMinions;
     private float _currentLifestoneChance;
     private IPlayerPicker _currentlySelectedPlayerPicker;
     private IInteractable _currentTargetInteractable;
@@ -47,15 +47,15 @@ public class Player : ILeader {
     public int lifestones {
         get { return _lifestones; }
     }
-    public int maxMinions {
-        get { return _maxMinions; }
-    }
+    //public int maxMinions {
+    //    get { return _maxMinions; }
+    //}
     public float currentLifestoneChance {
         get { return _currentLifestoneChance; }
     }
-    public bool areMinionsMaxed {
-        get { return _minions.Count >= maxMinions; }
-    }
+    //public bool areMinionsMaxed {
+    //    get { return _minions.Count >= maxMinions; }
+    //}
     public RACE race {
         get { return RACE.HUMANS; }
     }
@@ -244,18 +244,6 @@ public class Player : ILeader {
     }
     #endregion
 
-    //#region Actions
-    //private void ConstructPlayerActions() {
-    //    _actions = new List<CharacterAction>();
-    //    _actions.Add(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.MOVE_TO));
-    //    for (int i = 0; i < _actions.Count; i++) {
-    //        _actions[i].Initialize();
-    //        GameObject go = GameObject.Instantiate(UIManager.Instance.playerActionsUI.playerActionsBtnPrefab, UIManager.Instance.playerActionsUI.playerActionsContentTransform);
-    //        go.GetComponent<PlayerActionBtn>().SetAction(_actions[i]);
-    //    }
-    //}
-    //#endregion
-
     #region Intel
     public void AddIntel(Intel intel) {
         if (!_intels.Contains(intel)) {
@@ -276,36 +264,6 @@ public class Player : ILeader {
         }
         return false;
     }
-    //public void PickIntelToGiveToCharacter(Character character, ShareIntel shareIntelAbility) {
-    //    //TODO
-    //    _currentTargetInteractable = character;
-    //    _currentActiveAbility = shareIntelAbility;
-    //    PlayerUI.Instance.ShowPlayerPickerAndPopulate();
-    //}
-    //private void GiveIntelToCharacter() {
-    //    Intel intel = _currentlySelectedPlayerPicker as Intel;
-    //    ShareIntel shareIntel = _currentActiveAbility as ShareIntel;
-    //    Character character = _currentTargetInteractable as Character;
-    //    GiveIntelToCharacter(intel, character, shareIntel);
-    //}
-    //public void GiveIntelToCharacter(Intel intel, Character character, ShareIntel shareIntel = null) {
-    //    if (character.intelReactions.ContainsKey(intel.id)) {
-    //        character.OnIntelGiven(intel);
-    //        if (shareIntel != null) {
-    //            shareIntel.HasGivenIntel(character);
-    //        }
-    //    }
-    //}
-    //public List<Intel> GetIntelConcerning(Character character) {
-    //    List<Intel> intel = new List<Intel>();
-    //    for (int i = 0; i < _intels.Count; i++) {
-    //        Intel currIntel = _intels[i];
-            //if (currIntel.description.Contains(character.name) || currIntel.name.Contains(character.name)) {
-            //    intel.Add(currIntel);
-            //}
-    //    }
-    //    return intel;
-    //}
     #endregion
 
     #region Items
@@ -375,68 +333,6 @@ public class Player : ILeader {
     }
     #endregion
 
-    //#region PlayerPicker
-    //public void SetCurrentlySelectedPlayerPicker(IPlayerPicker playerPicker) {
-    //    _currentlySelectedPlayerPicker = playerPicker;
-    //}
-    //public void OnOkPlayerPicker() {
-    //    if(_currentlySelectedPlayerPicker != null && _currentTargetInteractable != null && _currentActiveAbility != null) {
-    //        if(_currentActiveAbility is GiveItem) {
-    //            GiveItemToCharacter();
-    //        }else if (_currentActiveAbility is ShareIntel) {
-    //            //GiveIntelToCharacter();
-    //        } else if (_currentActiveAbility is TakeItem) {
-    //            TakeItemFromLandmark();
-    //        }
-    //    }
-    //}
-    //public void OnHidePlayerPicker() {
-    //    _currentlySelectedPlayerPicker = null;
-    //    _currentTargetInteractable = null;
-    //    _currentActiveAbility = null;
-    //}
-    //#endregion
-
-    //#region Abilities
-    //private void ConstructAbilities() {
-    //    _allAbilities = new List<PlayerAbility>();
-    //    Inspect inspect = new Inspect();
-    //    RevealSecret revealSecret = new RevealSecret();
-    //    Spook spook = new Spook();
-    //    Assist assist = new Assist();
-    //    GiveItem giveItem = new GiveItem();
-    //    ShareIntel shareIntel = new ShareIntel();
-    //    TakeItem takeItem = new TakeItem();
-    //    MonsterAttack monsterAttack = new MonsterAttack();
-    //    Mark mark = new Mark();
-    //    Awaken awaken = new Awaken();
-    //    AwakenDesire awakenDesire = new AwakenDesire();
-
-    //    _allAbilities.Add(inspect);
-    //    _allAbilities.Add(revealSecret);
-    //    _allAbilities.Add(spook);
-    //    _allAbilities.Add(assist);
-    //    _allAbilities.Add(giveItem);
-    //    _allAbilities.Add(shareIntel);
-    //    _allAbilities.Add(takeItem);
-    //    _allAbilities.Add(monsterAttack);
-    //    _allAbilities.Add(mark);
-    //    _allAbilities.Add(awaken);
-    //    _allAbilities.Add(awakenDesire);
-
-    //    PlayerAbilitiesUI.Instance.ConstructAbilityButtons(_allAbilities);
-    //}
-    //public PlayerAbility GetAbility(string abilityName) {
-    //    for (int i = 0; i < _allAbilities.Count; i++) {
-    //        PlayerAbility currAbility = _allAbilities[i];
-    //        if (currAbility.name.Equals(abilityName)) {
-    //            return currAbility;
-    //        }
-    //    }
-    //    return null;
-    //}
-    //#endregion
-
     #region Character
     public void SetMarkedCharacter(Character character) {
         _markedCharacter = character;
@@ -447,11 +343,11 @@ public class Player : ILeader {
     public void CreateInitialMinions() {
         PlayerUI.Instance.ResetAllMinionItems();
         _minions = new List<Minion>();
-        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, false));
-        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, false));
-        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, false));
-        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, false));
-        AddMinion(CreateNewMinion("Farmer", RACE.HUMANS, false));
+        AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomClassName(), RACE.DEMON, PlayerManager.Instance.GetRandomDemonType(), false));
+        AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomClassName(), RACE.DEMON, PlayerManager.Instance.GetRandomDemonType(), false));
+        AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomClassName(), RACE.DEMON, PlayerManager.Instance.GetRandomDemonType(), false));
+        AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomClassName(), RACE.DEMON, PlayerManager.Instance.GetRandomDemonType(), false));
+        AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomClassName(), RACE.DEMON, PlayerManager.Instance.GetRandomDemonType(), false));
 
         //UpdateMinions();
         PlayerUI.Instance.minionsScrollRect.verticalNormalizedPosition = 1f;
@@ -523,58 +419,54 @@ public class Player : ILeader {
         UpdateMinions();
     }
     public void AddMinion(Minion minion) {
-        if(_minions.Count < _maxMinions) {
-            minion.SetIndexDefaultSort(_minions.Count);
-            //MinionItem minionItem = PlayerUI.Instance.minionItems[_minions.Count];
-            PlayerCharacterItem item = PlayerUI.Instance.GetUnoccupiedCharacterItem();
-            item.SetCharacter(minion.icharacter);
+        minion.SetIndexDefaultSort(_minions.Count);
+        //MinionItem minionItem = PlayerUI.Instance.minionItems[_minions.Count];
+        PlayerCharacterItem item = PlayerUI.Instance.CreateMinionItem();
+        item.SetCharacter(minion.icharacter);
 
-            if (PlayerUI.Instance.minionSortType == MINIONS_SORT_TYPE.LEVEL) {
-                for (int i = 0; i < _minions.Count; i++) {
-                    if(minion.lvl <= _minions[i].lvl) {
-                        _minions.Insert(i, minion);
-                        item.transform.SetSiblingIndex(i);
-                        break;
-                    }
+        if (PlayerUI.Instance.minionSortType == MINIONS_SORT_TYPE.LEVEL) {
+            for (int i = 0; i < _minions.Count; i++) {
+                if (minion.lvl <= _minions[i].lvl) {
+                    _minions.Insert(i, minion);
+                    item.transform.SetSiblingIndex(i);
+                    break;
                 }
-            }else if (PlayerUI.Instance.minionSortType == MINIONS_SORT_TYPE.TYPE) {
-                string strMinionType = minion.type.ToString();
-                for (int i = 0; i < _minions.Count; i++) {
-                    int compareResult = string.Compare(strMinionType, _minions[i].type.ToString());
-                    if (compareResult == -1 || compareResult == 0) {
-                        _minions.Insert(i, minion);
-                        item.transform.SetSiblingIndex(i);
-                        break;
-                    }
-                }
-            } else {
-                _minions.Add(minion);
             }
-
+        } else if (PlayerUI.Instance.minionSortType == MINIONS_SORT_TYPE.TYPE) {
+            string strMinionType = minion.type.ToString();
+            for (int i = 0; i < _minions.Count; i++) {
+                int compareResult = string.Compare(strMinionType, _minions[i].type.ToString());
+                if (compareResult == -1 || compareResult == 0) {
+                    _minions.Insert(i, minion);
+                    item.transform.SetSiblingIndex(i);
+                    break;
+                }
+            }
+        } else {
+            _minions.Add(minion);
         }
     }
     public void RemoveMinion(Minion minion) {
         if(_minions.Remove(minion)){
             PlayerUI.Instance.RemoveCharacterItem(minion.minionItem);
-            //if(minion.currentlyExploringArea != null) {
-            //    minion.currentlyExploringArea.landmarkInvestigation.CancelInvestigation("explore");
-            //}
-            //if (minion.currentlyAttackingArea != null) {
-            //    minion.currentlyAttackingArea.landmarkInvestigation.CancelInvestigation("attack");
-            //}
-            //minion.minionItem.SetMinion(null);
+            if (minion.currentlyExploringArea != null) {
+                minion.currentlyExploringArea.areaInvestigation.CancelInvestigation("explore");
+            }
+            if (minion.currentlyAttackingArea != null) {
+                minion.currentlyAttackingArea.areaInvestigation.CancelInvestigation("attack");
+            }
         }
     }
-    public void AdjustMaxMinions(int adjustment) {
-        _maxMinions += adjustment;
-        _maxMinions = Mathf.Max(0, _maxMinions);
-        PlayerUI.Instance.OnMaxMinionsChanged();
-    }
-    public void SetMaxMinions(int value) {
-        _maxMinions = value;
-        _maxMinions = Mathf.Max(0, _maxMinions);
-        PlayerUI.Instance.OnMaxMinionsChanged();
-    }
+    //public void AdjustMaxMinions(int adjustment) {
+    //    _maxMinions += adjustment;
+    //    _maxMinions = Mathf.Max(0, _maxMinions);
+    //    PlayerUI.Instance.OnMaxMinionsChanged();
+    //}
+    //public void SetMaxMinions(int value) {
+    //    _maxMinions = value;
+    //    _maxMinions = Mathf.Max(0, _maxMinions);
+    //    PlayerUI.Instance.OnMaxMinionsChanged();
+    //}
     #endregion
 
     #region Currencies
@@ -656,7 +548,7 @@ public class Player : ILeader {
         switch (landmark.specificLandmarkType) {
             case LANDMARK_TYPE.DWELLINGS:
                 //add 2 minion slots
-                AdjustMaxMinions(-2);
+                //AdjustMaxMinions(-2);
                 break;
             case LANDMARK_TYPE.IMP_KENNEL:
                 //adds 1 Imp capacity

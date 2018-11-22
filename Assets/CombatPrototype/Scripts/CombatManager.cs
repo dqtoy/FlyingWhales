@@ -210,9 +210,9 @@ namespace ECS {
             return totalWeight;
         }
         private void ApplyWinWeightOfCharacter(ICharacter icharacter, List<ICharacter> allies, List<ICharacter> enemies) {
-            for (int j = 0; j < icharacter.combatAttributes.Count; j++) {
-                for (int k = 0; k < icharacter.combatAttributes[j].effects.Count; k++) {
-                    TraitEffect traitEffect = icharacter.combatAttributes[j].effects[k];
+            for (int j = 0; j < icharacter.traits.Count; j++) {
+                for (int k = 0; k < icharacter.traits[j].effects.Count; k++) {
+                    TraitEffect traitEffect = icharacter.traits[j].effects[k];
                     ApplyTraitEffectPrePairing(icharacter, allies, enemies, traitEffect);
                     ApplyTraitEffectPairing(icharacter, enemies, traitEffect);
                 }
@@ -437,14 +437,14 @@ namespace ECS {
                     //if there is one mismatch, return false already because the separator is AND, otherwise, return true
                     if (traitEffect.isNot) {
                         for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                            if (icharacter.GetCombatAttribute(traitEffect.requirements[i]) != null) {
+                            if (icharacter.GetTrait(traitEffect.requirements[i]) != null) {
                                 return false;
                             }
                         }
                         return true;
                     } else {
                         for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                            if (icharacter.GetCombatAttribute(traitEffect.requirements[i]) == null) {
+                            if (icharacter.GetTrait(traitEffect.requirements[i]) == null) {
                                 return false;
                             }
                         }
@@ -454,14 +454,14 @@ namespace ECS {
                     //if there is one match, return true already because the separator is OR, otherwise, return false   
                     if (traitEffect.isNot) {
                         for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                            if (icharacter.GetCombatAttribute(traitEffect.requirements[i]) == null) {
+                            if (icharacter.GetTrait(traitEffect.requirements[i]) == null) {
                                 return true;
                             }
                         }
                         return false;
                     } else {
                         for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                            if (icharacter.GetCombatAttribute(traitEffect.requirements[i]) != null) {
+                            if (icharacter.GetTrait(traitEffect.requirements[i]) != null) {
                                 return true;
                             }
                         }

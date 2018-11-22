@@ -53,21 +53,21 @@ public class FactionAttacks : Interaction {
         if (state.name == "Start") {
             ActionOption stopOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Stop them from attacking.",
                 duration = 0,
                 effect = () => StopOption(state),
             };
             ActionOption ritualOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 20, currency = CURRENCY.MANA },
+                cost = new CurrenyCost { amount = 20, currency = CURRENCY.MANA },
                 name = "Perform a ritual to empower their attacking units.",
                 duration = 0,
                 effect = () => RitualOption(state),
             };
             ActionOption redirectOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Redirect their attack.",
                 duration = 0,
                 neededObjects = new List<System.Type>() { typeof(LocationIntel) },
@@ -75,7 +75,7 @@ public class FactionAttacks : Interaction {
             };
             ActionOption doNothingOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
                 effect = () => DoNothingOption(state),

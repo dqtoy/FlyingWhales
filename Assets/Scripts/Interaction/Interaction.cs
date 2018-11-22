@@ -197,7 +197,7 @@ public class Interaction {
 
         ActionOption yesPleaseOption = new ActionOption {
             interactionState = whatToDoNextState,
-            cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+            cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
             name = "Yes, please.",
             duration = 0,
             needsMinion = false,
@@ -205,7 +205,7 @@ public class Interaction {
         };
         ActionOption noWayOption = new ActionOption {
             interactionState = whatToDoNextState,
-            cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+            cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
             name = "No way.",
             duration = 0,
             needsMinion = false,

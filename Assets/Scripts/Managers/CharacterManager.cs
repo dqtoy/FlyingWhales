@@ -261,6 +261,17 @@ public class CharacterManager : MonoBehaviour {
             _classesDictionary.Add(currentClass.className, currentClass);
         }
     }
+    public string GetRandomClassName() {
+        int random = UnityEngine.Random.Range(0, CharacterManager.Instance.classesDictionary.Count);
+        int count = 0;
+        foreach (string className in CharacterManager.Instance.classesDictionary.Keys) {
+            if (count == random) {
+                return className;
+            }
+            count++;
+        }
+        return string.Empty;
+    }
     public void AddCharacterAvatar(CharacterAvatar characterAvatar) {
         int centerOrderLayer = (_allCharacterAvatars.Count * 2) + 1;
         int frameOrderLayer = centerOrderLayer + 1;

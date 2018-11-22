@@ -15,14 +15,14 @@ public class PlayerManager : MonoBehaviour {
     [SerializeField] private Sprite[] _playerAreaDefaultStructureSprites;
     [SerializeField] private Sprite _supplySprite, _manaSprite, _impSprite;
 
-    public List<LANDMARK_TYPE> playerStructureTypes = new List<LANDMARK_TYPE>() {
-        LANDMARK_TYPE.MANA_EXTRACTOR,
-        LANDMARK_TYPE.BARRACKS,
-        LANDMARK_TYPE.MINIONS_HOLD,
-        LANDMARK_TYPE.DWELLINGS,
-        LANDMARK_TYPE.RAMPART,
-        LANDMARK_TYPE.NODE,
-        LANDMARK_TYPE.SUMMONING_CIRCLE,
+    public Dictionary<LANDMARK_TYPE, CurrenyCost> playerStructureTypes = new Dictionary<LANDMARK_TYPE, CurrenyCost>() {
+        { LANDMARK_TYPE.DEMONIC_PORTAL, new CurrenyCost{ amount = 0, currency = CURRENCY.SUPPLY } },
+        { LANDMARK_TYPE.CORRUPTION_NODE, new CurrenyCost{ amount = 50, currency = CURRENCY.SUPPLY } },
+        { LANDMARK_TYPE.TRAINING_ARENA, new CurrenyCost{ amount = 100, currency = CURRENCY.SUPPLY } },
+        { LANDMARK_TYPE.RITUAL_CIRCLE, new CurrenyCost{ amount = 200, currency = CURRENCY.SUPPLY } },
+        { LANDMARK_TYPE.PENANCE_TEMPLE, new CurrenyCost{ amount = 100, currency = CURRENCY.SUPPLY } },
+        { LANDMARK_TYPE.MANA_EXTRACTOR, new CurrenyCost{ amount = 100, currency = CURRENCY.SUPPLY } },
+        { LANDMARK_TYPE.RAMPART, new CurrenyCost{ amount = 0, currency = CURRENCY.SUPPLY } },
     };
 
     #region getters/setters
@@ -64,7 +64,7 @@ public class PlayerManager : MonoBehaviour {
         player = new Player();
         player.CreatePlayerFaction();
         player.CreatePlayerArea(tile);
-        player.SetMaxMinions(9);
+        //player.SetMaxMinions(9);
         player.CreateInitialMinions();
         LandmarkManager.Instance.OwnArea(player.playerFaction, player.playerArea);
         Messenger.RemoveListener<HexTile>(Signals.TILE_LEFT_CLICKED, OnChooseStartingTile);
@@ -84,7 +84,7 @@ public class PlayerManager : MonoBehaviour {
         } else {
             player.LoadPlayerArea(existingPlayerArea);
         }
-        player.SetMaxMinions(9);
+        //player.SetMaxMinions(9);
         player.CreateInitialMinions();
         LandmarkManager.Instance.OwnArea(player.playerFaction, player.playerArea);
         portal.SetIsBeingInspected(true);
@@ -106,9 +106,11 @@ public class PlayerManager : MonoBehaviour {
         tile.StopCorruptionAnimation();
     }
     public void CreatePlayerLandmarkOnTile(HexTile location, LANDMARK_TYPE landmarkType) {
-        BaseLandmark landmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(location, landmarkType);
-        OnPlayerLandmarkCreated(landmark);
-        location.ScheduleCorruption();
+        if(CanCreateLandmarkOnTile(landmarkType, location)) {
+            player.AdjustCurrency(playerStructureTypes[landmarkType].currency, -playerStructureTypes[landmarkType].amount);
+            BaseLandmark landmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(location, landmarkType);
+            OnPlayerLandmarkCreated(landmark);
+        }
     }
 
     private void OnPlayerLandmarkCreated(BaseLandmark newLandmark) {
@@ -120,7 +122,7 @@ public class PlayerManager : MonoBehaviour {
                 break;
             case LANDMARK_TYPE.DWELLINGS:
                 //add 2 minion slots
-                player.AdjustMaxMinions(2);
+                //player.AdjustMaxMinions(2);
                 break;
             case LANDMARK_TYPE.IMP_KENNEL:
                 //adds 1 Imp capacity
@@ -170,12 +172,11 @@ public class PlayerManager : MonoBehaviour {
 
     #region Utilities
     public bool CanCreateLandmarkOnTile(LANDMARK_TYPE type, HexTile tile) {
-        switch (type) {
-            case LANDMARK_TYPE.MANA_EXTRACTOR:
-                return tile.data.manaOnTile > 0;
-            default:
-                return true;
+        CurrenyCost cost = playerStructureTypes[type];
+        if(player.currencies[cost.currency] >= cost.amount) {
+            return true;
         }
+        return false;
     }
     #endregion
 
@@ -185,6 +186,9 @@ public class PlayerManager : MonoBehaviour {
             player.playerFaction, player.demonicPortal, false), type);
         minion.SetLevel(level);
         return minion;
+    }
+    public DEMON_TYPE GetRandomDemonType() {
+        return (DEMON_TYPE) UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(DEMON_TYPE)).Length);
     }
     #endregion
 }

@@ -167,7 +167,7 @@ public class CharacterSim : ICharacterSim {
     public List<Skill> skills {
         get { return _skills; }
     }
-    public List<Trait> combatAttributes {
+    public List<Trait> traits {
         get { return _combatAttributes; }
     }
     public Dictionary<ELEMENT, float> elementalWeaknesses {
@@ -396,7 +396,7 @@ public class CharacterSim : ICharacterSim {
         if (hasEquipped) {
             if (item.attributeNames != null) {
                 for (int i = 0; i < item.attributeNames.Count; i++) {
-                    Trait newCombatAttribute = AttributeManager.Instance.allCombatAttributes[item.attributeNames[i]];
+                    Trait newCombatAttribute = AttributeManager.Instance.allTraits[item.attributeNames[i]];
                     AddCombatAttribute(newCombatAttribute);
                 }
             }
@@ -416,7 +416,7 @@ public class CharacterSim : ICharacterSim {
         }
         if (item.attributeNames != null) {
             for (int i = 0; i < item.attributeNames.Count; i++) {
-                Trait newCombatAttribute = AttributeManager.Instance.allCombatAttributes[item.attributeNames[i]];
+                Trait newCombatAttribute = AttributeManager.Instance.allTraits[item.attributeNames[i]];
                 RemoveCombatAttribute(newCombatAttribute);
             }
         }

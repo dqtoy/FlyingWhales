@@ -102,13 +102,6 @@ public class Minion : IUnit {
         _target = target;
         _icharacter.ownParty.GoToLocation(target.specificLocation, PATHFINDING_MODE.PASSABLE);
     }
-
-    //private void DoAbility() {
-    //    _ability.DoAbility(_target);
-
-    //    //Change activate button to recall button
-    //}
-
     public void SetEnabledState(bool state) {
         if (icharacter.IsInOwnParty()) {
             //also set enabled state of other party members

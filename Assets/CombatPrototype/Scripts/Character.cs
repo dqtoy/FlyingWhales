@@ -52,7 +52,7 @@ namespace ECS {
         protected List<CharacterAttribute> _attributes;
         protected List<Log> _history;
         protected List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
-        protected List<Trait> _combatAttributes;
+        protected List<Trait> _traits;
         protected CharacterActionQueue<ActionQueueItem> _actionQueue;
         protected List<CharacterAction> _miscActions;
         protected List<Interaction> _currentInteractions;
@@ -390,8 +390,8 @@ namespace ECS {
         public bool isDefender {
             get { return defendingLandmark != null; }
         }
-        public List<Trait> combatAttributes {
-            get { return _combatAttributes; }
+        public List<Trait> traits {
+            get { return _traits; }
         }
         public List<Interaction> currentInteractions {
             get { return _currentInteractions; }
@@ -497,7 +497,7 @@ namespace ECS {
             //previousActions = new Dictionary<CharacterTask, string>();
             //_relationships = new Dictionary<Character, Relationship>();
             _genericWorkAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.WORKING);
-            _combatAttributes = new List<Trait>();
+            _traits = new List<Trait>();
 
             //_actionData = new ActionData(this);
 
@@ -977,8 +977,8 @@ namespace ECS {
             if (hasEquipped) {
                 if (item.attributeNames != null) {
                     for (int i = 0; i < item.attributeNames.Count; i++) {
-                        Trait newTrait = AttributeManager.Instance.allCombatAttributes[item.attributeNames[i]];
-                        AddCombatAttribute(newTrait);
+                        Trait newTrait = AttributeManager.Instance.allTraits[item.attributeNames[i]];
+                        AddTrait(newTrait);
                     }
                 }
 #if !WORLD_CREATION_TOOL
@@ -1004,8 +1004,8 @@ namespace ECS {
             }
             if (item.attributeNames != null) {
                 for (int i = 0; i < item.attributeNames.Count; i++) {
-                    Trait newTrait = AttributeManager.Instance.allCombatAttributes[item.attributeNames[i]];
-                    RemoveCombatAttribute(newTrait);
+                    Trait newTrait = AttributeManager.Instance.allTraits[item.attributeNames[i]];
+                    RemoveTrait(newTrait);
                 }
             }
             Messenger.Broadcast(Signals.ITEM_UNEQUIPPED, item, this);
@@ -2721,31 +2721,43 @@ namespace ECS {
         #endregion
 
         #region Combat Attributes
-        public void AddCombatAttribute(Trait combatAttribute) {
-            if (GetCombatAttribute(combatAttribute.name) == null) {
-                _combatAttributes.Add(combatAttribute);
-                ApplyFlatCombatAttributeEffects(combatAttribute);
+        public void AddTrait(Trait trait) {
+            if (GetTrait(trait.name) == null) {
+                _traits.Add(trait);
+                ApplyFlatTraitEffects(trait);
             }
         }
-        public bool RemoveCombatAttribute(Trait combatAttribute) {
-            for (int i = 0; i < _combatAttributes.Count; i++) {
-                if (_combatAttributes[i].name == combatAttribute.name) {
-                    _combatAttributes.RemoveAt(i);
-                    UnapplyFlatCombatAttributeEffects(combatAttribute);
+        public bool RemoveTrait(Trait trait) {
+            for (int i = 0; i < _traits.Count; i++) {
+                if (_traits[i].name == trait.name) {
+                    _traits.RemoveAt(i);
+                    UnapplyFlatTraitEffects(trait);
                     return true;
                 }
             }
             return false;
         }
-        public Trait GetCombatAttribute(string attributeName) {
-            for (int i = 0; i < _combatAttributes.Count; i++) {
-                if (_combatAttributes[i].name == attributeName) {
-                    return _combatAttributes[i];
+        public Trait GetTrait(string traitName) {
+            for (int i = 0; i < _traits.Count; i++) {
+                if (_traits[i].name == traitName) {
+                    return _traits[i];
                 }
             }
             return null;
         }
-        private void ApplyFlatCombatAttributeEffects(Trait trait) {
+        public Trait GetRandomNegativeTrait() {
+            List<Trait> negativeTraits = new List<Trait>();
+            for (int i = 0; i < _traits.Count; i++) {
+                if (_traits[i].type == TRAIT_TYPE.NEGATIVE) {
+                    negativeTraits.Add(_traits[i]);
+                }
+            }
+            if(negativeTraits.Count > 0) {
+                return negativeTraits[UnityEngine.Random.Range(0, negativeTraits.Count)];
+            }
+            return null;
+        }
+        private void ApplyFlatTraitEffects(Trait trait) {
             for (int i = 0; i < trait.effects.Count; i++) {
                 TraitEffect traitEffect = trait.effects[i];
                 if (!traitEffect.hasRequirement && !traitEffect.isPercentage && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
@@ -2759,7 +2771,7 @@ namespace ECS {
                 }
             }
         }
-        private void UnapplyFlatCombatAttributeEffects(Trait trait) {
+        private void UnapplyFlatTraitEffects(Trait trait) {
             for (int i = 0; i < trait.effects.Count; i++) {
                 TraitEffect traitEffect = trait.effects[i];
                 if (!traitEffect.hasRequirement && !traitEffect.isPercentage && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
@@ -2775,9 +2787,9 @@ namespace ECS {
         }
         private int GetModifiedAttack() {
             float modifier = 0f;
-            for (int i = 0; i < _combatAttributes.Count; i++) {
-                for (int j = 0; j < _combatAttributes[i].effects.Count; j++) {
-                    TraitEffect traitEffect = _combatAttributes[i].effects[j];
+            for (int i = 0; i < _traits.Count; i++) {
+                for (int j = 0; j < _traits[i].effects.Count; j++) {
+                    TraitEffect traitEffect = _traits[i].effects[j];
                     if(traitEffect.stat == STAT.ATTACK && !traitEffect.hasRequirement && traitEffect.isPercentage && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
                         modifier += traitEffect.amount;
                     }
@@ -2787,9 +2799,9 @@ namespace ECS {
         }
         private int GetModifiedSpeed() {
             float modifier = 0f;
-            for (int i = 0; i < _combatAttributes.Count; i++) {
-                for (int j = 0; j < _combatAttributes[i].effects.Count; j++) {
-                    TraitEffect traitEffect = _combatAttributes[i].effects[j];
+            for (int i = 0; i < _traits.Count; i++) {
+                for (int j = 0; j < _traits[i].effects.Count; j++) {
+                    TraitEffect traitEffect = _traits[i].effects[j];
                     if (traitEffect.stat == STAT.SPEED && !traitEffect.hasRequirement && traitEffect.isPercentage && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
                         modifier += traitEffect.amount;
                     }
@@ -2799,9 +2811,9 @@ namespace ECS {
         }
         private int GetModifiedHP() {
             float modifier = 0f;
-            for (int i = 0; i < _combatAttributes.Count; i++) {
-                for (int j = 0; j < _combatAttributes[i].effects.Count; j++) {
-                    TraitEffect traitEffect = _combatAttributes[i].effects[j];
+            for (int i = 0; i < _traits.Count; i++) {
+                for (int j = 0; j < _traits[i].effects.Count; j++) {
+                    TraitEffect traitEffect = _traits[i].effects[j];
                     if (traitEffect.stat == STAT.HP && !traitEffect.hasRequirement && traitEffect.isPercentage && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
                         modifier += traitEffect.amount;
                     }
@@ -2812,16 +2824,16 @@ namespace ECS {
         private void SetTraitsFromClass() {
             if(_characterClass.traitNames != null) {
                 for (int i = 0; i < _characterClass.traitNames.Length; i++) {
-                    Trait trait = AttributeManager.Instance.allCombatAttributes[_characterClass.traitNames[i]];
-                    AddCombatAttribute(trait);
+                    Trait trait = AttributeManager.Instance.allTraits[_characterClass.traitNames[i]];
+                    AddTrait(trait);
                 }
             }
         }
         private void SetTraitsFromRace() {
             if (_raceSetting.traitNames != null) {
                 for (int i = 0; i < _raceSetting.traitNames.Length; i++) {
-                    Trait trait = AttributeManager.Instance.allCombatAttributes[_raceSetting.traitNames[i]];
-                    AddCombatAttribute(trait);
+                    Trait trait = AttributeManager.Instance.allTraits[_raceSetting.traitNames[i]];
+                    AddTrait(trait);
                 }
             }
         }

@@ -47,8 +47,8 @@ public class CharacterUIData {
         }
 
         combatAttributes.Clear();
-        if (character.combatAttributes != null) {
-            combatAttributes.AddRange(character.combatAttributes);
+        if (character.traits != null) {
+            combatAttributes.AddRange(character.traits);
         }
 
         equippedWeapon = character.equippedWeapon;

@@ -57,7 +57,7 @@ public class MysteriousSarcophagus : Interaction {
         if (state.name == "Start") {
             ActionOption ofCourseOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Of course.",
                 //description = "We have sent %minion% to open the sarcophagus.",
                 duration = 0,
@@ -66,7 +66,7 @@ public class MysteriousSarcophagus : Interaction {
             };
             ActionOption ofCourseNotOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Of course not.",
                 duration = 0,
                 needsMinion = false,
@@ -79,7 +79,7 @@ public class MysteriousSarcophagus : Interaction {
         } else {
             ActionOption continueSurveillanceOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Continue surveillance of the area.",
                 duration = 0,
                 needsMinion = false,
@@ -87,7 +87,7 @@ public class MysteriousSarcophagus : Interaction {
             };
             ActionOption returnToMeOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Return to me.",
                 duration = 0,
                 needsMinion = false,
@@ -182,9 +182,9 @@ public class MysteriousSarcophagus : Interaction {
         negativeTraitsWeights.AddElement("Negative Trait 3", 5);
 
         string chosenTrait = negativeTraitsWeights.PickRandomElementGivenWeights();
-        Trait negativeTrait = AttributeManager.Instance.allCombatAttributes[chosenTrait];
+        Trait negativeTrait = AttributeManager.Instance.allTraits[chosenTrait];
         for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
-            PlayerManager.Instance.player.minions[i].icharacter.AddCombatAttribute(negativeTrait);
+            PlayerManager.Instance.player.minions[i].icharacter.AddTrait(negativeTrait);
         }
         state.AddLogFiller(new LogFiller(null, chosenTrait, LOG_IDENTIFIER.STRING_1));
         //if (state.minionLog != null) {
@@ -222,8 +222,8 @@ public class MysteriousSarcophagus : Interaction {
         positiveTraitsWeights.AddElement("Positive Trait 3", 5);
 
         string chosenTrait = positiveTraitsWeights.PickRandomElementGivenWeights();
-        Trait positiveTrait = AttributeManager.Instance.allCombatAttributes[chosenTrait];
-        explorerMinion.icharacter.AddCombatAttribute(positiveTrait);
+        Trait positiveTrait = AttributeManager.Instance.allTraits[chosenTrait];
+        explorerMinion.icharacter.AddTrait(positiveTrait);
         state.AddLogFiller(new LogFiller(null, chosenTrait, LOG_IDENTIFIER.STRING_1));
         //if (state.minionLog != null) {
         //    state.minionLog.AddToFillers(null, chosenTrait, LOG_IDENTIFIER.STRING_1);

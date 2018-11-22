@@ -436,8 +436,8 @@ public class CharacterInfoUI : UIMenu {
     #region Combat Attributes
     private void UpdateCombatAttributes() {
         combatAttributeContentTransform.DestroyChildren();
-        for (int i = 0; i < _activeCharacter.combatAttributes.Count; i++) {
-            CreateCombatAttributeGO(_activeCharacter.combatAttributes[i]);
+        for (int i = 0; i < _activeCharacter.traits.Count; i++) {
+            CreateCombatAttributeGO(_activeCharacter.traits[i]);
         }
     }
     private void UpdateCombatAttributes(CharacterUIData uiData) {

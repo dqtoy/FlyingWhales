@@ -59,7 +59,7 @@ public class HarvestSeason : Interaction {
         if (state.name == "Start") {
             ActionOption sendOutDemon = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 30, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 30, currency = CURRENCY.SUPPLY },
                 name = "Send out a Demon to disrupt the harvest.",
                 //description = "We have sent %minion% to disrupt the harvest. It should take him a short time to execute the task.",
                 duration = 0,

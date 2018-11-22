@@ -58,7 +58,7 @@ public class UnexploredCave : Interaction {
         if(state.name == "Start") {
             ActionOption sendOutDemonOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Send out a Demon.",
                 //description = "We have sent %minion% to explore the interesting location.",
                 duration = 0,
@@ -68,7 +68,7 @@ public class UnexploredCave : Interaction {
 
             ActionOption leaveAloneOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Leave it alone.",
                 duration = 0,
                 needsMinion = false,
@@ -80,7 +80,7 @@ public class UnexploredCave : Interaction {
         } else {
             ActionOption continueSurveillanceOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Continue surveillance of the area.",
                 duration = 0,
                 needsMinion = false,
@@ -88,7 +88,7 @@ public class UnexploredCave : Interaction {
             };
             ActionOption returnToMeOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Return to me.",
                 duration = 0,
                 needsMinion = false,

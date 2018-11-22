@@ -44,7 +44,7 @@ public class ArmyMobilization : Interaction {
         if (state.name == "Start") {
             ActionOption stopThemOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 20, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Stop them.",
                 duration = 0,
                 //description = "We have sent %minion% to persuade the garrison general to stop army mobilization.",
@@ -53,7 +53,7 @@ public class ArmyMobilization : Interaction {
             };
             ActionOption doNothingOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 //description = "The garrison is mobilizing its forces. They are planning to assign some reserved units to defensive positions in the city.",
                 duration = 0,
@@ -71,7 +71,7 @@ public class ArmyMobilization : Interaction {
         } else {
             ActionOption continueSurveillanceOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Continue surveillance of the area.",
                 duration = 0,
                 needsMinion = false,
@@ -79,7 +79,7 @@ public class ArmyMobilization : Interaction {
             };
             ActionOption returnToMeOption = new ActionOption {
                 interactionState = state,
-                cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Return to me.",
                 duration = 0,
                 needsMinion = false,
