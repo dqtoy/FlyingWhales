@@ -309,15 +309,25 @@ SpriteAtlas:
   - {fileID: 21300054, guid: b691b436b68a75f46a376910267f4409, type: 3}
   - {fileID: 21300106, guid: 56a2c57009ed96c41b97b19cc3d6b340, type: 3}
   - {fileID: 21300052, guid: b691b436b68a75f46a376910267f4409, type: 3}
+  - {fileID: 21300006, guid: 57e738046dacd534b997008c7b9edac2, type: 3}
   - {fileID: 21300030, guid: 56a2c57009ed96c41b97b19cc3d6b340, type: 3}
+  - {fileID: 21300000, guid: 57e738046dacd534b997008c7b9edac2, type: 3}
+  - {fileID: 21300008, guid: 57e738046dacd534b997008c7b9edac2, type: 3}
+  - {fileID: 21300002, guid: 57e738046dacd534b997008c7b9edac2, type: 3}
   - {fileID: 21300000, guid: 09ae2603ebabe1848afd5f6fe31c6cd9, type: 3}
+  - {fileID: 21300004, guid: 57e738046dacd534b997008c7b9edac2, type: 3}
   - {fileID: 21300020, guid: 301ddda5fde017644bab1ae01392d876, type: 3}
   - {fileID: 21300080, guid: 301ddda5fde017644bab1ae01392d876, type: 3}
   - {fileID: 21300060, guid: 301ddda5fde017644bab1ae01392d876, type: 3}
   - {fileID: 21300044, guid: b691b436b68a75f46a376910267f4409, type: 3}
   - {fileID: 21300026, guid: 56a2c57009ed96c41b97b19cc3d6b340, type: 3}
+  - {fileID: 21300008, guid: 6c3b2ffe1f85f0448bf48ca83444aaef, type: 3}
   - {fileID: 21300010, guid: 56a2c57009ed96c41b97b19cc3d6b340, type: 3}
   - {fileID: 21300136, guid: b691b436b68a75f46a376910267f4409, type: 3}
+  - {fileID: 21300002, guid: 6c3b2ffe1f85f0448bf48ca83444aaef, type: 3}
+  - {fileID: 21300000, guid: 6c3b2ffe1f85f0448bf48ca83444aaef, type: 3}
+  - {fileID: 21300006, guid: 6c3b2ffe1f85f0448bf48ca83444aaef, type: 3}
+  - {fileID: 21300004, guid: 6c3b2ffe1f85f0448bf48ca83444aaef, type: 3}
   - {fileID: 21300008, guid: 301ddda5fde017644bab1ae01392d876, type: 3}
   - {fileID: 21300030, guid: 301ddda5fde017644bab1ae01392d876, type: 3}
   - {fileID: 21300026, guid: 301ddda5fde017644bab1ae01392d876, type: 3}
@@ -655,15 +665,25 @@ SpriteAtlas:
   - E_TallTreeHouse2_Tint
   - HumanStructuresRuined_26
   - E_TallTreeHouse1_Tint
+  - tentacle2_sheet_3
   - H_SmallHouse3_R
+  - tentacle2_sheet_0
+  - tentacle2_sheet_4
+  - tentacle2_sheet_1
   - mote1
+  - tentacle2_sheet_2
   - H_WallHouse3_Base
   - H_SmallHouse4_Base
   - H_SmallHouse3_Base
   - E_TriHouse2_Base
   - H_PointedHouse_R
+  - tentacle3_sheet_4
   - H_Wall2_R
   - E_TallTower1_Tint
+  - tentacle3_sheet_1
+  - tentacle3_sheet_0
+  - tentacle3_sheet_3
+  - tentacle3_sheet_2
   - H_SmallHouse2_Base
   - H_TallTower2_Tint
   - H_TallTower1_Tint
