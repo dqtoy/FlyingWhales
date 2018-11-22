@@ -614,6 +614,11 @@ namespace worldcreator {
                 HexTile currTile = tiles[i];
                 Biomes.Instance.UpdateTileVisuals(currTile);
                 Biomes.Instance.LoadPassableStates(currTile);
+                for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
+                    HexTile currNeighbour = currTile.AllNeighbours[j];
+                    Biomes.Instance.UpdateTileVisuals(currNeighbour);
+                    Biomes.Instance.LoadPassableStates(currNeighbour);
+                }
             }
         }
         public void SetElevation(HexTile tile, ELEVATION elevation, bool updateVisuals = true) {
@@ -636,6 +641,11 @@ namespace worldcreator {
             if (updateVisuals) {
                 Biomes.Instance.UpdateTileVisuals(tile);
                 Biomes.Instance.LoadPassableStates(tile);
+                for (int i = 0; i < tile.AllNeighbours.Count; i++) {
+                    HexTile currNeighbour = tile.AllNeighbours[i];
+                    Biomes.Instance.UpdateTileVisuals(currNeighbour);
+                    Biomes.Instance.LoadPassableStates(currNeighbour);
+                }
             }
         }
         #endregion

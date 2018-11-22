@@ -1628,6 +1628,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             return;
         }
         if (this.elevationType != ELEVATION.WATER) {
+            topLeftBeach.gameObject.SetActive(false);
+            topRightBeach.gameObject.SetActive(false);
+            rightBeach.gameObject.SetActive(false);
+            botRightBeach.gameObject.SetActive(false);
+            botLeftBeach.gameObject.SetActive(false);
+            leftBeach.gameObject.SetActive(false);
             return;
         }
         foreach (KeyValuePair<HEXTILE_DIRECTION, HexTile> kvp in _neighbourDirections) {
