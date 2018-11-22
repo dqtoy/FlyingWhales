@@ -375,7 +375,7 @@ public class Party : IParty {
 
     #region Combat
     public Combat CreateCombatWith(Party enemy) {
-        Combat combat = new Combat(this, enemy);
+        Combat combat = new Combat(this, enemy, _specificLocation as BaseLandmark);
         Debug.Log("Starting combat between " + enemy.name + " and  " + this.name);
 
         Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "start_combat");

@@ -255,6 +255,8 @@ public class AreaInvestigation {
 
         
         if (_currentlyAttackedLandmark.defenders != null) {
+            _assignedMinionAttack.icharacter.currentParty.specificLocation.RemoveCharacterFromLocation(_assignedMinionAttack.icharacter.currentParty);
+            _currentlyAttackedLandmark.AddCharacterToLocation(_assignedMinionAttack.icharacter.currentParty);
             Combat combat = _assignedMinionAttack.icharacter.currentParty.CreateCombatWith(_currentlyAttackedLandmark.defenders);
             combat.Fight(() => AttackCombatResult(combat));
         } else {
