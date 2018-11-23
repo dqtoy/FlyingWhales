@@ -177,9 +177,9 @@ public class MysteriousSarcophagus : Interaction {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //TODO: all of your units gain a random negative Trait (same negative Trait for all)
         WeightedDictionary<string> negativeTraitsWeights = new WeightedDictionary<string>();
-        negativeTraitsWeights.AddElement("Negative Trait 1", 35);
-        negativeTraitsWeights.AddElement("Negative Trait 2", 10);
-        negativeTraitsWeights.AddElement("Negative Trait 3", 5);
+        negativeTraitsWeights.AddElement("Spider Phobia", 35);
+        negativeTraitsWeights.AddElement("Goblin Phobia", 10);
+        negativeTraitsWeights.AddElement("Zombie Phobia", 5);
 
         string chosenTrait = negativeTraitsWeights.PickRandomElementGivenWeights();
         Trait negativeTrait = AttributeManager.Instance.allTraits[chosenTrait];
@@ -217,9 +217,9 @@ public class MysteriousSarcophagus : Interaction {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //TODO: Positive Trait Reward 1
         WeightedDictionary<string> positiveTraitsWeights = new WeightedDictionary<string>();
-        positiveTraitsWeights.AddElement("Positive Trait 1", 35);
-        positiveTraitsWeights.AddElement("Positive Trait 2", 10);
-        positiveTraitsWeights.AddElement("Positive Trait 3", 5);
+        positiveTraitsWeights.AddElement("Spider Slayer", 35);
+        positiveTraitsWeights.AddElement("Spider Hater", 10);
+        positiveTraitsWeights.AddElement("Spider Resistance", 5);
 
         string chosenTrait = positiveTraitsWeights.PickRandomElementGivenWeights();
         Trait positiveTrait = AttributeManager.Instance.allTraits[chosenTrait];

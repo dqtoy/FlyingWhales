@@ -52,10 +52,6 @@ public class PlayerLandmarkInfoUI : UIMenu {
     [SerializeField]
     private LandmarkCharacterItem[] defenderSlots;
 
-    //[Space(10)]
-    //[Header("Others")]
-    //[SerializeField] private GameObject[] notInspectedBGs;
-
     [Space(10)]
     [Header("Investigation")]
     [SerializeField]
@@ -66,6 +62,10 @@ public class PlayerLandmarkInfoUI : UIMenu {
     [SerializeField] private Button minionAssignmentRecallButton;
     [SerializeField] private TextMeshProUGUI minionAssignmentDescription;
     [SerializeField] private InvestigationMinionDraggableItem minionAssignmentDraggableItem;
+
+    [Space(10)]
+    [Header("Others")]
+    [SerializeField] private TextMeshProUGUI ritualCircleTraitText;
 
     private LogHistoryItem[] logHistoryItems;
 
@@ -85,6 +85,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
         //Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_INSPECTED, OnLandmarkInspected);
         Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_ADDED, OnResidentAddedToLandmark);
         Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_REMOVED, OnResidentRemovedFromLandmark);
+        Messenger.AddListener<RitualCircle>(Signals.UPDATE_RITUAL_CIRCLE_TRAIT, OnUpdateRitualCircleTrait);
     }
     public override void OpenMenu() {
         base.OpenMenu();
@@ -351,6 +352,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
             } else {
                 ResetMinionAssignment();
             }
+            ShowHideRitualCircleTraitText();
             investigationGO.SetActive(true);
         } else {
             investigationGO.SetActive(false);
@@ -411,5 +413,19 @@ public class PlayerLandmarkInfoUI : UIMenu {
     //public void OnClickRecall() {
     //    _activeLandmark.tileLocation.areaOfTile.areaInvestigation.RecallMinion("explore");
     //}
+    private void ShowHideRitualCircleTraitText() {
+        if (_activeLandmark.landmarkObj.specificObjectType == LANDMARK_TYPE.RITUAL_CIRCLE) {
+            RitualCircle ritualCircle = _activeLandmark.landmarkObj as RitualCircle;
+            ritualCircleTraitText.text = ritualCircle.traitForTheDay;
+            ritualCircleTraitText.gameObject.SetActive(true);
+        } else {
+            ritualCircleTraitText.gameObject.SetActive(false);
+        }
+    }
+    private void OnUpdateRitualCircleTrait(RitualCircle ritualCircle) {
+        if (_activeLandmark != null && _activeLandmark.landmarkObj == ritualCircle) {
+            ritualCircleTraitText.text = ritualCircle.traitForTheDay;
+        }
+    }
     #endregion
 }

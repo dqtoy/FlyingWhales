@@ -41,6 +41,7 @@ public static class Signals {
     public static string LANDMARK_RESIDENT_ADDED = "OnLandmarkResidentAdded"; //Parameters (BaseLandmark affectedLandmark, ICharacter character)
     public static string LANDMARK_RESIDENT_REMOVED = "OnLandmarkResidentRemoved"; //Parameters (BaseLandmark affectedLandmark, ICharacter character)
     public static string LANDMARK_INVESTIGATION_ACTIVATED = "OnLandmarkInvestigationActivated"; //Parameters (BaseLandmark investigatedLandmark)
+    public static string UPDATE_RITUAL_CIRCLE_TRAIT = "OnUpdateRitualCircleTrait";
     #endregion
 
     #region Character

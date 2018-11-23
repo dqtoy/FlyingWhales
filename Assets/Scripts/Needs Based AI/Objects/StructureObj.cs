@@ -369,7 +369,7 @@ public class StructureObj : IObject {
         }
     }
     public void ApplyEffectCostToPlayer() {
-        PlayerManager.Instance.player.AdjustCurrency(_effectCost.currency, _effectCost.amount);
+        PlayerManager.Instance.player.AdjustCurrency(_effectCost.currency, -_effectCost.amount);
     }
     #endregion
 

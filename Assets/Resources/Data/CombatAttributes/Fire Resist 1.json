@@ -1,1 +1,1 @@
-{"name":"Fire Resist 1","description":"-10 damage received from fire attacks","stat":1,"amount":-10.0,"hasRequirement":true,"isPercentage":false,"damageIdentifier":1,"requirementType":3,"requirement":"FIRE"}
+{"name":"Fire Resist 1","description":"-10 damage received from fire attacks","type":0,"daysDuration":0,"effects":[]}
