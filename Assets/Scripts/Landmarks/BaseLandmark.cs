@@ -229,6 +229,7 @@ public class BaseLandmark : ILocation, IInteractable {
         eventTriggerWeights = new WeightedDictionary<bool>();
         defenderWeights = new WeightedDictionary<LandmarkDefender>();
         SetSupplyProductionState(true);
+        SetMaxDefenderCount(4);
         defenderBuffs = new List<Buff>();
         //defenders = new Party[LandmarkManager.MAX_DEFENDERS];
         //Messenger.AddListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);

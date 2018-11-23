@@ -27,6 +27,10 @@ public class RitualCircle : StructureObj {
         base.OnAssignCharacter();
         ScheduleCharacterToGainTrait();
     }
+    public override void OnAddToLandmark(BaseLandmark newLocation) {
+        newLocation.SetMaxDefenderCount(2);
+        base.OnAddToLandmark(newLocation);
+    }
     #endregion
 
     #region Utilities

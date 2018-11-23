@@ -16,6 +16,7 @@ public class CorruptionNode : StructureObj {
         return clone;
     }
     public override void OnAddToLandmark(BaseLandmark newLocation) {
+        newLocation.SetMaxDefenderCount(2);
         base.OnAddToLandmark(newLocation);
         newLocation.tileLocation.ScheduleCorruption();
     }

@@ -21,6 +21,10 @@ public class TrainingArena : StructureObj {
         base.OnAssignCharacter();
         ScheduleCharacterToGainExperience();
     }
+    public override void OnAddToLandmark(BaseLandmark newLocation) {
+        newLocation.SetMaxDefenderCount(2);
+        base.OnAddToLandmark(newLocation);
+    }
     #endregion
 
     #region Utilities

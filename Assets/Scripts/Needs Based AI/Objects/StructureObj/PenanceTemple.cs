@@ -21,6 +21,10 @@ public class PenanceTemple : StructureObj {
         base.OnAssignCharacter();
         ScheduleCharacterToRemoveTrait();
     }
+    public override void OnAddToLandmark(BaseLandmark newLocation) {
+        newLocation.SetMaxDefenderCount(2);
+        base.OnAddToLandmark(newLocation);
+    }
     #endregion
 
     #region Utilities
