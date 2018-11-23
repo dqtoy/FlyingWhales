@@ -20,6 +20,8 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
     [Header("BG")]
     [SerializeField] private Image bg;
+    [SerializeField] private Sprite lockedBGSprite;
+    [SerializeField] private Sprite draggableBGSprite;
 
     [Header("Head")]
     [SerializeField] private Image head;
@@ -70,7 +72,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         Messenger.AddListener<CharacterIntel>(Signals.CHARACTER_INTEL_ADDED, OnCharacterIntelObtained);
     }
 
-    public void GeneratePortrait(ICharacter character, int imgSize = 97, CHARACTER_ROLE role = CHARACTER_ROLE.NONE) {
+    public void GeneratePortrait(ICharacter character, int imgSize = 104, CHARACTER_ROLE role = CHARACTER_ROLE.NONE) {
         _character = character;
         SetImageSize(imgSize);
         if(character == null) {
@@ -231,6 +233,12 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     }
     public void SetBGState(bool state) {
         bg.enabled = state;
+    }
+    public void SwitchBGToLocked() {
+        bg.sprite = lockedBGSprite;
+    }
+    public void SwitchBGToDraggable() {
+        bg.sprite = draggableBGSprite;
     }
     private void UpdateUnknownVisual() {
         if (_character != null) {

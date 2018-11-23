@@ -70,7 +70,7 @@ public class DraggableItem : MonoBehaviour, IDragHandler, IBeginDragHandler, IEn
     }
     #endregion
 
-    public void SetDraggable(bool state) {
+    public virtual void SetDraggable(bool state) {
         _isDraggable = state;
     }
 

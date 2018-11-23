@@ -16,7 +16,7 @@ public class InvestigationMinionDraggableItem : DraggableItem {
             return;
         }
         GameObject clone = (GameObject) Instantiate(_portrait.gameObject);
-        clone.GetComponent<CharacterPortrait>().SetBGState(true);
+        //clone.GetComponent<CharacterPortrait>().SetBGState(true);
         _draggingObject = clone.GetComponent<RectTransform>();
         _draggingObject.gameObject.AddComponent<DragObject>().parentItem = gameObject.GetComponent<PlayerCharacterItem>();
 
@@ -53,6 +53,14 @@ public class InvestigationMinionDraggableItem : DraggableItem {
                     }
                 }
             }
+        }
+    }
+    public override void SetDraggable(bool state) {
+        base.SetDraggable(state);
+        if (state) {
+            _portrait.SwitchBGToDraggable();
+        } else {
+            _portrait.SwitchBGToLocked();
         }
     }
 }
