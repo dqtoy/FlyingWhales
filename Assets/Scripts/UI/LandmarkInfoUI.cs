@@ -122,10 +122,15 @@ public class LandmarkInfoUI : UIMenu {
         ResetScrollPositions();
         //PlayerUI.Instance.UncollapseMinionHolder();
         //InteractionUI.Instance.OpenInteractionUI(_activeLandmark);
+        if(previousLandmark != null) {
+            if (previousLandmark.tileLocation.areaOfTile != null) {
+                previousLandmark.tileLocation.areaOfTile.SetOutlineState(false);
+            } else {
+                SetLandmarkBorderState(false);
+            }
+        }
         if(_activeLandmark.tileLocation.areaOfTile != null) {
             _activeLandmark.tileLocation.areaOfTile.SetOutlineState(true);
-            //if (!_activeLandmark.tileLocation.areaOfTile.isHighlighted) {
-            //}
         } else {
             SetLandmarkBorderState(true);
         }
@@ -135,8 +140,6 @@ public class LandmarkInfoUI : UIMenu {
         SetLandmarkBorderState(false);
         if (_activeLandmark.tileLocation.areaOfTile != null) {
             _activeLandmark.tileLocation.areaOfTile.SetOutlineState(false);
-            //if (_activeLandmark.tileLocation.areaOfTile.isHighlighted) {
-            //}
         } else {
             SetLandmarkBorderState(false);
         }
