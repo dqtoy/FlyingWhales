@@ -15,11 +15,12 @@ public class PlayerUI : MonoBehaviour {
 
     public Image threatFiller;
     public ScrollRect minionsScrollRect;
+    public RectTransform minionsScrollRectTransform;
     public LayoutElement minionsScrollRectLE;
 
     public GameObject minionPrefab;
     public GameObject minionsHolderGO;
-    public Transform minionsContentTransform;
+    public RectTransform minionsContentTransform;
     public TweenPosition minionContentTweenPos;
     public Button upScrollButton;
     public Button downScrollButton;
@@ -39,6 +40,8 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private AnimationCurve curve;
 
     private MINIONS_SORT_TYPE _minionSortType;
+    private bool _isScrollingUp;
+    private bool _isScrollingDown;
 
     #region getters/setters
     public MINIONS_SORT_TYPE minionSortType {
@@ -112,6 +115,10 @@ public class PlayerUI : MonoBehaviour {
 
     #region Minions
     public void OnStartMinionUI() {
+        StartCoroutine(StartMinionUICoroutine());
+    }
+    private IEnumerator StartMinionUICoroutine() {
+        yield return null;
         OnScroll(Vector2.zero);
     }
     public void MinionDragged(ReorderableList.ReorderableListEventStruct reorderableListEventStruct) {
@@ -124,27 +131,45 @@ public class PlayerUI : MonoBehaviour {
         //minionItem.SetEnabledState(false);
     }
     public void ScrollUp() {
-        float y = minionsContentTransform.localPosition.y - 115f;
-        if(y < 0f) {
-            y = 0f;
+        if (!_isScrollingUp) {
+            _isScrollingUp = true;
+            float y = minionsContentTransform.localPosition.y - 115f;
+            if (y < 0f) {
+                y = 0f;
+                upScrollButton.gameObject.SetActive(false);
+            }
+            //minionsContentTransform.localPosition = new Vector3(minionsContentTransform.localPosition.x, y, minionsContentTransform.localPosition.z);
+            minionContentTweenPos.from = minionsContentTransform.localPosition;
+            minionContentTweenPos.to = new Vector3(minionsContentTransform.localPosition.x, y, minionsContentTransform.localPosition.z);
+            minionContentTweenPos.SetOnFinished(OnFinishedScrollUp);
+            minionContentTweenPos.ResetToBeginning();
+            minionContentTweenPos.PlayForward();
         }
-        //minionsContentTransform.localPosition = new Vector3(minionsContentTransform.localPosition.x, y, minionsContentTransform.localPosition.z);
-        minionContentTweenPos.from = minionsContentTransform.localPosition;
-        minionContentTweenPos.to = new Vector3(minionsContentTransform.localPosition.x, y, minionsContentTransform.localPosition.z);
-        minionContentTweenPos.ResetToBeginning();
-        minionContentTweenPos.PlayForward();
+    }
+    private void OnFinishedScrollUp() {
+        _isScrollingUp = false;
     }
     public void ScrollDown() {
-        float y = minionsContentTransform.localPosition.y + 115f;
-        float height = minionsScrollRectLE.preferredHeight;
-        if (y > height) {
-            y = height;
+        if (!_isScrollingDown) {
+            _isScrollingDown = true;
+            float y = minionsContentTransform.localPosition.y + 115f;
+            float height = minionsScrollRectLE.preferredHeight;
+            if (y > height) {
+                y = height;
+            }
+            //if((y + minionsScrollRectLE.preferredHeight) == minionsContentTransform.rect.height) {
+            //    downScrollButton.gameObject.SetActive(false);
+            //}
+            //minionsContentTransform.localPosition = new Vector3(minionsContentTransform.localPosition.x, y, minionsContentTransform.localPosition.z);
+            minionContentTweenPos.from = minionsContentTransform.localPosition;
+            minionContentTweenPos.to = new Vector3(minionsContentTransform.localPosition.x, y, minionsContentTransform.localPosition.z);
+            minionContentTweenPos.SetOnFinished(OnFinishedScrollDown);
+            minionContentTweenPos.ResetToBeginning();
+            minionContentTweenPos.PlayForward();
         }
-        //minionsContentTransform.localPosition = new Vector3(minionsContentTransform.localPosition.x, y, minionsContentTransform.localPosition.z);
-        minionContentTweenPos.from = minionsContentTransform.localPosition;
-        minionContentTweenPos.to = new Vector3(minionsContentTransform.localPosition.x, y, minionsContentTransform.localPosition.z);
-        minionContentTweenPos.ResetToBeginning();
-        minionContentTweenPos.PlayForward();
+    }
+    private void OnFinishedScrollDown() {
+        _isScrollingDown = false;
     }
     public void SortByLvlMinions() {
         _minionSortType = MINIONS_SORT_TYPE.LEVEL;
@@ -179,15 +204,25 @@ public class PlayerUI : MonoBehaviour {
     public void OnScroll(Vector2 vector2) {
         if (minionsContentTransform.localPosition.y == 0f) {
             //on top
-            upScrollButton.gameObject.SetActive(false);
-            downScrollButton.gameObject.SetActive(true);
-        } else if (minionsContentTransform.localPosition.y == minionsScrollRectLE.preferredHeight) {
-            //on bottom
-            upScrollButton.gameObject.SetActive(true);
-            downScrollButton.gameObject.SetActive(false);
+            if (upScrollButton.gameObject.activeSelf) {
+                upScrollButton.gameObject.SetActive(false);
+            }
+            //downScrollButton.gameObject.SetActive(true);
         } else {
-            upScrollButton.gameObject.SetActive(true);
-            downScrollButton.gameObject.SetActive(true);
+            if (!upScrollButton.gameObject.activeSelf) {
+                upScrollButton.gameObject.SetActive(true);
+            }
+        }
+        if ((minionsContentTransform.localPosition.y + minionsScrollRectLE.preferredHeight) < minionsContentTransform.rect.height) {
+            //on bottom
+            //upScrollButton.gameObject.SetActive(true);
+            if (!downScrollButton.gameObject.activeSelf) {
+                downScrollButton.gameObject.SetActive(true);
+            }
+        } else {
+            if (downScrollButton.gameObject.activeSelf) {
+                downScrollButton.gameObject.SetActive(false);
+            }
         }
     }
     public void ResetAllMinionItems() {

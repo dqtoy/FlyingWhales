@@ -181,6 +181,11 @@ public class PlayerManager : MonoBehaviour {
     #endregion
 
     #region Minion
+    [ContextMenu("Create And Add New Minion")]
+    public void CreateMinionForTesting() {
+        Minion minion = CreateNewMinion("Pride");
+        player.AddMinion(minion);
+    }
     public Minion CreateNewMinion(string className, int level = 1) {
         Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, RACE.HUMANS, GENDER.MALE,
             player.playerFaction, player.demonicPortal, false));
