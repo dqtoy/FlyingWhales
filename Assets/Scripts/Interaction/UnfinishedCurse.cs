@@ -69,7 +69,7 @@ public class UnfinishedCurse : Interaction {
                 duration = 0,
                 needsMinion = false,
                 effect = () => HarnessMagicEffect(state),
-                canBeDoneAction = () => AssignedMinionIsOfType(DEMON_TYPE.GLUTTONY)
+                canBeDoneAction = () => AssignedMinionIsOfClass("Gluttony")
             };
             ActionOption leaveAlone = new ActionOption {
                 interactionState = state,

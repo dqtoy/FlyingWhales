@@ -171,11 +171,18 @@ public class Interaction {
             _characterInvolved.SetDoNotDisturb(true);
         }
     }
-    public bool AssignedMinionIsOfType(DEMON_TYPE type) {
-        return this.explorerMinion != null && this.explorerMinion.type == type;
+    public bool AssignedMinionIsOfClass(string className) {
+        return this.explorerMinion != null && this.explorerMinion.icharacter.characterClass.className.ToLower() == className.ToLower();
     }
-    public bool AssignedMinionIsOfType(List<DEMON_TYPE> allowedTypes) {
-        return this.explorerMinion != null && allowedTypes.Contains(this.explorerMinion.type);
+    public bool AssignedMinionIsOfClass(List<string> allowedClassNames) {
+        if(this.explorerMinion != null) {
+            for (int i = 0; i < allowedClassNames.Count; i++) {
+                if(allowedClassNames[i].ToLower() == this.explorerMinion.icharacter.characterClass.className.ToLower()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     #endregion
 

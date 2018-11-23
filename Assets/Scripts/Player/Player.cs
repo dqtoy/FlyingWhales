@@ -343,11 +343,11 @@ public class Player : ILeader {
     public void CreateInitialMinions() {
         PlayerUI.Instance.ResetAllMinionItems();
         _minions = new List<Minion>();
-        AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomClassName(), RACE.DEMON, PlayerManager.Instance.GetRandomDemonType(), false));
-        AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomClassName(), RACE.DEMON, PlayerManager.Instance.GetRandomDemonType(), false));
-        AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomClassName(), RACE.DEMON, PlayerManager.Instance.GetRandomDemonType(), false));
-        AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomClassName(), RACE.DEMON, PlayerManager.Instance.GetRandomDemonType(), false));
-        AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomClassName(), RACE.DEMON, PlayerManager.Instance.GetRandomDemonType(), false));
+        AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomDeadlySinsClassName(), RACE.DEMON, false));
+        AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomDeadlySinsClassName(), RACE.DEMON, false));
+        AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomDeadlySinsClassName(), RACE.DEMON, false));
+        AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomDeadlySinsClassName(), RACE.DEMON, false));
+        AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomDeadlySinsClassName(), RACE.DEMON, false));
 
         //UpdateMinions();
         PlayerUI.Instance.minionsScrollRect.verticalNormalizedPosition = 1f;
@@ -355,15 +355,6 @@ public class Player : ILeader {
     }
     public Minion CreateNewMinion(ICharacter character) {
         return new Minion(character);
-    }
-    public Minion CreateNewMinion(string className, RACE race, DEMON_TYPE demonType, bool isArmy) {
-        Minion minion = null;
-        if (isArmy) {
-            minion = new Minion(CharacterManager.Instance.CreateCharacterArmyUnit(className, race, playerFaction, _demonicPortal), demonType);
-        } else {
-            minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, race, GENDER.MALE, playerFaction, _demonicPortal, false), demonType);
-        }
-        return minion;
     }
     public Minion CreateNewMinion(string className, RACE race, bool isArmy) {
         Minion minion = null;
@@ -403,7 +394,7 @@ public class Player : ILeader {
         UpdateMinions();
     }
     public void SortByType() {
-        _minions = _minions.OrderBy(x => x.type.ToString()).ToList();
+        _minions = _minions.OrderBy(x => x.icharacter.characterClass.className).ToList();
         //for (int i = 0; i < PlayerUI.Instance.minionItems.Length; i++) {
         //    MinionItem minionItem = PlayerUI.Instance.minionItems[i];
         //    if (i < _minions.Count) {
@@ -433,9 +424,9 @@ public class Player : ILeader {
                 }
             }
         } else if (PlayerUI.Instance.minionSortType == MINIONS_SORT_TYPE.TYPE) {
-            string strMinionType = minion.type.ToString();
+            string strMinionType = minion.icharacter.characterClass.className;
             for (int i = 0; i < _minions.Count; i++) {
-                int compareResult = string.Compare(strMinionType, _minions[i].type.ToString());
+                int compareResult = string.Compare(strMinionType, minion.icharacter.characterClass.className);
                 if (compareResult == -1 || compareResult == 0) {
                     _minions.Insert(i, minion);
                     item.transform.SetSiblingIndex(i);

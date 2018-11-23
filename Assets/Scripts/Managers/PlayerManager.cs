@@ -181,14 +181,11 @@ public class PlayerManager : MonoBehaviour {
     #endregion
 
     #region Minion
-    public Minion CreateNewMinion(DEMON_TYPE type, int level = 1) {
-        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter("Farmer", RACE.HUMANS, GENDER.MALE,
-            player.playerFaction, player.demonicPortal, false), type);
+    public Minion CreateNewMinion(string className, int level = 1) {
+        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, RACE.HUMANS, GENDER.MALE,
+            player.playerFaction, player.demonicPortal, false));
         minion.SetLevel(level);
         return minion;
-    }
-    public DEMON_TYPE GetRandomDemonType() {
-        return (DEMON_TYPE) UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(DEMON_TYPE)).Length);
     }
     #endregion
 }

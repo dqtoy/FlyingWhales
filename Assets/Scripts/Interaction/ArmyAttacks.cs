@@ -84,7 +84,7 @@ public class ArmyAttacks : Interaction {
                 needsMinion = false,
                 neededObjects = new List<System.Type>() { typeof(LocationIntel) },
                 effect = () => RedirectAttackEffect(state),
-                canBeDoneAction = () => AssignedMinionIsOfType(DEMON_TYPE.GREED), //Needs greed minion
+                canBeDoneAction = () => AssignedMinionIsOfClass("Greed"), //Needs greed minion
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,

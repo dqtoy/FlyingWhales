@@ -13,8 +13,8 @@ public class Minion : IUnit {
 
     private ICharacter _icharacter;
     private IInteractable _target;
-    private DEMON_TYPE _type;
-    private string _strType;
+    //private DEMON_TYPE _type;
+    //private string _strType;
     //private int _lvl;
     private int _exp;
     private int _indexDefaultSort;
@@ -52,12 +52,12 @@ public class Minion : IUnit {
     public int indexDefaultSort {
         get { return _indexDefaultSort; }
     }
-    public DEMON_TYPE type {
-        get { return _type; }
-    }
-    public string strType {
-        get { return _strType; }
-    }
+    //public DEMON_TYPE type {
+    //    get { return _type; }
+    //}
+    //public string strType {
+    //    get { return _strType; }
+    //}
     public Party party {
         get { return icharacter.ownParty; }
     }
@@ -68,8 +68,8 @@ public class Minion : IUnit {
         //_ability = ability;
         //_lvl = 1;
         _exp = 0;
-        _type = DEMON_TYPE.NONE;
-        _strType = Utilities.NormalizeString(_type.ToString());
+        //_type = DEMON_TYPE.NONE;
+        //_strType = Utilities.NormalizeString(_type.ToString());
         _isEnabled = true;
         //PlayerManager.Instance.player.demonicPortal.AddCharacterHomeOnLandmark(_icharacter);
         //PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(_icharacter.ownParty);
@@ -79,25 +79,9 @@ public class Minion : IUnit {
         _icharacter.characterIntel.SetObtainedState(true);
         _icharacter.ownParty.icon.SetVisualState(true);
     }
-    public Minion(ICharacter icharacter, DEMON_TYPE demonType) {
-        _icharacter = icharacter;
-        //_ability = ability;
-        //_lvl = 1;
-        _exp = 0;
-        _type = demonType;
-        _strType = Utilities.NormalizeString(_type.ToString());
-        _isEnabled = true;
-        //_strType = Utilities.NormalizeString(_type.ToString());
-        //PlayerManager.Instance.player.demonicPortal.AddCharacterHomeOnLandmark(_icharacter);
-        //PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(_icharacter.ownParty);
-        _icharacter.SetMinion(this);
-        _icharacter.DisableInteractionGeneration();
-        _icharacter.characterIntel.SetObtainedState(true);
-        _icharacter.ownParty.icon.SetVisualState(true);
-    }
-    public void SetDemonType(DEMON_TYPE type) {
-        _type = type;
-    }
+    //public void SetDemonType(DEMON_TYPE type) {
+    //    _type = type;
+    //}
     public void SendMinionToPerformAbility(IInteractable target) {
         _target = target;
         _icharacter.ownParty.GoToLocation(target.specificLocation, PATHFINDING_MODE.PASSABLE);

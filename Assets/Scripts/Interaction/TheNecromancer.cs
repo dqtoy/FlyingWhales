@@ -93,7 +93,7 @@ public class TheNecromancer : Interaction {
                 duration = 0,
                 needsMinion = false,
                 effect = () => InflameResentmentOptionEffect(state),
-                canBeDoneAction = () => AssignedMinionIsOfType(GetDemonTypeFromMotivation(chosenMotivation)),
+                canBeDoneAction = () => AssignedMinionIsOfClass(chosenMotivation),
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -266,16 +266,4 @@ public class TheNecromancer : Interaction {
     }
     #endregion
 
-    private DEMON_TYPE GetDemonTypeFromMotivation(string motivation) {
-        switch (motivation) {
-            case "Pride":
-                return DEMON_TYPE.PRIDE;
-            case "Wrath":
-                return DEMON_TYPE.WRATH;
-            case "Envy":
-                return DEMON_TYPE.ENVY;
-            default:
-                throw new System.Exception("There is no demon type for motivation " + motivation);
-        }
-    }
 }

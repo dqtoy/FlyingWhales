@@ -973,16 +973,16 @@ public enum QUEST_GIVER_TYPE {
     QUEST_BOARD,
     CHARACTER,
 }
-public enum DEMON_TYPE {
-    NONE,
-    LUST,
-    GLUTTONY,
-    GREED,
-    SLOTH,
-    WRATH,
-    ENVY,
-    PRIDE,
-}
+//public enum DEMON_TYPE {
+//    NONE,
+//    LUST,
+//    GLUTTONY,
+//    GREED,
+//    SLOTH,
+//    WRATH,
+//    ENVY,
+//    PRIDE,
+//}
 public enum COMBATANT_TYPE {
     CHARACTER,
     ARMY, //Party

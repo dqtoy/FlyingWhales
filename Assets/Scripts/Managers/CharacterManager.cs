@@ -46,6 +46,7 @@ public class CharacterManager : MonoBehaviour {
     [SerializeField] private RuntimeAnimatorController[] characterAnimators;
 
     public Dictionary<Character, List<string>> allCharacterLogs { get; private set; }
+    private static readonly string[] _sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
 
     #region getters/setters
     public Dictionary<string, CharacterClass> classesDictionary {
@@ -260,6 +261,9 @@ public class CharacterManager : MonoBehaviour {
             currentClass.ConstructData();
             _classesDictionary.Add(currentClass.className, currentClass);
         }
+    }
+    public string GetRandomDeadlySinsClassName() {
+        return _sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, _sevenDeadlySinsClassNames.Length)];
     }
     public string GetRandomClassName() {
         int random = UnityEngine.Random.Range(0, CharacterManager.Instance.classesDictionary.Count);

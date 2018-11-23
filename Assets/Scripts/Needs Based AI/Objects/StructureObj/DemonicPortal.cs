@@ -32,7 +32,7 @@ public class DemonicPortal : StructureObj {
     private void SummonNewMinion() {
         if (!isRuined && PlayerManager.Instance.player.currencies[_effectCost.currency] >= _effectCost.amount) {
             ApplyEffectCostToPlayer();
-            Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(CharacterManager.Instance.GetRandomClassName(), RACE.DEMON, PlayerManager.Instance.GetRandomDemonType(), false);
+            Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(CharacterManager.Instance.GetRandomDeadlySinsClassName(), RACE.DEMON, false);
             PlayerManager.Instance.player.AddMinion(newMinion);
         }
     }

@@ -70,7 +70,7 @@ public class PlayerCharacterItem : PooledObject, IDragParentItem {
             lvlLbl.text = "Lvl. ? ???";
             expSlider.value = 0f;
         } else if (_character.minion != null) {
-            lvlLbl.text = "Lvl. " + _character.minion.lvl + " " + (_character.minion.type == DEMON_TYPE.NONE ? _character.characterClass.className : _character.minion.strType);
+            lvlLbl.text = "Lvl. " + _character.minion.lvl + " " + _character.characterClass.className;
             expSlider.value = (float)_character.minion.exp / 100f;
         } else if(_character != null) {
             lvlLbl.text = "Lvl. " + _character.level;

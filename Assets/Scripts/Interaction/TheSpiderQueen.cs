@@ -168,7 +168,7 @@ public class TheSpiderQueen : Interaction {
     }
     private void TransformRitualSuccessEffect(InteractionState state) {
         //**Reward**: Gain a new Level 10 Sloth Demon
-        PlayerManager.Instance.player.AddMinion(PlayerManager.Instance.CreateNewMinion(DEMON_TYPE.SLOTH, 10));
+        PlayerManager.Instance.player.AddMinion(PlayerManager.Instance.CreateNewMinion("Sloth", 10));
     }
     private void TransformRitualFailure(InteractionState state, string effectName) {
         //_states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " performed the Transform Ritual but the Queen's protectors discovered him at the last minute, forcing him to flee before the ritual is complete.");
