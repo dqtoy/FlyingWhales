@@ -101,7 +101,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         nameLbl.text = character.urlName;
         UpdateUnknownVisual();
     }
-    public void GeneratePortrait(PortraitSettings portraitSettings, int imgSize = 97) {
+    public void GeneratePortrait(PortraitSettings portraitSettings, int imgSize = 104) {
         _portraitSettings = portraitSettings;
         SetImageSize(imgSize);
         if (portraitSettings == null) {
@@ -236,9 +236,11 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     }
     public void SwitchBGToLocked() {
         bg.sprite = lockedBGSprite;
+        SetImageSize(_imgSize + 4);
     }
     public void SwitchBGToDraggable() {
         bg.sprite = draggableBGSprite;
+        SetImageSize(_imgSize - 4);
     }
     private void UpdateUnknownVisual() {
         if (_character != null) {

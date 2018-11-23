@@ -523,6 +523,7 @@ public class LandmarkInfoUI : UIMenu {
         minionAssignmentPartyWinChance.text = _currentWinChance.ToString("F2") + "%";
     }
     private void ResetMinionAssignmentParty(int index) {
+        _assignedParty[index] = null;
         minionAssignmentPartyPortraits[index].gameObject.SetActive(false);
         minionAssignmentPartyConfirmButton.gameObject.SetActive(false);
         minionAssignmentPartyRecallButton.gameObject.SetActive(false);
@@ -708,7 +709,6 @@ public class LandmarkInfoUI : UIMenu {
             minionAssignmentConfirmButton.interactable = !_activeLandmark.tileLocation.areaOfTile.areaInvestigation.isAttacking;
             OnUpdateLandmarkInvestigationState("attack");
         } else {
-            _assignedParty[index] = null;
             ResetMinionAssignmentParty(index);
         }
 

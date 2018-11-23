@@ -56,11 +56,13 @@ public class InvestigationMinionDraggableItem : DraggableItem {
         }
     }
     public override void SetDraggable(bool state) {
-        base.SetDraggable(state);
-        if (state) {
-            _portrait.SwitchBGToDraggable();
-        } else {
-            _portrait.SwitchBGToLocked();
+        if(_isDraggable != state) {
+            base.SetDraggable(state);
+            if (state) {
+                _portrait.SwitchBGToDraggable();
+            } else {
+                _portrait.SwitchBGToLocked();
+            }
         }
     }
 }
