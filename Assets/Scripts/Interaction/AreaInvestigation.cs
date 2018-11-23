@@ -64,7 +64,7 @@ public class AreaInvestigation {
 
         _isExploring = true;
     }
-    public void AttackRaidLandmark(string whatTodo, Minion[] minion) {
+    public void AttackRaidLandmark(string whatTodo, Minion[] minion, BaseLandmark targetLandmark) {
         _assignedMinionAttack = null;
         for (int i = 0; i < minion.Length; i++) {
             if (minion[i] != null) {
@@ -75,8 +75,10 @@ public class AreaInvestigation {
                 }
             }
         }
+        
         _assignedMinionAttack.SetEnabledState(false);
         _assignedMinionAttack.SetAttackingArea(_area);
+        _currentlyAttackedLandmark = targetLandmark;
         MinionGoToAssignment(AttackLandmark, "attack");
         _isAttacking = true;
     }
@@ -84,7 +86,7 @@ public class AreaInvestigation {
         if (whatToDo == "explore") {
             _assignedMinion.TravelToAssignment(_area.coreTile.landmarkOnTile, action);
         } else if (whatToDo == "attack") {
-            _assignedMinionAttack.TravelToAssignment(_area.coreTile.landmarkOnTile, action);
+            _assignedMinionAttack.TravelToAssignment(_currentlyAttackedLandmark, action);
         }
     }
     public void RecallMinion(string action) {
@@ -164,11 +166,13 @@ public class AreaInvestigation {
         _isExploring = false;
         _assignedMinion.SetExploringArea(null);
         SetAssignedMinion(null);
+        _currentlyExploredLandmark = null;
     }
     public void UnattackLandmark() {
         _isAttacking = false;
         _assignedMinionAttack.SetAttackingArea(null);
         SetAssignedMinionAttack(null);
+        _currentlyAttackedLandmark = null;
     }
     private void OnExploreTick() {
         if (_currentTick >= _duration) {
@@ -236,27 +240,25 @@ public class AreaInvestigation {
 
     #region Attack
     private void AttackLandmark() {
-        _currentlyAttackedLandmark = null;
-        float highestWinRate = 0f;
-        float loseRate = 0f;
-        for (int i = 0; i < _area.exposedTiles.Count; i++) {
-            if(_currentlyAttackedLandmark == null) {
-                _currentlyAttackedLandmark = _area.exposedTiles[i];
-                CombatManager.Instance.GetCombatChanceOfTwoLists(_assignedMinionAttack.icharacter.currentParty.icharacters, _currentlyAttackedLandmark.defenders.icharacters, out highestWinRate, out loseRate);
-            } else {
-                float winRate = 0f;
-                CombatManager.Instance.GetCombatChanceOfTwoLists(_assignedMinionAttack.icharacter.currentParty.icharacters, _area.exposedTiles[i].defenders.icharacters, out winRate, out loseRate);
-                if(winRate > highestWinRate) {
-                    _currentlyAttackedLandmark = _area.exposedTiles[i];
-                    highestWinRate = winRate;
-                }
-            }
-        }
-
-        
+        //_currentlyAttackedLandmark = null;
+        //float highestWinRate = 0f;
+        //float loseRate = 0f;
+        //for (int i = 0; i < _area.exposedTiles.Count; i++) {
+        //    if(_currentlyAttackedLandmark == null) {
+        //        _currentlyAttackedLandmark = _area.exposedTiles[i];
+        //        CombatManager.Instance.GetCombatChanceOfTwoLists(_assignedMinionAttack.icharacter.currentParty.icharacters, _currentlyAttackedLandmark.defenders.icharacters, out highestWinRate, out loseRate);
+        //    } else {
+        //        float winRate = 0f;
+        //        CombatManager.Instance.GetCombatChanceOfTwoLists(_assignedMinionAttack.icharacter.currentParty.icharacters, _area.exposedTiles[i].defenders.icharacters, out winRate, out loseRate);
+        //        if(winRate > highestWinRate) {
+        //            _currentlyAttackedLandmark = _area.exposedTiles[i];
+        //            highestWinRate = winRate;
+        //        }
+        //    }
+        //}
         if (_currentlyAttackedLandmark.defenders != null) {
-            _assignedMinionAttack.icharacter.currentParty.specificLocation.RemoveCharacterFromLocation(_assignedMinionAttack.icharacter.currentParty);
-            _currentlyAttackedLandmark.AddCharacterToLocation(_assignedMinionAttack.icharacter.currentParty);
+            //_assignedMinionAttack.icharacter.currentParty.specificLocation.RemoveCharacterFromLocation(_assignedMinionAttack.icharacter.currentParty);
+            //_currentlyAttackedLandmark.AddCharacterToLocation(_assignedMinionAttack.icharacter.currentParty);
             Combat combat = _assignedMinionAttack.icharacter.currentParty.CreateCombatWith(_currentlyAttackedLandmark.defenders);
             combat.Fight(() => AttackCombatResult(combat));
         } else {

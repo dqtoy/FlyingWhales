@@ -281,11 +281,13 @@ public class BaseLandmark : ILocation, IInteractable {
     #region Virtuals
     public virtual void Initialize() { }
     public virtual void DestroyLandmark() {
-        ObjectState ruined = landmarkObj.GetState("Ruined");
-        landmarkObj.ChangeState(ruined);
-        tileLocation.areaOfTile.CheckDeath();
-        if (tileLocation.areaOfTile.areaInvestigation != null) {
-            tileLocation.areaOfTile.areaInvestigation.OnDestroyLandmark(this);
+        if (!_landmarkObj.isRuined) {
+            ObjectState ruined = landmarkObj.GetState("Ruined");
+            landmarkObj.ChangeState(ruined);
+            tileLocation.areaOfTile.CheckDeath();
+            if (tileLocation.areaOfTile.areaInvestigation != null) {
+                tileLocation.areaOfTile.areaInvestigation.OnDestroyLandmark(this);
+            }
         }
         //RemoveListeners();
     }

@@ -638,7 +638,7 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Landmark Info")]
     [SerializeField] internal LandmarkInfoUI landmarkInfoUI;
-    public void ShowLandmarkInfo(BaseLandmark landmark) {
+    public void ShowLandmarkInfo(BaseLandmark landmark, int indexToggleToBeActivated = 0) {
         //HideMainUI();
         //if (factionInfoUI.isShowing) {
         //    factionInfoUI.HideMenu();
@@ -663,6 +663,7 @@ public class UIManager : MonoBehaviour {
         }
         landmarkInfoUI.SetData(landmark);
         landmarkInfoUI.OpenMenu();
+        landmarkInfoUI.UpdateInvestigation(indexToggleToBeActivated);
         landmark.CenterOnLandmark();
         //		playerActionsUI.ShowPlayerActionsUI ();
     }

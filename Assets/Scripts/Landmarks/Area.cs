@@ -634,4 +634,15 @@ public class Area {
         }
     }
     #endregion
+
+    #region Landmarks
+    public BaseLandmark GetFirstAliveExposedTile() {
+        for (int i = 0; i < exposedTiles.Count; i++) {
+            if (!exposedTiles[i].landmarkObj.isRuined) {
+                return exposedTiles[i];
+            }
+        }
+        return null;
+    }
+    #endregion
 }
