@@ -1079,7 +1079,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
             return;
         }
-        StartCorruptionAnimation();
+        //StartCorruptionAnimation();
         Messenger.Broadcast(Signals.TILE_LEFT_CLICKED, this);
         if (PlayerManager.Instance.isChoosingStartingTile) {
             return;
