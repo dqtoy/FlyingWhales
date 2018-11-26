@@ -73,9 +73,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     [Space(10)]
     [Header("Corruption")]
-    [SerializeField] private GameObject[] tendrils;
-    [SerializeField] private GameObject[] desertTendrils;
+    [SerializeField] private GameObject[] defaultCorruptionObjects;
     [SerializeField] private GameObject[] particleEffects;
+    [SerializeField] private TileSpriteCorruptionListDictionary tileCorruptionObjects;
 
     [Space(10)]
     [Header("Beaches")]
@@ -1079,7 +1079,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
             return;
         }
-        //StartCorruptionAnimation();
+        StartCorruptionAnimation();
         Messenger.Broadcast(Signals.TILE_LEFT_CLICKED, this);
         if (PlayerManager.Instance.isChoosingStartingTile) {
             return;
@@ -1341,22 +1341,34 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public void StartCorruptionAnimation() {
         GameObject tendril = null;
-        if (this.biomeType == BIOMES.DESERT && spriteRenderer.sprite.name.Contains("mountains")) {
-            tendril = desertTendrils[0];
-            //if (spriteRenderer.sprite.name.Contains("1")) {
-            //    tendril = desertTendrils[0];
-            //} else if (spriteRenderer.sprite.name.Contains("2")) {
-            //    tendril = desertTendrils[1];
-            //} else if (spriteRenderer.sprite.name.Contains("3")) {
-            //    tendril = desertTendrils[2];
-            //}
+        if (tileCorruptionObjects.ContainsKey(spriteRenderer.sprite)) {
+            List<GameObject> choices = tileCorruptionObjects[spriteRenderer.sprite];
+            tendril = choices[Random.Range(0, choices.Count)];
         } else {
-            tendril = tendrils[Random.Range(0, tendrils.Length)];
+            tendril = defaultCorruptionObjects[Random.Range(0, defaultCorruptionObjects.Length)];
         }
+        //if (this.biomeType == BIOMES.DESERT && spriteRenderer.sprite.name.Contains("mountains")) {
+        //    tendril = desertTendrils[0];
+        //    //if (spriteRenderer.sprite.name.Contains("1")) {
+        //    //    tendril = desertTendrils[0];
+        //    //} else if (spriteRenderer.sprite.name.Contains("2")) {
+        //    //    tendril = desertTendrils[1];
+        //    //} else if (spriteRenderer.sprite.name.Contains("3")) {
+        //    //    tendril = desertTendrils[2];
+        //    //}
+        //} else {
+        //    tendril = defaultCorruptionObjects[Random.Range(0, defaultCorruptionObjects.Length)];
+        //}
         _spawnedTendril = GameObject.Instantiate(tendril, biomeDetailsParent);
-        for (int i = 0; i < particleEffects.Length; i++) {
-            particleEffects[i].gameObject.SetActive(true);
+        SpriteRenderer[] srs = Utilities.GetComponentsInDirectChildren<SpriteRenderer>(_spawnedTendril);
+        for (int i = 0; i < srs.Length; i++) {
+            SpriteRenderer currRenderer = srs[i];
+            currRenderer.sortingLayerName = "Default";
+            currRenderer.sortingOrder = spriteRenderer.sortingOrder + 5;
         }
+        //for (int i = 0; i < particleEffects.Length; i++) {
+        //    particleEffects[i].gameObject.SetActive(true);
+        //}
     }
     public void StopCorruptionAnimation() {
         if(_spawnedTendril != null) {

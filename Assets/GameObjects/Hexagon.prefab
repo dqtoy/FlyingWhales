@@ -1597,17 +1597,43 @@ MonoBehaviour:
   structureAnimation: {fileID: 95793441165950988}
   minimapHexSprite: {fileID: 212000011571301836}
   biomeDetailsParent: {fileID: 4000010271148564}
-  tendrils:
-  - {fileID: 1333945586710530, guid: 8a952344c596b4a459ef55a9a53ccc8a, type: 2}
-  - {fileID: 1140917571844010, guid: 354120d1a043ff5408f1f5fa61268c30, type: 2}
-  - {fileID: 1257068715179384, guid: e4f030633cfd13a46a6acebc7b758c15, type: 2}
-  desertTendrils:
-  - {fileID: 1599636771382164, guid: 438da550191f77247b36fe20d6c1370b, type: 2}
-  - {fileID: 1107952052556648, guid: a09f7c5584cd37a4cb06ff08ba1ad725, type: 2}
-  - {fileID: 1451613633590294, guid: 2ed42c5eb12c90848bc1cdc80d27e9a6, type: 2}
+  defaultCorruptionObjects:
+  - {fileID: 1267288882204864, guid: c11ffea34223287429f1c2d6f08c9f4e, type: 2}
+  - {fileID: 1071620497060376, guid: fafcf6faa9c3b0449a80ddda96b66e91, type: 2}
+  - {fileID: 1845977768063954, guid: 2a628833045f89642af2da7f9aaafae0, type: 2}
   particleEffects:
   - {fileID: 1148778871623110}
   - {fileID: 1215992487288998}
+  tileCorruptionObjects:
+    m_keys:
+    - {fileID: 21300000, guid: 1a764932c2f82c441a16543fd10ada90, type: 3}
+    - {fileID: 21300000, guid: bddb2c3fe6bfe4144bbd409b8e3ad1b1, type: 3}
+    - {fileID: 21300000, guid: 14c656e1d5231ab44ab032113a5b2f1c, type: 3}
+    - {fileID: 21300000, guid: 7ccc4f9c430c8684697ba0114bb73c1a, type: 3}
+    - {fileID: 21300000, guid: d8ce950930d931148b19993b8dbc5db5, type: 3}
+    - {fileID: 21300000, guid: 81de0dee875bd824eb15883d7e6de36d, type: 3}
+    - {fileID: 21300000, guid: 588c63a6f0447f94da862e337b5ea31b, type: 3}
+    - {fileID: 21300000, guid: c1fd6c8ca4e1be1418a76340e4ce4b67, type: 3}
+    - {fileID: 21300000, guid: f6ce7ddca90b8f84695be209bb182b90, type: 3}
+    m_values:
+    - data:
+      - {fileID: 1599636771382164, guid: 438da550191f77247b36fe20d6c1370b, type: 2}
+    - data:
+      - {fileID: 1107952052556648, guid: a09f7c5584cd37a4cb06ff08ba1ad725, type: 2}
+    - data:
+      - {fileID: 1451613633590294, guid: 2ed42c5eb12c90848bc1cdc80d27e9a6, type: 2}
+    - data:
+      - {fileID: 1075584862366904, guid: 391428f9261bb0845a09191a938a81f8, type: 2}
+    - data:
+      - {fileID: 1756379372061600, guid: 0df10d995da1aac429bb3252cb4bca2e, type: 2}
+    - data:
+      - {fileID: 1723851568037068, guid: 9e5d43b5fb779924faebe7877223267c, type: 2}
+    - data:
+      - {fileID: 1770300644534106, guid: faba6cca469f42c45b1955b948180326, type: 2}
+    - data:
+      - {fileID: 1050082809870154, guid: b612125c99e859943b349c9b174b3b1c, type: 2}
+    - data:
+      - {fileID: 1925806453031780, guid: 4c66f4a3a39b2cd43a9cf5ea195c6f4c, type: 2}
   topLeftBeach: {fileID: 212865743258119026}
   leftBeach: {fileID: 212481725939569994}
   botLeftBeach: {fileID: 212064271762183792}
