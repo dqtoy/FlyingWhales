@@ -40,7 +40,8 @@ public class FactionEmblem : MonoBehaviour{
         if (faction == null) {
             this.gameObject.SetActive(false);
         } else {
-            if (forceShow || PlayerManager.Instance.player.intels.Contains(faction.factionIntel)) {
+            if (forceShow || 
+                (PlayerManager.Instance.player != null && PlayerManager.Instance.player.intels.Contains(faction.factionIntel))) {
                 //player has intel for this faction
                 emblemImage.sprite = faction.emblem;
                 this.gameObject.SetActive(true);
