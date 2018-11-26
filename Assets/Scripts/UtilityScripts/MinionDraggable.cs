@@ -41,7 +41,7 @@ public class MinionDraggable : DraggableItem {
             }
 
             if (customDropzone != null) {
-                customDropzone.OnDrop(_characterItem.gameObject);
+                customDropzone.OnDrop(_draggingObject.gameObject);
                 Destroy(_draggingObject.gameObject);
             } else {
                 CancelDrag();

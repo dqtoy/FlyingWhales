@@ -22,12 +22,16 @@ public class SlotItem : MonoBehaviour {
     public CustomDropZone dropZone;
     public SlotItemDraggableItem draggable;
 
+    [SerializeField] private string neededTypeStr;
+
+
     public int slotIndex { get; private set; }
 
     private string hoverInfo;
 
     public void SetNeededType(System.Type neededType) {
         this.neededType = neededType;
+        neededTypeStr = neededType.ToString();
     }
     public void SetSlotIndex(int index) {
         slotIndex = index;

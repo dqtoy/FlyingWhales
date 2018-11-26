@@ -18,11 +18,11 @@ public class LandmarkCharacterItem : PooledObject {
     public SlotItem slotItem;
 
 
-    private void Awake() {
-        if (slotItem != null) {
-            slotItem.SetNeededType(typeof(ICharacter));
-        }
-    }
+    //private void Awake() {
+    //    if (slotItem != null) {
+            
+    //    }
+    //}
 
     public void SetCharacter(ICharacter character, BaseLandmark landmark, bool isDefender = false) {
         this.character = character;
@@ -33,7 +33,13 @@ public class LandmarkCharacterItem : PooledObject {
         } else {
             slotItem.ClearSlot(true);
         }
-        slotItem.draggable.SetDraggable(false);
+        //if (_landmark.tileLocation.areaOfTile == null 
+        //    || _landmark.tileLocation.areaOfTile.id != PlayerManager.Instance.player.playerArea.id) {
+        //    slotItem.draggable.SetDraggable(false);
+        //} else {
+        //    slotItem.draggable.SetDraggable(true);
+        //}
+        
     }
     public void OnEnableSlotAction() {
         if (bgImage != null) {

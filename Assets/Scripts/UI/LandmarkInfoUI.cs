@@ -435,6 +435,7 @@ public class LandmarkInfoUI : UIMenu {
                 LandmarkCharacterItem currSlot = defenderSlots[i];
                 currSlot.SetCharacter(null, _activeLandmark, true);
                 currSlot.slotItem.dropZone.SetEnabledState(false);
+                currSlot.slotItem.draggable.SetDraggable(false);
             }
         } else {
             for (int i = 0; i < defenderSlots.Length; i++) {
@@ -442,6 +443,7 @@ public class LandmarkInfoUI : UIMenu {
                 ICharacter defender = _activeLandmark.defenders.icharacters.ElementAtOrDefault(i);
                 currSlot.SetCharacter(defender, _activeLandmark, true);
                 currSlot.slotItem.dropZone.SetEnabledState(false);
+                currSlot.slotItem.draggable.SetDraggable(false);
                 //defenderSlots[i].portrait.SetForceShowPortraitState(true);
             }
         }
@@ -631,7 +633,7 @@ public class LandmarkInfoUI : UIMenu {
         }
     }
     public void OnMinionDrop(GameObject go) {
-        PlayerCharacterItem minionItem = go.GetComponent<PlayerCharacterItem>();
+        PlayerCharacterItem minionItem = go.GetComponent<DragObject>().parentItem as PlayerCharacterItem;
         if(minionItem != null) {
             for (int i = 0; i < _assignedParty.Length; i++) {
                 if(_assignedParty[i] == minionItem.minion) {

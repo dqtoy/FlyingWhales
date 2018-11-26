@@ -61,6 +61,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private GameObject structureParentGO;
     [SerializeField] private SpriteRenderer mainStructure;
     [SerializeField] private SpriteRenderer structureTint;
+    [SerializeField] private Animator structureAnimation;
 
     [Space(10)]
     [Header("Minimap Objects")]
@@ -432,6 +433,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         structureTint.sprite = sprites.tintSprite;
         mainStructure.gameObject.SetActive(true);
         structureTint.gameObject.SetActive(true);
+        if (sprites.animation == null) {
+            structureAnimation.gameObject.SetActive(false);
+        } else {
+            structureAnimation.gameObject.SetActive(true);
+            structureAnimation.runtimeAnimatorController = sprites.animation;
+        }
     }
     public void HideLandmarkTileSprites() {
         mainStructure.gameObject.SetActive(false);
@@ -768,6 +775,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //} else {
         mainStructure.sortingOrder = sortingOrder + 2;
         structureTint.sortingOrder = sortingOrder + 3;
+        structureAnimation.gameObject.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 4;
         //}
     }
     internal SpriteRenderer ActivateBorder(HEXTILE_DIRECTION direction, Color color) {

@@ -103,8 +103,14 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 6b15ab4e0c664d94f906a2b783906619, type: 3}
   - {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
   - {fileID: 21300000, guid: 24721027853fdc643b1b4fe0c8c1d5cd, type: 3}
+  - {fileID: 21300000, guid: 73693bc5e1cc45e4fa3c5a9940527a1b, type: 3}
+  - {fileID: 21300000, guid: 11103371ec1406a4d890082ae331e6ac, type: 3}
+  - {fileID: 21300000, guid: b33478330d7d21b43a301e404f23c462, type: 3}
+  - {fileID: 21300000, guid: 2c62e84120580274a82d38c10c5d3c10, type: 3}
   - {fileID: 21300000, guid: f61b2142ebedad34682d4e8452e00507, type: 3}
   - {fileID: 21300000, guid: 97be908950d991c49b0092d3a14acceb, type: 3}
+  - {fileID: 21300000, guid: 0171fec404ee6ef4bb03719b04a1315f, type: 3}
+  - {fileID: 21300000, guid: 03533cffa60a6d64984a2289ce7122a7, type: 3}
   - {fileID: 21300000, guid: e05e2e554b638b14b85ab59342c8e0b0, type: 3}
   - {fileID: 21300000, guid: 1b9c2e3866c9dcc46ba88340a11eb721, type: 3}
   - {fileID: 21300000, guid: 897345c9564591c4697a148359e3dc3b, type: 3}
@@ -148,11 +154,21 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 85a0cd260bc3a304ea9c12fa4c06c78e, type: 3}
   - {fileID: 21300000, guid: 0cc55ad4160b82149815af8dd703dca4, type: 3}
   - {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
+  - {fileID: 21300000, guid: f2a6c3822290f35408a8cdf9d88cf95b, type: 3}
+  - {fileID: 21300000, guid: 8f0fea443fbc50648a81c43fddb808ce, type: 3}
+  - {fileID: 21300000, guid: acdf93d94a7cc274b9ce06b61ce89a62, type: 3}
   - {fileID: 21300000, guid: 92a121cdd7e46494e8802d75d1f0695b, type: 3}
+  - {fileID: 21300000, guid: 0856d6ffc6ee4d74fa139ea6dd68bf9a, type: 3}
+  - {fileID: 21300000, guid: c21f58726de070044b53d8c8f570ba01, type: 3}
+  - {fileID: 21300000, guid: 58fccbb421ef5c44ca47a4930e9e7e21, type: 3}
   - {fileID: 21300000, guid: 26a960b077921124b9e61433b11d623d, type: 3}
+  - {fileID: 21300000, guid: e527747dfdb61224f8f9470136569a19, type: 3}
   - {fileID: 21300000, guid: 488d014db3d2ddd48bc6467eea86b3d9, type: 3}
   - {fileID: 21300000, guid: bc0fdc68227150c488e1d5988e09871d, type: 3}
+  - {fileID: 21300000, guid: 6d57a01a591c1284f89c3a6c365d141a, type: 3}
   - {fileID: 21300000, guid: 971eeb3137932844281838463319e3ba, type: 3}
+  - {fileID: 21300000, guid: b9c8dea33367f3c4cba5afc934f006e0, type: 3}
+  - {fileID: 21300000, guid: 93fa75cde8a6b1e43829cb617d128fe5, type: 3}
   - {fileID: 21300000, guid: 8ed1ad880cfd34c4abb5cccc0c7f670a, type: 3}
   - {fileID: 21300000, guid: 0b1a6dfee21888942b79f0008084a2b8, type: 3}
   - {fileID: 21300000, guid: fd0b67965c7e8564bbde95f9d636c91f, type: 3}
@@ -172,6 +188,7 @@ SpriteAtlas:
   - {fileID: 21300064, guid: 56a2c57009ed96c41b97b19cc3d6b340, type: 3}
   - {fileID: 21300000, guid: 5a0610074b4ce4442a9cecc67b473644, type: 3}
   - {fileID: 21300084, guid: 301ddda5fde017644bab1ae01392d876, type: 3}
+  - {fileID: 21300000, guid: e25182124429402469751b740445d966, type: 3}
   - {fileID: 21300078, guid: 56a2c57009ed96c41b97b19cc3d6b340, type: 3}
   - {fileID: 21300086, guid: 301ddda5fde017644bab1ae01392d876, type: 3}
   - {fileID: 21300000, guid: c9cfd19b999de28429f009befe899765, type: 3}
@@ -459,8 +476,14 @@ SpriteAtlas:
   - human_town1
   - catacombs_snow
   - elven_lumberyard_colour
+  - monster lair_00013
+  - monster lair_00012
+  - monster lair_00011
+  - monster lair_00010
   - human_garrison
   - human_garrison
+  - monster lair_00015
+  - monster lair_00014
   - elven_lumberyard
   - pyramid_jungle
   - human_farm
@@ -504,11 +527,21 @@ SpriteAtlas:
   - elven_town2_colour
   - human_mine_iron_colour
   - human_mine_iron_colour
+  - monster lair_00000
+  - monster lair_00001
+  - monster lair_00002
   - pyramid_desert
+  - monster lair_00003
+  - monster lair_00004
+  - monster lair_00005
   - mountains_green2_cave
+  - monster lair_00006
   - snow2
   - demon_pens
+  - monster lair_00007
   - snow3
+  - monster lair_00008
+  - monster lair_00009
   - human_mine_iron
   - human_mine_iron
   - snow1
@@ -528,6 +561,7 @@ SpriteAtlas:
   - HumanStructuresRuined_5
   - KingdomColorOverlay
   - H_Capital_Base
+  - layered-assets-1-Recovered.psd_0000s_0000_lair-new
   - HumanStructuresRuined_12
   - H_Capital_Tint
   - Elixir_Collector11

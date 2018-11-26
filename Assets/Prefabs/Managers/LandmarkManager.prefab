@@ -74,6 +74,7 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: e51888dfb7058024aa3d4cc54418c6cd, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 0600000007000000
@@ -96,9 +97,11 @@ MonoBehaviour:
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 97be908950d991c49b0092d3a14acceb, type: 3}
       tintSprite: {fileID: 21300000, guid: 36bb9c87d942a0747a60b417b0cd79e2, type: 3}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: a35ec4294aacc5d45a5062db0a45d55d, type: 3}
       tintSprite: {fileID: 21300000, guid: 2676d8f62a64675408e6e640dfdf1a5c, type: 3}
+      animation: {fileID: 0}
     possibleSpawnPoints: 0600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}
@@ -118,9 +121,11 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 0b1a6dfee21888942b79f0008084a2b8, type: 3}
       tintSprite: {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
+      animation: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 0b1a6dfee21888942b79f0008084a2b8, type: 3}
       tintSprite: {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
@@ -141,9 +146,11 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 99997bff53b6d7042a70307d331e1d3f, type: 3}
       tintSprite: {fileID: 21300000, guid: 03b9f985c5fc3c74b8f56977df17c459, type: 3}
+      animation: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 99997bff53b6d7042a70307d331e1d3f, type: 3}
       tintSprite: {fileID: 21300000, guid: 03b9f985c5fc3c74b8f56977df17c459, type: 3}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
@@ -185,24 +192,33 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: fcf1353cbcd1f08478171177da44e53a, type: 3}
       tintSprite: {fileID: 21300000, guid: ab7ea309573094a46aefe91b9d263e85, type: 3}
+      animation: {fileID: 0}
     - mainSprite: {fileID: 21300000, guid: be64a1ec7b8543a49abda954ba47586a, type: 3}
       tintSprite: {fileID: 21300000, guid: 85a0cd260bc3a304ea9c12fa4c06c78e, type: 3}
+      animation: {fileID: 0}
     - mainSprite: {fileID: 21300000, guid: 3a45dae052a768e45b88c6a722e03f8d, type: 3}
       tintSprite: {fileID: 21300000, guid: 9f89551edef6d6743a2486dea9f60a21, type: 3}
+      animation: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 6b15ab4e0c664d94f906a2b783906619, type: 3}
       tintSprite: {fileID: 21300000, guid: d25eaa8dbe14ebb4e96d58aabf1b978f, type: 3}
+      animation: {fileID: 0}
     - mainSprite: {fileID: 21300000, guid: 0f6fa99d125714942961d8e54adf43b1, type: 3}
       tintSprite: {fileID: 21300000, guid: 59ba8e34d3c07e84784432fc9e1c45bb, type: 3}
+      animation: {fileID: 0}
     - mainSprite: {fileID: 21300000, guid: 56d159c582f9df74381d04ab1e663d9c, type: 3}
       tintSprite: {fileID: 21300000, guid: d17f26b8defdee446a0719c4630d3ef2, type: 3}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: fcf1353cbcd1f08478171177da44e53a, type: 3}
       tintSprite: {fileID: 21300000, guid: ab7ea309573094a46aefe91b9d263e85, type: 3}
+      animation: {fileID: 0}
     - mainSprite: {fileID: 21300000, guid: be64a1ec7b8543a49abda954ba47586a, type: 3}
       tintSprite: {fileID: 21300000, guid: 85a0cd260bc3a304ea9c12fa4c06c78e, type: 3}
+      animation: {fileID: 0}
     - mainSprite: {fileID: 21300000, guid: 3a45dae052a768e45b88c6a722e03f8d, type: 3}
       tintSprite: {fileID: 21300000, guid: 9f89551edef6d6743a2486dea9f60a21, type: 3}
+      animation: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}
@@ -223,12 +239,15 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 63d253e0c6b317d4395379a46b5ad2f2, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 63d253e0c6b317d4395379a46b5ad2f2, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 63d253e0c6b317d4395379a46b5ad2f2, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}
@@ -276,6 +295,7 @@ MonoBehaviour:
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 89966dd0fee7fab4abe474ffa1727756, type: 3}
       tintSprite: {fileID: 21300000, guid: 7828e545f69833d49a9b79ab03928852, type: 3}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
@@ -297,9 +317,11 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 897345c9564591c4697a148359e3dc3b, type: 3}
       tintSprite: {fileID: 21300000, guid: 455f303fb578b4841ae48fd16107beb2, type: 3}
+      animation: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 897345c9564591c4697a148359e3dc3b, type: 3}
       tintSprite: {fileID: 21300000, guid: 455f303fb578b4841ae48fd16107beb2, type: 3}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
@@ -321,9 +343,11 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 6b1f2c8a016859143b61f1cb6005250e, type: 3}
       tintSprite: {fileID: 21300000, guid: 9d1349113684fd348ab6dd814eaf5ae4, type: 3}
+      animation: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 6b1f2c8a016859143b61f1cb6005250e, type: 3}
       tintSprite: {fileID: 21300000, guid: 9d1349113684fd348ab6dd814eaf5ae4, type: 3}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
@@ -345,12 +369,15 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 3f5f539ec1c81814e972d6b0b4903932, type: 3}
       tintSprite: {fileID: 21300000, guid: 59980d3c50e9c3c4e8c869029a0ccc2e, type: 3}
+      animation: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 3f5f539ec1c81814e972d6b0b4903932, type: 3}
       tintSprite: {fileID: 21300000, guid: 59980d3c50e9c3c4e8c869029a0ccc2e, type: 3}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: e05e2e554b638b14b85ab59342c8e0b0, type: 3}
       tintSprite: {fileID: 21300000, guid: 24721027853fdc643b1b4fe0c8c1d5cd, type: 3}
+      animation: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}
@@ -372,9 +399,11 @@ MonoBehaviour:
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 25ad2f1445b44a44780267f577682fc6, type: 3}
       tintSprite: {fileID: 21300000, guid: 2509d8d1c25f61343a7e20c936950617, type: 3}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 8b326c962728b624abba32e9ef63bc02, type: 3}
       tintSprite: {fileID: 21300000, guid: 66e430c20799c3848917240b6ef2dd7c, type: 3}
+      animation: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}
@@ -393,14 +422,17 @@ MonoBehaviour:
       m_keys: 
       m_values: []
     neutralTileSprites:
-    - mainSprite: {fileID: 21300000, guid: 63d253e0c6b317d4395379a46b5ad2f2, type: 3}
+    - mainSprite: {fileID: 21300000, guid: e25182124429402469751b740445d966, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 9100000, guid: 5e52831c99093c9429a7012fe80475b7, type: 2}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 63d253e0c6b317d4395379a46b5ad2f2, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 63d253e0c6b317d4395379a46b5ad2f2, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}
@@ -421,12 +453,15 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}
@@ -447,12 +482,15 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 65cd2e8691df5aa408946fb5b873bdd3, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 65cd2e8691df5aa408946fb5b873bdd3, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 65cd2e8691df5aa408946fb5b873bdd3, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}
@@ -479,12 +517,15 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}
@@ -511,12 +552,15 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 568e996242fb9a84b9028d668e263ef3, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 568e996242fb9a84b9028d668e263ef3, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 568e996242fb9a84b9028d668e263ef3, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}
@@ -543,27 +587,35 @@ MonoBehaviour:
       - data:
         - mainSprite: {fileID: 21300000, guid: 6debf8113ebc504409044d47f4163ba5, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
       - data:
         - mainSprite: {fileID: 21300000, guid: 6debf8113ebc504409044d47f4163ba5, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
       - data:
         - mainSprite: {fileID: 21300000, guid: 6cb6c592c031ca945917b7754e0e1441, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
       - data:
         - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
       - data:
         - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 6debf8113ebc504409044d47f4163ba5, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 6debf8113ebc504409044d47f4163ba5, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 6debf8113ebc504409044d47f4163ba5, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}
@@ -590,24 +642,31 @@ MonoBehaviour:
       - data:
         - mainSprite: {fileID: 21300000, guid: 1b9c2e3866c9dcc46ba88340a11eb721, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
       - data:
         - mainSprite: {fileID: 21300000, guid: 92a121cdd7e46494e8802d75d1f0695b, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
       - data:
         - mainSprite: {fileID: 21300000, guid: 1b9c2e3866c9dcc46ba88340a11eb721, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
       - data:
         - mainSprite: {fileID: 21300000, guid: 1b9c2e3866c9dcc46ba88340a11eb721, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 92a121cdd7e46494e8802d75d1f0695b, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 92a121cdd7e46494e8802d75d1f0695b, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 92a121cdd7e46494e8802d75d1f0695b, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}
@@ -634,12 +693,15 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 3bc5ae8edcf5dfc4ca9f51fdc0a28946, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 3bc5ae8edcf5dfc4ca9f51fdc0a28946, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 3bc5ae8edcf5dfc4ca9f51fdc0a28946, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}
@@ -666,18 +728,24 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 1fbda9d0786a8e04caafa19bd1606c66, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     - mainSprite: {fileID: 21300000, guid: 4aaa23b9987451d4e895396f62c8683e, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 1fbda9d0786a8e04caafa19bd1606c66, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     - mainSprite: {fileID: 21300000, guid: 4aaa23b9987451d4e895396f62c8683e, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 1fbda9d0786a8e04caafa19bd1606c66, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     - mainSprite: {fileID: 21300000, guid: 4aaa23b9987451d4e895396f62c8683e, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}
@@ -704,15 +772,19 @@ MonoBehaviour:
       - data:
         - mainSprite: {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}
@@ -739,47 +811,65 @@ MonoBehaviour:
       - data:
         - mainSprite: {fileID: 21300000, guid: 98dbae7ea4933304e99ce222fa122a1c, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: 26a960b077921124b9e61433b11d623d, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: a41a24867a6731e4f9bf372de50136f4, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
       - data:
         - mainSprite: {fileID: 21300000, guid: 98dbae7ea4933304e99ce222fa122a1c, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: 26a960b077921124b9e61433b11d623d, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: a41a24867a6731e4f9bf372de50136f4, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
       - data:
         - mainSprite: {fileID: 21300000, guid: f0bb285e50b7c2e4ba3d8b9df4663978, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: a71eb5f8bfc5e6d45922bd4c922cee98, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: 6899b2833b4dd2e4ab31a5f2361aea7b, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
       - data:
         - mainSprite: {fileID: 21300000, guid: f0bb285e50b7c2e4ba3d8b9df4663978, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: a71eb5f8bfc5e6d45922bd4c922cee98, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: 6899b2833b4dd2e4ab31a5f2361aea7b, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
       - data:
         - mainSprite: {fileID: 21300000, guid: 671a2939fda30b34898a8299cebcfcd7, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: dce980df86557994483727bab006f16d, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: acc889bc0bb3df849a1a42ac1261b064, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 98dbae7ea4933304e99ce222fa122a1c, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 98dbae7ea4933304e99ce222fa122a1c, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 98dbae7ea4933304e99ce222fa122a1c, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}
@@ -806,18 +896,23 @@ MonoBehaviour:
       - data:
         - mainSprite: {fileID: 21300000, guid: 3c2c143b0f889194a91526a8068444c3, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
       - data:
         - mainSprite: {fileID: 21300000, guid: 3c2c143b0f889194a91526a8068444c3, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 3c2c143b0f889194a91526a8068444c3, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 3c2c143b0f889194a91526a8068444c3, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 3c2c143b0f889194a91526a8068444c3, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}
@@ -844,12 +939,15 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: c9cfd19b999de28429f009befe899765, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: c9cfd19b999de28429f009befe899765, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: c9cfd19b999de28429f009befe899765, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}
@@ -890,6 +988,7 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: bc0fdc68227150c488e1d5988e09871d, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
@@ -912,6 +1011,7 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: bc0fdc68227150c488e1d5988e09871d, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
@@ -934,6 +1034,7 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: bc0fdc68227150c488e1d5988e09871d, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
@@ -956,6 +1057,7 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: bc0fdc68227150c488e1d5988e09871d, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
@@ -998,38 +1100,53 @@ MonoBehaviour:
       - data:
         - mainSprite: {fileID: 21300000, guid: 98dbae7ea4933304e99ce222fa122a1c, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: 26a960b077921124b9e61433b11d623d, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: a41a24867a6731e4f9bf372de50136f4, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
       - data:
         - mainSprite: {fileID: 21300000, guid: 671a2939fda30b34898a8299cebcfcd7, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: dce980df86557994483727bab006f16d, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: acc889bc0bb3df849a1a42ac1261b064, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
       - data:
         - mainSprite: {fileID: 21300000, guid: f0bb285e50b7c2e4ba3d8b9df4663978, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: a71eb5f8bfc5e6d45922bd4c922cee98, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: 6899b2833b4dd2e4ab31a5f2361aea7b, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
       - data:
         - mainSprite: {fileID: 21300000, guid: f0bb285e50b7c2e4ba3d8b9df4663978, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: a71eb5f8bfc5e6d45922bd4c922cee98, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: 6899b2833b4dd2e4ab31a5f2361aea7b, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
       - data:
         - mainSprite: {fileID: 21300000, guid: 98dbae7ea4933304e99ce222fa122a1c, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: 26a960b077921124b9e61433b11d623d, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: a41a24867a6731e4f9bf372de50136f4, type: 3}
           tintSprite: {fileID: 0}
+          animation: {fileID: 0}
     neutralTileSprites: []
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
@@ -1053,6 +1170,7 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
@@ -1073,8 +1191,9 @@ MonoBehaviour:
       m_keys: 
       m_values: []
     neutralTileSprites:
-    - mainSprite: {fileID: 21300000, guid: 63d253e0c6b317d4395379a46b5ad2f2, type: 3}
+    - mainSprite: {fileID: 21300000, guid: e25182124429402469751b740445d966, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 9100000, guid: 5e52831c99093c9429a7012fe80475b7, type: 2}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
@@ -1097,6 +1216,7 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 1b9c2e3866c9dcc46ba88340a11eb721, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
@@ -1119,6 +1239,7 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: bc0fdc68227150c488e1d5988e09871d, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
@@ -1141,6 +1262,7 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
@@ -1163,6 +1285,7 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000
@@ -1185,6 +1308,7 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
       tintSprite: {fileID: 0}
+      animation: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 01000000020000000600000007000000

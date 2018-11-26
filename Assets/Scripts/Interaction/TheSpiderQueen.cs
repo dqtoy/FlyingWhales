@@ -156,7 +156,7 @@ public class TheSpiderQueen : Interaction {
 
         //force spawned army to raid target
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
-        state.chosenOption.assignedUnit.party.iactionData.AssignAction(characterAction, landmark.landmarkObj);
+        //state.chosenOption.assignedUnit.party.iactionData.AssignAction(characterAction, landmark.landmarkObj);
     }
     private void AttackLocationEffect(InteractionState state) {
         

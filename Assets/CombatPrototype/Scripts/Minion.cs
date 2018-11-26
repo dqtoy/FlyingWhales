@@ -58,9 +58,9 @@ public class Minion : IUnit {
     //public string strType {
     //    get { return _strType; }
     //}
-    public Party party {
-        get { return icharacter.ownParty; }
-    }
+    //public Party party {
+    //    get { return icharacter.ownParty; }
+    //}
     #endregion
 
     public Minion(ICharacter icharacter) {

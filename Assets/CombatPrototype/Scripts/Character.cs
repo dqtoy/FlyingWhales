@@ -6,7 +6,7 @@ using System.IO;
 using System;
 
 namespace ECS {
-    public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
+    public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit {
         public delegate void OnCharacterDeath();
         public OnCharacterDeath onCharacterDeath;
 
