@@ -229,14 +229,14 @@ public class LandmarkInvestigation {
         //GameManager.Instance.SetPausedState(true);
         List<Interaction> choices = _landmark.currentInteractions;
         Interaction chosenInteraction = choices[UnityEngine.Random.Range(0, choices.Count)];
-        chosenInteraction.CancelFirstTimeOut();
+        //chosenInteraction.CancelFirstTimeOut();
         chosenInteraction.ScheduleSecondTimeOut();
         return chosenInteraction;
         //Popup interaction
     }
     private Interaction GetNothingHappenedInteraction() {
         Interaction chosenInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.NOTHING_HAPPENED, _landmark);
-        chosenInteraction.CancelFirstTimeOut();
+        //chosenInteraction.CancelFirstTimeOut();
         chosenInteraction.ScheduleSecondTimeOut();
         return chosenInteraction;
     }

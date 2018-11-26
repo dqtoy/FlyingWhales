@@ -29,6 +29,7 @@ namespace ECS {
         protected CharacterClass _characterClass;
         protected RaceSetting _raceSetting;
         protected CharacterRole _role;
+        protected Job _job;
         protected Faction _faction;
         protected CharacterParty _ownParty;
         protected CharacterParty _currentParty;
@@ -147,6 +148,9 @@ namespace ECS {
         }
         public CharacterRole role {
             get { return _role; }
+        }
+        public Job job {
+            get { return _job; }
         }
         public Faction faction {
             get { return _faction; }
@@ -406,8 +410,9 @@ namespace ECS {
 
         public Character(string className, RACE race, GENDER gender) : this() {
             _id = Utilities.SetID(this);
-            _characterClass = CharacterManager.Instance.classesDictionary[className].CreateNewCopy();
+            //_characterClass = CharacterManager.Instance.classesDictionary[className].CreateNewCopy();
             _raceSetting = RaceManager.Instance.racesDictionary[race.ToString()].CreateNewCopy();
+            AssignClass(CharacterManager.Instance.classesDictionary[className]);
             _gender = gender;
             _name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
             if (this is CharacterArmyUnit) {
@@ -440,8 +445,9 @@ namespace ECS {
         }
         public Character(CharacterSaveData data) : this() {
             _id = Utilities.SetID(this, data.id);
-            _characterClass = CharacterManager.Instance.classesDictionary[data.className].CreateNewCopy();
+            //_characterClass = CharacterManager.Instance.classesDictionary[data.className].CreateNewCopy();
             _raceSetting = RaceManager.Instance.racesDictionary[data.race.ToString()].CreateNewCopy();
+            AssignClass(CharacterManager.Instance.classesDictionary[data.className]);
             _gender = data.gender;
             _name = data.name;
             //LoadRelationships(data.relationshipsData);
@@ -1377,8 +1383,41 @@ namespace ECS {
 
         #region Character Class
         public void AssignClass(CharacterClass charClass) {
-            _characterClass = charClass;
+            _characterClass = charClass.CreateNewCopy();
+            AssignJob(_characterClass.jobType);
         }
+        #endregion
+        private void AssignJob(JOB jobType) {
+            switch (jobType) {
+                case JOB.SPY:
+                _job = new Spy(this);
+                break;
+                case JOB.RAIDER:
+                _job = new Raider(this);
+                break;
+                case JOB.INSTIGATOR:
+                _job = new Instigator(this);
+                break;
+                case JOB.EXPLORER:
+                _job = new Explorer(this);
+                break;
+                case JOB.DISCOURAGER:
+                _job = new Discourager(this);
+                break;
+                case JOB.DIPLOMAT:
+                _job = new Diplomat(this);
+                break;
+                case JOB.RECRUITER:
+                _job = new Recruiter(this);
+                break;
+                default:
+                _job = new Job(this, JOB.NONE);
+                break;
+            }
+            _job.OnAssignJob();
+        }
+        #region Job
+        
         #endregion
 
         #region Character Tags
@@ -1764,7 +1803,8 @@ namespace ECS {
             //TODO: Change data as needed
             string previousClassName = _characterClass.className;
             CharacterClass charClass = CharacterManager.Instance.classesDictionary[className];
-            _characterClass = charClass.CreateNewCopy();
+            AssignClass(charClass);
+            //_characterClass = charClass.CreateNewCopy();
             OnCharacterClassChange();
 
 #if !WORLD_CREATION_TOOL
@@ -2890,6 +2930,7 @@ namespace ECS {
             _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.hoursPerDay + 1);
         }
         public void DailyInteractionGeneration() {
+            DefaultAllExistingInteractions();
             if (_currentInteractionTick == GameManager.Instance.hour) {
                 GenerateDailyInteraction();
                 SetDailyInteractionGenerationTick();
@@ -2918,6 +2959,14 @@ namespace ECS {
                 interactionLog += "\nDid not create new event because of event trigger weights";
             }
             Debug.Log(interactionLog);
+        }
+        private void DefaultAllExistingInteractions() {
+            for (int i = 0; i < _currentInteractions.Count; i++) {
+                if (!_currentInteractions[i].hasActivatedTimeOut) {
+                    _currentInteractions[i].TimedOutRunDefault();
+                    i--;
+                }
+            }
         }
         public Interaction GetInteractionOfType(INTERACTION_TYPE type) {
             for (int i = 0; i < _currentInteractions.Count; i++) {

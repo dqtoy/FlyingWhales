@@ -17,10 +17,10 @@ public class Garrison : StructureObj {
     }
     public override void StartDayAction() {
         ReplenishDefenderUnits();
-        ArmyTraining();
-        ArmyMobilize();
-        ArmyAttacks();
         base.StartDayAction();
+        //ArmyTraining();
+        //ArmyMobilize();
+        //ArmyAttacks();
     }
     #endregion
 

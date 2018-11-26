@@ -135,28 +135,25 @@ public class AreaInvestigation {
     }
     #region Explore
     public void ExploreArea() {
-
         if (_assignedMinion == null) {
             return;
         }
-        //if (_area.landmarkObj.isRuined) {
-        //    return;
-        //}
         if (!_area.hasBeenInspected) {
             _area.SetHasBeenInspected(true);
         }
-        //_area.SetIsBeingInspected(true);
 
-        _duration = 30;
-        _currentTick = 0;
-        Messenger.AddListener(Signals.HOUR_STARTED, OnExploreTick);
-        if (_currentlyExploredLandmark != null) {
-            _currentlyExploredLandmark.landmarkVisual.StopInteractionTimer();
-            _currentlyExploredLandmark.landmarkVisual.HideInteractionTimer();
-        }
-        _area.coreTile.landmarkOnTile.landmarkVisual.SetAndStartInteractionTimer(_duration);
-        _area.coreTile.landmarkOnTile.landmarkVisual.ShowNoInteractionForeground();
-        _area.coreTile.landmarkOnTile.landmarkVisual.ShowInteractionTimer();
+        Character character = _assignedMinion.icharacter as Character;
+        character.job.StartJobAction();
+        //_duration = 30;
+        //_currentTick = 0;
+        //Messenger.AddListener(Signals.HOUR_STARTED, OnExploreTick);
+        //if (_currentlyExploredLandmark != null) {
+        //    _currentlyExploredLandmark.landmarkVisual.StopInteractionTimer();
+        //    _currentlyExploredLandmark.landmarkVisual.HideInteractionTimer();
+        //}
+        //_area.coreTile.landmarkOnTile.landmarkVisual.SetAndStartInteractionTimer(_duration);
+        //_area.coreTile.landmarkOnTile.landmarkVisual.ShowNoInteractionForeground();
+        //_area.coreTile.landmarkOnTile.landmarkVisual.ShowInteractionTimer();
     }
     public void UnexploreLandmark() {
         //if (_area.isBeingInspected) {
@@ -221,7 +218,7 @@ public class AreaInvestigation {
     }
     private Interaction GetRandomInteraction(List<Interaction> choices) {
         Interaction chosenInteraction = choices[UnityEngine.Random.Range(0, choices.Count)];
-        chosenInteraction.CancelFirstTimeOut();
+        //chosenInteraction.CancelFirstTimeOut();
         chosenInteraction.ScheduleSecondTimeOut();
         return chosenInteraction;
     }

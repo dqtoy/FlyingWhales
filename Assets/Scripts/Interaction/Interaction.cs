@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using ECS;
 
@@ -14,12 +15,14 @@ public class Interaction {
     //protected InteractionItem _interactionItem;
     protected bool _isActivated;
     protected bool _isDone;
-    protected bool _isFirstTimeOutCancelled;
+    protected bool _hasActivatedTimeOut;
     protected bool _isSecondTimeOutCancelled;
     protected InteractionState _previousState;
     protected InteractionState _currentState;
     protected Minion _explorerMinion;
     protected Character _characterInvolved;
+    protected Action _endInteractionAction;
+    protected JOB[] _jobFilter;
 
     private bool _hasUsedBaseCreateStates;
 
@@ -56,16 +59,24 @@ public class Interaction {
     public bool isActivated {
         get { return _isActivated; }
     }
+    public bool hasActivatedTimeOut {
+        get { return _hasActivatedTimeOut; }
+    }
+    public JOB[] jobFilter {
+        get { return _jobFilter; }
+    }
     #endregion
     public Interaction(IInteractable interactable, INTERACTION_TYPE type, int timeOutTicks) {
         _id = Utilities.SetID(this);
         _type = type;
         _interactable = interactable;
         _timeOutTicks = timeOutTicks;
-        _isFirstTimeOutCancelled = false;
+        //_isFirstTimeOutCancelled = false;
+        _hasActivatedTimeOut = false;
         _isSecondTimeOutCancelled = false;
         _hasUsedBaseCreateStates = false;
         _states = new Dictionary<string, InteractionState>();
+        _jobFilter = new JOB[] { JOB.NONE };
         //Debug.Log("Created new interaction " + type.ToString() + " at " + interactable.name);
     }
 
@@ -73,7 +84,7 @@ public class Interaction {
     public virtual void Initialize() {
         //SetCharacterInvolved(characterInvolved);
         CreateStates();
-        ScheduleFirstTimeOut();
+        //ScheduleFirstTimeOut();
     }
     public virtual void CreateStates() {
     }
@@ -85,8 +96,16 @@ public class Interaction {
         }
         _interactable.RemoveInteraction(this);
         InteractionUI.Instance.HideInteractionUI();
+        if(_endInteractionAction != null) {
+            _endInteractionAction();
+            _endInteractionAction = null;
+        }
     }
-    public virtual void OnInteractionActive() { } //this is called when the player clicks the "exclamation point" button and this interaction was chosen
+    public virtual void OnInteractionActive() {
+        BaseLandmark landmark = interactable as BaseLandmark;
+        landmark.landmarkVisual.StopInteractionTimer();
+        landmark.landmarkVisual.HideInteractionTimer();
+    } //this is called when the player clicks the "exclamation point" button and this interaction was chosen
     #endregion
 
     #region Utilities
@@ -110,23 +129,32 @@ public class Interaction {
         //}
         Messenger.Broadcast(Signals.CHANGED_ACTIVATED_STATE, this);
     }
-    public void CancelFirstTimeOut() {
-        _isFirstTimeOutCancelled = true;
-    }
+    //public void CancelFirstTimeOut() {
+    //    _isFirstTimeOutCancelled = true;
+    //}
     public void CancelSecondTimeOut() {
         _isSecondTimeOutCancelled = true;
     }
-    public void ScheduleFirstTimeOut() {
-        GameDate timeOutDate = GameManager.Instance.Today();
-        timeOutDate.AddHours(_timeOutTicks);
-        _timeDate = timeOutDate;
-        SchedulingManager.Instance.AddEntry(_timeDate, () => FirstTimeOut());
-    }
+    //public void ScheduleFirstTimeOut() {
+    //    GameDate timeOutDate = GameManager.Instance.Today();
+    //    timeOutDate.AddHours(_timeOutTicks);
+    //    _timeDate = timeOutDate;
+    //    SchedulingManager.Instance.AddEntry(_timeDate, () => FirstTimeOut());
+    //}
     public void ScheduleSecondTimeOut() {
+        _hasActivatedTimeOut = true;
         GameDate timeOutDate = GameManager.Instance.Today();
         timeOutDate.AddHours(secondTimeOutTicks);
         _timeDate = timeOutDate;
         SchedulingManager.Instance.AddEntry(_timeDate, () => SecondTimeOut());
+
+        BaseLandmark landmark = interactable as BaseLandmark;
+        landmark.landmarkVisual.SetAndStartInteractionTimer(secondTimeOutTicks);
+        landmark.landmarkVisual.ShowInteractionForeground();
+        landmark.landmarkVisual.ShowInteractionTimer();
+    }
+    public void SetEndInteractionAction(Action action) {
+        _endInteractionAction = action;
     }
     //public void SetInteractionItem(InteractionItem interactionItem) {
     //    _interactionItem = interactionItem;
@@ -139,18 +167,21 @@ public class Interaction {
     //    int remainingTicks = GameManager.Instance.GetTicksDifferenceOfTwoDates(GameManager.Instance.Today(), stateFrom.timeDate);
     //    option.duration = remainingTicks;
     //}
-    protected void FirstTimeOut() {
-        if (!_isFirstTimeOutCancelled) {
-            TimedOutRunDefault();
-        }
-    }
+    //protected void FirstTimeOut() {
+    //    if (!_isFirstTimeOutCancelled) {
+    //        TimedOutRunDefault();
+    //    }
+    //}
     protected void SecondTimeOut() {
         if (!_isSecondTimeOutCancelled) {
             TimedOutRunDefault();
-            _interactable.specificLocation.tileLocation.areaOfTile.areaInvestigation.ExploreArea();
+            BaseLandmark landmark = interactable as BaseLandmark;
+            landmark.landmarkVisual.StopInteractionTimer();
+            landmark.landmarkVisual.HideInteractionTimer();
+            //_interactable.specificLocation.tileLocation.areaOfTile.areaInvestigation.ExploreArea();
         }
     }
-    protected void TimedOutRunDefault() {
+    public void TimedOutRunDefault() {
         if(_currentState.defaultOption == null) {
             return;
         }
@@ -180,6 +211,22 @@ public class Interaction {
                 if(allowedClassNames[i].ToLower() == this.explorerMinion.icharacter.characterClass.className.ToLower()) {
                     return true;
                 }
+            }
+        }
+        return false;
+    }
+    public bool DoesJobTypeFitsJobFilter(Character character) {
+        for (int i = 0; i < _jobFilter.Length; i++) {
+            if(character.job.jobType == _jobFilter[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool DoesJobTypeFitsJobFilter(JOB jobType) {
+        for (int i = 0; i < _jobFilter.Length; i++) {
+            if (jobType == _jobFilter[i]) {
+                return true;
             }
         }
         return false;

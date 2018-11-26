@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using ECS;
 
 public class Area {
 
@@ -21,6 +22,10 @@ public class Area {
     public LocationIntel locationIntel { get; private set; }
     public List<BaseLandmark> exposedTiles { get; private set; }
     public List<BaseLandmark> unexposedTiles { get; private set; }
+    public List<Character> areaResidents {
+        //Make this more performant, move resident list here
+        get { return GetAreaResidents(); }
+    }
     public bool isHighlighted { get; private set; }
     public bool hasBeenInspected { get; private set; }
     public bool areAllLandmarksDead { get; private set; }
@@ -452,14 +457,14 @@ public class Area {
     }
     public void SetHasBeenInspected(bool state) {
         hasBeenInspected = state;
-        if (state) {
-            if (owner != null && owner.id != PlayerManager.Instance.player.playerFaction.id) {
-                PlayerManager.Instance.player.AddIntel(owner.factionIntel);
-            }
-            if (id != PlayerManager.Instance.player.playerArea.id) {
-                PlayerManager.Instance.player.AddIntel(locationIntel);
-            }
-        }
+        //if (state) {
+        //    if (owner != null && owner.id != PlayerManager.Instance.player.playerFaction.id) {
+        //        PlayerManager.Instance.player.AddIntel(owner.factionIntel);
+        //    }
+        //    if (id != PlayerManager.Instance.player.playerArea.id) {
+        //        PlayerManager.Instance.player.AddIntel(locationIntel);
+        //    }
+        //}
     }
     public void CheckDeath() {
         for (int i = 0; i < tiles.Count; i++) {
@@ -643,6 +648,35 @@ public class Area {
             }
         }
         return null;
+    }
+    #endregion
+
+    #region Interactions
+    public List<Interaction> GetInteractionsOfJob(JOB jobType) {
+        List<Interaction> choices = new List<Interaction>();
+        List<BaseLandmark> landmarkCandidates = this.landmarks;
+        for (int i = 0; i < landmarkCandidates.Count; i++) {
+            for (int j = 0; j < landmarkCandidates[i].currentInteractions.Count; j++) {
+                Interaction interaction = landmarkCandidates[i].currentInteractions[j];
+                if (interaction.DoesJobTypeFitsJobFilter(jobType)) {
+                    choices.Add(interaction);
+                }
+            }
+        }
+        return choices;
+    }
+    public List<Character> GetAreaResidents() {
+        List<Character> choices = new List<Character>();
+        List<BaseLandmark> landmarkCandidates = this.landmarks;
+        for (int i = 0; i < landmarkCandidates.Count; i++) {
+            for (int j = 0; j < landmarkCandidates[i].charactersWithHomeOnLandmark.Count; j++) {
+                Character character = landmarkCandidates[i].charactersWithHomeOnLandmark[j] as Character;
+                if (character.specificLocation.tileLocation.areaOfTile == this) {
+                    choices.Add(character);
+                }
+            }
+        }
+        return choices;
     }
     #endregion
 }

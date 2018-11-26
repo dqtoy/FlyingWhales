@@ -134,6 +134,7 @@ public class StructureObj : IObject {
     public virtual void StartDayAction() {
         //GenerateDailyInteraction();
     }
+
     public virtual void GenerateInitialDefenders() {
         if (_objectLocation.owner == null) {
             return;
@@ -412,9 +413,18 @@ public class StructureObj : IObject {
         _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.hoursPerDay + 1);
     }
     private void DailyInteractionGeneration() {
+        DefaultAllExistingInteractions();
         if(_currentInteractionTick == GameManager.Instance.hour) {
             GenerateDailyInteraction();
             SetDailyInteractionGenerationTick();
+        }
+    }
+    private void DefaultAllExistingInteractions() {
+        for (int i = 0; i < _objectLocation.currentInteractions.Count; i++) {
+            if (!_objectLocation.currentInteractions[i].hasActivatedTimeOut) {
+                _objectLocation.currentInteractions[i].TimedOutRunDefault();
+                i--;
+            }
         }
     }
     #endregion

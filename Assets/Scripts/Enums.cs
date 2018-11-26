@@ -1065,3 +1065,13 @@ public enum TRAIT_REQUIREMENT_TARGET {
     SELF_ALL_IN_COMBAT,
     SELF_ALL_ENEMIES,
 }
+public enum JOB {
+    NONE,
+    INSTIGATOR,
+    EXPLORER,
+    DIPLOMAT,
+    RECRUITER,
+    RAIDER,
+    SPY,
+    DISCOURAGER,
+}

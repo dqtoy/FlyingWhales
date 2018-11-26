@@ -21,6 +21,7 @@ namespace ECS {
         [SerializeField] private string[] _traitNames;
         [SerializeField] private ACTION_TYPE _workActionType;
         [SerializeField] private CHARACTER_ROLE _roleType;
+        [SerializeField] private JOB _jobType;
 
         //private int _dodgeRate;
         //private int _parryRate;
@@ -65,6 +66,9 @@ namespace ECS {
         }
         public CHARACTER_ROLE roleType {
             get { return _roleType; }
+        }
+        public JOB jobType {
+            get { return _jobType; }
         }
         public string skillName {
             get { return _skillName; }

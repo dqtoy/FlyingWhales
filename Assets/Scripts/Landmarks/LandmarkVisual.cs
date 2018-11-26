@@ -153,6 +153,9 @@ public class LandmarkVisual : MonoBehaviour {
     public void ShowNoInteractionForeground() {
         interactionTimer.ShowNoInteractionForeground();
     }
+    public void SetTimerPauseState(bool state) {
+        interactionTimer.SetPauseState(state);
+    }
     public void OnClickInteractionButton() {
         Messenger.Broadcast(Signals.CLICKED_INTERACTION_BUTTON, _landmark);
     }
