@@ -1296,11 +1296,17 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     public void AddInteraction(Interaction interaction) {
         _currentInteractions.Add(interaction);
+        if (interaction.characterInvolved != null) {
+            interaction.characterInvolved.currentInteractions.Add(interaction);
+        }
         interaction.Initialize();
         //Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
     }
     public void RemoveInteraction(Interaction interaction) {
         if (_currentInteractions.Remove(interaction)) {
+            if (interaction.characterInvolved != null) {
+                interaction.characterInvolved.currentInteractions.Remove(interaction);
+            }
             //Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
         }
     }

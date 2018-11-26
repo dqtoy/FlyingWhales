@@ -2680,17 +2680,17 @@ namespace ECS {
             uiData.UpdateData(this);
         }
         public void AddInteraction(Interaction interaction) {
-            _currentInteractions.Add(interaction);
+            //_currentInteractions.Add(interaction);
             interaction.SetCharacterInvolved(this);
             interaction.interactable.AddInteraction(interaction);
             //interaction.Initialize(this);
             //Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
         }
         public void RemoveInteraction(Interaction interaction) {
-            if (_currentInteractions.Remove(interaction)) {
-                interaction.interactable.RemoveInteraction(interaction);
-                //Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
-            }
+            //if (_currentInteractions.Remove(interaction)) {
+            interaction.interactable.RemoveInteraction(interaction);
+            //Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
+            //}
         }
         #endregion
 

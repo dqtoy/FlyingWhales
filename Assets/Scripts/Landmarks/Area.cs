@@ -24,9 +24,13 @@ public class Area {
     public AreaInvestigation areaInvestigation { get; private set; }
     public int maxDefenderGroups { get; private set; }
     public int initialDefenderGroups { get; private set; }
-    public int initialDefendersPerGroup { get; private set; }
+    public int minInitialDefendersPerGroup { get; private set; }
+    public int maxInitialDefendersPerGroup { get; private set; }
     public int supplyCapacity { get; private set; }
     public List<Party> defenderGroups { get; private set; }
+    public int initialDefenderLevel { get; private set; }
+    public List<RACE> possibleOccupants { get; private set; }
+    public RACE defaultRace { get; private set; }
 
     private List<HexTile> outerTiles;
     private List<SpriteRenderer> outline;
@@ -56,7 +60,6 @@ public class Area {
         SetName(data.areaName);
         tiles = new List<HexTile>();
         residents = new List<ICharacter>();
-
         exposedTiles = new List<BaseLandmark>();
         unexposedTiles = new List<BaseLandmark>();
         areaColor = data.areaColor;
@@ -69,13 +72,34 @@ public class Area {
         SetCoreTile(GridMap.Instance.GetHexTile(data.coreTileID));
         StartSupplyLine();
 #endif
+        SetMaxDefenderGroups(data.maxDefenderGroups);
+        SetInitialDefenderGroups(data.initialDefenderGroups);
+        SetMinInitialDefendersPerGroup(data.minInitialDefendersPerGroup);
+        SetMaxInitialDefendersPerGroup(data.maxInitialDefendersPerGroup);
+        SetSupplyCapacity(data.supplyCapacity);
+        possibleOccupants = new List<RACE>();
+        if (data.possibleOccupants != null) {
+            possibleOccupants.AddRange(data.possibleOccupants);
+        }
+        SetDefaultRace(data.defaultRace);
         AddTile(Utilities.GetTilesFromIDs(data.tileData)); //exposed tiles will be determined after loading landmarks at MapGeneration
         UpdateBorderColors();
     }
 
+    #region Area Details
     public void SetName(string name) {
         this.name = name;
     }
+    public void SetDefaultRace(RACE race) {
+        defaultRace = race;
+    }
+    public void AddPossibleOccupant(RACE race) {
+        possibleOccupants.Add(race);
+    }
+    public void RemovePossibleOccupant(RACE race) {
+        possibleOccupants.Remove(race);
+    }
+    #endregion
 
     #region Tile Management
     public void SetCoreTile(HexTile tile) {
@@ -613,8 +637,14 @@ public class Area {
     public void SetInitialDefenderGroups(int initialDefenderGroups) {
         this.initialDefenderGroups = initialDefenderGroups;
     }
-    public void SetInitialDefendersPerGroup(int initialDefendersPerGroup) {
-        this.initialDefendersPerGroup = initialDefendersPerGroup;
+    public void SetMinInitialDefendersPerGroup(int minInitialDefendersPerGroup) {
+        this.minInitialDefendersPerGroup = minInitialDefendersPerGroup;
+    }
+    public void SetMaxInitialDefendersPerGroup(int maxInitialDefendersPerGroup) {
+        this.maxInitialDefendersPerGroup = maxInitialDefendersPerGroup;
+    }
+    public void SetInitialDefenderLevel(int initialDefenderLevel) {
+        this.initialDefenderLevel = initialDefenderLevel;
     }
     #endregion
 }
