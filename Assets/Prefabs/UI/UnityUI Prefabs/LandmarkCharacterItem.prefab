@@ -605,13 +605,13 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1020002337148820}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -685,6 +685,7 @@ MonoBehaviour:
   factionEmblem: {fileID: 114195571735787454}
   dropZone: {fileID: 114094099995630402}
   draggable: {fileID: 114554185732946442}
+  neededTypeStr: 
 --- !u!114 &114464593242590318
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -918,6 +919,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0108c528341e5a542bfe1b13bba92a35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isDraggable: 0
+  _isDragging: 0
   slot: {fileID: 114412016764401062}
 --- !u!114 &114574281160114758
 MonoBehaviour:
@@ -1349,6 +1352,8 @@ MonoBehaviour:
   forceShowPortrait: 1
   ignoreInteractions: 0
   bg: {fileID: 114468693219306844}
+  lockedBGSprite: {fileID: 0}
+  draggableBGSprite: {fileID: 0}
   head: {fileID: 114116556050732140}
   eyes: {fileID: 114741498364053622}
   eyebrows: {fileID: 114547440309573466}

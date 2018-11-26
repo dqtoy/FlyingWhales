@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -10,23 +11,22 @@ public class AreaInfoEditor : MonoBehaviour {
 
     [Header("Basic Info")]
     [SerializeField] private InputField areaNameField;
-
-    [Header("Settlement Priorities")]
-    public GameObject structurePriorityItemGO;
-    [SerializeField] private ScrollRect structurePriorityScrollView;
-    [SerializeField] private StructurePrioritySettingsEditor settingsEditor;
-
-    [Header("Class Priorities")]
-    public GameObject classPriorityItemGO;
-    [SerializeField] private ScrollRect classPriorityScrollView;
-    [SerializeField] private Dropdown classChoicesDropdown;
-
-    [Header("Recommended Power")]
-    [SerializeField] private InputField powerInput;
+    [SerializeField] private InputField maxDefendersField;
+    [SerializeField] private InputField initialDefenderGroupsField;
+    [SerializeField] private InputField minInitialDefendersField;
+    [SerializeField] private InputField maxInitialDefendersField;
+    [SerializeField] private InputField initialDefenderLevelField;
+    [SerializeField] private InputField supplyCapacityField;
+    [SerializeField] private Dropdown defaultRaceDropdown;
+    [SerializeField] private Dropdown possibleOccupantsRaceDropdown;
+    [SerializeField] private Text occupantsSummary;
 
     public void Initialize() {
-        settingsEditor.Initialize();
-        LoadClassChoices();
+        defaultRaceDropdown.ClearOptions();
+        possibleOccupantsRaceDropdown.ClearOptions();
+
+        defaultRaceDropdown.AddOptions(Utilities.GetEnumChoices<RACE>());
+        possibleOccupantsRaceDropdown.AddOptions(Utilities.GetEnumChoices<RACE>());
     }
 
     public void Show(Area area) {
@@ -40,76 +40,75 @@ public class AreaInfoEditor : MonoBehaviour {
 
     public void LoadData() {
         areaNameField.text = currentArea.name;
-        LoadStructurePriorities();
-        LoadClassPriorities();
-        powerInput.text = currentArea.recommendedPower.ToString();
+        maxDefendersField.text = currentArea.maxDefenderGroups.ToString();
+        initialDefenderGroupsField.text = currentArea.initialDefenderGroups.ToString();
+        minInitialDefendersField.text = currentArea.minInitialDefendersPerGroup.ToString();
+        maxInitialDefendersField.text = currentArea.maxInitialDefendersPerGroup.ToString();
+        initialDefenderLevelField.text = currentArea.initialDefenderLevel.ToString();
+        supplyCapacityField.text = currentArea.supplyCapacity.ToString();
+        defaultRaceDropdown.value = Utilities.GetOptionIndex(defaultRaceDropdown, currentArea.defaultRace.ToString());
+        occupantsSummary.text = string.Empty;
+        for (int i = 0; i < currentArea.possibleOccupants.Count; i++) {
+            RACE race = currentArea.possibleOccupants[i];
+            occupantsSummary.text += "(" + race.ToString() + ")";
+        }
     }
 
     #region Basic Info
     public void SetAreaName(string name) {
         currentArea.SetName(name);
     }
-    #endregion
-
-    #region Structure Priorities
-    public void LoadStructurePriorities() {
-        Utilities.DestroyChildren(structurePriorityScrollView.content);
-        for (int i = 0; i < currentArea.orderStructures.Count; i++) {
-            StructurePriority currPriority = currentArea.orderStructures[i];
-            GameObject structureItemGO = GameObject.Instantiate(structurePriorityItemGO, structurePriorityScrollView.content);
-            StructurePriorityItem item = structureItemGO.GetComponent<StructurePriorityItem>();
-            item.SetItem(currPriority, i);
+    public void SetMaxDefenderGroups(string amountStr) {
+        int amount;
+        if (Int32.TryParse(amountStr, out amount)) {
+            currentArea.SetMaxDefenderGroups(amount);
         }
     }
-    public void AddStructurePriority() {
-        StructurePrioritySetting newSetting = new StructurePrioritySetting();
-        StructurePriority newPrio = new StructurePriority(newSetting);
-        currentArea.AddStructurePriority(newPrio);
-        LoadStructurePriorities();
-    }
-    public void ShowSettingsEditor(StructurePrioritySetting settings, StructurePriority parent) {
-        settingsEditor.ShowSettings(settings, parent);
-    }
-    public void OnPriorityEdited(StructurePriority priority) {
-        StructurePriorityItem[] items = Utilities.GetComponentsInDirectChildren<StructurePriorityItem>(structurePriorityScrollView.content.gameObject);
-        for (int i = 0; i < items.Length; i++) {
-            StructurePriorityItem currItem = items[i];
-            if (currItem.item == priority) {
-                currItem.UpdateSettings();
-                break;
-            }
+    public void SetInitialDefenderGroups(string amountStr) {
+        int amount;
+        if (Int32.TryParse(amountStr, out amount)) {
+            currentArea.SetInitialDefenderGroups(amount);
         }
     }
-    #endregion
-
-    #region Class Priorities
-    public void LoadClassChoices() {
-        classChoicesDropdown.ClearOptions();
-        List<string> choices = new List<string>();
-        for (int i = 0; i < CharacterManager.Instance.classesDictionary.Keys.Count; i++) {
-            choices.Add(CharacterManager.Instance.classesDictionary.Keys.ElementAt(i));
-        }
-        classChoicesDropdown.AddOptions(choices);
-    }
-    public void LoadClassPriorities() {
-        Utilities.DestroyChildren(classPriorityScrollView.content);
-        for (int i = 0; i < currentArea.orderClasses.Count; i++) {
-            string currPriority = currentArea.orderClasses[i];
-            GameObject classItemGO = GameObject.Instantiate(classPriorityItemGO, classPriorityScrollView.content);
-            ClassPriorityItem item = classItemGO.GetComponent<ClassPriorityItem>();
-            item.SetItem(currPriority, i);
+    public void SetMinInitialDefendersPerGroup(string amountStr) {
+        int amount;
+        if (Int32.TryParse(amountStr, out amount)) {
+            currentArea.SetMinInitialDefendersPerGroup(amount);
         }
     }
-    public void AddClassPriority() {
-        currentArea.AddClassPriority(classChoicesDropdown.options[classChoicesDropdown.value].text);
-        LoadClassPriorities();
+    public void SetMaxInitialDefendersPerGroup(string amountStr) {
+        int amount;
+        if (Int32.TryParse(amountStr, out amount)) {
+            currentArea.SetMaxInitialDefendersPerGroup(amount);
+        }
+    }
+    public void SetInitialDefenderLevel(string amountStr) {
+        int amount;
+        if (Int32.TryParse(amountStr, out amount)) {
+            currentArea.SetInitialDefenderLevel(amount);
+        }
+    }
+    public void SetSupplyCapacity(string amountStr) {
+        int amount;
+        if (Int32.TryParse(amountStr, out amount)) {
+            currentArea.SetSupplyCapacity(amount);
+        }
+    }
+    public void SetDefaultRace(int choice) {
+        RACE result;
+        if (Enum.TryParse(defaultRaceDropdown.options[defaultRaceDropdown.value].text, out result)) {
+            currentArea.SetDefaultRace(result);
+        }
+    }
+    public void AddRemovePossibleOccupants() {
+        RACE race = (RACE)Enum.Parse(typeof(RACE), possibleOccupantsRaceDropdown.options[possibleOccupantsRaceDropdown.value].text);
+        if (currentArea.possibleOccupants.Contains(race)) {
+            currentArea.RemovePossibleOccupant(race);
+        } else {
+            currentArea.AddPossibleOccupant(race);
+        }
+        LoadData();
     }
     #endregion
 
-    #region Recommended Power
-    public void SetRecommendedPower(string strPower) {
-        float power = float.Parse(strPower);
-        currentArea.SetRecommendedPower(power);
-    }
-    #endregion
 }

@@ -6,7 +6,7 @@ using System.IO;
 using System;
 
 namespace ECS {
-    public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
+    public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit {
         public delegate void OnCharacterDeath();
         public OnCharacterDeath onCharacterDeath;
 
@@ -1808,14 +1808,14 @@ namespace ECS {
             OnCharacterClassChange();
 
 #if !WORLD_CREATION_TOOL
-            _homeLandmark.tileLocation.areaOfTile.excessClasses.Remove(previousClassName);
-            _homeLandmark.tileLocation.areaOfTile.missingClasses.Remove(_characterClass.className);
+            //_homeLandmark.tileLocation.areaOfTile.excessClasses.Remove(previousClassName);
+            //_homeLandmark.tileLocation.areaOfTile.missingClasses.Remove(_characterClass.className);
 
-            Log log = new Log(GameManager.Instance.Today(), "CharacterActions", "ChangeClassAction", "change_class");
-            log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(null, previousClassName, LOG_IDENTIFIER.STRING_1);
-            log.AddToFillers(null, _characterClass.className, LOG_IDENTIFIER.STRING_2);
-            AddHistory(log);
+            //Log log = new Log(GameManager.Instance.Today(), "CharacterActions", "ChangeClassAction", "change_class");
+            //log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            //log.AddToFillers(null, previousClassName, LOG_IDENTIFIER.STRING_1);
+            //log.AddToFillers(null, _characterClass.className, LOG_IDENTIFIER.STRING_2);
+            //AddHistory(log);
             //check equipped items
 #endif
 
@@ -2720,17 +2720,17 @@ namespace ECS {
             uiData.UpdateData(this);
         }
         public void AddInteraction(Interaction interaction) {
-            _currentInteractions.Add(interaction);
+            //_currentInteractions.Add(interaction);
             interaction.SetCharacterInvolved(this);
             interaction.interactable.AddInteraction(interaction);
             //interaction.Initialize(this);
             //Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
         }
         public void RemoveInteraction(Interaction interaction) {
-            if (_currentInteractions.Remove(interaction)) {
-                interaction.interactable.RemoveInteraction(interaction);
-                //Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
-            }
+            //if (_currentInteractions.Remove(interaction)) {
+            interaction.interactable.RemoveInteraction(interaction);
+            //Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
+            //}
         }
         #endregion
 

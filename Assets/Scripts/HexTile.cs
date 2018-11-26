@@ -61,6 +61,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private GameObject structureParentGO;
     [SerializeField] private SpriteRenderer mainStructure;
     [SerializeField] private SpriteRenderer structureTint;
+    [SerializeField] private Animator structureAnimation;
 
     [Space(10)]
     [Header("Minimap Objects")]
@@ -72,9 +73,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     [Space(10)]
     [Header("Corruption")]
-    [SerializeField] private GameObject[] tendrils;
-    [SerializeField] private GameObject[] desertTendrils;
+    [SerializeField] private GameObject[] defaultCorruptionObjects;
     [SerializeField] private GameObject[] particleEffects;
+    [SerializeField] private TileSpriteCorruptionListDictionary tileCorruptionObjects;
 
     [Space(10)]
     [Header("Beaches")]
@@ -432,6 +433,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         structureTint.sprite = sprites.tintSprite;
         mainStructure.gameObject.SetActive(true);
         structureTint.gameObject.SetActive(true);
+        if (sprites.animation == null) {
+            structureAnimation.gameObject.SetActive(false);
+        } else {
+            structureAnimation.gameObject.SetActive(true);
+            structureAnimation.runtimeAnimatorController = sprites.animation;
+        }
     }
     public void HideLandmarkTileSprites() {
         mainStructure.gameObject.SetActive(false);
@@ -768,6 +775,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //} else {
         mainStructure.sortingOrder = sortingOrder + 2;
         structureTint.sortingOrder = sortingOrder + 3;
+        structureAnimation.gameObject.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 4;
         //}
     }
     internal SpriteRenderer ActivateBorder(HEXTILE_DIRECTION direction, Color color) {
@@ -1333,19 +1341,31 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public void StartCorruptionAnimation() {
         GameObject tendril = null;
-        if (this.biomeType == BIOMES.DESERT && spriteRenderer.sprite.name.Contains("mountains")) {
-            tendril = desertTendrils[0];
-            //if (spriteRenderer.sprite.name.Contains("1")) {
-            //    tendril = desertTendrils[0];
-            //} else if (spriteRenderer.sprite.name.Contains("2")) {
-            //    tendril = desertTendrils[1];
-            //} else if (spriteRenderer.sprite.name.Contains("3")) {
-            //    tendril = desertTendrils[2];
-            //}
+        if (tileCorruptionObjects.ContainsKey(spriteRenderer.sprite)) {
+            List<GameObject> choices = tileCorruptionObjects[spriteRenderer.sprite];
+            tendril = choices[Random.Range(0, choices.Count)];
         } else {
-            tendril = tendrils[Random.Range(0, tendrils.Length)];
+            tendril = defaultCorruptionObjects[Random.Range(0, defaultCorruptionObjects.Length)];
         }
+        //if (this.biomeType == BIOMES.DESERT && spriteRenderer.sprite.name.Contains("mountains")) {
+        //    tendril = desertTendrils[0];
+        //    //if (spriteRenderer.sprite.name.Contains("1")) {
+        //    //    tendril = desertTendrils[0];
+        //    //} else if (spriteRenderer.sprite.name.Contains("2")) {
+        //    //    tendril = desertTendrils[1];
+        //    //} else if (spriteRenderer.sprite.name.Contains("3")) {
+        //    //    tendril = desertTendrils[2];
+        //    //}
+        //} else {
+        //    tendril = defaultCorruptionObjects[Random.Range(0, defaultCorruptionObjects.Length)];
+        //}
         _spawnedTendril = GameObject.Instantiate(tendril, biomeDetailsParent);
+        SpriteRenderer[] srs = Utilities.GetComponentsInDirectChildren<SpriteRenderer>(_spawnedTendril);
+        for (int i = 0; i < srs.Length; i++) {
+            SpriteRenderer currRenderer = srs[i];
+            currRenderer.sortingLayerName = "Default";
+            currRenderer.sortingOrder = spriteRenderer.sortingOrder + 5;
+        }
         for (int i = 0; i < particleEffects.Length; i++) {
             particleEffects[i].gameObject.SetActive(true);
         }
@@ -1354,6 +1374,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if(_spawnedTendril != null) {
             GameObject.Destroy(_spawnedTendril);
             _spawnedTendril = null;
+        }
+        for (int i = 0; i < particleEffects.Length; i++) {
+            particleEffects[i].gameObject.SetActive(false);
         }
     }
     #endregion

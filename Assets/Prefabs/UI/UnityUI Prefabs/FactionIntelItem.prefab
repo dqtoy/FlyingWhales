@@ -462,6 +462,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   emblemImage: {fileID: 114181956639665750}
+  forceShow: 1
 --- !u!114 &114660403208986770
 MonoBehaviour:
   m_ObjectHideFlags: 1

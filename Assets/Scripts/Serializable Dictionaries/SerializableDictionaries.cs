@@ -18,6 +18,8 @@ public class ActionCharacterTagListDictionary : SerializableDictionary<ACTION_TY
 public class BiomeLandmarkSpriteListDictionary : SerializableDictionary<BIOMES, List<LandmarkStructureSprite>, LandmarkSpriteListStorage> { }
 [System.Serializable]
 public class RoleInteractionsListDictionary : SerializableDictionary<CHARACTER_ROLE, List<CharacterInteractionWeight>, CharacterInteractionWeightListStorage> { }
+[System.Serializable]
+public class TileSpriteCorruptionListDictionary : SerializableDictionary<Sprite, List<GameObject>, CorruptionObjectsListStorage> { }
 
 [System.Serializable]
 public class CharacterTagListStorage : SerializableDictionary.Storage<List<CharacterActionTagRequirement>> { }
@@ -25,3 +27,5 @@ public class CharacterTagListStorage : SerializableDictionary.Storage<List<Chara
 public class LandmarkSpriteListStorage : SerializableDictionary.Storage<List<LandmarkStructureSprite>> { }
 [System.Serializable]
 public class CharacterInteractionWeightListStorage : SerializableDictionary.Storage<List<CharacterInteractionWeight>> { }
+[System.Serializable]
+public class CorruptionObjectsListStorage : SerializableDictionary.Storage<List<GameObject>> { }

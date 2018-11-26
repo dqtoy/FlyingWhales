@@ -313,6 +313,8 @@ public class PlayerLandmarkInfoUI : UIMenu {
                 LandmarkCharacterItem currSlot = defenderSlots[i];
                 currSlot.SetCharacter(null, _activeLandmark, true);
                 currSlot.slotItem.dropZone.SetEnabledState(false);
+                currSlot.slotItem.draggable.SetDraggable(false);
+                //currSlot.slotItem.SetNeededType(typeof(IUnit));
             }
         } else {
             for (int i = 0; i < defenderSlots.Length; i++) {
@@ -320,7 +322,8 @@ public class PlayerLandmarkInfoUI : UIMenu {
                 ICharacter defender = _activeLandmark.defenders.icharacters.ElementAtOrDefault(i);
                 currSlot.SetCharacter(defender, _activeLandmark, true);
                 currSlot.slotItem.dropZone.SetEnabledState(false);
-                //defenderSlots[i].portrait.SetForceShowPortraitState(true);
+                currSlot.slotItem.draggable.SetDraggable(false);
+                //currSlot.slotItem.SetNeededType(typeof(IUnit));
             }
         }
     }

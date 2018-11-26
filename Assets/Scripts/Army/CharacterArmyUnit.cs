@@ -104,5 +104,4 @@ public class CharacterArmyUnit : Character, IUnit {
 
 public interface IUnit {
     string name { get; }
-    Party party { get; }
 }
