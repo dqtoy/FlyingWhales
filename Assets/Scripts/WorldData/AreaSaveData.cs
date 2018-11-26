@@ -11,13 +11,14 @@ public class AreaSaveData {
     public List<int> tileData; //list of tile id's that belong to this region
     public Color32 areaColor;
     public int ownerID;
-    public List<string> orderClasses;
-    public List<StructurePriority> orderStructures;
+    public int maxDefenderGroups;
+    public int initialDefenderGroups;
+    public int initialDefendersPerGroup;
+    public int supplyCapacity;
 
     public AreaSaveData(Area area) {
         areaID = area.id;
         areaName = area.name;
-        recommendedPower = area.recommendedPower;
         areaType = area.areaType;
         coreTileID = area.coreTile.id;
         tileData = new List<int>();
@@ -31,8 +32,9 @@ public class AreaSaveData {
         } else {
             ownerID = area.owner.id;
         }
-
-        orderClasses = area.orderClasses;
-        orderStructures = area.orderStructures;
+        maxDefenderGroups = area.maxDefenderGroups;
+        initialDefenderGroups = area.initialDefenderGroups;
+        initialDefendersPerGroup = area.initialDefendersPerGroup;
+        supplyCapacity = area.supplyCapacity;
     }
 }

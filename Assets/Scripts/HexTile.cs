@@ -1366,14 +1366,17 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             currRenderer.sortingLayerName = "Default";
             currRenderer.sortingOrder = spriteRenderer.sortingOrder + 5;
         }
-        //for (int i = 0; i < particleEffects.Length; i++) {
-        //    particleEffects[i].gameObject.SetActive(true);
-        //}
+        for (int i = 0; i < particleEffects.Length; i++) {
+            particleEffects[i].gameObject.SetActive(true);
+        }
     }
     public void StopCorruptionAnimation() {
         if(_spawnedTendril != null) {
             GameObject.Destroy(_spawnedTendril);
             _spawnedTendril = null;
+        }
+        for (int i = 0; i < particleEffects.Length; i++) {
+            particleEffects[i].gameObject.SetActive(false);
         }
     }
     #endregion

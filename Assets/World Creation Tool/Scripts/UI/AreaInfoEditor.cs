@@ -11,22 +11,8 @@ public class AreaInfoEditor : MonoBehaviour {
     [Header("Basic Info")]
     [SerializeField] private InputField areaNameField;
 
-    [Header("Settlement Priorities")]
-    public GameObject structurePriorityItemGO;
-    [SerializeField] private ScrollRect structurePriorityScrollView;
-    [SerializeField] private StructurePrioritySettingsEditor settingsEditor;
-
-    [Header("Class Priorities")]
-    public GameObject classPriorityItemGO;
-    [SerializeField] private ScrollRect classPriorityScrollView;
-    [SerializeField] private Dropdown classChoicesDropdown;
-
-    [Header("Recommended Power")]
-    [SerializeField] private InputField powerInput;
-
     public void Initialize() {
-        settingsEditor.Initialize();
-        LoadClassChoices();
+        
     }
 
     public void Show(Area area) {
@@ -40,9 +26,6 @@ public class AreaInfoEditor : MonoBehaviour {
 
     public void LoadData() {
         areaNameField.text = currentArea.name;
-        LoadStructurePriorities();
-        LoadClassPriorities();
-        powerInput.text = currentArea.recommendedPower.ToString();
     }
 
     #region Basic Info
@@ -51,65 +34,4 @@ public class AreaInfoEditor : MonoBehaviour {
     }
     #endregion
 
-    #region Structure Priorities
-    public void LoadStructurePriorities() {
-        Utilities.DestroyChildren(structurePriorityScrollView.content);
-        for (int i = 0; i < currentArea.orderStructures.Count; i++) {
-            StructurePriority currPriority = currentArea.orderStructures[i];
-            GameObject structureItemGO = GameObject.Instantiate(structurePriorityItemGO, structurePriorityScrollView.content);
-            StructurePriorityItem item = structureItemGO.GetComponent<StructurePriorityItem>();
-            item.SetItem(currPriority, i);
-        }
-    }
-    public void AddStructurePriority() {
-        StructurePrioritySetting newSetting = new StructurePrioritySetting();
-        StructurePriority newPrio = new StructurePriority(newSetting);
-        currentArea.AddStructurePriority(newPrio);
-        LoadStructurePriorities();
-    }
-    public void ShowSettingsEditor(StructurePrioritySetting settings, StructurePriority parent) {
-        settingsEditor.ShowSettings(settings, parent);
-    }
-    public void OnPriorityEdited(StructurePriority priority) {
-        StructurePriorityItem[] items = Utilities.GetComponentsInDirectChildren<StructurePriorityItem>(structurePriorityScrollView.content.gameObject);
-        for (int i = 0; i < items.Length; i++) {
-            StructurePriorityItem currItem = items[i];
-            if (currItem.item == priority) {
-                currItem.UpdateSettings();
-                break;
-            }
-        }
-    }
-    #endregion
-
-    #region Class Priorities
-    public void LoadClassChoices() {
-        classChoicesDropdown.ClearOptions();
-        List<string> choices = new List<string>();
-        for (int i = 0; i < CharacterManager.Instance.classesDictionary.Keys.Count; i++) {
-            choices.Add(CharacterManager.Instance.classesDictionary.Keys.ElementAt(i));
-        }
-        classChoicesDropdown.AddOptions(choices);
-    }
-    public void LoadClassPriorities() {
-        Utilities.DestroyChildren(classPriorityScrollView.content);
-        for (int i = 0; i < currentArea.orderClasses.Count; i++) {
-            string currPriority = currentArea.orderClasses[i];
-            GameObject classItemGO = GameObject.Instantiate(classPriorityItemGO, classPriorityScrollView.content);
-            ClassPriorityItem item = classItemGO.GetComponent<ClassPriorityItem>();
-            item.SetItem(currPriority, i);
-        }
-    }
-    public void AddClassPriority() {
-        currentArea.AddClassPriority(classChoicesDropdown.options[classChoicesDropdown.value].text);
-        LoadClassPriorities();
-    }
-    #endregion
-
-    #region Recommended Power
-    public void SetRecommendedPower(string strPower) {
-        float power = float.Parse(strPower);
-        currentArea.SetRecommendedPower(power);
-    }
-    #endregion
 }

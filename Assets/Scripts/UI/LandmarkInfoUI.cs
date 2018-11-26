@@ -79,7 +79,6 @@ public class LandmarkInfoUI : UIMenu {
 
     private LogHistoryItem[] logHistoryItems;
     
-
     internal BaseLandmark currentlyShowingLandmark {
         get { return _data as BaseLandmark; }
     }

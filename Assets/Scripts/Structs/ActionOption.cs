@@ -15,6 +15,7 @@ public class ActionOption {
     public Func<bool> canBeDoneAction;
     public List<System.Type> neededObjects;
     public List<object> assignedObjects; //NOTE: assigned objects must be accurate with needed objects list, TODO: Change the 2 lists to use a dictionary instead
+    public string doesNotMeetRequirementsStr;
 
     private int _currentDuration;
 

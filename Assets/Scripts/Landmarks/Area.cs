@@ -7,14 +7,11 @@ public class Area {
 
     public int id { get; private set; }
     public string name { get; private set; }
-    public float recommendedPower { get; private set; }
     public AREA_TYPE areaType { get; private set; }
     public List<HexTile> tiles { get; private set; }
     public HexTile coreTile { get; private set; }
     public Color areaColor { get; private set; }
     public Faction owner { get; private set; }
-    public List<string> orderClasses { get; private set; }
-    public List<StructurePriority> orderStructures { get; private set; }
     public int suppliesInBank { get; private set; }
     public List<BaseLandmark> landmarks { get { return tiles.Where(x => x.landmarkOnTile != null).Select(x => x.landmarkOnTile).ToList(); } }
     public int totalCivilians { get { return landmarks.Sum(x => x.civilianCount); } }
@@ -25,11 +22,15 @@ public class Area {
     public bool hasBeenInspected { get; private set; }
     public bool areAllLandmarksDead { get; private set; }
     public AreaInvestigation areaInvestigation { get; private set; }
+    public int maxDefenderGroups { get; private set; }
+    public int initialDefenderGroups { get; private set; }
+    public int initialDefendersPerGroup { get; private set; }
+    public int supplyCapacity { get; private set; }
+    public List<Party> defenderGroups { get; private set; }
+
     private List<HexTile> outerTiles;
     private List<SpriteRenderer> outline;
 
-    public List<string> excessClasses;
-    public List<string> missingClasses;
     public List<ICharacter> residents;
 
     public Area(HexTile coreTile, AREA_TYPE areaType) {
@@ -37,17 +38,14 @@ public class Area {
         SetName(RandomNameGenerator.Instance.GetRegionName());
         tiles = new List<HexTile>();
         residents = new List<ICharacter>();
-        orderClasses = new List<string>();
-        excessClasses = new List<string>();
-        missingClasses = new List<string>();
         exposedTiles = new List<BaseLandmark>();
         unexposedTiles = new List<BaseLandmark>();
-        orderStructures = new List<StructurePriority>();
         areaColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         locationIntel = new LocationIntel(this);
         areaInvestigation = new AreaInvestigation(this); 
         SetAreaType(areaType);
         SetCoreTile(coreTile);
+        SetSupplyCapacity(1000);
         AddTile(coreTile);
 #if !WORLD_CREATION_TOOL
         StartSupplyLine();
@@ -56,23 +54,11 @@ public class Area {
     public Area(AreaSaveData data) {
         id = Utilities.SetID(this, data.areaID);
         SetName(data.areaName);
-        SetRecommendedPower(data.recommendedPower);
         tiles = new List<HexTile>();
         residents = new List<ICharacter>();
-        excessClasses = new List<string>();
-        missingClasses = new List<string>();
+
         exposedTiles = new List<BaseLandmark>();
         unexposedTiles = new List<BaseLandmark>();
-        if (data.orderClasses != null) {
-            orderClasses = data.orderClasses;
-        } else {
-            orderClasses = new List<string>();
-        }
-        if (data.orderStructures != null) {
-            orderStructures = data.orderStructures;
-        } else {
-            orderStructures = new List<StructurePriority>();
-        }
         areaColor = data.areaColor;
         SetAreaType(data.areaType);
         locationIntel = new LocationIntel(this);
@@ -85,10 +71,6 @@ public class Area {
 #endif
         AddTile(Utilities.GetTilesFromIDs(data.tileData)); //exposed tiles will be determined after loading landmarks at MapGeneration
         UpdateBorderColors();
-    }
-
-    public void SetRecommendedPower(float power) {
-        this.recommendedPower = power;
     }
 
     public void SetName(string name) {
@@ -490,33 +472,6 @@ public class Area {
         }
         return characters;
     }
-    public void AddClassPriority(string newPrio) {
-        orderClasses.Add(newPrio);
-    }
-    public void RemoveClassPriority(int index) {
-        orderClasses.RemoveAt(index);
-    }
-    #endregion
-
-    #region Structure Priorities
-    public void AddStructurePriority(StructurePriority newPrio) {
-        orderStructures.Add(newPrio);
-    }
-    public void RemoveStructurePriority(StructurePriority newPrio) {
-        orderStructures.Remove(newPrio);
-    }
-    public StructurePriority GetNextStructurePriority() {
-        List<LANDMARK_TYPE> currentLandmarks = new List<LANDMARK_TYPE>(landmarks.Select(x => x.specificLandmarkType));
-        for (int i = 0; i < orderStructures.Count; i++) {
-            StructurePriority currPrio = orderStructures[i];
-            if (currentLandmarks.Contains(currPrio.setting.landmarkType)) {
-                currentLandmarks.Remove(currPrio.setting.landmarkType);
-            } else {
-                return currPrio;
-            }
-        }
-        return null;
-    }
     #endregion
 
     #region Camp
@@ -612,6 +567,7 @@ public class Area {
     public void AdjustSuppliesInBank(int amount) {
         suppliesInBank += amount;
         suppliesInBank = Mathf.Max(0, suppliesInBank);
+        //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
     }
     public bool HasEnoughSupplies(int neededSupplies) {
         return suppliesInBank >= neededSupplies;
@@ -620,6 +576,10 @@ public class Area {
         if (reward.rewardType == REWARD.SUPPLY) {
             AdjustSuppliesInBank(-reward.amount);
         }
+    }
+    public void SetSupplyCapacity(int supplyCapacity) {
+        this.supplyCapacity = supplyCapacity;
+        //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
     }
     #endregion
 
@@ -643,6 +603,18 @@ public class Area {
             }
         }
         return null;
+    }
+    #endregion
+
+    #region Defenders
+    public void SetMaxDefenderGroups(int maxDefenderGroups) {
+        this.maxDefenderGroups = maxDefenderGroups;
+    }
+    public void SetInitialDefenderGroups(int initialDefenderGroups) {
+        this.initialDefenderGroups = initialDefenderGroups;
+    }
+    public void SetInitialDefendersPerGroup(int initialDefendersPerGroup) {
+        this.initialDefendersPerGroup = initialDefendersPerGroup;
     }
     #endregion
 }

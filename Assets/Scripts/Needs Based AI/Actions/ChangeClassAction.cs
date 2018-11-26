@@ -34,10 +34,10 @@ public class ChangeClassAction : CharacterAction {
     }
     public override bool CanBeDoneBy(Party party, IObject targetObject) {
         if(party.mainCharacter is Character && party.mainCharacter.characterClass != null) {
-            if(party.homeLandmark.tileLocation.areaOfTile.excessClasses.Contains(party.mainCharacter.characterClass.className)
-                && party.homeLandmark.tileLocation.areaOfTile.missingClasses.Contains(_advertisedClassName)) { //TODO: Subject for change
-                return true;
-            }
+            //if(party.homeLandmark.tileLocation.areaOfTile.excessClasses.Contains(party.mainCharacter.characterClass.className)
+            //    && party.homeLandmark.tileLocation.areaOfTile.missingClasses.Contains(_advertisedClassName)) { //TODO: Subject for change
+            //    return true;
+            //}
         }
         return false;
     }

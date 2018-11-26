@@ -389,12 +389,17 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Tooltips
-    public void ShowSmallInfo(string info) {
+    public void ShowSmallInfo(string info, string header = "", bool followMouse = true, Vector2 pos = new Vector2()) {
         //return;
         smallInfoLbl.text = info;
         smallInfoGO.SetActive(true);
         smallInfoEnvelopContent.Execute();
-        PositionTooltip(smallInfoRT);
+        if (followMouse) {
+            PositionTooltip(smallInfoRT);
+        } else {
+            smallInfoRT.position = pos;
+        }
+        
         //Debug.Log("Show small info " + info);
     }
     public void HideSmallInfo() {

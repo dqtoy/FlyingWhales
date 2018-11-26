@@ -74,27 +74,28 @@ public class GameManager : MonoBehaviour {
             }
         }
     }
-    //private void Update() {
-    //    if (!UIManager.Instance.IsConsoleShowing() && !UIManager.Instance.IsMouseOnInput() && !PlayerManager.Instance.isChoosingStartingTile) {
-    //        if (Input.GetKeyDown(KeyCode.Space)) {
-    //            if (isPaused) {
-    //                //SetProgressionSpeed(currProgressionSpeed);
-    //                //SetPausedState(false);
-    //                if (currProgressionSpeed == PROGRESSION_SPEED.X1) {
-    //                    UIManager.Instance.SetProgressionSpeed1X();
-    //                } else if (currProgressionSpeed == PROGRESSION_SPEED.X2) {
-    //                    UIManager.Instance.SetProgressionSpeed2X();
-    //                } else if (currProgressionSpeed == PROGRESSION_SPEED.X4) {
-    //                    UIManager.Instance.SetProgressionSpeed4X();
-    //                }
-    //            } else {
-    //                //pause
-    //                //SetPausedState(true);
-    //                UIManager.Instance.Pause();
-    //            }
-    //        }
-    //    }
-    //}
+    private void Update() {
+        //Application.targetFrameRate = 60;
+        //    if (!UIManager.Instance.IsConsoleShowing() && !UIManager.Instance.IsMouseOnInput() && !PlayerManager.Instance.isChoosingStartingTile) {
+        //        if (Input.GetKeyDown(KeyCode.Space)) {
+        //            if (isPaused) {
+        //                //SetProgressionSpeed(currProgressionSpeed);
+        //                //SetPausedState(false);
+        //                if (currProgressionSpeed == PROGRESSION_SPEED.X1) {
+        //                    UIManager.Instance.SetProgressionSpeed1X();
+        //                } else if (currProgressionSpeed == PROGRESSION_SPEED.X2) {
+        //                    UIManager.Instance.SetProgressionSpeed2X();
+        //                } else if (currProgressionSpeed == PROGRESSION_SPEED.X4) {
+        //                    UIManager.Instance.SetProgressionSpeed4X();
+        //                }
+        //            } else {
+        //                //pause
+        //                //SetPausedState(true);
+        //                UIManager.Instance.Pause();
+        //            }
+        //        }
+        //    }
+    }
     #endregion
 
 
