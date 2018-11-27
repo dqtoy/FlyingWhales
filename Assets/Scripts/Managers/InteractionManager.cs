@@ -96,6 +96,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.RAID_SUCCESS:
                 createdInteraction = new RaidSuccess(interactable);
                 break;
+            case INTERACTION_TYPE.MINION_FAILED:
+                createdInteraction = new MinionFailed(interactable);
+                break;
+            case INTERACTION_TYPE.MINION_CRITICAL_FAIL:
+                createdInteraction = new MinionCriticalFail(interactable);
+                break;
         }
         return createdInteraction;
     }

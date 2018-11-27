@@ -170,7 +170,7 @@ public class CharacterTracking : Interaction {
     }
     private void MinionMisdirectedRewardEffect(InteractionState state) {
         //**Mechanics**: Remove minion from player
-        PlayerManager.Instance.player.RemoveMinion(_explorerMinion);
+        PlayerManager.Instance.player.RemoveMinion(explorerMinion);
         //if (state.descriptionLog != null) {
         //    state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         //}

@@ -472,6 +472,7 @@ public class Utilities : MonoBehaviour {
         {"96", LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_O},
         {"97", LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_P},
         {"98", LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_R},
+
 		//{"99", LOG_IDENTIFIER.SECESSION_CITIES},
 		{"100", LOG_IDENTIFIER.TASK},
         {"101", LOG_IDENTIFIER.DATE},
@@ -487,6 +488,10 @@ public class Utilities : MonoBehaviour {
         {"111", LOG_IDENTIFIER.STRING_1},
         {"112", LOG_IDENTIFIER.STRING_2},
         {"113", LOG_IDENTIFIER.MINION_NAME},
+        {"114", LOG_IDENTIFIER.MINION_PRONOUN_S},
+        {"115", LOG_IDENTIFIER.MINION_PRONOUN_O},
+        {"116", LOG_IDENTIFIER.MINION_PRONOUN_P},
+        {"117", LOG_IDENTIFIER.MINION_PRONOUN_R},
 
 		//{"111", LOG_IDENTIFIER.PARTY_NAME},
 	};
@@ -494,19 +499,22 @@ public class Utilities : MonoBehaviour {
     public static string PronounReplacer(string word, object genderSubject) {
         //		string pronoun = Utilities.GetStringBetweenTwoChars (word, '_', '_');
         string[] pronouns = word.Split('/');
+        GENDER gender = GENDER.MALE;
         if (genderSubject is ECS.Character) {
-            GENDER gender = ((ECS.Character) genderSubject).gender;
-            if (gender == GENDER.MALE) {
-                if (pronouns.Length > 0) {
-                    if (!string.IsNullOrEmpty(pronouns[0])) {
-                        return pronouns[0];
-                    }
+            gender = (genderSubject as ECS.Character).gender;
+        }else if (genderSubject is Minion) {
+            gender = (genderSubject as Minion).icharacter.gender;
+        }
+        if (gender == GENDER.MALE) {
+            if (pronouns.Length > 0) {
+                if (!string.IsNullOrEmpty(pronouns[0])) {
+                    return pronouns[0];
                 }
-            } else {
-                if (pronouns.Length > 1) {
-                    if (!string.IsNullOrEmpty(pronouns[0])) {
-                        return pronouns[1];
-                    }
+            }
+        } else {
+            if (pronouns.Length > 1) {
+                if (!string.IsNullOrEmpty(pronouns[0])) {
+                    return pronouns[1];
                 }
             }
         }

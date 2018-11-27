@@ -17,9 +17,10 @@ public class Interaction {
     protected bool _isDone;
     protected bool _hasActivatedTimeOut;
     protected bool _isSecondTimeOutCancelled;
+    protected bool _isChosen;
     protected InteractionState _previousState;
     protected InteractionState _currentState;
-    protected Minion _explorerMinion;
+    //protected Minion _explorerMinion;
     protected Character _characterInvolved;
     protected Action _endInteractionAction;
     protected JOB[] _jobFilter;
@@ -45,7 +46,7 @@ public class Interaction {
         get { return _previousState; }
     }
     public Minion explorerMinion {
-        get { return _explorerMinion; }
+        get { return _interactable.specificLocation.tileLocation.areaOfTile.areaInvestigation.assignedMinion; }
     }
     public Character characterInvolved {
         get { return _characterInvolved; }
@@ -61,6 +62,9 @@ public class Interaction {
     }
     public bool hasActivatedTimeOut {
         get { return _hasActivatedTimeOut; }
+    }
+    public bool isChosen {
+        get { return _isChosen; }
     }
     public JOB[] jobFilter {
         get { return _jobFilter; }
@@ -102,6 +106,7 @@ public class Interaction {
         }
     }
     public virtual void OnInteractionActive() {
+        _isChosen = true;
         BaseLandmark landmark = interactable as BaseLandmark;
         landmark.landmarkVisual.StopInteractionTimer();
         landmark.landmarkVisual.HideInteractionTimer();
@@ -182,20 +187,20 @@ public class Interaction {
         }
     }
     public void TimedOutRunDefault() {
-        if(_currentState.defaultOption == null) {
+        if(!_currentState.isEnd && _currentState.defaultOption == null) {
             return;
         }
         while (!_isDone) {
             _currentState.ActivateDefault();
         }
     }
-    public void SetExplorerMinion(Minion minion) {
-        _explorerMinion = minion;
-        if(_explorerMinion != null) {
-            _currentState.CreateLogs();
-            _currentState.SetDescription();
-        }
-    }
+    //public void SetExplorerMinion(Minion minion) {
+    //    _explorerMinion = minion;
+    //    //if(_explorerMinion != null) {
+    //    //    _currentState.CreateLogs();
+    //    //    _currentState.SetDescription();
+    //    //}
+    //}
     public void SetCharacterInvolved(Character character) {
         _characterInvolved = character;
         if(_characterInvolved != null) {

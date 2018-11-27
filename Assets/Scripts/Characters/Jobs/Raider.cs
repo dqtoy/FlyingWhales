@@ -5,6 +5,14 @@ using ECS;
 
 public class Raider : Job {
 
+    private string _action; //Raid or Scavenge
+
+    #region getters/setters
+    public string action {
+        get { return _action; }
+    }
+    #endregion
+
     public Raider(Character character) : base(character, JOB.RAIDER) {
         _actionDuration = 50;
         _hasCaptureEvent = false;
