@@ -53,15 +53,18 @@ public class Spy : Job {
             rateWeights.AddElement(JOB_RESULT.CRITICAL_FAIL, criticalFailRate);
             if (rateWeights.GetTotalOfWeights() > 0) {
                 JOB_RESULT chosenResult = rateWeights.PickRandomElementGivenWeights();
+                Intel chosenIntel = intelChoices[Random.Range(0, intelChoices.Count)];
                 switch (chosenResult) {
                     case JOB_RESULT.SUCCESS:
-                        //RaidSuccess();
+                        Success(chosenIntel);
                         break;
                     case JOB_RESULT.FAIL:
-                        //RaidFail();
+                        //TODO: Shared Fail c/o Chy
+                        StartJobAction();
                         break;
                     case JOB_RESULT.CRITICAL_FAIL:
-                        //CriticalRaidFail();
+                        //TODO: Shared Critical Fail c/o Chy
+                        StartJobAction();
                         break;
                     default:
                         break;
@@ -77,4 +80,22 @@ public class Spy : Job {
         _actionDuration = 80 - (2 * (_character.level - 5));
     }
     #endregion
+
+    private void Success(Intel chosenIntel) {
+        Interaction interaction = null;
+        if (chosenIntel is FactionIntel) {
+            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.FACTION_DISCOVERED, character.specificLocation.tileLocation.landmarkOnTile);
+        } else if (chosenIntel is LocationIntel) {
+            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.LOCATION_OBSERVED, character.specificLocation.tileLocation.landmarkOnTile);
+        } else if (chosenIntel is CharacterIntel) {
+            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_ENCOUNTERED, character.specificLocation.tileLocation.landmarkOnTile);
+        } else if (chosenIntel is DefenderIntel) {
+            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.DEFENDERS_REVEALED, character.specificLocation.tileLocation.landmarkOnTile);
+        }
+        if (interaction != null) {
+            interaction.SetEndInteractionAction(() => StartJobAction());
+            interaction.ScheduleSecondTimeOut();
+        }
+        
+    }
 }

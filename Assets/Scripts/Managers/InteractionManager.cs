@@ -99,6 +99,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.FACTION_DISCOVERED:
                 createdInteraction = new FactionDiscovered(interactable);
                 break;
+            case INTERACTION_TYPE.LOCATION_OBSERVED:
+                createdInteraction = new LocationObserved(interactable);
+                break;
+            case INTERACTION_TYPE.DEFENDERS_REVEALED:
+                createdInteraction = new DefendersRevealed(interactable);
+                break;
         }
         return createdInteraction;
     }
