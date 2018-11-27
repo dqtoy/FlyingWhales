@@ -66,6 +66,7 @@ public class HumanBanditReinforcements : Interaction {
                 needsMinion = false,
                 effect = () => TakeUnitEffect(state),
                 canBeDoneAction = () => AssignedMinionIsOfClass(new List<string>() { "Greed", "Envy" }),
+                doesNotMeetRequirementsStr = "Minion must be Greed or Envy.",
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,

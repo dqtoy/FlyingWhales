@@ -94,6 +94,7 @@ public class TheNecromancer : Interaction {
                 needsMinion = false,
                 effect = () => InflameResentmentOptionEffect(state),
                 canBeDoneAction = () => AssignedMinionIsOfClass(chosenMotivation),
+                doesNotMeetRequirementsStr = "Minion must be " + chosenMotivation,
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
