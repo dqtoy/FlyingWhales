@@ -940,7 +940,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
             if (validInteractions.GetTotalOfWeights() > 0) {
                 INTERACTION_TYPE chosenInteraction = validInteractions.PickRandomElementGivenWeights();
                 //create interaction of type
-                Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, this);
+                Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, this.specificLocation.tileLocation.landmarkOnTile);
                 if (createdInteraction != null) {
                     (this.specificLocation as BaseLandmark).AddInteraction(createdInteraction);
                 }

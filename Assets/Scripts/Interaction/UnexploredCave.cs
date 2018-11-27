@@ -4,7 +4,7 @@ using UnityEngine;
 using ECS;
 
 public class UnexploredCave : Interaction {
-    public UnexploredCave(IInteractable interactable) : base(interactable, INTERACTION_TYPE.UNEXPLORED_CAVE, 70) {
+    public UnexploredCave(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.UNEXPLORED_CAVE, 70) {
         _name = "Unexplored Cave";
     }
     #region Overrides

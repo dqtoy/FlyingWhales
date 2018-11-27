@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AbandonedHouse : Interaction {
-    public AbandonedHouse(IInteractable interactable) : base(interactable, INTERACTION_TYPE.ABANDONED_HOUSE, 50) {
+    public AbandonedHouse(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.ABANDONED_HOUSE, 50) {
         _name = "Abandoned House";
     }
 

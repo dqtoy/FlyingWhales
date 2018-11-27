@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class NothingHappened : Interaction {
 
-    public NothingHappened(IInteractable interactable) : base(interactable, INTERACTION_TYPE.SUSPICIOUS_SOLDIER_MEETING, 70) {
+    public NothingHappened(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.SUSPICIOUS_SOLDIER_MEETING, 70) {
         _name = "Nothing Happened";
     }
 

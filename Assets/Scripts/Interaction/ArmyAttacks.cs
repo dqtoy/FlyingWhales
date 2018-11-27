@@ -15,56 +15,54 @@ public class ArmyAttacks : Interaction {
     private const string redirectionFailure = "Redirection Failure";
     private const string doNothing = "Do nothing";
 
-    public ArmyAttacks(IInteractable interactable) : base(interactable, INTERACTION_TYPE.ARMY_ATTACKS, 150) {
+    public ArmyAttacks(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.ARMY_ATTACKS, 150) {
         _name = "Army Attacks";
     }
 
     #region Overrides
     public override void CreateStates() {
-        if (_interactable is BaseLandmark) {
-            landmark = _interactable as BaseLandmark;
-            Faction targetFaction = landmark.owner.GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS.AT_WAR);
-            targetArea = targetFaction.ownedAreas[Random.Range(0, targetFaction.ownedAreas.Count)];
-            target = targetArea.GetRandomExposedLandmark();
-            //CreateExploreStates();
-            //CreateWhatToDoNextState("%minion% will not intervene with the Garrison's planned attack. Do you want him to continue surveillance of " + landmark.landmarkName + "?");
+        landmark = _interactable;
+        Faction targetFaction = landmark.owner.GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS.AT_WAR);
+        targetArea = targetFaction.ownedAreas[Random.Range(0, targetFaction.ownedAreas.Count)];
+        target = targetArea.GetRandomExposedLandmark();
+        //CreateExploreStates();
+        //CreateWhatToDoNextState("%minion% will not intervene with the Garrison's planned attack. Do you want him to continue surveillance of " + landmark.landmarkName + "?");
 
-            InteractionState startState = new InteractionState("Start", this);
-            //string startStateDesc = "The Garrison is preparing to attack " + landmark.name + ".";
-            //startState.SetDescription(startStateDesc);
-            CreateActionOptions(startState);
+        InteractionState startState = new InteractionState("Start", this);
+        //string startStateDesc = "The Garrison is preparing to attack " + landmark.name + ".";
+        //startState.SetDescription(startStateDesc);
+        CreateActionOptions(startState);
             
 
-            //action option states
-            InteractionState stopSuccessfulState = new InteractionState(stopSuccessful, this);
-            InteractionState stopFailureState = new InteractionState(stopFailure, this);
-            InteractionState stopCriticalFailureState = new InteractionState(stopCriticalFailure, this);
-            InteractionState redirectionSuccessfulState = new InteractionState(redirectionSuccessful, this);
-            InteractionState redirectionFailureState = new InteractionState(redirectionFailure, this);
-            InteractionState doNothingState = new InteractionState(doNothing, this);
+        //action option states
+        InteractionState stopSuccessfulState = new InteractionState(stopSuccessful, this);
+        InteractionState stopFailureState = new InteractionState(stopFailure, this);
+        InteractionState stopCriticalFailureState = new InteractionState(stopCriticalFailure, this);
+        InteractionState redirectionSuccessfulState = new InteractionState(redirectionSuccessful, this);
+        InteractionState redirectionFailureState = new InteractionState(redirectionFailure, this);
+        InteractionState doNothingState = new InteractionState(doNothing, this);
 
-            stopSuccessfulState.SetEndEffect(() => StopSuccessfulRewardEffect(stopSuccessfulState));
-            stopFailureState.SetEndEffect(() => StopFailureRewardEffect(stopFailureState));
-            stopCriticalFailureState.SetEndEffect(() => StopCriticalFailureRewardEffect(stopCriticalFailureState));
-            redirectionSuccessfulState.SetEndEffect(() => RedirectionSuccessfulRewardEffect(redirectionSuccessfulState));
-            redirectionFailureState.SetEndEffect(() => RedirectionFailureRewardEffect(redirectionFailureState));
-            doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
+        stopSuccessfulState.SetEndEffect(() => StopSuccessfulRewardEffect(stopSuccessfulState));
+        stopFailureState.SetEndEffect(() => StopFailureRewardEffect(stopFailureState));
+        stopCriticalFailureState.SetEndEffect(() => StopCriticalFailureRewardEffect(stopCriticalFailureState));
+        redirectionSuccessfulState.SetEndEffect(() => RedirectionSuccessfulRewardEffect(redirectionSuccessfulState));
+        redirectionFailureState.SetEndEffect(() => RedirectionFailureRewardEffect(redirectionFailureState));
+        doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
 
-            //CreateActionOptions(stopSuccessfulState);
-            //CreateActionOptions(stopFailureState);
-            //CreateActionOptions(redirectionSuccessfulState);
-            //CreateActionOptions(redirectionFailureState);
+        //CreateActionOptions(stopSuccessfulState);
+        //CreateActionOptions(stopFailureState);
+        //CreateActionOptions(redirectionSuccessfulState);
+        //CreateActionOptions(redirectionFailureState);
 
-            _states.Add(startState.name, startState);
-            _states.Add(stopSuccessfulState.name, stopSuccessfulState);
-            _states.Add(stopFailureState.name, stopFailureState);
-            _states.Add(stopCriticalFailureState.name, stopCriticalFailureState);
-            _states.Add(redirectionSuccessfulState.name, redirectionSuccessfulState);
-            _states.Add(redirectionFailureState.name, redirectionFailureState);
-            _states.Add(doNothingState.name, doNothingState);
+        _states.Add(startState.name, startState);
+        _states.Add(stopSuccessfulState.name, stopSuccessfulState);
+        _states.Add(stopFailureState.name, stopFailureState);
+        _states.Add(stopCriticalFailureState.name, stopCriticalFailureState);
+        _states.Add(redirectionSuccessfulState.name, redirectionSuccessfulState);
+        _states.Add(redirectionFailureState.name, redirectionFailureState);
+        _states.Add(doNothingState.name, doNothingState);
 
-            SetCurrentState(startState);
-        }
+        SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

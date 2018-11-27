@@ -10,7 +10,7 @@ public class Interaction {
     protected int _timeOutTicks;
     protected GameDate _timeDate;
     protected INTERACTION_TYPE _type;
-    protected IInteractable _interactable;
+    protected BaseLandmark _interactable;
     protected Dictionary<string, InteractionState> _states;
     //protected InteractionItem _interactionItem;
     protected bool _isActivated;
@@ -53,7 +53,7 @@ public class Interaction {
     //public InteractionItem interactionItem {
     //    get { return _interactionItem; }
     //}
-    public IInteractable interactable {
+    public BaseLandmark interactable {
         get { return _interactable; }
     }
     public bool isActivated {
@@ -66,7 +66,7 @@ public class Interaction {
         get { return _jobFilter; }
     }
     #endregion
-    public Interaction(IInteractable interactable, INTERACTION_TYPE type, int timeOutTicks) {
+    public Interaction(BaseLandmark interactable, INTERACTION_TYPE type, int timeOutTicks) {
         _id = Utilities.SetID(this);
         _type = type;
         _interactable = interactable;
@@ -81,9 +81,10 @@ public class Interaction {
     }
 
     #region Virtuals
-    public virtual void Initialize() {
+    public virtual void Initialize(Minion explorerMinion = null) {
         //SetCharacterInvolved(characterInvolved);
         CreateStates();
+        SetExplorerMinion(explorerMinion);
         //ScheduleFirstTimeOut();
     }
     public virtual void CreateStates() {
@@ -324,10 +325,8 @@ public class Interaction {
         SetCurrentState(_states[stateName]);
     }
     protected void ExploreContinuesRewardEffect(InteractionState state) {
-        if (_interactable is BaseLandmark) {
-            BaseLandmark landmark = _interactable as BaseLandmark;
-            landmark.tileLocation.areaOfTile.areaInvestigation.ExploreArea();
-        }
+        BaseLandmark landmark = _interactable;
+        landmark.tileLocation.areaOfTile.areaInvestigation.ExploreArea();
     }
     protected void ExploreEndsRewardState(InteractionState state, string stateName) {
         if (explorerMinion != null) {
@@ -339,10 +338,10 @@ public class Interaction {
         if(explorerMinion == null) {
             return;
         }
-        if (_interactable is BaseLandmark) {
-            BaseLandmark landmark = _interactable as BaseLandmark;
-            //landmark.landmarkInvestigation.RecallMinion("explore");
-        }
+        //if (_interactable is BaseLandmark) {
+        //    BaseLandmark landmark = _interactable as BaseLandmark;
+        //    //landmark.landmarkInvestigation.RecallMinion("explore");
+        //}
     }
     #endregion
     #endregion

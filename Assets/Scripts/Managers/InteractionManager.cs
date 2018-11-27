@@ -27,7 +27,7 @@ public class InteractionManager : MonoBehaviour {
         Instance = this;
     }
 
-    public Interaction CreateNewInteraction(INTERACTION_TYPE interactionType, IInteractable interactable) {
+    public Interaction CreateNewInteraction(INTERACTION_TYPE interactionType, BaseLandmark interactable) {
         Interaction createdInteraction = null;
         switch (interactionType) {
             case INTERACTION_TYPE.BANDIT_RAID:
@@ -95,6 +95,9 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.RAID_SUCCESS:
                 createdInteraction = new RaidSuccess(interactable);
+                break;
+            case INTERACTION_TYPE.FACTION_DISCOVERED:
+                createdInteraction = new FactionDiscovered(interactable);
                 break;
         }
         return createdInteraction;

@@ -7,7 +7,7 @@ public class FactionAttacks : Interaction {
 
     private Area _targetArea;
 
-    public FactionAttacks(IInteractable interactable) : base(interactable, INTERACTION_TYPE.FACTION_ATTACKS, 70) {
+    public FactionAttacks(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.FACTION_ATTACKS, 70) {
         _name = "Faction Attacks";
     }
 

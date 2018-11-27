@@ -32,7 +32,7 @@ public class Area {
     public int minInitialDefendersPerGroup { get; private set; }
     public int maxInitialDefendersPerGroup { get; private set; }
     public int supplyCapacity { get; private set; }
-    public List<Party> defenderGroups { get; private set; }
+    public List<DefenderGroup> defenderGroups { get; private set; }
     public int initialDefenderLevel { get; private set; }
     public List<RACE> possibleOccupants { get; private set; }
     public RACE defaultRace { get; private set; }

@@ -2947,7 +2947,7 @@ namespace ECS {
                     interactionLog += "\n" + validInteractions.GetWeightsSummary("Generating interaction:");
                     INTERACTION_TYPE chosenInteraction = validInteractions.PickRandomElementGivenWeights();
                     //create interaction of type
-                    Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, specificLocation as BaseLandmark);
+                    Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, specificLocation.tileLocation.landmarkOnTile);
                     AddInteraction(createdInteraction);
                     //if (createdInteraction != null) {
                     //    (this.specificLocation as BaseLandmark).AddInteraction(createdInteraction);
