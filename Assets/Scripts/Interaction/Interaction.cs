@@ -88,7 +88,7 @@ public class Interaction {
     public virtual void Initialize(Minion explorerMinion = null) {
         //SetCharacterInvolved(characterInvolved);
         CreateStates();
-        SetExplorerMinion(explorerMinion);
+        //SetExplorerMinion(explorerMinion);
         //ScheduleFirstTimeOut();
     }
     public virtual void CreateStates() {

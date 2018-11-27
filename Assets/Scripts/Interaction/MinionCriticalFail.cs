@@ -5,7 +5,7 @@ using ECS;
 
 public class MinionCriticalFail : Interaction {
 
-    public MinionCriticalFail(IInteractable interactable) : base(interactable, INTERACTION_TYPE.MINION_CRITICAL_FAIL, 70) {
+    public MinionCriticalFail(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MINION_CRITICAL_FAIL, 70) {
         _name = "Minion Critical Fail";
     }
 
