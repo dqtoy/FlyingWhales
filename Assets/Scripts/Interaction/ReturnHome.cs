@@ -21,10 +21,10 @@ public class ReturnHome : Interaction {
 
         CreateActionOptions(startState);
 
-        startState.SetEndEffect(() => StartEffect(startState));
-        cancelledState.SetEndEffect(() => CancelledRewardEffect(cancelledState));
-        continuesState.SetEndEffect(() => ContinuesRewardEffect(continuesState));
-        doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
+        startState.SetEffect(() => StartEffect(startState), false);
+        cancelledState.SetEffect(() => CancelledRewardEffect(cancelledState));
+        continuesState.SetEffect(() => ContinuesRewardEffect(continuesState));
+        doNothingState.SetEffect(() => DoNothingRewardEffect(doNothingState));
 
         _states.Add(startState.name, startState);
         _states.Add(cancelledState.name, cancelledState);

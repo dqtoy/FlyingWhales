@@ -206,7 +206,7 @@ public class AreaInvestigation {
         }
         if (choices.Count > 0) {
             _currentInteraction = GetRandomInteraction(choices);
-            _currentlyExploredLandmark = _currentInteraction.interactable as BaseLandmark;
+            _currentlyExploredLandmark = _currentInteraction.interactable;
             _currentlyExploredLandmark.landmarkVisual.SetAndStartInteractionTimer(Interaction.secondTimeOutTicks, new InteractionTimer.OnStopTimer(_currentlyExploredLandmark.landmarkVisual.HideInteractionTimer));
             _currentlyExploredLandmark.landmarkVisual.ShowInteractionForeground();
             _currentlyExploredLandmark.landmarkVisual.ShowInteractionTimer();

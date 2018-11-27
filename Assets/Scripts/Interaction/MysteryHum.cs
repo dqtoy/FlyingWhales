@@ -10,7 +10,7 @@ public class MysteryHum : Interaction {
     #region Overrides
     public override void CreateStates() {
         //CreateExploreStates();
-        //CreateWhatToDoNextState("%minion% ignored the humming in the area. Do you want him to continue surveillance of " + _interactable.specificLocation.thisName + "?");
+        //CreateWhatToDoNextState("%minion% ignored the humming in the area. Do you want him to continue surveillance of " + _interactable.thisName + "?");
 
         InteractionState startState = new InteractionState("Start", this);
         InteractionState demonDisappearsState = new InteractionState("Demon Disappears", this);
@@ -25,10 +25,10 @@ public class MysteryHum : Interaction {
         //CreateActionOptions(demonAttacksState);
         //CreateActionOptions(armyRecruitedState);
 
-        demonDisappearsState.SetEndEffect(() => DemonDisappearsRewardEffect(demonDisappearsState));
-        demonAttacksState.SetEndEffect(() => DemonAttacksRewardEffect(demonAttacksState));
-        armyRecruitedState.SetEndEffect(() => ArmyRecruitedRewardEffect(armyRecruitedState));
-        doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
+        demonDisappearsState.SetEffect(() => DemonDisappearsRewardEffect(demonDisappearsState));
+        demonAttacksState.SetEffect(() => DemonAttacksRewardEffect(demonAttacksState));
+        armyRecruitedState.SetEffect(() => ArmyRecruitedRewardEffect(armyRecruitedState));
+        doNothingState.SetEffect(() => DoNothingRewardEffect(doNothingState));
 
         _states.Add(startState.name, startState);
         _states.Add(demonDisappearsState.name, demonDisappearsState);

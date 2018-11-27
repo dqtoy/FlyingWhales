@@ -152,10 +152,10 @@ public class Minion : IUnit {
     public void SetIndexDefaultSort(int index) {
         _indexDefaultSort = index;
     }
-    public void GoToAssignment(IInteractable interactable) {
+    public void GoToAssignment(BaseLandmark interactable) {
         SetEnabledState(false);
         icharacter.currentParty.specificLocation.RemoveCharacterFromLocation(icharacter.currentParty);
-        interactable.specificLocation.AddCharacterToLocation(icharacter.currentParty);
+        interactable.AddCharacterToLocation(icharacter.currentParty);
     }
     public void GoBackFromAssignment() {
         if (icharacter.isDead) {

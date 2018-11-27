@@ -10,7 +10,7 @@ public class InteractionState {
     private string _description;
     private bool _isEnd;
     //private bool _isTimed;
-    private Action _endEffect;
+    private Action _effect;
     //private GameDate _timeDate;
     private Minion _assignedMinion;
     private ActionOption _chosenOption;
@@ -94,18 +94,19 @@ public class InteractionState {
             }
         }
     }
-    public void SetEndEffect(Action endEffect) {
-        if (endEffect != null) {
-            _isEnd = true;
-        } else {
-            _isEnd = false;
-        }
-        _endEffect = endEffect;
+    public void SetEffect(Action effect, bool isEnd = true) {
+        //if (endEffect != null) {
+        //    _isEnd = true;
+        //} else {
+        //    _isEnd = false;
+        //}
+        _isEnd = isEnd;
+        _effect = effect;
     }
     public void OnStartState() {
         CreateLogs();
-        if (_isEnd && _endEffect != null) {
-            _endEffect();
+        if (_effect != null) {
+            _effect();
         }
         SetDescription();
         //if(_isTimed && _defaultOption != null) {
@@ -150,7 +151,7 @@ public class InteractionState {
                 _descriptionLog.AddToFillers(interaction.characterInvolved, interaction.characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             }
             if (!_descriptionLog.HasFillerForIdentifier(LOG_IDENTIFIER.LANDMARK_1)) {
-                _descriptionLog.AddToFillers(_interaction.interactable.specificLocation.tileLocation.areaOfTile, _interaction.interactable.specificLocation.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+                _descriptionLog.AddToFillers(_interaction.interactable.tileLocation.areaOfTile, _interaction.interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
             }
             _description = Utilities.LogReplacer(descriptionLog);
             InteractionUI.Instance.interactionItem.SetDescription(_description, descriptionLog);
@@ -159,7 +160,7 @@ public class InteractionState {
         for (int i = 0; i < otherLogs.Count; i++) {
             Log currLog = otherLogs[i];
             currLog.SetFillers(logFillers);
-            _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.AddHistory(currLog);
+            _interaction.interactable.tileLocation.landmarkOnTile.AddHistory(currLog);
             if (_interaction.explorerMinion != null) {
                 _interaction.explorerMinion.icharacter.AddHistory(currLog);
             }

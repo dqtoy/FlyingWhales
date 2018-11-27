@@ -17,57 +17,55 @@ public class BanditRaid : Interaction {
 
     #region Overrides
     public override void CreateStates() {
-        if (_interactable is BaseLandmark) {
-            originLandmark = interactable as BaseLandmark;
-            //CreateExploreStates();
-            //CreateWhatToDoNextState("What do you want %minion% to do next?");
-            //ConstructAssaultSpawnWeights();
-            chosenLandmarkToRaid = GetLandmarkToRaid(originLandmark);
-            
-            InteractionState startState = new InteractionState("Start", this);
-            //string startStateDesc = "The bandits are preparing to raid " + chosenLandmarkToRaid.landmarkName;
-            //startState.SetDescription(startStateDesc);
+        originLandmark = interactable;
+        //CreateExploreStates();
+        //CreateWhatToDoNextState("What do you want %minion% to do next?");
+        //ConstructAssaultSpawnWeights();
+        chosenLandmarkToRaid = GetLandmarkToRaid(originLandmark);
 
-            Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-            startStateDescriptionLog.AddToFillers(chosenLandmarkToRaid.tileLocation.areaOfTile, chosenLandmarkToRaid.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-            startState.OverrideDescriptionLog(startStateDescriptionLog);
+        InteractionState startState = new InteractionState("Start", this);
+        //string startStateDesc = "The bandits are preparing to raid " + chosenLandmarkToRaid.landmarkName;
+        //startState.SetDescription(startStateDesc);
 
-            //action option states
-            InteractionState doNothingState = new InteractionState("Do nothing", this); //raid
-            InteractionState successfullyCancelledRaidState = new InteractionState("Successfully Cancelled Raid", this); //successfully cancelled raid
-            InteractionState failedToCancelRaidState = new InteractionState("Failed to Cancel Raid", this); //failed to cancel raid
-            InteractionState criticallyFailedToCancelRaidState = new InteractionState("Critically Fail to Cancel Raid", this); //critically failed to cancel raid
-            InteractionState empoweredRaidState = new InteractionState("Empowered Raid", this); //empowered raid
-            InteractionState misusedFundsState = new InteractionState("Misused Funds", this); //misused funds
-            InteractionState demonDiesState = new InteractionState("Demon Dies", this); //demon dies
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        startStateDescriptionLog.AddToFillers(chosenLandmarkToRaid.tileLocation.areaOfTile, chosenLandmarkToRaid.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+        startState.OverrideDescriptionLog(startStateDescriptionLog);
 
-            CreateActionOptions(startState);
-            //CreateActionOptions(raidState);
-            //CreateActionOptions(successfullyCancelledRaidState);
-            //CreateActionOptions(failedToCancelRaidState);
-            //CreateActionOptions(criticallyFailedToCancelRaidState);
-            //CreateActionOptions(empoweredRaidState);
-            //CreateActionOptions(misusedFundsState);
+        //action option states
+        InteractionState doNothingState = new InteractionState("Do nothing", this); //raid
+        InteractionState successfullyCancelledRaidState = new InteractionState("Successfully Cancelled Raid", this); //successfully cancelled raid
+        InteractionState failedToCancelRaidState = new InteractionState("Failed to Cancel Raid", this); //failed to cancel raid
+        InteractionState criticallyFailedToCancelRaidState = new InteractionState("Critically Fail to Cancel Raid", this); //critically failed to cancel raid
+        InteractionState empoweredRaidState = new InteractionState("Empowered Raid", this); //empowered raid
+        InteractionState misusedFundsState = new InteractionState("Misused Funds", this); //misused funds
+        InteractionState demonDiesState = new InteractionState("Demon Dies", this); //demon dies
 
-            doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
-            successfullyCancelledRaidState.SetEndEffect(() => SuccessfullyCancelledRaidRewardEffect(successfullyCancelledRaidState));
-            failedToCancelRaidState.SetEndEffect(() => FailedToCancelRaidRewardEffect(failedToCancelRaidState));
-            criticallyFailedToCancelRaidState.SetEndEffect(() => CriticalFailToCancelRaidRewardEffect(criticallyFailedToCancelRaidState));
-            empoweredRaidState.SetEndEffect(() => EmpoweredRaidRewardEffect(empoweredRaidState));
-            misusedFundsState.SetEndEffect(() => MisusedFundsRewardEffect(misusedFundsState));
-            demonDiesState.SetEndEffect(() => DemonDiesRewardEffect(demonDiesState));
+        CreateActionOptions(startState);
+        //CreateActionOptions(raidState);
+        //CreateActionOptions(successfullyCancelledRaidState);
+        //CreateActionOptions(failedToCancelRaidState);
+        //CreateActionOptions(criticallyFailedToCancelRaidState);
+        //CreateActionOptions(empoweredRaidState);
+        //CreateActionOptions(misusedFundsState);
 
-            _states.Add(startState.name, startState);
-            _states.Add(doNothingState.name, doNothingState);
-            _states.Add(successfullyCancelledRaidState.name, successfullyCancelledRaidState);
-            _states.Add(failedToCancelRaidState.name, failedToCancelRaidState);
-            _states.Add(criticallyFailedToCancelRaidState.name, criticallyFailedToCancelRaidState);
-            _states.Add(empoweredRaidState.name, empoweredRaidState);
-            _states.Add(misusedFundsState.name, misusedFundsState);
-            _states.Add(demonDiesState.name, demonDiesState);
+        doNothingState.SetEffect(() => DoNothingRewardEffect(doNothingState));
+        successfullyCancelledRaidState.SetEffect(() => SuccessfullyCancelledRaidRewardEffect(successfullyCancelledRaidState));
+        failedToCancelRaidState.SetEffect(() => FailedToCancelRaidRewardEffect(failedToCancelRaidState));
+        criticallyFailedToCancelRaidState.SetEffect(() => CriticalFailToCancelRaidRewardEffect(criticallyFailedToCancelRaidState));
+        empoweredRaidState.SetEffect(() => EmpoweredRaidRewardEffect(empoweredRaidState));
+        misusedFundsState.SetEffect(() => MisusedFundsRewardEffect(misusedFundsState));
+        demonDiesState.SetEffect(() => DemonDiesRewardEffect(demonDiesState));
 
-            SetCurrentState(startState);
-        }
+        _states.Add(startState.name, startState);
+        _states.Add(doNothingState.name, doNothingState);
+        _states.Add(successfullyCancelledRaidState.name, successfullyCancelledRaidState);
+        _states.Add(failedToCancelRaidState.name, failedToCancelRaidState);
+        _states.Add(criticallyFailedToCancelRaidState.name, criticallyFailedToCancelRaidState);
+        _states.Add(empoweredRaidState.name, empoweredRaidState);
+        _states.Add(misusedFundsState.name, misusedFundsState);
+        _states.Add(demonDiesState.name, demonDiesState);
+
+        SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

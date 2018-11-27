@@ -305,7 +305,7 @@ public class Player : ILeader {
     //private void TakeItemFromLandmark() {
     //    Item item = _currentlySelectedPlayerPicker as Item;
     //    TakeItem takeItem = _currentActiveAbility as TakeItem;
-    //    BaseLandmark landmark = _currentTargetInteractable as BaseLandmark;
+    //    BaseLandmark landmark = _currentTargetinteractable;
     //    AddItem(item);
     //    landmark.RemoveItemInLandmark(item);
     //    takeItem.HasTakenItem(landmark);

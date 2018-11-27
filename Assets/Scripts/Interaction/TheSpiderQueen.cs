@@ -15,7 +15,7 @@ public class TheSpiderQueen : Interaction {
     #region Overrides
     public override void CreateStates() {
         if (_interactable is BaseLandmark) {
-            landmark = _interactable as BaseLandmark;
+            landmark = _interactable;
             //Spawn spider queen
             SpawnSpiderQueen();
             ConstructAssaultSpawnWeights();
@@ -37,13 +37,13 @@ public class TheSpiderQueen : Interaction {
             InteractionState demonDiesState = new InteractionState("Demon Dies", this);
             InteractionState spidersAttackState = new InteractionState("Spiders Attack", this);
 
-            attackLocationState.SetEndEffect(() => AttackLocationEffect(attackLocationState));
-            transformRitualSuccessState.SetEndEffect(() => TransformRitualSuccessEffect(transformRitualSuccessState));
-            transformRitualFailState.SetEndEffect(() => TransformRitualFailureEffect(transformRitualFailState));
-            transformRitualCriticalFailState.SetEndEffect(() => TransformRitualCriticalFailureEffect(transformRitualCriticalFailState));
-            gainSuppliesState.SetEndEffect(() => GainSuppliesEffect(gainSuppliesState));
-            demonDiesState.SetEndEffect(() => DemonDiesEffect(demonDiesState));
-            spidersAttackState.SetEndEffect(() => SpidersAttackEffect(spidersAttackState));
+            attackLocationState.SetEffect(() => AttackLocationEffect(attackLocationState));
+            transformRitualSuccessState.SetEffect(() => TransformRitualSuccessEffect(transformRitualSuccessState));
+            transformRitualFailState.SetEffect(() => TransformRitualFailureEffect(transformRitualFailState));
+            transformRitualCriticalFailState.SetEffect(() => TransformRitualCriticalFailureEffect(transformRitualCriticalFailState));
+            gainSuppliesState.SetEffect(() => GainSuppliesEffect(gainSuppliesState));
+            demonDiesState.SetEffect(() => DemonDiesEffect(demonDiesState));
+            spidersAttackState.SetEffect(() => SpidersAttackEffect(spidersAttackState));
 
 
             _states.Add(startState.name, startState);

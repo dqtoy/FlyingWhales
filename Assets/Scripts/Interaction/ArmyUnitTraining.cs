@@ -29,10 +29,10 @@ public class ArmyUnitTraining : Interaction {
         //CreateActionOptions(failCancelledTrainingState);
         //CreateActionOptions(armyProducedState);
 
-        cancelledTrainingState.SetEndEffect(() => CancelledTrainingRewardEffect(cancelledTrainingState));
-        failCancelledTrainingState.SetEndEffect(() => FailedCancelTrainingRewardEffect(failCancelledTrainingState));
-        demonDisappearsState.SetEndEffect(() => DemonDisappearsRewardEffect(demonDisappearsState));
-        armyProducedState.SetEndEffect(() => ArmyProducedRewardEffect(armyProducedState));
+        cancelledTrainingState.SetEffect(() => CancelledTrainingRewardEffect(cancelledTrainingState));
+        failCancelledTrainingState.SetEffect(() => FailedCancelTrainingRewardEffect(failCancelledTrainingState));
+        demonDisappearsState.SetEffect(() => DemonDisappearsRewardEffect(demonDisappearsState));
+        armyProducedState.SetEffect(() => ArmyProducedRewardEffect(armyProducedState));
 
         _states.Add(startState.name, startState);
         _states.Add(cancelledTrainingState.name, cancelledTrainingState);
@@ -184,7 +184,7 @@ public class ArmyUnitTraining : Interaction {
         //}
     }
     private void ArmyProducedRewardEffect(InteractionState state) {
-        CharacterManager.Instance.CreateNewCharacter(_chosenClassName, interactable.faction.race, GENDER.MALE, interactable.faction, interactable as BaseLandmark);
+        CharacterManager.Instance.CreateNewCharacter(_chosenClassName, interactable.faction.race, GENDER.MALE, interactable.faction, interactable);
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(_interactable.faction.race), LOG_IDENTIFIER.STRING_1);
             state.descriptionLog.AddToFillers(null, _chosenClassName, LOG_IDENTIFIER.STRING_2);

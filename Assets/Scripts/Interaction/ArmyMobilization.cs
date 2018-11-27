@@ -11,7 +11,7 @@ public class ArmyMobilization : Interaction {
     #region Overrides
     public override void CreateStates() {
         //CreateExploreStates();
-        //CreateWhatToDoNextState(explorerMinion.name + " just watches while the army is being mobilized. Do you want him to continue surveillance of " + _interactable.specificLocation.thisName + "?");
+        //CreateWhatToDoNextState(explorerMinion.name + " just watches while the army is being mobilized. Do you want him to continue surveillance of " + _interactable.thisName + "?");
 
         InteractionState startState = new InteractionState("Start", this);
         InteractionState cancelledMobilizationState = new InteractionState("Cancelled Mobilization", this);
@@ -27,10 +27,10 @@ public class ArmyMobilization : Interaction {
         //CreateActionOptions(failCancelledMobilizationState);
         //CreateActionOptions(armyMobilizedState);
 
-        cancelledMobilizationState.SetEndEffect(() => CancelledMobilizationRewardEffect(cancelledMobilizationState));
-        failCancelledMobilizationState.SetEndEffect(() => FailedCancelMobilizationRewardEffect(failCancelledMobilizationState));
-        demonDisappearsState.SetEndEffect(() => DemonDisappearsRewardEffect(demonDisappearsState));
-        armyMobilizedState.SetEndEffect(() => ArmyMobilizedRewardEffect(armyMobilizedState));
+        cancelledMobilizationState.SetEffect(() => CancelledMobilizationRewardEffect(cancelledMobilizationState));
+        failCancelledMobilizationState.SetEffect(() => FailedCancelMobilizationRewardEffect(failCancelledMobilizationState));
+        demonDisappearsState.SetEffect(() => DemonDisappearsRewardEffect(demonDisappearsState));
+        armyMobilizedState.SetEffect(() => ArmyMobilizedRewardEffect(armyMobilizedState));
 
         _states.Add(startState.name, startState);
         _states.Add(cancelledMobilizationState.name, cancelledMobilizationState);

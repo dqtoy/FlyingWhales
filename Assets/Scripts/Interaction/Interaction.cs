@@ -46,7 +46,7 @@ public class Interaction {
         get { return _previousState; }
     }
     public Minion explorerMinion {
-        get { return _interactable.specificLocation.tileLocation.areaOfTile.areaInvestigation.assignedMinion; }
+        get { return _interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion; }
     }
     public Character characterInvolved {
         get { return _characterInvolved; }
@@ -85,10 +85,10 @@ public class Interaction {
     }
 
     #region Virtuals
-    public virtual void Initialize(Minion explorerMinion = null) {
+    public virtual void Initialize() {
         //SetCharacterInvolved(characterInvolved);
         CreateStates();
-        SetExplorerMinion(explorerMinion);
+        //SetExplorerMinion(explorerMinion);
         //ScheduleFirstTimeOut();
     }
     public virtual void CreateStates() {
@@ -108,9 +108,8 @@ public class Interaction {
     }
     public virtual void OnInteractionActive() {
         _isChosen = true;
-        BaseLandmark landmark = interactable as BaseLandmark;
-        landmark.landmarkVisual.StopInteractionTimer();
-        landmark.landmarkVisual.HideInteractionTimer();
+        interactable.landmarkVisual.StopInteractionTimer();
+        interactable.landmarkVisual.HideInteractionTimer();
     } //this is called when the player clicks the "exclamation point" button and this interaction was chosen
     #endregion
 
@@ -154,10 +153,9 @@ public class Interaction {
         _timeDate = timeOutDate;
         SchedulingManager.Instance.AddEntry(_timeDate, () => SecondTimeOut());
 
-        BaseLandmark landmark = interactable as BaseLandmark;
-        landmark.landmarkVisual.SetAndStartInteractionTimer(secondTimeOutTicks);
-        landmark.landmarkVisual.ShowInteractionForeground();
-        landmark.landmarkVisual.ShowInteractionTimer();
+        interactable.landmarkVisual.SetAndStartInteractionTimer(secondTimeOutTicks);
+        interactable.landmarkVisual.ShowInteractionForeground();
+        interactable.landmarkVisual.ShowInteractionTimer();
     }
     public void SetEndInteractionAction(Action action) {
         _endInteractionAction = action;
@@ -181,10 +179,9 @@ public class Interaction {
     protected void SecondTimeOut() {
         if (!_isSecondTimeOutCancelled) {
             TimedOutRunDefault();
-            BaseLandmark landmark = interactable as BaseLandmark;
-            landmark.landmarkVisual.StopInteractionTimer();
-            landmark.landmarkVisual.HideInteractionTimer();
-            //_interactable.specificLocation.tileLocation.areaOfTile.areaInvestigation.ExploreArea();
+            interactable.landmarkVisual.StopInteractionTimer();
+            interactable.landmarkVisual.HideInteractionTimer();
+            //_interactable.tileLocation.areaOfTile.areaInvestigation.ExploreArea();
         }
     }
     public void TimedOutRunDefault() {
@@ -245,8 +242,8 @@ public class Interaction {
         InteractionState exploreContinuesState = new InteractionState("Explore Continues", this);
         InteractionState exploreEndsState = new InteractionState("Explore Ends", this);
 
-        exploreContinuesState.SetEndEffect(() => ExploreContinuesRewardEffect(exploreContinuesState));
-        exploreEndsState.SetEndEffect(() => ExploreEndsRewardEffect(exploreEndsState));
+        exploreContinuesState.SetEffect(() => ExploreContinuesRewardEffect(exploreContinuesState));
+        exploreEndsState.SetEffect(() => ExploreEndsRewardEffect(exploreEndsState));
 
         _states.Add(exploreContinuesState.name, exploreContinuesState);
         _states.Add(exploreEndsState.name, exploreEndsState);
@@ -344,7 +341,7 @@ public class Interaction {
             return;
         }
         //if (_interactable is BaseLandmark) {
-        //    BaseLandmark landmark = _interactable as BaseLandmark;
+        //    BaseLandmark landmark = _interactable;
         //    //landmark.landmarkInvestigation.RecallMinion("explore");
         //}
     }

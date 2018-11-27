@@ -10,7 +10,7 @@ public class UnexploredCave : Interaction {
     #region Overrides
     public override void CreateStates() {
         //CreateExploreStates();
-        //CreateWhatToDoNextState("%minion% ignored the point of interest in the location. Do you want him to continue surveillance of " + _interactable.specificLocation.thisName + "?");
+        //CreateWhatToDoNextState("%minion% ignored the point of interest in the location. Do you want him to continue surveillance of " + _interactable.thisName + "?");
 
         InteractionState startState = new InteractionState("Start", this);
         InteractionState supplyState = new InteractionState("Supply", this);
@@ -33,14 +33,14 @@ public class UnexploredCave : Interaction {
         //CreateActionOptions(unleashedMonsterState);
         //CreateActionOptions(nothingState);
 
-        supplyState.SetEndEffect(() => SupplyRewardEffect(supplyState));
-        manaState.SetEndEffect(() => ManaRewardEffect(manaState));
-        demonDisappearsState.SetEndEffect(() => DemonDisappearsRewardEffect(demonDisappearsState));
+        supplyState.SetEffect(() => SupplyRewardEffect(supplyState));
+        manaState.SetEffect(() => ManaRewardEffect(manaState));
+        demonDisappearsState.SetEffect(() => DemonDisappearsRewardEffect(demonDisappearsState));
         //demonWeaponUpgradeState.SetEndEffect(() => DemonWeaponUpgradeEffect(demonWeaponUpgradeState));
         //demonArmorUpgradeState.SetEndEffect(() => DemonArmorUpgradeEffect(demonArmorUpgradeState));
-        unleashedMonsterState.SetEndEffect(() => UnleashedMonsterEffect(unleashedMonsterState));
-        nothingState.SetEndEffect(() => NothingEffect(nothingState));
-        leftAloneState.SetEndEffect(() => LeftAloneRewardEffect(leftAloneState));
+        unleashedMonsterState.SetEffect(() => UnleashedMonsterEffect(unleashedMonsterState));
+        nothingState.SetEffect(() => NothingEffect(nothingState));
+        leftAloneState.SetEffect(() => LeftAloneRewardEffect(leftAloneState));
 
         _states.Add(startState.name, startState);
         _states.Add(supplyState.name, supplyState);
@@ -154,7 +154,7 @@ public class UnexploredCave : Interaction {
     }
     private void UnleashedMonsterRewardState(InteractionState state, string effectName) {
         if(_interactable is BaseLandmark) {
-            BaseLandmark landmark = _interactable as BaseLandmark;
+            BaseLandmark landmark = _interactable;
             if(landmark.charactersWithHomeOnLandmark.Count > 0) {
                 //_states[effectName].SetDescription(explorerMinion.name + " has awakened a " + landmark.charactersWithHomeOnLandmark[0].name + ". It now defends the cave from intruders.");
                 SetCurrentState(_states[effectName]);
@@ -192,8 +192,8 @@ public class UnexploredCave : Interaction {
         }
 
         if(chosenClass != string.Empty) {
-            Character newDefender = CharacterManager.Instance.CreateNewCharacter(chosenClass, chosenRace, GENDER.MALE, null, _interactable.specificLocation, false);
-            BaseLandmark landmark = _interactable as BaseLandmark;
+            Character newDefender = CharacterManager.Instance.CreateNewCharacter(chosenClass, chosenRace, GENDER.MALE, null, _interactable, false);
+            BaseLandmark landmark = _interactable;
             landmark.AddDefender(newDefender);
 
             if (state.descriptionLog != null) {

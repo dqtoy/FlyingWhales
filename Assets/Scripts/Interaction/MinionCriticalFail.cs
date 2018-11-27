@@ -5,7 +5,7 @@ using ECS;
 
 public class MinionCriticalFail : Interaction {
 
-    public MinionCriticalFail(IInteractable interactable) : base(interactable, INTERACTION_TYPE.MINION_CRITICAL_FAIL, 70) {
+    public MinionCriticalFail(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MINION_CRITICAL_FAIL, 70) {
         _name = "Minion Critical Fail";
     }
 
@@ -22,7 +22,7 @@ public class MinionCriticalFail : Interaction {
             startState.OverrideDescriptionLog(startStateDescriptionLog);
         }
 
-        startState.SetEndEffect(() => StartEffect(startState));
+        startState.SetEffect(() => StartEffect(startState));
 
         _states.Add(startState.name, startState);
 
@@ -34,7 +34,7 @@ public class MinionCriticalFail : Interaction {
     private void StartEffect(InteractionState state) {
         DemonDisappearsRewardEffect(state);
         if (explorerMinion.icharacter.characterClass.jobType == JOB.RAIDER) {
-            interactable.specificLocation.tileLocation.areaOfTile.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -1);
+            interactable.tileLocation.areaOfTile.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -1);
         }
     }
     #endregion

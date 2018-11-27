@@ -43,12 +43,12 @@ public class CharacterTracking : Interaction {
 
         CreateActionOptions(startState);
 
-        successfullyFoundOutLocationState.SetEndEffect(() => SuccessfullyFoundOutLocationRewardEffect(successfullyFoundOutLocationState));
-        minionCaughtTailingCharacterState.SetEndEffect(() => MinionCaughtTailingRewardEffect(minionCaughtTailingCharacterState));
-        lostTheCharacterState.SetEndEffect(() => LostTheCharacterRewardEffect(lostTheCharacterState));
-        successfullyGotAheadOfCharacterState.SetEndEffect(() => SuccessfullyGotAheadOfCharacterRewardEffect(successfullyGotAheadOfCharacterState));
-        minionMisdirectedState.SetEndEffect(() => MinionMisdirectedRewardEffect(minionMisdirectedState));
-        doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
+        successfullyFoundOutLocationState.SetEffect(() => SuccessfullyFoundOutLocationRewardEffect(successfullyFoundOutLocationState));
+        minionCaughtTailingCharacterState.SetEffect(() => MinionCaughtTailingRewardEffect(minionCaughtTailingCharacterState));
+        lostTheCharacterState.SetEffect(() => LostTheCharacterRewardEffect(lostTheCharacterState));
+        successfullyGotAheadOfCharacterState.SetEffect(() => SuccessfullyGotAheadOfCharacterRewardEffect(successfullyGotAheadOfCharacterState));
+        minionMisdirectedState.SetEffect(() => MinionMisdirectedRewardEffect(minionMisdirectedState));
+        doNothingState.SetEffect(() => DoNothingRewardEffect(doNothingState));
 
         _states.Add(startState.name, startState);
         _states.Add(successfullyFoundOutLocationState.name, successfullyFoundOutLocationState);

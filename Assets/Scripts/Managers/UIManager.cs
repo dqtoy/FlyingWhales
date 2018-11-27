@@ -506,7 +506,7 @@ public class UIManager : MonoBehaviour {
     private void ShowNotification(string text, int expirationTicks, UnityAction onClickAction) {
         notificationArea.ShowNotification(text, expirationTicks, onClickAction);
     }
-    private void OnInteractionAdded(IInteractable interactable, Interaction interaction) {
+    private void OnInteractionAdded(BaseLandmark interactable, Interaction interaction) {
         if (GameManager.Instance.inspectAll || interactable.isBeingInspected) {
             ShowNotification("New <color=\"red\">" + interaction.name + "</color> interaction at <color=\"red\">" + interactable.name + "</color>", 50, () => ShowInteractableInfo(interactable));
         }
@@ -1094,24 +1094,24 @@ public class UIManager : MonoBehaviour {
             }
         }
     }
-    public void PopulateLandmarkItemsInPicker() {
-        BaseLandmark landmark = PlayerManager.Instance.player.currentTargetInteractable as BaseLandmark;
-        List<Item> items = landmark.itemsInLandmark;
-        int length = items.Count;
-        if (currentActivePlayerPickerButtons.Count > items.Count) {
-            length = currentActivePlayerPickerButtons.Count;
-        }
-        for (int i = 0; i < length; i++) {
-            if (i >= items.Count) {
-                currentActivePlayerPickerButtons[i].gameObject.SetActive(false);
-            } else if (i >= currentActivePlayerPickerButtons.Count) {
-                CreatePlayerPickerButton(items[i]);
-            } else {
-                currentActivePlayerPickerButtons[i].gameObject.SetActive(true);
-                currentActivePlayerPickerButtons[i].SetPlayerPicker(items[i]);
-            }
-        }
-    }
+    //public void PopulateLandmarkItemsInPicker() {
+    //    BaseLandmark landmark = PlayerManager.Instance.player.currentTargetinteractable;
+    //    List<Item> items = landmark.itemsInLandmark;
+    //    int length = items.Count;
+    //    if (currentActivePlayerPickerButtons.Count > items.Count) {
+    //        length = currentActivePlayerPickerButtons.Count;
+    //    }
+    //    for (int i = 0; i < length; i++) {
+    //        if (i >= items.Count) {
+    //            currentActivePlayerPickerButtons[i].gameObject.SetActive(false);
+    //        } else if (i >= currentActivePlayerPickerButtons.Count) {
+    //            CreatePlayerPickerButton(items[i]);
+    //        } else {
+    //            currentActivePlayerPickerButtons[i].gameObject.SetActive(true);
+    //            currentActivePlayerPickerButtons[i].SetPlayerPicker(items[i]);
+    //        }
+    //    }
+    //}
     private void CreatePlayerPickerButton(IPlayerPicker playerPicker) {
         GameObject go = GameObject.Instantiate(playerPickerButtonPrefab, playerPickerContentTransform);
         PlayerPickerButton playerPickerButton = go.GetComponent<PlayerPickerButton>();
@@ -1139,12 +1139,13 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Interaction
-    public void ShowInteractableInfo(IInteractable interactable) {
-        if (interactable is BaseLandmark) {
-            ShowLandmarkInfo(interactable as BaseLandmark);
-        } else if (interactable is Character) {
-            ShowCharacterInfo(interactable as Character);
-        }
+    public void ShowInteractableInfo(BaseLandmark interactable) {
+        ShowLandmarkInfo(interactable);
+        //if (interactable is BaseLandmark) {
+        //    ShowLandmarkInfo(interactable);
+        //} else if (interactable is Character) {
+        //    ShowCharacterInfo(interactable as Character);
+        //}
     }
     #endregion
 

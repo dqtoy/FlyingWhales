@@ -10,7 +10,7 @@ public class AbandonedHouse : Interaction {
     #region Overrides
     public override void CreateStates() {
         //CreateExploreStates();
-        //CreateWhatToDoNextState("%minion% ignored the point of interest in the location. Do you want him to continue surveillance of " + _interactable.specificLocation.thisName + "?");
+        //CreateWhatToDoNextState("%minion% ignored the point of interest in the location. Do you want him to continue surveillance of " + _interactable.thisName + "?");
 
         InteractionState startState = new InteractionState("Start", this);
         InteractionState supplyState = new InteractionState("Supply", this);
@@ -27,11 +27,11 @@ public class AbandonedHouse : Interaction {
         //CreateActionOptions(manaState);
         //CreateActionOptions(demonBonusExpState);
 
-        supplyState.SetEndEffect(() => SupplyRewardEffect(supplyState));
-        manaState.SetEndEffect(() => ManaRewardEffect(manaState));
-        demonDisappearsState.SetEndEffect(() => DemonDisappearsRewardEffect(demonDisappearsState));
-        demonBonusExpState.SetEndEffect(() => DemonBonusExpRewardEffect(demonBonusExpState));
-        leftAloneState.SetEndEffect(() => LeftAloneRewardEffect(leftAloneState));
+        supplyState.SetEffect(() => SupplyRewardEffect(supplyState));
+        manaState.SetEffect(() => ManaRewardEffect(manaState));
+        demonDisappearsState.SetEffect(() => DemonDisappearsRewardEffect(demonDisappearsState));
+        demonBonusExpState.SetEffect(() => DemonBonusExpRewardEffect(demonBonusExpState));
+        leftAloneState.SetEffect(() => LeftAloneRewardEffect(leftAloneState));
 
         _states.Add(startState.name, startState);
         _states.Add(supplyState.name, supplyState);

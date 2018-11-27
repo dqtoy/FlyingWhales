@@ -32,12 +32,12 @@ public class FactionAttacks : Interaction {
 
         CreateActionOptions(startState);
 
-        attackStoppedState.SetEndEffect(() => AttackStoppedEffect(attackStoppedState));
-        attackContinuesState.SetEndEffect(() => AttackContinuesEffect(attackContinuesState));
-        successfulEmpowermentState.SetEndEffect(() => SuccessfulEmpowermentEffect(successfulEmpowermentState));
-        failedEmpowermentState.SetEndEffect(() => FailedEmpowermentEffect(failedEmpowermentState));
-        redirectedAttackState.SetEndEffect(() => RedirectedEffect(redirectedAttackState));
-        doNothingState.SetEndEffect(() => DoNothingEffect(doNothingState));
+        attackStoppedState.SetEffect(() => AttackStoppedEffect(attackStoppedState));
+        attackContinuesState.SetEffect(() => AttackContinuesEffect(attackContinuesState));
+        successfulEmpowermentState.SetEffect(() => SuccessfulEmpowermentEffect(successfulEmpowermentState));
+        failedEmpowermentState.SetEffect(() => FailedEmpowermentEffect(failedEmpowermentState));
+        redirectedAttackState.SetEffect(() => RedirectedEffect(redirectedAttackState));
+        doNothingState.SetEffect(() => DoNothingEffect(doNothingState));
 
         _states.Add(startState.name, startState);
         _states.Add(attackStoppedState.name, attackStoppedState);

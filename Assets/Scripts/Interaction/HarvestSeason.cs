@@ -36,12 +36,12 @@ public class HarvestSeason : Interaction {
         //CreateActionOptions(obtainHarvestState);
         //CreateActionOptions(demonDiscoveredState);
 
-        farmerKilledState.SetEndEffect(() => FarmerKilledRewardEffect(farmerKilledState));
-        obtainHarvestState.SetEndEffect(() => ObtainHarvestRewardEffect(obtainHarvestState));
-        demonDiscoveredState.SetEndEffect(() => DemonDiscoveredRewardEffect(demonDiscoveredState));
-        demonKilledState.SetEndEffect(() => DemonKilledRewardEffect(demonKilledState));
-        doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
-        poisonedHarvestState.SetEndEffect(() => PoisonedHarvestRewardEffect(poisonedHarvestState));
+        farmerKilledState.SetEffect(() => FarmerKilledRewardEffect(farmerKilledState));
+        obtainHarvestState.SetEffect(() => ObtainHarvestRewardEffect(obtainHarvestState));
+        demonDiscoveredState.SetEffect(() => DemonDiscoveredRewardEffect(demonDiscoveredState));
+        demonKilledState.SetEffect(() => DemonKilledRewardEffect(demonKilledState));
+        doNothingState.SetEffect(() => DoNothingRewardEffect(doNothingState));
+        poisonedHarvestState.SetEffect(() => PoisonedHarvestRewardEffect(poisonedHarvestState));
 
         _states.Add(startState.name, startState);
         _states.Add(poisonedHarvestState.name, poisonedHarvestState);

@@ -35,7 +35,7 @@ public class ActionOption {
         assignedObjects = new List<object>();
     }
 
-    public void ActivateOption(IInteractable interactable) {
+    public void ActivateOption(BaseLandmark interactable) {
         PlayerManager.Instance.player.AdjustCurrency(cost.currency, -cost.amount);
         //Remove needsMinion, handle needed objects and assigned objects properly, transfer this needsMinion logic to assignedObjects
         if(needsMinion) {
@@ -43,7 +43,7 @@ public class ActionOption {
             if(minion != null) {
                 minion.GoToAssignment(interactable);
                 StartDuration();
-                //assignedMinion.icharacter.currentParty.GoToLocation(interactable.specificLocation, PATHFINDING_MODE.PASSABLE, () => StartDuration());
+                //assignedMinion.icharacter.currentParty.GoToLocation(interactable, PATHFINDING_MODE.PASSABLE, () => StartDuration());
                 interactionState.interaction.SetActivatedState(true);
             } else {
                 //Can't go, no minion assigned

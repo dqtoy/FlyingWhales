@@ -18,7 +18,7 @@ public class GoblinBanditReinforcements : Interaction {
         if (_interactable is BaseLandmark) {
             //CreateExploreStates();
             //CreateWhatToDoNextState("What do you want %minion% to do next?");
-            landmark = _interactable as BaseLandmark;
+            landmark = _interactable;
             ConstructDefenseSpawnWeights();
 
             InteractionState startState = new InteractionState("Start", this);
@@ -36,10 +36,10 @@ public class GoblinBanditReinforcements : Interaction {
             //CreateActionOptions(failedCancelState);
             //CreateActionOptions(giftRejectedState);
 
-            successCancelState.SetEndEffect(() => SuccessfullyCalledReinforcementRewardEffect(successCancelState));
-            failedCancelState.SetEndEffect(() => FailedToCancelReinforcementRewardEffect(failedCancelState));
-            unitStolenState.SetEndEffect(() => UnitStolenRewardEffect(unitStolenState));
-            doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
+            successCancelState.SetEffect(() => SuccessfullyCalledReinforcementRewardEffect(successCancelState));
+            failedCancelState.SetEffect(() => FailedToCancelReinforcementRewardEffect(failedCancelState));
+            unitStolenState.SetEffect(() => UnitStolenRewardEffect(unitStolenState));
+            doNothingState.SetEffect(() => DoNothingRewardEffect(doNothingState));
 
             _states.Add(startState.name, startState);
             _states.Add(successCancelState.name, successCancelState);

@@ -12,7 +12,7 @@ public class SuspiciousSoldierMeeting : Interaction {
     #region Overrides
     public override void CreateStates() {
         //CreateExploreStates();
-        //CreateWhatToDoNextState("%minion% stopped keeping track of the soldiers' whereabouts. Do you want him to continue surveillance of " + _interactable.specificLocation.thisName +"?");
+        //CreateWhatToDoNextState("%minion% stopped keeping track of the soldiers' whereabouts. Do you want him to continue surveillance of " + _interactable.thisName +"?");
         InteractionState startState = new InteractionState("Start", this);
         InteractionState reduceDefendersState = new InteractionState("Reduce Defenders", this);
         InteractionState warDeclaredState = new InteractionState("War Declared", this);
@@ -30,12 +30,12 @@ public class SuspiciousSoldierMeeting : Interaction {
         //CreateActionOptions(generalDiesState);
         //CreateActionOptions(nothingHappensState);
 
-        reduceDefendersState.SetEndEffect(() => ReduceDefendersRewardEffect(reduceDefendersState));
-        warDeclaredState.SetEndEffect(() => WarDeclaredRewardEffect(warDeclaredState));
-        demonDisappearsState.SetEndEffect(() => DemonDisappearsRewardEffect(demonDisappearsState));
-        armyGainedState.SetEndEffect(() => ArmyGainedRewardEffect(armyGainedState));
-        nothingHappensState.SetEndEffect(() => NothingHappensRewardEffect(nothingHappensState));
-        doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
+        reduceDefendersState.SetEffect(() => ReduceDefendersRewardEffect(reduceDefendersState));
+        warDeclaredState.SetEffect(() => WarDeclaredRewardEffect(warDeclaredState));
+        demonDisappearsState.SetEffect(() => DemonDisappearsRewardEffect(demonDisappearsState));
+        armyGainedState.SetEffect(() => ArmyGainedRewardEffect(armyGainedState));
+        nothingHappensState.SetEffect(() => NothingHappensRewardEffect(nothingHappensState));
+        doNothingState.SetEffect(() => DoNothingRewardEffect(doNothingState));
 
         _states.Add(startState.name, startState);
         _states.Add(reduceDefendersState.name, reduceDefendersState);
@@ -185,7 +185,7 @@ public class SuspiciousSoldierMeeting : Interaction {
                     //this is for deserter2
                     Log newMinionLog = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_log1");
                     newMinionLog.AddToFillers(explorerMinion, explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
-                    newMinionLog.AddToFillers(interactable.specificLocation.tileLocation.landmarkOnTile, interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
+                    newMinionLog.AddToFillers(interactable.tileLocation.landmarkOnTile, interactable.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
                     newMinionLog.AddToFillers(deserter2, deserter2.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     newMinionLog.AddLogToInvolvedObjects();
 
@@ -194,7 +194,7 @@ public class SuspiciousSoldierMeeting : Interaction {
 
                     //    Log newMinionLog = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), _name.ToLower() + "_logminion");
                     //    newMinionLog.AddToFillers(explorerMinion, explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
-                    //    newMinionLog.AddToFillers(interactable.specificLocation.tileLocation.landmarkOnTile, interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
+                    //    newMinionLog.AddToFillers(interactable.tileLocation.landmarkOnTile, interactable.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
                     //    newMinionLog.AddToFillers(deserter2, deserter2.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     //    explorerMinion.icharacter.AddHistory(newMinionLog);
                     //}
@@ -248,7 +248,7 @@ public class SuspiciousSoldierMeeting : Interaction {
         PlayerManager.Instance.player.AddMinion(newMinion);
 
         //if (_interactable is BaseLandmark) {
-        //    BaseLandmark landmark = _interactable as BaseLandmark;
+        //    BaseLandmark landmark = _interactable;
         //    ICharacter icharacter = landmark.GetResidentCharacterOfClass("General");
         //    if (icharacter != null) {
         //        icharacter.Assassinate(explorerMinion.icharacter);

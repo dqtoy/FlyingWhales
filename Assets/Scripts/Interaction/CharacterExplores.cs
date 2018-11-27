@@ -54,10 +54,10 @@ public class CharacterExplores : Interaction {
 
         CreateActionOptions(startState);
 
-        characterExploreCancelledState.SetEndEffect(() => CharacterExploreCancelledRewardEffect(characterExploreCancelledState));
-        characterExploreContinuesState.SetEndEffect(() => CharacterExploreContinuesRewardEffect(characterExploreContinuesState));
-        characterExploreRedirectedState.SetEndEffect(() => CharacterExploreRedirectedRewardEffect(characterExploreRedirectedState));
-        doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
+        characterExploreCancelledState.SetEffect(() => CharacterExploreCancelledRewardEffect(characterExploreCancelledState));
+        characterExploreContinuesState.SetEffect(() => CharacterExploreContinuesRewardEffect(characterExploreContinuesState));
+        characterExploreRedirectedState.SetEffect(() => CharacterExploreRedirectedRewardEffect(characterExploreRedirectedState));
+        doNothingState.SetEffect(() => DoNothingRewardEffect(doNothingState));
 
         _states.Add(startState.name, startState);
         _states.Add(characterExploreCancelledState.name, characterExploreCancelledState);

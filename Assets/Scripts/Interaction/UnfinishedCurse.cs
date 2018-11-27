@@ -35,11 +35,11 @@ public class UnfinishedCurse : Interaction {
         InteractionState obtainManaState = new InteractionState(obtainMana, this);
         InteractionState doNothingState = new InteractionState(doNothing, this);
             
-        curseCompletedState.SetEndEffect(() => CurseCompletedRewardEffect(curseCompletedState));
-        curseFailedToCompleteState.SetEndEffect(() => CurseFailedToCompleteRewardEffect(curseFailedToCompleteState));
-        curseBackfiresState.SetEndEffect(() => CurseBackfiresRewardEffect(curseBackfiresState));
-        obtainManaState.SetEndEffect(() => ObtainManaRewardEffect(obtainManaState));
-        doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
+        curseCompletedState.SetEffect(() => CurseCompletedRewardEffect(curseCompletedState));
+        curseFailedToCompleteState.SetEffect(() => CurseFailedToCompleteRewardEffect(curseFailedToCompleteState));
+        curseBackfiresState.SetEffect(() => CurseBackfiresRewardEffect(curseBackfiresState));
+        obtainManaState.SetEffect(() => ObtainManaRewardEffect(obtainManaState));
+        doNothingState.SetEffect(() => DoNothingRewardEffect(doNothingState));
             
 
         _states.Add(startState.name, startState);

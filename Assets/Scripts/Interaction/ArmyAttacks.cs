@@ -42,12 +42,12 @@ public class ArmyAttacks : Interaction {
         InteractionState redirectionFailureState = new InteractionState(redirectionFailure, this);
         InteractionState doNothingState = new InteractionState(doNothing, this);
 
-        stopSuccessfulState.SetEndEffect(() => StopSuccessfulRewardEffect(stopSuccessfulState));
-        stopFailureState.SetEndEffect(() => StopFailureRewardEffect(stopFailureState));
-        stopCriticalFailureState.SetEndEffect(() => StopCriticalFailureRewardEffect(stopCriticalFailureState));
-        redirectionSuccessfulState.SetEndEffect(() => RedirectionSuccessfulRewardEffect(redirectionSuccessfulState));
-        redirectionFailureState.SetEndEffect(() => RedirectionFailureRewardEffect(redirectionFailureState));
-        doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
+        stopSuccessfulState.SetEffect(() => StopSuccessfulRewardEffect(stopSuccessfulState));
+        stopFailureState.SetEffect(() => StopFailureRewardEffect(stopFailureState));
+        stopCriticalFailureState.SetEffect(() => StopCriticalFailureRewardEffect(stopCriticalFailureState));
+        redirectionSuccessfulState.SetEffect(() => RedirectionSuccessfulRewardEffect(redirectionSuccessfulState));
+        redirectionFailureState.SetEffect(() => RedirectionFailureRewardEffect(redirectionFailureState));
+        doNothingState.SetEffect(() => DoNothingRewardEffect(doNothingState));
 
         //CreateActionOptions(stopSuccessfulState);
         //CreateActionOptions(stopFailureState);

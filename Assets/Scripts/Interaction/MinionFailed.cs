@@ -5,7 +5,7 @@ using ECS;
 
 public class MinionFailed : Interaction {
 
-    public MinionFailed(IInteractable interactable) : base(interactable, INTERACTION_TYPE.MINION_FAILED, 70) {
+    public MinionFailed(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MINION_FAILED, 70) {
         _name = "Minion Failed";
     }
 
@@ -22,7 +22,7 @@ public class MinionFailed : Interaction {
             startState.OverrideDescriptionLog(startStateDescriptionLog);
         }
 
-        startState.SetEndEffect(() => StartEffect(startState));
+        startState.SetEffect(() => StartEffect(startState));
 
         _states.Add(startState.name, startState);
 
@@ -33,7 +33,7 @@ public class MinionFailed : Interaction {
     #region State Effects
     private void StartEffect(InteractionState state) {
         if (explorerMinion.icharacter.characterClass.jobType == JOB.RAIDER) {
-            interactable.specificLocation.tileLocation.areaOfTile.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -1);
+            interactable.tileLocation.areaOfTile.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -1);
         }
     }
     #endregion

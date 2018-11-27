@@ -1401,8 +1401,8 @@ namespace ECS {
                 case JOB.EXPLORER:
                 _job = new Explorer(this);
                 break;
-                case JOB.DISCOURAGER:
-                _job = new Discourager(this);
+                case JOB.DISSUADER:
+                _job = new Dissuader(this);
                 break;
                 case JOB.DIPLOMAT:
                 _job = new Diplomat(this);

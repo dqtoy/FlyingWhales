@@ -1299,7 +1299,7 @@ public class BaseLandmark : ILocation, IInteractable {
         if (interaction.characterInvolved != null) {
             interaction.characterInvolved.currentInteractions.Add(interaction);
         }
-        interaction.Initialize(this.tileLocation.areaOfTile.areaInvestigation.assignedMinion);
+        interaction.Initialize();
         //Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
     }
     public void RemoveInteraction(Interaction interaction) {

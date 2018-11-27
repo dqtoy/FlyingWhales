@@ -34,7 +34,7 @@ public class TheNecromancer : Interaction {
 
     #region Overrides
     public override void CreateStates() {
-        landmark = interactable as BaseLandmark;
+        landmark = interactable;
 
         InteractionState startState = new InteractionState("Start", this);
 

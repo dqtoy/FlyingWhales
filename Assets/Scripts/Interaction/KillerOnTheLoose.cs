@@ -10,7 +10,7 @@ public class KillerOnTheLoose : Interaction {
     #region Overrides
     public override void CreateStates() {
         //CreateExploreStates();
-        //CreateWhatToDoNextState("%minion% did not care about whether there is a serial killer on the loose. Do you want him to continue surveillance of " + _interactable.specificLocation.thisName + "?");
+        //CreateWhatToDoNextState("%minion% did not care about whether there is a serial killer on the loose. Do you want him to continue surveillance of " + _interactable.thisName + "?");
 
         InteractionState startState = new InteractionState("Start", this);
         InteractionState convertDemonState = new InteractionState("Convert Demon", this);
@@ -18,7 +18,7 @@ public class KillerOnTheLoose : Interaction {
         InteractionState gainSupplyState = new InteractionState("Gain Supply", this);
         InteractionState doNothingState = new InteractionState("Do Nothing", this);
 
-        //string startStateDesc = "%minion% reported rumors of a serial killer on the loose in " + _interactable.specificLocation.thisName + ". If there is truth to the rumor, a hardened criminal like that is a great candidate for a Demonic Conversion.";
+        //string startStateDesc = "%minion% reported rumors of a serial killer on the loose in " + _interactable.thisName + ". If there is truth to the rumor, a hardened criminal like that is a great candidate for a Demonic Conversion.";
         //startState.SetDescription(startStateDesc);
 
         CreateActionOptions(startState);
@@ -26,10 +26,10 @@ public class KillerOnTheLoose : Interaction {
         //CreateActionOptions(nothingHappensState);
         //CreateActionOptions(gainSupplyState);
 
-        convertDemonState.SetEndEffect(() => ConvertToDemonRewardEffect(convertDemonState));
-        gainSupplyState.SetEndEffect(() => GainSupplyRewardEffect(gainSupplyState));
-        nothingHappensState.SetEndEffect(() => NothingHappensRewardEffect(nothingHappensState));
-        doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
+        convertDemonState.SetEffect(() => ConvertToDemonRewardEffect(convertDemonState));
+        gainSupplyState.SetEffect(() => GainSupplyRewardEffect(gainSupplyState));
+        nothingHappensState.SetEffect(() => NothingHappensRewardEffect(nothingHappensState));
+        doNothingState.SetEffect(() => DoNothingRewardEffect(doNothingState));
 
         _states.Add(startState.name, startState);
         _states.Add(convertDemonState.name, convertDemonState);
