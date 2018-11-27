@@ -156,15 +156,16 @@ public class InteractionState {
             _description = Utilities.LogReplacer(descriptionLog);
             InteractionUI.Instance.interactionItem.SetDescription(_description, descriptionLog);
         }
-
-        for (int i = 0; i < otherLogs.Count; i++) {
-            Log currLog = otherLogs[i];
-            currLog.SetFillers(logFillers);
-            _interaction.interactable.tileLocation.landmarkOnTile.AddHistory(currLog);
-            if (_interaction.explorerMinion != null) {
-                _interaction.explorerMinion.icharacter.AddHistory(currLog);
+        if (otherLogs != null) {
+            for (int i = 0; i < otherLogs.Count; i++) {
+                Log currLog = otherLogs[i];
+                currLog.SetFillers(logFillers);
+                _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.AddHistory(currLog);
+                if (_interaction.explorerMinion != null) {
+                    _interaction.explorerMinion.icharacter.AddHistory(currLog);
+                }
+                currLog.AddLogToInvolvedObjects();
             }
-            currLog.AddLogToInvolvedObjects();
         }
     }
     public void SetChosenOption(ActionOption option) {
