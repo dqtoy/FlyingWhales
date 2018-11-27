@@ -7,53 +7,51 @@ public class HarvestSeason : Interaction {
 
     private BaseLandmark farm;
 
-    public HarvestSeason(IInteractable interactable) : base(interactable, INTERACTION_TYPE.HARVEST_SEASON, 70) {
+    public HarvestSeason(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.HARVEST_SEASON, 70) {
         _name = "Harvest Season";
     }
 
     #region Overrides
     public override void CreateStates() {
-        if (_interactable is BaseLandmark) {
-            //CreateExploreStates();
-            //CreateWhatToDoNextState("What do you want %minion% to do next?");
-            farm = interactable as BaseLandmark;
+        //CreateExploreStates();
+        //CreateWhatToDoNextState("What do you want %minion% to do next?");
+        farm = interactable;
 
-            InteractionState startState = new InteractionState("Start", this);
-            //string startStateDesc = "%minion% has reported that the farmers will soon be able to harvest their crops. A sizable amount of the harvest will be given to their troops, providing them with needed Supplies.";
-            //startState.SetDescription(startStateDesc);
-            CreateActionOptions(startState);
+        InteractionState startState = new InteractionState("Start", this);
+        //string startStateDesc = "%minion% has reported that the farmers will soon be able to harvest their crops. A sizable amount of the harvest will be given to their troops, providing them with needed Supplies.";
+        //startState.SetDescription(startStateDesc);
+        CreateActionOptions(startState);
 
-            //action option states
-            InteractionState poisonedHarvestState = new InteractionState("Poisoned Harvest", this);
-            InteractionState farmerKilledState = new InteractionState("Farmer Killed", this);
-            InteractionState obtainHarvestState = new InteractionState("Obtain Harvest", this); 
-            InteractionState demonDiscoveredState = new InteractionState("Demon Discovered", this);
-            InteractionState demonKilledState = new InteractionState("Demon Killed", this);
-            InteractionState doNothingState = new InteractionState("Do nothing", this);
+        //action option states
+        InteractionState poisonedHarvestState = new InteractionState("Poisoned Harvest", this);
+        InteractionState farmerKilledState = new InteractionState("Farmer Killed", this);
+        InteractionState obtainHarvestState = new InteractionState("Obtain Harvest", this); 
+        InteractionState demonDiscoveredState = new InteractionState("Demon Discovered", this);
+        InteractionState demonKilledState = new InteractionState("Demon Killed", this);
+        InteractionState doNothingState = new InteractionState("Do nothing", this);
 
 
-            //CreateActionOptions(poisonedHarvestState);
-            //CreateActionOptions(farmerKilledState);
-            //CreateActionOptions(obtainHarvestState);
-            //CreateActionOptions(demonDiscoveredState);
+        //CreateActionOptions(poisonedHarvestState);
+        //CreateActionOptions(farmerKilledState);
+        //CreateActionOptions(obtainHarvestState);
+        //CreateActionOptions(demonDiscoveredState);
 
-            farmerKilledState.SetEndEffect(() => FarmerKilledRewardEffect(farmerKilledState));
-            obtainHarvestState.SetEndEffect(() => ObtainHarvestRewardEffect(obtainHarvestState));
-            demonDiscoveredState.SetEndEffect(() => DemonDiscoveredRewardEffect(demonDiscoveredState));
-            demonKilledState.SetEndEffect(() => DemonKilledRewardEffect(demonKilledState));
-            doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
-            poisonedHarvestState.SetEndEffect(() => PoisonedHarvestRewardEffect(poisonedHarvestState));
+        farmerKilledState.SetEndEffect(() => FarmerKilledRewardEffect(farmerKilledState));
+        obtainHarvestState.SetEndEffect(() => ObtainHarvestRewardEffect(obtainHarvestState));
+        demonDiscoveredState.SetEndEffect(() => DemonDiscoveredRewardEffect(demonDiscoveredState));
+        demonKilledState.SetEndEffect(() => DemonKilledRewardEffect(demonKilledState));
+        doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
+        poisonedHarvestState.SetEndEffect(() => PoisonedHarvestRewardEffect(poisonedHarvestState));
 
-            _states.Add(startState.name, startState);
-            _states.Add(poisonedHarvestState.name, poisonedHarvestState);
-            _states.Add(farmerKilledState.name, farmerKilledState);
-            _states.Add(obtainHarvestState.name, obtainHarvestState);
-            _states.Add(demonDiscoveredState.name, demonDiscoveredState);
-            _states.Add(demonKilledState.name, demonKilledState);
-            _states.Add(doNothingState.name, doNothingState);
+        _states.Add(startState.name, startState);
+        _states.Add(poisonedHarvestState.name, poisonedHarvestState);
+        _states.Add(farmerKilledState.name, farmerKilledState);
+        _states.Add(obtainHarvestState.name, obtainHarvestState);
+        _states.Add(demonDiscoveredState.name, demonDiscoveredState);
+        _states.Add(demonKilledState.name, demonKilledState);
+        _states.Add(doNothingState.name, doNothingState);
 
-            SetCurrentState(startState);
-        }
+        SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

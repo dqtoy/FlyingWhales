@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterEncountered : Interaction {
-    public CharacterEncountered(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.CHARACTER_ENCOUNTERED, 0) {
-
+public class DefendersRevealed : Interaction {
+    public DefendersRevealed(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.DEFENDERS_REVEALED, 0) {
     }
 
     public override void CreateStates() {

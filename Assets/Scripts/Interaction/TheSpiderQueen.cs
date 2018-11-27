@@ -8,7 +8,7 @@ public class TheSpiderQueen : Interaction {
     private BaseLandmark landmark;
     private WeightedDictionary<LandmarkDefender> assaultSpawnWeights;
 
-    public TheSpiderQueen(IInteractable interactable) : base(interactable, INTERACTION_TYPE.SPIDER_QUEEN, 70) {
+    public TheSpiderQueen(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.SPIDER_QUEEN, 70) {
         _name = "The Spider Queen";
     }
 

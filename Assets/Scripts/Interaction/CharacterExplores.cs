@@ -27,7 +27,7 @@ public class CharacterExplores : Interaction {
         "Sorcerer"
     };
 
-    public CharacterExplores(IInteractable interactable) : base(interactable, INTERACTION_TYPE.CHARACTER_EXPLORES, 70) {
+    public CharacterExplores(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.CHARACTER_EXPLORES, 70) {
         _name = "Character Explores";
     }
 

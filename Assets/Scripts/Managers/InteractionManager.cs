@@ -27,7 +27,7 @@ public class InteractionManager : MonoBehaviour {
         Instance = this;
     }
 
-    public Interaction CreateNewInteraction(INTERACTION_TYPE interactionType, IInteractable interactable) {
+    public Interaction CreateNewInteraction(INTERACTION_TYPE interactionType, BaseLandmark interactable) {
         Interaction createdInteraction = null;
         switch (interactionType) {
             case INTERACTION_TYPE.BANDIT_RAID:
@@ -101,6 +101,15 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.MINION_CRITICAL_FAIL:
                 createdInteraction = new MinionCriticalFail(interactable);
+                break;
+            case INTERACTION_TYPE.FACTION_DISCOVERED:
+                createdInteraction = new FactionDiscovered(interactable);
+                break;
+            case INTERACTION_TYPE.LOCATION_OBSERVED:
+                createdInteraction = new LocationObserved(interactable);
+                break;
+            case INTERACTION_TYPE.DEFENDERS_REVEALED:
+                createdInteraction = new DefendersRevealed(interactable);
                 break;
         }
         return createdInteraction;

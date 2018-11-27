@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterEncountered : Interaction {
-    public CharacterEncountered(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.CHARACTER_ENCOUNTERED, 0) {
+public class LocationObserved : Interaction {
 
+    public LocationObserved(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.LOCATION_OBSERVED, 0) {
+        _name = "Location Observed";
     }
 
     public override void CreateStates() {

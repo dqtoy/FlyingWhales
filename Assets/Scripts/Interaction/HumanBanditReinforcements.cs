@@ -9,46 +9,44 @@ public class HumanBanditReinforcements : Interaction {
 
     private WeightedDictionary<LandmarkDefender> assaultSpawnWeights;
 
-    public HumanBanditReinforcements(IInteractable interactable) : base(interactable, INTERACTION_TYPE.HUMAN_BANDIT_REINFORCEMENTS, 50) {
+    public HumanBanditReinforcements(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.HUMAN_BANDIT_REINFORCEMENTS, 50) {
         _name = "Human Bandit Reinforcements";
     }
 
     #region Overrides
     public override void CreateStates() {
-        if (_interactable is BaseLandmark) {
-            //CreateExploreStates();
-            //CreateWhatToDoNextState("What do you want %minion% to do next?");
-            landmark = _interactable as BaseLandmark;
-            ConstructDefenseSpawnWeights();
+        //CreateExploreStates();
+        //CreateWhatToDoNextState("What do you want %minion% to do next?");
+        landmark = _interactable;
+        ConstructDefenseSpawnWeights();
 
-            InteractionState startState = new InteractionState("Start", this);
-            //string startStateDesc = "The bandits are increasing their defensive army.";
-            //startState.SetDescription(startStateDesc);
+        InteractionState startState = new InteractionState("Start", this);
+        //string startStateDesc = "The bandits are increasing their defensive army.";
+        //startState.SetDescription(startStateDesc);
 
-            //action option states
-            InteractionState successCancelState = new InteractionState("Successfully Cancelled Reinforcement", this);
-            InteractionState failedCancelState = new InteractionState("Failed to Cancel Reinforcement", this);
-            InteractionState unitStolenState = new InteractionState("Unit Stolen", this);
-            InteractionState doNothingState = new InteractionState("Do nothing", this);
+        //action option states
+        InteractionState successCancelState = new InteractionState("Successfully Cancelled Reinforcement", this);
+        InteractionState failedCancelState = new InteractionState("Failed to Cancel Reinforcement", this);
+        InteractionState unitStolenState = new InteractionState("Unit Stolen", this);
+        InteractionState doNothingState = new InteractionState("Do nothing", this);
 
-            CreateActionOptions(startState);
-            //CreateActionOptions(successCancelState);
-            //CreateActionOptions(failedCancelState);
-            //CreateActionOptions(giftRejectedState);
+        CreateActionOptions(startState);
+        //CreateActionOptions(successCancelState);
+        //CreateActionOptions(failedCancelState);
+        //CreateActionOptions(giftRejectedState);
 
-            successCancelState.SetEndEffect(() => SuccessfullyCalledReinforcementRewardEffect(successCancelState));
-            failedCancelState.SetEndEffect(() => FailedToCancelReinforcementRewardEffect(failedCancelState));
-            unitStolenState.SetEndEffect(() => UnitStolenRewardEffect(unitStolenState));
-            doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
+        successCancelState.SetEndEffect(() => SuccessfullyCalledReinforcementRewardEffect(successCancelState));
+        failedCancelState.SetEndEffect(() => FailedToCancelReinforcementRewardEffect(failedCancelState));
+        unitStolenState.SetEndEffect(() => UnitStolenRewardEffect(unitStolenState));
+        doNothingState.SetEndEffect(() => DoNothingRewardEffect(doNothingState));
 
-            _states.Add(startState.name, startState);
-            _states.Add(successCancelState.name, successCancelState);
-            _states.Add(failedCancelState.name, failedCancelState);
-            _states.Add(unitStolenState.name, unitStolenState);
-            _states.Add(doNothingState.name, doNothingState);
+        _states.Add(startState.name, startState);
+        _states.Add(successCancelState.name, successCancelState);
+        _states.Add(failedCancelState.name, failedCancelState);
+        _states.Add(unitStolenState.name, unitStolenState);
+        _states.Add(doNothingState.name, doNothingState);
 
-            SetCurrentState(startState);
-        }
+        SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

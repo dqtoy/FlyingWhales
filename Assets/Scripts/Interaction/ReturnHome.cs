@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ReturnHome : Interaction {
 
-    public ReturnHome(IInteractable interactable) : base(interactable, INTERACTION_TYPE.RETURN_HOME, 70) {
+    public ReturnHome(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.RETURN_HOME, 70) {
         _name = "Return Home";
     }
 

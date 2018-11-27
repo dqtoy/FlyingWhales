@@ -5,7 +5,7 @@ using ECS;
 
 public class MysteriousSarcophagus : Interaction {
 
-    public MysteriousSarcophagus(IInteractable interactable) : base(interactable, INTERACTION_TYPE.MYSTERIOUS_SARCOPHAGUS, 110) {
+    public MysteriousSarcophagus(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MYSTERIOUS_SARCOPHAGUS, 110) {
         _name = "Mysterious Sarcophagus";
     }
 
@@ -206,12 +206,10 @@ public class MysteriousSarcophagus : Interaction {
         PlayerManager.Instance.player.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
     }
     private void AwakenUndeadHeroRewardEffect(InteractionState state) {
-        if(_interactable is BaseLandmark) {
-            BaseLandmark landmark = _interactable as BaseLandmark;
-            Character zombieEarthbinderHero = CharacterManager.Instance.CreateNewCharacter("Earthbinder", RACE.ZOMBIE, GENDER.MALE, PlayerManager.Instance.player.playerFaction, PlayerManager.Instance.player.demonicPortal, false);
-            zombieEarthbinderHero.SetLevel(15);
-            landmark.AddDefender(zombieEarthbinderHero);
-        }
+        BaseLandmark landmark = _interactable;
+        Character zombieEarthbinderHero = CharacterManager.Instance.CreateNewCharacter("Earthbinder", RACE.ZOMBIE, GENDER.MALE, PlayerManager.Instance.player.playerFaction, PlayerManager.Instance.player.demonicPortal, false);
+        zombieEarthbinderHero.SetLevel(15);
+        landmark.AddDefender(zombieEarthbinderHero);
     }
     private void GainPositiveTraitRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));

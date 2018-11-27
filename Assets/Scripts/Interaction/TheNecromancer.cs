@@ -27,7 +27,7 @@ public class TheNecromancer : Interaction {
     private string Necromancer_Created = "Necromancer Created";
     private string Do_Nothing = "Do nothing";
 
-    public TheNecromancer(IInteractable interactable) 
+    public TheNecromancer(BaseLandmark interactable) 
         : base(interactable, INTERACTION_TYPE.THE_NECROMANCER, 250) {
         _name = "The Necromancer";
     }

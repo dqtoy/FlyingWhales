@@ -9,7 +9,7 @@ public class GoblinBanditReinforcements : Interaction {
 
     private WeightedDictionary<LandmarkDefender> assaultSpawnWeights;
 
-    public GoblinBanditReinforcements(IInteractable interactable) : base(interactable, INTERACTION_TYPE.GOBLIN_BANDIT_REINFORCEMENTS, 50) {
+    public GoblinBanditReinforcements(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.GOBLIN_BANDIT_REINFORCEMENTS, 50) {
         _name = "Goblin Bandit Reinforcements";
     }
 

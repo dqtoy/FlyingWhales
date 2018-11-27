@@ -72,11 +72,13 @@ public class Raider : Job {
         //TODO: Shared Fail c/o Chy
         //When a raid fails, the target Faction's Favor Count towards the raider is reduced by -1. The raider will not get anything.
         FavorEffects(-1);
+        GoBackHome();
     }
     private void CriticalRaidFail() {
         //TODO: Shared Critical Fail c/o Chy
         //When a raid critically fails, the target Faction's Favor Count towards the raider is reduced by -1. The raider will also perish.
         FavorEffects(-1);
+        GoBackHome();
     }
 
     private void GoBackHome() {

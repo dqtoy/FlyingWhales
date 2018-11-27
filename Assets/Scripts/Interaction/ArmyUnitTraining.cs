@@ -7,7 +7,7 @@ public class ArmyUnitTraining : Interaction {
 
     private string _chosenClassName;
 
-    public ArmyUnitTraining(IInteractable interactable) : base(interactable, INTERACTION_TYPE.ARMY_UNIT_TRAINING, 50) {
+    public ArmyUnitTraining(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.ARMY_UNIT_TRAINING, 50) {
         _name = "Army Unit Training";
     }
 

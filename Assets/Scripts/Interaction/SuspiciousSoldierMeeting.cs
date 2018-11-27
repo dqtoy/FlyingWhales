@@ -5,7 +5,7 @@ using ECS;
 
 public class SuspiciousSoldierMeeting : Interaction {
 
-    public SuspiciousSoldierMeeting(IInteractable interactable) : base(interactable, INTERACTION_TYPE.SUSPICIOUS_SOLDIER_MEETING, 80) {
+    public SuspiciousSoldierMeeting(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.SUSPICIOUS_SOLDIER_MEETING, 80) {
         _name = "Suspicious Soldier Meeting";
     }
 
@@ -159,73 +159,71 @@ public class SuspiciousSoldierMeeting : Interaction {
     #region State Effects
     private void ReduceDefendersRewardEffect(InteractionState state) {
         //Each Defender slot in the Garrison loses a random percentage between 15% to 50%
-        if(_interactable is BaseLandmark) {
-            BaseLandmark landmark = _interactable as BaseLandmark;
-            if(landmark.defenders != null) {
-                if(landmark.defenders.icharacters.Count >= 2) {
-                    int numOfDeserters = UnityEngine.Random.Range(1, 3);
-                    if (numOfDeserters == 1) {
-                        ICharacter deserter = landmark.defenders.icharacters[UnityEngine.Random.Range(0, landmark.defenders.icharacters.Count)];
-                        landmark.RemoveDefender(deserter);
-                        //if (state.minionLog != null) {
-                        //    state.minionLog.AddToFillers(deserter, deserter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        //}
-                        state.AddLogFiller(new LogFiller(deserter, deserter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
-                    } else {
-                        List<ICharacter> icharacters = new List<ICharacter>(landmark.defenders.icharacters);
-                        int deserter1Index = UnityEngine.Random.Range(0, icharacters.Count);
-                        ICharacter deserter1 = icharacters[deserter1Index];
-                        icharacters.RemoveAt(deserter1Index);
-                        ICharacter deserter2 = icharacters[UnityEngine.Random.Range(0, icharacters.Count)];
-
-                        landmark.RemoveDefender(deserter1);
-                        landmark.RemoveDefender(deserter2);
-
-                        state.AddLogFiller(new LogFiller(deserter1, deserter1.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
-
-                        //this is for deserter2
-                        Log newMinionLog = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_log1");
-                        newMinionLog.AddToFillers(explorerMinion, explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
-                        newMinionLog.AddToFillers(interactable.specificLocation.tileLocation.landmarkOnTile, interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
-                        newMinionLog.AddToFillers(deserter2, deserter2.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        newMinionLog.AddLogToInvolvedObjects();
-
-                        //if (state.minionLog != null) {
-                        //    state.minionLog.AddToFillers(deserter1, deserter1.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-
-                        //    Log newMinionLog = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), _name.ToLower() + "_logminion");
-                        //    newMinionLog.AddToFillers(explorerMinion, explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
-                        //    newMinionLog.AddToFillers(interactable.specificLocation.tileLocation.landmarkOnTile, interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
-                        //    newMinionLog.AddToFillers(deserter2, deserter2.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        //    explorerMinion.icharacter.AddHistory(newMinionLog);
-                        //}
-                    }
-                } else if(landmark.defenders.icharacters.Count == 1) {
-                    ICharacter deserter = landmark.defenders.icharacters[0];
+        BaseLandmark landmark = _interactable;
+        if(landmark.defenders != null) {
+            if(landmark.defenders.icharacters.Count >= 2) {
+                int numOfDeserters = UnityEngine.Random.Range(1, 3);
+                if (numOfDeserters == 1) {
+                    ICharacter deserter = landmark.defenders.icharacters[UnityEngine.Random.Range(0, landmark.defenders.icharacters.Count)];
                     landmark.RemoveDefender(deserter);
                     //if (state.minionLog != null) {
                     //    state.minionLog.AddToFillers(deserter, deserter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     //}
                     state.AddLogFiller(new LogFiller(deserter, deserter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
-                }
-                
-                //for (int i = 0; i < landmark.defenders.icharacters.Count; i++) {
-                    
-                    //if(landmark.defenders.icharacters[i] is CharacterArmyUnit) {
-                    //    CharacterArmyUnit defenderArmy = landmark.defenders.icharacters[i] as CharacterArmyUnit;
-                    //    int percentageLoss = UnityEngine.Random.Range(15, 51);
-                    //    float percentage = percentageLoss / 100f;
-                    //    int loss = (int)(defenderArmy.armyCount * percentage);
-                    //    defenderArmy.AdjustArmyCount(-loss);
-                    //} else if (landmark.defenders.icharacters[i] is MonsterArmyUnit) {
-                    //    MonsterArmyUnit defenderArmy = landmark.defenders.icharacters[i] as MonsterArmyUnit;
-                    //    int percentageLoss = UnityEngine.Random.Range(15, 51);
-                    //    float percentage = percentageLoss / 100f;
-                    //    int loss = (int) (defenderArmy.armyCount * percentage);
-                    //    defenderArmy.AdjustArmyCount(-loss);
+                } else {
+                    List<ICharacter> icharacters = new List<ICharacter>(landmark.defenders.icharacters);
+                    int deserter1Index = UnityEngine.Random.Range(0, icharacters.Count);
+                    ICharacter deserter1 = icharacters[deserter1Index];
+                    icharacters.RemoveAt(deserter1Index);
+                    ICharacter deserter2 = icharacters[UnityEngine.Random.Range(0, icharacters.Count)];
+
+                    landmark.RemoveDefender(deserter1);
+                    landmark.RemoveDefender(deserter2);
+
+                    state.AddLogFiller(new LogFiller(deserter1, deserter1.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+
+                    //this is for deserter2
+                    Log newMinionLog = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_log1");
+                    newMinionLog.AddToFillers(explorerMinion, explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
+                    newMinionLog.AddToFillers(interactable.specificLocation.tileLocation.landmarkOnTile, interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
+                    newMinionLog.AddToFillers(deserter2, deserter2.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    newMinionLog.AddLogToInvolvedObjects();
+
+                    //if (state.minionLog != null) {
+                    //    state.minionLog.AddToFillers(deserter1, deserter1.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+
+                    //    Log newMinionLog = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), _name.ToLower() + "_logminion");
+                    //    newMinionLog.AddToFillers(explorerMinion, explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
+                    //    newMinionLog.AddToFillers(interactable.specificLocation.tileLocation.landmarkOnTile, interactable.specificLocation.tileLocation.landmarkOnTile.name, LOG_IDENTIFIER.LANDMARK_1);
+                    //    newMinionLog.AddToFillers(deserter2, deserter2.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    //    explorerMinion.icharacter.AddHistory(newMinionLog);
                     //}
+                }
+            } else if(landmark.defenders.icharacters.Count == 1) {
+                ICharacter deserter = landmark.defenders.icharacters[0];
+                landmark.RemoveDefender(deserter);
+                //if (state.minionLog != null) {
+                //    state.minionLog.AddToFillers(deserter, deserter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 //}
+                state.AddLogFiller(new LogFiller(deserter, deserter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
             }
+                
+            //for (int i = 0; i < landmark.defenders.icharacters.Count; i++) {
+                    
+                //if(landmark.defenders.icharacters[i] is CharacterArmyUnit) {
+                //    CharacterArmyUnit defenderArmy = landmark.defenders.icharacters[i] as CharacterArmyUnit;
+                //    int percentageLoss = UnityEngine.Random.Range(15, 51);
+                //    float percentage = percentageLoss / 100f;
+                //    int loss = (int)(defenderArmy.armyCount * percentage);
+                //    defenderArmy.AdjustArmyCount(-loss);
+                //} else if (landmark.defenders.icharacters[i] is MonsterArmyUnit) {
+                //    MonsterArmyUnit defenderArmy = landmark.defenders.icharacters[i] as MonsterArmyUnit;
+                //    int percentageLoss = UnityEngine.Random.Range(15, 51);
+                //    float percentage = percentageLoss / 100f;
+                //    int loss = (int) (defenderArmy.armyCount * percentage);
+                //    defenderArmy.AdjustArmyCount(-loss);
+                //}
+            //}
         }
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
 

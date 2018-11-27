@@ -226,6 +226,7 @@ public class AreaInvestigation {
         if (_currentlyExploredLandmark == landmark) {
             _currentlyExploredLandmark.landmarkVisual.StopInteractionTimer();
             _currentInteraction.CancelSecondTimeOut();
+            //_currentInteraction.SetExplorerMinion(_assignedMinion);
             _currentInteraction.OnInteractionActive();
             InteractionUI.Instance.OpenInteractionUI(_currentInteraction);
         }
