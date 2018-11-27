@@ -147,6 +147,7 @@ public class Player : ILeader {
     }
     private void SetPlayerArea(Area area) {
         playerArea = area;
+        area.SetSuppliesInBank(_currencies[CURRENCY.SUPPLY]);
     }
     private void OnTileRemovedFromPlayerArea(Area affectedArea, HexTile removedTile) {
         if (playerArea != null && affectedArea.id == playerArea.id) {
@@ -475,6 +476,9 @@ public class Player : ILeader {
             _currencies[currency] = Mathf.Clamp(_currencies[currency], 0, maxImps);
         }else if (currency == CURRENCY.SUPPLY) {
             _currencies[currency] = Mathf.Max(_currencies[currency], 0);
+            if (playerArea != null) {
+                playerArea.SetSuppliesInBank(_currencies[currency]);
+            }
         } else if (currency == CURRENCY.MANA) {
             _currencies[currency] = Mathf.Max(_currencies[currency], 0); //maybe 999?
         }

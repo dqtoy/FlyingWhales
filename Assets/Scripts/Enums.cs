@@ -1039,6 +1039,7 @@ public enum INTERACTION_TYPE {
     THE_NECROMANCER,
     FACTION_ATTACKS,
     CHARACTER_ENCOUNTERED,
+    RAID_SUCCESS,
 }
 public enum REWARD {
     SUPPLY,
@@ -1075,4 +1076,9 @@ public enum JOB {
     RAIDER,
     SPY,
     DISCOURAGER,
+}
+public enum JOB_RESULT {
+    SUCCESS,
+    FAIL,
+    CRITICAL_FAIL
 }

@@ -593,6 +593,11 @@ public class Area {
             currLandmark.landmarkObj.StartDayAction();
         }
     }
+    public void SetSuppliesInBank(int amount) {
+        suppliesInBank = amount;
+        suppliesInBank = Mathf.Max(0, suppliesInBank);
+        //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
+    }
     public void AdjustSuppliesInBank(int amount) {
         suppliesInBank += amount;
         suppliesInBank = Mathf.Max(0, suppliesInBank);

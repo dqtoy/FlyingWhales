@@ -93,6 +93,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.FACTION_ATTACKS:
                 createdInteraction = new FactionAttacks(interactable);
                 break;
+            case INTERACTION_TYPE.RAID_SUCCESS:
+                createdInteraction = new RaidSuccess(interactable);
+                break;
         }
         return createdInteraction;
     }

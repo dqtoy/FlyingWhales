@@ -38,6 +38,7 @@ public class WeightedDictionary<T> {
      * */
     internal void AddElement(T newElement, int weight = 0) {
         if (!_dictionary.ContainsKey(newElement)) {
+            weight = Mathf.Max(0, weight); //clamp to 0
             _dictionary.Add(newElement, weight);
         } else {
             AddWeightToElement(newElement, weight);
@@ -80,8 +81,11 @@ public class WeightedDictionary<T> {
 
     internal void AddWeightToElement(T key, int weight) {
         if (_dictionary.ContainsKey(key)) {
-            _dictionary[key] += weight;
+            int newWeight = _dictionary[key] + weight;
+            newWeight = Mathf.Max(0, newWeight);
+            _dictionary[key] = newWeight;
 		}else{
+            weight = Mathf.Max(0, weight);
 			_dictionary.Add(key, weight);
 		}
     }
