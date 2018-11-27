@@ -26,7 +26,11 @@ public class ActionOptionButton : MonoBehaviour {
     }
     private void UpdateButton() {
         if(_actionOption != null) {
-            toggle.interactable = _actionOption.CanBeDone();
+            bool meetsRequirements = _actionOption.CanBeDone();
+            toggle.interactable = meetsRequirements;
+            if (!meetsRequirements) {
+                buttonText.text = "[LOCKED] " + _actionOption.doesNotMeetRequirementsStr;
+            }
         }
     }
     public void SetOption(ActionOption actionOption) {

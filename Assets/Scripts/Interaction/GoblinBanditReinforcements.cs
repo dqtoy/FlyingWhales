@@ -67,7 +67,8 @@ public class GoblinBanditReinforcements : Interaction {
                 duration = 0,
                 needsMinion = false,
                 effect = () => TakeUnitEffect(state),
-                canBeDoneAction = () => AssignedMinionIsOfClass(new List<string>() { "Wrath", "Pride" })
+                canBeDoneAction = () => AssignedMinionIsOfClass(new List<string>() { "Wrath", "Pride" }),
+                doesNotMeetRequirementsStr = "Minion must be Wrath or Pride",
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
