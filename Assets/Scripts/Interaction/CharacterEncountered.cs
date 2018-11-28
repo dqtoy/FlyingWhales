@@ -7,6 +7,7 @@ public class CharacterEncountered : Interaction {
 
     }
 
+    #region Overrides
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
 
@@ -30,6 +31,7 @@ public class CharacterEncountered : Interaction {
         _states.Add(startState.name, startState);
         SetCurrentState(startState);
     }
+    #endregion
 
     private void CharacterEncounteredEffect(InteractionState state) {
         //**Mechanics**: Unlock Character Intel

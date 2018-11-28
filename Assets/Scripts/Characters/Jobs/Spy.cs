@@ -101,6 +101,8 @@ public class Spy : Job {
             interaction.ScheduleSecondTimeOut();
             if (interaction.type == INTERACTION_TYPE.CHARACTER_ENCOUNTERED) {
                 ((chosenIntel as CharacterIntel).character as Character).AddInteraction(interaction);
+            } else if (interaction.type == INTERACTION_TYPE.LOCATION_OBSERVED) {
+                (chosenIntel as LocationIntel).location.coreTile.landmarkOnTile.AddInteraction(interaction);
             }
         }
         
