@@ -232,9 +232,9 @@ public class PlayerLandmarkInfoUI : UIMenu {
         characterItems.Clear();
         CheckScrollers();
         for (int i = 0; i < _activeLandmark.charactersAtLocation.Count; i++) {
-            if (!_activeLandmark.IsDefenderOfLandmark(_activeLandmark.charactersAtLocation[i])) {
+            //if (!_activeLandmark.IsDefenderOfLandmark(_activeLandmark.charactersAtLocation[i])) {
                 CreateNewCharacterItem(_activeLandmark.charactersAtLocation[i].owner);
-            }
+            //}
         }
     }
     private LandmarkCharacterItem GetItem(Party party) {
@@ -308,24 +308,31 @@ public class PlayerLandmarkInfoUI : UIMenu {
 
     #region Defenders
     private void UpdateDefenders() {
-        if (_activeLandmark.defenders == null) {
-            for (int i = 0; i < defenderSlots.Length; i++) {
-                LandmarkCharacterItem currSlot = defenderSlots[i];
-                currSlot.SetCharacter(null, _activeLandmark, true);
-                currSlot.slotItem.dropZone.SetEnabledState(false);
-                currSlot.slotItem.draggable.SetDraggable(false);
-                //currSlot.slotItem.SetNeededType(typeof(IUnit));
-            }
-        } else {
-            for (int i = 0; i < defenderSlots.Length; i++) {
-                LandmarkCharacterItem currSlot = defenderSlots[i];
-                ICharacter defender = _activeLandmark.defenders.icharacters.ElementAtOrDefault(i);
-                currSlot.SetCharacter(defender, _activeLandmark, true);
-                currSlot.slotItem.dropZone.SetEnabledState(false);
-                currSlot.slotItem.draggable.SetDraggable(false);
-                //currSlot.slotItem.SetNeededType(typeof(IUnit));
-            }
+        for (int i = 0; i < defenderSlots.Length; i++) {
+            LandmarkCharacterItem currSlot = defenderSlots[i];
+            currSlot.SetCharacter(null, _activeLandmark, true);
+            currSlot.slotItem.dropZone.SetEnabledState(false);
+            currSlot.slotItem.draggable.SetDraggable(false);
+            //currSlot.slotItem.SetNeededType(typeof(IUnit));
         }
+        //if (_activeLandmark.defenders == null) {
+        //    for (int i = 0; i < defenderSlots.Length; i++) {
+        //        LandmarkCharacterItem currSlot = defenderSlots[i];
+        //        currSlot.SetCharacter(null, _activeLandmark, true);
+        //        currSlot.slotItem.dropZone.SetEnabledState(false);
+        //        currSlot.slotItem.draggable.SetDraggable(false);
+        //        //currSlot.slotItem.SetNeededType(typeof(IUnit));
+        //    }
+        //} else {
+        //    for (int i = 0; i < defenderSlots.Length; i++) {
+        //        LandmarkCharacterItem currSlot = defenderSlots[i];
+        //        ICharacter defender = _activeLandmark.defenders.icharacters.ElementAtOrDefault(i);
+        //        currSlot.SetCharacter(defender, _activeLandmark, true);
+        //        currSlot.slotItem.dropZone.SetEnabledState(false);
+        //        currSlot.slotItem.draggable.SetDraggable(false);
+        //        //currSlot.slotItem.SetNeededType(typeof(IUnit));
+        //    }
+        //}
     }
     #endregion
 

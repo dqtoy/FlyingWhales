@@ -14,8 +14,9 @@ public class AttackLandmarkAction : CharacterAction {
         base.OnFirstEncounter(party, targetObject);
         BaseLandmark landmarkToAttack = targetObject.objectLocation;
         //Party defenderParty = null; //TODO
-        if (landmarkToAttack.defenders != null) {
-            Combat combat = party.CreateCombatWith(landmarkToAttack.defenders);
+        DefenderGroup defender = landmarkToAttack.tileLocation.areaOfTile.GetFirstDefenderGroup();
+        if (defender != null) {
+            Combat combat = party.CreateCombatWith(defender.party);
             combat.Fight();
         }
         //Attack their area: -3 Favor Count

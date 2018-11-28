@@ -7,7 +7,7 @@ public class HumanBanditReinforcements : Interaction {
 
     private BaseLandmark landmark;
 
-    private WeightedDictionary<LandmarkDefender> assaultSpawnWeights;
+    private WeightedDictionary<DefenderSetting> assaultSpawnWeights;
 
     public HumanBanditReinforcements(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.HUMAN_BANDIT_REINFORCEMENTS, 50) {
         _name = "Human Bandit Reinforcements";
@@ -84,15 +84,15 @@ public class HumanBanditReinforcements : Interaction {
     #endregion
 
     private void ConstructDefenseSpawnWeights() {
-        assaultSpawnWeights = new WeightedDictionary<LandmarkDefender>();
+        assaultSpawnWeights = new WeightedDictionary<DefenderSetting>();
 
-        LandmarkDefender marauder = new LandmarkDefender() {
+        DefenderSetting marauder = new DefenderSetting() {
             className = "Marauders",
         };
-        LandmarkDefender bowman = new LandmarkDefender() {
+        DefenderSetting bowman = new DefenderSetting() {
             className = "Rogues",
         };
-        LandmarkDefender mage = new LandmarkDefender() {
+        DefenderSetting mage = new DefenderSetting() {
             className = "Mages",
         };
 
@@ -103,7 +103,7 @@ public class HumanBanditReinforcements : Interaction {
     private CharacterParty CreateAssaultArmy(int unitCount) {
         CharacterParty army = null;
         for (int i = 0; i < unitCount; i++) {
-            LandmarkDefender chosenDefender = assaultSpawnWeights.PickRandomElementGivenWeights();
+            DefenderSetting chosenDefender = assaultSpawnWeights.PickRandomElementGivenWeights();
             Character armyUnit = CharacterManager.Instance.CreateNewCharacter(chosenDefender.className, landmark.owner.race, GENDER.MALE, landmark.owner, landmark);
             if (army == null) {
                 army = armyUnit.party;
@@ -164,9 +164,9 @@ public class HumanBanditReinforcements : Interaction {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //**Mechanics**: create an Army Unit from Defense Spawn Weights and add it to the Tile Defenders if not yet full or Character List if already full
         ICharacter createdUnit = CreateAssaultArmy(1).owner;
-        if (!landmark.defenders.isFull) {
-            landmark.AddDefender(createdUnit);
-        }
+        //if (!landmark.defenders.isFull) {
+            //landmark.AddDefender(createdUnit);
+        //}
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(createdUnit.race), LOG_IDENTIFIER.STRING_1);
             state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(createdUnit.role.roleType.ToString()), LOG_IDENTIFIER.STRING_2);
@@ -193,9 +193,9 @@ public class HumanBanditReinforcements : Interaction {
     private void DoNothingRewardEffect(InteractionState state) {
         //**Mechanics**: create an Army Unit from Defense Spawn Weights and add it to the Tile Defenders if not yet full or Character List if already full
         ICharacter createdUnit = CreateAssaultArmy(1).owner;
-        if (!landmark.defenders.isFull) {
-            landmark.AddDefender(createdUnit);
-        }
+        //if (!landmark.defenders.isFull) {
+            //landmark.AddDefender(createdUnit);
+        //}
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(createdUnit.race), LOG_IDENTIFIER.STRING_1);
             state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(createdUnit.role.roleType.ToString()), LOG_IDENTIFIER.STRING_2);

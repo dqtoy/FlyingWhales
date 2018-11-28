@@ -255,13 +255,13 @@ public class LandmarkInvestigation {
 
     #region Attack
     private void AttackLandmark() {
-        if (_landmark.defenders != null) {
-            Combat combat = _assignedMinionAttack.icharacter.currentParty.CreateCombatWith(_landmark.defenders);
-            combat.Fight(() => AttackCombatResult(combat));
-            //combat.AddAfterCombatAction(() => AttackCombatResult(combat));
-        } else {
-            _landmark.DestroyLandmark();
-        }
+        //if (_landmark.defenders != null) {
+        //    Combat combat = _assignedMinionAttack.icharacter.currentParty.CreateCombatWith(_landmark.defenders);
+        //    combat.Fight(() => AttackCombatResult(combat));
+        //    //combat.AddAfterCombatAction(() => AttackCombatResult(combat));
+        //} else {
+        //    _landmark.DestroyLandmark();
+        //}
     }
     private void AttackCombatResult(Combat combat) {
         if (_isActivated) { //when the minion dies, isActivated will become false, hence, it must not go through the result
@@ -274,13 +274,13 @@ public class LandmarkInvestigation {
 
     #region Raid
     private void RaidLandmark() {
-        if (_landmark.defenders != null) {
-            Combat combat = _assignedMinion.icharacter.currentParty.CreateCombatWith(_landmark.defenders);
-            combat.Fight(() => RaidCombatResult(combat));
-            //combat.AddAfterCombatAction(() => RaidCombatResult(combat));
-        } else {
-            RaidAndGoBack();
-        }
+        //if (_landmark.defenders != null) {
+        //    Combat combat = _assignedMinion.icharacter.currentParty.CreateCombatWith(_landmark.defenders);
+        //    combat.Fight(() => RaidCombatResult(combat));
+        //    //combat.AddAfterCombatAction(() => RaidCombatResult(combat));
+        //} else {
+        //    RaidAndGoBack();
+        //}
     }
     private void RaidCombatResult(Combat combat) {
         if (_isActivated) { //when the minion dies, isActivated will become false, hence, it must not go through the result

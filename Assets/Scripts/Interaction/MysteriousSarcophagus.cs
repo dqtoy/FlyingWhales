@@ -209,7 +209,7 @@ public class MysteriousSarcophagus : Interaction {
         BaseLandmark landmark = _interactable;
         Character zombieEarthbinderHero = CharacterManager.Instance.CreateNewCharacter("Earthbinder", RACE.ZOMBIE, GENDER.MALE, PlayerManager.Instance.player.playerFaction, PlayerManager.Instance.player.demonicPortal, false);
         zombieEarthbinderHero.SetLevel(15);
-        landmark.AddDefender(zombieEarthbinderHero);
+        //landmark.AddDefender(zombieEarthbinderHero);
     }
     private void GainPositiveTraitRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));

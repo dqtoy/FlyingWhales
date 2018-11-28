@@ -27,11 +27,13 @@ public class Area {
     public bool hasBeenInspected { get; private set; }
     public bool areAllLandmarksDead { get; private set; }
     public AreaInvestigation areaInvestigation { get; private set; }
+    public int supplyCapacity { get; private set; }
+
+    //defenders
     public int maxDefenderGroups { get; private set; }
     public int initialDefenderGroups { get; private set; }
     public int minInitialDefendersPerGroup { get; private set; }
     public int maxInitialDefendersPerGroup { get; private set; }
-    public int supplyCapacity { get; private set; }
     public List<DefenderGroup> defenderGroups { get; private set; }
     public int initialDefenderLevel { get; private set; }
     public List<RACE> possibleOccupants { get; private set; }
@@ -42,6 +44,12 @@ public class Area {
 
     public List<ICharacter> residents;
 
+    #region getters
+    public RACE race {
+        get { return owner == null ? defaultRace : owner.race; }
+    }
+    #endregion
+
     public Area(HexTile coreTile, AREA_TYPE areaType) {
         id = Utilities.SetID(this);
         SetName(RandomNameGenerator.Instance.GetRegionName());
@@ -49,6 +57,7 @@ public class Area {
         residents = new List<ICharacter>();
         exposedTiles = new List<BaseLandmark>();
         unexposedTiles = new List<BaseLandmark>();
+        defenderGroups = new List<DefenderGroup>();
         areaColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         locationIntel = new LocationIntel(this);
         areaInvestigation = new AreaInvestigation(this); 
@@ -67,6 +76,7 @@ public class Area {
         residents = new List<ICharacter>();
         exposedTiles = new List<BaseLandmark>();
         unexposedTiles = new List<BaseLandmark>();
+        defenderGroups = new List<DefenderGroup>();
         areaColor = data.areaColor;
         SetAreaType(data.areaType);
         locationIntel = new LocationIntel(this);
@@ -417,6 +427,7 @@ public class Area {
     public void LoadAdditionalData() {
         //DetermineExposedTiles();
         Messenger.AddListener<StructureObj, ObjectState>(Signals.STRUCTURE_STATE_CHANGED, OnStructureStateChanged);
+        GenerateInitialDefenders();
     }
     public bool HasLandmarkOfType(LANDMARK_TYPE type) {
         return landmarks.Where(x => x.specificLandmarkType == type).Any();
@@ -547,7 +558,7 @@ public class Area {
     }
     private void ExecuteSupplyLine() {
         CollectDailySupplies();
-        PayMaintenance();
+        //PayMaintenance();
         LandmarkStartDayActions();
     }
     private void CollectDailySupplies() {
@@ -568,24 +579,24 @@ public class Area {
     }
     private void PayMaintenance() {
         //consumes Supply per existing unit
-        for (int i = 0; i < landmarks.Count; i++) {
-            BaseLandmark currLandmark = landmarks[i];
-            if (currLandmark.defenders == null) {
-                continue;
-            }
-            for (int j = 0; j < currLandmark.defenders.icharacters.Count; j++) {
-                ICharacter currDefender = currLandmark.defenders.icharacters[j];
-                if (currDefender is CharacterArmyUnit) {
-                    CharacterArmyUnit armyUnit = currDefender as CharacterArmyUnit;
-                    AdjustSuppliesInBank(-armyUnit.armyCount);
-                } else if (currDefender is MonsterArmyUnit) {
-                    MonsterArmyUnit armyUnit = currDefender as MonsterArmyUnit;
-                    AdjustSuppliesInBank(-armyUnit.armyCount);
-                } else {
-                    AdjustSuppliesInBank(-1); //if just a single character or monster
-                }
-            }
-        }
+        //for (int i = 0; i < landmarks.Count; i++) {
+        //    BaseLandmark currLandmark = landmarks[i];
+        //    if (currLandmark.defenders == null) {
+        //        continue;
+        //    }
+        //    for (int j = 0; j < currLandmark.defenders.icharacters.Count; j++) {
+        //        ICharacter currDefender = currLandmark.defenders.icharacters[j];
+        //        if (currDefender is CharacterArmyUnit) {
+        //            CharacterArmyUnit armyUnit = currDefender as CharacterArmyUnit;
+        //            AdjustSuppliesInBank(-armyUnit.armyCount);
+        //        } else if (currDefender is MonsterArmyUnit) {
+        //            MonsterArmyUnit armyUnit = currDefender as MonsterArmyUnit;
+        //            AdjustSuppliesInBank(-armyUnit.armyCount);
+        //        } else {
+        //            AdjustSuppliesInBank(-1); //if just a single character or monster
+        //        }
+        //    }
+        //}
     }
     private void LandmarkStartDayActions() {
         for (int i = 0; i < landmarks.Count; i++) {
@@ -685,8 +696,50 @@ public class Area {
     public void SetInitialDefenderLevel(int initialDefenderLevel) {
         this.initialDefenderLevel = initialDefenderLevel;
     }
-    public void AddDefender(ICharacter defender) {
-
+    private void GenerateInitialDefenders() {
+        WeightedDictionary<AreaDefenderSetting> defenderWeights;
+        if (this.owner != null && this.owner.defenderWeights.GetTotalOfWeights() > 0) {
+            defenderWeights = this.owner.defenderWeights;
+        } else {
+            defenderWeights = LandmarkManager.Instance.GetDefaultDefenderWeights(race);
+        }
+        if (defenderWeights == null || defenderWeights.GetTotalOfWeights() <= 0) {
+            return;
+        }
+        for (int i = 0; i < initialDefenderGroups; i++) {
+            DefenderGroup newGroup = new DefenderGroup();
+            AddDefenderGroup(newGroup);
+            int defendersToGenerate = Random.Range(minInitialDefendersPerGroup, maxInitialDefendersPerGroup + 1);
+            for (int j = 0; j < defendersToGenerate; j++) {
+                string chosenClass = defenderWeights.PickRandomElementGivenWeights().className;
+                Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass, race, Utilities.GetRandomGender(), owner, coreTile.landmarkOnTile);
+                newGroup.AddCharacterToGroup(createdCharacter);
+                //TODO: Add Level
+            }
+        }
+    }
+    public void AddDefenderGroup(DefenderGroup defenderGroup) {
+        if (defenderGroups.Count < maxDefenderGroups) {
+            defenderGroups.Add(defenderGroup);
+            defenderGroup.SetDefendingArea(this);
+        }
+    }
+    public void RemoveDefenderGroup(DefenderGroup defenderGroup) {
+        if (defenderGroups.Remove(defenderGroup)) {
+            defenderGroup.SetDefendingArea(null);
+        }
+    }
+    public DefenderGroup GetFirstDefenderGroup() {
+        if (defenderGroups.Count > 0) {
+            return defenderGroups[0];
+        }
+        return null;
+    }
+    public DefenderGroup GetRandomDefenderGroup() {
+        if (defenderGroups.Count > 0) {
+            return defenderGroups[Random.Range(0, defenderGroups.Count)];
+        }
+        return null;
     }
     #endregion
 }

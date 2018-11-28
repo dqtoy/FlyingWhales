@@ -191,7 +191,10 @@ public class Interaction {
         }
     }
     public void TimedOutRunDefault() {
-        if (!_currentState.isEnd && _currentState.defaultOption == null) {
+        if (_currentState == null) {
+            throw new Exception(this.GetType().ToString() + " interaction at " + interactable.tileLocation.areaOfTile.name + " has a current state of null at second time out!");
+        }
+        if(!_currentState.isEnd && _currentState.defaultOption == null) {
             return;
         }
         while (!_isDone) {

@@ -16,6 +16,7 @@ public class FactionSaveData {
     public int emblemIndex;
     public MORALITY morality;
     public Dictionary<int, int> favor;
+    public Dictionary<AreaDefenderSetting, int> defenderWeights;
 
     public FactionSaveData(Faction faction) {
         factionID = faction.id;
@@ -34,6 +35,7 @@ public class FactionSaveData {
         }
         emblemIndex = FactionManager.Instance.GetFactionEmblemIndex(faction.emblem);
         morality = faction.morality;
+        defenderWeights = faction.defenderWeights.dictionary;
     }
     private void ConstructOwnedAreas(Faction faction) {
         ownedAreas = new List<int>();

@@ -13,6 +13,7 @@ public class Spy : Job {
     #region Overrides
     public override void DoJobAction() {
         base.DoJobAction();
+        string jobSummary = GameManager.Instance.TodayLogString() + " " + _character.name + " job summary: ";
         //Once the duration expires, check first if there are any new intel that can still be unlocked. Order of priority below:
         List<Intel> intelChoices = new List<Intel>();
         Area area = _character.specificLocation.tileLocation.areaOfTile;
@@ -51,9 +52,11 @@ public class Spy : Job {
             rateWeights.AddElement(JOB_RESULT.SUCCESS, baseSuccessRate);
             rateWeights.AddElement(JOB_RESULT.FAIL, baseFailRate);
             rateWeights.AddElement(JOB_RESULT.CRITICAL_FAIL, criticalFailRate);
+            jobSummary += "\n" + rateWeights.GetWeightsSummary("Rates summary ");
             if (rateWeights.GetTotalOfWeights() > 0) {
                 JOB_RESULT chosenResult = rateWeights.PickRandomElementGivenWeights();
                 Intel chosenIntel = intelChoices[Random.Range(0, intelChoices.Count)];
+                jobSummary += "\nRate result: " + chosenResult.ToString() + ". Chosen intel " + chosenIntel.ToString();
                 switch (chosenResult) {
                     case JOB_RESULT.SUCCESS:
                         Success(chosenIntel);
@@ -61,15 +64,28 @@ public class Spy : Job {
                     case JOB_RESULT.FAIL:
                         SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile));
                         //raidSuccess.SetEndInteractionAction(() => GoBackHome());
+                        _createdInteraction.SetEndInteractionAction(() => StartJobAction());
                         _createdInteraction.ScheduleSecondTimeOut();
-                        //StartJobAction();
-                        break;
+                        character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.AddInteraction(_createdInteraction);
+                        //Interaction minionFailed = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile);
+                        //minionFailed.SetEndInteractionAction(() => StartJobAction());
+                        //minionFailed.ScheduleSecondTimeOut();
+                        //character.specificLocation.tileLocation.areaOfTile.areaInvestigation.SetCurrentInteraction(minionFailed);
+                    //StartJobAction();
+                    break;
                     case JOB_RESULT.CRITICAL_FAIL:
                         SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.tileLocation.landmarkOnTile));
                         //raidSuccess.SetEndInteractionAction(() => GoBackHome());
+                        _createdInteraction.SetEndInteractionAction(() => StartJobAction());
                         _createdInteraction.ScheduleSecondTimeOut();
+                        character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.AddInteraction(_createdInteraction);
+                        //Interaction minionCriticalFail = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.tileLocation.landmarkOnTile);
+                        //minionCriticalFail.SetEndInteractionAction(() => StartJobAction());
+                        //minionCriticalFail.ScheduleSecondTimeOut();
+                        //character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.AddInteraction(minionCriticalFail);
+                        //character.specificLocation.tileLocation.areaOfTile.areaInvestigation.SetCurrentInteraction(minionCriticalFail);
                         //StartJobAction();
-                        break;
+                    break;
                     default:
                         break;
                 }
@@ -77,11 +93,13 @@ public class Spy : Job {
                 StartJobAction();
             }
         } else {
+            jobSummary += "\nNo more intel to gain."; 
             StartJobAction();
         }
+        Debug.Log(jobSummary);
     }
     public override void ApplyActionDuration() {
-        _actionDuration = 80 - (2 * (_character.level - 5));
+        _actionDuration = 80 - (2 * (Mathf.Max(_character.level - 5, 0)));
     }
     #endregion
 
@@ -101,11 +119,13 @@ public class Spy : Job {
             _createdInteraction.ScheduleSecondTimeOut();
             if (_createdInteraction.type == INTERACTION_TYPE.CHARACTER_ENCOUNTERED) {
                 ((chosenIntel as CharacterIntel).character as Character).AddInteraction(_createdInteraction);
-            } else if (_createdInteraction.type == INTERACTION_TYPE.LOCATION_OBSERVED 
+            } else if (_createdInteraction.type == INTERACTION_TYPE.LOCATION_OBSERVED
                 || _createdInteraction.type == INTERACTION_TYPE.DEFENDERS_REVEALED
                 || _createdInteraction.type == INTERACTION_TYPE.FACTION_DISCOVERED) {
-                (chosenIntel as LocationIntel).location.coreTile.landmarkOnTile.AddInteraction(_createdInteraction);
+                character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.AddInteraction(_createdInteraction);
+                //(chosenIntel as LocationIntel).location.coreTile.landmarkOnTile.AddInteraction(_createdInteraction);
             }
+            //character.specificLocation.tileLocation.areaOfTile.areaInvestigation.SetCurrentInteraction(interaction);
         }
         
     }

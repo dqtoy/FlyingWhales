@@ -6,7 +6,7 @@ public class TheSpiderQueen : Interaction {
 
     private ICharacter spiderQueen;
     private BaseLandmark landmark;
-    private WeightedDictionary<LandmarkDefender> assaultSpawnWeights;
+    private WeightedDictionary<DefenderSetting> assaultSpawnWeights;
 
     public TheSpiderQueen(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.SPIDER_QUEEN, 70) {
         _name = "The Spider Queen";
@@ -222,19 +222,16 @@ public class TheSpiderQueen : Interaction {
     }
 
     private void ConstructAssaultSpawnWeights() {
-        assaultSpawnWeights = new WeightedDictionary<LandmarkDefender>();
+        assaultSpawnWeights = new WeightedDictionary<DefenderSetting>();
 
-        LandmarkDefender striker = new LandmarkDefender() {
+        DefenderSetting striker = new DefenderSetting() {
             className = "Striker",
-            armyCount = 25
         };
-        LandmarkDefender spinner = new LandmarkDefender() {
+        DefenderSetting spinner = new DefenderSetting() {
             className = "Spinner",
-            armyCount = 25
         };
-        LandmarkDefender guardian = new LandmarkDefender() {
+        DefenderSetting guardian = new DefenderSetting() {
             className = "Guardian",
-            armyCount = 25
         };
 
         assaultSpawnWeights.AddElement(striker, 30);
@@ -250,7 +247,7 @@ public class TheSpiderQueen : Interaction {
         monsterParty.icon.SetPosition(landmark.tileLocation.transform.position);
         landmark.AddCharacterToLocation(monsterParty);
         for (int i = 0; i < unitCount; i++) {
-            LandmarkDefender chosenDefender = assaultSpawnWeights.PickRandomElementGivenWeights();
+            DefenderSetting chosenDefender = assaultSpawnWeights.PickRandomElementGivenWeights();
             MonsterArmyUnit armyUnit = MonsterManager.Instance.CreateNewMonsterArmyUnit(chosenDefender.className);
             landmark.AddCharacterHomeOnLandmark(armyUnit);
             monsterParty.AddCharacter(armyUnit);

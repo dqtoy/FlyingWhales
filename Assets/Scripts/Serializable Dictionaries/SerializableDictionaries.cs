@@ -9,7 +9,7 @@ public class PhaseItemDictionary : SerializableDictionary<SCHEDULE_ACTION_CATEGO
 [System.Serializable]
 public class StringIntDictionary : SerializableDictionary<string, int> { }
 [System.Serializable]
-public class LandmarkDefenderWeightDictionary : SerializableDictionary<LandmarkDefender, int> { }
+public class LandmarkDefenderWeightDictionary : SerializableDictionary<DefenderSetting, int> { }
 [System.Serializable]
 public class InteractionWeightDictionary : SerializableDictionary<INTERACTION_TYPE, int> { }
 [System.Serializable]
@@ -20,6 +20,8 @@ public class BiomeLandmarkSpriteListDictionary : SerializableDictionary<BIOMES, 
 public class RoleInteractionsListDictionary : SerializableDictionary<CHARACTER_ROLE, List<CharacterInteractionWeight>, CharacterInteractionWeightListStorage> { }
 [System.Serializable]
 public class TileSpriteCorruptionListDictionary : SerializableDictionary<Sprite, List<GameObject>, CorruptionObjectsListStorage> { }
+[System.Serializable]
+public class RaceDefenderListDictionary : SerializableDictionary<RACE, List<RaceAreaDefenderSetting>, RaceDefenderListStorage> { }
 
 [System.Serializable]
 public class CharacterTagListStorage : SerializableDictionary.Storage<List<CharacterActionTagRequirement>> { }
@@ -29,3 +31,5 @@ public class LandmarkSpriteListStorage : SerializableDictionary.Storage<List<Lan
 public class CharacterInteractionWeightListStorage : SerializableDictionary.Storage<List<CharacterInteractionWeight>> { }
 [System.Serializable]
 public class CorruptionObjectsListStorage : SerializableDictionary.Storage<List<GameObject>> { }
+[System.Serializable]
+public class RaceDefenderListStorage : SerializableDictionary.Storage<List<RaceAreaDefenderSetting>> { }

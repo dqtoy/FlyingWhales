@@ -51,14 +51,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3676c156a6b3f34fad647c5ec1114de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterProductionWeights:
-  - role: 1
-    weight: 50
-  - role: 2
-    weight: 0
-  initialResourceLandmarks: 30
-  initialDungeonLandmarks: 40
-  initialSettlementLandmarks: 10
   initialLandmarkCount: 60
   landmarkData:
   - landmarkTypeString: Demonic Portal
@@ -1335,3 +1327,35 @@ MonoBehaviour:
     type: 3}
   ruinedSprite: {fileID: 21300032, guid: 56a2c57009ed96c41b97b19cc3d6b340, type: 3}
   landmarkGO: {fileID: 1000010040247426, guid: 62f5adf3c35fcea45a8e702a164cf60d, type: 2}
+  defaultRaceDefenders:
+    m_keys: 110000000a0000000d0000000f00000008000000
+    m_values:
+    - data:
+      - className: Spinner
+        weight: 40
+    - data:
+      - className: Ravager
+        weight: 40
+    - data:
+      - className: Knight
+        weight: 30
+      - className: Archer
+        weight: 30
+      - className: Mage
+        weight: 30
+      - className: Marauder
+        weight: 30
+      - className: Rogue
+        weight: 30
+      - className: Stalker
+        weight: 30
+      - className: Shaman
+        weight: 30
+    - data:
+      - className: Shambler
+        weight: 40
+      - className: Binder
+        weight: 20
+    - data:
+      - className: Dragon
+        weight: 30

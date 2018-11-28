@@ -50,7 +50,7 @@ public class BaseLandmark : ILocation, IInteractable {
     public bool hasAdjacentCorruptedLandmark;
     public QuestBoard questBoard { get; private set; }
     public List<GameEvent> advertisedEvents { get; private set; } //events happening at this landmark, that other characters can partake in
-    public Party defenders { get; private set; }
+    //public Party defenders { get; private set; }
     public bool canProduceSupplies { get; private set; }
     public WeightedDictionary<INTERACTION_TYPE> scenarios { get; private set; }
     public WeightedDictionary<bool> eventTriggerWeights { get; private set; }
@@ -58,11 +58,9 @@ public class BaseLandmark : ILocation, IInteractable {
     public int noEventTriggerWeight { get; private set; }
     public int maxDailySupplyProduction { get; private set; }
     public int minDailySupplyProduction { get; private set; }
-    public int initialDefenderCount { get; private set; }
     public int maxDefenderCount { get; private set; }
-    public WeightedDictionary<LandmarkDefender> defenderWeights { get; private set; }
 
-    private List<Buff> defenderBuffs;
+    //private List<Buff> defenderBuffs;
 
     #region getters/setters
     public int id {
@@ -227,10 +225,9 @@ public class BaseLandmark : ILocation, IInteractable {
         _assaultParties = new List<Party>();
         scenarios = new WeightedDictionary<INTERACTION_TYPE>();
         eventTriggerWeights = new WeightedDictionary<bool>();
-        defenderWeights = new WeightedDictionary<LandmarkDefender>();
         SetSupplyProductionState(true);
-        SetMaxDefenderCount(4);
-        defenderBuffs = new List<Buff>();
+        //SetMaxDefenderCount(4);
+        //defenderBuffs = new List<Buff>();
         //defenders = new Party[LandmarkManager.MAX_DEFENDERS];
         //Messenger.AddListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);
     }
@@ -261,12 +258,12 @@ public class BaseLandmark : ILocation, IInteractable {
         eventTriggerWeights.AddElement(true, eventTriggerWeight);
         eventTriggerWeights.AddElement(false, noEventTriggerWeight);
 
-        if (data.defenderWeights != null) {
-            defenderWeights = new WeightedDictionary<LandmarkDefender>(data.defenderWeights);
-        }
+        //if (data.defenderWeights != null) {
+        //    defenderWeights = new WeightedDictionary<DefenderSetting>(data.defenderWeights);
+        //}
         SetMaxDailySupplyProductionAmount(data.maxDailySupplyAmount);
-        SetInitialDefenderCount(data.initialDefenderCount);
-        SetMaxDefenderCount(data.maxDefenderCount);
+        //SetInitialDefenderCount(data.initialDefenderCount);
+        //SetMaxDefenderCount(data.maxDefenderCount);
     }
 
     public void SetName(string name) {
@@ -419,9 +416,9 @@ public class BaseLandmark : ILocation, IInteractable {
     #region Location
     public void AddCharacterToLocation(Party iparty) {
         if (!_charactersAtLocation.Contains(iparty)) {
-            if (!IsDefenderOfLandmark(iparty)) {
+            //if (!IsDefenderOfLandmark(iparty)) {
                 _charactersAtLocation.Add(iparty); //only add to characters list if the party is not a defender of the landmark
-            }
+            //}
             //this.tileLocation.RemoveCharacterFromLocation(iparty);
             if (iparty.specificLocation != null) {
                 iparty.specificLocation.RemoveCharacterFromLocation(iparty);
@@ -1168,121 +1165,112 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     #endregion
 
-    #region Defenders
-    public void AddDefender(ICharacter newDefender) {
-        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
-        if (maxDefenderCount <= 0) {
-            return; //no defender slots
-        }
-        if (defenders == null) {
-            //set the defenders party as the party of the new defender
-            defenders = newDefender.ownParty;
-            defenders.SetMaxCharacters(maxDefenderCount);
-            //apply buffs, if any, to new defender party
-            for (int i = 0; i < defenderBuffs.Count; i++) {
-                Buff currBuff = defenderBuffs[i];
-                defenders.AddBuff(currBuff);
-            }
-        }
+    //#region Defenders
+    //public void AddDefender(ICharacter newDefender) {
+    //    LandmarkData data = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
+    //    if (maxDefenderCount <= 0) {
+    //        return; //no defender slots
+    //    }
+    //    if (defenders == null) {
+    //        //set the defenders party as the party of the new defender
+    //        defenders = newDefender.ownParty;
+    //        defenders.SetMaxCharacters(maxDefenderCount);
+    //        //apply buffs, if any, to new defender party
+    //        for (int i = 0; i < defenderBuffs.Count; i++) {
+    //            Buff currBuff = defenderBuffs[i];
+    //            defenders.AddBuff(currBuff);
+    //        }
+    //    }
 
-        if (defenders.icharacters.Count >= maxDefenderCount) {
-            return; //if the current defender party members is more or equal to the maximum defenders allowed for the landmark type
-        }
-        if (newDefender is Character) {
-            (newDefender as Character).OnSetAsDefender(this);
-        }
-        defenders.AddCharacter(newDefender);
-        //for (int i = 0; i < defenders.Length; i++) {
-        //    Party currDefender = defenders[i];
-        //    if (currDefender == null) {
-        //        defenders[i] = newDefender;
-        //        (newDefender.owner as Character).OnSetAsDefender(this);
-        //        break;
-        //    }
-        //}
-    }
-    public void RemoveDefender(ICharacter defender) {
-        if (defenders != null) {
-            if (defenders.owner.id == defender.id) {
-                //if the character that needs to be removed is the owner of the defender party
-                //check if there are any other characters left in the defender party
-                List<ICharacter> otherCharacters = new List<ICharacter>();
-                for (int i = 0; i < defenders.icharacters.Count; i++) {
-                    ICharacter currCharacter = defenders.icharacters[i];
-                    if (defenders.owner.id != currCharacter.id) {
-                        otherCharacters.Add(currCharacter);
-                    }
-                }
-                if (otherCharacters.Count > 0) {
-                    //if there are other characters left
-                    //set the defender party to the party of the first remaining character, 
-                    //then add all other characters to that party
-                    Party partyToUse = otherCharacters[0].ownParty;
-                    defenders = partyToUse;
-                    for (int i = 1; i < otherCharacters.Count; i++) {
-                        partyToUse.AddCharacter(otherCharacters[i]);
-                    }
-                } else {
-                    //there are no more other characters other than the owner
-                    //set the defenders to null
-                    defenders = null;
-                }
-                if (defender is Character) {
-                    (defender as Character).OnRemoveAsDefender();
-                }
-            } else {
-                if (defenders.icharacters.Contains(defender)) {
-                    defenders.RemoveCharacter(defender);
-                    if (defender is Character) {
-                        (defender as Character).OnRemoveAsDefender();
-                    }
-                }
-            }
-        }
+    //    if (defenders.icharacters.Count >= maxDefenderCount) {
+    //        return; //if the current defender party members is more or equal to the maximum defenders allowed for the landmark type
+    //    }
+    //    if (newDefender is Character) {
+    //        (newDefender as Character).OnSetAsDefender(this.tileLocation.areaOfTile);
+    //    }
+    //    defenders.AddCharacter(newDefender);
+    //    //for (int i = 0; i < defenders.Length; i++) {
+    //    //    Party currDefender = defenders[i];
+    //    //    if (currDefender == null) {
+    //    //        defenders[i] = newDefender;
+    //    //        (newDefender.owner as Character).OnSetAsDefender(this);
+    //    //        break;
+    //    //    }
+    //    //}
+    //}
+    //public void RemoveDefender(ICharacter defender) {
+    //    if (defenders != null) {
+    //        if (defenders.owner.id == defender.id) {
+    //            //if the character that needs to be removed is the owner of the defender party
+    //            //check if there are any other characters left in the defender party
+    //            List<ICharacter> otherCharacters = new List<ICharacter>();
+    //            for (int i = 0; i < defenders.icharacters.Count; i++) {
+    //                ICharacter currCharacter = defenders.icharacters[i];
+    //                if (defenders.owner.id != currCharacter.id) {
+    //                    otherCharacters.Add(currCharacter);
+    //                }
+    //            }
+    //            if (otherCharacters.Count > 0) {
+    //                //if there are other characters left
+    //                //set the defender party to the party of the first remaining character, 
+    //                //then add all other characters to that party
+    //                Party partyToUse = otherCharacters[0].ownParty;
+    //                defenders = partyToUse;
+    //                for (int i = 1; i < otherCharacters.Count; i++) {
+    //                    partyToUse.AddCharacter(otherCharacters[i]);
+    //                }
+    //            } else {
+    //                //there are no more other characters other than the owner
+    //                //set the defenders to null
+    //                defenders = null;
+    //            }
+    //            if (defender is Character) {
+    //                (defender as Character).OnRemoveAsDefender();
+    //            }
+    //        } else {
+    //            if (defenders.icharacters.Contains(defender)) {
+    //                defenders.RemoveCharacter(defender);
+    //                if (defender is Character) {
+    //                    (defender as Character).OnRemoveAsDefender();
+    //                }
+    //            }
+    //        }
+    //    }
         
-        //for (int i = 0; i < defenders.Length; i++) {
-        //    Party currDefender = defenders[i];
-        //    if (currDefender != null && currDefender.id == defender.id) {
-        //        defenders[i] = null;
-        //        (currDefender.owner as Character).OnRemoveAsDefender();
-        //        break;
-        //    }
-        //}
-    }
-    public bool IsDefenderOfLandmark(Party party) {
-        if (defenders != null) {
-            if (defenders.id == party.id) {
-                return true;
-            } else {
-                if (defenders.icharacters.Contains(party.owner)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public bool HasEmptyDefenderSlot() {
-        if (defenders == null || !defenders.isFull) {
-            return true;
-        }
-        return false;
-    }
-    public void SetInitialDefenderCount(int count) {
-        this.initialDefenderCount = count;
-    }
-    public void SetMaxDefenderCount(int count) {
-        this.maxDefenderCount = count;
-    }
-    public WeightedDictionary<LandmarkDefender> GetFirstDefenderWeights() {
-        WeightedDictionary<LandmarkDefender> weights = new WeightedDictionary<LandmarkDefender>();
-        foreach (KeyValuePair<LandmarkDefender, int> kvp in defenderWeights.dictionary) {
-            if (kvp.Key.includeInFirstWeight) {
-                weights.AddElement(kvp.Key, kvp.Value);
-            }
-        }
-        return weights;
-    }
-    #endregion
+    //    //for (int i = 0; i < defenders.Length; i++) {
+    //    //    Party currDefender = defenders[i];
+    //    //    if (currDefender != null && currDefender.id == defender.id) {
+    //    //        defenders[i] = null;
+    //    //        (currDefender.owner as Character).OnRemoveAsDefender();
+    //    //        break;
+    //    //    }
+    //    //}
+    //}
+    //public bool IsDefenderOfLandmark(Party party) {
+    //    if (defenders != null) {
+    //        if (defenders.id == party.id) {
+    //            return true;
+    //        } else {
+    //            if (defenders.icharacters.Contains(party.owner)) {
+    //                return true;
+    //            }
+    //        }
+    //    }
+    //    return false;
+    //}
+    //public bool HasEmptyDefenderSlot() {
+    //    if (defenders == null || !defenders.isFull) {
+    //        return true;
+    //    }
+    //    return false;
+    //}
+    ////public void SetInitialDefenderCount(int count) {
+    ////    this.initialDefenderCount = count;
+    ////}
+    ////public void SetMaxDefenderCount(int count) {
+    ////    this.maxDefenderCount = count;
+    ////}
+    //#endregion
 
     #region Interactions
     public void ConstructInitialInteractions() {
@@ -1378,25 +1366,25 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     #endregion
 
-    #region Buffs
-    public void AddDefenderBuff(Buff buff) {
-        defenderBuffs.Add(buff);
-        //apply buff to current defender
-        if (defenders != null) {
-            defenders.AddBuff(buff);
-        }
-    }
-    public void RemoveDefenderBuff(Buff buff) {
-        if (defenderBuffs.Contains(buff)) {
-            defenderBuffs.Remove(buff);
-            //apply debuff to current defender
-            if (defenders != null) {
-                defenders.RemoveBuff(buff);
-            }
-        }
+    //#region Buffs
+    //public void AddDefenderBuff(Buff buff) {
+    //    defenderBuffs.Add(buff);
+    //    //apply buff to current defender
+    //    if (defenders != null) {
+    //        defenders.AddBuff(buff);
+    //    }
+    //}
+    //public void RemoveDefenderBuff(Buff buff) {
+    //    if (defenderBuffs.Contains(buff)) {
+    //        defenderBuffs.Remove(buff);
+    //        //apply debuff to current defender
+    //        if (defenders != null) {
+    //            defenders.RemoveBuff(buff);
+    //        }
+    //    }
         
-    }
-    #endregion
+    //}
+    //#endregion
 
     #region Assault Army Party
     public void AddAssaultArmyParty(Party party) {
@@ -1419,16 +1407,16 @@ public class BaseLandmark : ILocation, IInteractable {
         //Assign army units to external tiles of area
         for (int i = 0; i < tileLocation.areaOfTile.exposedTiles.Count; i++) {
             BaseLandmark exposedTile = tileLocation.areaOfTile.exposedTiles[i];
-            if (exposedTile.defenders == null || exposedTile.defenders.icharacters.Count < 4) {
-                if(charactersNotAssigned.Count > 0) {
-                    charactersNotAssigned[0].currentParty.specificLocation.RemoveCharacterFromLocation(charactersNotAssigned[0].currentParty);
-                    charactersNotAssigned[0].homeLandmark.RemoveCharacterHomeOnLandmark(charactersNotAssigned[0]);
-                    exposedTile.AddCharacterToLocation(charactersNotAssigned[0].currentParty);
-                    exposedTile.AddCharacterHomeOnLandmark(charactersNotAssigned[0]);
-                    exposedTile.AddDefender(charactersNotAssigned[0]);
-                    charactersNotAssigned.RemoveAt(0);
-                }
-            }
+            //if (exposedTile.defenders == null || exposedTile.defenders.icharacters.Count < 4) {
+            //    if(charactersNotAssigned.Count > 0) {
+            //        charactersNotAssigned[0].currentParty.specificLocation.RemoveCharacterFromLocation(charactersNotAssigned[0].currentParty);
+            //        charactersNotAssigned[0].homeLandmark.RemoveCharacterHomeOnLandmark(charactersNotAssigned[0]);
+            //        exposedTile.AddCharacterToLocation(charactersNotAssigned[0].currentParty);
+            //        exposedTile.AddCharacterHomeOnLandmark(charactersNotAssigned[0]);
+            //        //exposedTile.AddDefender(charactersNotAssigned[0]);
+            //        charactersNotAssigned.RemoveAt(0);
+            //    }
+            //}
         }
 
         //Form or fill an assault party
@@ -1481,16 +1469,16 @@ public class BaseLandmark : ILocation, IInteractable {
         if (charactersNotAssigned.Count > 0) {
             for (int i = 0; i < tileLocation.areaOfTile.unexposedTiles.Count; i++) {
                 BaseLandmark unexposedTile = tileLocation.areaOfTile.unexposedTiles[i];
-                if (unexposedTile.defenders == null || unexposedTile.defenders.icharacters.Count < 4) {
-                    if (charactersNotAssigned.Count > 0) {
-                        charactersNotAssigned[0].currentParty.specificLocation.RemoveCharacterFromLocation(charactersNotAssigned[0].currentParty);
-                        charactersNotAssigned[0].homeLandmark.RemoveCharacterHomeOnLandmark(charactersNotAssigned[0]);
-                        unexposedTile.AddCharacterToLocation(charactersNotAssigned[0].currentParty);
-                        unexposedTile.AddCharacterHomeOnLandmark(charactersNotAssigned[0]);
-                        unexposedTile.AddDefender(charactersNotAssigned[0]);
-                        charactersNotAssigned.RemoveAt(0);
-                    }
-                }
+                //if (unexposedTile.defenders == null || unexposedTile.defenders.icharacters.Count < 4) {
+                //    if (charactersNotAssigned.Count > 0) {
+                //        charactersNotAssigned[0].currentParty.specificLocation.RemoveCharacterFromLocation(charactersNotAssigned[0].currentParty);
+                //        charactersNotAssigned[0].homeLandmark.RemoveCharacterHomeOnLandmark(charactersNotAssigned[0]);
+                //        unexposedTile.AddCharacterToLocation(charactersNotAssigned[0].currentParty);
+                //        unexposedTile.AddCharacterHomeOnLandmark(charactersNotAssigned[0]);
+                //        //unexposedTile.AddDefender(charactersNotAssigned[0]);
+                //        charactersNotAssigned.RemoveAt(0);
+                //    }
+                //}
             }
         }
 
