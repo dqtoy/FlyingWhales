@@ -218,6 +218,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: aef08e738de7f9144a2bf4587b8b17ec, type: 3}
   - {fileID: 21300000, guid: 6a9a19027c5b24f408e35e7ef73d0996, type: 3}
   - {fileID: 21300000, guid: febd7bc28a21ea044a06f7266d76b729, type: 3}
+  - {fileID: 21300000, guid: 2203f56052c373f4a9256a250a26f0f1, type: 3}
   - {fileID: 21300000, guid: 7fc27e0c5ebfeb0459dbb660ee50ac3f, type: 3}
   - {fileID: 21300000, guid: 1f589b68222dcea4fa1e1d129cd7cbf5, type: 3}
   - {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
@@ -430,6 +431,7 @@ SpriteAtlas:
   - interaction_tab_done
   - tile_log_divider
   - White_square
+  - TravelLine
   - supply_icon
   - text_scroll_thumb
   - Hungry

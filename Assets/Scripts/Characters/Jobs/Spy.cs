@@ -59,15 +59,15 @@ public class Spy : Job {
                         Success(chosenIntel);
                         break;
                     case JOB_RESULT.FAIL:
-                        Interaction minionFailed = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile);
+                        SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile));
                         //raidSuccess.SetEndInteractionAction(() => GoBackHome());
-                        minionFailed.ScheduleSecondTimeOut();
+                        _createdInteraction.ScheduleSecondTimeOut();
                         //StartJobAction();
                         break;
                     case JOB_RESULT.CRITICAL_FAIL:
-                        Interaction minionCriticalFail = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.tileLocation.landmarkOnTile);
+                        SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.tileLocation.landmarkOnTile));
                         //raidSuccess.SetEndInteractionAction(() => GoBackHome());
-                        minionCriticalFail.ScheduleSecondTimeOut();
+                        _createdInteraction.ScheduleSecondTimeOut();
                         //StartJobAction();
                         break;
                     default:
@@ -86,26 +86,25 @@ public class Spy : Job {
     #endregion
 
     private void Success(Intel chosenIntel) {
-        Interaction interaction = null;
         if (chosenIntel is FactionIntel) {
-            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.FACTION_DISCOVERED, character.specificLocation.tileLocation.landmarkOnTile);
+            SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.FACTION_DISCOVERED, character.specificLocation.tileLocation.landmarkOnTile));
         } else if (chosenIntel is LocationIntel) {
-            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.LOCATION_OBSERVED, character.specificLocation.tileLocation.landmarkOnTile);
+            SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.LOCATION_OBSERVED, character.specificLocation.tileLocation.landmarkOnTile));
         } else if (chosenIntel is CharacterIntel) {
-            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_ENCOUNTERED, character.specificLocation.tileLocation.landmarkOnTile);
+            SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_ENCOUNTERED, character.specificLocation.tileLocation.landmarkOnTile));
         } else if (chosenIntel is DefenderIntel) {
-            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.DEFENDERS_REVEALED, character.specificLocation.tileLocation.landmarkOnTile);
-            interaction.SetOtherData(new object[] { chosenIntel });
+            SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.DEFENDERS_REVEALED, character.specificLocation.tileLocation.landmarkOnTile));
+            _createdInteraction.SetOtherData(new object[] { chosenIntel });
         }
-        if (interaction != null) {
-            interaction.SetEndInteractionAction(() => StartJobAction());
-            interaction.ScheduleSecondTimeOut();
-            if (interaction.type == INTERACTION_TYPE.CHARACTER_ENCOUNTERED) {
-                ((chosenIntel as CharacterIntel).character as Character).AddInteraction(interaction);
-            } else if (interaction.type == INTERACTION_TYPE.LOCATION_OBSERVED 
-                || interaction.type == INTERACTION_TYPE.DEFENDERS_REVEALED
-                || interaction.type == INTERACTION_TYPE.FACTION_DISCOVERED) {
-                (chosenIntel as LocationIntel).location.coreTile.landmarkOnTile.AddInteraction(interaction);
+        if (_createdInteraction != null) {
+            _createdInteraction.SetEndInteractionAction(() => StartJobAction());
+            _createdInteraction.ScheduleSecondTimeOut();
+            if (_createdInteraction.type == INTERACTION_TYPE.CHARACTER_ENCOUNTERED) {
+                ((chosenIntel as CharacterIntel).character as Character).AddInteraction(_createdInteraction);
+            } else if (_createdInteraction.type == INTERACTION_TYPE.LOCATION_OBSERVED 
+                || _createdInteraction.type == INTERACTION_TYPE.DEFENDERS_REVEALED
+                || _createdInteraction.type == INTERACTION_TYPE.FACTION_DISCOVERED) {
+                (chosenIntel as LocationIntel).location.coreTile.landmarkOnTile.AddInteraction(_createdInteraction);
             }
         }
         

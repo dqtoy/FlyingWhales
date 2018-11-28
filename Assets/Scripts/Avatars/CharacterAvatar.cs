@@ -37,7 +37,7 @@ public class CharacterAvatar : MonoBehaviour{
     private bool _isTravelCancelled;
     private PATHFINDING_MODE _pathfindingMode;
     private ICharacter _trackTarget = null;
-    private BezierCurve _curve;
+    private TravelLine _travelLine;
     private Action queuedAction = null;
 
     public CharacterPortrait characterPortrait { get; private set; }
@@ -145,41 +145,41 @@ public class CharacterAvatar : MonoBehaviour{
         _isTravelling = true;
         float distance = Vector3.Distance(_party.specificLocation.tileLocation.transform.position, targetLocation.tileLocation.transform.position);
         _distanceToTarget = (Mathf.CeilToInt(distance / 2.315188f)) * 2; //6
-        _curve = targetLocation.tileLocation.ATileIsTryingToConnect(_party.specificLocation.tileLocation, _distanceToTarget);
-        _curve.SetActiveMeter(_isVisualShowing);
+        _travelLine = _party.specificLocation.tileLocation.CreateTravelLine(targetLocation.tileLocation, _distanceToTarget);
+        _travelLine.SetActiveMeter(_isVisualShowing);
         Messenger.AddListener(Signals.HOUR_STARTED, TraverseCurveLine);
     }
     private void TraverseCurveLine() {
-        if (_curve.isDone) {
+        if (_travelLine.isDone) {
             Messenger.RemoveListener(Signals.HOUR_STARTED, TraverseCurveLine);
             ArriveAtLocation();
             return;
         }
-        StartCoroutine(_curve.AddProgress());
+        _travelLine.AddProgress();
     }
     private void ReduceCurveLine() {
-        if (_curve.isNoMorePositions) {
+        if (_travelLine.isDone) {
             Messenger.RemoveListener(Signals.HOUR_STARTED, ReduceCurveLine);
             CancelledDeparture();
             return;
         }
-        StartCoroutine(_curve.ReduceProgress());
+        _travelLine.ReduceProgress();
     }
     private void CancelledDeparture() {
         _isTravelling = false;
         _isTravelCancelled = false;
-        _curve.curveParent.RemoveChild(_curve);
-        GameObject.Destroy(_curve.gameObject);
-        _curve = null;
+        _travelLine.travelLineParent.RemoveChild(_travelLine);
+        GameObject.Destroy(_travelLine.gameObject);
+        _travelLine = null;
         if(onPathCancelled != null) {
             onPathCancelled();
         }
     }
     private void ArriveAtLocation() {
         _isTravelling = false;
-        _curve.curveParent.RemoveChild(_curve);
-        GameObject.Destroy(_curve.gameObject);
-        _curve = null;
+        _travelLine.travelLineParent.RemoveChild(_travelLine);
+        GameObject.Destroy(_travelLine.gameObject);
+        _travelLine = null;
         SetHasArrivedState(true);
         _party.specificLocation.RemoveCharacterFromLocation(_party);
         targetLocation.AddCharacterToLocation(_party);
@@ -371,8 +371,8 @@ public class CharacterAvatar : MonoBehaviour{
     }
     public void SetVisualState(bool state) {
         _isVisualShowing = state;
-        if(_curve != null) {
-            _curve.SetActiveMeter(_isVisualShowing);
+        if(_travelLine != null) {
+            _travelLine.SetActiveMeter(_isVisualShowing);
         }
     }
     public void UpdateVisualState() {

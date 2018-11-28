@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
+  m_IndirectSpecularColor: {r: 0.22380304, g: 0.24376729, b: 0.26534945, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -22110,7 +22110,9 @@ MonoBehaviour:
   allCharactersAreVisible: 1
   inspectAll: 0
   ignoreEventTriggerWeights: 0
-  distanceLinePrefab: {fileID: 1818206060702910, guid: 11eeaabdf21494f43b753c71e75d5783,
+  travelLineParentPrefab: {fileID: 1299332570477848, guid: 7fbfec9db9af8174995f7853a5424299,
+    type: 2}
+  travelLinePrefab: {fileID: 1318962103750356, guid: 11eeaabdf21494f43b753c71e75d5783,
     type: 2}
   tile1: {fileID: 0}
   tile2: {fileID: 0}

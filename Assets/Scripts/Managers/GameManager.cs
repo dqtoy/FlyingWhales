@@ -30,7 +30,8 @@ public class GameManager : MonoBehaviour {
     public bool inspectAll = false;
     public bool ignoreEventTriggerWeights = false;
 
-    public GameObject distanceLinePrefab;
+    public GameObject travelLineParentPrefab;
+    public GameObject travelLinePrefab;
     public HexTile tile1;
     public HexTile tile2;
 
@@ -109,15 +110,17 @@ public class GameManager : MonoBehaviour {
         Messenger.Broadcast(Signals.DAY_START); //for the first day
     }
 
-    [ContextMenu("Rotate Distance Line")]
-    public void RotateDistanceLine() {
-        GameObject go = GameObject.Instantiate(distanceLinePrefab);
+    [ContextMenu("Create Travel Line")]
+    public void CreateTravelLine() {
+        GameObject go = GameObject.Instantiate(travelLinePrefab);
         go.transform.position = tile1.transform.position;
         float angle = Mathf.Atan2(tile2.transform.position.y - tile1.transform.position.y, tile2.transform.position.x - tile1.transform.position.x) * Mathf.Rad2Deg;
         go.transform.eulerAngles = new Vector3(go.transform.rotation.x, go.transform.rotation.y, angle);
         float distance = Vector3.Distance(tile1.transform.position, tile2.transform.position);
-        float scale = distance * 0.143f;
-        go.transform.localScale = new Vector3(scale, go.transform.localScale.y, go.transform.localScale.z);
+        //float scale = (distance * 0.143f) * 6f;
+        go.GetComponent<RectTransform>().sizeDelta = new Vector2(distance, 0.2f);
+        go.transform.SetParent(tile1.UIParent);
+        //go.transform.localScale = new Vector3(scale, go.transform.localScale.y, go.transform.localScale.z);
 
         /*To get num of ticks to travel from one tile to another, get distance and divide it by 2.31588, round up the result then multiply by 6, such that,
          * numOfTicks = (Math.Ceil(distance / 2.315188)) * 6

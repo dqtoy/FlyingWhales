@@ -169,7 +169,7 @@ public class LandmarkInvestigation {
         _currentTick = 0;
         Messenger.AddListener(Signals.HOUR_STARTED, OnExploreTick);
         _landmark.landmarkVisual.SetAndStartInteractionTimer(_duration);
-        _landmark.landmarkVisual.ShowNoInteractionForeground();
+        //_landmark.landmarkVisual.ShowNoInteractionForeground();
         _landmark.landmarkVisual.ShowInteractionTimer();
     }
     public void UnexploreLandmark() {
@@ -219,7 +219,7 @@ public class LandmarkInvestigation {
         if(_landmark.currentInteractions.Count > 0) {
             _currentInteraction = GetRandomInteraction();
             _landmark.landmarkVisual.SetAndStartInteractionTimer(Interaction.secondTimeOutTicks, new InteractionTimer.OnStopTimer(_landmark.landmarkVisual.HideInteractionTimer));
-            _landmark.landmarkVisual.ShowInteractionForeground();
+            //_landmark.landmarkVisual.ShowInteractionForeground();
         } else {
             ExploreLandmark();
         }

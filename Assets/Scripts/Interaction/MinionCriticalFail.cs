@@ -32,10 +32,10 @@ public class MinionCriticalFail : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        DemonDisappearsRewardEffect(state);
         if (explorerMinion.icharacter.characterClass.jobType == JOB.RAIDER) {
             interactable.tileLocation.areaOfTile.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -1);
         }
+        DemonDisappearsRewardEffect(state);
     }
     #endregion
 }

@@ -62,27 +62,27 @@ public class Raider : Job {
 
     private void RaidSuccess() {
         int obtainedSupply = GetSupplyObtained();
-        Interaction raidSuccess = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_SUCCESS, character.specificLocation.tileLocation.landmarkOnTile);
-        raidSuccess.SetEndInteractionAction(() => GoBackHomeSuccess(obtainedSupply));
-        raidSuccess.ScheduleSecondTimeOut();
-        raidSuccess.SetOtherData(new object[] { obtainedSupply });
-        character.AddInteraction(raidSuccess);
+        SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_SUCCESS, character.specificLocation.tileLocation.landmarkOnTile));
+        _createdInteraction.SetEndInteractionAction(() => GoBackHomeSuccess(obtainedSupply));
+        _createdInteraction.ScheduleSecondTimeOut();
+        _createdInteraction.SetOtherData(new object[] { obtainedSupply });
+        character.AddInteraction(_createdInteraction);
         //When a raid succeeds, the target Faction's Favor Count towards the raider is reduced by -2. 
         //FavorEffects(-2);
     }
     private void RaidFail() {
-        Interaction minionFailed = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile);
+        SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile));
         //raidSuccess.SetEndInteractionAction(() => GoBackHome());
-        minionFailed.ScheduleSecondTimeOut();
+        _createdInteraction.ScheduleSecondTimeOut();
         //When a raid fails, the target Faction's Favor Count towards the raider is reduced by -1. The raider will not get anything.
         FavorEffects(-1);
         //GoBackHome();
     }
     private void CriticalRaidFail() {
         //When a raid critically fails, the target Faction's Favor Count towards the raider is reduced by -1. The raider will also perish.
-        Interaction minionCriticalFail = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.tileLocation.landmarkOnTile);
+        SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.tileLocation.landmarkOnTile));
         //raidSuccess.SetEndInteractionAction(() => GoBackHome());
-        minionCriticalFail.ScheduleSecondTimeOut();
+        _createdInteraction.ScheduleSecondTimeOut();
         FavorEffects(-1);
         GoBackHome();
     }

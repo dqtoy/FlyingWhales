@@ -111,6 +111,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
     public BaseLandmark corruptedLandmark = null;
     private GameObject _spawnedTendril = null;
+    private TravelLineParent _travelLineParent = null;
 
     #region getters/setters
     public int id { get { return data.id; } }
@@ -195,6 +196,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public SpriteRenderer mainStructureSprite {
         get { return mainStructure; }
+    }
+    public TravelLineParent travelLineParent {
+        get { return _travelLineParent; }
     }
     #endregion
 
@@ -1635,22 +1639,22 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void RemoveConnectionInComingFrom(HexTile tile) {
         _tilesConnectedInComingFromMarker.Remove(tile);
     }
-    public BezierCurve ATileIsTryingToConnect(HexTile tile, int numOfTicks) {
+    public BezierCurve ATileIsTryingToConnect(HexTile target, int numOfTicks) {
         BezierCurve curve = null;
-        if (!_tilesConnectedInGoingToMarker.Contains(tile)) {
-            if (!_tilesConnectedInComingFromMarker.Contains(tile)) {
-                if (tile._tilesConnectedInGoingToMarker.Contains(this)) {
-                    AddConnectionInComingFrom(tile);
-                    curve = BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, comingFromMarker.position, numOfTicks, DIRECTION.DOWN);
+        if (!_tilesConnectedInGoingToMarker.Contains(target)) {
+            if (!_tilesConnectedInComingFromMarker.Contains(target)) {
+                if (target._tilesConnectedInGoingToMarker.Contains(this)) {
+                    AddConnectionInComingFrom(target);
+                    curve = BezierCurveManager.Instance.DrawCubicCurve(target.transform.position, comingFromMarker.position, numOfTicks, DIRECTION.DOWN);
                 } else {
-                    AddConnectionInGoingTo(tile);
-                    curve = BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, goingToMarker.position, numOfTicks, DIRECTION.UP);
+                    AddConnectionInGoingTo(target);
+                    curve = BezierCurveManager.Instance.DrawCubicCurve(target.transform.position, goingToMarker.position, numOfTicks, DIRECTION.UP);
                 }
             } else {
-                curve = BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, comingFromMarker.position, numOfTicks, DIRECTION.DOWN);
+                curve = BezierCurveManager.Instance.DrawCubicCurve(target.transform.position, comingFromMarker.position, numOfTicks, DIRECTION.DOWN);
             }
         } else {
-            curve = BezierCurveManager.Instance.DrawCubicCurve(tile.transform.position, goingToMarker.position, numOfTicks, DIRECTION.UP);
+            curve = BezierCurveManager.Instance.DrawCubicCurve(target.transform.position, goingToMarker.position, numOfTicks, DIRECTION.UP);
         }
         BezierCurveParent curveParent = BezierCurveManager.Instance.GetCurveParent(curve.startPos, curve.endPos);
         if(curveParent != null) {
@@ -1662,6 +1666,25 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
 
         return curve;
+    }
+    public TravelLine CreateTravelLine(HexTile target, int numOfTicks) {
+        if (_travelLineParent == null) {
+            GameObject goParent = GameObject.Instantiate(GameManager.Instance.travelLineParentPrefab);
+            TravelLineParent travelLineParent = goParent.GetComponent<TravelLineParent>();
+            travelLineParent.SetStartAndEndPositions(this, target, numOfTicks);
+        }
+        GameObject go = GameObject.Instantiate(GameManager.Instance.travelLinePrefab, _travelLineParent.transform);
+        go.transform.SetParent(_travelLineParent.transform);
+        TravelLine travelLine = go.GetComponent<TravelLine>();
+        _travelLineParent.AddChild(travelLine);
+
+        if(target.travelLineParent != null) {
+            target.travelLineParent.transform.localPosition = new Vector3(0f, 0.3f, 0f);
+        }
+        return travelLine;
+    }
+    public void SetTravelLineParent(TravelLineParent travelLineParent) {
+        _travelLineParent = travelLineParent;
     }
     #endregion
 

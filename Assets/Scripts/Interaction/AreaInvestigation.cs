@@ -92,13 +92,10 @@ public class AreaInvestigation {
     public void RecallMinion(string action) {
         if (_isExploring && action == "explore") {
             _assignedMinion.TravelBackFromAssignment(() => SetMinionRecallExploreState(false));
-            _area.coreTile.landmarkOnTile.landmarkVisual.StopInteractionTimer();
-            _area.coreTile.landmarkOnTile.landmarkVisual.HideInteractionTimer();
-            if (_currentlyExploredLandmark != null) {
-                _currentlyExploredLandmark.landmarkVisual.StopInteractionTimer();
-                _currentlyExploredLandmark.landmarkVisual.HideInteractionTimer();
-            }
-            Messenger.RemoveListener(Signals.HOUR_STARTED, OnExploreTick);
+            Character character = _assignedMinion.icharacter as Character;
+            character.job.StopJobAction();
+            character.job.StopCreatedInteraction();
+            //Messenger.RemoveListener(Signals.HOUR_STARTED, OnExploreTick);
             UnexploreLandmark();
             SetMinionRecallExploreState(true);
             UIManager.Instance.landmarkInfoUI.OnUpdateLandmarkInvestigationState("explore");
@@ -113,13 +110,18 @@ public class AreaInvestigation {
     public void CancelInvestigation(string action) {
         if (_isExploring && action == "explore") {
             _assignedMinion.SetEnabledState(true);
-            _area.coreTile.landmarkOnTile.landmarkVisual.StopInteractionTimer();
-            _area.coreTile.landmarkOnTile.landmarkVisual.HideInteractionTimer();
-            if(_currentlyExploredLandmark != null) {
-                _currentlyExploredLandmark.landmarkVisual.StopInteractionTimer();
-                _currentlyExploredLandmark.landmarkVisual.HideInteractionTimer();
-            }
-            Messenger.RemoveListener(Signals.HOUR_STARTED, OnExploreTick);
+            Character character = _assignedMinion.icharacter as Character;
+            character.job.StopJobAction();
+            character.job.StopCreatedInteraction();
+
+            //if (!character.isDead) {
+            //    character.job.StopCreatedInteraction();
+            //}
+            //if (_currentlyExploredLandmark != null) {
+            //    _currentlyExploredLandmark.landmarkVisual.StopInteractionTimer();
+            //    _currentlyExploredLandmark.landmarkVisual.HideInteractionTimer();
+            //}
+            //Messenger.RemoveListener(Signals.HOUR_STARTED, OnExploreTick);
             UnexploreLandmark();
         }
         if (_isAttacking && action == "attack") {
@@ -180,19 +182,19 @@ public class AreaInvestigation {
     }
     public void OnDestroyLandmark(BaseLandmark landmark) {
         if (_isExploring) {
-            if (_currentlyExploredLandmark == landmark) {
-                _currentlyExploredLandmark.landmarkVisual.StopInteractionTimer();
-                _currentlyExploredLandmark.landmarkVisual.HideInteractionTimer();
-                if (InteractionUI.Instance.interactionItem.interaction != null && InteractionUI.Instance.interactionItem.interaction.interactable == landmark) {
-                    InteractionUI.Instance.HideInteractionUI();
-                }
-            }
+            //if (_currentlyExploredLandmark == landmark) {
+            //    _currentlyExploredLandmark.landmarkVisual.StopInteractionTimer();
+            //    _currentlyExploredLandmark.landmarkVisual.HideInteractionTimer();
+            //    if (InteractionUI.Instance.interactionItem.interaction != null && InteractionUI.Instance.interactionItem.interaction.interactable == landmark) {
+            //        InteractionUI.Instance.HideInteractionUI();
+            //    }
+            //}
             if (_area.areAllLandmarksDead) {
                 if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
                     Messenger.RemoveListener(Signals.HOUR_STARTED, OnExploreTick);
                 }
-                _area.coreTile.landmarkOnTile.landmarkVisual.StopInteractionTimer();
-                _area.coreTile.landmarkOnTile.landmarkVisual.HideInteractionTimer();
+                _area.coreTile.landmarkOnTile.landmarkVisual.StopInteractionTimerJob();
+                _area.coreTile.landmarkOnTile.landmarkVisual.HideInteractionTimerJob();
             }
         }
     }
@@ -208,7 +210,7 @@ public class AreaInvestigation {
             _currentInteraction = GetRandomInteraction(choices);
             _currentlyExploredLandmark = _currentInteraction.interactable;
             _currentlyExploredLandmark.landmarkVisual.SetAndStartInteractionTimer(Interaction.secondTimeOutTicks, new InteractionTimer.OnStopTimer(_currentlyExploredLandmark.landmarkVisual.HideInteractionTimer));
-            _currentlyExploredLandmark.landmarkVisual.ShowInteractionForeground();
+            //_currentlyExploredLandmark.landmarkVisual.ShowInteractionForeground();
             _currentlyExploredLandmark.landmarkVisual.ShowInteractionTimer();
         } else {
             ExploreArea();
@@ -223,12 +225,12 @@ public class AreaInvestigation {
     }
   
     private void ClickedInteractionTimerButton(BaseLandmark landmark) {
-        if (_currentlyExploredLandmark == landmark) {
-            _currentlyExploredLandmark.landmarkVisual.StopInteractionTimer();
-            _currentInteraction.CancelSecondTimeOut();
+        if (_assignedMinion != null && landmark.tileLocation.areaOfTile == _area) {
+            Character character = _assignedMinion.icharacter as Character;
+            character.job.createdInteraction.CancelSecondTimeOut();
             //_currentInteraction.SetExplorerMinion(_assignedMinion);
-            _currentInteraction.OnInteractionActive();
-            InteractionUI.Instance.OpenInteractionUI(_currentInteraction);
+            character.job.createdInteraction.OnInteractionActive();
+            InteractionUI.Instance.OpenInteractionUI(character.job.createdInteraction);
         }
     }
     #endregion

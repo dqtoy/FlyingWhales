@@ -47,23 +47,22 @@ public class Recruiter : Job {
             weights.AddElement("Fail", fail);
             weights.AddElement("Crit Fail", critFail);
             string result = weights.PickRandomElementGivenWeights();
-            Interaction createdInteraction = null;
             if (result == "Success") {
                 //This is only for reference, Change this to Lust - Friendly Character Encountered
-                createdInteraction  = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.FRIENDLY_CHARACTER_ENCOUNTERED, area.coreTile.landmarkOnTile);
-                createdInteraction.SetEndInteractionAction(() => StartJobAction());
-                createdInteraction.ScheduleSecondTimeOut();
-                chosenCharacter.AddInteraction(createdInteraction);
+                SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.FRIENDLY_CHARACTER_ENCOUNTERED, area.coreTile.landmarkOnTile));
+                _createdInteraction.SetEndInteractionAction(() => StartJobAction());
+                _createdInteraction.ScheduleSecondTimeOut();
+                chosenCharacter.AddInteraction(_createdInteraction);
             } else if (result == "Fail") {
-                createdInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, area.coreTile.landmarkOnTile);
-                createdInteraction.SetEndInteractionAction(() => StartJobAction());
-                createdInteraction.ScheduleSecondTimeOut();
-                _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(createdInteraction);
+                SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, area.coreTile.landmarkOnTile));
+                _createdInteraction.SetEndInteractionAction(() => StartJobAction());
+                _createdInteraction.ScheduleSecondTimeOut();
+                _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(_createdInteraction);
             } else if (result == "Crit Fail") {
-                createdInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile);
-                createdInteraction.SetEndInteractionAction(() => StartJobAction());
-                createdInteraction.ScheduleSecondTimeOut();
-                _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(createdInteraction);
+                SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile));
+                _createdInteraction.SetEndInteractionAction(() => StartJobAction());
+                _createdInteraction.ScheduleSecondTimeOut();
+                _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(_createdInteraction);
             }
         } else {
             StartJobAction();
@@ -108,7 +107,6 @@ public class Recruiter : Job {
         successWeights.AddElement("Success", success);
         successWeights.AddElement("Crit Fail", critFail);
         string result = successWeights.PickRandomElementGivenWeights();
-        Interaction createdInteraction = null;
         if (result == "Success") {
             List<Interaction> choices = area.GetInteractionsOfJob(_jobType);
             if (choices.Count <= 0) {
@@ -116,13 +114,13 @@ public class Recruiter : Job {
                 return;
             }
             SetJobActionPauseState(true);
-            createdInteraction = choices[UnityEngine.Random.Range(0, choices.Count)];
+            SetCreatedInteraction(choices[UnityEngine.Random.Range(0, choices.Count)]);
         } else if (result == "Crit Fail"){
-            createdInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile);
+            SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile));
         }
-        createdInteraction.SetEndInteractionAction(() => SetJobActionPauseState(false));
-        createdInteraction.ScheduleSecondTimeOut();
-        _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(createdInteraction);
+        _createdInteraction.SetEndInteractionAction(() => SetJobActionPauseState(false));
+        _createdInteraction.ScheduleSecondTimeOut();
+        _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(_createdInteraction);
     }
     #endregion
 }

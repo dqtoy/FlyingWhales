@@ -23,6 +23,7 @@ public class Interaction {
     //protected Minion _explorerMinion;
     protected Character _characterInvolved;
     protected Action _endInteractionAction;
+    protected Job _jobAssociated;
     protected JOB[] _jobFilter;
     protected object[] otherData;
 
@@ -106,6 +107,10 @@ public class Interaction {
             _endInteractionAction();
             _endInteractionAction = null;
         }
+        if (_jobAssociated != null) {
+            _jobAssociated.SetCreatedInteraction(null);
+            SetJobAssociated(null);
+        }
     }
     public virtual void OnInteractionActive() {
         _isChosen = true;
@@ -155,7 +160,7 @@ public class Interaction {
         SchedulingManager.Instance.AddEntry(_timeDate, () => SecondTimeOut());
 
         interactable.landmarkVisual.SetAndStartInteractionTimer(secondTimeOutTicks);
-        interactable.landmarkVisual.ShowInteractionForeground();
+        //interactable.landmarkVisual.ShowInteractionForeground();
         interactable.landmarkVisual.ShowInteractionTimer();
     }
     public void SetEndInteractionAction(Action action) {
@@ -177,16 +182,16 @@ public class Interaction {
     //        TimedOutRunDefault();
     //    }
     //}
-    protected void SecondTimeOut() {
+    public void SecondTimeOut() {
         if (!_isSecondTimeOutCancelled) {
-            TimedOutRunDefault();
             interactable.landmarkVisual.StopInteractionTimer();
             interactable.landmarkVisual.HideInteractionTimer();
+            TimedOutRunDefault();
             //_interactable.tileLocation.areaOfTile.areaInvestigation.ExploreArea();
         }
     }
     public void TimedOutRunDefault() {
-        if(!_currentState.isEnd && _currentState.defaultOption == null) {
+        if (!_currentState.isEnd && _currentState.defaultOption == null) {
             return;
         }
         while (!_isDone) {
@@ -237,6 +242,9 @@ public class Interaction {
     }
     public void SetOtherData(object[] data) {
         otherData = data;
+    }
+    public void SetJobAssociated(Job job) {
+        _jobAssociated = job;
     }
     #endregion
 

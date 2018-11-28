@@ -9,6 +9,7 @@ public class Job {
     protected int _actionDuration; //-1 means no limits and no progress
     protected bool _hasCaptureEvent;
     protected Character _character;
+    protected Interaction _createdInteraction;
 
     private int _currentTick;
     private bool _isJobActionPaused;
@@ -25,6 +26,9 @@ public class Job {
     }
     public Character character {
         get { return _character; }
+    }
+    public Interaction createdInteraction {
+        get { return _createdInteraction; }
     }
     #endregion
 
@@ -52,23 +56,29 @@ public class Job {
             Messenger.AddListener(Signals.HOUR_STARTED, CheckJobAction);
         }
         if (_hasCaptureEvent) {
-            Messenger.AddListener(Signals.HOUR_ENDED, CaptureRandomLandmarkEvent);
+            Messenger.AddListener(Signals.HOUR_ENDED, CatchRandomEvent);
         }
-        _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.SetAndStartInteractionTimer(_actionDuration);
-        _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.ShowNoInteractionForeground();
-        _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.ShowInteractionTimer();
+        _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.SetAndStartInteractionTimerJob(_actionDuration);
+        _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.ShowInteractionTimerJob();
     }
 
     //Stops Job Action entirely
     //Uses - when a minion is recalled, when job action duration ends
     public void StopJobAction() {
-        _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.StopInteractionTimer();
-        _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.HideInteractionTimer();
+        _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.StopInteractionTimerJob();
+        _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.HideInteractionTimerJob();
         if (_actionDuration != -1) {
             Messenger.RemoveListener(Signals.HOUR_STARTED, CheckJobAction);
         }
         if (_hasCaptureEvent) {
-            Messenger.RemoveListener(Signals.HOUR_ENDED, CaptureRandomLandmarkEvent);
+            Messenger.RemoveListener(Signals.HOUR_ENDED, CatchRandomEvent);
+        }
+    }
+    public void StopCreatedInteraction() {
+        if(_createdInteraction != null) {
+            _createdInteraction.interactable.landmarkVisual.StopInteractionTimer();
+            _createdInteraction.interactable.landmarkVisual.HideInteractionTimer();
+            _createdInteraction.TimedOutRunDefault();
         }
     }
     private void CheckJobAction() {
@@ -83,10 +93,17 @@ public class Job {
     }
     protected void SetJobActionPauseState(bool state) {
         _isJobActionPaused = state;
-        _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.SetTimerPauseState(_isJobActionPaused);
+        _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.SetTimerPauseStateJob(_isJobActionPaused);
     }
-    protected void StartTimerForCreatedInteraction(Interaction interaction) {
-
+    public void SetCreatedInteraction(Interaction interaction) {
+        _createdInteraction = interaction;
+        if(_createdInteraction != null) {
+            _createdInteraction.SetJobAssociated(this);
+        }
+    }
+    private void CatchRandomEvent() {
+        if (_isJobActionPaused) { return; }
+        CaptureRandomLandmarkEvent();
     }
     #endregion
 }
