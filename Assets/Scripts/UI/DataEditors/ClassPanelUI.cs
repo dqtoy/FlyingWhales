@@ -23,6 +23,7 @@ public class ClassPanelUI : MonoBehaviour {
     public InputField baseSPInput;
     public InputField spPerLevelInput;
     public InputField armyCountInput;
+    public InputField recruitmentCostInput;
 
     public Dropdown weaponsOptions;
     public Dropdown armorsOptions;
@@ -32,6 +33,8 @@ public class ClassPanelUI : MonoBehaviour {
     public Dropdown workActionOptions;
     public Dropdown roleOptions;
     public Dropdown skillOptions;
+    public Dropdown jobTypeOptions;
+    public Dropdown recruitmentCostOptions;
 
     public GameObject weaponsGO;
     public GameObject armorsGO;
@@ -111,40 +114,21 @@ public class ClassPanelUI : MonoBehaviour {
         _traitNames = new List<string>();
 
         armyCountInput.text = "1";
+        recruitmentCostInput.text = "0";
         workActionOptions.ClearOptions();
-        //weaponsOptions.ClearOptions();
-        //armorsOptions.ClearOptions();
-        //accessoriesOptions.ClearOptions();
-        //traitOptions.ClearOptions();
         roleOptions.ClearOptions();
+        jobTypeOptions.ClearOptions();
+        recruitmentCostOptions.ClearOptions();
 
         string[] workActions = System.Enum.GetNames(typeof(ACTION_TYPE));
         string[] roles = System.Enum.GetNames(typeof(CHARACTER_ROLE));
+        string[] jobs = System.Enum.GetNames(typeof(JOB));
+        string[] cost = System.Enum.GetNames(typeof(CURRENCY));
 
-        //List<string> weapons = new List<string>();
-        //List<string> armors = new List<string>();
-        //List<string> accessories = new List<string>();
-        //string path = Utilities.dataPath + "Items/";
-        //string[] directories = Directory.GetDirectories(path);
-        //for (int i = 0; i < directories.Length; i++) {
-        //    string folderName = new DirectoryInfo(directories[i]).Name;
-        //    string[] files = Directory.GetFiles(directories[i], "*.json");
-        //    for (int j = 0; j < files.Length; j++) {
-        //        string fileName = Path.GetFileNameWithoutExtension(files[j]);
-        //        if (folderName == "WEAPON") {
-        //            weapons.Add(fileName);
-        //        } else if (folderName == "ARMOR") {
-        //            armors.Add(fileName);
-        //        }
-        //        accessories.Add(fileName);
-        //    }
-        //}
-
-        //weaponsOptions.AddOptions(weapons);
-        //armorsOptions.AddOptions(armors);
-        //accessoriesOptions.AddOptions(accessories);
         workActionOptions.AddOptions(workActions.ToList());
         roleOptions.AddOptions(roles.ToList());
+        jobTypeOptions.AddOptions(jobs.ToList());
+        recruitmentCostOptions.AddOptions(cost.ToList());
         UpdateClassList();
     }
     private void ClearData() {
@@ -165,6 +149,7 @@ public class ClassPanelUI : MonoBehaviour {
         baseSPInput.text = "0";
         spPerLevelInput.text = "0";
         armyCountInput.text = "1";
+        recruitmentCostInput.text = "0";
 
         weaponsOptions.value = 0;
         armorsOptions.value = 0;
@@ -173,6 +158,8 @@ public class ClassPanelUI : MonoBehaviour {
         workActionOptions.value = 0;
         skillOptions.value = 0;
         roleOptions.value = 0;
+        jobTypeOptions.value = 0;
+        recruitmentCostOptions.value = 0;
 
         _weaponTiers.Clear();
         _armorTiers.Clear();
@@ -247,9 +234,13 @@ public class ClassPanelUI : MonoBehaviour {
         hpPerLevelInput.text = characterClass.hpPerLevel.ToString();
         baseSPInput.text = characterClass.baseSP.ToString();
         spPerLevelInput.text = characterClass.spPerLevel.ToString();
+        recruitmentCostInput.text = characterClass.recruitmentCost.amount.ToString();
+
         workActionOptions.value = GetDropdownIndex(workActionOptions, characterClass.workActionType.ToString());
         roleOptions.value = GetDropdownIndex(roleOptions, characterClass.roleType.ToString());
         skillOptions.value = GetDropdownIndex(skillOptions, characterClass.skillName.ToString());
+        jobTypeOptions.value = GetDropdownIndex(jobTypeOptions, characterClass.jobType.ToString());
+        recruitmentCostOptions.value = GetDropdownIndex(recruitmentCostOptions, characterClass.recruitmentCost.currency.ToString());
 
         for (int i = 0; i < characterClass.weaponTierNames.Count; i++) {
             string weaponName = characterClass.weaponTierNames[i];

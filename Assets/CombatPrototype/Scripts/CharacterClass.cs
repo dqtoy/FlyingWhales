@@ -170,6 +170,11 @@ namespace ECS {
             this._armorTierNames = ClassPanelUI.Instance.armorTiers;
             this._accessoryTierNames = ClassPanelUI.Instance.accessoryTiers;
             this._traitNames = ClassPanelUI.Instance.traitNames.ToArray();
+            this._jobType = (JOB) System.Enum.Parse(typeof(JOB), ClassPanelUI.Instance.jobTypeOptions.options[ClassPanelUI.Instance.jobTypeOptions.value].text);
+            this._recruitmentCost  = new CurrenyCost {
+                amount = int.Parse(ClassPanelUI.Instance.recruitmentCostInput.text),
+                currency = (CURRENCY) System.Enum.Parse(typeof(CURRENCY), ClassPanelUI.Instance.recruitmentCostOptions.options[ClassPanelUI.Instance.recruitmentCostOptions.value].text),
+            };
         }
 
         public void ConstructData() {
