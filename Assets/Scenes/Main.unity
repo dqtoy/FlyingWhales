@@ -66504,33 +66504,11 @@ MonoBehaviour:
   roleDefaultInteractions:
     m_keys: 0100000003000000070000000200000008000000
     m_values:
-    - data:
-      - interactionType: 17
-        weight: 50
-      - interactionType: 18
-        weight: 50
-      - interactionType: 19
-        weight: 50
-    - data:
-      - interactionType: 17
-        weight: 50
-      - interactionType: 18
-        weight: 50
-      - interactionType: 19
-        weight: 50
-    - data:
-      - interactionType: 17
-        weight: 50
-      - interactionType: 18
-        weight: 50
-      - interactionType: 19
-        weight: 50
-    - data:
-      - interactionType: 19
-        weight: 50
-    - data:
-      - interactionType: 19
-        weight: 50
+    - data: []
+    - data: []
+    - data: []
+    - data: []
+    - data: []
 --- !u!1001 &1680592839
 Prefab:
   m_ObjectHideFlags: 0

@@ -429,6 +429,12 @@ public class LandmarkInfoUI : UIMenu {
 
     #region Defenders
     private void UpdateDefenders() {
+        for (int i = 0; i < defenderSlots.Length; i++) {
+            LandmarkCharacterItem currSlot = defenderSlots[i];
+            currSlot.SetCharacter(null, _activeLandmark, true);
+            currSlot.slotItem.dropZone.SetEnabledState(false);
+            currSlot.slotItem.draggable.SetDraggable(false);
+        }
         //if (_activeLandmark.defenders == null) {
         //    for (int i = 0; i < defenderSlots.Length; i++) {
         //        LandmarkCharacterItem currSlot = defenderSlots[i];

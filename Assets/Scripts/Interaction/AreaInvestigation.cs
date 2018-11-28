@@ -133,6 +133,10 @@ public class AreaInvestigation {
     public void SetMinionRecallAttackState(bool state) {
         _isMinionRecalledAttack = state;
     }
+    public void SetCurrentInteraction(Interaction interaction) {
+        _currentInteraction = interaction;
+    }
+
     #region Explore
     public void ExploreArea() {
         if (_assignedMinion == null) {
@@ -223,8 +227,8 @@ public class AreaInvestigation {
     }
   
     private void ClickedInteractionTimerButton(BaseLandmark landmark) {
-        if (_currentlyExploredLandmark == landmark) {
-            _currentlyExploredLandmark.landmarkVisual.StopInteractionTimer();
+        if (landmark.tileLocation.areaOfTile.id == _area.id) {
+            _currentInteraction.interactable.landmarkVisual.StopInteractionTimer();
             _currentInteraction.CancelSecondTimeOut();
             //_currentInteraction.SetExplorerMinion(_assignedMinion);
             _currentInteraction.OnInteractionActive();

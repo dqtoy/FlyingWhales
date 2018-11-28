@@ -39,7 +39,7 @@ public class Job {
     public virtual void CaptureRandomLandmarkEvent() {}
     public virtual void ApplyActionDuration() {}
     public virtual void DoJobAction() {
-        Debug.Log("Doing job action: " + character.name + "(" + jobType.ToString() + ")");
+        Debug.Log(GameManager.Instance.TodayLogString() + " Doing job action: " + character.name + "(" + jobType.ToString() + ")");
     }
     #endregion
 
