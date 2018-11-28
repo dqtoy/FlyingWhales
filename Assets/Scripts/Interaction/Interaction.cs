@@ -24,6 +24,7 @@ public class Interaction {
     protected Character _characterInvolved;
     protected Action _endInteractionAction;
     protected JOB[] _jobFilter;
+    protected object[] otherData;
 
     private bool _hasUsedBaseCreateStates;
 
@@ -233,6 +234,9 @@ public class Interaction {
             }
         }
         return false;
+    }
+    public void SetOtherData(object[] data) {
+        otherData = data;
     }
     #endregion
 

@@ -95,13 +95,14 @@ public class Spy : Job {
             interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_ENCOUNTERED, character.specificLocation.tileLocation.landmarkOnTile);
         } else if (chosenIntel is DefenderIntel) {
             interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.DEFENDERS_REVEALED, character.specificLocation.tileLocation.landmarkOnTile);
+            interaction.SetOtherData(new object[] { chosenIntel });
         }
         if (interaction != null) {
             interaction.SetEndInteractionAction(() => StartJobAction());
             interaction.ScheduleSecondTimeOut();
             if (interaction.type == INTERACTION_TYPE.CHARACTER_ENCOUNTERED) {
                 ((chosenIntel as CharacterIntel).character as Character).AddInteraction(interaction);
-            } else if (interaction.type == INTERACTION_TYPE.LOCATION_OBSERVED) {
+            } else if (interaction.type == INTERACTION_TYPE.LOCATION_OBSERVED || interaction.type == INTERACTION_TYPE.DEFENDERS_REVEALED) {
                 (chosenIntel as LocationIntel).location.coreTile.landmarkOnTile.AddInteraction(interaction);
             }
         }

@@ -74,12 +74,12 @@ public class CharacterIntel : Intel {
 }
 
 public class DefenderIntel : Intel {
-    public Party defenderParty;
+    public DefenderGroup defenderParty;
 
-    public DefenderIntel(Party defenderParty) : base() {
+    public DefenderIntel(DefenderGroup defenderParty) : base() {
         this.defenderParty = defenderParty;
     }
     public override string ToString() {
-        return defenderParty.name + " Intel";
+        return defenderParty.party.name + " Intel";
     }
 }

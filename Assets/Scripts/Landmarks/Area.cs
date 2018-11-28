@@ -685,5 +685,8 @@ public class Area {
     public void SetInitialDefenderLevel(int initialDefenderLevel) {
         this.initialDefenderLevel = initialDefenderLevel;
     }
+    public void AddDefender(ICharacter defender) {
+
+    }
     #endregion
 }
