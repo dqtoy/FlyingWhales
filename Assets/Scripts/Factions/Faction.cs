@@ -158,11 +158,13 @@ public class Faction {
     public void AddNewCharacter(ECS.Character character) {
         if (!_characters.Contains(character)) {
             _characters.Add(character);
+            character.SetFaction(this);
             Messenger.Broadcast(Signals.CHARACTER_ADDED_TO_FACTION, character, this);
         }
     }
     public void RemoveCharacter(ECS.Character character) {
         if (_characters.Remove(character)) {
+            character.SetFaction(null);
             Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_FACTION, character, this);
         }
         //if (_leader != null && character.id == _leader.id) {

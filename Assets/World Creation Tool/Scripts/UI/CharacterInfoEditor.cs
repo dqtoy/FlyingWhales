@@ -206,7 +206,7 @@ namespace worldcreator {
             if (_character.faction != null) {
                 _character.faction.RemoveCharacter(_character);
             }
-            _character.SetFaction(faction);
+            //_character.SetFaction(faction);
             if (faction != null) {
                 faction.AddNewCharacter(_character);
             }

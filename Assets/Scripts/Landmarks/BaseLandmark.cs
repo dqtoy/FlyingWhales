@@ -433,7 +433,7 @@ public class BaseLandmark : ILocation, IInteractable {
 #endif
         }
     }
-    public void RemoveCharacterFromLocation(Party iparty, bool addToTile = true) {
+    public void RemoveCharacterFromLocation(Party iparty, bool addToTile = false) {
         _charactersAtLocation.Remove(iparty);
         if (addToTile) {
             this.tileLocation.AddCharacterToLocation(iparty);

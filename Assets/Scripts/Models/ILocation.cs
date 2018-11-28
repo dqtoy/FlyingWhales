@@ -12,7 +12,7 @@ public interface ILocation {
     List<Party> charactersAtLocation { get; }
 
     void AddCharacterToLocation(Party iparty);
-	void RemoveCharacterFromLocation(Party iparty, bool addToTile = true);
+	void RemoveCharacterFromLocation(Party iparty, bool addToTile = false);
     void ReplaceCharacterAtLocation(Party ipartyToReplace, Party ipartyToAdd);
 
     //void ScheduleCombatCheck();

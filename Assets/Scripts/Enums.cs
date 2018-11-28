@@ -85,6 +85,12 @@ public enum GENDER{
 	FEMALE,
 }
 
+public enum PRONOUN_TYPE {
+    SUBJECTIVE,
+    OBJECTIVE,
+    POSSESSIVE,
+    REFLEXIVE,
+}
 public enum MONTH{
 	NONE,
 	JAN,

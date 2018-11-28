@@ -5,8 +5,6 @@ using ECS;
 
 public class FriendlyCharacterEncountered : Interaction {
 
-    private Character _targetCharacter;
-    
     public FriendlyCharacterEncountered(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.FRIENDLY_CHARACTER_ENCOUNTERED, 70) {
         _name = "Friendly Character Encountered";
     }
@@ -17,11 +15,82 @@ public class FriendlyCharacterEncountered : Interaction {
         InteractionState characterRecruitedState = new InteractionState("Character Recruited", this);
         InteractionState nothingHappenedState = new InteractionState("Nothing Happened", this);
 
-        //startState.SetEndEffect(() => StartEffect(startState));
+        if(_characterInvolved.race == RACE.BEAST) {
+            Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "-beast" + "_description");
+            startStateDescriptionLog.AddToFillers(null, Utilities.NormalizeString(characterInvolved.race.ToString()), LOG_IDENTIFIER.STRING_1);
+            startState.OverrideDescriptionLog(startStateDescriptionLog);
+        } else {
+            if (_characterInvolved.isFactionless) {
+                Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "-neutral" + "_description");
+                startStateDescriptionLog.AddToFillers(null, characterInvolved.characterClass.className, LOG_IDENTIFIER.STRING_1);
+                startState.OverrideDescriptionLog(startStateDescriptionLog);
+            } else {
+                Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "-friendly" + "_description");
+                startStateDescriptionLog.AddToFillers(null, characterInvolved.characterClass.className, LOG_IDENTIFIER.STRING_1);
+                startStateDescriptionLog.AddToFillers(characterInvolved.faction, characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
+                startState.OverrideDescriptionLog(startStateDescriptionLog);
+            }
+        }
+        
+
+        CreateActionOptions(startState);
+
+        characterRecruitedState.SetEffect(() => RecruitEffect(characterRecruitedState));
+        nothingHappenedState.SetEffect(() => NothingHappenedEffect(nothingHappenedState));
 
         _states.Add(startState.name, startState);
 
         SetCurrentState(startState);
+    }
+    public override void CreateActionOptions(InteractionState state) {
+        if (state.name == "Start") {
+            ActionOption recruitOption = new ActionOption {
+                interactionState = state,
+                cost = _characterInvolved.characterClass.recruitmentCost,
+                name = "Recruit " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + ".",
+                duration = 0,
+                needsMinion = false,
+                effect = () => RecruitOption(state),
+            };
+            ActionOption doNothingOption = new ActionOption {
+                interactionState = state,
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
+                name = "Do nothing.",
+                duration = 0,
+                needsMinion = false,
+                effect = () => DoNothingOption(state),
+            };
+
+            state.AddActionOption(recruitOption);
+            state.AddActionOption(doNothingOption);
+            state.SetDefaultOption(doNothingOption);
+        }
+    }
+    #endregion
+
+    #region Action Options
+    private void RecruitOption(InteractionState state) {
+        //WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
+        //effectWeights.AddElement("Character Recruited", 30);
+
+        //string chosenEffect = effectWeights.PickRandomElementGivenWeights();
+        SetCurrentState(_states["Character Recruited"]);
+    }
+    private void DoNothingOption(InteractionState state) {
+        //WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
+        //effectWeights.AddElement("Nothing Happened", 25);
+
+        //string chosenEffect = effectWeights.PickRandomElementGivenWeights();
+        SetCurrentState(_states["Nothing Happened"]);
+    }
+    #endregion
+
+    #region State Effects
+    private void RecruitEffect(InteractionState state) {
+        _characterInvolved.RecruitAsMinion();
+    }
+    private void NothingHappenedEffect(InteractionState state) {
+        state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
     }
     #endregion
 }

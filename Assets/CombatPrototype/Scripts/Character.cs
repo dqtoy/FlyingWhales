@@ -1675,7 +1675,9 @@ namespace ECS {
         #region Faction
         public void SetFaction(Faction faction) {
             _faction = faction;
-            Messenger.Broadcast<Character>(Signals.FACTION_SET, this);
+            if(_faction != null) {
+                Messenger.Broadcast<Character>(Signals.FACTION_SET, this);
+            }
         }
         #endregion
 
@@ -2889,6 +2891,22 @@ namespace ECS {
         public void SetMinion(Minion minion) {
             _minion = minion;
             UnsubscribeSignals();
+        }
+        public void RecruitAsMinion() {
+            if (!IsInOwnParty()) {
+                _currentParty.RemoveCharacter(this);
+            }
+            _homeLandmark.RemoveCharacterHomeOnLandmark(this);
+            PlayerManager.Instance.player.demonicPortal.AddCharacterHomeOnLandmark(this);
+
+            specificLocation.RemoveCharacterFromLocation(this.currentParty);
+            PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(this.currentParty);
+
+            faction.RemoveCharacter(this);
+            PlayerManager.Instance.player.playerFaction.AddNewCharacter(this);
+
+            Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(this);
+            PlayerManager.Instance.player.AddMinion(newMinion);
         }
         #endregion
 

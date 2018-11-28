@@ -309,7 +309,7 @@ public class Utilities : MonoBehaviour {
         string wordToReplace = string.Empty;
         //		string value = wordToBeReplaced.Substring(1, 2);
         string strIdentifier = identifier.ToString();
-        string pronouns = Utilities.GetPronoun(strIdentifier.Last(), wordToBeReplaced.Last());
+        string pronouns = GetPronoun(strIdentifier.Last(), wordToBeReplaced.Last());
 
         LOG_IDENTIFIER logIdentifier = LOG_IDENTIFIER.ACTIVE_CHARACTER;
         if (strIdentifier.Contains("FACTION_LEADER_1")) {
@@ -519,6 +519,34 @@ public class Utilities : MonoBehaviour {
             }
         }
         return string.Empty;
+    }
+    public static string GetPronounString(GENDER gender, PRONOUN_TYPE type, bool isUppercaseFirstLetter) {
+        string pronoun = string.Empty;
+        if(gender == GENDER.MALE) {
+            if (type == PRONOUN_TYPE.SUBJECTIVE) {
+                pronoun = "he";
+            } else if (type == PRONOUN_TYPE.OBJECTIVE) {
+                pronoun = "him";
+            } else if (type == PRONOUN_TYPE.POSSESSIVE) {
+                pronoun = "his";
+            } else if (type == PRONOUN_TYPE.REFLEXIVE) {
+                pronoun = "himself";
+            }
+        } else {
+            if (type == PRONOUN_TYPE.SUBJECTIVE) {
+                pronoun = "she";
+            } else if (type == PRONOUN_TYPE.OBJECTIVE) {
+                pronoun = "her";
+            } else if (type == PRONOUN_TYPE.POSSESSIVE) {
+                pronoun = "her";
+            } else if (type == PRONOUN_TYPE.REFLEXIVE) {
+                pronoun = "herself";
+            }
+        }
+        if (isUppercaseFirstLetter) {
+            pronoun = FirstLetterToUpperCase(pronoun);
+        }
+        return pronoun;
     }
     //	public static string PronounReplacer(string word, object genderSubject){
     //		string pronoun = Utilities.GetStringBetweenTwoChars (word, '_', '_');

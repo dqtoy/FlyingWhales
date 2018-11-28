@@ -50,15 +50,21 @@ public class Recruiter : Job {
             Interaction createdInteraction = null;
             if (result == "Success") {
                 //This is only for reference, Change this to Lust - Friendly Character Encountered
-                createdInteraction  = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.KILLER_ON_THE_LOOSE, area.coreTile.landmarkOnTile);
+                createdInteraction  = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.FRIENDLY_CHARACTER_ENCOUNTERED, area.coreTile.landmarkOnTile);
+                createdInteraction.SetEndInteractionAction(() => StartJobAction());
+                createdInteraction.ScheduleSecondTimeOut();
+                chosenCharacter.AddInteraction(createdInteraction);
             } else if (result == "Fail") {
                 createdInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, area.coreTile.landmarkOnTile);
+                createdInteraction.SetEndInteractionAction(() => StartJobAction());
+                createdInteraction.ScheduleSecondTimeOut();
+                _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(createdInteraction);
             } else if (result == "Crit Fail") {
                 createdInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile);
+                createdInteraction.SetEndInteractionAction(() => StartJobAction());
+                createdInteraction.ScheduleSecondTimeOut();
+                _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(createdInteraction);
             }
-            createdInteraction.SetEndInteractionAction(() => StartJobAction());
-            createdInteraction.ScheduleSecondTimeOut();
-            _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(createdInteraction);
         } else {
             StartJobAction();
         }

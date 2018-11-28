@@ -135,6 +135,9 @@ public class InteractionState {
                 if (interaction.characterInvolved != null) {
                     logFillers.Add(new LogFiller(interaction.characterInvolved, interaction.characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
                 }
+                if (!AlreadyHasLogFiller(LOG_IDENTIFIER.LANDMARK_1)) {
+                    logFillers.Add(new LogFiller(interaction.interactable.tileLocation.areaOfTile, interaction.interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
+                }
             }
         }
     }
@@ -229,6 +232,14 @@ public class InteractionState {
     #region Log Fillers
     public void AddLogFiller(LogFiller filler) {
         logFillers.Add(filler);
+    }
+    public bool AlreadyHasLogFiller(LOG_IDENTIFIER identifier) {
+        for (int i = 0; i < logFillers.Count; i++) {
+            if(logFillers[i].identifier == identifier) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 }

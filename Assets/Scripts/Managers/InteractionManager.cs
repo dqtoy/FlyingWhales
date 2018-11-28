@@ -111,6 +111,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.DEFENDERS_REVEALED:
                 createdInteraction = new DefendersRevealed(interactable);
                 break;
+            case INTERACTION_TYPE.FRIENDLY_CHARACTER_ENCOUNTERED:
+                createdInteraction = new FriendlyCharacterEncountered(interactable);
+                break;
         }
         return createdInteraction;
     }

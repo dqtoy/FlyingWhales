@@ -88,7 +88,7 @@ public class CharacterManager : MonoBehaviour {
                 ECS.Character currCharacter = CreateNewCharacter(currData);
                 Faction characterFaction = FactionManager.Instance.GetFactionBasedOnID(currData.factionID);
                 if (characterFaction != null) {
-                    currCharacter.SetFaction(characterFaction);
+                    //currCharacter.SetFaction(characterFaction);
                     characterFaction.AddNewCharacter(currCharacter);
                     FactionSaveData factionData = data.GetFactionData(characterFaction.id);
                     if (factionData.leaderID != -1 && factionData.leaderID == currCharacter.id) {
@@ -98,7 +98,7 @@ public class CharacterManager : MonoBehaviour {
 #if !WORLD_CREATION_TOOL
                 else {
                     characterFaction = FactionManager.Instance.neutralFaction;
-                    currCharacter.SetFaction(characterFaction);
+                    //currCharacter.SetFaction(characterFaction);
                     characterFaction.AddNewCharacter(currCharacter);
                 }
 #endif
@@ -159,7 +159,7 @@ public class CharacterManager : MonoBehaviour {
 		ECS.Character newCharacter = new ECS.Character(className, race, gender);
         Party party = newCharacter.CreateOwnParty();
         if (faction != null) {
-            newCharacter.SetFaction(faction);
+            faction.AddNewCharacter(newCharacter);
         }
         //if (newCharacter.role == null) {
         //    if (charRole != CHARACTER_ROLE.NONE) {
@@ -741,7 +741,7 @@ public class CharacterManager : MonoBehaviour {
 
         Party party = armyUnit.CreateOwnParty();
         if (faction != null) {
-            armyUnit.SetFaction(faction);
+            faction.AddNewCharacter(armyUnit);
         }
 #if !WORLD_CREATION_TOOL
         party.CreateIcon();

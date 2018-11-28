@@ -22,6 +22,7 @@ namespace ECS {
         [SerializeField] private ACTION_TYPE _workActionType;
         [SerializeField] private CHARACTER_ROLE _roleType;
         [SerializeField] private JOB _jobType;
+        [SerializeField] private CurrenyCost _recruitmentCost;
 
         //private int _dodgeRate;
         //private int _parryRate;
@@ -73,26 +74,12 @@ namespace ECS {
         public string skillName {
             get { return _skillName; }
         }
-        //public int dodgeRate {
-        //    get { return _dodgeRate; }
-        //}
-        //public int parryRate {
-        //    get { return _parryRate; }
-        //}
-        //public int blockRate {
-        //    get { return _blockRate; }
-        //}
-        //public List<WEAPON_TYPE> allowedWeaponTypes {
-        //    get { return _allowedWeaponTypes; }
-        //    //set { _allowedWeaponTypes = value; }
-        //}
+        public CurrenyCost recruitmentCost {
+            get { return _recruitmentCost; }
+        }
         public Skill skill {
             get { return _skill; }
         }
-        //public List<StringListWrapper> skillsPerLevelNames {
-        //    get { return _skillsPerLevelNames; }
-        //    //set { _skillsPerLevelNames = value; }
-        //}
         public List<string> weaponTierNames {
             get { return _weaponTierNames; }
         }
@@ -128,6 +115,8 @@ namespace ECS {
             newClass._armorTierNames = new List<string>(this._armorTierNames);
             newClass._accessoryTierNames = new List<string>(this._accessoryTierNames);
             newClass._traitNames = this._traitNames;
+            newClass._jobType = this._jobType;
+            newClass._recruitmentCost = this._recruitmentCost;
             //Array.Copy(this._traitNames, newClass._traitNames, this._traitNames.Length);
             return newClass;
         }
