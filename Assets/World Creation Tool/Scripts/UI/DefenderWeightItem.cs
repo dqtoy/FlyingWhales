@@ -5,20 +5,20 @@ using UnityEngine.UI;
 
 public class DefenderWeightItem : MonoBehaviour {
 
-    private BaseLandmark owner;
-    private LandmarkDefender defender;
+    private Faction owner;
+    private AreaDefenderSetting defender;
     private int weight;
 
     [SerializeField] private Dropdown classDropdown;
     [SerializeField] private InputField weightField;
-    [SerializeField] private Toggle includeInFirstToggle;
+    //[SerializeField] private Toggle includeInFirstToggle;
 
-    public void SetDefender(BaseLandmark owner, LandmarkDefender defender, int weight) {
+    public void SetDefender(Faction owner, AreaDefenderSetting defender, int weight) {
         classDropdown.ClearOptions();
         classDropdown.AddOptions(Utilities.GetFileChoices(Utilities.dataPath + "CharacterClasses/", "*.json"));
 
         classDropdown.value = Utilities.GetOptionIndex(classDropdown, defender.className);
-        includeInFirstToggle.isOn = defender.includeInFirstWeight;
+        //includeInFirstToggle.isOn = defender.includeInFirstWeight;
         weightField.text = weight.ToString();
 
         this.owner = owner;
@@ -33,12 +33,12 @@ public class DefenderWeightItem : MonoBehaviour {
         string chosenClass = classDropdown.options[choice].text;
         defender.className = chosenClass;
     }
-    public void OnIncludeInFirstToggleValueChange(bool value) {
-        if (this.owner == null) {
-            return;
-        }
-        defender.includeInFirstWeight = value;
-    }
+    //public void OnIncludeInFirstToggleValueChange(bool value) {
+    //    if (this.owner == null) {
+    //        return;
+    //    }
+    //    defender.includeInFirstWeight = value;
+    //}
     public void OnChangeWeight(string valueStr) {
         if (this.owner == null) {
             return;

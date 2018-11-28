@@ -60,7 +60,7 @@ public class BaseLandmark : ILocation, IInteractable {
     public int minDailySupplyProduction { get; private set; }
     public int initialDefenderCount { get; private set; }
     public int maxDefenderCount { get; private set; }
-    public WeightedDictionary<LandmarkDefender> defenderWeights { get; private set; }
+    public WeightedDictionary<DefenderSetting> defenderWeights { get; private set; }
 
     private List<Buff> defenderBuffs;
 
@@ -227,7 +227,7 @@ public class BaseLandmark : ILocation, IInteractable {
         _assaultParties = new List<Party>();
         scenarios = new WeightedDictionary<INTERACTION_TYPE>();
         eventTriggerWeights = new WeightedDictionary<bool>();
-        defenderWeights = new WeightedDictionary<LandmarkDefender>();
+        defenderWeights = new WeightedDictionary<DefenderSetting>();
         SetSupplyProductionState(true);
         SetMaxDefenderCount(4);
         defenderBuffs = new List<Buff>();
@@ -261,9 +261,9 @@ public class BaseLandmark : ILocation, IInteractable {
         eventTriggerWeights.AddElement(true, eventTriggerWeight);
         eventTriggerWeights.AddElement(false, noEventTriggerWeight);
 
-        if (data.defenderWeights != null) {
-            defenderWeights = new WeightedDictionary<LandmarkDefender>(data.defenderWeights);
-        }
+        //if (data.defenderWeights != null) {
+        //    defenderWeights = new WeightedDictionary<DefenderSetting>(data.defenderWeights);
+        //}
         SetMaxDailySupplyProductionAmount(data.maxDailySupplyAmount);
         SetInitialDefenderCount(data.initialDefenderCount);
         SetMaxDefenderCount(data.maxDefenderCount);
@@ -1189,7 +1189,7 @@ public class BaseLandmark : ILocation, IInteractable {
             return; //if the current defender party members is more or equal to the maximum defenders allowed for the landmark type
         }
         if (newDefender is Character) {
-            (newDefender as Character).OnSetAsDefender(this);
+            (newDefender as Character).OnSetAsDefender(this.tileLocation.areaOfTile);
         }
         defenders.AddCharacter(newDefender);
         //for (int i = 0; i < defenders.Length; i++) {
@@ -1273,9 +1273,9 @@ public class BaseLandmark : ILocation, IInteractable {
     public void SetMaxDefenderCount(int count) {
         this.maxDefenderCount = count;
     }
-    public WeightedDictionary<LandmarkDefender> GetFirstDefenderWeights() {
-        WeightedDictionary<LandmarkDefender> weights = new WeightedDictionary<LandmarkDefender>();
-        foreach (KeyValuePair<LandmarkDefender, int> kvp in defenderWeights.dictionary) {
+    public WeightedDictionary<DefenderSetting> GetFirstDefenderWeights() {
+        WeightedDictionary<DefenderSetting> weights = new WeightedDictionary<DefenderSetting>();
+        foreach (KeyValuePair<DefenderSetting, int> kvp in defenderWeights.dictionary) {
             if (kvp.Key.includeInFirstWeight) {
                 weights.AddElement(kvp.Key, kvp.Value);
             }

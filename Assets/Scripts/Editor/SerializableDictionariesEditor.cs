@@ -22,6 +22,8 @@ public class BiomeLandmarkSpriteListDictionaryPropertyDrawer : SerializableDicti
 public class RoleInteractionsListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileSpriteCorruptionListDictionary))]
 public class TileSpriteCorruptionListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(RaceDefenderListDictionary))]
+public class RaceDefenderListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 
 [CustomPropertyDrawer(typeof(CharacterTagListStorage))]
@@ -32,4 +34,6 @@ public class LandmarkSpriteListStorageStoragePropertyDrawer : SerializableDictio
 public class CharacterInteractionWeightListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 [CustomPropertyDrawer(typeof(CorruptionObjectsListStorage))]
 public class CorruptionObjectsListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
+[CustomPropertyDrawer(typeof(RaceDefenderListStorage))]
+public class DefenderListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 #endif

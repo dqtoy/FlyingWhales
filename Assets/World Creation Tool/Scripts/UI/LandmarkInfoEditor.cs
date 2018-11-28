@@ -22,22 +22,9 @@ public class LandmarkInfoEditor : MonoBehaviour {
     [SerializeField] private InputField eventTriggerField;
     [SerializeField] private InputField noEventTriggerField;
 
-    [Space(10)]
-    [Header("Defenders")]
-    [SerializeField] private ScrollRect defendersScrollView;
-    [SerializeField] private InputField maxDailySuppliesField;
-    [SerializeField] private InputField minDailySuppliesField;
-    [SerializeField] private InputField initialDefendersField;
-    [SerializeField] private InputField maxDefendersField;
-    [SerializeField] private GameObject defenderWeightItemPrefab;
-    [SerializeField] private Dropdown defenderClassDropdown;
-    [SerializeField] private InputField defenderWeightField;
-
     public void Initialize() {
         interactionTypesDropdown.ClearOptions();
         interactionTypesDropdown.AddOptions(Utilities.GetEnumChoices<INTERACTION_TYPE>());
-        defenderClassDropdown.ClearOptions();
-        defenderClassDropdown.AddOptions(Utilities.GetFileChoices(Utilities.dataPath + "CharacterClasses/", "*.json"));
     }
 
     public void ShowLandmarkInfo(BaseLandmark landmark) {
@@ -46,7 +33,6 @@ public class LandmarkInfoEditor : MonoBehaviour {
         landmarkName.text = landmark.landmarkName;
         landmarkType.text = landmark.specificLandmarkType.ToString();
         UpdateScenarioInfo();
-        UpdateDefenderWeights();
     }
     public void CloseMenu() {
         this.gameObject.SetActive(false);
@@ -77,43 +63,6 @@ public class LandmarkInfoEditor : MonoBehaviour {
             landmark.scenarios.AddElement(type, weight);
             UpdateScenarioInfo();
         }
-    }
-    #endregion
-
-    #region Defenders
-    private void UpdateDefenderWeights() {
-        Utilities.DestroyChildren(defendersScrollView.content);
-        foreach (KeyValuePair<LandmarkDefender, int> kvp in landmark.defenderWeights.dictionary) {
-            GameObject itemGO = GameObject.Instantiate(defenderWeightItemPrefab, defendersScrollView.content);
-            DefenderWeightItem item = itemGO.GetComponent<DefenderWeightItem>();
-            item.SetDefender(landmark, kvp.Key, kvp.Value);
-        }
-
-        maxDailySuppliesField.text = landmark.maxDailySupplyProduction.ToString();
-        minDailySuppliesField.text = landmark.minDailySupplyProduction.ToString();
-        initialDefendersField.text = landmark.initialDefenderCount.ToString();
-        maxDefendersField.text = landmark.maxDefenderCount.ToString();
-    }
-    public void AddDefenderWeight() {
-        string defenderClass = defenderClassDropdown.options[defenderClassDropdown.value].text;
-        int weight = 0;
-        if (HasDefenderWeightForClass(defenderClass)) {
-            WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Invalid defender class!", "Cannot add defender class " + defenderClass + " because landmark already has that type in it's defender weights");
-        } else if (!System.Int32.TryParse(defenderWeightField.text, out weight)) {
-            WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Invalid weight!", "Please enter a weight value!");
-        } else {
-            weight = Mathf.Max(0, weight);
-            landmark.defenderWeights.AddElement(new LandmarkDefender() { className = defenderClass, includeInFirstWeight = true, armyCount = 1}, weight);
-            UpdateDefenderWeights();
-        }
-    }
-    private bool HasDefenderWeightForClass(string className) {
-        foreach (KeyValuePair<LandmarkDefender, int> kvp in landmark.defenderWeights.dictionary) {
-            if (kvp.Key.className.Equals(className)) {
-                return true;
-            }
-        }
-        return false;
     }
     #endregion
 

@@ -759,7 +759,7 @@ public class CharacterManager : MonoBehaviour {
         //Messenger.Broadcast(Signals.CHARACTER_CREATED, armyUnit);
         return armyUnit;
     }
-    public CharacterArmyUnit CreateCharacterArmyUnit(RACE race, LandmarkDefender defender, Faction faction = null, ILocation initialLocation = null) {
+    public CharacterArmyUnit CreateCharacterArmyUnit(RACE race, DefenderSetting defender, Faction faction = null, ILocation initialLocation = null) {
         return CreateCharacterArmyUnit(defender.className, race, faction, initialLocation);
     }
     #endregion

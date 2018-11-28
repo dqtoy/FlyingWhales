@@ -7,17 +7,8 @@ public class LandmarkManager : MonoBehaviour {
 
     public static LandmarkManager Instance = null;
 
-    public static readonly int MAX_DEFENDERS = 4;
-
-    public List<CharacterProductionWeight> characterProductionWeights;
-	//public DungeonEncounterChances[] dungeonEncounterChances;
-    public int initialResourceLandmarks;
-    public int initialDungeonLandmarks;
-    public int initialSettlementLandmarks;
-
     public int initialLandmarkCount;
 
-    //public List<BaseLandmarkData> baseLandmarkData;
     [SerializeField] private List<LandmarkData> landmarkData;
     public List<AreaData> areaData;
 
@@ -32,6 +23,8 @@ public class LandmarkManager : MonoBehaviour {
     [SerializeField] private GameObject landmarkGO;
 
     private Dictionary<LANDMARK_TYPE, LandmarkData> landmarkDataDict;
+
+    public RaceDefenderListDictionary defaultRaceDefenders;
 
     #region Monobehaviours
     private void Awake() {
@@ -467,21 +460,6 @@ public class LandmarkManager : MonoBehaviour {
     }
     #endregion
 
-    #region ECS.Character Production
-    /*
-     Get the character role weights for a faction.
-     This will not include roles that the faction has already reached the cap of.
-         */
-    public WeightedDictionary<CHARACTER_ROLE> GetCharacterRoleProductionDictionary() {
-        WeightedDictionary<CHARACTER_ROLE> characterWeights = new WeightedDictionary<CHARACTER_ROLE>();
-        for (int i = 0; i < characterProductionWeights.Count; i++) {
-            CharacterProductionWeight currWeight = characterProductionWeights[i];
-			characterWeights.AddElement(currWeight.role, currWeight.weight);
-        }
-        return characterWeights;
-    }
-    #endregion
-
     #region Utilities
     public BaseLandmark GetLandmarkByID(int id) {
         List<BaseLandmark> allLandmarks = GetAllLandmarks();
@@ -693,6 +671,17 @@ public class LandmarkManager : MonoBehaviour {
             Area currArea = allAreas[i];
             currArea.LoadAdditionalData();
         }
+    }
+    public WeightedDictionary<AreaDefenderSetting> GetDefaultDefenderWeights(RACE race) {
+        if (defaultRaceDefenders.ContainsKey(race)) {
+            WeightedDictionary<AreaDefenderSetting> weights = new WeightedDictionary<AreaDefenderSetting>();
+            for (int i = 0; i < defaultRaceDefenders[race].Count; i++) {
+                RaceAreaDefenderSetting currSetting = defaultRaceDefenders[race][i];
+                weights.AddElement(new AreaDefenderSetting() { className = currSetting.className }, currSetting.weight);
+            }
+            return weights;
+        }
+        return null;
     }
     #endregion
 }

@@ -16,7 +16,7 @@ public class Garrison : StructureObj {
         return clone;
     }
     public override void StartDayAction() {
-        ReplenishDefenderUnits();
+        //ReplenishDefenderUnits();
         base.StartDayAction();
         //ArmyTraining();
         //ArmyMobilize();

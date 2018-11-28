@@ -7,7 +7,7 @@ public class HumanBanditReinforcements : Interaction {
 
     private BaseLandmark landmark;
 
-    private WeightedDictionary<LandmarkDefender> assaultSpawnWeights;
+    private WeightedDictionary<DefenderSetting> assaultSpawnWeights;
 
     public HumanBanditReinforcements(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.HUMAN_BANDIT_REINFORCEMENTS, 50) {
         _name = "Human Bandit Reinforcements";
@@ -84,15 +84,15 @@ public class HumanBanditReinforcements : Interaction {
     #endregion
 
     private void ConstructDefenseSpawnWeights() {
-        assaultSpawnWeights = new WeightedDictionary<LandmarkDefender>();
+        assaultSpawnWeights = new WeightedDictionary<DefenderSetting>();
 
-        LandmarkDefender marauder = new LandmarkDefender() {
+        DefenderSetting marauder = new DefenderSetting() {
             className = "Marauders",
         };
-        LandmarkDefender bowman = new LandmarkDefender() {
+        DefenderSetting bowman = new DefenderSetting() {
             className = "Rogues",
         };
-        LandmarkDefender mage = new LandmarkDefender() {
+        DefenderSetting mage = new DefenderSetting() {
             className = "Mages",
         };
 
@@ -103,7 +103,7 @@ public class HumanBanditReinforcements : Interaction {
     private CharacterParty CreateAssaultArmy(int unitCount) {
         CharacterParty army = null;
         for (int i = 0; i < unitCount; i++) {
-            LandmarkDefender chosenDefender = assaultSpawnWeights.PickRandomElementGivenWeights();
+            DefenderSetting chosenDefender = assaultSpawnWeights.PickRandomElementGivenWeights();
             Character armyUnit = CharacterManager.Instance.CreateNewCharacter(chosenDefender.className, landmark.owner.race, GENDER.MALE, landmark.owner, landmark);
             if (army == null) {
                 army = armyUnit.party;

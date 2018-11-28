@@ -92,7 +92,7 @@ namespace ECS {
         public Quest currentQuest { get; private set; }
         public CharacterEventSchedule eventSchedule { get; private set; }
         public CharacterUIData uiData { get; private set; }
-        public BaseLandmark defendingLandmark { get; private set; }
+        public Area defendingArea { get; private set; }
         public MORALITY morality { get; private set; }
         public CharacterIntel characterIntel { get; private set; }
         public WeightedDictionary<INTERACTION_TYPE> interactionWeights { get; private set; }
@@ -392,7 +392,7 @@ namespace ECS {
             get { return QUEST_GIVER_TYPE.CHARACTER; }
         }
         public bool isDefender {
-            get { return defendingLandmark != null; }
+            get { return defendingArea != null; }
         }
         public List<Trait> traits {
             get { return _traits; }
@@ -2737,25 +2737,25 @@ namespace ECS {
         #endregion
 
         #region Defender
-        public void OnSetAsDefender(BaseLandmark defending) {
-            defendingLandmark = defending;
-            defendingLandmark.RemoveCharacterFromLocation(this.ownParty, false);
-            ownParty.SetSpecificLocation(defending);
+        public void OnSetAsDefender(Area defending) {
+            defendingArea = defending;
+            this.specificLocation.RemoveCharacterFromLocation(this.ownParty, false);
+            ownParty.SetSpecificLocation(defending.coreTile.landmarkOnTile);
 #if !WORLD_CREATION_TOOL
             if (ownParty is CharacterParty) {
-                (ownParty as CharacterParty).actionData.ForceDoAction(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DEFENDER), defending.landmarkObj);
+                (ownParty as CharacterParty).actionData.ForceDoAction(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DEFENDER), defending.coreTile.landmarkOnTile.landmarkObj);
             }
 #endif
         }
         public void OnRemoveAsDefender() {
-            defendingLandmark.AddCharacterToLocation(this.ownParty);
-            defendingLandmark = null;
+            defendingArea.coreTile.landmarkOnTile.AddCharacterToLocation(this.ownParty);
+            defendingArea = null;
 #if !WORLD_CREATION_TOOL
             _ownParty.actionData.EndCurrentAction(); //end the defender action
 #endif
         }
         public bool IsDefending(BaseLandmark landmark) {
-            if (defendingLandmark != null && defendingLandmark.id == landmark.id) {
+            if (defendingArea != null && defendingArea.id == landmark.id) {
                 return true;
             }
             return false;

@@ -26,6 +26,7 @@ public class Faction {
     public MORALITY morality { get; private set; }
     public FactionIntel factionIntel { get; private set; }
     public Dictionary<Faction, int> favor { get; private set; }
+    public WeightedDictionary<AreaDefenderSetting> defenderWeights { get; private set; }
 
     #region getters/setters
     public int id {
@@ -87,6 +88,7 @@ public class Faction {
         _ownedAreas = new List<Area>();
         factionIntel = new FactionIntel(this);
         favor = new Dictionary<Faction, int>();
+        defenderWeights = new WeightedDictionary<AreaDefenderSetting>();
 #if !WORLD_CREATION_TOOL
         AddListeners();
 #endif
@@ -108,6 +110,12 @@ public class Faction {
         _ownedAreas = new List<Area>();
         factionIntel = new FactionIntel(this);
         favor = new Dictionary<Faction, int>();
+        if (data.defenderWeights != null) {
+            defenderWeights = new WeightedDictionary<AreaDefenderSetting>(data.defenderWeights);
+        } else {
+            defenderWeights = new WeightedDictionary<AreaDefenderSetting>();
+        }
+        
 #if !WORLD_CREATION_TOOL
         AddListeners();
 #endif

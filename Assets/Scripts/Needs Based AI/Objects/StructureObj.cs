@@ -113,7 +113,7 @@ public class StructureObj : IObject {
     }
     public virtual void OnAddToLandmark(BaseLandmark newLocation) {
         SetObjectLocation(newLocation);
-        GenerateInitialDefenders();
+        //GenerateInitialDefenders();
         SetDailyInteractionGenerationTick();
         Messenger.AddListener(Signals.HOUR_STARTED, DailyInteractionGeneration);
     }
@@ -135,25 +135,25 @@ public class StructureObj : IObject {
         //GenerateDailyInteraction();
     }
 
-    public virtual void GenerateInitialDefenders() {
-        if (_objectLocation.owner == null) {
-            return;
-        }
-        Debug.Log("Generating initial defenders for " + _specificObjectType.ToString());
-        for (int i = 0; i < _objectLocation.initialDefenderCount; i++) {
-            WeightedDictionary<LandmarkDefender> defenderWeights;
-            if (i == 0) {
-                defenderWeights = _objectLocation.GetFirstDefenderWeights();
-            } else {
-                defenderWeights = _objectLocation.defenderWeights;
-            }
-            if (defenderWeights.GetTotalOfWeights() > 0) {
-                LandmarkDefender chosenDefender = defenderWeights.PickRandomElementGivenWeights();
-                Character defenderUnit = CharacterManager.Instance.CreateNewCharacter(chosenDefender.className, _objectLocation.owner.race, GENDER.MALE, _objectLocation.owner, _objectLocation); //_objectLocation.owner.race
-                _objectLocation.AddDefender(defenderUnit);
-            }
-        }
-    }
+    //public virtual void GenerateInitialDefenders() {
+    //    if (_objectLocation.owner == null) {
+    //        return;
+    //    }
+    //    Debug.Log("Generating initial defenders for " + _specificObjectType.ToString());
+    //    for (int i = 0; i < _objectLocation.initialDefenderCount; i++) {
+    //        WeightedDictionary<DefenderSetting> defenderWeights;
+    //        if (i == 0) {
+    //            defenderWeights = _objectLocation.GetFirstDefenderWeights();
+    //        } else {
+    //            defenderWeights = _objectLocation.defenderWeights;
+    //        }
+    //        if (defenderWeights.GetTotalOfWeights() > 0) {
+    //            DefenderSetting chosenDefender = defenderWeights.PickRandomElementGivenWeights();
+    //            Character defenderUnit = CharacterManager.Instance.CreateNewCharacter(chosenDefender.className, _objectLocation.owner.race, GENDER.MALE, _objectLocation.owner, _objectLocation); //_objectLocation.owner.race
+    //            _objectLocation.AddDefender(defenderUnit);
+    //        }
+    //    }
+    //}
     public virtual void GenerateDailyInteraction() {
         string interactionLog = GameManager.Instance.TodayLogString() + "Generating daily interaction for " + _objectLocation.landmarkName + "(" + _objectLocation.specificLandmarkType.ToString() + ")";
         //if (_objectLocation.HasActiveInteraction()) {
