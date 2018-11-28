@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine.UI;
 using ECS;
+using UnityEngine.UI.Extensions;
 
 public class LandmarkInfoUI : UIMenu {
 
@@ -47,6 +48,8 @@ public class LandmarkInfoUI : UIMenu {
     [Space(10)]
     [Header("Defenders")]
     [SerializeField] private LandmarkCharacterItem[] defenderSlots;
+    [SerializeField] private GameObject defenderGroupPrefab;
+    [SerializeField] private ScrollRect defendersScrollView;
 
     //[Space(10)]
     //[Header("Others")]
@@ -111,9 +114,11 @@ public class LandmarkInfoUI : UIMenu {
             ResetMinionAssignment();
             ResetMinionAssignmentParty();
         }
+        UpdateDefenders();
         UpdateHiddenUI();
         UpdateLandmarkInfo();
         UpdateCharacters();
+        
         //UpdateInvestigation();
         //if (_activeLandmark.specificLandmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
         //    PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeLandmark);
@@ -163,7 +168,7 @@ public class LandmarkInfoUI : UIMenu {
         //}
         //UpdateInfo();
         //UpdateCharacters();
-        UpdateDefenders();
+        //UpdateDefenders();
         //UpdateItems();
         UpdateAllHistoryInfo();
     }
@@ -429,12 +434,23 @@ public class LandmarkInfoUI : UIMenu {
 
     #region Defenders
     private void UpdateDefenders() {
-        for (int i = 0; i < defenderSlots.Length; i++) {
-            LandmarkCharacterItem currSlot = defenderSlots[i];
-            currSlot.SetCharacter(null, _activeLandmark, true);
-            currSlot.slotItem.dropZone.SetEnabledState(false);
-            currSlot.slotItem.draggable.SetDraggable(false);
+        //GameObject[] removedItems;
+        //defendersScrollView.GetComponent<HorizontalScrollSnap>().RemoveAllChildren(out removedItems);
+        //for (int i = 0; i < removedItems.Length; i++) {
+        //    ObjectPoolManager.Instance.DestroyObject(removedItems[i]);
+        //}
+        Utilities.DestroyChildren(defendersScrollView.content);
+        for (int i = 0; i < _activeLandmark.tileLocation.areaOfTile.defenderGroups.Count; i++) {
+            DefenderGroup currGroup = _activeLandmark.tileLocation.areaOfTile.defenderGroups[i];
+            GameObject currGO = UIManager.Instance.InstantiateUIObject(defenderGroupPrefab.name, defendersScrollView.content);
+            currGO.GetComponent<DefenderGroupItem>().SetDefender(currGroup);
         }
+        //for (int i = 0; i < defenderSlots.Length; i++) {
+        //    LandmarkCharacterItem currSlot = defenderSlots[i];
+        //    currSlot.SetCharacter(null, _activeLandmark, true);
+        //    currSlot.slotItem.dropZone.SetEnabledState(false);
+        //    currSlot.slotItem.draggable.SetDraggable(false);
+        //}
         //if (_activeLandmark.defenders == null) {
         //    for (int i = 0; i < defenderSlots.Length; i++) {
         //        LandmarkCharacterItem currSlot = defenderSlots[i];
