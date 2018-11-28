@@ -24,32 +24,32 @@ public class Garrison : StructureObj {
     }
     #endregion
 
-    private void ReplenishDefenderUnits() {
-        if (_objectLocation.defenders == null) {
-            return;
-        }
-        string replenishSummary = GameManager.Instance.TodayLogString() + "Replenishing defender units for " + _objectLocation.locationName + ": ";
-        for (int j = 0; j < _objectLocation.defenders.icharacters.Count; j++) {
-            ICharacter currCharacter = _objectLocation.defenders.icharacters[j];
-            if (currCharacter is CharacterArmyUnit) {
-                CharacterArmyUnit armyUnit = currCharacter as CharacterArmyUnit;
-                int productionCost = armyUnit.GetProductionCost();
-                if (!armyUnit.isCapped() && _objectLocation.tileLocation.areaOfTile.HasEnoughSupplies(productionCost)) {
-                    armyUnit.AdjustArmyCount(1);
-                    _objectLocation.tileLocation.areaOfTile.AdjustSuppliesInBank(-productionCost);
-                    replenishSummary += "\nReplensihed 1 " + armyUnit.characterClass.className + " for " + productionCost;
-                }
-            } else if (currCharacter is MonsterArmyUnit) {
-                MonsterArmyUnit armyUnit = currCharacter as MonsterArmyUnit;
-                int productionCost = armyUnit.GetProductionCost();
-                if (_objectLocation.tileLocation.areaOfTile.HasEnoughSupplies(productionCost)) {
-                    armyUnit.AdjustArmyCount(1);
-                    _objectLocation.tileLocation.areaOfTile.AdjustSuppliesInBank(-productionCost);
-                }
-            }
-        }
-        Debug.Log(replenishSummary);
-    }
+    //private void ReplenishDefenderUnits() {
+    //    if (_objectLocation.defenders == null) {
+    //        return;
+    //    }
+    //    string replenishSummary = GameManager.Instance.TodayLogString() + "Replenishing defender units for " + _objectLocation.locationName + ": ";
+    //    for (int j = 0; j < _objectLocation.defenders.icharacters.Count; j++) {
+    //        ICharacter currCharacter = _objectLocation.defenders.icharacters[j];
+    //        if (currCharacter is CharacterArmyUnit) {
+    //            CharacterArmyUnit armyUnit = currCharacter as CharacterArmyUnit;
+    //            int productionCost = armyUnit.GetProductionCost();
+    //            if (!armyUnit.isCapped() && _objectLocation.tileLocation.areaOfTile.HasEnoughSupplies(productionCost)) {
+    //                armyUnit.AdjustArmyCount(1);
+    //                _objectLocation.tileLocation.areaOfTile.AdjustSuppliesInBank(-productionCost);
+    //                replenishSummary += "\nReplensihed 1 " + armyUnit.characterClass.className + " for " + productionCost;
+    //            }
+    //        } else if (currCharacter is MonsterArmyUnit) {
+    //            MonsterArmyUnit armyUnit = currCharacter as MonsterArmyUnit;
+    //            int productionCost = armyUnit.GetProductionCost();
+    //            if (_objectLocation.tileLocation.areaOfTile.HasEnoughSupplies(productionCost)) {
+    //                armyUnit.AdjustArmyCount(1);
+    //                _objectLocation.tileLocation.areaOfTile.AdjustSuppliesInBank(-productionCost);
+    //            }
+    //        }
+    //    }
+    //    Debug.Log(replenishSummary);
+    //}
     private void ArmyTraining() {
         if(_objectLocation.tileLocation.areaOfTile.suppliesInBank >= 100 && _objectLocation.GetInteractionOfType(INTERACTION_TYPE.ARMY_UNIT_TRAINING) == null) {
             bool hasArmyPartyWithAtLeast3Members = false;

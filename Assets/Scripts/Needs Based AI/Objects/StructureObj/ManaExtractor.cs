@@ -31,7 +31,7 @@ public class ManaExtractor : StructureObj {
         ScheduleCharacterToGoHome();
     }
     public override void OnAddToLandmark(BaseLandmark newLocation) {
-        newLocation.SetMaxDefenderCount(2);
+        //newLocation.SetMaxDefenderCount(2);
         base.OnAddToLandmark(newLocation);
     }
     #endregion

@@ -292,9 +292,9 @@ public class LandmarkInfoUI : UIMenu {
         //if (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll) {
             for (int i = 0; i < _activeLandmark.charactersAtLocation.Count; i++) {
                 //Party currParty = _activeLandmark.charactersWithHomeOnLandmark[i].ownParty;
-                if (!_activeLandmark.IsDefenderOfLandmark(_activeLandmark.charactersAtLocation[i])) {
+                //if (!_activeLandmark.IsDefenderOfLandmark(_activeLandmark.charactersAtLocation[i])) {
                     CreateNewCharacterItem(_activeLandmark.charactersAtLocation[i].owner);
-                }
+                //}
             }
         //}
         //else {
@@ -429,23 +429,23 @@ public class LandmarkInfoUI : UIMenu {
 
     #region Defenders
     private void UpdateDefenders() {
-        if (_activeLandmark.defenders == null) {
-            for (int i = 0; i < defenderSlots.Length; i++) {
-                LandmarkCharacterItem currSlot = defenderSlots[i];
-                currSlot.SetCharacter(null, _activeLandmark, true);
-                currSlot.slotItem.dropZone.SetEnabledState(false);
-                currSlot.slotItem.draggable.SetDraggable(false);
-            }
-        } else {
-            for (int i = 0; i < defenderSlots.Length; i++) {
-                LandmarkCharacterItem currSlot = defenderSlots[i];
-                ICharacter defender = _activeLandmark.defenders.icharacters.ElementAtOrDefault(i);
-                currSlot.SetCharacter(defender, _activeLandmark, true);
-                currSlot.slotItem.dropZone.SetEnabledState(false);
-                currSlot.slotItem.draggable.SetDraggable(false);
-                //defenderSlots[i].portrait.SetForceShowPortraitState(true);
-            }
-        }
+        //if (_activeLandmark.defenders == null) {
+        //    for (int i = 0; i < defenderSlots.Length; i++) {
+        //        LandmarkCharacterItem currSlot = defenderSlots[i];
+        //        currSlot.SetCharacter(null, _activeLandmark, true);
+        //        currSlot.slotItem.dropZone.SetEnabledState(false);
+        //        currSlot.slotItem.draggable.SetDraggable(false);
+        //    }
+        //} else {
+        //    for (int i = 0; i < defenderSlots.Length; i++) {
+        //        LandmarkCharacterItem currSlot = defenderSlots[i];
+        //        ICharacter defender = _activeLandmark.defenders.icharacters.ElementAtOrDefault(i);
+        //        currSlot.SetCharacter(defender, _activeLandmark, true);
+        //        currSlot.slotItem.dropZone.SetEnabledState(false);
+        //        currSlot.slotItem.draggable.SetDraggable(false);
+        //        //defenderSlots[i].portrait.SetForceShowPortraitState(true);
+        //    }
+        //}
     }
     #endregion
 
@@ -644,7 +644,7 @@ public class LandmarkInfoUI : UIMenu {
         }
     }
     public void OnPartyMinionDrop1(GameObject go) {
-        PlayerCharacterItem minionItem = go.GetComponent<PlayerCharacterItem>();
+        PlayerCharacterItem minionItem = go.GetComponent<DragObject>().parentItem as PlayerCharacterItem;
         if (minionItem != null) {
             if(_assignedMinion == minionItem.minion) {
                 AssignMinionToInvestigate(null);
@@ -653,7 +653,7 @@ public class LandmarkInfoUI : UIMenu {
         }
     }
     public void OnPartyMinionDrop2(GameObject go) {
-        PlayerCharacterItem minionItem = go.GetComponent<PlayerCharacterItem>();
+        PlayerCharacterItem minionItem = go.GetComponent<DragObject>().parentItem as PlayerCharacterItem;
         if (minionItem != null) {
             if (_assignedMinion == minionItem.minion) {
                 AssignMinionToInvestigate(null);
@@ -662,7 +662,7 @@ public class LandmarkInfoUI : UIMenu {
         }
     }
     public void OnPartyMinionDrop3(GameObject go) {
-        PlayerCharacterItem minionItem = go.GetComponent<PlayerCharacterItem>();
+        PlayerCharacterItem minionItem = go.GetComponent<DragObject>().parentItem as PlayerCharacterItem;
         if (minionItem != null) {
             if (_assignedMinion == minionItem.minion) {
                 AssignMinionToInvestigate(null);
@@ -671,7 +671,7 @@ public class LandmarkInfoUI : UIMenu {
         }
     }
     public void OnPartyMinionDrop4(GameObject go) {
-        PlayerCharacterItem minionItem = go.GetComponent<PlayerCharacterItem>();
+        PlayerCharacterItem minionItem = go.GetComponent<DragObject>().parentItem as PlayerCharacterItem;
         if (minionItem != null) {
             if (_assignedMinion == minionItem.minion) {
                 AssignMinionToInvestigate(null);
@@ -725,8 +725,9 @@ public class LandmarkInfoUI : UIMenu {
 
         float chance = 0f;
         float enemyChance = 0f;
-        if (_activeLandmark.defenders != null) {
-            CombatManager.Instance.GetCombatChanceOfTwoLists(assignedCharacters, _activeLandmark.defenders.icharacters, out chance, out enemyChance);
+        DefenderGroup defender = _activeLandmark.tileLocation.areaOfTile.GetFirstDefenderGroup();
+        if (defender != null) {
+            CombatManager.Instance.GetCombatChanceOfTwoLists(assignedCharacters, defender.party.icharacters, out chance, out enemyChance);
         } else {
             CombatManager.Instance.GetCombatChanceOfTwoLists(assignedCharacters, null, out chance, out enemyChance);
         }

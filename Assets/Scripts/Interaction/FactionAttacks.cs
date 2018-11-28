@@ -191,11 +191,11 @@ public class FactionAttacks : Interaction {
             BaseLandmark candidate = areaExposedTiles[i];
             float winRate = 0f;
             float loseRate = 0f;
-            if(candidate.defenders != null) {
-                CombatManager.Instance.GetCombatChanceOfTwoLists(assaultParty.icharacters, candidate.defenders.icharacters, out winRate, out loseRate);
-            } else {
-                CombatManager.Instance.GetCombatChanceOfTwoLists(assaultParty.icharacters, null, out winRate, out loseRate);
-            }
+            //if(candidate.defenders != null) {
+            //    CombatManager.Instance.GetCombatChanceOfTwoLists(assaultParty.icharacters, candidate.defenders.icharacters, out winRate, out loseRate);
+            //} else {
+            //    CombatManager.Instance.GetCombatChanceOfTwoLists(assaultParty.icharacters, null, out winRate, out loseRate);
+            //}
             if(winRate >= 30f) {
                 if(targetLandmark == null) {
                     targetLandmark = candidate;

@@ -160,25 +160,26 @@ public class SuspiciousSoldierMeeting : Interaction {
     private void ReduceDefendersRewardEffect(InteractionState state) {
         //Each Defender slot in the Garrison loses a random percentage between 15% to 50%
         BaseLandmark landmark = _interactable;
-        if(landmark.defenders != null) {
-            if(landmark.defenders.icharacters.Count >= 2) {
+        DefenderGroup randomGroup = landmark.tileLocation.areaOfTile.GetRandomDefenderGroup();
+        if(randomGroup != null) {
+            if(randomGroup.party.icharacters.Count >= 2) {
                 int numOfDeserters = UnityEngine.Random.Range(1, 3);
                 if (numOfDeserters == 1) {
-                    ICharacter deserter = landmark.defenders.icharacters[UnityEngine.Random.Range(0, landmark.defenders.icharacters.Count)];
-                    landmark.RemoveDefender(deserter);
+                    ICharacter deserter = randomGroup.party.icharacters[UnityEngine.Random.Range(0, randomGroup.party.icharacters.Count)];
+                    //landmark.RemoveDefender(deserter);
                     //if (state.minionLog != null) {
                     //    state.minionLog.AddToFillers(deserter, deserter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     //}
                     state.AddLogFiller(new LogFiller(deserter, deserter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
                 } else {
-                    List<ICharacter> icharacters = new List<ICharacter>(landmark.defenders.icharacters);
+                    List<ICharacter> icharacters = new List<ICharacter>(randomGroup.party.icharacters);
                     int deserter1Index = UnityEngine.Random.Range(0, icharacters.Count);
                     ICharacter deserter1 = icharacters[deserter1Index];
                     icharacters.RemoveAt(deserter1Index);
                     ICharacter deserter2 = icharacters[UnityEngine.Random.Range(0, icharacters.Count)];
 
-                    landmark.RemoveDefender(deserter1);
-                    landmark.RemoveDefender(deserter2);
+                    //landmark.RemoveDefender(deserter1);
+                    //landmark.RemoveDefender(deserter2);
 
                     state.AddLogFiller(new LogFiller(deserter1, deserter1.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
 
@@ -199,9 +200,9 @@ public class SuspiciousSoldierMeeting : Interaction {
                     //    explorerMinion.icharacter.AddHistory(newMinionLog);
                     //}
                 }
-            } else if(landmark.defenders.icharacters.Count == 1) {
-                ICharacter deserter = landmark.defenders.icharacters[0];
-                landmark.RemoveDefender(deserter);
+            } else if(randomGroup.party.icharacters.Count == 1) {
+                ICharacter deserter = randomGroup.party.icharacters[0];
+                //landmark.RemoveDefender(deserter);
                 //if (state.minionLog != null) {
                 //    state.minionLog.AddToFillers(deserter, deserter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 //}

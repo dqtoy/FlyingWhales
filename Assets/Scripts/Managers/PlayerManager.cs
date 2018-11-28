@@ -118,7 +118,7 @@ public class PlayerManager : MonoBehaviour {
         newLandmark.SetHasBeenInspected(true);
         switch (newLandmark.specificLandmarkType) {
             case LANDMARK_TYPE.SNATCHER_DEMONS_LAIR:
-                player.AdjustSnatchCredits(1);
+                //player.AdjustSnatchCredits(1);
                 break;
             case LANDMARK_TYPE.DWELLINGS:
                 //add 2 minion slots
@@ -126,17 +126,17 @@ public class PlayerManager : MonoBehaviour {
                 break;
             case LANDMARK_TYPE.IMP_KENNEL:
                 //adds 1 Imp capacity
-                player.AdjustMaxImps(1);
+                //player.AdjustMaxImps(1);
                 break;
             case LANDMARK_TYPE.RAMPART:
                 //bonus 25% HP to all Defenders
-                for (int i = 0; i < player.playerArea.landmarks.Count; i++) {
-                    BaseLandmark currLandmark = player.playerArea.landmarks[i];
-                    currLandmark.AddDefenderBuff(new Buff() { buffedStat = STAT.HP, percentage = 0.25f });
+                //for (int i = 0; i < player.playerArea.landmarks.Count; i++) {
+                //    BaseLandmark currLandmark = player.playerArea.landmarks[i];
+                //    currLandmark.AddDefenderBuff(new Buff() { buffedStat = STAT.HP, percentage = 0.25f });
                     //if (currLandmark.defenders != null) {
                     //    currLandmark.defenders.AddBuff(new Buff() { buffedStat = STAT.HP, percentage = 0.25f });
                     //}
-                }
+                //}
                 break;
             default:
                 break;

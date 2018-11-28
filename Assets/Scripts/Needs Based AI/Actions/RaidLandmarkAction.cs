@@ -14,8 +14,9 @@ public class RaidLandmarkAction : CharacterAction {
         BaseLandmark landmarkToRaid = targetObject.objectLocation;
         landmarkToRaid.SetRaidedState(true);
         //Party defenderParty = null; //TODO
-        if(landmarkToRaid.defenders != null) {
-            Combat combat = party.CreateCombatWith(landmarkToRaid.defenders);
+        DefenderGroup defender = landmarkToRaid.tileLocation.areaOfTile.GetFirstDefenderGroup();
+        if(defender != null) {
+            Combat combat = party.CreateCombatWith(defender.party);
             combat.Fight();
         }
         //Raid their area: -1 Favor Count

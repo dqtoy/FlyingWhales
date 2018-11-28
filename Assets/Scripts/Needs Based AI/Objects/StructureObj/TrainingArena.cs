@@ -22,7 +22,7 @@ public class TrainingArena : StructureObj {
         ScheduleCharacterToGainExperience();
     }
     public override void OnAddToLandmark(BaseLandmark newLocation) {
-        newLocation.SetMaxDefenderCount(2);
+        //newLocation.SetMaxDefenderCount(2);
         base.OnAddToLandmark(newLocation);
     }
     #endregion

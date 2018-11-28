@@ -66,4 +66,8 @@ public class DefenderGroup {
     public void SetDefendingArea(Area area) {
         defendingArea = area;
     }
+
+    private void GroupDeath() {
+
+    }
 }

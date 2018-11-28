@@ -252,10 +252,11 @@ public class AreaInvestigation {
         //        }
         //    }
         //}
-        if (_currentlyAttackedLandmark.defenders != null) {
+        DefenderGroup defender = _area.GetFirstDefenderGroup();
+        if (defender != null) {
             //_assignedMinionAttack.icharacter.currentParty.specificLocation.RemoveCharacterFromLocation(_assignedMinionAttack.icharacter.currentParty);
             //_currentlyAttackedLandmark.AddCharacterToLocation(_assignedMinionAttack.icharacter.currentParty);
-            Combat combat = _assignedMinionAttack.icharacter.currentParty.CreateCombatWith(_currentlyAttackedLandmark.defenders);
+            Combat combat = _assignedMinionAttack.icharacter.currentParty.CreateCombatWith(defender.party);
             combat.Fight(() => AttackCombatResult(combat));
         } else {
             _currentlyAttackedLandmark.DestroyLandmark();

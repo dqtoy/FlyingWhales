@@ -547,20 +547,20 @@ public class Player : ILeader {
                 break;
             case LANDMARK_TYPE.IMP_KENNEL:
                 //adds 1 Imp capacity
-                AdjustMaxImps(-1);
+                //AdjustMaxImps(-1);
                 break;
             case LANDMARK_TYPE.DEMONIC_PORTAL:
                 //player loses if the Portal is destroyed
                 throw new System.Exception("Demonic Portal Was Destroyed! Game Over!");
             case LANDMARK_TYPE.RAMPART:
                 //remove bonus 25% HP to all Defenders
-                for (int i = 0; i < playerArea.landmarks.Count; i++) {
-                    BaseLandmark currLandmark = playerArea.landmarks[i];
-                    currLandmark.RemoveDefenderBuff(new Buff() { buffedStat = STAT.HP, percentage = 0.25f });
-                    //if (currLandmark.defenders != null) {
-                    //    currLandmark.defenders.RemoveBuff(new Buff() { buffedStat = STAT.HP, percentage = 0.25f });
-                    //}
-                }
+                //for (int i = 0; i < playerArea.landmarks.Count; i++) {
+                //    BaseLandmark currLandmark = playerArea.landmarks[i];
+                //    currLandmark.RemoveDefenderBuff(new Buff() { buffedStat = STAT.HP, percentage = 0.25f });
+                //    //if (currLandmark.defenders != null) {
+                //    //    currLandmark.defenders.RemoveBuff(new Buff() { buffedStat = STAT.HP, percentage = 0.25f });
+                //    //}
+                //}
                 break;
             default:
                 break;

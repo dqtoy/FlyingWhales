@@ -558,7 +558,7 @@ public class Area {
     }
     private void ExecuteSupplyLine() {
         CollectDailySupplies();
-        PayMaintenance();
+        //PayMaintenance();
         LandmarkStartDayActions();
     }
     private void CollectDailySupplies() {
@@ -579,24 +579,24 @@ public class Area {
     }
     private void PayMaintenance() {
         //consumes Supply per existing unit
-        for (int i = 0; i < landmarks.Count; i++) {
-            BaseLandmark currLandmark = landmarks[i];
-            if (currLandmark.defenders == null) {
-                continue;
-            }
-            for (int j = 0; j < currLandmark.defenders.icharacters.Count; j++) {
-                ICharacter currDefender = currLandmark.defenders.icharacters[j];
-                if (currDefender is CharacterArmyUnit) {
-                    CharacterArmyUnit armyUnit = currDefender as CharacterArmyUnit;
-                    AdjustSuppliesInBank(-armyUnit.armyCount);
-                } else if (currDefender is MonsterArmyUnit) {
-                    MonsterArmyUnit armyUnit = currDefender as MonsterArmyUnit;
-                    AdjustSuppliesInBank(-armyUnit.armyCount);
-                } else {
-                    AdjustSuppliesInBank(-1); //if just a single character or monster
-                }
-            }
-        }
+        //for (int i = 0; i < landmarks.Count; i++) {
+        //    BaseLandmark currLandmark = landmarks[i];
+        //    if (currLandmark.defenders == null) {
+        //        continue;
+        //    }
+        //    for (int j = 0; j < currLandmark.defenders.icharacters.Count; j++) {
+        //        ICharacter currDefender = currLandmark.defenders.icharacters[j];
+        //        if (currDefender is CharacterArmyUnit) {
+        //            CharacterArmyUnit armyUnit = currDefender as CharacterArmyUnit;
+        //            AdjustSuppliesInBank(-armyUnit.armyCount);
+        //        } else if (currDefender is MonsterArmyUnit) {
+        //            MonsterArmyUnit armyUnit = currDefender as MonsterArmyUnit;
+        //            AdjustSuppliesInBank(-armyUnit.armyCount);
+        //        } else {
+        //            AdjustSuppliesInBank(-1); //if just a single character or monster
+        //        }
+        //    }
+        //}
     }
     private void LandmarkStartDayActions() {
         for (int i = 0; i < landmarks.Count; i++) {
@@ -723,6 +723,23 @@ public class Area {
             defenderGroups.Add(defenderGroup);
             defenderGroup.SetDefendingArea(this);
         }
+    }
+    public void RemoveDefenderGroup(DefenderGroup defenderGroup) {
+        if (defenderGroups.Remove(defenderGroup)) {
+            defenderGroup.SetDefendingArea(null);
+        }
+    }
+    public DefenderGroup GetFirstDefenderGroup() {
+        if (defenderGroups.Count > 0) {
+            return defenderGroups[0];
+        }
+        return null;
+    }
+    public DefenderGroup GetRandomDefenderGroup() {
+        if (defenderGroups.Count > 0) {
+            return defenderGroups[Random.Range(0, defenderGroups.Count)];
+        }
+        return null;
     }
     #endregion
 }

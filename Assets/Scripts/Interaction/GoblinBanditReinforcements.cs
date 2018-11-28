@@ -141,9 +141,9 @@ public class GoblinBanditReinforcements : Interaction {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
         //**Mechanics**: create an Army Unit from Defense Spawn Weights and add it to the Tile Defenders if not yet full or Character List if already full
         ICharacter createdUnit = CreateAssaultArmy(1).owner;
-        if (!landmark.defenders.isFull) {
-            landmark.AddDefender(createdUnit);
-        }
+        //if (!landmark.defenders.isFull) {
+            //landmark.AddDefender(createdUnit);
+        //}
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(createdUnit.race), LOG_IDENTIFIER.STRING_1);
             state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(createdUnit.role.roleType.ToString()), LOG_IDENTIFIER.STRING_2);
@@ -170,9 +170,9 @@ public class GoblinBanditReinforcements : Interaction {
     private void DoNothingRewardEffect(InteractionState state) {
         //**Mechanics**: create an Army Unit from Defense Spawn Weights and add it to the Tile Defenders if not yet full or Character List if already full
         ICharacter createdUnit = CreateAssaultArmy(1).owner;
-        if (!landmark.defenders.isFull) {
-            landmark.AddDefender(createdUnit);
-        }
+        //if (!landmark.defenders.isFull) {
+            //landmark.AddDefender(createdUnit);
+        //}
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(createdUnit.race), LOG_IDENTIFIER.STRING_1);
             state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(createdUnit.role.roleType.ToString()), LOG_IDENTIFIER.STRING_2);

@@ -59,20 +59,20 @@ public class TileInfoUI : MonoBehaviour {
             Item currItem = landmark.itemsInLandmark[i];
             info += "\n   - " + currItem.itemName;
         }
-        info += "\nDefenders: ";
-        if (landmark.defenders == null) {
-            info += "null";
-        } else {
-            for (int i = 0; i < landmark.defenders.icharacters.Count; i++) {
-                ICharacter currItem = landmark.defenders.icharacters[i];
-                if (currItem == null) {
-                    info += "\n   - null";
-                } else {
-                    info += "\n   - " + currItem.name;
-                }
+        //info += "\nDefenders: ";
+        //if (landmark.defenders == null) {
+        //    info += "null";
+        //} else {
+        //    for (int i = 0; i < landmark.defenders.icharacters.Count; i++) {
+        //        ICharacter currItem = landmark.defenders.icharacters[i];
+        //        if (currItem == null) {
+        //            info += "\n   - null";
+        //        } else {
+        //            info += "\n   - " + currItem.name;
+        //        }
 
-            }
-        }
+        //    }
+        //}
         
         if (landmark is MonsterSpawnerLandmark) {
             info += "\nMonster Set: ";

@@ -88,11 +88,11 @@ public class LandmarkInfoEditor : MonoBehaviour {
     }
     public void SetInitialDefenderCount(string countStr) {
         int count = System.Int32.Parse(countStr);
-        landmark.SetInitialDefenderCount(count);
+        //landmark.SetInitialDefenderCount(count);
     }
     public void SetMaxDefenderCount(string countStr) {
         int count = System.Int32.Parse(countStr);
-        landmark.SetMaxDefenderCount(count);
+        //landmark.SetMaxDefenderCount(count);
     }
     #endregion
 }
