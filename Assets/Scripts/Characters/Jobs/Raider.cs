@@ -61,12 +61,14 @@ public class Raider : Job {
     #endregion
 
     private void RaidSuccess() {
+        int obtainedSupply = GetSupplyObtained();
         Interaction raidSuccess = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_SUCCESS, character.specificLocation.tileLocation.landmarkOnTile);
-        raidSuccess.SetEndInteractionAction(() => GoBackHome());
+        raidSuccess.SetEndInteractionAction(() => GoBackHomeSuccess(obtainedSupply));
         raidSuccess.ScheduleSecondTimeOut();
-        SupplyObtained();
+        raidSuccess.SetOtherData(new object[] { obtainedSupply });
+        character.AddInteraction(raidSuccess);
         //When a raid succeeds, the target Faction's Favor Count towards the raider is reduced by -2. 
-        FavorEffects(-2);
+        //FavorEffects(-2);
     }
     private void RaidFail() {
         Interaction minionFailed = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile);
@@ -88,8 +90,12 @@ public class Raider : Job {
     private void GoBackHome() {
         character.currentParty.GoHome();
     }
+    private void GoBackHomeSuccess(int supplyObtained) {
+        character.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(supplyObtained);
+        GoBackHome();
+    }
 
-    private void SupplyObtained() {
+    private int GetSupplyObtained() {
         //When a raid succeeds, the amount of Supply obtained is based on character level.
         //5% to 15% of location's supply 
         //+1% every other level starting at level 6
@@ -98,8 +104,8 @@ public class Raider : Job {
         int supplyObtainedPercent = Random.Range(5, 16);
         supplyObtainedPercent += (character.level - 5);
 
-        int obtainedSupply = Mathf.FloorToInt(targetArea.suppliesInBank * (supplyObtainedPercent / 100f));
-        characterHomeArea.AdjustSuppliesInBank(obtainedSupply);
+        return Mathf.FloorToInt(targetArea.suppliesInBank * (supplyObtainedPercent / 100f));
+        //characterHomeArea.AdjustSuppliesInBank(obtainedSupply);
     }
 
     private void FavorEffects(int amount) {
