@@ -59,12 +59,16 @@ public class Spy : Job {
                         Success(chosenIntel);
                         break;
                     case JOB_RESULT.FAIL:
-                        //TODO: Shared Fail c/o Chy
-                        StartJobAction();
+                        Interaction minionFailed = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile);
+                        //raidSuccess.SetEndInteractionAction(() => GoBackHome());
+                        minionFailed.ScheduleSecondTimeOut();
+                        //StartJobAction();
                         break;
                     case JOB_RESULT.CRITICAL_FAIL:
-                        //TODO: Shared Critical Fail c/o Chy
-                        StartJobAction();
+                        Interaction minionCriticalFail = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.tileLocation.landmarkOnTile);
+                        //raidSuccess.SetEndInteractionAction(() => GoBackHome());
+                        minionCriticalFail.ScheduleSecondTimeOut();
+                        //StartJobAction();
                         break;
                     default:
                         break;

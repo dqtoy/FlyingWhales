@@ -69,14 +69,18 @@ public class Raider : Job {
         FavorEffects(-2);
     }
     private void RaidFail() {
-        //TODO: Shared Fail c/o Chy
+        Interaction minionFailed = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile);
+        //raidSuccess.SetEndInteractionAction(() => GoBackHome());
+        minionFailed.ScheduleSecondTimeOut();
         //When a raid fails, the target Faction's Favor Count towards the raider is reduced by -1. The raider will not get anything.
         FavorEffects(-1);
-        GoBackHome();
+        //GoBackHome();
     }
     private void CriticalRaidFail() {
-        //TODO: Shared Critical Fail c/o Chy
         //When a raid critically fails, the target Faction's Favor Count towards the raider is reduced by -1. The raider will also perish.
+        Interaction minionCriticalFail = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.tileLocation.landmarkOnTile);
+        //raidSuccess.SetEndInteractionAction(() => GoBackHome());
+        minionCriticalFail.ScheduleSecondTimeOut();
         FavorEffects(-1);
         GoBackHome();
     }
