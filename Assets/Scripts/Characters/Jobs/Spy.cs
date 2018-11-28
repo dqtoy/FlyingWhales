@@ -99,6 +99,9 @@ public class Spy : Job {
         if (interaction != null) {
             interaction.SetEndInteractionAction(() => StartJobAction());
             interaction.ScheduleSecondTimeOut();
+            if (interaction.type == INTERACTION_TYPE.CHARACTER_ENCOUNTERED) {
+                ((chosenIntel as CharacterIntel).character as Character).AddInteraction(interaction);
+            }
         }
         
     }
