@@ -51,7 +51,7 @@ public class FriendlyCharacterEncountered : Interaction {
                 name = "Recruit " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + ".",
                 duration = 0,
                 needsMinion = false,
-                effect = () => RecruitOption(state),
+                effect = () => RecruitOption(),
             };
             ActionOption doNothingOption = new ActionOption {
                 interactionState = state,
@@ -59,7 +59,7 @@ public class FriendlyCharacterEncountered : Interaction {
                 name = "Do nothing.",
                 duration = 0,
                 needsMinion = false,
-                effect = () => DoNothingOption(state),
+                effect = () => DoNothingOption(),
             };
 
             state.AddActionOption(recruitOption);
@@ -70,14 +70,14 @@ public class FriendlyCharacterEncountered : Interaction {
     #endregion
 
     #region Action Options
-    private void RecruitOption(InteractionState state) {
+    private void RecruitOption() {
         //WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
         //effectWeights.AddElement("Character Recruited", 30);
 
         //string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states["Character Recruited"]);
     }
-    private void DoNothingOption(InteractionState state) {
+    private void DoNothingOption() {
         //WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
         //effectWeights.AddElement("Nothing Happened", 25);
 

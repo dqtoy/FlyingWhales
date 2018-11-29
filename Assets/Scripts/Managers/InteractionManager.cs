@@ -116,6 +116,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.FRIENDLY_CHARACTER_ENCOUNTERED:
                 createdInteraction = new FriendlyCharacterEncountered(interactable);
                 break;
+            case INTERACTION_TYPE.SPAWN_CHARACTER:
+                createdInteraction = new SpawnCharacter(interactable);
+                break;
         }
         return createdInteraction;
     }

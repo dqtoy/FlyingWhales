@@ -244,6 +244,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public CharacterClass characterClass {
         get { return null; }
     }
+    public Job job {
+        get { return null; }
+    }
     public CharacterPortrait characterPortrait {
         get { return _characterPortrait; }
     }
