@@ -82,7 +82,7 @@ public class Interaction {
         _isSecondTimeOutCancelled = false;
         _hasUsedBaseCreateStates = false;
         _states = new Dictionary<string, InteractionState>();
-        _jobFilter = new JOB[] { JOB.NONE };
+        //_jobFilter = new JOB[] { JOB.NONE };
         //Debug.Log("Created new interaction " + type.ToString() + " at " + interactable.name);
     }
 
@@ -116,6 +116,8 @@ public class Interaction {
         _isChosen = true;
         interactable.landmarkVisual.StopInteractionTimer();
         interactable.landmarkVisual.HideInteractionTimer();
+        _currentState.CreateLogs();
+        _currentState.SetDescription();
     } //this is called when the player clicks the "exclamation point" button and this interaction was chosen
     #endregion
 
@@ -228,6 +230,9 @@ public class Interaction {
         return false;
     }
     public bool DoesJobTypeFitsJobFilter(Character character) {
+        if(_jobFilter == null) {
+            return true;
+        }
         for (int i = 0; i < _jobFilter.Length; i++) {
             if(character.job.jobType == _jobFilter[i]) {
                 return true;

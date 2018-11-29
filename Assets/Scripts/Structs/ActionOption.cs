@@ -16,6 +16,7 @@ public class ActionOption {
     public List<System.Type> neededObjects;
     public List<object> assignedObjects; //NOTE: assigned objects must be accurate with needed objects list, TODO: Change the 2 lists to use a dictionary instead
     public string doesNotMeetRequirementsStr;
+    public JOB jobNeeded;
 
     private int _currentDuration;
 
@@ -59,11 +60,19 @@ public class ActionOption {
     public bool CanBeDone() {
         if(canBeDoneAction != null) {
             if (canBeDoneAction() && PlayerManager.Instance.player.currencies[cost.currency] >= cost.amount) {
-                return true;
+                if(jobNeeded == JOB.NONE) {
+                    return true;
+                } else if(jobNeeded == interactionState.interaction.explorerMinion.icharacter.characterClass.jobType) {
+                    return true;
+                }
             }
         } else {
             if (PlayerManager.Instance.player.currencies[cost.currency] >= cost.amount) {
-                return true;
+                if (jobNeeded == JOB.NONE) {
+                    return true;
+                } else if (jobNeeded == interactionState.interaction.explorerMinion.icharacter.characterClass.jobType) {
+                    return true;
+                }
             }
         }
         return false;

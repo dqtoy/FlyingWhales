@@ -7,6 +7,7 @@ public class FriendlyCharacterEncountered : Interaction {
 
     public FriendlyCharacterEncountered(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.FRIENDLY_CHARACTER_ENCOUNTERED, 70) {
         _name = "Friendly Character Encountered";
+        _jobFilter = new JOB[] { JOB.RECRUITER };
     }
 
     #region Overrides
