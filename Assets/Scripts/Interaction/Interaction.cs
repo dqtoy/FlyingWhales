@@ -20,7 +20,7 @@ public class Interaction {
     protected bool _isChosen;
     protected InteractionState _previousState;
     protected InteractionState _currentState;
-    //protected Minion _explorerMinion;
+    protected Minion _explorerMinion;
     protected Character _characterInvolved;
     protected Action _endInteractionAction;
     protected Job _jobAssociated;
@@ -48,7 +48,13 @@ public class Interaction {
         get { return _previousState; }
     }
     public Minion explorerMinion {
-        get { return _interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion; }
+        get {
+            if(_interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion != null) {
+                return _interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion;
+            }
+            //Only used for Minion Critical Fail Event since assignedMinion will be null, interaction must still have reference of the dead minion
+            return _explorerMinion;
+        }
     }
     public Character characterInvolved {
         get { return _characterInvolved; }
@@ -163,7 +169,7 @@ public class Interaction {
 
         interactable.landmarkVisual.SetAndStartInteractionTimer(secondTimeOutTicks);
         //interactable.landmarkVisual.ShowInteractionForeground();
-        interactable.landmarkVisual.ShowInteractionTimer();
+        interactable.landmarkVisual.ShowInteractionTimer(this);
     }
     public void SetEndInteractionAction(Action action) {
         _endInteractionAction = action;
@@ -203,13 +209,13 @@ public class Interaction {
             _currentState.ActivateDefault();
         }
     }
-    //public void SetExplorerMinion(Minion minion) {
-    //    _explorerMinion = minion;
-    //    //if(_explorerMinion != null) {
-    //    //    _currentState.CreateLogs();
-    //    //    _currentState.SetDescription();
-    //    //}
-    //}
+    public void SetExplorerMinion(Minion minion) {
+        _explorerMinion = minion;
+        //if(_explorerMinion != null) {
+        //    _currentState.CreateLogs();
+        //    _currentState.SetDescription();
+        //}
+    }
     public void SetCharacterInvolved(Character character) {
         _characterInvolved = character;
         if(_characterInvolved != null) {

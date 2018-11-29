@@ -26,7 +26,9 @@ public class InteractionManager : MonoBehaviour {
     private void Awake() {
         Instance = this;
     }
-
+    private void Start() {
+        Messenger.AddListener<Interaction>(Signals.CLICKED_INTERACTION_BUTTON, OnClickInteraction);
+    }
     public Interaction CreateNewInteraction(INTERACTION_TYPE interactionType, BaseLandmark interactable) {
         Interaction createdInteraction = null;
         switch (interactionType) {
@@ -157,6 +159,13 @@ public class InteractionManager : MonoBehaviour {
             return roleDefaultInteractions[role];
         }
         return null;
+    }
+    public void OnClickInteraction(Interaction interaction) {
+        if(interaction != null) {
+            interaction.CancelSecondTimeOut();
+            interaction.OnInteractionActive();
+            InteractionUI.Instance.OpenInteractionUI(interaction);
+        }
     }
 }
 

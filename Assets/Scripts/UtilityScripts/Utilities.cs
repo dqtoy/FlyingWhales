@@ -305,7 +305,7 @@ public class Utilities : MonoBehaviour {
         return newText;
     }
     public static string CustomPronounReplacer(string wordToBeReplaced, List<LogFiller> objectLog) {
-        LOG_IDENTIFIER identifier = Utilities.logIdentifiers[wordToBeReplaced.Substring(1, 2)];
+        LOG_IDENTIFIER identifier = Utilities.logIdentifiers[wordToBeReplaced.Substring(1, wordToBeReplaced.Length - 2)];
         string wordToReplace = string.Empty;
         //		string value = wordToBeReplaced.Substring(1, 2);
         string strIdentifier = identifier.ToString();
@@ -320,6 +320,8 @@ public class Utilities : MonoBehaviour {
             logIdentifier = LOG_IDENTIFIER.TARGET_CHARACTER;
         } else if (strIdentifier.Contains("FACTION_LEADER_3")) {
             logIdentifier = LOG_IDENTIFIER.FACTION_LEADER_3;
+        } else if (strIdentifier.Contains("MINION")) {
+            logIdentifier = LOG_IDENTIFIER.MINION_NAME;
         }
         for (int i = 0; i < objectLog.Count; i++) {
             if (objectLog[i].identifier == logIdentifier) {
@@ -333,8 +335,8 @@ public class Utilities : MonoBehaviour {
     }
     public static string CustomStringReplacer(string wordToBeReplaced, ref List<LogFiller> objectLog) {
         string wordToReplace = string.Empty;
-        string strLogIdentifier = wordToBeReplaced.Remove(0, 1);
-        strLogIdentifier = strLogIdentifier.Remove((strLogIdentifier.Length - 1), 1);
+        string strLogIdentifier = wordToBeReplaced.Substring(1, wordToBeReplaced.Length - 2);
+        //strLogIdentifier = strLogIdentifier.Remove((strLogIdentifier.Length - 1), 1);
         LOG_IDENTIFIER identifier = Utilities.logIdentifiers[strLogIdentifier];
         if (wordToBeReplaced.EndsWith("@")) {
             for (int i = 0; i < objectLog.Count; i++) {

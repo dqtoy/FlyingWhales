@@ -419,14 +419,14 @@ public class AreaInfoUI : UIMenu {
             HideMinionAssignmentParty();
         }
     }
-    private void ResetMinionAssignment() {
+    public void ResetMinionAssignment() {
         _assignedMinion = null;
         minionAssignmentPortrait.gameObject.SetActive(false);
         minionAssignmentDescription.gameObject.SetActive(true);
         minionAssignmentConfirmButton.gameObject.SetActive(false);
         minionAssignmentRecallButton.gameObject.SetActive(false);
     }
-    private void ResetMinionAssignmentParty() {
+    public void ResetMinionAssignmentParty() {
         for (int i = 0; i < minionAssignmentPartyPortraits.Length; i++) {
             _assignedParty[i] = null;
             minionAssignmentPartyPortraits[i].gameObject.SetActive(false);

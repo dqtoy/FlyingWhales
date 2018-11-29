@@ -45,11 +45,11 @@ public class InvestigationMinionDraggableItem : DraggableItem {
                 if (UIManager.Instance.playerLandmarkInfoUI.isShowing) {
                     UIManager.Instance.playerLandmarkInfoUI.AssignMinionToInvestigate(null);
                 }
-                if (UIManager.Instance.landmarkInfoUI.isShowing) {
+                if (UIManager.Instance.areaInfoUI.isShowing) {
                     if (_index == -1) {
-                        UIManager.Instance.landmarkInfoUI.AssignMinionToInvestigate(null);
+                        UIManager.Instance.areaInfoUI.AssignMinionToInvestigate(null);
                     } else {
-                        UIManager.Instance.landmarkInfoUI.AssignPartyMinionToInvestigate(null, _index);
+                        UIManager.Instance.areaInfoUI.AssignPartyMinionToInvestigate(null, _index);
                     }
                 }
             }

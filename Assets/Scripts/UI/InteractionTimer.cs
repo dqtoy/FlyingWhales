@@ -15,7 +15,13 @@ public class InteractionTimer : MonoBehaviour {
     private int _currentTimerTick;
     private bool _isStopped;
     private bool _isPaused;
+    private Interaction _interaction;
 
+    #region getters/setters
+    public Interaction interaction {
+        get { return _interaction; }
+    }
+    #endregion
     public void SetTimer(int ticks) {
         _timer = ticks;
         if(_timer == -1) {
@@ -60,12 +66,16 @@ public class InteractionTimer : MonoBehaviour {
         _currentTimerTick = _timer;
         _isStopped = false;
     }
-    public void ShowInteractionForeground() {
+    public void ShowInteractionForeground(Interaction interaction) {
+        _interaction = interaction;
         interactionForegroundGO.SetActive(true);
         noInteractionForegroundGO.SetActive(false);
     }
     public void ShowNoInteractionForeground() {
         interactionForegroundGO.SetActive(false);
         noInteractionForegroundGO.SetActive(true);
+    }
+    public void OnClickTimer() {
+        Messenger.Broadcast(Signals.CLICKED_INTERACTION_BUTTON, _interaction);
     }
 }

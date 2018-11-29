@@ -10,6 +10,10 @@ public class MinionCriticalFail : Interaction {
     }
 
     #region Overrides
+    public override void Initialize() {
+        SetExplorerMinion(interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion);
+        base.Initialize();
+    }
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
         if (explorerMinion.icharacter.characterClass.jobType == JOB.RAIDER) {

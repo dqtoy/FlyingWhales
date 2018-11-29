@@ -170,7 +170,7 @@ public class LandmarkInvestigation {
         Messenger.AddListener(Signals.HOUR_STARTED, OnExploreTick);
         _landmark.landmarkVisual.SetAndStartInteractionTimer(_duration);
         //_landmark.landmarkVisual.ShowNoInteractionForeground();
-        _landmark.landmarkVisual.ShowInteractionTimer();
+        _landmark.landmarkVisual.ShowInteractionTimer(_currentInteraction);
     }
     public void UnexploreLandmark() {
         if (_landmark.isBeingInspected) {

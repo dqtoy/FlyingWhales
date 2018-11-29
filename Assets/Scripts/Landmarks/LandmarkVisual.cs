@@ -133,9 +133,9 @@ public class LandmarkVisual : MonoBehaviour {
     //}
 
     #region Interaction
-    public void ShowInteractionTimer() {
+    public void ShowInteractionTimer(Interaction interaction) {
         interactionTimer.gameObject.SetActive(true);
-        interactionTimer.ShowInteractionForeground();
+        interactionTimer.ShowInteractionForeground(interaction);
     }
     public void HideInteractionTimer() {
         interactionTimer.gameObject.SetActive(false);
@@ -181,7 +181,7 @@ public class LandmarkVisual : MonoBehaviour {
         interactionTimerJobAction.SetPauseState(state);
     }
     public void OnClickInteractionButton() {
-        Messenger.Broadcast(Signals.CLICKED_INTERACTION_BUTTON, _landmark);
+        interactionTimer.OnClickTimer();
     }
     #endregion
 }
