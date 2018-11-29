@@ -80,9 +80,10 @@ public class ArmyAttacks : Interaction {
                 name = "Redirect their attack.",
                 duration = 0,
                 needsMinion = false,
+                jobNeeded = JOB.RAIDER,
                 neededObjects = new List<System.Type>() { typeof(LocationIntel) },
                 effect = () => RedirectAttackEffect(state),
-                canBeDoneAction = () => AssignedMinionIsOfClass("Greed"), //Needs greed minion
+                //canBeDoneAction = () => AssignedMinionIsOfClass("Greed"), //Needs greed minion
                 doesNotMeetRequirementsStr = "Minion must be Greed.",
             };
             ActionOption doNothing = new ActionOption {

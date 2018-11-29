@@ -10,6 +10,7 @@ public class Job {
     protected bool _hasCaptureEvent;
     protected Character _character;
     protected Interaction _createdInteraction;
+    protected INTERACTION_TYPE[] _characterInteractions; //For non-minion characters only
 
     private int _currentTick;
     private bool _isJobActionPaused;
@@ -91,6 +92,7 @@ public class Job {
         _currentTick++;
 
     }
+
     protected void SetJobActionPauseState(bool state) {
         _isJobActionPaused = state;
         _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.SetTimerPauseStateJob(_isJobActionPaused);
@@ -104,6 +106,14 @@ public class Job {
     private void CatchRandomEvent() {
         if (_isJobActionPaused) { return; }
         CaptureRandomLandmarkEvent();
+    }
+    public void CreateRandomInteractionForNonMinionCharacters() {
+        INTERACTION_TYPE type = INTERACTION_TYPE.ABANDONED_HOUSE;
+        if(_characterInteractions != null) {
+            type = _characterInteractions[UnityEngine.Random.Range(0, _characterInteractions.Length)];
+        }
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(type, character.specificLocation as BaseLandmark);
+        character.AddInteraction(interaction);
     }
     #endregion
 }

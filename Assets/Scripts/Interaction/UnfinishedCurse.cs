@@ -68,8 +68,9 @@ public class UnfinishedCurse : Interaction {
                 name = "Harness its magic into Mana.",
                 duration = 0,
                 needsMinion = false,
+                jobNeeded = JOB.EXPLORER,
                 effect = () => HarnessMagicEffect(state),
-                canBeDoneAction = () => AssignedMinionIsOfClass("Gluttony"),
+                //canBeDoneAction = () => AssignedMinionIsOfClass("Gluttony"),
                 doesNotMeetRequirementsStr = "Minion must be Gluttony.",
             };
             ActionOption leaveAlone = new ActionOption {
