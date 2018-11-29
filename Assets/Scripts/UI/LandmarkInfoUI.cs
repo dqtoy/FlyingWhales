@@ -50,6 +50,7 @@ public class LandmarkInfoUI : UIMenu {
     [SerializeField] private LandmarkCharacterItem[] defenderSlots;
     [SerializeField] private GameObject defenderGroupPrefab;
     [SerializeField] private ScrollRect defendersScrollView;
+    [SerializeField] private CustomHorizaontalLayout defendersLayout;
 
     //[Space(10)]
     //[Header("Others")]
@@ -100,8 +101,8 @@ public class LandmarkInfoUI : UIMenu {
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
         Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, OnPartyEnteredLandmark);
         Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, OnPartyExitedLandmark);
-        Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_ADDED, OnResidentAddedToLandmark);
-        Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_REMOVED, OnResidentRemovedFromLandmark);
+        //Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_ADDED, OnResidentAddedToLandmark);
+        //Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_REMOVED, OnResidentRemovedFromLandmark);
         Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
         _assignedParty = new Minion[4];
     }
@@ -445,6 +446,8 @@ public class LandmarkInfoUI : UIMenu {
             GameObject currGO = UIManager.Instance.InstantiateUIObject(defenderGroupPrefab.name, defendersScrollView.content);
             currGO.GetComponent<DefenderGroupItem>().SetDefender(currGroup);
         }
+        defendersLayout.UpdateChildren();
+        defendersLayout.Execute();
         //for (int i = 0; i < defenderSlots.Length; i++) {
         //    LandmarkCharacterItem currSlot = defenderSlots[i];
         //    currSlot.SetCharacter(null, _activeLandmark, true);
