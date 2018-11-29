@@ -264,6 +264,7 @@ public class CharacterManager : MonoBehaviour {
     }
     public string GetRandomDeadlySinsClassName() {
         //return "Envy";
+        return "Sloth";
         return _sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, _sevenDeadlySinsClassNames.Length)];
     }
     public string GetRandomClassName() {

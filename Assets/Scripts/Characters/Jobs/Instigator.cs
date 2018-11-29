@@ -85,12 +85,15 @@ public class Instigator : Job {
             }
             SetJobActionPauseState(true);
             SetCreatedInteraction(choices[UnityEngine.Random.Range(0, choices.Count)]);
+            _createdInteraction.SetEndInteractionAction(() => SetJobActionPauseState(false));
+            _createdInteraction.ScheduleSecondTimeOut();
         } else if (result == "Crit Fail") {
             SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile));
+            _createdInteraction.SetEndInteractionAction(() => SetJobActionPauseState(false));
+            _createdInteraction.ScheduleSecondTimeOut();
+            _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(_createdInteraction);
         }
-        _createdInteraction.SetEndInteractionAction(() => SetJobActionPauseState(false));
-        _createdInteraction.ScheduleSecondTimeOut();
-        _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(_createdInteraction);
+
     }
     public override int GetSuccessRate() {
         int baseRate = 60;
