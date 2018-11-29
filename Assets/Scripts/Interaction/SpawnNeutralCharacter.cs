@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using ECS;
 
-public class SpawnCharacter : Interaction {
+public class SpawnNeutralCharacter : Interaction {
 
     private string _classNameToBeSpawned;
 
-    public SpawnCharacter(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.SPAWN_CHARACTER, 70) {
-        _name = "Spawn Character";
-        _jobFilter = new JOB[] { JOB.DISSUADER };
+    public SpawnNeutralCharacter(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER, 70) {
+        _name = "Spawn Neutral Character";
+        _jobFilter = new JOB[] { JOB.DISSUADER, JOB.RECRUITER };
     }
 
     #region Overrides
@@ -17,8 +17,8 @@ public class SpawnCharacter : Interaction {
         InteractionState startState = new InteractionState("Start", this);
         InteractionState successCancellationState = new InteractionState("Success Cancellation", this);
         InteractionState failCancellationState = new InteractionState("Fail Cancellation", this);
-        InteractionState successCurseState = new InteractionState("Success Curse", this);
-        InteractionState failCurseState = new InteractionState("Fail Curse", this);
+        InteractionState successRecruitState = new InteractionState("Success Recruit", this);
+        InteractionState failRecruitState = new InteractionState("Fail Recruit", this);
         InteractionState normalSpawnState = new InteractionState("Normal Spawn", this);
 
         CreateActionOptions(startState);
@@ -26,15 +26,15 @@ public class SpawnCharacter : Interaction {
         startState.SetEffect(() => StartEffect(startState), false);
         successCancellationState.SetEffect(() => SuccessCancelEffect(successCancellationState));
         failCancellationState.SetEffect(() => FailCancelEffect(failCancellationState));
-        successCurseState.SetEffect(() => SuccessCurseEffect(successCurseState));
-        failCurseState.SetEffect(() => FailCurseEffect(failCurseState));
+        successRecruitState.SetEffect(() => SuccessRecruitEffect(successRecruitState));
+        failRecruitState.SetEffect(() => FailRecruitEffect(failRecruitState));
         normalSpawnState.SetEffect(() => NormalSpawnEffect(normalSpawnState));
 
         _states.Add(startState.name, startState);
         _states.Add(successCancellationState.name, successCancellationState);
         _states.Add(failCancellationState.name, failCancellationState);
-        _states.Add(successCurseState.name, successCurseState);
-        _states.Add(failCurseState.name, failCurseState);
+        _states.Add(successRecruitState.name, successRecruitState);
+        _states.Add(failRecruitState.name, failRecruitState);
         _states.Add(normalSpawnState.name, normalSpawnState);
 
         SetCurrentState(startState);
@@ -50,14 +50,14 @@ public class SpawnCharacter : Interaction {
                 effect = () => StopOption(),
                 doesNotMeetRequirementsStr = "Minion must be Dissuader."
             };
-            ActionOption curseOption = new ActionOption {
+            ActionOption recruitOption = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 20, currency = CURRENCY.MANA },
-                name = "Curse the new character.",
+                name = "Beguile it to our side.",
                 duration = 0,
-                jobNeeded = JOB.DISSUADER,
-                effect = () => CurseOption(),
-                doesNotMeetRequirementsStr = "Minion must be Dissuader."
+                jobNeeded = JOB.RECRUITER,
+                effect = () => RecruitOption(),
+                doesNotMeetRequirementsStr = "Minion must be Recruiter."
             };
             ActionOption doNothingOption = new ActionOption {
                 interactionState = state,
@@ -69,7 +69,7 @@ public class SpawnCharacter : Interaction {
             };
 
             state.AddActionOption(stopOption);
-            state.AddActionOption(curseOption);
+            state.AddActionOption(recruitOption);
             state.AddActionOption(doNothingOption);
             state.SetDefaultOption(doNothingOption);
         }
@@ -84,10 +84,10 @@ public class SpawnCharacter : Interaction {
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
     }
-    private void CurseOption() {
+    private void RecruitOption() {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement("Success Curse", explorerMinion.icharacter.job.GetSuccessRate());
-        effectWeights.AddElement("Fail Curse", explorerMinion.icharacter.job.GetFailRate());
+        effectWeights.AddElement("Success Recruit", explorerMinion.icharacter.job.GetSuccessRate());
+        effectWeights.AddElement("Fail Recruit", explorerMinion.icharacter.job.GetFailRate());
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
     }
@@ -112,58 +112,49 @@ public class SpawnCharacter : Interaction {
         state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.race.ToString()), LOG_IDENTIFIER.STRING_1);
         state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
 
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.race.ToString()), LOG_IDENTIFIER.STRING_1));
         state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
     }
     private void FailCancelEffect(InteractionState state) {
-        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.race, Utilities.GetRandomGender(), interactable.tileLocation.areaOfTile.owner, interactable);
+        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.race, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
 
-        state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.race.ToString()), LOG_IDENTIFIER.STRING_1);
         state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
-        state.descriptionLog.AddToFillers(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.race.ToString()), LOG_IDENTIFIER.STRING_1));
         state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
         state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
-    private void SuccessCurseEffect(InteractionState state) {
-        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.race, Utilities.GetRandomGender(), interactable.tileLocation.areaOfTile.owner, interactable);
-        Trait curse = AttributeManager.Instance.allTraits["Placeholder Curse 1"];
-        createdCharacter.AddTrait(curse);
+    private void SuccessRecruitEffect(InteractionState state) {
+        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.race, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
+        createdCharacter.faction.RemoveCharacter(createdCharacter);
+        PlayerManager.Instance.player.playerFaction.AddNewCharacter(createdCharacter);
 
         state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.race.ToString()), LOG_IDENTIFIER.STRING_1);
         state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
         state.descriptionLog.AddToFillers(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.descriptionLog.AddToFillers(null, curse.name, LOG_IDENTIFIER.OTHER);
 
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.race.ToString()), LOG_IDENTIFIER.STRING_1));
         state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
         state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(null, curse.name, LOG_IDENTIFIER.OTHER));
     }
-    private void FailCurseEffect(InteractionState state) {
-        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.race, Utilities.GetRandomGender(), interactable.tileLocation.areaOfTile.owner, interactable);
+    private void FailRecruitEffect(InteractionState state) {
+        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.race, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
 
         state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.race.ToString()), LOG_IDENTIFIER.STRING_1);
         state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
 
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.race.ToString()), LOG_IDENTIFIER.STRING_1));
         state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
         state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalSpawnEffect(InteractionState state) {
-        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.race, Utilities.GetRandomGender(), interactable.tileLocation.areaOfTile.owner, interactable);
+        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.race, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
 
         state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.race.ToString()), LOG_IDENTIFIER.STRING_1);
         state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
         state.descriptionLog.AddToFillers(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.race.ToString()), LOG_IDENTIFIER.STRING_1));
         state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
         state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));

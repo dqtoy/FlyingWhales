@@ -415,7 +415,8 @@ public class StructureObj : IObject {
     private void DailyInteractionGeneration() {
         DefaultAllExistingInteractions();
         if(_currentInteractionTick == GameManager.Instance.hour) {
-            GenerateDailyInteraction();
+            //GenerateDailyInteraction();
+            CreateRandomInteractionForNonMinionCharacters();
             SetDailyInteractionGenerationTick();
         }
     }
@@ -425,6 +426,22 @@ public class StructureObj : IObject {
                 _objectLocation.currentInteractions[i].TimedOutRunDefault();
                 i--;
             }
+        }
+    }
+    public void CreateRandomInteractionForNonMinionCharacters() {
+        if (_objectLocation.tileLocation.isCorrupted || _objectLocation.tileLocation.areaOfTile.race == RACE.NONE) { return; }
+        int chance = UnityEngine.Random.Range(0, 100);
+        if(chance < 40) {
+            INTERACTION_TYPE type = INTERACTION_TYPE.SPAWN_CHARACTER;
+            //int chance2 = UnityEngine.Random.Range(0, 2);
+            //if(chance2 == 0) {
+            //    type = INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER;
+            //}
+            if (_objectLocation.tileLocation.areaOfTile.owner == null) {
+                type = INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER;
+            }
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(type, _objectLocation);
+            _objectLocation.AddInteraction(interaction);
         }
     }
     #endregion

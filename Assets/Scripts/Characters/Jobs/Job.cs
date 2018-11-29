@@ -37,6 +37,7 @@ public class Job {
         _jobType = jobType;
         _name = Utilities.NormalizeString(_jobType.ToString());
         _character = character;
+        _characterInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.RETURN_HOME };
     }
 
     #region Virtuals
@@ -112,8 +113,10 @@ public class Job {
     public void CreateRandomInteractionForNonMinionCharacters() {
         if(_characterInteractions != null) {
             INTERACTION_TYPE type = _characterInteractions[UnityEngine.Random.Range(0, _characterInteractions.Length)];
-            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(type, character.specificLocation as BaseLandmark);
-            character.AddInteraction(interaction);
+            if (InteractionManager.Instance.CanCreateInteraction(type, character)) {
+                Interaction interaction = InteractionManager.Instance.CreateNewInteraction(type, character.specificLocation as BaseLandmark);
+                character.AddInteraction(interaction);
+            }
         }
     }
     #endregion
