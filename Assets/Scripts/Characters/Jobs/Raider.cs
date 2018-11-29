@@ -58,6 +58,14 @@ public class Raider : Job {
             GoBackHome();
         }
     }
+    public override int GetSuccessRate() {
+        int baseRate = 60;
+        int multiplier = _character.level - 5;
+        if (multiplier < 0) {
+            multiplier = 0;
+        }
+        return baseRate + multiplier;
+    }
     #endregion
 
     private void RaidSuccess() {

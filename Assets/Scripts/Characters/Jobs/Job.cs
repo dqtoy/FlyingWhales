@@ -46,6 +46,8 @@ public class Job {
     public virtual void DoJobAction() {
         Debug.Log(GameManager.Instance.TodayLogString() + " Doing job action: " + character.name + "(" + jobType.ToString() + ")");
     }
+    public virtual int GetSuccessRate() { return 0; }
+    public virtual int GetFailRate() { return 40; }
     #endregion
 
     #region Utilities
@@ -108,12 +110,11 @@ public class Job {
         CaptureRandomLandmarkEvent();
     }
     public void CreateRandomInteractionForNonMinionCharacters() {
-        INTERACTION_TYPE type = INTERACTION_TYPE.ABANDONED_HOUSE;
         if(_characterInteractions != null) {
-            type = _characterInteractions[UnityEngine.Random.Range(0, _characterInteractions.Length)];
+            INTERACTION_TYPE type = _characterInteractions[UnityEngine.Random.Range(0, _characterInteractions.Length)];
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(type, character.specificLocation as BaseLandmark);
+            character.AddInteraction(interaction);
         }
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(type, character.specificLocation as BaseLandmark);
-        character.AddInteraction(interaction);
     }
     #endregion
 }

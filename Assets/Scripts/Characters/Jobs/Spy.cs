@@ -101,6 +101,14 @@ public class Spy : Job {
     public override void ApplyActionDuration() {
         _actionDuration = 80 - (2 * (Mathf.Max(_character.level - 5, 0)));
     }
+    public override int GetSuccessRate() {
+        int baseRate = 60;
+        int multiplier = _character.level - 5;
+        if (multiplier < 0) {
+            multiplier = 0;
+        }
+        return baseRate + multiplier;
+    }
     #endregion
 
     private void Success(Intel chosenIntel) {

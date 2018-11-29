@@ -2950,7 +2950,8 @@ namespace ECS {
         public void DailyInteractionGeneration() {
             DefaultAllExistingInteractions();
             if (_currentInteractionTick == GameManager.Instance.hour) {
-                GenerateDailyInteraction();
+                job.CreateRandomInteractionForNonMinionCharacters();
+                //GenerateDailyInteraction();
                 SetDailyInteractionGenerationTick();
             }
         }
