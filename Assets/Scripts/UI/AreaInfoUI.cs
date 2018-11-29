@@ -43,6 +43,7 @@ public class AreaInfoUI : UIMenu {
     [SerializeField] private LandmarkCharacterItem[] defenderSlots;
     [SerializeField] private GameObject defenderGroupPrefab;
     [SerializeField] private ScrollRect defendersScrollView;
+    [SerializeField] private HorizontalScrollSnap defendersScrollSnap;
 
     //[Space(10)]
     //[Header("Others")]
@@ -106,8 +107,8 @@ public class AreaInfoUI : UIMenu {
             ResetMinionAssignment();
             ResetMinionAssignmentParty();
         }
-        UpdateDefenders();
         UpdateHiddenUI();
+        UpdateDefenders();
         UpdateLandmarkInfo();
         UpdateCharacters();
         ResetScrollPositions();
@@ -120,6 +121,9 @@ public class AreaInfoUI : UIMenu {
     }
     public override void CloseMenu() {
         base.CloseMenu();
+        GameObject[] objects;
+        defendersScrollSnap.RemoveAllChildren(out objects);
+        //Utilities.DestroyChildren(defendersScrollView.content);
         if (_activeArea != null) {
             _activeArea.SetOutlineState(false);
         }
@@ -360,12 +364,12 @@ public class AreaInfoUI : UIMenu {
 
     #region Defenders
     private void UpdateDefenders() {
-        Utilities.DestroyChildren(defendersScrollView.content);
         for (int i = 0; i < _activeArea.defenderGroups.Count; i++) {
             DefenderGroup currGroup = _activeArea.defenderGroups[i];
             GameObject currGO = UIManager.Instance.InstantiateUIObject(defenderGroupPrefab.name, defendersScrollView.content);
             currGO.GetComponent<DefenderGroupItem>().SetDefender(currGroup);
         }
+        defendersScrollSnap.InitialiseChildObjectsFromScene();
     }
     #endregion
 

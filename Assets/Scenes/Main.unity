@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.22380304, g: 0.24376729, b: 0.26534945, a: 1}
+  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -12465,7 +12465,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1, y: 23}
+  m_AnchoredPosition: {x: 0, y: 23}
   m_SizeDelta: {x: 442, y: 110}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &308350275
@@ -32054,8 +32054,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000030517578, y: 0}
-  m_SizeDelta: {x: -0.00066297734, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &725284354
 Prefab:
@@ -37781,6 +37781,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 861656557}
+  - component: {fileID: 861656558}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -37801,11 +37802,24 @@ RectTransform:
   m_Father: {fileID: 308350274}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000030517578, y: 0}
-  m_SizeDelta: {x: -0.00066297734, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &861656558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 861656556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 875ced400d5212d40a2346d40904bb7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  children: []
+  spacing: 5
 --- !u!1 &862754800
 GameObject:
   m_ObjectHideFlags: 0
@@ -40116,6 +40130,7 @@ MonoBehaviour:
   defenderGroupPrefab: {fileID: 1662102530042056, guid: c05e125abbaae31498da82dac4e008dd,
     type: 2}
   defendersScrollView: {fileID: 308350276}
+  defendersLayout: {fileID: 861656558}
   investigationGO: {fileID: 1044067739}
   minionAssignmentGO: {fileID: 1734725569}
   minionAssignmentPortrait: {fileID: 1033307594}
@@ -40253,7 +40268,7 @@ MonoBehaviour:
   MaskBuffer: 1
   JumpOnEnable: 1
   RestartOnEnable: 1
-  UseParentTransform: 1
+  UseParentTransform: 0
   ChildObjects: []
   m_OnSelectionChangeStartEvent:
     m_PersistentCalls:
@@ -76390,6 +76405,8 @@ MonoBehaviour:
   defenderGroupPrefab: {fileID: 1662102530042056, guid: c05e125abbaae31498da82dac4e008dd,
     type: 2}
   defendersScrollView: {fileID: 916010549}
+  defendersScrollSnap: {fileID: 916010546}
+  defendersLayout: {fileID: 0}
   investigationGO: {fileID: 914759290}
   minionAssignmentGO: {fileID: 1862552079}
   minionAssignmentPortrait: {fileID: 712381657}
