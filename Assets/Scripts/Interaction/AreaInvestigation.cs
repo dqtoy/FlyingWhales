@@ -92,9 +92,8 @@ public class AreaInvestigation {
     public void RecallMinion(string action) {
         if (_isExploring && action == "explore") {
             _assignedMinion.TravelBackFromAssignment(() => SetMinionRecallExploreState(false));
-            Character character = _assignedMinion.icharacter as Character;
-            character.job.StopJobAction();
-            character.job.StopCreatedInteraction();
+            _assignedMinion.icharacter.job.StopJobAction();
+            _assignedMinion.icharacter.job.StopCreatedInteraction();
             //Messenger.RemoveListener(Signals.HOUR_STARTED, OnExploreTick);
             UnexploreLandmark();
             SetMinionRecallExploreState(true);
@@ -110,11 +109,10 @@ public class AreaInvestigation {
     public void CancelInvestigation(string action) {
         if (_isExploring && action == "explore") {
             _assignedMinion.SetEnabledState(true);
-            Character character = _assignedMinion.icharacter as Character;
-            character.job.StopJobAction();
+            _assignedMinion.icharacter.job.StopJobAction();
             //character.job.StopCreatedInteraction();
-            if (!character.isDead) {
-                character.job.StopCreatedInteraction();
+            if (!_assignedMinion.icharacter.isDead) {
+                _assignedMinion.icharacter.job.StopCreatedInteraction();
             }
 
             //if (_currentlyExploredLandmark != null) {
@@ -147,8 +145,7 @@ public class AreaInvestigation {
         if (!_area.hasBeenInspected) {
             _area.SetHasBeenInspected(true);
         }
-        Character character = _assignedMinion.icharacter as Character;
-        character.job.StartJobAction();
+        _assignedMinion.icharacter.job.StartJobAction();
         //_duration = 30;
         //_currentTick = 0;
         //Messenger.AddListener(Signals.HOUR_STARTED, OnExploreTick);

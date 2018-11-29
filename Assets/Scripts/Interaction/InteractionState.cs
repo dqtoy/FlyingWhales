@@ -132,12 +132,12 @@ public class InteractionState {
 
             if (_interaction.explorerMinion != null) {
                 logFillers.Add(new LogFiller(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME));
-                if (interaction.characterInvolved != null) {
-                    logFillers.Add(new LogFiller(interaction.characterInvolved, interaction.characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
-                }
-                if (!AlreadyHasLogFiller(LOG_IDENTIFIER.LANDMARK_1)) {
-                    logFillers.Add(new LogFiller(interaction.interactable.tileLocation.areaOfTile, interaction.interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
-                }
+            }
+            if (interaction.characterInvolved != null) {
+                logFillers.Add(new LogFiller(interaction.characterInvolved, interaction.characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+            }
+            if (!AlreadyHasLogFiller(LOG_IDENTIFIER.LANDMARK_1)) {
+                logFillers.Add(new LogFiller(interaction.interactable.tileLocation.areaOfTile, interaction.interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
             }
         }
     }

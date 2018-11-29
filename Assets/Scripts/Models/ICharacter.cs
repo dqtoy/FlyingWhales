@@ -46,6 +46,7 @@ public interface ICharacter {
     BaseLandmark homeLandmark { get; }
     CharacterRole role { get; } //Character only
     CharacterClass characterClass { get; } //Character only
+    Job job { get; } //Character only
     CharacterPortrait characterPortrait { get; }
     Weapon equippedWeapon { get; }
     Armor equippedArmor { get; }
