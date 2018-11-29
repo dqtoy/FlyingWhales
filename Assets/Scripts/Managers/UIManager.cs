@@ -246,6 +246,9 @@ public class UIManager : MonoBehaviour {
         if (playerLandmarkInfoUI.isShowing) {
             playerLandmarkInfoUI.CloseMenu();
         }
+        if (areaInfoUI.isShowing) {
+            areaInfoUI.CloseMenu();
+        }
     }
 
     #region Font Utilities
@@ -638,7 +641,49 @@ public class UIManager : MonoBehaviour {
     //public void ShowMainUI() {
     //    mainUIGO.SetActive(true);
     //}
-
+    #region Area Info
+    [Space(10)]
+    [Header("Area Info")]
+    [SerializeField]
+    internal AreaInfoUI areaInfoUI;
+    public void ShowAreaInfo(Area area, int indexToggleToBeActivated = 0) {
+        //HideMainUI();
+        //if (factionInfoUI.isShowing) {
+        //    factionInfoUI.HideMenu();
+        //}
+        if (characterInfoUI.isShowing) {
+            characterInfoUI.CloseMenu();
+        }
+        //if (hexTileInfoUI.isShowing) {
+        //    hexTileInfoUI.HideMenu();
+        //}
+        //if (questInfoUI.isShowing) {
+        //    questInfoUI.HideMenu();
+        //}
+        if (partyinfoUI.isShowing) {
+            partyinfoUI.CloseMenu();
+        }
+        if (monsterInfoUI.isShowing) {
+            monsterInfoUI.CloseMenu();
+        }
+        if (playerLandmarkInfoUI.isShowing) {
+            playerLandmarkInfoUI.CloseMenu();
+        }
+        if (landmarkInfoUI.isShowing) {
+            landmarkInfoUI.CloseMenu();
+        }
+        areaInfoUI.SetData(area);
+        areaInfoUI.OpenMenu();
+        areaInfoUI.UpdateInvestigation(indexToggleToBeActivated);
+        areaInfoUI.CenterOnCoreLandmark();
+        //		playerActionsUI.ShowPlayerActionsUI ();
+    }
+    public void UpdateAreaInfo() {
+        if (areaInfoUI.isShowing) {
+            areaInfoUI.UpdateLandmarkInfo();
+        }
+    }
+    #endregion
     #region Landmark Info
     [Space(10)]
     [Header("Landmark Info")]
@@ -665,6 +710,9 @@ public class UIManager : MonoBehaviour {
         }
         if (playerLandmarkInfoUI.isShowing) {
             playerLandmarkInfoUI.CloseMenu();
+        }
+        if (areaInfoUI.isShowing) {
+            areaInfoUI.CloseMenu();
         }
         landmarkInfoUI.SetData(landmark);
         landmarkInfoUI.OpenMenu();
@@ -695,6 +743,9 @@ public class UIManager : MonoBehaviour {
         }
         if (landmarkInfoUI.isShowing) {
             landmarkInfoUI.CloseMenu();
+        }
+        if (areaInfoUI.isShowing) {
+            areaInfoUI.CloseMenu();
         }
         playerLandmarkInfoUI.SetData(landmark);
         playerLandmarkInfoUI.OpenMenu();
@@ -756,6 +807,9 @@ public class UIManager : MonoBehaviour {
         if (playerLandmarkInfoUI.isShowing) {
             playerLandmarkInfoUI.CloseMenu();
         }
+        if (areaInfoUI.isShowing) {
+            areaInfoUI.CloseMenu();
+        }
         //if (factionInfoUI.isShowing) {
         //    factionInfoUI.HideMenu();
         //}
@@ -800,6 +854,9 @@ public class UIManager : MonoBehaviour {
         if (playerLandmarkInfoUI.isShowing) {
             playerLandmarkInfoUI.CloseMenu();
         }
+        if (areaInfoUI.isShowing) {
+            areaInfoUI.CloseMenu();
+        }
         //if (factionInfoUI.isShowing) {
         //    factionInfoUI.HideMenu();
         //}
@@ -836,6 +893,9 @@ public class UIManager : MonoBehaviour {
         }
         if (playerLandmarkInfoUI.isShowing) {
             playerLandmarkInfoUI.CloseMenu();
+        }
+        if (areaInfoUI.isShowing) {
+            areaInfoUI.CloseMenu();
         }
         //if (factionInfoUI.isShowing) {
         //    factionInfoUI.HideMenu();
@@ -1143,7 +1203,7 @@ public class UIManager : MonoBehaviour {
 
     #region Interaction
     public void ShowInteractableInfo(BaseLandmark interactable) {
-        ShowLandmarkInfo(interactable);
+        ShowAreaInfo(interactable.tileLocation.areaOfTile);
         //if (interactable is BaseLandmark) {
         //    ShowLandmarkInfo(interactable);
         //} else if (interactable is Character) {

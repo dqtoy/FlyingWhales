@@ -1091,7 +1091,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
         if (this.landmarkOnTile != null) {
             if (!this.landmarkOnTile.tileLocation.isCorrupted) {
-                UIManager.Instance.ShowLandmarkInfo(this.landmarkOnTile);
+                UIManager.Instance.ShowAreaInfo(this.areaOfTile);
             } else {
                 UIManager.Instance.ShowPlayerLandmarkInfo(this.landmarkOnTile);
             }

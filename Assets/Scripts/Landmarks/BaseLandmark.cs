@@ -415,30 +415,35 @@ public class BaseLandmark : ILocation, IInteractable {
 
     #region Location
     public void AddCharacterToLocation(Party iparty) {
-        if (!_charactersAtLocation.Contains(iparty)) {
-            //if (!IsDefenderOfLandmark(iparty)) {
+        if(iparty.owner.homeLandmark == this) {
+            if (!_charactersAtLocation.Contains(iparty)) {
+                //if (!IsDefenderOfLandmark(iparty)) {
                 _charactersAtLocation.Add(iparty); //only add to characters list if the party is not a defender of the landmark
-            //}
-            //this.tileLocation.RemoveCharacterFromLocation(iparty);
-            if (iparty.specificLocation != null) {
-                iparty.specificLocation.RemoveCharacterFromLocation(iparty);
-            }
-            iparty.SetSpecificLocation(this);
+                //}
+                //this.tileLocation.RemoveCharacterFromLocation(iparty);
+                if (iparty.specificLocation != null) {
+                    iparty.specificLocation.RemoveCharacterFromLocation(iparty);
+                }
+                iparty.SetSpecificLocation(this);
+                tileLocation.areaOfTile.AddResidentAtLocation(iparty.owner as Character);
 #if !WORLD_CREATION_TOOL
-            _landmarkVisual.OnCharacterEnteredLandmark(iparty);
-            Messenger.Broadcast<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, iparty, this);
+                _landmarkVisual.OnCharacterEnteredLandmark(iparty);
+                Messenger.Broadcast<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, iparty, this);
 #endif
+            }
         }
     }
     public void RemoveCharacterFromLocation(Party iparty, bool addToTile = false) {
-        _charactersAtLocation.Remove(iparty);
-        if (addToTile) {
-            this.tileLocation.AddCharacterToLocation(iparty);
-        }
+        if (_charactersAtLocation.Remove(iparty)) {
+            tileLocation.areaOfTile.RemoveResidentAtLocation(iparty.owner as Character);
+            if (addToTile) {
+                this.tileLocation.AddCharacterToLocation(iparty);
+            }
 #if !WORLD_CREATION_TOOL
-        _landmarkVisual.OnCharacterExitedLandmark(iparty);
-        Messenger.Broadcast<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, iparty, this);
+            _landmarkVisual.OnCharacterExitedLandmark(iparty);
+            Messenger.Broadcast<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, iparty, this);
 #endif
+        }
     }
     public void ReplaceCharacterAtLocation(Party ipartyToReplace, Party ipartyToAdd) {
         if (_charactersAtLocation.Contains(ipartyToReplace)) {
@@ -570,6 +575,7 @@ public class BaseLandmark : ILocation, IInteractable {
             if (this._history.Count > 60) {
                 this._history.RemoveAt(0);
             }
+            tileLocation.areaOfTile.AddHistory(log);
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
         }
     }

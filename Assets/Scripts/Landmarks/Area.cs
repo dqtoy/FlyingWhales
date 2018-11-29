@@ -19,10 +19,9 @@ public class Area {
     public LocationIntel locationIntel { get; private set; }
     public List<BaseLandmark> exposedTiles { get; private set; }
     public List<BaseLandmark> unexposedTiles { get; private set; }
-    public List<Character> areaResidents {
-        //Make this more performant, move resident list here
-        get { return GetAreaResidents(); }
-    }
+    public List<Character> areaResidents { get; private set; }
+    public List<Character> residentsAtLocation { get; private set; }
+    public List<Log> history { get; private set; }
     public bool isHighlighted { get; private set; }
     public bool hasBeenInspected { get; private set; }
     public bool areAllLandmarksDead { get; private set; }
@@ -42,8 +41,6 @@ public class Area {
     private List<HexTile> outerTiles;
     private List<SpriteRenderer> outline;
 
-    public List<ICharacter> residents;
-
     #region getters
     public RACE race {
         get { return owner == null ? defaultRace : owner.race; }
@@ -54,10 +51,12 @@ public class Area {
         id = Utilities.SetID(this);
         SetName(RandomNameGenerator.Instance.GetRegionName());
         tiles = new List<HexTile>();
-        residents = new List<ICharacter>();
+        areaResidents = new List<Character>();
+        residentsAtLocation = new List<Character>();
         exposedTiles = new List<BaseLandmark>();
         unexposedTiles = new List<BaseLandmark>();
         defenderGroups = new List<DefenderGroup>();
+        history = new List<Log>();
         areaColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         locationIntel = new LocationIntel(this);
         areaInvestigation = new AreaInvestigation(this); 
@@ -73,10 +72,12 @@ public class Area {
         id = Utilities.SetID(this, data.areaID);
         SetName(data.areaName);
         tiles = new List<HexTile>();
-        residents = new List<ICharacter>();
+        areaResidents = new List<Character>();
+        residentsAtLocation = new List<Character>();
         exposedTiles = new List<BaseLandmark>();
         unexposedTiles = new List<BaseLandmark>();
         defenderGroups = new List<DefenderGroup>();
+        history = new List<Log>();
         areaColor = data.areaColor;
         SetAreaType(data.areaType);
         locationIntel = new LocationIntel(this);
@@ -494,26 +495,6 @@ public class Area {
     }
     #endregion
 
-    #region Classes
-    public bool HasResidentWithClass(string className) {
-        for (int i = 0; i < residents.Count; i++) {
-            if(residents[i].characterClass != null && residents[i].characterClass.className == className) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public List<ICharacter> GetResidentsWithClass(string className) {
-        List<ICharacter> characters = new List<ICharacter>();
-        for (int i = 0; i < residents.Count; i++) {
-            if (residents[i].characterClass != null && residents[i].characterClass.className == className) {
-                characters.Add(residents[i]);
-            }
-        }
-        return characters;
-    }
-    #endregion
-
     #region Camp
     public BaseLandmark CreateCampOnTile(HexTile tile) {
         tile.SetArea(this);
@@ -649,6 +630,9 @@ public class Area {
         }
         return null;
     }
+    public void CenterOnCoreLandmark() {
+        CameraMove.Instance.CenterCameraOn(coreTile.gameObject);
+    }
     #endregion
 
     #region Interactions
@@ -740,6 +724,53 @@ public class Area {
             return defenderGroups[Random.Range(0, defenderGroups.Count)];
         }
         return null;
+    }
+    #endregion
+
+    #region Characters
+    public void AddResident(Character character) {
+        if (!areaResidents.Contains(character)) {
+            areaResidents.Add(character);
+        }
+    }
+    public void RemoveResident(Character character) {
+        areaResidents.Remove(character);
+    }
+    public void AddResidentAtLocation(Character character) {
+        if (!residentsAtLocation.Contains(character)) {
+            residentsAtLocation.Add(character);
+        }
+    }
+    public void RemoveResidentAtLocation(Character character) {
+        residentsAtLocation.Remove(character);
+    }
+    public bool HasResidentWithClass(string className) {
+        for (int i = 0; i < areaResidents.Count; i++) {
+            if (areaResidents[i].characterClass != null && areaResidents[i].characterClass.className == className) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public List<ICharacter> GetResidentsWithClass(string className) {
+        List<ICharacter> characters = new List<ICharacter>();
+        for (int i = 0; i < areaResidents.Count; i++) {
+            if (areaResidents[i].characterClass != null && areaResidents[i].characterClass.className == className) {
+                characters.Add(areaResidents[i]);
+            }
+        }
+        return characters;
+    }
+    #endregion
+
+    #region Logs
+    public void AddHistory(Log log) {
+        if (!history.Contains(log)) {
+            history.Add(log);
+            if (this.history.Count > 60) {
+                this.history.RemoveAt(0);
+            }
+        }
     }
     #endregion
 }

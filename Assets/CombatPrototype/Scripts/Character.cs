@@ -2510,9 +2510,9 @@ namespace ECS {
             this._homeLandmark = newHomeLandmark;
             if (!(this is CharacterArmyUnit)) {
                 if (previousHome != null) {
-                    previousHome.tileLocation.areaOfTile.residents.Remove(this);
+                    previousHome.tileLocation.areaOfTile.RemoveResident(this);
                     if (_homeLandmark != null) {
-                        _homeLandmark.tileLocation.areaOfTile.residents.Add(this);
+                        _homeLandmark.tileLocation.areaOfTile.AddResident(this);
                         if (_homeLandmark.tileLocation.areaOfTile.id != previousHome.tileLocation.areaOfTile.id) {
 #if !WORLD_CREATION_TOOL
                             LookForNewWorkplace();
@@ -2523,7 +2523,7 @@ namespace ECS {
                 } else {
                     if (_homeLandmark != null) {
                         if (_homeLandmark.tileLocation.areaOfTile != null) {
-                            _homeLandmark.tileLocation.areaOfTile.residents.Add(this);
+                            _homeLandmark.tileLocation.areaOfTile.AddResident(this);
                         }
 #if !WORLD_CREATION_TOOL
                         LookForNewWorkplace();

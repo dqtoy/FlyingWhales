@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class LandmarkCharacterItem : PooledObject {
 
     public ICharacter character { get; private set; }
-    private BaseLandmark _landmark;
+    //private BaseLandmark _landmark;
     private bool isDefender;
 
     //public CharacterPortrait portrait;
@@ -27,7 +27,7 @@ public class LandmarkCharacterItem : PooledObject {
     public void SetCharacter(ICharacter character, BaseLandmark landmark, bool isDefender = false) {
         this.character = character;
         this.isDefender = isDefender;
-        _landmark = landmark;
+        //_landmark = landmark;
         if (character != null) {
             slotItem.PlaceObject(character);
         } else {
