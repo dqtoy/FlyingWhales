@@ -42,7 +42,7 @@ public class Spy : Job {
             int criticalFailRate = 12;
 
             //Success Rate +1 per level starting at Level 6
-            baseSuccessRate += (character.level - 5);
+            baseSuccessRate += (Mathf.Max(character.level - 5, 0));
             //Critical Fail Rate -1 per mult of 4 level starting at Level 6
             if (character.level > 6) {
                 criticalFailRate -= Mathf.FloorToInt(character.level / 4);
