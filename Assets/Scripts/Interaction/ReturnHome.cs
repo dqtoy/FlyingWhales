@@ -6,6 +6,7 @@ public class ReturnHome : Interaction {
 
     public ReturnHome(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.RETURN_HOME, 70) {
         _name = "Return Home";
+        _jobFilter = new JOB[] { JOB.DISSUADER };
     }
 
     #region Overrides
@@ -22,8 +23,8 @@ public class ReturnHome : Interaction {
         CreateActionOptions(startState);
 
         startState.SetEffect(() => StartEffect(startState), false);
-        cancelledState.SetEffect(() => CancelledRewardEffect(cancelledState));
-        continuesState.SetEffect(() => ContinuesRewardEffect(continuesState));
+        cancelledState.SetEffect(() => CancelledEffect(cancelledState));
+        continuesState.SetEffect(() => ContinuesEffect(continuesState));
         doNothingState.SetEffect(() => DoNothingRewardEffect(doNothingState));
 
         _states.Add(startState.name, startState);
@@ -37,10 +38,11 @@ public class ReturnHome : Interaction {
         if (state.name == "Start") {
             ActionOption preventOption = new ActionOption {
                 interactionState = state,
-                cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
-                name = "Prevent him/her from leaving.",
-                //description = "We have sent %minion% to watch the soldiers and follow them on their next secret meeting.",
+                cost = new CurrenyCost { amount = 50, currency = CURRENCY.SUPPLY },
+                name = "Prevent " + Utilities.GetPronounString(characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + " from leaving.",
                 duration = 0,
+                jobNeeded = JOB.DISSUADER,
+                doesNotMeetRequirementsStr = "Minion must be Dissuader.",
                 effect = () => PreventOption(state),
             };
             ActionOption doNothingOption = new ActionOption {
@@ -80,17 +82,13 @@ public class ReturnHome : Interaction {
             PlayerManager.Instance.player.AddIntel(characterInvolved.characterIntel);
         }
     }
-    private void CancelledRewardEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+    private void CancelledEffect(InteractionState state) {
     }
-    private void ContinuesRewardEffect(InteractionState state) {
-        if (explorerMinion != null) {
-            explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
-        }
+    private void ContinuesEffect(InteractionState state) {
         characterInvolved.currentParty.GoHome();
     }
     private void DoNothingRewardEffect(InteractionState state) {
-        ContinuesRewardEffect(state);
+        ContinuesEffect(state);
     }
     #endregion
 }
