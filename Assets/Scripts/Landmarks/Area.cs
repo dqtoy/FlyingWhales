@@ -37,6 +37,7 @@ public class Area {
     public int initialDefenderLevel { get; private set; }
     public List<RACE> possibleOccupants { get; private set; }
     public RACE defaultRace { get; private set; }
+    public Dictionary<JOB, List<INTERACTION_TYPE>> jobInteractionTypes { get; private set; }
 
     private List<HexTile> outerTiles;
     private List<SpriteRenderer> outline;
@@ -59,7 +60,8 @@ public class Area {
         history = new List<Log>();
         areaColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         locationIntel = new LocationIntel(this);
-        areaInvestigation = new AreaInvestigation(this); 
+        areaInvestigation = new AreaInvestigation(this);
+        jobInteractionTypes = new Dictionary<JOB, List<INTERACTION_TYPE>>();
         SetAreaType(areaType);
         SetCoreTile(coreTile);
         SetSupplyCapacity(1000);
@@ -82,6 +84,7 @@ public class Area {
         SetAreaType(data.areaType);
         locationIntel = new LocationIntel(this);
         areaInvestigation = new AreaInvestigation(this);
+        jobInteractionTypes = new Dictionary<JOB, List<INTERACTION_TYPE>>();
 #if WORLD_CREATION_TOOL
         SetCoreTile(worldcreator.WorldCreatorManager.Instance.GetHexTile(data.coreTileID));
 #else
@@ -681,12 +684,12 @@ public class Area {
         this.initialDefenderLevel = initialDefenderLevel;
     }
     private void GenerateInitialDefenders() {
-        WeightedDictionary<AreaDefenderSetting> defenderWeights;
-        if (this.owner != null && this.owner.defenderWeights.GetTotalOfWeights() > 0) {
-            defenderWeights = this.owner.defenderWeights;
-        } else {
-            defenderWeights = LandmarkManager.Instance.GetDefaultDefenderWeights(race);
-        }
+        WeightedDictionary<AreaDefenderSetting> defenderWeights = GetClassWeights();
+        //if (this.owner != null && this.owner.defenderWeights.GetTotalOfWeights() > 0) {
+        //    defenderWeights = this.owner.defenderWeights;
+        //} else {
+        //    defenderWeights = LandmarkManager.Instance.GetDefaultDefenderWeights(race);
+        //}
         if (defenderWeights == null || defenderWeights.GetTotalOfWeights() <= 0) {
             return;
         }
@@ -724,6 +727,13 @@ public class Area {
             return defenderGroups[Random.Range(0, defenderGroups.Count)];
         }
         return null;
+    }
+    public WeightedDictionary<AreaDefenderSetting> GetClassWeights() {
+        if (this.owner != null && this.owner.defenderWeights.GetTotalOfWeights() > 0) {
+            return this.owner.defenderWeights;
+        } else {
+            return LandmarkManager.Instance.GetDefaultDefenderWeights(race);
+        }
     }
     #endregion
 
