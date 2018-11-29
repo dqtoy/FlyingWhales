@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.22380279, g: 0.24376711, b: 0.26534963, a: 1}
+  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -40116,6 +40116,7 @@ MonoBehaviour:
   defenderGroupPrefab: {fileID: 1662102530042056, guid: c05e125abbaae31498da82dac4e008dd,
     type: 2}
   defendersScrollView: {fileID: 308350276}
+  defendersLayout: {fileID: 0}
   investigationGO: {fileID: 1044067739}
   minionAssignmentGO: {fileID: 1734725569}
   minionAssignmentPortrait: {fileID: 1033307594}
@@ -76390,6 +76391,7 @@ MonoBehaviour:
   defenderGroupPrefab: {fileID: 1662102530042056, guid: c05e125abbaae31498da82dac4e008dd,
     type: 2}
   defendersScrollView: {fileID: 916010549}
+  defendersScrollSnap: {fileID: 916010546}
   investigationGO: {fileID: 914759290}
   minionAssignmentGO: {fileID: 1862552079}
   minionAssignmentPortrait: {fileID: 712381657}
