@@ -1,6 +1,8 @@
-﻿[System.Serializable]
+﻿using System.Collections.Generic;
+
+[System.Serializable]
 public class LocalizationData{
-	public LocalizationItem[] items;
+	public List<LocalizationItem> items;
 }
 
 [System.Serializable]

@@ -17,6 +17,7 @@ public class Area {
     public List<BaseLandmark> landmarks { get { return tiles.Where(x => x.landmarkOnTile != null).Select(x => x.landmarkOnTile).ToList(); } }
     public int totalCivilians { get { return landmarks.Sum(x => x.civilianCount); } }
     public LocationIntel locationIntel { get; private set; }
+    public DefenderIntel defenderIntel { get; private set; }
     public List<BaseLandmark> exposedTiles { get; private set; }
     public List<BaseLandmark> unexposedTiles { get; private set; }
     public List<Character> areaResidents { get; private set; }
@@ -60,6 +61,7 @@ public class Area {
         history = new List<Log>();
         areaColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         locationIntel = new LocationIntel(this);
+        defenderIntel = new DefenderIntel(this);
         areaInvestigation = new AreaInvestigation(this);
         jobInteractionTypes = new Dictionary<JOB, List<INTERACTION_TYPE>>();
         SetAreaType(areaType);
@@ -83,6 +85,7 @@ public class Area {
         areaColor = data.areaColor;
         SetAreaType(data.areaType);
         locationIntel = new LocationIntel(this);
+        defenderIntel = new DefenderIntel(this);
         areaInvestigation = new AreaInvestigation(this);
         jobInteractionTypes = new Dictionary<JOB, List<INTERACTION_TYPE>>();
 #if WORLD_CREATION_TOOL

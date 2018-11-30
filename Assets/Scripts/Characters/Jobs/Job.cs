@@ -11,6 +11,7 @@ public class Job {
     protected Character _character;
     protected Interaction _createdInteraction;
     protected INTERACTION_TYPE[] _characterInteractions; //For non-minion characters only
+    private WeightedDictionary<RESULT> rateWeights;
 
     private int _currentTick;
     private bool _isJobActionPaused;
@@ -38,6 +39,7 @@ public class Job {
         _name = Utilities.NormalizeString(_jobType.ToString());
         _character = character;
         _characterInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.RETURN_HOME };
+        rateWeights = new WeightedDictionary<RESULT>();
     }
 
     #region Virtuals
@@ -49,6 +51,12 @@ public class Job {
     }
     public virtual int GetSuccessRate() { return 0; }
     public virtual int GetFailRate() { return 40; }
+    public virtual WeightedDictionary<RESULT> GetJobRateWeights() {
+        rateWeights.Clear();
+        rateWeights.AddElement(RESULT.SUCCESS, GetSuccessRate());
+        rateWeights.AddElement(RESULT.FAIL, GetFailRate());
+        return rateWeights;
+    }
     #endregion
 
     #region Utilities

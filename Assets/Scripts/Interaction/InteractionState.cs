@@ -122,24 +122,24 @@ public class InteractionState {
         }
 
         //Only put logs in minions and landmarks when the particualar interaction is chosen to be interfered by the player
-        if (_interaction.isChosen) {
-            otherLogs = new List<Log>();
-            List<string> keysForState = LocalizationManager.Instance.GetKeysLike("Events", _interaction.GetType().ToString(), _name.ToLower(), "_description");
-            for (int i = 0; i < keysForState.Count; i++) {
-                string currentKey = keysForState[i];
-                otherLogs.Add(new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), currentKey));
-            }
-
-            if (_interaction.explorerMinion != null) {
-                logFillers.Add(new LogFiller(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME));
-            }
-            if (interaction.characterInvolved != null) {
-                logFillers.Add(new LogFiller(interaction.characterInvolved, interaction.characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
-            }
-            if (!AlreadyHasLogFiller(LOG_IDENTIFIER.LANDMARK_1)) {
-                logFillers.Add(new LogFiller(interaction.interactable.tileLocation.areaOfTile, interaction.interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
-            }
+        //if (_interaction.isChosen) {
+        otherLogs = new List<Log>();
+        List<string> keysForState = LocalizationManager.Instance.GetKeysLike("Events", _interaction.GetType().ToString(), _name.ToLower(), "_description");
+        for (int i = 0; i < keysForState.Count; i++) {
+            string currentKey = keysForState[i];
+            otherLogs.Add(new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), currentKey));
         }
+
+        if (_interaction.explorerMinion != null) {
+            logFillers.Add(new LogFiller(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME));
+        }
+        if (interaction.characterInvolved != null) {
+            logFillers.Add(new LogFiller(interaction.characterInvolved, interaction.characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        }
+        if (!AlreadyHasLogFiller(LOG_IDENTIFIER.LANDMARK_1)) {
+            logFillers.Add(new LogFiller(interaction.interactable.tileLocation.areaOfTile, interaction.interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
+        }
+        //}
     }
     public void OverrideDescriptionLog(Log descriptionLog) {
         _descriptionLog = descriptionLog;
@@ -230,8 +230,15 @@ public class InteractionState {
     }
 
     #region Log Fillers
-    public void AddLogFiller(LogFiller filler) {
-        logFillers.Add(filler);
+    public void AddLogFiller(LogFiller filler, bool replaceExisting = true) {
+        if (AlreadyHasLogFiller(filler.identifier)) {
+            if (replaceExisting) {
+                logFillers.Remove(GetLogFiller(filler.identifier));
+                logFillers.Add(filler);
+            }
+        } else {
+            logFillers.Add(filler);
+        }
     }
     public bool AlreadyHasLogFiller(LOG_IDENTIFIER identifier) {
         for (int i = 0; i < logFillers.Count; i++) {
@@ -240,6 +247,14 @@ public class InteractionState {
             }
         }
         return false;
+    }
+    public LogFiller GetLogFiller(LOG_IDENTIFIER identifier) {
+        for (int i = 0; i < logFillers.Count; i++) {
+            if (logFillers[i].identifier == identifier) {
+                return logFillers[i];
+            }
+        }
+        return new LogFiller();
     }
     #endregion
 }

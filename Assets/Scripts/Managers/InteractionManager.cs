@@ -122,6 +122,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER:
                 createdInteraction = new SpawnNeutralCharacter(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_SCAVENGE:
+                createdInteraction = new MoveToScavenge(interactable);
+                break;
+            case INTERACTION_TYPE.SCAVENGE_EVENT:
+                createdInteraction = new ScavengeEvent(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -148,6 +154,15 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.RETURN_HOME:
             case INTERACTION_TYPE.CHARACTER_TRACKING:
                 return character.specificLocation != character.homeLandmark;
+            case INTERACTION_TYPE.MOVE_TO_SCAVENGE:
+                //check if there are any unowned areas
+                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                    Area currArea = LandmarkManager.Instance.allAreas[i];
+                    if (currArea.owner == null) {
+                        return true;
+                    }
+                }
+                return false;
             default:
                 return true;
         }

@@ -26,11 +26,21 @@ public class ActionOptionButton : MonoBehaviour {
     }
     private void UpdateButton() {
         if(_actionOption != null) {
-            bool meetsRequirements = _actionOption.CanBeDone();
-            toggle.interactable = meetsRequirements;
-            if (!meetsRequirements) {
-                buttonText.text = "[LOCKED] " + _actionOption.doesNotMeetRequirementsStr;
+            string optionText = _actionOption.name;
+            bool buttonState = true;
+            if (!_actionOption.CanAfford()) {
+                buttonState = false;
+                if (_actionOption.cost.currency == CURRENCY.MANA) {
+                    optionText = "[LOCKED] Not enough mana.";
+                } else if (_actionOption.cost.currency == CURRENCY.SUPPLY) {
+                    optionText = "[LOCKED] Not enough supplies.";
+                }
+            } else if (!_actionOption.CanBeDone()) {
+                buttonState = false;
+                optionText = "[LOCKED] " + _actionOption.doesNotMeetRequirementsStr;
             }
+            toggle.interactable = buttonState;
+            buttonText.text = optionText;
         }
     }
     public void SetOption(ActionOption actionOption) {

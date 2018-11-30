@@ -1192,7 +1192,7 @@ public class UIManager : MonoBehaviour {
             notificationText = "Obtained intel about character: <color=\"green\"><b>" + (intel as CharacterIntel).character.name;
         } else if (intel is DefenderIntel) {
             action = () => ShowLocationIntelMenu();
-            notificationText = "Obtained intel about defenders at: <color=\"green\"><b>" + (intel as DefenderIntel).defenderParty.defendingArea.name;
+            notificationText = "Obtained intel about defenders at: <color=\"green\"><b>" + (intel as DefenderIntel).owner.name;
         }
         ShowNotification(notificationText, 5, action);
     }

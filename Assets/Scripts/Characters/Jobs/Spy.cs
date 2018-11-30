@@ -22,16 +22,13 @@ public class Spy : Job {
         } else if (area.owner != null && !area.owner.factionIntel.isObtained) {
             intelChoices.Add(area.owner.factionIntel);
         } else {
+            if (!area.defenderIntel.isObtained) {
+                intelChoices.Add(area.defenderIntel);
+            }
             for (int i = 0; i < area.areaResidents.Count; i++) {
                 Character currCharacter = area.areaResidents[i];
                 if (!currCharacter.characterIntel.isObtained) {
                     intelChoices.Add(currCharacter.characterIntel);
-                }
-            }
-            for (int i = 0; i < area.defenderGroups.Count; i++) {
-                DefenderGroup currGroup = area.defenderGroups[i];
-                if (!currGroup.intel.isObtained) {
-                    intelChoices.Add(currGroup.intel);
                 }
             }
         }
@@ -48,20 +45,20 @@ public class Spy : Job {
                 criticalFailRate -= Mathf.FloorToInt(character.level / 4);
             }
 
-            WeightedDictionary<JOB_RESULT> rateWeights = new WeightedDictionary<JOB_RESULT>();
-            rateWeights.AddElement(JOB_RESULT.SUCCESS, baseSuccessRate);
-            rateWeights.AddElement(JOB_RESULT.FAIL, baseFailRate);
-            rateWeights.AddElement(JOB_RESULT.CRITICAL_FAIL, criticalFailRate);
+            WeightedDictionary<RESULT> rateWeights = new WeightedDictionary<RESULT>();
+            rateWeights.AddElement(RESULT.SUCCESS, baseSuccessRate);
+            //rateWeights.AddElement(RESULT.FAIL, baseFailRate);
+            //rateWeights.AddElement(RESULT.CRITICAL_FAIL, criticalFailRate);
             jobSummary += "\n" + rateWeights.GetWeightsSummary("Rates summary ");
             if (rateWeights.GetTotalOfWeights() > 0) {
-                JOB_RESULT chosenResult = rateWeights.PickRandomElementGivenWeights();
+                RESULT chosenResult = rateWeights.PickRandomElementGivenWeights();
                 Intel chosenIntel = intelChoices[Random.Range(0, intelChoices.Count)];
                 jobSummary += "\nRate result: " + chosenResult.ToString() + ". Chosen intel " + chosenIntel.ToString();
                 switch (chosenResult) {
-                    case JOB_RESULT.SUCCESS:
+                    case RESULT.SUCCESS:
                         Success(chosenIntel);
                         break;
-                    case JOB_RESULT.FAIL:
+                    case RESULT.FAIL:
                         SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile));
                         //raidSuccess.SetEndInteractionAction(() => GoBackHome());
                         _createdInteraction.SetEndInteractionAction(() => StartJobAction());
@@ -73,7 +70,7 @@ public class Spy : Job {
                         //character.specificLocation.tileLocation.areaOfTile.areaInvestigation.SetCurrentInteraction(minionFailed);
                     //StartJobAction();
                     break;
-                    case JOB_RESULT.CRITICAL_FAIL:
+                    case RESULT.CRITICAL_FAIL:
                         SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.tileLocation.landmarkOnTile));
                         //raidSuccess.SetEndInteractionAction(() => GoBackHome());
                         _createdInteraction.SetEndInteractionAction(() => StartJobAction());
@@ -120,7 +117,7 @@ public class Spy : Job {
             SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_ENCOUNTERED, character.specificLocation.tileLocation.landmarkOnTile));
         } else if (chosenIntel is DefenderIntel) {
             SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.DEFENDERS_REVEALED, character.specificLocation.tileLocation.landmarkOnTile));
-            _createdInteraction.SetOtherData(new object[] { chosenIntel });
+            //_createdInteraction.SetOtherData(new object[] { chosenIntel });
         }
         if (_createdInteraction != null) {
             _createdInteraction.SetEndInteractionAction(() => StartJobAction());

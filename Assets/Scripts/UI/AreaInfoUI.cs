@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine.UI;
 using ECS;
 using UnityEngine.UI.Extensions;
+using EZObjectPools;
 
 public class AreaInfoUI : UIMenu {
 
@@ -121,8 +122,11 @@ public class AreaInfoUI : UIMenu {
     }
     public override void CloseMenu() {
         base.CloseMenu();
-        GameObject[] objects;
-        defendersScrollSnap.RemoveAllChildren(out objects);
+        //GameObject[] objects;
+        //defendersScrollSnap.RemoveAllChildren(out objects);
+        //for (int i = 0; i < objects.Length; i++) {
+        //    ObjectPoolManager.Instance.DestroyObject(objects[i]);
+        //}
         //Utilities.DestroyChildren(defendersScrollView.content);
         if (_activeArea != null) {
             _activeArea.SetOutlineState(false);
@@ -158,16 +162,23 @@ public class AreaInfoUI : UIMenu {
         } else {
             HideLocationIntelUI();
         }
-        //Add checker if defender intel is obtained
-        ShowDefenderIntelUI();
+        if (_activeArea.defenderIntel.isObtained) {
+            ShowDefenderIntelUI();
+        } else {
+            HideDefenderIntelUI();
+        }
+        
     }
     private void OnIntelAdded(Intel intel) {
         if(_activeArea != null) {
             if (_activeArea.locationIntel == intel) {
                 ShowLocationIntelUI();
             }
-            //Add checker if defender intel is obtained
-            ShowDefenderIntelUI();
+            if (_activeArea.defenderIntel.isObtained) {
+                ShowDefenderIntelUI();
+            } else {
+                HideDefenderIntelUI();
+            }
         }
 
     }
@@ -364,12 +375,14 @@ public class AreaInfoUI : UIMenu {
 
     #region Defenders
     private void UpdateDefenders() {
+        Utilities.DestroyChildren(defendersScrollView.content);
+        defendersScrollSnap.ChildObjects = new GameObject[0];
         for (int i = 0; i < _activeArea.defenderGroups.Count; i++) {
             DefenderGroup currGroup = _activeArea.defenderGroups[i];
             GameObject currGO = UIManager.Instance.InstantiateUIObject(defenderGroupPrefab.name, defendersScrollView.content);
             currGO.GetComponent<DefenderGroupItem>().SetDefender(currGroup);
         }
-        defendersScrollSnap.InitialiseChildObjectsFromScene();
+        //defendersScrollSnap.InitialiseChildObjectsFromScene();
     }
     #endregion
 

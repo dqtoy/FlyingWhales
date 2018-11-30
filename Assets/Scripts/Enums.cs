@@ -1058,6 +1058,8 @@ public enum INTERACTION_TYPE {
     FRIENDLY_CHARACTER_ENCOUNTERED,
     SPAWN_CHARACTER,
     SPAWN_NEUTRAL_CHARACTER,
+    MOVE_TO_SCAVENGE,
+    SCAVENGE_EVENT,
 }
 public enum REWARD {
     SUPPLY,
@@ -1095,7 +1097,7 @@ public enum JOB {
     SPY,
     DISSUADER,
 }
-public enum JOB_RESULT {
+public enum RESULT {
     SUCCESS,
     FAIL,
     CRITICAL_FAIL

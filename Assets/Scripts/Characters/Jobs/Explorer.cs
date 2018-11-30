@@ -26,16 +26,16 @@ public class Explorer : Job {
             criticalFailRate -= Mathf.FloorToInt(character.level / 4);
         }
 
-        WeightedDictionary<JOB_RESULT> rateWeights = new WeightedDictionary<JOB_RESULT>();
-        rateWeights.AddElement(JOB_RESULT.SUCCESS, baseSuccessRate);
-        rateWeights.AddElement(JOB_RESULT.FAIL, baseFailRate);
-        rateWeights.AddElement(JOB_RESULT.CRITICAL_FAIL, criticalFailRate);
+        WeightedDictionary<RESULT> rateWeights = new WeightedDictionary<RESULT>();
+        rateWeights.AddElement(RESULT.SUCCESS, baseSuccessRate);
+        //rateWeights.AddElement(RESULT.FAIL, baseFailRate);
+        //rateWeights.AddElement(RESULT.CRITICAL_FAIL, criticalFailRate);
         jobSummary += "\n" + rateWeights.GetWeightsSummary("Rates summary ");
         if (rateWeights.GetTotalOfWeights() > 0) {
-            JOB_RESULT chosenResult = rateWeights.PickRandomElementGivenWeights();
+            RESULT chosenResult = rateWeights.PickRandomElementGivenWeights();
             jobSummary += "\nRate result: " + chosenResult.ToString() + ".";
             switch (chosenResult) {
-                case JOB_RESULT.SUCCESS:
+                case RESULT.SUCCESS:
                     //TODO: If Success was triggered: spawn an event from Exploration Event of current area
                     SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_SUCCESS, character.specificLocation.tileLocation.landmarkOnTile));
                     _createdInteraction.SetEndInteractionAction(() => StartJobAction());
@@ -43,13 +43,13 @@ public class Explorer : Job {
                     _createdInteraction.SetOtherData(new object[] { 0 });
                     character.AddInteraction(_createdInteraction);
                     break;
-                case JOB_RESULT.FAIL:
+                case RESULT.FAIL:
                     SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile));
                     _createdInteraction.SetEndInteractionAction(() => StartJobAction());
                     _createdInteraction.ScheduleSecondTimeOut();
                     character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.AddInteraction(_createdInteraction);
                     break;
-                case JOB_RESULT.CRITICAL_FAIL:
+                case RESULT.CRITICAL_FAIL:
                     SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.tileLocation.landmarkOnTile));
                     _createdInteraction.SetEndInteractionAction(() => StartJobAction());
                     _createdInteraction.ScheduleSecondTimeOut();

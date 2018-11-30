@@ -145,4 +145,11 @@ public class ActionOption {
         }
         return null;
     }
+
+    public bool CanAfford() {
+        if (PlayerManager.Instance.player.currencies[cost.currency] >= cost.amount) {
+            return true;
+        }
+        return false;
+    }
 }

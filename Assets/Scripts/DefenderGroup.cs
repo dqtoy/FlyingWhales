@@ -6,12 +6,12 @@ using UnityEngine;
 public class DefenderGroup {
 
     public Party party;
-    public DefenderIntel intel;
+    //public DefenderIntel intel;
     public Area defendingArea;
 	
     public DefenderGroup() {
         //this.party = party;
-        intel = new DefenderIntel(this);
+        //intel = new DefenderIntel(this);
     }
 
     public void AddCharacterToGroup(ICharacter character) {

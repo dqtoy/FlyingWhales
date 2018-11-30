@@ -16,6 +16,7 @@ public class Raider : Job {
     public Raider(Character character) : base(character, JOB.RAIDER) {
         _actionDuration = 50;
         _hasCaptureEvent = false;
+        _characterInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.MOVE_TO_SCAVENGE };
     }
 
     #region Overrides
@@ -33,21 +34,21 @@ public class Raider : Job {
             criticalFailRate -= Mathf.FloorToInt(character.level / 4);
         }
 
-        WeightedDictionary<JOB_RESULT> rateWeights = new WeightedDictionary<JOB_RESULT>();
-        rateWeights.AddElement(JOB_RESULT.SUCCESS, baseSuccessRate);
-        rateWeights.AddElement(JOB_RESULT.FAIL, baseFailRate);
-        rateWeights.AddElement(JOB_RESULT.CRITICAL_FAIL, criticalFailRate);
+        WeightedDictionary<RESULT> rateWeights = new WeightedDictionary<RESULT>();
+        rateWeights.AddElement(RESULT.SUCCESS, baseSuccessRate);
+        //rateWeights.AddElement(RESULT.FAIL, baseFailRate);
+        //rateWeights.AddElement(RESULT.CRITICAL_FAIL, criticalFailRate);
 
         if (rateWeights.GetTotalOfWeights() > 0) {
-            JOB_RESULT chosenResult = rateWeights.PickRandomElementGivenWeights();
+            RESULT chosenResult = rateWeights.PickRandomElementGivenWeights();
             switch (chosenResult) {
-                case JOB_RESULT.SUCCESS:
+                case RESULT.SUCCESS:
                     RaidSuccess();
                     break;
-                case JOB_RESULT.FAIL:
+                case RESULT.FAIL:
                     RaidFail();
                     break;
-                case JOB_RESULT.CRITICAL_FAIL:
+                case RESULT.CRITICAL_FAIL:
                     CriticalRaidFail();
                     break;
                 default:
@@ -69,7 +70,7 @@ public class Raider : Job {
     #endregion
 
     private void RaidSuccess() {
-        int obtainedSupply = GetSupplyObtained();
+        int obtainedSupply = GetSupplyObtained(character.specificLocation.tileLocation.areaOfTile);
         SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_SUCCESS, character.specificLocation.tileLocation.landmarkOnTile));
         _createdInteraction.SetEndInteractionAction(() => GoBackHomeSuccess(obtainedSupply));
         _createdInteraction.ScheduleSecondTimeOut();
@@ -96,19 +97,24 @@ public class Raider : Job {
     }
 
     private void GoBackHome() {
-        character.currentParty.GoHome();
+        if (character.minion != null) {
+            character.minion.GoBackFromAssignment();
+        } else {
+            character.currentParty.GoHome();
+        }
+        
     }
     private void GoBackHomeSuccess(int supplyObtained) {
         character.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(supplyObtained);
         GoBackHome();
     }
 
-    private int GetSupplyObtained() {
+    public int GetSupplyObtained(Area targetArea) {
         //When a raid succeeds, the amount of Supply obtained is based on character level.
         //5% to 15% of location's supply 
         //+1% every other level starting at level 6
         Area characterHomeArea = character.homeLandmark.tileLocation.areaOfTile;
-        Area targetArea = character.specificLocation.tileLocation.areaOfTile;
+        //Area targetArea = character.specificLocation.tileLocation.areaOfTile;
         int supplyObtainedPercent = Random.Range(5, 16);
         supplyObtainedPercent += (character.level - 5);
 

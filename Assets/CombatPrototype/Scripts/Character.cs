@@ -2961,25 +2961,28 @@ namespace ECS {
             if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb) {
                 return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
             }
-            string interactionLog = GameManager.Instance.TodayLogString() + "Generating daily interaction for " + this.name;
-            if (GameManager.Instance.ignoreEventTriggerWeights || eventTriggerWeights.PickRandomElementGivenWeights()) {
-                WeightedDictionary<INTERACTION_TYPE> validInteractions = GetValidInteractionWeights();
-                if (validInteractions.GetTotalOfWeights() > 0) {
-                    interactionLog += "\n" + validInteractions.GetWeightsSummary("Generating interaction:");
-                    INTERACTION_TYPE chosenInteraction = validInteractions.PickRandomElementGivenWeights();
-                    //create interaction of type
-                    Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, specificLocation.tileLocation.landmarkOnTile);
-                    AddInteraction(createdInteraction);
-                    //if (createdInteraction != null) {
-                    //    (this.specificLocation as BaseLandmark).AddInteraction(createdInteraction);
-                    //}
-                } else {
-                    interactionLog += "\nCannot generate interaction because of weights";
-                }
-            } else {
-                interactionLog += "\nDid not create new event because of event trigger weights";
+            if (_job != null) {
+                _job.CreateRandomInteractionForNonMinionCharacters();
             }
-            Debug.Log(interactionLog);
+            //string interactionLog = GameManager.Instance.TodayLogString() + "Generating daily interaction for " + this.name;
+            //if (GameManager.Instance.ignoreEventTriggerWeights || eventTriggerWeights.PickRandomElementGivenWeights()) {
+            //    WeightedDictionary<INTERACTION_TYPE> validInteractions = GetValidInteractionWeights();
+            //    if (validInteractions.GetTotalOfWeights() > 0) {
+            //        interactionLog += "\n" + validInteractions.GetWeightsSummary("Generating interaction:");
+            //        INTERACTION_TYPE chosenInteraction = validInteractions.PickRandomElementGivenWeights();
+            //        //create interaction of type
+            //        Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, specificLocation.tileLocation.landmarkOnTile);
+            //        AddInteraction(createdInteraction);
+            //        //if (createdInteraction != null) {
+            //        //    (this.specificLocation as BaseLandmark).AddInteraction(createdInteraction);
+            //        //}
+            //    } else {
+            //        interactionLog += "\nCannot generate interaction because of weights";
+            //    }
+            //} else {
+            //    interactionLog += "\nDid not create new event because of event trigger weights";
+            //}
+            //Debug.Log(interactionLog);
         }
         private void DefaultAllExistingInteractions() {
             for (int i = 0; i < _currentInteractions.Count; i++) {

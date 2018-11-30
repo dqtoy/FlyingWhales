@@ -705,6 +705,21 @@ public class Utilities : MonoBehaviour {
         }
         return options;
     }
+    public static string GetPossessivePronounForCharacter(ICharacter character, bool capitalized = true) {
+        if (character.gender == GENDER.MALE) {
+            if (capitalized) {
+                return "His";
+            } else {
+                return "his";
+            }
+        } else {
+            if (capitalized) {
+                return "Her";
+            } else {
+                return "her";
+            }
+        }
+    }
     #endregion
 
     #region Weighted Dictionary

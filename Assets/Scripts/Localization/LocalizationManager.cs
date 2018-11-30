@@ -57,7 +57,7 @@ public class LocalizationManager : MonoBehaviour {
 					string dataAsJson = File.ReadAllText(files[j]);
 					LocalizationData loadedData = JsonUtility.FromJson<LocalizationData> (dataAsJson);
 
-					for (int k = 0; k < loadedData.items.Length; k++) {
+					for (int k = 0; k < loadedData.items.Count; k++) {
 						this._localizedText[categoryName][fileName].Add(loadedData.items [k].key, loadedData.items [k].value);   
 					}
 					//Debug.Log ("Data loaded, dictionary contains: " + this._localizedText.Count + " entries");
