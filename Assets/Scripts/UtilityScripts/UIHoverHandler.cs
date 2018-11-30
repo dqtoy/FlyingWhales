@@ -8,6 +8,9 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     private bool isHovering;
 
+    [SerializeField] private RectTransform tooltipPos;
+    [SerializeField] private string tooltipHeader;
+
     [SerializeField] private UnityEvent onHoverOverAction;
     [SerializeField] private UnityEvent onHoverExitAction;
 
@@ -42,5 +45,9 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     }
     public void HideSmallInfoString() {
         UIManager.Instance.HideSmallInfo();
+    }
+
+    public void ShowSmallInfoInSpecificPosition(string message) {
+        UIManager.Instance.ShowSmallInfo(message, tooltipHeader, tooltipPos);
     }
 }

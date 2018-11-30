@@ -11,7 +11,6 @@ MonoBehaviour:
   m_Script: {fileID: -395462249, guid: 89f0137620f6af44b9ba852b4190e64e, type: 3}
   m_Name: TMP Settings
   m_EditorClassIdentifier: 
-  m_version: 1.0.56.0b1
   m_enableWordWrapping: 1
   m_enableKerning: 1
   m_enableExtraPadding: 0

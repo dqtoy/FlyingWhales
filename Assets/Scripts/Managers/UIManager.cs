@@ -392,15 +392,24 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Tooltips
-    public void ShowSmallInfo(string info, string header = "", bool followMouse = true, Vector2 pos = new Vector2()) {
-        //return;
-        smallInfoLbl.text = info;
+    public void ShowSmallInfo(string info, string header = "", RectTransform position = null) {
+        string message = string.Empty;
+        if (!string.IsNullOrEmpty(header)) {
+            message = "<font=\"Eczar-Medium\"><line-height=100%><size=18>" + header + "</font>\n";
+        }
+        message += "<line-height=70%><size=16>" + info;
+
+        smallInfoLbl.text = message;
         smallInfoGO.SetActive(true);
         smallInfoEnvelopContent.Execute();
-        if (followMouse) {
+        if (position == null) {
+            smallInfoRT.SetParent(this.transform);
             PositionTooltip(smallInfoRT);
         } else {
-            smallInfoRT.position = pos;
+            smallInfoRT.SetParent(position);
+            smallInfoRT.anchoredPosition = Vector2.zero;
+            //smallInfoRT.anchoredPosition = pos;
+            //smallInfoRT.position = new Vector3(pos.x, pos.y, 0f);
         }
         
         //Debug.Log("Show small info " + info);
