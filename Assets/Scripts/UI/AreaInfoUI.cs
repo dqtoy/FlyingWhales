@@ -162,7 +162,7 @@ public class AreaInfoUI : UIMenu {
         } else {
             HideLocationIntelUI();
         }
-        if (_activeArea.defenderIntel.isObtained) {
+        if (_activeArea.defenderIntel.isObtained || GameManager.Instance.inspectAll) {
             ShowDefenderIntelUI();
         } else {
             HideDefenderIntelUI();
@@ -173,11 +173,8 @@ public class AreaInfoUI : UIMenu {
         if(_activeArea != null) {
             if (_activeArea.locationIntel == intel) {
                 ShowLocationIntelUI();
-            }
-            if (_activeArea.defenderIntel.isObtained) {
+            } else if (_activeArea.defenderIntel == intel) {
                 ShowDefenderIntelUI();
-            } else {
-                HideDefenderIntelUI();
             }
         }
 
@@ -317,6 +314,8 @@ public class AreaInfoUI : UIMenu {
         GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
         LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
         item.SetCharacter(character, null);
+        item.slotItem.draggable.SetDraggable(false);
+        item.slotItem.dropZone.SetEnabledState(false);
         characterItems.Add(item);
         CheckScrollers();
         return item;
@@ -375,6 +374,7 @@ public class AreaInfoUI : UIMenu {
 
     #region Defenders
     private void UpdateDefenders() {
+        defendersScrollSnap.enabled = false;
         Utilities.DestroyChildren(defendersScrollView.content);
         defendersScrollSnap.ChildObjects = new GameObject[0];
         for (int i = 0; i < _activeArea.defenderGroups.Count; i++) {
@@ -383,6 +383,7 @@ public class AreaInfoUI : UIMenu {
             currGO.GetComponent<DefenderGroupItem>().SetDefender(currGroup);
         }
         //defendersScrollSnap.InitialiseChildObjectsFromScene();
+        defendersScrollSnap.enabled = true;
     }
     #endregion
 
