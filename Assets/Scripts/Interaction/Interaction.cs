@@ -26,6 +26,7 @@ public class Interaction {
     protected Job _jobAssociated;
     protected JOB[] _jobFilter;
     protected object[] otherData;
+    private string interactionDebugLog;
 
     private bool _hasUsedBaseCreateStates;
 
@@ -90,6 +91,8 @@ public class Interaction {
         _states = new Dictionary<string, InteractionState>();
         //_jobFilter = new JOB[] { JOB.NONE };
         //Debug.Log("Created new interaction " + type.ToString() + " at " + interactable.name);
+        interactionDebugLog = type.ToString() + " Event at " + interactable.tileLocation.areaOfTile.name + "(" + interactable.name + ") Summary: \n" +
+            GameManager.Instance.TodayLogString() + " Event Created.";
     }
 
     #region Virtuals
@@ -117,6 +120,7 @@ public class Interaction {
             _jobAssociated.SetCreatedInteraction(null);
             SetJobAssociated(null);
         }
+        Debug.Log(interactionDebugLog);
     }
     public virtual void OnInteractionActive() {
         _isChosen = true;
@@ -138,6 +142,7 @@ public class Interaction {
             //}
         }
         _currentState = state;
+        AddToDebugLog("Set current state to " + _currentState.name);
         _currentState.OnStartState();
         Messenger.Broadcast(Signals.UPDATED_INTERACTION_STATE, this);
     }
@@ -219,6 +224,7 @@ public class Interaction {
     public void SetCharacterInvolved(Character character) {
         _characterInvolved = character;
         if(_characterInvolved != null) {
+            AddToDebugLog("Set character involved to " + character.name);
             _characterInvolved.SetDoNotDisturb(true);
         }
     }
@@ -259,6 +265,9 @@ public class Interaction {
     }
     public void SetJobAssociated(Job job) {
         _jobAssociated = job;
+    }
+    public void AddToDebugLog(string message) {
+        interactionDebugLog += "\n" + GameManager.Instance.TodayLogString() + message;
     }
     #endregion
 

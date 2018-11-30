@@ -183,7 +183,7 @@ public class CharacterAvatar : MonoBehaviour{
         SetHasArrivedState(true);
         _party.specificLocation.RemoveCharacterFromLocation(_party);
         targetLocation.AddCharacterToLocation(_party);
-        Debug.Log(_party.name + " has arrived at " + targetLocation.locationName + " on " + GameManager.Instance.Today().GetDayAndTicksString());
+        Debug.Log(GameManager.Instance.TodayLogString() + _party.name + " has arrived at " + targetLocation.locationName + " on " + GameManager.Instance.Today().GetDayAndTicksString());
         //Every time the party arrives at home, check if it still not ruined
         //if (_party.mainCharacter is Character && _party.mainCharacter.homeLandmark.specificLandmarkType == LANDMARK_TYPE.CAMP && _party.mainCharacter.homeLandmark.landmarkObj.currentState.stateName == "Ruined") {
         //    //Check if the location the character arrived at is the character's home landmark

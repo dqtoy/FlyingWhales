@@ -16,6 +16,7 @@ public class ScavengeEvent : Interaction {
 
     public ScavengeEvent(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.SCAVENGE_EVENT, 70) {
         _name = "Scavenge Event";
+        _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DIPLOMAT };
     }
 
     #region Overrides

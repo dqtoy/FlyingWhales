@@ -176,9 +176,9 @@ public class CharacterManager : MonoBehaviour {
                 homeLandmark.AddCharacterHomeOnLandmark(newCharacter);
             }
         }
-        if (createSchedule && newCharacter.role != null && newCharacter.role.roleType != CHARACTER_ROLE.PLAYER) {
-            newCharacter.SetSchedule(CharacterScheduleManager.Instance.GetScheduleForCharacter(newCharacter));
-        }
+        //if (createSchedule && newCharacter.role != null && newCharacter.role.roleType != CHARACTER_ROLE.PLAYER) {
+        //    newCharacter.SetSchedule(CharacterScheduleManager.Instance.GetScheduleForCharacter(newCharacter));
+        //}
 #endif
         _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
@@ -214,9 +214,9 @@ public class CharacterManager : MonoBehaviour {
 #endif
         }
 #if !WORLD_CREATION_TOOL
-        if (data.role != CHARACTER_ROLE.PLAYER) {
-            newCharacter.SetSchedule(CharacterScheduleManager.Instance.GetScheduleForCharacter(newCharacter));
-        }
+        //if (data.role != CHARACTER_ROLE.PLAYER) {
+        //    newCharacter.SetSchedule(CharacterScheduleManager.Instance.GetScheduleForCharacter(newCharacter));
+        //}
 #endif
 
         if (data.equipmentData != null) {
@@ -262,10 +262,22 @@ public class CharacterManager : MonoBehaviour {
             _classesDictionary.Add(currentClass.className, currentClass);
         }
     }
+    private List<string> deadlySinsRotation = new List<string>();
     public string GetRandomDeadlySinsClassName() {
         //return "Envy";
-        return "Sloth";
+        //return "Sloth";
         return _sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, _sevenDeadlySinsClassNames.Length)];
+    }
+    public string GetDeadlySinsClassNameFromRotation() {
+        //return "Envy";
+        //return "Sloth";
+        //return _sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, _sevenDeadlySinsClassNames.Length)];
+        if (deadlySinsRotation.Count == 0) {
+            deadlySinsRotation.AddRange(_sevenDeadlySinsClassNames);
+        }
+        string nextClass = deadlySinsRotation[0];
+        deadlySinsRotation.RemoveAt(0);
+        return nextClass;
     }
     public string GetRandomClassName() {
         int random = UnityEngine.Random.Range(0, CharacterManager.Instance.classesDictionary.Count);

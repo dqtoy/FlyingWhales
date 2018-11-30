@@ -562,7 +562,7 @@ public class Area {
                 supplySummary += currLandmark.name + "(" + currLandmark.specificLandmarkType.ToString() + ") - Cannot Produce\n";
             }
         }
-        Debug.Log(this.name + " collected supplies " + totalCollectedSupplies + " Summary: \n" + supplySummary);
+        //Debug.Log(this.name + " collected supplies " + totalCollectedSupplies + " Summary: \n" + supplySummary);
     }
     private void PayMaintenance() {
         //consumes Supply per existing unit

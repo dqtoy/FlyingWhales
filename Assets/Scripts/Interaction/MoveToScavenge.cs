@@ -12,6 +12,7 @@ public class MoveToScavenge : Interaction {
 
     public MoveToScavenge(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_SCAVENGE, 70) {
         _name = "Move To Scavenge";
+        _jobFilter = new JOB[] { JOB.RAIDER };
     }
 
     #region Overrides
@@ -22,6 +23,7 @@ public class MoveToScavenge : Interaction {
         InteractionState normalScavenge = new InteractionState(Normal_Scavenge, this);
 
         targetArea = GetTargetArea();
+        AddToDebugLog("Set target area to " + targetArea.name);
         //**Text Description**: [Character Name] is about to leave for [Location Name 1] to scavenge for supplies.
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
@@ -69,8 +71,11 @@ public class MoveToScavenge : Interaction {
     private void PursuadeToCancelEffect(InteractionState state) {
         //Compute Dissuader success rate
         WeightedDictionary<RESULT> resultWeights = _characterInvolved.job.GetJobRateWeights();
+        AddToDebugLog("Chose to pursuade to cancel. " + resultWeights.GetWeightsSummary("Summary of weights are: "));
         string nextState = string.Empty;
-        switch (resultWeights.PickRandomElementGivenWeights()) {
+        RESULT result = resultWeights.PickRandomElementGivenWeights();
+        AddToDebugLog("Result of weights is " + result);
+        switch (result) {
             case RESULT.SUCCESS:
                 nextState = Scavenge_Cancelled;
                 break;
@@ -81,6 +86,7 @@ public class MoveToScavenge : Interaction {
         SetCurrentState(_states[nextState]);
     }
     private void DoNothingEffect(InteractionState state) {
+        AddToDebugLog("Chose to do nothing");
         SetCurrentState(_states[Scavenge_Proceeds]);
     }
     #endregion
@@ -116,9 +122,11 @@ public class MoveToScavenge : Interaction {
     }
 
     private void StartMove() {
+        AddToDebugLog(_characterInvolved.name + " starts moving towards " + targetArea.name + "(" + targetArea.coreTile.landmarkOnTile.name + ")");
         _characterInvolved.ownParty.GoToLocation(targetArea.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateScavengeEvent());
     }
     private void CreateScavengeEvent() {
+        AddToDebugLog(_characterInvolved.name + " will now create scavenge event");
         Interaction scavenge = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SCAVENGE_EVENT, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
         _characterInvolved.AddInteraction(scavenge);
     }

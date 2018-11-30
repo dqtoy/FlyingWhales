@@ -236,7 +236,7 @@ public class GameManager : MonoBehaviour {
 
     #region Utilities
     private void LogCallback(string condition, string stackTrace, LogType type) {
-        CharacterManager.Instance.CategorizeLog(condition, stackTrace, type);
+        //CharacterManager.Instance.CategorizeLog(condition, stackTrace, type);
     }
     public void ToggleCharactersVisibility(bool state) {
         allCharactersAreVisible = state;

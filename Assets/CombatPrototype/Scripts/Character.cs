@@ -412,7 +412,11 @@ namespace ECS {
             _id = Utilities.SetID(this);
             //_characterClass = CharacterManager.Instance.classesDictionary[className].CreateNewCopy();
             _raceSetting = RaceManager.Instance.racesDictionary[race.ToString()].CreateNewCopy();
-            AssignClass(CharacterManager.Instance.classesDictionary[className]);
+            if (CharacterManager.Instance.classesDictionary.ContainsKey(className)) {
+                AssignClass(CharacterManager.Instance.classesDictionary[className]);
+            } else {
+                throw new Exception("There is no class named " + className + " but it is being assigned to " + this.name);
+            }
             _gender = gender;
             _name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
             if (this is CharacterArmyUnit) {
@@ -2950,10 +2954,10 @@ namespace ECS {
         public void DailyInteractionGeneration() {
             DefaultAllExistingInteractions();
             if (_currentInteractionTick == GameManager.Instance.hour) {
-                if(job.jobType != JOB.NONE) {
-                    job.CreateRandomInteractionForNonMinionCharacters();
-                }
-                //GenerateDailyInteraction();
+                //if(job.jobType != JOB.NONE) {
+                //    job.CreateRandomInteractionForNonMinionCharacters();
+                //}
+                GenerateDailyInteraction();
                 SetDailyInteractionGenerationTick();
             }
         }
@@ -2961,7 +2965,7 @@ namespace ECS {
             if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb) {
                 return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
             }
-            if (_job != null) {
+            if (_job != null && job.jobType != JOB.NONE) {
                 _job.CreateRandomInteractionForNonMinionCharacters();
             }
             //string interactionLog = GameManager.Instance.TodayLogString() + "Generating daily interaction for " + this.name;

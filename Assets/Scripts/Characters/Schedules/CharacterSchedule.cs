@@ -27,7 +27,7 @@ public class CharacterSchedule {
 
     public CharacterSchedule(CharacterScheduleTemplate template, Character owner) {
         this.owner = owner;
-        ConstructSchedule(template);
+        //ConstructSchedule(template);
     }
 
     #region Schedule Construction

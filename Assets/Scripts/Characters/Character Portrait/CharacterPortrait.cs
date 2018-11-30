@@ -70,6 +70,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
     public void Initialize() {
         Messenger.AddListener<CharacterIntel>(Signals.CHARACTER_INTEL_ADDED, OnCharacterIntelObtained);
+        Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
     }
 
     public void GeneratePortrait(ICharacter character, int imgSize = 104, CHARACTER_ROLE role = CHARACTER_ROLE.NONE) {
@@ -246,7 +247,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         if (_character != null) {
             CharacterIntel characterIntel = _character.characterIntel;
             if (_character is Character) {
-                if (forceShowPortrait) {
+                if (forceShowPortrait || GameManager.Instance.inspectAll) {
                     unknownGO.SetActive(false);
                     SetBodyPartsState(true);
                 } else {
@@ -254,7 +255,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
                     SetBodyPartsState(characterIntel.isObtained);
                 }
             } else if (_character is Monster) {
-                if (forceShowPortrait) {
+                if (forceShowPortrait || GameManager.Instance.inspectAll) {
                     unknownGO.SetActive(false);
                     SetBodyPartsState(true);
                 } else {
@@ -433,9 +434,15 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             UpdateUnknownVisual();
         }
     }
+    private void OnInspectAll() {
+        UpdateUnknownVisual();
+    }
     private void RemoveListeners() {
         if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_INTEL_ADDED)) {
             Messenger.RemoveListener<CharacterIntel>(Signals.CHARACTER_INTEL_ADDED, OnCharacterIntelObtained);
+        }
+        if (Messenger.eventTable.ContainsKey(Signals.INSPECT_ALL)) {
+            Messenger.RemoveListener(Signals.INSPECT_ALL, OnInspectAll);
         }
     }
     #endregion

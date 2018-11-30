@@ -139,15 +139,15 @@ public class ActionData : IActionData {
     }
     public void SetCurrentAction(CharacterAction action) {
         this.currentAction = action;
-        Debug.Log(GameManager.Instance.TodayLogString() + "Set current action of " + _party.name + " to " + this.currentAction.actionData.actionName);
+        //Debug.Log(GameManager.Instance.TodayLogString() + "Set current action of " + _party.name + " to " + this.currentAction.actionData.actionName);
     }
     public void SetCurrentTargetObject(IObject targetObject) {
         this.currentTargetObject = targetObject;
-        if (this.currentTargetObject == null) {
-            Debug.Log(GameManager.Instance.TodayLogString() + "Set current target object of " + _party.name + " to null.");
-        } else {
-            Debug.Log(GameManager.Instance.TodayLogString() + "Set current target object of " + _party.name + " to " + this.currentTargetObject.objectName);
-        }
+        //if (this.currentTargetObject == null) {
+        //    Debug.Log(GameManager.Instance.TodayLogString() + "Set current target object of " + _party.name + " to null.");
+        //} else {
+        //    Debug.Log(GameManager.Instance.TodayLogString() + "Set current target object of " + _party.name + " to " + this.currentTargetObject.objectName);
+        //}
        
     }
     private void SetQuestAssociatedWithAction(Quest quest) {
@@ -316,7 +316,7 @@ public class ActionData : IActionData {
      This will end the character's current action and assign the new action.
          */
     public void ForceDoAction(CharacterAction newAction, IObject targetObject) {
-        Debug.Log("Forced " + _party.name + " to perform " + newAction.actionData.actionName + " at " + targetObject.objectName);
+        //Debug.Log("Forced " + _party.name + " to perform " + newAction.actionData.actionName + " at " + targetObject.objectName);
         if (currentAction != null) {
             currentAction.EndAction(_party, currentTargetObject);
         }
