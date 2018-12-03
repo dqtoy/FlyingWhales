@@ -226,13 +226,13 @@ public class SuspiciousSoldierMeeting : Interaction {
                 //}
             //}
         }
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
 
 
     }
     private void WarDeclaredRewardEffect(InteractionState state) {
         //Tile owner faction will declare war on player
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         FactionManager.Instance.DeclareWarBetween(_interactable.faction, PlayerManager.Instance.player.playerFaction);
         //if(state.descriptionLog != null) {
         //    state.descriptionLog.AddToFillers(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1);
@@ -243,7 +243,7 @@ public class SuspiciousSoldierMeeting : Interaction {
         state.AddLogFiller(new LogFiller(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void ArmyGainedRewardEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Knights", RACE.HUMANS, false);
         newMinion.icharacter.SetLevel(UnityEngine.Random.Range(5, 9));
         PlayerManager.Instance.player.AddMinion(newMinion);
@@ -257,7 +257,7 @@ public class SuspiciousSoldierMeeting : Interaction {
         //}
     }
     private void NothingHappensRewardEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
     }
     private void DoNothingRewardEffect(InteractionState state) {
         //explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));

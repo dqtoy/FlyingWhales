@@ -6,7 +6,7 @@ using System;
 
 public class Minion : IUnit {
 
-    private PlayerCharacterItem _characterItem;
+    //private PlayerCharacterItem _characterItem;
     //private PlayerAbility _ability;
     private Area _currentlyExploringArea;
     private Area _currentlyAttackingArea;
@@ -35,7 +35,7 @@ public class Minion : IUnit {
         get { return _currentlyAttackingArea; }
     }
     public PlayerCharacterItem minionItem {
-        get { return _characterItem; }
+        get { return icharacter.playerCharacterItem; }
     }
     public ICharacter icharacter {
         get { return _icharacter; }
@@ -106,7 +106,7 @@ public class Minion : IUnit {
             }
         }
         _isEnabled = state;
-        _characterItem.SetEnabledState(state);
+        minionItem.SetEnabledState(state);
     }
     public void SetExploringArea(Area area) {
         _currentlyExploringArea = area;
@@ -131,7 +131,7 @@ public class Minion : IUnit {
         }
     }
     public void SetPlayerCharacterItem(PlayerCharacterItem item) {
-        _characterItem = item;
+        icharacter.SetPlayerCharacterItem(item);
     }
     public void AdjustExp(int amount) {
         _exp += amount;
@@ -141,13 +141,16 @@ public class Minion : IUnit {
         }else if (_exp < 0) {
             _exp = 0;
         }
-        _characterItem.UpdateMinionItem();
+        //_characterItem.UpdateMinionItem();
     }
     public void SetLevel(int level) {
         icharacter.SetLevel(level);
     }
     public void LevelUp() {
         icharacter.LevelUp();
+    }
+    public void LevelUp(int amount) {
+        icharacter.LevelUp(amount);
     }
     public void SetIndexDefaultSort(int index) {
         _indexDefaultSort = index;
@@ -187,8 +190,8 @@ public class Minion : IUnit {
     #region Rewards
     public void ClaimReward(Reward reward) {
         switch (reward.rewardType) {
-            case REWARD.EXP:
-            AdjustExp(reward.amount);
+            case REWARD.LEVEL:
+            LevelUp(reward.amount);
             break;
             default:
             break;

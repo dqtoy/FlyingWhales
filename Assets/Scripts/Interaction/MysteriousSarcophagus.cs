@@ -174,7 +174,7 @@ public class MysteriousSarcophagus : Interaction {
 
     #region State Effects
     private void CursedRewardEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         //TODO: all of your units gain a random negative Trait (same negative Trait for all)
         WeightedDictionary<string> negativeTraitsWeights = new WeightedDictionary<string>();
         negativeTraitsWeights.AddElement("Spider Phobia", 35);
@@ -192,17 +192,17 @@ public class MysteriousSarcophagus : Interaction {
         //}
     }
     private void AccessoryUpgradeRewardEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         if (explorerMinion.icharacter.equippedAccessory != null) {
             explorerMinion.icharacter.UpgradeAccessory();
         }
     }
     private void GainManaRewardEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         PlayerManager.Instance.player.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Mana_Cache_Reward_2));
     }
     private void GainSuppliesRewardEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         PlayerManager.Instance.player.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
     }
     private void AwakenUndeadHeroRewardEffect(InteractionState state) {
@@ -212,7 +212,7 @@ public class MysteriousSarcophagus : Interaction {
         //landmark.AddDefender(zombieEarthbinderHero);
     }
     private void GainPositiveTraitRewardEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         //TODO: Positive Trait Reward 1
         WeightedDictionary<string> positiveTraitsWeights = new WeightedDictionary<string>();
         positiveTraitsWeights.AddElement("Spider Slayer", 35);

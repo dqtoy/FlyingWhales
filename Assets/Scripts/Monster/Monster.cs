@@ -780,6 +780,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public void LevelUp() {
         //Not applicable
     }
+    public void LevelUp(int amount) {
+        //Not applicable
+    }
     public void AddTrait(Trait combatAttribute) {
         //Not applicable
     }

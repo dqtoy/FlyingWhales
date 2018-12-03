@@ -178,7 +178,7 @@ public class TheSpiderQueen : Interaction {
     }
     private void TransformRitualFailureEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
     }
     private void TransformRitualCriticalFailure(InteractionState state, string effectName) {
         //_states[effectName].SetDescription(state.chosenOption.assignedMinion.icharacter.name + " performed the Transform Ritual but the Queen's protectors discovered him at the last minute and killed him before he was able to complete the ritual.");
@@ -195,7 +195,7 @@ public class TheSpiderQueen : Interaction {
     }
     private void GainSuppliesEffect(InteractionState state) {
         //**Reward**: Supply Cache Reward 1, Demon gains Exp 1
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         Reward reward = InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1);
         PlayerManager.Instance.player.ClaimReward(reward);
         landmark.tileLocation.areaOfTile.PayForReward(reward);
@@ -218,7 +218,7 @@ public class TheSpiderQueen : Interaction {
         army.iactionData.AssignAction(characterAction, PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark().landmarkObj);
     }
     private void SpidersAttackEffect(InteractionState state) {
-        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
+        state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
     }
 
     private void ConstructAssaultSpawnWeights() {

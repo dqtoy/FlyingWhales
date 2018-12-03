@@ -130,7 +130,7 @@ public class MysteryHum : Interaction {
         Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Earthbinders", RACE.ZOMBIE, false);
         newMinion.icharacter.SetLevel(5);
         PlayerManager.Instance.player.AddMinion(newMinion);
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
     }
     private void DoNothingRewardEffect(InteractionState state) {
         //explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));

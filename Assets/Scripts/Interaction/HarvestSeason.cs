@@ -142,7 +142,7 @@ public class HarvestSeason : Interaction {
         GameDate dueDate = GameManager.Instance.Today();
         dueDate.AddMonths(5);
         farm.DisableSupplyProductionUntil(dueDate);
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     #endregion
 
@@ -169,7 +169,7 @@ public class HarvestSeason : Interaction {
         state.AddLogFiller(new LogFiller(chosenFarmer, chosenFarmer.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         chosenFarmer.Death();
         farm.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     #endregion
 
@@ -182,7 +182,7 @@ public class HarvestSeason : Interaction {
     //}
     private void ObtainHarvestRewardEffect(InteractionState state) {
         //**Reward**: Supply Cache 1, Demon gains Exp 1
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         Reward reward = InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1);
         PlayerManager.Instance.player.ClaimReward(reward);
         farm.tileLocation.areaOfTile.PayForReward(reward);
@@ -204,7 +204,7 @@ public class HarvestSeason : Interaction {
         //**Effect**: Faction declares war vs player, City gains Supply Cache 1
         FactionManager.Instance.DeclareWarBetween(farm.tileLocation.areaOfTile.owner, PlayerManager.Instance.player.playerFaction);
         farm.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(farm.tileLocation.areaOfTile.owner, farm.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
         }

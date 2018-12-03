@@ -82,18 +82,20 @@ public interface ICharacter {
     void UpgradeArmor();
     void UpgradeAccessory();
     void LevelUp();
+    void OnRemovedFromParty();
+    void OnAddedToParty();
+    void OnAddedToPlayer();
     //void FaintOrDeath(ICharacter killer);
     void SetSide(ECS.SIDES side);
     void SetRowNumber(int row);
     void AdjustSP(int amount);
     //void AdjustHP(int amount, ICharacter killer = null);
     void AdjustExperience(int amount);
+    void LevelUp(int amount);
+    void SetLevel(int amount);
     void EnableDisableSkills(Combat combat);
     void SetOwnedParty(Party party);
     void SetCurrentParty(Party party);
-    void OnRemovedFromParty();
-    void OnAddedToParty();
-    void OnAddedToPlayer();
     void SetHomeLandmark(BaseLandmark newHomeLandmark);
     void AddHistory(Log log); //Character only
     void SetMode(MODE mode);
@@ -101,7 +103,6 @@ public interface ICharacter {
     void RemoveMiscAction(ACTION_TYPE actionType);
     void SetMinion(Minion minion);
     void Assassinate(ICharacter assassin);
-    void SetLevel(int amount);
     void AddTrait(Trait combatAttribute);
     bool IsInParty();
     bool IsInOwnParty();

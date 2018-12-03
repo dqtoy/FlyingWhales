@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour {
 	public int year;
     public int hour;
     public int continuousDays;
-    public const int hoursPerDay = 100;
+    public const int hoursPerDay = 30;
 
     public int startYear;
 

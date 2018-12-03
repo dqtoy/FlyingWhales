@@ -126,7 +126,7 @@ public class ArmyAttacks : Interaction {
 
     private void StopSuccessfulRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         //if (state.minionLog != null) {
         //    state.minionLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
         //    state.minionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
@@ -140,7 +140,7 @@ public class ArmyAttacks : Interaction {
     }
     private void StopFailureRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         //**Mechanics**: Army Unit with most occupied slots will Attack the selected enemy location.
         CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
@@ -164,7 +164,7 @@ public class ArmyAttacks : Interaction {
         army.iactionData.AssignAction(characterAction, target.landmarkObj);
         landmark.tileLocation.areaOfTile.areaInvestigation.RecallMinion("attack");
         //**Reward**: Demon gains Exp 1
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         //if (state.minionLog != null) {
         //    state.minionLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
         //}
@@ -175,7 +175,7 @@ public class ArmyAttacks : Interaction {
     }
     private void RedirectionSuccessfulRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         //**Mechanics**: Army Unit with most occupied slots will Attack assigned Location Intel.
         BaseLandmark target = state.chosenOption.assignedLocation.location.GetRandomExposedLandmark();
         CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
@@ -197,7 +197,7 @@ public class ArmyAttacks : Interaction {
     }
     private void RedirectionFailureRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         //**Mechanics**: Army Unit with most occupied slots will Attack a player location.
         BaseLandmark target = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
         CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();

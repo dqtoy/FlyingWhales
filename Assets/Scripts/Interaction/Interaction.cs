@@ -327,7 +327,7 @@ public class Interaction {
     }
     protected void SupplyRewardEffect(InteractionState state) {
         PlayerManager.Instance.player.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
     }
 
     protected void ManaRewardState(InteractionState state, string effectName) {
@@ -337,7 +337,7 @@ public class Interaction {
     }
     protected void ManaRewardEffect(InteractionState state) {
         PlayerManager.Instance.player.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Mana_Cache_Reward_1));
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
     }
     protected void NothingRewardState(InteractionState state, string effectName) {
         //_states[effectName].SetDescription(explorerMinion.name + " has returned with nothing to report.");
@@ -345,7 +345,7 @@ public class Interaction {
         NothingEffect(_states[effectName]);
     }
     protected void NothingEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
     }
 
     #region End Result Share States and Effects

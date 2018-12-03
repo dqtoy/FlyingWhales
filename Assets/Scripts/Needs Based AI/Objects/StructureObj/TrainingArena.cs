@@ -19,7 +19,7 @@ public class TrainingArena : StructureObj {
     }
     public override void OnAssignCharacter() {
         base.OnAssignCharacter();
-        ScheduleCharacterToGainExperience();
+        ScheduleCharacterToGainLevel();
     }
     public override void OnAddToLandmark(BaseLandmark newLocation) {
         //newLocation.SetMaxDefenderCount(2);
@@ -28,14 +28,14 @@ public class TrainingArena : StructureObj {
     #endregion
 
     #region Utilities
-    private void ScheduleCharacterToGainExperience() {
+    private void ScheduleCharacterToGainLevel() {
         GameDate dueDate = GameManager.Instance.Today();
         dueDate.AddDays(80);
-        SchedulingManager.Instance.AddEntry(dueDate, () => CharacterGainsExperience());
+        SchedulingManager.Instance.AddEntry(dueDate, () => CharacterGainsLevel());
     }
-    private void CharacterGainsExperience() {
+    private void CharacterGainsLevel() {
         if(!isRuined && _assignedCharacter != null) {
-            _assignedCharacter.minion.AdjustExp(100);
+            _assignedCharacter.minion.LevelUp();
             _assignedCharacter.minion.GoBackFromAssignment();
         }
         OnEndStructureEffect();
