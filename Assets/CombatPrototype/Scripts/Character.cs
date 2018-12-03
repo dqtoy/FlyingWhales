@@ -3001,8 +3001,8 @@ namespace ECS {
             _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.hoursPerDay + 1);
         }
         public void DailyInteractionGeneration() {
-            DefaultAllExistingInteractions();
-            if (_currentInteractionTick == GameManager.Instance.hour) {
+            //DefaultAllExistingInteractions();
+            if (_currentInteractionTick == GameManager.Instance.days) {
                 //if(job.jobType != JOB.NONE) {
                 //    job.CreateRandomInteractionForNonMinionCharacters();
                 //}

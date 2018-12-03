@@ -932,7 +932,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.hoursPerDay + 1);
     }
     public void DailyInteractionGeneration() {
-        if (_currentInteractionTick == GameManager.Instance.hour) {
+        if (_currentInteractionTick == GameManager.Instance.days) {
             GenerateDailyInteraction();
             SetDailyInteractionGenerationTick();
         }

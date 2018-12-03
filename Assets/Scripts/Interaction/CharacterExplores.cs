@@ -103,7 +103,7 @@ public class CharacterExplores : Interaction {
     public override void OnInteractionActive() {
         base.OnInteractionActive();
         //If you dont have it yet, gain Intel of selected character (Check if minion is exploring)
-        PlayerManager.Instance.player.AddIntel(characterInvolved.characterIntel);
+        //PlayerManager.Instance.player.AddIntel(characterInvolved.characterIntel);
     }
     #endregion
 

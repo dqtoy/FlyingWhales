@@ -283,9 +283,6 @@ public class BaseLandmark : ILocation, IInteractable {
             ObjectState ruined = landmarkObj.GetState("Ruined");
             landmarkObj.ChangeState(ruined);
             tileLocation.areaOfTile.CheckDeath();
-            if (tileLocation.areaOfTile.areaInvestigation != null) {
-                tileLocation.areaOfTile.areaInvestigation.OnDestroyLandmark(this);
-            }
         }
         //RemoveListeners();
     }
@@ -1289,20 +1286,10 @@ public class BaseLandmark : ILocation, IInteractable {
         //AddInteraction(pointOfInterest2);
     }
     public void AddInteraction(Interaction interaction) {
-        _currentInteractions.Add(interaction);
-        if (interaction.characterInvolved != null) {
-            interaction.characterInvolved.currentInteractions.Add(interaction);
-        }
-        interaction.Initialize();
-        //Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
+        tileLocation.areaOfTile.AddInteraction(interaction);
     }
     public void RemoveInteraction(Interaction interaction) {
-        if (_currentInteractions.Remove(interaction)) {
-            if (interaction.characterInvolved != null) {
-                interaction.characterInvolved.currentInteractions.Remove(interaction);
-            }
-            //Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
-        }
+        tileLocation.areaOfTile.RemoveInteraction(interaction);
     }
     public Interaction GetInteractionOfType(INTERACTION_TYPE type) {
         for (int i = 0; i < _currentInteractions.Count; i++) {
@@ -1313,16 +1300,6 @@ public class BaseLandmark : ILocation, IInteractable {
         }
         return null;
     }
-    //public bool HasActiveInteraction() {
-    //    //if this landmark already has a landmark other than investigate
-    //    for (int i = 0; i < _currentInteractions.Count; i++) {
-    //        Interaction currInteraction = _currentInteractions[i];
-    //        if (currInteraction.type != INTERACTION_TYPE.INVESTIGATE) {
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
     public void SetEventTriggerWeight(int weight) {
         this.eventTriggerWeight = weight;
     }
@@ -1343,16 +1320,6 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     public void SetMinDailySupplyProductionAmount(int amount) {
         this.minDailySupplyProduction = amount;
-    }
-    public List<Interaction> GetAllInteractionsInLandmark() { //this includes all characters at this landmark
-        List<Interaction> interactions = new List<Interaction>(_currentInteractions);
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            Party currParty = _charactersAtLocation[i];
-            if (currParty.owner is Character) {
-                interactions.AddRange((currParty.owner as Character).currentInteractions);
-            }
-        }
-        return interactions;
     }
     #endregion
 

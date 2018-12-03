@@ -85,7 +85,7 @@ public class Interaction {
         _interactable = interactable;
         _timeOutTicks = timeOutTicks;
         //_isFirstTimeOutCancelled = false;
-        _hasActivatedTimeOut = false;
+        SetActivatedTimeOutState(false);
         _isSecondTimeOutCancelled = false;
         _hasUsedBaseCreateStates = false;
         _states = new Dictionary<string, InteractionState>();
@@ -111,7 +111,6 @@ public class Interaction {
             _characterInvolved.SetDoNotDisturb(false);
         }
         _interactable.RemoveInteraction(this);
-        InteractionUI.Instance.HideInteractionUI();
         if(_endInteractionAction != null) {
             _endInteractionAction();
             _endInteractionAction = null;
@@ -121,6 +120,9 @@ public class Interaction {
             SetJobAssociated(null);
         }
         Debug.Log(interactionDebugLog);
+        if(InteractionUI.Instance.interaction == this) {
+            InteractionUI.Instance.HideInteractionUI();
+        }
     }
     public virtual void OnInteractionActive() {
         _isChosen = true;
@@ -128,6 +130,7 @@ public class Interaction {
         interactable.landmarkVisual.HideInteractionTimer();
         _currentState.CreateLogs();
         _currentState.SetDescription();
+        Messenger.Broadcast(Signals.UPDATED_INTERACTION_STATE, this);
     } //this is called when the player clicks the "exclamation point" button and this interaction was chosen
     #endregion
 
@@ -166,7 +169,7 @@ public class Interaction {
     //    SchedulingManager.Instance.AddEntry(_timeDate, () => FirstTimeOut());
     //}
     public void ScheduleSecondTimeOut() {
-        _hasActivatedTimeOut = true;
+        SetActivatedTimeOutState(true);
         GameDate timeOutDate = GameManager.Instance.Today();
         timeOutDate.AddDays(secondTimeOutTicks);
         _timeDate = timeOutDate;
@@ -175,6 +178,9 @@ public class Interaction {
         interactable.landmarkVisual.SetAndStartInteractionTimer(secondTimeOutTicks);
         //interactable.landmarkVisual.ShowInteractionForeground();
         interactable.landmarkVisual.ShowInteractionTimer(this);
+    }
+    public void SetActivatedTimeOutState(bool state) {
+        _hasActivatedTimeOut = state;
     }
     public void SetEndInteractionAction(Action action) {
         _endInteractionAction = action;
