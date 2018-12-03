@@ -66,7 +66,7 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: e51888dfb7058024aa3d4cc54418c6cd, type: 3}
       tintSprite: {fileID: 0}
-      animation: {fileID: 0}
+      animation: {fileID: 9100000, guid: 6edecdf346129b14d8e8f55a9d5c59b5, type: 2}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
     possibleSpawnPoints: 0600000007000000

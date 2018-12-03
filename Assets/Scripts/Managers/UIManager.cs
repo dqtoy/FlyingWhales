@@ -399,6 +399,8 @@ public class UIManager : MonoBehaviour {
         }
         message += "<line-height=70%><size=16>" + info;
 
+        message = message.Replace("\\n", "\n");
+
         smallInfoLbl.text = message;
         smallInfoGO.SetActive(true);
         smallInfoEnvelopContent.Execute();
