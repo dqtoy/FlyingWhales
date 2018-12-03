@@ -33,19 +33,23 @@ public class Area {
     //defenders
     public int maxDefenderGroups { get; private set; }
     public int initialDefenderGroups { get; private set; }
-    public int minInitialDefendersPerGroup { get; private set; }
-    public int maxInitialDefendersPerGroup { get; private set; }
     public List<DefenderGroup> defenderGroups { get; private set; }
-    public int initialDefenderLevel { get; private set; }
     public List<RACE> possibleOccupants { get; private set; }
-    public RACE defaultRace { get; private set; }
+    public List<InitialRaceSetup> initialRaceSetup { get; private set; }
     public Dictionary<JOB, List<INTERACTION_TYPE>> jobInteractionTypes { get; private set; }
+    public int initialSupply { get; private set; } //this should not change when scavenging
+    public int residentCapacity { get; private set; }
+    public int workSupplyProduction { get; private set; }
 
+    private Race defaultRace;
     private List<HexTile> outerTiles;
     private List<SpriteRenderer> outline;
 
     #region getters
-    public RACE race {
+    public RACE raceType {
+        get { return owner == null ? defaultRace.race : owner.raceType; }
+    }
+    public Race race {
         get { return owner == null ? defaultRace : owner.race; }
     }
     #endregion
@@ -66,6 +70,8 @@ public class Area {
         defenderIntel = new DefenderIntel(this);
         areaInvestigation = new AreaInvestigation(this);
         jobInteractionTypes = new Dictionary<JOB, List<INTERACTION_TYPE>>();
+        initialRaceSetup = new List<InitialRaceSetup>();
+        defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
         SetAreaType(areaType);
         SetCoreTile(coreTile);
         SetSupplyCapacity(1000);
@@ -94,6 +100,11 @@ public class Area {
         defenderIntel = new DefenderIntel(this);
         areaInvestigation = new AreaInvestigation(this);
         jobInteractionTypes = new Dictionary<JOB, List<INTERACTION_TYPE>>();
+        if (data.raceSetup != null) {
+            initialRaceSetup = new List<InitialRaceSetup>(data.raceSetup);
+        } else {
+            initialRaceSetup = new List<InitialRaceSetup>();
+        }
 #if WORLD_CREATION_TOOL
         SetCoreTile(worldcreator.WorldCreatorManager.Instance.GetHexTile(data.coreTileID));
 #else
@@ -102,33 +113,72 @@ public class Area {
 #endif
         SetMaxDefenderGroups(data.maxDefenderGroups);
         SetInitialDefenderGroups(data.initialDefenderGroups);
-        SetMinInitialDefendersPerGroup(data.minInitialDefendersPerGroup);
-        SetMaxInitialDefendersPerGroup(data.maxInitialDefendersPerGroup);
         SetSupplyCapacity(data.supplyCapacity);
+        SetInitialSupplies(data.initialSupply);
+        SetResidentCapacity(data.residentCapacity);
+        SetWorkSupplyProduction(data.workSupplyProduction);
         possibleOccupants = new List<RACE>();
         if (data.possibleOccupants != null) {
             possibleOccupants.AddRange(data.possibleOccupants);
         }
-        SetDefaultRace(data.defaultRace);
+        //SetDefaultRace(data.defaultRace);
         AddTile(Utilities.GetTilesFromIDs(data.tileData)); //exposed tiles will be determined after loading landmarks at MapGeneration
         UpdateBorderColors();
         if (areaType != AREA_TYPE.DEMONIC_INTRUSION) {
             Messenger.AddListener(Signals.DAY_ENDED_2, DefaultAllExistingInteractions);
         }
+        GenerateDefaultRace();
     }
 
     #region Area Details
     public void SetName(string name) {
         this.name = name;
     }
-    public void SetDefaultRace(RACE race) {
-        defaultRace = race;
-    }
+    //public void SetDefaultRace(RACE race) {
+    //    defaultRace = race;
+    //}
     public void AddPossibleOccupant(RACE race) {
         possibleOccupants.Add(race);
     }
     public void RemovePossibleOccupant(RACE race) {
         possibleOccupants.Remove(race);
+    }
+    public bool HasRaceSetup(RACE race, RACE_SUB_TYPE subType) {
+        for (int i = 0; i < initialRaceSetup.Count; i++) {
+            InitialRaceSetup raceSetup = initialRaceSetup[i];
+            if (raceSetup.race.race == race && raceSetup.race.subType == subType) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public void AddRaceSetup(RACE race, RACE_SUB_TYPE subType) {
+        Race newRace = new Race(race, subType);
+        initialRaceSetup.Add(new InitialRaceSetup(newRace));
+    }
+    public void RemoveRaceSetup(RACE race, RACE_SUB_TYPE subType) {
+        for (int i = 0; i < initialRaceSetup.Count; i++) {
+            InitialRaceSetup raceSetup = initialRaceSetup[i];
+            if (raceSetup.race.race == race && raceSetup.race.subType == subType) {
+                initialRaceSetup.RemoveAt(i);
+                break;
+            }
+        }
+    }
+    public void SetInitialSupplies(int amount) {
+        initialSupply = amount;
+    }
+    public void SetResidentCapacity(int amount) {
+        residentCapacity = amount;
+    }
+    public void SetWorkSupplyProduction(int amount) {
+        workSupplyProduction = amount;
+    }
+    private void GenerateDefaultRace() {
+        if (initialRaceSetup.Count > 0) {
+            InitialRaceSetup chosenSetup = initialRaceSetup[Random.Range(0, initialRaceSetup.Count)];
+            defaultRace = chosenSetup.race;
+        }
     }
     #endregion
 
@@ -709,15 +759,6 @@ public class Area {
     public void SetInitialDefenderGroups(int initialDefenderGroups) {
         this.initialDefenderGroups = initialDefenderGroups;
     }
-    public void SetMinInitialDefendersPerGroup(int minInitialDefendersPerGroup) {
-        this.minInitialDefendersPerGroup = minInitialDefendersPerGroup;
-    }
-    public void SetMaxInitialDefendersPerGroup(int maxInitialDefendersPerGroup) {
-        this.maxInitialDefendersPerGroup = maxInitialDefendersPerGroup;
-    }
-    public void SetInitialDefenderLevel(int initialDefenderLevel) {
-        this.initialDefenderLevel = initialDefenderLevel;
-    }
     private void GenerateInitialDefenders() {
         WeightedDictionary<AreaDefenderSetting> defenderWeights = GetClassWeights();
         //if (this.owner != null && this.owner.defenderWeights.GetTotalOfWeights() > 0) {
@@ -731,10 +772,10 @@ public class Area {
         for (int i = 0; i < initialDefenderGroups; i++) {
             DefenderGroup newGroup = new DefenderGroup();
             AddDefenderGroup(newGroup);
-            int defendersToGenerate = Random.Range(minInitialDefendersPerGroup, maxInitialDefendersPerGroup + 1);
+            int defendersToGenerate = 4;
             for (int j = 0; j < defendersToGenerate; j++) {
                 string chosenClass = defenderWeights.PickRandomElementGivenWeights().className;
-                Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass, race, Utilities.GetRandomGender(), owner, coreTile.landmarkOnTile);
+                Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass, raceType, Utilities.GetRandomGender(), owner, coreTile.landmarkOnTile);
                 newGroup.AddCharacterToGroup(createdCharacter);
                 //TODO: Add Level
             }
@@ -767,7 +808,7 @@ public class Area {
         if (this.owner != null && this.owner.defenderWeights.GetTotalOfWeights() > 0) {
             return this.owner.defenderWeights;
         } else {
-            return LandmarkManager.Instance.GetDefaultDefenderWeights(race);
+            return LandmarkManager.Instance.GetDefaultDefenderWeights(raceType);
         }
     }
     #endregion
@@ -818,4 +859,35 @@ public class Area {
         }
     }
     #endregion
+}
+
+[System.Serializable]
+public struct IntRange {
+    public int lowerBound;
+    public int upperBound;
+    
+    public IntRange(int low, int high) {
+        lowerBound = low;
+        upperBound = high;
+    }
+}
+[System.Serializable]
+public struct Race {
+    public RACE race;
+    public RACE_SUB_TYPE subType;
+
+    public Race(RACE race, RACE_SUB_TYPE subType) {
+        this.race = race;
+        this.subType = subType;
+    }
+}
+[System.Serializable]
+public class InitialRaceSetup {
+    public Race race;
+    public IntRange spawnRange;
+
+    public InitialRaceSetup(Race race) {
+        this.race = race;
+        spawnRange = new IntRange(0,0);
+    }
 }

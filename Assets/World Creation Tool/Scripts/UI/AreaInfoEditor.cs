@@ -13,19 +13,26 @@ public class AreaInfoEditor : MonoBehaviour {
     [SerializeField] private InputField areaNameField;
     [SerializeField] private InputField maxDefendersField;
     [SerializeField] private InputField initialDefenderGroupsField;
-    [SerializeField] private InputField minInitialDefendersField;
-    [SerializeField] private InputField maxInitialDefendersField;
-    [SerializeField] private InputField initialDefenderLevelField;
     [SerializeField] private InputField supplyCapacityField;
-    [SerializeField] private Dropdown defaultRaceDropdown;
+    [SerializeField] private InputField initialSupplyField;
+    [SerializeField] private InputField residentCapacityField;
+    [SerializeField] private InputField workSupplyProductionField;
     [SerializeField] private Dropdown possibleOccupantsRaceDropdown;
     [SerializeField] private Text occupantsSummary;
 
-    public void Initialize() {
-        defaultRaceDropdown.ClearOptions();
-        possibleOccupantsRaceDropdown.ClearOptions();
+    [Header("Race Spawns")]
+    [SerializeField] private GameObject raceSpawnPrefab;
+    [SerializeField] private ScrollRect raceSpawnScrollView;
+    [SerializeField] private Dropdown initialRaceDropdown;
+    [SerializeField] private Dropdown initialRaceSubTypeDropdown;
 
-        defaultRaceDropdown.AddOptions(Utilities.GetEnumChoices<RACE>());
+    public void Initialize() {
+        possibleOccupantsRaceDropdown.ClearOptions();
+        initialRaceDropdown.ClearOptions();
+        initialRaceSubTypeDropdown.ClearOptions();
+
+        initialRaceDropdown.AddOptions(Utilities.GetEnumChoices<RACE>());
+        initialRaceSubTypeDropdown.AddOptions(Utilities.GetEnumChoices<RACE_SUB_TYPE>(true));
         possibleOccupantsRaceDropdown.AddOptions(Utilities.GetEnumChoices<RACE>());
     }
 
@@ -42,16 +49,17 @@ public class AreaInfoEditor : MonoBehaviour {
         areaNameField.text = currentArea.name;
         maxDefendersField.text = currentArea.maxDefenderGroups.ToString();
         initialDefenderGroupsField.text = currentArea.initialDefenderGroups.ToString();
-        minInitialDefendersField.text = currentArea.minInitialDefendersPerGroup.ToString();
-        maxInitialDefendersField.text = currentArea.maxInitialDefendersPerGroup.ToString();
-        initialDefenderLevelField.text = currentArea.initialDefenderLevel.ToString();
         supplyCapacityField.text = currentArea.supplyCapacity.ToString();
-        defaultRaceDropdown.value = Utilities.GetOptionIndex(defaultRaceDropdown, currentArea.defaultRace.ToString());
+        initialSupplyField.text = currentArea.initialSupply.ToString();
+        residentCapacityField.text = currentArea.residentCapacity.ToString();
+        workSupplyProductionField.text = currentArea.workSupplyProduction.ToString();
+        //defaultRaceDropdown.value = Utilities.GetOptionIndex(defaultRaceDropdown, currentArea.defaultRace.ToString());
         occupantsSummary.text = string.Empty;
         for (int i = 0; i < currentArea.possibleOccupants.Count; i++) {
             RACE race = currentArea.possibleOccupants[i];
             occupantsSummary.text += "(" + race.ToString() + ")";
         }
+        UpdateRaceSpawnData();
     }
 
     #region Basic Info
@@ -70,24 +78,6 @@ public class AreaInfoEditor : MonoBehaviour {
             currentArea.SetInitialDefenderGroups(amount);
         }
     }
-    public void SetMinInitialDefendersPerGroup(string amountStr) {
-        int amount;
-        if (Int32.TryParse(amountStr, out amount)) {
-            currentArea.SetMinInitialDefendersPerGroup(amount);
-        }
-    }
-    public void SetMaxInitialDefendersPerGroup(string amountStr) {
-        int amount;
-        if (Int32.TryParse(amountStr, out amount)) {
-            currentArea.SetMaxInitialDefendersPerGroup(amount);
-        }
-    }
-    public void SetInitialDefenderLevel(string amountStr) {
-        int amount;
-        if (Int32.TryParse(amountStr, out amount)) {
-            currentArea.SetInitialDefenderLevel(amount);
-        }
-    }
     public void SetSupplyCapacity(string amountStr) {
         int amount;
         if (Int32.TryParse(amountStr, out amount)) {
@@ -96,9 +86,9 @@ public class AreaInfoEditor : MonoBehaviour {
     }
     public void SetDefaultRace(int choice) {
         RACE result;
-        if (Enum.TryParse(defaultRaceDropdown.options[defaultRaceDropdown.value].text, out result)) {
-            currentArea.SetDefaultRace(result);
-        }
+        //if (Enum.TryParse(defaultRaceDropdown.options[defaultRaceDropdown.value].text, out result)) {
+        //    currentArea.SetDefaultRace(result);
+        //}
     }
     public void AddRemovePossibleOccupants() {
         RACE race = (RACE)Enum.Parse(typeof(RACE), possibleOccupantsRaceDropdown.options[possibleOccupantsRaceDropdown.value].text);
@@ -108,6 +98,43 @@ public class AreaInfoEditor : MonoBehaviour {
             currentArea.AddPossibleOccupant(race);
         }
         LoadData();
+    }
+    public void SetInitialSupplies(string amountStr) {
+        if (!string.IsNullOrEmpty(amountStr)) {
+            currentArea.SetInitialSupplies(System.Int32.Parse(amountStr));
+        }
+        
+    }
+    public void SetResidentCapacity(string amountStr) {
+        if (!string.IsNullOrEmpty(amountStr)) {
+            currentArea.SetResidentCapacity(System.Int32.Parse(amountStr));
+        }
+    }
+    public void SetWorkSupplyProduction(string amountStr) {
+        if (!string.IsNullOrEmpty(amountStr)) {
+            currentArea.SetWorkSupplyProduction(System.Int32.Parse(amountStr));
+        }
+    }
+    #endregion
+
+    #region Race Spawns
+    public void AddRemoveRaceSpawns() {
+        RACE chosenRace = (RACE) Enum.Parse(typeof(RACE), initialRaceDropdown.options[initialRaceDropdown.value].text);
+        RACE_SUB_TYPE chosenRaceSubType = (RACE_SUB_TYPE)Enum.Parse(typeof(RACE_SUB_TYPE), initialRaceSubTypeDropdown.options[initialRaceSubTypeDropdown.value].text);
+        if (currentArea.HasRaceSetup(chosenRace, chosenRaceSubType)) {
+            currentArea.RemoveRaceSetup(chosenRace, chosenRaceSubType);
+        } else {
+            currentArea.AddRaceSetup(chosenRace, chosenRaceSubType);
+        }
+        UpdateRaceSpawnData();
+    }
+    private void UpdateRaceSpawnData() {
+        Utilities.DestroyChildren(raceSpawnScrollView.content);
+        for (int i = 0; i < currentArea.initialRaceSetup.Count; i++) {
+            InitialRaceSetup setup = currentArea.initialRaceSetup[i];
+            GameObject go = GameObject.Instantiate(raceSpawnPrefab, raceSpawnScrollView.content);
+            go.GetComponent<RaceSpawnItem>().SetSetup(setup);
+        }
     }
     #endregion
 

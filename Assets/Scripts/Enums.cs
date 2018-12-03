@@ -1102,3 +1102,7 @@ public enum RESULT {
     FAIL,
     CRITICAL_FAIL
 }
+public enum RACE_SUB_TYPE {
+    NORMAL,
+    BANDIT,
+}

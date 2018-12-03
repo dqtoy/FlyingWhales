@@ -102,7 +102,7 @@ public class GoblinBanditReinforcements : Interaction {
         CharacterParty army = null;
         for (int i = 0; i < unitCount; i++) {
             DefenderSetting chosenDefender = assaultSpawnWeights.PickRandomElementGivenWeights();
-            Character armyUnit = CharacterManager.Instance.CreateNewCharacter(chosenDefender.className, landmark.owner.race, GENDER.MALE, landmark.owner, landmark);
+            Character armyUnit = CharacterManager.Instance.CreateNewCharacter(chosenDefender.className, landmark.owner.raceType, GENDER.MALE, landmark.owner, landmark);
             if (army == null) {
                 army = armyUnit.party;
             } else {

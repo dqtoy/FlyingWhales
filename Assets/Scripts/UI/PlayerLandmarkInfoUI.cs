@@ -152,7 +152,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
             landmarkNameLbl.text = _activeLandmark.landmarkName;
         }
         if (_activeLandmark.owner != null) {
-            landmarkTypeLbl.text = Utilities.GetNormalizedSingularRace(_activeLandmark.owner.race) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(_activeLandmark.specificLandmarkType.ToString());
+            landmarkTypeLbl.text = Utilities.GetNormalizedSingularRace(_activeLandmark.owner.raceType) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(_activeLandmark.specificLandmarkType.ToString());
         } else {
             landmarkTypeLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(_activeLandmark.specificLandmarkType.ToString());
         }

@@ -13,12 +13,13 @@ public class AreaSaveData {
     public int ownerID;
     public int maxDefenderGroups;
     public int initialDefenderGroups;
-    public int minInitialDefendersPerGroup;
-    public int maxInitialDefendersPerGroup;
     public int initialDefenderLevel;
     public int supplyCapacity;
     public List<RACE> possibleOccupants;
-    public RACE defaultRace;
+    public List<InitialRaceSetup> raceSetup;
+    public int initialSupply;
+    public int residentCapacity;
+    public int workSupplyProduction;
 
     public AreaSaveData(Area area) {
         areaID = area.id;
@@ -38,10 +39,11 @@ public class AreaSaveData {
         }
         maxDefenderGroups = area.maxDefenderGroups;
         initialDefenderGroups = area.initialDefenderGroups;
-        minInitialDefendersPerGroup = area.minInitialDefendersPerGroup;
-        maxInitialDefendersPerGroup = area.maxInitialDefendersPerGroup;
         supplyCapacity = area.supplyCapacity;
         possibleOccupants = new List<RACE>(area.possibleOccupants);
-        defaultRace = area.defaultRace;
+        raceSetup = new List<InitialRaceSetup>(area.initialRaceSetup);
+        initialSupply = area.initialSupply;
+        residentCapacity = area.residentCapacity;
+        workSupplyProduction = area.workSupplyProduction;
     }
 }

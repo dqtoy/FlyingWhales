@@ -411,7 +411,7 @@ public class InteractionItem : MonoBehaviour {
         }
 
         if (landmark.owner != null) {
-            locationTypeLbl.text = Utilities.GetNormalizedSingularRace(landmark.owner.race) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(landmark.specificLandmarkType.ToString());
+            locationTypeLbl.text = Utilities.GetNormalizedSingularRace(landmark.owner.raceType) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(landmark.specificLandmarkType.ToString());
             locationOwnerEmblem.gameObject.SetActive(true);
             locationOwnerEmblem.SetFaction(landmark.owner);
         } else {

@@ -205,7 +205,7 @@ public class AreaInfoUI : UIMenu {
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_activeArea.coreTile.landmarkOnTile.specificLandmarkType);
         landmarkNameLbl.text = _activeArea.name;
         if (_activeArea.owner != null) {
-            landmarkTypeLbl.text = Utilities.GetNormalizedSingularRace(_activeArea.owner.race) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(_activeArea.coreTile.landmarkOnTile.specificLandmarkType.ToString());
+            landmarkTypeLbl.text = Utilities.GetNormalizedSingularRace(_activeArea.owner.raceType) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(_activeArea.coreTile.landmarkOnTile.specificLandmarkType.ToString());
         } else {
             landmarkTypeLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(_activeArea.coreTile.landmarkOnTile.specificLandmarkType.ToString());
         }
