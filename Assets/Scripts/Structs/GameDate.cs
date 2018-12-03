@@ -7,20 +7,20 @@ public struct GameDate {
 	public int year;
     public int hour;
 
-	public GameDate(int month, int day, int year, int hour){
-		this.month = month;
+    public GameDate(int month, int day, int year, int hour){
+        this.month = month;
 		this.day = day;
 		this.year = year;
-        this.hour = hour;
-	}
-
-    public void AddHours(int amount) {
-        this.hour += amount;
-        while (this.hour > GameManager.hoursPerDay) {
-			this.hour -= GameManager.hoursPerDay;
-            AddDays(1);
-        }
+        this.hour = 0;
     }
+
+   // public void AddHours(int amount) {
+   //     this.hour += amount;
+   //     while (this.hour > GameManager.hoursPerDay) {
+			//this.hour -= GameManager.hoursPerDay;
+   //         AddDays(1);
+   //     }
+   // }
 
 	public void AddDays(int amount){
 		this.day += amount;
@@ -204,6 +204,6 @@ public struct GameDate {
     }
 
     public string GetDayAndTicksString() {
-        return ConvertToDays().ToString() + "." + hour.ToString();
+        return ConvertToDays().ToString();// + "." + hour.ToString();
     }
 }

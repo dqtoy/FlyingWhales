@@ -54,7 +54,7 @@ public class ActionThread : Multithread {
         associatedQuest = null;
         if (_party.owner is Character) {
             Character character = _party.owner as Character;
-            actionLog = "[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + character.name + "'s Action Logic: ";
+            actionLog = "[" + GameManager.Instance.continuousDays + "]" + character.name + "'s Action Logic: ";
             if (!character.actionQueue.IsEmpty) {//If Action Queue is not empty, pop the earliest one
                 ActionQueueItem item = character.actionQueue.Dequeue();
                 chosenAction = item.action;

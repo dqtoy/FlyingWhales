@@ -169,6 +169,6 @@ public class CharacterSchedule {
     }
 
     public void OnOwnerDied() {
-        Messenger.RemoveListener(Signals.DAY_START, OnDayStarted);
+        Messenger.RemoveListener(Signals.MONTH_START, OnDayStarted);
     }
 }

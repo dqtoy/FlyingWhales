@@ -14,7 +14,7 @@ public class PartyEvent : GameEvent {
     public void Initialize() {
         //End this event a day after today
         GameDate endDate = GameManager.Instance.Today();
-        endDate.AddDays(1);
+        endDate.AddMonths(1);
         SchedulingManager.Instance.AddEntry(endDate, () => EndEvent());
     }
 

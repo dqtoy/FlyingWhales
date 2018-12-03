@@ -168,7 +168,7 @@ public class Interaction {
     public void ScheduleSecondTimeOut() {
         _hasActivatedTimeOut = true;
         GameDate timeOutDate = GameManager.Instance.Today();
-        timeOutDate.AddHours(secondTimeOutTicks);
+        timeOutDate.AddDays(secondTimeOutTicks);
         _timeDate = timeOutDate;
         SchedulingManager.Instance.AddEntry(_timeDate, () => SecondTimeOut());
 

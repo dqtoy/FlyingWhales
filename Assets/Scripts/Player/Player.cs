@@ -106,7 +106,7 @@ public class Player : ILeader {
         //Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_ADDED, OnTileAddedToPlayerArea);
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
         Messenger.AddListener<Character>(Signals.CHARACTER_RELEASED, OnCharacterReleased);
-        Messenger.AddListener(Signals.HOUR_STARTED, EverydayAction);
+        Messenger.AddListener(Signals.DAY_STARTED, EverydayAction);
         //ConstructPlayerActions();
         AddWinListener();
     }

@@ -47,11 +47,11 @@ public class ObjectState {
 
     #region Utilities
     public void OnStartState() {
-        Messenger.AddListener(Signals.HOUR_ENDED, EveryTickEffect);
+        Messenger.AddListener(Signals.DAY_ENDED, EveryTickEffect);
         _object.StartState(this);
     }
     public void OnEndState() {
-        Messenger.RemoveListener(Signals.HOUR_ENDED, EveryTickEffect);
+        Messenger.RemoveListener(Signals.DAY_ENDED, EveryTickEffect);
         _object.EndState(this);
     }
     public void EveryTickEffect() {

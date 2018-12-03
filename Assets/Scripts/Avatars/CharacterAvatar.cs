@@ -137,8 +137,8 @@ public class CharacterAvatar : MonoBehaviour{
         if (_isTravelling && !_isTravelCancelled) {
             _isTravelCancelled = true;
             onPathCancelled = onCancelTravel;
-            Messenger.RemoveListener(Signals.HOUR_STARTED, TraverseCurveLine);
-            Messenger.AddListener(Signals.HOUR_STARTED, ReduceCurveLine);
+            Messenger.RemoveListener(Signals.DAY_STARTED, TraverseCurveLine);
+            Messenger.AddListener(Signals.DAY_STARTED, ReduceCurveLine);
         }
     }
     private void StartTravelling() {
@@ -147,11 +147,11 @@ public class CharacterAvatar : MonoBehaviour{
         _distanceToTarget = (Mathf.CeilToInt(distance / 2.315188f)) * 2; //6
         _travelLine = _party.specificLocation.tileLocation.CreateTravelLine(targetLocation.tileLocation, _distanceToTarget);
         _travelLine.SetActiveMeter(_isVisualShowing);
-        Messenger.AddListener(Signals.HOUR_STARTED, TraverseCurveLine);
+        Messenger.AddListener(Signals.DAY_STARTED, TraverseCurveLine);
     }
     private void TraverseCurveLine() {
         if (_travelLine.isDone) {
-            Messenger.RemoveListener(Signals.HOUR_STARTED, TraverseCurveLine);
+            Messenger.RemoveListener(Signals.DAY_STARTED, TraverseCurveLine);
             ArriveAtLocation();
             return;
         }
@@ -159,7 +159,7 @@ public class CharacterAvatar : MonoBehaviour{
     }
     private void ReduceCurveLine() {
         if (_travelLine.isDone) {
-            Messenger.RemoveListener(Signals.HOUR_STARTED, ReduceCurveLine);
+            Messenger.RemoveListener(Signals.DAY_STARTED, ReduceCurveLine);
             CancelledDeparture();
             return;
         }
@@ -183,7 +183,7 @@ public class CharacterAvatar : MonoBehaviour{
         SetHasArrivedState(true);
         _party.specificLocation.RemoveCharacterFromLocation(_party);
         targetLocation.AddCharacterToLocation(_party);
-        Debug.Log(GameManager.Instance.TodayLogString() + _party.name + " has arrived at " + targetLocation.locationName + " on " + GameManager.Instance.Today().GetDayAndTicksString());
+        Debug.Log(GameManager.Instance.TodayLogString() + _party.name + " has arrived at " + targetLocation.locationName + " on " + GameManager.Instance.continuousDays);
         //Every time the party arrives at home, check if it still not ruined
         //if (_party.mainCharacter is Character && _party.mainCharacter.homeLandmark.specificLandmarkType == LANDMARK_TYPE.CAMP && _party.mainCharacter.homeLandmark.landmarkObj.currentState.stateName == "Ruined") {
         //    //Check if the location the character arrived at is the character's home landmark
@@ -285,7 +285,7 @@ public class CharacterAvatar : MonoBehaviour{
                 _trackTarget = null;
                 SetHasArrivedState(true);
                 targetLocation.AddCharacterToLocation(_party);
-                Debug.Log(_party.name + " has arrived at " + targetLocation.locationName + " on " + GameManager.Instance.Today().GetDayAndTicksString());
+                Debug.Log(_party.name + " has arrived at " + targetLocation.locationName + " on " + GameManager.Instance.continuousDays);
                 //Every time the party arrives at home, check if it still not ruined
                 if(_party.mainCharacter is Character && _party.mainCharacter.homeLandmark.specificLandmarkType == LANDMARK_TYPE.CAMP && _party.mainCharacter.homeLandmark.landmarkObj.currentState.stateName == "Ruined") {
                     //Check if the location the character arrived at is the character's home landmark

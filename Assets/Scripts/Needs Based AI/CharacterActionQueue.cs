@@ -15,7 +15,7 @@ public class CharacterActionQueue<T> {
         if (value is ActionQueueItem) {
             Messenger.Broadcast(Signals.ACTION_ADDED_TO_QUEUE, value as ActionQueueItem, character);
         }
-        Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() + "] " + character.name + " added action to queue: \n" + value.ToString());
+        Debug.Log("[" + GameManager.Instance.continuousDays + "] " + character.name + " added action to queue: \n" + value.ToString());
     }
 
     public void Enqueue(T value, int index) {
@@ -23,7 +23,7 @@ public class CharacterActionQueue<T> {
         if (value is ActionQueueItem) {
             Messenger.Broadcast(Signals.ACTION_ADDED_TO_QUEUE, value as ActionQueueItem, character);
         }
-        Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() + "] " + character.name + " inserted action to queue (" + index + "): \n" + value.ToString());
+        Debug.Log("[" + GameManager.Instance.continuousDays + "] " + character.name + " inserted action to queue (" + index + "): \n" + value.ToString());
     }
 
     public T Dequeue() {

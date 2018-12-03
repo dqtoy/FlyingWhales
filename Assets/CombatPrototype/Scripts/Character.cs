@@ -551,7 +551,7 @@ namespace ECS {
             //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
             //Messenger.AddListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
             Messenger.AddListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
-            Messenger.AddListener(Signals.HOUR_STARTED, DailyInteractionGeneration);
+            Messenger.AddListener(Signals.DAY_STARTED, DailyInteractionGeneration);
             //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         }
         public void UnsubscribeSignals() {
@@ -562,10 +562,10 @@ namespace ECS {
             //Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
             //Messenger.RemoveListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
             Messenger.RemoveListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
-            Messenger.RemoveListener(Signals.HOUR_STARTED, DailyInteractionGeneration);
+            Messenger.RemoveListener(Signals.DAY_STARTED, DailyInteractionGeneration);
             //Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
-            if (Messenger.eventTable.ContainsKey(Signals.HOUR_ENDED)) {
-                Messenger.RemoveListener(Signals.HOUR_ENDED, EventEveryTick);
+            if (Messenger.eventTable.ContainsKey(Signals.DAY_ENDED)) {
+                Messenger.RemoveListener(Signals.DAY_ENDED, EventEveryTick);
             }
         }
         #endregion
@@ -2627,25 +2627,25 @@ namespace ECS {
         private GameEvent nextScheduledEvent;
         private DateRange nextScheduledEventDate;
         public void AddScheduledEvent(DateRange dateRange, GameEvent gameEvent) {
-            Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + this.name + " will schedule an event to " + dateRange.ToString());
+            Debug.Log("[" + GameManager.Instance.continuousDays + "]" + this.name + " will schedule an event to " + dateRange.ToString());
             if (eventSchedule.HasConflictingSchedule(dateRange)) {
                 //There is a conflict in the current schedule of the character, move the new event to a new schedule.
                 GameDate nextFreeDate = eventSchedule.GetNextFreeDateForEvent(gameEvent);
                 GameDate endDate = nextFreeDate;
-                endDate.AddHours(gameEvent.GetEventDurationRoughEstimateInTicks());
+                endDate.AddDays(gameEvent.GetEventDurationRoughEstimateInTicks());
                 DateRange newSched = new DateRange(nextFreeDate, endDate);
                 eventSchedule.AddElement(newSched, gameEvent);
-                Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + this.name + " has a conflicting schedule. Rescheduled event to " + newSched.ToString());
+                Debug.Log("[" + GameManager.Instance.continuousDays + "]" + this.name + " has a conflicting schedule. Rescheduled event to " + newSched.ToString());
             } else {
                 eventSchedule.AddElement(dateRange, gameEvent);
-                Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + this.name + " added scehduled event " + gameEvent.name + " on " + dateRange.ToString());
+                Debug.Log("[" + GameManager.Instance.continuousDays + "]" + this.name + " added scehduled event " + gameEvent.name + " on " + dateRange.ToString());
 
                 GameDate checkDate = dateRange.startDate;
                 checkDate.ReduceHours(GameManager.hoursPerDay);
                 if (checkDate.IsBefore(GameManager.Instance.Today())) { //if the check date is before today
                     //start check on the next tick
                     checkDate = GameManager.Instance.Today();
-                    checkDate.AddHours(1);
+                    checkDate.AddDays(1);
                 }
                 //Once event has been scheduled, schedule every tick checking 144 ticks before the start date of the new event
                 SchedulingManager.Instance.AddEntry(checkDate, () => StartEveryTickCheckForEvent());
@@ -2654,7 +2654,7 @@ namespace ECS {
         }
         public void AddScheduledEvent(GameDate startDate, GameEvent gameEvent) {
             GameDate endDate = startDate;
-            endDate.AddHours(gameEvent.GetEventDurationRoughEstimateInTicks());
+            endDate.AddDays(gameEvent.GetEventDurationRoughEstimateInTicks());
 
             DateRange dateRange = new DateRange(startDate, endDate);
             AddScheduledEvent(dateRange, gameEvent);
@@ -2663,7 +2663,7 @@ namespace ECS {
             //schedule a game event without specifing a date
             GameDate nextFreeDate = eventSchedule.GetNextFreeDateForEvent(gameEvent);
             GameDate endDate = nextFreeDate;
-            endDate.AddHours(gameEvent.GetEventDurationRoughEstimateInTicks());
+            endDate.AddDays(gameEvent.GetEventDurationRoughEstimateInTicks());
             DateRange newSched = new DateRange(nextFreeDate, endDate);
             AddScheduledEvent(newSched, gameEvent);
         }
@@ -2684,7 +2684,7 @@ namespace ECS {
             nextScheduledEvent = eventSchedule.GetNextEvent(); //Set next game event variable to the next event, to prevent checking the schecule every tick
             nextScheduledEventDate = eventSchedule.GetDateRangeForEvent(nextScheduledEvent);
             Debug.Log(this.name + " started checking every tick for event " + nextScheduledEvent.name);
-            Messenger.AddListener(Signals.HOUR_ENDED, EventEveryTick); //Add every tick listener for events
+            Messenger.AddListener(Signals.DAY_ENDED, EventEveryTick); //Add every tick listener for events
         }
         private void EventEveryTick() {
             HexTile currentLoc = this.currentParty.specificLocation.tileLocation; //check the character's current location
@@ -2692,7 +2692,7 @@ namespace ECS {
             int travelTime = PathGenerator.Instance.GetTravelTimeInTicks(this.specificLocation, nextEventAction.targetLocation, PATHFINDING_MODE.PASSABLE);
 
             GameDate eventArrivalDate = GameManager.Instance.Today();
-            eventArrivalDate.AddHours(travelTime); //given the start date and the travel time, check if the character has to leave now to reach the event in time
+            eventArrivalDate.AddDays(travelTime); //given the start date and the travel time, check if the character has to leave now to reach the event in time
             if (!eventArrivalDate.IsBefore(nextScheduledEventDate.startDate) && !party.actionData.isCurrentActionFromEvent) { //if the estimated arrival date is NOT before the next events' scheduled start date
                 if (party.actionData.isCurrentActionFromEvent) { //if this character's current action is from an event, do not perform the action from the next scheduled event.
                     Debug.LogWarning(this.name + " did not perform the next event action, since their current action is already from an event");
@@ -2701,7 +2701,7 @@ namespace ECS {
                     AddActionToQueue(nextScheduledEvent.GetNextEventAction(this), nextScheduledEvent); //queue the event action
                     _ownParty.actionData.EndCurrentAction();  //then end their current action
                 }
-                Messenger.RemoveListener(Signals.HOUR_ENDED, EventEveryTick);
+                Messenger.RemoveListener(Signals.DAY_ENDED, EventEveryTick);
                 Debug.Log(GameManager.Instance.TodayLogString() + this.name + " stopped checking every tick for event " + nextScheduledEvent.name);
                 nextScheduledEvent = null;
 
@@ -2940,7 +2940,7 @@ namespace ECS {
 
         #region Interaction Generation
         public void DisableInteractionGeneration() {
-            Messenger.RemoveListener(Signals.HOUR_STARTED, DailyInteractionGeneration);
+            Messenger.RemoveListener(Signals.DAY_STARTED, DailyInteractionGeneration);
         }
         public void AddInteractionWeight(INTERACTION_TYPE type, int weight) {
             interactionWeights.AddElement(type, weight);

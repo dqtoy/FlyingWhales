@@ -541,7 +541,7 @@ public class Area {
     #region Supplies
     private void StartSupplyLine() {
         AdjustSuppliesInBank(100);
-        Messenger.AddListener(Signals.DAY_START, ExecuteSupplyLine);
+        Messenger.AddListener(Signals.MONTH_START, ExecuteSupplyLine);
     }
     private void ExecuteSupplyLine() {
         CollectDailySupplies();

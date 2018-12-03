@@ -66,37 +66,37 @@ public class GameManager : MonoBehaviour {
     private void FixedUpdate() {
         if (_gameHasStarted && !isPaused) {
             if (this.timeElapsed == 0f) {
-                this.HourStarted();
+                this.DayStarted();
             }
             this.timeElapsed += Time.deltaTime;
             if (this.timeElapsed >= this.progressionSpeed) {
                 this.timeElapsed = 0f;
-                this.HourEnded();
+                this.DayEnded();
             }
         }
     }
-    private void Update() {
-        //Application.targetFrameRate = 60;
-        //    if (!UIManager.Instance.IsConsoleShowing() && !UIManager.Instance.IsMouseOnInput() && !PlayerManager.Instance.isChoosingStartingTile) {
-        //        if (Input.GetKeyDown(KeyCode.Space)) {
-        //            if (isPaused) {
-        //                //SetProgressionSpeed(currProgressionSpeed);
-        //                //SetPausedState(false);
-        //                if (currProgressionSpeed == PROGRESSION_SPEED.X1) {
-        //                    UIManager.Instance.SetProgressionSpeed1X();
-        //                } else if (currProgressionSpeed == PROGRESSION_SPEED.X2) {
-        //                    UIManager.Instance.SetProgressionSpeed2X();
-        //                } else if (currProgressionSpeed == PROGRESSION_SPEED.X4) {
-        //                    UIManager.Instance.SetProgressionSpeed4X();
-        //                }
-        //            } else {
-        //                //pause
-        //                //SetPausedState(true);
-        //                UIManager.Instance.Pause();
-        //            }
-        //        }
-        //    }
-    }
+    //private void Update() {
+    //    //Application.targetFrameRate = 60;
+    //    //    if (!UIManager.Instance.IsConsoleShowing() && !UIManager.Instance.IsMouseOnInput() && !PlayerManager.Instance.isChoosingStartingTile) {
+    //    //        if (Input.GetKeyDown(KeyCode.Space)) {
+    //    //            if (isPaused) {
+    //    //                //SetProgressionSpeed(currProgressionSpeed);
+    //    //                //SetPausedState(false);
+    //    //                if (currProgressionSpeed == PROGRESSION_SPEED.X1) {
+    //    //                    UIManager.Instance.SetProgressionSpeed1X();
+    //    //                } else if (currProgressionSpeed == PROGRESSION_SPEED.X2) {
+    //    //                    UIManager.Instance.SetProgressionSpeed2X();
+    //    //                } else if (currProgressionSpeed == PROGRESSION_SPEED.X4) {
+    //    //                    UIManager.Instance.SetProgressionSpeed4X();
+    //    //                }
+    //    //            } else {
+    //    //                //pause
+    //    //                //SetPausedState(true);
+    //    //                UIManager.Instance.Pause();
+    //    //            }
+    //    //        }
+    //    //    }
+    //}
     #endregion
 
 
@@ -107,7 +107,7 @@ public class GameManager : MonoBehaviour {
         UIManager.Instance.SetProgressionSpeed1X();
         UIManager.Instance.Pause();
 		SchedulingManager.Instance.StartScheduleCalls ();
-        Messenger.Broadcast(Signals.DAY_START); //for the first day
+        Messenger.Broadcast(Signals.MONTH_START); //for the first day
     }
 
     [ContextMenu("Create Travel Line")]
@@ -190,32 +190,32 @@ public class GameManager : MonoBehaviour {
         ECS.CombatManager.Instance.updateIntervals = this.progressionSpeed / (float) ECS.CombatManager.Instance.numOfCombatActionPerDay;
         Messenger.Broadcast(Signals.PROGRESSION_SPEED_CHANGED, progSpeed);
 	}
-    public void HourStarted() {
-        Messenger.Broadcast(Signals.HOUR_STARTED);
+    public void DayStarted() {
+        Messenger.Broadcast(Signals.DAY_STARTED);
         Messenger.Broadcast(Signals.UPDATE_UI);
     }
     /*
      * Function that triggers daily actions
      * */
-    public void HourEnded(){
-        Messenger.Broadcast(Signals.HOUR_ENDED);
+    public void DayEnded(){
+        Messenger.Broadcast(Signals.DAY_ENDED);
         Messenger.Broadcast(Signals.UPDATE_UI);
 
-        this.hour += 1;
-        if(this.hour > hoursPerDay) {
-            this.hour = 1;
-            this.days += 1;
-            Messenger.Broadcast(Signals.DAY_START);
-            this.continuousDays += 1;
-            if (days > daysInMonth[this.month]) {
-                this.days = 1;
-                this.month += 1;
-                if (this.month > 12) {
-                    this.month = 1;
-                    this.year += 1;
-                }
+        this.days += 1;
+        this.continuousDays += 1;
+        Messenger.Broadcast(Signals.MONTH_START);
+        if (days > daysInMonth[this.month]) {
+            this.days = 1;
+            this.month += 1;
+            if (this.month > 12) {
+                this.month = 1;
+                this.year += 1;
             }
         }
+        //this.hour += 1;
+        //if(this.hour > hoursPerDay) {
+        //    this.hour = 1;
+        //}
 	}
 
     #region Cursor

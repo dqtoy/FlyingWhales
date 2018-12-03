@@ -55,7 +55,7 @@ public struct DateRange {
         //GameDate startDate = this.startDate;
         //GameDate endDate = this.endDate;
         while (!lowerDate.IsSameDate(higherDate)) {
-            lowerDate.AddHours(1);
+            lowerDate.AddDays(1);
             range++;
         }
         return range;

@@ -11,7 +11,7 @@ public class Heartbroken : CharacterAttribute {
         base.OnAddAttribute(character);
         _character.role.AdjustConstantFunBuff(-50);
         GameDate expiryDate = GameManager.Instance.Today();
-        expiryDate.AddDays(15);
+        expiryDate.AddMonths(15);
         SchedulingManager.Instance.AddEntry(expiryDate, () => _character.RemoveAttribute(this));
     }
     public override void OnRemoveAttribute() {

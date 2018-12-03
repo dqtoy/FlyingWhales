@@ -22,7 +22,7 @@ public class TestEvent : GameEvent {
     public void ScheduleEvent(GameDate startDate) {
         SetupEventActions();
         GameDate endDate = startDate;
-        endDate.AddHours(GetEventDurationRoughEstimateInTicks());
+        endDate.AddDays(GetEventDurationRoughEstimateInTicks());
         character.AddScheduledEvent(new DateRange(startDate, endDate), this);
     }
 

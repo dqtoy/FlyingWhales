@@ -905,33 +905,33 @@ public class CharacterInfoUI : UIMenu {
         text += _activeCharacter.eventSchedule.GetEventScheduleSummary();
         Debug.Log(text);
     }
-    private void Update() {
-        int month;
-        int day;
-        int year;
-        int hour;
-        //daysConversionLbl.text = "Today is " + GameManager.Instance.Today().ToStringDate() + "Day Conversion: ";
-        if (Int32.TryParse(monthDropdown.options[monthDropdown.value].text, out month) && 
-            Int32.TryParse(dayDropdown.options[dayDropdown.value].text, out day) &&
-            Int32.TryParse(yearField.text, out year) &&
-            Int32.TryParse(tickField.text, out hour)) {
-            GameDate date = new GameDate(month, day, year, hour);
-            daysConversionLbl.text = "Day Conversion: " + date.GetDayAndTicksString();
-            if (date.IsBefore(GameManager.Instance.Today())) {
-                //the specified schedule date is before today
-                //do not allow
-                scheduleManualBtn.interactable = false;
-                daysConversionLbl.text += "(Invalid)";
-            } else {
-                if (!scheduleManualBtn.interactable) {
-                    scheduleManualBtn.interactable = true;
-                }
-            }
-        } else {
-            daysConversionLbl.text = "Day Conversion: Invalid";
-            scheduleManualBtn.interactable = false;
-        }
-    }
+    //private void Update() {
+    //    int month;
+    //    int day;
+    //    int year;
+    //    int hour;
+    //    //daysConversionLbl.text = "Today is " + GameManager.Instance.Today().ToStringDate() + "Day Conversion: ";
+    //    if (Int32.TryParse(monthDropdown.options[monthDropdown.value].text, out month) && 
+    //        Int32.TryParse(dayDropdown.options[dayDropdown.value].text, out day) &&
+    //        Int32.TryParse(yearField.text, out year) &&
+    //        Int32.TryParse(tickField.text, out hour)) {
+    //        GameDate date = new GameDate(month, day, year);
+    //        daysConversionLbl.text = "Day Conversion: " + date.GetDayAndTicksString();
+    //        if (date.IsBefore(GameManager.Instance.Today())) {
+    //            //the specified schedule date is before today
+    //            //do not allow
+    //            scheduleManualBtn.interactable = false;
+    //            daysConversionLbl.text += "(Invalid)";
+    //        } else {
+    //            if (!scheduleManualBtn.interactable) {
+    //                scheduleManualBtn.interactable = true;
+    //            }
+    //        }
+    //    } else {
+    //        daysConversionLbl.text = "Day Conversion: Invalid";
+    //        scheduleManualBtn.interactable = false;
+    //    }
+    //}
     #endregion
 
     private void CheckIfMenuShouldBeHidden() {

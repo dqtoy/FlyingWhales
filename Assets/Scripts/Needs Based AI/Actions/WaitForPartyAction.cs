@@ -39,7 +39,7 @@ public class WaitForPartyAction : CharacterAction {
         //this assumes that the deadline tick is greater than the current tick,
         //if somehow the current tick is greater, the wait counter will become negative and will, thrigger start quest at PerformAction()
         this._actionData.duration = deadlineTick - today.hour;
-        today.AddHours(_actionData.duration);
+        today.AddDays(_actionData.duration);
         //if (waitingCharacter.IsSquadLeader()) { //only listen for characters joining a party if this character is a squad leader
         //    Messenger.AddListener<ICharacter, Party>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
         //}

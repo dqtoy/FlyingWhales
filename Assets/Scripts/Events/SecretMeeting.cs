@@ -62,7 +62,7 @@ public class SecretMeeting : GameEvent {
         char2EatAction.SetDuration(72);
 
         GameDate waitDeadline = meetingDate;
-        waitDeadline.AddHours(20); //both of the characters will wait for 20 ticks from the meeting date
+        waitDeadline.AddDays(20); //both of the characters will wait for 20 ticks from the meeting date
         char1WaitAction.SetWaitUntil(waitDeadline);
         char2WaitAction.SetWaitUntil(waitDeadline);
 
@@ -75,7 +75,7 @@ public class SecretMeeting : GameEvent {
         SetName("Secret Meeting between " + _generalMax.name + " and " + _ladyOfTheLake.name + " at " + chosenMeetup.locationName);
 
         GameDate endDate = meetingDate;
-        endDate.AddHours(GetEventDurationRoughEstimateInTicks());
+        endDate.AddDays(GetEventDurationRoughEstimateInTicks());
 
         _generalMax.AddScheduledEvent(new DateRange(meetingDate, endDate), this);
         _ladyOfTheLake.AddScheduledEvent(new DateRange(meetingDate, endDate), this);
@@ -93,7 +93,7 @@ public class SecretMeeting : GameEvent {
         //}
         //meetingDate.AddDays(initialMeetingDay);
         GameDate meetingDate = GameManager.Instance.Today();
-        meetingDate.AddHours(72);
+        meetingDate.AddDays(72);
         return meetingDate;
     }
     public override void EndEventForCharacter(Character character) {
@@ -111,7 +111,7 @@ public class SecretMeeting : GameEvent {
         if (areAllCharactersDone) {
             //Reschedule the meeting 7 days from now
             GameDate nextMeeting = GameManager.Instance.Today();
-            nextMeeting.AddDays(7);
+            nextMeeting.AddMonths(7);
             ScheduleMeeting(nextMeeting);
         }
     }

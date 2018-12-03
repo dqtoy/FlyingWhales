@@ -45,7 +45,7 @@ public class MonsterParty : Party {
         _icharacterObject = _monsterObj;
         _actionData = new MonsterActionData(this);
         MonsterManager.Instance.allMonsterParties.Add(this);
-        Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
+        Messenger.AddListener(Signals.DAY_ENDED, EverydayAction);
         //ConstructResourceInventory();
 #endif
     }
@@ -78,7 +78,7 @@ public class MonsterParty : Party {
     }
     public override void RemoveListeners() {
         base.RemoveListeners();
-        Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
+        Messenger.RemoveListener(Signals.DAY_ENDED, EverydayAction);
     }
     public override void DetachActionData() {
         _actionData.DetachActionData();

@@ -177,7 +177,7 @@ public class AreaInvestigation {
     }
     private void OnExploreTick() {
         if (_currentTick >= _duration) {
-            Messenger.RemoveListener(Signals.HOUR_STARTED, OnExploreTick);
+            Messenger.RemoveListener(Signals.DAY_STARTED, OnExploreTick);
             ExploreDoneCheckForExistingEvents();
             return;
         }
@@ -193,8 +193,8 @@ public class AreaInvestigation {
             //    }
             //}
             if (_area.areAllLandmarksDead) {
-                if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
-                    Messenger.RemoveListener(Signals.HOUR_STARTED, OnExploreTick);
+                if (Messenger.eventTable.ContainsKey(Signals.DAY_STARTED)) {
+                    Messenger.RemoveListener(Signals.DAY_STARTED, OnExploreTick);
                 }
                 _area.coreTile.landmarkOnTile.landmarkVisual.StopInteractionTimerJob();
                 _area.coreTile.landmarkOnTile.landmarkVisual.HideInteractionTimerJob();

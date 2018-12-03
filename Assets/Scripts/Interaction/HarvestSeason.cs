@@ -140,7 +140,7 @@ public class HarvestSeason : Interaction {
     //}
     private void PoisonedHarvestRewardEffect(InteractionState state) {
         GameDate dueDate = GameManager.Instance.Today();
-        dueDate.AddDays(5);
+        dueDate.AddMonths(5);
         farm.DisableSupplyProductionUntil(dueDate);
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1)); //**Reward**: Demon gains Exp 1
     }

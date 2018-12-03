@@ -28,7 +28,7 @@ public class Instigator : Job {
         string result = weights.PickRandomElementGivenWeights();
         if (result == "Success") {
             //Get Random Chaos Event
-            //createdInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.KILLER_ON_THE_LOOSE, area.coreTile.landmarkOnTile);
+            SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER, area.coreTile.landmarkOnTile)); //NOT FINAL!
         } else if (result == "Fail") {
             SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, area.coreTile.landmarkOnTile));
         } else if (result == "Crit Fail") {

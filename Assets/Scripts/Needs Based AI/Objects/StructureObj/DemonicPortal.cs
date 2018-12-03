@@ -38,7 +38,7 @@ public class DemonicPortal : StructureObj {
     }
     private void ScheduleDoneTraining() {
         GameDate readyDate = GameManager.Instance.Today();
-        readyDate.AddHours(10); // 1 week
+        readyDate.AddDays(10); // 1 week
         SchedulingManager.Instance.AddEntry(readyDate, DoneTraining);
     }
     private void DoneTraining() {

@@ -94,7 +94,7 @@ public class ActionData : IActionData {
         //}
         //this.currentChainAction = chainAction;
 
-        actionHistory.Add("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + action.actionData.actionName + " - " + targetObject.objectName + "\n");
+        actionHistory.Add("[" + GameManager.Instance.continuousDays + "]" + action.actionData.actionName + " - " + targetObject.objectName + "\n");
         SetCurrentAction(action);
         SetCurrentTargetObject(targetObject);
         SetQuestAssociatedWithAction(associatedQuest);
@@ -127,7 +127,7 @@ public class ActionData : IActionData {
 
     public void EndAction() {
         if (currentAction != null){
-            Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() + "] Ended " + _party.name + " action " + currentAction.actionData.actionName);
+            Debug.Log("[" + GameManager.Instance.continuousDays + "] Ended " + _party.name + " action " + currentAction.actionData.actionName);
         }
         SetIsDone(true);
     }

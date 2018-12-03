@@ -14,7 +14,7 @@ public class SchedulingManager : MonoBehaviour {
 	}
 	public void StartScheduleCalls(){
 		this.checkGameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, GameManager.Instance.hour);
-		Messenger.AddListener (Signals.HOUR_ENDED, CheckSchedule);
+		Messenger.AddListener (Signals.DAY_ENDED, CheckSchedule);
 	}
 	private void CheckSchedule(){
 		this.checkGameDate.month = GameManager.Instance.month;
