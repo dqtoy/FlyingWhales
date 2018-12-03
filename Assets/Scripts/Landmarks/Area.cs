@@ -69,6 +69,7 @@ public class Area {
         areaInvestigation = new AreaInvestigation(this);
         jobInteractionTypes = new Dictionary<JOB, List<INTERACTION_TYPE>>();
         initialRaceSetup = new List<InitialRaceSetup>();
+        defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
         SetAreaType(areaType);
         SetCoreTile(coreTile);
         SetSupplyCapacity(1000);
@@ -117,6 +118,7 @@ public class Area {
         //SetDefaultRace(data.defaultRace);
         AddTile(Utilities.GetTilesFromIDs(data.tileData)); //exposed tiles will be determined after loading landmarks at MapGeneration
         UpdateBorderColors();
+        GenerateDefaultRace();
     }
 
     #region Area Details
@@ -162,6 +164,12 @@ public class Area {
     }
     public void SetWorkSupplyProduction(int amount) {
         workSupplyProduction = amount;
+    }
+    private void GenerateDefaultRace() {
+        if (initialRaceSetup.Count > 0) {
+            InitialRaceSetup chosenSetup = initialRaceSetup[Random.Range(0, initialRaceSetup.Count)];
+            defaultRace = chosenSetup.race;
+        }
     }
     #endregion
 
