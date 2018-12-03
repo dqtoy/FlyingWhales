@@ -10,8 +10,8 @@ public class InteractionManager : MonoBehaviour {
     public static readonly string Supply_Cache_Reward_1 = "SupplyCacheReward1";
     public static readonly string Mana_Cache_Reward_1 = "ManaCacheReward1";
     public static readonly string Mana_Cache_Reward_2 = "ManaCacheReward2";
-    public static readonly string Exp_Reward_1 = "ExpReward1";
-    public static readonly string Exp_Reward_2 = "ExpReward2";
+    public static readonly string Level_Reward_1 = "LevelReward1";
+    public static readonly string Level_Reward_2 = "LevelReward2";
 
     [SerializeField] private RoleInteractionsListDictionary roleDefaultInteractions;
 
@@ -19,8 +19,8 @@ public class InteractionManager : MonoBehaviour {
         { Supply_Cache_Reward_1, new RewardConfig(){ rewardType = REWARD.SUPPLY, lowerRange = 50, higherRange = 250 } },
         { Mana_Cache_Reward_1, new RewardConfig(){ rewardType = REWARD.MANA, lowerRange = 5, higherRange = 30 } },
         { Mana_Cache_Reward_2, new RewardConfig(){ rewardType = REWARD.MANA, lowerRange = 30, higherRange = 50 } },
-        { Exp_Reward_1, new RewardConfig(){ rewardType = REWARD.EXP, lowerRange = 40, higherRange = 40 } },
-        { Exp_Reward_2, new RewardConfig(){ rewardType = REWARD.EXP, lowerRange = 80, higherRange = 80 } },
+        { Level_Reward_1, new RewardConfig(){ rewardType = REWARD.LEVEL, lowerRange = 1, higherRange = 1 } },
+        { Level_Reward_2, new RewardConfig(){ rewardType = REWARD.LEVEL, lowerRange = 2, higherRange = 2 } },
     };
 
     private void Awake() {

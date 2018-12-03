@@ -57,7 +57,7 @@ MonoBehaviour:
   armyIconPrefab: {fileID: 1133497675646328, guid: 4bb373cd3a987c3419a7dd262591d640,
     type: 2}
   armyIconsParent: {fileID: 0}
-  maxLevel: 100
+  maxLevel: 30
   heroSprite: {fileID: 21300056, guid: be352ea3d46036640bb6df35b7b4dc2b, type: 3}
   villainSprite: {fileID: 21300034, guid: be352ea3d46036640bb6df35b7b4dc2b, type: 3}
   hermitSprite: {fileID: 21300050, guid: be352ea3d46036640bb6df35b7b4dc2b, type: 3}

@@ -17,6 +17,8 @@ namespace ECS {
         protected string _characterColorCode;
         protected int _id;
         protected int _gold;
+        protected int _currentInteractionTick;
+        protected int _lastLevelUpDay;
         protected float _actRate;
         protected bool _isDead;
         protected bool _isFainted;
@@ -62,7 +64,6 @@ namespace ECS {
         protected Dictionary<ELEMENT, float> _elementalResistances;
         protected Dictionary<Character, List<string>> _traceInfo;
         protected PlayerCharacterItem _playerCharacterItem;
-        protected int _currentInteractionTick;
 
         //Stats
         protected SIDES _currentSide;
@@ -2173,15 +2174,20 @@ namespace ECS {
 
         #region RPG
         public void LevelUp() {
+            //Only level up once per day
+            if (_lastLevelUpDay == GameManager.Instance.continuousDays) {
+                return;
+            }
+            _lastLevelUpDay = GameManager.Instance.continuousDays;
             if (_level < CharacterManager.Instance.maxLevel) {
                 _level += 1;
-                _experience = 0;
-                RecomputeMaxExperience();
+                //_experience = 0;
+                //RecomputeMaxExperience();
                 //Add stats per level from class
                 _attackPower += (int)((_characterClass.attackPowerPerLevel / 100f) * (float)_raceSetting.baseAttackPower);
                 _speed += (int)((_characterClass.speedPerLevel / 100f) * (float)_raceSetting.baseSpeed);
                 AdjustMaxHP((int)((_characterClass.hpPerLevel / 100f) * (float)_raceSetting.baseHP));
-                _maxSP += _characterClass.spPerLevel;
+                //_maxSP += _characterClass.spPerLevel;
                 //Add stats per level from race
                 if (_level > 1) {
                     int hpIndex = _level % _raceSetting.hpPerLevel.Length;
@@ -2195,7 +2201,46 @@ namespace ECS {
 
                 //Reset to full health and sp
                 ResetToFullHP();
-                ResetToFullSP();
+                //ResetToFullSP();
+                if(_playerCharacterItem != null) {
+                    _playerCharacterItem.UpdateMinionItem();
+                }
+            }
+        }
+        public void LevelUp(int amount) {
+            //Only level up once per day
+            if(_lastLevelUpDay == GameManager.Instance.continuousDays) {
+                return;
+            }
+            _lastLevelUpDay = GameManager.Instance.continuousDays;
+            int supposedLevel = _level + amount;
+            if (supposedLevel > CharacterManager.Instance.maxLevel) {
+                amount = CharacterManager.Instance.maxLevel - level;
+            }
+            _level += amount;
+            //_experience = 0;
+            //RecomputeMaxExperience();
+            //Add stats per level from class
+            _attackPower += (amount * (int) ((_characterClass.attackPowerPerLevel / 100f) * (float) _raceSetting.baseAttackPower));
+            _speed += (amount * (int) ((_characterClass.speedPerLevel / 100f) * (float) _raceSetting.baseSpeed));
+            AdjustMaxHP((amount * (int) ((_characterClass.hpPerLevel / 100f) * (float) _raceSetting.baseHP)));
+            //_maxSP += _characterClass.spPerLevel;
+            //Add stats per level from race
+            if (_level > 1) {
+                int hpIndex = _level % _raceSetting.hpPerLevel.Length;
+                hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
+                int attackIndex = _level % _raceSetting.attackPerLevel.Length;
+                attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
+
+                AdjustMaxHP(_raceSetting.hpPerLevel[hpIndex - 1]);
+                _attackPower += _raceSetting.attackPerLevel[attackIndex - 1];
+            }
+
+            //Reset to full health and sp
+            ResetToFullHP();
+            //ResetToFullSP();
+            if (_playerCharacterItem != null) {
+                _playerCharacterItem.UpdateMinionItem();
             }
         }
         public void SetLevel(int amount) {
@@ -2210,7 +2255,7 @@ namespace ECS {
             _attackPower += (multiplier * (int)((_characterClass.attackPowerPerLevel / 100f) * (float)_raceSetting.baseAttackPower));
             _speed += (multiplier * (int)((_characterClass.speedPerLevel / 100f) * (float)_raceSetting.baseSpeed));
             AdjustMaxHP((multiplier * (int)((_characterClass.hpPerLevel / 100f) * (float)_raceSetting.baseHP)));
-            _maxSP += _characterClass.spPerLevel;
+            //_maxSP += _characterClass.spPerLevel;
             //Add stats per level from race
             if (_level > 1) {
                 if (_raceSetting.hpPerLevel.Length > 0) {
@@ -2227,11 +2272,14 @@ namespace ECS {
 
             //Reset to full health and sp
             ResetToFullHP();
-            ResetToFullSP();
+            //ResetToFullSP();
+            if (_playerCharacterItem != null) {
+                _playerCharacterItem.UpdateMinionItem();
+            }
 
             //Reset Experience
-            _experience = 0;
-            RecomputeMaxExperience();
+            //_experience = 0;
+            //RecomputeMaxExperience();
         }
         public void OnCharacterClassChange() {
             if (_currentHP > _maxHP) {
@@ -2244,7 +2292,8 @@ namespace ECS {
         public void AdjustExperience(int amount) {
             _experience += amount;
             if (_experience >= _maxExperience) {
-                LevelUp();
+                _experience = 0;
+                //LevelUp();
             }
         }
         public void AdjustElementalWeakness(ELEMENT element, float amount) {

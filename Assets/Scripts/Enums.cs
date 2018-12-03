@@ -1064,7 +1064,7 @@ public enum INTERACTION_TYPE {
 public enum REWARD {
     SUPPLY,
     MANA,
-    EXP,
+    LEVEL,
 }
 public enum TRAIT_TYPE {
     NEUTRAL,

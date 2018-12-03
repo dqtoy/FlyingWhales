@@ -142,10 +142,10 @@ public class ArmyMobilization : Interaction {
 
     #region State Effects
     private void CancelledMobilizationRewardEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
     }
     private void FailedCancelMobilizationRewardEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         ArmyMobilizedRewardEffect(state);
     }
     private void ArmyMobilizedRewardEffect(InteractionState state) {

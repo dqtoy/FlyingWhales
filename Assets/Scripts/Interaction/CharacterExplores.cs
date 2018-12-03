@@ -132,7 +132,7 @@ public class CharacterExplores : Interaction {
     #region End Result Effects
     private void CharacterExploreCancelledRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         //**Mechanics**: Character will no longer leave.
         if (state.descriptionLog != null) {
             //state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -143,7 +143,7 @@ public class CharacterExplores : Interaction {
     }
     private void CharacterExploreContinuesRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         //**Mechanics**: Character will start its travel to selected location
         CharacterTravelToLocation(targetLandmark);
         if (state.descriptionLog != null) {
@@ -155,7 +155,7 @@ public class CharacterExplores : Interaction {
     }
     private void CharacterExploreRedirectedRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_1));
+        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         //**Mechanics**: Character will start its travel to Location Intel assigned by the player
         BaseLandmark targetLandmarkFromArea = GetTargetLandmark(this.previousState.assignedLocation.location);
         CharacterTravelToLocation(targetLandmarkFromArea);
