@@ -22,7 +22,7 @@ public class BiomeLandmarkSpriteListDictionaryPropertyDrawer : SerializableDicti
 public class RoleInteractionsListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileSpriteCorruptionListDictionary))]
 public class TileSpriteCorruptionListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(RaceDefenderListDictionary))]
+[CustomPropertyDrawer(typeof(RaceClassListDictionary))]
 public class RaceDefenderListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 

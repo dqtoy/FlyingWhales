@@ -429,7 +429,7 @@ public class StructureObj : IObject {
         }
     }
     public void CreateRandomInteractionForNonMinionCharacters() {
-        if (_objectLocation.tileLocation.isCorrupted || _objectLocation.tileLocation.areaOfTile.race == RACE.NONE) { return; }
+        if (_objectLocation.tileLocation.isCorrupted || _objectLocation.tileLocation.areaOfTile.raceType == RACE.NONE) { return; }
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < 40) {
             INTERACTION_TYPE type = INTERACTION_TYPE.SPAWN_CHARACTER;

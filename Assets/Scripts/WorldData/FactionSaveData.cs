@@ -8,7 +8,7 @@ public class FactionSaveData {
     public int factionID;
     public string factionName;
     public string factionDescription;
-    public RACE race;
+    public Race race;
     public ColorSave factionColor;
     public List<int> ownedAreas;
     public Dictionary<int, FACTION_RELATIONSHIP_STATUS> relationships;

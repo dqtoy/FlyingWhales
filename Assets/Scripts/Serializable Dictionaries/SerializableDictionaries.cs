@@ -21,7 +21,7 @@ public class RoleInteractionsListDictionary : SerializableDictionary<CHARACTER_R
 [System.Serializable]
 public class TileSpriteCorruptionListDictionary : SerializableDictionary<Sprite, List<GameObject>, CorruptionObjectsListStorage> { }
 [System.Serializable]
-public class RaceDefenderListDictionary : SerializableDictionary<RACE, List<RaceAreaDefenderSetting>, RaceDefenderListStorage> { }
+public class RaceClassListDictionary : SerializableDictionary<Race, List<RaceAreaDefenderSetting>, RaceDefenderListStorage> { }
 
 [System.Serializable]
 public class CharacterTagListStorage : SerializableDictionary.Storage<List<CharacterActionTagRequirement>> { }

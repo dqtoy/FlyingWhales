@@ -24,7 +24,7 @@ public class LandmarkManager : MonoBehaviour {
 
     private Dictionary<LANDMARK_TYPE, LandmarkData> landmarkDataDict;
 
-    public RaceDefenderListDictionary defaultRaceDefenders;
+    public RaceClassListDictionary defaultRaceDefenders;
 
     #region Monobehaviours
     private void Awake() {
@@ -673,14 +673,14 @@ public class LandmarkManager : MonoBehaviour {
         }
     }
     public WeightedDictionary<AreaDefenderSetting> GetDefaultDefenderWeights(RACE race) {
-        if (defaultRaceDefenders.ContainsKey(race)) {
-            WeightedDictionary<AreaDefenderSetting> weights = new WeightedDictionary<AreaDefenderSetting>();
-            for (int i = 0; i < defaultRaceDefenders[race].Count; i++) {
-                RaceAreaDefenderSetting currSetting = defaultRaceDefenders[race][i];
-                weights.AddElement(new AreaDefenderSetting() { className = currSetting.className }, currSetting.weight);
-            }
-            return weights;
-        }
+        //if (defaultRaceDefenders.ContainsKey(race)) {
+        //    WeightedDictionary<AreaDefenderSetting> weights = new WeightedDictionary<AreaDefenderSetting>();
+        //    for (int i = 0; i < defaultRaceDefenders[race].Count; i++) {
+        //        RaceAreaDefenderSetting currSetting = defaultRaceDefenders[race][i];
+        //        weights.AddElement(new AreaDefenderSetting() { className = currSetting.className }, currSetting.weight);
+        //    }
+        //    return weights;
+        //}
         return null;
     }
     #endregion

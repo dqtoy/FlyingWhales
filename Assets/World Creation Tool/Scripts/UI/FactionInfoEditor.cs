@@ -22,6 +22,7 @@ public class FactionInfoEditor : MonoBehaviour {
     [SerializeField] private Dropdown emblemDropdown;
     [SerializeField] private Dropdown moralityDropdown;
     [SerializeField] private Dropdown raceDropdown;
+    [SerializeField] private Dropdown subRaceDropdown;
 
     [Header("Relationships")]
     [SerializeField] private Text relationshipSummaryLbl;
@@ -100,7 +101,8 @@ public class FactionInfoEditor : MonoBehaviour {
 
         emblemDropdown.value = Utilities.GetOptionIndex(emblemDropdown, FactionManager.Instance.GetFactionEmblemIndex(_faction.emblem).ToString());
         moralityDropdown.value = Utilities.GetOptionIndex(moralityDropdown, _faction.morality.ToString());
-        raceDropdown.value = Utilities.GetOptionIndex(raceDropdown, _faction.race.ToString());
+        raceDropdown.value = Utilities.GetOptionIndex(raceDropdown, _faction.raceType.ToString());
+        subRaceDropdown.value = Utilities.GetOptionIndex(subRaceDropdown, _faction.subRaceType.ToString());
     }
     public void ChangeFactionName(string newName) {
         _faction.SetName(newName);
@@ -123,11 +125,19 @@ public class FactionInfoEditor : MonoBehaviour {
     private void LoadRaceChoices() {
         raceDropdown.ClearOptions();
         raceDropdown.AddOptions(Utilities.GetEnumChoices<RACE>());
+
+        subRaceDropdown.ClearOptions();
+        subRaceDropdown.AddOptions(Utilities.GetEnumChoices<RACE_SUB_TYPE>());
     }
     public void ChangeRace(int choice) {
         string chosen = raceDropdown.options[choice].text;
         RACE race = (RACE)System.Enum.Parse(typeof(RACE), chosen);
-        _faction.SetRace(race);
+        _faction.SetRaceType(race);
+    }
+    public void ChangeSubRace(int choice) {
+        string chosen = subRaceDropdown.options[choice].text;
+        RACE_SUB_TYPE race = (RACE_SUB_TYPE)System.Enum.Parse(typeof(RACE_SUB_TYPE), chosen);
+        _faction.SetSubRaceType(race);
     }
     #endregion
 
