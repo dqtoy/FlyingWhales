@@ -121,16 +121,31 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 7bcf611035629054786bbbf6b8ae0b71, type: 3}
   - {fileID: 21300000, guid: 88dc6c0198fd5164f8e41dcaacb85421, type: 3}
   - {fileID: 21300000, guid: 5a830d0740218fc45b19e75ff0a4b6e0, type: 3}
+  - {fileID: 21300000, guid: d90065208313b0046970c977116373dc, type: 3}
+  - {fileID: 21300000, guid: c5a701b6ff1c8cb4bb1a23d90a99e313, type: 3}
   - {fileID: 21300000, guid: 9f89551edef6d6743a2486dea9f60a21, type: 3}
+  - {fileID: 21300000, guid: a5b8617980b353148baf297aca6066c9, type: 3}
+  - {fileID: 21300000, guid: 86f1ccb54a19bc14dab94e3708d683e5, type: 3}
   - {fileID: 21300000, guid: b1ec0d6ae9a024e48b5541acb37f47bf, type: 3}
+  - {fileID: 21300000, guid: 4c6f96d8c7cdde34eb72712ff8314028, type: 3}
+  - {fileID: 21300000, guid: c6d21012852a97446ae62954fe3c1ec8, type: 3}
+  - {fileID: 21300000, guid: 97128aae12752b845b92d811ad29c0b7, type: 3}
   - {fileID: 21300000, guid: 7891f2d4738ed234d819612105ec0e99, type: 3}
   - {fileID: 21300000, guid: 6b1f2c8a016859143b61f1cb6005250e, type: 3}
   - {fileID: 21300000, guid: 783f972861f61dd4fa6d5931ea433539, type: 3}
+  - {fileID: 21300000, guid: 2c7c653655e480e4c9c5f90f34576d0b, type: 3}
+  - {fileID: 21300000, guid: cd9c4cc1810fdc54f8d458a69c25276e, type: 3}
   - {fileID: 21300000, guid: 6debf8113ebc504409044d47f4163ba5, type: 3}
+  - {fileID: 21300000, guid: 87ee9e45287a3f04eaea062f53833f5a, type: 3}
   - {fileID: 21300000, guid: 568e996242fb9a84b9028d668e263ef3, type: 3}
+  - {fileID: 21300000, guid: 268d9214d21c61d4b8b37437ba0208d1, type: 3}
+  - {fileID: 21300000, guid: 88ef567d89beb4748a223c3e3f80ee76, type: 3}
   - {fileID: 21300000, guid: 03b9f985c5fc3c74b8f56977df17c459, type: 3}
   - {fileID: 21300000, guid: 6f8afbec51f86154285b90585d512c28, type: 3}
   - {fileID: 21300000, guid: 1fbda9d0786a8e04caafa19bd1606c66, type: 3}
+  - {fileID: 21300000, guid: 8fd312c0b85c41e469fd69c58ab0652f, type: 3}
+  - {fileID: 21300000, guid: a2f5c7e98d6db1d42b56dc9f85380429, type: 3}
+  - {fileID: 21300000, guid: e32359f40cb114d4f9bc3d0d10e0fdc0, type: 3}
   - {fileID: 21300000, guid: e5e62589f3fda9b4f84318303a641b58, type: 3}
   - {fileID: 21300000, guid: 316ddb7009538c24fa9d92c1d957a0f9, type: 3}
   - {fileID: 21300000, guid: ebcba59080457654da75859e60efaed2, type: 3}
@@ -494,16 +509,31 @@ SpriteAtlas:
   - ancient_ruins_flat2
   - forest_floor2
   - ancient_ruins_flat1
+  - portal_00112
+  - portal_00113
   - elven_town3_colour
+  - portal_00111
+  - portal_00116
   - demonic_cold_forest1
+  - portal_00117
+  - portal_00114
+  - portal_00115
   - human_mine_gold
   - human_mine_gold
   - ancient_ruins_blocker1
+  - portal_00118
+  - portal_00119
   - catacombs_forest
+  - portal_00125
   - hermit_hut
+  - portal_00124
+  - portal_00123
   - human_tavern_colour
   - human_tavern_colour
   - giant_skeleton_left
+  - portal_00122
+  - portal_00121
+  - portal_00120
   - scrubv2
   - demonic_mountains_desert1
   - bandit_camp

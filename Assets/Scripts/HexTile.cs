@@ -772,14 +772,20 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         rightBeach.sortingOrder = sortingOrder + 1;
         topRightBeach.sortingOrder = sortingOrder + 1;
 
+        topLeftBorder.sortingOrder = sortingOrder + 2;
+        leftBorder.sortingOrder = sortingOrder + 2;
+        botLeftBorder.sortingOrder = sortingOrder + 2;
+        botRightBorder.sortingOrder = sortingOrder + 2;
+        rightBorder.sortingOrder = sortingOrder + 2;
+        topRightBorder.sortingOrder = sortingOrder + 2;
 
         //if (mainStructure.sprite != null && mainStructure.sprite.name.Contains("mountains")) {
         //    Utilities.SetSpriteSortingLayer(mainStructure, spriteRenderer.sortingLayerName);
         //    mainStructure.sortingOrder = spriteRenderer.sortingOrder + 1;
         //} else {
-        mainStructure.sortingOrder = sortingOrder + 2;
-        structureTint.sortingOrder = sortingOrder + 3;
-        structureAnimation.gameObject.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 4;
+        mainStructure.sortingOrder = sortingOrder + 3;
+        structureTint.sortingOrder = sortingOrder + 4;
+        structureAnimation.gameObject.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 5;
         //}
     }
     internal SpriteRenderer ActivateBorder(HEXTILE_DIRECTION direction, Color color) {
@@ -1370,9 +1376,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             currRenderer.sortingLayerName = "Default";
             currRenderer.sortingOrder = spriteRenderer.sortingOrder + 5;
         }
-        for (int i = 0; i < particleEffects.Length; i++) {
-            particleEffects[i].gameObject.SetActive(true);
-        }
+        //for (int i = 0; i < particleEffects.Length; i++) {
+        //    particleEffects[i].gameObject.SetActive(true);
+        //}
     }
     public void StopCorruptionAnimation() {
         if(_spawnedTendril != null) {
