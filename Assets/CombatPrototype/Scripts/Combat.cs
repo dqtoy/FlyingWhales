@@ -90,7 +90,15 @@ namespace ECS{
             if(chance < sideAChance) {
                 _winningSide = SIDES.A;
                 _losingSide = SIDES.B;
-                if(_charactersSideB != null) {
+
+                //Winners level up
+                if (_charactersSideA != null) {
+                    for (int i = 0; i < _charactersSideA.Count; i++) {
+                        _charactersSideA[i].LevelUp();
+                    }
+                }
+                //Losers die
+                if (_charactersSideB != null) {
                     for (int i = 0; i < _charactersSideB.Count; i++) {
                         _charactersSideB[i].Death();
                     }
@@ -98,6 +106,14 @@ namespace ECS{
             } else {
                 _winningSide = SIDES.B;
                 _losingSide = SIDES.A;
+
+                //Winners level up
+                if (_charactersSideB != null) {
+                    for (int i = 0; i < _charactersSideB.Count; i++) {
+                        _charactersSideB[i].LevelUp();
+                    }
+                }
+                //Losers die
                 if (_charactersSideA != null) {
                     for (int i = 0; i < _charactersSideA.Count; i++) {
                         _charactersSideA[i].Death();
@@ -116,6 +132,14 @@ namespace ECS{
             if (chance < sideAChance) {
                 _winningSide = SIDES.A;
                 _losingSide = SIDES.B;
+
+                //Winners level up
+                if (_charactersSideA != null) {
+                    for (int i = 0; i < _charactersSideA.Count; i++) {
+                        _charactersSideA[i].LevelUp();
+                    }
+                }
+                //Losers die
                 if (_charactersSideB != null) {
                     for (int i = 0; i < _charactersSideB.Count; i++) {
                         _charactersSideB[i].Death();
@@ -124,6 +148,14 @@ namespace ECS{
             } else {
                 _winningSide = SIDES.B;
                 _losingSide = SIDES.A;
+
+                //Winners level up
+                if (_charactersSideB != null) {
+                    for (int i = 0; i < _charactersSideB.Count; i++) {
+                        _charactersSideB[i].LevelUp();
+                    }
+                }
+                //Losers die
                 if (_charactersSideA != null) {
                     for (int i = 0; i < _charactersSideA.Count; i++) {
                         _charactersSideA[i].Death();

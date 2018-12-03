@@ -17,6 +17,8 @@ namespace ECS {
         protected string _characterColorCode;
         protected int _id;
         protected int _gold;
+        protected int _currentInteractionTick;
+        protected int _lastLevelUpDay;
         protected float _actRate;
         protected bool _isDead;
         protected bool _isFainted;
@@ -62,7 +64,6 @@ namespace ECS {
         protected Dictionary<ELEMENT, float> _elementalResistances;
         protected Dictionary<Character, List<string>> _traceInfo;
         protected PlayerCharacterItem _playerCharacterItem;
-        protected int _currentInteractionTick;
 
         //Stats
         protected SIDES _currentSide;
@@ -2173,6 +2174,11 @@ namespace ECS {
 
         #region RPG
         public void LevelUp() {
+            //Only level up once per day
+            if (_lastLevelUpDay == GameManager.Instance.continuousDays) {
+                return;
+            }
+            _lastLevelUpDay = GameManager.Instance.continuousDays;
             if (_level < CharacterManager.Instance.maxLevel) {
                 _level += 1;
                 //_experience = 0;
@@ -2202,6 +2208,11 @@ namespace ECS {
             }
         }
         public void LevelUp(int amount) {
+            //Only level up once per day
+            if(_lastLevelUpDay == GameManager.Instance.continuousDays) {
+                return;
+            }
+            _lastLevelUpDay = GameManager.Instance.continuousDays;
             int supposedLevel = _level + amount;
             if (supposedLevel > CharacterManager.Instance.maxLevel) {
                 amount = CharacterManager.Instance.maxLevel - level;
