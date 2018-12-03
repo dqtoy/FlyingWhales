@@ -15,7 +15,7 @@ public class ResearchScrollsEvent : GameEvent {
         researcher = characters[0];
 
         GameDate startDate = GameManager.Instance.Today();
-        startDate.AddDays(1); //schedule research a day from today
+        startDate.AddMonths(1); //schedule research a day from today
 
         //this is ususally called when the researcher obtains a new scroll
         //schedule research a day after obtaining a new scroll
@@ -24,7 +24,7 @@ public class ResearchScrollsEvent : GameEvent {
         eventActions[researcher].Enqueue(new EventAction(researchAction, researcher.homeLandmark.landmarkObj, this, researchAction.actionData.duration));
 
         GameDate endDate = startDate;
-        endDate.AddHours(GetEventDurationRoughEstimateInTicks());
+        endDate.AddDays(GetEventDurationRoughEstimateInTicks());
 
         researcher.AddScheduledEvent(new DateRange(startDate, endDate), this);
 

@@ -21,7 +21,7 @@ public class PlayerNotificationItem : PooledObject, IPointerClickHandler {
         envelopContent.Execute();
         if (expirationTicks != -1) {
             expirationDate = GameManager.Instance.Today();
-            expirationDate.AddHours(expirationTicks);
+            expirationDate.AddDays(expirationTicks);
             SchedulingManager.Instance.AddEntry(expirationDate, () => DestroyObject());
         }
     }

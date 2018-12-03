@@ -42,7 +42,7 @@ public class FetchAction : CharacterAction {
                     } else {
                         fetchLog = party.name + " did not obtain any item.";
                     }
-                    Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + party.name + "Fetch Log: \n" + fetchLog);
+                    Debug.Log("[" + GameManager.Instance.continuousDays + "]" + party.name + "Fetch Log: \n" + fetchLog);
                     CheckForQuestCompletion(party as CharacterParty);
                 }
             }

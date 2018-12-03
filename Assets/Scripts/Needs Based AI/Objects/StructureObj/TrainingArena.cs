@@ -30,7 +30,7 @@ public class TrainingArena : StructureObj {
     #region Utilities
     private void ScheduleCharacterToGainExperience() {
         GameDate dueDate = GameManager.Instance.Today();
-        dueDate.AddHours(80);
+        dueDate.AddDays(80);
         SchedulingManager.Instance.AddEntry(dueDate, () => CharacterGainsExperience());
     }
     private void CharacterGainsExperience() {

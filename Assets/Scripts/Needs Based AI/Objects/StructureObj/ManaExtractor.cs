@@ -22,12 +22,12 @@ public class ManaExtractor : StructureObj {
     public override void StartState(ObjectState state) {
         base.StartState(state);
         if (state.stateName == "Ruined") {
-            Messenger.RemoveListener(Signals.HOUR_STARTED, ProduceMana);
+            Messenger.RemoveListener(Signals.DAY_STARTED, ProduceMana);
         }
     }
     public override void OnAssignCharacter() {
         base.OnAssignCharacter();
-        Messenger.AddListener(Signals.HOUR_STARTED, ProduceMana);
+        Messenger.AddListener(Signals.DAY_STARTED, ProduceMana);
         ScheduleCharacterToGoHome();
     }
     public override void OnAddToLandmark(BaseLandmark newLocation) {
@@ -39,13 +39,13 @@ public class ManaExtractor : StructureObj {
     #region Utilities
     private void ScheduleCharacterToGoHome() {
         GameDate dueDate = GameManager.Instance.Today();
-        dueDate.AddHours(GameManager.hoursPerDay);
+        dueDate.AddDays(GameManager.hoursPerDay);
         SchedulingManager.Instance.AddEntry(dueDate, () => CharacterGoesHome());
     }
     private void CharacterGoesHome() {
         if (!isRuined && _assignedCharacter != null) {
             _assignedCharacter.minion.GoBackFromAssignment();
-            Messenger.RemoveListener(Signals.HOUR_STARTED, ProduceMana);
+            Messenger.RemoveListener(Signals.DAY_STARTED, ProduceMana);
         }
         OnEndStructureEffect();
     }

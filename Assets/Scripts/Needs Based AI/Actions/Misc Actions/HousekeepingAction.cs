@@ -26,7 +26,7 @@ public class HousekeepingAction : CharacterAction {
         StructureObj structure = targetObject as StructureObj;
         structure.SetIsDirty(false);
         GameDate dirtyDate = GameManager.Instance.Today();
-        dirtyDate.AddDays(1);
+        dirtyDate.AddMonths(1);
         SchedulingManager.Instance.AddEntry(dirtyDate, () => structure.SetIsDirty(true));
     }
     public override IObject GetTargetObject(CharacterParty sourceParty) {

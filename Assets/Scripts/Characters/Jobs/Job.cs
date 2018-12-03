@@ -65,10 +65,10 @@ public class Job {
         _currentTick = 0;
         SetJobActionPauseState(false);
         if(_actionDuration != -1) {
-            Messenger.AddListener(Signals.HOUR_STARTED, CheckJobAction);
+            Messenger.AddListener(Signals.DAY_STARTED, CheckJobAction);
         }
         if (_hasCaptureEvent) {
-            Messenger.AddListener(Signals.HOUR_ENDED, CatchRandomEvent);
+            Messenger.AddListener(Signals.DAY_ENDED, CatchRandomEvent);
         }
         _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.SetAndStartInteractionTimerJob(_actionDuration);
         _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.ShowInteractionTimerJob();
@@ -80,10 +80,10 @@ public class Job {
         _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.StopInteractionTimerJob();
         _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.HideInteractionTimerJob();
         if (_actionDuration != -1) {
-            Messenger.RemoveListener(Signals.HOUR_STARTED, CheckJobAction);
+            Messenger.RemoveListener(Signals.DAY_STARTED, CheckJobAction);
         }
         if (_hasCaptureEvent) {
-            Messenger.RemoveListener(Signals.HOUR_ENDED, CatchRandomEvent);
+            Messenger.RemoveListener(Signals.DAY_ENDED, CatchRandomEvent);
         }
     }
     public void StopCreatedInteraction() {

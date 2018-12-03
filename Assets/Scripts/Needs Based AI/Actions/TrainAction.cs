@@ -40,14 +40,14 @@ public class TrainAction : CharacterAction {
 
     private void ResetCooldown() {
         cooldown = baseCooldown;
-        Messenger.AddListener(Signals.HOUR_ENDED, Cooldown);
+        Messenger.AddListener(Signals.DAY_ENDED, Cooldown);
     }
 
     private void Cooldown() {
         cooldown--;
         if (cooldown <= 0) {
             cooldown = 0;
-            Messenger.RemoveListener(Signals.HOUR_ENDED, Cooldown);
+            Messenger.RemoveListener(Signals.DAY_ENDED, Cooldown);
         }
     }
 }

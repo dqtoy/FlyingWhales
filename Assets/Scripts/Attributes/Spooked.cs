@@ -45,7 +45,7 @@ public class Spooked : CharacterAttribute {
 
     private void ScheduleEndSpooked() {
         GameDate endDate = GameManager.Instance.Today();
-        endDate.AddDays(1);
+        endDate.AddMonths(1);
         SchedulingManager.Instance.AddEntry(endDate, () => _character.RemoveAttribute(ATTRIBUTE.SPOOKED));
     }
 }

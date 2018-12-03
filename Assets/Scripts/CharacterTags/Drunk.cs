@@ -12,7 +12,7 @@ public class Drunk : CharacterAttribute {
     public override void OnAddAttribute(Character character) {
         base.OnAddAttribute(character);
         GameDate gameDate = GameManager.Instance.Today();
-        gameDate.AddHours(16);
+        gameDate.AddDays(16);
         SchedulingManager.Instance.AddEntry(gameDate, () => SoberUp());
     }
     #endregion

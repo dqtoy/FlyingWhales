@@ -47,7 +47,7 @@ public class RitualCircle : StructureObj {
     private void ScheduleCharacterToGainTrait() {
         _lockedTrait = _traitForTheDay;
         GameDate dueDate = GameManager.Instance.Today();
-        dueDate.AddHours(80);
+        dueDate.AddDays(80);
         SchedulingManager.Instance.AddEntry(dueDate, () => CharacterGainsTrait());
     }
     private void CharacterGainsTrait() {

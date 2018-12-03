@@ -30,7 +30,7 @@ public class PenanceTemple : StructureObj {
     #region Utilities
     private void ScheduleCharacterToRemoveTrait() {
         GameDate dueDate = GameManager.Instance.Today();
-        dueDate.AddHours(80);
+        dueDate.AddDays(80);
         SchedulingManager.Instance.AddEntry(dueDate, () => CharacterRemovedTrait());
     }
     private void CharacterRemovedTrait() {

@@ -39,9 +39,9 @@ public class ArmyActionData {
         }
         Reset();
         if (targetObject != null) {
-            actionHistory.Add("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + action.actionData.actionName + " - " + targetObject.objectName + "\n");
+            actionHistory.Add("[" + GameManager.Instance.continuousDays + "]" + action.actionData.actionName + " - " + targetObject.objectName + "\n");
         } else {
-            actionHistory.Add("[" + GameManager.Instance.Today().GetDayAndTicksString() + "]" + action.actionData.actionName + "\n");
+            actionHistory.Add("[" + GameManager.Instance.continuousDays + "]" + action.actionData.actionName + "\n");
         }
         _currentAction = action;
         _currentTargetObject = targetObject;
@@ -103,7 +103,7 @@ public class ArmyActionData {
         }
     }
     public void EndAction() {
-        Debug.Log("[" + GameManager.Instance.Today().GetDayAndTicksString() + "] Ended " + _party.name + " action " + currentAction.actionData.actionName);
+        Debug.Log("[" + GameManager.Instance.continuousDays + "] Ended " + _party.name + " action " + currentAction.actionData.actionName);
         _isDone = true;
     }
     private void AdjustCurrentDay(int amount) {

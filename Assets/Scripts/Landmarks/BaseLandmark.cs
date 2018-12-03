@@ -663,7 +663,7 @@ public class BaseLandmark : ILocation, IInteractable {
     #region Traces
     public void AddTrace(Character character) {
         GameDate expDate = GameManager.Instance.Today();
-        expDate.AddDays(90);
+        expDate.AddMonths(90);
         if (!_characterTraces.ContainsKey(character)) {
             _characterTraces.Add(character, expDate);
         } else {
@@ -711,7 +711,7 @@ public class BaseLandmark : ILocation, IInteractable {
             //_horizontalBlocked = 0;
             //tileLocation.region.LandmarkStartedCorruption(this);
             PutWallDown();
-            Messenger.AddListener(Signals.HOUR_ENDED, DoCorruption);
+            Messenger.AddListener(Signals.DAY_ENDED, DoCorruption);
             //if (Messenger.eventTable.ContainsKey("StartCorruption")) {
             //    Messenger.RemoveListener<BaseLandmark>("StartCorruption", ALandmarkHasStartedCorruption);
             //    Messenger.Broadcast<BaseLandmark>("StartCorruption", this);
@@ -738,7 +738,7 @@ public class BaseLandmark : ILocation, IInteractable {
             PathGenerator.Instance.CreatePath(this, this.tileLocation, chosenTile, PATHFINDING_MODE.UNRESTRICTED);
         }
         //tileLocation.region.LandmarkStoppedCorruption(this);
-        Messenger.RemoveListener(Signals.HOUR_ENDED, DoCorruption);
+        Messenger.RemoveListener(Signals.DAY_ENDED, DoCorruption);
         //Messenger.Broadcast<BaseLandmark>("StopCorruption", this);
     }
     private void DoCorruption() {
@@ -1367,7 +1367,7 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     private void StartRaidedState() {
         GameDate endRaidedDate = GameManager.Instance.Today();
-        endRaidedDate.AddDays(5);
+        endRaidedDate.AddMonths(5);
         SchedulingManager.Instance.AddEntry(endRaidedDate, () => SetRaidedState(false));
     }
     #endregion
