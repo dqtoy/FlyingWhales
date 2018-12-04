@@ -59,7 +59,7 @@ public class InteractionLocalizedTextCreatorEditor : EditorWindow {
             string stateName = string.Empty;
             if (currChecklist.name.Equals("State 1")){
                 stateName = "start";
-            } else if (currChecklist.name.Contains("End State")) {
+            } else if (currChecklist.name.Contains("State")) {
                 stateName = currChecklist.name.Substring(currChecklist.name.LastIndexOf(": ") + 1);
                 stateName = stateName.Trim().ToLower();
             } else {
@@ -104,6 +104,7 @@ public class InteractionLocalizedTextCreatorEditor : EditorWindow {
     private string ConvertToLogFillers(string source) {
         string newString = source;
         newString = newString.Replace("[Demon Name]", "%113%");
+        newString = newString.Replace("[Minion Name]", "%113%");
         newString = newString.Replace("[Character Name]", "%00@");
         newString = newString.Replace("[Location Name]", "%04@");
         return newString;

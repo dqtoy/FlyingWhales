@@ -2564,7 +2564,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
             if (previousHome != null) {
                 previousHome.tileLocation.areaOfTile.RemoveResident(this);
                 if (_homeLandmark != null) {
-                    _homeLandmark.tileLocation.areaOfTile.AddResident(this);
+                    _homeLandmark.tileLocation.areaOfTile.AddResident(this, ignoreAreaResidentCapacity);
                     if (_homeLandmark.tileLocation.areaOfTile.id != previousHome.tileLocation.areaOfTile.id) {
 #if !WORLD_CREATION_TOOL
                         LookForNewWorkplace();

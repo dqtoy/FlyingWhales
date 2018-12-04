@@ -264,7 +264,7 @@ public class FactionInfoEditor : MonoBehaviour {
     }
     private void UpdateDefenderWeights() {
         Utilities.DestroyChildren(defendersScrollView.content);
-        foreach (KeyValuePair<AreaDefenderSetting, int> kvp in _faction.defenderWeights.dictionary) {
+        foreach (KeyValuePair<AreaCharacterClass, int> kvp in _faction.defenderWeights.dictionary) {
             GameObject itemGO = GameObject.Instantiate(defenderWeightItemPrefab, defendersScrollView.content);
             DefenderWeightItem item = itemGO.GetComponent<DefenderWeightItem>();
             item.SetDefender(_faction, kvp.Key, kvp.Value);
@@ -279,12 +279,12 @@ public class FactionInfoEditor : MonoBehaviour {
             WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Invalid weight!", "Please enter a weight value!");
         } else {
             weight = Mathf.Max(0, weight);
-            _faction.defenderWeights.AddElement(new AreaDefenderSetting() { className = defenderClass }, weight);
+            _faction.defenderWeights.AddElement(new AreaCharacterClass() { className = defenderClass }, weight);
             UpdateDefenderWeights();
         }
     }
     private bool HasDefenderWeightForClass(string className) {
-        foreach (KeyValuePair<AreaDefenderSetting, int> kvp in _faction.defenderWeights.dictionary) {
+        foreach (KeyValuePair<AreaCharacterClass, int> kvp in _faction.defenderWeights.dictionary) {
             if (kvp.Key.className.Equals(className)) {
                 return true;
             }

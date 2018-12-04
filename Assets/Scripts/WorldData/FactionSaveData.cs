@@ -16,7 +16,7 @@ public class FactionSaveData {
     public int emblemIndex;
     public MORALITY morality;
     public Dictionary<int, int> favor;
-    public Dictionary<AreaDefenderSetting, int> defenderWeights;
+    public Dictionary<AreaCharacterClass, int> defenderWeights;
 
     public FactionSaveData(Faction faction) {
         factionID = faction.id;

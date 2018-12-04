@@ -362,7 +362,7 @@ public class BaseLandmark : ILocation, IInteractable {
     public void AddCharacterHomeOnLandmark(Character character, bool broadcast = true) {
         if (!_charactersWithHomeOnLandmark.Contains(character)) {
             _charactersWithHomeOnLandmark.Add(character);
-            character.SetHomeLandmark(this);
+            character.SetHomeLandmark(this, ignoreAreaResidentCapacity);
             if (broadcast) {
                 Messenger.Broadcast(Signals.LANDMARK_RESIDENT_ADDED, this, character);
             }

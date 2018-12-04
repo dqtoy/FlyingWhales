@@ -99,14 +99,14 @@ public class TheSpiderQueen : Interaction {
 
     private void SpawnSpiderQueen() {
         MonsterParty monsterParty = new MonsterParty();
-        //spiderQueen = MonsterManager.Instance.CreateNewMonster("Spider Queen");
-        landmark.AddCharacterHomeOnLandmark(spiderQueen);
-        spiderQueen.SetOwnedParty(monsterParty);
-        spiderQueen.SetCurrentParty(monsterParty);
-        monsterParty.AddCharacter(spiderQueen);
-        monsterParty.CreateIcon();
-        monsterParty.icon.SetPosition(landmark.tileLocation.transform.position);
-        landmark.AddCharacterToLocation(monsterParty);
+        ////spiderQueen = MonsterManager.Instance.CreateNewMonster("Spider Queen");
+        //landmark.AddCharacterHomeOnLandmark(spiderQueen);
+        //spiderQueen.SetOwnedParty(monsterParty);
+        //spiderQueen.SetCurrentParty(monsterParty);
+        //monsterParty.AddCharacter(spiderQueen);
+        //monsterParty.CreateIcon();
+        //monsterParty.icon.SetPosition(landmark.tileLocation.transform.position);
+        //landmark.AddCharacterToLocation(monsterParty);
     }
 
     private void AttemptToKillItEffect(InteractionState state) {
@@ -246,12 +246,12 @@ public class TheSpiderQueen : Interaction {
         monsterParty.CreateIcon();
         monsterParty.icon.SetPosition(landmark.tileLocation.transform.position);
         landmark.AddCharacterToLocation(monsterParty);
-        for (int i = 0; i < unitCount; i++) {
-            DefenderSetting chosenDefender = assaultSpawnWeights.PickRandomElementGivenWeights();
-            MonsterArmyUnit armyUnit = MonsterManager.Instance.CreateNewMonsterArmyUnit(chosenDefender.className);
-            //landmark.AddCharacterHomeOnLandmark(armyUnit);
-            //monsterParty.AddCharacter(armyUnit);
-        }
+        //for (int i = 0; i < unitCount; i++) {
+        //    DefenderSetting chosenDefender = assaultSpawnWeights.PickRandomElementGivenWeights();
+        //    MonsterArmyUnit armyUnit = MonsterManager.Instance.CreateNewMonsterArmyUnit(chosenDefender.className);
+        //    //landmark.AddCharacterHomeOnLandmark(armyUnit);
+        //    //monsterParty.AddCharacter(armyUnit);
+        //}
         return monsterParty;
     }
 }

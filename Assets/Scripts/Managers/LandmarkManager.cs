@@ -672,15 +672,15 @@ public class LandmarkManager : MonoBehaviour {
             currArea.LoadAdditionalData();
         }
     }
-    public WeightedDictionary<AreaDefenderSetting> GetDefaultDefenderWeights(RACE race) {
-        //if (defaultRaceDefenders.ContainsKey(race)) {
-        //    WeightedDictionary<AreaDefenderSetting> weights = new WeightedDictionary<AreaDefenderSetting>();
-        //    for (int i = 0; i < defaultRaceDefenders[race].Count; i++) {
-        //        RaceAreaDefenderSetting currSetting = defaultRaceDefenders[race][i];
-        //        weights.AddElement(new AreaDefenderSetting() { className = currSetting.className }, currSetting.weight);
-        //    }
-        //    return weights;
-        //}
+    public WeightedDictionary<AreaCharacterClass> GetDefaultDefenderWeights(Race race) {
+        if (defaultRaceDefenders.ContainsKey(race)) {
+            WeightedDictionary<AreaCharacterClass> weights = new WeightedDictionary<AreaCharacterClass>();
+            for (int i = 0; i < defaultRaceDefenders[race].Count; i++) {
+                RaceAreaDefenderSetting currSetting = defaultRaceDefenders[race][i];
+                weights.AddElement(new AreaCharacterClass() { className = currSetting.className }, currSetting.weight);
+            }
+            return weights;
+        }
         return null;
     }
     #endregion

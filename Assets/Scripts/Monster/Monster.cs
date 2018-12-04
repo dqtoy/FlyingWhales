@@ -662,7 +662,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     //public void EverydayAction() {
     //    //No daily/tick action
     //}
-    public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
+    public void SetHomeLandmark(BaseLandmark newHomeLandmark, bool ignoreAreaResidentCapacity = false) {
         this._homeLandmark = newHomeLandmark;
     }
     public Party CreateOwnParty() {

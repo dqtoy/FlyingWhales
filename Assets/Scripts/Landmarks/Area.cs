@@ -165,6 +165,15 @@ public class Area {
             }
         }
     }
+    private InitialRaceSetup GetRaceSetup(Race race) {
+        for (int i = 0; i < initialRaceSetup.Count; i++) {
+            InitialRaceSetup raceSetup = initialRaceSetup[i];
+            if (raceSetup.race.race == race.race && raceSetup.race.subType == race.subType) {
+                return raceSetup;
+            }
+        }
+        return null;
+    }
     public void SetInitialSupplies(int amount) {
         initialSupply = amount;
     }
@@ -178,6 +187,8 @@ public class Area {
         if (initialRaceSetup.Count > 0) {
             InitialRaceSetup chosenSetup = initialRaceSetup[Random.Range(0, initialRaceSetup.Count)];
             defaultRace = chosenSetup.race;
+        } else {
+            defaultRace = new Race(RACE.NONE, RACE_SUB_TYPE.NORMAL);
         }
     }
     #endregion
@@ -760,7 +771,7 @@ public class Area {
         this.initialDefenderGroups = initialDefenderGroups;
     }
     private void GenerateInitialDefenders() {
-        WeightedDictionary<AreaDefenderSetting> defenderWeights = GetClassWeights();
+        WeightedDictionary<AreaCharacterClass> defenderWeights = GetClassWeights();
         //if (this.owner != null && this.owner.defenderWeights.GetTotalOfWeights() > 0) {
         //    defenderWeights = this.owner.defenderWeights;
         //} else {
@@ -804,18 +815,23 @@ public class Area {
         }
         return null;
     }
-    public WeightedDictionary<AreaDefenderSetting> GetClassWeights() {
-        if (this.owner != null && this.owner.defenderWeights.GetTotalOfWeights() > 0) {
-            return this.owner.defenderWeights;
-        } else {
-            return LandmarkManager.Instance.GetDefaultDefenderWeights(raceType);
-        }
+    public WeightedDictionary<AreaCharacterClass> GetClassWeights() {
+        //if (this.owner != null && this.owner.defenderWeights.GetTotalOfWeights() > 0) {
+        //    return this.owner.defenderWeights;
+        //} else {
+            return LandmarkManager.Instance.GetDefaultDefenderWeights(race);
+        //}
     }
     #endregion
 
     #region Characters
-    public void AddResident(Character character) {
+    public void AddResident(Character character, bool ignoreCapacity = true) {
         if (!areaResidents.Contains(character)) {
+            if (!ignoreCapacity) {
+                if (areaResidents.Count >= residentCapacity) {
+                    return; //area is at capacity
+                }
+            }
             areaResidents.Add(character);
         }
     }
@@ -846,6 +862,25 @@ public class Area {
             }
         }
         return characters;
+    }
+    public void GenerateNeutralCharacters() {
+        if (defaultRace.race == RACE.NONE) {
+            return; //no default race was generated
+        }
+        InitialRaceSetup setup = GetRaceSetup(defaultRace);
+        int charactersToCreate = Random.Range(setup.spawnRange.lowerBound, setup.spawnRange.upperBound + 1);
+        WeightedDictionary<AreaCharacterClass> classWeights = GetClassWeights();
+        if (classWeights.GetTotalOfWeights() > 0) {
+            for (int i = 0; i < charactersToCreate; i++) {
+                AreaCharacterClass chosenClass = classWeights.PickRandomElementGivenWeights();
+                BaseLandmark randomHome = this.landmarks[Random.Range(0, landmarks.Count)];
+                Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass.className, defaultRace.race, Utilities.GetRandomGender(), 
+                    FactionManager.Instance.neutralFaction, randomHome);
+                Debug.Log(GameManager.Instance.TodayLogString() + "Generated neutral character " +
+                    createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name);
+            }
+        }
+        
     }
     #endregion
 
