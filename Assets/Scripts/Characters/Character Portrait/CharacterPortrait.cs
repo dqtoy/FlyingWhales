@@ -75,14 +75,16 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     }
     #endregion
 
-    public void Initialize() {
+    private void OnEnable() {
         Messenger.AddListener<CharacterIntel>(Signals.CHARACTER_INTEL_ADDED, OnCharacterIntelObtained);
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
+    }
+    private void OnDisable() {
+        RemoveListeners();
     }
 
     public void GeneratePortrait(Character character, CHARACTER_ROLE role = CHARACTER_ROLE.NONE) {
         _character = character;
-        //SetImageSize(imgSize);
         if(character == null) {
             SetBodyPartsState(false);
             SetWholeImageSprite(null);
@@ -90,10 +92,6 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             return;
         }
         _portraitSettings = character.portraitSettings;
-        //if (character is Monster) {
-        //    SetBodyPartsState(false);
-        //    SetWholeImageSprite(MonsterManager.Instance.GetMonsterSprite(character.name));
-        //} else {
         SetBody(character.portraitSettings.bodyIndex);
         SetHead(character.portraitSettings.headIndex);
         SetEyes(character.portraitSettings.eyesIndex);
@@ -104,8 +102,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         SetFacialHair(character.portraitSettings.facialHairIndex);
         SetHairColor(character.portraitSettings.hairColor);
         SetWholeImageSprite(null);
-        //}
-        //SetBGState(true);
+
         nameLbl.text = character.urlName;
         lvlTxt.text = character.level.ToString();
         UpdateFrame();
@@ -259,24 +256,26 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     }
     private void UpdateUnknownVisual() {
         if (_character != null) {
-            CharacterIntel characterIntel = _character.characterIntel;
-            //if (_character is Character) {
-            if (forceShowPortrait || GameManager.Instance.inspectAll) {
-                unknownGO.SetActive(false);
-                SetBodyPartsState(true);
+            if (_character.isDefender) {
+                DefenderIntel defIntel = _character.defendingArea.defenderIntel;
+                if (forceShowPortrait || GameManager.Instance.inspectAll) {
+                    unknownGO.SetActive(false);
+                    SetBodyPartsState(true);
+                } else {
+                    unknownGO.SetActive(!defIntel.isObtained);
+                    SetBodyPartsState(defIntel.isObtained);
+                }
             } else {
-                unknownGO.SetActive(!characterIntel.isObtained);
-                SetBodyPartsState(characterIntel.isObtained);
+                CharacterIntel characterIntel = _character.characterIntel;
+                if (forceShowPortrait || GameManager.Instance.inspectAll) {
+                    unknownGO.SetActive(false);
+                    SetBodyPartsState(true);
+                } else {
+                    unknownGO.SetActive(!characterIntel.isObtained);
+                    SetBodyPartsState(characterIntel.isObtained);
+                }
             }
-            //} else if (_character is Monster) {
-            //    if (forceShowPortrait || GameManager.Instance.inspectAll) {
-            //        unknownGO.SetActive(false);
-            //        SetBodyPartsState(true);
-            //    } else {
-            //        unknownGO.SetActive(!characterIntel.isObtained);
-            //        SetWholeImageState(characterIntel.isObtained);
-            //    }
-            //}
+            
         }
     }
     public void SetForceShowPortraitState(bool state) {

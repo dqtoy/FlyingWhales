@@ -1329,6 +1329,8 @@ MonoBehaviour:
       subType: 0
     - race: 8
       subType: 0
+    - race: 6
+      subType: 0
     m_values:
     - data:
       - className: Knight
@@ -1393,3 +1395,10 @@ MonoBehaviour:
     - data:
       - className: Dragon
         weight: 30
+    - data:
+      - className: Marauder
+        weight: 30
+      - className: Rogue
+        weight: 40
+      - className: Shaman
+        weight: 20

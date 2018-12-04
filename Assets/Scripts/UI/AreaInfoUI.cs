@@ -26,14 +26,14 @@ public class AreaInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Characters")]
+    [SerializeField] private Toggle charactersMenuToggle;
     [SerializeField] private GameObject landmarkCharacterPrefab;
     [SerializeField] private ScrollRect charactersScrollView;
-    [SerializeField] private GameObject scrollLeftArrowGO;
-    [SerializeField] private GameObject scrollRightArrowGO;
     private List<LandmarkCharacterItem> characterItems;
 
     [Space(10)]
     [Header("Logs")]
+    [SerializeField] private Toggle logsMenuToggle;
     [SerializeField] private GameObject logHistoryPrefab;
     [SerializeField] private ScrollRect historyScrollView;
     [SerializeField] private Color evenLogColor;
@@ -58,9 +58,9 @@ public class AreaInfoUI : UIMenu {
     [SerializeField] private Button minionAssignmentConfirmButton;
     [SerializeField] private Button minionAssignmentRecallButton;
     [SerializeField] private TextMeshProUGUI minionAssignmentDescription;
-    [SerializeField] private TweenPosition minionAssignmentTween;
     [SerializeField] private InvestigationMinionDraggableItem minionAssignmentDraggableItem;
     [SerializeField] private Toggle[] investigateToggles;
+    [SerializeField] private TextMeshProUGUI defenderPageLbl;
 
     [Space(10)]
     [Header("Attack/Raid")]
@@ -69,7 +69,6 @@ public class AreaInfoUI : UIMenu {
     [SerializeField] private Button minionAssignmentPartyConfirmButton;
     [SerializeField] private Button minionAssignmentPartyRecallButton;
     [SerializeField] private TextMeshProUGUI minionAssignmentPartyWinChance;
-    [SerializeField] private TweenPosition minionAssignmentPartyTween;
     [SerializeField] private InvestigationMinionDraggableItem[] minionAssignmentPartyDraggableItem;
 
 
@@ -162,11 +161,11 @@ public class AreaInfoUI : UIMenu {
         } else {
             HideLocationIntelUI();
         }
-        if (_activeArea.defenderIntel.isObtained || GameManager.Instance.inspectAll) {
-            ShowDefenderIntelUI();
-        } else {
-            HideDefenderIntelUI();
-        }
+        //if (_activeArea.defenderIntel.isObtained || GameManager.Instance.inspectAll) {
+        //    ShowDefenderIntelUI();
+        //} else {
+        //    HideDefenderIntelUI();
+        //}
         
     }
     private void OnIntelAdded(Intel intel) {
@@ -180,24 +179,30 @@ public class AreaInfoUI : UIMenu {
 
     }
     private void ShowLocationIntelUI() {
-        charactersGO.SetActive(true);
-        logsGO.SetActive(true);
-        connectorsGO[1].SetActive(true);
-        connectorsGO[2].SetActive(true);
+        //charactersGO.SetActive(true);
+        //logsGO.SetActive(true);
+        charactersMenuToggle.interactable = true;
+        logsMenuToggle.interactable = true;
+        //connectorsGO[1].SetActive(true);
+        //connectorsGO[2].SetActive(true);
     }
     private void HideLocationIntelUI() {
         charactersGO.SetActive(false);
         logsGO.SetActive(false);
-        connectorsGO[1].SetActive(false);
-        connectorsGO[2].SetActive(false);
+        charactersMenuToggle.isOn = false;
+        logsMenuToggle.isOn = false;
+        charactersMenuToggle.interactable = false;
+        logsMenuToggle.interactable = false;
+        //connectorsGO[1].SetActive(false);
+        //connectorsGO[2].SetActive(false);
     }
     private void ShowDefenderIntelUI() {
         defendersGO.SetActive(true);
-        connectorsGO[0].SetActive(true);
+        //connectorsGO[0].SetActive(true);
     }
     private void HideDefenderIntelUI() {
         defendersGO.SetActive(false);
-        connectorsGO[0].SetActive(false);
+        //connectorsGO[0].SetActive(false);
     }
 
     #region Basic Info
@@ -280,10 +285,10 @@ public class AreaInfoUI : UIMenu {
     private void UpdateCharacters() {
         Utilities.DestroyChildren(charactersScrollView.content);
         characterItems.Clear();
-        CheckScrollers();
+        //CheckScrollers();
 
-        for (int i = 0; i < _activeArea.areaResidents.Count; i++) {
-            CreateNewCharacterItem(_activeArea.areaResidents[i]);
+        for (int i = 0; i < _activeArea.charactersAtLocation.Count; i++) {
+            CreateNewCharacterItem(_activeArea.charactersAtLocation[i]);
         }
     }
     private LandmarkCharacterItem GetItem(Party party) {
@@ -317,7 +322,7 @@ public class AreaInfoUI : UIMenu {
         //item.slotItem.draggable.SetDraggable(false);
         //item.slotItem.dropZone.SetEnabledState(false);
         characterItems.Add(item);
-        CheckScrollers();
+        //CheckScrollers();
         return item;
     }
     private void CreateNewCharacterItem(LandmarkPartyData partyData) {
@@ -336,7 +341,7 @@ public class AreaInfoUI : UIMenu {
             if(item != null) {
                 characterItems.Remove(item);
                 ObjectPoolManager.Instance.DestroyObject(item.gameObject);
-                CheckScrollers();
+                //CheckScrollers();
             }
         }
     }
@@ -351,7 +356,7 @@ public class AreaInfoUI : UIMenu {
             if (item != null) {
                 characterItems.Remove(item);
                 ObjectPoolManager.Instance.DestroyObject(item.gameObject);
-                CheckScrollers();
+                //CheckScrollers();
             }
         }
     }
@@ -361,15 +366,15 @@ public class AreaInfoUI : UIMenu {
     public void ScrollCharactersRight() {
         charactersScrollView.horizontalNormalizedPosition += Time.deltaTime;
     }
-    private void CheckScrollers() {
-        if (characterItems.Count > 5) {
-            scrollLeftArrowGO.SetActive(true);
-            scrollRightArrowGO.SetActive(true);
-        } else {
-            scrollLeftArrowGO.SetActive(false);
-            scrollRightArrowGO.SetActive(false);
-        }
-    }
+    //private void CheckScrollers() {
+    //    if (characterItems.Count > 5) {
+    //        scrollLeftArrowGO.SetActive(true);
+    //        scrollRightArrowGO.SetActive(true);
+    //    } else {
+    //        scrollLeftArrowGO.SetActive(false);
+    //        scrollRightArrowGO.SetActive(false);
+    //    }
+    //}
     #endregion
 
     #region Defenders
@@ -384,6 +389,9 @@ public class AreaInfoUI : UIMenu {
         }
         //defendersScrollSnap.InitialiseChildObjectsFromScene();
         defendersScrollSnap.enabled = true;
+    }
+    public void UpdateDefenderPage(int newPage) {
+        defenderPageLbl.text = (newPage + 1).ToString() + "/" + defendersScrollSnap.ChildObjects.Length.ToString();
     }
     #endregion
 
@@ -409,10 +417,10 @@ public class AreaInfoUI : UIMenu {
     #region Investigation
     public void UpdateInvestigation(int indexToggleToBeActivated = 0) {
         if(_activeArea != null && _activeArea.areaInvestigation != null) {
-            if (!investigationGO.activeSelf) {
-                minionAssignmentTween.ResetToBeginning();
-                minionAssignmentPartyTween.ResetToBeginning();
-            }
+            //if (!investigationGO.activeSelf) {
+            //    minionAssignmentTween.ResetToBeginning();
+            //    minionAssignmentPartyTween.ResetToBeginning();
+            //}
             investigateToggles[indexToggleToBeActivated].isOn = false;
             investigateToggles[indexToggleToBeActivated].isOn = true;
             investigationGO.SetActive(true);
@@ -440,7 +448,7 @@ public class AreaInfoUI : UIMenu {
     public void ResetMinionAssignment() {
         _assignedMinion = null;
         minionAssignmentPortrait.gameObject.SetActive(false);
-        minionAssignmentDescription.gameObject.SetActive(true);
+        //minionAssignmentDescription.gameObject.SetActive(true);
         minionAssignmentConfirmButton.gameObject.SetActive(false);
         minionAssignmentRecallButton.gameObject.SetActive(false);
     }
@@ -474,13 +482,15 @@ public class AreaInfoUI : UIMenu {
             AssignMinionToInvestigate(_assignedMinion);
         }
 
-        minionAssignmentTween.PlayForward();
+        //minionAssignmentTween.PlayForward();
+        minionAssignmentGO.SetActive(true);
         HideMinionAssignmentParty();
     }
     public void HideMinionAssignment() {
         //ResetMinionAssignment();
         //minionAssignmentTween.ResetToBeginning();
-        minionAssignmentTween.PlayReverse();
+        //minionAssignmentTween.PlayReverse();
+        minionAssignmentGO.SetActive(false);
     }
     public void ShowMinionAssignmentParty() {
         if (_activeArea.areaInvestigation.isAttacking) {
@@ -496,12 +506,14 @@ public class AreaInfoUI : UIMenu {
                 AssignPartyMinionToInvestigate(_assignedParty[i], i, false);
             }
         }
-        minionAssignmentPartyTween.PlayForward();
+        //minionAssignmentPartyTween.PlayForward();
+        minionAssignmentPartyGO.SetActive(true);
         HideMinionAssignment();
     }
     public void HideMinionAssignmentParty() {
         //ResetMinionAssignmentParty();
-        minionAssignmentPartyTween.PlayReverse();
+        //minionAssignmentPartyTween.PlayReverse();
+        minionAssignmentPartyGO.SetActive(false);
     }
     public void OnUpdateLandmarkInvestigationState(string whatToDo) {
         if(_activeArea == null) {
@@ -613,7 +625,7 @@ public class AreaInfoUI : UIMenu {
             minionAssignmentPortrait.gameObject.SetActive(true);
             minionAssignmentPortrait.GeneratePortrait(minion.character);
             //minionAssignmentConfirmButton.interactable = !_activeLandmark.landmarkInvestigation.isExploring;
-            minionAssignmentDescription.gameObject.SetActive(false);
+            //minionAssignmentDescription.gameObject.SetActive(false);
 
             OnUpdateLandmarkInvestigationState("explore");
             //minionAssignmentRecallButton.gameObject.SetActive(false);
@@ -666,7 +678,7 @@ public class AreaInfoUI : UIMenu {
     }
     private void OnUpdateWinChance(float value) {
         _currentWinChance = value;
-        minionAssignmentPartyWinChance.text = _currentWinChance.ToString("F2") + "%";
+        minionAssignmentPartyWinChance.text = "Send up to four units to attack.\nWin Chance: " + _currentWinChance.ToString("F2") + "%";
     }
     public void OnClickConfirmInvestigation() {
         _activeArea.areaInvestigation.InvestigateLandmark(_assignedMinion);

@@ -681,7 +681,8 @@ public class LandmarkManager : MonoBehaviour {
             }
             return weights;
         }
-        return null;
+        throw new System.Exception("There is no default defender weights for " + race.race.ToString() + "/" + race.subType.ToString());
+        //return null;
     }
     #endregion
 }

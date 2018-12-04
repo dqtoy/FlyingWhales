@@ -422,7 +422,7 @@ public class BaseLandmark : ILocation, IInteractable {
                 iparty.specificLocation.RemoveCharacterFromLocation(iparty);
             }
             iparty.SetSpecificLocation(this);
-            tileLocation.areaOfTile.AddResidentAtLocation(iparty.owner);
+            tileLocation.areaOfTile.AddCharacterAtLocation(iparty.owner);
 #if !WORLD_CREATION_TOOL
             _landmarkVisual.OnCharacterEnteredLandmark(iparty);
             Messenger.Broadcast<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, iparty, this);
@@ -432,7 +432,7 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     public void RemoveCharacterFromLocation(Party iparty, bool addToTile = false) {
         if (_charactersAtLocation.Remove(iparty)) {
-            tileLocation.areaOfTile.RemoveResidentAtLocation(iparty.owner);
+            tileLocation.areaOfTile.RemoveCharacterAtLocation(iparty.owner);
             if (addToTile) {
                 this.tileLocation.AddCharacterToLocation(iparty);
             }

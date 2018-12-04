@@ -32,15 +32,19 @@ SpriteAtlas:
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
+  - {fileID: 21300000, guid: 220beadea4b397945a5c5a55f7f3e354, type: 3}
   - {fileID: 21300000, guid: ec7ae60734ce2eb4e82af2e524deff24, type: 3}
   - {fileID: 21300000, guid: cc690d09307871644b5fd19558aacf9b, type: 3}
+  - {fileID: 21300000, guid: 68bc68e0de336bc45a7ee29d2dc0c8a3, type: 3}
   - {fileID: 21300000, guid: 3e18a3e9bf482e8488e8495210704150, type: 3}
   - {fileID: 21300000, guid: 16506bb7a6ba7ce44808e2aecffabaaf, type: 3}
   - {fileID: 21300000, guid: 1311a4b5fe4c0fd4cb1879feb3334c4e, type: 3}
   - {fileID: 21300000, guid: 0ab2ec650b5ddce4987e8b2156080306, type: 3}
   - {fileID: 21300000, guid: e935dbe84922563429a59e6311adcf08, type: 3}
+  - {fileID: 21300000, guid: bb6d2748f234697409e8d57b8ecd778a, type: 3}
   - {fileID: 21300000, guid: 215e78623d34ed546904cde7a9a85f43, type: 3}
   - {fileID: 21300000, guid: 9eb4e391ebec42d4ba6f1a2f359a32a4, type: 3}
+  - {fileID: 21300000, guid: 3c1d09bdb731df34b9795e3f8117b2ca, type: 3}
   - {fileID: 21300000, guid: 7c84c1516188866438148428c354ff01, type: 3}
   - {fileID: 21300000, guid: 8fdd06c4ca82199459a8145f73a1a5ad, type: 3}
   - {fileID: 21300000, guid: 8d2617f4eb88ce2429aff5360ae67baf, type: 3}
@@ -51,6 +55,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: cbba3d8eb51349d4db64320e45c68fe1, type: 3}
   - {fileID: 21300000, guid: 2472b8fadbb4cbb45b9f4042515ee5af, type: 3}
   - {fileID: 21300000, guid: 1e80ac21ed4b41c43a8acefcd19459ee, type: 3}
+  - {fileID: 21300000, guid: 1f95a8a1a2c05e94d8323085988072d6, type: 3}
   - {fileID: 21300000, guid: c1a6e50d0ccdd2043bbe00862f05a7c2, type: 3}
   - {fileID: 21300000, guid: 83d7c5daa7b74214a9d66f6a261444b6, type: 3}
   - {fileID: 21300000, guid: c25a3ca9fbd78ca45b6f29ebaa9d86af, type: 3}
@@ -65,6 +70,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 4d0d62edf3d94ca47abf569d951db9f9, type: 3}
   - {fileID: 21300052, guid: 4d0d62edf3d94ca47abf569d951db9f9, type: 3}
   - {fileID: 21300054, guid: 4d0d62edf3d94ca47abf569d951db9f9, type: 3}
+  - {fileID: 21300000, guid: 14afa930c299efd4093d211526ea64d3, type: 3}
   - {fileID: 21300000, guid: 4de91c900d7f65c4685277ad83db497a, type: 3}
   - {fileID: 21300000, guid: 1b4604932b89b3a46b3204f2eb3f340e, type: 3}
   - {fileID: 21300000, guid: 32aeae6a47f36a04a8a907f56d88dba1, type: 3}
@@ -72,6 +78,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 5cc90bcf42fd4974abaae59743b659cd, type: 3}
   - {fileID: 21300000, guid: 63d54631d5396824a803db830e0e7b02, type: 3}
   - {fileID: 21300000, guid: e1ddc440b90944a48a3228c70448fd39, type: 3}
+  - {fileID: 21300000, guid: f8ed3ca5e3ea6394b9ce70a0c1c3798a, type: 3}
   - {fileID: 21300000, guid: 683795c9de78ff74f91fc16fe7030fca, type: 3}
   - {fileID: 21300000, guid: a5dcbdca302a5144c89d2c39bada8400, type: 3}
   - {fileID: 21300000, guid: 748fcc0f876895640a267cb4f8fec809, type: 3}
@@ -176,8 +183,12 @@ SpriteAtlas:
   - {fileID: 21300014, guid: 4d0d62edf3d94ca47abf569d951db9f9, type: 3}
   - {fileID: 21300000, guid: 860dc689b4a48f442aa34a3024a86264, type: 3}
   - {fileID: 21300000, guid: c4b3d4f4942a74149a645c288ecb200d, type: 3}
+  - {fileID: 21300000, guid: 8ea5b3c65b6eb8b41b6c00a1c7790ae9, type: 3}
   - {fileID: 21300000, guid: 59687b70134453e47b8a5194bbaeb63c, type: 3}
+  - {fileID: 21300000, guid: 903de9c28c9370040b98412593553aa5, type: 3}
+  - {fileID: 21300000, guid: 694f759dc8267fe488a2efce66d4ce17, type: 3}
   - {fileID: 21300000, guid: 68b14393b6cb42d46a88285e2690fed2, type: 3}
+  - {fileID: 21300000, guid: 4a6be7f7d662241409e7a60176548553, type: 3}
   - {fileID: 21300000, guid: 4732e2d6081d3f5438cfd307a7b3c3a3, type: 3}
   - {fileID: 21300000, guid: 32f5284e780ab35459035b92f39b3f9e, type: 3}
   - {fileID: 21300000, guid: f9ddf8ce0ba0595419a58730fbc42b74, type: 3}
@@ -245,15 +256,19 @@ SpriteAtlas:
   - {fileID: 21300064, guid: 4d0d62edf3d94ca47abf569d951db9f9, type: 3}
   - {fileID: 21300046, guid: 4d0d62edf3d94ca47abf569d951db9f9, type: 3}
   m_PackedSpriteNamesToIndex:
+  - tile_UI_v2
   - interaction_main_widget
   - character_info_widget
+  - tile_central_container
   - interaction_background
   - character_log_widget
   - interaction_main_decor
   - character_log_decor
   - tile_log_widget
+  - tile_log_container
   - tile_log_decor
   - character_info_decor
+  - tile_character_list_container
   - tile_character_list_bottom_widget
   - tile_character_list_bottom_widget
   - character_info_only
@@ -264,6 +279,7 @@ SpriteAtlas:
   - tile_defender_slot_widget
   - interaction_used_list_decor
   - tile_info_widget
+  - tile_attack_action_slots
   - WhiteCircle
   - question-mark
   - tile_actions_slider
@@ -278,6 +294,7 @@ SpriteAtlas:
   - World UI_0
   - World UI_26
   - World UI_27
+  - tile_faction_emblem
   - tile_decor_1
   - minion_holder_bottom
   - widget_supplies_mana
@@ -285,6 +302,7 @@ SpriteAtlas:
   - widget_day_counter
   - bottom_right_right_cap
   - widget_system
+  - tile_explore_action_slots
   - bottom_right_icon_holder_off
   - bottom_intel1
   - bottom_intel0
@@ -389,8 +407,12 @@ SpriteAtlas:
   - World UI_10
   - minion_create_army_off
   - minion_create_army_on
+  - tile_log_button_clicked
   - button_system_off
+  - tile_log_button_default
+  - tile_character_list_button_default
   - button_system_on
+  - tile_character_list_button_clicked
   - decor_bar1
   - hourglass
   - text_scroll_bg

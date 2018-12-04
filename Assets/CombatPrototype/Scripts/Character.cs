@@ -2797,7 +2797,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
     #region Defender
     public void OnSetAsDefender(Area defending) {
         defendingArea = defending;
-        this.specificLocation.RemoveCharacterFromLocation(this.ownParty, false);
+        this.ownParty.specificLocation.RemoveCharacterFromLocation(this.ownParty, false);
         ownParty.SetSpecificLocation(defending.coreTile.landmarkOnTile);
 #if !WORLD_CREATION_TOOL
         if (ownParty is CharacterParty) {
