@@ -2189,13 +2189,16 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
             //_maxSP += _characterClass.spPerLevel;
             //Add stats per level from race
             if (_level > 1) {
-                int hpIndex = _level % _raceSetting.hpPerLevel.Length;
-                hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
-                int attackIndex = _level % _raceSetting.attackPerLevel.Length;
-                attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
-
-                AdjustMaxHP(_raceSetting.hpPerLevel[hpIndex - 1]);
-                _attackPower += _raceSetting.attackPerLevel[attackIndex - 1];
+                if(_raceSetting.hpPerLevel.Length > 0) {
+                    int hpIndex = _level % _raceSetting.hpPerLevel.Length;
+                    hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
+                    AdjustMaxHP(_raceSetting.hpPerLevel[hpIndex - 1]);
+                }
+                if (_raceSetting.attackPerLevel.Length > 0) {
+                    int attackIndex = _level % _raceSetting.attackPerLevel.Length;
+                    attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
+                    _attackPower += _raceSetting.attackPerLevel[attackIndex - 1];
+                }
             }
 
             //Reset to full health and sp
@@ -2226,13 +2229,16 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         //_maxSP += _characterClass.spPerLevel;
         //Add stats per level from race
         if (_level > 1) {
-            int hpIndex = _level % _raceSetting.hpPerLevel.Length;
-            hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
-            int attackIndex = _level % _raceSetting.attackPerLevel.Length;
-            attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
-
-            AdjustMaxHP(_raceSetting.hpPerLevel[hpIndex - 1]);
-            _attackPower += _raceSetting.attackPerLevel[attackIndex - 1];
+            if (_raceSetting.hpPerLevel.Length > 0) {
+                int hpIndex = _level % _raceSetting.hpPerLevel.Length;
+                hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
+                AdjustMaxHP(_raceSetting.hpPerLevel[hpIndex - 1]);
+            }
+            if (_raceSetting.attackPerLevel.Length > 0) {
+                int attackIndex = _level % _raceSetting.attackPerLevel.Length;
+                attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
+                _attackPower += _raceSetting.attackPerLevel[attackIndex - 1];
+            }
         }
 
         //Reset to full health and sp

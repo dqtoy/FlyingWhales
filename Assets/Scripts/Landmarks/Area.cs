@@ -876,6 +876,7 @@ public class Area {
                 BaseLandmark randomHome = this.landmarks[Random.Range(0, landmarks.Count)];
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass.className, defaultRace.race, Utilities.GetRandomGender(), 
                     FactionManager.Instance.neutralFaction, randomHome);
+                createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);
                 Debug.Log(GameManager.Instance.TodayLogString() + "Generated neutral character " +
                     createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name);
             }

@@ -12,6 +12,7 @@ public class Faction {
 	protected int _id;
     protected string _name;
     protected string _description;
+    protected int _level;
     protected Race _race;
     protected ILeader _leader;
     private Sprite _emblem;
@@ -32,6 +33,9 @@ public class Faction {
     public int id {
 		get { return _id; }
 	}
+    public int level {
+        get { return _level; }
+    }
     public string name {
 		get { return _name; }
     }
@@ -86,6 +90,7 @@ public class Faction {
         SetFactionColor (Utilities.GetColorForFaction());
         SetRace(new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL));
         SetMorality(MORALITY.GOOD);
+        _level = 1;
         _characters = new List<Character>();
         _ownedLandmarks = new List<BaseLandmark>();
         _ownedRegions = new List<Region>();
@@ -108,6 +113,7 @@ public class Faction {
         SetEmblem(FactionManager.Instance.GetFactionEmblem(data.emblemIndex));
         SetMorality(data.morality);
         SetRace(data.race);
+        SetLevel(data.level);
         _characters = new List<Character>();
         _ownedLandmarks = new List<BaseLandmark>();
         _ownedRegions = new List<Region>();
@@ -125,20 +131,6 @@ public class Faction {
 #if !WORLD_CREATION_TOOL
         AddListeners();
 #endif
-    }
-
-    private void AddListeners() {
-        Messenger.AddListener<Character>(Signals.CHARACTER_REMOVED, RemoveCharacter);
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-    }
-    public void SetRace(Race race) {
-        _race = race;
-    }
-    public void SetRaceType(RACE race) {
-        _race.race = race;
-    }
-    public void SetSubRaceType(RACE_SUB_TYPE race) {
-        _race.subType = race;
     }
 
     #region virtuals
@@ -203,6 +195,19 @@ public class Faction {
     #endregion
 
     #region Utilities
+    private void AddListeners() {
+        Messenger.AddListener<Character>(Signals.CHARACTER_REMOVED, RemoveCharacter);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+    }
+    public void SetRace(Race race) {
+        _race = race;
+    }
+    public void SetRaceType(RACE race) {
+        _race.race = race;
+    }
+    public void SetSubRaceType(RACE_SUB_TYPE race) {
+        _race.subType = race;
+    }
     public void SetFactionColor(Color color) {
         factionColor = color;
     }
@@ -275,6 +280,15 @@ public class Faction {
             LandmarkManager.Instance.UnownArea(areasToUnown[i]);
         }
         Messenger.Broadcast(Signals.FACTION_LEADER_DIED, this);
+    }
+    public void SetLevel(int amount) {
+        _level = amount;
+    }
+    public void LevelUp() {
+        _level ++;
+    }
+    public void LevelUp(int amount) {
+        _level += amount;
     }
     #endregion
 

@@ -8,9 +8,16 @@ public class RaceSetting {
     public int baseAttackPower;
     public int baseSpeed;
     public int baseHP;
+    public int neutralSpawnLevelModifier;
     public int[] hpPerLevel;
     public int[] attackPerLevel;
     public string[] traitNames;
+
+    #region getters/setters
+    public int neutralSpawnLevel {
+        get { return FactionManager.Instance.GetAverageFactionLevel() + neutralSpawnLevelModifier; }
+    }
+    #endregion
 
     public RaceSetting CreateNewCopy() {
         RaceSetting newRaceSetting = new RaceSetting();
@@ -32,5 +39,6 @@ public class RaceSetting {
         this.hpPerLevel = RacePanelUI.Instance.hpPerLevel.ToArray();
         this.attackPerLevel = RacePanelUI.Instance.attackPerLevel.ToArray();
         this.traitNames = RacePanelUI.Instance.traitNames.ToArray();
+        this.neutralSpawnLevelModifier = int.Parse(RacePanelUI.Instance.neutralSpawnLevelModInput.text);
     }
 }

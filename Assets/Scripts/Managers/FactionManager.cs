@@ -382,5 +382,8 @@ public class FactionManager : MonoBehaviour {
         FactionRelationship rel = GetRelationshipBetween(faction1, faction2);
         rel.ChangeRelationshipStatus(FACTION_RELATIONSHIP_STATUS.AT_WAR);
     }
+    public int GetAverageFactionLevel() {
+        return allFactions.Sum(x => x.level) / allFactions.Count;
+    }
     #endregion
 }

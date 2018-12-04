@@ -41,7 +41,7 @@ public class Dissuader : Job {
             critFail = 0;
         }
         successWeights.AddElement("Success", success);
-        //successWeights.AddElement("Crit Fail", critFail);
+        successWeights.AddElement("Crit Fail", critFail);
         string result = successWeights.PickRandomElementGivenWeights();
         if (result == "Success") {
             List<Interaction> choices = area.GetInteractionsOfJob(_jobType);
