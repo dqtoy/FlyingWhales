@@ -45,6 +45,7 @@ public class AreaInfoUI : UIMenu {
     [SerializeField] private GameObject defenderGroupPrefab;
     [SerializeField] private ScrollRect defendersScrollView;
     [SerializeField] private HorizontalScrollSnap defendersScrollSnap;
+    [SerializeField] private TextMeshProUGUI defenderPageLbl;
 
     //[Space(10)]
     //[Header("Others")]
@@ -60,7 +61,7 @@ public class AreaInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI minionAssignmentDescription;
     [SerializeField] private InvestigationMinionDraggableItem minionAssignmentDraggableItem;
     [SerializeField] private Toggle[] investigateToggles;
-    [SerializeField] private TextMeshProUGUI defenderPageLbl;
+    
 
     [Space(10)]
     [Header("Attack/Raid")]

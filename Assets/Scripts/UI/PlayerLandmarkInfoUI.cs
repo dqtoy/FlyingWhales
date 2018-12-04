@@ -35,8 +35,6 @@ public class PlayerLandmarkInfoUI : UIMenu {
     [SerializeField]
     private GameObject landmarkCharacterPrefab;
     [SerializeField] private ScrollRect charactersScrollView;
-    [SerializeField] private GameObject scrollLeftArrowGO;
-    [SerializeField] private GameObject scrollRightArrowGO;
     private List<LandmarkCharacterItem> characterItems;
 
     [Space(10)]
@@ -232,7 +230,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
     private void UpdateCharacters() {
         Utilities.DestroyChildren(charactersScrollView.content);
         characterItems.Clear();
-        CheckScrollers();
+        //CheckScrollers();
         for (int i = 0; i < _activeLandmark.charactersAtLocation.Count; i++) {
             //if (!_activeLandmark.IsDefenderOfLandmark(_activeLandmark.charactersAtLocation[i])) {
                 CreateNewCharacterItem(_activeLandmark.charactersAtLocation[i].owner);
@@ -268,7 +266,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
         LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
         item.SetCharacter(character, _activeLandmark);
         characterItems.Add(item);
-        CheckScrollers();
+        //CheckScrollers();
         return item;
     }
     private void CreateNewCharacterItem(LandmarkPartyData partyData) {
@@ -287,7 +285,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
             if (item != null) {
                 characterItems.Remove(item);
                 ObjectPoolManager.Instance.DestroyObject(item.gameObject);
-                CheckScrollers();
+                //CheckScrollers();
             }
         }
     }
@@ -297,15 +295,15 @@ public class PlayerLandmarkInfoUI : UIMenu {
     public void ScrollCharactersRight() {
         charactersScrollView.horizontalNormalizedPosition += Time.deltaTime;
     }
-    private void CheckScrollers() {
-        if (characterItems.Count > 5) {
-            scrollLeftArrowGO.SetActive(true);
-            scrollRightArrowGO.SetActive(true);
-        } else {
-            scrollLeftArrowGO.SetActive(false);
-            scrollRightArrowGO.SetActive(false);
-        }
-    }
+    //private void CheckScrollers() {
+    //    if (characterItems.Count > 5) {
+    //        scrollLeftArrowGO.SetActive(true);
+    //        scrollRightArrowGO.SetActive(true);
+    //    } else {
+    //        scrollLeftArrowGO.SetActive(false);
+    //        scrollRightArrowGO.SetActive(false);
+    //    }
+    //}
     #endregion
 
     #region Defenders
