@@ -8,14 +8,19 @@ public class MinionDraggable : DraggableItem {
 
     private PlayerCharacterItem _characterItem;
 
+    private void Awake() {
+        _characterItem = gameObject.GetComponent<PlayerCharacterItem>();
+        SetDraggable(_isDraggable);
+    }
+
     #region Overrides
     public override void OnBeginDrag(PointerEventData eventData) {
         //base.OnBeginDrag(eventData);
-        _characterItem = null;
+        //_characterItem = null;
         if (!_isDraggable) {
             return;
         }
-        _characterItem = gameObject.GetComponent<PlayerCharacterItem>();
+        //_characterItem = gameObject.GetComponent<PlayerCharacterItem>();
         CharacterPortrait portrait = _characterItem.portrait;
         GameObject clone = (GameObject)Instantiate(portrait.gameObject);
         _draggingObject = clone.GetComponent<RectTransform>();
@@ -50,7 +55,17 @@ public class MinionDraggable : DraggableItem {
     }
     public override void CancelDrag() {
         base.CancelDrag();
-        _characterItem = null;
+        //_characterItem = null;
+    }
+    public override void SetDraggable(bool state) {
+        if (_isDraggable != state) {
+            base.SetDraggable(state);
+            if (state) {
+                _characterItem.portrait.SwitchBGToDraggable();
+            } else {
+                _characterItem.portrait.SwitchBGToLocked();
+            }
+        }
     }
     #endregion
 }

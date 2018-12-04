@@ -18,7 +18,7 @@ public class DraggableCharacterItem : MonoBehaviour {
 
     private void Update() {
         if (character != null) {
-            portrait.GeneratePortrait(character, 64);
+            portrait.GeneratePortrait(character);
             nameLbl.text = character.name;
             if (character.faction == null) {
                 nameLbl.text += "(Factionless)";

@@ -43,11 +43,29 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 2375e0b2dbb652541ba13facd9be9d44, type: 3}
   - {fileID: 21300000, guid: ba56a251aea2abe4daa3cc9bad485dce, type: 3}
   - {fileID: 21300000, guid: 6f587e59f2e8c5b49abce62925d237e3, type: 3}
+  - {fileID: 21300000, guid: edde7993874bcdd418dd3ee02c991b71, type: 3}
   - {fileID: 21300000, guid: c8f72e5968d3c1142bbcbf6993e4a556, type: 3}
   - {fileID: 21300000, guid: 70cd1c9e6a125964fb05ec6626ebc776, type: 3}
   - {fileID: 21300000, guid: e6d74152ef264b14ca512319a7b07b38, type: 3}
   - {fileID: 21300000, guid: ef77e663d5485c34c94899eaa38de451, type: 3}
   - {fileID: 21300000, guid: 634f842cc183c284eb73eda0c51a3b14, type: 3}
+  - {fileID: 21300000, guid: d39b8d292d8f6a740b1e405ec4972ac3, type: 3}
+  - {fileID: 21300000, guid: 586bb47a7165eab459c9a955f1e8c274, type: 3}
+  - {fileID: 21300000, guid: 55a42e2b40090c949bf109151d5a5837, type: 3}
+  - {fileID: 21300000, guid: cc584bb09368175488b9b94dd82c0e52, type: 3}
+  - {fileID: 21300000, guid: 14f5f78aab59afe418b8b464da3f9a32, type: 3}
+  - {fileID: 21300000, guid: 1e82455a81caebb48bcc4204465c36c6, type: 3}
+  - {fileID: 21300000, guid: 2abf9aa574b041c479f1d067793a0c33, type: 3}
+  - {fileID: 21300000, guid: 7514cfaa8b6928c49ae846264fccba01, type: 3}
+  - {fileID: 21300000, guid: 95fdf5d018ae0a44f8f6c14311eacbf7, type: 3}
+  - {fileID: 21300000, guid: 0eee50aade62d9146b483bfbfd3b234b, type: 3}
+  - {fileID: 21300000, guid: b0b59a0625d27b540828242b4da855cb, type: 3}
+  - {fileID: 21300000, guid: 0c8bdc28ff116d24086cd06a6b50a1ae, type: 3}
+  - {fileID: 21300000, guid: 2f6ac3442bb62f14b971c4cc911ff701, type: 3}
+  - {fileID: 21300000, guid: f5fa9113321e5c44c9eac1768e18534c, type: 3}
+  - {fileID: 21300000, guid: 0958b75698307094fb50c3c54dd47799, type: 3}
+  - {fileID: 21300000, guid: 3be87161752773b42818660252d1dccb, type: 3}
+  - {fileID: 21300000, guid: 882d2ae67ca6c4242b8bc08270a4dd0c, type: 3}
   - {fileID: 21300000, guid: c29537a92c447b245a8366b7eb41be4f, type: 3}
   - {fileID: 21300000, guid: 1b2543ea6fe624447a93bb7c092ec762, type: 3}
   - {fileID: 21300000, guid: 69923ae63c671ce4688429533b6782e3, type: 3}
@@ -326,6 +344,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ec382fa9a954b744983040a06c3537e0, type: 3}
   - {fileID: 21300000, guid: fd537a939ffc09549a77b17fcf541c4d, type: 3}
   - {fileID: 21300000, guid: b3ce7c06de6326e4d97eec3495de6a26, type: 3}
+  - {fileID: 21300000, guid: 0999d24164c71144083be6c249335440, type: 3}
   m_PackedSpriteNamesToIndex:
   - Wolf_1
   - Slime_1
@@ -338,11 +357,29 @@ SpriteAtlas:
   - Rat_2
   - Cat_1
   - Orc_1
+  - portrait_sample
   - av-h_m-bg
   - av-h_f-bg
   - av-e_f-bg
   - av-h_f-hair-2b
   - av-e_m-bg
+  - portrait_border_locked_worker
+  - portrait_border_locked_explorer
+  - portrait_border_locked_recruiter
+  - portrait_border_locked_raider
+  - portrait_border_locked_spy
+  - portrait_border_locked_dissuader
+  - portrait_border_locked_instigator
+  - portrait_border_locked_diplomat
+  - portrait_border_drag
+  - portrait_bg_instigator
+  - portrait_bg_recruiter
+  - portrait_bg_explorer
+  - portrait_bg_dissuader
+  - portrait_bg_raider
+  - portrait_bg_spy
+  - portrait_bg_worker
+  - portrait_bg_diplomat
   - av-h_f-nose-9
   - av-e_m-mouth-9
   - av-h_f-nose-8
@@ -621,5 +658,6 @@ SpriteAtlas:
   - av-e_f-brow-10
   - av-e_f-brow-8
   - PlayerLocator
+  - portrait_lvl_container
   m_Tag: PortraitAtlas
   m_IsVariant: 0

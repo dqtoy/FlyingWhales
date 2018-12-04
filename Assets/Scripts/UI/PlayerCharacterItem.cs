@@ -47,7 +47,7 @@ public class PlayerCharacterItem : PooledObject, IDragParentItem {
         } else if (_character.minion != null) {
             //chartacter is a minion
             _character.minion.SetPlayerCharacterItem(this);
-            portrait.GeneratePortrait(_character, 104);
+            portrait.GeneratePortrait(_character);
             portrait.gameObject.SetActive(true);
             bgImage.sprite = unlockedSprite;
             nameLbl.text = _character.name;
@@ -55,7 +55,7 @@ public class PlayerCharacterItem : PooledObject, IDragParentItem {
             minionDraggable.SetAssociatedObject(_character.minion);
         } else if(_character != null) {
             //character is a character
-            portrait.GeneratePortrait(_character, 104);
+            portrait.GeneratePortrait(_character);
             portrait.gameObject.SetActive(true);
             bgImage.sprite = unlockedSprite;
             nameLbl.text = _character.name;

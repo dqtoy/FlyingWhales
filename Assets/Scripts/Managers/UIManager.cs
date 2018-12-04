@@ -433,7 +433,7 @@ public class UIManager : MonoBehaviour {
             GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterPortrait", Vector3.zero, Quaternion.identity, detailedInfoContentParent);
             CharacterPortrait portrait = portraitGO.GetComponent<CharacterPortrait>();
             //portrait.SetDimensions(48f);
-            portrait.GeneratePortrait(character, 48);
+            portrait.GeneratePortrait(character);
         }
         PositionTooltip(detailedInfoGO.transform as RectTransform);
     }

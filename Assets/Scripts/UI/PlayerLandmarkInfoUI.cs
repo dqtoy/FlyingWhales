@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Linq;
 using TMPro;
 using UnityEngine.UI;
-
+using UnityEngine.UI.Extensions;
 
 public class PlayerLandmarkInfoUI : UIMenu {
 
@@ -49,8 +49,10 @@ public class PlayerLandmarkInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Defenders")]
-    [SerializeField]
-    private LandmarkCharacterItem[] defenderSlots;
+    [SerializeField] private LandmarkCharacterItem[] defenderSlots;
+    [SerializeField] private GameObject defenderGroupPrefab;
+    [SerializeField] private ScrollRect defendersScrollView;
+    [SerializeField] private HorizontalScrollSnap defendersScrollSnap;
 
     [Space(10)]
     [Header("Investigation")]
@@ -308,31 +310,16 @@ public class PlayerLandmarkInfoUI : UIMenu {
 
     #region Defenders
     private void UpdateDefenders() {
-        for (int i = 0; i < defenderSlots.Length; i++) {
-            LandmarkCharacterItem currSlot = defenderSlots[i];
-            currSlot.SetCharacter(null, _activeLandmark, true);
-            currSlot.slotItem.dropZone.SetEnabledState(false);
-            currSlot.slotItem.draggable.SetDraggable(false);
-            //currSlot.slotItem.SetNeededType(typeof(IUnit));
+        defendersScrollSnap.enabled = false;
+        Utilities.DestroyChildren(defendersScrollView.content);
+        defendersScrollSnap.ChildObjects = new GameObject[0];
+        for (int i = 0; i < _activeLandmark.tileLocation.areaOfTile.defenderGroups.Count; i++) {
+            DefenderGroup currGroup = _activeLandmark.tileLocation.areaOfTile.defenderGroups[i];
+            GameObject currGO = UIManager.Instance.InstantiateUIObject(defenderGroupPrefab.name, defendersScrollView.content);
+            currGO.GetComponent<DefenderGroupItem>().SetDefender(currGroup);
         }
-        //if (_activeLandmark.defenders == null) {
-        //    for (int i = 0; i < defenderSlots.Length; i++) {
-        //        LandmarkCharacterItem currSlot = defenderSlots[i];
-        //        currSlot.SetCharacter(null, _activeLandmark, true);
-        //        currSlot.slotItem.dropZone.SetEnabledState(false);
-        //        currSlot.slotItem.draggable.SetDraggable(false);
-        //        //currSlot.slotItem.SetNeededType(typeof(IUnit));
-        //    }
-        //} else {
-        //    for (int i = 0; i < defenderSlots.Length; i++) {
-        //        LandmarkCharacterItem currSlot = defenderSlots[i];
-        //        ICharacter defender = _activeLandmark.defenders.icharacters.ElementAtOrDefault(i);
-        //        currSlot.SetCharacter(defender, _activeLandmark, true);
-        //        currSlot.slotItem.dropZone.SetEnabledState(false);
-        //        currSlot.slotItem.draggable.SetDraggable(false);
-        //        //currSlot.slotItem.SetNeededType(typeof(IUnit));
-        //    }
-        //}
+        //defendersScrollSnap.InitialiseChildObjectsFromScene();
+        defendersScrollSnap.enabled = true;
     }
     #endregion
 
