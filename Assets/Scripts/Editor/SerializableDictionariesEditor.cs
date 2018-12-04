@@ -24,6 +24,8 @@ public class RoleInteractionsListDictionaryPropertyDrawer : SerializableDictiona
 public class TileSpriteCorruptionListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(RaceClassListDictionary))]
 public class RaceDefenderListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(JobPortraitFramesDictionary))]
+public class JobPortraitFramesDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 
 [CustomPropertyDrawer(typeof(CharacterTagListStorage))]

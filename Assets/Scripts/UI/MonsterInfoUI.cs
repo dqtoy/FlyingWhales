@@ -267,7 +267,7 @@ public class MonsterInfoUI : UIMenu {
     }
     private void UpdatePortrait() {
         //characterPortrait.GeneratePortrait(_activeMonster);
-        characterPortrait.SetBGState(false);
+        //characterPortrait.SetBGState(false);
     }
 
     #region Stats

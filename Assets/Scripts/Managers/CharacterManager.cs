@@ -41,6 +41,7 @@ public class CharacterManager : MonoBehaviour {
     public GameObject characterPortraitPrefab;
     [SerializeField] private List<RacePortraitAssets> portraitAssets;
     public List<Color> hairColors;
+    [SerializeField] private JobPortraitFramesDictionary portraitFrames;
 
     [Header("Character Role Animators")]
     [SerializeField] private RuntimeAnimatorController[] characterAnimators;
@@ -584,6 +585,12 @@ public class CharacterManager : MonoBehaviour {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
         return pac.eyebrowAssets.Count;
     }
+    public PortraitFrame GetPortraitFrame(JOB job) {
+        if (portraitFrames.ContainsKey(job)) {
+            return portraitFrames[job];
+        }
+        throw new System.Exception("There is no frame for job " + job.ToString());
+    }
     #endregion
 
     #region Elements
@@ -780,4 +787,10 @@ public class CharacterManager : MonoBehaviour {
         return CreateCharacterArmyUnit(defender.className, race, faction, initialLocation);
     }
     #endregion
+}
+
+[System.Serializable]
+public class PortraitFrame {
+    public Sprite baseBG;
+    public Sprite frameOutline;
 }

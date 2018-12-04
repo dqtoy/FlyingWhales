@@ -731,7 +731,7 @@ public class LandmarkInfoUI : UIMenu {
             }
             _assignedParty[index] = minion;
             minionAssignmentPartyPortraits[index].gameObject.SetActive(true);
-            minionAssignmentPartyPortraits[index].GeneratePortrait(minion.character, 85);
+            minionAssignmentPartyPortraits[index].GeneratePortrait(minion.character);
             //minionAssignmentPartyRecallButton.gameObject.SetActive(false);
             //minionAssignmentPartyConfirmButton.gameObject.SetActive(true);
             //minionAssignmentDraggableItem.SetDraggable(true);

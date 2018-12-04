@@ -303,7 +303,7 @@ public class CharacterInfoUI : UIMenu {
     }
     private void UpdatePortrait() {
         characterPortrait.GeneratePortrait(_activeCharacter);
-        characterPortrait.SetBGState(false);
+        //characterPortrait.SetBGState(false);
     }
     private void UpdateBasicInfo() {
         nameLbl.text = _activeCharacter.name;

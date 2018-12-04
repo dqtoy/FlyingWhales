@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class SlotItemDraggableItem : DraggableItem {
+public class SlotItemDraggable : DraggableItem {
 
     [SerializeField] private SlotItem slot;
+
+    private void Awake() {
+        SetDraggable(_isDraggable);
+    }
 
     public override void OnBeginDrag(PointerEventData eventData) {
         if (slot.placedObject == null || !_isDraggable) {
@@ -57,6 +61,16 @@ public class SlotItemDraggableItem : DraggableItem {
             Destroy(_draggingObject.gameObject);
             if (customDropzone == null) {
                 slot.OnItemDroppedOut();
+            }
+        }
+    }
+    public override void SetDraggable(bool state) {
+        if (_isDraggable != state) {
+            base.SetDraggable(state);
+            if (state) {
+                slot.portrait.SwitchBGToDraggable();
+            } else {
+                slot.portrait.SwitchBGToLocked();
             }
         }
     }

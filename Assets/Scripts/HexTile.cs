@@ -1538,7 +1538,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                     despawnMonster.SetSubMenu(despawnMonsterSettings);
 
                     for (int i = 0; i < this.landmarkOnTile.charactersAtLocation.Count; i++) {
-                        IParty currParty = this.landmarkOnTile.charactersAtLocation[i];
+                        Party currParty = this.landmarkOnTile.charactersAtLocation[i];
                         if (currParty is MonsterParty) {
                             ContextMenuItemSettings despawnMonsterItem = new ContextMenuItemSettings(currParty.name);
                             despawnMonsterItem.onClickAction = () => MonsterManager.Instance.DespawnMonsterPartyOnLandmark(landmarkOnTile, currParty as MonsterParty);

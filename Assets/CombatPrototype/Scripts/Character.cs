@@ -463,7 +463,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
 #if !WORLD_CREATION_TOOL
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, UIManager.Instance.characterPortraitsParent);
         _characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
-        _characterPortrait.GeneratePortrait(this, 36, data.role);
+        _characterPortrait.GeneratePortrait(this, data.role);
         portraitGO.SetActive(false);
 #endif
 

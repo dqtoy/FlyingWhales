@@ -314,8 +314,8 @@ public class AreaInfoUI : UIMenu {
         GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
         LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
         item.SetCharacter(character, null);
-        item.slotItem.draggable.SetDraggable(false);
-        item.slotItem.dropZone.SetEnabledState(false);
+        //item.slotItem.draggable.SetDraggable(false);
+        //item.slotItem.dropZone.SetEnabledState(false);
         characterItems.Add(item);
         CheckScrollers();
         return item;
@@ -634,7 +634,7 @@ public class AreaInfoUI : UIMenu {
             }
             _assignedParty[index] = minion;
             minionAssignmentPartyPortraits[index].gameObject.SetActive(true);
-            minionAssignmentPartyPortraits[index].GeneratePortrait(minion.character, 85);
+            minionAssignmentPartyPortraits[index].GeneratePortrait(minion.character);
             //minionAssignmentPartyRecallButton.gameObject.SetActive(false);
             //minionAssignmentPartyConfirmButton.gameObject.SetActive(true);
             //minionAssignmentDraggableItem.SetDraggable(true);

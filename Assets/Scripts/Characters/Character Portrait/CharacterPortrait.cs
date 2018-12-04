@@ -19,9 +19,16 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     public bool ignoreInteractions = false;
 
     [Header("BG")]
-    [SerializeField] private Image bg;
-    [SerializeField] private Sprite lockedBGSprite;
-    [SerializeField] private Sprite draggableBGSprite;
+    [SerializeField] private Image baseBG;
+    [SerializeField] private Image lockedFrame;
+    [SerializeField] private GameObject draggableFrameGO;
+    [SerializeField] private TextMeshProUGUI lvlTxt;
+    [SerializeField] private GameObject lvlGO;
+    //[SerializeField] private Sprite lockedBGSprite;
+    //[SerializeField] private Sprite draggableBGSprite;
+
+    [Header("Face")]
+    [SerializeField] private GameObject faceParentGO;
 
     [Header("Head")]
     [SerializeField] private Image head;
@@ -73,9 +80,9 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
     }
 
-    public void GeneratePortrait(Character character, int imgSize = 104, CHARACTER_ROLE role = CHARACTER_ROLE.NONE) {
+    public void GeneratePortrait(Character character, CHARACTER_ROLE role = CHARACTER_ROLE.NONE) {
         _character = character;
-        SetImageSize(imgSize);
+        //SetImageSize(imgSize);
         if(character == null) {
             SetBodyPartsState(false);
             SetWholeImageSprite(null);
@@ -100,11 +107,13 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         //}
         //SetBGState(true);
         nameLbl.text = character.urlName;
+        lvlTxt.text = character.level.ToString();
+        UpdateFrame();
         UpdateUnknownVisual();
     }
-    public void GeneratePortrait(PortraitSettings portraitSettings, int imgSize = 104) {
+    public void GeneratePortrait(PortraitSettings portraitSettings) {
         _portraitSettings = portraitSettings;
-        SetImageSize(imgSize);
+        //SetImageSize(imgSize);
         if (portraitSettings == null) {
             SetBodyPartsState(false);
             //wholeImage.sprite = null;
@@ -127,46 +136,47 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
     #region Utilities
     private void SetBodyPartsState(bool state) {
-        body.gameObject.SetActive(state);
-        head.gameObject.SetActive(state);
-        eyes.gameObject.SetActive(state);
-        eyebrows.gameObject.SetActive(state);
-        nose.gameObject.SetActive(state);
-        mouth.gameObject.SetActive(state);
-        if (hair.sprite == null) {
-            hair.gameObject.SetActive(false);
-        } else {
-            hair.gameObject.SetActive(state);
-        }
-        if (hairBack.sprite == null) {
-            hairBack.gameObject.SetActive(false);
-        } else {
-            hairBack.gameObject.SetActive(state);
-        }
+        faceParentGO.SetActive(state);
+        //body.gameObject.SetActive(state);
+        //head.gameObject.SetActive(state);
+        //eyes.gameObject.SetActive(state);
+        //eyebrows.gameObject.SetActive(state);
+        //nose.gameObject.SetActive(state);
+        //mouth.gameObject.SetActive(state);
+        //if (hair.sprite == null) {
+        //    hair.gameObject.SetActive(false);
+        //} else {
+        //    hair.gameObject.SetActive(state);
+        //}
+        //if (hairBack.sprite == null) {
+        //    hairBack.gameObject.SetActive(false);
+        //} else {
+        //    hairBack.gameObject.SetActive(state);
+        //}
 
-        if (facialHair.sprite == null) {
-            facialHair.gameObject.SetActive(false);
-        } else {
-            facialHair.gameObject.SetActive(state);
-        }
+        //if (facialHair.sprite == null) {
+        //    facialHair.gameObject.SetActive(false);
+        //} else {
+        //    facialHair.gameObject.SetActive(state);
+        //}
 
-        if (hairOverlay.sprite == null) {
-            hairOverlay.gameObject.SetActive(false);
-        } else {
-            hairOverlay.gameObject.SetActive(state);
-        }
+        //if (hairOverlay.sprite == null) {
+        //    hairOverlay.gameObject.SetActive(false);
+        //} else {
+        //    hairOverlay.gameObject.SetActive(state);
+        //}
 
-        if (hairBackOverlay.sprite == null) {
-            hairBackOverlay.gameObject.SetActive(false);
-        } else {
-            hairBackOverlay.gameObject.SetActive(state);
-        }
+        //if (hairBackOverlay.sprite == null) {
+        //    hairBackOverlay.gameObject.SetActive(false);
+        //} else {
+        //    hairBackOverlay.gameObject.SetActive(state);
+        //}
 
-        if (facialHairOverlay.sprite == null) {
-            facialHairOverlay.gameObject.SetActive(false);
-        } else {
-            facialHairOverlay.gameObject.SetActive(state);
-        }
+        //if (facialHairOverlay.sprite == null) {
+        //    facialHairOverlay.gameObject.SetActive(false);
+        //} else {
+        //    facialHairOverlay.gameObject.SetActive(state);
+        //}
     }
     private void SetWholeImageSprite(Sprite sprite) {
         wholeImage.sprite = sprite;
@@ -183,65 +193,69 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             nameLbl.gameObject.SetActive(state);
         }
     }
-    public void SetImageSize(int imgSize) {
-        //if (ignoreSize) {
-        //    return;
-        //}
-        _imgSize = imgSize;
-        SetDimensions(imgSize);
-        normalSize = (this.transform as RectTransform).sizeDelta;
-        //float size = 0f;
-        //if (!ignoreSize) {
-        //RectTransform[] rt = Utilities.GetComponentsInDirectChildren<RectTransform>(this.gameObject);
-        //switch (imgSize) {
-        //    case IMAGE_SIZE.X64:
-        //        size = 64f;
-        //        break;
-        //    case IMAGE_SIZE.X256:
-        //        size = 256f;
-        //        break;
-        //    case IMAGE_SIZE.X72:
-        //        size = 72f;
-        //        break;
-        //    case IMAGE_SIZE.X36:
-        //        size = 36f;
-        //        break;
-        //    default:
-        //        break;
-        //}
-        //SetDimensions(size);
-        //for (int i = 0; i < rt.Length; i++) {
-        //    rt[i].sizeDelta = new Vector2(size, size);
-        //}
-        //}
+    //public void SetImageSize(int imgSize) {
+    //    //if (ignoreSize) {
+    //    //    return;
+    //    //}
+    //    _imgSize = imgSize;
+    //    //SetDimensions(imgSize);
+    //    normalSize = (this.transform as RectTransform).sizeDelta;
+    //    //float size = 0f;
+    //    //if (!ignoreSize) {
+    //    //RectTransform[] rt = Utilities.GetComponentsInDirectChildren<RectTransform>(this.gameObject);
+    //    //switch (imgSize) {
+    //    //    case IMAGE_SIZE.X64:
+    //    //        size = 64f;
+    //    //        break;
+    //    //    case IMAGE_SIZE.X256:
+    //    //        size = 256f;
+    //    //        break;
+    //    //    case IMAGE_SIZE.X72:
+    //    //        size = 72f;
+    //    //        break;
+    //    //    case IMAGE_SIZE.X36:
+    //    //        size = 36f;
+    //    //        break;
+    //    //    default:
+    //    //        break;
+    //    //}
+    //    //SetDimensions(size);
+    //    //for (int i = 0; i < rt.Length; i++) {
+    //    //    rt[i].sizeDelta = new Vector2(size, size);
+    //    //}
+    //    //}
 
-    }
-    public void SetDimensions(float size) {
-        (this.transform as RectTransform).sizeDelta = new Vector2(size, size);
-        //head.rectTransform.sizeDelta = new Vector2(size, size);
-        //eyes.rectTransform.sizeDelta = new Vector2(size, size);
-        //eyebrows.rectTransform.sizeDelta = new Vector2(size, size);
-        //nose.rectTransform.sizeDelta = new Vector2(size, size);
-        //mouth.rectTransform.sizeDelta = new Vector2(size, size);
-        //hair.rectTransform.sizeDelta = new Vector2(size, size);
-        //hairBack.rectTransform.sizeDelta = new Vector2(size, size);
-        //hairOverlay.rectTransform.sizeDelta = new Vector2(size, size);
-        //hairBackOverlay.rectTransform.sizeDelta = new Vector2(size, size);
-        //facialHair.rectTransform.sizeDelta = new Vector2(size, size);
-        //facialHairOverlay.rectTransform.sizeDelta = new Vector2(size, size);
-        //body.rectTransform.sizeDelta = new Vector2(size, size);
-        //wholeImage.rectTransform.sizeDelta = new Vector2(size, size);
-    }
-    public void SetBGState(bool state) {
-        bg.enabled = state;
-    }
+    //}
+    //public void SetDimensions(float size) {
+    //    (this.transform as RectTransform).sizeDelta = new Vector2(size, size);
+    //    //head.rectTransform.sizeDelta = new Vector2(size, size);
+    //    //eyes.rectTransform.sizeDelta = new Vector2(size, size);
+    //    //eyebrows.rectTransform.sizeDelta = new Vector2(size, size);
+    //    //nose.rectTransform.sizeDelta = new Vector2(size, size);
+    //    //mouth.rectTransform.sizeDelta = new Vector2(size, size);
+    //    //hair.rectTransform.sizeDelta = new Vector2(size, size);
+    //    //hairBack.rectTransform.sizeDelta = new Vector2(size, size);
+    //    //hairOverlay.rectTransform.sizeDelta = new Vector2(size, size);
+    //    //hairBackOverlay.rectTransform.sizeDelta = new Vector2(size, size);
+    //    //facialHair.rectTransform.sizeDelta = new Vector2(size, size);
+    //    //facialHairOverlay.rectTransform.sizeDelta = new Vector2(size, size);
+    //    //body.rectTransform.sizeDelta = new Vector2(size, size);
+    //    //wholeImage.rectTransform.sizeDelta = new Vector2(size, size);
+    //}
+    //public void SetBGState(bool state) {
+    //    bg.enabled = state;
+    //}
     public void SwitchBGToLocked() {
-        bg.sprite = lockedBGSprite;
-        SetImageSize(_imgSize + 4);
+        lockedFrame.gameObject.SetActive(true);
+        draggableFrameGO.SetActive(false);
+        //bg.sprite = lockedBGSprite;
+        //SetImageSize(_imgSize + 4);
     }
     public void SwitchBGToDraggable() {
-        bg.sprite = draggableBGSprite;
-        SetImageSize(_imgSize - 4);
+        lockedFrame.gameObject.SetActive(false);
+        draggableFrameGO.SetActive(true);
+        //bg.sprite = draggableBGSprite;
+        //SetImageSize(_imgSize - 4);
     }
     private void UpdateUnknownVisual() {
         if (_character != null) {
@@ -268,6 +282,13 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     public void SetForceShowPortraitState(bool state) {
         forceShowPortrait = state;
         UpdateUnknownVisual();
+    }
+    private void UpdateFrame() {
+        if (_character != null && _character.job.jobType != JOB.NONE) {
+            PortraitFrame frame = CharacterManager.Instance.GetPortraitFrame(_character.job.jobType);
+            baseBG.sprite = frame.baseBG;
+            lockedFrame.sprite = frame.frameOutline;
+        }
     }
     #endregion
 

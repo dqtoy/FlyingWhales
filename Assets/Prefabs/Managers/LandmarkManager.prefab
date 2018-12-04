@@ -801,22 +801,10 @@ MonoBehaviour:
       m_keys: 0000000004000000010000000200000003000000
       m_values:
       - data:
-        - mainSprite: {fileID: 21300000, guid: 98dbae7ea4933304e99ce222fa122a1c, type: 3}
-          tintSprite: {fileID: 0}
-          animation: {fileID: 0}
-        - mainSprite: {fileID: 21300000, guid: 26a960b077921124b9e61433b11d623d, type: 3}
-          tintSprite: {fileID: 0}
-          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: a41a24867a6731e4f9bf372de50136f4, type: 3}
           tintSprite: {fileID: 0}
           animation: {fileID: 0}
       - data:
-        - mainSprite: {fileID: 21300000, guid: 98dbae7ea4933304e99ce222fa122a1c, type: 3}
-          tintSprite: {fileID: 0}
-          animation: {fileID: 0}
-        - mainSprite: {fileID: 21300000, guid: 26a960b077921124b9e61433b11d623d, type: 3}
-          tintSprite: {fileID: 0}
-          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: a41a24867a6731e4f9bf372de50136f4, type: 3}
           tintSprite: {fileID: 0}
           animation: {fileID: 0}
@@ -841,13 +829,7 @@ MonoBehaviour:
           tintSprite: {fileID: 0}
           animation: {fileID: 0}
       - data:
-        - mainSprite: {fileID: 21300000, guid: 671a2939fda30b34898a8299cebcfcd7, type: 3}
-          tintSprite: {fileID: 0}
-          animation: {fileID: 0}
         - mainSprite: {fileID: 21300000, guid: dce980df86557994483727bab006f16d, type: 3}
-          tintSprite: {fileID: 0}
-          animation: {fileID: 0}
-        - mainSprite: {fileID: 21300000, guid: acc889bc0bb3df849a1a42ac1261b064, type: 3}
           tintSprite: {fileID: 0}
           animation: {fileID: 0}
     neutralTileSprites:

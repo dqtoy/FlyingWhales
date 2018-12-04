@@ -10044,6 +10044,40 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 224997515615235662, guid: cdfed07929227104599994075478446b,
+        type: 2}
+      propertyPath: m_SizeDelta.x
+      value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 224997515615235662, guid: cdfed07929227104599994075478446b,
+        type: 2}
+      propertyPath: m_SizeDelta.y
+      value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 224229902447694794, guid: cdfed07929227104599994075478446b,
+        type: 2}
+      propertyPath: m_SizeDelta.x
+      value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 224229902447694794, guid: cdfed07929227104599994075478446b,
+        type: 2}
+      propertyPath: m_SizeDelta.y
+      value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 224073514525032536, guid: cdfed07929227104599994075478446b,
+        type: 2}
+      propertyPath: m_SizeDelta.x
+      value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 224073514525032536, guid: cdfed07929227104599994075478446b,
+        type: 2}
+      propertyPath: m_SizeDelta.y
+      value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 1717838022588716, guid: cdfed07929227104599994075478446b, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: cdfed07929227104599994075478446b, type: 2}
   m_IsPrefabParent: 0
@@ -43380,6 +43414,10 @@ Prefab:
       propertyPath: forceShowPortrait
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1717838022588716, guid: cdfed07929227104599994075478446b, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: cdfed07929227104599994075478446b, type: 2}
   m_IsPrefabParent: 0
@@ -69992,6 +70030,10 @@ Prefab:
       propertyPath: forceShowPortrait
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1717838022588716, guid: cdfed07929227104599994075478446b, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: cdfed07929227104599994075478446b, type: 2}
   m_IsPrefabParent: 0
@@ -82432,7 +82474,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 1007957311
   m_SortingOrder: 0
   m_TargetDisplay: 0
