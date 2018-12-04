@@ -41,7 +41,7 @@ public class Dissuader : Job {
             critFail = 0;
         }
         successWeights.AddElement("Success", success);
-        successWeights.AddElement("Crit Fail", critFail);
+        //successWeights.AddElement("Crit Fail", critFail);
         string result = successWeights.PickRandomElementGivenWeights();
         if (result == "Success") {
             List<Interaction> choices = area.GetInteractionsOfJob(_jobType);
@@ -52,8 +52,9 @@ public class Dissuader : Job {
             SetJobActionPauseState(true);
             SetCreatedInteraction(choices[UnityEngine.Random.Range(0, choices.Count)]);
             _createdInteraction.SetEndInteractionAction(() => SetJobActionPauseState(false));
-            _createdInteraction.ScheduleSecondTimeOut();
+            InteractionUI.Instance.OpenInteractionUI(_createdInteraction);
         } else if (result == "Crit Fail") {
+            SetJobActionPauseState(true);
             SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile));
             _createdInteraction.SetEndInteractionAction(() => SetJobActionPauseState(false));
             _createdInteraction.ScheduleSecondTimeOut();

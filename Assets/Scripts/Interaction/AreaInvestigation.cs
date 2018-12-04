@@ -175,58 +175,6 @@ public class AreaInvestigation {
         _currentlyAttackedLandmark = null;
         UIManager.Instance.areaInfoUI.ResetMinionAssignmentParty();
     }
-    private void OnExploreTick() {
-        if (_currentTick >= _duration) {
-            Messenger.RemoveListener(Signals.DAY_STARTED, OnExploreTick);
-            ExploreDoneCheckForExistingEvents();
-            return;
-        }
-        _currentTick++;
-    }
-    public void OnDestroyLandmark(BaseLandmark landmark) {
-        if (_isExploring) {
-            //if (_currentlyExploredLandmark == landmark) {
-            //    _currentlyExploredLandmark.landmarkVisual.StopInteractionTimer();
-            //    _currentlyExploredLandmark.landmarkVisual.HideInteractionTimer();
-            //    if (InteractionUI.Instance.interactionItem.interaction != null && InteractionUI.Instance.interactionItem.interaction.interactable == landmark) {
-            //        InteractionUI.Instance.HideInteractionUI();
-            //    }
-            //}
-            if (_area.areAllLandmarksDead) {
-                if (Messenger.eventTable.ContainsKey(Signals.DAY_STARTED)) {
-                    Messenger.RemoveListener(Signals.DAY_STARTED, OnExploreTick);
-                }
-                _area.coreTile.landmarkOnTile.landmarkVisual.StopInteractionTimerJob();
-                _area.coreTile.landmarkOnTile.landmarkVisual.HideInteractionTimerJob();
-            }
-        }
-    }
-    private void ExploreDoneCheckForExistingEvents() {
-        _area.coreTile.landmarkOnTile.landmarkVisual.StopInteractionTimer();
-        _area.coreTile.landmarkOnTile.landmarkVisual.HideInteractionTimer();
-
-        List<Interaction> choices = new List<Interaction>();
-        for (int i = 0; i < _area.landmarks.Count; i++) {
-            choices.AddRange(_area.landmarks[i].currentInteractions);
-        }
-        if (choices.Count > 0) {
-            _currentInteraction = GetRandomInteraction(choices);
-            _currentlyExploredLandmark = _currentInteraction.interactable;
-            _currentlyExploredLandmark.landmarkVisual.SetAndStartInteractionTimer(Interaction.secondTimeOutTicks, new InteractionTimer.OnStopTimer(_currentlyExploredLandmark.landmarkVisual.HideInteractionTimer));
-            //_currentlyExploredLandmark.landmarkVisual.ShowInteractionForeground();
-            _currentlyExploredLandmark.landmarkVisual.ShowInteractionTimer(_currentInteraction);
-        } else {
-            ExploreArea();
-        }
-
-    }
-    private Interaction GetRandomInteraction(List<Interaction> choices) {
-        Interaction chosenInteraction = choices[UnityEngine.Random.Range(0, choices.Count)];
-        //chosenInteraction.CancelFirstTimeOut();
-        chosenInteraction.ScheduleSecondTimeOut();
-        return chosenInteraction;
-    }
-  
     //private void ClickedInteractionTimerButton(BaseLandmark landmark) {
     //    if (_assignedMinion != null && landmark.tileLocation.areaOfTile == _area) {
     //        Character character = _assignedMinion.icharacter as Character;
@@ -241,22 +189,6 @@ public class AreaInvestigation {
 
     #region Attack
     private void AttackLandmark() {
-        //_currentlyAttackedLandmark = null;
-        //float highestWinRate = 0f;
-        //float loseRate = 0f;
-        //for (int i = 0; i < _area.exposedTiles.Count; i++) {
-        //    if(_currentlyAttackedLandmark == null) {
-        //        _currentlyAttackedLandmark = _area.exposedTiles[i];
-        //        CombatManager.Instance.GetCombatChanceOfTwoLists(_assignedMinionAttack.icharacter.currentParty.icharacters, _currentlyAttackedLandmark.defenders.icharacters, out highestWinRate, out loseRate);
-        //    } else {
-        //        float winRate = 0f;
-        //        CombatManager.Instance.GetCombatChanceOfTwoLists(_assignedMinionAttack.icharacter.currentParty.icharacters, _area.exposedTiles[i].defenders.icharacters, out winRate, out loseRate);
-        //        if(winRate > highestWinRate) {
-        //            _currentlyAttackedLandmark = _area.exposedTiles[i];
-        //            highestWinRate = winRate;
-        //        }
-        //    }
-        //}
         DefenderGroup defender = _area.GetFirstDefenderGroup();
         if (defender != null) {
             //_assignedMinionAttack.icharacter.currentParty.specificLocation.RemoveCharacterFromLocation(_assignedMinionAttack.icharacter.currentParty);
@@ -264,15 +196,17 @@ public class AreaInvestigation {
             Combat combat = _assignedMinionAttack.icharacter.currentParty.CreateCombatWith(defender.party);
             combat.Fight(() => AttackCombatResult(combat));
         } else {
-            _currentlyAttackedLandmark.DestroyLandmark();
             RecallMinion("attack");
+            //Destroy Area
         }
     }
     private void AttackCombatResult(Combat combat) {
         if (_isAttacking) { //when the minion dies, isActivated will become false, hence, it must not go through the result
             if (combat.winningSide == _assignedMinionAttack.icharacter.currentSide) {
-                _currentlyAttackedLandmark.DestroyLandmark();
                 RecallMinion("attack");
+                if(_area.GetFirstDefenderGroup() == null) {
+                    //Destroy Area
+                }
             }
         }
     }

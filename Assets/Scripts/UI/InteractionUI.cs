@@ -24,9 +24,9 @@ public class InteractionUI : MonoBehaviour {
     //private List<InteractionItem> _allInteractionItems;
 
     #region getters/setters
-    //public Interaction interaction {
-    //    get { return _interaction; }
-    //}
+    public Interaction interaction {
+        get { return _interaction; }
+    }
     #endregion
     private void Awake() {
         Instance = this;
@@ -43,21 +43,38 @@ public class InteractionUI : MonoBehaviour {
         }
     }
     public void OpenInteractionUI(Interaction interaction) {
+        if(_interaction != null) {
+            InteractionManager.Instance.AddToInteractionQueue(interaction);
+            return;
+        }
         if (interaction != null) {
             _interaction = interaction;
+            if (!interaction.hasActivatedTimeOut) {
+                interaction.SetActivatedTimeOutState(true);
+            }
+            interaction.OnInteractionActive();
             interactionItem.SetInteraction(_interaction);
             interactionHolder.SetActive(true);
             GameManager.Instance.SetPausedState(true);
-            Messenger.Broadcast(Signals.INTERACTION_MENU_OPENED);
+            //Messenger.Broadcast(Signals.INTERACTION_MENU_OPENED);
         }
     }
     public void HideInteractionUI() {
         if (interactionHolder.activeSelf) { //only if the menu is showing
             _interaction = null;
             interactionItem.SetInteraction(_interaction);
+
+            if(InteractionManager.Instance.interactionUIQueue.Count > 0) {
+                Interaction queuedInteraction = InteractionManager.Instance.interactionUIQueue.Dequeue();
+                if (queuedInteraction != null) {
+                    OpenInteractionUI(queuedInteraction);
+                    return;
+                }
+            }
+
             interactionHolder.SetActive(false);
             GameManager.Instance.SetPausedState(false);
-            Messenger.Broadcast(Signals.INTERACTION_MENU_CLOSED);
+            //Messenger.Broadcast(Signals.INTERACTION_MENU_CLOSED);
         }
     }
     //public void UpdateInteraction() {

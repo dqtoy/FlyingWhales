@@ -16,12 +16,14 @@ public class BezierCurveManager : MonoBehaviour {
     public Transform controlPoint2;
 
     private List<BezierCurveParent> _curveParents;
+    private List<TravelLineParent> _travelLineParents;
 
     private void Awake() {
         Instance = this;
     }
     private void Start() {
         _curveParents = new List<BezierCurveParent>();
+        _travelLineParents = new List<TravelLineParent>();
     }
     //private void Update() {
     //    DrawCubicCurveTesting(startPoint.position, endPoint.position);
@@ -159,4 +161,21 @@ public class BezierCurveManager : MonoBehaviour {
         Debug.LogWarning("Normal: " + normal);
         Debug.LogWarning("NormalUp: " + normalUp);
     }
+
+    #region Travel Lines
+    public void AddTravelLineParent(TravelLineParent travelLineParent) {
+        _travelLineParents.Add(travelLineParent);
+    }
+    public void RemoveTravelLineParent(TravelLineParent travelLineParent) {
+        _travelLineParents.Remove(travelLineParent);
+    }
+    public TravelLineParent GetTravelLineParent(HexTile startTile, HexTile endTile) {
+        for (int i = 0; i < _travelLineParents.Count; i++) {
+            if (_travelLineParents[i].startPos == startTile && _travelLineParents[i].endPos == endTile) {
+                return _travelLineParents[i];
+            }
+        }
+        return null;
+    }
+    #endregion
 }

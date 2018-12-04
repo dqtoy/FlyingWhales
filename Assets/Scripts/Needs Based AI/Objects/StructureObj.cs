@@ -413,19 +413,11 @@ public class StructureObj : IObject {
         _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.hoursPerDay + 1);
     }
     private void DailyInteractionGeneration() {
-        DefaultAllExistingInteractions();
-        if(_currentInteractionTick == GameManager.Instance.hour) {
+        //DefaultAllExistingInteractions();
+        if(_currentInteractionTick == GameManager.Instance.days) {
             //GenerateDailyInteraction();
             CreateRandomInteractionForNonMinionCharacters();
             SetDailyInteractionGenerationTick();
-        }
-    }
-    private void DefaultAllExistingInteractions() {
-        for (int i = 0; i < _objectLocation.currentInteractions.Count; i++) {
-            if (!_objectLocation.currentInteractions[i].hasActivatedTimeOut) {
-                _objectLocation.currentInteractions[i].TimedOutRunDefault();
-                i--;
-            }
         }
     }
     public void CreateRandomInteractionForNonMinionCharacters() {
@@ -433,12 +425,9 @@ public class StructureObj : IObject {
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < 40) {
             INTERACTION_TYPE type = INTERACTION_TYPE.SPAWN_CHARACTER;
-            //int chance2 = UnityEngine.Random.Range(0, 2);
-            //if(chance2 == 0) {
-            //    type = INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER;
-            //}
             if (_objectLocation.tileLocation.areaOfTile.owner == null) {
                 type = INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER;
+                return;
             }
             Interaction interaction = InteractionManager.Instance.CreateNewInteraction(type, _objectLocation);
             _objectLocation.AddInteraction(interaction);

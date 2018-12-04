@@ -40,7 +40,7 @@ public class TravelLineParent : MonoBehaviour {
         gameObject.transform.SetParent(_startTile.UIParent);
         transform.localPosition = Vector3.zero;
 
-        _startTile.SetTravelLineParent(this);
+        BezierCurveManager.Instance.AddTravelLineParent(this);
     }
     public void AddChild(TravelLine line) {
         _children.Add(line);
@@ -62,8 +62,8 @@ public class TravelLineParent : MonoBehaviour {
         line.SetLineParent(null);
         SetActiveBG(false);
         if(_children.Count <= 0) {
+            BezierCurveManager.Instance.RemoveTravelLineParent(this);
             GameObject.Destroy(this.gameObject);
-            _startTile.SetTravelLineParent(null);
         }
     }
     public void SetActiveBG(bool state) {

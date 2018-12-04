@@ -171,8 +171,10 @@ public class GameManager : MonoBehaviour {
 	}
     public void SetPausedState(bool isPaused){
         //Debug.Log("Set paused state to " + isPaused);
-		this.isPaused = isPaused;
-        Messenger.Broadcast(Signals.PAUSED, isPaused);
+        if(this.isPaused != isPaused) {
+            this.isPaused = isPaused;
+            Messenger.Broadcast(Signals.PAUSED, isPaused);
+        }
 	}
     /*
      * Set day progression speed to 1x, 2x of 4x
@@ -192,6 +194,7 @@ public class GameManager : MonoBehaviour {
 	}
     public void DayStarted() {
         Messenger.Broadcast(Signals.DAY_STARTED);
+        Messenger.Broadcast(Signals.DAY_STARTED_2);
         Messenger.Broadcast(Signals.UPDATE_UI);
     }
     /*
@@ -199,6 +202,7 @@ public class GameManager : MonoBehaviour {
      * */
     public void DayEnded(){
         Messenger.Broadcast(Signals.DAY_ENDED);
+        Messenger.Broadcast(Signals.DAY_ENDED_2);
         Messenger.Broadcast(Signals.UPDATE_UI);
 
         this.days += 1;

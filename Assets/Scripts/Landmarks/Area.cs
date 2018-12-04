@@ -23,6 +23,7 @@ public class Area {
     public List<Character> areaResidents { get; private set; }
     public List<Character> residentsAtLocation { get; private set; }
     public List<Log> history { get; private set; }
+    public List<Interaction> currentInteractions { get; private set; }
     public bool isHighlighted { get; private set; }
     public bool hasBeenInspected { get; private set; }
     public bool areAllLandmarksDead { get; private set; }
@@ -63,6 +64,7 @@ public class Area {
         unexposedTiles = new List<BaseLandmark>();
         defenderGroups = new List<DefenderGroup>();
         history = new List<Log>();
+        currentInteractions = new List<Interaction>();
         areaColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         locationIntel = new LocationIntel(this);
         defenderIntel = new DefenderIntel(this);
@@ -74,6 +76,9 @@ public class Area {
         SetCoreTile(coreTile);
         SetSupplyCapacity(1000);
         AddTile(coreTile);
+        if(areaType != AREA_TYPE.DEMONIC_INTRUSION) {
+            Messenger.AddListener(Signals.DAY_ENDED_2, DefaultAllExistingInteractions);
+        }
 #if !WORLD_CREATION_TOOL
         StartSupplyLine();
 #endif
@@ -88,6 +93,7 @@ public class Area {
         unexposedTiles = new List<BaseLandmark>();
         defenderGroups = new List<DefenderGroup>();
         history = new List<Log>();
+        currentInteractions = new List<Interaction>();
         areaColor = data.areaColor;
         SetAreaType(data.areaType);
         locationIntel = new LocationIntel(this);
@@ -118,6 +124,9 @@ public class Area {
         //SetDefaultRace(data.defaultRace);
         AddTile(Utilities.GetTilesFromIDs(data.tileData)); //exposed tiles will be determined after loading landmarks at MapGeneration
         UpdateBorderColors();
+        if (areaType != AREA_TYPE.DEMONIC_INTRUSION) {
+            Messenger.AddListener(Signals.DAY_ENDED_2, DefaultAllExistingInteractions);
+        }
         GenerateDefaultRace();
     }
 
@@ -703,15 +712,38 @@ public class Area {
     #endregion
 
     #region Interactions
+    public void AddInteraction(Interaction interaction) {
+        currentInteractions.Add(interaction);
+        if (interaction.characterInvolved != null) {
+            interaction.characterInvolved.currentInteractions.Add(interaction);
+        }
+        interaction.interactable.currentInteractions.Add(interaction);
+        interaction.Initialize();
+        //Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
+    }
+    public void RemoveInteraction(Interaction interaction) {
+        if (currentInteractions.Remove(interaction)) {
+            if (interaction.characterInvolved != null) {
+                interaction.characterInvolved.currentInteractions.Remove(interaction);
+            }
+            interaction.interactable.currentInteractions.Remove(interaction);
+            //Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
+        }
+    }
+    private void DefaultAllExistingInteractions() {
+        for (int i = 0; i < currentInteractions.Count; i++) {
+            if (!currentInteractions[i].hasActivatedTimeOut) {
+                currentInteractions[i].TimedOutRunDefault();
+                i--;
+            }
+        }
+    }
     public List<Interaction> GetInteractionsOfJob(JOB jobType) {
         List<Interaction> choices = new List<Interaction>();
-        List<BaseLandmark> landmarkCandidates = this.landmarks;
-        for (int i = 0; i < landmarkCandidates.Count; i++) {
-            for (int j = 0; j < landmarkCandidates[i].currentInteractions.Count; j++) {
-                Interaction interaction = landmarkCandidates[i].currentInteractions[j];
-                if (interaction.DoesJobTypeFitsJobFilter(jobType)) {
-                    choices.Add(interaction);
-                }
+        for (int i = 0; i < currentInteractions.Count; i++) {
+            Interaction interaction = currentInteractions[i];
+            if (interaction.DoesJobTypeFitsJobFilter(jobType)) {
+                choices.Add(interaction);
             }
         }
         return choices;

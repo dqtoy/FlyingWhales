@@ -111,7 +111,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
     public BaseLandmark corruptedLandmark = null;
     private GameObject _spawnedTendril = null;
-    private TravelLineParent _travelLineParent = null;
 
     #region getters/setters
     public int id { get { return data.id; } }
@@ -196,9 +195,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public SpriteRenderer mainStructureSprite {
         get { return mainStructure; }
-    }
-    public TravelLineParent travelLineParent {
-        get { return _travelLineParent; }
     }
     #endregion
 
@@ -1674,23 +1670,22 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         return curve;
     }
     public TravelLine CreateTravelLine(HexTile target, int numOfTicks) {
-        if (_travelLineParent == null) {
+        TravelLineParent lineParent = BezierCurveManager.Instance.GetTravelLineParent(this, target);
+        if (lineParent == null) {
             GameObject goParent = GameObject.Instantiate(GameManager.Instance.travelLineParentPrefab);
-            TravelLineParent travelLineParent = goParent.GetComponent<TravelLineParent>();
-            travelLineParent.SetStartAndEndPositions(this, target, numOfTicks);
+            lineParent = goParent.GetComponent<TravelLineParent>();
+            lineParent.SetStartAndEndPositions(this, target, numOfTicks);
         }
-        GameObject go = GameObject.Instantiate(GameManager.Instance.travelLinePrefab, _travelLineParent.transform);
-        go.transform.SetParent(_travelLineParent.transform);
+        GameObject go = GameObject.Instantiate(GameManager.Instance.travelLinePrefab, lineParent.transform);
+        go.transform.SetParent(lineParent.transform);
         TravelLine travelLine = go.GetComponent<TravelLine>();
-        _travelLineParent.AddChild(travelLine);
+        lineParent.AddChild(travelLine);
 
-        if(target.travelLineParent != null) {
-            target.travelLineParent.transform.localPosition = new Vector3(0f, 0.3f, 0f);
+        TravelLineParent targetLineParent = BezierCurveManager.Instance.GetTravelLineParent(target, this);
+        if (targetLineParent != null) {
+            targetLineParent.transform.localPosition = new Vector3(0f, 0.3f, 0f);
         }
         return travelLine;
-    }
-    public void SetTravelLineParent(TravelLineParent travelLineParent) {
-        _travelLineParent = travelLineParent;
     }
     #endregion
 

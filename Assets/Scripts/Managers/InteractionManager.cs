@@ -13,6 +13,8 @@ public class InteractionManager : MonoBehaviour {
     public static readonly string Level_Reward_1 = "LevelReward1";
     public static readonly string Level_Reward_2 = "LevelReward2";
 
+    public Queue<Interaction> interactionUIQueue { get; private set; }
+
     [SerializeField] private RoleInteractionsListDictionary roleDefaultInteractions;
 
     public Dictionary<string, RewardConfig> rewardConfig = new Dictionary<string, RewardConfig>(){
@@ -27,6 +29,7 @@ public class InteractionManager : MonoBehaviour {
         Instance = this;
     }
     private void Start() {
+        interactionUIQueue = new Queue<Interaction>();
         Messenger.AddListener<Interaction>(Signals.CLICKED_INTERACTION_BUTTON, OnClickInteraction);
     }
     public Interaction CreateNewInteraction(INTERACTION_TYPE interactionType, BaseLandmark interactable) {
@@ -184,9 +187,11 @@ public class InteractionManager : MonoBehaviour {
     public void OnClickInteraction(Interaction interaction) {
         if(interaction != null) {
             interaction.CancelSecondTimeOut();
-            interaction.OnInteractionActive();
             InteractionUI.Instance.OpenInteractionUI(interaction);
         }
+    }
+    public void AddToInteractionQueue(Interaction interaction) {
+        interactionUIQueue.Enqueue(interaction);
     }
 }
 
