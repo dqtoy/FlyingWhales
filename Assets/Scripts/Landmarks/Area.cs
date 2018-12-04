@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 using UnityEngine;
-
 
 public class Area {
 
@@ -27,6 +27,7 @@ public class Area {
     public bool isHighlighted { get; private set; }
     public bool hasBeenInspected { get; private set; }
     public bool areAllLandmarksDead { get; private set; }
+    public bool stopDefaultAllExistingInteractions { get; private set; }
     public AreaInvestigation areaInvestigation { get; private set; }
     public int supplyCapacity { get; private set; }
 
@@ -65,7 +66,7 @@ public class Area {
         defenderGroups = new List<DefenderGroup>();
         history = new List<Log>();
         currentInteractions = new List<Interaction>();
-        areaColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        areaColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         locationIntel = new LocationIntel(this);
         defenderIntel = new DefenderIntel(this);
         areaInvestigation = new AreaInvestigation(this);
@@ -185,7 +186,7 @@ public class Area {
     }
     private void GenerateDefaultRace() {
         if (initialRaceSetup.Count > 0) {
-            InitialRaceSetup chosenSetup = initialRaceSetup[Random.Range(0, initialRaceSetup.Count)];
+            InitialRaceSetup chosenSetup = initialRaceSetup[UnityEngine.Random.Range(0, initialRaceSetup.Count)];
             defaultRace = chosenSetup.race;
         } else {
             defaultRace = new Race(RACE.NONE, RACE_SUB_TYPE.NORMAL);
@@ -306,7 +307,7 @@ public class Area {
     }
     private void OnTileRemovedFromArea(HexTile removedTile) {
         if (this.areaType == AREA_TYPE.ANCIENT_RUINS) {
-            removedTile.SetBaseSprite(Biomes.Instance.ancienctRuinTiles[Random.Range(0, Biomes.Instance.ancienctRuinTiles.Length)]);
+            removedTile.SetBaseSprite(Biomes.Instance.ancienctRuinTiles[UnityEngine.Random.Range(0, Biomes.Instance.ancienctRuinTiles.Length)]);
             removedTile.HideLandmarkTileSprites();
         }
         ////update tile visuals if necessary
@@ -389,7 +390,7 @@ public class Area {
     }
     public BaseLandmark GetRandomExposedLandmark() {
         if (exposedTiles.Count > 0) {
-            return exposedTiles[Random.Range(0, exposedTiles.Count)];
+            return exposedTiles[UnityEngine.Random.Range(0, exposedTiles.Count)];
         }
         return null;
     }
@@ -624,7 +625,7 @@ public class Area {
         for (int i = 0; i < landmarks.Count; i++) {
             BaseLandmark currLandmark = landmarks[i];
             if (currLandmark.canProduceSupplies && !currLandmark.landmarkObj.isRuined && currLandmark.MeetsSupplyProductionRequirements()) {
-                int providedSupplies = Random.Range(currLandmark.minDailySupplyProduction, currLandmark.maxDailySupplyProduction);
+                int providedSupplies = UnityEngine.Random.Range(currLandmark.minDailySupplyProduction, currLandmark.maxDailySupplyProduction);
                 totalCollectedSupplies += providedSupplies;
                 AdjustSuppliesInBank(providedSupplies);
                 supplySummary += currLandmark.name + "(" + currLandmark.specificLandmarkType.ToString() + ") - " + providedSupplies.ToString() + "\n";
@@ -713,12 +714,30 @@ public class Area {
 
     #region Interactions
     public void AddInteraction(Interaction interaction) {
-        currentInteractions.Add(interaction);
+        if(currentInteractions.Count > 0) {
+            int interactionToBeAddedIndex = Utilities.GetInteractionPriorityIndex(interaction.type);
+            bool hasBeenInserted = false;
+            if (interactionToBeAddedIndex != -1) {
+                for (int i = 0; i < currentInteractions.Count; i++) {
+                    int currentInteractionIndex = Utilities.GetInteractionPriorityIndex(currentInteractions[i].type);
+                    if (interactionToBeAddedIndex < currentInteractionIndex) {
+                        hasBeenInserted = true;
+                        currentInteractions.Insert(i, interaction);
+                        break;
+                    }
+                }
+            }
+            if (!hasBeenInserted) {
+                currentInteractions.Add(interaction);
+            }
+        } else {
+            currentInteractions.Add(interaction);
+        }
         if (interaction.characterInvolved != null) {
             interaction.characterInvolved.currentInteractions.Add(interaction);
         }
         interaction.interactable.currentInteractions.Add(interaction);
-        interaction.Initialize();
+        //interaction.Initialize();
         //Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
     }
     public void RemoveInteraction(Interaction interaction) {
@@ -730,13 +749,17 @@ public class Area {
             //Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
         }
     }
-    private void DefaultAllExistingInteractions() {
+    public void DefaultAllExistingInteractions() {
+        if(stopDefaultAllExistingInteractions) { return; }
         for (int i = 0; i < currentInteractions.Count; i++) {
             if (!currentInteractions[i].hasActivatedTimeOut) {
                 currentInteractions[i].TimedOutRunDefault();
                 i--;
             }
         }
+    }
+    public void SetStopDefaultInteractionsState(bool state) {
+        stopDefaultAllExistingInteractions = stopDefaultAllExistingInteractions;
     }
     public List<Interaction> GetInteractionsOfJob(JOB jobType) {
         List<Interaction> choices = new List<Interaction>();
@@ -811,7 +834,7 @@ public class Area {
     }
     public DefenderGroup GetRandomDefenderGroup() {
         if (defenderGroups.Count > 0) {
-            return defenderGroups[Random.Range(0, defenderGroups.Count)];
+            return defenderGroups[UnityEngine.Random.Range(0, defenderGroups.Count)];
         }
         return null;
     }
@@ -868,12 +891,12 @@ public class Area {
             return; //no default race was generated
         }
         InitialRaceSetup setup = GetRaceSetup(defaultRace);
-        int charactersToCreate = Random.Range(setup.spawnRange.lowerBound, setup.spawnRange.upperBound + 1);
+        int charactersToCreate = UnityEngine.Random.Range(setup.spawnRange.lowerBound, setup.spawnRange.upperBound + 1);
         WeightedDictionary<AreaCharacterClass> classWeights = GetClassWeights();
         if (classWeights.GetTotalOfWeights() > 0) {
             for (int i = 0; i < charactersToCreate; i++) {
                 AreaCharacterClass chosenClass = classWeights.PickRandomElementGivenWeights();
-                BaseLandmark randomHome = this.landmarks[Random.Range(0, landmarks.Count)];
+                BaseLandmark randomHome = this.landmarks[UnityEngine.Random.Range(0, landmarks.Count)];
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass.className, defaultRace.race, Utilities.GetRandomGender(), 
                     FactionManager.Instance.neutralFaction, randomHome);
                 createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);

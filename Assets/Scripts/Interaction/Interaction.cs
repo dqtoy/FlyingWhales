@@ -18,11 +18,12 @@ public class Interaction {
     protected bool _hasActivatedTimeOut;
     protected bool _isSecondTimeOutCancelled;
     protected bool _isChosen;
+    protected bool _hasInitialized;
     protected InteractionState _previousState;
     protected InteractionState _currentState;
     protected Minion _explorerMinion;
     protected Character _characterInvolved;
-    protected Action _endInteractionAction;
+    protected List<Action> _endInteractionActions;
     protected Job _jobAssociated;
     protected JOB[] _jobFilter;
     protected object[] otherData;
@@ -75,6 +76,9 @@ public class Interaction {
     public bool isChosen {
         get { return _isChosen; }
     }
+    public bool hasInitialized {
+        get { return _hasInitialized; }
+    }
     public JOB[] jobFilter {
         get { return _jobFilter; }
     }
@@ -89,6 +93,7 @@ public class Interaction {
         _isSecondTimeOutCancelled = false;
         _hasUsedBaseCreateStates = false;
         _states = new Dictionary<string, InteractionState>();
+        _endInteractionActions = new List<Action>();
         //_jobFilter = new JOB[] { JOB.NONE };
         //Debug.Log("Created new interaction " + type.ToString() + " at " + interactable.name);
         interactionDebugLog = type.ToString() + " Event at " + interactable.tileLocation.areaOfTile.name + "(" + interactable.name + ") Summary: \n" +
@@ -97,6 +102,7 @@ public class Interaction {
 
     #region Virtuals
     public virtual void Initialize() {
+        _hasInitialized = true;
         //SetCharacterInvolved(characterInvolved);
         CreateStates();
         //SetExplorerMinion(explorerMinion);
@@ -111,14 +117,14 @@ public class Interaction {
             _characterInvolved.SetDoNotDisturb(false);
         }
         _interactable.RemoveInteraction(this);
-        if(_endInteractionAction != null) {
-            _endInteractionAction();
-            _endInteractionAction = null;
-        }
         if (_jobAssociated != null) {
             _jobAssociated.SetCreatedInteraction(null);
             SetJobAssociated(null);
         }
+        for (int i = 0; i < _endInteractionActions.Count; i++) {
+            _endInteractionActions[i]();
+        }
+        _endInteractionActions.Clear();
         Debug.Log(interactionDebugLog);
         if(InteractionUI.Instance.interaction == this) {
             InteractionUI.Instance.HideInteractionUI();
@@ -182,8 +188,8 @@ public class Interaction {
     public void SetActivatedTimeOutState(bool state) {
         _hasActivatedTimeOut = state;
     }
-    public void SetEndInteractionAction(Action action) {
-        _endInteractionAction = action;
+    public void AddEndInteractionAction(Action action) {
+        _endInteractionActions.Add(action);
     }
     //public void SetInteractionItem(InteractionItem interactionItem) {
     //    _interactionItem = interactionItem;
@@ -205,11 +211,15 @@ public class Interaction {
         if (!_isSecondTimeOutCancelled) {
             interactable.landmarkVisual.StopInteractionTimer();
             interactable.landmarkVisual.HideInteractionTimer();
-            TimedOutRunDefault();
+            SetActivatedTimeOutState(false);
+            //TimedOutRunDefault();
             //_interactable.tileLocation.areaOfTile.areaInvestigation.ExploreArea();
         }
     }
     public void TimedOutRunDefault() {
+        if (!_hasInitialized) {
+            Initialize();
+        }
         if (_currentState == null) {
             throw new Exception(this.GetType().ToString() + " interaction at " + interactable.tileLocation.areaOfTile.name + " has a current state of null at second time out!");
         }

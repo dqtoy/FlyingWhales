@@ -72,7 +72,7 @@ public class Raider : Job {
     private void RaidSuccess() {
         int obtainedSupply = GetSupplyObtained(character.specificLocation.tileLocation.areaOfTile);
         SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_SUCCESS, character.specificLocation.tileLocation.landmarkOnTile));
-        _createdInteraction.SetEndInteractionAction(() => GoBackHomeSuccess(obtainedSupply));
+        _createdInteraction.AddEndInteractionAction(() => GoBackHomeSuccess(obtainedSupply));
         _createdInteraction.ScheduleSecondTimeOut();
         _createdInteraction.SetOtherData(new object[] { obtainedSupply });
         character.AddInteraction(_createdInteraction);

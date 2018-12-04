@@ -61,7 +61,7 @@ public class Spy : Job {
                     case RESULT.FAIL:
                         SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile));
                         //raidSuccess.SetEndInteractionAction(() => GoBackHome());
-                        _createdInteraction.SetEndInteractionAction(() => StartJobAction());
+                        _createdInteraction.AddEndInteractionAction(() => StartJobAction());
                         _createdInteraction.ScheduleSecondTimeOut();
                         character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.AddInteraction(_createdInteraction);
                         //Interaction minionFailed = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile);
@@ -73,7 +73,7 @@ public class Spy : Job {
                     case RESULT.CRITICAL_FAIL:
                         SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.tileLocation.landmarkOnTile));
                         //raidSuccess.SetEndInteractionAction(() => GoBackHome());
-                        _createdInteraction.SetEndInteractionAction(() => StartJobAction());
+                        _createdInteraction.AddEndInteractionAction(() => StartJobAction());
                         _createdInteraction.ScheduleSecondTimeOut();
                         character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.AddInteraction(_createdInteraction);
                         //Interaction minionCriticalFail = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.tileLocation.landmarkOnTile);
@@ -120,7 +120,7 @@ public class Spy : Job {
             //_createdInteraction.SetOtherData(new object[] { chosenIntel });
         }
         if (_createdInteraction != null) {
-            _createdInteraction.SetEndInteractionAction(() => StartJobAction());
+            _createdInteraction.AddEndInteractionAction(() => StartJobAction());
             _createdInteraction.ScheduleSecondTimeOut();
             if (_createdInteraction.type == INTERACTION_TYPE.CHARACTER_ENCOUNTERED) {
                 ((chosenIntel as CharacterIntel).character).AddInteraction(_createdInteraction);
