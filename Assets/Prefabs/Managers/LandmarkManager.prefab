@@ -1406,7 +1406,7 @@ MonoBehaviour:
     - data:
       - className: Shambler
         weight: 40
-      - className: Earth Binder
+      - className: Earthbinder
         weight: 20
     - data:
       - className: Dragon

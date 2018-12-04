@@ -2558,14 +2558,14 @@ namespace ECS {
             }
             return chosenLandmark;
         }
-        public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
+        public void SetHomeLandmark(BaseLandmark newHomeLandmark, bool ignoreAreaResidentCapacity = false) {
             BaseLandmark previousHome = _homeLandmark;
             this._homeLandmark = newHomeLandmark;
             if (!(this is CharacterArmyUnit)) {
                 if (previousHome != null) {
                     previousHome.tileLocation.areaOfTile.RemoveResident(this);
                     if (_homeLandmark != null) {
-                        _homeLandmark.tileLocation.areaOfTile.AddResident(this);
+                        _homeLandmark.tileLocation.areaOfTile.AddResident(this, ignoreAreaResidentCapacity);
                         if (_homeLandmark.tileLocation.areaOfTile.id != previousHome.tileLocation.areaOfTile.id) {
 #if !WORLD_CREATION_TOOL
                             LookForNewWorkplace();
@@ -2576,7 +2576,7 @@ namespace ECS {
                 } else {
                     if (_homeLandmark != null) {
                         if (_homeLandmark.tileLocation.areaOfTile != null) {
-                            _homeLandmark.tileLocation.areaOfTile.AddResident(this);
+                            _homeLandmark.tileLocation.areaOfTile.AddResident(this, ignoreAreaResidentCapacity);
                         }
 #if !WORLD_CREATION_TOOL
                         LookForNewWorkplace();

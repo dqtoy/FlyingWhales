@@ -6,14 +6,14 @@ using UnityEngine.UI;
 public class DefenderWeightItem : MonoBehaviour {
 
     private Faction owner;
-    private AreaDefenderSetting defender;
+    private AreaCharacterClass defender;
     private int weight;
 
     [SerializeField] private Dropdown classDropdown;
     [SerializeField] private InputField weightField;
     //[SerializeField] private Toggle includeInFirstToggle;
 
-    public void SetDefender(Faction owner, AreaDefenderSetting defender, int weight) {
+    public void SetDefender(Faction owner, AreaCharacterClass defender, int weight) {
         classDropdown.ClearOptions();
         classDropdown.AddOptions(Utilities.GetFileChoices(Utilities.dataPath + "CharacterClasses/", "*.json"));
 

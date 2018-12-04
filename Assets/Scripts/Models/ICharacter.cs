@@ -96,7 +96,7 @@ public interface ICharacter {
     void EnableDisableSkills(Combat combat);
     void SetOwnedParty(Party party);
     void SetCurrentParty(Party party);
-    void SetHomeLandmark(BaseLandmark newHomeLandmark);
+    void SetHomeLandmark(BaseLandmark newHomeLandmark, bool ignoreAreaResidentCapacity = false);
     void AddHistory(Log log); //Character only
     void SetMode(MODE mode);
     void AddMiscAction(CharacterAction characterAction);

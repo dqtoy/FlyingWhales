@@ -153,7 +153,7 @@ namespace worldcreator {
             MonsterManager.Instance.LoadMonsters(data);
             //CharacterManager.Instance.LoadSquads(data);
             //LandmarkManager.Instance.LoadDefenders(data);
-            CharacterManager.Instance.LoadCharactersInfo(data);
+            //CharacterManager.Instance.LoadCharactersInfo(data);
             Biomes.Instance.UpdateTileVisuals(hexTiles);
             //PathfindingManager.Instance.LoadSettings(data.pathfindingSettings);
 

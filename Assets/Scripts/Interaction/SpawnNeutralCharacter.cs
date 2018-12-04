@@ -102,7 +102,7 @@ public class SpawnNeutralCharacter : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        WeightedDictionary<AreaDefenderSetting> classWeights = interactable.tileLocation.areaOfTile.GetClassWeights();
+        WeightedDictionary<AreaCharacterClass> classWeights = interactable.tileLocation.areaOfTile.GetClassWeights();
         _classNameToBeSpawned = classWeights.PickRandomElementGivenWeights().className;
 
         state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.raceType.ToString()), LOG_IDENTIFIER.STRING_1);

@@ -117,21 +117,21 @@ public class CharacterManager : MonoBehaviour {
             //CheckForSecrets(currCharacter);
         }
     }
-    public void LoadCharactersInfo(WorldSaveData data) {
-        for (int i = 0; i < allCharacters.Count; i++) {
-            Character currCharacter = allCharacters[i];
-            CharacterSaveData saveData = data.GetCharacterSaveData(currCharacter.id);
-            //if (saveData != null) {
-            //    SetHiddenDesireForCharacter(saveData.hiddenDesire, currCharacter); //hidden desire
-            //    if (saveData.secrets != null) { //secrets
-            //        for (int j = 0; j < saveData.secrets.Count; j++) {
-            //            int secretID = saveData.secrets[j];
-            //            currCharacter.AddSecret(secretID);
-            //        }
-            //    }
-            //}
-        }
-    }
+    //public void LoadCharactersInfo(WorldSaveData data) {
+    //    for (int i = 0; i < allCharacters.Count; i++) {
+    //        Character currCharacter = allCharacters[i];
+    //        CharacterSaveData saveData = data.GetCharacterSaveData(currCharacter.id);
+    //        //if (saveData != null) {
+    //        //    SetHiddenDesireForCharacter(saveData.hiddenDesire, currCharacter); //hidden desire
+    //        //    if (saveData.secrets != null) { //secrets
+    //        //        for (int j = 0; j < saveData.secrets.Count; j++) {
+    //        //            int secretID = saveData.secrets[j];
+    //        //            currCharacter.AddSecret(secretID);
+    //        //        }
+    //        //    }
+    //        //}
+    //    }
+    //}
     //public void LoadRelationships(WorldSaveData data) {
     //    if (data.charactersData != null) {
     //        for (int i = 0; i < data.charactersData.Count; i++) {
@@ -161,11 +161,6 @@ public class CharacterManager : MonoBehaviour {
         if (faction != null) {
             faction.AddNewCharacter(newCharacter);
         }
-        //if (newCharacter.role == null) {
-        //    if (charRole != CHARACTER_ROLE.NONE) {
-        //        newCharacter.AssignRole(charRole);
-        //    }
-        //}
 #if !WORLD_CREATION_TOOL
         party.CreateIcon();
         if(homeLocation != null) {
@@ -194,7 +189,7 @@ public class CharacterManager : MonoBehaviour {
         if (data.homeLandmarkID != -1) {
             BaseLandmark homeLandmark = LandmarkManager.Instance.GetLandmarkByID(data.homeLandmarkID);
             if (homeLandmark != null) {
-                homeLandmark.AddCharacterHomeOnLandmark(newCharacter);
+                homeLandmark.AddCharacterHomeOnLandmark(newCharacter, true);
             }
         }
         Party party = newCharacter.CreateOwnParty();
@@ -307,6 +302,14 @@ public class CharacterManager : MonoBehaviour {
             }
         }
         return null;
+    }
+    public void CreateNeutralCharacters() {
+        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+            Area currArea = LandmarkManager.Instance.allAreas[i];
+            if (currArea.owner == null && currArea.areaType != AREA_TYPE.DEMONIC_INTRUSION) { //if unowned (neutral)
+                currArea.GenerateNeutralCharacters();
+            }
+        }
     }
     #endregion
 
@@ -765,7 +768,7 @@ public class CharacterManager : MonoBehaviour {
             if (homeLocation is BaseLandmark) {
                 BaseLandmark landmark = homeLocation as BaseLandmark;
                 landmark.AddCharacterToLocation(party);
-                landmark.AddCharacterHomeOnLandmark(armyUnit, false);
+                landmark.AddCharacterHomeOnLandmark(armyUnit, false, false);
             }
         }
 #endif

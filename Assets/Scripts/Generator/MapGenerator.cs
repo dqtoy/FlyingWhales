@@ -178,7 +178,8 @@ public class MapGenerator : MonoBehaviour {
         CameraMove.Instance.UpdateMinimapTexture();
         QuestManager.Instance.Initialize();
         EventManager.Instance.Initialize();
-        CharacterManager.Instance.LoadCharactersInfo(data);
+        //CharacterManager.Instance.LoadCharactersInfo(data);
+        CharacterManager.Instance.CreateNeutralCharacters();
         if (SteamManager.Initialized) {
             AchievementManager.Instance.Initialize();
         }

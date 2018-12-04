@@ -9,7 +9,7 @@ public class DefenderSetting  {
 }
 
 [System.Serializable]
-public class AreaDefenderSetting {
+public class AreaCharacterClass {
     public string className;
 }
 
