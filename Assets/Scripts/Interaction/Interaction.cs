@@ -50,7 +50,7 @@ public class Interaction {
     }
     public Minion explorerMinion {
         get {
-            if(_interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion != null) {
+            if(_interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion != null && _interactable.tileLocation.areaOfTile == _interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion.character.specificLocation.tileLocation.areaOfTile) {
                 return _interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion;
             }
             //Only used for Minion Critical Fail Event since assignedMinion will be null, interaction must still have reference of the dead minion
