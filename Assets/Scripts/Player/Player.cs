@@ -472,6 +472,7 @@ public class Player : ILeader {
         _currencies.Add(CURRENCY.SUPPLY, 0);
         AdjustCurrency(CURRENCY.IMP, maxImps);
         AdjustCurrency(CURRENCY.SUPPLY, 5000);
+        AdjustCurrency(CURRENCY.MANA, 5000);
     }
     public void AdjustCurrency(CURRENCY currency, int amount) {
         _currencies[currency] += amount;

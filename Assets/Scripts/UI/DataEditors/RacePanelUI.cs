@@ -22,6 +22,7 @@ public class RacePanelUI : MonoBehaviour {
     public InputField baseHPInput;
     public InputField hpPerLevelInput;
     public InputField attackPerLevelInput;
+    public InputField neutralSpawnLevelModInput;
 
     public GameObject traitsGO;
     public GameObject hpPerLevelGO;
@@ -64,13 +65,14 @@ public class RacePanelUI : MonoBehaviour {
     public void LoadAllData() {
         _traitNames = new List<string>();
         _hpPerLevel = new List<int>();
-        _hpPerLevel = new List<int>();
+        _attackPerLevel = new List<int>();
 
         baseAttackInput.text = "0";
         baseSpeedInput.text = "0";
         baseHPInput.text = "0";
         hpPerLevelInput.text = "0";
         attackPerLevelInput.text = "0";
+        neutralSpawnLevelModInput.text = "0";
 
         raceOptions.ClearOptions();
 
@@ -88,6 +90,7 @@ public class RacePanelUI : MonoBehaviour {
         baseHPInput.text = "0";
         hpPerLevelInput.text = "0";
         attackPerLevelInput.text = "0";
+        neutralSpawnLevelModInput.text = "0";
 
         raceOptions.value = 0;
         traitOptions.value = 0;
@@ -154,6 +157,7 @@ public class RacePanelUI : MonoBehaviour {
         baseAttackInput.text = raceSetting.baseAttackPower.ToString();
         baseSpeedInput.text = raceSetting.baseSpeed.ToString();
         baseHPInput.text = raceSetting.baseHP.ToString();
+        neutralSpawnLevelModInput.text = raceSetting.neutralSpawnLevelModifier.ToString();
 
         for (int i = 0; i < raceSetting.traitNames.Length; i++) {
             string traitName = raceSetting.traitNames[i];

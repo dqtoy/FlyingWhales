@@ -109,6 +109,8 @@ public class SpawnNeutralCharacter : Interaction {
         state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
     }
     private void SuccessCancelEffect(InteractionState state) {
+        explorerMinion.LevelUp();
+
         state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
         state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
 
@@ -117,6 +119,8 @@ public class SpawnNeutralCharacter : Interaction {
     }
     private void FailCancelEffect(InteractionState state) {
         Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
+        createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);
+        //Debug.Log("CREATED NEW NEUTRAL CHARACTER: " + createdCharacter.name + " - " + createdCharacter.level);
 
         state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
         state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
@@ -126,9 +130,13 @@ public class SpawnNeutralCharacter : Interaction {
         state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void SuccessRecruitEffect(InteractionState state) {
+        explorerMinion.LevelUp();
+
         Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
-        createdCharacter.faction.RemoveCharacter(createdCharacter);
-        PlayerManager.Instance.player.playerFaction.AddNewCharacter(createdCharacter);
+        createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);
+        createdCharacter.RecruitAsMinion();
+
+        //Debug.Log("CREATED NEW NEUTRAL CHARACTER: " + createdCharacter.name + " - " + createdCharacter.level);
 
         state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
         state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
@@ -140,6 +148,8 @@ public class SpawnNeutralCharacter : Interaction {
     }
     private void FailRecruitEffect(InteractionState state) {
         Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
+        createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);
+        //Debug.Log("CREATED NEW NEUTRAL CHARACTER: " + createdCharacter.name + " - " + createdCharacter.level);
 
         state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
         state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
@@ -150,6 +160,8 @@ public class SpawnNeutralCharacter : Interaction {
     }
     private void NormalSpawnEffect(InteractionState state) {
         Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
+        createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);
+        //Debug.Log("CREATED NEW NEUTRAL CHARACTER: " + createdCharacter.name + " - " + createdCharacter.level);
 
         state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
         state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);

@@ -427,8 +427,12 @@ public class StructureObj : IObject {
             INTERACTION_TYPE type = INTERACTION_TYPE.SPAWN_CHARACTER;
             if (_objectLocation.tileLocation.areaOfTile.owner == null) {
                 type = INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER;
-                return;
+                //return;
             }
+            //else {
+            //    return;
+            //}
+            //if(_objectLocation.tileLocation.areaOfTile.name != "Gloomhollow Crypts") { return; }
             Interaction interaction = InteractionManager.Instance.CreateNewInteraction(type, _objectLocation);
             _objectLocation.AddInteraction(interaction);
         }
