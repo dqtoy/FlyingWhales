@@ -42,9 +42,9 @@ public class LandmarkCharacterItem : PooledObject {
         if (character == null) {
             return;
         }
-        //if (slotItem.portrait.isLocked) {
-        //    return;
-        //}
+        if (portrait.isLocked) {
+            return;
+        }
         //if (isDefender) {
         //    UIManager.Instance.ShowSmallInfo(character.name);
         //} else {

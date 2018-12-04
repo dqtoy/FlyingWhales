@@ -21,7 +21,7 @@ public class Area {
     public List<BaseLandmark> exposedTiles { get; private set; }
     public List<BaseLandmark> unexposedTiles { get; private set; }
     public List<Character> areaResidents { get; private set; }
-    public List<Character> residentsAtLocation { get; private set; }
+    public List<Character> charactersAtLocation { get; private set; }
     public List<Log> history { get; private set; }
     public List<Interaction> currentInteractions { get; private set; }
     public bool isHighlighted { get; private set; }
@@ -59,7 +59,7 @@ public class Area {
         SetName(RandomNameGenerator.Instance.GetRegionName());
         tiles = new List<HexTile>();
         areaResidents = new List<Character>();
-        residentsAtLocation = new List<Character>();
+        charactersAtLocation = new List<Character>();
         exposedTiles = new List<BaseLandmark>();
         unexposedTiles = new List<BaseLandmark>();
         defenderGroups = new List<DefenderGroup>();
@@ -88,7 +88,7 @@ public class Area {
         SetName(data.areaName);
         tiles = new List<HexTile>();
         areaResidents = new List<Character>();
-        residentsAtLocation = new List<Character>();
+        charactersAtLocation = new List<Character>();
         exposedTiles = new List<BaseLandmark>();
         unexposedTiles = new List<BaseLandmark>();
         defenderGroups = new List<DefenderGroup>();
@@ -771,6 +771,9 @@ public class Area {
         this.initialDefenderGroups = initialDefenderGroups;
     }
     private void GenerateInitialDefenders() {
+        if (initialDefenderGroups == 0) {
+            return;
+        }
         WeightedDictionary<AreaCharacterClass> defenderWeights = GetClassWeights();
         //if (this.owner != null && this.owner.defenderWeights.GetTotalOfWeights() > 0) {
         //    defenderWeights = this.owner.defenderWeights;
@@ -838,13 +841,13 @@ public class Area {
     public void RemoveResident(Character character) {
         areaResidents.Remove(character);
     }
-    public void AddResidentAtLocation(Character character) {
-        if (!residentsAtLocation.Contains(character)) {
-            residentsAtLocation.Add(character);
+    public void AddCharacterAtLocation(Character character) {
+        if (!charactersAtLocation.Contains(character)) {
+            charactersAtLocation.Add(character);
         }
     }
-    public void RemoveResidentAtLocation(Character character) {
-        residentsAtLocation.Remove(character);
+    public void RemoveCharacterAtLocation(Character character) {
+        charactersAtLocation.Remove(character);
     }
     public bool HasResidentWithClass(string className) {
         for (int i = 0; i < areaResidents.Count; i++) {
