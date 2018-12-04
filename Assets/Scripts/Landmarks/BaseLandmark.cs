@@ -359,7 +359,7 @@ public class BaseLandmark : ILocation, IInteractable {
     #endregion
 
     #region Characters
-    public void AddCharacterHomeOnLandmark(Character character, bool broadcast = true) {
+    public void AddCharacterHomeOnLandmark(Character character, bool ignoreAreaResidentCapacity = false, bool broadcast = true) {
         if (!_charactersWithHomeOnLandmark.Contains(character)) {
             _charactersWithHomeOnLandmark.Add(character);
             character.SetHomeLandmark(this, ignoreAreaResidentCapacity);

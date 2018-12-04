@@ -2557,7 +2557,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         }
         return chosenLandmark;
     }
-    public void SetHomeLandmark(BaseLandmark newHomeLandmark) {
+    public void SetHomeLandmark(BaseLandmark newHomeLandmark, bool ignoreAreaResidentCapacity = false) {
         BaseLandmark previousHome = _homeLandmark;
         this._homeLandmark = newHomeLandmark;
         if (!(this is CharacterArmyUnit)) {
