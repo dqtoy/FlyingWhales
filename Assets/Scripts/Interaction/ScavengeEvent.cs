@@ -164,6 +164,7 @@ public class ScavengeEvent : Interaction {
 
     private void ScavengeTrapFailedRewardEffect(InteractionState state) {
         //**Mechanics**: Compute Supply obtained by scavenger and transfer it to his home area. Scavenger also travels back to his home area.
+        _characterInvolved.LevelUp();
         int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
         _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply);
         GoBackHome();
@@ -174,15 +175,20 @@ public class ScavengeEvent : Interaction {
     }
     private void ScavengeTrappedRewardEffect(InteractionState state) {
         //**Mechanics**: Scavenger travels back to his home area.
+        explorerMinion.LevelUp();
         GoBackHome();
     }
     private void ScavengeCriticallyTrappedRewardEffect(InteractionState state) {
         //**Mechanics**: Scavenger dies.
+        explorerMinion.LevelUp();
         _characterInvolved.Death();
     }
     private void ScavengeBuffedRewardEffect(InteractionState state) {
         //**Mechanics**: Compute Supply obtained by scavenger and transfer it to his home area. Scavenger also travels back to his home area.
         //+2 Favor from Faction 1
+        explorerMinion.LevelUp();
+        _characterInvolved.LevelUp();
+
         int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
         _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply);
         GoBackHome();
@@ -208,6 +214,8 @@ public class ScavengeEvent : Interaction {
     private void ScavengeBuffCriticallyFailedRewardEffect(InteractionState state) {
         //**Mechanics**: Compute Supply obtained by scavenger and transfer it to his home area. Scavenger also travels back to his home area.
         //+2 Favor from Faction 1
+        explorerMinion.LevelUp();
+
         int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
         GoBackHome();
         _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);
@@ -219,6 +227,8 @@ public class ScavengeEvent : Interaction {
     }
     private void NormalScavengeSuccessRewardEffect(InteractionState state) {
         //**Mechanics**: Compute Supply obtained by scavenger and transfer it to his home area. Scavenger also travels back to his home area.
+        _characterInvolved.LevelUp();
+
         int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
         _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply);
         GoBackHome();

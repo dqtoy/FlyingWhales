@@ -27,5 +27,6 @@ public class RaidSuccess : Interaction {
     private void RaidSuccessEffect(InteractionState state) {
         //**Mechanics**: Favor Count -2
         interactable.faction.AdjustFavorFor(_characterInvolved.faction, -2);
+        explorerMinion.LevelUp();
     }
 }

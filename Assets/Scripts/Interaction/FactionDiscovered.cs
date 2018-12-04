@@ -29,5 +29,6 @@ public class FactionDiscovered : Interaction {
         //**Log**: [Minion Name] obtained intel about [Faction Name].
         state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
         PlayerManager.Instance.player.AddIntel(interactable.owner.factionIntel);
+        explorerMinion.LevelUp();
     }
 }
