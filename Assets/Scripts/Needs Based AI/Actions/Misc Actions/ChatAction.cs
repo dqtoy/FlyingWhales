@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public class ChatAction : CharacterAction {
 
@@ -15,7 +15,7 @@ public class ChatAction : CharacterAction {
     public override void OnChooseAction(Party iparty, IObject targetObject) {
         base.OnChooseAction(iparty, targetObject);
         if(iparty is CharacterParty) {
-            Character chatter = iparty.mainCharacter as Character;
+            Character chatter = iparty.mainCharacter;
             chatter.SetDoNotDisturb(true);
         }
         //Reset();
@@ -40,7 +40,7 @@ public class ChatAction : CharacterAction {
             ICharacterObject icharacterObject = targetObject as ICharacterObject;
             if (icharacterObject.iparty is CharacterParty) {
                 CharacterParty targetParty = icharacterObject.iparty as CharacterParty;
-                Character targetCharacter = targetParty.mainCharacter as Character;
+                Character targetCharacter = targetParty.mainCharacter;
 
                 if (targetParty.actionData.currentAction == null) {
                     ChatAction actionToAssign = targetParty.mainCharacter.GetMiscAction(_actionData.actionType) as ChatAction;
@@ -124,14 +124,14 @@ public class ChatAction : CharacterAction {
         if (characterParty.actionData.isDone) {
             return;
         }
-        Character chatter = characterParty.mainCharacter as Character;
+        Character chatter = characterParty.mainCharacter;
         chatter.SetDoNotDisturb(false);
 
         if (targetObject is ICharacterObject) {
             ICharacterObject icharacterObject = targetObject as ICharacterObject;
             if (icharacterObject.iparty is CharacterParty) {
                 CharacterParty targetParty = icharacterObject.iparty as CharacterParty;
-                Character targetCharacter = targetParty.mainCharacter as Character;
+                Character targetCharacter = targetParty.mainCharacter;
                 targetCharacter.SetDoNotDisturb(false);
             }
         }
@@ -166,13 +166,13 @@ public class ChatAction : CharacterAction {
     //    }
     //}
     public override IObject GetTargetObject(CharacterParty sourceParty) {
-        Character mainCharacter = sourceParty.mainCharacter as Character;
+        Character mainCharacter = sourceParty.mainCharacter;
         List<CharacterParty> targetCandidates = new List<CharacterParty>();
         if(mainCharacter.GetAttribute(ATTRIBUTE.INTROVERT) != null) {
             for (int i = 0; i < mainCharacter.specificLocation.charactersAtLocation.Count; i++) {
                 Party targetParty = mainCharacter.specificLocation.charactersAtLocation[i];
                 if(targetParty != sourceParty && targetParty is CharacterParty) {
-                    Character targetMainCharacter = targetParty.mainCharacter as Character;
+                    Character targetMainCharacter = targetParty.mainCharacter;
                     //if (targetMainCharacter.doNotDisturb || targetParty.icon.isTravelling) {
                     //    continue;
                     //}
@@ -186,7 +186,7 @@ public class ChatAction : CharacterAction {
             for (int i = 0; i < mainCharacter.specificLocation.charactersAtLocation.Count; i++) {
                 Party targetParty = mainCharacter.specificLocation.charactersAtLocation[i];
                 if (targetParty != sourceParty && targetParty is CharacterParty) {
-                    Character targetMainCharacter = targetParty.mainCharacter as Character;
+                    Character targetMainCharacter = targetParty.mainCharacter;
                     //if (targetMainCharacter.doNotDisturb) {
                     //    continue;
                     //}

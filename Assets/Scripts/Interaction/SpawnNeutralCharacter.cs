@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public class SpawnNeutralCharacter : Interaction {
 
@@ -79,15 +79,15 @@ public class SpawnNeutralCharacter : Interaction {
     #region Action Options
     private void StopOption() {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement("Success Cancellation", explorerMinion.icharacter.job.GetSuccessRate());
-        effectWeights.AddElement("Fail Cancellation", explorerMinion.icharacter.job.GetFailRate());
+        effectWeights.AddElement("Success Cancellation", explorerMinion.character.job.GetSuccessRate());
+        effectWeights.AddElement("Fail Cancellation", explorerMinion.character.job.GetFailRate());
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
     }
     private void RecruitOption() {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement("Success Recruit", explorerMinion.icharacter.job.GetSuccessRate());
-        effectWeights.AddElement("Fail Recruit", explorerMinion.icharacter.job.GetFailRate());
+        effectWeights.AddElement("Success Recruit", explorerMinion.character.job.GetSuccessRate());
+        effectWeights.AddElement("Fail Recruit", explorerMinion.character.job.GetFailRate());
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
     }

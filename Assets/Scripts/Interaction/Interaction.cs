@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
-using ECS;
+
 
 public class Interaction {
     protected int _id;
@@ -235,12 +235,12 @@ public class Interaction {
         }
     }
     public bool AssignedMinionIsOfClass(string className) {
-        return this.explorerMinion != null && this.explorerMinion.icharacter.characterClass.className.ToLower() == className.ToLower();
+        return this.explorerMinion != null && this.explorerMinion.character.characterClass.className.ToLower() == className.ToLower();
     }
     public bool AssignedMinionIsOfClass(List<string> allowedClassNames) {
         if(this.explorerMinion != null) {
             for (int i = 0; i < allowedClassNames.Count; i++) {
-                if(allowedClassNames[i].ToLower() == this.explorerMinion.icharacter.characterClass.className.ToLower()) {
+                if(allowedClassNames[i].ToLower() == this.explorerMinion.character.characterClass.className.ToLower()) {
                     return true;
                 }
             }
@@ -360,7 +360,7 @@ public class Interaction {
         SetCurrentState(_states[effectName]);
     }
     protected void DemonDisappearsRewardEffect(InteractionState state) {
-        explorerMinion.icharacter.Death();
+        explorerMinion.character.Death();
         //PlayerManager.Instance.player.RemoveMinion(explorerMinion);
     }
     protected void ExploreContinuesRewardState(InteractionState state, string stateName) {

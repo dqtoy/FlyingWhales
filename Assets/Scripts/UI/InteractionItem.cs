@@ -7,7 +7,7 @@ using TMPro;
 using System.Linq;
 using System;
 using UnityEngine.Events;
-using ECS;
+
 
 public class InteractionItem : MonoBehaviour {
     private Interaction _interaction;
@@ -237,7 +237,7 @@ public class InteractionItem : MonoBehaviour {
             descriptionAssignment.text = "Requires a Demon Minion to be dragged from the list.";
         } else if (neededType == typeof(IUnit)) {
             descriptionAssignment.text = "Requires a Minion/Character to be dragged from the list.";
-        } else if (neededType == typeof(ICharacter)) {
+        } else if (neededType == typeof(Character)) {
             descriptionAssignment.text = "Requires a Demon Minion/Character to be dragged from the list.";
         }
         //for (int i = 0; i < slotItems.Length; i++) {
@@ -387,10 +387,10 @@ public class InteractionItem : MonoBehaviour {
             ShowLandmarkInfo(obj as BaseLandmark);
         } else if (obj is Area) {
             ShowAreaInfo(obj as Area);
-        } else if (obj is ICharacter) {
-            ShowCharacterInfo(obj as ICharacter);
+        } else if (obj is Character) {
+            ShowCharacterInfo(obj as Character);
         } else if (obj is Minion) {
-            ShowCharacterInfo((obj as Minion).icharacter);
+            ShowCharacterInfo((obj as Minion).character);
         }
     }
     public void HideObjectInfo() {
@@ -438,7 +438,7 @@ public class InteractionItem : MonoBehaviour {
         landmarkInfoGO.SetActive(true);
     }
 
-    private void ShowCharacterInfo(ICharacter character) {
+    private void ShowCharacterInfo(Character character) {
         if (characterInfoGO.activeSelf) {
             return;
         }

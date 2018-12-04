@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using ECS;
+
 
 public class Sad : CharacterAttribute {
     public Sad() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.SAD) {

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public class MinionCriticalFail : Interaction {
 
@@ -16,12 +16,12 @@ public class MinionCriticalFail : Interaction {
     }
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
-        if (explorerMinion.icharacter.characterClass.jobType == JOB.RAIDER) {
-            Raider raider = explorerMinion.icharacter.job as Raider;
-            Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "-" + explorerMinion.icharacter.characterClass.jobType.ToString().ToLower() + "-" + raider.action.ToLower() + "_description");
+        if (explorerMinion.character.characterClass.jobType == JOB.RAIDER) {
+            Raider raider = explorerMinion.character.job as Raider;
+            Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "-" + explorerMinion.character.characterClass.jobType.ToString().ToLower() + "-" + raider.action.ToLower() + "_description");
             startState.OverrideDescriptionLog(startStateDescriptionLog);
         } else {
-            Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "-" + explorerMinion.icharacter.characterClass.jobType.ToString().ToLower() + "_description");
+            Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "-" + explorerMinion.character.characterClass.jobType.ToString().ToLower() + "_description");
             startState.OverrideDescriptionLog(startStateDescriptionLog);
         }
 
@@ -35,7 +35,7 @@ public class MinionCriticalFail : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        if (explorerMinion.icharacter.characterClass.jobType == JOB.RAIDER) {
+        if (explorerMinion.character.characterClass.jobType == JOB.RAIDER) {
             interactable.tileLocation.areaOfTile.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -1);
         }
         DemonDisappearsRewardEffect(state);

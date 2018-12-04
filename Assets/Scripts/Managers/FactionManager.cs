@@ -107,18 +107,18 @@ public class FactionManager : MonoBehaviour {
    //         if (Random.Range(0, 2) == 1) {
    //             randomRace = RACE.ELVES;
    //         }
-			//ECS.Character newChar = landmark.CreateNewCharacter(randomRace, chosenRole, Utilities.NormalizeString(chosenClass.ToString()));
+			//Character newChar = landmark.CreateNewCharacter(randomRace, chosenRole, Utilities.NormalizeString(chosenClass.ToString()));
 			////Initial Character tags
 			//newChar.AssignInitialTags();
    //     }
    // }
-	private void EquipFullArmorSet(MATERIAL materialToUse, ECS.Character character){
+	private void EquipFullArmorSet(MATERIAL materialToUse, Character character){
 		if(materialToUse == MATERIAL.NONE){
 			return;
 		}
 		foreach (ARMOR_TYPE armorType in ItemManager.Instance.armorTypeData.Keys) {
 			string armorName = Utilities.NormalizeString(materialToUse.ToString()) + " " + Utilities.NormalizeString(armorType.ToString());
-			ECS.Item item = ItemManager.Instance.CreateNewItemInstance(armorName);
+			Item item = ItemManager.Instance.CreateNewItemInstance(armorName);
             if(item != null) {
                 character.EquipItem(item);
             }
@@ -248,18 +248,18 @@ public class FactionManager : MonoBehaviour {
     #endregion
 
     #region Characters
-    public List<ECS.Character> GetAllCharactersOfType(CHARACTER_ROLE role) {
-        List<ECS.Character> characters = new List<ECS.Character>();
+    public List<Character> GetAllCharactersOfType(CHARACTER_ROLE role) {
+        List<Character> characters = new List<Character>();
         for (int i = 0; i < allFactions.Count; i++) {
             Faction currFaction = allFactions[i];
             characters.AddRange(currFaction.GetCharactersOfType(role));
         }
         return characters;
     }
-    public ECS.Character GetCharacterByID(int id) {
+    public Character GetCharacterByID(int id) {
         for (int i = 0; i < allFactions.Count; i++) {
             Faction currFaction = allFactions[i];
-            ECS.Character charInFaction = currFaction.GetCharacterByID(id);
+            Character charInFaction = currFaction.GetCharacterByID(id);
             if(charInFaction != null) {
                 return charInFaction;
             }

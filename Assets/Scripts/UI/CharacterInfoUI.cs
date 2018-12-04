@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ECS;
+
 using TMPro;
 using UnityEngine.UI;
 using System;
@@ -159,7 +159,7 @@ public class CharacterInfoUI : UIMenu {
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         //affiliations.Initialize();
         currentActionIcon.Initialize();
-        //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         InititalizeLogsMenu();
         InititalizeInventoryMenu();
         InitializeSchedulingMenu();
@@ -247,7 +247,7 @@ public class CharacterInfoUI : UIMenu {
         //logsMenuCover.SetActive(state);
     }
 
-    //private void OnCharacterDied(ECS.Character deadCharacter) {
+    //private void OnCharacterDied(Character deadCharacter) {
     //    if (isShowing && _activeCharacter != null && _activeCharacter.id == deadCharacter.id) {
     //        SetData(null);
     //        CloseMenu();

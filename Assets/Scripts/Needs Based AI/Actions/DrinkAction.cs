@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public class DrinkAction : CharacterAction {
     public DrinkAction() : base(ACTION_TYPE.DRINK) {
@@ -11,8 +11,8 @@ public class DrinkAction : CharacterAction {
     public override void OnFirstEncounter(Party party, IObject targetObject) {
         base.OnFirstEncounter(party, targetObject);
         //Add history log
-        for (int i = 0; i < party.icharacters.Count; i++) {
-            party.icharacters[i].AddAttribute(ATTRIBUTE.DRUNK);
+        for (int i = 0; i < party.characters.Count; i++) {
+            party.characters[i].AddAttribute(ATTRIBUTE.DRUNK);
         }
     }
     public override void PerformAction(Party party, IObject targetObject) {

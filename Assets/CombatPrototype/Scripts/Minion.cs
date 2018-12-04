@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 using System;
 
 public class Minion : IUnit {
@@ -11,7 +11,7 @@ public class Minion : IUnit {
     private Area _currentlyExploringArea;
     private Area _currentlyAttackingArea;
 
-    private ICharacter _icharacter;
+    private Character _character;
     private IInteractable _target;
     //private DEMON_TYPE _type;
     //private string _strType;
@@ -23,7 +23,7 @@ public class Minion : IUnit {
 
     #region getters/setters
     public string name {
-        get { return icharacter.name; }
+        get { return character.name; }
     }
     //public PlayerAbility ability {
     //    get { return _ability; }
@@ -35,16 +35,16 @@ public class Minion : IUnit {
         get { return _currentlyAttackingArea; }
     }
     public PlayerCharacterItem minionItem {
-        get { return icharacter.playerCharacterItem; }
+        get { return character.playerCharacterItem; }
     }
-    public ICharacter icharacter {
-        get { return _icharacter; }
+    public Character character {
+        get { return _character; }
     }
     public bool isEnabled {
         get { return _isEnabled; }
     }
     public int lvl {
-        get { return _icharacter.level; }
+        get { return _character.level; }
     }
     public int exp {
         get { return _exp; }
@@ -63,8 +63,8 @@ public class Minion : IUnit {
     //}
     #endregion
 
-    public Minion(ICharacter icharacter) {
-        _icharacter = icharacter;
+    public Minion(Character icharacter) {
+        _character = icharacter;
         //_ability = ability;
         //_lvl = 1;
         _exp = 0;
@@ -73,25 +73,25 @@ public class Minion : IUnit {
         _isEnabled = true;
         //PlayerManager.Instance.player.demonicPortal.AddCharacterHomeOnLandmark(_icharacter);
         //PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(_icharacter.ownParty);
-        _icharacter.SetMinion(this);
-        _icharacter.SetName(RandomNameGenerator.Instance.GenerateMinionName());
-        _icharacter.DisableInteractionGeneration();
-        _icharacter.characterIntel.SetObtainedState(true);
-        _icharacter.ownParty.icon.SetVisualState(true);
+        _character.SetMinion(this);
+        _character.SetName(RandomNameGenerator.Instance.GenerateMinionName());
+        _character.DisableInteractionGeneration();
+        _character.characterIntel.SetObtainedState(true);
+        _character.ownParty.icon.SetVisualState(true);
     }
     //public void SetDemonType(DEMON_TYPE type) {
     //    _type = type;
     //}
     public void SendMinionToPerformAbility(IInteractable target) {
         _target = target;
-        _icharacter.ownParty.GoToLocation(target.specificLocation, PATHFINDING_MODE.PASSABLE);
+        _character.ownParty.GoToLocation(target.specificLocation, PATHFINDING_MODE.PASSABLE);
     }
     public void SetEnabledState(bool state) {
-        if (icharacter.IsInOwnParty()) {
+        if (character.IsInOwnParty()) {
             //also set enabled state of other party members
-            for (int i = 0; i < icharacter.ownParty.icharacters.Count; i++) {
-                ICharacter otherChar = icharacter.ownParty.icharacters[i];
-                if (otherChar.id != icharacter.id && otherChar.minion != null) {
+            for (int i = 0; i < character.ownParty.characters.Count; i++) {
+                Character otherChar = character.ownParty.characters[i];
+                if (otherChar.id != character.id && otherChar.minion != null) {
                     otherChar.minion.SetEnabledState(state);
                     if (state) {
                         //Since the otherChar will be removed from the party when he is not the owner and state is true, reduce loop count so no argument exception error will be called
@@ -102,7 +102,7 @@ public class Minion : IUnit {
         } else {
             //If character is not own party and is enabled, automatically put him in his own party so he can be used again
             if (state) {
-                icharacter.currentParty.RemoveCharacter(icharacter);
+                character.currentParty.RemoveCharacter(character);
             }
         }
         _isEnabled = state;
@@ -110,28 +110,28 @@ public class Minion : IUnit {
     }
     public void SetExploringArea(Area area) {
         _currentlyExploringArea = area;
-        if (icharacter.IsInOwnParty()) {
-            for (int i = 0; i < icharacter.currentParty.icharacters.Count; i++) {
-                ICharacter otherChar = icharacter.ownParty.icharacters[i];
-                if (otherChar.id != icharacter.id) {
-                    icharacter.currentParty.icharacters[i].minion.SetExploringArea(area);
+        if (character.IsInOwnParty()) {
+            for (int i = 0; i < character.currentParty.characters.Count; i++) {
+                Character otherChar = character.ownParty.characters[i];
+                if (otherChar.id != character.id) {
+                    character.currentParty.characters[i].minion.SetExploringArea(area);
                 }
             }
         }
     }
     public void SetAttackingArea(Area area) {
         _currentlyAttackingArea = area;
-        if (icharacter.IsInOwnParty()) {
-            for (int i = 0; i < icharacter.currentParty.icharacters.Count; i++) {
-                ICharacter otherChar = icharacter.ownParty.icharacters[i];
-                if (otherChar.id != icharacter.id) {
-                    icharacter.currentParty.icharacters[i].minion.SetAttackingArea(area);
+        if (character.IsInOwnParty()) {
+            for (int i = 0; i < character.currentParty.characters.Count; i++) {
+                Character otherChar = character.ownParty.characters[i];
+                if (otherChar.id != character.id) {
+                    character.currentParty.characters[i].minion.SetAttackingArea(area);
                 }
             }
         }
     }
     public void SetPlayerCharacterItem(PlayerCharacterItem item) {
-        icharacter.SetPlayerCharacterItem(item);
+        character.SetPlayerCharacterItem(item);
     }
     public void AdjustExp(int amount) {
         _exp += amount;
@@ -144,39 +144,39 @@ public class Minion : IUnit {
         //_characterItem.UpdateMinionItem();
     }
     public void SetLevel(int level) {
-        icharacter.SetLevel(level);
+        character.SetLevel(level);
     }
     public void LevelUp() {
-        icharacter.LevelUp();
+        character.LevelUp();
     }
     public void LevelUp(int amount) {
-        icharacter.LevelUp(amount);
+        character.LevelUp(amount);
     }
     public void SetIndexDefaultSort(int index) {
         _indexDefaultSort = index;
     }
     public void GoToAssignment(BaseLandmark interactable) {
         SetEnabledState(false);
-        icharacter.currentParty.specificLocation.RemoveCharacterFromLocation(icharacter.currentParty);
-        interactable.AddCharacterToLocation(icharacter.currentParty);
+        character.currentParty.specificLocation.RemoveCharacterFromLocation(character.currentParty);
+        interactable.AddCharacterToLocation(character.currentParty);
     }
     public void GoBackFromAssignment() {
-        if (icharacter.isDead) {
+        if (character.isDead) {
             return;
         }
         SetEnabledState(true);
-        icharacter.currentParty.specificLocation.RemoveCharacterFromLocation(icharacter.currentParty);
-        PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(icharacter.currentParty);
+        character.currentParty.specificLocation.RemoveCharacterFromLocation(character.currentParty);
+        PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(character.currentParty);
     }
     public void TravelToAssignment(BaseLandmark target, Action action) {
-        _icharacter.currentParty.GoToLocation(target, PATHFINDING_MODE.PASSABLE, () => action());
+        _character.currentParty.GoToLocation(target, PATHFINDING_MODE.PASSABLE, () => action());
     }
     public void TravelBackFromAssignment(Action action = null) {
         _travelBackAction = action;
-        if (_icharacter.currentParty.icon.isTravelling) {
-            _icharacter.currentParty.CancelTravel(() => TravelBackFromAssignmentComplete());
+        if (_character.currentParty.icon.isTravelling) {
+            _character.currentParty.CancelTravel(() => TravelBackFromAssignmentComplete());
         } else {
-            _icharacter.currentParty.GoToLocation(PlayerManager.Instance.player.demonicPortal, PATHFINDING_MODE.PASSABLE, () => TravelBackFromAssignmentComplete());
+            _character.currentParty.GoToLocation(PlayerManager.Instance.player.demonicPortal, PATHFINDING_MODE.PASSABLE, () => TravelBackFromAssignmentComplete());
         }
     }
     private void TravelBackFromAssignmentComplete() {

@@ -104,7 +104,7 @@ public class ScavengeEvent : Interaction {
         WeightedDictionary<RESULT> scavengerResultWeights = _characterInvolved.job.GetJobRateWeights();
         if (this.isChosen) {
             //Compute Scavenger success rate (Minion Instigator Success = +30 to Fail Rate, +2 to Critical Fail Rate)
-            WeightedDictionary<RESULT> minionResultWeights = (explorerMinion.icharacter as ECS.Character).job.GetJobRateWeights();
+            WeightedDictionary<RESULT> minionResultWeights = explorerMinion.character.job.GetJobRateWeights();
             if (minionResultWeights.PickRandomElementGivenWeights() == RESULT.SUCCESS) {
                 scavengerResultWeights.AddWeightToElement(RESULT.FAIL, 30);
             } else {

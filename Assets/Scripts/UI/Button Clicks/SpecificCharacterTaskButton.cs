@@ -16,10 +16,10 @@ public class SpecificCharacterTaskButton : MonoBehaviour {
 
 	//private void ChangeButtonText(){
 	//	string text = string.Empty;
-	//	if(this.target is ECS.Character){
-	//		text = (this.target as ECS.Character).name;
-	//	}else if(this.target is ECS.Item){
-	//		text = (this.target as ECS.Item).itemName;
+	//	if(this.target is Character){
+	//		text = (this.target as Character).name;
+	//	}else if(this.target is Item){
+	//		text = (this.target as Item).itemName;
 	//	} else if (this.target is Quest) {
 	//		text = (this.target as Quest).questName;
  //       }
@@ -33,7 +33,7 @@ public class SpecificCharacterTaskButton : MonoBehaviour {
 	}
 
 	private void ClickAction(){
-		ECS.Character character = UIManager.Instance.characterInfoUI.activeCharacter;
+		Character character = UIManager.Instance.characterInfoUI.activeCharacter;
 		if(character == null){
 			//UIManager.Instance.HidePlayerActions ();
 			return;

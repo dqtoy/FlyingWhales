@@ -45,7 +45,7 @@ public class MonsterManager : MonoBehaviour {
     }
 
     public void Initialize() {
-        ConstructAllMonsters();
+        //ConstructAllMonsters();
     }
 
     private void ConstructAllMonsters() {
@@ -134,11 +134,11 @@ public class MonsterManager : MonoBehaviour {
                 string monsterName = monsterPartyComponent.monsters[i].name;
                 Monster monster = CreateNewMonster(monsterName);
                 if (makeMonsterResident) {
-                    landmark.AddCharacterHomeOnLandmark(monster);
+                    //landmark.AddCharacterHomeOnLandmark(monster);
                 }
                 monster.SetOwnedParty(monsterParty);
                 monster.SetCurrentParty(monsterParty);
-                monsterParty.AddCharacter(monster);
+                //monsterParty.AddCharacter(monster);
             }
         }
 #if !WORLD_CREATION_TOOL

@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace ECS {
-    public class EntityComponent { }
-}
+public class EntityComponent { }

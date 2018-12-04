@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
-using ECS;
+
 
 public class AreaInvestigation {
     private Area _area;
@@ -71,7 +71,7 @@ public class AreaInvestigation {
                 if (_assignedMinionAttack == null) {
                     SetAssignedMinionAttack(minion[i]);
                 } else {
-                    _assignedMinionAttack.icharacter.ownParty.AddCharacter(minion[i].icharacter);
+                    _assignedMinionAttack.character.ownParty.AddCharacter(minion[i].character);
                 }
             }
         }
@@ -92,8 +92,8 @@ public class AreaInvestigation {
     public void RecallMinion(string action) {
         if (_isExploring && action == "explore") {
             _assignedMinion.TravelBackFromAssignment(() => SetMinionRecallExploreState(false));
-            _assignedMinion.icharacter.job.StopJobAction();
-            _assignedMinion.icharacter.job.StopCreatedInteraction();
+            _assignedMinion.character.job.StopJobAction();
+            _assignedMinion.character.job.StopCreatedInteraction();
             //Messenger.RemoveListener(Signals.HOUR_STARTED, OnExploreTick);
             UnexploreLandmark();
             SetMinionRecallExploreState(true);
@@ -109,10 +109,10 @@ public class AreaInvestigation {
     public void CancelInvestigation(string action) {
         if (_isExploring && action == "explore") {
             _assignedMinion.SetEnabledState(true);
-            _assignedMinion.icharacter.job.StopJobAction();
+            _assignedMinion.character.job.StopJobAction();
             //character.job.StopCreatedInteraction();
-            if (!_assignedMinion.icharacter.isDead) {
-                _assignedMinion.icharacter.job.StopCreatedInteraction();
+            if (!_assignedMinion.character.isDead) {
+                _assignedMinion.character.job.StopCreatedInteraction();
             }
 
             //if (_currentlyExploredLandmark != null) {
@@ -145,7 +145,7 @@ public class AreaInvestigation {
         if (!_area.hasBeenInspected) {
             _area.SetHasBeenInspected(true);
         }
-        _assignedMinion.icharacter.job.StartJobAction();
+        _assignedMinion.character.job.StartJobAction();
         //_duration = 30;
         //_currentTick = 0;
         //Messenger.AddListener(Signals.HOUR_STARTED, OnExploreTick);
@@ -193,7 +193,7 @@ public class AreaInvestigation {
         if (defender != null) {
             //_assignedMinionAttack.icharacter.currentParty.specificLocation.RemoveCharacterFromLocation(_assignedMinionAttack.icharacter.currentParty);
             //_currentlyAttackedLandmark.AddCharacterToLocation(_assignedMinionAttack.icharacter.currentParty);
-            Combat combat = _assignedMinionAttack.icharacter.currentParty.CreateCombatWith(defender.party);
+            Combat combat = _assignedMinionAttack.character.currentParty.CreateCombatWith(defender.party);
             combat.Fight(() => AttackCombatResult(combat));
         } else {
             RecallMinion("attack");
@@ -202,7 +202,7 @@ public class AreaInvestigation {
     }
     private void AttackCombatResult(Combat combat) {
         if (_isAttacking) { //when the minion dies, isActivated will become false, hence, it must not go through the result
-            if (combat.winningSide == _assignedMinionAttack.icharacter.currentSide) {
+            if (combat.winningSide == _assignedMinionAttack.character.currentSide) {
                 RecallMinion("attack");
                 if(_area.GetFirstDefenderGroup() == null) {
                     //Destroy Area

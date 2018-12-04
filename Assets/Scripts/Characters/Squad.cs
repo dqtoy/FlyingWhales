@@ -7,16 +7,16 @@ public class Squad {
 
     public int id { get; private set; }
     public string name { get; private set; }
-    public ICharacter squadLeader { get; private set; }
-    public List<ICharacter> squadMembers { get; private set; } //all members + leader
+    public Character squadLeader { get; private set; }
+    public List<Character> squadMembers { get; private set; } //all members + leader
     public EmblemBG emblemBG { get; private set; }
     public Sprite emblem { get; private set; }
     public Color squadColor { get; private set; }
 
     #region getters/setters
-    public List<ICharacter> squadFollowers {
+    public List<Character> squadFollowers {
         get {
-            List<ICharacter> followers = new List<ICharacter>(squadMembers);
+            List<Character> followers = new List<Character>(squadMembers);
             followers.Remove(squadLeader);
             return followers;
         }
@@ -29,7 +29,7 @@ public class Squad {
     public Squad() {
         id = Utilities.SetID(this);
         SetName("Squad " + id.ToString());
-        squadMembers = new List<ICharacter>();
+        squadMembers = new List<Character>();
         emblemBG = CharacterManager.Instance.GetRandomEmblemBG();
         emblem = CharacterManager.Instance.GetRandomEmblem();
         SetSquadColor(Color.white);
@@ -38,7 +38,7 @@ public class Squad {
     public Squad(SquadSaveData data) {
         id = Utilities.SetID(this, data.squadID);
         SetName(data.squadName);
-        squadMembers = new List<ICharacter>();
+        squadMembers = new List<Character>();
         emblemBG = CharacterManager.Instance.emblemBGs[data.emblemBGIndex];
         emblem = CharacterManager.Instance.emblemSymbols[data.emblemIndex];
         SetSquadColor(data.squadColor);
@@ -51,7 +51,7 @@ public class Squad {
     #endregion
 
     #region Leader
-    public void SetLeader(ICharacter leader) {
+    public void SetLeader(Character leader) {
         squadLeader = leader;
         Messenger.Broadcast(Signals.SQUAD_LEADER_SET, leader, this);
         AddMember(leader);
@@ -59,14 +59,14 @@ public class Squad {
     #endregion
 
     #region Members
-    public void AddMember(ICharacter member) {
+    public void AddMember(Character member) {
         if (!squadMembers.Contains(member)) {
             squadMembers.Add(member);
             //member.SetSquad(this);
             Messenger.Broadcast(Signals.SQUAD_MEMBER_ADDED, member, this);
         }
     }
-    public void RemoveMember(ICharacter member) {
+    public void RemoveMember(Character member) {
         if (squadMembers.Remove(member)) {
             Messenger.Broadcast(Signals.SQUAD_MEMBER_REMOVED, member, this);
             //member.SetSquad(null);
@@ -87,8 +87,8 @@ public class Squad {
     //    List<Quest> quests = new List<Quest>();
     //    for (int i = 0; i < squadMembers.Count; i++) {
     //        ICharacter currMember = squadMembers[i];
-    //        if (currMember is ECS.Character) {
-    //            ECS.Character character = currMember as ECS.Character;
+    //        if (currMember is Character) {
+    //            Character character = currMember as Character;
     //            for (int j = 0; j < character.questData.Count; j++) {
     //                CharacterQuestData currData = character.questData[j];
     //                if (currData.parentQuest.groupType == GROUP_TYPE.PARTY && !quests.Contains(currData.parentQuest)) {
@@ -103,8 +103,8 @@ public class Squad {
     //    List<CharacterQuestData> questData = new List<CharacterQuestData>();
     //    for (int i = 0; i < squadMembers.Count; i++) {
     //        ICharacter currMember = squadMembers[i];
-    //        if (currMember is ECS.Character) {
-    //            ECS.Character character = currMember as ECS.Character;
+    //        if (currMember is Character) {
+    //            Character character = currMember as Character;
     //            for (int j = 0; j < character.questData.Count; j++) {
     //                CharacterQuestData currData = character.questData[j];
     //                if (currData.parentQuest.groupType == GROUP_TYPE.PARTY && !questData.Contains(currData)) {

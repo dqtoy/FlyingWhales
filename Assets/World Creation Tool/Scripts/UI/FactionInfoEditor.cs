@@ -90,7 +90,7 @@ public class FactionInfoEditor : MonoBehaviour {
         //characters
         charactersSummaryLbl.text = string.Empty;
         for (int i = 0; i < _faction.characters.Count; i++) {
-            ECS.Character currCharacter = _faction.characters[i];
+            Character currCharacter = _faction.characters[i];
             charactersSummaryLbl.text += currCharacter.name + "\n";
         }
 
@@ -179,7 +179,7 @@ public class FactionInfoEditor : MonoBehaviour {
     }
     public void SetLeader(int choice) {
         string characterName = leadersDropdown.options[leadersDropdown.value].text;
-        ECS.Character character = CharacterManager.Instance.GetCharacterByName(characterName);
+        Character character = CharacterManager.Instance.GetCharacterByName(characterName);
         _faction.SetLeader(character);
     }
     #endregion

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public class Intel {
     protected bool _isObtained;
@@ -63,9 +63,9 @@ public class LocationIntel : Intel {
 }
 
 public class CharacterIntel : Intel {
-    public ICharacter character;
+    public Character character;
 
-    public CharacterIntel(ICharacter character) : base() {
+    public CharacterIntel(Character character) : base() {
         this.character = character;
     }
     public override string ToString() {

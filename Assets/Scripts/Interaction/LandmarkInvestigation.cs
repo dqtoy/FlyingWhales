@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using ECS;
+
 
 public class LandmarkInvestigation {
 
@@ -88,7 +88,7 @@ public class LandmarkInvestigation {
                 if (_assignedMinionAttack == null) {
                     SetAssignedMinionAttack(minion[i]);
                 } else {
-                    _assignedMinionAttack.icharacter.ownParty.AddCharacter(minion[i].icharacter);
+                    _assignedMinionAttack.character.ownParty.AddCharacter(minion[i].character);
                 }
             }
         }
@@ -265,7 +265,7 @@ public class LandmarkInvestigation {
     }
     private void AttackCombatResult(Combat combat) {
         if (_isActivated) { //when the minion dies, isActivated will become false, hence, it must not go through the result
-            if (combat.winningSide == _assignedMinionAttack.icharacter.currentSide) {
+            if (combat.winningSide == _assignedMinionAttack.character.currentSide) {
                 _landmark.DestroyLandmark();
             }
         }
@@ -284,7 +284,7 @@ public class LandmarkInvestigation {
     }
     private void RaidCombatResult(Combat combat) {
         if (_isActivated) { //when the minion dies, isActivated will become false, hence, it must not go through the result
-            if (combat.winningSide == _assignedMinion.icharacter.currentSide) {
+            if (combat.winningSide == _assignedMinion.character.currentSide) {
                 RaidAndGoBack();
             }
         }

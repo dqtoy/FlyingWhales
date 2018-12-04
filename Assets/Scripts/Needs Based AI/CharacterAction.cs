@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 using UnityEngine.Events;
 using System;
 
@@ -123,8 +123,8 @@ public class CharacterAction {
     }
     //Give all provided needs to the character regardless of the amount
     public virtual void GiveAllReward(CharacterParty party) {
-        for (int i = 0; i < party.icharacters.Count; i++) {
-            ICharacter icharacter = party.icharacters[i];
+        for (int i = 0; i < party.characters.Count; i++) {
+            Character icharacter = party.characters[i];
             icharacter.role.AdjustFullness(_actionData.providedFullness);
             icharacter.role.AdjustEnergy(_actionData.providedEnergy);
             icharacter.role.AdjustFun(_actionData.providedFun);
@@ -151,8 +151,8 @@ public class CharacterAction {
         _filters = filters;
     }
     public virtual bool MeetsRequirements(CharacterParty party, BaseLandmark landmark) {
-        if (filters != null && party.mainCharacter is Character) {
-            Character character = party.mainCharacter as Character;
+        if (filters != null) {
+            Character character = party.mainCharacter;
             for (int i = 0; i < filters.Length; i++) {
                 ActionFilter currFilter = filters[i];
                 if (!currFilter.MeetsRequirements(character, landmark)) {
@@ -190,8 +190,8 @@ public class CharacterAction {
     }
     //Give specific provided need to a character
     public void GiveReward(NEEDS need, CharacterParty party) {
-        for (int i = 0; i < party.icharacters.Count; i++) {
-            ICharacter icharacter = party.icharacters[i];
+        for (int i = 0; i < party.characters.Count; i++) {
+            Character icharacter = party.characters[i];
             switch (need) {
                 case NEEDS.FULLNESS:
                 icharacter.role.AdjustFullness(_actionData.providedFullness);

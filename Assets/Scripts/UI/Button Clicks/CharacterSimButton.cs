@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using ECS;
+
 using System;
 
 public class CharacterSimButton : MonoBehaviour {

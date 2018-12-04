@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public class MysteriousSarcophagus : Interaction {
 
@@ -184,7 +184,7 @@ public class MysteriousSarcophagus : Interaction {
         string chosenTrait = negativeTraitsWeights.PickRandomElementGivenWeights();
         Trait negativeTrait = AttributeManager.Instance.allTraits[chosenTrait];
         for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
-            PlayerManager.Instance.player.minions[i].icharacter.AddTrait(negativeTrait);
+            PlayerManager.Instance.player.minions[i].character.AddTrait(negativeTrait);
         }
         state.AddLogFiller(new LogFiller(null, chosenTrait, LOG_IDENTIFIER.STRING_1));
         //if (state.minionLog != null) {
@@ -193,8 +193,8 @@ public class MysteriousSarcophagus : Interaction {
     }
     private void AccessoryUpgradeRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
-        if (explorerMinion.icharacter.equippedAccessory != null) {
-            explorerMinion.icharacter.UpgradeAccessory();
+        if (explorerMinion.character.equippedAccessory != null) {
+            explorerMinion.character.UpgradeAccessory();
         }
     }
     private void GainManaRewardEffect(InteractionState state) {
@@ -221,7 +221,7 @@ public class MysteriousSarcophagus : Interaction {
 
         string chosenTrait = positiveTraitsWeights.PickRandomElementGivenWeights();
         Trait positiveTrait = AttributeManager.Instance.allTraits[chosenTrait];
-        explorerMinion.icharacter.AddTrait(positiveTrait);
+        explorerMinion.character.AddTrait(positiveTrait);
         state.AddLogFiller(new LogFiller(null, chosenTrait, LOG_IDENTIFIER.STRING_1));
         //if (state.minionLog != null) {
         //    state.minionLog.AddToFillers(null, chosenTrait, LOG_IDENTIFIER.STRING_1);

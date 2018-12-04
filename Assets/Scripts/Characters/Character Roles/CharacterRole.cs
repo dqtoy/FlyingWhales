@@ -7,7 +7,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
-using ECS;
+
 
 public class CharacterRole {
 	protected Character _character;

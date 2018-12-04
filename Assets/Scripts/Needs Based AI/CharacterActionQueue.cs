@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class CharacterActionQueue<T> {
     private readonly List<T> list = new List<T>();
-    public ECS.Character character { get; private set; }
+    public Character character { get; private set; }
 
-    public CharacterActionQueue(ECS.Character owner) {
+    public CharacterActionQueue(Character owner) {
         character = owner;
     }
 

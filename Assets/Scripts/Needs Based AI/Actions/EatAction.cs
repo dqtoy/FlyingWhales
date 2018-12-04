@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public class EatAction : CharacterAction {
     public EatAction() : base(ACTION_TYPE.EAT) {
@@ -24,7 +24,7 @@ public class EatAction : CharacterAction {
             StructureObj structureObj = targetObject as StructureObj;
             if (structureObj.specificObjectType == LANDMARK_TYPE.HOUSES) {
                 BaseLandmark landmark = structureObj.objectLocation;
-                if (landmark.charactersWithHomeOnLandmark.Contains(party.mainCharacter as ECS.Character)) {
+                if (landmark.charactersWithHomeOnLandmark.Contains(party.mainCharacter)) {
                     return true;
                 }
             } else if (structureObj.specificObjectType == LANDMARK_TYPE.INN) {

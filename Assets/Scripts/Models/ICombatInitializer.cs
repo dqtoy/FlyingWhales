@@ -11,13 +11,13 @@ public interface ICombatInitializer {
 	//CharacterAction currentAction { get;}
 	//bool isInCombat { get; }
 	//Action currentFunction { get; }
-	//ECS.Character mainCharacter { get; }
+	//Character mainCharacter { get; }
 	//int numOfCharacters { get; }
 	//Region currentRegion { get; }
 
 	////bool InitializeCombat();
 	//bool IsHostileWith (Character combatInitializer);
-	//void ReturnCombatResults(ECS.Combat combat);
+	//void ReturnCombatResults(Combat combat);
 	//void SetIsDefeated (bool state);
  //   bool CanInitiateCombat();
  //   //void SetCivilians (int amount);

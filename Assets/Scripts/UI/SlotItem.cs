@@ -97,14 +97,14 @@ public class SlotItem : MonoBehaviour {
             factionEmblem.gameObject.SetActive(false);
             areaEmblem.gameObject.SetActive(false);
             portrait.gameObject.SetActive(true);
-            portrait.GeneratePortrait((associatedObj as Minion).icharacter);
+            portrait.GeneratePortrait((associatedObj as Minion).character);
             hoverInfo = (associatedObj as Minion).name;
-        } else if (associatedObj is ICharacter) {
+        } else if (associatedObj is Character) {
             factionEmblem.gameObject.SetActive(false);
             areaEmblem.gameObject.SetActive(false);
             portrait.gameObject.SetActive(true);
-            portrait.GeneratePortrait((associatedObj as ICharacter));
-            hoverInfo = (associatedObj as ICharacter).name;
+            portrait.GeneratePortrait((associatedObj as Character));
+            hoverInfo = (associatedObj as Character).name;
         }
     }
     public void ClearSlot(bool keepType = false) {
@@ -128,7 +128,7 @@ public class SlotItem : MonoBehaviour {
             return "Character";
         } else if (type == typeof(Minion)) {
             return "Minion";
-        } else if (type == typeof(ICharacter)) {
+        } else if (type == typeof(Character)) {
             return "Character";
         } else if (type == typeof(IUnit)) {
             return "Army/Minion";

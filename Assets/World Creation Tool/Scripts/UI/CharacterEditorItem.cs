@@ -8,7 +8,7 @@ using UnityEngine.UI;
 namespace worldcreator {
     public class CharacterEditorItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
 
-        private ECS.Character _character;
+        private Character _character;
 
         [SerializeField] private Text characterNameLbl;
         [SerializeField] private Button editBtn;
@@ -16,12 +16,12 @@ namespace worldcreator {
         [SerializeField] private Button setHomeBtn;
 
         #region getters/setters
-        public ECS.Character character {
+        public Character character {
             get { return _character; }
         }
         #endregion
 
-        public void SetCharacter(ECS.Character character) {
+        public void SetCharacter(Character character) {
             _character = character;
             UpdateInfo();
         }

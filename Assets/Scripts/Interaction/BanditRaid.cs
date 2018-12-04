@@ -1,4 +1,4 @@
-﻿using ECS;
+﻿
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -207,8 +207,8 @@ public class BanditRaid : Interaction {
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
         createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
         Trait empoweredTrait = AttributeManager.Instance.allTraits["Empowered"];
-        for (int i = 0; i < createdParty.icharacters.Count; i++) {
-            createdParty.icharacters[i].AddTrait(empoweredTrait);
+        for (int i = 0; i < createdParty.characters.Count; i++) {
+            createdParty.characters[i].AddTrait(empoweredTrait);
         }
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(originLandmark, originLandmark.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
@@ -253,26 +253,26 @@ public class BanditRaid : Interaction {
     private Party CombineCharacters(int upTo) {
         Party partyToUse = null;
         for (int i = 0; i < originLandmark.charactersWithHomeOnLandmark.Count; i++) {
-            ICharacter currCharacter = originLandmark.charactersWithHomeOnLandmark[i];
-            if (currCharacter is Character && (currCharacter as Character).isDefender) {
+            Character currCharacter = originLandmark.charactersWithHomeOnLandmark[i];
+            if (currCharacter.isDefender) {
                 continue; //skip characters that are defending
             }
             Party currCharacterParty = currCharacter.ownParty;
             if (partyToUse == null || currCharacterParty == null ||
-                (currCharacterParty != null && currCharacterParty.icharacters.Count > partyToUse.icharacters.Count)) {
+                (currCharacterParty != null && currCharacterParty.characters.Count > partyToUse.characters.Count)) {
                 partyToUse = currCharacterParty;
             }
         }
         if (partyToUse != null) {
-            if (partyToUse.icharacters.Count < upTo) {
+            if (partyToUse.characters.Count < upTo) {
                 for (int i = 0; i < originLandmark.charactersWithHomeOnLandmark.Count; i++) {
-                    ICharacter currCharacter = originLandmark.charactersWithHomeOnLandmark[i];
-                    if (currCharacter is Character && (currCharacter as Character).isDefender) {
+                    Character currCharacter = originLandmark.charactersWithHomeOnLandmark[i];
+                    if (currCharacter.isDefender) {
                         continue; //skip characters that are defending
                     }
                     if (partyToUse.owner.id != currCharacter.id && !currCharacter.IsInParty()) { //the current character is not the owner of the party
                         partyToUse.AddCharacter(currCharacter);
-                        if (partyToUse.icharacters.Count >= upTo) {
+                        if (partyToUse.characters.Count >= upTo) {
                             break;
                         }
                     }

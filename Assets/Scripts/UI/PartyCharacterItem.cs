@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class PartyCharacterItem : PooledObject {
 
-    private ICharacter character;
+    private Character character;
 
     [SerializeField] private Image bg;
     [SerializeField] private CharacterPortrait portrait;
@@ -15,20 +15,15 @@ public class PartyCharacterItem : PooledObject {
     [SerializeField] private TextMeshProUGUI lvlClassLbl;
     [SerializeField] private AffiliationsObject affiliations;
 
-    public void SetCharacter(ICharacter character) {
+    public void SetCharacter(Character character) {
         this.character = character;
         portrait.GeneratePortrait(character);
         nameLbl.text = character.name;
-        if (character is ECS.Character) {
-            lvlClassLbl.text = "Lvl." + character.level.ToString() + " " + character.characterClass.className;
-            affiliations.SetDisablePartyState(true);
-            affiliations.Initialize(character as ECS.Character);
-            affiliations.gameObject.SetActive(true);
-            lvlClassLbl.gameObject.SetActive(true);
-        } else {
-            lvlClassLbl.gameObject.SetActive(false);
-            affiliations.gameObject.SetActive(false);
-        }
+        lvlClassLbl.text = "Lvl." + character.level.ToString() + " " + character.characterClass.className;
+        affiliations.SetDisablePartyState(true);
+        affiliations.Initialize(character);
+        affiliations.gameObject.SetActive(true);
+        lvlClassLbl.gameObject.SetActive(true);
     }
 
     public void SetBGColor(Color color) {

@@ -7,12 +7,12 @@ using UnityEngine.UI;
 
 public class ItemContainer : PooledObject, IPointerEnterHandler, IPointerExitHandler {
 
-    private ECS.Item item;
+    private Item item;
     private bool isHovering = false;
 
     [SerializeField] private Image itemIcon;
 
-    public void SetItem(ECS.Item item, bool hasBeenInspected = true) {
+    public void SetItem(Item item, bool hasBeenInspected = true) {
         this.item = item;
         UpdateVisual(hasBeenInspected);
     }

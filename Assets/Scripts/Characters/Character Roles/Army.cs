@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Army : CharacterRole {
 
-    public Army(ECS.Character character) : base(character) {
+    public Army(Character character) : base(character) {
         _roleType = CHARACTER_ROLE.ARMY;
     }
 }

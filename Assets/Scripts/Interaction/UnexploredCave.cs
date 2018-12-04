@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public class UnexploredCave : Interaction {
     public UnexploredCave(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.UNEXPLORED_CAVE, 70) {
@@ -163,16 +163,10 @@ public class UnexploredCave : Interaction {
         }
     }
     private void DemonWeaponUpgradeEffect(InteractionState state) {
-        if(explorerMinion.icharacter is Character) {
-            Character character = explorerMinion.icharacter as Character;
-            character.UpgradeWeapon();
-        }
+        explorerMinion.character.UpgradeWeapon();
     }
     private void DemonArmorUpgradeEffect(InteractionState state) {
-        if (explorerMinion.icharacter is Character) {
-            Character character = explorerMinion.icharacter as Character;
-            character.UpgradeArmor();
-        }
+        explorerMinion.character.UpgradeArmor();
     }
     private void UnleashedMonsterEffect(InteractionState state) {
         //TODO: awaken monster and put it in defenders list

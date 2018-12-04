@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public class RestAction : CharacterAction {
     public RestAction() : base(ACTION_TYPE.REST) {
@@ -24,7 +24,7 @@ public class RestAction : CharacterAction {
         if (targetObject is StructureObj) {
             StructureObj structureObj = targetObject as StructureObj;
             BaseLandmark landmark = structureObj.objectLocation;
-            Character character = party.owner as Character;
+            Character character = party.owner;
             if (landmark.charactersWithHomeOnLandmark.Contains(character)) {
                 return true;
             } else if (structureObj.specificObjectType == LANDMARK_TYPE.INN) {

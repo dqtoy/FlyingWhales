@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 using System;
 
 public class ActionData : IActionData {
@@ -285,7 +285,7 @@ public class ActionData : IActionData {
 
     //private IEnumerator LookForActionCoroutine() {
     //    List<CharacterQuestData> dataToSetup = new List<CharacterQuestData>(_party.questData);
-    //    if (_party.owner is ECS.Character && (_party.owner as ECS.Character).IsSquadLeader()) {
+    //    if (_party.owner is Character && (_party.owner as Character).IsSquadLeader()) {
     //        dataToSetup.AddRange(_party.owner.squad.GetSquadQuestData());
     //    } else {
     //        dataToSetup.AddRange(_party.questData);

@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ECS;
+
 
 public class CharacterManager : MonoBehaviour {
 
@@ -85,7 +85,7 @@ public class CharacterManager : MonoBehaviour {
         if (data.charactersData != null) {
             for (int i = 0; i < data.charactersData.Count; i++) {
                 CharacterSaveData currData = data.charactersData[i];
-                ECS.Character currCharacter = CreateNewCharacter(currData);
+                Character currCharacter = CreateNewCharacter(currData);
                 Faction characterFaction = FactionManager.Instance.GetFactionBasedOnID(currData.factionID);
                 if (characterFaction != null) {
                     //currCharacter.SetFaction(characterFaction);
@@ -136,7 +136,7 @@ public class CharacterManager : MonoBehaviour {
     //    if (data.charactersData != null) {
     //        for (int i = 0; i < data.charactersData.Count; i++) {
     //            CharacterSaveData currData = data.charactersData[i];
-    //            ECS.Character currCharacter = CharacterManager.Instance.GetCharacterByID(currData.id);
+    //            Character currCharacter = CharacterManager.Instance.GetCharacterByID(currData.id);
     //            currCharacter.LoadRelationships(currData.relationshipsData);
     //        }
     //    }
@@ -152,11 +152,11 @@ public class CharacterManager : MonoBehaviour {
     /*
      Create a new character, given a role, class and race.
          */
-    public ECS.Character CreateNewCharacter(string className, RACE race, GENDER gender, Faction faction = null, ILocation homeLocation = null, bool createSchedule = true) {
+    public Character CreateNewCharacter(string className, RACE race, GENDER gender, Faction faction = null, ILocation homeLocation = null, bool createSchedule = true) {
 		if(className == "None"){
             className = "Classless";
 		}
-		ECS.Character newCharacter = new ECS.Character(className, race, gender);
+		Character newCharacter = new Character(className, race, gender);
         Party party = newCharacter.CreateOwnParty();
         if (faction != null) {
             faction.AddNewCharacter(newCharacter);
@@ -184,8 +184,8 @@ public class CharacterManager : MonoBehaviour {
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
     }
-    public ECS.Character CreateNewCharacter(CharacterSaveData data) {
-        ECS.Character newCharacter = new ECS.Character(data);
+    public Character CreateNewCharacter(CharacterSaveData data) {
+        Character newCharacter = new Character(data);
         allCharacterLogs.Add(newCharacter, new List<string>());
 
         //if (data.role != CHARACTER_ROLE.NONE) {
@@ -247,9 +247,9 @@ public class CharacterManager : MonoBehaviour {
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
     }
-    public void RemoveCharacter(ECS.Character character) {
+    public void RemoveCharacter(Character character) {
         _allCharacters.Remove(character);
-        Messenger.Broadcast<ECS.Character>(Signals.CHARACTER_REMOVED, character);
+        Messenger.Broadcast<Character>(Signals.CHARACTER_REMOVED, character);
     }
     private void ConstructAllClasses() {
         _classesDictionary = new Dictionary<string, CharacterClass>();
@@ -311,7 +311,7 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Relationships
-    //public Relationship CreateNewRelationshipTowards(ECS.Character sourceCharacter, ECS.Character targetCharacter) {
+    //public Relationship CreateNewRelationshipTowards(Character sourceCharacter, Character targetCharacter) {
     //    Relationship newRel = new Relationship(sourceCharacter, targetCharacter);
     //    sourceCharacter.AddNewRelationship(targetCharacter, newRel);
     //    return newRel;
@@ -323,7 +323,7 @@ public class CharacterManager : MonoBehaviour {
     // NOTE: This is probably more performance intensive because of the additional checking.
     // User can opt to use each characters GetRelationshipWith() instead.
     //     */
-    //public Relationship GetRelationshipBetween(ECS.Character character1, ECS.Character character2) {
+    //public Relationship GetRelationshipBetween(Character character1, Character character2) {
     //    if(character1 == null || character2 == null) {
     //        return null;
     //    }
@@ -370,7 +370,7 @@ public class CharacterManager : MonoBehaviour {
     //        //CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
     //        CHARACTER_CLASS chosenClass = CHARACTER_CLASS.WARRIOR;
     //        CHARACTER_ROLE chosenRole = characterRoleProductionDictionary.PickRandomElementGivenWeights();
-    //        ECS.Character newChar = chosenLandmark.CreateNewCharacter(RACE.HUMANS, chosenRole, Utilities.NormalizeString(chosenClass.ToString()), false);
+    //        Character newChar = chosenLandmark.CreateNewCharacter(RACE.HUMANS, chosenRole, Utilities.NormalizeString(chosenClass.ToString()), false);
     //        //Initial Character tags
     //        newChar.AssignInitialTags();
     //        //CharacterManager.Instance.EquipCharacterWithBestGear(chosenSettlement, newChar);

@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using ECS;
+
 using TMPro;
 #if UNITY_EDITOR
 using UnityEditor;

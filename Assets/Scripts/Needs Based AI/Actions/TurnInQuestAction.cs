@@ -1,4 +1,4 @@
-﻿using ECS;
+﻿
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,7 +16,7 @@ public class TurnInQuestAction : CharacterAction {
     }
     public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
-        Character mainCharacter = party.owner as Character;
+        Character mainCharacter = party.owner;
         if (mainCharacter.currentQuest == null) {
             //if the main character's current quest is null,
             //this would ususally happen because something unusual happened to the

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public class SuspiciousSoldierMeeting : Interaction {
 
@@ -162,21 +162,21 @@ public class SuspiciousSoldierMeeting : Interaction {
         BaseLandmark landmark = _interactable;
         DefenderGroup randomGroup = landmark.tileLocation.areaOfTile.GetRandomDefenderGroup();
         if(randomGroup != null) {
-            if(randomGroup.party.icharacters.Count >= 2) {
+            if(randomGroup.party.characters.Count >= 2) {
                 int numOfDeserters = UnityEngine.Random.Range(1, 3);
                 if (numOfDeserters == 1) {
-                    ICharacter deserter = randomGroup.party.icharacters[UnityEngine.Random.Range(0, randomGroup.party.icharacters.Count)];
+                    Character deserter = randomGroup.party.characters[UnityEngine.Random.Range(0, randomGroup.party.characters.Count)];
                     //landmark.RemoveDefender(deserter);
                     //if (state.minionLog != null) {
                     //    state.minionLog.AddToFillers(deserter, deserter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     //}
                     state.AddLogFiller(new LogFiller(deserter, deserter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
                 } else {
-                    List<ICharacter> icharacters = new List<ICharacter>(randomGroup.party.icharacters);
+                    List<Character> icharacters = new List<Character>(randomGroup.party.characters);
                     int deserter1Index = UnityEngine.Random.Range(0, icharacters.Count);
-                    ICharacter deserter1 = icharacters[deserter1Index];
+                    Character deserter1 = icharacters[deserter1Index];
                     icharacters.RemoveAt(deserter1Index);
-                    ICharacter deserter2 = icharacters[UnityEngine.Random.Range(0, icharacters.Count)];
+                    Character deserter2 = icharacters[UnityEngine.Random.Range(0, icharacters.Count)];
 
                     //landmark.RemoveDefender(deserter1);
                     //landmark.RemoveDefender(deserter2);
@@ -200,8 +200,8 @@ public class SuspiciousSoldierMeeting : Interaction {
                     //    explorerMinion.icharacter.AddHistory(newMinionLog);
                     //}
                 }
-            } else if(randomGroup.party.icharacters.Count == 1) {
-                ICharacter deserter = randomGroup.party.icharacters[0];
+            } else if(randomGroup.party.characters.Count == 1) {
+                Character deserter = randomGroup.party.characters[0];
                 //landmark.RemoveDefender(deserter);
                 //if (state.minionLog != null) {
                 //    state.minionLog.AddToFillers(deserter, deserter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -245,7 +245,7 @@ public class SuspiciousSoldierMeeting : Interaction {
     private void ArmyGainedRewardEffect(InteractionState state) {
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Knights", RACE.HUMANS, false);
-        newMinion.icharacter.SetLevel(UnityEngine.Random.Range(5, 9));
+        newMinion.character.SetLevel(UnityEngine.Random.Range(5, 9));
         PlayerManager.Instance.player.AddMinion(newMinion);
 
         //if (_interactable is BaseLandmark) {

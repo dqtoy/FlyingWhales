@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 using UnityEngine;
-using ECS;
+
 
 public class AttributeManager : MonoBehaviour {
     public static AttributeManager Instance;

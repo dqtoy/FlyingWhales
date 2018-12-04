@@ -6,7 +6,7 @@ public class Armies : Party {
 
     public ArmyActionData actionData { get; private set; }
 
-    public Armies(ICharacter owner) : base(owner) {
+    public Armies(Character owner) : base(owner) {
         actionData = new ArmyActionData(this);
     }
 

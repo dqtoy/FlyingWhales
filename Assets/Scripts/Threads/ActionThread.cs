@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 using System;
 using System.Linq;
 
@@ -52,49 +52,47 @@ public class ActionThread : Multithread {
     private void LookForAction() {
         associatedEvent = null;
         associatedQuest = null;
-        if (_party.owner is Character) {
-            Character character = _party.owner as Character;
-            actionLog = "[" + GameManager.Instance.continuousDays + "]" + character.name + "'s Action Logic: ";
-            if (!character.actionQueue.IsEmpty) {//If Action Queue is not empty, pop the earliest one
-                ActionQueueItem item = character.actionQueue.Dequeue();
-                chosenAction = item.action;
-                chosenObject = item.targetObject;
-                associatedQuest = item.associatedQuest;
-                associatedEvent = item.associatedEvent;
-                //_party.actionData.SetQuestAssociatedWithAction(item.associatedQuest);
-                //_party.actionData.SetEventAssociatedWithAction(item.associatedEvent);
-                actionLog += "\nGot action from queue " + chosenAction.actionData.actionName + "-" + (chosenObject == null ? "null" : chosenObject.objectName);
-                return;
-            } else if (_party.actionData.isCurrentActionFromEvent) {
-                GameEvent eventAssociated = _party.actionData.eventAssociatedWithAction;
-                //if the current action is from an event, and the associated event is no yet done, check if this character can still get an action from it
-                if (!eventAssociated.isDone && eventAssociated.PeekNextEventAction(character) != null) {
-                    //if yes, perform the action from the event.
-                    EventAction nextEventAction = eventAssociated.GetNextEventAction(character);
-                    chosenAction = nextEventAction.action;
-                    chosenObject = nextEventAction.targetObject;
-                    associatedEvent = eventAssociated;
-                    actionLog += "\nGot action from event " + chosenAction.actionData.actionName + "-" + (chosenObject == null ? "null" : chosenObject.objectName);
-                    return;
-                } else {
-                    //if not, set the event as done for this character and continue with it's daily actions
-                    eventAssociated.EndEventForCharacter(character);
-                }
-            }
-
-            //always return rest action at home for now
-            chosenAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.REST);
-            chosenObject = character.homeLandmark.landmarkObj;
-
+        Character character = _party.owner;
+        actionLog = "[" + GameManager.Instance.continuousDays + "]" + character.name + "'s Action Logic: ";
+        if (!character.actionQueue.IsEmpty) {//If Action Queue is not empty, pop the earliest one
+            ActionQueueItem item = character.actionQueue.Dequeue();
+            chosenAction = item.action;
+            chosenObject = item.targetObject;
+            associatedQuest = item.associatedQuest;
+            associatedEvent = item.associatedEvent;
+            //_party.actionData.SetQuestAssociatedWithAction(item.associatedQuest);
+            //_party.actionData.SetEventAssociatedWithAction(item.associatedEvent);
+            actionLog += "\nGot action from queue " + chosenAction.actionData.actionName + "-" + (chosenObject == null ? "null" : chosenObject.objectName);
             return;
-            List<ActionThreadItem> actionChoices = GetActionsByCategory(character.schedule.currentPhase);
-            if (actionChoices.Count > 0) {
-                ActionThreadItem chosenItem = actionChoices[Utilities.rng.Next(0, actionChoices.Count)];
-                chosenObject = chosenItem.targetObj;
-                chosenAction = chosenItem.action;
+        } else if (_party.actionData.isCurrentActionFromEvent) {
+            GameEvent eventAssociated = _party.actionData.eventAssociatedWithAction;
+            //if the current action is from an event, and the associated event is no yet done, check if this character can still get an action from it
+            if (!eventAssociated.isDone && eventAssociated.PeekNextEventAction(character) != null) {
+                //if yes, perform the action from the event.
+                EventAction nextEventAction = eventAssociated.GetNextEventAction(character);
+                chosenAction = nextEventAction.action;
+                chosenObject = nextEventAction.targetObject;
+                associatedEvent = eventAssociated;
+                actionLog += "\nGot action from event " + chosenAction.actionData.actionName + "-" + (chosenObject == null ? "null" : chosenObject.objectName);
+                return;
             } else {
-                throw new Exception(character.name + " could not find action!");
+                //if not, set the event as done for this character and continue with it's daily actions
+                eventAssociated.EndEventForCharacter(character);
             }
+        }
+
+        //always return rest action at home for now
+        chosenAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.REST);
+        chosenObject = character.homeLandmark.landmarkObj;
+
+        return;
+        List<ActionThreadItem> actionChoices = GetActionsByCategory(character.schedule.currentPhase);
+        if (actionChoices.Count > 0) {
+            ActionThreadItem chosenItem = actionChoices[Utilities.rng.Next(0, actionChoices.Count)];
+            chosenObject = chosenItem.targetObj;
+            chosenAction = chosenItem.action;
+        } else {
+            throw new Exception(character.name + " could not find action!");
         }
     }
 

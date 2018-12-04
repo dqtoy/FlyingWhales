@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.EventSystems;
 using TMPro;
-using ECS;
+
 using UnityEngine.Events;
 
 public class EventLabel : MonoBehaviour, IPointerClickHandler{
@@ -77,12 +77,10 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
                         UIManager.Instance.ShowCombatLog(lf.obj as Combat);
                     } else if (lf.obj is Party) {
                         Party party = lf.obj as Party;
-                        if(party.icharacters.Count > 1) {
+                        if(party.characters.Count > 1) {
                             UIManager.Instance.ShowPartyInfo(party);
-                        } else if (party.icharacters.Count == 1) {
-                            if(party.mainCharacter is Character) {
-                                UIManager.Instance.ShowCharacterInfo(party.mainCharacter as Character);
-                            }
+                        } else if (party.characters.Count == 1) {
+                            UIManager.Instance.ShowCharacterInfo(party.mainCharacter);
                         }
                     }
                 }
@@ -156,14 +154,14 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
     //           }
 
     //           if (lf.obj != null) {
-    //               if (lf.obj is ECS.Character) {
-    //                   UIManager.Instance.ShowCharacterInfo(lf.obj as ECS.Character);
+    //               if (lf.obj is Character) {
+    //                   UIManager.Instance.ShowCharacterInfo(lf.obj as Character);
     //               } else if (lf.obj is Party) {
     //                   UIManager.Instance.ShowCharacterInfo((lf.obj as Party).partyLeader);
     //               } else if (lf.obj is BaseLandmark) {
     //                   UIManager.Instance.ShowLandmarkInfo(lf.obj as BaseLandmark);
-    //               } else if (lf.obj is ECS.Combat) {
-    //                   UIManager.Instance.ShowCombatLog(lf.obj as ECS.Combat);
+    //               } else if (lf.obj is Combat) {
+    //                   UIManager.Instance.ShowCombatLog(lf.obj as Combat);
     //               }
     //           }
     //	}

@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 [System.Serializable]
 public class CharacterObj : ICharacterObject {

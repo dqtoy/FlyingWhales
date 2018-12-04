@@ -66,10 +66,10 @@ public class Utilities : MonoBehaviour {
         } else if (obj is Faction) {
             lastFactionID += 1;
             return lastFactionID;
-        } else if (obj is ECS.Character) {
+        } else if (obj is Character) {
             lastCharacterID += 1;
             return lastCharacterID;
-        } else if (obj is ECS.Item) {
+        } else if (obj is Item) {
             lastItemID += 1;
             return lastItemID;
         } else if (obj is Monster) {
@@ -108,9 +108,9 @@ public class Utilities : MonoBehaviour {
             lastLandmarkID = idToUse;
         } else if (obj is Faction) {
             lastFactionID = idToUse;
-        } else if (obj is ECS.Character) {
+        } else if (obj is Character) {
             lastCharacterID = idToUse;
-        } else if (obj is ECS.Item) {
+        } else if (obj is Item) {
             lastItemID = idToUse;
         } else if (obj is Monster) {
             lastMonsterID = idToUse;
@@ -502,10 +502,10 @@ public class Utilities : MonoBehaviour {
         //		string pronoun = Utilities.GetStringBetweenTwoChars (word, '_', '_');
         string[] pronouns = word.Split('/');
         GENDER gender = GENDER.MALE;
-        if (genderSubject is ECS.Character) {
-            gender = (genderSubject as ECS.Character).gender;
+        if (genderSubject is Character) {
+            gender = (genderSubject as Character).gender;
         }else if (genderSubject is Minion) {
-            gender = (genderSubject as Minion).icharacter.gender;
+            gender = (genderSubject as Minion).character.gender;
         }
         if (gender == GENDER.MALE) {
             if (pronouns.Length > 0) {
@@ -705,7 +705,7 @@ public class Utilities : MonoBehaviour {
         }
         return options;
     }
-    public static string GetPossessivePronounForCharacter(ICharacter character, bool capitalized = true) {
+    public static string GetPossessivePronounForCharacter(Character character, bool capitalized = true) {
         if (character.gender == GENDER.MALE) {
             if (capitalized) {
                 return "His";
@@ -854,8 +854,8 @@ public class Utilities : MonoBehaviour {
         foreach (KeyValuePair<T, int> kvp in weights) {
             T key = kvp.Key;
             int value = kvp.Value;
-            if (key is ECS.Character) {
-                actionWeightsSummary += "\n" + (key as ECS.Character).name + " - " + kvp.Value.ToString();
+            if (key is Character) {
+                actionWeightsSummary += "\n" + (key as Character).name + " - " + kvp.Value.ToString();
             } else if (key is BaseLandmark) {
                 actionWeightsSummary += "\n" + (key as BaseLandmark).landmarkName + " - " + kvp.Value.ToString();
             } else {
@@ -875,8 +875,8 @@ public class Utilities : MonoBehaviour {
             //} else if(key is AlliancePool) {
             //    actionWeightsSummary += "\n" + ((AlliancePool)((object)key)).name + " - " + kvp.Value.ToString();
             //} else 
-            if (key is ECS.Character) {
-                actionWeightsSummary += "\n" + (key as ECS.Character).name + " - " + kvp.Value.ToString();
+            if (key is Character) {
+                actionWeightsSummary += "\n" + (key as Character).name + " - " + kvp.Value.ToString();
             } else if (key is BaseLandmark) {
                 actionWeightsSummary += "\n" + (key as BaseLandmark).landmarkName + " - " + kvp.Value.ToString();
             } else {
@@ -1482,7 +1482,7 @@ public class Utilities : MonoBehaviour {
         List<string> choices = new List<string>();
         string[] classes = System.IO.Directory.GetFiles(path, searchPattern);
         for (int i = 0; i < classes.Length; i++) {
-            ECS.CharacterClass currentClass = JsonUtility.FromJson<ECS.CharacterClass>(System.IO.File.ReadAllText(classes[i]));
+            CharacterClass currentClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(classes[i]));
             choices.Add(currentClass.className);
         }
         return choices;
@@ -1490,7 +1490,7 @@ public class Utilities : MonoBehaviour {
     #endregion
 
     #region Combat Prototype
-    public static ECS.IBodyPart.ATTRIBUTE GetNeededAttributeForArmor(ECS.Armor armor) {
+    public static IBodyPart.ATTRIBUTE GetNeededAttributeForArmor(Armor armor) {
         string armorBodyType = string.Empty;
         if(ItemManager.Instance != null) {
             armorBodyType = ItemManager.Instance.armorTypeData[armor.armorType].armorBodyType;
@@ -1499,23 +1499,23 @@ public class Utilities : MonoBehaviour {
         }
         switch (armorBodyType) {
             case "Head":
-            return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_HEAD_ARMOR;
+            return IBodyPart.ATTRIBUTE.CAN_EQUIP_HEAD_ARMOR;
             case "Torso":
-            return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_TORSO_ARMOR;
+            return IBodyPart.ATTRIBUTE.CAN_EQUIP_TORSO_ARMOR;
             case "Tail":
-            return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_TAIL_ARMOR;
+            return IBodyPart.ATTRIBUTE.CAN_EQUIP_TAIL_ARMOR;
             case "Arm":
-            return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_ARM_ARMOR;
+            return IBodyPart.ATTRIBUTE.CAN_EQUIP_ARM_ARMOR;
             case "Hand":
-            return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_HAND_ARMOR;
+            return IBodyPart.ATTRIBUTE.CAN_EQUIP_HAND_ARMOR;
             case "Leg":
-            return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_LEG_ARMOR;
+            return IBodyPart.ATTRIBUTE.CAN_EQUIP_LEG_ARMOR;
             case "Hip":
-            return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_HIP_ARMOR;
+            return IBodyPart.ATTRIBUTE.CAN_EQUIP_HIP_ARMOR;
             case "Feet":
-            return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_FOOT_ARMOR;
+            return IBodyPart.ATTRIBUTE.CAN_EQUIP_FOOT_ARMOR;
             default:
-            return ECS.IBodyPart.ATTRIBUTE.CAN_EQUIP_TORSO_ARMOR;
+            return IBodyPart.ATTRIBUTE.CAN_EQUIP_TORSO_ARMOR;
         }
     }
     #endregion
@@ -1566,7 +1566,7 @@ public class Utilities : MonoBehaviour {
             return ITEM_TYPE.WEAPON;
         }
     }
-    public static ATTACK_CATEGORY GetAttackCategoryByClass(ECS.Character character) {
+    public static ATTACK_CATEGORY GetAttackCategoryByClass(Character character) {
         switch (character.characterClass.className) {
             case "Warrior":
             case "Barbarian":

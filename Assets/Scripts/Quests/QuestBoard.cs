@@ -1,4 +1,4 @@
-﻿using ECS;
+﻿
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +31,7 @@ public class QuestBoard : IQuestGiver {
         Messenger.AddListener<Quest>(Signals.QUEST_TURNED_IN, OnQuestTurnedIn);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
     }
-    public Quest GetQuestForCharacter(ECS.Character character) {
+    public Quest GetQuestForCharacter(Character character) {
         if (character.role.roleType != CHARACTER_ROLE.HERO) {
             throw new System.Exception("Non hero character " + character.name + " is trying to get a quest!");
         }

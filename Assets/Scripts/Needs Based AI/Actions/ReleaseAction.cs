@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public class ReleaseAction : CharacterAction {
     //private CharacterObj _characterObj;
@@ -54,7 +54,7 @@ public class ReleaseAction : CharacterAction {
                 }
                 
                 if (icharacterObject is CharacterObj) {
-                    Messenger.Broadcast(Signals.CHARACTER_RELEASED, (icharacterObject as CharacterObj).party.mainCharacter as ECS.Character);
+                    Messenger.Broadcast(Signals.CHARACTER_RELEASED, (icharacterObject as CharacterObj).party.mainCharacter);
                 }
             }
         }

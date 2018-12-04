@@ -11,9 +11,9 @@ public class CombatThread {
 
 	private TODO _todo;
 
-	private ECS.Combat combat;
-	private List<ECS.Character> characterSideA;
-	private List<ECS.Character> characterSideB;
+	private Combat combat;
+	private List<Character> characterSideA;
+	private List<Character> characterSideB;
 
 	public void StartSimulation(){
 		

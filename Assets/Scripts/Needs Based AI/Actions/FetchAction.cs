@@ -1,4 +1,4 @@
-﻿using ECS;
+﻿
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,7 +14,7 @@ public class FetchAction : CharacterAction {
     public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         if (party is CharacterParty) {
-            FetchQuest fetchQuest = ((party.owner as Character).currentQuest as FetchQuest);
+            FetchQuest fetchQuest = (party.owner.currentQuest as FetchQuest);
             if (fetchQuest.fetchCooldown > 0) {
                 fetchQuest.AdjustFetchCooldown(-1);
 
@@ -35,7 +35,7 @@ public class FetchAction : CharacterAction {
                             for (int j = 0; j < droppedItems.Count; j++) {
                                 string droppedItemName = droppedItems[j];
                                 Item item = ItemManager.Instance.allItems[droppedItemName].CreateNewCopy();
-                                (party.mainCharacter as Character).PickupItem(item, false);
+                                party.mainCharacter.PickupItem(item, false);
                                 fetchLog += "\n" + item.itemName;
                             }
                         }
@@ -58,7 +58,7 @@ public class FetchAction : CharacterAction {
     }
     public override void OnChooseAction(Party iparty, IObject targetObject) {
         base.OnChooseAction(iparty, targetObject);
-        FetchQuest fetchQuest = ((iparty.owner as Character).currentQuest as FetchQuest);
+        FetchQuest fetchQuest = (iparty.owner.currentQuest as FetchQuest);
         fetchQuest.SetFetchCooldown(GetFetchCooldown(iparty as CharacterParty));
     }
     #endregion

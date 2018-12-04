@@ -54,7 +54,7 @@ public class Garrison : StructureObj {
         if(_objectLocation.tileLocation.areaOfTile.suppliesInBank >= 100 && _objectLocation.GetInteractionOfType(INTERACTION_TYPE.ARMY_UNIT_TRAINING) == null) {
             bool hasArmyPartyWithAtLeast3Members = false;
             for (int i = 0; i < _objectLocation.charactersWithHomeOnLandmark.Count; i++) {
-                if (_objectLocation.charactersWithHomeOnLandmark[i].currentParty.icharacters.Count >= 3) {
+                if (_objectLocation.charactersWithHomeOnLandmark[i].currentParty.characters.Count >= 3) {
                     hasArmyPartyWithAtLeast3Members = true;
                     break;
                 }
@@ -104,7 +104,7 @@ public class Garrison : StructureObj {
         if (_objectLocation.GetInteractionOfType(INTERACTION_TYPE.ARMY_ATTACKS) == null && _objectLocation.owner.HasRelationshipStatus(FACTION_RELATIONSHIP_STATUS.AT_WAR)) {
             bool hasArmyPartyWithAtLeast3Members = false;
             for (int i = 0; i < _objectLocation.charactersWithHomeOnLandmark.Count; i++) {
-                if (_objectLocation.charactersWithHomeOnLandmark[i].currentParty.icharacters.Count >= 3) {
+                if (_objectLocation.charactersWithHomeOnLandmark[i].currentParty.characters.Count >= 3) {
                     hasArmyPartyWithAtLeast3Members = true;
                     break;
                 }

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 public class Relationship {
 
-    private ECS.Character _sourceCharacter;
-    private ECS.Character _targetCharacter;
-    //private ECS.Character _character2;
+    private Character _sourceCharacter;
+    private Character _targetCharacter;
+    //private Character _character2;
 
     //private int _value;
     //private int _baseValue; //This is the value affected by traits, race, etc.
@@ -20,19 +20,19 @@ public class Relationship {
     public List<CHARACTER_RELATIONSHIP> relationshipStatuses {
         get { return _relationshipStatuses; }
     }
-    public ECS.Character targetCharacter {
+    public Character targetCharacter {
 		get { return _targetCharacter; }
 	}
-    public ECS.Character sourceCharacter {
+    public Character sourceCharacter {
         get { return _sourceCharacter; }
     }
     #endregion
 
-    public Relationship(ECS.Character sourceCharacter, ECS.Character targetCharacter) : this(){
+    public Relationship(Character sourceCharacter, Character targetCharacter) : this(){
         _sourceCharacter = sourceCharacter;
         _targetCharacter = targetCharacter;
         
-        Messenger.AddListener<ECS.Character, GENDER>(Signals.GENDER_CHANGED, OnCharacterChangedGender);
+        Messenger.AddListener<Character, GENDER>(Signals.GENDER_CHANGED, OnCharacterChangedGender);
     }
     public Relationship() {
         _relationshipStatuses = new List<CHARACTER_RELATIONSHIP>();
@@ -46,7 +46,7 @@ public class Relationship {
         return copy;
     }
 
-    public void OnCharacterChangedGender(ECS.Character characterWithNewGender, GENDER newGender) {
+    public void OnCharacterChangedGender(Character characterWithNewGender, GENDER newGender) {
         if (characterWithNewGender.id == _sourceCharacter.id || characterWithNewGender.id == _targetCharacter.id) {
             RevalidateRelationshipStatuses();
         }

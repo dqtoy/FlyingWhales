@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
-using ECS;
+
 
 public class CharacterAttribute {
     protected string _name;

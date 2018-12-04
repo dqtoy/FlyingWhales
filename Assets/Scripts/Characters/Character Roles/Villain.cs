@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class Villain : CharacterRole {
 
-	public Villain(ECS.Character character): base (character) {
+	public Villain(Character character): base (character) {
 		_roleType = CHARACTER_ROLE.VILLAIN;
 
 		//_allowedQuestAlignments = new List<ACTION_ALIGNMENT>() {

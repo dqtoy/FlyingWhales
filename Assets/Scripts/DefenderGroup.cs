@@ -1,4 +1,4 @@
-﻿using ECS;
+﻿
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,23 +14,23 @@ public class DefenderGroup {
         //intel = new DefenderIntel(this);
     }
 
-    public void AddCharacterToGroup(ICharacter character) {
+    public void AddCharacterToGroup(Character character) {
         if (party == null) {
             party = character.ownParty;
         } else {
             party.AddCharacter(character);
         }
-        (character as Character).OnSetAsDefender(defendingArea);
+        character.OnSetAsDefender(defendingArea);
     }
-    public void RemoveCharacterFromGroup(ICharacter defender) {
+    public void RemoveCharacterFromGroup(Character defender) {
         //party.RemoveCharacter(defender);
         if (party != null) {
             if (party.owner.id == defender.id) {
                 //if the character that needs to be removed is the owner of the defender party
                 //check if there are any other characters left in the defender party
-                List<ICharacter> otherCharacters = new List<ICharacter>();
-                for (int i = 0; i < party.icharacters.Count; i++) {
-                    ICharacter currCharacter = party.icharacters[i];
+                List<Character> otherCharacters = new List<Character>();
+                for (int i = 0; i < party.characters.Count; i++) {
+                    Character currCharacter = party.characters[i];
                     if (party.owner.id != currCharacter.id) {
                         otherCharacters.Add(currCharacter);
                     }
@@ -49,15 +49,11 @@ public class DefenderGroup {
                     //set the defenders to null
                     party = null;
                 }
-                if (defender is Character) {
-                    (defender as Character).OnRemoveAsDefender();
-                }
+                defender.OnRemoveAsDefender();
             } else {
-                if (party.icharacters.Contains(defender)) {
+                if (party.characters.Contains(defender)) {
                     party.RemoveCharacter(defender);
-                    if (defender is Character) {
-                        (defender as Character).OnRemoveAsDefender();
-                    }
+                    defender.OnRemoveAsDefender();
                 }
             }
         }

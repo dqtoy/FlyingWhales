@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Leader : CharacterRole {
 
-    public Leader(ECS.Character character) : base(character) {
+    public Leader(Character character) : base(character) {
         _roleType = CHARACTER_ROLE.LEADER;
     }
 }

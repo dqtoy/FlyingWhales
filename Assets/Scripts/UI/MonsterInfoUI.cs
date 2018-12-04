@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine.UI;
-using ECS;
+
 
 public class MonsterInfoUI : UIMenu {
     private const int MAX_HISTORY_LOGS = 60;
@@ -99,7 +99,7 @@ public class MonsterInfoUI : UIMenu {
         _activeMonster = _data as Monster;
         UpdatePortrait();
         UpdateMonsterInfo();
-        currentActionIcon.SetCharacter(_activeMonster);
+        //currentActionIcon.SetCharacter(_activeMonster);
         currentActionIcon.SetAction(_activeMonster.currentParty.currentAction);
         //PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeMonster);
         historyScrollView.verticalNormalizedPosition = 1;
@@ -266,7 +266,7 @@ public class MonsterInfoUI : UIMenu {
         //affiliations.SetCharacter(_activeCharacter);
     }
     private void UpdatePortrait() {
-        characterPortrait.GeneratePortrait(_activeMonster);
+        //characterPortrait.GeneratePortrait(_activeMonster);
         characterPortrait.SetBGState(false);
     }
 

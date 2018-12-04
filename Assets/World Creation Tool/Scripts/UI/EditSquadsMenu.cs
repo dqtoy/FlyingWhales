@@ -14,62 +14,58 @@ public class EditSquadsMenu : MonoBehaviour {
     private List<SquadEditorItem> squadItems;
 
     public void Initialize() {
-        Messenger.AddListener<ECS.Character>(Signals.CHARACTER_CREATED, OnCharacterCreated);
-        Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, OnCharacterRemoved);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CREATED, OnCharacterCreated);
+        Messenger.AddListener<Character>(Signals.CHARACTER_REMOVED, OnCharacterRemoved);
 
         Messenger.AddListener<Squad>(Signals.SQUAD_CREATED, OnSquadCreated);
         Messenger.AddListener<Squad>(Signals.SQUAD_DELETED, OnSquadDeleted);
 
-        Messenger.AddListener<ICharacter, Squad>(Signals.SQUAD_MEMBER_REMOVED, OnCharacterRemovedFromSquad);
-        Messenger.AddListener<ICharacter, Squad>(Signals.SQUAD_MEMBER_ADDED, OnCharacterAddedToSquad);
+        Messenger.AddListener<Character, Squad>(Signals.SQUAD_MEMBER_REMOVED, OnCharacterRemovedFromSquad);
+        Messenger.AddListener<Character, Squad>(Signals.SQUAD_MEMBER_ADDED, OnCharacterAddedToSquad);
 
-        Messenger.AddListener<ICharacter, Squad>(Signals.SQUAD_LEADER_SET, OnSquadLeaderSet);
+        Messenger.AddListener<Character, Squad>(Signals.SQUAD_LEADER_SET, OnSquadLeaderSet);
 
         items = new List<CharacterSquadEditorItem>();
         squadItems = new List<SquadEditorItem>();
     }
 
-    public void OnCharacterCreated(ECS.Character newCharacter) {
+    public void OnCharacterCreated(Character newCharacter) {
         GameObject characterGO = GameObject.Instantiate(characterSquadEditorPrefab, charactersScrollView.content);
         CharacterSquadEditorItem characterItem = characterGO.GetComponent<CharacterSquadEditorItem>();
         characterItem.SetCharacter(newCharacter);
         characterItem.gameObject.GetComponent<Draggable>().parentWhileDragging = this.transform;
         items.Add(characterItem);
     }
-    public void OnCharacterRemoved(ECS.Character removedCharacter) {
+    public void OnCharacterRemoved(Character removedCharacter) {
         CharacterSquadEditorItem characterItem = GetCharacterSquadItem(removedCharacter);
         items.Remove(characterItem);
         GameObject.Destroy(characterItem.gameObject);
     }
-    public void OnCharacterRemovedFromSquad(ICharacter character, Squad squad) {
-        if (character is ECS.Character) {
-            CharacterSquadEditorItem item = GetCharacterSquadItem(character as ECS.Character);
-            if (item != null && item.transform.parent != charactersScrollView.content) {
-                item.transform.SetParent(charactersScrollView.content);
-            }
+    public void OnCharacterRemovedFromSquad(Character character, Squad squad) {
+        CharacterSquadEditorItem item = GetCharacterSquadItem(character);
+        if (item != null && item.transform.parent != charactersScrollView.content) {
+            item.transform.SetParent(charactersScrollView.content);
         }
     }
-    public void OnCharacterAddedToSquad(ICharacter character, Squad squad) {
-        if (character is ECS.Character && squad.squadLeader.id != character.id) {
-            CharacterSquadEditorItem item = GetCharacterSquadItem(character as ECS.Character);
+    public void OnCharacterAddedToSquad(Character character, Squad squad) {
+        if (squad.squadLeader.id != character.id) {
+            CharacterSquadEditorItem item = GetCharacterSquadItem(character);
             SquadEditorItem squadItem = GetSquadItem(squad);
             if (item.transform.parent != squadItem.membersContainer) {
                 item.transform.SetParent(squadItem.membersContainer);
             }
         }
     }
-    public void OnSquadLeaderSet(ICharacter character, Squad squad) {
-        if (character is ECS.Character) {
-            CharacterSquadEditorItem item = GetCharacterSquadItem(character as ECS.Character);
-            SquadEditorItem squadItem = GetSquadItem(squad);
-            if (item.transform.parent != squadItem.leaderContainer) {
-                item.transform.SetParent(squadItem.leaderContainer);
-                item.transform.localPosition = Vector3.zero;
-            }
+    public void OnSquadLeaderSet(Character character, Squad squad) {
+        CharacterSquadEditorItem item = GetCharacterSquadItem(character);
+        SquadEditorItem squadItem = GetSquadItem(squad);
+        if (item.transform.parent != squadItem.leaderContainer) {
+            item.transform.SetParent(squadItem.leaderContainer);
+            item.transform.localPosition = Vector3.zero;
         }
     }
 
-    private CharacterSquadEditorItem GetCharacterSquadItem(ECS.Character character) {
+    private CharacterSquadEditorItem GetCharacterSquadItem(Character character) {
         for (int i = 0; i < items.Count; i++) {
             CharacterSquadEditorItem currItem = items[i];
             if (currItem.character.id == character.id) {

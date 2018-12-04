@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using ECS;
+
 
 public class Area {
 
@@ -742,7 +742,7 @@ public class Area {
         List<BaseLandmark> landmarkCandidates = this.landmarks;
         for (int i = 0; i < landmarkCandidates.Count; i++) {
             for (int j = 0; j < landmarkCandidates[i].charactersWithHomeOnLandmark.Count; j++) {
-                Character character = landmarkCandidates[i].charactersWithHomeOnLandmark[j] as Character;
+                Character character = landmarkCandidates[i].charactersWithHomeOnLandmark[j];
                 if (character.specificLocation.tileLocation.areaOfTile == this) {
                     choices.Add(character);
                 }
@@ -838,8 +838,8 @@ public class Area {
         }
         return false;
     }
-    public List<ICharacter> GetResidentsWithClass(string className) {
-        List<ICharacter> characters = new List<ICharacter>();
+    public List<Character> GetResidentsWithClass(string className) {
+        List<Character> characters = new List<Character>();
         for (int i = 0; i < areaResidents.Count; i++) {
             if (areaResidents[i].characterClass != null && areaResidents[i].characterClass.className == className) {
                 characters.Add(areaResidents[i]);

@@ -24,7 +24,7 @@ public class DefenderGroupItem : PooledObject {
     public void UpdateSlots() {
         for (int i = 0; i < slots.Length; i++) {
             SlotItem currItem = slots[i];
-            ICharacter currCharacter = defender.party.icharacters.ElementAtOrDefault(i);
+            Character currCharacter = defender.party.characters.ElementAtOrDefault(i);
             if (currCharacter == null) {
                 currItem.ClearSlot();
             } else {

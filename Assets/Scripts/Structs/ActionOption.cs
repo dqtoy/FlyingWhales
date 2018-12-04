@@ -62,7 +62,7 @@ public class ActionOption {
             if (canBeDoneAction() && PlayerManager.Instance.player.currencies[cost.currency] >= cost.amount) {
                 if(jobNeeded == JOB.NONE) {
                     return true;
-                } else if(jobNeeded == interactionState.interaction.explorerMinion.icharacter.characterClass.jobType) {
+                } else if(jobNeeded == interactionState.interaction.explorerMinion.character.characterClass.jobType) {
                     return true;
                 }
             }
@@ -70,7 +70,7 @@ public class ActionOption {
             if (PlayerManager.Instance.player.currencies[cost.currency] >= cost.amount) {
                 if (jobNeeded == JOB.NONE) {
                     return true;
-                } else if (jobNeeded == interactionState.interaction.explorerMinion.icharacter.characterClass.jobType) {
+                } else if (jobNeeded == interactionState.interaction.explorerMinion.character.characterClass.jobType) {
                     return true;
                 }
             }
@@ -104,7 +104,7 @@ public class ActionOption {
     private void SetDescription() {
         if(!string.IsNullOrEmpty(description) && interactionState.interaction == InteractionUI.Instance.interactionItem.interaction) {
             if (description.Contains("%minion%") && assignedMinion != null) {
-                description = description.Replace("%minion%", assignedMinion.icharacter.name);
+                description = description.Replace("%minion%", assignedMinion.character.name);
             }
             InteractionUI.Instance.interactionItem.SetDescription(description, null);
         }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using ECS;
+
 
 public class InteractionState {
     private Interaction _interaction;
@@ -165,7 +165,7 @@ public class InteractionState {
                 currLog.SetFillers(logFillers);
                 _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.AddHistory(currLog);
                 if (_interaction.explorerMinion != null) {
-                    _interaction.explorerMinion.icharacter.AddHistory(currLog);
+                    _interaction.explorerMinion.character.AddHistory(currLog);
                 }
                 currLog.AddLogToInvolvedObjects();
             }
@@ -188,10 +188,10 @@ public class InteractionState {
     }
     public void AssignedMinionGoesBack() {
         if (_assignedMinion != null) {
-            if (_assignedMinion.icharacter.currentParty.currentAction == null || _assignedMinion.icharacter.currentParty.iactionData.isDoneAction) {
+            if (_assignedMinion.character.currentParty.currentAction == null || _assignedMinion.character.currentParty.iactionData.isDoneAction) {
                 _assignedMinion.GoBackFromAssignment();
             } else {
-                _assignedMinion.icharacter.currentParty.currentAction.SetOnEndAction(() => _assignedMinion.GoBackFromAssignment());
+                _assignedMinion.character.currentParty.currentAction.SetOnEndAction(() => _assignedMinion.GoBackFromAssignment());
             }
         }
     }

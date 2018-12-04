@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ActionFilter : ICloneable {
 
-    public virtual bool MeetsRequirements(ECS.Character character, BaseLandmark landmark) {
+    public virtual bool MeetsRequirements(Character character, BaseLandmark landmark) {
         return false;
     }
     public virtual bool MeetsRequirements(BaseLandmark landmark) {
@@ -33,7 +33,7 @@ public class MustBeRole : ActionFilter {
             _allowedRoles.Add(role);
         }
     }
-    public override bool MeetsRequirements(ECS.Character character, BaseLandmark landmark) {
+    public override bool MeetsRequirements(Character character, BaseLandmark landmark) {
         if (character.role != null) {
             if (_allowedRoles.Contains(character.role.roleType)) {
                 return true;
@@ -54,7 +54,7 @@ public class MustNotBeRole : ActionFilter {
             _unallowedRoles.Add(role);
         }
     }
-    public override bool MeetsRequirements(ECS.Character character, BaseLandmark landmark) {
+    public override bool MeetsRequirements(Character character, BaseLandmark landmark) {
         if (character.role != null && !_unallowedRoles.Contains(character.role.roleType)) {
             return true;
         }
@@ -73,7 +73,7 @@ public class MustBeClass : ActionFilter {
             _allowedClasses.Add(Utilities.NormalizeStringUpperCaseFirstLetters(charClass.ToString()));
         }
     }
-    public override bool MeetsRequirements(ECS.Character character, BaseLandmark landmark) {
+    public override bool MeetsRequirements(Character character, BaseLandmark landmark) {
         if (character.characterClass != null) {
             if (_allowedClasses.Contains(character.characterClass.className)) {
                 return true;
@@ -100,7 +100,7 @@ public class MustNotBeClass : ActionFilter {
             _unallowedClasses.Add(charClass.ToString());
         }
     }
-    public override bool MeetsRequirements(ECS.Character character, BaseLandmark landmark) {
+    public override bool MeetsRequirements(Character character, BaseLandmark landmark) {
         if (character.characterClass != null) {
             if (_unallowedClasses.Contains(character.characterClass.className)) {
                 return false;
@@ -125,7 +125,7 @@ public class LandmarkMustBeState : ActionFilter {
     public LandmarkMustBeState(ACTION_FILTER requiredState) {
         this.requiredState = (STRUCTURE_STATE)Enum.Parse(typeof(STRUCTURE_STATE), requiredState.ToString());
     }
-    public override bool MeetsRequirements(ECS.Character character, BaseLandmark landmark) {
+    public override bool MeetsRequirements(Character character, BaseLandmark landmark) {
         //if (landmark.tileLocation.structureObjOnTile != null && landmark.tileLocation.structureObjOnTile.structureState == requiredState) {
         //    return true;
         //}

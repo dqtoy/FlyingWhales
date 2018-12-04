@@ -1,4 +1,4 @@
-﻿using ECS;
+﻿
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -83,7 +83,7 @@ public class CharacterArmyUnit : Character, IUnit {
     #endregion
 
     #region Overrides
-    public void AdjustHP(int amount, ICharacter killer = null) {
+    public void AdjustHP(int amount, Character killer = null) {
         int previous = this._currentHP;
         this._currentHP += amount;
         this._currentHP = Mathf.Clamp(this._currentHP, 0, hp);

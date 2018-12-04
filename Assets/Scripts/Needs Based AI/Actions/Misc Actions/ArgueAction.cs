@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public class ArgueAction : CharacterAction {
 
@@ -16,7 +16,7 @@ public class ArgueAction : CharacterAction {
     public override void OnChooseAction(Party iparty, IObject targetObject) {
         base.OnChooseAction(iparty, targetObject);
         if (iparty is CharacterParty) {
-            Character arguer = iparty.mainCharacter as Character;
+            Character arguer = iparty.mainCharacter;
             arguer.SetDoNotDisturb(true);
         }
     }
@@ -29,7 +29,7 @@ public class ArgueAction : CharacterAction {
             ICharacterObject icharacterObject = targetObject as ICharacterObject;
             if (icharacterObject.iparty is CharacterParty) {
                 CharacterParty targetParty = icharacterObject.iparty as CharacterParty;
-                Character targetCharacter = targetParty.mainCharacter as Character;
+                Character targetCharacter = targetParty.mainCharacter;
                 if (targetParty.actionData.currentAction == null) {
                     ArgueAction actionToAssign = targetParty.mainCharacter.GetMiscAction(_actionData.actionType) as ArgueAction;
                     targetParty.actionData.AssignAction(actionToAssign, party.icharacterObject);
@@ -65,13 +65,13 @@ public class ArgueAction : CharacterAction {
         }
     }
     public override IObject GetTargetObject(CharacterParty sourceParty) {
-        Character mainCharacter = sourceParty.mainCharacter as Character;
+        Character mainCharacter = sourceParty.mainCharacter;
         if (mainCharacter.GetAttribute(ATTRIBUTE.INTROVERT) == null && mainCharacter.GetAttribute(ATTRIBUTE.BELLIGERENT) != null) {
             List<CharacterParty> targetCandidates = new List<CharacterParty>();
             for (int i = 0; i < mainCharacter.specificLocation.charactersAtLocation.Count; i++) {
                 Party targetParty = mainCharacter.specificLocation.charactersAtLocation[i];
                 if (targetParty != sourceParty && targetParty is CharacterParty) {
-                    Character targetMainCharacter = targetParty.mainCharacter as Character;
+                    Character targetMainCharacter = targetParty.mainCharacter;
                     //if (targetMainCharacter.doNotDisturb || targetParty.icon.isTravelling) {
                     //    continue;
                     //}
@@ -95,14 +95,14 @@ public class ArgueAction : CharacterAction {
         if (characterParty.actionData.isDone) {
             return;
         }
-        Character arguer = characterParty.mainCharacter as Character;
+        Character arguer = characterParty.mainCharacter;
         arguer.SetDoNotDisturb(false);
 
         if (targetObject is ICharacterObject) {
             ICharacterObject icharacterObject = targetObject as ICharacterObject;
             if (icharacterObject.iparty is CharacterParty) {
                 CharacterParty targetParty = icharacterObject.iparty as CharacterParty;
-                Character targetCharacter = targetParty.mainCharacter as Character;
+                Character targetCharacter = targetParty.mainCharacter;
                 targetCharacter.SetDoNotDisturb(false);
             }
         }

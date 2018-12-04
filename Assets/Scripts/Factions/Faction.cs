@@ -6,7 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using ECS;
+
 
 public class Faction {
 	protected int _id;
@@ -18,7 +18,7 @@ public class Faction {
     protected List<Region> _ownedRegions;
     protected List<BaseLandmark> _ownedLandmarks;
     internal Color factionColor;
-    protected List<ECS.Character> _characters; //List of characters that are part of the faction
+    protected List<Character> _characters; //List of characters that are part of the faction
     protected Dictionary<Faction, FactionRelationship> _relationships;
     protected List<BaseLandmark> _landmarkInfo;
     protected List<Area> _ownedAreas;
@@ -56,7 +56,7 @@ public class Faction {
     public Sprite emblem {
         get { return _emblem; }
     }
-    public List<ECS.Character> characters {
+    public List<Character> characters {
         get { return _characters; }
     }
     public List<Region> ownedRegions {
@@ -86,7 +86,7 @@ public class Faction {
         SetFactionColor (Utilities.GetColorForFaction());
         SetRace(new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL));
         SetMorality(MORALITY.GOOD);
-        _characters = new List<ECS.Character>();
+        _characters = new List<Character>();
         _ownedLandmarks = new List<BaseLandmark>();
         _ownedRegions = new List<Region>();
         _relationships = new Dictionary<Faction, FactionRelationship>();
@@ -108,7 +108,7 @@ public class Faction {
         SetEmblem(FactionManager.Instance.GetFactionEmblem(data.emblemIndex));
         SetMorality(data.morality);
         SetRace(data.race);
-        _characters = new List<ECS.Character>();
+        _characters = new List<Character>();
         _ownedLandmarks = new List<BaseLandmark>();
         _ownedRegions = new List<Region>();
         _relationships = new Dictionary<Faction, FactionRelationship>();
@@ -128,8 +128,8 @@ public class Faction {
     }
 
     private void AddListeners() {
-        Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveCharacter);
-        Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<Character>(Signals.CHARACTER_REMOVED, RemoveCharacter);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
     }
     public void SetRace(Race race) {
         _race = race;
@@ -174,14 +174,14 @@ public class Faction {
     #endregion
 
     #region Characters
-    public void AddNewCharacter(ECS.Character character) {
+    public void AddNewCharacter(Character character) {
         if (!_characters.Contains(character)) {
             _characters.Add(character);
             character.SetFaction(this);
             Messenger.Broadcast(Signals.CHARACTER_ADDED_TO_FACTION, character, this);
         }
     }
-    public void RemoveCharacter(ECS.Character character) {
+    public void RemoveCharacter(Character character) {
         if (_characters.Remove(character)) {
             character.SetFaction(null);
             Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_FACTION, character, this);
@@ -190,10 +190,10 @@ public class Faction {
         //    SetLeader(null);
         //}
     }
-    public List<ECS.Character> GetCharactersOfType(CHARACTER_ROLE role) {
-        List<ECS.Character> chars = new List<ECS.Character>();
+    public List<Character> GetCharactersOfType(CHARACTER_ROLE role) {
+        List<Character> chars = new List<Character>();
         for (int i = 0; i < _characters.Count; i++) {
-            ECS.Character currCharacter = _characters[i];
+            Character currCharacter = _characters[i];
             if(currCharacter.role.roleType == role) {
                 chars.Add(currCharacter);
             }
@@ -212,7 +212,7 @@ public class Faction {
     public void SetDescription(string description) {
         _description = description;
     }
-    public ECS.Character GetCharacterByID(int id) {
+    public Character GetCharacterByID(int id) {
         for (int i = 0; i < _characters.Count; i++) {
             if (_characters[i].id == id) {
                 return _characters[i];

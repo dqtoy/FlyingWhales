@@ -36,7 +36,7 @@ public class QuestManager : MonoBehaviour {
     //    Quest createdQuest = null;
     //    switch (questType) {
     //        case QUEST_TYPE.RELEASE_CHARACTER:
-    //            createdQuest = new ReleaseCharacterQuest(data as ECS.Character);
+    //            createdQuest = new ReleaseCharacterQuest(data as Character);
     //            break;
     //        case QUEST_TYPE.BUILD_STRUCTURE:
     //            createdQuest = new BuildStructureQuest()
@@ -60,26 +60,26 @@ public class QuestManager : MonoBehaviour {
     //    availableQuests[quest.questType].Remove(quest);
     //}
     
-    //public void TakeQuest(QUEST_TYPE type, ECS.Character questTaker, object data = null) {
+    //public void TakeQuest(QUEST_TYPE type, Character questTaker, object data = null) {
     //    //CharacterQuestData questData = ConstructQuestData(type, questTaker, data);
     //    //questTaker.AddQuestData(questData);
     //    //questTaker.OnTakeQuest(questData.parentQuest);
     //}
-    //public void TakeQuest(Quest quest, ECS.Character questTaker, object data = null) {
+    //public void TakeQuest(Quest quest, Character questTaker, object data = null) {
     //    //CharacterQuestData questData = ConstructQuestData(quest, questTaker, data);
     //    //questTaker.AddQuestData(questData);
     //    questTaker.OnTakeQuest(quest);
     //}
 
-    //private CharacterQuestData ConstructQuestData(QUEST_TYPE type, ECS.Character questTaker, object data) {
+    //private CharacterQuestData ConstructQuestData(QUEST_TYPE type, Character questTaker, object data) {
     //    Quest quest = (GetQuest(type, data));
     //    return ConstructQuestData(quest, questTaker, data);
     //}
-    //private CharacterQuestData ConstructQuestData(Quest quest, ECS.Character questTaker, object data) {
+    //private CharacterQuestData ConstructQuestData(Quest quest, Character questTaker, object data) {
     //    if (quest != null) {
     //        switch (quest.questType) {
     //            //case QUEST_TYPE.RELEASE_CHARACTER:
-    //            //    return new ReleaseCharacterQuestData(quest, questTaker, data as ECS.Character);
+    //            //    return new ReleaseCharacterQuestData(quest, questTaker, data as Character);
     //            //case QUEST_TYPE.BUILD_STRUCTURE:
     //            //    return new BuildStructureQuestData(quest, questTaker);
     //            default:
@@ -102,7 +102,7 @@ public class QuestManager : MonoBehaviour {
     //    return null;
     //}
 
-    //public CharacterAction GetNextQuestAction(QUEST_TYPE type, ECS.Character character, CharacterQuestData data) {
+    //public CharacterAction GetNextQuestAction(QUEST_TYPE type, Character character, CharacterQuestData data) {
     //    if (availableQuests.ContainsKey(type)) {
     //        Quest quest = availableQuests[type];
     //        return quest.GetQuestAction(character, data);

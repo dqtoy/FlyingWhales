@@ -14,7 +14,7 @@ public class CharacterFilter {
         this.allowedClasses = allowedClasses;
     }
 
-    public bool MeetsRequirements(ECS.Character character) {
+    public bool MeetsRequirements(Character character) {
         if(requiredFaction != null) {
             if (character.faction != requiredFaction) {
                 return false;

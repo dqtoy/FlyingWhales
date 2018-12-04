@@ -24,7 +24,7 @@ public class SquadSaveData {
 
         memberIDs = new Dictionary<int, ICHARACTER_TYPE>();
         for (int i = 0; i < squad.squadMembers.Count; i++) {
-            ICharacter currMember = squad.squadMembers[i];
+            Character currMember = squad.squadMembers[i];
             memberIDs.Add(currMember.id, currMember.icharacterType);
         }
 

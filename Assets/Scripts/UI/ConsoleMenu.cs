@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Linq;
-using ECS;
+
 using TMPro;
 using UnityEngine.UI;
 
@@ -282,7 +282,7 @@ public class ConsoleMenu : UIMenu {
 
     //     if (isQuestParameterNumeric && isCharacterParameterNumeric) {
     //         OldQuest.Quest quest = FactionManager.Instance.GetQuestByID(questID);
-    //         ECS.Character character = CharacterManager.Instance.GetCharacterByID(characterID);
+    //         Character character = CharacterManager.Instance.GetCharacterByID(characterID);
 
     //         if(character.currentTask != null) {
     //             character.SetTaskToDoNext(quest);
@@ -341,7 +341,7 @@ public class ConsoleMenu : UIMenu {
 
         bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
 
-        ECS.Character character = null;
+        Character character = null;
 
         if (isCharacterParameterNumeric) {
             character = CharacterManager.Instance.GetCharacterByID(characterID);
@@ -372,7 +372,7 @@ public class ConsoleMenu : UIMenu {
     //    bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
     //    bool isGoldParameterNumeric = int.TryParse(goldAdjustmentParamterString, out goldAdjustment);
     //    if (isCharacterParameterNumeric && isGoldParameterNumeric) {
-    //        ECS.Character character = CharacterManager.Instance.GetCharacterByID(characterID);
+    //        Character character = CharacterManager.Instance.GetCharacterByID(characterID);
     //        character.AdjustGold(goldAdjustment);
     //        AddSuccessMessage(character.name + "'s gold was adjusted by " + goldAdjustment.ToString() + ". New gold is " + character.gold.ToString());
     //    } else {
@@ -394,7 +394,7 @@ public class ConsoleMenu : UIMenu {
         int characterID;
 
         bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
-        ECS.Character character = null;
+        Character character = null;
         if (isCharacterParameterNumeric) {
             character = CharacterManager.Instance.GetCharacterByID(characterID);
         } else {
@@ -427,7 +427,7 @@ public class ConsoleMenu : UIMenu {
         int characterID;
 
         bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
-        ECS.Character character = null;
+        Character character = null;
         if (isCharacterParameterNumeric) {
             character = CharacterManager.Instance.GetCharacterByID(characterID);
         } else {
@@ -460,7 +460,7 @@ public class ConsoleMenu : UIMenu {
         int characterID;
 
         bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
-        ECS.Character character = null;
+        Character character = null;
         if (isCharacterParameterNumeric) {
             character = CharacterManager.Instance.GetCharacterByID(characterID);
         } else {
@@ -484,7 +484,7 @@ public class ConsoleMenu : UIMenu {
         int characterID;
 
         bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
-        ECS.Character character = null;
+        Character character = null;
         if (isCharacterParameterNumeric) {
             character = CharacterManager.Instance.GetCharacterByID(characterID);
         } else {
@@ -519,7 +519,7 @@ public class ConsoleMenu : UIMenu {
         characterParameterString = characterParameterString.Trim();
 
         bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
-        ECS.Character character;
+        Character character;
         if (isCharacterParameterNumeric) {
             character = CharacterManager.Instance.GetCharacterByID(characterID);
         } else {
@@ -551,7 +551,7 @@ public class ConsoleMenu : UIMenu {
         characterParameterString = characterParameterString.Trim();
 
         bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
-        ECS.Character character;
+        Character character;
         if (isCharacterParameterNumeric) {
             character = CharacterManager.Instance.GetCharacterByID(characterID);
         } else {
@@ -584,7 +584,7 @@ public class ConsoleMenu : UIMenu {
         int intelID;
 
         bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
-        ECS.Character character = null;
+        Character character = null;
         if (isCharacterParameterNumeric) {
             character = CharacterManager.Instance.GetCharacterByID(characterID);
         } else {
@@ -619,7 +619,7 @@ public class ConsoleMenu : UIMenu {
         int characterID;
 
         bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
-        ECS.Character character = null;
+        Character character = null;
         if (isCharacterParameterNumeric) {
             character = CharacterManager.Instance.GetCharacterByID(characterID);
         } else {
@@ -826,7 +826,7 @@ public class ConsoleMenu : UIMenu {
         int characterID;
 
         bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
-        ECS.Character character = null;
+        Character character = null;
         if (isCharacterParameterNumeric) {
             character = CharacterManager.Instance.GetCharacterByID(characterID);
         } else {

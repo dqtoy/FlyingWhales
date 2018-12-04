@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using UnityEngine;
-using ECS;
 
-public class Party : IParty {
+
+public class Party {
     public delegate void DailyAction();
     public DailyAction onDailyAction;
 
@@ -15,14 +15,14 @@ public class Party : IParty {
     protected bool _isDead;
     protected bool _isAttacking;
     protected bool _isDefending;
-    protected List<ICharacter> _icharacters;
+    protected List<Character> _characters;
     protected Region _currentRegion;
     protected CharacterAvatar _icon;
     protected Faction _attackedByFaction;
     protected Combat _currentCombat;
     protected ILocation _specificLocation;
     protected ICharacterObject _icharacterObject;
-    protected ICharacter _owner;
+    protected Character _owner;
     protected List<Buff> _partyBuffs;
     protected int _maxCharacters;
 
@@ -43,7 +43,7 @@ public class Party : IParty {
     }
     public virtual string name {
         get {
-            if (icharacters.Count > 1) {
+            if (characters.Count > 1) {
                 return _partyName;
             } else {
                 return mainCharacter.name;
@@ -52,7 +52,7 @@ public class Party : IParty {
     }
     public string urlName {
         get {
-            if (_icharacters.Count == 1) {
+            if (_characters.Count == 1) {
                 return "<link=" + '"' + mainCharacter.id.ToString() + "_character" + '"' + ">" + name + "</link>";
             } else {
                 return "<link=" + '"' + this._id.ToString() + "_party" + '"' + ">" + name + "</link>";
@@ -63,7 +63,7 @@ public class Party : IParty {
         get { return "<link=" + '"' + this._id.ToString() + "_party" + '"' + ">" + "<color=#000000>" + name + "</color></link>"; }
     }
     public float computedPower {
-        get { return _icharacters.Sum(x => x.computedPower); }
+        get { return _characters.Sum(x => x.computedPower); }
     }
     public bool isDead {
         get { return _isDead; }
@@ -75,10 +75,10 @@ public class Party : IParty {
         get { return _isDefending; }
     }
     public MODE currentMode {
-        get { return _icharacters[0].currentMode; }
+        get { return _characters[0].currentMode; }
     }
-    public List<ICharacter> icharacters {
-        get { return _icharacters; }
+    public List<Character> characters {
+        get { return _characters; }
     }
     public Faction attackedByFaction {
         get { return _attackedByFaction; }
@@ -111,19 +111,19 @@ public class Party : IParty {
     public BaseLandmark homeLandmark {
         get { return mainCharacter.homeLandmark; }
     }
-    public ICharacter mainCharacter {
-        get { return _icharacters[0]; }
+    public Character mainCharacter {
+        get { return _characters[0]; }
     }
     public ICharacterObject icharacterObject {
         get { return _icharacterObject; }
     }
     public ILocation specificLocation {
-        get { return GetSpecificLocation(); }
+        get { return _specificLocation; }
     }
     //public List<CharacterQuestData> questData {
     //    get { return GetQuestData(); }
     //}
-    public virtual ICharacter owner {
+    public virtual Character owner {
         get { return _owner; }
     }
     public virtual CharacterAction currentAction {
@@ -137,7 +137,7 @@ public class Party : IParty {
     }
     public COMBATANT_TYPE combatantType {
         get {
-            if (icharacters.Count > 1) {
+            if (characters.Count > 1) {
                 return COMBATANT_TYPE.ARMY; //if the party consists of 2 or more characters, it is considered an army
             } else {
                 return COMBATANT_TYPE.CHARACTER;
@@ -148,18 +148,18 @@ public class Party : IParty {
         get { return _maxCharacters; }
     }
     public bool isFull {
-        get { return icharacters.Count >= maxCharacters; }
+        get { return characters.Count >= maxCharacters; }
     }
     #endregion
 
-    public Party(ICharacter owner) {
+    public Party(Character owner) {
         _owner = owner;
         if (owner != null) {
             _partyName = owner.name + "'s Party";
         }
         _id = Utilities.SetID(this);
         _isDead = false;
-        _icharacters = new List<ICharacter>();
+        _characters = new List<Character>();
         _partyBuffs = new List<Buff>();
         SetEmblemSettings(CharacterManager.Instance.GetRandomEmblemBG(),
                             CharacterManager.Instance.GetRandomEmblem(),
@@ -212,76 +212,46 @@ public class Party : IParty {
     #endregion
 
     #region Interface
-    //public void AdvertiseSelf(ActionThread actionThread) {
-    //    actionThread.AddToChoices(_icharacterObject);
-    //}
-    private ILocation GetSpecificLocation() {
-        return _specificLocation;
-        //if (_specificLocation != null) {
-        //    return _specificLocation;
-        //} else {
-        //    if (_icon != null) {
-        //        Collider2D collide = Physics2D.OverlapCircle(icon.aiPath.transform.position, 0.1f, LayerMask.GetMask("Hextiles"));
-        //        //Collider[] collide = Physics.OverlapSphere(icon.aiPath.transform.position, 5f);
-        //        HexTile tile = collide.gameObject.GetComponent<HexTile>();
-        //        if (tile != null) {
-        //            return tile;
-        //        } else {
-        //            LandmarkVisual landmarkObject = collide.gameObject.GetComponent<LandmarkVisual>();
-        //            if (landmarkObject != null) {
-        //                return landmarkObject.landmark.tileLocation;
-        //            }
-        //        }
-        //    }
-        //    return null;
-        //}
-    }
     public void SetSpecificLocation(ILocation location) {
         _specificLocation = location;
         if (_specificLocation != null) {
             _currentRegion = _specificLocation.tileLocation.region;
         }
     }
-    public bool AddCharacter(ICharacter icharacter) {
-        if (!isFull && !_icharacters.Contains(icharacter)) {
-            _icharacters.Add(icharacter);
-            icharacter.SetCurrentParty(this);
-            icharacter.OnAddedToParty();
-            ApplyCurrentBuffsToCharacter(icharacter);
-            if (icharacter is ECS.Character) {
-                Messenger.Broadcast(Signals.CHARACTER_JOINED_PARTY, icharacter, this);
-            }
+    public bool AddCharacter(Character character) {
+        if (!isFull && !_characters.Contains(character)) {
+            _characters.Add(character);
+            character.SetCurrentParty(this);
+            character.OnAddedToParty();
+            ApplyCurrentBuffsToCharacter(character);
+            Messenger.Broadcast(Signals.CHARACTER_JOINED_PARTY, character, this);
             return true;
         }
         return false;
     }
-    public void RemoveCharacter(ICharacter icharacter) {
+    public void RemoveCharacter(Character character) {
         //bool isCharacterMain = false;
         //if(mainCharacter == icharacter) {
         //    isCharacterMain = true;
         //}
-        if(_owner == icharacter) {
+        if(_owner == character) {
             return;
         }
-        if (_icharacters.Remove(icharacter)) {
-            icharacter.OnRemovedFromParty();
-            RemoveCurrentBuffsFromCharacter(icharacter);
-            icharacter.ownParty.icon.transform.position = this.specificLocation.tileLocation.transform.position;
+        if (_characters.Remove(character)) {
+            character.OnRemovedFromParty();
+            RemoveCurrentBuffsFromCharacter(character);
+            character.ownParty.icon.transform.position = this.specificLocation.tileLocation.transform.position;
             if (this.specificLocation is BaseLandmark) {
-                this.specificLocation.AddCharacterToLocation(icharacter.ownParty);
+                this.specificLocation.AddCharacterToLocation(character.ownParty);
             } else {
                 //icharacter.ownParty.icon.SetAIPathPosition(this.specificLocation.tileLocation.transform.position);
-                icharacter.ownParty.SetSpecificLocation(this.specificLocation);
+                character.ownParty.SetSpecificLocation(this.specificLocation);
                 //icharacter.ownParty.icon.SetVisualState(true);
             }
-            if (icharacter is ECS.Character) {
-                Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, icharacter, this);
-                //if (isCharacterMain) {
-                //    icharacter.ownParty.icon.SetAnimator(CharacterManager.Instance.GetAnimatorByRole(mainCharacter.role.roleType));
-                //}
-            }
+            Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
+
             //Check if there are still characters in this party, if not, change to dead state
-            if (_icharacters.Count <= 0) {
+            if (_characters.Count <= 0) {
                 PartyDeath();
             }
         }
@@ -293,8 +263,8 @@ public class Party : IParty {
 
     #region Quests
     //private List<CharacterQuestData> GetQuestData() {
-    //    if (_icharacters.Count > 0 && mainCharacter is ECS.Character) {
-    //        return (mainCharacter as ECS.Character).questData;
+    //    if (_icharacters.Count > 0 && mainCharacter is Character) {
+    //        return (mainCharacter as Character).questData;
     //    }
     //    return null;
     //}
@@ -309,7 +279,7 @@ public class Party : IParty {
         this.emblem = emblem;
         this.partyColor = partyColor;
     }
-    public void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null, ICharacter trackTarget = null, Action actionOnStartOfMovement = null) {
+    public void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null, Character trackTarget = null, Action actionOnStartOfMovement = null) {
         //if (_icon.isMovingToHex) {
         //    _icon.SetQueuedAction(() => GoToLocation(targetLocation, pathfindingMode, doneAction, trackTarget, actionOnStartOfMovement));
         //    return;
@@ -341,8 +311,8 @@ public class Party : IParty {
         return this;
     }
     public bool IsPartyBeingInspected() {
-        for (int i = 0; i < _icharacters.Count; i++) {
-            if (_icharacters[i].isBeingInspected) {
+        for (int i = 0; i < _characters.Count; i++) {
+            if (_characters[i].isBeingInspected) {
                 return true;
             }
         }
@@ -383,11 +353,11 @@ public class Party : IParty {
         combatLog.AddToFillers(null, " fought with ", LOG_IDENTIFIER.COMBAT);
         combatLog.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        for (int i = 0; i < enemy.icharacters.Count; i++) {
-            enemy.icharacters[i].AddHistory(combatLog);
+        for (int i = 0; i < enemy.characters.Count; i++) {
+            enemy.characters[i].AddHistory(combatLog);
         }
-        for (int i = 0; i < this.icharacters.Count; i++) {
-            this.icharacters[i].AddHistory(combatLog);
+        for (int i = 0; i < this.characters.Count; i++) {
+            this.characters[i].AddHistory(combatLog);
         }
         return combat;
     }
@@ -408,11 +378,11 @@ public class Party : IParty {
             combatLog.AddToFillers(friend.currentCombat, " joins battle of ", LOG_IDENTIFIER.COMBAT);
             combatLog.AddToFillers(friend, friend.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-            for (int i = 0; i < this.icharacters.Count; i++) {
-                this.icharacters[i].AddHistory(combatLog);
+            for (int i = 0; i < this.characters.Count; i++) {
+                this.characters[i].AddHistory(combatLog);
             }
-            for (int i = 0; i < friend.icharacters.Count; i++) {
-                friend.icharacters[i].AddHistory(combatLog);
+            for (int i = 0; i < friend.characters.Count; i++) {
+                friend.characters[i].AddHistory(combatLog);
             }
         }
     }
@@ -421,36 +391,36 @@ public class Party : IParty {
     #region Buffs
     public void AddBuff(Buff buff) {
         _partyBuffs.Add(buff);
-        ApplyBuffToPartyMembers(icharacters, buff);
+        ApplyBuffToPartyMembers(characters, buff);
     }
     public void RemoveBuff(Buff buff) {
         if (_partyBuffs.Contains(buff)) {
             _partyBuffs.Remove(buff);
-            RemoveBuffFromPartyMembers(icharacters, buff);
+            RemoveBuffFromPartyMembers(characters, buff);
         }
     }
-    private void ApplyBuffToPartyMembers(List<ICharacter> characters, Buff buff) {
+    private void ApplyBuffToPartyMembers(List<Character> characters, Buff buff) {
         for (int i = 0; i < characters.Count; i++) {
             ApplyBuffToPartyMember(characters[i], buff);
         }
     }
-    private void ApplyBuffToPartyMember(ICharacter member, Buff buff) {
+    private void ApplyBuffToPartyMember(Character member, Buff buff) {
         member.AddBuff(buff);
     }
-    private void RemoveBuffFromPartyMembers(List<ICharacter> characters, Buff buff) {
+    private void RemoveBuffFromPartyMembers(List<Character> characters, Buff buff) {
         for (int i = 0; i < characters.Count; i++) {
             RemoveBuffFromPartyMember(characters[i], buff);
         }
     }
-    private void RemoveBuffFromPartyMember(ICharacter member, Buff buff) {
+    private void RemoveBuffFromPartyMember(Character member, Buff buff) {
         member.RemoveBuff(buff);
     }
-    private void ApplyCurrentBuffsToCharacter(ICharacter character) {
+    private void ApplyCurrentBuffsToCharacter(Character character) {
         for (int i = 0; i < _partyBuffs.Count; i++) {
             ApplyBuffToPartyMember(character, _partyBuffs[i]);
         }
     }
-    private void RemoveCurrentBuffsFromCharacter(ICharacter character) {
+    private void RemoveCurrentBuffsFromCharacter(Character character) {
         for (int i = 0; i < _partyBuffs.Count; i++) {
             RemoveBuffFromPartyMember(character, _partyBuffs[i]);
         }

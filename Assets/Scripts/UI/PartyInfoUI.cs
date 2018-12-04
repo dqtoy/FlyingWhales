@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine.UI;
 
+
 public class PartyInfoUI : UIMenu {
 
     [Space(10)]
@@ -72,7 +73,7 @@ public class PartyInfoUI : UIMenu {
     private void UpdatePartyCharacters() {
         for (int i = 0; i < partySlots.Length; i++) {
             SlotItem currItem = partySlots[i];
-            ICharacter character = currentlyShowingParty.icharacters.ElementAtOrDefault(i);
+            Character character = currentlyShowingParty.characters.ElementAtOrDefault(i);
             if (character == null) {
                 currItem.ClearSlot(true);
             } else {
@@ -212,12 +213,12 @@ public class PartyInfoUI : UIMenu {
     }
     private void OnItemDroppedOnSlot(object obj, int slotIndex) {
         //Debug.Log(obj.ToString() + " dropped at slot " + slotIndex);
-        ICharacter characterToAdd = null;
+        Character characterToAdd = null;
         SlotItem item = partySlots[slotIndex];
         if (obj is Minion) {
-            characterToAdd = (obj as Minion).icharacter;
-        } else if (obj is ICharacter) {
-            characterToAdd = obj as ICharacter;
+            characterToAdd = (obj as Minion).character;
+        } else if (obj is Character) {
+            characterToAdd = obj as Character;
         } else {
             //dragged item was invalid
             item.ClearSlot(true);
@@ -253,18 +254,18 @@ public class PartyInfoUI : UIMenu {
         Debug.Log(obj.ToString() + " dropped out of slot " + slotIndex);
         SlotItem item = partySlots[slotIndex];
         if (obj is Minion) {
-            partyHolder.RemoveCharacter((obj as Minion).icharacter);
-        } else if (obj is ICharacter) {
-            partyHolder.RemoveCharacter(obj as ICharacter);
+            partyHolder.RemoveCharacter((obj as Minion).character);
+        } else if (obj is Character) {
+            partyHolder.RemoveCharacter(obj as Character);
         }
         item.ClearSlot(true);
         OnChangesMade();
     }
     public void OnClickSave() {
         if (currentlyShowingParty != null) {
-            List<ICharacter> charactersToRemove = new List<ICharacter>();
-            for (int i = 0; i < currentlyShowingParty.icharacters.Count; i++) {
-                ICharacter currCharacter = currentlyShowingParty.icharacters[i];
+            List<Character> charactersToRemove = new List<Character>();
+            for (int i = 0; i < currentlyShowingParty.characters.Count; i++) {
+                Character currCharacter = currentlyShowingParty.characters[i];
                 if (!partyHolder.characters.Contains(currCharacter)) {
                     charactersToRemove.Add(currCharacter);
                 }
@@ -272,7 +273,7 @@ public class PartyInfoUI : UIMenu {
             if (charactersToRemove.Contains(currentlyShowingParty.owner)) {
                 //the party owner was removed from the party
                 //remove all other characters instead
-                charactersToRemove = new List<ICharacter>(currentlyShowingParty.icharacters);
+                charactersToRemove = new List<Character>(currentlyShowingParty.characters);
                 charactersToRemove.Remove(currentlyShowingParty.owner);
             }
             for (int i = 0; i < charactersToRemove.Count; i++) {
@@ -285,7 +286,7 @@ public class PartyInfoUI : UIMenu {
         partyToUse.SetPartyName(partyHolder.name);
         partyToUse.SetEmblemSettings(partyHolder.emblemBG, partyHolder.emblem, partyHolder.partyColor);
         for (int i = 1; i < partyHolder.characters.Count; i++) {
-            ICharacter currCharacter = partyHolder.characters[i];
+            Character currCharacter = partyHolder.characters[i];
             partyToUse.AddCharacter(currCharacter);
         }
         SetData(partyToUse);
@@ -296,15 +297,15 @@ public class PartyInfoUI : UIMenu {
         partyHolder.SetName(name);
     }
     private bool HasSameCharacters(Party party, PartyHolder other) {
-        for (int i = 0; i < party.icharacters.Count; i++) {
-            ICharacter partyCharacter = party.icharacters[i];
+        for (int i = 0; i < party.characters.Count; i++) {
+            Character partyCharacter = party.characters[i];
             if (!other.characters.Contains(partyCharacter)) {
                 return false;
             }
         }
         for (int i = 0; i < other.characters.Count; i++) {
-            ICharacter otherPartyCharacter = other.characters[i];
-            if (!party.icharacters.Contains(otherPartyCharacter)) {
+            Character otherPartyCharacter = other.characters[i];
+            if (!party.characters.Contains(otherPartyCharacter)) {
                 return false;
             }
         }
@@ -314,8 +315,8 @@ public class PartyInfoUI : UIMenu {
         partyHolder.characters.Clear();
         partyHolder.SetEmblemSettings(party.emblemBG, party.emblem, party.partyColor);
         partyHolder.SetName(party.partyName);
-        for (int i = 0; i < party.icharacters.Count; i++) {
-            partyHolder.AddCharacter(party.icharacters[i]);
+        for (int i = 0; i < party.characters.Count; i++) {
+            partyHolder.AddCharacter(party.characters[i]);
         }
     }
     #endregion
@@ -325,14 +326,14 @@ public class PartyInfoUI : UIMenu {
 public class PartyHolder {
 
     public string name { get; private set; }
-    public List<ICharacter> characters { get; private set; }
+    public List<Character> characters { get; private set; }
     public EmblemBG emblemBG { get; private set; }
     public Sprite emblem { get; private set; }
     public Color partyColor { get; private set; }
 
     public PartyHolder() {
         name = string.Empty;
-        characters = new List<ICharacter>();
+        characters = new List<Character>();
         SetEmblemSettings(CharacterManager.Instance.GetRandomEmblemBG(), 
             CharacterManager.Instance.GetRandomEmblem(), 
             UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f));
@@ -346,12 +347,12 @@ public class PartyHolder {
         this.emblem = emblem;
         this.partyColor = partyColor;
     }
-    public void AddCharacter(ICharacter character) {
+    public void AddCharacter(Character character) {
         if (!characters.Contains(character)) {
             characters.Add(character);
         }
     }
-    public void RemoveCharacter(ICharacter character) {
+    public void RemoveCharacter(Character character) {
         characters.Remove(character);
     }
 }

@@ -1,4 +1,4 @@
-﻿using ECS;
+﻿
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +30,7 @@ public class CharacterUIData {
         relationships = new List<Relationship>();
     }
 
-    public void UpdateData(ICharacter character) {
+    public void UpdateData(Character character) {
         level = character.level;
         if (character.characterClass != null) {
             className = character.characterClass.className;

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public class GoHomeAction : CharacterAction {
     public GoHomeAction() : base(ACTION_TYPE.GO_HOME) {

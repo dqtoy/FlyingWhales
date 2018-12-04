@@ -22,7 +22,7 @@ public class SlotItemDraggableItem : DraggableItem {
             FactionEmblem emblem = slot.factionEmblem;
             original = emblem.gameObject;
             clone = (GameObject)Instantiate(emblem.gameObject);
-        } else if (slot.placedObject is Minion || slot.placedObject is ICharacter) {
+        } else if (slot.placedObject is Minion || slot.placedObject is Character) {
             CharacterPortrait portrait = slot.portrait;
             original = portrait.gameObject;
             clone = (GameObject)Instantiate(portrait.gameObject);

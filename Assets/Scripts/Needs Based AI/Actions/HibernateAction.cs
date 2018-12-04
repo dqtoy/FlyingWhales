@@ -11,10 +11,10 @@ public class HibernateAction : CharacterAction {
     #region Overrides
     public override void OnFirstEncounter(Party party, IObject targetObject) {
         base.OnFirstEncounter(party, targetObject);
-        for (int i = 0; i < party.icharacters.Count; i++) {
-            Monster monster = party.icharacters[i] as Monster;
-            monster.SetSleeping(true);
-        }
+        //for (int i = 0; i < party.characters.Count; i++) {
+        //    Monster monster = party.characters[i] as Monster;
+        //    monster.SetSleeping(true);
+        //}
     }
     public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
@@ -25,10 +25,10 @@ public class HibernateAction : CharacterAction {
     }
     public override void EndAction(Party party, IObject targetObject) {
         base.EndAction(party, targetObject);
-        for (int i = 0; i < party.icharacters.Count; i++) {
-            Monster monster = party.icharacters[i] as Monster;
-            monster.SetSleeping(false);
-        }
+        //for (int i = 0; i < party.characters.Count; i++) {
+        //    Monster monster = party.characters[i] as Monster;
+        //    monster.SetSleeping(false);
+        //}
     }
     public override CharacterAction Clone() {
         HibernateAction action = new HibernateAction();

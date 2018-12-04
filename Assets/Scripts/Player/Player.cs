@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using ECS;
+
 using UnityEngine;
 using System.Linq;
 
@@ -29,7 +29,7 @@ public class Player : ILeader {
     private List<Minion> _minions;
     private Dictionary<CURRENCY, int> _currencies;
 
-    public List<ICharacter> otherCharacters;
+    public List<Character> otherCharacters;
 
     //#region getters/setters
     //public Area playerArea {
@@ -94,10 +94,10 @@ public class Player : ILeader {
     public Player() {
         playerArea = null;
         snatchCredits = 0;
-        _snatchedCharacters = new List<ECS.Character>();
+        _snatchedCharacters = new List<Character>();
         _intels = new List<Intel>();
         _items = new List<Item>();
-        otherCharacters = new List<ICharacter>();
+        otherCharacters = new List<Character>();
         //_maxMinions = PlayerUI.Instance.minionItems.Count;
         maxImps = 5;
         SetCurrentLifestoneChance(25f);
@@ -172,7 +172,7 @@ public class Player : ILeader {
         snatchCredits += adjustment;
         snatchCredits = Mathf.Max(0, snatchCredits);
     }
-    public void SnatchCharacter(ECS.Character character) {
+    public void SnatchCharacter(Character character) {
         AdjustSnatchCredits(-1);
         //check for success
         if (IsSnatchSuccess(character)) {
@@ -191,7 +191,7 @@ public class Player : ILeader {
         }
         
     }
-    private bool IsSnatchSuccess(ECS.Character character) {
+    private bool IsSnatchSuccess(Character character) {
         return true;
         if (character.role == null) {
             return true;
@@ -217,7 +217,7 @@ public class Player : ILeader {
         }
         return false;
     }
-    public bool IsCharacterSnatched(ECS.Character character) {
+    public bool IsCharacterSnatched(Character character) {
         return _snatchedCharacters.Contains(character);
     }
     public BaseLandmark GetAvailableSnatcherLair() {
@@ -233,7 +233,7 @@ public class Player : ILeader {
     }
     public bool HasSnatchedCharacter(BaseLandmark landmark) {
         for (int i = 0; i < _snatchedCharacters.Count; i++) {
-            ECS.Character currCharacter = _snatchedCharacters[i];
+            Character currCharacter = _snatchedCharacters[i];
             if (landmark.charactersAtLocation.Contains(currCharacter.party)) {
                 return true;
             }
@@ -357,7 +357,7 @@ public class Player : ILeader {
         PlayerUI.Instance.minionsScrollRect.verticalNormalizedPosition = 1f;
         PlayerUI.Instance.OnStartMinionUI();
     }
-    public Minion CreateNewMinion(ICharacter character) {
+    public Minion CreateNewMinion(Character character) {
         return new Minion(character);
     }
     public Minion CreateNewMinion(string className, RACE race, bool isArmy) {
@@ -398,7 +398,7 @@ public class Player : ILeader {
         UpdateMinions();
     }
     public void SortByType() {
-        _minions = _minions.OrderBy(x => x.icharacter.characterClass.className).ToList();
+        _minions = _minions.OrderBy(x => x.character.characterClass.className).ToList();
         //for (int i = 0; i < PlayerUI.Instance.minionItems.Length; i++) {
         //    MinionItem minionItem = PlayerUI.Instance.minionItems[i];
         //    if (i < _minions.Count) {
@@ -417,7 +417,7 @@ public class Player : ILeader {
         minion.SetIndexDefaultSort(_minions.Count);
         //MinionItem minionItem = PlayerUI.Instance.minionItems[_minions.Count];
         PlayerCharacterItem item = PlayerUI.Instance.CreateMinionItem();
-        item.SetCharacter(minion.icharacter);
+        item.SetCharacter(minion.character);
 
         if (PlayerUI.Instance.minionSortType == MINIONS_SORT_TYPE.LEVEL) {
             for (int i = 0; i < _minions.Count; i++) {
@@ -428,9 +428,9 @@ public class Player : ILeader {
                 }
             }
         } else if (PlayerUI.Instance.minionSortType == MINIONS_SORT_TYPE.TYPE) {
-            string strMinionType = minion.icharacter.characterClass.className;
+            string strMinionType = minion.character.characterClass.className;
             for (int i = 0; i < _minions.Count; i++) {
-                int compareResult = string.Compare(strMinionType, minion.icharacter.characterClass.className);
+                int compareResult = string.Compare(strMinionType, minion.character.characterClass.className);
                 if (compareResult == -1 || compareResult == 0) {
                     _minions.Insert(i, minion);
                     item.transform.SetSiblingIndex(i);
@@ -516,7 +516,7 @@ public class Player : ILeader {
     #endregion
 
     #region Other Characters/Units
-    public void AddNewCharacter(ICharacter character) {
+    public void AddNewCharacter(Character character) {
         if (!otherCharacters.Contains(character)) {
             otherCharacters.Add(character);
             character.OnAddedToPlayer();
@@ -524,7 +524,7 @@ public class Player : ILeader {
             item.SetCharacter(character);
         }
     }
-    public void RemoveCharacter(ICharacter character) {
+    public void RemoveCharacter(Character character) {
         if (otherCharacters.Remove(character)) {
             PlayerUI.Instance.RemoveCharacterItem(character.playerCharacterItem);
         }

@@ -131,7 +131,7 @@ public class AchievementManager : MonoBehaviour {
     #endregion
 
     public void Initialize() {
-        Messenger.AddListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
+        Messenger.AddListener<Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
     }
 
     #region Callbacks
@@ -213,7 +213,7 @@ public class AchievementManager : MonoBehaviour {
     }
 
     #region Handlers
-    private void OnCharacterSnatched(ECS.Character snatchedCharacter) {
+    private void OnCharacterSnatched(Character snatchedCharacter) {
         charactersSnatched++;
         shouldStoreStats = true;
         Debug.Log("Incremented snatched characters to " + charactersSnatched.ToString());

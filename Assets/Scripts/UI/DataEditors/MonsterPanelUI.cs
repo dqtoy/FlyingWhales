@@ -8,7 +8,7 @@ using UnityEngine.UI;
 using UnityEditor;
 #endif
 using System.IO;
-using ECS;
+
 
 public class MonsterPanelUI : MonoBehaviour {
     public static MonsterPanelUI Instance;

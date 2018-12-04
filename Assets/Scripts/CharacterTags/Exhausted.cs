@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using ECS;
+
 
 public class Exhausted : CharacterAttribute {
     public Exhausted() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.EXHAUSTED) {

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 using System.IO;
 
 public class CharacterSim : ICharacterSim {
@@ -252,7 +252,7 @@ public class CharacterSim : ICharacterSim {
     public void ResetToFullSP() {
         AdjustSP(_maxSP);
     }
-    public void AdjustHP(int amount, ICharacter killer = null) {
+    public void AdjustHP(int amount, Character killer = null) {
         int previous = this._currentHP;
         this._currentHP += amount;
         this._currentHP = Mathf.Clamp(this._currentHP, 0, hp);

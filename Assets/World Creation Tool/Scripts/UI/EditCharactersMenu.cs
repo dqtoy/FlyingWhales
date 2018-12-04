@@ -1,4 +1,4 @@
-﻿using ECS;
+﻿
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,8 +25,8 @@ namespace worldcreator {
         #endregion
 
         public void Initialize() {
-            Messenger.AddListener<ECS.Character>(Signals.CHARACTER_CREATED, OnCreateNewCharacter);
-            Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, OnCharacterRemoved);
+            Messenger.AddListener<Character>(Signals.CHARACTER_CREATED, OnCreateNewCharacter);
+            Messenger.AddListener<Character>(Signals.CHARACTER_REMOVED, OnCharacterRemoved);
             PopulateDropdowns();
             _characterInfoEditor.Initialize();
         }
@@ -39,8 +39,8 @@ namespace worldcreator {
             //CHARACTER_JOB job = (CHARACTER_JOB)Enum.Parse(typeof(CHARACTER_JOB), jobDropdown.options[jobDropdown.value].text);
             string className = classDropdown.options[classDropdown.value].text;
 
-            ECS.CharacterSetup setup = ECS.CombatManager.Instance.GetBaseCharacterSetup(className);
-            ECS.Character newCharacter = CharacterManager.Instance.CreateNewCharacter(className, race, gender);
+            CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(className);
+            Character newCharacter = CharacterManager.Instance.CreateNewCharacter(className, race, gender);
             //Debug.Log("Created new character " + newCharacter.name + "")
         }
         private void OnCreateNewCharacter(Character newCharacter) {
@@ -56,7 +56,7 @@ namespace worldcreator {
             CharacterEditorItem characterItem = GetCharacterItem(characterToBeRemoved);
             GameObject.Destroy(characterItem.gameObject);
         }
-        private CharacterEditorItem GetCharacterItem(ECS.Character character) {
+        private CharacterEditorItem GetCharacterItem(Character character) {
             Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(charactersScrollView.content.gameObject);
             for (int i = 0; i < children.Length; i++) {
                 CharacterEditorItem item = children[i].gameObject.GetComponent<CharacterEditorItem>();

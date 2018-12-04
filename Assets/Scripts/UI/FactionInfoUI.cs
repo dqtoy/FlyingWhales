@@ -27,7 +27,7 @@ public class FactionInfoUI : UIMenu {
     internal override void Initialize() {
         base.Initialize();
         //Messenger.AddListener("UpdateUI", UpdateFactionInfo);
-        Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         leaderEntry.Initialize();
     }
 
@@ -56,10 +56,10 @@ public class FactionInfoUI : UIMenu {
     }
 
     private void UpdateFactionLeader() {
-        if (currentlyShowingFaction.leader != null && currentlyShowingFaction.leader is ECS.Character) {
+        if (currentlyShowingFaction.leader != null && currentlyShowingFaction.leader is Character) {
             leaderEntry.gameObject.SetActive(true);
             leaderEntry.Initialize();
-            leaderEntry.SetCharacter((currentlyShowingFaction.leader as ECS.Character).characterIntel);
+            leaderEntry.SetCharacter((currentlyShowingFaction.leader as Character).characterIntel);
         } else {
             leaderEntry.gameObject.SetActive(false);
             leaderEntry.Reset();
@@ -68,12 +68,12 @@ public class FactionInfoUI : UIMenu {
 
     public void UpdateFactionCharacters() {
         Utilities.DestroyChildren(charactersScrollView.content);
-        List<ECS.Character> characters = new List<ECS.Character>(currentlyShowingFaction.characters);
+        List<Character> characters = new List<Character>(currentlyShowingFaction.characters);
         if (currentlyShowingFaction.leader != null) {
-            characters.Remove(currentlyShowingFaction.leader as ECS.Character);
+            characters.Remove(currentlyShowingFaction.leader as Character);
         }
         for (int i = 0; i < characters.Count; i++) {
-            ECS.Character currCharacter = characters[i];
+            Character currCharacter = characters[i];
             GameObject characterEntryGO = UIManager.Instance.InstantiateUIObject(characterEntryPrefab.name, charactersScrollView.content);
             CharacterIntelItem characterEntry = characterEntryGO.GetComponent<CharacterIntelItem>();
             characterEntry.SetCharacter(currCharacter.characterIntel);
@@ -94,7 +94,7 @@ public class FactionInfoUI : UIMenu {
             property.SetArea(currArea);
         }
     }
-    private CharacterIntelItem GetCharacterSummary(ECS.Character character) {
+    private CharacterIntelItem GetCharacterSummary(Character character) {
         CharacterIntelItem[] entries = Utilities.GetComponentsInDirectChildren<CharacterIntelItem>(charactersScrollView.content.gameObject);
         for (int i = 0; i < entries.Length; i++) {
             CharacterIntelItem currEntry = entries[i];
@@ -110,7 +110,7 @@ public class FactionInfoUI : UIMenu {
     //	}
 
     #region Handlers
-    private void OnCharacterDied(ECS.Character characterThatDied) {
+    private void OnCharacterDied(Character characterThatDied) {
         if (isShowing) {
             if (leaderEntry.gameObject.activeSelf) {
                 if (leaderEntry.character.id == characterThatDied.id) {

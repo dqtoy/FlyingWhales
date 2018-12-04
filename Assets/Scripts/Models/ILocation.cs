@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using ECS;
+
 
 public interface ILocation {
     int id { get; }
@@ -25,8 +25,8 @@ public interface ILocation {
     //void CheckPatrollingGroupsCombat();
     //bool HasHostilities();
     //bool HasHostilitiesWith(Faction faction, bool withFactionOnly = false);
-    bool HasHostileCharactersWith(ECS.Character character);
-    bool IsCharacterAtLocation(ICharacter character);
+    bool HasHostileCharactersWith(Character character);
+    bool IsCharacterAtLocation(Character character);
     //List<Character> GetAttackingGroups();
     //List<Character> GetPatrollingGroups();
     //List<Character> GetGroupsBasedOnStance(STANCE stance, bool notInCombatOnly, Character except = null);
@@ -34,7 +34,7 @@ public interface ILocation {
     //void StartCombatAtLocation();
     //bool CombatAtLocation();
     //Character GetCombatEnemy(Character combatInitializer);
-    //void SetCurrentCombat(ECS.CombatPrototype combat);
+    //void SetCurrentCombat(CombatPrototype combat);
     //int CharactersCount(bool includeHostile = false);
     //void ContinueDailyActions();
 

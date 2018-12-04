@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using PathFind;
 using System.Linq;
-using ECS;
+
 using worldcreator;
 using SpriteGlow;
 
@@ -1278,10 +1278,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             //}
         }
     }
-    public bool IsCharacterAtLocation(ICharacter character) {
+    public bool IsCharacterAtLocation(Character character) {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
             Party currParty = _charactersAtLocation[i];
-            if (currParty.icharacters.Contains(character)) {
+            if (currParty.characters.Contains(character)) {
                 return true;
             }
         }
@@ -1578,7 +1578,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #if UNITY_EDITOR
         if (UIManager.Instance.characterInfoUI.activeCharacter != null && UIManager.Instance.characterInfoUI.isShowing) {
             if (this.landmarkOnTile != null) {
-                ECS.Character character = UIManager.Instance.characterInfoUI.activeCharacter;
+                Character character = UIManager.Instance.characterInfoUI.activeCharacter;
                 ContextMenuItemSettings forceActionMain = new ContextMenuItemSettings("Force Action");
                 //forceActionMain.onClickAction += () => PlayerManager.Instance.AddTileToPlayerArea(this);
                 bool hasDoableAction = false;

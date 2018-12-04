@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using EZObjectPools;
 using System;
-using ECS;
+
 
 public class CharacterAvatar : MonoBehaviour{
 
@@ -36,7 +36,7 @@ public class CharacterAvatar : MonoBehaviour{
     private bool _isVisualShowing;
     private bool _isTravelCancelled;
     private PATHFINDING_MODE _pathfindingMode;
-    private ICharacter _trackTarget = null;
+    private Character _trackTarget = null;
     private TravelLine _travelLine;
     private Action queuedAction = null;
 
@@ -76,13 +76,14 @@ public class CharacterAvatar : MonoBehaviour{
         SetVisualState(false);
         if (_party.mainCharacter is CharacterArmyUnit) {
             _avatarSpriteRenderer.sprite = CharacterManager.Instance.villainSprite;
-        } else if (_party.mainCharacter is MonsterArmyUnit) {
-            _avatarSpriteRenderer.sprite = CharacterManager.Instance.villainSprite;
-        } else if(_party.mainCharacter is Character){
+        } else {
             SetSprite(_party.mainCharacter.role.roleType);
-        } else if (_party.mainCharacter is Monster) {
-            SetSprite((_party.mainCharacter as Monster).type);
         }
+        //else if (_party.mainCharacter is MonsterArmyUnit) {
+        //    _avatarSpriteRenderer.sprite = CharacterManager.Instance.villainSprite;
+        //} else if (_party.mainCharacter is Monster) {
+        //    SetSprite((_party.mainCharacter as Monster).type);
+        //}
 #if !WORLD_CREATION_TOOL
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
         characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
@@ -113,7 +114,7 @@ public class CharacterAvatar : MonoBehaviour{
     public void SetTarget(ILocation target) {
         targetLocation = target;
     }
-    public void StartPath(PATHFINDING_MODE pathFindingMode, Action actionOnPathFinished = null, ICharacter trackTarget = null, Action actionOnPathReceived = null) {
+    public void StartPath(PATHFINDING_MODE pathFindingMode, Action actionOnPathFinished = null, Character trackTarget = null, Action actionOnPathReceived = null) {
         //if (smoothMovement.isMoving) {
         //    smoothMovement.ForceStopMovement();
         //}
@@ -184,26 +185,9 @@ public class CharacterAvatar : MonoBehaviour{
         _party.specificLocation.RemoveCharacterFromLocation(_party);
         targetLocation.AddCharacterToLocation(_party);
         Debug.Log(GameManager.Instance.TodayLogString() + _party.name + " has arrived at " + targetLocation.locationName + " on " + GameManager.Instance.continuousDays);
-        //Every time the party arrives at home, check if it still not ruined
-        //if (_party.mainCharacter is Character && _party.mainCharacter.homeLandmark.specificLandmarkType == LANDMARK_TYPE.CAMP && _party.mainCharacter.homeLandmark.landmarkObj.currentState.stateName == "Ruined") {
-        //    //Check if the location the character arrived at is the character's home landmark
-        //    if (targetLocation.tileLocation.id == _party.mainCharacter.homeLandmark.tileLocation.id) {
-        //        //Check if the current landmark in the location is a camp and it is not yet ruined
-        //        if (targetLocation.tileLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CAMP) {
-        //            Character character = _party.mainCharacter as Character;
-        //            if (targetLocation.tileLocation.landmarkOnTile.landmarkObj.currentState.stateName != "Ruined") {
-        //                //Make it the character's new home landmark
-        //                _party.mainCharacter.homeLandmark.RemoveCharacterHomeOnLandmark(character);
-        //                targetLocation.tileLocation.landmarkOnTile.AddCharacterHomeOnLandmark(character);
-        //            } else {
-        //                //Create new camp
-        //                BaseLandmark newCamp = targetLocation.tileLocation.areaOfTile.CreateCampOnTile(targetLocation.tileLocation);
-        //                _party.mainCharacter.homeLandmark.RemoveCharacterHomeOnLandmark(character);
-        //                newCamp.AddCharacterHomeOnLandmark(character);
-        //            }
-        //        }
-        //    }
-        //}
+        for (int i = 0; i < _party.characters.Count; i++) {
+
+        }
         if (onPathFinished != null) {
             onPathFinished();
         }
@@ -287,12 +271,12 @@ public class CharacterAvatar : MonoBehaviour{
                 targetLocation.AddCharacterToLocation(_party);
                 Debug.Log(_party.name + " has arrived at " + targetLocation.locationName + " on " + GameManager.Instance.continuousDays);
                 //Every time the party arrives at home, check if it still not ruined
-                if(_party.mainCharacter is Character && _party.mainCharacter.homeLandmark.specificLandmarkType == LANDMARK_TYPE.CAMP && _party.mainCharacter.homeLandmark.landmarkObj.currentState.stateName == "Ruined") {
+                if(_party.mainCharacter.homeLandmark.specificLandmarkType == LANDMARK_TYPE.CAMP && _party.mainCharacter.homeLandmark.landmarkObj.currentState.stateName == "Ruined") {
                     //Check if the location the character arrived at is the character's home landmark
                     if (targetLocation.tileLocation.id == _party.mainCharacter.homeLandmark.tileLocation.id) {
                         //Check if the current landmark in the location is a camp and it is not yet ruined
                         if (targetLocation.tileLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CAMP) {
-                            Character character = _party.mainCharacter as Character;
+                            Character character = _party.mainCharacter;
                             if (targetLocation.tileLocation.landmarkOnTile.landmarkObj.currentState.stateName != "Ruined") {
                                 //Make it the character's new home landmark
                                 _party.mainCharacter.homeLandmark.RemoveCharacterHomeOnLandmark(character);

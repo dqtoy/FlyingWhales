@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FormPartyAction : CharacterAction {
 
-    protected List<ICharacter> joiningCharacters;
+    protected List<Character> joiningCharacters;
     protected CharacterParty party;
     protected int minimumDuration;
 
@@ -31,25 +31,22 @@ public class FormPartyAction : CharacterAction {
     }
 
     public override void OnChooseAction(Party iparty, IObject targetObject) {
-        joiningCharacters = new List<ICharacter>();
+        joiningCharacters = new List<Character>();
         party = iparty as CharacterParty;
         minimumDuration = 12;
         //When a Squad Leader starts performing a Forming Party action, it will loop through all other party members:
-        for (int i = 0; i < iparty.icharacters.Count; i++) {
-            ICharacter character = iparty.icharacters[i];
-            if (character is ECS.Character) {
-                ECS.Character currCharacter = character as ECS.Character;
-                //if (!currCharacter.IsSquadLeader()) {
-                    //If below Happiness, Mental or Physical Point thresholds
-                    //if (currCharacter.role.happiness < CharacterManager.Instance.HAPPINESS_THRESHOLD
-                    //    && currCharacter.mentalPoints < CharacterManager.Instance.MENTAL_THRESHOLD && currCharacter.mentalPoints < CharacterManager.Instance.PHYSICAL_THRESHOLD) {
-                    //    //end their In Party action and put them out of the party
-                    //    iparty.RemoveCharacter(currCharacter);
-                    //    //currCharacter.party.actionData.EndAction();
-                    //}
-                    //Otherwise, maintain existing In Party action
+        for (int i = 0; i < iparty.characters.Count; i++) {
+            Character character = iparty.characters[i];
+            //if (!currCharacter.IsSquadLeader()) {
+                //If below Happiness, Mental or Physical Point thresholds
+                //if (currCharacter.role.happiness < CharacterManager.Instance.HAPPINESS_THRESHOLD
+                //    && currCharacter.mentalPoints < CharacterManager.Instance.MENTAL_THRESHOLD && currCharacter.mentalPoints < CharacterManager.Instance.PHYSICAL_THRESHOLD) {
+                //    //end their In Party action and put them out of the party
+                //    iparty.RemoveCharacter(currCharacter);
+                //    //currCharacter.party.actionData.EndAction();
                 //}
-            }
+                //Otherwise, maintain existing In Party action
+            //}
         }
         //Then, the character will select a safe spot within 3 tile radius of his current location. To determine this, this is the order of priority:
         //check first if the party's current location is already fine
@@ -142,12 +139,12 @@ public class FormPartyAction : CharacterAction {
     }
     //Give all provided needs to the character regardless of the amount
     public override void GiveAllReward(CharacterParty party) {
-        for (int i = 0; i < party.icharacters.Count; i++) {
-            ICharacter icharacter = party.icharacters[i];
+        for (int i = 0; i < party.characters.Count; i++) {
+            Character icharacter = party.characters[i];
             icharacter.role.AdjustFullness(_actionData.providedFullness);
             icharacter.role.AdjustEnergy(_actionData.providedEnergy);
             //icharacter.role.AdjustPrestige(_actionData.providedPrestige);
-            if (party.icharacters.Count >= 2) { //only if there are at least 2 members in the party
+            if (party.characters.Count >= 2) { //only if there are at least 2 members in the party
                 //icharacter.role.AdjustSanity(_actionData.providedSanity);
                 icharacter.role.AdjustFun(_actionData.providedFun);
             }
@@ -162,10 +159,10 @@ public class FormPartyAction : CharacterAction {
     public override void EndAction(Party party, IObject targetObject) {
         base.EndAction(party, targetObject);
         if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_JOINED_PARTY)) {
-            Messenger.RemoveListener<ICharacter, Party>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
+            Messenger.RemoveListener<Character, Party>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
         }
         if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_DEATH)) {
-            Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         }
     }
     public override bool ShouldGoToTargetObjectOnChoose() {
@@ -186,11 +183,11 @@ public class FormPartyAction : CharacterAction {
         //}
         //if (joiningCharacters.Count > 0) {
         //    Messenger.AddListener<ICharacter, Party>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
-        //    Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        //    Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         //}
     //}
 
-    private void OnCharacterJoinedParty(ICharacter character, Party affectedParty) {
+    private void OnCharacterJoinedParty(Character character, Party affectedParty) {
         if (this.party.id == affectedParty.id) {
             if (joiningCharacters.Contains(character)) {
                 joiningCharacters.Remove(character);
@@ -198,7 +195,7 @@ public class FormPartyAction : CharacterAction {
             }
         }
     }
-    private void OnCharacterDied(ECS.Character character) {
+    private void OnCharacterDied(Character character) {
         if (joiningCharacters.Contains(character)) {
             joiningCharacters.Remove(character);
             CheckForEnd();

@@ -1,4 +1,4 @@
-﻿using ECS;
+﻿
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,9 +33,9 @@ public class WaitForPartyAction : CharacterAction {
     }
     public override void OnChooseAction(Party iparty, IObject targetObject) {
         base.OnChooseAction(iparty, targetObject);
-        waitingCharacter = iparty.owner as Character;
+        waitingCharacter = iparty.owner;
         GameDate today = GameManager.Instance.Today();
-        int deadlineTick = (iparty.owner as Character).GetWorkDeadlineTick();
+        int deadlineTick = iparty.owner.GetWorkDeadlineTick();
         //this assumes that the deadline tick is greater than the current tick,
         //if somehow the current tick is greater, the wait counter will become negative and will, thrigger start quest at PerformAction()
         this._actionData.duration = deadlineTick - today.hour;
@@ -58,7 +58,7 @@ public class WaitForPartyAction : CharacterAction {
     }
     #endregion
 
-    private void OnCharacterJoinedParty(ICharacter character, Party party) {
+    private void OnCharacterJoinedParty(Character character, Party party) {
         if (waitingCharacter.ownParty.id == party.id) {
             //the party that the character joined is the party of the character that is waiting
             //if (waitingCharacter.squad.squadMembers.Count == waitingCharacter.ownParty.icharacters.Count) {
@@ -69,10 +69,10 @@ public class WaitForPartyAction : CharacterAction {
     }
 
     private void StartQuestAction(Party party) {
-        Character mainCharacter = party.mainCharacter as Character;
+        Character mainCharacter = party.mainCharacter;
         CharacterParty charParty = party as CharacterParty;
         //if (mainCharacter.IsSquadLeader()) {
-        //    QuestAction questAction = mainCharacter.currentQuest.GetQuestAction(party.mainCharacter as ECS.Character);
+        //    QuestAction questAction = mainCharacter.currentQuest.GetQuestAction(party.mainCharacter as Character);
         //    charParty.actionData.ForceDoAction(questAction);
         //} else {
         //    //means that the character could not join party, start idling at workplace

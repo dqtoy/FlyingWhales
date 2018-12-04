@@ -29,9 +29,7 @@ public class GrindAction : CharacterAction {
         if (choices.Count > 0) {
             choices = choices.OrderBy(x => x.specificLocation.tileLocation.GetDistanceTo(party.specificLocation.tileLocation)).ToList();
             MonsterParty chosenParty = choices[0];
-            if (party.mainCharacter is ECS.Character) {
-                (party.mainCharacter as ECS.Character).AddActionToQueue(chosenParty.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK), chosenParty.icharacterObject);
-            }
+            party.mainCharacter.AddActionToQueue(chosenParty.icharacterObject.currentState.GetAction(ACTION_TYPE.ATTACK), chosenParty.icharacterObject);
         } else {
             //IObject obj = null;
             //party.mainCharacter.AddActionToQueue(party.mainCharacter.GetRandomDesperateAction(ref obj), obj);

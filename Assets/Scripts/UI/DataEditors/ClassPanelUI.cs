@@ -8,7 +8,7 @@ using UnityEngine.UI;
 using UnityEditor;
 #endif
 using System.IO;
-using ECS;
+
 
 public class ClassPanelUI : MonoBehaviour {
     public static ClassPanelUI Instance;

@@ -64,10 +64,10 @@ public class WorldSaveData {
             landmarksData.Add(landmarkData);
         }
     }
-    public void OccupyCharactersData(List<ECS.Character> characters) {
+    public void OccupyCharactersData(List<Character> characters) {
         charactersData = new List<CharacterSaveData>();
         for (int i = 0; i < characters.Count; i++) {
-            ECS.Character currCharacter = characters[i];
+            Character currCharacter = characters[i];
             CharacterSaveData characterData = new CharacterSaveData(currCharacter);
             charactersData.Add(characterData);
         }

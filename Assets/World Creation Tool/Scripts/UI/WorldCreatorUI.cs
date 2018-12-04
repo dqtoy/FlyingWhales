@@ -447,7 +447,7 @@ namespace worldcreator {
         #endregion
 
         #region Small Character Info
-        public void ShowSmallCharacterInfo(ECS.Character character) {
+        public void ShowSmallCharacterInfo(Character character) {
             smallCharacterInfo.ShowCharacterInfo(character);
         }
         public void HideSmallCharacterInfo() {

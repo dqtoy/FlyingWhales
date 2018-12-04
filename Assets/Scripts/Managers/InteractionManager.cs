@@ -1,4 +1,4 @@
-﻿using ECS;
+﻿
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -152,7 +152,7 @@ public class InteractionManager : MonoBehaviour {
                 return true;
         }
     }
-    public bool CanCreateInteraction(INTERACTION_TYPE interactionType, ICharacter character) {
+    public bool CanCreateInteraction(INTERACTION_TYPE interactionType, Character character) {
         switch (interactionType) {
             case INTERACTION_TYPE.RETURN_HOME:
             case INTERACTION_TYPE.CHARACTER_TRACKING:

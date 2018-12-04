@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Beast : CharacterRole {
 
-    public Beast(ECS.Character character) : base(character) {
+    public Beast(Character character) : base(character) {
         _roleType = CHARACTER_ROLE.BEAST;
     }
 }

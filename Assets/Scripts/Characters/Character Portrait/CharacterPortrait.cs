@@ -5,11 +5,11 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 using EZObjectPools;
-using ECS;
+
 
 public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
-    private ICharacter _character;
+    private Character _character;
     private int _imgSize;
     private bool _ignoreSize;
     private PortraitSettings _portraitSettings;
@@ -57,8 +57,8 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     [SerializeField] private GameObject unknownGO;
 
     #region getters/setters
-    public ECS.Character thisCharacter {
-        get { return _character as ECS.Character; }
+    public Character thisCharacter {
+        get { return _character; }
     }
     public PortraitSettings portraitSettings {
         get { return _portraitSettings; }
@@ -73,7 +73,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
     }
 
-    public void GeneratePortrait(ICharacter character, int imgSize = 104, CHARACTER_ROLE role = CHARACTER_ROLE.NONE) {
+    public void GeneratePortrait(Character character, int imgSize = 104, CHARACTER_ROLE role = CHARACTER_ROLE.NONE) {
         _character = character;
         SetImageSize(imgSize);
         if(character == null) {
@@ -83,21 +83,21 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             return;
         }
         _portraitSettings = character.portraitSettings;
-        if (character is ECS.Character) {
-            SetBody(character.portraitSettings.bodyIndex);
-            SetHead(character.portraitSettings.headIndex);
-            SetEyes(character.portraitSettings.eyesIndex);
-            SetEyebrows(character.portraitSettings.eyesIndex);
-            SetNose(character.portraitSettings.noseIndex);
-            SetMouth(character.portraitSettings.mouthIndex);
-            SetHair(character.portraitSettings.hairIndex);
-            SetFacialHair(character.portraitSettings.facialHairIndex);
-            SetHairColor(character.portraitSettings.hairColor);
-            SetWholeImageSprite(null);
-        } else if (character is Monster) {
-            SetBodyPartsState(false);
-            SetWholeImageSprite(MonsterManager.Instance.GetMonsterSprite(character.name));
-        }
+        //if (character is Monster) {
+        //    SetBodyPartsState(false);
+        //    SetWholeImageSprite(MonsterManager.Instance.GetMonsterSprite(character.name));
+        //} else {
+        SetBody(character.portraitSettings.bodyIndex);
+        SetHead(character.portraitSettings.headIndex);
+        SetEyes(character.portraitSettings.eyesIndex);
+        SetEyebrows(character.portraitSettings.eyesIndex);
+        SetNose(character.portraitSettings.noseIndex);
+        SetMouth(character.portraitSettings.mouthIndex);
+        SetHair(character.portraitSettings.hairIndex);
+        SetFacialHair(character.portraitSettings.facialHairIndex);
+        SetHairColor(character.portraitSettings.hairColor);
+        SetWholeImageSprite(null);
+        //}
         //SetBGState(true);
         nameLbl.text = character.urlName;
         UpdateUnknownVisual();
@@ -246,23 +246,23 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     private void UpdateUnknownVisual() {
         if (_character != null) {
             CharacterIntel characterIntel = _character.characterIntel;
-            if (_character is Character) {
-                if (forceShowPortrait || GameManager.Instance.inspectAll) {
-                    unknownGO.SetActive(false);
-                    SetBodyPartsState(true);
-                } else {
-                    unknownGO.SetActive(!characterIntel.isObtained);
-                    SetBodyPartsState(characterIntel.isObtained);
-                }
-            } else if (_character is Monster) {
-                if (forceShowPortrait || GameManager.Instance.inspectAll) {
-                    unknownGO.SetActive(false);
-                    SetBodyPartsState(true);
-                } else {
-                    unknownGO.SetActive(!characterIntel.isObtained);
-                    SetWholeImageState(characterIntel.isObtained);
-                }
+            //if (_character is Character) {
+            if (forceShowPortrait || GameManager.Instance.inspectAll) {
+                unknownGO.SetActive(false);
+                SetBodyPartsState(true);
+            } else {
+                unknownGO.SetActive(!characterIntel.isObtained);
+                SetBodyPartsState(characterIntel.isObtained);
             }
+            //} else if (_character is Monster) {
+            //    if (forceShowPortrait || GameManager.Instance.inspectAll) {
+            //        unknownGO.SetActive(false);
+            //        SetBodyPartsState(true);
+            //    } else {
+            //        unknownGO.SetActive(!characterIntel.isObtained);
+            //        SetWholeImageState(characterIntel.isObtained);
+            //    }
+            //}
         }
     }
     public void SetForceShowPortraitState(bool state) {
@@ -311,11 +311,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         if (eventData.button == PointerEventData.InputButton.Right) {
             //Debug.Log("Right clicked character portrait!");
             if (_character != null) {
-                if (_character is ECS.Character) {
-                    UIManager.Instance.ShowCharacterInfo(_character as ECS.Character);
-                } else if (_character is Monster) {
-                    UIManager.Instance.ShowMonsterInfo(_character as Monster);
-                }
+                UIManager.Instance.ShowCharacterInfo(_character);
             }
         }
         

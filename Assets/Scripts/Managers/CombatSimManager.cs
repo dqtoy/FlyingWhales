@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.IO;
-using ECS;
+
 using TMPro;
 
 public class CombatSimManager : MonoBehaviour {

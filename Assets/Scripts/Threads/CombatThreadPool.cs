@@ -9,8 +9,8 @@ public class CombatThreadPool : MonoBehaviour {
 
 	private static readonly object THREAD_LOCKER = new object ();
 
-	private Queue<ECS.Combat> functionsToBeRunInThread;
-	private Queue<ECS.Combat> functionsToBeResolved;
+	private Queue<Combat> functionsToBeRunInThread;
+	private Queue<Combat> functionsToBeResolved;
 
 	private Thread newThread;
 	private bool isRunning;
@@ -22,8 +22,8 @@ public class CombatThreadPool : MonoBehaviour {
 	void Start () {
 		this.isRunning = true;
 
-		functionsToBeRunInThread = new Queue<ECS.Combat> ();
-		functionsToBeResolved = new Queue<ECS.Combat> ();
+		functionsToBeRunInThread = new Queue<Combat> ();
+		functionsToBeResolved = new Queue<Combat> ();
 
 		newThread = new Thread( RunThread );
 		newThread.IsBackground = true;
@@ -32,12 +32,12 @@ public class CombatThreadPool : MonoBehaviour {
 	
 	//void Update () {
 	//	if(this.functionsToBeResolved.Count > 0){
-	//		ECS.Combat combat = this.functionsToBeResolved.Dequeue ();
+	//		Combat combat = this.functionsToBeResolved.Dequeue ();
 	//		combat.ReturnCombatResults ();
 	//	}
 	//}
 
-	public void AddToThreadPool(ECS.Combat combat){
+	public void AddToThreadPool(Combat combat){
 		lock (THREAD_LOCKER) {
 			functionsToBeRunInThread.Enqueue (combat);
 		}
@@ -47,7 +47,7 @@ public class CombatThreadPool : MonoBehaviour {
 		//while(isRunning){
 		//	if(this.functionsToBeRunInThread.Count > 0){
 		//		Thread.Sleep (2);
-		//		ECS.Combat newFunction = null;
+		//		Combat newFunction = null;
 		//		lock(THREAD_LOCKER){
 		//			newFunction = this.functionsToBeRunInThread.Dequeue ();
 		//		}

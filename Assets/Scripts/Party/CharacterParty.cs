@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using UnityEngine;
-using ECS;
+
 
 public class CharacterParty : Party {
     private bool _isIdle; //can't do action, needs will not deplete
@@ -26,7 +26,7 @@ public class CharacterParty : Party {
         get { return _actionData; }
     }
     public Character characterOwner {
-        get { return owner as Character; }
+        get { return owner; }
     }
     public override CharacterAction currentAction {
         get { return _actionData.currentAction; }
@@ -46,13 +46,13 @@ public class CharacterParty : Party {
 
     }
 
-    public CharacterParty(ICharacter owner): base(owner) {
+    public CharacterParty(Character owner): base(owner) {
         _isIdle = false;
         _actionData = new ActionData(this);
 #if !WORLD_CREATION_TOOL
         Messenger.AddListener(Signals.DAY_ENDED, EverydayAction);
-        Messenger.AddListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
-        Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         //ConstructResourceInventory();
 #endif
     }
@@ -72,10 +72,10 @@ public class CharacterParty : Party {
     #region Utilities
     private string GetPartyName() {
         if (owner is CharacterArmyUnit) {
-            if (icharacters.Count > 1) {
+            if (characters.Count > 1) {
                 string name = "Army of:";
-                for (int i = 0; i < icharacters.Count; i++) {
-                    name += "\n" + icharacters[i].name;
+                for (int i = 0; i < characters.Count; i++) {
+                    name += "\n" + characters[i].name;
                 }
                 return name;
             } else {
@@ -122,11 +122,11 @@ public class CharacterParty : Party {
         }
     }
     public float TotalHappinessIncrease(CharacterAction action, IObject targetObject) {
-        return _icharacters.Sum(x => x.role.GetTotalHappinessIncrease(action, targetObject));
+        return _characters.Sum(x => x.role.GetTotalHappinessIncrease(action, targetObject));
     }
     public bool IsFull(NEEDS need) {
-        for (int i = 0; i < _icharacters.Count; i++) {
-            ICharacter icharacter = _icharacters[i];
+        for (int i = 0; i < _characters.Count; i++) {
+            Character icharacter = _characters[i];
             if (!icharacter.role.IsFull(need)) {
                 return false;
             }
@@ -156,9 +156,9 @@ public class CharacterParty : Party {
 
     #region Overrides
     public void DisbandPartyKeepOwner() {
-        while (icharacters.Count != 1) {
-            for (int i = 0; i < icharacters.Count; i++) {
-                ICharacter currCharacter = icharacters[i];
+        while (characters.Count != 1) {
+            for (int i = 0; i < characters.Count; i++) {
+                Character currCharacter = characters[i];
                 if (currCharacter.id != owner.id) {
                     RemoveCharacter(currCharacter);
                     break;
@@ -187,8 +187,8 @@ public class CharacterParty : Party {
     public override void RemoveListeners() {
         base.RemoveListeners();
         Messenger.RemoveListener(Signals.DAY_ENDED, EverydayAction);
-        Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
-        Messenger.RemoveListener<ECS.Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
     }
     public override void EndAction() {
         _actionData.EndAction();

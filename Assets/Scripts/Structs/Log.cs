@@ -55,12 +55,12 @@ public class Log {
             LogFiller currFiller = fillers[i];
             object obj = currFiller.obj;
             if (obj != null) {
-                if (obj is ICharacter) {
-                    (obj as ICharacter).AddHistory(this);
+                if (obj is Character) {
+                    (obj as Character).AddHistory(this);
                 } else if (obj is BaseLandmark) {
                     (obj as BaseLandmark).AddHistory(this);
                 } else if (obj is Minion) {
-                    (obj as Minion).icharacter.AddHistory(this);
+                    (obj as Minion).character.AddHistory(this);
                 }
             }
         }

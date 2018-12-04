@@ -15,17 +15,17 @@ public class CharactersIntelUI : UIMenu {
     [SerializeField] private EasyTween tweener;
     [SerializeField] private AnimationCurve curve;
 
-    private Dictionary<ECS.Character, CharacterIntelItem> characterEntries;
+    private Dictionary<Character, CharacterIntelItem> characterEntries;
 
 
     internal override void Initialize() {
         base.Initialize();
-        characterEntries = new Dictionary<ECS.Character, CharacterIntelItem>();
-        Messenger.AddListener<ECS.Character>(Signals.CHARACTER_CREATED, AddCharacterEntry);
-        //Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, RemoveCharacterEntry);
-        Messenger.AddListener<ECS.Character>(Signals.CHARACTER_DEATH, UpdateCharacterEntry);
-        Messenger.AddListener<ECS.Character>(Signals.ROLE_CHANGED, UpdateCharacterEntry);
-        Messenger.AddListener<ECS.Character>(Signals.FACTION_SET, UpdateCharacterEntry);
+        characterEntries = new Dictionary<Character, CharacterIntelItem>();
+        Messenger.AddListener<Character>(Signals.CHARACTER_CREATED, AddCharacterEntry);
+        //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, RemoveCharacterEntry);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, UpdateCharacterEntry);
+        Messenger.AddListener<Character>(Signals.ROLE_CHANGED, UpdateCharacterEntry);
+        Messenger.AddListener<Character>(Signals.FACTION_SET, UpdateCharacterEntry);
         //Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
         //Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
         Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
@@ -40,7 +40,7 @@ public class CharactersIntelUI : UIMenu {
         isShowing = false;
     }
 
-    private void AddCharacterEntry(ECS.Character character) {
+    private void AddCharacterEntry(Character character) {
         if(character.role != null && character.role.roleType == CHARACTER_ROLE.PLAYER) {
             return;
         }
@@ -52,7 +52,7 @@ public class CharactersIntelUI : UIMenu {
         newEntry.gameObject.SetActive(false);
         characterEntries.Add(character, newEntry);
     }
-    private void RemoveCharacterEntry(ECS.Character character) {
+    private void RemoveCharacterEntry(Character character) {
         CharacterIntelItem characterEntry = GetCharacterEntry(character);
         if (characterEntry != null) {
             characterEntries.Remove(character);
@@ -64,13 +64,13 @@ public class CharactersIntelUI : UIMenu {
         //}
         //sortingAction();
     }
-    private CharacterIntelItem GetCharacterEntry(ECS.Character character) {
+    private CharacterIntelItem GetCharacterEntry(Character character) {
         if (characterEntries.ContainsKey(character)) {
             return characterEntries[character];
         }
         return null;
     }
-    private void UpdateCharacterEntry(ECS.Character character) {
+    private void UpdateCharacterEntry(Character character) {
         CharacterIntelItem charEntry = GetCharacterEntry(character);
         if (charEntry != null) {
             charEntry.UpdateCharacterInfo();
@@ -105,11 +105,9 @@ public class CharactersIntelUI : UIMenu {
     private void OnIntelAdded(Intel intel) {
         if (intel is CharacterIntel) {
             CharacterIntel charIntel = (intel as CharacterIntel);
-            if (charIntel.character is ECS.Character) {
-                CharacterIntelItem item = GetCharacterEntry(charIntel.character as ECS.Character);
-                if (item != null) {
-                    item.gameObject.SetActive(true);
-                }
+            CharacterIntelItem item = GetCharacterEntry(charIntel.character);
+            if (item != null) {
+                item.gameObject.SetActive(true);
             }
         }
     }

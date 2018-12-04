@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public interface ICharacterSim {
     string name { get; }
@@ -39,7 +39,7 @@ public interface ICharacterSim {
     void SetSide(SIDES side);
     void SetRowNumber(int row);
     void AdjustSP(int amount);
-    void AdjustHP(int amount, ICharacter killer = null);
+    void AdjustHP(int amount, Character killer = null);
     void EnableDisableSkills(CombatSim combatSim);
     CharacterAttribute GetAttribute(string attribute);
     //int GetDef();

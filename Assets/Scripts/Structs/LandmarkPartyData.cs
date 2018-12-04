@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public struct LandmarkPartyData {
-    public List<ICharacter> partyMembers;
+    public List<Character> partyMembers;
     public CharacterAction action;
     public int currentDuration;
 }

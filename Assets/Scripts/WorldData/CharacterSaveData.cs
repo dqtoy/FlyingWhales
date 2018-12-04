@@ -26,7 +26,7 @@ public class CharacterSaveData {
     public MORALITY morality;
     public int level;
 
-    public CharacterSaveData(ECS.Character character) {
+    public CharacterSaveData(Character character) {
         id = character.id;
         name = character.name;
         race = character.raceSetting.race;
@@ -63,18 +63,18 @@ public class CharacterSaveData {
 
         //equipmentData = new List<string>();
         //for (int i = 0; i < character.equippedItems.Count; i++) {
-        //    ECS.Item item = character.equippedItems[i];
+        //    Item item = character.equippedItems[i];
         //    equipmentData.Add(item.itemName);
         //}
 
         inventoryData = new List<string>();
         for (int i = 0; i < character.inventory.Count; i++) {
-            ECS.Item item = character.inventory[i];
+            Item item = character.inventory[i];
             inventoryData.Add(item.itemName);
         }
 
         //relationshipsData = new List<RelationshipSaveData>();
-        //foreach (KeyValuePair<ECS.Character, Relationship> kvp in character.relationships) {
+        //foreach (KeyValuePair<Character, Relationship> kvp in character.relationships) {
         //    relationshipsData.Add(new RelationshipSaveData(kvp.Value));
         //}
 

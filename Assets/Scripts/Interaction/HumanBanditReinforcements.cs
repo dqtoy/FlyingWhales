@@ -1,4 +1,4 @@
-﻿using ECS;
+﻿
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -163,7 +163,7 @@ public class HumanBanditReinforcements : Interaction {
         //**Reward**: Demon gains Exp 1
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         //**Mechanics**: create an Army Unit from Defense Spawn Weights and add it to the Tile Defenders if not yet full or Character List if already full
-        ICharacter createdUnit = CreateAssaultArmy(1).owner;
+        Character createdUnit = CreateAssaultArmy(1).owner;
         //if (!landmark.defenders.isFull) {
             //landmark.AddDefender(createdUnit);
         //}
@@ -177,7 +177,7 @@ public class HumanBanditReinforcements : Interaction {
     }
     private void UnitStolenRewardEffect(InteractionState state) {
         //**Mechanics**: create an Army Unit from Defense Spawn Weights and add it to the player's Minion List.
-        ICharacter createdUnit = CreateAssaultArmy(1).owner;
+        Character createdUnit = CreateAssaultArmy(1).owner;
         //Add unit to players minion list
         PlayerManager.Instance.player.AddNewCharacter(createdUnit);
         //**Reward**: Demon gains Exp 1
@@ -192,7 +192,7 @@ public class HumanBanditReinforcements : Interaction {
     }
     private void DoNothingRewardEffect(InteractionState state) {
         //**Mechanics**: create an Army Unit from Defense Spawn Weights and add it to the Tile Defenders if not yet full or Character List if already full
-        ICharacter createdUnit = CreateAssaultArmy(1).owner;
+        Character createdUnit = CreateAssaultArmy(1).owner;
         //if (!landmark.defenders.isFull) {
             //landmark.AddDefender(createdUnit);
         //}

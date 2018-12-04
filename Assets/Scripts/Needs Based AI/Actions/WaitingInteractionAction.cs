@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public class WaitingInteractionAction : CharacterAction {
     private Character _waitedCharacter;
@@ -51,7 +51,7 @@ public class WaitingInteractionAction : CharacterAction {
     private bool IsWaitedCharacterHere(Party party) {
         for (int i = 0; i < party.specificLocation.charactersAtLocation.Count; i++) {
             Party currParty = party.specificLocation.charactersAtLocation[i];
-            if (currParty.icharacters.Contains(_waitedCharacter)) {
+            if (currParty.characters.Contains(_waitedCharacter)) {
                 return true;
             }
         }

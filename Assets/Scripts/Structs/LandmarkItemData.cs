@@ -63,7 +63,7 @@ public class LandmarkItemDataDrawer : PropertyDrawer {
             for (int k = 0; k < files.Length; k++) {
                 string currFilePath = files[k];
                 string dataAsJson = File.ReadAllText(currFilePath);
-                ECS.Item newItem = JsonUtility.FromJson<ECS.Item>(dataAsJson);
+                Item newItem = JsonUtility.FromJson<Item>(dataAsJson);
                 allItemNames.Add(newItem.itemName);
             }
         }

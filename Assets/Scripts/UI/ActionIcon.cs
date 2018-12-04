@@ -1,4 +1,4 @@
-﻿using ECS;
+﻿
 using EZObjectPools;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandler {
 
     private CharacterAction _action;
-    private ICharacter _character;
+    private Character _character;
 
     [SerializeField] private Image progressBarImage;
     [SerializeField] private Image middleCircleImage;
@@ -31,7 +31,7 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
         Messenger.AddListener<CharacterAction, Party>(Signals.ACTION_TAKEN, OnActionTaken);
         //Messenger.AddListener<ICharacter, NewParty>(Signals.CHARACTER_JOINED_PARTY, OnCharacterJoinedParty);
     }
-    public void SetCharacter(ICharacter character) {
+    public void SetCharacter(Character character) {
         _character = character;
     }
     public void SetAction(CharacterAction action) {
@@ -56,7 +56,7 @@ public class ActionIcon : PooledObject, IPointerEnterHandler, IPointerExitHandle
         if (_action == null || _character == null) {
             return;
         }
-        if (_action == action && party.icharacters.Contains(_character)) {
+        if (_action == action && party.characters.Contains(_character)) {
             UpdateProgress();
         }
     }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using UnityEngine;
-using ECS;
+
 
 public class MonsterParty : Party {
     private string _name;
@@ -24,7 +24,7 @@ public class MonsterParty : Party {
     public MonsterActionData actionData {
         get { return _actionData; }
     }
-    public override ICharacter owner {
+    public override Character owner {
         get { return mainCharacter; }
     }
     public override CharacterAction currentAction {

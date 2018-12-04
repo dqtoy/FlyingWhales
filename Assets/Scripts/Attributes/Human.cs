@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public class Human : CharacterAttribute {
     public Human() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.HUMAN) {

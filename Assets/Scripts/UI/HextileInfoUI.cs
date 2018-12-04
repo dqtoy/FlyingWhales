@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine.UI;
-using ECS;
+
 
 public class HextileInfoUI : UIMenu {
 
@@ -78,7 +78,7 @@ public class HextileInfoUI : UIMenu {
   //                  text += " (" + currChar.actionData.currentAction.actionData.actionName.ToString() + ")";
   //                  //}
   //              }
-  //  //            if (currentlyShowingHexTile.charactersAtLocation[i] is ECS.Character) {
+  //  //            if (currentlyShowingHexTile.charactersAtLocation[i] is Character) {
 		//		//	Character currChar = currentlyShowingHexTile.charactersAtLocation [i];
 		//		//	text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString () : "NONE");
 		//		//	if (currChar.actionData.currentAction != null) {

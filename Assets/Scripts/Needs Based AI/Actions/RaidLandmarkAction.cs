@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public class RaidLandmarkAction : CharacterAction {
     public RaidLandmarkAction() : base(ACTION_TYPE.RAID_LANDMARK) {

@@ -15,8 +15,8 @@ public class CharacterIntelItem : PooledObject, IDragParentItem {
     public CharacterPortrait characterPortrait;
 
     #region getters/setters
-    public ECS.Character character {
-        get { return _characterIntel.character as ECS.Character; }
+    public Character character {
+        get { return _characterIntel.character; }
     }
     public object associatedObj {
         get { return _characterIntel; }

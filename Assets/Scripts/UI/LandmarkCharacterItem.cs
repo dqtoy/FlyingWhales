@@ -1,4 +1,4 @@
-﻿using ECS;
+﻿
 using EZObjectPools;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class LandmarkCharacterItem : PooledObject {
 
-    public ICharacter character { get; private set; }
+    public Character character { get; private set; }
     //private BaseLandmark _landmark;
     private bool isDefender;
 
@@ -24,7 +24,7 @@ public class LandmarkCharacterItem : PooledObject {
     //    }
     //}
 
-    public void SetCharacter(ICharacter character, BaseLandmark landmark, bool isDefender = false) {
+    public void SetCharacter(Character character, BaseLandmark landmark, bool isDefender = false) {
         this.character = character;
         this.isDefender = isDefender;
         //_landmark = landmark;
@@ -64,7 +64,7 @@ public class LandmarkCharacterItem : PooledObject {
         if (isDefender) {
             UIManager.Instance.ShowSmallInfo(character.name);
         } else {
-            if (character.currentParty.icharacters.Count > 1) {
+            if (character.currentParty.characters.Count > 1) {
                 UIManager.Instance.ShowSmallInfo(character.currentParty.name);
             } else {
                 UIManager.Instance.ShowSmallInfo(character.name);

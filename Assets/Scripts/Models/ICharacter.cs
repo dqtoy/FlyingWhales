@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public interface ICharacter {
     //getters
@@ -86,7 +86,7 @@ public interface ICharacter {
     void OnAddedToParty();
     void OnAddedToPlayer();
     //void FaintOrDeath(ICharacter killer);
-    void SetSide(ECS.SIDES side);
+    void SetSide(SIDES side);
     void SetRowNumber(int row);
     void AdjustSP(int amount);
     //void AdjustHP(int amount, ICharacter killer = null);
@@ -102,11 +102,11 @@ public interface ICharacter {
     void AddMiscAction(CharacterAction characterAction);
     void RemoveMiscAction(ACTION_TYPE actionType);
     void SetMinion(Minion minion);
-    void Assassinate(ICharacter assassin);
+    void Assassinate(Character assassin);
     void AddTrait(Trait combatAttribute);
     bool IsInParty();
     bool IsInOwnParty();
-    bool InviteToParty(ICharacter inviter);
+    bool InviteToParty(Character inviter);
     bool RemoveTrait(Trait combatAttribute);
     Party CreateOwnParty();
     CharacterAttribute GetAttribute(string attribute);

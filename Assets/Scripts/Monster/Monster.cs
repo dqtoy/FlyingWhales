@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 using System.IO;
 
 public class Monster : ICharacter, ICharacterSim, IInteractable {
@@ -470,7 +470,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         Messenger.RemoveListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
         Messenger.Broadcast(Signals.MONSTER_DEATH, this);
         if(_currentParty.id != _ownParty.id) {
-            _currentParty.RemoveCharacter(this);
+            //_currentParty.RemoveCharacter(this);
         }
         _ownParty.PartyDeath();
         MonsterManager.Instance.allMonsters.Remove(this);
@@ -555,7 +555,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _raceSetting = RaceManager.Instance.racesDictionary[_type.ToString()].CreateNewCopy();
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
         _currentInteractions = new List<Interaction>();
-        characterIntel = new CharacterIntel(this);
+        //characterIntel = new CharacterIntel(this);
         if (_skills == null) {
             _skills = new List<Skill>();
         }
@@ -569,10 +569,10 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         //ConstructMiscActions();
 
 #if !WORLD_CREATION_TOOL
-        GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, UIManager.Instance.characterPortraitsParent);
-        _characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
-        _characterPortrait.GeneratePortrait(this, 36);
-        portraitGO.SetActive(false);
+        //GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, UIManager.Instance.characterPortraitsParent);
+        //_characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
+        //_characterPortrait.GeneratePortrait(this, 36);
+        //portraitGO.SetActive(false);
 #endif
 
         Messenger.AddListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
@@ -614,7 +614,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _currentSP += amount;
         _currentSP = Mathf.Clamp(_currentSP, 0, _maxSP);
     }
-    public virtual void AdjustHP(int amount, ICharacter killer = null) {
+    public virtual void AdjustHP(int amount, Character killer = null) {
         int previous = this._currentHP;
         this._currentHP += amount;
         this._currentHP = Mathf.Clamp(this._currentHP, 0, hp);
@@ -643,7 +643,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         //    _currentHP = currentMaxHP;
         //}
     }
-    public void FaintOrDeath(ICharacter killer) {
+    public void FaintOrDeath(Character killer) {
         if (CombatSimManager.Instance == null) {
             //if (_ownParty.currentCombat != null) {
             //    _ownParty.currentCombat.CharacterDeath(this, killer);
@@ -746,11 +746,11 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         }
         PlayerManager.Instance.player.playerArea.coreTile.landmarkOnTile.AddCharacterToLocation(ownParty);
     }
-    public bool InviteToParty(ICharacter inviter) {
+    public bool InviteToParty(Character inviter) {
         return false;
     }
     public bool IsInParty() {
-        if (currentParty.icharacters.Count > 1) {
+        if (currentParty.characters.Count > 1) {
             return true; //if the character is in a party that has more than 1 characters
         }
         return false;
@@ -761,7 +761,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public CharacterAttribute GetAttribute(string attribute) {
         return null;
     }
-    public void Assassinate(ICharacter assassin) {
+    public void Assassinate(Character assassin) {
         Debug.Log(assassin.name + " assassinated " + name);
         Death();
     }
@@ -874,7 +874,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _hasBeenInspected = true;
     }
     public void EndedInspection() {
-        uiData.UpdateData(this);
+        //uiData.UpdateData(this);
     }
     public void AddInteraction(Interaction interaction) {
         _currentInteractions.Add(interaction);
@@ -955,11 +955,11 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     private WeightedDictionary<INTERACTION_TYPE> GetValidInteractionWeights() {
         WeightedDictionary<INTERACTION_TYPE> weights = new WeightedDictionary<INTERACTION_TYPE>();
-        foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in interactionWeights.dictionary) {
-            if (InteractionManager.Instance.CanCreateInteraction(kvp.Key, this)) {
-                weights.AddElement(kvp.Key, kvp.Value);
-            }
-        }
+        //foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in interactionWeights.dictionary) {
+        //    if (InteractionManager.Instance.CanCreateInteraction(kvp.Key, this)) {
+        //        weights.AddElement(kvp.Key, kvp.Value);
+        //    }
+        //}
         return weights;
     }
     #endregion

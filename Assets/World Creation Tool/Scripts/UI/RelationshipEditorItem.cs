@@ -20,7 +20,7 @@ public class RelationshipEditorItem : MonoBehaviour, IPointerEnterHandler, IPoin
     #endregion
 
     private void Awake() {
-        Messenger.AddListener<ECS.Character, GENDER>(Signals.GENDER_CHANGED, OnCharacterChangedGender);
+        Messenger.AddListener<Character, GENDER>(Signals.GENDER_CHANGED, OnCharacterChangedGender);
     }
 
     public void SetRelationship(Relationship rel) {
@@ -70,7 +70,7 @@ public class RelationshipEditorItem : MonoBehaviour, IPointerEnterHandler, IPoin
     public void RemoveRelationship() {
         //_relationship.sourceCharacter.RemoveRelationshipWith(_relationship.targetCharacter);
     }
-    private void OnCharacterChangedGender(ECS.Character character, GENDER newGender) {
+    private void OnCharacterChangedGender(Character character, GENDER newGender) {
         if (_relationship.sourceCharacter.id == character.id || _relationship.targetCharacter.id == character.id) {
             LoadRelationshipChoices();
             _relationship.OnCharacterChangedGender(character, newGender);
@@ -89,7 +89,7 @@ public class RelationshipEditorItem : MonoBehaviour, IPointerEnterHandler, IPoin
 
     #region Monobehaviours
     private void OnDestroy() {
-        Messenger.RemoveListener<ECS.Character, GENDER>(Signals.GENDER_CHANGED, OnCharacterChangedGender);
+        Messenger.RemoveListener<Character, GENDER>(Signals.GENDER_CHANGED, OnCharacterChangedGender);
     }
     #endregion
 }

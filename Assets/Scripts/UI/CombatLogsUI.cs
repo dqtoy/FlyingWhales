@@ -2,7 +2,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine.UI;
-using ECS;
+
 
 public class CombatLogsUI : UIMenu {
 

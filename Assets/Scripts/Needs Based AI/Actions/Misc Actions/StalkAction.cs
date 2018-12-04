@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public class StalkAction : CharacterAction {
 
@@ -39,7 +39,7 @@ public class StalkAction : CharacterAction {
         }
     }
     public override IObject GetTargetObject(CharacterParty sourceParty) {
-        Character stalker = sourceParty.mainCharacter as Character;
+        Character stalker = sourceParty.mainCharacter;
         Stalker stalkerAtt = stalker.GetAttribute(ATTRIBUTE.STALKER) as Stalker;
         return stalkerAtt.stalkee.ownParty.icharacterObject;
     }

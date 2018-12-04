@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bandit : CharacterRole {
 
-    public Bandit(ECS.Character character) : base(character) {
+    public Bandit(Character character) : base(character) {
         _roleType = CHARACTER_ROLE.BANDIT;
     }
 }

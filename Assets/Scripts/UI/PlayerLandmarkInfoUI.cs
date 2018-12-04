@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Linq;
 using TMPro;
 using UnityEngine.UI;
-using ECS;
+
 
 public class PlayerLandmarkInfoUI : UIMenu {
 
@@ -83,8 +83,8 @@ public class PlayerLandmarkInfoUI : UIMenu {
         LoadLogItems();
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         //Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_INSPECTED, OnLandmarkInspected);
-        Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_ADDED, OnResidentAddedToLandmark);
-        Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_REMOVED, OnResidentRemovedFromLandmark);
+        Messenger.AddListener<BaseLandmark, Character>(Signals.LANDMARK_RESIDENT_ADDED, OnResidentAddedToLandmark);
+        Messenger.AddListener<BaseLandmark, Character>(Signals.LANDMARK_RESIDENT_REMOVED, OnResidentRemovedFromLandmark);
         Messenger.AddListener<RitualCircle>(Signals.UPDATE_RITUAL_CIRCLE_TRAIT, OnUpdateRitualCircleTrait);
     }
     public override void OpenMenu() {
@@ -249,7 +249,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
         }
         return null;
     }
-    private LandmarkCharacterItem GetItem(ICharacter character) {
+    private LandmarkCharacterItem GetItem(Character character) {
         LandmarkCharacterItem[] items = Utilities.GetComponentsInDirectChildren<LandmarkCharacterItem>(charactersScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
             LandmarkCharacterItem item = items[i];
@@ -261,7 +261,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
         }
         return null;
     }
-    private LandmarkCharacterItem CreateNewCharacterItem(ICharacter character) {
+    private LandmarkCharacterItem CreateNewCharacterItem(Character character) {
         GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
         LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
         item.SetCharacter(character, _activeLandmark);
@@ -274,12 +274,12 @@ public class PlayerLandmarkInfoUI : UIMenu {
         LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
         item.SetCharacter(partyData.partyMembers[0], _activeLandmark);
     }
-    private void OnResidentAddedToLandmark(BaseLandmark landmark, ICharacter character) {
+    private void OnResidentAddedToLandmark(BaseLandmark landmark, Character character) {
         if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id) { // && (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll)
             CreateNewCharacterItem(character);
         }
     }
-    private void OnResidentRemovedFromLandmark(BaseLandmark landmark, ICharacter character) {
+    private void OnResidentRemovedFromLandmark(BaseLandmark landmark, Character character) {
         if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id) {
             LandmarkCharacterItem item = GetItem(character);
             if (item != null) {
@@ -409,7 +409,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
         _assignedMinion = minion;
         if (minion != null) {
             minionAssignmentPortrait.gameObject.SetActive(true);
-            minionAssignmentPortrait.GeneratePortrait(minion.icharacter);
+            minionAssignmentPortrait.GeneratePortrait(minion.character);
             minionAssignmentDescription.gameObject.SetActive(false);
             OnUpdateLandmarkInvestigationState();
         } else {
@@ -417,7 +417,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
         }
     }
     public void OnClickConfirmInvestigation() {
-        _activeLandmark.landmarkObj.SetAssignedCharacter(_assignedMinion.icharacter as Character);
+        _activeLandmark.landmarkObj.SetAssignedCharacter(_assignedMinion.character);
         OnUpdateLandmarkInvestigationState();
     }
     //public void OnClickRecall() {

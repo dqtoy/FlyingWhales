@@ -1,4 +1,4 @@
-﻿using ECS;
+﻿
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -161,8 +161,8 @@ public class HarvestSeason : Interaction {
     //}
     private void FarmerKilledRewardEffect(InteractionState state) {
         //**Effect**: Kill a random Farmer staying at that farm, City gains Supply Cache 1
-        List<ICharacter> farmers = farm.tileLocation.areaOfTile.GetResidentsWithClass("Farmer");
-        ICharacter chosenFarmer = farmers[Random.Range(0, farmers.Count)];
+        List<Character> farmers = farm.tileLocation.areaOfTile.GetResidentsWithClass("Farmer");
+        Character chosenFarmer = farmers[Random.Range(0, farmers.Count)];
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(chosenFarmer, chosenFarmer.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }

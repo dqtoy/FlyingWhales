@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using ECS;
+
 
 public class Tired : CharacterAttribute {
     public Tired() : base(ATTRIBUTE_CATEGORY.CHARACTER, ATTRIBUTE.TIRED) {

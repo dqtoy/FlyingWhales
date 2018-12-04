@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ECS;
+
 
 public class RandomNameGenerator : MonoBehaviour {
 

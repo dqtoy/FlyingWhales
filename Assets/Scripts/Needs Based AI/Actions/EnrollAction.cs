@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnrollAction : CharacterAction {
 
-    private ECS.Character mentor;
+    private Character mentor;
 
     public EnrollAction() : base(ACTION_TYPE.ENROLL) {
         
@@ -16,9 +16,7 @@ public class EnrollAction : CharacterAction {
         if (mentor == null) {
             if (targetObject is ICharacterObject) {
                 ICharacterObject owner = targetObject as ICharacterObject;
-                if (owner.iparty.mainCharacter is ECS.Character) {
-                    mentor = (owner.iparty.mainCharacter as ECS.Character);
-                }
+                mentor = owner.iparty.mainCharacter;
             }
         }
 
@@ -32,7 +30,7 @@ public class EnrollAction : CharacterAction {
         //}
 
         if (Random.Range(0, 100) < enrollChance) {
-            ECS.Character student = party.mainCharacter as ECS.Character;
+            Character student = party.mainCharacter;
             //success
             //Relationship mentorRel = mentor.GetRelationshipWith(student);
             //Relationship studentRel = student.GetRelationshipWith(mentor);
@@ -60,18 +58,12 @@ public class EnrollAction : CharacterAction {
     public override bool CanBeDoneBy(Party party, IObject targetObject) {
         if (targetObject is ICharacterObject) {
             ICharacterObject owner = targetObject as ICharacterObject;
-            if (owner.iparty.mainCharacter is ECS.Character) {
-                mentor = (owner.iparty.mainCharacter as ECS.Character);
-            }
+            mentor = owner.iparty.mainCharacter;
         }
-        ICharacter currCharacter = party.mainCharacter;
-        if (currCharacter is ECS.Character) {
-            ECS.Character character = currCharacter as ECS.Character;
-            //Relationship rel = mentor.GetRelationshipWith(character);
-            //if (rel == null || !rel.HasStatus(CHARACTER_RELATIONSHIP.STUDENT)) {
-            //    return true;
-            //}
-        }
+        //Relationship rel = mentor.GetRelationshipWith(party.mainCharacter);
+        //if (rel == null || !rel.HasStatus(CHARACTER_RELATIONSHIP.STUDENT)) {
+        //    return true;
+        //}
         return base.CanBeDoneBy(party, targetObject);
     }
     public override bool CanBeDone(IObject targetObject) {

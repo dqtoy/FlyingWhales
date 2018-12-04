@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using System;
-using ECS;
+
 
 public class StructureObj : IObject {
     protected OBJECT_TYPE _objectType;

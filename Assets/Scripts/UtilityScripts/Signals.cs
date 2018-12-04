@@ -60,10 +60,10 @@ public static class Signals {
     public static string RELATIONSHIP_REMOVED = "OnRelationshipRemoved"; //Parameters (Relationship removedRelationship)
     public static string GENDER_CHANGED = "OnGenderChanged"; //Parameters (Character characterThatChangedGender, GENDER newGender)
     public static string CHARACTER_REMOVED = "OnCharacterRemoved"; //Parameters (Character removedCharacter)
-    public static string ITEM_EQUIPPED = "OnItemEquipped"; //Parameters (Item equippedItem, ECS.Character character)
-    public static string ITEM_UNEQUIPPED = "OnItemUnequipped"; //Parameters (Item unequippedItem, ECS.Character character)
+    public static string ITEM_EQUIPPED = "OnItemEquipped"; //Parameters (Item equippedItem, Character character)
+    public static string ITEM_UNEQUIPPED = "OnItemUnequipped"; //Parameters (Item unequippedItem, Character character)
     public static string ITEM_OBTAINED = "OnObtainItem"; //Parameters (Item obtainedItem, Character characterThatObtainedItem)
-    public static string ITEM_THROWN = "OnItemThrown"; //Parameters (Item unobtainedItem, ECS.Character character)
+    public static string ITEM_THROWN = "OnItemThrown"; //Parameters (Item unobtainedItem, Character character)
     public static string CHARACTER_MARKED = "OnCharacterMarked";
     public static string CHARACTER_INSPECTED = "OnCharacterInspected"; //Parameters (Character inspectedCharacter)
     #endregion
@@ -73,7 +73,7 @@ public static class Signals {
     public static string HIDE_POPUP_MESSAGE = "HidePopupMessage";
     public static string UPDATE_UI = "UpdateUI";
     public static string SHOW_NOTIFICATION = "ShowNotification"; //Parameters (string text, UnityAction onClickAction)
-    public static string SHOW_CHARACTER_DIALOG = "ShowCharacterDialog"; //Parameters(ECS.Character character, string text, List<CharacterDialogChoice> choices)
+    public static string SHOW_CHARACTER_DIALOG = "ShowCharacterDialog"; //Parameters(Character character, string text, List<CharacterDialogChoice> choices)
     public static string HISTORY_ADDED = "OnHistoryAdded"; //Parameters (object itemThatHadHistoryAdded) either a character or a landmark
     public static string PAUSED = "OnPauseChanged"; //Parameters (bool isGamePaused)
     public static string PROGRESSION_SPEED_CHANGED = "OnProgressionSpeedChanged"; //Parameters (PROGRESSION_SPEED progressionSpeed)

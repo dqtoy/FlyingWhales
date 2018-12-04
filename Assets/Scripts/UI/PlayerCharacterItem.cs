@@ -20,10 +20,10 @@ public class PlayerCharacterItem : PooledObject, IDragParentItem {
     public TweenPosition tweenPos;
     public int supposedIndex;
 
-    private ICharacter _character;
+    private Character _character;
 
     #region getters/setters
-    public ICharacter character {
+    public Character character {
         get { return _character; }
     }
     public Minion minion {
@@ -34,7 +34,7 @@ public class PlayerCharacterItem : PooledObject, IDragParentItem {
     }
     #endregion
 
-    public void SetCharacter(ICharacter character) {
+    public void SetCharacter(Character character) {
         _character = character;
         if (_character == null) {
             //character is null

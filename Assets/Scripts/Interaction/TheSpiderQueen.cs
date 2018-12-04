@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TheSpiderQueen : Interaction {
 
-    private ICharacter spiderQueen;
+    private Character spiderQueen;
     private BaseLandmark landmark;
     private WeightedDictionary<DefenderSetting> assaultSpawnWeights;
 
@@ -99,7 +99,7 @@ public class TheSpiderQueen : Interaction {
 
     private void SpawnSpiderQueen() {
         MonsterParty monsterParty = new MonsterParty();
-        spiderQueen = MonsterManager.Instance.CreateNewMonster("Spider Queen");
+        //spiderQueen = MonsterManager.Instance.CreateNewMonster("Spider Queen");
         landmark.AddCharacterHomeOnLandmark(spiderQueen);
         spiderQueen.SetOwnedParty(monsterParty);
         spiderQueen.SetCurrentParty(monsterParty);
@@ -249,8 +249,8 @@ public class TheSpiderQueen : Interaction {
         for (int i = 0; i < unitCount; i++) {
             DefenderSetting chosenDefender = assaultSpawnWeights.PickRandomElementGivenWeights();
             MonsterArmyUnit armyUnit = MonsterManager.Instance.CreateNewMonsterArmyUnit(chosenDefender.className);
-            landmark.AddCharacterHomeOnLandmark(armyUnit);
-            monsterParty.AddCharacter(armyUnit);
+            //landmark.AddCharacterHomeOnLandmark(armyUnit);
+            //monsterParty.AddCharacter(armyUnit);
         }
         return monsterParty;
     }

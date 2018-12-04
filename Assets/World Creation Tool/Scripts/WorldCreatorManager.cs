@@ -93,7 +93,7 @@ namespace worldcreator {
             }
 
             WorldCreatorUI.Instance.InitializeMenus();
-            ECS.CombatManager.Instance.Initialize();
+            CombatManager.Instance.Initialize();
             
             //Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
             Biomes.Instance.LoadPassableStates(hexTiles);
@@ -141,7 +141,7 @@ namespace worldcreator {
             Biomes.Instance.LoadPassableStates(hexTiles);
 
             WorldCreatorUI.Instance.InitializeMenus();
-            ECS.CombatManager.Instance.Initialize();
+            CombatManager.Instance.Initialize();
             LoadRegions(data);
             FactionManager.Instance.LoadFactions(data);
             LandmarkManager.Instance.LoadAreas(data);
@@ -353,7 +353,7 @@ namespace worldcreator {
         //    if (data.charactersData != null) {
         //        for (int i = 0; i < data.charactersData.Count; i++) {
         //            CharacterSaveData currData = data.charactersData[i];
-        //            ECS.Character currCharacter = CharacterManager.Instance.CreateNewCharacter(currData);
+        //            Character currCharacter = CharacterManager.Instance.CreateNewCharacter(currData);
         //            Faction characterFaction = FactionManager.Instance.GetFactionBasedOnID(currData.factionID);
         //            if (characterFaction != null) {
         //                characterFaction.AddNewCharacter(currCharacter);
@@ -367,7 +367,7 @@ namespace worldcreator {
         //    if (data.charactersData != null) {
         //        for (int i = 0; i < data.charactersData.Count; i++) {
         //            CharacterSaveData currData = data.charactersData[i];
-        //            ECS.Character currCharacter = CharacterManager.Instance.GetCharacterByID(currData.id);
+        //            Character currCharacter = CharacterManager.Instance.GetCharacterByID(currData.id);
         //            currCharacter.LoadRelationships(currData.relationshipsData);
         //        }
         //    }

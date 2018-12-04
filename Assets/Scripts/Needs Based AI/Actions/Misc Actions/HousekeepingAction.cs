@@ -43,12 +43,12 @@ public class HousekeepingAction : CharacterAction {
     }
     public override string GetArriveActionString(Party party = null) {
         Log arriveLog = new Log(GameManager.Instance.Today(), "CharacterActions", this.GetType().ToString(), "arrive_action");
-        arriveLog.AddToFillers(party.owner as ECS.Character, (party.owner as ECS.Character).name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        arriveLog.AddToFillers(party.owner, party.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         return Utilities.LogReplacer(arriveLog);
     }
     public override string GetLeaveActionString(Party party = null) {
         Log arriveLog = new Log(GameManager.Instance.Today(), "CharacterActions", this.GetType().ToString(), "leave_action");
-        arriveLog.AddToFillers(party.owner as ECS.Character, (party.owner as ECS.Character).name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        arriveLog.AddToFillers(party.owner, party.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         return Utilities.LogReplacer(arriveLog);
     }
     #endregion

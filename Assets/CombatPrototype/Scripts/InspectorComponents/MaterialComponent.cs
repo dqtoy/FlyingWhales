@@ -11,10 +11,10 @@ public class MaterialComponent: MonoBehaviour {
 	public Structure structure;
 
 	//Weapon Data
-	public ECS.WeaponMaterial weaponData;
+	public WeaponMaterial weaponData;
 
 	//Armor Data
-	public ECS.ArmorMaterial armorData;
+	public ArmorMaterial armorData;
 
 	//Construction Data
 	public int sturdiness;

@@ -5,13 +5,13 @@ using UnityEngine.UI;
 
 public class CharacterSquadEditorItem : MonoBehaviour {
 
-    public ECS.Character character;
+    public Character character;
 
     [SerializeField] private CharacterPortrait portrait;
     [SerializeField] private Text characterNameLbl;
     [SerializeField] private Text otherInfoLbl;
 
-    public void SetCharacter(ECS.Character character) {
+    public void SetCharacter(Character character) {
         this.character = character;
         portrait.GeneratePortrait(character, 64);
     }

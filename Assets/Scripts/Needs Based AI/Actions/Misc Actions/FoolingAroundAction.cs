@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public class FoolingAroundAction : CharacterAction {
 
@@ -16,7 +16,7 @@ public class FoolingAroundAction : CharacterAction {
     public override void OnChooseAction(Party iparty, IObject targetObject) {
         base.OnChooseAction(iparty, targetObject);
         if (iparty is CharacterParty) {
-            Character character = iparty.mainCharacter as Character;
+            Character character = iparty.mainCharacter;
             character.SetDoNotDisturb(true);
         }
     }
@@ -28,7 +28,7 @@ public class FoolingAroundAction : CharacterAction {
             ICharacterObject icharacterObject = targetObject as ICharacterObject;
             if (icharacterObject.iparty is CharacterParty) {
                 CharacterParty targetParty = icharacterObject.iparty as CharacterParty;
-                Character targetCharacter = targetParty.mainCharacter as Character;
+                Character targetCharacter = targetParty.mainCharacter;
 
                 if (targetParty.actionData.currentAction == null) {
                     FoolingAroundAction actionToAssign = targetParty.mainCharacter.GetMiscAction(_actionData.actionType) as FoolingAroundAction;
@@ -71,21 +71,21 @@ public class FoolingAroundAction : CharacterAction {
         if (characterParty.actionData.isDone) {
             return;
         }
-        Character character = characterParty.mainCharacter as Character;
+        Character character = characterParty.mainCharacter;
         character.SetDoNotDisturb(false);
 
         if (targetObject is ICharacterObject) {
             ICharacterObject icharacterObject = targetObject as ICharacterObject;
             if (icharacterObject.iparty is CharacterParty) {
                 CharacterParty targetParty = icharacterObject.iparty as CharacterParty;
-                Character targetCharacter = targetParty.mainCharacter as Character;
+                Character targetCharacter = targetParty.mainCharacter;
                 targetCharacter.SetDoNotDisturb(false);
             }
         }
         //Relationship effects
     }
     public override IObject GetTargetObject(CharacterParty sourceParty) {
-        Character mainCharacter = sourceParty.mainCharacter as Character;
+        Character mainCharacter = sourceParty.mainCharacter;
         if (mainCharacter.GetAttribute(ATTRIBUTE.UNFAITHFUL) != null) {
             return GetTargetObjectAsUnfaithful(mainCharacter);
         } else if (mainCharacter.GetAttribute(ATTRIBUTE.LIBERATED) != null) {
@@ -165,13 +165,11 @@ public class FoolingAroundAction : CharacterAction {
             if (candidate.icon.isTravelling) {
                 continue;
             }
-            if (candidate.mainCharacter is Character) {
-                Character characterCandidate = candidate.mainCharacter as Character;
-                //Character candidatePartner = characterCandidate.GetPartner();
-                //if(candidatePartner == null && characterCandidate.GetAttribute(ATTRIBUTE.LIBERATED) != null) {
-                //    potentialCandidates.Add(characterCandidate);
-                //}
-            }
+            Character characterCandidate = candidate.mainCharacter;
+            //Character candidatePartner = characterCandidate.GetPartner();
+            //if(candidatePartner == null && characterCandidate.GetAttribute(ATTRIBUTE.LIBERATED) != null) {
+            //    potentialCandidates.Add(characterCandidate);
+            //}
         }
         if(potentialCandidates.Count > 0) {
             return potentialCandidates[Utilities.rng.Next(0, potentialCandidates.Count)].ownParty.icharacterObject;

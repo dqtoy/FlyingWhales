@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 
 public class Spy : Job {
 
@@ -123,7 +123,7 @@ public class Spy : Job {
             _createdInteraction.SetEndInteractionAction(() => StartJobAction());
             _createdInteraction.ScheduleSecondTimeOut();
             if (_createdInteraction.type == INTERACTION_TYPE.CHARACTER_ENCOUNTERED) {
-                ((chosenIntel as CharacterIntel).character as Character).AddInteraction(_createdInteraction);
+                ((chosenIntel as CharacterIntel).character).AddInteraction(_createdInteraction);
             } else if (_createdInteraction.type == INTERACTION_TYPE.LOCATION_OBSERVED
                 || _createdInteraction.type == INTERACTION_TYPE.DEFENDERS_REVEALED
                 || _createdInteraction.type == INTERACTION_TYPE.FACTION_DISCOVERED) {

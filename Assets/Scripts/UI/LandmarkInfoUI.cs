@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine.UI;
-using ECS;
+
 using UnityEngine.UI.Extensions;
 
 public class LandmarkInfoUI : UIMenu {
@@ -322,7 +322,7 @@ public class LandmarkInfoUI : UIMenu {
         }
         return null;
     }
-    private LandmarkCharacterItem GetItem(ICharacter character) {
+    private LandmarkCharacterItem GetItem(Character character) {
         LandmarkCharacterItem[] items = Utilities.GetComponentsInDirectChildren<LandmarkCharacterItem>(charactersScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
             LandmarkCharacterItem item = items[i];
@@ -334,7 +334,7 @@ public class LandmarkInfoUI : UIMenu {
         }
         return null;
     }
-    private LandmarkCharacterItem CreateNewCharacterItem(ICharacter character) {
+    private LandmarkCharacterItem CreateNewCharacterItem(Character character) {
         GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
         LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
         item.SetCharacter(character, _activeLandmark);
@@ -362,12 +362,12 @@ public class LandmarkInfoUI : UIMenu {
             }
         }
     }
-    private void OnResidentAddedToLandmark(BaseLandmark landmark, ICharacter character) {
+    private void OnResidentAddedToLandmark(BaseLandmark landmark, Character character) {
         if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id) { // && (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll)
             CreateNewCharacterItem(character);
         }
     }
-    private void OnResidentRemovedFromLandmark(BaseLandmark landmark, ICharacter character) {
+    private void OnResidentRemovedFromLandmark(BaseLandmark landmark, Character character) {
         if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id) {
             LandmarkCharacterItem item = GetItem(character);
             if (item != null) {
@@ -582,8 +582,8 @@ public class LandmarkInfoUI : UIMenu {
     public void ShowMinionAssignmentParty() {
         if (_activeLandmark.tileLocation.areaOfTile.areaInvestigation.isAttacking) {
             for (int i = 0; i < _assignedParty.Length; i++) {
-                if (i < _activeLandmark.tileLocation.areaOfTile.areaInvestigation.assignedMinionAttack.icharacter.currentParty.icharacters.Count) {
-                    AssignPartyMinionToInvestigate(_activeLandmark.tileLocation.areaOfTile.areaInvestigation.assignedMinionAttack.icharacter.currentParty.icharacters[i].minion, i, false);
+                if (i < _activeLandmark.tileLocation.areaOfTile.areaInvestigation.assignedMinionAttack.character.currentParty.characters.Count) {
+                    AssignPartyMinionToInvestigate(_activeLandmark.tileLocation.areaOfTile.areaInvestigation.assignedMinionAttack.character.currentParty.characters[i].minion, i, false);
                 } else {
                     AssignPartyMinionToInvestigate(null, i, false);
                 }
@@ -708,7 +708,7 @@ public class LandmarkInfoUI : UIMenu {
         _assignedMinion = minion;
         if (minion != null) {
             minionAssignmentPortrait.gameObject.SetActive(true);
-            minionAssignmentPortrait.GeneratePortrait(minion.icharacter);
+            minionAssignmentPortrait.GeneratePortrait(minion.character);
             //minionAssignmentConfirmButton.interactable = !_activeLandmark.landmarkInvestigation.isExploring;
             minionAssignmentDescription.gameObject.SetActive(false);
 
@@ -731,7 +731,7 @@ public class LandmarkInfoUI : UIMenu {
             }
             _assignedParty[index] = minion;
             minionAssignmentPartyPortraits[index].gameObject.SetActive(true);
-            minionAssignmentPartyPortraits[index].GeneratePortrait(minion.icharacter, 85);
+            minionAssignmentPartyPortraits[index].GeneratePortrait(minion.character, 85);
             //minionAssignmentPartyRecallButton.gameObject.SetActive(false);
             //minionAssignmentPartyConfirmButton.gameObject.SetActive(true);
             //minionAssignmentDraggableItem.SetDraggable(true);
@@ -741,10 +741,10 @@ public class LandmarkInfoUI : UIMenu {
             ResetMinionAssignmentParty(index);
         }
 
-        List<ICharacter> assignedCharacters = new List<ICharacter>();
+        List<Character> assignedCharacters = new List<Character>();
         for (int i = 0; i < _assignedParty.Length; i++) {
             if (_assignedParty[i] != null) {
-                assignedCharacters.Add(_assignedParty[i].icharacter);
+                assignedCharacters.Add(_assignedParty[i].character);
             }
         }
 
@@ -752,7 +752,7 @@ public class LandmarkInfoUI : UIMenu {
         float enemyChance = 0f;
         DefenderGroup defender = _activeLandmark.tileLocation.areaOfTile.GetFirstDefenderGroup();
         if (defender != null) {
-            CombatManager.Instance.GetCombatChanceOfTwoLists(assignedCharacters, defender.party.icharacters, out chance, out enemyChance);
+            CombatManager.Instance.GetCombatChanceOfTwoLists(assignedCharacters, defender.party.characters, out chance, out enemyChance);
         } else {
             CombatManager.Instance.GetCombatChanceOfTwoLists(assignedCharacters, null, out chance, out enemyChance);
         }

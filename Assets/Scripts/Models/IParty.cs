@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ECS;
+
 using System;
 
 public interface IParty {
@@ -21,16 +21,16 @@ public interface IParty {
     BaseLandmark landmarkLocation { get; }
     BaseLandmark homeLandmark { get; }
     CharacterAction currentAction { get; }
-    ICharacter mainCharacter { get; }
+    Character mainCharacter { get; }
     ICharacterObject icharacterObject { get; }
     ILocation specificLocation { get; }
     IActionData iactionData { get; }
-    List<ICharacter> icharacters { get; }
+    List<Character> characters { get; }
 
     void EndAction();
     void GoHome(Action action = null, Action actionOnStartOfMovement = null);
-    void RemoveCharacter(ICharacter icharacter);
+    void RemoveCharacter(Character icharacter);
     //void AdvertiseSelf(ActionThread actionThread);
     void SetSpecificLocation(ILocation location);
-    bool AddCharacter(ICharacter icharacter);
+    bool AddCharacter(Character icharacter);
 }

@@ -7,7 +7,7 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
-using ECS;
+
 
 public class UIManager : MonoBehaviour {
 
@@ -428,8 +428,8 @@ public class UIManager : MonoBehaviour {
         detailedInfoIcon.gameObject.SetActive(false);
         detailedInfoContentParent.gameObject.SetActive(true);
         Utilities.DestroyChildren(detailedInfoContentParent);
-        for (int i = 0; i < party.icharacters.Count; i++) {
-            ICharacter character = party.icharacters[i];
+        for (int i = 0; i < party.characters.Count; i++) {
+            Character character = party.characters[i];
             GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterPortrait", Vector3.zero, Quaternion.identity, detailedInfoContentParent);
             CharacterPortrait portrait = portraitGO.GetComponent<CharacterPortrait>();
             //portrait.SetDimensions(48f);
