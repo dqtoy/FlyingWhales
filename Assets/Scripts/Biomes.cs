@@ -113,7 +113,7 @@ public class Biomes : MonoBehaviour {
     }
     public void UpdateTileVisuals(HexTile currentHexTile) {
 #if WORLD_CREATION_TOOL
-        int sortingOrder = (((int)worldcreator.WorldCreatorManager.Instance.height - 1) -  (currentHexTile.yCoordinate - 2)) * 2;
+        int sortingOrder = (((int)worldcreator.WorldCreatorManager.Instance.height - 1) -  (currentHexTile.yCoordinate - 2)) * 10;
 #else
         int sortingOrder = (((int)GridMap.Instance.height - 1) -  (currentHexTile.yCoordinate - 2)) * 10; //10 is the number of sorting order between rows
         if (PlayerManager.Instance.player != null &&  PlayerManager.Instance.player.playerArea != null 

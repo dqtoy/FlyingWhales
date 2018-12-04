@@ -166,6 +166,9 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 10684bec90479f64f9f517a6db0f31d2, type: 3}
   - {fileID: 21300000, guid: 1824d50e92226a8428284955865e952d, type: 3}
   - {fileID: 21300000, guid: ec5cf9cba9396494189cbd042ff5a2e8, type: 3}
+  - {fileID: 21300000, guid: b7bb65c906830e94aae46a8e5a3bfec3, type: 3}
+  - {fileID: 21300000, guid: 4cea78643ddeafd44be5a77de7124d38, type: 3}
+  - {fileID: 21300000, guid: f826054197bc3474b9c09e21ec923e5e, type: 3}
   - {fileID: 21300000, guid: 85a0cd260bc3a304ea9c12fa4c06c78e, type: 3}
   - {fileID: 21300000, guid: 0cc55ad4160b82149815af8dd703dca4, type: 3}
   - {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
@@ -554,6 +557,9 @@ SpriteAtlas:
   - demonic_desert_forest1
   - demonic_forest1
   - demonic_flat1
+  - water1
+  - water2
+  - water3
   - elven_town2_colour
   - human_mine_iron_colour
   - human_mine_iron_colour

@@ -32,7 +32,6 @@ namespace worldcreator {
         public int _borderThickness;
 
         public List<Region> allRegions { get; private set; }
-
         public List<HexTile> allTiles { get; private set; }
 
         private void Awake() {
@@ -614,10 +613,12 @@ namespace worldcreator {
                 HexTile currTile = tiles[i];
                 Biomes.Instance.UpdateTileVisuals(currTile);
                 Biomes.Instance.LoadPassableStates(currTile);
-                for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
-                    HexTile currNeighbour = currTile.AllNeighbours[j];
-                    Biomes.Instance.UpdateTileVisuals(currNeighbour);
-                    Biomes.Instance.LoadPassableStates(currNeighbour);
+                if (currTile.AllNeighbours != null) {
+                    for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
+                        HexTile currNeighbour = currTile.AllNeighbours[j];
+                        Biomes.Instance.UpdateTileVisuals(currNeighbour);
+                        Biomes.Instance.LoadPassableStates(currNeighbour);
+                    }
                 }
             }
         }
