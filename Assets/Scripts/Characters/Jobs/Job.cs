@@ -111,6 +111,9 @@ public class Job {
     public void SetCreatedInteraction(Interaction interaction) {
         _createdInteraction = interaction;
         if(_createdInteraction != null) {
+            if (!_createdInteraction.hasInitialized) {
+                _createdInteraction.Initialize();
+            }
             _createdInteraction.SetJobAssociated(this);
         }
     }
@@ -126,6 +129,10 @@ public class Job {
                 character.AddInteraction(interaction);
             }
         }
+    }
+    public void ForceDefaultAllExistingInteractions() {
+        _character.specificLocation.tileLocation.areaOfTile.SetStopDefaultInteractionsState(false);
+        _character.specificLocation.tileLocation.areaOfTile.DefaultAllExistingInteractions();
     }
     #endregion
 }

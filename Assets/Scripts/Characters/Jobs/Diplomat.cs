@@ -50,17 +50,18 @@ public class Diplomat : Job {
                 return;
             }
             SetJobActionPauseState(true);
+            area.SetStopDefaultInteractionsState(true);
             SetCreatedInteraction(choices[UnityEngine.Random.Range(0, choices.Count)]);
-            _createdInteraction.SetEndInteractionAction(() => SetJobActionPauseState(false));
+            _createdInteraction.AddEndInteractionAction(() => SetJobActionPauseState(false));
+            _createdInteraction.AddEndInteractionAction(() => ForceDefaultAllExistingInteractions());
             InteractionUI.Instance.OpenInteractionUI(_createdInteraction);
         } else if (result == "Crit Fail") {
             SetJobActionPauseState(true);
             SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile));
-            _createdInteraction.SetEndInteractionAction(() => SetJobActionPauseState(false));
+            _createdInteraction.AddEndInteractionAction(() => SetJobActionPauseState(false));
             _createdInteraction.ScheduleSecondTimeOut();
             _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(_createdInteraction);
         }
-
     }
     public override int GetSuccessRate() {
         int baseRate = 60;

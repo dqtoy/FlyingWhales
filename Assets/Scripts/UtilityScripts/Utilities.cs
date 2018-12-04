@@ -1719,4 +1719,41 @@ public class Utilities : MonoBehaviour {
         return 0;
     }
     #endregion
+
+    #region Interaction
+    public static INTERACTION_TYPE[] interactionPriorityList = new INTERACTION_TYPE[] {
+        //Faction Created Events
+        INTERACTION_TYPE.SPAWN_CHARACTER,
+        INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER,
+
+        //Character Departure
+        INTERACTION_TYPE.RETURN_HOME,
+        INTERACTION_TYPE.MOVE_TO_SCAVENGE,
+
+        //Explore
+        INTERACTION_TYPE.CHARACTER_EXPLORES,
+
+        //Combat
+
+        //Raid
+        INTERACTION_TYPE.RAID_SUCCESS,
+
+        //Expansion
+
+        //Minion Created Events
+        INTERACTION_TYPE.MINION_CRITICAL_FAIL,
+        INTERACTION_TYPE.MINION_FAILED,
+        INTERACTION_TYPE.FRIENDLY_CHARACTER_ENCOUNTERED,
+
+        //Character Arrival
+    };
+    public static int GetInteractionPriorityIndex(INTERACTION_TYPE interactionType) {
+        for (int i = 0; i < interactionPriorityList.Length; i++) {
+            if(interactionType == interactionPriorityList[i]) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    #endregion
 }
