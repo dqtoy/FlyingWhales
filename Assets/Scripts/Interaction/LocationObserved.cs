@@ -24,5 +24,6 @@ public class LocationObserved : Interaction {
         //**Mechanics**: Unlock Location Intel
         //**Log**: [Minion Name] obtained intel about [Location Name].
         PlayerManager.Instance.player.AddIntel(interactable.tileLocation.areaOfTile.locationIntel);
+        explorerMinion.LevelUp();
     }
 }

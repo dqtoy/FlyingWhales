@@ -109,6 +109,8 @@ public class SpawnCharacter : Interaction {
         state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
     }
     private void SuccessCancelEffect(InteractionState state) {
+        explorerMinion.LevelUp();
+
         state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
         state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
 
@@ -130,6 +132,8 @@ public class SpawnCharacter : Interaction {
         state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void SuccessCurseEffect(InteractionState state) {
+        explorerMinion.LevelUp();
+
         Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), interactable.tileLocation.areaOfTile.owner, interactable);
         Trait curse = AttributeManager.Instance.allTraits["Placeholder Curse 1"];
         createdCharacter.AddTrait(curse);
