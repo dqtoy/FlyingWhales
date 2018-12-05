@@ -99,7 +99,6 @@ public class GameManager : MonoBehaviour {
     //}
     #endregion
 
-
     [ContextMenu("Start Progression")]
 	public void StartProgression(){
         _gameHasStarted = true;

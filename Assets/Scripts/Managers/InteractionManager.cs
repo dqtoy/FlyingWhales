@@ -138,6 +138,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.RAID_EVENT:
                 createdInteraction = new RaidEvent(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_ATTACK:
+                createdInteraction = new MoveToAttack(interactable);
+                break;
+            case INTERACTION_TYPE.ATTACK:
+                createdInteraction = new Attack(interactable);
+                break;
             case INTERACTION_TYPE.INDUCE_WAR:
                 createdInteraction = new InduceWar(interactable);
                 break;
@@ -156,6 +162,9 @@ public class InteractionManager : MonoBehaviour {
                 //Random event that occurs on Bandit Camps. Requires at least 3 characters or army units in the Bandit Camp 
                 //character list owned by the Faction owner.
                 return landmark.GetIdleResidents().Count >= 3;
+            case INTERACTION_TYPE.MOVE_TO_ATTACK:
+                Area target = GetAttackTarget(landmark.tileLocation.areaOfTile);
+                return target != null;
             default:
                 return true;
         }
@@ -195,6 +204,69 @@ public class InteractionManager : MonoBehaviour {
             default:
                 return true;
         }
+    }
+    private Area GetAttackTarget(Area areaToAttack) {
+        Area targetArea = null;
+        List<Faction> enemyFaction = new List<Faction>();
+        List<Area> enemyAreas = new List<Area>();
+        foreach (Faction otherFaction in areaToAttack.owner.relationships.Keys) {
+            FactionRelationship factionRelationship = areaToAttack.owner.relationships[otherFaction];
+            if(factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+                enemyFaction.Add(otherFaction);
+                enemyAreas.AddRange(otherFaction.ownedAreas);
+            }
+        }
+        if(enemyFaction.Count > 0) {
+            //If at war with other factions
+            List<Character> residentsAtArea = new List<Character>();
+            for (int i = 0; i < areaToAttack.areaResidents.Count; i++) {
+                Character resident = areaToAttack.areaResidents[i];
+                if(resident.specificLocation.tileLocation.areaOfTile.id == areaToAttack.id) {
+                    residentsAtArea.Add(resident);
+                }
+            }
+            if(residentsAtArea.Count >= 3) {
+                //If has at least 3 residents in area
+                int numOfMembers = 3;
+                if(residentsAtArea.Count >= 4) {
+                    numOfMembers = 4;
+                }
+                List<List<Character>> characterCombinations = Utilities.ItemCombinations(residentsAtArea, 5, numOfMembers, numOfMembers);
+                if(characterCombinations.Count > 0) {
+                    List<Character> currentAttackCharacters = null;
+                    Area currentTargetArea = null;
+                    float highestWinChance = 0f;
+                    for (int i = 0; i < characterCombinations.Count; i++) {
+                        List<Character> attackCharacters = characterCombinations[i];
+                        Area target = enemyAreas[UnityEngine.Random.Range(0, enemyAreas.Count)];
+                        DefenderGroup defender = target.GetFirstDefenderGroup();
+                        float winChance = 0f;
+                        float loseChance = 0f;
+                        if(defender != null) {
+                            CombatManager.Instance.GetCombatChanceOfTwoLists(attackCharacters, defender.party.characters, out winChance, out loseChance);
+                        } else {
+                            CombatManager.Instance.GetCombatChanceOfTwoLists(attackCharacters, null, out winChance, out loseChance);
+                        }
+                        if (winChance > 30f) {
+                            if(currentTargetArea == null) {
+                                currentTargetArea = target;
+                                currentAttackCharacters = attackCharacters;
+                                highestWinChance = winChance;
+                            } else {
+                                if(winChance > highestWinChance) {
+                                    currentTargetArea = target;
+                                    currentAttackCharacters = attackCharacters;
+                                    highestWinChance = winChance;
+                                }
+                            }
+                        }
+                    }
+                    targetArea = currentTargetArea;
+                    areaToAttack.SetAttackTargetAndCharacters(currentTargetArea, currentAttackCharacters);
+                }
+            }
+        }
+        return targetArea;
     }
     public Reward GetReward(string rewardName) {
         if (rewardConfig.ContainsKey(rewardName)) {

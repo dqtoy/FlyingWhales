@@ -445,8 +445,8 @@ public class Faction {
     private void InitializeInteractions() {
         _nonNeutralInteractionTypes = new INTERACTION_TYPE[] {
             INTERACTION_TYPE.SPAWN_CHARACTER,
+            INTERACTION_TYPE.MOVE_TO_ATTACK,
             //Defense Mobilization
-            //Move to Attack
             //Defense Upgrade
         };
         _neutralInteractionTypes = new INTERACTION_TYPE[] {
@@ -489,7 +489,9 @@ public class Faction {
         }
         if(interactionCandidates.Count > 0) {
             int chosenIndex = UnityEngine.Random.Range(0, interactionCandidates.Count);
+            interactionCandidates[chosenIndex].landmark.tileLocation.areaOfTile.AdjustSuppliesInBank(-100);
             Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(interactionCandidates[chosenIndex].interactionType, interactionCandidates[chosenIndex].landmark);
+            createdInteraction.SetMinionSuccessAction(() => interactionCandidates[chosenIndex].landmark.tileLocation.areaOfTile.AdjustSuppliesInBank(100));
             interactionCandidates[chosenIndex].landmark.AddInteraction(createdInteraction);
             interactionLog += "\nCreated " + createdInteraction.type.ToString() + " on " + createdInteraction.interactable.tileLocation.areaOfTile.name;
             Debug.Log(interactionLog);
