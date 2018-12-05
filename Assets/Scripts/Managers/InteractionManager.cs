@@ -144,6 +144,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.ATTACK:
                 createdInteraction = new Attack(interactable);
                 break;
+            case INTERACTION_TYPE.INDUCE_WAR:
+                createdInteraction = new InduceWar(interactable);
+                break;
+            case INTERACTION_TYPE.MOVE_TO_PEACE_NEGOTIATION:
+                createdInteraction = new MoveToPeaceNegotiation(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -173,6 +179,15 @@ public class InteractionManager : MonoBehaviour {
                 for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                     Area currArea = LandmarkManager.Instance.allAreas[i];
                     if (currArea.owner == null) {
+                        return true;
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_RAID:
+                //check if there are any areas owned by factions other than your own
+                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                    Area currArea = LandmarkManager.Instance.allAreas[i];
+                    if (currArea.owner != null && currArea.owner.id != character.faction.id) {
                         return true;
                     }
                 }

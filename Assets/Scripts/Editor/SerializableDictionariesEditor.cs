@@ -20,6 +20,8 @@ public class ActionCharacterTagDictionaryPropertyDrawer : SerializableDictionary
 public class BiomeLandmarkSpriteListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(RoleInteractionsListDictionary))]
 public class RoleInteractionsListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(JobInteractionsListDictionary))]
+public class JobInteractionsListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileSpriteCorruptionListDictionary))]
 public class TileSpriteCorruptionListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(RaceClassListDictionary))]

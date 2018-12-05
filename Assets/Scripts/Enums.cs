@@ -1064,6 +1064,8 @@ public enum INTERACTION_TYPE {
     RAID_EVENT,
     MOVE_TO_ATTACK,
     ATTACK,
+    MOVE_TO_PEACE_NEGOTIATION,
+    INDUCE_WAR,
 }
 public enum REWARD {
     SUPPLY,
