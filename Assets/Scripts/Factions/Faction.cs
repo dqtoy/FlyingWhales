@@ -13,16 +13,20 @@ public class Faction {
     protected string _name;
     protected string _description;
     protected int _level;
+    protected int _currentInteractionTick;
+    protected bool _isPlayerFaction;
     protected Race _race;
     protected ILeader _leader;
-    private Sprite _emblem;
+    protected Sprite _emblem;
     protected List<Region> _ownedRegions;
     protected List<BaseLandmark> _ownedLandmarks;
-    internal Color factionColor;
+    protected Color _factionColor;
     protected List<Character> _characters; //List of characters that are part of the faction
     protected Dictionary<Faction, FactionRelationship> _relationships;
     protected List<BaseLandmark> _landmarkInfo;
     protected List<Area> _ownedAreas;
+    protected INTERACTION_TYPE[] _nonNeutralInteractionTypes;
+    protected INTERACTION_TYPE[] _neutralInteractionTypes;
 
     public MORALITY morality { get; private set; }
     public FactionIntel factionIntel { get; private set; }
@@ -40,11 +44,14 @@ public class Faction {
     public string name {
 		get { return _name; }
     }
+    public string urlName {
+        get { return "<link=" + '"' + this._id.ToString() + "_faction" + '"' + ">" + this._name + "</link>"; }
+    }
     public string description {
         get { return _description; }
     }
-    public Race race {
-        get { return _race; }
+    public bool isDestroyed {
+        get { return _leader == null; }
     }
     public RACE raceType {
         get { return _race.race; }
@@ -52,14 +59,17 @@ public class Faction {
     public RACE_SUB_TYPE subRaceType {
         get { return _race.subType; }
     }
-    public string urlName {
-		get { return "<link=" + '"' + this._id.ToString() + "_faction" + '"' +">" + this._name + "</link>"; }
-    }
     public ILeader leader {
         get { return _leader; }
     }
+    public Race race {
+        get { return _race; }
+    }
     public Sprite emblem {
         get { return _emblem; }
+    }
+    public Color factionColor {
+        get { return _factionColor; }
     }
     public List<Character> characters {
         get { return _characters; }
@@ -79,12 +89,10 @@ public class Faction {
     public List<Area> ownedAreas {
         get { return _ownedAreas; }
     }
-    public bool isDestroyed {
-        get { return _leader == null; }
-    }
     #endregion
 
-    public Faction() {
+    public Faction(bool isPlayerFaction = false) {
+        _isPlayerFaction = isPlayerFaction;
 		this._id = Utilities.SetID<Faction>(this);
         SetName(RandomNameGenerator.Instance.GenerateKingdomName());
         SetEmblem(FactionManager.Instance.GenerateFactionEmblem(this));
@@ -102,6 +110,8 @@ public class Faction {
         factionIntel = new FactionIntel(this);
         favor = new Dictionary<Faction, int>();
         defenderWeights = new WeightedDictionary<AreaCharacterClass>();
+        InitializeInteractions();
+        SetDailyInteractionGenerationTick();
 #if !WORLD_CREATION_TOOL
         AddListeners();
 #endif
@@ -130,7 +140,8 @@ public class Faction {
         } else {
             defenderWeights = new WeightedDictionary<AreaCharacterClass>();
         }
-        
+        InitializeInteractions();
+        SetDailyInteractionGenerationTick();
 #if !WORLD_CREATION_TOOL
         AddListeners();
 #endif
@@ -201,6 +212,16 @@ public class Faction {
     private void AddListeners() {
         Messenger.AddListener<Character>(Signals.CHARACTER_REMOVED, RemoveCharacter);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        if (!_isPlayerFaction) {
+            Messenger.AddListener(Signals.DAY_STARTED, DailyInteractionGeneration);
+        }
+    }
+    private void RemoveListeners() {
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_REMOVED, RemoveCharacter);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        if (!_isPlayerFaction) {
+            Messenger.RemoveListener(Signals.DAY_STARTED, DailyInteractionGeneration);
+        }
     }
     public void SetRace(Race race) {
         _race = race;
@@ -212,7 +233,7 @@ public class Faction {
         _race.subType = race;
     }
     public void SetFactionColor(Color color) {
-        factionColor = color;
+        _factionColor = color;
     }
     public void SetName(string name) {
         _name = name;
@@ -355,6 +376,7 @@ public class Faction {
 
     #region Death
     public void Death() {
+        RemoveListeners();
         FactionManager.Instance.RemoveRelationshipsWith(this);
     }
     #endregion
@@ -415,6 +437,92 @@ public class Faction {
             favor[otherFaction] += adjustment;
         } else {
             Debug.LogWarning("There is no favor key for " + otherFaction.name + " in " + this.name + "'s favor dictionary");
+        }
+    }
+    #endregion
+
+    #region Interaction
+    private void InitializeInteractions() {
+        _nonNeutralInteractionTypes = new INTERACTION_TYPE[] {
+            INTERACTION_TYPE.SPAWN_CHARACTER,
+            //Defense Mobilization
+            //Move to Attack
+            //Defense Upgrade
+        };
+        _neutralInteractionTypes = new INTERACTION_TYPE[] {
+            INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER,
+        };
+    }
+    private void SetDailyInteractionGenerationTick() {
+        _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.hoursPerDay + 1);
+    }
+    private void DailyInteractionGeneration() {
+        if (_currentInteractionTick == GameManager.Instance.days) {
+            GenerateDailyInteraction();
+            SetDailyInteractionGenerationTick();
+        }
+    }
+    private void GenerateDailyInteraction() {
+        if(name == "Neutral") {
+            GenerateNeutralInteraction();
+        } else {
+            GenerateNonNeutralInteraction();
+        }
+    }
+    private void GenerateNonNeutralInteraction() {
+        string interactionLog = GameManager.Instance.TodayLogString() + "Generating non neutral interaction for " + this.name;
+        List<InteractionAndInteractable> interactionCandidates = new List<InteractionAndInteractable>();
+        for (int i = 0; i < _ownedAreas.Count; i++) {
+            Area area = _ownedAreas[i];
+            if(area.suppliesInBank >= 100) {
+                for (int j = 0; j < _nonNeutralInteractionTypes.Length; j++) {
+                    INTERACTION_TYPE type = _nonNeutralInteractionTypes[j];
+                    if (InteractionManager.Instance.CanCreateInteraction(type, area.coreTile.landmarkOnTile)) {
+                        InteractionAndInteractable candidate = new InteractionAndInteractable {
+                            interactionType = type,
+                            landmark = area.coreTile.landmarkOnTile,
+                        };
+                        interactionCandidates.Add(candidate);
+                    }
+                }
+            }
+        }
+        if(interactionCandidates.Count > 0) {
+            int chosenIndex = UnityEngine.Random.Range(0, interactionCandidates.Count);
+            Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(interactionCandidates[chosenIndex].interactionType, interactionCandidates[chosenIndex].landmark);
+            interactionCandidates[chosenIndex].landmark.AddInteraction(createdInteraction);
+            interactionLog += "\nCreated " + createdInteraction.type.ToString() + " on " + createdInteraction.interactable.tileLocation.areaOfTile.name;
+            Debug.Log(interactionLog);
+        } else {
+            interactionLog += "\nCannot create interaction because all interactions do not meet the requirements";
+            Debug.Log(interactionLog);
+        }
+    }
+    private void GenerateNeutralInteraction() {
+        string interactionLog = GameManager.Instance.TodayLogString() + "Generating neutral interaction for " + this.name;
+        List<InteractionAndInteractable> interactionCandidates = new List<InteractionAndInteractable>();
+        for (int i = 0; i < _ownedAreas.Count; i++) {
+            Area area = _ownedAreas[i];
+            for (int j = 0; j < _neutralInteractionTypes.Length; j++) {
+                INTERACTION_TYPE type = _neutralInteractionTypes[j];
+                if (InteractionManager.Instance.CanCreateInteraction(type, area.coreTile.landmarkOnTile)) {
+                    InteractionAndInteractable candidate = new InteractionAndInteractable {
+                        interactionType = type,
+                        landmark = area.coreTile.landmarkOnTile,
+                    };
+                    interactionCandidates.Add(candidate);
+                }
+            }
+        }
+        if (interactionCandidates.Count > 0) {
+            int chosenIndex = UnityEngine.Random.Range(0, interactionCandidates.Count);
+            Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(interactionCandidates[chosenIndex].interactionType, interactionCandidates[chosenIndex].landmark);
+            interactionCandidates[chosenIndex].landmark.AddInteraction(createdInteraction);
+            interactionLog += "\nCreated " + createdInteraction.type.ToString() + " on " + createdInteraction.interactable.tileLocation.areaOfTile.name;
+            Debug.Log(interactionLog);
+        } else {
+            interactionLog += "\nCannot create interaction because all interactions do not meet the requirements";
+            Debug.Log(interactionLog);
         }
     }
     #endregion

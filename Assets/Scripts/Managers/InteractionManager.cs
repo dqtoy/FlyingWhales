@@ -16,6 +16,7 @@ public class InteractionManager : MonoBehaviour {
     public Queue<Interaction> interactionUIQueue { get; private set; }
 
     [SerializeField] private RoleInteractionsListDictionary roleDefaultInteractions;
+    [SerializeField] private JobInteractionsListDictionary jobNPCInteractions;
 
     public Dictionary<string, RewardConfig> rewardConfig = new Dictionary<string, RewardConfig>(){
         { Supply_Cache_Reward_1, new RewardConfig(){ rewardType = REWARD.SUPPLY, lowerRange = 50, higherRange = 250 } },
@@ -142,14 +143,9 @@ public class InteractionManager : MonoBehaviour {
     }
     public bool CanCreateInteraction(INTERACTION_TYPE interactionType, BaseLandmark landmark) {
         switch (interactionType) {
-            //case INTERACTION_TYPE.ABANDONED_HOUSE:
-            //case INTERACTION_TYPE.UNEXPLORED_CAVE:
-            //case INTERACTION_TYPE.SPIDER_QUEEN:
-            //case INTERACTION_TYPE.MYSTERY_HUM:
-            //case INTERACTION_TYPE.UNFINISHED_CURSE:
-            //case INTERACTION_TYPE.HARVEST_SEASON:
-            //    //Requires actively Investigating Imp.
-            //    return landmark.isBeingInspected;
+            case INTERACTION_TYPE.SPAWN_CHARACTER:
+            case INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER:
+                return landmark.tileLocation.areaOfTile.areaResidents.Count < landmark.tileLocation.areaOfTile.residentCapacity;
             case INTERACTION_TYPE.BANDIT_RAID:
                 //Random event that occurs on Bandit Camps. Requires at least 3 characters or army units in the Bandit Camp 
                 //character list owned by the Faction owner.
@@ -193,9 +189,15 @@ public class InteractionManager : MonoBehaviour {
         throw new System.Exception("There is no reward configuration with name " + rewardName);
     }
 
-    public List<CharacterInteractionWeight> GetDefauInteractionWeightsForRole(CHARACTER_ROLE role) {
+    public List<CharacterInteractionWeight> GetDefaultInteractionWeightsForRole(CHARACTER_ROLE role) {
         if (roleDefaultInteractions.ContainsKey(role)) {
             return roleDefaultInteractions[role];
+        }
+        return null;
+    }
+    public List<CharacterInteractionWeight> GetJobNPCInteractionWeights(JOB jobType) {
+        if (jobNPCInteractions.ContainsKey(jobType)) {
+            return jobNPCInteractions[jobType];
         }
         return null;
     }

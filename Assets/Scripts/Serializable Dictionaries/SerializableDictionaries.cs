@@ -19,6 +19,8 @@ public class BiomeLandmarkSpriteListDictionary : SerializableDictionary<BIOMES, 
 [System.Serializable]
 public class RoleInteractionsListDictionary : SerializableDictionary<CHARACTER_ROLE, List<CharacterInteractionWeight>, CharacterInteractionWeightListStorage> { }
 [System.Serializable]
+public class JobInteractionsListDictionary : SerializableDictionary<JOB, List<CharacterInteractionWeight>, CharacterInteractionWeightListStorage> { }
+[System.Serializable]
 public class TileSpriteCorruptionListDictionary : SerializableDictionary<Sprite, List<GameObject>, CorruptionObjectsListStorage> { }
 [System.Serializable]
 public class RaceClassListDictionary : SerializableDictionary<Race, List<RaceAreaDefenderSetting>, RaceDefenderListStorage> { }
