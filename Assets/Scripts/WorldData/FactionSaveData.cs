@@ -15,6 +15,7 @@ public class FactionSaveData {
     public int leaderID;
     public int emblemIndex;
     public int level;
+    public bool isActive;
     public MORALITY morality;
     public Dictionary<int, int> favor;
     public Dictionary<AreaCharacterClass, int> defenderWeights;
@@ -38,6 +39,7 @@ public class FactionSaveData {
         morality = faction.morality;
         defenderWeights = faction.defenderWeights.dictionary;
         level = faction.level;
+        isActive = faction.isActive;
     }
     private void ConstructOwnedAreas(Faction faction) {
         ownedAreas = new List<int>();

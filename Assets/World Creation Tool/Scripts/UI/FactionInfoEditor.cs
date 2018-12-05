@@ -23,6 +23,8 @@ public class FactionInfoEditor : MonoBehaviour {
     [SerializeField] private Dropdown moralityDropdown;
     [SerializeField] private Dropdown raceDropdown;
     [SerializeField] private Dropdown subRaceDropdown;
+    [SerializeField] private InputField levelInputField;
+    [SerializeField] private Toggle isActiveToggle;
 
     [Header("Relationships")]
     [SerializeField] private Text relationshipSummaryLbl;
@@ -103,9 +105,19 @@ public class FactionInfoEditor : MonoBehaviour {
         moralityDropdown.value = Utilities.GetOptionIndex(moralityDropdown, _faction.morality.ToString());
         raceDropdown.value = Utilities.GetOptionIndex(raceDropdown, _faction.raceType.ToString());
         subRaceDropdown.value = Utilities.GetOptionIndex(subRaceDropdown, _faction.subRaceType.ToString());
+        levelInputField.text = _faction.level.ToString();
+        isActiveToggle.isOn = _faction.isActive;
     }
     public void ChangeFactionName(string newName) {
         _faction.SetName(newName);
+    }
+    public void ChangeFactionLevel(string input) {
+        if (!string.IsNullOrEmpty(input)) {
+            _faction.SetLevel(Int32.Parse(input));
+        }
+    }
+    public void SetFactionActiveState(bool state) {
+        _faction.SetFactionActiveState(state);
     }
     public void ChangeDescriptionName(string description) {
         _faction.SetDescription(description);

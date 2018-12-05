@@ -903,8 +903,8 @@ public class Area {
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass.className, defaultRace.race, Utilities.GetRandomGender(), 
                     FactionManager.Instance.neutralFaction, randomHome);
                 createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);
-                Debug.Log(GameManager.Instance.TodayLogString() + "Generated neutral character " +
-                    createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name);
+                Debug.Log(GameManager.Instance.TodayLogString() + "Generated Lvl. " + createdCharacter.level.ToString() + 
+                    " neutral character " + createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name);
             }
         }
         

@@ -58,8 +58,8 @@ public class FactionManager : MonoBehaviour {
     private void CreateNeutralFaction() {
         Faction newFaction = new Faction();
         newFaction.SetName("Neutral");
+        newFaction.SetFactionActiveState(false);
         newFaction.SetEmblem(GetFactionEmblem(7));
-        //newFaction.SetEmblemSymbol(GetFactionEmblemSymbol(0));
         allFactions.Add(newFaction);
         neutralFaction = newFaction;
         CreateRelationshipsForFaction(newFaction);
@@ -383,7 +383,9 @@ public class FactionManager : MonoBehaviour {
         rel.ChangeRelationshipStatus(FACTION_RELATIONSHIP_STATUS.AT_WAR);
     }
     public int GetAverageFactionLevel() {
-        return allFactions.Sum(x => x.level) / allFactions.Count;
+        int activeFactionsCount = allFactions.Where(x => x.isActive).Count();
+        int totalFactionLvl = allFactions.Where(x => x.isActive).Sum(x => x.level);
+        return totalFactionLvl / activeFactionsCount;
     }
     #endregion
 }

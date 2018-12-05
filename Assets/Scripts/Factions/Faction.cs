@@ -28,6 +28,7 @@ public class Faction {
     public FactionIntel factionIntel { get; private set; }
     public Dictionary<Faction, int> favor { get; private set; }
     public WeightedDictionary<AreaCharacterClass> defenderWeights { get; private set; }
+    public bool isActive { get; private set; }
 
     #region getters/setters
     public int id {
@@ -90,6 +91,7 @@ public class Faction {
         SetFactionColor (Utilities.GetColorForFaction());
         SetRace(new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL));
         SetMorality(MORALITY.GOOD);
+        SetFactionActiveState(true);
         _level = 1;
         _characters = new List<Character>();
         _ownedLandmarks = new List<BaseLandmark>();
@@ -114,6 +116,7 @@ public class Faction {
         SetMorality(data.morality);
         SetRace(data.race);
         SetLevel(data.level);
+        SetFactionActiveState(data.isActive);
         _characters = new List<Character>();
         _ownedLandmarks = new List<BaseLandmark>();
         _ownedRegions = new List<Region>();
@@ -289,6 +292,9 @@ public class Faction {
     }
     public void LevelUp(int amount) {
         _level += amount;
+    }
+    public void SetFactionActiveState(bool state) {
+        isActive = state;
     }
     #endregion
 
