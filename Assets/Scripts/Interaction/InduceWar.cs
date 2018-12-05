@@ -123,7 +123,8 @@ public class InduceWar : Interaction {
     private Faction GetTargetFaction() {
         List<Faction> choices = new List<Faction>();
         foreach (KeyValuePair<Faction, int> kvp in sourceFaction.favor) {
-            if (kvp.Key.id != PlayerManager.Instance.player.playerFaction.id && kvp.Value <= -10) {
+            if (kvp.Key.id != PlayerManager.Instance.player.playerFaction.id && kvp.Value <= -10
+                && sourceFaction.GetRelationshipWith(kvp.Key).relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
                 choices.Add(kvp.Key);
             }
         }
