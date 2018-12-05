@@ -138,6 +138,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.RAID_EVENT:
                 createdInteraction = new RaidEvent(interactable);
                 break;
+            case INTERACTION_TYPE.INDUCE_WAR:
+                createdInteraction = new InduceWar(interactable);
+                break;
+            case INTERACTION_TYPE.MOVE_TO_PEACE_NEGOTIATION:
+                createdInteraction = new MoveToPeaceNegotiation(interactable);
+                break;
         }
         return createdInteraction;
     }

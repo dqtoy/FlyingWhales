@@ -381,6 +381,7 @@ public class FactionManager : MonoBehaviour {
     public void DeclareWarBetween(Faction faction1, Faction faction2) {
         FactionRelationship rel = GetRelationshipBetween(faction1, faction2);
         rel.ChangeRelationshipStatus(FACTION_RELATIONSHIP_STATUS.AT_WAR);
+        Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_NOTIFICATION, "<color=\"green\"><b> " + faction1.name + "</b></color> declares war on <color=\"green\"><b>" + faction2.name + "</b></color>.", 5, null);
     }
     public int GetAverageFactionLevel() {
         int activeFactionsCount = allFactions.Where(x => x.isActive).Count();
