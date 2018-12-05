@@ -47,7 +47,8 @@ public class ConsoleMenu : UIMenu {
             {"/log_event_schedule", LogEventSchedule },
             {"/share_intel", ShareIntel },
             {"/show_logs", ShowLogs },
-            {"/change_landmark_state", ChangeLandmarkState }
+            {"/change_landmark_state", ChangeLandmarkState },
+            {"/adjust_faction_favor", AdjustFactionFavor},
         };
     }
 
@@ -193,6 +194,52 @@ public class ConsoleMenu : UIMenu {
         rel.ChangeRelationshipStatus(newRelStatus);
 
         AddSuccessMessage("Changed relationship status of " + faction1.name + " and " + faction2.name + " to " + rel.relationshipStatus.ToString());
+    }
+    private void AdjustFactionFavor(string[] parameters) {
+        if (parameters.Length != 4) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /change_faction_rel_stat");
+            return;
+        }
+        string faction1ParameterString = parameters[1];
+        string faction2ParameterString = parameters[2];
+        string adjustmentStr = parameters[3];
+
+        Faction faction1;
+        Faction faction2;
+
+        int faction1ID = -1;
+        int faction2ID = -1;
+
+        bool isFaction1Numeric = int.TryParse(faction1ParameterString, out faction1ID);
+        bool isFaction2Numeric = int.TryParse(faction2ParameterString, out faction2ID);
+
+        string faction1Name = parameters[1];
+        string faction2Name = parameters[2];
+
+        if (isFaction1Numeric) {
+            faction1 = FactionManager.Instance.GetFactionBasedOnID(faction1ID);
+        } else {
+            faction1 = FactionManager.Instance.GetFactionBasedOnName(faction1Name);
+        }
+
+        if (isFaction2Numeric) {
+            faction2 = FactionManager.Instance.GetFactionBasedOnID(faction2ID);
+        } else {
+            faction2 = FactionManager.Instance.GetFactionBasedOnName(faction2Name);
+        }
+
+        int adjustment;
+
+        if (!Int32.TryParse(adjustmentStr, out adjustment) || faction1 == null || faction2 == null) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+
+        faction1.AdjustFavorFor(faction2, adjustment);
+
+        AddSuccessMessage("Changed favor of " + faction1.name + " towards " + faction2.name + ".New favor is " + faction1.favor[faction2].ToString());
     }
     #endregion
 

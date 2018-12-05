@@ -183,6 +183,15 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
+            case INTERACTION_TYPE.INDUCE_WAR:
+                Faction sourceFaction = character.specificLocation.tileLocation.landmarkOnTile.owner;
+                foreach (KeyValuePair<Faction, int> kvp in sourceFaction.favor) {
+                    if (kvp.Key.id != PlayerManager.Instance.player.playerFaction.id 
+                        && kvp.Value <= -10 && sourceFaction.GetRelationshipWith(kvp.Key).relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+                        return true;
+                    }
+                }
+                return false;
             default:
                 return true;
         }

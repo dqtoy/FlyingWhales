@@ -5,6 +5,10 @@ using UnityEngine;
 
 public class Instigator : Job {
 
+    INTERACTION_TYPE[] chaosEvents = new INTERACTION_TYPE[] { //TODO: Put this somwhere else
+        INTERACTION_TYPE.INDUCE_WAR
+    };
+
     public Instigator(Character character) : base(character, JOB.INSTIGATOR) {
         _actionDuration = 120;
         _hasCaptureEvent = true;
@@ -27,8 +31,13 @@ public class Instigator : Job {
         weights.AddElement("Crit Fail", critFail);
         string result = weights.PickRandomElementGivenWeights();
         if (result == "Success") {
-            //Get Random Chaos Event
-            SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER, area.coreTile.landmarkOnTile)); //NOT FINAL!
+            List<INTERACTION_TYPE> choices = GetValidChaosEvents();
+            if (choices.Count > 0) {
+                INTERACTION_TYPE chosenType = choices[Random.Range(0, choices.Count)];
+                //Get Random Chaos Event
+                SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(chosenType, area.coreTile.landmarkOnTile));
+                //SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER, area.coreTile.landmarkOnTile)); //NOT FINAL!
+            }
         } else if (result == "Fail") {
             SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, area.coreTile.landmarkOnTile));
         } else if (result == "Crit Fail") {
@@ -107,4 +116,15 @@ public class Instigator : Job {
         return baseRate + multiplier;
     }
     #endregion
+
+    private List<INTERACTION_TYPE> GetValidChaosEvents() {
+        List<INTERACTION_TYPE> validTypes = new List<INTERACTION_TYPE>();
+        for (int i = 0; i < chaosEvents.Length; i++) {
+            INTERACTION_TYPE type = chaosEvents[i];
+            if (InteractionManager.Instance.CanCreateInteraction(type, _character)) {
+                validTypes.Add(type);
+            }
+        }
+        return validTypes;
+    }
 }
