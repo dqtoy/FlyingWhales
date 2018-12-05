@@ -10,7 +10,7 @@ public class Job {
     protected bool _hasCaptureEvent;
     protected Character _character;
     protected Interaction _createdInteraction;
-    protected INTERACTION_TYPE[] _characterInteractions; //For non-minion characters only
+    //protected INTERACTION_TYPE[] _characterInteractions; //For non-minion characters only
     private WeightedDictionary<RESULT> rateWeights;
 
     private int _currentTick;
@@ -38,7 +38,7 @@ public class Job {
         _jobType = jobType;
         _name = Utilities.NormalizeString(_jobType.ToString());
         _character = character;
-        _characterInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.RETURN_HOME };
+        //_characterInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.RETURN_HOME };
         rateWeights = new WeightedDictionary<RESULT>();
     }
 
@@ -121,15 +121,15 @@ public class Job {
         if (_isJobActionPaused) { return; }
         CaptureRandomLandmarkEvent();
     }
-    public void CreateRandomInteractionForNonMinionCharacters() {
-        if(_characterInteractions != null) {
-            INTERACTION_TYPE type = _characterInteractions[UnityEngine.Random.Range(0, _characterInteractions.Length)];
-            if (InteractionManager.Instance.CanCreateInteraction(type, character)) {
-                Interaction interaction = InteractionManager.Instance.CreateNewInteraction(type, character.specificLocation as BaseLandmark);
-                character.AddInteraction(interaction);
-            }
-        }
-    }
+    //public void CreateRandomInteractionForNonMinionCharacters() {
+        //if(_characterInteractions != null) {
+        //    INTERACTION_TYPE type = _characterInteractions[UnityEngine.Random.Range(0, _characterInteractions.Length)];
+        //    if (InteractionManager.Instance.CanCreateInteraction(type, character)) {
+        //        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(type, character.specificLocation as BaseLandmark);
+        //        character.AddInteraction(interaction);
+        //    }
+        //}
+    //}
     public void ForceDefaultAllExistingInteractions() {
         _character.specificLocation.tileLocation.areaOfTile.SetStopDefaultInteractionsState(false);
         _character.specificLocation.tileLocation.areaOfTile.DefaultAllExistingInteractions();

@@ -48,6 +48,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
     protected Color _characterColor;
     protected CharacterAction _genericWorkAction;
     protected Minion _minion;
+    protected Interaction _forcedInteraction;
     protected PairCombatStats[] _pairCombatStats;
     protected List<Item> _inventory;
     protected List<Skill> _skills;
@@ -114,7 +115,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         }
     }
     public string coloredName {
-        get { return "<color=#" + this._characterColorCode  + ">" + name + "</color>"; }
+        get { return "<color=#" + this._characterColorCode + ">" + name + "</color>"; }
     }
     public string urlName {
         get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + name + "</link>"; }
@@ -210,10 +211,10 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         get { return _workplace; }
     }
     public float remainingHP { //Percentage of remaining HP this character has
-        get { return (float)currentHP / (float)maxHP; }
+        get { return (float) currentHP / (float) maxHP; }
     }
     public int remainingHPPercent {
-        get { return (int)(remainingHP * 100); }
+        get { return (int) (remainingHP * 100); }
     }
     public List<Log> history {
         get { return this._history; }
@@ -1340,38 +1341,38 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         }
         switch (role) {
             case CHARACTER_ROLE.HERO:
-                _role = new Hero(this);
-                break;
+            _role = new Hero(this);
+            break;
             case CHARACTER_ROLE.VILLAIN:
-                _role = new Villain(this);
-                break;
+            _role = new Villain(this);
+            break;
             case CHARACTER_ROLE.CIVILIAN:
-                _role = new Civilian(this);
-                break;
+            _role = new Civilian(this);
+            break;
             case CHARACTER_ROLE.KING:
-                _role = new King(this);
-                break;
+            _role = new King(this);
+            break;
             case CHARACTER_ROLE.PLAYER:
-                _role = new PlayerRole(this);
-                break;
+            _role = new PlayerRole(this);
+            break;
             case CHARACTER_ROLE.GUARDIAN:
-                _role = new Guardian(this);
-                break;
+            _role = new Guardian(this);
+            break;
             case CHARACTER_ROLE.BEAST:
-                _role = new Beast(this);
-                break;
+            _role = new Beast(this);
+            break;
             case CHARACTER_ROLE.LEADER:
-                _role = new Leader(this);
-                break;
+            _role = new Leader(this);
+            break;
             case CHARACTER_ROLE.BANDIT:
-                _role = new Bandit(this);
-                break;
+            _role = new Bandit(this);
+            break;
             case CHARACTER_ROLE.ARMY:
-                _role = new Army(this);
-                SetName(this.characterClass.className);
-                break;
+            _role = new Army(this);
+            SetName(this.characterClass.className);
+            break;
             default:
-                break;
+            break;
         }
         if (_role != null) {
             _role.OnAssignRole();
@@ -1421,7 +1422,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         _job.OnAssignJob();
     }
     #region Job
-        
+
     #endregion
 
     #region Character Tags
@@ -1504,77 +1505,77 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
     public CharacterAttribute CreateAttribute(ATTRIBUTE type) {
         switch (type) {
             case ATTRIBUTE.GREGARIOUS:
-                return new Gregarious();
+            return new Gregarious();
             case ATTRIBUTE.BOOKWORM:
-                return new Bookworm();
+            return new Bookworm();
             case ATTRIBUTE.SINGER:
-                return new Singer();
+            return new Singer();
             case ATTRIBUTE.DAYDREAMER:
-                return new Daydreamer();
+            return new Daydreamer();
             case ATTRIBUTE.MEDITATOR:
-                return new Meditator();
+            return new Meditator();
             case ATTRIBUTE.CLEANER:
-                return new Cleaner();
+            return new Cleaner();
             case ATTRIBUTE.INTROVERT:
-                return new Introvert();
+            return new Introvert();
             case ATTRIBUTE.EXTROVERT:
-                return new Extrovert();
+            return new Extrovert();
             case ATTRIBUTE.BELLIGERENT:
-                return new Belligerent();
+            return new Belligerent();
             case ATTRIBUTE.LIBERATED:
-                return new Liberated();
+            return new Liberated();
             case ATTRIBUTE.UNFAITHFUL:
-                return new Unfaithful();
+            return new Unfaithful();
             case ATTRIBUTE.DEAFENED:
-                return new Deafened();
+            return new Deafened();
             case ATTRIBUTE.MUTE:
-                return new Mute();
+            return new Mute();
             case ATTRIBUTE.ROYALTY:
-                return new Royalty();
+            return new Royalty();
             case ATTRIBUTE.STALKER:
-                return new Stalker();
+            return new Stalker();
             case ATTRIBUTE.SPOOKED:
-                return new Spooked();
+            return new Spooked();
             case ATTRIBUTE.HUMAN:
-                return new Human();
+            return new Human();
             case ATTRIBUTE.HUNGRY:
-                return new Hungry();
+            return new Hungry();
             case ATTRIBUTE.FAMISHED:
-                return new Famished();
+            return new Famished();
             case ATTRIBUTE.TIRED:
-                return new Tired();
+            return new Tired();
             case ATTRIBUTE.EXHAUSTED:
-                return new Exhausted();
+            return new Exhausted();
             case ATTRIBUTE.SAD:
-                return new Sad();
+            return new Sad();
             case ATTRIBUTE.DEPRESSED:
-                return new Depressed();
+            return new Depressed();
             case ATTRIBUTE.ANXIOUS:
-                return new Anxious();
+            return new Anxious();
             case ATTRIBUTE.INSECURE:
-                return new Insecure();
+            return new Insecure();
             case ATTRIBUTE.DRUNK:
-                return new Drunk();
+            return new Drunk();
             case ATTRIBUTE.DISTURBED:
-                return new Disturbed();
+            return new Disturbed();
             case ATTRIBUTE.CRAZED:
-                return new Crazed();
+            return new Crazed();
             case ATTRIBUTE.DEMORALIZED:
-                return new Demoralized();
+            return new Demoralized();
             case ATTRIBUTE.STARVING:
-                return new Starving();
+            return new Starving();
             case ATTRIBUTE.WOUNDED:
-                return new Wounded();
+            return new Wounded();
             case ATTRIBUTE.WRECKED:
-                return new Wrecked();
+            return new Wrecked();
             case ATTRIBUTE.IMPULSIVE:
-                return new Impulsive();
+            return new Impulsive();
             case ATTRIBUTE.BETRAYED:
-                return new Betrayed();
+            return new Betrayed();
             case ATTRIBUTE.HEARTBROKEN:
-                return new Heartbroken();
+            return new Heartbroken();
             case ATTRIBUTE.MARKED:
-                return new Marked();
+            return new Marked();
         }
         return null;
     }
@@ -1679,7 +1680,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
     #region Faction
     public void SetFaction(Faction faction) {
         _faction = faction;
-        if(_faction != null) {
+        if (_faction != null) {
             Messenger.Broadcast<Character>(Signals.FACTION_SET, this);
         }
     }
@@ -2015,7 +2016,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
             }
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
         }
-            
+
     }
     #endregion
 
@@ -2097,11 +2098,11 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         STANCE stance = GetCurrentStance();
         switch (stance) {
             case STANCE.COMBAT:
-                return 100;
+            return 100;
             case STANCE.NEUTRAL:
-                return 50;
+            return 50;
             case STANCE.STEALTHY:
-                return 25;
+            return 25;
         }
         return 0;
     }
@@ -2114,7 +2115,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
                     if (_traceInfo[previousTrace].Count <= 0) {
                         _traceInfo.Remove(previousTrace);
                     }
-                    Debug.Log(this.name +  " REMOVED TRACE INFO OF " + previousTrace.name + " FOR " + identifier);
+                    Debug.Log(this.name + " REMOVED TRACE INFO OF " + previousTrace.name + " FOR " + identifier);
                 } else {
                     return;
                 }
@@ -2123,11 +2124,11 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         if (_traceInfo.ContainsKey(character)) {
             if (!_traceInfo[character].Contains(identifier)) {
                 _traceInfo[character].Add(identifier);
-                Debug.Log(this.name +  " ADDED TRACE INFO OF " + character.name + " FOR " + identifier);
+                Debug.Log(this.name + " ADDED TRACE INFO OF " + character.name + " FOR " + identifier);
             }
         } else {
             _traceInfo.Add(character, new List<string>() { identifier });
-            Debug.Log(this.name +  " ADDED TRACE INFO OF " + character.name + " FOR " + identifier);
+            Debug.Log(this.name + " ADDED TRACE INFO OF " + character.name + " FOR " + identifier);
         }
     }
     public Character GetCharacterFromTraceInfo(string info) {
@@ -2183,13 +2184,13 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
             //_experience = 0;
             //RecomputeMaxExperience();
             //Add stats per level from class
-            _attackPower += (int)((_characterClass.attackPowerPerLevel / 100f) * (float)_raceSetting.baseAttackPower);
-            _speed += (int)((_characterClass.speedPerLevel / 100f) * (float)_raceSetting.baseSpeed);
-            AdjustMaxHP((int)((_characterClass.hpPerLevel / 100f) * (float)_raceSetting.baseHP));
+            _attackPower += (int) ((_characterClass.attackPowerPerLevel / 100f) * (float) _raceSetting.baseAttackPower);
+            _speed += (int) ((_characterClass.speedPerLevel / 100f) * (float) _raceSetting.baseSpeed);
+            AdjustMaxHP((int) ((_characterClass.hpPerLevel / 100f) * (float) _raceSetting.baseHP));
             //_maxSP += _characterClass.spPerLevel;
             //Add stats per level from race
             if (_level > 1) {
-                if(_raceSetting.hpPerLevel.Length > 0) {
+                if (_raceSetting.hpPerLevel.Length > 0) {
                     int hpIndex = _level % _raceSetting.hpPerLevel.Length;
                     hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
                     AdjustMaxHP(_raceSetting.hpPerLevel[hpIndex - 1]);
@@ -2204,14 +2205,14 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
             //Reset to full health and sp
             ResetToFullHP();
             //ResetToFullSP();
-            if(_playerCharacterItem != null) {
+            if (_playerCharacterItem != null) {
                 _playerCharacterItem.UpdateMinionItem();
             }
         }
     }
     public void LevelUp(int amount) {
         //Only level up once per day
-        if(_lastLevelUpDay == GameManager.Instance.continuousDays) {
+        if (_lastLevelUpDay == GameManager.Instance.continuousDays) {
             return;
         }
         _lastLevelUpDay = GameManager.Instance.continuousDays;
@@ -2257,9 +2258,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         int multiplier = _level - 1;
 
         //Add stats per level from class
-        _attackPower += (multiplier * (int)((_characterClass.attackPowerPerLevel / 100f) * (float)_raceSetting.baseAttackPower));
-        _speed += (multiplier * (int)((_characterClass.speedPerLevel / 100f) * (float)_raceSetting.baseSpeed));
-        AdjustMaxHP((multiplier * (int)((_characterClass.hpPerLevel / 100f) * (float)_raceSetting.baseHP)));
+        _attackPower += (multiplier * (int) ((_characterClass.attackPowerPerLevel / 100f) * (float) _raceSetting.baseAttackPower));
+        _speed += (multiplier * (int) ((_characterClass.speedPerLevel / 100f) * (float) _raceSetting.baseSpeed));
+        AdjustMaxHP((multiplier * (int) ((_characterClass.hpPerLevel / 100f) * (float) _raceSetting.baseHP)));
         //_maxSP += _characterClass.spPerLevel;
         //Add stats per level from race
         if (_level > 1) {
@@ -2312,7 +2313,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         _sp = Mathf.Clamp(_sp, 0, _maxSP);
     }
     private void RecomputeMaxExperience() {
-        _maxExperience = Mathf.CeilToInt(100f * ((Mathf.Pow((float)_level, 1.25f)) / 1.1f));
+        _maxExperience = Mathf.CeilToInt(100f * ((Mathf.Pow((float) _level, 1.25f)) / 1.1f));
     }
     public void ResetToFullHP() {
         SetHP(maxHP);
@@ -2751,7 +2752,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
             if (party.actionData.isCurrentActionFromEvent) { //if this character's current action is from an event, do not perform the action from the next scheduled event.
                 Debug.LogWarning(this.name + " did not perform the next event action, since their current action is already from an event");
             } else { //else if this character's action is not from an event
-                        //leave now and do the event action
+                     //leave now and do the event action
                 AddActionToQueue(nextScheduledEvent.GetNextEventAction(this), nextScheduledEvent); //queue the event action
                 _ownParty.actionData.EndCurrentAction();  //then end their current action
             }
@@ -2852,7 +2853,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
                 negativeTraits.Add(_traits[i]);
             }
         }
-        if(negativeTraits.Count > 0) {
+        if (negativeTraits.Count > 0) {
             return negativeTraits[UnityEngine.Random.Range(0, negativeTraits.Count)];
         }
         return null;
@@ -2864,7 +2865,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
                 if (traitEffect.stat == STAT.ATTACK) {
                     _attackPower += (int) traitEffect.amount;
                 } else if (traitEffect.stat == STAT.HP) {
-                    AdjustMaxHP ((int) traitEffect.amount);
+                    AdjustMaxHP((int) traitEffect.amount);
                 } else if (traitEffect.stat == STAT.SPEED) {
                     _speed += (int) traitEffect.amount;
                 }
@@ -2890,12 +2891,12 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         for (int i = 0; i < _traits.Count; i++) {
             for (int j = 0; j < _traits[i].effects.Count; j++) {
                 TraitEffect traitEffect = _traits[i].effects[j];
-                if(traitEffect.stat == STAT.ATTACK && !traitEffect.hasRequirement && traitEffect.isPercentage && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
+                if (traitEffect.stat == STAT.ATTACK && !traitEffect.hasRequirement && traitEffect.isPercentage && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
                     modifier += traitEffect.amount;
                 }
             }
         }
-        return (int)(_attackPower * (modifier / 100f));
+        return (int) (_attackPower * (modifier / 100f));
     }
     private int GetModifiedSpeed() {
         float modifier = 0f;
@@ -2922,7 +2923,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         return (int) (_maxHP * (modifier / 100f));
     }
     private void SetTraitsFromClass() {
-        if(_characterClass.traitNames != null) {
+        if (_characterClass.traitNames != null) {
             for (int i = 0; i < _characterClass.traitNames.Length; i++) {
                 Trait trait = AttributeManager.Instance.allTraits[_characterClass.traitNames[i]];
                 AddTrait(trait);
@@ -3016,31 +3017,42 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         }
     }
     public void GenerateDailyInteraction() {
-        if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb) {
+        if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb || _job == null) {
             return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
         }
-        if (_job != null && job.jobType != JOB.NONE) {
-            _job.CreateRandomInteractionForNonMinionCharacters();
+        if (job.jobType == JOB.NONE) {
+            return;
+            //_job.CreateRandomInteractionForNonMinionCharacters();
         }
-        //string interactionLog = GameManager.Instance.TodayLogString() + "Generating daily interaction for " + this.name;
-        //if (GameManager.Instance.ignoreEventTriggerWeights || eventTriggerWeights.PickRandomElementGivenWeights()) {
-        //    WeightedDictionary<INTERACTION_TYPE> validInteractions = GetValidInteractionWeights();
-        //    if (validInteractions.GetTotalOfWeights() > 0) {
-        //        interactionLog += "\n" + validInteractions.GetWeightsSummary("Generating interaction:");
-        //        INTERACTION_TYPE chosenInteraction = validInteractions.PickRandomElementGivenWeights();
-        //        //create interaction of type
-        //        Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, specificLocation.tileLocation.landmarkOnTile);
-        //        AddInteraction(createdInteraction);
-        //        //if (createdInteraction != null) {
-        //        //    (this.specificLocation as BaseLandmark).AddInteraction(createdInteraction);
-        //        //}
-        //    } else {
-        //        interactionLog += "\nCannot generate interaction because of weights";
-        //    }
-        //} else {
-        //    interactionLog += "\nDid not create new event because of event trigger weights";
-        //}
+        string interactionLog = GameManager.Instance.TodayLogString() + "Generating daily interaction for " + this.name;
+        if (_forcedInteraction != null) {
+            interactionLog += "\nUsinng forced interaction: " + _forcedInteraction.type.ToString();
+            AddInteraction(_forcedInteraction);
+            _forcedInteraction = null;
+        } else {
+            //if (GameManager.Instance.ignoreEventTriggerWeights || eventTriggerWeights.PickRandomElementGivenWeights()) {
+            WeightedDictionary<INTERACTION_TYPE> validInteractions = GetValidInteractionWeights();
+            if (validInteractions != null) {
+                if (validInteractions.GetTotalOfWeights() > 0) {
+                    interactionLog += "\n" + validInteractions.GetWeightsSummary("Generating interaction:");
+                    INTERACTION_TYPE chosenInteraction = validInteractions.PickRandomElementGivenWeights();
+                    //create interaction of type
+                    Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, specificLocation as BaseLandmark);
+                    AddInteraction(createdInteraction);
+                } else {
+                    interactionLog += "\nCannot generate interaction because weights are not greater than zero";
+                }
+            } else {
+                interactionLog += "\nCannot generate interaction because there are no interactions for job: " + job.jobType.ToString();
+            }
+            //} else {
+            //    interactionLog += "\nDid not create new event because of event trigger weights";
+            //}
+        }
         //Debug.Log(interactionLog);
+    }
+    public void SetForcedInteraction(Interaction interaction) {
+        _forcedInteraction = interaction;
     }
     private void DefaultAllExistingInteractions() {
         for (int i = 0; i < _currentInteractions.Count; i++) {
@@ -3060,16 +3072,25 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         return null;
     }
     private WeightedDictionary<INTERACTION_TYPE> GetValidInteractionWeights() {
-        WeightedDictionary<INTERACTION_TYPE> weights = new WeightedDictionary<INTERACTION_TYPE>();
-        foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in interactionWeights.dictionary) {
-            if (GetInteractionOfType(kvp.Key) == null && InteractionManager.Instance.CanCreateInteraction(kvp.Key, this)) {
-                weights.AddElement(kvp.Key, kvp.Value);
+        List<CharacterInteractionWeight> jobInteractions = InteractionManager.Instance.GetJobNPCInteractionWeights(job.jobType);
+        if(jobInteractions != null) {
+            WeightedDictionary<INTERACTION_TYPE> weights = new WeightedDictionary<INTERACTION_TYPE>();
+            for (int i = 0; i < jobInteractions.Count; i++) {
+                if (GetInteractionOfType(jobInteractions[i].interactionType) == null && InteractionManager.Instance.CanCreateInteraction(jobInteractions[i].interactionType, this)) {
+                    weights.AddElement(jobInteractions[i].interactionType, jobInteractions[i].weight);
+                }
             }
+            return weights;
         }
-        return weights;
+        //foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in interactionWeights.dictionary) {
+        //    if (GetInteractionOfType(kvp.Key) == null && InteractionManager.Instance.CanCreateInteraction(kvp.Key, this)) {
+        //        weights.AddElement(kvp.Key, kvp.Value);
+        //    }
+        //}
+        return null;
     }
     private void AddDefaultInteractions() {
-        List<CharacterInteractionWeight> defaultInteractions = InteractionManager.Instance.GetDefauInteractionWeightsForRole(this.role.roleType);
+        List<CharacterInteractionWeight> defaultInteractions = InteractionManager.Instance.GetDefaultInteractionWeightsForRole(this.role.roleType);
         if (defaultInteractions != null) {
             for (int i = 0; i < defaultInteractions.Count; i++) {
                 CharacterInteractionWeight currWeight = defaultInteractions[i];

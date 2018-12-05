@@ -125,7 +125,7 @@ public class FactionManager : MonoBehaviour {
         }
 	}
     public Faction CreateNewFaction(bool isPlayerFaction = false) {
-        Faction newFaction = new Faction();
+        Faction newFaction = new Faction(isPlayerFaction);
         allFactions.Add(newFaction);
         CreateRelationshipsForFaction(newFaction);
         CreateFavorsForFaction(newFaction);
