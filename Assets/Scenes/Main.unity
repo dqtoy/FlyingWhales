@@ -23691,8 +23691,6 @@ MonoBehaviour:
   landmarkCharacterPrefab: {fileID: 1618945397602768, guid: 2975c486214c95b4ab5eed6af62fba90,
     type: 2}
   charactersScrollView: {fileID: 2102118696}
-  scrollLeftArrowGO: {fileID: 0}
-  scrollRightArrowGO: {fileID: 0}
   logHistoryPrefab: {fileID: 1169224389995412, guid: 098b2e337fdaee74d8c8e6db791778ce,
     type: 2}
   historyScrollView: {fileID: 2124432644}
@@ -82734,6 +82732,12 @@ MonoBehaviour:
     - data: []
     - data: []
     - data: []
+  jobNPCInteractions:
+    m_keys: 05000000
+    m_values:
+    - data:
+      - interactionType: 34
+        weight: 10
 --- !u!1001 &1680592839
 Prefab:
   m_ObjectHideFlags: 0
@@ -88516,8 +88520,6 @@ MonoBehaviour:
   landmarkCharacterPrefab: {fileID: 1618945397602768, guid: 2975c486214c95b4ab5eed6af62fba90,
     type: 2}
   charactersScrollView: {fileID: 2112547667}
-  scrollLeftArrowGO: {fileID: 356664410}
-  scrollRightArrowGO: {fileID: 1426830921}
   logHistoryPrefab: {fileID: 1169224389995412, guid: 098b2e337fdaee74d8c8e6db791778ce,
     type: 2}
   historyScrollView: {fileID: 1616088862}
