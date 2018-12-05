@@ -16,7 +16,7 @@ public class Raider : Job {
     public Raider(Character character) : base(character, JOB.RAIDER) {
         _actionDuration = 50;
         _hasCaptureEvent = false;
-        _characterInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.MOVE_TO_SCAVENGE };
+        _characterInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.MOVE_TO_SCAVENGE, INTERACTION_TYPE.MOVE_TO_RAID };
     }
 
     #region Overrides
