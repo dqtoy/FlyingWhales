@@ -51,7 +51,6 @@ public class FriendlyCharacterEncountered : Interaction {
                 cost = _characterInvolved.characterClass.recruitmentCost,
                 name = "Recruit " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + ".",
                 duration = 0,
-                needsMinion = false,
                 effect = () => RecruitOption(),
             };
             ActionOption doNothingOption = new ActionOption {
@@ -59,7 +58,6 @@ public class FriendlyCharacterEncountered : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => DoNothingOption(),
             };
 

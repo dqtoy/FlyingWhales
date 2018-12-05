@@ -57,7 +57,6 @@ public class GoblinBanditReinforcements : Interaction {
                 cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Stop Them.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => StopThemEffect(state),
             };
             ActionOption takeUnit = new ActionOption {
@@ -65,7 +64,6 @@ public class GoblinBanditReinforcements : Interaction {
                 cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Take the unit they will produce.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => TakeUnitEffect(state),
                 canBeDoneAction = () => AssignedMinionIsOfClass(new List<string>() { "Wrath", "Pride" }),
                 doesNotMeetRequirementsStr = "Minion must be Wrath or Pride",
@@ -75,7 +73,6 @@ public class GoblinBanditReinforcements : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => DoNothingEffect(state),
             };
             state.AddActionOption(stopThem);

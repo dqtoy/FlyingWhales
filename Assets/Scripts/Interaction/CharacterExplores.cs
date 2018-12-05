@@ -74,7 +74,6 @@ public class CharacterExplores : Interaction {
                 cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Prevent him/her from leaving.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => PreventFromLeavingEffect(state),
             };
             ActionOption takeUnit = new ActionOption {
@@ -82,7 +81,6 @@ public class CharacterExplores : Interaction {
                 cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Convince him/her to visit elsewhere.",
                 duration = 0,
-                needsMinion = false,
                 neededObjects = new List<System.Type>() { typeof(LocationIntel) },
                 effect = () => ConvinceToVisitElsewhere(state),
             };
@@ -91,7 +89,6 @@ public class CharacterExplores : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => DoNothingEffect(state),
             };
             state.AddActionOption(prevent);

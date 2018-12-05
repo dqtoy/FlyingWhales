@@ -54,7 +54,6 @@ public class InduceWar : Interaction {
                 cost = new CurrenyCost { amount = 100, currency = CURRENCY.SUPPLY },
                 name = "What are you waiting for? Do it now!",
                 duration = 0,
-                needsMinion = false,
                 effect = () => DoNowOptionEffect(state),
             };
             ActionOption doNothing = new ActionOption {
@@ -62,7 +61,6 @@ public class InduceWar : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Not yet.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => DoNothingEffect(state),
             };
             state.AddActionOption(doNow);

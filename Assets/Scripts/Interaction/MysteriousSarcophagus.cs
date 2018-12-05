@@ -61,7 +61,6 @@ public class MysteriousSarcophagus : Interaction {
                 name = "Of course.",
                 //description = "We have sent %minion% to open the sarcophagus.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => OfCourseOption(state),
             };
             ActionOption ofCourseNotOption = new ActionOption {
@@ -69,34 +68,12 @@ public class MysteriousSarcophagus : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Of course not.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => DoNothingOption(state),
             };
 
             state.AddActionOption(ofCourseOption);
             state.AddActionOption(ofCourseNotOption);
             state.SetDefaultOption(ofCourseNotOption);
-        } else {
-            ActionOption continueSurveillanceOption = new ActionOption {
-                interactionState = state,
-                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Continue surveillance of the area.",
-                duration = 0,
-                needsMinion = false,
-                effect = () => ExploreContinuesOption(state),
-            };
-            ActionOption returnToMeOption = new ActionOption {
-                interactionState = state,
-                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Return to me.",
-                duration = 0,
-                needsMinion = false,
-                effect = () => ExploreEndsOption(state),
-            };
-
-            state.AddActionOption(continueSurveillanceOption);
-            state.AddActionOption(returnToMeOption);
-            state.SetDefaultOption(returnToMeOption);
         }
     }
     #endregion

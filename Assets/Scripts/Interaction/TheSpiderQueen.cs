@@ -66,7 +66,6 @@ public class TheSpiderQueen : Interaction {
                 name = "Attempt to kill it.",
                 description = "We have sent %minion% to kill the Spider Queen while it is vulnerable.",
                 duration = 10,
-                needsMinion = true,
                 neededObjects = new List<System.Type>() { typeof(IUnit) },
                 effect = () => AttemptToKillItEffect(state),
             };
@@ -76,7 +75,6 @@ public class TheSpiderQueen : Interaction {
                 name = "Attempt to corrupt it.",
                 description = "We have sent %minion% to transform the Spider Queen into a Demon minion while it is out in the open.",
                 duration = 10,
-                needsMinion = true,
                 neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => AttemptToCorruptItEffect(state),
             };
@@ -86,7 +84,6 @@ public class TheSpiderQueen : Interaction {
                 name = "Quietly loot the lair while it is busy.",
                 description = "We have sent %minion% to loot the hive core while the Spider Queen and its defenders are away.",
                 duration = 10,
-                needsMinion = true,
                 neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => LootLairEffect(state),
             };

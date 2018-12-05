@@ -47,7 +47,6 @@ public class MoveToRaid : Interaction {
                 cost = new CurrenyCost { amount = 50, currency = CURRENCY.SUPPLY },
                 name = "Pursuade " + _characterInvolved.name + " to cancel " + Utilities.GetPossessivePronounForCharacter(_characterInvolved, false) + " plans.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => PursuadeToCancelEffect(state),
                 jobNeeded = JOB.DISSUADER,
                 doesNotMeetRequirementsStr = "Minion must be a dissuader",
@@ -57,7 +56,6 @@ public class MoveToRaid : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => DoNothingEffect(state),
             };
             state.AddActionOption(stopThem);

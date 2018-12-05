@@ -55,7 +55,6 @@ public class SuspiciousSoldierMeeting : Interaction {
                 name = "Send out a Demon.",
                 //description = "We have sent %minion% to watch the soldiers and follow them on their next secret meeting.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => SendOutDemonOption(state),
             };
             ActionOption doNothingOption = new ActionOption {
@@ -63,7 +62,6 @@ public class SuspiciousSoldierMeeting : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => DoNothingOption(state),
             };
 
@@ -73,27 +71,6 @@ public class SuspiciousSoldierMeeting : Interaction {
             //GameDate scheduleDate = GameManager.Instance.Today();
             //scheduleDate.AddHours(60);
             //state.SetTimeSchedule(doNothingOption, scheduleDate);
-        } else {
-            ActionOption continueSurveillanceOption = new ActionOption {
-                interactionState = state,
-                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Continue surveillance of the area.",
-                duration = 0,
-                needsMinion = false,
-                effect = () => ExploreContinuesOption(state),
-            };
-            ActionOption returnToMeOption = new ActionOption {
-                interactionState = state,
-                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Return to me.",
-                duration = 0,
-                needsMinion = false,
-                effect = () => ExploreEndsOption(state),
-            };
-
-            state.AddActionOption(continueSurveillanceOption);
-            state.AddActionOption(returnToMeOption);
-            state.SetDefaultOption(returnToMeOption);
         }
     }
     #endregion

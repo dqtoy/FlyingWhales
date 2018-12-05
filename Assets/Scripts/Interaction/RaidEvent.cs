@@ -63,7 +63,6 @@ public class RaidEvent : Interaction {
                 cost = new CurrenyCost { amount = 50, currency = CURRENCY.SUPPLY },
                 name = "Alert " + interactable.name + ".",
                 duration = 0,
-                needsMinion = false,
                 effect = () => AlertOptionEffect(state),
                 jobNeeded = JOB.INSTIGATOR,
                 doesNotMeetRequirementsStr = "Minion must be a instigator",
@@ -73,7 +72,6 @@ public class RaidEvent : Interaction {
                 cost = new CurrenyCost { amount = 20, currency = CURRENCY.MANA },
                 name = "Assist with the raid.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => AssistOptionEffect(state),
                 jobNeeded = JOB.DIPLOMAT,
                 doesNotMeetRequirementsStr = "Minion must be a diplomat",
@@ -83,7 +81,6 @@ public class RaidEvent : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => DoNothingEffect(state),
             };
             state.AddActionOption(alert);

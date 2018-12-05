@@ -51,7 +51,6 @@ public class ArmyUnitTraining : Interaction {
                 name = "Stop them.",
                 duration = 0,
                 //description = "We have sent %minion% to persuade the garrison general to stop their current plan of raising a new army unit.",
-                needsMinion = false,
                 effect = () => StopThemOption(state),
             };
             ActionOption doNothingOption = new ActionOption {
@@ -60,7 +59,6 @@ public class ArmyUnitTraining : Interaction {
                 name = "Do nothing.",
                 //description = "The garrison is producing another army unit.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => DoNothingOption(state),
                 //onStartDurationAction = () => SetDefaultActionDurationAsRemainingTicks("Do nothing.", state)
             };
@@ -71,27 +69,6 @@ public class ArmyUnitTraining : Interaction {
             //GameDate scheduleDate = GameManager.Instance.Today();
             //scheduleDate.AddHours(50);
             //state.SetTimeSchedule(doNothingOption, scheduleDate);
-        } else {
-            ActionOption continueSurveillanceOption = new ActionOption {
-                interactionState = state,
-                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Continue surveillance of the area.",
-                duration = 0,
-                needsMinion = false,
-                effect = () => ExploreContinuesOption(state),
-            };
-            ActionOption returnToMeOption = new ActionOption {
-                interactionState = state,
-                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Return to me.",
-                duration = 0,
-                needsMinion = false,
-                effect = () => ExploreEndsOption(state),
-            };
-
-            state.AddActionOption(continueSurveillanceOption);
-            state.AddActionOption(returnToMeOption);
-            state.SetDefaultOption(returnToMeOption);
         }
     }
     #endregion

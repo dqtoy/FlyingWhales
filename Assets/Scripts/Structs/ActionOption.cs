@@ -9,7 +9,7 @@ public class ActionOption {
     public string description;
     public CurrenyCost cost;
     public int duration;
-    public bool needsMinion;
+    public int needsMinion;
     public Action effect;
     public Action onStartDurationAction;
     public Func<bool> canBeDoneAction;
@@ -38,22 +38,8 @@ public class ActionOption {
 
     public void ActivateOption(BaseLandmark interactable) {
         PlayerManager.Instance.player.AdjustCurrency(cost.currency, -cost.amount);
-        //Remove needsMinion, handle needed objects and assigned objects properly, transfer this needsMinion logic to assignedObjects
-        if(needsMinion) {
-            Minion minion = assignedMinion;
-            if(minion != null) {
-                minion.GoToAssignment(interactable);
-                StartDuration();
-                //assignedMinion.icharacter.currentParty.GoToLocation(interactable, PATHFINDING_MODE.PASSABLE, () => StartDuration());
-                interactionState.interaction.SetActivatedState(true);
-            } else {
-                //Can't go, no minion assigned
-                Debug.LogWarning("Can't go, no minion assigned");
-            }
-        } else {
-            interactionState.interaction.SetActivatedState(true);
-            StartDuration();
-        }
+        interactionState.interaction.SetActivatedState(true);
+        StartDuration();
         interactionState.SetChosenOption(this);
         SetDescription();
     }

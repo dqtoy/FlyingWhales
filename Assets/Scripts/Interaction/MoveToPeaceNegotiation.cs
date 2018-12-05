@@ -68,7 +68,6 @@ public class MoveToPeaceNegotiation : Interaction {
                 cost = new CurrenyCost { amount = 50, currency = CURRENCY.SUPPLY },
                 name = "Kill the diplomat.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => KillDiplomatOptionEffect(state),
                 jobNeeded = JOB.INSTIGATOR,
                 doesNotMeetRequirementsStr = "Minion must be a instigator",
@@ -78,7 +77,6 @@ public class MoveToPeaceNegotiation : Interaction {
                 cost = new CurrenyCost { amount = 50, currency = CURRENCY.SUPPLY },
                 name = "Convince " + interactable.owner.leader.name + " otherwise.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => ConvinceOptionEffect(state),
                 jobNeeded = JOB.DIPLOMAT,
                 doesNotMeetRequirementsStr = "Minion must be a diplomat",
@@ -88,7 +86,6 @@ public class MoveToPeaceNegotiation : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => DoNothingEffect(state),
             };
             state.AddActionOption(kill);

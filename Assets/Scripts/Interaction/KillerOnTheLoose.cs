@@ -47,7 +47,6 @@ public class KillerOnTheLoose : Interaction {
                 name = "Search for the killer.",
                 //description = "We have sent %minion% to search for the killer.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => SearchKillerOption(state),
             };
             ActionOption doNothingOption = new ActionOption {
@@ -55,7 +54,6 @@ public class KillerOnTheLoose : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => DoNothingOption(state),
             };
 
@@ -65,27 +63,6 @@ public class KillerOnTheLoose : Interaction {
             //GameDate scheduleDate = GameManager.Instance.Today();
             //scheduleDate.AddHours(300);
             //state.SetTimeSchedule(doNothingOption, scheduleDate);
-        } else {
-            ActionOption continueSurveillanceOption = new ActionOption {
-                interactionState = state,
-                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Continue surveillance of the area.",
-                duration = 0,
-                needsMinion = false,
-                effect = () => ExploreContinuesOption(state),
-            };
-            ActionOption returnToMeOption = new ActionOption {
-                interactionState = state,
-                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Return to me.",
-                duration = 0,
-                needsMinion = false,
-                effect = () => ExploreEndsOption(state),
-            };
-
-            state.AddActionOption(continueSurveillanceOption);
-            state.AddActionOption(returnToMeOption);
-            state.SetDefaultOption(returnToMeOption);
         }
     }
     #endregion

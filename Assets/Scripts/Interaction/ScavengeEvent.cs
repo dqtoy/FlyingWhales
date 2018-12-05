@@ -69,7 +69,6 @@ public class ScavengeEvent : Interaction {
                 cost = new CurrenyCost { amount = 50, currency = CURRENCY.SUPPLY },
                 name = "Lay some traps.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => LayTrapOptionEffect(state),
                 jobNeeded = JOB.INSTIGATOR,
                 doesNotMeetRequirementsStr = "Minion must be a instigator",
@@ -79,7 +78,6 @@ public class ScavengeEvent : Interaction {
                 cost = new CurrenyCost { amount = 20, currency = CURRENCY.MANA },
                 name = "Assist with the scavenging.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => AssistOptionEffect(state),
                 jobNeeded = JOB.DIPLOMAT,
                 doesNotMeetRequirementsStr = "Minion must be a diplomat",
@@ -89,7 +87,6 @@ public class ScavengeEvent : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => DoNothingEffect(state),
             };
             state.AddActionOption(stopThem);

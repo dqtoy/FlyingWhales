@@ -61,41 +61,19 @@ public class HarvestSeason : Interaction {
                 name = "Send out a Demon to disrupt the harvest.",
                 //description = "We have sent %minion% to disrupt the harvest. It should take him a short time to execute the task.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => SendOutDemonEffect(state),
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
                 name = "Do nothing.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => DoNothingEffect(state),
             };
 
             state.AddActionOption(sendOutDemon);
             state.AddActionOption(doNothing);
             state.SetDefaultOption(doNothing);
-        } 
-        //else {
-        //    ActionOption continueSurveillance = new ActionOption {
-        //        interactionState = state,
-        //        cost = new ActionOptionCost { amount = 0, currency = CURRENCY.SUPPLY },
-        //        name = "Continue surveillance of the area.",
-        //        duration = 0,
-        //        needsMinion = false,
-        //        effect = () => ExploreContinuesOption(state),
-        //    };
-        //    ActionOption returnToMe = new ActionOption {
-        //        interactionState = state,
-        //        name = "Return to me.",
-        //        duration = 0,
-        //        needsMinion = false,
-        //        effect = () => ExploreEndsOption(state),
-        //    };
-        //    state.AddActionOption(continueSurveillance);
-        //    state.AddActionOption(returnToMe);
-        //    state.SetDefaultOption(returnToMe);
-        //}
+        }
     }
     #endregion
 

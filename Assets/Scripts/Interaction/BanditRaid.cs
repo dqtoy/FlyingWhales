@@ -74,7 +74,6 @@ public class BanditRaid : Interaction {
                 cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Stop them from attacking.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => StopThemFromAttackingEffect(state),
             };
             ActionOption provideSomeAssistance = new ActionOption {
@@ -82,7 +81,6 @@ public class BanditRaid : Interaction {
                 cost = new CurrenyCost { amount = 100, currency = CURRENCY.SUPPLY },
                 name = "Provide them some assistance.",
                 duration = 0,
-                needsMinion = false,
                 //neededObjects = new List<System.Type>() { typeof(ICharacter) },
                 effect = () => ProvideThemSomeAssistanceEffect(state),
             };
@@ -91,7 +89,6 @@ public class BanditRaid : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => DoNothingEffect(state),
             };
 

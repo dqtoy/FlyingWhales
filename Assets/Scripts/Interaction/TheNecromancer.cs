@@ -91,7 +91,6 @@ public class TheNecromancer : Interaction {
                 cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Inflame " + pronoun + " resentment.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => InflameResentmentOptionEffect(state),
                 canBeDoneAction = () => AssignedMinionIsOfClass(chosenMotivation),
                 doesNotMeetRequirementsStr = "Minion must be " + chosenMotivation,
@@ -101,7 +100,6 @@ public class TheNecromancer : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => DoNothingOptionEffect(state),
             };
             state.AddActionOption(inflame);
@@ -113,7 +111,6 @@ public class TheNecromancer : Interaction {
                 cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Perform the ritual.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => PerformRitualOptionEffect(state),
             };
             ActionOption drainResentment = new ActionOption {
@@ -121,7 +118,6 @@ public class TheNecromancer : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Drain " + pronoun + " resentment for Mana.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => DrainResentmentOptionEffect(state),
             };
             ActionOption leaveAlone = new ActionOption {
@@ -129,7 +125,6 @@ public class TheNecromancer : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Leave " + pronoun + " alone.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => LeaveAloneEffect(state),
             };
             state.AddActionOption(preformRitual);
@@ -142,7 +137,6 @@ public class TheNecromancer : Interaction {
                 cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Provide " + pronoun + " with some Supplies.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => PerformRitualOptionEffect(state),
             };
             ActionOption provideMinion = new ActionOption {
@@ -150,7 +144,6 @@ public class TheNecromancer : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Provide " + pronoun + " with your Minion.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => DrainResentmentOptionEffect(state),
             };
             ActionOption leaveAlone = new ActionOption {
@@ -158,7 +151,6 @@ public class TheNecromancer : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Leave " + pronoun + " alone.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => LeaveAloneEffect(state),
             };
             state.AddActionOption(provideSupplies);

@@ -58,7 +58,6 @@ public class UnfinishedCurse : Interaction {
                 cost = new CurrenyCost { amount = 5, currency = CURRENCY.MANA },
                 name = "Attempt to complete the ritual.",
                 duration = 0,
-                needsMinion = false,
                 neededObjects = new List<System.Type>() { typeof(CharacterIntel) },
                 effect = () => CompleteCurseEffect(state),
             };
@@ -67,7 +66,6 @@ public class UnfinishedCurse : Interaction {
                 cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Harness its magic into Mana.",
                 duration = 0,
-                needsMinion = false,
                 jobNeeded = JOB.EXPLORER,
                 effect = () => HarnessMagicEffect(state),
                 //canBeDoneAction = () => AssignedMinionIsOfClass("Gluttony"),
@@ -78,7 +76,6 @@ public class UnfinishedCurse : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Leave it alone.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => LeaveItAloneEffect(state),
             };
 

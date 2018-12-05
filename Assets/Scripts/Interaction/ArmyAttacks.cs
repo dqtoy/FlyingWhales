@@ -71,7 +71,6 @@ public class ArmyAttacks : Interaction {
                 cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Stop Them.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => StopThemEffect(state),
             };
             ActionOption redirectAttack = new ActionOption {
@@ -79,7 +78,6 @@ public class ArmyAttacks : Interaction {
                 cost = new CurrenyCost { amount = 30, currency = CURRENCY.SUPPLY },
                 name = "Redirect their attack.",
                 duration = 0,
-                needsMinion = false,
                 jobNeeded = JOB.RAIDER,
                 neededObjects = new List<System.Type>() { typeof(LocationIntel) },
                 effect = () => RedirectAttackEffect(state),
@@ -92,7 +90,6 @@ public class ArmyAttacks : Interaction {
                 name = "Do nothing.",
                 //description = "The bandits are increasing their defensive army.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => DoNothingEffect(state),
             };
             state.AddActionOption(stopThem);

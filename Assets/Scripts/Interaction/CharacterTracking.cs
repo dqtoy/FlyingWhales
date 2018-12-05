@@ -71,7 +71,6 @@ public class CharacterTracking : Interaction {
                 cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Follow " + subjectivePronoun + " closely",
                 duration = 0,
-                needsMinion = false,
                 effect = () => FollowThemCloselyEffect(state),
             };
             ActionOption getAhead = new ActionOption {
@@ -79,7 +78,6 @@ public class CharacterTracking : Interaction {
                 cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Attempt to get ahead of " + characterInvolved.name + ".",
                 duration = 0,
-                needsMinion = false,
                 effect = () => GetAheadEffect(state),
             };
             ActionOption doNothing = new ActionOption {
@@ -87,7 +85,6 @@ public class CharacterTracking : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => DoNothingEffect(state),
             };
             state.AddActionOption(follow);

@@ -28,7 +28,6 @@ public class NothingHappened : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Keep looking.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => ExploreContinuesOption(state),
             };
             ActionOption okOption = new ActionOption {
@@ -36,7 +35,6 @@ public class NothingHappened : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "OK.",
                 duration = 0,
-                needsMinion = false,
                 effect = () => ExploreEndsOption(state),
             };
 

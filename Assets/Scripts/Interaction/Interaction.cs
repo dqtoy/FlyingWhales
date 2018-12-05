@@ -317,7 +317,6 @@ public class Interaction {
             cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
             name = "Yes, please.",
             duration = 0,
-            needsMinion = false,
             effect = () => ExploreContinuesOption(whatToDoNextState),
         };
         ActionOption noWayOption = new ActionOption {
@@ -325,7 +324,6 @@ public class Interaction {
             cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
             name = "No way.",
             duration = 0,
-            needsMinion = false,
             effect = () => ExploreEndsOption(whatToDoNextState),
         };
 
