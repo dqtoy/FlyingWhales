@@ -66,6 +66,7 @@ public static class Signals {
     public static string ITEM_THROWN = "OnItemThrown"; //Parameters (Item unobtainedItem, Character character)
     public static string CHARACTER_MARKED = "OnCharacterMarked";
     public static string CHARACTER_INSPECTED = "OnCharacterInspected"; //Parameters (Character inspectedCharacter)
+    public static string CHARACTER_LEVEL_CHANGED = "OnCharacterLevelChange"; //Parameters (Character character)
     #endregion
 
     #region UI
