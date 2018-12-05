@@ -93,6 +93,7 @@ public class ScavengeEvent : Interaction {
                 effect = () => DoNothingEffect(state),
             };
             state.AddActionOption(stopThem);
+            state.AddActionOption(assist);
             state.AddActionOption(doNothing);
             state.SetDefaultOption(doNothing);
         }

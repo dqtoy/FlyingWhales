@@ -131,6 +131,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.SCAVENGE_EVENT:
                 createdInteraction = new ScavengeEvent(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_RAID:
+                createdInteraction = new MoveToRaid(interactable);
+                break;
+            case INTERACTION_TYPE.RAID_EVENT:
+                createdInteraction = new RaidEvent(interactable);
+                break;
         }
         return createdInteraction;
     }
