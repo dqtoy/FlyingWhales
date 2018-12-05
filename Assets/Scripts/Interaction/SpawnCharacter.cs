@@ -110,6 +110,7 @@ public class SpawnCharacter : Interaction {
     }
     private void SuccessCancelEffect(InteractionState state) {
         explorerMinion.LevelUp();
+        MinionSuccess();
 
         state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
         state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);

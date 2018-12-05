@@ -23,6 +23,7 @@ public class Interaction {
     protected InteractionState _currentState;
     protected Minion _explorerMinion;
     protected Character _characterInvolved;
+    protected Action _minionSuccessfulAction;
     protected List<Action> _endInteractionActions;
     protected Job _jobAssociated;
     protected JOB[] _jobFilter;
@@ -191,6 +192,9 @@ public class Interaction {
     public void AddEndInteractionAction(Action action) {
         _endInteractionActions.Add(action);
     }
+    public void SetMinionSuccessAction(Action action) {
+        _minionSuccessfulAction = action;
+    }
     //public void SetInteractionItem(InteractionItem interactionItem) {
     //    _interactionItem = interactionItem;
     //}
@@ -284,6 +288,11 @@ public class Interaction {
     }
     public void AddToDebugLog(string message) {
         interactionDebugLog += "\n" + GameManager.Instance.TodayLogString() + message;
+    }
+    protected void MinionSuccess() {
+        if(_minionSuccessfulAction != null) {
+            _minionSuccessfulAction();
+        }
     }
     #endregion
 

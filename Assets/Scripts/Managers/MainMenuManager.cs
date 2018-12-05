@@ -4,6 +4,7 @@ using UnityEngine;
 using System.IO;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Linq;
 
 public class MainMenuManager : MonoBehaviour {
 
@@ -16,6 +17,20 @@ public class MainMenuManager : MonoBehaviour {
     [SerializeField] private GameObject worldConfigPrefab;
     [SerializeField] private GameObject worldConfigContent;
     [SerializeField] private ContentSorter worldConfigContentSorter;
+
+    [ContextMenu("Get Combinations")]
+    public void GetCombinations() {
+        List<int> sample = new List<int> { 1, 2 };
+        List<List<int>> result = Utilities.ItemCombinations(sample, 3, 3);
+        for (int i = 0; i < result.Count; i++) {
+            string log = "\n{";
+            for (int j = 0; j < result[i].Count(); j++) {
+                log += " " + result[i][j]+ ",";
+            }
+            log += " }";
+            Debug.Log(log);
+        }
+    }
 
     public void OnClickPlayGame() {
         //PlayGame();

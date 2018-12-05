@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class FriendlyCharacterEncountered : Interaction {
 
     public FriendlyCharacterEncountered(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.FRIENDLY_CHARACTER_ENCOUNTERED, 70) {
@@ -40,6 +39,8 @@ public class FriendlyCharacterEncountered : Interaction {
         nothingHappenedState.SetEffect(() => NothingHappenedEffect(nothingHappenedState));
 
         _states.Add(startState.name, startState);
+        _states.Add(characterRecruitedState.name, characterRecruitedState);
+        _states.Add(nothingHappenedState.name, nothingHappenedState);
 
         SetCurrentState(startState);
     }

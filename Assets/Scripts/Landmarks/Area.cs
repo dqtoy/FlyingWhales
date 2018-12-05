@@ -7,21 +7,23 @@ using UnityEngine;
 public class Area {
 
     public int id { get; private set; }
+    public int totalCivilians { get { return landmarks.Sum(x => x.civilianCount); } }
+    public int suppliesInBank { get; private set; }
     public string name { get; private set; }
     public AREA_TYPE areaType { get; private set; }
-    public List<HexTile> tiles { get; private set; }
     public HexTile coreTile { get; private set; }
     public Color areaColor { get; private set; }
     public Faction owner { get; private set; }
-    public int suppliesInBank { get; private set; }
-    public List<BaseLandmark> landmarks { get { return tiles.Where(x => x.landmarkOnTile != null).Select(x => x.landmarkOnTile).ToList(); } }
-    public int totalCivilians { get { return landmarks.Sum(x => x.civilianCount); } }
+    public Area attackTarget { get; private set; }
     public LocationIntel locationIntel { get; private set; }
     public DefenderIntel defenderIntel { get; private set; }
+    public List<HexTile> tiles { get; private set; }
+    public List<BaseLandmark> landmarks { get { return tiles.Where(x => x.landmarkOnTile != null).Select(x => x.landmarkOnTile).ToList(); } }
     public List<BaseLandmark> exposedTiles { get; private set; }
     public List<BaseLandmark> unexposedTiles { get; private set; }
     public List<Character> areaResidents { get; private set; }
     public List<Character> charactersAtLocation { get; private set; }
+    public List<Character> attackCharacters { get; private set; }
     public List<Log> history { get; private set; }
     public List<Interaction> currentInteractions { get; private set; }
     public bool isHighlighted { get; private set; }
@@ -570,6 +572,10 @@ public class Area {
         }
         areAllLandmarksDead = true;
     }
+    public void SetAttackTargetAndCharacters(Area target, List<Character> characters) {
+        attackTarget = target;
+        attackCharacters = characters;
+    }
     #endregion
 
     #region Camp
@@ -919,6 +925,16 @@ public class Area {
                 this.history.RemoveAt(0);
             }
         }
+    }
+    #endregion
+
+    #region Attack
+    public void AttackTarget() {
+        for (int i = 1; i < attackCharacters.Count; i++) {
+            attackCharacters[0].ownParty.AddCharacter(attackCharacters[i]);
+        }
+        Interaction attackInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ATTACK, attackTarget.coreTile.landmarkOnTile);
+        attackCharacters[0].ownParty.GoToLocation(attackTarget.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => attackCharacters[0].SetForcedInteraction(attackInteraction));
     }
     #endregion
 }
