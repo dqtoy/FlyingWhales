@@ -93,6 +93,7 @@ public class ScavengeEvent : Interaction {
                 effect = () => DoNothingEffect(state),
             };
             state.AddActionOption(stopThem);
+            state.AddActionOption(assist);
             state.AddActionOption(doNothing);
             state.SetDefaultOption(doNothing);
         }
@@ -166,8 +167,7 @@ public class ScavengeEvent : Interaction {
         //**Mechanics**: Compute Supply obtained by scavenger and transfer it to his home area. Scavenger also travels back to his home area.
         _characterInvolved.LevelUp();
         int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
-        _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply);
-        GoBackHome();
+        GoBackHome(() => _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply));
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
         }
@@ -190,8 +190,7 @@ public class ScavengeEvent : Interaction {
         _characterInvolved.LevelUp();
 
         int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
-        _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply);
-        GoBackHome();
+        GoBackHome(() => _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply));
         _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);
 
         if (state.descriptionLog != null) {
@@ -203,7 +202,7 @@ public class ScavengeEvent : Interaction {
         //**Mechanics**: Compute Supply obtained by scavenger and transfer it to his home area. Scavenger also travels back to his home area.
         //+2 Favor from Faction 1
         int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
-        GoBackHome();
+        GoBackHome(() => _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply));
         _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 1);
 
         if (state.descriptionLog != null) {
@@ -217,7 +216,7 @@ public class ScavengeEvent : Interaction {
         explorerMinion.LevelUp();
 
         int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
-        GoBackHome();
+        GoBackHome(() => _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply));
         _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);
 
         if (state.descriptionLog != null) {
@@ -230,8 +229,7 @@ public class ScavengeEvent : Interaction {
         _characterInvolved.LevelUp();
 
         int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
-        _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply);
-        GoBackHome();
+        GoBackHome(() => _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply));
 
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
@@ -247,7 +245,7 @@ public class ScavengeEvent : Interaction {
         _characterInvolved.Death();
     }
 
-    private void GoBackHome() {
-        _characterInvolved.ownParty.GoHome();
+    private void GoBackHome(System.Action doneAction = null) {
+        _characterInvolved.ownParty.GoHome(doneAction);
     }
 }

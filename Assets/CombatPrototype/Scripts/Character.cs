@@ -2205,8 +2205,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
             //Reset to full health and sp
             ResetToFullHP();
             //ResetToFullSP();
-            if (_playerCharacterItem != null) {
+            if(_playerCharacterItem != null) {
                 _playerCharacterItem.UpdateMinionItem();
+                Messenger.Broadcast(Signals.CHARACTER_LEVEL_CHANGED, this);
             }
         }
     }
@@ -2245,6 +2246,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         //Reset to full health and sp
         ResetToFullHP();
         //ResetToFullSP();
+        Messenger.Broadcast(Signals.CHARACTER_LEVEL_CHANGED, this);
         if (_playerCharacterItem != null) {
             _playerCharacterItem.UpdateMinionItem();
         }
@@ -2279,6 +2281,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         //Reset to full health and sp
         ResetToFullHP();
         //ResetToFullSP();
+        Messenger.Broadcast(Signals.CHARACTER_LEVEL_CHANGED, this);
         if (_playerCharacterItem != null) {
             _playerCharacterItem.UpdateMinionItem();
         }

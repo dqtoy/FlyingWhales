@@ -77,6 +77,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
     private void OnEnable() {
         Messenger.AddListener<CharacterIntel>(Signals.CHARACTER_INTEL_ADDED, OnCharacterIntelObtained);
+        Messenger.AddListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
     }
     private void OnDisable() {
@@ -104,7 +105,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         SetWholeImageSprite(null);
 
         nameLbl.text = character.urlName;
-        lvlTxt.text = character.level.ToString();
+        UpdateLvl();
         UpdateFrame();
         UpdateUnknownVisual();
     }
@@ -132,6 +133,9 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     }
 
     #region Utilities
+    private void UpdateLvl() {
+        lvlTxt.text = _character.level.ToString();
+    }
     private void SetBodyPartsState(bool state) {
         faceParentGO.SetActive(state);
         //body.gameObject.SetActive(state);
@@ -259,18 +263,22 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             if (_character.isDefender) {
                 DefenderIntel defIntel = _character.defendingArea.defenderIntel;
                 if (forceShowPortrait || GameManager.Instance.inspectAll) {
+                    lvlGO.SetActive(true);
                     unknownGO.SetActive(false);
                     SetBodyPartsState(true);
                 } else {
+                    lvlGO.SetActive(defIntel.isObtained);
                     unknownGO.SetActive(!defIntel.isObtained);
                     SetBodyPartsState(defIntel.isObtained);
                 }
             } else {
                 CharacterIntel characterIntel = _character.characterIntel;
                 if (forceShowPortrait || GameManager.Instance.inspectAll) {
+                    lvlGO.SetActive(true);
                     unknownGO.SetActive(false);
                     SetBodyPartsState(true);
                 } else {
+                    lvlGO.SetActive(characterIntel.isObtained);
                     unknownGO.SetActive(!characterIntel.isObtained);
                     SetBodyPartsState(characterIntel.isObtained);
                 }
@@ -450,6 +458,11 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             UpdateUnknownVisual();
         }
     }
+    private void OnCharacterLevelChanged(Character character) {
+        if (_character != null && _character.id == character.id) {
+            UpdateLvl();
+        }
+    }
     private void OnInspectAll() {
         UpdateUnknownVisual();
     }
@@ -459,6 +472,9 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         }
         if (Messenger.eventTable.ContainsKey(Signals.INSPECT_ALL)) {
             Messenger.RemoveListener(Signals.INSPECT_ALL, OnInspectAll);
+        }
+        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_LEVEL_CHANGED)) {
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
         }
     }
     #endregion
