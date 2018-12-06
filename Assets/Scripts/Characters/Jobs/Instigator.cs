@@ -37,7 +37,13 @@ public class Instigator : Job {
                 //Get Random Chaos Event
                 SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(chosenType, area.coreTile.landmarkOnTile));
                 //SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER, area.coreTile.landmarkOnTile)); //NOT FINAL!
+                _createdInteraction.AddEndInteractionAction(() => StartJobAction());
+                _createdInteraction.ScheduleSecondTimeOut();
+                _character.AddInteraction(_createdInteraction);
+            } else {
+                StartJobAction();
             }
+            return;
         } else if (result == "Fail") {
             SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, area.coreTile.landmarkOnTile));
         } else if (result == "Crit Fail") {
@@ -60,6 +66,12 @@ public class Instigator : Job {
             //Current location has no area
             return;
         }
+        List<Interaction> choices = area.GetInteractionsOfJob(_jobType);
+        if (choices.Count <= 0) {
+            //No interaction for job type
+            return;
+        }
+
         WeightedDictionary<string> checkWeights = new WeightedDictionary<string>();
         int checkMultiplier = _character.level - 5;
         if (checkMultiplier < 0) {
@@ -87,11 +99,6 @@ public class Instigator : Job {
         successWeights.AddElement("Crit Fail", critFail);
         string result = successWeights.PickRandomElementGivenWeights();
         if (result == "Success") {
-            List<Interaction> choices = area.GetInteractionsOfJob(_jobType);
-            if (choices.Count <= 0) {
-                //No interaction for job type
-                return;
-            }
             SetJobActionPauseState(true);
             area.SetStopDefaultInteractionsState(true);
             SetCreatedInteraction(choices[UnityEngine.Random.Range(0, choices.Count)]);

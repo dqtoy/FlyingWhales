@@ -81,6 +81,11 @@ public class Recruiter : Job {
             //Current location has no area
             return;
         }
+        List<Interaction> choices = area.GetInteractionsOfJob(_jobType);
+        if (choices.Count <= 0) {
+            //No interaction for job type
+            return;
+        }
         WeightedDictionary<string> checkWeights = new WeightedDictionary<string>();
         int checkMultiplier = _character.level - 5;
         if (checkMultiplier < 0) {
@@ -108,11 +113,6 @@ public class Recruiter : Job {
         successWeights.AddElement("Crit Fail", critFail);
         string result = successWeights.PickRandomElementGivenWeights();
         if (result == "Success") {
-            List<Interaction> choices = area.GetInteractionsOfJob(_jobType);
-            if (choices.Count <= 0) {
-                //No interaction for job type
-                return;
-            }
             SetJobActionPauseState(true);
             area.SetStopDefaultInteractionsState(true);
             SetCreatedInteraction(choices[UnityEngine.Random.Range(0, choices.Count)]);
