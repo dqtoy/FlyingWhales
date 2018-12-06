@@ -161,7 +161,7 @@ public class MoveToPeaceNegotiation : Interaction {
     }
     private void DiplomatSurvivesMinionFleesRewardEffect(InteractionState state) {
         //**Mechanic**: Diplomat travels to [Location] for Peace Negotiation, Player Favor Count -2 on Diplomat's Faction
-        GoToTarget();
+        GoToTargetAndStartPeaceNegotiation();
         _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -2);
 
         state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
@@ -169,7 +169,7 @@ public class MoveToPeaceNegotiation : Interaction {
     }
     private void DiplomatSurvivesMinionDiesRewardEffect(InteractionState state) {
         //**Mechanic**: Diplomat travels to [Location] for Peace Negotiation, Player Favor Count -2 on Diplomat's Faction
-        GoToTarget();
+        GoToTargetAndStartPeaceNegotiation();
         _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -2);
 
         state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
@@ -181,22 +181,22 @@ public class MoveToPeaceNegotiation : Interaction {
     }
     private void FactionLeaderRejectedRewardEffect(InteractionState state) {
         //**Mechanic**: Diplomat travels to [Location] for Peace Negotiation
-        GoToTarget();
+        GoToTargetAndStartPeaceNegotiation();
 
         state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
         state.AddLogFiller(new LogFiller(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2));
     }
     private void DoNothingRewardEffect(InteractionState state) {
         //**Mechanic**: Diplomat travels to [Location] for Peace Negotiation
-        GoToTarget();
+        GoToTargetAndStartPeaceNegotiation();
 
         state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
         state.AddLogFiller(new LogFiller(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2));
     }
     #endregion
 
-    private void GoToTarget() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile, PATHFINDING_MODE.NORMAL);
+    private void GoToTargetAndStartPeaceNegotiation() {
+        _characterInvolved.GoToAreaToMakePeaceWithFaction(targetLocation);
     }
 
     private Faction GetTargetFaction() {

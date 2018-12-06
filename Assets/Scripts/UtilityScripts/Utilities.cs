@@ -1754,6 +1754,8 @@ public class Utilities : MonoBehaviour {
         INTERACTION_TYPE.MOVE_TO_SCAVENGE,
         INTERACTION_TYPE.MOVE_TO_ATTACK,
         INTERACTION_TYPE.MOVE_TO_RAID,
+        INTERACTION_TYPE.MOVE_TO_PEACE_NEGOTIATION,
+        INTERACTION_TYPE.MOVE_TO_EXPLORE,
 
         //Explore
         INTERACTION_TYPE.CHARACTER_EXPLORES,
@@ -1772,6 +1774,7 @@ public class Utilities : MonoBehaviour {
         INTERACTION_TYPE.FRIENDLY_CHARACTER_ENCOUNTERED,
 
         //Character Arrival
+        INTERACTION_TYPE.CHARACTER_PEACE_NEGOTIATION,
     };
     public static int GetInteractionPriorityIndex(INTERACTION_TYPE interactionType) {
         for (int i = 0; i < interactionPriorityList.Length; i++) {

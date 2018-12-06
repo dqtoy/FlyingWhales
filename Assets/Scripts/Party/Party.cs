@@ -260,7 +260,12 @@ public class Party {
         }
     }
     public void GoHome(Action doneAction = null, Action actionOnStartOfMovement = null) {
+        if (_isDead) { return; }
         GoToLocation(mainCharacter.homeLandmark, PATHFINDING_MODE.PASSABLE, doneAction, null, actionOnStartOfMovement);
+    }
+    public void GoHomeAndDisband(Action actionOnStartOfMovement = null) {
+        if(_isDead) { return; }
+        GoToLocation(mainCharacter.homeLandmark, PATHFINDING_MODE.PASSABLE, () => DisbandParty(), null, actionOnStartOfMovement);
     }
     #endregion
 

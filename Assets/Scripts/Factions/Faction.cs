@@ -439,6 +439,13 @@ public class Faction {
             Debug.LogWarning("There is no favor key for " + otherFaction.name + " in " + this.name + "'s favor dictionary");
         }
     }
+    public void SetFavorFor(Faction otherFaction, int adjustment) {
+        if (favor.ContainsKey(otherFaction)) {
+            favor[otherFaction] = adjustment;
+        } else {
+            Debug.LogWarning("There is no favor key for " + otherFaction.name + " in " + this.name + "'s favor dictionary");
+        }
+    }
     #endregion
 
     #region Interaction

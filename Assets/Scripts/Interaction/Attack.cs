@@ -10,23 +10,35 @@ public class Attack : Interaction {
     private Minion _supporterMinion;
     private Combat _combat;
 
+    private const string Start = "Start";
+    private const string Helped_Attackers_Won = "Helped Attackers Won";
+    private const string Helped_Attackers_Lost = "Helped Attackers Lost";
+    private const string Helped_Attackers_No_Defense = "Helped Attackers No Defense";
+    private const string Helped_Defenders_Won = "Helped Defenders Won";
+    private const string Helped_Defenders_Lost = "Helped Defenders Lost";
+    private const string Solo_Defense_Won = "Solo Defense Won";
+    private const string Solo_Defense_Lost = "Solo Defense Lost";
+    private const string Normal_Attackers_Won = "Normal Attackers Won";
+    private const string Normal_Attackers_Lost = "Normal Attackers Lost";
+    private const string Normal_Attackers_No_Defense = "Normal Attackers No Defense";
+
     public Attack(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.ATTACK, 0) {
         _name = "Attack";
         _jobFilter = new JOB[] { JOB.DIPLOMAT };
     }
     #region Overrides
     public override void CreateStates() {
-        InteractionState startState = new InteractionState("Start", this);
-        InteractionState helpedAttackersWonState = new InteractionState("Helped Attackers Won", this);
-        InteractionState helpedAttackersLostState = new InteractionState("Helped Attackers Lost", this);
-        InteractionState helpedAttackersNoDefState = new InteractionState("Helped Attackers No Defense", this);
-        InteractionState helpedDefendersWonState = new InteractionState("Helped Defenders Won", this);
-        InteractionState helpedDefendersLostState = new InteractionState("Helped Defenders Lost", this);
-        InteractionState soloDefenseWonState = new InteractionState("Solo Defense Won", this);
-        InteractionState soloDefenseLostState = new InteractionState("Solo Defense Lost", this);
-        InteractionState normalAttackersWonState = new InteractionState("Normal Attackers Won", this);
-        InteractionState normalAttackersLostState = new InteractionState("Normal Attackers Lost", this);
-        InteractionState normalAttackersNoDefState = new InteractionState("Normal Attackers No Defense", this);
+        InteractionState startState = new InteractionState(Start, this);
+        InteractionState helpedAttackersWonState = new InteractionState(Helped_Attackers_Won, this);
+        InteractionState helpedAttackersLostState = new InteractionState(Helped_Attackers_Lost, this);
+        InteractionState helpedAttackersNoDefState = new InteractionState(Helped_Attackers_No_Defense, this);
+        InteractionState helpedDefendersWonState = new InteractionState(Helped_Defenders_Won, this);
+        InteractionState helpedDefendersLostState = new InteractionState(Helped_Defenders_Lost, this);
+        InteractionState soloDefenseWonState = new InteractionState(Solo_Defense_Won, this);
+        InteractionState soloDefenseLostState = new InteractionState(Solo_Defense_Lost, this);
+        InteractionState normalAttackersWonState = new InteractionState(Normal_Attackers_Won, this);
+        InteractionState normalAttackersLostState = new InteractionState(Normal_Attackers_Lost, this);
+        InteractionState normalAttackersNoDefState = new InteractionState(Normal_Attackers_No_Defense, this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(_characterInvolved.homeLandmark.tileLocation.areaOfTile, _characterInvolved.homeLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_2);
@@ -111,14 +123,14 @@ public class Attack : Interaction {
         if(_combat != null) {
             if(_combat.winningSide == SIDES.A) {
                 //Helped Attackers Won
-                SetCurrentState(_states["Helped Attackers Won"]);
+                SetCurrentState(_states[Helped_Attackers_Won]);
             } else {
                 //Helped Attackers Lost
-                SetCurrentState(_states["Helped Attackers Lost"]);
+                SetCurrentState(_states[Helped_Attackers_Lost]);
             }
         } else {
             //Helped Attackers No Defense
-            SetCurrentState(_states["Helped Attackers No Defense"]);
+            SetCurrentState(_states[Helped_Attackers_No_Defense]);
         }
     }
     private void SupportDefendersOption(InteractionState state) {
@@ -138,18 +150,18 @@ public class Attack : Interaction {
         if (_combat.winningSide == SIDES.A) {
             if(_defenderGroup != null) {
                 //Helped Defenders Lost - means that attackers won
-                SetCurrentState(_states["Helped Defenders Lost"]);
+                SetCurrentState(_states[Helped_Defenders_Lost]);
             } else {
                 //Solo Defense Lost - means that attackers won
-                SetCurrentState(_states["Solo Defense Lost"]);
+                SetCurrentState(_states[Solo_Defense_Lost]);
             }
         } else {
             if (_defenderGroup != null) {
                 //Helped Defenders Won
-                SetCurrentState(_states["Helped Defenders Won"]);
+                SetCurrentState(_states[Helped_Defenders_Won]);
             } else {
                 //Solo Defense Won
-                SetCurrentState(_states["Solo Defense Won"]);
+                SetCurrentState(_states[Solo_Defense_Won]);
             }
         }
     }
@@ -163,14 +175,14 @@ public class Attack : Interaction {
         if (_combat != null) {
             if (_combat.winningSide == SIDES.A) {
                 //Normal Attackers Won
-                SetCurrentState(_states["Normal Attackers Won"]);
+                SetCurrentState(_states[Normal_Attackers_Won]);
             } else {
                 //Normal Attackers Lost
-                SetCurrentState(_states["Normal Attackers Lost"]);
+                SetCurrentState(_states[Normal_Attackers_Lost]);
             }
         } else {
             //Normal Attackers No Defense
-            SetCurrentState(_states["Normal Attackers No Defense"]);
+            SetCurrentState(_states[Normal_Attackers_No_Defense]);
         }
     }
     #endregion
@@ -197,10 +209,8 @@ public class Attack : Interaction {
         DefenderGroup newDefenders = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
         if (newDefenders == null) {
             interactable.tileLocation.areaOfTile.Death();
-            //Log area is cleared
+            //Log area is cleared - Add faction log filler
         }
-
-        characterInvolved.currentParty.GoHome(() => characterInvolved.currentParty.DisbandParty());
     }
     private void HelpedAttackersLostEffect(InteractionState state) {
         characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 1);
@@ -231,7 +241,6 @@ public class Attack : Interaction {
         }
 
         interactable.tileLocation.areaOfTile.Death();
-        characterInvolved.currentParty.GoHome(() => characterInvolved.currentParty.DisbandParty());
     }
     private void HelpedDefendersLostEffect(InteractionState state) {
         interactable.tileLocation.areaOfTile.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 1);
@@ -246,9 +255,8 @@ public class Attack : Interaction {
         DefenderGroup newDefenders = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
         if (newDefenders == null) {
             interactable.tileLocation.areaOfTile.Death();
-            //Log area is cleared
+            //Log area is cleared - Add faction log filler
         }
-        characterInvolved.currentParty.GoHome(() => characterInvolved.currentParty.DisbandParty());
     }
     private void HelpedDefendersWonEffect(InteractionState state) {
         interactable.tileLocation.areaOfTile.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);
@@ -272,7 +280,6 @@ public class Attack : Interaction {
             state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1));
         }
         interactable.tileLocation.areaOfTile.Death();
-        characterInvolved.currentParty.GoHome(() => characterInvolved.currentParty.DisbandParty());
     }
     private void SoloDefenseWonEffect(InteractionState state) {
         interactable.tileLocation.areaOfTile.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);
@@ -280,6 +287,7 @@ public class Attack : Interaction {
 
         state.descriptionLog.AddToFillers(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2);
         state.AddLogFiller(new LogFiller(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2));
+        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
             state.descriptionLog.AddToFillers(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
             state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1));
@@ -298,9 +306,8 @@ public class Attack : Interaction {
         DefenderGroup newDefenders = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
         if (newDefenders == null) {
             interactable.tileLocation.areaOfTile.Death();
-            //Log area is cleared
+            //Log area is cleared - Add faction log filler
         }
-        characterInvolved.currentParty.GoHome(() => characterInvolved.currentParty.DisbandParty());
     }
     private void NormalAttackersLostEffect(InteractionState state) {
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
@@ -312,13 +319,13 @@ public class Attack : Interaction {
         }
     }
     private void NormalAttackersNoDefenseEffect(InteractionState state) {
+        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
         for (int i = 0; i < characterInvolved.currentParty.characters.Count; i++) {
             state.descriptionLog.AddToFillers(characterInvolved.currentParty.characters[i], characterInvolved.currentParty.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
             state.AddLogFiller(new LogFiller(characterInvolved.currentParty.characters[i], characterInvolved.currentParty.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1));
         }
 
         interactable.tileLocation.areaOfTile.Death();
-        characterInvolved.currentParty.GoHome(() => characterInvolved.currentParty.DisbandParty());
     }
     #endregion
 }

@@ -18,9 +18,8 @@ public class MoveToAttack : Interaction {
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.attackTarget, interactable.tileLocation.areaOfTile.attackTarget.name, LOG_IDENTIFIER.LANDMARK_2);
-        LOG_IDENTIFIER[] characterIdentifiers = new LOG_IDENTIFIER[] { LOG_IDENTIFIER.TARGET_CHARACTER, LOG_IDENTIFIER.STRING_1, LOG_IDENTIFIER.STRING_2, LOG_IDENTIFIER.OTHER };
         for (int i = 0; i < interactable.tileLocation.areaOfTile.attackCharacters.Count; i++) {
-            startStateDescriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.attackCharacters[i], interactable.tileLocation.areaOfTile.attackCharacters[i].name, characterIdentifiers[i]);
+            startStateDescriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.attackCharacters[i], interactable.tileLocation.areaOfTile.attackCharacters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
         }
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 

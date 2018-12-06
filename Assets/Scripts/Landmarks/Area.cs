@@ -938,8 +938,7 @@ public class Area {
         for (int i = 1; i < attackCharacters.Count; i++) {
             attackCharacters[0].ownParty.AddCharacter(attackCharacters[i]);
         }
-        Interaction attackInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ATTACK, attackTarget.coreTile.landmarkOnTile);
-        attackCharacters[0].ownParty.GoToLocation(attackTarget.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => attackCharacters[0].SetForcedInteraction(attackInteraction));
+        attackCharacters[0].AttackAnArea(attackTarget);
     }
     #endregion
 }

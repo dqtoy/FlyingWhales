@@ -1925,6 +1925,16 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
     public void SetDoNotDisturb(bool state) {
         _doNotDisturb = state;
     }
+    public void AttackAnArea(Area target) {
+        Interaction attackInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ATTACK, target.coreTile.landmarkOnTile);
+        attackInteraction.AddEndInteractionAction(() => _ownParty.GoHomeAndDisband());
+        _ownParty.GoToLocation(target.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => SetForcedInteraction(attackInteraction));
+    }
+    public void GoToAreaToMakePeaceWithFaction(Area target) {
+        Interaction peaceInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_PEACE_NEGOTIATION, target.coreTile.landmarkOnTile);
+        peaceInteraction.AddEndInteractionAction(() => _ownParty.GoHome());
+        _ownParty.GoToLocation(target.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => SetForcedInteraction(peaceInteraction));
+    }
     #endregion
 
     #region Relationships

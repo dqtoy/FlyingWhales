@@ -150,6 +150,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MOVE_TO_PEACE_NEGOTIATION:
                 createdInteraction = new MoveToPeaceNegotiation(interactable);
                 break;
+            case INTERACTION_TYPE.CHARACTER_PEACE_NEGOTIATION:
+                createdInteraction = new CharacterPeaceNegotiation(interactable);
+                break;
         }
         return createdInteraction;
     }
