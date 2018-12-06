@@ -320,8 +320,8 @@ public class Utilities : MonoBehaviour {
             logIdentifier = LOG_IDENTIFIER.TARGET_CHARACTER;
         } else if (strIdentifier.Contains("FACTION_LEADER_3")) {
             logIdentifier = LOG_IDENTIFIER.FACTION_LEADER_3;
-        } else if (strIdentifier.Contains("MINION")) {
-            logIdentifier = LOG_IDENTIFIER.MINION_NAME;
+        } else if (strIdentifier.Contains("MINION_1")) {
+            logIdentifier = LOG_IDENTIFIER.MINION_1;
         }
         for (int i = 0; i < objectLog.Count; i++) {
             if (objectLog[i].identifier == logIdentifier) {
@@ -489,11 +489,11 @@ public class Utilities : MonoBehaviour {
         {"110", LOG_IDENTIFIER.COMBAT},
         {"111", LOG_IDENTIFIER.STRING_1},
         {"112", LOG_IDENTIFIER.STRING_2},
-        {"113", LOG_IDENTIFIER.MINION_NAME},
-        {"114", LOG_IDENTIFIER.MINION_PRONOUN_S},
-        {"115", LOG_IDENTIFIER.MINION_PRONOUN_O},
-        {"116", LOG_IDENTIFIER.MINION_PRONOUN_P},
-        {"117", LOG_IDENTIFIER.MINION_PRONOUN_R},
+        {"113", LOG_IDENTIFIER.MINION_1},
+        {"114", LOG_IDENTIFIER.MINION_1_PRONOUN_S},
+        {"115", LOG_IDENTIFIER.MINION_1_PRONOUN_O},
+        {"116", LOG_IDENTIFIER.MINION_1_PRONOUN_P},
+        {"117", LOG_IDENTIFIER.MINION_1_PRONOUN_R},
 
 		//{"111", LOG_IDENTIFIER.PARTY_NAME},
 	};

@@ -576,6 +576,11 @@ public class Area {
         attackTarget = target;
         attackCharacters = characters;
     }
+    public void Death() {
+        if(owner != FactionManager.Instance.neutralFaction) {
+            LandmarkManager.Instance.OwnArea(FactionManager.Instance.neutralFaction, this);
+        }
+    }
     #endregion
 
     #region Camp

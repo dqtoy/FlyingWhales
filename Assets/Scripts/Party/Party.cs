@@ -198,11 +198,14 @@ public class Party {
 
         _owner.homeLandmark.RemoveAssaultArmyParty(this);
     }
-    //public virtual void DisbandParty() {
-    //    while (icharacters.Count != 0) {
-    //        RemoveCharacter(icharacters[0]);
-    //    }
-    //}
+    public void DisbandParty() {
+        for (int i = 0; i < _characters.Count; i++) {
+            if(_characters[i] != _owner) {
+                RemoveCharacter(_characters[i]);
+                i--;
+            }
+        }
+    }
     public virtual void RemoveListeners() {
         //Messenger.RemoveListener<ActionThread>(Signals.LOOK_FOR_ACTION, AdvertiseSelf);
         //Messenger.RemoveListener<BuildStructureQuestData>(Signals.BUILD_STRUCTURE_LOOK_ACTION, BuildStructureLookingForAction);

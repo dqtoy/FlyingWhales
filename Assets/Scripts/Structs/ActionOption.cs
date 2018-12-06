@@ -103,6 +103,9 @@ public class ActionOption {
 
     public void AddAssignedObject(object obj) {
         if (obj != null) {
+            if(obj is Minion) {
+                (obj as Minion).SetEnabledState(false);
+            }
             int index = assignedObjects.Count;
             assignedObjects.Add(obj);
             interactionState.SetAssignedObjects(assignedObjects);
