@@ -463,7 +463,7 @@ public class Faction {
         }
     }
     private void GenerateDailyInteraction() {
-        if(name == "Neutral") {
+        if(this == FactionManager.Instance.neutralFaction) {
             GenerateNeutralInteraction();
         } else {
             GenerateNonNeutralInteraction();
