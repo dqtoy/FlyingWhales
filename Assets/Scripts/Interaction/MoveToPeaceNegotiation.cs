@@ -35,20 +35,19 @@ public class MoveToPeaceNegotiation : Interaction {
         sourceFaction = _characterInvolved.faction;
         targetFaction = GetTargetFaction();
         targetLocation = targetFaction.ownedAreas[Random.Range(0, targetFaction.ownedAreas.Count)];
-        ////targetArea = GetTargetArea();
-        ////**Text Description**: [Character Name] is about to leave for [Location Name 1] to scavenge for supplies.
-        //Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        //startStateDescriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
-        //startState.OverrideDescriptionLog(startStateDescriptionLog);
+        //**Text Description**: [Character Name] is about to leave for [Location Name 1] to scavenge for supplies.
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        startStateDescriptionLog.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_1);
+        startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
-        //diplomatKilledNoWitness.SetEffect(() => ScavengeTrapFailedRewardEffect(diplomatKilledNoWitness));
-        //diplomatKilledWitnessed.SetEffect(() => ScavengeTrappedRewardEffect(diplomatKilledWitnessed));
-        //diplomatSurvivesMinionFlees.SetEffect(() => ScavengeCriticallyTrappedRewardEffect(diplomatSurvivesMinionFlees));
-        //diplomatSurvivesMinionDies.SetEffect(() => ScavengeBuffedRewardEffect(diplomatSurvivesMinionDies));
-        //factionLeaderPursuaded.SetEffect(() => ScavengeBuffFailedRewardEffect(factionLeaderPursuaded));
-        //factionLeaderRejected.SetEffect(() => ScavengeBuffCriticallyFailedRewardEffect(factionLeaderRejected));
-        //doNothing.SetEffect(() => NormalScavengeSuccessRewardEffect(doNothing));
+        diplomatKilledNoWitness.SetEffect(() => DiplomatKilledNoWitnessRewardEffect(diplomatKilledNoWitness));
+        diplomatKilledWitnessed.SetEffect(() => DiplomatKilledWithWitnessRewardEffect(diplomatKilledWitnessed));
+        diplomatSurvivesMinionFlees.SetEffect(() => DiplomatSurvivesMinionFleesRewardEffect(diplomatSurvivesMinionFlees));
+        diplomatSurvivesMinionDies.SetEffect(() => DiplomatSurvivesMinionDiesRewardEffect(diplomatSurvivesMinionDies));
+        factionLeaderPursuaded.SetEffect(() => FactionLeaderPursuadedRewardEffect(factionLeaderPursuaded));
+        factionLeaderRejected.SetEffect(() => FactionLeaderRejectedRewardEffect(factionLeaderRejected));
+        doNothing.SetEffect(() => DoNothingRewardEffect(doNothing));
 
         _states.Add(startState.name, startState);
         _states.Add(diplomatKilledNoWitness.name, diplomatKilledNoWitness);
@@ -162,20 +161,54 @@ public class MoveToPeaceNegotiation : Interaction {
     }
     private void DiplomatSurvivesMinionFleesRewardEffect(InteractionState state) {
         //**Mechanic**: Diplomat travels to [Location] for Peace Negotiation, Player Favor Count -2 on Diplomat's Faction
-        _characterInvolved.Death();
+        GoToTarget();
         _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -2);
 
-        //**Level Up**: Instigator Minion +1
+        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2));
+    }
+    private void DiplomatSurvivesMinionDiesRewardEffect(InteractionState state) {
+        //**Mechanic**: Diplomat travels to [Location] for Peace Negotiation, Player Favor Count -2 on Diplomat's Faction
+        GoToTarget();
+        _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -2);
+
+        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2));
+    }
+    private void FactionLeaderPursuadedRewardEffect(InteractionState state) {
+        //**Level Up**: Diplomat Minion +1
         explorerMinion.LevelUp();
-        if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
-        }
-        state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
+    }
+    private void FactionLeaderRejectedRewardEffect(InteractionState state) {
+        //**Mechanic**: Diplomat travels to [Location] for Peace Negotiation
+        GoToTarget();
+
+        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2));
+    }
+    private void DoNothingRewardEffect(InteractionState state) {
+        //**Mechanic**: Diplomat travels to [Location] for Peace Negotiation
+        GoToTarget();
+
+        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
         state.AddLogFiller(new LogFiller(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2));
     }
     #endregion
 
+    private void GoToTarget() {
+        _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile, PATHFINDING_MODE.NORMAL);
+    }
+
     private Faction GetTargetFaction() {
+        List<Faction> choices = new List<Faction>();
+        foreach (KeyValuePair<Faction, FactionRelationship> keyValuePair in sourceFaction.relationships) {
+            if (keyValuePair.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR && keyValuePair.Value.currentWarCombatCount >= 3) {
+                choices.Add(keyValuePair.Key);
+            }
+        }
+        if (choices.Count > 0) {
+            return choices[Random.Range(0, choices.Count)];
+        }
         return null;
     }
 }

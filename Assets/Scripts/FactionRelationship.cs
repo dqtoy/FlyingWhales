@@ -9,6 +9,8 @@ public class FactionRelationship {
 
     protected FACTION_RELATIONSHIP_STATUS _relationshipStatus;
 
+    public int currentWarCombatCount { get; private set; } //this will be reset once relationship status is set to anything but AT_WAR
+
     #region getters/setters
     public FACTION_RELATIONSHIP_STATUS relationshipStatus {
 		get { return _relationshipStatus; }
@@ -32,6 +34,14 @@ public class FactionRelationship {
             return;
         }
 		_relationshipStatus = newStatus;
+        if (_relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+            currentWarCombatCount = 0;
+        }
     }
     #endregion
+
+    public void AdjustWarCombatCount(int amount) {
+        currentWarCombatCount += amount;
+        currentWarCombatCount = Mathf.Max(0, currentWarCombatCount);
+    }
 }
