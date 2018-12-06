@@ -1073,6 +1073,7 @@ public enum INTERACTION_TYPE {
     ATTACK,
     MOVE_TO_PEACE_NEGOTIATION,
     INDUCE_WAR,
+    MOVE_TO_EXPLORE
 }
 public enum REWARD {
     SUPPLY,
