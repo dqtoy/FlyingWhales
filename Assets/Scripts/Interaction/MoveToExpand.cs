@@ -1,44 +1,45 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class MoveToExplore : Interaction {
+public class MoveToExpand : Interaction {
 
-    private const string Character_Explore_Cancelled = "Character Explore Cancelled";
-    private const string Character_Explore_Continues = "Character Explore Continues";
-    private const string Do_Nothing = "Do nothing";
+    private const string Character_Expand_Cancelled = "Character Expand Cancelled";
+    private const string Character_Expand_Continues = "Character Expand Continues";
+    private const string Character_Normal_Expand = "Character Normal Expand";
 
-    private Area targetLocation;
+    public Area targetLocation { get; private set; }
 
-    public MoveToExplore(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_EXPLORE, 0) {
-        _name = "Move to Explore";
+    public MoveToExpand(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_EXPAND, 0) {
+        _name = "Move to Expand";
         _jobFilter = new JOB[] { JOB.DISSUADER };
     }
 
     #region Overrides
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
-        InteractionState characterExploreCancelled = new InteractionState(Character_Explore_Cancelled, this);
-        InteractionState characterExploreContinues = new InteractionState(Character_Explore_Continues, this);
-        InteractionState doNothing = new InteractionState(Do_Nothing, this);
+        InteractionState characterExpandCancelled = new InteractionState(Character_Expand_Cancelled, this);
+        InteractionState characterExpandContinues = new InteractionState(Character_Expand_Continues, this);
+        InteractionState characterNormalExpand = new InteractionState(Character_Normal_Expand, this);
 
         targetLocation = GetTargetLocation();
+        targetLocation.AddEventTargettingThis(this);
+        _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(-100);
 
-        //**Text Description**: [Character Name] is about to leave for [Location Name 1] to scavenge for supplies.
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(_characterInvolved.race), LOG_IDENTIFIER.STRING_1);
         startStateDescriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
-        characterExploreCancelled.SetEffect(() => CharacterExploreCancelledRewardEffect(characterExploreCancelled));
-        characterExploreContinues.SetEffect(() => CharacterExploreContinuesRewardEffect(characterExploreContinues));
-        doNothing.SetEffect(() => DoNothingRewardEffect(doNothing));
+        characterExpandCancelled.SetEffect(() => CharacterExploreCancelledRewardEffect(characterExpandCancelled));
+        characterExpandContinues.SetEffect(() => CharacterExploreContinuesRewardEffect(characterExpandContinues));
+        characterNormalExpand.SetEffect(() => DoNothingRewardEffect(characterNormalExpand));
 
         _states.Add(startState.name, startState);
-        _states.Add(characterExploreCancelled.name, characterExploreCancelled);
-        _states.Add(characterExploreContinues.name, characterExploreContinues);
-        _states.Add(doNothing.name, doNothing);
+        _states.Add(characterExpandCancelled.name, characterExpandCancelled);
+        _states.Add(characterExpandContinues.name, characterExpandContinues);
+        _states.Add(characterNormalExpand.name, characterNormalExpand);
 
         SetCurrentState(startState);
     }
@@ -47,9 +48,9 @@ public class MoveToExplore : Interaction {
             ActionOption prevent = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 50, currency = CURRENCY.SUPPLY },
-                name = "Prevent him/her from leaving.",
+                name = "Discourage them from leaving.",
                 duration = 0,
-                effect = () => PreventFromLeavingOptionEffect(state),
+                effect = () => DiscourageFromLeavingOptionEffect(state),
                 jobNeeded = JOB.DISSUADER,
                 doesNotMeetRequirementsStr = "Minion must be a dissuader",
             };
@@ -68,23 +69,23 @@ public class MoveToExplore : Interaction {
     #endregion
 
     #region Option Effects
-    private void PreventFromLeavingOptionEffect(InteractionState state) {
+    private void DiscourageFromLeavingOptionEffect(InteractionState state) {
         WeightedDictionary<RESULT> resultWeights = explorerMinion.character.job.GetJobRateWeights();
         resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
 
         string nextState = string.Empty;
         switch (resultWeights.PickRandomElementGivenWeights()) {
             case RESULT.SUCCESS:
-                nextState = Character_Explore_Cancelled;
+                nextState = Character_Expand_Cancelled;
                 break;
             case RESULT.FAIL:
-                nextState = Character_Explore_Continues;
+                nextState = Character_Expand_Continues;
                 break;
         }
         SetCurrentState(_states[nextState]);
     }
     private void DoNothingEffect(InteractionState state) {
-        SetCurrentState(_states[Do_Nothing]);
+        SetCurrentState(_states[Character_Normal_Expand]);
     }
     #endregion
 
@@ -92,36 +93,40 @@ public class MoveToExplore : Interaction {
     private void CharacterExploreCancelledRewardEffect(InteractionState state) {
         //**Mechanics**: Character will no longer leave.
         //**Level Up**: Dissuader Minion +1
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
+        }
         explorerMinion.LevelUp();
     }
     private void CharacterExploreContinuesRewardEffect(InteractionState state) {
-        //**Mechanics**: Character will start its travel to selected location to start an Explore event.
+        //**Mechanics**: Character travels to the Location to start an Expansion event.
         GoToTargetLocation();
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
+        }
         state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
     }
     private void DoNothingRewardEffect(InteractionState state) {
-        //**Mechanics**: Character will start its travel to selected location to start an Explore event.
+        //**Mechanics**: Character travels to the Location to start an Expansion event.
         GoToTargetLocation();
         state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
     }
     #endregion
 
     private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL);
+        _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateExpansionEvent());
+    }
+
+    private void CreateExpansionEvent() {
+        //TODO: Create expansion event
+        targetLocation.RemoveEventTargettingThis(this);
     }
 
     private Area GetTargetLocation() {
-        List<Area> choices = new List<Area>();
-        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-            Area currArea = LandmarkManager.Instance.allAreas[i];
-            if (_characterInvolved.specificLocation.tileLocation.areaOfTile.id != currArea.id 
-                && PlayerManager.Instance.player.playerArea.id != currArea.id && !currArea.IsHostileTowards(_characterInvolved)) {
-                choices.Add(currArea);
-            }
-        }
+        List<Area> choices = _characterInvolved.homeLandmark.tileLocation.areaOfTile.GetElligibleExpansionTargets(_characterInvolved);
         if (choices.Count > 0) {
             return choices[Random.Range(0, choices.Count)];
         }
-        return null;
+        throw new System.Exception("Could not find target location for expand");
     }
 }

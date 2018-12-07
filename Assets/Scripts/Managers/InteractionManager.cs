@@ -162,6 +162,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.DEFENSE_UPGRADE:
                 createdInteraction = new DefenseUpgrade(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_EXPAND:
+                createdInteraction = new MoveToExpand(interactable);
+                break;
             case INTERACTION_TYPE.FACTION_UPGRADE:
                 createdInteraction = new FactionUpgrade(interactable);
                 break;
@@ -227,6 +230,21 @@ public class InteractionManager : MonoBehaviour {
                 if (character.specificLocation.tileLocation.landmarkOnTile.owner != null) {
                     foreach (KeyValuePair<Faction, FactionRelationship> keyValuePair in character.specificLocation.tileLocation.landmarkOnTile.owner.relationships) {
                         if (keyValuePair.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR && keyValuePair.Value.currentWarCombatCount >= 3) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_EXPAND:
+                /* - the character is at his home Area
+                 * - the Area has at least 100 Supply
+                 * - there is an unoccupied Area that is compatible with the character's race
+                 * - ensure that no other active Expand event targets the same location. */
+                if (character.homeLandmark.tileLocation.areaOfTile.id == character.specificLocation.tileLocation.areaOfTile.id) {
+                    Area homeArea = character.homeLandmark.tileLocation.areaOfTile;
+                    if (homeArea.suppliesInBank >= 100) {
+                        List<Area> expansionTargets = homeArea.GetElligibleExpansionTargets(character);
+                        if (expansionTargets.Count > 0) {
                             return true;
                         }
                     }
@@ -330,6 +348,20 @@ public class InteractionManager : MonoBehaviour {
     public void AddToInteractionQueue(Interaction interaction) {
         interactionUIQueue.Enqueue(interaction);
     }
+
+    //public List<T> GetAllCurrentInteractionsOfType<T>(INTERACTION_TYPE type) {
+    //    List<T> interactionsOfType = new List<T>();
+    //    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+    //        Area currArea = LandmarkManager.Instance.allAreas[i];
+    //        for (int j = 0; j < currArea.currentInteractions.Count; j++) {
+    //            Interaction currInteraction = currArea.currentInteractions[j];
+    //            if (currInteraction.type == type && currInteraction is T) {
+    //                interactionsOfType.Add((T)System.Convert.ChangeType(currInteraction, typeof(T)));
+    //            }
+    //        }
+    //    }
+    //    return interactionsOfType;
+    //}
 
     public void UnlockAllIntel() {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {

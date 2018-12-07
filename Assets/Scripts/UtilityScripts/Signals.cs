@@ -141,5 +141,6 @@ public static class Signals {
     public static string CHANGED_ACTIVATED_STATE = "OnChangedInteractionState"; //Parameters (Interaction interaction)
     public static string ADDED_INTERACTION = "OnAddedInteraction"; //Parameters (Interaction interaction)
     public static string REMOVED_INTERACTION = "OnRemovedInteraction"; //Parameters (Interaction interaction)
+    public static string INTERACTION_ENDED = "OnInteractionEnded"; //Parameters (Interaction interaction)
     #endregion
 }

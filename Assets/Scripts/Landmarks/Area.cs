@@ -43,6 +43,10 @@ public class Area {
     public int initialSupply { get; private set; } //this should not change when scavenging
     public int residentCapacity { get; private set; }
     public int workSupplyProduction { get; private set; }
+    public List<Interaction> eventsTargettingThis { get; private set; }
+
+    //for testing
+    public List<string> supplyLog { get; private set; } //limited to 100 entries
 
     private Race defaultRace;
     private List<HexTile> outerTiles;
@@ -74,6 +78,8 @@ public class Area {
         areaInvestigation = new AreaInvestigation(this);
         jobInteractionTypes = new Dictionary<JOB, List<INTERACTION_TYPE>>();
         initialRaceSetup = new List<InitialRaceSetup>();
+        eventsTargettingThis = new List<Interaction>();
+        supplyLog = new List<string>();
         defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
         SetAreaType(areaType);
         SetCoreTile(coreTile);
@@ -104,6 +110,8 @@ public class Area {
         defenderIntel = new DefenderIntel(this);
         areaInvestigation = new AreaInvestigation(this);
         jobInteractionTypes = new Dictionary<JOB, List<INTERACTION_TYPE>>();
+        eventsTargettingThis = new List<Interaction>();
+        supplyLog = new List<string>();
         if (data.raceSetup != null) {
             initialRaceSetup = new List<InitialRaceSetup>(data.raceSetup);
         } else {
@@ -509,6 +517,7 @@ public class Area {
     public void LoadAdditionalData() {
         //DetermineExposedTiles();
         Messenger.AddListener<StructureObj, ObjectState>(Signals.STRUCTURE_STATE_CHANGED, OnStructureStateChanged);
+        //Messenger.AddListener<Interaction>(Signals.INTERACTION_ENDED, RemoveEventTargettingThis); 
         GenerateInitialDefenders();
     }
     public bool HasLandmarkOfType(LANDMARK_TYPE type) {
@@ -592,6 +601,20 @@ public class Area {
             return true;
         }
         return false;
+    }
+    public List<Area> GetElligibleExpansionTargets(Character expander) {
+        List<Area> targets = new List<Area>();
+        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+            Area currArea = LandmarkManager.Instance.allAreas[i];
+            if (currArea.id != PlayerManager.Instance.player.playerArea.id 
+                && currArea.owner == null
+                && currArea.possibleOccupants.Contains(expander.race)
+                && currArea.id != this.id
+                && currArea.GetEventsOfTypeTargettingThis(INTERACTION_TYPE.MOVE_TO_EXPAND).Count == 0) {
+                targets.Add(currArea);
+            }
+        }
+        return targets;
     }
     #endregion
 
@@ -693,6 +716,11 @@ public class Area {
     public void AdjustSuppliesInBank(int amount) {
         suppliesInBank += amount;
         suppliesInBank = Mathf.Max(0, suppliesInBank);
+        supplyLog.Add(GameManager.Instance.TodayLogString() + "Adjusted supplies in bank by " + amount.ToString() +
+            " ST: " + StackTraceUtility.ExtractStackTrace());
+        if (supplyLog.Count > 100) {
+            supplyLog.RemoveAt(0);
+        }
         //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
     }
     public bool HasEnoughSupplies(int neededSupplies) {
@@ -806,6 +834,23 @@ public class Area {
             }
         }
         return choices;
+    }
+    public void AddEventTargettingThis(Interaction interaction) {
+        if (!eventsTargettingThis.Contains(interaction)) {
+            eventsTargettingThis.Add(interaction);
+        }
+    }
+    public void RemoveEventTargettingThis(Interaction interaction) {
+        eventsTargettingThis.Remove(interaction);
+    }
+    public List<Interaction> GetEventsOfTypeTargettingThis(INTERACTION_TYPE type) {
+        List<Interaction> events = new List<Interaction>();
+        for (int i = 0; i < eventsTargettingThis.Count; i++) {
+            if (eventsTargettingThis[i].type == type) {
+                events.Add(eventsTargettingThis[i]);
+            }
+        }
+        return events;
     }
     #endregion
 

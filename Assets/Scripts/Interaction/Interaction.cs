@@ -130,6 +130,7 @@ public class Interaction {
         if(InteractionUI.Instance.interaction == this) {
             InteractionUI.Instance.HideInteractionUI();
         }
+        Messenger.Broadcast<Interaction>(Signals.INTERACTION_ENDED, this);
     }
     public virtual void OnInteractionActive() {
         _isChosen = true;
