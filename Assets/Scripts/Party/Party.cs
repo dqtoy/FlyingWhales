@@ -197,6 +197,7 @@ public class Party {
         _currentCombat = null;
 
         _owner.homeLandmark.RemoveAssaultArmyParty(this);
+        Messenger.Broadcast<Party>(Signals.PARTY_DIED, this);
     }
     public void DisbandParty() {
         for (int i = 0; i < _characters.Count; i++) {

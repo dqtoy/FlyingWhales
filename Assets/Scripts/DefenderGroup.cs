@@ -12,6 +12,7 @@ public class DefenderGroup {
     public DefenderGroup() {
         //this.party = party;
         //intel = new DefenderIntel(this);
+        Messenger.AddListener<Party>(Signals.PARTY_DIED, OnPartyDied);
     }
 
     public void AddCharacterToGroup(Character character) {
@@ -64,6 +65,13 @@ public class DefenderGroup {
     }
 
     private void GroupDeath() {
+        defendingArea.RemoveDefenderGroup(this);
+        Messenger.RemoveListener<Party>(Signals.PARTY_DIED, OnPartyDied);
+    }
 
+    private void OnPartyDied(Party partyThatDied) {
+        if (this.party.id == partyThatDied.id) {
+            GroupDeath();
+        }
     }
 }
