@@ -25,9 +25,9 @@ public class WorkEvent : Interaction {
         InteractionState stealSupplyFail = new InteractionState(Steal_Supply_Fail, this);
         InteractionState normalWork = new InteractionState(Normal_Work, this);
 
-        //Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        //startStateDescriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
-        //startState.OverrideDescriptionLog(startStateDescriptionLog);
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        startStateDescriptionLog.AddToFillers(null, interactable.tileLocation.areaOfTile.workSupplyProduction.ToString(), LOG_IDENTIFIER.STRING_1);
+        startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
         stopWorkSuccessful.SetEffect(() => StopWorkSuccessfulRewardEffect(stopWorkSuccessful));
