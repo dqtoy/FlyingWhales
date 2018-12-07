@@ -159,6 +159,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.DEFENSE_UPGRADE:
                 createdInteraction = new DefenseUpgrade(interactable);
                 break;
+            case INTERACTION_TYPE.FACTION_UPGRADE:
+                createdInteraction = new FactionUpgrade(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -226,6 +229,8 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
+            case INTERACTION_TYPE.FACTION_UPGRADE:
+                return character.specificLocation.tileLocation.areaOfTile.id == character.homeLandmark.tileLocation.areaOfTile.id && character.specificLocation.tileLocation.areaOfTile.suppliesInBank >= 100;
             default:
                 return true;
         }

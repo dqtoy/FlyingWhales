@@ -118,6 +118,12 @@ public class Player : ILeader {
         //DepleteThreatLevel();
     }
 
+    #region ILeader
+    public void LevelUp() {
+        //Not applicable
+    }
+    #endregion
+
     #region Area
     public void CreatePlayerArea(HexTile chosenCoreTile) {
         chosenCoreTile.SetCorruption(true);

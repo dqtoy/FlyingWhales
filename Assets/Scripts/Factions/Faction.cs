@@ -154,6 +154,9 @@ public class Faction {
          */
     public virtual void SetLeader(ILeader leader) {
         _leader = leader;
+        if (_leader != null && _leader is Character) {
+            (_leader as Character).AssignJob(JOB.FACTION_LEADER);
+        }
     }
     #endregion
 
@@ -496,9 +499,10 @@ public class Faction {
         }
         if(interactionCandidates.Count > 0) {
             int chosenIndex = UnityEngine.Random.Range(0, interactionCandidates.Count);
-            interactionCandidates[chosenIndex].landmark.tileLocation.areaOfTile.AdjustSuppliesInBank(-100);
+            Area area = interactionCandidates[chosenIndex].landmark.tileLocation.areaOfTile;
+            area.AdjustSuppliesInBank(-100);
             Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(interactionCandidates[chosenIndex].interactionType, interactionCandidates[chosenIndex].landmark);
-            createdInteraction.SetMinionSuccessAction(() => interactionCandidates[chosenIndex].landmark.tileLocation.areaOfTile.AdjustSuppliesInBank(100));
+            createdInteraction.SetMinionSuccessAction(() => area.AdjustSuppliesInBank(100));
             interactionCandidates[chosenIndex].landmark.AddInteraction(createdInteraction);
             interactionLog += "\nCreated " + createdInteraction.type.ToString() + " on " + createdInteraction.interactable.tileLocation.areaOfTile.name;
             Debug.Log(interactionLog);
