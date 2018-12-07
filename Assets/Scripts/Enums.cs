@@ -1115,7 +1115,7 @@ public enum JOB {
     RAIDER,
     SPY,
     DISSUADER,
-    FACTION_LEADER,
+    LEADER,
 }
 public enum RESULT {
     SUCCESS,

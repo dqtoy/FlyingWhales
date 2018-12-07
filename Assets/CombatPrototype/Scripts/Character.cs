@@ -1417,8 +1417,8 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
             case JOB.RECRUITER:
             _job = new Recruiter(this);
             break;
-            case JOB.FACTION_LEADER:
-            _job = new FactionLeader(this);
+            case JOB.LEADER:
+            _job = new LeaderJob(this);
             break;
             default:
             _job = new Job(this, JOB.NONE);
@@ -3059,7 +3059,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
                     }
                     Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, specificLocation as BaseLandmark);
                     
-                    if (job.jobType == JOB.FACTION_LEADER) {
+                    if (job.jobType == JOB.LEADER) {
                         //For Faction Upgrade Interaction Only
                         Area area = _homeLandmark.tileLocation.areaOfTile;
                         area.AdjustSuppliesInBank(-100);

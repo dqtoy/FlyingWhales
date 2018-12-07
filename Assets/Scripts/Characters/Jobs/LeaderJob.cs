@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FactionLeader : Job {
+public class LeaderJob : Job {
 
-    public FactionLeader(Character character) : base(character, JOB.FACTION_LEADER) {
+    public LeaderJob(Character character) : base(character, JOB.LEADER) {
         _actionDuration = 1;
     }
 }

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
+  m_IndirectSpecularColor: {r: 0.22380279, g: 0.24376711, b: 0.26534963, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -82930,7 +82930,7 @@ MonoBehaviour:
     - data: []
     - data: []
   jobNPCInteractions:
-    m_keys: 050000000300000002000000
+    m_keys: 050000000300000002000000010000000600000008000000
     m_values:
     - data:
       - interactionType: 34
@@ -82940,6 +82940,15 @@ MonoBehaviour:
         weight: 10
     - data:
       - interactionType: 40
+        weight: 10
+    - data:
+      - interactionType: 34
+        weight: 10
+    - data:
+      - interactionType: 40
+        weight: 10
+    - data:
+      - interactionType: 44
         weight: 10
 --- !u!1001 &1680592839
 Prefab:
