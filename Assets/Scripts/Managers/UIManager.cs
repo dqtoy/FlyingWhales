@@ -644,6 +644,9 @@ public class UIManager : MonoBehaviour {
         PlayerManager.Instance.player.AdjustLifestone(10);
         PlayerUI.Instance.UpdateUI();
     }
+    public void UnlockAllIntel() {
+        InteractionManager.Instance.UnlockAllIntel();
+    }
     #endregion
 
     //private void HideMainUI() {
