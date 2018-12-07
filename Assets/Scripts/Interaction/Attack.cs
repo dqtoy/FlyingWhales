@@ -208,8 +208,11 @@ public class Attack : Interaction {
 
         DefenderGroup newDefenders = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
         if (newDefenders == null) {
+            Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
+            log.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+            log.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.AddLogToInvolvedObjects(log);
             interactable.tileLocation.areaOfTile.Death();
-            //Log area is cleared - Add faction log filler
         }
     }
     private void HelpedAttackersLostEffect(InteractionState state) {
@@ -254,8 +257,11 @@ public class Attack : Interaction {
 
         DefenderGroup newDefenders = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
         if (newDefenders == null) {
+            Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
+            log.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+            log.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.AddLogToInvolvedObjects(log);
             interactable.tileLocation.areaOfTile.Death();
-            //Log area is cleared - Add faction log filler
         }
     }
     private void HelpedDefendersWonEffect(InteractionState state) {
@@ -275,6 +281,7 @@ public class Attack : Interaction {
 
         state.descriptionLog.AddToFillers(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2);
         state.AddLogFiller(new LogFiller(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2));
+        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
             state.descriptionLog.AddToFillers(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
             state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1));
@@ -287,7 +294,6 @@ public class Attack : Interaction {
 
         state.descriptionLog.AddToFillers(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2);
         state.AddLogFiller(new LogFiller(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2));
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
             state.descriptionLog.AddToFillers(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
             state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1));
@@ -305,6 +311,10 @@ public class Attack : Interaction {
 
         DefenderGroup newDefenders = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
         if (newDefenders == null) {
+            Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
+            log.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+            log.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.AddLogToInvolvedObjects(log);
             interactable.tileLocation.areaOfTile.Death();
             //Log area is cleared - Add faction log filler
         }
