@@ -521,7 +521,7 @@ MonoBehaviour:
   - {r: 0.8396226, g: 0.32872015, b: 0.32872015, a: 1}
   - {r: 0.8773585, g: 0.8259349, b: 0.31038627, a: 1}
   portraitFrames:
-    m_keys: 03000000070000000200000001000000050000000400000006000000
+    m_keys: 030000000700000002000000010000000500000004000000060000000800000009000000
     m_values:
     - baseBG: {fileID: 21300000, guid: 882d2ae67ca6c4242b8bc08270a4dd0c, type: 3}
       frameOutline: {fileID: 21300000, guid: 7514cfaa8b6928c49ae846264fccba01, type: 3}
@@ -537,6 +537,10 @@ MonoBehaviour:
       frameOutline: {fileID: 21300000, guid: 55a42e2b40090c949bf109151d5a5837, type: 3}
     - baseBG: {fileID: 21300000, guid: 0958b75698307094fb50c3c54dd47799, type: 3}
       frameOutline: {fileID: 21300000, guid: 14f5f78aab59afe418b8b464da3f9a32, type: 3}
+    - baseBG: {fileID: 21300000, guid: 3be87161752773b42818660252d1dccb, type: 3}
+      frameOutline: {fileID: 21300000, guid: d39b8d292d8f6a740b1e405ec4972ac3, type: 3}
+    - baseBG: {fileID: 21300000, guid: 3be87161752773b42818660252d1dccb, type: 3}
+      frameOutline: {fileID: 21300000, guid: d39b8d292d8f6a740b1e405ec4972ac3, type: 3}
   characterAnimators:
   - {fileID: 9100000, guid: 99c541d13ccccd24e8bade5dc18cd996, type: 2}
   - {fileID: 9100000, guid: 52ac513067146394f9dfb6caf8fa93b3, type: 2}
