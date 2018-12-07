@@ -164,13 +164,16 @@ public class InteractionState {
             for (int i = 0; i < otherLogs.Count; i++) {
                 Log currLog = otherLogs[i];
                 currLog.SetFillers(logFillers);
-                _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.AddHistory(currLog);
-                if (_interaction.explorerMinion != null) {
-                    _interaction.explorerMinion.character.AddHistory(currLog);
-                }
-                currLog.AddLogToInvolvedObjects();
+                AddLogToInvolvedObjects(currLog);
             }
         }
+    }
+    public void AddLogToInvolvedObjects(Log log) {
+        _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.AddHistory(log);
+        if (_interaction.explorerMinion != null) {
+            _interaction.explorerMinion.character.AddHistory(log);
+        }
+        log.AddLogToInvolvedObjects();
     }
     public void SetChosenOption(ActionOption option) {
         _chosenOption = option;
