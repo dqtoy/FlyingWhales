@@ -19,7 +19,7 @@ public class Recruiter : Job {
         int success = 0;
         for (int i = 0; i < areaResidents.Count; i++) {
             Character resident = areaResidents[i];
-            if(resident != resident.faction.leader && resident.specificLocation.tileLocation.areaOfTile.id == area.id) {
+            if(resident != resident.faction.leader && resident.specificLocation.tileLocation.areaOfTile.id == area.id && !resident.currentParty.icon.isTravelling) {
                 if (resident.isFactionless) {
                     chosenCharacter = resident;
                     success = 30;
@@ -44,8 +44,8 @@ public class Recruiter : Job {
             int critFail = 12 - (multiplier / 4);
             WeightedDictionary<string> weights = new WeightedDictionary<string>();
             weights.AddElement("Success", success);
-            //weights.AddElement("Fail", fail);
-            //weights.AddElement("Crit Fail", critFail);
+            weights.AddElement("Fail", fail);
+            weights.AddElement("Crit Fail", critFail);
             string result = "Success"; // weights.PickRandomElementGivenWeights();
             Interaction interaction = null;
             if (result == "Success") {
