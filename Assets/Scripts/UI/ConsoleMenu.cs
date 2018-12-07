@@ -49,6 +49,7 @@ public class ConsoleMenu : UIMenu {
             {"/show_logs", ShowLogs },
             {"/change_landmark_state", ChangeLandmarkState },
             {"/adjust_faction_favor", AdjustFactionFavor},
+            {"/log_location_history", LogLocationHistory  }
         };
     }
 
@@ -680,6 +681,39 @@ public class ConsoleMenu : UIMenu {
 
         string logSummary = character.name + "'s logs: ";
         List<string> logs = CharacterManager.Instance.GetCharacterLogs(character);
+        for (int i = 0; i < logs.Count; i++) {
+            logSummary += "\n" + logs[i];
+        }
+        AddSuccessMessage(logSummary);
+    }
+    private void LogLocationHistory(string[] parameters) {
+        if (parameters.Length < 2) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+        string characterParameterString = string.Empty;
+        for (int i = 1; i < parameters.Length; i++) {
+            characterParameterString += parameters[i] + " ";
+        }
+        characterParameterString = characterParameterString.Trim();
+        int characterID;
+
+        bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
+        Character character = null;
+        if (isCharacterParameterNumeric) {
+            character = CharacterManager.Instance.GetCharacterByID(characterID);
+        } else {
+            character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+        }
+
+        if (character == null) {
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+
+        string logSummary = character.name + "'s location history: ";
+        List<string> logs = character.ownParty.specificLocationHistory;
         for (int i = 0; i < logs.Count; i++) {
             logSummary += "\n" + logs[i];
         }

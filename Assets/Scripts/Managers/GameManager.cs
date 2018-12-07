@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour {
 
@@ -240,6 +241,11 @@ public class GameManager : MonoBehaviour {
     #region Utilities
     private void LogCallback(string condition, string stackTrace, LogType type) {
         //CharacterManager.Instance.CategorizeLog(condition, stackTrace, type);
+        if (type == LogType.Error || type == LogType.Exception) {
+            string notification = "<color=\"red\">" + TodayLogString() + "Error occurred! Check console for log message</color>";
+            Messenger.Broadcast<string, int, UnityAction>(Signals.SHOW_NOTIFICATION, notification, 100, null);
+            UIManager.Instance.Pause();
+        }
     }
     public void ToggleCharactersVisibility(bool state) {
         allCharactersAreVisible = state;

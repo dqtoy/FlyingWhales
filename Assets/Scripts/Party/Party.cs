@@ -30,6 +30,8 @@ public class Party {
     public Sprite emblem { get; private set; }
     public Color partyColor { get; private set; }
 
+    public List<string> specificLocationHistory { get; private set; } //limited to only 50 items
+
     #region getters/setters
     public int id {
         get { return _id; }
@@ -161,6 +163,7 @@ public class Party {
         _isDead = false;
         _characters = new List<Character>();
         _partyBuffs = new List<Buff>();
+        specificLocationHistory = new List<string>();
         SetEmblemSettings(CharacterManager.Instance.GetRandomEmblemBG(),
                             CharacterManager.Instance.GetRandomEmblem(),
                             UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f));
@@ -218,6 +221,11 @@ public class Party {
     #region Interface
     public void SetSpecificLocation(ILocation location) {
         _specificLocation = location;
+        specificLocationHistory.Add("Set specific location to " + _specificLocation.ToString() 
+            + " ST: " + StackTraceUtility.ExtractStackTrace());
+        if (specificLocationHistory.Count >= 50) {
+            specificLocationHistory.RemoveAt(0);
+        }
         if (_specificLocation != null) {
             _currentRegion = _specificLocation.tileLocation.region;
         }

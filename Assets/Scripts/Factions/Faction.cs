@@ -89,6 +89,9 @@ public class Faction {
     public List<Area> ownedAreas {
         get { return _ownedAreas; }
     }
+    public bool isNeutral {
+        get { return this.id == FactionManager.Instance.neutralFaction.id; }
+    }
     #endregion
 
     public Faction(bool isPlayerFaction = false) {

@@ -3053,6 +3053,10 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
                     interactionLog += "\n" + validInteractions.GetWeightsSummary("Generating interaction:");
                     INTERACTION_TYPE chosenInteraction = validInteractions.PickRandomElementGivenWeights();
                     //create interaction of type
+                    BaseLandmark interactable = specificLocation as BaseLandmark;
+                    if (interactable == null) {
+                        throw new Exception(GameManager.Instance.TodayLogString() + this.name + "'s specific location (" + specificLocation.locationName + ") is not a landmark!");
+                    }
                     Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, specificLocation as BaseLandmark);
                     
                     if (job.jobType == JOB.FACTION_LEADER) {
