@@ -859,6 +859,16 @@ public class Area {
             return LandmarkManager.Instance.GetDefaultDefenderWeights(race);
         //}
     }
+    public void UpgradeDefendersToMatchFactionLvl() {
+        for (int i = 0; i < defenderGroups.Count; i++) {
+            for (int j = 0; j < defenderGroups[i].party.characters.Count; j++) {
+                Character defender = defenderGroups[i].party.characters[j];
+                if (defender.level < owner.level) {
+                    defender.SetLevel(owner.level);
+                }
+            }
+        }
+    }
     #endregion
 
     #region Characters

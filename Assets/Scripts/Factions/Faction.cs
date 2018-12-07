@@ -453,8 +453,8 @@ public class Faction {
         _nonNeutralInteractionTypes = new INTERACTION_TYPE[] {
             INTERACTION_TYPE.SPAWN_CHARACTER,
             INTERACTION_TYPE.MOVE_TO_ATTACK,
-            //Defense Mobilization
-            //Defense Upgrade
+            INTERACTION_TYPE.DEFENSE_MOBILIZATION,
+            INTERACTION_TYPE.DEFENSE_UPGRADE,
         };
         _neutralInteractionTypes = new INTERACTION_TYPE[] {
             INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER,

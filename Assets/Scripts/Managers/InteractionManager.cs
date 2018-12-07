@@ -156,6 +156,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MINION_PEACE_NEGOTIATION:
                 createdInteraction = new MinionPeaceNegotiation(interactable);
                 break;
+            case INTERACTION_TYPE.DEFENSE_UPGRADE:
+                createdInteraction = new DefenseUpgrade(interactable);
+                break;
         }
         return createdInteraction;
     }
