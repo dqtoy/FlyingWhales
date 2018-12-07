@@ -1392,7 +1392,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         AssignJob(_characterClass.jobType);
     }
     #endregion
-    private void AssignJob(JOB jobType) {
+
+    #region Job
+    public void AssignJob(JOB jobType) {
         switch (jobType) {
             case JOB.SPY:
             _job = new Spy(this);
@@ -1415,14 +1417,15 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
             case JOB.RECRUITER:
             _job = new Recruiter(this);
             break;
+            case JOB.LEADER:
+            _job = new LeaderJob(this);
+            break;
             default:
             _job = new Job(this, JOB.NONE);
             break;
         }
         _job.OnAssignJob();
     }
-    #region Job
-
     #endregion
 
     #region Character Tags
@@ -3055,6 +3058,14 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
                         throw new Exception(GameManager.Instance.TodayLogString() + this.name + "'s specific location (" + specificLocation.locationName + ") is not a landmark!");
                     }
                     Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, specificLocation as BaseLandmark);
+                    
+                    if (job.jobType == JOB.LEADER) {
+                        //For Faction Upgrade Interaction Only
+                        Area area = _homeLandmark.tileLocation.areaOfTile;
+                        area.AdjustSuppliesInBank(-100);
+                        createdInteraction.SetMinionSuccessAction(() => area.AdjustSuppliesInBank(100));
+                    }
+
                     AddInteraction(createdInteraction);
                 } else {
                     interactionLog += "\nCannot generate interaction because weights are not greater than zero";

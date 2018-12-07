@@ -156,7 +156,7 @@ public class RaidEvent : Interaction {
         _explorerMinion.character.LevelUp(); //Instigator
         //Player Favor Count +1 on Raided Faction
         interactable.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 1);
-        int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
+        int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable.tileLocation.areaOfTile);
         GoBackHome(() => TransferSupplies(obtainedSupply, _characterInvolved.homeLandmark.tileLocation.areaOfTile,
             interactable.tileLocation.areaOfTile));
         if (state.descriptionLog != null) {
@@ -187,7 +187,7 @@ public class RaidEvent : Interaction {
         explorerMinion.LevelUp();
         _characterInvolved.LevelUp();
 
-        int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
+        int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable.tileLocation.areaOfTile);
         GoBackHome(() => TransferSupplies(obtainedSupply, _characterInvolved.homeLandmark.tileLocation.areaOfTile,
             interactable.tileLocation.areaOfTile));
         //Player Favor Count +2 from Raider Faction
@@ -215,7 +215,7 @@ public class RaidEvent : Interaction {
         _characterInvolved.LevelUp();
 
         //**Mechanics**: Compute Supply obtained by Raider and transfer it to his home area. Raider also travels back to his home area.
-        int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
+        int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable.tileLocation.areaOfTile);
         GoBackHome(() => TransferSupplies(obtainedSupply, _characterInvolved.homeLandmark.tileLocation.areaOfTile,
             interactable.tileLocation.areaOfTile));
 

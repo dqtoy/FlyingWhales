@@ -8,4 +8,6 @@ public interface ILeader {
     string name { get; }
     RACE race { get; }
     ILocation specificLocation { get; }
+
+    void LevelUp();
 }

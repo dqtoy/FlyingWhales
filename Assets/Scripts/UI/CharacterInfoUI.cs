@@ -307,17 +307,8 @@ public class CharacterInfoUI : UIMenu {
     }
     private void UpdateBasicInfo() {
         nameLbl.text = _activeCharacter.name;
-        //if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
-            //nameLbl.text += " (Updated)"; 
-            lvlClassLbl.text = "Lvl." + _activeCharacter.level.ToString() + " " + _activeCharacter.characterClass.className;
-        //} else {
-        //    if (_activeCharacter.hasBeenInspected) {
-        //        nameLbl.text += " (Old)";
-        //        lvlClassLbl.text = "Lvl." + _activeCharacter.uiData.level.ToString() + " " + _activeCharacter.uiData.className;
-        //    } else {
-        //        lvlClassLbl.text = "???";
-        //    }
-        //}
+        lvlClassLbl.text = Utilities.NormalizeString(_activeCharacter.race.ToString()) + " " + _activeCharacter.characterClass.className;
+
         if (_activeCharacter.schedule != null) {
             phaseLbl.text = _activeCharacter.schedule.currentPhase.ToString();
             phaseLbl.gameObject.SetActive(true);

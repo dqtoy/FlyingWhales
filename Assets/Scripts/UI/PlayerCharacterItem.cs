@@ -67,14 +67,9 @@ public class PlayerCharacterItem : PooledObject, IDragParentItem {
 
     public void UpdateMinionItem() {
         if (_character == null) {
-            lvlLbl.text = "Lvl. ? ???";
-            expSlider.value = 0f;
-        } else if (_character.minion != null) {
-            lvlLbl.text = "Lvl. " + _character.minion.lvl + " " + _character.characterClass.className;
-            expSlider.value = (float)_character.minion.exp / 100f;
-        } else if(_character != null) {
-            lvlLbl.text = "Lvl. " + _character.level;
-            expSlider.value = (float)_character.experience / _character.maxExperience;
+            lvlLbl.text = "??? ???";
+        } else {
+            lvlLbl.text = Utilities.NormalizeString(_character.race.ToString()) + " " + _character.characterClass.className;
         }
     }
     public void SetEnabledState(bool state) {

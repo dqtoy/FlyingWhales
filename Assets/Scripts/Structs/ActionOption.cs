@@ -48,7 +48,7 @@ public class ActionOption {
             if (canBeDoneAction() && PlayerManager.Instance.player.currencies[cost.currency] >= cost.amount) {
                 if(jobNeeded == JOB.NONE) {
                     return true;
-                } else if(jobNeeded == interactionState.interaction.explorerMinion.character.characterClass.jobType) {
+                } else if(jobNeeded == interactionState.interaction.explorerMinion.character.job.jobType) {
                     return true;
                 }
             }
@@ -56,7 +56,7 @@ public class ActionOption {
             if (PlayerManager.Instance.player.currencies[cost.currency] >= cost.amount) {
                 if (jobNeeded == JOB.NONE) {
                     return true;
-                } else if (jobNeeded == interactionState.interaction.explorerMinion.character.characterClass.jobType) {
+                } else if (jobNeeded == interactionState.interaction.explorerMinion.character.job.jobType) {
                     return true;
                 }
             }
