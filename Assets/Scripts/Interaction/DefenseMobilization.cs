@@ -98,6 +98,7 @@ public class DefenseMobilization : Interaction {
 
     private DefenderGroup CreateNewDefenderGroupFromIdleCharactersInArea() {
         DefenderGroup newDefenders = new DefenderGroup();
+        interactable.tileLocation.areaOfTile.AddDefenderGroup(newDefenders);
         for (int i = 0; i < interactable.tileLocation.areaOfTile.areaResidents.Count; i++) {
             Character resident = interactable.tileLocation.areaOfTile.areaResidents[i];
             if (!resident.currentParty.icon.isTravelling && resident.specificLocation.tileLocation.areaOfTile.id == interactable.tileLocation.areaOfTile.id) {
@@ -107,7 +108,6 @@ public class DefenseMobilization : Interaction {
                 }
             }
         }
-        interactable.tileLocation.areaOfTile.AddDefenderGroup(newDefenders);
         return newDefenders;
     }
 }
