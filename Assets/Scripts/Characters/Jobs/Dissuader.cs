@@ -57,10 +57,11 @@ public class Dissuader : Job {
             InteractionUI.Instance.OpenInteractionUI(_createdInteraction);
         } else if (result == "Crit Fail") {
             SetJobActionPauseState(true);
-            SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile));
-            _createdInteraction.AddEndInteractionAction(() => SetJobActionPauseState(false));
-            _createdInteraction.ScheduleSecondTimeOut();
-            _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(_createdInteraction);
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile);
+            interaction.AddEndInteractionAction(() => SetJobActionPauseState(false));
+            interaction.ScheduleSecondTimeOut();
+            _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
+            SetCreatedInteraction(interaction);
         }
     }
     public override int GetSuccessRate() {

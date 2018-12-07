@@ -2982,6 +2982,10 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
 
         Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(this);
         PlayerManager.Instance.player.AddMinion(newMinion);
+
+        if (!characterIntel.isObtained) {
+            PlayerManager.Instance.player.AddIntel(characterIntel);
+        }
     }
     #endregion
 

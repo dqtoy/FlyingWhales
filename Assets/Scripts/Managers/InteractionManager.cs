@@ -168,6 +168,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.FACTION_UPGRADE:
                 createdInteraction = new FactionUpgrade(interactable);
                 break;
+            case INTERACTION_TYPE.DEFENSE_MOBILIZATION:
+                createdInteraction = new DefenseMobilization(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -187,6 +190,21 @@ public class InteractionManager : MonoBehaviour {
                 FactionRelationship relationship = PlayerManager.Instance.player.playerFaction.GetRelationshipWith(landmark.tileLocation.areaOfTile.owner);
                 if(relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR && landmark.tileLocation.areaOfTile.owner.leader.specificLocation.tileLocation.areaOfTile.id == landmark.tileLocation.areaOfTile.id) {
                     return true;
+                }
+                return false;
+            case INTERACTION_TYPE.DEFENSE_MOBILIZATION:
+                if(landmark.tileLocation.areaOfTile.defenderGroups.Count < landmark.tileLocation.areaOfTile.maxDefenderGroups) {
+                    int idleCharactersCount = 0;
+                    for (int i = 0; i < landmark.tileLocation.areaOfTile.areaResidents.Count; i++) {
+                        Character resident = landmark.tileLocation.areaOfTile.areaResidents[i];
+                        if (!resident.currentParty.icon.isTravelling && resident.specificLocation.tileLocation.areaOfTile.id == landmark.tileLocation.areaOfTile.id) {
+                            idleCharactersCount++;
+                            if (idleCharactersCount >= 4) {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
                 }
                 return false;
             default:

@@ -85,7 +85,8 @@ public class Area {
         SetCoreTile(coreTile);
         SetSupplyCapacity(1000);
         AddTile(coreTile);
-        if(areaType != AREA_TYPE.DEMONIC_INTRUSION) {
+        SetSuppliesInBank(1000);
+        if (areaType != AREA_TYPE.DEMONIC_INTRUSION) {
             Messenger.AddListener(Signals.DAY_ENDED_2, DefaultAllExistingInteractions);
         }
 #if !WORLD_CREATION_TOOL
@@ -128,6 +129,7 @@ public class Area {
         SetInitialSupplies(data.initialSupply);
         SetResidentCapacity(data.residentCapacity);
         SetWorkSupplyProduction(data.workSupplyProduction);
+        SetSuppliesInBank(1000);
         possibleOccupants = new List<RACE>();
         if (data.possibleOccupants != null) {
             possibleOccupants.AddRange(data.possibleOccupants);

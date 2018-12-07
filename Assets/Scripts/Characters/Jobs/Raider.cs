@@ -71,11 +71,12 @@ public class Raider : Job {
 
     private void RaidSuccess() {
         int obtainedSupply = GetSupplyObtained(character.specificLocation.tileLocation.areaOfTile);
-        SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_SUCCESS, character.specificLocation.tileLocation.landmarkOnTile));
-        _createdInteraction.AddEndInteractionAction(() => GoBackHomeSuccess(obtainedSupply));
-        _createdInteraction.ScheduleSecondTimeOut();
-        _createdInteraction.SetOtherData(new object[] { obtainedSupply });
-        character.AddInteraction(_createdInteraction);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_SUCCESS, character.specificLocation.tileLocation.landmarkOnTile);
+        interaction.AddEndInteractionAction(() => GoBackHomeSuccess(obtainedSupply));
+        interaction.ScheduleSecondTimeOut();
+        interaction.SetOtherData(new object[] { obtainedSupply });
+        character.AddInteraction(interaction);
+        SetCreatedInteraction(interaction);
         //When a raid succeeds, the target Faction's Favor Count towards the raider is reduced by -2. 
         //FavorEffects(-2);
     }
