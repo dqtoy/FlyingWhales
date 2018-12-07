@@ -35,23 +35,30 @@ public class Instigator : Job {
             if (choices.Count > 0) {
                 INTERACTION_TYPE chosenType = choices[Random.Range(0, choices.Count)];
                 //Get Random Chaos Event
-                SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(chosenType, area.coreTile.landmarkOnTile));
+                Interaction interaction = InteractionManager.Instance.CreateNewInteraction(chosenType, area.coreTile.landmarkOnTile);
                 //SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER, area.coreTile.landmarkOnTile)); //NOT FINAL!
-                _createdInteraction.AddEndInteractionAction(() => StartJobAction());
-                _createdInteraction.ScheduleSecondTimeOut();
-                _character.AddInteraction(_createdInteraction);
+                interaction.AddEndInteractionAction(() => StartJobAction());
+                interaction.ScheduleSecondTimeOut();
+                _character.AddInteraction(interaction);
+                SetCreatedInteraction(interaction);
             } else {
                 StartJobAction();
             }
             return;
         } else if (result == "Fail") {
-            SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, area.coreTile.landmarkOnTile));
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, area.coreTile.landmarkOnTile);
+            interaction.AddEndInteractionAction(() => StartJobAction());
+            interaction.ScheduleSecondTimeOut();
+            _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
+            SetCreatedInteraction(interaction);
         } else if (result == "Crit Fail") {
-            SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile));
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile);
+            interaction.AddEndInteractionAction(() => StartJobAction());
+            interaction.ScheduleSecondTimeOut();
+            _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
+            SetCreatedInteraction(interaction);
         }
-        _createdInteraction.AddEndInteractionAction(() => StartJobAction());
-        _createdInteraction.ScheduleSecondTimeOut();
-        _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(_createdInteraction);
+
     }
     public override void ApplyActionDuration() {
         int multiplier = _character.level - 5;
@@ -107,10 +114,11 @@ public class Instigator : Job {
             InteractionUI.Instance.OpenInteractionUI(_createdInteraction);
         } else if (result == "Crit Fail") {
             SetJobActionPauseState(true);
-            SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile));
-            _createdInteraction.AddEndInteractionAction(() => SetJobActionPauseState(false));
-            _createdInteraction.ScheduleSecondTimeOut();
-            _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(_createdInteraction);
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile);
+            interaction.AddEndInteractionAction(() => SetJobActionPauseState(false));
+            interaction.ScheduleSecondTimeOut();
+            _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
+            SetCreatedInteraction(interaction);
         }
 
     }

@@ -257,10 +257,13 @@ public class Player : ILeader {
     #region Intel
     public void AddIntel(Intel intel) {
         if (!_intels.Contains(intel)) {
-            _intels.Add(intel);
+            if (intel is CharacterIntel && (intel as CharacterIntel).character.minion != null) {
+            } else {
+                _intels.Add(intel);
+                Debug.Log("Added intel " + intel.ToString());
+                Messenger.Broadcast(Signals.INTEL_ADDED, intel);
+            }
             intel.SetObtainedState(true);
-            Debug.Log("Added intel " + intel.ToString());
-            Messenger.Broadcast(Signals.INTEL_ADDED, intel);
             if (intel is CharacterIntel) {
                 Messenger.Broadcast(Signals.CHARACTER_INTEL_ADDED, intel as CharacterIntel);
             }

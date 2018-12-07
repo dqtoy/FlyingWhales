@@ -34,26 +34,30 @@ public class Explorer : Job {
         if (rateWeights.GetTotalOfWeights() > 0) {
             RESULT chosenResult = rateWeights.PickRandomElementGivenWeights();
             jobSummary += "\nRate result: " + chosenResult.ToString() + ".";
+            Interaction interaction = null;
             switch (chosenResult) {
                 case RESULT.SUCCESS:
                     //TODO: If Success was triggered: spawn an event from Exploration Event of current area
-                    SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_SUCCESS, character.specificLocation.tileLocation.landmarkOnTile));
-                    _createdInteraction.AddEndInteractionAction(() => StartJobAction());
-                    _createdInteraction.ScheduleSecondTimeOut();
-                    _createdInteraction.SetOtherData(new object[] { 0 });
-                    character.AddInteraction(_createdInteraction);
+                    interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_SUCCESS, character.specificLocation.tileLocation.landmarkOnTile);
+                    interaction.AddEndInteractionAction(() => StartJobAction());
+                    interaction.ScheduleSecondTimeOut();
+                    interaction.SetOtherData(new object[] { 0 });
+                    character.AddInteraction(interaction);
+                    SetCreatedInteraction(interaction);
                     break;
                 case RESULT.FAIL:
-                    SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile));
-                    _createdInteraction.AddEndInteractionAction(() => StartJobAction());
-                    _createdInteraction.ScheduleSecondTimeOut();
-                    character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.AddInteraction(_createdInteraction);
+                    interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile);
+                    interaction.AddEndInteractionAction(() => StartJobAction());
+                    interaction.ScheduleSecondTimeOut();
+                    character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.AddInteraction(interaction);
+                    SetCreatedInteraction(interaction);
                     break;
                 case RESULT.CRITICAL_FAIL:
-                    SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.tileLocation.landmarkOnTile));
-                    _createdInteraction.AddEndInteractionAction(() => StartJobAction());
-                    _createdInteraction.ScheduleSecondTimeOut();
-                    character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.AddInteraction(_createdInteraction);
+                    interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.tileLocation.landmarkOnTile);
+                    interaction.AddEndInteractionAction(() => StartJobAction());
+                    interaction.ScheduleSecondTimeOut();
+                    character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.AddInteraction(interaction);
+                    SetCreatedInteraction(interaction);
                     break;
                 default:
                     break;
