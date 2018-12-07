@@ -11,7 +11,7 @@ SpriteAtlas:
       serializedVersion: 2
       anisoLevel: 1
       compressionQuality: 50
-      maxTextureSize: 4096
+      maxTextureSize: 2048
       textureCompression: 0
       filterMode: 0
       generateMipMaps: 0
@@ -32,7 +32,6 @@ SpriteAtlas:
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
-  - {fileID: 21300000, guid: 220beadea4b397945a5c5a55f7f3e354, type: 3}
   - {fileID: 21300000, guid: ec7ae60734ce2eb4e82af2e524deff24, type: 3}
   - {fileID: 21300000, guid: cc690d09307871644b5fd19558aacf9b, type: 3}
   - {fileID: 21300000, guid: 68bc68e0de336bc45a7ee29d2dc0c8a3, type: 3}
@@ -256,7 +255,6 @@ SpriteAtlas:
   - {fileID: 21300064, guid: 4d0d62edf3d94ca47abf569d951db9f9, type: 3}
   - {fileID: 21300046, guid: 4d0d62edf3d94ca47abf569d951db9f9, type: 3}
   m_PackedSpriteNamesToIndex:
-  - tile_UI_v2
   - interaction_main_widget
   - character_info_widget
   - tile_central_container

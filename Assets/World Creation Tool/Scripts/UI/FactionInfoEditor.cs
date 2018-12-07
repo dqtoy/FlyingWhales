@@ -99,6 +99,8 @@ public class FactionInfoEditor : MonoBehaviour {
         if (_faction.leader != null) {
             leadersDropdown.value = Utilities.GetOptionIndex(leadersDropdown, _faction.leader.name);
             //leadersDropdown.itemText.text = _faction.leader.name;
+        } else {
+            leadersDropdown.value = Utilities.GetOptionIndex(leadersDropdown, "None");
         }
 
         emblemDropdown.value = Utilities.GetOptionIndex(emblemDropdown, FactionManager.Instance.GetFactionEmblemIndex(_faction.emblem).ToString());
@@ -187,12 +189,20 @@ public class FactionInfoEditor : MonoBehaviour {
     #region Leader
     private void LoadLeaderChoices() {
         leadersDropdown.ClearOptions();
-        leadersDropdown.AddOptions(_faction.characters.Select(x => x.name).ToList());
+        List<string> choices = new List<string>();
+        choices.Add("None");
+        choices.AddRange(_faction.characters.Select(x => x.name));
+        leadersDropdown.AddOptions(choices);
     }
     public void SetLeader(int choice) {
         string characterName = leadersDropdown.options[leadersDropdown.value].text;
         Character character = CharacterManager.Instance.GetCharacterByName(characterName);
-        _faction.SetLeader(character);
+        if (character != null) {
+            _faction.SetLeader(character);
+        } else {
+            _faction.SetLeader(null); ;
+        }
+        
     }
     #endregion
 

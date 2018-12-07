@@ -1398,32 +1398,35 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
     public void AssignJob(JOB jobType) {
         switch (jobType) {
             case JOB.SPY:
-            _job = new Spy(this);
-            break;
+                _job = new Spy(this);
+                break;
             case JOB.RAIDER:
-            _job = new Raider(this);
-            break;
+                _job = new Raider(this);
+                break;
             case JOB.INSTIGATOR:
-            _job = new Instigator(this);
-            break;
+                _job = new Instigator(this);
+                break;
             case JOB.EXPLORER:
-            _job = new Explorer(this);
-            break;
+                _job = new Explorer(this);
+                break;
             case JOB.DISSUADER:
-            _job = new Dissuader(this);
-            break;
+                _job = new Dissuader(this);
+                break;
             case JOB.DIPLOMAT:
-            _job = new Diplomat(this);
-            break;
+                _job = new Diplomat(this);
+                break;
             case JOB.RECRUITER:
-            _job = new Recruiter(this);
-            break;
+                _job = new Recruiter(this);
+                break;
             case JOB.LEADER:
-            _job = new LeaderJob(this);
-            break;
+                _job = new LeaderJob(this);
+                break;
+            case JOB.WORKER:
+                _job = new Worker(this);
+                break;
             default:
-            _job = new Job(this, JOB.NONE);
-            break;
+                _job = new Job(this, JOB.NONE);
+                break;
         }
         _job.OnAssignJob();
     }
