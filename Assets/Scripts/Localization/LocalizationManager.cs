@@ -96,7 +96,7 @@ public class LocalizationManager : MonoBehaviour {
         return result;
 
 	}
-    public List<string> GetKeysLike(string category, string file, string keyLike, string except = "") {
+    public List<string> GetKeysLike(string category, string file, string keyLike, string[] except = null) {
         List<string> keys = new List<string>();
         if (!this._localizedText.ContainsKey(category)) {
             Debug.LogWarning("Localization error! " + category + "/");
@@ -107,7 +107,15 @@ public class LocalizationManager : MonoBehaviour {
         }
         Dictionary<string, string> logs = this.localizedText[category][file];
         foreach (KeyValuePair<string, string> kvp in logs) {
-            if (kvp.Key.Contains(keyLike) && (string.IsNullOrEmpty(except) || !kvp.Key.Contains(except))) {
+            if (except != null) {
+                for (int i = 0; i < except.Length; i++) {
+                    string exceptStr = except[i];
+                    if (kvp.Key.Contains(exceptStr)) {
+                        continue; //skip
+                    }
+                }
+            }
+            if (kvp.Key.Contains(keyLike)) {
                 keys.Add(kvp.Key);
             }
         }

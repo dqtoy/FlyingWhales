@@ -125,7 +125,7 @@ public class InteractionState {
         //Only put logs in minions and landmarks when the particualar interaction is chosen to be interfered by the player
         //if (_interaction.isChosen) {
         otherLogs = new List<Log>();
-        List<string> keysForState = LocalizationManager.Instance.GetKeysLike("Events", _interaction.GetType().ToString(), _name.ToLower(), "_description");
+        List<string> keysForState = LocalizationManager.Instance.GetKeysLike("Events", _interaction.GetType().ToString(), _name.ToLower(), new string[] { "_description", "_special" });
         for (int i = 0; i < keysForState.Count; i++) {
             string currentKey = keysForState[i];
             otherLogs.Add(new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), currentKey));
