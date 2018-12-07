@@ -172,6 +172,9 @@ public class RaidEvent : Interaction {
         GoBackHome();
         //Player Favor Count +2 on Raided Faction
         interactable.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
+        }
     }
     private void AlertedRaidCriticallyFailRewardEffect(InteractionState state) {
         //**Mechanics**: Scavenger dies.
@@ -180,6 +183,9 @@ public class RaidEvent : Interaction {
 
         //Player Favor Count +2 on Raided Faction
         interactable.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
+        }
     }
     private void AssistedRaidSuccessRewardEffect(InteractionState state) {
         //**Mechanics**: Compute Supply obtained by scavenger and transfer it to his home area. Scavenger also travels back to his home area.
