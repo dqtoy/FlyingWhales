@@ -86,7 +86,7 @@ public class Instigator : Job {
         }
         int check = 30 + (2 * checkMultiplier);
         checkWeights.AddElement("Check", check);
-        checkWeights.AddElement("Dont Check", 70);
+        //checkWeights.AddElement("Dont Check", 70);
         string checkResult = checkWeights.PickRandomElementGivenWeights();
         if (checkResult == "Dont Check") {
             return;
@@ -103,7 +103,7 @@ public class Instigator : Job {
             critFail = 0;
         }
         successWeights.AddElement("Success", success);
-        successWeights.AddElement("Crit Fail", critFail);
+        //successWeights.AddElement("Crit Fail", critFail);
         string result = successWeights.PickRandomElementGivenWeights();
         if (result == "Success") {
             SetJobActionPauseState(true);

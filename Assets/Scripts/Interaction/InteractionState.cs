@@ -235,8 +235,8 @@ public class InteractionState {
 
     #region Log Fillers
     public void AddLogFiller(LogFiller filler, bool replaceExisting = true) {
-        if (AlreadyHasLogFiller(filler.identifier)) {
-            if (replaceExisting) {
+        if (replaceExisting) {
+            if (AlreadyHasLogFiller(filler.identifier)) {
                 logFillers.Remove(GetLogFiller(filler.identifier));
                 logFillers.Add(filler);
             }

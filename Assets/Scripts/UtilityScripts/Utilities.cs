@@ -349,6 +349,8 @@ public class Utilities : MonoBehaviour {
                         }
                         wordToReplace += "<link=" + '"' + i.ToString() + '"' + "><b>" + objectLog[i].value + "</b></link>";
                     }
+                }
+                if(wordToReplace != string.Empty) {
                     //Add 'and' after last comma
                     int commaLastIndex = wordToReplace.LastIndexOf(',');
                     wordToReplace = wordToReplace.Insert(commaLastIndex + 1, " and");
@@ -370,6 +372,8 @@ public class Utilities : MonoBehaviour {
                         }
                         wordToReplace += objectLog[i].value;
                     }
+                }
+                if (wordToReplace != string.Empty) {
                     //Add 'and' after last comma
                     int commaLastIndex = wordToReplace.LastIndexOf(',');
                     wordToReplace = wordToReplace.Insert(commaLastIndex + 1, " and");

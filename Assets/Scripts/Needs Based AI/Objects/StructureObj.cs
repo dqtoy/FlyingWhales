@@ -17,6 +17,7 @@ public class StructureObj : IObject {
     protected string _objectName;
     protected int _currentHP;
     protected int _currentInteractionTick;
+    protected int _usedMonthForInteraction;
     protected bool _isDirty;
     protected RESOURCE _madeOf;
     protected BaseLandmark _objectLocation;
@@ -410,11 +411,15 @@ public class StructureObj : IObject {
 
     #region Interaction
     private void SetDailyInteractionGenerationTick() {
-        _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.hoursPerDay + 1);
+        _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.daysInMonth[GameManager.Instance.GetNextMonth()] + 1);
     }
     private void DailyInteractionGeneration() {
+        if (_usedMonthForInteraction == GameManager.Instance.month) {
+            return;
+        }
         //DefaultAllExistingInteractions();
-        if(_currentInteractionTick == GameManager.Instance.days) {
+        if (_currentInteractionTick == GameManager.Instance.days) {
+            _usedMonthForInteraction = GameManager.Instance.month;
             //GenerateDailyInteraction();
             CreateRandomInteractionForNonMinionCharacters();
             SetDailyInteractionGenerationTick();

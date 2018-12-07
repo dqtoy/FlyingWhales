@@ -84,14 +84,14 @@ public class DefenseMobilization : Interaction {
         DefenderGroup newDefenderGroup = CreateNewDefenderGroupFromIdleCharactersInArea();
         for (int i = 0; i < newDefenderGroup.party.characters.Count; i++) {
             state.descriptionLog.AddToFillers(newDefenderGroup.party.characters[i], newDefenderGroup.party.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
-            state.AddLogFiller(new LogFiller(newDefenderGroup.party.characters[i], newDefenderGroup.party.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1));
+            state.AddLogFiller(new LogFiller(newDefenderGroup.party.characters[i], newDefenderGroup.party.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
     }
     private void DefenderGroupCreatedEffect(InteractionState state) {
         DefenderGroup newDefenderGroup = CreateNewDefenderGroupFromIdleCharactersInArea();
         for (int i = 0; i < newDefenderGroup.party.characters.Count; i++) {
             state.descriptionLog.AddToFillers(newDefenderGroup.party.characters[i], newDefenderGroup.party.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
-            state.AddLogFiller(new LogFiller(newDefenderGroup.party.characters[i], newDefenderGroup.party.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1));
+            state.AddLogFiller(new LogFiller(newDefenderGroup.party.characters[i], newDefenderGroup.party.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
     }
     #endregion
@@ -101,7 +101,7 @@ public class DefenseMobilization : Interaction {
         interactable.tileLocation.areaOfTile.AddDefenderGroup(newDefenders);
         for (int i = 0; i < interactable.tileLocation.areaOfTile.areaResidents.Count; i++) {
             Character resident = interactable.tileLocation.areaOfTile.areaResidents[i];
-            if (!resident.currentParty.icon.isTravelling && resident.specificLocation.tileLocation.areaOfTile.id == interactable.tileLocation.areaOfTile.id) {
+            if (!resident.currentParty.icon.isTravelling && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == interactable.tileLocation.areaOfTile.id) {
                 newDefenders.AddCharacterToGroup(resident);
                 if (newDefenders.party.characters.Count >= 4) {
                     break;
