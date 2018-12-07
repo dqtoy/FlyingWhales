@@ -68,6 +68,9 @@ public class Player : ILeader {
     public BaseLandmark demonicPortal {
         get { return _demonicPortal; }
     }
+    public ILocation specificLocation {
+        get { return _demonicPortal; }
+    }
     public IInteractable currentTargetInteractable {
         get { return _currentTargetInteractable; }
     }
