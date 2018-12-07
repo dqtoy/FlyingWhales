@@ -14,6 +14,7 @@ public class Faction {
     protected string _description;
     protected int _level;
     protected int _currentInteractionTick;
+    protected int _usedMonthForInteraction;
     protected bool _isPlayerFaction;
     protected Race _race;
     protected ILeader _leader;
@@ -467,10 +468,14 @@ public class Faction {
         };
     }
     private void SetDailyInteractionGenerationTick() {
-        _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.hoursPerDay + 1);
+        _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.daysInMonth[GameManager.Instance.GetNextMonth()] + 1);
     }
     private void DailyInteractionGeneration() {
+        if (_usedMonthForInteraction == GameManager.Instance.month) {
+            return;
+        }
         if (_currentInteractionTick == GameManager.Instance.days) {
+            _usedMonthForInteraction = GameManager.Instance.month;
             GenerateDailyInteraction();
             SetDailyInteractionGenerationTick();
         }

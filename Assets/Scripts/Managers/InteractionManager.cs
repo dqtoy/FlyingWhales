@@ -197,7 +197,7 @@ public class InteractionManager : MonoBehaviour {
                     int idleCharactersCount = 0;
                     for (int i = 0; i < landmark.tileLocation.areaOfTile.areaResidents.Count; i++) {
                         Character resident = landmark.tileLocation.areaOfTile.areaResidents[i];
-                        if (!resident.currentParty.icon.isTravelling && resident.specificLocation.tileLocation.areaOfTile.id == landmark.tileLocation.areaOfTile.id) {
+                        if (!resident.currentParty.icon.isTravelling && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == landmark.tileLocation.areaOfTile.id) {
                             idleCharactersCount++;
                             if (idleCharactersCount >= 4) {
                                 return true;
@@ -290,7 +290,7 @@ public class InteractionManager : MonoBehaviour {
             List<Character> residentsAtArea = new List<Character>();
             for (int i = 0; i < areaToAttack.areaResidents.Count; i++) {
                 Character resident = areaToAttack.areaResidents[i];
-                if(resident.specificLocation.tileLocation.areaOfTile.id == areaToAttack.id) {
+                if(!resident.currentParty.icon.isTravelling && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == areaToAttack.id) {
                     residentsAtArea.Add(resident);
                 }
             }

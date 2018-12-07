@@ -148,6 +148,14 @@ public class GameManager : MonoBehaviour {
     public GameDate EndOfTheMonth() {
         return new GameDate(this.month, daysInMonth[this.month], this.year, hoursPerDay);
     }
+    public int GetNextMonth() {
+        int currMonth = this.month;
+        currMonth++;
+        if(currMonth > 12) {
+            currMonth = 1;
+        }
+        return currMonth;
+    }
     public int GetTicksDifferenceOfTwoDates(GameDate fromDate, GameDate toDate) {
         int date1DaysDiff = fromDate.day;
         for (int i = 1; i < fromDate.month; i++) {

@@ -153,7 +153,7 @@ public class RaidEvent : Interaction {
         //**Mechanics**: Compute Supply obtained by raider and transfer it to his home area. Raider also travels back to his home area.
         //**Level Up**: Instigator Minion +1, Minion Character +1
         _characterInvolved.LevelUp(); //Minion Character
-        _explorerMinion.character.LevelUp(); //Instigator
+        explorerMinion.character.LevelUp(); //Instigator
         //Player Favor Count +1 on Raided Faction
         interactable.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 1);
         int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable.tileLocation.areaOfTile);

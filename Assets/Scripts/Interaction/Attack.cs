@@ -202,7 +202,7 @@ public class Attack : Interaction {
         state.AddLogFiller(new LogFiller(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2));
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
             if(_combat.charactersSideA[i] != _supporterMinion.character) {
-                state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1));
+                state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
             }
         }
 
@@ -226,7 +226,7 @@ public class Attack : Interaction {
         state.AddLogFiller(new LogFiller(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2));
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
             if (_combat.charactersSideA[i] != _supporterMinion.character) {
-                state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1));
+                state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
             }
         }
     }
@@ -240,7 +240,7 @@ public class Attack : Interaction {
         state.AddLogFiller(new LogFiller(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2));
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
         for (int i = 0; i < characterInvolved.currentParty.characters.Count; i++) {
-            state.AddLogFiller(new LogFiller(characterInvolved.currentParty.characters[i], characterInvolved.currentParty.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1));
+            state.AddLogFiller(new LogFiller(characterInvolved.currentParty.characters[i], characterInvolved.currentParty.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
 
         interactable.tileLocation.areaOfTile.Death();
@@ -252,7 +252,7 @@ public class Attack : Interaction {
         state.AddLogFiller(new LogFiller(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2));
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
             state.descriptionLog.AddToFillers(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
-            state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1));
+            state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
 
         DefenderGroup newDefenders = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
@@ -273,7 +273,7 @@ public class Attack : Interaction {
         state.AddLogFiller(new LogFiller(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2));
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
             state.descriptionLog.AddToFillers(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
-            state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1));
+            state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
     }
     private void SoloDefenseLostEffect(InteractionState state) {
@@ -284,7 +284,7 @@ public class Attack : Interaction {
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
             state.descriptionLog.AddToFillers(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
-            state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1));
+            state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
         interactable.tileLocation.areaOfTile.Death();
     }
@@ -296,14 +296,14 @@ public class Attack : Interaction {
         state.AddLogFiller(new LogFiller(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2));
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
             state.descriptionLog.AddToFillers(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
-            state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1));
+            state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
 
     }
     private void NormalAttackersWonEffect(InteractionState state) {
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
             state.descriptionLog.AddToFillers(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
-            state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1));
+            state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
         for (int i = 0; i < _combat.charactersSideB.Count; i++) {
             state.descriptionLog.AddToFillers(_combat.charactersSideB[i], _combat.charactersSideB[i].name, LOG_IDENTIFIER.CHARACTER_LIST_2);
@@ -322,7 +322,7 @@ public class Attack : Interaction {
     private void NormalAttackersLostEffect(InteractionState state) {
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
             state.descriptionLog.AddToFillers(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
-            state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1));
+            state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
         for (int i = 0; i < _combat.charactersSideB.Count; i++) {
             state.descriptionLog.AddToFillers(_combat.charactersSideB[i], _combat.charactersSideB[i].name, LOG_IDENTIFIER.CHARACTER_LIST_2);
@@ -332,7 +332,7 @@ public class Attack : Interaction {
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
         for (int i = 0; i < characterInvolved.currentParty.characters.Count; i++) {
             state.descriptionLog.AddToFillers(characterInvolved.currentParty.characters[i], characterInvolved.currentParty.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
-            state.AddLogFiller(new LogFiller(characterInvolved.currentParty.characters[i], characterInvolved.currentParty.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1));
+            state.AddLogFiller(new LogFiller(characterInvolved.currentParty.characters[i], characterInvolved.currentParty.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
 
         interactable.tileLocation.areaOfTile.Death();
