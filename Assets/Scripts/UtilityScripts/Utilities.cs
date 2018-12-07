@@ -320,8 +320,10 @@ public class Utilities : MonoBehaviour {
             logIdentifier = LOG_IDENTIFIER.TARGET_CHARACTER;
         } else if (strIdentifier.Contains("FACTION_LEADER_3")) {
             logIdentifier = LOG_IDENTIFIER.FACTION_LEADER_3;
-        } else if (strIdentifier.Contains("MINION")) {
-            logIdentifier = LOG_IDENTIFIER.MINION_NAME;
+        } else if (strIdentifier.Contains("MINION_1")) {
+            logIdentifier = LOG_IDENTIFIER.MINION_1;
+        } else if (strIdentifier.Contains("MINION_2")) {
+            logIdentifier = LOG_IDENTIFIER.MINION_2;
         }
         for (int i = 0; i < objectLog.Count; i++) {
             if (objectLog[i].identifier == logIdentifier) {
@@ -339,31 +341,45 @@ public class Utilities : MonoBehaviour {
         //strLogIdentifier = strLogIdentifier.Remove((strLogIdentifier.Length - 1), 1);
         LOG_IDENTIFIER identifier = Utilities.logIdentifiers[strLogIdentifier];
         if (wordToBeReplaced.EndsWith("@")) {
-            for (int i = 0; i < objectLog.Count; i++) {
-                if (objectLog[i].identifier == identifier) {
-                    //if (objectLog[i].identifier == LOG_IDENTIFIER.RANDOM_GOVERNOR_1 || objectLog[i].identifier == LOG_IDENTIFIER.RANDOM_GOVERNOR_2){
-                    //	if(objectLog [i].obj is Kingdom){
-                    //		Kingdom kingdom = (Kingdom)objectLog [i].obj;
-                    //		Citizen randomGovernor = kingdom.GetRandomGovernorFromKingdom ();
-                    //		objectLog [i] = new LogFiller(randomGovernor, randomGovernor.name, objectLog[i].identifier);
-                    //	}
-                    //}
-                    wordToReplace = "<link=" + '"' + i.ToString() + '"' + "><b>" + objectLog[i].value + "</b></link>";
-                    break;
+            if (identifier.ToString().Contains("LIST")) {
+                for (int i = 0; i < objectLog.Count; i++) {
+                    if (objectLog[i].identifier == identifier) {
+                        if (wordToReplace != string.Empty) {
+                            wordToReplace += ", ";
+                        }
+                        wordToReplace += "<link=" + '"' + i.ToString() + '"' + "><b>" + objectLog[i].value + "</b></link>";
+                    }
+                    //Add 'and' after last comma
+                    int commaLastIndex = wordToReplace.LastIndexOf(',');
+                    wordToReplace = wordToReplace.Insert(commaLastIndex + 1, " and");
+                }
+            } else {
+                for (int i = 0; i < objectLog.Count; i++) {
+                    if (objectLog[i].identifier == identifier) {
+                        wordToReplace = "<link=" + '"' + i.ToString() + '"' + "><b>" + objectLog[i].value + "</b></link>";
+                        break;
+                    }
                 }
             }
         } else if (wordToBeReplaced.EndsWith("%")) {
-            for (int i = 0; i < objectLog.Count; i++) {
-                if (objectLog[i].identifier == identifier) {
-                    //if (objectLog[i].identifier == LOG_IDENTIFIER.RANDOM_GOVERNOR_1 || objectLog[i].identifier == LOG_IDENTIFIER.RANDOM_GOVERNOR_2){
-                    //	if(objectLog [i].obj is Kingdom){
-                    //		Kingdom kingdom = (Kingdom)objectLog [i].obj;
-                    //		Citizen randomGovernor = kingdom.GetRandomGovernorFromKingdom ();
-                    //		objectLog [i] = new LogFiller(randomGovernor, randomGovernor.name, objectLog[i].identifier);
-                    //	}
-                    //}
-                    wordToReplace = objectLog[i].value;
-                    break;
+            if (identifier.ToString().Contains("LIST")) {
+                for (int i = 0; i < objectLog.Count; i++) {
+                    if (objectLog[i].identifier == identifier) {
+                        if (wordToReplace != string.Empty) {
+                            wordToReplace += ", ";
+                        }
+                        wordToReplace += objectLog[i].value;
+                    }
+                    //Add 'and' after last comma
+                    int commaLastIndex = wordToReplace.LastIndexOf(',');
+                    wordToReplace = wordToReplace.Insert(commaLastIndex + 1, " and");
+                }
+            } else {
+                for (int i = 0; i < objectLog.Count; i++) {
+                    if (objectLog[i].identifier == identifier) {
+                        wordToReplace = objectLog[i].value;
+                        break;
+                    }
                 }
             }
         }
@@ -384,54 +400,6 @@ public class Utilities : MonoBehaviour {
     //		return wordToReplace;
     //
     //	}
-    public static string GetPronoun(string type, string caseIdentifier) {
-        if (type == "S") {
-            if (caseIdentifier == "a") {
-                return "He/She";
-            }
-            return "he/she";
-        } else if (type == "O") {
-            if (caseIdentifier == "a") {
-                return "Him/Her";
-            }
-            return "him/her";
-        } else if (type == "P") {
-            if (caseIdentifier == "a") {
-                return "His/Her";
-            }
-            return "his/her";
-        } else if (type == "R") {
-            if (caseIdentifier == "a") {
-                return "Himself/Herself";
-            }
-            return "himself/herself";
-        }
-        return string.Empty;
-    }
-    public static string GetPronoun(char type, char caseIdentifier) {
-        if (type == 'S') {
-            if (caseIdentifier == 'a') {
-                return "He/She";
-            }
-            return "he/she";
-        } else if (type == 'O') {
-            if (caseIdentifier == 'a') {
-                return "Him/Her";
-            }
-            return "him/her";
-        } else if (type == 'P') {
-            if (caseIdentifier == 'a') {
-                return "His/Her";
-            }
-            return "his/her";
-        } else if (type == 'R') {
-            if (caseIdentifier == 'a') {
-                return "Himself/Herself";
-            }
-            return "himself/herself";
-        }
-        return string.Empty;
-    }
     public static Dictionary<string, LOG_IDENTIFIER> logIdentifiers = new Dictionary<string, LOG_IDENTIFIER>() {
         {"00", LOG_IDENTIFIER.ACTIVE_CHARACTER},
         {"01", LOG_IDENTIFIER.FACTION_1},
@@ -489,11 +457,18 @@ public class Utilities : MonoBehaviour {
         {"110", LOG_IDENTIFIER.COMBAT},
         {"111", LOG_IDENTIFIER.STRING_1},
         {"112", LOG_IDENTIFIER.STRING_2},
-        {"113", LOG_IDENTIFIER.MINION_NAME},
-        {"114", LOG_IDENTIFIER.MINION_PRONOUN_S},
-        {"115", LOG_IDENTIFIER.MINION_PRONOUN_O},
-        {"116", LOG_IDENTIFIER.MINION_PRONOUN_P},
-        {"117", LOG_IDENTIFIER.MINION_PRONOUN_R},
+        {"113", LOG_IDENTIFIER.MINION_1},
+        {"114", LOG_IDENTIFIER.MINION_1_PRONOUN_S},
+        {"115", LOG_IDENTIFIER.MINION_1_PRONOUN_O},
+        {"116", LOG_IDENTIFIER.MINION_1_PRONOUN_P},
+        {"117", LOG_IDENTIFIER.MINION_1_PRONOUN_R},
+        {"118", LOG_IDENTIFIER.MINION_2},
+        {"119", LOG_IDENTIFIER.MINION_2_PRONOUN_S},
+        {"120", LOG_IDENTIFIER.MINION_2_PRONOUN_O},
+        {"121", LOG_IDENTIFIER.MINION_2_PRONOUN_P},
+        {"122", LOG_IDENTIFIER.MINION_2_PRONOUN_R},
+        {"123", LOG_IDENTIFIER.CHARACTER_LIST_1},
+        {"124", LOG_IDENTIFIER.CHARACTER_LIST_2},
 
 		//{"111", LOG_IDENTIFIER.PARTY_NAME},
 	};
@@ -519,6 +494,54 @@ public class Utilities : MonoBehaviour {
                     return pronouns[1];
                 }
             }
+        }
+        return string.Empty;
+    }
+    public static string GetPronoun(string type, string caseIdentifier) {
+        if (type == "S") {
+            if (caseIdentifier == "a") {
+                return "He/She";
+            }
+            return "he/she";
+        } else if (type == "O") {
+            if (caseIdentifier == "a") {
+                return "Him/Her";
+            }
+            return "him/her";
+        } else if (type == "P") {
+            if (caseIdentifier == "a") {
+                return "His/Her";
+            }
+            return "his/her";
+        } else if (type == "R") {
+            if (caseIdentifier == "a") {
+                return "Himself/Herself";
+            }
+            return "himself/herself";
+        }
+        return string.Empty;
+    }
+    public static string GetPronoun(char type, char caseIdentifier) {
+        if (type == 'S') {
+            if (caseIdentifier == 'a') {
+                return "He/She";
+            }
+            return "he/she";
+        } else if (type == 'O') {
+            if (caseIdentifier == 'a') {
+                return "Him/Her";
+            }
+            return "him/her";
+        } else if (type == 'P') {
+            if (caseIdentifier == 'a') {
+                return "His/Her";
+            }
+            return "his/her";
+        } else if (type == 'R') {
+            if (caseIdentifier == 'a') {
+                return "Himself/Herself";
+            }
+            return "himself/herself";
         }
         return string.Empty;
     }
@@ -1731,6 +1754,8 @@ public class Utilities : MonoBehaviour {
         INTERACTION_TYPE.MOVE_TO_SCAVENGE,
         INTERACTION_TYPE.MOVE_TO_ATTACK,
         INTERACTION_TYPE.MOVE_TO_RAID,
+        INTERACTION_TYPE.MOVE_TO_PEACE_NEGOTIATION,
+        INTERACTION_TYPE.MOVE_TO_EXPLORE,
 
         //Explore
         INTERACTION_TYPE.CHARACTER_EXPLORES,
@@ -1749,6 +1774,7 @@ public class Utilities : MonoBehaviour {
         INTERACTION_TYPE.FRIENDLY_CHARACTER_ENCOUNTERED,
 
         //Character Arrival
+        INTERACTION_TYPE.CHARACTER_PEACE_NEGOTIATION,
     };
     public static int GetInteractionPriorityIndex(INTERACTION_TYPE interactionType) {
         for (int i = 0; i < interactionPriorityList.Length; i++) {

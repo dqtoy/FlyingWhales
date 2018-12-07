@@ -197,12 +197,16 @@ public class Party {
         _currentCombat = null;
 
         _owner.homeLandmark.RemoveAssaultArmyParty(this);
+        Messenger.Broadcast<Party>(Signals.PARTY_DIED, this);
     }
-    //public virtual void DisbandParty() {
-    //    while (icharacters.Count != 0) {
-    //        RemoveCharacter(icharacters[0]);
-    //    }
-    //}
+    public void DisbandParty() {
+        for (int i = 0; i < _characters.Count; i++) {
+            if(_characters[i] != _owner) {
+                RemoveCharacter(_characters[i]);
+                i--;
+            }
+        }
+    }
     public virtual void RemoveListeners() {
         //Messenger.RemoveListener<ActionThread>(Signals.LOOK_FOR_ACTION, AdvertiseSelf);
         //Messenger.RemoveListener<BuildStructureQuestData>(Signals.BUILD_STRUCTURE_LOOK_ACTION, BuildStructureLookingForAction);
@@ -257,7 +261,12 @@ public class Party {
         }
     }
     public void GoHome(Action doneAction = null, Action actionOnStartOfMovement = null) {
+        if (_isDead) { return; }
         GoToLocation(mainCharacter.homeLandmark, PATHFINDING_MODE.PASSABLE, doneAction, null, actionOnStartOfMovement);
+    }
+    public void GoHomeAndDisband(Action actionOnStartOfMovement = null) {
+        if(_isDead) { return; }
+        GoToLocation(mainCharacter.homeLandmark, PATHFINDING_MODE.PASSABLE, () => DisbandParty(), null, actionOnStartOfMovement);
     }
     #endregion
 

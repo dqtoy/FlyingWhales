@@ -96,6 +96,7 @@ public static class Signals {
     public static string MONSTER_PARTY_DIED = "OnMonsterPartyDied"; //Parameters (MonsterParty monsterParty)
     public static string CHARACTER_JOINED_PARTY = "OnCharacterJoinedParty"; //Parameters (ICharacter characterThatJoined, NewParty affectedParty)
     public static string CHARACTER_LEFT_PARTY = "OnCharacterLeftParty"; //Parameters (ICharacter characterThatLeft, NewParty affectedParty)
+    public static string PARTY_DIED = "OnPartyDied"; //Parameters (Party partyThatDied)
     #endregion
 
     #region Factions

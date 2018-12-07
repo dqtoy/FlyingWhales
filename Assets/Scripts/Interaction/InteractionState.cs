@@ -43,9 +43,7 @@ public class InteractionState {
     public Interaction interaction {
         get { return _interaction; }
     }
-    public Minion assignedMinion {
-        get { return _assignedMinion; }
-    }
+
     public Log descriptionLog {
         get { return _descriptionLog; }
     }
@@ -63,6 +61,9 @@ public class InteractionState {
     }
     public CharacterIntel assignedCharacter {
         get { return (_assignedObjects == null ? null : GetAssignedObjectOfType(typeof(CharacterIntel)) as CharacterIntel); }
+    }
+    public Minion assignedMinion {
+        get { return (_assignedObjects == null ? null : GetAssignedObjectOfType(typeof(Minion)) as Minion); }
     }
     public List<object> assignedObjects {
         get { return _assignedObjects; }
@@ -114,7 +115,7 @@ public class InteractionState {
         //}
     }
     public void OnEndState() {
-        AssignedMinionGoesBack();
+        //AssignedMinionGoesBack();
     }
     public void CreateLogs() {
         if (_descriptionLog == null) {
@@ -131,7 +132,7 @@ public class InteractionState {
         }
 
         if (_interaction.explorerMinion != null) {
-            logFillers.Add(new LogFiller(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME));
+            logFillers.Add(new LogFiller(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_1));
         }
         if (interaction.characterInvolved != null) {
             logFillers.Add(new LogFiller(interaction.characterInvolved, interaction.characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
@@ -148,7 +149,7 @@ public class InteractionState {
         //TODO: make this more performant
         if(_descriptionLog != null) {
             if (_interaction.explorerMinion != null) {
-                _descriptionLog.AddToFillers(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_NAME);
+                _descriptionLog.AddToFillers(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_1);
             }
             if (interaction.characterInvolved != null) {
                 _descriptionLog.AddToFillers(interaction.characterInvolved, interaction.characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -186,7 +187,7 @@ public class InteractionState {
         _defaultOption = defaultOption;
     }
     public void EndResult() {
-        AssignedMinionGoesBack();
+        //AssignedMinionGoesBack();
         interaction.EndInteraction();
     }
     public void AssignedMinionGoesBack() {

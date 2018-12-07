@@ -150,6 +150,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MOVE_TO_PEACE_NEGOTIATION:
                 createdInteraction = new MoveToPeaceNegotiation(interactable);
                 break;
+            case INTERACTION_TYPE.CHARACTER_PEACE_NEGOTIATION:
+                createdInteraction = new CharacterPeaceNegotiation(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -193,11 +196,21 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.INDUCE_WAR:
-                Faction sourceFaction = character.specificLocation.tileLocation.landmarkOnTile.owner;
-                foreach (KeyValuePair<Faction, int> kvp in sourceFaction.favor) {
-                    if (kvp.Key.id != PlayerManager.Instance.player.playerFaction.id 
-                        && kvp.Value <= -10 && sourceFaction.GetRelationshipWith(kvp.Key).relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
-                        return true;
+                if (character.specificLocation.tileLocation.landmarkOnTile.owner != null) {
+                    foreach (KeyValuePair<Faction, int> kvp in character.specificLocation.tileLocation.landmarkOnTile.owner.favor) {
+                        if (kvp.Key.id != PlayerManager.Instance.player.playerFaction.id
+                            && kvp.Value <= -10 && character.specificLocation.tileLocation.landmarkOnTile.owner.GetRelationshipWith(kvp.Key).relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_PEACE_NEGOTIATION:
+                if (character.specificLocation.tileLocation.landmarkOnTile.owner != null) {
+                    foreach (KeyValuePair<Faction, FactionRelationship> keyValuePair in character.specificLocation.tileLocation.landmarkOnTile.owner.relationships) {
+                        if (keyValuePair.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR && keyValuePair.Value.currentWarCombatCount >= 3) {
+                            return true;
+                        }
                     }
                 }
                 return false;
