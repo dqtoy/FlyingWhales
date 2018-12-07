@@ -310,6 +310,24 @@ public class InteractionManager : MonoBehaviour {
     public void AddToInteractionQueue(Interaction interaction) {
         interactionUIQueue.Enqueue(interaction);
     }
+
+    public void UnlockAllIntel() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character currCharacter = CharacterManager.Instance.allCharacters[i];
+            if (!currCharacter.isDefender) {
+                PlayerManager.Instance.player.AddIntel(currCharacter.characterIntel);
+            }
+        }
+        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+            Area currArea = LandmarkManager.Instance.allAreas[i];
+            PlayerManager.Instance.player.AddIntel(currArea.locationIntel);
+            PlayerManager.Instance.player.AddIntel(currArea.defenderIntel);
+        }
+        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            Faction currFaction = FactionManager.Instance.allFactions[i];
+            PlayerManager.Instance.player.AddIntel(currFaction.factionIntel);
+        }
+    }
 }
 
 public struct RewardConfig {
