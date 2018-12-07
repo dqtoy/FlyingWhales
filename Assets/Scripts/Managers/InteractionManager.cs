@@ -171,6 +171,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.DEFENSE_MOBILIZATION:
                 createdInteraction = new DefenseMobilization(interactable);
                 break;
+            case INTERACTION_TYPE.WORK_EVENT:
+                createdInteraction = new WorkEvent(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -270,6 +273,9 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.FACTION_UPGRADE:
                 return character.specificLocation.tileLocation.areaOfTile.id == character.homeLandmark.tileLocation.areaOfTile.id && character.specificLocation.tileLocation.areaOfTile.suppliesInBank >= 100;
+            case INTERACTION_TYPE.WORK_EVENT:
+                //if character is at home, allow
+                return character.specificLocation.tileLocation.areaOfTile.id == character.homeLandmark.tileLocation.areaOfTile.id;
             default:
                 return true;
         }

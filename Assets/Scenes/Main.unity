@@ -82930,7 +82930,7 @@ MonoBehaviour:
     - data: []
     - data: []
   jobNPCInteractions:
-    m_keys: 05000000030000000200000001000000060000000800000004000000
+    m_keys: 0500000003000000020000000100000006000000080000000400000009000000
     m_values:
     - data:
       - interactionType: 34
@@ -82952,6 +82952,9 @@ MonoBehaviour:
         weight: 10
     - data:
       - interactionType: 46
+        weight: 10
+    - data:
+      - interactionType: 47
         weight: 10
 --- !u!1001 &1680592839
 Prefab:

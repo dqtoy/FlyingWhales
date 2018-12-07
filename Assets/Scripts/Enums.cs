@@ -1080,6 +1080,7 @@ public enum INTERACTION_TYPE {
     FACTION_UPGRADE,
     DEFENSE_MOBILIZATION,
     MOVE_TO_EXPAND,
+    WORK_EVENT,
 }
 public enum REWARD {
     SUPPLY,
@@ -1117,6 +1118,7 @@ public enum JOB {
     SPY,
     DISSUADER,
     LEADER,
+    WORKER,
 }
 public enum RESULT {
     SUCCESS,
