@@ -153,6 +153,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.CHARACTER_PEACE_NEGOTIATION:
                 createdInteraction = new CharacterPeaceNegotiation(interactable);
                 break;
+            case INTERACTION_TYPE.MINION_PEACE_NEGOTIATION:
+                createdInteraction = new MinionPeaceNegotiation(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -168,6 +171,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MOVE_TO_ATTACK:
                 Area target = GetAttackTarget(landmark.tileLocation.areaOfTile);
                 return target != null;
+            case INTERACTION_TYPE.MINION_PEACE_NEGOTIATION:
+                FactionRelationship relationship = PlayerManager.Instance.player.playerFaction.GetRelationshipWith(landmark.tileLocation.areaOfTile.owner);
+                if(relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR && landmark.tileLocation.areaOfTile.owner.leader.specificLocation.tileLocation.areaOfTile.id == landmark.tileLocation.areaOfTile.id) {
+                    return true;
+                }
+                return false;
             default:
                 return true;
         }
