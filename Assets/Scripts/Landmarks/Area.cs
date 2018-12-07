@@ -581,6 +581,16 @@ public class Area {
             LandmarkManager.Instance.OwnArea(FactionManager.Instance.neutralFaction, this);
         }
     }
+    public bool IsHostileTowards(Character character) {
+        if (character.faction.isNeutral || this.owner == null || this.owner.id == character.faction.id) {
+            return false;
+        }
+        FACTION_RELATIONSHIP_STATUS relStat = FactionManager.Instance.GetRelationshipStatusBetween(character.faction, this.owner);
+        if (relStat == FACTION_RELATIONSHIP_STATUS.AT_WAR || relStat == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+            return true;
+        }
+        return false;
+    }
     #endregion
 
     #region Camp

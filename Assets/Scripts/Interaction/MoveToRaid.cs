@@ -129,10 +129,9 @@ public class MoveToRaid : Interaction {
         _characterInvolved.ownParty.GoToLocation(targetArea.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateRaidEvent());
     }
     private void CreateRaidEvent() {
-        //TODO: Change this to use end interaction override
         AddToDebugLog(_characterInvolved.name + " will now create raid event");
-        Interaction scavenge = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_EVENT, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
-        _characterInvolved.AddInteraction(scavenge);
+        Interaction raid = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_EVENT, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        _characterInvolved.SetForcedInteraction(raid);
     }
 
     private Area GetTargetArea() {
@@ -140,7 +139,8 @@ public class MoveToRaid : Interaction {
         //Select another area owned by a different Faction as the Raid target.
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
-            if (currArea.owner != null && currArea.owner.id != _characterInvolved.faction.id) {
+            if (currArea.owner != null && currArea.id != PlayerManager.Instance.player.playerArea.id 
+                && currArea.owner.id != _characterInvolved.faction.id) {
                 choices.Add(currArea);
             }
         }

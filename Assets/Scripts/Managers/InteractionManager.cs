@@ -153,6 +153,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.CHARACTER_PEACE_NEGOTIATION:
                 createdInteraction = new CharacterPeaceNegotiation(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_EXPLORE:
+                createdInteraction = new MoveToExplore(interactable);
+                break;
         }
         return createdInteraction;
     }

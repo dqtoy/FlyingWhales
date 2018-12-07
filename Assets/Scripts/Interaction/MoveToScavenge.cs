@@ -132,7 +132,7 @@ public class MoveToScavenge : Interaction {
         //TODO: Change this to use end interaction override
         AddToDebugLog(_characterInvolved.name + " will now create scavenge event");
         Interaction scavenge = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SCAVENGE_EVENT, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
-        _characterInvolved.AddInteraction(scavenge);
+        _characterInvolved.SetForcedInteraction(scavenge);
     }
 
     private Area GetTargetArea() {

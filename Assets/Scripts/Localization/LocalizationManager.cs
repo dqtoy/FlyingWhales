@@ -108,11 +108,16 @@ public class LocalizationManager : MonoBehaviour {
         Dictionary<string, string> logs = this.localizedText[category][file];
         foreach (KeyValuePair<string, string> kvp in logs) {
             if (except != null) {
+                bool skipKey = false;
                 for (int i = 0; i < except.Length; i++) {
                     string exceptStr = except[i];
                     if (kvp.Key.Contains(exceptStr)) {
-                        continue; //skip
+                        skipKey = true;
+                        break; //skip
                     }
+                }
+                if (skipKey) {
+                    continue; //proceed to next key
                 }
             }
             if (kvp.Key.Contains(keyLike)) {
