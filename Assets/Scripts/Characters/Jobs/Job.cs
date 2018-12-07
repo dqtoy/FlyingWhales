@@ -134,5 +134,17 @@ public class Job {
         _character.specificLocation.tileLocation.areaOfTile.SetStopDefaultInteractionsState(false);
         _character.specificLocation.tileLocation.areaOfTile.DefaultAllExistingInteractions();
     }
+    public int GetSupplyObtained(Area targetArea) {
+        //When a raid succeeds, the amount of Supply obtained is based on character level.
+        //5% to 15% of location's supply 
+        //+1% every other level starting at level 6
+        Area characterHomeArea = character.homeLandmark.tileLocation.areaOfTile;
+        //Area targetArea = character.specificLocation.tileLocation.areaOfTile;
+        int supplyObtainedPercent = Random.Range(5, 16);
+        supplyObtainedPercent += (character.level - 5);
+
+        return Mathf.FloorToInt(targetArea.suppliesInBank * (supplyObtainedPercent / 100f));
+        //characterHomeArea.AdjustSuppliesInBank(obtainedSupply);
+    }
     #endregion
 }

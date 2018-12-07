@@ -307,7 +307,7 @@ public class CharacterInfoUI : UIMenu {
     }
     private void UpdateBasicInfo() {
         nameLbl.text = _activeCharacter.name;
-        lvlClassLbl.text = Utilities.FirstLetterToUpperCase(_activeCharacter.race.ToString()) + " " + _activeCharacter.characterClass.className;
+        lvlClassLbl.text = Utilities.NormalizeString(_activeCharacter.race.ToString()) + " " + _activeCharacter.characterClass.className;
 
         if (_activeCharacter.schedule != null) {
             phaseLbl.text = _activeCharacter.schedule.currentPhase.ToString();

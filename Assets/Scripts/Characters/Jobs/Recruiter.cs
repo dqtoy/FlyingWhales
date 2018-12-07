@@ -19,7 +19,7 @@ public class Recruiter : Job {
         int success = 0;
         for (int i = 0; i < areaResidents.Count; i++) {
             Character resident = areaResidents[i];
-            if(resident != resident.faction.leader) {
+            if(resident != resident.faction.leader && resident.specificLocation.tileLocation.areaOfTile.id == area.id) {
                 if (resident.isFactionless) {
                     chosenCharacter = resident;
                     success = 30;
