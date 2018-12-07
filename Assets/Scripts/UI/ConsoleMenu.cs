@@ -49,7 +49,8 @@ public class ConsoleMenu : UIMenu {
             {"/show_logs", ShowLogs },
             {"/change_landmark_state", ChangeLandmarkState },
             {"/adjust_faction_favor", AdjustFactionFavor},
-            {"/log_location_history", LogLocationHistory  }
+            {"/log_location_history", LogLocationHistory  },
+            {"/log_supply_history", LogSupplyHistory  }
         };
     }
 
@@ -973,4 +974,46 @@ public class ConsoleMenu : UIMenu {
         //}
     }
     #endregion
+
+    #region Area
+    private void LogSupplyHistory(string[] parameters) {
+        if (parameters.Length < 2) { 
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+
+        string areaParameterString = parameters[1];
+        int areaID;
+
+        string areaName = string.Empty;
+        for (int i = 1; i < parameters.Length; i++) {
+            areaName += parameters[i] + " ";
+        }
+        areaName = areaName.Trim();
+
+        bool isAreaParameterNumeric = int.TryParse(areaParameterString, out areaID);
+
+        Area area = null;
+        if (isAreaParameterNumeric) {
+            area = LandmarkManager.Instance.GetAreaByID(areaID);
+        } else {
+            area = LandmarkManager.Instance.GetAreaByName(areaName);
+        }
+
+        string text = area.name + "'s Supply History: ";
+        for (int i = 0; i < area.supplyLog.Count; i++) {
+            text += "\n" + area.supplyLog[i];
+        }
+        AddSuccessMessage(text);
+    }
+    #endregion
+
+    //private bool IsCommandValid(string[] parameters) {
+    //    if (parameters.Length != 1) { //command, object name, location
+    //        AddCommandHistory(consoleLbl.text);
+    //        AddErrorMessage("There was an error in the command format of " + parameters[0]);
+    //        return;
+    //    }
+    //}
 }

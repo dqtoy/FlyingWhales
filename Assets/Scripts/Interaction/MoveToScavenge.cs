@@ -49,7 +49,7 @@ public class MoveToScavenge : Interaction {
                 duration = 0,
                 effect = () => PursuadeToCancelEffect(state),
                 jobNeeded = JOB.DISSUADER,
-                doesNotMeetRequirementsStr = "Minion must be a raider",
+                doesNotMeetRequirementsStr = "Minion must be a dissuader",
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -129,7 +129,6 @@ public class MoveToScavenge : Interaction {
         _characterInvolved.ownParty.GoToLocation(targetArea.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateScavengeEvent());
     }
     private void CreateScavengeEvent() {
-        //TODO: Change this to use end interaction override
         AddToDebugLog(_characterInvolved.name + " will now create scavenge event");
         Interaction scavenge = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SCAVENGE_EVENT, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
         _characterInvolved.SetForcedInteraction(scavenge);
