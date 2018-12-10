@@ -61,7 +61,7 @@ public class RaidEvent : Interaction {
             ActionOption alert = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 50, currency = CURRENCY.SUPPLY },
-                name = "Alert " + interactable.name + ".",
+                name = "Alert " + interactable.tileLocation.areaOfTile.name + ".",
                 duration = 0,
                 effect = () => AlertOptionEffect(state),
                 jobNeeded = JOB.INSTIGATOR,
