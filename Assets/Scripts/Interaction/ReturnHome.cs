@@ -22,7 +22,7 @@ public class ReturnHome : Interaction {
 
         CreateActionOptions(startState);
 
-        startState.SetEffect(() => StartEffect(startState), false);
+        //startState.SetEffect(() => StartEffect(startState), false);
         cancelledState.SetEffect(() => CancelledEffect(cancelledState));
         continuesState.SetEffect(() => ContinuesEffect(continuesState));
         doNothingState.SetEffect(() => DoNothingRewardEffect(doNothingState));
@@ -77,11 +77,11 @@ public class ReturnHome : Interaction {
     }
 
     #region State Effects
-    private void StartEffect(InteractionState state) {
-        if (!characterInvolved.characterIntel.isObtained) {
-            PlayerManager.Instance.player.AddIntel(characterInvolved.characterIntel);
-        }
-    }
+    //private void StartEffect(InteractionState state) {
+    //    if (!characterInvolved.characterIntel.isObtained) {
+    //        PlayerManager.Instance.player.AddIntel(characterInvolved.characterIntel);
+    //    }
+    //}
     private void CancelledEffect(InteractionState state) {
         explorerMinion.LevelUp();
     }

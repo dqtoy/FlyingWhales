@@ -370,14 +370,14 @@ public class Player : ILeader {
         PlayerUI.Instance.OnStartMinionUI();
     }
     public Minion CreateNewMinion(Character character) {
-        return new Minion(character);
+        return new Minion(character, true);
     }
     public Minion CreateNewMinion(string className, RACE race, bool isArmy) {
         Minion minion = null;
         if (isArmy) {
-            minion = new Minion(CharacterManager.Instance.CreateCharacterArmyUnit(className, race, playerFaction, _demonicPortal));
+            minion = new Minion(CharacterManager.Instance.CreateCharacterArmyUnit(className, race, playerFaction, _demonicPortal), false);
         } else {
-            minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, race, GENDER.MALE, playerFaction, _demonicPortal, false));
+            minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, race, GENDER.MALE, playerFaction, _demonicPortal, false), false);
         }
         return minion;
     }
