@@ -206,4 +206,18 @@ public struct GameDate {
     public string GetDayAndTicksString() {
         return ConvertToDays().ToString();// + "." + hour.ToString();
     }
+
+    public override bool Equals(object obj) {
+        //if (obj is GameDate) {
+        //    return Equals((GameDate)obj);
+        //}
+        return base.Equals(obj);
+    }
+
+    public bool Equals(GameDate otherDate) {
+        if (this.year == otherDate.year && this.month == otherDate.month && this.day == otherDate.day) {
+            return true;
+        }
+        return false;
+    }
 }
