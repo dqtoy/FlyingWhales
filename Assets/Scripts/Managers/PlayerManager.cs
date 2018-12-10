@@ -188,7 +188,7 @@ public class PlayerManager : MonoBehaviour {
     }
     public Minion CreateNewMinion(string className, int level = 1) {
         Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, RACE.HUMANS, GENDER.MALE,
-            player.playerFaction, player.demonicPortal, false));
+            player.playerFaction, player.demonicPortal, false), false);
         minion.SetLevel(level);
         return minion;
     }

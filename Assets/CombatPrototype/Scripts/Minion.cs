@@ -63,7 +63,7 @@ public class Minion : IUnit {
     //}
     #endregion
 
-    public Minion(Character icharacter) {
+    public Minion(Character icharacter, bool keepData) {
         _character = icharacter;
         //_ability = ability;
         //_lvl = 1;
@@ -74,10 +74,13 @@ public class Minion : IUnit {
         //PlayerManager.Instance.player.demonicPortal.AddCharacterHomeOnLandmark(_icharacter);
         //PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(_icharacter.ownParty);
         _character.SetMinion(this);
-        _character.SetName(RandomNameGenerator.Instance.GenerateMinionName());
         _character.DisableInteractionGeneration();
         _character.characterIntel.SetObtainedState(true);
         _character.ownParty.icon.SetVisualState(true);
+
+        if (!keepData) {
+            _character.SetName(RandomNameGenerator.Instance.GenerateMinionName());
+        }
     }
     //public void SetDemonType(DEMON_TYPE type) {
     //    _type = type;

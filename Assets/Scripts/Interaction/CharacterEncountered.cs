@@ -36,7 +36,7 @@ public class CharacterEncountered : Interaction {
     private void CharacterEncounteredEffect(InteractionState state) {
         //**Mechanics**: Unlock Character Intel
         //**Log**: [Minion Name] obtained intel about [Character Name].
-        PlayerManager.Instance.player.AddIntel(_characterInvolved.characterIntel);
+        //PlayerManager.Instance.player.AddIntel(_characterInvolved.characterIntel);
         explorerMinion.LevelUp();
     }
 }

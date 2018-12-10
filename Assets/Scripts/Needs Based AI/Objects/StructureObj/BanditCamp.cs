@@ -15,10 +15,6 @@ public class BanditCamp : StructureObj {
         SetCommonData(clone);
         return clone;
     }
-    public override void StartDayAction() {
-        base.StartDayAction();
-        //ReplenishDefenderUnits();
-    }
     #endregion
 
     //private void ReplenishDefenderUnits() {

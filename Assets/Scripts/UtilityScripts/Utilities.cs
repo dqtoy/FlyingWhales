@@ -370,7 +370,7 @@ public class Utilities : MonoBehaviour {
                         if (wordToReplace != string.Empty) {
                             wordToReplace += ", ";
                         }
-                        wordToReplace += objectLog[i].value;
+                        wordToReplace += "<b>" + objectLog[i].value + "</b>";
                     }
                 }
                 if (wordToReplace != string.Empty) {
@@ -381,7 +381,7 @@ public class Utilities : MonoBehaviour {
             } else {
                 for (int i = 0; i < objectLog.Count; i++) {
                     if (objectLog[i].identifier == identifier) {
-                        wordToReplace = objectLog[i].value;
+                        wordToReplace = "<b>" + objectLog[i].value + "</b>";
                         break;
                     }
                 }
