@@ -591,14 +591,12 @@ public class LandmarkManager : MonoBehaviour {
                     }
                 }
 #if !WORLD_CREATION_TOOL
-                //else{
-                //    Faction neutralFaction = FactionManager.Instance.neutralFaction;
-                //    if (neutralFaction == null) {
-                //        throw new System.Exception("There is no neutral faction!");
-                //    } else {
-                //        OwnArea(neutralFaction, newArea);
-                //    }
-                //}
+                else {
+                    Faction neutralFaction = FactionManager.Instance.neutralFaction;
+                    if (neutralFaction != null) {
+                        neutralFaction.OwnArea(newArea); //this will add area to the neutral factions owned area list, but the area's owner will still be null
+                    }
+                }
 #endif
             }
         }
