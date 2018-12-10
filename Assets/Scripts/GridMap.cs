@@ -217,8 +217,7 @@ public class GridMap : MonoBehaviour {
                 id++;
             }
         }
-
-        //outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(outerGrid, true));
+        outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighboursForBorders());
     }
     internal void GenerateOuterGrid(WorldSaveData data) {
         if (data.outerGridTilesData == null) {
@@ -262,7 +261,7 @@ public class GridMap : MonoBehaviour {
             }
         }
         Biomes.Instance.UpdateTileVisuals(outerGridList);
-        //outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(outerGrid, true));
+        outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighboursForBorders());
     }
     //public void GenerateNeighboursWithSameTag() {
     //    for (int i = 0; i < listHexes.Count; i++) {
@@ -270,6 +269,23 @@ public class GridMap : MonoBehaviour {
     //        currHex.sameTagNeighbours = currHex.AllNeighbours.Where(x => x.tileTag == currHex.tileTag).ToList();
     //    }
     //}
+    public HexTile GetTileFromCoordinates(int x, int y) {
+        if ((x < 0 || x > width - 1) || (y < 0 || y > height - 1)) {
+            //outer tile
+            return GetBorderTile(x, y);
+        } else {
+            return map[x, y];
+        }
+    }
+    private HexTile GetBorderTile(int x, int y) {
+        for (int i = 0; i < outerGridList.Count; i++) {
+            HexTile currTile = outerGridList[i];
+            if (currTile.xCoordinate == x && currTile.yCoordinate == y) {
+                return currTile;
+            }
+        }
+        return null;
+    }
     #endregion
 
     #region Grid Utilities

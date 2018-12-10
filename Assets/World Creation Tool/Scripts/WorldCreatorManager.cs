@@ -192,7 +192,6 @@ namespace worldcreator {
                     currHex.data.tileName = hex.name;
                     currHex.data.xCoordinate = x - _borderThickness;
                     currHex.data.yCoordinate = y - _borderThickness;
-
                     outerGridList.Add(currHex);
 
                     int xToCopy = x - _borderThickness;
@@ -241,7 +240,7 @@ namespace worldcreator {
                 }
             }
             allTiles = GetAllTiles();
-            //outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(outerGrid, true));
+            outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighboursForBorders());
         }
         internal void GenerateOuterGrid(WorldSaveData data) {
             if (data.outerGridTilesData == null) {
@@ -286,13 +285,15 @@ namespace worldcreator {
                     currHex.data.xCoordinate = x - _borderThickness;
                     currHex.data.yCoordinate = y - _borderThickness;
 
+                    currHex.name = currHex.xCoordinate + "," + currHex.yCoordinate;
+
                     outerGridList.Add(currHex);
                     id++;
                 }
             }
             allTiles = GetAllTiles();
             Biomes.Instance.UpdateTileVisuals(outerGridList);
-            //outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(outerGrid, true));
+            outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighboursForBorders());
         }
         private bool IsCoordinatePartOfMainMap(int x, int y) {
             try {
@@ -401,6 +402,23 @@ namespace worldcreator {
             List<HexTile> allTiles = new List<HexTile>(hexTiles);
             allTiles.AddRange(outerGridList);
             return allTiles;
+        }
+        public HexTile GetTileFromCoordinates(int x, int y) {
+            if ((x < 0 || x > width - 1) || (y < 0 || y > height - 1)) {
+                //outer tile
+                return GetBorderTile(x, y);
+            } else {
+                return map[x, y];
+            }
+        }
+        private HexTile GetBorderTile(int x, int y) {
+            for (int i = 0; i < outerGridList.Count; i++) {
+                HexTile currTile = outerGridList[i];
+                if (currTile.xCoordinate == x && currTile.yCoordinate == y) {
+                    return currTile;
+                }
+            }
+            return null;
         }
         #endregion
 
@@ -613,13 +631,13 @@ namespace worldcreator {
                 HexTile currTile = tiles[i];
                 Biomes.Instance.UpdateTileVisuals(currTile);
                 Biomes.Instance.LoadPassableStates(currTile);
-                if (currTile.AllNeighbours != null) {
+                //if (currTile.AllNeighbours != null) {
                     for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
                         HexTile currNeighbour = currTile.AllNeighbours[j];
                         Biomes.Instance.UpdateTileVisuals(currNeighbour);
                         Biomes.Instance.LoadPassableStates(currNeighbour);
                     }
-                }
+                //}
             }
         }
         public void SetElevation(HexTile tile, ELEVATION elevation, bool updateVisuals = true) {
