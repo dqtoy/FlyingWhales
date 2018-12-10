@@ -36,8 +36,8 @@ public class Raider : Job {
 
         WeightedDictionary<RESULT> rateWeights = new WeightedDictionary<RESULT>();
         rateWeights.AddElement(RESULT.SUCCESS, baseSuccessRate);
-        //rateWeights.AddElement(RESULT.FAIL, baseFailRate);
-        //rateWeights.AddElement(RESULT.CRITICAL_FAIL, criticalFailRate);
+        rateWeights.AddElement(RESULT.FAIL, baseFailRate);
+        rateWeights.AddElement(RESULT.CRITICAL_FAIL, criticalFailRate);
 
         if (rateWeights.GetTotalOfWeights() > 0) {
             RESULT chosenResult = rateWeights.PickRandomElementGivenWeights();

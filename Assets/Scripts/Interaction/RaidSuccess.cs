@@ -28,7 +28,13 @@ public class RaidSuccess : Interaction {
 
     private void RaidSuccessEffect(InteractionState state) {
         //**Mechanics**: Favor Count -2
-        interactable.faction.AdjustFavorFor(_characterInvolved.faction, -2);
+        /*Raiders may also obtain supply from areas that aren't controlled by any other faction. 
+         * This action is called Scavenge and behaves similarly with Raid except 
+         * that it does not have any Favor Count effects.
+         */
+        if (interactable.faction != null) {
+            interactable.faction.AdjustFavorFor(_characterInvolved.faction, -2);
+        }
         _characterInvolved.LevelUp();
     }
 }
