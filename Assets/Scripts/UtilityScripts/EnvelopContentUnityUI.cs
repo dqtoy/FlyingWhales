@@ -14,6 +14,7 @@ public class EnvelopContentUnityUI : MonoBehaviour {
         if (this.gameObject.activeInHierarchy) {
             StartCoroutine(Envelop());
         }
+        //UIManager.Instance.EnvelopContentCoroutineStarter(this.transform as RectTransform, otherTransform, followWidth, followHeight, padding);
     }
 
     private IEnumerator Envelop() {

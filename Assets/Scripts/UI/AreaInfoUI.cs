@@ -284,6 +284,15 @@ public class AreaInfoUI : UIMenu {
         }
         return false;
     }
+    public void ToggleLogsMenu(bool state) {
+        logsGO.SetActive(state);
+        if (state) {
+            for (int i = 0; i < logHistoryItems.Length; i++) {
+                LogHistoryItem currItem = logHistoryItems[i];
+                currItem.EnvelopContentExecute();
+            }
+        }
+    }
     #endregion
 
     #region Characters

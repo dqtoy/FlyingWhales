@@ -1281,4 +1281,24 @@ public class UIManager : MonoBehaviour {
         }
         return false;
     }
+
+    //public void EnvelopContentCoroutineStarter(RectTransform thisTransform, RectTransform otherTransform,
+    //    bool followWidth, bool followHeight, Vector2 padding) {
+    //    StartCoroutine(Envelop(thisTransform, otherTransform, followWidth, followHeight, padding));
+    //}
+
+    //private IEnumerator Envelop(RectTransform thisTransform, RectTransform otherTransform, 
+    //    bool followWidth, bool followHeight, Vector2 padding) {
+    //    yield return null;
+    //    Vector2 newSize = thisTransform.sizeDelta;
+    //    if (followWidth) {
+    //        newSize.x = otherTransform.sizeDelta.x;
+    //        newSize.x += padding.x;
+    //    }
+    //    if (followHeight) {
+    //        newSize.y = otherTransform.sizeDelta.y;
+    //        newSize.y += padding.y;
+    //    }
+    //    thisTransform.sizeDelta = newSize;
+    //}
 }
