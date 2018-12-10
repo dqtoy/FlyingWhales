@@ -9,10 +9,21 @@ public class EnvelopContentUnityUI : MonoBehaviour {
     [SerializeField] private bool followHeight;
     [SerializeField] private Vector2 padding;
 
+    private bool executeOnEnable = false;
+
+    private void OnEnable() {
+        if (executeOnEnable) {
+            Execute();
+            executeOnEnable = false;
+        }
+    }
+
     [ContextMenu("Execute")]
     public void Execute() {
         if (this.gameObject.activeInHierarchy) {
             StartCoroutine(Envelop());
+        } else {
+            executeOnEnable = true;
         }
         //UIManager.Instance.EnvelopContentCoroutineStarter(this.transform as RectTransform, otherTransform, followWidth, followHeight, padding);
     }

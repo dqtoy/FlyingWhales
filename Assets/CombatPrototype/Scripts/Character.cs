@@ -542,7 +542,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         GetRandomCharacterColor();
         ConstructDefaultMiscActions();
         //_combatHistoryID = 0;
+#if !WORLD_CREATION_TOOL
         SetDailyInteractionGenerationTick();
+#endif
         SubscribeToSignals();
     }
     public void Initialize() { }

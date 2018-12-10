@@ -87,9 +87,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private SpriteRenderer topRightBeach;
 
     private PASSABLE_TYPE _passableType;
-    //private int _redMagicAmount;
-    //private int _blueMagicAmount;
-    //private int _greenMagicAmount;
     private BaseLandmark _landmarkOnTile = null;
 
     protected List<Party> _charactersAtLocation = new List<Party>(); //List of characters/party on landmark
@@ -573,17 +570,57 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                 HexTile currNeighbour = gameBoard[neighbourCoordinateX, neighbourCoordinateY];
                 if (currNeighbour != null) {
                     neighbours.Add(currNeighbour);
-                } else {
-                    //This part is for outerGridTiles only!
-                    try {
-                        neighbourCoordinateX -= GridMap.Instance._borderThickness;
-                        neighbourCoordinateY -= GridMap.Instance._borderThickness;
-                        currNeighbour = GridMap.Instance.map[neighbourCoordinateX, neighbourCoordinateY];
-                        neighbours.Add(currNeighbour);
-                    } catch {
-                        //No Handling
-                    }
-                }
+                } 
+                //else {
+                //    //This part is for outerGridTiles only!
+                //    try {
+                //        neighbourCoordinateX -= GridMap.Instance._borderThickness;
+                //        neighbourCoordinateY -= GridMap.Instance._borderThickness;
+                //        currNeighbour = GridMap.Instance.map[neighbourCoordinateX, neighbourCoordinateY];
+                //        neighbours.Add(currNeighbour);
+                //    } catch {
+                //        //No Handling
+                //    }
+                //}
+            }
+
+        }
+        this.AllNeighbours = neighbours;
+
+        for (int i = 0; i < neighbours.Count; i++) {
+            HexTile currNeighbour = neighbours[i];
+            if (currNeighbour == null) {
+                continue;
+            }
+            HEXTILE_DIRECTION dir = GetNeighbourDirection(currNeighbour);
+            if (dir != HEXTILE_DIRECTION.NONE) {
+                _neighbourDirections.Add(dir, currNeighbour);
+            }
+        }
+    }
+    public void FindNeighboursForBorders() {
+        _neighbourDirections = new Dictionary<HEXTILE_DIRECTION, HexTile>();
+        var neighbours = new List<HexTile>();
+
+        List<Point> possibleExits;
+
+        if ((yCoordinate % 2) == 0) {
+            possibleExits = Utilities.EvenNeighbours;
+        } else {
+            possibleExits = Utilities.OddNeighbours;
+        }
+
+        for (int i = 0; i < possibleExits.Count; i++) {
+            int neighbourCoordinateX = xCoordinate + possibleExits[i].X;
+            int neighbourCoordinateY = yCoordinate + possibleExits[i].Y;
+#if WORLD_CREATION_TOOL
+            HexTile neighbour = WorldCreatorManager.Instance.GetTileFromCoordinates(neighbourCoordinateX, neighbourCoordinateY);
+#else
+            HexTile neighbour = GridMap.Instance.GetTileFromCoordinates(neighbourCoordinateX, neighbourCoordinateY);
+#endif
+
+            if (neighbour != null) {
+                neighbours.Add(neighbour);
             }
 
         }
@@ -1119,6 +1156,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //Debug.Log("IS MOUSE OVER UI " + worldcreator.WorldCreatorUI.Instance.IsMouseOnUI());
         if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
             Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OVER, this);
+            //if (WorldCreatorManager.Instance.outerGridList.Contains(this)) {
+            //    SetNeighbourHighlightState(true);
+            //}
             if (Input.GetMouseButton(0)) {
                 //Debug.Log("MOUSE DOWN!");
                 Messenger.Broadcast<HexTile>(Signals.TILE_LEFT_CLICKED, this);
@@ -1159,6 +1199,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #if WORLD_CREATION_TOOL
         //if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
             Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OUT, this);
+        //}
+        //if (WorldCreatorManager.Instance.outerGridList.Contains(this)) {
+        //    SetNeighbourHighlightState(false);
         //}
 #else
         _hoverHighlightGO.SetActive(false);
@@ -1226,6 +1269,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public override string ToString() {
         return this.locationName;
+    }
+    private void SetNeighbourHighlightState(bool state) {
+        for (int i = 0; i < AllNeighbours.Count; i++) {
+            HexTile currNeighbour = AllNeighbours[i];
+            currNeighbour._hoverHighlightGO.SetActive(state);
+        }
     }
     #endregion
 

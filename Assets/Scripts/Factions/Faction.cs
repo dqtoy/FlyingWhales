@@ -115,8 +115,8 @@ public class Faction {
         favor = new Dictionary<Faction, int>();
         defenderWeights = new WeightedDictionary<AreaCharacterClass>();
         InitializeInteractions();
-        SetDailyInteractionGenerationTick();
 #if !WORLD_CREATION_TOOL
+        SetDailyInteractionGenerationTick();
         AddListeners();
 #endif
     }
@@ -145,8 +145,8 @@ public class Faction {
             defenderWeights = new WeightedDictionary<AreaCharacterClass>();
         }
         InitializeInteractions();
-        SetDailyInteractionGenerationTick();
 #if !WORLD_CREATION_TOOL
+        SetDailyInteractionGenerationTick();
         AddListeners();
 #endif
     }

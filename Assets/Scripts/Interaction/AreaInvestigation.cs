@@ -146,6 +146,7 @@ public class AreaInvestigation {
             _area.SetHasBeenInspected(true);
         }
         _assignedMinion.character.job.StartJobAction();
+        Messenger.Broadcast(Signals.MINION_STARTS_INVESTIGATING_AREA, _assignedMinion, _area);
         //_duration = 30;
         //_currentTick = 0;
         //Messenger.AddListener(Signals.HOUR_STARTED, OnExploreTick);

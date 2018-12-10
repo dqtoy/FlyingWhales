@@ -14,6 +14,7 @@ public class PlayerNotificationItem : PooledObject, IPointerClickHandler {
     private UnityAction onClickAction;
 
     private GameDate expirationDate;
+    private bool hasExpiry;
 
     public void SetNotification(string text, int expirationTicks, UnityAction onClickAction = null) {
         notificationLbl.text = text;
@@ -22,7 +23,11 @@ public class PlayerNotificationItem : PooledObject, IPointerClickHandler {
         if (expirationTicks != -1) {
             expirationDate = GameManager.Instance.Today();
             expirationDate.AddDays(expirationTicks);
-            SchedulingManager.Instance.AddEntry(expirationDate, () => DestroyObject());
+            hasExpiry = true;
+            Messenger.AddListener(Signals.DAY_ENDED, CheckForExpiration);
+            //SchedulingManager.Instance.AddEntry(expirationDate, () => DestroyObject());
+        } else {
+            hasExpiry = false;
         }
     }
 
@@ -36,13 +41,23 @@ public class PlayerNotificationItem : PooledObject, IPointerClickHandler {
     #endregion
 
     private void DestroyObject() {
-        SchedulingManager.Instance.RemoveSpecificEntry(expirationDate, DestroyObject);
+        //SchedulingManager.Instance.RemoveSpecificEntry(expirationDate, DestroyObject);
         ObjectPoolManager.Instance.DestroyObject(this.gameObject);
+    }
+
+    private void CheckForExpiration() {
+        if (GameManager.Instance.Today().Equals(expirationDate)) {
+            DestroyObject();
+        }
     }
 
     public override void Reset() {
         base.Reset();
+        if (hasExpiry) {
+            Messenger.RemoveListener(Signals.DAY_ENDED, CheckForExpiration);
+        }
         onClickAction = null;
+        hasExpiry = false;
     }
 
 }
