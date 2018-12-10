@@ -51,6 +51,7 @@ public class Job {
     }
     public virtual int GetSuccessRate() { return 0; }
     public virtual int GetFailRate() { return 40; }
+    public virtual int GetCritFailRate() { return 12; }
     public virtual WeightedDictionary<RESULT> GetJobRateWeights() {
         rateWeights.Clear();
         rateWeights.AddElement(RESULT.SUCCESS, GetSuccessRate());

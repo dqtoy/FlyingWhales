@@ -108,6 +108,7 @@ public class CharactersIntelUI : UIMenu {
             CharacterIntelItem item = GetCharacterEntry(charIntel.character);
             if (item != null) {
                 item.gameObject.SetActive(true);
+                item.draggable.SetDraggable(true);
             }
         }
     }

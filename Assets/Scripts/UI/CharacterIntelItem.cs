@@ -11,12 +11,15 @@ public class CharacterIntelItem : PooledObject, IDragParentItem {
 
     [SerializeField] private TextMeshProUGUI characterNameLbl;
     [SerializeField] private TextMeshProUGUI characterLvlClassLbl;
-    [SerializeField] private DraggableItem draggable;
+    [SerializeField] private DraggableItem _draggable;
     public CharacterPortrait characterPortrait;
 
     #region getters/setters
     public Character character {
         get { return _characterIntel.character; }
+    }
+    public DraggableItem draggable {
+        get { return _draggable; }
     }
     public object associatedObj {
         get { return _characterIntel; }
@@ -37,7 +40,7 @@ public class CharacterIntelItem : PooledObject, IDragParentItem {
         //characterPortrait.SetDimensions(42f);
         characterPortrait.GeneratePortrait(characterIntel.character);
         UpdateCharacterInfo();
-        draggable.SetAssociatedObject(characterIntel);
+        _draggable.SetAssociatedObject(characterIntel);
         //UpdateAffiliations();
     }
     //public void UpdateAffiliations() {

@@ -174,6 +174,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.WORK_EVENT:
                 createdInteraction = new WorkEvent(interactable);
                 break;
+            case INTERACTION_TYPE.INDUCE_GRUDGE:
+                createdInteraction = new InduceGrudge(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -276,6 +279,15 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.WORK_EVENT:
                 //if character is at home, allow
                 return character.specificLocation.tileLocation.areaOfTile.id == character.homeLandmark.tileLocation.areaOfTile.id;
+            case INTERACTION_TYPE.INDUCE_GRUDGE:
+                Area targetArea = character.specificLocation.tileLocation.areaOfTile;
+                for (int i = 0; i < targetArea.areaResidents.Count; i++) {
+                    Character resident = targetArea.areaResidents[i];
+                    if(!resident.alreadyTargetedByGrudge && !resident.isDefender && (resident.race == RACE.HUMANS || resident.race == RACE.ELVES || resident.race == RACE.GOBLIN) && resident.specificLocation.tileLocation.areaOfTile.id == targetArea.id) {
+                        return true;
+                    }
+                }
+            return false;
             default:
                 return true;
         }

@@ -6,7 +6,8 @@ using UnityEngine;
 public class Instigator : Job {
 
     INTERACTION_TYPE[] chaosEvents = new INTERACTION_TYPE[] { //TODO: Put this somwhere else
-        INTERACTION_TYPE.INDUCE_WAR
+        INTERACTION_TYPE.INDUCE_WAR,
+        INTERACTION_TYPE.INDUCE_GRUDGE,
     };
 
     public Instigator(Character character) : base(character, JOB.INSTIGATOR) {
@@ -39,7 +40,8 @@ public class Instigator : Job {
                 //SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER, area.coreTile.landmarkOnTile)); //NOT FINAL!
                 interaction.AddEndInteractionAction(() => StartJobAction());
                 interaction.ScheduleSecondTimeOut();
-                _character.AddInteraction(interaction);
+                Character targetCharacter = GetTargetCharacter(chosenType);
+                targetCharacter.AddInteraction(interaction);
                 SetCreatedInteraction(interaction);
             } else {
                 StartJobAction();
@@ -141,5 +143,18 @@ public class Instigator : Job {
             }
         }
         return validTypes;
+    }
+    private Character GetTargetCharacter(INTERACTION_TYPE type) {
+        if(type == INTERACTION_TYPE.INDUCE_GRUDGE) {
+            Area targetArea = character.specificLocation.tileLocation.areaOfTile;
+            for (int i = 0; i < targetArea.areaResidents.Count; i++) {
+                Character resident = targetArea.areaResidents[i];
+                if (!resident.alreadyTargetedByGrudge && !resident.isDefender && (resident.race == RACE.HUMANS || resident.race == RACE.ELVES || resident.race == RACE.GOBLIN) && resident.specificLocation.tileLocation.areaOfTile.id == targetArea.id) {
+                    resident.SetAlreadyTargetedByGrudge(true);
+                    return resident;
+                }
+            }
+        }
+        return _character;
     }
 }
