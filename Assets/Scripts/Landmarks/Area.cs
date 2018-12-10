@@ -663,7 +663,7 @@ public class Area {
     private void ExecuteSupplyLine() {
         CollectDailySupplies();
         //PayMaintenance();
-        LandmarkStartDayActions();
+        LandmarkStartMonthActions();
     }
     private void CollectDailySupplies() {
         int totalCollectedSupplies = 0;
@@ -702,10 +702,10 @@ public class Area {
         //    }
         //}
     }
-    private void LandmarkStartDayActions() {
+    private void LandmarkStartMonthActions() {
         for (int i = 0; i < landmarks.Count; i++) {
             BaseLandmark currLandmark = landmarks[i];
-            currLandmark.landmarkObj.StartDayAction();
+            currLandmark.landmarkObj.StartMonthAction();
         }
     }
     public void SetSuppliesInBank(int amount) {

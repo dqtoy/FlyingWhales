@@ -132,7 +132,7 @@ public class StructureObj : IObject {
     public virtual void EndState(ObjectState state) {
 
     }
-    public virtual void StartDayAction() {
+    public virtual void StartMonthAction() {
         //GenerateDailyInteraction();
     }
 

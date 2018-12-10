@@ -15,13 +15,6 @@ public class Garrison : StructureObj {
         SetCommonData(clone);
         return clone;
     }
-    public override void StartDayAction() {
-        //ReplenishDefenderUnits();
-        base.StartDayAction();
-        //ArmyTraining();
-        //ArmyMobilize();
-        //ArmyAttacks();
-    }
     #endregion
 
     //private void ReplenishDefenderUnits() {

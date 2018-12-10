@@ -16,10 +16,6 @@ public class DemonicPortal : StructureObj {
         SetCommonData(clone);
         return clone;
     }
-    public override void StartDayAction() {
-        base.StartDayAction();
-
-    }
     //public override void StartState(ObjectState state) {
     //    base.StartState(state);
     //    if (state.stateName == "Preparing") {

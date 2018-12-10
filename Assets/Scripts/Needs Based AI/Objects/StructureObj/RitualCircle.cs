@@ -26,8 +26,8 @@ public class RitualCircle : StructureObj {
         SetCommonData(clone);
         return clone;
     }
-    public override void StartDayAction() {
-        base.StartDayAction();
+    public override void StartMonthAction() {
+        base.StartMonthAction();
         _traitForTheDay = AttributeManager.Instance.GetRandomPositiveTrait();
         Messenger.Broadcast(Signals.UPDATE_RITUAL_CIRCLE_TRAIT, this);
     }

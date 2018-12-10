@@ -215,7 +215,6 @@ public class GameManager : MonoBehaviour {
 
         this.days += 1;
         this.continuousDays += 1;
-        Messenger.Broadcast(Signals.MONTH_START);
         if (days > daysInMonth[this.month]) {
             this.days = 1;
             this.month += 1;
@@ -223,12 +222,13 @@ public class GameManager : MonoBehaviour {
                 this.month = 1;
                 this.year += 1;
             }
+            Messenger.Broadcast(Signals.MONTH_START);
         }
         //this.hour += 1;
         //if(this.hour > hoursPerDay) {
         //    this.hour = 1;
         //}
-	}
+    }
 
     #region Cursor
     public void SetCursorToDefault() {
