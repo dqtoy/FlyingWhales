@@ -185,13 +185,16 @@ public class CharacterAvatar : MonoBehaviour{
         _party.specificLocation.RemoveCharacterFromLocation(_party);
         targetLocation.AddCharacterToLocation(_party);
         Debug.Log(GameManager.Instance.TodayLogString() + _party.name + " has arrived at " + targetLocation.locationName + " on " + GameManager.Instance.continuousDays);
-        for (int i = 0; i < _party.characters.Count; i++) {
-            Character character = party.characters[i];
+        if(_party.characters.Count > 0) {
             Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
-            arriveLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            for (int i = 0; i < _party.characters.Count; i++) {
+                Character character = party.characters[i];
+                arriveLog.AddToFillers(character, character.name, LOG_IDENTIFIER.CHARACTER_LIST_1);
+            }
             arriveLog.AddToFillers(targetLocation.tileLocation.areaOfTile, targetLocation.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-            character.AddHistory(arriveLog);
+            arriveLog.AddLogToInvolvedObjects();
         }
+
         if (onPathFinished != null) {
             onPathFinished();
         }

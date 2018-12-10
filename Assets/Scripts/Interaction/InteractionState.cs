@@ -239,6 +239,8 @@ public class InteractionState {
             if (AlreadyHasLogFiller(filler.identifier)) {
                 logFillers.Remove(GetLogFiller(filler.identifier));
                 logFillers.Add(filler);
+            } else {
+                logFillers.Add(filler);
             }
         } else {
             logFillers.Add(filler);

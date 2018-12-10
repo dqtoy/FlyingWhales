@@ -342,15 +342,17 @@ public class Utilities : MonoBehaviour {
         LOG_IDENTIFIER identifier = Utilities.logIdentifiers[strLogIdentifier];
         if (wordToBeReplaced.EndsWith("@")) {
             if (identifier.ToString().Contains("LIST")) {
+                int listCount = 0;
                 for (int i = 0; i < objectLog.Count; i++) {
                     if (objectLog[i].identifier == identifier) {
                         if (wordToReplace != string.Empty) {
                             wordToReplace += ", ";
                         }
                         wordToReplace += "<link=" + '"' + i.ToString() + '"' + "><b>" + objectLog[i].value + "</b></link>";
+                        listCount++;
                     }
                 }
-                if(wordToReplace != string.Empty) {
+                if(listCount > 1) {
                     //Add 'and' after last comma
                     int commaLastIndex = wordToReplace.LastIndexOf(',');
                     wordToReplace = wordToReplace.Insert(commaLastIndex + 1, " and");
@@ -365,15 +367,17 @@ public class Utilities : MonoBehaviour {
             }
         } else if (wordToBeReplaced.EndsWith("%")) {
             if (identifier.ToString().Contains("LIST")) {
+                int listCount = 0;
                 for (int i = 0; i < objectLog.Count; i++) {
                     if (objectLog[i].identifier == identifier) {
                         if (wordToReplace != string.Empty) {
                             wordToReplace += ", ";
                         }
                         wordToReplace += "<b>" + objectLog[i].value + "</b>";
+                        listCount++;
                     }
                 }
-                if (wordToReplace != string.Empty) {
+                if (listCount > 1) {
                     //Add 'and' after last comma
                     int commaLastIndex = wordToReplace.LastIndexOf(',');
                     wordToReplace = wordToReplace.Insert(commaLastIndex + 1, " and");
