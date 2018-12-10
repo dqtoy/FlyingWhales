@@ -465,8 +465,8 @@ public class ObjectManager : MonoBehaviour {
             case LANDMARK_TYPE.SKELETON_CEMETERY:
                 structureObj = new SkeletonCemetery();
                 break;
-            case LANDMARK_TYPE.SPIDER_HIVE_LAIR:
-                structureObj = new SpiderHiveLair();
+            case LANDMARK_TYPE.HIVE_LAIR:
+                structureObj = new HiveLair();
                 break;
             case LANDMARK_TYPE.ZOMBIE_PYRAMID:
                 structureObj = new ZombiePyramid();

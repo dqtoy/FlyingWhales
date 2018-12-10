@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4937453183900482}
   - component: {fileID: 114507616343566192}
   m_Layer: 0
-  m_Name: SPIDER_HIVE_LAIR
+  m_Name: HIVE_LAIR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
