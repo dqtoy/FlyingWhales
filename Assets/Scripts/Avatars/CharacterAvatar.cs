@@ -189,6 +189,7 @@ public class CharacterAvatar : MonoBehaviour{
             Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
             for (int i = 0; i < _party.characters.Count; i++) {
                 Character character = party.characters[i];
+                character.SetDailyInteractionGenerationTick();
                 arriveLog.AddToFillers(character, character.name, LOG_IDENTIFIER.CHARACTER_LIST_1);
             }
             arriveLog.AddToFillers(targetLocation.tileLocation.areaOfTile, targetLocation.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);

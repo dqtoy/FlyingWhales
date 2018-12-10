@@ -17,7 +17,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
     protected int _id;
     protected int _gold;
     protected int _currentInteractionTick;
-    protected int _usedMonthForInteraction;
     protected int _lastLevelUpDay;
     protected float _actRate;
     protected bool _isDead;
@@ -3028,19 +3027,18 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         interactionWeights.RemoveElement(type);
     }
     public void SetDailyInteractionGenerationTick() {
-        _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.daysInMonth[GameManager.Instance.GetNextMonth()] + 1);
+        int remainingDaysInWeek = GameManager.Instance.continuousDays % 7;
+        int startDay = GameManager.Instance.continuousDays + remainingDaysInWeek + 1;
+        _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + 7);
     }
     public void DailyInteractionGeneration() {
-        //DefaultAllExistingInteractions();
-        if(_usedMonthForInteraction == GameManager.Instance.month) {
-            return;
-        }
-        if (_currentInteractionTick == GameManager.Instance.days) {
-            _usedMonthForInteraction = GameManager.Instance.month;
+        if (_currentInteractionTick == GameManager.Instance.continuousDays) {
             //if(job.jobType != JOB.NONE) {
             //    job.CreateRandomInteractionForNonMinionCharacters();
             //}
             GenerateDailyInteraction();
+            SetDailyInteractionGenerationTick();
+        } else if (_currentInteractionTick > GameManager.Instance.continuousDays) {
             SetDailyInteractionGenerationTick();
         }
     }
@@ -3059,6 +3057,11 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
             _forcedInteraction = null;
         } else {
             //if (GameManager.Instance.ignoreEventTriggerWeights || eventTriggerWeights.PickRandomElementGivenWeights()) {
+            int chance = UnityEngine.Random.Range(0, 100);
+            if(chance >= 15) {
+                //Character will not perform
+                return;
+            }
             WeightedDictionary<INTERACTION_TYPE> validInteractions = GetValidInteractionWeights();
             if (validInteractions != null) {
                 if (validInteractions.GetTotalOfWeights() > 0) {
