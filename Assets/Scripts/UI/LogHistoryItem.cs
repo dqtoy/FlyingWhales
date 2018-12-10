@@ -40,10 +40,22 @@ public class LogHistoryItem : LogItem {
         //if (!this.gameObject.activeSelf) {
         //    throw new System.Exception("Log Item is not active!");
         //}
+        EnvelopContentExecute();
+    }
+    public void EnvelopContentExecute() {
         envelopContent.Execute();
     }
 
     public void SetLogColor(Color color) {
         //logBG.color = color;
+    }
+
+    public void ShowLogDebugInfo() {
+        string text = log.file;
+        text += "\n" + log.logCallStack;
+        UIManager.Instance.ShowSmallInfo(text);
+    }
+    public void HideLogDebugInfo() {
+        UIManager.Instance.HideSmallInfo();
     }
 }

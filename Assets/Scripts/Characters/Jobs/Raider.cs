@@ -39,6 +39,12 @@ public class Raider : Job {
         rateWeights.AddElement(RESULT.FAIL, baseFailRate);
         rateWeights.AddElement(RESULT.CRITICAL_FAIL, criticalFailRate);
 
+        if (character.specificLocation.tileLocation.landmarkOnTile.owner == null) {
+            _action = "scavenge";
+        } else {
+            _action = "raid";
+        }
+
         if (rateWeights.GetTotalOfWeights() > 0) {
             RESULT chosenResult = rateWeights.PickRandomElementGivenWeights();
             switch (chosenResult) {
