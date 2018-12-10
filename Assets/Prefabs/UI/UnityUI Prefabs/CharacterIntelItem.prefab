@@ -1603,7 +1603,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   characterNameLbl: {fileID: 114804137959754240}
   characterLvlClassLbl: {fileID: 114718636325415368}
-  draggable: {fileID: 114828660855661908}
+  _draggable: {fileID: 114828660855661908}
   characterPortrait: {fileID: 114023396287838364}
 --- !u!114 &114981163971369210
 MonoBehaviour:

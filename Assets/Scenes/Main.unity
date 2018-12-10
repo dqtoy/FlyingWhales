@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
+  m_IndirectSpecularColor: {r: 0.22380279, g: 0.24376711, b: 0.26534963, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -8668,7 +8668,7 @@ RectTransform:
   - {fileID: 355033867}
   - {fileID: 1863476511}
   m_Father: {fileID: 606078597}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
@@ -26077,10 +26077,10 @@ RectTransform:
   - {fileID: 404843594}
   - {fileID: 1325775620}
   - {fileID: 785638274}
+  - {fileID: 667180686}
   - {fileID: 1117973115}
   - {fileID: 215701895}
   - {fileID: 1821077718}
-  - {fileID: 667180686}
   m_Father: {fileID: 1538653384}
   m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -28542,7 +28542,7 @@ RectTransform:
   m_Children:
   - {fileID: 883548642}
   m_Father: {fileID: 606078597}
-  m_RootOrder: 6
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -48655,7 +48655,7 @@ RectTransform:
   - {fileID: 1184654059}
   - {fileID: 938466922}
   m_Father: {fileID: 606078597}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
@@ -83719,7 +83719,7 @@ RectTransform:
   - {fileID: 926635162}
   - {fileID: 1287595755}
   m_Father: {fileID: 606078597}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
@@ -96749,7 +96749,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   characterNameLbl: {fileID: 621497268}
   characterLvlClassLbl: {fileID: 699368000}
-  draggable: {fileID: 0}
+  _draggable: {fileID: 0}
   characterPortrait: {fileID: 241525079}
 --- !u!1 &2131002327
 GameObject:
