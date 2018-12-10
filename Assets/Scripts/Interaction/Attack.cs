@@ -80,6 +80,7 @@ public class Attack : Interaction {
                 name = "Support the attackers.",
                 duration = 0,
                 jobNeeded = JOB.DIPLOMAT,
+                doesNotMeetRequirementsStr = "Minion must be Diplomat.",
                 neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => SupportAttackersOption(state),
             };
@@ -89,6 +90,7 @@ public class Attack : Interaction {
                 name = "Support the defenders.",
                 duration = 0,
                 jobNeeded = JOB.DIPLOMAT,
+                doesNotMeetRequirementsStr = "Minion must be Diplomat.",
                 neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => SupportDefendersOption(state),
             };

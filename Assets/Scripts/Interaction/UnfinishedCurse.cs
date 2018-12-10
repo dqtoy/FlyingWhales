@@ -69,7 +69,7 @@ public class UnfinishedCurse : Interaction {
                 jobNeeded = JOB.EXPLORER,
                 effect = () => HarnessMagicEffect(state),
                 //canBeDoneAction = () => AssignedMinionIsOfClass("Gluttony"),
-                doesNotMeetRequirementsStr = "Minion must be Gluttony.",
+                doesNotMeetRequirementsStr = "Minion must be Explorer.",
             };
             ActionOption leaveAlone = new ActionOption {
                 interactionState = state,
