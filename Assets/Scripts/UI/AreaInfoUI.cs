@@ -61,7 +61,8 @@ public class AreaInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI minionAssignmentDescription;
     [SerializeField] private InvestigationMinionDraggableItem minionAssignmentDraggableItem;
     [SerializeField] private Toggle[] investigateToggles;
-    
+    [SerializeField] private EnvelopContentUnityUI minionAssignmentDescriptionEnvelop;
+
 
     [Space(10)]
     [Header("Attack/Raid")]
@@ -98,6 +99,7 @@ public class AreaInfoUI : UIMenu {
         //Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_ADDED, OnResidentAddedToLandmark);
         //Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_REMOVED, OnResidentRemovedFromLandmark);
         Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
+        Messenger.AddListener<Minion, Area>(Signals.MINION_STARTS_INVESTIGATING_AREA, OnMinionInvestigateArea);
         _assignedParty = new Minion[4];
     }
     public override void OpenMenu() {
@@ -465,6 +467,7 @@ public class AreaInfoUI : UIMenu {
         //minionAssignmentDescription.gameObject.SetActive(true);
         minionAssignmentConfirmButton.gameObject.SetActive(false);
         minionAssignmentRecallButton.gameObject.SetActive(false);
+        UpdateMinionTooltipDescription(_assignedMinion);
     }
     public void ResetMinionAssignmentParty() {
         for (int i = 0; i < minionAssignmentPartyPortraits.Length; i++) {
@@ -640,14 +643,15 @@ public class AreaInfoUI : UIMenu {
             minionAssignmentPortrait.GeneratePortrait(minion.character);
             //minionAssignmentConfirmButton.interactable = !_activeLandmark.landmarkInvestigation.isExploring;
             //minionAssignmentDescription.gameObject.SetActive(false);
-
             OnUpdateLandmarkInvestigationState("explore");
+            UpdateMinionTooltipDescription(minion);
             //minionAssignmentRecallButton.gameObject.SetActive(false);
             //minionAssignmentConfirmButton.gameObject.SetActive(true);
             //minionAssignmentDraggableItem.SetDraggable(true);
         } else {
             ResetMinionAssignment();
         }
+        
     }
     public void AssignPartyMinionToInvestigate(Minion minion, int index, bool checkDuplicate = true) {
         if (minion != null) {
@@ -713,6 +717,76 @@ public class AreaInfoUI : UIMenu {
         _activeArea.areaInvestigation.RecallMinion("attack");
         //OnUpdateLandmarkInvestigationState();
         //ChangeStateAllButtons(!_activeLandmark.landmarkInvestigation.isActivated);
+    }
+    private void UpdateMinionTooltipDescription(Minion minion) {
+        if (minion != null) {
+            string jobStr = string.Empty;
+            if (_activeArea.areaInvestigation.assignedMinion == null || _activeArea.areaInvestigation.assignedMinion.character.ownParty.icon.isTravelling) {
+                switch (minion.character.job.jobType) {
+                    case JOB.INSTIGATOR:
+                        jobStr = "will <b>sow discord</b> in";
+                        break;
+                    case JOB.EXPLORER:
+                        jobStr = "will <b>explore</b>";
+                        break;
+                    case JOB.DIPLOMAT:
+                        jobStr = "will <b>improve relations with characters</b> in";
+                        break;
+                    case JOB.RECRUITER:
+                        jobStr = "will <b>recruit new minions</b> in";
+                        break;
+                    case JOB.RAIDER:
+                        jobStr = "will <b>raid</b>";
+                        break;
+                    case JOB.SPY:
+                        jobStr = "will <b>obtain intel</b> about";
+                        break;
+                    case JOB.DISSUADER:
+                        jobStr = "will <b>discourage activities</b> in";
+                        break;
+                    default:
+                        jobStr = "will <b>do nothing</b> in";
+                        break;
+                }
+            } else {
+                switch (minion.character.job.jobType) {
+                    case JOB.INSTIGATOR:
+                        jobStr = "is <b>sowing discord</b> in";
+                        break;
+                    case JOB.EXPLORER:
+                        jobStr = "is <b>exploring</b>";
+                        break;
+                    case JOB.DIPLOMAT:
+                        jobStr = "is <b>improving relations with characters</b> in";
+                        break;
+                    case JOB.RECRUITER:
+                        jobStr = "is <b>recruiting new minions</b> in";
+                        break;
+                    case JOB.RAIDER:
+                        jobStr = "is <b>raiding</b>";
+                        break;
+                    case JOB.SPY:
+                        jobStr = "is <b>obtaining intel</b> about";
+                        break;
+                    case JOB.DISSUADER:
+                        jobStr = "is <b>discouraging activities</b> in";
+                        break;
+                    default:
+                        jobStr = "is <b>doing nothing</b> in";
+                        break;
+                }
+            }
+            
+            minionAssignmentDescription.text = "This minion " + jobStr + " this area";
+        } else {
+            minionAssignmentDescription.text = "Drag a minion from the list here.";
+        }
+        minionAssignmentDescriptionEnvelop.Execute();
+    }
+    private void OnMinionInvestigateArea(Minion minion, Area area) {
+        if (this.isShowing && _activeArea != null && _activeArea.id == area.id) {
+            UpdateMinionTooltipDescription(minion);
+        }
     }
     #endregion
 }

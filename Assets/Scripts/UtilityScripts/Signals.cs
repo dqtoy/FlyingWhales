@@ -142,5 +142,6 @@ public static class Signals {
     public static string ADDED_INTERACTION = "OnAddedInteraction"; //Parameters (Interaction interaction)
     public static string REMOVED_INTERACTION = "OnRemovedInteraction"; //Parameters (Interaction interaction)
     public static string INTERACTION_ENDED = "OnInteractionEnded"; //Parameters (Interaction interaction)
+    public static string MINION_STARTS_INVESTIGATING_AREA = "OnMinionStartInvestigateArea"; //Parameters (Minion minion, Area area)
     #endregion
 }

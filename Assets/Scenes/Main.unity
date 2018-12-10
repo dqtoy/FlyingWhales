@@ -54293,6 +54293,7 @@ GameObject:
   - component: {fileID: 1250756517}
   - component: {fileID: 1250756519}
   - component: {fileID: 1250756518}
+  - component: {fileID: 1250756520}
   m_Layer: 5
   m_Name: Description
   m_TagString: Untagged
@@ -54314,11 +54315,11 @@ RectTransform:
   m_Father: {fileID: 1862552080}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -28.795, y: 78}
-  m_SizeDelta: {x: 190.59, y: 66.37}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -28.794922, y: 149.98999}
+  m_SizeDelta: {x: 190.59, y: 60.01}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &1250756518
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54352,6 +54353,21 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1250756516}
+--- !u!114 &1250756520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1250756516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d821a190b14981c4f85f4f8c88518bec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  otherTransform: {fileID: 1713001492}
+  followWidth: 0
+  followHeight: 1
+  padding: {x: 5, y: 5}
 --- !u!1 &1256021707
 GameObject:
   m_ObjectHideFlags: 0
@@ -77671,6 +77687,7 @@ GameObject:
   - component: {fileID: 1713001492}
   - component: {fileID: 1713001493}
   - component: {fileID: 1713001494}
+  - component: {fileID: 1713001495}
   m_Layer: 5
   m_Name: Description
   m_TagString: Untagged
@@ -77691,10 +77708,10 @@ RectTransform:
   m_Father: {fileID: 1437180040}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 186, y: 55.01}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1713001493
 CanvasRenderer:
@@ -77816,6 +77833,19 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &1713001495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1713001491}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1741964061, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 0
+  m_VerticalFit: 2
 --- !u!1 &1719068493
 GameObject:
   m_ObjectHideFlags: 0
@@ -79612,6 +79642,7 @@ MonoBehaviour:
   investigateToggles:
   - {fileID: 1707711901}
   - {fileID: 1510780838}
+  minionAssignmentDescriptionEnvelop: {fileID: 1250756520}
   minionAssignmentPartyGO: {fileID: 1775096635}
   minionAssignmentPartyPortraits:
   - {fileID: 1977599131}

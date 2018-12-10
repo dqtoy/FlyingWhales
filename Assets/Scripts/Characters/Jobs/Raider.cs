@@ -87,20 +87,24 @@ public class Raider : Job {
         //FavorEffects(-2);
     }
     private void RaidFail() {
-        SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile));
-        //raidSuccess.SetEndInteractionAction(() => GoBackHome());
-        _createdInteraction.ScheduleSecondTimeOut();
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile);
+        interaction.AddEndInteractionAction(() => GoBackHome());
+        interaction.ScheduleSecondTimeOut();
+        character.AddInteraction(interaction);
+        SetCreatedInteraction(interaction);
         //When a raid fails, the target Faction's Favor Count towards the raider is reduced by -1. The raider will not get anything.
         FavorEffects(-1);
         //GoBackHome();
     }
     private void CriticalRaidFail() {
         //When a raid critically fails, the target Faction's Favor Count towards the raider is reduced by -1. The raider will also perish.
-        SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.tileLocation.landmarkOnTile));
-        //raidSuccess.SetEndInteractionAction(() => GoBackHome());
-        _createdInteraction.ScheduleSecondTimeOut();
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.tileLocation.landmarkOnTile);
+        interaction.AddEndInteractionAction(() => GoBackHome());
+        interaction.ScheduleSecondTimeOut();
+        character.AddInteraction(interaction);
+        SetCreatedInteraction(interaction);
         FavorEffects(-1);
-        GoBackHome();
+        //GoBackHome();
     }
 
     private void GoBackHome() {
