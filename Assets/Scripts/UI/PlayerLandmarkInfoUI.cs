@@ -151,11 +151,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
         } else {
             landmarkNameLbl.text = _activeLandmark.landmarkName;
         }
-        if (_activeLandmark.owner != null) {
-            landmarkTypeLbl.text = Utilities.GetNormalizedSingularRace(_activeLandmark.owner.raceType) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(_activeLandmark.specificLandmarkType.ToString());
-        } else {
-            landmarkTypeLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(_activeLandmark.specificLandmarkType.ToString());
-        }
+        landmarkTypeLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(_activeLandmark.specificLandmarkType.ToString());
 
         if (_activeLandmark.tileLocation.areaOfTile != null) {
             suppliesNameLbl.text = _activeLandmark.tileLocation.areaOfTile.suppliesInBank.ToString();
