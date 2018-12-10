@@ -82,7 +82,7 @@ public class ArmyAttacks : Interaction {
                 neededObjects = new List<System.Type>() { typeof(LocationIntel) },
                 effect = () => RedirectAttackEffect(state),
                 //canBeDoneAction = () => AssignedMinionIsOfClass("Greed"), //Needs greed minion
-                doesNotMeetRequirementsStr = "Minion must be Greed.",
+                doesNotMeetRequirementsStr = "Minion must be Raider.",
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,

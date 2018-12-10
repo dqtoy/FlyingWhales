@@ -89,7 +89,7 @@ public class MoveToRaid : Interaction {
     }
     private void DoNothingEffect(InteractionState state) {
         AddToDebugLog("Chose to do nothing");
-        SetCurrentState(_states[Raid_Proceeds]);
+        SetCurrentState(_states[Normal_Raid]);
     }
     #endregion
 

@@ -229,6 +229,7 @@ public class RaidEvent : Interaction {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
         }
         state.AddLogFiller(new LogFiller(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(_characterInvolved.homeLandmark.tileLocation.areaOfTile, _characterInvolved.homeLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_2));
     }
     private void NormalRaidFailRewardEffect(InteractionState state) {
         //**Mechanics**: Raider travels back to his home area.

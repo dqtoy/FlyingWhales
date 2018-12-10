@@ -169,11 +169,21 @@ public class InteractionState {
         }
     }
     public void AddLogToInvolvedObjects(Log log) {
-        _interaction.interactable.specificLocation.tileLocation.landmarkOnTile.AddHistory(log);
-        if (_interaction.explorerMinion != null) {
-            _interaction.explorerMinion.character.AddHistory(log);
+        _interaction.interactable.specificLocation.tileLocation.areaOfTile.AddHistory(log);
+        //if (_interaction.explorerMinion != null) {
+        //    _interaction.explorerMinion.character.AddHistory(log);
+        //}
+        for (int i = 0; i < log.fillers.Count; i++) {
+            LogFiller currFiller = log.fillers[i];
+            object obj = currFiller.obj;
+            if (obj != null) {
+                if (obj is Character) {
+                    (obj as Character).AddHistory(log);
+                }  else if (obj is Minion) {
+                    (obj as Minion).character.AddHistory(log);
+                }
+            }
         }
-        log.AddLogToInvolvedObjects();
     }
     public void SetChosenOption(ActionOption option) {
         _chosenOption = option;

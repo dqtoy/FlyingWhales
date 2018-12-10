@@ -41,6 +41,7 @@ public class DefenseMobilization : Interaction {
                 name = "Stop them.",
                 duration = 0,
                 jobNeeded = JOB.DISSUADER,
+                doesNotMeetRequirementsStr = "Minion must be Dissuader.",
                 effect = () => StopOption(),
             };
             ActionOption doNothingOption = new ActionOption {

@@ -54,9 +54,9 @@ public class DragonAttack : GameEvent {
         _dragonParty.homeLandmark.AddItem(dragonEgg);
         Log log = new Log(GameManager.Instance.Today(), "Events", "DragonAttack", "lay_egg");
         log.AddToFillers(_dragonParty.mainCharacter, _dragonParty.mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(_dragonParty.homeLandmark, _dragonParty.homeLandmark.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+        log.AddToFillers(_dragonParty.homeLandmark.tileLocation.areaOfTile, _dragonParty.homeLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
         _dragonParty.mainCharacter.AddHistory(log);
-        _dragonParty.homeLandmark.AddHistory(log);
+        _dragonParty.homeLandmark.tileLocation.areaOfTile.AddHistory(log);
 
         _dragonParty.EndAction();
         Hibernate();

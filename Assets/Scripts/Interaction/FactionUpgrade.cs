@@ -57,6 +57,7 @@ public class FactionUpgrade : Interaction {
                 name = "Stop them.",
                 duration = 0,
                 jobNeeded = JOB.DISSUADER,
+                doesNotMeetRequirementsStr = "Minion must be Dissuader.",
                 effect = () => StopOption(),
             };
             ActionOption disruptOption = new ActionOption {
@@ -65,6 +66,7 @@ public class FactionUpgrade : Interaction {
                 name = "Disrupt the plan.",
                 duration = 0,
                 jobNeeded = JOB.INSTIGATOR,
+                doesNotMeetRequirementsStr = "Minion must be Instigator.",
                 effect = () => DisruptOption(),
             };
             ActionOption assistOption = new ActionOption {
@@ -73,6 +75,7 @@ public class FactionUpgrade : Interaction {
                 name = "Provide assistance in both supplies and training.",
                 duration = 0,
                 jobNeeded = JOB.DIPLOMAT,
+                doesNotMeetRequirementsStr = "Minion must be Diplomat.",
                 effect = () => AssistOption(),
             };
             ActionOption doNothingOption = new ActionOption {

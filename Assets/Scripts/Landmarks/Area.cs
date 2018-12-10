@@ -996,6 +996,7 @@ public class Area {
             if (this.history.Count > 60) {
                 this.history.RemoveAt(0);
             }
+            Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
         }
     }
     #endregion

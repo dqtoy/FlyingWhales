@@ -59,6 +59,7 @@ public class CharacterPeaceNegotiation : Interaction {
                 name = "Disrupt the negotiations.",
                 duration = 0,
                 jobNeeded = JOB.INSTIGATOR,
+                doesNotMeetRequirementsStr = "Minion must be Instigator.",
                 effect = () => DisruptOption(),
             };
             ActionOption ensureOption = new ActionOption {
@@ -67,6 +68,7 @@ public class CharacterPeaceNegotiation : Interaction {
                 name = "Ensure the negotiations go by smoothly.",
                 duration = 0,
                 jobNeeded = JOB.DIPLOMAT,
+                doesNotMeetRequirementsStr = "Minion must be Diplomat.",
                 effect = () => EnsureOption(),
             };
             ActionOption doNothingOption = new ActionOption {
