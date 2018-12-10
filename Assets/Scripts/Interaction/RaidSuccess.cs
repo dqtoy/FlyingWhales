@@ -17,6 +17,8 @@ public class RaidSuccess : Interaction {
         startStateDescriptionLog.AddToFillers(null, otherData[0].ToString(), LOG_IDENTIFIER.STRING_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
+        startState.AddLogFiller(new LogFiller(null, otherData[0].ToString(), LOG_IDENTIFIER.STRING_1));
+
         startState.SetEffect(() => RaidSuccessEffect(startState));
 
         _states.Add(startState.name, startState);
@@ -27,6 +29,6 @@ public class RaidSuccess : Interaction {
     private void RaidSuccessEffect(InteractionState state) {
         //**Mechanics**: Favor Count -2
         interactable.faction.AdjustFavorFor(_characterInvolved.faction, -2);
-        explorerMinion.LevelUp();
+        _characterInvolved.LevelUp();
     }
 }

@@ -99,14 +99,19 @@ public class Raider : Job {
 
     private void GoBackHome() {
         if (character.minion != null) {
-            character.minion.GoBackFromAssignment();
+            character.specificLocation.tileLocation.areaOfTile.areaInvestigation.RecallMinion("explore");
         } else {
             character.currentParty.GoHome();
         }
         
     }
     private void GoBackHomeSuccess(int supplyObtained) {
-        character.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(supplyObtained);
+        if (character.minion != null) {
+            PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, supplyObtained);
+            //character.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(supplyObtained);
+        } else {
+            character.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(supplyObtained);
+        }
         GoBackHome();
     }
 
