@@ -27,7 +27,11 @@ public class FactionEmblem : MonoBehaviour{
         if (this.faction == null) {
             return;
         }
-        UIManager.Instance.ShowSmallInfo(this.faction.name);
+        string text = this.faction.name + "\nFavor Summary:";
+        foreach (KeyValuePair<Faction, int> kvp in faction.favor) {
+            text += "\n" + kvp.Key.name + " - " + kvp.Value.ToString();
+        }
+        UIManager.Instance.ShowSmallInfo(text);
     }
     public void HideSmallInfo() {
         if (this.faction == null) {
