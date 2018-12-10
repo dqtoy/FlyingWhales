@@ -59,6 +59,8 @@ public class Log {
                     (obj as Character).AddHistory(this);
                 } else if (obj is BaseLandmark) {
                     (obj as BaseLandmark).AddHistory(this);
+                } else if (obj is Area) {
+                    (obj as Area).AddHistory(this);
                 } else if (obj is Minion) {
                     (obj as Minion).character.AddHistory(this);
                 }

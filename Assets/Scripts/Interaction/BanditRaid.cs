@@ -177,7 +177,7 @@ public class BanditRaid : Interaction {
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
         createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(originLandmark, originLandmark.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(originLandmark.tileLocation.areaOfTile, originLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
             state.descriptionLog.AddToFillers(chosenLandmarkToRaid.tileLocation.areaOfTile, chosenLandmarkToRaid.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_2);
         }
         state.AddLogFiller(new LogFiller(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1));
@@ -191,7 +191,7 @@ public class BanditRaid : Interaction {
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
         createdParty.iactionData.AssignAction(characterAction, newRaidTarget.landmarkObj);
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(originLandmark, originLandmark.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(originLandmark.tileLocation.areaOfTile, originLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
             state.descriptionLog.AddToFillers(newRaidTarget.tileLocation.areaOfTile, newRaidTarget.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_2);
         }
         state.AddLogFiller(new LogFiller(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1));
@@ -208,7 +208,7 @@ public class BanditRaid : Interaction {
             createdParty.characters[i].AddTrait(empoweredTrait);
         }
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(originLandmark, originLandmark.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(originLandmark.tileLocation.areaOfTile, originLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
             state.descriptionLog.AddToFillers(chosenLandmarkToRaid.tileLocation.areaOfTile, chosenLandmarkToRaid.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_2);
         }
         state.AddLogFiller(new LogFiller(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1));
@@ -222,7 +222,7 @@ public class BanditRaid : Interaction {
         createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
         originLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(100);
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(originLandmark, originLandmark.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(originLandmark.tileLocation.areaOfTile, originLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
             state.descriptionLog.AddToFillers(chosenLandmarkToRaid.tileLocation.areaOfTile, chosenLandmarkToRaid.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_2);
         }
         state.AddLogFiller(new LogFiller(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1));

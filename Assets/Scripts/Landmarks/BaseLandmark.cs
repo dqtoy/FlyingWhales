@@ -572,7 +572,7 @@ public class BaseLandmark : ILocation, IInteractable {
             if (this._history.Count > 60) {
                 this._history.RemoveAt(0);
             }
-            tileLocation.areaOfTile.AddHistory(log);
+            //tileLocation.areaOfTile.AddHistory(log);
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
         }
     }

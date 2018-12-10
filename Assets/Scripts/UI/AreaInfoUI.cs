@@ -247,7 +247,7 @@ public class AreaInfoUI : UIMenu {
         }
     }
     private void UpdateHistory(object obj) {
-        if (obj is BaseLandmark && _activeArea != null && (obj as BaseLandmark).tileLocation.areaOfTile.id == _activeArea.id) {
+        if (obj is Area && _activeArea != null && (obj as Area).id == _activeArea.id) {
             UpdateAllHistoryInfo();
         }
     }
