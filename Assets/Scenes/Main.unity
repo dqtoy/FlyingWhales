@@ -26100,6 +26100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b78f9ebfd38b9ad48a4bea7c131dac2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  charactersIntelUI: {fileID: 215701896}
   manaText: {fileID: 462844911}
   suppliesText: {fileID: 1144584639}
   impsText: {fileID: 357062887}
@@ -96750,6 +96751,7 @@ MonoBehaviour:
   characterNameLbl: {fileID: 621497268}
   characterLvlClassLbl: {fileID: 699368000}
   _draggable: {fileID: 0}
+  _grayedOutGO: {fileID: 0}
   characterPortrait: {fileID: 241525079}
 --- !u!1 &2131002327
 GameObject:

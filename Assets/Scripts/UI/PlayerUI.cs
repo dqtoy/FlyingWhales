@@ -9,6 +9,8 @@ using System.Linq;
 public class PlayerUI : MonoBehaviour {
     public static PlayerUI Instance;
 
+    public CharactersIntelUI charactersIntelUI;
+
     public TextMeshProUGUI manaText;
     public TextMeshProUGUI suppliesText;
     public TextMeshProUGUI impsText;

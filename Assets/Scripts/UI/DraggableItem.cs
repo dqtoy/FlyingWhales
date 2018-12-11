@@ -13,6 +13,12 @@ public class DraggableItem : MonoBehaviour, IDragHandler, IBeginDragHandler, IEn
 
     protected object associatedObj;
 
+    #region getters/setters
+    public bool isDraggable {
+        get { return _isDraggable; }
+    }
+    #endregion
+
     private void Awake() {
         SetDraggable(true);
     }

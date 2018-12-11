@@ -44,6 +44,12 @@ public class InduceGrudge : Interaction {
                 name = "Do it.",
                 duration = 0,
                 effect = () => InduceOption(),
+                neededObjectsChecker = new List<ActionOptionNeededObjectChecker>() {
+                    new ActionOptionNeededObjectChecker {
+                        categoryReq = TRAIT_REQUIREMENT.RACE,
+                        requirements = new string[] { RACE.HUMANS.ToString(), RACE.ELVES.ToString(), RACE.GOBLIN.ToString() }
+                    }
+                },
                 neededObjects = new List<System.Type>() { typeof(CharacterIntel) }
             };
             ActionOption doNothingOption = new ActionOption {

@@ -12,17 +12,19 @@ public class CharacterIntelItem : PooledObject, IDragParentItem {
     [SerializeField] private TextMeshProUGUI characterNameLbl;
     [SerializeField] private TextMeshProUGUI characterLvlClassLbl;
     [SerializeField] private DraggableItem _draggable;
+    [SerializeField] private GameObject _grayedOutGO;
+
     public CharacterPortrait characterPortrait;
 
     #region getters/setters
     public Character character {
         get { return _characterIntel.character; }
     }
-    public DraggableItem draggable {
-        get { return _draggable; }
-    }
     public object associatedObj {
         get { return _characterIntel; }
+    }
+    public bool isDraggable {
+        get { return _draggable.isDraggable; }
     }
     #endregion
 
@@ -57,6 +59,10 @@ public class CharacterIntelItem : PooledObject, IDragParentItem {
             characterNameLbl.text += "(Dead)"; 
         }
         characterLvlClassLbl.text = "Lvl." + character.level.ToString() + " " + character.characterClass.className;
+    }
+    public void SetDraggable(bool state) {
+        _draggable.SetDraggable(state);
+        _grayedOutGO.SetActive(!state);
     }
 
     //public void SetBGColor(Color color) {

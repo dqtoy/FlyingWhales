@@ -28,8 +28,8 @@ public class Instigator : Job {
         int critFail = 12 - (multiplier / 4);
         WeightedDictionary<string> weights = new WeightedDictionary<string>();
         weights.AddElement("Success", success);
-        weights.AddElement("Fail", fail);
-        weights.AddElement("Crit Fail", critFail);
+        //weights.AddElement("Fail", fail);
+        //weights.AddElement("Crit Fail", critFail);
         string result = weights.PickRandomElementGivenWeights();
         if (result == "Success") {
             List<INTERACTION_TYPE> choices = GetValidChaosEvents();
