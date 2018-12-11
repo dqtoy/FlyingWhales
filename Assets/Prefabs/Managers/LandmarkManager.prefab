@@ -870,23 +870,23 @@ MonoBehaviour:
       - data:
         - mainSprite: {fileID: 21300000, guid: 3c2c143b0f889194a91526a8068444c3, type: 3}
           tintSprite: {fileID: 0}
-          animation: {fileID: 0}
+          animation: {fileID: 9100000, guid: f163560261e0a8b4ea51b301015f4a74, type: 2}
       - data:
         - mainSprite: {fileID: 21300000, guid: 3c2c143b0f889194a91526a8068444c3, type: 3}
           tintSprite: {fileID: 0}
-          animation: {fileID: 0}
+          animation: {fileID: 9100000, guid: f163560261e0a8b4ea51b301015f4a74, type: 2}
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 3c2c143b0f889194a91526a8068444c3, type: 3}
       tintSprite: {fileID: 0}
-      animation: {fileID: 0}
+      animation: {fileID: 9100000, guid: f163560261e0a8b4ea51b301015f4a74, type: 2}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 3c2c143b0f889194a91526a8068444c3, type: 3}
       tintSprite: {fileID: 0}
-      animation: {fileID: 0}
+      animation: {fileID: 9100000, guid: f163560261e0a8b4ea51b301015f4a74, type: 2}
     elvenLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 3c2c143b0f889194a91526a8068444c3, type: 3}
       tintSprite: {fileID: 0}
-      animation: {fileID: 0}
+      animation: {fileID: 9100000, guid: f163560261e0a8b4ea51b301015f4a74, type: 2}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
     startingMonsterSpawn: {fileID: 0}

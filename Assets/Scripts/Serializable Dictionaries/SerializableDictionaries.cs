@@ -26,6 +26,8 @@ public class TileSpriteCorruptionListDictionary : SerializableDictionary<Sprite,
 public class RaceClassListDictionary : SerializableDictionary<Race, List<RaceAreaDefenderSetting>, RaceDefenderListStorage> { }
 [System.Serializable]
 public class JobPortraitFramesDictionary : SerializableDictionary<JOB, PortraitFrame> { }
+[System.Serializable]
+public class BiomeSpriteAnimationDictionary : SerializableDictionary<Sprite, RuntimeAnimatorController> { }
 
 [System.Serializable]
 public class CharacterTagListStorage : SerializableDictionary.Storage<List<CharacterActionTagRequirement>> { }
