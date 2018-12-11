@@ -29,7 +29,7 @@ public class InflictIllness : Interaction {
         //startState.AddLogFiller(new LogFiller(null, otherData[0].ToString(), LOG_IDENTIFIER.STRING_1));
 
         //startState.SetEffect(() => RaidSuccessEffect(startState));
-
+        CreateActionOptions(startState);
         induceIllnessSuccessful.SetEffect(() => InduceIllnessSuccessRewardEffect(induceIllnessSuccessful));
         induceIllnessFail.SetEffect(() => InduceIllnessFailRewardEffect(induceIllnessFail));
         induceIllnessCriticalFail.SetEffect(() => InduceIllnessCriticalFailRewardEffect(induceIllnessCriticalFail));
@@ -50,6 +50,11 @@ public class InflictIllness : Interaction {
                 name = "Use it now.",
                 duration = 0,
                 effect = () => InduceIllnessOptionEffect(state),
+                neededObjectsChecker = new List<ActionOptionNeededObjectChecker>() {
+                    new ActionOptionLocationRequirement {
+                        requiredLocation = interactable.tileLocation.areaOfTile,
+                    }
+                },
                 neededObjects = new List<System.Type>() { typeof(CharacterIntel) },
                 //jobNeeded = JOB.DISSUADER,
                 //doesNotMeetRequirementsStr = "Minion must be a dissuader",
@@ -93,14 +98,34 @@ public class InflictIllness : Interaction {
     #region Reward Effects
     private void InduceIllnessSuccessRewardEffect(InteractionState state) {
         //**Mechanics**: Choose a random Illness Trait and add it to Character Intel
+        string chosenIllness = AttributeManager.Instance.GetRandomIllness();
         //**Level Up**: Instigator Minion +1
         _characterInvolved.LevelUp();
+        Character target = previousState.assignedCharacter.character;
+        target.AddTrait(AttributeManager.Instance.allIllnesses[chosenIllness]);
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.descriptionLog.AddToFillers(null, chosenIllness, LOG_IDENTIFIER.STRING_1);
+        }
+        state.AddLogFiller(new LogFiller(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        state.AddLogFiller(new LogFiller(null, chosenIllness, LOG_IDENTIFIER.STRING_1));
     }
     private void InduceIllnessFailRewardEffect(InteractionState state) {
-
+        Character target = previousState.assignedCharacter.character;
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        }
+        state.AddLogFiller(new LogFiller(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
     }
     private void InduceIllnessCriticalFailRewardEffect(InteractionState state) {
         //**Mechanics**: Choose a random Illness Trait and add it to Instigator Minion
+        string chosenIllness = AttributeManager.Instance.GetRandomIllness();
+        _characterInvolved.AddTrait(AttributeManager.Instance.allIllnesses[chosenIllness]);
+
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(null, chosenIllness, LOG_IDENTIFIER.STRING_1);
+        }
+        state.AddLogFiller(new LogFiller(null, chosenIllness, LOG_IDENTIFIER.STRING_1));
     }
     private void DoNothingRewardEffect(InteractionState state) {
 

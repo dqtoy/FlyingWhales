@@ -301,27 +301,27 @@ public class Biomes : MonoBehaviour {
         int index = 0;
         switch (tile.biomeType) {
             case BIOMES.SNOW:
-            index = Array.IndexOf(snowTrees, tile.spriteRenderer.sprite);
+            index = Array.IndexOf(snowTrees, tile.baseSprite);
             tile.SetBaseSprite(snowTreesCorrupted[index]);
             break;
             case BIOMES.TUNDRA:
-            index = Array.IndexOf(tundraTrees, tile.spriteRenderer.sprite);
+            index = Array.IndexOf(tundraTrees, tile.baseSprite);
             tile.SetBaseSprite(tundraTreesCorrupted[index]);
             break;
             case BIOMES.DESERT:
-            index = Array.IndexOf(desertTrees, tile.spriteRenderer.sprite);
+            index = Array.IndexOf(desertTrees, tile.baseSprite);
             tile.SetBaseSprite(desertTreesCorrupted[index]);
             break;
             case BIOMES.GRASSLAND:
-            index = Array.IndexOf(grasslandTrees, tile.spriteRenderer.sprite);
+            index = Array.IndexOf(grasslandTrees, tile.baseSprite);
             tile.SetBaseSprite(grasslandTreesCorrupted[index]);
             break;
             case BIOMES.FOREST:
-            index = Array.IndexOf(forestTrees, tile.spriteRenderer.sprite);
+            index = Array.IndexOf(forestTrees, tile.baseSprite);
             tile.SetBaseSprite(forestTreesCorrupted[index]);
             break;
             case BIOMES.ANCIENT_RUIN:
-            index = Array.IndexOf(ancienctRuinTiles, tile.spriteRenderer.sprite);
+            index = Array.IndexOf(ancienctRuinTiles, tile.baseSprite);
             tile.SetBaseSprite(ancientRuinCorruptedTiles[index]);
             break;
         }

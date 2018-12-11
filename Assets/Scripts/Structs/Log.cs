@@ -44,7 +44,10 @@ public class Log {
         logCallStack = StackTraceUtility.ExtractStackTrace();
     }
 
-    internal void AddToFillers(object obj, string value, LOG_IDENTIFIER identifier){
+    internal void AddToFillers(object obj, string value, LOG_IDENTIFIER identifier, bool replaceExisting = true){
+        if (replaceExisting && HasFillerForIdentifier(identifier)) {
+            fillers.Remove(GetFillerForIdentifier(identifier));
+        }
 		this.fillers.Add (new LogFiller (obj, value, identifier));
 	}
     public void SetFillers(List<LogFiller> fillers) {
@@ -75,5 +78,14 @@ public class Log {
             }
         }
         return false;
+    }
+    private LogFiller GetFillerForIdentifier(LOG_IDENTIFIER identifier) {
+        for (int i = 0; i < fillers.Count; i++) {
+            LogFiller currFiller = fillers[i];
+            if (currFiller.identifier == identifier) {
+                return currFiller;
+            }
+        }
+        return default(LogFiller);
     }
 }

@@ -475,31 +475,43 @@ public class InteractionItem : MonoBehaviour {
     private void CharacterIntelChecker() {
         if (_currentSelectedActionOption.neededObjectsChecker != null) {
             ActionOptionNeededObjectChecker checker = _currentSelectedActionOption.neededObjectsChecker.ElementAtOrDefault(currentNeededObjectIndex);
-            if (checker != null && checker.requirements != null) {
-                if(checker.categoryReq == TRAIT_REQUIREMENT.RACE) {
-                    if(_interaction.characterInvolved != null) {
-                        for (int i = 0; i < PlayerUI.Instance.charactersIntelUI.activeCharacterEntries.Count; i++) {
-                            if (!PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].isDraggable) {
-                                continue;
+            if (checker is ActionOptionTraitRequirement) {
+                ActionOptionTraitRequirement requirement = checker as ActionOptionTraitRequirement;
+                if (checker != null && requirement.requirements != null) {
+                    if (requirement.categoryReq == TRAIT_REQUIREMENT.RACE) {
+                        if (_interaction.characterInvolved != null) {
+                            for (int i = 0; i < PlayerUI.Instance.charactersIntelUI.activeCharacterEntries.Count; i++) {
+                                if (!PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].isDraggable) {
+                                    continue;
+                                }
+                                Character character = PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].character;
+                                if (_interaction.characterInvolved == character) {
+                                    PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].SetDraggable(false);
+                                } else {
+                                    PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].SetDraggable(checker.IsMatch(character));
+                                }
                             }
-                            Character character = PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].character;
-                            if (_interaction.characterInvolved == character) {
-                                PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].SetDraggable(false);
-                            } else {
+                        } else {
+                            for (int i = 0; i < PlayerUI.Instance.charactersIntelUI.activeCharacterEntries.Count; i++) {
+                                if (!PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].isDraggable) {
+                                    continue;
+                                }
+                                Character character = PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].character;
                                 PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].SetDraggable(checker.IsMatch(character));
                             }
                         }
-                    } else {
-                        for (int i = 0; i < PlayerUI.Instance.charactersIntelUI.activeCharacterEntries.Count; i++) {
-                            if (!PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].isDraggable) {
-                                continue;
-                            }
-                            Character character = PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].character;
-                            PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].SetDraggable(checker.IsMatch(character));
-                        }
                     }
                 }
+            } else {
+                for (int i = 0; i < PlayerUI.Instance.charactersIntelUI.activeCharacterEntries.Count; i++) {
+                    if (!PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].isDraggable) {
+                        continue;
+                    }
+                    Character character = PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].character;
+                    PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].SetDraggable(checker.IsMatch(character));
+                }
             }
+            
         }
     }
     #endregion

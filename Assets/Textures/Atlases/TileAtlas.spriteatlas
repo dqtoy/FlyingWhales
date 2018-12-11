@@ -165,6 +165,21 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 550328c8aab0cb541bfe4ffe3274eda9, type: 3}
   - {fileID: 21300058, guid: c7ff9c909e8eed246bce7d9e83cebd70, type: 3}
   - {fileID: 21300032, guid: b6e724aa95c4859418f329113b62e9c9, type: 3}
+  - {fileID: 21300000, guid: 21d81b00ebf4f6f4da7770880f230e9f, type: 3}
+  - {fileID: 21300000, guid: 53b87fd42d12b1a4e8798b2960bcb98d, type: 3}
+  - {fileID: 21300000, guid: 3a32ab53acc949649ae967884adf2142, type: 3}
+  - {fileID: 21300000, guid: e6712495fcf5833479ab8374f8819dc7, type: 3}
+  - {fileID: 21300000, guid: bb446d3f9b07cef4e9db4ea25b49e724, type: 3}
+  - {fileID: 21300000, guid: 29e439d8f413f314a92bba13c24c7509, type: 3}
+  - {fileID: 21300000, guid: a96eb1358b101ec4eb91fb09c4c8021f, type: 3}
+  - {fileID: 21300000, guid: dd52f9a16da7341408773dc6b3d29c0f, type: 3}
+  - {fileID: 21300000, guid: 7b57e639d8eb404419455b591db58d13, type: 3}
+  - {fileID: 21300000, guid: 0234962aedae3ea43923af6d82948d6d, type: 3}
+  - {fileID: 21300000, guid: 155168658d87c854b8e196306ef8190e, type: 3}
+  - {fileID: 21300000, guid: b55e70b332b8c864bb5f0a52f75816b5, type: 3}
+  - {fileID: 21300000, guid: 09b243ef3444ae548b3d91f627d90acf, type: 3}
+  - {fileID: 21300000, guid: 976d66e3187e5174b9662fa2c6c6b86f, type: 3}
+  - {fileID: 21300000, guid: cbe4ea300e0115b46a834cd2b2023cb6, type: 3}
   - {fileID: 21300028, guid: c7ff9c909e8eed246bce7d9e83cebd70, type: 3}
   - {fileID: 21300000, guid: b81af6e4fc769684f86792f75f8053b9, type: 3}
   - {fileID: 21300000, guid: 91e5449382975514899f09d4cbed9029, type: 3}
@@ -706,6 +721,21 @@ SpriteAtlas:
   - Jungle Forest_00001
   - S_Mountains_4
   - PrototypeTile5_16
+  - Desert Forest_00006
+  - Desert Forest_00007
+  - Desert Forest_00004
+  - Desert Forest_00005
+  - Desert Forest_00002
+  - Desert Forest_00003
+  - Desert Forest_00000
+  - Desert Forest_00001
+  - Desert Forest_00011
+  - Desert Forest_00010
+  - Desert Forest_00013
+  - Desert Forest_00008
+  - Desert Forest_00012
+  - Desert Forest_00009
+  - Desert Forest_00014
   - D_Trees_1
   - Tundra Forest_00014
   - Tundra Forest_00009

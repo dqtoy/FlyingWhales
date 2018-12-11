@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 using UnityEngine;
-
+using System.Linq;
 
 public class AttributeManager : MonoBehaviour {
     public static AttributeManager Instance;
@@ -14,6 +14,7 @@ public class AttributeManager : MonoBehaviour {
     private List<CharacterAttribute> _allStructureAttributes;
     private Dictionary<string, Trait> _allTraits;
     private Dictionary<string, Trait> _allPositiveTraits;
+    private Dictionary<string, Trait> _allIlnesses;
 
     #region getters/setters
     public List<CharacterAttribute> allAttributes {
@@ -34,6 +35,9 @@ public class AttributeManager : MonoBehaviour {
     public Dictionary<string, Trait> allPositiveTraits {
         get { return _allPositiveTraits; }
     }
+    public Dictionary<string, Trait> allIllnesses {
+        get { return _allIlnesses; }
+    }
     #endregion
 
     void Awake() {
@@ -43,6 +47,7 @@ public class AttributeManager : MonoBehaviour {
     public void Initialize() {
         _allTraits = new Dictionary<string, Trait>();
         _allPositiveTraits = new Dictionary<string, Trait>();
+        _allIlnesses = new Dictionary<string, Trait>();
         string path = Utilities.dataPath + "CombatAttributes/";
         string[] files = Directory.GetFiles(path, "*.json");
         for (int i = 0; i < files.Length; i++) {
@@ -50,6 +55,8 @@ public class AttributeManager : MonoBehaviour {
             _allTraits.Add(attribute.name, attribute);
             if(attribute.type == TRAIT_TYPE.POSITIVE) {
                 _allPositiveTraits.Add(attribute.name, attribute);
+            } else if (attribute.type == TRAIT_TYPE.ILLNESS) {
+                _allIlnesses.Add(attribute.name, attribute);
             }
         }
     }
@@ -70,5 +77,10 @@ public class AttributeManager : MonoBehaviour {
             count++;
         }
         return string.Empty;
+    }
+
+    public string GetRandomIllness() {
+        int random = UnityEngine.Random.Range(0, _allIlnesses.Count);
+        return _allIlnesses.Keys.ElementAt(random);
     }
 }
