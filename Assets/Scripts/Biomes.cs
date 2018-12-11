@@ -58,6 +58,10 @@ public class Biomes : MonoBehaviour {
     [SerializeField] private Sprite[] tundraTrees;
     [SerializeField] private Sprite[] tundraTreesCorrupted;
 
+    [Space(10)]
+    [Header("Animations")]
+    [SerializeField] private BiomeSpriteAnimationDictionary biomeSpriteAnimations;
+
     #region getters/setters
     public Sprite[] bareTiles{
 		get{ return this._bareTiles; }
@@ -716,6 +720,13 @@ public class Biomes : MonoBehaviour {
             currTile.SetElevation(ELEVATION.PLAIN);
             currTile.SetPassableState(true);
         }
+    }
+
+    public RuntimeAnimatorController GetTileSpriteAnimation(Sprite sprite) {
+        if (biomeSpriteAnimations.ContainsKey(sprite)) {
+            return biomeSpriteAnimations[sprite];
+        }
+        return null;
     }
 
    // [ContextMenu("Generate Tags")]

@@ -38,6 +38,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private GameObject _clickHighlightGO;
     [SerializeField] private GameObject _corruptionHighlightGO;
     [SerializeField] private Sprite manaTileSprite;
+    [SerializeField] private Animator baseTileAnimator;
 
     [Space(10)]
     [Header("Tile Borders")]
@@ -980,6 +981,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     //}
     internal void SetBaseSprite(Sprite baseSprite) {
         spriteRenderer.sprite = baseSprite;
+        RuntimeAnimatorController animation = Biomes.Instance.GetTileSpriteAnimation(baseSprite);
+        if (animation != null) {
+            baseTileAnimator.runtimeAnimatorController = animation;
+            baseTileAnimator.enabled = true;
+        } else {
+            baseTileAnimator.enabled = false;
+        }
     }
     internal void SetCenterSprite(Sprite centerSprite) {
         this.centerPiece.GetComponent<SpriteRenderer>().sprite = centerSprite;

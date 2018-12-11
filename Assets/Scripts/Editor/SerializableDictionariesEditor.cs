@@ -28,6 +28,8 @@ public class TileSpriteCorruptionListDictionaryPropertyDrawer : SerializableDict
 public class RaceDefenderListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(JobPortraitFramesDictionary))]
 public class JobPortraitFramesDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(BiomeSpriteAnimationDictionary))]
+public class BiomeSpriteAnimationDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 
 [CustomPropertyDrawer(typeof(CharacterTagListStorage))]
