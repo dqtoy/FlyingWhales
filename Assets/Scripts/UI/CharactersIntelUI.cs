@@ -16,10 +16,16 @@ public class CharactersIntelUI : UIMenu {
     [SerializeField] private AnimationCurve curve;
 
     private Dictionary<Character, CharacterIntelItem> characterEntries;
+    private List<CharacterIntelItem> _activeCharacterEntries;
 
-
+    #region getters/setters
+    public List<CharacterIntelItem> activeCharacterEntries {
+        get { return _activeCharacterEntries; }
+    }
+    #endregion
     internal override void Initialize() {
         base.Initialize();
+        _activeCharacterEntries = new List<CharacterIntelItem>();
         characterEntries = new Dictionary<Character, CharacterIntelItem>();
         Messenger.AddListener<Character>(Signals.CHARACTER_CREATED, AddCharacterEntry);
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, RemoveCharacterEntry);
@@ -108,6 +114,8 @@ public class CharactersIntelUI : UIMenu {
             CharacterIntelItem item = GetCharacterEntry(charIntel.character);
             if (item != null) {
                 item.gameObject.SetActive(true);
+                item.SetDraggable(true);
+                _activeCharacterEntries.Add(item);
             }
         }
     }

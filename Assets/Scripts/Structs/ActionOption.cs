@@ -13,6 +13,7 @@ public class ActionOption {
     public Action effect;
     public Action onStartDurationAction;
     public Func<bool> canBeDoneAction;
+    public List<ActionOptionNeededObjectChecker> neededObjectsChecker;
     public List<System.Type> neededObjects;
     public List<object> assignedObjects; //NOTE: assigned objects must be accurate with needed objects list, TODO: Change the 2 lists to use a dictionary instead
     public string doesNotMeetRequirementsStr;

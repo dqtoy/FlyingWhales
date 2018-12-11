@@ -771,7 +771,7 @@ public class Area {
             if (interactionToBeAddedIndex != -1) {
                 for (int i = 0; i < currentInteractions.Count; i++) {
                     int currentInteractionIndex = Utilities.GetInteractionPriorityIndex(currentInteractions[i].type);
-                    if (interactionToBeAddedIndex < currentInteractionIndex) {
+                    if (currentInteractionIndex == -1 || interactionToBeAddedIndex < currentInteractionIndex) {
                         hasBeenInserted = true;
                         currentInteractions.Insert(i, interaction);
                         break;

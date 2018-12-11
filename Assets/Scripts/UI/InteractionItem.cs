@@ -268,6 +268,7 @@ public class InteractionItem : MonoBehaviour {
                 LoadSlotData();
                 UpdateSideMenu();
             } else {
+                ResetSideMenu();
                 //no more needed objects
                 if (!_interaction.currentState.isEnd) {
                     _currentSelectedActionOption.ActivateOption(_interaction.interactable);
@@ -338,10 +339,23 @@ public class InteractionItem : MonoBehaviour {
             UIManager.Instance.ShowFactionIntelMenu();
         } else if (neededObject == typeof(CharacterIntel)) {
             UIManager.Instance.ShowCharacterIntelMenu();
+            CharacterIntelChecker();
         } else if (neededObject == typeof(Minion)) {
             UIManager.Instance.ShowMinionsMenu();
         } else if (neededObject == typeof(LocationIntel)) {
             UIManager.Instance.ShowLocationIntelMenu();
+        }
+    }
+    private void ResetSideMenu() {
+        System.Type neededObject = _currentSelectedActionOption.neededObjects[currentNeededObjectIndex];
+        if (neededObject == typeof(FactionIntel)) {
+            //TODO
+        } else if (neededObject == typeof(CharacterIntel)) {
+            ResetCharacterIntels();
+        } else if (neededObject == typeof(Minion)) {
+            //TODO
+        } else if (neededObject == typeof(LocationIntel)) {
+            //TODO
         }
     }
     public void AddAssignedObject(object obj) {
@@ -449,4 +463,44 @@ public class InteractionItem : MonoBehaviour {
         characterFactionEmblem.SetFaction(character.faction);
         characterInfoGO.SetActive(true);
     }
+
+    #region Action Option Needed Object Checker
+    private void ResetCharacterIntels() {
+        for (int i = 0; i < PlayerUI.Instance.charactersIntelUI.activeCharacterEntries.Count; i++) {
+            if (!PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].isDraggable) {
+                PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].SetDraggable(true);
+            }
+        }
+    }
+    private void CharacterIntelChecker() {
+        if (_currentSelectedActionOption.neededObjectsChecker != null) {
+            ActionOptionNeededObjectChecker checker = _currentSelectedActionOption.neededObjectsChecker.ElementAtOrDefault(currentNeededObjectIndex);
+            if (checker != null && checker.requirements != null) {
+                if(checker.categoryReq == TRAIT_REQUIREMENT.RACE) {
+                    if(_interaction.characterInvolved != null) {
+                        for (int i = 0; i < PlayerUI.Instance.charactersIntelUI.activeCharacterEntries.Count; i++) {
+                            if (!PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].isDraggable) {
+                                continue;
+                            }
+                            Character character = PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].character;
+                            if (_interaction.characterInvolved == character) {
+                                PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].SetDraggable(false);
+                            } else {
+                                PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].SetDraggable(checker.IsMatch(character));
+                            }
+                        }
+                    } else {
+                        for (int i = 0; i < PlayerUI.Instance.charactersIntelUI.activeCharacterEntries.Count; i++) {
+                            if (!PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].isDraggable) {
+                                continue;
+                            }
+                            Character character = PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].character;
+                            PlayerUI.Instance.charactersIntelUI.activeCharacterEntries[i].SetDraggable(checker.IsMatch(character));
+                        }
+                    }
+                }
+            }
+        }
+    }
+    #endregion
 }

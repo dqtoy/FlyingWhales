@@ -25,6 +25,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
     protected bool _doNotDisturb;
     protected bool _isBeingInspected;
     protected bool _hasBeenInspected;
+    protected bool _alreadyTargetedByGrudge;
     protected GENDER _gender;
     protected MODE _currentMode;
     protected CharacterClass _characterClass;
@@ -385,6 +386,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
     }
     public bool hasBeenInspected {
         get { return _hasBeenInspected; }
+    }
+    public bool alreadyTargetedByGrudge {
+        get { return _alreadyTargetedByGrudge; }
     }
     public IObject questGiverObj {
         get { return currentParty.icharacterObject; }
@@ -1933,6 +1937,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
     public void SetDoNotDisturb(bool state) {
         _doNotDisturb = state;
     }
+    public void SetAlreadyTargetedByGrudge(bool state) {
+        _alreadyTargetedByGrudge = state;
+    }
     public void AttackAnArea(Area target) {
         Interaction attackInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ATTACK, target.coreTile.landmarkOnTile);
         attackInteraction.AddEndInteractionAction(() => _ownParty.GoHomeAndDisband());
@@ -3118,21 +3125,18 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
     }
     private WeightedDictionary<INTERACTION_TYPE> GetValidInteractionWeights() {
         List<CharacterInteractionWeight> jobInteractions = InteractionManager.Instance.GetJobNPCInteractionWeights(job.jobType);
-        if(jobInteractions != null) {
-            WeightedDictionary<INTERACTION_TYPE> weights = new WeightedDictionary<INTERACTION_TYPE>();
+        WeightedDictionary<INTERACTION_TYPE> weights = new WeightedDictionary<INTERACTION_TYPE>();
+        if (jobInteractions != null) {
             for (int i = 0; i < jobInteractions.Count; i++) {
                 if (GetInteractionOfType(jobInteractions[i].interactionType) == null && InteractionManager.Instance.CanCreateInteraction(jobInteractions[i].interactionType, this)) {
                     weights.AddElement(jobInteractions[i].interactionType, jobInteractions[i].weight);
                 }
             }
-            return weights;
         }
-        //foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in interactionWeights.dictionary) {
-        //    if (GetInteractionOfType(kvp.Key) == null && InteractionManager.Instance.CanCreateInteraction(kvp.Key, this)) {
-        //        weights.AddElement(kvp.Key, kvp.Value);
-        //    }
-        //}
-        return null;
+        if (InteractionManager.Instance.CanCreateInteraction(INTERACTION_TYPE.RETURN_HOME, this)) {
+            weights.AddElement(INTERACTION_TYPE.RETURN_HOME, 10);
+        }
+        return weights;
     }
     private void AddDefaultInteractions() {
         List<CharacterInteractionWeight> defaultInteractions = InteractionManager.Instance.GetDefaultInteractionWeightsForRole(this.role.roleType);
@@ -3144,5 +3148,4 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         }
     }
     #endregion
-
 }
