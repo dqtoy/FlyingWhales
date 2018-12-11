@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.22380279, g: 0.24376711, b: 0.26534963, a: 1}
+  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -41318,7 +41318,7 @@ Camera:
   far clip plane: 1000
   field of view: 120
   orthographic: 1
-  orthographic size: 9
+  orthographic size: 8
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -41360,9 +41360,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _minFov: 5
-  _maxFov: 9
-  sensitivity: 15
-  _zoomSpeed: 30
+  _maxFov: 8
+  sensitivity: 10
+  _zoomSpeed: 10
   nameplateCamera: {fileID: 252774528}
   _wholeMapCamera: {fileID: 1608479981}
   _uiCamera: {fileID: 0}
