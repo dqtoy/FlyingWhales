@@ -161,6 +161,8 @@ public class CharacterManager : MonoBehaviour {
         Party party = newCharacter.CreateOwnParty();
         if (faction != null) {
             faction.AddNewCharacter(newCharacter);
+        } else {
+            FactionManager.Instance.neutralFaction.AddNewCharacter(newCharacter);
         }
 #if !WORLD_CREATION_TOOL
         party.CreateIcon();

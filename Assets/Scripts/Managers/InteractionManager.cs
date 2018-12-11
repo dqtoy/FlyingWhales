@@ -216,6 +216,8 @@ public class InteractionManager : MonoBehaviour {
                     return false;
                 }
                 return false;
+            case INTERACTION_TYPE.MYSTERIOUS_SARCOPHAGUS:
+                return landmark.specificLocation.tileLocation.areaOfTile.name == "Tessellated Triangle" || landmark.specificLocation.tileLocation.areaOfTile.name == "Gloomhollow Crypts";
             default:
                 return true;
         }
@@ -291,6 +293,8 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
+            case INTERACTION_TYPE.MYSTERIOUS_SARCOPHAGUS:
+                return character.specificLocation.tileLocation.areaOfTile.name == "Tessellated Triangle" || character.specificLocation.tileLocation.areaOfTile.name == "Gloomhollow Crypts";
             case INTERACTION_TYPE.INFLICT_ILLNESS:
                 /*You can inflict a random illness on a character. Trigger requirements:
                 - there must be at least one character in the location

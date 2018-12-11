@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class Explorer : Job {
 
-    INTERACTION_TYPE[] explorerEvents = new INTERACTION_TYPE[] { //TODO: Put this somwhere else
-        
+    INTERACTION_TYPE[] explorerEvents = new INTERACTION_TYPE[] { //TODO: Put this somwhere else        
+	INTERACTION_TYPE.MYSTERIOUS_SARCOPHAGUS,
     };
 
     public Explorer(Character character) : base(character, JOB.EXPLORER) {
