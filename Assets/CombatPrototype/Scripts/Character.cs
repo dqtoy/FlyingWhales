@@ -2854,6 +2854,11 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         if (GetTrait(trait.name) == null) {
             _traits.Add(trait);
             ApplyFlatTraitEffects(trait);
+            if(trait.daysDuration > 0) {
+                GameDate removeDate = GameManager.Instance.Today();
+                removeDate.AddDays(trait.daysDuration);
+                SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait));
+            }
         }
     }
     public bool RemoveTrait(Trait trait) {
