@@ -213,6 +213,8 @@ public class InteractionManager : MonoBehaviour {
                     return false;
                 }
                 return false;
+            case INTERACTION_TYPE.MYSTERIOUS_SARCOPHAGUS:
+                return landmark.specificLocation.tileLocation.areaOfTile.name == "Tessellated Triangle" || landmark.specificLocation.tileLocation.areaOfTile.name == "Gloomhollow Crypts";
             default:
                 return true;
         }
@@ -288,6 +290,8 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
             return false;
+            case INTERACTION_TYPE.MYSTERIOUS_SARCOPHAGUS:
+            return character.specificLocation.tileLocation.areaOfTile.name == "Tessellated Triangle" || character.specificLocation.tileLocation.areaOfTile.name == "Gloomhollow Crypts";
             default:
                 return true;
         }

@@ -38,7 +38,9 @@ public class ActionOption {
     }
 
     public void ActivateOption(BaseLandmark interactable) {
-        PlayerManager.Instance.player.AdjustCurrency(cost.currency, -cost.amount);
+        if (interactionState.interaction.isChosen) { //Only those interaction that pops up must have cost, all other interactions are free since they will all default
+            PlayerManager.Instance.player.AdjustCurrency(cost.currency, -cost.amount);
+        }
         interactionState.interaction.SetActivatedState(true);
         StartDuration();
         interactionState.SetChosenOption(this);
@@ -46,20 +48,28 @@ public class ActionOption {
     }
     public bool CanBeDone() {
         if(canBeDoneAction != null) {
-            if (canBeDoneAction() && PlayerManager.Instance.player.currencies[cost.currency] >= cost.amount) {
-                if(jobNeeded == JOB.NONE) {
-                    return true;
-                } else if(jobNeeded == interactionState.interaction.explorerMinion.character.job.jobType) {
+            if (canBeDoneAction()) {
+                if(jobNeeded != JOB.NONE && jobNeeded != interactionState.interaction.explorerMinion.character.job.jobType) {
+                    return false;
+                }
+                if(interactionState.interaction.isChosen) {
+                    if(PlayerManager.Instance.player.currencies[cost.currency] >= cost.amount) {
+                        return true;
+                    }
+                } else {
                     return true;
                 }
             }
         } else {
-            if (PlayerManager.Instance.player.currencies[cost.currency] >= cost.amount) {
-                if (jobNeeded == JOB.NONE) {
-                    return true;
-                } else if (jobNeeded == interactionState.interaction.explorerMinion.character.job.jobType) {
+            if (jobNeeded != JOB.NONE && jobNeeded != interactionState.interaction.explorerMinion.character.job.jobType) {
+                return false;
+            }
+            if (interactionState.interaction.isChosen) {
+                if (PlayerManager.Instance.player.currencies[cost.currency] >= cost.amount) {
                     return true;
                 }
+            } else {
+                return true;
             }
         }
         return false;

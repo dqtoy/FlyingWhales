@@ -3030,7 +3030,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         _playerCharacterItem = item;
     }
 
-    #region Interaction Generation
+    #region Interaction
     public void DisableInteractionGeneration() {
         Messenger.RemoveListener(Signals.DAY_STARTED, DailyInteractionGeneration);
     }
@@ -3150,6 +3150,22 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
                 CharacterInteractionWeight currWeight = defaultInteractions[i];
                 interactionWeights.AddElement(currWeight.interactionType, currWeight.weight);
             }
+        }
+    }
+    public void ClaimReward(Reward reward) {
+        switch (reward.rewardType) {
+            case REWARD.LEVEL:
+            LevelUp(reward.amount);
+            break;
+            case REWARD.SUPPLY:
+            if(minion != null) {
+                PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, reward.amount);
+            } else {
+                homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(reward.amount);
+            }
+            break;
+            default:
+            break;
         }
     }
     #endregion

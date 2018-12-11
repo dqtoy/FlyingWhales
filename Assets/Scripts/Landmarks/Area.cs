@@ -822,19 +822,6 @@ public class Area {
         }
         return choices;
     }
-    public List<Character> GetAreaResidents() {
-        List<Character> choices = new List<Character>();
-        List<BaseLandmark> landmarkCandidates = this.landmarks;
-        for (int i = 0; i < landmarkCandidates.Count; i++) {
-            for (int j = 0; j < landmarkCandidates[i].charactersWithHomeOnLandmark.Count; j++) {
-                Character character = landmarkCandidates[i].charactersWithHomeOnLandmark[j];
-                if (character.specificLocation.tileLocation.areaOfTile == this) {
-                    choices.Add(character);
-                }
-            }
-        }
-        return choices;
-    }
     public void AddEventTargettingThis(Interaction interaction) {
         if (!eventsTargettingThis.Contains(interaction)) {
             eventsTargettingThis.Add(interaction);

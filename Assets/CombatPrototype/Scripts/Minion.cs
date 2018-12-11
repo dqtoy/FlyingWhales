@@ -192,13 +192,7 @@ public class Minion : IUnit {
 
     #region Rewards
     public void ClaimReward(Reward reward) {
-        switch (reward.rewardType) {
-            case REWARD.LEVEL:
-            LevelUp(reward.amount);
-            break;
-            default:
-            break;
-        }
+        _character.ClaimReward(reward);
     }
     #endregion
 }
