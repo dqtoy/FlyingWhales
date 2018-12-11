@@ -63,10 +63,6 @@ public class MoveToRaid : Interaction {
             state.SetDefaultOption(doNothing);
         }
     }
-    public override void EndInteraction() {
-        base.EndInteraction();
-        //TODO: _characterInvolved.SetForce
-    }
     #endregion
 
     #region Action Option Effects

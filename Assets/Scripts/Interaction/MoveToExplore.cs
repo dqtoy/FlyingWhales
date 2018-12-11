@@ -107,7 +107,12 @@ public class MoveToExplore : Interaction {
     #endregion
 
     private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL);
+        _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateExploreEvent());
+    }
+
+    private void CreateExploreEvent() {
+        Interaction exploreEvent = (_characterInvolved.job as Explorer).CreateExplorerEvent();
+        _characterInvolved.SetForcedInteraction(exploreEvent);
     }
 
     private Area GetTargetLocation() {
