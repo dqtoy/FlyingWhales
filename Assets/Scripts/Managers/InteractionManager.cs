@@ -177,6 +177,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.INDUCE_GRUDGE:
                 createdInteraction = new InduceGrudge(interactable);
                 break;
+            case INTERACTION_TYPE.INFLICT_ILLNESS:
+                createdInteraction = new InflictIllness(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -287,7 +290,21 @@ public class InteractionManager : MonoBehaviour {
                         return true;
                     }
                 }
-            return false;
+                return false;
+            case INTERACTION_TYPE.INFLICT_ILLNESS:
+                /*You can inflict a random illness on a character. Trigger requirements:
+                - there must be at least one character in the location
+                - the player must have intel of at least one of these characters*/
+                Area area = character.specificLocation.tileLocation.areaOfTile;
+                List<Character> choices = new List<Character>(area.charactersAtLocation);
+                choices.Remove(character);
+                for (int i = 0; i < choices.Count; i++) {
+                    Character currCharacter = choices[i];
+                    if (currCharacter.characterIntel.isObtained) {
+                        return true;
+                    }
+                }
+                return false;
             default:
                 return true;
         }

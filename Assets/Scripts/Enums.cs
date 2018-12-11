@@ -1093,6 +1093,7 @@ public enum TRAIT_TYPE {
     NEUTRAL,
     POSITIVE,
     NEGATIVE,
+    ILLNESS,
 }
 public enum TRAIT_REQUIREMENT_SEPARATOR {
     OR,

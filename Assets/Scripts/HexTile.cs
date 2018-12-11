@@ -110,6 +110,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public BaseLandmark corruptedLandmark = null;
     private GameObject _spawnedTendril = null;
 
+    public Sprite baseSprite { get; private set; }
+
     #region getters/setters
     public int id { get { return data.id; } }
     public int xCoordinate { get { return data.xCoordinate; } }
@@ -980,6 +982,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     //    }
     //}
     internal void SetBaseSprite(Sprite baseSprite) {
+        this.baseSprite = baseSprite;
         spriteRenderer.sprite = baseSprite;
         RuntimeAnimatorController animation = Biomes.Instance.GetTileSpriteAnimation(baseSprite);
         if (animation != null) {
