@@ -42,16 +42,12 @@ public class Explorer : Job {
             Interaction interaction = null;
             switch (chosenResult) {
                 case RESULT.SUCCESS:
-                    List<INTERACTION_TYPE> choices = GetValidExplorerEvents();
-                    if (choices.Count > 0) {
-                        INTERACTION_TYPE chosenType = choices[Random.Range(0, choices.Count)];
-                        //Get Random Chaos Event
-                        interaction = InteractionManager.Instance.CreateNewInteraction(chosenType, area.coreTile.landmarkOnTile);
-                        //SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER, area.coreTile.landmarkOnTile)); //NOT FINAL!
-                        interaction.AddEndInteractionAction(() => StartJobAction());
-                        interaction.ScheduleSecondTimeOut();
-                        _character.AddInteraction(interaction);
-                        SetCreatedInteraction(interaction);
+                    Interaction createdInteraction = CreateExplorerEvent();
+                    if (createdInteraction != null) {
+                        createdInteraction.AddEndInteractionAction(() => StartJobAction());
+                        createdInteraction.ScheduleSecondTimeOut();
+                        _character.AddInteraction(createdInteraction);
+                        SetCreatedInteraction(createdInteraction);
                     } else {
                         StartJobAction();
                     }
@@ -100,5 +96,16 @@ public class Explorer : Job {
             }
         }
         return validTypes;
+    }
+
+    public Interaction CreateExplorerEvent() {
+        List<INTERACTION_TYPE> choices = GetValidExplorerEvents();
+        if (choices.Count > 0) {
+            Area area = _character.specificLocation.tileLocation.areaOfTile;
+            INTERACTION_TYPE chosenType = choices[Random.Range(0, choices.Count)];
+            //Get Random Explorer Event
+            return InteractionManager.Instance.CreateNewInteraction(chosenType, area.coreTile.landmarkOnTile);
+        }
+        return null;
     }
 }

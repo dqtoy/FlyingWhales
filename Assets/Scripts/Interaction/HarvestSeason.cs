@@ -7,70 +7,87 @@ public class HarvestSeason : Interaction {
 
     private BaseLandmark farm;
 
+    private const string Burn_Farm_Success = "Burn Farm Success";
+    private const string Burn_Farm_Fail = "Burn Farm Fail";
+    private const string Poison_Crops_Success = "Poison Crops Success";
+    private const string Poison_Crops_Fail = "Poison Crops Fail";
+    private const string Steal_Crops_Success = "Steal Crops Success";
+    private const string Steal_Crops_Fail = "Steal Crops Fail";
+    private const string Steal_Crops_Critical_Fail = "Steal Crops Critical Fail";
+    private const string Do_Nothing = "Do nothing";
+
     public HarvestSeason(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.HARVEST_SEASON, 70) {
         _name = "Harvest Season";
     }
 
     #region Overrides
     public override void CreateStates() {
-        //CreateExploreStates();
-        //CreateWhatToDoNextState("What do you want %minion% to do next?");
         farm = interactable;
 
         InteractionState startState = new InteractionState("Start", this);
-        //string startStateDesc = "%minion% has reported that the farmers will soon be able to harvest their crops. A sizable amount of the harvest will be given to their troops, providing them with needed Supplies.";
-        //startState.SetDescription(startStateDesc);
+        InteractionState burnFarmSuccess = new InteractionState(Burn_Farm_Success, this);
+        InteractionState burnFarmFail = new InteractionState(Burn_Farm_Fail, this);
+        InteractionState poisonCropsSuccess = new InteractionState(Poison_Crops_Success, this); 
+        InteractionState poisonCropsFail = new InteractionState(Poison_Crops_Fail, this);
+        InteractionState stealCropsSuccess = new InteractionState(Steal_Crops_Success, this);
+        InteractionState stealCropsFail = new InteractionState(Steal_Crops_Fail, this);
+        InteractionState stealCropsCriticalFail = new InteractionState(Steal_Crops_Critical_Fail, this);
+        InteractionState doNothingState = new InteractionState(Do_Nothing, this);
+
         CreateActionOptions(startState);
 
-        //action option states
-        InteractionState poisonedHarvestState = new InteractionState("Poisoned Harvest", this);
-        InteractionState farmerKilledState = new InteractionState("Farmer Killed", this);
-        InteractionState obtainHarvestState = new InteractionState("Obtain Harvest", this); 
-        InteractionState demonDiscoveredState = new InteractionState("Demon Discovered", this);
-        InteractionState demonKilledState = new InteractionState("Demon Killed", this);
-        InteractionState doNothingState = new InteractionState("Do nothing", this);
-
-
-        //CreateActionOptions(poisonedHarvestState);
-        //CreateActionOptions(farmerKilledState);
-        //CreateActionOptions(obtainHarvestState);
-        //CreateActionOptions(demonDiscoveredState);
-
-        farmerKilledState.SetEffect(() => FarmerKilledRewardEffect(farmerKilledState));
-        obtainHarvestState.SetEffect(() => ObtainHarvestRewardEffect(obtainHarvestState));
-        demonDiscoveredState.SetEffect(() => DemonDiscoveredRewardEffect(demonDiscoveredState));
-        demonKilledState.SetEffect(() => DemonKilledRewardEffect(demonKilledState));
+        burnFarmSuccess.SetEffect(() => BurnFarmSuccessRewardEffect(burnFarmSuccess));
+        burnFarmFail.SetEffect(() => BurnFarmFailRewardEffect(burnFarmFail));
+        poisonCropsSuccess.SetEffect(() => PoisonCropsSuccessRewardEffect(poisonCropsSuccess));
+        poisonCropsFail.SetEffect(() => PoisonCropsFailRewardEffect(poisonCropsFail));
+        stealCropsSuccess.SetEffect(() => StealCropsSuccessRewardEffect(stealCropsSuccess));
+        stealCropsFail.SetEffect(() => StealCropsFailRewardEffect(stealCropsFail));
+        stealCropsCriticalFail.SetEffect(() => StealCropsCriticalFailRewardEffect(stealCropsCriticalFail));
         doNothingState.SetEffect(() => DoNothingRewardEffect(doNothingState));
-        poisonedHarvestState.SetEffect(() => PoisonedHarvestRewardEffect(poisonedHarvestState));
+        
 
         _states.Add(startState.name, startState);
-        _states.Add(poisonedHarvestState.name, poisonedHarvestState);
-        _states.Add(farmerKilledState.name, farmerKilledState);
-        _states.Add(obtainHarvestState.name, obtainHarvestState);
-        _states.Add(demonDiscoveredState.name, demonDiscoveredState);
-        _states.Add(demonKilledState.name, demonKilledState);
+        _states.Add(burnFarmSuccess.name, burnFarmSuccess);
+        _states.Add(burnFarmFail.name, burnFarmFail);
+        _states.Add(poisonCropsSuccess.name, poisonCropsSuccess);
+        _states.Add(poisonCropsFail.name, poisonCropsFail);
+        _states.Add(stealCropsSuccess.name, stealCropsSuccess);
+        _states.Add(stealCropsFail.name, stealCropsFail);
+        _states.Add(stealCropsCriticalFail.name, stealCropsCriticalFail);
         _states.Add(doNothingState.name, doNothingState);
 
         SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {
-            ActionOption sendOutDemon = new ActionOption {
+            ActionOption burn = new ActionOption {
                 interactionState = state,
-                cost = new CurrenyCost { amount = 30, currency = CURRENCY.SUPPLY },
-                name = "Send out a Demon to disrupt the harvest.",
-                //description = "We have sent %minion% to disrupt the harvest. It should take him a short time to execute the task.",
-                duration = 0,
-                effect = () => SendOutDemonEffect(state),
+                cost = new CurrenyCost { amount = 50, currency = CURRENCY.SUPPLY },
+                name = "Burn as much farmland as possible.",
+                effect = () => BurnOptionEffect(state),
+            };
+            ActionOption poison = new ActionOption {
+                interactionState = state,
+                cost = new CurrenyCost { amount = 50, currency = CURRENCY.SUPPLY },
+                name = "Poison the harvested crops.",
+                effect = () => PoisonOptionEffect(state),
+            };
+            ActionOption steal = new ActionOption {
+                interactionState = state,
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
+                name = "Steal the harvested crops.",
+                effect = () => StealOptionEffect(state),
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
                 name = "Do nothing.",
                 duration = 0,
-                effect = () => DoNothingEffect(state),
+                effect = () => DoNothingOptionEffect(state),
             };
 
-            state.AddActionOption(sendOutDemon);
+            state.AddActionOption(burn);
+            state.AddActionOption(poison);
+            state.AddActionOption(steal);
             state.AddActionOption(doNothing);
             state.SetDefaultOption(doNothing);
         }
@@ -78,66 +95,69 @@ public class HarvestSeason : Interaction {
     #endregion
 
     #region Action Option Effects
-    private void SendOutDemonEffect(InteractionState state) {
-        WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement("Poisoned Harvest", 20);
-        if (farm.tileLocation.areaOfTile.HasResidentWithClass("Farmer")) {
-            //**Requirement**: City that farm is a part of must have a farmer
-            effectWeights.AddElement("Farmer Killed", 10);
+    private void BurnOptionEffect(InteractionState state) {
+        WeightedDictionary<RESULT> resultWeights = explorerMinion.character.job.GetJobRateWeights();
+        resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
+        string nextState = string.Empty;
+        switch (resultWeights.PickRandomElementGivenWeights()) {
+            case RESULT.SUCCESS:
+                nextState = Burn_Farm_Success;
+                break;
+            case RESULT.FAIL:
+                nextState = Burn_Farm_Fail;
+                break;
+            default:
+                break;
         }
-        effectWeights.AddElement("Obtain Harvest", 10);
-        if (FactionManager.Instance.GetRelationshipStatusBetween(farm.tileLocation.areaOfTile.owner,
-            PlayerManager.Instance.player.playerFaction) != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
-            //**Requirement**: Tile Owner Faction must not be at war with the player
-            effectWeights.AddElement("Demon Discovered", 5);
-        }
-
-        effectWeights.AddElement("Demon Killed", 5);
-
-        string chosenEffect = effectWeights.PickRandomElementGivenWeights();
-        SetCurrentState(_states[chosenEffect]);
+        SetCurrentState(_states[nextState]);
     }
-    private void DoNothingEffect(InteractionState state) {
+    private void PoisonOptionEffect(InteractionState state) {
+        WeightedDictionary<RESULT> resultWeights = explorerMinion.character.job.GetJobRateWeights();
+        resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
+        string nextState = string.Empty;
+        switch (resultWeights.PickRandomElementGivenWeights()) {
+            case RESULT.SUCCESS:
+                nextState = Poison_Crops_Success;
+                break;
+            case RESULT.FAIL:
+                nextState = Poison_Crops_Fail;
+                break;
+            default:
+                break;
+        }
+        SetCurrentState(_states[nextState]);
+    }
+    private void StealOptionEffect(InteractionState state) {
+        WeightedDictionary<RESULT> resultWeights = explorerMinion.character.job.GetJobRateWeights();
+        string nextState = string.Empty;
+        switch (resultWeights.PickRandomElementGivenWeights()) {
+            case RESULT.SUCCESS:
+                nextState = Steal_Crops_Success;
+                break;
+            case RESULT.FAIL:
+                nextState = Steal_Crops_Fail;
+                break;
+            case RESULT.CRITICAL_FAIL:
+                nextState = Steal_Crops_Critical_Fail;
+                break;
+            default:
+                break;
+        }
+        SetCurrentState(_states[nextState]);
+    }
+    private void DoNothingOptionEffect(InteractionState state) {
         SetCurrentState(_states["Do nothing"]);
     }
     #endregion
 
-    #region Poisoned Harvest
-    //private void PoisonedHarvest(InteractionState state, string effectName) {
-    //    //_states[effectName]
-    //    //    .SetDescription("After a significant amount of stealthy effort, " + explorerMinion.name + 
-    //    //    " managed to secretly poison the crops. The farmers will not be able to provide extra Supply to the city. " +
-    //    //    "Furthermore, the poison has rendered the soil toxic, preventing the Farm from producing more Supplies for 5 days. " +
-    //    //    "What do you want " + explorerMinion.name + " to do next?");
-    //    SetCurrentState(_states[effectName]);
-    //    //Farm stops producing Supply for 5 days
-    //    //GameDate dueDate = GameManager.Instance.Today();
-    //    //dueDate.AddDays(5);
-    //    //farm.DisableSupplyProductionUntil(dueDate);
-    //    PoisonedHarvestRewardEffect(_states[effectName]);
-    //}
-    private void PoisonedHarvestRewardEffect(InteractionState state) {
+    #region Reward Effects
+    private void BurnFarmSuccessRewardEffect(InteractionState state) {
         GameDate dueDate = GameManager.Instance.Today();
         dueDate.AddMonths(5);
         farm.DisableSupplyProductionUntil(dueDate);
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
     }
-    #endregion
-
-    #region Farmer Killed
-    //private void FarmerKilled(InteractionState state, string effectName) {
-    //    //**Effect**: Kill a random Farmer staying at that farm, City gains Supply Cache 1
-    //    //List<ICharacter> farmers = farm.tileLocation.areaOfTile.GetResidentsWithClass("Farmer");
-    //    //ICharacter chosenFarmer = farmers[Random.Range(0, farmers.Count)];
-    //    //_states[effectName].SetDescription(explorerMinion.name + " entered the farm at night and was about to poison " +
-    //    //    "the crops when a farmer named " + chosenFarmer.name + " discovered him. He managed to slay the farmer before being forced to flee. " +
-    //    //    "What do you want him to do next?");
-    //    SetCurrentState(_states[effectName]);
-    //    //chosenFarmer.Death();
-    //    //farm.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
-    //    FarmerKilledRewardEffect(_states[effectName]);
-    //}
-    private void FarmerKilledRewardEffect(InteractionState state) {
+    private void BurnFarmFailRewardEffect(InteractionState state) {
         //**Effect**: Kill a random Farmer staying at that farm, City gains Supply Cache 1
         List<Character> farmers = farm.tileLocation.areaOfTile.GetResidentsWithClass("Farmer");
         Character chosenFarmer = farmers[Random.Range(0, farmers.Count)];
@@ -149,36 +169,14 @@ public class HarvestSeason : Interaction {
         farm.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
     }
-    #endregion
-
-    #region Obtain Harvest
-    //private void ObtainHarvest(InteractionState state, string effectName) {
-    //    //_states[effectName].SetDescription(explorerMinion.name + " stole the harvest in the dead of night, " +
-    //    //    "providing us with much needed Supply. What do you want him to do next?");
-    //    SetCurrentState(_states[effectName]);
-    //    ObtainHarvestRewardEffect(_states[effectName]);
-    //}
-    private void ObtainHarvestRewardEffect(InteractionState state) {
+    private void PoisonCropsSuccessRewardEffect(InteractionState state) {
         //**Reward**: Supply Cache 1, Demon gains Exp 1
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         Reward reward = InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1);
         PlayerManager.Instance.player.ClaimReward(reward);
         farm.tileLocation.areaOfTile.PayForReward(reward);
     }
-    #endregion
-
-    #region Demon Discovered
-    //private void DemonDiscovered(InteractionState state, string effectName) {
-    //    //_states[effectName].SetDescription(explorerMinion.name + " was discovered by some farmers! " +
-    //    //    "He managed to run away unscathed but " + farm.tileLocation.areaOfTile.owner.name + " is now aware of our sabotage " +
-    //    //    "attempts and have declared war upon us. What do you want him to do next?");
-    //    SetCurrentState(_states[effectName]);
-    //    ////**Effect**: Faction declares war vs player, City gains Supply Cache 1
-    //    //FactionManager.Instance.DeclareWarBetween(farm.tileLocation.areaOfTile.owner, PlayerManager.Instance.player.playerFaction);
-    //    //farm.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
-    //    DemonDiscoveredRewardEffect(_states[effectName]);
-    //}
-    private void DemonDiscoveredRewardEffect(InteractionState state) {
+    private void PoisonCropsFailRewardEffect(InteractionState state) {
         //**Effect**: Faction declares war vs player, City gains Supply Cache 1
         FactionManager.Instance.DeclareWarBetween(farm.tileLocation.areaOfTile.owner, PlayerManager.Instance.player.playerFaction);
         farm.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
@@ -188,31 +186,27 @@ public class HarvestSeason : Interaction {
         }
         state.AddLogFiller(new LogFiller(farm.tileLocation.areaOfTile.owner, farm.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
     }
-    #endregion
-
-    #region Demon Killed
-    //private void DemonKilled(InteractionState state, string effectName) {
-    //    //_states[effectName].SetDescription(explorerMinion.name + " was caught by some guards and was slain in combat. What a weakling. He deserved that.");
-    //    SetCurrentState(_states[effectName]);
-    //    DemonKilledRewardEffect(_states[effectName]);
-    //}
-    private void DemonKilledRewardEffect(InteractionState state) {
+    private void StealCropsSuccessRewardEffect(InteractionState state) {
         //City gains Supply Cache 1
         farm.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
         //**Effect**: Demon is removed from Minion List
         PlayerManager.Instance.player.RemoveMinion(explorerMinion);
     }
-    #endregion
-
-    #region Do Nothing
-    //private void DoNothing(InteractionState state, string effectName) {
-    //    SetCurrentState(_states[effectName]);
-    //    DoNothingRewardEffect(_states[effectName]);
-    //}
+    private void StealCropsFailRewardEffect(InteractionState state) {
+        //City gains Supply Cache 1
+        farm.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
+        //**Effect**: Demon is removed from Minion List
+        PlayerManager.Instance.player.RemoveMinion(explorerMinion);
+    }
+    private void StealCropsCriticalFailRewardEffect(InteractionState state) {
+        //City gains Supply Cache 1
+        farm.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
+        //**Effect**: Demon is removed from Minion List
+        PlayerManager.Instance.player.RemoveMinion(explorerMinion);
+    }
     private void DoNothingRewardEffect(InteractionState state) {
         //**Effect**: City gains Supply Cache 1
         farm.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
     }
     #endregion
-
 }
