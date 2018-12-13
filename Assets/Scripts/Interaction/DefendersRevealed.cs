@@ -22,7 +22,7 @@ public class DefendersRevealed : Interaction {
     private void DefenderRevealedEffect(InteractionState state) {
         //**Mechanics**: Unlock Location's Defender Tile
         //**Log**: [Minion Name] obtained intel about [Location Name]'s defenders.
-        PlayerManager.Instance.player.AddIntel(interactable.tileLocation.areaOfTile.defenderIntel);
+        PlayerManager.Instance.player.AddToken(interactable.tileLocation.areaOfTile.defenderToken);
         explorerMinion.LevelUp();
     }
 }

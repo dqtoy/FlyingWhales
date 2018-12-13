@@ -58,7 +58,7 @@ public class UnfinishedCurse : Interaction {
                 cost = new CurrenyCost { amount = 5, currency = CURRENCY.MANA },
                 name = "Attempt to complete the ritual.",
                 duration = 0,
-                neededObjects = new List<System.Type>() { typeof(CharacterIntel) },
+                neededObjects = new List<System.Type>() { typeof(CharacterToken) },
                 effect = () => CompleteCurseEffect(state),
             };
             ActionOption harnessMagic = new ActionOption {

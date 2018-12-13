@@ -15,25 +15,25 @@ public class Spy : Job {
         base.DoJobAction();
         string jobSummary = GameManager.Instance.TodayLogString() + " " + _character.name + " job summary: ";
         //Once the duration expires, check first if there are any new intel that can still be unlocked. Order of priority below:
-        List<Intel> intelChoices = new List<Intel>();
+        List<Token> tokenChoices = new List<Token>();
         Area area = _character.specificLocation.tileLocation.areaOfTile;
-        if (!area.locationIntel.isObtained) {
-            intelChoices.Add(area.locationIntel);
-        } else if (area.owner != null && !area.owner.factionIntel.isObtained) {
-            intelChoices.Add(area.owner.factionIntel);
+        if (!area.locationToken.isObtained) {
+            tokenChoices.Add(area.locationToken);
+        } else if (area.owner != null && !area.owner.factionToken.isObtained) {
+            tokenChoices.Add(area.owner.factionToken);
         } else {
-            if (!area.defenderIntel.isObtained) {
-                intelChoices.Add(area.defenderIntel);
+            if (!area.defenderToken.isObtained) {
+                tokenChoices.Add(area.defenderToken);
             }
             for (int i = 0; i < area.areaResidents.Count; i++) {
                 Character currCharacter = area.areaResidents[i];
-                if (!currCharacter.characterIntel.isObtained) {
-                    intelChoices.Add(currCharacter.characterIntel);
+                if (!currCharacter.characterToken.isObtained) {
+                    tokenChoices.Add(currCharacter.characterToken);
                 }
             }
         }
 
-        if (intelChoices.Count > 0) {
+        if (tokenChoices.Count > 0) {
             int baseSuccessRate = 50;
             int baseFailRate = 40;
             int criticalFailRate = 12;
@@ -52,12 +52,12 @@ public class Spy : Job {
             jobSummary += "\n" + rateWeights.GetWeightsSummary("Rates summary ");
             if (rateWeights.GetTotalOfWeights() > 0) {
                 RESULT chosenResult = rateWeights.PickRandomElementGivenWeights();
-                Intel chosenIntel = intelChoices[Random.Range(0, intelChoices.Count)];
-                jobSummary += "\nRate result: " + chosenResult.ToString() + ". Chosen intel " + chosenIntel.ToString();
+                Token chosenToken = tokenChoices[Random.Range(0, tokenChoices.Count)];
+                jobSummary += "\nRate result: " + chosenResult.ToString() + ". Chosen token " + chosenToken.ToString();
                 Interaction interaction = null;
                 switch (chosenResult) {
                     case RESULT.SUCCESS:
-                        Success(chosenIntel);
+                        Success(chosenToken);
                         break;
                     case RESULT.FAIL:
                         interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile);
@@ -94,7 +94,7 @@ public class Spy : Job {
                 StartJobAction();
             }
         } else {
-            jobSummary += "\nNo more intel to gain."; 
+            jobSummary += "\nNo more token to gain."; 
             StartJobAction();
         }
         Debug.Log(jobSummary);
@@ -112,28 +112,28 @@ public class Spy : Job {
     }
     #endregion
 
-    private void Success(Intel chosenIntel) {
+    private void Success(Token chosenToken) {
         Interaction interaction = null;
-        if (chosenIntel is FactionIntel) {
+        if (chosenToken is FactionToken) {
             interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.FACTION_DISCOVERED, character.specificLocation.tileLocation.landmarkOnTile);
-        } else if (chosenIntel is LocationIntel) {
+        } else if (chosenToken is LocationToken) {
             interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.LOCATION_OBSERVED, character.specificLocation.tileLocation.landmarkOnTile);
-        } else if (chosenIntel is CharacterIntel) {
+        } else if (chosenToken is CharacterToken) {
             interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_ENCOUNTERED, character.specificLocation.tileLocation.landmarkOnTile);
-        } else if (chosenIntel is DefenderIntel) {
+        } else if (chosenToken is DefenderToken) {
             interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.DEFENDERS_REVEALED, character.specificLocation.tileLocation.landmarkOnTile);
-            //_createdInteraction.SetOtherData(new object[] { chosenIntel });
+            //_createdInteraction.SetOtherData(new object[] { chosenToken });
         }
         if (interaction != null) {
             interaction.AddEndInteractionAction(() => StartJobAction());
             interaction.ScheduleSecondTimeOut();
             if (interaction.type == INTERACTION_TYPE.CHARACTER_ENCOUNTERED) {
-                ((chosenIntel as CharacterIntel).character).AddInteraction(interaction);
+                ((chosenToken as CharacterToken).character).AddInteraction(interaction);
             } else if (interaction.type == INTERACTION_TYPE.LOCATION_OBSERVED
                 || interaction.type == INTERACTION_TYPE.DEFENDERS_REVEALED
                 || interaction.type == INTERACTION_TYPE.FACTION_DISCOVERED) {
                 character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.AddInteraction(interaction);
-                //(chosenIntel as LocationIntel).location.coreTile.landmarkOnTile.AddInteraction(_createdInteraction);
+                //(chosenToken as LocationToken).location.coreTile.landmarkOnTile.AddInteraction(_createdInteraction);
             }
             SetCreatedInteraction(interaction);
             //character.specificLocation.tileLocation.areaOfTile.areaInvestigation.SetCurrentInteraction(interaction);

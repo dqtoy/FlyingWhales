@@ -30,7 +30,7 @@ public class Faction {
     protected INTERACTION_TYPE[] _neutralInteractionTypes;
 
     public MORALITY morality { get; private set; }
-    public FactionIntel factionIntel { get; private set; }
+    public FactionToken factionToken { get; private set; }
     public Dictionary<Faction, int> favor { get; private set; }
     public WeightedDictionary<AreaCharacterClass> defenderWeights { get; private set; }
     public bool isActive { get; private set; }
@@ -111,7 +111,7 @@ public class Faction {
         _relationships = new Dictionary<Faction, FactionRelationship>();
         _landmarkInfo = new List<BaseLandmark>();
         _ownedAreas = new List<Area>();
-        factionIntel = new FactionIntel(this);
+        factionToken = new FactionToken(this);
         favor = new Dictionary<Faction, int>();
         defenderWeights = new WeightedDictionary<AreaCharacterClass>();
         InitializeInteractions();
@@ -137,7 +137,7 @@ public class Faction {
         _relationships = new Dictionary<Faction, FactionRelationship>();
         _landmarkInfo = new List<BaseLandmark>();
         _ownedAreas = new List<Area>();
-        factionIntel = new FactionIntel(this);
+        factionToken = new FactionToken(this);
         favor = new Dictionary<Faction, int>();
         if (data.defenderWeights != null) {
             defenderWeights = new WeightedDictionary<AreaCharacterClass>(data.defenderWeights);

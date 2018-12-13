@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FactionIntelUI : UIMenu {
+public class FactionTokenUI : UIMenu {
 
     [SerializeField] private ScrollRect factionsScrollView;
     [SerializeField] private GameObject factionItemPrefab;
@@ -13,16 +13,16 @@ public class FactionIntelUI : UIMenu {
     [SerializeField] private EasyTween tweener;
     [SerializeField] private AnimationCurve curve;
 
-    private Dictionary<Faction, FactionIntelItem> items;
+    private Dictionary<Faction, FactionTokenItem> items;
 
     internal override void Initialize() {
         base.Initialize();
         Messenger.AddListener<Faction>(Signals.FACTION_CREATED, OnFactionCreated);
         Messenger.AddListener<Faction>(Signals.FACTION_DELETED, OnFactionDeleted);
-        Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
+        Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnTokenAdded);
         //Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
         //Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
-        items = new Dictionary<Faction, FactionIntelItem>();
+        items = new Dictionary<Faction, FactionTokenItem>();
     }
     public override void CloseMenu() {
         isShowing = false;
@@ -33,8 +33,8 @@ public class FactionIntelUI : UIMenu {
 
     private void OnFactionCreated(Faction createdFaction) {
         GameObject factionItemGO = UIManager.Instance.InstantiateUIObject(factionItemPrefab.name, factionsScrollView.content);
-        FactionIntelItem factionItem = factionItemGO.GetComponent<FactionIntelItem>();
-        factionItem.SetFactionIntel(createdFaction.factionIntel);
+        FactionTokenItem factionItem = factionItemGO.GetComponent<FactionTokenItem>();
+        factionItem.SetFactionToken(createdFaction.factionToken);
         factionItem.gameObject.SetActive(false);
         items.Add(createdFaction, factionItem);
         //UpdateColors();
@@ -46,15 +46,15 @@ public class FactionIntelUI : UIMenu {
             //UpdateColors();
         }
     }
-    private FactionIntelItem GetItem(Faction faction) {
+    private FactionTokenItem GetItem(Faction faction) {
         if (items.ContainsKey(faction)) {
             return items[faction];
         }
         return null;
     }
-    private void OnIntelAdded(Intel intel) {
-        if (intel is FactionIntel) {
-            FactionIntelItem item = GetItem((intel as FactionIntel).faction);
+    private void OnTokenAdded(Token token) {
+        if (token is FactionToken) {
+            FactionTokenItem item = GetItem((token as FactionToken).faction);
             if (item != null) {
                 item.gameObject.SetActive(true);
             }

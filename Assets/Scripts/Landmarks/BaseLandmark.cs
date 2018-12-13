@@ -40,7 +40,7 @@ public class BaseLandmark : ILocation, IInteractable {
     protected List<HexTile> _nextCorruptedTilesToCheck;
     protected List<HexTile> _wallTiles;
     //protected List<Secret> _secrets;
-    protected List<Intel> _intels;
+    protected List<Token> _tokens;
     protected List<string> _encounters;
     protected List<Interaction> _currentInteractions;
     protected Dictionary<Character, GameDate> _characterTraces; //Lasts for 60 days
@@ -141,8 +141,8 @@ public class BaseLandmark : ILocation, IInteractable {
     //public List<Secret> secrets {
     //    get { return _secrets; }
     //}
-    public List<Intel> intels {
-        get { return _intels; }
+    public List<Token> tokens {
+        get { return _tokens; }
     }
     public List<string> encounters {
         get { return _encounters; }
@@ -217,7 +217,7 @@ public class BaseLandmark : ILocation, IInteractable {
         _wallTiles = new List<HexTile>();
         advertisedEvents = new List<GameEvent>();
         //_secrets = new List<Secret>();
-        _intels = new List<Intel>();
+        _tokens = new List<Token>();
         _encounters = new List<string>();
         _currentInteractions = new List<Interaction>();
         _combatHistory = new Dictionary<int, Combat>();

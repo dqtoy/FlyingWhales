@@ -11,7 +11,7 @@ public class FactionInfoUI : UIMenu {
     [Header("Content")]
     [SerializeField] private TextMeshProUGUI factionNameLbl;
     [SerializeField] private TextMeshProUGUI factionDescriptionLbl;
-    [SerializeField] private CharacterIntelItem leaderEntry;
+    [SerializeField] private CharacterTokenItem leaderEntry;
     [SerializeField] private ScrollRect charactersScrollView;
     [SerializeField] private ScrollRect propertiesScrollView;
     [SerializeField] private GameObject characterEntryPrefab;
@@ -59,7 +59,7 @@ public class FactionInfoUI : UIMenu {
         if (currentlyShowingFaction.leader != null && currentlyShowingFaction.leader is Character) {
             leaderEntry.gameObject.SetActive(true);
             leaderEntry.Initialize();
-            leaderEntry.SetCharacter((currentlyShowingFaction.leader as Character).characterIntel);
+            leaderEntry.SetCharacter((currentlyShowingFaction.leader as Character).characterToken);
         } else {
             leaderEntry.gameObject.SetActive(false);
             leaderEntry.Reset();
@@ -75,8 +75,8 @@ public class FactionInfoUI : UIMenu {
         for (int i = 0; i < characters.Count; i++) {
             Character currCharacter = characters[i];
             GameObject characterEntryGO = UIManager.Instance.InstantiateUIObject(characterEntryPrefab.name, charactersScrollView.content);
-            CharacterIntelItem characterEntry = characterEntryGO.GetComponent<CharacterIntelItem>();
-            characterEntry.SetCharacter(currCharacter.characterIntel);
+            CharacterTokenItem characterEntry = characterEntryGO.GetComponent<CharacterTokenItem>();
+            characterEntry.SetCharacter(currCharacter.characterToken);
             characterEntry.Initialize();
             //if (Utilities.IsEven(i)) {
             //    characterEntry.SetBGColor(evenColor);
@@ -94,10 +94,10 @@ public class FactionInfoUI : UIMenu {
             property.SetArea(currArea);
         }
     }
-    private CharacterIntelItem GetCharacterSummary(Character character) {
-        CharacterIntelItem[] entries = Utilities.GetComponentsInDirectChildren<CharacterIntelItem>(charactersScrollView.content.gameObject);
+    private CharacterTokenItem GetCharacterSummary(Character character) {
+        CharacterTokenItem[] entries = Utilities.GetComponentsInDirectChildren<CharacterTokenItem>(charactersScrollView.content.gameObject);
         for (int i = 0; i < entries.Length; i++) {
-            CharacterIntelItem currEntry = entries[i];
+            CharacterTokenItem currEntry = entries[i];
             if (currEntry.character.id == character.id) {
                 return currEntry;
             }
@@ -119,7 +119,7 @@ public class FactionInfoUI : UIMenu {
                     return;
                 }
             }
-            CharacterIntelItem entry = GetCharacterSummary(characterThatDied);
+            CharacterTokenItem entry = GetCharacterSummary(characterThatDied);
             if (entry != null) {
                 ObjectPoolManager.Instance.DestroyObject(entry.gameObject);
             }

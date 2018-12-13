@@ -9,7 +9,7 @@ using System.Linq;
 public class PlayerUI : MonoBehaviour {
     public static PlayerUI Instance;
 
-    public CharactersIntelUI charactersIntelUI;
+    public CharactersTokenUI charactersIntelUI;
 
     public TextMeshProUGUI manaText;
     public TextMeshProUGUI suppliesText;
@@ -85,7 +85,7 @@ public class PlayerUI : MonoBehaviour {
     }
     public void ShowPlayerPickerIntel() {
         //PlayerManager.Instance.player.OnHidePlayerPicker();
-        UIManager.Instance.PopulatePlayerIntelsInPicker();
+        UIManager.Instance.PopulatePlayerTokensInPicker();
         UIManager.Instance.ShowPlayerPicker();
     }
     public void ShowPlayerPickerInventory() {
@@ -310,11 +310,11 @@ public class PlayerUI : MonoBehaviour {
             } else if (previousMenu.Equals("minion")) {
                 UIManager.Instance.ShowMinionsMenu();
             } else if (previousMenu.Equals("character")) {
-                UIManager.Instance.ShowCharacterIntelMenu();
+                UIManager.Instance.ShowCharacterTokenMenu();
             } else if (previousMenu.Equals("location")) {
-                UIManager.Instance.ShowLocationIntelMenu();
+                UIManager.Instance.ShowLocationTokenMenu();
             } else if (previousMenu.Equals("faction")) {
-                UIManager.Instance.ShowFactionIntelMenu();
+                UIManager.Instance.ShowFactionTokenMenu();
             }
         }
     }

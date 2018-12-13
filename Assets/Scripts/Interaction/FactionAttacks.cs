@@ -70,7 +70,7 @@ public class FactionAttacks : Interaction {
                 cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Redirect their attack.",
                 duration = 0,
-                neededObjects = new List<System.Type>() { typeof(LocationIntel) },
+                neededObjects = new List<System.Type>() { typeof(LocationToken) },
                 effect = () => RedirectOption(state),
             };
             ActionOption doNothingOption = new ActionOption {

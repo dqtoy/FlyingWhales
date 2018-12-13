@@ -111,7 +111,8 @@ public class MoveToExplore : Interaction {
     }
 
     private void CreateExploreEvent() {
-        Interaction exploreEvent = (_characterInvolved.job as Explorer).CreateExplorerEvent();
+        Interaction exploreEvent = _characterInvolved.job.CreateExplorerEvent();
+
         _characterInvolved.SetForcedInteraction(exploreEvent);
     }
 

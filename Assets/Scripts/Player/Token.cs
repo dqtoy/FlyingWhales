@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class Intel {
+public class Token {
     protected bool _isObtained;
 
     #region getters/setters
@@ -12,7 +12,7 @@ public class Intel {
     }
     #endregion
 
-    public Intel() {
+    public Token() {
         _isObtained = false;
     }
     public void SetObtainedState(bool state) {
@@ -38,45 +38,45 @@ public class Intel {
     //}
 }
 
-public class FactionIntel : Intel{
+public class FactionToken : Token{
     public Faction faction;
 
-    public FactionIntel(Faction faction) : base() {
+    public FactionToken(Faction faction) : base() {
         this.faction = faction;
     }
 
     public override string ToString() {
-        return faction.name + " Intel";
+        return faction.name + " Token";
     }
 }
 
-public class LocationIntel : Intel {
+public class LocationToken : Token {
     public Area location;
 
-    public LocationIntel(Area location) : base() {
+    public LocationToken(Area location) : base() {
         this.location = location;
     }
 
     public override string ToString() {
-        return location.name + " Intel";
+        return location.name + " Token";
     }
 }
 
-public class CharacterIntel : Intel {
+public class CharacterToken : Token {
     public Character character;
 
-    public CharacterIntel(Character character) : base() {
+    public CharacterToken(Character character) : base() {
         this.character = character;
     }
     public override string ToString() {
-        return character.name + " Intel";
+        return character.name + " Token";
     }
 }
 
-public class DefenderIntel : Intel {
+public class DefenderToken : Token {
     public Area owner;
 
-    public DefenderIntel(Area owner) : base() {
+    public DefenderToken(Area owner) : base() {
         this.owner = owner;
     }
     public override string ToString() {

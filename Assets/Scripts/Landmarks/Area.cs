@@ -15,8 +15,8 @@ public class Area {
     public Color areaColor { get; private set; }
     public Faction owner { get; private set; }
     public Area attackTarget { get; private set; }
-    public LocationIntel locationIntel { get; private set; }
-    public DefenderIntel defenderIntel { get; private set; }
+    public LocationToken locationToken { get; private set; }
+    public DefenderToken defenderToken { get; private set; }
     public List<HexTile> tiles { get; private set; }
     public List<BaseLandmark> landmarks { get { return tiles.Where(x => x.landmarkOnTile != null).Select(x => x.landmarkOnTile).ToList(); } }
     public List<BaseLandmark> exposedTiles { get; private set; }
@@ -73,8 +73,8 @@ public class Area {
         history = new List<Log>();
         currentInteractions = new List<Interaction>();
         areaColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
-        locationIntel = new LocationIntel(this);
-        defenderIntel = new DefenderIntel(this);
+        locationToken = new LocationToken(this);
+        defenderToken = new DefenderToken(this);
         areaInvestigation = new AreaInvestigation(this);
         jobInteractionTypes = new Dictionary<JOB, List<INTERACTION_TYPE>>();
         initialRaceSetup = new List<InitialRaceSetup>();
@@ -106,8 +106,8 @@ public class Area {
         currentInteractions = new List<Interaction>();
         areaColor = data.areaColor;
         SetAreaType(data.areaType);
-        locationIntel = new LocationIntel(this);
-        defenderIntel = new DefenderIntel(this);
+        locationToken = new LocationToken(this);
+        defenderToken = new DefenderToken(this);
         areaInvestigation = new AreaInvestigation(this);
         jobInteractionTypes = new Dictionary<JOB, List<INTERACTION_TYPE>>();
         eventsTargettingThis = new List<Interaction>();

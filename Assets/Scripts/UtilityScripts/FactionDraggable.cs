@@ -12,11 +12,11 @@ public class FactionDraggable : DraggableItem {
             return;
         }
 
-        FactionEmblem emblem = gameObject.GetComponent<FactionIntelItem>().factionEmblem;
+        FactionEmblem emblem = gameObject.GetComponent<FactionTokenItem>().factionEmblem;
         GameObject clone = (GameObject)Instantiate(emblem.gameObject);
         //GameObject clone = ObjectPoolManager.Instance.InstantiateObjectFromPool(emblem.name, Vector3.zero, Quaternion.identity);
         _draggingObject = clone.GetComponent<RectTransform>();
-        _draggingObject.gameObject.AddComponent<DragObject>().parentItem = gameObject.GetComponent<FactionIntelItem>();
+        _draggingObject.gameObject.AddComponent<DragObject>().parentItem = gameObject.GetComponent<FactionTokenItem>();
 
         //Put _dragging object into the dragging area
         _draggingObject.sizeDelta = emblem.gameObject.GetComponent<RectTransform>().rect.size;

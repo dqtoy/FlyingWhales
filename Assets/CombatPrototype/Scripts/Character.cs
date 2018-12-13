@@ -96,7 +96,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
     public CharacterUIData uiData { get; private set; }
     public Area defendingArea { get; private set; }
     public MORALITY morality { get; private set; }
-    public CharacterIntel characterIntel { get; private set; }
+    public CharacterToken characterToken { get; private set; }
     public WeightedDictionary<INTERACTION_TYPE> interactionWeights { get; private set; }
     public WeightedDictionary<bool> eventTriggerWeights { get; private set; }
     private Dictionary<STAT, float> _buffs;
@@ -530,7 +530,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         _currentInteractions = new List<Interaction>();
         eventSchedule = new CharacterEventSchedule(this);
         uiData = new CharacterUIData();
-        characterIntel = new CharacterIntel(this);
+        characterToken = new CharacterToken(this);
         interactionWeights = new WeightedDictionary<INTERACTION_TYPE>();
         eventTriggerWeights = new WeightedDictionary<bool>();
         eventTriggerWeights.AddElement(true, 200); //Hard coded for now
@@ -3000,8 +3000,8 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit 
         Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(this);
         PlayerManager.Instance.player.AddMinion(newMinion);
 
-        if (!characterIntel.isObtained) {
-            PlayerManager.Instance.player.AddIntel(characterIntel);
+        if (!characterToken.isObtained) {
+            PlayerManager.Instance.player.AddToken(characterToken);
         }
     }
     #endregion

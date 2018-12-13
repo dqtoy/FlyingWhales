@@ -18,11 +18,11 @@ public class SlotItemDraggable : DraggableItem {
         base.OnBeginDrag(eventData);
         GameObject original = null;
         GameObject clone = null;
-        if (slot.placedObject is LocationIntel) {
+        if (slot.placedObject is LocationToken) {
             AreaEmblem emblem = slot.areaEmblem;
             original = emblem.gameObject;
             clone = (GameObject)Instantiate(emblem.gameObject);
-        } else if (slot.placedObject is FactionIntel) {
+        } else if (slot.placedObject is FactionToken) {
             FactionEmblem emblem = slot.factionEmblem;
             original = emblem.gameObject;
             clone = (GameObject)Instantiate(emblem.gameObject);

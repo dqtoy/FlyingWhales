@@ -56,11 +56,11 @@ public class InteractionState {
     public IUnit assignedUnit {
         get { return (_assignedObjects == null ? null : GetAssignedObjectOfType(typeof(IUnit)) as IUnit); }
     }
-    public LocationIntel assignedLocation {
-        get { return (_assignedObjects == null ? null : GetAssignedObjectOfType(typeof(LocationIntel)) as LocationIntel); }
+    public LocationToken assignedLocation {
+        get { return (_assignedObjects == null ? null : GetAssignedObjectOfType(typeof(LocationToken)) as LocationToken); }
     }
-    public CharacterIntel assignedCharacter {
-        get { return (_assignedObjects == null ? null : GetAssignedObjectOfType(typeof(CharacterIntel)) as CharacterIntel); }
+    public CharacterToken assignedCharacter {
+        get { return (_assignedObjects == null ? null : GetAssignedObjectOfType(typeof(CharacterToken)) as CharacterToken); }
     }
     public Minion assignedMinion {
         get { return (_assignedObjects == null ? null : GetAssignedObjectOfType(typeof(Minion)) as Minion); }

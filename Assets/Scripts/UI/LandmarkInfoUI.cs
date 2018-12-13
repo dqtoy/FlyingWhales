@@ -103,7 +103,7 @@ public class LandmarkInfoUI : UIMenu {
         Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, OnPartyExitedLandmark);
         //Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_ADDED, OnResidentAddedToLandmark);
         //Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_REMOVED, OnResidentRemovedFromLandmark);
-        Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
+        Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnIntelAdded);
         _assignedParty = new Minion[4];
     }
     public override void OpenMenu() {
@@ -174,14 +174,14 @@ public class LandmarkInfoUI : UIMenu {
         UpdateAllHistoryInfo();
     }
     private void UpdateHiddenUI() {
-        if (_activeLandmark.tileLocation.areaOfTile.locationIntel.isObtained || GameManager.Instance.inspectAll) {
+        if (_activeLandmark.tileLocation.areaOfTile.locationToken.isObtained || GameManager.Instance.inspectAll) {
             ShowIntelTriggeredUI();
         } else {
             HideIntelTriggeredUI();
         }
     }
-    private void OnIntelAdded(Intel intel) {
-        if(_activeLandmark != null && _activeLandmark.tileLocation.areaOfTile.locationIntel == intel) {
+    private void OnIntelAdded(Token intel) {
+        if(_activeLandmark != null && _activeLandmark.tileLocation.areaOfTile.locationToken == intel) {
             ShowIntelTriggeredUI();
         }
     }

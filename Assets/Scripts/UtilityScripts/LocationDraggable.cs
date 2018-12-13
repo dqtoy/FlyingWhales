@@ -12,11 +12,11 @@ public class LocationDraggable : DraggableItem {
             return;
         }
 
-        AreaEmblem emblem = gameObject.GetComponent<LocationIntelItem>().emblem;
+        AreaEmblem emblem = gameObject.GetComponent<LocationTokenItem>().emblem;
         GameObject clone = (GameObject)Instantiate(emblem.gameObject);
         _draggingObject = clone.GetComponent<RectTransform>();
 
-        _draggingObject.gameObject.AddComponent<DragObject>().parentItem = gameObject.GetComponent<LocationIntelItem>();
+        _draggingObject.gameObject.AddComponent<DragObject>().parentItem = gameObject.GetComponent<LocationTokenItem>();
 
         //Put _dragging object into the dragging area
         _draggingObject.sizeDelta = emblem.gameObject.GetComponent<RectTransform>().rect.size;

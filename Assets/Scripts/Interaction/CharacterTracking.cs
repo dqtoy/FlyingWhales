@@ -128,7 +128,7 @@ public class CharacterTracking : Interaction {
         //**Reward**: Demon gains Exp 1
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         //**Mechanics**: Player get's the location intel that the character has chosen.
-        PlayerManager.Instance.player.AddIntel(targetArea.locationIntel);
+        PlayerManager.Instance.player.AddToken(targetArea.locationToken);
 
         if (state.descriptionLog != null) {
             //state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

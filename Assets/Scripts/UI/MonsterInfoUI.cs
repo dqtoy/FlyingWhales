@@ -58,7 +58,7 @@ public class MonsterInfoUI : UIMenu {
     [Space(10)]
     [Header("Info")]
     [SerializeField] private SecretItem[] secretItems;
-    [SerializeField] private IntelItem[] intelItems;
+    [SerializeField] private TokenItem[] intelItems;
     [SerializeField] private HiddenDesireItem hiddenDesireItem;
     [SerializeField] private GameObject infoMenuCover;
 
@@ -87,7 +87,7 @@ public class MonsterInfoUI : UIMenu {
     internal override void Initialize() {
         base.Initialize();
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
-        Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
+        Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnIntelAdded);
 
         currentActionIcon.Initialize();
         InititalizeLogsMenu();
@@ -242,7 +242,7 @@ public class MonsterInfoUI : UIMenu {
 
         //intel
         for (int i = 0; i < intelItems.Length; i++) {
-            IntelItem currItem = intelItems[i];
+            TokenItem currItem = intelItems[i];
             currItem.gameObject.SetActive(false);
         }
 
@@ -373,7 +373,7 @@ public class MonsterInfoUI : UIMenu {
         //    hiddenDesireItem.gameObject.SetActive(true);
         //}
     }
-    private void OnIntelAdded(Intel intel) {
+    private void OnIntelAdded(Token intel) {
         if (_activeMonster == null) {
             return;
         }

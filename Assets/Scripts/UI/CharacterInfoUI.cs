@@ -73,7 +73,7 @@ public class CharacterInfoUI : UIMenu {
     [Space(10)]
     [Header("Info")]
     [SerializeField] private SecretItem[] secretItems;
-    [SerializeField] private IntelItem[] intelItems;
+    [SerializeField] private TokenItem[] tokenItems;
     [SerializeField] private HiddenDesireItem hiddenDesireItem;
     [SerializeField] private GameObject infoMenuCover;
 

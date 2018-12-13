@@ -63,7 +63,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public CharacterUIData uiData { get; private set; }
     public WeightedDictionary<INTERACTION_TYPE> interactionWeights { get; private set; }
     public WeightedDictionary<bool> eventTriggerWeights { get; private set; }
-    public CharacterIntel characterIntel { get; private set; }
+    public CharacterToken characterToken { get; private set; }
 
     #region getters/setters
     public string name {

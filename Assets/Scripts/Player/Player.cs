@@ -23,7 +23,7 @@ public class Player : ILeader {
     private BaseLandmark _demonicPortal;
     private List<CharacterAction> _actions;
     private List<Character> _snatchedCharacters;
-    private List<Intel> _intels;
+    private List<Token> _tokens;
     private List<Item> _items;
     //private List<PlayerAbility> _allAbilities;
     private List<Minion> _minions;
@@ -77,8 +77,8 @@ public class Player : ILeader {
     public List<CharacterAction> actions {
         get { return _actions; }
     }
-    public List<Intel> intels {
-        get { return _intels; }
+    public List<Token> tokens {
+        get { return _tokens; }
     }
     public List<Item> items {
         get { return _items; }
@@ -98,7 +98,7 @@ public class Player : ILeader {
         playerArea = null;
         snatchCredits = 0;
         _snatchedCharacters = new List<Character>();
-        _intels = new List<Intel>();
+        _tokens = new List<Token>();
         _items = new List<Item>();
         otherCharacters = new List<Character>();
         //_maxMinions = PlayerUI.Instance.minionItems.Count;
@@ -254,25 +254,25 @@ public class Player : ILeader {
     }
     #endregion
 
-    #region Intel
-    public void AddIntel(Intel intel) {
-        if (!_intels.Contains(intel)) {
-            if (intel is CharacterIntel && (intel as CharacterIntel).character.minion != null) {
+    #region Token
+    public void AddToken(Token token) {
+        if (!_tokens.Contains(token)) {
+            if (token is CharacterToken && (token as CharacterToken).character.minion != null) {
             } else {
-                _intels.Add(intel);
-                Debug.Log("Added intel " + intel.ToString());
-                Messenger.Broadcast(Signals.INTEL_ADDED, intel);
+                _tokens.Add(token);
+                Debug.Log("Added token " + token.ToString());
+                Messenger.Broadcast(Signals.TOKEN_ADDED, token);
             }
-            intel.SetObtainedState(true);
-            if (intel is CharacterIntel) {
-                Messenger.Broadcast(Signals.CHARACTER_INTEL_ADDED, intel as CharacterIntel);
+            token.SetObtainedState(true);
+            if (token is CharacterToken) {
+                Messenger.Broadcast(Signals.CHARACTER_TOKEN_ADDED, token as CharacterToken);
             }
         }
     }
-    public bool RemoveIntel(Intel intel) {
-        if (_intels.Remove(intel)) {
-            intel.SetObtainedState(false);
-            Debug.Log("Removed intel " + intel.ToString());
+    public bool RemoveToken(Token token) {
+        if (_tokens.Remove(token)) {
+            token.SetObtainedState(false);
+            Debug.Log("Removed token " + token.ToString());
             return true;
         }
         return false;

@@ -94,14 +94,14 @@ public class CharacterAvatar : MonoBehaviour{
 #endif
         //Messenger.AddListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
-        Messenger.AddListener<CharacterIntel>(Signals.CHARACTER_INTEL_ADDED, OnCharacterIntelObtained);
+        Messenger.AddListener<CharacterToken>(Signals.CHARACTER_TOKEN_ADDED, OnCharacterTokenObtained);
     }
 
     #region Monobehaviour
     private void OnDestroy() {
         Messenger.RemoveListener(Signals.INSPECT_ALL, OnInspectAll);
-        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_INTEL_ADDED)) {
-            Messenger.RemoveListener<CharacterIntel>(Signals.CHARACTER_INTEL_ADDED, OnCharacterIntelObtained);
+        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_TOKEN_ADDED)) {
+            Messenger.RemoveListener<CharacterToken>(Signals.CHARACTER_TOKEN_ADDED, OnCharacterTokenObtained);
         }
         //Messenger.RemoveListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);
 #if !WORLD_CREATION_TOOL
@@ -437,8 +437,8 @@ public class CharacterAvatar : MonoBehaviour{
     #endregion
 
     #region Listeners
-    private void OnCharacterIntelObtained(CharacterIntel intel) {
-        if (_party.owner != null && _party.owner.characterIntel == intel) {
+    private void OnCharacterTokenObtained(CharacterToken token) {
+        if (_party.owner != null && _party.owner.characterToken == token) {
             SetVisualState(true);
         }
     }
@@ -446,7 +446,7 @@ public class CharacterAvatar : MonoBehaviour{
         if (GameManager.Instance.inspectAll) {
             SetVisualState(true);
         } else {
-            if(_party.owner.minion != null || _party.owner.characterIntel.isObtained) {
+            if(_party.owner.minion != null || _party.owner.characterToken.isObtained) {
                 SetVisualState(true);
             } else {
                 SetVisualState(false);

@@ -227,11 +227,11 @@ public class InteractionItem : MonoBehaviour {
         slotItem.ClearSlot();
         System.Type neededType = _currentSelectedActionOption.neededObjects[currentNeededObjectIndex];
         slotItem.SetNeededType(neededType);
-        if (neededType == typeof(FactionIntel)) {
+        if (neededType == typeof(FactionToken)) {
             descriptionAssignment.text = "Requires a Faction Intel to be dragged from the list.";
-        } else if (neededType == typeof(LocationIntel)) {
+        } else if (neededType == typeof(LocationToken)) {
             descriptionAssignment.text = "Requires a Location Intel to be dragged from the list.";
-        } else if (neededType == typeof(CharacterIntel)) {
+        } else if (neededType == typeof(CharacterToken)) {
             descriptionAssignment.text = "Requires a Character Intel to be dragged from the list.";
         } else if (neededType == typeof(Minion)) {
             descriptionAssignment.text = "Requires a Demon Minion to be dragged from the list.";
@@ -335,26 +335,26 @@ public class InteractionItem : MonoBehaviour {
 
     private void UpdateSideMenu() {
         System.Type neededObject = _currentSelectedActionOption.neededObjects[currentNeededObjectIndex];
-        if (neededObject == typeof(FactionIntel)) {
-            UIManager.Instance.ShowFactionIntelMenu();
-        } else if (neededObject == typeof(CharacterIntel)) {
-            UIManager.Instance.ShowCharacterIntelMenu();
+        if (neededObject == typeof(FactionToken)) {
+            UIManager.Instance.ShowFactionTokenMenu();
+        } else if (neededObject == typeof(CharacterToken)) {
+            UIManager.Instance.ShowCharacterTokenMenu();
             CharacterIntelChecker();
         } else if (neededObject == typeof(Minion)) {
             UIManager.Instance.ShowMinionsMenu();
-        } else if (neededObject == typeof(LocationIntel)) {
-            UIManager.Instance.ShowLocationIntelMenu();
+        } else if (neededObject == typeof(LocationToken)) {
+            UIManager.Instance.ShowLocationTokenMenu();
         }
     }
     private void ResetSideMenu() {
         System.Type neededObject = _currentSelectedActionOption.neededObjects[currentNeededObjectIndex];
-        if (neededObject == typeof(FactionIntel)) {
+        if (neededObject == typeof(FactionToken)) {
             //TODO
-        } else if (neededObject == typeof(CharacterIntel)) {
+        } else if (neededObject == typeof(CharacterToken)) {
             ResetCharacterIntels();
         } else if (neededObject == typeof(Minion)) {
             //TODO
-        } else if (neededObject == typeof(LocationIntel)) {
+        } else if (neededObject == typeof(LocationToken)) {
             //TODO
         }
     }

@@ -50,11 +50,11 @@ public class IntelManager : MonoBehaviour {
     //    return intel;
     //}
 
-    public List<Intel> GetIntelConcerning(List<Character> character) {
-        List<Intel> intel = new List<Intel>();
-        List<Intel> intelForCharacter = GetIntelConcerning(character);
+    public List<Token> GetIntelConcerning(List<Character> character) {
+        List<Token> intel = new List<Token>();
+        List<Token> intelForCharacter = GetIntelConcerning(character);
         for (int i = 0; i < intelForCharacter.Count; i++) {
-            Intel currIntelForCharacter = intelForCharacter[i];
+            Token currIntelForCharacter = intelForCharacter[i];
             if (!intel.Contains(currIntelForCharacter)) {
                 intel.Add(currIntelForCharacter);
             }

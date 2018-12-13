@@ -5,7 +5,7 @@ using System;
 using UnityEngine.UI;
 using System.Linq;
 
-public class CharactersIntelUI : UIMenu {
+public class CharactersTokenUI : UIMenu {
 
     [SerializeField] private GameObject characterEntryPrefab;
     [SerializeField] private ScrollRect charactersScrollRect;
@@ -15,18 +15,18 @@ public class CharactersIntelUI : UIMenu {
     [SerializeField] private EasyTween tweener;
     [SerializeField] private AnimationCurve curve;
 
-    private Dictionary<Character, CharacterIntelItem> characterEntries;
-    private List<CharacterIntelItem> _activeCharacterEntries;
+    private Dictionary<Character, CharacterTokenItem> characterEntries;
+    private List<CharacterTokenItem> _activeCharacterEntries;
 
     #region getters/setters
-    public List<CharacterIntelItem> activeCharacterEntries {
+    public List<CharacterTokenItem> activeCharacterEntries {
         get { return _activeCharacterEntries; }
     }
     #endregion
     internal override void Initialize() {
         base.Initialize();
-        _activeCharacterEntries = new List<CharacterIntelItem>();
-        characterEntries = new Dictionary<Character, CharacterIntelItem>();
+        _activeCharacterEntries = new List<CharacterTokenItem>();
+        characterEntries = new Dictionary<Character, CharacterTokenItem>();
         Messenger.AddListener<Character>(Signals.CHARACTER_CREATED, AddCharacterEntry);
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, RemoveCharacterEntry);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, UpdateCharacterEntry);
@@ -34,7 +34,7 @@ public class CharactersIntelUI : UIMenu {
         Messenger.AddListener<Character>(Signals.FACTION_SET, UpdateCharacterEntry);
         //Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
         //Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
-        Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
+        Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnTokenAdded);
     }
 
     public override void OpenMenu() {
@@ -52,14 +52,14 @@ public class CharactersIntelUI : UIMenu {
         }
         GameObject newEntryGO = UIManager.Instance.InstantiateUIObject(characterEntryPrefab.name, charactersScrollRect.content);
         newEntryGO.transform.localScale = Vector3.one;
-        CharacterIntelItem newEntry = newEntryGO.GetComponent<CharacterIntelItem>();
-        newEntry.SetCharacter(character.characterIntel);
+        CharacterTokenItem newEntry = newEntryGO.GetComponent<CharacterTokenItem>();
+        newEntry.SetCharacter(character.characterToken);
         newEntry.Initialize();
         newEntry.gameObject.SetActive(false);
         characterEntries.Add(character, newEntry);
     }
     private void RemoveCharacterEntry(Character character) {
-        CharacterIntelItem characterEntry = GetCharacterEntry(character);
+        CharacterTokenItem characterEntry = GetCharacterEntry(character);
         if (characterEntry != null) {
             characterEntries.Remove(character);
             ObjectPoolManager.Instance.DestroyObject(characterEntry.gameObject);
@@ -70,14 +70,14 @@ public class CharactersIntelUI : UIMenu {
         //}
         //sortingAction();
     }
-    private CharacterIntelItem GetCharacterEntry(Character character) {
+    private CharacterTokenItem GetCharacterEntry(Character character) {
         if (characterEntries.ContainsKey(character)) {
             return characterEntries[character];
         }
         return null;
     }
     private void UpdateCharacterEntry(Character character) {
-        CharacterIntelItem charEntry = GetCharacterEntry(character);
+        CharacterTokenItem charEntry = GetCharacterEntry(character);
         if (charEntry != null) {
             charEntry.UpdateCharacterInfo();
         }
@@ -108,10 +108,10 @@ public class CharactersIntelUI : UIMenu {
             tweener.SetAnimationPosition(closePosition, openPosition, curve, curve);
         }
     }
-    private void OnIntelAdded(Intel intel) {
-        if (intel is CharacterIntel) {
-            CharacterIntel charIntel = (intel as CharacterIntel);
-            CharacterIntelItem item = GetCharacterEntry(charIntel.character);
+    private void OnTokenAdded(Token token) {
+        if (token is CharacterToken) {
+            CharacterToken charToken = (token as CharacterToken);
+            CharacterTokenItem item = GetCharacterEntry(charToken.character);
             if (item != null) {
                 item.gameObject.SetActive(true);
                 item.SetDraggable(true);

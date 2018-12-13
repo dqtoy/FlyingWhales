@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
+  m_IndirectSpecularColor: {r: 0.22380279, g: 0.24376711, b: 0.26534963, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6894,7 +6894,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 321.01, y: 50.01}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &163229468
 MonoBehaviour:
@@ -7015,7 +7015,7 @@ MonoBehaviour:
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -7143,12 +7143,6 @@ RectTransform:
   m_PrefabParentObject: {fileID: 224639283629299028, guid: 9e936abe468e502459315397d81dc971,
     type: 2}
   m_PrefabInternal: {fileID: 167632981}
---- !u!114 &167632983 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114688447031471538, guid: 9e936abe468e502459315397d81dc971,
-    type: 2}
-  m_PrefabInternal: {fileID: 167632981}
-  m_Script: {fileID: 11500000, guid: 4fd5946e2db80494790b691bcb1be294, type: 3}
 --- !u!1 &173499365
 GameObject:
   m_ObjectHideFlags: 0
@@ -19307,7 +19301,7 @@ MonoBehaviour:
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -32250,7 +32244,7 @@ MonoBehaviour:
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -43101,7 +43095,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1538653385}
-        m_MethodName: UnlockAllIntel
+        m_MethodName: UnlockAllTokens
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -44898,12 +44892,6 @@ RectTransform:
   m_PrefabParentObject: {fileID: 224639283629299028, guid: 9e936abe468e502459315397d81dc971,
     type: 2}
   m_PrefabInternal: {fileID: 1024964020}
---- !u!114 &1024964022 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114688447031471538, guid: 9e936abe468e502459315397d81dc971,
-    type: 2}
-  m_PrefabInternal: {fileID: 1024964020}
-  m_Script: {fileID: 11500000, guid: 4fd5946e2db80494790b691bcb1be294, type: 3}
 --- !u!1 &1028461810
 GameObject:
   m_ObjectHideFlags: 0
@@ -49229,7 +49217,7 @@ MonoBehaviour:
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -80031,12 +80019,6 @@ RectTransform:
   m_PrefabParentObject: {fileID: 224639283629299028, guid: 9e936abe468e502459315397d81dc971,
     type: 2}
   m_PrefabInternal: {fileID: 1753208872}
---- !u!114 &1753208874 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114688447031471538, guid: 9e936abe468e502459315397d81dc971,
-    type: 2}
-  m_PrefabInternal: {fileID: 1753208872}
-  m_Script: {fileID: 11500000, guid: 4fd5946e2db80494790b691bcb1be294, type: 3}
 --- !u!1001 &1753978334
 Prefab:
   m_ObjectHideFlags: 0
@@ -83659,10 +83641,8 @@ MonoBehaviour:
   closePosition: {x: 166, y: 35, z: 0}
   tweener: {fileID: 1821077715}
   curve:
-    serializedVersion: 2
     m_Curve:
-    - serializedVersion: 3
-      time: 0
+    - time: 0
       value: 0
       inSlope: 0
       outSlope: 0
@@ -83670,8 +83650,7 @@ MonoBehaviour:
       weightedMode: 0
       inWeight: 0
       outWeight: 0
-    - serializedVersion: 3
-      time: 0.61698717
+    - time: 0.61698717
       value: 0.32115385
       inSlope: 0.99999994
       outSlope: 0.99999994
@@ -83679,8 +83658,7 @@ MonoBehaviour:
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
+    - time: 1
       value: 1
       inSlope: 1
       outSlope: 1
@@ -92356,10 +92334,7 @@ MonoBehaviour:
   - {fileID: 660896729}
   - {fileID: 827083600}
   - {fileID: 1465251515}
-  intelItems:
-  - {fileID: 1024964022}
-  - {fileID: 1753208874}
-  - {fileID: 167632983}
+  tokenItems: []
   hiddenDesireItem: {fileID: 965370965}
   infoMenuCover: {fileID: 486443476}
   logParentGO: {fileID: 1172234677}

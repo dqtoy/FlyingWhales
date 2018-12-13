@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 114688447031471538}
   - component: {fileID: 114215674544067692}
   m_Layer: 5
-  m_Name: IntelItem
+  m_Name: TokenItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -58,11 +58,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114688447031471538}
-        m_MethodName: ShowIntelInfo
+        m_MethodName: ShowTokenInfo
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -78,7 +80,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114688447031471538}
-        m_MethodName: HideIntelInfo
+        m_MethodName: HideTokenInfo
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -5,10 +5,10 @@ using UnityEngine.EventSystems;
 
 public class CharacterDraggable : DraggableItem {
 
-    private CharacterIntelItem parentItem;
+    private CharacterTokenItem parentItem;
 
     private void Awake() {
-        parentItem = gameObject.GetComponent<CharacterIntelItem>();
+        parentItem = gameObject.GetComponent<CharacterTokenItem>();
         SetDraggable(_isDraggable);
     }
 

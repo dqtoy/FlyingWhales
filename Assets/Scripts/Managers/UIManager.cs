@@ -219,7 +219,7 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OVER, OnHoverOverTile);
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OUT, OnHoverOutTile);
 
-        Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
+        Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnTokenAdded);
         Messenger.AddListener<Combat>(Signals.COMBAT_DONE, OnCombatDone);
         //Messenger.AddListener<IInteractable, Interaction>(Signals.ADDED_INTERACTION, OnInteractionAdded);
     }
@@ -644,8 +644,8 @@ public class UIManager : MonoBehaviour {
         PlayerManager.Instance.player.AdjustLifestone(10);
         PlayerUI.Instance.UpdateUI();
     }
-    public void UnlockAllIntel() {
-        InteractionManager.Instance.UnlockAllIntel();
+    public void UnlockAllTokens() {
+        InteractionManager.Instance.UnlockAllTokens();
     }
     #endregion
 
@@ -996,7 +996,7 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Characters Summary")]
     [SerializeField] private GameObject charactersSummaryGO;
-    public CharactersIntelUI charactersSummaryMenu;
+    public CharactersTokenUI charactersSummaryMenu;
     public void ShowCharactersSummary() {
         //HideQuestsSummary();
         //HideStorylinesSummary();
@@ -1019,7 +1019,7 @@ public class UIManager : MonoBehaviour {
     #region Faction Summary
     [Space(10)]
     [Header("Factions Summary")]
-    public FactionIntelUI factionsSummaryMenu;
+    public FactionTokenUI factionsSummaryMenu;
     public void ShowFactionsSummary() {
         factionsSummaryMenu.OpenMenu();
     }
@@ -1151,14 +1151,14 @@ public class UIManager : MonoBehaviour {
             }
         }
     }
-    public void PopulatePlayerIntelsInPicker() {
-        List<Intel> intels = PlayerManager.Instance.player.intels;
-        int length = intels.Count;
-        if (currentActivePlayerPickerButtons.Count > intels.Count) {
+    public void PopulatePlayerTokensInPicker() {
+        List<Token> tokens = PlayerManager.Instance.player.tokens;
+        int length = tokens.Count;
+        if (currentActivePlayerPickerButtons.Count > tokens.Count) {
             length = currentActivePlayerPickerButtons.Count;
         }
         for (int i = 0; i < length; i++) {
-            if (i >= intels.Count) {
+            if (i >= tokens.Count) {
                 currentActivePlayerPickerButtons[i].gameObject.SetActive(false);
             } else if (i >= currentActivePlayerPickerButtons.Count) {
                 //CreatePlayerPickerButton(intels[i]);
@@ -1192,21 +1192,21 @@ public class UIManager : MonoBehaviour {
         playerPickerButton.SetPlayerPicker(playerPicker);
         currentActivePlayerPickerButtons.Add(playerPickerButton);
     }
-    private void OnIntelAdded(Intel intel) {
+    private void OnTokenAdded(Token token) {
         UnityAction action = null;
         string notificationText = string.Empty;
-        if (intel is FactionIntel) {
-            action = () => ShowFactionIntelMenu();
-            notificationText = "Obtained intel about faction: <color=\"green\"><b>" + (intel as FactionIntel).faction.name;
-        } else if (intel is LocationIntel) {
-            action = () => ShowLocationIntelMenu();
-            notificationText = "Obtained intel about location: <color=\"green\"><b>" + (intel as LocationIntel).location.name;
-        } else if (intel is CharacterIntel) {
-            action = () => ShowCharacterIntelMenu();
-            notificationText = "Obtained intel about character: <color=\"green\"><b>" + (intel as CharacterIntel).character.name;
-        } else if (intel is DefenderIntel) {
-            action = () => ShowLocationIntelMenu();
-            notificationText = "Obtained intel about defenders at: <color=\"green\"><b>" + (intel as DefenderIntel).owner.name;
+        if (token is FactionToken) {
+            action = () => ShowFactionTokenMenu();
+            notificationText = "Obtained token about faction: <color=\"green\"><b>" + (token as FactionToken).faction.name;
+        } else if (token is LocationToken) {
+            action = () => ShowLocationTokenMenu();
+            notificationText = "Obtained token about location: <color=\"green\"><b>" + (token as LocationToken).location.name;
+        } else if (token is CharacterToken) {
+            action = () => ShowCharacterTokenMenu();
+            notificationText = "Obtained token about character: <color=\"green\"><b>" + (token as CharacterToken).character.name;
+        } else if (token is DefenderToken) {
+            action = () => ShowLocationTokenMenu();
+            notificationText = "Obtained token about defenders at: <color=\"green\"><b>" + (token as DefenderToken).owner.name;
         }
         ShowNotification(notificationText, 5, action);
     }
@@ -1229,13 +1229,13 @@ public class UIManager : MonoBehaviour {
     public void ShowMinionsMenu() {
         minionsMenuToggle.isOn = true;
     }
-    public void ShowCharacterIntelMenu() {
+    public void ShowCharacterTokenMenu() {
         charactersMenuToggle.isOn = true;
     }
-    public void ShowLocationIntelMenu() {
+    public void ShowLocationTokenMenu() {
         locationsMenuToggle.isOn = true;
     }
-    public void ShowFactionIntelMenu() {
+    public void ShowFactionTokenMenu() {
         factionsMenuToggle.isOn = true;
     }
     public void HideRightMenus() {
@@ -1252,21 +1252,21 @@ public class UIManager : MonoBehaviour {
             }
         }
     }
-    public void OnCharacterIntelMenuToggled(bool state) {
+    public void OnCharacterTokenMenuToggled(bool state) {
         if (!state) {
             if (!AreAllSideMenusAreClosed()) {
                 PlayerUI.Instance.previousMenu = "character";
             }
         }
     }
-    public void OnLocationIntelMenuToggled(bool state) {
+    public void OnLocationTokenMenuToggled(bool state) {
         if (!state) {
             if (!AreAllSideMenusAreClosed()) {
                 PlayerUI.Instance.previousMenu = "location";
             }
         }
     }
-    public void OnFactionIntelMenuToggled(bool state) {
+    public void OnFactionTokenMenuToggled(bool state) {
         if (!state) {
             if (!AreAllSideMenusAreClosed()) {
                 PlayerUI.Instance.previousMenu = "faction";

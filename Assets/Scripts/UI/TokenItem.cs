@@ -3,40 +3,40 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class IntelItem : MonoBehaviour {
+public class TokenItem : MonoBehaviour {
 
-    private Intel intel;
+    private Token token;
 
     [SerializeField] private Image intelImage;
     [SerializeField] private GameObject lockedGO;
 
-    public void SetIntel(Intel intel) {
-        this.intel = intel;
+    public void SetToken(Token token) {
+        this.token = token;
         UpdateVisuals();
-        Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAddedToPlayer);
+        Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnTokenAddedToPlayer);
     }
 
     private void UpdateVisuals() {
-        if (intel.isObtained) {
+        if (token.isObtained) {
             lockedGO.SetActive(false);
         } else {
             lockedGO.SetActive(true);
         }
     }
-    public void ShowIntelInfo() {
-        if (intel.isObtained) {
+    public void ShowTokenInfo() {
+        if (token.isObtained) {
             //UIManager.Instance.ShowSmallInfo(intel.description);
         }
     }
-    public void HideIntelInfo() {
+    public void HideTokenInfo() {
         UIManager.Instance.HideSmallInfo();
     }
 
-    private void OnIntelAddedToPlayer(Intel intel) {
+    private void OnTokenAddedToPlayer(Token token) {
         UpdateVisuals();
     }
 
     public void Reset() {
-        Messenger.RemoveListener<Intel>(Signals.INTEL_ADDED, OnIntelAddedToPlayer);
+        Messenger.RemoveListener<Token>(Signals.TOKEN_ADDED, OnTokenAddedToPlayer);
     }
 }

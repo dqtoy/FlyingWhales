@@ -44,7 +44,7 @@ public class IntelCreator : Editor {
         }
     }
     private void SaveIntelJson(IntelComponent currentComponent, string path) {
-        Intel intel = new Intel();
+        Token intel = new Token();
         //intel.SetData(currentComponent);
         //string jsonString = JsonUtility.ToJson(intel);
         //System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);

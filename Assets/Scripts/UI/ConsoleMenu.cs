@@ -640,7 +640,7 @@ public class ConsoleMenu : UIMenu {
             character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
         }
 
-        Intel intel = null;
+        Token intel = null;
         bool isIntelParameterNumeric = int.TryParse(intelIDParameterString, out intelID);
         if (isIntelParameterNumeric) {
             //intel = IntelManager.Instance.GetIntel(intelID);

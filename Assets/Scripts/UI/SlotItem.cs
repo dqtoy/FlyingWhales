@@ -76,23 +76,23 @@ public class SlotItem : MonoBehaviour {
     }
     public void PlaceObject(object associatedObj) {
         placedObject = associatedObj;
-        if (associatedObj is FactionIntel) {
+        if (associatedObj is FactionToken) {
             factionEmblem.gameObject.SetActive(true);
             areaEmblem.gameObject.SetActive(false);
             portrait.gameObject.SetActive(false);
-            factionEmblem.SetFaction((associatedObj as FactionIntel).faction);
-            hoverInfo = (associatedObj as FactionIntel).faction.name;
-        } else if (associatedObj is LocationIntel) {
+            factionEmblem.SetFaction((associatedObj as FactionToken).faction);
+            hoverInfo = (associatedObj as FactionToken).faction.name;
+        } else if (associatedObj is LocationToken) {
             factionEmblem.gameObject.SetActive(false);
             areaEmblem.gameObject.SetActive(true);
             portrait.gameObject.SetActive(false);
-            hoverInfo = (associatedObj as LocationIntel).location.name;
-        } else if (associatedObj is CharacterIntel) {
+            hoverInfo = (associatedObj as LocationToken).location.name;
+        } else if (associatedObj is CharacterToken) {
             factionEmblem.gameObject.SetActive(false);
             areaEmblem.gameObject.SetActive(false);
             portrait.gameObject.SetActive(true);
-            portrait.GeneratePortrait((associatedObj as CharacterIntel).character);
-            hoverInfo = (associatedObj as CharacterIntel).character.name;
+            portrait.GeneratePortrait((associatedObj as CharacterToken).character);
+            hoverInfo = (associatedObj as CharacterToken).character.name;
         } else if (associatedObj is Minion) {
             factionEmblem.gameObject.SetActive(false);
             areaEmblem.gameObject.SetActive(false);
@@ -120,11 +120,11 @@ public class SlotItem : MonoBehaviour {
         if (type == null) {
             return "null";
         }
-        if (type == typeof(FactionIntel)) {
+        if (type == typeof(FactionToken)) {
             return "Faction";
-        } else if (type == typeof(LocationIntel)) {
+        } else if (type == typeof(LocationToken)) {
             return "Location";
-        } else if (type == typeof(CharacterIntel)) {
+        } else if (type == typeof(CharacterToken)) {
             return "Character";
         } else if (type == typeof(Minion)) {
             return "Minion";

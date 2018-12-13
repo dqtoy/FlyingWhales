@@ -55,7 +55,7 @@ public class InflictIllness : Interaction {
                         requiredLocation = interactable.tileLocation.areaOfTile,
                     }
                 },
-                neededObjects = new List<System.Type>() { typeof(CharacterIntel) },
+                neededObjects = new List<System.Type>() { typeof(CharacterToken) },
                 //jobNeeded = JOB.DISSUADER,
                 //doesNotMeetRequirementsStr = "Minion must be a dissuader",
             };

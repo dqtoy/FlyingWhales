@@ -5,9 +5,9 @@ using TMPro;
 using UnityEngine.EventSystems;
 using EZObjectPools;
 
-public class CharacterIntelItem : PooledObject, IDragParentItem {
+public class CharacterTokenItem : PooledObject, IDragParentItem {
 
-    private CharacterIntel _characterIntel;
+    private CharacterToken _characterToken;
 
     [SerializeField] private TextMeshProUGUI characterNameLbl;
     [SerializeField] private TextMeshProUGUI characterLvlClassLbl;
@@ -18,10 +18,10 @@ public class CharacterIntelItem : PooledObject, IDragParentItem {
 
     #region getters/setters
     public Character character {
-        get { return _characterIntel.character; }
+        get { return _characterToken.character; }
     }
     public object associatedObj {
-        get { return _characterIntel; }
+        get { return _characterToken; }
     }
     public bool isDraggable {
         get { return _draggable.isDraggable; }
@@ -34,15 +34,15 @@ public class CharacterIntelItem : PooledObject, IDragParentItem {
         //actionIcon.Initialize();
     }
 
-    public void SetCharacter(CharacterIntel characterIntel) {
-        _characterIntel = characterIntel;
+    public void SetCharacter(CharacterToken characterToken) {
+        _characterToken = characterToken;
         //affiliations.Initialize(character);
         //actionIcon.SetCharacter(character);
         //actionIcon.SetAction(character.currentParty.currentAction);
         //characterPortrait.SetDimensions(42f);
-        characterPortrait.GeneratePortrait(characterIntel.character);
+        characterPortrait.GeneratePortrait(characterToken.character);
         UpdateCharacterInfo();
-        _draggable.SetAssociatedObject(characterIntel);
+        _draggable.SetAssociatedObject(characterToken);
         //UpdateAffiliations();
     }
     //public void UpdateAffiliations() {
@@ -83,7 +83,7 @@ public class CharacterIntelItem : PooledObject, IDragParentItem {
     public override void Reset() {
         base.Reset();
         //RemoveListeners();
-        _characterIntel = null;
+        _characterToken = null;
         //actionIcon.Reset();
     }
 }

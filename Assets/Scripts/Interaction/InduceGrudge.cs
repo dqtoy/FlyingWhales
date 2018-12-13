@@ -50,7 +50,7 @@ public class InduceGrudge : Interaction {
                         requirements = new string[] { RACE.HUMANS.ToString(), RACE.ELVES.ToString(), RACE.GOBLIN.ToString() }
                     }
                 },
-                neededObjects = new List<System.Type>() { typeof(CharacterIntel) }
+                neededObjects = new List<System.Type>() { typeof(CharacterToken) }
             };
             ActionOption doNothingOption = new ActionOption {
                 interactionState = state,

@@ -98,7 +98,7 @@ public class AreaInfoUI : UIMenu {
         Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, OnPartyExitedLandmark);
         //Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_ADDED, OnResidentAddedToLandmark);
         //Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_REMOVED, OnResidentRemovedFromLandmark);
-        Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
+        Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnTokenAdded);
         Messenger.AddListener<Minion, Area>(Signals.MINION_STARTS_INVESTIGATING_AREA, OnMinionInvestigateArea);
         _assignedParty = new Minion[4];
     }
@@ -159,10 +159,10 @@ public class AreaInfoUI : UIMenu {
         UpdateAllHistoryInfo();
     }
     private void UpdateHiddenUI() {
-        if (_activeArea.locationIntel.isObtained || GameManager.Instance.inspectAll) {
-            ShowLocationIntelUI();
+        if (_activeArea.locationToken.isObtained || GameManager.Instance.inspectAll) {
+            ShowLocationTokenUI();
         } else {
-            HideLocationIntelUI();
+            HideLocationTokenUI();
         }
         //if (_activeArea.defenderIntel.isObtained || GameManager.Instance.inspectAll) {
         //    ShowDefenderIntelUI();
@@ -171,17 +171,17 @@ public class AreaInfoUI : UIMenu {
         //}
         
     }
-    private void OnIntelAdded(Intel intel) {
+    private void OnTokenAdded(Token token) {
         if(_activeArea != null) {
-            if (_activeArea.locationIntel == intel) {
-                ShowLocationIntelUI();
-            } else if (_activeArea.defenderIntel == intel) {
-                ShowDefenderIntelUI();
+            if (_activeArea.locationToken == token) {
+                ShowLocationTokenUI();
+            } else if (_activeArea.defenderToken == token) {
+                ShowDefenderTokenUI();
             }
         }
 
     }
-    private void ShowLocationIntelUI() {
+    private void ShowLocationTokenUI() {
         //charactersGO.SetActive(true);
         //logsGO.SetActive(true);
         charactersMenuToggle.interactable = true;
@@ -189,7 +189,7 @@ public class AreaInfoUI : UIMenu {
         //connectorsGO[1].SetActive(true);
         //connectorsGO[2].SetActive(true);
     }
-    private void HideLocationIntelUI() {
+    private void HideLocationTokenUI() {
         charactersGO.SetActive(false);
         logsGO.SetActive(false);
         charactersMenuToggle.isOn = false;
@@ -199,11 +199,11 @@ public class AreaInfoUI : UIMenu {
         //connectorsGO[1].SetActive(false);
         //connectorsGO[2].SetActive(false);
     }
-    private void ShowDefenderIntelUI() {
+    private void ShowDefenderTokenUI() {
         defendersGO.SetActive(true);
         //connectorsGO[0].SetActive(true);
     }
-    private void HideDefenderIntelUI() {
+    private void HideDefenderTokenUI() {
         defendersGO.SetActive(false);
         //connectorsGO[0].SetActive(false);
     }
@@ -739,7 +739,7 @@ public class AreaInfoUI : UIMenu {
                         jobStr = "will <b>raid</b>";
                         break;
                     case JOB.SPY:
-                        jobStr = "will <b>obtain intel</b> about";
+                        jobStr = "will <b>obtain token</b> about";
                         break;
                     case JOB.DISSUADER:
                         jobStr = "will <b>discourage activities</b> in";
@@ -766,7 +766,7 @@ public class AreaInfoUI : UIMenu {
                         jobStr = "is <b>raiding</b>";
                         break;
                     case JOB.SPY:
-                        jobStr = "is <b>obtaining intel</b> about";
+                        jobStr = "is <b>obtaining token</b> about";
                         break;
                     case JOB.DISSUADER:
                         jobStr = "is <b>discouraging activities</b> in";

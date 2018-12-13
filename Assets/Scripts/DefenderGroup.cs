@@ -6,12 +6,12 @@ using UnityEngine;
 public class DefenderGroup {
 
     public Party party;
-    //public DefenderIntel intel;
+    //public DefenderToken token;
     public Area defendingArea;
 	
     public DefenderGroup() {
         //this.party = party;
-        //intel = new DefenderIntel(this);
+        //intel = new DefenderToken(this);
         Messenger.AddListener<Party>(Signals.PARTY_DIED, OnPartyDied);
     }
 

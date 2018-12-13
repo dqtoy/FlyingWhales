@@ -75,7 +75,7 @@ public class Minion : IUnit {
         //PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(_icharacter.ownParty);
         _character.SetMinion(this);
         _character.DisableInteractionGeneration();
-        _character.characterIntel.SetObtainedState(true);
+        _character.characterToken.SetObtainedState(true);
         _character.ownParty.icon.SetVisualState(true);
 
         if (!keepData) {

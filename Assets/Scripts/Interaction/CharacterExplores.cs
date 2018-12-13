@@ -81,7 +81,7 @@ public class CharacterExplores : Interaction {
                 cost = new CurrenyCost { amount = 20, currency = CURRENCY.SUPPLY },
                 name = "Convince him/her to visit elsewhere.",
                 duration = 0,
-                neededObjects = new List<System.Type>() { typeof(LocationIntel) },
+                neededObjects = new List<System.Type>() { typeof(LocationToken) },
                 effect = () => ConvinceToVisitElsewhere(state),
             };
             ActionOption doNothing = new ActionOption {

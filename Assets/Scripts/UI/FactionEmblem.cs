@@ -13,10 +13,10 @@ public class FactionEmblem : MonoBehaviour{
     [SerializeField] private bool forceShow;
 
     private void OnEnable() {
-        Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelObtained);
+        Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnTokenObtained);
     }
     private void OnDisable() {
-        Messenger.RemoveListener<Intel>(Signals.INTEL_ADDED, OnIntelObtained);
+        Messenger.RemoveListener<Token>(Signals.TOKEN_ADDED, OnTokenObtained);
     }
 
     public void SetFaction(Faction faction) {
@@ -45,7 +45,7 @@ public class FactionEmblem : MonoBehaviour{
             this.gameObject.SetActive(false);
         } else {
             if (forceShow || 
-                (PlayerManager.Instance.player != null && PlayerManager.Instance.player.intels.Contains(faction.factionIntel))) {
+                (PlayerManager.Instance.player != null && PlayerManager.Instance.player.tokens.Contains(faction.factionToken))) {
                 //player has intel for this faction
                 emblemImage.sprite = faction.emblem;
                 this.gameObject.SetActive(true);
@@ -57,9 +57,9 @@ public class FactionEmblem : MonoBehaviour{
         }
     }
 
-    private void OnIntelObtained(Intel intel) {
-        if (intel is FactionIntel) {
-            if (this.faction != null && (intel as FactionIntel).faction.id == this.faction.id) {
+    private void OnTokenObtained(Token token) {
+        if (token is FactionToken) {
+            if (this.faction != null && (token as FactionToken).faction.id == this.faction.id) {
                 UpdateEmblem();
             }
         }

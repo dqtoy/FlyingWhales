@@ -28,7 +28,7 @@ public class FactionDiscovered : Interaction {
         //**Mechanics**: Unlock Faction Intel
         //**Log**: [Minion Name] obtained intel about [Faction Name].
         state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
-        PlayerManager.Instance.player.AddIntel(interactable.owner.factionIntel);
+        PlayerManager.Instance.player.AddToken(interactable.owner.factionToken);
         explorerMinion.LevelUp();
     }
 }

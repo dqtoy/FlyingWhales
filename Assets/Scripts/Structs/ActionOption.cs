@@ -28,8 +28,8 @@ public class ActionOption {
     public Minion assignedMinion {
         get { return GetAssignedObjectOfType(typeof(Minion)) as Minion; }
     }
-    public LocationIntel assignedLocation {
-        get { return GetAssignedObjectOfType(typeof(LocationIntel)) as LocationIntel; }
+    public LocationToken assignedLocation {
+        get { return GetAssignedObjectOfType(typeof(LocationToken)) as LocationToken; }
     }
     #endregion
 
