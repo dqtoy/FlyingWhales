@@ -9,6 +9,7 @@ public class InteractionState {
     private string _name;
     private string _description;
     private bool _isEnd;
+    private bool _useInvestigatorMinionOnly, _useTokeneerMinionOnly;
     //private bool _isTimed;
     private Action _effect;
     //private GameDate _timeDate;
@@ -74,6 +75,8 @@ public class InteractionState {
         _interaction = interaction;
         _name = name;
         _chosenOption = null;
+        SetUseInvestigatorMinionOnly(false);
+        SetUseTokeneerMinionOnly(false);
         _actionOptions = new ActionOption[4];
         logFillers = new List<LogFiller>();
     }
@@ -81,6 +84,12 @@ public class InteractionState {
     //public void SetDescription(string desc) {
     //    _description = desc;
     //}
+    public void SetUseInvestigatorMinionOnly(bool state) {
+        _useInvestigatorMinionOnly = state;
+    }
+    public void SetUseTokeneerMinionOnly(bool state) {
+        _useTokeneerMinionOnly = state;
+    }
     public void SetAssignedMinion(Minion minion) {
         _assignedMinion = minion;
     }
@@ -130,16 +139,6 @@ public class InteractionState {
             string currentKey = keysForState[i];
             otherLogs.Add(new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), currentKey));
         }
-
-        if (_interaction.explorerMinion != null) {
-            logFillers.Add(new LogFiller(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_1));
-        }
-        if (interaction.characterInvolved != null) {
-            logFillers.Add(new LogFiller(interaction.characterInvolved, interaction.characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
-        }
-        if (!AlreadyHasLogFiller(LOG_IDENTIFIER.LANDMARK_1)) {
-            logFillers.Add(new LogFiller(interaction.interactable.tileLocation.areaOfTile, interaction.interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
-        }
         //}
     }
     public void OverrideDescriptionLog(Log descriptionLog) {
@@ -148,9 +147,30 @@ public class InteractionState {
     public void SetDescription() {
         //TODO: make this more performant
         if(_descriptionLog != null) {
-            if (_interaction.explorerMinion != null) {
-                _descriptionLog.AddToFillers(_interaction.explorerMinion, _interaction.explorerMinion.name, LOG_IDENTIFIER.MINION_1);
+            if (!_useInvestigatorMinionOnly && !_useTokeneerMinionOnly) {
+                if (_interaction.investigatorMinion != null) {
+                    _descriptionLog.AddToFillers(_interaction.investigatorMinion, _interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
+                }
+            } else if (_useInvestigatorMinionOnly && _useTokeneerMinionOnly) {
+                if (_interaction.investigatorMinion != null) {
+                    _descriptionLog.AddToFillers(_interaction.investigatorMinion, _interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
+                }
+                if (_interaction.tokeneerMinion != null) {
+                    _descriptionLog.AddToFillers(_interaction.tokeneerMinion, _interaction.tokeneerMinion.name, LOG_IDENTIFIER.MINION_2);
+                }
+            } else {
+                if (_useInvestigatorMinionOnly) {
+                    if (_interaction.investigatorMinion != null) {
+                        _descriptionLog.AddToFillers(_interaction.investigatorMinion, _interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
+                    }
+                }
+                if (_useTokeneerMinionOnly) {
+                    if (_interaction.tokeneerMinion != null) {
+                        _descriptionLog.AddToFillers(_interaction.tokeneerMinion, _interaction.tokeneerMinion.name, LOG_IDENTIFIER.MINION_1);
+                    }
+                }
             }
+
             if (interaction.characterInvolved != null && !_descriptionLog.HasFillerForIdentifier(LOG_IDENTIFIER.ACTIVE_CHARACTER)) {
                 _descriptionLog.AddToFillers(interaction.characterInvolved, interaction.characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             }
@@ -161,6 +181,35 @@ public class InteractionState {
             //InteractionUI.Instance.interactionItem.SetDescription(_description, descriptionLog);
         }
         if (otherLogs != null) {
+            if (!_useInvestigatorMinionOnly && !_useTokeneerMinionOnly) {
+                if (_interaction.investigatorMinion != null) {
+                    logFillers.Add(new LogFiller(_interaction.investigatorMinion, _interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
+                }
+            } else if (_useInvestigatorMinionOnly && _useTokeneerMinionOnly) {
+                if (_interaction.investigatorMinion != null) {
+                    logFillers.Add(new LogFiller(_interaction.investigatorMinion, _interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
+                }
+                if (_interaction.tokeneerMinion != null) {
+                    logFillers.Add(new LogFiller(_interaction.tokeneerMinion, _interaction.tokeneerMinion.name, LOG_IDENTIFIER.MINION_2));
+                }
+            } else {
+                if (_useInvestigatorMinionOnly) {
+                    if (_interaction.investigatorMinion != null) {
+                        logFillers.Add(new LogFiller(_interaction.investigatorMinion, _interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
+                    }
+                }
+                if (_useTokeneerMinionOnly) {
+                    if (_interaction.tokeneerMinion != null) {
+                        logFillers.Add(new LogFiller(_interaction.tokeneerMinion, _interaction.tokeneerMinion.name, LOG_IDENTIFIER.MINION_1));
+                    }
+                }
+            }
+            if (interaction.characterInvolved != null) {
+                logFillers.Add(new LogFiller(interaction.characterInvolved, interaction.characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+            }
+            if (!AlreadyHasLogFiller(LOG_IDENTIFIER.LANDMARK_1)) {
+                logFillers.Add(new LogFiller(interaction.interactable.tileLocation.areaOfTile, interaction.interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
+            }
             for (int i = 0; i < otherLogs.Count; i++) {
                 Log currLog = otherLogs[i];
                 currLog.SetFillers(logFillers);

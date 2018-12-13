@@ -83,7 +83,7 @@ public class ReturnHome : Interaction {
     //    }
     //}
     private void CancelledEffect(InteractionState state) {
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
     }
     private void ContinuesEffect(InteractionState state) {
         characterInvolved.currentParty.GoHome();

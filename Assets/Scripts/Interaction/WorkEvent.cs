@@ -82,7 +82,7 @@ public class WorkEvent : Interaction {
 
     #region Option Effects
     private void StopOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = explorerMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> resultWeights = investigatorMinion.character.job.GetJobRateWeights();
         resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
 
         string nextState = string.Empty;
@@ -99,7 +99,7 @@ public class WorkEvent : Interaction {
         SetCurrentState(_states[nextState]);
     }
     private void StealOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = explorerMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> resultWeights = investigatorMinion.character.job.GetJobRateWeights();
         resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
 
         string nextState = string.Empty;
@@ -123,7 +123,7 @@ public class WorkEvent : Interaction {
     #region Reward Effects
     private void StopWorkSuccessfulRewardEffect(InteractionState state) {
         //**Level Up**: Dissuader Minion +1
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
 
         int obtainedSupplies = interactable.tileLocation.areaOfTile.monthlySupply;
         state.AddLogFiller(new LogFiller(null, obtainedSupplies.ToString(), LOG_IDENTIFIER.STRING_1));
@@ -141,7 +141,7 @@ public class WorkEvent : Interaction {
         int obtainedSupplies = interactable.tileLocation.areaOfTile.monthlySupply;
         PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, obtainedSupplies);
         //**Level Up**: Instigator Minion +1
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
         //**Mechanics**: Favor Count -2
         _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -2);
 

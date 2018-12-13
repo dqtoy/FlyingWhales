@@ -130,12 +130,12 @@ public class GoblinBanditReinforcements : Interaction {
 
     private void SuccessfullyCalledReinforcementRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         state.AddLogFiller(new LogFiller(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void FailedToCancelReinforcementRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         //**Mechanics**: create an Army Unit from Defense Spawn Weights and add it to the Tile Defenders if not yet full or Character List if already full
         Character createdUnit = CreateAssaultArmy(1).owner;
         //if (!landmark.defenders.isFull) {
@@ -155,7 +155,7 @@ public class GoblinBanditReinforcements : Interaction {
         //Add unit to players minion list
         PlayerManager.Instance.player.AddNewCharacter(createdUnit);
         //**Reward**: Demon gains Exp 1
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(createdUnit.race), LOG_IDENTIFIER.STRING_1);
             state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(createdUnit.role.roleType.ToString()), LOG_IDENTIFIER.STRING_2);

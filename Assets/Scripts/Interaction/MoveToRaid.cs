@@ -96,7 +96,7 @@ public class MoveToRaid : Interaction {
         }
         //**Log**: [Demon Name] persuaded [Character Name] to stop [his/her] plans to raid [Location Name].
         state.AddLogFiller(new LogFiller(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
     }
     private void RaidProceedsRewardEffect(InteractionState state) {
         //Selected character will travel to Location 1 to start a Raid Event.

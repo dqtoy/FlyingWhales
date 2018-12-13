@@ -46,7 +46,7 @@ public class FactionToken : Token{
     }
 
     public override string ToString() {
-        return faction.name + " Token";
+        return faction.name + "'s Token";
     }
 }
 
@@ -69,7 +69,18 @@ public class CharacterToken : Token {
         this.character = character;
     }
     public override string ToString() {
-        return character.name + " Token";
+        return character.name + "'s Token";
+    }
+}
+
+public class SpecialToken : Token {
+    public string name;
+
+    public SpecialToken(string name) : base() {
+        this.name = name;
+    }
+    public override string ToString() {
+        return name + " Token";
     }
 }
 

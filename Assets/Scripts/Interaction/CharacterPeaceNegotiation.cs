@@ -90,8 +90,8 @@ public class CharacterPeaceNegotiation : Interaction {
     #region Action Options
     private void DisruptOption() {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement("Success", explorerMinion.character.job.GetSuccessRate());
-        effectWeights.AddElement("Fail", explorerMinion.character.job.GetFailRate());
+        effectWeights.AddElement("Success", investigatorMinion.character.job.GetSuccessRate());
+        effectWeights.AddElement("Fail", investigatorMinion.character.job.GetFailRate());
         string instigatorResult = effectWeights.PickRandomElementGivenWeights();
 
         int failModifier = 0;
@@ -107,8 +107,8 @@ public class CharacterPeaceNegotiation : Interaction {
     }
     private void EnsureOption() {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement("Success", explorerMinion.character.job.GetSuccessRate());
-        effectWeights.AddElement("Fail", explorerMinion.character.job.GetFailRate());
+        effectWeights.AddElement("Success", investigatorMinion.character.job.GetSuccessRate());
+        effectWeights.AddElement("Fail", investigatorMinion.character.job.GetFailRate());
         string instigatorResult = effectWeights.PickRandomElementGivenWeights();
 
         int successModifier = 0;
@@ -144,7 +144,7 @@ public class CharacterPeaceNegotiation : Interaction {
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2));
     }
     private void NegotiationsDisruptedEffect(InteractionState state) {
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
 
         state.descriptionLog.AddToFillers(characterInvolved.faction, characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2);
@@ -154,7 +154,7 @@ public class CharacterPeaceNegotiation : Interaction {
     }
     private void NegotiationsImprovedEffect(InteractionState state) {
         FactionManager.Instance.DeclarePeaceBetween(characterInvolved.faction, interactable.tileLocation.areaOfTile.owner);
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
         characterInvolved.LevelUp();
 
         state.descriptionLog.AddToFillers(characterInvolved.faction, characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);

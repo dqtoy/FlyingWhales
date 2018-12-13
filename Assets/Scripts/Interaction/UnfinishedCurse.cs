@@ -122,7 +122,7 @@ public class UnfinishedCurse : Interaction {
     #endregion
 
     private void CurseCompletedRewardEffect(InteractionState state) {
-        this.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
+        this.investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Effect**: Character should gain a random curse from the Curse checklist below
         string chosenCurse = curseWeights.PickRandomElementGivenWeights();
         Trait chosenAttribute = AttributeManager.Instance.allTraits[chosenCurse];
@@ -132,11 +132,11 @@ public class UnfinishedCurse : Interaction {
     }
     private void CurseFailedToCompleteRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        this.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        this.investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         //state.AddLogFiller(new LogFiller(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
     }
     private void CurseBackfiresRewardEffect(InteractionState state) {
-        this.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
+        this.investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Effect**: Demon Minion should gain a random curse from the Curse checklist below
         string chosenCurse = curseWeights.PickRandomElementGivenWeights();
         state.assignedMinion.character.AddTrait(AttributeManager.Instance.allTraits[chosenCurse]);
@@ -144,7 +144,7 @@ public class UnfinishedCurse : Interaction {
     }
     private void ObtainManaRewardEffect(InteractionState state) {
         //**Reward**: Mana Cache 1, Demon gains Exp 1
-        this.explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        this.investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         Reward reward = InteractionManager.Instance.GetReward(InteractionManager.Mana_Cache_Reward_1);
         PlayerManager.Instance.player.ClaimReward(reward);
     }

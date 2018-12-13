@@ -137,14 +137,14 @@ public class ArmyUnitTraining : Interaction {
 
     #region State Effects
     private void CancelledTrainingRewardEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         state.AddLogFiller(new LogFiller(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
         //if (state.minionLog != null) {
         //    state.minionLog.AddToFillers(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1);
         //}
     }
     private void FailedCancelTrainingRewardEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         ArmyProducedRewardEffect(state);
 
         if (state.descriptionLog != null) {

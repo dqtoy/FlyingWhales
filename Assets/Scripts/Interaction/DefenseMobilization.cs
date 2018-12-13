@@ -62,8 +62,8 @@ public class DefenseMobilization : Interaction {
     #region Action Options
     private void StopOption() {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement(Stop_Mobilization_Successful, explorerMinion.character.job.GetSuccessRate());
-        effectWeights.AddElement(Stop_Mobilization_Fail, explorerMinion.character.job.GetFailRate());
+        effectWeights.AddElement(Stop_Mobilization_Successful, investigatorMinion.character.job.GetSuccessRate());
+        effectWeights.AddElement(Stop_Mobilization_Fail, investigatorMinion.character.job.GetFailRate());
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
@@ -79,7 +79,7 @@ public class DefenseMobilization : Interaction {
 
     #region State Effects
     private void StopMobilizationSuccessEffect(InteractionState state) {
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
     }
     private void StopMobilizationFailEffect(InteractionState state) {
         DefenderGroup newDefenderGroup = CreateNewDefenderGroupFromIdleCharactersInArea();

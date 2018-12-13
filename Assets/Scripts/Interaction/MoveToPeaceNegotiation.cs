@@ -98,11 +98,11 @@ public class MoveToPeaceNegotiation : Interaction {
     #region Action Option Effect
     private void KillDiplomatOptionEffect(InteractionState state) {
         //Combat computation between the Minion and the Diplomat
-        Combat combat = explorerMinion.character.currentParty.CreateCombatWith(_characterInvolved.party);
+        Combat combat = investigatorMinion.character.currentParty.CreateCombatWith(_characterInvolved.party);
         combat.Fight(() => AttackCombatResult(combat));
     }
     private void ConvinceOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = explorerMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> resultWeights = investigatorMinion.character.job.GetJobRateWeights();
         resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
 
         string nextState = string.Empty;
@@ -123,7 +123,7 @@ public class MoveToPeaceNegotiation : Interaction {
 
     private void AttackCombatResult(Combat combat) {
         WeightedDictionary<string> resultWeights = new WeightedDictionary<string>();
-        if (combat.winningSide == explorerMinion.character.currentSide) {
+        if (combat.winningSide == investigatorMinion.character.currentSide) {
             //Minion won
             resultWeights.AddElement(Diplomat_Killed_No_Witness, 30);
             resultWeights.AddElement(Diplomat_Killed_Witnessed, 30);
@@ -141,7 +141,7 @@ public class MoveToPeaceNegotiation : Interaction {
         //**Mechanic**: Diplomat Dies, peace declaration cancelled.
         _characterInvolved.Death();
         //**Level Up**: Instigator Minion +1
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
 
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2));
@@ -152,7 +152,7 @@ public class MoveToPeaceNegotiation : Interaction {
         _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -2);
 
         //**Level Up**: Instigator Minion +1
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         }
@@ -177,7 +177,7 @@ public class MoveToPeaceNegotiation : Interaction {
     }
     private void FactionLeaderPursuadedRewardEffect(InteractionState state) {
         //**Level Up**: Diplomat Minion +1
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
     }
     private void FactionLeaderRejectedRewardEffect(InteractionState state) {
         //**Mechanic**: Diplomat travels to [Location] for Peace Negotiation

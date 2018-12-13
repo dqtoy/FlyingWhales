@@ -121,12 +121,12 @@ public class KillerOnTheLoose : Interaction {
         state.AddLogFiller(new LogFiller(createdMinion, createdMinion.name, LOG_IDENTIFIER.STRING_1));
     }
     private void GainSupplyRewardEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         _interactable.tileLocation.areaOfTile.AdjustSuppliesInBank(50);
         state.AddLogFiller(new LogFiller(_interactable.owner, _interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void NothingHappensRewardEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
     }
     private void DoNothingRewardEffect(InteractionState state) {
         //explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));

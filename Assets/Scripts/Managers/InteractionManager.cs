@@ -180,10 +180,23 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.INFLICT_ILLNESS:
                 createdInteraction = new InflictIllness(interactable);
                 break;
+            case INTERACTION_TYPE.SPY_SPAWN_INTERACTION_1:
+                createdInteraction = new SpySpawnInteraction1(interactable);
+                break;
+            case INTERACTION_TYPE.SPY_SPAWN_INTERACTION_2:
+                createdInteraction = new SpySpawnInteraction2(interactable);
+                break;
+            case INTERACTION_TYPE.SPY_SPAWN_INTERACTION_3:
+                createdInteraction = new SpySpawnInteraction3(interactable);
+                break;
+            case INTERACTION_TYPE.SPY_SPAWN_INTERACTION_4:
+                createdInteraction = new SpySpawnInteraction4(interactable);
+                break;
         }
         return createdInteraction;
     }
     public bool CanCreateInteraction(INTERACTION_TYPE interactionType, BaseLandmark landmark) {
+        int count = 0;
         switch (interactionType) {
             case INTERACTION_TYPE.SPAWN_CHARACTER:
             case INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER:
@@ -218,6 +231,46 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.MYSTERIOUS_SARCOPHAGUS:
                 return landmark.specificLocation.tileLocation.areaOfTile.name == "Tessellated Triangle" || landmark.specificLocation.tileLocation.areaOfTile.name == "Gloomhollow Crypts";
+            case INTERACTION_TYPE.SPY_SPAWN_INTERACTION_1:
+                count = 0;
+                for (int i = 0; i < landmark.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
+                    Character character = landmark.tileLocation.areaOfTile.charactersAtLocation[i];
+                    if(character.faction.id != PlayerManager.Instance.player.playerFaction.id) {
+                        count++;
+                        if(count >= 2) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.SPY_SPAWN_INTERACTION_2:
+                count = 0;
+                for (int i = 0; i < landmark.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
+                    Character character = landmark.tileLocation.areaOfTile.charactersAtLocation[i];
+                    if (character.faction.id != PlayerManager.Instance.player.playerFaction.id) {
+                        count++;
+                        if (count >= 3) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.SPY_SPAWN_INTERACTION_3:
+                for (int i = 0; i < landmark.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
+                    Character character = landmark.tileLocation.areaOfTile.charactersAtLocation[i];
+                    if (character.faction.id != PlayerManager.Instance.player.playerFaction.id) {
+                        return true;
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.SPY_SPAWN_INTERACTION_4:
+                for (int i = 0; i < landmark.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
+                    Character character = landmark.tileLocation.areaOfTile.charactersAtLocation[i];
+                    if (character.faction.id != PlayerManager.Instance.player.playerFaction.id && character.faction.id != FactionManager.Instance.neutralFaction.id && character.homeLandmark.tileLocation.areaOfTile.id != landmark.tileLocation.areaOfTile.id) {
+                        return true;
+                    }
+                }
+                return false;
             default:
                 return true;
         }

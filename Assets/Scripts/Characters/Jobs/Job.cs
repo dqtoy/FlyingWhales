@@ -14,6 +14,7 @@ public class Job {
     protected bool _hasCaptureEvent;
     protected Character _character;
     protected Interaction _createdInteraction;
+    protected bool _useInteractionTimer;
     //protected INTERACTION_TYPE[] _characterInteractions; //For non-minion characters only
     private WeightedDictionary<RESULT> rateWeights;
 
@@ -44,6 +45,7 @@ public class Job {
         _character = character;
         //_characterInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.RETURN_HOME };
         rateWeights = new WeightedDictionary<RESULT>();
+        _useInteractionTimer = true;
     }
 
     #region Virtuals
@@ -75,15 +77,19 @@ public class Job {
         if (_hasCaptureEvent) {
             Messenger.AddListener(Signals.DAY_ENDED, CatchRandomEvent);
         }
-        _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.SetAndStartInteractionTimerJob(_actionDuration);
-        _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.ShowInteractionTimerJob();
+        if (_useInteractionTimer) {
+            _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.SetAndStartInteractionTimerJob(_actionDuration);
+            _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.ShowInteractionTimerJob();
+        }
     }
 
     //Stops Job Action entirely
     //Uses - when a minion is recalled, when job action duration ends
     public void StopJobAction() {
-        _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.StopInteractionTimerJob();
-        _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.HideInteractionTimerJob();
+        if (_useInteractionTimer) {
+            _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.StopInteractionTimerJob();
+            _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.HideInteractionTimerJob();
+        }
         if (_actionDuration != -1) {
             Messenger.RemoveListener(Signals.DAY_STARTED, CheckJobAction);
         }
@@ -111,7 +117,9 @@ public class Job {
 
     protected void SetJobActionPauseState(bool state) {
         _isJobActionPaused = state;
-        _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.SetTimerPauseStateJob(_isJobActionPaused);
+        if (_useInteractionTimer) {
+            _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.SetTimerPauseStateJob(_isJobActionPaused);
+        }
     }
     public void SetCreatedInteraction(Interaction interaction) {
         _createdInteraction = interaction;

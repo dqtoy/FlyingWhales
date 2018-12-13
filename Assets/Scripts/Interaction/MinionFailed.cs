@@ -12,12 +12,12 @@ public class MinionFailed : Interaction {
     #region Overrides
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
-        if(explorerMinion.character.job.jobType == JOB.RAIDER) {
-            Raider raider = explorerMinion.character.job as Raider;
-            Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "-" + explorerMinion.character.job.jobType.ToString().ToLower() + "-" + raider.action.ToLower() + "_description");
+        if(investigatorMinion.character.job.jobType == JOB.RAIDER) {
+            Raider raider = investigatorMinion.character.job as Raider;
+            Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "-" + investigatorMinion.character.job.jobType.ToString().ToLower() + "-" + raider.action.ToLower() + "_description");
             startState.OverrideDescriptionLog(startStateDescriptionLog);
         } else {
-            Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "-" + explorerMinion.character.job.jobType.ToString().ToLower() + "_description");
+            Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "-" + investigatorMinion.character.job.jobType.ToString().ToLower() + "_description");
             startState.OverrideDescriptionLog(startStateDescriptionLog);
         }
 
@@ -31,7 +31,7 @@ public class MinionFailed : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        if (explorerMinion.character.job.jobType == JOB.RAIDER && interactable.tileLocation.areaOfTile.owner != null) {
+        if (investigatorMinion.character.job.jobType == JOB.RAIDER && interactable.tileLocation.areaOfTile.owner != null) {
             interactable.tileLocation.areaOfTile.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -1);
         }
     }

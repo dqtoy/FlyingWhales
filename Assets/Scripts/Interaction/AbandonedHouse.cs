@@ -103,7 +103,7 @@ public class AbandonedHouse : Interaction {
         SetCurrentState(_states[effectName]);
     }
     private void DemonBonusExpRewardEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_2));
+        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_2));
     }
     private void LeftAloneRewardState(InteractionState state, string effectName) {
         //_states[effectName].SetDescription("We left the abandoned mansion alone.");

@@ -49,7 +49,7 @@ public class ActionOption {
     public bool CanBeDone() {
         if(canBeDoneAction != null) {
             if (canBeDoneAction()) {
-                if(jobNeeded != JOB.NONE && jobNeeded != interactionState.interaction.explorerMinion.character.job.jobType) {
+                if(jobNeeded != JOB.NONE && jobNeeded != interactionState.interaction.investigatorMinion.character.job.jobType) {
                     return false;
                 }
                 if(interactionState.interaction.isChosen) {
@@ -61,7 +61,7 @@ public class ActionOption {
                 }
             }
         } else {
-            if (jobNeeded != JOB.NONE && jobNeeded != interactionState.interaction.explorerMinion.character.job.jobType) {
+            if (jobNeeded != JOB.NONE && jobNeeded != interactionState.interaction.investigatorMinion.character.job.jobType) {
                 return false;
             }
             if (interactionState.interaction.isChosen) {

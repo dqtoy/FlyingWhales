@@ -78,15 +78,15 @@ public class SpawnNeutralCharacter : Interaction {
     #region Action Options
     private void StopOption() {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement("Success Cancellation", explorerMinion.character.job.GetSuccessRate());
-        effectWeights.AddElement("Fail Cancellation", explorerMinion.character.job.GetFailRate());
+        effectWeights.AddElement("Success Cancellation", investigatorMinion.character.job.GetSuccessRate());
+        effectWeights.AddElement("Fail Cancellation", investigatorMinion.character.job.GetFailRate());
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
     }
     private void RecruitOption() {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement("Success Recruit", explorerMinion.character.job.GetSuccessRate());
-        effectWeights.AddElement("Fail Recruit", explorerMinion.character.job.GetFailRate());
+        effectWeights.AddElement("Success Recruit", investigatorMinion.character.job.GetSuccessRate());
+        effectWeights.AddElement("Fail Recruit", investigatorMinion.character.job.GetFailRate());
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
     }
@@ -108,7 +108,7 @@ public class SpawnNeutralCharacter : Interaction {
         state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
     }
     private void SuccessCancelEffect(InteractionState state) {
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
 
         state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
         state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
@@ -129,7 +129,7 @@ public class SpawnNeutralCharacter : Interaction {
         state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void SuccessRecruitEffect(InteractionState state) {
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
 
         Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
         createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);

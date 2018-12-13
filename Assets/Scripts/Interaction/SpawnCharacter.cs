@@ -78,15 +78,15 @@ public class SpawnCharacter : Interaction {
     #region Action Options
     private void StopOption() {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement("Success Cancellation", explorerMinion.character.job.GetSuccessRate());
-        effectWeights.AddElement("Fail Cancellation", explorerMinion.character.job.GetFailRate());
+        effectWeights.AddElement("Success Cancellation", investigatorMinion.character.job.GetSuccessRate());
+        effectWeights.AddElement("Fail Cancellation", investigatorMinion.character.job.GetFailRate());
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
     }
     private void CurseOption() {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement("Success Curse", explorerMinion.character.job.GetSuccessRate());
-        effectWeights.AddElement("Fail Curse", explorerMinion.character.job.GetFailRate());
+        effectWeights.AddElement("Success Curse", investigatorMinion.character.job.GetSuccessRate());
+        effectWeights.AddElement("Fail Curse", investigatorMinion.character.job.GetFailRate());
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
     }
@@ -108,7 +108,7 @@ public class SpawnCharacter : Interaction {
         state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
     }
     private void SuccessCancelEffect(InteractionState state) {
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
         MinionSuccess();
 
         state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
@@ -132,7 +132,7 @@ public class SpawnCharacter : Interaction {
         state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void SuccessCurseEffect(InteractionState state) {
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
 
         Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), interactable.tileLocation.areaOfTile.owner, interactable);
         Trait curse = AttributeManager.Instance.allTraits["Placeholder Curse 1"];

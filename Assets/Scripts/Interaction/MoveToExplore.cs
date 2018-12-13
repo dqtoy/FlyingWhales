@@ -69,7 +69,7 @@ public class MoveToExplore : Interaction {
 
     #region Option Effects
     private void PreventFromLeavingOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = explorerMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> resultWeights = investigatorMinion.character.job.GetJobRateWeights();
         resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
 
         string nextState = string.Empty;
@@ -92,7 +92,7 @@ public class MoveToExplore : Interaction {
     private void CharacterExploreCancelledRewardEffect(InteractionState state) {
         //**Mechanics**: Character will no longer leave.
         //**Level Up**: Dissuader Minion +1
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
     }
     private void CharacterExploreContinuesRewardEffect(InteractionState state) {
         //**Mechanics**: Character will start its travel to selected location to start an Explore event.

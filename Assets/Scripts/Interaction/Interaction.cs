@@ -21,7 +21,7 @@ public class Interaction {
     protected bool _hasInitialized;
     protected InteractionState _previousState;
     protected InteractionState _currentState;
-    protected Minion _explorerMinion;
+    protected Minion _investigatorMinion;
     protected Character _characterInvolved;
     protected Action _minionSuccessfulAction;
     protected List<Action> _endInteractionActions;
@@ -50,13 +50,21 @@ public class Interaction {
     public InteractionState previousState {
         get { return _previousState; }
     }
-    public Minion explorerMinion {
+    public Minion investigatorMinion {
         get {
             if(_interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion != null && _interactable.tileLocation.areaOfTile == _interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion.character.specificLocation.tileLocation.areaOfTile) {
                 return _interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion;
             }
             //Only used for Minion Critical Fail Event since assignedMinion will be null, interaction must still have reference of the dead minion
-            return _explorerMinion;
+            return _investigatorMinion;
+        }
+    }
+    public Minion tokeneerMinion {
+        get {
+            if (_interactable.tileLocation.areaOfTile.areaInvestigation.assignedTokeneerMinion != null && _interactable.tileLocation.areaOfTile == _interactable.tileLocation.areaOfTile.areaInvestigation.assignedTokeneerMinion.character.specificLocation.tileLocation.areaOfTile) {
+                return _interactable.tileLocation.areaOfTile.areaInvestigation.assignedTokeneerMinion;
+            }
+            return null;
         }
     }
     public Character characterInvolved {
@@ -236,7 +244,7 @@ public class Interaction {
         }
     }
     public void SetExplorerMinion(Minion minion) {
-        _explorerMinion = minion;
+        _investigatorMinion = minion;
         //if(_explorerMinion != null) {
         //    _currentState.CreateLogs();
         //    _currentState.SetDescription();
@@ -250,12 +258,12 @@ public class Interaction {
         }
     }
     public bool AssignedMinionIsOfClass(string className) {
-        return this.explorerMinion != null && this.explorerMinion.character.characterClass.className.ToLower() == className.ToLower();
+        return this.investigatorMinion != null && this.investigatorMinion.character.characterClass.className.ToLower() == className.ToLower();
     }
     public bool AssignedMinionIsOfClass(List<string> allowedClassNames) {
-        if(this.explorerMinion != null) {
+        if(this.investigatorMinion != null) {
             for (int i = 0; i < allowedClassNames.Count; i++) {
-                if(allowedClassNames[i].ToLower() == this.explorerMinion.character.characterClass.className.ToLower()) {
+                if(allowedClassNames[i].ToLower() == this.investigatorMinion.character.characterClass.className.ToLower()) {
                     return true;
                 }
             }
@@ -351,7 +359,7 @@ public class Interaction {
     }
     protected void SupplyRewardEffect(InteractionState state) {
         PlayerManager.Instance.player.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
     }
 
     protected void ManaRewardState(InteractionState state, string effectName) {
@@ -361,7 +369,7 @@ public class Interaction {
     }
     protected void ManaRewardEffect(InteractionState state) {
         PlayerManager.Instance.player.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Mana_Cache_Reward_1));
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
     }
     protected void NothingRewardState(InteractionState state, string effectName) {
         //_states[effectName].SetDescription(explorerMinion.name + " has returned with nothing to report.");
@@ -369,7 +377,7 @@ public class Interaction {
         NothingEffect(_states[effectName]);
     }
     protected void NothingEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
     }
 
     #region End Result Share States and Effects
@@ -378,7 +386,7 @@ public class Interaction {
         SetCurrentState(_states[effectName]);
     }
     protected void DemonDisappearsRewardEffect(InteractionState state) {
-        explorerMinion.character.Death();
+        investigatorMinion.character.Death();
         //PlayerManager.Instance.player.RemoveMinion(explorerMinion);
     }
     protected void ExploreContinuesRewardState(InteractionState state, string stateName) {
@@ -390,13 +398,13 @@ public class Interaction {
         landmark.tileLocation.areaOfTile.areaInvestigation.ExploreArea();
     }
     protected void ExploreEndsRewardState(InteractionState state, string stateName) {
-        if (explorerMinion != null) {
+        if (investigatorMinion != null) {
             //_states[stateName].SetDescription("We've instructed " + explorerMinion.name + " to return.");
         }
         SetCurrentState(_states[stateName]);
     }
     protected void ExploreEndsRewardEffect(InteractionState state) {
-        if(explorerMinion == null) {
+        if(investigatorMinion == null) {
             return;
         }
         //if (_interactable is BaseLandmark) {

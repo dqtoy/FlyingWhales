@@ -95,19 +95,19 @@ public class MysteryHum : Interaction {
         ArmyRecruitedRewardEffect(_states[effectName]);
     }
     private void DemonAttacksRewardEffect(InteractionState state) {
-        PlayerManager.Instance.player.RemoveMinion(explorerMinion);
-        explorerMinion.SetEnabledState(true);
+        PlayerManager.Instance.player.RemoveMinion(investigatorMinion);
+        investigatorMinion.SetEnabledState(true);
 
         List<BaseLandmark> playerLandmarks = PlayerManager.Instance.player.demonicPortal.tileLocation.areaOfTile.landmarks;
         BaseLandmark playerLandmarkToAttack = playerLandmarks[UnityEngine.Random.Range(0, playerLandmarks.Count)];
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
-        explorerMinion.character.currentParty.iactionData.AssignAction(characterAction, playerLandmarkToAttack.landmarkObj);
+        investigatorMinion.character.currentParty.iactionData.AssignAction(characterAction, playerLandmarkToAttack.landmarkObj);
     }
     private void ArmyRecruitedRewardEffect(InteractionState state) {
         Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Earthbinders", RACE.ZOMBIE, false);
         newMinion.character.SetLevel(5);
         PlayerManager.Instance.player.AddMinion(newMinion);
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
     }
     private void DoNothingRewardEffect(InteractionState state) {
         //explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));

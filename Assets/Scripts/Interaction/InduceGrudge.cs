@@ -70,9 +70,9 @@ public class InduceGrudge : Interaction {
     #region Action Options
     private void InduceOption() {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement(Induce_Grudge_Successful, explorerMinion.character.job.GetSuccessRate());
-        effectWeights.AddElement(Induce_Grudge_Fail, explorerMinion.character.job.GetFailRate());
-        effectWeights.AddElement(Induce_Grudge_Critical_Fail, explorerMinion.character.job.GetCritFailRate());
+        effectWeights.AddElement(Induce_Grudge_Successful, investigatorMinion.character.job.GetSuccessRate());
+        effectWeights.AddElement(Induce_Grudge_Fail, investigatorMinion.character.job.GetFailRate());
+        effectWeights.AddElement(Induce_Grudge_Critical_Fail, investigatorMinion.character.job.GetCritFailRate());
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
@@ -91,7 +91,7 @@ public class InduceGrudge : Interaction {
         Character targetCharacter = _previousState.assignedCharacter.character;
         Grudge newGrudge = new Grudge(targetCharacter);
         _characterInvolved.AddTrait(newGrudge);
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
 
         state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
@@ -109,10 +109,10 @@ public class InduceGrudge : Interaction {
         Character targetCharacter = _previousState.assignedCharacter.character;
         _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -2);
 
-        state.descriptionLog.AddToFillers(explorerMinion, explorerMinion.name, LOG_IDENTIFIER.MINION_1);
+        state.descriptionLog.AddToFillers(investigatorMinion, investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
         state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(explorerMinion, explorerMinion.name, LOG_IDENTIFIER.MINION_1));
+        state.AddLogFiller(new LogFiller(investigatorMinion, investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
 
         DemonDisappearsRewardEffect(state);
     }

@@ -62,8 +62,8 @@ public class DefenseUpgrade : Interaction {
     #region Action Options
     private void StopOption() {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement(Stop_Defense_Upgrade_Successful, explorerMinion.character.job.GetSuccessRate());
-        effectWeights.AddElement(Stop_Defense_Upgrade_Fail, explorerMinion.character.job.GetFailRate());
+        effectWeights.AddElement(Stop_Defense_Upgrade_Successful, investigatorMinion.character.job.GetSuccessRate());
+        effectWeights.AddElement(Stop_Defense_Upgrade_Fail, investigatorMinion.character.job.GetFailRate());
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
@@ -79,7 +79,7 @@ public class DefenseUpgrade : Interaction {
 
     #region State Effects
     private void StopDefenseUpgradeSuccessEffect(InteractionState state) {
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
     }
     private void StopDefenseUpgradeFailEffect(InteractionState state) {
         interactable.tileLocation.areaOfTile.UpgradeDefendersToMatchFactionLvl();

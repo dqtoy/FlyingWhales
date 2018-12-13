@@ -8,6 +8,7 @@ public class AreaInvestigation {
     private Area _area;
     private Minion _assignedMinion;
     private Minion _assignedMinionAttack;
+    private Minion _assignedTokeneerMinion;
     private BaseLandmark _currentlyExploredLandmark;
     private BaseLandmark _currentlyAttackedLandmark;
     private bool _isExploring;
@@ -29,6 +30,9 @@ public class AreaInvestigation {
     }
     public Minion assignedMinionAttack {
         get { return _assignedMinionAttack; }
+    }
+    public Minion assignedTokeneerMinion {
+        get { return _assignedTokeneerMinion; }
     }
     public bool isExploring {
         get { return _isExploring; }

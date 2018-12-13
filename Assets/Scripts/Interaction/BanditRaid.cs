@@ -162,7 +162,7 @@ public class BanditRaid : Interaction {
     }
 
     private void SuccessfullyCancelledRaidRewardEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
+        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1);
             state.descriptionLog.AddToFillers(chosenLandmarkToRaid.tileLocation.areaOfTile, chosenLandmarkToRaid.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
@@ -171,7 +171,7 @@ public class BanditRaid : Interaction {
         state.AddLogFiller(new LogFiller(chosenLandmarkToRaid.tileLocation.areaOfTile, chosenLandmarkToRaid.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void FailedToCancelRaidRewardEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
+        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target
         Party createdParty = CombineCharacters(4);
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
@@ -184,7 +184,7 @@ public class BanditRaid : Interaction {
         state.AddLogFiller(new LogFiller(chosenLandmarkToRaid.tileLocation.areaOfTile, chosenLandmarkToRaid.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void CriticalFailToCancelRaidRewardEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
+        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
         BaseLandmark newRaidTarget = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target
         Party createdParty = CombineCharacters(4);
@@ -198,7 +198,7 @@ public class BanditRaid : Interaction {
     }
 
     private void EmpoweredRaidRewardEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
+        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target, all raiding units gain "Empowered" buff
         Party createdParty = CombineCharacters(4);
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
@@ -215,7 +215,7 @@ public class BanditRaid : Interaction {
         state.AddLogFiller(new LogFiller(chosenLandmarkToRaid.tileLocation.areaOfTile, chosenLandmarkToRaid.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void MisusedFundsRewardEffect(InteractionState state) {
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
+        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target, add 100 Supply to Bandit Camp
         Party createdParty = CombineCharacters(4);
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
@@ -230,7 +230,7 @@ public class BanditRaid : Interaction {
     }
     private void DemonDiesRewardEffect(InteractionState state) {
         //**Effect**: Demon is removed from Minion List
-        PlayerManager.Instance.player.RemoveMinion(explorerMinion);
+        PlayerManager.Instance.player.RemoveMinion(investigatorMinion);
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target
         Party createdParty = CombineCharacters(4);
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);

@@ -98,16 +98,16 @@ public class FactionUpgrade : Interaction {
     #region Action Options
     private void StopOption() {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement(Stop_Faction_Upgrade_Successful, explorerMinion.character.job.GetSuccessRate());
-        effectWeights.AddElement(Stop_Faction_Upgrade_Fail, explorerMinion.character.job.GetFailRate());
+        effectWeights.AddElement(Stop_Faction_Upgrade_Successful, investigatorMinion.character.job.GetSuccessRate());
+        effectWeights.AddElement(Stop_Faction_Upgrade_Fail, investigatorMinion.character.job.GetFailRate());
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
     }
     private void DisruptOption() {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement(Disrupt_Faction_Upgrade_Successful, explorerMinion.character.job.GetSuccessRate());
-        effectWeights.AddElement(Disrupt_Faction_Upgrade_Fail, explorerMinion.character.job.GetFailRate());
+        effectWeights.AddElement(Disrupt_Faction_Upgrade_Successful, investigatorMinion.character.job.GetSuccessRate());
+        effectWeights.AddElement(Disrupt_Faction_Upgrade_Fail, investigatorMinion.character.job.GetFailRate());
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
@@ -126,7 +126,7 @@ public class FactionUpgrade : Interaction {
 
     #region State Effects
     private void StopFactionUpgradeSuccessEffect(InteractionState state) {
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
         MinionSuccess();
 
         state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner.leader, interactable.tileLocation.areaOfTile.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -143,7 +143,7 @@ public class FactionUpgrade : Interaction {
         state.AddLogFiller(new LogFiller(null, interactable.tileLocation.areaOfTile.owner.level.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     private void DisruptFactionUpgradeSuccessEffect(InteractionState state) {
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
         interactable.tileLocation.areaOfTile.owner.LevelUp(-1);
         interactable.tileLocation.areaOfTile.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -2);
 
@@ -163,7 +163,7 @@ public class FactionUpgrade : Interaction {
         state.AddLogFiller(new LogFiller(null, interactable.tileLocation.areaOfTile.owner.level.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     private void AssistedFactionUpgradeEffect(InteractionState state) {
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
         interactable.tileLocation.areaOfTile.owner.leader.LevelUp();
         interactable.tileLocation.areaOfTile.owner.LevelUp(2);
         interactable.tileLocation.areaOfTile.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);

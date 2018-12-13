@@ -66,8 +66,8 @@ public class MoveToAttack : Interaction {
     #region Action Options
     private void StopOption() {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement("Stop Successful", explorerMinion.character.job.GetSuccessRate());
-        effectWeights.AddElement("Stop Fail", explorerMinion.character.job.GetFailRate());
+        effectWeights.AddElement("Stop Successful", investigatorMinion.character.job.GetSuccessRate());
+        effectWeights.AddElement("Stop Fail", investigatorMinion.character.job.GetFailRate());
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
     }
@@ -82,7 +82,7 @@ public class MoveToAttack : Interaction {
 
     #region State Effects
     private void StopSuccessfulEffect(InteractionState state) {
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
         MinionSuccess();
 
         state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);

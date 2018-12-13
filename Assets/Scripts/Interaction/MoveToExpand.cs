@@ -70,7 +70,7 @@ public class MoveToExpand : Interaction {
 
     #region Option Effects
     private void DiscourageFromLeavingOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = explorerMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> resultWeights = investigatorMinion.character.job.GetJobRateWeights();
         resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
 
         string nextState = string.Empty;
@@ -96,7 +96,7 @@ public class MoveToExpand : Interaction {
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
         }
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
     }
     private void CharacterExploreContinuesRewardEffect(InteractionState state) {
         //**Mechanics**: Character travels to the Location to start an Expansion event.

@@ -10,8 +10,9 @@ public class Explorer : Job {
     };
 
     public Explorer(Character character) : base(character, JOB.EXPLORER) {
-        _actionDuration = 120;
-        _hasCaptureEvent = false;
+        _actionDuration = -1;
+        _hasCaptureEvent = true;
+        _useInteractionTimer = false;
     }
 
     #region Overrides
@@ -84,6 +85,8 @@ public class Explorer : Job {
             multiplier = 0;
         }
         return baseRate + multiplier;
+    }
+    public override void CaptureRandomLandmarkEvent() {
     }
     #endregion
 

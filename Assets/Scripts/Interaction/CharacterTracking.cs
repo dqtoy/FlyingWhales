@@ -126,7 +126,7 @@ public class CharacterTracking : Interaction {
     #region End Result Effects
     private void SuccessfullyFoundOutLocationRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         //**Mechanics**: Player get's the location intel that the character has chosen.
         PlayerManager.Instance.player.AddToken(targetArea.locationToken);
 
@@ -139,7 +139,7 @@ public class CharacterTracking : Interaction {
     }
     private void MinionCaughtTailingRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         //TODO: **Mechanics**: Start combat between Character and Demon
         //if (state.descriptionLog != null) {
         //    state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -154,7 +154,7 @@ public class CharacterTracking : Interaction {
     }
     private void SuccessfullyGotAheadOfCharacterRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         //**Mechanics**: Player gains Mana Cache Reward 1 and Supply Cache Reward 1
         PlayerManager.Instance.player.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Mana_Cache_Reward_1));
         PlayerManager.Instance.player.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
@@ -167,7 +167,7 @@ public class CharacterTracking : Interaction {
     }
     private void MinionMisdirectedRewardEffect(InteractionState state) {
         //**Mechanics**: Remove minion from player
-        PlayerManager.Instance.player.RemoveMinion(explorerMinion);
+        PlayerManager.Instance.player.RemoveMinion(investigatorMinion);
         //if (state.descriptionLog != null) {
         //    state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         //}

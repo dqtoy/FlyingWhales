@@ -153,7 +153,7 @@ public class RaidEvent : Interaction {
         //**Mechanics**: Compute Supply obtained by raider and transfer it to his home area. Raider also travels back to his home area.
         //**Level Up**: Instigator Minion +1, Minion Character +1
         _characterInvolved.LevelUp(); //Minion Character
-        explorerMinion.character.LevelUp(); //Instigator
+        investigatorMinion.character.LevelUp(); //Instigator
         //Player Favor Count +1 on Raided Faction
         interactable.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 1);
         int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable.tileLocation.areaOfTile);
@@ -168,7 +168,7 @@ public class RaidEvent : Interaction {
     }
     private void AlertedRaidFailRewardEffect(InteractionState state) {
         //**Mechanics**: Scavenger travels back to his home area.
-        explorerMinion.LevelUp(); //**Level Up**: Instigator Minion +1
+        investigatorMinion.LevelUp(); //**Level Up**: Instigator Minion +1
         GoBackHome();
         //Player Favor Count +2 on Raided Faction
         interactable.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);
@@ -178,7 +178,7 @@ public class RaidEvent : Interaction {
     }
     private void AlertedRaidCriticallyFailRewardEffect(InteractionState state) {
         //**Mechanics**: Scavenger dies.
-        explorerMinion.LevelUp(); //**Level Up**: Instigator Minion +1
+        investigatorMinion.LevelUp(); //**Level Up**: Instigator Minion +1
         _characterInvolved.Death();
 
         //Player Favor Count +2 on Raided Faction
@@ -190,7 +190,7 @@ public class RaidEvent : Interaction {
     private void AssistedRaidSuccessRewardEffect(InteractionState state) {
         //**Mechanics**: Compute Supply obtained by scavenger and transfer it to his home area. Scavenger also travels back to his home area.
         //**Level Up**: Diplomat Minion +1, Raider Character +1
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
         _characterInvolved.LevelUp();
 
         int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable.tileLocation.areaOfTile);

@@ -5,13 +5,20 @@ using UnityEngine;
 
 public class Spy : Job {
 
-    //INTERACTION_TYPE[] explorerEvents = new INTERACTION_TYPE[] { //TODO: Put this somwhere else
-        
-    //};
+    INTERACTION_TYPE[] spySpawnEvents = new INTERACTION_TYPE[] {
+        INTERACTION_TYPE.SPY_SPAWN_INTERACTION_1,
+        INTERACTION_TYPE.SPY_SPAWN_INTERACTION_2,
+        INTERACTION_TYPE.SPY_SPAWN_INTERACTION_3,
+        INTERACTION_TYPE.SPY_SPAWN_INTERACTION_4,
+    };
+
+    private int _currentInteractionTick;
+    private int _usedMonthTick;
 
     public Spy(Character character) : base(character, JOB.SPY) {
-        _actionDuration = 80;
-        _hasCaptureEvent = false;
+        _actionDuration = -1;
+        _hasCaptureEvent = true;
+        _useInteractionTimer = false;
     }
 
     #region Overrides
@@ -105,6 +112,7 @@ public class Spy : Job {
     }
     public override void ApplyActionDuration() {
         _actionDuration = 80 - (2 * (Mathf.Max(_character.level - 5, 0)));
+        SetCurrentInteractionTick();
     }
     public override int GetSuccessRate() {
         int baseRate = 60;
@@ -114,8 +122,51 @@ public class Spy : Job {
         }
         return baseRate + multiplier;
     }
+    public override void CaptureRandomLandmarkEvent() {
+        if(_currentInteractionTick == GameManager.Instance.days) {
+            if(_usedMonthTick == GameManager.Instance.month) {
+                return;
+            }
+            _usedMonthTick = GameManager.Instance.month;
+            GenerateSpawnedInteraction();
+            SetCurrentInteractionTick();
+        }
+    }
     #endregion
 
+    private void SetCurrentInteractionTick() {
+        int currMonth = _currentInteractionTick;
+        currMonth++;
+        if (currMonth > 12) {
+            currMonth = 1;
+        }
+        _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.daysInMonth[currMonth] + 1);
+    }
+    private void GenerateSpawnedInteraction() {
+        List<INTERACTION_TYPE> choices = GetValidSpySpawnEvents();
+        if(choices.Count > 0) {
+            Area area = _character.specificLocation.tileLocation.areaOfTile;
+            area.SetStopDefaultInteractionsState(true);
+            SetJobActionPauseState(true);
+            INTERACTION_TYPE chosenInteractionType = choices[UnityEngine.Random.Range(0, choices.Count)];
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(chosenInteractionType, _character.specificLocation as BaseLandmark);
+            interaction.AddEndInteractionAction(() => SetJobActionPauseState(false));
+            interaction.AddEndInteractionAction(() => ForceDefaultAllExistingInteractions());
+            _character.specificLocation.tileLocation.areaOfTile.AddInteraction(interaction);
+            SetCreatedInteraction(interaction);
+            InteractionUI.Instance.OpenInteractionUI(_createdInteraction);
+        }
+    }
+    private List<INTERACTION_TYPE> GetValidSpySpawnEvents() {
+        List<INTERACTION_TYPE> validTypes = new List<INTERACTION_TYPE>();
+        for (int i = 0; i < spySpawnEvents.Length; i++) {
+            INTERACTION_TYPE type = spySpawnEvents[i];
+            if (InteractionManager.Instance.CanCreateInteraction(type, _character.specificLocation as BaseLandmark)) {
+                validTypes.Add(type);
+            }
+        }
+        return validTypes;
+    }
     private void Success(Token chosenToken) {
         Interaction interaction = null;
         if (chosenToken is FactionToken) {

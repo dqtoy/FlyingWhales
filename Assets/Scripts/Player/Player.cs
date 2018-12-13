@@ -278,6 +278,14 @@ public class Player : ILeader {
         }
         return false;
     }
+    public Token GetToken(Token token) {
+        for (int i = 0; i < _tokens.Count; i++) {
+            if(_tokens[i] == token) {
+                return _tokens[i];
+            }
+        }
+        return null;
+    }
     #endregion
 
     #region Items

@@ -23,6 +23,6 @@ public class DefendersRevealed : Interaction {
         //**Mechanics**: Unlock Location's Defender Tile
         //**Log**: [Minion Name] obtained intel about [Location Name]'s defenders.
         PlayerManager.Instance.player.AddToken(interactable.tileLocation.areaOfTile.defenderToken);
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
     }
 }

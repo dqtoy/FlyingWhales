@@ -102,7 +102,7 @@ public class ScavengeEvent : Interaction {
         WeightedDictionary<RESULT> scavengerResultWeights = _characterInvolved.job.GetJobRateWeights();
         if (this.isChosen) {
             //Compute Scavenger success rate (Minion Instigator Success = +30 to Fail Rate, +2 to Critical Fail Rate)
-            WeightedDictionary<RESULT> minionResultWeights = explorerMinion.character.job.GetJobRateWeights();
+            WeightedDictionary<RESULT> minionResultWeights = investigatorMinion.character.job.GetJobRateWeights();
             if (minionResultWeights.PickRandomElementGivenWeights() == RESULT.SUCCESS) {
                 scavengerResultWeights.AddWeightToElement(RESULT.FAIL, 30);
             } else {
@@ -173,18 +173,18 @@ public class ScavengeEvent : Interaction {
     }
     private void ScavengeTrappedRewardEffect(InteractionState state) {
         //**Mechanics**: Scavenger travels back to his home area.
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
         GoBackHome();
     }
     private void ScavengeCriticallyTrappedRewardEffect(InteractionState state) {
         //**Mechanics**: Scavenger dies.
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
         _characterInvolved.Death();
     }
     private void ScavengeBuffedRewardEffect(InteractionState state) {
         //**Mechanics**: Compute Supply obtained by scavenger and transfer it to his home area. Scavenger also travels back to his home area.
         //+2 Favor from Faction 1
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
         _characterInvolved.LevelUp();
 
         int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
@@ -211,7 +211,7 @@ public class ScavengeEvent : Interaction {
     private void ScavengeBuffCriticallyFailedRewardEffect(InteractionState state) {
         //**Mechanics**: Compute Supply obtained by scavenger and transfer it to his home area. Scavenger also travels back to his home area.
         //+2 Favor from Faction 1
-        explorerMinion.LevelUp();
+        investigatorMinion.LevelUp();
 
         int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
         GoBackHome(() => _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply));
