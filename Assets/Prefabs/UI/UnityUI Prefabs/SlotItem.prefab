@@ -653,11 +653,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -1231,11 +1231,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49b5edcf9cebc8b4192c2a42abf05afd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onItemDropped:
+  onItemDroppedValid:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114698373371233428}
-        m_MethodName: OnDropItemSlotItem
+        m_MethodName: OnDroppedItemValid
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

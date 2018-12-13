@@ -5,7 +5,7 @@ using System.Linq;
 using System.IO;
 using System;
 
-public class Character : ICharacter, ILeader, IInteractable, IQuestGiver, IUnit {
+public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public delegate void OnCharacterDeath();
     public OnCharacterDeath onCharacterDeath;
 

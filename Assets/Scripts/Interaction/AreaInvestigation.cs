@@ -12,13 +12,18 @@ public class AreaInvestigation {
     private BaseLandmark _currentlyAttackedLandmark;
     private bool _isExploring;
     private bool _isAttacking;
+    private bool _isCollectingTokens;
     private bool _isMinionRecalledAttack;
     private bool _isMinionRecalledExplore;
+    private bool _isMinionRecalledCollect;
 
     //Explore
     private int _duration;
     private int _currentTick;
     private Interaction _currentInteraction;
+
+    //Token Collection
+    public Minion tokenCollector;
 
     #region getters/setters
     public Area area {
@@ -36,11 +41,17 @@ public class AreaInvestigation {
     public bool isAttacking {
         get { return _isAttacking; }
     }
+    public bool isCollectingTokens {
+        get { return _isCollectingTokens; }
+    }
     public bool isMinionRecalledAttack {
         get { return _isMinionRecalledAttack; }
     }
     public bool isMinionRecalledExplore {
         get { return _isMinionRecalledExplore; }
+    }
+    public bool isMinionRecalledCollect {
+        get { return _isMinionRecalledCollect; }
     }
     #endregion
 
@@ -87,6 +98,8 @@ public class AreaInvestigation {
             _assignedMinion.TravelToAssignment(_area.coreTile.landmarkOnTile, action);
         } else if (whatToDo == "attack") {
             _assignedMinionAttack.TravelToAssignment(_currentlyAttackedLandmark, action);
+        } else if (whatToDo == "collect") {
+            tokenCollector.TravelToAssignment(_area.coreTile.landmarkOnTile, action);
         }
     }
     public void RecallMinion(string action) {
@@ -97,13 +110,19 @@ public class AreaInvestigation {
             //Messenger.RemoveListener(Signals.HOUR_STARTED, OnExploreTick);
             UnexploreLandmark();
             SetMinionRecallExploreState(true);
-            UIManager.Instance.landmarkInfoUI.OnUpdateLandmarkInvestigationState("explore");
+            //UIManager.Instance.landmarkInfoUI.OnUpdateLandmarkInvestigationState("explore");
         }
         if (_isAttacking && action == "attack") {
             _assignedMinionAttack.TravelBackFromAssignment(() => SetMinionRecallAttackState(false));
             UnattackLandmark();
             SetMinionRecallAttackState(true);
-            UIManager.Instance.landmarkInfoUI.OnUpdateLandmarkInvestigationState("attack");
+            //UIManager.Instance.landmarkInfoUI.OnUpdateLandmarkInvestigationState("attack");
+        }
+        if (_isCollectingTokens && action == "collect") {
+            tokenCollector.TravelBackFromAssignment(() => SetMinionRecallCollectState(false));
+            SetMinionRecallCollectState(true);
+            StopTokenCollection();
+            //UIManager.Instance.landmarkInfoUI.OnUpdateLandmarkInvestigationState("collect");
         }
     }
     public void CancelInvestigation(string action) {
@@ -131,7 +150,10 @@ public class AreaInvestigation {
         _isMinionRecalledExplore = state;
     }
     public void SetMinionRecallAttackState(bool state) {
-        _isMinionRecalledAttack = state;
+        _isMinionRecalledExplore = state;
+    }
+    public void SetMinionRecallCollectState(bool state) {
+        _isMinionRecalledCollect = state;
     }
     public void SetCurrentInteraction(Interaction interaction) {
         _currentInteraction = interaction;
@@ -210,6 +232,29 @@ public class AreaInvestigation {
                 }
             }
         }
+    }
+    #endregion
+
+    #region Token Collector
+    public void AssignTokenCollector(Minion minion) {
+        SetTokenCollector(minion);
+        tokenCollector.SetEnabledState(false);
+        tokenCollector.SetCollectingTokenArea(_area);
+
+        MinionGoToAssignment(StartTokenCollection, "collect");
+        _isCollectingTokens = true;
+    }
+    private void SetTokenCollector(Minion minion) {
+        tokenCollector = minion;
+    }
+    public void StartTokenCollection() {
+        //TODO: Collect tokens
+    }
+    public void StopTokenCollection() {
+        _isCollectingTokens = false;
+        tokenCollector.SetCollectingTokenArea(null);
+        SetTokenCollector(null);
+        UIManager.Instance.areaInfoUI.ResetTokenCollectorAssignment();
     }
     #endregion
 }

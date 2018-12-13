@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -10,9 +11,11 @@ public class SlotItem : MonoBehaviour {
     public object placedObject { get; private set; }
     public System.Type neededType { get; private set; }
 
-    public SlotItemDropEvent onItemDropped;
+    public SlotItemDropEvent onItemDroppedValid;
     public ItemDroppedCallback itemDroppedCallback;
     public ItemDroppedOutCallback itemDroppedOutCallback;
+
+    public Func<bool> otherValidation;
 
     [Space(10)]
     [Header("Slot Elements")]
@@ -21,22 +24,12 @@ public class SlotItem : MonoBehaviour {
     public FactionEmblem factionEmblem;
     public CustomDropZone dropZone;
     public SlotItemDraggable draggable;
-
     [SerializeField] private string neededTypeStr;
 
-
     public int slotIndex { get; private set; }
-
     private string hoverInfo;
 
-    public void SetNeededType(System.Type neededType) {
-        this.neededType = neededType;
-        neededTypeStr = neededType.ToString();
-    }
-    public void SetSlotIndex(int index) {
-        slotIndex = index;
-    }
-
+    #region Drop Zone
     public void OnDropItemAtDropZone(GameObject go) { //this is used to filter if the dragged object is valid for this slot
         DragObject dragObj = go.GetComponent<DragObject>();
         if (dragObj == null) {
@@ -44,31 +37,32 @@ public class SlotItem : MonoBehaviour {
         }
         IDragParentItem parentItem = dragObj.parentItem;
         if (parentItem != null) {
-            if (neededType == typeof(IUnit)) {
-                if (parentItem.associatedObj is IUnit) { //TODO: Make this more elegant!
-                    SuccessfulDropZoneDrop(parentItem);
-                } else {
-                    //dragged object is not of needed type
-                    //Debug.Log("Dragged invalid object");
-                    Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE, "This slot requires a " + GetTypeString(neededType), true);
-                }
+            if (parentItem.associatedObj.GetType() == neededType || parentItem.associatedObj.GetType().BaseType == neededType) {
+                SuccessfulDropZoneDrop(parentItem);
             } else {
-                if (parentItem.associatedObj.GetType() == neededType || parentItem.associatedObj.GetType().BaseType == neededType) {
-                    SuccessfulDropZoneDrop(parentItem);
-                } else {
-                    //dragged object is not of needed type
-                    //Debug.Log("Dragged invalid object");
-                    Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE, "This slot requires a " + GetTypeString(neededType), true);
-                }
+
+                Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE, "This slot requires a " + GetTypeString(neededType), true);
             }
         }
     }
     private void SuccessfulDropZoneDrop(IDragParentItem parentItem) {
-        if (onItemDropped != null) {
-            onItemDropped.Invoke(parentItem);
+        if (onItemDroppedValid != null) {
+            if (otherValidation == null || otherValidation()) {
+                onItemDroppedValid.Invoke(parentItem);
+            }
         }
     }
-    public void OnDropItemSlotItem(IDragParentItem item) {
+    #endregion
+
+    #region Core Functions
+    public void SetSlotIndex(int index) {
+        slotIndex = index;
+    }
+    public void SetNeededType(System.Type neededType) {
+        this.neededType = neededType;
+        neededTypeStr = neededType.ToString();
+    }
+    public void OnDroppedItemValid(IDragParentItem item) {
         PlaceObject(item.associatedObj);
         if (itemDroppedCallback != null) {
             itemDroppedCallback.Invoke(item.associatedObj, slotIndex);
@@ -116,6 +110,17 @@ public class SlotItem : MonoBehaviour {
         areaEmblem.gameObject.SetActive(false);
         portrait.gameObject.SetActive(false);
     }
+    #endregion
+
+    #region Draggable Item
+    public void OnItemDroppedOut() {
+        if (itemDroppedOutCallback != null) {
+            itemDroppedOutCallback.Invoke(placedObject, slotIndex);
+        }
+    }
+    #endregion
+
+    #region Utilities
     private string GetTypeString(System.Type type) {
         if (type == null) {
             return "null";
@@ -130,15 +135,8 @@ public class SlotItem : MonoBehaviour {
             return "Minion";
         } else if (type == typeof(Character)) {
             return "Character";
-        } else if (type == typeof(IUnit)) {
-            return "Army/Minion";
         } else {
             return type.ToString();
-        }
-    }
-    public void OnItemDroppedOut() {
-        if (itemDroppedOutCallback != null) {
-            itemDroppedOutCallback.Invoke(placedObject, slotIndex);
         }
     }
     public void HideVisuals() {
@@ -146,7 +144,6 @@ public class SlotItem : MonoBehaviour {
         factionEmblem.gameObject.SetActive(false);
         areaEmblem.gameObject.SetActive(false);
     }
-
     public void ShowObjectInfo() {
         if (placedObject != null) {
             UIManager.Instance.ShowSmallInfo(hoverInfo);
@@ -157,6 +154,7 @@ public class SlotItem : MonoBehaviour {
             UIManager.Instance.HideSmallInfo();
         }
     }
+    #endregion
 }
 
 [System.Serializable]

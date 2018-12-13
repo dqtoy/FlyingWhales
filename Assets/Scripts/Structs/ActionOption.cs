@@ -22,9 +22,6 @@ public class ActionOption {
     private int _currentDuration;
 
     #region getters/setters
-    public IUnit assignedUnit {
-        get { return GetAssignedObjectOfType(typeof(IUnit)) as IUnit; }
-    }
     public Minion assignedMinion {
         get { return GetAssignedObjectOfType(typeof(Minion)) as Minion; }
     }
@@ -133,14 +130,8 @@ public class ActionOption {
     public object GetAssignedObjectOfType(System.Type type) {
         for (int i = 0; i < assignedObjects.Count; i++) {
             object currObject = assignedObjects[i];
-            if (type == typeof(IUnit)) {
-                if (currObject is IUnit) { //TODO: Make this more elegant!
-                    return currObject;
-                }
-            } else {
-                if (currObject.GetType() == type) {
-                    return currObject;
-                }
+            if (currObject.GetType() == type) {
+                return currObject;
             }
         }
         return null;

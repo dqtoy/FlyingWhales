@@ -4,12 +4,13 @@ using UnityEngine;
 
 using System;
 
-public class Minion : IUnit {
+public class Minion {
 
     //private PlayerCharacterItem _characterItem;
     //private PlayerAbility _ability;
     private Area _currentlyExploringArea;
     private Area _currentlyAttackingArea;
+    private Area _currentlyCollectingArea;
 
     private Character _character;
     private IInteractable _target;
@@ -118,6 +119,17 @@ public class Minion : IUnit {
                 Character otherChar = character.ownParty.characters[i];
                 if (otherChar.id != character.id) {
                     character.currentParty.characters[i].minion.SetExploringArea(area);
+                }
+            }
+        }
+    }
+    public void SetCollectingTokenArea(Area area) {
+        _currentlyCollectingArea = area;
+        if (character.IsInOwnParty()) {
+            for (int i = 0; i < character.currentParty.characters.Count; i++) {
+                Character otherChar = character.ownParty.characters[i];
+                if (otherChar.id != character.id) {
+                    character.currentParty.characters[i].minion.SetCollectingTokenArea(area);
                 }
             }
         }

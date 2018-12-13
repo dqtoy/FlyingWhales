@@ -47,10 +47,6 @@ public class AreaInfoUI : UIMenu {
     [SerializeField] private HorizontalScrollSnap defendersScrollSnap;
     [SerializeField] private TextMeshProUGUI defenderPageLbl;
 
-    //[Space(10)]
-    //[Header("Others")]
-    //[SerializeField] private GameObject[] notInspectedBGs;
-
     [Space(10)]
     [Header("Investigation")]
     [SerializeField] private GameObject investigationGO;
@@ -63,6 +59,13 @@ public class AreaInfoUI : UIMenu {
     [SerializeField] private Toggle[] investigateToggles;
     [SerializeField] private EnvelopContentUnityUI minionAssignmentDescriptionEnvelop;
 
+    [Space(10)]
+    [Header("Token Collector")]
+    [SerializeField] private GameObject tokenCollectorGO;
+    [SerializeField] private CharacterPortrait tokenCollectorPortrait;
+    [SerializeField] private Button tokenCollectorConfirmBtn;
+    [SerializeField] private Button tokenCollectorRecallBtn;
+    [SerializeField] private InvestigationMinionDraggableItem tokenCollectorDraggableItem;
 
     [Space(10)]
     [Header("Attack/Raid")]
@@ -86,6 +89,7 @@ public class AreaInfoUI : UIMenu {
     private Minion _assignedMinion;
     private Minion[] _assignedParty;
     private float _currentWinChance;
+    private Minion _assignedTokenCollectorMinion;
 
     internal override void Initialize() {
         base.Initialize();
@@ -116,7 +120,8 @@ public class AreaInfoUI : UIMenu {
         UpdateLandmarkInfo();
         UpdateCharacters();
         ResetScrollPositions();
-        if(previousArea != null) {
+        UpdateTokenCollectorData();
+        if (previousArea != null) {
             previousArea.SetOutlineState(false);
         }
         if (_activeArea != null) {
@@ -391,15 +396,6 @@ public class AreaInfoUI : UIMenu {
     public void ScrollCharactersRight() {
         charactersScrollView.horizontalNormalizedPosition += Time.deltaTime;
     }
-    //private void CheckScrollers() {
-    //    if (characterItems.Count > 5) {
-    //        scrollLeftArrowGO.SetActive(true);
-    //        scrollRightArrowGO.SetActive(true);
-    //    } else {
-    //        scrollLeftArrowGO.SetActive(false);
-    //        scrollRightArrowGO.SetActive(false);
-    //    }
-    //}
     #endregion
 
     #region Defenders
@@ -795,6 +791,81 @@ public class AreaInfoUI : UIMenu {
     private void OnMinionInvestigateArea(Minion minion, Area area) {
         if (this.isShowing && _activeArea != null && _activeArea.id == area.id) {
             UpdateMinionTooltipDescription(minion);
+        }
+    }
+    #endregion
+
+    #region Token Collector
+    public void OnTokenCollectorMinionDrop(GameObject go) {
+        PlayerCharacterItem minionItem = go.GetComponent<DragObject>().parentItem as PlayerCharacterItem;
+        if (minionItem != null) {
+            AssignMinionToTokenCollection(minionItem.minion);
+        }
+    }
+    public void AssignMinionToTokenCollection(Minion minion) {
+        _assignedTokenCollectorMinion = minion;
+        if (minion != null) {
+            tokenCollectorPortrait.gameObject.SetActive(true);
+            tokenCollectorPortrait.GeneratePortrait(minion.character);
+            UpdateTokenCollectorInteractables();
+        } else {
+            ResetTokenCollectorAssignment();
+        }
+    }
+    public void ResetTokenCollectorAssignment() {
+        _assignedTokenCollectorMinion = null;
+        tokenCollectorPortrait.gameObject.SetActive(false);
+        UpdateTokenCollectorInteractables();
+    }
+    private bool CanCollectTokensHere(Minion minion) {
+        if (_activeArea.owner == null) {
+            return minion.character.job.jobType == JOB.EXPLORER;
+        } else {
+            return minion.character.job.jobType == JOB.SPY;
+        }
+    }
+    public void OnClickConfirmTokenCollection() {
+        _activeArea.areaInvestigation.AssignTokenCollector(_assignedTokenCollectorMinion);
+        UpdateTokenCollectorData();
+    }
+    public void OnClickTokenCollectorRecall() {
+        _activeArea.areaInvestigation.RecallMinion("collect");
+    }
+    private void UpdateTokenCollectorData() {
+        if (_activeArea.areaInvestigation.tokenCollector != null) {
+            AssignMinionToTokenCollection(_activeArea.areaInvestigation.tokenCollector);
+            tokenCollectorPortrait.gameObject.SetActive(true);
+            tokenCollectorPortrait.GeneratePortrait(_activeArea.areaInvestigation.tokenCollector.character);
+        } else {
+            tokenCollectorPortrait.gameObject.SetActive(false);
+        }
+        UpdateTokenCollectorInteractables();
+    }
+    private void UpdateTokenCollectorInteractables() {
+        if (_activeArea.areaInvestigation.tokenCollector != null) { //if there is already an assigned minion as the token collector
+            //only show the recall button
+            tokenCollectorRecallBtn.gameObject.SetActive(true);
+            tokenCollectorConfirmBtn.gameObject.SetActive(false);
+            //set portrait as undraggable
+            tokenCollectorDraggableItem.SetDraggable(false);
+        } else { //else
+            //disable recall button
+            tokenCollectorRecallBtn.gameObject.SetActive(false);
+            tokenCollectorConfirmBtn.gameObject.SetActive(true);
+            //set portrait as draggable
+            tokenCollectorDraggableItem.SetDraggable(true);
+            if (_assignedTokenCollectorMinion != null) { //check if there is an assigned token collector minion (not yet locked in)
+                if (CanCollectTokensHere(_assignedTokenCollectorMinion)) { //check if that assigned minion can collect tokens in this area
+                    //if yes, enable confirm btn
+                    tokenCollectorConfirmBtn.interactable = true;
+                } else {
+                    //if no, disable confirm btn
+                    tokenCollectorConfirmBtn.interactable = false;
+                }
+            } else { //else if there is no assigned token collector yet
+                //disable confirm btn
+                tokenCollectorConfirmBtn.interactable = false;
+            }
         }
     }
     #endregion

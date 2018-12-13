@@ -66,7 +66,7 @@ public class TheSpiderQueen : Interaction {
                 name = "Attempt to kill it.",
                 description = "We have sent %minion% to kill the Spider Queen while it is vulnerable.",
                 duration = 10,
-                neededObjects = new List<System.Type>() { typeof(IUnit) },
+                //neededObjects = new List<System.Type>() { typeof(IUnit) },
                 effect = () => AttemptToKillItEffect(state),
             };
             ActionOption attemptToCorrupt = new ActionOption {
