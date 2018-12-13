@@ -165,6 +165,7 @@ public class ScavengeEvent : Interaction {
         _characterInvolved.LevelUp();
         int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
         GoBackHome(() => _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply));
+        interactable.tileLocation.areaOfTile.AdjustSuppliesInBank(-obtainedSupply);
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
         }
@@ -189,7 +190,7 @@ public class ScavengeEvent : Interaction {
         int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
         GoBackHome(() => _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply));
         _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);
-
+        interactable.tileLocation.areaOfTile.AdjustSuppliesInBank(-obtainedSupply);
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
         }
@@ -201,7 +202,7 @@ public class ScavengeEvent : Interaction {
         int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
         GoBackHome(() => _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply));
         _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 1);
-
+        interactable.tileLocation.areaOfTile.AdjustSuppliesInBank(-obtainedSupply);
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
         }
@@ -227,6 +228,7 @@ public class ScavengeEvent : Interaction {
 
         int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
         GoBackHome(() => _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply));
+        interactable.tileLocation.areaOfTile.AdjustSuppliesInBank(-obtainedSupply);
 
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);

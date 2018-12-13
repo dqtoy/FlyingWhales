@@ -27,6 +27,7 @@ public static class Signals {
     public static string AREA_DELETED = "OnAreaDeleted"; //Parameters (Area deletedArea)
     public static string AREA_TILE_REMOVED = "OnAreaTileRemoved"; //Parameters (Area affectedArea)
     public static string AREA_TILE_ADDED = "OnAreaTileAdded"; //Parameters (Area affectedArea)
+    public static string AREA_SUPPLIES_CHANGED = "OnAreaSuppliesSet"; //Parameters (Area affectedArea)
     #endregion
 
     #region Landmarks

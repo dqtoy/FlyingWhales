@@ -50,7 +50,8 @@ public class ConsoleMenu : UIMenu {
             {"/change_landmark_state", ChangeLandmarkState },
             {"/adjust_faction_favor", AdjustFactionFavor},
             {"/log_location_history", LogLocationHistory  },
-            {"/log_supply_history", LogSupplyHistory  }
+            {"/log_supply_history", LogSupplyHistory  },
+            {"/adjust_area_supply", AdjustSupply  },
         };
     }
 
@@ -1006,6 +1007,40 @@ public class ConsoleMenu : UIMenu {
             text += "\n" + area.supplyLog[i];
         }
         AddSuccessMessage(text);
+    }
+    private void AdjustSupply(string[] parameters) {
+        if (parameters.Length < 3) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+
+        string supplyAdjustmentString = parameters[1];
+        string areaParameterString = parameters[2];
+        int areaID;
+
+        string areaName = string.Empty;
+        for (int i = 2; i < parameters.Length; i++) {
+            areaName += parameters[i] + " ";
+        }
+        areaName = areaName.Trim();
+
+        bool isAreaParameterNumeric = int.TryParse(areaParameterString, out areaID);
+
+        Area area = null;
+        if (isAreaParameterNumeric) {
+            area = LandmarkManager.Instance.GetAreaByID(areaID);
+        } else {
+            area = LandmarkManager.Instance.GetAreaByName(areaName);
+        }
+
+        int supplyAdjustment;
+        if (Int32.TryParse(supplyAdjustmentString, out supplyAdjustment)) {
+            area.AdjustSuppliesInBank(supplyAdjustment);
+            AddSuccessMessage("Supplies of " + area.name + " is now " + area.suppliesInBank.ToString());
+        } else {
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+        }
     }
     #endregion
 

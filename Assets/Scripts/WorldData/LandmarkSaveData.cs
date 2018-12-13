@@ -14,8 +14,8 @@ public class LandmarkSaveData {
     public Dictionary<INTERACTION_TYPE, int> scenarioWeights;
     public int eventTriggerWeight;
     public int noEventTriggerWeight;
-    public int maxDailySupplyAmount;
-    public int minDailySupplyAmount;
+    //public int maxDailySupplyAmount;
+    //public int minDailySupplyAmount;
     //public int initialDefenderCount;
     //public int maxDefenderCount;
     //public int[] defenders;
@@ -48,8 +48,8 @@ public class LandmarkSaveData {
         eventTriggerWeight = landmark.eventTriggerWeight;
         noEventTriggerWeight = landmark.noEventTriggerWeight;
 
-        maxDailySupplyAmount = landmark.maxDailySupplyProduction;
-        minDailySupplyAmount = landmark.minDailySupplyProduction;
+        //maxDailySupplyAmount = landmark.maxDailySupplyProduction;
+        //minDailySupplyAmount = landmark.minDailySupplyProduction;
         //maxDefenderCount = landmark.maxDefenderCount;
         //defenders = new int[LandmarkManager.MAX_DEFENDERS];
         //for (int i = 0; i < defenders.Length; i++) {

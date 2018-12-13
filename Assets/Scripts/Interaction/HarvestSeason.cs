@@ -154,7 +154,7 @@ public class HarvestSeason : Interaction {
     private void BurnFarmSuccessRewardEffect(InteractionState state) {
         GameDate dueDate = GameManager.Instance.Today();
         dueDate.AddMonths(5);
-        farm.DisableSupplyProductionUntil(dueDate);
+        //farm.DisableSupplyProductionUntil(dueDate);
         explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     private void BurnFarmFailRewardEffect(InteractionState state) {

@@ -26,7 +26,7 @@ public class WorkEvent : Interaction {
         InteractionState normalWork = new InteractionState(Normal_Work, this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(null, interactable.tileLocation.areaOfTile.workSupplyProduction.ToString(), LOG_IDENTIFIER.STRING_1);
+        startStateDescriptionLog.AddToFillers(null, interactable.tileLocation.areaOfTile.monthlySupply.ToString(), LOG_IDENTIFIER.STRING_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -125,12 +125,12 @@ public class WorkEvent : Interaction {
         //**Level Up**: Dissuader Minion +1
         explorerMinion.LevelUp();
 
-        int obtainedSupplies = interactable.tileLocation.areaOfTile.workSupplyProduction;
+        int obtainedSupplies = interactable.tileLocation.areaOfTile.monthlySupply;
         state.AddLogFiller(new LogFiller(null, obtainedSupplies.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     private void StopWorkFailRewardEffect(InteractionState state) {
         //**Mechanics**: Produce amount based on Location Supply Production and add to Area
-        int obtainedSupplies = interactable.tileLocation.areaOfTile.workSupplyProduction;
+        int obtainedSupplies = interactable.tileLocation.areaOfTile.monthlySupply;
         interactable.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupplies);
         //**Level Up**: Worker Character +1
         _characterInvolved.LevelUp();
@@ -138,7 +138,7 @@ public class WorkEvent : Interaction {
     }
     private void StealSupplySuccessRewardEffect(InteractionState state) {
         //**Mechanics**: Produce amount based on Location Supply Production and add to player
-        int obtainedSupplies = interactable.tileLocation.areaOfTile.workSupplyProduction;
+        int obtainedSupplies = interactable.tileLocation.areaOfTile.monthlySupply;
         PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, obtainedSupplies);
         //**Level Up**: Instigator Minion +1
         explorerMinion.LevelUp();
@@ -152,7 +152,7 @@ public class WorkEvent : Interaction {
     }
     private void StealSupplyFailRewardEffect(InteractionState state) {
         //**Mechanics**: Produce amount based on Location Supply Production and add to Area
-        int obtainedSupplies = interactable.tileLocation.areaOfTile.workSupplyProduction;
+        int obtainedSupplies = interactable.tileLocation.areaOfTile.monthlySupply;
         interactable.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupplies);
         //**Level Up**: Worker Character +1
         _characterInvolved.LevelUp();
@@ -163,7 +163,7 @@ public class WorkEvent : Interaction {
     }
     private void NormalWorkRewardEffect(InteractionState state) {
         //**Mechanics**: Produce amount based on Location Supply Production and add to Area
-        int obtainedSupplies = interactable.tileLocation.areaOfTile.workSupplyProduction;
+        int obtainedSupplies = interactable.tileLocation.areaOfTile.monthlySupply;
         interactable.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupplies);
         //**Level Up**: Worker Character +1
         _characterInvolved.LevelUp();

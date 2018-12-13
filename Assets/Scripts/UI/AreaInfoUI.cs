@@ -100,6 +100,7 @@ public class AreaInfoUI : UIMenu {
         //Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_REMOVED, OnResidentRemovedFromLandmark);
         Messenger.AddListener<Intel>(Signals.INTEL_ADDED, OnIntelAdded);
         Messenger.AddListener<Minion, Area>(Signals.MINION_STARTS_INVESTIGATING_AREA, OnMinionInvestigateArea);
+        Messenger.AddListener<Area>(Signals.AREA_SUPPLIES_CHANGED, OnAreaSuppliesSet);
         _assignedParty = new Minion[4];
     }
     public override void OpenMenu() {
@@ -222,7 +223,7 @@ public class AreaInfoUI : UIMenu {
         } else {
             landmarkTypeLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(_activeArea.coreTile.landmarkOnTile.specificLandmarkType.ToString());
         }
-        suppliesNameLbl.text = _activeArea.suppliesInBank.ToString();
+        UpdateSupplies();
 
 
         if (_activeArea.owner == null) {
@@ -231,6 +232,14 @@ public class AreaInfoUI : UIMenu {
             factionEmblem.gameObject.SetActive(true);
             factionEmblem.SetFaction(_activeArea.owner);
         }
+    }
+    private void OnAreaSuppliesSet(Area area) {
+        if (this.isShowing && _activeArea.id == area.id) {
+            UpdateSupplies();
+        }
+    }
+    private void UpdateSupplies() {
+        suppliesNameLbl.text = _activeArea.suppliesInBank.ToString();
     }
     #endregion
 

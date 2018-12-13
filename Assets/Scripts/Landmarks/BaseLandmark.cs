@@ -51,13 +51,13 @@ public class BaseLandmark : ILocation, IInteractable {
     public QuestBoard questBoard { get; private set; }
     public List<GameEvent> advertisedEvents { get; private set; } //events happening at this landmark, that other characters can partake in
     //public Party defenders { get; private set; }
-    public bool canProduceSupplies { get; private set; }
+    //public bool canProduceSupplies { get; private set; }
     public WeightedDictionary<INTERACTION_TYPE> scenarios { get; private set; }
     public WeightedDictionary<bool> eventTriggerWeights { get; private set; }
     public int eventTriggerWeight { get; private set; }
     public int noEventTriggerWeight { get; private set; }
-    public int maxDailySupplyProduction { get; private set; }
-    public int minDailySupplyProduction { get; private set; }
+    //public int maxDailySupplyProduction { get; private set; }
+    //public int minDailySupplyProduction { get; private set; }
     public int maxDefenderCount { get; private set; }
 
     //private List<Buff> defenderBuffs;
@@ -225,7 +225,7 @@ public class BaseLandmark : ILocation, IInteractable {
         _assaultParties = new List<Party>();
         scenarios = new WeightedDictionary<INTERACTION_TYPE>();
         eventTriggerWeights = new WeightedDictionary<bool>();
-        SetSupplyProductionState(true);
+        //SetSupplyProductionState(true);
         //SetMaxDefenderCount(4);
         //defenderBuffs = new List<Buff>();
         //defenders = new Party[LandmarkManager.MAX_DEFENDERS];
@@ -261,7 +261,7 @@ public class BaseLandmark : ILocation, IInteractable {
         //if (data.defenderWeights != null) {
         //    defenderWeights = new WeightedDictionary<DefenderSetting>(data.defenderWeights);
         //}
-        SetMaxDailySupplyProductionAmount(data.maxDailySupplyAmount);
+        //SetMaxDailySupplyProductionAmount(data.maxDailySupplyAmount);
         //SetInitialDefenderCount(data.initialDefenderCount);
         //SetMaxDefenderCount(data.maxDefenderCount);
     }
@@ -1151,22 +1151,22 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     #endregion
 
-    #region Supplies
-    public void DisableSupplyProductionUntil(GameDate dueDate) {
-        SetSupplyProductionState(false);
-        SchedulingManager.Instance.AddEntry(dueDate, () => SetSupplyProductionState(true));
-    }
-    public void SetSupplyProductionState(bool state) {
-        canProduceSupplies = state;
-    }
-    public bool MeetsSupplyProductionRequirements() {
-        switch (specificLandmarkType) {
-            case LANDMARK_TYPE.FARM:
-                return charactersWithHomeOnLandmark.Where(x => x.characterClass.className == "Farmer").Count() > 0; //(Requires at least 1 Farmer)
-        }
-        return true;
-    }
-    #endregion
+    //#region Supplies
+    //public void DisableSupplyProductionUntil(GameDate dueDate) {
+    //    SetSupplyProductionState(false);
+    //    SchedulingManager.Instance.AddEntry(dueDate, () => SetSupplyProductionState(true));
+    //}
+    //public void SetSupplyProductionState(bool state) {
+    //    canProduceSupplies = state;
+    //}
+    //public bool MeetsSupplyProductionRequirements() {
+    //    switch (specificLandmarkType) {
+    //        case LANDMARK_TYPE.FARM:
+    //            return charactersWithHomeOnLandmark.Where(x => x.characterClass.className == "Farmer").Count() > 0; //(Requires at least 1 Farmer)
+    //    }
+    //    return true;
+    ////}
+    //#endregion
 
     //#region Defenders
     //public void AddDefender(ICharacter newDefender) {
@@ -1315,12 +1315,12 @@ public class BaseLandmark : ILocation, IInteractable {
         }
         return weights;
     }
-    public void SetMaxDailySupplyProductionAmount(int amount) {
-        this.maxDailySupplyProduction = amount;
-    }
-    public void SetMinDailySupplyProductionAmount(int amount) {
-        this.minDailySupplyProduction = amount;
-    }
+    //public void SetMaxDailySupplyProductionAmount(int amount) {
+    //    this.maxDailySupplyProduction = amount;
+    //}
+    //public void SetMinDailySupplyProductionAmount(int amount) {
+    //    this.minDailySupplyProduction = amount;
+    //}
     #endregion
 
     #region Raid
