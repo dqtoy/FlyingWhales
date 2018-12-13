@@ -78,14 +78,14 @@ public class LandmarkInfoEditor : MonoBehaviour {
         int weight = System.Int32.Parse(newWeight);
         landmark.SetNoEventTriggerWeight(weight);
     }
-    public void SetMaxDailySupplyProductionAmount(string amountStr) {
-        int amount = System.Int32.Parse(amountStr);
-        landmark.SetMaxDailySupplyProductionAmount(amount);
-    }
-    public void SetMinDailySupplyProductionAmount(string amountStr) {
-        int amount = System.Int32.Parse(amountStr);
-        landmark.SetMinDailySupplyProductionAmount(amount);
-    }
+    //public void SetMaxDailySupplyProductionAmount(string amountStr) {
+    //    int amount = System.Int32.Parse(amountStr);
+    //    landmark.SetMaxDailySupplyProductionAmount(amount);
+    //}
+    //public void SetMinDailySupplyProductionAmount(string amountStr) {
+    //    int amount = System.Int32.Parse(amountStr);
+    //    landmark.SetMinDailySupplyProductionAmount(amount);
+    //}
     public void SetInitialDefenderCount(string countStr) {
         int count = System.Int32.Parse(countStr);
         //landmark.SetInitialDefenderCount(count);

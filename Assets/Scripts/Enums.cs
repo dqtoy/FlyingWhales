@@ -1083,6 +1083,7 @@ public enum INTERACTION_TYPE {
     WORK_EVENT,
     INDUCE_GRUDGE,
     INFLICT_ILLNESS,
+    EXPANSION_EVENT,
 }
 public enum REWARD {
     SUPPLY,

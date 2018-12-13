@@ -13,10 +13,10 @@ public class AreaInfoEditor : MonoBehaviour {
     [SerializeField] private InputField areaNameField;
     [SerializeField] private InputField maxDefendersField;
     [SerializeField] private InputField initialDefenderGroupsField;
-    [SerializeField] private InputField supplyCapacityField;
-    [SerializeField] private InputField initialSupplyField;
+    //[SerializeField] private InputField supplyCapacityField;
+    //[SerializeField] private InputField initialSupplyField;
     [SerializeField] private InputField residentCapacityField;
-    [SerializeField] private InputField workSupplyProductionField;
+    [SerializeField] private InputField monthlySupplyField;
     [SerializeField] private Dropdown possibleOccupantsRaceDropdown;
     [SerializeField] private Text occupantsSummary;
 
@@ -49,10 +49,10 @@ public class AreaInfoEditor : MonoBehaviour {
         areaNameField.text = currentArea.name;
         maxDefendersField.text = currentArea.maxDefenderGroups.ToString();
         initialDefenderGroupsField.text = currentArea.initialDefenderGroups.ToString();
-        supplyCapacityField.text = currentArea.supplyCapacity.ToString();
-        initialSupplyField.text = currentArea.initialSupply.ToString();
+        //supplyCapacityField.text = currentArea.supplyCapacity.ToString();
+        //initialSupplyField.text = currentArea.initialSupply.ToString();
         residentCapacityField.text = currentArea.residentCapacity.ToString();
-        workSupplyProductionField.text = currentArea.workSupplyProduction.ToString();
+        monthlySupplyField.text = currentArea.monthlySupply.ToString();
         //defaultRaceDropdown.value = Utilities.GetOptionIndex(defaultRaceDropdown, currentArea.defaultRace.ToString());
         occupantsSummary.text = string.Empty;
         for (int i = 0; i < currentArea.possibleOccupants.Count; i++) {
@@ -78,12 +78,12 @@ public class AreaInfoEditor : MonoBehaviour {
             currentArea.SetInitialDefenderGroups(amount);
         }
     }
-    public void SetSupplyCapacity(string amountStr) {
-        int amount;
-        if (Int32.TryParse(amountStr, out amount)) {
-            currentArea.SetSupplyCapacity(amount);
-        }
-    }
+    //public void SetSupplyCapacity(string amountStr) {
+    //    int amount;
+    //    if (Int32.TryParse(amountStr, out amount)) {
+    //        currentArea.SetSupplyCapacity(amount);
+    //    }
+    //}
     public void SetDefaultRace(int choice) {
         RACE result;
         //if (Enum.TryParse(defaultRaceDropdown.options[defaultRaceDropdown.value].text, out result)) {
@@ -99,20 +99,20 @@ public class AreaInfoEditor : MonoBehaviour {
         }
         LoadData();
     }
-    public void SetInitialSupplies(string amountStr) {
-        if (!string.IsNullOrEmpty(amountStr)) {
-            currentArea.SetInitialSupplies(System.Int32.Parse(amountStr));
-        }
+    //public void SetInitialSupplies(string amountStr) {
+    //    if (!string.IsNullOrEmpty(amountStr)) {
+    //        currentArea.SetInitialSupplies(System.Int32.Parse(amountStr));
+    //    }
         
-    }
+    //}
     public void SetResidentCapacity(string amountStr) {
         if (!string.IsNullOrEmpty(amountStr)) {
             currentArea.SetResidentCapacity(System.Int32.Parse(amountStr));
         }
     }
-    public void SetWorkSupplyProduction(string amountStr) {
+    public void SetMonthlySupply(string amountStr) {
         if (!string.IsNullOrEmpty(amountStr)) {
-            currentArea.SetWorkSupplyProduction(System.Int32.Parse(amountStr));
+            currentArea.SetMonthlySupply(System.Int32.Parse(amountStr));
         }
     }
     #endregion

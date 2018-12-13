@@ -111,9 +111,16 @@ public class MoveToExplore : Interaction {
     }
 
     private void CreateExploreEvent() {
-        Interaction exploreEvent = _characterInvolved.job.CreateExplorerEvent();
-
-        _characterInvolved.SetForcedInteraction(exploreEvent);
+        if (_characterInvolved.job is Explorer) {
+            Interaction exploreEvent = (_characterInvolved.job as Explorer).CreateExplorerEvent();
+            if (exploreEvent != null) {
+                _characterInvolved.SetForcedInteraction(exploreEvent);
+            }
+        } 
+        //else if (_characterInvolved.job is Spy) {
+        //    Interaction exploreEvent = (_characterInvolved.job as Spy).CreateExplorerEvent();
+        //    _characterInvolved.SetForcedInteraction(exploreEvent);
+        //}
     }
 
     private Area GetTargetLocation() {

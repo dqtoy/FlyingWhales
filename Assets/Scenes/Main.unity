@@ -75993,9 +75993,7 @@ MonoBehaviour:
     - data:
       - interactionType: 46
         weight: 10
-    - data:
-      - interactionType: 47
-        weight: 10
+    - data: []
 --- !u!1001 &1680592839
 Prefab:
   m_ObjectHideFlags: 0

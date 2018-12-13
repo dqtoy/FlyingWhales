@@ -42,7 +42,7 @@ public class Area {
     public Dictionary<JOB, List<INTERACTION_TYPE>> jobInteractionTypes { get; private set; }
     public int initialSupply { get; private set; } //this should not change when scavenging
     public int residentCapacity { get; private set; }
-    public int workSupplyProduction { get; private set; }
+    public int monthlySupply { get; private set; }
     public List<Interaction> eventsTargettingThis { get; private set; }
 
     //for testing
@@ -83,7 +83,7 @@ public class Area {
         defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
         SetAreaType(areaType);
         SetCoreTile(coreTile);
-        SetSupplyCapacity(1000);
+        //SetSupplyCapacity(1000);
         AddTile(coreTile);
         SetSuppliesInBank(1000);
         if (areaType != AREA_TYPE.DEMONIC_INTRUSION) {
@@ -125,11 +125,11 @@ public class Area {
 #endif
         SetMaxDefenderGroups(data.maxDefenderGroups);
         SetInitialDefenderGroups(data.initialDefenderGroups);
-        SetSupplyCapacity(data.supplyCapacity);
-        SetInitialSupplies(data.initialSupply);
+        //SetSupplyCapacity(data.supplyCapacity);
+        //SetInitialSupplies(data.initialSupply);
         SetResidentCapacity(data.residentCapacity);
-        SetWorkSupplyProduction(data.workSupplyProduction);
-        SetSuppliesInBank(1000);
+        SetMonthlySupply(data.monthlySupply);
+        SetSuppliesInBank(data.monthlySupply);
         possibleOccupants = new List<RACE>();
         if (data.possibleOccupants != null) {
             possibleOccupants.AddRange(data.possibleOccupants);
@@ -187,14 +187,14 @@ public class Area {
         }
         return null;
     }
-    public void SetInitialSupplies(int amount) {
-        initialSupply = amount;
-    }
+    //public void SetInitialSupplies(int amount) {
+    //    initialSupply = amount;
+    //}
     public void SetResidentCapacity(int amount) {
         residentCapacity = amount;
     }
-    public void SetWorkSupplyProduction(int amount) {
-        workSupplyProduction = amount;
+    public void SetMonthlySupply(int amount) {
+        monthlySupply = amount;
     }
     private void GenerateDefaultRace() {
         if (initialRaceSetup.Count > 0) {
@@ -657,70 +657,56 @@ public class Area {
 
     #region Supplies
     private void StartSupplyLine() {
-        AdjustSuppliesInBank(100);
+        //AdjustSuppliesInBank(100);
         Messenger.AddListener(Signals.MONTH_START, ExecuteSupplyLine);
     }
+    public void StopSupplyLine() {
+        Messenger.RemoveListener(Signals.MONTH_START, ExecuteSupplyLine);
+    }
     private void ExecuteSupplyLine() {
-        CollectDailySupplies();
+        CollectMonthlySupplies();
         //PayMaintenance();
-        LandmarkStartMonthActions();
+        //LandmarkStartMonthActions();
     }
-    private void CollectDailySupplies() {
-        int totalCollectedSupplies = 0;
-        string supplySummary = string.Empty;
-        for (int i = 0; i < landmarks.Count; i++) {
-            BaseLandmark currLandmark = landmarks[i];
-            if (currLandmark.canProduceSupplies && !currLandmark.landmarkObj.isRuined && currLandmark.MeetsSupplyProductionRequirements()) {
-                int providedSupplies = UnityEngine.Random.Range(currLandmark.minDailySupplyProduction, currLandmark.maxDailySupplyProduction);
-                totalCollectedSupplies += providedSupplies;
-                AdjustSuppliesInBank(providedSupplies);
-                supplySummary += currLandmark.name + "(" + currLandmark.specificLandmarkType.ToString() + ") - " + providedSupplies.ToString() + "\n";
-            } else {
-                supplySummary += currLandmark.name + "(" + currLandmark.specificLandmarkType.ToString() + ") - Cannot Produce\n";
-            }
-        }
-        //Debug.Log(this.name + " collected supplies " + totalCollectedSupplies + " Summary: \n" + supplySummary);
-    }
-    private void PayMaintenance() {
-        //consumes Supply per existing unit
+    private void CollectMonthlySupplies() {
+        SetSuppliesInBank(monthlySupply);
+        //int totalCollectedSupplies = 0;
+        //string supplySummary = string.Empty;
         //for (int i = 0; i < landmarks.Count; i++) {
         //    BaseLandmark currLandmark = landmarks[i];
-        //    if (currLandmark.defenders == null) {
-        //        continue;
-        //    }
-        //    for (int j = 0; j < currLandmark.defenders.icharacters.Count; j++) {
-        //        ICharacter currDefender = currLandmark.defenders.icharacters[j];
-        //        if (currDefender is CharacterArmyUnit) {
-        //            CharacterArmyUnit armyUnit = currDefender as CharacterArmyUnit;
-        //            AdjustSuppliesInBank(-armyUnit.armyCount);
-        //        } else if (currDefender is MonsterArmyUnit) {
-        //            MonsterArmyUnit armyUnit = currDefender as MonsterArmyUnit;
-        //            AdjustSuppliesInBank(-armyUnit.armyCount);
-        //        } else {
-        //            AdjustSuppliesInBank(-1); //if just a single character or monster
-        //        }
+        //    if (currLandmark.canProduceSupplies && !currLandmark.landmarkObj.isRuined && currLandmark.MeetsSupplyProductionRequirements()) {
+        //        int providedSupplies = UnityEngine.Random.Range(currLandmark.minDailySupplyProduction, currLandmark.maxDailySupplyProduction);
+        //        totalCollectedSupplies += providedSupplies;
+        //        AdjustSuppliesInBank(providedSupplies);
+        //        supplySummary += currLandmark.name + "(" + currLandmark.specificLandmarkType.ToString() + ") - " + providedSupplies.ToString() + "\n";
+        //    } else {
+        //        supplySummary += currLandmark.name + "(" + currLandmark.specificLandmarkType.ToString() + ") - Cannot Produce\n";
         //    }
         //}
+        //Debug.Log(this.name + " collected supplies " + totalCollectedSupplies + " Summary: \n" + supplySummary);
     }
-    private void LandmarkStartMonthActions() {
-        for (int i = 0; i < landmarks.Count; i++) {
-            BaseLandmark currLandmark = landmarks[i];
-            currLandmark.landmarkObj.StartMonthAction();
-        }
-    }
+    //private void LandmarkStartMonthActions() {
+    //    for (int i = 0; i < landmarks.Count; i++) {
+    //        BaseLandmark currLandmark = landmarks[i];
+    //        currLandmark.landmarkObj.StartMonthAction();
+    //    }
+    //}
     public void SetSuppliesInBank(int amount) {
         suppliesInBank = amount;
-        suppliesInBank = Mathf.Max(0, suppliesInBank);
+        suppliesInBank = Mathf.Clamp(suppliesInBank, 0, monthlySupply);
+        Debug.Log(GameManager.Instance.TodayLogString() + "Set " + this.name + " supplies to " + suppliesInBank.ToString());
+        Messenger.Broadcast(Signals.AREA_SUPPLIES_CHANGED, this);
         //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
     }
     public void AdjustSuppliesInBank(int amount) {
         suppliesInBank += amount;
-        suppliesInBank = Mathf.Max(0, suppliesInBank);
+        suppliesInBank = Mathf.Clamp(suppliesInBank, 0, monthlySupply);
         supplyLog.Add(GameManager.Instance.TodayLogString() + "Adjusted supplies in bank by " + amount.ToString() +
             " ST: " + StackTraceUtility.ExtractStackTrace());
         if (supplyLog.Count > 100) {
             supplyLog.RemoveAt(0);
         }
+        Messenger.Broadcast(Signals.AREA_SUPPLIES_CHANGED, this);
         //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
     }
     public bool HasEnoughSupplies(int neededSupplies) {
@@ -731,10 +717,10 @@ public class Area {
             AdjustSuppliesInBank(-reward.amount);
         }
     }
-    public void SetSupplyCapacity(int supplyCapacity) {
-        this.supplyCapacity = supplyCapacity;
-        //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
-    }
+    //public void SetSupplyCapacity(int supplyCapacity) {
+    //    this.supplyCapacity = supplyCapacity;
+    //    //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
+    //}
     #endregion
 
     #region Rewards

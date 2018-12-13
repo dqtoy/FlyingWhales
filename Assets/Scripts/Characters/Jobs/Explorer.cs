@@ -5,6 +5,10 @@ using UnityEngine;
 
 public class Explorer : Job {
 
+    INTERACTION_TYPE[] explorerEvents = new INTERACTION_TYPE[] { //TODO: Put this somwhere else        
+	INTERACTION_TYPE.MYSTERIOUS_SARCOPHAGUS,
+    };
+
     public Explorer(Character character) : base(character, JOB.EXPLORER) {
         _actionDuration = 120;
         _hasCaptureEvent = false;
@@ -82,4 +86,26 @@ public class Explorer : Job {
         return baseRate + multiplier;
     }
     #endregion
+
+    private List<INTERACTION_TYPE> GetValidExplorerEvents() {
+        List<INTERACTION_TYPE> validTypes = new List<INTERACTION_TYPE>();
+        for (int i = 0; i < explorerEvents.Length; i++) {
+            INTERACTION_TYPE type = explorerEvents[i];
+            if (InteractionManager.Instance.CanCreateInteraction(type, _character)) {
+                validTypes.Add(type);
+            }
+        }
+        return validTypes;
+    }
+
+    public Interaction CreateExplorerEvent() {
+        List<INTERACTION_TYPE> choices = GetValidExplorerEvents();
+        if (choices.Count > 0) {
+            Area area = _character.specificLocation.tileLocation.areaOfTile;
+            INTERACTION_TYPE chosenType = choices[Random.Range(0, choices.Count)];
+            //Get Random Explorer Event
+            return InteractionManager.Instance.CreateNewInteraction(chosenType, area.coreTile.landmarkOnTile);
+        }
+        return null;
+    }
 }
