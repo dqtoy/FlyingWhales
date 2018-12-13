@@ -192,6 +192,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.SPY_SPAWN_INTERACTION_4:
                 createdInteraction = new SpySpawnInteraction4(interactable);
                 break;
+            case INTERACTION_TYPE.EXPLORER_SPAWN_INTERACTION_1:
+                createdInteraction = new ExplorerSpawnInteraction1(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -271,6 +274,9 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
+            case INTERACTION_TYPE.EXPLORER_SPAWN_INTERACTION_1:
+                //TODO
+                return true;
             default:
                 return true;
         }

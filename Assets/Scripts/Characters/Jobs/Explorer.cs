@@ -5,9 +5,13 @@ using UnityEngine;
 
 public class Explorer : Job {
 
-    INTERACTION_TYPE[] explorerEvents = new INTERACTION_TYPE[] { //TODO: Put this somwhere else        
-	INTERACTION_TYPE.MYSTERIOUS_SARCOPHAGUS,
+    INTERACTION_TYPE[] explorerEvents = new INTERACTION_TYPE[] {
+        INTERACTION_TYPE.EXPLORER_SPAWN_INTERACTION_1,
+        //INTERACTION_TYPE.MYSTERIOUS_SARCOPHAGUS,
     };
+
+    private int _currentInteractionTick;
+    private int _usedMonthTick;
 
     public Explorer(Character character) : base(character, JOB.EXPLORER) {
         _actionDuration = -1;
@@ -77,6 +81,7 @@ public class Explorer : Job {
     }
     public override void ApplyActionDuration() {
         _actionDuration = 120 - (3 * (Mathf.Max(_character.level - 5, 0)));
+        SetCurrentInteractionTick();
     }
     public override int GetSuccessRate() {
         int baseRate = 60;
@@ -87,14 +92,46 @@ public class Explorer : Job {
         return baseRate + multiplier;
     }
     public override void CaptureRandomLandmarkEvent() {
+        if (_currentInteractionTick == GameManager.Instance.days) {
+            if (_usedMonthTick == GameManager.Instance.month) {
+                return;
+            }
+            _usedMonthTick = GameManager.Instance.month;
+            GenerateSpawnedInteraction();
+            SetCurrentInteractionTick();
+        }
     }
     #endregion
+
+    private void SetCurrentInteractionTick() {
+        int currMonth = _currentInteractionTick;
+        currMonth++;
+        if (currMonth > 12) {
+            currMonth = 1;
+        }
+        _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.daysInMonth[currMonth] + 1);
+    }
+    private void GenerateSpawnedInteraction() {
+        List<INTERACTION_TYPE> choices = GetValidExplorerEvents();
+        if (choices.Count > 0) {
+            Area area = _character.specificLocation.tileLocation.areaOfTile;
+            area.SetStopDefaultInteractionsState(true);
+            SetJobActionPauseState(true);
+            INTERACTION_TYPE chosenInteractionType = choices[UnityEngine.Random.Range(0, choices.Count)];
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(chosenInteractionType, _character.specificLocation as BaseLandmark);
+            interaction.AddEndInteractionAction(() => SetJobActionPauseState(false));
+            interaction.AddEndInteractionAction(() => ForceDefaultAllExistingInteractions());
+            _character.specificLocation.tileLocation.areaOfTile.AddInteraction(interaction);
+            SetCreatedInteraction(interaction);
+            InteractionUI.Instance.OpenInteractionUI(_createdInteraction);
+        }
+    }
 
     private List<INTERACTION_TYPE> GetValidExplorerEvents() {
         List<INTERACTION_TYPE> validTypes = new List<INTERACTION_TYPE>();
         for (int i = 0; i < explorerEvents.Length; i++) {
             INTERACTION_TYPE type = explorerEvents[i];
-            if (InteractionManager.Instance.CanCreateInteraction(type, _character)) {
+            if (InteractionManager.Instance.CanCreateInteraction(type, _character.specificLocation as BaseLandmark)) {
                 validTypes.Add(type);
             }
         }
