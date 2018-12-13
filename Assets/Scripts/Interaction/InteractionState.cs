@@ -54,9 +54,6 @@ public class InteractionState {
     //public GameDate timeDate {
     //    get { return _timeDate; }
     //}
-    public IUnit assignedUnit {
-        get { return (_assignedObjects == null ? null : GetAssignedObjectOfType(typeof(IUnit)) as IUnit); }
-    }
     public LocationToken assignedLocation {
         get { return (_assignedObjects == null ? null : GetAssignedObjectOfType(typeof(LocationToken)) as LocationToken); }
     }
@@ -279,14 +276,8 @@ public class InteractionState {
     public object GetAssignedObjectOfType(System.Type type) {
         for (int i = 0; i < _assignedObjects.Count; i++) {
             object currObject = _assignedObjects[i];
-            if (type == typeof(IUnit)) {
-                if (currObject is IUnit) { //TODO: Make this more elegant!
-                    return currObject;
-                }
-            } else {
-                if (currObject.GetType() == type) {
-                    return currObject;
-                }
+            if (currObject.GetType() == type) {
+                return currObject;
             }
         }
         return null;

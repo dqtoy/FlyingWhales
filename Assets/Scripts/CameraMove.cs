@@ -93,6 +93,7 @@ public class CameraMove : MonoBehaviour {
             float fov = Camera.main.orthographicSize;
             float adjustment = Input.GetAxis("Mouse ScrollWheel") * (sensitivity);
             fov -= adjustment;
+            fov = Mathf.Round(fov * 100f) / 100f;
             fov = Mathf.Clamp(fov, _minFov, _maxFov);
 
             if (!Mathf.Approximately(previousCameraFOV, fov)) {

@@ -32,7 +32,7 @@ public class PartyInfoUI : UIMenu {
         partyHolder = new PartyHolder();
         for (int i = 0; i < partySlots.Length; i++) {
             SlotItem currSlot = partySlots[i];
-            currSlot.SetNeededType(typeof(IUnit));
+            //currSlot.SetNeededType(typeof(IUnit));
             currSlot.SetSlotIndex(i);
         }
         Messenger.AddListener<CharacterAction, Party>(Signals.ACTION_TAKEN, OnActionTakenByParty);

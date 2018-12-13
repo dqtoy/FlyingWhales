@@ -235,8 +235,6 @@ public class InteractionItem : MonoBehaviour {
             descriptionAssignment.text = "Requires a Character Intel to be dragged from the list.";
         } else if (neededType == typeof(Minion)) {
             descriptionAssignment.text = "Requires a Demon Minion to be dragged from the list.";
-        } else if (neededType == typeof(IUnit)) {
-            descriptionAssignment.text = "Requires a Minion/Character to be dragged from the list.";
         } else if (neededType == typeof(Character)) {
             descriptionAssignment.text = "Requires a Demon Minion/Character to be dragged from the list.";
         }
