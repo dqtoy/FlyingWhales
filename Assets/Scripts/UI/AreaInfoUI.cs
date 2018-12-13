@@ -19,10 +19,12 @@ public class AreaInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI suppliesNameLbl;
     [SerializeField] private FactionEmblem factionEmblem;
     [SerializeField] private Image healthProgressBar;
+    [SerializeField] private Image areaCenterImage;
     [SerializeField] private GameObject defendersGO;
     [SerializeField] private GameObject charactersGO;
     [SerializeField] private GameObject logsGO;
     [SerializeField] private GameObject[] connectorsGO;
+    [SerializeField] private Sprite[] areaCenterSprites;
 
     [Space(10)]
     [Header("Characters")]
@@ -117,7 +119,7 @@ public class AreaInfoUI : UIMenu {
         }
         UpdateHiddenUI();
         UpdateDefenders();
-        UpdateLandmarkInfo();
+        UpdateAreaInfo();
         UpdateCharacters();
         ResetScrollPositions();
         UpdateTokenCollectorData();
@@ -148,7 +150,7 @@ public class AreaInfoUI : UIMenu {
         base.SetData(data);
     }
 
-    public void UpdateLandmarkInfo() {
+    public void UpdateAreaInfo() {
         if (_activeArea == null) {
             return;
         }
@@ -228,6 +230,7 @@ public class AreaInfoUI : UIMenu {
         } else {
             landmarkTypeLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(_activeArea.coreTile.landmarkOnTile.specificLandmarkType.ToString());
         }
+        areaCenterImage.sprite = GetAreaCenterSprite(_activeArea.name);
         UpdateSupplies();
 
 
@@ -245,6 +248,14 @@ public class AreaInfoUI : UIMenu {
     }
     private void UpdateSupplies() {
         suppliesNameLbl.text = _activeArea.suppliesInBank.ToString();
+    }
+    private Sprite GetAreaCenterSprite(string name) {
+        for (int i = 0; i < areaCenterSprites.Length; i++) {
+            if(areaCenterSprites[i].name.ToLower() == name.ToLower()) {
+                return areaCenterSprites[i];
+            }
+        }
+        return null;
     }
     #endregion
 

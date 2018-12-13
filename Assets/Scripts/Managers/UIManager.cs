@@ -694,7 +694,7 @@ public class UIManager : MonoBehaviour {
     }
     public void UpdateAreaInfo() {
         if (areaInfoUI.isShowing) {
-            areaInfoUI.UpdateLandmarkInfo();
+            areaInfoUI.UpdateAreaInfo();
         }
     }
     #endregion

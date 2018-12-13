@@ -11,7 +11,7 @@ SpriteAtlas:
       serializedVersion: 2
       anisoLevel: 1
       compressionQuality: 50
-      maxTextureSize: 2048
+      maxTextureSize: 4096
       textureCompression: 0
       filterMode: 0
       generateMipMaps: 0
@@ -39,6 +39,11 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 16506bb7a6ba7ce44808e2aecffabaaf, type: 3}
   - {fileID: 21300000, guid: 1311a4b5fe4c0fd4cb1879feb3334c4e, type: 3}
   - {fileID: 21300000, guid: 0ab2ec650b5ddce4987e8b2156080306, type: 3}
+  - {fileID: 21300000, guid: 9454c506db5f3a04f99f02de6342ec43, type: 3}
+  - {fileID: 21300000, guid: 7d1e6c9a21fa48c4c9c23a7fae692e79, type: 3}
+  - {fileID: 21300000, guid: f29fc845b1e7e81499d926a0bdd914e5, type: 3}
+  - {fileID: 21300000, guid: 81e1240cf953f764790b09c2fc0a02da, type: 3}
+  - {fileID: 21300000, guid: c7614ebb00aed064abc85b9aa465b6e0, type: 3}
   - {fileID: 21300000, guid: e935dbe84922563429a59e6311adcf08, type: 3}
   - {fileID: 21300000, guid: bb6d2748f234697409e8d57b8ecd778a, type: 3}
   - {fileID: 21300000, guid: 215e78623d34ed546904cde7a9a85f43, type: 3}
@@ -262,6 +267,11 @@ SpriteAtlas:
   - character_log_widget
   - interaction_main_decor
   - character_log_decor
+  - Gloomhollow Crypts
+  - Cindermaul Hideout
+  - Blistering Hollow
+  - Cardell
+  - Unexplored Cave
   - tile_log_widget
   - tile_log_container
   - tile_log_decor
