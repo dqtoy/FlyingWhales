@@ -159,7 +159,10 @@ public class Faction {
     public virtual void SetLeader(ILeader leader) {
         _leader = leader;
         if (_leader != null && _leader is Character) {
-            (_leader as Character).AssignJob(JOB.LEADER);
+            Character character = _leader as Character;
+            if(character.job.jobType != JOB.LEADER) {
+                character.AssignJob(JOB.LEADER);
+            }
         }
     }
     #endregion

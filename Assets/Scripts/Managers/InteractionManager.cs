@@ -198,6 +198,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.INSTIGATOR_CHARACTER_ENCOUNTER:
                 createdInteraction = new InstigatorCharacterEncounter(interactable);
                 break;
+            case INTERACTION_TYPE.CREATE_NECROMANCER:
+                createdInteraction = new CreateNecromancer(interactable);
+                break;
         }
         return createdInteraction;
     }
