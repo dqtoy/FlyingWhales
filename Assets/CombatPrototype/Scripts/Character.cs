@@ -434,15 +434,12 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         }
         SetMorality(MORALITY.GOOD);
         //_skills = GetGeneralSkills();
-        _skills = new List<Skill>();
-        _skills.Add(_characterClass.skill);
+
         //_bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
         //ConstructBodyPartDict(_raceSetting.bodyParts);
 
         //AllocateStatPoints(10);
         AllocateStats();
-        EquipItemsByClass();
-        SetTraitsFromClass();
         SetTraitsFromRace();
         //CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(className);
         //if(setup != null) {
@@ -475,8 +472,8 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         //_bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
         //ConstructBodyPartDict(_raceSetting.bodyParts);
         //_skills = GetGeneralSkills();
-        _skills = new List<Skill>();
-        _skills.Add(_characterClass.skill);
+        //_skills = new List<Skill>();
+        //_skills.Add(_characterClass.skill);
         //_skills.AddRange (GetBodyPartSkills ());
         if (data.attributes != null) {
             AddAttributes(data.attributes);
@@ -485,8 +482,8 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
 
         //AllocateStatPoints(10);
         AllocateStats();
-        EquipItemsByClass();
-        SetTraitsFromClass();
+        //EquipItemsByClass();
+        //SetTraitsFromClass();
         SetTraitsFromRace();
         //EquipPreEquippedItems(baseSetup);
         CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(data.className);
@@ -1395,6 +1392,10 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     #region Character Class
     public void AssignClass(CharacterClass charClass) {
         _characterClass = charClass.CreateNewCopy();
+        _skills = new List<Skill>();
+        _skills.Add(_characterClass.skill);
+        EquipItemsByClass();
+        SetTraitsFromClass();
         AssignJob(_characterClass.jobType);
     }
     #endregion
