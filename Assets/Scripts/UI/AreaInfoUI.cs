@@ -904,11 +904,13 @@ public class AreaInfoUI : UIMenu {
     public void ResetTokenCollectorAssignment() {
         _assignedTokenCollectorMinion = null;
         tokenCollectorSlot.ClearSlot(true);
+        tokenCollectorSlot.dropZone.SetEnabledState(true);
         //tokenCollectorPortrait.gameObject.SetActive(false);
         UpdateTokenCollectorInteractables();
     }
     public void OnClickConfirmTokenCollection() {
         activeArea.areaInvestigation.AssignTokenCollector(_assignedTokenCollectorMinion);
+        tokenCollectorSlot.dropZone.SetEnabledState(false);
         UpdateTokenCollectorData();
     }
     public void OnClickTokenCollectorRecall() {
