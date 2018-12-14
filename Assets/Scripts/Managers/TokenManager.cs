@@ -31,6 +31,13 @@ public class TokenManager : MonoBehaviour {
         for (int i = 0; i < tokens.Length; i++) {
             //JsonUtility.FromJsonOverwrite(System.IO.File.ReadAllText(classes[i]), monsterComponent);
             SpecialToken token = JsonUtility.FromJson<SpecialToken>(System.IO.File.ReadAllText(tokens[i]));
+            switch (token.name) {
+                case "Blighted Potion":
+                    token = new BlightedPotion();
+                    break;
+                default:
+                    break;
+            }
             specialTokens.Add(token.name, token);
             Messenger.Broadcast(Signals.SPECIAL_TOKEN_CREATED, token);
         }

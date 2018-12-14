@@ -941,7 +941,8 @@ public class AreaInfoUI : UIMenu {
             //tokenCollectorPortrait.GeneratePortrait(activeArea.areaInvestigation.tokenCollector.character);
         } else {
             //tokenCollectorPortrait.gameObject.SetActive(false);
-            tokenCollectorSlot.ClearSlot(true);
+            //tokenCollectorSlot.ClearSlot(true);
+            ResetTokenCollectorAssignment();
         }
         UpdateTokenCollectorInteractables();
     }
