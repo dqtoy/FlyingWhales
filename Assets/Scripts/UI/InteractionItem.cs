@@ -62,8 +62,8 @@ public class InteractionItem : MonoBehaviour {
 
     public void Initialize() {
         slotItem.SetSlotIndex(0);
-        slotItem.itemDroppedCallback = new ItemDroppedCallback();
-        slotItem.itemDroppedCallback.AddListener(OnItemDroppedInSlot);
+        //slotItem.itemDroppedCallback = new ItemDroppedCallback();
+        slotItem.SetItemDroppedCallback(OnItemDroppedInSlot);
         //for (int i = 0; i < slotItems.Length; i++) {
         //    SlotItem currItem = slotItems[i];
         //    currItem.SetSlotIndex(i);

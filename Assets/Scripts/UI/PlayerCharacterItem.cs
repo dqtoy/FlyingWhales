@@ -30,7 +30,12 @@ public class PlayerCharacterItem : PooledObject, IDragParentItem {
         get { return _character.minion; }
     }
     public object associatedObj {
-        get { return _character; }
+        get {
+            if (_character.minion != null) {
+                return _character.minion;
+            }
+            return _character;
+        }
     }
     #endregion
 

@@ -85,5 +85,21 @@ public class DraggableItem : MonoBehaviour, IDragHandler, IBeginDragHandler, IEn
 
 public class DragObject : MonoBehaviour {
 
-    public IDragParentItem parentItem;
+    private IDragParentItem _parentItem;
+
+    #region getters/setters
+    public IDragParentItem parentItem {
+        get { return _parentItem; }
+        set { SetParentItem(value); }
+    }
+    #endregion
+
+    private void SetParentItem(IDragParentItem parentItem) {
+        _parentItem = parentItem;
+        Messenger.Broadcast(Signals.DRAG_OBJECT_CREATED, this);
+    }
+
+    public void OnDestroy() {
+        Messenger.Broadcast(Signals.DRAG_OBJECT_DESTROYED, this);
+    }
 }

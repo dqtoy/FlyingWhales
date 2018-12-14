@@ -42,12 +42,13 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9454c506db5f3a04f99f02de6342ec43, type: 3}
   - {fileID: 21300000, guid: 7d1e6c9a21fa48c4c9c23a7fae692e79, type: 3}
   - {fileID: 21300000, guid: f29fc845b1e7e81499d926a0bdd914e5, type: 3}
-  - {fileID: 21300000, guid: 81e1240cf953f764790b09c2fc0a02da, type: 3}
   - {fileID: 21300000, guid: c7614ebb00aed064abc85b9aa465b6e0, type: 3}
+  - {fileID: 21300000, guid: 81e1240cf953f764790b09c2fc0a02da, type: 3}
   - {fileID: 21300000, guid: e935dbe84922563429a59e6311adcf08, type: 3}
   - {fileID: 21300000, guid: bb6d2748f234697409e8d57b8ecd778a, type: 3}
   - {fileID: 21300000, guid: 215e78623d34ed546904cde7a9a85f43, type: 3}
   - {fileID: 21300000, guid: 9eb4e391ebec42d4ba6f1a2f359a32a4, type: 3}
+  - {fileID: 21300000, guid: d8a6fc8357a0c0640a0cf00e1ac188c9, type: 3}
   - {fileID: 21300000, guid: 3c1d09bdb731df34b9795e3f8117b2ca, type: 3}
   - {fileID: 21300000, guid: 7c84c1516188866438148428c354ff01, type: 3}
   - {fileID: 21300000, guid: 8fdd06c4ca82199459a8145f73a1a5ad, type: 3}
@@ -270,12 +271,13 @@ SpriteAtlas:
   - Gloomhollow Crypts
   - Cindermaul Hideout
   - Blistering Hollow
+  - Radisle Cavern
   - Cardell
-  - Unexplored Cave
   - tile_log_widget
   - tile_log_container
   - tile_log_decor
   - character_info_decor
+  - glow
   - tile_character_list_container
   - tile_character_list_bottom_widget
   - tile_character_list_bottom_widget
