@@ -293,5 +293,12 @@ public class AreaInvestigation {
         }
         return false;
     }
+    public bool CanCollectTokensHere(Minion minion) {
+        if (_area.owner == null) {
+            return minion.character.job.jobType == JOB.EXPLORER;
+        } else {
+            return minion.character.job.jobType == JOB.SPY;
+        }
+    }
     #endregion
 }

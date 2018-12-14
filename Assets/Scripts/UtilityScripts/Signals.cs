@@ -87,6 +87,8 @@ public static class Signals {
     public static string INTERACTION_MENU_CLOSED = "OnInteractionMenuClosed"; //Parameters ()
     public static string CLICKED_INTERACTION_BUTTON = "OnClickedInteractionButton";
     public static string HIDE_MENUS = "HideMenus";
+    public static string DRAG_OBJECT_CREATED = "OnDragObjectCreated"; //Parameters (DragObject obj)
+    public static string DRAG_OBJECT_DESTROYED = "OnDragObjectDestroyed"; //Parameters (DragObject obj)
     #endregion
 
     #region Quest Signals

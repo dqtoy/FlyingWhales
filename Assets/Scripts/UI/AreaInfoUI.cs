@@ -53,30 +53,32 @@ public class AreaInfoUI : UIMenu {
     [Header("Investigation")]
     [SerializeField] private GameObject investigationGO;
     [SerializeField] private GameObject minionAssignmentGO;
-    [SerializeField] private CharacterPortrait minionAssignmentPortrait;
+    //[SerializeField] private CharacterPortrait minionAssignmentPortrait;
     [SerializeField] private Button minionAssignmentConfirmButton;
     [SerializeField] private Button minionAssignmentRecallButton;
     [SerializeField] private TextMeshProUGUI minionAssignmentDescription;
-    [SerializeField] private InvestigationMinionDraggableItem minionAssignmentDraggableItem;
+    //[SerializeField] private InvestigationMinionDraggableItem minionAssignmentDraggableItem;
     [SerializeField] private Toggle[] investigateToggles;
     [SerializeField] private EnvelopContentUnityUI minionAssignmentDescriptionEnvelop;
+    [SerializeField] private SlotItem minionAssignmentSlot;
 
     [Space(10)]
     [Header("Token Collector")]
     [SerializeField] private GameObject tokenCollectorGO;
-    [SerializeField] private CharacterPortrait tokenCollectorPortrait;
+    //[SerializeField] private CharacterPortrait tokenCollectorPortrait;
     [SerializeField] private Button tokenCollectorConfirmBtn;
     [SerializeField] private Button tokenCollectorRecallBtn;
-    [SerializeField] private InvestigationMinionDraggableItem tokenCollectorDraggableItem;
+    //[SerializeField] private InvestigationMinionDraggableItem tokenCollectorDraggableItem;
+    [SerializeField] private SlotItem tokenCollectorSlot;
 
     [Space(10)]
     [Header("Attack/Raid")]
     [SerializeField] private GameObject minionAssignmentPartyGO;
-    [SerializeField] private CharacterPortrait[] minionAssignmentPartyPortraits;
+    [SerializeField] private SlotItem[] minionAssignmentPartySlots;
     [SerializeField] private Button minionAssignmentPartyConfirmButton;
     [SerializeField] private Button minionAssignmentPartyRecallButton;
     [SerializeField] private TextMeshProUGUI minionAssignmentPartyWinChance;
-    [SerializeField] private InvestigationMinionDraggableItem[] minionAssignmentPartyDraggableItem;
+    //[SerializeField] private InvestigationMinionDraggableItem[] minionAssignmentPartyDraggableItem;
 
 
     private InvestigateButton _currentSelectedInvestigateButton;
@@ -109,7 +111,46 @@ public class AreaInfoUI : UIMenu {
         Messenger.AddListener<Minion, Area>(Signals.MINION_STARTS_INVESTIGATING_AREA, OnMinionInvestigateArea);
         Messenger.AddListener<Area>(Signals.AREA_SUPPLIES_CHANGED, OnAreaSuppliesSet);
         _assignedParty = new Minion[4];
+
+        //Minion Investigator slot
+        minionAssignmentSlot.SetNeededType(typeof(Minion));
+        minionAssignmentSlot.SetOtherValidation(IsObjectValidForInvestigation);
+        minionAssignmentSlot.SetItemDroppedCallback(OnMinionDrop);
+        minionAssignmentSlot.SetItemDroppedOutCallback(OnInvestigatorMinionDraggedOut);
+
+        //attack/raid
+        for (int i = 0; i < minionAssignmentPartySlots.Length; i++) {
+            SlotItem currSlot = minionAssignmentPartySlots[i];
+            currSlot.SetNeededType(typeof(Minion));
+            currSlot.SetSlotIndex(i);
+            currSlot.SetItemDroppedCallback(OnPartyMinionDrop);
+            currSlot.SetItemDroppedOutCallback(OnPartyMinionDroppedOut);
+        }
+
+        //Token Collector Slot
+        tokenCollectorSlot.SetNeededType(typeof(Minion));
+        tokenCollectorSlot.SetOtherValidation(IsObjectValidForTokenCollector);
+        tokenCollectorSlot.SetItemDroppedCallback(OnTokenCollectorMinionDrop);
+        tokenCollectorSlot.SetItemDroppedOutCallback(OnTokenCollectorDragOut);
     }
+
+    #region Slot Checkers
+    private bool IsObjectValidForTokenCollector(object obj) {
+        if (obj is Minion) {
+            Minion minion = obj as Minion;
+            return activeArea.areaInvestigation.CanCollectTokensHere(minion);
+        }
+        return false;
+    }
+    private bool IsObjectValidForInvestigation(object obj) {
+        if (obj is Minion) {
+            Minion minion = obj as Minion;
+            return minion.character.job.jobType != JOB.EXPLORER && minion.character.job.jobType != JOB.SPY;
+        }
+        return false;
+    }
+    #endregion
+
     public override void OpenMenu() {
         base.OpenMenu();
         Area previousArea = activeArea;
@@ -487,16 +528,19 @@ public class AreaInfoUI : UIMenu {
     }
     public void ResetMinionAssignment() {
         _assignedMinion = null;
-        minionAssignmentPortrait.gameObject.SetActive(false);
+        minionAssignmentSlot.ClearSlot(true);
+        //minionAssignmentPortrait.gameObject.SetActive(false);
         //minionAssignmentDescription.gameObject.SetActive(true);
+        minionAssignmentSlot.dropZone.SetEnabledState(true);
         minionAssignmentConfirmButton.gameObject.SetActive(false);
         minionAssignmentRecallButton.gameObject.SetActive(false);
         UpdateMinionTooltipDescription(_assignedMinion);
     }
     public void ResetMinionAssignmentParty() {
-        for (int i = 0; i < minionAssignmentPartyPortraits.Length; i++) {
+        for (int i = 0; i < minionAssignmentPartySlots.Length; i++) {
             _assignedParty[i] = null;
-            minionAssignmentPartyPortraits[i].gameObject.SetActive(false);
+            //minionAssignmentPartySlots[i].gameObject.SetActive(false);
+            minionAssignmentPartySlots[i].ClearSlot(true);
         }
         minionAssignmentPartyConfirmButton.gameObject.SetActive(false);
         minionAssignmentPartyRecallButton.gameObject.SetActive(false);
@@ -505,7 +549,8 @@ public class AreaInfoUI : UIMenu {
     }
     private void ResetMinionAssignmentParty(int index) {
         _assignedParty[index] = null;
-        minionAssignmentPartyPortraits[index].gameObject.SetActive(false);
+        minionAssignmentPartySlots[index].ClearSlot(true);
+        //minionAssignmentPartySlots[index].gameObject.SetActive(false);
         minionAssignmentPartyConfirmButton.gameObject.SetActive(false);
         minionAssignmentPartyRecallButton.gameObject.SetActive(false);
         for (int i = 0; i < _assignedParty.Length; i++) {
@@ -564,20 +609,25 @@ public class AreaInfoUI : UIMenu {
             if (activeArea.areaInvestigation.isExploring) {
                 minionAssignmentConfirmButton.gameObject.SetActive(false);
                 minionAssignmentRecallButton.gameObject.SetActive(true);
-                minionAssignmentDraggableItem.SetDraggable(false);
+                minionAssignmentSlot.draggable.SetDraggable(false);
+                minionAssignmentSlot.dropZone.SetEnabledState(false);
+                //minionAssignmentDraggableItem.SetDraggable(false);
                 minionAssignmentConfirmButton.interactable = false;
                 minionAssignmentRecallButton.interactable = true;
             } else {
                 if (activeArea.areaInvestigation.isMinionRecalledExplore) {
                     minionAssignmentConfirmButton.gameObject.SetActive(false);
                     minionAssignmentRecallButton.gameObject.SetActive(true);
-                    minionAssignmentDraggableItem.SetDraggable(false);
+                    minionAssignmentSlot.draggable.SetDraggable(false);
+                    minionAssignmentSlot.dropZone.SetEnabledState(false);
+                    //minionAssignmentDraggableItem.SetDraggable(false);
                     minionAssignmentConfirmButton.interactable = true;
                     minionAssignmentRecallButton.interactable = false;
                 } else {
                     minionAssignmentConfirmButton.gameObject.SetActive(true);
                     minionAssignmentRecallButton.gameObject.SetActive(false);
-                    minionAssignmentDraggableItem.SetDraggable(true);
+                    minionAssignmentSlot.draggable.SetDraggable(true);
+                    //minionAssignmentDraggableItem.SetDraggable(true);
                     minionAssignmentConfirmButton.interactable = true;
                     minionAssignmentRecallButton.interactable = false;
                 }
@@ -588,8 +638,8 @@ public class AreaInfoUI : UIMenu {
                 minionAssignmentPartyRecallButton.gameObject.SetActive(true);
                 minionAssignmentPartyConfirmButton.interactable = false;
                 minionAssignmentPartyRecallButton.interactable = true;
-                for (int i = 0; i < minionAssignmentPartyDraggableItem.Length; i++) {
-                    minionAssignmentPartyDraggableItem[i].SetDraggable(false);
+                for (int i = 0; i < minionAssignmentPartySlots.Length; i++) {
+                    minionAssignmentPartySlots[i].draggable.SetDraggable(false);
                 }
             } else {
                 if (activeArea.areaInvestigation.isMinionRecalledAttack) {
@@ -597,74 +647,83 @@ public class AreaInfoUI : UIMenu {
                     minionAssignmentPartyRecallButton.gameObject.SetActive(true);
                     minionAssignmentPartyConfirmButton.interactable = true;
                     minionAssignmentPartyRecallButton.interactable = false;
-                    for (int i = 0; i < minionAssignmentPartyDraggableItem.Length; i++) {
-                        minionAssignmentPartyDraggableItem[i].SetDraggable(false);
+                    for (int i = 0; i < minionAssignmentPartySlots.Length; i++) {
+                        minionAssignmentPartySlots[i].draggable.SetDraggable(false);
                     }
                 } else {
                     minionAssignmentPartyConfirmButton.gameObject.SetActive(true);
                     minionAssignmentPartyRecallButton.gameObject.SetActive(false);
                     minionAssignmentPartyConfirmButton.interactable = true;
                     minionAssignmentPartyRecallButton.interactable = false;
-                    for (int i = 0; i < minionAssignmentPartyDraggableItem.Length; i++) {
-                        minionAssignmentPartyDraggableItem[i].SetDraggable(true);
+                    for (int i = 0; i < minionAssignmentPartySlots.Length; i++) {
+                        minionAssignmentPartySlots[i].draggable.SetDraggable(true);
                     }
                 }
             }
         }
     }
-    public void OnMinionDrop(GameObject go) {
-        PlayerCharacterItem minionItem = go.GetComponent<DragObject>().parentItem as PlayerCharacterItem;
-        if(minionItem != null) {
+    public void OnMinionDrop(object obj, int index) {
+        //PlayerCharacterItem minionItem = go.GetComponent<DragObject>().parentItem as PlayerCharacterItem;
+        //if(minionItem != null) {
+        if (obj is Minion) {
+            Minion minion = obj as Minion;
             for (int i = 0; i < _assignedParty.Length; i++) {
-                if(_assignedParty[i] == minionItem.minion) {
+                if (_assignedParty[i] == minion) {
                     AssignPartyMinionToInvestigate(null, i, false);
                     break;
                 }
             }
-            AssignMinionToInvestigate(minionItem.minion);
+            AssignMinionToInvestigate(minion);
         }
+        
+        //}
     }
-    public void OnPartyMinionDrop1(GameObject go) {
-        PlayerCharacterItem minionItem = go.GetComponent<DragObject>().parentItem as PlayerCharacterItem;
-        if (minionItem != null) {
-            if(_assignedMinion == minionItem.minion) {
+    public void OnPartyMinionDrop(object obj, int index) {
+        //PlayerCharacterItem minionItem = go.GetComponent<DragObject>().parentItem as PlayerCharacterItem;
+        if (obj is Minion) {
+            Minion minion = obj as Minion;
+            if(_assignedMinion == minion) {
                 AssignMinionToInvestigate(null);
             }
-            AssignPartyMinionToInvestigate(minionItem.minion, 0);
+            AssignPartyMinionToInvestigate(minion, index);
         }
     }
-    public void OnPartyMinionDrop2(GameObject go) {
-        PlayerCharacterItem minionItem = go.GetComponent<DragObject>().parentItem as PlayerCharacterItem;
-        if (minionItem != null) {
-            if (_assignedMinion == minionItem.minion) {
-                AssignMinionToInvestigate(null);
-            }
-            AssignPartyMinionToInvestigate(minionItem.minion, 1);
-        }
+    public void OnPartyMinionDroppedOut(object obj, int index) {
+        AssignPartyMinionToInvestigate(null, index);
     }
-    public void OnPartyMinionDrop3(GameObject go) {
-        PlayerCharacterItem minionItem = go.GetComponent<DragObject>().parentItem as PlayerCharacterItem;
-        if (minionItem != null) {
-            if (_assignedMinion == minionItem.minion) {
-                AssignMinionToInvestigate(null);
-            }
-            AssignPartyMinionToInvestigate(minionItem.minion, 2);
-        }
-    }
-    public void OnPartyMinionDrop4(GameObject go) {
-        PlayerCharacterItem minionItem = go.GetComponent<DragObject>().parentItem as PlayerCharacterItem;
-        if (minionItem != null) {
-            if (_assignedMinion == minionItem.minion) {
-                AssignMinionToInvestigate(null);
-            }
-            AssignPartyMinionToInvestigate(minionItem.minion, 3);
-        }
-    }
+    //public void OnPartyMinionDrop2(object obj, int index) {
+    //    PlayerCharacterItem minionItem = go.GetComponent<DragObject>().parentItem as PlayerCharacterItem;
+    //    if (minionItem != null) {
+    //        if (_assignedMinion == minionItem.minion) {
+    //            AssignMinionToInvestigate(null);
+    //        }
+    //        AssignPartyMinionToInvestigate(minionItem.minion, 1);
+    //    }
+    //}
+    //public void OnPartyMinionDrop3(object obj, int index) {
+    //    PlayerCharacterItem minionItem = go.GetComponent<DragObject>().parentItem as PlayerCharacterItem;
+    //    if (minionItem != null) {
+    //        if (_assignedMinion == minionItem.minion) {
+    //            AssignMinionToInvestigate(null);
+    //        }
+    //        AssignPartyMinionToInvestigate(minionItem.minion, 2);
+    //    }
+    //}
+    //public void OnPartyMinionDrop4(object obj, int index) {
+    //    PlayerCharacterItem minionItem = go.GetComponent<DragObject>().parentItem as PlayerCharacterItem;
+    //    if (minionItem != null) {
+    //        if (_assignedMinion == minionItem.minion) {
+    //            AssignMinionToInvestigate(null);
+    //        }
+    //        AssignPartyMinionToInvestigate(minionItem.minion, 3);
+    //    }
+    //}
     public void AssignMinionToInvestigate(Minion minion) {
         _assignedMinion = minion;
         if (minion != null) {
-            minionAssignmentPortrait.gameObject.SetActive(true);
-            minionAssignmentPortrait.GeneratePortrait(minion.character);
+            //minionAssignmentPortrait.gameObject.SetActive(true);
+            //minionAssignmentPortrait.GeneratePortrait(minion.character);
+            minionAssignmentSlot.PlaceObject(minion);
             //minionAssignmentConfirmButton.interactable = !_activeLandmark.landmarkInvestigation.isExploring;
             //minionAssignmentDescription.gameObject.SetActive(false);
             OnUpdateLandmarkInvestigationState("explore");
@@ -687,8 +746,9 @@ public class AreaInfoUI : UIMenu {
                 }
             }
             _assignedParty[index] = minion;
-            minionAssignmentPartyPortraits[index].gameObject.SetActive(true);
-            minionAssignmentPartyPortraits[index].GeneratePortrait(minion.character);
+            minionAssignmentPartySlots[index].PlaceObject(minion);
+            //minionAssignmentPartySlots[index].gameObject.SetActive(true);
+            //minionAssignmentPartySlots[index].GeneratePortrait(minion.character);
             //minionAssignmentPartyRecallButton.gameObject.SetActive(false);
             //minionAssignmentPartyConfirmButton.gameObject.SetActive(true);
             //minionAssignmentDraggableItem.SetDraggable(true);
@@ -812,20 +872,30 @@ public class AreaInfoUI : UIMenu {
             UpdateMinionTooltipDescription(minion);
         }
     }
+    private void OnInvestigatorMinionDraggedOut(object obj, int index) {
+        AssignMinionToInvestigate(null);
+    }
     #endregion
 
     #region Token Collector
-    public void OnTokenCollectorMinionDrop(GameObject go) {
-        PlayerCharacterItem minionItem = go.GetComponent<DragObject>().parentItem as PlayerCharacterItem;
-        if (minionItem != null) {
-            AssignMinionToTokenCollection(minionItem.minion);
+    public void OnTokenCollectorMinionDrop(object obj, int index) {
+        if (obj is Minion) {
+            AssignMinionToTokenCollection(obj as Minion);
         }
+        //PlayerCharacterItem minionItem = go.GetComponent<DragObject>().parentItem as PlayerCharacterItem;
+        //if (minionItem != null) {
+        //    AssignMinionToTokenCollection(minionItem.minion);
+        //}
+    }
+    public void OnTokenCollectorDragOut(object obj, int index) {
+        AssignMinionToTokenCollection(null);
     }
     public void AssignMinionToTokenCollection(Minion minion) {
         _assignedTokenCollectorMinion = minion;
         if (minion != null) {
-            tokenCollectorPortrait.gameObject.SetActive(true);
-            tokenCollectorPortrait.GeneratePortrait(minion.character);
+            tokenCollectorSlot.PlaceObject(minion);
+            //tokenCollectorPortrait.gameObject.SetActive(true);
+            //tokenCollectorPortrait.GeneratePortrait(minion.character);
             UpdateTokenCollectorInteractables();
         } else {
             ResetTokenCollectorAssignment();
@@ -833,18 +903,14 @@ public class AreaInfoUI : UIMenu {
     }
     public void ResetTokenCollectorAssignment() {
         _assignedTokenCollectorMinion = null;
-        tokenCollectorPortrait.gameObject.SetActive(false);
+        tokenCollectorSlot.ClearSlot(true);
+        tokenCollectorSlot.dropZone.SetEnabledState(true);
+        //tokenCollectorPortrait.gameObject.SetActive(false);
         UpdateTokenCollectorInteractables();
-    }
-    private bool CanCollectTokensHere(Minion minion) {
-        if (activeArea.owner == null) {
-            return minion.character.job.jobType == JOB.EXPLORER;
-        } else {
-            return minion.character.job.jobType == JOB.SPY;
-        }
     }
     public void OnClickConfirmTokenCollection() {
         activeArea.areaInvestigation.AssignTokenCollector(_assignedTokenCollectorMinion);
+        tokenCollectorSlot.dropZone.SetEnabledState(false);
         UpdateTokenCollectorData();
     }
     public void OnClickTokenCollectorRecall() {
@@ -853,10 +919,12 @@ public class AreaInfoUI : UIMenu {
     private void UpdateTokenCollectorData() {
         if (activeArea.areaInvestigation.tokenCollector != null) {
             AssignMinionToTokenCollection(activeArea.areaInvestigation.tokenCollector);
-            tokenCollectorPortrait.gameObject.SetActive(true);
-            tokenCollectorPortrait.GeneratePortrait(activeArea.areaInvestigation.tokenCollector.character);
+            tokenCollectorSlot.PlaceObject(activeArea.areaInvestigation.tokenCollector);
+            //tokenCollectorPortrait.gameObject.SetActive(true);
+            //tokenCollectorPortrait.GeneratePortrait(activeArea.areaInvestigation.tokenCollector.character);
         } else {
-            tokenCollectorPortrait.gameObject.SetActive(false);
+            //tokenCollectorPortrait.gameObject.SetActive(false);
+            tokenCollectorSlot.ClearSlot(true);
         }
         UpdateTokenCollectorInteractables();
     }
@@ -866,15 +934,15 @@ public class AreaInfoUI : UIMenu {
             tokenCollectorRecallBtn.gameObject.SetActive(true);
             tokenCollectorConfirmBtn.gameObject.SetActive(false);
             //set portrait as undraggable
-            tokenCollectorDraggableItem.SetDraggable(false);
+            tokenCollectorSlot.draggable.SetDraggable(false);
         } else { //else
             //disable recall button
             tokenCollectorRecallBtn.gameObject.SetActive(false);
             tokenCollectorConfirmBtn.gameObject.SetActive(true);
             //set portrait as draggable
-            tokenCollectorDraggableItem.SetDraggable(true);
+            tokenCollectorSlot.draggable.SetDraggable(true);
             if (_assignedTokenCollectorMinion != null) { //check if there is an assigned token collector minion (not yet locked in)
-                if (CanCollectTokensHere(_assignedTokenCollectorMinion)) { //check if that assigned minion can collect tokens in this area
+                if (activeArea.areaInvestigation.CanCollectTokensHere(_assignedTokenCollectorMinion)) { //check if that assigned minion can collect tokens in this area
                     //if yes, enable confirm btn
                     tokenCollectorConfirmBtn.interactable = true;
                 } else {

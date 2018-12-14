@@ -11,24 +11,38 @@ public class SlotItem : MonoBehaviour {
     public object placedObject { get; private set; }
     public System.Type neededType { get; private set; }
 
-    public SlotItemDropEvent onItemDroppedValid;
-    public ItemDroppedCallback itemDroppedCallback;
-    public ItemDroppedOutCallback itemDroppedOutCallback;
+    public delegate bool OtherValidation(object obj); //this is for when special conditions are needed to determine whether an object is valid for this slot (i.e Character must have traits, or be a specific race)
+    public OtherValidation isObjectValidForSlot;
 
-    public Func<bool> otherValidation;
+    public SlotItemDropEvent onItemDroppedValid;
+    private ItemDroppedCallback itemDroppedCallback = new ItemDroppedCallback();
+    private ItemDroppedOutCallback itemDroppedOutCallback = new ItemDroppedOutCallback();
 
     [Space(10)]
     [Header("Slot Elements")]
+    [SerializeField] private string neededTypeStr;
     public CharacterPortrait portrait;
     public AreaEmblem areaEmblem;
     public FactionEmblem factionEmblem;
     public Image image;
     public CustomDropZone dropZone;
     public SlotItemDraggable draggable;
-    [SerializeField] private string neededTypeStr;
+
+    [Space(10)]
+    [Header("Misc")]
+    [SerializeField] private GameObject glowGO;
 
     public int slotIndex { get; private set; }
     private string hoverInfo;
+
+    #region Monobehaviours
+    private void OnEnable() {
+        AddListeners();
+    }
+    private void OnDisable() {
+        RemoveListeners();
+    }
+    #endregion
 
     #region Drop Zone
     public void OnDropItemAtDropZone(GameObject go) { //this is used to filter if the dragged object is valid for this slot
@@ -38,19 +52,17 @@ public class SlotItem : MonoBehaviour {
         }
         IDragParentItem parentItem = dragObj.parentItem;
         if (parentItem != null) {
-            if (parentItem.associatedObj.GetType() == neededType || parentItem.associatedObj.GetType().BaseType == neededType) {
+            if (IsObjectValidForSlot(parentItem.associatedObj)) {
                 SuccessfulDropZoneDrop(parentItem);
-            } else {
-
-                Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE, "This slot requires a " + GetTypeString(neededType), true);
             }
+            //else {
+            //    Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE, "This slot requires a " + GetTypeString(neededType), true);
+            //}
         }
     }
     private void SuccessfulDropZoneDrop(IDragParentItem parentItem) {
         if (onItemDroppedValid != null) {
-            if (otherValidation == null || otherValidation()) {
-                onItemDroppedValid.Invoke(parentItem);
-            }
+            onItemDroppedValid.Invoke(parentItem);
         }
     }
     #endregion
@@ -123,6 +135,14 @@ public class SlotItem : MonoBehaviour {
         areaEmblem.gameObject.SetActive(false);
         portrait.gameObject.SetActive(false);
     }
+    private bool IsObjectValidForSlot(object obj) {
+        if (neededType != null && (obj.GetType() == neededType || obj.GetType().BaseType == neededType)) {
+            if (isObjectValidForSlot == null || isObjectValidForSlot(obj)) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Draggable Item
@@ -166,6 +186,33 @@ public class SlotItem : MonoBehaviour {
         if (placedObject != null) {
             UIManager.Instance.HideSmallInfo();
         }
+    }
+    private void AddListeners() {
+        Messenger.AddListener<DragObject>(Signals.DRAG_OBJECT_CREATED, OnDragObjectCreated);
+        Messenger.AddListener<DragObject>(Signals.DRAG_OBJECT_DESTROYED, OnDragObjectDestroyed);
+    }
+    private void RemoveListeners() {
+        Messenger.RemoveListener<DragObject>(Signals.DRAG_OBJECT_CREATED, OnDragObjectCreated);
+        Messenger.RemoveListener<DragObject>(Signals.DRAG_OBJECT_DESTROYED, OnDragObjectDestroyed);
+    }
+    private void OnDragObjectCreated(DragObject obj) {
+        if (dropZone != null && dropZone.isEnabled && neededType != null && IsObjectValidForSlot(obj.parentItem.associatedObj)) {
+            glowGO.SetActive(true);
+        }
+    }
+    private void OnDragObjectDestroyed(DragObject obj) {
+        glowGO.SetActive(false);
+    }
+    public void SetOtherValidation(OtherValidation validation) {
+        isObjectValidForSlot = validation;
+    }
+    public void SetItemDroppedCallback(UnityAction<object, int> itemDroppedCallback) {
+        this.itemDroppedCallback.RemoveAllListeners();
+        this.itemDroppedCallback.AddListener(itemDroppedCallback);
+    }
+    public void SetItemDroppedOutCallback(UnityAction<object, int> itemDroppedOutCallback) {
+        this.itemDroppedOutCallback.RemoveAllListeners();
+        this.itemDroppedOutCallback.AddListener(itemDroppedOutCallback);
     }
     #endregion
 }

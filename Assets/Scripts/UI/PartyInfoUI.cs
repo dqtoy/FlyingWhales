@@ -133,10 +133,9 @@ public class PartyInfoUI : UIMenu {
             SlotItem currSlot = partySlots[i];
             currSlot.ClearSlot(true);
             //currSlot.SetNeededType(typeof(IUnit));
-            currSlot.itemDroppedCallback = new ItemDroppedCallback();
-            currSlot.itemDroppedCallback.AddListener(OnItemDroppedOnSlot);
-            currSlot.itemDroppedOutCallback = new ItemDroppedOutCallback();
-            currSlot.itemDroppedOutCallback.AddListener(OnItemDroppedOutOfSlot);
+            //currSlot.itemDroppedCallback = new ItemDroppedCallback();
+            currSlot.SetItemDroppedCallback(OnItemDroppedOnSlot);
+            currSlot.SetItemDroppedOutCallback(OnItemDroppedOutOfSlot);
             currSlot.dropZone.SetEnabledState(true);
             currSlot.draggable.SetDraggable(true);
         }
