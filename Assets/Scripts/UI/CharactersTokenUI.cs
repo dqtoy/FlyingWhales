@@ -7,22 +7,35 @@ using System.Linq;
 
 public class CharactersTokenUI : UIMenu {
 
+    [Header("Characters")]
     [SerializeField] private GameObject characterEntryPrefab;
-    [SerializeField] private ScrollRect charactersScrollRect;
+    [SerializeField] private ScrollRect tokensScrollView;
     [SerializeField] private Vector3 openPosition;
     [SerializeField] private Vector3 closePosition;
     [SerializeField] private Vector3 halfPosition;
     [SerializeField] private EasyTween tweener;
     [SerializeField] private AnimationCurve curve;
 
+    [Space(10)]
+    [Header("Factions")]
+    [SerializeField] private GameObject factionItemPrefab;
+
+    [Space(10)]
+    [Header("Locations")]
+    [SerializeField] private GameObject locationItemPrefab;
+
     private Dictionary<Character, CharacterTokenItem> characterEntries;
+    private Dictionary<Faction, FactionTokenItem> factionItems;
+    private Dictionary<Area, LocationTokenItem> areaItems;
     private List<CharacterTokenItem> _activeCharacterEntries;
+
 
     #region getters/setters
     public List<CharacterTokenItem> activeCharacterEntries {
         get { return _activeCharacterEntries; }
     }
     #endregion
+
     internal override void Initialize() {
         base.Initialize();
         _activeCharacterEntries = new List<CharacterTokenItem>();
@@ -32,8 +45,18 @@ public class CharactersTokenUI : UIMenu {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, UpdateCharacterEntry);
         Messenger.AddListener<Character>(Signals.ROLE_CHANGED, UpdateCharacterEntry);
         Messenger.AddListener<Character>(Signals.FACTION_SET, UpdateCharacterEntry);
-        //Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
-        //Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
+        
+        //Faction
+        Messenger.AddListener<Faction>(Signals.FACTION_CREATED, OnFactionCreated);
+        Messenger.AddListener<Faction>(Signals.FACTION_DELETED, OnFactionDeleted);
+        factionItems = new Dictionary<Faction, FactionTokenItem>();
+
+        //Area
+        Messenger.AddListener<Area>(Signals.AREA_CREATED, OnAreaCreated);
+        Messenger.AddListener<Area>(Signals.AREA_DELETED, OnAreanDeleted);
+        areaItems = new Dictionary<Area, LocationTokenItem>();
+
+        //Shared
         Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnTokenAdded);
     }
 
@@ -46,11 +69,12 @@ public class CharactersTokenUI : UIMenu {
         isShowing = false;
     }
 
+    #region Character Tokens
     private void AddCharacterEntry(Character character) {
-        if(character.role != null && character.role.roleType == CHARACTER_ROLE.PLAYER) {
+        if (character.role != null && character.role.roleType == CHARACTER_ROLE.PLAYER) {
             return;
         }
-        GameObject newEntryGO = UIManager.Instance.InstantiateUIObject(characterEntryPrefab.name, charactersScrollRect.content);
+        GameObject newEntryGO = UIManager.Instance.InstantiateUIObject(characterEntryPrefab.name, tokensScrollView.content);
         newEntryGO.transform.localScale = Vector3.one;
         CharacterTokenItem newEntry = newEntryGO.GetComponent<CharacterTokenItem>();
         newEntry.SetCharacter(character.characterToken);
@@ -83,31 +107,79 @@ public class CharactersTokenUI : UIMenu {
         }
         //sortingAction();
     }
+    #endregion
 
-    private void OnInteractionMenuOpened() {
-        if (this.isShowing) {
-            //if the menu is showing update it's open position
-            //only open halfway
-            tweener.SetAnimationPosition(openPosition, halfPosition, curve, curve);
-            tweener.ChangeSetState(false);
-            tweener.TriggerOpenClose();
-            tweener.SetAnimationPosition(closePosition, halfPosition, curve, curve);
-        } else {
-            //only open halfway
-            tweener.SetAnimationPosition(closePosition, halfPosition, curve, curve);
+    #region Faction Tokens
+    private void OnFactionCreated(Faction createdFaction) {
+        GameObject factionItemGO = UIManager.Instance.InstantiateUIObject(factionItemPrefab.name, tokensScrollView.content);
+        FactionTokenItem factionItem = factionItemGO.GetComponent<FactionTokenItem>();
+        factionItem.SetFactionToken(createdFaction.factionToken);
+        factionItem.gameObject.SetActive(false);
+        factionItems.Add(createdFaction, factionItem);
+        //UpdateColors();
+    }
+    private void OnFactionDeleted(Faction deletedFaction) {
+        if (factionItems.ContainsKey(deletedFaction)) {
+            ObjectPoolManager.Instance.DestroyObject(factionItems[deletedFaction].gameObject);
+            factionItems.Remove(deletedFaction);
+            //UpdateColors();
         }
     }
-    private void OnInteractionMenuClosed() {
-        if (this.isShowing) {
-            tweener.SetAnimationPosition(halfPosition, openPosition, curve, curve);
-            tweener.ChangeSetState(false);
-            tweener.TriggerOpenClose();
-            tweener.SetAnimationPosition(closePosition, openPosition, curve, curve);
-        } else {
-            //reset positions to normal
-            tweener.SetAnimationPosition(closePosition, openPosition, curve, curve);
+    private FactionTokenItem GetItem(Faction faction) {
+        if (factionItems.ContainsKey(faction)) {
+            return factionItems[faction];
+        }
+        return null;
+    }
+    #endregion
+
+    #region Area Tokens
+    private void OnAreaCreated(Area createdArea) {
+        GameObject locationItemGO = UIManager.Instance.InstantiateUIObject(locationItemPrefab.name, tokensScrollView.content);
+        LocationTokenItem locationItem = locationItemGO.GetComponent<LocationTokenItem>();
+        locationItem.SetLocation(createdArea.locationToken);
+        locationItem.gameObject.SetActive(false);
+        areaItems.Add(createdArea, locationItem);
+    }
+    private void OnAreanDeleted(Area deletedArea) {
+        if (areaItems.ContainsKey(deletedArea)) {
+            ObjectPoolManager.Instance.DestroyObject(areaItems[deletedArea].gameObject);
+            areaItems.Remove(deletedArea);
         }
     }
+    private LocationTokenItem GetItem(Area area) {
+        if (areaItems.ContainsKey(area)) {
+            return areaItems[area];
+        }
+        return null;
+    }
+    #endregion
+
+
+    //private void OnInteractionMenuOpened() {
+    //    if (this.isShowing) {
+    //        //if the menu is showing update it's open position
+    //        //only open halfway
+    //        tweener.SetAnimationPosition(openPosition, halfPosition, curve, curve);
+    //        tweener.ChangeSetState(false);
+    //        tweener.TriggerOpenClose();
+    //        tweener.SetAnimationPosition(closePosition, halfPosition, curve, curve);
+    //    } else {
+    //        //only open halfway
+    //        tweener.SetAnimationPosition(closePosition, halfPosition, curve, curve);
+    //    }
+    //}
+    //private void OnInteractionMenuClosed() {
+    //    if (this.isShowing) {
+    //        tweener.SetAnimationPosition(halfPosition, openPosition, curve, curve);
+    //        tweener.ChangeSetState(false);
+    //        tweener.TriggerOpenClose();
+    //        tweener.SetAnimationPosition(closePosition, openPosition, curve, curve);
+    //    } else {
+    //        //reset positions to normal
+    //        tweener.SetAnimationPosition(closePosition, openPosition, curve, curve);
+    //    }
+    //}
     private void OnTokenAdded(Token token) {
         if (token is CharacterToken) {
             CharacterToken charToken = (token as CharacterToken);
@@ -116,6 +188,16 @@ public class CharactersTokenUI : UIMenu {
                 item.gameObject.SetActive(true);
                 item.SetDraggable(true);
                 _activeCharacterEntries.Add(item);
+            }
+        } else if (token is FactionToken) {
+            FactionTokenItem item = GetItem((token as FactionToken).faction);
+            if (item != null) {
+                item.gameObject.SetActive(true);
+            }
+        } else if (token is LocationToken) {
+            LocationTokenItem item = GetItem((token as LocationToken).location);
+            if (item != null) {
+                item.gameObject.SetActive(true);
             }
         }
     }

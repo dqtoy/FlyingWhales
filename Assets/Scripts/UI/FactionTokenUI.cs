@@ -20,8 +20,6 @@ public class FactionTokenUI : UIMenu {
         Messenger.AddListener<Faction>(Signals.FACTION_CREATED, OnFactionCreated);
         Messenger.AddListener<Faction>(Signals.FACTION_DELETED, OnFactionDeleted);
         Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnTokenAdded);
-        //Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
-        //Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
         items = new Dictionary<Faction, FactionTokenItem>();
     }
     public override void CloseMenu() {
@@ -58,31 +56,6 @@ public class FactionTokenUI : UIMenu {
             if (item != null) {
                 item.gameObject.SetActive(true);
             }
-        }
-    }
-
-    private void OnInteractionMenuOpened() {
-        if (this.isShowing) {
-            //if the menu is showing update it's open position
-            //only open halfway
-            tweener.SetAnimationPosition(openPosition, halfPosition, curve, curve);
-            tweener.ChangeSetState(false);
-            tweener.TriggerOpenClose();
-            tweener.SetAnimationPosition(closePosition, halfPosition, curve, curve);
-        } else {
-            //only open halfway
-            tweener.SetAnimationPosition(closePosition, halfPosition, curve, curve);
-        }
-    }
-    private void OnInteractionMenuClosed() {
-        if (this.isShowing) {
-            tweener.SetAnimationPosition(halfPosition, openPosition, curve, curve);
-            tweener.ChangeSetState(false);
-            tweener.TriggerOpenClose();
-            tweener.SetAnimationPosition(closePosition, openPosition, curve, curve);
-        } else {
-            //reset positions to normal
-            tweener.SetAnimationPosition(closePosition, openPosition, curve, curve);
         }
     }
 }

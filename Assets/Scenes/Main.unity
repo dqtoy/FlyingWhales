@@ -8976,7 +8976,7 @@ MonoBehaviour:
   isShowing: 0
   characterEntryPrefab: {fileID: 1667677566377938, guid: a9057d326864f1d488dd411e969ca51d,
     type: 2}
-  charactersScrollRect: {fileID: 1863476515}
+  tokensScrollView: {fileID: 1863476515}
   openPosition: {x: -153, y: 35, z: 0}
   closePosition: {x: 166, y: 35, z: 0}
   halfPosition: {x: 30, y: 35, z: 0}
@@ -9014,6 +9014,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  factionItemPrefab: {fileID: 1960029943899900, guid: 40796bb49d293324490f615d012de961,
+    type: 2}
+  locationItemPrefab: {fileID: 1059898416166788, guid: 3f5d886336cd4e3428717b21e20b2772,
+    type: 2}
 --- !u!1001 &216649937
 Prefab:
   m_ObjectHideFlags: 0
@@ -20306,7 +20310,7 @@ GameObject:
   - component: {fileID: 481249750}
   - component: {fileID: 481249752}
   m_Layer: 5
-  m_Name: Characters
+  m_Name: Tokens
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20377,7 +20381,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 1119691117}
-  tooltipHeader: Character Intel
+  tooltipHeader: Tokens
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -20389,9 +20393,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: View the list of characters in the world that you have
-            encountered.\nSend spies to other locations to add characters they encounter
-            to this list
+          m_StringArgument: View the list of tokens you have obtained.
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
@@ -20457,17 +20459,6 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 215701893}
         m_MethodName: OnValueChangedAnimation
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1538653385}
-        m_MethodName: OnCharacterIntelMenuToggled
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -26478,7 +26469,7 @@ MonoBehaviour:
   impsText: {fileID: 357062887}
   threatFiller: {fileID: 971817909}
   minionsScrollRect: {fileID: 1958775172}
-  minionsScrollRectTransform: {fileID: 0}
+  minionsScrollRectTransform: {fileID: 1958775169}
   minionsScrollRectLE: {fileID: 1958775173}
   minionPrefab: {fileID: 1632239326956908, guid: 6a3fbd7f8a25b814bb4c4e417caae8ec,
     type: 2}
@@ -30085,7 +30076,7 @@ GameObject:
   m_Layer: 5
   m_Name: TooltipHolder
   m_TagString: Untagged
-  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -49288,7 +49279,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1117973113
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67547,7 +67538,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1508957533
 RectTransform:
   m_ObjectHideFlags: 0
@@ -69605,13 +69596,11 @@ MonoBehaviour:
   - {fileID: 2042713286}
   - {fileID: 258663800}
   - {fileID: 720442089}
-  - {fileID: 1117973113}
   - {fileID: 65978408}
   - {fileID: 401963491}
   - {fileID: 914495163}
   - {fileID: 1614811351}
   - {fileID: 493832345}
-  - {fileID: 1821077716}
   - {fileID: 1297442069}
   - {fileID: 497507705}
   - {fileID: 1741253390}
@@ -82829,7 +82818,7 @@ GameObject:
   m_Layer: 5
   m_Name: TooltipHolder
   m_TagString: Untagged
-  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -82937,7 +82926,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1794640208
 RectTransform:
   m_ObjectHideFlags: 0
@@ -84487,7 +84476,7 @@ GameObject:
   m_Layer: 5
   m_Name: TooltipHolder
   m_TagString: Untagged
-  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -84596,7 +84585,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1821077715
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89572,7 +89561,7 @@ GameObject:
   m_Layer: 5
   m_Name: TooltipHolder
   m_TagString: Untagged
-  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
