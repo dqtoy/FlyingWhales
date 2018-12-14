@@ -39,6 +39,9 @@ public class Job {
     public Interaction createdInteraction {
         get { return _createdInteraction; }
     }
+    public Token attachedToken {
+        get { return _attachedToken; }
+    }
     #endregion
 
     public Job (Character character, JOB jobType) {

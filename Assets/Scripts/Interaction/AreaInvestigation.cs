@@ -115,6 +115,7 @@ public class AreaInvestigation {
             _assignedMinion.TravelBackFromAssignment(() => SetMinionRecallExploreState(false));
             _assignedMinion.character.job.StopJobAction();
             _assignedMinion.character.job.StopCreatedInteraction();
+            _assignedMinion.character.job.SetToken(null);
             //Messenger.RemoveListener(Signals.HOUR_STARTED, OnExploreTick);
             UnexploreLandmark();
             SetMinionRecallExploreState(true);
