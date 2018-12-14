@@ -996,7 +996,7 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Characters Summary")]
     [SerializeField] private GameObject charactersSummaryGO;
-    public CharactersTokenUI charactersSummaryMenu;
+    public TokensUI charactersSummaryMenu;
     public void ShowCharactersSummary() {
         //HideQuestsSummary();
         //HideStorylinesSummary();
@@ -1196,17 +1196,20 @@ public class UIManager : MonoBehaviour {
         UnityAction action = null;
         string notificationText = string.Empty;
         if (token is FactionToken) {
-            action = () => ShowFactionTokenMenu();
+            action = () => ShowCharacterTokenMenu();
             notificationText = "Obtained token about faction: <color=\"green\"><b>" + (token as FactionToken).faction.name;
         } else if (token is LocationToken) {
-            action = () => ShowLocationTokenMenu();
+            action = () => ShowCharacterTokenMenu();
             notificationText = "Obtained token about location: <color=\"green\"><b>" + (token as LocationToken).location.name;
         } else if (token is CharacterToken) {
             action = () => ShowCharacterTokenMenu();
             notificationText = "Obtained token about character: <color=\"green\"><b>" + (token as CharacterToken).character.name;
         } else if (token is DefenderToken) {
-            action = () => ShowLocationTokenMenu();
+            action = () => ShowCharacterTokenMenu();
             notificationText = "Obtained token about defenders at: <color=\"green\"><b>" + (token as DefenderToken).owner.name;
+        } else if (token is SpecialToken) {
+            action = () => ShowCharacterTokenMenu();
+            notificationText = "Obtained token about special item: <color=\"green\"><b>" + (token as SpecialToken).name;
         }
         ShowNotification(notificationText, 5, action);
     }

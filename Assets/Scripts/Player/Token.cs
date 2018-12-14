@@ -18,6 +18,10 @@ public class Token {
     public void SetObtainedState(bool state) {
         _isObtained = state;
     }
+    public void ConsumeToken() {
+        SetObtainedState(false);
+        Messenger.Broadcast(Signals.TOKEN_CONSUMED, this);
+    }
     //public int id;
     //public string name;
     //public string description;
@@ -73,11 +77,21 @@ public class CharacterToken : Token {
     }
 }
 
-public class SpecialToken : Token {
+[System.Serializable]
+/*
+ NOTE: There is only one instance of SpecialToken class per special token. (See TokenManager)
+     */
+public class SpecialToken : Token { 
     public string name;
-
+    public int quantity;
     public SpecialToken(string name) : base() {
         this.name = name;
+    }
+    public void AdjustQuantity(int amount) {
+        quantity += amount;
+        if (quantity <= 0) {
+            Messenger.Broadcast(Signals.SPECIAL_TOKEN_RAN_OUT, this);
+        }
     }
     public override string ToString() {
         return name + " Token";

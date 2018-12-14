@@ -20,6 +20,7 @@ public class AreaSaveData {
     //public int initialSupply;
     public int residentCapacity;
     public int monthlySupply;
+    public List<string> possibleSpecialTokenSpawns;
 
     public AreaSaveData(Area area) {
         areaID = area.id;
@@ -45,5 +46,11 @@ public class AreaSaveData {
         //initialSupply = area.initialSupply;
         residentCapacity = area.residentCapacity;
         monthlySupply = area.monthlySupply;
+
+        possibleSpecialTokenSpawns = new List<string>();
+        for (int i = 0; i < area.possibleSpecialTokenSpawns.Count; i++) {
+            SpecialToken currToken = area.possibleSpecialTokenSpawns[i];
+            possibleSpecialTokenSpawns.Add(currToken.name);
+        }
     }
 }

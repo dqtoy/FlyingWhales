@@ -9,7 +9,7 @@ using System.Linq;
 public class PlayerUI : MonoBehaviour {
     public static PlayerUI Instance;
 
-    public CharactersTokenUI charactersIntelUI;
+    public TokensUI charactersIntelUI;
 
     public TextMeshProUGUI manaText;
     public TextMeshProUGUI suppliesText;

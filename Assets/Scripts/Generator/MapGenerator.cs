@@ -53,6 +53,7 @@ public class MapGenerator : MonoBehaviour {
         UIManager.Instance.InitializeUI();
         ObjectManager.Instance.Initialize();
         CharacterScheduleManager.Instance.Initialize();
+        TokenManager.Instance.Initialize();
 
         LevelLoaderManager.UpdateLoadingInfo("Generating Factions...");
         yield return null;
@@ -131,6 +132,7 @@ public class MapGenerator : MonoBehaviour {
 
         UIManager.Instance.InitializeUI();
         ObjectManager.Instance.Initialize();
+        TokenManager.Instance.Initialize();
 
         LevelLoaderManager.UpdateLoadingInfo("Loading Factions...");
         yield return null;

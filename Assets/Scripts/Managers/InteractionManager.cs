@@ -275,8 +275,7 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.EXPLORER_SPAWN_INTERACTION_1:
-                //TODO
-                return true;
+                return landmark.tileLocation.areaOfTile.possibleSpecialTokenSpawns.Count > 0;
             default:
                 return true;
         }

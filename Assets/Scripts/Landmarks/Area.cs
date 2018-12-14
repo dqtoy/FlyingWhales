@@ -46,6 +46,9 @@ public class Area {
     public int monthlySupply { get; private set; }
     public List<Interaction> eventsTargettingThis { get; private set; }
 
+    //special tokens
+    public List<SpecialToken> possibleSpecialTokenSpawns { get; private set; }
+
     //for testing
     public List<string> supplyLog { get; private set; } //limited to 100 entries
 
@@ -82,6 +85,7 @@ public class Area {
         eventsTargettingThis = new List<Interaction>();
         supplyLog = new List<string>();
         defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
+        possibleSpecialTokenSpawns = new List<SpecialToken>();
         SetAreaType(areaType);
         SetCoreTile(coreTile);
         //SetSupplyCapacity(1000);
@@ -135,6 +139,7 @@ public class Area {
         if (data.possibleOccupants != null) {
             possibleOccupants.AddRange(data.possibleOccupants);
         }
+        LoadSpecialTokens(data);
         //SetDefaultRace(data.defaultRace);
         AddTile(Utilities.GetTilesFromIDs(data.tileData)); //exposed tiles will be determined after loading landmarks at MapGeneration
         UpdateBorderColors();
@@ -982,6 +987,27 @@ public class Area {
             attackCharacters[0].ownParty.AddCharacter(attackCharacters[i]);
         }
         attackCharacters[0].AttackAnArea(attackTarget);
+    }
+    #endregion
+
+    #region Special Tokens
+    private void LoadSpecialTokens(AreaSaveData data) {
+        possibleSpecialTokenSpawns = new List<SpecialToken>();
+        if (data.possibleSpecialTokenSpawns != null) {
+            for (int i = 0; i < data.possibleSpecialTokenSpawns.Count; i++) {
+                string tokenName = data.possibleSpecialTokenSpawns[i];
+                possibleSpecialTokenSpawns.Add(TokenManager.Instance.GetSpecialToken(tokenName));
+            }
+            Messenger.AddListener<SpecialToken>(Signals.SPECIAL_TOKEN_RAN_OUT, OnSpecialTokenRanOut);
+        }
+    }
+    private void OnSpecialTokenRanOut(SpecialToken token) { //Called when special token quantity reaches 0
+        if (possibleSpecialTokenSpawns.Contains(token)) {
+            possibleSpecialTokenSpawns.Remove(token);
+            if (possibleSpecialTokenSpawns.Count == 0) {
+                Messenger.RemoveListener<SpecialToken>(Signals.SPECIAL_TOKEN_RAN_OUT, OnSpecialTokenRanOut);
+            }
+        }
     }
     #endregion
 }

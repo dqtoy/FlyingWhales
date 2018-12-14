@@ -5,7 +5,7 @@ using System;
 using UnityEngine.UI;
 using System.Linq;
 
-public class CharactersTokenUI : UIMenu {
+public class TokensUI : UIMenu {
 
     [Header("Characters")]
     [SerializeField] private GameObject characterEntryPrefab;
@@ -24,9 +24,14 @@ public class CharactersTokenUI : UIMenu {
     [Header("Locations")]
     [SerializeField] private GameObject locationItemPrefab;
 
+    [Space(10)]
+    [Header("Special Tokens")]
+    [SerializeField] private GameObject specialTokenPrefab;
+
     private Dictionary<Character, CharacterTokenItem> characterEntries;
     private Dictionary<Faction, FactionTokenItem> factionItems;
     private Dictionary<Area, LocationTokenItem> areaItems;
+    private Dictionary<SpecialToken, SpecialTokenItem> specialTokenItems;
     private List<CharacterTokenItem> _activeCharacterEntries;
 
 
@@ -56,8 +61,13 @@ public class CharactersTokenUI : UIMenu {
         Messenger.AddListener<Area>(Signals.AREA_DELETED, OnAreanDeleted);
         areaItems = new Dictionary<Area, LocationTokenItem>();
 
+        //special tokens
+        Messenger.AddListener<SpecialToken>(Signals.SPECIAL_TOKEN_CREATED, OnSpecialTokenCreated);
+        specialTokenItems = new Dictionary<SpecialToken, SpecialTokenItem>();
+
         //Shared
         Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnTokenAdded);
+        Messenger.AddListener<Token>(Signals.TOKEN_CONSUMED, OnTokenConsumed);
     }
 
     public override void OpenMenu() {
@@ -155,6 +165,22 @@ public class CharactersTokenUI : UIMenu {
     }
     #endregion
 
+    #region Special Tokens
+    private void OnSpecialTokenCreated(SpecialToken token) {
+        GameObject tokenGO = UIManager.Instance.InstantiateUIObject(specialTokenPrefab.name, tokensScrollView.content);
+        SpecialTokenItem tokenItem = tokenGO.GetComponent<SpecialTokenItem>();
+        tokenItem.SetToken(token);
+        tokenItem.gameObject.SetActive(false);
+        specialTokenItems.Add(token, tokenItem);
+    }
+    private SpecialTokenItem GetItem(SpecialToken token) {
+        if (specialTokenItems.ContainsKey(token)) {
+            return specialTokenItems[token];
+        }
+        return null;
+    }
+    #endregion
+
 
     //private void OnInteractionMenuOpened() {
     //    if (this.isShowing) {
@@ -198,6 +224,37 @@ public class CharactersTokenUI : UIMenu {
             LocationTokenItem item = GetItem((token as LocationToken).location);
             if (item != null) {
                 item.gameObject.SetActive(true);
+            }
+        } else if (token is SpecialToken) {
+            SpecialTokenItem item = GetItem(token as SpecialToken);
+            if (item != null) {
+                item.gameObject.SetActive(true);
+            }
+        }
+    }
+    private void OnTokenConsumed(Token token) {
+        if (token is CharacterToken) {
+            CharacterToken charToken = (token as CharacterToken);
+            CharacterTokenItem item = GetCharacterEntry(charToken.character);
+            if (item != null) {
+                item.gameObject.SetActive(false);
+                item.SetDraggable(false);
+                _activeCharacterEntries.Remove(item);
+            }
+        } else if (token is FactionToken) {
+            FactionTokenItem item = GetItem((token as FactionToken).faction);
+            if (item != null) {
+                item.gameObject.SetActive(false);
+            }
+        } else if (token is LocationToken) {
+            LocationTokenItem item = GetItem((token as LocationToken).location);
+            if (item != null) {
+                item.gameObject.SetActive(false);
+            }
+        } else if (token is SpecialToken) {
+            SpecialTokenItem item = GetItem(token as SpecialToken);
+            if (item != null) {
+                item.gameObject.SetActive(false);
             }
         }
     }

@@ -93,7 +93,7 @@ namespace worldcreator {
 
             WorldCreatorUI.Instance.InitializeMenus();
             CombatManager.Instance.Initialize();
-            
+            TokenManager.Instance.Initialize();
             //Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
             Biomes.Instance.LoadPassableStates(hexTiles);
             CreateNewRegion(hexTiles);
@@ -141,6 +141,7 @@ namespace worldcreator {
 
             WorldCreatorUI.Instance.InitializeMenus();
             CombatManager.Instance.Initialize();
+            TokenManager.Instance.Initialize();
             LoadRegions(data);
             FactionManager.Instance.LoadFactions(data);
             LandmarkManager.Instance.LoadAreas(data);

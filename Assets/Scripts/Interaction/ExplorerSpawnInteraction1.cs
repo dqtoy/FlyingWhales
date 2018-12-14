@@ -129,6 +129,9 @@ public class ExplorerSpawnInteraction1 : Interaction {
     #endregion
 
     private void SetChosenSpecialToken() {
-        //TODO
+        if (interactable.tileLocation.areaOfTile.possibleSpecialTokenSpawns.Count == 0) {
+            throw new System.Exception("No more special token spawns in " + interactable.tileLocation.areaOfTile.name);
+        }
+        _chosenSpecialToken = interactable.tileLocation.areaOfTile.possibleSpecialTokenSpawns[Random.Range(0, interactable.tileLocation.areaOfTile.possibleSpecialTokenSpawns.Count)];
     }
 }

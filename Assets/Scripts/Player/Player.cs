@@ -259,6 +259,7 @@ public class Player : ILeader {
     public void AddToken(Token token) {
         if (!_tokens.Contains(token)) {
             if (token is CharacterToken && (token as CharacterToken).character.minion != null) {
+
             } else {
                 _tokens.Add(token);
                 Debug.Log("Added token " + token.ToString());
@@ -267,6 +268,8 @@ public class Player : ILeader {
             token.SetObtainedState(true);
             if (token is CharacterToken) {
                 Messenger.Broadcast(Signals.CHARACTER_TOKEN_ADDED, token as CharacterToken);
+            } else if (token is SpecialToken) {
+                (token as SpecialToken).AdjustQuantity(-1);
             }
         }
     }

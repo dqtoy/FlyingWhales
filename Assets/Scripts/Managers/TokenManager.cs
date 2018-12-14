@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IntelManager : MonoBehaviour {
-    public static IntelManager Instance;
+public class TokenManager : MonoBehaviour {
+    public static TokenManager Instance;
 
     //private Dictionary<int, Intel> _intelLookup;
+
+    private Dictionary<string, SpecialToken> specialTokens;
 
     #region getters/setters
     //public Dictionary<int, Intel> intelLookup {
@@ -19,19 +21,24 @@ public class IntelManager : MonoBehaviour {
     }
 
     public void Initialize() {
-        //ConstructAllIntel();
+        ConstructSpecialTokens();
     }
 
-    //private void ConstructAllIntel() {
-    //    _intelLookup = new Dictionary<int, Intel> ();
-    //    string path = Utilities.dataPath + "Intels/";
-    //    string[] intels = System.IO.Directory.GetFiles(path, "*.json");
-    //    for (int i = 0; i < intels.Length; i++) {
-    //        //JsonUtility.FromJsonOverwrite(System.IO.File.ReadAllText(classes[i]), monsterComponent);
-    //        Intel intel = JsonUtility.FromJson<Intel>(System.IO.File.ReadAllText(intels[i]));
-    //        _intelLookup.Add(intel.id, intel);
-    //    }
-    //}
+    private void ConstructSpecialTokens() {
+        specialTokens = new Dictionary<string, SpecialToken>();
+        string path = Utilities.dataPath + "Tokens/";
+        string[] tokens = System.IO.Directory.GetFiles(path, "*.json");
+        for (int i = 0; i < tokens.Length; i++) {
+            //JsonUtility.FromJsonOverwrite(System.IO.File.ReadAllText(classes[i]), monsterComponent);
+            SpecialToken token = JsonUtility.FromJson<SpecialToken>(System.IO.File.ReadAllText(tokens[i]));
+            specialTokens.Add(token.name, token);
+            Messenger.Broadcast(Signals.SPECIAL_TOKEN_CREATED, token);
+        }
+    }
+
+    public SpecialToken GetSpecialToken(string name) {
+        return specialTokens[name];
+    }
 
     //public Intel GetIntel(int id) {
     //    return _intelLookup[id];

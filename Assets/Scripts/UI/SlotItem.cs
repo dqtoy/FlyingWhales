@@ -22,6 +22,7 @@ public class SlotItem : MonoBehaviour {
     public CharacterPortrait portrait;
     public AreaEmblem areaEmblem;
     public FactionEmblem factionEmblem;
+    public Image image;
     public CustomDropZone dropZone;
     public SlotItemDraggable draggable;
     [SerializeField] private string neededTypeStr;
@@ -74,31 +75,43 @@ public class SlotItem : MonoBehaviour {
             factionEmblem.gameObject.SetActive(true);
             areaEmblem.gameObject.SetActive(false);
             portrait.gameObject.SetActive(false);
+            image.gameObject.SetActive(false);
             factionEmblem.SetFaction((associatedObj as FactionToken).faction);
             hoverInfo = (associatedObj as FactionToken).faction.name;
         } else if (associatedObj is LocationToken) {
             factionEmblem.gameObject.SetActive(false);
             areaEmblem.gameObject.SetActive(true);
             portrait.gameObject.SetActive(false);
+            image.gameObject.SetActive(false);
             hoverInfo = (associatedObj as LocationToken).location.name;
         } else if (associatedObj is CharacterToken) {
             factionEmblem.gameObject.SetActive(false);
             areaEmblem.gameObject.SetActive(false);
             portrait.gameObject.SetActive(true);
+            image.gameObject.SetActive(false);
             portrait.GeneratePortrait((associatedObj as CharacterToken).character);
             hoverInfo = (associatedObj as CharacterToken).character.name;
         } else if (associatedObj is Minion) {
             factionEmblem.gameObject.SetActive(false);
             areaEmblem.gameObject.SetActive(false);
             portrait.gameObject.SetActive(true);
+            image.gameObject.SetActive(false);
             portrait.GeneratePortrait((associatedObj as Minion).character);
             hoverInfo = (associatedObj as Minion).name;
         } else if (associatedObj is Character) {
             factionEmblem.gameObject.SetActive(false);
             areaEmblem.gameObject.SetActive(false);
             portrait.gameObject.SetActive(true);
+            image.gameObject.SetActive(false);
             portrait.GeneratePortrait((associatedObj as Character));
             hoverInfo = (associatedObj as Character).name;
+        } else if (associatedObj is SpecialToken) {
+            factionEmblem.gameObject.SetActive(false);
+            areaEmblem.gameObject.SetActive(false);
+            portrait.gameObject.SetActive(false);
+            hoverInfo = (associatedObj as SpecialToken).name;
+            image.gameObject.SetActive(true);
+            //TODO: Change Sprite per token
         }
     }
     public void ClearSlot(bool keepType = false) {

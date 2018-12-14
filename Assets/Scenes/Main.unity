@@ -8759,7 +8759,7 @@ GameObject:
   - component: {fileID: 215701894}
   - component: {fileID: 215701893}
   m_Layer: 5
-  m_Name: Characters
+  m_Name: Tokens
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9017,6 +9017,8 @@ MonoBehaviour:
   factionItemPrefab: {fileID: 1960029943899900, guid: 40796bb49d293324490f615d012de961,
     type: 2}
   locationItemPrefab: {fileID: 1059898416166788, guid: 3f5d886336cd4e3428717b21e20b2772,
+    type: 2}
+  specialTokenPrefab: {fileID: 1960029943899900, guid: e494a759a881ec348bff58d5240594c9,
     type: 2}
 --- !u!1001 &216649937
 Prefab:
@@ -93763,11 +93765,6 @@ Prefab:
         type: 2}
       propertyPath: m_isInputParsingRequired
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 224082882852576176, guid: ec1478e6b1255494cbd655df50b37cb2,
-        type: 2}
-      propertyPath: m_AnchoredPosition.y
-      value: 0.0000104904175
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ec1478e6b1255494cbd655df50b37cb2, type: 2}
