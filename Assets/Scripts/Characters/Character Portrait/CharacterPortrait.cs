@@ -76,7 +76,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     #endregion
 
     private void OnEnable() {
-        Messenger.AddListener<CharacterToken>(Signals.CHARACTER_TOKEN_ADDED, OnCharacterTokenObtained);
+        //Messenger.AddListener<CharacterToken>(Signals.CHARACTER_TOKEN_ADDED, OnCharacterTokenObtained);
         Messenger.AddListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
     }
@@ -258,18 +258,18 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         //bg.sprite = draggableBGSprite;
         //SetImageSize(_imgSize - 4);
     }
-    private void UpdateUnknownVisual() {
+    public void UpdateUnknownVisual() {
         if (_character != null) {
             if (_character.isDefender) {
-                DefenderToken defToken = _character.defendingArea.defenderToken;
+                //DefenderToken defToken = _character.defendingArea.defenderToken;
                 if (forceShowPortrait || GameManager.Instance.inspectAll) {
                     lvlGO.SetActive(true);
                     unknownGO.SetActive(false);
                     SetBodyPartsState(true);
                 } else {
-                    lvlGO.SetActive(defToken.isObtained);
-                    unknownGO.SetActive(!defToken.isObtained);
-                    SetBodyPartsState(defToken.isObtained);
+                    lvlGO.SetActive(_character.defendingArea.areaInvestigation.isActivelyCollectingToken);
+                    unknownGO.SetActive(!_character.defendingArea.areaInvestigation.isActivelyCollectingToken);
+                    SetBodyPartsState(_character.defendingArea.areaInvestigation.isActivelyCollectingToken);
                 }
             } else {
                 CharacterToken characterToken = _character.characterToken;
@@ -467,9 +467,9 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         UpdateUnknownVisual();
     }
     private void RemoveListeners() {
-        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_TOKEN_ADDED)) {
-            Messenger.RemoveListener<CharacterToken>(Signals.CHARACTER_TOKEN_ADDED, OnCharacterTokenObtained);
-        }
+        //if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_TOKEN_ADDED)) {
+            //Messenger.RemoveListener<CharacterToken>(Signals.CHARACTER_TOKEN_ADDED, OnCharacterTokenObtained);
+        //}
         if (Messenger.eventTable.ContainsKey(Signals.INSPECT_ALL)) {
             Messenger.RemoveListener(Signals.INSPECT_ALL, OnInspectAll);
         }

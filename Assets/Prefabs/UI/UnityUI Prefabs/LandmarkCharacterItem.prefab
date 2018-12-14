@@ -720,7 +720,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
-  forceShowPortrait: 0
+  forceShowPortrait: 1
   ignoreInteractions: 0
   baseBG: {fileID: 114731532543157136}
   lockedFrame: {fileID: 114810656830676762}

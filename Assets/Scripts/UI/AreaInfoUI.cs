@@ -87,7 +87,7 @@ public class AreaInfoUI : UIMenu {
         get { return _data as Area; }
     }
 
-    private Area _activeArea;
+    public Area activeArea { get; private set; }
     private Minion _assignedMinion;
     private Minion[] _assignedParty;
     private float _currentWinChance;
@@ -104,16 +104,17 @@ public class AreaInfoUI : UIMenu {
         Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, OnPartyExitedLandmark);
         //Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_ADDED, OnResidentAddedToLandmark);
         //Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_REMOVED, OnResidentRemovedFromLandmark);
-        Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnTokenAdded);
+        //Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnTokenAdded);
+        Messenger.AddListener<Area>(Signals.AREA_TOKEN_COLLECTION_CHANGED, OnTokenCollectionStateChanged);
         Messenger.AddListener<Minion, Area>(Signals.MINION_STARTS_INVESTIGATING_AREA, OnMinionInvestigateArea);
         Messenger.AddListener<Area>(Signals.AREA_SUPPLIES_CHANGED, OnAreaSuppliesSet);
         _assignedParty = new Minion[4];
     }
     public override void OpenMenu() {
         base.OpenMenu();
-        Area previousArea = _activeArea;
-        _activeArea = _data as Area;
-        if(previousArea == null || (previousArea != null && previousArea != _activeArea)) {
+        Area previousArea = activeArea;
+        activeArea = _data as Area;
+        if(previousArea == null || (previousArea != null && previousArea != activeArea)) {
             ResetMinionAssignment();
             ResetMinionAssignmentParty();
         }
@@ -126,8 +127,8 @@ public class AreaInfoUI : UIMenu {
         if (previousArea != null) {
             previousArea.SetOutlineState(false);
         }
-        if (_activeArea != null) {
-            _activeArea.SetOutlineState(true);
+        if (activeArea != null) {
+            activeArea.SetOutlineState(true);
         }
     }
     public override void CloseMenu() {
@@ -138,10 +139,10 @@ public class AreaInfoUI : UIMenu {
         //    ObjectPoolManager.Instance.DestroyObject(objects[i]);
         //}
         //Utilities.DestroyChildren(defendersScrollView.content);
-        if (_activeArea != null) {
-            _activeArea.SetOutlineState(false);
+        if (activeArea != null) {
+            activeArea.SetOutlineState(false);
         }
-        _activeArea = null;
+        activeArea = null;
         //PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
         //PlayerUI.Instance.CollapseMinionHolder();
         //InteractionUI.Instance.HideInteractionUI();
@@ -151,7 +152,7 @@ public class AreaInfoUI : UIMenu {
     }
 
     public void UpdateAreaInfo() {
-        if (_activeArea == null) {
+        if (activeArea == null) {
             return;
         }
         UpdateBasicInfo();
@@ -167,10 +168,12 @@ public class AreaInfoUI : UIMenu {
         UpdateAllHistoryInfo();
     }
     private void UpdateHiddenUI() {
-        if (_activeArea.locationToken.isObtained || GameManager.Instance.inspectAll) {
+        if (activeArea.areaInvestigation.isActivelyCollectingToken || GameManager.Instance.inspectAll) {
             ShowLocationTokenUI();
+            //ShowDefenderTokenUI();
         } else {
             HideLocationTokenUI();
+            //HideDefenderTokenUI();
         }
         //if (_activeArea.defenderIntel.isObtained || GameManager.Instance.inspectAll) {
         //    ShowDefenderIntelUI();
@@ -179,15 +182,19 @@ public class AreaInfoUI : UIMenu {
         //}
         
     }
-    private void OnTokenAdded(Token token) {
-        if(_activeArea != null) {
-            if (_activeArea.locationToken == token) {
-                ShowLocationTokenUI();
-            } else if (_activeArea.defenderToken == token) {
-                ShowDefenderTokenUI();
-            }
+    //private void OnTokenAdded(Token token) {
+    //    if(activeArea != null) {
+    //        if (activeArea.locationToken == token) {
+    //            ShowLocationTokenUI();
+    //        } else if (activeArea.defenderToken == token) {
+    //            ShowDefenderTokenUI();
+    //        }
+    //    }
+    //}
+    private void OnTokenCollectionStateChanged(Area area) {
+        if (this.isShowing && activeArea.id == area.id) {
+            UpdateHiddenUI();
         }
-
     }
     private void ShowLocationTokenUI() {
         //charactersGO.SetActive(true);
@@ -218,36 +225,36 @@ public class AreaInfoUI : UIMenu {
 
     #region Basic Info
     private void UpdateBasicInfo() {
-        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_activeArea.coreTile.landmarkOnTile.specificLandmarkType);
-        landmarkNameLbl.text = _activeArea.name;
-        if (_activeArea.race.race != RACE.NONE) {
-            if (_activeArea.tiles.Count > 1) {
-                landmarkTypeLbl.text = Utilities.GetNormalizedSingularRace(_activeArea.race.race) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(_activeArea.GetBaseAreaType().ToString());
+        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(activeArea.coreTile.landmarkOnTile.specificLandmarkType);
+        landmarkNameLbl.text = activeArea.name;
+        if (activeArea.race.race != RACE.NONE) {
+            if (activeArea.tiles.Count > 1) {
+                landmarkTypeLbl.text = Utilities.GetNormalizedSingularRace(activeArea.race.race) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(activeArea.GetBaseAreaType().ToString());
             } else {
-                landmarkTypeLbl.text = Utilities.GetNormalizedSingularRace(_activeArea.race.race) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(_activeArea.coreTile.landmarkOnTile.specificLandmarkType.ToString());
+                landmarkTypeLbl.text = Utilities.GetNormalizedSingularRace(activeArea.race.race) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(activeArea.coreTile.landmarkOnTile.specificLandmarkType.ToString());
             }
             
         } else {
-            landmarkTypeLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(_activeArea.coreTile.landmarkOnTile.specificLandmarkType.ToString());
+            landmarkTypeLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(activeArea.coreTile.landmarkOnTile.specificLandmarkType.ToString());
         }
-        areaCenterImage.sprite = GetAreaCenterSprite(_activeArea.name);
+        areaCenterImage.sprite = GetAreaCenterSprite(activeArea.name);
         UpdateSupplies();
 
 
-        if (_activeArea.owner == null) {
+        if (activeArea.owner == null) {
             factionEmblem.gameObject.SetActive(false);
         } else {
             factionEmblem.gameObject.SetActive(true);
-            factionEmblem.SetFaction(_activeArea.owner);
+            factionEmblem.SetFaction(activeArea.owner);
         }
     }
     private void OnAreaSuppliesSet(Area area) {
-        if (this.isShowing && _activeArea.id == area.id) {
+        if (this.isShowing && activeArea.id == area.id) {
             UpdateSupplies();
         }
     }
     private void UpdateSupplies() {
-        suppliesNameLbl.text = _activeArea.suppliesInBank.ToString();
+        suppliesNameLbl.text = activeArea.suppliesInBank.ToString();
     }
     private Sprite GetAreaCenterSprite(string name) {
         for (int i = 0; i < areaCenterSprites.Length; i++) {
@@ -274,12 +281,12 @@ public class AreaInfoUI : UIMenu {
         }
     }
     private void UpdateHistory(object obj) {
-        if (obj is Area && _activeArea != null && (obj as Area).id == _activeArea.id) {
+        if (obj is Area && activeArea != null && (obj as Area).id == activeArea.id) {
             UpdateAllHistoryInfo();
         }
     }
     private void UpdateAllHistoryInfo() {
-        List<Log> landmarkHistory = new List<Log>(_activeArea.history.OrderByDescending(x => x.id));
+        List<Log> landmarkHistory = new List<Log>(activeArea.history.OrderByDescending(x => x.id));
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
             Log currLog = landmarkHistory.ElementAtOrDefault(i);
@@ -328,8 +335,8 @@ public class AreaInfoUI : UIMenu {
         characterItems.Clear();
         //CheckScrollers();
 
-        for (int i = 0; i < _activeArea.charactersAtLocation.Count; i++) {
-            CreateNewCharacterItem(_activeArea.charactersAtLocation[i]);
+        for (int i = 0; i < activeArea.charactersAtLocation.Count; i++) {
+            CreateNewCharacterItem(activeArea.charactersAtLocation[i]);
         }
     }
     private LandmarkCharacterItem GetItem(Party party) {
@@ -372,12 +379,12 @@ public class AreaInfoUI : UIMenu {
         item.SetCharacter(partyData.partyMembers[0], null);
     }
     private void OnPartyEnteredLandmark(Party party, BaseLandmark landmark) {
-        if (isShowing && _activeArea != null && _activeArea.id == landmark.tileLocation.areaOfTile.id) { //&& (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll)
+        if (isShowing && activeArea != null && activeArea.id == landmark.tileLocation.areaOfTile.id) { //&& (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll)
             CreateNewCharacterItem(party.owner);
         }
     }
     private void OnPartyExitedLandmark(Party party, BaseLandmark landmark) {
-        if (isShowing && _activeArea != null && _activeArea.id == landmark.tileLocation.areaOfTile.id) {
+        if (isShowing && activeArea != null && activeArea.id == landmark.tileLocation.areaOfTile.id) {
             LandmarkCharacterItem item = GetItem(party);
             if(item != null) {
                 characterItems.Remove(item);
@@ -387,12 +394,12 @@ public class AreaInfoUI : UIMenu {
         }
     }
     private void OnResidentAddedToLandmark(BaseLandmark landmark, Character character) {
-        if (isShowing && _activeArea != null && _activeArea.id == landmark.tileLocation.areaOfTile.id) { // && (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll)
+        if (isShowing && activeArea != null && activeArea.id == landmark.tileLocation.areaOfTile.id) { // && (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll)
             CreateNewCharacterItem(character);
         }
     }
     private void OnResidentRemovedFromLandmark(BaseLandmark landmark, Character character) {
-        if (isShowing && _activeArea != null && _activeArea.id == landmark.tileLocation.areaOfTile.id) {
+        if (isShowing && activeArea != null && activeArea.id == landmark.tileLocation.areaOfTile.id) {
             LandmarkCharacterItem item = GetItem(character);
             if (item != null) {
                 characterItems.Remove(item);
@@ -414,13 +421,14 @@ public class AreaInfoUI : UIMenu {
         defendersScrollSnap.enabled = false;
         Utilities.DestroyChildren(defendersScrollView.content);
         defendersScrollSnap.ChildObjects = new GameObject[0];
-        for (int i = 0; i < _activeArea.defenderGroups.Count; i++) {
-            DefenderGroup currGroup = _activeArea.defenderGroups[i];
+        for (int i = 0; i < activeArea.defenderGroups.Count; i++) {
+            DefenderGroup currGroup = activeArea.defenderGroups[i];
             GameObject currGO = UIManager.Instance.InstantiateUIObject(defenderGroupPrefab.name, defendersScrollView.content);
             currGO.GetComponent<DefenderGroupItem>().SetDefender(currGroup);
         }
         //defendersScrollSnap.InitialiseChildObjectsFromScene();
         defendersScrollSnap.enabled = true;
+        ShowDefenderTokenUI();
     }
     public void UpdateDefenderPage(int newPage) {
         defenderPageLbl.text = (newPage + 1).ToString() + "/" + defendersScrollSnap.ChildObjects.Length.ToString();
@@ -432,14 +440,14 @@ public class AreaInfoUI : UIMenu {
         CloseMenu();
     }
     public void CenterOnCoreLandmark() {
-        _activeArea.CenterOnCoreLandmark();
+        activeArea.CenterOnCoreLandmark();
     }
     private void ResetScrollPositions() {
         charactersScrollView.verticalNormalizedPosition = 1;
         historyScrollView.verticalNormalizedPosition = 1;
     }
     private void OnInspectAll() {
-        if (isShowing && _activeArea != null) {
+        if (isShowing && activeArea != null) {
             UpdateCharacters();
             UpdateHiddenUI();
         }
@@ -448,7 +456,7 @@ public class AreaInfoUI : UIMenu {
 
     #region Investigation
     public void UpdateInvestigation(int indexToggleToBeActivated = 0) {
-        if(_activeArea != null && _activeArea.areaInvestigation != null) {
+        if(activeArea != null && activeArea.areaInvestigation != null) {
             //if (!investigationGO.activeSelf) {
             //    minionAssignmentTween.ResetToBeginning();
             //    minionAssignmentPartyTween.ResetToBeginning();
@@ -509,8 +517,8 @@ public class AreaInfoUI : UIMenu {
 
     }
     public void ShowMinionAssignment() {
-        if (_activeArea.areaInvestigation.isExploring) {
-            AssignMinionToInvestigate(_activeArea.areaInvestigation.assignedMinion);
+        if (activeArea.areaInvestigation.isExploring) {
+            AssignMinionToInvestigate(activeArea.areaInvestigation.assignedMinion);
         } else {
             AssignMinionToInvestigate(_assignedMinion);
         }
@@ -526,10 +534,10 @@ public class AreaInfoUI : UIMenu {
         minionAssignmentGO.SetActive(false);
     }
     public void ShowMinionAssignmentParty() {
-        if (_activeArea.areaInvestigation.isAttacking) {
+        if (activeArea.areaInvestigation.isAttacking) {
             for (int i = 0; i < _assignedParty.Length; i++) {
-                if (i < _activeArea.areaInvestigation.assignedMinionAttack.character.currentParty.characters.Count) {
-                    AssignPartyMinionToInvestigate(_activeArea.areaInvestigation.assignedMinionAttack.character.currentParty.characters[i].minion, i, false);
+                if (i < activeArea.areaInvestigation.assignedMinionAttack.character.currentParty.characters.Count) {
+                    AssignPartyMinionToInvestigate(activeArea.areaInvestigation.assignedMinionAttack.character.currentParty.characters[i].minion, i, false);
                 } else {
                     AssignPartyMinionToInvestigate(null, i, false);
                 }
@@ -549,18 +557,18 @@ public class AreaInfoUI : UIMenu {
         minionAssignmentPartyGO.SetActive(false);
     }
     public void OnUpdateLandmarkInvestigationState(string whatToDo) {
-        if(_activeArea == null) {
+        if(activeArea == null) {
             return;
         }
         if(whatToDo == "explore") {
-            if (_activeArea.areaInvestigation.isExploring) {
+            if (activeArea.areaInvestigation.isExploring) {
                 minionAssignmentConfirmButton.gameObject.SetActive(false);
                 minionAssignmentRecallButton.gameObject.SetActive(true);
                 minionAssignmentDraggableItem.SetDraggable(false);
                 minionAssignmentConfirmButton.interactable = false;
                 minionAssignmentRecallButton.interactable = true;
             } else {
-                if (_activeArea.areaInvestigation.isMinionRecalledExplore) {
+                if (activeArea.areaInvestigation.isMinionRecalledExplore) {
                     minionAssignmentConfirmButton.gameObject.SetActive(false);
                     minionAssignmentRecallButton.gameObject.SetActive(true);
                     minionAssignmentDraggableItem.SetDraggable(false);
@@ -575,7 +583,7 @@ public class AreaInfoUI : UIMenu {
                 }
             }
         } else {
-            if (_activeArea.areaInvestigation.isAttacking) {
+            if (activeArea.areaInvestigation.isAttacking) {
                 minionAssignmentPartyConfirmButton.gameObject.SetActive(false);
                 minionAssignmentPartyRecallButton.gameObject.SetActive(true);
                 minionAssignmentPartyConfirmButton.interactable = false;
@@ -584,7 +592,7 @@ public class AreaInfoUI : UIMenu {
                     minionAssignmentPartyDraggableItem[i].SetDraggable(false);
                 }
             } else {
-                if (_activeArea.areaInvestigation.isMinionRecalledAttack) {
+                if (activeArea.areaInvestigation.isMinionRecalledAttack) {
                     minionAssignmentPartyConfirmButton.gameObject.SetActive(false);
                     minionAssignmentPartyRecallButton.gameObject.SetActive(true);
                     minionAssignmentPartyConfirmButton.interactable = true;
@@ -684,7 +692,7 @@ public class AreaInfoUI : UIMenu {
             //minionAssignmentPartyRecallButton.gameObject.SetActive(false);
             //minionAssignmentPartyConfirmButton.gameObject.SetActive(true);
             //minionAssignmentDraggableItem.SetDraggable(true);
-            minionAssignmentConfirmButton.interactable = !_activeArea.areaInvestigation.isAttacking;
+            minionAssignmentConfirmButton.interactable = !activeArea.areaInvestigation.isAttacking;
             OnUpdateLandmarkInvestigationState("attack");
         } else {
             ResetMinionAssignmentParty(index);
@@ -699,7 +707,7 @@ public class AreaInfoUI : UIMenu {
 
         float chance = 0f;
         float enemyChance = 0f;
-        DefenderGroup defender = _activeArea.GetFirstDefenderGroup();
+        DefenderGroup defender = activeArea.GetFirstDefenderGroup();
         if (defender != null) {
             CombatManager.Instance.GetCombatChanceOfTwoLists(assignedCharacters, defender.party.characters, out chance, out enemyChance);
         } else {
@@ -715,29 +723,29 @@ public class AreaInfoUI : UIMenu {
         minionAssignmentPartyWinChance.text = "Send up to four units to attack.\nWin Chance: " + _currentWinChance.ToString("F2") + "%";
     }
     public void OnClickConfirmInvestigation() {
-        _activeArea.areaInvestigation.InvestigateLandmark(_assignedMinion);
+        activeArea.areaInvestigation.InvestigateLandmark(_assignedMinion);
         OnUpdateLandmarkInvestigationState("explore");
         //ChangeStateAllButtons(!_activeLandmark.landmarkInvestigation.isActivated);
     }
     public void OnClickRecall() {
-        _activeArea.areaInvestigation.RecallMinion("explore");
+        activeArea.areaInvestigation.RecallMinion("explore");
         //OnUpdateLandmarkInvestigationState();
         //ChangeStateAllButtons(!_activeLandmark.landmarkInvestigation.isActivated);
     }
     public void OnClickConfirmPartyInvestigation() {
-        _activeArea.areaInvestigation.AttackRaidLandmark(_currentSelectedInvestigateButton.actionName, _assignedParty, _activeArea.coreTile.landmarkOnTile);
+        activeArea.areaInvestigation.AttackRaidLandmark(_currentSelectedInvestigateButton.actionName, _assignedParty, activeArea.coreTile.landmarkOnTile);
         OnUpdateLandmarkInvestigationState("attack");
         //ChangeStateAllButtons(!_activeLandmark.landmarkInvestigation.isActivated);
     }
     public void OnClickPartyRecall() {
-        _activeArea.areaInvestigation.RecallMinion("attack");
+        activeArea.areaInvestigation.RecallMinion("attack");
         //OnUpdateLandmarkInvestigationState();
         //ChangeStateAllButtons(!_activeLandmark.landmarkInvestigation.isActivated);
     }
     private void UpdateMinionTooltipDescription(Minion minion) {
         if (minion != null) {
             string jobStr = string.Empty;
-            if (_activeArea.areaInvestigation.assignedMinion == null || _activeArea.areaInvestigation.assignedMinion.character.ownParty.icon.isTravelling) {
+            if (activeArea.areaInvestigation.assignedMinion == null || activeArea.areaInvestigation.assignedMinion.character.ownParty.icon.isTravelling) {
                 switch (minion.character.job.jobType) {
                     case JOB.INSTIGATOR:
                         jobStr = "will <b>sow discord</b> in";
@@ -800,7 +808,7 @@ public class AreaInfoUI : UIMenu {
         minionAssignmentDescriptionEnvelop.Execute();
     }
     private void OnMinionInvestigateArea(Minion minion, Area area) {
-        if (this.isShowing && _activeArea != null && _activeArea.id == area.id) {
+        if (this.isShowing && activeArea != null && activeArea.id == area.id) {
             UpdateMinionTooltipDescription(minion);
         }
     }
@@ -829,31 +837,31 @@ public class AreaInfoUI : UIMenu {
         UpdateTokenCollectorInteractables();
     }
     private bool CanCollectTokensHere(Minion minion) {
-        if (_activeArea.owner == null) {
+        if (activeArea.owner == null) {
             return minion.character.job.jobType == JOB.EXPLORER;
         } else {
             return minion.character.job.jobType == JOB.SPY;
         }
     }
     public void OnClickConfirmTokenCollection() {
-        _activeArea.areaInvestigation.AssignTokenCollector(_assignedTokenCollectorMinion);
+        activeArea.areaInvestigation.AssignTokenCollector(_assignedTokenCollectorMinion);
         UpdateTokenCollectorData();
     }
     public void OnClickTokenCollectorRecall() {
-        _activeArea.areaInvestigation.RecallMinion("collect");
+        activeArea.areaInvestigation.RecallMinion("collect");
     }
     private void UpdateTokenCollectorData() {
-        if (_activeArea.areaInvestigation.tokenCollector != null) {
-            AssignMinionToTokenCollection(_activeArea.areaInvestigation.tokenCollector);
+        if (activeArea.areaInvestigation.tokenCollector != null) {
+            AssignMinionToTokenCollection(activeArea.areaInvestigation.tokenCollector);
             tokenCollectorPortrait.gameObject.SetActive(true);
-            tokenCollectorPortrait.GeneratePortrait(_activeArea.areaInvestigation.tokenCollector.character);
+            tokenCollectorPortrait.GeneratePortrait(activeArea.areaInvestigation.tokenCollector.character);
         } else {
             tokenCollectorPortrait.gameObject.SetActive(false);
         }
         UpdateTokenCollectorInteractables();
     }
     private void UpdateTokenCollectorInteractables() {
-        if (_activeArea.areaInvestigation.tokenCollector != null) { //if there is already an assigned minion as the token collector
+        if (activeArea.areaInvestigation.tokenCollector != null) { //if there is already an assigned minion as the token collector
             //only show the recall button
             tokenCollectorRecallBtn.gameObject.SetActive(true);
             tokenCollectorConfirmBtn.gameObject.SetActive(false);

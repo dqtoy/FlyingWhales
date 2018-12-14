@@ -663,6 +663,7 @@ public class LandmarkManager : MonoBehaviour {
         }
         area.SetOwner(null);
         area.TintStructuresInArea(Color.white);
+        Messenger.Broadcast(Signals.AREA_OCCUPANY_CHANGED, area);
     }
     public void LoadAdditionalAreaData() {
         for (int i = 0; i < allAreas.Count; i++) {

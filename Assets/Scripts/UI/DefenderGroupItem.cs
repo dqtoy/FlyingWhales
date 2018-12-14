@@ -16,6 +16,19 @@ public class DefenderGroupItem : PooledObject {
     //    }
     //}
 
+    private void OnEnable() {
+        Messenger.AddListener<Area>(Signals.AREA_TOKEN_COLLECTION_CHANGED, OnAreaTokenCollectionChanged);
+    }
+    private void OnDisable() {
+        Messenger.AddListener<Area>(Signals.AREA_TOKEN_COLLECTION_CHANGED, OnAreaTokenCollectionChanged);
+    }
+
+    private void OnAreaTokenCollectionChanged(Area area) {
+        if (defender != null && defender.defendingArea.id == area.id) {
+            UpdateSlots();
+        }
+    }
+
     public void SetDefender(DefenderGroup defender) {
         this.defender = defender;
         UpdateSlots();
@@ -35,6 +48,7 @@ public class DefenderGroupItem : PooledObject {
                 } else {
                     currItem.draggable.SetDraggable(false);
                     currItem.dropZone.SetEnabledState(false);
+                    currItem.portrait.UpdateUnknownVisual();
                 }
             }
         }

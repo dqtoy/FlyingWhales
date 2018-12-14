@@ -28,6 +28,8 @@ public static class Signals {
     public static string AREA_TILE_REMOVED = "OnAreaTileRemoved"; //Parameters (Area affectedArea)
     public static string AREA_TILE_ADDED = "OnAreaTileAdded"; //Parameters (Area affectedArea)
     public static string AREA_SUPPLIES_CHANGED = "OnAreaSuppliesSet"; //Parameters (Area affectedArea)
+    public static string AREA_OCCUPANY_CHANGED = "OnAreaOccupancyChanged"; //Parameters (Area affectedArea)
+    public static string AREA_TOKEN_COLLECTION_CHANGED = "OnAreaTokenCollectionChanged"; //Parameters (Area affectedArea)
     #endregion
 
     #region Landmarks

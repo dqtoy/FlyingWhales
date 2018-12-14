@@ -61,8 +61,8 @@ public class Interaction {
     }
     public Minion tokeneerMinion {
         get {
-            if (_interactable.tileLocation.areaOfTile.areaInvestigation.assignedTokeneerMinion != null && _interactable.tileLocation.areaOfTile == _interactable.tileLocation.areaOfTile.areaInvestigation.assignedTokeneerMinion.character.specificLocation.tileLocation.areaOfTile) {
-                return _interactable.tileLocation.areaOfTile.areaInvestigation.assignedTokeneerMinion;
+            if (_interactable.tileLocation.areaOfTile.areaInvestigation.tokenCollector != null && _interactable.tileLocation.areaOfTile == _interactable.tileLocation.areaOfTile.areaInvestigation.tokenCollector.character.specificLocation.tileLocation.areaOfTile) {
+                return _interactable.tileLocation.areaOfTile.areaInvestigation.tokenCollector;
             }
             return null;
         }

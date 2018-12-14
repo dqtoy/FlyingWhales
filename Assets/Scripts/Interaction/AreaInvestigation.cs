@@ -24,7 +24,7 @@ public class AreaInvestigation {
     private Interaction _currentInteraction;
 
     //Token Collection
-    public Minion tokenCollector;
+    public Minion tokenCollector { get; private set; }
 
     #region getters/setters
     public Area area {
@@ -36,9 +36,9 @@ public class AreaInvestigation {
     public Minion assignedMinionAttack {
         get { return _assignedMinionAttack; }
     }
-    public Minion assignedTokeneerMinion {
-        get { return _assignedTokeneerMinion; }
-    }
+    //public Minion tokenCollector {
+    //    get { return _assignedTokeneerMinion; }
+    //}
     public bool isExploring {
         get { return _isExploring; }
     }
@@ -57,11 +57,15 @@ public class AreaInvestigation {
     public bool isMinionRecalledCollect {
         get { return _isMinionRecalledCollect; }
     }
+    public bool isActivelyCollectingToken {
+        get { return IsActivelyCollectingTokens(); }
+    }
     #endregion
 
     public AreaInvestigation(Area area) {
         _area = area;
         //Messenger.AddListener<BaseLandmark>(Signals.CLICKED_INTERACTION_BUTTON, ClickedInteractionTimerButton);
+        Messenger.AddListener<Area>(Signals.AREA_OCCUPANY_CHANGED, OnAreaOccupancyChanged);
     }
 
     public void SetAssignedMinion(Minion minion) {
@@ -252,13 +256,42 @@ public class AreaInvestigation {
         tokenCollector = minion;
     }
     public void StartTokenCollection() {
-        //TODO: Collect tokens
+        tokenCollector.character.job.StartJobAction();
+        PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, -50);
+        Messenger.Broadcast(Signals.AREA_TOKEN_COLLECTION_CHANGED, _area);
     }
     public void StopTokenCollection() {
+        tokenCollector.character.job.StopJobAction();
         _isCollectingTokens = false;
         tokenCollector.SetCollectingTokenArea(null);
         SetTokenCollector(null);
-        UIManager.Instance.areaInfoUI.ResetTokenCollectorAssignment();
+        if (UIManager.Instance.areaInfoUI.isShowing && UIManager.Instance.areaInfoUI.activeArea.id == _area.id) {
+            UIManager.Instance.areaInfoUI.ResetTokenCollectorAssignment();
+        }
+        Messenger.Broadcast(Signals.AREA_TOKEN_COLLECTION_CHANGED, _area);
+    }
+    private void OnAreaOccupancyChanged(Area area) {
+        if (_area.id == area.id) {
+            if (tokenCollector != null) {
+                Log retreatLog = new Log(GameManager.Instance.Today(), "Job", tokenCollector.character.job.GetType().ToString(), "token_retreat");
+                retreatLog.AddToFillers(tokenCollector.character, tokenCollector.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                retreatLog.AddToFillers(area, area.name, LOG_IDENTIFIER.LANDMARK_1);
+                if (tokenCollector.character.job.jobType == JOB.SPY) {
+                    retreatLog.AddToFillers(area.previousOwner, area.previousOwner.name, LOG_IDENTIFIER.FACTION_1);
+                } else {
+                    retreatLog.AddToFillers(area.owner, area.owner.name, LOG_IDENTIFIER.FACTION_1);
+                }
+                retreatLog.AddLogToInvolvedObjects();
+                RecallMinion("collect");
+            }
+        }
+    }
+    private bool IsActivelyCollectingTokens() {
+        if (tokenCollector != null && tokenCollector.character.specificLocation.tileLocation.areaOfTile != null 
+            && tokenCollector.character.specificLocation.tileLocation.areaOfTile.id == _area.id) {
+            return true;
+        }
+        return false;
     }
     #endregion
 }

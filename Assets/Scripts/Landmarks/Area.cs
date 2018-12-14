@@ -14,6 +14,7 @@ public class Area {
     public HexTile coreTile { get; private set; }
     public Color areaColor { get; private set; }
     public Faction owner { get; private set; }
+    public Faction previousOwner { get; private set; }
     public Area attackTarget { get; private set; }
     public LocationToken locationToken { get; private set; }
     public DefenderToken defenderToken { get; private set; }
@@ -499,6 +500,7 @@ public class Area {
 
     #region Owner
     public void SetOwner(Faction owner) {
+        previousOwner = this.owner;
         this.owner = owner;
         UpdateBorderColors();
         if (owner != null) {
