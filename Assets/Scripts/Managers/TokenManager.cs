@@ -35,6 +35,9 @@ public class TokenManager : MonoBehaviour {
                 case "Blighted Potion":
                     token = new BlightedPotion();
                     break;
+                case "Book of the Dead":
+                    token = new BookOfTheDead();
+                    break;
                 default:
                     break;
             }

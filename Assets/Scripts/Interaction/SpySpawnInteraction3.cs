@@ -125,6 +125,7 @@ public class SpySpawnInteraction3 : Interaction {
         //state.AddLogFiller(new LogFiller(null, interactable.tileLocation.areaOfTile.locationToken.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     private void DoNothingEffect(InteractionState state) {
+        state.SetUseTokeneerMinionOnly(true);
     }
     #endregion
 
