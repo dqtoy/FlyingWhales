@@ -12,63 +12,20 @@ public class Instigator : Job {
     };
 
     public Instigator(Character character) : base(character, JOB.INSTIGATOR) {
-        _actionDuration = 120;
+        _actionDuration = -1;
         _hasCaptureEvent = true;
+        _tokenInteractionTypes = new Dictionary<TOKEN_TYPE, INTERACTION_TYPE> {
+            {TOKEN_TYPE.CHARACTER, INTERACTION_TYPE.INSTIGATOR_CHARACTER_ENCOUNTER},
+        };
     }
 
     #region Overrides
-    public override void DoJobAction() {
-        base.DoJobAction();
-        Area area = _character.specificLocation.tileLocation.areaOfTile;
-        int multiplier = _character.level - 5;
-        if (multiplier < 0) {
-            multiplier = 0;
+    protected override bool IsTokenCompatibleWithJob(Token token) {
+        if(token.tokenType == TOKEN_TYPE.CHARACTER) {
+            CharacterToken characterToken = token as CharacterToken;
+            return characterToken.character.specificLocation.tileLocation.areaOfTile.id == _character.specificLocation.tileLocation.areaOfTile.id;
         }
-        int success = 50 + multiplier;
-        int fail = 40;
-        int critFail = 12 - (multiplier / 4);
-        WeightedDictionary<string> weights = new WeightedDictionary<string>();
-        weights.AddElement("Success", success);
-        //weights.AddElement("Fail", fail);
-        //weights.AddElement("Crit Fail", critFail);
-        string result = weights.PickRandomElementGivenWeights();
-        if (result == "Success") {
-            List<INTERACTION_TYPE> choices = GetValidChaosEvents();
-            if (choices.Count > 0) {
-                INTERACTION_TYPE chosenType = choices[Random.Range(0, choices.Count)];
-                //Get Random Chaos Event
-                Interaction interaction = InteractionManager.Instance.CreateNewInteraction(chosenType, area.coreTile.landmarkOnTile);
-                //SetCreatedInteraction(InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER, area.coreTile.landmarkOnTile)); //NOT FINAL!
-                interaction.AddEndInteractionAction(() => StartJobAction());
-                interaction.ScheduleSecondTimeOut();
-                Character targetCharacter = GetTargetCharacter(chosenType);
-                targetCharacter.AddInteraction(interaction);
-                SetCreatedInteraction(interaction);
-            } else {
-                StartJobAction();
-            }
-            return;
-        } else if (result == "Fail") {
-            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, area.coreTile.landmarkOnTile);
-            interaction.AddEndInteractionAction(() => StartJobAction());
-            interaction.ScheduleSecondTimeOut();
-            _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
-            SetCreatedInteraction(interaction);
-        } else if (result == "Crit Fail") {
-            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile);
-            interaction.AddEndInteractionAction(() => StartJobAction());
-            interaction.ScheduleSecondTimeOut();
-            _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
-            SetCreatedInteraction(interaction);
-        }
-
-    }
-    public override void ApplyActionDuration() {
-        int multiplier = _character.level - 5;
-        if (multiplier < 0) {
-            multiplier = 0;
-        }
-        _actionDuration = 80 - (3 * multiplier);
+        return base.IsTokenCompatibleWithJob(token);
     }
     public override void CaptureRandomLandmarkEvent() {
         Area area = _character.specificLocation.tileLocation.areaOfTile;

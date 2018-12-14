@@ -165,6 +165,9 @@ public class Interaction {
         _currentState.OnStartState();
         Messenger.Broadcast(Signals.UPDATED_INTERACTION_STATE, this);
     }
+    public void AddState(InteractionState state) {
+        _states.Add(state.name, state);
+    }
     public void SetActivatedState(bool state) {
         _isActivated = state;
         //if (!state) {

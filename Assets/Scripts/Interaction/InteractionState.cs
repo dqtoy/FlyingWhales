@@ -60,6 +60,9 @@ public class InteractionState {
     public CharacterToken assignedCharacter {
         get { return (_assignedObjects == null ? null : GetAssignedObjectOfType(typeof(CharacterToken)) as CharacterToken); }
     }
+    public SpecialToken assignedSpecialToken {
+        get { return (_assignedObjects == null ? null : GetAssignedObjectOfType(typeof(SpecialToken)) as SpecialToken); }
+    }
     public Minion assignedMinion {
         get { return (_assignedObjects == null ? null : GetAssignedObjectOfType(typeof(Minion)) as Minion); }
     }

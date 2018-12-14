@@ -80,6 +80,7 @@ public class AttributeManager : MonoBehaviour {
     }
 
     public string GetRandomIllness() {
+        //TODO: Optimize this for performance
         int random = UnityEngine.Random.Range(0, _allIlnesses.Count);
         return _allIlnesses.Keys.ElementAt(random);
     }

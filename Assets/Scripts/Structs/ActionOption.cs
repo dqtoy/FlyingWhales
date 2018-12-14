@@ -28,6 +28,9 @@ public class ActionOption {
     public LocationToken assignedLocation {
         get { return GetAssignedObjectOfType(typeof(LocationToken)) as LocationToken; }
     }
+    public SpecialToken assignedSpecialToken {
+        get { return GetAssignedObjectOfType(typeof(SpecialToken)) as SpecialToken; }
+    }
     #endregion
 
     public ActionOption() {

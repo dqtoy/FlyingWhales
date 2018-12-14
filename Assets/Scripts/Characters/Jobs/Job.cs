@@ -12,9 +12,11 @@ public class Job {
     protected JOB _jobType;
     protected int _actionDuration; //-1 means no limits and no progress
     protected bool _hasCaptureEvent;
+    protected bool _useInteractionTimer;
     protected Character _character;
     protected Interaction _createdInteraction;
-    protected bool _useInteractionTimer;
+    protected Token _attachedToken;
+    protected Dictionary<TOKEN_TYPE, INTERACTION_TYPE> _tokenInteractionTypes;
     //protected INTERACTION_TYPE[] _characterInteractions; //For non-minion characters only
     private WeightedDictionary<RESULT> rateWeights;
 
@@ -51,6 +53,27 @@ public class Job {
     #region Virtuals
     public virtual void OnAssignJob() {}
     public virtual void CaptureRandomLandmarkEvent() {}
+    public virtual void CheckTokenTriggeredEvent() {
+        if (_attachedToken != null) {
+            //Area area = _character.specificLocation.tileLocation.areaOfTile;
+            //SetJobActionPauseState(true);
+            //area.SetStopDefaultInteractionsState(true);
+
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(_tokenInteractionTypes[_attachedToken.tokenType], _character.specificLocation as BaseLandmark);
+            //interaction.AddEndInteractionAction(() => SetJobActionPauseState(false));
+            //interaction.AddEndInteractionAction(() => ForceDefaultAllExistingInteractions());
+
+            if (_attachedToken.tokenType == TOKEN_TYPE.CHARACTER) {
+                CharacterToken characterToken = _attachedToken as CharacterToken;
+                characterToken.character.AddInteraction(interaction);
+            } else {
+                _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
+            }
+            SetCreatedInteraction(interaction);
+            _attachedToken = null;
+            InteractionUI.Instance.OpenInteractionUI(_createdInteraction);
+        }
+    }
     public virtual void ApplyActionDuration() {}
     public virtual void DoJobAction() {
         Debug.Log(GameManager.Instance.TodayLogString() + " Doing job action: " + character.name + "(" + jobType.ToString() + ")");
@@ -64,16 +87,27 @@ public class Job {
         rateWeights.AddElement(RESULT.FAIL, GetFailRate());
         return rateWeights;
     }
+    protected virtual bool IsTokenCompatibleWithJob(Token token) { return false; }
     #endregion
 
     #region Utilities
+    public void SetToken(Token token) {
+        _attachedToken = token;
+    }
+    public bool CanTokenBeAttached(Token token) {
+        if(token != null && _tokenInteractionTypes != null && _tokenInteractionTypes.ContainsKey(token.tokenType)) {
+            return IsTokenCompatibleWithJob(token);
+        }
+        return false;
+    }
     public void StartJobAction() {
         ApplyActionDuration();
         _currentTick = 0;
         SetJobActionPauseState(false);
-        if(_actionDuration != -1) {
-            Messenger.AddListener(Signals.DAY_STARTED, CheckJobAction);
-        }
+        //if(_actionDuration != -1) {
+        //    Messenger.AddListener(Signals.DAY_STARTED, CheckJobAction);
+        //}
+        Messenger.AddListener(Signals.DAY_STARTED, CheckTokenTriggeredEvent);
         if (_hasCaptureEvent) {
             Messenger.AddListener(Signals.DAY_ENDED, CatchRandomEvent);
         }
@@ -90,9 +124,10 @@ public class Job {
             _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.StopInteractionTimerJob();
             _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.HideInteractionTimerJob();
         }
-        if (_actionDuration != -1) {
-            Messenger.RemoveListener(Signals.DAY_STARTED, CheckJobAction);
-        }
+        //if (_actionDuration != -1) {
+        //    Messenger.RemoveListener(Signals.DAY_STARTED, CheckJobAction);
+        //}
+        Messenger.RemoveListener(Signals.DAY_STARTED, CheckTokenTriggeredEvent);
         if (_hasCaptureEvent) {
             Messenger.RemoveListener(Signals.DAY_ENDED, CatchRandomEvent);
         }

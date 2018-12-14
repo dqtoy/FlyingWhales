@@ -80,7 +80,7 @@ public class Explorer : Job {
         Debug.Log(jobSummary);
     }
     public override void ApplyActionDuration() {
-        _actionDuration = 120 - (3 * (Mathf.Max(_character.level - 5, 0)));
+        //_actionDuration = 120 - (3 * (Mathf.Max(_character.level - 5, 0)));
         SetCurrentInteractionTick();
     }
     public override int GetSuccessRate() {
@@ -121,7 +121,7 @@ public class Explorer : Job {
             Interaction interaction = InteractionManager.Instance.CreateNewInteraction(chosenInteractionType, _character.specificLocation as BaseLandmark);
             interaction.AddEndInteractionAction(() => SetJobActionPauseState(false));
             interaction.AddEndInteractionAction(() => ForceDefaultAllExistingInteractions());
-            _character.specificLocation.tileLocation.areaOfTile.AddInteraction(interaction);
+            _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
             SetCreatedInteraction(interaction);
             InteractionUI.Instance.OpenInteractionUI(_createdInteraction);
         }

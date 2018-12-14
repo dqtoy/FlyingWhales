@@ -195,6 +195,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.EXPLORER_SPAWN_INTERACTION_1:
                 createdInteraction = new ExplorerSpawnInteraction1(interactable);
                 break;
+            case INTERACTION_TYPE.INSTIGATOR_CHARACTER_ENCOUNTER:
+                createdInteraction = new InstigatorCharacterEncounter(interactable);
+                break;
         }
         return createdInteraction;
     }
