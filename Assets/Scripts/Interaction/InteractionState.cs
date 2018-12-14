@@ -279,7 +279,7 @@ public class InteractionState {
     public object GetAssignedObjectOfType(System.Type type) {
         for (int i = 0; i < _assignedObjects.Count; i++) {
             object currObject = _assignedObjects[i];
-            if (currObject.GetType() == type) {
+            if (currObject.GetType() == type || currObject.GetType().BaseType == type) {
                 return currObject;
             }
         }
