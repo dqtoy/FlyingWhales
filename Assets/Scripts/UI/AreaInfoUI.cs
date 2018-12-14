@@ -61,6 +61,8 @@ public class AreaInfoUI : UIMenu {
     [SerializeField] private Toggle[] investigateToggles;
     [SerializeField] private EnvelopContentUnityUI minionAssignmentDescriptionEnvelop;
     [SerializeField] private SlotItem minionAssignmentSlot;
+    [SerializeField] private SlotItem supportingTokenSlot;
+    [SerializeField] private Button consumeSuppotingTokenBtn;
 
     [Space(10)]
     [Header("Token Collector")]
@@ -132,6 +134,12 @@ public class AreaInfoUI : UIMenu {
         tokenCollectorSlot.SetOtherValidation(IsObjectValidForTokenCollector);
         tokenCollectorSlot.SetItemDroppedCallback(OnTokenCollectorMinionDrop);
         tokenCollectorSlot.SetItemDroppedOutCallback(OnTokenCollectorDragOut);
+
+        //Supporting Token Slot
+        supportingTokenSlot.SetNeededType(typeof(Token));
+        supportingTokenSlot.SetOtherValidation(IsObjectValidForSupportToken);
+        supportingTokenSlot.SetItemDroppedCallback(OnSupportTokenDropped);
+        tokenCollectorSlot.SetItemDroppedOutCallback(OnSupportTokenDraggedOut);
     }
 
     #region Slot Checkers
@@ -146,6 +154,13 @@ public class AreaInfoUI : UIMenu {
         if (obj is Minion) {
             Minion minion = obj as Minion;
             return minion.character.job.jobType != JOB.EXPLORER && minion.character.job.jobType != JOB.SPY;
+        }
+        return false;
+    }
+    private bool IsObjectValidForSupportToken(object obj) {
+        if (obj is Token && activeArea.areaInvestigation.assignedMinion != null) {
+            Token token = obj as Token;
+            return activeArea.areaInvestigation.assignedMinion.character.job.CanTokenBeAttached(token);
         }
         return false;
     }
@@ -165,6 +180,7 @@ public class AreaInfoUI : UIMenu {
         UpdateCharacters();
         ResetScrollPositions();
         UpdateTokenCollectorData();
+        LoadSupportTokenData();
         if (previousArea != null) {
             previousArea.SetOutlineState(false);
         }
@@ -789,6 +805,7 @@ public class AreaInfoUI : UIMenu {
     }
     public void OnClickRecall() {
         activeArea.areaInvestigation.RecallMinion("explore");
+        LoadSupportTokenData();
         //OnUpdateLandmarkInvestigationState();
         //ChangeStateAllButtons(!_activeLandmark.landmarkInvestigation.isActivated);
     }
@@ -953,6 +970,57 @@ public class AreaInfoUI : UIMenu {
                 //disable confirm btn
                 tokenCollectorConfirmBtn.interactable = false;
             }
+        }
+    }
+    #endregion
+
+    #region Token Assignment
+    private Token assignedSupportToken;
+    private void LoadSupportTokenData() {
+        if (activeArea.areaInvestigation.assignedMinion != null 
+            && activeArea.areaInvestigation.assignedMinion.character.job.attachedToken != null) {
+            assignedSupportToken = activeArea.areaInvestigation.assignedMinion.character.job.attachedToken;
+            supportingTokenSlot.PlaceObject(assignedSupportToken);
+        } else {
+            ResetSupportTokenSlot();
+        }
+        UpdateConsumeButtonState();
+    }
+    private void OnSupportTokenDropped(object obj, int index) {
+        assignedSupportToken = obj as Token;
+        UpdateConsumeButtonState();
+    }
+    private void OnSupportTokenDraggedOut(object obj, int index) {
+        ResetSupportTokenSlot();
+    }
+    private void ResetSupportTokenSlot() {
+        assignedSupportToken = null;
+        supportingTokenSlot.ClearSlot(true);
+        supportingTokenSlot.dropZone.SetEnabledState(true);
+        supportingTokenSlot.draggable.SetDraggable(true);
+        UpdateConsumeButtonState();
+    }
+    public void OnClickConsumeSupportToken() {
+        activeArea.areaInvestigation.assignedMinion.character.job.SetToken(assignedSupportToken);
+        assignedSupportToken.ConsumeToken();
+        supportingTokenSlot.dropZone.SetEnabledState(false);
+        supportingTokenSlot.draggable.SetDraggable(false);
+        UpdateConsumeButtonState();
+    }
+    private void UpdateConsumeButtonState() {
+        if (assignedSupportToken == null) {
+            consumeSuppotingTokenBtn.gameObject.SetActive(false);
+        } else {
+            if (activeArea.areaInvestigation.assignedMinion == null) {
+                consumeSuppotingTokenBtn.gameObject.SetActive(false);
+            } else {
+                if (activeArea.areaInvestigation.assignedMinion.character.job.attachedToken != null) {
+                    consumeSuppotingTokenBtn.gameObject.SetActive(false);
+                } else {
+                    consumeSuppotingTokenBtn.gameObject.SetActive(true);
+                }
+            }
+            //consumeSuppotingTokenBtn.gameObject.SetActive(activeArea.areaInvestigation.isExploring);
         }
     }
     #endregion
