@@ -446,7 +446,7 @@ public class CharacterAvatar : MonoBehaviour{
         if (GameManager.Instance.inspectAll) {
             SetVisualState(true);
         } else {
-            if(_party.owner.minion != null || _party.owner.characterToken.isObtained) {
+            if(_party.owner.minion != null || _party.owner.characterToken.isObtainedByPlayer) {
                 SetVisualState(true);
             } else {
                 SetVisualState(false);

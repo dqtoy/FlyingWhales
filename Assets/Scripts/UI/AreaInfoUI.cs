@@ -1003,7 +1003,7 @@ public class AreaInfoUI : UIMenu {
     }
     public void OnClickConsumeSupportToken() {
         activeArea.areaInvestigation.assignedMinion.character.job.SetToken(assignedSupportToken);
-        assignedSupportToken.ConsumeToken();
+        assignedSupportToken.PlayerConsumeToken();
         supportingTokenSlot.dropZone.SetEnabledState(false);
         supportingTokenSlot.draggable.SetDraggable(false);
         UpdateConsumeButtonState();

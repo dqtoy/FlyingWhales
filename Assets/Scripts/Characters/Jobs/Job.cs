@@ -107,6 +107,7 @@ public class Job {
         rateWeights.Clear();
         rateWeights.AddElement(RESULT.SUCCESS, GetSuccessRate());
         rateWeights.AddElement(RESULT.FAIL, GetFailRate());
+        rateWeights.AddElement(RESULT.CRITICAL_FAIL, GetCritFailRate());
         return rateWeights;
     }
     protected virtual bool IsTokenCompatibleWithJob(Token token) {

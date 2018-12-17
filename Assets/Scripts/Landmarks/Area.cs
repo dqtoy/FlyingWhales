@@ -1007,6 +1007,11 @@ public class Area {
             }
         }
     }
+    public List<SpecialToken> GetElligibleTokensForCharacter(Character character) {
+        List<SpecialToken> choices = new List<SpecialToken>(possibleSpecialTokenSpawns);
+        Utilities.ListRemoveRange(choices, character.tokenInventory);
+        return choices;
+    }
     #endregion
 }
 

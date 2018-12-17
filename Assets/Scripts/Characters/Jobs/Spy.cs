@@ -28,17 +28,17 @@ public class Spy : Job {
         //Once the duration expires, check first if there are any new intel that can still be unlocked. Order of priority below:
         List<Token> tokenChoices = new List<Token>();
         Area area = _character.specificLocation.tileLocation.areaOfTile;
-        if (!area.locationToken.isObtained) {
+        if (!area.locationToken.isObtainedByPlayer) {
             tokenChoices.Add(area.locationToken);
-        } else if (area.owner != null && !area.owner.factionToken.isObtained) {
+        } else if (area.owner != null && !area.owner.factionToken.isObtainedByPlayer) {
             tokenChoices.Add(area.owner.factionToken);
         } else {
-            if (!area.defenderToken.isObtained) {
+            if (!area.defenderToken.isObtainedByPlayer) {
                 tokenChoices.Add(area.defenderToken);
             }
             for (int i = 0; i < area.areaResidents.Count; i++) {
                 Character currCharacter = area.areaResidents[i];
-                if (!currCharacter.characterToken.isObtained) {
+                if (!currCharacter.characterToken.isObtainedByPlayer) {
                     tokenChoices.Add(currCharacter.characterToken);
                 }
             }

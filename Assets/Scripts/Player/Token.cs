@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 public class Token {
-    protected bool _isObtained;
+    protected bool _isObtainedByPlayer;
     protected TOKEN_TYPE _tokenType;
 
     #region getters/setters
@@ -14,8 +14,8 @@ public class Token {
     public string nameInBold {
         get { return "<b>" + tokenName + "</b>"; }
     }
-    public bool isObtained {
-        get { return _isObtained; }
+    public bool isObtainedByPlayer {
+        get { return _isObtainedByPlayer; }
     }
     public TOKEN_TYPE tokenType {
         get { return _tokenType; }
@@ -23,12 +23,16 @@ public class Token {
     #endregion
 
     public Token() {
-        _isObtained = false;
+        _isObtainedByPlayer = false;
     }
     public void SetObtainedState(bool state) {
-        _isObtained = state;
+        _isObtainedByPlayer = state;
     }
-    public void ConsumeToken() {
+    /*
+     NOTE: Only use this when the player consumes this token.
+     If a character consumes this token, use ConsumeToken(Token) in that characters instance.
+         */
+    public void PlayerConsumeToken() {
         SetObtainedState(false);
         Messenger.Broadcast(Signals.TOKEN_CONSUMED, this);
     }
