@@ -171,13 +171,13 @@ public class ExploreEvent : Interaction {
     }
     private void DoNothingOptionEffect(InteractionState state) {
         WeightedDictionary<RESULT> resultWeights = _characterInvolved.job.GetJobRateWeights();
-        WeightedDictionary<RESULT> minionInstigatorWeights = investigatorMinion.character.job.GetJobRateWeights();
-        switch (minionInstigatorWeights.PickRandomElementGivenWeights()) {
-            case RESULT.SUCCESS:
-                resultWeights.AddWeightToElement(RESULT.FAIL, 30);
-                resultWeights.AddWeightToElement(RESULT.CRITICAL_FAIL, 20);
-                break;
-        }
+        //WeightedDictionary<RESULT> minionInstigatorWeights = investigatorMinion.character.job.GetJobRateWeights();
+        //switch (minionInstigatorWeights.PickRandomElementGivenWeights()) {
+        //    case RESULT.SUCCESS:
+        //        resultWeights.AddWeightToElement(RESULT.FAIL, 30);
+        //        resultWeights.AddWeightToElement(RESULT.CRITICAL_FAIL, 20);
+        //        break;
+        //}
 
         string nextState = string.Empty;
         switch (resultWeights.PickRandomElementGivenWeights()) {
