@@ -66,6 +66,16 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 0958b75698307094fb50c3c54dd47799, type: 3}
   - {fileID: 21300000, guid: 3be87161752773b42818660252d1dccb, type: 3}
   - {fileID: 21300000, guid: 882d2ae67ca6c4242b8bc08270a4dd0c, type: 3}
+  - {fileID: 21300000, guid: de065925292803e41918d3489cbfaf40, type: 3}
+  - {fileID: 21300000, guid: ae076f5ba3e7ec242be227bfeee11dfe, type: 3}
+  - {fileID: 21300000, guid: e7f267b27fc9d0540bfde09eb7615d39, type: 3}
+  - {fileID: 21300000, guid: b30af01a1bcb4a446aa708207bfcee38, type: 3}
+  - {fileID: 21300000, guid: 4d6cd19941e19a14c8803b0509b32866, type: 3}
+  - {fileID: 21300000, guid: d8fad059b8ecabe41a647fb0bf810b5c, type: 3}
+  - {fileID: 21300000, guid: b728ca31f80c045498540a439b457efb, type: 3}
+  - {fileID: 21300000, guid: 8508cc219c2f52a4eb35f23afe659c70, type: 3}
+  - {fileID: 21300000, guid: 1a744fd672e8a5845bb49e214b4dfbc1, type: 3}
+  - {fileID: 21300000, guid: b2c69e79d3587374c8666bd30defd411, type: 3}
   - {fileID: 21300000, guid: c29537a92c447b245a8366b7eb41be4f, type: 3}
   - {fileID: 21300000, guid: 1b2543ea6fe624447a93bb7c092ec762, type: 3}
   - {fileID: 21300000, guid: 69923ae63c671ce4688429533b6782e3, type: 3}
@@ -380,6 +390,16 @@ SpriteAtlas:
   - portrait_bg_spy
   - portrait_bg_worker
   - portrait_bg_diplomat
+  - icon_blistering_hollow
+  - icon_odious_lair
+  - icon_redheart_den
+  - icon_radisle_cavern
+  - icon_cindermaul_hideout
+  - icon_pitthize
+  - icon_narris
+  - icon_cardell
+  - icon_tessellated_triangle
+  - icon_gloomhollow_crypts
   - av-h_f-nose-9
   - av-e_m-mouth-9
   - av-h_f-nose-8

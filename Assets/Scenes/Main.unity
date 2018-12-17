@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
+  m_IndirectSpecularColor: {r: 0.22380279, g: 0.24376711, b: 0.26534963, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -90526,7 +90526,7 @@ GameObject:
   - component: {fileID: 1687531015}
   - component: {fileID: 1687531016}
   m_Layer: 5
-  m_Name: IntelManager
+  m_Name: TokenManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -94480,11 +94480,16 @@ MonoBehaviour:
   - {fileID: 2007691347}
   - {fileID: 1910064604}
   areaCenterSprites:
-  - {fileID: 21300000, guid: f29fc845b1e7e81499d926a0bdd914e5, type: 3}
+  - {fileID: 21300000, guid: 3d5d01cc86ac72647b748c6ee18fe349, type: 3}
   - {fileID: 21300000, guid: 81e1240cf953f764790b09c2fc0a02da, type: 3}
-  - {fileID: 21300000, guid: 7d1e6c9a21fa48c4c9c23a7fae692e79, type: 3}
-  - {fileID: 21300000, guid: 9454c506db5f3a04f99f02de6342ec43, type: 3}
-  - {fileID: 21300000, guid: c7614ebb00aed064abc85b9aa465b6e0, type: 3}
+  - {fileID: 21300000, guid: aa65e846891081d49901dbf649c804cf, type: 3}
+  - {fileID: 21300000, guid: 7e068a966a25ef24fb412da184caa1d1, type: 3}
+  - {fileID: 21300000, guid: 486280923a41cbe4c833b8e400fc55d7, type: 3}
+  - {fileID: 21300000, guid: d3d127dddfde41d44ba5bfdb8fc09d38, type: 3}
+  - {fileID: 21300000, guid: 6a669ec4417b23349a373fe06578d61c, type: 3}
+  - {fileID: 21300000, guid: 5b4fd8fae79fa8643883fcbf95f88ee3, type: 3}
+  - {fileID: 21300000, guid: e87141bea9d9a0246b7760df857768f9, type: 3}
+  - {fileID: 21300000, guid: 99d2b917dce57c9489a889b19b42f243, type: 3}
   charactersMenuToggle: {fileID: 1739620468}
   landmarkCharacterPrefab: {fileID: 1618945397602768, guid: 2975c486214c95b4ab5eed6af62fba90,
     type: 2}

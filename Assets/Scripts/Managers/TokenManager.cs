@@ -31,11 +31,11 @@ public class TokenManager : MonoBehaviour {
         for (int i = 0; i < tokens.Length; i++) {
             //JsonUtility.FromJsonOverwrite(System.IO.File.ReadAllText(classes[i]), monsterComponent);
             SpecialToken token = JsonUtility.FromJson<SpecialToken>(System.IO.File.ReadAllText(tokens[i]));
-            switch (token.name) {
-                case "Blighted Potion":
+            switch (token.specialTokenType) {
+                case SPECIAL_TOKEN.BLIGHTED_POTION:
                     token = new BlightedPotion();
                     break;
-                case "Book of the Dead":
+                case SPECIAL_TOKEN.BOOK_OF_THE_DEAD:
                     token = new BookOfTheDead();
                     break;
                 default:
