@@ -139,7 +139,7 @@ public class AreaInfoUI : UIMenu {
         supportingTokenSlot.SetNeededType(typeof(Token));
         supportingTokenSlot.SetOtherValidation(IsObjectValidForSupportToken);
         supportingTokenSlot.SetItemDroppedCallback(OnSupportTokenDropped);
-        tokenCollectorSlot.SetItemDroppedOutCallback(OnSupportTokenDraggedOut);
+        supportingTokenSlot.SetItemDroppedOutCallback(OnSupportTokenDraggedOut);
     }
 
     #region Slot Checkers
