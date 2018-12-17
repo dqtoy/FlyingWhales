@@ -663,15 +663,14 @@ public class Area {
     #region Supplies
     private void StartSupplyLine() {
         //AdjustSuppliesInBank(100);
-        Messenger.AddListener(Signals.MONTH_START, ExecuteSupplyLine);
+        Messenger.AddListener(Signals.MONTH_START, StartMonthActions);
     }
     public void StopSupplyLine() {
-        Messenger.RemoveListener(Signals.MONTH_START, ExecuteSupplyLine);
+        Messenger.RemoveListener(Signals.MONTH_START, StartMonthActions);
     }
-    private void ExecuteSupplyLine() {
+    private void StartMonthActions() {
         CollectMonthlySupplies();
-        //PayMaintenance();
-        //LandmarkStartMonthActions();
+        AssignInteractionsToResidents();
     }
     private void CollectMonthlySupplies() {
         SetSuppliesInBank(monthlySupply);
@@ -829,6 +828,109 @@ public class Area {
             }
         }
         return events;
+    }
+    private void AssignInteractionsToResidents() {
+        if (owner != null) {
+            int supplySpent = 0;
+            bool canMoveToRaid = false, canMoveToScavenge = false, canMoveToImproveRelations = false;
+            for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                Area area = LandmarkManager.Instance.allAreas[i];
+                if (area.id != id) {
+                    if (area.owner != null) {
+                        if (area.owner.id != owner.id) {
+                            if (!canMoveToRaid) {
+                                FactionRelationship relationship = owner.GetRelationshipWith(area.owner);
+                                if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
+                                    canMoveToRaid = true;
+                                }
+                            }
+                            if (!canMoveToImproveRelations) {
+                                FactionRelationship relationship = owner.GetRelationshipWith(area.owner);
+                                if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY) {
+                                    canMoveToImproveRelations = true;
+                                }
+                            }
+                        }
+                    } else {
+                        if (!canMoveToScavenge) {
+                            canMoveToScavenge = true;
+                        }
+                    }
+                }
+            }
+            List<Character> candidates = new List<Character>();
+            for (int i = 0; i < areaResidents.Count; i++) {
+                Character resident = areaResidents[i];
+                if (!resident.isLeader && resident.faction == owner && resident.specificLocation.tileLocation.areaOfTile.id == id) {
+                    candidates.Add(resident);
+                }
+            }
+            while (candidates.Count > 0) {
+                int index = UnityEngine.Random.Range(0, candidates.Count);
+                Character chosenCandidate = candidates[index];
+                candidates.RemoveAt(index);
+
+                INTERACTION_TYPE interactionType = GetInteractionTypeForResidentCharacter(chosenCandidate, canMoveToRaid, canMoveToScavenge, canMoveToImproveRelations);
+                if (interactionType != INTERACTION_TYPE.MOVE_TO_RAID && interactionType != INTERACTION_TYPE.MOVE_TO_SCAVENGE) {
+                    supplySpent += 100;
+                    if (supplySpent < suppliesInBank) {
+                        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
+                        chosenCandidate.SetForcedInteraction(interaction);
+                    } else if (supplySpent == suppliesInBank) {
+                        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
+                        chosenCandidate.SetForcedInteraction(interaction);
+                        break;
+                    } else {
+                        break;
+                    }
+                } else {
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
+                    chosenCandidate.SetForcedInteraction(interaction);
+                }
+            }
+        }
+    }
+    private INTERACTION_TYPE GetInteractionTypeForResidentCharacter(Character resident, bool canMoveToRaid, bool canMoveToScavenge, bool canMoveToImproveRelations) {
+        bool canMoveToExpand = false;
+        if (canMoveToScavenge) {
+            for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                Area area = LandmarkManager.Instance.allAreas[i];
+                if (area.id != id && area.owner == null && area.raceType == resident.race) {
+                    canMoveToExpand = true;
+                    break;
+                }
+            }
+        }
+        
+        WeightedDictionary<INTERACTION_TYPE> interactionWeights = new WeightedDictionary<INTERACTION_TYPE>();
+        interactionWeights.AddElement(INTERACTION_TYPE.MOVE_TO_EXPLORE, 20);
+        if (canMoveToExpand) {
+            interactionWeights.AddElement(INTERACTION_TYPE.MOVE_TO_EXPAND, 10);
+        }
+        if (resident.job.jobType == JOB.RAIDER) {
+            if (canMoveToRaid) {
+                interactionWeights.AddElement(INTERACTION_TYPE.MOVE_TO_RAID, 50);
+            }
+            if (canMoveToScavenge) {
+                interactionWeights.AddElement(INTERACTION_TYPE.MOVE_TO_SCAVENGE, 50);
+            }
+        } else if (resident.job.jobType == JOB.DIPLOMAT) {
+            if (canMoveToImproveRelations) {
+                interactionWeights.AddElement(INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS, 50);
+            }
+        } else if (resident.job.jobType == JOB.DISSUADER) {
+            interactionWeights.AddElement(INTERACTION_TYPE.PATROL, 50);
+        } else if (resident.job.jobType == JOB.RECRUITER) {
+            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                Character character = CharacterManager.Instance.allCharacters[i];
+                if(character.id != resident.id && character.faction != owner && character.level <= resident.level) {
+                    interactionWeights.AddElement(INTERACTION_TYPE.MOVE_TO_RECRUIT, 50);
+                    break;
+                }
+            }
+        }
+
+        return interactionWeights.PickRandomElementGivenWeights();
     }
     #endregion
 
