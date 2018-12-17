@@ -44,7 +44,7 @@ public class ExplorerSpawnInteraction1 : Interaction {
             ActionOption specialTokenOption = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Get " + _chosenSpecialToken.ToString(),
+                name = "Get Item Token: " + _chosenSpecialToken.nameInBold,
                 duration = 0,
                 canBeDoneAction = () => CanGetSpecialToken(_chosenSpecialToken),
                 effect = () => SpecialTokenOption(),
@@ -53,7 +53,7 @@ public class ExplorerSpawnInteraction1 : Interaction {
             ActionOption locationTokenOption = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Get " + interactable.tileLocation.areaOfTile.locationToken.ToString(),
+                name = "Get Location Token: " + interactable.tileLocation.areaOfTile.locationToken.nameInBold,
                 duration = 0,
                 canBeDoneAction = () => CanGetLocationToken(),
                 effect = () => LocationTokenOption(),
@@ -111,18 +111,18 @@ public class ExplorerSpawnInteraction1 : Interaction {
 
         PlayerManager.Instance.player.AddToken(_chosenSpecialToken);
 
-        state.descriptionLog.AddToFillers(null, _chosenSpecialToken.ToString(), LOG_IDENTIFIER.STRING_1);
+        state.descriptionLog.AddToFillers(null, _chosenSpecialToken.tokenName, LOG_IDENTIFIER.STRING_1);
 
-        state.AddLogFiller(new LogFiller(null, _chosenSpecialToken.ToString(), LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(null, _chosenSpecialToken.tokenName, LOG_IDENTIFIER.STRING_1));
     }
     private void CurrentLocationTokenObtainedEffect(InteractionState state) {
         state.SetUseTokeneerMinionOnly(true);
 
         PlayerManager.Instance.player.AddToken(interactable.tileLocation.areaOfTile.locationToken);
 
-        state.descriptionLog.AddToFillers(null, interactable.tileLocation.areaOfTile.locationToken.ToString(), LOG_IDENTIFIER.STRING_1);
+        state.descriptionLog.AddToFillers(null, interactable.tileLocation.areaOfTile.locationToken.tokenName, LOG_IDENTIFIER.STRING_1);
 
-        state.AddLogFiller(new LogFiller(null, interactable.tileLocation.areaOfTile.locationToken.ToString(), LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(null, interactable.tileLocation.areaOfTile.locationToken.tokenName, LOG_IDENTIFIER.STRING_1));
     }
     private void DoNothingEffect(InteractionState state) {
         state.SetUseTokeneerMinionOnly(true);

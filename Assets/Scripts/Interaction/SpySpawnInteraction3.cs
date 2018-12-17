@@ -44,7 +44,7 @@ public class SpySpawnInteraction3 : Interaction {
             ActionOption character1TokenOption = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Get " + _character1.characterToken.ToString(),
+                name = "Get Character Token: " + _character1.characterToken.nameInBold,
                 duration = 0,
                 canBeDoneAction = () => CanGetCharacterToken(_character1),
                 effect = () => Character1TokenOption(),
@@ -53,7 +53,7 @@ public class SpySpawnInteraction3 : Interaction {
             ActionOption factionTokenOption = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Get " + _character1.faction.factionToken.ToString(),
+                name = "Get Faction Token: " + _character1.faction.factionToken.nameInBold,
                 duration = 0,
                 canBeDoneAction = () => CanGetFactionToken(_character1.faction),
                 effect = () => FactionTokenOption(),
@@ -111,7 +111,7 @@ public class SpySpawnInteraction3 : Interaction {
 
         PlayerManager.Instance.player.AddToken(_character1.characterToken);
 
-        state.descriptionLog.AddToFillers(null, _character1.characterToken.ToString(), LOG_IDENTIFIER.STRING_1);
+        state.descriptionLog.AddToFillers(null, _character1.characterToken.tokenName, LOG_IDENTIFIER.STRING_1);
 
         //state.AddLogFiller(new LogFiller(null, _character1.characterToken.ToString(), LOG_IDENTIFIER.STRING_1));
     }
@@ -120,7 +120,7 @@ public class SpySpawnInteraction3 : Interaction {
 
         PlayerManager.Instance.player.AddToken(_character1.faction.factionToken);
 
-        state.descriptionLog.AddToFillers(null, _character1.faction.factionToken.ToString(), LOG_IDENTIFIER.STRING_1);
+        state.descriptionLog.AddToFillers(null, _character1.faction.factionToken.tokenName, LOG_IDENTIFIER.STRING_1);
 
         //state.AddLogFiller(new LogFiller(null, interactable.tileLocation.areaOfTile.locationToken.ToString(), LOG_IDENTIFIER.STRING_1));
     }

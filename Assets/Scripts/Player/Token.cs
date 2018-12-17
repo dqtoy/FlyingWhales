@@ -8,6 +8,12 @@ public class Token {
     protected TOKEN_TYPE _tokenType;
 
     #region getters/setters
+    public virtual string tokenName {
+        get { return string.Empty; }
+    }
+    public string nameInBold {
+        get { return "<b>" + tokenName + "</b>"; }
+    }
     public bool isObtained {
         get { return _isObtained; }
     }
@@ -52,6 +58,12 @@ public class Token {
 public class FactionToken : Token{
     public Faction faction;
 
+    #region getters/setters
+    public override string tokenName {
+        get { return faction.name; }
+    }
+    #endregion
+
     public FactionToken(Faction faction) : base() {
         _tokenType = TOKEN_TYPE.FACTION;
         this.faction = faction;
@@ -65,6 +77,12 @@ public class FactionToken : Token{
 public class LocationToken : Token {
     public Area location;
 
+    #region getters/setters
+    public override string tokenName {
+        get { return location.name; }
+    }
+    #endregion
+
     public LocationToken(Area location) : base() {
         _tokenType = TOKEN_TYPE.LOCATION;
         this.location = location;
@@ -77,6 +95,12 @@ public class LocationToken : Token {
 
 public class CharacterToken : Token {
     public Character character;
+
+    #region getters/setters
+    public override string tokenName {
+        get { return character.name; }
+    }
+    #endregion
 
     public CharacterToken(Character character) : base() {
         _tokenType = TOKEN_TYPE.CHARACTER;
@@ -95,6 +119,13 @@ public class SpecialToken : Token {
     public SPECIAL_TOKEN specialTokenType;
     public string name;
     public int quantity;
+
+    #region getters/setters
+    public override string tokenName {
+        get { return name; }
+    }
+    #endregion
+
     public SpecialToken(SPECIAL_TOKEN specialTokenType) : base() {
         _tokenType = TOKEN_TYPE.SPECIAL;
         this.specialTokenType = specialTokenType;

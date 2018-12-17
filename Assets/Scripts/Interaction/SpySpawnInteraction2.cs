@@ -50,7 +50,7 @@ public class SpySpawnInteraction2 : Interaction {
             ActionOption character1TokenOption = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Get " + _character1.characterToken.ToString(),
+                name = "Get Character Token: " + _character1.characterToken.nameInBold,
                 duration = 0,
                 canBeDoneAction = () => CanGetCharacterToken(_character1),
                 effect = () => Character1TokenOption(),
@@ -59,7 +59,7 @@ public class SpySpawnInteraction2 : Interaction {
             ActionOption character2TokenOption = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Get " + _character2.characterToken.ToString(),
+                name = "Get Character Token: " + _character2.characterToken.nameInBold,
                 duration = 0,
                 canBeDoneAction = () => CanGetCharacterToken(_character2),
                 effect = () => Character2TokenOption(),
@@ -68,7 +68,7 @@ public class SpySpawnInteraction2 : Interaction {
             ActionOption character3TokenObtainedState = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Get " + _character3.characterToken.ToString(),
+                name = "Get Character Token: " + _character3.characterToken.nameInBold,
                 duration = 0,
                 canBeDoneAction = () => CanGetCharacterToken(_character3),
                 effect = () => Character3TokenOption(),
@@ -131,7 +131,7 @@ public class SpySpawnInteraction2 : Interaction {
 
         PlayerManager.Instance.player.AddToken(_character1.characterToken);
 
-        state.descriptionLog.AddToFillers(null, _character1.characterToken.ToString(), LOG_IDENTIFIER.STRING_1);
+        state.descriptionLog.AddToFillers(null, _character1.characterToken.tokenName, LOG_IDENTIFIER.STRING_1);
 
         //state.AddLogFiller(new LogFiller(null, _character1.characterToken.ToString(), LOG_IDENTIFIER.STRING_1));
     }
@@ -140,7 +140,7 @@ public class SpySpawnInteraction2 : Interaction {
 
         PlayerManager.Instance.player.AddToken(_character2.characterToken);
 
-        state.descriptionLog.AddToFillers(null, _character2.characterToken.ToString(), LOG_IDENTIFIER.STRING_1);
+        state.descriptionLog.AddToFillers(null, _character2.characterToken.tokenName, LOG_IDENTIFIER.STRING_1);
 
         //state.AddLogFiller(new LogFiller(null, _character2.characterToken.ToString(), LOG_IDENTIFIER.STRING_1));
     }
@@ -149,7 +149,7 @@ public class SpySpawnInteraction2 : Interaction {
 
         PlayerManager.Instance.player.AddToken(_character3.characterToken);
 
-        state.descriptionLog.AddToFillers(null, _character3.characterToken.ToString(), LOG_IDENTIFIER.STRING_1);
+        state.descriptionLog.AddToFillers(null, _character3.characterToken.tokenName, LOG_IDENTIFIER.STRING_1);
 
         //state.AddLogFiller(new LogFiller(null, _character3.characterToken.ToString(), LOG_IDENTIFIER.STRING_1));
     }
