@@ -139,6 +139,7 @@ public class ExploreEvent : Interaction {
             default:
                 break;
         }
+        SetCurrentState(_states[nextState]);
     }
     private void AssistOptionEffect(InteractionState state) {
         WeightedDictionary<RESULT> resultWeights = _characterInvolved.job.GetJobRateWeights();
@@ -168,6 +169,7 @@ public class ExploreEvent : Interaction {
             default:
                 break;
         }
+        SetCurrentState(_states[nextState]);
     }
     private void DoNothingOptionEffect(InteractionState state) {
         WeightedDictionary<RESULT> resultWeights = _characterInvolved.job.GetJobRateWeights();
@@ -197,6 +199,7 @@ public class ExploreEvent : Interaction {
             default:
                 break;
         }
+        SetCurrentState(_states[nextState]);
     }
     #endregion
 
