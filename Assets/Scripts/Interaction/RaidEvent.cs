@@ -162,58 +162,53 @@ public class RaidEvent : Interaction {
         state.AddLogFiller(new LogFiller(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     private void AlertedRaidFailRewardEffect(InteractionState state) {
-        //**Mechanics**: Scavenger travels back to his home area.
         investigatorMinion.LevelUp(); //**Level Up**: Diplomat Minion +1
-        GoBackHome();
-        //Player Favor Count +2 on Raided Faction
+        //**Mechanics**: Player Relationship +1 on Raided Faction
         interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
-        /*
-         DITO KA NA MYKEL!!!!
-         */
-        if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
-        }
         state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.owner
+            .GetRelationshipWith(PlayerManager.Instance.player.playerFaction).relationshipStatus.ToString()), LOG_IDENTIFIER.STRING_1));
     }
     private void AlertedRaidCriticallyFailRewardEffect(InteractionState state) {
-        //**Mechanics**: Scavenger dies.
-        investigatorMinion.LevelUp(); //**Level Up**: Instigator Minion +1
+        //**Mechanics**: Raider dies. Player Relationship +1 on Raided Faction
+        investigatorMinion.LevelUp(); //**Level Up**: Diplomat Minion +1
         _characterInvolved.Death();
 
-        //Player Favor Count +2 on Raided Faction
-        interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
-        if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
-        }
+        //**Mechanics**: Raider dies. Player Relationship +1 on Raided Faction
+        interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.owner.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).relationshipStatus.ToString()), LOG_IDENTIFIER.STRING_1));
     }
     private void AssistedRaidSuccessRewardEffect(InteractionState state) {
-        //**Mechanics**: Compute Supply obtained by scavenger and transfer it to his home area. Scavenger also travels back to his home area.
-        //**Level Up**: Diplomat Minion +1, Raider Character +1
+        //**Mechanics**: Compute Supply obtained by raider and transfer it to his home area. Player Relationship +1 on Raider Faction
+        //**Level Up**: Raider +1, Instigator Minion +1
         investigatorMinion.LevelUp();
         _characterInvolved.LevelUp();
 
         int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable.tileLocation.areaOfTile);
-        GoBackHome(() => TransferSupplies(obtainedSupply, _characterInvolved.homeLandmark.tileLocation.areaOfTile,
-            interactable.tileLocation.areaOfTile));
-        //Player Favor Count +2 from Raider Faction
-        _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
+        TransferSupplies(obtainedSupply, _characterInvolved.homeLandmark.tileLocation.areaOfTile,
+            interactable.tileLocation.areaOfTile);
+        _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
 
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
         }
         state.AddLogFiller(new LogFiller(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(_characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).relationshipStatus.ToString()), LOG_IDENTIFIER.STRING_2));
     }
     private void AssistedRaidFailedRewardEffect(InteractionState state) {
-        //**Mechanics**: Raider travels back to his home area.
-        GoBackHome();
-        //Player Favor Count +1 from Raider Faction
+        //**Level Up**: Diplomat Minion +1 (if alerted)
+        investigatorMinion.LevelUp();
         _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
+
+        state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(_characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).relationshipStatus.ToString()), LOG_IDENTIFIER.STRING_2));
     }
     private void AssistedRaidCriticallyFailedRewardEffect(InteractionState state) {
         //**Mechanics**: Raider dies.
         _characterInvolved.Death();
-        //Player Favor Count +2 from Raider Faction
-        _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
+        investigatorMinion.LevelUp();
     }
     private void NormalRaidSuccessRewardEffect(InteractionState state) {
         //**Level Up**: Raider Character +1
@@ -221,27 +216,25 @@ public class RaidEvent : Interaction {
 
         //**Mechanics**: Compute Supply obtained by Raider and transfer it to his home area. Raider also travels back to his home area.
         int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable.tileLocation.areaOfTile);
-        GoBackHome(() => TransferSupplies(obtainedSupply, _characterInvolved.homeLandmark.tileLocation.areaOfTile,
-            interactable.tileLocation.areaOfTile));
+        TransferSupplies(obtainedSupply, _characterInvolved.homeLandmark.tileLocation.areaOfTile,
+            interactable.tileLocation.areaOfTile);
 
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
         }
         state.AddLogFiller(new LogFiller(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(_characterInvolved.homeLandmark.tileLocation.areaOfTile, _characterInvolved.homeLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_2));
     }
     private void NormalRaidFailRewardEffect(InteractionState state) {
-        //**Mechanics**: Raider travels back to his home area.
-        GoBackHome();
+        
     }
     private void NormalRaidCriticalFailRewardEffect(InteractionState state) {
         //**Mechanics**: Raider dies.
         _characterInvolved.Death();
     }
 
-    private void GoBackHome(System.Action doneAction = null) {
-        _characterInvolved.ownParty.GoHome(doneAction);
-    }
+    //private void GoBackHome(System.Action doneAction = null) {
+    //    _characterInvolved.ownParty.GoHome(doneAction);
+    //}
     private void TransferSupplies(int amount, Area recieving, Area source) {
         recieving.AdjustSuppliesInBank(amount);
         source.AdjustSuppliesInBank(-amount);
