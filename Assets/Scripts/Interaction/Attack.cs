@@ -191,7 +191,7 @@ public class Attack : Interaction {
 
     #region State Effects
     private void HelpedAttackersWonEffect(InteractionState state) {
-        characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);
+        characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
         _supporterMinion.character.currentParty.RemoveCharacter(_supporterMinion.character);
         _supporterMinion.SetEnabledState(true);
         //Remove Defender Group, if there is no more defender group after removing, trigger area death
@@ -218,7 +218,7 @@ public class Attack : Interaction {
         }
     }
     private void HelpedAttackersLostEffect(InteractionState state) {
-        characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 1);
+        characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
 
         state.descriptionLog.AddToFillers(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2);
         for (int i = 0; i < _combat.charactersSideB.Count; i++) {
@@ -233,7 +233,7 @@ public class Attack : Interaction {
         }
     }
     private void HelpedAttackersNoDefenseEffect(InteractionState state) {
-        characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 1);
+        characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
         _supporterMinion.character.currentParty.RemoveCharacter(_supporterMinion.character);
         _supporterMinion.SetEnabledState(true);
 
@@ -248,7 +248,7 @@ public class Attack : Interaction {
         interactable.tileLocation.areaOfTile.Death();
     }
     private void HelpedDefendersLostEffect(InteractionState state) {
-        interactable.tileLocation.areaOfTile.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 1);
+        interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
 
         state.descriptionLog.AddToFillers(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2);
         state.AddLogFiller(new LogFiller(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2));
@@ -267,7 +267,7 @@ public class Attack : Interaction {
         }
     }
     private void HelpedDefendersWonEffect(InteractionState state) {
-        interactable.tileLocation.areaOfTile.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);
+        interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
         _supporterMinion.character.currentParty.RemoveCharacter(_supporterMinion.character);
         _supporterMinion.SetEnabledState(true);
 
@@ -279,7 +279,7 @@ public class Attack : Interaction {
         }
     }
     private void SoloDefenseLostEffect(InteractionState state) {
-        interactable.tileLocation.areaOfTile.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 1);
+        interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
 
         state.descriptionLog.AddToFillers(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2);
         state.AddLogFiller(new LogFiller(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2));
@@ -291,7 +291,7 @@ public class Attack : Interaction {
         interactable.tileLocation.areaOfTile.Death();
     }
     private void SoloDefenseWonEffect(InteractionState state) {
-        interactable.tileLocation.areaOfTile.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);
+        interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
         _supporterMinion.SetEnabledState(true);
 
         state.descriptionLog.AddToFillers(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2);

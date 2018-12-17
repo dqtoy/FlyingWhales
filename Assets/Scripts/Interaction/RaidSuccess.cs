@@ -33,7 +33,7 @@ public class RaidSuccess : Interaction {
          * that it does not have any Favor Count effects.
          */
         if (interactable.faction != null) {
-            interactable.faction.AdjustFavorFor(_characterInvolved.faction, -2);
+            interactable.faction.AdjustRelationshipFor(_characterInvolved.faction, -2);
         }
         _characterInvolved.LevelUp();
     }

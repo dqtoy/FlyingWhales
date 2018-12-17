@@ -32,7 +32,7 @@ public class MinionFailed : Interaction {
     #region State Effects
     private void StartEffect(InteractionState state) {
         if (investigatorMinion.character.job.jobType == JOB.RAIDER && interactable.tileLocation.areaOfTile.owner != null) {
-            interactable.tileLocation.areaOfTile.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -1);
+            interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -1);
         }
     }
     #endregion

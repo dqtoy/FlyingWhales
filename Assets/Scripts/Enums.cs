@@ -483,9 +483,11 @@ public enum QUEST_TYPE {
     SURRENDER_ITEMS,
 }
 public enum FACTION_RELATIONSHIP_STATUS {
-    NON_HOSTILE,
-    HOSTILE,
-    AT_WAR,
+    ALLY,
+    FRIEND,
+    NEUTRAL,
+    DISLIKED,
+    ENEMY,
 }
 //---------------------------------------- ENTITY COMPONENT SYSTEM ---------------------------------------//
 //public enum BODY_PART{

@@ -219,7 +219,7 @@ public class InteractionManager : MonoBehaviour {
                 return target != null;
             case INTERACTION_TYPE.MINION_PEACE_NEGOTIATION:
                 FactionRelationship relationship = PlayerManager.Instance.player.playerFaction.GetRelationshipWith(landmark.tileLocation.areaOfTile.owner);
-                if(relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR && landmark.tileLocation.areaOfTile.owner.leader.specificLocation.tileLocation.areaOfTile.id == landmark.tileLocation.areaOfTile.id) {
+                if(relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY && landmark.tileLocation.areaOfTile.owner.leader.specificLocation.tileLocation.areaOfTile.id == landmark.tileLocation.areaOfTile.id) {
                     return true;
                 }
                 return false;
@@ -311,18 +311,13 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.INDUCE_WAR:
                 if (character.specificLocation.tileLocation.landmarkOnTile.owner != null) {
-                    foreach (KeyValuePair<Faction, int> kvp in character.specificLocation.tileLocation.landmarkOnTile.owner.favor) {
-                        if (kvp.Key.id != PlayerManager.Instance.player.playerFaction.id
-                            && kvp.Value <= -10 && character.specificLocation.tileLocation.landmarkOnTile.owner.GetRelationshipWith(kvp.Key).relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
-                            return true;
-                        }
-                    }
+                    return character.specificLocation.tileLocation.landmarkOnTile.owner.GetFactionsWithRelationship(FACTION_RELATIONSHIP_STATUS.DISLIKED).Count > 0;
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_PEACE_NEGOTIATION:
                 if (character.specificLocation.tileLocation.landmarkOnTile.owner != null) {
                     foreach (KeyValuePair<Faction, FactionRelationship> keyValuePair in character.specificLocation.tileLocation.landmarkOnTile.owner.relationships) {
-                        if (keyValuePair.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR && keyValuePair.Value.currentWarCombatCount >= 3) {
+                        if (keyValuePair.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY && keyValuePair.Value.currentWarCombatCount >= 3) {
                             return true;
                         }
                     }
@@ -383,7 +378,7 @@ public class InteractionManager : MonoBehaviour {
         List<Area> enemyAreas = new List<Area>();
         foreach (Faction otherFaction in areaToAttack.owner.relationships.Keys) {
             FactionRelationship factionRelationship = areaToAttack.owner.relationships[otherFaction];
-            if(factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+            if(factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY) {
                 enemyFaction.Add(otherFaction);
                 enemyAreas.AddRange(otherFaction.ownedAreas);
             }

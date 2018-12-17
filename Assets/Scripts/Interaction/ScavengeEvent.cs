@@ -189,7 +189,7 @@ public class ScavengeEvent : Interaction {
 
         int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
         GoBackHome(() => _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply));
-        _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);
+        _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
         interactable.tileLocation.areaOfTile.AdjustSuppliesInBank(-obtainedSupply);
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
@@ -201,7 +201,7 @@ public class ScavengeEvent : Interaction {
         //+2 Favor from Faction 1
         int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
         GoBackHome(() => _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply));
-        _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 1);
+        _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
         interactable.tileLocation.areaOfTile.AdjustSuppliesInBank(-obtainedSupply);
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
@@ -215,7 +215,7 @@ public class ScavengeEvent : Interaction {
 
         int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
         GoBackHome(() => _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply));
-        _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);
+        _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
 
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);

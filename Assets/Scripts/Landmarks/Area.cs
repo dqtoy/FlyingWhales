@@ -122,25 +122,23 @@ public class Area {
         } else {
             initialRaceSetup = new List<InitialRaceSetup>();
         }
+        SetMaxDefenderGroups(data.maxDefenderGroups);
+        SetInitialDefenderGroups(data.initialDefenderGroups);
+        SetResidentCapacity(data.residentCapacity);
+        SetMonthlySupply(data.monthlySupply);
 #if WORLD_CREATION_TOOL
         SetCoreTile(worldcreator.WorldCreatorManager.Instance.GetHexTile(data.coreTileID));
 #else
+        SetSuppliesInBank(data.monthlySupply);
         SetCoreTile(GridMap.Instance.GetHexTile(data.coreTileID));
         StartSupplyLine();
 #endif
-        SetMaxDefenderGroups(data.maxDefenderGroups);
-        SetInitialDefenderGroups(data.initialDefenderGroups);
-        //SetSupplyCapacity(data.supplyCapacity);
-        //SetInitialSupplies(data.initialSupply);
-        SetResidentCapacity(data.residentCapacity);
-        SetMonthlySupply(data.monthlySupply);
-        SetSuppliesInBank(data.monthlySupply);
+
         possibleOccupants = new List<RACE>();
         if (data.possibleOccupants != null) {
             possibleOccupants.AddRange(data.possibleOccupants);
         }
         LoadSpecialTokens(data);
-        //SetDefaultRace(data.defaultRace);
         AddTile(Utilities.GetTilesFromIDs(data.tileData)); //exposed tiles will be determined after loading landmarks at MapGeneration
         UpdateBorderColors();
         if (areaType != AREA_TYPE.DEMONIC_INTRUSION) {
@@ -604,7 +602,7 @@ public class Area {
             return false;
         }
         FACTION_RELATIONSHIP_STATUS relStat = FactionManager.Instance.GetRelationshipStatusBetween(character.faction, this.owner);
-        if (relStat == FACTION_RELATIONSHIP_STATUS.AT_WAR || relStat == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+        if (relStat == FACTION_RELATIONSHIP_STATUS.ENEMY || relStat == FACTION_RELATIONSHIP_STATUS.ENEMY) {
             return true;
         }
         return false;

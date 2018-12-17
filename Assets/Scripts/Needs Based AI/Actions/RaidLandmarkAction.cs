@@ -22,7 +22,7 @@ public class RaidLandmarkAction : CharacterAction {
         //Raid their area: -1 Favor Count
         Faction raidedFaction = landmarkToRaid.owner;
         if (raidedFaction != null && party.faction != null) {
-            raidedFaction.AdjustFavorFor(party.faction, -1);
+            raidedFaction.AdjustRelationshipFor(party.faction, -1);
         }
     }
     public override void PerformAction(Party party, IObject targetObject) {

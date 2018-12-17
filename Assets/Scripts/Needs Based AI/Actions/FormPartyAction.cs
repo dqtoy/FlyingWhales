@@ -83,7 +83,7 @@ public class FormPartyAction : CharacterAction {
                     } else {
                         FactionRelationship rel = FactionManager.Instance.GetRelationshipBetween(factionOfParty, factionOfTile);
                         if (rel != null) {
-                            if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NON_HOSTILE) {
+                            if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ALLY) {
                                 locationChoices[TileType.S_Tile_Of_Non_Hostile_Faction].Add(currTile); //Settlement Tiles owned by non-hostile Faction
                             } else {
                                 locationChoices[TileType.Tile_Owned_By_Hostile].Add(currTile); //Tiles owned by hostile Faction

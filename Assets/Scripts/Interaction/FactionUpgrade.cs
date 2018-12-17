@@ -145,7 +145,7 @@ public class FactionUpgrade : Interaction {
     private void DisruptFactionUpgradeSuccessEffect(InteractionState state) {
         investigatorMinion.LevelUp();
         interactable.tileLocation.areaOfTile.owner.LevelUp(-1);
-        interactable.tileLocation.areaOfTile.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -2);
+        interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -2);
 
         state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
 
@@ -155,7 +155,7 @@ public class FactionUpgrade : Interaction {
     private void DisruptFactionUpgradeFailEffect(InteractionState state) {
         interactable.tileLocation.areaOfTile.owner.leader.LevelUp();
         interactable.tileLocation.areaOfTile.owner.LevelUp();
-        interactable.tileLocation.areaOfTile.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -1);
+        interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -1);
 
         state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
 
@@ -166,7 +166,7 @@ public class FactionUpgrade : Interaction {
         investigatorMinion.LevelUp();
         interactable.tileLocation.areaOfTile.owner.leader.LevelUp();
         interactable.tileLocation.areaOfTile.owner.LevelUp(2);
-        interactable.tileLocation.areaOfTile.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);
+        interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
 
         state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner.leader, interactable.tileLocation.areaOfTile.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 

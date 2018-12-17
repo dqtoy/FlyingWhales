@@ -22,7 +22,7 @@ public class ArmyAttacks : Interaction {
     #region Overrides
     public override void CreateStates() {
         landmark = _interactable;
-        Faction targetFaction = landmark.owner.GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS.AT_WAR);
+        Faction targetFaction = landmark.owner.GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS.ENEMY);
         targetArea = targetFaction.ownedAreas[Random.Range(0, targetFaction.ownedAreas.Count)];
         target = targetArea.GetRandomExposedLandmark();
         //CreateExploreStates();

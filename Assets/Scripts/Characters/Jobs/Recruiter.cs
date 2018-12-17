@@ -26,9 +26,10 @@ public class Recruiter : Job {
                     break;
                 } else {
                     FactionRelationship relationship = PlayerManager.Instance.player.playerFaction.GetRelationshipWith(resident.faction);
-                    if (relationship != null && relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NON_HOSTILE) {
+                    if (relationship != null && relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ALLY) {
                         chosenCharacter = resident;
-                        success = 10 * PlayerManager.Instance.player.playerFaction.favor[resident.faction];
+                        //success = 10 * PlayerManager.Instance.player.playerFaction.favor[resident.faction];
+                        success = 10;
                         break;
                     }
                 }

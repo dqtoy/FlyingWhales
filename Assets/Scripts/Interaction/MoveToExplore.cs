@@ -46,8 +46,8 @@ public class MoveToExplore : Interaction {
         if (state.name == "Start") {
             ActionOption prevent = new ActionOption {
                 interactionState = state,
-                cost = new CurrenyCost { amount = 50, currency = CURRENCY.SUPPLY },
-                name = "Prevent him/her from leaving.",
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
+                name = "Prevent " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.POSSESSIVE, false) +" from leaving.",
                 duration = 0,
                 effect = () => PreventFromLeavingOptionEffect(state),
                 jobNeeded = JOB.DISSUADER,
@@ -128,7 +128,8 @@ public class MoveToExplore : Interaction {
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
             if (_characterInvolved.specificLocation.tileLocation.areaOfTile.id != currArea.id 
-                && PlayerManager.Instance.player.playerArea.id != currArea.id && !currArea.IsHostileTowards(_characterInvolved)) {
+                && PlayerManager.Instance.player.playerArea.id != currArea.id) {
+                //&& !currArea.IsHostileTowards(_characterInvolved)
                 choices.Add(currArea);
             }
         }

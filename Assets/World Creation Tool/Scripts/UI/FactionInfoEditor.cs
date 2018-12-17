@@ -31,10 +31,10 @@ public class FactionInfoEditor : MonoBehaviour {
     [SerializeField] private Dropdown factionsDropdown;
     [SerializeField] private Dropdown relStatDropdown;
 
-    [Header("Favor")]
-    [SerializeField] private Text favorSummaryLbl;
-    [SerializeField] private Dropdown factionsFavorDropdown;
-    [SerializeField] private InputField favorAmountField;
+    //[Header("Favor")]
+    //[SerializeField] private Text favorSummaryLbl;
+    //[SerializeField] private Dropdown factionsFavorDropdown;
+    //[SerializeField] private InputField favorAmountField;
 
     [Header("Defenders")]
     [SerializeField] private ScrollRect defendersScrollView;
@@ -50,12 +50,12 @@ public class FactionInfoEditor : MonoBehaviour {
         LoadEmblemChoices();
         LoadMoralityChoices();
         LoadRaceChoices();
-        LoadFavorChoices();
+        //LoadFavorChoices();
         LoadDefenderChoices();
         UpdateBasicInfo();
         UpdateAreas();
         UpdateRelationshipInfo();
-        UpdateFavorInfo();
+        //UpdateFavorInfo();
         UpdateDefenderWeights();
         this.gameObject.SetActive(true);
     }
@@ -70,8 +70,8 @@ public class FactionInfoEditor : MonoBehaviour {
         }
         LoadRelationshipChoices();
         UpdateRelationshipInfo();
-        LoadFavorChoices();
-        UpdateFavorInfo();
+        //LoadFavorChoices();
+        //UpdateFavorInfo();
     }
     public void OnFactionDeleted(Faction deletedFaction) {
         if (_faction == null) {
@@ -79,8 +79,8 @@ public class FactionInfoEditor : MonoBehaviour {
         }
         LoadRelationshipChoices();
         UpdateRelationshipInfo();
-        LoadFavorChoices();
-        UpdateFavorInfo();
+        //LoadFavorChoices();
+        //UpdateFavorInfo();
     }
 
     #region Basic Info
@@ -230,7 +230,7 @@ public class FactionInfoEditor : MonoBehaviour {
         Faction faction = FactionManager.Instance.GetFactionBasedOnName(factionName);
         FACTION_RELATIONSHIP_STATUS relStat = (FACTION_RELATIONSHIP_STATUS)System.Enum.Parse(typeof(FACTION_RELATIONSHIP_STATUS), relStatString);
 
-        _faction.GetRelationshipWith(faction).ChangeRelationshipStatus(relStat);
+        _faction.GetRelationshipWith(faction).SetRelationshipStatus(relStat);
         UpdateRelationshipInfo();
     }
     #endregion
@@ -254,30 +254,30 @@ public class FactionInfoEditor : MonoBehaviour {
     }
     #endregion
 
-    #region Favor
-    private void LoadFavorChoices() {
-        factionsFavorDropdown.ClearOptions();
-        List<string> factionOnptions = FactionManager.Instance.allFactions.Where(x => x.id != _faction.id).Select(x => x.name).ToList();
-        factionsFavorDropdown.AddOptions(factionOnptions);
-    }
-    private void UpdateFavorInfo() {
-        string text = string.Empty;
-        foreach (KeyValuePair<Faction, int> kvp in _faction.favor) {
-            text += kvp.Key.name + " - " + kvp.Value.ToString() + "\n";
-        }
-        favorSummaryLbl.text = text;
-    }
-    public void ApplyFavor() {
-        string factionName = factionsFavorDropdown.options[factionsFavorDropdown.value].text;
-        string favorAmountStr = favorAmountField.text;
+    //#region Favor
+    //private void LoadFavorChoices() {
+    //    factionsFavorDropdown.ClearOptions();
+    //    List<string> factionOnptions = FactionManager.Instance.allFactions.Where(x => x.id != _faction.id).Select(x => x.name).ToList();
+    //    factionsFavorDropdown.AddOptions(factionOnptions);
+    //}
+    //private void UpdateFavorInfo() {
+    //    string text = string.Empty;
+    //    //foreach (KeyValuePair<Faction, int> kvp in _faction.favor) {
+    //    //    text += kvp.Key.name + " - " + kvp.Value.ToString() + "\n";
+    //    //}
+    //    favorSummaryLbl.text = text;
+    //}
+    //public void ApplyFavor() {
+    //    string factionName = factionsFavorDropdown.options[factionsFavorDropdown.value].text;
+    //    string favorAmountStr = favorAmountField.text;
 
-        Faction faction = FactionManager.Instance.GetFactionBasedOnName(factionName);
-        int favorAmount = Int32.Parse(favorAmountStr);
+    //    Faction faction = FactionManager.Instance.GetFactionBasedOnName(factionName);
+    //    int favorAmount = Int32.Parse(favorAmountStr);
 
-        _faction.AddNewFactionFavor(faction, favorAmount);
-        UpdateFavorInfo();
-    }
-    #endregion
+    //    //_faction.AddNewFactionFavor(faction, favorAmount);
+    //    UpdateFavorInfo();
+    //}
+    //#endregion
 
     #region Defenders
     private void LoadDefenderChoices() {

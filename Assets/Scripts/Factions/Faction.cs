@@ -31,7 +31,7 @@ public class Faction {
 
     public MORALITY morality { get; private set; }
     public FactionToken factionToken { get; private set; }
-    public Dictionary<Faction, int> favor { get; private set; }
+    //public Dictionary<Faction, int> favor { get; private set; }
     public WeightedDictionary<AreaCharacterClass> defenderWeights { get; private set; }
     public bool isActive { get; private set; }
 
@@ -112,7 +112,7 @@ public class Faction {
         _landmarkInfo = new List<BaseLandmark>();
         _ownedAreas = new List<Area>();
         factionToken = new FactionToken(this);
-        favor = new Dictionary<Faction, int>();
+        //favor = new Dictionary<Faction, int>();
         defenderWeights = new WeightedDictionary<AreaCharacterClass>();
         InitializeInteractions();
 #if !WORLD_CREATION_TOOL
@@ -138,7 +138,7 @@ public class Faction {
         _landmarkInfo = new List<BaseLandmark>();
         _ownedAreas = new List<Area>();
         factionToken = new FactionToken(this);
-        favor = new Dictionary<Faction, int>();
+        //favor = new Dictionary<Faction, int>();
         if (data.defenderWeights != null) {
             defenderWeights = new WeightedDictionary<AreaCharacterClass>(data.defenderWeights);
         } else {
@@ -264,7 +264,7 @@ public class Faction {
             return false;
         }
         FactionRelationship rel = GetRelationshipWith(faction);
-        return rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE;
+        return rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY;
     }
     public bool HasLandmarkOfType(LANDMARK_TYPE landmarkType) {
         for (int i = 0; i < _ownedLandmarks.Count; i++) {
@@ -382,6 +382,13 @@ public class Faction {
         }
         return factions;
     }
+    public void AdjustRelationshipFor(Faction otherFaction, int adjustment) {
+        if (relationships.ContainsKey(otherFaction)) {
+            relationships[otherFaction].AdjustRelationshipStatus(adjustment);
+        } else {
+            Debug.LogWarning("There is no favor key for " + otherFaction.name + " in " + this.name + "'s favor dictionary");
+        }
+    }
     #endregion
 
     #region Death
@@ -431,30 +438,6 @@ public class Faction {
     #region Morality
     public void SetMorality(MORALITY morality) {
         this.morality = morality;
-    }
-    #endregion
-
-    #region Favor
-    public void AddNewFactionFavor(Faction faction, int value = 0) {
-        if (favor.ContainsKey(faction)) {
-            favor[faction] = value;
-        } else {
-            favor.Add(faction, value);
-        }
-    }
-    public void AdjustFavorFor(Faction otherFaction, int adjustment) {
-        if (favor.ContainsKey(otherFaction)) {
-            favor[otherFaction] += adjustment;
-        } else {
-            Debug.LogWarning("There is no favor key for " + otherFaction.name + " in " + this.name + "'s favor dictionary");
-        }
-    }
-    public void SetFavorFor(Faction otherFaction, int adjustment) {
-        if (favor.ContainsKey(otherFaction)) {
-            favor[otherFaction] = adjustment;
-        } else {
-            Debug.LogWarning("There is no favor key for " + otherFaction.name + " in " + this.name + "'s favor dictionary");
-        }
     }
     #endregion
 

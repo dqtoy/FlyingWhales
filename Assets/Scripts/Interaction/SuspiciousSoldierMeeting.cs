@@ -81,7 +81,7 @@ public class SuspiciousSoldierMeeting : Interaction {
         effectWeights.AddElement("Demon Disappears", 5);
         effectWeights.AddElement("Nothing Happens", 15);
         effectWeights.AddElement("Army Gained", 5);
-        if (_interactable.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+        if (_interactable.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).relationshipStatus != FACTION_RELATIONSHIP_STATUS.ENEMY) {
             effectWeights.AddElement("War Declared", 5);
         }
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();

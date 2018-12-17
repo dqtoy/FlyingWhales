@@ -44,7 +44,7 @@ public class RestAction : CharacterAction {
                         }
 
                         FactionRelationship rel = FactionManager.Instance.GetRelationshipBetween(landmarkFaction, characterFaction);
-                        if (rel != null && rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NON_HOSTILE) {
+                        if (rel != null && rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ALLY) {
                             return true;
                         }
                     }

@@ -149,7 +149,7 @@ public class MoveToPeaceNegotiation : Interaction {
     private void DiplomatKilledWithWitnessRewardEffect(InteractionState state) {
         //**Mechanic**: Diplomat Dies, peace declaration cancelled, Player Favor Count -2 on Diplomat's Faction
         _characterInvolved.Death();
-        _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -2);
+        _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -2);
 
         //**Level Up**: Instigator Minion +1
         investigatorMinion.LevelUp();
@@ -162,7 +162,7 @@ public class MoveToPeaceNegotiation : Interaction {
     private void DiplomatSurvivesMinionFleesRewardEffect(InteractionState state) {
         //**Mechanic**: Diplomat travels to [Location] for Peace Negotiation, Player Favor Count -2 on Diplomat's Faction
         GoToTargetAndStartPeaceNegotiation();
-        _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -2);
+        _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -2);
 
         state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
         state.AddLogFiller(new LogFiller(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2));
@@ -170,7 +170,7 @@ public class MoveToPeaceNegotiation : Interaction {
     private void DiplomatSurvivesMinionDiesRewardEffect(InteractionState state) {
         //**Mechanic**: Diplomat travels to [Location] for Peace Negotiation, Player Favor Count -2 on Diplomat's Faction
         GoToTargetAndStartPeaceNegotiation();
-        _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -2);
+        _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -2);
 
         state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
         state.AddLogFiller(new LogFiller(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2));
@@ -202,7 +202,7 @@ public class MoveToPeaceNegotiation : Interaction {
     private Faction GetTargetFaction() {
         List<Faction> choices = new List<Faction>();
         foreach (KeyValuePair<Faction, FactionRelationship> keyValuePair in sourceFaction.relationships) {
-            if (keyValuePair.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR && keyValuePair.Value.currentWarCombatCount >= 3) {
+            if (keyValuePair.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY && keyValuePair.Value.currentWarCombatCount >= 3) {
                 choices.Add(keyValuePair.Key);
             }
         }

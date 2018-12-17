@@ -2067,7 +2067,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 return false; //characters are of same faction
             }
             FactionRelationship rel = this.faction.GetRelationshipWith(factionOfEnemy);
-            if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+            if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY) {
                 return true; //factions of combatants are hostile
             }
             return false;
@@ -2490,7 +2490,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     private CharacterParty GetPriority2TargetChatAction(List<CharacterParty> partyPool) {
         //random parties within non-hostile factions within settlements
         partyPool.Clear();
-        List<Faction> nonHostileFactions = FactionManager.Instance.GetFactionsWithByStatus(faction, FACTION_RELATIONSHIP_STATUS.NON_HOSTILE);
+        List<Faction> nonHostileFactions = FactionManager.Instance.GetFactionsWithByStatus(faction, FACTION_RELATIONSHIP_STATUS.ALLY);
         for (int i = 0; i < nonHostileFactions.Count; i++) {
             Faction nonHostileFaction = nonHostileFactions[i];
             for (int k = 0; k < nonHostileFaction.characters.Count; k++) {
@@ -2524,7 +2524,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     private CharacterParty GetPriority4TargetChatAction(List<CharacterParty> partyPool) {
         //random parties within non-hostile faction outside settlements currently performing an Idle Action
         partyPool.Clear();
-        List<Faction> nonHostileFactions = FactionManager.Instance.GetFactionsWithByStatus(faction, FACTION_RELATIONSHIP_STATUS.NON_HOSTILE);
+        List<Faction> nonHostileFactions = FactionManager.Instance.GetFactionsWithByStatus(faction, FACTION_RELATIONSHIP_STATUS.ALLY);
         for (int i = 0; i < nonHostileFactions.Count; i++) {
             Faction nonHostileFaction = nonHostileFactions[i];
             for (int k = 0; k < nonHostileFaction.characters.Count; k++) {

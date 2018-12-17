@@ -99,7 +99,7 @@ public class InduceGrudge : Interaction {
     }
     private void InduceGrudgeFailEffect(InteractionState state) {
         Character targetCharacter = _previousState.assignedCharacter.character;
-        _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -2);
+        _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -2);
 
         state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
@@ -107,7 +107,7 @@ public class InduceGrudge : Interaction {
     }
     private void InduceGrudgeCritFailEffect(InteractionState state) {
         Character targetCharacter = _previousState.assignedCharacter.character;
-        _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -2);
+        _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -2);
 
         state.descriptionLog.AddToFillers(investigatorMinion, investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
         state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

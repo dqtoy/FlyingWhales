@@ -121,13 +121,13 @@ public class InduceWar : Interaction {
     #endregion
 
     private Faction GetTargetFaction() {
-        List<Faction> choices = new List<Faction>();
-        foreach (KeyValuePair<Faction, int> kvp in sourceFaction.favor) {
-            if (kvp.Key.id != PlayerManager.Instance.player.playerFaction.id && kvp.Value <= -10
-                && sourceFaction.GetRelationshipWith(kvp.Key).relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
-                choices.Add(kvp.Key);
-            }
-        }
+        List<Faction> choices = sourceFaction.GetFactionsWithRelationship(FACTION_RELATIONSHIP_STATUS.DISLIKED);
+        //foreach (KeyValuePair<Faction, int> kvp in ) {
+        //    if (kvp.Key.id != PlayerManager.Instance.player.playerFaction.id && kvp.Value <= -10
+        //        && sourceFaction.GetRelationshipWith(kvp.Key).relationshipStatus != FACTION_RELATIONSHIP_STATUS.ENEMY) {
+        //        choices.Add(kvp.Key);
+        //    }
+        //}
         return choices[Random.Range(0, choices.Count)];
     }
 }
