@@ -62,17 +62,21 @@ public class Job {
             //SetJobActionPauseState(true);
             //area.SetStopDefaultInteractionsState(true);
 
-            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(_tokenInteractionTypes[_attachedToken.tokenType], _character.specificLocation as BaseLandmark);
-            //interaction.AddEndInteractionAction(() => SetJobActionPauseState(false));
-            //interaction.AddEndInteractionAction(() => ForceDefaultAllExistingInteractions());
+            if(_attachedToken.tokenType != TOKEN_TYPE.SPECIAL) {
+                Interaction interaction = InteractionManager.Instance.CreateNewInteraction(_tokenInteractionTypes[_attachedToken.tokenType], _character.specificLocation as BaseLandmark);
+                //interaction.AddEndInteractionAction(() => SetJobActionPauseState(false));
+                //interaction.AddEndInteractionAction(() => ForceDefaultAllExistingInteractions());
 
-            if (_attachedToken.tokenType == TOKEN_TYPE.CHARACTER) {
-                CharacterToken characterToken = _attachedToken as CharacterToken;
-                characterToken.character.AddInteraction(interaction);
+                if (_attachedToken.tokenType == TOKEN_TYPE.CHARACTER) {
+                    CharacterToken characterToken = _attachedToken as CharacterToken;
+                    characterToken.character.AddInteraction(interaction);
+                } else {
+                    _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
+                }
+                SetCreatedInteraction(interaction);
             } else {
-                _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
+                CreateSpecialTokenInteraction(_attachedToken as SpecialToken);
             }
-            SetCreatedInteraction(interaction);
             _attachedToken = null;
             InteractionUI.Instance.OpenInteractionUI(_createdInteraction);
         }
@@ -80,6 +84,21 @@ public class Job {
     public virtual void ApplyActionDuration() {}
     public virtual void DoJobAction() {
         Debug.Log(GameManager.Instance.TodayLogString() + " Doing job action: " + character.name + "(" + jobType.ToString() + ")");
+    }
+    public virtual void CreateSpecialTokenInteraction(SpecialToken specialToken) {
+        if(specialToken.specialTokenType == SPECIAL_TOKEN.BOOK_OF_THE_DEAD) {
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CREATE_NECROMANCER, _character.specificLocation as BaseLandmark);
+            for (int i = 0; i < _character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
+                //location has a male Human, Goblin or Elven character that is part of a Faction
+                Character characterAtLocation = _character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
+                if (characterAtLocation.faction != FactionManager.Instance.neutralFaction && !characterAtLocation.isLeader &&
+                    (characterAtLocation.race == RACE.HUMANS || characterAtLocation.race == RACE.GOBLIN || characterAtLocation.race == RACE.ELVES)) {
+                    characterAtLocation.AddInteraction(interaction);
+                    break;
+                }
+            }
+            SetCreatedInteraction(interaction);
+        }
     }
     public virtual int GetSuccessRate() { return 0; }
     public virtual int GetFailRate() { return 40; }
@@ -90,7 +109,25 @@ public class Job {
         rateWeights.AddElement(RESULT.FAIL, GetFailRate());
         return rateWeights;
     }
-    protected virtual bool IsTokenCompatibleWithJob(Token token) { return false; }
+    protected virtual bool IsTokenCompatibleWithJob(Token token) {
+        if(token.tokenType == TOKEN_TYPE.SPECIAL) {
+            SpecialToken specialToken = token as SpecialToken;
+            if(specialToken.specialTokenType == SPECIAL_TOKEN.BOOK_OF_THE_DEAD) {
+                //location is Gloomhollow Crypts, location is not owned by any Faction
+                if (_character.specificLocation.tileLocation.areaOfTile.name == "Gloomhollow Crypts" && _character.specificLocation.tileLocation.areaOfTile.owner == null) {
+                    for (int i = 0; i < _character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
+                        //location has a male Human, Goblin or Elven character that is part of a Faction
+                        Character characterAtLocation = _character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
+                        if (characterAtLocation.faction != FactionManager.Instance.neutralFaction && !characterAtLocation.isLeader &&
+                            (characterAtLocation.race == RACE.HUMANS || characterAtLocation.race == RACE.GOBLIN || characterAtLocation.race == RACE.ELVES)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Utilities
@@ -98,10 +135,7 @@ public class Job {
         _attachedToken = token;
     }
     public bool CanTokenBeAttached(Token token) {
-        if(token != null && _tokenInteractionTypes != null && _tokenInteractionTypes.ContainsKey(token.tokenType)) {
-            return IsTokenCompatibleWithJob(token);
-        }
-        return false;
+        return token != null && IsTokenCompatibleWithJob(token);
     }
     public void StartJobAction() {
         ApplyActionDuration();

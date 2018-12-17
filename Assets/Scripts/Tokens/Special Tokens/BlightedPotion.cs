@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BlightedPotion : SpecialToken {
 
-    public BlightedPotion() : base("Blighted Potion") {
+    public BlightedPotion() : base(SPECIAL_TOKEN.BLIGHTED_POTION) {
     }
 
     #region Overrides

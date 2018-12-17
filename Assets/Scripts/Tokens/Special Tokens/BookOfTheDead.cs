@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class BookOfTheDead : SpecialToken {
 
-    public BookOfTheDead() : base("Book of the Dead") {
+    public BookOfTheDead() : base(SPECIAL_TOKEN.BOOK_OF_THE_DEAD) {
     }
 }

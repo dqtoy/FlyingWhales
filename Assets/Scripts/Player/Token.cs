@@ -91,12 +91,14 @@ public class CharacterToken : Token {
 /*
  NOTE: There is only one instance of SpecialToken class per special token. (See TokenManager)
      */
-public class SpecialToken : Token { 
+public class SpecialToken : Token {
+    public SPECIAL_TOKEN specialTokenType;
     public string name;
     public int quantity;
-    public SpecialToken(string name) : base() {
+    public SpecialToken(SPECIAL_TOKEN specialTokenType) : base() {
         _tokenType = TOKEN_TYPE.SPECIAL;
-        this.name = name;
+        this.specialTokenType = specialTokenType;
+        this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.specialTokenType.ToString());
     }
     public void AdjustQuantity(int amount) {
         quantity += amount;

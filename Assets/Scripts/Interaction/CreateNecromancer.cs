@@ -69,6 +69,7 @@ public class CreateNecromancer : Interaction {
     #region State Effects
     private void NecromancerCreatedEffect(InteractionState state) {
         _characterInvolved.ChangeClass("Necromancer");
+        _characterInvolved.SetForcedInteraction(null);
 
         Faction newFaction = FactionManager.Instance.GetFactionBasedOnName("Zirana");
         newFaction.SetLeader(_characterInvolved);

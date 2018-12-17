@@ -157,9 +157,15 @@ public class Faction {
      This creates relationships between the leader and it's village heads by default.
          */
     public virtual void SetLeader(ILeader leader) {
+        if (_leader != null && _leader is Character) {
+            Character character = _leader as Character;
+            character.SetIsLeader(false);
+        }
+
         _leader = leader;
         if (_leader != null && _leader is Character) {
             Character character = _leader as Character;
+            character.SetIsLeader(true);
             if(character.job.jobType != JOB.LEADER) {
                 character.AssignJob(JOB.LEADER);
             }

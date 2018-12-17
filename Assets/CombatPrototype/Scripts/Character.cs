@@ -26,6 +26,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     protected bool _isBeingInspected;
     protected bool _hasBeenInspected;
     protected bool _alreadyTargetedByGrudge;
+    protected bool _isLeader;
     protected GENDER _gender;
     protected MODE _currentMode;
     protected CharacterClass _characterClass;
@@ -389,6 +390,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     }
     public bool alreadyTargetedByGrudge {
         get { return _alreadyTargetedByGrudge; }
+    }
+    public bool isLeader {
+        get { return _isLeader; }
     }
     public IObject questGiverObj {
         get { return currentParty.icharacterObject; }
@@ -1941,6 +1945,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public void SetAlreadyTargetedByGrudge(bool state) {
         _alreadyTargetedByGrudge = state;
     }
+    public void SetIsLeader(bool state) {
+        _isLeader = state;
+    }
     public void AttackAnArea(Area target) {
         Interaction attackInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ATTACK, target.coreTile.landmarkOnTile);
         attackInteraction.AddEndInteractionAction(() => _ownParty.GoHomeAndDisband());
@@ -3067,44 +3074,43 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         }
         string interactionLog = GameManager.Instance.TodayLogString() + "Generating daily interaction for " + this.name;
         if (_forcedInteraction != null) {
-            interactionLog += "\nUsinng forced interaction: " + _forcedInteraction.type.ToString();
+            interactionLog += "\nUsing forced interaction: " + _forcedInteraction.type.ToString();
             AddInteraction(_forcedInteraction);
             _forcedInteraction = null;
         } else {
-            //if (GameManager.Instance.ignoreEventTriggerWeights || eventTriggerWeights.PickRandomElementGivenWeights()) {
-            int chance = UnityEngine.Random.Range(0, 100);
-            if(chance >= 15) {
-                //Character will not perform
-                return;
-            }
-            WeightedDictionary<INTERACTION_TYPE> validInteractions = GetValidInteractionWeights();
-            if (validInteractions != null) {
-                if (validInteractions.GetTotalOfWeights() > 0) {
-                    interactionLog += "\n" + validInteractions.GetWeightsSummary("Generating interaction:");
-                    INTERACTION_TYPE chosenInteraction = validInteractions.PickRandomElementGivenWeights();
-                    //create interaction of type
-                    BaseLandmark interactable = specificLocation as BaseLandmark;
-                    if (interactable == null) {
-                        throw new Exception(GameManager.Instance.TodayLogString() + this.name + "'s specific location (" + specificLocation.locationName + ") is not a landmark!");
-                    }
-                    Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, specificLocation as BaseLandmark);
-                    
-                    if (job.jobType == JOB.LEADER) {
-                        //For Faction Upgrade Interaction Only
-                        Area area = _homeLandmark.tileLocation.areaOfTile;
-                        area.AdjustSuppliesInBank(-100);
-                        createdInteraction.SetMinionSuccessAction(() => area.AdjustSuppliesInBank(100));
-                    }
+            //Only go here if away from home, then choose from the character interactions away from home
+            //TODO
 
-                    AddInteraction(createdInteraction);
-                } else {
-                    interactionLog += "\nCannot generate interaction because weights are not greater than zero";
-                }
-            } else {
-                interactionLog += "\nCannot generate interaction because there are no interactions for job: " + job.jobType.ToString();
-            }
+            //int chance = UnityEngine.Random.Range(0, 100);
+            //if(chance >= 15) {
+            //    //Character will not perform
+            //    return;
+            //}
+            //WeightedDictionary<INTERACTION_TYPE> validInteractions = GetValidInteractionWeights();
+            //if (validInteractions != null) {
+            //    if (validInteractions.GetTotalOfWeights() > 0) {
+            //        interactionLog += "\n" + validInteractions.GetWeightsSummary("Generating interaction:");
+            //        INTERACTION_TYPE chosenInteraction = validInteractions.PickRandomElementGivenWeights();
+            //        //create interaction of type
+            //        BaseLandmark interactable = specificLocation as BaseLandmark;
+            //        if (interactable == null) {
+            //            throw new Exception(GameManager.Instance.TodayLogString() + this.name + "'s specific location (" + specificLocation.locationName + ") is not a landmark!");
+            //        }
+            //        Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, specificLocation as BaseLandmark);
+                    
+            //        if (job.jobType == JOB.LEADER) {
+            //            //For Faction Upgrade Interaction Only
+            //            Area area = _homeLandmark.tileLocation.areaOfTile;
+            //            area.AdjustSuppliesInBank(-100);
+            //            createdInteraction.SetMinionSuccessAction(() => area.AdjustSuppliesInBank(100));
+            //        }
+
+            //        AddInteraction(createdInteraction);
+            //    } else {
+            //        interactionLog += "\nCannot generate interaction because weights are not greater than zero";
+            //    }
             //} else {
-            //    interactionLog += "\nDid not create new event because of event trigger weights";
+            //    interactionLog += "\nCannot generate interaction because there are no interactions for job: " + job.jobType.ToString();
             //}
         }
         //Debug.Log(interactionLog);

@@ -1145,3 +1145,7 @@ public enum TOKEN_TYPE {
     FACTION,
     SPECIAL,
 }
+public enum SPECIAL_TOKEN {
+    BLIGHTED_POTION,
+    BOOK_OF_THE_DEAD,
+}
