@@ -19,6 +19,8 @@ public class Interaction {
     protected bool _isSecondTimeOutCancelled;
     protected bool _isChosen;
     protected bool _hasInitialized;
+    protected Func<bool> _canInteractionBeDone;
+    protected Action _initializeAction;
     protected InteractionState _previousState;
     protected InteractionState _currentState;
     protected Minion _investigatorMinion;
@@ -112,6 +114,9 @@ public class Interaction {
     #region Virtuals
     public virtual void Initialize() {
         _hasInitialized = true;
+        if(_initializeAction != null) {
+            _initializeAction();
+        }
         //SetCharacterInvolved(characterInvolved);
         CreateStates();
         //SetExplorerMinion(explorerMinion);
@@ -305,6 +310,18 @@ public class Interaction {
         if(_minionSuccessfulAction != null) {
             _minionSuccessfulAction();
         }
+    }
+    public void SetInitializeAction(Action action) {
+        _initializeAction = action;
+    }
+    public void SetCanInteractionBeDoneAction(Func<bool> func) {
+        _canInteractionBeDone = func;
+    }
+    public bool CanInteractionBeDone() {
+        if(_canInteractionBeDone != null) {
+            return _canInteractionBeDone();
+        }
+        return true;
     }
     #endregion
 
