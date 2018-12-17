@@ -206,6 +206,7 @@ public class InteractionManager : MonoBehaviour {
     }
     public bool CanCreateInteraction(INTERACTION_TYPE interactionType, BaseLandmark landmark) {
         int count = 0;
+        FactionRelationship relationship = null;
         switch (interactionType) {
             case INTERACTION_TYPE.SPAWN_CHARACTER:
             case INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER:
@@ -218,7 +219,7 @@ public class InteractionManager : MonoBehaviour {
                 Area target = GetAttackTarget(landmark.tileLocation.areaOfTile);
                 return target != null;
             case INTERACTION_TYPE.MINION_PEACE_NEGOTIATION:
-                FactionRelationship relationship = PlayerManager.Instance.player.playerFaction.GetRelationshipWith(landmark.tileLocation.areaOfTile.owner);
+                relationship = PlayerManager.Instance.player.playerFaction.GetRelationshipWith(landmark.tileLocation.areaOfTile.owner);
                 if(relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY && landmark.tileLocation.areaOfTile.owner.leader.specificLocation.tileLocation.areaOfTile.id == landmark.tileLocation.areaOfTile.id) {
                     return true;
                 }
@@ -287,25 +288,35 @@ public class InteractionManager : MonoBehaviour {
         }
     }
     public bool CanCreateInteraction(INTERACTION_TYPE interactionType, Character character) {
+        Area area = null;
+        FactionRelationship relationship = null;
         switch (interactionType) {
             case INTERACTION_TYPE.RETURN_HOME:
             case INTERACTION_TYPE.CHARACTER_TRACKING:
                 return character.specificLocation != character.homeLandmark;
             case INTERACTION_TYPE.MOVE_TO_SCAVENGE:
                 //check if there are any unowned areas
-                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                    Area currArea = LandmarkManager.Instance.allAreas[i];
-                    if (currArea.owner == null) {
-                        return true;
+                if (character.job.jobType == JOB.RAIDER) {
+                    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                        Area currArea = LandmarkManager.Instance.allAreas[i];
+                        if (currArea.owner == null) {
+                            return true;
+                        }
                     }
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_RAID:
                 //check if there are any areas owned by factions other than your own
-                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                    Area currArea = LandmarkManager.Instance.allAreas[i];
-                    if (currArea.owner != null && currArea.owner.id != character.faction.id) {
-                        return true;
+                if(character.job.jobType == JOB.RAIDER) {
+                    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                        Area currArea = LandmarkManager.Instance.allAreas[i];
+                        if (currArea.owner != null && currArea.owner.id != character.specificLocation.tileLocation.areaOfTile.owner.id) {
+                            relationship = character.specificLocation.tileLocation.areaOfTile.owner.GetRelationshipWith(currArea.owner);
+                            if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
+                                return true;
+
+                            }
+                        }
                     }
                 }
                 return false;
@@ -324,19 +335,26 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_EXPAND:
-                /* - the character is at his home Area
-                 * - the Area has at least 100 Supply
-                 * - there is an unoccupied Area that is compatible with the character's race
-                 * - ensure that no other active Expand event targets the same location. */
-                if (character.homeLandmark.tileLocation.areaOfTile.id == character.specificLocation.tileLocation.areaOfTile.id) {
-                    Area homeArea = character.homeLandmark.tileLocation.areaOfTile;
-                    if (homeArea.suppliesInBank >= 100) {
-                        List<Area> expansionTargets = homeArea.GetElligibleExpansionTargets(character);
-                        if (expansionTargets.Count > 0) {
-                            return true;
-                        }
+                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                    area = LandmarkManager.Instance.allAreas[i];
+                    if (area.id != character.specificLocation.tileLocation.areaOfTile.id && area.owner == null && area.raceType == character.race) {
+                        return true;
                     }
                 }
+
+                ///* - the character is at his home Area
+                // * - the Area has at least 100 Supply
+                // * - there is an unoccupied Area that is compatible with the character's race
+                // * - ensure that no other active Expand event targets the same location. */
+                //if (character.homeLandmark.tileLocation.areaOfTile.id == character.specificLocation.tileLocation.areaOfTile.id) {
+                //    Area homeArea = character.homeLandmark.tileLocation.areaOfTile;
+                //    if (homeArea.suppliesInBank >= 100) {
+                //        List<Area> expansionTargets = homeArea.GetElligibleExpansionTargets(character);
+                //        if (expansionTargets.Count > 0) {
+                //            return true;
+                //        }
+                //    }
+                //}
                 return false;
             case INTERACTION_TYPE.FACTION_UPGRADE:
                 return character.specificLocation.tileLocation.areaOfTile.id == character.homeLandmark.tileLocation.areaOfTile.id && character.specificLocation.tileLocation.areaOfTile.suppliesInBank >= 100;
@@ -358,7 +376,7 @@ public class InteractionManager : MonoBehaviour {
                 /*You can inflict a random illness on a character. Trigger requirements:
                 - there must be at least one character in the location
                 - the player must have intel of at least one of these characters*/
-                Area area = character.specificLocation.tileLocation.areaOfTile;
+                area = character.specificLocation.tileLocation.areaOfTile;
                 List<Character> choices = new List<Character>(area.charactersAtLocation);
                 choices.Remove(character);
                 for (int i = 0; i < choices.Count; i++) {
@@ -368,6 +386,34 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
+            case INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS:
+                //check if there are any areas owned by factions other than your own
+                if(character.job.jobType == JOB.DIPLOMAT) {
+                    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                        Area currArea = LandmarkManager.Instance.allAreas[i];
+                        if (currArea.owner != null && currArea.owner.id != character.specificLocation.tileLocation.areaOfTile.owner.id) {
+                            relationship = character.specificLocation.tileLocation.areaOfTile.owner.GetRelationshipWith(currArea.owner);
+                            if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY) {
+                                return true;
+
+                            }
+                        }
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_RECRUIT:
+                if (character.job.jobType == JOB.RECRUITER) {
+                    for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                        Character currChar = CharacterManager.Instance.allCharacters[i];
+                        if (currChar.id != character.id && currChar.specificLocation.tileLocation.areaOfTile != character.specificLocation.tileLocation.areaOfTile
+                            && currChar.faction != character.specificLocation.tileLocation.areaOfTile.owner && currChar.level <= character.level) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.PATROL:
+                return character.job.jobType == JOB.DISSUADER;
             default:
                 return true;
         }

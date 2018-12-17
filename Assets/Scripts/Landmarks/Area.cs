@@ -9,13 +9,19 @@ public class Area {
     public int id { get; private set; }
     public int totalCivilians { get { return landmarks.Sum(x => x.civilianCount); } }
     public int suppliesInBank { get; private set; }
+    public int supplyCapacity { get; private set; }
     public string name { get; private set; }
+    public bool isHighlighted { get; private set; }
+    public bool hasBeenInspected { get; private set; }
+    public bool areAllLandmarksDead { get; private set; }
+    public bool stopDefaultAllExistingInteractions { get; private set; }
     public AREA_TYPE areaType { get; private set; }
     public HexTile coreTile { get; private set; }
     public Color areaColor { get; private set; }
     public Faction owner { get; private set; }
     public Faction previousOwner { get; private set; }
     public Area attackTarget { get; private set; }
+    public AreaInvestigation areaInvestigation { get; private set; }
     public LocationToken locationToken { get; private set; }
     public DefenderToken defenderToken { get; private set; }
     public List<HexTile> tiles { get; private set; }
@@ -27,12 +33,7 @@ public class Area {
     public List<Character> attackCharacters { get; private set; }
     public List<Log> history { get; private set; }
     public List<Interaction> currentInteractions { get; private set; }
-    public bool isHighlighted { get; private set; }
-    public bool hasBeenInspected { get; private set; }
-    public bool areAllLandmarksDead { get; private set; }
-    public bool stopDefaultAllExistingInteractions { get; private set; }
-    public AreaInvestigation areaInvestigation { get; private set; }
-    public int supplyCapacity { get; private set; }
+    public Dictionary<INTERACTION_TYPE, int> areaTasksInteractionWeights { get; private set; }
 
     //defenders
     public int maxDefenderGroups { get; private set; }
@@ -95,6 +96,7 @@ public class Area {
             Messenger.AddListener(Signals.DAY_ENDED_2, DefaultAllExistingInteractions);
         }
 #if !WORLD_CREATION_TOOL
+        ConstructAreaTasksInteractionWeights();
         StartSupplyLine();
 #endif
     }
@@ -131,6 +133,7 @@ public class Area {
 #else
         SetSuppliesInBank(data.monthlySupply);
         SetCoreTile(GridMap.Instance.GetHexTile(data.coreTileID));
+        ConstructAreaTasksInteractionWeights();
         StartSupplyLine();
 #endif
 
@@ -754,6 +757,17 @@ public class Area {
     #endregion
 
     #region Interactions
+    private void ConstructAreaTasksInteractionWeights() {
+        areaTasksInteractionWeights = new Dictionary<INTERACTION_TYPE, int>() {
+            {INTERACTION_TYPE.MOVE_TO_RAID, 50},
+            {INTERACTION_TYPE.MOVE_TO_SCAVENGE, 50},
+            {INTERACTION_TYPE.MOVE_TO_RECRUIT, 50},
+            {INTERACTION_TYPE.PATROL, 50},
+            {INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS, 50},
+            {INTERACTION_TYPE.MOVE_TO_EXPAND, 10},
+            {INTERACTION_TYPE.MOVE_TO_EXPLORE, 20},
+        };
+    }
     public void AddInteraction(Interaction interaction) {
         if(currentInteractions.Count > 0) {
             int interactionToBeAddedIndex = Utilities.GetInteractionPriorityIndex(interaction.type);
@@ -832,32 +846,6 @@ public class Area {
     private void AssignInteractionsToResidents() {
         if (owner != null) {
             int supplySpent = 0;
-            bool canMoveToRaid = false, canMoveToScavenge = false, canMoveToImproveRelations = false;
-            for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                Area area = LandmarkManager.Instance.allAreas[i];
-                if (area.id != id) {
-                    if (area.owner != null) {
-                        if (area.owner.id != owner.id) {
-                            if (!canMoveToRaid) {
-                                FactionRelationship relationship = owner.GetRelationshipWith(area.owner);
-                                if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
-                                    canMoveToRaid = true;
-                                }
-                            }
-                            if (!canMoveToImproveRelations) {
-                                FactionRelationship relationship = owner.GetRelationshipWith(area.owner);
-                                if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY) {
-                                    canMoveToImproveRelations = true;
-                                }
-                            }
-                        }
-                    } else {
-                        if (!canMoveToScavenge) {
-                            canMoveToScavenge = true;
-                        }
-                    }
-                }
-            }
             List<Character> candidates = new List<Character>();
             for (int i = 0; i < areaResidents.Count; i++) {
                 Character resident = areaResidents[i];
@@ -870,7 +858,7 @@ public class Area {
                 Character chosenCandidate = candidates[index];
                 candidates.RemoveAt(index);
 
-                INTERACTION_TYPE interactionType = GetInteractionTypeForResidentCharacter(chosenCandidate, canMoveToRaid, canMoveToScavenge, canMoveToImproveRelations);
+                INTERACTION_TYPE interactionType = GetInteractionTypeForResidentCharacter(chosenCandidate);
                 if (interactionType != INTERACTION_TYPE.MOVE_TO_RAID && interactionType != INTERACTION_TYPE.MOVE_TO_SCAVENGE) {
                     supplySpent += 100;
                     if (supplySpent < suppliesInBank) {
@@ -890,46 +878,13 @@ public class Area {
             }
         }
     }
-    private INTERACTION_TYPE GetInteractionTypeForResidentCharacter(Character resident, bool canMoveToRaid, bool canMoveToScavenge, bool canMoveToImproveRelations) {
-        bool canMoveToExpand = false;
-        if (canMoveToScavenge) {
-            for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                Area area = LandmarkManager.Instance.allAreas[i];
-                if (area.id != id && area.owner == null && area.raceType == resident.race) {
-                    canMoveToExpand = true;
-                    break;
-                }
-            }
-        }
-        
+    private INTERACTION_TYPE GetInteractionTypeForResidentCharacter(Character resident) {    
         WeightedDictionary<INTERACTION_TYPE> interactionWeights = new WeightedDictionary<INTERACTION_TYPE>();
-        interactionWeights.AddElement(INTERACTION_TYPE.MOVE_TO_EXPLORE, 20);
-        if (canMoveToExpand) {
-            interactionWeights.AddElement(INTERACTION_TYPE.MOVE_TO_EXPAND, 10);
-        }
-        if (resident.job.jobType == JOB.RAIDER) {
-            if (canMoveToRaid) {
-                interactionWeights.AddElement(INTERACTION_TYPE.MOVE_TO_RAID, 50);
-            }
-            if (canMoveToScavenge) {
-                interactionWeights.AddElement(INTERACTION_TYPE.MOVE_TO_SCAVENGE, 50);
-            }
-        } else if (resident.job.jobType == JOB.DIPLOMAT) {
-            if (canMoveToImproveRelations) {
-                interactionWeights.AddElement(INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS, 50);
-            }
-        } else if (resident.job.jobType == JOB.DISSUADER) {
-            interactionWeights.AddElement(INTERACTION_TYPE.PATROL, 50);
-        } else if (resident.job.jobType == JOB.RECRUITER) {
-            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-                Character character = CharacterManager.Instance.allCharacters[i];
-                if(character.id != resident.id && character.faction != owner && character.level <= resident.level) {
-                    interactionWeights.AddElement(INTERACTION_TYPE.MOVE_TO_RECRUIT, 50);
-                    break;
-                }
+        foreach (KeyValuePair<INTERACTION_TYPE, int> areaTasks in areaTasksInteractionWeights) {
+            if(InteractionManager.Instance.CanCreateInteraction(areaTasks.Key, resident)) {
+                interactionWeights.AddElement(areaTasks.Key, areaTasks.Value);
             }
         }
-
         return interactionWeights.PickRandomElementGivenWeights();
     }
     #endregion

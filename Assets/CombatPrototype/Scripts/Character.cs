@@ -3081,6 +3081,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             //Only go here if away from home, then choose from the character interactions away from home
             //TODO
 
+
             //int chance = UnityEngine.Random.Range(0, 100);
             //if(chance >= 15) {
             //    //Character will not perform
