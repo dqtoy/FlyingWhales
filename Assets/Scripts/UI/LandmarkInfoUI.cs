@@ -174,7 +174,7 @@ public class LandmarkInfoUI : UIMenu {
         UpdateAllHistoryInfo();
     }
     private void UpdateHiddenUI() {
-        if (_activeLandmark.tileLocation.areaOfTile.locationToken.isObtained || GameManager.Instance.inspectAll) {
+        if (_activeLandmark.tileLocation.areaOfTile.locationToken.isObtainedByPlayer || GameManager.Instance.inspectAll) {
             ShowIntelTriggeredUI();
         } else {
             HideIntelTriggeredUI();

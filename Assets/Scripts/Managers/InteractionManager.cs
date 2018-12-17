@@ -201,6 +201,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.CREATE_NECROMANCER:
                 createdInteraction = new CreateNecromancer(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_RETURN_HOME:
+                createdInteraction = new MoveToReturnHome(interactable);
+                break;
+            case INTERACTION_TYPE.EXPLORE_EVENT:
+                createdInteraction = new ExploreEvent(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -292,6 +298,7 @@ public class InteractionManager : MonoBehaviour {
         FactionRelationship relationship = null;
         switch (interactionType) {
             case INTERACTION_TYPE.RETURN_HOME:
+                return character.specificLocation.tileLocation.areaOfTile.id != character.homeLandmark.tileLocation.areaOfTile.id;
             case INTERACTION_TYPE.CHARACTER_TRACKING:
                 return character.specificLocation != character.homeLandmark;
             case INTERACTION_TYPE.MOVE_TO_SCAVENGE:
@@ -381,7 +388,7 @@ public class InteractionManager : MonoBehaviour {
                 choices.Remove(character);
                 for (int i = 0; i < choices.Count; i++) {
                     Character currCharacter = choices[i];
-                    if (currCharacter.characterToken.isObtained) {
+                    if (currCharacter.characterToken.isObtainedByPlayer) {
                         return true;
                     }
                 }
@@ -414,6 +421,9 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.PATROL:
                 return character.job.jobType == JOB.DISSUADER;
+            case INTERACTION_TYPE.MOVE_TO_RETURN_HOME:
+                //if character is NOT at home, allow
+                return character.specificLocation.tileLocation.areaOfTile.id != character.homeLandmark.tileLocation.areaOfTile.id;
             default:
                 return true;
         }

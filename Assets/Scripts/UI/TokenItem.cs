@@ -17,14 +17,14 @@ public class TokenItem : MonoBehaviour {
     }
 
     private void UpdateVisuals() {
-        if (token.isObtained) {
+        if (token.isObtainedByPlayer) {
             lockedGO.SetActive(false);
         } else {
             lockedGO.SetActive(true);
         }
     }
     public void ShowTokenInfo() {
-        if (token.isObtained) {
+        if (token.isObtainedByPlayer) {
             //UIManager.Instance.ShowSmallInfo(intel.description);
         }
     }

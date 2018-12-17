@@ -278,9 +278,9 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
                     unknownGO.SetActive(false);
                     SetBodyPartsState(true);
                 } else {
-                    lvlGO.SetActive(characterToken.isObtained);
-                    unknownGO.SetActive(!characterToken.isObtained);
-                    SetBodyPartsState(characterToken.isObtained);
+                    lvlGO.SetActive(characterToken.isObtainedByPlayer);
+                    unknownGO.SetActive(!characterToken.isObtainedByPlayer);
+                    SetBodyPartsState(characterToken.isObtainedByPlayer);
                 }
             }
             

@@ -100,6 +100,8 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public CharacterToken characterToken { get; private set; }
     public WeightedDictionary<INTERACTION_TYPE> interactionWeights { get; private set; }
     public WeightedDictionary<bool> eventTriggerWeights { get; private set; }
+    public List<SpecialToken> tokenInventory { get; private set; }
+
     private Dictionary<STAT, float> _buffs;
 
     public Dictionary<int, Combat> combatHistory;
@@ -532,6 +534,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         eventSchedule = new CharacterEventSchedule(this);
         uiData = new CharacterUIData();
         characterToken = new CharacterToken(this);
+        tokenInventory = new List<SpecialToken>();
         interactionWeights = new WeightedDictionary<INTERACTION_TYPE>();
         eventTriggerWeights = new WeightedDictionary<bool>();
         eventTriggerWeights.AddElement(true, 200); //Hard coded for now
@@ -3008,7 +3011,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(this);
         PlayerManager.Instance.player.AddMinion(newMinion);
 
-        if (!characterToken.isObtained) {
+        if (!characterToken.isObtainedByPlayer) {
             PlayerManager.Instance.player.AddToken(characterToken);
         }
     }
@@ -3175,6 +3178,18 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             default:
             break;
         }
+    }
+    #endregion
+
+    #region Token Inventory
+    public void ObtainToken(SpecialToken token) {
+        if (!tokenInventory.Contains(token)) {
+            tokenInventory.Add(token);
+            token.AdjustQuantity(-1);
+        }
+    }
+    public void ConsumeToken(SpecialToken token) {
+        tokenInventory.Remove(token);
     }
     #endregion
 }

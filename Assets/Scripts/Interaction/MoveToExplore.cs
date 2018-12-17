@@ -111,16 +111,20 @@ public class MoveToExplore : Interaction {
     }
 
     private void CreateExploreEvent() {
-        if (_characterInvolved.job is Explorer) {
-            Interaction exploreEvent = (_characterInvolved.job as Explorer).CreateExplorerEvent();
-            if (exploreEvent != null) {
-                _characterInvolved.SetForcedInteraction(exploreEvent);
-            }
-        } 
+        //if (_characterInvolved.job is Explorer) {
+        //    Interaction exploreEvent = (_characterInvolved.job as Explorer).CreateExplorerEvent();
+        //    if (exploreEvent != null) {
+        //        _characterInvolved.SetForcedInteraction(exploreEvent);
+        //    }
+        //} 
         //else if (_characterInvolved.job is Spy) {
         //    Interaction exploreEvent = (_characterInvolved.job as Spy).CreateExplorerEvent();
         //    _characterInvolved.SetForcedInteraction(exploreEvent);
         //}
+        Interaction exploreEvent = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.EXPLORE_EVENT, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        if (exploreEvent != null) {
+            _characterInvolved.SetForcedInteraction(exploreEvent);
+        }
     }
 
     private Area GetTargetLocation() {

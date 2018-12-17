@@ -59,8 +59,8 @@ public class InteractionLocalizedTextCreatorEditor : EditorWindow {
             string stateName = string.Empty;
             if (currChecklist.name.Equals("State 1")){
                 stateName = "start";
-            } else if (currChecklist.name.Contains("State")) {
-                stateName = currChecklist.name.Substring(currChecklist.name.LastIndexOf(": ") + 1);
+            } else if (currChecklist.name.Contains("State") || currChecklist.name.Contains("Result")) {
+                stateName = currChecklist.name.Substring(currChecklist.name.IndexOf(": ") + 1);
                 stateName = stateName.Trim().ToLower();
             } else {
                 continue; //skip
@@ -70,14 +70,14 @@ public class InteractionLocalizedTextCreatorEditor : EditorWindow {
             for (int j = 0; j < currChecklist.checkItems.Count; j++) {
                 ChecklistItem currChecklistItem = currChecklist.checkItems[j];
                 if (currChecklistItem.name.Contains("Text Description")) {
-                    string description = currChecklistItem.name.Substring(currChecklistItem.name.LastIndexOf(": ") + 1);
+                    string description = currChecklistItem.name.Substring(currChecklistItem.name.IndexOf(": ") + 1);
                     description = ConvertToLogFillers(description.TrimStart());
                     localizationData.items.Add(new LocalizationItem() {
                         key = stateName + "_description",
                         value = description,
                     });
-                } else if (currChecklistItem.name.Contains("Log")) {
-                    string log = currChecklistItem.name.Substring(currChecklistItem.name.LastIndexOf(": ") + 1);
+                } else if (currChecklistItem.name.Contains("Log") || currChecklistItem.name.Contains("Logs")) {
+                    string log = currChecklistItem.name.Substring(currChecklistItem.name.IndexOf(": ") + 1);
                     log = ConvertToLogFillers(log.TrimStart());
                     localizationData.items.Add(new LocalizationItem() {
                         key = stateName + "_log" + logCount,
@@ -108,6 +108,7 @@ public class InteractionLocalizedTextCreatorEditor : EditorWindow {
         newString = newString.Replace("[Character Name]", "%00@");
         newString = newString.Replace("[Location Name]", "%04@");
         newString = newString.Replace("[Faction Name]", "%01@");
+        newString = newString.Replace("[Location Name 2]", "%14@");
         return newString;
     }
 }
