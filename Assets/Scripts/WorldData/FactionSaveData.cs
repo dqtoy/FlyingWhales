@@ -17,7 +17,7 @@ public class FactionSaveData {
     public int level;
     public bool isActive;
     public MORALITY morality;
-    public Dictionary<int, int> favor;
+    //public Dictionary<int, int> favor;
     public Dictionary<AreaCharacterClass, int> defenderWeights;
 
     public FactionSaveData(Faction faction) {
@@ -28,7 +28,7 @@ public class FactionSaveData {
         race = faction.race;
         ConstructOwnedAreas(faction);
         ConstructRelationships(faction);
-        ConstructFavor(faction);
+        //ConstructFavor(faction);
 
         if (faction.leader == null) {
             leaderID = -1;
@@ -54,10 +54,10 @@ public class FactionSaveData {
             relationships.Add(kvp.Key.id, kvp.Value.relationshipStatus);
         }
     }
-    private void ConstructFavor(Faction faction) {
-        favor = new Dictionary<int, int>();
-        foreach (KeyValuePair<Faction, int> kvp in faction.favor) {
-            favor.Add(kvp.Key.id, kvp.Value);
-        }
-    }
+    //private void ConstructFavor(Faction faction) {
+    //    favor = new Dictionary<int, int>();
+    //    foreach (KeyValuePair<Faction, int> kvp in faction.favor) {
+    //        favor.Add(kvp.Key.id, kvp.Value);
+    //    }
+    //}
 }

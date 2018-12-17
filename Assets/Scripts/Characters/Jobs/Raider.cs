@@ -128,7 +128,7 @@ public class Raider : Job {
     private void FavorEffects(int amount) {
         Area targetArea = character.specificLocation.tileLocation.areaOfTile;
         if (targetArea.owner != null) {
-            targetArea.owner.AdjustFavorFor(character.faction, amount);
+            targetArea.owner.AdjustRelationshipFor(character.faction, amount);
         }
     }
 }

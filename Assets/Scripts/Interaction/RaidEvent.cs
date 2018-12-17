@@ -155,7 +155,7 @@ public class RaidEvent : Interaction {
         _characterInvolved.LevelUp(); //Minion Character
         investigatorMinion.character.LevelUp(); //Instigator
         //Player Favor Count +1 on Raided Faction
-        interactable.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 1);
+        interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
         int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable.tileLocation.areaOfTile);
         GoBackHome(() => TransferSupplies(obtainedSupply, _characterInvolved.homeLandmark.tileLocation.areaOfTile,
             interactable.tileLocation.areaOfTile));
@@ -171,7 +171,7 @@ public class RaidEvent : Interaction {
         investigatorMinion.LevelUp(); //**Level Up**: Instigator Minion +1
         GoBackHome();
         //Player Favor Count +2 on Raided Faction
-        interactable.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);
+        interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
         }
@@ -182,7 +182,7 @@ public class RaidEvent : Interaction {
         _characterInvolved.Death();
 
         //Player Favor Count +2 on Raided Faction
-        interactable.owner.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);
+        interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
         }
@@ -197,7 +197,7 @@ public class RaidEvent : Interaction {
         GoBackHome(() => TransferSupplies(obtainedSupply, _characterInvolved.homeLandmark.tileLocation.areaOfTile,
             interactable.tileLocation.areaOfTile));
         //Player Favor Count +2 from Raider Faction
-        _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);
+        _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
 
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
@@ -208,13 +208,13 @@ public class RaidEvent : Interaction {
         //**Mechanics**: Raider travels back to his home area.
         GoBackHome();
         //Player Favor Count +1 from Raider Faction
-        _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 1);
+        _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
     }
     private void AssistedRaidCriticallyFailedRewardEffect(InteractionState state) {
         //**Mechanics**: Raider dies.
         _characterInvolved.Death();
         //Player Favor Count +2 from Raider Faction
-        _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);
+        _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
     }
     private void NormalRaidSuccessRewardEffect(InteractionState state) {
         //**Level Up**: Raider Character +1

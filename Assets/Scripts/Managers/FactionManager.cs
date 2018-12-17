@@ -47,7 +47,7 @@ public class FactionManager : MonoBehaviour {
 #else
             }
 #endif
-            LoadAdditionalFactionInfo(data);
+            //LoadAdditionalFactionInfo(data);
         }
 #if !WORLD_CREATION_TOOL
         //if (data.HasFactionlessCharacter()) {
@@ -171,14 +171,14 @@ public class FactionManager : MonoBehaviour {
     //        }
     //    }
     //}
-    public void LoadAdditionalFactionInfo(WorldSaveData data) {
-        for (int i = 0; i < data.factionsData.Count; i++) {
-            FactionSaveData currData = data.factionsData[i];
-            Faction faction = GetFactionBasedOnID(currData.factionID);
-            //LoadRelationshipsForFaction(faction, currData);
-            LoadFavorsForFaction(faction, currData);
-        }
-    }
+    //public void LoadAdditionalFactionInfo(WorldSaveData data) {
+    //    for (int i = 0; i < data.factionsData.Count; i++) {
+    //        FactionSaveData currData = data.factionsData[i];
+    //        Faction faction = GetFactionBasedOnID(currData.factionID);
+    //        //LoadRelationshipsForFaction(faction, currData);
+    //        //LoadFavorsForFaction(faction, currData);
+    //    }
+    //}
     #endregion
 
     #region Emblem
@@ -300,8 +300,8 @@ public class FactionManager : MonoBehaviour {
         for (int i = 0; i < allFactions.Count; i++) {
             Faction otherFaction = allFactions[i];
             if (otherFaction.id != faction.id) {
-                faction.AddNewFactionFavor(otherFaction);
-                otherFaction.AddNewFactionFavor(faction);
+                //faction.AddNewFactionFavor(otherFaction);
+                //otherFaction.AddNewFactionFavor(faction);
             }
         }
     }
@@ -311,27 +311,26 @@ public class FactionManager : MonoBehaviour {
             if (otherFaction.id != faction.id) {
                 FactionRelationship rel = CreateNewRelationshipBetween(otherFaction, faction);
                 if (data.relationships.ContainsKey(otherFaction.id)) {
-                    rel.ChangeRelationshipStatus(data.relationships[otherFaction.id]);
+                    rel.SetRelationshipStatus(data.relationships[otherFaction.id]);
                 }
             }
         }
     }
     
-    public void LoadFavorsForFaction(Faction faction, FactionSaveData data) {
-        if (data.favor == null) {
-            CreateFavorsForFaction(faction);
-        } else {
-            for (int i = 0; i < allFactions.Count; i++) {
-                Faction otherFaction = allFactions[i];
-                if (otherFaction.id != faction.id) {
-                    if (data.favor.ContainsKey(otherFaction.id)) {
-                        faction.AddNewFactionFavor(otherFaction, data.favor[otherFaction.id]);
-                    }
-                }
-            }
-        }
-        
-    }
+    //public void LoadFavorsForFaction(Faction faction, FactionSaveData data) {
+    //    if (data.favor == null) {
+    //        CreateFavorsForFaction(faction);
+    //    } else {
+    //        for (int i = 0; i < allFactions.Count; i++) {
+    //            Faction otherFaction = allFactions[i];
+    //            if (otherFaction.id != faction.id) {
+    //                if (data.favor.ContainsKey(otherFaction.id)) {
+    //                    //faction.AddNewFactionFavor(otherFaction, data.favor[otherFaction.id]);
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
     public void RemoveRelationshipsWith(Faction faction) {
         for (int i = 0; i < allFactions.Count; i++) {
             Faction otherFaction = allFactions[i];
@@ -380,15 +379,15 @@ public class FactionManager : MonoBehaviour {
     }
     public void DeclareWarBetween(Faction faction1, Faction faction2) {
         FactionRelationship rel = GetRelationshipBetween(faction1, faction2);
-        rel.ChangeRelationshipStatus(FACTION_RELATIONSHIP_STATUS.AT_WAR);
+        rel.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
         Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_NOTIFICATION, "<color=\"green\"><b> " + faction1.name + "</b></color> declares war on <color=\"green\"><b>" + faction2.name + "</b></color>.", 5, null);
     }
     public void DeclarePeaceBetween(Faction faction1, Faction faction2) {
-        faction1.SetFavorFor(faction2, -4);
-        faction2.SetFavorFor(faction1, -4);
+        //faction1.SetFavorFor(faction2, -4);
+        //faction2.SetFavorFor(faction1, -4);
 
         FactionRelationship rel = GetRelationshipBetween(faction1, faction2);
-        rel.ChangeRelationshipStatus(FACTION_RELATIONSHIP_STATUS.NON_HOSTILE);
+        rel.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.NEUTRAL);
         Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_NOTIFICATION, "<color=\"green\"><b> " + faction1.name + "</b></color> declares peace on <color=\"green\"><b>" + faction2.name + "</b></color>.", 5, null);
     }
     public int GetAverageFactionLevel() {

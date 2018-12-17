@@ -194,7 +194,7 @@ public class ConsoleMenu : UIMenu {
         }
 
         FactionRelationship rel = FactionManager.Instance.GetRelationshipBetween(faction1, faction2);
-        rel.ChangeRelationshipStatus(newRelStatus);
+        rel.SetRelationshipStatus(newRelStatus);
 
         AddSuccessMessage("Changed relationship status of " + faction1.name + " and " + faction2.name + " to " + rel.relationshipStatus.ToString());
     }
@@ -240,9 +240,9 @@ public class ConsoleMenu : UIMenu {
             return;
         }
 
-        faction1.AdjustFavorFor(faction2, adjustment);
+        faction1.AdjustRelationshipFor(faction2, adjustment);
 
-        AddSuccessMessage("Changed favor of " + faction1.name + " towards " + faction2.name + ".New favor is " + faction1.favor[faction2].ToString());
+        //AddSuccessMessage("Changed favor of " + faction1.name + " towards " + faction2.name + ".New favor is " + faction1.favor[faction2].ToString());
     }
     #endregion
 

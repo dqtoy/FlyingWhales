@@ -94,7 +94,7 @@ public class Garrison : StructureObj {
     75 out of 200
          */
     private void ArmyAttacks() {
-        if (_objectLocation.GetInteractionOfType(INTERACTION_TYPE.ARMY_ATTACKS) == null && _objectLocation.owner.HasRelationshipStatus(FACTION_RELATIONSHIP_STATUS.AT_WAR)) {
+        if (_objectLocation.GetInteractionOfType(INTERACTION_TYPE.ARMY_ATTACKS) == null && _objectLocation.owner.HasRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY)) {
             bool hasArmyPartyWithAtLeast3Members = false;
             for (int i = 0; i < _objectLocation.charactersWithHomeOnLandmark.Count; i++) {
                 if (_objectLocation.charactersWithHomeOnLandmark[i].currentParty.characters.Count >= 3) {

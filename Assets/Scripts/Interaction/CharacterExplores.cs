@@ -180,7 +180,7 @@ public class CharacterExplores : Interaction {
 
     private BaseLandmark GetTargetLandmark() {
         List<BaseLandmark> choices = new List<BaseLandmark>();
-        List<Faction> nonHostileFactions = characterInvolved.faction.GetFactionsWithRelationship(FACTION_RELATIONSHIP_STATUS.NON_HOSTILE);
+        List<Faction> nonHostileFactions = characterInvolved.faction.GetFactionsWithRelationship(FACTION_RELATIONSHIP_STATUS.ALLY);
         nonHostileFactions.Add(characterInvolved.faction);
         for (int i = 0; i < nonHostileFactions.Count; i++) {
             Faction currFaction = nonHostileFactions[i];

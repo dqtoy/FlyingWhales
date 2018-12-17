@@ -132,7 +132,7 @@ public class FactionAttacks : Interaction {
     }
     private void SuccessfulEmpowermentEffect(InteractionState state) {
         investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
-        interactable.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, 2);
+        interactable.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
         //Add Empowered Trait to Attacking Units - just one attacking unit or all?
 
         state.AddLogFiller(new LogFiller(interactable.faction, interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
@@ -169,7 +169,7 @@ public class FactionAttacks : Interaction {
     private void WeakenedUnits(InteractionState state) {
         state.AddLogFiller(new LogFiller(interactable.faction, interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
 
-        interactable.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -3);
+        interactable.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -3);
         //Add Weakened Trait to Attacking Units - just one attacking unit or all?
         //How do logs work? How can I override it?
     }
@@ -179,7 +179,7 @@ public class FactionAttacks : Interaction {
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < 60) {
             FactionRelationship relationship = interactable.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction);
-            relationship.ChangeRelationshipStatus(FACTION_RELATIONSHIP_STATUS.AT_WAR);
+            relationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
         }
     }
     private void AttackTargetArea(Party assaultParty = null) {

@@ -143,7 +143,7 @@ public class WorkEvent : Interaction {
         //**Level Up**: Instigator Minion +1
         investigatorMinion.LevelUp();
         //**Mechanics**: Favor Count -2
-        _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -2);
+        _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -2);
 
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
@@ -157,7 +157,7 @@ public class WorkEvent : Interaction {
         //**Level Up**: Worker Character +1
         _characterInvolved.LevelUp();
         //**Mechanics**: Favor Count -1
-        _characterInvolved.faction.AdjustFavorFor(PlayerManager.Instance.player.playerFaction, -1);
+        _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -1);
 
         state.AddLogFiller(new LogFiller(null, obtainedSupplies.ToString(), LOG_IDENTIFIER.STRING_1));
     }
