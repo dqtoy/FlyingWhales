@@ -859,21 +859,27 @@ public class Area {
                 candidates.RemoveAt(index);
 
                 INTERACTION_TYPE interactionType = GetInteractionTypeForResidentCharacter(chosenCandidate);
+                Interaction interaction = null;
                 if (interactionType != INTERACTION_TYPE.MOVE_TO_RAID && interactionType != INTERACTION_TYPE.MOVE_TO_SCAVENGE) {
                     supplySpent += 100;
                     if (supplySpent < suppliesInBank) {
-                        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
+                        interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
                         chosenCandidate.SetForcedInteraction(interaction);
                     } else if (supplySpent == suppliesInBank) {
-                        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
+                        interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
                         chosenCandidate.SetForcedInteraction(interaction);
                         break;
                     } else {
                         break;
                     }
                 } else {
-                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
+                    interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
                     chosenCandidate.SetForcedInteraction(interaction);
+                }
+                if(interaction != null) {
+                    interaction.SetCanInteractionBeDoneAction(() => CanDoAreaTaskInteraction(interactionType, chosenCandidate));
+                    interaction.SetInitializeAction(() => AdjustSuppliesInBank(-100));
+                    interaction.SetMinionSuccessAction(() => AdjustSuppliesInBank(100));
                 }
             }
         }
@@ -886,6 +892,9 @@ public class Area {
             }
         }
         return interactionWeights.PickRandomElementGivenWeights();
+    }
+    private bool CanDoAreaTaskInteraction(INTERACTION_TYPE interactionType, Character character) {
+        return suppliesInBank >= 100 && InteractionManager.Instance.CanCreateInteraction(interactionType, character);
     }
     #endregion
 

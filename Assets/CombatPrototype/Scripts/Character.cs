@@ -3078,11 +3078,34 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         string interactionLog = GameManager.Instance.TodayLogString() + "Generating daily interaction for " + this.name;
         if (_forcedInteraction != null) {
             interactionLog += "\nUsing forced interaction: " + _forcedInteraction.type.ToString();
-            AddInteraction(_forcedInteraction);
+            if(_forcedInteraction.CanInteractionBeDone()) {
+                AddInteraction(_forcedInteraction);
+            } else {
+                interactionLog += "\nCan't do forced interaction: " + _forcedInteraction.type.ToString();
+            }
             _forcedInteraction = null;
         } else {
             //Only go here if away from home, then choose from the character interactions away from home
             //TODO
+            if(InteractionManager.Instance.CanCreateInteraction(INTERACTION_TYPE.RETURN_HOME, this)) {
+                WeightedDictionary<string> awayFromHomeInteractionWeights = new WeightedDictionary<string>();
+                awayFromHomeInteractionWeights.AddElement("Return", 100);
+
+                for (int i = 0; i < tokenInventory.Count; i++) {
+                    if (tokenInventory[i].CanBeUsed()) {
+                        awayFromHomeInteractionWeights.AddElement(tokenInventory[i].tokenName, 100);
+                    }
+                }
+                string result = awayFromHomeInteractionWeights.PickRandomElementGivenWeights();
+                if(result == "Return") {
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RETURN_HOME, specificLocation as BaseLandmark);
+                    AddInteraction(interaction);
+                } else {
+                    UseItemOnCharacter interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.USE_ITEM_ON_CHARACTER, specificLocation as BaseLandmark) as UseItemOnCharacter;
+                    interaction.SetItemToken(GetTokenByName(result));
+                    AddInteraction(interaction);
+                }
+            }
 
 
             //int chance = UnityEngine.Random.Range(0, 100);
@@ -3101,7 +3124,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             //            throw new Exception(GameManager.Instance.TodayLogString() + this.name + "'s specific location (" + specificLocation.locationName + ") is not a landmark!");
             //        }
             //        Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, specificLocation as BaseLandmark);
-                    
+
             //        if (job.jobType == JOB.LEADER) {
             //            //For Faction Upgrade Interaction Only
             //            Area area = _homeLandmark.tileLocation.areaOfTile;
@@ -3190,6 +3213,14 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     }
     public void ConsumeToken(SpecialToken token) {
         tokenInventory.Remove(token);
+    }
+    public SpecialToken GetTokenByName(string name) {
+        for (int i = 0; i < tokenInventory.Count; i++) {
+            if (tokenInventory[i].tokenName == name) {
+                return tokenInventory[i];
+            }
+        }
+        return null;
     }
     #endregion
 }
