@@ -104,6 +104,7 @@ public class InteractionLocalizedTextCreatorEditor : EditorWindow {
     private string ConvertToLogFillers(string source) {
         string newString = source;
         newString = newString.Replace("[Demon Name]", "%113%");
+        newString = newString.Replace("[Demon]", "%113%");
         newString = newString.Replace("[Minion Name]", "%113%");
         newString = newString.Replace("[Character Name]", "%00@");
         newString = newString.Replace("[Location Name]", "%04@");

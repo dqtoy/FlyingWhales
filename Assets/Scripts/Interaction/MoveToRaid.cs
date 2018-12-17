@@ -90,12 +90,6 @@ public class MoveToRaid : Interaction {
     #endregion
 
     private void RaidCancelledRewardEffect(InteractionState state) {
-        //**Text Description**: [Demon Name] convinced [Character Name] to cancel [his/her] plan to raid [Location Name].
-        if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
-        }
-        //**Log**: [Demon Name] persuaded [Character Name] to stop [his/her] plans to raid [Location Name].
-        state.AddLogFiller(new LogFiller(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
         investigatorMinion.LevelUp();
     }
     private void RaidProceedsRewardEffect(InteractionState state) {
@@ -112,7 +106,6 @@ public class MoveToRaid : Interaction {
     private void NormalRaidRewardEffect(InteractionState state) {
         //Selected character will travel to Location 1 to start a Raid Event.
         StartMove();
-        //**Text Description**: [Demon Name] did not interfere with [Character Name]'s plans.
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         }
@@ -132,12 +125,15 @@ public class MoveToRaid : Interaction {
 
     private Area GetTargetArea() {
         List<Area> choices = new List<Area>();
-        //Select another area owned by a different Faction as the Raid target.
+        //there must be at least one area that is owned by a different faction that is not Ally or Friend of this faction
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
             if (currArea.owner != null && currArea.id != PlayerManager.Instance.player.playerArea.id 
                 && currArea.owner.id != _characterInvolved.faction.id) {
-                choices.Add(currArea);
+                FACTION_RELATIONSHIP_STATUS relStat = currArea.owner.GetRelationshipWith(_characterInvolved.faction).relationshipStatus;
+                if (relStat != FACTION_RELATIONSHIP_STATUS.ALLY && relStat != FACTION_RELATIONSHIP_STATUS.FRIEND) {
+                    choices.Add(currArea);
+                }
             }
         }
         if (choices.Count > 0) {

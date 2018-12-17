@@ -60,21 +60,21 @@ public class RaidEvent : Interaction {
         if (state.name == "Start") {
             ActionOption alert = new ActionOption {
                 interactionState = state,
-                cost = new CurrenyCost { amount = 50, currency = CURRENCY.SUPPLY },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Alert " + interactable.tileLocation.areaOfTile.name + ".",
                 duration = 0,
                 effect = () => AlertOptionEffect(state),
-                jobNeeded = JOB.INSTIGATOR,
-                doesNotMeetRequirementsStr = "Minion must be a instigator",
+                jobNeeded = JOB.DIPLOMAT,
+                doesNotMeetRequirementsStr = "Minion must be a diplomat",
             };
             ActionOption assist = new ActionOption {
                 interactionState = state,
-                cost = new CurrenyCost { amount = 20, currency = CURRENCY.MANA },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Assist with the raid.",
                 duration = 0,
                 effect = () => AssistOptionEffect(state),
-                jobNeeded = JOB.DIPLOMAT,
-                doesNotMeetRequirementsStr = "Minion must be a diplomat",
+                jobNeeded = JOB.INSTIGATOR,
+                doesNotMeetRequirementsStr = "Minion must be an instigator",
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -150,31 +150,30 @@ public class RaidEvent : Interaction {
     #endregion
 
     private void AlertedRaidSuccessRewardEffect(InteractionState state) {
-        //**Mechanics**: Compute Supply obtained by raider and transfer it to his home area. Raider also travels back to his home area.
-        //**Level Up**: Instigator Minion +1, Minion Character +1
-        _characterInvolved.LevelUp(); //Minion Character
-        investigatorMinion.character.LevelUp(); //Instigator
-        //Player Favor Count +1 on Raided Faction
-        interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
+        //**Mechanics**: Compute Supply obtained by raider and transfer it to his home area.
+        //**Level Up**: Raider Character +1
+        _characterInvolved.LevelUp(); //Raider Character
         int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable.tileLocation.areaOfTile);
-        GoBackHome(() => TransferSupplies(obtainedSupply, _characterInvolved.homeLandmark.tileLocation.areaOfTile,
-            interactable.tileLocation.areaOfTile));
+        TransferSupplies(obtainedSupply, _characterInvolved.homeLandmark.tileLocation.areaOfTile,
+            interactable.tileLocation.areaOfTile);
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
-            state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
         }
         state.AddLogFiller(new LogFiller(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void AlertedRaidFailRewardEffect(InteractionState state) {
         //**Mechanics**: Scavenger travels back to his home area.
-        investigatorMinion.LevelUp(); //**Level Up**: Instigator Minion +1
+        investigatorMinion.LevelUp(); //**Level Up**: Diplomat Minion +1
         GoBackHome();
         //Player Favor Count +2 on Raided Faction
-        interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
+        interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
+        /*
+         DITO KA NA MYKEL!!!!
+         */
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
         }
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void AlertedRaidCriticallyFailRewardEffect(InteractionState state) {
         //**Mechanics**: Scavenger dies.
