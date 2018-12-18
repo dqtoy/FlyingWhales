@@ -121,7 +121,12 @@ public class MoveToExpand : Interaction {
     private void CreateExpansionEvent() {
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.EXPANSION_EVENT, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
         _characterInvolved.SetForcedInteraction(interaction);
+        interaction.SetCanInteractionBeDoneAction(IsExpansionStillValid);
         targetLocation.RemoveEventTargettingThis(this);
+    }
+
+    private bool IsExpansionStillValid() {
+        return _characterInvolved.specificLocation.tileLocation.areaOfTile != null && _characterInvolved.specificLocation.tileLocation.areaOfTile.owner == null;
     }
 
     private Area GetTargetLocation() {

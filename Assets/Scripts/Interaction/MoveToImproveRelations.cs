@@ -126,7 +126,11 @@ public class MoveToImproveRelations : Interaction {
     private void CreateImproveRelationsEvent() {
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.IMPROVE_RELATIONS_EVENT, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
         (interaction as ImproveRelationsEvent).SetTargetFaction(targetFaction);
+        interaction.SetCanInteractionBeDoneAction(IsImproveRelationsValid);
         _characterInvolved.SetForcedInteraction(interaction);
+    }
+    private bool IsImproveRelationsValid() {
+        return targetLocation.owner != null && targetLocation.owner.id == targetFaction.id;
     }
 
     private Area GetTargetLocation() {

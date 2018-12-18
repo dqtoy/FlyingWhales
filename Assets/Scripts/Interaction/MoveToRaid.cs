@@ -9,6 +9,7 @@ public class MoveToRaid : Interaction {
     private const string Normal_Raid = "Normal Raid";
 
     private Area targetArea;
+    private Faction targetFaction;
 
     public MoveToRaid(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_RAID, 0) {
         _name = "Move To Raid";
@@ -29,6 +30,7 @@ public class MoveToRaid : Interaction {
         if(targetArea == null) {
             targetArea = GetTargetArea();
         }
+        targetFaction = targetArea.owner;
         AddToDebugLog("Set target area to " + targetArea.name);
         //**Text Description**: [Character Name] is about to leave for [Location Name 1] to scavenge for supplies.
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
@@ -127,7 +129,11 @@ public class MoveToRaid : Interaction {
     private void CreateRaidEvent() {
         AddToDebugLog(_characterInvolved.name + " will now create raid event");
         Interaction raid = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_EVENT, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        raid.SetCanInteractionBeDoneAction(IsRaidStillValid);
         _characterInvolved.SetForcedInteraction(raid);
+    }
+    private bool IsRaidStillValid() {
+        return targetArea.owner != null && targetArea.owner.id == targetFaction.id; //check if the faction owner of the target area has not changed
     }
 
     private Area GetTargetArea() {

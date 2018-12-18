@@ -118,7 +118,15 @@ public class MoveToRecruit : Interaction {
     private void CreateRecruitEvent() {
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RECRUIT_ACTION, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
         (interaction as RecruitAction).SetTargetCharacter(targetCharacter);
+        interaction.SetCanInteractionBeDoneAction(IsRecruitActionStillValid);
         _characterInvolved.SetForcedInteraction(interaction);
+    }
+
+    private bool IsRecruitActionStillValid() {
+        /* It will no longer be valid if the target character to be recruited is no longer in the location. 
+         * It will also no longer be valid if the recruiter's home area's Residents Capacity is already full.
+         */
+        return targetCharacter.specificLocation.tileLocation.areaOfTile == targetLocation && !_characterInvolved.homeLandmark.tileLocation.areaOfTile.IsResidentsFull();
     }
 
     private Character GetTargetCharacter() {

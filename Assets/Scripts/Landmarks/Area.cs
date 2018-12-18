@@ -880,7 +880,7 @@ public class Area {
                     chosenCandidate.SetForcedInteraction(interaction);
                 }
                 if(interaction != null) {
-                    interaction.SetCanInteractionBeDoneAction(() => CanDoAreaTaskInteraction(interactionType, chosenCandidate));
+                    interaction.SetCanInteractionBeDoneAction(() => CanDoAreaTaskInteraction(interaction.type, chosenCandidate));
                     interaction.SetInitializeAction(() => AdjustSuppliesInBank(-100));
                     interaction.SetMinionSuccessAction(() => AdjustSuppliesInBank(100));
                 }
@@ -979,7 +979,7 @@ public class Area {
     public void AddResident(Character character, bool ignoreCapacity = true) {
         if (!areaResidents.Contains(character)) {
             if (!ignoreCapacity) {
-                if (areaResidents.Count >= residentCapacity) {
+                if (IsResidentsFull()) {
                     return; //area is at capacity
                 }
             }
@@ -1013,6 +1013,9 @@ public class Area {
             }
         }
         return characters;
+    }
+    public bool IsResidentsFull() {
+        return areaResidents.Count >= residentCapacity;
     }
     public void GenerateNeutralCharacters() {
         if (defaultRace.race == RACE.NONE) {

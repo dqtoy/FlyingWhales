@@ -233,6 +233,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.IMPROVE_RELATIONS_EVENT:
                 createdInteraction = new ImproveRelationsEvent(interactable);
                 break;
+            case INTERACTION_TYPE.UNABLE_TO_PERFORM:
+                createdInteraction = new UnableToPerform(interactable);
+                break;
         }
         return createdInteraction;
     }
