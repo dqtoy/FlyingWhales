@@ -91,6 +91,7 @@ public class MoveToRaid : Interaction {
 
     private void RaidCancelledRewardEffect(InteractionState state) {
         investigatorMinion.LevelUp();
+        MinionSuccess();
     }
     private void RaidProceedsRewardEffect(InteractionState state) {
         //Selected character will travel to Location 1 to start a Raid Event.

@@ -3098,7 +3098,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 }
                 string result = awayFromHomeInteractionWeights.PickRandomElementGivenWeights();
                 if(result == "Return") {
-                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RETURN_HOME, specificLocation as BaseLandmark);
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, specificLocation as BaseLandmark);
                     AddInteraction(interaction);
                 } else {
                     UseItemOnCharacter interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.USE_ITEM_ON_CHARACTER, specificLocation as BaseLandmark) as UseItemOnCharacter;

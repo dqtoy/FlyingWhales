@@ -45,7 +45,7 @@ public class MoveToScavenge : Interaction {
             ActionOption stopThem = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 50, currency = CURRENCY.SUPPLY },
-                name = "Pursuade " + _characterInvolved.name + " to cancel " + Utilities.GetPossessivePronounForCharacter(_characterInvolved, false) + " plans.",
+                name = "Prevent " + Utilities.GetPossessivePronounForCharacter(_characterInvolved, false) + " from leaving.",
                 duration = 0,
                 effect = () => PursuadeToCancelEffect(state),
                 jobNeeded = JOB.DISSUADER,
@@ -94,33 +94,24 @@ public class MoveToScavenge : Interaction {
     #endregion
 
     private void ScavengeCancelledRewardEffect(InteractionState state) {
-        //**Text Description**: [Demon Name] convinced [Character Name] to cancel [his/her] plan to scavenge at [Location Name].
-        if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
-        }
-        //**Log**: [Demon Name] persuaded [Character Name] to stop [his/her] plans to scavenge at [Location Name].
-        state.AddLogFiller(new LogFiller(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
+        //**Level Up**: Dissuader Minion +1
         investigatorMinion.LevelUp();
+        MinionSuccess();
     }
     private void ScavengeProceedsRewardEffect(InteractionState state) {
         //Selected character will travel to Location 1 to start a Scavenge Event.
         StartMove();
-        //**Text Description**: [Demon Name] failed to convince [Character Name] to cancel [his/her] plan to scavenge at [Location Name].
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         }
-        //**Log**: [Demon Name] failed to persuade [Character Name] to stop [his/her] plans to scavenge at [Location Name].
-        //**Log**: [Character Name] left to scavenge at [Location Name].
         state.AddLogFiller(new LogFiller(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void NormalScavengeRewardEffect(InteractionState state) {
         //Selected character will travel to Location 1 to start a Scavenge Event.
         StartMove();
-        //**Text Description**: [Demon Name] did not interfere with [Character Name]'s plans.
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         }
-        //**Log**: [Character Name] left to scavenge at [Location Name].
         state.AddLogFiller(new LogFiller(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
     }
 
