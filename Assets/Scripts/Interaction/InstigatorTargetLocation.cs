@@ -19,6 +19,7 @@ public class InstigatorTargetLocation : Interaction {
     #region Overrides
     public override void CreateStates() {
         _targetLocationToken = _tokenTrigger as LocationToken;
+        SetAttackers();
 
         InteractionState startState = new InteractionState(Start, this);
         InteractionState induceAttackState = new InteractionState(Induce_Attack, this);
@@ -65,7 +66,6 @@ public class InstigatorTargetLocation : Interaction {
 
     #region Action Options
     private bool CanInduceAttack(ActionOption option) {
-        SetAttackers();
         if(_attackers == null) {
             option.disabledTooltipText = "This location is not strong enough to launch an assault on " + _targetLocationToken.nameInBold;
             return false;
@@ -81,6 +81,44 @@ public class InstigatorTargetLocation : Interaction {
         }
         return true;
     }
+    private void InduceOption(InteractionState state) {
+        SetCurrentState(_states[Induce_Attack]);
+    }
+    private void DoNothingOption() {
+        SetCurrentState(_states[Do_Nothing]);
+    }
+    #endregion
+
+    #region State Effects
+    private void InduceAttackEffect(InteractionState state) {
+        investigatorMinion.LevelUp();
+
+        FactionRelationship relationship = interactable.tileLocation.areaOfTile.owner.GetRelationshipWith(_targetLocationToken.location.owner);
+        if(relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ENEMY) {
+            relationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
+
+            Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
+            log.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            log.AddToFillers(_targetLocationToken.location.owner, _targetLocationToken.location.owner.name, LOG_IDENTIFIER.FACTION_2);
+            state.AddLogToInvolvedObjects(log);
+        }
+
+        MoveToAttack moveToAttack = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_ATTACK, interactable) as MoveToAttack;
+        moveToAttack.SetTargetAndAttackers(_targetLocationToken.location, _attackers);
+        _attackers[0].InduceInteraction(moveToAttack);
+
+        state.descriptionLog.AddToFillers(_targetLocationToken.location, _targetLocationToken.location.name, LOG_IDENTIFIER.LANDMARK_2);
+        for (int i = 0; i < _attackers.Count; i++) {
+            state.descriptionLog.AddToFillers(_attackers[0], _attackers[0].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
+            state.AddLogFiller(new LogFiller(_attackers[0], _attackers[0].name, LOG_IDENTIFIER.CHARACTER_LIST_1));
+        }
+    }
+    private void DoNothingEffect(InteractionState state) {
+        state.descriptionLog.AddToFillers(null, _targetLocationToken.ToString(), LOG_IDENTIFIER.STRING_1);
+        state.AddLogFiller(new LogFiller(null, _targetLocationToken.ToString(), LOG_IDENTIFIER.STRING_1));
+    }
+    #endregion
+
     private void SetAttackers() {
         Area areaToAttack = interactable.tileLocation.areaOfTile;
         Area targetArea = _targetLocationToken.location;
@@ -127,41 +165,4 @@ public class InstigatorTargetLocation : Interaction {
             }
         }
     }
-    private void InduceOption(InteractionState state) {
-        SetCurrentState(_states[Induce_Attack]);
-    }
-    private void DoNothingOption() {
-        SetCurrentState(_states[Do_Nothing]);
-    }
-    #endregion
-
-    #region State Effects
-    private void InduceAttackEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
-
-        FactionRelationship relationship = interactable.tileLocation.areaOfTile.owner.GetRelationshipWith(_targetLocationToken.location.owner);
-        if(relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ENEMY) {
-            relationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
-
-            Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
-            log.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
-            log.AddToFillers(_targetLocationToken.location.owner, _targetLocationToken.location.owner.name, LOG_IDENTIFIER.FACTION_2);
-            state.AddLogToInvolvedObjects(log);
-        }
-
-        MoveToAttack moveToAttack = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_ATTACK, interactable) as MoveToAttack;
-        moveToAttack.SetTargetAndAttackers(_targetLocationToken.location, _attackers);
-        _attackers[0].InduceInteraction(moveToAttack);
-
-        state.descriptionLog.AddToFillers(_targetLocationToken.location, _targetLocationToken.location.name, LOG_IDENTIFIER.LANDMARK_2);
-        for (int i = 0; i < _attackers.Count; i++) {
-            state.descriptionLog.AddToFillers(_attackers[0], _attackers[0].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
-            state.AddLogFiller(new LogFiller(_attackers[0], _attackers[0].name, LOG_IDENTIFIER.CHARACTER_LIST_1));
-        }
-    }
-    private void DoNothingEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(null, _targetLocationToken.ToString(), LOG_IDENTIFIER.STRING_1);
-        state.AddLogFiller(new LogFiller(null, _targetLocationToken.ToString(), LOG_IDENTIFIER.STRING_1));
-    }
-    #endregion
 }

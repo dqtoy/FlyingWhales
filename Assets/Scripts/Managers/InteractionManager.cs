@@ -216,6 +216,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.EXPANSION_EVENT:
                 createdInteraction = new ExpansionEvent(interactable);
                 break;
+            case INTERACTION_TYPE.RAIDER_CHARACTER_ENCOUNTER:
+                createdInteraction = new RaiderCharacterEncounter(interactable);
+                break;
+            case INTERACTION_TYPE.RAIDER_TARGET_LOCATION:
+                createdInteraction = new RaiderTargetLocation(interactable);
+                break;
         }
         return createdInteraction;
     }

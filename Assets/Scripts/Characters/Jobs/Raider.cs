@@ -20,6 +20,24 @@ public class Raider : Job {
     }
 
     #region Overrides
+    protected override void PassiveEffect(Area area) {
+        int takenSupplies = (int)(area.suppliesInBank * 0.25f);
+        area.AdjustSuppliesInBank(-takenSupplies);
+        PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, takenSupplies);
+    }
+    protected override bool IsTokenCompatibleWithJob(Token token) {
+        if (token.tokenType == TOKEN_TYPE.CHARACTER) {
+            CharacterToken characterToken = token as CharacterToken;
+            return characterToken.character.specificLocation.tileLocation.areaOfTile.id == _character.specificLocation.tileLocation.areaOfTile.id;
+        } else if (token.tokenType == TOKEN_TYPE.LOCATION) {
+            LocationToken locationToken = token as LocationToken;
+            //If current area has factions, and target area's faction is different from current area's faction or target area has no faction, and target area is not the current area - return true
+            return _character.specificLocation.tileLocation.areaOfTile.owner != null
+                && (locationToken.location.owner == null || (locationToken.location.owner != null && locationToken.location.owner.id != _character.specificLocation.tileLocation.areaOfTile.owner.id))
+                && locationToken.location.id != _character.specificLocation.tileLocation.areaOfTile.id;
+        }
+        return base.IsTokenCompatibleWithJob(token);
+    }
     public override void DoJobAction() {
         base.DoJobAction();
 
