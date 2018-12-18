@@ -236,6 +236,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.DIPLOMAT_FACTION_MEDIATION:
                 createdInteraction = new DiplomatFactionMediation(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS:
+                createdInteraction = new MoveToImproveRelations(interactable);
+                break;
+            case INTERACTION_TYPE.IMPROVE_RELATIONS_EVENT:
+                createdInteraction = new ImproveRelationsEvent(interactable);
+                break;
         }
         return createdInteraction;
     }
