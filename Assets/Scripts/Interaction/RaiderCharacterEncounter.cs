@@ -63,7 +63,7 @@ public class RaiderCharacterEncounter : Interaction {
 
             ActionOption assaultOption = new ActionOption {
                 interactionState = state,
-                cost = new CurrenyCost { amount = 0, currency = CURRENCY.MANA },
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Assault " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + ".",
                 enabledTooltipText = "May lead to death or injury...",
                 effect = () => AssaultOption(),

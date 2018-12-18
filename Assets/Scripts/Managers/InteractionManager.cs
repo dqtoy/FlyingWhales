@@ -242,6 +242,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.IMPROVE_RELATIONS_EVENT:
                 createdInteraction = new ImproveRelationsEvent(interactable);
                 break;
+            case INTERACTION_TYPE.RECRUITER_CHARACTER_ENCOUNTER:
+                createdInteraction = new RecruiterCharacterEncounter(interactable);
+                break;
         }
         return createdInteraction;
     }
