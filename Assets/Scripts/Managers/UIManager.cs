@@ -141,11 +141,6 @@ public class UIManager : MonoBehaviour {
         ToggleBorders();
     }
     private void Update() {
-        if (Input.GetKeyDown(KeyCode.BackQuote)) {
-            if (GameManager.Instance.allowConsole) {
-                ToggleConsole();
-            }
-        }
         if (Input.GetKeyDown(KeyCode.Escape)) {
             if (contextMenu.gameObject.activeSelf) {
                 HideContextMenu();
@@ -646,6 +641,16 @@ public class UIManager : MonoBehaviour {
     }
     public void UnlockAllTokens() {
         InteractionManager.Instance.UnlockAllTokens();
+    }
+    public void SetUIState(bool state) {
+        //Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);
+        //for (int i = 0; i < children.Length; i++) {
+        //    Transform currChild = children[i];
+        //    if (currChild.GetComponent<ConsoleMenu>() == null) {
+        //        currChild.gameObject.SetActive(state);
+        //    }
+        //}
+        this.gameObject.SetActive(state);
     }
     #endregion
 

@@ -75,6 +75,11 @@ public class GameManager : MonoBehaviour {
                 this.DayEnded();
             }
         }
+        if (Input.GetKeyDown(KeyCode.BackQuote)) {
+            if (allowConsole) {
+                UIManager.Instance.ToggleConsole();
+            }
+        }
     }
     //private void Update() {
     //    //Application.targetFrameRate = 60;

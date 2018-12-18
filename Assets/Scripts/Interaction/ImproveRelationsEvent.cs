@@ -7,14 +7,14 @@ public class ImproveRelationsEvent : Interaction {
     private Faction targetFaction;
 
     private const string Disrupted_Improve_Relations_Success = "Disrupted Improve Relations Success";
-    private const string Disrupted_Improve_Relations_Fail = "Disrupted Improve Relations Success";
-    private const string Disrupted_Improve_Relations_Critically_Fail = "Disrupted Improve Relations Success";
+    private const string Disrupted_Improve_Relations_Fail = "Disrupted Improve Relations Fail";
+    private const string Disrupted_Improve_Relations_Critically_Fail = "Disrupted Improve Relations Critically Fail";
     private const string Assisted_Improve_Relations_Success = "Assisted Improve Relations Success";
-    private const string Assisted_Improve_Relations_Fail = "Assisted Improve Relations Success";
-    private const string Assisted_Improve_Relations_Critically_Fail = "Assisted Improve Relations Success";
+    private const string Assisted_Improve_Relations_Fail = "Assisted Improve Relations Fail";
+    private const string Assisted_Improve_Relations_Critically_Fail = "Assisted Improve Relations Critically Fail";
     private const string Normal_Improve_Relations_Success = "Normal Improve Relations Success";
-    private const string Normal_Improve_Relations_Fail = "Normal Improve Relations Success";
-    private const string Normal_Improve_Relations_Critically_Fail = "Normal Improve Relations Success";
+    private const string Normal_Improve_Relations_Fail = "Normal Improve Relations Fail";
+    private const string Normal_Improve_Relations_Critically_Fail = "Normal Improve Relations Critically Fail";
 
     public ImproveRelationsEvent(BaseLandmark interactable) 
         : base(interactable, INTERACTION_TYPE.IMPROVE_RELATIONS_EVENT, 0) {
