@@ -3080,6 +3080,8 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             if(_forcedInteraction.CanInteractionBeDone()) {
                 AddInteraction(_forcedInteraction);
             } else {
+                Interaction unable = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, this.specificLocation.tileLocation.landmarkOnTile);
+                AddInteraction(unable);
                 interactionLog += "\nCan't do forced interaction: " + _forcedInteraction.type.ToString();
             }
             _forcedInteraction = null;

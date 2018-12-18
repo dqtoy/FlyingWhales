@@ -245,6 +245,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.RECRUITER_CHARACTER_ENCOUNTER:
                 createdInteraction = new RecruiterCharacterEncounter(interactable);
                 break;
+            case INTERACTION_TYPE.UNABLE_TO_PERFORM:
+                createdInteraction = new UnableToPerform(interactable);
+                break;
         }
         return createdInteraction;
     }

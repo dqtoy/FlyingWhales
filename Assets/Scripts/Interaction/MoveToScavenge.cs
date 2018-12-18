@@ -128,7 +128,12 @@ public class MoveToScavenge : Interaction {
     private void CreateScavengeEvent() {
         AddToDebugLog(_characterInvolved.name + " will now create scavenge event");
         Interaction scavenge = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SCAVENGE_EVENT, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        scavenge.SetCanInteractionBeDoneAction(IsScavengeStillValid);
         _characterInvolved.SetForcedInteraction(scavenge);
+    }
+
+    private bool IsScavengeStillValid() {
+        return _characterInvolved.specificLocation.tileLocation.areaOfTile != null && _characterInvolved.specificLocation.tileLocation.areaOfTile.owner == null;
     }
 
     private Area GetTargetArea() {
