@@ -7,6 +7,8 @@ public class ActionOption {
     public InteractionState interactionState;
     public string name;
     public string description;
+    public string enabledTooltipText;
+    public string disabledTooltipText;
     public CurrenyCost cost;
     public int duration;
     public int needsMinion;
@@ -35,6 +37,7 @@ public class ActionOption {
 
     public ActionOption() {
         assignedObjects = new List<object>();
+        duration = 0;
     }
 
     public void ActivateOption(BaseLandmark interactable) {

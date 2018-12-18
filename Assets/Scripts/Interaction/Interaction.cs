@@ -25,6 +25,7 @@ public class Interaction {
     protected InteractionState _currentState;
     protected Minion _investigatorMinion;
     protected Character _characterInvolved;
+    protected Token _tokenTrigger;
     protected Action _minionSuccessfulAction;
     protected List<Action> _endInteractionActions;
     protected Job _jobAssociated;
@@ -77,6 +78,9 @@ public class Interaction {
     //}
     public BaseLandmark interactable {
         get { return _interactable; }
+    }
+    public Token tokenTrigger {
+        get { return _tokenTrigger; }
     }
     public bool isActivated {
         get { return _isActivated; }
@@ -316,6 +320,9 @@ public class Interaction {
     }
     public void SetCanInteractionBeDoneAction(Func<bool> func) {
         _canInteractionBeDone = func;
+    }
+    public void SetTokenTrigger(Token token) {
+        _tokenTrigger = token;
     }
     public bool CanInteractionBeDone() {
         if(_canInteractionBeDone != null) {

@@ -47,7 +47,8 @@ public class InstigatorCharacterEncounter : Interaction {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Use a token.",
-                duration = 0,
+                enabledTooltipText = "Check token details.",
+                disabledTooltipText = "This token cannot be used here.",
                 neededObjects = new List<System.Type>() { typeof(SpecialToken) },
                 effect = () => UseTokenOption(state),
             };
@@ -55,14 +56,13 @@ public class InstigatorCharacterEncounter : Interaction {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.MANA },
                 name = "Assault " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) +  ".",
-                duration = 0,
+                enabledTooltipText = "May lead to death or injury...",
                 effect = () => AssaultOption(),
             };
             ActionOption doNothingOption = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Leave " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + " alone.",
-                duration = 0,
                 effect = () => DoNothingOption(),
             };
 

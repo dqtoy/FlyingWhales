@@ -3052,6 +3052,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         int startDay = GameManager.Instance.continuousDays + remainingDaysInWeek + 1;
         _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + 7);
     }
+    public void SetDailyInteractionGenerationTick(int tick) {
+        _currentInteractionTick = tick;
+    }
     public void DailyInteractionGeneration() {
         if (_currentInteractionTick == GameManager.Instance.continuousDays) {
             //if(job.jobType != JOB.NONE) {
@@ -3140,6 +3143,10 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     }
     public void SetForcedInteraction(Interaction interaction) {
         _forcedInteraction = interaction;
+    }
+    public void InduceInteraction(Interaction interaction) {
+        SetForcedInteraction(interaction);
+        SetDailyInteractionGenerationTick(GameManager.Instance.continuousDays + 1);
     }
     private void DefaultAllExistingInteractions() {
         for (int i = 0; i < _currentInteractions.Count; i++) {

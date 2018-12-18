@@ -207,6 +207,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.EXPLORE_EVENT:
                 createdInteraction = new ExploreEvent(interactable);
                 break;
+            case INTERACTION_TYPE.INSTIGATOR_TARGET_LOCATION:
+                createdInteraction = new InstigatorTargetLocation(interactable);
+                break;
+            case INTERACTION_TYPE.INSTIGATOR_FACTION_FRAME_UP:
+                createdInteraction = new InstigatorFactionFrameUp(interactable);
+                break;
             case INTERACTION_TYPE.EXPANSION_EVENT:
                 createdInteraction = new ExpansionEvent(interactable);
                 break;
