@@ -16,6 +16,10 @@ public class MoveToExpand : Interaction {
         _jobFilter = new JOB[] { JOB.DISSUADER };
     }
 
+    public void SetTargetLocation(Area area) {
+        targetLocation = area;
+    }
+
     #region Overrides
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
@@ -23,7 +27,9 @@ public class MoveToExpand : Interaction {
         InteractionState characterExpandContinues = new InteractionState(Character_Expand_Continues, this);
         InteractionState characterNormalExpand = new InteractionState(Character_Normal_Expand, this);
 
-        targetLocation = GetTargetLocation();
+        if(targetLocation == null) {
+            targetLocation = GetTargetLocation();
+        }
         targetLocation.AddEventTargettingThis(this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");

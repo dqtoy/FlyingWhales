@@ -50,7 +50,7 @@ public class RaiderTargetLocation : Interaction {
             ActionOption induceRaidOption = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Induce a raid on " + _targetLocationToken.nameInBold,
+                name = "Induce a raid on " + _targetLocationToken.nameInBold + ".",
                 enabledTooltipText = "This location will send someone to raid " + _targetLocationToken.location.name + ".",
                 effect = () => InduceRaidOption(state),
             };

@@ -14,9 +14,13 @@ public class Raider : Job {
     #endregion
 
     public Raider(Character character) : base(character, JOB.RAIDER) {
-        _actionDuration = 50;
-        _hasCaptureEvent = false;
+        _actionDuration = -1;
+        _hasCaptureEvent = true;
         //_characterInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.MOVE_TO_SCAVENGE };
+        _tokenInteractionTypes = new Dictionary<TOKEN_TYPE, INTERACTION_TYPE> {
+            {TOKEN_TYPE.CHARACTER, INTERACTION_TYPE.RAIDER_CHARACTER_ENCOUNTER},
+            {TOKEN_TYPE.LOCATION, INTERACTION_TYPE.RAIDER_TARGET_LOCATION},
+        };
     }
 
     #region Overrides
@@ -31,7 +35,7 @@ public class Raider : Job {
             return characterToken.character.specificLocation.tileLocation.areaOfTile.id == _character.specificLocation.tileLocation.areaOfTile.id;
         } else if (token.tokenType == TOKEN_TYPE.LOCATION) {
             LocationToken locationToken = token as LocationToken;
-            //If current area has factions, and target area's faction is different from current area's faction or target area has no faction, and target area is not the current area - return true
+            //If current area has faction, and target area's faction is different from current area's faction or target area has no faction, and target area is not the current area - return true
             return _character.specificLocation.tileLocation.areaOfTile.owner != null
                 && (locationToken.location.owner == null || (locationToken.location.owner != null && locationToken.location.owner.id != _character.specificLocation.tileLocation.areaOfTile.owner.id))
                 && locationToken.location.id != _character.specificLocation.tileLocation.areaOfTile.id;
@@ -90,6 +94,60 @@ public class Raider : Job {
             multiplier = 0;
         }
         return baseRate + multiplier;
+    }
+    public override void CaptureRandomLandmarkEvent() {
+        Area area = _character.specificLocation.tileLocation.areaOfTile;
+        if (area == null) {
+            //Current location has no area
+            return;
+        }
+        List<Interaction> choices = area.GetInteractionsOfJob(_jobType);
+        if (choices.Count <= 0) {
+            //No interaction for job type
+            return;
+        }
+
+        WeightedDictionary<string> checkWeights = new WeightedDictionary<string>();
+        int checkMultiplier = _character.level - 5;
+        if (checkMultiplier < 0) {
+            checkMultiplier = 0;
+        }
+        int check = 30 + (2 * checkMultiplier);
+        checkWeights.AddElement("Check", check);
+        //checkWeights.AddElement("Dont Check", 70);
+        string checkResult = checkWeights.PickRandomElementGivenWeights();
+        if (checkResult == "Dont Check") {
+            return;
+        }
+        //---------------------------------------- When the result is Check
+        WeightedDictionary<string> successWeights = new WeightedDictionary<string>();
+        int levelMultiplier = _character.level - 5;
+        if (levelMultiplier < 0) {
+            levelMultiplier = 0;
+        }
+        int success = 90 + levelMultiplier;
+        int critFail = 12 - (levelMultiplier / 4);
+        if (critFail < 0) {
+            critFail = 0;
+        }
+        successWeights.AddElement("Success", success);
+        successWeights.AddElement("Crit Fail", critFail);
+        string result = successWeights.PickRandomElementGivenWeights();
+        if (result == "Success") {
+            SetJobActionPauseState(true);
+            area.SetStopDefaultInteractionsState(true);
+            SetCreatedInteraction(choices[UnityEngine.Random.Range(0, choices.Count)]);
+            _createdInteraction.AddEndInteractionAction(() => SetJobActionPauseState(false));
+            _createdInteraction.AddEndInteractionAction(() => ForceDefaultAllExistingInteractions());
+            InteractionUI.Instance.OpenInteractionUI(_createdInteraction);
+        } else if (result == "Crit Fail") {
+            SetJobActionPauseState(true);
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile);
+            interaction.AddEndInteractionAction(() => SetJobActionPauseState(false));
+            interaction.ScheduleSecondTimeOut();
+            _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
+            SetCreatedInteraction(interaction);
+        }
     }
     #endregion
 

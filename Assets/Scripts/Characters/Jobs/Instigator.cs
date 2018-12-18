@@ -98,7 +98,6 @@ public class Instigator : Job {
             _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
             SetCreatedInteraction(interaction);
         }
-
     }
     public override int GetSuccessRate() {
         int baseRate = 60;

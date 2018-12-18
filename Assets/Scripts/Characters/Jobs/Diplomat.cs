@@ -8,12 +8,35 @@ public class Diplomat : Job {
 	public Diplomat(Character character) : base(character, JOB.DIPLOMAT) {
         _actionDuration = -1;
         _hasCaptureEvent = true;
+        _tokenInteractionTypes = new Dictionary<TOKEN_TYPE, INTERACTION_TYPE> {
+            {TOKEN_TYPE.CHARACTER, INTERACTION_TYPE.DIPLOMAT_CHARACTER_ENCOUNTER},
+            {TOKEN_TYPE.LOCATION, INTERACTION_TYPE.DIPLOMAT_TARGET_LOCATION},
+            {TOKEN_TYPE.FACTION, INTERACTION_TYPE.DIPLOMAT_FACTION_MEDIATION},
+        };
     }
 
     #region Overrides
     protected override void PassiveEffect(Area area) {
         float supplies = area.suppliesInBank * 1.5f;
         area.SetSuppliesInBank((int)supplies);
+    }
+    protected override bool IsTokenCompatibleWithJob(Token token) {
+        if (token.tokenType == TOKEN_TYPE.CHARACTER) {
+            CharacterToken characterToken = token as CharacterToken;
+            return characterToken.character.specificLocation.tileLocation.areaOfTile.id == _character.specificLocation.tileLocation.areaOfTile.id;
+        } else if (token.tokenType == TOKEN_TYPE.LOCATION) {
+            LocationToken locationToken = token as LocationToken;
+            //If current area has faction, and target area's faction is different from current area's faction or target area has no faction, and target area is not the current area - return true
+            return _character.specificLocation.tileLocation.areaOfTile.owner != null
+                && locationToken.location.owner == null
+                && locationToken.location.id != _character.specificLocation.tileLocation.areaOfTile.id;
+        } else if (token.tokenType == TOKEN_TYPE.FACTION) {
+            FactionToken factionToken = token as FactionToken;
+            //If current area has faction, and target faction is different from current area's faction - return true
+            return _character.specificLocation.tileLocation.areaOfTile.owner != null
+                && factionToken.faction.id != _character.specificLocation.tileLocation.areaOfTile.owner.id;
+        }
+        return base.IsTokenCompatibleWithJob(token);
     }
     public override void CaptureRandomLandmarkEvent() {
         Area area = _character.specificLocation.tileLocation.areaOfTile;

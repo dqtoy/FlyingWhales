@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InstigatorFactionFrameUp : Interaction {
+public class DiplomatFactionMediation : Interaction {
 
     private const string Start = "Start";
-    private const string Incite_Anger = "Incite Anger";
+    private const string Improve_Relationship = "Improve Relationship";
     private const string Do_Nothing = "Do Nothing";
 
     private FactionToken _targetFactionToken;
 
-    public InstigatorFactionFrameUp(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.INSTIGATOR_FACTION_FRAME_UP, 0) {
-        _name = "Instigator Faction Frame Up";
-        _jobFilter = new JOB[] { JOB.INSTIGATOR };
+    public DiplomatFactionMediation(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.DIPLOMAT_FACTION_MEDIATION, 0) {
+        _name = "Diplomat Faction Mediation";
+        _jobFilter = new JOB[] { JOB.DIPLOMAT };
     }
 
     #region Overrides
@@ -20,34 +20,34 @@ public class InstigatorFactionFrameUp : Interaction {
         _targetFactionToken = _tokenTrigger as FactionToken;
 
         InteractionState startState = new InteractionState(Start, this);
-        InteractionState inciteAngerState = new InteractionState(Incite_Anger, this);
+        InteractionState improveRelationshipState = new InteractionState(Improve_Relationship, this);
         InteractionState doNothingState = new InteractionState(Do_Nothing, this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(_targetFactionToken, _targetFactionToken.ToString(), LOG_IDENTIFIER.STRING_1);
         startStateDescriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
-        startStateDescriptionLog.AddToFillers(_targetFactionToken.faction, _targetFactionToken.faction.name , LOG_IDENTIFIER.FACTION_2);
+        startStateDescriptionLog.AddToFillers(_targetFactionToken.faction, _targetFactionToken.faction.name, LOG_IDENTIFIER.FACTION_2);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
 
-        inciteAngerState.SetEffect(() => InciteAngerEffect(inciteAngerState));
+        improveRelationshipState.SetEffect(() => ImproveRelationshipEffect(improveRelationshipState));
         doNothingState.SetEffect(() => DoNothingEffect(doNothingState));
 
         _states.Add(startState.name, startState);
-        _states.Add(inciteAngerState.name, inciteAngerState);
+        _states.Add(improveRelationshipState.name, improveRelationshipState);
         _states.Add(doNothingState.name, doNothingState);
 
         SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {
-            ActionOption inciteOption = new ActionOption {
+            ActionOption improveOption = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Incite anger against " + _targetFactionToken.nameInBold + ".",
-                enabledTooltipText = "Reduce relationship between " + interactable.tileLocation.areaOfTile.owner.name + " and " + _targetFactionToken.faction.name + ".",
-                effect = () => InciteOption(state),
+                name = "Improve relationship between " + interactable.tileLocation.areaOfTile.owner.name + " and " + _targetFactionToken.faction.name + ".",
+                enabledTooltipText = "Improve relationship between " + interactable.tileLocation.areaOfTile.owner.name + " and " + _targetFactionToken.faction.name + ".",
+                effect = () => ImproveOption(state),
             };
 
             ActionOption doNothingOption = new ActionOption {
@@ -57,7 +57,7 @@ public class InstigatorFactionFrameUp : Interaction {
                 effect = () => DoNothingOption(),
             };
 
-            state.AddActionOption(inciteOption);
+            state.AddActionOption(improveOption);
             state.AddActionOption(doNothingOption);
             state.SetDefaultOption(doNothingOption);
         }
@@ -65,8 +65,8 @@ public class InstigatorFactionFrameUp : Interaction {
     #endregion
 
     #region Action Options
-    private void InciteOption(InteractionState state) {
-        SetCurrentState(_states[Incite_Anger]);
+    private void ImproveOption(InteractionState state) {
+        SetCurrentState(_states[Improve_Relationship]);
     }
     private void DoNothingOption() {
         SetCurrentState(_states[Do_Nothing]);
@@ -74,11 +74,11 @@ public class InstigatorFactionFrameUp : Interaction {
     #endregion
 
     #region State Effects
-    private void InciteAngerEffect(InteractionState state) {
+    private void ImproveRelationshipEffect(InteractionState state) {
         investigatorMinion.LevelUp();
 
         FactionRelationship relationship = interactable.tileLocation.areaOfTile.owner.GetRelationshipWith(_targetFactionToken.faction);
-        relationship.AdjustRelationshipStatus(-1);
+        relationship.AdjustRelationshipStatus(1);
 
         state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(_targetFactionToken.faction, _targetFactionToken.faction.name, LOG_IDENTIFIER.FACTION_2);
