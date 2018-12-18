@@ -277,6 +277,14 @@ public class CharacterManager : MonoBehaviour {
         deadlySinsRotation.RemoveAt(0);
         return nextClass;
     }
+    public bool IsClassADeadlySin(string className) {
+        for (int i = 0; i < _sevenDeadlySinsClassNames.Length; i++) {
+            if(className == _sevenDeadlySinsClassNames[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
     public string GetRandomClassName() {
         int random = UnityEngine.Random.Range(0, CharacterManager.Instance.classesDictionary.Count);
         int count = 0;

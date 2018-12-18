@@ -15,6 +15,10 @@ public class MoveToRecruit : Interaction {
         _name = "Move To Recruit";
     }
 
+    public void SetCharacterToBeRecruited(Character character) {
+        targetCharacter = character;
+    }
+
     #region Overrides
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
@@ -22,7 +26,9 @@ public class MoveToRecruit : Interaction {
         InteractionState characterRecruitContinues = new InteractionState(Character_Recruit_Continues, this);
         InteractionState doNothing = new InteractionState(Do_Nothing, this);
 
-        targetCharacter = GetTargetCharacter();
+        if (targetCharacter == null) {
+            targetCharacter = GetTargetCharacter(_characterInvolved);
+        }
         targetLocation = targetCharacter.specificLocation.tileLocation.areaOfTile;
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
@@ -121,24 +127,22 @@ public class MoveToRecruit : Interaction {
         interaction.SetCanInteractionBeDoneAction(IsRecruitActionStillValid);
         _characterInvolved.SetForcedInteraction(interaction);
     }
-
     private bool IsRecruitActionStillValid() {
         /* It will no longer be valid if the target character to be recruited is no longer in the location. 
          * It will also no longer be valid if the recruiter's home area's Residents Capacity is already full.
          */
         return targetCharacter.specificLocation.tileLocation.areaOfTile == targetLocation && !_characterInvolved.homeLandmark.tileLocation.areaOfTile.IsResidentsFull();
     }
-
-    private Character GetTargetCharacter() {
+    public Character GetTargetCharacter(Character characterInvolve) {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character currCharacter = CharacterManager.Instance.allCharacters[i];
-            if (currCharacter.id != _characterInvolved.id && !currCharacter.isDefender) { //- character must not be in Defender Tile.
+            if (currCharacter.id != characterInvolve.id && !currCharacter.isDefender) { //- character must not be in Defender Tile.
                 int weight = 0;
                 if (currCharacter.isFactionless) {
                     weight += 35; //- character is not part of any Faction: Weight +35
-                } else if (currCharacter.faction.id != _characterInvolved.faction.id) { //exclude characters with same faction
-                    FactionRelationship rel = currCharacter.faction.GetRelationshipWith(_characterInvolved.faction);
+                } else if (currCharacter.faction.id != characterInvolve.faction.id) { //exclude characters with same faction
+                    FactionRelationship rel = currCharacter.faction.GetRelationshipWith(characterInvolve.faction);
                     //- character is part of a Faction with Neutral relationship with recruiter's Faction: Weight +15
                     if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL) {
                         weight += 15;
@@ -147,9 +151,9 @@ public class MoveToRecruit : Interaction {
                     }
                 }
 
-                if (currCharacter.level > _characterInvolved.level) {
+                if (currCharacter.level > characterInvolve.level) {
                     weight -= 30; //- character is higher level than Recruiter: Weight -30
-                } else if (currCharacter.level < _characterInvolved.level) { //- character is same level as Recruiter: Weight +0
+                } else if (currCharacter.level < characterInvolve.level) { //- character is same level as Recruiter: Weight +0
                     weight += 10; //- character is lower level than Recruiter: Weight +10
                 }
 

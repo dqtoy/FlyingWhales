@@ -6,11 +6,21 @@ using UnityEngine;
 public class Recruiter : Job {
 
     public Recruiter(Character character) : base(character, JOB.RECRUITER) {
-        _actionDuration = 80;
+        _actionDuration = -1;
         _hasCaptureEvent = true;
+        _tokenInteractionTypes = new Dictionary<TOKEN_TYPE, INTERACTION_TYPE> {
+            {TOKEN_TYPE.CHARACTER, INTERACTION_TYPE.RECRUITER_CHARACTER_ENCOUNTER},
+        };
     }
 
     #region Overrides
+    protected override bool IsTokenCompatibleWithJob(Token token) {
+        if (token.tokenType == TOKEN_TYPE.CHARACTER) {
+            CharacterToken characterToken = token as CharacterToken;
+            return characterToken.character.specificLocation.tileLocation.areaOfTile.id == _character.specificLocation.tileLocation.areaOfTile.id;
+        }
+        return base.IsTokenCompatibleWithJob(token);
+    }
     public override void DoJobAction() {
         base.DoJobAction();
         Area area = _character.specificLocation.tileLocation.areaOfTile;
