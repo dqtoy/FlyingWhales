@@ -13,6 +13,7 @@ public class Job {
     protected int _actionDuration; //-1 means no limits and no progress
     protected bool _hasCaptureEvent;
     protected bool _useInteractionTimer;
+    protected bool _startedJobAction;
     protected Character _character;
     protected Interaction _createdInteraction;
     protected Token _attachedToken;
@@ -101,6 +102,7 @@ public class Job {
             SetCreatedInteraction(interaction);
         }
     }
+    protected virtual void PassiveEffect(Area area) {}
     public virtual int GetSuccessRate() { return 0; }
     public virtual int GetFailRate() { return 40; }
     public virtual int GetCritFailRate() { return 12; }
@@ -140,6 +142,7 @@ public class Job {
         return token != null && IsTokenCompatibleWithJob(token);
     }
     public void StartJobAction() {
+        _startedJobAction = true;
         ApplyActionDuration();
         _currentTick = 0;
         SetJobActionPauseState(false);
@@ -159,6 +162,7 @@ public class Job {
     //Stops Job Action entirely
     //Uses - when a minion is recalled, when job action duration ends
     public void StopJobAction() {
+        _startedJobAction = false;
         if (_useInteractionTimer) {
             _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.StopInteractionTimerJob();
             _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.HideInteractionTimerJob();
@@ -252,6 +256,10 @@ public class Job {
             }
         }
         return validTypes;
+    }
+    public void DoPassiveEffect(Area area) {
+        if(!_startedJobAction) { return; }
+        PassiveEffect(area);
     }
     #endregion
 }

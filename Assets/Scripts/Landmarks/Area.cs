@@ -677,6 +677,9 @@ public class Area {
     }
     private void CollectMonthlySupplies() {
         SetSuppliesInBank(monthlySupply);
+        if(areaInvestigation.assignedMinion != null) {
+            areaInvestigation.assignedMinion.character.job.DoPassiveEffect(this);
+        }
         //int totalCollectedSupplies = 0;
         //string supplySummary = string.Empty;
         //for (int i = 0; i < landmarks.Count; i++) {

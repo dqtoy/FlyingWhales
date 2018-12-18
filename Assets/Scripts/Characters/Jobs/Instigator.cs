@@ -22,6 +22,11 @@ public class Instigator : Job {
     }
 
     #region Overrides
+    protected override void PassiveEffect(Area area) {
+        int supplies = area.suppliesInBank;
+        supplies /= 2;
+        area.SetSuppliesInBank(supplies);
+    }
     protected override bool IsTokenCompatibleWithJob(Token token) {
         if(token.tokenType == TOKEN_TYPE.CHARACTER) {
             CharacterToken characterToken = token as CharacterToken;

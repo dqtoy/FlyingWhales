@@ -15,6 +15,10 @@ public class MoveToScavenge : Interaction {
         _jobFilter = new JOB[] { JOB.DISSUADER };
     }
 
+    public void SetTargetArea(Area target) {
+        targetArea = target;
+    }
+
     #region Overrides
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
@@ -22,7 +26,9 @@ public class MoveToScavenge : Interaction {
         InteractionState scavengeProceeds = new InteractionState(Scavenge_Proceeds, this);
         InteractionState normalScavenge = new InteractionState(Normal_Scavenge, this);
 
-        targetArea = GetTargetArea();
+        if (targetArea == null) {
+            targetArea = GetTargetArea();
+        }
         AddToDebugLog("Set target area to " + targetArea.name);
         //**Text Description**: [Character Name] is about to leave for [Location Name 1] to scavenge for supplies.
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");

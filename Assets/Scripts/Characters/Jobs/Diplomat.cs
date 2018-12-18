@@ -11,6 +11,10 @@ public class Diplomat : Job {
     }
 
     #region Overrides
+    protected override void PassiveEffect(Area area) {
+        float supplies = area.suppliesInBank * 1.5f;
+        area.SetSuppliesInBank((int)supplies);
+    }
     public override void CaptureRandomLandmarkEvent() {
         Area area = _character.specificLocation.tileLocation.areaOfTile;
         if (area == null) {
