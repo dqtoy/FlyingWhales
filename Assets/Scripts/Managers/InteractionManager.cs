@@ -457,7 +457,7 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
-            case INTERACTION_TYPE.PATROL:
+            case INTERACTION_TYPE.PATROL_ACTION:
                 return character.job.jobType == JOB.DISSUADER;
             case INTERACTION_TYPE.MOVE_TO_RETURN_HOME:
                 //if character is NOT at home, allow

@@ -330,6 +330,11 @@ public class Interaction {
         }
         return true;
     }
+    public void AddLogFillerToAllStates(LogFiller filler) {
+        foreach (KeyValuePair<string, InteractionState> kvp in _states) {
+            kvp.Value.AddLogFiller(filler);
+        }
+    }
     #endregion
 
     #region Shared States and Effects
