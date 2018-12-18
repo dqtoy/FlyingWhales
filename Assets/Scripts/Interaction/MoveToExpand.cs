@@ -25,16 +25,16 @@ public class MoveToExpand : Interaction {
 
         targetLocation = GetTargetLocation();
         targetLocation.AddEventTargettingThis(this);
-        _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(-100);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        startStateDescriptionLog.AddToFillers(null, Utilities.NormalizeString(_characterInvolved.race.ToString()), LOG_IDENTIFIER.STRING_1);
         startStateDescriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
-        characterExpandCancelled.SetEffect(() => CharacterExploreCancelledRewardEffect(characterExpandCancelled));
-        characterExpandContinues.SetEffect(() => CharacterExploreContinuesRewardEffect(characterExpandContinues));
-        characterNormalExpand.SetEffect(() => DoNothingRewardEffect(characterNormalExpand));
+        characterExpandCancelled.SetEffect(() => CharacterExpandCancelledRewardEffect(characterExpandCancelled));
+        characterExpandContinues.SetEffect(() => CharacterExpandContinuesRewardEffect(characterExpandContinues));
+        characterNormalExpand.SetEffect(() => CharacterNormalExpandRewardEffect(characterNormalExpand));
 
         _states.Add(startState.name, startState);
         _states.Add(characterExpandCancelled.name, characterExpandCancelled);
@@ -47,8 +47,8 @@ public class MoveToExpand : Interaction {
         if (state.name == "Start") {
             ActionOption prevent = new ActionOption {
                 interactionState = state,
-                cost = new CurrenyCost { amount = 50, currency = CURRENCY.SUPPLY },
-                name = "Discourage them from leaving.",
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
+                name = "Prevent " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + " from leaving.",
                 duration = 0,
                 effect = () => DiscourageFromLeavingOptionEffect(state),
                 jobNeeded = JOB.DISSUADER,
@@ -90,26 +90,27 @@ public class MoveToExpand : Interaction {
     #endregion
 
     #region Reward Effects
-    private void CharacterExploreCancelledRewardEffect(InteractionState state) {
+    private void CharacterExpandCancelledRewardEffect(InteractionState state) {
         //**Mechanics**: Character will no longer leave.
         //**Level Up**: Dissuader Minion +1
-        if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
-        }
         investigatorMinion.LevelUp();
+        MinionSuccess();
     }
-    private void CharacterExploreContinuesRewardEffect(InteractionState state) {
+    private void CharacterExpandContinuesRewardEffect(InteractionState state) {
         //**Mechanics**: Character travels to the Location to start an Expansion event.
         GoToTargetLocation();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
+            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         }
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
     }
-    private void DoNothingRewardEffect(InteractionState state) {
+    private void CharacterNormalExpandRewardEffect(InteractionState state) {
         //**Mechanics**: Character travels to the Location to start an Expansion event.
         GoToTargetLocation();
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
+        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     #endregion
 
@@ -118,12 +119,24 @@ public class MoveToExpand : Interaction {
     }
 
     private void CreateExpansionEvent() {
-        //TODO: Create expansion event
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.EXPANSION_EVENT, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        _characterInvolved.SetForcedInteraction(interaction);
         targetLocation.RemoveEventTargettingThis(this);
     }
 
     private Area GetTargetLocation() {
-        List<Area> choices = _characterInvolved.homeLandmark.tileLocation.areaOfTile.GetElligibleExpansionTargets(_characterInvolved);
+        //List<Area> choices = _characterInvolved.homeLandmark.tileLocation.areaOfTile.GetElligibleExpansionTargets(_characterInvolved);
+        //if (choices.Count > 0) {
+        //    return choices[Random.Range(0, choices.Count)];
+        //}
+        List<Area> choices = new List<Area>();
+        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+            Area area = LandmarkManager.Instance.allAreas[i];
+            if (area.id != _characterInvolved.specificLocation.tileLocation.areaOfTile.id 
+                && area.owner == null && area.possibleOccupants.Contains(_characterInvolved.race)) {
+                choices.Add(area);
+            }
+        }
         if (choices.Count > 0) {
             return choices[Random.Range(0, choices.Count)];
         }

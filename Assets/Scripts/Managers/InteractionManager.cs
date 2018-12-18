@@ -213,6 +213,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.INSTIGATOR_FACTION_FRAME_UP:
                 createdInteraction = new InstigatorFactionFrameUp(interactable);
                 break;
+            case INTERACTION_TYPE.EXPANSION_EVENT:
+                createdInteraction = new ExpansionEvent(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -350,7 +353,7 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MOVE_TO_EXPAND:
                 for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                     area = LandmarkManager.Instance.allAreas[i];
-                    if (area.id != character.specificLocation.tileLocation.areaOfTile.id && area.owner == null && area.raceType == character.race) {
+                    if (area.id != character.specificLocation.tileLocation.areaOfTile.id && area.owner == null && area.possibleOccupants.Contains(character.race)) {
                         return true;
                     }
                 }
