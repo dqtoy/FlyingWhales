@@ -227,6 +227,15 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.RECRUIT_ACTION:
                 createdInteraction = new RecruitAction(interactable);
                 break;
+            case INTERACTION_TYPE.DIPLOMAT_CHARACTER_ENCOUNTER:
+                createdInteraction = new DiplomatCharacterEncounter(interactable);
+                break;
+            case INTERACTION_TYPE.DIPLOMAT_TARGET_LOCATION:
+                createdInteraction = new DiplomatTargetLocation(interactable);
+                break;
+            case INTERACTION_TYPE.DIPLOMAT_FACTION_MEDIATION:
+                createdInteraction = new DiplomatFactionMediation(interactable);
+                break;
             case INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS:
                 createdInteraction = new MoveToImproveRelations(interactable);
                 break;

@@ -27,6 +27,7 @@ public class InstigatorTargetLocation : Interaction {
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(_targetLocationToken.location, _targetLocationToken.location.name, LOG_IDENTIFIER.LANDMARK_2);
+        startStateDescriptionLog.AddToFillers(null, _targetLocationToken.ToString(), LOG_IDENTIFIER.STRING_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -45,7 +46,8 @@ public class InstigatorTargetLocation : Interaction {
             ActionOption induceOption = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Induce attack on " + _targetLocationToken.nameInBold,
+                name = "Induce attack on " + _targetLocationToken.nameInBold + ".",
+                enabledTooltipText = "This location will send some characters to attack " + _targetLocationToken.location.name + ".",
                 effect = () => InduceOption(state),
             };
             induceOption.canBeDoneAction = () => CanInduceAttack(induceOption);

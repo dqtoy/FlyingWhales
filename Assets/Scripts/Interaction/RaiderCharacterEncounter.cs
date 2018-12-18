@@ -138,7 +138,7 @@ public class RaiderCharacterEncounter : Interaction {
         } else {
             //Scavenge
             raidOrScavengeText = "scavenge";
-            MoveToScavenge moveToScavenge = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RAID, interactable) as MoveToScavenge;
+            MoveToScavenge moveToScavenge = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_SCAVENGE, interactable) as MoveToScavenge;
             moveToScavenge.SetTargetArea(_targetArea);
             _characterInvolved.InduceInteraction(moveToScavenge);
         }
