@@ -1,5 +1,4 @@
-﻿
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -221,6 +220,12 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.RAIDER_TARGET_LOCATION:
                 createdInteraction = new RaiderTargetLocation(interactable);
+                break;
+            case INTERACTION_TYPE.MOVE_TO_RECRUIT:
+                createdInteraction = new MoveToRecruit(interactable);
+                break;
+            case INTERACTION_TYPE.RECRUIT_ACTION:
+                createdInteraction = new RecruitAction(interactable);
                 break;
         }
         return createdInteraction;

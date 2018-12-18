@@ -95,7 +95,7 @@ public class MoveToScavenge : Interaction {
     }
     private void DoNothingEffect(InteractionState state) {
         AddToDebugLog("Chose to do nothing");
-        SetCurrentState(_states[Scavenge_Proceeds]);
+        SetCurrentState(_states[Normal_Scavenge]);
     }
     #endregion
 
