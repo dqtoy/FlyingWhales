@@ -16,6 +16,8 @@ public class Instigator : Job {
         _hasCaptureEvent = true;
         _tokenInteractionTypes = new Dictionary<TOKEN_TYPE, INTERACTION_TYPE> {
             {TOKEN_TYPE.CHARACTER, INTERACTION_TYPE.INSTIGATOR_CHARACTER_ENCOUNTER},
+            {TOKEN_TYPE.LOCATION, INTERACTION_TYPE.INSTIGATOR_TARGET_LOCATION},
+            {TOKEN_TYPE.FACTION, INTERACTION_TYPE.INSTIGATOR_FACTION_FRAME_UP},
         };
     }
 
@@ -24,6 +26,17 @@ public class Instigator : Job {
         if(token.tokenType == TOKEN_TYPE.CHARACTER) {
             CharacterToken characterToken = token as CharacterToken;
             return characterToken.character.specificLocation.tileLocation.areaOfTile.id == _character.specificLocation.tileLocation.areaOfTile.id;
+        } else if (token.tokenType == TOKEN_TYPE.LOCATION) {
+            LocationToken locationToken = token as LocationToken;
+            //If target area and current area have factions, and target area's faction is different from current area's faction, and target area is not the current area - return true
+            return locationToken.location.owner != null && _character.specificLocation.tileLocation.areaOfTile.owner != null
+                && locationToken.location.owner.id != _character.specificLocation.tileLocation.areaOfTile.owner.id
+                && locationToken.location.id != _character.specificLocation.tileLocation.areaOfTile.id;
+        } else if (token.tokenType == TOKEN_TYPE.FACTION) {
+            FactionToken factionToken = token as FactionToken;
+            //If current area has owner and target faction is not the current area's owner - return true
+            return _character.specificLocation.tileLocation.areaOfTile.owner != null
+                && factionToken.faction.id != _character.specificLocation.tileLocation.areaOfTile.owner.id;
         }
         return base.IsTokenCompatibleWithJob(token);
     }

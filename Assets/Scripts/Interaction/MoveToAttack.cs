@@ -4,9 +4,17 @@ using UnityEngine;
 
 public class MoveToAttack : Interaction {
 
+    private Area _target;
+    private List<Character> _attackers;
+
     public MoveToAttack(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_ATTACK, 0) {
         _name = "Move To Attack";
         _jobFilter = new JOB[] { JOB.DISSUADER };
+    }
+
+    public void SetTargetAndAttackers(Area target, List<Character> attackers) {
+        _target = target;
+        _attackers = attackers;
     }
 
     #region Overrides
@@ -96,12 +104,18 @@ public class MoveToAttack : Interaction {
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.attackTarget, interactable.tileLocation.areaOfTile.attackTarget.name, LOG_IDENTIFIER.LANDMARK_2));
 
+        if(_target != null && _attackers != null) {
+            interactable.tileLocation.areaOfTile.SetAttackTargetAndCharacters(_target, _attackers);
+        }
         interactable.tileLocation.areaOfTile.AttackTarget();
     }
     private void DoNothingEffect(InteractionState state) {
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.attackTarget, interactable.tileLocation.areaOfTile.attackTarget.name, LOG_IDENTIFIER.LANDMARK_2));
 
+        if (_target != null && _attackers != null) {
+            interactable.tileLocation.areaOfTile.SetAttackTargetAndCharacters(_target, _attackers);
+        }
         interactable.tileLocation.areaOfTile.AttackTarget();
     }
     #endregion

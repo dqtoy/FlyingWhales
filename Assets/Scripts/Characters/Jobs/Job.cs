@@ -77,6 +77,7 @@ public class Job {
             } else {
                 CreateSpecialTokenInteraction(_attachedToken as SpecialToken);
             }
+            _createdInteraction.SetTokenTrigger(_attachedToken);
             _attachedToken = null;
             InteractionUI.Instance.OpenInteractionUI(_createdInteraction);
         }
