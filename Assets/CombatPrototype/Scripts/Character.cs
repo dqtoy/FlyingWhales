@@ -434,6 +434,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         if (_characterClass.roleType != CHARACTER_ROLE.NONE) {
             AssignRole(_characterClass.roleType);
         }
+        AssignRandomJob();
         SetMorality(MORALITY.GOOD);
         //_skills = GetGeneralSkills();
 
@@ -463,6 +464,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         if (_characterClass.roleType != CHARACTER_ROLE.NONE) {
             AssignRole(_characterClass.roleType);
         }
+        AssignRandomJob();
         SetMorality(data.morality);
 #if !WORLD_CREATION_TOOL
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, UIManager.Instance.characterPortraitsParent);
@@ -1399,11 +1401,18 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         _skills.Add(_characterClass.skill);
         EquipItemsByClass();
         SetTraitsFromClass();
-        AssignJob(_characterClass.jobType);
     }
     #endregion
 
     #region Job
+    private void AssignRandomJob() {
+        if (CharacterManager.Instance.IsClassADeadlySin(_characterClass.className)) {
+            AssignJob(_characterClass.jobType);
+        } else {
+            JOB[] jobs = new JOB[] { JOB.DIPLOMAT, JOB.DISSUADER, JOB.EXPLORER, JOB.INSTIGATOR, JOB.RAIDER, JOB.RECRUITER, JOB.SPY };
+            AssignJob(jobs[UnityEngine.Random.Range(0, jobs.Length)]);
+        }
+    }
     public void AssignJob(JOB jobType) {
         switch (jobType) {
             case JOB.SPY:
