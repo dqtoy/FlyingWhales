@@ -237,11 +237,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public bool isFactionless { //is the character part of the neutral faction? or no faction?
         get {
             if (FactionManager.Instance.neutralFaction == null) {
-                if (faction != null) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return faction == null;
             } else {
                 if (faction != null && FactionManager.Instance.neutralFaction.id == faction.id) {
                     return true;

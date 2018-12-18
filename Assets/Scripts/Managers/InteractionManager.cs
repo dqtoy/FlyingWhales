@@ -210,6 +210,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.EXPANSION_EVENT:
                 createdInteraction = new ExpansionEvent(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_RECRUIT:
+                createdInteraction = new MoveToRecruit(interactable);
+                break;
+            case INTERACTION_TYPE.RECRUIT_ACTION:
+                createdInteraction = new RecruitAction(interactable);
+                break;
         }
         return createdInteraction;
     }
