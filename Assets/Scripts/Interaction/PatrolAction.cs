@@ -28,6 +28,7 @@ public class PatrolAction : Interaction {
     public PatrolAction(BaseLandmark interactable) 
         : base(interactable, INTERACTION_TYPE.PATROL_ACTION, 0) {
         _name = "Patrol Action";
+        _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DISSUADER };
     }
 
     #region Overrides
