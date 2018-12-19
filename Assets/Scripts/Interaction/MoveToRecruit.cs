@@ -133,16 +133,16 @@ public class MoveToRecruit : Interaction {
          */
         return targetCharacter.specificLocation.tileLocation.areaOfTile == targetLocation && !_characterInvolved.homeLandmark.tileLocation.areaOfTile.IsResidentsFull();
     }
-    public Character GetTargetCharacter(Character characterInvolve) {
+    public Character GetTargetCharacter(Character characterInvolved) {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character currCharacter = CharacterManager.Instance.allCharacters[i];
-            if (currCharacter.id != characterInvolve.id && !currCharacter.isDefender) { //- character must not be in Defender Tile.
+            if (currCharacter.id != characterInvolved.id && !currCharacter.isDefender) { //- character must not be in Defender Tile.
                 int weight = 0;
                 if (currCharacter.isFactionless) {
                     weight += 35; //- character is not part of any Faction: Weight +35
-                } else if (currCharacter.faction.id != characterInvolve.faction.id) { //exclude characters with same faction
-                    FactionRelationship rel = currCharacter.faction.GetRelationshipWith(characterInvolve.faction);
+                } else if (currCharacter.faction.id != characterInvolved.faction.id) { //exclude characters with same faction
+                    FactionRelationship rel = currCharacter.faction.GetRelationshipWith(characterInvolved.faction);
                     //- character is part of a Faction with Neutral relationship with recruiter's Faction: Weight +15
                     if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL) {
                         weight += 15;
@@ -151,9 +151,9 @@ public class MoveToRecruit : Interaction {
                     }
                 }
 
-                if (currCharacter.level > characterInvolve.level) {
+                if (currCharacter.level > characterInvolved.level) {
                     weight -= 30; //- character is higher level than Recruiter: Weight -30
-                } else if (currCharacter.level < characterInvolve.level) { //- character is same level as Recruiter: Weight +0
+                } else if (currCharacter.level < characterInvolved.level) { //- character is same level as Recruiter: Weight +0
                     weight += 10; //- character is lower level than Recruiter: Weight +10
                 }
 

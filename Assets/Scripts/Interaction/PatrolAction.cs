@@ -96,6 +96,15 @@ public class PatrolAction : Interaction {
                 name = "Reveal an enemy's whereabouts.",
                 effect = () => RevealOptionEffect(state),
                 neededObjects = new List<System.Type>() { typeof(CharacterToken) },
+                neededObjectsChecker = new List<ActionOptionNeededObjectChecker>() {
+                    new ActionOptionLocationRequirement {
+                        requiredLocation = interactable.tileLocation.areaOfTile,
+                    },
+                    new ActionOptionFactionRelationshipRequirement {
+                        requiredStatus = new List<FACTION_RELATIONSHIP_STATUS>(){ FACTION_RELATIONSHIP_STATUS.DISLIKED, FACTION_RELATIONSHIP_STATUS.ENEMY },
+                        sourceCharacter =_characterInvolved
+                    }
+                },
                 jobNeeded = JOB.INSTIGATOR,
                 doesNotMeetRequirementsStr = "Minion must be an instigator",
             };

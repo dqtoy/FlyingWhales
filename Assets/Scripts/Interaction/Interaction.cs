@@ -294,9 +294,11 @@ public class Interaction {
         return false;
     }
     public bool DoesJobTypeFitsJobFilter(JOB jobType) {
-        for (int i = 0; i < _jobFilter.Length; i++) {
-            if (jobType == _jobFilter[i]) {
-                return true;
+        if (_jobFilter != null) {
+            for (int i = 0; i < _jobFilter.Length; i++) {
+                if (jobType == _jobFilter[i]) {
+                    return true;
+                }
             }
         }
         return false;

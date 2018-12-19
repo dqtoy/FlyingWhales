@@ -35,6 +35,23 @@ public class ActionOptionLocationRequirement : ActionOptionNeededObjectChecker {
         return false;
     }
 }
+public class ActionOptionFactionRelationshipRequirement : ActionOptionNeededObjectChecker {
+    public List<FACTION_RELATIONSHIP_STATUS> requiredStatus;
+    public Character sourceCharacter;
+
+    public override bool IsMatch(Character character) {
+        if (requiredStatus == null) {
+            return false;
+        }
+        if (!character.isFactionless && character.faction.id != sourceCharacter.faction.id) {
+            FactionRelationship rel = character.faction.GetRelationshipWith(sourceCharacter.faction);
+            if (requiredStatus.Contains(rel.relationshipStatus)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
 
 public class ActionOptionNeededObjectChecker {
     
