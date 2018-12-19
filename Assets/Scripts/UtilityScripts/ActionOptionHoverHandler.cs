@@ -7,38 +7,26 @@ using UnityEngine.UI;
 
 
 public class ActionOptionHoverHandler : UIHoverHandler {
-
-    private void OnEnable() {
-        selectable = this.GetComponent<Selectable>();
-    }
-
-    private void OnDisable() {
-        isHovering = false;
-        if (onHoverExitAction != null) {
-            onHoverExitAction.Invoke();
-        }
-    }
-
     public override void OnPointerEnter(PointerEventData eventData) {
-        if (selectable != null) {
-            return;
+        //if (selectable != null) {
+        //    if (!selectable.IsInteractable()) {
+        //        return;
+        //    }
+        //}
+        if(selectable != null) {
+            isHovering = true;
         }
-        isHovering = true;
     }
     public override void OnPointerExit(PointerEventData eventData) {
         if (selectable != null) {
-            return;
-        }
-        isHovering = false;
-        if (onHoverExitAction != null) {
-            onHoverExitAction.Invoke();
-        }
-    }
-    void Update() {
-        if (isHovering) {
-            if (onHoverOverAction != null) {
-                onHoverOverAction.Invoke();
+            isHovering = false;
+            if (onHoverExitAction != null) {
+                onHoverExitAction.Invoke();
             }
         }
+        //isHovering = false;
+        //if (onHoverExitAction != null) {
+        //    onHoverExitAction.Invoke();
+        //}
     }
 }
