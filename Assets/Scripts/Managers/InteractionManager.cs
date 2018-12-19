@@ -251,6 +251,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.PATROL_ACTION:
                 createdInteraction = new PatrolAction(interactable);
                 break;
+            case INTERACTION_TYPE.CHARACTER_FLEES:
+                createdInteraction = new CharacterFlees(interactable);
+                break;
         }
         return createdInteraction;
     }
