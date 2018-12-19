@@ -254,6 +254,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.CHARACTER_FLEES:
                 createdInteraction = new CharacterFlees(interactable);
                 break;
+            case INTERACTION_TYPE.USE_ITEM_ON_CHARACTER:
+                createdInteraction = new UseItemOnCharacter(interactable);
+                break;
         }
         return createdInteraction;
     }

@@ -231,13 +231,14 @@ public class AreaInfoUI : UIMenu {
         UpdateAllHistoryInfo();
     }
     private void UpdateHiddenUI() {
-        if (activeArea.areaInvestigation.isActivelyCollectingToken || GameManager.Instance.inspectAll) {
-            ShowLocationTokenUI();
-            //ShowDefenderTokenUI();
-        } else {
-            HideLocationTokenUI();
-            //HideDefenderTokenUI();
-        }
+        ShowLocationTokenUI();
+        //if (activeArea.areaInvestigation.isActivelyCollectingToken || GameManager.Instance.inspectAll) {
+        //    ShowLocationTokenUI();
+        //    //ShowDefenderTokenUI();
+        //} else {
+        //    HideLocationTokenUI();
+        //    //HideDefenderTokenUI();
+        //}
         //if (_activeArea.defenderIntel.isObtained || GameManager.Instance.inspectAll) {
         //    ShowDefenderIntelUI();
         //} else {

@@ -21,8 +21,6 @@ public class RaiderCharacterEncounter : Interaction {
 
     #region Overrides
     public override void CreateStates() {
-        SetInduceRaidTarget();
-
         InteractionState startState = new InteractionState(Start, this);
         InteractionState induceRaidState = new InteractionState(Induce_Raid, this);
         InteractionState minionKilledCharacterState = new InteractionState(Minion_Killed_Character, this);
@@ -85,6 +83,7 @@ public class RaiderCharacterEncounter : Interaction {
 
     #region Action Options
     private bool CanInduceRaidBeDone(ActionOption option) {
+        SetInduceRaidTarget();
         if (_characterInvolved.job.jobType != JOB.RAIDER) {
             option.disabledTooltipText = _characterInvolved.name + " must be a Raider.";
             return false;

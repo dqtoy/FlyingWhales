@@ -7,15 +7,15 @@ using UnityEngine.UI;
 
 public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
 
-    private bool isHovering;
+    protected bool isHovering;
 
-    [SerializeField] private RectTransform tooltipPos;
-    [SerializeField] private string tooltipHeader;
+    [SerializeField] protected RectTransform tooltipPos;
+    [SerializeField] protected string tooltipHeader;
 
-    [SerializeField] private UnityEvent onHoverOverAction;
-    [SerializeField] private UnityEvent onHoverExitAction;
+    [SerializeField] protected UnityEvent onHoverOverAction;
+    [SerializeField] protected UnityEvent onHoverExitAction;
 
-    private Selectable selectable;
+    protected Selectable selectable;
 
     private void OnEnable() {
         selectable = this.GetComponent<Selectable>();
@@ -28,7 +28,7 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
     }
 
-    public void OnPointerEnter(PointerEventData eventData) {
+    public virtual void OnPointerEnter(PointerEventData eventData) {
         if (selectable != null) {
             if (!selectable.IsInteractable()) {
                 return;
@@ -37,7 +37,7 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         isHovering = true;
     }
 
-    public void OnPointerExit(PointerEventData eventData) {
+    public virtual void OnPointerExit(PointerEventData eventData) {
         if (selectable != null) {
             if (!selectable.IsInteractable()) {
                 return;
@@ -49,7 +49,7 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
     }
 
-    private void Update() {
+    void Update() {
         if (isHovering) {
             if (onHoverOverAction != null) {
                 onHoverOverAction.Invoke();
