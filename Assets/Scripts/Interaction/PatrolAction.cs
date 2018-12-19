@@ -20,10 +20,7 @@ public class PatrolAction : Interaction {
     private const string Normal_Character_Injured_Patroller = "Normal Character Injured Patroller";
     private const string Normal_Patrol_Failed = "Normal Patrol Failed";
 
-    private Character targetCharacter {
-        get { return targetCharacter; }
-        set { SetTargetCharacter(value); }
-    }
+    private Character targetCharacter;
 
     public PatrolAction(BaseLandmark interactable) 
         : base(interactable, INTERACTION_TYPE.PATROL_ACTION, 0) {
@@ -128,7 +125,7 @@ public class PatrolAction : Interaction {
     private void RevealOptionEffect(InteractionState state) {
         int patrollerChance = 0;
         int tokenChance = 0;
-        targetCharacter = state.assignedCharacter.character;
+        SetTargetCharacter(state.assignedCharacter.character);
         CombatManager.Instance.GetCombatWeightsOfTwoLists(_characterInvolved.currentParty.characters,
             targetCharacter.currentParty.characters, out patrollerChance, out tokenChance);
         WeightedDictionary<string> combatResults = new WeightedDictionary<string>();
@@ -163,7 +160,7 @@ public class PatrolAction : Interaction {
             patrollerSuccessRate.RemoveElement(RESULT.CRITICAL_FAIL);
             if (patrollerSuccessRate.PickRandomElementGivenWeights() == RESULT.SUCCESS) {
                 //**Mechanics**: Combat Patroller vs Selected Character
-                targetCharacter = GetTargetCharacter();
+                SetTargetCharacter(GetTargetCharacter());
                 if (targetCharacter != null) {
                     int patrollerChance = 0;
                     int targetCharacterChance = 0;
@@ -202,7 +199,7 @@ public class PatrolAction : Interaction {
         string nextState = string.Empty;
         if (patrollerSuccessRate.PickRandomElementGivenWeights() == RESULT.SUCCESS) {
             //**Mechanics**: Combat Patroller vs Selected Character
-            targetCharacter = GetTargetCharacter();
+            SetTargetCharacter(GetTargetCharacter());
             if (targetCharacter != null) {
                 int patrollerChance = 0;
                 int targetCharacterChance = 0;
