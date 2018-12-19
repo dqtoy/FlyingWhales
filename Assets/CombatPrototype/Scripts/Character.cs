@@ -3102,7 +3102,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 awayFromHomeInteractionWeights.AddElement("Return", 100);
 
                 for (int i = 0; i < tokenInventory.Count; i++) {
-                    if (tokenInventory[i].CanBeUsed()) {
+                    if (tokenInventory[i].CanBeUsedBy(this)) {
                         awayFromHomeInteractionWeights.AddElement(tokenInventory[i].tokenName, 100);
                     }
                 }

@@ -38,7 +38,7 @@ public class Token {
     }
     #region Virtuals
     public virtual void CreateJointInteractionStates(Interaction interaction) { }
-    public virtual bool CanBeUsed() { return true; }
+    public virtual bool CanBeUsedBy(Character character) { return true; }
     #endregion
     //public int id;
     //public string name;
@@ -141,6 +141,9 @@ public class SpecialToken : Token {
         if (quantity <= 0) {
             Messenger.Broadcast(Signals.SPECIAL_TOKEN_RAN_OUT, this);
         }
+    }
+    public virtual Character GetTargetCharacterFor(Character sourceCharacter) {
+        return null;
     }
     public override string ToString() {
         return name + " Token";

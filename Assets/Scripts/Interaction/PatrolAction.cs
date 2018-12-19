@@ -363,7 +363,9 @@ public class PatrolAction : Interaction {
 
     private void SetTargetCharacter(Character character) {
         targetCharacter = character;
-        AddLogFillerToAllStates(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        if (targetCharacter != null) {
+            AddLogFillerToAllStates(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        }
     }
     #endregion
 
