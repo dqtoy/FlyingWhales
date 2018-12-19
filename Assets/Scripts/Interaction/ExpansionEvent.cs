@@ -101,11 +101,7 @@ public class ExpansionEvent : Interaction {
     private void MinionKilledCharacterRewardEffect(InteractionState state) {
         //Player Relationship -1 on Expanding Faction
         _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -1);
-        //**Mechanic**: Character Dies, Expansion cancelled
-        _characterInvolved.Death();
-        //**Level Up**: Instigator Minion +1
-        investigatorMinion.LevelUp();
-
+        
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, _characterInvolved.characterClass.className, LOG_IDENTIFIER.STRING_1);
         }
@@ -113,6 +109,11 @@ public class ExpansionEvent : Interaction {
         state.AddLogFiller(new LogFiller(null, 
             Utilities.NormalizeString(_characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).relationshipStatus.ToString()), LOG_IDENTIFIER.STRING_2));
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
+
+        //**Mechanic**: Character Dies, Expansion cancelled
+        _characterInvolved.Death();
+        //**Level Up**: Instigator Minion +1
+        investigatorMinion.LevelUp();
     }
     private void MinionInjuredCharacterRewardEffect(InteractionState state) {
         //**Mechanic**: Character Injured, Expansion cancelled
