@@ -137,7 +137,7 @@ public class MoveToRecruit : Interaction {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character currCharacter = CharacterManager.Instance.allCharacters[i];
-            if (currCharacter.id != characterInvolved.id && !currCharacter.isDefender) { //- character must not be in Defender Tile.
+            if (currCharacter.id != characterInvolved.id && !currCharacter.isDefender && currCharacter.minion == null) { //- character must not be in Defender Tile.
                 int weight = 0;
                 if (currCharacter.isFactionless) {
                     weight += 35; //- character is not part of any Faction: Weight +35

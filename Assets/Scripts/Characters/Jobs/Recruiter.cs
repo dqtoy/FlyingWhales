@@ -80,13 +80,13 @@ public class Recruiter : Job {
             StartJobAction();
         }
     }
-    public override void ApplyActionDuration() {
-        int multiplier = _character.level - 5;
-        if(multiplier < 0) {
-            multiplier = 0;
-        }
-        _actionDuration = 80 - (2 * multiplier);
-    }
+    //public override void ApplyActionDuration() {
+    //    int multiplier = _character.level - 5;
+    //    if(multiplier < 0) {
+    //        multiplier = 0;
+    //    }
+    //    _actionDuration = 80 - (2 * multiplier);
+    //}
     public override void CaptureRandomLandmarkEvent() {
         Area area = _character.specificLocation.tileLocation.areaOfTile;
         if(area == null) {
