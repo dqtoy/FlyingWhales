@@ -77,4 +77,19 @@ public class ActionOptionButton : MonoBehaviour {
             }
         }
     }
+
+    public void ShowOptionTooltip() {
+        if (toggle.IsInteractable()) {
+            if (!string.IsNullOrEmpty(_actionOption.enabledTooltipText)) {
+                UIManager.Instance.ShowSmallInfo(_actionOption.enabledTooltipText);
+            }
+        } else {
+            if (!string.IsNullOrEmpty(_actionOption.disabledTooltipText)) {
+                UIManager.Instance.ShowSmallInfo(_actionOption.disabledTooltipText);
+            }
+        }
+    }
+    public void HideOptionTooltip() {
+        UIManager.Instance.HideSmallInfo();
+    }
 }
