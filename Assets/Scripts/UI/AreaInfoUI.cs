@@ -187,6 +187,9 @@ public class AreaInfoUI : UIMenu {
         if (activeArea != null) {
             activeArea.SetOutlineState(true);
         }
+        UIManager.Instance.SetCoverState(true);
+        UIManager.Instance.Pause();
+        UIManager.Instance.SetSpeedTogglesState(false);
     }
     public override void CloseMenu() {
         base.CloseMenu();
@@ -200,6 +203,9 @@ public class AreaInfoUI : UIMenu {
             activeArea.SetOutlineState(false);
         }
         activeArea = null;
+        UIManager.Instance.SetCoverState(false);
+        UIManager.Instance.Unpause();
+        UIManager.Instance.SetSpeedTogglesState(true);
         //PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
         //PlayerUI.Instance.CollapseMinionHolder();
         //InteractionUI.Instance.HideInteractionUI();

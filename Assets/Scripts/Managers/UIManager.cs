@@ -19,21 +19,12 @@ public class UIManager : MonoBehaviour {
     public RectTransform mainRT;
     [SerializeField] private EventSystem eventSystem;
 
-    //[Space(10)]
-    //[Header("Unified Settings")]
-    //public UnifiedUISettings settings;
-
     [Space(10)]
     [SerializeField] UIMenu[] allMenus;
 
     [Space(10)]
     [Header("Prefabs")]
     [SerializeField] private GameObject notificationPrefab;
-
-    //[Space(10)]
-    //[Header("Main UI Objects")]
-    //[SerializeField] private GameObject mainUIGO;
-
 
     [Space(10)]
     [Header("Date Objects")]
@@ -60,15 +51,6 @@ public class UIManager : MonoBehaviour {
     public RectTransform detailedInfoContentParent;
     public CharacterPortrait[] detailedInfoPortraits;
 
-    //[Space(10)]
-    //[Header("World Info Menu")]
-    //[SerializeField] private GameObject worldInfoCharactersSelectedGO;
-    //[SerializeField] private GameObject worldInfoQuestsSelectedGO;
-    //[SerializeField] private GameObject worldInfoStorylinesSelectedGO;
-    //[SerializeField] private GameObject worldInfoCharactersBtn;
-    //[SerializeField] private GameObject worldInfoQuestsBtn;
-    //[SerializeField] private GameObject worldInfoStorylinesBtn;
-
     [Space(10)]
     [Header("Popup Message Box")]
     [SerializeField] private PopupMessageBox popupMessageBox;
@@ -76,10 +58,6 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Notification Area")]
     [SerializeField] private PlayerNotificationArea notificationArea;
-
-    //[Space(10)]
-    //[Header("Character Dialog Menu")]
-    //[SerializeField] private CharacterDialogMenu characterDialogMenu;
 
     [Space(10)]
     [Header("Portraits")]
@@ -96,10 +74,11 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private Toggle locationsMenuToggle;
     [SerializeField] private Toggle factionsMenuToggle;
 
-    private List<PlayerPickerButton> currentActivePlayerPickerButtons;
+    [Space(10)]
+    [Header("Shared")]
+    [SerializeField] private GameObject cover;
 
-    public Color onToggleTextColor;
-    public Color offToggleTextColor;
+    private List<PlayerPickerButton> currentActivePlayerPickerButtons;
 
     [Space(10)] //FOR TESTING
     [Header("For Testing")]
@@ -117,15 +96,6 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private int SMALLEST_FONT_SIZE = 12;
 
     internal List<object> eventLogsQueue = new List<object>();
-
-    #region getters/setters
-    //internal GameObject minimapTexture {
-    //    get { return minimapTextureGO; }
-    //}
-    //internal List<UIMenuSettings> menuHistory {
-    //    get { return _menuHistory; }
-    //}
-    #endregion
 
     #region Monobehaviours
     private void Awake() {
@@ -317,18 +287,30 @@ public class UIManager : MonoBehaviour {
         }
     }
     public void SetProgressionSpeed1X() {
+        if (!x1Btn.IsInteractable()) {
+            return;
+        }
         GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X1);
         Unpause();
     }
     public void SetProgressionSpeed2X() {
+        if (!x2Btn.IsInteractable()) {
+            return;
+        }
         GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X2);
         Unpause();
     }
     public void SetProgressionSpeed4X() {
+        if (!x4Btn.IsInteractable()) {
+            return;
+        }
         GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X4);
         Unpause();
     }
     public void Pause() {
+        if (!pauseBtn.IsInteractable()) {
+            return;
+        }
         GameManager.Instance.SetPausedState(true);
         if (onPauseEventExpiration != null) {
             onPauseEventExpiration(true);
@@ -342,6 +324,12 @@ public class UIManager : MonoBehaviour {
     }
     public void ShowDateSummary() {
         ShowSmallInfo(GameManager.Instance.Today().ToStringDate());
+    }
+    public void SetSpeedTogglesState(bool state) {
+        pauseBtn.interactable = state;
+        x1Btn.interactable = state;
+        x2Btn.interactable = state;
+        x4Btn.interactable = state;
     }
     #endregion
 
@@ -592,6 +580,9 @@ public class UIManager : MonoBehaviour {
             return false;
         }
         return true;
+    }
+    public void SetCoverState(bool state) {
+        cover.SetActive(state);
     }
     #endregion
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
 
@@ -14,6 +15,12 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     [SerializeField] private UnityEvent onHoverOverAction;
     [SerializeField] private UnityEvent onHoverExitAction;
 
+    private Selectable selectable;
+
+    private void OnEnable() {
+        selectable = this.GetComponent<Selectable>();
+    }
+
     private void OnDisable() {
         isHovering = false;
         if (onHoverExitAction != null) {
@@ -22,10 +29,20 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
+        if (selectable != null) {
+            if (!selectable.IsInteractable()) {
+                return;
+            }
+        }
         isHovering = true;
     }
 
     public void OnPointerExit(PointerEventData eventData) {
+        if (selectable != null) {
+            if (!selectable.IsInteractable()) {
+                return;
+            }
+        }
         isHovering = false;
         if (onHoverExitAction != null) {
             onHoverExitAction.Invoke();
