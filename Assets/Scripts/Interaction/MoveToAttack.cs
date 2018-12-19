@@ -19,6 +19,9 @@ public class MoveToAttack : Interaction {
 
     #region Overrides
     public override void CreateStates() {
+        if (_target != null && _attackers != null) {
+            interactable.tileLocation.areaOfTile.SetAttackTargetAndCharacters(_target, _attackers);
+        }
         InteractionState startState = new InteractionState("Start", this);
         InteractionState stopSuccessfulState = new InteractionState("Stop Successful", this);
         InteractionState stopFailState = new InteractionState("Stop Fail", this);
@@ -104,18 +107,12 @@ public class MoveToAttack : Interaction {
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.attackTarget, interactable.tileLocation.areaOfTile.attackTarget.name, LOG_IDENTIFIER.LANDMARK_2));
 
-        if(_target != null && _attackers != null) {
-            interactable.tileLocation.areaOfTile.SetAttackTargetAndCharacters(_target, _attackers);
-        }
         interactable.tileLocation.areaOfTile.AttackTarget();
     }
     private void DoNothingEffect(InteractionState state) {
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.attackTarget, interactable.tileLocation.areaOfTile.attackTarget.name, LOG_IDENTIFIER.LANDMARK_2));
 
-        if (_target != null && _attackers != null) {
-            interactable.tileLocation.areaOfTile.SetAttackTargetAndCharacters(_target, _attackers);
-        }
         interactable.tileLocation.areaOfTile.AttackTarget();
     }
     #endregion

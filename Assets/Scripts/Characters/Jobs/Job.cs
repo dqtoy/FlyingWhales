@@ -62,9 +62,9 @@ public class Job {
             //Area area = _character.specificLocation.tileLocation.areaOfTile;
             //SetJobActionPauseState(true);
             //area.SetStopDefaultInteractionsState(true);
-
-            if(_attachedToken.tokenType != TOKEN_TYPE.SPECIAL) {
-                Interaction interaction = InteractionManager.Instance.CreateNewInteraction(_tokenInteractionTypes[_attachedToken.tokenType], _character.specificLocation as BaseLandmark);
+            Interaction interaction = null;
+            if (_attachedToken.tokenType != TOKEN_TYPE.SPECIAL) {
+                interaction = InteractionManager.Instance.CreateNewInteraction(_tokenInteractionTypes[_attachedToken.tokenType], _character.specificLocation as BaseLandmark);
                 //interaction.AddEndInteractionAction(() => SetJobActionPauseState(false));
                 //interaction.AddEndInteractionAction(() => ForceDefaultAllExistingInteractions());
 
@@ -74,20 +74,23 @@ public class Job {
                 } else {
                     _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
                 }
-                SetCreatedInteraction(interaction);
             } else {
-                CreateSpecialTokenInteraction(_attachedToken as SpecialToken);
+                interaction = CreateSpecialTokenInteraction(_attachedToken as SpecialToken);
             }
-            _createdInteraction.SetTokenTrigger(_attachedToken);
-            _attachedToken = null;
-            InteractionUI.Instance.OpenInteractionUI(_createdInteraction);
+            if(interaction != null) {
+                interaction.SetTokenTrigger(_attachedToken);
+                SetCreatedInteraction(interaction);
+                _attachedToken = null;
+                InteractionUI.Instance.OpenInteractionUI(_createdInteraction);
+            }
+
         }
     }
     public virtual void ApplyActionDuration() {}
     public virtual void DoJobAction() {
         Debug.Log(GameManager.Instance.TodayLogString() + " Doing job action: " + character.name + "(" + jobType.ToString() + ")");
     }
-    public virtual void CreateSpecialTokenInteraction(SpecialToken specialToken) {
+    public virtual Interaction CreateSpecialTokenInteraction(SpecialToken specialToken) {
         if(specialToken.specialTokenType == SPECIAL_TOKEN.BOOK_OF_THE_DEAD) {
             Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CREATE_NECROMANCER, _character.specificLocation as BaseLandmark);
             for (int i = 0; i < _character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
@@ -99,8 +102,9 @@ public class Job {
                     break;
                 }
             }
-            SetCreatedInteraction(interaction);
+            return interaction;
         }
+        return null;
     }
     protected virtual void PassiveEffect(Area area) {}
     public virtual int GetSuccessRate() { return 0; }
