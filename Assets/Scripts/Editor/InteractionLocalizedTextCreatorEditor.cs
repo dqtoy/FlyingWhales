@@ -106,12 +106,17 @@ public class InteractionLocalizedTextCreatorEditor : EditorWindow {
         newString = newString.Replace("[Demon Name]", "%113%");
         newString = newString.Replace("[Demon]", "%113%");
         newString = newString.Replace("[Minion Name]", "%113%");
+
         newString = newString.Replace("[Character Name]", "%00@");
         newString = newString.Replace("[Character Name 1]", "%00@");
         newString = newString.Replace("[Character Name 2]", "%10@");
+
         newString = newString.Replace("[Location Name]", "%04@");
-        newString = newString.Replace("[Faction Name]", "%01@");
         newString = newString.Replace("[Location Name 2]", "%14@");
+
+        newString = newString.Replace("[Faction Name]", "%01@");
+        newString = newString.Replace("[Faction Name 1]", "%01@");
+        newString = newString.Replace("[Faction Name 2]", "%11@");
         return newString;
     }
 }

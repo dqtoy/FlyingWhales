@@ -333,7 +333,11 @@ public class Interaction {
     public void AddLogFillerToAllStates(LogFiller filler) {
         foreach (KeyValuePair<string, InteractionState> kvp in _states) {
             kvp.Value.AddLogFiller(filler);
+            if (kvp.Value.descriptionLog != null) {
+                kvp.Value.descriptionLog.AddToFillers(filler);
+            }
         }
+        
     }
     #endregion
 

@@ -50,10 +50,13 @@ public class Log {
         }
 		this.fillers.Add (new LogFiller (obj, value, identifier));
 	}
+    internal void AddToFillers(LogFiller filler, bool replaceExisting = true) {
+        AddToFillers(filler.obj, filler.value, filler.identifier, replaceExisting);
+    }
     internal void AddToFillers(List<LogFiller> fillers, bool replaceExisting = true) {
         for (int i = 0; i < fillers.Count; i++) {
             LogFiller filler = fillers[i];
-            AddToFillers(filler.obj, filler.value, filler.identifier, replaceExisting);
+            AddToFillers(filler);
         }
     }
     public void SetFillers(List<LogFiller> fillers) {

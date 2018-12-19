@@ -248,6 +248,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.UNABLE_TO_PERFORM:
                 createdInteraction = new UnableToPerform(interactable);
                 break;
+            case INTERACTION_TYPE.PATROL_ACTION:
+                createdInteraction = new PatrolAction(interactable);
+                break;
         }
         return createdInteraction;
     }
