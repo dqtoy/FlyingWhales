@@ -3071,9 +3071,10 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             //}
             GenerateDailyInteraction();
             SetDailyInteractionGenerationTick();
-        } else if (_currentInteractionTick > GameManager.Instance.continuousDays) {
-            SetDailyInteractionGenerationTick();
-        }
+        } 
+        //else if (_currentInteractionTick > GameManager.Instance.continuousDays) {
+        //    SetDailyInteractionGenerationTick();
+        //}
     }
     public void GenerateDailyInteraction() {
         if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb || _job == null) {

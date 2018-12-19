@@ -92,7 +92,7 @@ public class ObjectPoolManager : MonoBehaviour {
     public void DestroyObject(GameObject go) {
         PooledObject po = go.GetComponent<PooledObject>();
         if(po == null) {
-            throw new Exception("Cannot Destroy Object via Object Pool! Object " + go.name + " is not from an object pool");
+             Debug.LogWarning("Cannot Destroy Object via Object Pool! Object " + go.name + " is not from an object pool");
         } else {
             po.SendObjectBackToPool();
             po.Reset();
