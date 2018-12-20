@@ -177,9 +177,9 @@ public class PlayerUI : MonoBehaviour {
         _minionSortType = MINIONS_SORT_TYPE.LEVEL;
         PlayerManager.Instance.player.SortByLevel();
     }
-    public void SortByTypeMinions() {
+    public void SortByClassMinions() {
         _minionSortType = MINIONS_SORT_TYPE.TYPE;
-        PlayerManager.Instance.player.SortByType();
+        PlayerManager.Instance.player.SortByClass();
     }
     public void SortByDefaultMinions() {
         _minionSortType = MINIONS_SORT_TYPE.DEFAULT;
@@ -196,7 +196,7 @@ public class PlayerUI : MonoBehaviour {
     }
     public void OnToggleSortTypeMinions(bool state) {
         if (state) {
-            SortByTypeMinions();
+            SortByClassMinions();
         } else {
             if (!minionSortingToggleGroup.AnyTogglesOn()) {
                 SortByDefaultMinions();
