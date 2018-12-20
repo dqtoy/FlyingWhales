@@ -75,7 +75,8 @@ public class DiplomatCharacterEncounter : Interaction {
     }
     private void UseTokenOption(InteractionState state) {
         SpecialToken specialToken = state.assignedSpecialToken;
-        specialToken.CreateJointInteractionStates(this);
+        specialToken.CreateJointInteractionStates(this, investigatorMinion.character, _characterInvolved);
+        SetCurrentState(_states[specialToken.Item_Used]);
     }
     private void TrainOption() {
         SetCurrentState(_states[Train_Character]);

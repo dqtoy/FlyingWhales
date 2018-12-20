@@ -7,7 +7,7 @@ public class UseItemOnCharacter : Interaction {
     private SpecialToken _tokenToBeUsed;
 
     private const string Stop_Successful = "Stop Successful";
-    private const string Stop_Fail = "Stop Fail";
+    //private const string Stop_Fail = "Stop Fail";
     private const string Do_Nothing = "Do nothing";
 
     private Character targetCharacter;
@@ -25,7 +25,7 @@ public class UseItemOnCharacter : Interaction {
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
         InteractionState stopSuccessful = new InteractionState(Stop_Successful, this);
-        InteractionState stopFail = new InteractionState(Stop_Fail, this);
+        //InteractionState stopFail = new InteractionState(Stop_Fail, this);
         InteractionState doNothing = new InteractionState(Do_Nothing, this);
 
         targetCharacter = _tokenToBeUsed.GetTargetCharacterFor(_characterInvolved);
@@ -33,12 +33,12 @@ public class UseItemOnCharacter : Interaction {
         CreateActionOptions(startState);
 
         stopSuccessful.SetEffect(() => StopSuccessfulRewardEffect(stopSuccessful));
-        stopFail.SetEffect(() => StopFailRewardEffect(stopFail));
+        //stopFail.SetEffect(() => StopFailRewardEffect(stopFail));
         doNothing.SetEffect(() => DoNothingRewardEffect(doNothing));
 
         _states.Add(startState.name, startState);
         _states.Add(stopSuccessful.name, stopSuccessful);
-        _states.Add(stopFail.name, stopFail);
+        //_states.Add(stopFail.name, stopFail);
         _states.Add(doNothing.name, doNothing);
 
         SetCurrentState(startState);
@@ -77,7 +77,8 @@ public class UseItemOnCharacter : Interaction {
                 nextState = Stop_Successful;
                 break;
             case RESULT.FAIL:
-                nextState = Stop_Fail;
+                _tokenToBeUsed.CreateJointInteractionStates(this, _characterInvolved, targetCharacter);
+                nextState = _tokenToBeUsed.Stop_Fail;
                 break;
             default:
                 break;
@@ -85,7 +86,8 @@ public class UseItemOnCharacter : Interaction {
         SetCurrentState(_states[nextState]);
     }
     private void DoNothingOptionEffect(InteractionState state) {
-        _tokenToBeUsed.CreateJointInteractionStates(this);
+        _tokenToBeUsed.CreateJointInteractionStates(this, _characterInvolved, targetCharacter);
+        SetCurrentState(_states[_tokenToBeUsed.Item_Used]);
         //SetCurrentState(_states[Do_Nothing]);
     }
     #endregion
@@ -102,8 +104,7 @@ public class UseItemOnCharacter : Interaction {
         //**Level Up**: Dissuader Minion +1
         investigatorMinion.LevelUp();
     }
-    private void StopFailRewardEffect(InteractionState state) {
-        _tokenToBeUsed.CreateJointInteractionStates(this);
+    private void StopFailRewardEffect(InteractionState state) {        
         //if (state.descriptionLog != null) {
         //    state.descriptionLog.AddToFillers(null, _tokenToBeUsed.nameInBold, LOG_IDENTIFIER.STRING_1);
         //    state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
