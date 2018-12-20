@@ -151,6 +151,6 @@ public class MoveToExpand : Interaction {
         if (choices.Count > 0) {
             return choices[Random.Range(0, choices.Count)];
         }
-        throw new System.Exception("Could not find target location for expand");
+        throw new System.Exception(_characterInvolved.name + " Could not find target location for expand for " + _characterInvolved.faction.name);
     }
 }

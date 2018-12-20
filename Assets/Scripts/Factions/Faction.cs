@@ -304,6 +304,7 @@ public class Faction {
     }
     private void OnCharacterDied(Character characterThatDied) {
         if (leader != null && leader is Character && leader.id == characterThatDied.id) {
+            Debug.Log(this.name + "'s Leader that died was " + characterThatDied.name);
             OnLeaderDied();
         }
     }

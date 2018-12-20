@@ -22,6 +22,7 @@
         "GOBLIN",
         "ZOMBIE"
       ],
+      "possibleSpecialTokenSpawns": [],
       "raceSetup": [
         {
           "race": {
@@ -65,6 +66,11 @@
         "GOBLIN",
         "SPIDER"
       ],
+      "possibleSpecialTokenSpawns": [
+        "Blighted Potion",
+        "Charm Spell",
+        "Fear Spell",
+      ],
       "raceSetup": [
         {
           "race": {
@@ -106,9 +112,9 @@
         "HUMANS",
         "GOBLIN"
       ],
-      "possibleSpecialTokenSpawns" : [
-      	"Book Of The Dead",
-      	"Blighted Potion"
+      "possibleSpecialTokenSpawns": [
+        "Book Of The Dead",
+        "Blighted Potion"
       ],
       "raceSetup": [
         {
@@ -149,8 +155,10 @@
         "GOBLIN",
         "SPIDER"
       ],
-      "possibleSpecialTokenSpawns" : [
-      	"Blighted Potion"
+      "possibleSpecialTokenSpawns": [
+        "Blighted Potion",
+        "Charm Spell",
+        "Fear Spell",
       ],
       "raceSetup": [],
       "recommendedPower": 0.0,
@@ -181,6 +189,11 @@
         "GOBLIN",
         "WOLF",
         "ELVES"
+      ],
+      "possibleSpecialTokenSpawns": [
+        "Blighted Potion",
+        "Charm Spell",
+        "Fear Spell",
       ],
       "raceSetup": [
         {
@@ -262,6 +275,7 @@
         "GOBLIN",
         "SKELETON"
       ],
+      "possibleSpecialTokenSpawns": [],
       "raceSetup": [
         {
           "race": {
@@ -310,6 +324,7 @@
         "SKELETON",
         "ZOMBIE"
       ],
+      "possibleSpecialTokenSpawns": [],
       "raceSetup": [
         {
           "race": {
@@ -350,6 +365,11 @@
         "GOBLIN",
         "HUMANS",
         "WOLF"
+      ],
+      "possibleSpecialTokenSpawns": [
+        "Blighted Potion",
+        "Charm Spell",
+        "Fear Spell",
       ],
       "raceSetup": [
         {
@@ -432,6 +452,7 @@
         "SKELETON",
         "ZOMBIE"
       ],
+      "possibleSpecialTokenSpawns": [],
       "raceSetup": [
         {
           "race": {
@@ -467,6 +488,7 @@
       "monthlySupply": 0,
       "ownerID": -1,
       "possibleOccupants": [],
+      "possibleSpecialTokenSpawns": [],
       "raceSetup": [],
       "recommendedPower": 0.0,
       "residentCapacity": 0,
@@ -494,6 +516,11 @@
         "SPIDER",
         "GOBLIN",
         "SKELETON"
+      ],
+      "possibleSpecialTokenSpawns": [
+        "Blighted Potion",
+        "Charm Spell",
+        "Fear Spell",
       ],
       "raceSetup": [
         {
@@ -1807,82 +1834,6 @@
       "race": "HUMANS",
       "role": "HERO",
       "secrets": null
-    },
-    {
-      "attributes": [],
-      "className": "Worker",
-      "equipmentData": null,
-      "factionID": 1,
-      "gender": "MALE",
-      "hiddenDesire": "NONE",
-      "homeID": -1,
-      "homeLandmarkID": 18,
-      "id": 34,
-      "inventoryData": [],
-      "level": 1,
-      "locationID": 18,
-      "locationType": "LANDMARK",
-      "morality": "GOOD",
-      "name": "Fyn Worker 1",
-      "portraitSettings": {
-        "bodyIndex": 0,
-        "eyeBrowIndex": 3,
-        "eyesIndex": 3,
-        "facialHairIndex": 3,
-        "gender": "MALE",
-        "hairColor": {
-          "a": 255,
-          "b": 0,
-          "g": 0,
-          "r": 0
-        },
-        "hairIndex": 8,
-        "headIndex": 4,
-        "mouthIndex": 0,
-        "noseIndex": 5,
-        "race": "HUMANS"
-      },
-      "race": "HUMANS",
-      "role": "CIVILIAN",
-      "secrets": null
-    },
-    {
-      "attributes": [],
-      "className": "Worker",
-      "equipmentData": null,
-      "factionID": 2,
-      "gender": "MALE",
-      "hiddenDesire": "NONE",
-      "homeID": -1,
-      "homeLandmarkID": 3,
-      "id": 35,
-      "inventoryData": [],
-      "level": 1,
-      "locationID": 3,
-      "locationType": "LANDMARK",
-      "morality": "GOOD",
-      "name": "Orelia Worker 1",
-      "portraitSettings": {
-        "bodyIndex": 0,
-        "eyeBrowIndex": 8,
-        "eyesIndex": 3,
-        "facialHairIndex": 0,
-        "gender": "MALE",
-        "hairColor": {
-          "a": 255,
-          "b": 0,
-          "g": 0,
-          "r": 0
-        },
-        "hairIndex": 2,
-        "headIndex": 7,
-        "mouthIndex": 3,
-        "noseIndex": 0,
-        "race": "ELVES"
-      },
-      "race": "ELVES",
-      "role": "CIVILIAN",
-      "secrets": null
     }
   ],
   "factionsData": [
@@ -1923,28 +1874,6 @@
       "factionDescription": "",
       "factionID": 1,
       "factionName": "Fyn",
-      "favor": [
-        {
-          "Key": 2,
-          "Value": 0
-        },
-        {
-          "Key": 3,
-          "Value": 0
-        },
-        {
-          "Key": 4,
-          "Value": 0
-        },
-        {
-          "Key": 5,
-          "Value": 0
-        },
-        {
-          "Key": 6,
-          "Value": 0
-        }
-      ],
       "isActive": true,
       "leaderID": 1,
       "level": 14,
@@ -2016,28 +1945,6 @@
       "factionDescription": "",
       "factionID": 2,
       "factionName": "Orelia",
-      "favor": [
-        {
-          "Key": 1,
-          "Value": 0
-        },
-        {
-          "Key": 3,
-          "Value": 0
-        },
-        {
-          "Key": 4,
-          "Value": 0
-        },
-        {
-          "Key": 5,
-          "Value": 0
-        },
-        {
-          "Key": 6,
-          "Value": 0
-        }
-      ],
       "isActive": true,
       "leaderID": 15,
       "level": 10,
@@ -2103,28 +2010,6 @@
       "factionDescription": "",
       "factionID": 3,
       "factionName": "Rikitik Bandits",
-      "favor": [
-        {
-          "Key": 1,
-          "Value": 0
-        },
-        {
-          "Key": 2,
-          "Value": 0
-        },
-        {
-          "Key": 4,
-          "Value": 0
-        },
-        {
-          "Key": 5,
-          "Value": 0
-        },
-        {
-          "Key": 6,
-          "Value": 0
-        }
-      ],
       "isActive": true,
       "leaderID": 24,
       "level": 8,
@@ -2196,28 +2081,6 @@
       "factionDescription": "",
       "factionID": 4,
       "factionName": "Caeven Bandits",
-      "favor": [
-        {
-          "Key": 1,
-          "Value": 0
-        },
-        {
-          "Key": 2,
-          "Value": 0
-        },
-        {
-          "Key": 3,
-          "Value": 0
-        },
-        {
-          "Key": 5,
-          "Value": 0
-        },
-        {
-          "Key": 6,
-          "Value": 0
-        }
-      ],
       "isActive": true,
       "leaderID": 29,
       "level": 7,
@@ -2264,28 +2127,6 @@
       "factionDescription": "",
       "factionID": 5,
       "factionName": "Ziranna",
-      "favor": [
-        {
-          "Key": 1,
-          "Value": 0
-        },
-        {
-          "Key": 2,
-          "Value": 0
-        },
-        {
-          "Key": 3,
-          "Value": 0
-        },
-        {
-          "Key": 4,
-          "Value": 0
-        },
-        {
-          "Key": 6,
-          "Value": 0
-        }
-      ],
       "isActive": false,
       "leaderID": -1,
       "level": 0,
@@ -2330,28 +2171,6 @@
       "factionDescription": "",
       "factionID": 6,
       "factionName": "Lucareth",
-      "favor": [
-        {
-          "Key": 1,
-          "Value": 0
-        },
-        {
-          "Key": 2,
-          "Value": 0
-        },
-        {
-          "Key": 3,
-          "Value": 0
-        },
-        {
-          "Key": 4,
-          "Value": 0
-        },
-        {
-          "Key": 5,
-          "Value": 0
-        }
-      ],
       "isActive": false,
       "leaderID": -1,
       "level": 0,

@@ -179,6 +179,7 @@ public class CharacterManager : MonoBehaviour {
         //}
 #endif
         _allCharacters.Add(newCharacter);
+        //CheckForDuplicateIDs(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
     }
@@ -242,6 +243,7 @@ public class CharacterManager : MonoBehaviour {
         }
 
         _allCharacters.Add(newCharacter);
+        //CheckForDuplicateIDs(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
     }
@@ -319,6 +321,16 @@ public class CharacterManager : MonoBehaviour {
             Area currArea = LandmarkManager.Instance.allAreas[i];
             if (currArea.owner == null && currArea.areaType != AREA_TYPE.DEMONIC_INTRUSION) { //if unowned (neutral)
                 currArea.GenerateNeutralCharacters();
+            }
+        }
+    }
+    private void CheckForDuplicateIDs(Character createdCharacter) {
+        for (int i = 0; i < allCharacters.Count; i++) {
+            Character currCharacter = allCharacters[i];
+            if (currCharacter != createdCharacter) {
+                if (currCharacter.id == createdCharacter.id) {
+                    throw new System.Exception(currCharacter.name + " has same id as " + createdCharacter.name);
+                }
             }
         }
     }
