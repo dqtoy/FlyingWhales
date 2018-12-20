@@ -795,8 +795,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 if (_ownParty.actionData.currentAction != null) {
                     _ownParty.actionData.currentAction.EndAction(_ownParty, _ownParty.actionData.currentTargetObject);
                 }
+            } else {
+                _currentParty.RemoveCharacter(this);
             }
-            _currentParty.RemoveCharacter(this);
             _ownParty.PartyDeath();
             //if (currentParty.id != _ownParty.id) {
             //}

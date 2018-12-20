@@ -187,6 +187,16 @@ public class Party {
             return;
         }
         _isDead = true;
+        //For now, when a party dies and there still members besides the owner of this party, kick them out of the party first before applying death
+        if(_characters.Count > 1) {
+            for (int i = 0; i < _characters.Count; i++) {
+                if(_characters[i].id != _owner.id) {
+                    RemoveCharacter(_characters[i]);
+                    i--;
+                }
+            }
+        }
+
         ILocation deathLocation = this.specificLocation;
         this.specificLocation.RemoveCharacterFromLocation(this);
         SetSpecificLocation(deathLocation); //set the specific location of this party, to the location it died at
@@ -262,10 +272,10 @@ public class Party {
             }
             Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
 
-            //Check if there are still characters in this party, if not, change to dead state
-            if (_characters.Count <= 0) {
-                PartyDeath();
-            }
+            ////Check if there are still characters in this party, if not, change to dead state
+            //if (_characters.Count <= 0) {
+            //    PartyDeath();
+            //}
         }
     }
     public void GoHome(Action doneAction = null, Action actionOnStartOfMovement = null) {

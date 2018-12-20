@@ -104,6 +104,9 @@ public class CharacterAvatar : MonoBehaviour{
             Messenger.RemoveListener<CharacterToken>(Signals.CHARACTER_TOKEN_ADDED, OnCharacterTokenObtained);
         }
         //Messenger.RemoveListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);
+        if (_isTravelling) {
+            CancelledDeparture();
+        }
 #if !WORLD_CREATION_TOOL
         CharacterManager.Instance.RemoveCharacterAvatar(this);
 #endif
@@ -161,10 +164,16 @@ public class CharacterAvatar : MonoBehaviour{
     private void ReduceCurveLine() {
         if (_travelLine.isDone) {
             Messenger.RemoveListener(Signals.DAY_STARTED, ReduceCurveLine);
-            CancelledDeparture();
+            CancelTravelDeparture();
             return;
         }
         _travelLine.ReduceProgress();
+    }
+    private void CancelTravelDeparture() {
+        CancelledDeparture();
+        if(onPathCancelled != null) {
+            onPathCancelled();
+        }
     }
     private void CancelledDeparture() {
         _isTravelling = false;
@@ -172,9 +181,6 @@ public class CharacterAvatar : MonoBehaviour{
         _travelLine.travelLineParent.RemoveChild(_travelLine);
         GameObject.Destroy(_travelLine.gameObject);
         _travelLine = null;
-        if(onPathCancelled != null) {
-            onPathCancelled();
-        }
     }
     private void ArriveAtLocation() {
         _isTravelling = false;
