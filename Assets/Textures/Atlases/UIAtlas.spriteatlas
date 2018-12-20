@@ -43,6 +43,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: aa65e846891081d49901dbf649c804cf, type: 3}
   - {fileID: 21300000, guid: 3d5d01cc86ac72647b748c6ee18fe349, type: 3}
   - {fileID: 21300000, guid: 5b4fd8fae79fa8643883fcbf95f88ee3, type: 3}
+  - {fileID: 21300000, guid: 5de5d9e79e7bca6468fe0c1767df3f96, type: 3}
   - {fileID: 21300000, guid: 81e1240cf953f764790b09c2fc0a02da, type: 3}
   - {fileID: 21300000, guid: 99d2b917dce57c9489a889b19b42f243, type: 3}
   - {fileID: 21300000, guid: d3d127dddfde41d44ba5bfdb8fc09d38, type: 3}
@@ -277,6 +278,7 @@ SpriteAtlas:
   - Cindermaul Hideout
   - Blistering Hollow
   - Radisle Cavern
+  - Demonic Portal
   - Cardell
   - Tessellated Triangle
   - Odious Lair

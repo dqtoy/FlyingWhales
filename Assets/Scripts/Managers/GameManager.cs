@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager Instance = null;
 
-	public static int[] daysInMonth = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+	public static int[] daysInMonth = {0, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30};
     public static string[] daysInWords = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 	public int month;
 	public int days;

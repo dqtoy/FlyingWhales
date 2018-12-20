@@ -411,7 +411,7 @@ public class StructureObj : IObject {
 
     #region Interaction
     private void SetDailyInteractionGenerationTick() {
-        _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.daysInMonth[GameManager.Instance.GetNextMonth()] + 1);
+        _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.hoursPerDay + 1);
     }
     private void DailyInteractionGeneration() {
         if (_usedMonthForInteraction == GameManager.Instance.month) {

@@ -340,57 +340,67 @@ public class Utilities : MonoBehaviour {
         string strLogIdentifier = wordToBeReplaced.Substring(1, wordToBeReplaced.Length - 2);
         //strLogIdentifier = strLogIdentifier.Remove((strLogIdentifier.Length - 1), 1);
         LOG_IDENTIFIER identifier = Utilities.logIdentifiers[strLogIdentifier];
-        if (wordToBeReplaced.EndsWith("@")) {
-            if (identifier.ToString().Contains("LIST")) {
-                int listCount = 0;
-                for (int i = 0; i < objectLog.Count; i++) {
-                    if (objectLog[i].identifier == identifier) {
-                        if (wordToReplace != string.Empty) {
-                            wordToReplace += ", ";
-                        }
+        if (identifier.ToString().Contains("LIST")) {
+            int listCount = 0;
+            for (int i = 0; i < objectLog.Count; i++) {
+                if (objectLog[i].identifier == identifier) {
+                    if (wordToReplace != string.Empty) {
+                        wordToReplace += ", ";
+                    }
+                    if(objectLog[i].obj != null) {
                         wordToReplace += "<link=" + '"' + i.ToString() + '"' + "><b>" + objectLog[i].value + "</b></link>";
-                        listCount++;
+                    } else {
+                        wordToReplace += "<b>" + objectLog[i].value + "</b>";
                     }
-                }
-                if(listCount > 1) {
-                    //Add 'and' after last comma
-                    int commaLastIndex = wordToReplace.LastIndexOf(',');
-                    wordToReplace = wordToReplace.Insert(commaLastIndex + 1, " and");
-                }
-            } else {
-                for (int i = 0; i < objectLog.Count; i++) {
-                    if (objectLog[i].identifier == identifier) {
-                        wordToReplace = "<link=" + '"' + i.ToString() + '"' + "><b>" + objectLog[i].value + "</b></link>";
-                        break;
-                    }
+                    listCount++;
                 }
             }
-        } else if (wordToBeReplaced.EndsWith("%")) {
-            if (identifier.ToString().Contains("LIST")) {
-                int listCount = 0;
-                for (int i = 0; i < objectLog.Count; i++) {
-                    if (objectLog[i].identifier == identifier) {
-                        if (wordToReplace != string.Empty) {
-                            wordToReplace += ", ";
-                        }
-                        wordToReplace += "<b>" + objectLog[i].value + "</b>";
-                        listCount++;
-                    }
-                }
-                if (listCount > 1) {
-                    //Add 'and' after last comma
-                    int commaLastIndex = wordToReplace.LastIndexOf(',');
-                    wordToReplace = wordToReplace.Insert(commaLastIndex + 1, " and");
-                }
-            } else {
-                for (int i = 0; i < objectLog.Count; i++) {
-                    if (objectLog[i].identifier == identifier) {
+            if(listCount > 1) {
+                //Add 'and' after last comma
+                int commaLastIndex = wordToReplace.LastIndexOf(',');
+                wordToReplace = wordToReplace.Insert(commaLastIndex + 1, " and");
+            }
+        } else {
+            for (int i = 0; i < objectLog.Count; i++) {
+                if (objectLog[i].identifier == identifier) {
+                    if (objectLog[i].obj != null) {
+                        wordToReplace = "<link=" + '"' + i.ToString() + '"' + "><b>" + objectLog[i].value + "</b></link>";
+                    } else {
                         wordToReplace = "<b>" + objectLog[i].value + "</b>";
-                        break;
                     }
+                    break;
                 }
             }
         }
+        //if (wordToBeReplaced.EndsWith("@")) {
+
+        //}
+        //else if (wordToBeReplaced.EndsWith("%")) {
+        //    if (identifier.ToString().Contains("LIST")) {
+        //        int listCount = 0;
+        //        for (int i = 0; i < objectLog.Count; i++) {
+        //            if (objectLog[i].identifier == identifier) {
+        //                if (wordToReplace != string.Empty) {
+        //                    wordToReplace += ", ";
+        //                }
+        //                wordToReplace += "<b>" + objectLog[i].value + "</b>";
+        //                listCount++;
+        //            }
+        //        }
+        //        if (listCount > 1) {
+        //            //Add 'and' after last comma
+        //            int commaLastIndex = wordToReplace.LastIndexOf(',');
+        //            wordToReplace = wordToReplace.Insert(commaLastIndex + 1, " and");
+        //        }
+        //    } else {
+        //        for (int i = 0; i < objectLog.Count; i++) {
+        //            if (objectLog[i].identifier == identifier) {
+        //                wordToReplace = "<b>" + objectLog[i].value + "</b>";
+        //                break;
+        //            }
+        //        }
+        //    }
+        //}
 
         return wordToReplace;
 
