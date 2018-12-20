@@ -162,7 +162,7 @@ public class SuspiciousSoldierMeeting : Interaction {
 
                     //this is for deserter2
                     Log newMinionLog = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_log1");
-                    newMinionLog.AddToFillers(investigatorMinion, investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
+                    newMinionLog.AddToFillers(investigatorMinion.character, investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1);
                     newMinionLog.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
                     newMinionLog.AddToFillers(deserter2, deserter2.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     newMinionLog.AddLogToInvolvedObjects();

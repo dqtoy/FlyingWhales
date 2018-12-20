@@ -1413,9 +1413,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         if (CharacterManager.Instance.IsClassADeadlySin(_characterClass.className)) {
             AssignJob(_characterClass.jobType);
         } else {
-            //JOB[] jobs = new JOB[] { JOB.DIPLOMAT, JOB.DISSUADER, JOB.EXPLORER, JOB.INSTIGATOR, JOB.RAIDER, JOB.RECRUITER, JOB.SPY };
-            //AssignJob(jobs[UnityEngine.Random.Range(0, jobs.Length)]);
-            AssignJob(JOB.RAIDER);
+            JOB[] jobs = new JOB[] { JOB.DIPLOMAT, JOB.DISSUADER, JOB.EXPLORER, JOB.INSTIGATOR, JOB.RAIDER, JOB.RECRUITER, JOB.SPY };
+            AssignJob(jobs[UnityEngine.Random.Range(0, jobs.Length)]);
+            //AssignJob(JOB.RAIDER);
         }
     }
     public void AssignJob(JOB jobType) {

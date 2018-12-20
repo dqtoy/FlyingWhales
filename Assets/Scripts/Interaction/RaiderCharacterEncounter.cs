@@ -165,9 +165,9 @@ public class RaiderCharacterEncounter : Interaction {
     private void CharacterKilledMinionEffect(InteractionState state) {
         characterInvolved.LevelUp();
 
-        state.descriptionLog.AddToFillers(investigatorMinion, investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
+        state.descriptionLog.AddToFillers(investigatorMinion.character, investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1);
 
-        state.AddLogFiller(new LogFiller(investigatorMinion, investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
+        state.AddLogFiller(new LogFiller(investigatorMinion.character, investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1));
 
         DemonDisappearsRewardEffect(state);
     }

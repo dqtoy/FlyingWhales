@@ -77,7 +77,8 @@ public class InstigatorCharacterEncounter : Interaction {
     #region Action Options
     private void UseTokenOption(InteractionState state) {
         SpecialToken specialToken = state.assignedSpecialToken;
-        specialToken.CreateJointInteractionStates(this);
+        specialToken.CreateJointInteractionStates(this, investigatorMinion.character, _characterInvolved);
+        SetCurrentState(_states[specialToken.Item_Used]);
     }
     private void AssaultOption() {
         int minionWeight = 0;
@@ -125,9 +126,9 @@ public class InstigatorCharacterEncounter : Interaction {
     private void CharacterKilledMinionEffect(InteractionState state) {
         characterInvolved.LevelUp();
 
-        state.descriptionLog.AddToFillers(investigatorMinion, investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
+        state.descriptionLog.AddToFillers(investigatorMinion.character, investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1);
 
-        state.AddLogFiller(new LogFiller(investigatorMinion, investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
+        state.AddLogFiller(new LogFiller(investigatorMinion.character, investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1));
 
         DemonDisappearsRewardEffect(state);
     }

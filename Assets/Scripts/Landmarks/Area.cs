@@ -875,27 +875,25 @@ public class Area {
                     Interaction interaction = null;
                     if (interactionType != INTERACTION_TYPE.MOVE_TO_RAID && interactionType != INTERACTION_TYPE.MOVE_TO_SCAVENGE) {
                         supplySpent += 100;
-                        if (supplySpent < suppliesInBank) {
+                        if (supplySpent <= suppliesInBank) {
+                            testLog += "\nChosen Interaction: " + interactionType.ToString();
                             interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
+                            interaction.SetCanInteractionBeDoneAction(() => CanDoAreaTaskInteraction(interaction.type, chosenCandidate));
+                            interaction.SetInitializeAction(() => AdjustSuppliesInBank(-100));
+                            interaction.SetMinionSuccessAction(() => AdjustSuppliesInBank(100));
                             chosenCandidate.SetForcedInteraction(interaction);
-                        } else if (supplySpent == suppliesInBank) {
-                            interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
-                            chosenCandidate.SetForcedInteraction(interaction);
-                            testLog += "\nAssigning area tasks will stop, all area supplies have been allotted.";
-                            break;
+                            if (supplySpent == suppliesInBank) {
+                                testLog += "\nAssigning area tasks will stop, all area supplies have been allotted.";
+                                break;
+                            }
                         } else {
                             testLog += "\nCan't do " + interactionType.ToString() + "! Area cannot accomodate supply cost anymore!";
                             break;
                         }
                     } else {
                         interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
+                        interaction.SetCanInteractionBeDoneAction(() => InteractionManager.Instance.CanCreateInteraction(interaction.type, chosenCandidate));
                         chosenCandidate.SetForcedInteraction(interaction);
-                    }
-                    if (interaction != null) {
-                        testLog += "\nChosen Interaction: " + interactionType.ToString();
-                        interaction.SetCanInteractionBeDoneAction(() => CanDoAreaTaskInteraction(interaction.type, chosenCandidate));
-                        interaction.SetInitializeAction(() => AdjustSuppliesInBank(-100));
-                        interaction.SetMinionSuccessAction(() => AdjustSuppliesInBank(100));
                     }
                 }
             }

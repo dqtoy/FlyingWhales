@@ -109,10 +109,10 @@ public class InduceGrudge : Interaction {
         Character targetCharacter = _previousState.assignedCharacter.character;
         _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -2);
 
-        state.descriptionLog.AddToFillers(investigatorMinion, investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
+        state.descriptionLog.AddToFillers(investigatorMinion.character, investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1);
         state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(investigatorMinion, investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
+        state.AddLogFiller(new LogFiller(investigatorMinion.character, investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1));
 
         DemonDisappearsRewardEffect(state);
     }
