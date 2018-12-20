@@ -847,6 +847,7 @@ public class Area {
         return events;
     }
     private void AssignInteractionsToResidents() {
+        string testLog = "[Day " + GameManager.Instance.continuousDays + "] AREA TASKS FOR " + this.name;
         if (owner != null) {
             int supplySpent = 0;
             List<Character> candidates = new List<Character>();
@@ -856,44 +857,61 @@ public class Area {
                     candidates.Add(resident);
                 }
             }
-            while (candidates.Count > 0) {
-                int index = UnityEngine.Random.Range(0, candidates.Count);
-                Character chosenCandidate = candidates[index];
-                candidates.RemoveAt(index);
-
-                INTERACTION_TYPE interactionType = GetInteractionTypeForResidentCharacter(chosenCandidate);
-                Interaction interaction = null;
-                if (interactionType != INTERACTION_TYPE.MOVE_TO_RAID && interactionType != INTERACTION_TYPE.MOVE_TO_SCAVENGE) {
-                    supplySpent += 100;
-                    if (supplySpent < suppliesInBank) {
-                        interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
-                        chosenCandidate.SetForcedInteraction(interaction);
-                    } else if (supplySpent == suppliesInBank) {
-                        interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
-                        chosenCandidate.SetForcedInteraction(interaction);
-                        break;
+            if(candidates.Count <= 0) {
+                testLog += "\nNo available residents to be chosen!";
+            } else {
+                while (candidates.Count > 0) {
+                    int index = UnityEngine.Random.Range(0, candidates.Count);
+                    Character chosenCandidate = candidates[index];
+                    candidates.RemoveAt(index);
+                    testLog += "\nChosen Resident: " + chosenCandidate.name;
+                    string validInteractionsLog = string.Empty;
+                    INTERACTION_TYPE interactionType = GetInteractionTypeForResidentCharacter(chosenCandidate, out validInteractionsLog);
+                    testLog += validInteractionsLog;
+                    Interaction interaction = null;
+                    if (interactionType != INTERACTION_TYPE.MOVE_TO_RAID && interactionType != INTERACTION_TYPE.MOVE_TO_SCAVENGE) {
+                        supplySpent += 100;
+                        if (supplySpent < suppliesInBank) {
+                            interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
+                            chosenCandidate.SetForcedInteraction(interaction);
+                        } else if (supplySpent == suppliesInBank) {
+                            interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
+                            chosenCandidate.SetForcedInteraction(interaction);
+                            testLog += "\nAssigning area tasks will stop, all area supplies have been allotted.";
+                            break;
+                        } else {
+                            testLog += "\nCan't do " + interactionType.ToString() + "! Area cannot accomodate supply cost anymore!";
+                            break;
+                        }
                     } else {
-                        break;
+                        interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
+                        chosenCandidate.SetForcedInteraction(interaction);
                     }
-                } else {
-                    interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
-                    chosenCandidate.SetForcedInteraction(interaction);
-                }
-                if(interaction != null) {
-                    interaction.SetCanInteractionBeDoneAction(() => CanDoAreaTaskInteraction(interaction.type, chosenCandidate));
-                    interaction.SetInitializeAction(() => AdjustSuppliesInBank(-100));
-                    interaction.SetMinionSuccessAction(() => AdjustSuppliesInBank(100));
+                    if (interaction != null) {
+                        testLog += "\nChosen Interaction: " + interactionType.ToString();
+                        interaction.SetCanInteractionBeDoneAction(() => CanDoAreaTaskInteraction(interaction.type, chosenCandidate));
+                        interaction.SetInitializeAction(() => AdjustSuppliesInBank(-100));
+                        interaction.SetMinionSuccessAction(() => AdjustSuppliesInBank(100));
+                    }
                 }
             }
+        } else {
+            testLog += "\nNo Area Tasks because this area has NO FACTION!";
+        }
+        if(UIManager.Instance.areaInfoUI.activeArea != null && UIManager.Instance.areaInfoUI.activeArea.id == id) {
+            Debug.Log(testLog);
         }
     }
-    private INTERACTION_TYPE GetInteractionTypeForResidentCharacter(Character resident) {    
+    private INTERACTION_TYPE GetInteractionTypeForResidentCharacter(Character resident, out string testLog) {
+        string log = "\nValid Interactions for " + resident.name + ":";
         WeightedDictionary<INTERACTION_TYPE> interactionWeights = new WeightedDictionary<INTERACTION_TYPE>();
         foreach (KeyValuePair<INTERACTION_TYPE, int> areaTasks in areaTasksInteractionWeights) {
             if(InteractionManager.Instance.CanCreateInteraction(areaTasks.Key, resident)) {
                 interactionWeights.AddElement(areaTasks.Key, areaTasks.Value);
+                log += "\n - " + areaTasks.Key.ToString();
             }
         }
+        testLog = log;
         return interactionWeights.PickRandomElementGivenWeights();
     }
     private bool CanDoAreaTaskInteraction(INTERACTION_TYPE interactionType, Character character) {
