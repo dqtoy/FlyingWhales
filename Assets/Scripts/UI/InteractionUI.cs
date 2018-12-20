@@ -55,7 +55,8 @@ public class InteractionUI : MonoBehaviour {
             interaction.OnInteractionActive();
             interactionItem.SetInteraction(_interaction);
             interactionHolder.SetActive(true);
-            GameManager.Instance.SetPausedState(true);
+            UIManager.Instance.Pause();
+            UIManager.Instance.SetSpeedTogglesState(false);
             //Messenger.Broadcast(Signals.INTERACTION_MENU_OPENED);
         }
     }
@@ -73,7 +74,9 @@ public class InteractionUI : MonoBehaviour {
             }
 
             interactionHolder.SetActive(false);
-            GameManager.Instance.SetPausedState(false);
+            UIManager.Instance.Unpause();
+            UIManager.Instance.SetSpeedTogglesState(true);
+            //GameManager.Instance.SetPausedState(false);
             //Messenger.Broadcast(Signals.INTERACTION_MENU_CLOSED);
         }
     }

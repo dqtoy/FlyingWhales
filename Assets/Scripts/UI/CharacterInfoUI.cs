@@ -185,6 +185,7 @@ public class CharacterInfoUI : UIMenu {
     public override void CloseMenu() {
         base.CloseMenu();
         _activeCharacter = null;
+        UIManager.Instance.SetCoverState(false);
         //PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
         //PlayerUI.Instance.CollapseMinionHolder();
         //InteractionUI.Instance.HideInteractionUI();
@@ -215,6 +216,7 @@ public class CharacterInfoUI : UIMenu {
         //InteractionUI.Instance.OpenInteractionUI(_activeCharacter);
         historyScrollView.verticalNormalizedPosition = 1;
         CheckIfMenuShouldBeHidden();
+        UIManager.Instance.SetCoverState(true);
     }
     public override void ShowTooltip(GameObject objectHovered) {
         base.ShowTooltip(objectHovered);
@@ -307,6 +309,9 @@ public class CharacterInfoUI : UIMenu {
     }
     private void UpdateBasicInfo() {
         nameLbl.text = _activeCharacter.name;
+#if UNITY_EDITOR
+        nameLbl.text += " (" + _activeCharacter.currentInteractionTick.ToString() + ")";
+#endif
         lvlClassLbl.text = Utilities.NormalizeString(_activeCharacter.race.ToString()) + " " + _activeCharacter.characterClass.className;
 
         if (_activeCharacter.schedule != null) {

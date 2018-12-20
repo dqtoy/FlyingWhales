@@ -107,7 +107,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         nameLbl.text = character.urlName;
         UpdateLvl();
         UpdateFrame();
-        UpdateUnknownVisual();
+        //UpdateUnknownVisual();
     }
     public void GeneratePortrait(PortraitSettings portraitSettings) {
         _portraitSettings = portraitSettings;
@@ -288,7 +288,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     }
     public void SetForceShowPortraitState(bool state) {
         forceShowPortrait = state;
-        UpdateUnknownVisual();
+        //UpdateUnknownVisual();
     }
     private void UpdateFrame() {
         if (_character != null && _character.job.jobType != JOB.NONE) {
@@ -455,7 +455,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     #region Listeners
     private void OnCharacterTokenObtained(CharacterToken token) {
         if (_character != null && _character.characterToken == token) {
-            UpdateUnknownVisual();
+            //UpdateUnknownVisual();
         }
     }
     private void OnCharacterLevelChanged(Character character) {
@@ -464,7 +464,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         }
     }
     private void OnInspectAll() {
-        UpdateUnknownVisual();
+        //UpdateUnknownVisual();
     }
     private void RemoveListeners() {
         //if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_TOKEN_ADDED)) {

@@ -8,7 +8,12 @@ public class TokenManager : MonoBehaviour {
 
     //private Dictionary<int, Intel> _intelLookup;
 
-    private Dictionary<string, SpecialToken> specialTokens;
+    private Dictionary<string, SpecialToken> specialTokens = new Dictionary<string, SpecialToken>() {
+        { "Blighted Potion", new BlightedPotion() },
+        { "Book Of The Dead", new BookOfTheDead() },
+        { "Charm Spell", new CharmSpell() },
+        { "Fear Spell", new FearSpell() },
+    };
 
     #region getters/setters
     //public Dictionary<int, Intel> intelLookup {
@@ -21,29 +26,33 @@ public class TokenManager : MonoBehaviour {
     }
 
     public void Initialize() {
-        ConstructSpecialTokens();
+        LoadSpecialTokens();
     }
 
-    private void ConstructSpecialTokens() {
-        specialTokens = new Dictionary<string, SpecialToken>();
-        string path = Utilities.dataPath + "Tokens/";
-        string[] tokens = System.IO.Directory.GetFiles(path, "*.json");
-        for (int i = 0; i < tokens.Length; i++) {
-            //JsonUtility.FromJsonOverwrite(System.IO.File.ReadAllText(classes[i]), monsterComponent);
-            SpecialToken token = JsonUtility.FromJson<SpecialToken>(System.IO.File.ReadAllText(tokens[i]));
-            switch (token.specialTokenType) {
-                case SPECIAL_TOKEN.BLIGHTED_POTION:
-                    token = new BlightedPotion();
-                    break;
-                case SPECIAL_TOKEN.BOOK_OF_THE_DEAD:
-                    token = new BookOfTheDead();
-                    break;
-                default:
-                    break;
-            }
-            specialTokens.Add(token.name, token);
-            Messenger.Broadcast(Signals.SPECIAL_TOKEN_CREATED, token);
+    private void LoadSpecialTokens() {
+        foreach (KeyValuePair<string, SpecialToken> item in specialTokens) {
+            Messenger.Broadcast(Signals.SPECIAL_TOKEN_CREATED, item.Value);
         }
+
+        //specialTokens = new Dictionary<string, SpecialToken>();
+        //string path = Utilities.dataPath + "Tokens/";
+        //string[] tokens = System.IO.Directory.GetFiles(path, "*.json");
+        //for (int i = 0; i < tokens.Length; i++) {
+        //    //JsonUtility.FromJsonOverwrite(System.IO.File.ReadAllText(classes[i]), monsterComponent);
+        //    SpecialToken token = JsonUtility.FromJson<SpecialToken>(System.IO.File.ReadAllText(tokens[i]));
+        //    switch (token.specialTokenType) {
+        //        case SPECIAL_TOKEN.BLIGHTED_POTION:
+        //            token = new BlightedPotion();
+        //            break;
+        //        case SPECIAL_TOKEN.BOOK_OF_THE_DEAD:
+        //            token = new BookOfTheDead();
+        //            break;
+        //        default:
+        //            break;
+        //    }
+        //    specialTokens.Add(token.name, token);
+        //    Messenger.Broadcast(Signals.SPECIAL_TOKEN_CREATED, token);
+        //}
     }
 
     public SpecialToken GetSpecialToken(string name) {

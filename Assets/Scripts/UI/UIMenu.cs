@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System;
 
 public class UIMenu : MonoBehaviour {
 
     public bool isShowing;
+    private Action openMenuAction;
 
     protected object _data;
 
@@ -16,6 +18,10 @@ public class UIMenu : MonoBehaviour {
     public virtual void OpenMenu() {
         isShowing = true;
         this.gameObject.SetActive(true);
+        if (openMenuAction != null) {
+            openMenuAction();
+            openMenuAction = null;
+        }
         Messenger.Broadcast(Signals.MENU_OPENED, this);
     }
     public virtual void CloseMenu() {
@@ -40,6 +46,10 @@ public class UIMenu : MonoBehaviour {
         }
     }
     #endregion
+
+    public void SetOpenMenuAction(Action action) {
+        openMenuAction = action;
+    }
 
     //public void ApplyUnifiedSettings(UnifiedUISettings settings) {
     //    if (bgImage != null && outlineImage != null) {

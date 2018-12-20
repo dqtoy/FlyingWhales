@@ -139,7 +139,7 @@ public class MoveToRecruit : Interaction {
             Character currCharacter = CharacterManager.Instance.allCharacters[i];
             if (currCharacter.id != characterInvolved.id && !currCharacter.isDefender && currCharacter.minion == null) { //- character must not be in Defender Tile.
                 int weight = 0;
-                if (currCharacter.isFactionless) {
+                if (currCharacter.faction == null || currCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
                     weight += 35; //- character is not part of any Faction: Weight +35
                 } else if (currCharacter.faction.id != characterInvolved.faction.id) { //exclude characters with same faction
                     FactionRelationship rel = currCharacter.faction.GetRelationshipWith(characterInvolved.faction);

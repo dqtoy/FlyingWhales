@@ -48,7 +48,7 @@ public class DefenderGroupItem : PooledObject {
                 } else {
                     currItem.draggable.SetDraggable(false);
                     currItem.dropZone.SetEnabledState(false);
-                    currItem.portrait.UpdateUnknownVisual();
+                    //currItem.portrait.UpdateUnknownVisual();
                 }
             }
         }
