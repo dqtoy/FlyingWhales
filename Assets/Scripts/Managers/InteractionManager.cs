@@ -275,10 +275,13 @@ public class InteractionManager : MonoBehaviour {
                 Area target = GetAttackTarget(landmark.tileLocation.areaOfTile);
                 return target != null;
             case INTERACTION_TYPE.MINION_PEACE_NEGOTIATION:
-                relationship = PlayerManager.Instance.player.playerFaction.GetRelationshipWith(landmark.tileLocation.areaOfTile.owner);
-                if(relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY && landmark.tileLocation.areaOfTile.owner.leader.specificLocation.tileLocation.areaOfTile.id == landmark.tileLocation.areaOfTile.id) {
-                    return true;
+                if(landmark.tileLocation.areaOfTile.owner.id != PlayerManager.Instance.player.playerFaction.id) {
+                    relationship = PlayerManager.Instance.player.playerFaction.GetRelationshipWith(landmark.tileLocation.areaOfTile.owner);
+                    if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY && landmark.tileLocation.areaOfTile.owner.leader.specificLocation.tileLocation.areaOfTile.id == landmark.tileLocation.areaOfTile.id) {
+                        return true;
+                    }
                 }
+                
                 return false;
             case INTERACTION_TYPE.DEFENSE_MOBILIZATION:
                 if(landmark.tileLocation.areaOfTile.defenderGroups.Count < landmark.tileLocation.areaOfTile.maxDefenderGroups) {

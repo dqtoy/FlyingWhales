@@ -190,9 +190,11 @@ public class RaiderCharacterEncounter : Interaction {
                 if (potentialTarget.owner == null) {
                     targets.Add(potentialTarget);
                 } else {
-                    FactionRelationship relationship = interactable.tileLocation.areaOfTile.owner.GetRelationshipWith(potentialTarget.owner);
-                    if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
-                        targets.Add(potentialTarget);
+                    if(interactable.tileLocation.areaOfTile.owner.id != potentialTarget.owner.id) {
+                        FactionRelationship relationship = interactable.tileLocation.areaOfTile.owner.GetRelationshipWith(potentialTarget.owner);
+                        if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
+                            targets.Add(potentialTarget);
+                        }
                     }
                 }
             }
