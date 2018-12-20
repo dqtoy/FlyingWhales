@@ -523,7 +523,7 @@ public class InteractionManager : MonoBehaviour {
                         } else {
                             CombatManager.Instance.GetCombatChanceOfTwoLists(attackCharacters, null, out winChance, out loseChance);
                         }
-                        if (winChance > 30f) {
+                        if (winChance > 40f) {
                             if(currentTargetArea == null) {
                                 currentTargetArea = target;
                                 currentAttackCharacters = attackCharacters;

@@ -399,15 +399,16 @@ public class Player : ILeader {
         }
     }
     private void RearrangeMinionItem(PlayerCharacterItem minionItem, int index) {
-        if (minionItem.transform.GetSiblingIndex() != index) {
+        //if (minionItem.transform.GetSiblingIndex() != index) {
+            //minionItem.transform.SetSiblingIndex(index);
+            minionItem.supposedIndex = index;
             Vector3 to = PlayerUI.Instance.minionsContentTransform.GetChild(index).transform.localPosition;
             Vector3 from = minionItem.transform.localPosition;
-            minionItem.supposedIndex = index;
             minionItem.tweenPos.from = from;
             minionItem.tweenPos.to = to;
             minionItem.tweenPos.ResetToBeginning();
             minionItem.tweenPos.PlayForward();
-        }
+        //}
     }
     public void SortByLevel() {
         _minions = _minions.OrderBy(x => x.lvl).ToList();
@@ -421,7 +422,7 @@ public class Player : ILeader {
         //}
         UpdateMinions();
     }
-    public void SortByType() {
+    public void SortByClass() {
         _minions = _minions.OrderBy(x => x.character.characterClass.className).ToList();
         //for (int i = 0; i < PlayerUI.Instance.minionItems.Length; i++) {
         //    MinionItem minionItem = PlayerUI.Instance.minionItems[i];

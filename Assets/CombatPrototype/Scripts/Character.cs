@@ -1413,8 +1413,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         if (CharacterManager.Instance.IsClassADeadlySin(_characterClass.className)) {
             AssignJob(_characterClass.jobType);
         } else {
-            JOB[] jobs = new JOB[] { JOB.DIPLOMAT, JOB.DISSUADER, JOB.EXPLORER, JOB.INSTIGATOR, JOB.RAIDER, JOB.RECRUITER, JOB.SPY };
-            AssignJob(jobs[UnityEngine.Random.Range(0, jobs.Length)]);
+            //JOB[] jobs = new JOB[] { JOB.DIPLOMAT, JOB.DISSUADER, JOB.EXPLORER, JOB.INSTIGATOR, JOB.RAIDER, JOB.RECRUITER, JOB.SPY };
+            //AssignJob(jobs[UnityEngine.Random.Range(0, jobs.Length)]);
+            AssignJob(JOB.RAIDER);
         }
     }
     public void AssignJob(JOB jobType) {
@@ -2567,15 +2568,13 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         //Try to get a new home structure from this character's area
         BaseLandmark landmark = GetNewHomeFromArea(_homeLandmark.tileLocation.areaOfTile);
         if (landmark != null) {
-            _homeLandmark.RemoveCharacterHomeOnLandmark(this);
-            landmark.AddCharacterHomeOnLandmark(this);
+            MigrateTo(landmark);
         } else {
             //If there is no available structure, look for it in other areas of the faction and migrate there
             landmark = GetNewHomeFromFaction();
             if (landmark != null) {
                 //SetHome(landmark.tileLocation.areaOfTile);
-                _homeLandmark.RemoveCharacterHomeOnLandmark(this);
-                landmark.AddCharacterHomeOnLandmark(this);
+                MigrateTo(landmark);
             } else {
                 //TODO: For future update, migrate to another friendly faction's structure
             }
@@ -2664,6 +2663,12 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             //throw new Exception("Could not find workplace for " + this.name);
         }
         return false;
+    }
+    public void MigrateTo(BaseLandmark newHomeLandmark) {
+        if(_homeLandmark != null) {
+            _homeLandmark.RemoveCharacterHomeOnLandmark(this);
+        }
+        newHomeLandmark.AddCharacterHomeOnLandmark(this);
     }
     #endregion
 
