@@ -853,13 +853,17 @@ public class Area {
             List<Character> candidates = new List<Character>();
             for (int i = 0; i < areaResidents.Count; i++) {
                 Character resident = areaResidents[i];
-                if (!resident.isLeader && resident.faction == owner && resident.specificLocation.tileLocation.areaOfTile.id == id) {
+                if (!resident.isLeader && !resident.isDefender && resident.faction == owner && resident.specificLocation.tileLocation.areaOfTile.id == id) {
                     candidates.Add(resident);
                 }
             }
             if(candidates.Count <= 0) {
                 testLog += "\nNo available residents to be chosen!";
             } else {
+                testLog += "\nAvailable residents to choose from: " + candidates[0].name;
+                for (int i = 1; i < candidates.Count; i++) {
+                    testLog += ", " + candidates[i].name;
+                }
                 while (candidates.Count > 0) {
                     int index = UnityEngine.Random.Range(0, candidates.Count);
                     Character chosenCandidate = candidates[index];
