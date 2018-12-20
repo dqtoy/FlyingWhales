@@ -62,9 +62,7 @@ public class BlightedPotion : SpecialToken {
         if (state.interaction.investigatorMinion != null) {
             state.interaction.investigatorMinion.LevelUp();
         }
-
         state.descriptionLog.AddToFillers(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1);
-
         state.AddLogFiller(new LogFiller(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1));
     }
 }
