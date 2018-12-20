@@ -96,6 +96,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private int SMALLEST_FONT_SIZE = 12;
 
     internal List<object> eventLogsQueue = new List<object>();
+    private UIMenu lastOpenedMenu = null;
 
     #region Monobehaviours
     private void Awake() {
@@ -597,12 +598,11 @@ public class UIManager : MonoBehaviour {
     private void OnMenuClosed(UIMenu closedMenu) {
         if (GameManager.Instance.isPaused) {
             //if the game is paused, and a menu was closed, check if all other menus are closed, if so unpause the game
-            if (!areaInfoUI.isShowing && !characterInfoUI.isShowing && !playerLandmarkInfoUI.isShowing) {
+            if (!InteractionUI.Instance.isShowing && !areaInfoUI.isShowing && !characterInfoUI.isShowing && !playerLandmarkInfoUI.isShowing) {
                 Unpause();
             }
         }
     }
-    private UIMenu lastOpenedMenu = null;
     private void OnInteractionMenuOpened() {
         if (areaInfoUI.isShowing) {
             lastOpenedMenu = areaInfoUI;
@@ -617,6 +617,7 @@ public class UIManager : MonoBehaviour {
         //reopen last opened menu
         if (lastOpenedMenu != null) {
             lastOpenedMenu.OpenMenu();
+            lastOpenedMenu = null;
         }
     }
     #endregion

@@ -23,6 +23,8 @@ public class InteractionUI : MonoBehaviour {
     private Interaction _interaction;
     //private List<InteractionItem> _allInteractionItems;
 
+    public bool isShowing = false;
+
     #region getters/setters
     public Interaction interaction {
         get { return _interaction; }
@@ -57,7 +59,8 @@ public class InteractionUI : MonoBehaviour {
             interactionHolder.SetActive(true);
             UIManager.Instance.Pause();
             UIManager.Instance.SetSpeedTogglesState(false);
-            //Messenger.Broadcast(Signals.INTERACTION_MENU_OPENED);
+            isShowing = true;
+            Messenger.Broadcast(Signals.INTERACTION_MENU_OPENED);
         }
     }
     public void HideInteractionUI() {
@@ -77,7 +80,8 @@ public class InteractionUI : MonoBehaviour {
             UIManager.Instance.Unpause();
             UIManager.Instance.SetSpeedTogglesState(true);
             //GameManager.Instance.SetPausedState(false);
-            //Messenger.Broadcast(Signals.INTERACTION_MENU_CLOSED);
+            isShowing = false;
+            Messenger.Broadcast(Signals.INTERACTION_MENU_CLOSED);
         }
     }
     //public void UpdateInteraction() {
