@@ -274,7 +274,8 @@ public class ConsoleMenu : UIMenu {
             AddErrorMessage("There was an error in the command format of " + parameters[0]);
             return;
         }
-        UIManager.Instance.ShowLandmarkInfo(landmark);
+        landmark.CenterOnLandmark();
+        //UIManager.Instance.ShowLandmarkInfo(landmark);
         //character.CenterOnCharacter();
     }
     private void ChangeLandmarkState(string[] parameters) {

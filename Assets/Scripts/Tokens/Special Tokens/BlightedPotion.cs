@@ -59,7 +59,9 @@ public class BlightedPotion : SpecialToken {
     private void InflictIllnessEffect(InteractionState state) {
         string chosenIllnessName = AttributeManager.Instance.GetRandomIllness();
         state.interaction.characterInvolved.AddTrait(AttributeManager.Instance.allIllnesses[chosenIllnessName]);
-        state.interaction.investigatorMinion.LevelUp();
+        if (state.interaction.investigatorMinion != null) {
+            state.interaction.investigatorMinion.LevelUp();
+        }
 
         state.descriptionLog.AddToFillers(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1);
 

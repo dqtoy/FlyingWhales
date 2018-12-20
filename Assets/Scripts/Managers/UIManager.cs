@@ -187,7 +187,7 @@ public class UIManager : MonoBehaviour {
 
         Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnTokenAdded);
         Messenger.AddListener<Combat>(Signals.COMBAT_DONE, OnCombatDone);
-        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        //Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         //Messenger.AddListener<IInteractable, Interaction>(Signals.ADDED_INTERACTION, OnInteractionAdded);
 
         Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
@@ -693,7 +693,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     internal AreaInfoUI areaInfoUI;
     public void ShowAreaInfo(Area area, int indexToggleToBeActivated = 0) {
-        BeforeOpeningMenu(areaInfoUI);
+        //BeforeOpeningMenu(areaInfoUI);
         //HideMainUI();
         //if (factionInfoUI.isShowing) {
         //    factionInfoUI.HideMenu();
@@ -736,7 +736,7 @@ public class UIManager : MonoBehaviour {
     [Header("Landmark Info")]
     [SerializeField] internal LandmarkInfoUI landmarkInfoUI;
     public void ShowLandmarkInfo(BaseLandmark landmark, int indexToggleToBeActivated = 0) {
-        BeforeOpeningMenu(landmarkInfoUI);
+        //BeforeOpeningMenu(landmarkInfoUI);
         //HideMainUI();
         //if (factionInfoUI.isShowing) {
         //    factionInfoUI.HideMenu();
@@ -780,7 +780,7 @@ public class UIManager : MonoBehaviour {
     [Header("Player Landmark Info")]
     public PlayerLandmarkInfoUI playerLandmarkInfoUI;
     public void ShowPlayerLandmarkInfo(BaseLandmark landmark) {
-        BeforeOpeningMenu(playerLandmarkInfoUI);
+        //BeforeOpeningMenu(playerLandmarkInfoUI);
         if (characterInfoUI.isShowing) {
             characterInfoUI.CloseMenu();
         }
@@ -814,7 +814,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     internal FactionInfoUI factionInfoUI;
     public void ShowFactionInfo(Faction faction) {
-        BeforeOpeningMenu(factionInfoUI);
+        //BeforeOpeningMenu(factionInfoUI);
         //HideMainUI();
         //if (landmarkInfoUI.isShowing) {
         //    landmarkInfoUI.HideMenu();
@@ -850,7 +850,7 @@ public class UIManager : MonoBehaviour {
     [Header("Character Info")]
     [SerializeField] internal CharacterInfoUI characterInfoUI;
     public void ShowCharacterInfo(Character character) {
-        BeforeOpeningMenu(characterInfoUI);
+        //BeforeOpeningMenu(characterInfoUI);
         //HideMainUI();
         if (landmarkInfoUI.isShowing) {
             landmarkInfoUI.CloseMenu();
@@ -898,7 +898,7 @@ public class UIManager : MonoBehaviour {
     [Header("Party Info")]
     [SerializeField] internal PartyInfoUI partyinfoUI;
     public void ShowPartyInfo(Party party) {
-        BeforeOpeningMenu(partyinfoUI);
+        //BeforeOpeningMenu(partyinfoUI);
         //HideMainUI();
         if (landmarkInfoUI.isShowing) {
             landmarkInfoUI.CloseMenu();
@@ -939,7 +939,7 @@ public class UIManager : MonoBehaviour {
     [Header("Monster Info")]
     [SerializeField] internal MonsterInfoUI monsterInfoUI;
     public void ShowMonsterInfo(Monster monster) {
-        BeforeOpeningMenu(monsterInfoUI);
+        //BeforeOpeningMenu(monsterInfoUI);
         //HideMainUI();
         if (landmarkInfoUI.isShowing) {
             landmarkInfoUI.CloseMenu();
