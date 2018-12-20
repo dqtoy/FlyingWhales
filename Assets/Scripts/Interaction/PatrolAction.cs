@@ -102,7 +102,7 @@ public class PatrolAction : Interaction {
                     },
                     new ActionOptionFactionRelationshipRequirement {
                         requiredStatus = new List<FACTION_RELATIONSHIP_STATUS>(){ FACTION_RELATIONSHIP_STATUS.DISLIKED, FACTION_RELATIONSHIP_STATUS.ENEMY },
-                        sourceCharacter =_characterInvolved
+                        sourceCharacter = _characterInvolved,
                     }
                 },
                 jobNeeded = JOB.INSTIGATOR,
