@@ -137,7 +137,7 @@ public class MoveToImproveRelations : Interaction {
         List<Area> choices = new List<Area>();
         for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
             Faction currFaction = FactionManager.Instance.allFactions[i];
-            if (currFaction.isActive && currFaction.id != _characterInvolved.faction.id) {
+            if (currFaction.isActive && currFaction.id != PlayerManager.Instance.player.playerFaction.id && currFaction.id != _characterInvolved.faction.id) {
                 FactionRelationship rel = currFaction.GetRelationshipWith(_characterInvolved.faction);
                 if (rel.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY) {
                     choices.AddRange(currFaction.ownedAreas);

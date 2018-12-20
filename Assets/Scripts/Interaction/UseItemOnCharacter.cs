@@ -85,7 +85,8 @@ public class UseItemOnCharacter : Interaction {
         SetCurrentState(_states[nextState]);
     }
     private void DoNothingOptionEffect(InteractionState state) {
-        SetCurrentState(_states[Do_Nothing]);
+        _tokenToBeUsed.CreateJointInteractionStates(this);
+        //SetCurrentState(_states[Do_Nothing]);
     }
     #endregion
 
@@ -114,7 +115,7 @@ public class UseItemOnCharacter : Interaction {
         //investigatorMinion.LevelUp();
     }
     private void DoNothingRewardEffect(InteractionState state) {
-        _tokenToBeUsed.CreateJointInteractionStates(this);
+        //_tokenToBeUsed.CreateJointInteractionStates(this);
     }
     #endregion
 }
