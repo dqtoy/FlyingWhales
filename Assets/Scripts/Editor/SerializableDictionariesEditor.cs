@@ -30,7 +30,8 @@ public class RaceDefenderListDictionaryPropertyDrawer : SerializableDictionaryPr
 public class JobPortraitFramesDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(BiomeSpriteAnimationDictionary))]
 public class BiomeSpriteAnimationDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-
+[CustomPropertyDrawer(typeof(LogReplacerDictionary))]
+public class LogReplacerDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 [CustomPropertyDrawer(typeof(CharacterTagListStorage))]
 public class CharacterTagListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }

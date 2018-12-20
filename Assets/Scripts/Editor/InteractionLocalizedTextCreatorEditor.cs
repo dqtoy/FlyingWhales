@@ -9,6 +9,8 @@ using System;
 
 public class InteractionLocalizedTextCreatorEditor : EditorWindow {
     public TrelloCard cardData;
+    //public List<LogReplacerItem> logReplacers = new List<LogReplacerItem>();
+    public LogReplacerDictionary logReplacers;
 
     string trelloJSONStr = "Place trello json here...";
     Vector2 scrollPos = Vector2.zero;
@@ -22,11 +24,14 @@ public class InteractionLocalizedTextCreatorEditor : EditorWindow {
     }
 
     private void OnGUI() {
+        SerializedObject serializedObject = new SerializedObject(this);
         textAreaScroll = EditorGUILayout.BeginScrollView(textAreaScroll);
         EditorGUILayout.LabelField(textAreaStr, GUILayout.Height(position.height));
+
+        SerializedProperty serializedProperty = serializedObject.FindProperty("logReplacers");
+        EditorGUILayout.PropertyField(serializedProperty, true);
         EditorGUILayout.EndScrollView();
 
-        //this.scrollPos = EditorGUILayout.BeginScrollView(this.scrollPos, GUILayout.Width(this.position.width), GUILayout.Height(this.position.height));
         if (cardData != null) {
             if (GUILayout.Button("Save As Localized Text")) {
                 SaveAsLocalizedText();
@@ -39,15 +44,35 @@ public class InteractionLocalizedTextCreatorEditor : EditorWindow {
             }
             LoadJSONData();
         }
-        //EditorGUILayout.EndScrollView();
+        serializedObject.ApplyModifiedProperties();
     }
     private void LoadJSONData() {
         if (!string.IsNullOrEmpty(trelloJSONStr)) {
             cardData = JsonUtility.FromJson<TrelloCard>(trelloJSONStr);
             Debug.Log(cardData.ToString());
             textAreaStr = cardData.ToString();
+            LoadLogReplacers();
         } else {
             cardData = null;
+        }
+    }
+    private void LoadLogReplacers() {
+        logReplacers.Clear();
+        for (int i = 0; i < cardData.checklists.Count; i++) {
+            Checklist currChecklist = cardData.checklists[i];
+            for (int j = 0; j < currChecklist.checkItems.Count; j++) {
+                ChecklistItem currChecklistItem = currChecklist.checkItems[j];
+                string text = currChecklistItem.name.Substring(currChecklistItem.name.IndexOf(": ") + 1);
+                text = text.TrimStart();
+                List<string> words = Utilities.ExtractFromString(text, "[", "]");
+                for (int k = 0; k < words.Count; k++) {
+                    string currWord = words[k];
+                    currWord = "[" + currWord + "]";
+                    if (!logReplacers.ContainsKey(currWord)) {
+                        logReplacers.Add(currWord, GetLogIdentifierForString(currWord));
+                    }
+                }
+            }
         }
     }
     private void SaveAsLocalizedText() {
@@ -103,21 +128,59 @@ public class InteractionLocalizedTextCreatorEditor : EditorWindow {
 
     private string ConvertToLogFillers(string source) {
         string newString = source;
-        newString = newString.Replace("[Demon Name]", "%113%");
-        newString = newString.Replace("[Demon]", "%113%");
-        newString = newString.Replace("[Minion Name]", "%113%");
+        foreach (KeyValuePair<string, LOG_IDENTIFIER> kvp in logReplacers) {
+            if (kvp.Value != LOG_IDENTIFIER.NONE) {
+                newString = newString.Replace(kvp.Key, Utilities.GetStringForIdentifier(kvp.Value));
+            }
+        }
 
-        newString = newString.Replace("[Character Name]", "%00@");
-        newString = newString.Replace("[Character Name 1]", "%00@");
-        newString = newString.Replace("[Character Name 2]", "%10@");
+        //if (logReplacers.ContainsKey(source)) {
+        //    if (logReplacers[source] != LOG_IDENTIFIER.NONE) {
+        //        newString = newString.Replace(source, Utilities.GetStringForIdentifier(logReplacers[source]));
+        //    }
+        //}
+        //newString = newString.Replace("[Demon Name]", "%113%");
+        //newString = newString.Replace("[Demon]", "%113%");
+        //newString = newString.Replace("[Minion Name]", "%113%");
 
-        newString = newString.Replace("[Location Name]", "%04@");
-        newString = newString.Replace("[Location Name 2]", "%14@");
+        //newString = newString.Replace("[Character Name]", "%00@");
+        //newString = newString.Replace("[Character Name 1]", "%00@");
+        //newString = newString.Replace("[Character Name 2]", "%10@");
 
-        newString = newString.Replace("[Faction Name]", "%01@");
-        newString = newString.Replace("[Faction Name 1]", "%01@");
-        newString = newString.Replace("[Faction Name 2]", "%11@");
+        //newString = newString.Replace("[Location Name]", "%04@");
+        //newString = newString.Replace("[Location Name 2]", "%14@");
+
+        //newString = newString.Replace("[Faction Name]", "%01@");
+        //newString = newString.Replace("[Faction Name 1]", "%01@");
+        //newString = newString.Replace("[Faction Name 2]", "%11@");
         return newString;
+    }
+
+    private LOG_IDENTIFIER GetLogIdentifierForString(string str) {
+        switch (str) {
+            case "[Demon Name]":
+            case "[Demon]":
+            case "[Minion Name]":
+            case "[User Name]":
+                return LOG_IDENTIFIER.MINION_1;
+            case "[Character Name]":
+            case "[Character Name 1]":
+                return LOG_IDENTIFIER.ACTIVE_CHARACTER;
+            case "[Character Name 2]":
+                return LOG_IDENTIFIER.TARGET_CHARACTER;
+            case "[Location Name]":
+            case "[Location Name 1]":
+                return LOG_IDENTIFIER.LANDMARK_1;
+            case "[Location Name 2]":
+                return LOG_IDENTIFIER.LANDMARK_1;
+            case "[Faction Name]":
+            case "[Faction Name 1]":
+                return LOG_IDENTIFIER.FACTION_1;
+            case "[Faction Name 2]":
+                return LOG_IDENTIFIER.FACTION_2;
+            default:
+                return LOG_IDENTIFIER.NONE;
+        }
     }
 }
 

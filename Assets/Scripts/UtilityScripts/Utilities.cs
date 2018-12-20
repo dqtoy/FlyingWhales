@@ -490,7 +490,40 @@ public class Utilities : MonoBehaviour {
 
 		//{"111", LOG_IDENTIFIER.PARTY_NAME},
 	};
-
+    public static string GetStringForIdentifier(LOG_IDENTIFIER identifier) {
+        foreach (KeyValuePair<string, LOG_IDENTIFIER> item in logIdentifiers) {
+            if (item.Value == identifier) {
+                string key = item.Key;
+                key = "%" + key;
+                switch (identifier) {
+                    case LOG_IDENTIFIER.ACTIVE_CHARACTER:
+                    case LOG_IDENTIFIER.FACTION_1:
+                    case LOG_IDENTIFIER.FACTION_LEADER_1:
+                    case LOG_IDENTIFIER.LANDMARK_1:
+                    case LOG_IDENTIFIER.PARTY_1:
+                    case LOG_IDENTIFIER.TARGET_CHARACTER:
+                    case LOG_IDENTIFIER.FACTION_2:
+                    case LOG_IDENTIFIER.FACTION_LEADER_2:
+                    case LOG_IDENTIFIER.LANDMARK_2:
+                    case LOG_IDENTIFIER.PARTY_2:
+                    case LOG_IDENTIFIER.CHARACTER_3:
+                    case LOG_IDENTIFIER.FACTION_3:
+                    case LOG_IDENTIFIER.FACTION_LEADER_3:
+                    case LOG_IDENTIFIER.LANDMARK_3:
+                    case LOG_IDENTIFIER.PARTY_3:
+                    case LOG_IDENTIFIER.TASK:
+                    case LOG_IDENTIFIER.COMBAT:
+                        key += "@";
+                        break;
+                    default:
+                        key += "%";
+                        break;
+                }
+                return key;
+            }
+        }
+        return string.Empty;
+    }
     public static string PronounReplacer(string word, object genderSubject) {
         //		string pronoun = Utilities.GetStringBetweenTwoChars (word, '_', '_');
         string[] pronouns = word.Split('/');
@@ -760,6 +793,22 @@ public class Utilities : MonoBehaviour {
                 return "her";
             }
         }
+    }
+    public static List<string> ExtractFromString(string text, string startString, string endString) {
+        List<string> matched = new List<string>();
+        int indexStart = 0, indexEnd = 0;
+        bool exit = false;
+        while (!exit) {
+            indexStart = text.IndexOf(startString);
+            indexEnd = text.IndexOf(endString);
+            if (indexStart != -1 && indexEnd != -1) {
+                matched.Add(text.Substring(indexStart + startString.Length,
+                    indexEnd - indexStart - startString.Length));
+                text = text.Substring(indexEnd + endString.Length);
+            } else
+                exit = true;
+        }
+        return matched;
     }
     #endregion
 
