@@ -30,6 +30,8 @@ public class UseItemOnCharacter : Interaction {
 
         targetCharacter = _tokenToBeUsed.GetTargetCharacterFor(_characterInvolved);
 
+        CreateActionOptions(startState);
+
         stopSuccessful.SetEffect(() => StopSuccessfulRewardEffect(stopSuccessful));
         stopFail.SetEffect(() => StopFailRewardEffect(stopFail));
         doNothing.SetEffect(() => DoNothingRewardEffect(doNothing));

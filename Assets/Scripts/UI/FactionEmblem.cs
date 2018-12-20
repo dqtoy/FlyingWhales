@@ -44,16 +44,17 @@ public class FactionEmblem : MonoBehaviour{
         if (faction == null) {
             this.gameObject.SetActive(false);
         } else {
-            if (forceShow || 
-                (PlayerManager.Instance.player != null && PlayerManager.Instance.player.tokens.Contains(faction.factionToken))) {
-                //player has intel for this faction
-                emblemImage.sprite = faction.emblem;
-                this.gameObject.SetActive(true);
-            } else {
-                //player does not have intel for this faction
-                //emblemImage.sprite = faction.emblem;
-                this.gameObject.SetActive(false);
-            }
+            this.gameObject.SetActive(true);
+            //if (forceShow || 
+            //    (PlayerManager.Instance.player != null && PlayerManager.Instance.player.tokens.Contains(faction.factionToken))) {
+            //    //player has intel for this faction
+            //    emblemImage.sprite = faction.emblem;
+            //    this.gameObject.SetActive(true);
+            //} else {
+            //    //player does not have intel for this faction
+            //    //emblemImage.sprite = faction.emblem;
+            //    this.gameObject.SetActive(false);
+            //}
         }
     }
 

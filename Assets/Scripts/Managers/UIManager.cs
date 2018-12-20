@@ -96,6 +96,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private int SMALLEST_FONT_SIZE = 12;
 
     internal List<object> eventLogsQueue = new List<object>();
+    private UIMenu lastOpenedMenu = null;
 
     #region Monobehaviours
     private void Awake() {
@@ -186,7 +187,11 @@ public class UIManager : MonoBehaviour {
 
         Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnTokenAdded);
         Messenger.AddListener<Combat>(Signals.COMBAT_DONE, OnCombatDone);
+        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         //Messenger.AddListener<IInteractable, Interaction>(Signals.ADDED_INTERACTION, OnInteractionAdded);
+
+        Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
+        Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
     }
     //public void UnifySelectables() {
     //    UnifiedSelectableBehaviour[] selectables = this.GetComponentsInChildren<UnifiedSelectableBehaviour>(true);
@@ -584,6 +589,37 @@ public class UIManager : MonoBehaviour {
     public void SetCoverState(bool state) {
         cover.SetActive(state);
     }
+    private void BeforeOpeningMenu(UIMenu menuToOpen) {
+        //if none of the menus are showing, pause the game when the menu opens
+        if (!areaInfoUI.isShowing && !characterInfoUI.isShowing && !playerLandmarkInfoUI.isShowing) {
+            menuToOpen.SetOpenMenuAction(() => Pause());
+        }
+    }
+    private void OnMenuClosed(UIMenu closedMenu) {
+        if (GameManager.Instance.isPaused) {
+            //if the game is paused, and a menu was closed, check if all other menus are closed, if so unpause the game
+            if (!InteractionUI.Instance.isShowing && !areaInfoUI.isShowing && !characterInfoUI.isShowing && !playerLandmarkInfoUI.isShowing) {
+                Unpause();
+            }
+        }
+    }
+    private void OnInteractionMenuOpened() {
+        if (areaInfoUI.isShowing) {
+            lastOpenedMenu = areaInfoUI;
+        } else if (characterInfoUI.isShowing) {
+            lastOpenedMenu = characterInfoUI;
+        } else if (playerLandmarkInfoUI.isShowing) {
+            lastOpenedMenu = playerLandmarkInfoUI;
+        }
+        HideMenus();
+    }
+    private void OnInteractionMenuClosed() {
+        //reopen last opened menu
+        if (lastOpenedMenu != null) {
+            lastOpenedMenu.OpenMenu();
+            lastOpenedMenu = null;
+        }
+    }
     #endregion
 
     #region Object Pooling
@@ -657,6 +693,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     internal AreaInfoUI areaInfoUI;
     public void ShowAreaInfo(Area area, int indexToggleToBeActivated = 0) {
+        BeforeOpeningMenu(areaInfoUI);
         //HideMainUI();
         //if (factionInfoUI.isShowing) {
         //    factionInfoUI.HideMenu();
@@ -699,6 +736,7 @@ public class UIManager : MonoBehaviour {
     [Header("Landmark Info")]
     [SerializeField] internal LandmarkInfoUI landmarkInfoUI;
     public void ShowLandmarkInfo(BaseLandmark landmark, int indexToggleToBeActivated = 0) {
+        BeforeOpeningMenu(landmarkInfoUI);
         //HideMainUI();
         //if (factionInfoUI.isShowing) {
         //    factionInfoUI.HideMenu();
@@ -742,6 +780,7 @@ public class UIManager : MonoBehaviour {
     [Header("Player Landmark Info")]
     public PlayerLandmarkInfoUI playerLandmarkInfoUI;
     public void ShowPlayerLandmarkInfo(BaseLandmark landmark) {
+        BeforeOpeningMenu(playerLandmarkInfoUI);
         if (characterInfoUI.isShowing) {
             characterInfoUI.CloseMenu();
         }
@@ -775,6 +814,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     internal FactionInfoUI factionInfoUI;
     public void ShowFactionInfo(Faction faction) {
+        BeforeOpeningMenu(factionInfoUI);
         //HideMainUI();
         //if (landmarkInfoUI.isShowing) {
         //    landmarkInfoUI.HideMenu();
@@ -810,6 +850,7 @@ public class UIManager : MonoBehaviour {
     [Header("Character Info")]
     [SerializeField] internal CharacterInfoUI characterInfoUI;
     public void ShowCharacterInfo(Character character) {
+        BeforeOpeningMenu(characterInfoUI);
         //HideMainUI();
         if (landmarkInfoUI.isShowing) {
             landmarkInfoUI.CloseMenu();
@@ -857,6 +898,7 @@ public class UIManager : MonoBehaviour {
     [Header("Party Info")]
     [SerializeField] internal PartyInfoUI partyinfoUI;
     public void ShowPartyInfo(Party party) {
+        BeforeOpeningMenu(partyinfoUI);
         //HideMainUI();
         if (landmarkInfoUI.isShowing) {
             landmarkInfoUI.CloseMenu();
@@ -897,6 +939,7 @@ public class UIManager : MonoBehaviour {
     [Header("Monster Info")]
     [SerializeField] internal MonsterInfoUI monsterInfoUI;
     public void ShowMonsterInfo(Monster monster) {
+        BeforeOpeningMenu(monsterInfoUI);
         //HideMainUI();
         if (landmarkInfoUI.isShowing) {
             landmarkInfoUI.CloseMenu();

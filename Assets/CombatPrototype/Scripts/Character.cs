@@ -413,6 +413,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public PlayerCharacterItem playerCharacterItem {
         get { return _playerCharacterItem; }
     }
+    public int currentInteractionTick {
+        get { return _currentInteractionTick; }
+    }
     #endregion
 
     public Character(string className, RACE race, GENDER gender) : this() {

@@ -82,7 +82,6 @@ public class AreaInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI minionAssignmentPartyWinChance;
     //[SerializeField] private InvestigationMinionDraggableItem[] minionAssignmentPartyDraggableItem;
 
-
     private InvestigateButton _currentSelectedInvestigateButton;
 
     private LogHistoryItem[] logHistoryItems;
@@ -188,8 +187,8 @@ public class AreaInfoUI : UIMenu {
             activeArea.SetOutlineState(true);
         }
         UIManager.Instance.SetCoverState(true);
-        UIManager.Instance.Pause();
-        UIManager.Instance.SetSpeedTogglesState(false);
+        //UIManager.Instance.Pause();
+        //UIManager.Instance.SetSpeedTogglesState(false);
     }
     public override void CloseMenu() {
         base.CloseMenu();
@@ -204,8 +203,8 @@ public class AreaInfoUI : UIMenu {
         }
         activeArea = null;
         UIManager.Instance.SetCoverState(false);
-        UIManager.Instance.Unpause();
-        UIManager.Instance.SetSpeedTogglesState(true);
+        //UIManager.Instance.Unpause();
+        //UIManager.Instance.SetSpeedTogglesState(true);
         //PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
         //PlayerUI.Instance.CollapseMinionHolder();
         //InteractionUI.Instance.HideInteractionUI();

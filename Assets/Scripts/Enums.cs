@@ -1168,4 +1168,6 @@ public enum TOKEN_TYPE {
 public enum SPECIAL_TOKEN {
     BLIGHTED_POTION,
     BOOK_OF_THE_DEAD,
+    CHARM_SPELL,
+    FEAR_SPELL,
 }
