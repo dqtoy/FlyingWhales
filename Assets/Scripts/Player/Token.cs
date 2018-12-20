@@ -37,7 +37,7 @@ public class Token {
         Messenger.Broadcast(Signals.TOKEN_CONSUMED, this);
     }
     #region Virtuals
-    public virtual void CreateJointInteractionStates(Interaction interaction) { }
+    public virtual void CreateJointInteractionStates(Interaction interaction, Character user, object target) { }
     public virtual bool CanBeUsedBy(Character character) { return true; }
     #endregion
     //public int id;
@@ -128,6 +128,12 @@ public class SpecialToken : Token {
     #region getters/setters
     public override string tokenName {
         get { return name; }
+    }
+    public virtual string Item_Used {
+        get { return "Item Used"; }
+    }
+    public virtual string Stop_Fail {
+        get { return "Stop Fail"; }
     }
     #endregion
 

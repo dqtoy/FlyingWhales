@@ -196,12 +196,12 @@ public class Attack : Interaction {
         _supporterMinion.SetEnabledState(true);
         //Remove Defender Group, if there is no more defender group after removing, trigger area death
 
-        state.descriptionLog.AddToFillers(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2);
+        state.descriptionLog.AddToFillers(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2);
         for (int i = 0; i < _combat.charactersSideB.Count; i++) {
             state.descriptionLog.AddToFillers(_combat.charactersSideB[i], _combat.charactersSideB[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
         }
 
-        state.AddLogFiller(new LogFiller(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2));
+        state.AddLogFiller(new LogFiller(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2));
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
             if(_combat.charactersSideA[i] != _supporterMinion.character) {
                 state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
@@ -220,12 +220,12 @@ public class Attack : Interaction {
     private void HelpedAttackersLostEffect(InteractionState state) {
         characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
 
-        state.descriptionLog.AddToFillers(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2);
+        state.descriptionLog.AddToFillers(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2);
         for (int i = 0; i < _combat.charactersSideB.Count; i++) {
             state.descriptionLog.AddToFillers(_combat.charactersSideB[i], _combat.charactersSideB[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
         }
 
-        state.AddLogFiller(new LogFiller(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2));
+        state.AddLogFiller(new LogFiller(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2));
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
             if (_combat.charactersSideA[i] != _supporterMinion.character) {
                 state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
@@ -237,9 +237,9 @@ public class Attack : Interaction {
         _supporterMinion.character.currentParty.RemoveCharacter(_supporterMinion.character);
         _supporterMinion.SetEnabledState(true);
 
-        state.descriptionLog.AddToFillers(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2);
+        state.descriptionLog.AddToFillers(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2);
 
-        state.AddLogFiller(new LogFiller(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2));
+        state.AddLogFiller(new LogFiller(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2));
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
         for (int i = 0; i < characterInvolved.currentParty.characters.Count; i++) {
             state.AddLogFiller(new LogFiller(characterInvolved.currentParty.characters[i], characterInvolved.currentParty.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
@@ -250,8 +250,8 @@ public class Attack : Interaction {
     private void HelpedDefendersLostEffect(InteractionState state) {
         interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
 
-        state.descriptionLog.AddToFillers(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2);
-        state.AddLogFiller(new LogFiller(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2));
+        state.descriptionLog.AddToFillers(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2);
+        state.AddLogFiller(new LogFiller(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2));
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
             state.descriptionLog.AddToFillers(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
             state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
@@ -271,8 +271,8 @@ public class Attack : Interaction {
         _supporterMinion.character.currentParty.RemoveCharacter(_supporterMinion.character);
         _supporterMinion.SetEnabledState(true);
 
-        state.descriptionLog.AddToFillers(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2);
-        state.AddLogFiller(new LogFiller(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2));
+        state.descriptionLog.AddToFillers(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2);
+        state.AddLogFiller(new LogFiller(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2));
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
             state.descriptionLog.AddToFillers(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
             state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
@@ -281,8 +281,8 @@ public class Attack : Interaction {
     private void SoloDefenseLostEffect(InteractionState state) {
         interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
 
-        state.descriptionLog.AddToFillers(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2);
-        state.AddLogFiller(new LogFiller(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2));
+        state.descriptionLog.AddToFillers(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2);
+        state.AddLogFiller(new LogFiller(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2));
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
             state.descriptionLog.AddToFillers(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
@@ -294,8 +294,8 @@ public class Attack : Interaction {
         interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
         _supporterMinion.SetEnabledState(true);
 
-        state.descriptionLog.AddToFillers(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2);
-        state.AddLogFiller(new LogFiller(_supporterMinion, _supporterMinion.name, LOG_IDENTIFIER.MINION_2));
+        state.descriptionLog.AddToFillers(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2);
+        state.AddLogFiller(new LogFiller(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2));
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
             state.descriptionLog.AddToFillers(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
             state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);

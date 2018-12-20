@@ -9,14 +9,15 @@ public class BlightedPotion : SpecialToken {
     }
 
     #region Overrides
-    public override void CreateJointInteractionStates(Interaction interaction) {
-        InteractionState inflictIllnessState = new InteractionState("Illness Inflicted", interaction);
+    public override void CreateJointInteractionStates(Interaction interaction, Character user, object target) {
+        TokenInteractionState inflictIllnessState = new TokenInteractionState(Item_Used, interaction, this);
+        inflictIllnessState.SetTokenUserAndTarget(user, target);
 
         inflictIllnessState.SetEffect(() => InflictIllnessEffect(inflictIllnessState));
 
         interaction.AddState(inflictIllnessState);
 
-        interaction.SetCurrentState(inflictIllnessState);
+        //interaction.SetCurrentState(inflictIllnessState);
     }
     public override Character GetTargetCharacterFor(Character sourceCharacter) {
         //NPC Usage Requirement: Character must be part of a Disliked or Enemy Faction
@@ -56,12 +57,11 @@ public class BlightedPotion : SpecialToken {
     }
     #endregion
 
-    private void InflictIllnessEffect(InteractionState state) {
+    private void InflictIllnessEffect(TokenInteractionState state) {
         string chosenIllnessName = AttributeManager.Instance.GetRandomIllness();
-        state.interaction.characterInvolved.AddTrait(AttributeManager.Instance.allIllnesses[chosenIllnessName]);
-        if (state.interaction.investigatorMinion != null) {
-            state.interaction.investigatorMinion.LevelUp();
-        }
+        (state.target as Character).AddTrait(AttributeManager.Instance.allIllnesses[chosenIllnessName]);
+        state.tokenUser.LevelUp();
+
         state.descriptionLog.AddToFillers(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1);
         state.AddLogFiller(new LogFiller(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1));
     }

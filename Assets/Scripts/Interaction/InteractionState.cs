@@ -5,22 +5,22 @@ using System;
 
 
 public class InteractionState {
-    private Interaction _interaction;
-    private string _name;
-    private string _description;
-    private bool _isEnd;
-    private bool _useInvestigatorMinionOnly, _useTokeneerMinionOnly;
-    //private bool _isTimed;
-    private Action _effect;
-    //private GameDate _timeDate;
-    private Minion _assignedMinion;
-    private ActionOption _chosenOption;
-    private ActionOption _defaultOption;
-    private Log _descriptionLog;
-    private ActionOption[] _actionOptions;
-    private List<object> _assignedObjects;
-    private List<LogFiller> logFillers;
-    private List<Log> otherLogs;
+    protected Interaction _interaction;
+    protected string _name;
+    protected string _description;
+    protected bool _isEnd;
+    protected bool _useInvestigatorMinionOnly, _useTokeneerMinionOnly;
+    //protected bool _isTimed;
+    protected Action _effect;
+    //protected GameDate _timeDate;
+    protected Minion _assignedMinion;
+    protected ActionOption _chosenOption;
+    protected ActionOption _defaultOption;
+    protected Log _descriptionLog;
+    protected ActionOption[] _actionOptions;
+    protected List<object> _assignedObjects;
+    protected List<LogFiller> logFillers;
+    protected List<Log> otherLogs;
 
     #region getters/setters
     public string name {
@@ -125,7 +125,7 @@ public class InteractionState {
     public void OnEndState() {
         //AssignedMinionGoesBack();
     }
-    public void CreateLogs() {
+    public virtual void CreateLogs() {
         if (_descriptionLog == null) {
             _descriptionLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_description");
         }
@@ -139,29 +139,29 @@ public class InteractionState {
     public void OverrideDescriptionLog(Log descriptionLog) {
         _descriptionLog = descriptionLog;
     }
-    public void SetDescription() {
+    public virtual void SetDescription() {
         //TODO: make this more performant
         if(_descriptionLog != null) {
             if (!_useInvestigatorMinionOnly && !_useTokeneerMinionOnly) {
                 if (_interaction.investigatorMinion != null) {
-                    _descriptionLog.AddToFillers(_interaction.investigatorMinion, _interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
+                    _descriptionLog.AddToFillers(_interaction.investigatorMinion.character, _interaction.investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1);
                 }
             } else if (_useInvestigatorMinionOnly && _useTokeneerMinionOnly) {
                 if (_interaction.investigatorMinion != null) {
-                    _descriptionLog.AddToFillers(_interaction.investigatorMinion, _interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
+                    _descriptionLog.AddToFillers(_interaction.investigatorMinion.character, _interaction.investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1);
                 }
                 if (_interaction.tokeneerMinion != null) {
-                    _descriptionLog.AddToFillers(_interaction.tokeneerMinion, _interaction.tokeneerMinion.name, LOG_IDENTIFIER.MINION_2);
+                    _descriptionLog.AddToFillers(_interaction.tokeneerMinion.character, _interaction.tokeneerMinion.character.name, LOG_IDENTIFIER.MINION_2);
                 }
             } else {
                 if (_useInvestigatorMinionOnly) {
                     if (_interaction.investigatorMinion != null) {
-                        _descriptionLog.AddToFillers(_interaction.investigatorMinion, _interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
+                        _descriptionLog.AddToFillers(_interaction.investigatorMinion.character, _interaction.investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1);
                     }
                 }
                 if (_useTokeneerMinionOnly) {
                     if (_interaction.tokeneerMinion != null) {
-                        _descriptionLog.AddToFillers(_interaction.tokeneerMinion, _interaction.tokeneerMinion.name, LOG_IDENTIFIER.MINION_1);
+                        _descriptionLog.AddToFillers(_interaction.tokeneerMinion.character, _interaction.tokeneerMinion.character.name, LOG_IDENTIFIER.MINION_1);
                     }
                 }
             }
@@ -178,24 +178,24 @@ public class InteractionState {
         if (otherLogs != null) {
             if (!_useInvestigatorMinionOnly && !_useTokeneerMinionOnly) {
                 if (_interaction.investigatorMinion != null) {
-                    logFillers.Add(new LogFiller(_interaction.investigatorMinion, _interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
+                    logFillers.Add(new LogFiller(_interaction.investigatorMinion.character, _interaction.investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1));
                 }
             } else if (_useInvestigatorMinionOnly && _useTokeneerMinionOnly) {
                 if (_interaction.investigatorMinion != null) {
-                    logFillers.Add(new LogFiller(_interaction.investigatorMinion, _interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
+                    logFillers.Add(new LogFiller(_interaction.investigatorMinion.character, _interaction.investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1));
                 }
                 if (_interaction.tokeneerMinion != null) {
-                    logFillers.Add(new LogFiller(_interaction.tokeneerMinion, _interaction.tokeneerMinion.name, LOG_IDENTIFIER.MINION_2));
+                    logFillers.Add(new LogFiller(_interaction.tokeneerMinion.character, _interaction.tokeneerMinion.character.name, LOG_IDENTIFIER.MINION_2));
                 }
             } else {
                 if (_useInvestigatorMinionOnly) {
                     if (_interaction.investigatorMinion != null) {
-                        logFillers.Add(new LogFiller(_interaction.investigatorMinion, _interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
+                        logFillers.Add(new LogFiller(_interaction.investigatorMinion.character, _interaction.investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1));
                     }
                 }
                 if (_useTokeneerMinionOnly) {
                     if (_interaction.tokeneerMinion != null) {
-                        logFillers.Add(new LogFiller(_interaction.tokeneerMinion, _interaction.tokeneerMinion.name, LOG_IDENTIFIER.MINION_1));
+                        logFillers.Add(new LogFiller(_interaction.tokeneerMinion.character, _interaction.tokeneerMinion.character.name, LOG_IDENTIFIER.MINION_1));
                     }
                 }
             }
