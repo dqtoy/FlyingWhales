@@ -9,8 +9,9 @@ public class FearSpell : SpecialToken {
     }
 
     #region Overrides
-    public override void CreateJointInteractionStates(Interaction interaction) {
-        InteractionState itemUsed = new InteractionState("Item Used", interaction);
+    public override void CreateJointInteractionStates(Interaction interaction, Character user, object target) {
+        TokenInteractionState itemUsed = new TokenInteractionState("Item Used", interaction, this);
+        itemUsed.SetTokenUserAndTarget(user, target);
 
         itemUsed.SetEffect(() => ItemUsedEffect(itemUsed));
 
@@ -55,12 +56,10 @@ public class FearSpell : SpecialToken {
     }
     #endregion
 
-    private void ItemUsedEffect(InteractionState state) {
+    private void ItemUsedEffect(TokenInteractionState state) {
         string chosenIllnessName = AttributeManager.Instance.GetRandomIllness();
-        state.interaction.characterInvolved.AddTrait(AttributeManager.Instance.allIllnesses[chosenIllnessName]);
-        if (state.interaction.investigatorMinion != null) {
-            state.interaction.investigatorMinion.LevelUp();
-        }
+        (state.target as Character).AddTrait(AttributeManager.Instance.allIllnesses[chosenIllnessName]);
+        state.tokenUser.LevelUp();
 
         state.descriptionLog.AddToFillers(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1);
         state.AddLogFiller(new LogFiller(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1));
