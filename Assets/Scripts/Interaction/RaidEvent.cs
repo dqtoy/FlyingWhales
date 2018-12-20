@@ -12,7 +12,7 @@ public class RaidEvent : Interaction {
     private const string Assisted_Raid_Critically_Failed = "Assisted Raid Critically Failed";
     private const string Normal_Raid_Success = "Normal Raid Success";
     private const string Normal_Raid_Fail = "Normal Raid Fail";
-    private const string Normal_Raid_Critical_Fail = "Normal Raid Critical Fail";
+    private const string Normal_Raid_Critical_Fail = "Normal Raid Critically Fail";
 
     public RaidEvent(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.RAID_EVENT, 0) {
         _name = "Raid Event";
