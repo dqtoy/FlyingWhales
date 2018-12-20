@@ -28,6 +28,8 @@ public class RaceClassListDictionary : SerializableDictionary<Race, List<RaceAre
 public class JobPortraitFramesDictionary : SerializableDictionary<JOB, PortraitFrame> { }
 [System.Serializable]
 public class BiomeSpriteAnimationDictionary : SerializableDictionary<Sprite, RuntimeAnimatorController> { }
+[System.Serializable]
+public class LogReplacerDictionary : SerializableDictionary<string, LOG_IDENTIFIER> { }
 
 [System.Serializable]
 public class CharacterTagListStorage : SerializableDictionary.Storage<List<CharacterActionTagRequirement>> { }
