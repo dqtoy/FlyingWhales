@@ -71,7 +71,7 @@ public class CreateNecromancer : Interaction {
         _characterInvolved.ChangeClass("Necromancer");
         _characterInvolved.SetForcedInteraction(null);
 
-        Faction newFaction = FactionManager.Instance.GetFactionBasedOnName("Zirana");
+        Faction newFaction = FactionManager.Instance.GetFactionBasedOnName("Ziranna");
         newFaction.SetLeader(_characterInvolved);
         newFaction.AddNewCharacter(_characterInvolved);
         LandmarkManager.Instance.OwnArea(newFaction, interactable.tileLocation.areaOfTile);
