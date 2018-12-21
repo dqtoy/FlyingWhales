@@ -370,7 +370,9 @@ public class InteractionManager : MonoBehaviour {
                 if(character.job.jobType == JOB.RAIDER) {
                     for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                         Area currArea = LandmarkManager.Instance.allAreas[i];
-                        if (currArea.owner != null && currArea.owner.id != character.specificLocation.tileLocation.areaOfTile.owner.id) {
+                        if (currArea.owner != null 
+                            && currArea.owner.isActive 
+                            && currArea.owner.id != character.specificLocation.tileLocation.areaOfTile.owner.id) {
                             relationship = character.specificLocation.tileLocation.areaOfTile.owner.GetRelationshipWith(currArea.owner);
                             if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
                                 return true;

@@ -141,7 +141,8 @@ public class MoveToRaid : Interaction {
         //there must be at least one area that is owned by a different faction that is not Ally or Friend of this faction
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
-            if (currArea.owner != null && currArea.id != PlayerManager.Instance.player.playerArea.id 
+            if (currArea.owner != null && currArea.owner.isActive
+                && currArea.id != PlayerManager.Instance.player.playerArea.id 
                 && currArea.owner.id != _characterInvolved.faction.id) {
                 FACTION_RELATIONSHIP_STATUS relStat = currArea.owner.GetRelationshipWith(_characterInvolved.faction).relationshipStatus;
                 if (relStat != FACTION_RELATIONSHIP_STATUS.ALLY && relStat != FACTION_RELATIONSHIP_STATUS.FRIEND) {

@@ -1402,3 +1402,28 @@ MonoBehaviour:
         weight: 40
       - className: Shaman
         weight: 20
+  locationPortraits:
+    m_keys:
+    - Blistering Hollow
+    - Cardell
+    - Cindermaul Hideout
+    - Gloomhollow Crypts
+    - Narris
+    - Odious Lair
+    - Pitthize
+    - Player Area
+    - Radisle Cavern
+    - Redheart Den
+    - Tessellated Triangle
+    m_values:
+    - {fileID: 21300000, guid: de065925292803e41918d3489cbfaf40, type: 3}
+    - {fileID: 21300000, guid: 8508cc219c2f52a4eb35f23afe659c70, type: 3}
+    - {fileID: 21300000, guid: 4d6cd19941e19a14c8803b0509b32866, type: 3}
+    - {fileID: 21300000, guid: b2c69e79d3587374c8666bd30defd411, type: 3}
+    - {fileID: 21300000, guid: b728ca31f80c045498540a439b457efb, type: 3}
+    - {fileID: 21300000, guid: ae076f5ba3e7ec242be227bfeee11dfe, type: 3}
+    - {fileID: 21300000, guid: d8fad059b8ecabe41a647fb0bf810b5c, type: 3}
+    - {fileID: 21300000, guid: 5b5fd7dfb6c09fe419150cfdc5f8493e, type: 3}
+    - {fileID: 21300000, guid: b30af01a1bcb4a446aa708207bfcee38, type: 3}
+    - {fileID: 21300000, guid: e7f267b27fc9d0540bfde09eb7615d39, type: 3}
+    - {fileID: 21300000, guid: 1a744fd672e8a5845bb49e214b4dfbc1, type: 3}

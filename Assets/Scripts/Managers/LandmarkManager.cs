@@ -25,6 +25,7 @@ public class LandmarkManager : MonoBehaviour {
     private Dictionary<LANDMARK_TYPE, LandmarkData> landmarkDataDict;
 
     public RaceClassListDictionary defaultRaceDefenders;
+    public LocationPortraitDictionary locationPortraits; //NOTE: Move this to world creation when time permits.
 
     #region Monobehaviours
     private void Awake() {
@@ -617,6 +618,9 @@ public class LandmarkManager : MonoBehaviour {
         } else {
             newArea.AddTile(tiles);
         }
+        if (locationPortraits.ContainsKey(newArea.name)) {
+            newArea.SetLocationPortrait(locationPortraits[newArea.name]);
+        }
         Messenger.Broadcast(Signals.AREA_CREATED, newArea);
         allAreas.Add(newArea);
         return newArea;
@@ -627,6 +631,9 @@ public class LandmarkManager : MonoBehaviour {
     }
     public Area CreateNewArea(AreaSaveData data) {
         Area newArea = new Area(data);
+        if (locationPortraits.ContainsKey(newArea.name)) {
+            newArea.SetLocationPortrait(locationPortraits[newArea.name]);
+        }
         Messenger.Broadcast(Signals.AREA_CREATED, newArea);
         allAreas.Add(newArea);
         return newArea;
