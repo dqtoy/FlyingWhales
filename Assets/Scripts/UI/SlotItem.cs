@@ -136,7 +136,7 @@ public class SlotItem : MonoBehaviour {
         portrait.gameObject.SetActive(false);
     }
     private bool IsObjectValidForSlot(object obj) {
-        if (neededType != null && (obj.GetType() == neededType || obj.GetType().BaseType == neededType)) {
+        if (neededType != null && neededType.IsInstanceOfType(obj)) {
             if (isObjectValidForSlot == null || isObjectValidForSlot(obj)) {
                 return true;
             }
