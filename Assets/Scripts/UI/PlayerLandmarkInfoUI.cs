@@ -22,6 +22,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
     [SerializeField] private GameObject charactersGO;
     [SerializeField] private GameObject logsGO;
     [SerializeField] private GameObject[] connectorsGO;
+    [SerializeField] private Image areaPortrait;
 
     //[Space(10)]
     //[Header("Info")]
@@ -165,6 +166,15 @@ public class PlayerLandmarkInfoUI : UIMenu {
             factionEmblem.gameObject.SetActive(true);
             factionEmblem.SetFaction(_activeLandmark.owner);
         }
+
+        //portrait
+        if (_activeLandmark.tileLocation.areaOfTile.locationPortrait != null) {
+            areaPortrait.gameObject.SetActive(true);
+            areaPortrait.sprite = _activeLandmark.tileLocation.areaOfTile.locationPortrait;
+        } else {
+            areaPortrait.gameObject.SetActive(false);
+        }
+
         UpdateHP();
     }
     private void UpdateHP() {

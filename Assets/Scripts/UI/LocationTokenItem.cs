@@ -29,6 +29,7 @@ public class LocationTokenItem : MonoBehaviour, IPointerEnterHandler, IPointerEx
         this.locationToken = locationToken;
         areaNameLbl.text = locationToken.location.name;
         draggable.SetAssociatedObject(locationToken);
+        emblem.image.sprite = locationToken.location.locationPortrait;
     }
 
 }

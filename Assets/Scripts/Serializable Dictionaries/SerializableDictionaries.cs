@@ -30,6 +30,8 @@ public class JobPortraitFramesDictionary : SerializableDictionary<JOB, PortraitF
 public class BiomeSpriteAnimationDictionary : SerializableDictionary<Sprite, RuntimeAnimatorController> { }
 [System.Serializable]
 public class LogReplacerDictionary : SerializableDictionary<string, LOG_IDENTIFIER> { }
+[System.Serializable]
+public class LocationPortraitDictionary : SerializableDictionary<string, Sprite> { }
 
 [System.Serializable]
 public class CharacterTagListStorage : SerializableDictionary.Storage<List<CharacterActionTagRequirement>> { }

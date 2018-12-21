@@ -25,6 +25,7 @@ public class AreaInfoUI : UIMenu {
     [SerializeField] private GameObject logsGO;
     [SerializeField] private GameObject[] connectorsGO;
     [SerializeField] private Sprite[] areaCenterSprites;
+    [SerializeField] private Image areaPortrait;
 
     [Space(10)]
     [Header("Characters")]
@@ -309,6 +310,14 @@ public class AreaInfoUI : UIMenu {
         } else {
             factionEmblem.gameObject.SetActive(true);
             factionEmblem.SetFaction(activeArea.owner);
+        }
+
+        //portrait
+        if (activeArea.locationPortrait != null) {
+            areaPortrait.gameObject.SetActive(true);
+            areaPortrait.sprite = activeArea.locationPortrait;
+        } else {
+            areaPortrait.gameObject.SetActive(false);
         }
     }
     private void OnAreaSuppliesSet(Area area) {
