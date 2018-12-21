@@ -53,7 +53,7 @@ public class ActionData : IActionData {
         Reset();
         choices = new CharacterActionAdvertisement[3];
         actionThread = new ActionThread(_party);
-        _party.onDailyAction += PerformCurrentAction;
+        //_party.onDailyAction += PerformCurrentAction;
         _homeMultiplier = 1f;
         _hasDoneActionAtHome = false;
         _isHalted = false;
@@ -118,7 +118,7 @@ public class ActionData : IActionData {
         Messenger.Broadcast(Signals.ACTION_TAKEN, action, _party.GetBase());
     }
     public void DetachActionData() {
-        _party.onDailyAction -= PerformCurrentAction;
+        //_party.onDailyAction -= PerformCurrentAction;
         Reset();
         _party = null;
         //Messenger.RemoveListener<CharacterParty, ObjectState>(Signals.STATE_ENDED, APartyEndedState);
