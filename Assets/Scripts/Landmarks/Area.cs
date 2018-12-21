@@ -67,6 +67,9 @@ public class Area {
     public Race race {
         get { return owner == null ? defaultRace : owner.race; }
     }
+    public int elligibleResidents {
+        get { return areaResidents.Where(x => !x.isDefender).Count(); }
+    }
     #endregion
 
     public Area(HexTile coreTile, AREA_TYPE areaType) {
@@ -1041,7 +1044,7 @@ public class Area {
         return characters;
     }
     public bool IsResidentsFull() {
-        return areaResidents.Count >= residentCapacity;
+        return elligibleResidents >= residentCapacity;
     }
     public void GenerateNeutralCharacters() {
         if (defaultRace.race == RACE.NONE) {

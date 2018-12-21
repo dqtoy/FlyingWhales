@@ -29,13 +29,14 @@ public class RecruitAction : Interaction {
         InteractionState normalRecruitmenSuccess = new InteractionState(Normal_Recruitment_Success, this);
         InteractionState normalRecruitmentFail = new InteractionState(Normal_Recruitment_Fail, this);
 
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
-        startState.OverrideDescriptionLog(startStateDescriptionLog);
-
         if (targetCharacter == null) {
             SetTargetCharacter(GetTargetCharacter(_characterInvolved));
         }
+
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        startStateDescriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
+        startStateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
         disruptedRecruitmentSuccess.SetEffect(() => DisruptedRecruitmentSuccessRewardEffect(disruptedRecruitmentSuccess));
@@ -228,7 +229,7 @@ public class RecruitAction : Interaction {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
             Character currCharacter = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
-            if (currCharacter.id != characterInvolved.id && !currCharacter.isDefender && currCharacter.minion == null) { //- character must not be in Defender Tile.
+            if (currCharacter.id != characterInvolved.id && !currCharacter.isLeader && !currCharacter.isDefender && currCharacter.minion == null) { //- character must not be in Defender Tile.
                 int weight = 0;
                 if (currCharacter.faction == null || currCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
                     weight += 35; //- character is not part of any Faction: Weight +35
@@ -255,6 +256,7 @@ public class RecruitAction : Interaction {
         if (characterWeights.GetTotalOfWeights() > 0) {
             return characterWeights.PickRandomElementGivenWeights();
         }
-        throw new System.Exception("Could not find any character to recruit!");
+        return null;
+        //throw new System.Exception("Could not find any character to recruit!");
     }
 }
