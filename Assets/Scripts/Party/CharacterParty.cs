@@ -50,8 +50,8 @@ public class CharacterParty : Party {
         _isIdle = false;
         _actionData = new ActionData(this);
 #if !WORLD_CREATION_TOOL
-        Messenger.AddListener(Signals.DAY_ENDED, EverydayAction);
-        Messenger.AddListener<Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
+        //Messenger.AddListener(Signals.DAY_ENDED, EverydayAction);
+        //Messenger.AddListener<Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         //ConstructResourceInventory();
 #endif
@@ -186,8 +186,8 @@ public class CharacterParty : Party {
     }
     public override void RemoveListeners() {
         base.RemoveListeners();
-        Messenger.RemoveListener(Signals.DAY_ENDED, EverydayAction);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
+        //Messenger.RemoveListener(Signals.DAY_ENDED, EverydayAction);
+        //Messenger.RemoveListener<Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
     }
     public override void EndAction() {

@@ -17,6 +17,8 @@ public class Log {
 
 	public List<LogFiller> fillers;
 
+    private bool lockFillers;
+
     public string logCallStack;
 
     public Log(int month, int day, int year, int hour, string category, string file, string key){
@@ -29,6 +31,7 @@ public class Log {
 		this.file = file;
 		this.key = key;
 		this.fillers = new List<LogFiller>();
+        this.lockFillers = false;
         logCallStack = StackTraceUtility.ExtractStackTrace();
 	}
     public Log(GameDate date, string category, string file, string key) {
@@ -41,10 +44,14 @@ public class Log {
         this.file = file;
         this.key = key;
         this.fillers = new List<LogFiller>();
+        this.lockFillers = false;
         logCallStack = StackTraceUtility.ExtractStackTrace();
     }
 
     internal void AddToFillers(object obj, string value, LOG_IDENTIFIER identifier, bool replaceExisting = true){
+        if (lockFillers) {
+            return;
+        }
         if (replaceExisting && HasFillerForIdentifier(identifier)) {
             fillers.Remove(GetFillerForIdentifier(identifier));
         }
@@ -60,6 +67,9 @@ public class Log {
         }
     }
     public void SetFillers(List<LogFiller> fillers) {
+        if (lockFillers) {
+            return;
+        }
         this.fillers = fillers;
     }
     public void AddLogToInvolvedObjects() {
@@ -97,4 +107,10 @@ public class Log {
         }
         return default(LogFiller);
     }
+
+    #region Utilities
+    public void SetFillerLockedState(bool state) {
+        lockFillers = state;
+    }
+    #endregion
 }

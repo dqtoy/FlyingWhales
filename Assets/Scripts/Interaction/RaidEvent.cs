@@ -150,7 +150,8 @@ public class RaidEvent : Interaction {
     #endregion
 
     private void AlertedRaidSuccessRewardEffect(InteractionState state) {
-        //**Mechanics**: Compute Supply obtained by raider and transfer it to his home area.
+        //**Mechanics**: Compute Supply obtained by raider and transfer it to his home area. Raider Faction and Raided Faction -1 Relationship.
+        AdjustFactionsRelationship(_characterInvolved.faction, interactable.tileLocation.areaOfTile.owner, -1, state);
         //**Level Up**: Raider Character +1
         _characterInvolved.LevelUp(); //Raider Character
         int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable.tileLocation.areaOfTile);
@@ -189,6 +190,9 @@ public class RaidEvent : Interaction {
         TransferSupplies(obtainedSupply, _characterInvolved.homeLandmark.tileLocation.areaOfTile,
             interactable.tileLocation.areaOfTile);
         _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
+        
+        //Raider Faction and Raided Faction -1 Relationship.
+        AdjustFactionsRelationship(_characterInvolved.faction, interactable.tileLocation.areaOfTile.owner, -1, state);
 
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
@@ -218,6 +222,9 @@ public class RaidEvent : Interaction {
         int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable.tileLocation.areaOfTile);
         TransferSupplies(obtainedSupply, _characterInvolved.homeLandmark.tileLocation.areaOfTile,
             interactable.tileLocation.areaOfTile);
+
+        //Raider Faction and Raided Faction -1 Relationship.
+        AdjustFactionsRelationship(_characterInvolved.faction, interactable.tileLocation.areaOfTile.owner, -1, state);
 
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
