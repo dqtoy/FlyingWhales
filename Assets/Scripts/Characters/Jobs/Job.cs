@@ -126,7 +126,7 @@ public class Job {
                     for (int i = 0; i < _character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
                         //location has a male Human, Goblin or Elven character that is part of a Faction
                         Character characterAtLocation = _character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
-                        if (characterAtLocation.faction != FactionManager.Instance.neutralFaction && !characterAtLocation.isLeader &&
+                        if (characterAtLocation.faction != FactionManager.Instance.neutralFaction && !characterAtLocation.isLeader && && characterAtLocation.gender == GENDER.MALE &&
                             (characterAtLocation.race == RACE.HUMANS || characterAtLocation.race == RACE.GOBLIN || characterAtLocation.race == RACE.ELVES)) {
                             return true;
                         }
