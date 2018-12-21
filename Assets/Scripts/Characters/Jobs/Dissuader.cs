@@ -48,21 +48,19 @@ public class Dissuader : Job {
         successWeights.AddElement("Success", success);
         successWeights.AddElement("Crit Fail", critFail);
         string result = successWeights.PickRandomElementGivenWeights();
+
+        SetJobActionPauseState(true);
+        area.SetStopDefaultInteractionsState(true);
         if (result == "Success") {
-            SetJobActionPauseState(true);
-            area.SetStopDefaultInteractionsState(true);
             SetCreatedInteraction(choices[UnityEngine.Random.Range(0, choices.Count)]);
-            _createdInteraction.AddEndInteractionAction(() => SetJobActionPauseState(false));
-            _createdInteraction.AddEndInteractionAction(() => ForceDefaultAllExistingInteractions());
-            InteractionUI.Instance.OpenInteractionUI(_createdInteraction);
         } else if (result == "Crit Fail") {
-            SetJobActionPauseState(true);
             Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile);
-            interaction.AddEndInteractionAction(() => SetJobActionPauseState(false));
-            interaction.ScheduleSecondTimeOut();
             _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
             SetCreatedInteraction(interaction);
         }
+        _createdInteraction.AddEndInteractionAction(() => SetJobActionPauseState(false));
+        _createdInteraction.AddEndInteractionAction(() => ForceDefaultAllExistingInteractions());
+        InteractionUI.Instance.OpenInteractionUI(_createdInteraction);
     }
     public override int GetSuccessRate() {
         int baseRate = 60;
