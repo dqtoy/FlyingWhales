@@ -98,7 +98,11 @@ public class InteractionItem : MonoBehaviour {
             landmarkInfoGO.SetActive(false);
             characterInfoGO.SetActive(false);
             //_interaction.SetInteractionItem(this);
-            defaultAssignedSlotItem.PlaceObject(_interaction.investigatorMinion);
+            if(_interaction.investigatorMinion != null) {
+                defaultAssignedSlotItem.PlaceObject(_interaction.investigatorMinion);
+            }else if(_interaction.tokeneerMinion != null) {
+                defaultAssignedSlotItem.PlaceObject(_interaction.tokeneerMinion);
+            }
             UpdateState();
             ChangedActivatedState();
         }
