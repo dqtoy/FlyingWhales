@@ -78,7 +78,8 @@ public class MoveToScavenge : Interaction {
     #region Action Option Effects
     private void PursuadeToCancelEffect(InteractionState state) {
         //Compute Dissuader success rate
-        WeightedDictionary<RESULT> resultWeights = _characterInvolved.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> resultWeights = investigatorMinion.character.job.GetJobRateWeights();
+        resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
         AddToDebugLog("Chose to pursuade to cancel. " + resultWeights.GetWeightsSummary("Summary of weights are: "));
         string nextState = string.Empty;
         RESULT result = resultWeights.PickRandomElementGivenWeights();
