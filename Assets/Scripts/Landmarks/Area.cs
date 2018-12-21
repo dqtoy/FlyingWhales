@@ -768,12 +768,12 @@ public class Area {
     #region Interactions
     private void ConstructAreaTasksInteractionWeights() {
         areaTasksInteractionWeights = new Dictionary<INTERACTION_TYPE, int>() {
-            //{INTERACTION_TYPE.MOVE_TO_RAID, 50},
-            //{INTERACTION_TYPE.MOVE_TO_SCAVENGE, 50},
-            //{INTERACTION_TYPE.MOVE_TO_RECRUIT, 50},
-            //{INTERACTION_TYPE.PATROL_ACTION, 50},
-            //{INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS, 50},
-            //{INTERACTION_TYPE.MOVE_TO_EXPAND, 10},
+            {INTERACTION_TYPE.MOVE_TO_RAID, 50},
+            {INTERACTION_TYPE.MOVE_TO_SCAVENGE, 50},
+            {INTERACTION_TYPE.MOVE_TO_RECRUIT, 50},
+            {INTERACTION_TYPE.PATROL_ACTION, 50},
+            {INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS, 50},
+            {INTERACTION_TYPE.MOVE_TO_EXPAND, 10},
             {INTERACTION_TYPE.MOVE_TO_EXPLORE, 20},
         };
     }
