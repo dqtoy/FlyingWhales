@@ -233,7 +233,11 @@ public class ExploreEvent : Interaction {
 
     private SpecialToken GiveSpecialTokenToCharacter() {
         List<SpecialToken> choices = interactable.tileLocation.areaOfTile.GetElligibleTokensForCharacter(_characterInvolved);
-        SpecialToken token = choices[Random.Range(0, choices.Count)];
+        WeightedDictionary<SpecialToken> tokenWeights = new WeightedDictionary<SpecialToken>();
+        for (int i = 0; i < choices.Count; i++) {
+            tokenWeights.AddElement(choices[i], choices[i].weight);
+        }
+        SpecialToken token = tokenWeights.PickRandomElementGivenWeights();
         _characterInvolved.ObtainToken(token);
         return token;
     }

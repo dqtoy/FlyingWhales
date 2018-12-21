@@ -218,7 +218,7 @@ public class RecruitAction : Interaction {
         faction.AddNewCharacter(character);
         character.homeLandmark.RemoveCharacterHomeOnLandmark(character);
         _characterInvolved.homeLandmark.AddCharacterHomeOnLandmark(character);
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation.tileLocation.landmarkOnTile);
         character.SetForcedInteraction(interaction);
     }
 

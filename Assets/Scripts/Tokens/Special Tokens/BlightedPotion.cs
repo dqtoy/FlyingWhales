@@ -6,6 +6,7 @@ public class BlightedPotion : SpecialToken {
 
     public BlightedPotion() : base(SPECIAL_TOKEN.BLIGHTED_POTION) {
         quantity = 4;
+        weight = 100;
     }
 
     #region Overrides
