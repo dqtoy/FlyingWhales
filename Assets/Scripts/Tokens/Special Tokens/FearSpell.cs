@@ -6,6 +6,7 @@ public class FearSpell : SpecialToken {
 
     public FearSpell() : base(SPECIAL_TOKEN.FEAR_SPELL) {
         quantity = 6;
+        weight = 100;
     }
 
     #region Overrides
@@ -57,11 +58,14 @@ public class FearSpell : SpecialToken {
     #endregion
 
     private void ItemUsedEffect(TokenInteractionState state) {
-        string chosenIllnessName = AttributeManager.Instance.GetRandomIllness();
-        (state.target as Character).AddTrait(AttributeManager.Instance.allIllnesses[chosenIllnessName]);
         state.tokenUser.LevelUp();
-
-        state.descriptionLog.AddToFillers(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1);
-        state.AddLogFiller(new LogFiller(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1));
+        //**Mechanics**: Target character will trigger https://trello.com/c/vDKl0cyy/859-character-flees on the next tick (overriding any other action).
+        if (state.target is Character) {
+            Character target = state.target as Character;
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_FLEES, target.specificLocation.tileLocation.landmarkOnTile);
+            target.SetForcedInteraction(interaction);
+        }
+        //state.descriptionLog.AddToFillers(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1);
+        //state.AddLogFiller(new LogFiller(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1));
     }
 }

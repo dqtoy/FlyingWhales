@@ -48,15 +48,15 @@ public class TokenInteractionState : InteractionState {
             //InteractionUI.Instance.interactionItem.SetDescription(_description, descriptionLog);
         }
         if (otherLogs != null) {
-            _descriptionLog.AddToFillers(_tokenUser, _tokenUser.name, LOG_IDENTIFIER.MINION_1);
+            AddLogFiller(new LogFiller(_tokenUser, _tokenUser.name, LOG_IDENTIFIER.MINION_1));
             if (_target is Character) {
-                _descriptionLog.AddToFillers(_target as Character, (_target as Character).name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                AddLogFiller(new LogFiller(_target as Character, (_target as Character).name, LOG_IDENTIFIER.TARGET_CHARACTER));
             }
             //if (interaction.characterInvolved != null) {
             //    logFillers.Add(new LogFiller(interaction.characterInvolved, interaction.characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
             //}
             if (!AlreadyHasLogFiller(LOG_IDENTIFIER.LANDMARK_1)) {
-                logFillers.Add(new LogFiller(interaction.interactable.tileLocation.areaOfTile, interaction.interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
+                AddLogFiller(new LogFiller(interaction.interactable.tileLocation.areaOfTile, interaction.interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
             }
             for (int i = 0; i < otherLogs.Count; i++) {
                 Log currLog = otherLogs[i];

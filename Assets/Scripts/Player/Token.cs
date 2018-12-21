@@ -124,6 +124,7 @@ public class SpecialToken : Token {
     public SPECIAL_TOKEN specialTokenType;
     public string name;
     public int quantity;
+    public int weight;
 
     #region getters/setters
     public override string tokenName {

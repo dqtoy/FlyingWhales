@@ -285,6 +285,14 @@ public class FactionManager : MonoBehaviour {
         }
         return null;
     }
+    public void TransferCharacter(Character character, Faction faction, BaseLandmark newHome) {
+        character.faction.RemoveCharacter(character);
+        faction.AddNewCharacter(character);
+        character.homeLandmark.RemoveCharacterHomeOnLandmark(character);
+        newHome.AddCharacterHomeOnLandmark(character);
+        //Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        //character.SetForcedInteraction(interaction);
+    }
     #endregion
 
     #region Relationships
