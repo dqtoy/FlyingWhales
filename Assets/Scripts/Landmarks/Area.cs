@@ -605,8 +605,9 @@ public class Area {
         attackCharacters = characters;
     }
     public void Death() {
-        if(owner != FactionManager.Instance.neutralFaction) {
-            LandmarkManager.Instance.OwnArea(FactionManager.Instance.neutralFaction, this);
+        if(owner != null && owner != FactionManager.Instance.neutralFaction) {
+            LandmarkManager.Instance.UnownArea(this);
+            FactionManager.Instance.neutralFaction.OwnArea(this);
         }
     }
     public bool IsHostileTowards(Character character) {
