@@ -215,11 +215,20 @@ public class ExploreEvent : Interaction {
         
     }
     private void ExploreFailRewardEffect(InteractionState state) {
-        
+        if (investigatorMinion != null) {
+            investigatorMinion.LevelUp();
+        }
     }
     private void ExploreCriticalFailRewardEffect(InteractionState state) {
+        if (interactable.tileLocation.areaOfTile.owner != null 
+            && interactable.tileLocation.areaOfTile.owner.id != _characterInvolved.faction.id) {
+            AdjustFactionsRelationship(interactable.tileLocation.areaOfTile.owner, _characterInvolved.faction, -1, state);
+        }
         //**Mechanic**: Character dies.
         _characterInvolved.Death();
+        if (investigatorMinion != null) {
+            investigatorMinion.LevelUp();
+        }
     }
 
     private SpecialToken GiveSpecialTokenToCharacter() {

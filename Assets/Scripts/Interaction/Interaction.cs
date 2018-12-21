@@ -341,6 +341,16 @@ public class Interaction {
         }
         
     }
+    protected void AdjustFactionsRelationship(Faction faction1, Faction faction2, int adjustment, InteractionState state) {
+        faction1.AdjustRelationshipFor(faction2, adjustment);
+        Log factionRelationshipLog = new Log(GameManager.Instance.Today(), "Events", "Generic", "faction_relationship_changed");
+        state.AddOtherLog(factionRelationshipLog);
+
+        state.AddLogFiller(new LogFiller(faction1, faction1.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(faction2, faction2.name, LOG_IDENTIFIER.FACTION_2));
+        state.AddLogFiller(new LogFiller(null,
+            Utilities.NormalizeString(faction1.GetRelationshipWith(faction2).relationshipStatus.ToString()), LOG_IDENTIFIER.STRING_1));
+    }
     #endregion
 
     #region Shared States and Effects

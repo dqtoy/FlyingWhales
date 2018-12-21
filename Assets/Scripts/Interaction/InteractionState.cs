@@ -114,6 +114,9 @@ public class InteractionState {
     }
     public void OnStartState() {
         CreateLogs();
+        if (descriptionLog == null) {
+            Debug.LogWarning("State " + this.name + " in " + interaction.name  + " does not have a description log!");
+        }
         if (_effect != null) {
             _effect();
         }
@@ -135,6 +138,9 @@ public class InteractionState {
             string currentKey = keysForState[i];
             otherLogs.Add(new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), currentKey));
         }
+    }
+    public void AddOtherLog(Log log) {
+        otherLogs.Add(log);
     }
     public void OverrideDescriptionLog(Log descriptionLog) {
         _descriptionLog = descriptionLog;
@@ -286,10 +292,8 @@ public class InteractionState {
         if (replaceExisting) {
             if (AlreadyHasLogFiller(filler.identifier)) {
                 logFillers.Remove(GetLogFiller(filler.identifier));
-                logFillers.Add(filler);
-            } else {
-                logFillers.Add(filler);
             }
+            logFillers.Add(filler);
         } else {
             logFillers.Add(filler);
         }

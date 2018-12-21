@@ -8,12 +8,12 @@ public class PatrolAction : Interaction {
     private const string Revealed_Patroller_Injured_Character = "Revealed Patroller Injured Character";
     private const string Revealed_Character_Killed_Patroller = "Revealed Character Killed Patroller";
     private const string Revealed_Character_Injured_Patroller = "Revealed Character Injured Patroller";
-    private const string Pursuaded_Patrol_Stopped = "Pursuaded Patrol Stopped";
-    private const string Pursuaded_Patroller_Killed_Character = "Pursuaded Patroller Killed Character";
-    private const string Pursuaded_Patroller_Injured_Character = "Pursuaded Patroller Injured Character";
-    private const string Pursuaded_Character_Killed_Patroller = "Pursuaded Character Killed Patroller";
-    private const string Pursuaded_Character_Injured_Patroller = "Pursuaded Character Injured Patroller";
-    private const string Pursuaded_Patrol_Failed = "Pursuaded Patrol Failed";
+    private const string Persuaded_Patrol_Stopped = "Persuaded Patrol Stopped";
+    private const string Persuaded_Patroller_Killed_Character = "Persuaded Patroller Killed Character";
+    private const string Persuaded_Patroller_Injured_Character = "Persuaded Patroller Injured Character";
+    private const string Persuaded_Character_Killed_Patroller = "Persuaded Character Killed Patroller";
+    private const string Persuaded_Character_Injured_Patroller = "Persuaded Character Injured Patroller";
+    private const string Persuaded_Patrol_Failed = "Persuaded Patrol Failed";
     private const string Normal_Patroller_Killed_Character = "Normal Patroller Killed Character";
     private const string Normal_Patroller_Injured_Character = "Normal Patroller Injured Character";
     private const string Normal_Character_Killed_Patroller = "Normal Character Killed Patroller";
@@ -35,12 +35,12 @@ public class PatrolAction : Interaction {
         InteractionState revealedPatrollerInjuredCharacter = new InteractionState(Revealed_Patroller_Injured_Character, this);
         InteractionState revealedCharacterKilledPatroller = new InteractionState(Revealed_Character_Killed_Patroller, this);
         InteractionState revealedCharacterInjuredPatroller = new InteractionState(Revealed_Character_Injured_Patroller, this);
-        InteractionState pursuadedPatrolStopped = new InteractionState(Pursuaded_Patrol_Stopped, this);
-        InteractionState pursuadedPatrollerKilledCharacter = new InteractionState(Pursuaded_Patroller_Killed_Character, this);
-        InteractionState pursuadedPatrollerInjuredCharacter = new InteractionState(Pursuaded_Patroller_Injured_Character, this);
-        InteractionState pursuadedCharacterKilledPatroller = new InteractionState(Pursuaded_Character_Killed_Patroller, this);
-        InteractionState pursuadedCharacterInjuredPatroller = new InteractionState(Pursuaded_Character_Injured_Patroller, this);
-        InteractionState pursuadedPatrolFailed = new InteractionState(Pursuaded_Patrol_Failed, this);
+        InteractionState pursuadedPatrolStopped = new InteractionState(Persuaded_Patrol_Stopped, this);
+        InteractionState pursuadedPatrollerKilledCharacter = new InteractionState(Persuaded_Patroller_Killed_Character, this);
+        InteractionState pursuadedPatrollerInjuredCharacter = new InteractionState(Persuaded_Patroller_Injured_Character, this);
+        InteractionState pursuadedCharacterKilledPatroller = new InteractionState(Persuaded_Character_Killed_Patroller, this);
+        InteractionState pursuadedCharacterInjuredPatroller = new InteractionState(Persuaded_Character_Injured_Patroller, this);
+        InteractionState pursuadedPatrolFailed = new InteractionState(Persuaded_Patrol_Failed, this);
         InteractionState normalPatrollerKilledCharacter = new InteractionState(Normal_Patroller_Killed_Character, this);
         InteractionState normalPatrollerInjuredCharacter = new InteractionState(Normal_Patroller_Injured_Character, this);
         InteractionState normalCharacterKilledPatroller = new InteractionState(Normal_Character_Killed_Patroller, this);
@@ -163,7 +163,7 @@ public class PatrolAction : Interaction {
 
         string nextState = string.Empty;
         if (dissuaderSuccessRate.PickRandomElementGivenWeights() == RESULT.SUCCESS) {
-            nextState = Pursuaded_Patrol_Stopped;
+            nextState = Persuaded_Patrol_Stopped;
         } else {
             WeightedDictionary<RESULT> patrollerSuccessRate = _characterInvolved.job.GetJobRateWeights();
             patrollerSuccessRate.RemoveElement(RESULT.CRITICAL_FAIL);
@@ -182,22 +182,22 @@ public class PatrolAction : Interaction {
                     WeightedDictionary<string> nextStateWeights = new WeightedDictionary<string>();
                     switch (combatResults.PickRandomElementGivenWeights()) {
                         case "Patroller Won":
-                            nextStateWeights.AddElement(Pursuaded_Patroller_Killed_Character, 20);
-                            nextStateWeights.AddElement(Pursuaded_Patroller_Injured_Character, 40);
+                            nextStateWeights.AddElement(Persuaded_Patroller_Killed_Character, 20);
+                            nextStateWeights.AddElement(Persuaded_Patroller_Injured_Character, 40);
                             break;
                         case "Patroller Lost":
-                            nextStateWeights.AddElement(Pursuaded_Character_Killed_Patroller, 20);
-                            nextStateWeights.AddElement(Pursuaded_Character_Injured_Patroller, 40);
+                            nextStateWeights.AddElement(Persuaded_Character_Killed_Patroller, 20);
+                            nextStateWeights.AddElement(Persuaded_Character_Injured_Patroller, 40);
                             break;
                         default:
                             break;
                     }
                     nextState = nextStateWeights.PickRandomElementGivenWeights();
                 } else {
-                    nextState = Pursuaded_Patrol_Failed;
+                    nextState = Persuaded_Patrol_Failed;
                 }
             } else {
-                nextState = Pursuaded_Patrol_Failed;
+                nextState = Persuaded_Patrol_Failed;
             }
         }
         SetCurrentState(_states[nextState]);
@@ -247,7 +247,6 @@ public class PatrolAction : Interaction {
         //**Mechanics**: Character is killed. Reduce relationship between the two factions.
         AdjustFactionsRelationship(_characterInvolved.faction, targetCharacter.faction, -1, state);
         targetCharacter.Death();
-        
         //**Level Up**: Patroller +1
         _characterInvolved.LevelUp();
     }
@@ -345,13 +344,13 @@ public class PatrolAction : Interaction {
     #endregion
 
     #region Utilities
-    private void AdjustFactionsRelationship(Faction faction1, Faction faction2, int adjustment, InteractionState state) {
-        faction1.AdjustRelationshipFor(faction2, adjustment);
-        state.AddLogFiller(new LogFiller(faction1, faction1.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(faction2, faction2.name, LOG_IDENTIFIER.FACTION_2));
-        state.AddLogFiller(new LogFiller(null,
-            Utilities.NormalizeString(faction1.GetRelationshipWith(faction2).relationshipStatus.ToString()), LOG_IDENTIFIER.STRING_1));
-    }
+    //private void AdjustFactionsRelationship(Faction faction1, Faction faction2, int adjustment, InteractionState state) {
+    //    faction1.AdjustRelationshipFor(faction2, adjustment);
+    //    state.AddLogFiller(new LogFiller(faction1, faction1.name, LOG_IDENTIFIER.FACTION_1));
+    //    state.AddLogFiller(new LogFiller(faction2, faction2.name, LOG_IDENTIFIER.FACTION_2));
+    //    state.AddLogFiller(new LogFiller(null,
+    //        Utilities.NormalizeString(faction1.GetRelationshipWith(faction2).relationshipStatus.ToString()), LOG_IDENTIFIER.STRING_1));
+    //}
     private Character GetTargetCharacter() {
         List<Character> choices = new List<Character>();
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
