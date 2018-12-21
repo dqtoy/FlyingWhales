@@ -97,6 +97,9 @@ public class MoveToExplore : Interaction {
     private void CharacterExploreContinuesRewardEffect(InteractionState state) {
         //**Mechanics**: Character will start its travel to selected location to start an Explore event.
         GoToTargetLocation();
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
+        }
         state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
     }
     private void DoNothingRewardEffect(InteractionState state) {

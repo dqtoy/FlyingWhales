@@ -153,6 +153,6 @@ public class MoveToRaid : Interaction {
         if (choices.Count > 0) {
             return choices[Random.Range(0, choices.Count)];
         }
-        throw new System.Exception("Cannot find target area for move to scavenge event at " + interactable.name);
+        throw new System.Exception("Cannot find target area for move to raid event at " + interactable.name);
     }
 }
