@@ -249,6 +249,9 @@ public class PatrolAction : Interaction {
         targetCharacter.Death();
         //**Level Up**: Patroller +1
         _characterInvolved.LevelUp();
+
+        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void RevealedPatrollerInjuredCharacter(InteractionState state) {
         //**Mechanics**: Character gains Injured.
@@ -256,6 +259,9 @@ public class PatrolAction : Interaction {
 
         //**Level Up**: Patroller +1
         _characterInvolved.LevelUp();
+
+        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void RevealedCharacterKilledPatroller(InteractionState state) {
         //**Mechanics**: Patroller is killed. Reduce relationship between the two factions.
@@ -264,6 +270,9 @@ public class PatrolAction : Interaction {
 
         //**Level Up**: Character +1
         targetCharacter.LevelUp();
+
+        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void RevealedCharacterInjuredPatroller(InteractionState state) {
         //**Mechanics**: Patroller gains Injured.
@@ -271,6 +280,9 @@ public class PatrolAction : Interaction {
 
         //**Level Up**: Character +1
         targetCharacter.LevelUp();
+
+        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void PursuadedPatrolStopped(InteractionState state) {
         
@@ -282,6 +294,9 @@ public class PatrolAction : Interaction {
 
         //**Level Up**: Character +1
         _characterInvolved.LevelUp();
+
+        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void PursuadedPatrollerInjuredCharacter(InteractionState state) {
         //**Mechanics**: Character gains Injured.
@@ -289,6 +304,9 @@ public class PatrolAction : Interaction {
 
         //**Level Up**: Patroller +1
         _characterInvolved.LevelUp();
+
+        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void PursuadedCharacterKilledPatroller(InteractionState state) {
         //**Mechanics**: Patroller is killed. Reduce relationship between the two factions.
@@ -304,6 +322,9 @@ public class PatrolAction : Interaction {
 
         //**Level Up**: Character +1
         targetCharacter.LevelUp();
+
+        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void PursuadedPatrolFailed(InteractionState state) {
 
@@ -315,6 +336,9 @@ public class PatrolAction : Interaction {
 
         //**Level Up**: Patroller +1
         _characterInvolved.LevelUp();
+
+        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalPatrollerInjuredCharacter(InteractionState state) {
         //**Mechanics**: Character gains Injured.
@@ -322,6 +346,9 @@ public class PatrolAction : Interaction {
 
         //**Level Up**: Patroller +1
         _characterInvolved.LevelUp();
+
+        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalCharacterKilledPatroller(InteractionState state) {
         //**Mechanics**: Patroller is killed. Reduce relationship between the two factions.
@@ -330,6 +357,9 @@ public class PatrolAction : Interaction {
 
         //**Level Up**: Character +1
         targetCharacter.LevelUp();
+
+        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalCharacterInjuredPatroller(InteractionState state) {
         //**Mechanics**: Patroller gains Injured.
@@ -337,6 +367,9 @@ public class PatrolAction : Interaction {
 
         //**Level Up**: Character +1
         targetCharacter.LevelUp();
+
+        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalPatrolFailed(InteractionState state) {
 
