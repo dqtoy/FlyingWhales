@@ -465,15 +465,14 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.MOVE_TO_RECRUIT:
                 if (character.job.jobType == JOB.RECRUITER) {
-                    //for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-                    //    Character currChar = CharacterManager.Instance.allCharacters[i];
-                    //    if (currChar.id != character.id && currChar.specificLocation.tileLocation.areaOfTile != character.specificLocation.tileLocation.areaOfTile
-                    //        && currChar.faction != character.specificLocation.tileLocation.areaOfTile.owner && currChar.level <= character.level) {
-                    //        return true;
-                    //    }
-                    //}
+                    if (character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) { //check if resident capacity is full
+                        return false;
+                    }
                     for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                         Area currArea = LandmarkManager.Instance.allAreas[i];
+                        if (currArea.areaType == AREA_TYPE.DEMONIC_INTRUSION) { //skip the player area
+                            continue; //skip
+                        }
                         if (currArea.owner == null) {
                             return true;
                         } else if (currArea.owner.id != character.faction.id) {

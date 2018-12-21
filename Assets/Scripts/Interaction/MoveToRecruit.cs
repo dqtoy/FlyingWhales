@@ -147,6 +147,9 @@ public class MoveToRecruit : Interaction {
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
             int weight = 0;
+            if (currArea.areaType == AREA_TYPE.DEMONIC_INTRUSION) { //skip the player area
+                continue; //skip
+            }
             if (currArea.owner == null) {
                 weight += 35;
             } else if (currArea.owner.id != characterInvolved.faction.id) {
