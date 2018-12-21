@@ -48,23 +48,23 @@ public class Hero : CharacterRole {
         UpdateHappiness();
     }
 
-    #region Overrides
-    public override void OnAssignRole() {
-        base.OnAssignRole();
-        CharacterAction _defendAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DEFEND) as DefendAction;
-        _character.AddMiscAction(_defendAction);
-        Messenger.AddListener<Party, GameEvent>(Signals.LANDMARK_UNDER_ATTACK, LandmarkUnderAttack);
-    }
-    public override void DeathRole() {
-        base.DeathRole();
-        _character.RemoveMiscAction(ACTION_TYPE.DEFEND);
-        Messenger.RemoveListener<Party, GameEvent>(Signals.LANDMARK_UNDER_ATTACK, LandmarkUnderAttack);
-    }
-    public override void ChangedRole() {
-        base.ChangedRole();
-        Messenger.RemoveListener<Party, GameEvent>(Signals.LANDMARK_UNDER_ATTACK, LandmarkUnderAttack);
-    }
-    #endregion
+    //#region Overrides
+    //public override void OnAssignRole() {
+    //    base.OnAssignRole();
+    //    CharacterAction _defendAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DEFEND) as DefendAction;
+    //    _character.AddMiscAction(_defendAction);
+    //    Messenger.AddListener<Party, GameEvent>(Signals.LANDMARK_UNDER_ATTACK, LandmarkUnderAttack);
+    //}
+    //public override void DeathRole() {
+    //    base.DeathRole();
+    //    _character.RemoveMiscAction(ACTION_TYPE.DEFEND);
+    //    Messenger.RemoveListener<Party, GameEvent>(Signals.LANDMARK_UNDER_ATTACK, LandmarkUnderAttack);
+    //}
+    //public override void ChangedRole() {
+    //    base.ChangedRole();
+    //    Messenger.RemoveListener<Party, GameEvent>(Signals.LANDMARK_UNDER_ATTACK, LandmarkUnderAttack);
+    //}
+    //#endregion
 
     private void LandmarkUnderAttack(Party attacker, GameEvent associatedEvent) {
         if(_character.currentParty.currentCombat == null && attacker.specificLocation.tileLocation.landmarkOnTile != null && attacker.specificLocation.tileLocation.areaOfTile.id == _character.homeLandmark.tileLocation.areaOfTile.id) {
