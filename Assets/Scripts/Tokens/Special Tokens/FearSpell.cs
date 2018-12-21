@@ -10,13 +10,13 @@ public class FearSpell : SpecialToken {
 
     #region Overrides
     public override void CreateJointInteractionStates(Interaction interaction, Character user, object target) {
-        TokenInteractionState itemUsed = new TokenInteractionState("Item Used", interaction, this);
+        TokenInteractionState itemUsed = new TokenInteractionState(Item_Used, interaction, this);
         itemUsed.SetTokenUserAndTarget(user, target);
 
         itemUsed.SetEffect(() => ItemUsedEffect(itemUsed));
 
         interaction.AddState(itemUsed);
-        interaction.SetCurrentState(itemUsed);
+        //interaction.SetCurrentState(itemUsed);
     }
     public override Character GetTargetCharacterFor(Character sourceCharacter) {
         //NPC Usage Requirement: Character must be part of a Disliked or Enemy Faction

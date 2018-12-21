@@ -38,7 +38,7 @@ public class Token {
     }
     #region Virtuals
     public virtual void CreateJointInteractionStates(Interaction interaction, Character user, object target) { }
-    public virtual bool CanBeUsedBy(Character character) { return true; }
+    public virtual bool CanBeUsedBy(Character character) { return false; }
     #endregion
     //public int id;
     //public string name;

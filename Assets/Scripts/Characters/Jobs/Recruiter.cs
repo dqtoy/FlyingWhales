@@ -17,7 +17,7 @@ public class Recruiter : Job {
     protected override bool IsTokenCompatibleWithJob(Token token) {
         if (token.tokenType == TOKEN_TYPE.CHARACTER) {
             CharacterToken characterToken = token as CharacterToken;
-            return characterToken.character.specificLocation.tileLocation.areaOfTile.id == _character.specificLocation.tileLocation.areaOfTile.id;
+            return characterToken.character.specificLocation.tileLocation.areaOfTile.id == _character.specificLocation.tileLocation.areaOfTile.id && !characterToken.character.currentParty.icon.isTravelling;
         }
         return base.IsTokenCompatibleWithJob(token);
     }

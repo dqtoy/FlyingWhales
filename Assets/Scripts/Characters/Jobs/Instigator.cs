@@ -30,7 +30,7 @@ public class Instigator : Job {
     protected override bool IsTokenCompatibleWithJob(Token token) {
         if(token.tokenType == TOKEN_TYPE.CHARACTER) {
             CharacterToken characterToken = token as CharacterToken;
-            return characterToken.character.specificLocation.tileLocation.areaOfTile.id == _character.specificLocation.tileLocation.areaOfTile.id;
+            return characterToken.character.specificLocation.tileLocation.areaOfTile.id == _character.specificLocation.tileLocation.areaOfTile.id && !characterToken.character.currentParty.icon.isTravelling;
         } else if (token.tokenType == TOKEN_TYPE.LOCATION) {
             LocationToken locationToken = token as LocationToken;
             //If target area and current area have factions, and target area's faction is different from current area's faction, and target area is not the current area - return true

@@ -90,13 +90,32 @@ public class Job {
     public virtual void DoJobAction() {
         Debug.Log(GameManager.Instance.TodayLogString() + " Doing job action: " + character.name + "(" + jobType.ToString() + ")");
     }
+    protected virtual bool IsTokenCompatibleWithJob(Token token) {
+        if (token.tokenType == TOKEN_TYPE.SPECIAL) {
+            SpecialToken specialToken = token as SpecialToken;
+            if (specialToken.specialTokenType == SPECIAL_TOKEN.BOOK_OF_THE_DEAD) {
+                //location is Gloomhollow Crypts, location is not owned by any Faction
+                if (_character.specificLocation.tileLocation.areaOfTile.name == "Gloomhollow Crypts" && _character.specificLocation.tileLocation.areaOfTile.owner == null) {
+                    for (int i = 0; i < _character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
+                        //location has a male Human, Goblin or Elven character that is part of a Faction
+                        Character characterAtLocation = _character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
+                        if (characterAtLocation.faction != FactionManager.Instance.neutralFaction && !characterAtLocation.isLeader && characterAtLocation.gender == GENDER.MALE &&
+                            (characterAtLocation.race == RACE.HUMANS || characterAtLocation.race == RACE.GOBLIN || characterAtLocation.race == RACE.ELVES)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
     public virtual Interaction CreateSpecialTokenInteraction(SpecialToken specialToken) {
         if(specialToken.specialTokenType == SPECIAL_TOKEN.BOOK_OF_THE_DEAD) {
             Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CREATE_NECROMANCER, _character.specificLocation as BaseLandmark);
             for (int i = 0; i < _character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
                 //location has a male Human, Goblin or Elven character that is part of a Faction
                 Character characterAtLocation = _character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
-                if (characterAtLocation.faction != FactionManager.Instance.neutralFaction && !characterAtLocation.isLeader &&
+                if (characterAtLocation.faction != FactionManager.Instance.neutralFaction && !characterAtLocation.isLeader && characterAtLocation.gender == GENDER.MALE &&
                     (characterAtLocation.race == RACE.HUMANS || characterAtLocation.race == RACE.GOBLIN || characterAtLocation.race == RACE.ELVES)) {
                     characterAtLocation.AddInteraction(interaction);
                     break;
@@ -116,25 +135,6 @@ public class Job {
         rateWeights.AddElement(RESULT.FAIL, GetFailRate());
         rateWeights.AddElement(RESULT.CRITICAL_FAIL, GetCritFailRate());
         return rateWeights;
-    }
-    protected virtual bool IsTokenCompatibleWithJob(Token token) {
-        if(token.tokenType == TOKEN_TYPE.SPECIAL) {
-            SpecialToken specialToken = token as SpecialToken;
-            if(specialToken.specialTokenType == SPECIAL_TOKEN.BOOK_OF_THE_DEAD) {
-                //location is Gloomhollow Crypts, location is not owned by any Faction
-                if (_character.specificLocation.tileLocation.areaOfTile.name == "Gloomhollow Crypts" && _character.specificLocation.tileLocation.areaOfTile.owner == null) {
-                    for (int i = 0; i < _character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-                        //location has a male Human, Goblin or Elven character that is part of a Faction
-                        Character characterAtLocation = _character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
-                        if (characterAtLocation.faction != FactionManager.Instance.neutralFaction && !characterAtLocation.isLeader && characterAtLocation.gender == GENDER.MALE &&
-                            (characterAtLocation.race == RACE.HUMANS || characterAtLocation.race == RACE.GOBLIN || characterAtLocation.race == RACE.ELVES)) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
     }
     #endregion
 
