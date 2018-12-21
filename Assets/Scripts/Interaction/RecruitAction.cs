@@ -33,6 +33,10 @@ public class RecruitAction : Interaction {
         startStateDescriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
+        if (targetCharacter == null) {
+            SetTargetCharacter(GetTargetCharacter(_characterInvolved));
+        }
+
         CreateActionOptions(startState);
         disruptedRecruitmentSuccess.SetEffect(() => DisruptedRecruitmentSuccessRewardEffect(disruptedRecruitmentSuccess));
         disruptedRecruitmentFail.SetEffect(() => DisruptedRecruitmentFailRewardEffect(disruptedRecruitmentFail));
@@ -219,5 +223,38 @@ public class RecruitAction : Interaction {
 
     public void SetTargetCharacter(Character targetCharacter) {
         this.targetCharacter = targetCharacter;
+    }
+    public Character GetTargetCharacter(Character characterInvolved) {
+        WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
+        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
+            Character currCharacter = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
+            if (currCharacter.id != characterInvolved.id && !currCharacter.isDefender && currCharacter.minion == null) { //- character must not be in Defender Tile.
+                int weight = 0;
+                if (currCharacter.faction == null || currCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
+                    weight += 35; //- character is not part of any Faction: Weight +35
+                } else if (currCharacter.faction.id != characterInvolved.faction.id) { //exclude characters with same faction
+                    FactionRelationship rel = currCharacter.faction.GetRelationshipWith(characterInvolved.faction);
+                    //- character is part of a Faction with Neutral relationship with recruiter's Faction: Weight +15
+                    if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL) {
+                        weight += 15;
+                    } else if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
+                        weight += 25;
+                    }
+                }
+
+                if (currCharacter.level > characterInvolved.level) {
+                    weight -= 30; //- character is higher level than Recruiter: Weight -30
+                } else if (currCharacter.level < characterInvolved.level) { //- character is same level as Recruiter: Weight +0
+                    weight += 10; //- character is lower level than Recruiter: Weight +10
+                }
+
+                weight = Mathf.Max(0, weight);
+                characterWeights.AddElement(currCharacter, weight);
+            }
+        }
+        if (characterWeights.GetTotalOfWeights() > 0) {
+            return characterWeights.PickRandomElementGivenWeights();
+        }
+        throw new System.Exception("Could not find any character to recruit!");
     }
 }

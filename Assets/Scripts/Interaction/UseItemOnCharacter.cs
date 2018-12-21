@@ -87,6 +87,9 @@ public class UseItemOnCharacter : Interaction {
     }
     private void DoNothingOptionEffect(InteractionState state) {
         _tokenToBeUsed.CreateJointInteractionStates(this, _characterInvolved, targetCharacter);
+        if (!_states.ContainsKey(_tokenToBeUsed.Item_Used)) {
+            throw new System.Exception(this.name + " does have state " + _tokenToBeUsed.Item_Used + " when using token " + _tokenToBeUsed.name);
+        }
         SetCurrentState(_states[_tokenToBeUsed.Item_Used]);
         //SetCurrentState(_states[Do_Nothing]);
     }

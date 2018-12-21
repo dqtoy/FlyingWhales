@@ -349,7 +349,7 @@ public class Interaction {
         state.AddLogFiller(new LogFiller(faction1, faction1.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(faction2, faction2.name, LOG_IDENTIFIER.FACTION_2));
         state.AddLogFiller(new LogFiller(null,
-            Utilities.NormalizeString(faction1.GetRelationshipWith(faction2).relationshipStatus.ToString()), LOG_IDENTIFIER.STRING_1));
+            Utilities.NormalizeString(faction1.GetRelationshipWith(faction2).relationshipStatus.ToString()), LOG_IDENTIFIER.OTHER));
     }
     #endregion
 

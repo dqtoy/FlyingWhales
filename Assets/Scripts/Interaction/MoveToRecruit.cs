@@ -13,6 +13,7 @@ public class MoveToRecruit : Interaction {
 
     public MoveToRecruit(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_RECRUIT, 0) {
         _name = "Move To Recruit";
+        _jobFilter = new JOB[] { JOB.DISSUADER };
     }
 
     public void SetCharacterToBeRecruited(Character character) {
@@ -26,13 +27,18 @@ public class MoveToRecruit : Interaction {
         InteractionState characterRecruitContinues = new InteractionState(Character_Recruit_Continues, this);
         InteractionState doNothing = new InteractionState(Do_Nothing, this);
 
-        if (targetCharacter == null) {
-            targetCharacter = GetTargetCharacter(_characterInvolved);
+        if (targetCharacter != null) {
+            targetLocation = targetCharacter.specificLocation.tileLocation.areaOfTile;
+        } else {
+            targetLocation = GetTargetLocation(_characterInvolved);
         }
-        targetLocation = targetCharacter.specificLocation.tileLocation.areaOfTile;
+        //if (targetCharacter == null) {
+        //    targetCharacter = GetTargetCharacter(_characterInvolved);
+        //}
+        
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //startStateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         startStateDescriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
@@ -101,13 +107,13 @@ public class MoveToRecruit : Interaction {
         investigatorMinion.LevelUp();
         MinionSuccess();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         }
     }
     private void CharacterRecruitContinuesRewardEffect(InteractionState state) {
         GoToTargetLocation();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         }
         state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
     }
@@ -117,22 +123,53 @@ public class MoveToRecruit : Interaction {
     }
     #endregion
 
-
     private void GoToTargetLocation() {
         _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateRecruitEvent());
     }
     private void CreateRecruitEvent() {
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RECRUIT_ACTION, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
         (interaction as RecruitAction).SetTargetCharacter(targetCharacter);
-        interaction.SetCanInteractionBeDoneAction(IsRecruitActionStillValid);
+        interaction.SetCanInteractionBeDoneAction(() => IsRecruitActionStillValid(interaction as RecruitAction));
         _characterInvolved.SetForcedInteraction(interaction);
     }
-    private bool IsRecruitActionStillValid() {
-        /* It will no longer be valid if the target character to be recruited is no longer in the location. 
+    private bool IsRecruitActionStillValid(RecruitAction recruitAction) {
+        /* It will no longer be valid if no recruitable character is avialable in the location. 
          * It will also no longer be valid if the recruiter's home area's Residents Capacity is already full.
          */
-        return targetCharacter.specificLocation.tileLocation.areaOfTile == targetLocation && !_characterInvolved.homeLandmark.tileLocation.areaOfTile.IsResidentsFull();
+        if (targetCharacter != null) {
+            return !_characterInvolved.homeLandmark.tileLocation.areaOfTile.IsResidentsFull() && targetCharacter.specificLocation.tileLocation.areaOfTile == targetLocation;
+        }
+        return !_characterInvolved.homeLandmark.tileLocation.areaOfTile.IsResidentsFull() && recruitAction.GetTargetCharacter(_characterInvolved) != null;
     }
+
+    private Area GetTargetLocation(Character characterInvolved) {
+        WeightedDictionary<Area> locationWeights = new WeightedDictionary<Area>();
+        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+            Area currArea = LandmarkManager.Instance.allAreas[i];
+            int weight = 0;
+            if (currArea.owner == null) {
+                weight += 35;
+            } else if (currArea.owner.id != characterInvolved.faction.id) {
+                FactionRelationship rel = currArea.owner.GetRelationshipWith(characterInvolved.faction);
+                if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL) {
+                    weight += 15;
+                } else if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
+                    weight += 25;
+                }
+            }
+            if (weight > 0) {
+                locationWeights.AddElement(currArea, weight);
+            }
+        }
+        if (locationWeights.GetTotalOfWeights() > 0) {
+            return locationWeights.PickRandomElementGivenWeights();
+        }
+        throw new System.Exception(GameManager.Instance.TodayLogString() + _characterInvolved.name + " could not find any location to recruit at!");
+    }
+
+    /*
+     NOTE: This is for induce only!
+         */
     public Character GetTargetCharacter(Character characterInvolved) {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {

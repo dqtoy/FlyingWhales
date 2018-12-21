@@ -367,6 +367,7 @@ public class PatrolAction : Interaction {
             return choices[Random.Range(0, choices.Count)];
         }
         return null;
+        //throw new System.Exception("Could not find target character for Patrol Action at " + interactable.tileLocation.areaOfTile.name);
     }
 
     private void SetTargetCharacter(Character character) {
