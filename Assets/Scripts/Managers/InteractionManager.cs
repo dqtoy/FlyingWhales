@@ -257,6 +257,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.USE_ITEM_ON_CHARACTER:
                 createdInteraction = new UseItemOnCharacter(interactable);
                 break;
+            case INTERACTION_TYPE.USE_ITEM_ON_SELF:
+                createdInteraction = new UseItemOnSelf(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -452,7 +455,7 @@ public class InteractionManager : MonoBehaviour {
                 if(character.race == RACE.ELVES || character.race == RACE.HUMANS) {
                     for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
                         Faction faction = FactionManager.Instance.allFactions[i];
-                        if (faction.id != PlayerManager.Instance.player.playerFaction.id && faction.isActive) {
+                        if (faction.id != PlayerManager.Instance.player.playerFaction.id && faction.id != character.faction.id && faction.isActive) {
                             relationship = character.faction.GetRelationshipWith(faction);
                             if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY) {
                                 return true;

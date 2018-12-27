@@ -135,18 +135,14 @@ public class MoveToImproveRelations : Interaction {
 
     private Area GetTargetLocation() {
         List<Area> choices = new List<Area>();
-        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
-            Faction currFaction = FactionManager.Instance.allFactions[i];
-            if (currFaction.isActive && currFaction.id != PlayerManager.Instance.player.playerFaction.id && currFaction.id != _characterInvolved.faction.id) {
-                FactionRelationship rel = currFaction.GetRelationshipWith(_characterInvolved.faction);
-                if (rel.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY) {
-                    choices.AddRange(currFaction.ownedAreas);
-                }
+        foreach (KeyValuePair<Faction, FactionRelationship> kvp in _characterInvolved.faction.relationships) {
+            if (kvp.Key.isActive && kvp.Key.id != PlayerManager.Instance.player.playerFaction.id && kvp.Value.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY) {
+                choices.AddRange(kvp.Key.ownedAreas);
             }
         }
         if (choices.Count > 0) {
             return choices[Random.Range(0, choices.Count)];
         }
-        throw new System.Exception("Could not find target location for improve relations");
+        throw new System.Exception("Could not find target location for improve relations of faction " + _characterInvolved.faction.name);
     }
 }
