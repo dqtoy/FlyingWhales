@@ -3112,7 +3112,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             }
             _forcedInteraction = null;
         } else {
-            if(specificLocation.tileLocation.areaOfTile.id != homeLandmark.tileLocation.id) {
+            if(specificLocation.tileLocation.areaOfTile.id != homeLandmark.tileLocation.areaOfTile.id) {
                 //Character actions away from home
                 WeightedDictionary<string> awayFromHomeInteractionWeights = new WeightedDictionary<string>();
                 awayFromHomeInteractionWeights.AddElement("Return", 100);
@@ -3121,12 +3121,12 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 if (tokenInInventory != null && tokenInInventory.CanBeUsedBy(this)) {
                     awayFromHomeInteractionWeights.AddElement(tokenInInventory.tokenName, 70);
                 }
-                INTERACTION_TYPE[] classTriggeredInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.FOUND_LUCARETH }; //, INTERACTION_TYPE.FOUND_BESTALIA, INTERACTION_TYPE.FOUND_MAGUS };
-                for (int i = 0; i < classTriggeredInteractions.Length; i++) {
-                    if (InteractionManager.Instance.CanCreateInteraction(classTriggeredInteractions[i], this)) {
-                        awayFromHomeInteractionWeights.AddElement(classTriggeredInteractions[i].ToString(), 15);
-                    }
-                }
+                //INTERACTION_TYPE[] classTriggeredInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.FOUND_LUCARETH }; //, INTERACTION_TYPE.FOUND_BESTALIA, INTERACTION_TYPE.FOUND_MAGUS };
+                //for (int i = 0; i < classTriggeredInteractions.Length; i++) {
+                //    if (InteractionManager.Instance.CanCreateInteraction(classTriggeredInteractions[i], this)) {
+                //        awayFromHomeInteractionWeights.AddElement(classTriggeredInteractions[i].ToString(), 15);
+                //    }
+                //}
 
                 string result = awayFromHomeInteractionWeights.PickRandomElementGivenWeights();
                 if(result == "DoNothing") {
@@ -3134,7 +3134,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                     Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, specificLocation as BaseLandmark);
                     AddInteraction(interaction);
                 } else if (result == tokenInInventory.tokenName) {
-                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.npcAssociatedInteractionType, specificLocation as BaseLandmark);
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.associatedInteractionType, specificLocation as BaseLandmark);
                     if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
                         (interaction as UseItemOnCharacter).SetItemToken(tokenInInventory);
                     }else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
@@ -3162,8 +3162,8 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 if(result == "ItemNotUsable") {
                     Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.DROP_ITEM, specificLocation as BaseLandmark);
                     AddInteraction(interaction);
-                }else if (result == tokenInInventory.tokenName) {
-                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.npcAssociatedInteractionType, specificLocation as BaseLandmark);
+                }else if (tokenInInventory != null && result == tokenInInventory.tokenName) {
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.associatedInteractionType, specificLocation as BaseLandmark);
                     if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
                         (interaction as UseItemOnCharacter).SetItemToken(tokenInInventory);
                     } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
@@ -3281,6 +3281,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         token.AdjustQuantity(-1);
     }
     public void ConsumeToken() {
+        tokenInInventory = null;
+    }
+    public void DropToken(BaseLandmark location) {
         tokenInInventory = null;
     }
     #endregion

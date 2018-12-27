@@ -153,7 +153,10 @@ public class MoveToRaid : Interaction {
         List<Area> choices = new List<Area>();
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
-            if (currArea.owner != null && currArea.owner.id != _characterInvolved.faction.id && currArea.owner.isActive) {
+            if (currArea.owner != null 
+                && currArea.owner.id != _characterInvolved.faction.id
+                && currArea.id != PlayerManager.Instance.player.playerArea.id
+                && currArea.owner.isActive) {
                 FactionRelationship relationship = _characterInvolved.faction.GetRelationshipWith(currArea.owner);
                 if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
                     choices.Add(currArea);

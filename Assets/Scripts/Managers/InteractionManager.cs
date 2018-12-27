@@ -260,6 +260,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.USE_ITEM_ON_SELF:
                 createdInteraction = new UseItemOnSelf(interactable);
                 break;
+            case INTERACTION_TYPE.DROP_ITEM:
+                createdInteraction = new DropItem(interactable);
+                break;
         }
         return createdInteraction;
     }

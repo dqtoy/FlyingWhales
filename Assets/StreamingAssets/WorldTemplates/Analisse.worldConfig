@@ -738,6 +738,14 @@
         {
           "Key": 6,
           "Value": "NEUTRAL"
+        },
+        {
+          "Key": 7,
+          "Value": "NEUTRAL"
+        },
+        {
+          "Key": 8,
+          "Value": "NEUTRAL"
         }
       ]
     },
@@ -783,6 +791,14 @@
         },
         {
           "Key": 6,
+          "Value": "NEUTRAL"
+        },
+        {
+          "Key": 7,
+          "Value": "NEUTRAL"
+        },
+        {
+          "Key": 8,
           "Value": "NEUTRAL"
         }
       ]
@@ -830,6 +846,14 @@
         {
           "Key": 6,
           "Value": "NEUTRAL"
+        },
+        {
+          "Key": 7,
+          "Value": "NEUTRAL"
+        },
+        {
+          "Key": 8,
+          "Value": "NEUTRAL"
         }
       ]
     },
@@ -876,6 +900,14 @@
         {
           "Key": 6,
           "Value": "NEUTRAL"
+        },
+        {
+          "Key": 7,
+          "Value": "NEUTRAL"
+        },
+        {
+          "Key": 8,
+          "Value": "NEUTRAL"
         }
       ]
     },
@@ -920,6 +952,14 @@
         {
           "Key": 6,
           "Value": "NEUTRAL"
+        },
+        {
+          "Key": 7,
+          "Value": "NEUTRAL"
+        },
+        {
+          "Key": 8,
+          "Value": "NEUTRAL"
         }
       ]
     },
@@ -963,6 +1003,118 @@
         },
         {
           "Key": 5,
+          "Value": "NEUTRAL"
+        },
+        {
+          "Key": 7,
+          "Value": "NEUTRAL"
+        },
+        {
+          "Key": 8,
+          "Value": "NEUTRAL"
+        }
+      ]
+    },
+    {
+      "defenderWeights": null,
+      "emblemIndex": 6,
+      "factionColor": {
+        "a": 0.5686275,
+        "b": 0.0,
+        "g": 0.0,
+        "r": 0.8588235
+      },
+      "factionDescription": "",
+      "factionID": 7,
+      "factionName": "Bestalia",
+      "isActive": false,
+      "leaderID": -1,
+      "level": 1,
+      "morality": "EVIL",
+      "ownedAreas": [],
+      "race": {
+        "race": "WOLF",
+        "subType": "NORMAL"
+      },
+      "relationships": [
+        {
+          "Key": 1,
+          "Value": "NEUTRAL"
+        },
+        {
+          "Key": 2,
+          "Value": "NEUTRAL"
+        },
+        {
+          "Key": 3,
+          "Value": "NEUTRAL"
+        },
+        {
+          "Key": 4,
+          "Value": "NEUTRAL"
+        },
+        {
+          "Key": 5,
+          "Value": "NEUTRAL"
+        },
+        {
+          "Key": 6,
+          "Value": "NEUTRAL"
+        },
+        {
+          "Key": 8,
+          "Value": "NEUTRAL"
+        }
+      ]
+    },
+    {
+      "defenderWeights": null,
+      "emblemIndex": 2,
+      "factionColor": {
+        "a": 0.5686275,
+        "b": 0.9529412,
+        "g": 0.3176471,
+        "r": 0.0
+      },
+      "factionDescription": "",
+      "factionID": 8,
+      "factionName": "Magus",
+      "isActive": false,
+      "leaderID": -1,
+      "level": 1,
+      "morality": "EVIL",
+      "ownedAreas": [],
+      "race": {
+        "race": "HUMANS",
+        "subType": "NORMAL"
+      },
+      "relationships": [
+        {
+          "Key": 1,
+          "Value": "NEUTRAL"
+        },
+        {
+          "Key": 2,
+          "Value": "NEUTRAL"
+        },
+        {
+          "Key": 3,
+          "Value": "NEUTRAL"
+        },
+        {
+          "Key": 4,
+          "Value": "NEUTRAL"
+        },
+        {
+          "Key": 5,
+          "Value": "NEUTRAL"
+        },
+        {
+          "Key": 6,
+          "Value": "NEUTRAL"
+        },
+        {
+          "Key": 7,
           "Value": "NEUTRAL"
         }
       ]
