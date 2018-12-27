@@ -1177,6 +1177,7 @@ public enum SPECIAL_TOKEN {
     BOOK_OF_THE_DEAD,
     CHARM_SPELL,
     FEAR_SPELL,
+    MARK_OF_THE_WITCH,
 }
 public enum COMBAT_POSITION {
     FRONTLINE,

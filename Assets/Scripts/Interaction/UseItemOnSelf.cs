@@ -8,7 +8,7 @@ public class UseItemOnSelf : Interaction {
 
     private const string Stop_Successful = "Stop Successful";
 
-    private Character targetCharacter;
+    //private Character targetCharacter;
 
     public UseItemOnSelf(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.USE_ITEM_ON_SELF, 0) {
         _name = "Use Item On Self";
@@ -23,7 +23,7 @@ public class UseItemOnSelf : Interaction {
         InteractionState startState = new InteractionState("Start", this);
         InteractionState stopSuccessful = new InteractionState(Stop_Successful, this);
 
-        targetCharacter = _characterInvolved;
+        //targetCharacter = _characterInvolved;
 
         CreateActionOptions(startState);
 
@@ -68,7 +68,7 @@ public class UseItemOnSelf : Interaction {
                 nextState = Stop_Successful;
                 break;
             case RESULT.FAIL:
-                _tokenToBeUsed.CreateJointInteractionStates(this, _characterInvolved, targetCharacter);
+                _tokenToBeUsed.CreateJointInteractionStates(this, _characterInvolved, null);
                 nextState = _tokenToBeUsed.Stop_Fail;
                 break;
             default:
@@ -77,7 +77,7 @@ public class UseItemOnSelf : Interaction {
         SetCurrentState(_states[nextState]);
     }
     private void DoNothingOptionEffect(InteractionState state) {
-        _tokenToBeUsed.CreateJointInteractionStates(this, _characterInvolved, targetCharacter);
+        _tokenToBeUsed.CreateJointInteractionStates(this, _characterInvolved, null);
         if (!_states.ContainsKey(_tokenToBeUsed.Item_Used)) {
             throw new System.Exception(this.name + " does have state " + _tokenToBeUsed.Item_Used + " when using token " + _tokenToBeUsed.name);
         }
