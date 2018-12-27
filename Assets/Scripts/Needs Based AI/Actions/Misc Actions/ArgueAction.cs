@@ -17,7 +17,7 @@ public class ArgueAction : CharacterAction {
         base.OnChooseAction(iparty, targetObject);
         if (iparty is CharacterParty) {
             Character arguer = iparty.mainCharacter;
-            arguer.SetDoNotDisturb(true);
+            arguer.AdjustDoNotDisturb(1);
         }
     }
     public override void OnFirstEncounter(Party party, IObject targetObject) {
@@ -96,14 +96,14 @@ public class ArgueAction : CharacterAction {
             return;
         }
         Character arguer = characterParty.mainCharacter;
-        arguer.SetDoNotDisturb(false);
+        arguer.AdjustDoNotDisturb(-1);
 
         if (targetObject is ICharacterObject) {
             ICharacterObject icharacterObject = targetObject as ICharacterObject;
             if (icharacterObject.iparty is CharacterParty) {
                 CharacterParty targetParty = icharacterObject.iparty as CharacterParty;
                 Character targetCharacter = targetParty.mainCharacter;
-                targetCharacter.SetDoNotDisturb(false);
+                targetCharacter.AdjustDoNotDisturb(-1);
             }
         }
         //Relationship effects

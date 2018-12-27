@@ -59,7 +59,19 @@ public class DefenderGroup {
             }
         }
     }
-
+    public void DisbandGroup() {
+        if(party == null) {
+            return;
+        }
+        for (int i = 0; i < party.characters.Count; i++) {
+            Character character = party.characters[i];
+            if (party.owner.id != character.id) {
+                RemoveCharacterFromGroup(character);
+                i--;
+            }
+        }
+        RemoveCharacterFromGroup(party.characters[0]);
+    }
     public void SetDefendingArea(Area area) {
         defendingArea = area;
     }

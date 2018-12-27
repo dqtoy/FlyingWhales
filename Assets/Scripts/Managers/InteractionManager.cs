@@ -288,7 +288,7 @@ public class InteractionManager : MonoBehaviour {
                     int idleCharactersCount = 0;
                     for (int i = 0; i < landmark.tileLocation.areaOfTile.areaResidents.Count; i++) {
                         Character resident = landmark.tileLocation.areaOfTile.areaResidents[i];
-                        if (resident.role.roleType != CHARACTER_ROLE.LEADER && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == landmark.tileLocation.areaOfTile.id) {
+                        if (resident.IsInOwnParty() && !resident.isLeader && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && resident.specificLocation.tileLocation.areaOfTile.id == landmark.tileLocation.areaOfTile.id) {
                             idleCharactersCount++;
                             if (idleCharactersCount >= 4) {
                                 return true;
@@ -349,38 +349,34 @@ public class InteractionManager : MonoBehaviour {
     public bool CanCreateInteraction(INTERACTION_TYPE interactionType, Character character) {
         Area area = null;
         FactionRelationship relationship = null;
-        List<Area> areaChoices = null;
         switch (interactionType) {
             case INTERACTION_TYPE.RETURN_HOME:
                 return character.specificLocation.tileLocation.areaOfTile.id != character.homeLandmark.tileLocation.areaOfTile.id;
             case INTERACTION_TYPE.CHARACTER_TRACKING:
                 return character.specificLocation != character.homeLandmark;
             case INTERACTION_TYPE.MOVE_TO_SCAVENGE:
-                //**Valid Races**: Faery, Human, Elf, Goblin
-                if (!IsCharacterOfRace(character, new List<RACE>() { RACE.FAERY, RACE.HUMANS, RACE.ELVES, RACE.GOBLIN })) {
-                    return false;
-                }
-                //**Trigger Criteria 1**: There must be at least one unoccupied location
-                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                    Area currArea = LandmarkManager.Instance.allAreas[i];
-                    if (currArea.owner == null) {
-                        return true;
+                //check if there are any unowned areas
+                if (character.race == RACE.FAERY || character.race == RACE.HUMANS || character.race == RACE.ELVES || character.race == RACE.GOBLIN) {
+                    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                        Area currArea = LandmarkManager.Instance.allAreas[i];
+                        if (currArea.owner == null) {
+                            return true;
+                        }
                     }
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_RAID:
-                //**Valid Races**: Goblins, Skeletons, Humans
-                if (!IsCharacterOfRace(character, new List<RACE>() { RACE.GOBLIN, RACE.SKELETON, RACE.HUMANS})) {
-                    return false;
-                }
-                //**Trigger Criteria 1**: There must be at least one other location that is occupied but not owned by the character's Faction and not owned by an Ally or a Friend faction
-                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                    Area currArea = LandmarkManager.Instance.allAreas[i];
-                    if (currArea.owner != null && currArea.owner.id != character.faction.id && currArea.owner.isActive) {
-                        relationship = character.faction.GetRelationshipWith(currArea.owner);
-                        if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
-                            return true;
-
+                //check if there are any areas owned by factions other than your own
+                if(character.race == RACE.GOBLIN || character.race == RACE.SKELETON || character.race == RACE.HUMANS) {
+                    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                        Area currArea = LandmarkManager.Instance.allAreas[i];
+                        if (currArea.owner != null 
+                            && currArea.owner.isActive 
+                            && currArea.owner.id != character.specificLocation.tileLocation.areaOfTile.owner.id && currArea.owner.id != character.faction.id) {
+                            relationship = character.specificLocation.tileLocation.areaOfTile.owner.GetRelationshipWith(currArea.owner);
+                            if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -400,13 +396,26 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_EXPAND:
-                //**Trigger Criteria 1**: There must be at least one other unoccupied location that is a valid expansion target for the character's race.
                 for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                    Area currArea = LandmarkManager.Instance.allAreas[i];
-                    if (currArea.id != PlayerManager.Instance.player.playerArea.id && currArea.owner == null && currArea.possibleOccupants.Contains(character.race)) {
+                    area = LandmarkManager.Instance.allAreas[i];
+                    if (area.id != character.specificLocation.tileLocation.areaOfTile.id && area.owner == null && area.possibleOccupants.Contains(character.race)) {
                         return true;
                     }
                 }
+
+                ///* - the character is at his home Area
+                // * - the Area has at least 100 Supply
+                // * - there is an unoccupied Area that is compatible with the character's race
+                // * - ensure that no other active Expand event targets the same location. */
+                //if (character.homeLandmark.tileLocation.areaOfTile.id == character.specificLocation.tileLocation.areaOfTile.id) {
+                //    Area homeArea = character.homeLandmark.tileLocation.areaOfTile;
+                //    if (homeArea.suppliesInBank >= 100) {
+                //        List<Area> expansionTargets = homeArea.GetElligibleExpansionTargets(character);
+                //        if (expansionTargets.Count > 0) {
+                //            return true;
+                //        }
+                //    }
+                //}
                 return false;
             case INTERACTION_TYPE.FACTION_UPGRADE:
                 return character.specificLocation.tileLocation.areaOfTile.id == character.homeLandmark.tileLocation.areaOfTile.id && character.specificLocation.tileLocation.areaOfTile.suppliesInBank >= 100;
@@ -429,10 +438,10 @@ public class InteractionManager : MonoBehaviour {
                 - there must be at least one character in the location
                 - the player must have intel of at least one of these characters*/
                 area = character.specificLocation.tileLocation.areaOfTile;
-                List<Character> characterChoices = new List<Character>(area.charactersAtLocation);
-                characterChoices.Remove(character);
-                for (int i = 0; i < characterChoices.Count; i++) {
-                    Character currCharacter = characterChoices[i];
+                List<Character> choices = new List<Character>(area.charactersAtLocation);
+                choices.Remove(character);
+                for (int i = 0; i < choices.Count; i++) {
+                    Character currCharacter = choices[i];
                     if (currCharacter.characterToken.isObtainedByPlayer) {
                         return true;
                     }
@@ -440,11 +449,11 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS:
                 //check if there are any areas owned by factions other than your own
-                if(character.job.jobType == JOB.DIPLOMAT) {
-                    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                        Area currArea = LandmarkManager.Instance.allAreas[i];
-                        if (currArea.owner != null && currArea.owner.id != character.specificLocation.tileLocation.areaOfTile.owner.id) {
-                            relationship = character.specificLocation.tileLocation.areaOfTile.owner.GetRelationshipWith(currArea.owner);
+                if(character.race == RACE.ELVES || character.race == RACE.HUMANS) {
+                    for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+                        Faction faction = FactionManager.Instance.allFactions[i];
+                        if (faction.id != PlayerManager.Instance.player.playerFaction.id && faction.isActive) {
+                            relationship = character.faction.GetRelationshipWith(faction);
                             if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY) {
                                 return true;
 
@@ -454,44 +463,95 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_RECRUIT:
-                //**Valid Races**: Elf, Human
-                if (!IsCharacterOfRace(character, new List<RACE>() { RACE.ELVES, RACE.HUMANS })) {
-                    return false;
-                }
-                //**Trigger Criteria 2**: Home location resident capacity is not yet full
-                if (character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
-                    return false;
-                }
-                //**Trigger Criteria 1**: There must be at least one other character not part of current faction who is either unaligned or part of a Neutral or Friend faction.
-                if (FactionManager.Instance.neutralFaction.characters.Count > 0) {
-                    return true;
-                }
-                List<Faction> factions = character.faction.GetFactionsWithRelationship(FACTION_RELATIONSHIP_STATUS.NEUTRAL);
-                factions.AddRange(character.faction.GetFactionsWithRelationship(FACTION_RELATIONSHIP_STATUS.FRIEND));
-                for (int i = 0; i < factions.Count; i++) {
-                    if (factions[i].characters.Count > 0) {
-                        return true;
+                if (character.race == RACE.ELVES || character.race == RACE.HUMANS) {
+                    if (character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) { //check if resident capacity is full
+                        return false;
+                    }
+                    for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                        Character currCharacter = CharacterManager.Instance.allCharacters[i];
+                        if (currCharacter.id != character.id) {
+                            if (currCharacter.faction == null) {
+                                //Unaligned?
+                                return true;
+                            } else {
+                                if (currCharacter.faction.id != character.faction.id) {
+                                    relationship = currCharacter.faction.GetRelationshipWith(character.faction);
+                                    if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL
+                                        || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 return false;
-            //case INTERACTION_TYPE.PATROL_ACTION:
-            //    return character.job.jobType == JOB.DISSUADER;
             case INTERACTION_TYPE.MOVE_TO_RETURN_HOME:
                 //if character is NOT at home, allow
                 return character.specificLocation.tileLocation.areaOfTile.id != character.homeLandmark.tileLocation.areaOfTile.id;
             case INTERACTION_TYPE.MOVE_TO_EXPLORE:
-                //**Trigger Criteria 1**: The character must not be holding an item
-                if (character.isHoldingItem) {
-                    return false;
-                }
-                //**Trigger Criteria 2**: There must be at least one other location that is not owned by the character's Faction
-                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                    Area currArea = LandmarkManager.Instance.allAreas[i];
-                    if ((currArea.owner == null || currArea.owner.id != character.faction.id) && currArea.id != PlayerManager.Instance.player.playerArea.id) {
-                        return true;
+                if(character.tokenInInventory == null) {
+                    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                        area = LandmarkManager.Instance.allAreas[i];
+                        if (area.id != character.specificLocation.tileLocation.areaOfTile.id && (area.owner == null || (area.owner != null && area.owner.id != character.faction.id && area.owner.id != PlayerManager.Instance.player.playerFaction.id))) {
+                            return true;
+                        }
                     }
                 }
                 return false;
+            case INTERACTION_TYPE.MOVE_TO_CHARM:
+                if (character.race == RACE.FAERY || character.race == RACE.ELVES) {
+                    if (!character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
+                        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                            Character currCharacter = CharacterManager.Instance.allCharacters[i];
+                            if(currCharacter.id != character.id) {
+                                if(currCharacter.faction == null) {
+                                    //Unaligned?
+                                    return true;
+                                } else {
+                                    if(currCharacter.faction.id != character.faction.id) {
+                                        relationship = currCharacter.faction.GetRelationshipWith(character.faction);
+                                        if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL
+                                            || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
+                                            return true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_ABDUCT:
+                if (character.race == RACE.GOBLIN || character.race == RACE.SPIDER) {
+                    if (!character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
+                        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                            Character currCharacter = CharacterManager.Instance.allCharacters[i];
+                            if (currCharacter.id != character.id) {
+                                if (currCharacter.faction == null || currCharacter.faction.id != character.faction.id) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_STEAL:
+                if (character.race == RACE.GOBLIN || character.race == RACE.SKELETON || character.race == RACE.FAERY || character.race == RACE.DRAGON) {
+                    if (character.tokenInInventory == null) {
+                        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                            Character currCharacter = CharacterManager.Instance.allCharacters[i];
+                            if (currCharacter.id != character.id && currCharacter.tokenInInventory != null) {
+                                if (currCharacter.faction == null || currCharacter.faction.id != character.faction.id) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_HUNT:
+                return character.race == RACE.WOLF || character.race == RACE.SPIDER || character.race == RACE.DRAGON;
             default:
                 return true;
         }
@@ -512,7 +572,7 @@ public class InteractionManager : MonoBehaviour {
             List<Character> residentsAtArea = new List<Character>();
             for (int i = 0; i < areaToAttack.areaResidents.Count; i++) {
                 Character resident = areaToAttack.areaResidents[i];
-                if(resident.role.roleType != CHARACTER_ROLE.LEADER && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == areaToAttack.id) {
+                if(resident.IsInOwnParty() && !resident.isLeader && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == areaToAttack.id) {
                     residentsAtArea.Add(resident);
                 }
             }
@@ -587,13 +647,6 @@ public class InteractionManager : MonoBehaviour {
     }
     public void AddToInteractionQueue(Interaction interaction) {
         interactionUIQueue.Enqueue(interaction);
-    }
-
-    private bool IsCharacterOfRace(Character character, List<RACE> allowedRaces) {
-        return allowedRaces.Contains(character.race);
-    }
-    private bool IsCharacterOfRace(Character character, RACE allowedRace) {
-        return allowedRace == character.race;
     }
 
     //public List<T> GetAllCurrentInteractionsOfType<T>(INTERACTION_TYPE type) {

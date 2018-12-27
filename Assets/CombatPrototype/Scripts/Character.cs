@@ -18,15 +18,14 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     protected int _gold;
     protected int _currentInteractionTick;
     protected int _lastLevelUpDay;
+    protected int _doNotDisturb;
     protected float _actRate;
     protected bool _isDead;
     protected bool _isFainted;
     protected bool _isInCombat;
-    protected bool _doNotDisturb;
     protected bool _isBeingInspected;
     protected bool _hasBeenInspected;
     protected bool _alreadyTargetedByGrudge;
-    protected bool _isLeader;
     protected GENDER _gender;
     protected MODE _currentMode;
     protected CharacterClass _characterClass;
@@ -100,7 +99,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public CharacterToken characterToken { get; private set; }
     public WeightedDictionary<INTERACTION_TYPE> interactionWeights { get; private set; }
     public WeightedDictionary<bool> eventTriggerWeights { get; private set; }
-    public List<SpecialToken> tokenInventory { get; private set; }
+    public SpecialToken tokenInInventory { get; private set; }
 
     private Dictionary<STAT, float> _buffs;
 
@@ -377,7 +376,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public CharacterActionQueue<ActionQueueItem> actionQueue {
         get { return _actionQueue; }
     }
-    public bool doNotDisturb {
+    public int doNotDisturb {
         get { return _doNotDisturb; }
     }
     public bool isBeingInspected {
@@ -390,7 +389,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         get { return _alreadyTargetedByGrudge; }
     }
     public bool isLeader {
-        get { return _isLeader; }
+        get { return job.jobType == JOB.LEADER; }
     }
     public IObject questGiverObj {
         get { return currentParty.icharacterObject; }
@@ -413,11 +412,14 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public PlayerCharacterItem playerCharacterItem {
         get { return _playerCharacterItem; }
     }
+    public Interaction forcedInteraction {
+        get { return _forcedInteraction; }
+    }
     public int currentInteractionTick {
         get { return _currentInteractionTick; }
     }
     public bool isHoldingItem {
-        get { return tokenInventory.Count >= 1; }
+        get { return tokenInInventory != null; }
     }
     #endregion
 
@@ -538,7 +540,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         eventSchedule = new CharacterEventSchedule(this);
         uiData = new CharacterUIData();
         characterToken = new CharacterToken(this);
-        tokenInventory = new List<SpecialToken>();
+        tokenInInventory = null;
         interactionWeights = new WeightedDictionary<INTERACTION_TYPE>();
         eventTriggerWeights = new WeightedDictionary<bool>();
         eventTriggerWeights.AddElement(true, 200); //Hard coded for now
@@ -1951,14 +1953,14 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public void SetMode(MODE mode) {
         _currentMode = mode;
     }
-    public void SetDoNotDisturb(bool state) {
-        _doNotDisturb = state;
+    public void AdjustDoNotDisturb(int amount) {
+        _doNotDisturb += amount;
+        if(_doNotDisturb < 0) {
+            _doNotDisturb = 0;
+        }
     }
     public void SetAlreadyTargetedByGrudge(bool state) {
         _alreadyTargetedByGrudge = state;
-    }
-    public void SetIsLeader(bool state) {
-        _isLeader = state;
     }
     public void AttackAnArea(Area target) {
         Interaction attackInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ATTACK, target.coreTile.landmarkOnTile);
@@ -2852,18 +2854,18 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         defendingArea = defending;
         this.ownParty.specificLocation.RemoveCharacterFromLocation(this.ownParty, false);
         ownParty.SetSpecificLocation(defending.coreTile.landmarkOnTile);
-#if !WORLD_CREATION_TOOL
-        if (ownParty is CharacterParty) {
-            (ownParty as CharacterParty).actionData.ForceDoAction(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DEFENDER), defending.coreTile.landmarkOnTile.landmarkObj);
-        }
-#endif
+//#if !WORLD_CREATION_TOOL
+//        if (ownParty is CharacterParty) {
+//            (ownParty as CharacterParty).actionData.ForceDoAction(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DEFENDER), defending.coreTile.landmarkOnTile.landmarkObj);
+//        }
+//#endif
     }
     public void OnRemoveAsDefender() {
         defendingArea.coreTile.landmarkOnTile.AddCharacterToLocation(this.ownParty);
         defendingArea = null;
-#if !WORLD_CREATION_TOOL
-        _ownParty.actionData.EndCurrentAction(); //end the defender action
-#endif
+//#if !WORLD_CREATION_TOOL
+//        _ownParty.actionData.EndCurrentAction(); //end the defender action
+//#endif
     }
     public bool IsDefending(BaseLandmark landmark) {
         if (defendingArea != null && defendingArea.id == landmark.id) {
@@ -2916,6 +2918,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         return null;
     }
     private void ApplyFlatTraitEffects(Trait trait) {
+        if(trait.name == "Abducted" || trait.name == "Hibernating") {
+            AdjustDoNotDisturb(1);
+        }
         for (int i = 0; i < trait.effects.Count; i++) {
             TraitEffect traitEffect = trait.effects[i];
             if (!traitEffect.hasRequirement && !traitEffect.isPercentage && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
@@ -2930,6 +2935,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         }
     }
     private void UnapplyFlatTraitEffects(Trait trait) {
+        if (trait.name == "Abducted" || trait.name == "Hibernating") {
+            AdjustDoNotDisturb(-1);
+        }
         for (int i = 0; i < trait.effects.Count; i++) {
             TraitEffect traitEffect = trait.effects[i];
             if (!traitEffect.hasRequirement && !traitEffect.isPercentage && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
@@ -3085,7 +3093,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         //}
     }
     public void GenerateDailyInteraction() {
-        if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb || _job == null) {
+        if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || _job == null) {
             return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
         }
         if (job.jobType == JOB.NONE) {
@@ -3110,10 +3118,8 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 WeightedDictionary<string> awayFromHomeInteractionWeights = new WeightedDictionary<string>();
                 awayFromHomeInteractionWeights.AddElement("Return", 100);
 
-                for (int i = 0; i < tokenInventory.Count; i++) {
-                    if (tokenInventory[i].CanBeUsedBy(this)) {
-                        awayFromHomeInteractionWeights.AddElement(tokenInventory[i].tokenName, 100);
-                    }
+                if (tokenInInventory != null && tokenInInventory.CanBeUsedBy(this)) {
+                    awayFromHomeInteractionWeights.AddElement(tokenInInventory.tokenName, 100);
                 }
                 string result = awayFromHomeInteractionWeights.PickRandomElementGivenWeights();
                 if(result == "Return") {
@@ -3121,7 +3127,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                     AddInteraction(interaction);
                 } else {
                     UseItemOnCharacter interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.USE_ITEM_ON_CHARACTER, specificLocation as BaseLandmark) as UseItemOnCharacter;
-                    interaction.SetItemToken(GetTokenByName(result));
+                    interaction.SetItemToken(tokenInInventory);
                     AddInteraction(interaction);
                 }
             }
@@ -3229,21 +3235,11 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
 
     #region Token Inventory
     public void ObtainToken(SpecialToken token) {
-        if (!tokenInventory.Contains(token)) {
-            tokenInventory.Add(token);
-            token.AdjustQuantity(-1);
-        }
+        tokenInInventory = token;
+        token.AdjustQuantity(-1);
     }
-    public void ConsumeToken(SpecialToken token) {
-        tokenInventory.Remove(token);
-    }
-    public SpecialToken GetTokenByName(string name) {
-        for (int i = 0; i < tokenInventory.Count; i++) {
-            if (tokenInventory[i].tokenName == name) {
-                return tokenInventory[i];
-            }
-        }
-        return null;
+    public void ConsumeToken() {
+        tokenInInventory = null;
     }
     #endregion
 }

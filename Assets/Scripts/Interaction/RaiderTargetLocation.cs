@@ -149,7 +149,7 @@ public class RaiderTargetLocation : Interaction {
         List<Character> raiders = new List<Character>();
         for (int i = 0; i < interactable.tileLocation.areaOfTile.areaResidents.Count; i++) {
             Character resident = interactable.tileLocation.areaOfTile.areaResidents[i];
-            if(resident.job.jobType == JOB.RAIDER && resident.faction.id == interactable.tileLocation.areaOfTile.owner.id 
+            if(resident.IsInOwnParty() && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.job.jobType == JOB.RAIDER && resident.faction.id == interactable.tileLocation.areaOfTile.owner.id 
                 && resident.specificLocation.tileLocation.areaOfTile.id == interactable.tileLocation.areaOfTile.id) {
                 raiders.Add(resident);
             }

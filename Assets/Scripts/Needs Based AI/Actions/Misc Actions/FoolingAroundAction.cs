@@ -17,7 +17,7 @@ public class FoolingAroundAction : CharacterAction {
         base.OnChooseAction(iparty, targetObject);
         if (iparty is CharacterParty) {
             Character character = iparty.mainCharacter;
-            character.SetDoNotDisturb(true);
+            character.AdjustDoNotDisturb(1);
         }
     }
     public override void OnFirstEncounter(Party party, IObject targetObject) {
@@ -72,14 +72,14 @@ public class FoolingAroundAction : CharacterAction {
             return;
         }
         Character character = characterParty.mainCharacter;
-        character.SetDoNotDisturb(false);
+        character.AdjustDoNotDisturb(-1);
 
         if (targetObject is ICharacterObject) {
             ICharacterObject icharacterObject = targetObject as ICharacterObject;
             if (icharacterObject.iparty is CharacterParty) {
                 CharacterParty targetParty = icharacterObject.iparty as CharacterParty;
                 Character targetCharacter = targetParty.mainCharacter;
-                targetCharacter.SetDoNotDisturb(false);
+                targetCharacter.AdjustDoNotDisturb(-1);
             }
         }
         //Relationship effects
