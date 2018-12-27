@@ -82,7 +82,7 @@ public class DefenderGroup {
     }
 
     private void OnPartyDied(Party partyThatDied) {
-        if (this.party.id == partyThatDied.id) {
+        if (this.party != null && this.party.id == partyThatDied.id) {
             GroupDeath();
         }
     }
