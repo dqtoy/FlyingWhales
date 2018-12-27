@@ -454,23 +454,23 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_RECRUIT:
-                if (character.job.jobType == JOB.RECRUITER) {
-                    if (character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) { //check if resident capacity is full
-                        return false;
-                    }
-                    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                        Area currArea = LandmarkManager.Instance.allAreas[i];
-                        if (currArea.areaType == AREA_TYPE.DEMONIC_INTRUSION) { //skip the player area
-                            continue; //skip
-                        }
-                        if (currArea.owner == null) {
-                            return true;
-                        } else if (currArea.owner.id != character.faction.id) {
-                            FactionRelationship rel = currArea.owner.GetRelationshipWith(character.faction);
-                            if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL || rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
-                                return true;
-                            }
-                        }
+                //**Valid Races**: Elf, Human
+                if (!IsCharacterOfRace(character, new List<RACE>() { RACE.ELVES, RACE.HUMANS })) {
+                    return false;
+                }
+                //**Trigger Criteria 2**: Home location resident capacity is not yet full
+                if (character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
+                    return false;
+                }
+                //**Trigger Criteria 1**: There must be at least one other character not part of current faction who is either unaligned or part of a Neutral or Friend faction.
+                if (FactionManager.Instance.neutralFaction.characters.Count > 0) {
+                    return true;
+                }
+                List<Faction> factions = character.faction.GetFactionsWithRelationship(FACTION_RELATIONSHIP_STATUS.NEUTRAL);
+                factions.AddRange(character.faction.GetFactionsWithRelationship(FACTION_RELATIONSHIP_STATUS.FRIEND));
+                for (int i = 0; i < factions.Count; i++) {
+                    if (factions[i].characters.Count > 0) {
+                        return true;
                     }
                 }
                 return false;

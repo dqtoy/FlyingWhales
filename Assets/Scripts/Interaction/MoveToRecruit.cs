@@ -151,13 +151,13 @@ public class MoveToRecruit : Interaction {
                 continue; //skip
             }
             if (currArea.owner == null) {
-                weight += 35;
+                weight += 35; //- location is not part of any Faction: Weight +35
             } else if (currArea.owner.id != characterInvolved.faction.id) {
-                FactionRelationship rel = currArea.owner.GetRelationshipWith(characterInvolved.faction);
+                FactionRelationship rel = currArea.owner.GetRelationshipWith(characterInvolved.faction); 
                 if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL) {
-                    weight += 15;
+                    weight += 15; //- location is part of a Faction with Neutral relationship with recruiter's Faction: Weight +15
                 } else if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
-                    weight += 25;
+                    weight += 25; //- location is part of a Faction with Friend relationship with recruiter's Faction: Weight +25
                 }
             }
             if (weight > 0) {
