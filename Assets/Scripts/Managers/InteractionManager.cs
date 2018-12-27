@@ -374,11 +374,9 @@ public class InteractionManager : MonoBehaviour {
                     return false;
                 }
                 //**Trigger Criteria 1**: There must be at least one other location that is occupied but not owned by the character's Faction and not owned by an Ally or a Friend faction
-                areaChoices = new List<Area>(LandmarkManager.Instance.allAreas);
-                Utilities.ListRemoveRange(areaChoices, character.faction.ownedAreas);
-                for (int i = 0; i < areaChoices.Count; i++) {
-                    Area currArea = areaChoices[i];
-                    if (currArea.owner != null && currArea.owner.isActive) {
+                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                    Area currArea = LandmarkManager.Instance.allAreas[i];
+                    if (currArea.owner != null && currArea.owner.id != character.faction.id && currArea.owner.isActive) {
                         relationship = character.faction.GetRelationshipWith(currArea.owner);
                         if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
                             return true;
@@ -476,8 +474,8 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
-            case INTERACTION_TYPE.PATROL_ACTION:
-                return character.job.jobType == JOB.DISSUADER;
+            //case INTERACTION_TYPE.PATROL_ACTION:
+            //    return character.job.jobType == JOB.DISSUADER;
             case INTERACTION_TYPE.MOVE_TO_RETURN_HOME:
                 //if character is NOT at home, allow
                 return character.specificLocation.tileLocation.areaOfTile.id != character.homeLandmark.tileLocation.areaOfTile.id;
@@ -487,13 +485,13 @@ public class InteractionManager : MonoBehaviour {
                     return false;
                 }
                 //**Trigger Criteria 2**: There must be at least one other location that is not owned by the character's Faction
-                List<Area> allAreas = new List<Area>(LandmarkManager.Instance.allAreas);
-                Utilities.ListRemoveRange(allAreas, character.faction.ownedAreas);
-                allAreas.Remove(PlayerManager.Instance.player.playerArea);
-                if (allAreas.Count <= 0) {
-                    return false;
+                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                    Area currArea = LandmarkManager.Instance.allAreas[i];
+                    if ((currArea.owner == null || currArea.owner.id != character.faction.id) && currArea.id != PlayerManager.Instance.player.playerArea.id) {
+                        return true;
+                    }
                 }
-                return true;
+                return false;
             default:
                 return true;
         }

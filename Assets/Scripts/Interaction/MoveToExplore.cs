@@ -122,9 +122,13 @@ public class MoveToExplore : Interaction {
     }
 
     private Area GetTargetLocation() {
-        List<Area> choices = new List<Area>(LandmarkManager.Instance.allAreas);
-        Utilities.ListRemoveRange(choices, _characterInvolved.faction.ownedAreas);
-        choices.Remove(PlayerManager.Instance.player.playerArea);
+        List<Area> choices = new List<Area>();
+        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+            Area currArea = LandmarkManager.Instance.allAreas[i];
+            if ((currArea.owner == null || currArea.owner.id != _characterInvolved.faction.id) && currArea.id != PlayerManager.Instance.player.playerArea.id) {
+                choices.Add(currArea);
+            }
+        }
         if (choices.Count > 0) {
             return choices[Random.Range(0, choices.Count)];
         }
