@@ -7,16 +7,21 @@ public class BlightedPotion : SpecialToken {
     public BlightedPotion() : base(SPECIAL_TOKEN.BLIGHTED_POTION) {
         quantity = 4;
         weight = 100;
+        npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_CHARACTER;
     }
 
     #region Overrides
     public override void CreateJointInteractionStates(Interaction interaction, Character user, object target) {
-        TokenInteractionState inflictIllnessState = new TokenInteractionState(Item_Used, interaction, this);
-        inflictIllnessState.SetTokenUserAndTarget(user, target);
+        TokenInteractionState itemUsedState = new TokenInteractionState(Item_Used, interaction, this);
+        TokenInteractionState stopFailState = new TokenInteractionState(Stop_Fail, interaction, this);
+        itemUsedState.SetTokenUserAndTarget(user, target);
+        stopFailState.SetTokenUserAndTarget(user, target);
 
-        inflictIllnessState.SetEffect(() => InflictIllnessEffect(inflictIllnessState));
+        itemUsedState.SetEffect(() => ItemUsedEffect(itemUsedState));
+        stopFailState.SetEffect(() => StopFailEffect(stopFailState));
 
-        interaction.AddState(inflictIllnessState);
+        interaction.AddState(itemUsedState);
+        interaction.AddState(stopFailState);
 
         //interaction.SetCurrentState(inflictIllnessState);
     }
@@ -58,12 +63,25 @@ public class BlightedPotion : SpecialToken {
     }
     #endregion
 
-    private void InflictIllnessEffect(TokenInteractionState state) {
+    private void ItemUsedEffect(TokenInteractionState state) {
         string chosenIllnessName = AttributeManager.Instance.GetRandomIllness();
         (state.target as Character).AddTrait(AttributeManager.Instance.allIllnesses[chosenIllnessName]);
         state.tokenUser.LevelUp();
 
         state.descriptionLog.AddToFillers(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1);
         state.AddLogFiller(new LogFiller(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1));
+    }
+    private void StopFailEffect(TokenInteractionState state) {
+        string chosenIllnessName = AttributeManager.Instance.GetRandomIllness();
+        (state.target as Character).AddTrait(AttributeManager.Instance.allIllnesses[chosenIllnessName]);
+        state.tokenUser.LevelUp();
+
+        state.descriptionLog.AddToFillers(state.interaction.investigatorMinion, state.interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
+        state.descriptionLog.AddToFillers(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1);
+        state.descriptionLog.AddToFillers(null, this.name, LOG_IDENTIFIER.ITEM_1);
+
+        state.AddLogFiller(new LogFiller(state.interaction.investigatorMinion, state.interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
+        state.AddLogFiller(new LogFiller(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(null, this.name, LOG_IDENTIFIER.ITEM_1));
     }
 }

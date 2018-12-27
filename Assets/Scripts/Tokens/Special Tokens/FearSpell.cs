@@ -7,16 +7,21 @@ public class FearSpell : SpecialToken {
     public FearSpell() : base(SPECIAL_TOKEN.FEAR_SPELL) {
         quantity = 6;
         weight = 100;
+        npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_CHARACTER;
     }
 
     #region Overrides
     public override void CreateJointInteractionStates(Interaction interaction, Character user, object target) {
-        TokenInteractionState itemUsed = new TokenInteractionState(Item_Used, interaction, this);
-        itemUsed.SetTokenUserAndTarget(user, target);
+        TokenInteractionState itemUsedState = new TokenInteractionState(Item_Used, interaction, this);
+        TokenInteractionState stopFailState = new TokenInteractionState(Stop_Fail, interaction, this);
+        itemUsedState.SetTokenUserAndTarget(user, target);
+        stopFailState.SetTokenUserAndTarget(user, target);
 
-        itemUsed.SetEffect(() => ItemUsedEffect(itemUsed));
+        itemUsedState.SetEffect(() => ItemUsedEffect(itemUsedState));
+        stopFailState.SetEffect(() => StopFailEffect(stopFailState));
 
-        interaction.AddState(itemUsed);
+        interaction.AddState(itemUsedState);
+        interaction.AddState(stopFailState);
         //interaction.SetCurrentState(itemUsed);
     }
     public override Character GetTargetCharacterFor(Character sourceCharacter) {
@@ -65,7 +70,20 @@ public class FearSpell : SpecialToken {
             Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_FLEES, target.specificLocation.tileLocation.landmarkOnTile);
             target.SetForcedInteraction(interaction);
         }
-        //state.descriptionLog.AddToFillers(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1);
-        //state.AddLogFiller(new LogFiller(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1));
+    }
+    private void StopFailEffect(TokenInteractionState state) {
+        state.tokenUser.LevelUp();
+        //**Mechanics**: Target character will trigger https://trello.com/c/vDKl0cyy/859-character-flees on the next tick (overriding any other action).
+        if (state.target is Character) {
+            Character target = state.target as Character;
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_FLEES, target.specificLocation.tileLocation.landmarkOnTile);
+            target.SetForcedInteraction(interaction);
+        }
+
+        state.descriptionLog.AddToFillers(state.interaction.investigatorMinion, state.interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
+        state.descriptionLog.AddToFillers(null, this.name, LOG_IDENTIFIER.ITEM_1);
+
+        state.AddLogFiller(new LogFiller(state.interaction.investigatorMinion, state.interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
+        state.AddLogFiller(new LogFiller(null, this.name, LOG_IDENTIFIER.ITEM_1));
     }
 }

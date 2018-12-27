@@ -7,16 +7,21 @@ public class CharmSpell : SpecialToken {
     public CharmSpell() : base(SPECIAL_TOKEN.CHARM_SPELL) {
         quantity = 4;
         weight = 50;
+        npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_CHARACTER;
     }
 
     #region Overrides
     public override void CreateJointInteractionStates(Interaction interaction, Character user, object target) {
-        TokenInteractionState itemUsed = new TokenInteractionState(Item_Used, interaction, this);
-        itemUsed.SetTokenUserAndTarget(user, target);
+        TokenInteractionState itemUsedState = new TokenInteractionState(Item_Used, interaction, this);
+        TokenInteractionState stopFailState = new TokenInteractionState(Stop_Fail, interaction, this);
+        itemUsedState.SetTokenUserAndTarget(user, target);
+        stopFailState.SetTokenUserAndTarget(user, target);
 
-        itemUsed.SetEffect(() => ItemUsedEffect(itemUsed));
+        itemUsedState.SetEffect(() => ItemUsedEffect(itemUsedState));
+        stopFailState.SetEffect(() => StopFailEffect(stopFailState));
 
-        interaction.AddState(itemUsed);
+        interaction.AddState(itemUsedState);
+        interaction.AddState(stopFailState);
         //interaction.SetCurrentState(itemUsed);
     }
     public override Character GetTargetCharacterFor(Character sourceCharacter) {
@@ -63,5 +68,22 @@ public class CharmSpell : SpecialToken {
 
         state.descriptionLog.AddToFillers(state.tokenUser.faction, state.tokenUser.faction.name, LOG_IDENTIFIER.FACTION_1);
         state.AddLogFiller(new LogFiller(state.tokenUser.faction, state.tokenUser.faction.name, LOG_IDENTIFIER.FACTION_1));
+    }
+    private void StopFailEffect(TokenInteractionState state) {
+        state.tokenUser.LevelUp();
+
+        //**Mechanics**: Target character will transfer to character or player's faction
+        if (state.target is Character) {
+            Character target = state.target as Character;
+            FactionManager.Instance.TransferCharacter(target, state.tokenUser.faction, state.tokenUser.homeLandmark);
+        }
+
+        state.descriptionLog.AddToFillers(state.tokenUser.faction, state.tokenUser.faction.name, LOG_IDENTIFIER.FACTION_1);
+        state.descriptionLog.AddToFillers(state.interaction.investigatorMinion, state.interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
+        state.descriptionLog.AddToFillers(null, this.name, LOG_IDENTIFIER.ITEM_1);
+
+        state.AddLogFiller(new LogFiller(state.tokenUser.faction, state.tokenUser.faction.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(state.interaction.investigatorMinion, state.interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
+        state.AddLogFiller(new LogFiller(null, this.name, LOG_IDENTIFIER.ITEM_1));
     }
 }

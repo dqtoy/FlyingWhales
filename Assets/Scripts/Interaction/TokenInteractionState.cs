@@ -34,27 +34,20 @@ public class TokenInteractionState : InteractionState {
     public override void SetDescription() {
         //TODO: make this more performant
         if (_descriptionLog != null) {
-            _descriptionLog.AddToFillers(_tokenUser, _tokenUser.name, LOG_IDENTIFIER.MINION_1);
-            if(_target is Character) {
+            _descriptionLog.AddToFillers(_tokenUser, _tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            if(_target != null && _target is Character) {
                 _descriptionLog.AddToFillers(_target as Character, (_target as Character).name, LOG_IDENTIFIER.TARGET_CHARACTER);
             }
-            //if (interaction.characterInvolved != null && !_descriptionLog.HasFillerForIdentifier(LOG_IDENTIFIER.ACTIVE_CHARACTER)) {
-            //    _descriptionLog.AddToFillers(interaction.characterInvolved, interaction.characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            //}
             if (!_descriptionLog.HasFillerForIdentifier(LOG_IDENTIFIER.LANDMARK_1)) {
                 _descriptionLog.AddToFillers(_interaction.interactable.tileLocation.areaOfTile, _interaction.interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
             }
             _description = Utilities.LogReplacer(descriptionLog);
-            //InteractionUI.Instance.interactionItem.SetDescription(_description, descriptionLog);
         }
         if (otherLogs != null) {
-            AddLogFiller(new LogFiller(_tokenUser, _tokenUser.name, LOG_IDENTIFIER.MINION_1));
-            if (_target is Character) {
+            AddLogFiller(new LogFiller(_tokenUser, _tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+            if (_target != null && _target is Character) {
                 AddLogFiller(new LogFiller(_target as Character, (_target as Character).name, LOG_IDENTIFIER.TARGET_CHARACTER));
             }
-            //if (interaction.characterInvolved != null) {
-            //    logFillers.Add(new LogFiller(interaction.characterInvolved, interaction.characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
-            //}
             if (!AlreadyHasLogFiller(LOG_IDENTIFIER.LANDMARK_1)) {
                 AddLogFiller(new LogFiller(interaction.interactable.tileLocation.areaOfTile, interaction.interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
             }
