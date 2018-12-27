@@ -137,16 +137,28 @@ public class MoveToRaid : Interaction {
     }
 
     private Area GetTargetArea() {
-        List<Area> choices = new List<Area>();
-        //there must be at least one area that is owned by a different faction that is not Ally or Friend of this faction
-        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-            Area currArea = LandmarkManager.Instance.allAreas[i];
-            if (currArea.owner != null && currArea.owner.isActive
-                && currArea.id != PlayerManager.Instance.player.playerArea.id 
-                && currArea.owner.id != _characterInvolved.faction.id) {
-                FACTION_RELATIONSHIP_STATUS relStat = currArea.owner.GetRelationshipWith(_characterInvolved.faction).relationshipStatus;
-                if (relStat != FACTION_RELATIONSHIP_STATUS.ALLY && relStat != FACTION_RELATIONSHIP_STATUS.FRIEND) {
+        //List<Area> choices = new List<Area>();
+        ////there must be at least one area that is owned by a different faction that is not Ally or Friend of this faction
+        //for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+        //    Area currArea = LandmarkManager.Instance.allAreas[i];
+        //    if (currArea.owner != null && currArea.owner.isActive
+        //        && currArea.id != PlayerManager.Instance.player.playerArea.id 
+        //        && currArea.owner.id != _characterInvolved.faction.id) {
+        //        FACTION_RELATIONSHIP_STATUS relStat = currArea.owner.GetRelationshipWith(_characterInvolved.faction).relationshipStatus;
+        //        if (relStat != FACTION_RELATIONSHIP_STATUS.ALLY && relStat != FACTION_RELATIONSHIP_STATUS.FRIEND) {
+        //            choices.Add(currArea);
+        //        }
+        //    }
+        //}
+        List<Area> choices = new List<Area>(LandmarkManager.Instance.allAreas);
+        Utilities.ListRemoveRange(choices, _characterInvolved.faction.ownedAreas);
+        for (int i = 0; i < choices.Count; i++) {
+            Area currArea = choices[i];
+            if (currArea.owner != null && currArea.owner.isActive) {
+                FactionRelationship relationship = _characterInvolved.faction.GetRelationshipWith(currArea.owner);
+                if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
                     choices.Add(currArea);
+
                 }
             }
         }

@@ -349,35 +349,40 @@ public class InteractionManager : MonoBehaviour {
     public bool CanCreateInteraction(INTERACTION_TYPE interactionType, Character character) {
         Area area = null;
         FactionRelationship relationship = null;
+        List<Area> areaChoices = null;
         switch (interactionType) {
             case INTERACTION_TYPE.RETURN_HOME:
                 return character.specificLocation.tileLocation.areaOfTile.id != character.homeLandmark.tileLocation.areaOfTile.id;
             case INTERACTION_TYPE.CHARACTER_TRACKING:
                 return character.specificLocation != character.homeLandmark;
             case INTERACTION_TYPE.MOVE_TO_SCAVENGE:
-                //check if there are any unowned areas
-                if (character.job.jobType == JOB.RAIDER) {
-                    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                        Area currArea = LandmarkManager.Instance.allAreas[i];
-                        if (currArea.owner == null) {
-                            return true;
-                        }
+                //**Valid Races**: Faery, Human, Elf, Goblin
+                if (!IsCharacterOfRace(character, new List<RACE>() { RACE.FAERY, RACE.HUMANS, RACE.ELVES, RACE.GOBLIN })) {
+                    return false;
+                }
+                //**Trigger Criteria 1**: There must be at least one unoccupied location
+                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                    Area currArea = LandmarkManager.Instance.allAreas[i];
+                    if (currArea.owner == null) {
+                        return true;
                     }
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_RAID:
-                //check if there are any areas owned by factions other than your own
-                if(character.job.jobType == JOB.RAIDER) {
-                    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                        Area currArea = LandmarkManager.Instance.allAreas[i];
-                        if (currArea.owner != null 
-                            && currArea.owner.isActive 
-                            && currArea.owner.id != character.specificLocation.tileLocation.areaOfTile.owner.id) {
-                            relationship = character.specificLocation.tileLocation.areaOfTile.owner.GetRelationshipWith(currArea.owner);
-                            if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
-                                return true;
+                //**Valid Races**: Goblins, Skeletons, Humans
+                if (!IsCharacterOfRace(character, new List<RACE>() { RACE.GOBLIN, RACE.SKELETON, RACE.HUMANS})) {
+                    return false;
+                }
+                //**Trigger Criteria 1**: There must be at least one other location that is occupied but not owned by the character's Faction and not owned by an Ally or a Friend faction
+                areaChoices = new List<Area>(LandmarkManager.Instance.allAreas);
+                Utilities.ListRemoveRange(areaChoices, character.faction.ownedAreas);
+                for (int i = 0; i < areaChoices.Count; i++) {
+                    Area currArea = areaChoices[i];
+                    if (currArea.owner != null && currArea.owner.isActive) {
+                        relationship = character.faction.GetRelationshipWith(currArea.owner);
+                        if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
+                            return true;
 
-                            }
                         }
                     }
                 }
@@ -397,9 +402,10 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_EXPAND:
+                //**Trigger Criteria 1**: There must be at least one other unoccupied location that is a valid expansion target for the character's race.
                 for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                    area = LandmarkManager.Instance.allAreas[i];
-                    if (area.id != character.specificLocation.tileLocation.areaOfTile.id && area.owner == null && area.possibleOccupants.Contains(character.race)) {
+                    Area currArea = LandmarkManager.Instance.allAreas[i];
+                    if (currArea.id != PlayerManager.Instance.player.playerArea.id && currArea.owner == null && currArea.possibleOccupants.Contains(character.race)) {
                         return true;
                     }
                 }
@@ -425,10 +431,10 @@ public class InteractionManager : MonoBehaviour {
                 - there must be at least one character in the location
                 - the player must have intel of at least one of these characters*/
                 area = character.specificLocation.tileLocation.areaOfTile;
-                List<Character> choices = new List<Character>(area.charactersAtLocation);
-                choices.Remove(character);
-                for (int i = 0; i < choices.Count; i++) {
-                    Character currCharacter = choices[i];
+                List<Character> characterChoices = new List<Character>(area.charactersAtLocation);
+                characterChoices.Remove(character);
+                for (int i = 0; i < characterChoices.Count; i++) {
+                    Character currCharacter = characterChoices[i];
                     if (currCharacter.characterToken.isObtainedByPlayer) {
                         return true;
                     }
