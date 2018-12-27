@@ -1313,8 +1313,6 @@ MonoBehaviour:
     m_keys:
     - race: 1
       subType: 0
-    - race: 1
-      subType: 1
     - race: 2
       subType: 0
     - race: 6
@@ -1329,41 +1327,26 @@ MonoBehaviour:
       subType: 0
     - race: 8
       subType: 0
-    - race: 6
-      subType: 0
     m_values:
     - data:
       - className: Knight
         weight: 50
       - className: Archer
         weight: 30
-      - className: Mage
-        weight: 20
-      - className: Cleric
+      - className: Hunter
         weight: 20
     - data:
-      - className: Marauder
-        weight: 40
-      - className: Rogue
-        weight: 40
-      - className: Sorcerer
-        weight: 30
-      - className: Bard
-        weight: 20
-    - data:
-      - className: Archer
-        weight: 40
       - className: Stalker
         weight: 40
-      - className: Mage
-        weight: 20
-      - className: Cleric
+      - className: Archer
+        weight: 40
+      - className: Druid
         weight: 20
     - data:
-      - className: Marauder
-        weight: 30
-      - className: Rogue
+      - className: Barbarian
         weight: 40
+      - className: Archer
+        weight: 20
       - className: Shaman
         weight: 20
     - data:
@@ -1375,33 +1358,32 @@ MonoBehaviour:
     - data:
       - className: Knight
         weight: 30
-      - className: Archer
-        weight: 30
-      - className: Mage
-        weight: 30
       - className: Marauder
         weight: 30
-      - className: Rogue
+      - className: Barbarian
         weight: 30
       - className: Stalker
         weight: 30
+      - className: Archer
+        weight: 30
+      - className: Hunter
+        weight: 30
+      - className: Mage
+        weight: 30
       - className: Shaman
         weight: 30
+      - className: Druid
+        weight: 30
     - data:
-      - className: Shambler
+      - className: Marauder
         weight: 40
-      - className: Earthbinder
+      - className: Mage
+        weight: 20
+      - className: Shaman
         weight: 20
     - data:
       - className: Dragon
         weight: 30
-    - data:
-      - className: Marauder
-        weight: 30
-      - className: Rogue
-        weight: 40
-      - className: Shaman
-        weight: 20
   locationPortraits:
     m_keys:
     - Blistering Hollow

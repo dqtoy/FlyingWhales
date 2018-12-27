@@ -2616,9 +2616,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 if (_homeLandmark != null) {
                     _homeLandmark.tileLocation.areaOfTile.AddResident(this, ignoreAreaResidentCapacity);
                     if (_homeLandmark.tileLocation.areaOfTile.id != previousHome.tileLocation.areaOfTile.id) {
-#if !WORLD_CREATION_TOOL
-                        LookForNewWorkplace();
-#endif
+//#if !WORLD_CREATION_TOOL
+                        //LookForNewWorkplace();
+//#endif
                     }
                 }
 
@@ -2627,9 +2627,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                     if (_homeLandmark.tileLocation.areaOfTile != null) {
                         _homeLandmark.tileLocation.areaOfTile.AddResident(this);
                     }
-#if !WORLD_CREATION_TOOL
-                    LookForNewWorkplace();
-#endif
+//#if !WORLD_CREATION_TOOL
+                    //LookForNewWorkplace();
+//#endif
                 }
             }
         }
@@ -2637,29 +2637,29 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     #endregion
 
     #region Work
-    public bool LookForNewWorkplace() {
-        if (_characterClass.workActionType == ACTION_TYPE.WORKING) {
-            _workplace = _homeLandmark;
-            return true;
-        } else {
-            List<BaseLandmark> workplaceChoices = new List<BaseLandmark>();
-            for (int i = 0; i < _homeLandmark.tileLocation.areaOfTile.landmarks.Count; i++) {
-                StructureObj structure = _homeLandmark.tileLocation.areaOfTile.landmarks[i].landmarkObj;
-                for (int j = 0; j < structure.currentState.actions.Count; j++) {
-                    if (structure.currentState.actions[j].actionType == _characterClass.workActionType) {
-                        workplaceChoices.Add(_homeLandmark.tileLocation.areaOfTile.landmarks[i]);
-                        break;
-                    }
-                }
-            }
-            if (workplaceChoices.Count != 0) {
-                _workplace = workplaceChoices[UnityEngine.Random.Range(0, workplaceChoices.Count)];
-                return true;
-            }
-            //throw new Exception("Could not find workplace for " + this.name);
-        }
-        return false;
-    }
+    //public bool LookForNewWorkplace() {
+    //    if (_characterClass.workActionType == ACTION_TYPE.WORKING) {
+    //        _workplace = _homeLandmark;
+    //        return true;
+    //    } else {
+    //        List<BaseLandmark> workplaceChoices = new List<BaseLandmark>();
+    //        for (int i = 0; i < _homeLandmark.tileLocation.areaOfTile.landmarks.Count; i++) {
+    //            StructureObj structure = _homeLandmark.tileLocation.areaOfTile.landmarks[i].landmarkObj;
+    //            for (int j = 0; j < structure.currentState.actions.Count; j++) {
+    //                if (structure.currentState.actions[j].actionType == _characterClass.workActionType) {
+    //                    workplaceChoices.Add(_homeLandmark.tileLocation.areaOfTile.landmarks[i]);
+    //                    break;
+    //                }
+    //            }
+    //        }
+    //        if (workplaceChoices.Count != 0) {
+    //            _workplace = workplaceChoices[UnityEngine.Random.Range(0, workplaceChoices.Count)];
+    //            return true;
+    //        }
+    //        //throw new Exception("Could not find workplace for " + this.name);
+    //    }
+    //    return false;
+    //}
     public void MigrateTo(BaseLandmark newHomeLandmark) {
         if(_homeLandmark != null) {
             _homeLandmark.RemoveCharacterHomeOnLandmark(this);

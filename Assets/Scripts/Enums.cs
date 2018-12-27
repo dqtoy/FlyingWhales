@@ -42,7 +42,7 @@ public enum RACE{
     BEAST,
     SKELETON,
     DEMON,
-    ZOMBIE,
+    FAERY,
     INSECT,
     SPIDER,
 }
@@ -539,11 +539,9 @@ public enum SKILL_CATEGORY {
 }
 
 public enum ATTACK_TYPE {
-    CRUSH,
-    PIERCE,
-    SLASH,
-    MAGIC,
-	STATUS
+    PHYSICAL_MELEE,
+    PHYSICAL_RANGED,
+    MAGICAL_RANGED,
 }
 public enum DEFEND_TYPE {
     DODGE,
@@ -1170,4 +1168,18 @@ public enum SPECIAL_TOKEN {
     BOOK_OF_THE_DEAD,
     CHARM_SPELL,
     FEAR_SPELL,
+}
+public enum COMBAT_POSITION {
+    FRONTLINE,
+    BACKLINE,
+}
+public enum COMBAT_TARGET {
+    SINGLE,
+    ALL,
+    FRONTROW,
+    BACKROW,
+    ROW,
+    COLUMN,
+    SINGLE_FRONTROW,
+    SINGLE_BACKROW,
 }

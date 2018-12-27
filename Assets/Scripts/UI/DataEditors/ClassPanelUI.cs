@@ -22,7 +22,6 @@ public class ClassPanelUI : MonoBehaviour {
     public InputField hpPerLevelInput;
     public InputField baseSPInput;
     public InputField spPerLevelInput;
-    public InputField armyCountInput;
     public InputField recruitmentCostInput;
 
     public Dropdown weaponsOptions;
@@ -30,7 +29,9 @@ public class ClassPanelUI : MonoBehaviour {
     public Dropdown accessoriesOptions;
     public Dropdown traitOptions;
 
-    public Dropdown workActionOptions;
+    public Dropdown combatPositionOptions;
+    public Dropdown combatTargetOptions;
+    public Dropdown attackTypeOptions;
     public Dropdown roleOptions;
     public Dropdown skillOptions;
     public Dropdown jobTypeOptions;
@@ -113,19 +114,24 @@ public class ClassPanelUI : MonoBehaviour {
         _accessoryTiers = new List<string>();
         _traitNames = new List<string>();
 
-        armyCountInput.text = "1";
         recruitmentCostInput.text = "0";
-        workActionOptions.ClearOptions();
+        combatPositionOptions.ClearOptions();
+        combatTargetOptions.ClearOptions();
+        attackTypeOptions.ClearOptions();
         roleOptions.ClearOptions();
         jobTypeOptions.ClearOptions();
         recruitmentCostOptions.ClearOptions();
 
-        string[] workActions = System.Enum.GetNames(typeof(ACTION_TYPE));
+        string[] combatPositions = System.Enum.GetNames(typeof(COMBAT_POSITION));
+        string[] combatTargets = System.Enum.GetNames(typeof(COMBAT_TARGET));
+        string[] attackTypes = System.Enum.GetNames(typeof(ATTACK_TYPE));
         string[] roles = System.Enum.GetNames(typeof(CHARACTER_ROLE));
         string[] jobs = System.Enum.GetNames(typeof(JOB));
         string[] cost = System.Enum.GetNames(typeof(CURRENCY));
 
-        workActionOptions.AddOptions(workActions.ToList());
+        combatPositionOptions.AddOptions(combatPositions.ToList());
+        combatTargetOptions.AddOptions(combatTargets.ToList());
+        attackTypeOptions.AddOptions(attackTypes.ToList());
         roleOptions.AddOptions(roles.ToList());
         jobTypeOptions.AddOptions(jobs.ToList());
         recruitmentCostOptions.AddOptions(cost.ToList());
@@ -148,14 +154,15 @@ public class ClassPanelUI : MonoBehaviour {
         hpPerLevelInput.text = "0";
         baseSPInput.text = "0";
         spPerLevelInput.text = "0";
-        armyCountInput.text = "1";
         recruitmentCostInput.text = "0";
 
         weaponsOptions.value = 0;
         armorsOptions.value = 0;
         accessoriesOptions.value = 0;
         traitOptions.value = 0;
-        workActionOptions.value = 0;
+        combatPositionOptions.value = 0;
+        combatTargetOptions.value = 0;
+        attackTypeOptions.value = 0;
         skillOptions.value = 0;
         roleOptions.value = 0;
         jobTypeOptions.value = 0;
@@ -229,14 +236,16 @@ public class ClassPanelUI : MonoBehaviour {
         attackPowerPerLevelInput.text = characterClass.attackPowerPerLevel.ToString();
         //baseSpeedInput.text = characterClass.baseSpeed.ToString();
         speedPerLevelInput.text = characterClass.speedPerLevel.ToString();
-        armyCountInput.text = characterClass.armyCount.ToString();
+        //armyCountInput.text = characterClass.armyCount.ToString();
         //baseHPInput.text = characterClass.baseHP.ToString();
         hpPerLevelInput.text = characterClass.hpPerLevel.ToString();
         baseSPInput.text = characterClass.baseSP.ToString();
         spPerLevelInput.text = characterClass.spPerLevel.ToString();
         recruitmentCostInput.text = characterClass.recruitmentCost.amount.ToString();
 
-        workActionOptions.value = GetDropdownIndex(workActionOptions, characterClass.workActionType.ToString());
+        combatPositionOptions.value = GetDropdownIndex(combatPositionOptions, characterClass.combatPosition.ToString());
+        combatTargetOptions.value = GetDropdownIndex(combatTargetOptions, characterClass.combatTarget.ToString());
+        attackTypeOptions.value = GetDropdownIndex(attackTypeOptions, characterClass.attackType.ToString());
         roleOptions.value = GetDropdownIndex(roleOptions, characterClass.roleType.ToString());
         skillOptions.value = GetDropdownIndex(skillOptions, characterClass.skillName.ToString());
         jobTypeOptions.value = GetDropdownIndex(jobTypeOptions, characterClass.jobType.ToString());

@@ -7,7 +7,6 @@ public class CharacterClass : EntityComponent {
     [SerializeField] private string _className;
     [SerializeField] private int _baseSP;
     [SerializeField] private int _spPerLevel;
-    [SerializeField] private int _armyCount;
     [SerializeField] private float _attackPowerPerLevel;
     [SerializeField] private float _speedPerLevel;
     [SerializeField] private float _hpPerLevel;
@@ -18,9 +17,11 @@ public class CharacterClass : EntityComponent {
     [SerializeField] private List<string> _armorTierNames;
     [SerializeField] private List<string> _accessoryTierNames;
     [SerializeField] private string[] _traitNames;
-    [SerializeField] private ACTION_TYPE _workActionType;
     [SerializeField] private CHARACTER_ROLE _roleType;
     [SerializeField] private JOB _jobType;
+    [SerializeField] private COMBAT_POSITION _combatPosition;
+    [SerializeField] private COMBAT_TARGET _combatTarget;
+    [SerializeField] private ATTACK_TYPE _attackType;
     [SerializeField] private CurrenyCost _recruitmentCost;
 
     //private int _dodgeRate;
@@ -55,20 +56,23 @@ public class CharacterClass : EntityComponent {
         get { return _baseSP; }
         //set { _spModifier = value; }
     }
-    public int armyCount {
-        get { return _armyCount; }
-    }
     public int spPerLevel {
         get { return _spPerLevel; }
-    }
-    public ACTION_TYPE workActionType {
-        get { return _workActionType; }
     }
     public CHARACTER_ROLE roleType {
         get { return _roleType; }
     }
     public JOB jobType {
         get { return _jobType; }
+    }
+    public COMBAT_POSITION combatPosition {
+        get { return _combatPosition; }
+    }
+    public COMBAT_TARGET combatTarget {
+        get { return _combatTarget; }
+    }
+    public ATTACK_TYPE attackType {
+        get { return _attackType; }
     }
     public string skillName {
         get { return _skillName; }
@@ -104,8 +108,10 @@ public class CharacterClass : EntityComponent {
         newClass._hpPerLevel = this._hpPerLevel;
         newClass._baseSP = this._baseSP;
         newClass._spPerLevel = this._spPerLevel;
-        newClass._armyCount = this._armyCount;
-        newClass._workActionType = this._workActionType;
+        //newClass._workActionType = this._workActionType;
+        newClass._combatPosition = this._combatPosition;
+        newClass._combatTarget = this._combatTarget;
+        newClass._attackType = this._attackType;
         newClass._roleType = this._roleType;
         newClass._skillName = this._skillName;
         newClass._harvestResources = new List<RESOURCE>(this._harvestResources);
@@ -130,7 +136,7 @@ public class CharacterClass : EntityComponent {
         this._hpPerLevel = (float)classComponent.hpPerLevel;
         this._baseSP = classComponent.baseSP;
         this._spPerLevel = classComponent.spPerLevel;
-        this._workActionType = classComponent.workActionType;
+        //this._workActionType = classComponent.workActionType;
         //this._dodgeRate = classComponent.dodgeRate;
         //this._parryRate = classComponent.parryRate;
         //this._blockRate = classComponent.blockRate;
@@ -161,8 +167,9 @@ public class CharacterClass : EntityComponent {
         this._hpPerLevel = float.Parse(ClassPanelUI.Instance.hpPerLevelInput.text);
         this._baseSP = int.Parse(ClassPanelUI.Instance.baseSPInput.text);
         this._spPerLevel = int.Parse(ClassPanelUI.Instance.spPerLevelInput.text);
-        this._armyCount = int.Parse(ClassPanelUI.Instance.armyCountInput.text);
-        this._workActionType = (ACTION_TYPE)System.Enum.Parse(typeof(ACTION_TYPE), ClassPanelUI.Instance.workActionOptions.options[ClassPanelUI.Instance.workActionOptions.value].text);
+        this._combatPosition = (COMBAT_POSITION) System.Enum.Parse(typeof(COMBAT_POSITION), ClassPanelUI.Instance.combatPositionOptions.options[ClassPanelUI.Instance.combatPositionOptions.value].text);
+        this._combatTarget = (COMBAT_TARGET)System.Enum.Parse(typeof(COMBAT_TARGET), ClassPanelUI.Instance.combatTargetOptions.options[ClassPanelUI.Instance.combatTargetOptions.value].text);
+        this._attackType = (ATTACK_TYPE) System.Enum.Parse(typeof(ATTACK_TYPE), ClassPanelUI.Instance.attackTypeOptions.options[ClassPanelUI.Instance.attackTypeOptions.value].text);
         this._roleType = (CHARACTER_ROLE) System.Enum.Parse(typeof(CHARACTER_ROLE), ClassPanelUI.Instance.roleOptions.options[ClassPanelUI.Instance.roleOptions.value].text);
         this._skillName = ClassPanelUI.Instance.skillOptions.options[ClassPanelUI.Instance.skillOptions.value].text;
         this._weaponTierNames = ClassPanelUI.Instance.weaponTiers;
