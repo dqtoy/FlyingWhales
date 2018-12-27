@@ -416,6 +416,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public int currentInteractionTick {
         get { return _currentInteractionTick; }
     }
+    public bool isHoldingItem {
+        get { return tokenInventory.Count >= 1; }
+    }
     #endregion
 
     public Character(string className, RACE race, GENDER gender) : this() {

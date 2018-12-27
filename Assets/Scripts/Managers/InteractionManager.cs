@@ -403,20 +403,6 @@ public class InteractionManager : MonoBehaviour {
                         return true;
                     }
                 }
-
-                ///* - the character is at his home Area
-                // * - the Area has at least 100 Supply
-                // * - there is an unoccupied Area that is compatible with the character's race
-                // * - ensure that no other active Expand event targets the same location. */
-                //if (character.homeLandmark.tileLocation.areaOfTile.id == character.specificLocation.tileLocation.areaOfTile.id) {
-                //    Area homeArea = character.homeLandmark.tileLocation.areaOfTile;
-                //    if (homeArea.suppliesInBank >= 100) {
-                //        List<Area> expansionTargets = homeArea.GetElligibleExpansionTargets(character);
-                //        if (expansionTargets.Count > 0) {
-                //            return true;
-                //        }
-                //    }
-                //}
                 return false;
             case INTERACTION_TYPE.FACTION_UPGRADE:
                 return character.specificLocation.tileLocation.areaOfTile.id == character.homeLandmark.tileLocation.areaOfTile.id && character.specificLocation.tileLocation.areaOfTile.suppliesInBank >= 100;
@@ -489,6 +475,19 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MOVE_TO_RETURN_HOME:
                 //if character is NOT at home, allow
                 return character.specificLocation.tileLocation.areaOfTile.id != character.homeLandmark.tileLocation.areaOfTile.id;
+            case INTERACTION_TYPE.MOVE_TO_EXPLORE:
+                //**Trigger Criteria 1**: The character must not be holding an item
+                if (character.isHoldingItem) {
+                    return false;
+                }
+                //**Trigger Criteria 2**: There must be at least one other location that is not owned by the character's Faction
+                List<Area> allAreas = new List<Area>(LandmarkManager.Instance.allAreas);
+                Utilities.ListRemoveRange(allAreas, character.faction.ownedAreas);
+                allAreas.Remove(PlayerManager.Instance.player.playerArea);
+                if (allAreas.Count <= 0) {
+                    return false;
+                }
+                return true;
             default:
                 return true;
         }
@@ -584,6 +583,13 @@ public class InteractionManager : MonoBehaviour {
     }
     public void AddToInteractionQueue(Interaction interaction) {
         interactionUIQueue.Enqueue(interaction);
+    }
+
+    private bool IsCharacterOfRace(Character character, List<RACE> allowedRaces) {
+        return allowedRaces.Contains(character.race);
+    }
+    private bool IsCharacterOfRace(Character character, RACE allowedRace) {
+        return allowedRace == character.race;
     }
 
     //public List<T> GetAllCurrentInteractionsOfType<T>(INTERACTION_TYPE type) {
