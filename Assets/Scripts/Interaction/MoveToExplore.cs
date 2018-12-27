@@ -23,8 +23,8 @@ public class MoveToExplore : Interaction {
         InteractionState doNothing = new InteractionState(Do_Nothing, this);
 
         targetLocation = GetTargetLocation();
+        AddToDebugLog(_characterInvolved.name + " chose to explore " + targetLocation.name);
 
-        //**Text Description**: [Character Name] is about to leave for [Location Name 1] to scavenge for supplies.
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(_characterInvolved.race), LOG_IDENTIFIER.STRING_1);
         startStateDescriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
@@ -110,20 +110,11 @@ public class MoveToExplore : Interaction {
     #endregion
 
     private void GoToTargetLocation() {
+        AddToDebugLog(_characterInvolved.name + " will  no go to " + targetLocation.name + " to explore");
         _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateExploreEvent());
     }
 
     private void CreateExploreEvent() {
-        //if (_characterInvolved.job is Explorer) {
-        //    Interaction exploreEvent = (_characterInvolved.job as Explorer).CreateExplorerEvent();
-        //    if (exploreEvent != null) {
-        //        _characterInvolved.SetForcedInteraction(exploreEvent);
-        //    }
-        //} 
-        //else if (_characterInvolved.job is Spy) {
-        //    Interaction exploreEvent = (_characterInvolved.job as Spy).CreateExplorerEvent();
-        //    _characterInvolved.SetForcedInteraction(exploreEvent);
-        //}
         Interaction exploreEvent = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.EXPLORE_EVENT, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
         if (exploreEvent != null) {
             _characterInvolved.SetForcedInteraction(exploreEvent);
@@ -134,9 +125,7 @@ public class MoveToExplore : Interaction {
         List<Area> choices = new List<Area>();
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
-            if (_characterInvolved.specificLocation.tileLocation.areaOfTile.id != currArea.id 
-                && PlayerManager.Instance.player.playerArea.id != currArea.id) {
-                //&& !currArea.IsHostileTowards(_characterInvolved)
+            if ((currArea.owner == null || currArea.owner.id != _characterInvolved.faction.id) && currArea.id != PlayerManager.Instance.player.playerArea.id) {
                 choices.Add(currArea);
             }
         }

@@ -388,7 +388,12 @@ public class PatrolAction : Interaction {
         List<Character> choices = new List<Character>();
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
             Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
-            if (!character.isFactionless && _characterInvolved.id != character.id && _characterInvolved.faction.id != character.faction.id) {
+            if (character.id == _characterInvolved.id) {
+                continue; //skip
+            }
+            if (character.isFactionless) {
+                choices.Add(character);
+            } else if (_characterInvolved.faction.id != character.faction.id) {
                 FactionRelationship rel = _characterInvolved.faction.GetRelationshipWith(character.faction);
                 if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED ||
                     rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY) {

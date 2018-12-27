@@ -136,16 +136,11 @@ public class MoveToExpand : Interaction {
     }
 
     private Area GetTargetLocation() {
-        //List<Area> choices = _characterInvolved.homeLandmark.tileLocation.areaOfTile.GetElligibleExpansionTargets(_characterInvolved);
-        //if (choices.Count > 0) {
-        //    return choices[Random.Range(0, choices.Count)];
-        //}
         List<Area> choices = new List<Area>();
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-            Area area = LandmarkManager.Instance.allAreas[i];
-            if (area.id != _characterInvolved.specificLocation.tileLocation.areaOfTile.id 
-                && area.owner == null && area.possibleOccupants.Contains(_characterInvolved.race)) {
-                choices.Add(area);
+            Area currArea = LandmarkManager.Instance.allAreas[i];
+            if (currArea.id != PlayerManager.Instance.player.playerArea.id && currArea.owner == null && currArea.possibleOccupants.Contains(_characterInvolved.race)) {
+                choices.Add(currArea);
             }
         }
         if (choices.Count > 0) {

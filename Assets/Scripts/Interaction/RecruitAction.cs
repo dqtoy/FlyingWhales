@@ -235,11 +235,10 @@ public class RecruitAction : Interaction {
                     weight += 35; //- character is not part of any Faction: Weight +35
                 } else if (currCharacter.faction.id != characterInvolved.faction.id) { //exclude characters with same faction
                     FactionRelationship rel = currCharacter.faction.GetRelationshipWith(characterInvolved.faction);
-                    //- character is part of a Faction with Neutral relationship with recruiter's Faction: Weight +15
                     if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL) {
-                        weight += 15;
+                        weight += 15; //- character is part of a Faction with Neutral relationship with recruiter's Faction: Weight +15
                     } else if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
-                        weight += 25;
+                        weight += 25; //- character is part of a Faction with Friend relationship with recruiter's Faction: Weight +25
                     }
                 }
 

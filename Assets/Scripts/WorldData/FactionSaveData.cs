@@ -37,7 +37,7 @@ public class FactionSaveData {
         }
         emblemIndex = FactionManager.Instance.GetFactionEmblemIndex(faction.emblem);
         morality = faction.morality;
-        defenderWeights = faction.defenderWeights.dictionary;
+        //defenderWeights = faction.defenderWeights.dictionary;
         level = faction.level;
         isActive = faction.isActive;
     }

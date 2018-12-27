@@ -611,7 +611,16 @@ public class UIManager : MonoBehaviour {
         } else if (playerLandmarkInfoUI.isShowing) {
             lastOpenedMenu = playerLandmarkInfoUI;
         }
-        HideMenus();
+        //HideMenus();
+        if (areaInfoUI.isShowing) {
+            areaInfoUI.gameObject.SetActive(false);
+        }
+        if (characterInfoUI.isShowing) {
+            characterInfoUI.gameObject.SetActive(false);
+        }
+        if (playerLandmarkInfoUI.isShowing) {
+            playerLandmarkInfoUI.gameObject.SetActive(false);
+        }
     }
     private void OnInteractionMenuClosed() {
         //reopen last opened menu

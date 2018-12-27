@@ -1327,6 +1327,8 @@ MonoBehaviour:
       subType: 0
     - race: 8
       subType: 0
+    - race: 6
+      subType: 0
     m_values:
     - data:
       - className: Knight
@@ -1384,6 +1386,13 @@ MonoBehaviour:
     - data:
       - className: Dragon
         weight: 30
+    - data:
+      - className: Barbarian
+        weight: 40
+      - className: Archer
+        weight: 20
+      - className: Shaman
+        weight: 20
   locationPortraits:
     m_keys:
     - Blistering Hollow

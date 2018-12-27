@@ -21,6 +21,7 @@ public class AreaSaveData {
     public int residentCapacity;
     public int monthlySupply;
     public List<string> possibleSpecialTokenSpawns;
+    public int initialResidents;
 
     public AreaSaveData(Area area) {
         areaID = area.id;
@@ -46,6 +47,7 @@ public class AreaSaveData {
         //initialSupply = area.initialSupply;
         residentCapacity = area.residentCapacity;
         monthlySupply = area.monthlySupply;
+        initialResidents = area.initialResidents;
 
         possibleSpecialTokenSpawns = new List<string>();
         for (int i = 0; i < area.possibleSpecialTokenSpawns.Count; i++) {

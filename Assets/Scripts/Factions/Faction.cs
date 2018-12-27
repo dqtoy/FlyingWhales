@@ -32,7 +32,7 @@ public class Faction {
     public MORALITY morality { get; private set; }
     public FactionToken factionToken { get; private set; }
     //public Dictionary<Faction, int> favor { get; private set; }
-    public WeightedDictionary<AreaCharacterClass> defenderWeights { get; private set; }
+    //public WeightedDictionary<AreaCharacterClass> defenderWeights { get; private set; }
     public bool isActive { get; private set; }
 
     #region getters/setters
@@ -113,7 +113,7 @@ public class Faction {
         _ownedAreas = new List<Area>();
         factionToken = new FactionToken(this);
         //favor = new Dictionary<Faction, int>();
-        defenderWeights = new WeightedDictionary<AreaCharacterClass>();
+        //defenderWeights = new WeightedDictionary<AreaCharacterClass>();
         InitializeInteractions();
 #if !WORLD_CREATION_TOOL
         SetDailyInteractionGenerationTick();
@@ -139,11 +139,11 @@ public class Faction {
         _ownedAreas = new List<Area>();
         factionToken = new FactionToken(this);
         //favor = new Dictionary<Faction, int>();
-        if (data.defenderWeights != null) {
-            defenderWeights = new WeightedDictionary<AreaCharacterClass>(data.defenderWeights);
-        } else {
-            defenderWeights = new WeightedDictionary<AreaCharacterClass>();
-        }
+        //if (data.defenderWeights != null) {
+        //    defenderWeights = new WeightedDictionary<AreaCharacterClass>(data.defenderWeights);
+        //} else {
+        //    defenderWeights = new WeightedDictionary<AreaCharacterClass>();
+        //}
         InitializeInteractions();
 #if !WORLD_CREATION_TOOL
         SetDailyInteractionGenerationTick();

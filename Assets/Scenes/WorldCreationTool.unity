@@ -13715,7 +13715,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &284105013
 RectTransform:
   m_ObjectHideFlags: 0
@@ -17356,6 +17356,7 @@ MonoBehaviour:
   initialDefenderGroupsField: {fileID: 2045506754}
   residentCapacityField: {fileID: 981993272}
   monthlySupplyField: {fileID: 287257506}
+  initialResidentsField: {fileID: 1696433510}
   possibleOccupantsRaceDropdown: {fileID: 9179539}
   occupantsSummary: {fileID: 772491723}
   raceSpawnPrefab: {fileID: 1471828616132480, guid: cdc839c35da195345b951be99cd6e829,
@@ -22393,7 +22394,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1135966172}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.9999998
+  m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -24872,7 +24873,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1047.1, y: -402.35}
+  m_AnchoredPosition: {x: 593, y: -402.35}
   m_SizeDelta: {x: 426.35, y: 283.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &529994912
@@ -35973,7 +35974,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -0.000006679359, y: -0.0000017420098}
+  m_AnchoredPosition: {x: -0.000006679359, y: -0.000017000799}
   m_SizeDelta: {x: 128, y: 22}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &762218949
@@ -46895,12 +46896,12 @@ GameObject:
   m_Component:
   - component: {fileID: 1018731857}
   m_Layer: 5
-  m_Name: InitialSupply
+  m_Name: InitialResidents
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1018731857
 RectTransform:
   m_ObjectHideFlags: 0
@@ -46918,7 +46919,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 249.92004, y: -192}
+  m_AnchoredPosition: {x: 249.39001, y: -222}
   m_SizeDelta: {x: 414.25, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1019614939
@@ -48391,7 +48392,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 597.14, y: -408.04996}
+  m_AnchoredPosition: {x: 249.1, y: -686.05}
   m_SizeDelta: {x: 473.57, y: 272.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1061613914
@@ -50134,11 +50135,6 @@ MonoBehaviour:
   relationshipSummaryLbl: {fileID: 762218951}
   factionsDropdown: {fileID: 355754758}
   relStatDropdown: {fileID: 1187484379}
-  defendersScrollView: {fileID: 965947704}
-  defenderWeightItemPrefab: {fileID: 1068526770767506, guid: 2d2bf595e483602429accdef0d472382,
-    type: 2}
-  defenderClassDropdown: {fileID: 105201486}
-  defenderWeightField: {fileID: 319047126}
 --- !u!224 &1099456811
 RectTransform:
   m_ObjectHideFlags: 0
@@ -51793,7 +51789,7 @@ RectTransform:
   m_Father: {fileID: 2056032899}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.00000017881393}
+  m_AnchorMin: {x: 0, y: 0.000000059604645}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
@@ -58262,7 +58258,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0.000046112866, y: 0.000040588217}
+  m_AnchoredPosition: {x: 0.000015595288, y: 0.000040588217}
   m_SizeDelta: {x: 128, y: 22}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1283050359
@@ -72679,8 +72675,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 62.515, y: 0}
-  m_SizeDelta: {x: -125.24, y: 30}
+  m_AnchoredPosition: {x: 75.59, y: 0}
+  m_SizeDelta: {x: -151.4, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1696433508
 MonoBehaviour:
@@ -72770,7 +72766,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 360204308}
-        m_MethodName: SetInitialSupplies
+        m_MethodName: SetInitialResidents
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -81823,8 +81819,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 63.82, y: 0}
-  m_SizeDelta: {x: 122.63, y: 30}
+  m_AnchoredPosition: {x: 76.898, y: 0}
+  m_SizeDelta: {x: 148.79, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1915294950
 MonoBehaviour:
@@ -81858,7 +81854,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Initial Supply: '
+  m_Text: 'Initial Residents: '
 --- !u!222 &1915294951
 CanvasRenderer:
   m_ObjectHideFlags: 0

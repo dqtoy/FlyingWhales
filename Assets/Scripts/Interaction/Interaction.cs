@@ -342,6 +342,10 @@ public class Interaction {
         
     }
     protected void AdjustFactionsRelationship(Faction faction1, Faction faction2, int adjustment, InteractionState state) {
+        if (faction1 == null || faction2 == null || faction1.id == FactionManager.Instance.neutralFaction.id 
+            || faction2.id == FactionManager.Instance.neutralFaction.id) {
+            return;
+        }
         faction1.AdjustRelationshipFor(faction2, adjustment);
         Log factionRelationshipLog = new Log(GameManager.Instance.Today(), "Events", "Generic", "faction_relationship_changed");
         factionRelationshipLog.AddToFillers(new LogFiller(faction1, faction1.name, LOG_IDENTIFIER.FACTION_1));

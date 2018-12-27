@@ -34,6 +34,7 @@ public class Area {
     public List<Log> history { get; private set; }
     public List<Interaction> currentInteractions { get; private set; }
     public Dictionary<INTERACTION_TYPE, int> areaTasksInteractionWeights { get; private set; }
+    public int initialResidents { get; private set; }
 
     //defenders
     public int maxDefenderGroups { get; private set; }
@@ -134,6 +135,7 @@ public class Area {
         SetInitialDefenderGroups(data.initialDefenderGroups);
         SetResidentCapacity(data.residentCapacity);
         SetMonthlySupply(data.monthlySupply);
+        SetInitialResidents(data.initialResidents);
 #if WORLD_CREATION_TOOL
         SetCoreTile(worldcreator.WorldCreatorManager.Instance.GetHexTile(data.coreTileID));
 #else
@@ -535,7 +537,8 @@ public class Area {
         //DetermineExposedTiles();
         Messenger.AddListener<StructureObj, ObjectState>(Signals.STRUCTURE_STATE_CHANGED, OnStructureStateChanged);
         //Messenger.AddListener<Interaction>(Signals.INTERACTION_ENDED, RemoveEventTargettingThis); 
-        GenerateInitialDefenders();
+        //GenerateInitialDefenders();
+        GenerateInitialResidents();
     }
     public bool HasLandmarkOfType(LANDMARK_TYPE type) {
         return landmarks.Where(x => x.specificLandmarkType == type).Any();
@@ -704,20 +707,6 @@ public class Area {
         if(areaInvestigation.assignedMinion != null) {
             areaInvestigation.assignedMinion.character.job.DoPassiveEffect(this);
         }
-        //int totalCollectedSupplies = 0;
-        //string supplySummary = string.Empty;
-        //for (int i = 0; i < landmarks.Count; i++) {
-        //    BaseLandmark currLandmark = landmarks[i];
-        //    if (currLandmark.canProduceSupplies && !currLandmark.landmarkObj.isRuined && currLandmark.MeetsSupplyProductionRequirements()) {
-        //        int providedSupplies = UnityEngine.Random.Range(currLandmark.minDailySupplyProduction, currLandmark.maxDailySupplyProduction);
-        //        totalCollectedSupplies += providedSupplies;
-        //        AdjustSuppliesInBank(providedSupplies);
-        //        supplySummary += currLandmark.name + "(" + currLandmark.specificLandmarkType.ToString() + ") - " + providedSupplies.ToString() + "\n";
-        //    } else {
-        //        supplySummary += currLandmark.name + "(" + currLandmark.specificLandmarkType.ToString() + ") - Cannot Produce\n";
-        //    }
-        //}
-        //Debug.Log(this.name + " collected supplies " + totalCollectedSupplies + " Summary: \n" + supplySummary);
     }
     //private void LandmarkStartMonthActions() {
     //    for (int i = 0; i < landmarks.Count; i++) {
@@ -1122,6 +1111,25 @@ public class Area {
             }
         }
         
+    }
+    public void SetInitialResidents(int initialResidents) {
+        this.initialResidents = initialResidents;
+    }
+    private void GenerateInitialResidents() {
+        if (initialResidents <= 0) {
+            return;
+        }
+        WeightedDictionary<AreaCharacterClass> classWeights = GetClassWeights();
+        int remainingCharactersToGenerate = initialResidents - areaResidents.Count;
+        for (int i = 0; i < remainingCharactersToGenerate; i++) {
+            AreaCharacterClass chosenClass = classWeights.PickRandomElementGivenWeights();
+            BaseLandmark randomHome = this.landmarks[UnityEngine.Random.Range(0, landmarks.Count)];
+            Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass.className, this.raceType, Utilities.GetRandomGender(),
+                owner, randomHome);
+            createdCharacter.SetLevel(owner.level);
+            Debug.Log(GameManager.Instance.TodayLogString() + "Generated Lvl. " + createdCharacter.level.ToString() +
+                    " character " + createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name + " for faction " + this.owner.name);
+        }
     }
     #endregion
 
