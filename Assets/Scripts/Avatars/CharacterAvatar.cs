@@ -154,6 +154,10 @@ public class CharacterAvatar : MonoBehaviour{
         Messenger.AddListener(Signals.DAY_STARTED, TraverseCurveLine);
     }
     private void TraverseCurveLine() {
+        if (_travelLine == null) {
+            Messenger.RemoveListener(Signals.DAY_STARTED, TraverseCurveLine);
+            return;
+        }
         if (_travelLine.isDone) {
             Messenger.RemoveListener(Signals.DAY_STARTED, TraverseCurveLine);
             ArriveAtLocation();

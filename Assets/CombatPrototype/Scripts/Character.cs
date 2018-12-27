@@ -238,7 +238,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             if (FactionManager.Instance.neutralFaction == null) {
                 return faction == null;
             } else {
-                if (faction != null && FactionManager.Instance.neutralFaction.id == faction.id) {
+                if (faction == null || FactionManager.Instance.neutralFaction.id == faction.id) {
                     return true;
                 } else {
                     return false;
