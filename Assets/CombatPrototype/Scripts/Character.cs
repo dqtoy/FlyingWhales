@@ -419,7 +419,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         get { return _currentInteractionTick; }
     }
     public bool isHoldingItem {
-        get { return tokenInventory.Count >= 1; }
+        get { return tokenInInventory != null; }
     }
     #endregion
 
