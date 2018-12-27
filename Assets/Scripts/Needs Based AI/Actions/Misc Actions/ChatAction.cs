@@ -16,7 +16,7 @@ public class ChatAction : CharacterAction {
         base.OnChooseAction(iparty, targetObject);
         if(iparty is CharacterParty) {
             Character chatter = iparty.mainCharacter;
-            chatter.SetDoNotDisturb(true);
+            chatter.AdjustDoNotDisturb(1);
         }
         //Reset();
         //if (targetObject != null && targetObject is CharacterObj) {
@@ -125,14 +125,14 @@ public class ChatAction : CharacterAction {
             return;
         }
         Character chatter = characterParty.mainCharacter;
-        chatter.SetDoNotDisturb(false);
+        chatter.AdjustDoNotDisturb(-1);
 
         if (targetObject is ICharacterObject) {
             ICharacterObject icharacterObject = targetObject as ICharacterObject;
             if (icharacterObject.iparty is CharacterParty) {
                 CharacterParty targetParty = icharacterObject.iparty as CharacterParty;
                 Character targetCharacter = targetParty.mainCharacter;
-                targetCharacter.SetDoNotDisturb(false);
+                targetCharacter.AdjustDoNotDisturb(-1);
             }
         }
         //Relationship effects

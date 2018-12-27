@@ -67,9 +67,9 @@ public class Area {
     public Race race {
         get { return owner == null ? defaultRace : owner.race; }
     }
-    public int elligibleResidents {
-        get { return areaResidents.Where(x => !x.isDefender).Count(); }
-    }
+    //public int elligibleResidents {
+    //    get { return areaResidents.Where(x => !x.isDefender).Count(); }
+    //}
     #endregion
 
     public Area(HexTile coreTile, AREA_TYPE areaType) {
@@ -683,7 +683,21 @@ public class Area {
     }
     private void StartMonthActions() {
         CollectMonthlySupplies();
-        AssignInteractionsToResidents();
+
+        List<Character> defenderCandidates = new List<Character>();
+        List<Character> interactionCandidates = new List<Character>();
+
+        for (int i = 0; i < areaResidents.Count; i++) {
+            Character resident = areaResidents[i];
+            if (resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.faction == owner && resident.specificLocation.tileLocation.areaOfTile.id == id) {
+                if (resident.forcedInteraction == null || (resident.forcedInteraction != null && resident.forcedInteraction.type != INTERACTION_TYPE.MOVE_TO_ATTACK)) {
+                    defenderCandidates.Add(resident);
+                }
+                interactionCandidates.Add(resident);
+            }
+        }
+        AssignMonthlyDefenders(defenderCandidates, interactionCandidates);
+        AssignInteractionsToResidents(interactionCandidates);
     }
     private void CollectMonthlySupplies() {
         SetSuppliesInBank(monthlySupply);
@@ -772,13 +786,17 @@ public class Area {
     #region Interactions
     private void ConstructAreaTasksInteractionWeights() {
         areaTasksInteractionWeights = new Dictionary<INTERACTION_TYPE, int>() {
-            {INTERACTION_TYPE.MOVE_TO_RAID, 50},
-            {INTERACTION_TYPE.MOVE_TO_SCAVENGE, 50},
-            {INTERACTION_TYPE.MOVE_TO_RECRUIT, 60},
-            {INTERACTION_TYPE.PATROL_ACTION, 60},
-            {INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS, 60},
-            {INTERACTION_TYPE.MOVE_TO_EXPAND, 5},
-            {INTERACTION_TYPE.MOVE_TO_EXPLORE, 30},
+            {INTERACTION_TYPE.MOVE_TO_EXPLORE, 100},
+            {INTERACTION_TYPE.MOVE_TO_EXPAND, 30},
+            {INTERACTION_TYPE.MOVE_TO_SCAVENGE, 60},
+            {INTERACTION_TYPE.MOVE_TO_RAID, 40},
+            {INTERACTION_TYPE.MOVE_TO_CHARM, 20},
+            {INTERACTION_TYPE.MOVE_TO_RECRUIT, 20},
+            {INTERACTION_TYPE.MOVE_TO_ABDUCT, 20},
+            {INTERACTION_TYPE.MOVE_TO_STEAL, 20},
+            {INTERACTION_TYPE.MOVE_TO_HUNT, 20},
+            {INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS, 40},
+            {INTERACTION_TYPE.PATROL_ACTION, 50},
         };
     }
     public void AddInteraction(Interaction interaction) {
@@ -856,17 +874,10 @@ public class Area {
         }
         return events;
     }
-    private void AssignInteractionsToResidents() {
+    private void AssignInteractionsToResidents(List<Character> candidates) {
         string testLog = "[Day " + GameManager.Instance.continuousDays + "] AREA TASKS FOR " + this.name;
         if (owner != null) {
             int supplySpent = 0;
-            List<Character> candidates = new List<Character>();
-            for (int i = 0; i < areaResidents.Count; i++) {
-                Character resident = areaResidents[i];
-                if (!resident.isLeader && !resident.isDefender && resident.faction == owner && resident.specificLocation.tileLocation.areaOfTile.id == id) {
-                    candidates.Add(resident);
-                }
-            }
             if(candidates.Count <= 0) {
                 testLog += "\nNo available residents to be chosen!";
             } else {
@@ -939,35 +950,37 @@ public class Area {
         this.initialDefenderGroups = initialDefenderGroups;
     }
     private void GenerateInitialDefenders() {
-        if (initialDefenderGroups == 0) {
-            return;
-        }
-        WeightedDictionary<AreaCharacterClass> defenderWeights = GetClassWeights();
-        //if (this.owner != null && this.owner.defenderWeights.GetTotalOfWeights() > 0) {
-        //    defenderWeights = this.owner.defenderWeights;
-        //} else {
-        //    defenderWeights = LandmarkManager.Instance.GetDefaultDefenderWeights(race);
+        //This will generate an empty defender group
+        AddDefenderGroup(new DefenderGroup());
+        //if (initialDefenderGroups == 0) {
+        //    return;
         //}
-        if (defenderWeights == null || defenderWeights.GetTotalOfWeights() <= 0) {
-            return;
-        }
-        for (int i = 0; i < initialDefenderGroups; i++) {
-            DefenderGroup newGroup = new DefenderGroup();
-            AddDefenderGroup(newGroup);
-            int defendersToGenerate = 4;
-            for (int j = 0; j < defendersToGenerate; j++) {
-                string chosenClass = defenderWeights.PickRandomElementGivenWeights().className;
-                Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass, raceType, Utilities.GetRandomGender(), owner, coreTile.landmarkOnTile);
-                newGroup.AddCharacterToGroup(createdCharacter);
-                //TODO: Add Level
-            }
-        }
+        //WeightedDictionary<AreaCharacterClass> defenderWeights = GetClassWeights();
+        ////if (this.owner != null && this.owner.defenderWeights.GetTotalOfWeights() > 0) {
+        ////    defenderWeights = this.owner.defenderWeights;
+        ////} else {
+        ////    defenderWeights = LandmarkManager.Instance.GetDefaultDefenderWeights(race);
+        ////}
+        //if (defenderWeights == null || defenderWeights.GetTotalOfWeights() <= 0) {
+        //    return;
+        //}
+        //for (int i = 0; i < initialDefenderGroups; i++) {
+        //    DefenderGroup newGroup = new DefenderGroup();
+        //    AddDefenderGroup(newGroup);
+        //    int defendersToGenerate = 4;
+        //    for (int j = 0; j < defendersToGenerate; j++) {
+        //        string chosenClass = defenderWeights.PickRandomElementGivenWeights().className;
+        //        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass, raceType, Utilities.GetRandomGender(), owner, coreTile.landmarkOnTile);
+        //        newGroup.AddCharacterToGroup(createdCharacter);
+        //        //TODO: Add Level
+        //    }
+        //}
     }
     public void AddDefenderGroup(DefenderGroup defenderGroup) {
-        if (defenderGroups.Count < maxDefenderGroups) {
+        //if (defenderGroups.Count < maxDefenderGroups) {
             defenderGroups.Add(defenderGroup);
             defenderGroup.SetDefendingArea(this);
-        }
+        //}
     }
     public void RemoveDefenderGroup(DefenderGroup defenderGroup) {
         if (defenderGroups.Remove(defenderGroup)) {
@@ -999,6 +1012,49 @@ public class Area {
                 Character defender = defenderGroups[i].party.characters[j];
                 if (defender.level < owner.level) {
                     defender.SetLevel(owner.level);
+                }
+            }
+        }
+    }
+    private void AssignMonthlyDefenders(List<Character> candidates, List<Character> interactionCandidates) {
+        if(owner != null) {
+            string testLog = "[Day " + GameManager.Instance.continuousDays + "] DEFENDERS FOR " + this.name;
+            DefenderGroup defenderGroup = GetFirstDefenderGroup();
+            if (defenderGroup != null) {
+                testLog += "\nDisbanding current defenders...";
+                defenderGroup.DisbandGroup();
+            } else {
+                testLog += "\nNo more defender group. Creating new one...";
+                defenderGroup = new DefenderGroup();
+                AddDefenderGroup(defenderGroup);
+            }
+            if(candidates.Count > 0) {
+                List<int> frontlineIndexes = new List<int>();
+                List<int> backlineIndexes = new List<int>();
+                for (int i = 0; i < candidates.Count; i++) {
+                    if(candidates[i].characterClass.combatPosition == COMBAT_POSITION.FRONTLINE) {
+                        frontlineIndexes.Add(i);
+                    } else {
+                        backlineIndexes.Add(i);
+                    }
+                }
+                for (int i = 0; i < 2; i++) {
+                    if(frontlineIndexes.Count > 0) {
+                        int index = UnityEngine.Random.Range(0, frontlineIndexes.Count);
+                        defenderGroup.AddCharacterToGroup(candidates[frontlineIndexes[index]]);
+                        interactionCandidates.Remove(candidates[frontlineIndexes[index]]);
+                        testLog += "\nFRONTLINE DEFENDER " + (i + 1) + ": " + candidates[frontlineIndexes[index]].name;
+                        frontlineIndexes.RemoveAt(index);
+                    }
+                }
+                for (int i = 0; i < 2; i++) {
+                    if (backlineIndexes.Count > 0) {
+                        int index = UnityEngine.Random.Range(0, backlineIndexes.Count);
+                        defenderGroup.AddCharacterToGroup(candidates[backlineIndexes[index]]);
+                        interactionCandidates.Remove(candidates[backlineIndexes[index]]);
+                        testLog += "\nBACKLINE DEFENDER " + (i + 1) + ": " + candidates[backlineIndexes[index]].name;
+                        backlineIndexes.RemoveAt(index);
+                    }
                 }
             }
         }
@@ -1045,7 +1101,7 @@ public class Area {
         return characters;
     }
     public bool IsResidentsFull() {
-        return elligibleResidents >= residentCapacity;
+        return areaResidents.Count >= residentCapacity;
     }
     public void GenerateNeutralCharacters() {
         if (defaultRace.race == RACE.NONE) {
@@ -1111,7 +1167,8 @@ public class Area {
     }
     public List<SpecialToken> GetElligibleTokensForCharacter(Character character) {
         List<SpecialToken> choices = new List<SpecialToken>(possibleSpecialTokenSpawns);
-        Utilities.ListRemoveRange(choices, character.tokenInventory);
+        choices.Remove(character.tokenInInventory);
+        //Utilities.ListRemoveRange(choices, character.tokenInInventory);
         return choices;
     }
     #endregion

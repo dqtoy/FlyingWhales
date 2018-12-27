@@ -132,7 +132,7 @@ public class Interaction {
     public virtual void EndInteraction() {
         _isDone = true;
         if(_characterInvolved != null) {
-            _characterInvolved.SetDoNotDisturb(false);
+            _characterInvolved.AdjustDoNotDisturb(-1);
         }
         _interactable.RemoveInteraction(this);
         if (_jobAssociated != null) {
@@ -266,7 +266,7 @@ public class Interaction {
         _characterInvolved = character;
         if(_characterInvolved != null) {
             AddToDebugLog("Set character involved to " + character.name);
-            _characterInvolved.SetDoNotDisturb(true);
+            _characterInvolved.AdjustDoNotDisturb(1);
         }
     }
     public bool AssignedMinionIsOfClass(string className) {

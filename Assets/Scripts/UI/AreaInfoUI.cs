@@ -290,7 +290,7 @@ public class AreaInfoUI : UIMenu {
     #region Basic Info
     private void UpdateBasicInfo() {
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(activeArea.coreTile.landmarkOnTile.specificLandmarkType);
-        landmarkNameLbl.text = activeArea.name + " (" + activeArea.elligibleResidents + "/" + activeArea.residentCapacity + ")";
+        landmarkNameLbl.text = activeArea.name + " (" + activeArea.areaResidents.Count + "/" + activeArea.residentCapacity + ")";
         if (activeArea.race.race != RACE.NONE) {
             if (activeArea.tiles.Count > 1) {
                 landmarkTypeLbl.text = Utilities.GetNormalizedSingularRace(activeArea.race.race) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(activeArea.GetBaseAreaType().ToString());

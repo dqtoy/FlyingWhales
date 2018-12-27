@@ -288,7 +288,7 @@ public class InteractionManager : MonoBehaviour {
                     int idleCharactersCount = 0;
                     for (int i = 0; i < landmark.tileLocation.areaOfTile.areaResidents.Count; i++) {
                         Character resident = landmark.tileLocation.areaOfTile.areaResidents[i];
-                        if (resident.role.roleType != CHARACTER_ROLE.LEADER && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == landmark.tileLocation.areaOfTile.id) {
+                        if (resident.IsInOwnParty() && !resident.isLeader && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && resident.specificLocation.tileLocation.areaOfTile.id == landmark.tileLocation.areaOfTile.id) {
                             idleCharactersCount++;
                             if (idleCharactersCount >= 4) {
                                 return true;
@@ -356,7 +356,7 @@ public class InteractionManager : MonoBehaviour {
                 return character.specificLocation != character.homeLandmark;
             case INTERACTION_TYPE.MOVE_TO_SCAVENGE:
                 //check if there are any unowned areas
-                if (character.job.jobType == JOB.RAIDER) {
+                if (character.race == RACE.FAERY || character.race == RACE.HUMANS || character.race == RACE.ELVES || character.race == RACE.GOBLIN) {
                     for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                         Area currArea = LandmarkManager.Instance.allAreas[i];
                         if (currArea.owner == null) {
@@ -367,16 +367,15 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.MOVE_TO_RAID:
                 //check if there are any areas owned by factions other than your own
-                if(character.job.jobType == JOB.RAIDER) {
+                if(character.race == RACE.GOBLIN || character.race == RACE.SKELETON || character.race == RACE.HUMANS) {
                     for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                         Area currArea = LandmarkManager.Instance.allAreas[i];
                         if (currArea.owner != null 
                             && currArea.owner.isActive 
-                            && currArea.owner.id != character.specificLocation.tileLocation.areaOfTile.owner.id) {
+                            && currArea.owner.id != character.specificLocation.tileLocation.areaOfTile.owner.id && currArea.owner.id != character.faction.id) {
                             relationship = character.specificLocation.tileLocation.areaOfTile.owner.GetRelationshipWith(currArea.owner);
                             if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
                                 return true;
-
                             }
                         }
                     }
@@ -450,11 +449,11 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS:
                 //check if there are any areas owned by factions other than your own
-                if(character.job.jobType == JOB.DIPLOMAT) {
-                    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                        Area currArea = LandmarkManager.Instance.allAreas[i];
-                        if (currArea.owner != null && currArea.owner.id != character.specificLocation.tileLocation.areaOfTile.owner.id) {
-                            relationship = character.specificLocation.tileLocation.areaOfTile.owner.GetRelationshipWith(currArea.owner);
+                if(character.race == RACE.ELVES || character.race == RACE.HUMANS) {
+                    for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+                        Faction faction = FactionManager.Instance.allFactions[i];
+                        if (faction.id != PlayerManager.Instance.player.playerFaction.id && faction.isActive) {
+                            relationship = character.faction.GetRelationshipWith(faction);
                             if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY) {
                                 return true;
 
@@ -464,31 +463,95 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_RECRUIT:
-                if (character.job.jobType == JOB.RECRUITER) {
+                if (character.race == RACE.ELVES || character.race == RACE.HUMANS) {
                     if (character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) { //check if resident capacity is full
                         return false;
                     }
-                    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                        Area currArea = LandmarkManager.Instance.allAreas[i];
-                        if (currArea.areaType == AREA_TYPE.DEMONIC_INTRUSION) { //skip the player area
-                            continue; //skip
-                        }
-                        if (currArea.owner == null) {
-                            return true;
-                        } else if (currArea.owner.id != character.faction.id) {
-                            FactionRelationship rel = currArea.owner.GetRelationshipWith(character.faction);
-                            if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL || rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
+                    for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                        Character currCharacter = CharacterManager.Instance.allCharacters[i];
+                        if (currCharacter.id != character.id) {
+                            if (currCharacter.faction == null) {
+                                //Unaligned?
                                 return true;
+                            } else {
+                                if (currCharacter.faction.id != character.faction.id) {
+                                    relationship = currCharacter.faction.GetRelationshipWith(character.faction);
+                                    if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL
+                                        || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
+                                        return true;
+                                    }
+                                }
                             }
                         }
                     }
                 }
                 return false;
-            case INTERACTION_TYPE.PATROL_ACTION:
-                return character.job.jobType == JOB.DISSUADER;
             case INTERACTION_TYPE.MOVE_TO_RETURN_HOME:
                 //if character is NOT at home, allow
                 return character.specificLocation.tileLocation.areaOfTile.id != character.homeLandmark.tileLocation.areaOfTile.id;
+            case INTERACTION_TYPE.MOVE_TO_EXPLORE:
+                if(character.tokenInInventory == null) {
+                    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                        area = LandmarkManager.Instance.allAreas[i];
+                        if (area.id != character.specificLocation.tileLocation.areaOfTile.id && (area.owner == null || (area.owner != null && area.owner.id != character.faction.id && area.owner.id != PlayerManager.Instance.player.playerFaction.id))) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_CHARM:
+                if (character.race == RACE.FAERY || character.race == RACE.ELVES) {
+                    if (!character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
+                        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                            Character currCharacter = CharacterManager.Instance.allCharacters[i];
+                            if(currCharacter.id != character.id) {
+                                if(currCharacter.faction == null) {
+                                    //Unaligned?
+                                    return true;
+                                } else {
+                                    if(currCharacter.faction.id != character.faction.id) {
+                                        relationship = currCharacter.faction.GetRelationshipWith(character.faction);
+                                        if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL
+                                            || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
+                                            return true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_ABDUCT:
+                if (character.race == RACE.GOBLIN || character.race == RACE.SPIDER) {
+                    if (!character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
+                        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                            Character currCharacter = CharacterManager.Instance.allCharacters[i];
+                            if (currCharacter.id != character.id) {
+                                if (currCharacter.faction == null || currCharacter.faction.id != character.faction.id) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_STEAL:
+                if (character.race == RACE.GOBLIN || character.race == RACE.SKELETON || character.race == RACE.FAERY || character.race == RACE.DRAGON) {
+                    if (character.tokenInInventory == null) {
+                        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                            Character currCharacter = CharacterManager.Instance.allCharacters[i];
+                            if (currCharacter.id != character.id && currCharacter.tokenInInventory != null) {
+                                if (currCharacter.faction == null || currCharacter.faction.id != character.faction.id) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_HUNT:
+                return character.race == RACE.WOLF || character.race == RACE.SPIDER || character.race == RACE.DRAGON;
             default:
                 return true;
         }
@@ -509,7 +572,7 @@ public class InteractionManager : MonoBehaviour {
             List<Character> residentsAtArea = new List<Character>();
             for (int i = 0; i < areaToAttack.areaResidents.Count; i++) {
                 Character resident = areaToAttack.areaResidents[i];
-                if(resident.role.roleType != CHARACTER_ROLE.LEADER && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == areaToAttack.id) {
+                if(resident.IsInOwnParty() && !resident.isLeader && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == areaToAttack.id) {
                     residentsAtArea.Add(resident);
                 }
             }
