@@ -314,10 +314,10 @@ public class MysteriousSarcophagus : Interaction {
     #endregion
 
     private void SpawnUndeadCharacter() {
-        RACE race = RACE.ZOMBIE;
+        RACE race = RACE.FAERY;
         int levelModifier = 0;
         if (interactable.tileLocation.areaOfTile.name == "Tessellated Triangle") {
-            race = RACE.ZOMBIE;
+            race = RACE.FAERY;
             levelModifier = 6;
         } else if (interactable.tileLocation.areaOfTile.name == "Gloomhollow Crypts") {
             race = RACE.SKELETON;

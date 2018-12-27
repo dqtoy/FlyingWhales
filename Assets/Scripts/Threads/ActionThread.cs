@@ -130,19 +130,19 @@ public class ActionThread : Multithread {
                 }
                 break;
             case SCHEDULE_ACTION_CATEGORY.WORK:
-                if (character.workplace == null || character.workplace.landmarkObj.isRuined) { //check first if the character has a workplace, or if their workplace is ruined
-                    //if it does not, look for a new workplace
-                    if (!character.LookForNewWorkplace()) {
-                        //if still, no workplace can be found, idle at home instead
-                        actions.Add(new ActionThreadItem(_party.characterObject.currentState.GetAction(ACTION_TYPE.IDLE), character.homeLandmark.landmarkObj));
-                        return actions;
-                    }
-                }
-                if (character.characterClass.workActionType == ACTION_TYPE.WORKING) {
-                    actions.Add(new ActionThreadItem(character.genericWorkAction, character.workplace.landmarkObj));
-                } else {
-                    actions.Add(new ActionThreadItem(character.workplace.landmarkObj.currentState.GetAction(character.characterClass.workActionType), character.workplace.landmarkObj));
-                }
+                //if (character.workplace == null || character.workplace.landmarkObj.isRuined) { //check first if the character has a workplace, or if their workplace is ruined
+                //    //if it does not, look for a new workplace
+                //    if (!character.LookForNewWorkplace()) {
+                //        //if still, no workplace can be found, idle at home instead
+                //        actions.Add(new ActionThreadItem(_party.characterObject.currentState.GetAction(ACTION_TYPE.IDLE), character.homeLandmark.landmarkObj));
+                //        return actions;
+                //    }
+                //}
+                //if (character.characterClass.workActionType == ACTION_TYPE.WORKING) {
+                //    actions.Add(new ActionThreadItem(character.genericWorkAction, character.workplace.landmarkObj));
+                //} else {
+                //    actions.Add(new ActionThreadItem(character.workplace.landmarkObj.currentState.GetAction(character.characterClass.workActionType), character.workplace.landmarkObj));
+                //}
                 break;
             default:
                 break;

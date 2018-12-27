@@ -37,7 +37,7 @@ public class CharacterArmyUnit : Character {
 
     public CharacterArmyUnit(string className, RACE race) : base(className, race, GENDER.MALE) {
         this.armyCap = GetArmyCap();
-        this.armyCount = _characterClass.armyCount;
+        this.armyCount = 0; // _characterClass.armyCount;
     }
 
     #region Army Management
