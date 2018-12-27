@@ -122,6 +122,7 @@ public class CharacterToken : Token {
      */
 public class SpecialToken : Token {
     public SPECIAL_TOKEN specialTokenType;
+    public INTERACTION_TYPE associatedInteractionType;
     public string name;
     public int quantity;
     public int weight;
