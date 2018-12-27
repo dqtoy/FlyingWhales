@@ -3112,25 +3112,67 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             }
             _forcedInteraction = null;
         } else {
-            //Only go here if away from home, then choose from the character interactions away from home
-            //TODO
-            if(InteractionManager.Instance.CanCreateInteraction(INTERACTION_TYPE.RETURN_HOME, this)) {
+            if(specificLocation.tileLocation.areaOfTile.id != homeLandmark.tileLocation.id) {
+                //Character actions away from home
                 WeightedDictionary<string> awayFromHomeInteractionWeights = new WeightedDictionary<string>();
                 awayFromHomeInteractionWeights.AddElement("Return", 100);
+                awayFromHomeInteractionWeights.AddElement("DoNothing", 50);
 
                 if (tokenInInventory != null && tokenInInventory.CanBeUsedBy(this)) {
-                    awayFromHomeInteractionWeights.AddElement(tokenInInventory.tokenName, 100);
+                    awayFromHomeInteractionWeights.AddElement(tokenInInventory.tokenName, 70);
                 }
+                INTERACTION_TYPE[] classTriggeredInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.FOUND_LUCARETH }; //, INTERACTION_TYPE.FOUND_BESTALIA, INTERACTION_TYPE.FOUND_MAGUS };
+                for (int i = 0; i < classTriggeredInteractions.Length; i++) {
+                    if (InteractionManager.Instance.CanCreateInteraction(classTriggeredInteractions[i], this)) {
+                        awayFromHomeInteractionWeights.AddElement(classTriggeredInteractions[i].ToString(), 15);
+                    }
+                }
+
                 string result = awayFromHomeInteractionWeights.PickRandomElementGivenWeights();
-                if(result == "Return") {
+                if(result == "DoNothing") {
+                }else if (result == "Return") {
                     Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, specificLocation as BaseLandmark);
                     AddInteraction(interaction);
+                } else if (result == tokenInInventory.tokenName) {
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.associatedInteractionType, specificLocation as BaseLandmark);
+                    if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
+                        (interaction as UseItemOnCharacter).SetItemToken(tokenInInventory);
+                    }else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
+                        (interaction as UseItemOnSelf).SetItemToken(tokenInInventory);
+                    }
+                    AddInteraction(interaction);
                 } else {
-                    UseItemOnCharacter interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.USE_ITEM_ON_CHARACTER, specificLocation as BaseLandmark) as UseItemOnCharacter;
-                    interaction.SetItemToken(tokenInInventory);
+                    INTERACTION_TYPE interactionType = (INTERACTION_TYPE) Enum.Parse(typeof(INTERACTION_TYPE), result);
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, specificLocation as BaseLandmark);
+                    AddInteraction(interaction);
+                }
+            } else {
+                //Character actions at home
+                WeightedDictionary<string> atHomeInteractionWeights = new WeightedDictionary<string>();
+                atHomeInteractionWeights.AddElement("DoNothing", 100);
+                if (tokenInInventory != null) {
+                    if (tokenInInventory.CanBeUsedBy(this)) {
+                        atHomeInteractionWeights.AddElement(tokenInInventory.tokenName, 70);
+                    } else {
+                        atHomeInteractionWeights.AddElement("ItemNotUsable", 70);
+                    }
+                }
+                string result = atHomeInteractionWeights.PickRandomElementGivenWeights();
+
+                if(result == "ItemNotUsable") {
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.DROP_ITEM, specificLocation as BaseLandmark);
+                    AddInteraction(interaction);
+                }else if (result == tokenInInventory.tokenName) {
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.associatedInteractionType, specificLocation as BaseLandmark);
+                    if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
+                        (interaction as UseItemOnCharacter).SetItemToken(tokenInInventory);
+                    } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
+                        (interaction as UseItemOnSelf).SetItemToken(tokenInInventory);
+                    }
                     AddInteraction(interaction);
                 }
             }
+
 
 
             //int chance = UnityEngine.Random.Range(0, 100);
