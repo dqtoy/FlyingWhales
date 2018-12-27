@@ -17,6 +17,7 @@ public class AreaInfoEditor : MonoBehaviour {
     //[SerializeField] private InputField initialSupplyField;
     [SerializeField] private InputField residentCapacityField;
     [SerializeField] private InputField monthlySupplyField;
+    [SerializeField] private InputField initialResidentsField;
     [SerializeField] private Dropdown possibleOccupantsRaceDropdown;
     [SerializeField] private Text occupantsSummary;
 
@@ -53,6 +54,7 @@ public class AreaInfoEditor : MonoBehaviour {
         //initialSupplyField.text = currentArea.initialSupply.ToString();
         residentCapacityField.text = currentArea.residentCapacity.ToString();
         monthlySupplyField.text = currentArea.monthlySupply.ToString();
+        initialResidentsField.text = currentArea.initialResidents.ToString();
         //defaultRaceDropdown.value = Utilities.GetOptionIndex(defaultRaceDropdown, currentArea.defaultRace.ToString());
         occupantsSummary.text = string.Empty;
         for (int i = 0; i < currentArea.possibleOccupants.Count; i++) {
@@ -103,7 +105,7 @@ public class AreaInfoEditor : MonoBehaviour {
     //    if (!string.IsNullOrEmpty(amountStr)) {
     //        currentArea.SetInitialSupplies(System.Int32.Parse(amountStr));
     //    }
-        
+
     //}
     public void SetResidentCapacity(string amountStr) {
         if (!string.IsNullOrEmpty(amountStr)) {
@@ -115,6 +117,12 @@ public class AreaInfoEditor : MonoBehaviour {
             currentArea.SetMonthlySupply(System.Int32.Parse(amountStr));
         }
     }
+    public void SetInitialResidents(string amountStr) {
+        if (!string.IsNullOrEmpty(amountStr)) {
+            currentArea.SetInitialResidents(System.Int32.Parse(amountStr));
+        }
+    }
+
     #endregion
 
     #region Race Spawns

@@ -44,11 +44,11 @@ public class DefenderWeightItem : MonoBehaviour {
             return;
         }
         int value = System.Int32.Parse(valueStr);
-        owner.defenderWeights.ChangeElementWeight(defender, value);
+        //owner.defenderWeights.ChangeElementWeight(defender, value);
     }
 
     public void DeleteItem() {
-        owner.defenderWeights.RemoveElement(defender);
+        //owner.defenderWeights.RemoveElement(defender);
         GameObject.Destroy(this.gameObject);
     }
 }

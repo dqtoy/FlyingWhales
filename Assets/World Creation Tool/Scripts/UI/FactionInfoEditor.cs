@@ -36,11 +36,11 @@ public class FactionInfoEditor : MonoBehaviour {
     //[SerializeField] private Dropdown factionsFavorDropdown;
     //[SerializeField] private InputField favorAmountField;
 
-    [Header("Defenders")]
-    [SerializeField] private ScrollRect defendersScrollView;
-    [SerializeField] private GameObject defenderWeightItemPrefab;
-    [SerializeField] private Dropdown defenderClassDropdown;
-    [SerializeField] private InputField defenderWeightField;
+    //[Header("Defenders")]
+    //[SerializeField] private ScrollRect defendersScrollView;
+    //[SerializeField] private GameObject defenderWeightItemPrefab;
+    //[SerializeField] private Dropdown defenderClassDropdown;
+    //[SerializeField] private InputField defenderWeightField;
 
     public void ShowFactionInfo(Faction faction) {
         _faction = faction;
@@ -51,12 +51,12 @@ public class FactionInfoEditor : MonoBehaviour {
         LoadMoralityChoices();
         LoadRaceChoices();
         //LoadFavorChoices();
-        LoadDefenderChoices();
+        //LoadDefenderChoices();
         UpdateBasicInfo();
         UpdateAreas();
         UpdateRelationshipInfo();
         //UpdateFavorInfo();
-        UpdateDefenderWeights();
+        //UpdateDefenderWeights();
         this.gameObject.SetActive(true);
     }
 
@@ -280,38 +280,38 @@ public class FactionInfoEditor : MonoBehaviour {
     //#endregion
 
     #region Defenders
-    private void LoadDefenderChoices() {
-        defenderClassDropdown.ClearOptions();
-        defenderClassDropdown.AddOptions(Utilities.GetFileChoices(Utilities.dataPath + "CharacterClasses/", "*.json"));
-    }
-    private void UpdateDefenderWeights() {
-        Utilities.DestroyChildren(defendersScrollView.content);
-        foreach (KeyValuePair<AreaCharacterClass, int> kvp in _faction.defenderWeights.dictionary) {
-            GameObject itemGO = GameObject.Instantiate(defenderWeightItemPrefab, defendersScrollView.content);
-            DefenderWeightItem item = itemGO.GetComponent<DefenderWeightItem>();
-            item.SetDefender(_faction, kvp.Key, kvp.Value);
-        }
-    }
-    public void AddDefenderWeight() {
-        string defenderClass = defenderClassDropdown.options[defenderClassDropdown.value].text;
-        int weight = 0;
-        if (HasDefenderWeightForClass(defenderClass)) {
-            WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Invalid defender class!", "Cannot add defender class " + defenderClass + " because landmark already has that type in it's defender weights");
-        } else if (!System.Int32.TryParse(defenderWeightField.text, out weight)) {
-            WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Invalid weight!", "Please enter a weight value!");
-        } else {
-            weight = Mathf.Max(0, weight);
-            _faction.defenderWeights.AddElement(new AreaCharacterClass() { className = defenderClass }, weight);
-            UpdateDefenderWeights();
-        }
-    }
-    private bool HasDefenderWeightForClass(string className) {
-        foreach (KeyValuePair<AreaCharacterClass, int> kvp in _faction.defenderWeights.dictionary) {
-            if (kvp.Key.className.Equals(className)) {
-                return true;
-            }
-        }
-        return false;
-    }
+    //private void LoadDefenderChoices() {
+    //    defenderClassDropdown.ClearOptions();
+    //    defenderClassDropdown.AddOptions(Utilities.GetFileChoices(Utilities.dataPath + "CharacterClasses/", "*.json"));
+    //}
+    //private void UpdateDefenderWeights() {
+    //    Utilities.DestroyChildren(defendersScrollView.content);
+    //    foreach (KeyValuePair<AreaCharacterClass, int> kvp in _faction.defenderWeights.dictionary) {
+    //        GameObject itemGO = GameObject.Instantiate(defenderWeightItemPrefab, defendersScrollView.content);
+    //        DefenderWeightItem item = itemGO.GetComponent<DefenderWeightItem>();
+    //        item.SetDefender(_faction, kvp.Key, kvp.Value);
+    //    }
+    //}
+    //public void AddDefenderWeight() {
+    //    string defenderClass = defenderClassDropdown.options[defenderClassDropdown.value].text;
+    //    int weight = 0;
+    //    if (HasDefenderWeightForClass(defenderClass)) {
+    //        WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Invalid defender class!", "Cannot add defender class " + defenderClass + " because landmark already has that type in it's defender weights");
+    //    } else if (!System.Int32.TryParse(defenderWeightField.text, out weight)) {
+    //        WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Invalid weight!", "Please enter a weight value!");
+    //    } else {
+    //        weight = Mathf.Max(0, weight);
+    //        _faction.defenderWeights.AddElement(new AreaCharacterClass() { className = defenderClass }, weight);
+    //        UpdateDefenderWeights();
+    //    }
+    //}
+    //private bool HasDefenderWeightForClass(string className) {
+    //    foreach (KeyValuePair<AreaCharacterClass, int> kvp in _faction.defenderWeights.dictionary) {
+    //        if (kvp.Key.className.Equals(className)) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
     #endregion
 }
