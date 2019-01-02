@@ -21,6 +21,10 @@ public class DropItem : Interaction {
 
     private void StartRewardEffect(InteractionState state) {
         //**Mechanics**: Character drops the item it is holding and leaves it at the location.
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(null, _characterInvolved.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+        }
+        state.AddLogFiller(new LogFiller(null, _characterInvolved.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
         _characterInvolved.DropToken(interactable);
     }
 }
