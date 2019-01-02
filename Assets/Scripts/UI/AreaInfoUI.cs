@@ -24,7 +24,6 @@ public class AreaInfoUI : UIMenu {
     [SerializeField] private GameObject charactersGO;
     [SerializeField] private GameObject logsGO;
     [SerializeField] private GameObject[] connectorsGO;
-    [SerializeField] private Sprite[] areaCenterSprites;
     [SerializeField] private Image areaPortrait;
 
     [Space(10)]
@@ -302,7 +301,7 @@ public class AreaInfoUI : UIMenu {
         //} else {
         //    landmarkTypeLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(activeArea.coreTile.landmarkOnTile.specificLandmarkType.ToString());
         //}
-        areaCenterImage.sprite = GetAreaCenterSprite(activeArea.name);
+        areaCenterImage.sprite = UIManager.Instance.GetAreaCenterSprite(activeArea.name);
         UpdateSupplies();
 
 
@@ -328,14 +327,6 @@ public class AreaInfoUI : UIMenu {
     }
     private void UpdateSupplies() {
         suppliesNameLbl.text = activeArea.suppliesInBank.ToString();
-    }
-    private Sprite GetAreaCenterSprite(string name) {
-        for (int i = 0; i < areaCenterSprites.Length; i++) {
-            if(areaCenterSprites[i].name.ToLower() == name.ToLower()) {
-                return areaCenterSprites[i];
-            }
-        }
-        return null;
     }
     #endregion
 

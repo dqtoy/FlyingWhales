@@ -52,6 +52,10 @@ public class UIManager : MonoBehaviour {
     public CharacterPortrait[] detailedInfoPortraits;
 
     [Space(10)]
+    [Header("Area Info")]
+    public Sprite[] areaCenterSprites;
+
+    [Space(10)]
     [Header("Popup Message Box")]
     [SerializeField] private PopupMessageBox popupMessageBox;
 
@@ -738,6 +742,14 @@ public class UIManager : MonoBehaviour {
         if (areaInfoUI.isShowing) {
             areaInfoUI.UpdateAreaInfo();
         }
+    }
+    public Sprite GetAreaCenterSprite(string name) {
+        for (int i = 0; i < areaCenterSprites.Length; i++) {
+            if (areaCenterSprites[i].name.ToLower() == name.ToLower()) {
+                return areaCenterSprites[i];
+            }
+        }
+        return null;
     }
     #endregion
     #region Landmark Info

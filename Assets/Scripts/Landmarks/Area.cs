@@ -612,23 +612,22 @@ public class Area {
         attackCharacters = characters;
     }
     public void Death() {
-        if (owner != FactionManager.Instance.neutralFaction) {
-            if (owner != null) {
-                for (int i = 0; i < areaResidents.Count; i++) {
-                    Character resident = areaResidents[i];
-                    if (resident.id != resident.faction.leader.id && resident.faction.id == owner.id && resident.specificLocation.tileLocation.areaOfTile.id == id) {
-                        resident.Death();
-                    }
+        if (owner != null) {
+            for (int i = 0; i < areaResidents.Count; i++) {
+                Character resident = areaResidents[i];
+                if (!resident.currentParty.icon.isTravelling && resident.id != resident.faction.leader.id && resident.faction.id == owner.id && resident.specificLocation.tileLocation.areaOfTile.id == id) {
+                    resident.Death();
                 }
-                LandmarkManager.Instance.UnownArea(this);
             }
-            FactionManager.Instance.neutralFaction.OwnArea(this);
+            LandmarkManager.Instance.UnownArea(this);
+        }
 
-            if (previousOwner != null && previousOwner.leader is Character) {
-                Character leader = previousOwner.leader as Character;
-                if(leader.specificLocation.tileLocation.areaOfTile.id == id && leader.homeLandmark.tileLocation.areaOfTile.id == id) {
-                    leader.Death();
-                }
+        FactionManager.Instance.neutralFaction.OwnArea(this);
+
+        if (previousOwner != null && previousOwner.leader != null && previousOwner.leader is Character) {
+            Character leader = previousOwner.leader as Character;
+            if (!leader.currentParty.icon.isTravelling && leader.specificLocation.tileLocation.areaOfTile.id == id && leader.homeLandmark.tileLocation.areaOfTile.id == id) {
+                leader.Death();
             }
         }
     }

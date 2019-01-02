@@ -18,6 +18,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI suppliesNameLbl;
     [SerializeField] private FactionEmblem factionEmblem;
     [SerializeField] private Image healthProgressBar;
+    //[SerializeField] private Image areaCenterImage;
     [SerializeField] private GameObject defendersGO;
     [SerializeField] private GameObject charactersGO;
     [SerializeField] private GameObject logsGO;
@@ -174,6 +175,8 @@ public class PlayerLandmarkInfoUI : UIMenu {
         } else {
             areaPortrait.gameObject.SetActive(false);
         }
+
+        //areaCenterImage.sprite = UIManager.Instance.GetAreaCenterSprite("Demonic Portal");
 
         UpdateHP();
     }
