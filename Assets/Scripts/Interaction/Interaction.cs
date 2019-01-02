@@ -242,6 +242,10 @@ public class Interaction {
         }
     }
     public void TimedOutRunDefault() {
+        if(_characterInvolved != null && _characterInvolved.isDead) {
+            EndInteraction();
+            return;
+        }
         if (!_hasInitialized) {
             Initialize();
         }
