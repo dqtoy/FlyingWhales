@@ -154,7 +154,8 @@ public class ImproveRelationsEvent : Interaction {
     #region Reward Effect
     private void DisruptedImproveRelationsSuccessRewardEffect(InteractionState state) {
         //**Mechanics**: Relationship +1 on the two factions
-        _characterInvolved.faction.AdjustRelationshipFor(targetFaction, 1);
+        AdjustFactionsRelationship(_characterInvolved.faction, targetFaction, 1, state);
+        //_characterInvolved.faction.AdjustRelationshipFor(targetFaction, 1);
         //**Level Up**: Diplomat Character +1, Diplomat Minion +1 (if assisted)
         _characterInvolved.LevelUp();
         investigatorMinion.LevelUp();
@@ -165,7 +166,7 @@ public class ImproveRelationsEvent : Interaction {
         FactionRelationship rel = _characterInvolved.faction.GetRelationshipWith(targetFaction);
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2));
-        state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(rel.relationshipStatus.ToString()), LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(rel.relationshipStatus.ToString()), LOG_IDENTIFIER.STRING_1));
     }
     private void DisruptedImproveRelationsFailRewardEffect(InteractionState state) {
         //**Level Up**: Diplomat Minion +1
@@ -179,7 +180,8 @@ public class ImproveRelationsEvent : Interaction {
     }
     private void DisruptedImproveRelationsCriticallyFailRewardEffect(InteractionState state) {
         //**Mechanics**: Relationship -1 on the two factions
-        _characterInvolved.faction.AdjustRelationshipFor(targetFaction, -1);
+        AdjustFactionsRelationship(_characterInvolved.faction, targetFaction, -1, state);
+        //_characterInvolved.faction.AdjustRelationshipFor(targetFaction, -1);
         //**Level Up**: Diplomat Minion +1
         investigatorMinion.LevelUp();
         if (state.descriptionLog != null) {
@@ -191,7 +193,8 @@ public class ImproveRelationsEvent : Interaction {
     }
     private void AssistedImproveRelationsSuccessRewardEffect(InteractionState state) {
         //**Mechanics**: Relationship +1 on the two factions
-        _characterInvolved.faction.AdjustRelationshipFor(targetFaction, 1);
+        AdjustFactionsRelationship(_characterInvolved.faction, targetFaction, 1, state);
+        //_characterInvolved.faction.AdjustRelationshipFor(targetFaction, 1);
         //**Level Up**: Diplomat Character +1, Diplomat Minion +1 (if assisted)
         _characterInvolved.LevelUp();
         investigatorMinion.LevelUp();
@@ -202,7 +205,7 @@ public class ImproveRelationsEvent : Interaction {
         FactionRelationship rel = _characterInvolved.faction.GetRelationshipWith(targetFaction);
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2));
-        state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(rel.relationshipStatus.ToString()), LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(rel.relationshipStatus.ToString()), LOG_IDENTIFIER.STRING_1));
     }
     private void AssistedImproveRelationsFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
@@ -214,7 +217,8 @@ public class ImproveRelationsEvent : Interaction {
     }
     private void AssistedImproveRelationsCriticallyFailRewardEffect(InteractionState state) {
         //**Mechanics**: Relationship -1 on the two factions
-        _characterInvolved.faction.AdjustRelationshipFor(targetFaction, -1);
+        AdjustFactionsRelationship(_characterInvolved.faction, targetFaction, -1, state);
+        //_characterInvolved.faction.AdjustRelationshipFor(targetFaction, -1);
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
             state.descriptionLog.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2);
@@ -224,7 +228,8 @@ public class ImproveRelationsEvent : Interaction {
     }
     private void NormalImproveRelationsSuccessRewardEffect(InteractionState state) {
         //**Mechanics**: Relationship +1 on the two factions
-        _characterInvolved.faction.AdjustRelationshipFor(targetFaction, 1);
+        AdjustFactionsRelationship(_characterInvolved.faction, targetFaction, 1, state);
+        //_characterInvolved.faction.AdjustRelationshipFor(targetFaction, 1);
         //**Level Up**: Diplomat Character +1
         _characterInvolved.LevelUp();
         if (state.descriptionLog != null) {
@@ -234,7 +239,7 @@ public class ImproveRelationsEvent : Interaction {
         FactionRelationship rel = _characterInvolved.faction.GetRelationshipWith(targetFaction);
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2));
-        state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(rel.relationshipStatus.ToString()), LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(rel.relationshipStatus.ToString()), LOG_IDENTIFIER.STRING_1));
     }
     private void NormalImproveRelationsFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
@@ -246,7 +251,8 @@ public class ImproveRelationsEvent : Interaction {
     }
     private void NormalImproveRelationsCriticallyFailRewardEffect(InteractionState state) {
         //**Mechanics**: Relationship -1 on the two factions
-        _characterInvolved.faction.AdjustRelationshipFor(targetFaction, -1);
+        AdjustFactionsRelationship(_characterInvolved.faction, targetFaction, -1, state);
+        //_characterInvolved.faction.AdjustRelationshipFor(targetFaction, -1);
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
             state.descriptionLog.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2);
