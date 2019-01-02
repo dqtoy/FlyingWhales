@@ -352,6 +352,13 @@ public class Interaction {
         factionRelationshipLog.AddToFillers(new LogFiller(faction2, faction2.name, LOG_IDENTIFIER.FACTION_2));
         factionRelationshipLog.AddToFillers(new LogFiller(null,
             Utilities.NormalizeString(faction1.GetRelationshipWith(faction2).relationshipStatus.ToString()), LOG_IDENTIFIER.OTHER));
+        if (_characterInvolved != null) {
+            factionRelationshipLog.AddToFillers(new LogFiller(_characterInvolved, _characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        }
+        if (investigatorMinion != null) {
+            factionRelationshipLog.AddToFillers(new LogFiller(investigatorMinion, investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
+        }
+        factionRelationshipLog.AddToFillers(new LogFiller(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
         factionRelationshipLog.SetFillerLockedState(true);
         state.AddOtherLog(factionRelationshipLog);
     }
