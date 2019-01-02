@@ -573,16 +573,14 @@ public class InteractionManager : MonoBehaviour {
     }
     private Area GetAttackTarget(Area areaToAttack) {
         Area targetArea = null;
-        List<Faction> enemyFaction = new List<Faction>();
         List<Area> enemyAreas = new List<Area>();
         foreach (KeyValuePair<Faction, FactionRelationship> kvp in areaToAttack.owner.relationships) {
             FactionRelationship factionRelationship = kvp.Value;
-            if(factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY) {
-                enemyFaction.Add(kvp.Key);
+            if(kvp.Key.isActive && factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY) {
                 enemyAreas.AddRange(kvp.Key.ownedAreas);
             }
         }
-        if(enemyFaction.Count > 0) {
+        if(enemyAreas.Count > 0) {
             //If at war with other factions
             List<Character> residentsAtArea = new List<Character>();
             for (int i = 0; i < areaToAttack.areaResidents.Count; i++) {
