@@ -938,33 +938,33 @@ public class Area {
     public void SetInitialDefenderGroups(int initialDefenderGroups) {
         this.initialDefenderGroups = initialDefenderGroups;
     }
-    private void GenerateInitialDefenders() {
-        //This will generate an empty defender group
-        AddDefenderGroup(new DefenderGroup());
-        //if (initialDefenderGroups == 0) {
-        //    return;
-        //}
-        //WeightedDictionary<AreaCharacterClass> defenderWeights = GetClassWeights();
-        ////if (this.owner != null && this.owner.defenderWeights.GetTotalOfWeights() > 0) {
-        ////    defenderWeights = this.owner.defenderWeights;
-        ////} else {
-        ////    defenderWeights = LandmarkManager.Instance.GetDefaultDefenderWeights(race);
-        ////}
-        //if (defenderWeights == null || defenderWeights.GetTotalOfWeights() <= 0) {
-        //    return;
-        //}
-        //for (int i = 0; i < initialDefenderGroups; i++) {
-        //    DefenderGroup newGroup = new DefenderGroup();
-        //    AddDefenderGroup(newGroup);
-        //    int defendersToGenerate = 4;
-        //    for (int j = 0; j < defendersToGenerate; j++) {
-        //        string chosenClass = defenderWeights.PickRandomElementGivenWeights().className;
-        //        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass, raceType, Utilities.GetRandomGender(), owner, coreTile.landmarkOnTile);
-        //        newGroup.AddCharacterToGroup(createdCharacter);
-        //        //TODO: Add Level
-        //    }
-        //}
-    }
+    //private void GenerateInitialDefenders() {
+    //    //This will generate an empty defender group
+    //    AddDefenderGroup(new DefenderGroup());
+    //    //if (initialDefenderGroups == 0) {
+    //    //    return;
+    //    //}
+    //    //WeightedDictionary<AreaCharacterClass> defenderWeights = GetClassWeights();
+    //    ////if (this.owner != null && this.owner.defenderWeights.GetTotalOfWeights() > 0) {
+    //    ////    defenderWeights = this.owner.defenderWeights;
+    //    ////} else {
+    //    ////    defenderWeights = LandmarkManager.Instance.GetDefaultDefenderWeights(race);
+    //    ////}
+    //    //if (defenderWeights == null || defenderWeights.GetTotalOfWeights() <= 0) {
+    //    //    return;
+    //    //}
+    //    //for (int i = 0; i < initialDefenderGroups; i++) {
+    //    //    DefenderGroup newGroup = new DefenderGroup();
+    //    //    AddDefenderGroup(newGroup);
+    //    //    int defendersToGenerate = 4;
+    //    //    for (int j = 0; j < defendersToGenerate; j++) {
+    //    //        string chosenClass = defenderWeights.PickRandomElementGivenWeights().className;
+    //    //        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass, raceType, Utilities.GetRandomGender(), owner, coreTile.landmarkOnTile);
+    //    //        newGroup.AddCharacterToGroup(createdCharacter);
+    //    //        //TODO: Add Level
+    //    //    }
+    //    //}
+    //}
     public void AddDefenderGroup(DefenderGroup defenderGroup) {
         //if (defenderGroups.Count < maxDefenderGroups) {
             defenderGroups.Add(defenderGroup);
@@ -1017,18 +1017,18 @@ public class Area {
                 defenderGroup = new DefenderGroup();
                 AddDefenderGroup(defenderGroup);
             }
-            if(candidates.Count > 0) {
+            if (candidates.Count > 0) {
                 List<int> frontlineIndexes = new List<int>();
                 List<int> backlineIndexes = new List<int>();
                 for (int i = 0; i < candidates.Count; i++) {
-                    if(candidates[i].characterClass.combatPosition == COMBAT_POSITION.FRONTLINE) {
+                    if (candidates[i].characterClass.combatPosition == COMBAT_POSITION.FRONTLINE) {
                         frontlineIndexes.Add(i);
                     } else {
                         backlineIndexes.Add(i);
                     }
                 }
                 for (int i = 0; i < 2; i++) {
-                    if(frontlineIndexes.Count > 0) {
+                    if (frontlineIndexes.Count > 0) {
                         int index = UnityEngine.Random.Range(0, frontlineIndexes.Count);
                         defenderGroup.AddCharacterToGroup(candidates[frontlineIndexes[index]]);
                         interactionCandidates.Remove(candidates[frontlineIndexes[index]]);

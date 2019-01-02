@@ -52,6 +52,7 @@ public class ConsoleMenu : UIMenu {
             {"/log_location_history", LogLocationHistory  },
             {"/log_supply_history", LogSupplyHistory  },
             {"/adjust_area_supply", AdjustSupply  },
+            {"/get_characters_with_item", GetCharactersWithItem },
         };
     }
 
@@ -608,7 +609,7 @@ public class ConsoleMenu : UIMenu {
         } else {
             character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
         }
-        
+
         ATTRIBUTE tag = (ATTRIBUTE)Enum.Parse(typeof(ATTRIBUTE), parameters[1]);
 
         if (character == null) {
@@ -721,6 +722,38 @@ public class ConsoleMenu : UIMenu {
             logSummary += "\n" + logs[i];
         }
         AddSuccessMessage(logSummary);
+    }
+    private void GetCharactersWithItem(string[] parameters) {
+        if (parameters.Length < 2) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+        string itemParameterString = string.Empty;
+        for (int i = 1; i < parameters.Length; i++) {
+            itemParameterString += parameters[i] + " ";
+        }
+        itemParameterString = itemParameterString.Trim();
+
+        List<Character> characters = new List<Character>();
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character currCharacter = CharacterManager.Instance.allCharacters[i];
+            if (currCharacter.tokenInInventory != null && currCharacter.tokenInInventory.tokenName.ToLower() == itemParameterString.ToLower()) {
+                characters.Add(currCharacter);
+            }
+        }
+
+        string summary = "Characters that have " + itemParameterString + ": ";
+        if (characters.Count == 0) {
+            summary += "\nNONE";
+        } else {
+            for (int i = 0; i < characters.Count; i++) {
+                summary += "\n" + characters[i].name;
+            }
+        }
+        
+
+        AddSuccessMessage(summary);
     }
     #endregion
 

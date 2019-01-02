@@ -77,6 +77,7 @@ public class DefenderGroup {
     }
 
     private void GroupDeath() {
+        Debug.Log(GameManager.Instance.TodayLogString() + "Removing defender group from " + defendingArea.name + ". " + this.party.name);
         defendingArea.RemoveDefenderGroup(this);
         Messenger.RemoveListener<Party>(Signals.PARTY_DIED, OnPartyDied);
     }

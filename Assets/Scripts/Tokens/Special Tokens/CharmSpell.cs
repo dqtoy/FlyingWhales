@@ -48,7 +48,9 @@ public class CharmSpell : SpecialToken {
             Area location = sourceCharacter.ownParty.specificLocation.tileLocation.areaOfTile;
             for (int i = 0; i < location.charactersAtLocation.Count; i++) {
                 Character currCharacter = location.charactersAtLocation[i];
-                if (currCharacter.id != sourceCharacter.id && currCharacter.faction.id != sourceCharacter.faction.id && !currCharacter.isLeader) {
+                if (currCharacter.id != sourceCharacter.id 
+                    && (currCharacter.isFactionless || currCharacter.faction.id != sourceCharacter.faction.id) 
+                    && !currCharacter.isLeader) {
                     return true;
                 }
             }

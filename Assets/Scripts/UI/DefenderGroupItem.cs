@@ -35,20 +35,27 @@ public class DefenderGroupItem : PooledObject {
     }
 
     public void UpdateSlots() {
-        for (int i = 0; i < slots.Length; i++) {
-            SlotItem currItem = slots[i];
-            Character currCharacter = defender.party.characters.ElementAtOrDefault(i);
-            if (currCharacter == null) {
-                currItem.ClearSlot();
-            } else {
-                currItem.PlaceObject(currCharacter);
-                if (defender.defendingArea.id == PlayerManager.Instance.player.playerArea.id) {
-                    currItem.draggable.SetDraggable(true);
-                    currItem.dropZone.SetEnabledState(true);
+        if (defender.party == null) { //this is for when the defender party has been wiped out
+            for (int i = 0; i < slots.Length; i++) {
+                SlotItem currItem = slots[i];
+                currItem.ClearSlot(true);
+            }
+        } else {
+            for (int i = 0; i < slots.Length; i++) {
+                SlotItem currItem = slots[i];
+                Character currCharacter = defender.party.characters.ElementAtOrDefault(i);
+                if (currCharacter == null) {
+                    currItem.ClearSlot();
                 } else {
-                    currItem.draggable.SetDraggable(false);
-                    currItem.dropZone.SetEnabledState(false);
-                    //currItem.portrait.UpdateUnknownVisual();
+                    currItem.PlaceObject(currCharacter);
+                    if (defender.defendingArea.id == PlayerManager.Instance.player.playerArea.id) {
+                        currItem.draggable.SetDraggable(true);
+                        currItem.dropZone.SetEnabledState(true);
+                    } else {
+                        currItem.draggable.SetDraggable(false);
+                        currItem.dropZone.SetEnabledState(false);
+                        //currItem.portrait.UpdateUnknownVisual();
+                    }
                 }
             }
         }

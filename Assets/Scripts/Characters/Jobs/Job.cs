@@ -233,6 +233,9 @@ public class Job {
         //When a raid succeeds, the amount of Supply obtained is based on character level.
         //5% to 15% of location's supply 
         //+1% every other level starting at level 6
+        if (character.homeLandmark == null) {
+            throw new System.Exception(GameManager.Instance.TodayLogString() + character.name + " does not have a home, but GetSupplyObtained needs one to function.");
+        }
         Area characterHomeArea = character.homeLandmark.tileLocation.areaOfTile;
         //Area targetArea = character.specificLocation.tileLocation.areaOfTile;
         int supplyObtainedPercent = Random.Range(5, 16);
