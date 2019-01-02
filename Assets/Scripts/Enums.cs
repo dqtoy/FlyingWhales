@@ -1117,6 +1117,7 @@ public enum INTERACTION_TYPE {
     FOUND_MAGUS,
     FOUND_BESTALIA,
     DROP_ITEM,
+    CHARM_ACTION,
 }
 public enum REWARD {
     SUPPLY,
