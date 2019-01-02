@@ -70,12 +70,12 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private Color oddRelationshipColor;
     [SerializeField] private GameObject relationsMenuCover;
 
-    [Space(10)]
-    [Header("Info")]
-    [SerializeField] private SecretItem[] secretItems;
-    [SerializeField] private TokenItem[] tokenItems;
-    [SerializeField] private HiddenDesireItem hiddenDesireItem;
-    [SerializeField] private GameObject infoMenuCover;
+    //[Space(10)]
+    //[Header("Info")]
+    //[SerializeField] private SecretItem[] secretItems;
+    //[SerializeField] private TokenItem[] tokenItems;
+    //[SerializeField] private HiddenDesireItem hiddenDesireItem;
+    //[SerializeField] private GameObject infoMenuCover;
 
     //[Space(10)]
     //[Header("Content")]
@@ -243,7 +243,7 @@ public class CharacterInfoUI : UIMenu {
     #endregion
 
     private void SetCoversState(bool state) {
-        infoMenuCover.SetActive(state);
+        //infoMenuCover.SetActive(state);
         itemsMenuCover.SetActive(state);
         relationsMenuCover.SetActive(state);
         //logsMenuCover.SetActive(state);

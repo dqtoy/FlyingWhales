@@ -54,10 +54,10 @@ public class PatrolAction : Interaction {
         CreateActionOptions(startState);
         revealedPatrollerKilledCharacter.SetEffect(() => RevealedPatrollerKilledCharacter(revealedPatrollerKilledCharacter));
         revealedPatrollerInjuredCharacter.SetEffect(() => RevealedPatrollerInjuredCharacter(revealedPatrollerInjuredCharacter));
-        revealedCharacterKilledPatroller.SetEffect(() => RevealedCharacterKilledPatroller(revealedPatrollerInjuredCharacter));
+        revealedCharacterKilledPatroller.SetEffect(() => RevealedCharacterKilledPatroller(revealedCharacterKilledPatroller));
         revealedCharacterInjuredPatroller.SetEffect(() => RevealedCharacterInjuredPatroller(revealedCharacterInjuredPatroller));
         pursuadedPatrolStopped.SetEffect(() => PursuadedPatrolStopped(pursuadedPatrolStopped));
-        pursuadedPatrollerKilledCharacter.SetEffect(() => PursuadedPatrollerKilledCharacter(pursuadedPatrolStopped));
+        pursuadedPatrollerKilledCharacter.SetEffect(() => PursuadedPatrollerKilledCharacter(pursuadedPatrollerKilledCharacter));
         pursuadedPatrollerInjuredCharacter.SetEffect(() => PursuadedPatrollerInjuredCharacter(pursuadedPatrollerInjuredCharacter));
         pursuadedCharacterKilledPatroller.SetEffect(() => PursuadedCharacterKilledPatroller(pursuadedCharacterKilledPatroller));
         pursuadedCharacterInjuredPatroller.SetEffect(() => PursuadedCharacterInjuredPatroller(pursuadedCharacterInjuredPatroller));

@@ -53,6 +53,7 @@ public class ConsoleMenu : UIMenu {
             {"/log_supply_history", LogSupplyHistory  },
             {"/adjust_area_supply", AdjustSupply  },
             {"/get_characters_with_item", GetCharactersWithItem },
+            {"/check_characters_data", CheckCharactersData },
         };
     }
 
@@ -754,6 +755,13 @@ public class ConsoleMenu : UIMenu {
         
 
         AddSuccessMessage(summary);
+    }
+    private void CheckCharactersData(string[] parameters) {
+        if (parameters.Length < 2) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
     }
     #endregion
 

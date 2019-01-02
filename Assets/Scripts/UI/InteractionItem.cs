@@ -49,6 +49,12 @@ public class InteractionItem : MonoBehaviour {
     [SerializeField] private CharacterPortrait characterPortrait;
     [SerializeField] private FactionEmblem characterFactionEmblem;
 
+    [Space(10)]
+    [Header("Token Choices")]
+    [SerializeField] private GameObject tokenChoicesGO;
+    [SerializeField] private ScrollRect tokenChoicesScrollView;
+    [SerializeField] private GameObject tokenItemPrefab;
+
     private bool _isToggled;
 
     private int currentNeededObjectIndex;
@@ -211,6 +217,7 @@ public class InteractionItem : MonoBehaviour {
                 ////    slotItems[i].gameObject.SetActive(false);
                 ////}
                 //confirmBtn.interactable = true;
+                HideChoicesMenu();
             } else {
                 //needs slots
                 //assignmentGO.SetActive(true);
@@ -223,7 +230,8 @@ public class InteractionItem : MonoBehaviour {
                 //}
                 LoadSlotData();
                 //confirmBtn.interactable = false;
-                UpdateSideMenu();
+                UpdateChoicesMenu();
+                //UpdateSideMenu();
             }
         }
     }
@@ -236,11 +244,11 @@ public class InteractionItem : MonoBehaviour {
         } else if (neededType == typeof(LocationToken)) {
             descriptionAssignment.text = "Requires a Location Intel to be dragged from the list.";
         } else if (neededType == typeof(CharacterToken)) {
-            descriptionAssignment.text = "Requires a Character Intel to be dragged from the list.";
+            descriptionAssignment.text = "Requires a Character Intel to be picked from the list.";
         } else if (neededType == typeof(Minion)) {
-            descriptionAssignment.text = "Requires a Demon Minion to be dragged from the list.";
+            descriptionAssignment.text = "Requires a Demon Minion to be picked from the list.";
         } else if (neededType == typeof(Character)) {
-            descriptionAssignment.text = "Requires a Demon Minion/Character to be dragged from the list.";
+            descriptionAssignment.text = "Requires a Demon Minion/Character to be picked from the list.";
         }
         //for (int i = 0; i < slotItems.Length; i++) {
         //    SlotItem currItem = slotItems[i];
@@ -259,7 +267,7 @@ public class InteractionItem : MonoBehaviour {
                 _interaction.currentState.EndResult();
             }
         } else {
-            _currentSelectedActionOption.AddAssignedObject(slotItem.placedObject);
+            //_currentSelectedActionOption.AddAssignedObject(slotItem.placedObject); //Note: Removed this because assigned objects are no longer being dragged
             //check if needed objects are done
             if (_currentSelectedActionOption.neededObjects.Count > currentNeededObjectIndex + 1) {
                 //there are still needed objects
@@ -268,7 +276,8 @@ public class InteractionItem : MonoBehaviour {
                 //nextSlotItem.gameObject.SetActive(true);
                 currentNeededObjectIndex++;
                 LoadSlotData();
-                UpdateSideMenu();
+                UpdateChoicesMenu();
+                //UpdateSideMenu();
             } else {
                 ResetSideMenu();
                 //no more needed objects
@@ -335,6 +344,89 @@ public class InteractionItem : MonoBehaviour {
         //}
     }
 
+    #region Choices Menu
+    private void UpdateChoicesMenu() {
+        System.Type neededObject = _currentSelectedActionOption.neededObjects[currentNeededObjectIndex];
+        if (neededObject == typeof(CharacterToken)) {
+            LoadCharacterChoices(_currentSelectedActionOption);
+        } else if (neededObject == typeof(Minion)) {
+            LoadMinionChoices(_currentSelectedActionOption);
+        }
+        //TODO: Add Loading for Locations and Factions
+        tokenChoicesGO.SetActive(true);
+    }
+    public void HideChoicesMenu() {
+        tokenChoicesGO.SetActive(false);
+    }
+    private void LoadCharacterChoices(ActionOption option) {
+        List<Character> validCharacters = new List<Character>();
+        if (option.neededObjectsChecker == null) {
+            validCharacters.AddRange(CharacterManager.Instance.allCharacters); //means that all characters can be dragged
+        } else {
+            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                Character currCharacter = CharacterManager.Instance.allCharacters[i];
+                bool isCharacterValid = true;
+                for (int j = 0; j < option.neededObjectsChecker.Count; j++) {
+                    ActionOptionNeededObjectChecker currFilter = option.neededObjectsChecker[j];
+                    if (!currFilter.IsMatch(currCharacter)) {
+                        isCharacterValid = false;
+                        break;
+                    }
+                }
+                if (isCharacterValid) {
+                    validCharacters.Add(currCharacter);
+                }
+            }
+        }
+
+        Utilities.DestroyChildren(tokenChoicesScrollView.content);
+        for (int i = 0; i < validCharacters.Count; i++) {
+            Character currCharacter = validCharacters[i];
+            GameObject characterGO = UIManager.Instance.InstantiateUIObject(tokenItemPrefab.name, tokenChoicesScrollView.content);
+            TokenItem item = characterGO.GetComponent<TokenItem>();
+            item.SetClickAction(OnChooseToken);
+            item.SetObject(currCharacter.characterToken);
+        }
+    }
+    private void LoadMinionChoices(ActionOption option) {
+        List<Minion> validMinions = new List<Minion>();
+        if (option.neededObjectsChecker == null) {
+            validMinions.AddRange(PlayerManager.Instance.player.minions.Where(x => x.isEnabled)); //means that all characters can be dragged
+        } else {
+            List<Minion> ableMinions = PlayerManager.Instance.player.minions.Where(x => x.isEnabled).ToList();
+            for (int i = 0; i < ableMinions.Count; i++) {
+                Minion currMinion = ableMinions[i];
+                bool isMinionValid = true;
+                for (int j = 0; j < option.neededObjectsChecker.Count; j++) {
+                    ActionOptionNeededObjectChecker currFilter = option.neededObjectsChecker[j];
+                    if (!currFilter.IsMatch(currMinion.character)) {
+                        isMinionValid = false;
+                        break;
+                    }
+                }
+                if (isMinionValid) {
+                    validMinions.Add(currMinion);
+                }
+            }
+        }
+
+        Utilities.DestroyChildren(tokenChoicesScrollView.content);
+        for (int i = 0; i < validMinions.Count; i++) {
+            Minion currMinion = validMinions[i];
+            GameObject characterGO = UIManager.Instance.InstantiateUIObject(tokenItemPrefab.name, tokenChoicesScrollView.content);
+            TokenItem item = characterGO.GetComponent<TokenItem>();
+            item.SetClickAction(OnChooseToken);
+            item.SetObject(currMinion);
+        }
+    }
+    private void OnChooseToken(object obj) {
+        HideChoicesMenu();
+        _currentSelectedActionOption.AddAssignedObject(obj);
+        OnClickConfirm();
+    }
+    #endregion
+
+
     private void UpdateSideMenu() {
         System.Type neededObject = _currentSelectedActionOption.neededObjects[currentNeededObjectIndex];
         if (neededObject == typeof(FactionToken)) {
@@ -380,7 +472,7 @@ public class InteractionItem : MonoBehaviour {
         confirmBtn.gameObject.SetActive(true);
         confirmBtn.interactable = isInteractable;
         confirmBtnRect.anchoredPosition = confirmBtnPosNoSlot;
-        slotItem.gameObject.SetActive(false);
+        //slotItem.gameObject.SetActive(false);
         descriptionAssignment.gameObject.SetActive(false);
     }
     private void ShowConfirmButtonWithSlot(bool isInteractable) {
@@ -388,14 +480,14 @@ public class InteractionItem : MonoBehaviour {
         confirmBtn.gameObject.SetActive(true);
         confirmBtn.interactable = isInteractable;
         confirmBtnRect.anchoredPosition = confirmBtnPosWithSlot;
-        slotItem.gameObject.SetActive(true);
+        //slotItem.gameObject.SetActive(true);
         descriptionAssignment.gameObject.SetActive(false);
     }
     private void ShowDescriptionAssignment() {
         assignmentGO.SetActive(true);
         confirmBtn.gameObject.SetActive(false);
         descriptionAssignment.gameObject.SetActive(true);
-        slotItem.gameObject.SetActive(true);
+        //slotItem.gameObject.SetActive(true);
     }
 
     public void ShowObjectInfo(object obj) {

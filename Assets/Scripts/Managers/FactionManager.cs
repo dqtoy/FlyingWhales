@@ -286,7 +286,9 @@ public class FactionManager : MonoBehaviour {
         return null;
     }
     public void TransferCharacter(Character character, Faction faction, BaseLandmark newHome) {
-        character.faction.RemoveCharacter(character);
+        if (character.faction != null) {
+            character.faction.RemoveCharacter(character);
+        }
         faction.AddNewCharacter(character);
         character.homeLandmark.RemoveCharacterHomeOnLandmark(character);
         newHome.AddCharacterHomeOnLandmark(character);
