@@ -263,6 +263,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.DROP_ITEM:
                 createdInteraction = new DropItem(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_CHARM:
+                createdInteraction = new MoveToCharm(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -378,8 +381,8 @@ public class InteractionManager : MonoBehaviour {
                         Area currArea = LandmarkManager.Instance.allAreas[i];
                         if (currArea.owner != null 
                             && currArea.owner.isActive 
-                            && currArea.owner.id != character.specificLocation.tileLocation.areaOfTile.owner.id && currArea.owner.id != character.faction.id) {
-                            relationship = character.specificLocation.tileLocation.areaOfTile.owner.GetRelationshipWith(currArea.owner);
+                            && currArea.owner.id != character.faction.id) {
+                            relationship = character.faction.GetRelationshipWith(currArea.owner);
                             if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
                                 return true;
                             }
@@ -458,6 +461,9 @@ public class InteractionManager : MonoBehaviour {
                 if(character.race == RACE.ELVES || character.race == RACE.HUMANS) {
                     for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
                         Faction faction = FactionManager.Instance.allFactions[i];
+                        if (faction.ownedAreas.Count == 0) { //skip factions that don't have owned areas
+                            continue; //skip
+                        }
                         if (faction.id != PlayerManager.Instance.player.playerFaction.id && faction.id != character.faction.id && faction.isActive) {
                             relationship = character.faction.GetRelationshipWith(faction);
                             if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY) {

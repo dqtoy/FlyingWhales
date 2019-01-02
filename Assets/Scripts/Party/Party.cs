@@ -252,10 +252,6 @@ public class Party {
         return false;
     }
     public void RemoveCharacter(Character character) {
-        //bool isCharacterMain = false;
-        //if(mainCharacter == icharacter) {
-        //    isCharacterMain = true;
-        //}
         if(_owner == character) {
             return;
         }
@@ -263,12 +259,12 @@ public class Party {
             character.OnRemovedFromParty();
             RemoveCurrentBuffsFromCharacter(character);
             character.ownParty.icon.transform.position = this.specificLocation.tileLocation.transform.position;
-            if (this.specificLocation is BaseLandmark) {
-                this.specificLocation.AddCharacterToLocation(character.ownParty);
-            } else {
-                //icharacter.ownParty.icon.SetAIPathPosition(this.specificLocation.tileLocation.transform.position);
-                character.ownParty.SetSpecificLocation(this.specificLocation);
-                //icharacter.ownParty.icon.SetVisualState(true);
+            if (!character.isDead) {
+                if (this.specificLocation is BaseLandmark) {
+                    this.specificLocation.AddCharacterToLocation(character.ownParty);
+                } else {
+                    character.ownParty.SetSpecificLocation(this.specificLocation);
+                }
             }
             Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
 
