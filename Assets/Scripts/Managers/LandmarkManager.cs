@@ -588,7 +588,7 @@ public class LandmarkManager : MonoBehaviour {
                 if (areaData.ownerID != -1) {
                     Faction owner = FactionManager.Instance.GetFactionBasedOnID(areaData.ownerID);
                     if (owner != null) {
-                        OwnArea(owner, newArea);
+                        OwnArea(owner, owner.raceType, newArea);
                     }
                 }
 #if !WORLD_CREATION_TOOL
