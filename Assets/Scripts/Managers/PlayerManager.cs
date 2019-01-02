@@ -66,7 +66,7 @@ public class PlayerManager : MonoBehaviour {
         player.CreatePlayerArea(tile);
         //player.SetMaxMinions(9);
         player.CreateInitialMinions();
-        LandmarkManager.Instance.OwnArea(player.playerFaction, player.playerArea);
+        LandmarkManager.Instance.OwnArea(player.playerFaction, RACE.DEMON, player.playerArea);
         Messenger.RemoveListener<HexTile>(Signals.TILE_LEFT_CLICKED, OnChooseStartingTile);
         Messenger.Broadcast(Signals.HIDE_POPUP_MESSAGE);
         GameManager.Instance.StartProgression();
@@ -86,7 +86,7 @@ public class PlayerManager : MonoBehaviour {
         }
         //player.SetMaxMinions(9);
         player.CreateInitialMinions();
-        LandmarkManager.Instance.OwnArea(player.playerFaction, player.playerArea);
+        LandmarkManager.Instance.OwnArea(player.playerFaction, RACE.DEMON, player.playerArea);
         portal.SetIsBeingInspected(true);
         portal.SetHasBeenInspected(true);
         GameManager.Instance.StartProgression();

@@ -175,7 +175,7 @@ public class FactionInfoEditor : MonoBehaviour {
     public void AddArea() {
         string chosenAreaName = areasDropdown.options[areasDropdown.value].text;
         Area chosenArea = LandmarkManager.Instance.GetAreaByName(chosenAreaName);
-        LandmarkManager.Instance.OwnArea(_faction, chosenArea);
+        LandmarkManager.Instance.OwnArea(_faction, _faction.raceType, chosenArea);
         UpdateAreas();
     }
     public void RemoveArea() {

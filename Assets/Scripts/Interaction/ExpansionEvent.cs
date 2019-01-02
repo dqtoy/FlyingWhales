@@ -129,7 +129,7 @@ public class ExpansionEvent : Interaction {
     private void CharacterKilledMinionRewardEffect(InteractionState state) {
         //**Mechanic**: Minion Killed, Location becomes part of Character's faction and its Race will be set as Character's Race
         investigatorMinion.character.Death();
-        LandmarkManager.Instance.OwnArea(_characterInvolved.faction, interactable.tileLocation.areaOfTile);
+        LandmarkManager.Instance.OwnArea(_characterInvolved.faction, _characterInvolved.race, interactable.tileLocation.areaOfTile);
         //Migrate Character to the new settlement
         _characterInvolved.MigrateTo(interactable);
         //**Level Up**: Expanding Character +1
@@ -138,7 +138,7 @@ public class ExpansionEvent : Interaction {
     private void CharacterInjuredMinionRewardEffect(InteractionState state) {
         //**Mechanic**: Minion Injured, Location becomes part of Character's faction and its Race will be set as Character's Race
         investigatorMinion.character.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
-        LandmarkManager.Instance.OwnArea(_characterInvolved.faction, interactable.tileLocation.areaOfTile);
+        LandmarkManager.Instance.OwnArea(_characterInvolved.faction, _characterInvolved.race, interactable.tileLocation.areaOfTile);
         //Migrate Character to the new settlement
         _characterInvolved.MigrateTo(interactable);
         //**Level Up**: Expanding Character +1
@@ -146,7 +146,7 @@ public class ExpansionEvent : Interaction {
     }
     private void NormalExpansionRewardEffect(InteractionState state) {
         //**Mechanic**: Location becomes part of Character's faction and its Race will be set as Character's Race
-        LandmarkManager.Instance.OwnArea(_characterInvolved.faction, interactable.tileLocation.areaOfTile);
+        LandmarkManager.Instance.OwnArea(_characterInvolved.faction, _characterInvolved.race, interactable.tileLocation.areaOfTile);
         //Migrate Character to the new settlement
         _characterInvolved.MigrateTo(interactable);
         //**Level Up**: Expanding Character +1

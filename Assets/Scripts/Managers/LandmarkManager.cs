@@ -588,7 +588,7 @@ public class LandmarkManager : MonoBehaviour {
                 if (areaData.ownerID != -1) {
                     Faction owner = FactionManager.Instance.GetFactionBasedOnID(areaData.ownerID);
                     if (owner != null) {
-                        OwnArea(owner, newArea);
+                        OwnArea(owner, owner.raceType, newArea);
                     }
                 }
 #if !WORLD_CREATION_TOOL
@@ -656,12 +656,13 @@ public class LandmarkManager : MonoBehaviour {
         }
         return null;
     }
-    public void OwnArea(Faction newOwner, Area area) {
+    public void OwnArea(Faction newOwner, RACE newRace, Area area) {
         if (area.owner != null) {
             UnownArea(area);
         }
         newOwner.OwnArea(area);
         area.SetOwner(newOwner);
+        area.SetRaceType(newRace);
         area.TintStructuresInArea(newOwner.factionColor);
     }
     public void UnownArea(Area area) {
