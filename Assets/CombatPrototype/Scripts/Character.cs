@@ -1743,11 +1743,11 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     }
     public void OnRemovedFromParty() {
         SetCurrentParty(ownParty); //set the character's party to it's own party
-        if (ownParty is CharacterParty) {
-            if ((ownParty as CharacterParty).actionData.currentAction != null) {
-                (ownParty as CharacterParty).actionData.currentAction.EndAction(ownParty, (ownParty as CharacterParty).actionData.currentTargetObject);
-            }
-        }
+        //if (ownParty is CharacterParty) {
+        //    if ((ownParty as CharacterParty).actionData.currentAction != null) {
+        //        (ownParty as CharacterParty).actionData.currentAction.EndAction(ownParty, (ownParty as CharacterParty).actionData.currentTargetObject);
+        //    }
+        //}
         if (this.minion != null) {
             this.minion.SetEnabledState(true); //reenable this minion, since it could've been disabled because it was part of another party
         }

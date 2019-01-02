@@ -437,20 +437,20 @@ public class BaseLandmark : ILocation, IInteractable {
             iparty.SetSpecificLocation(this);
             tileLocation.areaOfTile.AddCharacterAtLocation(iparty.owner);
 #if !WORLD_CREATION_TOOL
-            _landmarkVisual.OnCharacterEnteredLandmark(iparty);
+            //_landmarkVisual.OnCharacterEnteredLandmark(iparty);
             Messenger.Broadcast<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, iparty, this);
 #endif
         }
         //}
     }
     public void RemoveCharacterFromLocation(Party iparty, bool addToTile = false) {
+        tileLocation.areaOfTile.RemoveCharacterAtLocation(iparty.owner);
         if (_charactersAtLocation.Remove(iparty)) {
-            tileLocation.areaOfTile.RemoveCharacterAtLocation(iparty.owner);
             if (addToTile) {
                 this.tileLocation.AddCharacterToLocation(iparty);
             }
 #if !WORLD_CREATION_TOOL
-            _landmarkVisual.OnCharacterExitedLandmark(iparty);
+            //_landmarkVisual.OnCharacterExitedLandmark(iparty);
             Messenger.Broadcast<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, iparty, this);
 #endif
         }

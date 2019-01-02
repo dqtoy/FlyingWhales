@@ -259,12 +259,10 @@ public class Party {
             character.OnRemovedFromParty();
             RemoveCurrentBuffsFromCharacter(character);
             character.ownParty.icon.transform.position = this.specificLocation.tileLocation.transform.position;
-            if (!character.isDead) {
-                if (this.specificLocation is BaseLandmark) {
-                    this.specificLocation.AddCharacterToLocation(character.ownParty);
-                } else {
-                    character.ownParty.SetSpecificLocation(this.specificLocation);
-                }
+            if (this.specificLocation is BaseLandmark) {
+                this.specificLocation.AddCharacterToLocation(character.ownParty);
+            } else {
+                character.ownParty.SetSpecificLocation(this.specificLocation);
             }
             Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
 

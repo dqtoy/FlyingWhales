@@ -51,10 +51,13 @@ public class ConsoleMenu : UIMenu {
             {"/adjust_faction_favor", AdjustFactionFavor},
             {"/log_location_history", LogLocationHistory  },
             {"/log_supply_history", LogSupplyHistory  },
+            {"/log_area_characters_history", LogAreaCharactersHistory  },
             {"/adjust_area_supply", AdjustSupply  },
             {"/get_characters_with_item", GetCharactersWithItem },
             {"/check_characters_data", CheckCharactersData },
         };
+
+        Messenger.AddListener(Signals.DAY_ENDED, CheckForDeadCharactersInArea);
     }
 
     public void ShowConsole() {
@@ -129,6 +132,19 @@ public class ConsoleMenu : UIMenu {
             if (!string.IsNullOrEmpty(command)) {
                 consoleLbl.text = command;
                 currentHistoryIndex = newIndex;
+            }
+        }
+    }
+
+    private void CheckForDeadCharactersInArea() {
+        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+            Area currArea = LandmarkManager.Instance.allAreas[i];
+            for (int j = 0; j < currArea.charactersAtLocation.Count; j++) {
+                Character character = currArea.charactersAtLocation[j];
+                if (character.isDead) {
+                    Debug.LogWarning("There is still a dead character at " + currArea.name + " : " + character.name);
+                    UIManager.Instance.Pause();
+                }
             }
         }
     }
@@ -1083,6 +1099,37 @@ public class ConsoleMenu : UIMenu {
         } else {
             AddErrorMessage("There was an error in the command format of " + parameters[0]);
         }
+    }
+    private void LogAreaCharactersHistory(string[] parameters) {
+        if (parameters.Length < 2) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            return;
+        }
+
+        string areaParameterString = parameters[1];
+        int areaID;
+
+        string areaName = string.Empty;
+        for (int i = 1; i < parameters.Length; i++) {
+            areaName += parameters[i] + " ";
+        }
+        areaName = areaName.Trim();
+
+        bool isAreaParameterNumeric = int.TryParse(areaParameterString, out areaID);
+
+        Area area = null;
+        if (isAreaParameterNumeric) {
+            area = LandmarkManager.Instance.GetAreaByID(areaID);
+        } else {
+            area = LandmarkManager.Instance.GetAreaByName(areaName);
+        }
+
+        string text = area.name + "'s Characters History: ";
+        for (int i = 0; i < area.charactersAtLocationHistory.Count; i++) {
+            text += "\n" + area.charactersAtLocationHistory[i];
+        }
+        AddSuccessMessage(text);
     }
     #endregion
 

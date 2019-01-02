@@ -56,6 +56,7 @@ public class Area {
 
     //for testing
     public List<string> supplyLog { get; private set; } //limited to 100 entries
+    public List<string> charactersAtLocationHistory { get; private set; }
 
     private Race defaultRace;
     private RACE _raceType;
@@ -95,6 +96,7 @@ public class Area {
         supplyLog = new List<string>();
         defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
         possibleSpecialTokenSpawns = new List<SpecialToken>();
+        charactersAtLocationHistory = new List<string>();
         SetAreaType(areaType);
         SetCoreTile(coreTile);
         //SetSupplyCapacity(1000);
@@ -126,6 +128,7 @@ public class Area {
         areaInvestigation = new AreaInvestigation(this);
         jobInteractionTypes = new Dictionary<JOB, List<INTERACTION_TYPE>>();
         eventsTargettingThis = new List<Interaction>();
+        charactersAtLocationHistory = new List<string>();
         supplyLog = new List<string>();
         if (data.raceSetup != null) {
             initialRaceSetup = new List<InitialRaceSetup>(data.raceSetup);
@@ -1096,10 +1099,20 @@ public class Area {
     public void AddCharacterAtLocation(Character character) {
         if (!charactersAtLocation.Contains(character)) {
             charactersAtLocation.Add(character);
+            AddCharacterAtLocationHistory("Added " + character.name + "ST: " + StackTraceUtility.ExtractStackTrace());
         }
     }
     public void RemoveCharacterAtLocation(Character character) {
-        charactersAtLocation.Remove(character);
+        if (charactersAtLocation.Remove(character)) {
+            AddCharacterAtLocationHistory("Removed " + character.name + "ST: " + StackTraceUtility.ExtractStackTrace());
+        }
+
+    }
+    private void AddCharacterAtLocationHistory(string str) {
+        charactersAtLocationHistory.Add(GameManager.Instance.TodayLogString() + str);
+        if (charactersAtLocationHistory.Count > 100) {
+            charactersAtLocationHistory.RemoveAt(0);
+        }
     }
     public bool HasResidentWithClass(string className) {
         for (int i = 0; i < areaResidents.Count; i++) {
