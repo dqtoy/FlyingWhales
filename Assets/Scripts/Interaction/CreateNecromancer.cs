@@ -78,7 +78,7 @@ public class CreateNecromancer : Interaction {
         newFaction.SetLeader(_characterInvolved);
         newFaction.AddNewCharacter(_characterInvolved);
         FactionManager.Instance.neutralFaction.UnownArea(interactable.tileLocation.areaOfTile);
-        LandmarkManager.Instance.OwnArea(newFaction, interactable.tileLocation.areaOfTile);
+        LandmarkManager.Instance.OwnArea(newFaction, newFaction.raceType, interactable.tileLocation.areaOfTile);
         newFaction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
         newFaction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ALLY);
         newFaction.SetFactionActiveState(true);

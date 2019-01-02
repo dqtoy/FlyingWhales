@@ -58,12 +58,13 @@ public class Area {
     public List<string> supplyLog { get; private set; } //limited to 100 entries
 
     private Race defaultRace;
+    private RACE _raceType;
     private List<HexTile> outerTiles;
     private List<SpriteRenderer> outline;
 
     #region getters
     public RACE raceType {
-        get { return owner == null ? defaultRace.race : owner.raceType; }
+        get { return owner == null ? defaultRace.race : _raceType; }
     }
     public Race race {
         get { return owner == null ? defaultRace : owner.race; }
@@ -529,6 +530,9 @@ public class Area {
                 landmarks[i].UnoccupyLandmark();
             }
         }
+    }
+    public void SetRaceType(RACE raceType) {
+        _raceType = raceType;
     }
     #endregion
 

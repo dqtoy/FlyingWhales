@@ -656,12 +656,13 @@ public class LandmarkManager : MonoBehaviour {
         }
         return null;
     }
-    public void OwnArea(Faction newOwner, Area area) {
+    public void OwnArea(Faction newOwner, RACE newRace, Area area) {
         if (area.owner != null) {
             UnownArea(area);
         }
         newOwner.OwnArea(area);
         area.SetOwner(newOwner);
+        area.SetRaceType(newRace);
         area.TintStructuresInArea(newOwner.factionColor);
     }
     public void UnownArea(Area area) {

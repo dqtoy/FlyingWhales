@@ -408,6 +408,16 @@ public class BaseLandmark : ILocation, IInteractable {
         }
         return null;
     }
+    public void SpawnRandomCharacters(int howMany) {
+        WeightedDictionary<AreaCharacterClass> classWeights = tileLocation.areaOfTile.GetClassWeights();
+        for (int i = 0; i < howMany; i++) {
+            if (tileLocation.areaOfTile.IsResidentsFull()) {
+                break;
+            }
+            string classNameToBeSpawned = classWeights.PickRandomElementGivenWeights().className;
+            Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(classNameToBeSpawned, tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), tileLocation.areaOfTile.owner, this);
+        }
+    }
     #endregion
 
     #region Location
