@@ -317,6 +317,7 @@ public class Faction {
         List<Area> areasToUnown = new List<Area>(ownedAreas);
         for (int i = 0; i < areasToUnown.Count; i++) {
             LandmarkManager.Instance.UnownArea(areasToUnown[i]);
+            FactionManager.Instance.neutralFaction.OwnArea(areasToUnown[i]);
         }
         Messenger.Broadcast(Signals.FACTION_LEADER_DIED, this);
     }

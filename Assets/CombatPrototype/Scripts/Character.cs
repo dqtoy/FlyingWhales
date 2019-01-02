@@ -1969,12 +1969,16 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public void AttackAnArea(Area target) {
         Interaction attackInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ATTACK, target.coreTile.landmarkOnTile);
         attackInteraction.AddEndInteractionAction(() => _ownParty.GoHomeAndDisband());
+        attackInteraction.SetCanInteractionBeDoneAction(() => IsTargetStillViable(target));
         _ownParty.GoToLocation(target.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => SetForcedInteraction(attackInteraction));
     }
     public void GoToAreaToMakePeaceWithFaction(Area target) {
         Interaction peaceInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_PEACE_NEGOTIATION, target.coreTile.landmarkOnTile);
         peaceInteraction.AddEndInteractionAction(() => _ownParty.GoHome());
         _ownParty.GoToLocation(target.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => SetForcedInteraction(peaceInteraction));
+    }
+    private bool IsTargetStillViable(Area target) {
+        return target.owner != null;
     }
     #endregion
 
