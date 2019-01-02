@@ -1,42 +1,53 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class TokenItem : MonoBehaviour {
+public class TokenItem : MonoBehaviour, IPointerClickHandler {
 
-    private Token token;
+    public delegate void OnTokenItemClicked(object obj);
+    private OnTokenItemClicked onTokenItemClicked;
 
-    [SerializeField] private Image intelImage;
-    [SerializeField] private GameObject lockedGO;
+    [SerializeField] private SlotItem slot;
+    [SerializeField] private TextMeshProUGUI mainText;
+    [SerializeField] private TextMeshProUGUI subText;
 
-    public void SetToken(Token token) {
-        this.token = token;
-        UpdateVisuals();
-        Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnTokenAddedToPlayer);
-    }
-
-    private void UpdateVisuals() {
-        if (token.isObtainedByPlayer) {
-            lockedGO.SetActive(false);
-        } else {
-            lockedGO.SetActive(true);
+    #region Pointer Actions
+    public void OnPointerClick(PointerEventData eventData) {
+        if (onTokenItemClicked != null) {
+            onTokenItemClicked(slot.placedObject);
         }
     }
-    public void ShowTokenInfo() {
-        if (token.isObtainedByPlayer) {
-            //UIManager.Instance.ShowSmallInfo(intel.description);
+    #endregion
+
+    public void SetObject(Token token) {
+        slot.PlaceObject(token);
+        UpdateText();
+    }
+    public void SetObject(Minion minion) {
+        slot.PlaceObject(minion);
+        UpdateText();
+    }
+    private void UpdateText() {
+        if (slot.placedObject is CharacterToken) {
+            Character character = (slot.placedObject as CharacterToken).character;
+            mainText.text = character.name;
+            subText.text = "Lvl. " + character.level.ToString() + " " + character.characterClass.className;
+        } else if (slot.placedObject is LocationToken) {
+            Area location = (slot.placedObject as LocationToken).location;
+            mainText.text = location.name;
+            subText.text = Utilities.NormalizeString(location.GetAreaTypeString());
+        } else if (slot.placedObject is FactionToken) {
+            Faction faction = (slot.placedObject as FactionToken).faction;
+            mainText.text = faction.name;
+            subText.text = Utilities.NormalizeString(faction.raceType.ToString());
         }
     }
-    public void HideTokenInfo() {
-        UIManager.Instance.HideSmallInfo();
-    }
 
-    private void OnTokenAddedToPlayer(Token token) {
-        UpdateVisuals();
+    #region Utilities
+    public void SetClickAction(OnTokenItemClicked itemClicked) {
+        onTokenItemClicked = itemClicked;
     }
-
-    public void Reset() {
-        Messenger.RemoveListener<Token>(Signals.TOKEN_ADDED, OnTokenAddedToPlayer);
-    }
+    #endregion
 }

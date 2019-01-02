@@ -75,7 +75,7 @@ public class TheSpiderQueen : Interaction {
                 name = "Attempt to corrupt it.",
                 description = "We have sent %minion% to transform the Spider Queen into a Demon minion while it is out in the open.",
                 duration = 10,
-                neededObjects = new List<System.Type>() { typeof(Minion) },
+                //neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => AttemptToCorruptItEffect(state),
             };
             ActionOption lootLair = new ActionOption {
@@ -84,7 +84,7 @@ public class TheSpiderQueen : Interaction {
                 name = "Quietly loot the lair while it is busy.",
                 description = "We have sent %minion% to loot the hive core while the Spider Queen and its defenders are away.",
                 duration = 10,
-                neededObjects = new List<System.Type>() { typeof(Minion) },
+                //neededObjects = new List<System.Type>() { typeof(Minion) },
                 effect = () => LootLairEffect(state),
             };
             state.AddActionOption(attemptToKill);

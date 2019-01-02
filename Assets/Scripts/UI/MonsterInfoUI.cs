@@ -55,12 +55,12 @@ public class MonsterInfoUI : UIMenu {
     [SerializeField] private Color oddRelationshipColor;
     [SerializeField] private GameObject relationsMenuCover;
 
-    [Space(10)]
-    [Header("Info")]
-    [SerializeField] private SecretItem[] secretItems;
-    [SerializeField] private TokenItem[] intelItems;
-    [SerializeField] private HiddenDesireItem hiddenDesireItem;
-    [SerializeField] private GameObject infoMenuCover;
+    //[Space(10)]
+    //[Header("Info")]
+    //[SerializeField] private SecretItem[] secretItems;
+    //[SerializeField] private TokenItem[] intelItems;
+    //[SerializeField] private HiddenDesireItem hiddenDesireItem;
+    //[SerializeField] private GameObject infoMenuCover;
 
     [Space(10)]
     [Header("Logs")]
@@ -194,7 +194,7 @@ public class MonsterInfoUI : UIMenu {
         //Item drop info
     }
     private void SetCoversState(bool state) {
-        infoMenuCover.SetActive(state);
+        //infoMenuCover.SetActive(state);
         statsMenuCover.SetActive(state);
         itemsMenuCover.SetActive(state);
         relationsMenuCover.SetActive(state);
@@ -234,20 +234,20 @@ public class MonsterInfoUI : UIMenu {
             currItem.gameObject.SetActive(false);
         }
 
-        //secrets
-        for (int i = 0; i < secretItems.Length; i++) {
-            SecretItem currItem = secretItems[i];
-            currItem.gameObject.SetActive(false);
-        }
+        ////secrets
+        //for (int i = 0; i < secretItems.Length; i++) {
+        //    SecretItem currItem = secretItems[i];
+        //    currItem.gameObject.SetActive(false);
+        //}
 
         //intel
-        for (int i = 0; i < intelItems.Length; i++) {
-            TokenItem currItem = intelItems[i];
-            currItem.gameObject.SetActive(false);
-        }
+        //for (int i = 0; i < intelItems.Length; i++) {
+        //    TokenItem currItem = intelItems[i];
+        //    currItem.gameObject.SetActive(false);
+        //}
 
         //hidden desire
-        hiddenDesireItem.gameObject.SetActive(false);
+        //hiddenDesireItem.gameObject.SetActive(false);
     }
     private void UpdateBasicInfo() {
         nameLbl.text = _activeMonster.name;
@@ -332,19 +332,19 @@ public class MonsterInfoUI : UIMenu {
 
     #region Info
     private void InitializeInfoMenu() {
-        for (int i = 0; i < secretItems.Length; i++) {
-            SecretItem currItem = secretItems[i];
-            currItem.Initialize();
-        }
+        //for (int i = 0; i < secretItems.Length; i++) {
+        //    SecretItem currItem = secretItems[i];
+        //    currItem.Initialize();
+        //}
     }
     private void UpdateInfoMenu() {
-        for (int i = 0; i < secretItems.Length; i++) {
-            secretItems[i].gameObject.SetActive(false);
-        }
-        for (int i = 0; i < intelItems.Length; i++) {
-            intelItems[i].gameObject.SetActive(false);
-        }
-        hiddenDesireItem.gameObject.SetActive(false);
+        //for (int i = 0; i < secretItems.Length; i++) {
+        //    secretItems[i].gameObject.SetActive(false);
+        //}
+        //for (int i = 0; i < intelItems.Length; i++) {
+        //    intelItems[i].gameObject.SetActive(false);
+        //}
+        //hiddenDesireItem.gameObject.SetActive(false);
         //for (int i = 0; i < secretItems.Length; i++) {
         //    SecretItem currItem = secretItems[i];
         //    Secret currSecret = _activeMonster.secrets.ElementAtOrDefault(i);

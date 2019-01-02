@@ -68,6 +68,7 @@ public class ActionOptionButton : MonoBehaviour {
         } else {
             if(!toggle.group.AnyTogglesOn()){
                 interactionItem.assignmentGO.SetActive(false);
+                interactionItem.HideChoicesMenu();
                 interactionItem.ClearNeededObjectSlots ();
                 interactionItem.SetCurrentSelectedActionOption(null);
                 //if (interactionItem.confirmMinionGO.activeSelf) {

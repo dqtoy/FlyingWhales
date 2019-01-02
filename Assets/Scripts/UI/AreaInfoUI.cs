@@ -291,16 +291,17 @@ public class AreaInfoUI : UIMenu {
     private void UpdateBasicInfo() {
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(activeArea.coreTile.landmarkOnTile.specificLandmarkType);
         landmarkNameLbl.text = activeArea.name + " (" + activeArea.areaResidents.Count + "/" + activeArea.residentCapacity + ")";
-        if (activeArea.race.race != RACE.NONE) {
-            if (activeArea.tiles.Count > 1) {
-                landmarkTypeLbl.text = Utilities.GetNormalizedSingularRace(activeArea.race.race) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(activeArea.GetBaseAreaType().ToString());
-            } else {
-                landmarkTypeLbl.text = Utilities.GetNormalizedSingularRace(activeArea.race.race) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(activeArea.coreTile.landmarkOnTile.specificLandmarkType.ToString());
-            }
+        landmarkTypeLbl.text = activeArea.GetAreaTypeString();
+        //if (activeArea.race.race != RACE.NONE) {
+        //    if (activeArea.tiles.Count > 1) {
+        //        landmarkTypeLbl.text = Utilities.GetNormalizedSingularRace(activeArea.race.race) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(activeArea.GetBaseAreaType().ToString());
+        //    } else {
+        //        landmarkTypeLbl.text = Utilities.GetNormalizedSingularRace(activeArea.race.race) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(activeArea.coreTile.landmarkOnTile.specificLandmarkType.ToString());
+        //    }
             
-        } else {
-            landmarkTypeLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(activeArea.coreTile.landmarkOnTile.specificLandmarkType.ToString());
-        }
+        //} else {
+        //    landmarkTypeLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(activeArea.coreTile.landmarkOnTile.specificLandmarkType.ToString());
+        //}
         areaCenterImage.sprite = GetAreaCenterSprite(activeArea.name);
         UpdateSupplies();
 

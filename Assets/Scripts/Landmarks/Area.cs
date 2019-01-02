@@ -656,6 +656,17 @@ public class Area {
         }
         return targets;
     }
+    public string GetAreaTypeString() {
+        if (race.race != RACE.NONE) {
+            if (tiles.Count > 1) {
+                return Utilities.GetNormalizedSingularRace(race.race) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(GetBaseAreaType().ToString());
+            } else {
+                return Utilities.GetNormalizedSingularRace(race.race) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(coreTile.landmarkOnTile.specificLandmarkType.ToString());
+            }
+        } else {
+            return Utilities.NormalizeStringUpperCaseFirstLetters(coreTile.landmarkOnTile.specificLandmarkType.ToString());
+        }
+    }
     #endregion
 
     #region Camp
