@@ -409,6 +409,9 @@ public class BaseLandmark : ILocation, IInteractable {
         return null;
     }
     public void SpawnRandomCharacters(int howMany) {
+        if (tileLocation.areaOfTile.IsResidentsFull()) {
+            return;
+        }
         WeightedDictionary<AreaCharacterClass> classWeights = tileLocation.areaOfTile.GetClassWeights();
         for (int i = 0; i < howMany; i++) {
             if (tileLocation.areaOfTile.IsResidentsFull()) {

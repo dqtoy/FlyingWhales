@@ -1715,6 +1715,10 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             Messenger.Broadcast<Character>(Signals.FACTION_SET, this);
         }
     }
+    public void ChangeFactionTo(Faction newFaction) {
+        faction.RemoveCharacter(this);
+        newFaction.AddNewCharacter(this);
+    }
     #endregion
 
     #region Party
@@ -3020,14 +3024,12 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         if (!IsInOwnParty()) {
             _currentParty.RemoveCharacter(this);
         }
-        _homeLandmark.RemoveCharacterHomeOnLandmark(this);
-        PlayerManager.Instance.player.demonicPortal.AddCharacterHomeOnLandmark(this);
+        MigrateTo(PlayerManager.Instance.player.demonicPortal);
 
         specificLocation.RemoveCharacterFromLocation(this.currentParty);
         PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(this.currentParty);
 
-        faction.RemoveCharacter(this);
-        PlayerManager.Instance.player.playerFaction.AddNewCharacter(this);
+        ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
 
         Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(this);
         PlayerManager.Instance.player.AddMinion(newMinion);
@@ -3121,7 +3123,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 if (tokenInInventory != null && tokenInInventory.CanBeUsedBy(this)) {
                     awayFromHomeInteractionWeights.AddElement(tokenInInventory.tokenName, 70);
                 }
-                INTERACTION_TYPE[] classTriggeredInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.FOUND_LUCARETH }; //, INTERACTION_TYPE.FOUND_BESTALIA, INTERACTION_TYPE.FOUND_MAGUS };
+                INTERACTION_TYPE[] classTriggeredInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.FOUND_LUCARETH, INTERACTION_TYPE.FOUND_BESTALIA }; //, INTERACTION_TYPE.FOUND_MAGUS };
                 for (int i = 0; i < classTriggeredInteractions.Length; i++) {
                     if (InteractionManager.Instance.CanCreateInteraction(classTriggeredInteractions[i], this)) {
                         awayFromHomeInteractionWeights.AddElement(classTriggeredInteractions[i].ToString(), 15);
