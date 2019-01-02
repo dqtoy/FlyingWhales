@@ -608,8 +608,10 @@ public class Area {
         attackCharacters = characters;
     }
     public void Death() {
-        if(owner != null && owner != FactionManager.Instance.neutralFaction) {
+        if(owner != null) {
             LandmarkManager.Instance.UnownArea(this);
+        }
+        if(owner != FactionManager.Instance.neutralFaction) {
             FactionManager.Instance.neutralFaction.OwnArea(this);
         }
     }
