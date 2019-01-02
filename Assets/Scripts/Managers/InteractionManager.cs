@@ -608,7 +608,7 @@ public class InteractionManager : MonoBehaviour {
                         DefenderGroup defender = target.GetFirstDefenderGroup();
                         float winChance = 0f;
                         float loseChance = 0f;
-                        if(defender != null) {
+                        if(defender != null && defender.party != null) {
                             CombatManager.Instance.GetCombatChanceOfTwoLists(attackCharacters, defender.party.characters, out winChance, out loseChance);
                         } else {
                             CombatManager.Instance.GetCombatChanceOfTwoLists(attackCharacters, null, out winChance, out loseChance);

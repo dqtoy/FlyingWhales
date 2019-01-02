@@ -118,7 +118,7 @@ public class Attack : Interaction {
 
         _defenderGroup = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
         _combat = null;
-        if (_defenderGroup != null) {
+        if (_defenderGroup != null && _defenderGroup.party != null) {
             _combat = _characterInvolved.currentParty.CreateCombatWith(_defenderGroup.party);
             _combat.Fight();
         }
@@ -139,10 +139,9 @@ public class Attack : Interaction {
         _supporterMinion = state.assignedMinion;
         _defenderGroup = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
         _combat = null;
-        if (_defenderGroup != null) {
+        if (_defenderGroup != null && _defenderGroup.party != null) {
             //Add minion to support
             _defenderGroup.party.AddCharacter(_supporterMinion.character);
-
             _combat = _characterInvolved.currentParty.CreateCombatWith(_defenderGroup.party);
         } else {
             _combat = _characterInvolved.currentParty.CreateCombatWith(_supporterMinion.character.currentParty);
@@ -170,7 +169,7 @@ public class Attack : Interaction {
     private void StandAsideOption() {
         _defenderGroup = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
         _combat = null;
-        if (_defenderGroup != null) {
+        if (_defenderGroup != null && _defenderGroup.party != null) {
             _combat = _characterInvolved.currentParty.CreateCombatWith(_defenderGroup.party);
             _combat.Fight();
         }
@@ -212,7 +211,7 @@ public class Attack : Interaction {
         if (newDefenders == null) {
             Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
             log.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-            log.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            log.AddToFillers(interactable.tileLocation.areaOfTile.previousOwner, interactable.tileLocation.areaOfTile.previousOwner.name, LOG_IDENTIFIER.FACTION_1);
             state.AddLogToInvolvedObjects(log);
             interactable.tileLocation.areaOfTile.Death();
         }
@@ -240,7 +239,7 @@ public class Attack : Interaction {
         state.descriptionLog.AddToFillers(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2);
 
         state.AddLogFiller(new LogFiller(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2));
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.previousOwner, interactable.tileLocation.areaOfTile.previousOwner.name, LOG_IDENTIFIER.FACTION_1));
         for (int i = 0; i < characterInvolved.currentParty.characters.Count; i++) {
             state.AddLogFiller(new LogFiller(characterInvolved.currentParty.characters[i], characterInvolved.currentParty.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
@@ -261,7 +260,7 @@ public class Attack : Interaction {
         if (newDefenders == null) {
             Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
             log.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-            log.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            log.AddToFillers(interactable.tileLocation.areaOfTile.previousOwner, interactable.tileLocation.areaOfTile.previousOwner.name, LOG_IDENTIFIER.FACTION_1);
             state.AddLogToInvolvedObjects(log);
             interactable.tileLocation.areaOfTile.Death();
         }
@@ -283,7 +282,7 @@ public class Attack : Interaction {
 
         state.descriptionLog.AddToFillers(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2);
         state.AddLogFiller(new LogFiller(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2));
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.previousOwner, interactable.tileLocation.areaOfTile.previousOwner.name, LOG_IDENTIFIER.FACTION_1));
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
             state.descriptionLog.AddToFillers(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
             state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
@@ -315,7 +314,7 @@ public class Attack : Interaction {
         if (newDefenders == null) {
             Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
             log.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-            log.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            log.AddToFillers(interactable.tileLocation.areaOfTile.previousOwner, interactable.tileLocation.areaOfTile.previousOwner.name, LOG_IDENTIFIER.FACTION_1);
             state.AddLogToInvolvedObjects(log);
             interactable.tileLocation.areaOfTile.Death();
             //Log area is cleared - Add faction log filler
@@ -331,7 +330,7 @@ public class Attack : Interaction {
         }
     }
     private void NormalAttackersNoDefenseEffect(InteractionState state) {
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.previousOwner, interactable.tileLocation.areaOfTile.previousOwner.name, LOG_IDENTIFIER.FACTION_1));
         for (int i = 0; i < characterInvolved.currentParty.characters.Count; i++) {
             state.descriptionLog.AddToFillers(characterInvolved.currentParty.characters[i], characterInvolved.currentParty.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
             state.AddLogFiller(new LogFiller(characterInvolved.currentParty.characters[i], characterInvolved.currentParty.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
