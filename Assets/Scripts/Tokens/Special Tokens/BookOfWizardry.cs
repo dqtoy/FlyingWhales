@@ -28,6 +28,7 @@ public class BookOfWizardry : SpecialToken {
         interaction.AddState(stopFailState);
     }
     public override bool CanBeUsedBy(Character sourceCharacter) {
+        return true;
         return sourceCharacter.gender == GENDER.MALE && sourceCharacter.characterClass.attackType == ATTACK_TYPE.MAGICAL_RANGED && sourceCharacter.role.roleType != CHARACTER_ROLE.BEAST;
     }
     #endregion
@@ -36,29 +37,31 @@ public class BookOfWizardry : SpecialToken {
         Character targetCharacter = state.target as Character;
         targetCharacter.ChangeClass("Archmage");
 
-        Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), state.name.ToLower() + "-minion" + "_description");
+        Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-minion" + "_description");
         stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.MINION_1);
         stateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         state.OverrideDescriptionLog(stateDescriptionLog);
 
-        Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special1");
+        Log log = new Log(GameManager.Instance.Today(), "Tokens", GetType().ToString(), state.name.ToLower() + "_special1");
         stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.MINION_1);
         stateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         state.AddLogToInvolvedObjects(log);
     }
     private void ItemUsedEffectNPC(TokenInteractionState state) {
         state.tokenUser.ChangeClass("Archmage");
+        state.tokenUser.ConsumeToken();
 
-        Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), state.name.ToLower() + "-npc" + "_description");
+        Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-npc" + "_description");
         stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         state.OverrideDescriptionLog(stateDescriptionLog);
 
-        Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special2");
+        Log log = new Log(GameManager.Instance.Today(), "Tokens", GetType().ToString(), state.name.ToLower() + "_special2");
         stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         state.AddLogToInvolvedObjects(log);
     }
     private void StopFailEffect(TokenInteractionState state) {
         state.tokenUser.ChangeClass("Archmage");
+        state.tokenUser.ConsumeToken();
 
         state.descriptionLog.AddToFillers(state.interaction.investigatorMinion, state.interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
 

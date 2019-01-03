@@ -565,13 +565,13 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MOVE_TO_HUNT:
                 return character.race == RACE.WOLF || character.race == RACE.SPIDER || character.race == RACE.DRAGON;
             case INTERACTION_TYPE.FOUND_LUCARETH:
-                return character.characterClass.className == "Witch" && character.gender == GENDER.FEMALE && character.specificLocation.tileLocation.areaOfTile.owner == null 
+                return character.characterClass.className == "Witch" && character.specificLocation.tileLocation.areaOfTile.owner == null 
                     && character.specificLocation.tileLocation.areaOfTile.raceType == character.race && !FactionManager.Instance.GetFactionBasedOnName("Lucareth").isActive;
             case INTERACTION_TYPE.FOUND_BESTALIA:
-                return character.characterClass.className == "Beastmaster" && character.gender == GENDER.MALE && character.specificLocation.tileLocation.areaOfTile.owner == null
+                return character.characterClass.className == "Beastmaster" && character.specificLocation.tileLocation.areaOfTile.owner == null
                     && character.specificLocation.tileLocation.areaOfTile.raceType == character.race && !FactionManager.Instance.GetFactionBasedOnName("Bestalia").isActive;
             case INTERACTION_TYPE.FOUND_MAGUS:
-                return character.characterClass.className == "Archmage" && character.gender == GENDER.MALE && character.specificLocation.tileLocation.areaOfTile.owner == null
+                return character.characterClass.className == "Archmage" && character.specificLocation.tileLocation.areaOfTile.owner == null
                     && character.specificLocation.tileLocation.areaOfTile.raceType == character.race && !FactionManager.Instance.GetFactionBasedOnName("Magus").isActive;
             default:
                 return true;

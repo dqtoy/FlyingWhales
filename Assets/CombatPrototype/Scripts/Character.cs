@@ -3124,13 +3124,13 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 awayFromHomeInteractionWeights.AddElement("Return", 100);
                 awayFromHomeInteractionWeights.AddElement("DoNothing", 50);
 
-                if (tokenInInventory != null && tokenInInventory.CanBeUsedBy(this)) {
+                if (tokenInInventory != null && tokenInInventory.CanBeUsedBy(this) && InteractionManager.Instance.CanCreateInteraction(tokenInInventory.npcAssociatedInteractionType, this)) {
                     awayFromHomeInteractionWeights.AddElement(tokenInInventory.tokenName, 70);
                 }
-                INTERACTION_TYPE[] classTriggeredInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.FOUND_LUCARETH, INTERACTION_TYPE.FOUND_BESTALIA }; //, INTERACTION_TYPE.FOUND_MAGUS };
+                INTERACTION_TYPE[] classTriggeredInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.FOUND_LUCARETH, INTERACTION_TYPE.FOUND_BESTALIA, INTERACTION_TYPE.FOUND_MAGUS };
                 for (int i = 0; i < classTriggeredInteractions.Length; i++) {
                     if (InteractionManager.Instance.CanCreateInteraction(classTriggeredInteractions[i], this)) {
-                        awayFromHomeInteractionWeights.AddElement(classTriggeredInteractions[i].ToString(), 15);
+                        awayFromHomeInteractionWeights.AddElement(classTriggeredInteractions[i].ToString(), 100); //15
                     }
                 }
 
@@ -3157,7 +3157,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 WeightedDictionary<string> atHomeInteractionWeights = new WeightedDictionary<string>();
                 atHomeInteractionWeights.AddElement("DoNothing", 100);
                 if (tokenInInventory != null) {
-                    if (tokenInInventory.CanBeUsedBy(this)) {
+                    if (tokenInInventory.CanBeUsedBy(this) && InteractionManager.Instance.CanCreateInteraction(tokenInInventory.npcAssociatedInteractionType, this)) {
                         atHomeInteractionWeights.AddElement(tokenInInventory.tokenName, 70);
                     } else {
                         atHomeInteractionWeights.AddElement("ItemNotUsable", 70);
