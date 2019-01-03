@@ -103,6 +103,8 @@ public class MoveToAttack : Interaction {
 
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.attackTarget, interactable.tileLocation.areaOfTile.attackTarget.name, LOG_IDENTIFIER.LANDMARK_2));
+
+        interactable.tileLocation.areaOfTile.SetAttackTargetAndCharacters(null, null);
     }
     private void StopFailEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
