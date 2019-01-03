@@ -229,7 +229,11 @@ public class RecruitAction : Interaction {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
             Character currCharacter = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
-            if (currCharacter.id != characterInvolved.id && !currCharacter.isLeader && !currCharacter.isDefender && currCharacter.minion == null) { //- character must not be in Defender Tile.
+            if (currCharacter.id != characterInvolved.id 
+                && !currCharacter.isLeader 
+                && !currCharacter.isDefender 
+                && currCharacter.minion == null
+                && currCharacter.faction.id != characterInvolved.faction.id) { //- character must not be in Defender Tile.
                 int weight = 0;
                 if (currCharacter.faction == null || currCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
                     weight += 35; //- character is not part of any Faction: Weight +35

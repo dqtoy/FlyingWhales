@@ -266,6 +266,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MOVE_TO_CHARM:
                 createdInteraction = new MoveToCharm(interactable);
                 break;
+            case INTERACTION_TYPE.CHARM_ACTION:
+                createdInteraction = new CharmAction(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -520,14 +523,13 @@ public class InteractionManager : MonoBehaviour {
                                 if(currCharacter.faction == null) {
                                     //Unaligned?
                                     return true;
-                                } else {
-                                    if(currCharacter.faction.id != character.faction.id) {
+                                } else if(currCharacter.faction.id != character.faction.id) {
                                         relationship = currCharacter.faction.GetRelationshipWith(character.faction);
-                                        if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL
+                                        if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED 
+                                            || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL
                                             || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
                                             return true;
                                         }
-                                    }
                                 }
                             }
                         }

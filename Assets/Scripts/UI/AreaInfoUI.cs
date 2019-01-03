@@ -18,6 +18,7 @@ public class AreaInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI landmarkTypeLbl;
     [SerializeField] private TextMeshProUGUI suppliesNameLbl;
     [SerializeField] private FactionEmblem factionEmblem;
+    [SerializeField] private FactionEmblem factionEmblem2;
     [SerializeField] private Image healthProgressBar;
     [SerializeField] private Image areaCenterImage;
     [SerializeField] private GameObject defendersGO;
@@ -308,14 +309,18 @@ public class AreaInfoUI : UIMenu {
 
         if (activeArea.owner == null) {
             factionEmblem.gameObject.SetActive(false);
+            factionEmblem2.gameObject.SetActive(false);
         } else {
             factionEmblem.gameObject.SetActive(true);
             factionEmblem.SetFaction(activeArea.owner);
+
+            factionEmblem2.gameObject.SetActive(true);
+            factionEmblem2.SetFaction(activeArea.owner);
         }
 
         //portrait
         if (activeArea.locationPortrait != null) {
-            areaPortrait.gameObject.SetActive(true);
+            areaPortrait.gameObject.SetActive(false);
             areaPortrait.sprite = activeArea.locationPortrait;
         } else {
             areaPortrait.gameObject.SetActive(false);
