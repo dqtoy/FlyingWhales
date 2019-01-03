@@ -618,7 +618,7 @@ public class Area {
         if (owner != null) {
             for (int i = 0; i < areaResidents.Count; i++) {
                 Character resident = areaResidents[i];
-                if (!resident.currentParty.icon.isTravelling && resident.id != resident.faction.leader.id && resident.faction.id == owner.id && resident.specificLocation.tileLocation.areaOfTile.id == id) {
+                if (resident.faction.name != "Neutral" && !resident.currentParty.icon.isTravelling && resident.faction.id == owner.id && resident.id != resident.faction.leader.id && resident.specificLocation.tileLocation.areaOfTile.id == id) {
                     resident.Death();
                 }
             }
