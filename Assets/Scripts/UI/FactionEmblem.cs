@@ -41,10 +41,11 @@ public class FactionEmblem : MonoBehaviour{
     }
 
     private void UpdateEmblem() {
-        if (faction == null) {
+        if (faction == null || (FactionManager.Instance.neutralFaction != null && faction.id == FactionManager.Instance.neutralFaction.id)) {
             this.gameObject.SetActive(false);
         } else {
             this.gameObject.SetActive(true);
+            emblemImage.sprite = faction.emblem;
             //if (forceShow || 
             //    (PlayerManager.Instance.player != null && PlayerManager.Instance.player.tokens.Contains(faction.factionToken))) {
             //    //player has intel for this faction
