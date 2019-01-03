@@ -177,7 +177,8 @@ public class MoveToRecruit : Interaction {
         if (locationWeights.GetTotalOfWeights() > 0) {
             return locationWeights.PickRandomElementGivenWeights();
         }
-        throw new System.Exception(GameManager.Instance.TodayLogString() + _characterInvolved.name + " could not find any location to recruit at!");
+        return null;
+        //throw new System.Exception(GameManager.Instance.TodayLogString() + _characterInvolved.name + " could not find any location to recruit at!");
     }
 
     /*
