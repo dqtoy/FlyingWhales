@@ -170,6 +170,7 @@ public class Player : ILeader {
     public void CreatePlayerFaction() {
         Faction playerFaction = FactionManager.Instance.CreateNewFaction(true);
         playerFaction.SetLeader(this);
+        playerFaction.SetEmblem(FactionManager.Instance.GetFactionEmblem(6));
         SetPlayerFaction(playerFaction);
     }
     private void SetPlayerFaction(Faction faction) {

@@ -1110,10 +1110,12 @@ public class Area {
 
     }
     private void AddCharacterAtLocationHistory(string str) {
+#if !WORLD_CREATION_TOOL
         charactersAtLocationHistory.Add(GameManager.Instance.TodayLogString() + str);
         if (charactersAtLocationHistory.Count > 100) {
             charactersAtLocationHistory.RemoveAt(0);
         }
+#endif
     }
     public bool HasResidentWithClass(string className) {
         for (int i = 0; i < areaResidents.Count; i++) {
@@ -1174,9 +1176,9 @@ public class Area {
                     " character " + createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name + " for faction " + this.owner.name);
         }
     }
-    #endregion
+#endregion
 
-    #region Logs
+#region Logs
     public void AddHistory(Log log) {
         if (!history.Contains(log)) {
             history.Add(log);
@@ -1186,18 +1188,18 @@ public class Area {
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
         }
     }
-    #endregion
+#endregion
 
-    #region Attack
+#region Attack
     public void AttackTarget() {
         for (int i = 1; i < attackCharacters.Count; i++) {
             attackCharacters[0].ownParty.AddCharacter(attackCharacters[i]);
         }
         attackCharacters[0].AttackAnArea(attackTarget);
     }
-    #endregion
+#endregion
 
-    #region Special Tokens
+#region Special Tokens
     private void LoadSpecialTokens(AreaSaveData data) {
         possibleSpecialTokenSpawns = new List<SpecialToken>();
         if (data.possibleSpecialTokenSpawns != null) {
@@ -1222,7 +1224,7 @@ public class Area {
         //Utilities.ListRemoveRange(choices, character.tokenInInventory);
         return choices;
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]

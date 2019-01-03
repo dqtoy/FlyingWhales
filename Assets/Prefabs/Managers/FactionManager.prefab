@@ -52,38 +52,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _factionEmblems:
-  - {fileID: 21300000, guid: 7d8b9e6d403093a47bbd67c4579fc30e, type: 3}
-  - {fileID: 21300000, guid: c48691d7942da31489e0920e06068c1b, type: 3}
-  - {fileID: 21300000, guid: 753e5c738b4b3ac4b91918f25067be1f, type: 3}
-  - {fileID: 21300000, guid: e60c3cda02f82ba45b542f22f9e78b03, type: 3}
-  - {fileID: 21300000, guid: 4c3b67432f5fd374eac45b1e4375b1e3, type: 3}
-  - {fileID: 21300000, guid: 1881be4e2a432374f9ca4a47c3e30c06, type: 3}
-  - {fileID: 21300000, guid: 3a0c3c0d69bd87440aa82110003fa003, type: 3}
-  - {fileID: 21300000, guid: aedd6c71646ab304dad0ae875c18b2cd, type: 3}
-  - {fileID: 21300000, guid: fd9b1ed7f978dae4f85ebfa5eb14d230, type: 3}
+  - {fileID: 21300000, guid: c050c3f585c7ca84493e5ccf35c939f7, type: 3}
+  - {fileID: 21300000, guid: eacc0e79510daf84a80ae8a35e2f0a77, type: 3}
+  - {fileID: 21300000, guid: ef02c953443b42a4cac1e4500036e9e9, type: 3}
+  - {fileID: 21300000, guid: 80e51d5bf696e864195e89b5e1151871, type: 3}
+  - {fileID: 21300000, guid: 9af2d419485d6ae478889d6d915d2266, type: 3}
+  - {fileID: 21300000, guid: a47bd4df720d07043b0db5b9058df34c, type: 3}
+  - {fileID: 21300000, guid: 6e5b3a5ba6344b547a8e1503e7b0040a, type: 3}
+  - {fileID: 21300000, guid: 05fa35e1c002cfb4882f1995aa47c30c, type: 3}
+  - {fileID: 21300000, guid: cdfd57df9346abe41bcb7203c449fd45, type: 3}
   _emblemBGs:
-  - id: 0
-    frame: {fileID: 21300000, guid: 16fe8168036d48c46a8e8c246960dab0, type: 3}
+  - frame: {fileID: 21300000, guid: 16fe8168036d48c46a8e8c246960dab0, type: 3}
     tint: {fileID: 21300000, guid: b801005bb2163be4a97e39745c0198b0, type: 3}
     outline: {fileID: 21300000, guid: 3106159f657e64647b0ffad0500d4ff0, type: 3}
-  - id: 1
-    frame: {fileID: 21300000, guid: 5b1f5f7e5b6d3c94eb68f515dc13967d, type: 3}
+  - frame: {fileID: 21300000, guid: 5b1f5f7e5b6d3c94eb68f515dc13967d, type: 3}
     tint: {fileID: 21300000, guid: 64191aa6492658a489b29b33cbce9899, type: 3}
     outline: {fileID: 21300000, guid: cb65a1d38736f1b43aee1b0332fcb98f, type: 3}
-  - id: 2
-    frame: {fileID: 21300000, guid: c32c75b435985cf45baf96e2289b6495, type: 3}
+  - frame: {fileID: 21300000, guid: c32c75b435985cf45baf96e2289b6495, type: 3}
     tint: {fileID: 21300000, guid: 7d7350edb1c09ef44bd106a428ec75d7, type: 3}
     outline: {fileID: 21300000, guid: 33bab20cf722b6b449eb05b1009d762a, type: 3}
-  - id: 3
-    frame: {fileID: 21300000, guid: 7d3a9a2f307539f4780eb5d2e326ef20, type: 3}
+  - frame: {fileID: 21300000, guid: 7d3a9a2f307539f4780eb5d2e326ef20, type: 3}
     tint: {fileID: 21300000, guid: bfe41a7cd17508b4d9f0c2fbed669c6a, type: 3}
     outline: {fileID: 21300000, guid: 1300f55860aa36a4787ceced217bec7a, type: 3}
-  - id: 4
-    frame: {fileID: 21300000, guid: 3e90c00e87ec4cc45a61c1a0f7d06585, type: 3}
+  - frame: {fileID: 21300000, guid: 3e90c00e87ec4cc45a61c1a0f7d06585, type: 3}
     tint: {fileID: 21300000, guid: 5b6a9120e63507d4283bd6d9395709ad, type: 3}
     outline: {fileID: 21300000, guid: 68536d9a0f3e0ae49affc11b074194df, type: 3}
-  - id: 5
-    frame: {fileID: 21300000, guid: f9c50e85008e55e4c81f3e2f45f5ca53, type: 3}
+  - frame: {fileID: 21300000, guid: f9c50e85008e55e4c81f3e2f45f5ca53, type: 3}
     tint: {fileID: 21300000, guid: 5ed93a7acf0e2644d8412e493d5c4e9b, type: 3}
     outline: {fileID: 21300000, guid: 7a4596b896e6fc84b9412fa20aab74b1, type: 3}
   _emblemSymbols:

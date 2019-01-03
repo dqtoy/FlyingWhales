@@ -193,7 +193,7 @@ public struct GameDate {
         int totalDays = 0;
         if (year > GameManager.Instance.startYear) {
             int difference = year - GameManager.Instance.startYear;
-            totalDays += 365 * difference;
+            totalDays += 360 * difference;
         }
         for (int i = 1; i < month; i++) {
             totalDays += GameManager.daysInMonth[i];

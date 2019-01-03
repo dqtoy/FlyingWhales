@@ -59,7 +59,7 @@ public class FactionManager : MonoBehaviour {
         Faction newFaction = new Faction();
         newFaction.SetName("Neutral");
         newFaction.SetFactionActiveState(false);
-        newFaction.SetEmblem(GetFactionEmblem(7));
+        newFaction.SetEmblem(GetFactionEmblem(4));
         allFactions.Add(newFaction);
         neutralFaction = newFaction;
         CreateRelationshipsForFaction(newFaction);
