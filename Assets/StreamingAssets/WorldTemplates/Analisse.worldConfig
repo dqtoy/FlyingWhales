@@ -514,7 +514,10 @@
       "possibleSpecialTokenSpawns": [
         "Blighted Potion",
         "Charm Spell",
-        "Fear Spell"
+        "Fear Spell",
+        "Book Of Wizardry",
+        "Brand Of The Beastmaster",
+        "Mark Of The Witch",
       ],
       "raceSetup": [
         {

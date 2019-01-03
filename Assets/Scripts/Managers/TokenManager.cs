@@ -13,6 +13,9 @@ public class TokenManager : MonoBehaviour {
         { "Book Of The Dead", new BookOfTheDead() },
         { "Charm Spell", new CharmSpell() },
         { "Fear Spell", new FearSpell() },
+        { "Book Of Wizardry", new BookOfWizardry() },
+        { "Brand Of The Beastmaster", new BrandOfTheBeastmaster() },
+        { "Mark Of The Witch", new MarkOfTheWitch() }
     };
 
     #region getters/setters
