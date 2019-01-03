@@ -30,7 +30,7 @@ public class MoveToAttack : Interaction {
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.attackTarget, interactable.tileLocation.areaOfTile.attackTarget.name, LOG_IDENTIFIER.LANDMARK_2);
         for (int i = 0; i < interactable.tileLocation.areaOfTile.attackCharacters.Count; i++) {
-            startStateDescriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.attackCharacters[i], interactable.tileLocation.areaOfTile.attackCharacters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
+            startStateDescriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.attackCharacters[i], interactable.tileLocation.areaOfTile.attackCharacters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
         }
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
@@ -117,6 +117,9 @@ public class MoveToAttack : Interaction {
     private void DoNothingEffect(InteractionState state) {
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.attackTarget, interactable.tileLocation.areaOfTile.attackTarget.name, LOG_IDENTIFIER.LANDMARK_2));
+        for (int i = 0; i < interactable.tileLocation.areaOfTile.attackCharacters.Count; i++) {
+            state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.attackCharacters[i], interactable.tileLocation.areaOfTile.attackCharacters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
+        }
 
         interactable.tileLocation.areaOfTile.AttackTarget();
     }

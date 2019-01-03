@@ -200,7 +200,7 @@ public class CharacterAvatar : MonoBehaviour{
             for (int i = 0; i < _party.characters.Count; i++) {
                 Character character = party.characters[i];
                 character.SetDailyInteractionGenerationTick();
-                arriveLog.AddToFillers(character, character.name, LOG_IDENTIFIER.CHARACTER_LIST_1);
+                arriveLog.AddToFillers(character, character.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
             }
             arriveLog.AddToFillers(targetLocation.tileLocation.areaOfTile, targetLocation.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
             arriveLog.AddLogToInvolvedObjects();
