@@ -2862,18 +2862,10 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         defendingArea = defending;
         this.ownParty.specificLocation.RemoveCharacterFromLocation(this.ownParty, false);
         ownParty.SetSpecificLocation(defending.coreTile.landmarkOnTile);
-//#if !WORLD_CREATION_TOOL
-//        if (ownParty is CharacterParty) {
-//            (ownParty as CharacterParty).actionData.ForceDoAction(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.DEFENDER), defending.coreTile.landmarkOnTile.landmarkObj);
-//        }
-//#endif
     }
     public void OnRemoveAsDefender() {
         defendingArea.coreTile.landmarkOnTile.AddCharacterToLocation(this.ownParty);
         defendingArea = null;
-//#if !WORLD_CREATION_TOOL
-//        _ownParty.actionData.EndCurrentAction(); //end the defender action
-//#endif
     }
     public bool IsDefending(BaseLandmark landmark) {
         if (defendingArea != null && defendingArea.id == landmark.id) {
