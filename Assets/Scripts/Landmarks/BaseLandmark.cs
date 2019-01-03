@@ -431,9 +431,9 @@ public class BaseLandmark : ILocation, IInteractable {
             _charactersAtLocation.Add(iparty); //only add to characters list if the party is not a defender of the landmark
             //}
             //this.tileLocation.RemoveCharacterFromLocation(iparty);
-            if (iparty.specificLocation != null) {
-                iparty.specificLocation.RemoveCharacterFromLocation(iparty);
-            }
+            //if (iparty.specificLocation != null) {
+            //    iparty.specificLocation.RemoveCharacterFromLocation(iparty);
+            //}
             iparty.SetSpecificLocation(this);
             tileLocation.areaOfTile.AddCharacterAtLocation(iparty.owner);
 #if !WORLD_CREATION_TOOL
@@ -444,15 +444,16 @@ public class BaseLandmark : ILocation, IInteractable {
         //}
     }
     public void RemoveCharacterFromLocation(Party iparty, bool addToTile = false) {
-        tileLocation.areaOfTile.RemoveCharacterAtLocation(iparty.owner);
         if (_charactersAtLocation.Remove(iparty)) {
             if (addToTile) {
                 this.tileLocation.AddCharacterToLocation(iparty);
             }
+            tileLocation.areaOfTile.RemoveCharacterAtLocation(iparty.owner);
 #if !WORLD_CREATION_TOOL
-            //_landmarkVisual.OnCharacterExitedLandmark(iparty);
             Messenger.Broadcast<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, iparty, this);
 #endif
+        } else {
+            Debug.LogWarning("Cannot remove character from " + this.name + " because he/she is not here");
         }
     }
     public void ReplaceCharacterAtLocation(Party ipartyToReplace, Party ipartyToAdd) {

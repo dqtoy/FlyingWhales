@@ -111,6 +111,7 @@ public class AreaInfoUI : UIMenu {
         Messenger.AddListener<Area>(Signals.AREA_TOKEN_COLLECTION_CHANGED, OnTokenCollectionStateChanged);
         Messenger.AddListener<Minion, Area>(Signals.MINION_STARTS_INVESTIGATING_AREA, OnMinionInvestigateArea);
         Messenger.AddListener<Area>(Signals.AREA_SUPPLIES_CHANGED, OnAreaSuppliesSet);
+        Messenger.AddListener<Area>(Signals.AREA_DEFENDERS_CHANGED, OnAreaDefendersChanged);
         _assignedParty = new Minion[4];
 
         //Minion Investigator slot
@@ -496,6 +497,11 @@ public class AreaInfoUI : UIMenu {
     }
     public void UpdateDefenderPage(int newPage) {
         defenderPageLbl.text = (newPage + 1).ToString() + "/" + defendersScrollSnap.ChildObjects.Length.ToString();
+    }
+    private void OnAreaDefendersChanged(Area area) {
+        if (this.isShowing && activeArea.id == area.id) {
+            UpdateDefenders();
+        }
     }
     #endregion
 

@@ -57,7 +57,9 @@ public class ConsoleMenu : UIMenu {
             {"/check_characters_data", CheckCharactersData },
         };
 
-        Messenger.AddListener(Signals.DAY_ENDED, CheckForDeadCharactersInArea);
+#if UNITY_EDITOR
+        Messenger.AddListener(Signals.DAY_ENDED, CheckForWrongCharacterData);
+#endif
     }
 
     public void ShowConsole() {
@@ -136,13 +138,22 @@ public class ConsoleMenu : UIMenu {
         }
     }
 
-    private void CheckForDeadCharactersInArea() {
+    private void CheckForWrongCharacterData() {
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
             for (int j = 0; j < currArea.charactersAtLocation.Count; j++) {
                 Character character = currArea.charactersAtLocation[j];
                 if (character.isDead) {
                     Debug.LogWarning("There is still a dead character at " + currArea.name + " : " + character.name);
+                    UIManager.Instance.Pause();
+                }
+            }
+        }
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character currCharacter = CharacterManager.Instance.allCharacters[i];
+            if (!currCharacter.isDead) {
+                if (currCharacter.faction == null) {
+                    Debug.LogWarning("There is an alive character with a null faction! " + currCharacter.name);
                     UIManager.Instance.Pause();
                 }
             }

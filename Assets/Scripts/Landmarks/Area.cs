@@ -1078,6 +1078,7 @@ public class Area {
                     }
                 }
             }
+            Messenger.Broadcast(Signals.AREA_DEFENDERS_CHANGED, this);
         }
     }
     #endregion
