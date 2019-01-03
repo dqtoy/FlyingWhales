@@ -30,6 +30,7 @@ public static class Signals {
     public static string AREA_SUPPLIES_CHANGED = "OnAreaSuppliesSet"; //Parameters (Area affectedArea)
     public static string AREA_OCCUPANY_CHANGED = "OnAreaOccupancyChanged"; //Parameters (Area affectedArea)
     public static string AREA_TOKEN_COLLECTION_CHANGED = "OnAreaTokenCollectionChanged"; //Parameters (Area affectedArea)
+    public static string AREA_DEFENDERS_CHANGED = "OnAreaDefendersChanged"; //Parameters (Area affectedArea)
     #endregion
 
     #region Landmarks

@@ -127,18 +127,22 @@ public class MoveToRecruit : Interaction {
         _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateRecruitEvent());
     }
     private void CreateRecruitEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RECRUIT_ACTION, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RECRUIT_ACTION, targetLocation.coreTile.landmarkOnTile);
         (interaction as RecruitAction).SetTargetCharacter(targetCharacter);
         interaction.SetCanInteractionBeDoneAction(() => IsRecruitActionStillValid(interaction as RecruitAction));
         _characterInvolved.SetForcedInteraction(interaction);
     }
     private bool IsRecruitActionStillValid(RecruitAction recruitAction) {
-        /* It will no longer be valid if no recruitable character is avialable in the location. 
+        /*
+         If the recruit was induced, the action should already have a target character,
+         check if that character is still at that location
+         */
+        if (recruitAction.targetCharacter != null) {
+            return !_characterInvolved.homeLandmark.tileLocation.areaOfTile.IsResidentsFull() && recruitAction.targetCharacter.specificLocation.tileLocation.areaOfTile.id == targetLocation.id;
+        }
+        /* It will no longer be valid if no recruitable character is available in the location. 
          * It will also no longer be valid if the recruiter's home area's Residents Capacity is already full.
          */
-        if (targetCharacter != null) {
-            return !_characterInvolved.homeLandmark.tileLocation.areaOfTile.IsResidentsFull() && targetCharacter.specificLocation.tileLocation.areaOfTile == targetLocation;
-        }
         return !_characterInvolved.homeLandmark.tileLocation.areaOfTile.IsResidentsFull() && recruitAction.GetTargetCharacter(_characterInvolved) != null;
     }
 
@@ -177,7 +181,7 @@ public class MoveToRecruit : Interaction {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character currCharacter = CharacterManager.Instance.allCharacters[i];
-            if (currCharacter.id != characterInvolved.id && !currCharacter.isDefender && currCharacter.minion == null) { //- character must not be in Defender Tile.
+            if (currCharacter.id != characterInvolved.id && !currCharacter.isLeader && !currCharacter.isDefender && currCharacter.minion == null) { //- character must not be in Defender Tile.
                 int weight = 0;
                 if (currCharacter.faction == null || currCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
                     weight += 35; //- character is not part of any Faction: Weight +35

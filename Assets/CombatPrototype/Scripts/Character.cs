@@ -2860,11 +2860,11 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     #region Defender
     public void OnSetAsDefender(Area defending) {
         defendingArea = defending;
-        this.ownParty.specificLocation.RemoveCharacterFromLocation(this.ownParty, false);
-        ownParty.SetSpecificLocation(defending.coreTile.landmarkOnTile);
+        //this.ownParty.specificLocation.RemoveCharacterFromLocation(this.ownParty, false);
+        //ownParty.SetSpecificLocation(defending.coreTile.landmarkOnTile);
     }
     public void OnRemoveAsDefender() {
-        defendingArea.coreTile.landmarkOnTile.AddCharacterToLocation(this.ownParty);
+        //defendingArea.coreTile.landmarkOnTile.AddCharacterToLocation(this.ownParty);
         defendingArea = null;
     }
     public bool IsDefending(BaseLandmark landmark) {

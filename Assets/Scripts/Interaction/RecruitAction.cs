@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RecruitAction : Interaction {
 
-    private Character targetCharacter;
+    public Character targetCharacter;
 
     private const string Disrupted_Recruitment_Success = "Disrupted Recruitment Success";
     private const string Disrupted_Recruitment_Fail = "Disrupted Recruitment Fail";
