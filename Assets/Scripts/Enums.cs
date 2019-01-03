@@ -1118,6 +1118,7 @@ public enum INTERACTION_TYPE {
     FOUND_BESTALIA,
     DROP_ITEM,
     CHARM_ACTION,
+    ABDUCT_ACTION,
 }
 public enum REWARD {
     SUPPLY,

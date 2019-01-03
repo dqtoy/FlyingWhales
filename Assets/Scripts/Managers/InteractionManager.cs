@@ -366,6 +366,41 @@ public class InteractionManager : MonoBehaviour {
                 return character.specificLocation.tileLocation.areaOfTile.id != character.homeLandmark.tileLocation.areaOfTile.id;
             case INTERACTION_TYPE.CHARACTER_TRACKING:
                 return character.specificLocation != character.homeLandmark;
+            case INTERACTION_TYPE.INDUCE_WAR:
+                if (character.specificLocation.tileLocation.landmarkOnTile.owner != null) {
+                    return character.specificLocation.tileLocation.landmarkOnTile.owner.GetFactionsWithRelationship(FACTION_RELATIONSHIP_STATUS.DISLIKED).Count > 0;
+                }
+                return false;
+            case INTERACTION_TYPE.FACTION_UPGRADE:
+                return character.specificLocation.tileLocation.areaOfTile.id == character.homeLandmark.tileLocation.areaOfTile.id && character.specificLocation.tileLocation.areaOfTile.suppliesInBank >= 100;
+            case INTERACTION_TYPE.WORK_EVENT:
+                //if character is at home, allow
+                return character.specificLocation.tileLocation.areaOfTile.id == character.homeLandmark.tileLocation.areaOfTile.id;
+            case INTERACTION_TYPE.INDUCE_GRUDGE:
+                Area targetArea = character.specificLocation.tileLocation.areaOfTile;
+                for (int i = 0; i < targetArea.areaResidents.Count; i++) {
+                    Character resident = targetArea.areaResidents[i];
+                    if(!resident.alreadyTargetedByGrudge && !resident.isDefender && (resident.race == RACE.HUMANS || resident.race == RACE.ELVES || resident.race == RACE.GOBLIN) && resident.specificLocation.tileLocation.areaOfTile.id == targetArea.id) {
+                        return true;
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.MYSTERIOUS_SARCOPHAGUS:
+                return character.specificLocation.tileLocation.areaOfTile.name == "Tessellated Triangle" || character.specificLocation.tileLocation.areaOfTile.name == "Gloomhollow Crypts";
+            case INTERACTION_TYPE.INFLICT_ILLNESS:
+                /*You can inflict a random illness on a character. Trigger requirements:
+                - there must be at least one character in the location
+                - the player must have intel of at least one of these characters*/
+                area = character.specificLocation.tileLocation.areaOfTile;
+                List<Character> choices = new List<Character>(area.charactersAtLocation);
+                choices.Remove(character);
+                for (int i = 0; i < choices.Count; i++) {
+                    Character currCharacter = choices[i];
+                    if (currCharacter.characterToken.isObtainedByPlayer) {
+                        return true;
+                    }
+                }
+                return false;
             case INTERACTION_TYPE.MOVE_TO_SCAVENGE:
                 //check if there are any unowned areas
                 if (character.race == RACE.FAERY || character.race == RACE.HUMANS || character.race == RACE.ELVES || character.race == RACE.GOBLIN) {
@@ -382,7 +417,7 @@ public class InteractionManager : MonoBehaviour {
                 if (character.race == RACE.GOBLIN || character.race == RACE.SKELETON || character.race == RACE.HUMANS) {
                     for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                         Area currArea = LandmarkManager.Instance.allAreas[i];
-                        if (currArea.owner != null 
+                        if (currArea.owner != null
                             && currArea.owner.id != character.faction.id
                             && currArea.id != PlayerManager.Instance.player.playerArea.id) {
                             relationship = character.faction.GetRelationshipWith(currArea.owner);
@@ -391,11 +426,6 @@ public class InteractionManager : MonoBehaviour {
                             }
                         }
                     }
-                }
-                return false;
-            case INTERACTION_TYPE.INDUCE_WAR:
-                if (character.specificLocation.tileLocation.landmarkOnTile.owner != null) {
-                    return character.specificLocation.tileLocation.landmarkOnTile.owner.GetFactionsWithRelationship(FACTION_RELATIONSHIP_STATUS.DISLIKED).Count > 0;
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_PEACE_NEGOTIATION:
@@ -429,54 +459,24 @@ public class InteractionManager : MonoBehaviour {
                 //    }
                 //}
                 return false;
-            case INTERACTION_TYPE.FACTION_UPGRADE:
-                return character.specificLocation.tileLocation.areaOfTile.id == character.homeLandmark.tileLocation.areaOfTile.id && character.specificLocation.tileLocation.areaOfTile.suppliesInBank >= 100;
-            case INTERACTION_TYPE.WORK_EVENT:
-                //if character is at home, allow
-                return character.specificLocation.tileLocation.areaOfTile.id == character.homeLandmark.tileLocation.areaOfTile.id;
-            case INTERACTION_TYPE.INDUCE_GRUDGE:
-                Area targetArea = character.specificLocation.tileLocation.areaOfTile;
-                for (int i = 0; i < targetArea.areaResidents.Count; i++) {
-                    Character resident = targetArea.areaResidents[i];
-                    if(!resident.alreadyTargetedByGrudge && !resident.isDefender && (resident.race == RACE.HUMANS || resident.race == RACE.ELVES || resident.race == RACE.GOBLIN) && resident.specificLocation.tileLocation.areaOfTile.id == targetArea.id) {
-                        return true;
-                    }
-                }
-                return false;
-            case INTERACTION_TYPE.MYSTERIOUS_SARCOPHAGUS:
-                return character.specificLocation.tileLocation.areaOfTile.name == "Tessellated Triangle" || character.specificLocation.tileLocation.areaOfTile.name == "Gloomhollow Crypts";
-            case INTERACTION_TYPE.INFLICT_ILLNESS:
-                /*You can inflict a random illness on a character. Trigger requirements:
-                - there must be at least one character in the location
-                - the player must have intel of at least one of these characters*/
-                area = character.specificLocation.tileLocation.areaOfTile;
-                List<Character> choices = new List<Character>(area.charactersAtLocation);
-                choices.Remove(character);
-                for (int i = 0; i < choices.Count; i++) {
-                    Character currCharacter = choices[i];
-                    if (currCharacter.characterToken.isObtainedByPlayer) {
-                        return true;
-                    }
-                }
-                return false;
             case INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS:
-                //check if there are any areas owned by factions other than your own
-                if(character.race == RACE.ELVES || character.race == RACE.HUMANS) {
-                    for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
-                        Faction faction = FactionManager.Instance.allFactions[i];
-                        if (faction.ownedAreas.Count == 0) { //skip factions that don't have owned areas
-                            continue; //skip
-                        }
-                        if (faction.id != PlayerManager.Instance.player.playerFaction.id && faction.id != character.faction.id && faction.isActive) {
-                            relationship = character.faction.GetRelationshipWith(faction);
-                            if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY) {
-                                return true;
+                    //check if there are any areas owned by factions other than your own
+                    if(character.race == RACE.ELVES || character.race == RACE.HUMANS) {
+                        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+                            Faction faction = FactionManager.Instance.allFactions[i];
+                            if (faction.ownedAreas.Count == 0) { //skip factions that don't have owned areas
+                                continue; //skip
+                            }
+                            if (faction.id != PlayerManager.Instance.player.playerFaction.id && faction.id != character.faction.id && faction.isActive) {
+                                relationship = character.faction.GetRelationshipWith(faction);
+                                if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY) {
+                                    return true;
 
+                                }
                             }
                         }
                     }
-                }
-                return false;
+                    return false;
             case INTERACTION_TYPE.MOVE_TO_RECRUIT:
                 if (character.race == RACE.ELVES || character.race == RACE.HUMANS) {
                     if (character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) { //check if resident capacity is full
@@ -541,7 +541,7 @@ public class InteractionManager : MonoBehaviour {
                     if (!character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
                         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
                             Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                            if (currCharacter.id != character.id) {
+                            if (currCharacter.id != character.id && !currCharacter.currentParty.icon.isTravelling) {
                                 if (currCharacter.faction == null || currCharacter.faction.id != character.faction.id) {
                                     return true;
                                 }

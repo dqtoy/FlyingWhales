@@ -28,7 +28,7 @@ public class BookOfWizardry : SpecialToken {
         interaction.AddState(stopFailState);
     }
     public override bool CanBeUsedBy(Character sourceCharacter) {
-        return true;
+        //return true;
         return sourceCharacter.gender == GENDER.MALE && sourceCharacter.characterClass.attackType == ATTACK_TYPE.MAGICAL_RANGED && sourceCharacter.role.roleType != CHARACTER_ROLE.BEAST;
     }
     #endregion
@@ -58,6 +58,8 @@ public class BookOfWizardry : SpecialToken {
         Log log = new Log(GameManager.Instance.Today(), "Tokens", GetType().ToString(), state.name.ToLower() + "_special2");
         stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         state.AddLogToInvolvedObjects(log);
+
+        Debug.LogWarning("[Day " + GameManager.Instance.continuousDays + "] " + state.tokenUser.name + " used " + name + " on " + Utilities.GetPronounString(state.tokenUser.gender, PRONOUN_TYPE.REFLEXIVE, false) + " and became a " + state.tokenUser.characterClass.className + " at " + state.tokenUser.specificLocation.tileLocation.areaOfTile.name);
     }
     private void StopFailEffect(TokenInteractionState state) {
         state.tokenUser.ChangeClass("Archmage");
@@ -66,5 +68,7 @@ public class BookOfWizardry : SpecialToken {
         state.descriptionLog.AddToFillers(state.interaction.investigatorMinion, state.interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
 
         state.AddLogFiller(new LogFiller(state.interaction.investigatorMinion, state.interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
+
+        Debug.LogWarning("[Day " + GameManager.Instance.continuousDays + "] " + state.tokenUser.name + " used " + name + " on " + Utilities.GetPronounString(state.tokenUser.gender, PRONOUN_TYPE.REFLEXIVE, false) + " and became a " + state.tokenUser.characterClass.className + " at " + state.tokenUser.specificLocation.tileLocation.areaOfTile.name);
     }
 }

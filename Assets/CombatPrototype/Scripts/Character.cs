@@ -873,6 +873,10 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             //_icon = null;
 
             Debug.Log(this.name + " died!");
+            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death");
+            log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            //log.AddToFillers(specificLocation.tileLocation.areaOfTile, specificLocation.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+            AddHistory(log);
         }
     }
     public void Assassinate(Character assassin) {
