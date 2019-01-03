@@ -157,7 +157,12 @@ public class Interaction {
         _currentState.SetDescription();
         Messenger.Broadcast(Signals.UPDATED_INTERACTION_STATE, this);
     } //this is called when the player clicks the "exclamation point" button and this interaction was chosen
-
+    public virtual bool CanInteractionBeDoneBy(Character character) { //Converted this to virtual so each instance of interaction can also have trigger requirements other than CanCreateInteraction at InteractionManager
+        if (_canInteractionBeDone != null) {
+            return _canInteractionBeDone();
+        }
+        return true;
+    }
     public virtual bool CanStillDoInteraction() { return true; }
     #endregion
 
@@ -332,12 +337,7 @@ public class Interaction {
     public void SetTokenTrigger(Token token) {
         _tokenTrigger = token;
     }
-    public bool CanInteractionBeDone() {
-        if(_canInteractionBeDone != null) {
-            return _canInteractionBeDone();
-        }
-        return true;
-    }
+    
     public void AddLogFillerToAllStates(LogFiller filler) {
         foreach (KeyValuePair<string, InteractionState> kvp in _states) {
             kvp.Value.AddLogFiller(filler);
