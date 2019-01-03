@@ -261,8 +261,8 @@ public class ObjectManager : MonoBehaviour {
             //    return new PatrolAction();
             case ACTION_TYPE.REPAIR:
                 return new RepairAction();
-            case ACTION_TYPE.ABDUCT:
-                return new AbductAction();
+            //case ACTION_TYPE.ABDUCT:
+            //    return new AbductAction();
             case ACTION_TYPE.PRAY:
                 return new PrayAction();
             case ACTION_TYPE.ATTACK:

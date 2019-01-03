@@ -239,6 +239,7 @@ public class ExploreEvent : Interaction {
         }
         SpecialToken token = tokenWeights.PickRandomElementGivenWeights();
         _characterInvolved.ObtainToken(token);
+        Debug.LogWarning("[Day " + GameManager.Instance.continuousDays + "] " + _characterInvolved.name + " obtained " + token.tokenName + " at " + interactable.tileLocation.areaOfTile.name);
         return token;
     }
 }
