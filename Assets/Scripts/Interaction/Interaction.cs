@@ -157,6 +157,8 @@ public class Interaction {
         _currentState.SetDescription();
         Messenger.Broadcast(Signals.UPDATED_INTERACTION_STATE, this);
     } //this is called when the player clicks the "exclamation point" button and this interaction was chosen
+
+    public virtual bool CanStillDoInteraction() { return true; }
     #endregion
 
     #region Utilities
@@ -242,7 +244,7 @@ public class Interaction {
         }
     }
     public void TimedOutRunDefault() {
-        if(_characterInvolved != null && _characterInvolved.isDead) {
+        if((_characterInvolved != null && _characterInvolved.isDead) || !CanStillDoInteraction()) {
             EndInteraction();
             return;
         }
