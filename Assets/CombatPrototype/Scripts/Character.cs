@@ -3101,7 +3101,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         string interactionLog = GameManager.Instance.TodayLogString() + "Generating daily interaction for " + this.name;
         if (_forcedInteraction != null) {
             interactionLog += "\nUsing forced interaction: " + _forcedInteraction.type.ToString();
-            if(_forcedInteraction.CanInteractionBeDone()) {
+            if(_forcedInteraction.CanInteractionBeDoneBy(this)) {
                 AddInteraction(_forcedInteraction);
             } else {
                 Interaction unable = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, this.specificLocation.tileLocation.landmarkOnTile);

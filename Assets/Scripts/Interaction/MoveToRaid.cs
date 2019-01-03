@@ -28,7 +28,7 @@ public class MoveToRaid : Interaction {
         InteractionState normalRaid = new InteractionState(Normal_Raid, this);
 
         if(targetArea == null) {
-            targetArea = GetTargetArea();
+            targetArea = GetTargetArea(_characterInvolved);
         }
         targetFaction = targetArea.owner;
         AddToDebugLog("Set target area to " + targetArea.name);
@@ -70,6 +70,12 @@ public class MoveToRaid : Interaction {
             state.AddActionOption(doNothing);
             state.SetDefaultOption(doNothing);
         }
+    }
+    public override bool CanInteractionBeDoneBy(Character character) {
+        if (GetTargetArea(character) == null) {
+            return false;
+        }
+        return base.CanInteractionBeDoneBy(character);
     }
     #endregion
 
@@ -136,14 +142,14 @@ public class MoveToRaid : Interaction {
         return targetArea.owner != null && targetArea.owner.id == targetFaction.id; //check if the faction owner of the target area has not changed
     }
 
-    private Area GetTargetArea() {
+    private Area GetTargetArea(Character character) {
         List<Area> choices = new List<Area>();
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
             if (currArea.owner != null 
-                && currArea.owner.id != _characterInvolved.faction.id
+                && currArea.owner.id != character.faction.id
                 && currArea.id != PlayerManager.Instance.player.playerArea.id) {
-                FactionRelationship relationship = _characterInvolved.faction.GetRelationshipWith(currArea.owner);
+                FactionRelationship relationship = character.faction.GetRelationshipWith(currArea.owner);
                 if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
                     choices.Add(currArea);
 

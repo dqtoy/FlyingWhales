@@ -77,6 +77,12 @@ public class MoveToRecruit : Interaction {
             state.SetDefaultOption(doNothing);
         }
     }
+    public override bool CanInteractionBeDoneBy(Character character) {
+        if (GetTargetLocation(character) == null) {
+            return false;
+        }
+        return base.CanInteractionBeDoneBy(character);
+    }
     #endregion
 
     #region Action Option Effects
