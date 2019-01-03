@@ -375,13 +375,13 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_RAID:
-                //check if there are any areas owned by factions other than your own
-                if(character.race == RACE.GOBLIN || character.race == RACE.SKELETON || character.race == RACE.HUMANS) {
+                //There must be at least one other location that is occupied but not owned by the character's Faction and not owned by an Ally or a Friend faction
+                if (character.race == RACE.GOBLIN || character.race == RACE.SKELETON || character.race == RACE.HUMANS) {
                     for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                         Area currArea = LandmarkManager.Instance.allAreas[i];
                         if (currArea.owner != null 
-                            && currArea.owner.isActive 
-                            && currArea.owner.id != character.faction.id) {
+                            && currArea.owner.id != character.faction.id
+                            && currArea.id != PlayerManager.Instance.player.playerArea.id) {
                             relationship = character.faction.GetRelationshipWith(currArea.owner);
                             if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
                                 return true;
