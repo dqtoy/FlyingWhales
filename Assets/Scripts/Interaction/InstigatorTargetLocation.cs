@@ -111,8 +111,8 @@ public class InstigatorTargetLocation : Interaction {
 
         state.descriptionLog.AddToFillers(_targetLocationToken.location, _targetLocationToken.location.name, LOG_IDENTIFIER.LANDMARK_2);
         for (int i = 0; i < _attackers.Count; i++) {
-            state.descriptionLog.AddToFillers(_attackers[0], _attackers[0].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
-            state.AddLogFiller(new LogFiller(_attackers[0], _attackers[0].name, LOG_IDENTIFIER.CHARACTER_LIST_1));
+            state.descriptionLog.AddToFillers(_attackers[0], _attackers[0].name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
+            state.AddLogFiller(new LogFiller(_attackers[0], _attackers[0].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
     }
     private void DoNothingEffect(InteractionState state) {

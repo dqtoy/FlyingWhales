@@ -84,14 +84,14 @@ public class DefenseMobilization : Interaction {
     private void StopMobilizationFailEffect(InteractionState state) {
         DefenderGroup newDefenderGroup = CreateNewDefenderGroupFromIdleCharactersInArea();
         for (int i = 0; i < newDefenderGroup.party.characters.Count; i++) {
-            state.descriptionLog.AddToFillers(newDefenderGroup.party.characters[i], newDefenderGroup.party.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
+            state.descriptionLog.AddToFillers(newDefenderGroup.party.characters[i], newDefenderGroup.party.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
             state.AddLogFiller(new LogFiller(newDefenderGroup.party.characters[i], newDefenderGroup.party.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
     }
     private void DefenderGroupCreatedEffect(InteractionState state) {
         DefenderGroup newDefenderGroup = CreateNewDefenderGroupFromIdleCharactersInArea();
         for (int i = 0; i < newDefenderGroup.party.characters.Count; i++) {
-            state.descriptionLog.AddToFillers(newDefenderGroup.party.characters[i], newDefenderGroup.party.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1);
+            state.descriptionLog.AddToFillers(newDefenderGroup.party.characters[i], newDefenderGroup.party.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
             state.AddLogFiller(new LogFiller(newDefenderGroup.party.characters[i], newDefenderGroup.party.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
     }
