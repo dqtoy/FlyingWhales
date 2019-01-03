@@ -163,6 +163,7 @@ public class Interaction {
         }
         return true;
     }
+    public virtual bool CanStillDoInteraction() { return true; }
     #endregion
 
     #region Utilities
@@ -248,7 +249,7 @@ public class Interaction {
         }
     }
     public void TimedOutRunDefault() {
-        if(_characterInvolved != null && _characterInvolved.isDead) {
+        if((_characterInvolved != null && _characterInvolved.isDead) || !CanStillDoInteraction()) {
             EndInteraction();
             return;
         }
