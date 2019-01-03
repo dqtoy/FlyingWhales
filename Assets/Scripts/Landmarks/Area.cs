@@ -725,6 +725,9 @@ public class Area {
         for (int i = 0; i < areaResidents.Count; i++) {
             Character resident = areaResidents[i];
             if (resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.faction == owner && resident.specificLocation.tileLocation.areaOfTile.id == id) {
+                if(attackCharacters != null && attackCharacters.Contains(resident)) {
+                    continue;
+                }
                 if (resident.forcedInteraction == null || (resident.forcedInteraction != null && resident.forcedInteraction.type != INTERACTION_TYPE.MOVE_TO_ATTACK)) {
                     defenderCandidates.Add(resident);
                 }
@@ -1194,6 +1197,7 @@ public class Area {
             attackCharacters[0].ownParty.AddCharacter(attackCharacters[i]);
         }
         attackCharacters[0].AttackAnArea(attackTarget);
+        SetAttackTargetAndCharacters(null, null);
     }
     #endregion
 

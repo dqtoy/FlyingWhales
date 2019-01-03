@@ -591,7 +591,7 @@ public class InteractionManager : MonoBehaviour {
             List<Character> residentsAtArea = new List<Character>();
             for (int i = 0; i < areaToAttack.areaResidents.Count; i++) {
                 Character resident = areaToAttack.areaResidents[i];
-                if(resident.IsInOwnParty() && !resident.isLeader && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == areaToAttack.id) {
+                if(resident.forcedInteraction == null && resident.IsInOwnParty() && !resident.isLeader && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == areaToAttack.id) {
                     residentsAtArea.Add(resident);
                 }
             }
