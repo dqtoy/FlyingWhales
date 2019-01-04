@@ -243,8 +243,8 @@ public class ObjectManager : MonoBehaviour {
                 return new DestroyAction();
             case ACTION_TYPE.REST:
                 return new RestAction();
-            case ACTION_TYPE.HUNT:
-                return new HuntAction();
+            //case ACTION_TYPE.HUNT:
+            //    return new HuntAction();
             case ACTION_TYPE.EAT:
                 return new EatAction();
             case ACTION_TYPE.DRINK:

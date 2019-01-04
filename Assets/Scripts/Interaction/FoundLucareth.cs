@@ -64,7 +64,7 @@ public class FoundLucareth : Interaction {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Turn her against her former faction: " + _characterInvolved.faction.name + ".",
-                disabledTooltipText = investigatorMinion.name + " must be an Instigator.",
+                disabledTooltipText = "Must be an Instigator.",
                 jobNeeded = JOB.INSTIGATOR,
                 effect = () => TurnOption(),
             };
@@ -72,7 +72,7 @@ public class FoundLucareth : Interaction {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Establish an alliance with her.",
-                disabledTooltipText = investigatorMinion.name + " must be a Diplomat.",
+                disabledTooltipText = "Must be a Diplomat.",
                 jobNeeded = JOB.DIPLOMAT,
                 effect = () => AllyOption(),
             };
@@ -80,7 +80,7 @@ public class FoundLucareth : Interaction {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Dissuade her from the idea.",
-                disabledTooltipText = investigatorMinion.name + " must be a Dissuader.",
+                disabledTooltipText = "Must be a Dissuader.",
                 jobNeeded = JOB.DISSUADER,
                 effect = () => DissuadeOption(),
             };

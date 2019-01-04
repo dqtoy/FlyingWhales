@@ -10,7 +10,7 @@ public class AbductAction : Interaction {
     private const string Assisted_Abduction_Success = "Assisted Abduction Success";
     private const string Assisted_Abduction_Fail = "Assisted Abduction Fail";
     private const string Assisted_Abduction_Critical_Fail = "Assisted Abduction Critical Fail";
-    private const string Thwarted_Abduction_Success = "Assisted Abduction Success";
+    private const string Thwarted_Abduction_Success = "Thwarted Abduction Success";
     private const string Thwarted_Abduction_Fail = "Thwarted Abduction Fail";
     private const string Thwarted_Abduction_Critical_Fail = "Thwarted Abduction Critical Fail";
     private const string Normal_Abduction_Success = "Normal Abduction Success";

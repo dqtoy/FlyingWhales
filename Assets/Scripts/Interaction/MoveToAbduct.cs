@@ -50,7 +50,7 @@ public class MoveToAbduct : Interaction {
                 name = "Prevent " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + ".",
                 duration = 0,
                 jobNeeded = JOB.DISSUADER,
-                disabledTooltipText = investigatorMinion.name + " must be a Dissuader.",
+                disabledTooltipText = "Must be a Dissuader.",
                 effect = () => PreventOption(),
             };
             ActionOption doNothingOption = new ActionOption {
@@ -141,7 +141,7 @@ public class MoveToAbduct : Interaction {
                 int weight = 0;
                 if (currArea.owner == null) {
                     weight += 15;
-                } else if (currArea.owner.id != characterInvolved.faction.id) {
+                } else if (currArea.owner.id != PlayerManager.Instance.player.playerFaction.id && currArea.owner.id != characterInvolved.faction.id) {
                     FactionRelationship rel = currArea.owner.GetRelationshipWith(characterInvolved.faction);
                     if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY || rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED) {
                         weight += 25;

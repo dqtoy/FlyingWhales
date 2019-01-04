@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class ActionOptionTraitRequirement : ActionOptionNeededObjectChecker {
@@ -54,8 +55,12 @@ public class ActionOptionFactionRelationshipRequirement : ActionOptionNeededObje
 }
 
 public class ActionOptionNeededObjectChecker {
-    
+    public Func<Character, bool> isMatchFunction;
+
     public virtual bool IsMatch(Character character) {
+        if(isMatchFunction != null) {
+            return isMatchFunction(character);
+        }
         return true;
     }
 }

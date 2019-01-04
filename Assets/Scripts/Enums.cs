@@ -1120,6 +1120,7 @@ public enum INTERACTION_TYPE {
     CHARM_ACTION,
     ABDUCT_ACTION,
     STEAL_ACTION,
+    HUNT_ACTION,
 }
 public enum REWARD {
     SUPPLY,

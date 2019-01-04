@@ -281,6 +281,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.ABDUCT_ACTION:
                 createdInteraction = new AbductAction(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_HUNT:
+                createdInteraction = new MoveToHunt(interactable);
+                break;
+            case INTERACTION_TYPE.HUNT_ACTION:
+                createdInteraction = new HuntAction(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -564,7 +570,15 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_HUNT:
-                return character.race == RACE.WOLF || character.race == RACE.SPIDER || character.race == RACE.DRAGON;
+            if(character.race == RACE.WOLF || character.race == RACE.SPIDER || character.race == RACE.DRAGON) {
+                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                    area = LandmarkManager.Instance.allAreas[i];
+                    if (area.id != character.specificLocation.tileLocation.areaOfTile.id && (area.owner == null || (area.owner != null && area.owner.id != character.faction.id && area.owner.id != PlayerManager.Instance.player.playerFaction.id))) {
+                        return true;
+                    }
+                }
+            }
+            return false;
             case INTERACTION_TYPE.FOUND_LUCARETH:
                 return character.characterClass.className == "Witch" && character.specificLocation.tileLocation.areaOfTile.owner == null 
                     && character.specificLocation.tileLocation.areaOfTile.raceType == character.race && !FactionManager.Instance.GetFactionBasedOnName("Lucareth").isActive;
