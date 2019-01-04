@@ -90,16 +90,39 @@ public class MoveToAbduct : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
 
-        //TODO: Abduct
+        StartMove();
     }
     private void NormalAbductEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
 
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
 
-        //TODO: Abduct
+        StartMove();
     }
     #endregion
+    private void StartMove() {
+        AddToDebugLog(_characterInvolved.name + " starts moving towards " + _targetArea.name + "(" + _targetArea.coreTile.landmarkOnTile.name + ") to abduct!");
+        _characterInvolved.currentParty.GoToLocation(_targetArea.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateAbductAction());
+    }
+    private void CreateAbductAction() {
+        AddToDebugLog(_characterInvolved.name + " will now create abduct action");
+        Interaction abduct = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ABDUCT_ACTION, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        abduct.SetCanInteractionBeDoneAction(IsAbductStillValid);
+        _characterInvolved.SetForcedInteraction(abduct);
+    }
+    private bool IsAbductStillValid() {
+        if (!_characterInvolved.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
+            for (int i = 0; i < _targetArea.charactersAtLocation.Count; i++) {
+                Character currCharacter = _targetArea.charactersAtLocation[i];
+                if (currCharacter.id != _characterInvolved.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty()) {
+                    if (currCharacter.isFactionless || currCharacter.faction.id != _characterInvolved.faction.id) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
     private Area GetTargetLocation(Character characterInvolved) {
         WeightedDictionary<Area> locationWeights = new WeightedDictionary<Area>();

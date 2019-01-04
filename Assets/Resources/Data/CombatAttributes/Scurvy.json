@@ -1,1 +1,1 @@
-{"name":"Scurvy","description":"Scurvy","type":3,"daysDuration":10,"effects":[{"stat":1,"amount":10.0,"isPercentage":false,"target":0,"description":"","hasRequirement":false,"isNot":false,"requirementType":0,"requirementSeparator":0,"requirements":[]}]}
+{"name":"Scurvy","description":"This character has a disease.","type":3,"daysDuration":0,"effects":[{"stat":1,"amount":10.0,"isPercentage":false,"target":0,"description":"","hasRequirement":false,"isNot":false,"requirementType":0,"requirementSeparator":0,"requirements":[]}]}

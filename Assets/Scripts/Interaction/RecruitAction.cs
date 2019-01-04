@@ -235,7 +235,7 @@ public class RecruitAction : Interaction {
                 && currCharacter.minion == null
                 && currCharacter.faction.id != characterInvolved.faction.id) { //- character must not be in Defender Tile.
                 int weight = 0;
-                if (currCharacter.faction == null || currCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
+                if (currCharacter.isFactionless) {
                     weight += 35; //- character is not part of any Faction: Weight +35
                 } else if (currCharacter.faction.id != characterInvolved.faction.id) { //exclude characters with same faction
                     FactionRelationship rel = currCharacter.faction.GetRelationshipWith(characterInvolved.faction);

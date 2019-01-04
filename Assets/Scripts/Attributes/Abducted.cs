@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Charmed : Trait {
+public class Abducted : Trait {
     public Faction originalFaction { get; private set; }
 
-    public Charmed(Faction originalFaction) {
-        name = "Charmed";
+    public Abducted(Faction originalFaction) {
+        name = "Abducted";
         this.originalFaction = originalFaction;
         //name = "Charmed from " + originalFaction.name;
-        description = "This character has been bewitched!";
+        description = "This character has been abducted!";
         type = TRAIT_TYPE.NEGATIVE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
