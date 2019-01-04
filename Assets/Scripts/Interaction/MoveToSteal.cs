@@ -163,6 +163,6 @@ public class MoveToSteal : Interaction {
         if (choices.GetTotalOfWeights() > 0) {
             return choices.PickRandomElementGivenWeights();
         }
-        throw new System.Exception("Could not find target location for move to steal of " + _characterInvolved.name);
+        return null;
     }
 }

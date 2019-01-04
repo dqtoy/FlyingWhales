@@ -158,6 +158,7 @@ public class MoveToCharm : Interaction {
         if (choices.GetTotalOfWeights() > 0) {
             return choices.PickRandomElementGivenWeights();
         }
-        throw new System.Exception("Could not find target location for move to charm of " + _characterInvolved.faction.name);
+        return null;
+        //throw new System.Exception("Could not find target location for move to charm of " + _characterInvolved.faction.name);
     }
 }
