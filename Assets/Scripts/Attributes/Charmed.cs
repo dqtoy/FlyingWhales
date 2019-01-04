@@ -8,8 +8,8 @@ public class Charmed : Trait {
     public Charmed(Faction originalFaction) {
         name = "Charmed";
         this.originalFaction = originalFaction;
-        name = "Charmed from " + originalFaction.name;
-        description = "This character was part of " + originalFaction.name + " before he/she was charmed";
+        //name = "Charmed from " + originalFaction.name;
+        description = "This character has been bewitched!";
         type = TRAIT_TYPE.NEGATIVE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
