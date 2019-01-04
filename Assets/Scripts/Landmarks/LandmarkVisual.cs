@@ -31,6 +31,7 @@ public class LandmarkVisual : MonoBehaviour {
     [SerializeField] private InteractionTimer interactionTimerJobAction;
     [SerializeField] private TweenRotation interactionTimerTween;
     [SerializeField] private TweenRotation interactionTimerJobActionTween;
+    public Canvas landmarkCanvas;
     public GameObject landmarkHPGO;
 
     #region getters/setters

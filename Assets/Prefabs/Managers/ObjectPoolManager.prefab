@@ -74,6 +74,7 @@ MonoBehaviour:
   - {fileID: 1662102530042056, guid: c05e125abbaae31498da82dac4e008dd, type: 2}
   - {fileID: 1960029943899900, guid: e494a759a881ec348bff58d5240594c9, type: 2}
   - {fileID: 1763281387834148, guid: 9e936abe468e502459315397d81dc971, type: 2}
+  - {fileID: 1677564857695062, guid: 52b80ee5fdeff7946bfa7fea000b7c07, type: 2}
   otherPrefabs:
   - {fileID: 1000012712350628, guid: 5372250d22a51bc40a200236eee58ac2, type: 2}
   UIObjectPoolParent: {fileID: 0}

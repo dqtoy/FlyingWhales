@@ -82,6 +82,10 @@ public class UIManager : MonoBehaviour {
     [Header("Shared")]
     [SerializeField] private GameObject cover;
 
+    [Space(10)]
+    [Header("Nameplates")]
+    [SerializeField] private RectTransform nameplateParent;
+
     private List<PlayerPickerButton> currentActivePlayerPickerButtons;
 
     [Space(10)] //FOR TESTING
@@ -648,6 +652,13 @@ public class UIManager : MonoBehaviour {
             NormalizeFontSizeOfLabel(goLbls[i]);
         }
         return go;
+    }
+    #endregion
+
+    #region Nameplate
+    public void CreateAreaNameplate(Area area) {
+        GameObject nameplateGO = UIManager.Instance.InstantiateUIObject("AreaNameplate", nameplateParent);
+        nameplateGO.GetComponent<AreaNameplate>().SetArea(area);
     }
     #endregion
 

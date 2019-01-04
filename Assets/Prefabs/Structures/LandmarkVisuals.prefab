@@ -520,6 +520,7 @@ MonoBehaviour:
   interactionTimerJobAction: {fileID: 114325175078119444}
   interactionTimerTween: {fileID: 114517736461814870}
   interactionTimerJobActionTween: {fileID: 114167006845197322}
+  landmarkCanvas: {fileID: 223191840476214176}
   landmarkHPGO: {fileID: 1094328930522268}
 --- !u!114 &114150353554900346
 MonoBehaviour:
