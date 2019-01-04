@@ -53,6 +53,7 @@ public class Area {
 
     //misc
     public Sprite locationPortrait { get; private set; }
+    public Vector2 nameplatePos { get; private set; }
 
     //for testing
     public List<string> supplyLog { get; private set; } //limited to 100 entries
@@ -109,6 +110,7 @@ public class Area {
         ConstructAreaTasksInteractionWeights();
         StartSupplyLine();
 #endif
+        nameplatePos = LandmarkManager.Instance.GetAreaNameplatePosition(this);
     }
     public Area(AreaSaveData data) {
         id = Utilities.SetID(this, data.areaID);
@@ -160,6 +162,7 @@ public class Area {
             Messenger.AddListener(Signals.DAY_ENDED_2, DefaultAllExistingInteractions);
         }
         GenerateDefaultRace();
+        nameplatePos = LandmarkManager.Instance.GetAreaNameplatePosition(this);
     }
 
     #region Area Details
@@ -517,6 +520,12 @@ public class Area {
     public void SetLocationPortrait(Sprite portrait) {
         locationPortrait = portrait;
     }
+    private void CreateNameplate() {
+        //GameObject nameplateGO = UIManager.Instance.InstantiateUIObject("AreaNameplate", coreTile.tileLocation.landmarkOnTile.landmarkVisual.landmarkCanvas.transform);
+        ////nameplateGO.transform.position = coreTile.transform.position;
+        //nameplateGO.GetComponent<AreaNameplate>().SetArea(this);
+        UIManager.Instance.CreateAreaNameplate(this);
+    }
     #endregion
 
     #region Owner
@@ -546,6 +555,7 @@ public class Area {
         //Messenger.AddListener<Interaction>(Signals.INTERACTION_ENDED, RemoveEventTargettingThis); 
         //GenerateInitialDefenders();
         GenerateInitialResidents();
+        CreateNameplate();
     }
     public bool HasLandmarkOfType(LANDMARK_TYPE type) {
         return landmarks.Where(x => x.specificLandmarkType == type).Any();
@@ -1179,9 +1189,9 @@ public class Area {
                     " character " + createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name + " for faction " + this.owner.name);
         }
     }
-#endregion
+    #endregion
 
-#region Logs
+    #region Logs
     public void AddHistory(Log log) {
         if (!history.Contains(log)) {
             history.Add(log);
@@ -1191,9 +1201,9 @@ public class Area {
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
         }
     }
-#endregion
+    #endregion
 
-#region Attack
+    #region Attack
     public void AttackTarget() {
         for (int i = 1; i < attackCharacters.Count; i++) {
             attackCharacters[0].ownParty.AddCharacter(attackCharacters[i]);
@@ -1201,9 +1211,9 @@ public class Area {
         attackCharacters[0].AttackAnArea(attackTarget);
         SetAttackTargetAndCharacters(null, null);
     }
-#endregion
+    #endregion
 
-#region Special Tokens
+    #region Special Tokens
     private void LoadSpecialTokens(AreaSaveData data) {
         possibleSpecialTokenSpawns = new List<SpecialToken>();
         if (data.possibleSpecialTokenSpawns != null) {
@@ -1228,7 +1238,7 @@ public class Area {
         //Utilities.ListRemoveRange(choices, character.tokenInInventory);
         return choices;
     }
-#endregion
+    #endregion
 }
 
 [System.Serializable]

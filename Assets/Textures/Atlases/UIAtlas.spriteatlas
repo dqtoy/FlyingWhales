@@ -32,6 +32,7 @@ SpriteAtlas:
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
+  - {fileID: 21300000, guid: 75868a1101a9fc945bf49112201ca68d, type: 3}
   - {fileID: 21300000, guid: ec7ae60734ce2eb4e82af2e524deff24, type: 3}
   - {fileID: 21300000, guid: cc690d09307871644b5fd19558aacf9b, type: 3}
   - {fileID: 21300000, guid: 68bc68e0de336bc45a7ee29d2dc0c8a3, type: 3}
@@ -172,6 +173,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 5767b2c2db928c446b1558b601f40b9f, type: 3}
   - {fileID: 21300000, guid: 276870770cad95e4583fd7d81613ee9f, type: 3}
   - {fileID: 21300000, guid: b5da86a2551e2e743ad07951e8718429, type: 3}
+  - {fileID: 21300000, guid: 5d0c0f7e230bc454f808771a962dd252, type: 3}
   - {fileID: 21300000, guid: be4ce15dc4f7c6349939c5b30dedb120, type: 3}
   - {fileID: 21300000, guid: a71d2184e4d63df45a06011aba4280aa, type: 3}
   - {fileID: 21300000, guid: 9e762da25c798184ba4d3cb38041cd51, type: 3}
@@ -276,6 +278,7 @@ SpriteAtlas:
   - {fileID: 21300064, guid: 4d0d62edf3d94ca47abf569d951db9f9, type: 3}
   - {fileID: 21300046, guid: 4d0d62edf3d94ca47abf569d951db9f9, type: 3}
   m_PackedSpriteNamesToIndex:
+  - AreaBadgeTool
   - interaction_main_widget
   - character_info_widget
   - tile_central_container
@@ -416,6 +419,7 @@ SpriteAtlas:
   - event_active_button_clicked
   - event_active_button_enabled
   - event_timer_button_disabled
+  - area_badge
   - tile_explore_button_clicked
   - tile_raid_button_disabled
   - tile_raid_button_enabled
