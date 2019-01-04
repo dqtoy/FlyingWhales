@@ -2,42 +2,42 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveToCharm : Interaction {
+public class MoveToSteal : Interaction {
 
-    private const string Character_Charm_Cancelled = "Character Charm Cancelled";
-    private const string Character_Charm_Continues = "Character Charm Continues";
-    private const string Do_Nothing = "Do Nothing";
+    private const string Steal_Cancelled = "Steal Cancelled";
+    private const string Steal_Proceeds = "Steal Proceeds";
+    private const string Normal_Steal = "Normal Steal";
 
     public Area targetLocation { get; private set; }
 
-    public MoveToCharm(BaseLandmark interactable) 
-        : base(interactable, INTERACTION_TYPE.MOVE_TO_CHARM, 0) {
-        _name = "Move To Charm";
+    public MoveToSteal(BaseLandmark interactable)
+        : base(interactable, INTERACTION_TYPE.MOVE_TO_STEAL, 0) {
+        _name = "Move To Steal";
         _jobFilter = new JOB[] { JOB.DISSUADER };
     }
 
     #region Overrides
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
-        InteractionState characterCharmCancelled = new InteractionState(Character_Charm_Cancelled, this);
-        InteractionState characterCharmContinues = new InteractionState(Character_Charm_Continues, this);
-        InteractionState doNothing = new InteractionState(Do_Nothing, this);
+        InteractionState stealCancelled = new InteractionState(Steal_Cancelled, this);
+        InteractionState stealProceeds = new InteractionState(Steal_Proceeds, this);
+        InteractionState normalSteal = new InteractionState(Normal_Steal, this);
 
-        targetLocation = GetTargetLocation();
+        targetLocation = GetTargetLocation(_characterInvolved);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
-        characterCharmCancelled.SetEffect(() => CharacterCharmCancelledRewardEffect(characterCharmCancelled));
-        characterCharmContinues.SetEffect(() => CharacterCharmContinuesRewardEffect(characterCharmContinues));
-        doNothing.SetEffect(() => DoNothingRewardEffect(doNothing));
+        stealCancelled.SetEffect(() => CancelledRewardEffect(stealCancelled));
+        stealProceeds.SetEffect(() => ProceedsRewardEffect(stealProceeds));
+        normalSteal.SetEffect(() => NormalRewardEffect(normalSteal));
 
         _states.Add(startState.name, startState);
-        _states.Add(characterCharmCancelled.name, characterCharmCancelled);
-        _states.Add(characterCharmContinues.name, characterCharmContinues);
-        _states.Add(doNothing.name, doNothing);
+        _states.Add(stealCancelled.name, stealCancelled);
+        _states.Add(stealProceeds.name, stealProceeds);
+        _states.Add(normalSteal.name, normalSteal);
 
         SetCurrentState(startState);
     }
@@ -64,6 +64,12 @@ public class MoveToCharm : Interaction {
             state.SetDefaultOption(doNothing);
         }
     }
+    public override bool CanInteractionBeDoneBy(Character character) {
+        if (GetTargetLocation(character) == null) {
+            return false;
+        }
+        return base.CanInteractionBeDoneBy(character);
+    }
     #endregion
 
     #region Option Effects
@@ -74,61 +80,54 @@ public class MoveToCharm : Interaction {
         string nextState = string.Empty;
         switch (resultWeights.PickRandomElementGivenWeights()) {
             case RESULT.SUCCESS:
-                nextState = Character_Charm_Cancelled;
+                nextState = Steal_Cancelled;
                 break;
             case RESULT.FAIL:
-                nextState = Character_Charm_Continues;
+                nextState = Steal_Proceeds;
                 break;
         }
         SetCurrentState(_states[nextState]);
     }
     private void DoNothingEffect(InteractionState state) {
-        SetCurrentState(_states[Do_Nothing]);
+        SetCurrentState(_states[Normal_Steal]);
     }
     #endregion
 
     #region Reward Effects
-    private void CharacterCharmCancelledRewardEffect(InteractionState state) {
+    private void CancelledRewardEffect(InteractionState state) {
         //**Mechanics**: Character will no longer leave.
         //**Level Up**: Dissuader Minion +1
         investigatorMinion.LevelUp();
         MinionSuccess();
-        if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
-        }
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
     }
-    private void CharacterCharmContinuesRewardEffect(InteractionState state) {
+    private void ProceedsRewardEffect(InteractionState state) {
         GoToTargetLocation();
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         }
         state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
     }
-    private void DoNothingRewardEffect(InteractionState state) {
+    private void NormalRewardEffect(InteractionState state) {
         GoToTargetLocation();
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
         state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     #endregion
 
     private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateCharmEvent());
+        _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateEvent());
     }
 
-    private void CreateCharmEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARM_ACTION, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+    private void CreateEvent() {
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.STEAL_ACTION, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
         //(interaction as ImproveRelationsEvent).SetTargetFaction(targetFaction);
         //interaction.SetCanInteractionBeDoneAction(IsImproveRelationsValid);
         _characterInvolved.SetForcedInteraction(interaction);
     }
-    //private bool IsImproveRelationsValid() {
-    //    return targetLocation.owner != null && targetLocation.owner.id == targetFaction.id;
-    //}
 
-    private Area GetTargetLocation() {
-        /* Location Selection Weights:
-            - location is not part of any Faction: Weight +10
-            - location is part of a Faction with Disliked, Neutral or Friend Faction: Weight +25 */
+    private Area GetTargetLocation(Character character) {
         WeightedDictionary<Area> choices = new WeightedDictionary<Area>();
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
@@ -137,14 +136,20 @@ public class MoveToCharm : Interaction {
                 continue; //skip
             }
             if (currArea.owner == null) {
-                weight += 10;
-            } else if (currArea.owner.id != _characterInvolved.faction.id) {
-                FactionRelationship rel = currArea.owner.GetRelationshipWith(_characterInvolved.faction);
+                weight += 5; //- Location is not owned by any faction: Weight +5
+            } else if (currArea.owner.id != character.faction.id) {
+                FactionRelationship rel = currArea.owner.GetRelationshipWith(character.faction);
                 switch (rel.relationshipStatus) {
+                    case FACTION_RELATIONSHIP_STATUS.ENEMY:
                     case FACTION_RELATIONSHIP_STATUS.DISLIKED:
+                        weight += 30;//- Location is owned by a Faction that is Enemy or Disliked by Abductor's Faction: Weight +30
+                        break;
                     case FACTION_RELATIONSHIP_STATUS.NEUTRAL:
+                        weight += 20;//- Location is owned by a Faction with Neutral relationship with Abductor's Faction: Weight +20
+                        break;
                     case FACTION_RELATIONSHIP_STATUS.FRIEND:
-                        weight += 25;
+                    case FACTION_RELATIONSHIP_STATUS.ALLY:
+                        weight += 10; //- Location is owned by a Faction with Friend or Ally relationship with Abductor's Faction: Weight +10
                         break;
                     default:
                         break;
@@ -158,6 +163,6 @@ public class MoveToCharm : Interaction {
         if (choices.GetTotalOfWeights() > 0) {
             return choices.PickRandomElementGivenWeights();
         }
-        throw new System.Exception("Could not find target location for move to charm of " + _characterInvolved.faction.name);
+        throw new System.Exception("Could not find target location for move to steal of " + _characterInvolved.name);
     }
 }
