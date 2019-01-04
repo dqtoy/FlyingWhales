@@ -109,7 +109,7 @@ public class MoveToAbduct : Interaction {
             areaFitsCriteria = false;
             for (int j = 0; j < currArea.charactersAtLocation.Count; j++) {
                 Character character = currArea.charactersAtLocation[j];
-                if(character.faction.id != characterInvolved.faction.id && !character.currentParty.icon.isTravelling) {
+                if(character.IsInOwnParty() && !character.currentParty.icon.isTravelling && character.faction.id != characterInvolved.faction.id) {
                     areaFitsCriteria = true;
                     break;
                 }

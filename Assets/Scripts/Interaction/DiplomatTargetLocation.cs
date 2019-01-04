@@ -105,7 +105,7 @@ public class DiplomatTargetLocation : Interaction {
         List<Character> expanders = new List<Character>();
         for (int i = 0; i < interactable.tileLocation.areaOfTile.areaResidents.Count; i++) {
             Character resident = interactable.tileLocation.areaOfTile.areaResidents[i];
-            if (resident.IsInOwnParty() && !resident.isLeader && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.specificLocation.tileLocation.areaOfTile.id == interactable.tileLocation.areaOfTile.id && resident.race == _targetLocationToken.location.raceType) {
+            if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.specificLocation.tileLocation.areaOfTile.id == interactable.tileLocation.areaOfTile.id && resident.race == _targetLocationToken.location.raceType) {
                 expanders.Add(resident);
             }
         }

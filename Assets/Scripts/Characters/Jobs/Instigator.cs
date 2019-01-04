@@ -30,7 +30,7 @@ public class Instigator : Job {
     protected override bool IsTokenCompatibleWithJob(Token token) {
         if(token.tokenType == TOKEN_TYPE.CHARACTER) {
             CharacterToken characterToken = token as CharacterToken;
-            return characterToken.character.specificLocation.tileLocation.areaOfTile.id == _character.specificLocation.tileLocation.areaOfTile.id && !characterToken.character.currentParty.icon.isTravelling;
+            return characterToken.character.IsInOwnParty() && characterToken.character.doNotDisturb <= 0 && characterToken.character.specificLocation.tileLocation.areaOfTile.id == _character.specificLocation.tileLocation.areaOfTile.id && !characterToken.character.currentParty.icon.isTravelling;
         } else if (token.tokenType == TOKEN_TYPE.LOCATION) {
             LocationToken locationToken = token as LocationToken;
             //If target area and current area have factions, and target area's faction is different from current area's faction, and target area is not the current area - return true
@@ -122,7 +122,9 @@ public class Instigator : Job {
             Area targetArea = character.specificLocation.tileLocation.areaOfTile;
             for (int i = 0; i < targetArea.areaResidents.Count; i++) {
                 Character resident = targetArea.areaResidents[i];
-                if (!resident.alreadyTargetedByGrudge && !resident.isDefender && (resident.race == RACE.HUMANS || resident.race == RACE.ELVES || resident.race == RACE.GOBLIN) && resident.specificLocation.tileLocation.areaOfTile.id == targetArea.id) {
+                if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && !resident.currentParty.icon.isTravelling &&
+                    !resident.alreadyTargetedByGrudge && !resident.isDefender && (resident.race == RACE.HUMANS || resident.race == RACE.ELVES || resident.race == RACE.GOBLIN) 
+                    && resident.specificLocation.tileLocation.areaOfTile.id == targetArea.id) {
                     resident.SetAlreadyTargetedByGrudge(true);
                     return resident;
                 }

@@ -17,7 +17,7 @@ public class Recruiter : Job {
     protected override bool IsTokenCompatibleWithJob(Token token) {
         if (token.tokenType == TOKEN_TYPE.CHARACTER) {
             CharacterToken characterToken = token as CharacterToken;
-            return characterToken.character.specificLocation.tileLocation.areaOfTile.id == _character.specificLocation.tileLocation.areaOfTile.id && !characterToken.character.currentParty.icon.isTravelling;
+            return characterToken.character.IsInOwnParty() && characterToken.character.doNotDisturb <= 0 && characterToken.character.specificLocation.tileLocation.areaOfTile.id == _character.specificLocation.tileLocation.areaOfTile.id && !characterToken.character.currentParty.icon.isTravelling;
         }
         return base.IsTokenCompatibleWithJob(token);
     }
@@ -29,7 +29,7 @@ public class Recruiter : Job {
         int success = 0;
         for (int i = 0; i < areaResidents.Count; i++) {
             Character resident = areaResidents[i];
-            if(resident.role.roleType != CHARACTER_ROLE.LEADER && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == area.id && !resident.currentParty.icon.isTravelling) {
+            if(resident.IsInOwnParty() && resident.doNotDisturb <= 0 && resident.role.roleType != CHARACTER_ROLE.LEADER && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == area.id && !resident.currentParty.icon.isTravelling) {
                 if (resident.isFactionless) {
                     chosenCharacter = resident;
                     success = 30;

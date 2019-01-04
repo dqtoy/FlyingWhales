@@ -3034,6 +3034,8 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(this);
         PlayerManager.Instance.player.AddMinion(newMinion);
 
+        SetForcedInteraction(null);
+
         if (!characterToken.isObtainedByPlayer) {
             PlayerManager.Instance.player.AddToken(characterToken);
         }

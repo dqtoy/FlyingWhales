@@ -481,12 +481,56 @@ public class Faction {
     }
     private void GenerateNonNeutralInteraction() {
         string interactionLog = GameManager.Instance.TodayLogString() + "Generating non neutral interaction for " + this.name;
-        List<InteractionAndInteractable> interactionCandidates = new List<InteractionAndInteractable>();
-        for (int i = 0; i < _ownedAreas.Count; i++) {
-            Area area = _ownedAreas[i];
-            if(area.suppliesInBank >= 100) {
-                for (int j = 0; j < _nonNeutralInteractionTypes.Length; j++) {
-                    INTERACTION_TYPE type = _nonNeutralInteractionTypes[j];
+        WeightedDictionary<string> generateWeights = new WeightedDictionary<string>();
+        generateWeights.AddElement("Generate", 100);
+        generateWeights.AddElement("Dont Generate", 300);
+
+        string generateResult = generateWeights.PickRandomElementGivenWeights();
+        if(generateResult == "Generate") {
+            List<InteractionAndInteractable> interactionCandidates = new List<InteractionAndInteractable>();
+            for (int i = 0; i < _ownedAreas.Count; i++) {
+                Area area = _ownedAreas[i];
+                if (area.suppliesInBank >= 100) {
+                    for (int j = 0; j < _nonNeutralInteractionTypes.Length; j++) {
+                        INTERACTION_TYPE type = _nonNeutralInteractionTypes[j];
+                        if (InteractionManager.Instance.CanCreateInteraction(type, area.coreTile.landmarkOnTile)) {
+                            InteractionAndInteractable candidate = new InteractionAndInteractable {
+                                interactionType = type,
+                                landmark = area.coreTile.landmarkOnTile,
+                            };
+                            interactionCandidates.Add(candidate);
+                        }
+                    }
+                }
+            }
+            if (interactionCandidates.Count > 0) {
+                int chosenIndex = UnityEngine.Random.Range(0, interactionCandidates.Count);
+                Area area = interactionCandidates[chosenIndex].landmark.tileLocation.areaOfTile;
+                area.AdjustSuppliesInBank(-100);
+                Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(interactionCandidates[chosenIndex].interactionType, interactionCandidates[chosenIndex].landmark);
+                createdInteraction.SetMinionSuccessAction(() => area.AdjustSuppliesInBank(100));
+                interactionCandidates[chosenIndex].landmark.AddInteraction(createdInteraction);
+                interactionLog += "\nCreated " + createdInteraction.type.ToString() + " on " + createdInteraction.interactable.tileLocation.areaOfTile.name;
+                Debug.Log(interactionLog);
+            } else {
+                interactionLog += "\nCannot create interaction because all interactions do not meet the requirements";
+                Debug.Log(interactionLog);
+            }
+        }
+    }
+    private void GenerateNeutralInteraction() {
+        string interactionLog = GameManager.Instance.TodayLogString() + "Generating neutral interaction for " + this.name;
+        WeightedDictionary<string> generateWeights = new WeightedDictionary<string>();
+        generateWeights.AddElement("Generate", 100);
+        generateWeights.AddElement("Dont Generate", 300);
+
+        string generateResult = generateWeights.PickRandomElementGivenWeights();
+        if (generateResult == "Generate") {
+            List<InteractionAndInteractable> interactionCandidates = new List<InteractionAndInteractable>();
+            for (int i = 0; i < _ownedAreas.Count; i++) {
+                Area area = _ownedAreas[i];
+                for (int j = 0; j < _neutralInteractionTypes.Length; j++) {
+                    INTERACTION_TYPE type = _neutralInteractionTypes[j];
                     if (InteractionManager.Instance.CanCreateInteraction(type, area.coreTile.landmarkOnTile)) {
                         InteractionAndInteractable candidate = new InteractionAndInteractable {
                             interactionType = type,
@@ -496,46 +540,16 @@ public class Faction {
                     }
                 }
             }
-        }
-        if(interactionCandidates.Count > 0) {
-            int chosenIndex = UnityEngine.Random.Range(0, interactionCandidates.Count);
-            Area area = interactionCandidates[chosenIndex].landmark.tileLocation.areaOfTile;
-            area.AdjustSuppliesInBank(-100);
-            Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(interactionCandidates[chosenIndex].interactionType, interactionCandidates[chosenIndex].landmark);
-            createdInteraction.SetMinionSuccessAction(() => area.AdjustSuppliesInBank(100));
-            interactionCandidates[chosenIndex].landmark.AddInteraction(createdInteraction);
-            interactionLog += "\nCreated " + createdInteraction.type.ToString() + " on " + createdInteraction.interactable.tileLocation.areaOfTile.name;
-            Debug.Log(interactionLog);
-        } else {
-            interactionLog += "\nCannot create interaction because all interactions do not meet the requirements";
-            Debug.Log(interactionLog);
-        }
-    }
-    private void GenerateNeutralInteraction() {
-        string interactionLog = GameManager.Instance.TodayLogString() + "Generating neutral interaction for " + this.name;
-        List<InteractionAndInteractable> interactionCandidates = new List<InteractionAndInteractable>();
-        for (int i = 0; i < _ownedAreas.Count; i++) {
-            Area area = _ownedAreas[i];
-            for (int j = 0; j < _neutralInteractionTypes.Length; j++) {
-                INTERACTION_TYPE type = _neutralInteractionTypes[j];
-                if (InteractionManager.Instance.CanCreateInteraction(type, area.coreTile.landmarkOnTile)) {
-                    InteractionAndInteractable candidate = new InteractionAndInteractable {
-                        interactionType = type,
-                        landmark = area.coreTile.landmarkOnTile,
-                    };
-                    interactionCandidates.Add(candidate);
-                }
+            if (interactionCandidates.Count > 0) {
+                int chosenIndex = UnityEngine.Random.Range(0, interactionCandidates.Count);
+                Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(interactionCandidates[chosenIndex].interactionType, interactionCandidates[chosenIndex].landmark);
+                interactionCandidates[chosenIndex].landmark.AddInteraction(createdInteraction);
+                interactionLog += "\nCreated " + createdInteraction.type.ToString() + " on " + createdInteraction.interactable.tileLocation.areaOfTile.name;
+                Debug.Log(interactionLog);
+            } else {
+                interactionLog += "\nCannot create interaction because all interactions do not meet the requirements";
+                Debug.Log(interactionLog);
             }
-        }
-        if (interactionCandidates.Count > 0) {
-            int chosenIndex = UnityEngine.Random.Range(0, interactionCandidates.Count);
-            Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(interactionCandidates[chosenIndex].interactionType, interactionCandidates[chosenIndex].landmark);
-            interactionCandidates[chosenIndex].landmark.AddInteraction(createdInteraction);
-            interactionLog += "\nCreated " + createdInteraction.type.ToString() + " on " + createdInteraction.interactable.tileLocation.areaOfTile.name;
-            Debug.Log(interactionLog);
-        } else {
-            interactionLog += "\nCannot create interaction because all interactions do not meet the requirements";
-            Debug.Log(interactionLog);
         }
     }
     #endregion
