@@ -20,7 +20,7 @@ public class DraggableCharacterItem : MonoBehaviour {
         if (character != null) {
             portrait.GeneratePortrait(character);
             nameLbl.text = character.name;
-            if (character.faction == null) {
+            if (character.isFactionless) {
                 nameLbl.text += "(Factionless)";
             } else {
                 nameLbl.text += "(" + character.faction.name + ")";

@@ -312,7 +312,7 @@ public class CharmAction : Interaction {
                 && currCharacter.minion == null 
                 && currCharacter.faction.id != characterInvolved.faction.id) { //- character must not be in Defender Tile.
                 int weight = 0;
-                if (currCharacter.faction == null || currCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
+                if (currCharacter.isFactionless) {
                     weight += 15; //character is not part of any Faction: Weight +15
                 } else if (currCharacter.faction.id != characterInvolved.faction.id) { //exclude characters with same faction
                     //character is part of a Faction with Disliked, Neutral, Friend relationship with recruiter's Faction: Weight +25
