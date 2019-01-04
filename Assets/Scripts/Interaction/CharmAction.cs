@@ -35,9 +35,7 @@ public class CharmAction : Interaction {
         InteractionState normalCharmFail = new InteractionState(Normal_Charm_Fail, this);
         InteractionState normalCharmCriticalFail = new InteractionState(Normal_Charm_Critical_Fail, this);
 
-        if (targetCharacter == null) {
-            SetTargetCharacter(GetTargetCharacter(_characterInvolved));
-        }
+        SetTargetCharacter(GetTargetCharacter(_characterInvolved));
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
@@ -102,6 +100,12 @@ public class CharmAction : Interaction {
             state.SetDefaultOption(doNothing);
         }
     }
+    public override bool CanInteractionBeDoneBy(Character character) {
+        if (GetTargetCharacter(character) == null) {
+            return false;
+        }
+        return base.CanInteractionBeDoneBy(character);
+    }
     #endregion
 
     #region Option Effect
@@ -163,104 +167,130 @@ public class CharmAction : Interaction {
 
     #region Reward Effect
     private void AssistedCharmSuccessRewardEffect(InteractionState state) {
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
+            state.descriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
+        }
+        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
+
         /* Mechanics**: Transfer Character 2 to Character 1's Faction. 
          * Change its home to be the same as Character 1's home Area. 
          * Override his next action as https://trello.com/c/PTkSE6DZ/439-character-move-to-return-home
          */
         TransferCharacter(targetCharacter, _characterInvolved.faction);
-        //**Level Up**: Diplomat +1, Recruiting Character +1
+        //**Level Up**: Charmer Character +1, Instigator Minion +1
         _characterInvolved.LevelUp();
         investigatorMinion.LevelUp();
-
-        if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
-        }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
+        //**Mechanics**: Relationship between the two factions -1
+        AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
     }
     private void AssistedCharmFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         }
         state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void AssistedCharmCriticalFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         }
         state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
+        //**Mechanics**: Character Name 1 dies.
+        _characterInvolved.Death();
     }
     private void ThwartedCharmSuccessRewardEffect(InteractionState state) {
-        /* Mechanics**: Transfer Character 2 to Character 1's Faction. 
-         * Change its home to be the same as Character 1's home Area. 
-         * Override his next action as https://trello.com/c/PTkSE6DZ/439-character-move-to-return-home
-         */
-        TransferCharacter(targetCharacter, _characterInvolved.faction);
-        //**Level Up**: Recruiting Character +1
-        _characterInvolved.LevelUp();
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         }
         state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
+
+        /* Mechanics**: Transfer Character 2 to Character 1's Faction. 
+         * Change its home to be the same as Character 1's home Area. 
+         * Override his next action as https://trello.com/c/PTkSE6DZ/439-character-move-to-return-home
+         */
+        TransferCharacter(targetCharacter, _characterInvolved.faction);
+        //**Level Up**: Charmer Character +1
+        _characterInvolved.LevelUp();
     }
     private void ThwartedCharmFailRewardEffect(InteractionState state) {
-        //**Level Up**: Instigator Minion +1
-        investigatorMinion.LevelUp();
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
+            state.descriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
         }
         state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
+
+        //**Level Up**: Diplomat Minion +1
+        investigatorMinion.LevelUp();
+        //**Mechanics**: Player relationship with abductee's faction +1
+        AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, targetCharacter.faction, 1, state);
     }
     private void ThwartedCharmCriticalFailRewardEffect(InteractionState state) {
-        //**Level Up**: Instigator Minion +1
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
+            state.descriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
+        }
+        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
+
+        //**Mechanics**: Player relationship with abductee's faction +1 Relationship between the two factions -1
+        AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, targetCharacter.faction, 1, state);
+        AdjustFactionsRelationship(_characterInvolved.faction, targetCharacter.faction, -1, state);
+
+        //**Mechanics**: Character Name 1 dies.
+        _characterInvolved.Death();
+
+        //**Level Up**: Diplomat Minion +1
         investigatorMinion.LevelUp();
+    }
+    private void NormalCharmSuccessRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         }
         state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
-    }
-    private void NormalCharmSuccessRewardEffect(InteractionState state) {
+
         /* Mechanics**: Transfer Character 2 to Character 1's Faction. 
          * Change its home to be the same as Character 1's home Area. 
          * Override his next action as https://trello.com/c/PTkSE6DZ/439-character-move-to-return-home
          */
         TransferCharacter(targetCharacter, _characterInvolved.faction);
-        //**Level Up**: Recruiting Character +1
+        //**Level Up**: Charmer Character +1
         _characterInvolved.LevelUp();
-
-        if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
-        }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void NormalCharmFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         }
         state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void NormalCharmCriticalFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         }
         state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
+        _characterInvolved.Death();
     }
     #endregion
 
     private void TransferCharacter(Character character, Faction faction) {
+        //only add charmed trait to characters that have not been charmed yet, this is to retain it's original faction
+        Charmed charmedTrait = new Charmed(character.faction);
+        character.AddTrait(charmedTrait);
         character.faction.RemoveCharacter(character);
         faction.AddNewCharacter(character);
         character.homeLandmark.RemoveCharacterHomeOnLandmark(character);
@@ -276,23 +306,28 @@ public class CharmAction : Interaction {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
             Character currCharacter = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
-            if (currCharacter.id != characterInvolved.id && !currCharacter.isLeader && !currCharacter.isDefender && currCharacter.minion == null) { //- character must not be in Defender Tile.
+            if (currCharacter.id != characterInvolved.id 
+                && !currCharacter.isLeader 
+                && !currCharacter.isDefender 
+                && currCharacter.minion == null 
+                && currCharacter.faction.id != characterInvolved.faction.id) { //- character must not be in Defender Tile.
                 int weight = 0;
                 if (currCharacter.faction == null || currCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
-                    weight += 35; //- character is not part of any Faction: Weight +35
+                    weight += 15; //character is not part of any Faction: Weight +15
                 } else if (currCharacter.faction.id != characterInvolved.faction.id) { //exclude characters with same faction
+                    //character is part of a Faction with Disliked, Neutral, Friend relationship with recruiter's Faction: Weight +25
                     FactionRelationship rel = currCharacter.faction.GetRelationshipWith(characterInvolved.faction);
-                    if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL) {
-                        weight += 15; //- character is part of a Faction with Neutral relationship with recruiter's Faction: Weight +15
-                    } else if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
-                        weight += 25; //- character is part of a Faction with Friend relationship with recruiter's Faction: Weight +25
+                    if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL 
+                        || rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED
+                        || rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
+                        weight += 25; 
                     }
                 }
 
                 if (currCharacter.level > characterInvolved.level) {
-                    weight -= 30; //- character is higher level than Recruiter: Weight -30
-                } else if (currCharacter.level < characterInvolved.level) { //- character is same level as Recruiter: Weight +0
-                    weight += 10; //- character is lower level than Recruiter: Weight +10
+                    weight -= 20; //character is higher level than Charmer: Weight -20
+                } else if (currCharacter.level < characterInvolved.level) { //character is same level as Charmer: Weight +0
+                    weight += 10; //character is lower level than Charmer: Weight +10
                 }
 
                 weight = Mathf.Max(0, weight);

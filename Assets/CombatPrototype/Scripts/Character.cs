@@ -3279,8 +3279,11 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
 
     #region Token Inventory
     public void ObtainToken(SpecialToken token) {
-        tokenInInventory = token;
+        SetToken(token);
         token.AdjustQuantity(-1);
+    }
+    public void SetToken(SpecialToken token) {
+        tokenInInventory = token;
     }
     public void ConsumeToken() {
         tokenInInventory = null;

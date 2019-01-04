@@ -108,7 +108,10 @@
       ],
       "possibleSpecialTokenSpawns": [
         "Book Of The Dead",
-        "Blighted Potion"
+        "Blighted Potion",
+        "Book Of Wizardry",
+        "Brand Of The Beastmaster",
+        "Mark Of The Witch"
       ],
       "raceSetup": [
         {
@@ -154,7 +157,10 @@
       "possibleSpecialTokenSpawns": [
         "Blighted Potion",
         "Charm Spell",
-        "Fear Spell"
+        "Fear Spell",
+        "Book Of Wizardry",
+        "Brand Of The Beastmaster",
+        "Mark Of The Witch"
       ],
       "raceSetup": [],
       "recommendedPower": 0.0,
