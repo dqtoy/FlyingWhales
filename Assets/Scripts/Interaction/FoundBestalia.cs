@@ -159,12 +159,13 @@ public class FoundBestalia : Interaction {
                 break;
             }
             Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
-            if (character.role.roleType == CHARACTER_ROLE.BEAST) {
+            if (character.role.roleType == CHARACTER_ROLE.BEAST && !character.currentParty.icon.isTravelling) {
                 if (!character.IsInOwnParty()) {
                     character.currentParty.RemoveCharacter(character);
                 }
                 character.MigrateTo(character.specificLocation as BaseLandmark);
                 character.ChangeFactionTo(newFaction);
+                character.SetForcedInteraction(null);
             }
         }
         interactable.SpawnRandomCharacters(2);
@@ -192,12 +193,13 @@ public class FoundBestalia : Interaction {
                 break;
             }
             Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
-            if (character.role.roleType == CHARACTER_ROLE.BEAST) {
+            if (character.role.roleType == CHARACTER_ROLE.BEAST && !character.currentParty.icon.isTravelling) {
                 if (!character.IsInOwnParty()) {
                     character.currentParty.RemoveCharacter(character);
                 }
                 character.MigrateTo(character.specificLocation as BaseLandmark);
                 character.ChangeFactionTo(newFaction);
+                character.SetForcedInteraction(null);
             }
         }
         interactable.SpawnRandomCharacters(2);
@@ -229,12 +231,13 @@ public class FoundBestalia : Interaction {
                 break;
             }
             Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
-            if (character.role.roleType == CHARACTER_ROLE.BEAST) {
+            if (character.role.roleType == CHARACTER_ROLE.BEAST && !character.currentParty.icon.isTravelling) {
                 if (!character.IsInOwnParty()) {
                     character.currentParty.RemoveCharacter(character);
                 }
                 character.MigrateTo(character.specificLocation as BaseLandmark);
                 character.ChangeFactionTo(newFaction);
+                character.SetForcedInteraction(null);
             }
         }
         interactable.SpawnRandomCharacters(2);
@@ -267,12 +270,13 @@ public class FoundBestalia : Interaction {
                 break;
             }
             Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
-            if (character.role.roleType == CHARACTER_ROLE.BEAST) {
+            if (character.role.roleType == CHARACTER_ROLE.BEAST && !character.currentParty.icon.isTravelling) {
                 if (!character.IsInOwnParty()) {
                     character.currentParty.RemoveCharacter(character);
                 }
                 character.MigrateTo(character.specificLocation as BaseLandmark);
                 character.ChangeFactionTo(newFaction);
+                character.SetForcedInteraction(null)
             }
         }
         interactable.SpawnRandomCharacters(2);
@@ -293,12 +297,13 @@ public class FoundBestalia : Interaction {
                 break;
             }
             Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
-            if (character.role.roleType == CHARACTER_ROLE.BEAST) {
+            if (character.role.roleType == CHARACTER_ROLE.BEAST && !character.currentParty.icon.isTravelling) {
                 if (!character.IsInOwnParty()) {
                     character.currentParty.RemoveCharacter(character);
                 }
                 character.MigrateTo(character.specificLocation as BaseLandmark);
                 character.ChangeFactionTo(newFaction);
+                character.SetForcedInteraction(null);
             }
         }
         interactable.SpawnRandomCharacters(2);
@@ -323,12 +328,13 @@ public class FoundBestalia : Interaction {
                 break;
             }
             Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
-            if (character.role.roleType == CHARACTER_ROLE.BEAST) {
+            if (character.role.roleType == CHARACTER_ROLE.BEAST && !character.currentParty.icon.isTravelling) {
                 if (!character.IsInOwnParty()) {
                     character.currentParty.RemoveCharacter(character);
                 }
                 character.MigrateTo(character.specificLocation as BaseLandmark);
                 character.ChangeFactionTo(newFaction);
+                character.SetForcedInteraction(null);
             }
         }
         interactable.SpawnRandomCharacters(2);
@@ -352,12 +358,13 @@ public class FoundBestalia : Interaction {
                 break;
             }
             Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
-            if (character.role.roleType == CHARACTER_ROLE.BEAST) {
+            if (character.role.roleType == CHARACTER_ROLE.BEAST && !character.currentParty.icon.isTravelling) {
                 if (!character.IsInOwnParty()) {
                     character.currentParty.RemoveCharacter(character);
                 }
                 character.MigrateTo(character.specificLocation as BaseLandmark);
                 character.ChangeFactionTo(newFaction);
+                character.SetForcedInteraction(null);
             }
         }
         interactable.SpawnRandomCharacters(2);
@@ -378,12 +385,13 @@ public class FoundBestalia : Interaction {
                 break;
             }
             Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
-            if (character.role.roleType == CHARACTER_ROLE.BEAST) {
+            if (character.role.roleType == CHARACTER_ROLE.BEAST && !character.currentParty.icon.isTravelling) {
                 if (!character.IsInOwnParty()) {
                     character.currentParty.RemoveCharacter(character);
                 }
                 character.MigrateTo(character.specificLocation as BaseLandmark);
                 character.ChangeFactionTo(newFaction);
+                character.SetForcedInteraction(null);
             }
         }
         interactable.SpawnRandomCharacters(2);

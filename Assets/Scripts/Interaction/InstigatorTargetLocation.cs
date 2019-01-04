@@ -127,7 +127,7 @@ public class InstigatorTargetLocation : Interaction {
         List<Character> residentsAtArea = new List<Character>();
         for (int i = 0; i < areaToAttack.areaResidents.Count; i++) {
             Character resident = areaToAttack.areaResidents[i];
-            if (resident.IsInOwnParty() && !resident.isLeader && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == areaToAttack.id) {
+            if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == areaToAttack.id) {
                 residentsAtArea.Add(resident);
             }
         }

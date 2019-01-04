@@ -99,7 +99,7 @@ public class Job {
                     for (int i = 0; i < _character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
                         //location has a male Human, Goblin or Elven character that is part of a Faction
                         Character characterAtLocation = _character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
-                        if (characterAtLocation.faction != FactionManager.Instance.neutralFaction && !characterAtLocation.isLeader && characterAtLocation.gender == GENDER.MALE &&
+                        if (characterAtLocation.IsInOwnParty() && character.doNotDisturb <=0 && !characterAtLocation.currentParty.icon.isTravelling && characterAtLocation.faction != FactionManager.Instance.neutralFaction && !characterAtLocation.isLeader && characterAtLocation.gender == GENDER.MALE &&
                             (characterAtLocation.race == RACE.HUMANS || characterAtLocation.race == RACE.GOBLIN || characterAtLocation.race == RACE.ELVES)) {
                             return true;
                         }
@@ -115,7 +115,7 @@ public class Job {
             for (int i = 0; i < _character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
                 //location has a male Human, Goblin or Elven character that is part of a Faction
                 Character characterAtLocation = _character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
-                if (characterAtLocation.faction != FactionManager.Instance.neutralFaction && !characterAtLocation.isLeader && characterAtLocation.gender == GENDER.MALE &&
+                if (characterAtLocation.IsInOwnParty() && character.doNotDisturb <= 0 && !characterAtLocation.currentParty.icon.isTravelling && characterAtLocation.faction != FactionManager.Instance.neutralFaction && !characterAtLocation.isLeader && characterAtLocation.gender == GENDER.MALE &&
                     (characterAtLocation.race == RACE.HUMANS || characterAtLocation.race == RACE.GOBLIN || characterAtLocation.race == RACE.ELVES)) {
                     characterAtLocation.AddInteraction(interaction);
                     break;
