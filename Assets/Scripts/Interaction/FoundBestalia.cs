@@ -276,7 +276,7 @@ public class FoundBestalia : Interaction {
                 }
                 character.MigrateTo(character.specificLocation as BaseLandmark);
                 character.ChangeFactionTo(newFaction);
-                character.SetForcedInteraction(null)
+                character.SetForcedInteraction(null);
             }
         }
         interactable.SpawnRandomCharacters(2);
