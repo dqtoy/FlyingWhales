@@ -279,11 +279,11 @@ public class BaseLandmark : ILocation, IInteractable {
     #region Virtuals
     public virtual void Initialize() { }
     public virtual void DestroyLandmark() {
-        if (!_landmarkObj.isRuined) {
-            ObjectState ruined = landmarkObj.GetState("Ruined");
-            landmarkObj.ChangeState(ruined);
+        //if (!_landmarkObj.isRuined) {
+            //ObjectState ruined = landmarkObj.GetState("Ruined");
+            //landmarkObj.ChangeState(ruined);
             tileLocation.areaOfTile.CheckDeath();
-        }
+        //}
         //RemoveListeners();
     }
     /*
@@ -594,7 +594,7 @@ public class BaseLandmark : ILocation, IInteractable {
 
     #region Materials
     public void AdjustDurability(int amount) {
-        _landmarkObj.AdjustHP(amount);
+        //_landmarkObj.AdjustHP(amount);
         //_currDurability += amount;
         //_currDurability = Mathf.Clamp (_currDurability, 0, _totalDurability);
     }
@@ -703,9 +703,9 @@ public class BaseLandmark : ILocation, IInteractable {
 
     #region Objects
     public void SetObject(StructureObj obj) {
-        _landmarkObj = obj;
+        //_landmarkObj = obj;
         //obj.SetObjectLocation(this);
-        obj.OnAddToLandmark(this);
+        //obj.OnAddToLandmark(this);
     }
     #endregion
 
@@ -1063,87 +1063,87 @@ public class BaseLandmark : ILocation, IInteractable {
     #endregion
 
     #region Camp
-    public void MigrateCharactersToAnotherLandmark() {
-        List<BaseLandmark> homeLandmarks = GetNewHomeLandmarksFromArea();
-        if (homeLandmarks.Count > 0) {
-            BaseLandmark chosenLandmark = homeLandmarks[0];
-            while (_charactersWithHomeOnLandmark.Count > 0) {
-                Character character = _charactersWithHomeOnLandmark[0];
-                RemoveCharacterHomeOnLandmark(character);
-                chosenLandmark.AddCharacterHomeOnLandmark(character);
-            }
-            int civiliansPerLandmark = _civilianCount / homeLandmarks.Count;
-            int civiliansRemainder = _civilianCount % homeLandmarks.Count;
-            homeLandmarks[0].AdjustCivilianCount(civiliansRemainder);
-            for (int i = 0; i < homeLandmarks.Count; i++) {
-                homeLandmarks[i].AdjustCivilianCount(civiliansPerLandmark);
-            }
-            SetCivilianCount(0);
-        } else {
-            //Camp
-            if (_specificLandmarkType == LANDMARK_TYPE.CAMP) {
-                //If this is the last camp, cannot be migrated anymore, kill all civilians, characters will make a camp on their own
-                SetCivilianCount(0);
-                return;
-            }
-            int numOfCamps = 0;
-            if (_charactersWithHomeOnLandmark.Count > 0) {
-                numOfCamps = _charactersWithHomeOnLandmark.Count / 3;
-                if (numOfCamps <= 0) {
-                    numOfCamps = 1;
-                }
-            } else if (_civilianCount > 0) {
-                numOfCamps = _civilianCount / 50;
-                if (numOfCamps <= 0) {
-                    numOfCamps = 1;
-                }
-            }
-            if (numOfCamps > 0) {
-                int civiliansPerCamp = _civilianCount / numOfCamps;
-                int civiliansRemainder = _civilianCount % numOfCamps;
-                for (int i = 0; i < numOfCamps; i++) {
-                    BaseLandmark camp = tileLocation.areaOfTile.CreateCampForHouse(this.tileLocation);
-                    camp.tileLocation.SetArea(tileLocation.areaOfTile);
-                    camp.AdjustCivilianCount(civiliansPerCamp);
-                    if (i == numOfCamps - 1) {
-                        //Last camp
-                        camp.AdjustCivilianCount(civiliansRemainder);
-                        while (_charactersWithHomeOnLandmark.Count > 0) {
-                            Character character = _charactersWithHomeOnLandmark[0];
-                            RemoveCharacterHomeOnLandmark(character);
-                            camp.AddCharacterHomeOnLandmark(character);
-                        }
-                    } else {
-                        int count = 3;
-                        while (count > 0) {
-                            if (_charactersWithHomeOnLandmark.Count > 0) {
-                                Character character = _charactersWithHomeOnLandmark[0];
-                                RemoveCharacterHomeOnLandmark(character);
-                                camp.AddCharacterHomeOnLandmark(character);
-                            } else {
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    private List<BaseLandmark> GetNewHomeLandmarksFromArea() {
-        List<BaseLandmark> chosenLandmarks = new List<BaseLandmark>();
-        if (tileLocation.areaOfTile != null) {
-            for (int i = 0; i < tileLocation.areaOfTile.landmarks.Count; i++) {
-                BaseLandmark landmark = tileLocation.areaOfTile.landmarks[i];
-                if (landmark != this && landmark.landmarkObj.specificObjectType == _landmarkObj.specificObjectType && landmark.landmarkObj.currentState.stateName != "Ruined") {
-                    chosenLandmarks.Add(landmark);
-                }
-            }
-            if (chosenLandmarks.Count > 1) {
-                chosenLandmarks = chosenLandmarks.OrderBy(x => x._charactersWithHomeOnLandmark.Count).ToList();
-            }
-        }
-        return chosenLandmarks;
-    }
+    //public void MigrateCharactersToAnotherLandmark() {
+    //    List<BaseLandmark> homeLandmarks = GetNewHomeLandmarksFromArea();
+    //    if (homeLandmarks.Count > 0) {
+    //        BaseLandmark chosenLandmark = homeLandmarks[0];
+    //        while (_charactersWithHomeOnLandmark.Count > 0) {
+    //            Character character = _charactersWithHomeOnLandmark[0];
+    //            RemoveCharacterHomeOnLandmark(character);
+    //            chosenLandmark.AddCharacterHomeOnLandmark(character);
+    //        }
+    //        int civiliansPerLandmark = _civilianCount / homeLandmarks.Count;
+    //        int civiliansRemainder = _civilianCount % homeLandmarks.Count;
+    //        homeLandmarks[0].AdjustCivilianCount(civiliansRemainder);
+    //        for (int i = 0; i < homeLandmarks.Count; i++) {
+    //            homeLandmarks[i].AdjustCivilianCount(civiliansPerLandmark);
+    //        }
+    //        SetCivilianCount(0);
+    //    } else {
+    //        //Camp
+    //        if (_specificLandmarkType == LANDMARK_TYPE.CAMP) {
+    //            //If this is the last camp, cannot be migrated anymore, kill all civilians, characters will make a camp on their own
+    //            SetCivilianCount(0);
+    //            return;
+    //        }
+    //        int numOfCamps = 0;
+    //        if (_charactersWithHomeOnLandmark.Count > 0) {
+    //            numOfCamps = _charactersWithHomeOnLandmark.Count / 3;
+    //            if (numOfCamps <= 0) {
+    //                numOfCamps = 1;
+    //            }
+    //        } else if (_civilianCount > 0) {
+    //            numOfCamps = _civilianCount / 50;
+    //            if (numOfCamps <= 0) {
+    //                numOfCamps = 1;
+    //            }
+    //        }
+    //        if (numOfCamps > 0) {
+    //            int civiliansPerCamp = _civilianCount / numOfCamps;
+    //            int civiliansRemainder = _civilianCount % numOfCamps;
+    //            for (int i = 0; i < numOfCamps; i++) {
+    //                BaseLandmark camp = tileLocation.areaOfTile.CreateCampForHouse(this.tileLocation);
+    //                camp.tileLocation.SetArea(tileLocation.areaOfTile);
+    //                camp.AdjustCivilianCount(civiliansPerCamp);
+    //                if (i == numOfCamps - 1) {
+    //                    //Last camp
+    //                    camp.AdjustCivilianCount(civiliansRemainder);
+    //                    while (_charactersWithHomeOnLandmark.Count > 0) {
+    //                        Character character = _charactersWithHomeOnLandmark[0];
+    //                        RemoveCharacterHomeOnLandmark(character);
+    //                        camp.AddCharacterHomeOnLandmark(character);
+    //                    }
+    //                } else {
+    //                    int count = 3;
+    //                    while (count > 0) {
+    //                        if (_charactersWithHomeOnLandmark.Count > 0) {
+    //                            Character character = _charactersWithHomeOnLandmark[0];
+    //                            RemoveCharacterHomeOnLandmark(character);
+    //                            camp.AddCharacterHomeOnLandmark(character);
+    //                        } else {
+    //                            break;
+    //                        }
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
+    //private List<BaseLandmark> GetNewHomeLandmarksFromArea() {
+    //    List<BaseLandmark> chosenLandmarks = new List<BaseLandmark>();
+    //    if (tileLocation.areaOfTile != null) {
+    //        for (int i = 0; i < tileLocation.areaOfTile.landmarks.Count; i++) {
+    //            BaseLandmark landmark = tileLocation.areaOfTile.landmarks[i];
+    //            if (landmark != this && landmark.landmarkObj.specificObjectType == _landmarkObj.specificObjectType) {
+    //                chosenLandmarks.Add(landmark);
+    //            }
+    //        }
+    //        if (chosenLandmarks.Count > 1) {
+    //            chosenLandmarks = chosenLandmarks.OrderBy(x => x._charactersWithHomeOnLandmark.Count).ToList();
+    //        }
+    //    }
+    //    return chosenLandmarks;
+    //}
     #endregion
 
     #region Events

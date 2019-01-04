@@ -288,26 +288,26 @@ public class CharacterAvatar : MonoBehaviour{
                 SetHasArrivedState(true);
                 targetLocation.AddCharacterToLocation(_party);
                 Debug.Log(_party.name + " has arrived at " + targetLocation.locationName + " on " + GameManager.Instance.continuousDays);
-                //Every time the party arrives at home, check if it still not ruined
-                if(_party.mainCharacter.homeLandmark.specificLandmarkType == LANDMARK_TYPE.CAMP && _party.mainCharacter.homeLandmark.landmarkObj.currentState.stateName == "Ruined") {
-                    //Check if the location the character arrived at is the character's home landmark
-                    if (targetLocation.tileLocation.id == _party.mainCharacter.homeLandmark.tileLocation.id) {
-                        //Check if the current landmark in the location is a camp and it is not yet ruined
-                        if (targetLocation.tileLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CAMP) {
-                            Character character = _party.mainCharacter;
-                            if (targetLocation.tileLocation.landmarkOnTile.landmarkObj.currentState.stateName != "Ruined") {
-                                //Make it the character's new home landmark
-                                _party.mainCharacter.homeLandmark.RemoveCharacterHomeOnLandmark(character);
-                                targetLocation.tileLocation.landmarkOnTile.AddCharacterHomeOnLandmark(character);
-                            } else {
-                                //Create new camp
-                                BaseLandmark newCamp = targetLocation.tileLocation.areaOfTile.CreateCampOnTile(targetLocation.tileLocation);
-                                _party.mainCharacter.homeLandmark.RemoveCharacterHomeOnLandmark(character);
-                                newCamp.AddCharacterHomeOnLandmark(character);
-                            }
-                        }
-                    }
-                }
+                ////Every time the party arrives at home, check if it still not ruined
+                //if(_party.mainCharacter.homeLandmark.specificLandmarkType == LANDMARK_TYPE.CAMP) {
+                //    //Check if the location the character arrived at is the character's home landmark
+                //    if (targetLocation.tileLocation.id == _party.mainCharacter.homeLandmark.tileLocation.id) {
+                //        //Check if the current landmark in the location is a camp and it is not yet ruined
+                //        if (targetLocation.tileLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CAMP) {
+                //            Character character = _party.mainCharacter;
+                //            if (targetLocation.tileLocation.landmarkOnTile.landmarkObj.currentState.stateName != "Ruined") {
+                //                //Make it the character's new home landmark
+                //                _party.mainCharacter.homeLandmark.RemoveCharacterHomeOnLandmark(character);
+                //                targetLocation.tileLocation.landmarkOnTile.AddCharacterHomeOnLandmark(character);
+                //            } else {
+                //                //Create new camp
+                //                BaseLandmark newCamp = targetLocation.tileLocation.areaOfTile.CreateCampOnTile(targetLocation.tileLocation);
+                //                _party.mainCharacter.homeLandmark.RemoveCharacterHomeOnLandmark(character);
+                //                newCamp.AddCharacterHomeOnLandmark(character);
+                //            }
+                //        }
+                //    }
+                //}
                 if(onPathFinished != null) {
                     onPathFinished();
                 }

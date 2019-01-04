@@ -82,7 +82,7 @@ public class LandmarkManager : MonoBehaviour {
         //}
         //ConstructLandmarkObjects(landmarkData, newLandmark);
         //		AddInitialLandmarkItems (newLandmark);
-        newLandmark.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(newLandmark.specificLandmarkType.ToString())) as StructureObj);
+        //newLandmark.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(newLandmark.specificLandmarkType.ToString())) as StructureObj);
         if (newLandmark.tileLocation.areaOfTile != null) {
             newLandmark.tileLocation.areaOfTile.DetermineIfTileIsExposed(newLandmark.tileLocation);
         }
@@ -111,7 +111,7 @@ public class LandmarkManager : MonoBehaviour {
         }
 
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
-        newLandmark.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(newLandmark.specificLandmarkType.ToString())) as StructureObj);
+        //newLandmark.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(newLandmark.specificLandmarkType.ToString())) as StructureObj);
         if (newLandmark.tileLocation.areaOfTile != null) {
             newLandmark.tileLocation.areaOfTile.DetermineIfTileIsExposed(newLandmark.tileLocation);
         }

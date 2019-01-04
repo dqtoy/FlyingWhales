@@ -85,7 +85,7 @@ public class QuestingAction : CharacterAction {
                 CharacterParty charParty = (currParty as CharacterParty);
                 Character partyOwner = charParty.characterOwner;
                 if (partyOwner.id != squad.squadLeader.id && squad.squadMembers.Contains(partyOwner)) {
-                    partyOwner.InviteToParty(squad.squadLeader);
+                    //partyOwner.InviteToParty(squad.squadLeader);
                 }
             }
         }

@@ -212,7 +212,7 @@ public class TheSpiderQueen : Interaction {
         MonsterParty army = CreateAssaultArmy(4);
         //attack player area
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
-        army.iactionData.AssignAction(characterAction, PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark().landmarkObj);
+        //army.iactionData.AssignAction(characterAction, PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark().landmarkObj);
     }
     private void SpidersAttackEffect(InteractionState state) {
         state.assignedMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1

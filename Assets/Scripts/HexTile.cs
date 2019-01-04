@@ -417,7 +417,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         _region.AddLandmarkToRegion(_landmarkOnTile);
         if (_landmarkOnTile != null) {
             SetPassableState(true);
-            _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(_landmarkOnTile.specificLandmarkType.ToString())) as StructureObj);
+            //_landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(_landmarkOnTile.specificLandmarkType.ToString())) as StructureObj);
         }
         return _landmarkOnTile;
     }
@@ -1636,28 +1636,28 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             }
         }
 #if UNITY_EDITOR
-        if (UIManager.Instance.characterInfoUI.activeCharacter != null && UIManager.Instance.characterInfoUI.isShowing) {
-            if (this.landmarkOnTile != null) {
-                Character character = UIManager.Instance.characterInfoUI.activeCharacter;
-                ContextMenuItemSettings forceActionMain = new ContextMenuItemSettings("Force Action");
-                //forceActionMain.onClickAction += () => PlayerManager.Instance.AddTileToPlayerArea(this);
-                bool hasDoableAction = false;
-                ContextMenuSettings forceActionSub = new ContextMenuSettings();
-                forceActionMain.SetSubMenu(forceActionSub);
-                for (int i = 0; i < landmarkOnTile.landmarkObj.currentState.actions.Count; i++) {
-                    CharacterAction action = landmarkOnTile.landmarkObj.currentState.actions[i];
-                    if (action.MeetsRequirements(character.party, this._landmarkOnTile) && action.CanBeDone(landmarkOnTile.landmarkObj) && action.CanBeDoneBy(character.party, landmarkOnTile.landmarkObj)) {
-                        hasDoableAction = true;
-                        ContextMenuItemSettings doableAction = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(action.actionType.ToString()));
-                        doableAction.onClickAction = () => character.party.actionData.ForceDoAction(action, landmarkOnTile.landmarkObj);
-                        forceActionSub.AddMenuItem(doableAction);
-                    }
-                }
-                if (hasDoableAction) {
-                    settings.AddMenuItem(forceActionMain);
-                }
-            }
-        }
+        //if (UIManager.Instance.characterInfoUI.activeCharacter != null && UIManager.Instance.characterInfoUI.isShowing) {
+        //    if (this.landmarkOnTile != null) {
+        //        Character character = UIManager.Instance.characterInfoUI.activeCharacter;
+        //        ContextMenuItemSettings forceActionMain = new ContextMenuItemSettings("Force Action");
+        //        //forceActionMain.onClickAction += () => PlayerManager.Instance.AddTileToPlayerArea(this);
+        //        bool hasDoableAction = false;
+        //        ContextMenuSettings forceActionSub = new ContextMenuSettings();
+        //        forceActionMain.SetSubMenu(forceActionSub);
+        //        for (int i = 0; i < landmarkOnTile.landmarkObj.currentState.actions.Count; i++) {
+        //            CharacterAction action = landmarkOnTile.landmarkObj.currentState.actions[i];
+        //            if (action.MeetsRequirements(character.party, this._landmarkOnTile) && action.CanBeDone(landmarkOnTile.landmarkObj) && action.CanBeDoneBy(character.party, landmarkOnTile.landmarkObj)) {
+        //                hasDoableAction = true;
+        //                ContextMenuItemSettings doableAction = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(action.actionType.ToString()));
+        //                doableAction.onClickAction = () => character.party.actionData.ForceDoAction(action, landmarkOnTile.landmarkObj);
+        //                forceActionSub.AddMenuItem(doableAction);
+        //            }
+        //        }
+        //        if (hasDoableAction) {
+        //            settings.AddMenuItem(forceActionMain);
+        //        }
+        //    }
+        //}
 #endif
         return settings;
     }

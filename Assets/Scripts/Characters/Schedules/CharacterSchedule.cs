@@ -147,9 +147,9 @@ public class CharacterSchedule {
         currentPhaseIndex = 0;
         previousPhaseIndex = -1;
         owner.OnSchedulePhaseStarted(currentPhase);
-        if (owner.homeLandmark != null) {
-            owner.party.actionData.ForceDoAction(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.REST), owner.homeLandmark.landmarkObj);
-        }
+        //if (owner.homeLandmark != null) {
+        //    owner.party.actionData.ForceDoAction(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.REST), owner.homeLandmark.landmarkObj);
+        //}
         //Messenger.AddListener(Signals.DAY_START, OnDayStarted);
     }
 

@@ -362,7 +362,7 @@ public class Area {
         //}
     }
     public void DetermineIfTileIsExposed(HexTile currTile) {
-        if (currTile.landmarkOnTile == null || currTile.landmarkOnTile.landmarkObj.isRuined) {
+        if (currTile.landmarkOnTile == null) {
             return; //if there is no landmark on the tile, or it's landmark is already ruined, do not count as exposed
         }
         //check if the tile has a flat empty tile as a neighbour
@@ -370,7 +370,7 @@ public class Area {
         bool isExposed = false;
         for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
             HexTile currNeighbour = currTile.AllNeighbours[j];
-            if (!isExposed && (currNeighbour.landmarkOnTile == null || currNeighbour.landmarkOnTile.landmarkObj.isRuined)
+            if (!isExposed && (currNeighbour.landmarkOnTile == null)
                 && currNeighbour.elevationType == ELEVATION.PLAIN) {
                 unexposedTiles.Remove(currTile.landmarkOnTile);
                 if (!exposedTiles.Contains(currTile.landmarkOnTile)) {
@@ -392,7 +392,7 @@ public class Area {
         }
     }
     public void DetermineIfNeighborTileIsExposed(HexTile currTile) {
-        if (currTile.landmarkOnTile == null || currTile.landmarkOnTile.landmarkObj.isRuined || currTile.areaOfTile == null || (currTile.areaOfTile != null && currTile.areaOfTile != this)) {
+        if (currTile.landmarkOnTile == null || currTile.areaOfTile == null || (currTile.areaOfTile != null && currTile.areaOfTile != this)) {
             return; //if there is no landmark on the tile, or it's landmark is already ruined, do not count as exposed
         }
         //check if the tile has a flat empty tile as a neighbour
@@ -400,7 +400,7 @@ public class Area {
         bool isExposed = false;
         for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
             HexTile currNeighbour = currTile.AllNeighbours[j];
-            if ((currNeighbour.landmarkOnTile == null || currNeighbour.landmarkOnTile.landmarkObj.isRuined)
+            if ((currNeighbour.landmarkOnTile == null)
                 && currNeighbour.elevationType == ELEVATION.PLAIN) {
                 unexposedTiles.Remove(currTile.landmarkOnTile);
                 if (!exposedTiles.Contains(currTile.landmarkOnTile)) {
@@ -613,7 +613,7 @@ public class Area {
     }
     public void CheckDeath() {
         for (int i = 0; i < tiles.Count; i++) {
-            if (tiles[i].landmarkOnTile != null && !tiles[i].landmarkOnTile.landmarkObj.isRuined) {
+            if (tiles[i].landmarkOnTile != null) {
                 areAllLandmarksDead = false;
                 return;
             }
@@ -804,14 +804,14 @@ public class Area {
     #endregion
 
     #region Landmarks
-    public BaseLandmark GetFirstAliveExposedTile() {
-        for (int i = 0; i < exposedTiles.Count; i++) {
-            if (!exposedTiles[i].landmarkObj.isRuined) {
-                return exposedTiles[i];
-            }
-        }
-        return null;
-    }
+    //public BaseLandmark GetFirstAliveExposedTile() {
+    //    for (int i = 0; i < exposedTiles.Count; i++) {
+    //        if (!exposedTiles[i].landmarkObj.isRuined) {
+    //            return exposedTiles[i];
+    //        }
+    //    }
+    //    return null;
+    //}
     public void CenterOnCoreLandmark() {
         CameraMove.Instance.CenterCameraOn(coreTile.gameObject);
     }

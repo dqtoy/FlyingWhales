@@ -101,7 +101,7 @@ public class MysteryHum : Interaction {
         List<BaseLandmark> playerLandmarks = PlayerManager.Instance.player.demonicPortal.tileLocation.areaOfTile.landmarks;
         BaseLandmark playerLandmarkToAttack = playerLandmarks[UnityEngine.Random.Range(0, playerLandmarks.Count)];
         CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
-        investigatorMinion.character.currentParty.iactionData.AssignAction(characterAction, playerLandmarkToAttack.landmarkObj);
+        //investigatorMinion.character.currentParty.iactionData.AssignAction(characterAction, playerLandmarkToAttack.landmarkObj);
     }
     private void ArmyRecruitedRewardEffect(InteractionState state) {
         Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Earthbinders", RACE.FAERY, false);

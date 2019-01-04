@@ -106,7 +106,6 @@ public interface ICharacter {
     void AddTrait(Trait combatAttribute);
     bool IsInParty();
     bool IsInOwnParty();
-    bool InviteToParty(Character inviter);
     bool RemoveTrait(Trait combatAttribute);
     Party CreateOwnParty();
     CharacterAttribute GetAttribute(string attribute);

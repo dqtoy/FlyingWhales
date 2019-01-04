@@ -66,14 +66,14 @@ public class Hero : CharacterRole {
     //}
     //#endregion
 
-    private void LandmarkUnderAttack(Party attacker, GameEvent associatedEvent) {
-        if(_character.currentParty.currentCombat == null && attacker.specificLocation.tileLocation.landmarkOnTile != null && attacker.specificLocation.tileLocation.areaOfTile.id == _character.homeLandmark.tileLocation.areaOfTile.id) {
-            DefendAction defendAction = _character.GetMiscAction(ACTION_TYPE.DEFEND) as DefendAction;
-            if (!_character.IsInOwnParty()) {
-                _character.currentParty.RemoveCharacter(_character);
-            }
-            CharacterParty characterParty = _character.ownParty as CharacterParty;
-            characterParty.actionData.AssignAction(defendAction, attacker.specificLocation.tileLocation.landmarkOnTile.landmarkObj, null, associatedEvent);
-        }
-    }
+    //private void LandmarkUnderAttack(Party attacker, GameEvent associatedEvent) {
+    //    if(_character.currentParty.currentCombat == null && attacker.specificLocation.tileLocation.landmarkOnTile != null && attacker.specificLocation.tileLocation.areaOfTile.id == _character.homeLandmark.tileLocation.areaOfTile.id) {
+    //        DefendAction defendAction = _character.GetMiscAction(ACTION_TYPE.DEFEND) as DefendAction;
+    //        if (!_character.IsInOwnParty()) {
+    //            _character.currentParty.RemoveCharacter(_character);
+    //        }
+    //        CharacterParty characterParty = _character.ownParty as CharacterParty;
+    //        characterParty.actionData.AssignAction(defendAction, attacker.specificLocation.tileLocation.landmarkOnTile.landmarkObj, null, associatedEvent);
+    //    }
+    //}
 }

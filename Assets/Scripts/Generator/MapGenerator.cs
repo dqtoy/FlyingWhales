@@ -51,7 +51,7 @@ public class MapGenerator : MonoBehaviour {
         //GridMap.Instance.DivideOuterGridRegions();
 
         UIManager.Instance.InitializeUI();
-        ObjectManager.Instance.Initialize();
+        //ObjectManager.Instance.Initialize();
         CharacterScheduleManager.Instance.Initialize();
         TokenManager.Instance.Initialize();
 
@@ -73,7 +73,7 @@ public class MapGenerator : MonoBehaviour {
 
         LevelLoaderManager.UpdateLoadingInfo("Starting Game...");
         yield return null;
-        ObjectManager.Instance.Initialize();
+        //ObjectManager.Instance.Initialize();
 
         Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
         //Biomes.Instance.GenerateTileBiomeDetails(GridMap.Instance.hexTiles);
@@ -131,7 +131,7 @@ public class MapGenerator : MonoBehaviour {
         RoadManager.Instance.GenerateTilePassableTypes();
 
         UIManager.Instance.InitializeUI();
-        ObjectManager.Instance.Initialize();
+        //ObjectManager.Instance.Initialize();
         TokenManager.Instance.Initialize();
 
         LevelLoaderManager.UpdateLoadingInfo("Loading Factions...");

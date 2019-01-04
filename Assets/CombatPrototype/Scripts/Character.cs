@@ -1736,7 +1736,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         CharacterParty newParty = new CharacterParty(this);
         SetOwnedParty(newParty);
         newParty.AddCharacter(this);
-        newParty.CreateCharacterObject();
+        //newParty.CreateCharacterObject();
         return newParty;
     }
     public virtual void SetOwnedParty(Party party) {
@@ -1782,21 +1782,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     }
     public bool IsInOwnParty() {
         if (currentParty.id == ownParty.id) {
-            return true;
-        }
-        return false;
-    }
-    public bool InviteToParty(Character inviter) {
-        if (IsInParty()) {
-            return false;
-        }
-        if (party.isIdle) {
-            return false;
-        }
-        if (this.party.actionData.currentAction == null || this.party.actionData.currentAction.actionData.actionType == ACTION_TYPE.WAIT_FOR_PARTY) {
-            //accept invitation
-            //this.actionQueue.Clear();
-            this.party.actionData.ForceDoAction(inviter.ownParty.icharacterObject.currentState.GetAction(ACTION_TYPE.JOIN_PARTY), inviter.ownParty.icharacterObject);
             return true;
         }
         return false;
@@ -1900,27 +1885,27 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     //        actionThread.AddToChoices(_characterObject);
     //    }
     //}
-    public bool CanObtainResource(List<RESOURCE> resources) {
-        if (this.role != null) {//characters without a role cannot get actions, and therefore cannot obtain resources
-            for (int i = 0; i < _ownParty.currentRegion.landmarks.Count; i++) {
-                BaseLandmark landmark = _ownParty.currentRegion.landmarks[i];
-                StructureObj iobject = landmark.landmarkObj;
-                if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
-                    for (int k = 0; k < iobject.currentState.actions.Count; k++) {
-                        CharacterAction action = iobject.currentState.actions[k];
-                        if (action.actionData.resourceGiven != RESOURCE.NONE && resources.Contains(action.actionData.resourceGiven)) { //does the action grant a resource, and is that a resource that is needed
-                            if (action.MeetsRequirements(_ownParty, landmark) && action.CanBeDone(iobject) && action.CanBeDoneBy(_ownParty, iobject)) { //Filter
-                                //if the character can do an action that yields a needed resource, return true
-                                return true;
-                            }
-                        }
+    //public bool CanObtainResource(List<RESOURCE> resources) {
+    //    if (this.role != null) {//characters without a role cannot get actions, and therefore cannot obtain resources
+    //        for (int i = 0; i < _ownParty.currentRegion.landmarks.Count; i++) {
+    //            BaseLandmark landmark = _ownParty.currentRegion.landmarks[i];
+    //            StructureObj iobject = landmark.landmarkObj;
+    //            if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
+    //                for (int k = 0; k < iobject.currentState.actions.Count; k++) {
+    //                    CharacterAction action = iobject.currentState.actions[k];
+    //                    if (action.actionData.resourceGiven != RESOURCE.NONE && resources.Contains(action.actionData.resourceGiven)) { //does the action grant a resource, and is that a resource that is needed
+    //                        if (action.MeetsRequirements(_ownParty, landmark) && action.CanBeDone(iobject) && action.CanBeDoneBy(_ownParty, iobject)) { //Filter
+    //                            //if the character can do an action that yields a needed resource, return true
+    //                            return true;
+    //                        }
+    //                    }
 
-                    }
-                }
-            }
-        }
-        return false;
-    }
+    //                }
+    //            }
+    //        }
+    //    }
+    //    return false;
+    //}
     public bool IsSpecialCivilian() {
         if (this.characterClass != null) {
             if (this.characterClass.className.Equals("Farmer") || this.characterClass.className.Equals("Miner") || this.characterClass.className.Equals("Retired Hero") ||
@@ -2577,53 +2562,53 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     #endregion
 
     #region Home
-    public void LookForNewHome() {
-        //Try to get a new home structure from this character's area
-        BaseLandmark landmark = GetNewHomeFromArea(_homeLandmark.tileLocation.areaOfTile);
-        if (landmark != null) {
-            MigrateTo(landmark);
-        } else {
-            //If there is no available structure, look for it in other areas of the faction and migrate there
-            landmark = GetNewHomeFromFaction();
-            if (landmark != null) {
-                //SetHome(landmark.tileLocation.areaOfTile);
-                MigrateTo(landmark);
-            } else {
-                //TODO: For future update, migrate to another friendly faction's structure
-            }
-        }
-    }
-    private BaseLandmark GetNewHomeFromArea(Area area) {
-        BaseLandmark chosenLandmark = null;
-        for (int i = 0; i < area.landmarks.Count; i++) {
-            BaseLandmark landmark = area.landmarks[i];
-            if (landmark != _homeLandmark && landmark.landmarkObj.specificObjectType == _homeLandmark.landmarkObj.specificObjectType) {
-                if (chosenLandmark == null) {
-                    chosenLandmark = landmark;
-                } else {
-                    if (landmark.charactersWithHomeOnLandmark.Count < chosenLandmark.charactersWithHomeOnLandmark.Count) {
-                        chosenLandmark = landmark;
-                    }
-                }
-            }
-        }
-        return chosenLandmark;
-    }
-    private BaseLandmark GetNewHomeFromFaction() {
-        BaseLandmark chosenLandmark = null;
-        if (_faction != null) {
-            for (int i = 0; i < _faction.ownedAreas.Count; i++) {
-                Area area = _faction.ownedAreas[i];
-                if (area.id != _homeLandmark.tileLocation.areaOfTile.id) {
-                    chosenLandmark = GetNewHomeFromArea(area);
-                    if (chosenLandmark != null) {
-                        break;
-                    }
-                }
-            }
-        }
-        return chosenLandmark;
-    }
+    //public void LookForNewHome() {
+    //    //Try to get a new home structure from this character's area
+    //    BaseLandmark landmark = GetNewHomeFromArea(_homeLandmark.tileLocation.areaOfTile);
+    //    if (landmark != null) {
+    //        MigrateTo(landmark);
+    //    } else {
+    //        //If there is no available structure, look for it in other areas of the faction and migrate there
+    //        landmark = GetNewHomeFromFaction();
+    //        if (landmark != null) {
+    //            //SetHome(landmark.tileLocation.areaOfTile);
+    //            MigrateTo(landmark);
+    //        } else {
+    //            //TODO: For future update, migrate to another friendly faction's structure
+    //        }
+    //    }
+    //}
+    //private BaseLandmark GetNewHomeFromArea(Area area) {
+    //    BaseLandmark chosenLandmark = null;
+    //    for (int i = 0; i < area.landmarks.Count; i++) {
+    //        BaseLandmark landmark = area.landmarks[i];
+    //        if (landmark != _homeLandmark && landmark.landmarkObj.specificObjectType == _homeLandmark.landmarkObj.specificObjectType) {
+    //            if (chosenLandmark == null) {
+    //                chosenLandmark = landmark;
+    //            } else {
+    //                if (landmark.charactersWithHomeOnLandmark.Count < chosenLandmark.charactersWithHomeOnLandmark.Count) {
+    //                    chosenLandmark = landmark;
+    //                }
+    //            }
+    //        }
+    //    }
+    //    return chosenLandmark;
+    //}
+    //private BaseLandmark GetNewHomeFromFaction() {
+    //    BaseLandmark chosenLandmark = null;
+    //    if (_faction != null) {
+    //        for (int i = 0; i < _faction.ownedAreas.Count; i++) {
+    //            Area area = _faction.ownedAreas[i];
+    //            if (area.id != _homeLandmark.tileLocation.areaOfTile.id) {
+    //                chosenLandmark = GetNewHomeFromArea(area);
+    //                if (chosenLandmark != null) {
+    //                    break;
+    //                }
+    //            }
+    //        }
+    //    }
+    //    return chosenLandmark;
+    //}
     public void SetHomeLandmark(BaseLandmark newHomeLandmark, bool ignoreAreaResidentCapacity = false) {
         BaseLandmark previousHome = _homeLandmark;
         this._homeLandmark = newHomeLandmark;

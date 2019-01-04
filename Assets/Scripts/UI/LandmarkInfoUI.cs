@@ -517,23 +517,23 @@ public class LandmarkInfoUI : UIMenu {
             investigationGO.SetActive(false);
         }
     }
-    public void SetCurentSelectedInvestigateButton(InvestigateButton investigateButton) {
-        _currentSelectedInvestigateButton = investigateButton;
-        if(_currentSelectedInvestigateButton != null) {
-            if(_currentSelectedInvestigateButton.actionName == "explore") {
-                ShowMinionAssignment();
-            } else {
-                BaseLandmark chosenToAttackLandmark = _activeLandmark.tileLocation.areaOfTile.GetFirstAliveExposedTile();
-                if(chosenToAttackLandmark != _activeLandmark) {
-                    UIManager.Instance.ShowLandmarkInfo(chosenToAttackLandmark, 1);
-                }
-                ShowMinionAssignmentParty();
-            }
-        } else {
-            HideMinionAssignment();
-            HideMinionAssignmentParty();
-        }
-    }
+    //public void SetCurentSelectedInvestigateButton(InvestigateButton investigateButton) {
+    //    _currentSelectedInvestigateButton = investigateButton;
+    //    if(_currentSelectedInvestigateButton != null) {
+    //        if(_currentSelectedInvestigateButton.actionName == "explore") {
+    //            ShowMinionAssignment();
+    //        } else {
+    //            BaseLandmark chosenToAttackLandmark = _activeLandmark.tileLocation.areaOfTile.GetFirstAliveExposedTile();
+    //            if(chosenToAttackLandmark != _activeLandmark) {
+    //                UIManager.Instance.ShowLandmarkInfo(chosenToAttackLandmark, 1);
+    //            }
+    //            ShowMinionAssignmentParty();
+    //        }
+    //    } else {
+    //        HideMinionAssignment();
+    //        HideMinionAssignmentParty();
+    //    }
+    //}
     private void ResetMinionAssignment() {
         _assignedMinion = null;
         minionAssignmentPortrait.gameObject.SetActive(false);

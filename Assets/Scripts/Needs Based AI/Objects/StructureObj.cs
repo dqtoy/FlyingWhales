@@ -122,7 +122,7 @@ public class StructureObj : IObject {
         if(state.stateName == "Ruined") {
             Messenger.Broadcast(Signals.DESTROY_LANDMARK, this.objectLocation);
             objectLocation.tileLocation.SetLandmarkTileSprite(new LandmarkStructureSprite(LandmarkManager.Instance.ruinedSprite, null));
-            objectLocation.MigrateCharactersToAnotherLandmark();
+            //objectLocation.MigrateCharactersToAnotherLandmark();
             //Messenger.RemoveListener(Signals.DAY_STARTED, DailyInteractionGeneration);
             if(_assignedCharacter != null) {
                 _assignedCharacter.minion.GoBackFromAssignment();
