@@ -240,9 +240,9 @@ public class FactionInfoEditor : MonoBehaviour {
         emblemDropdown.ClearOptions();
         List<Dropdown.OptionData> emblemOptions = new List<Dropdown.OptionData>();
         for (int i = 0; i < FactionManager.Instance.factionEmblems.Count; i++) {
-            Sprite currEmblem = FactionManager.Instance.factionEmblems[i];
+            FactionEmblemSetting currEmblem = FactionManager.Instance.factionEmblems[i];
             Dropdown.OptionData currData = new Dropdown.OptionData();
-            currData.image = currEmblem;
+            currData.image = currEmblem.GetSpriteForSize(96);
             currData.text = i.ToString();
             emblemOptions.Add(currData);
         }
