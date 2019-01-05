@@ -89,6 +89,13 @@ public class RaidEvent : Interaction {
             state.SetDefaultOption(doNothing);
         }
     }
+    public override bool CanStillDoInteraction() {
+        if (interactable.tileLocation.areaOfTile.owner == null 
+            || interactable.tileLocation.areaOfTile.owner.id == _characterInvolved.faction.id) {
+            return false;
+        }
+        return base.CanStillDoInteraction();
+    }
     #endregion
 
     #region Action Option Effect

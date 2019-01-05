@@ -393,7 +393,7 @@ public class Faction {
         if (relationships.ContainsKey(otherFaction)) {
             relationships[otherFaction].AdjustRelationshipStatus(adjustment);
         } else {
-            Debug.LogWarning("There is no favor key for " + otherFaction.name + " in " + this.name + "'s favor dictionary");
+            Debug.LogWarning("There is no key for " + otherFaction.name + " in " + this.name + "'s relationship dictionary");
         }
     }
     #endregion
