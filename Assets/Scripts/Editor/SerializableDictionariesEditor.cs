@@ -34,6 +34,8 @@ public class BiomeSpriteAnimationDictionaryPropertyDrawer : SerializableDictiona
 public class LogReplacerDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(LocationPortraitDictionary))]
 public class LocationPortraitDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(FactionEmblemDictionary))]
+public class FactionEmblemDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 [CustomPropertyDrawer(typeof(CharacterTagListStorage))]
 public class CharacterTagListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }

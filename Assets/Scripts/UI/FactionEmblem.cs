@@ -45,7 +45,7 @@ public class FactionEmblem : MonoBehaviour{
             this.gameObject.SetActive(false);
         } else {
             this.gameObject.SetActive(true);
-            emblemImage.sprite = faction.emblem;
+            emblemImage.sprite = faction.emblem.GetSpriteForSize(emblemImage);
             //if (forceShow || 
             //    (PlayerManager.Instance.player != null && PlayerManager.Instance.player.tokens.Contains(faction.factionToken))) {
             //    //player has intel for this faction

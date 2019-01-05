@@ -32,6 +32,8 @@ public class BiomeSpriteAnimationDictionary : SerializableDictionary<Sprite, Run
 public class LogReplacerDictionary : SerializableDictionary<string, LOG_IDENTIFIER> { }
 [System.Serializable]
 public class LocationPortraitDictionary : SerializableDictionary<string, Sprite> { }
+[System.Serializable]
+public class FactionEmblemDictionary : SerializableDictionary<int, Sprite> { }
 
 [System.Serializable]
 public class CharacterTagListStorage : SerializableDictionary.Storage<List<CharacterActionTagRequirement>> { }

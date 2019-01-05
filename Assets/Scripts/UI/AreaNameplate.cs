@@ -15,6 +15,8 @@ public class AreaNameplate : MonoBehaviour {
         name = area.name + " Nameplate";
         UpdateVisuals();
         UpdatePosition();
+
+        Messenger.AddListener<Area>(Signals.AREA_OWNER_CHANGED, OnAreaOwnerChanged);
     }
 
     private void UpdateVisuals() {
@@ -31,5 +33,11 @@ public class AreaNameplate : MonoBehaviour {
 
     public void Update() {
         UpdatePosition();
+    }
+
+    private void OnAreaOwnerChanged(Area area) {
+        if (this.area.id == area.id) {
+            UpdateVisuals();
+        }
     }
 }

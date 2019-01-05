@@ -18,7 +18,7 @@ public class Faction {
     protected bool _isPlayerFaction;
     protected Race _race;
     protected ILeader _leader;
-    protected Sprite _emblem;
+    protected FactionEmblemSetting _emblem;
     protected List<Region> _ownedRegions;
     protected List<BaseLandmark> _ownedLandmarks;
     protected Color _factionColor;
@@ -66,7 +66,7 @@ public class Faction {
     public Race race {
         get { return _race; }
     }
-    public Sprite emblem {
+    public FactionEmblemSetting emblem {
         get { return _emblem; }
     }
     public Color factionColor {
@@ -436,7 +436,7 @@ public class Faction {
     #endregion
 
     #region Emblems
-    public void SetEmblem(Sprite sprite) {
+    public void SetEmblem(FactionEmblemSetting sprite) {
         _emblem = sprite;
     }
     #endregion

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.UI;
 
 public class FactionManager : MonoBehaviour {
 
@@ -12,7 +13,7 @@ public class FactionManager : MonoBehaviour {
 
     [Space(10)]
     [Header("Visuals")]
-    [SerializeField] private List<Sprite> _factionEmblems;
+    [SerializeField] private List<FactionEmblemSetting> _factionEmblems;
 
     [SerializeField] private List<EmblemBG> _emblemBGs;
     [SerializeField] private List<Sprite> _emblemSymbols;
@@ -25,7 +26,7 @@ public class FactionManager : MonoBehaviour {
     public List<Sprite> emblemSymbols {
         get { return _emblemSymbols; }
     }
-    public List<Sprite> factionEmblems {
+    public List<FactionEmblemSetting> factionEmblems {
         get { return _factionEmblems; }
     }
     #endregion
@@ -187,7 +188,7 @@ public class FactionManager : MonoBehaviour {
      * This will return a sprite and set that sprite as used.
      * Will return an error if there are no more available emblems.
      * */
-    internal Sprite GenerateFactionEmblem(Faction faction) {
+    internal FactionEmblemSetting GenerateFactionEmblem(Faction faction) {
         //List<Sprite> emblemsToUse = new List<Sprite>(_emblemSymbols);
         //for (int i = 0; i < emblemsToUse.Count; i++) {
         //    Sprite currSprite = emblemsToUse[i];
@@ -202,7 +203,7 @@ public class FactionManager : MonoBehaviour {
     //internal Sprite GenerateFactionEmblemBG() {
     //    return _emblemBGs[Random.Range(0, _emblemBGs.Count)];
     //}
-    public Sprite GetFactionEmblem(int emblemIndex) {
+    public FactionEmblemSetting GetFactionEmblem(int emblemIndex) {
         return _factionEmblems[emblemIndex];
         //for (int i = 0; i < _emblemBGs.Count; i++) {
         //    EmblemBG currBG = _emblemBGs[i];
@@ -212,12 +213,17 @@ public class FactionManager : MonoBehaviour {
         //}
         //throw new System.Exception("There is no emblem bg with id " + emblemID);
     }
-    public int GetFactionEmblemIndex(Sprite emblem) {
+    public int GetFactionEmblemIndex(FactionEmblemSetting emblem) {
         for (int i = 0; i < _factionEmblems.Count; i++) {
-            Sprite currSprite = _factionEmblems[i];
-            if (currSprite.name == emblem.name) {
+            FactionEmblemSetting currSetting = _factionEmblems[i];
+            if (currSetting == emblem) {
                 return i;
             }
+            //foreach (KeyValuePair<int, Sprite> kvp in currSetting.emblems) {
+            //    if (kvp.Value.name == emblem.name) {
+            //        return i;
+            //    }
+            //}
         }
         return -1;
     }
@@ -406,4 +412,24 @@ public class FactionManager : MonoBehaviour {
         return totalFactionLvl / activeFactionsCount;
     }
     #endregion
+}
+
+[System.Serializable]
+public class FactionEmblemSetting {
+    public FactionEmblemDictionary emblems;
+
+    public Sprite GetSpriteForSize(Image image) {
+        if (image.rectTransform.sizeDelta.x <= 24) {
+            return emblems[24];
+        } else {
+            return emblems[96];
+        }
+    }
+    public Sprite GetSpriteForSize(int size) {
+        if (size <= 24) {
+            return emblems[24];
+        } else {
+            return emblems[96];
+        }
+    }
 }

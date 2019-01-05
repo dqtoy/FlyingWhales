@@ -178,7 +178,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
 
         //areaCenterImage.sprite = UIManager.Instance.GetAreaCenterSprite("Demonic Portal");
 
-        UpdateHP();
+        //UpdateHP();
     }
     private void UpdateHP() {
         healthProgressBar.fillAmount = _activeLandmark.currDurability / (float) _activeLandmark.totalDurability;
@@ -350,17 +350,17 @@ public class PlayerLandmarkInfoUI : UIMenu {
 
     #region Investigation
     public void UpdateInvestigation() {
-        if (_activeLandmark != null && _activeLandmark.landmarkObj.needsMinionAssignment) {
-            if (_activeLandmark.landmarkObj.assignedCharacter != null) {
-                AssignMinionToInvestigate(_activeLandmark.landmarkObj.assignedCharacter.minion);
-            } else {
-                ResetMinionAssignment();
-            }
-            ShowHideRitualCircleTraitText();
-            investigationGO.SetActive(true);
-        } else {
+        //if (_activeLandmark != null && _activeLandmark.landmarkObj.needsMinionAssignment) {
+        //    if (_activeLandmark.landmarkObj.assignedCharacter != null) {
+        //        AssignMinionToInvestigate(_activeLandmark.landmarkObj.assignedCharacter.minion);
+        //    } else {
+        //        ResetMinionAssignment();
+        //    }
+        //    ShowHideRitualCircleTraitText();
+        //    investigationGO.SetActive(true);
+        //} else {
             investigationGO.SetActive(false);
-        }
+        //}
     }
     private void ResetMinionAssignment() {
         _assignedMinion = null;
