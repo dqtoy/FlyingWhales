@@ -287,6 +287,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.HUNT_ACTION:
                 createdInteraction = new HuntAction(interactable);
                 break;
+            case INTERACTION_TYPE.USE_ITEM_ON_LOCATION:
+                createdInteraction = new UseItemOnLocation(interactable);
+                break;
         }
         return createdInteraction;
     }

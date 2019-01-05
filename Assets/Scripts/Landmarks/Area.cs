@@ -827,7 +827,7 @@ public class Area {
             {INTERACTION_TYPE.MOVE_TO_RAID, 40},
             {INTERACTION_TYPE.MOVE_TO_CHARM, 35},
             {INTERACTION_TYPE.MOVE_TO_RECRUIT, 35},
-            {INTERACTION_TYPE.MOVE_TO_ABDUCT, 25},
+            //{INTERACTION_TYPE.MOVE_TO_ABDUCT, 25},
             {INTERACTION_TYPE.MOVE_TO_STEAL, 20},
             {INTERACTION_TYPE.MOVE_TO_HUNT, 20},
             {INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS, 40},
@@ -1035,11 +1035,11 @@ public class Area {
         return null;
     }
     public WeightedDictionary<AreaCharacterClass> GetClassWeights() {
-        //if (this.owner != null && this.owner.defenderWeights.GetTotalOfWeights() > 0) {
-        //    return this.owner.defenderWeights;
-        //} else {
-            return LandmarkManager.Instance.GetDefaultDefenderWeights(race);
-        //}
+        WeightedDictionary<AreaCharacterClass> classWeights = LandmarkManager.Instance.GetDefaultDefenderWeights(race);
+        if (this.owner != null && this.owner.additionalClassWeights.GetTotalOfWeights() > 0) {
+            classWeights.AddElements(this.owner.additionalClassWeights);
+        }
+        return classWeights;
     }
     public void UpgradeDefendersToMatchFactionLvl() {
         for (int i = 0; i < defenderGroups.Count; i++) {

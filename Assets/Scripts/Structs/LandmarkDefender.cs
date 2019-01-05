@@ -9,8 +9,16 @@ public class DefenderSetting  {
 }
 
 [System.Serializable]
-public class AreaCharacterClass {
+public struct AreaCharacterClass {
     public string className;
+
+    public AreaCharacterClass(string className) {
+        this.className = className;
+    }
+
+    public override string ToString() {
+        return className;
+    }
 }
 
 [System.Serializable]

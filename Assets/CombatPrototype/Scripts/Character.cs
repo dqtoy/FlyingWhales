@@ -3126,8 +3126,10 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                     Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.npcAssociatedInteractionType, specificLocation as BaseLandmark);
                     if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
                         (interaction as UseItemOnCharacter).SetItemToken(tokenInInventory);
-                    }else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
+                    } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
                         (interaction as UseItemOnSelf).SetItemToken(tokenInInventory);
+                    } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_LOCATION) {
+                        (interaction as UseItemOnLocation).SetItemToken(tokenInInventory);
                     }
                     AddInteraction(interaction);
                 } else {
@@ -3157,6 +3159,8 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                         (interaction as UseItemOnCharacter).SetItemToken(tokenInInventory);
                     } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
                         (interaction as UseItemOnSelf).SetItemToken(tokenInInventory);
+                    } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_LOCATION) {
+                        (interaction as UseItemOnLocation).SetItemToken(tokenInInventory);
                     }
                     AddInteraction(interaction);
                 }

@@ -61,7 +61,8 @@
       "possibleSpecialTokenSpawns": [
         "Blighted Potion",
         "Charm Spell",
-        "Fear Spell"
+        "Fear Spell",
+        "Secret Scroll"
       ],
       "raceSetup": [
         {
@@ -111,7 +112,8 @@
         "Blighted Potion",
         "Book Of Wizardry",
         "Brand Of The Beastmaster",
-        "Mark Of The Witch"
+        "Mark Of The Witch",
+        "Secret Scroll"
       ],
       "raceSetup": [
         {
@@ -160,7 +162,8 @@
         "Fear Spell",
         "Book Of Wizardry",
         "Brand Of The Beastmaster",
-        "Mark Of The Witch"
+        "Mark Of The Witch",
+        "Secret Scroll"
       ],
       "raceSetup": [],
       "recommendedPower": 0.0,
@@ -196,7 +199,8 @@
       "possibleSpecialTokenSpawns": [
         "Blighted Potion",
         "Charm Spell",
-        "Fear Spell"
+        "Fear Spell",
+        "Secret Scroll"
       ],
       "raceSetup": [
         {
@@ -365,7 +369,8 @@
       "possibleSpecialTokenSpawns": [
         "Blighted Potion",
         "Charm Spell",
-        "Fear Spell"
+        "Fear Spell",
+        "Secret Scroll"
       ],
       "raceSetup": [
         {
@@ -512,7 +517,8 @@
         "Fear Spell",
         "Book Of Wizardry",
         "Brand Of The Beastmaster",
-        "Mark Of The Witch"
+        "Mark Of The Witch",
+        "Secret Scroll"
       ],
       "raceSetup": [
         {

@@ -28,17 +28,11 @@ public class SecretScroll : SpecialToken {
     }
     public override bool CanBeUsedBy(Character sourceCharacter) {
         if (!sourceCharacter.isFactionless) {
-            if (sourceCharacter.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
-                return false; //resident capacity is already full, do not use charm spell
-            }
-            Area location = sourceCharacter.ownParty.specificLocation.tileLocation.areaOfTile;
-            for (int i = 0; i < location.charactersAtLocation.Count; i++) {
-                Character currCharacter = location.charactersAtLocation[i];
-                if (currCharacter.id != sourceCharacter.id
-                    && (currCharacter.isFactionless || currCharacter.faction.id != sourceCharacter.faction.id)
-                    && !currCharacter.isLeader) {
-                    return true;
-                }
+            Area areaLocation = sourceCharacter.specificLocation.tileLocation.areaOfTile;
+            if (areaLocation != null
+                && areaLocation.owner != null
+                && areaLocation.owner.id == sourceCharacter.faction.id) {
+                return true;
             }
         }
         return false;
@@ -49,6 +43,9 @@ public class SecretScroll : SpecialToken {
         state.tokenUser.LevelUp();
         state.tokenUser.ConsumeToken();
 
+        //**Mechanics**: Faction will now be able to train the scroll's class with a weight of 20.
+        state.tokenUser.faction.AddClassWeight(grantedClass, 20);
+
         state.descriptionLog.AddToFillers(state.tokenUser.faction, state.tokenUser.faction.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(null, grantedClass, LOG_IDENTIFIER.STRING_1);
 
@@ -58,6 +55,9 @@ public class SecretScroll : SpecialToken {
     private void StopFailEffect(TokenInteractionState state) {
         state.tokenUser.LevelUp();
         state.tokenUser.ConsumeToken();
+
+        //**Mechanics**: Faction will now be able to train the scroll's class with a weight of 20.
+        state.tokenUser.faction.AddClassWeight(grantedClass, 20);
 
         state.descriptionLog.AddToFillers(state.tokenUser.faction, state.tokenUser.faction.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(null, grantedClass, LOG_IDENTIFIER.STRING_1);
