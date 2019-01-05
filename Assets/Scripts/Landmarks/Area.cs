@@ -542,6 +542,7 @@ public class Area {
                 landmarks[i].UnoccupyLandmark();
             }
         }
+        Messenger.Broadcast(Signals.AREA_OWNER_CHANGED, this);
     }
     public void SetRaceType(RACE raceType) {
         _raceType = raceType;
