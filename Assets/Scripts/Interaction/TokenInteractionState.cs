@@ -38,9 +38,8 @@ public class TokenInteractionState : InteractionState {
             if(_target != null && _target is Character) {
                 _descriptionLog.AddToFillers(_target as Character, (_target as Character).name, LOG_IDENTIFIER.TARGET_CHARACTER);
             }
-            if (!_descriptionLog.HasFillerForIdentifier(LOG_IDENTIFIER.LANDMARK_1)) {
-                _descriptionLog.AddToFillers(_interaction.interactable.tileLocation.areaOfTile, _interaction.interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-            }
+            _descriptionLog.AddToFillers(_interaction.interactable.tileLocation.areaOfTile, _interaction.interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+
             _description = Utilities.LogReplacer(descriptionLog);
         }
         if (otherLogs != null) {
@@ -48,9 +47,8 @@ public class TokenInteractionState : InteractionState {
             if (_target != null && _target is Character) {
                 AddLogFiller(new LogFiller(_target as Character, (_target as Character).name, LOG_IDENTIFIER.TARGET_CHARACTER));
             }
-            if (!AlreadyHasLogFiller(LOG_IDENTIFIER.LANDMARK_1)) {
-                AddLogFiller(new LogFiller(interaction.interactable.tileLocation.areaOfTile, interaction.interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
-            }
+            AddLogFiller(new LogFiller(interaction.interactable.tileLocation.areaOfTile, interaction.interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
+
             for (int i = 0; i < otherLogs.Count; i++) {
                 Log currLog = otherLogs[i];
                 currLog.SetFillers(logFillers);
