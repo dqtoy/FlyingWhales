@@ -17,6 +17,12 @@ public class DropItem : Interaction {
         _states.Add(startState.name, startState);
         SetCurrentState(startState);
     }
+    public override bool CanStillDoInteraction() {
+        if (_characterInvolved.tokenInInventory == null) {
+            return false;
+        }
+        return base.CanStillDoInteraction();
+    }
     #endregion
 
     private void StartRewardEffect(InteractionState state) {
