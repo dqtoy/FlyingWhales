@@ -549,7 +549,7 @@ public class Area {
     }
     #endregion
 
-    #region Utilities
+     #region Utilities
     public void LoadAdditionalData() {
         //DetermineExposedTiles();
         Messenger.AddListener<StructureObj, ObjectState>(Signals.STRUCTURE_STATE_CHANGED, OnStructureStateChanged);

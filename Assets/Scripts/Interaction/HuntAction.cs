@@ -499,20 +499,20 @@ public class HuntAction : Interaction {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
             Character currCharacter = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
-            if (currCharacter.id != _characterInvolved.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty() && !currCharacter.isLeader && currCharacter.race != RACE.SKELETON) {
+            if (currCharacter.id != characterInvolved.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty() && !currCharacter.isLeader && currCharacter.race != RACE.SKELETON) {
                 int weight = 0;
                 if (currCharacter.isFactionless) {
                     weight += 25;
-                } else if (currCharacter.faction.id != _characterInvolved.faction.id) {
-                    FactionRelationship relationship = currCharacter.faction.GetRelationshipWith(_characterInvolved.faction);
+                } else if (currCharacter.faction.id != characterInvolved.faction.id) {
+                    FactionRelationship relationship = currCharacter.faction.GetRelationshipWith(characterInvolved.faction);
                     if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED) {
                         weight += 20;
                     } else if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ALLY || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
                         weight += 5;
                     }
-                    if (currCharacter.level > _characterInvolved.level) {
+                    if (currCharacter.level > characterInvolved.level) {
                         weight -= 15;
-                    } else if (currCharacter.level < _characterInvolved.level) {
+                    } else if (currCharacter.level < characterInvolved.level) {
                         weight += 15;
                     }
                 }
