@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Abducted : Trait {
-    public Faction originalFaction { get; private set; }
+    public BaseLandmark originalHomeLandmark { get; private set; }
 
-    public Abducted(Faction originalFaction) {
+    public Abducted(BaseLandmark originalHomeLandmark) {
         name = "Abducted";
-        this.originalFaction = originalFaction;
+        this.originalHomeLandmark = originalHomeLandmark;
         //name = "Charmed from " + originalFaction.name;
         description = "This character has been abducted!";
         type = TRAIT_TYPE.NEGATIVE;

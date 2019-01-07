@@ -282,10 +282,9 @@ public class AbductAction : Interaction {
 
     private void AbductCharacter(Character character) {
         //only add abducted trait to characters that have not been abducted yet, this is to retain it's original faction
-        Abducted abductedTrait = new Abducted(character.faction);
+        Abducted abductedTrait = new Abducted(character.homeLandmark);
         character.AddTrait(abductedTrait);
-        character.homeLandmark.RemoveCharacterHomeOnLandmark(character);
-        _characterInvolved.homeLandmark.AddCharacterHomeOnLandmark(character);
+        character.MigrateTo(_characterInvolved.homeLandmark);
         Interaction interactionAbductor = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation.tileLocation.landmarkOnTile);
         Interaction interactionAbducted = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation.tileLocation.landmarkOnTile);
         _characterInvolved.SetForcedInteraction(interactionAbductor);

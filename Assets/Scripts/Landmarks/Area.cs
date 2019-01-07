@@ -832,6 +832,8 @@ public class Area {
             {INTERACTION_TYPE.MOVE_TO_HUNT, 20},
             {INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS, 40},
             {INTERACTION_TYPE.PATROL_ACTION, 50},
+            {INTERACTION_TYPE.EAT_ABDUCTED, 20},
+            {INTERACTION_TYPE.TORTURE_ACTION, 25},
         };
     }
     public void AddInteraction(Interaction interaction) {
