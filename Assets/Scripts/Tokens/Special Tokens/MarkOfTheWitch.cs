@@ -5,7 +5,7 @@ using UnityEngine;
 public class MarkOfTheWitch : SpecialToken {
 
     public MarkOfTheWitch() : base(SPECIAL_TOKEN.MARK_OF_THE_WITCH) {
-        quantity = 1;
+        //quantity = 1;
         weight = 20;
         npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_SELF;
     }

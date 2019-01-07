@@ -5,7 +5,7 @@ using UnityEngine;
 public class BrandOfTheBeastmaster : SpecialToken {
 
     public BrandOfTheBeastmaster() : base(SPECIAL_TOKEN.BRAND_OF_THE_BEASTMASTER) {
-        quantity = 1;
+        //quantity = 1;
         weight = 20;
         npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_SELF;
     }

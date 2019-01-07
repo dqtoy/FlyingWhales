@@ -117,15 +117,13 @@ public class CharacterToken : Token {
 }
 
 [System.Serializable]
-/*
- NOTE: There is only one instance of SpecialToken class per special token. (See TokenManager)
-     */
 public class SpecialToken : Token {
     public SPECIAL_TOKEN specialTokenType;
     public INTERACTION_TYPE npcAssociatedInteractionType;
     public string name;
-    public int quantity;
+    //public int quantity;
     public int weight;
+    public Faction owner;
 
     #region getters/setters
     public override string tokenName {
@@ -137,6 +135,15 @@ public class SpecialToken : Token {
     public virtual string Stop_Fail {
         get { return "Stop Fail"; }
     }
+    public string ownerName {
+        get {
+            if (owner == null) {
+                return "no one";
+            } else {
+                return owner.name;
+            }
+        }
+    }
     #endregion
 
     public SpecialToken(SPECIAL_TOKEN specialTokenType) : base() {
@@ -144,17 +151,20 @@ public class SpecialToken : Token {
         this.specialTokenType = specialTokenType;
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.specialTokenType.ToString());
     }
-    public void AdjustQuantity(int amount) {
-        quantity += amount;
-        if (quantity <= 0) {
-            Messenger.Broadcast(Signals.SPECIAL_TOKEN_RAN_OUT, this);
-        }
-    }
+    //public void AdjustQuantity(int amount) {
+    //    quantity += amount;
+    //    if (quantity <= 0) {
+    //        Messenger.Broadcast(Signals.SPECIAL_TOKEN_RAN_OUT, this);
+    //    }
+    //}
     public virtual Character GetTargetCharacterFor(Character sourceCharacter) {
         return null;
     }
+    public void SetOwner(Faction owner) {
+        this.owner = owner;
+    }
     public override string ToString() {
-        return name + " Token";
+        return name;
     }
 }
 

@@ -5,7 +5,7 @@ using UnityEngine;
 public class BlightedPotion : SpecialToken {
 
     public BlightedPotion() : base(SPECIAL_TOKEN.BLIGHTED_POTION) {
-        quantity = 4;
+        //quantity = 4;
         weight = 100;
         npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_CHARACTER;
     }

@@ -537,7 +537,7 @@ public class InteractionManager : MonoBehaviour {
                                 if(currCharacter.isFactionless) {
                                     //Unaligned?
                                     return true;
-                                } else if(currCharacter.faction.id != character.faction.id) {
+                                } else if(currCharacter.faction.id != character.faction.id && currCharacter.faction.ownedAreas.Count > 0) {
                                         relationship = currCharacter.faction.GetRelationshipWith(character.faction);
                                         if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED 
                                             || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL

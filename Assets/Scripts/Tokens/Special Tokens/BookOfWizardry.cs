@@ -5,7 +5,7 @@ using UnityEngine;
 public class BookOfWizardry : SpecialToken {
 
     public BookOfWizardry() : base(SPECIAL_TOKEN.BOOK_OF_WIZARDRY) {
-        quantity = 1;
+        //quantity = 1;
         weight = 20;
         npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_SELF;
     }

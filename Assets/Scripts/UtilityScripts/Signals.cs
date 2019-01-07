@@ -113,6 +113,7 @@ public static class Signals {
     public static string CHARACTER_REMOVED_FROM_FACTION = "OnCharacterRemovedFromFaction"; //Parameters (Character addedCharacter, Faction affectedFaction)
     public static string FACTION_SET = "OnFactionSet"; //Parameters (Character characterThatSetFaction)
     public static string FACTION_LEADER_DIED = "OnFactionLeaderDied"; //Parameters (Faction affectedFaction)
+    public static string FACTION_DIED = "OnFactionDied"; //Parameters (Faction affectedFaction)
     #endregion
 
     #region Actions
@@ -153,7 +154,7 @@ public static class Signals {
     #endregion
 
     #region Tokens
-    public static string SPECIAL_TOKEN_RAN_OUT = "OnSpecialTokenRanOut"; //Parameters (SpecialToken specialToken)
+    //public static string SPECIAL_TOKEN_RAN_OUT = "OnSpecialTokenRanOut"; //Parameters (SpecialToken specialToken)
     public static string SPECIAL_TOKEN_CREATED = "OnSpecialTokenCreated"; //Parameters (SpecialToken specialToken)
     public static string TOKEN_CONSUMED = "OnTokenConsumed"; //Parameters (SpecialToken specialToken)
     #endregion

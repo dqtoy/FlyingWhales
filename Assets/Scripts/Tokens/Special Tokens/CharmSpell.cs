@@ -5,7 +5,7 @@ using UnityEngine;
 public class CharmSpell : SpecialToken {
 
     public CharmSpell() : base(SPECIAL_TOKEN.CHARM_SPELL) {
-        quantity = 4;
+        //quantity = 4;
         weight = 50;
         npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_CHARACTER;
     }
