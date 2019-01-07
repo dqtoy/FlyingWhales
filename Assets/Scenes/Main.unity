@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -73420,6 +73420,7 @@ GameObject:
   - component: {fileID: 1372672405}
   - component: {fileID: 1372672406}
   - component: {fileID: 1372672407}
+  - component: {fileID: 1372672408}
   m_Layer: 5
   m_Name: StructureNameLbl_HEADER_NO
   m_TagString: Untagged
@@ -73565,6 +73566,51 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &1372672408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1372672404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1741253390}
+        m_MethodName: ShowSpecialTokensAtLocation
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1741253390}
+        m_MethodName: HideSpecialTokensAtLocation
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!1 &1372841233
 GameObject:
   m_ObjectHideFlags: 0
@@ -93019,6 +93065,75 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b6d2f936b7822a46a5e7dd7fa8fb07d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  specialTokenSettings:
+  - tokenName: Mark of the Witch
+    quantity: 1
+    appearanceWeight: 40
+    areaLocations:
+    - Tessellated Triangle
+    - Pitthize
+    - Gloomhollow Crypts
+  - tokenName: Brand of the Beastmaster
+    quantity: 1
+    appearanceWeight: 40
+    areaLocations:
+    - Tessellated Triangle
+    - Pitthize
+    - Gloomhollow Crypts
+  - tokenName: Book of Wizardry
+    quantity: 1
+    appearanceWeight: 40
+    areaLocations:
+    - Tessellated Triangle
+    - Pitthize
+    - Gloomhollow Crypts
+  - tokenName: Blighted Potion
+    quantity: 4
+    appearanceWeight: 100
+    areaLocations:
+    - Odious Lair
+    - Tessellated Triangle
+    - Pitthize
+    - Radisle Cavern
+    - Blistering Hollow
+    - Gloomhollow Crypts
+  - tokenName: Fear Spell
+    quantity: 4
+    appearanceWeight: 100
+    areaLocations:
+    - Odious Lair
+    - Pitthize
+    - Radisle Cavern
+    - Blistering Hollow
+    - Gloomhollow Crypts
+  - tokenName: Charm Spell
+    quantity: 4
+    appearanceWeight: 100
+    areaLocations:
+    - Odious Lair
+    - Pitthize
+    - Radisle Cavern
+    - Blistering Hollow
+    - Gloomhollow Crypts
+  - tokenName: Scroll of Power
+    quantity: 3
+    appearanceWeight: 50
+    areaLocations: []
+  - tokenName: Book of the Dead
+    quantity: 1
+    appearanceWeight: 100
+    areaLocations:
+    - Tessellated Triangle
+  - tokenName: Secret Scroll
+    quantity: 6
+    appearanceWeight: 40
+    areaLocations:
+    - Odious Lair
+    - Tessellated Triangle
+    - Pitthize
+    - Radisle Cavern
+    - Blistering Hollow
+    - Gloomhollow Crypts
 --- !u!1 &1688629845
 GameObject:
   m_ObjectHideFlags: 0

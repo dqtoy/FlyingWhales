@@ -293,8 +293,8 @@ public class StealAction : Interaction {
     #endregion
 
     private void TransferItem(Character sourceCharacter, Character thief) {
-        thief.SetToken(sourceCharacter.tokenInInventory);
-        sourceCharacter.DropToken(interactable);
+        thief.ObtainToken(sourceCharacter.tokenInInventory);
+        sourceCharacter.SetToken(null);
     }
 
     public void SetTargetCharacter(Character targetCharacter) {

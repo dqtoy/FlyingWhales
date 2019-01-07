@@ -8,16 +8,18 @@ public class TokenManager : MonoBehaviour {
 
     //private Dictionary<int, Intel> _intelLookup;
 
-    private Dictionary<string, SpecialToken> specialTokens = new Dictionary<string, SpecialToken>() {
-        { "Blighted Potion", new BlightedPotion() },
-        { "Book Of The Dead", new BookOfTheDead() },
-        { "Charm Spell", new CharmSpell() },
-        { "Fear Spell", new FearSpell() },
-        { "Book Of Wizardry", new BookOfWizardry() },
-        { "Brand Of The Beastmaster", new BrandOfTheBeastmaster() },
-        { "Mark Of The Witch", new MarkOfTheWitch() },
-        { "Secret Scroll", new SecretScroll() },
-    };
+    //private Dictionary<string, int> specialTokens = new Dictionary<string, int>() {
+    //    { "Blighted Potion", 4 },
+    //    { "Book Of The Dead", 1 },
+    //    { "Charm Spell", 4 },
+    //    { "Fear Spell", 4 },
+    //    { "Book Of Wizardry", 1 },
+    //    { "Brand Of The Beastmaster", new BrandOfTheBeastmaster() },
+    //    { "Mark Of The Witch", new MarkOfTheWitch() },
+    //    { "Secret Scroll", new SecretScroll() },
+    //};
+
+    public List<SpecialTokenSettings> specialTokenSettings;
 
     #region getters/setters
     //public Dictionary<int, Intel> intelLookup {
@@ -34,9 +36,56 @@ public class TokenManager : MonoBehaviour {
     }
 
     private void LoadSpecialTokens() {
-        foreach (KeyValuePair<string, SpecialToken> item in specialTokens) {
-            Messenger.Broadcast(Signals.SPECIAL_TOKEN_CREATED, item.Value);
+        for (int i = 0; i < specialTokenSettings.Count; i++) {
+            SpecialTokenSettings currSetting = specialTokenSettings[i];
+            List<Area> areas = GetPossibleAreaSpawns(currSetting);
+            if (areas.Count <= 0) {
+                continue; //skip
+            }
+            for (int j = 0; j < currSetting.quantity; j++) {
+                if (Random.Range(0, 100) < currSetting.appearanceWeight) {
+                    Area chosenArea = areas[Random.Range(0, areas.Count)];
+                    SpecialToken createdToken = null;
+                    switch (currSetting.tokenName) {
+                        case "Mark of the Witch":
+                            createdToken = new MarkOfTheWitch();
+                            break;
+                        case "Brand of the Beastmaster":
+                            createdToken = new BrandOfTheBeastmaster();
+                            break;
+                        case "Book of Wizardry":
+                            createdToken = new BookOfWizardry();
+                            break;
+                        case "Blighted Potion":
+                            createdToken = new BlightedPotion();
+                            break;
+                        case "Fear Spell":
+                            createdToken = new FearSpell();
+                            break;
+                        case "Charm Spell":
+                            createdToken = new CharmSpell();
+                            break;
+                        //case "Scroll of Power":
+                        //    chosenArea.AddSpecialTokenToLocation(new ScrollOf());
+                        //    break;
+                        case "Book of the Dead":
+                            createdToken = new BookOfTheDead();
+                            break;
+                        case "Secret Scroll":
+                            createdToken = new SecretScroll();
+                            break;
+                    }
+                    if (createdToken != null) {
+                        chosenArea.AddSpecialTokenToLocation(createdToken);
+                        createdToken.SetOwner(chosenArea.owner);
+                        Messenger.Broadcast<SpecialToken>(Signals.SPECIAL_TOKEN_CREATED, createdToken);
+                    }
+                }
+            }
         }
+        //foreach (KeyValuePair<string, SpecialToken> item in specialTokens) {
+        //    Messenger.Broadcast(Signals.SPECIAL_TOKEN_CREATED, item.Value);
+        //}
 
         //specialTokens = new Dictionary<string, SpecialToken>();
         //string path = Utilities.dataPath + "Tokens/";
@@ -59,8 +108,17 @@ public class TokenManager : MonoBehaviour {
         //}
     }
 
+    public List<Area> GetPossibleAreaSpawns(SpecialTokenSettings setting) {
+        List<Area> areas = new List<Area>();
+        for (int i = 0; i < setting.areaLocations.Count; i++) {
+            string areaName = setting.areaLocations[i];
+            areas.Add(LandmarkManager.Instance.GetAreaByName(areaName));
+        }
+        return areas;
+    }
+
     public SpecialToken GetSpecialToken(string name) {
-        return specialTokens[name];
+        return null;
     }
 
     //public Intel GetIntel(int id) {
@@ -115,4 +173,12 @@ public class TokenManager : MonoBehaviour {
         
     //    return intel;
     //}
+}
+
+[System.Serializable]
+public class SpecialTokenSettings {
+    public string tokenName;
+    public int quantity;
+    public int appearanceWeight;
+    public List<string> areaLocations;
 }

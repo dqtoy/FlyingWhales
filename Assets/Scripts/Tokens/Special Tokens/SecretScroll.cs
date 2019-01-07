@@ -7,7 +7,7 @@ public class SecretScroll : SpecialToken {
     private string grantedClass;
 
     public SecretScroll() : base(SPECIAL_TOKEN.SECRET_SCROLL) {
-        quantity = 6;
+        //quantity = 6;
         weight = 100;
         npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_LOCATION;
         grantedClass = "Knight";

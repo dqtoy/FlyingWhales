@@ -131,6 +131,7 @@ public class Area {
         jobInteractionTypes = new Dictionary<JOB, List<INTERACTION_TYPE>>();
         eventsTargettingThis = new List<Interaction>();
         charactersAtLocationHistory = new List<string>();
+        possibleSpecialTokenSpawns = new List<SpecialToken>();
         supplyLog = new List<string>();
         if (data.raceSetup != null) {
             initialRaceSetup = new List<InitialRaceSetup>(data.raceSetup);
@@ -155,7 +156,7 @@ public class Area {
         if (data.possibleOccupants != null) {
             possibleOccupants.AddRange(data.possibleOccupants);
         }
-        LoadSpecialTokens(data);
+        //LoadSpecialTokens(data);
         AddTile(Utilities.GetTilesFromIDs(data.tileData)); //exposed tiles will be determined after loading landmarks at MapGeneration
         UpdateBorderColors();
         if (areaType != AREA_TYPE.DEMONIC_INTRUSION) {
@@ -1215,23 +1216,33 @@ public class Area {
     #endregion
 
     #region Special Tokens
-    private void LoadSpecialTokens(AreaSaveData data) {
-        possibleSpecialTokenSpawns = new List<SpecialToken>();
-        if (data.possibleSpecialTokenSpawns != null) {
-            for (int i = 0; i < data.possibleSpecialTokenSpawns.Count; i++) {
-                string tokenName = data.possibleSpecialTokenSpawns[i];
-                possibleSpecialTokenSpawns.Add(TokenManager.Instance.GetSpecialToken(tokenName));
-            }
-            Messenger.AddListener<SpecialToken>(Signals.SPECIAL_TOKEN_RAN_OUT, OnSpecialTokenRanOut);
+    //private void LoadSpecialTokens(AreaSaveData data) {
+    //    possibleSpecialTokenSpawns = new List<SpecialToken>();
+    //    if (data.possibleSpecialTokenSpawns != null) {
+    //        for (int i = 0; i < data.possibleSpecialTokenSpawns.Count; i++) {
+    //            string tokenName = data.possibleSpecialTokenSpawns[i];
+    //            possibleSpecialTokenSpawns.Add(TokenManager.Instance.GetSpecialToken(tokenName));
+    //        }
+    //        Messenger.AddListener<SpecialToken>(Signals.SPECIAL_TOKEN_RAN_OUT, OnSpecialTokenRanOut);
+    //    }
+    //}
+    //private void OnSpecialTokenRanOut(SpecialToken token) { //Called when special token quantity reaches 0
+    //    if (possibleSpecialTokenSpawns.Contains(token)) {
+    //        possibleSpecialTokenSpawns.Remove(token);
+    //        if (possibleSpecialTokenSpawns.Count == 0) {
+    //            Messenger.RemoveListener<SpecialToken>(Signals.SPECIAL_TOKEN_RAN_OUT, OnSpecialTokenRanOut);
+    //        }
+    //    }
+    //}
+    public void AddSpecialTokenToLocation(SpecialToken token) {
+        if (!possibleSpecialTokenSpawns.Contains(token)) {
+            possibleSpecialTokenSpawns.Add(token);
+            Debug.Log(GameManager.Instance.TodayLogString() + "Added " + token.name + " at " + name);
         }
     }
-    private void OnSpecialTokenRanOut(SpecialToken token) { //Called when special token quantity reaches 0
-        if (possibleSpecialTokenSpawns.Contains(token)) {
-            possibleSpecialTokenSpawns.Remove(token);
-            if (possibleSpecialTokenSpawns.Count == 0) {
-                Messenger.RemoveListener<SpecialToken>(Signals.SPECIAL_TOKEN_RAN_OUT, OnSpecialTokenRanOut);
-            }
-        }
+    public void RemoveSpecialTokenFromLocation(SpecialToken token) {
+        possibleSpecialTokenSpawns.Remove(token);
+        Debug.Log(GameManager.Instance.TodayLogString() + "Removed " + token.name + " from " + name);
     }
     public List<SpecialToken> GetElligibleTokensForCharacter(Character character) {
         List<SpecialToken> choices = new List<SpecialToken>(possibleSpecialTokenSpawns);

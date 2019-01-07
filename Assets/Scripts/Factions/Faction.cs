@@ -321,6 +321,7 @@ public class Faction {
             FactionManager.Instance.neutralFaction.OwnArea(areasToUnown[i]);
         }
         Messenger.Broadcast(Signals.FACTION_LEADER_DIED, this);
+        Messenger.Broadcast(Signals.FACTION_DIED, this);
     }
     public void SetLevel(int amount) {
         _level = amount;

@@ -98,7 +98,7 @@ public class ExplorerSpawnInteraction1 : Interaction {
         SetCurrentState(_states[Do_Nothing]);
     }
     private bool CanGetSpecialToken(SpecialToken token) {
-        return PlayerManager.Instance.player.GetToken(token) == null;
+        return !PlayerManager.Instance.player.HasSpecialToken(token.name);
     }
     private bool CanGetLocationToken() {
         return PlayerManager.Instance.player.GetToken(interactable.tileLocation.areaOfTile.locationToken) == null;
@@ -110,6 +110,7 @@ public class ExplorerSpawnInteraction1 : Interaction {
         state.SetUseTokeneerMinionOnly(true);
 
         PlayerManager.Instance.player.AddToken(_chosenSpecialToken);
+        interactable.tileLocation.areaOfTile.RemoveSpecialTokenFromLocation(_chosenSpecialToken);
 
         state.descriptionLog.AddToFillers(null, _chosenSpecialToken.tokenName, LOG_IDENTIFIER.STRING_1);
 

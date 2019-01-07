@@ -269,9 +269,10 @@ public class Player : ILeader {
             token.SetObtainedState(true);
             if (token is CharacterToken) {
                 Messenger.Broadcast(Signals.CHARACTER_TOKEN_ADDED, token as CharacterToken);
-            } else if (token is SpecialToken) {
-                (token as SpecialToken).AdjustQuantity(-1);
-            }
+            } 
+            //else if (token is SpecialToken) {
+            //    (token as SpecialToken).AdjustQuantity(-1);
+            //}
         }
     }
     public bool RemoveToken(Token token) {
@@ -289,6 +290,14 @@ public class Player : ILeader {
             }
         }
         return null;
+    }
+    public bool HasSpecialToken(string tokenName) {
+        for (int i = 0; i < _tokens.Count; i++) {
+            if (_tokens[i].tokenName == tokenName) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 

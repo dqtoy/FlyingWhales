@@ -233,12 +233,13 @@ public class ExploreEvent : Interaction {
 
     private SpecialToken GiveSpecialTokenToCharacter() {
         List<SpecialToken> choices = interactable.tileLocation.areaOfTile.GetElligibleTokensForCharacter(_characterInvolved);
-        WeightedDictionary<SpecialToken> tokenWeights = new WeightedDictionary<SpecialToken>();
-        for (int i = 0; i < choices.Count; i++) {
-            tokenWeights.AddElement(choices[i], choices[i].weight);
-        }
-        SpecialToken token = tokenWeights.PickRandomElementGivenWeights();
+        //WeightedDictionary<SpecialToken> tokenWeights = new WeightedDictionary<SpecialToken>();
+        //for (int i = 0; i < choices.Count; i++) {
+        //    tokenWeights.AddElement(choices[i], choices[i].weight);
+        //}
+        SpecialToken token = choices[Random.Range(0, choices.Count)];
         _characterInvolved.ObtainToken(token);
+        interactable.tileLocation.areaOfTile.RemoveSpecialTokenFromLocation(token);
         Debug.LogWarning("[Day " + GameManager.Instance.continuousDays + "] " + _characterInvolved.name + " obtained " + token.tokenName + " at " + interactable.tileLocation.areaOfTile.name);
         return token;
     }

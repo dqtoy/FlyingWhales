@@ -1043,4 +1043,22 @@ public class AreaInfoUI : UIMenu {
         }
     }
     #endregion
+
+    #region For Testing
+    public void ShowSpecialTokensAtLocation() {
+        string summary = "Items at " + activeArea.name + ": ";
+        if (activeArea.possibleSpecialTokenSpawns.Count > 0) {
+            for (int i = 0; i < activeArea.possibleSpecialTokenSpawns.Count; i++) {
+                SpecialToken currToken = activeArea.possibleSpecialTokenSpawns[i];
+                summary += "\n" + currToken.name + " owned by " + currToken.ownerName;
+            }
+        } else {
+            summary += "None";
+        }
+        UIManager.Instance.ShowSmallInfo(summary);
+    }
+    public void HideSpecialTokensAtLocation() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    #endregion
 }

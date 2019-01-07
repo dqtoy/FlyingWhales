@@ -798,6 +798,10 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             while (_inventory.Count > 0) {
                 ThrowItem(_inventory[0]);
             }
+            if (ownParty.specificLocation is BaseLandmark && tokenInInventory != null) {
+                tokenInInventory.SetOwner(null);
+                DropToken(ownParty.specificLocation as BaseLandmark);
+            }
 
             if (!IsInOwnParty()) {
                 _currentParty.RemoveCharacter(this);
@@ -1715,6 +1719,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     #region Faction
     public void SetFaction(Faction faction) {
         _faction = faction;
+        UpdateTokenOwner();
         if (_faction != null) {
             Messenger.Broadcast<Character>(Signals.FACTION_SET, this);
         }
@@ -3271,7 +3276,8 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     #region Token Inventory
     public void ObtainToken(SpecialToken token) {
         SetToken(token);
-        token.AdjustQuantity(-1);
+        token.SetOwner(this.faction);
+        //token.AdjustQuantity(-1);
     }
     public void SetToken(SpecialToken token) {
         tokenInInventory = token;
@@ -3280,7 +3286,16 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         tokenInInventory = null;
     }
     public void DropToken(BaseLandmark location) {
-        tokenInInventory = null;
+        if (tokenInInventory != null) {
+            location.tileLocation.areaOfTile.AddSpecialTokenToLocation(tokenInInventory);
+            tokenInInventory = null;
+        }
+        
+    }
+    private void UpdateTokenOwner() {
+        if (tokenInInventory != null) {
+            tokenInInventory.SetOwner(this.faction);
+        }
     }
     #endregion
 }

@@ -53,7 +53,6 @@ public class MapGenerator : MonoBehaviour {
         UIManager.Instance.InitializeUI();
         //ObjectManager.Instance.Initialize();
         CharacterScheduleManager.Instance.Initialize();
-        TokenManager.Instance.Initialize();
 
         LevelLoaderManager.UpdateLoadingInfo("Generating Factions...");
         yield return null;
@@ -67,6 +66,7 @@ public class MapGenerator : MonoBehaviour {
         LandmarkManager.Instance.GenerateFactionLandmarks();
         st.Stop();
 
+        TokenManager.Instance.Initialize();
         PathfindingManager.Instance.CreateGrid(GridMap.Instance.map, (int)GridMap.Instance.width, (int)GridMap.Instance.height);
 
         //FactionManager.Instance.OccupyLandmarksInFactionRegions();
@@ -132,7 +132,6 @@ public class MapGenerator : MonoBehaviour {
 
         UIManager.Instance.InitializeUI();
         //ObjectManager.Instance.Initialize();
-        TokenManager.Instance.Initialize();
 
         LevelLoaderManager.UpdateLoadingInfo("Loading Factions...");
         yield return null;
@@ -173,6 +172,7 @@ public class MapGenerator : MonoBehaviour {
         //CharacterManager.Instance.LoadRelationships(data);
 
         MonsterManager.Instance.LoadMonsters(data);
+        TokenManager.Instance.Initialize();
 
         //CharacterManager.Instance.LoadSquads(data);
         //LandmarkManager.Instance.LoadDefenders(data);

@@ -5,7 +5,7 @@ using UnityEngine;
 public class BookOfTheDead : SpecialToken {
 
     public BookOfTheDead() : base(SPECIAL_TOKEN.BOOK_OF_THE_DEAD) {
-        quantity = 1;
+        //quantity = 1;
         weight = 20;
         npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_SELF;
     }
