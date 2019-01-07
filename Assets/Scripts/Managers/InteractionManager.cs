@@ -290,12 +290,19 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.USE_ITEM_ON_LOCATION:
                 createdInteraction = new UseItemOnLocation(interactable);
                 break;
+            case INTERACTION_TYPE.EAT_ABDUCTED:
+                createdInteraction = new EatAbducted(interactable);
+                break;
+            case INTERACTION_TYPE.TORTURE_ACTION:
+                createdInteraction = new TortureAction(interactable);
+                break;
             case INTERACTION_TYPE.MOVE_TO_SPREAD_UNDEATH:
                 createdInteraction = new MoveToSpreadUndeath(interactable);
                 break;
             case INTERACTION_TYPE.SPREAD_UNDEATH_ACTION:
                 createdInteraction = new SpreadUndeathAction(interactable);
                 break;
+
         }
         return createdInteraction;
     }
@@ -597,6 +604,26 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.FOUND_MAGUS:
                 return character.characterClass.className == "Archmage" && character.specificLocation.tileLocation.areaOfTile.owner == null
                     && character.specificLocation.tileLocation.areaOfTile.raceType == character.race && !FactionManager.Instance.GetFactionBasedOnName("Magus").isActive;
+            case INTERACTION_TYPE.EAT_ABDUCTED:
+                if (character.race == RACE.GOBLIN || character.race == RACE.SPIDER || character.race == RACE.WOLF) {
+                    for (int i = 0; i < character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
+                        Character characterAtLocation = character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
+                        if (characterAtLocation.id != character.id && !characterAtLocation.currentParty.icon.isTravelling && characterAtLocation.IsInOwnParty() && characterAtLocation.GetTrait("Abducted") != null) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.TORTURE_ACTION:
+                if (character.race == RACE.GOBLIN || character.race == RACE.HUMANS || character.race == RACE.SKELETON) {
+                    for (int i = 0; i < character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
+                        Character characterAtLocation = character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
+                        if (characterAtLocation.id != character.id && !characterAtLocation.currentParty.icon.isTravelling && characterAtLocation.IsInOwnParty() && characterAtLocation.GetTrait("Abducted") != null) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
             default:
                 return true;
         }

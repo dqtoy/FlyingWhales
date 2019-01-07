@@ -255,8 +255,8 @@ public class ObjectManager : MonoBehaviour {
                 return new PopulateAction();
             case ACTION_TYPE.HARVEST:
                 return new HarvestAction();
-            case ACTION_TYPE.TORTURE:
-                return new TortureAction();
+            //case ACTION_TYPE.TORTURE:
+            //    return new TortureAction();
             //case ACTION_TYPE.PATROL:
             //    return new PatrolAction();
             case ACTION_TYPE.REPAIR:

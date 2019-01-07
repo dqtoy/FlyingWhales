@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Grudge : Trait {
+public class Enemy : Trait {
     public Character targetCharacter;
 
     public override string nameInUI {
-        get { return "Grudge: " + targetCharacter.name;}
+        get { return "Enemy: " + targetCharacter.name; }
     }
 
-    public Grudge(Character target) {
+    public Enemy(Character target) {
         targetCharacter = target;
-        name = "Grudge";
-        description = "This character holds a grudge against " + targetCharacter.name;
+        name = "Enemy";
+        description = "This character is an enemy of " + targetCharacter.name;
         type = TRAIT_TYPE.NEGATIVE;
         daysDuration = 0;
         effects = new List<TraitEffect>();

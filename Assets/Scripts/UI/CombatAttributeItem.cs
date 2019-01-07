@@ -11,7 +11,7 @@ public class CombatAttributeItem : MonoBehaviour {
 
     public void SetCombatAttribute(Trait combatAttribute) {
         _combatAttribute = combatAttribute;
-        nameText.text = _combatAttribute.name;
+        nameText.text = _combatAttribute.nameInUI;
         descriptionText.text = _combatAttribute.description;
     }
 }
