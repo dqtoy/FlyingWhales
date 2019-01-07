@@ -31,7 +31,8 @@ public class SecretScroll : SpecialToken {
             Area areaLocation = sourceCharacter.specificLocation.tileLocation.areaOfTile;
             if (areaLocation != null
                 && areaLocation.owner != null
-                && areaLocation.owner.id == sourceCharacter.faction.id) {
+                && areaLocation.owner.id == sourceCharacter.faction.id
+                && !areaLocation.HasClassInWeights(grantedClass)) {
                 return true;
             }
         }

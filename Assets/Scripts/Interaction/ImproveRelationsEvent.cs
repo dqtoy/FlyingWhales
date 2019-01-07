@@ -92,6 +92,15 @@ public class ImproveRelationsEvent : Interaction {
             state.SetDefaultOption(doNothing);
         }
     }
+    public override bool CanStillDoInteraction() {
+        if (_characterInvolved.faction == null ||targetFaction == null || _characterInvolved.faction.isDestroyed || targetFaction.isDestroyed) {
+            return false;
+        }
+        if (_characterInvolved.faction.id == targetFaction.id) {
+            return false;
+        }
+        return base.CanStillDoInteraction();
+    }
     #endregion
 
     #region Option Effect

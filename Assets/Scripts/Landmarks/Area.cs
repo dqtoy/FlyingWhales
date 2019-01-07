@@ -1044,6 +1044,15 @@ public class Area {
         }
         return classWeights;
     }
+    public bool HasClassInWeights(string className) {
+        WeightedDictionary<AreaCharacterClass> classWeights = GetClassWeights();
+        foreach (KeyValuePair<AreaCharacterClass, int> keyValuePair in classWeights.dictionary) {
+            if (keyValuePair.Key.className.Equals(className)) {
+                return true;
+            }
+        }
+        return false;
+    }
     public void UpgradeDefendersToMatchFactionLvl() {
         for (int i = 0; i < defenderGroups.Count; i++) {
             for (int j = 0; j < defenderGroups[i].party.characters.Count; j++) {
