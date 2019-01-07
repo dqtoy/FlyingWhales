@@ -2,42 +2,42 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveToCharm : Interaction {
+public class MoveToSpreadUndeath : Interaction {
 
-    private const string Character_Charm_Cancelled = "Character Charm Cancelled";
-    private const string Character_Charm_Continues = "Character Charm Continues";
-    private const string Do_Nothing = "Do Nothing";
+    private const string Undeath_Cancelled = "Undeath Cancelled";
+    private const string Undeath_Proceeds = "Undeath Proceeds";
+    private const string Normal_Undeath = "Normal Undeath";
 
     public Area targetLocation { get; private set; }
 
-    public MoveToCharm(BaseLandmark interactable) 
-        : base(interactable, INTERACTION_TYPE.MOVE_TO_CHARM, 0) {
-        _name = "Move To Charm";
+    public MoveToSpreadUndeath(BaseLandmark interactable) 
+        : base(interactable, INTERACTION_TYPE.MOVE_TO_SPREAD_UNDEATH, 0) {
+        _name = "Move To Spread Undeath";
         _jobFilter = new JOB[] { JOB.DISSUADER };
     }
 
     #region Overrides
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
-        InteractionState characterCharmCancelled = new InteractionState(Character_Charm_Cancelled, this);
-        InteractionState characterCharmContinues = new InteractionState(Character_Charm_Continues, this);
-        InteractionState doNothing = new InteractionState(Do_Nothing, this);
+        InteractionState undeathCancelled = new InteractionState(Undeath_Cancelled, this);
+        InteractionState undeathProceeds = new InteractionState(Undeath_Proceeds, this);
+        InteractionState normalUndeath = new InteractionState(Normal_Undeath, this);
 
-        targetLocation = GetTargetLocation(_characterInvolved);
+        targetLocation = GetTargetLocation();
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
-        characterCharmCancelled.SetEffect(() => CharacterCharmCancelledRewardEffect(characterCharmCancelled));
-        characterCharmContinues.SetEffect(() => CharacterCharmContinuesRewardEffect(characterCharmContinues));
-        doNothing.SetEffect(() => DoNothingRewardEffect(doNothing));
+        undeathCancelled.SetEffect(() => UndeathCancelledRewardEffect(undeathCancelled));
+        undeathProceeds.SetEffect(() => UndeathProceedsRewardEffect(undeathProceeds));
+        normalUndeath.SetEffect(() => NormalUndeathRewardEffect(normalUndeath));
 
         _states.Add(startState.name, startState);
-        _states.Add(characterCharmCancelled.name, characterCharmCancelled);
-        _states.Add(characterCharmContinues.name, characterCharmContinues);
-        _states.Add(doNothing.name, doNothing);
+        _states.Add(undeathCancelled.name, undeathCancelled);
+        _states.Add(undeathProceeds.name, undeathProceeds);
+        _states.Add(normalUndeath.name, normalUndeath);
 
         SetCurrentState(startState);
     }
@@ -64,12 +64,6 @@ public class MoveToCharm : Interaction {
             state.SetDefaultOption(doNothing);
         }
     }
-    public override bool CanInteractionBeDoneBy(Character character) {
-        if (GetTargetLocation(character) == null) {
-            return false;
-        }
-        return base.CanInteractionBeDoneBy(character);
-    }
     #endregion
 
     #region Option Effects
@@ -80,61 +74,62 @@ public class MoveToCharm : Interaction {
         string nextState = string.Empty;
         switch (resultWeights.PickRandomElementGivenWeights()) {
             case RESULT.SUCCESS:
-                nextState = Character_Charm_Cancelled;
+                nextState = Undeath_Cancelled;
                 break;
             case RESULT.FAIL:
-                nextState = Character_Charm_Continues;
+                nextState = Undeath_Proceeds;
                 break;
         }
         SetCurrentState(_states[nextState]);
     }
     private void DoNothingEffect(InteractionState state) {
-        SetCurrentState(_states[Do_Nothing]);
+        SetCurrentState(_states[Normal_Undeath]);
     }
     #endregion
 
     #region Reward Effects
-    private void CharacterCharmCancelledRewardEffect(InteractionState state) {
+    private void UndeathCancelledRewardEffect(InteractionState state) {
         //**Mechanics**: Character will no longer leave.
         //**Level Up**: Dissuader Minion +1
         investigatorMinion.LevelUp();
         MinionSuccess();
-        if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
-        }
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
+        //if (state.descriptionLog != null) {
+        //    state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+        //}
+        //state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
     }
-    private void CharacterCharmContinuesRewardEffect(InteractionState state) {
+    private void UndeathProceedsRewardEffect(InteractionState state) {
         GoToTargetLocation();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
         }
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
+        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
     }
-    private void DoNothingRewardEffect(InteractionState state) {
+    private void NormalUndeathRewardEffect(InteractionState state) {
         GoToTargetLocation();
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
+        }
+        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
     }
     #endregion
 
     private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateCharmEvent());
+        _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateEvent());
     }
 
-    private void CreateCharmEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARM_ACTION, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
-        //(interaction as ImproveRelationsEvent).SetTargetFaction(targetFaction);
-        //interaction.SetCanInteractionBeDoneAction(IsImproveRelationsValid);
+    private void CreateEvent() {
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SPREAD_UNDEATH_ACTION, targetLocation.coreTile.landmarkOnTile);
         _characterInvolved.SetForcedInteraction(interaction);
     }
-    //private bool IsImproveRelationsValid() {
-    //    return targetLocation.owner != null && targetLocation.owner.id == targetFaction.id;
-    //}
 
-    private Area GetTargetLocation(Character character) {
-        /* Location Selection Weights:
-            - location is not part of any Faction: Weight +10
-            - location is part of a Faction with Disliked, Neutral or Friend Faction: Weight +25 */
+    private Area GetTargetLocation() {
+        /* From all locations that has at least one character not part of faction, choose via weight based:
+            - Location is not owned by any faction: Weight +15
+            - Location is owned by a Faction that is Enemy or Disliked by Abductor's Faction: Weight +25
+            - Location is owned by a Faction with Neutral relationship with Abductor's Faction: Weight +15
+            - Location is owned by a Faction with Friend relationship with Abductor's Faction: Weight +5
+            - Location is owned by a Faction with Ally relationship with Abductor's Faction: Weight +2 */
         WeightedDictionary<Area> choices = new WeightedDictionary<Area>();
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
@@ -144,8 +139,8 @@ public class MoveToCharm : Interaction {
             }
             if (currArea.owner == null) {
                 weight += 10;
-            } else if (currArea.owner.id != character.faction.id) {
-                FactionRelationship rel = currArea.owner.GetRelationshipWith(character.faction);
+            } else if (currArea.owner.id != _characterInvolved.faction.id) {
+                FactionRelationship rel = currArea.owner.GetRelationshipWith(_characterInvolved.faction);
                 switch (rel.relationshipStatus) {
                     case FACTION_RELATIONSHIP_STATUS.DISLIKED:
                     case FACTION_RELATIONSHIP_STATUS.NEUTRAL:

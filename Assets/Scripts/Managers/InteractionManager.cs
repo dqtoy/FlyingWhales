@@ -290,6 +290,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.USE_ITEM_ON_LOCATION:
                 createdInteraction = new UseItemOnLocation(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_SPREAD_UNDEATH:
+                createdInteraction = new MoveToSpreadUndeath(interactable);
+                break;
+            case INTERACTION_TYPE.SPREAD_UNDEATH_ACTION:
+                createdInteraction = new SpreadUndeathAction(interactable);
+                break;
         }
         return createdInteraction;
     }

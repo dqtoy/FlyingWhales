@@ -823,12 +823,12 @@ public class Area {
     private void ConstructAreaTasksInteractionWeights() {
         areaTasksInteractionWeights = new Dictionary<INTERACTION_TYPE, int>() {
             {INTERACTION_TYPE.MOVE_TO_EXPLORE, 100},
-            {INTERACTION_TYPE.MOVE_TO_EXPAND, 30},
+            {INTERACTION_TYPE.MOVE_TO_EXPAND, 15},
             {INTERACTION_TYPE.MOVE_TO_SCAVENGE, 60},
             {INTERACTION_TYPE.MOVE_TO_RAID, 40},
             {INTERACTION_TYPE.MOVE_TO_CHARM, 35},
             {INTERACTION_TYPE.MOVE_TO_RECRUIT, 35},
-            //{INTERACTION_TYPE.MOVE_TO_ABDUCT, 25},
+            {INTERACTION_TYPE.MOVE_TO_ABDUCT, 25},
             {INTERACTION_TYPE.MOVE_TO_STEAL, 20},
             {INTERACTION_TYPE.MOVE_TO_HUNT, 20},
             {INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS, 40},

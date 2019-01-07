@@ -92,23 +92,23 @@ public class CameraMove : MonoBehaviour {
             //camera scrolling code
             float fov = Camera.main.orthographicSize;
             float adjustment = Input.GetAxis("Mouse ScrollWheel") * (sensitivity);
+            //Debug.Log(adjustment);
             fov -= adjustment;
-            fov = Mathf.Round(fov * 100f) / 100f;
+            //fov = Mathf.Round(fov * 100f) / 100f;
             fov = Mathf.Clamp(fov, _minFov, _maxFov);
 
             if (!Mathf.Approximately(previousCameraFOV, fov)) {
                 previousCameraFOV = fov;
                 Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
                 nameplateCamera.orthographicSize = Mathf.Lerp(nameplateCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
-#if !WORLD_CREATION_TOOL
-                //if (GameManager.Instance.gameHasStarted) {
-                CalculateCameraBounds();
-                //}
-#else
+#if WORLD_CREATION_TOOL
                 _uiCamera.orthographicSize = fov;
-                CalculateCameraBounds();
 #endif
+            } else {
+                Camera.main.orthographicSize = fov;
+                nameplateCamera.orthographicSize = fov;
             }
+            CalculateCameraBounds();
         }
 
 #if WORLD_CREATION_TOOL
