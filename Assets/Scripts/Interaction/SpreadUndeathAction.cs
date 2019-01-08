@@ -77,7 +77,7 @@ public class SpreadUndeathAction : Interaction {
             ActionOption assist = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Assist with the Spell.",
+                name = "Assist with the conversion.",
                 effect = () => AssistOptionEffect(state),
                 jobNeeded = JOB.INSTIGATOR,
                 doesNotMeetRequirementsStr = "Minion must be an instigator",
@@ -85,7 +85,7 @@ public class SpreadUndeathAction : Interaction {
             ActionOption thwart = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Thwart the attempt.",
+                name = "Thwart the convertion.",
                 effect = () => ThwartOptionEffect(state),
                 jobNeeded = JOB.DIPLOMAT,
                 doesNotMeetRequirementsStr = "Minion must be a diplomat",
@@ -289,15 +289,13 @@ public class SpreadUndeathAction : Interaction {
     #endregion
 
     private void TransferCharacter(Character character, Faction faction) {
-        //only add charmed trait to characters that have not been charmed yet, this is to retain it's original faction
-        Charmed charmedTrait = new Charmed(character.faction);
-        character.AddTrait(charmedTrait);
         character.faction.RemoveCharacter(character);
         faction.AddNewCharacter(character);
         character.homeLandmark.RemoveCharacterHomeOnLandmark(character);
         _characterInvolved.homeLandmark.AddCharacterHomeOnLandmark(character);
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation.tileLocation.landmarkOnTile);
         character.SetForcedInteraction(interaction);
+        character.ChangeRace(RACE.SKELETON);
     }
 
     public void SetTargetCharacter(Character targetCharacter) {
@@ -311,28 +309,32 @@ public class SpreadUndeathAction : Interaction {
                 && !currCharacter.isLeader 
                 && !currCharacter.isDefender 
                 && currCharacter.minion == null 
-                && currCharacter.faction.id != characterInvolved.faction.id) { //- character must not be in Defender Tile.
+                && currCharacter.faction.id != characterInvolved.faction.id) {
                 int weight = 0;
                 if (currCharacter.isFactionless) {
                     weight += 15; //character is not part of any Faction: Weight +15
-                } else if (currCharacter.faction.id != characterInvolved.faction.id) { //exclude characters with same faction
-                    //character is part of a Faction with Disliked, Neutral, Friend relationship with recruiter's Faction: Weight +25
+                } else if (currCharacter.faction.id != characterInvolved.faction.id) {
                     FactionRelationship rel = currCharacter.faction.GetRelationshipWith(characterInvolved.faction);
-                    if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL 
-                        || rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED
-                        || rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
-                        weight += 25; 
+                    switch (rel.relationshipStatus) {
+                        case FACTION_RELATIONSHIP_STATUS.ENEMY:
+                        case FACTION_RELATIONSHIP_STATUS.DISLIKED:
+                            weight += 25; //character is part of a Faction that is Enemy or Disliked by Spreader's Faction: Weight +25
+                            break;
+                        case FACTION_RELATIONSHIP_STATUS.FRIEND:
+                        case FACTION_RELATIONSHIP_STATUS.ALLY:
+                            weight -= 5; //character is part of a Faction with Friend or Ally relationship with Spreader's Faction: Weight -5
+                            break;
                     }
                 }
 
                 if (currCharacter.level > characterInvolved.level) {
-                    weight -= 20; //character is higher level than Charmer: Weight -20
-                } else if (currCharacter.level < characterInvolved.level) { //character is same level as Charmer: Weight +0
-                    weight += 10; //character is lower level than Charmer: Weight +10
+                    weight -= 15; //character is higher level than Spreader: Weight -15
+                } else if (currCharacter.level < characterInvolved.level) {
+                    weight += 15; //character is lower level than Spreader: Weight +15
                 }
-
-                weight = Mathf.Max(0, weight);
-                characterWeights.AddElement(currCharacter, weight);
+                if (weight > 0) {
+                    characterWeights.AddElement(currCharacter, weight);
+                }
             }
         }
         if (characterWeights.GetTotalOfWeights() > 0) {

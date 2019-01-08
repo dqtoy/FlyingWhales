@@ -835,6 +835,7 @@ public class Area {
             {INTERACTION_TYPE.PATROL_ACTION, 50},
             {INTERACTION_TYPE.EAT_ABDUCTED, 20},
             {INTERACTION_TYPE.TORTURE_ACTION, 25},
+            {INTERACTION_TYPE.MOVE_TO_SPREAD_UNDEATH, 20},
         };
     }
     public void AddInteraction(Interaction interaction) {
@@ -1201,6 +1202,15 @@ public class Area {
             Debug.Log(GameManager.Instance.TodayLogString() + "Generated Lvl. " + createdCharacter.level.ToString() +
                     " character " + createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name + " for faction " + this.owner.name);
         }
+    }
+    public bool HasCharacterThatIsNotFromFaction(Faction faction) {
+        for (int i = 0; i < charactersAtLocation.Count; i++) {
+            Character currChar = charactersAtLocation[i];
+            if (currChar.faction.id != faction.id) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
