@@ -263,6 +263,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.DROP_ITEM:
                 createdInteraction = new DropItem(interactable);
                 break;
+            case INTERACTION_TYPE.PICK_ITEM:
+                createdInteraction = new PickItem(interactable);
+                break;
             case INTERACTION_TYPE.MOVE_TO_CHARM:
                 createdInteraction = new MoveToCharm(interactable);
                 break;
