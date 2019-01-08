@@ -305,6 +305,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.SPREAD_UNDEATH_ACTION:
                 createdInteraction = new SpreadUndeathAction(interactable);
                 break;
+            case INTERACTION_TYPE.CHANCE_ENCOUNTER:
+                createdInteraction = new ChanceEncounter(interactable);
+                break;
 
         }
         return createdInteraction;
@@ -636,6 +639,14 @@ public class InteractionManager : MonoBehaviour {
                         }
                     }
                     
+                }
+                return false;
+            case INTERACTION_TYPE.CHANCE_ENCOUNTER:
+                for (int i = 0; i < character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
+                    Character currCharacter = character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
+                    if (currCharacter.id != character.id) {
+                        return true;
+                    }
                 }
                 return false;
             default:

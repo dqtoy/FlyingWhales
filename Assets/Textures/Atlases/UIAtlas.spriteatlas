@@ -32,11 +32,15 @@ SpriteAtlas:
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
+  - {fileID: 21300000, guid: b488fdd3b6db516449dce48c830901ec, type: 3}
+  - {fileID: 21300000, guid: f6c43bf539305ff4aa155c06d0189f92, type: 3}
+  - {fileID: 21300000, guid: 41f307609fb0c314c9c3d6096744660a, type: 3}
   - {fileID: 21300000, guid: ec7ae60734ce2eb4e82af2e524deff24, type: 3}
   - {fileID: 21300000, guid: cc690d09307871644b5fd19558aacf9b, type: 3}
   - {fileID: 21300000, guid: 68bc68e0de336bc45a7ee29d2dc0c8a3, type: 3}
   - {fileID: 21300000, guid: 3e18a3e9bf482e8488e8495210704150, type: 3}
   - {fileID: 21300000, guid: 16506bb7a6ba7ce44808e2aecffabaaf, type: 3}
+  - {fileID: 21300000, guid: d2c4daa0d69897f42aeedbed1d879bc0, type: 3}
   - {fileID: 21300000, guid: 1311a4b5fe4c0fd4cb1879feb3334c4e, type: 3}
   - {fileID: 21300000, guid: 0ab2ec650b5ddce4987e8b2156080306, type: 3}
   - {fileID: 21300000, guid: 7e068a966a25ef24fb412da184caa1d1, type: 3}
@@ -56,6 +60,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9eb4e391ebec42d4ba6f1a2f359a32a4, type: 3}
   - {fileID: 21300000, guid: d8a6fc8357a0c0640a0cf00e1ac188c9, type: 3}
   - {fileID: 21300000, guid: 3c1d09bdb731df34b9795e3f8117b2ca, type: 3}
+  - {fileID: 21300000, guid: 373550004dae78d40a853eac3ee92801, type: 3}
   - {fileID: 21300000, guid: 7c84c1516188866438148428c354ff01, type: 3}
   - {fileID: 21300000, guid: 8fdd06c4ca82199459a8145f73a1a5ad, type: 3}
   - {fileID: 21300000, guid: 8d2617f4eb88ce2429aff5360ae67baf, type: 3}
@@ -103,12 +108,30 @@ SpriteAtlas:
   - {fileID: 21300000, guid: bbc8aecbe28700a4dafe5188c53b2ee2, type: 3}
   - {fileID: 21300000, guid: 6a4d7fe63a2ddce45a6389b32e22e2d4, type: 3}
   - {fileID: 21300000, guid: 64c0c27a3a5a0b7419e7b96952268b8a, type: 3}
+  - {fileID: 21300000, guid: 8bdc1a1cf8a1c5842be972458dd90a72, type: 3}
+  - {fileID: 21300000, guid: 3c22d2408af182842891aca017fc9672, type: 3}
+  - {fileID: 21300000, guid: dd677f2786e46fd43baf05028fe00bd9, type: 3}
+  - {fileID: 21300000, guid: 303972d2e7b7b394887d86b363da3c87, type: 3}
+  - {fileID: 21300000, guid: c7bbbee74bee8704fa2b45e11eadc95d, type: 3}
+  - {fileID: 21300000, guid: c7513830e2eb521408c5d295524a5d88, type: 3}
+  - {fileID: 21300000, guid: 4efda50ad081ec64cb8fb650a76ee54c, type: 3}
+  - {fileID: 21300000, guid: 32b11fdf4fe54a94390363d811b89a5a, type: 3}
+  - {fileID: 21300000, guid: 2afa2f55883fd8443a134a59fa9b3ae6, type: 3}
   - {fileID: 21300000, guid: f6387ee2f8881994f98b423c7f36f320, type: 3}
+  - {fileID: 21300000, guid: 2da5d3ed1a211414782ee147aeab2947, type: 3}
+  - {fileID: 21300000, guid: 7d4e0c84121d9bb48af8acbf0ff807a4, type: 3}
+  - {fileID: 21300000, guid: 972a4b37fbdfc504a80be01b47467e96, type: 3}
   - {fileID: 21300000, guid: 0740052277773e24d896e5929351d05a, type: 3}
   - {fileID: 21300000, guid: 2893f0ba151f16840aaf43bc571100b7, type: 3}
+  - {fileID: 21300000, guid: 189752b89c81e9541b45c7ece9ed0a54, type: 3}
+  - {fileID: 21300000, guid: 35d1e1b7dd03b024d825b5f6c704f698, type: 3}
+  - {fileID: 21300000, guid: 44b0b504b0cc00b4789b446495270faf, type: 3}
   - {fileID: 21300000, guid: 64bc17278d4066b419c756ddcf6c216d, type: 3}
   - {fileID: 21300000, guid: 165146342d129374ba18d5b3bf969df6, type: 3}
   - {fileID: 21300000, guid: 658e054bda22c0a4c976ef2344240399, type: 3}
+  - {fileID: 21300000, guid: b622fd449b4d38f45920d196466070b4, type: 3}
+  - {fileID: 21300000, guid: ecc715b7fa5e4d447a0c7a336b9c29d8, type: 3}
+  - {fileID: 21300000, guid: 2da070e321ea13240bdbf563da7ed53a, type: 3}
   - {fileID: 21300000, guid: 9af2d419485d6ae478889d6d915d2266, type: 3}
   - {fileID: 21300000, guid: ef02c953443b42a4cac1e4500036e9e9, type: 3}
   - {fileID: 21300000, guid: 5b6a9120e63507d4283bd6d9395709ad, type: 3}
@@ -277,11 +300,15 @@ SpriteAtlas:
   - {fileID: 21300064, guid: 4d0d62edf3d94ca47abf569d951db9f9, type: 3}
   - {fileID: 21300046, guid: 4d0d62edf3d94ca47abf569d951db9f9, type: 3}
   m_PackedSpriteNamesToIndex:
+  - main_menu_fg
+  - main_menu_bg
+  - main_menu_glow
   - interaction_main_widget
   - character_info_widget
   - tile_central_container
   - interaction_background
   - character_log_widget
+  - main_menu_ui_container
   - interaction_main_decor
   - character_log_decor
   - Gloomhollow Crypts
@@ -301,6 +328,7 @@ SpriteAtlas:
   - character_info_decor
   - glow
   - tile_character_list_container
+  - main_menu_logo
   - tile_character_list_bottom_widget
   - tile_character_list_bottom_widget
   - character_info_only
@@ -348,12 +376,30 @@ SpriteAtlas:
   - bottom_right_left_cap
   - interaction_minion_slot_glow
   - interaction_minion_slot
+  - main_menu_loadgame_btn_hover
+  - main_menu_loadgame_btn_default
+  - main_menu_loadgame_btn_pressed
+  - main_menu_newgame_btn_pressed
+  - main_menu_newgame_btn_hover
+  - main_menu_newgame_btn_default
+  - main_menu_continue_btn_pressed
+  - main_menu_continue_btn_default
+  - main_menu_continue_btn_hover
   - minion_container_flat
+  - main_menu_settings_btn_pressed
+  - main_menu_settings_btn_default
+  - main_menu_settings_btn_hover
   - bottom_right_center_tile
   - portrait_container_locked
+  - main_menu_credits_btn_hover
+  - main_menu_credits_btn_default
+  - main_menu_credits_btn_pressed
   - transparent_bg
   - interaction_tab_bg
   - minion_container_draggable
+  - main_menu_exit_btn_pressed
+  - main_menu_exit_btn_default
+  - main_menu_exit_btn_hover
   - neutrals
   - fyn
   - ge_cont-05B
