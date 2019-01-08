@@ -736,7 +736,7 @@ public class Area {
 
         for (int i = 0; i < areaResidents.Count; i++) {
             Character resident = areaResidents[i];
-            if (resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.currentParty.icon.isTravelling && resident.faction == owner && resident.specificLocation.tileLocation.areaOfTile.id == id) {
+            if (resident.doNotDisturb <= 0 && !resident.currentParty.icon.isTravelling && resident.faction == owner && resident.specificLocation.tileLocation.areaOfTile.id == id) {
                 if(attackCharacters != null && attackCharacters.Contains(resident)) {
                     continue;
                 }
