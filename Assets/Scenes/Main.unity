@@ -93070,51 +93070,65 @@ MonoBehaviour:
     quantity: 1
     appearanceWeight: 40
     areaLocations:
-    - Tessellated Triangle
-    - Pitthize
+    - Odious Lair
+    - Narris
     - Gloomhollow Crypts
   - tokenName: Brand of the Beastmaster
     quantity: 1
     appearanceWeight: 40
     areaLocations:
-    - Tessellated Triangle
+    - Radisle Cavern
     - Pitthize
-    - Gloomhollow Crypts
+    - Blistering Hollow
   - tokenName: Book of Wizardry
     quantity: 1
     appearanceWeight: 40
     areaLocations:
     - Tessellated Triangle
-    - Pitthize
+    - Redheart Den
     - Gloomhollow Crypts
   - tokenName: Blighted Potion
     quantity: 4
     appearanceWeight: 100
     areaLocations:
-    - Odious Lair
+    - Narris
     - Tessellated Triangle
     - Pitthize
     - Radisle Cavern
     - Blistering Hollow
     - Gloomhollow Crypts
+    - Odious Lair
+    - Cardell
+    - Redheart Den
+    - Cindermaul Hideout
   - tokenName: Fear Spell
     quantity: 4
     appearanceWeight: 100
     areaLocations:
-    - Odious Lair
+    - Narris
+    - Tessellated Triangle
     - Pitthize
     - Radisle Cavern
     - Blistering Hollow
     - Gloomhollow Crypts
+    - Odious Lair
+    - Cardell
+    - Redheart Den
+    - Cindermaul Hideout
   - tokenName: Charm Spell
     quantity: 4
     appearanceWeight: 100
     areaLocations:
-    - Odious Lair
+    - Narris
+    - Tessellated Triangle
     - Pitthize
     - Radisle Cavern
     - Blistering Hollow
     - Gloomhollow Crypts
+    - Odious Lair
+    - Cardell
+    - Redheart Den
+    - Cindermaul Hideout
   - tokenName: Scroll of Power
     quantity: 3
     appearanceWeight: 50
@@ -93128,12 +93142,10 @@ MonoBehaviour:
     quantity: 6
     appearanceWeight: 40
     areaLocations:
-    - Odious Lair
+    - Cardell
     - Tessellated Triangle
     - Pitthize
-    - Radisle Cavern
     - Blistering Hollow
-    - Gloomhollow Crypts
 --- !u!1 &1688629845
 GameObject:
   m_ObjectHideFlags: 0
