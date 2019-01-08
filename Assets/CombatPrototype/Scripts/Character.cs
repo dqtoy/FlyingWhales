@@ -3164,7 +3164,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 INTERACTION_TYPE[] classTriggeredInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.FOUND_LUCARETH, INTERACTION_TYPE.FOUND_BESTALIA, INTERACTION_TYPE.FOUND_MAGUS };
                 for (int i = 0; i < classTriggeredInteractions.Length; i++) {
                     if (InteractionManager.Instance.CanCreateInteraction(classTriggeredInteractions[i], this)) {
-                        awayFromHomeInteractionWeights.AddElement(classTriggeredInteractions[i].ToString(), 100); //15
+                        awayFromHomeInteractionWeights.AddElement(classTriggeredInteractions[i].ToString(), 50); //15
                     }
                 }
 
@@ -3173,7 +3173,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 }else if (result == "Return") {
                     Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, specificLocation as BaseLandmark);
                     AddInteraction(interaction);
-                } else if (result == tokenInInventory.tokenName) {
+                } else if (tokenInInventory != null && result == tokenInInventory.tokenName) {
                     Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.npcAssociatedInteractionType, specificLocation as BaseLandmark);
                     if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
                         (interaction as UseItemOnCharacter).SetItemToken(tokenInInventory);
@@ -3195,8 +3195,15 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 if (tokenInInventory != null) {
                     if (tokenInInventory.CanBeUsedBy(this) && InteractionManager.Instance.CanCreateInteraction(tokenInInventory.npcAssociatedInteractionType, this)) {
                         atHomeInteractionWeights.AddElement(tokenInInventory.tokenName, 70);
-                    } else {
+                    } else if(tokenInInventory.npcAssociatedInteractionType == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
                         atHomeInteractionWeights.AddElement("ItemNotUsable", 70);
+                    }
+                } else {
+                    for (int i = 0; i < specificLocation.tileLocation.areaOfTile.possibleSpecialTokenSpawns.Count; i++) {
+                        if(specificLocation.tileLocation.areaOfTile.possibleSpecialTokenSpawns[i].owner == this.faction) {
+                            atHomeInteractionWeights.AddElement("PickUp", 70);
+                            break;
+                        }
                     }
                 }
                 string result = atHomeInteractionWeights.PickRandomElementGivenWeights();
@@ -3204,7 +3211,10 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 if(result == "ItemNotUsable") {
                     Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.DROP_ITEM, specificLocation as BaseLandmark);
                     AddInteraction(interaction);
-                }else if (tokenInInventory != null && result == tokenInInventory.tokenName) {
+                } else if (result == "PickUp") {
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.PICK_ITEM, specificLocation as BaseLandmark);
+                    AddInteraction(interaction);
+                } else if (tokenInInventory != null && result == tokenInInventory.tokenName) {
                     Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.npcAssociatedInteractionType, specificLocation as BaseLandmark);
                     if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
                         (interaction as UseItemOnCharacter).SetItemToken(tokenInInventory);
@@ -3336,7 +3346,29 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             location.tileLocation.areaOfTile.AddSpecialTokenToLocation(tokenInInventory);
             tokenInInventory = null;
         }
-        
+    }
+    public void PickUpToken(SpecialToken token, BaseLandmark location) {
+        if (tokenInInventory == null) {
+            tokenInInventory = token;
+            location.tileLocation.areaOfTile.RemoveSpecialTokenFromLocation(token);
+        }
+    }
+    public void PickUpRandomToken(BaseLandmark location) {
+        if (tokenInInventory == null) {
+            WeightedDictionary<SpecialToken> pickWeights = new WeightedDictionary<SpecialToken>();
+            for (int i = 0; i < location.tileLocation.areaOfTile.possibleSpecialTokenSpawns.Count; i++) {
+                SpecialToken token = location.tileLocation.areaOfTile.possibleSpecialTokenSpawns[i];
+                if(token.npcAssociatedInteractionType != INTERACTION_TYPE.USE_ITEM_ON_SELF) {
+                    pickWeights.AddElement(token, 60);
+                } else if(token.CanBeUsedBy(this)) {
+                    pickWeights.AddElement(token, 100);
+                }
+            }
+            if(pickWeights.Count > 0) {
+                SpecialToken chosenToken = pickWeights.PickRandomElementGivenWeights();
+                PickUpToken(chosenToken, location);
+            }
+        }
     }
     private void UpdateTokenOwner() {
         if (tokenInInventory != null) {

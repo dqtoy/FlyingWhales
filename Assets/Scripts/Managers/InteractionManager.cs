@@ -263,6 +263,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.DROP_ITEM:
                 createdInteraction = new DropItem(interactable);
                 break;
+            case INTERACTION_TYPE.PICK_ITEM:
+                createdInteraction = new PickItem(interactable);
+                break;
             case INTERACTION_TYPE.MOVE_TO_CHARM:
                 createdInteraction = new MoveToCharm(interactable);
                 break;
@@ -597,13 +600,13 @@ public class InteractionManager : MonoBehaviour {
             return false;
             case INTERACTION_TYPE.FOUND_LUCARETH:
                 return character.characterClass.className == "Witch" && character.specificLocation.tileLocation.areaOfTile.owner == null 
-                    && character.specificLocation.tileLocation.areaOfTile.raceType == character.race && !FactionManager.Instance.GetFactionBasedOnName("Lucareth").isActive;
+                    && character.specificLocation.tileLocation.areaOfTile.possibleOccupants.Contains(character.race) && !FactionManager.Instance.GetFactionBasedOnName("Lucareth").isActive;
             case INTERACTION_TYPE.FOUND_BESTALIA:
                 return character.characterClass.className == "Beastmaster" && character.specificLocation.tileLocation.areaOfTile.owner == null
-                    && character.specificLocation.tileLocation.areaOfTile.raceType == character.race && !FactionManager.Instance.GetFactionBasedOnName("Bestalia").isActive;
+                    && character.specificLocation.tileLocation.areaOfTile.possibleOccupants.Contains(character.race) && !FactionManager.Instance.GetFactionBasedOnName("Bestalia").isActive;
             case INTERACTION_TYPE.FOUND_MAGUS:
                 return character.characterClass.className == "Archmage" && character.specificLocation.tileLocation.areaOfTile.owner == null
-                    && character.specificLocation.tileLocation.areaOfTile.raceType == character.race && !FactionManager.Instance.GetFactionBasedOnName("Magus").isActive;
+                    && character.specificLocation.tileLocation.areaOfTile.possibleOccupants.Contains(character.race) && !FactionManager.Instance.GetFactionBasedOnName("Magus").isActive;
             case INTERACTION_TYPE.EAT_ABDUCTED:
                 if (character.race == RACE.GOBLIN || character.race == RACE.SPIDER || character.race == RACE.WOLF) {
                     for (int i = 0; i < character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {

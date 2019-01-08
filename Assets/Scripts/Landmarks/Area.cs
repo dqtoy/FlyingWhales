@@ -736,14 +736,16 @@ public class Area {
 
         for (int i = 0; i < areaResidents.Count; i++) {
             Character resident = areaResidents[i];
-            if (resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.faction == owner && resident.specificLocation.tileLocation.areaOfTile.id == id) {
+            if (resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.currentParty.icon.isTravelling && resident.faction == owner && resident.specificLocation.tileLocation.areaOfTile.id == id) {
                 if(attackCharacters != null && attackCharacters.Contains(resident)) {
                     continue;
                 }
                 if (resident.forcedInteraction == null || (resident.forcedInteraction != null && resident.forcedInteraction.type != INTERACTION_TYPE.MOVE_TO_ATTACK)) {
                     defenderCandidates.Add(resident);
                 }
-                interactionCandidates.Add(resident);
+                //if (!resident.isDefender) {
+                    interactionCandidates.Add(resident);
+                //}
             }
         }
         AssignMonthlyDefenders(defenderCandidates, interactionCandidates);
@@ -1070,6 +1072,11 @@ public class Area {
             DefenderGroup defenderGroup = GetFirstDefenderGroup();
             if (defenderGroup != null) {
                 testLog += "\nDisbanding current defenders...";
+                //if(defenderGroup.party != null) {
+                //    for (int i = 0; i < defenderGroup.party.characters.Count; i++) {
+                //        interactionCandidates.Add(defenderGroup.party.characters[i]);
+                //    }
+                //}
                 defenderGroup.DisbandGroup();
             } else {
                 testLog += "\nNo more defender group. Creating new one...";
@@ -1106,6 +1113,9 @@ public class Area {
                 }
             }
             Messenger.Broadcast(Signals.AREA_DEFENDERS_CHANGED, this);
+            if (UIManager.Instance.areaInfoUI.activeArea != null && UIManager.Instance.areaInfoUI.activeArea.id == id) {
+                Debug.Log(testLog);
+            }
         }
     }
     #endregion
