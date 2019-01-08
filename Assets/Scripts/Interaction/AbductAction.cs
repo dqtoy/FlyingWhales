@@ -285,12 +285,11 @@ public class AbductAction : Interaction {
         Abducted abductedTrait = new Abducted(character.homeLandmark);
         character.AddTrait(abductedTrait);
         character.MigrateTo(_characterInvolved.homeLandmark);
+        _characterInvolved.ownParty.AddCharacter(character);
         Interaction interactionAbductor = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, interactable);
-        Interaction interactionAbducted = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, interactable);
+        interactionAbductor.AddEndInteractionAction(() => _characterInvolved.ownParty.DisbandParty());
         _characterInvolved.SetForcedInteraction(interactionAbductor);
         _characterInvolved.SetDailyInteractionGenerationTick(GameManager.Instance.continuousDays + 1);
-        character.SetForcedInteraction(interactionAbducted);
-        character.SetDailyInteractionGenerationTick(GameManager.Instance.continuousDays + 1);
     }
 
     public void SetTargetCharacter(Character targetCharacter) {
