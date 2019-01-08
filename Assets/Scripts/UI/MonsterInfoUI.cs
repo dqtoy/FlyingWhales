@@ -118,7 +118,7 @@ public class MonsterInfoUI : UIMenu {
     public override void ShowTooltip(GameObject objectHovered) {
         base.ShowTooltip(objectHovered);
         if (objectHovered == healthProgressBar.gameObject) {
-            UIManager.Instance.ShowSmallInfo(_activeMonster.currentHP + "/" + _activeMonster.hp);
+            UIManager.Instance.ShowSmallInfo(_activeMonster.currentHP + "/" + _activeMonster.maxHP);
         } else if (objectHovered == manaProgressBar.gameObject) {
             UIManager.Instance.ShowSmallInfo(_activeMonster.currentSP + "/" + _activeMonster.maxSP);
         } 
@@ -272,7 +272,7 @@ public class MonsterInfoUI : UIMenu {
 
     #region Stats
     private void UpdateStatsInfo() {
-        healthProgressBar.value = (float) _activeMonster.currentHP / (float) _activeMonster.hp;
+        healthProgressBar.value = (float) _activeMonster.currentHP / (float) _activeMonster.maxHP;
         manaProgressBar.value = (float) _activeMonster.currentSP / (float) _activeMonster.maxSP;
         //strengthLbl.text = _activeMonster.strength.ToString();
         //agilityLbl.text = _activeMonster.agility.ToString();

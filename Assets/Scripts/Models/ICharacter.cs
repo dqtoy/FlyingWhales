@@ -14,7 +14,7 @@ public interface ICharacter {
     int maxSP { get; }
     int currentRow { get; }
     int id { get; }
-    int hp { get; }
+    int maxHP { get; }
     int attackPower { get; }
     int speed { get; }
     int combatBaseAttack { get; set; }

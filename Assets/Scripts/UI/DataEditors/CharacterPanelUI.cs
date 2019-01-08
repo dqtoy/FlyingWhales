@@ -293,31 +293,29 @@ public class CharacterPanelUI : MonoBehaviour {
         return currentRace;
     }
     private void AllocateStats(RaceSetting raceSetting) {
-        _singleAttackPower = raceSetting.baseAttackPower;
-        _singleSpeed = raceSetting.baseSpeed;
-        _singleHP = raceSetting.baseHP;
-        //_sp = characterClass.baseSP;
+        //_singleAttackPower = raceSetting.attackPowerModifier;
+        //_singleSpeed = raceSetting.speedModifier;
+        //_singleHP = raceSetting.hpModifier;
     }
     private void LevelUp(int level, CharacterClass characterClass, RaceSetting raceSetting) {
         int multiplier = level - 1;
         if(multiplier < 0) {
             multiplier = 0;
         }
-        _singleAttackPower += (multiplier * (int)((characterClass.attackPowerPerLevel / 100f) * (float)raceSetting.baseAttackPower));
-        _singleSpeed += (multiplier * (int) ((characterClass.speedPerLevel / 100f) * (float) raceSetting.baseSpeed));
-        _singleHP += (multiplier * (int) ((characterClass.hpPerLevel / 100f) * (float) raceSetting.baseHP));
-        //_sp += ((int)multiplier * characterClass.spPerLevel);
+        _singleAttackPower += (multiplier * (int)((characterClass.attackPowerPerLevel / 100f) * (float)raceSetting.attackPowerModifier));
+        _singleSpeed += (multiplier * (int) ((characterClass.speedPerLevel / 100f) * (float) raceSetting.speedModifier));
+        _singleHP += (multiplier * (int) ((characterClass.hpPerLevel / 100f) * (float) raceSetting.hpModifier));
 
-        //Add stats per level from race
-        if(level > 1) {
-            int hpIndex = level % raceSetting.hpPerLevel.Length;
-            hpIndex = hpIndex == 0 ? raceSetting.hpPerLevel.Length : hpIndex;
-            int attackIndex = level % raceSetting.attackPerLevel.Length;
-            attackIndex = attackIndex == 0 ? raceSetting.attackPerLevel.Length : attackIndex;
+        ////Add stats per level from race
+        //if(level > 1) {
+        //    int hpIndex = level % raceSetting.hpPerLevel.Length;
+        //    hpIndex = hpIndex == 0 ? raceSetting.hpPerLevel.Length : hpIndex;
+        //    int attackIndex = level % raceSetting.attackPerLevel.Length;
+        //    attackIndex = attackIndex == 0 ? raceSetting.attackPerLevel.Length : attackIndex;
 
-            _singleHP += raceSetting.hpPerLevel[hpIndex - 1];
-            _singleAttackPower += raceSetting.attackPerLevel[attackIndex - 1];
-        }
+        //    _singleHP += raceSetting.hpPerLevel[hpIndex - 1];
+        //    _singleAttackPower += raceSetting.attackPerLevel[attackIndex - 1];
+        //}
     }
     private void ArmyModifier(bool state) {
         if (state) {

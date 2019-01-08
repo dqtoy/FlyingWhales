@@ -170,7 +170,7 @@ public class CombatManager : MonoBehaviour {
     private void ApplyBaseStats(Character character) {
         character.combatBaseAttack = character.attackPower;
         character.combatBaseSpeed = character.speed;
-        character.combatBaseHP = character.hp;
+        character.combatBaseHP = character.maxHP;
     }
 
     private void ApplyTraitEffectPrePairing(Character icharacter, List<Character> allies, List<Character> enemies, TraitEffect traitEffect) {

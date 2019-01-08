@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.22380304, g: 0.24376729, b: 0.26534945, a: 1}
+  m_IndirectSpecularColor: {r: 0.22380279, g: 0.24376711, b: 0.26534963, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4490,13 +4490,13 @@ RectTransform:
   - {fileID: 1316203310}
   - {fileID: 1423205297}
   - {fileID: 951437169}
-  - {fileID: 1757643063}
   - {fileID: 1982225717}
+  - {fileID: 1757643063}
   - {fileID: 1718011224}
   - {fileID: 1386365918}
   - {fileID: 1294866531}
-  - {fileID: 396763699}
   - {fileID: 1562832813}
+  - {fileID: 396763699}
   - {fileID: 932554914}
   - {fileID: 1402573121}
   - {fileID: 546166921}
@@ -20724,11 +20724,11 @@ RectTransform:
   m_Children:
   - {fileID: 1403849359}
   m_Father: {fileID: 71289648}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -223.00006, y: 68.59999}
+  m_AnchoredPosition: {x: -223.00006, y: 28.59999}
   m_SizeDelta: {x: 89.1, y: 21.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &396763700
@@ -41868,7 +41868,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &816748945
 RectTransform:
   m_ObjectHideFlags: 0
@@ -42433,13 +42433,13 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 823611952}
   m_TextComponent: {fileID: 28748988}
   m_Placeholder: {fileID: 1631436128}
-  m_ContentType: 2
+  m_ContentType: 3
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 4
+  m_KeyboardType: 2
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 1
+  m_CharacterValidation: 2
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
@@ -52508,13 +52508,13 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1009096826}
   m_TextComponent: {fileID: 859575211}
   m_Placeholder: {fileID: 1818332918}
-  m_ContentType: 2
+  m_ContentType: 3
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 4
+  m_KeyboardType: 2
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 1
+  m_CharacterValidation: 2
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
@@ -62433,7 +62433,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1183771452
 RectTransform:
   m_ObjectHideFlags: 0
@@ -72368,7 +72368,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: 'Base HP:'
+  m_text: 'HP Mod:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
@@ -72436,7 +72436,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1364062464}
-    characterCount: 8
+    characterCount: 7
     spriteCount: 0
     spaceCount: 1
     wordCount: 2
@@ -76115,7 +76115,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: 'Base Attack:'
+  m_text: 'Attack Mod:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
@@ -76183,7 +76183,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1438230898}
-    characterCount: 12
+    characterCount: 11
     spriteCount: 0
     spaceCount: 1
     wordCount: 2
@@ -81996,11 +81996,11 @@ RectTransform:
   m_Children:
   - {fileID: 1198298945}
   m_Father: {fileID: 71289648}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -223.00006, y: 31.199997}
+  m_AnchoredPosition: {x: -223.00006, y: 64.7}
   m_SizeDelta: {x: 89.1, y: 21.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1562832814
@@ -84178,7 +84178,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: 'Base Speed:'
+  m_text: 'Speed Mod:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
@@ -84246,7 +84246,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1613438689}
-    characterCount: 11
+    characterCount: 10
     spriteCount: 0
     spaceCount: 1
     wordCount: 2
@@ -90562,13 +90562,13 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1735147026}
   m_TextComponent: {fileID: 1393267638}
   m_Placeholder: {fileID: 1607473748}
-  m_ContentType: 2
+  m_ContentType: 3
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 4
+  m_KeyboardType: 2
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 1
+  m_CharacterValidation: 2
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
@@ -91833,11 +91833,11 @@ RectTransform:
   m_Children:
   - {fileID: 1435729647}
   m_Father: {fileID: 71289648}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -394.2, y: 68}
+  m_AnchoredPosition: {x: -394.2, y: 28}
   m_SizeDelta: {x: 118.2, y: 21.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1757643064
@@ -104769,9 +104769,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   raceOptions: {fileID: 1848066443}
   traitOptions: {fileID: 1911670868}
-  baseAttackInput: {fileID: 1009096824}
-  baseSpeedInput: {fileID: 1735147024}
-  baseHPInput: {fileID: 823611950}
+  attackModifierInput: {fileID: 1009096824}
+  speedModifierInput: {fileID: 1735147024}
+  hpModifierInput: {fileID: 823611950}
   hpPerLevelInput: {fileID: 1808842556}
   attackPerLevelInput: {fileID: 749000823}
   neutralSpawnLevelModInput: {fileID: 1867315572}
@@ -104845,11 +104845,11 @@ RectTransform:
   m_Children:
   - {fileID: 641366234}
   m_Father: {fileID: 71289648}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -394.2, y: 32.699997}
+  m_AnchoredPosition: {x: -394.2, y: 66.2}
   m_SizeDelta: {x: 118.2, y: 21.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1982225718

@@ -94,7 +94,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public int currentHP {
         get { return _currentHP; }
     }
-    public int hp {
+    public int maxHP {
         get { return _maxHP; }
     }
     public int currentRow {
@@ -617,7 +617,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public virtual void AdjustHP(int amount, Character killer = null) {
         int previous = this._currentHP;
         this._currentHP += amount;
-        this._currentHP = Mathf.Clamp(this._currentHP, 0, hp);
+        this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
         if (previous != this._currentHP) {
             if (this._currentHP == 0) {
                 FaintOrDeath(killer);

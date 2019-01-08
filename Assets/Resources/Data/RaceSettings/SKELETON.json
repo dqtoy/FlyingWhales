@@ -1,1 +1,1 @@
-{"race":13,"baseAttackPower":0,"baseSpeed":0,"baseHP":0,"neutralSpawnLevelModifier":-2,"hpPerLevel":[],"attackPerLevel":[],"traitNames":[]}
+{"race":13,"attackPowerModifier":0.0,"speedModifier":0.0,"hpModifier":-10.0,"neutralSpawnLevelModifier":-2,"traitNames":[]}

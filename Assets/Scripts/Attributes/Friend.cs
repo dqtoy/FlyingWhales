@@ -17,4 +17,22 @@ public class Friend : Trait {
         daysDuration = 0;
         effects = new List<TraitEffect>();
     }
+
+    #region Overrides
+    public override void OnAddTrait(Character sourceCharacter) {
+        Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "friend");
+        log.AddToFillers(sourceCharacter, sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        log.AddLogToInvolvedObjects();
+    }
+    public override void OnRemoveTrait(Character sourceCharacter) {
+        Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "not_friend");
+        log.AddToFillers(sourceCharacter, sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        log.AddLogToInvolvedObjects();
+    }
+    public override bool IsUnique() {
+        return false;
+    }
+    #endregion
 }

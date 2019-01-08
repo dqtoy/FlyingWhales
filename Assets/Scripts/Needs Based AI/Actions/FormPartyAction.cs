@@ -149,8 +149,8 @@ public class FormPartyAction : CharacterAction {
                 icharacter.role.AdjustFun(_actionData.providedFun);
             }
             //icharacter.role.AdjustSafety(_actionData.providedSafety);
-            if (_actionData.hpRecoveredPercentage != 0f && icharacter.currentHP < icharacter.hp) {
-                float hpRecovery = (_actionData.hpRecoveredPercentage / 100f) * (float)icharacter.hp;
+            if (_actionData.hpRecoveredPercentage != 0f && icharacter.currentHP < icharacter.maxHP) {
+                float hpRecovery = (_actionData.hpRecoveredPercentage / 100f) * (float)icharacter.maxHP;
                 //icharacter.AdjustHP((int)hpRecovery);
             }
         }

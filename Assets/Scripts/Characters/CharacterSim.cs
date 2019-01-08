@@ -122,7 +122,7 @@ public class CharacterSim : ICharacterSim {
     public int speed {
         get { return _speed; }
     }
-    public int hp {
+    public int maxHP {
         get { return _hp; }
     }
     public int currentHP {
@@ -255,9 +255,9 @@ public class CharacterSim : ICharacterSim {
     public void AdjustHP(int amount, Character killer = null) {
         int previous = this._currentHP;
         this._currentHP += amount;
-        this._currentHP = Mathf.Clamp(this._currentHP, 0, hp);
+        this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
         if (isArmy) {
-            int diff = hp - _currentHP;
+            int diff = maxHP - _currentHP;
             if (diff > 0) {
                 int armyLoss = diff / _hp;
                 AdjustArmyCount(-armyLoss);
@@ -336,9 +336,9 @@ public class CharacterSim : ICharacterSim {
         //}
     }
     private void AllocateStats() {
-        _attackPower = _raceSetting.baseAttackPower;
-        _speed = _raceSetting.baseSpeed;
-        _hp = _raceSetting.baseHP;
+        //_attackPower = _raceSetting.attackPowerModifier;
+        //_speed = _raceSetting.speedModifier;
+        //_hp = _raceSetting.hpModifier;
         //_sp = characterClass.baseSP;
     }
     private void LevelUp() {
@@ -346,24 +346,24 @@ public class CharacterSim : ICharacterSim {
         if (multiplier < 0) {
             multiplier = 0;
         }
-        _attackPower += (multiplier * (int) ((characterClass.attackPowerPerLevel / 100f) * (float) _raceSetting.baseAttackPower));
-        _speed += (multiplier * (int) ((characterClass.speedPerLevel / 100f) * (float) _raceSetting.baseSpeed));
-        _hp += (multiplier * (int) ((characterClass.hpPerLevel / 100f) * (float) _raceSetting.baseHP));
+        _attackPower += (multiplier * (int) ((characterClass.attackPowerPerLevel / 100f) * (float) _raceSetting.attackPowerModifier));
+        _speed += (multiplier * (int) ((characterClass.speedPerLevel / 100f) * (float) _raceSetting.speedModifier));
+        _hp += (multiplier * (int) ((characterClass.hpPerLevel / 100f) * (float) _raceSetting.hpModifier));
         //_sp += ((int)multiplier * characterClass.spPerLevel);
 
-        //Add stats per level from race
-        if (level > 1) {
-            if(_raceSetting.hpPerLevel.Length > 0) {
-                int hpIndex = level % _raceSetting.hpPerLevel.Length;
-                hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
-                _hp += _raceSetting.hpPerLevel[hpIndex - 1];
-            }
-            if (_raceSetting.attackPerLevel.Length > 0) {
-                int attackIndex = level % _raceSetting.attackPerLevel.Length;
-                attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
-                _attackPower += _raceSetting.attackPerLevel[attackIndex - 1];
-            }
-        }
+        ////Add stats per level from race
+        //if (level > 1) {
+        //    if(_raceSetting.hpPerLevel.Length > 0) {
+        //        int hpIndex = level % _raceSetting.hpPerLevel.Length;
+        //        hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
+        //        _hp += _raceSetting.hpPerLevel[hpIndex - 1];
+        //    }
+        //    if (_raceSetting.attackPerLevel.Length > 0) {
+        //        int attackIndex = level % _raceSetting.attackPerLevel.Length;
+        //        attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
+        //        _attackPower += _raceSetting.attackPerLevel[attackIndex - 1];
+        //    }
+        //}
     }
     //private void ArmyModifier() {
     //    if (_isArmy) {

@@ -76,8 +76,8 @@ public class MonsterArmyUnit : Monster {
     public override void AdjustHP(int amount, Character killer = null) {
         int previous = this._currentHP;
         this._currentHP += amount;
-        this._currentHP = Mathf.Clamp(this._currentHP, 0, hp);
-        int diff = hp - _currentHP;
+        this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
+        int diff = maxHP - _currentHP;
         if (diff > 0) {
             int armyLoss = diff / _maxHP;
             AdjustArmyCount(-armyLoss);

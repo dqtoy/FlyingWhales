@@ -221,7 +221,7 @@ public class CharacterInfoUI : UIMenu {
     public override void ShowTooltip(GameObject objectHovered) {
         base.ShowTooltip(objectHovered);
         if(objectHovered == healthProgressBar.gameObject) {
-            UIManager.Instance.ShowSmallInfo(_activeCharacter.currentHP + "/" + _activeCharacter.hp);
+            UIManager.Instance.ShowSmallInfo(_activeCharacter.currentHP + "/" + _activeCharacter.maxHP);
         } else if (objectHovered == manaProgressBar.gameObject) {
             UIManager.Instance.ShowSmallInfo(_activeCharacter.currentSP + "/" + _activeCharacter.maxSP);
         } 
@@ -333,7 +333,7 @@ public class CharacterInfoUI : UIMenu {
     private void UpdateStatInfo() {
         //if (_activeCharacter.hasBeenInspected || GameManager.Instance.inspectAll) {
         //    if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
-                hpLbl.text = _activeCharacter.hp.ToString();
+                hpLbl.text = _activeCharacter.maxHP.ToString();
                 attackLbl.text = _activeCharacter.attackPower.ToString();
                 speedLbl.text = _activeCharacter.speed.ToString();
             //} else {

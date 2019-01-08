@@ -17,9 +17,9 @@ public class RacePanelUI : MonoBehaviour {
     public Dropdown raceOptions;
     public Dropdown traitOptions;
 
-    public InputField baseAttackInput;
-    public InputField baseSpeedInput;
-    public InputField baseHPInput;
+    public InputField attackModifierInput;
+    public InputField speedModifierInput;
+    public InputField hpModifierInput;
     public InputField hpPerLevelInput;
     public InputField attackPerLevelInput;
     public InputField neutralSpawnLevelModInput;
@@ -67,9 +67,9 @@ public class RacePanelUI : MonoBehaviour {
         _hpPerLevel = new List<int>();
         _attackPerLevel = new List<int>();
 
-        baseAttackInput.text = "0";
-        baseSpeedInput.text = "0";
-        baseHPInput.text = "0";
+        attackModifierInput.text = "0";
+        speedModifierInput.text = "0";
+        hpModifierInput.text = "0";
         hpPerLevelInput.text = "0";
         attackPerLevelInput.text = "0";
         neutralSpawnLevelModInput.text = "0";
@@ -85,9 +85,9 @@ public class RacePanelUI : MonoBehaviour {
         currentSelectedHPPerLevelButton = null;
         currentSelectedAttackPerLevelButton = null;
 
-        baseAttackInput.text = "0";
-        baseSpeedInput.text = "0";
-        baseHPInput.text = "0";
+        attackModifierInput.text = "0";
+        speedModifierInput.text = "0";
+        hpModifierInput.text = "0";
         hpPerLevelInput.text = "0";
         attackPerLevelInput.text = "0";
         neutralSpawnLevelModInput.text = "0";
@@ -154,9 +154,9 @@ public class RacePanelUI : MonoBehaviour {
     }
     private void LoadRaceDataToUI(RaceSetting raceSetting) {
         raceOptions.value = GetDropdownIndex(raceOptions, raceSetting.race.ToString());
-        baseAttackInput.text = raceSetting.baseAttackPower.ToString();
-        baseSpeedInput.text = raceSetting.baseSpeed.ToString();
-        baseHPInput.text = raceSetting.baseHP.ToString();
+        attackModifierInput.text = raceSetting.attackPowerModifier.ToString();
+        speedModifierInput.text = raceSetting.speedModifier.ToString();
+        hpModifierInput.text = raceSetting.hpModifier.ToString();
         neutralSpawnLevelModInput.text = raceSetting.neutralSpawnLevelModifier.ToString();
 
         for (int i = 0; i < raceSetting.traitNames.Length; i++) {
@@ -165,18 +165,18 @@ public class RacePanelUI : MonoBehaviour {
             GameObject go = GameObject.Instantiate(raceStringButtonPrefab, traitsScrollRect.content);
             go.GetComponent<RaceStringButton>().SetText(traitName, "trait");
         }
-        for (int i = 0; i < raceSetting.hpPerLevel.Length; i++) {
-            int hpPerLevel = raceSetting.hpPerLevel[i];
-            _hpPerLevel.Add(hpPerLevel);
-            GameObject go = GameObject.Instantiate(raceStringButtonPrefab, hpPerLevelScrollRect.content);
-            go.GetComponent<RaceStringButton>().SetText(hpPerLevel.ToString(), "hpperlevel");
-        }
-        for (int i = 0; i < raceSetting.attackPerLevel.Length; i++) {
-            int attackPerLevel = raceSetting.attackPerLevel[i];
-            _attackPerLevel.Add(attackPerLevel);
-            GameObject go = GameObject.Instantiate(raceStringButtonPrefab, attackPerLevelScrollRect.content);
-            go.GetComponent<RaceStringButton>().SetText(attackPerLevel.ToString(), "attackperlevel");
-        }
+        //for (int i = 0; i < raceSetting.hpPerLevel.Length; i++) {
+        //    int hpPerLevel = raceSetting.hpPerLevel[i];
+        //    _hpPerLevel.Add(hpPerLevel);
+        //    GameObject go = GameObject.Instantiate(raceStringButtonPrefab, hpPerLevelScrollRect.content);
+        //    go.GetComponent<RaceStringButton>().SetText(hpPerLevel.ToString(), "hpperlevel");
+        //}
+        //for (int i = 0; i < raceSetting.attackPerLevel.Length; i++) {
+        //    int attackPerLevel = raceSetting.attackPerLevel[i];
+        //    _attackPerLevel.Add(attackPerLevel);
+        //    GameObject go = GameObject.Instantiate(raceStringButtonPrefab, attackPerLevelScrollRect.content);
+        //    go.GetComponent<RaceStringButton>().SetText(attackPerLevel.ToString(), "attackperlevel");
+        //}
     }
     private int GetDropdownIndex(Dropdown options, string name) {
         for (int i = 0; i < options.options.Count; i++) {
