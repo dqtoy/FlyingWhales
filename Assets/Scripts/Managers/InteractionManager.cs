@@ -305,6 +305,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.SPREAD_UNDEATH_ACTION:
                 createdInteraction = new SpreadUndeathAction(interactable);
                 break;
+            case INTERACTION_TYPE.CHANCE_ENCOUNTER:
+                createdInteraction = new ChanceEncounter(interactable);
+                break;
 
         }
         return createdInteraction;
@@ -638,6 +641,14 @@ public class InteractionManager : MonoBehaviour {
                     
                 }
                 return false;
+            case INTERACTION_TYPE.CHANCE_ENCOUNTER:
+                for (int i = 0; i < character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
+                    Character currCharacter = character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
+                    if (currCharacter.id != character.id) {
+                        return true;
+                    }
+                }
+                return false;
             case INTERACTION_TYPE.USE_ITEM_ON_CHARACTER:
                 if (character.tokenInInventory != null) {
                     return character.tokenInInventory.GetTargetCharacterFor(character) != null;
@@ -661,7 +672,10 @@ public class InteractionManager : MonoBehaviour {
             List<Character> residentsAtArea = new List<Character>();
             for (int i = 0; i < areaToAttack.areaResidents.Count; i++) {
                 Character resident = areaToAttack.areaResidents[i];
-                if(resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == areaToAttack.id) {
+                if(resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader 
+                    && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling 
+                    && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == areaToAttack.id
+                    && resident.faction == areaToAttack.owner) {
                     residentsAtArea.Add(resident);
                 }
             }

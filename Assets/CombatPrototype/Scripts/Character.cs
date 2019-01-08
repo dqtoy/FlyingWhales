@@ -2909,7 +2909,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     }
     #endregion
 
-    #region Combat Attributes
+    #region Traits
     public void AddTrait(Trait trait) {
         if (trait.IsUnique() && GetTrait(trait.name) != null) {
             return;
@@ -3043,6 +3043,28 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             }
         }
     }
+    public Friend GetFriendTraitWith(Character character) {
+        for (int i = 0; i < _traits.Count; i++) {
+            if(_traits[i] is Friend) {
+                Friend friendTrait = _traits[i] as Friend;
+                if(friendTrait.targetCharacter == character) {
+                    return friendTrait;
+                }
+            }
+        }
+        return null;
+    }
+    public Enemy GetEnemyTraitWith(Character character) {
+        for (int i = 0; i < _traits.Count; i++) {
+            if (_traits[i] is Enemy) {
+                Enemy enemyTrait = _traits[i] as Enemy;
+                if (enemyTrait.targetCharacter == character) {
+                    return enemyTrait;
+                }
+            }
+        }
+        return null;
+    }
     #endregion
 
     #region Morality
@@ -3161,10 +3183,12 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 if (tokenInInventory != null && tokenInInventory.CanBeUsedBy(this) && InteractionManager.Instance.CanCreateInteraction(tokenInInventory.npcAssociatedInteractionType, this)) {
                     awayFromHomeInteractionWeights.AddElement(tokenInInventory.tokenName, 70);
                 }
-                INTERACTION_TYPE[] classTriggeredInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.FOUND_LUCARETH, INTERACTION_TYPE.FOUND_BESTALIA, INTERACTION_TYPE.FOUND_MAGUS };
-                for (int i = 0; i < classTriggeredInteractions.Length; i++) {
-                    if (InteractionManager.Instance.CanCreateInteraction(classTriggeredInteractions[i], this)) {
-                        awayFromHomeInteractionWeights.AddElement(classTriggeredInteractions[i].ToString(), 50); //15
+                INTERACTION_TYPE[] triggeredInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.FOUND_LUCARETH, INTERACTION_TYPE.FOUND_BESTALIA, INTERACTION_TYPE.FOUND_MAGUS, INTERACTION_TYPE.CHANCE_ENCOUNTER };
+                int[] triggeredInteractionsWeights = new int[] { 50, 50, 50, 10 };
+
+                for (int i = 0; i < triggeredInteractions.Length; i++) {
+                    if (InteractionManager.Instance.CanCreateInteraction(triggeredInteractions[i], this)) {
+                        awayFromHomeInteractionWeights.AddElement(triggeredInteractions[i].ToString(), triggeredInteractionsWeights[i]); //15
                     }
                 }
 
@@ -3192,6 +3216,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 //Character actions at home
                 WeightedDictionary<string> atHomeInteractionWeights = new WeightedDictionary<string>();
                 atHomeInteractionWeights.AddElement("DoNothing", 100);
+                if(InteractionManager.Instance.CanCreateInteraction(INTERACTION_TYPE.CHANCE_ENCOUNTER, this)) {
+                    atHomeInteractionWeights.AddElement(INTERACTION_TYPE.CHANCE_ENCOUNTER.ToString(), 10);
+                }
                 if (tokenInInventory != null) {
                     if (tokenInInventory.CanBeUsedBy(this) && InteractionManager.Instance.CanCreateInteraction(tokenInInventory.npcAssociatedInteractionType, this)) {
                         atHomeInteractionWeights.AddElement(tokenInInventory.tokenName, 70);
@@ -3208,7 +3235,8 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 }
                 string result = atHomeInteractionWeights.PickRandomElementGivenWeights();
 
-                if(result == "ItemNotUsable") {
+                if (result == "DoNothing") {
+                }   else if (result == "ItemNotUsable") {
                     Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.DROP_ITEM, specificLocation as BaseLandmark);
                     AddInteraction(interaction);
                 } else if (result == "PickUp") {
@@ -3223,6 +3251,10 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                     } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_LOCATION) {
                         (interaction as UseItemOnLocation).SetItemToken(tokenInInventory);
                     }
+                    AddInteraction(interaction);
+                } else {
+                    INTERACTION_TYPE interactionType = (INTERACTION_TYPE) Enum.Parse(typeof(INTERACTION_TYPE), result);
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, specificLocation as BaseLandmark);
                     AddInteraction(interaction);
                 }
             }

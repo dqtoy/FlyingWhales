@@ -337,29 +337,50 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Relationships
-    //public Relationship CreateNewRelationshipTowards(Character sourceCharacter, Character targetCharacter) {
-    //    Relationship newRel = new Relationship(sourceCharacter, targetCharacter);
-    //    sourceCharacter.AddNewRelationship(targetCharacter, newRel);
-    //    return newRel;
-    //}
-    ///*
-    // Utility Function for getting the relationship between 2 characters,
-    // this just adds a checking for data consistency if, the 2 characters have the
-    // same reference to their relationship.
-    // NOTE: This is probably more performance intensive because of the additional checking.
-    // User can opt to use each characters GetRelationshipWith() instead.
-    //     */
-    //public Relationship GetRelationshipBetween(Character character1, Character character2) {
-    //    if(character1 == null || character2 == null) {
-    //        return null;
-    //    }
-    //    Relationship char1Rel = character1.GetRelationshipWith(character2);
-    //    Relationship char2Rel = character2.GetRelationshipWith(character1);
-    //    if(char1Rel == char2Rel) {
-    //        return char1Rel;
-    //    }
-    //    throw new System.Exception(character1.name + " does not have the same relationship object as " + character2.name + "!");
-    //}
+    public void ChangePersonalRelationshipBetweenTwoCharacters(Character character1, Character character2, int amount) {
+        if(amount < 0) {
+            //negative
+            int range = amount * -1;
+            for (int i = 0; i < range; i++) {
+                Friend friendTrait1 = character1.GetFriendTraitWith(character2);
+                Friend friendTrait2 = character2.GetFriendTraitWith(character1);
+
+                Enemy enemyTrait1 = character1.GetEnemyTraitWith(character2);
+                Enemy enemyTrait2 = character2.GetEnemyTraitWith(character1);
+
+                if (friendTrait1 != null && friendTrait2 != null) {
+                    character1.RemoveTrait(friendTrait1);
+                    character2.RemoveTrait(friendTrait2);
+                } else if (enemyTrait1 == null && enemyTrait2 == null) {
+                    enemyTrait1 = new Enemy(character2);
+                    enemyTrait2 = new Enemy(character1);
+
+                    character1.AddTrait(enemyTrait1);
+                    character2.AddTrait(enemyTrait2);
+                }
+            }
+        }else if (amount > 0) {
+            //positive
+            for (int i = 0; i < amount; i++) {
+                Friend friendTrait1 = character1.GetFriendTraitWith(character2);
+                Friend friendTrait2 = character2.GetFriendTraitWith(character1);
+
+                Enemy enemyTrait1 = character1.GetEnemyTraitWith(character2);
+                Enemy enemyTrait2 = character2.GetEnemyTraitWith(character1);
+
+                if (enemyTrait1 != null && enemyTrait2 != null) {
+                    character1.RemoveTrait(enemyTrait1);
+                    character2.RemoveTrait(enemyTrait2);
+                } else if (friendTrait1 == null && friendTrait2 == null) {
+                    friendTrait1 = new Friend(character2);
+                    friendTrait2 = new Friend(character1);
+
+                    character1.AddTrait(friendTrait1);
+                    character2.AddTrait(friendTrait2);
+                }
+            }
+        }
+    }
     #endregion
 
     #region Utilities

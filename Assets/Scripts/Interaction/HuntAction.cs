@@ -278,7 +278,7 @@ public class HuntAction : Interaction {
         _characterInvolved.LevelUp();
         investigatorMinion.LevelUp();
 
-        if(targetCharacter.faction.name != "Neutral" && _characterInvolved.faction.name != "Neutral") {
+        if(!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
             AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
@@ -292,7 +292,7 @@ public class HuntAction : Interaction {
         _characterInvolved.LevelUp();
         investigatorMinion.LevelUp();
 
-        if (targetCharacter.faction.name != "Neutral" && _characterInvolved.faction.name != "Neutral") {
+        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
             AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
@@ -305,7 +305,7 @@ public class HuntAction : Interaction {
 
         targetCharacter.LevelUp();
 
-        if (targetCharacter.faction.name != "Neutral" && _characterInvolved.faction.name != "Neutral") {
+        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
             AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
@@ -318,7 +318,7 @@ public class HuntAction : Interaction {
 
         targetCharacter.LevelUp();
 
-        if (targetCharacter.faction.name != "Neutral" && _characterInvolved.faction.name != "Neutral") {
+        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
             AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
@@ -331,7 +331,7 @@ public class HuntAction : Interaction {
 
         _characterInvolved.LevelUp();
 
-        if (targetCharacter.faction.name != "Neutral" && _characterInvolved.faction.name != "Neutral") {
+        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
             AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
@@ -344,7 +344,7 @@ public class HuntAction : Interaction {
 
         _characterInvolved.LevelUp();
 
-        if (targetCharacter.faction.name != "Neutral" && _characterInvolved.faction.name != "Neutral") {
+        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
             AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
@@ -358,7 +358,7 @@ public class HuntAction : Interaction {
         targetCharacter.LevelUp();
         investigatorMinion.LevelUp();
 
-        if (targetCharacter.faction.name != "Neutral" && _characterInvolved.faction.name != "Neutral") {
+        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
             AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
@@ -372,7 +372,7 @@ public class HuntAction : Interaction {
         targetCharacter.LevelUp();
         investigatorMinion.LevelUp();
 
-        if (targetCharacter.faction.name != "Neutral" && _characterInvolved.faction.name != "Neutral") {
+        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
             AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
@@ -387,7 +387,7 @@ public class HuntAction : Interaction {
 
         _characterInvolved.LevelUp();
 
-        if (targetCharacter.faction.name != "Neutral" && _characterInvolved.faction.name != "Neutral") {
+        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
             AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
@@ -402,7 +402,7 @@ public class HuntAction : Interaction {
 
         _characterInvolved.LevelUp();
 
-        if (targetCharacter.faction.name != "Neutral" && _characterInvolved.faction.name != "Neutral") {
+        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
             AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
@@ -417,7 +417,7 @@ public class HuntAction : Interaction {
 
         targetCharacter.LevelUp();
 
-        if (targetCharacter.faction.name != "Neutral" && _characterInvolved.faction.name != "Neutral") {
+        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
             AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
@@ -432,7 +432,7 @@ public class HuntAction : Interaction {
 
         targetCharacter.LevelUp();
 
-        if (targetCharacter.faction.name != "Neutral" && _characterInvolved.faction.name != "Neutral") {
+        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
             AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
@@ -445,7 +445,7 @@ public class HuntAction : Interaction {
 
         _characterInvolved.LevelUp();
 
-        if (targetCharacter.faction.name != "Neutral" && _characterInvolved.faction.name != "Neutral") {
+        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
             AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
@@ -458,7 +458,7 @@ public class HuntAction : Interaction {
 
         _characterInvolved.LevelUp();
 
-        if (targetCharacter.faction.name != "Neutral" && _characterInvolved.faction.name != "Neutral") {
+        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
             AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
@@ -471,7 +471,7 @@ public class HuntAction : Interaction {
 
         targetCharacter.LevelUp();
 
-        if (targetCharacter.faction.name != "Neutral" && _characterInvolved.faction.name != "Neutral") {
+        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
             AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
@@ -484,7 +484,7 @@ public class HuntAction : Interaction {
 
         targetCharacter.LevelUp();
 
-        if (targetCharacter.faction.name != "Neutral" && _characterInvolved.faction.name != "Neutral") {
+        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
             AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
