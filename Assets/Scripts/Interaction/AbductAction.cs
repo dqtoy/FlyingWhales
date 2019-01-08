@@ -285,8 +285,8 @@ public class AbductAction : Interaction {
         Abducted abductedTrait = new Abducted(character.homeLandmark);
         character.AddTrait(abductedTrait);
         character.MigrateTo(_characterInvolved.homeLandmark);
-        Interaction interactionAbductor = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation.tileLocation.landmarkOnTile);
-        Interaction interactionAbducted = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation.tileLocation.landmarkOnTile);
+        Interaction interactionAbductor = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, interactable);
+        Interaction interactionAbducted = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, interactable);
         _characterInvolved.SetForcedInteraction(interactionAbductor);
         _characterInvolved.SetDailyInteractionGenerationTick(GameManager.Instance.continuousDays + 1);
         character.SetForcedInteraction(interactionAbducted);

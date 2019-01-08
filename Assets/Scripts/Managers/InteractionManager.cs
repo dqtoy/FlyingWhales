@@ -505,7 +505,7 @@ public class InteractionManager : MonoBehaviour {
                     }
                     for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
                         Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                        if (currCharacter.id != character.id) {
+                        if (currCharacter.id != character.id && !currCharacter.isDead) {
                             if (currCharacter.isFactionless) {
                                 //Unaligned?
                                 return true;
@@ -540,7 +540,7 @@ public class InteractionManager : MonoBehaviour {
                     if (!character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
                         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
                             Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                            if(currCharacter.id != character.id) {
+                            if(currCharacter.id != character.id && !currCharacter.isDead) {
                                 if(currCharacter.isFactionless) {
                                     //Unaligned?
                                     return true;
@@ -562,7 +562,7 @@ public class InteractionManager : MonoBehaviour {
                     if (!character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
                         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
                             Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                            if (currCharacter.id != character.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty()) {
+                            if (currCharacter.id != character.id && !currCharacter.isDead && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty()) {
                                 if (currCharacter.isFactionless || currCharacter.faction.id != character.faction.id) {
                                     return true;
                                 }
@@ -576,7 +576,7 @@ public class InteractionManager : MonoBehaviour {
                     if (character.tokenInInventory == null) {
                         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
                             Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                            if (currCharacter.id != character.id && currCharacter.tokenInInventory != null) {
+                            if (currCharacter.id != character.id && !currCharacter.isDead && currCharacter.tokenInInventory != null) {
                                 if (currCharacter.isFactionless || currCharacter.faction.id != character.faction.id) {
                                     return true;
                                 }

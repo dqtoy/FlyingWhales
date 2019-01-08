@@ -29,7 +29,7 @@ public class BookOfWizardry : SpecialToken {
     }
     public override bool CanBeUsedBy(Character sourceCharacter) {
         //return true;
-        return sourceCharacter.gender == GENDER.MALE && sourceCharacter.characterClass.attackType == ATTACK_TYPE.MAGICAL_RANGED && sourceCharacter.role.roleType != CHARACTER_ROLE.BEAST;
+        return sourceCharacter.gender == GENDER.MALE && sourceCharacter.characterClass.attackType == ATTACK_TYPE.MAGICAL && sourceCharacter.role.roleType != CHARACTER_ROLE.BEAST;
     }
     #endregion
 

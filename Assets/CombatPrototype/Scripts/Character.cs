@@ -69,15 +69,15 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     //Stats
     protected SIDES _currentSide;
     protected int _currentHP;
-    protected int _maxHP;
     protected int _currentRow;
     protected int _level;
     protected int _experience;
     protected int _maxExperience;
     protected int _sp;
     protected int _maxSP;
-    protected int _attackPower;
-    protected int _speed;
+    protected int _attackPowerMod;
+    protected int _speedMod;
+    protected int _maxHPMod;
     protected int _combatBaseAttack;
     protected int _combatBaseSpeed;
     protected int _combatBaseHP;
@@ -271,16 +271,16 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         get { return _maxExperience; }
     }
     public int speed {
-        get { return _speed + GetModifiedSpeed(); }
+        get { return _characterClass.baseSpeed + _speedMod; }
     }
     public int attackPower {
-        get { return _attackPower + GetModifiedAttack(); }
+        get { return _characterClass.baseAttackPower + _attackPowerMod; }
     }
     public int hp {
-        get { return _maxHP + GetModifiedHP(); }
+        get { return _maxHPMod + GetModifiedHP(); }
     }
     public int maxHP {
-        get { return this._maxHP; }
+        get { return _characterClass.baseHP + _maxHPMod; }
     }
     public int combatBaseAttack {
         get { return _combatBaseAttack; }
@@ -450,7 +450,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         //ConstructBodyPartDict(_raceSetting.bodyParts);
 
         //AllocateStatPoints(10);
-        AllocateStats();
         SetTraitsFromRace();
         //CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(className);
         //if(setup != null) {
@@ -493,7 +492,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         //GenerateSetupTags(baseSetup);
 
         //AllocateStatPoints(10);
-        AllocateStats();
         //EquipItemsByClass();
         //SetTraitsFromClass();
         SetTraitsFromRace();
@@ -587,12 +585,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     }
     #endregion
 
-    private void AllocateStats() {
-        _attackPower = _raceSetting.baseAttackPower;
-        _speed = _raceSetting.baseSpeed;
-        SetMaxHP(_raceSetting.baseHP);
-        _maxSP = _characterClass.baseSP;
-    }
     //      private void AllocateStatPoints(int statAllocation){
     //          _baseStrength = 0;
     //          _baseIntelligence = 0;
@@ -1196,72 +1188,72 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             }
         }
     }
-    private void EquipItemsByClass() {
-        if (_characterClass != null) {
-            if (_characterClass.weaponTierNames != null && _characterClass.weaponTierNames.Count > 0) {
-                EquipItem(_characterClass.weaponTierNames[0]);
-            }
-            if (_characterClass.armorTierNames != null && _characterClass.armorTierNames.Count > 0) {
-                EquipItem(_characterClass.armorTierNames[0]);
-            }
-            if (_characterClass.accessoryTierNames != null && _characterClass.accessoryTierNames.Count > 0) {
-                EquipItem(_characterClass.accessoryTierNames[0]);
-            }
-        }
-    }
+    //private void EquipItemsByClass() {
+    //    if (_characterClass != null) {
+    //        if (_characterClass.weaponTierNames != null && _characterClass.weaponTierNames.Count > 0) {
+    //            EquipItem(_characterClass.weaponTierNames[0]);
+    //        }
+    //        if (_characterClass.armorTierNames != null && _characterClass.armorTierNames.Count > 0) {
+    //            EquipItem(_characterClass.armorTierNames[0]);
+    //        }
+    //        if (_characterClass.accessoryTierNames != null && _characterClass.accessoryTierNames.Count > 0) {
+    //            EquipItem(_characterClass.accessoryTierNames[0]);
+    //        }
+    //    }
+    //}
     public void UpgradeWeapon() {
-        if (_characterClass != null && _equippedWeapon != null) {
-            if (_characterClass.weaponTierNames != null && _characterClass.weaponTierNames.Count > 0) {
-                bool foundEquipped = false;
-                for (int i = 0; i < _characterClass.weaponTierNames.Count; i++) {
-                    if (foundEquipped) {
-                        //Found equipped item, now equip next on the list for upgrade
-                        EquipItem(_characterClass.weaponTierNames[i]);
-                        break;
-                    } else {
-                        if (_equippedWeapon.itemName == _characterClass.weaponTierNames[i]) {
-                            foundEquipped = true;
-                        }
-                    }
-                }
-            }
-        }
+        //if (_characterClass != null && _equippedWeapon != null) {
+        //    if (_characterClass.weaponTierNames != null && _characterClass.weaponTierNames.Count > 0) {
+        //        bool foundEquipped = false;
+        //        for (int i = 0; i < _characterClass.weaponTierNames.Count; i++) {
+        //            if (foundEquipped) {
+        //                //Found equipped item, now equip next on the list for upgrade
+        //                EquipItem(_characterClass.weaponTierNames[i]);
+        //                break;
+        //            } else {
+        //                if (_equippedWeapon.itemName == _characterClass.weaponTierNames[i]) {
+        //                    foundEquipped = true;
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
     }
     public void UpgradeArmor() {
-        if (_characterClass != null && _equippedArmor != null) {
-            if (_characterClass.armorTierNames != null && _characterClass.armorTierNames.Count > 0) {
-                bool foundEquipped = false;
-                for (int i = 0; i < _characterClass.armorTierNames.Count; i++) {
-                    if (foundEquipped) {
-                        //Found equipped item, now equip next on the list for upgrade
-                        EquipItem(_characterClass.armorTierNames[i]);
-                        break;
-                    } else {
-                        if (_equippedArmor.itemName == _characterClass.armorTierNames[i]) {
-                            foundEquipped = true;
-                        }
-                    }
-                }
-            }
-        }
+        //if (_characterClass != null && _equippedArmor != null) {
+        //    if (_characterClass.armorTierNames != null && _characterClass.armorTierNames.Count > 0) {
+        //        bool foundEquipped = false;
+        //        for (int i = 0; i < _characterClass.armorTierNames.Count; i++) {
+        //            if (foundEquipped) {
+        //                //Found equipped item, now equip next on the list for upgrade
+        //                EquipItem(_characterClass.armorTierNames[i]);
+        //                break;
+        //            } else {
+        //                if (_equippedArmor.itemName == _characterClass.armorTierNames[i]) {
+        //                    foundEquipped = true;
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
     }
     public void UpgradeAccessory() {
-        if (_characterClass != null && _equippedAccessory != null) {
-            if (_characterClass.accessoryTierNames != null && _characterClass.accessoryTierNames.Count > 0) {
-                bool foundEquipped = false;
-                for (int i = 0; i < _characterClass.accessoryTierNames.Count; i++) {
-                    if (foundEquipped) {
-                        //Found equipped weapon, now equip next on the list for upgrade
-                        EquipItem(_characterClass.accessoryTierNames[i]);
-                        break;
-                    } else {
-                        if (_equippedAccessory.itemName == _characterClass.accessoryTierNames[i]) {
-                            foundEquipped = true;
-                        }
-                    }
-                }
-            }
-        }
+        //if (_characterClass != null && _equippedAccessory != null) {
+        //    if (_characterClass.accessoryTierNames != null && _characterClass.accessoryTierNames.Count > 0) {
+        //        bool foundEquipped = false;
+        //        for (int i = 0; i < _characterClass.accessoryTierNames.Count; i++) {
+        //            if (foundEquipped) {
+        //                //Found equipped weapon, now equip next on the list for upgrade
+        //                EquipItem(_characterClass.accessoryTierNames[i]);
+        //                break;
+        //            } else {
+        //                if (_equippedAccessory.itemName == _characterClass.accessoryTierNames[i]) {
+        //                    foundEquipped = true;
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
     }
     #endregion
 
@@ -1412,7 +1404,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         _characterClass = charClass.CreateNewCopy();
         _skills = new List<Skill>();
         _skills.Add(_characterClass.skill);
-        EquipItemsByClass();
+        //EquipItemsByClass();
         SetTraitsFromClass();
     }
     #endregion
@@ -2230,30 +2222,26 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         _lastLevelUpDay = GameManager.Instance.continuousDays;
         if (_level < CharacterManager.Instance.maxLevel) {
             _level += 1;
-            //_experience = 0;
-            //RecomputeMaxExperience();
             //Add stats per level from class
-            _attackPower += (int) ((_characterClass.attackPowerPerLevel / 100f) * (float) _raceSetting.baseAttackPower);
-            _speed += (int) ((_characterClass.speedPerLevel / 100f) * (float) _raceSetting.baseSpeed);
-            AdjustMaxHP((int) ((_characterClass.hpPerLevel / 100f) * (float) _raceSetting.baseHP));
-            //_maxSP += _characterClass.spPerLevel;
-            //Add stats per level from race
-            if (_level > 1) {
-                if (_raceSetting.hpPerLevel.Length > 0) {
-                    int hpIndex = _level % _raceSetting.hpPerLevel.Length;
-                    hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
-                    AdjustMaxHP(_raceSetting.hpPerLevel[hpIndex - 1]);
-                }
-                if (_raceSetting.attackPerLevel.Length > 0) {
-                    int attackIndex = _level % _raceSetting.attackPerLevel.Length;
-                    attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
-                    _attackPower += _raceSetting.attackPerLevel[attackIndex - 1];
-                }
-            }
+            ChangeStatModifiers(1);
+
+            ////Add stats per level from race
+            //if (_level > 1) {
+            //    if (_raceSetting.hpPerLevel.Length > 0) {
+            //        int hpIndex = _level % _raceSetting.hpPerLevel.Length;
+            //        hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
+            //        AdjustMaxHP(_raceSetting.hpPerLevel[hpIndex - 1]);
+            //    }
+            //    if (_raceSetting.attackPerLevel.Length > 0) {
+            //        int attackIndex = _level % _raceSetting.attackPerLevel.Length;
+            //        attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
+            //        _attackPowerMod += _raceSetting.attackPerLevel[attackIndex - 1];
+            //    }
+            //}
 
             //Reset to full health and sp
             ResetToFullHP();
-            //ResetToFullSP();
+
             if(_playerCharacterItem != null) {
                 _playerCharacterItem.UpdateMinionItem();
                 Messenger.Broadcast(Signals.CHARACTER_LEVEL_CHANGED, this);
@@ -2271,26 +2259,23 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             amount = CharacterManager.Instance.maxLevel - level;
         }
         _level += amount;
-        //_experience = 0;
-        //RecomputeMaxExperience();
+
         //Add stats per level from class
-        _attackPower += (amount * (int) ((_characterClass.attackPowerPerLevel / 100f) * (float) _raceSetting.baseAttackPower));
-        _speed += (amount * (int) ((_characterClass.speedPerLevel / 100f) * (float) _raceSetting.baseSpeed));
-        AdjustMaxHP((amount * (int) ((_characterClass.hpPerLevel / 100f) * (float) _raceSetting.baseHP)));
-        //_maxSP += _characterClass.spPerLevel;
-        //Add stats per level from race
-        if (_level > 1) {
-            if (_raceSetting.hpPerLevel.Length > 0) {
-                int hpIndex = _level % _raceSetting.hpPerLevel.Length;
-                hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
-                AdjustMaxHP(_raceSetting.hpPerLevel[hpIndex - 1]);
-            }
-            if (_raceSetting.attackPerLevel.Length > 0) {
-                int attackIndex = _level % _raceSetting.attackPerLevel.Length;
-                attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
-                _attackPower += _raceSetting.attackPerLevel[attackIndex - 1];
-            }
-        }
+        ChangeStatModifiers(amount);
+
+        ////Add stats per level from race
+        //if (_level > 1) {
+        //    if (_raceSetting.hpPerLevel.Length > 0) {
+        //        int hpIndex = _level % _raceSetting.hpPerLevel.Length;
+        //        hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
+        //        AdjustMaxHP(_raceSetting.hpPerLevel[hpIndex - 1]);
+        //    }
+        //    if (_raceSetting.attackPerLevel.Length > 0) {
+        //        int attackIndex = _level % _raceSetting.attackPerLevel.Length;
+        //        attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
+        //        _attackPowerMod += _raceSetting.attackPerLevel[attackIndex - 1];
+        //    }
+        //}
 
         //Reset to full health and sp
         ResetToFullHP();
@@ -2305,27 +2290,25 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         if (_level < 1) {
             _level = 1;
         }
-        AllocateStats();
-        int multiplier = _level - 1;
 
         //Add stats per level from class
-        _attackPower += (multiplier * (int) ((_characterClass.attackPowerPerLevel / 100f) * (float) _raceSetting.baseAttackPower));
-        _speed += (multiplier * (int) ((_characterClass.speedPerLevel / 100f) * (float) _raceSetting.baseSpeed));
-        AdjustMaxHP((multiplier * (int) ((_characterClass.hpPerLevel / 100f) * (float) _raceSetting.baseHP)));
-        //_maxSP += _characterClass.spPerLevel;
-        //Add stats per level from race
-        if (_level > 1) {
-            if (_raceSetting.hpPerLevel.Length > 0) {
-                int hpIndex = _level % _raceSetting.hpPerLevel.Length;
-                hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
-                AdjustMaxHP(_raceSetting.hpPerLevel[hpIndex - 1]);
-            }
-            if (_raceSetting.attackPerLevel.Length > 0) {
-                int attackIndex = _level % _raceSetting.attackPerLevel.Length;
-                attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
-                _attackPower += _raceSetting.attackPerLevel[attackIndex - 1];
-            }
-        }
+        _attackPowerMod += _characterClass.attackPowerPerLevel;
+        _speedMod += _characterClass.speedPerLevel;
+        AdjustMaxHP(_characterClass.hpPerLevel);
+        
+        ////Add stats per level from race
+        //if (_level > 1) {
+        //    if (_raceSetting.hpPerLevel.Length > 0) {
+        //        int hpIndex = _level % _raceSetting.hpPerLevel.Length;
+        //        hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
+        //        AdjustMaxHP(_raceSetting.hpPerLevel[hpIndex - 1]);
+        //    }
+        //    if (_raceSetting.attackPerLevel.Length > 0) {
+        //        int attackIndex = _level % _raceSetting.attackPerLevel.Length;
+        //        attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
+        //        _attackPowerMod += _raceSetting.attackPerLevel[attackIndex - 1];
+        //    }
+        //}
 
         //Reset to full health and sp
         ResetToFullHP();
@@ -2339,9 +2322,25 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         //_experience = 0;
         //RecomputeMaxExperience();
     }
+    private void ChangeStatModifiers(int amount) {
+        if(_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.MELEE) {
+            _attackPowerMod += _characterClass.attackPowerPerLevel * amount;
+            _speedMod += _characterClass.speedPerLevel * amount;
+            AdjustMaxHP(_characterClass.hpPerLevel * amount);
+        } else if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
+            _attackPowerMod += _characterClass.attackPowerPerLevel * amount;
+            _speedMod += _characterClass.speedPerLevel * amount;
+            AdjustMaxHP(_characterClass.hpPerLevel * amount);
+        } else if (_characterClass.attackType == ATTACK_TYPE.MAGICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
+            _attackPowerMod += _characterClass.attackPowerPerLevel * amount;
+            _speedMod += _characterClass.speedPerLevel * amount;
+            AdjustMaxHP(_characterClass.hpPerLevel * amount);
+        }
+
+    }
     public void OnCharacterClassChange() {
-        if (_currentHP > _maxHP) {
-            _currentHP = _maxHP;
+        if (_currentHP > _maxHPMod) {
+            _currentHP = _maxHPMod;
         }
         if (_sp > _maxSP) {
             _sp = _maxSP;
@@ -2382,7 +2381,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     }
     public void SetMaxHP(int amount) {
         int previousMaxHP = maxHP;
-        _maxHP = amount;
+        _maxHPMod = amount;
         int currentMaxHP = maxHP;
         if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
             _currentHP = currentMaxHP;
@@ -2390,7 +2389,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     }
     public void AdjustMaxHP(int amount) {
         int previousMaxHP = maxHP;
-        _maxHP += amount;
+        _maxHPMod += amount;
         int currentMaxHP = maxHP;
         if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
             _currentHP = currentMaxHP;
@@ -2919,11 +2918,11 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             TraitEffect traitEffect = trait.effects[i];
             if (!traitEffect.hasRequirement && !traitEffect.isPercentage && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
                 if (traitEffect.stat == STAT.ATTACK) {
-                    _attackPower += (int) traitEffect.amount;
+                    _attackPowerMod += (int) traitEffect.amount;
                 } else if (traitEffect.stat == STAT.HP) {
                     AdjustMaxHP((int) traitEffect.amount);
                 } else if (traitEffect.stat == STAT.SPEED) {
-                    _speed += (int) traitEffect.amount;
+                    _speedMod += (int) traitEffect.amount;
                 }
             }
         }
@@ -2936,11 +2935,11 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             TraitEffect traitEffect = trait.effects[i];
             if (!traitEffect.hasRequirement && !traitEffect.isPercentage && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
                 if (traitEffect.stat == STAT.ATTACK) {
-                    _attackPower -= (int) traitEffect.amount;
+                    _attackPowerMod -= (int) traitEffect.amount;
                 } else if (traitEffect.stat == STAT.HP) {
                     AdjustMaxHP(-(int) traitEffect.amount);
                 } else if (traitEffect.stat == STAT.SPEED) {
-                    _speed -= (int) traitEffect.amount;
+                    _speedMod -= (int) traitEffect.amount;
                 }
             }
         }
@@ -2955,7 +2954,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 }
             }
         }
-        return (int) (_attackPower * (modifier / 100f));
+        return (int) (_attackPowerMod * (modifier / 100f));
     }
     private int GetModifiedSpeed() {
         float modifier = 0f;
@@ -2967,7 +2966,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 }
             }
         }
-        return (int) (_speed * (modifier / 100f));
+        return (int) (_speedMod * (modifier / 100f));
     }
     private int GetModifiedHP() {
         float modifier = 0f;
@@ -2979,7 +2978,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 }
             }
         }
-        return (int) (_maxHP * (modifier / 100f));
+        return (int) (_maxHPMod * (modifier / 100f));
     }
     private void SetTraitsFromClass() {
         if (_characterClass.traitNames != null) {

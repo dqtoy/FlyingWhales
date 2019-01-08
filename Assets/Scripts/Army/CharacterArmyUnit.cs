@@ -89,7 +89,7 @@ public class CharacterArmyUnit : Character {
         this._currentHP = Mathf.Clamp(this._currentHP, 0, hp);
         int diff = hp - _currentHP;
         if(diff > 0) {
-            int armyLoss = diff / _maxHP;
+            int armyLoss = diff / _maxHPMod;
             AdjustArmyCount(-armyLoss);
         }
         if (previous != this._currentHP) {

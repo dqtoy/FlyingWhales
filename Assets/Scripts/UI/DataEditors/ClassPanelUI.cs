@@ -14,11 +14,11 @@ public class ClassPanelUI : MonoBehaviour {
     public static ClassPanelUI Instance;
 
     public InputField classNameInput;
-    //public InputField baseAttackPowerInput;
+    public InputField baseAttackPowerInput;
     public InputField attackPowerPerLevelInput;
-    //public InputField baseSpeedInput;
+    public InputField baseSpeedInput;
     public InputField speedPerLevelInput;
-    //public InputField baseHPInput;
+    public InputField baseHPInput;
     public InputField hpPerLevelInput;
     public InputField baseSPInput;
     public InputField spPerLevelInput;
@@ -32,6 +32,8 @@ public class ClassPanelUI : MonoBehaviour {
     public Dropdown combatPositionOptions;
     public Dropdown combatTargetOptions;
     public Dropdown attackTypeOptions;
+    public Dropdown rangeTypeOptions;
+    public Dropdown occupiedTileOptions;
     public Dropdown roleOptions;
     public Dropdown skillOptions;
     public Dropdown jobTypeOptions;
@@ -118,6 +120,8 @@ public class ClassPanelUI : MonoBehaviour {
         combatPositionOptions.ClearOptions();
         combatTargetOptions.ClearOptions();
         attackTypeOptions.ClearOptions();
+        rangeTypeOptions.ClearOptions();
+        occupiedTileOptions.ClearOptions();
         roleOptions.ClearOptions();
         jobTypeOptions.ClearOptions();
         recruitmentCostOptions.ClearOptions();
@@ -125,6 +129,8 @@ public class ClassPanelUI : MonoBehaviour {
         string[] combatPositions = System.Enum.GetNames(typeof(COMBAT_POSITION));
         string[] combatTargets = System.Enum.GetNames(typeof(COMBAT_TARGET));
         string[] attackTypes = System.Enum.GetNames(typeof(ATTACK_TYPE));
+        string[] rangeTypes = System.Enum.GetNames(typeof(RANGE_TYPE));
+        string[] occupiedTiles = System.Enum.GetNames(typeof(COMBAT_OCCUPIED_TILE));
         string[] roles = System.Enum.GetNames(typeof(CHARACTER_ROLE));
         string[] jobs = System.Enum.GetNames(typeof(JOB));
         string[] cost = System.Enum.GetNames(typeof(CURRENCY));
@@ -132,6 +138,8 @@ public class ClassPanelUI : MonoBehaviour {
         combatPositionOptions.AddOptions(combatPositions.ToList());
         combatTargetOptions.AddOptions(combatTargets.ToList());
         attackTypeOptions.AddOptions(attackTypes.ToList());
+        rangeTypeOptions.AddOptions(rangeTypes.ToList());
+        occupiedTileOptions.AddOptions(occupiedTiles.ToList());
         roleOptions.AddOptions(roles.ToList());
         jobTypeOptions.AddOptions(jobs.ToList());
         recruitmentCostOptions.AddOptions(cost.ToList());
@@ -146,11 +154,11 @@ public class ClassPanelUI : MonoBehaviour {
 
         classNameInput.text = string.Empty;
 
-        //baseAttackPowerInput.text = "0";
+        baseAttackPowerInput.text = "0";
         attackPowerPerLevelInput.text = "0";
-        //baseSpeedInput.text = "0";
+        baseSpeedInput.text = "0";
         speedPerLevelInput.text = "0";
-        //baseHPInput.text = "0";
+        baseHPInput.text = "0";
         hpPerLevelInput.text = "0";
         baseSPInput.text = "0";
         spPerLevelInput.text = "0";
@@ -163,6 +171,8 @@ public class ClassPanelUI : MonoBehaviour {
         combatPositionOptions.value = 0;
         combatTargetOptions.value = 0;
         attackTypeOptions.value = 0;
+        rangeTypeOptions.value = 0;
+        occupiedTileOptions.value = 0;
         skillOptions.value = 0;
         roleOptions.value = 0;
         jobTypeOptions.value = 0;
@@ -232,49 +242,25 @@ public class ClassPanelUI : MonoBehaviour {
 
     private void LoadClassDataToUI(CharacterClass characterClass) {
         classNameInput.text = characterClass.className;
-        //baseAttackPowerInput.text = characterClass.baseAttackPower.ToString();
+        baseAttackPowerInput.text = characterClass.baseAttackPower.ToString();
         attackPowerPerLevelInput.text = characterClass.attackPowerPerLevel.ToString();
-        //baseSpeedInput.text = characterClass.baseSpeed.ToString();
+        baseSpeedInput.text = characterClass.baseSpeed.ToString();
         speedPerLevelInput.text = characterClass.speedPerLevel.ToString();
         //armyCountInput.text = characterClass.armyCount.ToString();
-        //baseHPInput.text = characterClass.baseHP.ToString();
+        baseHPInput.text = characterClass.baseHP.ToString();
         hpPerLevelInput.text = characterClass.hpPerLevel.ToString();
-        baseSPInput.text = characterClass.baseSP.ToString();
-        spPerLevelInput.text = characterClass.spPerLevel.ToString();
         recruitmentCostInput.text = characterClass.recruitmentCost.amount.ToString();
 
         combatPositionOptions.value = GetDropdownIndex(combatPositionOptions, characterClass.combatPosition.ToString());
         combatTargetOptions.value = GetDropdownIndex(combatTargetOptions, characterClass.combatTarget.ToString());
         attackTypeOptions.value = GetDropdownIndex(attackTypeOptions, characterClass.attackType.ToString());
+        rangeTypeOptions.value = GetDropdownIndex(rangeTypeOptions, characterClass.rangeType.ToString());
+        occupiedTileOptions.value = GetDropdownIndex(occupiedTileOptions, characterClass.occupiedTileType.ToString());
+
         roleOptions.value = GetDropdownIndex(roleOptions, characterClass.roleType.ToString());
         skillOptions.value = GetDropdownIndex(skillOptions, characterClass.skillName.ToString());
         jobTypeOptions.value = GetDropdownIndex(jobTypeOptions, characterClass.jobType.ToString());
         recruitmentCostOptions.value = GetDropdownIndex(recruitmentCostOptions, characterClass.recruitmentCost.currency.ToString());
-
-        for (int i = 0; i < characterClass.weaponTierNames.Count; i++) {
-            string weaponName = characterClass.weaponTierNames[i];
-            _weaponTiers.Add(weaponName);
-            GameObject go = GameObject.Instantiate(weaponTypeBtnGO, weaponsContentTransform);
-            go.GetComponent<WeaponTypeButton>().buttonText.text = weaponName;
-            go.GetComponent<WeaponTypeButton>().panelName = "class";
-            go.GetComponent<WeaponTypeButton>().categoryName = "weapon";
-        }
-        for (int i = 0; i < characterClass.armorTierNames.Count; i++) {
-            string armorName = characterClass.armorTierNames[i];
-            _armorTiers.Add(armorName);
-            GameObject go = GameObject.Instantiate(weaponTypeBtnGO, armorsContentTransform);
-            go.GetComponent<WeaponTypeButton>().buttonText.text = armorName;
-            go.GetComponent<WeaponTypeButton>().panelName = "class";
-            go.GetComponent<WeaponTypeButton>().categoryName = "armor";
-        }
-        for (int i = 0; i < characterClass.accessoryTierNames.Count; i++) {
-            string accessoryName = characterClass.accessoryTierNames[i];
-            _accessoryTiers.Add(accessoryName);
-            GameObject go = GameObject.Instantiate(weaponTypeBtnGO, accessoriesContentTransform);
-            go.GetComponent<WeaponTypeButton>().buttonText.text = accessoryName;
-            go.GetComponent<WeaponTypeButton>().panelName = "class";
-            go.GetComponent<WeaponTypeButton>().categoryName = "accessory";
-        }
         for (int i = 0; i < characterClass.traitNames.Length; i++) {
             string traitName = characterClass.traitNames[i];
             _traitNames.Add(traitName);

@@ -539,9 +539,12 @@ public enum SKILL_CATEGORY {
 }
 
 public enum ATTACK_TYPE {
-    PHYSICAL_MELEE,
-    PHYSICAL_RANGED,
-    MAGICAL_RANGED,
+    PHYSICAL,
+    MAGICAL,
+}
+public enum RANGE_TYPE {
+    MELEE,
+    RANGED,
 }
 public enum DEFEND_TYPE {
     DODGE,
@@ -1204,4 +1207,10 @@ public enum COMBAT_TARGET {
     COLUMN,
     SINGLE_FRONTROW,
     SINGLE_BACKROW,
+}
+public enum COMBAT_OCCUPIED_TILE {
+    SINGLE,
+    COLUMN,
+    ROW,
+    ALL,
 }

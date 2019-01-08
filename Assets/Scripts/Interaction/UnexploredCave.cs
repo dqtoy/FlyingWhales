@@ -140,10 +140,10 @@ public class UnexploredCave : Interaction {
         }
     }
     private void DemonWeaponUpgradeEffect(InteractionState state) {
-        investigatorMinion.character.UpgradeWeapon();
+        //investigatorMinion.character.UpgradeWeapon();
     }
     private void DemonArmorUpgradeEffect(InteractionState state) {
-        investigatorMinion.character.UpgradeArmor();
+        //investigatorMinion.character.UpgradeArmor();
     }
     private void UnleashedMonsterEffect(InteractionState state) {
         //TODO: awaken monster and put it in defenders list

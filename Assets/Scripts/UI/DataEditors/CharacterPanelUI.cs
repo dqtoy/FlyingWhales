@@ -333,23 +333,23 @@ public class CharacterPanelUI : MonoBehaviour {
     private void UpdateSkills(CharacterClass characterClass) {
         _skillName = characterClass.skillName;
     }
-    private void UpdateEquipment(CharacterClass characterClass) {
-        if(characterClass.weaponTierNames != null && characterClass.weaponTierNames.Count > 0) {
-            _weaponName = characterClass.weaponTierNames[0];
-        } else {
-            _weaponName = string.Empty;
-        }
-        if (characterClass.armorTierNames != null && characterClass.armorTierNames.Count > 0) {
-            _armorName = characterClass.armorTierNames[0];
-        } else {
-            _armorName = string.Empty;
-        }
-        if (characterClass.accessoryTierNames != null && characterClass.accessoryTierNames.Count > 0) {
-            _accessoryName = characterClass.accessoryTierNames[0];
-        } else {
-            _accessoryName = string.Empty;
-        }
-    }
+    //private void UpdateEquipment(CharacterClass characterClass) {
+    //    if(characterClass.weaponTierNames != null && characterClass.weaponTierNames.Count > 0) {
+    //        _weaponName = characterClass.weaponTierNames[0];
+    //    } else {
+    //        _weaponName = string.Empty;
+    //    }
+    //    if (characterClass.armorTierNames != null && characterClass.armorTierNames.Count > 0) {
+    //        _armorName = characterClass.armorTierNames[0];
+    //    } else {
+    //        _armorName = string.Empty;
+    //    }
+    //    if (characterClass.accessoryTierNames != null && characterClass.accessoryTierNames.Count > 0) {
+    //        _accessoryName = characterClass.accessoryTierNames[0];
+    //    } else {
+    //        _accessoryName = string.Empty;
+    //    }
+    //}
     private void UpdateUI() {
         attackPowerLbl.text = _attackPower.ToString();
         speedLbl.text = _speed.ToString();
@@ -438,7 +438,7 @@ public class CharacterPanelUI : MonoBehaviour {
         LevelUp(level, characterClass, race);
         ArmyModifier(toggleArmy.isOn);
         UpdateSkills(characterClass);
-        UpdateEquipment(characterClass);
+        //UpdateEquipment(characterClass);
         UpdateUI();
     }
     private void RaceChange(int index) {
@@ -456,7 +456,7 @@ public class CharacterPanelUI : MonoBehaviour {
         LevelUp(level, characterClass, race);
         ArmyModifier(toggleArmy.isOn);
         UpdateSkills(characterClass);
-        UpdateEquipment(characterClass);
+        //UpdateEquipment(characterClass);
         UpdateUI();
     }
     #endregion
