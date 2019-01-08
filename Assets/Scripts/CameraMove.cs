@@ -85,7 +85,10 @@ public class CameraMove : MonoBehaviour {
 
         Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
 #if WORLD_CREATION_TOOL
-        if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI() && !worldcreator.WorldCreatorUI.Instance.IsUserOnUI() && screenRect.Contains(Input.mousePosition)) {
+        if (worldcreator.WorldCreatorManager.Instance.isDoneLoadingWorld 
+            && !worldcreator.WorldCreatorUI.Instance.IsMouseOnUI() 
+            && !worldcreator.WorldCreatorUI.Instance.IsUserOnUI() 
+            && screenRect.Contains(Input.mousePosition)) {
 #else
         if (allowZoom && !UIManager.Instance.IsMouseOnUI() && screenRect.Contains(Input.mousePosition)) {
 #endif

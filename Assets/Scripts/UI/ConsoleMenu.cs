@@ -76,11 +76,11 @@ public class ConsoleMenu : UIMenu {
         string mainCommand = words[0];
 
         var reg = new Regex("\".*?\"");
-        MatchCollection matches = reg.Matches(command);
-        List<string> parameters = matches.Cast<string>().ToList();
+        var parameters = reg.Matches(command).Cast<Match>().Select(m => m.Value).ToArray();
+        //List<string> parameters = matches.Cast<string>().ToList();
 
         if (_consoleActions.ContainsKey(mainCommand)) {
-            _consoleActions[mainCommand](parameters.ToArray());
+            _consoleActions[mainCommand](parameters);
         } else {
             AddCommandHistory(command);
             AddErrorMessage("Error: there is no such command as " + mainCommand + "![-]");

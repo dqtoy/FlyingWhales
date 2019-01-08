@@ -10,6 +10,8 @@ namespace worldcreator {
     public class WorldCreatorManager : MonoBehaviour {
         public static WorldCreatorManager Instance = null;
 
+        public bool isDoneLoadingWorld = false;
+
         [Header("Map Generation")]
         [SerializeField] private float xOffset;
         [SerializeField] private float yOffset;

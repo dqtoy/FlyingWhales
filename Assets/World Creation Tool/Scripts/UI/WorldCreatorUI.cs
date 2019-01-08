@@ -188,6 +188,7 @@ namespace worldcreator {
             OnClickEditBiomes();
             WorldCreatorManager.Instance.EnableSelection();
             CameraMove.Instance.CalculateCameraBounds();
+            WorldCreatorManager.Instance.isDoneLoadingWorld = true;
         }
         #endregion
 
