@@ -1050,7 +1050,11 @@ public class AreaInfoUI : UIMenu {
         if (activeArea.possibleSpecialTokenSpawns.Count > 0) {
             for (int i = 0; i < activeArea.possibleSpecialTokenSpawns.Count; i++) {
                 SpecialToken currToken = activeArea.possibleSpecialTokenSpawns[i];
-                summary += "\n" + currToken.name + " owned by " + currToken.ownerName;
+                summary += "\n" + currToken.name;
+                if (currToken is SecretScroll) {
+                    summary += ": " + (currToken as SecretScroll).grantedClass;
+                }
+                summary +=  " owned by " + currToken.ownerName;
             }
         } else {
             summary += "None";

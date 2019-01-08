@@ -638,6 +638,11 @@ public class InteractionManager : MonoBehaviour {
                     
                 }
                 return false;
+            case INTERACTION_TYPE.USE_ITEM_ON_CHARACTER:
+                if (character.tokenInInventory != null) {
+                    return character.tokenInInventory.GetTargetCharacterFor(character) != null;
+                }
+                return false;
             default:
                 return true;
         }
