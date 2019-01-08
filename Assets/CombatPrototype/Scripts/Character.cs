@@ -213,12 +213,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public BaseLandmark workplace {
         get { return _workplace; }
     }
-    public float remainingHP { //Percentage of remaining HP this character has
-        get { return (float) currentHP / (float) maxHP; }
-    }
-    public int remainingHPPercent {
-        get { return (int) (remainingHP * 100); }
-    }
     public List<Log> history {
         get { return this._history; }
     }
@@ -271,16 +265,34 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         get { return _maxExperience; }
     }
     public int speed {
-        get { return _characterClass.baseSpeed + _speedMod; }
+        get {
+            int total = (int) ((_characterClass.baseSpeed + _speedMod) * (1f + (_raceSetting.speedModifier / 100f)));
+            if (total < 0) {
+                return 1;
+            }
+            return total;
+        }
     }
     public int attackPower {
-        get { return _characterClass.baseAttackPower + _attackPowerMod; }
-    }
-    public int hp {
-        get { return _maxHPMod + GetModifiedHP(); }
+        get {
+            int total = (int) ((_characterClass.baseAttackPower + _attackPowerMod) * (1f + (_raceSetting.attackPowerModifier / 100f)));
+            if (total < 0) {
+                return 1;
+            }
+            return total;
+        }
     }
     public int maxHP {
-        get { return _characterClass.baseHP + _maxHPMod; }
+        get { return GetModifiedHP(); }
+    }
+    public int hp {
+        get {
+            int total = (int) ((_characterClass.baseHP + _maxHPMod) * (1f + (_raceSetting.hpModifier / 100f)));
+            if (total < 0) {
+                return 1;
+            }
+            return total;
+        }
     }
     public int combatBaseAttack {
         get { return _combatBaseAttack; }
@@ -694,9 +706,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     //        }
     //    }
     //}
-    public void SetHP(int amount) {
-        this._currentHP = amount;
-    }
+
     private string GetFaintOrDeath() {
         return "die";
         //WeightedDictionary<string> faintDieDict = new WeightedDictionary<string> ();
@@ -1809,12 +1819,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     }
     #endregion
 
-    #region HP
-    public bool IsHealthFull() {
-        return _currentHP >= maxHP;
-    }
-    #endregion
-
     #region Utilities
     public void ChangeGender(GENDER gender) {
         _gender = gender;
@@ -2214,6 +2218,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     #endregion
 
     #region RPG
+    private bool hpMagicRangedStatMod;
     public void LevelUp() {
         //Only level up once per day
         if (_lastLevelUpDay == GameManager.Instance.continuousDays) {
@@ -2223,21 +2228,30 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         if (_level < CharacterManager.Instance.maxLevel) {
             _level += 1;
             //Add stats per level from class
-            ChangeStatModifiers(1);
-
-            ////Add stats per level from race
-            //if (_level > 1) {
-            //    if (_raceSetting.hpPerLevel.Length > 0) {
-            //        int hpIndex = _level % _raceSetting.hpPerLevel.Length;
-            //        hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
-            //        AdjustMaxHP(_raceSetting.hpPerLevel[hpIndex - 1]);
-            //    }
-            //    if (_raceSetting.attackPerLevel.Length > 0) {
-            //        int attackIndex = _level % _raceSetting.attackPerLevel.Length;
-            //        attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
-            //        _attackPowerMod += _raceSetting.attackPerLevel[attackIndex - 1];
-            //    }
-            //}
+            if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.MELEE) {
+                _attackPowerMod += _characterClass.attackPowerPerLevel;
+                _speedMod += _characterClass.speedPerLevel;
+                AdjustMaxHPMod(_characterClass.hpPerLevel);
+            } else if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
+                if (_level % 2 == 0) {
+                    //even
+                    AdjustMaxHPMod(_characterClass.hpPerLevel);
+                } else {
+                    //odd
+                    _attackPowerMod += _characterClass.attackPowerPerLevel;
+                }
+                _speedMod += _characterClass.speedPerLevel;
+            } else if (_characterClass.attackType == ATTACK_TYPE.MAGICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
+                if (!hpMagicRangedStatMod) {
+                    _attackPowerMod += _characterClass.attackPowerPerLevel;
+                } else {
+                    AdjustMaxHPMod(_characterClass.hpPerLevel);
+                }
+                if ((_level - 1) % 2 == 0) {
+                    hpMagicRangedStatMod = !hpMagicRangedStatMod;
+                }
+                _speedMod += _characterClass.speedPerLevel;
+            }
 
             //Reset to full health and sp
             ResetToFullHP();
@@ -2257,25 +2271,43 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         int supposedLevel = _level + amount;
         if (supposedLevel > CharacterManager.Instance.maxLevel) {
             amount = CharacterManager.Instance.maxLevel - level;
+        } else if (supposedLevel < 0) {
+            amount -= (supposedLevel - 1);
+        }
+        //Add stats per level from class
+        if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.MELEE) {
+            _attackPowerMod += _characterClass.attackPowerPerLevel * amount;
+            _speedMod += _characterClass.speedPerLevel * amount;
+            AdjustMaxHPMod(_characterClass.hpPerLevel * amount);
+        } else if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
+            int multiplier = (amount < 0 ? -1 : 1);
+            int range = amount * multiplier;
+            for (int i = 0; i < range; i++) {
+                if (i % 2 == 0) {
+                    //even
+                    AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
+                } else {
+                    //odd
+                    _attackPowerMod += (_characterClass.attackPowerPerLevel * multiplier);
+                }
+            }
+            _speedMod += _characterClass.speedPerLevel * amount;
+        } else if (_characterClass.attackType == ATTACK_TYPE.MAGICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
+            int multiplier = (amount < 0 ? -1 : 1);
+            int range = amount * multiplier;
+            for (int i = _level; i <= _level + range; i++) {
+                if (!hpMagicRangedStatMod) {
+                    _attackPowerMod += _characterClass.attackPowerPerLevel * multiplier;
+                } else {
+                    AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
+                }
+                if (i != 1 && (i - 1) % 2 == 0) {
+                    hpMagicRangedStatMod = !hpMagicRangedStatMod;
+                }
+            }
+            _speedMod += _characterClass.speedPerLevel * amount;
         }
         _level += amount;
-
-        //Add stats per level from class
-        ChangeStatModifiers(amount);
-
-        ////Add stats per level from race
-        //if (_level > 1) {
-        //    if (_raceSetting.hpPerLevel.Length > 0) {
-        //        int hpIndex = _level % _raceSetting.hpPerLevel.Length;
-        //        hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
-        //        AdjustMaxHP(_raceSetting.hpPerLevel[hpIndex - 1]);
-        //    }
-        //    if (_raceSetting.attackPerLevel.Length > 0) {
-        //        int attackIndex = _level % _raceSetting.attackPerLevel.Length;
-        //        attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
-        //        _attackPowerMod += _raceSetting.attackPerLevel[attackIndex - 1];
-        //    }
-        //}
 
         //Reset to full health and sp
         ResetToFullHP();
@@ -2286,29 +2318,48 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         }
     }
     public void SetLevel(int amount) {
+        int previousLevel = _level;
         _level = amount;
         if (_level < 1) {
             _level = 1;
+        }else if (_level > CharacterManager.Instance.maxLevel) {
+            _level = CharacterManager.Instance.maxLevel;
         }
 
         //Add stats per level from class
-        _attackPowerMod += _characterClass.attackPowerPerLevel;
-        _speedMod += _characterClass.speedPerLevel;
-        AdjustMaxHP(_characterClass.hpPerLevel);
-        
-        ////Add stats per level from race
-        //if (_level > 1) {
-        //    if (_raceSetting.hpPerLevel.Length > 0) {
-        //        int hpIndex = _level % _raceSetting.hpPerLevel.Length;
-        //        hpIndex = hpIndex == 0 ? _raceSetting.hpPerLevel.Length : hpIndex;
-        //        AdjustMaxHP(_raceSetting.hpPerLevel[hpIndex - 1]);
-        //    }
-        //    if (_raceSetting.attackPerLevel.Length > 0) {
-        //        int attackIndex = _level % _raceSetting.attackPerLevel.Length;
-        //        attackIndex = attackIndex == 0 ? _raceSetting.attackPerLevel.Length : attackIndex;
-        //        _attackPowerMod += _raceSetting.attackPerLevel[attackIndex - 1];
-        //    }
-        //}
+        int difference = _level - previousLevel;
+        if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.MELEE) {
+            _attackPowerMod += _characterClass.attackPowerPerLevel * difference;
+            _speedMod += _characterClass.speedPerLevel * difference;
+            AdjustMaxHPMod(_characterClass.hpPerLevel * difference);
+        } else if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
+            int multiplier = (difference < 0 ? -1 : 1);
+            int range = difference * multiplier;
+            for (int i = 0; i < range; i++) {
+                if (i % 2 == 0) {
+                    //even
+                    AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
+                } else {
+                    //odd
+                    _attackPowerMod += (_characterClass.attackPowerPerLevel * multiplier);
+                }
+            }
+            _speedMod += _characterClass.speedPerLevel * difference;
+        } else if (_characterClass.attackType == ATTACK_TYPE.MAGICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
+            int multiplier = (difference < 0 ? -1 : 1);
+            int range = difference * multiplier;
+            for (int i = _level; i <= _level + range; i++) {
+                if (!hpMagicRangedStatMod) {
+                    _attackPowerMod += _characterClass.attackPowerPerLevel * multiplier;
+                } else {
+                    AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
+                }
+                if (i != 1 && (i - 1) % 2 == 0) {
+                    hpMagicRangedStatMod = !hpMagicRangedStatMod;
+                }
+            }
+            _speedMod += _characterClass.speedPerLevel * difference;
+        }
 
         //Reset to full health and sp
         ResetToFullHP();
@@ -2321,22 +2372,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         //Reset Experience
         //_experience = 0;
         //RecomputeMaxExperience();
-    }
-    private void ChangeStatModifiers(int amount) {
-        if(_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.MELEE) {
-            _attackPowerMod += _characterClass.attackPowerPerLevel * amount;
-            _speedMod += _characterClass.speedPerLevel * amount;
-            AdjustMaxHP(_characterClass.hpPerLevel * amount);
-        } else if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
-            _attackPowerMod += _characterClass.attackPowerPerLevel * amount;
-            _speedMod += _characterClass.speedPerLevel * amount;
-            AdjustMaxHP(_characterClass.hpPerLevel * amount);
-        } else if (_characterClass.attackType == ATTACK_TYPE.MAGICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
-            _attackPowerMod += _characterClass.attackPowerPerLevel * amount;
-            _speedMod += _characterClass.speedPerLevel * amount;
-            AdjustMaxHP(_characterClass.hpPerLevel * amount);
-        }
-
     }
     public void OnCharacterClassChange() {
         if (_currentHP > _maxHPMod) {
@@ -2379,21 +2414,27 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         }
         return compPower;
     }
-    public void SetMaxHP(int amount) {
-        int previousMaxHP = maxHP;
+    public void SetHP(int amount) {
+        this._currentHP = amount;
+    }
+    public void SetMaxHPMod(int amount) {
+        int previousMaxHP = hp;
         _maxHPMod = amount;
-        int currentMaxHP = maxHP;
+        int currentMaxHP = hp;
         if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
             _currentHP = currentMaxHP;
         }
     }
-    public void AdjustMaxHP(int amount) {
-        int previousMaxHP = maxHP;
+    public void AdjustMaxHPMod(int amount) {
+        int previousMaxHP = hp;
         _maxHPMod += amount;
-        int currentMaxHP = maxHP;
+        int currentMaxHP = hp;
         if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
             _currentHP = currentMaxHP;
         }
+    }
+    public bool IsHealthFull() {
+        return _currentHP >= maxHP;
     }
     #endregion
 
@@ -2920,7 +2961,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 if (traitEffect.stat == STAT.ATTACK) {
                     _attackPowerMod += (int) traitEffect.amount;
                 } else if (traitEffect.stat == STAT.HP) {
-                    AdjustMaxHP((int) traitEffect.amount);
+                    AdjustMaxHPMod((int) traitEffect.amount);
                 } else if (traitEffect.stat == STAT.SPEED) {
                     _speedMod += (int) traitEffect.amount;
                 }
@@ -2937,7 +2978,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 if (traitEffect.stat == STAT.ATTACK) {
                     _attackPowerMod -= (int) traitEffect.amount;
                 } else if (traitEffect.stat == STAT.HP) {
-                    AdjustMaxHP(-(int) traitEffect.amount);
+                    AdjustMaxHPMod(-(int) traitEffect.amount);
                 } else if (traitEffect.stat == STAT.SPEED) {
                     _speedMod -= (int) traitEffect.amount;
                 }
@@ -2954,7 +2995,8 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 }
             }
         }
-        return (int) (_attackPowerMod * (modifier / 100f));
+        int atk = attackPower;
+        return (int) (atk + (atk * (modifier / 100f)));
     }
     private int GetModifiedSpeed() {
         float modifier = 0f;
@@ -2966,7 +3008,8 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 }
             }
         }
-        return (int) (_speedMod * (modifier / 100f));
+        int spd = speed;
+        return (int) (spd + (spd * (modifier / 100f)));
     }
     private int GetModifiedHP() {
         float modifier = 0f;
@@ -2978,7 +3021,8 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 }
             }
         }
-        return (int) (_maxHPMod * (modifier / 100f));
+        int hp = this.hp;
+        return (int) (hp + (hp * (modifier / 100f)));
     }
     private void SetTraitsFromClass() {
         if (_characterClass.traitNames != null) {

@@ -174,7 +174,7 @@ public class MonsterPanelUI : MonoBehaviour {
         typeOptions.value = GetMonsterTypeIndex(monster.type);
         levelInput.text = monster.level.ToString();
         expInput.text = monster.experienceDrop.ToString();
-        hpInput.text = monster.hp.ToString();
+        hpInput.text = monster.maxHP.ToString();
         spInput.text = monster.maxSP.ToString();
         powerInput.text = monster.attackPower.ToString();
         speedInput.text = monster.speed.ToString();

@@ -12,7 +12,7 @@ public interface ICharacterSim {
     int level { get; }
     int currentSP { get; }
     int currentHP { get; }
-    int hp { get; }
+    int maxHP { get; }
     int attackPower { get; }
     //int pFinalAttack { get; }
     //int mFinalAttack { get; }
