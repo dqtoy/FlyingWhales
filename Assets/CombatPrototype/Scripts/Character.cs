@@ -2911,21 +2911,24 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
 
     #region Combat Attributes
     public void AddTrait(Trait trait) {
-        if (GetTrait(trait.name) == null) {
-            _traits.Add(trait);
-            ApplyFlatTraitEffects(trait);
-            if(trait.daysDuration > 0) {
-                GameDate removeDate = GameManager.Instance.Today();
-                removeDate.AddDays(trait.daysDuration);
-                SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait));
-            }
+        if (trait.IsUnique() && GetTrait(trait.name) != null) {
+            return;
         }
+        _traits.Add(trait);
+        ApplyFlatTraitEffects(trait);
+        if (trait.daysDuration > 0) {
+            GameDate removeDate = GameManager.Instance.Today();
+            removeDate.AddDays(trait.daysDuration);
+            SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait));
+        }
+        trait.OnAddTrait(this);
     }
     public bool RemoveTrait(Trait trait) {
         for (int i = 0; i < _traits.Count; i++) {
             if (_traits[i].name == trait.name) {
+                UnapplyFlatTraitEffects(_traits[i]);
+                _traits[i].OnRemoveTrait(this);
                 _traits.RemoveAt(i);
-                UnapplyFlatTraitEffects(trait);
                 return true;
             }
         }

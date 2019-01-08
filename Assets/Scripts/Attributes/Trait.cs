@@ -13,6 +13,12 @@ public class Trait {
     public TRAIT_TYPE type;
     public int daysDuration; //Zero (0) means Permanent
     public List<TraitEffect> effects;
+
+    #region Virtuals
+    public virtual void OnAddTrait(Character sourceCharacter) { }
+    public virtual void OnRemoveTrait(Character sourceCharacter) { }
+    public virtual bool IsUnique() { return true; }
+    #endregion
 }
 
 [System.Serializable]
