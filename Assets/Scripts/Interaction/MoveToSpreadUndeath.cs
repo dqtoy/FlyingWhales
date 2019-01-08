@@ -23,7 +23,7 @@ public class MoveToSpreadUndeath : Interaction {
         InteractionState undeathProceeds = new InteractionState(Undeath_Proceeds, this);
         InteractionState normalUndeath = new InteractionState(Normal_Undeath, this);
 
-        targetLocation = GetTargetLocation();
+        targetLocation = GetTargetLocation(_characterInvolved);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
@@ -63,6 +63,12 @@ public class MoveToSpreadUndeath : Interaction {
             state.AddActionOption(doNothing);
             state.SetDefaultOption(doNothing);
         }
+    }
+    public override bool CanInteractionBeDoneBy(Character character) {
+        if (GetTargetLocation(character) == null) {
+            return false;
+        }
+        return base.CanInteractionBeDoneBy(character);
     }
     #endregion
 
@@ -123,8 +129,10 @@ public class MoveToSpreadUndeath : Interaction {
         _characterInvolved.SetForcedInteraction(interaction);
     }
 
-    private Area GetTargetLocation() {
-        /* From all locations that has at least one character not part of faction, choose via weight based:
+    private Area GetTargetLocation(Character character) {
+        /* A character travels to an area that his faction does not own that has at least one character not part of his faction. This action may be done by Skeletons
+         * 
+         * From all locations that has at least one character not part of same faction, choose via weight based:
             - Location is not owned by any faction: Weight +15
             - Location is owned by a Faction that is Enemy or Disliked by Abductor's Faction: Weight +25
             - Location is owned by a Faction with Neutral relationship with Abductor's Faction: Weight +15
@@ -133,26 +141,36 @@ public class MoveToSpreadUndeath : Interaction {
         WeightedDictionary<Area> choices = new WeightedDictionary<Area>();
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
-            int weight = 0;
-            if (currArea.id == PlayerManager.Instance.player.playerArea.id) {
+            if (currArea.owner != null && currArea.owner.id == character.faction.id) {
                 continue; //skip
             }
-            if (currArea.owner == null) {
-                weight += 10;
-            } else if (currArea.owner.id != _characterInvolved.faction.id) {
-                FactionRelationship rel = currArea.owner.GetRelationshipWith(_characterInvolved.faction);
-                switch (rel.relationshipStatus) {
-                    case FACTION_RELATIONSHIP_STATUS.DISLIKED:
-                    case FACTION_RELATIONSHIP_STATUS.NEUTRAL:
-                    case FACTION_RELATIONSHIP_STATUS.FRIEND:
-                        weight += 25;
-                        break;
-                    default:
-                        break;
+            if (currArea.HasCharacterThatIsNotFromFaction(character.faction)) {
+                int weight = 0;
+
+                if (currArea.owner == null) {
+                    weight += 15; //Location is not owned by any faction: Weight +15
+                } else {
+                    FactionRelationship rel = currArea.owner.GetRelationshipWith(character.faction);
+                    switch (rel.relationshipStatus) {
+                        case FACTION_RELATIONSHIP_STATUS.ENEMY:
+                        case FACTION_RELATIONSHIP_STATUS.DISLIKED:
+                            weight += 25;
+                            break;
+                        case FACTION_RELATIONSHIP_STATUS.NEUTRAL:
+                            weight += 15;
+                            break;
+                        case FACTION_RELATIONSHIP_STATUS.FRIEND:
+                            weight += 5;
+                            break;
+                        case FACTION_RELATIONSHIP_STATUS.ALLY:
+                            weight += 2;
+                            break;
+                    }
                 }
-            }
-            if (weight > 0) {
-                choices.AddElement(currArea, weight);
+
+                if (weight > 0) {
+                    choices.AddElement(currArea, weight);
+                }
             }
         }
 

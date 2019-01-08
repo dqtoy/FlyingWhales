@@ -241,6 +241,8 @@ public class StealAction : Interaction {
 
         //**Level Up**: Diplomat Minion +1
         investigatorMinion.LevelUp();
+        //**Mechanics**: Relationship between the player factions and Faction 2 +1
+        AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, targetCharacter.faction, 1, state);
     }
     private void ThwartedTheftCriticalFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
@@ -257,6 +259,9 @@ public class StealAction : Interaction {
 
         //**Level Up**: Diplomat Minion +1
         investigatorMinion.LevelUp();
+
+        //**Mechanics**: Relationship between the player factions and Faction 2 +1
+        AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, targetCharacter.faction, 1, state);
     }
     private void NormalTheftSuccessRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {

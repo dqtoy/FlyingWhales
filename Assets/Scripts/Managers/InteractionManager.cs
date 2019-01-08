@@ -624,6 +624,17 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
+            case INTERACTION_TYPE.MOVE_TO_SPREAD_UNDEATH:
+                if (character.race == RACE.SKELETON && !character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
+                    for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+                        Faction currFaction = FactionManager.Instance.allFactions[i];
+                        if (currFaction.id != character.faction.id && currFaction.characters.Count > 1) { //used 1 because faction leader should be excluded
+                            return true; //**Trigger Criteria 2**: There must be at least one other character not part of current faction.
+                        }
+                    }
+                    
+                }
+                return false;
             default:
                 return true;
         }
