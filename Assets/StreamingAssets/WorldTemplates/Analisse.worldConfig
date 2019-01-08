@@ -545,7 +545,7 @@
       "attributes": [
         "HUMAN"
       ],
-      "className": "Boy King",
+      "className": "Human King",
       "equipmentData": null,
       "factionID": 1,
       "gender": "MALE",
@@ -583,7 +583,7 @@
     },
     {
       "attributes": [],
-      "className": "Frost Queen",
+      "className": "Elf Queen",
       "equipmentData": null,
       "factionID": 2,
       "gender": "FEMALE",

@@ -93067,21 +93067,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   specialTokenSettings:
   - tokenName: Mark of the Witch
-    quantity: 1
+    quantity: 2
     appearanceWeight: 40
     areaLocations:
     - Odious Lair
     - Narris
     - Gloomhollow Crypts
   - tokenName: Brand of the Beastmaster
-    quantity: 1
+    quantity: 2
     appearanceWeight: 40
     areaLocations:
     - Radisle Cavern
     - Pitthize
     - Blistering Hollow
   - tokenName: Book of Wizardry
-    quantity: 1
+    quantity: 2
     appearanceWeight: 40
     areaLocations:
     - Tessellated Triangle
