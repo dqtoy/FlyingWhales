@@ -3164,7 +3164,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 INTERACTION_TYPE[] classTriggeredInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.FOUND_LUCARETH, INTERACTION_TYPE.FOUND_BESTALIA, INTERACTION_TYPE.FOUND_MAGUS };
                 for (int i = 0; i < classTriggeredInteractions.Length; i++) {
                     if (InteractionManager.Instance.CanCreateInteraction(classTriggeredInteractions[i], this)) {
-                        awayFromHomeInteractionWeights.AddElement(classTriggeredInteractions[i].ToString(), 100); //15
+                        awayFromHomeInteractionWeights.AddElement(classTriggeredInteractions[i].ToString(), 50); //15
                     }
                 }
 
