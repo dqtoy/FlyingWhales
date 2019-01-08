@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class SecretScroll : SpecialToken {
 
-    private string grantedClass;
+    public string grantedClass { get; private set; }
+
+    private string[] classes = new string[] { "Knight", "Marauder", "Barbarian", "Stalker", "Archer", "Hunter", "Druid", "Mage", "Shaman" };
 
     public SecretScroll() : base(SPECIAL_TOKEN.SECRET_SCROLL) {
         //quantity = 6;
         weight = 100;
         npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_LOCATION;
-        grantedClass = "Knight";
+        //grantedClass = "Knight";
+        grantedClass = classes[Random.Range(0, classes.Length)];
     }
 
     #region Overrides
