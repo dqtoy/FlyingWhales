@@ -5,6 +5,7 @@ using System.IO;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Linq;
+using BayatGames.SaveGameFree;
 
 public class MainMenuManager : MonoBehaviour {
 
@@ -32,14 +33,34 @@ public class MainMenuManager : MonoBehaviour {
         }
     }
 
+    private WorldSaveData newGameData;
+
+    #region Monobehaviours
+    public void Awake() {
+        LoadNewGameData();
+    }
+    #endregion
+
     public void OnClickPlayGame() {
         //PlayGame();
-        ShowWorldConfigurations();
+        //ShowWorldConfigurations();
+        WorldConfigManager.Instance.SetDataToUse(newGameData);
+        LevelLoaderManager.Instance.LoadLevel("Main");
     }
 
     private void ShowWorldConfigurations() {
         worldConfigsMenuGO.SetActive(true);
         LoadWorldConfigurations();
+    }
+
+    private void LoadNewGameData() {
+        DirectoryInfo templateDirInfo = new DirectoryInfo(Utilities.worldConfigsTemplatesPath);
+        FileInfo[] templateFiles = templateDirInfo.GetFiles("*.worldConfig");
+        if (templateFiles.Length == 0) {
+            throw new System.Exception("There is no new game data");
+        }
+        newGameData = SaveGame.Load<WorldSaveData>(templateFiles[0].FullName);
+        Utilities.ValidateSaveData(newGameData);
     }
 
     private void LoadWorldConfigurations() {
