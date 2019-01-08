@@ -1072,6 +1072,11 @@ public class Area {
             DefenderGroup defenderGroup = GetFirstDefenderGroup();
             if (defenderGroup != null) {
                 testLog += "\nDisbanding current defenders...";
+                if(defenderGroup.party != null) {
+                    for (int i = 0; i < defenderGroup.party.characters.Count; i++) {
+                        interactionCandidates.Add(defenderGroup.party.characters[i]);
+                    }
+                }
                 defenderGroup.DisbandGroup();
             } else {
                 testLog += "\nNo more defender group. Creating new one...";
