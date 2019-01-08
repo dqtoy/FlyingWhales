@@ -86,6 +86,12 @@ public class RecruitAction : Interaction {
             state.SetDefaultOption(doNothing);
         }
     }
+    public override bool CanInteractionBeDoneBy(Character character) {
+        if (GetTargetCharacter(character) == null && targetCharacter == null) {
+            return false;
+        }
+        return base.CanInteractionBeDoneBy(character);
+    }
     #endregion
 
     #region Option Effect
