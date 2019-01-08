@@ -12,4 +12,9 @@ public class MainMenuUI : MonoBehaviour {
         buttonsTween.OnValueChangedAnimation(true);
         titleTween.OnValueChangedAnimation(true);
     }
+
+    public void ExitGame() {
+        //TODO: Add Confirmation Prompt
+        Application.Quit();
+    }
 }
