@@ -217,7 +217,9 @@ public class PatrolAction : Interaction {
                 WeightedDictionary<string> combatResults = new WeightedDictionary<string>();
                 combatResults.AddElement("Patroller Won", patrollerChance);
                 combatResults.AddElement("Patroller Lost", targetCharacterChance);
-
+                if (patrollerChance <= 0 && targetCharacterChance <= 0) {
+                    throw new System.Exception("Both patroller and target has no chance to win combat! Patroller is " + _characterInvolved.name + ". Target is " + targetCharacter.name + ".");
+                }
                 WeightedDictionary<string> nextStateWeights = new WeightedDictionary<string>();
                 switch (combatResults.PickRandomElementGivenWeights()) {
                     case "Patroller Won":
