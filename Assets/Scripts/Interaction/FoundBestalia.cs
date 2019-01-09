@@ -140,18 +140,12 @@ public class FoundBestalia : Interaction {
         investigatorMinion.LevelUp();
 
         //Remove character from her current Faction and turn her into the Faction Leader of a new Bestalia faction. Current area becomes owned by Bestalia faction, set its race to the character's race.
-        _characterInvolved.SetForcedInteraction(null);
         Faction oldFaction = _characterInvolved.faction;
-        _characterInvolved.faction.RemoveCharacter(_characterInvolved);
-        Faction newFaction = FactionManager.Instance.GetFactionBasedOnName("Bestalia");
-        newFaction.SetLeader(_characterInvolved);
-        newFaction.AddNewCharacter(_characterInvolved);
-        FactionManager.Instance.neutralFaction.UnownArea(interactable.tileLocation.areaOfTile);
-        LandmarkManager.Instance.OwnArea(newFaction, _characterInvolved.race, interactable.tileLocation.areaOfTile);
+        _characterInvolved.FoundFaction("Bestalia", interactable);
 
         //Set Bestalia faction to Enemy of character's original faction
-        newFaction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
-        newFaction.SetFactionActiveState(true);
+        _characterInvolved.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
+        _characterInvolved.faction.SetFactionActiveState(true);
 
         //All beasts in the location will change faction and home to the current location. Spawn 2 new characters in the location or until the resident capacity has been reached. Race is the same as the character's. 
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
@@ -164,28 +158,22 @@ public class FoundBestalia : Interaction {
                     character.currentParty.RemoveCharacter(character);
                 }
                 character.MigrateTo(character.specificLocation as BaseLandmark);
-                character.ChangeFactionTo(newFaction);
+                character.ChangeFactionTo(_characterInvolved.faction);
                 character.SetForcedInteraction(null);
             }
         }
         interactable.SpawnRandomCharacters(2);
 
-        state.descriptionLog.AddToFillers(newFaction, newFaction.name, LOG_IDENTIFIER.FACTION_1);
+        state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2);
 
-        state.AddLogFiller(new LogFiller(newFaction, newFaction.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2));
     }
     private void TurnFailEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Bestalia faction. Current area becomes owned by Bestalia faction, set its race to the character's race.
-        _characterInvolved.SetForcedInteraction(null);
         Faction oldFaction = _characterInvolved.faction;
-        _characterInvolved.faction.RemoveCharacter(_characterInvolved);
-        Faction newFaction = FactionManager.Instance.GetFactionBasedOnName("Bestalia");
-        newFaction.SetLeader(_characterInvolved);
-        newFaction.AddNewCharacter(_characterInvolved);
-        FactionManager.Instance.neutralFaction.UnownArea(interactable.tileLocation.areaOfTile);
-        LandmarkManager.Instance.OwnArea(newFaction, _characterInvolved.race, interactable.tileLocation.areaOfTile);
+        _characterInvolved.FoundFaction("Bestalia", interactable);
 
         //All beasts in the location will change faction and home to the current location. Spawn 2 new characters in the location or until the resident capacity has been reached. Race is the same as the character's. 
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
@@ -198,32 +186,26 @@ public class FoundBestalia : Interaction {
                     character.currentParty.RemoveCharacter(character);
                 }
                 character.MigrateTo(character.specificLocation as BaseLandmark);
-                character.ChangeFactionTo(newFaction);
+                character.ChangeFactionTo(_characterInvolved.faction);
                 character.SetForcedInteraction(null);
             }
         }
         interactable.SpawnRandomCharacters(2);
 
-        state.descriptionLog.AddToFillers(newFaction, newFaction.name, LOG_IDENTIFIER.FACTION_1);
+        state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2);
 
-        state.AddLogFiller(new LogFiller(newFaction, newFaction.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2));
     }
     private void TurnCritFailEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Bestalia faction. Current area becomes owned by Bestalia faction, set its race to the character's race.
-        _characterInvolved.SetForcedInteraction(null);
         Faction oldFaction = _characterInvolved.faction;
-        _characterInvolved.faction.RemoveCharacter(_characterInvolved);
-        Faction newFaction = FactionManager.Instance.GetFactionBasedOnName("Bestalia");
-        newFaction.SetLeader(_characterInvolved);
-        newFaction.AddNewCharacter(_characterInvolved);
-        FactionManager.Instance.neutralFaction.UnownArea(interactable.tileLocation.areaOfTile);
-        LandmarkManager.Instance.OwnArea(newFaction, _characterInvolved.race, interactable.tileLocation.areaOfTile);
+        _characterInvolved.FoundFaction("Bestalia", interactable);
 
         //Set Bestalia faction to Friend of character's original faction
-        newFaction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.FRIEND);
-        newFaction.SetFactionActiveState(true);
+        _characterInvolved.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.FRIEND);
+        _characterInvolved.faction.SetFactionActiveState(true);
 
         //All beasts in the location will change faction and home to the current location. Spawn 2 new characters in the location or until the resident capacity has been reached. Race is the same as the character's. 
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
@@ -236,33 +218,27 @@ public class FoundBestalia : Interaction {
                     character.currentParty.RemoveCharacter(character);
                 }
                 character.MigrateTo(character.specificLocation as BaseLandmark);
-                character.ChangeFactionTo(newFaction);
+                character.ChangeFactionTo(_characterInvolved.faction);
                 character.SetForcedInteraction(null);
             }
         }
         interactable.SpawnRandomCharacters(2);
 
-        state.descriptionLog.AddToFillers(newFaction, newFaction.name, LOG_IDENTIFIER.FACTION_1);
+        state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2);
 
-        state.AddLogFiller(new LogFiller(newFaction, newFaction.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2));
     }
     private void AllianceSuccessEffect(InteractionState state) {
         investigatorMinion.LevelUp();
 
         //Remove character from her current Faction and turn her into the Faction Leader of a new Bestalia faction. Current area becomes owned by Bestalia faction, set its race to the character's race.
-        _characterInvolved.SetForcedInteraction(null);
-        _characterInvolved.faction.RemoveCharacter(_characterInvolved);
-        Faction newFaction = FactionManager.Instance.GetFactionBasedOnName("Bestalia");
-        newFaction.SetLeader(_characterInvolved);
-        newFaction.AddNewCharacter(_characterInvolved);
-        FactionManager.Instance.neutralFaction.UnownArea(interactable.tileLocation.areaOfTile);
-        LandmarkManager.Instance.OwnArea(newFaction, _characterInvolved.race, interactable.tileLocation.areaOfTile);
+        _characterInvolved.FoundFaction("Bestalia", interactable);
 
         //Set Bestalia faction to Ally of player faction.
-        newFaction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ALLY);
-        newFaction.SetFactionActiveState(true);
+        _characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ALLY);
+        _characterInvolved.faction.SetFactionActiveState(true);
 
         //All beasts in the location will change faction and home to the current location. Spawn 2 new characters in the location or until the resident capacity has been reached. Race is the same as the character's. 
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
@@ -275,7 +251,7 @@ public class FoundBestalia : Interaction {
                     character.currentParty.RemoveCharacter(character);
                 }
                 character.MigrateTo(character.specificLocation as BaseLandmark);
-                character.ChangeFactionTo(newFaction);
+                character.ChangeFactionTo(_characterInvolved.faction);
                 character.SetForcedInteraction(null);
             }
         }
@@ -283,13 +259,7 @@ public class FoundBestalia : Interaction {
     }
     private void AllianceFailEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Bestalia faction. Current area becomes owned by Bestalia faction, set its race to the character's race.
-        _characterInvolved.SetForcedInteraction(null);
-        _characterInvolved.faction.RemoveCharacter(_characterInvolved);
-        Faction newFaction = FactionManager.Instance.GetFactionBasedOnName("Bestalia");
-        newFaction.SetLeader(_characterInvolved);
-        newFaction.AddNewCharacter(_characterInvolved);
-        FactionManager.Instance.neutralFaction.UnownArea(interactable.tileLocation.areaOfTile);
-        LandmarkManager.Instance.OwnArea(newFaction, _characterInvolved.race, interactable.tileLocation.areaOfTile);
+        _characterInvolved.FoundFaction("Bestalia", interactable);
 
         //All beasts in the location will change faction and home to the current location. Spawn 2 new characters in the location or until the resident capacity has been reached. Race is the same as the character's. 
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
@@ -302,7 +272,7 @@ public class FoundBestalia : Interaction {
                     character.currentParty.RemoveCharacter(character);
                 }
                 character.MigrateTo(character.specificLocation as BaseLandmark);
-                character.ChangeFactionTo(newFaction);
+                character.ChangeFactionTo(_characterInvolved.faction);
                 character.SetForcedInteraction(null);
             }
         }
@@ -310,17 +280,11 @@ public class FoundBestalia : Interaction {
     }
     private void AllianceCritFailEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Bestalia faction. Current area becomes owned by Bestalia faction, set its race to the character's race.
-        _characterInvolved.SetForcedInteraction(null);
-        _characterInvolved.faction.RemoveCharacter(_characterInvolved);
-        Faction newFaction = FactionManager.Instance.GetFactionBasedOnName("Bestalia");
-        newFaction.SetLeader(_characterInvolved);
-        newFaction.AddNewCharacter(_characterInvolved);
-        FactionManager.Instance.neutralFaction.UnownArea(interactable.tileLocation.areaOfTile);
-        LandmarkManager.Instance.OwnArea(newFaction, _characterInvolved.race, interactable.tileLocation.areaOfTile);
+        _characterInvolved.FoundFaction("Bestalia", interactable);
 
         //Set Bestalia faction to Disliked of player faction.
-        newFaction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
-        newFaction.SetFactionActiveState(true);
+        _characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
+        _characterInvolved.faction.SetFactionActiveState(true);
 
         //All beasts in the location will change faction and home to the current location. Spawn 2 new characters in the location or until the resident capacity has been reached. Race is the same as the character's. 
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
@@ -333,7 +297,7 @@ public class FoundBestalia : Interaction {
                     character.currentParty.RemoveCharacter(character);
                 }
                 character.MigrateTo(character.specificLocation as BaseLandmark);
-                character.ChangeFactionTo(newFaction);
+                character.ChangeFactionTo(_characterInvolved.faction);
                 character.SetForcedInteraction(null);
             }
         }
@@ -344,13 +308,7 @@ public class FoundBestalia : Interaction {
     }
     private void DissuadeFailEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Bestalia faction. Current area becomes owned by Bestalia faction, set its race to the character's race.
-        _characterInvolved.SetForcedInteraction(null);
-        _characterInvolved.faction.RemoveCharacter(_characterInvolved);
-        Faction newFaction = FactionManager.Instance.GetFactionBasedOnName("Bestalia");
-        newFaction.SetLeader(_characterInvolved);
-        newFaction.AddNewCharacter(_characterInvolved);
-        FactionManager.Instance.neutralFaction.UnownArea(interactable.tileLocation.areaOfTile);
-        LandmarkManager.Instance.OwnArea(newFaction, _characterInvolved.race, interactable.tileLocation.areaOfTile);
+        _characterInvolved.FoundFaction("Bestalia", interactable);
 
         //All beasts in the location will change faction and home to the current location. Spawn 2 new characters in the location or until the resident capacity has been reached. Race is the same as the character's. 
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
@@ -363,7 +321,7 @@ public class FoundBestalia : Interaction {
                     character.currentParty.RemoveCharacter(character);
                 }
                 character.MigrateTo(character.specificLocation as BaseLandmark);
-                character.ChangeFactionTo(newFaction);
+                character.ChangeFactionTo(_characterInvolved.faction);
                 character.SetForcedInteraction(null);
             }
         }
@@ -371,13 +329,7 @@ public class FoundBestalia : Interaction {
     }
     private void BestaliaFoundEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Bestalia faction. Current area becomes owned by Bestalia faction, set its race to the character's race.
-        _characterInvolved.SetForcedInteraction(null);
-        _characterInvolved.faction.RemoveCharacter(_characterInvolved);
-        Faction newFaction = FactionManager.Instance.GetFactionBasedOnName("Bestalia");
-        newFaction.SetLeader(_characterInvolved);
-        newFaction.AddNewCharacter(_characterInvolved);
-        FactionManager.Instance.neutralFaction.UnownArea(interactable.tileLocation.areaOfTile);
-        LandmarkManager.Instance.OwnArea(newFaction, _characterInvolved.race, interactable.tileLocation.areaOfTile);
+        _characterInvolved.FoundFaction("Bestalia", interactable);
 
         //All beasts in the location will change faction and home to the current location. Spawn 2 new characters in the location or until the resident capacity has been reached. Race is the same as the character's. 
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
@@ -390,7 +342,7 @@ public class FoundBestalia : Interaction {
                     character.currentParty.RemoveCharacter(character);
                 }
                 character.MigrateTo(character.specificLocation as BaseLandmark);
-                character.ChangeFactionTo(newFaction);
+                character.ChangeFactionTo(_characterInvolved.faction);
                 character.SetForcedInteraction(null);
             }
         }

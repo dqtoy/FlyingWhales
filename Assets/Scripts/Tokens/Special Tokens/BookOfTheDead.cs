@@ -69,13 +69,12 @@ public class BookOfTheDead : SpecialToken {
         state.tokenUser.ChangeClass("Necromancer");
         state.tokenUser.ChangeRace(RACE.SKELETON);
         state.tokenUser.SetForcedInteraction(null);
+        state.tokenUser.MigrateTo(state.tokenUser.specificLocation as BaseLandmark);
 
         Faction oldFaction = state.tokenUser.faction;
-        state.tokenUser.faction.RemoveCharacter(state.tokenUser);
-
         Faction newFaction = FactionManager.Instance.GetFactionBasedOnName("Ziranna");
         newFaction.SetLeader(state.tokenUser);
-        newFaction.AddNewCharacter(state.tokenUser);
+        state.tokenUser.ChangeFactionTo(newFaction);
         FactionManager.Instance.neutralFaction.UnownArea(state.tokenUser.specificLocation.tileLocation.areaOfTile);
         LandmarkManager.Instance.OwnArea(newFaction, newFaction.raceType, state.tokenUser.specificLocation.tileLocation.areaOfTile);
 
