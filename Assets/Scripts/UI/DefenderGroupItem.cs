@@ -35,7 +35,7 @@ public class DefenderGroupItem : PooledObject {
     }
 
     public void UpdateSlots() {
-        if (defender.party == null) { //this is for when the defender party has been wiped out
+        if (defender == null || defender.party == null) { //this is for when the defender party has been wiped out
             for (int i = 0; i < slots.Length; i++) {
                 SlotItem currItem = slots[i];
                 currItem.ClearSlot(true);
