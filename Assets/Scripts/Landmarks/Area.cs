@@ -15,6 +15,7 @@ public class Area {
     public bool hasBeenInspected { get; private set; }
     public bool areAllLandmarksDead { get; private set; }
     public bool stopDefaultAllExistingInteractions { get; private set; }
+    public bool isDead { get; private set; }
     public AREA_TYPE areaType { get; private set; }
     public HexTile coreTile { get; private set; }
     public Color areaColor { get; private set; }
@@ -259,7 +260,6 @@ public class Area {
 #endif
             OnTileAddedToArea(tile);
             Messenger.Broadcast(Signals.AREA_TILE_ADDED, this, tile);
-            CheckDeath();
         }
     }
     public void RemoveTile(List<HexTile> tiles, bool determineOuterTiles = true) {
@@ -613,37 +613,38 @@ public class Area {
         //    }
         //}
     }
-    public void CheckDeath() {
-        for (int i = 0; i < tiles.Count; i++) {
-            if (tiles[i].landmarkOnTile != null) {
-                areAllLandmarksDead = false;
-                return;
-            }
-        }
-        areAllLandmarksDead = true;
-    }
     public void SetAttackTargetAndCharacters(Area target, List<Character> characters) {
         attackTarget = target;
         attackCharacters = characters;
     }
     public void Death() {
-        if (owner != null) {
-            for (int i = 0; i < areaResidents.Count; i++) {
-                Character resident = areaResidents[i];
-                if (!resident.isFactionless && !resident.currentParty.icon.isTravelling && resident.faction.id == owner.id && resident.id != resident.faction.leader.id && resident.specificLocation.tileLocation.areaOfTile.id == id) {
-                    resident.Death();
+        if (!isDead) {
+            isDead = true;
+            if (owner != null) {
+                for (int i = 0; i < areaResidents.Count; i++) {
+                    Character resident = areaResidents[i];
+                    if (!resident.isFactionless && !resident.currentParty.icon.isTravelling && resident.faction.id == owner.id && resident.id != resident.faction.leader.id && resident.specificLocation.tileLocation.areaOfTile.id == id) {
+                        resident.Death();
+                    }
+                }
+                LandmarkManager.Instance.UnownArea(this);
+            }
+
+            FactionManager.Instance.neutralFaction.OwnArea(this);
+
+            if (previousOwner != null && previousOwner.leader != null && previousOwner.leader is Character) {
+                Character leader = previousOwner.leader as Character;
+                if (!leader.currentParty.icon.isTravelling && leader.specificLocation.tileLocation.areaOfTile.id == id && leader.homeLandmark.tileLocation.areaOfTile.id == id) {
+                    leader.Death();
                 }
             }
-            LandmarkManager.Instance.UnownArea(this);
+
+            ReleaseAllAbductedCharacters();
         }
-
-        FactionManager.Instance.neutralFaction.OwnArea(this);
-
-        if (previousOwner != null && previousOwner.leader != null && previousOwner.leader is Character) {
-            Character leader = previousOwner.leader as Character;
-            if (!leader.currentParty.icon.isTravelling && leader.specificLocation.tileLocation.areaOfTile.id == id && leader.homeLandmark.tileLocation.areaOfTile.id == id) {
-                leader.Death();
-            }
+    }
+    private void ReleaseAllAbductedCharacters() {
+        for (int i = 0; i < charactersAtLocation.Count; i++) {
+            charactersAtLocation[i].ReleaseFromAbduction();
         }
     }
     public bool IsHostileTowards(Character character) {

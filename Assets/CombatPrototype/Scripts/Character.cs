@@ -3065,6 +3065,20 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         }
         return null;
     }
+    public bool ReleaseFromAbduction() {
+        Trait trait = GetTrait("Abducted");
+        if (trait != null) {
+            Abducted abductedTrait = trait as Abducted;
+            RemoveTrait(abductedTrait);
+            MigrateTo(abductedTrait.originalHomeLandmark);
+
+            Interaction interactionAbducted = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, specificLocation as BaseLandmark);
+            SetForcedInteraction(interactionAbducted);
+            SetDailyInteractionGenerationTick(GameManager.Instance.continuousDays + 1);
+            return true;
+        }
+        return false;
+    }
     #endregion
 
     #region Morality
