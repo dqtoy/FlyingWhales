@@ -22,7 +22,7 @@ public class MoveToExplore : Interaction {
         InteractionState characterExploreContinues = new InteractionState(Character_Explore_Continues, this);
         InteractionState doNothing = new InteractionState(Do_Nothing, this);
 
-        targetLocation = GetTargetLocation();
+        targetLocation = GetTargetLocation(_characterInvolved);
         AddToDebugLog(_characterInvolved.name + " chose to explore " + targetLocation.name);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
@@ -64,6 +64,12 @@ public class MoveToExplore : Interaction {
             state.AddActionOption(doNothing);
             state.SetDefaultOption(doNothing);
         }
+    }
+    public override bool CanInteractionBeDoneBy(Character character) {
+        if (GetTargetLocation(character) == null) {
+            return false;
+        }
+        return base.CanInteractionBeDoneBy(character);
     }
     #endregion
 
@@ -121,16 +127,42 @@ public class MoveToExplore : Interaction {
         }
     }
 
-    private Area GetTargetLocation() {
-        List<Area> choices = new List<Area>();
+    private Area GetTargetLocation(Character character) {
+        WeightedDictionary<Area> choices = new WeightedDictionary<Area>();
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
-            if ((currArea.owner == null || currArea.owner.id != _characterInvolved.faction.id) && currArea.id != PlayerManager.Instance.player.playerArea.id) {
-                choices.Add(currArea);
+            if (currArea.id != PlayerManager.Instance.player.playerArea.id) {
+                int weight = 0;
+                if (currArea.owner != null) {
+                    if (currArea.owner.id == character.faction.id) {
+                        weight += 10; // Location is owned by the character's faction: Weight +10
+                    } else {
+                        FactionRelationship rel = currArea.owner.GetRelationshipWith(character.faction);
+                        if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY) {
+                            weight += 20; //Location is owned by an Enemy faction: Weight +20
+                        } else {
+                            weight += 50; //Location is owned by a non-Enemy faction: Weight +50
+                        }
+                    }
+                } else {
+                    //Location is unoccupied: If character has a special class such as Necromancer, Archmage, Witch or Beastmaster, Weight +150. Otherwise Weight +50
+                    if (character.characterClass.className.Equals("Necromancer")
+                        || character.characterClass.className.Equals("Archmage")
+                        || character.characterClass.className.Equals("Witch")
+                        || character.characterClass.className.Equals("Beastmaster")) {
+                        weight += 150;
+                    } else {
+                        weight += 50;
+                    }
+                }
+
+                if (weight > 0) {
+                    choices.AddElement(currArea, weight);
+                }
             }
         }
-        if (choices.Count > 0) {
-            return choices[Random.Range(0, choices.Count)];
+        if (choices.GetTotalOfWeights() > 0) {
+            return choices.PickRandomElementGivenWeights();
         }
         return null;
     }
