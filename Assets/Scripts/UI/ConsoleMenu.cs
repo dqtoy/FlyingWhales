@@ -78,6 +78,11 @@ public class ConsoleMenu : UIMenu {
         var reg = new Regex("\".*?\"");
         var parameters = reg.Matches(command).Cast<Match>().Select(m => m.Value).ToArray();
         //List<string> parameters = matches.Cast<string>().ToList();
+        for (int i = 0; i < parameters.Length; i++) {
+            string currParameter = parameters[i];
+            string trimmed = currParameter.Trim(new char[] { '"' });
+            parameters[i] = trimmed;
+        }
 
         if (_consoleActions.ContainsKey(mainCommand)) {
             _consoleActions[mainCommand](parameters);
