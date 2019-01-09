@@ -116,7 +116,8 @@ public class StealAction : Interaction {
         resultWeights.AddWeightToElement(RESULT.SUCCESS, 30);
 
         string nextState = string.Empty;
-        switch (resultWeights.PickRandomElementGivenWeights()) {
+        RESULT result = resultWeights.PickRandomElementGivenWeights();
+        switch (result) {
             case RESULT.SUCCESS:
                 nextState = Assisted_Theft_Success;
                 break;
@@ -135,7 +136,8 @@ public class StealAction : Interaction {
         resultWeights.AddWeightToElement(RESULT.CRITICAL_FAIL, 20);
 
         string nextState = string.Empty;
-        switch (resultWeights.PickRandomElementGivenWeights()) {
+        RESULT result = resultWeights.PickRandomElementGivenWeights();
+        switch (result) {
             case RESULT.SUCCESS:
                 nextState = Thwarted_Theft_Success;
                 break;
@@ -152,7 +154,8 @@ public class StealAction : Interaction {
         WeightedDictionary<RESULT> resultWeights = _characterInvolved.job.GetJobRateWeights();
 
         string nextState = string.Empty;
-        switch (resultWeights.PickRandomElementGivenWeights()) {
+        RESULT result = resultWeights.PickRandomElementGivenWeights();
+        switch (result) {
             case RESULT.SUCCESS:
                 nextState = Normal_Theft_Success;
                 break;
@@ -181,8 +184,15 @@ public class StealAction : Interaction {
         //**Mechanics**: Transfer item from target character to the thief.
         TransferItem(targetCharacter, _characterInvolved);
 
-        //**Mechanics**: Relationship between the two factions -1
-        AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+        if (targetCharacter.faction.id != _characterInvolved.faction.id) {
+            //**Mechanics**: If different faction, relationship between the two factions -1.
+            AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+        } else {
+            //**Mechanics**: If same faction, personal relationship between the two characters -1. Thief gains Criminal trait.
+            CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(targetCharacter, _characterInvolved, -1);
+            _characterInvolved.AddTrait(new Criminal());
+        }
+
 
         //**Level Up**: Thief Character +1, Instigator +1
         _characterInvolved.LevelUp();
@@ -198,8 +208,15 @@ public class StealAction : Interaction {
         state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1));
 
-        //**Mechanics**: Relationship between the two factions -1
-        AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+
+        if (targetCharacter.faction.id != _characterInvolved.faction.id) {
+            //**Mechanics**: If different faction, relationship between the two factions -1.
+            AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+        } else {
+            //**Mechanics**: If same faction, personal relationship between the two characters -1. Thief gains Criminal trait.
+            CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(targetCharacter, _characterInvolved, -1);
+            _characterInvolved.AddTrait(new Criminal());
+        }
     }
     private void AssistedTheftCriticalFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
@@ -225,6 +242,14 @@ public class StealAction : Interaction {
 
         //**Mechanics**: Transfer item from target character to the thief.
         TransferItem(targetCharacter, _characterInvolved);
+
+        //**Mechanics**: If same faction, 50% chance that personal relationship between the two characters -1 and Thief gains Criminal trait.
+        if (targetCharacter.faction.id == _characterInvolved.faction.id) {
+            if (Random.Range(0, 100) < 50) {
+                CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(targetCharacter, _characterInvolved, -1);
+                _characterInvolved.AddTrait(new Criminal());
+            }
+        }
 
         //**Level Up**: Thief Character +1
         _characterInvolved.LevelUp();
@@ -273,8 +298,17 @@ public class StealAction : Interaction {
 
         //**Mechanics**: Transfer item from target character to the thief.
         TransferItem(targetCharacter, _characterInvolved);
-        //**Level Up**: Thief Character +1
-        _characterInvolved.LevelUp();
+
+        //**Mechanics**: If same faction, 50% chance that personal relationship between the two characters -1 and Thief gains Criminal trait.
+        if (targetCharacter.faction.id == _characterInvolved.faction.id) {
+            if (Random.Range(0, 100) < 50) {
+                CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(targetCharacter, _characterInvolved, -1);
+                _characterInvolved.AddTrait(new Criminal());
+        }
+    }
+
+    //**Level Up**: Thief Character +1
+    _characterInvolved.LevelUp();
     }
     private void NormalTheftFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
@@ -306,11 +340,24 @@ public class StealAction : Interaction {
         this.targetCharacter = targetCharacter;
     }
     public Character GetTargetCharacter(Character characterInvolved) {
-        //randomly select any character in the location holding an item that is not part of the character's faction.
+        /*
+         Once the actual action is triggered, the character will randomly select any character in the location holding 
+         an item that is not part of the character's faction. 
+         If the character has Crooked trait, this will include characters from his own faction.
+         */
         List<Character> choices = new List<Character>();
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
             Character currCharacter = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
-            if (currCharacter.tokenInInventory != null && (currCharacter.isFactionless || currCharacter.faction.id != characterInvolved.faction.id)) {
+            if (currCharacter.tokenInInventory != null 
+                && currCharacter.id != characterInvolved.id
+                && !currCharacter.currentParty.icon.isTravelling
+                && currCharacter.minion == null) {
+                if (currCharacter.faction.id == characterInvolved.faction.id) {
+                    //check if the character involved is crooked
+                    if (characterInvolved.GetTrait("Crooked") == null) {
+                        continue; //skip
+                    }
+                }
                 choices.Add(currCharacter);
             }
         }

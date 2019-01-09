@@ -390,7 +390,7 @@ public class PatrolAction : Interaction {
         List<Character> choices = new List<Character>();
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
             Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
-            if (character.id == _characterInvolved.id) {
+            if (character.id == _characterInvolved.id || character.currentParty.icon.isTravelling) {
                 continue; //skip
             }
             if (character.isFactionless) {

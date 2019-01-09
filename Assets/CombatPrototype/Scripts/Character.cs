@@ -1719,8 +1719,15 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     #endregion
 
     #region Faction
-    public void SetFaction(Faction faction) {
-        _faction = faction;
+    public void SetFaction(Faction newFaction) {
+        if (_faction != null 
+            && newFaction != null
+            && _faction.id == newFaction.id) {
+            //ignore change, because character is already part of that faction
+            return;
+        }
+        _faction = newFaction;
+        OnChangeFaction();
         UpdateTokenOwner();
         if (_faction != null) {
             Messenger.Broadcast<Character>(Signals.FACTION_SET, this);
@@ -1729,6 +1736,13 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public void ChangeFactionTo(Faction newFaction) {
         faction.RemoveCharacter(this);
         newFaction.AddNewCharacter(this);
+    }
+    private void OnChangeFaction() {
+        //check if this character has a Criminal Trait, if so, remove it
+        Trait criminal = GetTrait("Criminal");
+        if (criminal != null) {
+            RemoveTrait(criminal, false);
+        }
     }
     #endregion
 
@@ -2878,6 +2892,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     }
     public void AddInteraction(Interaction interaction) {
         //_currentInteractions.Add(interaction);
+        if (interaction == null) {
+            throw new Exception("Something is trying to add null interaction");
+        }
         interaction.SetCharacterInvolved(this);
         interaction.interactable.AddInteraction(interaction);
         //interaction.Initialize(this);
@@ -2923,11 +2940,13 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         }
         trait.OnAddTrait(this);
     }
-    public bool RemoveTrait(Trait trait) {
+    public bool RemoveTrait(Trait trait, bool triggerOnRemove = true) {
         for (int i = 0; i < _traits.Count; i++) {
             if (_traits[i].name == trait.name) {
                 UnapplyFlatTraitEffects(_traits[i]);
-                _traits[i].OnRemoveTrait(this);
+                if (triggerOnRemove) {
+                    _traits[i].OnRemoveTrait(this);
+                }
                 _traits.RemoveAt(i);
                 return true;
             }
@@ -3064,6 +3083,13 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             }
         }
         return null;
+    }
+    public void GenerateRandomTraits() {
+        //All characters have a 1 in 8 chance of having Crooked trait when spawned
+        if (UnityEngine.Random.Range(0, 8) < 1) {
+            AddTrait(AttributeManager.Instance.allTraits["Crooked"]);
+            Debug.Log(this.name + " is set to be Crooked");
+        }
     }
     public bool ReleaseFromAbduction() {
         Trait trait = GetTrait("Abducted");

@@ -786,7 +786,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public void AddTrait(Trait combatAttribute) {
         //Not applicable
     }
-    public bool RemoveTrait(Trait combatAttribute) {
+    public bool RemoveTrait(Trait combatAttribute, bool triggerOnRemove = true) {
         //Not applicable
         return false;
     }

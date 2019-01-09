@@ -163,7 +163,7 @@ public class UnexploredCave : Interaction {
         }
 
         if(chosenClass != string.Empty) {
-            Character newDefender = CharacterManager.Instance.CreateNewCharacter(chosenClass, chosenRace, GENDER.MALE, null, _interactable, false);
+            Character newDefender = CharacterManager.Instance.CreateNewCharacter(chosenClass, chosenRace, GENDER.MALE, null, _interactable);
             BaseLandmark landmark = _interactable;
             //landmark.AddDefender(newDefender);
 

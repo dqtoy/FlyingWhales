@@ -307,7 +307,8 @@ public class SpreadUndeathAction : Interaction {
             Character currCharacter = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
             if (currCharacter.id != characterInvolved.id 
                 && !currCharacter.isLeader 
-                && !currCharacter.isDefender 
+                && !currCharacter.isDefender
+                && !currCharacter.currentParty.icon.isTravelling
                 && currCharacter.minion == null 
                 && currCharacter.faction.id != characterInvolved.faction.id) {
                 int weight = 0;

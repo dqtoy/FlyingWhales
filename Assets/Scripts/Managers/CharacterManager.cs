@@ -153,7 +153,7 @@ public class CharacterManager : MonoBehaviour {
     /*
      Create a new character, given a role, class and race.
          */
-    public Character CreateNewCharacter(string className, RACE race, GENDER gender, Faction faction = null, ILocation homeLocation = null, bool createSchedule = true) {
+    public Character CreateNewCharacter(string className, RACE race, GENDER gender, Faction faction = null, ILocation homeLocation = null, bool generateTraits = true) {
 		if(className == "None"){
             className = "Classless";
 		}
@@ -174,10 +174,10 @@ public class CharacterManager : MonoBehaviour {
                 homeLandmark.AddCharacterHomeOnLandmark(newCharacter);
             }
         }
-        //if (createSchedule && newCharacter.role != null && newCharacter.role.roleType != CHARACTER_ROLE.PLAYER) {
-        //    newCharacter.SetSchedule(CharacterScheduleManager.Instance.GetScheduleForCharacter(newCharacter));
-        //}
 #endif
+        if (generateTraits) {
+            newCharacter.GenerateRandomTraits();
+        }
         _allCharacters.Add(newCharacter);
         //CheckForDuplicateIDs(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
@@ -187,9 +187,6 @@ public class CharacterManager : MonoBehaviour {
         Character newCharacter = new Character(data);
         allCharacterLogs.Add(newCharacter, new List<string>());
 
-        //if (data.role != CHARACTER_ROLE.NONE) {
-        //    newCharacter.AssignRole(data.role);
-        //}
         if (data.homeLandmarkID != -1) {
             BaseLandmark homeLandmark = LandmarkManager.Instance.GetLandmarkByID(data.homeLandmarkID);
             if (homeLandmark != null) {
@@ -212,11 +209,6 @@ public class CharacterManager : MonoBehaviour {
             }
 #endif
         }
-#if !WORLD_CREATION_TOOL
-        //if (data.role != CHARACTER_ROLE.PLAYER) {
-        //    newCharacter.SetSchedule(CharacterScheduleManager.Instance.GetScheduleForCharacter(newCharacter));
-        //}
-#endif
 
         if (data.equipmentData != null) {
             for (int i = 0; i < data.equipmentData.Count; i++) {
@@ -242,6 +234,7 @@ public class CharacterManager : MonoBehaviour {
             newCharacter.SetLevel(data.level);
         }
 
+        newCharacter.GenerateRandomTraits();
         _allCharacters.Add(newCharacter);
         //CheckForDuplicateIDs(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
