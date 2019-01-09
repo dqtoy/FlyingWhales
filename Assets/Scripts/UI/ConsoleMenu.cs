@@ -36,6 +36,8 @@ public class ConsoleMenu : UIMenu {
             {"/log_area_characters_history", LogAreaCharactersHistory  },
             {"/get_characters_with_item", GetCharactersWithItem },
             {"/subscribe_to_interaction", SubscribeToInteraction },
+            {"/add_trait_character", AddTraitToCharacter },
+            {"/transfer_character_faction", TransferCharacterToFaction },
         };
 
 #if UNITY_EDITOR
@@ -382,6 +384,59 @@ public class ConsoleMenu : UIMenu {
             }
         }
         AddSuccessMessage(summary);
+    }
+    private void AddTraitToCharacter(string[] parameters) {
+        if (parameters.Length != 2) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of AddTraitToCharacter");
+            return;
+        }
+        string characterParameterString = parameters[0];
+        string traitParameterString = parameters[1];
+
+        Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+
+        if (character == null) {
+            AddErrorMessage("There is no character named " + characterParameterString);
+            return;
+        }
+
+        if (AttributeManager.Instance.allTraits.ContainsKey(traitParameterString)) {
+            character.AddTrait(AttributeManager.Instance.allTraits[traitParameterString]);
+        } else {
+            switch (traitParameterString) {
+                case "Criminal":
+                    character.AddTrait(new Criminal());
+                    break;
+                default:
+                    AddErrorMessage("There is no trait called " + traitParameterString);
+                    return;
+            }
+        }
+        AddSuccessMessage("Added " + traitParameterString + " to " + character.name);
+    }
+    private void TransferCharacterToFaction(string[] parameters) {
+        if (parameters.Length != 2) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of TransferCharacterToFaction");
+            return;
+        }
+        string characterParameterString = parameters[0];
+        string factionParameterString = parameters[1];
+
+        Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+        if (character == null) {
+            AddErrorMessage("There is no character named " + characterParameterString);
+            return;
+        }
+        Faction faction = FactionManager.Instance.GetFactionBasedOnName(factionParameterString);
+        if (faction == null) {
+            AddErrorMessage("There is no faction named " + factionParameterString);
+            return;
+        }
+
+        character.ChangeFactionTo(faction);
+        AddSuccessMessage("Transferred " + character.name + " to " + faction.name);
     }
     #endregion
 
