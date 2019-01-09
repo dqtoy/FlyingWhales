@@ -95,6 +95,8 @@ public class CameraMove : MonoBehaviour {
             //camera scrolling code
             float fov = Camera.main.orthographicSize;
             float adjustment = Input.GetAxis("Mouse ScrollWheel") * (sensitivity);
+
+
             //Debug.Log(adjustment);
             fov -= adjustment;
             //fov = Mathf.Round(fov * 100f) / 100f;

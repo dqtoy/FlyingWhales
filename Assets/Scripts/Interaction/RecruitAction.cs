@@ -238,6 +238,7 @@ public class RecruitAction : Interaction {
             if (currCharacter.id != characterInvolved.id 
                 && !currCharacter.isLeader 
                 && !currCharacter.isDefender 
+                && !currCharacter.currentParty.icon.isTravelling
                 && currCharacter.minion == null
                 && currCharacter.faction.id != characterInvolved.faction.id) { //- character must not be in Defender Tile.
                 int weight = 0;

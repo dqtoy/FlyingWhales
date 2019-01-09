@@ -106,7 +106,7 @@ public interface ICharacter {
     void AddTrait(Trait combatAttribute);
     bool IsInParty();
     bool IsInOwnParty();
-    bool RemoveTrait(Trait combatAttribute);
+    bool RemoveTrait(Trait combatAttribute, bool triggerOnRemove = true);
     Party CreateOwnParty();
     CharacterAttribute GetAttribute(string attribute);
     CharacterAction GetRandomMiscAction(ref IObject targetObject);

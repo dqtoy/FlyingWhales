@@ -325,7 +325,7 @@ public class MysteriousSarcophagus : Interaction {
         }
         WeightedDictionary<AreaCharacterClass> classWeights = LandmarkManager.Instance.GetDefaultDefenderWeights(new Race(race, RACE_SUB_TYPE.NORMAL));
         string className = classWeights.PickRandomElementGivenWeights().className;
-        _undeadCharacter = CharacterManager.Instance.CreateNewCharacter(className, race, Utilities.GetRandomGender(), interactable.tileLocation.areaOfTile.owner, interactable, false);
+        _undeadCharacter = CharacterManager.Instance.CreateNewCharacter(className, race, Utilities.GetRandomGender(), interactable.tileLocation.areaOfTile.owner, interactable);
         _undeadCharacter.SetLevel(FactionManager.Instance.GetAverageFactionLevel() + levelModifier);
     }
 }
