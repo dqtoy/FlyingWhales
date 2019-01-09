@@ -45,9 +45,10 @@ public class AreaInfoUI : UIMenu {
     [Space(10)]
     [Header("Defenders")]
     [SerializeField] private LandmarkCharacterItem[] defenderSlots;
-    [SerializeField] private GameObject defenderGroupPrefab;
-    [SerializeField] private ScrollRect defendersScrollView;
-    [SerializeField] private HorizontalScrollSnap defendersScrollSnap;
+    [SerializeField] private DefenderGroupItem defenderGroupItem;
+    //[SerializeField] private GameObject defenderGroupPrefab;
+    //[SerializeField] private ScrollRect defendersScrollView;
+    //[SerializeField] private HorizontalScrollSnap defendersScrollSnap;
     [SerializeField] private TextMeshProUGUI defenderPageLbl;
 
     [Space(10)]
@@ -113,6 +114,7 @@ public class AreaInfoUI : UIMenu {
         Messenger.AddListener<Minion, Area>(Signals.MINION_STARTS_INVESTIGATING_AREA, OnMinionInvestigateArea);
         Messenger.AddListener<Area>(Signals.AREA_SUPPLIES_CHANGED, OnAreaSuppliesSet);
         Messenger.AddListener<Area>(Signals.AREA_DEFENDERS_CHANGED, OnAreaDefendersChanged);
+        Messenger.AddListener<Area>(Signals.AREA_OWNER_CHANGED, OnAreaOwnerChanged);
         _assignedParty = new Minion[4];
 
         //Minion Investigator slot
@@ -334,6 +336,11 @@ public class AreaInfoUI : UIMenu {
     private void UpdateSupplies() {
         suppliesNameLbl.text = activeArea.suppliesInBank.ToString();
     }
+    private void OnAreaOwnerChanged(Area area) {
+        if (this.isShowing && activeArea.id == area.id) {
+            UpdateBasicInfo();
+        }
+    }
     #endregion
 
     #region Log History
@@ -488,20 +495,21 @@ public class AreaInfoUI : UIMenu {
 
     #region Defenders
     private void UpdateDefenders() {
-        defendersScrollSnap.enabled = false;
-        Utilities.DestroyChildren(defendersScrollView.content);
-        defendersScrollSnap.ChildObjects = new GameObject[0];
-        for (int i = 0; i < activeArea.defenderGroups.Count; i++) {
-            DefenderGroup currGroup = activeArea.defenderGroups[i];
-            GameObject currGO = UIManager.Instance.InstantiateUIObject(defenderGroupPrefab.name, defendersScrollView.content);
-            currGO.GetComponent<DefenderGroupItem>().SetDefender(currGroup);
-        }
+        //defendersScrollSnap.enabled = false;
+        //Utilities.DestroyChildren(defendersScrollView.content);
+        //defendersScrollSnap.ChildObjects = new GameObject[0];
+        //for (int i = 0; i < activeArea.defenderGroups.Count; i++) {
+        //    DefenderGroup currGroup = activeArea.defenderGroups[i];
+        //    GameObject currGO = UIManager.Instance.InstantiateUIObject(defenderGroupPrefab.name, defendersScrollView.content);
+        //    currGO.GetComponent<DefenderGroupItem>().SetDefender(currGroup);
+        //}
+        defenderGroupItem.SetDefender(activeArea.defenderGroups.FirstOrDefault());
         //defendersScrollSnap.InitialiseChildObjectsFromScene();
-        defendersScrollSnap.enabled = true;
+        //defendersScrollSnap.enabled = true;
         ShowDefenderTokenUI();
     }
     public void UpdateDefenderPage(int newPage) {
-        defenderPageLbl.text = (newPage + 1).ToString() + "/" + defendersScrollSnap.ChildObjects.Length.ToString();
+        //defenderPageLbl.text = (newPage + 1).ToString() + "/" + defendersScrollSnap.ChildObjects.Length.ToString();
     }
     private void OnAreaDefendersChanged(Area area) {
         if (this.isShowing && activeArea.id == area.id) {

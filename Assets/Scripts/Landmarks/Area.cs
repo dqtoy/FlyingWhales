@@ -672,11 +672,11 @@ public class Area {
         return targets;
     }
     public string GetAreaTypeString() {
-        if (race.race != RACE.NONE) {
+        if (_raceType != RACE.NONE) {
             if (tiles.Count > 1) {
-                return Utilities.GetNormalizedSingularRace(race.race) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(GetBaseAreaType().ToString());
+                return Utilities.GetNormalizedSingularRace(_raceType) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(GetBaseAreaType().ToString());
             } else {
-                return Utilities.GetNormalizedSingularRace(race.race) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(coreTile.landmarkOnTile.specificLandmarkType.ToString());
+                return Utilities.GetNormalizedSingularRace(_raceType) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(coreTile.landmarkOnTile.specificLandmarkType.ToString());
             }
         } else {
             return Utilities.NormalizeStringUpperCaseFirstLetters(coreTile.landmarkOnTile.specificLandmarkType.ToString());
