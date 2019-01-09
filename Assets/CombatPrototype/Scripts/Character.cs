@@ -3091,6 +3091,20 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             Debug.Log(this.name + " is set to be Crooked");
         }
     }
+    public bool ReleaseFromAbduction() {
+        Trait trait = GetTrait("Abducted");
+        if (trait != null) {
+            Abducted abductedTrait = trait as Abducted;
+            RemoveTrait(abductedTrait);
+            MigrateTo(abductedTrait.originalHomeLandmark);
+
+            Interaction interactionAbducted = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, specificLocation as BaseLandmark);
+            SetForcedInteraction(interactionAbducted);
+            SetDailyInteractionGenerationTick(GameManager.Instance.continuousDays + 1);
+            return true;
+        }
+        return false;
+    }
     #endregion
 
     #region Morality
@@ -3210,7 +3224,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                     awayFromHomeInteractionWeights.AddElement(tokenInInventory.tokenName, 70);
                 }
                 INTERACTION_TYPE[] triggeredInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.FOUND_LUCARETH, INTERACTION_TYPE.FOUND_BESTALIA, INTERACTION_TYPE.FOUND_MAGUS, INTERACTION_TYPE.CHANCE_ENCOUNTER };
-                int[] triggeredInteractionsWeights = new int[] { 50, 50, 50, 10 };
+                int[] triggeredInteractionsWeights = new int[] { 50, 50, 50, 2 };
 
                 for (int i = 0; i < triggeredInteractions.Length; i++) {
                     if (InteractionManager.Instance.CanCreateInteraction(triggeredInteractions[i], this)) {
@@ -3243,7 +3257,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 WeightedDictionary<string> atHomeInteractionWeights = new WeightedDictionary<string>();
                 atHomeInteractionWeights.AddElement("DoNothing", 100);
                 if(InteractionManager.Instance.CanCreateInteraction(INTERACTION_TYPE.CHANCE_ENCOUNTER, this)) {
-                    atHomeInteractionWeights.AddElement(INTERACTION_TYPE.CHANCE_ENCOUNTER.ToString(), 10);
+                    atHomeInteractionWeights.AddElement(INTERACTION_TYPE.CHANCE_ENCOUNTER.ToString(), 2);
                 }
                 if (tokenInInventory != null) {
                     if (tokenInInventory.CanBeUsedBy(this) && InteractionManager.Instance.CanCreateInteraction(tokenInInventory.npcAssociatedInteractionType, this)) {

@@ -282,7 +282,7 @@ public class BaseLandmark : ILocation, IInteractable {
         //if (!_landmarkObj.isRuined) {
             //ObjectState ruined = landmarkObj.GetState("Ruined");
             //landmarkObj.ChangeState(ruined);
-            tileLocation.areaOfTile.CheckDeath();
+            //tileLocation.areaOfTile.CheckDeath();
         //}
         //RemoveListeners();
     }

@@ -180,15 +180,7 @@ public class TortureAction : Interaction {
         investigatorMinion.LevelUp();
         AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, targetCharacter.faction, 1, state);
 
-        Abducted abductedTrait = targetCharacter.GetTrait("Abducted") as Abducted;
-        targetCharacter.MigrateTo(abductedTrait.originalHomeLandmark);
-
-        Interaction interactionAbducted = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, interactable);
-        targetCharacter.SetForcedInteraction(interactionAbducted);
-        targetCharacter.SetDailyInteractionGenerationTick(GameManager.Instance.continuousDays + 1);
-
-        targetCharacter.RemoveTrait(abductedTrait);
-
+        targetCharacter.ReleaseFromAbduction();
     }
     private void ReleaseCharacterDiedEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
