@@ -183,7 +183,8 @@ public class Job {
         if(_createdInteraction != null) {
             _createdInteraction.interactable.landmarkVisual.StopInteractionTimer();
             _createdInteraction.interactable.landmarkVisual.HideInteractionTimer();
-            _createdInteraction.TimedOutRunDefault();
+            string summary = string.Empty;
+            _createdInteraction.TimedOutRunDefault(ref summary);
         }
     }
     private void CheckJobAction() {
@@ -227,7 +228,9 @@ public class Job {
     //}
     public void ForceDefaultAllExistingInteractions() {
         _character.specificLocation.tileLocation.areaOfTile.SetStopDefaultInteractionsState(false);
-        _character.specificLocation.tileLocation.areaOfTile.DefaultAllExistingInteractions();
+        string summary = "";
+        InteractionManager.Instance.DefaultInteractionsInArea(_character.specificLocation.tileLocation.areaOfTile, ref summary);
+        //_character.specificLocation.tileLocation.areaOfTile.DefaultAllExistingInteractions();
     }
     public int GetSupplyObtained(Area targetArea) {
         //When a raid succeeds, the amount of Supply obtained is based on character level.

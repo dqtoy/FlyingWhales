@@ -32,6 +32,9 @@ public class InteractionManager : MonoBehaviour {
         interactionUIQueue = new Queue<Interaction>();
         Messenger.AddListener<Interaction>(Signals.CLICKED_INTERACTION_BUTTON, OnClickInteraction);
     }
+    public void Initialize() {
+        Messenger.AddListener(Signals.DAY_ENDED_2, ExecuteInteractionsDefault);
+    }
     public Interaction CreateNewInteraction(INTERACTION_TYPE interactionType, BaseLandmark interactable) {
         Interaction createdInteraction = null;
         switch (interactionType) {
@@ -750,6 +753,51 @@ public class InteractionManager : MonoBehaviour {
     }
     public void AddToInteractionQueue(Interaction interaction) {
         interactionUIQueue.Enqueue(interaction);
+    }
+
+    private void ExecuteInteractionsDefault() {
+        string summary = GameManager.Instance.TodayLogString() + "Executing interactions";
+        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+            Area currArea = LandmarkManager.Instance.allAreas[i];
+            DefaultInteractionsInArea(currArea, ref summary);
+        }
+        summary += "\n==========Done==========";
+        Debug.Log(summary);
+    }
+    public void DefaultInteractionsInArea(Area area, ref string log) {
+        log += "\n==========Executing " + area.name + "'s interactions==========";
+        if (area.stopDefaultAllExistingInteractions) {
+            log += "\nCannot run areas default interactions because area interactions have been disabled";
+            return; //skip
+        }
+        List<Interaction> interactionsInArea = new List<Interaction>(area.currentInteractions);
+        if (interactionsInArea.Count == 0) {
+            log += "\nNo interactions in area";
+            return;
+        }
+
+        for (int j = 0; j < interactionsInArea.Count; j++) {
+            Interaction currInteraction = interactionsInArea[j];
+            Character character = currInteraction.characterInvolved;
+            if (!currInteraction.hasActivatedTimeOut) {
+                if (character == null || currInteraction.CanInteractionBeDoneBy(character)) {
+                    log += "\nRunning interaction default " + currInteraction.type.ToString();
+                    if (character != null) {
+                        log += " Involving " + character.name;
+                    }
+                    currInteraction.TimedOutRunDefault(ref log);
+                    log += "\n";
+                } else {
+                    area.RemoveInteraction(currInteraction);
+                    log += "\n" + character.name + " is unable to perform " + currInteraction.name + "!";
+                    //Unable to perform
+                    Interaction unable = CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, area.coreTile.landmarkOnTile);
+                    character.AddInteraction(unable);
+                    unable.TimedOutRunDefault(ref log);
+                    log += "\n";
+                }
+            }
+        }
     }
 
     //public List<T> GetAllCurrentInteractionsOfType<T>(INTERACTION_TYPE type) {

@@ -17,11 +17,11 @@ public class DropItem : Interaction {
         _states.Add(startState.name, startState);
         SetCurrentState(startState);
     }
-    public override bool CanStillDoInteraction() {
-        if (_characterInvolved.tokenInInventory == null) {
+    public override bool CanInteractionBeDoneBy(Character character) {
+        if (character.tokenInInventory == null) {
             return false;
         }
-        return base.CanStillDoInteraction();
+        return base.CanInteractionBeDoneBy(character);
     }
     #endregion
 

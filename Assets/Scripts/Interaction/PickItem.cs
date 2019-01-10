@@ -19,15 +19,15 @@ public class PickItem : Interaction {
         _states.Add(startState.name, startState);
         SetCurrentState(startState);
     }
-    public override bool CanStillDoInteraction() {
-        if (_characterInvolved.tokenInInventory != null) {
+    public override bool CanInteractionBeDoneBy(Character character) {
+        if (character.tokenInInventory != null) {
             return false;
         } else {
             for (int i = 0; i < interactable.tileLocation.areaOfTile.possibleSpecialTokenSpawns.Count; i++) {
                 SpecialToken token = interactable.tileLocation.areaOfTile.possibleSpecialTokenSpawns[i];
                 if (token.npcAssociatedInteractionType != INTERACTION_TYPE.USE_ITEM_ON_SELF) {
                     pickWeights.AddElement(token, 60);
-                } else if (token.CanBeUsedBy(_characterInvolved)) {
+                } else if (token.CanBeUsedBy(character)) {
                     pickWeights.AddElement(token, 100);
                 }
             }
@@ -35,8 +35,26 @@ public class PickItem : Interaction {
                 return false;
             }
         }
-        return base.CanStillDoInteraction();
+        return base.CanInteractionBeDoneBy(character);
     }
+    //public override bool CanStillDoInteraction() {
+    //    if (_characterInvolved.tokenInInventory != null) {
+    //        return false;
+    //    } else {
+    //        for (int i = 0; i < interactable.tileLocation.areaOfTile.possibleSpecialTokenSpawns.Count; i++) {
+    //            SpecialToken token = interactable.tileLocation.areaOfTile.possibleSpecialTokenSpawns[i];
+    //            if (token.npcAssociatedInteractionType != INTERACTION_TYPE.USE_ITEM_ON_SELF) {
+    //                pickWeights.AddElement(token, 60);
+    //            } else if (token.CanBeUsedBy(_characterInvolved)) {
+    //                pickWeights.AddElement(token, 100);
+    //            }
+    //        }
+    //        if (pickWeights.Count <= 0) {
+    //            return false;
+    //        }
+    //    }
+    //    return base.CanStillDoInteraction();
+    //}
     #endregion
 
     private void StartRewardEffect(InteractionState state) {

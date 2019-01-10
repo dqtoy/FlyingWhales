@@ -3214,13 +3214,14 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         string interactionLog = GameManager.Instance.TodayLogString() + "Generating daily interaction for " + this.name;
         if (_forcedInteraction != null) {
             interactionLog += "\nUsing forced interaction: " + _forcedInteraction.type.ToString();
-            if(_forcedInteraction.CanInteractionBeDoneBy(this)) {
-                AddInteraction(_forcedInteraction);
-            } else {
-                Interaction unable = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, this.specificLocation.tileLocation.landmarkOnTile);
-                AddInteraction(unable);
-                interactionLog += "\nCan't do forced interaction: " + _forcedInteraction.type.ToString();
-            }
+            AddInteraction(_forcedInteraction);
+            //if(_forcedInteraction.CanInteractionBeDoneBy(this)) {
+            //      AddInteraction(_forcedInteraction);
+            //} else {
+            //    Interaction unable = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, this.specificLocation.tileLocation.landmarkOnTile);
+            //    AddInteraction(unable);
+            //    interactionLog += "\nCan't do forced interaction: " + _forcedInteraction.type.ToString();
+            //}
             _forcedInteraction = null;
         } else {
             if(specificLocation.tileLocation.areaOfTile.id != homeLandmark.tileLocation.areaOfTile.id) {
@@ -3351,14 +3352,14 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         SetForcedInteraction(interaction);
         SetDailyInteractionGenerationTick(GameManager.Instance.continuousDays + 1);
     }
-    private void DefaultAllExistingInteractions() {
-        for (int i = 0; i < _currentInteractions.Count; i++) {
-            if (!_currentInteractions[i].hasActivatedTimeOut) {
-                _currentInteractions[i].TimedOutRunDefault();
-                i--;
-            }
-        }
-    }
+    //private void DefaultAllExistingInteractions() {
+    //    for (int i = 0; i < _currentInteractions.Count; i++) {
+    //        if (!_currentInteractions[i].hasActivatedTimeOut) {
+    //            _currentInteractions[i].TimedOutRunDefault();
+    //            i--;
+    //        }
+    //    }
+    //}
     public Interaction GetInteractionOfType(INTERACTION_TYPE type) {
         for (int i = 0; i < _currentInteractions.Count; i++) {
             Interaction currInteraction = _currentInteractions[i];

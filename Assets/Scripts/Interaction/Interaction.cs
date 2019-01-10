@@ -163,7 +163,7 @@ public class Interaction {
         }
         return true;
     }
-    public virtual bool CanStillDoInteraction() { return true; }
+    //public virtual bool CanStillDoInteraction() { return true; }
     #endregion
 
     #region Utilities
@@ -248,8 +248,9 @@ public class Interaction {
             //_interactable.tileLocation.areaOfTile.areaInvestigation.ExploreArea();
         }
     }
-    public void TimedOutRunDefault() {
-        if((_characterInvolved != null && _characterInvolved.isDead) || !CanStillDoInteraction()) {
+    public void TimedOutRunDefault(ref string summary) {
+        //|| !CanStillDoInteraction()
+        if ((_characterInvolved != null && _characterInvolved.isDead)) {
             EndInteraction();
             return;
         }
@@ -264,6 +265,9 @@ public class Interaction {
         }
         while (!_isDone) {
             _currentState.ActivateDefault();
+        }
+        if (!string.IsNullOrEmpty(summary)) {
+            summary += "\nInteraction summary :" + interactionDebugLog;
         }
     }
     public void SetExplorerMinion(Minion minion) {
