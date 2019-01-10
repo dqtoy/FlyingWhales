@@ -630,7 +630,7 @@ public class Area {
                 LandmarkManager.Instance.UnownArea(this);
             }
 
-            FactionManager.Instance.neutralFaction.OwnArea(this);
+            FactionManager.Instance.neutralFaction.AddToOwnedAreas(this);
 
             if (previousOwner != null && previousOwner.leader != null && previousOwner.leader is Character) {
                 Character leader = previousOwner.leader as Character;

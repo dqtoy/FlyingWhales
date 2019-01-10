@@ -289,47 +289,60 @@ public class CharmAction : Interaction {
     #endregion
 
     private void TransferCharacter(Character character, Faction faction) {
+        AddToDebugLog("Transferring character " + character.name + " to " + faction.name);
+        if (character.isDefender) {
+            AddToDebugLog("Target character is defender of " + character.defendingArea + ", removing him/her as defender...");
+            character.defendingArea.GetFirstDefenderGroup().RemoveCharacterFromGroup(character);
+        }
         //only add charmed trait to characters that have not been charmed yet, this is to retain it's original faction
         Charmed charmedTrait = new Charmed(character.faction);
         character.AddTrait(charmedTrait);
         character.faction.RemoveCharacter(character);
         faction.AddNewCharacter(character);
+        AddToDebugLog("Successfully transferred " + character.name + " to " + character.faction.name);
         character.homeLandmark.RemoveCharacterHomeOnLandmark(character);
         _characterInvolved.homeLandmark.AddCharacterHomeOnLandmark(character);
+        AddToDebugLog("Set " + character.name + "'s home to " + character.homeLandmark.tileLocation.areaOfTile.name);
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation.tileLocation.landmarkOnTile);
         character.SetForcedInteraction(interaction);
+        AddToDebugLog("Forced " + character.name + " to go home");
     }
 
     public void SetTargetCharacter(Character targetCharacter) {
         this.targetCharacter = targetCharacter;
+        AddToDebugLog("Set " + targetCharacter.name + " as target");
     }
     public Character GetTargetCharacter(Character characterInvolved) {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
             Character currCharacter = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
             if (currCharacter.id != characterInvolved.id 
-                && !currCharacter.isLeader 
-                && !currCharacter.isDefender 
+                && !currCharacter.isLeader //character must not be a Faction Leader
+                //&& !currCharacter.isDefender 
                 && !currCharacter.currentParty.icon.isTravelling
                 && currCharacter.minion == null 
-                && currCharacter.faction.id != characterInvolved.faction.id) { //- character must not be in Defender Tile.
+                && currCharacter.faction.id != characterInvolved.faction.id
+                && currCharacter.GetFriendTraitWith(characterInvolved) == null) { //character must not be a personal Friend of charmer
                 int weight = 0;
                 if (currCharacter.isFactionless) {
-                    weight += 15; //character is not part of any Faction: Weight +15
+                    weight += 150; // character is not part of any Faction: Weight +150
                 } else if (currCharacter.faction.id != characterInvolved.faction.id) { //exclude characters with same faction
                     //character is part of a Faction with Disliked, Neutral, Friend relationship with recruiter's Faction: Weight +25
                     FactionRelationship rel = currCharacter.faction.GetRelationshipWith(characterInvolved.faction);
                     if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL 
                         || rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED
-                        || rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
-                        weight += 25; 
+                        || rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY) {
+                        weight += 200; //character is part of an Enemy, Disliked or Neutral Faction: Weight +200
+                    } else if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND
+                        || rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ALLY) {
+                        weight += 50; //- character is part of a Friend or Ally Faction: Weight +50
                     }
                 }
 
                 if (currCharacter.level > characterInvolved.level) {
-                    weight -= 20; //character is higher level than Charmer: Weight -20
+                    weight -= 120; //character is higher level than Charmer: Weight -120
                 } else if (currCharacter.level < characterInvolved.level) { //character is same level as Charmer: Weight +0
-                    weight += 10; //character is lower level than Charmer: Weight +10
+                    weight += 50; //character is lower level than Charmer: Weight +50
                 }
 
                 weight = Mathf.Max(0, weight);

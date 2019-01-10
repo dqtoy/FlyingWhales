@@ -74,6 +74,9 @@ public class TokenManager : MonoBehaviour {
                         case "Secret Scroll":
                             createdToken = new SecretScroll();
                             break;
+                        case "Mutagenic Goo":
+                            createdToken = new MutagenicGoo();
+                            break;
                     }
                     if (createdToken != null) {
                         chosenArea.AddSpecialTokenToLocation(createdToken);

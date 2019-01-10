@@ -18,6 +18,7 @@ public class MoveToRecruit : Interaction {
 
     public void SetCharacterToBeRecruited(Character character) {
         targetCharacter = character;
+        AddToDebugLog("Set target character to " + targetCharacter.name);
     }
 
     #region Overrides
@@ -135,43 +136,40 @@ public class MoveToRecruit : Interaction {
     private void CreateRecruitEvent() {
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RECRUIT_ACTION, targetLocation.coreTile.landmarkOnTile);
         (interaction as RecruitAction).SetTargetCharacter(targetCharacter);
-        interaction.SetCanInteractionBeDoneAction(() => IsRecruitActionStillValid(interaction as RecruitAction));
+        //interaction.SetCanInteractionBeDoneAction(() => IsRecruitActionStillValid(interaction as RecruitAction));
         _characterInvolved.SetForcedInteraction(interaction);
     }
-    private bool IsRecruitActionStillValid(RecruitAction recruitAction) {
-        /*
-         If the recruit was induced, the action should already have a target character,
-         check if that character is still at that location
-         */
-        if (recruitAction.targetCharacter != null) {
-            return !_characterInvolved.homeLandmark.tileLocation.areaOfTile.IsResidentsFull() && recruitAction.targetCharacter.specificLocation.tileLocation.areaOfTile.id == targetLocation.id;
-        }
-        /* It will no longer be valid if no recruitable character is available in the location. 
-         * It will also no longer be valid if the recruiter's home area's Residents Capacity is already full.
-         */
-        return !_characterInvolved.homeLandmark.tileLocation.areaOfTile.IsResidentsFull() && recruitAction.GetTargetCharacter(_characterInvolved) != null;
-    }
+    //private bool IsRecruitActionStillValid(RecruitAction recruitAction) {
+    //    /*
+    //     If the recruit was induced, the action should already have a target character,
+    //     check if that character is still at that location
+    //     */
+    //    if (recruitAction.targetCharacter != null) {
+    //        return recruitAction.targetCharacter.specificLocation.tileLocation.areaOfTile.id == targetLocation.id;
+    //    }
+    //    return true;
+    //    /* It will no longer be valid if no recruitable character is available in the location. 
+    //     * It will also no longer be valid if the recruiter's home area's Residents Capacity is already full.
+    //     */
+    //    //return !_characterInvolved.homeLandmark.tileLocation.areaOfTile.IsResidentsFull() && recruitAction.GetTargetCharacter(_characterInvolved) != null;
+    //}
 
     private Area GetTargetLocation(Character characterInvolved) {
+        /*
+         Location Selection Weights:
+
+        - location is Home of an unaligned character: Weight +35
+        - location is Home of a personal Friend that is not from the character's faction: Weight +15
+         */
         WeightedDictionary<Area> locationWeights = new WeightedDictionary<Area>();
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
             int weight = 0;
-            if (currArea.areaType == AREA_TYPE.DEMONIC_INTRUSION) { //skip the player area
-                continue; //skip
+            if (AreaHasUnalignedResident(currArea)) {
+                weight += 35;
             }
-            if (currArea.owner == null) {
-                weight += 35; //- location is not part of any Faction: Weight +35
-            } else if (currArea.owner.id != characterInvolved.faction.id) {
-                FactionRelationship rel = currArea.owner.GetRelationshipWith(characterInvolved.faction); 
-                if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL) {
-                    weight += 15; //- location is part of a Faction with Neutral relationship with recruiter's Faction: Weight +15
-                } else if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
-                    weight += 25; //- location is part of a Faction with Friend relationship with recruiter's Faction: Weight +25
-                }
-            }
-            if (weight > 0) {
-                locationWeights.AddElement(currArea, weight);
+            if (AreaHasNonFactionFriendResident(currArea, characterInvolved)) {
+                weight += 15;
             }
         }
         if (locationWeights.GetTotalOfWeights() > 0) {
@@ -180,6 +178,27 @@ public class MoveToRecruit : Interaction {
         return null;
         //throw new System.Exception(GameManager.Instance.TodayLogString() + _characterInvolved.name + " could not find any location to recruit at!");
     }
+    private bool AreaHasUnalignedResident(Area area) {
+        for (int i = 0; i < area.areaResidents.Count; i++) {
+            Character character = area.areaResidents[i];
+            if (character.isFactionless) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private bool AreaHasNonFactionFriendResident(Area area, Character characterInvolved) {
+        for (int i = 0; i < area.areaResidents.Count; i++) {
+            Character character = area.areaResidents[i];
+            if (!character.isFactionless 
+                && character.faction.id != characterInvolved.faction.id
+                && character.GetFriendTraitWith(characterInvolved) != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     /*
      NOTE: This is for induce only!

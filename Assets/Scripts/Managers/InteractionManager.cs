@@ -321,7 +321,7 @@ public class InteractionManager : MonoBehaviour {
         switch (interactionType) {
             case INTERACTION_TYPE.SPAWN_CHARACTER:
             case INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER:
-                return landmark.tileLocation.areaOfTile.areaResidents.Count < landmark.tileLocation.areaOfTile.residentCapacity && landmark.tileLocation.areaOfTile.race.race != RACE.NONE;
+                return landmark.tileLocation.areaOfTile.areaResidents.Count < landmark.tileLocation.areaOfTile.residentCapacity;
             case INTERACTION_TYPE.BANDIT_RAID:
                 //Random event that occurs on Bandit Camps. Requires at least 3 characters or army units in the Bandit Camp 
                 //character list owned by the Faction owner.
@@ -512,21 +512,32 @@ public class InteractionManager : MonoBehaviour {
                     if (character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) { //check if resident capacity is full
                         return false;
                     }
+                    //**Trigger Criteria 1**: There must be at least one other unaligned character or the character must have a personal friend not from the same faction
+                    for (int i = 0; i < character.traits.Count; i++) {
+                        Trait trait = character.traits[i];
+                        if (trait is Friend) {
+                            Friend friend = trait as Friend;
+                            if (friend.targetCharacter.faction.id != character.faction.id) {
+                                return true;
+                            }
+                        }
+                    }
                     for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
                         Character currCharacter = CharacterManager.Instance.allCharacters[i];
                         if (currCharacter.id != character.id && !currCharacter.isDead) {
                             if (currCharacter.isFactionless) {
                                 //Unaligned?
                                 return true;
-                            } else {
-                                if (currCharacter.faction.id != character.faction.id) {
-                                    relationship = currCharacter.faction.GetRelationshipWith(character.faction);
-                                    if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL
-                                        || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
-                                        return true;
-                                    }
-                                }
-                            }
+                            } 
+                            //else {
+                            //    if (currCharacter.faction.id != character.faction.id) {
+                            //        relationship = currCharacter.faction.GetRelationshipWith(character.faction);
+                            //        if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL
+                            //            || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
+                            //            return true;
+                            //        }
+                            //    }
+                            //}
                         }
                     }
                 }
@@ -545,7 +556,7 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_CHARM:
-                if (character.race == RACE.FAERY || character.race == RACE.ELVES) {
+                if (character.race == RACE.FAERY) {
                     if (!character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
                         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
                             Character currCharacter = CharacterManager.Instance.allCharacters[i];
@@ -788,7 +799,8 @@ public class InteractionManager : MonoBehaviour {
                     currInteraction.TimedOutRunDefault(ref log);
                     log += "\n";
                 } else {
-                    area.RemoveInteraction(currInteraction);
+                    //area.RemoveInteraction(currInteraction);
+                    currInteraction.EndInteraction();
                     log += "\n" + character.name + " is unable to perform " + currInteraction.name + "!";
                     //Unable to perform
                     Interaction unable = CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, area.coreTile.landmarkOnTile);

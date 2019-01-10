@@ -1072,5 +1072,44 @@ public class AreaInfoUI : UIMenu {
     public void HideSpecialTokensAtLocation() {
         UIManager.Instance.HideSmallInfo();
     }
+    public void ClearOutFaction() {
+        if (activeArea.owner != null) {
+            if (activeArea.owner.ownedAreas.Count <= 1) {
+                Debug.Log(activeArea.owner.name + " only has 1 area left! Not allowing clear out this areas faction...");
+                return;
+            }
+
+            List<Character> charactersToMove = new List<Character>();
+            for (int i = 0; i < activeArea.areaResidents.Count; i++) {
+                Character currResident = activeArea.areaResidents[i];
+                if (currResident.faction.id == activeArea.owner.id) {
+                    charactersToMove.Add(currResident);
+                }
+            }
+            DefenderGroup defender = activeArea.GetFirstDefenderGroup();
+            if (defender != null && defender.party != null) {
+                List<Character> defenders = new List<Character>(defender.party.characters);
+                for (int i = 0; i < defenders.Count; i++) {
+                    Character currDefender = defenders[i];
+                    if (currDefender.faction.id == activeArea.owner.id) {
+                        defender.RemoveCharacterFromGroup(currDefender);
+                        charactersToMove.Add(currDefender);
+                    }
+                }
+            }
+            List<Area> choices = new List<Area>(activeArea.owner.ownedAreas);
+            choices.Remove(activeArea);
+            Area moveLocation = choices[Random.Range(0, choices.Count)];
+            for (int i = 0; i < charactersToMove.Count; i++) {
+                Character currCharacter = charactersToMove[i];
+                currCharacter.homeLandmark.RemoveCharacterHomeOnLandmark(currCharacter);
+                moveLocation.coreTile.landmarkOnTile.AddCharacterHomeOnLandmark(currCharacter, true);
+            }
+
+            LandmarkManager.Instance.UnownArea(activeArea);
+            FactionManager.Instance.neutralFaction.AddToOwnedAreas(activeArea);
+            OpenMenu();
+        }
+    }
     #endregion
 }

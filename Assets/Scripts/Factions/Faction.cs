@@ -361,7 +361,7 @@ public class Faction {
         List<Area> areasToUnown = new List<Area>(ownedAreas);
         for (int i = 0; i < areasToUnown.Count; i++) {
             LandmarkManager.Instance.UnownArea(areasToUnown[i]);
-            FactionManager.Instance.neutralFaction.OwnArea(areasToUnown[i]);
+            FactionManager.Instance.neutralFaction.AddToOwnedAreas(areasToUnown[i]);
         }
         Messenger.Broadcast(Signals.FACTION_LEADER_DIED, this);
         Messenger.Broadcast(Signals.FACTION_DIED, this);
@@ -477,12 +477,12 @@ public class Faction {
     #endregion
 
     #region Areas
-    public void OwnArea(Area area) {
+    public void AddToOwnedAreas(Area area) {
         if (!_ownedAreas.Contains(area)) {
             _ownedAreas.Add(area);
         }
     }
-    public void UnownArea(Area area) {
+    public void RemoveFromOwnedAreas(Area area) {
         _ownedAreas.Remove(area);
     }
     #endregion
