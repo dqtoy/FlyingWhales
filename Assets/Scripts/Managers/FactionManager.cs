@@ -128,7 +128,7 @@ public class FactionManager : MonoBehaviour {
                     if (areaData.ownerID == faction.id) {
                         Area newArea = LandmarkManager.Instance.GetAreaByID(areaData.areaID);
                         if (neutralFaction != null) {
-                            neutralFaction.UnownArea(newArea); //this will add area to the neutral factions owned area list, but the area's owner will still be null
+                            neutralFaction.RemoveFromOwnedAreas(newArea); //this will add area to the neutral factions owned area list, but the area's owner will still be null
                         }
                         LandmarkManager.Instance.OwnArea(faction, faction.raceType, newArea);
                     }
