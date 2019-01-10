@@ -2948,6 +2948,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait));
         }
         trait.OnAddTrait(this);
+        Messenger.Broadcast(Signals.TRAIT_ADDED, this);
     }
     public bool RemoveTrait(Trait trait, bool triggerOnRemove = true) {
         for (int i = 0; i < _traits.Count; i++) {
@@ -2957,6 +2958,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                     _traits[i].OnRemoveTrait(this);
                 }
                 _traits.RemoveAt(i);
+                Messenger.Broadcast(Signals.TRAIT_REMOVED, this);
                 return true;
             }
         }

@@ -26,8 +26,8 @@ public class Faction {
     protected Dictionary<Faction, FactionRelationship> _relationships;
     protected List<BaseLandmark> _landmarkInfo;
     protected List<Area> _ownedAreas;
-    protected INTERACTION_TYPE[] _nonNeutralInteractionTypes;
-    protected INTERACTION_TYPE[] _neutralInteractionTypes;
+    protected Dictionary<INTERACTION_TYPE, int> _nonNeutralInteractionTypes;
+    protected Dictionary<INTERACTION_TYPE, int> _neutralInteractionTypes;
 
     public MORALITY morality { get; private set; }
     public FactionToken factionToken { get; private set; }
@@ -451,14 +451,14 @@ public class Faction {
 
     #region Interaction
     private void InitializeInteractions() {
-        _nonNeutralInteractionTypes = new INTERACTION_TYPE[] {
-            INTERACTION_TYPE.SPAWN_CHARACTER,
-            INTERACTION_TYPE.MOVE_TO_ATTACK,
+        _nonNeutralInteractionTypes = new Dictionary<INTERACTION_TYPE, int> {
+            { INTERACTION_TYPE.SPAWN_CHARACTER, 50 },
+            { INTERACTION_TYPE.MOVE_TO_ATTACK, 100 },
             //INTERACTION_TYPE.DEFENSE_MOBILIZATION,
             //INTERACTION_TYPE.DEFENSE_UPGRADE,
         };
-        _neutralInteractionTypes = new INTERACTION_TYPE[] {
-            INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER,
+        _neutralInteractionTypes = new Dictionary<INTERACTION_TYPE, int> {
+            { INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER, 50 }
         };
     }
     private void SetDailyInteractionGenerationTick() {
@@ -484,34 +484,35 @@ public class Faction {
     private void GenerateNonNeutralInteraction() {
         string interactionLog = GameManager.Instance.TodayLogString() + "Generating non neutral interaction for " + this.name;
         WeightedDictionary<string> generateWeights = new WeightedDictionary<string>();
-        generateWeights.AddElement("Generate", 100);
+        generateWeights.AddElement("Generate", 50);
         generateWeights.AddElement("Dont Generate", 300);
 
         string generateResult = generateWeights.PickRandomElementGivenWeights();
         if(generateResult == "Generate") {
-            List<InteractionAndInteractable> interactionCandidates = new List<InteractionAndInteractable>();
+            WeightedDictionary<InteractionAndInteractable> interactionCandidates = new WeightedDictionary<InteractionAndInteractable>();
             for (int i = 0; i < _ownedAreas.Count; i++) {
                 Area area = _ownedAreas[i];
                 if (area.suppliesInBank >= 100) {
-                    for (int j = 0; j < _nonNeutralInteractionTypes.Length; j++) {
-                        INTERACTION_TYPE type = _nonNeutralInteractionTypes[j];
+                    foreach(KeyValuePair<INTERACTION_TYPE, int> kvp in _nonNeutralInteractionTypes) {
+                        INTERACTION_TYPE type = kvp.Key;
+                        int weight = kvp.Value;
                         if (InteractionManager.Instance.CanCreateInteraction(type, area.coreTile.landmarkOnTile)) {
                             InteractionAndInteractable candidate = new InteractionAndInteractable {
                                 interactionType = type,
                                 landmark = area.coreTile.landmarkOnTile,
                             };
-                            interactionCandidates.Add(candidate);
+                            interactionCandidates.AddElement(candidate, weight);
                         }
                     }
                 }
             }
             if (interactionCandidates.Count > 0) {
-                int chosenIndex = UnityEngine.Random.Range(0, interactionCandidates.Count);
-                Area area = interactionCandidates[chosenIndex].landmark.tileLocation.areaOfTile;
+                InteractionAndInteractable chosenInteraction = interactionCandidates.PickRandomElementGivenWeights();
+                Area area = chosenInteraction.landmark.tileLocation.areaOfTile;
                 area.AdjustSuppliesInBank(-100);
-                Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(interactionCandidates[chosenIndex].interactionType, interactionCandidates[chosenIndex].landmark);
+                Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction.interactionType, chosenInteraction.landmark);
                 createdInteraction.SetMinionSuccessAction(() => area.AdjustSuppliesInBank(100));
-                interactionCandidates[chosenIndex].landmark.AddInteraction(createdInteraction);
+                chosenInteraction.landmark.AddInteraction(createdInteraction);
                 interactionLog += "\nCreated " + createdInteraction.type.ToString() + " on " + createdInteraction.interactable.tileLocation.areaOfTile.name;
                 Debug.Log(interactionLog);
             } else {
@@ -523,29 +524,30 @@ public class Faction {
     private void GenerateNeutralInteraction() {
         string interactionLog = GameManager.Instance.TodayLogString() + "Generating neutral interaction for " + this.name;
         WeightedDictionary<string> generateWeights = new WeightedDictionary<string>();
-        generateWeights.AddElement("Generate", 100);
+        generateWeights.AddElement("Generate", 50);
         generateWeights.AddElement("Dont Generate", 300);
 
         string generateResult = generateWeights.PickRandomElementGivenWeights();
         if (generateResult == "Generate") {
-            List<InteractionAndInteractable> interactionCandidates = new List<InteractionAndInteractable>();
+            WeightedDictionary<InteractionAndInteractable> interactionCandidates = new WeightedDictionary<InteractionAndInteractable>();
             for (int i = 0; i < _ownedAreas.Count; i++) {
                 Area area = _ownedAreas[i];
-                for (int j = 0; j < _neutralInteractionTypes.Length; j++) {
-                    INTERACTION_TYPE type = _neutralInteractionTypes[j];
+                foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in _neutralInteractionTypes) {
+                    INTERACTION_TYPE type = kvp.Key;
+                    int weight = kvp.Value;
                     if (InteractionManager.Instance.CanCreateInteraction(type, area.coreTile.landmarkOnTile)) {
                         InteractionAndInteractable candidate = new InteractionAndInteractable {
                             interactionType = type,
                             landmark = area.coreTile.landmarkOnTile,
                         };
-                        interactionCandidates.Add(candidate);
+                        interactionCandidates.AddElement(candidate, weight);
                     }
                 }
             }
             if (interactionCandidates.Count > 0) {
-                int chosenIndex = UnityEngine.Random.Range(0, interactionCandidates.Count);
-                Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(interactionCandidates[chosenIndex].interactionType, interactionCandidates[chosenIndex].landmark);
-                interactionCandidates[chosenIndex].landmark.AddInteraction(createdInteraction);
+                InteractionAndInteractable chosenInteraction = interactionCandidates.PickRandomElementGivenWeights();
+                Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction.interactionType, chosenInteraction.landmark);
+                chosenInteraction.landmark.AddInteraction(createdInteraction);
                 interactionLog += "\nCreated " + createdInteraction.type.ToString() + " on " + createdInteraction.interactable.tileLocation.areaOfTile.name;
                 Debug.Log(interactionLog);
             } else {

@@ -72,6 +72,8 @@ public static class Signals {
     public static string CHARACTER_MARKED = "OnCharacterMarked";
     public static string CHARACTER_INSPECTED = "OnCharacterInspected"; //Parameters (Character inspectedCharacter)
     public static string CHARACTER_LEVEL_CHANGED = "OnCharacterLevelChange"; //Parameters (Character character)
+    public static string TRAIT_ADDED = "OnTraitAdded";
+    public static string TRAIT_REMOVED = "OnTraitRemoved"; //Parameters (Character character)
     #endregion
 
     #region UI

@@ -69,6 +69,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: b841b11601ebf1d43abe56c6978bdef0, type: 3}
   - {fileID: 21300000, guid: defbe3380eec93a469004ccc9b14f200, type: 3}
   - {fileID: 21300000, guid: cbba3d8eb51349d4db64320e45c68fe1, type: 3}
+  - {fileID: 21300000, guid: 7d0a8449227f2fd4c8763e20107d847a, type: 3}
   - {fileID: 21300000, guid: 2472b8fadbb4cbb45b9f4042515ee5af, type: 3}
   - {fileID: 21300000, guid: 1e80ac21ed4b41c43a8acefcd19459ee, type: 3}
   - {fileID: 21300000, guid: 1f95a8a1a2c05e94d8323085988072d6, type: 3}
@@ -337,6 +338,7 @@ SpriteAtlas:
   - interaction_used_list
   - tile_defender_slot_widget
   - tile_defender_slot_widget
+  - combatslots
   - interaction_used_list_decor
   - tile_info_widget
   - tile_attack_action_slots
