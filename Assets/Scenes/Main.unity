@@ -101923,6 +101923,13 @@ MonoBehaviour:
     - Tessellated Triangle
     - Pitthize
     - Blistering Hollow
+  - tokenName: Mutagenic Goo
+    quantity: 2
+    appearanceWeight: 80
+    areaLocations:
+    - Odious Lair
+    - Cindermaul Hideout
+    - Pitthize
 --- !u!1 &1688629845
 GameObject:
   m_ObjectHideFlags: 0
