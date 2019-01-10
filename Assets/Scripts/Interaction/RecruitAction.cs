@@ -87,8 +87,15 @@ public class RecruitAction : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (GetTargetCharacter(character) == null && targetCharacter == null) {
+        if (interactable.tileLocation.areaOfTile.IsResidentsFull()) {
             return false;
+        }
+        if (targetCharacter != null) { //if there is a target character, he/she must still be in this location
+            return targetCharacter.specificLocation.tileLocation.areaOfTile.id == interactable.tileLocation.areaOfTile.id;
+        } else { //if there is no set target character
+            if (GetTargetCharacter(character) == null) { //check if a target character can be found using the provided weights
+                return false;
+            }
         }
         return base.CanInteractionBeDoneBy(character);
     }
@@ -230,6 +237,7 @@ public class RecruitAction : Interaction {
 
     public void SetTargetCharacter(Character targetCharacter) {
         this.targetCharacter = targetCharacter;
+        AddToDebugLog("Set target character to " + targetCharacter.name);
     }
     public Character GetTargetCharacter(Character characterInvolved) {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
@@ -240,16 +248,13 @@ public class RecruitAction : Interaction {
                 && !currCharacter.isDefender 
                 && !currCharacter.currentParty.icon.isTravelling
                 && currCharacter.minion == null
-                && currCharacter.faction.id != characterInvolved.faction.id) { //- character must not be in Defender Tile.
+                && currCharacter.faction.id != characterInvolved.faction.id) {
                 int weight = 0;
                 if (currCharacter.isFactionless) {
-                    weight += 35; //- character is not part of any Faction: Weight +35
-                } else if (currCharacter.faction.id != characterInvolved.faction.id) { //exclude characters with same faction
-                    FactionRelationship rel = currCharacter.faction.GetRelationshipWith(characterInvolved.faction);
-                    if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL) {
-                        weight += 15; //- character is part of a Faction with Neutral relationship with recruiter's Faction: Weight +15
-                    } else if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
-                        weight += 25; //- character is part of a Faction with Friend relationship with recruiter's Faction: Weight +25
+                    weight += 35; //character is not part of any Faction: Weight +35
+                } else if (currCharacter.faction.id != characterInvolved.faction.id) {
+                    if (currCharacter.GetFriendTraitWith(characterInvolved) != null) {
+                        weight += 15;//character is a personal Friend that is not from the recruiter's faction: Weight +15
                     }
                 }
 
@@ -267,6 +272,5 @@ public class RecruitAction : Interaction {
             return characterWeights.PickRandomElementGivenWeights();
         }
         return null;
-        //throw new System.Exception("Could not find any character to recruit!");
     }
 }
