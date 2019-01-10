@@ -8,8 +8,6 @@ public class MutagenicGoo : SpecialToken {
         RACE.DRAGON,
         RACE.WOLF,
         RACE.BEAST,
-        RACE.SKELETON,
-        RACE.INSECT,
         RACE.SPIDER
     };
     List<RACE> nonBeastRaces = new List<RACE>() {
@@ -17,6 +15,7 @@ public class MutagenicGoo : SpecialToken {
         RACE.ELVES,
         RACE.GOBLIN,
         RACE.FAERY,
+        RACE.SKELETON,
     };
 
     public MutagenicGoo() : base(SPECIAL_TOKEN.MUTAGENIC_GOO) {
@@ -51,6 +50,7 @@ public class MutagenicGoo : SpecialToken {
     
     private void ItemUsedEffectNPC(TokenInteractionState state) {
         ChangeRaceRandomly(state.tokenUser);
+        state.tokenUser.ConsumeToken();
         Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-npc" + "_description");
         stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         stateDescriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(state.tokenUser.race), LOG_IDENTIFIER.STRING_1);
@@ -63,6 +63,7 @@ public class MutagenicGoo : SpecialToken {
     }
     private void ItemUsedEffectMinion(TokenInteractionState state) {
         ChangeRaceRandomly(state.tokenUser);
+        state.tokenUser.ConsumeToken();
         Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-minion" + "_description");
         stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         stateDescriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(state.tokenUser.race), LOG_IDENTIFIER.STRING_1);
