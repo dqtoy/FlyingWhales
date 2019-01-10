@@ -12,10 +12,13 @@ public class Faction {
 	protected int _id;
     protected string _name;
     protected string _description;
+    protected string _initialLeaderClass;
     protected int _level;
     protected int _currentInteractionTick;
     protected int _usedMonthForInteraction;
     protected bool _isPlayerFaction;
+    protected GENDER _initialLeaderGender;
+    protected RACE _initialLeaderRace;
     protected Race _race;
     protected ILeader _leader;
     protected FactionEmblemSetting _emblem;
@@ -23,9 +26,11 @@ public class Faction {
     protected List<BaseLandmark> _ownedLandmarks;
     protected Color _factionColor;
     protected List<Character> _characters; //List of characters that are part of the faction
-    protected Dictionary<Faction, FactionRelationship> _relationships;
     protected List<BaseLandmark> _landmarkInfo;
     protected List<Area> _ownedAreas;
+    protected List<RACE> _recruitableRaces;
+    protected List<RACE> _startingFollowers;
+    protected Dictionary<Faction, FactionRelationship> _relationships;
     protected Dictionary<INTERACTION_TYPE, int> _nonNeutralInteractionTypes;
     protected Dictionary<INTERACTION_TYPE, int> _neutralInteractionTypes;
 
@@ -50,6 +55,9 @@ public class Faction {
     public string description {
         get { return _description; }
     }
+    public string initialLeaderClass {
+        get { return _initialLeaderClass; }
+    }
     public bool isDestroyed {
         get { return _leader == null; }
     }
@@ -58,6 +66,12 @@ public class Faction {
     }
     public RACE_SUB_TYPE subRaceType {
         get { return _race.subType; }
+    }
+    public GENDER initialLeaderGender {
+        get { return _initialLeaderGender; }
+    }
+    public RACE initialLeaderRace {
+        get { return _initialLeaderRace; }
     }
     public ILeader leader {
         get { return _leader; }
@@ -89,6 +103,12 @@ public class Faction {
     public List<Area> ownedAreas {
         get { return _ownedAreas; }
     }
+    public List<RACE> recruitableRaces {
+        get { return _recruitableRaces; }
+    }
+    public List<RACE> startingFollowers {
+        get { return _startingFollowers; }
+    }
     public bool isNeutral {
         get { return this.id == FactionManager.Instance.neutralFaction.id; }
     }
@@ -110,6 +130,8 @@ public class Faction {
         _relationships = new Dictionary<Faction, FactionRelationship>();
         _landmarkInfo = new List<BaseLandmark>();
         _ownedAreas = new List<Area>();
+        _recruitableRaces = new List<RACE>();
+        _startingFollowers = new List<RACE>();
         factionToken = new FactionToken(this);
         //favor = new Dictionary<Faction, int>();
         //defenderWeights = new WeightedDictionary<AreaCharacterClass>();
@@ -131,12 +153,24 @@ public class Faction {
         SetRace(data.race);
         SetLevel(data.level);
         SetFactionActiveState(data.isActive);
+        _initialLeaderClass = data.initialLeaderClass;
+        _initialLeaderRace = data.initialLeaderRace;
+        _initialLeaderGender = data.initialLeaderGender;
+        _recruitableRaces = data.recruitableRaces;
+        _startingFollowers = data.startingFollowers;
+
         _characters = new List<Character>();
         _ownedLandmarks = new List<BaseLandmark>();
         _ownedRegions = new List<Region>();
         _relationships = new Dictionary<Faction, FactionRelationship>();
         _landmarkInfo = new List<BaseLandmark>();
         _ownedAreas = new List<Area>();
+        if(_recruitableRaces == null) {
+            _recruitableRaces = new List<RACE>();
+        }
+        if (_startingFollowers == null) {
+            _startingFollowers = new List<RACE>();
+        }
         factionToken = new FactionToken(this);
         //favor = new Dictionary<Faction, int>();
         //if (data.defenderWeights != null) {
@@ -256,6 +290,15 @@ public class Faction {
     public void SetDescription(string description) {
         _description = description;
     }
+    public void SetInitialFactionLeaderGender(GENDER gender) {
+        _initialLeaderGender = gender;
+    }
+    public void SetInitialFactionLeaderClass(string className) {
+        _initialLeaderClass = className;
+    }
+    public void SetInitialFactionLeaderRace(RACE race) {
+        _initialLeaderRace = race;
+    }
     public Character GetCharacterByID(int id) {
         for (int i = 0; i < _characters.Count; i++) {
             if (_characters[i].id == id) {
@@ -334,6 +377,13 @@ public class Faction {
     }
     public void SetFactionActiveState(bool state) {
         isActive = state;
+    }
+    public void GenerateStartingLeader(int leaderLevel) {
+        Character leader = CharacterManager.Instance.CreateNewCharacter(_initialLeaderClass, _initialLeaderRace, _initialLeaderGender,
+                    this, _ownedAreas[0].coreTile.landmarkOnTile);
+        leader.LevelUp(leaderLevel - 1);
+        Debug.Log(GameManager.Instance.TodayLogString() + "LEADER Generated Lvl. " + leader.level.ToString() +
+                " character " + leader.characterClass.className + " " + leader.name + " at " + this.name + " for faction " + leader.name);
     }
     #endregion
 

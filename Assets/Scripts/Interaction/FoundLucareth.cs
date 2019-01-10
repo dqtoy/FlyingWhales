@@ -145,7 +145,6 @@ public class FoundLucareth : Interaction {
 
         //Set Lucareth faction to Enemy of character's original faction
         _characterInvolved.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
-        _characterInvolved.faction.SetFactionActiveState(true);
 
         //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
         interactable.SpawnRandomCharacters(4);
@@ -177,7 +176,6 @@ public class FoundLucareth : Interaction {
 
         //Set Lucareth faction to Friend of character's original faction
         _characterInvolved.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.FRIEND);
-        _characterInvolved.faction.SetFactionActiveState(true);
 
         //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
         interactable.SpawnRandomCharacters(4);
@@ -196,7 +194,6 @@ public class FoundLucareth : Interaction {
 
         //Set Lucareth faction to Ally of player faction.
         _characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ALLY);
-        _characterInvolved.faction.SetFactionActiveState(true);
 
         //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
         interactable.SpawnRandomCharacters(4);
@@ -214,7 +211,6 @@ public class FoundLucareth : Interaction {
 
         //Set Lucareth faction to Disliked of player faction.
         _characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
-        _characterInvolved.faction.SetFactionActiveState(true);
 
         //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
         interactable.SpawnRandomCharacters(4);

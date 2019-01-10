@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions.ColorPicker;
@@ -13,17 +14,23 @@ public class FactionInfoEditor : MonoBehaviour {
 
     [SerializeField] private InputField nameInputField;
     [SerializeField] private InputField descriptionInputField;
+    [SerializeField] private InputField levelInputField;
     [SerializeField] private Text charactersSummaryLbl;
     [SerializeField] private Text areaSummaryLbl;
+    [SerializeField] private Text recruitableRacesSummaryLbl;
+    [SerializeField] private Text startingFollowersSummaryLbl;
     [SerializeField] private Dropdown areasDropdown;
-    [SerializeField] private Dropdown leadersDropdown;
-    [SerializeField] private Image factionColor;
-    [SerializeField] private ColorPickerControl factionColorPicker;
+    [SerializeField] private Dropdown leadersGenderDropdown;
+    [SerializeField] private Dropdown leadersRaceDropdown;
+    [SerializeField] private Dropdown leadersClassDropdown;
     [SerializeField] private Dropdown emblemDropdown;
     [SerializeField] private Dropdown moralityDropdown;
     [SerializeField] private Dropdown raceDropdown;
     [SerializeField] private Dropdown subRaceDropdown;
-    [SerializeField] private InputField levelInputField;
+    [SerializeField] private Dropdown recruitableRacesDropdown;
+    [SerializeField] private Dropdown startingFollowersDropdown;
+    [SerializeField] private Image factionColor;
+    [SerializeField] private ColorPickerControl factionColorPicker;
     [SerializeField] private Toggle isActiveToggle;
 
     [Header("Relationships")]
@@ -50,11 +57,15 @@ public class FactionInfoEditor : MonoBehaviour {
         LoadEmblemChoices();
         LoadMoralityChoices();
         LoadRaceChoices();
+        LoadRecruitableRacesChoices();
+        LoadStartingFollowersChoices();
         //LoadFavorChoices();
         //LoadDefenderChoices();
         UpdateBasicInfo();
         UpdateAreas();
         UpdateRelationshipInfo();
+        UpdateRecruitableRaces();
+        UpdateStartingFollowers();
         //UpdateFavorInfo();
         //UpdateDefenderWeights();
         this.gameObject.SetActive(true);
@@ -96,12 +107,9 @@ public class FactionInfoEditor : MonoBehaviour {
             charactersSummaryLbl.text += currCharacter.name + "\n";
         }
 
-        if (_faction.leader != null) {
-            leadersDropdown.value = Utilities.GetOptionIndex(leadersDropdown, _faction.leader.name);
-            //leadersDropdown.itemText.text = _faction.leader.name;
-        } else {
-            leadersDropdown.value = Utilities.GetOptionIndex(leadersDropdown, "None");
-        }
+        leadersGenderDropdown.value = Utilities.GetOptionIndex(leadersGenderDropdown, _faction.initialLeaderGender.ToString());
+        leadersRaceDropdown.value = Utilities.GetOptionIndex(leadersRaceDropdown, _faction.initialLeaderRace.ToString());
+        leadersClassDropdown.value = Utilities.GetOptionIndex(leadersClassDropdown, _faction.initialLeaderClass);
 
         emblemDropdown.value = Utilities.GetOptionIndex(emblemDropdown, FactionManager.Instance.GetFactionEmblemIndex(_faction.emblem).ToString());
         moralityDropdown.value = Utilities.GetOptionIndex(moralityDropdown, _faction.morality.ToString());
@@ -188,21 +196,42 @@ public class FactionInfoEditor : MonoBehaviour {
 
     #region Leader
     private void LoadLeaderChoices() {
-        leadersDropdown.ClearOptions();
-        List<string> choices = new List<string>();
-        choices.Add("None");
-        choices.AddRange(_faction.characters.Select(x => x.name));
-        leadersDropdown.AddOptions(choices);
+        leadersGenderDropdown.ClearOptions();
+        leadersRaceDropdown.ClearOptions();
+        leadersClassDropdown.ClearOptions();
+
+        string[] genders = System.Enum.GetNames(typeof(GENDER));
+        string[] races = System.Enum.GetNames(typeof(RACE));
+        List<string> classes = new List<string>();
+        string path = Utilities.dataPath + "CharacterClasses/";
+        foreach (string file in Directory.GetFiles(path, "*.json")) {
+            classes.Add(Path.GetFileNameWithoutExtension(file));
+        }
+
+        leadersGenderDropdown.AddOptions(genders.ToList());
+        leadersRaceDropdown.AddOptions(races.ToList());
+        leadersClassDropdown.AddOptions(classes.ToList());
     }
     public void SetLeader(int choice) {
-        string characterName = leadersDropdown.options[leadersDropdown.value].text;
+        string characterName = leadersGenderDropdown.options[leadersGenderDropdown.value].text;
         Character character = CharacterManager.Instance.GetCharacterByName(characterName);
         if (character != null) {
             _faction.SetLeader(character);
         } else {
             _faction.SetLeader(null); ;
         }
-        
+    }
+    public void SetLeaderGender(int choice) {
+        GENDER gender = (GENDER) System.Enum.Parse(typeof(GENDER), leadersGenderDropdown.options[leadersGenderDropdown.value].text);
+        _faction.SetInitialFactionLeaderGender(gender);
+    }
+    public void SetLeaderRace(int choice) {
+        RACE race = (RACE) System.Enum.Parse(typeof(RACE), leadersRaceDropdown.options[leadersRaceDropdown.value].text);
+        _faction.SetInitialFactionLeaderRace(race);
+    }
+    public void SetLeaderClass(int choice) {
+        string className = leadersClassDropdown.options[leadersClassDropdown.value].text;
+        _faction.SetInitialFactionLeaderClass(className);
     }
     #endregion
 
@@ -254,64 +283,58 @@ public class FactionInfoEditor : MonoBehaviour {
     }
     #endregion
 
-    //#region Favor
-    //private void LoadFavorChoices() {
-    //    factionsFavorDropdown.ClearOptions();
-    //    List<string> factionOnptions = FactionManager.Instance.allFactions.Where(x => x.id != _faction.id).Select(x => x.name).ToList();
-    //    factionsFavorDropdown.AddOptions(factionOnptions);
-    //}
-    //private void UpdateFavorInfo() {
-    //    string text = string.Empty;
-    //    //foreach (KeyValuePair<Faction, int> kvp in _faction.favor) {
-    //    //    text += kvp.Key.name + " - " + kvp.Value.ToString() + "\n";
-    //    //}
-    //    favorSummaryLbl.text = text;
-    //}
-    //public void ApplyFavor() {
-    //    string factionName = factionsFavorDropdown.options[factionsFavorDropdown.value].text;
-    //    string favorAmountStr = favorAmountField.text;
-
-    //    Faction faction = FactionManager.Instance.GetFactionBasedOnName(factionName);
-    //    int favorAmount = Int32.Parse(favorAmountStr);
-
-    //    //_faction.AddNewFactionFavor(faction, favorAmount);
-    //    UpdateFavorInfo();
-    //}
-    //#endregion
-
-    #region Defenders
-    //private void LoadDefenderChoices() {
-    //    defenderClassDropdown.ClearOptions();
-    //    defenderClassDropdown.AddOptions(Utilities.GetFileChoices(Utilities.dataPath + "CharacterClasses/", "*.json"));
-    //}
-    //private void UpdateDefenderWeights() {
-    //    Utilities.DestroyChildren(defendersScrollView.content);
-    //    foreach (KeyValuePair<AreaCharacterClass, int> kvp in _faction.defenderWeights.dictionary) {
-    //        GameObject itemGO = GameObject.Instantiate(defenderWeightItemPrefab, defendersScrollView.content);
-    //        DefenderWeightItem item = itemGO.GetComponent<DefenderWeightItem>();
-    //        item.SetDefender(_faction, kvp.Key, kvp.Value);
-    //    }
-    //}
-    //public void AddDefenderWeight() {
-    //    string defenderClass = defenderClassDropdown.options[defenderClassDropdown.value].text;
-    //    int weight = 0;
-    //    if (HasDefenderWeightForClass(defenderClass)) {
-    //        WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Invalid defender class!", "Cannot add defender class " + defenderClass + " because landmark already has that type in it's defender weights");
-    //    } else if (!System.Int32.TryParse(defenderWeightField.text, out weight)) {
-    //        WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Invalid weight!", "Please enter a weight value!");
-    //    } else {
-    //        weight = Mathf.Max(0, weight);
-    //        _faction.defenderWeights.AddElement(new AreaCharacterClass() { className = defenderClass }, weight);
-    //        UpdateDefenderWeights();
-    //    }
-    //}
-    //private bool HasDefenderWeightForClass(string className) {
-    //    foreach (KeyValuePair<AreaCharacterClass, int> kvp in _faction.defenderWeights.dictionary) {
-    //        if (kvp.Key.className.Equals(className)) {
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
+    #region Recruitable Races
+    private void UpdateRecruitableRaces() {
+        recruitableRacesSummaryLbl.text = string.Empty;
+        if(_faction.recruitableRaces == null) {
+            return;
+        }
+        for (int i = 0; i < _faction.recruitableRaces.Count; i++) {
+            RACE currRace = _faction.recruitableRaces[i];
+            recruitableRacesSummaryLbl.text += currRace.ToString() + "\n";
+        }
+    }
+    private void LoadRecruitableRacesChoices() {
+        recruitableRacesDropdown.ClearOptions();
+        string[] races = System.Enum.GetNames(typeof(RACE));
+        recruitableRacesDropdown.AddOptions(races.ToList());
+    }
+    public void AddRecruitableRace() {
+        RACE race = (RACE) System.Enum.Parse(typeof(RACE), recruitableRacesDropdown.options[recruitableRacesDropdown.value].text);
+        _faction.recruitableRaces.Add(race);
+        UpdateRecruitableRaces();
+    }
+    public void RemoveRecruitableRace() {
+        RACE race = (RACE) System.Enum.Parse(typeof(RACE), recruitableRacesDropdown.options[recruitableRacesDropdown.value].text);
+        _faction.recruitableRaces.Remove(race);
+        UpdateRecruitableRaces();
+    }
+    #endregion
+    #region Starting Followers
+    private void UpdateStartingFollowers() {
+        startingFollowersSummaryLbl.text = string.Empty;
+        if (_faction.startingFollowers == null) {
+            return;
+        }
+        for (int i = 0; i < _faction.startingFollowers.Count; i++) {
+            RACE currRace = _faction.startingFollowers[i];
+            startingFollowersSummaryLbl.text += currRace.ToString() + "\n";
+        }
+    }
+    private void LoadStartingFollowersChoices() {
+        startingFollowersDropdown.ClearOptions();
+        string[] races = System.Enum.GetNames(typeof(RACE));
+        startingFollowersDropdown.AddOptions(races.ToList());
+    }
+    public void AddStartingFollower() {
+        RACE race = (RACE) System.Enum.Parse(typeof(RACE), startingFollowersDropdown.options[startingFollowersDropdown.value].text);
+        _faction.startingFollowers.Add(race);
+        UpdateStartingFollowers();
+    }
+    public void RemoveStartingFollower() {
+        RACE race = (RACE) System.Enum.Parse(typeof(RACE), startingFollowersDropdown.options[startingFollowersDropdown.value].text);
+        _faction.startingFollowers.Remove(race);
+        UpdateStartingFollowers();
+    }
     #endregion
 }

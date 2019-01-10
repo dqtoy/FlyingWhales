@@ -181,6 +181,7 @@ public class MapGenerator : MonoBehaviour {
         QuestManager.Instance.Initialize();
         EventManager.Instance.Initialize();
         //CharacterManager.Instance.LoadCharactersInfo(data);
+        FactionManager.Instance.RandomizeStartingFactions(data);
         CharacterManager.Instance.CreateNeutralCharacters();
         InteractionManager.Instance.Initialize();
         if (SteamManager.Initialized) {

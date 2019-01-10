@@ -17,8 +17,13 @@ public class FactionSaveData {
     public int level;
     public bool isActive;
     public MORALITY morality;
+    public GENDER initialLeaderGender;
+    public RACE initialLeaderRace;
+    public string initialLeaderClass;
     //public Dictionary<int, int> favor;
     public Dictionary<AreaCharacterClass, int> defenderWeights;
+    public List<RACE> recruitableRaces;
+    public List<RACE> startingFollowers;
 
     public FactionSaveData(Faction faction) {
         factionID = faction.id;
@@ -26,15 +31,19 @@ public class FactionSaveData {
         factionDescription = faction.description;
         factionColor = new ColorSave(faction.factionColor);
         race = faction.race;
+        recruitableRaces = new List<RACE>(faction.recruitableRaces);
+        startingFollowers = new List<RACE>(faction.startingFollowers);
         ConstructOwnedAreas(faction);
         ConstructRelationships(faction);
         //ConstructFavor(faction);
-
-        if (faction.leader == null) {
-            leaderID = -1;
-        } else {
-            leaderID = faction.leader.id;
-        }
+        initialLeaderGender = faction.initialLeaderGender;
+        initialLeaderRace = faction.initialLeaderRace;
+        initialLeaderClass = faction.initialLeaderClass;
+        //if (faction.leader == null) {
+        //    leaderID = -1;
+        //} else {
+        //    leaderID = faction.leader.id;
+        //}
         emblemIndex = FactionManager.Instance.GetFactionEmblemIndex(faction.emblem);
         morality = faction.morality;
         //defenderWeights = faction.defenderWeights.dictionary;

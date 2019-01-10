@@ -43,17 +43,11 @@ public class BookOfTheDead : SpecialToken {
         targetCharacter.SetForcedInteraction(null);
 
         Faction oldFaction = targetCharacter.faction;
-        targetCharacter.faction.RemoveCharacter(targetCharacter);
 
-        Faction newFaction = FactionManager.Instance.GetFactionBasedOnName("Ziranna");
-        newFaction.SetLeader(targetCharacter);
-        newFaction.AddNewCharacter(targetCharacter);
-        FactionManager.Instance.neutralFaction.UnownArea(targetCharacter.specificLocation.tileLocation.areaOfTile);
-        LandmarkManager.Instance.OwnArea(newFaction, newFaction.raceType, targetCharacter.specificLocation.tileLocation.areaOfTile);
+        targetCharacter.FoundFaction("Ziranna", targetCharacter.specificLocation as BaseLandmark);
 
-        newFaction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
-        newFaction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ALLY);
-        newFaction.SetFactionActiveState(true);
+        targetCharacter.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
+        targetCharacter.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ALLY);
 
         Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-minion" + "_description");
         stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.MINION_1);
@@ -72,15 +66,10 @@ public class BookOfTheDead : SpecialToken {
         state.tokenUser.MigrateTo(state.tokenUser.specificLocation as BaseLandmark);
 
         Faction oldFaction = state.tokenUser.faction;
-        Faction newFaction = FactionManager.Instance.GetFactionBasedOnName("Ziranna");
-        newFaction.SetLeader(state.tokenUser);
-        state.tokenUser.ChangeFactionTo(newFaction);
-        FactionManager.Instance.neutralFaction.UnownArea(state.tokenUser.specificLocation.tileLocation.areaOfTile);
-        LandmarkManager.Instance.OwnArea(newFaction, newFaction.raceType, state.tokenUser.specificLocation.tileLocation.areaOfTile);
+        state.tokenUser.FoundFaction("Ziranna", state.tokenUser.specificLocation as BaseLandmark);
 
-        newFaction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
-        newFaction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
-        newFaction.SetFactionActiveState(true);
+        state.tokenUser.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
+        state.tokenUser.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
 
         Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-npc" + "_description");
         stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -98,17 +87,10 @@ public class BookOfTheDead : SpecialToken {
         state.tokenUser.SetForcedInteraction(null);
 
         Faction oldFaction = state.tokenUser.faction;
-        state.tokenUser.faction.RemoveCharacter(state.tokenUser);
+        state.tokenUser.FoundFaction("Ziranna", state.tokenUser.specificLocation as BaseLandmark);
 
-        Faction newFaction = FactionManager.Instance.GetFactionBasedOnName("Ziranna");
-        newFaction.SetLeader(state.tokenUser);
-        newFaction.AddNewCharacter(state.tokenUser);
-        FactionManager.Instance.neutralFaction.UnownArea(state.tokenUser.specificLocation.tileLocation.areaOfTile);
-        LandmarkManager.Instance.OwnArea(newFaction, newFaction.raceType, state.tokenUser.specificLocation.tileLocation.areaOfTile);
-
-        newFaction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
-        newFaction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
-        newFaction.SetFactionActiveState(true);
+        state.tokenUser.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
+        state.tokenUser.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
 
         state.descriptionLog.AddToFillers(state.interaction.investigatorMinion, state.interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
 

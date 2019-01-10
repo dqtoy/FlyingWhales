@@ -85,6 +85,57 @@ public class FactionManager : MonoBehaviour {
             chosenRegion.SetMinimapColor(newFaction.factionColor, 69f / 255f);
         }
     }
+    public void RandomizeStartingFactions(WorldSaveData data) {
+        List<Faction> factions = allFactions.Where(x => x.name != "Neutral").ToList();
+        string[] startFactions = new string[] { "Fyn", "Orelia" };
+        for (int i = 0; i < startFactions.Length; i++) {
+            Faction faction = GetFactionBasedOnName(startFactions[i]);
+            if (!faction.isActive) {
+                OwnInitialAreasOfFaction(data.areaData, faction);
+                faction.GenerateStartingLeader(9);
+                faction.ownedAreas[0].GenerateStartingFollowers(7);
+                faction.SetFactionActiveState(true);
+                factions.Remove(faction);
+            }
+        }
+
+        //First random faction
+        int index1 = UnityEngine.Random.Range(0, factions.Count);
+        Faction firstRandomFaction = factions[index1];
+        if (!firstRandomFaction.isActive) {
+            OwnInitialAreasOfFaction(data.areaData, firstRandomFaction);
+            firstRandomFaction.GenerateStartingLeader(6);
+            firstRandomFaction.ownedAreas[0].GenerateStartingFollowers(4);
+            firstRandomFaction.SetFactionActiveState(true);
+            factions.RemoveAt(index1);
+        }
+
+        //Second random faction
+        int index2 = UnityEngine.Random.Range(0, factions.Count);
+        Faction secondRandomFaction = factions[index2];
+        if (!secondRandomFaction.isActive) {
+            OwnInitialAreasOfFaction(data.areaData, secondRandomFaction);
+            secondRandomFaction.GenerateStartingLeader(5);
+            secondRandomFaction.ownedAreas[0].GenerateStartingFollowers(3);
+            secondRandomFaction.SetFactionActiveState(true);
+        }
+    }
+    private void OwnInitialAreasOfFaction(List<AreaSaveData> areaSaveData, Faction faction) {
+        if (areaSaveData != null) {
+            for (int i = 0; i < areaSaveData.Count; i++) {
+                AreaSaveData areaData = areaSaveData[i];
+                if (areaData.ownerID != -1) {
+                    if (areaData.ownerID == faction.id) {
+                        Area newArea = LandmarkManager.Instance.GetAreaByID(areaData.areaID);
+                        if (neutralFaction != null) {
+                            neutralFaction.UnownArea(newArea); //this will add area to the neutral factions owned area list, but the area's owner will still be null
+                        }
+                        LandmarkManager.Instance.OwnArea(faction, faction.raceType, newArea);
+                    }
+                }
+            }
+        }
+    }
     //public void GenerateFactionCharacters() {
     //    for (int i = 0; i < allFactions.Count; i++) {
     //        Faction currFaction = allFactions[i];
@@ -95,25 +146,25 @@ public class FactionManager : MonoBehaviour {
     //        //CreateChieftainForFaction(currTribe);
     //    }
     //}
-   // /*
-   //  Initital tribes should have a chieftain and a village head.
-   //      */
-   // private void CreateInitialFactionCharacters(Faction faction, BaseLandmark landmark) {
-   //     int numOfCharacters = Random.Range(1, 3); //Generate 1 to 3 characters in each Village with civilians, limit class based on technologies known by its Faction.
-   //     WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary();
-   //     for (int i = 0; i < numOfCharacters; i++) {
-   //         CHARACTER_CLASS chosenClass = CHARACTER_CLASS.WARRIOR;
-   //         CHARACTER_ROLE chosenRole = characterRoleProductionDictionary.PickRandomElementGivenWeights();
-   //         RACE randomRace = RACE.HUMANS;
-   //         if (Random.Range(0, 2) == 1) {
-   //             randomRace = RACE.ELVES;
-   //         }
-			//Character newChar = landmark.CreateNewCharacter(randomRace, chosenRole, Utilities.NormalizeString(chosenClass.ToString()));
-			////Initial Character tags
-			//newChar.AssignInitialTags();
-   //     }
-   // }
-	private void EquipFullArmorSet(MATERIAL materialToUse, Character character){
+    // /*
+    //  Initital tribes should have a chieftain and a village head.
+    //      */
+    // private void CreateInitialFactionCharacters(Faction faction, BaseLandmark landmark) {
+    //     int numOfCharacters = Random.Range(1, 3); //Generate 1 to 3 characters in each Village with civilians, limit class based on technologies known by its Faction.
+    //     WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary();
+    //     for (int i = 0; i < numOfCharacters; i++) {
+    //         CHARACTER_CLASS chosenClass = CHARACTER_CLASS.WARRIOR;
+    //         CHARACTER_ROLE chosenRole = characterRoleProductionDictionary.PickRandomElementGivenWeights();
+    //         RACE randomRace = RACE.HUMANS;
+    //         if (Random.Range(0, 2) == 1) {
+    //             randomRace = RACE.ELVES;
+    //         }
+    //Character newChar = landmark.CreateNewCharacter(randomRace, chosenRole, Utilities.NormalizeString(chosenClass.ToString()));
+    ////Initial Character tags
+    //newChar.AssignInitialTags();
+    //     }
+    // }
+    private void EquipFullArmorSet(MATERIAL materialToUse, Character character){
 		if(materialToUse == MATERIAL.NONE){
 			return;
 		}

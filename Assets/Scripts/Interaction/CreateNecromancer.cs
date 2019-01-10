@@ -72,16 +72,10 @@ public class CreateNecromancer : Interaction {
         _characterInvolved.SetForcedInteraction(null);
 
         Faction oldFaction = _characterInvolved.faction;
-        _characterInvolved.faction.RemoveCharacter(_characterInvolved);
+        _characterInvolved.FoundFaction("Ziranna", interactable);
 
-        Faction newFaction = FactionManager.Instance.GetFactionBasedOnName("Ziranna");
-        newFaction.SetLeader(_characterInvolved);
-        newFaction.AddNewCharacter(_characterInvolved);
-        FactionManager.Instance.neutralFaction.UnownArea(interactable.tileLocation.areaOfTile);
-        LandmarkManager.Instance.OwnArea(newFaction, newFaction.raceType, interactable.tileLocation.areaOfTile);
-        newFaction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
-        newFaction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ALLY);
-        newFaction.SetFactionActiveState(true);
+        _characterInvolved.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
+        _characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ALLY);
     }
     private void DoNothingEffect(InteractionState state) {
     }

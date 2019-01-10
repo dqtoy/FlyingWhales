@@ -588,7 +588,17 @@ public class LandmarkManager : MonoBehaviour {
                 if (areaData.ownerID != -1) {
                     Faction owner = FactionManager.Instance.GetFactionBasedOnID(areaData.ownerID);
                     if (owner != null) {
-                        OwnArea(owner, owner.raceType, newArea);
+                        if (owner.isActive) {
+                            OwnArea(owner, owner.raceType, newArea);
+                        }
+#if !WORLD_CREATION_TOOL
+                        else {
+                            Faction neutralFaction = FactionManager.Instance.neutralFaction;
+                            if (neutralFaction != null) {
+                                neutralFaction.OwnArea(newArea); //this will add area to the neutral factions owned area list, but the area's owner will still be null
+                            }
+                        }
+#endif
                     }
                 }
 #if !WORLD_CREATION_TOOL

@@ -145,7 +145,6 @@ public class FoundBestalia : Interaction {
 
         //Set Bestalia faction to Enemy of character's original faction
         _characterInvolved.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
-        _characterInvolved.faction.SetFactionActiveState(true);
 
         //All beasts in the location will change faction and home to the current location. Spawn 2 new characters in the location or until the resident capacity has been reached. Race is the same as the character's. 
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
@@ -205,7 +204,6 @@ public class FoundBestalia : Interaction {
 
         //Set Bestalia faction to Friend of character's original faction
         _characterInvolved.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.FRIEND);
-        _characterInvolved.faction.SetFactionActiveState(true);
 
         //All beasts in the location will change faction and home to the current location. Spawn 2 new characters in the location or until the resident capacity has been reached. Race is the same as the character's. 
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
@@ -238,7 +236,6 @@ public class FoundBestalia : Interaction {
 
         //Set Bestalia faction to Ally of player faction.
         _characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ALLY);
-        _characterInvolved.faction.SetFactionActiveState(true);
 
         //All beasts in the location will change faction and home to the current location. Spawn 2 new characters in the location or until the resident capacity has been reached. Race is the same as the character's. 
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
@@ -284,7 +281,6 @@ public class FoundBestalia : Interaction {
 
         //Set Bestalia faction to Disliked of player faction.
         _characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
-        _characterInvolved.faction.SetFactionActiveState(true);
 
         //All beasts in the location will change faction and home to the current location. Spawn 2 new characters in the location or until the resident capacity has been reached. Race is the same as the character's. 
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {

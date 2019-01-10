@@ -556,7 +556,7 @@ public class Area {
         Messenger.AddListener<StructureObj, ObjectState>(Signals.STRUCTURE_STATE_CHANGED, OnStructureStateChanged);
         //Messenger.AddListener<Interaction>(Signals.INTERACTION_ENDED, RemoveEventTargettingThis); 
         //GenerateInitialDefenders();
-        GenerateInitialResidents();
+        //GenerateInitialResidents();
         CreateNameplate();
     }
     public bool HasLandmarkOfType(LANDMARK_TYPE type) {
@@ -1048,6 +1048,14 @@ public class Area {
         }
         return classWeights;
     }
+    public WeightedDictionary<AreaCharacterClass> GetClassWeights(RACE raceType) {
+        Race race = new Race(raceType, RACE_SUB_TYPE.NORMAL);
+        WeightedDictionary<AreaCharacterClass> classWeights = LandmarkManager.Instance.GetDefaultDefenderWeights(race);
+        if (this.owner != null && this.owner.additionalClassWeights.GetTotalOfWeights() > 0) {
+            classWeights.AddElements(this.owner.additionalClassWeights);
+        }
+        return classWeights;
+    }
     public bool HasClassInWeights(string className) {
         WeightedDictionary<AreaCharacterClass> classWeights = GetClassWeights();
         foreach (KeyValuePair<AreaCharacterClass, int> keyValuePair in classWeights.dictionary) {
@@ -1212,6 +1220,20 @@ public class Area {
             createdCharacter.SetLevel(owner.level);
             Debug.Log(GameManager.Instance.TodayLogString() + "Generated Lvl. " + createdCharacter.level.ToString() +
                     " character " + createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name + " for faction " + this.owner.name);
+        }
+    }
+    public void GenerateStartingFollowers(int followersLevel) {
+        if(owner != null) {
+            for (int i = 0; i < owner.startingFollowers.Count; i++) {
+                WeightedDictionary<AreaCharacterClass> classWeights = GetClassWeights(owner.startingFollowers[i]);
+                AreaCharacterClass chosenClass = classWeights.PickRandomElementGivenWeights();
+                BaseLandmark randomHome = this.landmarks[UnityEngine.Random.Range(0, landmarks.Count)];
+                Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass.className, owner.startingFollowers[i], Utilities.GetRandomGender(),
+                    owner, randomHome);
+                createdCharacter.LevelUp(followersLevel - 1);
+                Debug.Log(GameManager.Instance.TodayLogString() + "Generated Lvl. " + createdCharacter.level.ToString() +
+                        " character " + createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name + " for faction " + this.owner.name);
+            }
         }
     }
     public bool HasCharacterThatIsNotFromFaction(Faction faction) {
