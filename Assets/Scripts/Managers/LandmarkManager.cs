@@ -595,7 +595,7 @@ public class LandmarkManager : MonoBehaviour {
                 else {
                     Faction neutralFaction = FactionManager.Instance.neutralFaction;
                     if (neutralFaction != null) {
-                        neutralFaction.OwnArea(newArea); //this will add area to the neutral factions owned area list, but the area's owner will still be null
+                        neutralFaction.AddToOwnedAreas(newArea); //this will add area to the neutral factions owned area list, but the area's owner will still be null
                     }
                 }
 #endif
@@ -660,14 +660,14 @@ public class LandmarkManager : MonoBehaviour {
         if (area.owner != null) {
             UnownArea(area);
         }
-        newOwner.OwnArea(area);
+        newOwner.AddToOwnedAreas(area);
         area.SetOwner(newOwner);
         area.SetRaceType(newRace);
         area.TintStructuresInArea(newOwner.factionColor);
     }
     public void UnownArea(Area area) {
         if (area.owner != null) {
-            area.owner.UnownArea(area);
+            area.owner.RemoveFromOwnedAreas(area);
         }
         area.SetOwner(null);
         area.TintStructuresInArea(Color.white);

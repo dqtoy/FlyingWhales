@@ -157,7 +157,7 @@ public class ExpansionEvent : Interaction {
     private void OwnArea(Character character) {
         Area area = interactable.tileLocation.areaOfTile;
         if (area.owner == null) {
-            FactionManager.Instance.neutralFaction.UnownArea(area);
+            FactionManager.Instance.neutralFaction.RemoveFromOwnedAreas(area);
         }
         LandmarkManager.Instance.OwnArea(character.faction, character.race, area);
     }

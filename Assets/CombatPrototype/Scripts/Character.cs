@@ -1750,7 +1750,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         Faction newFaction = FactionManager.Instance.GetFactionBasedOnName(factionName);
         newFaction.SetLeader(this);
         ChangeFactionTo(newFaction);
-        FactionManager.Instance.neutralFaction.UnownArea(location.tileLocation.areaOfTile);
+        FactionManager.Instance.neutralFaction.RemoveFromOwnedAreas(location.tileLocation.areaOfTile);
         LandmarkManager.Instance.OwnArea(newFaction, race, location.tileLocation.areaOfTile);
     }
     #endregion

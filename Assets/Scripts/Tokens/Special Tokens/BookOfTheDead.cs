@@ -48,7 +48,7 @@ public class BookOfTheDead : SpecialToken {
         Faction newFaction = FactionManager.Instance.GetFactionBasedOnName("Ziranna");
         newFaction.SetLeader(targetCharacter);
         newFaction.AddNewCharacter(targetCharacter);
-        FactionManager.Instance.neutralFaction.UnownArea(targetCharacter.specificLocation.tileLocation.areaOfTile);
+        FactionManager.Instance.neutralFaction.RemoveFromOwnedAreas(targetCharacter.specificLocation.tileLocation.areaOfTile);
         LandmarkManager.Instance.OwnArea(newFaction, newFaction.raceType, targetCharacter.specificLocation.tileLocation.areaOfTile);
 
         newFaction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
@@ -75,7 +75,7 @@ public class BookOfTheDead : SpecialToken {
         Faction newFaction = FactionManager.Instance.GetFactionBasedOnName("Ziranna");
         newFaction.SetLeader(state.tokenUser);
         state.tokenUser.ChangeFactionTo(newFaction);
-        FactionManager.Instance.neutralFaction.UnownArea(state.tokenUser.specificLocation.tileLocation.areaOfTile);
+        FactionManager.Instance.neutralFaction.RemoveFromOwnedAreas(state.tokenUser.specificLocation.tileLocation.areaOfTile);
         LandmarkManager.Instance.OwnArea(newFaction, newFaction.raceType, state.tokenUser.specificLocation.tileLocation.areaOfTile);
 
         newFaction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
@@ -103,7 +103,7 @@ public class BookOfTheDead : SpecialToken {
         Faction newFaction = FactionManager.Instance.GetFactionBasedOnName("Ziranna");
         newFaction.SetLeader(state.tokenUser);
         newFaction.AddNewCharacter(state.tokenUser);
-        FactionManager.Instance.neutralFaction.UnownArea(state.tokenUser.specificLocation.tileLocation.areaOfTile);
+        FactionManager.Instance.neutralFaction.RemoveFromOwnedAreas(state.tokenUser.specificLocation.tileLocation.areaOfTile);
         LandmarkManager.Instance.OwnArea(newFaction, newFaction.raceType, state.tokenUser.specificLocation.tileLocation.areaOfTile);
 
         newFaction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
