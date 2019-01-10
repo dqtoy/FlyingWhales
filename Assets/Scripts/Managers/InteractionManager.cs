@@ -321,7 +321,7 @@ public class InteractionManager : MonoBehaviour {
         switch (interactionType) {
             case INTERACTION_TYPE.SPAWN_CHARACTER:
             case INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER:
-                return landmark.tileLocation.areaOfTile.areaResidents.Count < landmark.tileLocation.areaOfTile.residentCapacity && landmark.tileLocation.areaOfTile.race.race != RACE.NONE;
+                return landmark.tileLocation.areaOfTile.areaResidents.Count < landmark.tileLocation.areaOfTile.residentCapacity;
             case INTERACTION_TYPE.BANDIT_RAID:
                 //Random event that occurs on Bandit Camps. Requires at least 3 characters or army units in the Bandit Camp 
                 //character list owned by the Faction owner.
@@ -799,7 +799,8 @@ public class InteractionManager : MonoBehaviour {
                     currInteraction.TimedOutRunDefault(ref log);
                     log += "\n";
                 } else {
-                    area.RemoveInteraction(currInteraction);
+                    //area.RemoveInteraction(currInteraction);
+                    currInteraction.EndInteraction();
                     log += "\n" + character.name + " is unable to perform " + currInteraction.name + "!";
                     //Unable to perform
                     Interaction unable = CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, area.coreTile.landmarkOnTile);

@@ -572,7 +572,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     #region Signals
     private void SubscribeToSignals() {
         //Messenger.AddListener<Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
-        //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
         //Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
         //Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
         //Messenger.AddListener<Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
@@ -583,7 +583,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     }
     public void UnsubscribeSignals() {
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
-        //Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
         //Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
         //Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
@@ -1939,14 +1939,19 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         }
         return false;
     }
-    //private void OnOtherCharacterDied(Character character) {
-    //    if (character.id != this.id) {
-    //        if (IsCharacterLovedOne(character)) { //A character gains heartbroken tag for 15 days when a family member or a loved one dies.
-    //            AddAttribute(ATTRIBUTE.HEARTBROKEN);
-    //        }
-    //        //RemoveRelationshipWith(character);
-    //    }
-    //}
+    private void OnOtherCharacterDied(Character character) {
+        if (character.id != this.id) {
+            Friend friend = this.GetFriendTraitWith(character);
+            if (friend != null) {
+                RemoveTrait(friend);
+            }
+
+            Enemy enemy = this.GetEnemyTraitWith(character);
+            if (enemy != null) {
+                RemoveTrait(enemy);
+            }
+        }
+    }
     //public bool IsCharacterLovedOne(Character otherCharacter) {
     //    Relationship rel = GetRelationshipWith(otherCharacter);
     //    if (rel != null) {
