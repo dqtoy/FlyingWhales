@@ -31,7 +31,7 @@ public class MoveToReturnHome : Interaction {
 
     private void StartStateRewardEffect(InteractionState state) {
         //**Mechanics**: Character will start its travel to home location
-        _characterInvolved.ownParty.GoHome();
+        _characterInvolved.ownParty.GoHomeAndDisband();
         state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
     }
 }

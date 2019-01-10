@@ -213,10 +213,12 @@ public class Party {
         Messenger.Broadcast<Party>(Signals.PARTY_DIED, this);
     }
     public void DisbandParty() {
-        for (int i = 0; i < _characters.Count; i++) {
-            if(_characters[i] != _owner) {
-                RemoveCharacter(_characters[i]);
-                i--;
+        if(_characters.Count > 1) {
+            for (int i = 0; i < _characters.Count; i++) {
+                if (_characters[i] != _owner) {
+                    RemoveCharacter(_characters[i]);
+                    i--;
+                }
             }
         }
     }

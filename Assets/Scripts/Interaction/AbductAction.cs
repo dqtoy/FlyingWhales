@@ -287,7 +287,6 @@ public class AbductAction : Interaction {
         character.MigrateTo(_characterInvolved.homeLandmark);
         _characterInvolved.ownParty.AddCharacter(character);
         Interaction interactionAbductor = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, interactable);
-        interactionAbductor.AddEndInteractionAction(() => _characterInvolved.ownParty.DisbandParty());
         _characterInvolved.SetForcedInteraction(interactionAbductor);
         _characterInvolved.SetDailyInteractionGenerationTick(GameManager.Instance.continuousDays + 1);
     }
