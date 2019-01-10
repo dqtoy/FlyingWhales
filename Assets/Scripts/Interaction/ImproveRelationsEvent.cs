@@ -92,14 +92,14 @@ public class ImproveRelationsEvent : Interaction {
             state.SetDefaultOption(doNothing);
         }
     }
-    public override bool CanStillDoInteraction() {
-        if (_characterInvolved.faction == null ||targetFaction == null || _characterInvolved.faction.isDestroyed || targetFaction.isDestroyed) {
+    public override bool CanInteractionBeDoneBy(Character character) {
+        if (character.faction == null || targetFaction == null || character.faction.isDestroyed || targetFaction.isDestroyed) {
             return false;
         }
-        if (_characterInvolved.faction.id == targetFaction.id) {
+        if (character.faction.id == targetFaction.id) {
             return false;
         }
-        return base.CanStillDoInteraction();
+        return base.CanInteractionBeDoneBy(character);
     }
     #endregion
 

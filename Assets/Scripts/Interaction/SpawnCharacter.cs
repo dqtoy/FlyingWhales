@@ -73,9 +73,12 @@ public class SpawnCharacter : Interaction {
             state.SetDefaultOption(doNothingOption);
         }
     }
-    public override bool CanStillDoInteraction() {
+    public override bool CanInteractionBeDoneBy(Character character) {
         return interactable.tileLocation.areaOfTile.owner != null;
     }
+    //public override bool CanStillDoInteraction() {
+    //    return interactable.tileLocation.areaOfTile.owner != null;
+    //}
     #endregion
 
     #region Action Options

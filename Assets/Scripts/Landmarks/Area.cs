@@ -104,9 +104,9 @@ public class Area {
         //SetSupplyCapacity(1000);
         AddTile(coreTile);
         SetSuppliesInBank(1000);
-        if (areaType != AREA_TYPE.DEMONIC_INTRUSION) {
-            Messenger.AddListener(Signals.DAY_ENDED_2, DefaultAllExistingInteractions);
-        }
+        //if (areaType != AREA_TYPE.DEMONIC_INTRUSION) {
+        //    Messenger.AddListener(Signals.DAY_ENDED_2, DefaultAllExistingInteractions);
+        //}
 #if !WORLD_CREATION_TOOL
         ConstructAreaTasksInteractionWeights();
         StartSupplyLine();
@@ -160,9 +160,9 @@ public class Area {
         //LoadSpecialTokens(data);
         AddTile(Utilities.GetTilesFromIDs(data.tileData)); //exposed tiles will be determined after loading landmarks at MapGeneration
         UpdateBorderColors();
-        if (areaType != AREA_TYPE.DEMONIC_INTRUSION) {
-            Messenger.AddListener(Signals.DAY_ENDED_2, DefaultAllExistingInteractions);
-        }
+        //if (areaType != AREA_TYPE.DEMONIC_INTRUSION) {
+        //    Messenger.AddListener(Signals.DAY_ENDED_2, DefaultAllExistingInteractions);
+        //}
         GenerateDefaultRace();
         nameplatePos = LandmarkManager.Instance.GetAreaNameplatePosition(this);
     }
@@ -877,15 +877,15 @@ public class Area {
             //Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
         }
     }
-    public void DefaultAllExistingInteractions() {
-        if(stopDefaultAllExistingInteractions) { return; }
-        for (int i = 0; i < currentInteractions.Count; i++) {
-            if (!currentInteractions[i].hasActivatedTimeOut) {
-                currentInteractions[i].TimedOutRunDefault();
-                i--;
-            }
-        }
-    }
+    //public void DefaultAllExistingInteractions() { //NOTE: Only 
+    //    if(stopDefaultAllExistingInteractions) { return; }
+    //    for (int i = 0; i < currentInteractions.Count; i++) {
+    //        if (!currentInteractions[i].hasActivatedTimeOut) {
+    //            currentInteractions[i].TimedOutRunDefault();
+    //            i--;
+    //        }
+    //    }
+    //}
     public void SetStopDefaultInteractionsState(bool state) {
         stopDefaultAllExistingInteractions = stopDefaultAllExistingInteractions;
     }
