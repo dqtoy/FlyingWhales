@@ -382,6 +382,7 @@ public class Faction {
         Character leader = CharacterManager.Instance.CreateNewCharacter(_initialLeaderClass, _initialLeaderRace, _initialLeaderGender,
                     this, _ownedAreas[0].coreTile.landmarkOnTile);
         leader.LevelUp(leaderLevel - 1);
+        SetLeader(leader);
         Debug.Log(GameManager.Instance.TodayLogString() + "LEADER Generated Lvl. " + leader.level.ToString() +
                 " character " + leader.characterClass.className + " " + leader.name + " at " + this.name + " for faction " + leader.name);
     }
