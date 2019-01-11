@@ -295,7 +295,7 @@ public class CharmAction : Interaction {
             character.defendingArea.GetFirstDefenderGroup().RemoveCharacterFromGroup(character);
         }
         //only add charmed trait to characters that have not been charmed yet, this is to retain it's original faction
-        Charmed charmedTrait = new Charmed(character.faction);
+        Charmed charmedTrait = new Charmed(character.faction, character.homeLandmark);
         character.AddTrait(charmedTrait);
         character.faction.RemoveCharacter(character);
         faction.AddNewCharacter(character);

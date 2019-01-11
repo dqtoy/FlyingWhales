@@ -101930,6 +101930,20 @@ MonoBehaviour:
     - Odious Lair
     - Cindermaul Hideout
     - Pitthize
+  - tokenName: Dispel Scroll
+    quantity: 0
+    appearanceWeight: 100
+    areaLocations:
+    - Cardell
+    - Narris
+    - Cindermaul Hideout
+    - Redheart Den
+    - Radisle Cavern
+    - Blistering Hollow
+    - Odious Lair
+    - Gloomhollow Crypts
+    - Tessellated Triangle
+    - Pitthize
 --- !u!1 &1688629845
 GameObject:
   m_ObjectHideFlags: 0

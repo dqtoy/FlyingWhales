@@ -1999,6 +1999,49 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     private bool IsTargetStillViable(Area target) {
         return target.owner != null;
     }
+    public void ReturnToOriginalHomeAndFaction(BaseLandmark ogHome, Faction ogFaction) { 
+        //first, check if the character's original faction is still alive
+        if (!ogFaction.isDestroyed) { //if it is, 
+            this.ChangeFactionTo(ogFaction);  //transfer the character to his original faction
+            if (ogFaction.id == FactionManager.Instance.neutralFaction.id) { //if the character's original faction is the neutral faction
+                if (ogHome.tileLocation.areaOfTile.owner == null && !ogHome.tileLocation.areaOfTile.IsResidentsFull()) { //check if his original home is still unowned
+                    //if it is and it has not reached it's resident capacity, return him to his original home
+                    MigrateTo(ogHome);
+                } else { //if it does not meet those requirements
+                    //check if the neutral faction still has any available areas that have not reached capacity yet
+                    List<Area> validNeutralAreas = FactionManager.Instance.neutralFaction.ownedAreas.Where(x => !x.IsResidentsFull()).ToList();
+                    if (validNeutralAreas.Count > 0) {
+                        //if it does, pick randomly from those
+                        Area chosenArea = validNeutralAreas[UnityEngine.Random.Range(0, validNeutralAreas.Count)];
+                        MigrateTo(chosenArea);
+                    }
+                    //if not, keep the characters current home
+                }
+            } else { //if it is not, check if his original home is still owned by that faction and it has not yet reached it's resident capacity
+                if (ogHome.tileLocation.areaOfTile.owner == ogFaction && !ogHome.tileLocation.areaOfTile.IsResidentsFull()) {
+                    //if it meets those requirements, return the character's home to that location
+                    MigrateTo(ogHome);
+                } else { //if not, get another area owned by his faction that has not yet reached capacity
+                    List<Area> validAreas = ogFaction.ownedAreas.Where(x => !x.IsResidentsFull()).ToList();
+                    if (validAreas.Count > 0) {
+                        Area chosenArea = validAreas[UnityEngine.Random.Range(0, validAreas.Count)];
+                        MigrateTo(chosenArea);
+                    }
+                    //if there are still no areas that can be his home, keep his current one.
+                }
+            }
+        } else { //if not
+            //transfer the character to the neutral faction instead
+            this.ChangeFactionTo(FactionManager.Instance.neutralFaction);
+            List<Area> validNeutralAreas = FactionManager.Instance.neutralFaction.ownedAreas.Where(x => !x.IsResidentsFull()).ToList();
+            if (validNeutralAreas.Count > 0) {  //then check if the neutral faction has any owned areas that have not yet reached area capacity
+                //if it does, pick from any of those, then set it as the characters new home
+                Area chosenArea = validNeutralAreas[UnityEngine.Random.Range(0, validNeutralAreas.Count)];
+                MigrateTo(chosenArea);
+            }
+            //if it does not, keep the characters current home
+        }
+    }
     #endregion
 
     #region Relationships
@@ -2741,6 +2784,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             _homeLandmark.RemoveCharacterHomeOnLandmark(this);
         }
         newHomeLandmark.AddCharacterHomeOnLandmark(this);
+    }
+    public void MigrateTo(Area newHomeArea) {
+        MigrateTo(newHomeArea.coreTile.landmarkOnTile);
     }
     #endregion
 
