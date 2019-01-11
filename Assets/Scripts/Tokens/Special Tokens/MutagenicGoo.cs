@@ -4,20 +4,6 @@ using UnityEngine;
 
 public class MutagenicGoo : SpecialToken {
 
-    List<RACE> beastRaces = new List<RACE>() {
-        RACE.DRAGON,
-        RACE.WOLF,
-        RACE.BEAST,
-        RACE.SPIDER
-    };
-    List<RACE> nonBeastRaces = new List<RACE>() {
-        RACE.HUMANS,
-        RACE.ELVES,
-        RACE.GOBLIN,
-        RACE.FAERY,
-        RACE.SKELETON,
-    };
-
     public MutagenicGoo() : base(SPECIAL_TOKEN.MUTAGENIC_GOO) {
         weight = 80;
         npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_SELF;
@@ -92,13 +78,18 @@ public class MutagenicGoo : SpecialToken {
     private void ChangeRaceRandomly(Character character) {
         //**Mechanics**: Change character's race randomly (beast to beast only, non-beast to non-beast only)
         List<RACE> choices;
-        if (beastRaces.Contains(character.race)) {
-            choices = new List<RACE>(beastRaces);
+        bool isBeast = Utilities.IsRaceBeast(character.race);
+        if (isBeast) {
+            choices = new List<RACE>(Utilities.beastRaces);
         } else {
-            choices = new List<RACE>(nonBeastRaces);
+            choices = new List<RACE>(Utilities.nonBeastRaces);
         }
         choices.Remove(character.race);
         RACE chosenRace = choices[Random.Range(0, choices.Count)];
         character.ChangeRace(chosenRace);
+        if (isBeast) { //change class to the appropriate class
+            WeightedDictionary<AreaCharacterClass> classWeights = LandmarkManager.Instance.GetDefaultClassWeights(chosenRace);
+            character.ChangeClass(classWeights.PickRandomElementGivenWeights().className);
+        }
     }
 }

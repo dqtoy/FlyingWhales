@@ -1459,6 +1459,23 @@ public class Utilities : MonoBehaviour {
             return ((party1.computedPower - party2.computedPower) / party1.computedPower) * 100;
         }
     }
+
+    public static List<RACE> beastRaces = new List<RACE>() {
+        RACE.DRAGON,
+        RACE.WOLF,
+        RACE.BEAST,
+        RACE.SPIDER
+    };
+    public static List<RACE> nonBeastRaces = new List<RACE>() {
+        RACE.HUMANS,
+        RACE.ELVES,
+        RACE.GOBLIN,
+        RACE.FAERY,
+        RACE.SKELETON,
+    };
+    public static bool IsRaceBeast(RACE race) {
+        return beastRaces.Contains(race);
+    }
     #endregion
 
     #region Resources
