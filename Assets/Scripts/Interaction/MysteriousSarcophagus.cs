@@ -323,7 +323,7 @@ public class MysteriousSarcophagus : Interaction {
             race = RACE.SKELETON;
             levelModifier = 3;
         }
-        WeightedDictionary<AreaCharacterClass> classWeights = LandmarkManager.Instance.GetDefaultDefenderWeights(new Race(race, RACE_SUB_TYPE.NORMAL));
+        WeightedDictionary<AreaCharacterClass> classWeights = LandmarkManager.Instance.GetDefaultClassWeights(race);
         string className = classWeights.PickRandomElementGivenWeights().className;
         _undeadCharacter = CharacterManager.Instance.CreateNewCharacter(className, race, Utilities.GetRandomGender(), interactable.tileLocation.areaOfTile.owner, interactable);
         _undeadCharacter.SetLevel(FactionManager.Instance.GetAverageFactionLevel() + levelModifier);

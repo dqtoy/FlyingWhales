@@ -4,20 +4,6 @@ using UnityEngine;
 
 public class MutagenicGoo : SpecialToken {
 
-    List<RACE> beastRaces = new List<RACE>() {
-        RACE.DRAGON,
-        RACE.WOLF,
-        RACE.BEAST,
-        RACE.SPIDER
-    };
-    List<RACE> nonBeastRaces = new List<RACE>() {
-        RACE.HUMANS,
-        RACE.ELVES,
-        RACE.GOBLIN,
-        RACE.FAERY,
-        RACE.SKELETON,
-    };
-
     public MutagenicGoo() : base(SPECIAL_TOKEN.MUTAGENIC_GOO) {
         weight = 80;
         npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_SELF;
@@ -75,30 +61,31 @@ public class MutagenicGoo : SpecialToken {
         state.AddLogToInvolvedObjects(log);
     }
     private void StopFailEffect(TokenInteractionState state) {
-        string chosenIllnessName = AttributeManager.Instance.GetRandomIllness();
-        (state.target as Character).AddTrait(AttributeManager.Instance.allIllnesses[chosenIllnessName]);
-        state.tokenUser.LevelUp();
+        ChangeRaceRandomly(state.tokenUser);
         state.tokenUser.ConsumeToken();
 
         state.descriptionLog.AddToFillers(state.interaction.investigatorMinion, state.interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
-        state.descriptionLog.AddToFillers(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1);
-        state.descriptionLog.AddToFillers(null, this.name, LOG_IDENTIFIER.ITEM_1);
+        state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(state.tokenUser.race), LOG_IDENTIFIER.STRING_1);
 
         state.AddLogFiller(new LogFiller(state.interaction.investigatorMinion, state.interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
-        state.AddLogFiller(new LogFiller(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(null, this.name, LOG_IDENTIFIER.ITEM_1));
+        state.AddLogFiller(new LogFiller(null, Utilities.GetNormalizedSingularRace(state.tokenUser.race), LOG_IDENTIFIER.STRING_1));
     }
 
     private void ChangeRaceRandomly(Character character) {
         //**Mechanics**: Change character's race randomly (beast to beast only, non-beast to non-beast only)
         List<RACE> choices;
-        if (beastRaces.Contains(character.race)) {
-            choices = new List<RACE>(beastRaces);
+        bool isBeast = Utilities.IsRaceBeast(character.race);
+        if (isBeast) {
+            choices = new List<RACE>(Utilities.beastRaces);
         } else {
-            choices = new List<RACE>(nonBeastRaces);
+            choices = new List<RACE>(Utilities.nonBeastRaces);
         }
         choices.Remove(character.race);
         RACE chosenRace = choices[Random.Range(0, choices.Count)];
         character.ChangeRace(chosenRace);
+        if (isBeast) { //change class to the appropriate class
+            WeightedDictionary<AreaCharacterClass> classWeights = LandmarkManager.Instance.GetDefaultClassWeights(chosenRace);
+            character.ChangeClass(classWeights.PickRandomElementGivenWeights().className);
+        }
     }
 }

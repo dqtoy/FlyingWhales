@@ -680,6 +680,7 @@ public class LandmarkManager : MonoBehaviour {
             area.owner.RemoveFromOwnedAreas(area);
         }
         area.SetOwner(null);
+        area.SetRaceType(area.defaultRace.race); //Return area to its default race
         area.TintStructuresInArea(Color.white);
         Messenger.Broadcast(Signals.AREA_OCCUPANY_CHANGED, area);
     }
@@ -689,7 +690,7 @@ public class LandmarkManager : MonoBehaviour {
             currArea.LoadAdditionalData();
         }
     }
-    public WeightedDictionary<AreaCharacterClass> GetDefaultDefenderWeights(Race race) {
+    public WeightedDictionary<AreaCharacterClass> GetDefaultClassWeights(RACE race) {
         if (defaultRaceDefenders.ContainsKey(race)) {
             WeightedDictionary<AreaCharacterClass> weights = new WeightedDictionary<AreaCharacterClass>();
             for (int i = 0; i < defaultRaceDefenders[race].Count; i++) {
@@ -698,7 +699,7 @@ public class LandmarkManager : MonoBehaviour {
             }
             return weights;
         }
-        throw new System.Exception("There is no default defender weights for " + race.race.ToString() + "/" + race.subType.ToString());
+        throw new System.Exception("There is no default defender weights for " + race.ToString());
         //return null;
     }
     public Vector2 GetAreaNameplatePosition(Area area) {

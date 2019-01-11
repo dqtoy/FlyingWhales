@@ -1310,25 +1310,7 @@ MonoBehaviour:
   ruinedSprite: {fileID: 21300032, guid: 56a2c57009ed96c41b97b19cc3d6b340, type: 3}
   landmarkGO: {fileID: 1000010040247426, guid: 62f5adf3c35fcea45a8e702a164cf60d, type: 2}
   defaultRaceDefenders:
-    m_keys:
-    - race: 1
-      subType: 0
-    - race: 2
-      subType: 0
-    - race: 6
-      subType: 1
-    - race: 17
-      subType: 0
-    - race: 10
-      subType: 0
-    - race: 13
-      subType: 0
-    - race: 15
-      subType: 0
-    - race: 8
-      subType: 0
-    - race: 6
-      subType: 0
+    m_keys: 0100000002000000060000000f0000000d000000110000000a00000008000000
     m_values:
     - data:
       - className: Knight
@@ -1341,7 +1323,7 @@ MonoBehaviour:
       - className: Stalker
         weight: 40
       - className: Archer
-        weight: 40
+        weight: 0
       - className: Druid
         weight: 20
     - data:
@@ -1352,11 +1334,12 @@ MonoBehaviour:
       - className: Shaman
         weight: 20
     - data:
-      - className: Spinner
+      - className: Marauder
         weight: 40
-    - data:
-      - className: Ravager
-        weight: 40
+      - className: Mage
+        weight: 20
+      - className: Shaman
+        weight: 20
     - data:
       - className: Knight
         weight: 30
@@ -1377,22 +1360,14 @@ MonoBehaviour:
       - className: Druid
         weight: 30
     - data:
-      - className: Marauder
+      - className: Spinner
         weight: 40
-      - className: Mage
-        weight: 20
-      - className: Shaman
-        weight: 20
+    - data:
+      - className: Ravager
+        weight: 40
     - data:
       - className: Dragon
-        weight: 30
-    - data:
-      - className: Barbarian
         weight: 40
-      - className: Archer
-        weight: 20
-      - className: Shaman
-        weight: 20
   locationPortraits:
     m_keys:
     - Blistering Hollow

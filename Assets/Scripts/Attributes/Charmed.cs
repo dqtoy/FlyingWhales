@@ -14,5 +14,4 @@ public class Charmed : Trait {
         daysDuration = 0;
         effects = new List<TraitEffect>();
     }
-	
 }

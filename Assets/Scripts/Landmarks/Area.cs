@@ -60,18 +60,18 @@ public class Area {
     public List<string> supplyLog { get; private set; } //limited to 100 entries
     public List<string> charactersAtLocationHistory { get; private set; }
 
-    private Race defaultRace;
+    public Race defaultRace { get; private set; }
     private RACE _raceType;
     private List<HexTile> outerTiles;
     private List<SpriteRenderer> outline;
 
     #region getters
     public RACE raceType {
-        get { return owner == null ? defaultRace.race : _raceType; }
+        get { return _raceType; }
     }
-    public Race race {
-        get { return owner == null ? defaultRace : owner.race; }
-    }
+    //public RACE raceType {
+    //    get { return owner == null ? defaultRace.race : _raceType; }
+    //}
     //public int elligibleResidents {
     //    get { return areaResidents.Where(x => !x.isDefender).Count(); }
     //}
@@ -112,6 +112,7 @@ public class Area {
         StartSupplyLine();
 #endif
         nameplatePos = LandmarkManager.Instance.GetAreaNameplatePosition(this);
+        possibleOccupants = new List<RACE>();
     }
     public Area(AreaSaveData data) {
         id = Utilities.SetID(this, data.areaID);
@@ -224,6 +225,7 @@ public class Area {
         if (initialRaceSetup.Count > 0) {
             InitialRaceSetup chosenSetup = initialRaceSetup[UnityEngine.Random.Range(0, initialRaceSetup.Count)];
             defaultRace = chosenSetup.race;
+            SetRaceType(defaultRace.race);
         } else {
             defaultRace = new Race(RACE.NONE, RACE_SUB_TYPE.NORMAL);
         }
@@ -767,7 +769,9 @@ public class Area {
     public void SetSuppliesInBank(int amount) {
         suppliesInBank = amount;
         suppliesInBank = Mathf.Clamp(suppliesInBank, 0, monthlySupply);
+#if !WORLD_CREATION_TOOL
         Debug.Log(GameManager.Instance.TodayLogString() + "Set " + this.name + " supplies to " + suppliesInBank.ToString());
+#endif
         Messenger.Broadcast(Signals.AREA_SUPPLIES_CHANGED, this);
         //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
     }
@@ -1042,16 +1046,13 @@ public class Area {
         return null;
     }
     public WeightedDictionary<AreaCharacterClass> GetClassWeights() {
-        WeightedDictionary<AreaCharacterClass> classWeights = LandmarkManager.Instance.GetDefaultDefenderWeights(race);
-        if (this.owner != null && this.owner.additionalClassWeights.GetTotalOfWeights() > 0) {
-            classWeights.AddElements(this.owner.additionalClassWeights);
-        }
-        return classWeights;
+        return GetClassWeights(raceType);
     }
     public WeightedDictionary<AreaCharacterClass> GetClassWeights(RACE raceType) {
-        Race race = new Race(raceType, RACE_SUB_TYPE.NORMAL);
-        WeightedDictionary<AreaCharacterClass> classWeights = LandmarkManager.Instance.GetDefaultDefenderWeights(race);
-        if (this.owner != null && this.owner.additionalClassWeights.GetTotalOfWeights() > 0) {
+        WeightedDictionary<AreaCharacterClass> classWeights = LandmarkManager.Instance.GetDefaultClassWeights(raceType);
+        if (!Utilities.IsRaceBeast(raceType) //Check if the area is a beast type, if it is, only use the default class weights
+            && this.owner != null
+            && this.owner.additionalClassWeights.GetTotalOfWeights() > 0) {
             classWeights.AddElements(this.owner.additionalClassWeights);
         }
         return classWeights;
