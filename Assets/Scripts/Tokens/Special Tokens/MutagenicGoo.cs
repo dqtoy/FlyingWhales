@@ -61,18 +61,14 @@ public class MutagenicGoo : SpecialToken {
         state.AddLogToInvolvedObjects(log);
     }
     private void StopFailEffect(TokenInteractionState state) {
-        string chosenIllnessName = AttributeManager.Instance.GetRandomIllness();
-        (state.target as Character).AddTrait(AttributeManager.Instance.allIllnesses[chosenIllnessName]);
-        state.tokenUser.LevelUp();
+        ChangeRaceRandomly(state.tokenUser);
         state.tokenUser.ConsumeToken();
 
         state.descriptionLog.AddToFillers(state.interaction.investigatorMinion, state.interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
-        state.descriptionLog.AddToFillers(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1);
-        state.descriptionLog.AddToFillers(null, this.name, LOG_IDENTIFIER.ITEM_1);
+        state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(state.tokenUser.race), LOG_IDENTIFIER.STRING_1);
 
         state.AddLogFiller(new LogFiller(state.interaction.investigatorMinion, state.interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
-        state.AddLogFiller(new LogFiller(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(null, this.name, LOG_IDENTIFIER.ITEM_1));
+        state.AddLogFiller(new LogFiller(null, Utilities.GetNormalizedSingularRace(state.tokenUser.race), LOG_IDENTIFIER.STRING_1));
     }
 
     private void ChangeRaceRandomly(Character character) {
