@@ -23,7 +23,7 @@ public class JobInteractionsListDictionary : SerializableDictionary<JOB, List<Ch
 [System.Serializable]
 public class TileSpriteCorruptionListDictionary : SerializableDictionary<Sprite, List<GameObject>, CorruptionObjectsListStorage> { }
 [System.Serializable]
-public class RaceClassListDictionary : SerializableDictionary<Race, List<RaceAreaDefenderSetting>, RaceDefenderListStorage> { }
+public class RaceClassListDictionary : SerializableDictionary<RACE, List<RaceAreaDefenderSetting>, RaceDefenderListStorage> { }
 [System.Serializable]
 public class JobPortraitFramesDictionary : SerializableDictionary<JOB, PortraitFrame> { }
 [System.Serializable]

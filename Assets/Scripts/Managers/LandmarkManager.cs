@@ -689,7 +689,7 @@ public class LandmarkManager : MonoBehaviour {
             currArea.LoadAdditionalData();
         }
     }
-    public WeightedDictionary<AreaCharacterClass> GetDefaultDefenderWeights(Race race) {
+    public WeightedDictionary<AreaCharacterClass> GetDefaultDefenderWeights(RACE race) {
         if (defaultRaceDefenders.ContainsKey(race)) {
             WeightedDictionary<AreaCharacterClass> weights = new WeightedDictionary<AreaCharacterClass>();
             for (int i = 0; i < defaultRaceDefenders[race].Count; i++) {
@@ -698,7 +698,7 @@ public class LandmarkManager : MonoBehaviour {
             }
             return weights;
         }
-        throw new System.Exception("There is no default defender weights for " + race.race.ToString() + "/" + race.subType.ToString());
+        throw new System.Exception("There is no default defender weights for " + race.ToString());
         //return null;
     }
     public Vector2 GetAreaNameplatePosition(Area area) {

@@ -69,9 +69,6 @@ public class Area {
     public RACE raceType {
         get { return owner == null ? defaultRace.race : _raceType; }
     }
-    public Race race {
-        get { return owner == null ? defaultRace : owner.race; }
-    }
     //public int elligibleResidents {
     //    get { return areaResidents.Where(x => !x.isDefender).Count(); }
     //}
@@ -112,6 +109,7 @@ public class Area {
         StartSupplyLine();
 #endif
         nameplatePos = LandmarkManager.Instance.GetAreaNameplatePosition(this);
+        possibleOccupants = new List<RACE>();
     }
     public Area(AreaSaveData data) {
         id = Utilities.SetID(this, data.areaID);
@@ -767,7 +765,9 @@ public class Area {
     public void SetSuppliesInBank(int amount) {
         suppliesInBank = amount;
         suppliesInBank = Mathf.Clamp(suppliesInBank, 0, monthlySupply);
+#if !WORLD_CREATION_TOOL
         Debug.Log(GameManager.Instance.TodayLogString() + "Set " + this.name + " supplies to " + suppliesInBank.ToString());
+#endif
         Messenger.Broadcast(Signals.AREA_SUPPLIES_CHANGED, this);
         //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
     }
@@ -794,9 +794,9 @@ public class Area {
     //    this.supplyCapacity = supplyCapacity;
     //    //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
     //}
-    #endregion
+#endregion
 
-    #region Rewards
+#region Rewards
     public void ClaimReward(Reward reward) {
         switch (reward.rewardType) {
             case REWARD.SUPPLY:
@@ -806,9 +806,9 @@ public class Area {
             break;
         }
     }
-    #endregion
+#endregion
 
-    #region Landmarks
+#region Landmarks
     //public BaseLandmark GetFirstAliveExposedTile() {
     //    for (int i = 0; i < exposedTiles.Count; i++) {
     //        if (!exposedTiles[i].landmarkObj.isRuined) {
@@ -820,9 +820,9 @@ public class Area {
     public void CenterOnCoreLandmark() {
         CameraMove.Instance.CenterCameraOn(coreTile.gameObject);
     }
-    #endregion
+#endregion
 
-    #region Interactions
+#region Interactions
     private void ConstructAreaTasksInteractionWeights() {
         areaTasksInteractionWeights = new Dictionary<INTERACTION_TYPE, int>() {
             {INTERACTION_TYPE.MOVE_TO_EXPLORE, 100},
@@ -982,9 +982,9 @@ public class Area {
     private bool CanDoAreaTaskInteraction(INTERACTION_TYPE interactionType, Character character) {
         return suppliesInBank >= 100 && InteractionManager.Instance.CanCreateInteraction(interactionType, character);
     }
-    #endregion
+#endregion
 
-    #region Defenders
+#region Defenders
     public void SetMaxDefenderGroups(int maxDefenderGroups) {
         this.maxDefenderGroups = maxDefenderGroups;
     }
@@ -1042,7 +1042,7 @@ public class Area {
         return null;
     }
     public WeightedDictionary<AreaCharacterClass> GetClassWeights() {
-        WeightedDictionary<AreaCharacterClass> classWeights = LandmarkManager.Instance.GetDefaultDefenderWeights(race);
+        WeightedDictionary<AreaCharacterClass> classWeights = LandmarkManager.Instance.GetDefaultDefenderWeights(raceType);
         if (this.owner != null && this.owner.additionalClassWeights.GetTotalOfWeights() > 0) {
             classWeights.AddElements(this.owner.additionalClassWeights);
         }
@@ -1050,7 +1050,7 @@ public class Area {
     }
     public WeightedDictionary<AreaCharacterClass> GetClassWeights(RACE raceType) {
         Race race = new Race(raceType, RACE_SUB_TYPE.NORMAL);
-        WeightedDictionary<AreaCharacterClass> classWeights = LandmarkManager.Instance.GetDefaultDefenderWeights(race);
+        WeightedDictionary<AreaCharacterClass> classWeights = LandmarkManager.Instance.GetDefaultDefenderWeights(raceType);
         if (this.owner != null && this.owner.additionalClassWeights.GetTotalOfWeights() > 0) {
             classWeights.AddElements(this.owner.additionalClassWeights);
         }
@@ -1127,9 +1127,9 @@ public class Area {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Characters
+#region Characters
     public void AddResident(Character character, bool ignoreCapacity = true) {
         if (!areaResidents.Contains(character)) {
             if (!ignoreCapacity) {
@@ -1245,9 +1245,9 @@ public class Area {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Logs
+#region Logs
     public void AddHistory(Log log) {
         if (!history.Contains(log)) {
             history.Add(log);
@@ -1257,9 +1257,9 @@ public class Area {
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
         }
     }
-    #endregion
+#endregion
 
-    #region Attack
+#region Attack
     public void AttackTarget() {
         for (int i = 1; i < attackCharacters.Count; i++) {
             attackCharacters[0].ownParty.AddCharacter(attackCharacters[i]);
@@ -1267,9 +1267,9 @@ public class Area {
         attackCharacters[0].AttackAnArea(attackTarget);
         SetAttackTargetAndCharacters(null, null);
     }
-    #endregion
+#endregion
 
-    #region Special Tokens
+#region Special Tokens
     //private void LoadSpecialTokens(AreaSaveData data) {
     //    possibleSpecialTokenSpawns = new List<SpecialToken>();
     //    if (data.possibleSpecialTokenSpawns != null) {
@@ -1304,7 +1304,7 @@ public class Area {
         //Utilities.ListRemoveRange(choices, character.tokenInInventory);
         return choices;
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]
