@@ -7,6 +7,18 @@ public class CombatGrid : MonoBehaviour {
     private int[,] _columnReference;
     private int[,] _rowReference;
 
+    #region getters/setters
+    public CombatSlot[] slots {
+        get { return _slots; }
+    }
+    public int[,] rowReference {
+        get { return _rowReference; }
+    }
+    public int[,] columnReference {
+        get { return _columnReference; }
+    }
+    #endregion
+
     public void Initialize() {
         _columnReference = new int[,] { { 0, 2 }, { 1, 3 } };
         _rowReference = new int[,] { { 0, 1 }, { 2, 3 } };
@@ -14,6 +26,26 @@ public class CombatGrid : MonoBehaviour {
         for (int i = 0; i < _slots.Length; i++) {
             _slots[i] = new CombatSlot() { gridNumber = i };
         }
+    }
+    public void ResetGrid() {
+        for (int i = 0; i < _slots.Length; i++) {
+            _slots[i].ResetSlot();
+        }
+    }
+    public void RemoveCharacterFromGrid(Character character) {
+        for (int i = 0; i < _slots.Length; i++) {
+            if (_slots[i].character != null && _slots[i].character.id == character.id){
+                _slots[i].character = null;
+            }
+        }
+    }
+    public bool IsGridEmpty() {
+        for (int i = 0; i < _slots.Length; i++) {
+            if (_slots[i].character != null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public bool CanCharacterBeAttachedToGrid(Character character) {
