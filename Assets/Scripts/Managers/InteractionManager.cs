@@ -311,7 +311,15 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.CHANCE_ENCOUNTER:
                 createdInteraction = new ChanceEncounter(interactable);
                 break;
-
+            case INTERACTION_TYPE.FOUND_LUCARETH:
+                createdInteraction = new FoundLucareth(interactable);
+                break;
+            case INTERACTION_TYPE.FOUND_BESTALIA:
+                createdInteraction = new FoundBestalia(interactable);
+                break;
+            case INTERACTION_TYPE.FOUND_MAGUS:
+                createdInteraction = new FoundMagus(interactable);
+                break;
         }
         return createdInteraction;
     }
