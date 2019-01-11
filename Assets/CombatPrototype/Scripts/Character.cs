@@ -696,16 +696,16 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         this._currentSide = side;
     }
     //Adjust current HP based on specified paramater, but HP must not go below 0
-    //public virtual void AdjustHP(int amount, ICharacter killer = null) {
-    //    int previous = this._currentHP;
-    //    this._currentHP += amount;
-    //    this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
-    //    if (previous != this._currentHP) {
-    //        if (this._currentHP == 0) {
-    //            FaintOrDeath(killer);
-    //        }
-    //    }
-    //}
+    public virtual void AdjustHP(int amount, bool triggerDeath = false) {
+        int previous = this._currentHP;
+        this._currentHP += amount;
+        this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
+        if (triggerDeath && previous != this._currentHP) {
+            if (this._currentHP == 0) {
+                Death();
+            }
+        }
+    }
 
     private string GetFaintOrDeath() {
         return "die";
@@ -2957,16 +2957,13 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         Messenger.Broadcast(Signals.TRAIT_ADDED, this);
     }
     public bool RemoveTrait(Trait trait, bool triggerOnRemove = true) {
-        for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i].name == trait.name) {
-                UnapplyFlatTraitEffects(_traits[i]);
-                if (triggerOnRemove) {
-                    _traits[i].OnRemoveTrait(this);
-                }
-                _traits.RemoveAt(i);
-                Messenger.Broadcast(Signals.TRAIT_REMOVED, this);
-                return true;
+        if (_traits.Remove(trait)) {
+            UnapplyFlatTraitEffects(trait);
+            if (triggerOnRemove) {
+                trait.OnRemoveTrait(this);
             }
+            Messenger.Broadcast(Signals.TRAIT_REMOVED, this);
+            return true;
         }
         return false;
     }
