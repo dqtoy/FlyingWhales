@@ -588,10 +588,13 @@ public class LandmarkManager : MonoBehaviour {
                 if (areaData.ownerID != -1) {
                     Faction owner = FactionManager.Instance.GetFactionBasedOnID(areaData.ownerID);
                     if (owner != null) {
+#if WORLD_CREATION_TOOL
+                        OwnArea(owner, owner.raceType, newArea);
+#endif
+#if !WORLD_CREATION_TOOL
                         if (owner.isActive) {
                             OwnArea(owner, owner.raceType, newArea);
                         }
-#if !WORLD_CREATION_TOOL
                         else {
                             Faction neutralFaction = FactionManager.Instance.neutralFaction;
                             if (neutralFaction != null) {
@@ -715,5 +718,5 @@ public class LandmarkManager : MonoBehaviour {
         defaultPos.y -= 1f;
         return defaultPos;
     }
-    #endregion
+#endregion
 }

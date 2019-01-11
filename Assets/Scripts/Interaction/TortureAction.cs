@@ -275,13 +275,14 @@ public class TortureAction : Interaction {
         targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
     }
     private void CharacterRecruitedEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-
         Abducted abductedTrait = targetCharacter.GetTrait("Abducted") as Abducted;
         targetCharacter.RemoveTrait(abductedTrait);
         targetCharacter.ChangeFactionTo(_characterInvolved.faction);
+
+        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+
+        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1));
     }
     #endregion
 
