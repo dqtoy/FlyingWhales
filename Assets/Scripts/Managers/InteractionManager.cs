@@ -799,7 +799,7 @@ public class InteractionManager : MonoBehaviour {
             Interaction currInteraction = interactionsInArea[j];
             Character character = currInteraction.characterInvolved;
             if (!currInteraction.hasActivatedTimeOut) {
-                if (character == null || currInteraction.CanInteractionBeDoneBy(character)) {
+                if (character == null || (!character.isDead && currInteraction.CanInteractionBeDoneBy(character))) {
                     log += "\nRunning interaction default " + currInteraction.type.ToString();
                     if (character != null) {
                         log += " Involving " + character.name;
