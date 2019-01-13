@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
+  m_IndirectSpecularColor: {r: 0.22380304, g: 0.24376729, b: 0.26534945, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -59080,6 +59080,7 @@ GameObject:
   - component: {fileID: 996892239}
   - component: {fileID: 996892241}
   - component: {fileID: 996892240}
+  - component: {fileID: 996892242}
   m_Layer: 5
   m_Name: MinionAttackParty
   m_TagString: Untagged
@@ -59144,6 +59145,17 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 996892238}
+--- !u!114 &996892242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 996892238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f06f3421769872c4aa75374f6a3b573b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &997831983
 GameObject:
   m_ObjectHideFlags: 0
@@ -106205,15 +106217,16 @@ MonoBehaviour:
   tokenCollectorConfirmBtn: {fileID: 1687431027}
   tokenCollectorRecallBtn: {fileID: 890278842}
   tokenCollectorSlot: {fileID: 739011982}
-  minionAssignmentPartyGO: {fileID: 1775096635}
-  minionAssignmentPartySlots:
-  - {fileID: 1109821597}
-  - {fileID: 2077385769}
-  - {fileID: 2009395320}
-  - {fileID: 220213094}
-  minionAssignmentPartyConfirmButton: {fileID: 849149752}
-  minionAssignmentPartyRecallButton: {fileID: 1567164345}
-  minionAssignmentPartyWinChance: {fileID: 1021754076}
+  combatGrid: {fileID: 996892242}
+  minionAttackPartyGO: {fileID: 996892238}
+  minionAttackPartySlots:
+  - {fileID: 789120270}
+  - {fileID: 80535205}
+  - {fileID: 779303551}
+  - {fileID: 16598100}
+  minionAttackPartyConfirmButton: {fileID: 168951254}
+  minionAttackPartyRecallButton: {fileID: 1949310453}
+  minionAttackPartyWinChance: {fileID: 1021754076}
 --- !u!224 &1741253391
 RectTransform:
   m_ObjectHideFlags: 0

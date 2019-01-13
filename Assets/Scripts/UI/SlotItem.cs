@@ -11,7 +11,7 @@ public class SlotItem : MonoBehaviour {
     public object placedObject { get; private set; }
     public System.Type neededType { get; private set; }
 
-    public delegate bool OtherValidation(object obj); //this is for when special conditions are needed to determine whether an object is valid for this slot (i.e Character must have traits, or be a specific race)
+    public delegate bool OtherValidation(object obj, SlotItem slotItem); //this is for when special conditions are needed to determine whether an object is valid for this slot (i.e Character must have traits, or be a specific race)
     public OtherValidation isObjectValidForSlot;
 
     public SlotItemDropEvent onItemDroppedValid;
@@ -82,6 +82,9 @@ public class SlotItem : MonoBehaviour {
         }
     }
     public void PlaceObject(object associatedObj) {
+        if(associatedObj == null) {
+            return;
+        }
         placedObject = associatedObj;
         if (associatedObj is FactionToken) {
             factionEmblem.gameObject.SetActive(true);
@@ -137,7 +140,7 @@ public class SlotItem : MonoBehaviour {
     }
     private bool IsObjectValidForSlot(object obj) {
         if (neededType != null && neededType.IsInstanceOfType(obj)) {
-            if (isObjectValidForSlot == null || isObjectValidForSlot(obj)) {
+            if (isObjectValidForSlot == null || isObjectValidForSlot(obj, this)) {
                 return true;
             }
         }

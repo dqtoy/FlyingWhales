@@ -77,11 +77,12 @@ public class AreaInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Attack/Raid")]
-    [SerializeField] private GameObject minionAssignmentPartyGO;
-    [SerializeField] private SlotItem[] minionAssignmentPartySlots;
-    [SerializeField] private Button minionAssignmentPartyConfirmButton;
-    [SerializeField] private Button minionAssignmentPartyRecallButton;
-    [SerializeField] private TextMeshProUGUI minionAssignmentPartyWinChance;
+    [SerializeField] private CombatGrid combatGrid;
+    [SerializeField] private GameObject minionAttackPartyGO;
+    [SerializeField] private SlotItem[] minionAttackPartySlots;
+    [SerializeField] private Button minionAttackPartyConfirmButton;
+    [SerializeField] private Button minionAttackPartyRecallButton;
+    [SerializeField] private TextMeshProUGUI minionAttackPartyWinChance;
     //[SerializeField] private InvestigationMinionDraggableItem[] minionAssignmentPartyDraggableItem;
 
     private InvestigateButton _currentSelectedInvestigateButton;
@@ -101,6 +102,7 @@ public class AreaInfoUI : UIMenu {
     internal override void Initialize() {
         base.Initialize();
         characterItems = new List<LandmarkCharacterItem>();
+        combatGrid.Initialize();
         LoadLogItems();
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         //Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_INSPECTED, OnLandmarkInspected);
@@ -124,9 +126,10 @@ public class AreaInfoUI : UIMenu {
         minionAssignmentSlot.SetItemDroppedOutCallback(OnInvestigatorMinionDraggedOut);
 
         //attack/raid
-        for (int i = 0; i < minionAssignmentPartySlots.Length; i++) {
-            SlotItem currSlot = minionAssignmentPartySlots[i];
+        for (int i = 0; i < minionAttackPartySlots.Length; i++) {
+            SlotItem currSlot = minionAttackPartySlots[i];
             currSlot.SetNeededType(typeof(Minion));
+            currSlot.SetOtherValidation(IsObjectValidForAttack);
             currSlot.SetSlotIndex(i);
             currSlot.SetItemDroppedCallback(OnPartyMinionDrop);
             currSlot.SetItemDroppedOutCallback(OnPartyMinionDroppedOut);
@@ -146,24 +149,39 @@ public class AreaInfoUI : UIMenu {
     }
 
     #region Slot Checkers
-    private bool IsObjectValidForTokenCollector(object obj) {
+    private bool IsObjectValidForTokenCollector(object obj, SlotItem slotItem) {
         if (obj is Minion) {
             Minion minion = obj as Minion;
             return activeArea.areaInvestigation.CanCollectTokensHere(minion);
         }
         return false;
     }
-    private bool IsObjectValidForInvestigation(object obj) {
+    private bool IsObjectValidForInvestigation(object obj, SlotItem slotItem) {
         if (obj is Minion) {
             Minion minion = obj as Minion;
             return minion.character.job.jobType != JOB.EXPLORER && minion.character.job.jobType != JOB.SPY;
         }
         return false;
     }
-    private bool IsObjectValidForSupportToken(object obj) {
+    private bool IsObjectValidForSupportToken(object obj, SlotItem slotItem) {
         if (obj is Token && activeArea.areaInvestigation.assignedMinion != null) {
             Token token = obj as Token;
             return activeArea.areaInvestigation.assignedMinion.character.job.CanTokenBeAttached(token);
+        }
+        return false;
+    }
+    private bool IsObjectValidForAttack(object obj, SlotItem slotItem) {
+        if (obj is Minion) {
+            Minion minion = obj as Minion;
+            if(minion.character.characterClass.combatPosition == COMBAT_POSITION.FRONTLINE) {
+                if(minionAttackPartySlots[0] == slotItem || minionAttackPartySlots[1] == slotItem) {
+                    return true;
+                }
+            } else {
+                if (minionAttackPartySlots[2] == slotItem || minionAttackPartySlots[3] == slotItem) {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -579,22 +597,22 @@ public class AreaInfoUI : UIMenu {
         UpdateMinionTooltipDescription(_assignedMinion);
     }
     public void ResetMinionAssignmentParty() {
-        for (int i = 0; i < minionAssignmentPartySlots.Length; i++) {
+        for (int i = 0; i < minionAttackPartySlots.Length; i++) {
             _assignedParty[i] = null;
             //minionAssignmentPartySlots[i].gameObject.SetActive(false);
-            minionAssignmentPartySlots[i].ClearSlot(true);
+            minionAttackPartySlots[i].ClearSlot(true);
         }
-        minionAssignmentPartyConfirmButton.gameObject.SetActive(false);
-        minionAssignmentPartyRecallButton.gameObject.SetActive(false);
+        minionAttackPartyConfirmButton.gameObject.SetActive(false);
+        minionAttackPartyRecallButton.gameObject.SetActive(false);
         _currentWinChance = 0f;
-        minionAssignmentPartyWinChance.text = _currentWinChance.ToString("F2") + "%";
+        minionAttackPartyWinChance.text = _currentWinChance.ToString("F2") + "%";
     }
     private void ResetMinionAssignmentParty(int index) {
         _assignedParty[index] = null;
-        minionAssignmentPartySlots[index].ClearSlot(true);
+        minionAttackPartySlots[index].ClearSlot(true);
         //minionAssignmentPartySlots[index].gameObject.SetActive(false);
-        minionAssignmentPartyConfirmButton.gameObject.SetActive(false);
-        minionAssignmentPartyRecallButton.gameObject.SetActive(false);
+        minionAttackPartyConfirmButton.gameObject.SetActive(false);
+        minionAttackPartyRecallButton.gameObject.SetActive(false);
         for (int i = 0; i < _assignedParty.Length; i++) {
             if(_assignedParty[i] != null) {
                 OnUpdateLandmarkInvestigationState("attack");
@@ -635,13 +653,13 @@ public class AreaInfoUI : UIMenu {
             }
         }
         //minionAssignmentPartyTween.PlayForward();
-        minionAssignmentPartyGO.SetActive(true);
+        minionAttackPartyGO.SetActive(true);
         HideMinionAssignment();
     }
     public void HideMinionAssignmentParty() {
         //ResetMinionAssignmentParty();
         //minionAssignmentPartyTween.PlayReverse();
-        minionAssignmentPartyGO.SetActive(false);
+        minionAttackPartyGO.SetActive(false);
     }
     public void OnUpdateLandmarkInvestigationState(string whatToDo) {
         if(activeArea == null) {
@@ -676,29 +694,29 @@ public class AreaInfoUI : UIMenu {
             }
         } else {
             if (activeArea.areaInvestigation.isAttacking) {
-                minionAssignmentPartyConfirmButton.gameObject.SetActive(false);
-                minionAssignmentPartyRecallButton.gameObject.SetActive(true);
-                minionAssignmentPartyConfirmButton.interactable = false;
-                minionAssignmentPartyRecallButton.interactable = true;
-                for (int i = 0; i < minionAssignmentPartySlots.Length; i++) {
-                    minionAssignmentPartySlots[i].draggable.SetDraggable(false);
+                minionAttackPartyConfirmButton.gameObject.SetActive(false);
+                minionAttackPartyRecallButton.gameObject.SetActive(true);
+                minionAttackPartyConfirmButton.interactable = false;
+                minionAttackPartyRecallButton.interactable = true;
+                for (int i = 0; i < minionAttackPartySlots.Length; i++) {
+                    minionAttackPartySlots[i].draggable.SetDraggable(false);
                 }
             } else {
                 if (activeArea.areaInvestigation.isMinionRecalledAttack) {
-                    minionAssignmentPartyConfirmButton.gameObject.SetActive(false);
-                    minionAssignmentPartyRecallButton.gameObject.SetActive(true);
-                    minionAssignmentPartyConfirmButton.interactable = true;
-                    minionAssignmentPartyRecallButton.interactable = false;
-                    for (int i = 0; i < minionAssignmentPartySlots.Length; i++) {
-                        minionAssignmentPartySlots[i].draggable.SetDraggable(false);
+                    minionAttackPartyConfirmButton.gameObject.SetActive(false);
+                    minionAttackPartyRecallButton.gameObject.SetActive(true);
+                    minionAttackPartyConfirmButton.interactable = true;
+                    minionAttackPartyRecallButton.interactable = false;
+                    for (int i = 0; i < minionAttackPartySlots.Length; i++) {
+                        minionAttackPartySlots[i].draggable.SetDraggable(false);
                     }
                 } else {
-                    minionAssignmentPartyConfirmButton.gameObject.SetActive(true);
-                    minionAssignmentPartyRecallButton.gameObject.SetActive(false);
-                    minionAssignmentPartyConfirmButton.interactable = true;
-                    minionAssignmentPartyRecallButton.interactable = false;
-                    for (int i = 0; i < minionAssignmentPartySlots.Length; i++) {
-                        minionAssignmentPartySlots[i].draggable.SetDraggable(true);
+                    minionAttackPartyConfirmButton.gameObject.SetActive(true);
+                    minionAttackPartyRecallButton.gameObject.SetActive(false);
+                    minionAttackPartyConfirmButton.interactable = true;
+                    minionAttackPartyRecallButton.interactable = false;
+                    for (int i = 0; i < minionAttackPartySlots.Length; i++) {
+                        minionAttackPartySlots[i].draggable.SetDraggable(true);
                     }
                 }
             }
@@ -731,7 +749,10 @@ public class AreaInfoUI : UIMenu {
         }
     }
     public void OnPartyMinionDroppedOut(object obj, int index) {
-        AssignPartyMinionToInvestigate(null, index);
+        if (obj is Minion) {
+            Minion minion = obj as Minion;
+            RemovePartyMinionToInvestigate(minion, index);
+        }
     }
     //public void OnPartyMinionDrop2(object obj, int index) {
     //    PlayerCharacterItem minionItem = go.GetComponent<DragObject>().parentItem as PlayerCharacterItem;
@@ -787,42 +808,65 @@ public class AreaInfoUI : UIMenu {
                     }
                 }
             }
-            _assignedParty[index] = minion;
-            minionAssignmentPartySlots[index].PlaceObject(minion);
+            if(combatGrid.AssignCharacterToGrid(minion.character, index, true)) {
+                for (int i = 0; i < combatGrid.slots.Length; i++) {
+                    if(combatGrid.slots[i].character != null) {
+                        _assignedParty[i] = combatGrid.slots[i].character.minion;
+                    }
+                    minionAttackPartySlots[i].PlaceObject(combatGrid.slots[i].character);
+                }
+                minionAssignmentConfirmButton.interactable = !activeArea.areaInvestigation.isAttacking;
+                OnUpdateLandmarkInvestigationState("attack");
+            }
             //minionAssignmentPartySlots[index].gameObject.SetActive(true);
             //minionAssignmentPartySlots[index].GeneratePortrait(minion.character);
             //minionAssignmentPartyRecallButton.gameObject.SetActive(false);
             //minionAssignmentPartyConfirmButton.gameObject.SetActive(true);
             //minionAssignmentDraggableItem.SetDraggable(true);
-            minionAssignmentConfirmButton.interactable = !activeArea.areaInvestigation.isAttacking;
-            OnUpdateLandmarkInvestigationState("attack");
         } else {
             ResetMinionAssignmentParty(index);
         }
 
-        List<Character> assignedCharacters = new List<Character>();
-        for (int i = 0; i < _assignedParty.Length; i++) {
-            if (_assignedParty[i] != null) {
-                assignedCharacters.Add(_assignedParty[i].character);
+        //List<Character> assignedCharacters = new List<Character>();
+        //for (int i = 0; i < _assignedParty.Length; i++) {
+        //    if (_assignedParty[i] != null) {
+        //        assignedCharacters.Add(_assignedParty[i].character);
+        //    }
+        //}
+
+        //float chance = 0f;
+        //float enemyChance = 0f;
+        //DefenderGroup defender = activeArea.GetFirstDefenderGroup();
+        //if (defender != null) {
+        //    CombatManager.Instance.GetCombatChanceOfTwoLists(assignedCharacters, defender.party.characters, out chance, out enemyChance);
+        //} else {
+        //    CombatManager.Instance.GetCombatChanceOfTwoLists(assignedCharacters, null, out chance, out enemyChance);
+        //}
+        //SetWinChance(chance);
+    }
+    public void RemovePartyMinionToInvestigate(Minion minion, int index) {
+        combatGrid.RemoveCharacterFromGrid(minion.character);
+        for (int i = 0; i < combatGrid.slots.Length; i++) {
+            if (!combatGrid.slots[i].isOccupied) {
+                _assignedParty[i] = null;
+                minionAttackPartySlots[i].ClearSlot(true);
             }
         }
-
-        float chance = 0f;
-        float enemyChance = 0f;
-        DefenderGroup defender = activeArea.GetFirstDefenderGroup();
-        if (defender != null) {
-            CombatManager.Instance.GetCombatChanceOfTwoLists(assignedCharacters, defender.party.characters, out chance, out enemyChance);
-        } else {
-            CombatManager.Instance.GetCombatChanceOfTwoLists(assignedCharacters, null, out chance, out enemyChance);
+        minionAttackPartyConfirmButton.gameObject.SetActive(false);
+        minionAttackPartyRecallButton.gameObject.SetActive(false);
+        for (int i = 0; i < _assignedParty.Length; i++) {
+            if (_assignedParty[i] != null) {
+                OnUpdateLandmarkInvestigationState("attack");
+                break;
+            }
         }
-        SetWinChance(chance);
     }
     private void SetWinChance(float chance) {
         iTween.ValueTo(this.gameObject, iTween.Hash("from", _currentWinChance, "to", chance, "time", 0.3f, "onupdate", "OnUpdateWinChance"));
     }
     private void OnUpdateWinChance(float value) {
         _currentWinChance = value;
-        minionAssignmentPartyWinChance.text = "Send up to four units to attack.\nWin Chance: " + _currentWinChance.ToString("F2") + "%";
+        minionAttackPartyWinChance.text = "Send up to four units to attack.\nWin Chance: " + _currentWinChance.ToString("F2") + "%";
     }
     public void OnClickConfirmInvestigation() {
         activeArea.areaInvestigation.InvestigateLandmark(_assignedMinion);

@@ -47,33 +47,73 @@ public class CombatGrid : MonoBehaviour {
         }
         return true;
     }
-
-    public bool CanCharacterBeAttachedToGrid(Character character) {
-        if(character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.ALL) {
-            for (int i = 0; i < _slots.Length; i++) {
-                if (_slots[i].isOccupied) {
-                    return false;
+    public bool AssignCharacterToGrid(Character character, int slotIndex, bool overwrite) {
+        if (character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.ALL) {
+            if (overwrite) {
+                for (int i = 0; i < _slots.Length; i++) {
+                    _slots[i].character = character;
+                }
+            } else {
+                for (int i = 0; i < _slots.Length; i++) {
+                    if (_slots[i].isOccupied) {
+                        return false;
+                    }
+                }
+                for (int i = 0; i < _slots.Length; i++) {
+                    _slots[i].character = character;
                 }
             }
-        }else if (character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.COLUMN) {
-            for (int i = 0; i < _columnReference.Length; i++) {
-                if (!_slots[_columnReference[i, 0]].isOccupied && !_slots[_columnReference[i, 1]].isOccupied) {
-                    return true;
+        } else if (character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.COLUMN) {
+            if (overwrite) {
+                for (int i = 0; i < _columnReference.Length; i++) {
+                    if (_slots[_columnReference[i, 0]].gridNumber == slotIndex || _slots[_columnReference[i, 1]].gridNumber == slotIndex) {
+                        _slots[_columnReference[i, 0]].character = character;
+                        _slots[_columnReference[i, 1]].character = character;
+                        return true;
+                    }
+                }
+            } else {
+                for (int i = 0; i < _columnReference.Length; i++) {
+                    if (_slots[_columnReference[i, 0]].gridNumber == slotIndex || _slots[_columnReference[i, 1]].gridNumber == slotIndex) {
+                        if (!_slots[_columnReference[i, 0]].isOccupied && !_slots[_columnReference[i, 1]].isOccupied) {
+                            _slots[_columnReference[i, 0]].character = character;
+                            _slots[_columnReference[i, 1]].character = character;
+                            return true;
+                        }
+                    }
                 }
             }
             return false;
         } else if (character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.ROW) {
-            for (int i = 0; i < _rowReference.Length; i++) {
-                if (!_slots[_rowReference[i, 0]].isOccupied && !_slots[_rowReference[i, 1]].isOccupied) {
-                    return true;
+            if (overwrite) {
+                for (int i = 0; i < _rowReference.Length; i++) {
+                    if (_slots[_rowReference[i, 0]].gridNumber == slotIndex || _slots[_rowReference[i, 1]].gridNumber == slotIndex) {
+                        _slots[_rowReference[i, 0]].character = character;
+                        _slots[_rowReference[i, 1]].character = character;
+                        return true;
+                    }
+                }
+            } else {
+                for (int i = 0; i < _rowReference.Length; i++) {
+                    if (_slots[_rowReference[i, 0]].gridNumber == slotIndex || _slots[_rowReference[i, 1]].gridNumber == slotIndex) {
+                        if (!_slots[_rowReference[i, 0]].isOccupied && !_slots[_rowReference[i, 1]].isOccupied) {
+                            _slots[_rowReference[i, 0]].character = character;
+                            _slots[_rowReference[i, 1]].character = character;
+                            return true;
+                        }
+                    }
                 }
             }
             return false;
         } else if (character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.SINGLE) {
-            for (int i = 0; i < _slots.Length; i++) {
-                if (!_slots[i].isOccupied) {
-                    return false;
+            if (overwrite) {
+                _slots[slotIndex].character = character;
+            } else {
+                if (!_slots[slotIndex].isOccupied) {
+                    _slots[slotIndex].character = character;
+                    return true;
                 }
+                return false;
             }
         }
         return true;
