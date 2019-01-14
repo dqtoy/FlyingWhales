@@ -1734,6 +1734,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         }
     }
     public void ChangeFactionTo(Faction newFaction) {
+        if (this.faction.id == newFaction.id) {
+            return; //if the new faction is the same, ignore change
+        }
         faction.RemoveCharacter(this);
         newFaction.AddNewCharacter(this);
     }
@@ -3148,7 +3151,8 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         if (trait != null) {
             Abducted abductedTrait = trait as Abducted;
             RemoveTrait(abductedTrait);
-            MigrateTo(abductedTrait.originalHomeLandmark);
+            ReturnToOriginalHomeAndFaction(abductedTrait.originalHomeLandmark, this.faction);
+            //MigrateTo(abductedTrait.originalHomeLandmark);
 
             Interaction interactionAbducted = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, specificLocation as BaseLandmark);
             SetForcedInteraction(interactionAbducted);
