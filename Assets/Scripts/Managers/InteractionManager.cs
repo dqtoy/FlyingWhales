@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class InteractionManager : MonoBehaviour {
@@ -320,6 +321,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.FOUND_MAGUS:
                 createdInteraction = new FoundMagus(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_SAVE:
+                createdInteraction = new MoveToSave(interactable);
+                break;
+            case INTERACTION_TYPE.SAVE_ACTION:
+                createdInteraction = new SaveAction(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -525,6 +532,9 @@ public class InteractionManager : MonoBehaviour {
                         Trait trait = character.traits[i];
                         if (trait is Friend) {
                             Friend friend = trait as Friend;
+                            if (friend.targetCharacter == null) {
+                                throw new System.Exception("target friend is null!");
+                            }
                             if (friend.targetCharacter.faction.id != character.faction.id) {
                                 return true;
                             }
@@ -676,6 +686,8 @@ public class InteractionManager : MonoBehaviour {
                     return character.tokenInInventory.GetTargetCharacterFor(character) != null;
                 }
                 return false;
+            case INTERACTION_TYPE.MOVE_TO_SAVE:
+                return CanCreateMoveToSave(character);
             default:
                 return true;
         }
@@ -851,6 +863,41 @@ public class InteractionManager : MonoBehaviour {
             PlayerManager.Instance.player.AddToken(currFaction.factionToken);
         }
     }
+
+    #region Move To Save
+    private bool CanCreateMoveToSave(Character character) {
+        /*
+         * Trigger Criteria 1: There is at least one other area that his faction does not own that has at least one Abducted character 
+         * that is not part of that area's faction that is either from this character's faction or from a Neutral, Friend or Ally factions
+         */
+        if (character.race == RACE.HUMANS || character.race == RACE.ELVES || character.race == RACE.SPIDER) {
+            List<Area> otherAreas = new List<Area>(LandmarkManager.Instance.allAreas.Where(x => x.owner != null && x.owner.id != character.faction.id));
+            for (int i = 0; i < otherAreas.Count; i++) {
+                Area currArea = otherAreas[i];
+                for (int j = 0; j < currArea.charactersAtLocation.Count; j++) {
+                    Character currCharacter = currArea.charactersAtLocation[j];
+                    Abducted abductedTrait = currCharacter.GetTrait("Abducted") as Abducted;
+                    if (abductedTrait != null && currArea.owner.id != currCharacter.faction.id) { //check if character is abducted and that the area he/she is in is not owned by their faction
+                        if (currCharacter.faction.id == character.faction.id) {
+                            return true;
+                        } else {
+                            FactionRelationship rel = character.faction.GetRelationshipWith(currCharacter.faction);
+                            switch (rel.relationshipStatus) {
+                                case FACTION_RELATIONSHIP_STATUS.NEUTRAL:
+                                case FACTION_RELATIONSHIP_STATUS.FRIEND:
+                                case FACTION_RELATIONSHIP_STATUS.ALLY:
+                                    return true;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    #endregion
 }
 
 public struct RewardConfig {

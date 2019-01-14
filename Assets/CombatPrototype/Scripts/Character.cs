@@ -1940,14 +1940,14 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         }
         return false;
     }
-    private void OnOtherCharacterDied(Character character) {
-        if (character.id != this.id) {
-            Friend friend = this.GetFriendTraitWith(character);
+    private void OnOtherCharacterDied(Character characterThatDied) {
+        if (characterThatDied.id != this.id) {
+            Friend friend = this.GetFriendTraitWith(characterThatDied);
             if (friend != null) {
                 RemoveTrait(friend);
             }
 
-            Enemy enemy = this.GetEnemyTraitWith(character);
+            Enemy enemy = this.GetEnemyTraitWith(characterThatDied);
             if (enemy != null) {
                 RemoveTrait(enemy);
             }
@@ -2734,11 +2734,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 previousHome.tileLocation.areaOfTile.RemoveResident(this);
                 if (_homeLandmark != null) {
                     _homeLandmark.tileLocation.areaOfTile.AddResident(this, ignoreAreaResidentCapacity);
-                    if (_homeLandmark.tileLocation.areaOfTile.id != previousHome.tileLocation.areaOfTile.id) {
-//#if !WORLD_CREATION_TOOL
-                        //LookForNewWorkplace();
-//#endif
-                    }
                 }
 
             } else {
@@ -2746,9 +2741,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                     if (_homeLandmark.tileLocation.areaOfTile != null) {
                         _homeLandmark.tileLocation.areaOfTile.AddResident(this);
                     }
-//#if !WORLD_CREATION_TOOL
-                    //LookForNewWorkplace();
-//#endif
                 }
             }
         }
@@ -3126,7 +3118,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         for (int i = 0; i < _traits.Count; i++) {
             if(_traits[i] is Friend) {
                 Friend friendTrait = _traits[i] as Friend;
-                if(friendTrait.targetCharacter == character) {
+                if(friendTrait.targetCharacter.id == character.id) {
                     return friendTrait;
                 }
             }
