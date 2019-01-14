@@ -843,6 +843,7 @@ public class Area {
             {INTERACTION_TYPE.EAT_ABDUCTED, 20},
             {INTERACTION_TYPE.TORTURE_ACTION, 25},
             {INTERACTION_TYPE.MOVE_TO_SPREAD_UNDEATH, 20},
+            {INTERACTION_TYPE.MOVE_TO_SAVE, 30},
         };
     }
     public void AddInteraction(Interaction interaction) {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Friend : Trait {
-    public Character targetCharacter;
+    public Character targetCharacter { get; private set; }
 
     public override string nameInUI {
         get { return "Friend: " + targetCharacter.name;}
