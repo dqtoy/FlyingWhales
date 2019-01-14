@@ -776,7 +776,7 @@ public class LandmarkInfoUI : UIMenu {
         //ChangeStateAllButtons(!_activeLandmark.landmarkInvestigation.isActivated);
     }
     public void OnClickConfirmPartyInvestigation() {
-        _activeLandmark.tileLocation.areaOfTile.areaInvestigation.AttackRaidLandmark(_currentSelectedInvestigateButton.actionName, _assignedParty, _activeLandmark);
+        //_activeLandmark.tileLocation.areaOfTile.areaInvestigation.AttackRaidLandmark(_currentSelectedInvestigateButton.actionName, _assignedParty, _activeLandmark);
         OnUpdateLandmarkInvestigationState("attack");
         //ChangeStateAllButtons(!_activeLandmark.landmarkInvestigation.isActivated);
     }

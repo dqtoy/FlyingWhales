@@ -34,7 +34,7 @@ public class CombatGrid : MonoBehaviour {
     }
     public void RemoveCharacterFromGrid(Character character) {
         for (int i = 0; i < _slots.Length; i++) {
-            if (_slots[i].character != null && _slots[i].character.id == character.id){
+            if (_slots[i].isOccupied && _slots[i].character.id == character.id){
                 _slots[i].character = null;
             }
         }
@@ -46,6 +46,14 @@ public class CombatGrid : MonoBehaviour {
             }
         }
         return true;
+    }
+    public bool IsCharacterInGrid(Character character) {
+        for (int i = 0; i < _slots.Length; i++) {
+            if (_slots[i].isOccupied && _slots[i].character.id == character.id) {
+                return true;
+            }
+        }
+        return false;
     }
     public bool AssignCharacterToGrid(Character character, int slotIndex, bool overwrite) {
         if (character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.ALL) {
