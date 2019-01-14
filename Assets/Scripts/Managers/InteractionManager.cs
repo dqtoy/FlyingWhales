@@ -702,57 +702,63 @@ public class InteractionManager : MonoBehaviour {
             }
         }
         if(enemyAreas.Count > 0) {
-            //If at war with other factions
-            List<Character> residentsAtArea = new List<Character>();
-            for (int i = 0; i < areaToAttack.areaResidents.Count; i++) {
-                Character resident = areaToAttack.areaResidents[i];
-                if(resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader 
-                    && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling 
-                    && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == areaToAttack.id
-                    && resident.faction == areaToAttack.owner) {
-                    residentsAtArea.Add(resident);
-                }
+            targetArea = enemyAreas[UnityEngine.Random.Range(0, enemyAreas.Count)];
+            List<Character> attackers = areaToAttack.FormCombatCharacters();
+            if(attackers.Count > 0) {
+                areaToAttack.SetAttackTargetAndCharacters(targetArea, attackers);
             }
-            if(residentsAtArea.Count >= 3) {
-                //If has at least 3 residents in area
-                int numOfMembers = 3;
-                if(residentsAtArea.Count >= 4) {
-                    numOfMembers = 4;
-                }
-                List<List<Character>> characterCombinations = Utilities.ItemCombinations(residentsAtArea, 5, numOfMembers, numOfMembers);
-                if(characterCombinations.Count > 0) {
-                    List<Character> currentAttackCharacters = null;
-                    Area currentTargetArea = null;
-                    float highestWinChance = 0f;
-                    for (int i = 0; i < characterCombinations.Count; i++) {
-                        List<Character> attackCharacters = characterCombinations[i];
-                        Area target = enemyAreas[UnityEngine.Random.Range(0, enemyAreas.Count)];
-                        DefenderGroup defender = target.GetFirstDefenderGroup();
-                        float winChance = 0f;
-                        float loseChance = 0f;
-                        if(defender != null && defender.party != null) {
-                            CombatManager.Instance.GetCombatChanceOfTwoLists(attackCharacters, defender.party.characters, out winChance, out loseChance);
-                        } else {
-                            CombatManager.Instance.GetCombatChanceOfTwoLists(attackCharacters, null, out winChance, out loseChance);
-                        }
-                        if (winChance > 40f) {
-                            if(currentTargetArea == null) {
-                                currentTargetArea = target;
-                                currentAttackCharacters = attackCharacters;
-                                highestWinChance = winChance;
-                            } else {
-                                if(winChance > highestWinChance) {
-                                    currentTargetArea = target;
-                                    currentAttackCharacters = attackCharacters;
-                                    highestWinChance = winChance;
-                                }
-                            }
-                        }
-                    }
-                    targetArea = currentTargetArea;
-                    areaToAttack.SetAttackTargetAndCharacters(currentTargetArea, currentAttackCharacters);
-                }
-            }
+
+            ////If at war with other factions
+            //List<Character> residentsAtArea = new List<Character>();
+            //for (int i = 0; i < areaToAttack.areaResidents.Count; i++) {
+            //    Character resident = areaToAttack.areaResidents[i];
+            //    if(resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader 
+            //        && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling 
+            //        && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == areaToAttack.id
+            //        && resident.faction == areaToAttack.owner) {
+            //        residentsAtArea.Add(resident);
+            //    }
+            //}
+            //if(residentsAtArea.Count >= 3) {
+            //    //If has at least 3 residents in area
+            //    int numOfMembers = 3;
+            //    if(residentsAtArea.Count >= 4) {
+            //        numOfMembers = 4;
+            //    }
+            //    List<List<Character>> characterCombinations = Utilities.ItemCombinations(residentsAtArea, 5, numOfMembers, numOfMembers);
+            //    if(characterCombinations.Count > 0) {
+            //        List<Character> currentAttackCharacters = null;
+            //        Area currentTargetArea = null;
+            //        float highestWinChance = 0f;
+            //        for (int i = 0; i < characterCombinations.Count; i++) {
+            //            List<Character> attackCharacters = characterCombinations[i];
+            //            Area target = enemyAreas[UnityEngine.Random.Range(0, enemyAreas.Count)];
+            //            DefenderGroup defender = target.GetFirstDefenderGroup();
+            //            float winChance = 0f;
+            //            float loseChance = 0f;
+            //            if(defender != null && defender.party != null) {
+            //                CombatManager.Instance.GetCombatChanceOfTwoLists(attackCharacters, defender.party.characters, out winChance, out loseChance);
+            //            } else {
+            //                CombatManager.Instance.GetCombatChanceOfTwoLists(attackCharacters, null, out winChance, out loseChance);
+            //            }
+            //            if (winChance > 40f) {
+            //                if(currentTargetArea == null) {
+            //                    currentTargetArea = target;
+            //                    currentAttackCharacters = attackCharacters;
+            //                    highestWinChance = winChance;
+            //                } else {
+            //                    if(winChance > highestWinChance) {
+            //                        currentTargetArea = target;
+            //                        currentAttackCharacters = attackCharacters;
+            //                        highestWinChance = winChance;
+            //                    }
+            //                }
+            //            }
+            //        }
+            //        targetArea = currentTargetArea;
+            //        areaToAttack.SetAttackTargetAndCharacters(currentTargetArea, currentAttackCharacters);
+            //    }
+            //}
         }
         return targetArea;
     }

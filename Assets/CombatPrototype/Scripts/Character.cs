@@ -463,6 +463,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
 
         //AllocateStatPoints(10);
         SetTraitsFromRace();
+        ResetToFullHP();
         //CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(className);
         //if(setup != null) {
         //    GenerateSetupAttributes(setup);
@@ -508,13 +509,14 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         //SetTraitsFromClass();
         SetTraitsFromRace();
         //EquipPreEquippedItems(baseSetup);
-        CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(data.className);
-        if (setup != null) {
-            GenerateSetupAttributes(setup);
-            //if (setup.optionalRole != CHARACTER_ROLE.NONE) {
-            //    AssignRole(setup.optionalRole);
-            //}
-        }
+        //CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(data.className);
+        //if (setup != null) {
+        //    GenerateSetupAttributes(setup);
+        //    //if (setup.optionalRole != CHARACTER_ROLE.NONE) {
+        //    //    AssignRole(setup.optionalRole);
+        //    //}
+        //}
+        ResetToFullHP();
         //DetermineAllowedMiscActions();
     }
     public Character() {
@@ -555,7 +557,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         eventTriggerWeights = new WeightedDictionary<bool>();
         eventTriggerWeights.AddElement(true, 200); //Hard coded for now
         eventTriggerWeights.AddElement(false, 1000);
-
         //AllocateStats();
         //EquipItemsByClass();
         //ConstructBuffs();

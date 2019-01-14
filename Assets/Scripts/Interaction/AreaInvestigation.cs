@@ -230,24 +230,25 @@ public class AreaInvestigation {
 
     #region Attack
     private void AttackLandmark() {
-        DefenderGroup defender = _area.GetFirstDefenderGroup();
+        DefenderGroup defender = _area.GetDefenseGroup();
         if (defender != null) {
-            //_assignedMinionAttack.icharacter.currentParty.specificLocation.RemoveCharacterFromLocation(_assignedMinionAttack.icharacter.currentParty);
-            //_currentlyAttackedLandmark.AddCharacterToLocation(_assignedMinionAttack.icharacter.currentParty);
-            Combat combat = _assignedMinionAttack.character.currentParty.CreateCombatWith(defender.party);
-            combat.Fight(() => AttackCombatResult(combat));
+            //Combat combat = _assignedMinionAttack.character.currentParty.CreateCombatWith(defender.party);
+            //combat.Fight(() => AttackCombatResult(combat));
+            CombatManager.Instance.newCombat.StartNewCombat();
+            CombatManager.Instance.newCombat.AddCharacters(_assignedMinionAttack.character.currentParty.characters, SIDES.A);
+            CombatManager.Instance.newCombat.AddCharacters(defender.party.characters, SIDES.B);
+            CombatManager.Instance.newCombat.AddEndCombatActions(() => AttackCombatResult());
+            UIManager.Instance.combatUI.OpenCombatUI(true);
         } else {
             RecallMinion("attack");
-            //Destroy Area
+            _area.Death();
         }
     }
-    private void AttackCombatResult(Combat combat) {
+    private void AttackCombatResult() {
         if (_isAttacking) { //when the minion dies, isActivated will become false, hence, it must not go through the result
-            if (combat.winningSide == _assignedMinionAttack.character.currentSide) {
+            if (CombatManager.Instance.newCombat.winningSide == SIDES.A) {
                 RecallMinion("attack");
-                if(_area.GetFirstDefenderGroup() == null) {
-                    //Destroy Area
-                }
+                _area.Death();
             }
         }
     }

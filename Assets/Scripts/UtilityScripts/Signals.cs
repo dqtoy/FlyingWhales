@@ -138,6 +138,11 @@ public static class Signals {
 
     #region Combat
     public static string COMBAT_DONE = "OnCombatDone"; //Parameters (Combat doneCombat)
+    public static string ADD_TO_COMBAT_LOGS = "OnAddToCombatLogs";
+    public static string HIGHLIGHT_ATTACKER = "OnHighlightAttacker";
+    public static string UNHIGHLIGHT_ATTACKER = "OnUnhighlightAttacker";
+    public static string UPDATE_COMBAT_GRIDS = "OnUpdateCombatGrids";
+    public static string NEWCOMBAT_DONE = "OnNewCombatDone";
     #endregion
 
     #region Player

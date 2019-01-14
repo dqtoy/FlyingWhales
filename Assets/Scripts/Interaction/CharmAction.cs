@@ -290,10 +290,10 @@ public class CharmAction : Interaction {
 
     private void TransferCharacter(Character character, Faction faction) {
         AddToDebugLog("Transferring character " + character.name + " to " + faction.name);
-        if (character.isDefender) {
-            AddToDebugLog("Target character is defender of " + character.defendingArea + ", removing him/her as defender...");
-            character.defendingArea.GetFirstDefenderGroup().RemoveCharacterFromGroup(character);
-        }
+        //if (character.isDefender) {
+        //    AddToDebugLog("Target character is defender of " + character.defendingArea + ", removing him/her as defender...");
+        //    character.defendingArea.GetFirstDefenderGroup().RemoveCharacterFromGroup(character);
+        //}
         //only add charmed trait to characters that have not been charmed yet, this is to retain it's original faction
         Charmed charmedTrait = new Charmed(character.faction, character.homeLandmark);
         character.AddTrait(charmedTrait);

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CombatGrid : MonoBehaviour {
+public class CombatGrid {
     private CombatSlot[] _slots;
     private int[,] _columnReference;
     private int[,] _rowReference;
@@ -54,6 +54,18 @@ public class CombatGrid : MonoBehaviour {
             }
         }
         return false;
+    }
+    public bool IsPositionFull(COMBAT_POSITION position) {
+        int rowIndex = 0;
+        if (position == COMBAT_POSITION.BACKLINE) {
+            rowIndex = 1;
+        }
+        for (int i = 0; i < _rowReference.GetLength(1); i++) {
+            if (!_slots[_rowReference[rowIndex, i]].isOccupied) {
+                return false;
+            }
+        }
+        return true;
     }
     public bool AssignCharacterToGrid(Character character, int slotIndex, bool overwrite) {
         if (character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.ALL) {
@@ -123,6 +135,49 @@ public class CombatGrid : MonoBehaviour {
                 }
                 return false;
             }
+        }
+        return true;
+    }
+    public bool AssignCharacterToGrid(Character character) {
+        if (character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.ALL) {
+            for (int i = 0; i < _slots.Length; i++) {
+                if (_slots[i].isOccupied) {
+                    return false;
+                }
+            }
+            for (int i = 0; i < _slots.Length; i++) {
+                _slots[i].character = character;
+            }
+        } else if (character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.COLUMN) {
+            for (int i = 0; i < _columnReference.Length; i++) {
+                if (!_slots[_columnReference[i, 0]].isOccupied && !_slots[_columnReference[i, 1]].isOccupied) {
+                    _slots[_columnReference[i, 0]].character = character;
+                    _slots[_columnReference[i, 1]].character = character;
+                    return true;
+                }
+            }
+            return false;
+        } else if (character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.ROW) {
+            for (int i = 0; i < _rowReference.Length; i++) {
+                if (!_slots[_rowReference[i, 0]].isOccupied && !_slots[_rowReference[i, 1]].isOccupied) {
+                    _slots[_rowReference[i, 0]].character = character;
+                    _slots[_rowReference[i, 1]].character = character;
+                    return true;
+                }
+            }
+            return false;
+        } else if (character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.SINGLE) {
+            int rowIndex = 0;
+            if(character.characterClass.combatPosition == COMBAT_POSITION.BACKLINE) {
+                rowIndex = 1;
+            }
+            for (int i = 0; i < _rowReference.GetLength(1); i++) {
+                if (!_slots[_rowReference[rowIndex, i]].isOccupied) {
+                    _slots[_rowReference[rowIndex, i]].character = character;
+                    return true;
+                }
+            }
+            return false;
         }
         return true;
     }

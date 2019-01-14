@@ -77,7 +77,6 @@ public class AreaInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Attack/Raid")]
-    [SerializeField] private CombatGrid combatGrid;
     [SerializeField] private GameObject minionAttackPartyGO;
     [SerializeField] private SlotItem[] minionAttackPartySlots;
     [SerializeField] private Button minionAttackPartyConfirmButton;
@@ -86,6 +85,7 @@ public class AreaInfoUI : UIMenu {
     //[SerializeField] private InvestigationMinionDraggableItem[] minionAssignmentPartyDraggableItem;
 
     private InvestigateButton _currentSelectedInvestigateButton;
+    private CombatGrid combatGrid;
 
     private LogHistoryItem[] logHistoryItems;
     
@@ -102,6 +102,7 @@ public class AreaInfoUI : UIMenu {
     internal override void Initialize() {
         base.Initialize();
         characterItems = new List<LandmarkCharacterItem>();
+        combatGrid = new CombatGrid();
         combatGrid.Initialize();
         LoadLogItems();
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
@@ -1127,17 +1128,17 @@ public class AreaInfoUI : UIMenu {
                     charactersToMove.Add(currResident);
                 }
             }
-            DefenderGroup defender = activeArea.GetFirstDefenderGroup();
-            if (defender != null && defender.party != null) {
-                List<Character> defenders = new List<Character>(defender.party.characters);
-                for (int i = 0; i < defenders.Count; i++) {
-                    Character currDefender = defenders[i];
-                    if (currDefender.faction.id == activeArea.owner.id) {
-                        defender.RemoveCharacterFromGroup(currDefender);
-                        charactersToMove.Add(currDefender);
-                    }
-                }
-            }
+            //DefenderGroup defender = activeArea.GetFirstDefenderGroup();
+            //if (defender != null && defender.party != null) {
+            //    List<Character> defenders = new List<Character>(defender.party.characters);
+            //    for (int i = 0; i < defenders.Count; i++) {
+            //        Character currDefender = defenders[i];
+            //        if (currDefender.faction.id == activeArea.owner.id) {
+            //            defender.RemoveCharacterFromGroup(currDefender);
+            //            charactersToMove.Add(currDefender);
+            //        }
+            //    }
+            //}
             List<Area> choices = new List<Area>(activeArea.owner.ownedAreas);
             choices.Remove(activeArea);
             Area moveLocation = choices[Random.Range(0, choices.Count)];

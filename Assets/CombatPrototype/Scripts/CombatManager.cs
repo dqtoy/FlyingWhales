@@ -7,10 +7,11 @@ using System;
 public class CombatManager : MonoBehaviour {
     public static CombatManager Instance = null;
 
-    [NonSerialized] public float updateIntervals = 0f;
+    public float updateIntervals;
     public int numOfCombatActionPerDay;
 
     public Combat combat;
+    public NewCombat newCombat;
 
     public CharacterSetup[] baseCharacters;
 	public Color[] characterColors;
@@ -18,6 +19,7 @@ public class CombatManager : MonoBehaviour {
 
 	private List<Color> unusedColors;
 	private List<Color> usedColors;
+
 
     private void Awake() {
         Instance = this;
@@ -27,6 +29,7 @@ public class CombatManager : MonoBehaviour {
         weaponTypeSkills = new Dictionary<WEAPON_TYPE, List<Skill>>();
         unusedColors = new List<Color>();
         usedColors = new List<Color>();
+        newCombat.Initialize();
         //ConstructCharacterColors ();
         //			ConstructAttributeSkills ();
         //NewCombat();

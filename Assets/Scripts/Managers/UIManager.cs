@@ -103,6 +103,10 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private int TOOLTIP_FONT_SIZE = 18;
     [SerializeField] private int SMALLEST_FONT_SIZE = 12;
 
+    [Space(10)]
+    [Header("Combat")]
+    public CombatUI combatUI;
+
     internal List<object> eventLogsQueue = new List<object>();
     private UIMenu lastOpenedMenu = null;
 
