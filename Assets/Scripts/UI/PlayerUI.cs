@@ -110,7 +110,7 @@ public class PlayerUI : MonoBehaviour {
     private void LoadRoleSlots() {
         roleSlots = Utilities.GetComponentsInDirectChildren<RoleSlotItem>(roleSlotsParent);
         int currIndex = 0;
-        foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in PlayerManager.Instance.player.jobSlots) {
+        foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in PlayerManager.Instance.player.roleSlots) {
             RoleSlotItem item = roleSlots.ElementAtOrDefault(currIndex);
             if (item != null) {
                 item.SetSlotJob(keyValuePair.Key);
