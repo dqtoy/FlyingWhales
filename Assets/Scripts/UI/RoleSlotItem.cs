@@ -12,12 +12,24 @@ public class RoleSlotItem : MonoBehaviour {
     [SerializeField] private Image jobIcon;
     [SerializeField] private TextMeshProUGUI jobNameLbl;
     [SerializeField] private CharacterPortrait portrait;
+    [SerializeField] private Button assignBtn;
 
-    public void SetSlotJob(JOB job) {
+    [Header("Job Actions")]
+    [SerializeField] private GameObject jobActionBtnPrefab;
+    [SerializeField] private RectTransform jobActionsParent;
+
+    public void SetSlotJob(JOB job) { //This should only be called once!
         slotJob = job;
         UpdateVisuals();
+        AddListeners();
+    }
+
+    private void AddListeners() {
         Messenger.AddListener<JOB, Character>(Signals.CHARACTER_ASSIGNED_TO_JOB, OnCharacterAssignedToJob);
         Messenger.AddListener<JOB, Character>(Signals.CHARACTER_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
+        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener<JOB, bool>(Signals.JOB_SLOT_LOCK_CHANGED, OnJobSlotLockChanged);
     }
 
     public void SetCharacter(Character character) {
@@ -29,6 +41,7 @@ public class RoleSlotItem : MonoBehaviour {
         }
         
         UpdateVisuals();
+        UpdateActionButtons();
     }
     private void UpdateVisuals() {
         jobIcon.sprite = CharacterManager.Instance.GetJobSprite(slotJob);
@@ -66,6 +79,56 @@ public class RoleSlotItem : MonoBehaviour {
             SetCharacter(null);
         }
     }
+
+    #region Assign
+    private void OnJobSlotLockChanged(JOB job, bool isLocked) {
+        if (slotJob == job) {
+            assignBtn.interactable = !isLocked;
+        }
+    }
+    #endregion
+
+    #region Action Buttons
+    private void HideActionButtons() {
+        jobActionsParent.gameObject.SetActive(false);
+    }
+    private void ShowActionButtons(JOB_ACTION_TARGET actionTarget) {
+        Utilities.DestroyChildren(jobActionsParent);
+        List<PlayerJobAction> actions = PlayerManager.Instance.player.GetJobActionsThatCanTarget(slotJob, actionTarget);
+        for (int i = 0; i < actions.Count; i++) {
+            PlayerJobAction currAction = actions[i];
+            GameObject buttonGO = UIManager.Instance.InstantiateUIObject(jobActionBtnPrefab.name, jobActionsParent);
+            buttonGO.name = currAction.actionName;
+            PlayerJobActionButton btn = buttonGO.GetComponent<PlayerJobActionButton>();
+            switch (actionTarget) {
+                case JOB_ACTION_TARGET.CHARACTER:
+                    btn.SetAction(currAction, character, UIManager.Instance.characterInfoUI.activeCharacter);
+                    btn.SetClickAction(() => currAction.ActivateAction(character, UIManager.Instance.characterInfoUI.activeCharacter));
+                    break;
+                case JOB_ACTION_TARGET.AREA:
+                    break;
+                case JOB_ACTION_TARGET.FACTION:
+                    break;
+                default:
+                    break;
+            }
+        }
+        jobActionsParent.gameObject.SetActive(true);
+    }
+    private void OnMenuOpened(UIMenu menu) {
+        UpdateActionButtons();
+    }
+    private void OnMenuClosed(UIMenu menu) {
+        UpdateActionButtons();
+    }
+    private void UpdateActionButtons() {
+        if (UIManager.Instance.characterInfoUI.isShowing) {
+            ShowActionButtons(JOB_ACTION_TARGET.CHARACTER);
+        } else {
+            HideActionButtons();
+        }
+    }
+    #endregion
 }
 
 public class CharacterLevelComparer : IComparer<Character> {

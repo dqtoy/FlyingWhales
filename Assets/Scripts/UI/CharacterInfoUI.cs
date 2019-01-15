@@ -193,8 +193,8 @@ public class CharacterInfoUI : UIMenu {
         //InteractionUI.Instance.HideInteractionUI();
     }
     public override void OpenMenu() {
-        base.OpenMenu();
         _activeCharacter = _data as Character;
+        base.OpenMenu();
         UpdateCharacterInfo();
         //if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
             UpdateCombatAttributes();

@@ -1222,3 +1222,9 @@ public enum COMBAT_OCCUPIED_TILE {
     ROW,
     ALL,
 }
+public enum JOB_ACTION_TARGET {
+    NONE,
+    CHARACTER,
+    AREA,
+    FACTION
+}

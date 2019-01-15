@@ -20,7 +20,8 @@ public class Player : ILeader {
     private Dictionary<CURRENCY, int> _currencies;
     public List<Character> otherCharacters;
 
-    public Dictionary<JOB, Character> roleSlots { get; private set; }
+    public Dictionary<JOB, PlayerJobData> jobSlots { get; private set; }
+    //public Dictionary<JOB, List<PlayerJobAction>> jobActions { get; private set; }
 
     #region getters/setters
     public int id {
@@ -66,8 +67,10 @@ public class Player : ILeader {
         SetCurrentLifestoneChance(25f);
         ConstructCurrencies();
         ConstructRoleSlots();
+        //ConstructRoleActions();
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
         Messenger.AddListener(Signals.DAY_STARTED, EverydayAction);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         AddWinListener();
     }
 
@@ -437,12 +440,12 @@ public class Player : ILeader {
 
     #region Role Slots
     public void ConstructRoleSlots() {
-        roleSlots = new Dictionary<JOB, Character>();
-        roleSlots.Add(JOB.SPY, null);
-        roleSlots.Add(JOB.RECRUITER, null);
-        roleSlots.Add(JOB.DIPLOMAT, null);
-        roleSlots.Add(JOB.INSTIGATOR, null);
-        roleSlots.Add(JOB.DEBILITATOR, null);
+        jobSlots = new Dictionary<JOB, PlayerJobData>();
+        jobSlots.Add(JOB.SPY, new PlayerJobData(JOB.SPY));
+        jobSlots.Add(JOB.RECRUITER, new PlayerJobData(JOB.RECRUITER));
+        jobSlots.Add(JOB.DIPLOMAT, new PlayerJobData(JOB.DIPLOMAT));
+        jobSlots.Add(JOB.INSTIGATOR, new PlayerJobData(JOB.INSTIGATOR));
+        jobSlots.Add(JOB.DEBILITATOR, new PlayerJobData(JOB.DEBILITATOR));
     }
     public List<JOB> GetValidJobForCharacter(Character character) {
         List<JOB> validJobs = new List<JOB>();
@@ -508,11 +511,11 @@ public class Player : ILeader {
         return jobs.Contains(job);
     }
     public void AssignCharacterToJob(JOB job, Character character) {
-        if (!roleSlots.ContainsKey(job)) {
+        if (!jobSlots.ContainsKey(job)) {
             Debug.LogWarning("There is something trying to assign a character to " + job.ToString() + " but the player doesn't have a slot for it.");
             return;
         }
-        if (roleSlots[job] != null) {
+        if (jobSlots[job] != null) {
             UnassignCharacterFromJob(job);
         }
         JOB charactersCurrentJob = GetCharactersCurrentJob(character);
@@ -520,28 +523,53 @@ public class Player : ILeader {
             UnassignCharacterFromJob(charactersCurrentJob);
         }
 
-        roleSlots[job] = character;
+        jobSlots[job].AssignCharacter(character);
         Messenger.Broadcast(Signals.CHARACTER_ASSIGNED_TO_JOB, job, character);
     }
     public void UnassignCharacterFromJob(JOB job) {
-        if (!roleSlots.ContainsKey(job)) {
+        if (!jobSlots.ContainsKey(job)) {
             Debug.LogWarning("There is something trying to unassign a character from " + job.ToString() + " but the player doesn't have a slot for it.");
             return;
         }
-        if (roleSlots[job] == null) {
+        if (jobSlots[job] == null) {
             return; //ignore command
         }
-        Character character = roleSlots[job];
-        roleSlots[job] = null;
+        Character character = jobSlots[job].assignedCharacter;
+        jobSlots[job].AssignCharacter(null);
         Messenger.Broadcast(Signals.CHARACTER_UNASSIGNED_FROM_JOB, job, character);
     }
     public JOB GetCharactersCurrentJob(Character character) {
-        foreach (KeyValuePair<JOB, Character> keyValuePair in roleSlots) {
-            if (keyValuePair.Value != null && keyValuePair.Value.id == character.id) {
+        foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in jobSlots) {
+            if (keyValuePair.Value.assignedCharacter != null && keyValuePair.Value.assignedCharacter.id == character.id) {
                 return keyValuePair.Key;
             }
         }
         return JOB.NONE;
     }
+    public bool HasCharacterAssignedToJob(JOB job) {
+        return jobSlots[job].assignedCharacter != null;
+    }
     #endregion
+
+    #region Role Actions
+    public List<PlayerJobAction> GetJobActionsThatCanTarget(JOB job, JOB_ACTION_TARGET targetType) {
+        List<PlayerJobAction> actions = new List<PlayerJobAction>();
+        if (HasCharacterAssignedToJob(job)) {
+            for (int i = 0; i < jobSlots[job].jobActions.Count; i++) {
+                PlayerJobAction currAction = jobSlots[job].jobActions[i];
+                if (currAction.targettableTypes.Contains(targetType)) {
+                    actions.Add(currAction);
+                }
+            }
+        }
+        return actions;
+    }
+    #endregion
+
+    private void OnCharacterDied(Character character) {
+        JOB job = GetCharactersCurrentJob(character);
+        if (job != JOB.NONE) {
+            UnassignCharacterFromJob(job);
+        }
+    }
 }
