@@ -674,12 +674,15 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.CHANCE_ENCOUNTER:
+                if(character.race != RACE.BEAST && character.race != RACE.SKELETON) {
                 for (int i = 0; i < character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
                     Character currCharacter = character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
-                    if (currCharacter.id != character.id) {
+                    if (currCharacter.id != character.id && currCharacter.race != RACE.BEAST && currCharacter.race != RACE.SKELETON) {
                         return true;
                     }
                 }
+            }
+               
                 return false;
             case INTERACTION_TYPE.USE_ITEM_ON_CHARACTER:
                 if (character.tokenInInventory != null) {

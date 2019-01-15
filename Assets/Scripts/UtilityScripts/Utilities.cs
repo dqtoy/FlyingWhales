@@ -1988,4 +1988,18 @@ public class Utilities : MonoBehaviour {
         }
         return numberBits;
     }
+
+    private static RACE[,] opposingRaces = new RACE[,] { { RACE.HUMANS, RACE.ELVES }, { RACE.FAERY, RACE.GOBLIN } };
+    public static bool AreTwoCharactersFromOpposingRaces(Character character1, Character character2) {
+        if(character1.race != character2.race) {
+            int outerLength = opposingRaces.GetLength(0);
+            for (int i = 0; i < outerLength; i++) {
+                if((character1.race == opposingRaces[i, 0] || character1.race == opposingRaces[i, 1])
+                    && (character2.race == opposingRaces[i, 0] || character2.race == opposingRaces[i, 1])) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
