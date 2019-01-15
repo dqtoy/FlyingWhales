@@ -740,6 +740,8 @@ public class InteractionManager : MonoBehaviour {
             List<Character> attackers = areaToAttack.FormCombatCharacters();
             if(attackers.Count > 0) {
                 areaToAttack.SetAttackTargetAndCharacters(targetArea, attackers);
+            } else {
+                return null;
             }
 
             ////If at war with other factions
