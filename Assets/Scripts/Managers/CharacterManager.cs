@@ -47,6 +47,8 @@ public class CharacterManager : MonoBehaviour {
     [SerializeField] private RuntimeAnimatorController[] characterAnimators;
 
     public Dictionary<Character, List<string>> allCharacterLogs { get; private set; }
+    public Dictionary<INTERACTION_TYPE, int> awayFromHomeInteractionWeights { get; private set; }
+    public Dictionary<INTERACTION_TYPE, int> atHomeInteractionWeights { get; private set; }
     private static readonly string[] _sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
 
     #region getters/setters
@@ -78,6 +80,8 @@ public class CharacterManager : MonoBehaviour {
     public void Initialize() {
         ConstructAllClasses();
         ConstructElementChanceDictionary();
+        ConstructAwayFromHomeInteractionWeights();
+        ConstructAtHomeInteractionWeights();
         //ConstructPortraitDictionaries();
     }
 
@@ -636,6 +640,23 @@ public class CharacterManager : MonoBehaviour {
         for (int i = 0; i < elements.Length; i++) {
             _elementsChanceDictionary.Add(elements[i], 0f);
         }
+    }
+    #endregion
+
+    #region Interaction
+    private void ConstructAwayFromHomeInteractionWeights() {
+        awayFromHomeInteractionWeights = new Dictionary<INTERACTION_TYPE, int> {
+            { INTERACTION_TYPE.FOUND_LUCARETH, 50 },
+            { INTERACTION_TYPE.FOUND_BESTALIA, 50 },
+            { INTERACTION_TYPE.FOUND_MAGUS, 50 },
+            { INTERACTION_TYPE.CHANCE_ENCOUNTER, 2 },
+        };
+    }
+    private void ConstructAtHomeInteractionWeights() {
+        atHomeInteractionWeights = new Dictionary<INTERACTION_TYPE, int> {
+            { INTERACTION_TYPE.CHANCE_ENCOUNTER, 2 },
+            { INTERACTION_TYPE.STEAL_ACTION, 10 },
+        };
     }
     #endregion
 

@@ -624,15 +624,17 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_HUNT:
-            if(character.race == RACE.WOLF || character.race == RACE.SPIDER || character.race == RACE.DRAGON) {
-                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                    area = LandmarkManager.Instance.allAreas[i];
-                    if (area.id != character.specificLocation.tileLocation.areaOfTile.id && (area.owner == null || (area.owner != null && area.owner.id != character.faction.id && area.owner.id != PlayerManager.Instance.player.playerFaction.id))) {
-                        return true;
+                if(character.race == RACE.WOLF || character.race == RACE.SPIDER || character.race == RACE.DRAGON) {
+                    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                        area = LandmarkManager.Instance.allAreas[i];
+                        if (area.id != character.specificLocation.tileLocation.areaOfTile.id && (area.owner == null || (area.owner != null && area.owner.id != character.faction.id && area.owner.id != PlayerManager.Instance.player.playerFaction.id))) {
+                            return true;
+                        }
                     }
                 }
-            }
-            return false;
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_SAVE:
+                return CanCreateMoveToSave(character);
             case INTERACTION_TYPE.FOUND_LUCARETH:
                 return character.characterClass.className == "Witch" && character.specificLocation.tileLocation.areaOfTile.owner == null 
                     && character.specificLocation.tileLocation.areaOfTile.possibleOccupants.Contains(character.race) && !FactionManager.Instance.GetFactionBasedOnName("Lucareth").isActive;
@@ -675,22 +677,33 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.CHANCE_ENCOUNTER:
                 if(character.race != RACE.BEAST && character.race != RACE.SKELETON) {
-                for (int i = 0; i < character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-                    Character currCharacter = character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
-                    if (currCharacter.id != character.id && currCharacter.race != RACE.BEAST && currCharacter.race != RACE.SKELETON) {
-                        return true;
+                    for (int i = 0; i < character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
+                        Character currCharacter = character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
+                        if (currCharacter.id != character.id && currCharacter.race != RACE.BEAST && currCharacter.race != RACE.SKELETON) {
+                            return true;
+                        }
                     }
                 }
-            }
-               
                 return false;
             case INTERACTION_TYPE.USE_ITEM_ON_CHARACTER:
                 if (character.tokenInInventory != null) {
                     return character.tokenInInventory.GetTargetCharacterFor(character) != null;
                 }
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_SAVE:
-                return CanCreateMoveToSave(character);
+            case INTERACTION_TYPE.STEAL_ACTION:
+                if(character.specificLocation.tileLocation.areaOfTile.id == character.homeLandmark.tileLocation.areaOfTile.id) {
+                    //If At Home
+                    if(character.GetTrait("Crooked") != null) {
+                        for (int i = 0; i < character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
+                            Character currCharacter = character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
+                            if (currCharacter.id != character.id && currCharacter.isHoldingItem) {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }
+                return true;
             default:
                 return true;
         }
