@@ -624,15 +624,17 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_HUNT:
-            if(character.race == RACE.WOLF || character.race == RACE.SPIDER || character.race == RACE.DRAGON) {
-                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                    area = LandmarkManager.Instance.allAreas[i];
-                    if (area.id != character.specificLocation.tileLocation.areaOfTile.id && (area.owner == null || (area.owner != null && area.owner.id != character.faction.id && area.owner.id != PlayerManager.Instance.player.playerFaction.id))) {
-                        return true;
+                if(character.race == RACE.WOLF || character.race == RACE.SPIDER || character.race == RACE.DRAGON) {
+                    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                        area = LandmarkManager.Instance.allAreas[i];
+                        if (area.id != character.specificLocation.tileLocation.areaOfTile.id && (area.owner == null || (area.owner != null && area.owner.id != character.faction.id && area.owner.id != PlayerManager.Instance.player.playerFaction.id))) {
+                            return true;
+                        }
                     }
                 }
-            }
-            return false;
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_SAVE:
+                return CanCreateMoveToSave(character);
             case INTERACTION_TYPE.FOUND_LUCARETH:
                 return character.characterClass.className == "Witch" && character.specificLocation.tileLocation.areaOfTile.owner == null 
                     && character.specificLocation.tileLocation.areaOfTile.possibleOccupants.Contains(character.race) && !FactionManager.Instance.GetFactionBasedOnName("Lucareth").isActive;
@@ -674,10 +676,12 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.CHANCE_ENCOUNTER:
-                for (int i = 0; i < character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-                    Character currCharacter = character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
-                    if (currCharacter.id != character.id) {
-                        return true;
+                if(character.race != RACE.BEAST && character.race != RACE.SKELETON) {
+                    for (int i = 0; i < character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
+                        Character currCharacter = character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
+                        if (currCharacter.id != character.id && currCharacter.race != RACE.BEAST && currCharacter.race != RACE.SKELETON) {
+                            return true;
+                        }
                     }
                 }
                 return false;
@@ -686,8 +690,20 @@ public class InteractionManager : MonoBehaviour {
                     return character.tokenInInventory.GetTargetCharacterFor(character) != null;
                 }
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_SAVE:
-                return CanCreateMoveToSave(character);
+            case INTERACTION_TYPE.STEAL_ACTION:
+                if(character.specificLocation.tileLocation.areaOfTile.id == character.homeLandmark.tileLocation.areaOfTile.id) {
+                    //If At Home
+                    if(character.GetTrait("Crooked") != null) {
+                        for (int i = 0; i < character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
+                            Character currCharacter = character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
+                            if (currCharacter.id != character.id && currCharacter.isHoldingItem) {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }
+                return true;
             default:
                 return true;
         }
@@ -702,57 +718,63 @@ public class InteractionManager : MonoBehaviour {
             }
         }
         if(enemyAreas.Count > 0) {
-            //If at war with other factions
-            List<Character> residentsAtArea = new List<Character>();
-            for (int i = 0; i < areaToAttack.areaResidents.Count; i++) {
-                Character resident = areaToAttack.areaResidents[i];
-                if(resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader 
-                    && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling 
-                    && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == areaToAttack.id
-                    && resident.faction == areaToAttack.owner) {
-                    residentsAtArea.Add(resident);
-                }
+            targetArea = enemyAreas[UnityEngine.Random.Range(0, enemyAreas.Count)];
+            List<Character> attackers = areaToAttack.FormCombatCharacters();
+            if(attackers.Count > 0) {
+                areaToAttack.SetAttackTargetAndCharacters(targetArea, attackers);
             }
-            if(residentsAtArea.Count >= 3) {
-                //If has at least 3 residents in area
-                int numOfMembers = 3;
-                if(residentsAtArea.Count >= 4) {
-                    numOfMembers = 4;
-                }
-                List<List<Character>> characterCombinations = Utilities.ItemCombinations(residentsAtArea, 5, numOfMembers, numOfMembers);
-                if(characterCombinations.Count > 0) {
-                    List<Character> currentAttackCharacters = null;
-                    Area currentTargetArea = null;
-                    float highestWinChance = 0f;
-                    for (int i = 0; i < characterCombinations.Count; i++) {
-                        List<Character> attackCharacters = characterCombinations[i];
-                        Area target = enemyAreas[UnityEngine.Random.Range(0, enemyAreas.Count)];
-                        DefenderGroup defender = target.GetFirstDefenderGroup();
-                        float winChance = 0f;
-                        float loseChance = 0f;
-                        if(defender != null && defender.party != null) {
-                            CombatManager.Instance.GetCombatChanceOfTwoLists(attackCharacters, defender.party.characters, out winChance, out loseChance);
-                        } else {
-                            CombatManager.Instance.GetCombatChanceOfTwoLists(attackCharacters, null, out winChance, out loseChance);
-                        }
-                        if (winChance > 40f) {
-                            if(currentTargetArea == null) {
-                                currentTargetArea = target;
-                                currentAttackCharacters = attackCharacters;
-                                highestWinChance = winChance;
-                            } else {
-                                if(winChance > highestWinChance) {
-                                    currentTargetArea = target;
-                                    currentAttackCharacters = attackCharacters;
-                                    highestWinChance = winChance;
-                                }
-                            }
-                        }
-                    }
-                    targetArea = currentTargetArea;
-                    areaToAttack.SetAttackTargetAndCharacters(currentTargetArea, currentAttackCharacters);
-                }
-            }
+
+            ////If at war with other factions
+            //List<Character> residentsAtArea = new List<Character>();
+            //for (int i = 0; i < areaToAttack.areaResidents.Count; i++) {
+            //    Character resident = areaToAttack.areaResidents[i];
+            //    if(resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader 
+            //        && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling 
+            //        && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == areaToAttack.id
+            //        && resident.faction == areaToAttack.owner) {
+            //        residentsAtArea.Add(resident);
+            //    }
+            //}
+            //if(residentsAtArea.Count >= 3) {
+            //    //If has at least 3 residents in area
+            //    int numOfMembers = 3;
+            //    if(residentsAtArea.Count >= 4) {
+            //        numOfMembers = 4;
+            //    }
+            //    List<List<Character>> characterCombinations = Utilities.ItemCombinations(residentsAtArea, 5, numOfMembers, numOfMembers);
+            //    if(characterCombinations.Count > 0) {
+            //        List<Character> currentAttackCharacters = null;
+            //        Area currentTargetArea = null;
+            //        float highestWinChance = 0f;
+            //        for (int i = 0; i < characterCombinations.Count; i++) {
+            //            List<Character> attackCharacters = characterCombinations[i];
+            //            Area target = enemyAreas[UnityEngine.Random.Range(0, enemyAreas.Count)];
+            //            DefenderGroup defender = target.GetFirstDefenderGroup();
+            //            float winChance = 0f;
+            //            float loseChance = 0f;
+            //            if(defender != null && defender.party != null) {
+            //                CombatManager.Instance.GetCombatChanceOfTwoLists(attackCharacters, defender.party.characters, out winChance, out loseChance);
+            //            } else {
+            //                CombatManager.Instance.GetCombatChanceOfTwoLists(attackCharacters, null, out winChance, out loseChance);
+            //            }
+            //            if (winChance > 40f) {
+            //                if(currentTargetArea == null) {
+            //                    currentTargetArea = target;
+            //                    currentAttackCharacters = attackCharacters;
+            //                    highestWinChance = winChance;
+            //                } else {
+            //                    if(winChance > highestWinChance) {
+            //                        currentTargetArea = target;
+            //                        currentAttackCharacters = attackCharacters;
+            //                        highestWinChance = winChance;
+            //                    }
+            //                }
+            //            }
+            //        }
+            //        targetArea = currentTargetArea;
+            //        areaToAttack.SetAttackTargetAndCharacters(currentTargetArea, currentAttackCharacters);
+            //    }
+            //}
         }
         return targetArea;
     }

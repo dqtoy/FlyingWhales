@@ -734,24 +734,24 @@ public class Area {
     private void StartMonthActions() {
         CollectMonthlySupplies();
 
-        List<Character> defenderCandidates = new List<Character>();
+        //List<Character> defenderCandidates = new List<Character>();
         List<Character> interactionCandidates = new List<Character>();
 
         for (int i = 0; i < areaResidents.Count; i++) {
             Character resident = areaResidents[i];
-            if (resident.doNotDisturb <= 0 && !resident.currentParty.icon.isTravelling && resident.faction == owner && resident.specificLocation.tileLocation.areaOfTile.id == id) {
+            if (resident.doNotDisturb <= 0 && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.faction == owner && resident.specificLocation.tileLocation.areaOfTile.id == id) {
                 if(attackCharacters != null && attackCharacters.Contains(resident)) {
                     continue;
                 }
-                if (resident.forcedInteraction == null || (resident.forcedInteraction != null && resident.forcedInteraction.type != INTERACTION_TYPE.MOVE_TO_ATTACK)) {
-                    defenderCandidates.Add(resident);
-                }
+                //if (resident.forcedInteraction == null || (resident.forcedInteraction != null && resident.forcedInteraction.type != INTERACTION_TYPE.MOVE_TO_ATTACK)) {
+                //    defenderCandidates.Add(resident);
+                //}
                 //if (!resident.isDefender) {
                     interactionCandidates.Add(resident);
                 //}
             }
         }
-        AssignMonthlyDefenders(defenderCandidates, interactionCandidates);
+        //AssignMonthlyDefenders(defenderCandidates, interactionCandidates);
         AssignInteractionsToResidents(interactionCandidates);
     }
     private void CollectMonthlySupplies() {
@@ -1040,6 +1040,18 @@ public class Area {
         }
         return null;
     }
+    public DefenderGroup GetDefenseGroup() {
+        List<Character> defenders = FormCombatCharacters();
+        if(defenders.Count > 0) {
+            DefenderGroup group = new DefenderGroup();
+            group.SetDefendingArea(this);
+            for (int i = 0; i < defenders.Count; i++) {
+                group.AddCharacterToGroup(defenders[i]);
+            }
+            return group;
+        }
+        return null;
+    }
     public DefenderGroup GetRandomDefenderGroup() {
         if (defenderGroups.Count > 0) {
             return defenderGroups[UnityEngine.Random.Range(0, defenderGroups.Count)];
@@ -1268,6 +1280,60 @@ public class Area {
         }
         attackCharacters[0].AttackAnArea(attackTarget);
         SetAttackTargetAndCharacters(null, null);
+    }
+    public List<Character> FormCombatCharacters() {
+        List<Character> residentsAtArea = new List<Character>();
+        CombatGrid combatGrid = new CombatGrid();
+        combatGrid.Initialize();
+        for (int i = 0; i < areaResidents.Count; i++) {
+            Character resident = areaResidents[i];
+            if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader
+                && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling
+                && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == id
+                && resident.faction == owner) {
+                residentsAtArea.Add(resident);
+            }
+        }
+        List<int> frontlineIndexes = new List<int>();
+        List<int> backlineIndexes = new List<int>();
+        for (int i = 0; i < residentsAtArea.Count; i++) {
+            if (residentsAtArea[i].characterClass.combatPosition == COMBAT_POSITION.FRONTLINE) {
+                frontlineIndexes.Add(i);
+            } else {
+                backlineIndexes.Add(i);
+            }
+        }
+        if (frontlineIndexes.Count > 0) {
+            for (int i = 0; i < frontlineIndexes.Count; i++) {
+                if (combatGrid.IsPositionFull(COMBAT_POSITION.FRONTLINE)) {
+                    break;
+                } else {
+                    combatGrid.AssignCharacterToGrid(residentsAtArea[frontlineIndexes[i]]);
+                    frontlineIndexes.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
+        if (backlineIndexes.Count > 0) {
+            for (int i = 0; i < backlineIndexes.Count; i++) {
+                if (combatGrid.IsPositionFull(COMBAT_POSITION.BACKLINE)) {
+                    break;
+                } else {
+                    combatGrid.AssignCharacterToGrid(residentsAtArea[backlineIndexes[i]]);
+                    backlineIndexes.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
+        List<Character> attackCharacters = new List<Character>();
+        for (int i = 0; i < combatGrid.slots.Length; i++) {
+            if (combatGrid.slots[i].isOccupied) {
+                if (!attackCharacters.Contains(combatGrid.slots[i].character)){
+                    attackCharacters.Add(combatGrid.slots[i].character);
+                }
+            }
+        }
+        return attackCharacters;
     }
     #endregion
 

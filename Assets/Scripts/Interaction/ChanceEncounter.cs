@@ -15,6 +15,10 @@ public class ChanceEncounter : Interaction {
     private const string Normal_Encounter_Neutral = "Normal Encounter Neutral";
     private const string Normal_Encounter_Negative = "Normal Encounter Negative";
 
+    private const string Positive = "Positive";
+    private const string Neutral = "Neutral";
+    private const string Negative = "Negative";
+
     private Character targetCharacter;
     private WeightedDictionary<string> encounterWeights = new WeightedDictionary<string>();
 
@@ -29,24 +33,36 @@ public class ChanceEncounter : Interaction {
             SetTargetCharacter(GetTargetCharacter(_characterInvolved));
         }
 
-        encounterWeights.AddElement("Positive", 100);
-        encounterWeights.AddElement("Neutral", 100);
-        encounterWeights.AddElement("Negative", 100);
+        encounterWeights.AddElement(Positive, 100);
+        encounterWeights.AddElement(Neutral, 100);
+        encounterWeights.AddElement(Negative, 100);
 
         if(!_characterInvolved.isFactionless && !targetCharacter.isFactionless) {
             if (_characterInvolved.faction == targetCharacter.faction) {
-                encounterWeights.AddWeightToElement("Positive", 100);
-                encounterWeights.AddWeightToElement("Neutral", 50);
+                encounterWeights.AddWeightToElement(Positive, 100);
+                encounterWeights.AddWeightToElement(Neutral, 50);
             } else {
                 FactionRelationship relationship = _characterInvolved.faction.GetRelationshipWith(targetCharacter.faction);
                 if(relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ALLY || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
-                    encounterWeights.AddWeightToElement("Positive", 50);
-                    encounterWeights.AddWeightToElement("Neutral", 100);
+                    encounterWeights.AddWeightToElement(Positive, 50);
+                    encounterWeights.AddWeightToElement(Neutral, 100);
                 } else if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL) {
-                    encounterWeights.AddWeightToElement("Neutral", 50);
+                    encounterWeights.AddWeightToElement(Neutral, 50);
                 } else if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY) {
-                    encounterWeights.AddWeightToElement("Negative", 100);
+                    encounterWeights.AddWeightToElement(Negative, 100);
                 }
+            }
+            if(_characterInvolved.race == targetCharacter.race) {
+                encounterWeights.AddWeightToElement(Positive, 100);
+                encounterWeights.AddWeightToElement(Neutral, 50);
+            } else {
+                if(Utilities.AreTwoCharactersFromOpposingRaces(_characterInvolved, targetCharacter)) {
+                    encounterWeights.AddWeightToElement(Negative, 100);
+                }
+            }
+            if (_characterInvolved.characterClass.rangeType == targetCharacter.characterClass.rangeType &&_characterInvolved.characterClass.attackType == targetCharacter.characterClass.attackType) {
+                encounterWeights.AddWeightToElement(Positive, 100);
+                encounterWeights.AddWeightToElement(Neutral, 50);
             }
         }
         
@@ -134,27 +150,27 @@ public class ChanceEncounter : Interaction {
 
     #region Action Options
     private void EnemyOption() {
-        encounterWeights.AddWeightToElement("Negative", 150);
+        encounterWeights.AddWeightToElement(Negative, 150);
         string result = encounterWeights.PickRandomElementGivenWeights();
         string nextState = string.Empty;
-        if(result == "Positive") {
+        if(result == Positive) {
             nextState = Instigated_Encounter_Positive;
-        } else if (result == "Neutral") {
+        } else if (result == Neutral) {
             nextState = Instigated_Encounter_Neutral;
-        } else if (result == "Negative") {
+        } else if (result == Negative) {
             nextState = Instigated_Encounter_Negative;
         }
         SetCurrentState(_states[nextState]);
     }
     private void FriendOption() {
-        encounterWeights.AddWeightToElement("Positive", 150);
+        encounterWeights.AddWeightToElement(Positive, 150);
         string result = encounterWeights.PickRandomElementGivenWeights();
         string nextState = string.Empty;
-        if (result == "Positive") {
+        if (result == Positive) {
             nextState = Assisted_Encounter_Positive;
-        } else if (result == "Neutral") {
+        } else if (result == Neutral) {
             nextState = Assisted_Encounter_Neutral;
-        } else if (result == "Negative") {
+        } else if (result == Negative) {
             nextState = Assisted_Encounter_Negative;
         }
         SetCurrentState(_states[nextState]);
@@ -162,11 +178,11 @@ public class ChanceEncounter : Interaction {
     private void DoNothingOption() {
         string result = encounterWeights.PickRandomElementGivenWeights();
         string nextState = string.Empty;
-        if (result == "Positive") {
+        if (result == Positive) {
             nextState = Normal_Encounter_Positive;
-        } else if (result == "Neutral") {
+        } else if (result == Neutral) {
             nextState = Normal_Encounter_Neutral;
-        } else if (result == "Negative") {
+        } else if (result == Negative) {
             nextState = Normal_Encounter_Negative;
         }
         SetCurrentState(_states[nextState]);
@@ -242,7 +258,8 @@ public class ChanceEncounter : Interaction {
         List<Character> characterList = new List<Character>();
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
             Character currCharacter = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
-            if (currCharacter.id != characterInvolved.id) {
+            if (currCharacter.forcedInteraction == null && currCharacter.id != characterInvolved.id
+                && currCharacter.race != RACE.BEAST && currCharacter.race != RACE.SKELETON) {
                 characterList.Add(currCharacter);
             }
         }

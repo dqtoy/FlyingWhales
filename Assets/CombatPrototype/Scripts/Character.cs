@@ -463,6 +463,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
 
         //AllocateStatPoints(10);
         SetTraitsFromRace();
+        ResetToFullHP();
         //CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(className);
         //if(setup != null) {
         //    GenerateSetupAttributes(setup);
@@ -508,13 +509,14 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         //SetTraitsFromClass();
         SetTraitsFromRace();
         //EquipPreEquippedItems(baseSetup);
-        CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(data.className);
-        if (setup != null) {
-            GenerateSetupAttributes(setup);
-            //if (setup.optionalRole != CHARACTER_ROLE.NONE) {
-            //    AssignRole(setup.optionalRole);
-            //}
-        }
+        //CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(data.className);
+        //if (setup != null) {
+        //    GenerateSetupAttributes(setup);
+        //    //if (setup.optionalRole != CHARACTER_ROLE.NONE) {
+        //    //    AssignRole(setup.optionalRole);
+        //    //}
+        //}
+        ResetToFullHP();
         //DetermineAllowedMiscActions();
     }
     public Character() {
@@ -555,7 +557,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         eventTriggerWeights = new WeightedDictionary<bool>();
         eventTriggerWeights.AddElement(true, 200); //Hard coded for now
         eventTriggerWeights.AddElement(false, 1000);
-
         //AllocateStats();
         //EquipItemsByClass();
         //ConstructBuffs();
@@ -3280,12 +3281,10 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 if (tokenInInventory != null && tokenInInventory.CanBeUsedBy(this) && InteractionManager.Instance.CanCreateInteraction(tokenInInventory.npcAssociatedInteractionType, this)) {
                     awayFromHomeInteractionWeights.AddElement(tokenInInventory.tokenName, 70);
                 }
-                INTERACTION_TYPE[] triggeredInteractions = new INTERACTION_TYPE[] { INTERACTION_TYPE.FOUND_LUCARETH, INTERACTION_TYPE.FOUND_BESTALIA, INTERACTION_TYPE.FOUND_MAGUS, INTERACTION_TYPE.CHANCE_ENCOUNTER };
-                int[] triggeredInteractionsWeights = new int[] { 50, 50, 50, 2 };
 
-                for (int i = 0; i < triggeredInteractions.Length; i++) {
-                    if (InteractionManager.Instance.CanCreateInteraction(triggeredInteractions[i], this)) {
-                        awayFromHomeInteractionWeights.AddElement(triggeredInteractions[i].ToString(), triggeredInteractionsWeights[i]); //15
+                foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in CharacterManager.Instance.awayFromHomeInteractionWeights) {
+                    if (InteractionManager.Instance.CanCreateInteraction(kvp.Key, this)) {
+                        awayFromHomeInteractionWeights.AddElement(kvp.Key.ToString(), kvp.Value); //15
                     }
                 }
 
@@ -3313,8 +3312,10 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 //Character actions at home
                 WeightedDictionary<string> atHomeInteractionWeights = new WeightedDictionary<string>();
                 atHomeInteractionWeights.AddElement("DoNothing", 100);
-                if(InteractionManager.Instance.CanCreateInteraction(INTERACTION_TYPE.CHANCE_ENCOUNTER, this)) {
-                    atHomeInteractionWeights.AddElement(INTERACTION_TYPE.CHANCE_ENCOUNTER.ToString(), 2);
+                foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in CharacterManager.Instance.atHomeInteractionWeights) {
+                    if (InteractionManager.Instance.CanCreateInteraction(kvp.Key, this)) {
+                        atHomeInteractionWeights.AddElement(kvp.Key.ToString(), kvp.Value); //15
+                    }
                 }
                 if (tokenInInventory != null) {
                     if (tokenInInventory.CanBeUsedBy(this) && InteractionManager.Instance.CanCreateInteraction(tokenInInventory.npcAssociatedInteractionType, this)) {

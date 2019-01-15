@@ -68,7 +68,7 @@ public class InstigatorTargetLocation : Interaction {
 
     #region Action Options
     private bool CanInduceAttack(ActionOption option) {
-        if(_attackers == null) {
+        if(_attackers == null || _attackers.Count <= 0) {
             option.disabledTooltipText = "This location is not strong enough to launch an assault on " + _targetLocationToken.nameInBold;
             return false;
         } else {
@@ -124,47 +124,48 @@ public class InstigatorTargetLocation : Interaction {
     private void SetAttackers() {
         Area areaToAttack = interactable.tileLocation.areaOfTile;
         Area targetArea = _targetLocationToken.location;
-        List<Character> residentsAtArea = new List<Character>();
-        for (int i = 0; i < areaToAttack.areaResidents.Count; i++) {
-            Character resident = areaToAttack.areaResidents[i];
-            if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == areaToAttack.id) {
-                residentsAtArea.Add(resident);
-            }
-        }
-        if (residentsAtArea.Count >= 3) {
-            //If has at least 3 residents in area
-            int numOfMembers = 3;
-            if (residentsAtArea.Count >= 4) {
-                numOfMembers = 4;
-            }
-            List<List<Character>> characterCombinations = Utilities.ItemCombinations(residentsAtArea, 5, numOfMembers, numOfMembers);
-            if (characterCombinations.Count > 0) {
-                List<Character> currentAttackCharacters = null;
-                float highestWinChance = 0f;
-                for (int i = 0; i < characterCombinations.Count; i++) {
-                    List<Character> attackCharacters = characterCombinations[i];
-                    DefenderGroup defender = targetArea.GetFirstDefenderGroup();
-                    float winChance = 0f;
-                    float loseChance = 0f;
-                    if (defender != null) {
-                        CombatManager.Instance.GetCombatChanceOfTwoLists(attackCharacters, defender.party.characters, out winChance, out loseChance);
-                    } else {
-                        CombatManager.Instance.GetCombatChanceOfTwoLists(attackCharacters, null, out winChance, out loseChance);
-                    }
-                    if (winChance > 40f) {
-                        if (currentAttackCharacters == null) {
-                            currentAttackCharacters = attackCharacters;
-                            highestWinChance = winChance;
-                        } else {
-                            if (winChance > highestWinChance) {
-                                currentAttackCharacters = attackCharacters;
-                                highestWinChance = winChance;
-                            }
-                        }
-                    }
-                }
-                _attackers = currentAttackCharacters;
-            }
-        }
+        _attackers = areaToAttack.FormCombatCharacters();
+        //List<Character> residentsAtArea = new List<Character>();
+        //for (int i = 0; i < areaToAttack.areaResidents.Count; i++) {
+        //    Character resident = areaToAttack.areaResidents[i];
+        //    if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == areaToAttack.id) {
+        //        residentsAtArea.Add(resident);
+        //    }
+        //}
+        //if (residentsAtArea.Count >= 3) {
+        //    //If has at least 3 residents in area
+        //    int numOfMembers = 3;
+        //    if (residentsAtArea.Count >= 4) {
+        //        numOfMembers = 4;
+        //    }
+        //    List<List<Character>> characterCombinations = Utilities.ItemCombinations(residentsAtArea, 5, numOfMembers, numOfMembers);
+        //    if (characterCombinations.Count > 0) {
+        //        List<Character> currentAttackCharacters = null;
+        //        float highestWinChance = 0f;
+        //        for (int i = 0; i < characterCombinations.Count; i++) {
+        //            List<Character> attackCharacters = characterCombinations[i];
+        //            DefenderGroup defender = targetArea.GetFirstDefenderGroup();
+        //            float winChance = 0f;
+        //            float loseChance = 0f;
+        //            if (defender != null) {
+        //                CombatManager.Instance.GetCombatChanceOfTwoLists(attackCharacters, defender.party.characters, out winChance, out loseChance);
+        //            } else {
+        //                CombatManager.Instance.GetCombatChanceOfTwoLists(attackCharacters, null, out winChance, out loseChance);
+        //            }
+        //            if (winChance > 40f) {
+        //                if (currentAttackCharacters == null) {
+        //                    currentAttackCharacters = attackCharacters;
+        //                    highestWinChance = winChance;
+        //                } else {
+        //                    if (winChance > highestWinChance) {
+        //                        currentAttackCharacters = attackCharacters;
+        //                        highestWinChance = winChance;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        _attackers = currentAttackCharacters;
+        //    }
+        //}
     }
 }

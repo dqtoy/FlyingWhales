@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 using UnityEngine;
 
 public class NewCombat : MonoBehaviour {
@@ -9,6 +10,9 @@ public class NewCombat : MonoBehaviour {
 
     private List<Character> _deadCharacters;
     private List<CombatCharacter> _combatOrder;
+    private List<Action> _endCombatActions;
+
+    public SIDES winningSide { get; private set; }
 
     private bool _isPaused;
 
@@ -21,6 +25,9 @@ public class NewCombat : MonoBehaviour {
     public void Initialize() {
         _deadCharacters = new List<Character>();
         _combatOrder = new List<CombatCharacter>();
+        _endCombatActions = new List<Action>();
+        leftSide = new CombatGrid();
+        rightSide = new CombatGrid();
         leftSide.Initialize();
         rightSide.Initialize();
     }
@@ -30,6 +37,7 @@ public class NewCombat : MonoBehaviour {
         rightSide.ResetGrid();
         _deadCharacters.Clear();
         _combatOrder.Clear();
+        _endCombatActions.Clear();
     }
 
     public void StartNewCombat() {
@@ -44,7 +52,18 @@ public class NewCombat : MonoBehaviour {
             chosenGrid.slots[i].character = grid.slots[i].character;
         }
     }
-
+    public void AddCharacters(List<Character> characters, SIDES side) {
+        CombatGrid chosenGrid = leftSide;
+        if (side == SIDES.B) {
+            chosenGrid = rightSide;
+        }
+        for (int i = 0; i < characters.Count; i++) {
+            chosenGrid.AssignCharacterToGrid(characters[i]);
+        }
+    }
+    public void AddEndCombatActions(Action action) {
+        _endCombatActions.Add(action);
+    }
     private void ReorderCombat() {
         for (int i = 0; i < _combatOrder.Count; i++) {
             _combatOrder[i].ReEvaluateSpeed();
@@ -72,7 +91,7 @@ public class NewCombat : MonoBehaviour {
 
     private void TransferSlotsToOrder() {
         for (int i = 0; i < leftSide.slots.Length; i++) {
-            if (leftSide.slots[i].isOccupied) {
+            if (leftSide.slots[i].isOccupied && !IsInCombatOrder(leftSide.slots[i].character)) {
                 _combatOrder.Add(
                     new CombatCharacter() {
                         character = leftSide.slots[i].character,
@@ -80,8 +99,9 @@ public class NewCombat : MonoBehaviour {
                         speed = 0,
                     }
                 );
+                leftSide.slots[i].character.AdjustDoNotDisturb(1);
             }
-            if (rightSide.slots[i].isOccupied) {
+            if (rightSide.slots[i].isOccupied && !IsInCombatOrder(rightSide.slots[i].character)) {
                 _combatOrder.Add(
                     new CombatCharacter() {
                         character = rightSide.slots[i].character,
@@ -89,40 +109,122 @@ public class NewCombat : MonoBehaviour {
                         speed = 0,
                     }
                 );
+                rightSide.slots[i].character.AdjustDoNotDisturb(1);
             }
         }
     }
-
+    private bool IsInCombatOrder(Character character) {
+        for (int i = 0; i < _combatOrder.Count; i++) {
+            if(_combatOrder[i].character.id == character.id) {
+                return true;
+            }
+        }
+        return false;
+    }
     public void Fight() {
+        StartCoroutine(StartCombatCoroutine());
+    }
+
+    private IEnumerator StartCombatCoroutine() {
         TransferSlotsToOrder();
         while (!isCombatEnd) {
-            StartCoroutine(StartRound());
-        }
-    }
+            ReorderCombat();
+            CombatCharacter previousCombatCharacter = new CombatCharacter();
+            for (int i = 0; i < _combatOrder.Count; i++) {
+                if (previousCombatCharacter.character != null) {
+                    UIManager.Instance.combatUI.UnhighlightAttacker(previousCombatCharacter.character, previousCombatCharacter.side);
+                }
+                CombatCharacter sourceCombatCharacter = _combatOrder[i];
+                previousCombatCharacter = sourceCombatCharacter;
+                UIManager.Instance.combatUI.HighlightAttacker(sourceCombatCharacter.character, sourceCombatCharacter.side);
+                //Messenger.Broadcast(Signals.HIGHLIGHT_ATTACKER, sourceCombatCharacter.character, sourceCombatCharacter.side);
+                UIManager.Instance.combatUI.AddCombatLogs(sourceCombatCharacter.character.name + " will now attack!");
+                //Messenger.Broadcast(Signals.ADD_TO_COMBAT_LOGS, sourceCombatCharacter.character.name + " will now attack!");
 
-    private IEnumerator StartRound() {
-        ReorderCombat();
-        for (int i = 0; i < _combatOrder.Count; i++) {
-            CombatCharacter sourceCombatCharacter = _combatOrder[i];
-            //if (sourceCombatCharacter.character.currentHP <= 0) {
-            //    _combatOrder.RemoveAt(i);
-            //    i--;
-            //    continue;
-            //}
-            //Get and Hit Targets
-            List<Character> targetCharacters = GetTargetCharacters(sourceCombatCharacter);
-            for (int j = 0; j < targetCharacters.Count; j++) {
-                Character target = targetCharacters[j];
-                target.AdjustHP(-sourceCombatCharacter.character.attackPower);
-                if (target.currentHP <= 0) {
-                    AddToDeadCharacters(target);
+                //if (sourceCombatCharacter.character.currentHP <= 0) {
+                //    _combatOrder.RemoveAt(i);
+                //    i--;
+                //    continue;
+                //}
+                //Get and Hit Targets
+                List<Character> targetCharacters = GetTargetCharacters(sourceCombatCharacter);
+                string attackLog = string.Empty;
+                if (targetCharacters.Count > 0) {
+                    attackLog = sourceCombatCharacter.character.name + " attacks ";
+                    int sourceAttack = sourceCombatCharacter.character.attackPower;
+                    for (int j = 0; j < targetCharacters.Count; j++) {
+                        Character target = targetCharacters[j];
+                        if (j == 0) {
+                            attackLog += target.name;
+                        } else {
+                            attackLog += ", " + target.name;
+                        }
+                        target.AdjustHP(-sourceAttack);
+                        if (target.currentHP <= 0) {
+                            int removedIndex = RemoveFromCombatOrder(target);
+                            if(removedIndex != -1) {
+                                AddToDeadCharacters(target);
+                                if (removedIndex < i) {
+                                    i--;
+                                }
+                            }
+
+                        }
+                    }
+                    attackLog += " for " + sourceAttack.ToString() + ".";
+                    UIManager.Instance.combatUI.AddCombatLogs(attackLog);
+                    //Messenger.Broadcast(Signals.ADD_TO_COMBAT_LOGS, attackLog);
+
+                    string deathLog = string.Empty;
+                    for (int j = 0; j < targetCharacters.Count; j++) {
+                        if (targetCharacters[j].currentHP <= 0) {
+                            if (deathLog == string.Empty) {
+                                deathLog += targetCharacters[j].name;
+                            } else {
+                                deathLog += ", " + targetCharacters[j].name;
+                            }
+                        }
+                    }
+                    if (deathLog != string.Empty) {
+                        deathLog += " is dead!";
+                        UIManager.Instance.combatUI.AddCombatLogs(deathLog);
+                    }
+                    //Messenger.Broadcast(Signals.ADD_TO_COMBAT_LOGS, deathLog);
+                } else {
+                    attackLog = "No more targets! Combat will end!";
+                    UIManager.Instance.combatUI.AddCombatLogs(attackLog);
+                    //Messenger.Broadcast(Signals.ADD_TO_COMBAT_LOGS, attackLog);
+                }
+
+                //Messenger.Broadcast(Signals.UNHIGHLIGHT_ATTACKER, sourceCombatCharacter.character, sourceCombatCharacter.side);
+                UIManager.Instance.combatUI.UpdateCombatSlotItems();
+                //Messenger.Broadcast(Signals.UPDATE_COMBAT_GRIDS);
+                yield return new WaitWhile(() => _isPaused == true);
+                yield return new WaitForSeconds(2f);
+                if (isCombatEnd) {
+                    break;
                 }
             }
-            if (isCombatEnd) {
-                break;
+        }
+        if (rightSide.IsGridEmpty()) {
+            winningSide = SIDES.A;
+            UIManager.Instance.combatUI.AddCombatLogs("Left Side Wins!");
+            //Messenger.Broadcast(Signals.ADD_TO_COMBAT_LOGS, "Left Side Wins!");
+        } else {
+            winningSide = SIDES.B;
+            UIManager.Instance.combatUI.AddCombatLogs("Right Side Wins!");
+            //Messenger.Broadcast(Signals.ADD_TO_COMBAT_LOGS, "Right Side Wins!");
+        }
+        for (int i = 0; i < _combatOrder.Count; i++) {
+            _combatOrder[i].character.AdjustDoNotDisturb(-1);
+        }
+        for (int i = 0; i < _deadCharacters.Count; i++) {
+            _deadCharacters[i].AdjustDoNotDisturb(-1);
+        }
+        for (int i = 0; i < _endCombatActions.Count; i++) {
+            if (_endCombatActions[i] != null) {
+                _endCombatActions[i]();
             }
-            yield return new WaitWhile(() => _isPaused == true);
-            yield return new WaitForSeconds(CombatManager.Instance.updateIntervals);
         }
         //RemoveAllDeadFromCombatOrder();
     }
@@ -137,18 +239,18 @@ public class NewCombat : MonoBehaviour {
     private void AddToDeadCharacters(Character character) {
         if (!_deadCharacters.Contains(character)) {
             _deadCharacters.Add(character);
-            RemoveFromCombatOrder(character);
         }
     }
-    private bool RemoveFromCombatOrder(Character character) {
+    private int RemoveFromCombatOrder(Character character) {
         for (int i = 0; i < _combatOrder.Count; i++) {
             if(_combatOrder[i].character == character) {
+                int index = i;
                 RemoveFromCombatGrid(_combatOrder[i]);
                 _combatOrder.RemoveAt(i);
-                return true;
+                return index;
             }
         }
-        return false;
+        return -1;
     }
     private void RemoveFromCombatGrid(CombatCharacter combatCharacter) {
         CombatGrid grid = leftSide;
@@ -169,11 +271,24 @@ public class NewCombat : MonoBehaviour {
             gridToBeChecked = rightSide;
         }
         for (int i = 0; i < targetIndexes.Count; i++) {
+            bool canBeTargeted = false;
             for (int j = 0; j < targetIndexes[i].Length; j++) {
                 Character targetCharacter = gridToBeChecked.slots[targetIndexes[i][j]].character;
-                if (targetCharacter != null && !_deadCharacters.Contains(targetCharacter) && !targets.Contains(targetCharacter)) {
-                    targets.Add(targetCharacter);
+                if (targetCharacter != null && !_deadCharacters.Contains(targetCharacter)) { //&& !targets.Contains(targetCharacter)
+                    canBeTargeted = true;
+                    break;
                 }
+            }
+            if (!canBeTargeted) {
+                targetIndexes.RemoveAt(i);
+                i--;
+            }
+        }
+        int chosenIndex = UnityEngine.Random.Range(0, targetIndexes.Count);
+        for (int j = 0; j < targetIndexes[chosenIndex].Length; j++) {
+            Character targetCharacter = gridToBeChecked.slots[targetIndexes[chosenIndex][j]].character;
+            if (targetCharacter != null && !_deadCharacters.Contains(targetCharacter) && !targets.Contains(targetCharacter)) {
+                targets.Add(targetCharacter);
             }
         }
         return targets;

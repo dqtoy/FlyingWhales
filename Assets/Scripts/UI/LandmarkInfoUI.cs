@@ -741,22 +741,22 @@ public class LandmarkInfoUI : UIMenu {
             ResetMinionAssignmentParty(index);
         }
 
-        List<Character> assignedCharacters = new List<Character>();
-        for (int i = 0; i < _assignedParty.Length; i++) {
-            if (_assignedParty[i] != null) {
-                assignedCharacters.Add(_assignedParty[i].character);
-            }
-        }
+        //List<Character> assignedCharacters = new List<Character>();
+        //for (int i = 0; i < _assignedParty.Length; i++) {
+        //    if (_assignedParty[i] != null) {
+        //        assignedCharacters.Add(_assignedParty[i].character);
+        //    }
+        //}
 
-        float chance = 0f;
-        float enemyChance = 0f;
-        DefenderGroup defender = _activeLandmark.tileLocation.areaOfTile.GetFirstDefenderGroup();
-        if (defender != null) {
-            CombatManager.Instance.GetCombatChanceOfTwoLists(assignedCharacters, defender.party.characters, out chance, out enemyChance);
-        } else {
-            CombatManager.Instance.GetCombatChanceOfTwoLists(assignedCharacters, null, out chance, out enemyChance);
-        }
-        SetWinChance(chance);
+        //float chance = 0f;
+        //float enemyChance = 0f;
+        //DefenderGroup defender = _activeLandmark.tileLocation.areaOfTile.GetFirstDefenderGroup();
+        //if (defender != null) {
+        //    CombatManager.Instance.GetCombatChanceOfTwoLists(assignedCharacters, defender.party.characters, out chance, out enemyChance);
+        //} else {
+        //    CombatManager.Instance.GetCombatChanceOfTwoLists(assignedCharacters, null, out chance, out enemyChance);
+        //}
+        //SetWinChance(chance);
     }
     private void SetWinChance(float chance) {
         iTween.ValueTo(this.gameObject, iTween.Hash("from", _currentWinChance, "to", chance, "time", 0.3f, "onupdate", "OnUpdateWinChance"));
@@ -776,7 +776,7 @@ public class LandmarkInfoUI : UIMenu {
         //ChangeStateAllButtons(!_activeLandmark.landmarkInvestigation.isActivated);
     }
     public void OnClickConfirmPartyInvestigation() {
-        _activeLandmark.tileLocation.areaOfTile.areaInvestigation.AttackRaidLandmark(_currentSelectedInvestigateButton.actionName, _assignedParty, _activeLandmark);
+        //_activeLandmark.tileLocation.areaOfTile.areaInvestigation.AttackRaidLandmark(_currentSelectedInvestigateButton.actionName, _assignedParty, _activeLandmark);
         OnUpdateLandmarkInvestigationState("attack");
         //ChangeStateAllButtons(!_activeLandmark.landmarkInvestigation.isActivated);
     }

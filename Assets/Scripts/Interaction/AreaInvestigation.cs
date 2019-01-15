@@ -11,6 +11,7 @@ public class AreaInvestigation {
     private Minion _assignedTokeneerMinion;
     private BaseLandmark _currentlyExploredLandmark;
     private BaseLandmark _currentlyAttackedLandmark;
+    private CombatSlot[] _combatSlots;
     private bool _isExploring;
     private bool _isAttacking;
     private bool _isCollectingTokens;
@@ -35,6 +36,9 @@ public class AreaInvestigation {
     }
     public Minion assignedMinionAttack {
         get { return _assignedMinionAttack; }
+    }
+    public CombatSlot[] combatSlots {
+        get { return _combatSlots; }
     }
     //public Minion tokenCollector {
     //    get { return _assignedTokeneerMinion; }
@@ -64,6 +68,10 @@ public class AreaInvestigation {
 
     public AreaInvestigation(Area area) {
         _area = area;
+        _combatSlots = new CombatSlot[4];
+        for (int i = 0; i < _combatSlots.Length; i++) {
+            _combatSlots[i] = new CombatSlot() { gridNumber = i };
+        }
         //Messenger.AddListener<BaseLandmark>(Signals.CLICKED_INTERACTION_BUTTON, ClickedInteractionTimerButton);
         Messenger.AddListener<Area>(Signals.AREA_OCCUPANY_CHANGED, OnAreaOccupancyChanged);
     }
@@ -83,14 +91,15 @@ public class AreaInvestigation {
 
         _isExploring = true;
     }
-    public void AttackRaidLandmark(string whatTodo, Minion[] minion, BaseLandmark targetLandmark) {
+    public void AttackRaidLandmark(string whatTodo, CombatGrid combatGrid, BaseLandmark targetLandmark) {
         _assignedMinionAttack = null;
-        for (int i = 0; i < minion.Length; i++) {
-            if (minion[i] != null) {
+        for (int i = 0; i < _combatSlots.Length; i++) {
+            _combatSlots[i].character = combatGrid.slots[i].character;
+            if (_combatSlots[i].character != null) {
                 if (_assignedMinionAttack == null) {
-                    SetAssignedMinionAttack(minion[i]);
+                    SetAssignedMinionAttack(_combatSlots[i].character.minion);
                 } else {
-                    _assignedMinionAttack.character.ownParty.AddCharacter(minion[i].character);
+                    _assignedMinionAttack.character.ownParty.AddCharacter(_combatSlots[i].character);
                 }
             }
         }
@@ -221,24 +230,25 @@ public class AreaInvestigation {
 
     #region Attack
     private void AttackLandmark() {
-        DefenderGroup defender = _area.GetFirstDefenderGroup();
+        DefenderGroup defender = _area.GetDefenseGroup();
         if (defender != null) {
-            //_assignedMinionAttack.icharacter.currentParty.specificLocation.RemoveCharacterFromLocation(_assignedMinionAttack.icharacter.currentParty);
-            //_currentlyAttackedLandmark.AddCharacterToLocation(_assignedMinionAttack.icharacter.currentParty);
-            Combat combat = _assignedMinionAttack.character.currentParty.CreateCombatWith(defender.party);
-            combat.Fight(() => AttackCombatResult(combat));
+            //Combat combat = _assignedMinionAttack.character.currentParty.CreateCombatWith(defender.party);
+            //combat.Fight(() => AttackCombatResult(combat));
+            CombatManager.Instance.newCombat.StartNewCombat();
+            CombatManager.Instance.newCombat.AddCharacters(_assignedMinionAttack.character.currentParty.characters, SIDES.A);
+            CombatManager.Instance.newCombat.AddCharacters(defender.party.characters, SIDES.B);
+            CombatManager.Instance.newCombat.AddEndCombatActions(() => AttackCombatResult());
+            UIManager.Instance.combatUI.OpenCombatUI(true);
         } else {
             RecallMinion("attack");
-            //Destroy Area
+            _area.Death();
         }
     }
-    private void AttackCombatResult(Combat combat) {
+    private void AttackCombatResult() {
         if (_isAttacking) { //when the minion dies, isActivated will become false, hence, it must not go through the result
-            if (combat.winningSide == _assignedMinionAttack.character.currentSide) {
+            if (CombatManager.Instance.newCombat.winningSide == SIDES.A) {
                 RecallMinion("attack");
-                if(_area.GetFirstDefenderGroup() == null) {
-                    //Destroy Area
-                }
+                _area.Death();
             }
         }
     }

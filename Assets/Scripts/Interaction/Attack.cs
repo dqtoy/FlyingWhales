@@ -116,7 +116,7 @@ public class Attack : Interaction {
         //Add minion to support
         _characterInvolved.currentParty.AddCharacter(_supporterMinion.character);
 
-        _defenderGroup = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
+        _defenderGroup = interactable.tileLocation.areaOfTile.GetDefenseGroup();
         _combat = null;
         if (_defenderGroup != null && _defenderGroup.party != null) {
             _combat = _characterInvolved.currentParty.CreateCombatWith(_defenderGroup.party);
@@ -137,7 +137,7 @@ public class Attack : Interaction {
     }
     private void SupportDefendersOption(InteractionState state) {
         _supporterMinion = state.assignedMinion;
-        _defenderGroup = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
+        _defenderGroup = interactable.tileLocation.areaOfTile.GetDefenseGroup();
         _combat = null;
         if (_defenderGroup != null && _defenderGroup.party != null) {
             //Add minion to support
@@ -167,7 +167,7 @@ public class Attack : Interaction {
         }
     }
     private void StandAsideOption() {
-        _defenderGroup = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
+        _defenderGroup = interactable.tileLocation.areaOfTile.GetDefenseGroup();
         _combat = null;
         if (_defenderGroup != null && _defenderGroup.party != null) {
             _combat = _characterInvolved.currentParty.CreateCombatWith(_defenderGroup.party);
@@ -207,15 +207,15 @@ public class Attack : Interaction {
             }
         }
 
-        DefenderGroup newDefenders = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
-        if (newDefenders == null) {
+        //DefenderGroup newDefenders = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
+        //if (newDefenders == null) {
             interactable.tileLocation.areaOfTile.Death();
 
             Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
             log.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
             log.AddToFillers(interactable.tileLocation.areaOfTile.previousOwner, interactable.tileLocation.areaOfTile.previousOwner.name, LOG_IDENTIFIER.FACTION_1);
             state.AddLogToInvolvedObjects(log);
-        }
+        //}
     }
     private void HelpedAttackersLostEffect(InteractionState state) {
         characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
@@ -256,15 +256,15 @@ public class Attack : Interaction {
             state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
 
-        DefenderGroup newDefenders = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
-        if (newDefenders == null) {
+        //DefenderGroup newDefenders = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
+        //if (newDefenders == null) {
             interactable.tileLocation.areaOfTile.Death();
 
             Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
             log.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
             log.AddToFillers(interactable.tileLocation.areaOfTile.previousOwner, interactable.tileLocation.areaOfTile.previousOwner.name, LOG_IDENTIFIER.FACTION_1);
             state.AddLogToInvolvedObjects(log);
-        }
+        //}
     }
     private void HelpedDefendersWonEffect(InteractionState state) {
         interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
@@ -311,8 +311,8 @@ public class Attack : Interaction {
             state.descriptionLog.AddToFillers(_combat.charactersSideB[i], _combat.charactersSideB[i].name, LOG_IDENTIFIER.CHARACTER_LIST_2, false);
         }
 
-        DefenderGroup newDefenders = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
-        if (newDefenders == null) {
+        //DefenderGroup newDefenders = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
+        //if (newDefenders == null) {
             interactable.tileLocation.areaOfTile.Death();
 
             Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
@@ -324,7 +324,7 @@ public class Attack : Interaction {
             }
             state.AddLogToInvolvedObjects(log);
             //Log area is cleared - Add faction log filler
-        }
+        //}
     }
     private void NormalAttackersLostEffect(InteractionState state) {
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
