@@ -18,6 +18,8 @@ public class InteractionManager : MonoBehaviour {
     [SerializeField] private RoleInteractionsListDictionary roleDefaultInteractions;
     [SerializeField] private JobInteractionsListDictionary jobNPCInteractions;
 
+    private string dailyInteractionSummary;
+
     public Dictionary<string, RewardConfig> rewardConfig = new Dictionary<string, RewardConfig>(){
         { Supply_Cache_Reward_1, new RewardConfig(){ rewardType = REWARD.SUPPLY, lowerRange = 50, higherRange = 250 } },
         { Mana_Cache_Reward_1, new RewardConfig(){ rewardType = REWARD.MANA, lowerRange = 5, higherRange = 30 } },
@@ -828,14 +830,19 @@ public class InteractionManager : MonoBehaviour {
         interactionUIQueue.Enqueue(interaction);
     }
 
+    private void TryExecuteInteractionsDefault() {
+
+    }
+
     private void ExecuteInteractionsDefault() {
-        string summary = GameManager.Instance.TodayLogString() + "Executing interactions";
+        dailyInteractionSummary = GameManager.Instance.TodayLogString() + "Executing interactions";
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
-            DefaultInteractionsInArea(currArea, ref summary);
+            DefaultInteractionsInArea(currArea, ref dailyInteractionSummary);
+            //StartCoroutine(DefaultInteractionsInAreaCoroutine(currArea, AddToDailySummary));
         }
-        summary += "\n==========Done==========";
-        Debug.Log(summary);
+        dailyInteractionSummary += "\n==========Done==========";
+        Debug.Log(dailyInteractionSummary);
     }
     public void DefaultInteractionsInArea(Area area, ref string log) {
         log += "\n==========Executing " + area.name + "'s interactions==========";
@@ -873,6 +880,50 @@ public class InteractionManager : MonoBehaviour {
             }
         }
     }
+
+    //private void AddToDailySummary(string log) {
+    //    dailyInteractionSummary += log;
+    //}
+    //public IEnumerator DefaultInteractionsInAreaCoroutine(Area area, System.Action<string> addToLog) {
+    //    string log = "\n==========Executing " + area.name + "'s interactions==========";
+    //    if (area.stopDefaultAllExistingInteractions) {
+    //        log += "\nCannot run areas default interactions because area interactions have been disabled";
+    //        addToLog(log);
+    //        yield return null; //skip
+    //    }
+    //    List<Interaction> interactionsInArea = new List<Interaction>(area.currentInteractions);
+    //    if (interactionsInArea.Count == 0) {
+    //        log += "\nNo interactions in area";
+    //        addToLog(log);
+    //        yield return null;
+    //    }
+
+    //    for (int j = 0; j < interactionsInArea.Count; j++) {
+    //        Interaction currInteraction = interactionsInArea[j];
+    //        Character character = currInteraction.characterInvolved;
+    //        if (!currInteraction.hasActivatedTimeOut) {
+    //            if (character == null || (!character.isDead && currInteraction.CanInteractionBeDoneBy(character))) {
+    //                log += "\nRunning interaction default " + currInteraction.type.ToString();
+    //                if (character != null) {
+    //                    log += " Involving " + character.name;
+    //                }
+    //                currInteraction.TimedOutRunDefault(ref log);
+    //                log += "\n";
+    //            } else {
+    //                //area.RemoveInteraction(currInteraction);
+    //                currInteraction.EndInteraction();
+    //                log += "\n" + character.name + " is unable to perform " + currInteraction.name + "!";
+    //                //Unable to perform
+    //                Interaction unable = CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, area.coreTile.landmarkOnTile);
+    //                character.AddInteraction(unable);
+    //                unable.TimedOutRunDefault(ref log);
+    //                log += "\n";
+    //            }
+    //        }
+    //    }
+    //    addToLog(log);
+    //    yield return null;
+    //}
 
     //public List<T> GetAllCurrentInteractionsOfType<T>(INTERACTION_TYPE type) {
     //    List<T> interactionsOfType = new List<T>();
