@@ -237,6 +237,9 @@ public class UIManager : MonoBehaviour {
         if (objectPicker.gameObject.activeSelf) {
             HideObjectPicker();
         }
+        if (PlayerUI.Instance.attackGridGO.activeSelf) {
+            PlayerUI.Instance.HideAttackGrid();
+        }
     }
 
     #region Font Utilities
@@ -673,8 +676,11 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Object Picker
-    public void ShowObjectPicker<T>(List<T> choices, Action<T> onClickAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null) {
-        objectPicker.Show(choices, onClickAction, comparer, validityChecker);
+    public void ShowClickableObjectPicker<T>(List<T> choices, Action<T> onClickAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null) {
+        objectPicker.ShowClickable(choices, onClickAction, comparer, validityChecker);
+    }
+    public void ShowDraggableObjectPicker<T>(List<T> choices, IComparer<T> comparer = null, Func<T, bool> validityChecker = null) {
+        objectPicker.ShowDraggable(choices, comparer, validityChecker);
     }
     public void HideObjectPicker() {
         objectPicker.Hide();

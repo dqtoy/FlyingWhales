@@ -74,11 +74,7 @@ public class PartyInfoUI : UIMenu {
         for (int i = 0; i < partySlots.Length; i++) {
             SlotItem currItem = partySlots[i];
             Character character = currentlyShowingParty.characters.ElementAtOrDefault(i);
-            if (character == null) {
-                currItem.ClearSlot(true);
-            } else {
-                currItem.PlaceObject(character);
-            }
+            currItem.PlaceObject(character);
         }
     }
 

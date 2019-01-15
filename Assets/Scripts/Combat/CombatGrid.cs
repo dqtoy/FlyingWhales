@@ -71,7 +71,7 @@ public class CombatGrid {
         if (character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.ALL) {
             if (overwrite) {
                 for (int i = 0; i < _slots.Length; i++) {
-                    _slots[i].character = character;
+                    _slots[i].OccupySlot(character);
                 }
             } else {
                 for (int i = 0; i < _slots.Length; i++) {
@@ -80,15 +80,15 @@ public class CombatGrid {
                     }
                 }
                 for (int i = 0; i < _slots.Length; i++) {
-                    _slots[i].character = character;
+                    _slots[i].OccupySlot(character);
                 }
             }
         } else if (character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.COLUMN) {
             if (overwrite) {
                 for (int i = 0; i < _columnReference.Length; i++) {
                     if (_slots[_columnReference[i, 0]].gridNumber == slotIndex || _slots[_columnReference[i, 1]].gridNumber == slotIndex) {
-                        _slots[_columnReference[i, 0]].character = character;
-                        _slots[_columnReference[i, 1]].character = character;
+                        _slots[_columnReference[i, 0]].OccupySlot(character);
+                        _slots[_columnReference[i, 1]].OccupySlot(character);
                         return true;
                     }
                 }
@@ -96,8 +96,8 @@ public class CombatGrid {
                 for (int i = 0; i < _columnReference.Length; i++) {
                     if (_slots[_columnReference[i, 0]].gridNumber == slotIndex || _slots[_columnReference[i, 1]].gridNumber == slotIndex) {
                         if (!_slots[_columnReference[i, 0]].isOccupied && !_slots[_columnReference[i, 1]].isOccupied) {
-                            _slots[_columnReference[i, 0]].character = character;
-                            _slots[_columnReference[i, 1]].character = character;
+                            _slots[_columnReference[i, 0]].OccupySlot(character);
+                            _slots[_columnReference[i, 1]].OccupySlot(character);
                             return true;
                         }
                     }
@@ -108,8 +108,8 @@ public class CombatGrid {
             if (overwrite) {
                 for (int i = 0; i < _rowReference.Length; i++) {
                     if (_slots[_rowReference[i, 0]].gridNumber == slotIndex || _slots[_rowReference[i, 1]].gridNumber == slotIndex) {
-                        _slots[_rowReference[i, 0]].character = character;
-                        _slots[_rowReference[i, 1]].character = character;
+                        _slots[_rowReference[i, 0]].OccupySlot(character);
+                        _slots[_rowReference[i, 1]].OccupySlot(character);
                         return true;
                     }
                 }
@@ -117,8 +117,8 @@ public class CombatGrid {
                 for (int i = 0; i < _rowReference.Length; i++) {
                     if (_slots[_rowReference[i, 0]].gridNumber == slotIndex || _slots[_rowReference[i, 1]].gridNumber == slotIndex) {
                         if (!_slots[_rowReference[i, 0]].isOccupied && !_slots[_rowReference[i, 1]].isOccupied) {
-                            _slots[_rowReference[i, 0]].character = character;
-                            _slots[_rowReference[i, 1]].character = character;
+                            _slots[_rowReference[i, 0]].OccupySlot(character);
+                            _slots[_rowReference[i, 1]].OccupySlot(character);
                             return true;
                         }
                     }
@@ -127,10 +127,10 @@ public class CombatGrid {
             return false;
         } else if (character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.SINGLE) {
             if (overwrite) {
-                _slots[slotIndex].character = character;
+                _slots[slotIndex].OccupySlot(character);
             } else {
                 if (!_slots[slotIndex].isOccupied) {
-                    _slots[slotIndex].character = character;
+                    _slots[slotIndex].OccupySlot(character);
                     return true;
                 }
                 return false;
@@ -146,13 +146,13 @@ public class CombatGrid {
                 }
             }
             for (int i = 0; i < _slots.Length; i++) {
-                _slots[i].character = character;
+                _slots[i].OccupySlot(character);
             }
         } else if (character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.COLUMN) {
             for (int i = 0; i < _columnReference.Length; i++) {
                 if (!_slots[_columnReference[i, 0]].isOccupied && !_slots[_columnReference[i, 1]].isOccupied) {
-                    _slots[_columnReference[i, 0]].character = character;
-                    _slots[_columnReference[i, 1]].character = character;
+                    _slots[_columnReference[i, 0]].OccupySlot(character);
+                    _slots[_columnReference[i, 1]].OccupySlot(character);
                     return true;
                 }
             }
@@ -160,8 +160,8 @@ public class CombatGrid {
         } else if (character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.ROW) {
             for (int i = 0; i < _rowReference.Length; i++) {
                 if (!_slots[_rowReference[i, 0]].isOccupied && !_slots[_rowReference[i, 1]].isOccupied) {
-                    _slots[_rowReference[i, 0]].character = character;
-                    _slots[_rowReference[i, 1]].character = character;
+                    _slots[_rowReference[i, 0]].OccupySlot(character);
+                    _slots[_rowReference[i, 1]].OccupySlot(character);
                     return true;
                 }
             }
@@ -173,7 +173,7 @@ public class CombatGrid {
             }
             for (int i = 0; i < _rowReference.GetLength(1); i++) {
                 if (!_slots[_rowReference[rowIndex, i]].isOccupied) {
-                    _slots[_rowReference[rowIndex, i]].character = character;
+                    _slots[_rowReference[rowIndex, i]].OccupySlot(character);
                     return true;
                 }
             }

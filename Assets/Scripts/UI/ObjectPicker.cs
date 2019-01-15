@@ -10,8 +10,9 @@ public class ObjectPicker : MonoBehaviour {
     [Header("Object Picker")]
     [SerializeField] private ScrollRect objectPickerScrollView;
     [SerializeField] private GameObject objectPickerCharacterItemPrefab;
-    
-    public void Show<T>(List<T> items, Action<T> onClickItemAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null) {
+    [SerializeField] private GameObject objectPickerAttackItemPrefab;
+
+    public void ShowClickable<T>(List<T> items, Action<T> onClickItemAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null) {
         Utilities.DestroyChildren(objectPickerScrollView.content);
         List<T> validItems;
         List<T> invalidItems;
@@ -19,6 +20,17 @@ public class ObjectPicker : MonoBehaviour {
         Type type = typeof(T);
         if (type == typeof(Character)) {
             ShowCharacterItems(validItems.Cast<Character>().ToList(), invalidItems.Cast<Character>().ToList(), onClickItemAction);
+        }
+        this.gameObject.SetActive(true);
+    }
+    public void ShowDraggable<T>(List<T> items, IComparer<T> comparer = null, Func<T, bool> validityChecker = null) {
+        Utilities.DestroyChildren(objectPickerScrollView.content);
+        List<T> validItems;
+        List<T> invalidItems;
+        OrganizeList(items, out validItems, out invalidItems, comparer, validityChecker);
+        Type type = typeof(T);
+        if (type == typeof(Character)) {
+            ShowDraggableCharacterItems<T>(validItems.Cast<Character>().ToList(), invalidItems.Cast<Character>().ToList());
         }
         this.gameObject.SetActive(true);
     }
@@ -67,6 +79,22 @@ public class ObjectPicker : MonoBehaviour {
             CharacterPickerItem characterItem = characterItemGO.GetComponent<CharacterPickerItem>();
             characterItem.SetCharacter(currCharacter);
             characterItem.SetButtonState(false);
+        }
+    }
+    private void ShowDraggableCharacterItems<T>(List<Character> validItems, List<Character> invalidItems) {
+        for (int i = 0; i < validItems.Count; i++) {
+            Character currCharacter = validItems[i];
+            GameObject characterItemGO = UIManager.Instance.InstantiateUIObject(objectPickerAttackItemPrefab.name, objectPickerScrollView.content);
+            AttackPickerItem characterItem = characterItemGO.GetComponent<AttackPickerItem>();
+            characterItem.SetCharacter(currCharacter);
+            characterItem.SetDraggableState(true);
+        }
+        for (int i = 0; i < invalidItems.Count; i++) {
+            Character currCharacter = invalidItems[i];
+            GameObject characterItemGO = UIManager.Instance.InstantiateUIObject(objectPickerAttackItemPrefab.name, objectPickerScrollView.content);
+            AttackPickerItem characterItem = characterItemGO.GetComponent<AttackPickerItem>();
+            characterItem.SetCharacter(currCharacter);
+            characterItem.SetDraggableState(false);
         }
     }
 

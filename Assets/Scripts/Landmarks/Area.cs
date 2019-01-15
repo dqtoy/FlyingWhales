@@ -629,9 +629,8 @@ public class Area {
                         resident.Death();
                     }
                 }
-                LandmarkManager.Instance.UnownArea(this);
             }
-
+            LandmarkManager.Instance.UnownArea(this);
             FactionManager.Instance.neutralFaction.AddToOwnedAreas(this);
 
             if (previousOwner != null && previousOwner.leader != null && previousOwner.leader is Character) {

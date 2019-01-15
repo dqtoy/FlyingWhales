@@ -67,11 +67,11 @@ public class SlotItemDraggable : DraggableItem {
     public override void SetDraggable(bool state) {
         if (_isDraggable != state) {
             base.SetDraggable(state);
-            if (state) {
-                slot.portrait.SwitchBGToDraggable();
-            } else {
-                slot.portrait.SwitchBGToLocked();
-            }
+            //if (state) {
+            //    slot.portrait.SwitchBGToDraggable();
+            //} else {
+            //    slot.portrait.SwitchBGToLocked();
+            //}
         }
     }
 }

@@ -22,6 +22,7 @@ public class Player : ILeader {
 
     public Dictionary<JOB, PlayerJobData> jobSlots { get; private set; }
     //public Dictionary<JOB, List<PlayerJobAction>> jobActions { get; private set; }
+    public CombatGrid attackGrid { get; private set; }
 
     #region getters/setters
     public int id {
@@ -63,6 +64,8 @@ public class Player : ILeader {
         playerArea = null;
         _tokens = new List<Token>();
         otherCharacters = new List<Character>();
+        attackGrid = new CombatGrid();
+        attackGrid.Initialize();
         maxImps = 5;
         SetCurrentLifestoneChance(25f);
         ConstructCurrencies();
@@ -510,6 +513,9 @@ public class Player : ILeader {
         List<JOB> jobs = GetValidJobForCharacter(character);
         return jobs.Contains(job);
     }
+    public bool CanAssignCharacterToAttack(Character character) {
+        return !roleSlots.ContainsValue(character);
+    }
     public void AssignCharacterToJob(JOB job, Character character) {
         if (!jobSlots.ContainsKey(job)) {
             Debug.LogWarning("There is something trying to assign a character to " + job.ToString() + " but the player doesn't have a slot for it.");
@@ -537,6 +543,9 @@ public class Player : ILeader {
         Character character = jobSlots[job].assignedCharacter;
         jobSlots[job].AssignCharacter(null);
         Messenger.Broadcast(Signals.CHARACTER_UNASSIGNED_FROM_JOB, job, character);
+    }
+    public void AssignAttackGrid(CombatGrid grid) {
+        attackGrid = grid;
     }
     public JOB GetCharactersCurrentJob(Character character) {
         foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in jobSlots) {

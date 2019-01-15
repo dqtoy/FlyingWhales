@@ -49,7 +49,7 @@ public class NewCombat : MonoBehaviour {
             chosenGrid = rightSide;
         }
         for (int i = 0; i < grid.slots.Length; i++) {
-            chosenGrid.slots[i].character = grid.slots[i].character;
+            chosenGrid.slots[i].OccupySlot(grid.slots[i].character);
         }
     }
     public void AddCharacters(List<Character> characters, SIDES side) {

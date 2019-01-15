@@ -12,7 +12,7 @@ public class CharacterPickerItem : ObjectPickerItem<Character> {
     private Character character;
 
     [SerializeField] private CharacterPortrait portrait;
-    [SerializeField] private GameObject portraitCover;
+    public GameObject portraitCover;
 
     public void SetCharacter(Character character) {
         this.character = character;

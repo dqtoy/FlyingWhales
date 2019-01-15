@@ -94,7 +94,7 @@ public class AreaInvestigation {
     public void AttackRaidLandmark(string whatTodo, CombatGrid combatGrid, BaseLandmark targetLandmark) {
         _assignedMinionAttack = null;
         for (int i = 0; i < _combatSlots.Length; i++) {
-            _combatSlots[i].character = combatGrid.slots[i].character;
+            _combatSlots[i].OccupySlot(combatGrid.slots[i].character);
             if (_combatSlots[i].character != null) {
                 if (_assignedMinionAttack == null) {
                     SetAssignedMinionAttack(_combatSlots[i].character.minion);

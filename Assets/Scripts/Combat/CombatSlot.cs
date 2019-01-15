@@ -11,7 +11,9 @@ public class CombatSlot {
         get { return character != null; }
     }
     #endregion
-
+    public void OccupySlot(Character character) {
+        this.character = character;
+    }
     public void ResetSlot() {
         character = null;
     }
