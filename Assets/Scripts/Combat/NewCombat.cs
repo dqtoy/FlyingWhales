@@ -91,7 +91,7 @@ public class NewCombat : MonoBehaviour {
 
     private void TransferSlotsToOrder() {
         for (int i = 0; i < leftSide.slots.Length; i++) {
-            if (leftSide.slots[i].isOccupied) {
+            if (leftSide.slots[i].isOccupied && !IsInCombatOrder(leftSide.slots[i].character)) {
                 _combatOrder.Add(
                     new CombatCharacter() {
                         character = leftSide.slots[i].character,
@@ -99,8 +99,9 @@ public class NewCombat : MonoBehaviour {
                         speed = 0,
                     }
                 );
+                leftSide.slots[i].character.AdjustDoNotDisturb(1);
             }
-            if (rightSide.slots[i].isOccupied) {
+            if (rightSide.slots[i].isOccupied && !IsInCombatOrder(rightSide.slots[i].character)) {
                 _combatOrder.Add(
                     new CombatCharacter() {
                         character = rightSide.slots[i].character,
@@ -108,10 +109,18 @@ public class NewCombat : MonoBehaviour {
                         speed = 0,
                     }
                 );
+                rightSide.slots[i].character.AdjustDoNotDisturb(1);
             }
         }
     }
-
+    private bool IsInCombatOrder(Character character) {
+        for (int i = 0; i < _combatOrder.Count; i++) {
+            if(_combatOrder[i].character.id == character.id) {
+                return true;
+            }
+        }
+        return false;
+    }
     public void Fight() {
         StartCoroutine(StartCombatCoroutine());
     }
@@ -205,6 +214,12 @@ public class NewCombat : MonoBehaviour {
             winningSide = SIDES.B;
             UIManager.Instance.combatUI.AddCombatLogs("Right Side Wins!");
             //Messenger.Broadcast(Signals.ADD_TO_COMBAT_LOGS, "Right Side Wins!");
+        }
+        for (int i = 0; i < _combatOrder.Count; i++) {
+            _combatOrder[i].character.AdjustDoNotDisturb(-1);
+        }
+        for (int i = 0; i < _deadCharacters.Count; i++) {
+            _deadCharacters[i].AdjustDoNotDisturb(-1);
         }
         for (int i = 0; i < _endCombatActions.Count; i++) {
             if (_endCombatActions[i] != null) {
