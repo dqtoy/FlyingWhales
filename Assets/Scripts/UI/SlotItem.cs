@@ -14,7 +14,7 @@ public class SlotItem : MonoBehaviour {
     public delegate bool OtherValidation(object obj, SlotItem slotItem); //this is for when special conditions are needed to determine whether an object is valid for this slot (i.e Character must have traits, or be a specific race)
     public OtherValidation isObjectValidForSlot;
 
-    public SlotItemDropEvent onItemDroppedValid;
+    //public SlotItemDropEvent onItemDroppedValid;
     private ItemDroppedCallback itemDroppedCallback = new ItemDroppedCallback();
     private ItemDroppedOutCallback itemDroppedOutCallback = new ItemDroppedOutCallback();
 
@@ -31,6 +31,8 @@ public class SlotItem : MonoBehaviour {
     [Space(10)]
     [Header("Misc")]
     [SerializeField] private GameObject glowGO;
+    [SerializeField] private GameObject validPortraitGO;
+    [SerializeField] private GameObject invalidPortraitGO;
 
     public int slotIndex { get; private set; }
     private string hoverInfo;
@@ -53,18 +55,18 @@ public class SlotItem : MonoBehaviour {
         IDragParentItem parentItem = dragObj.parentItem;
         if (parentItem != null) {
             if (IsObjectValidForSlot(parentItem.associatedObj)) {
-                SuccessfulDropZoneDrop(parentItem);
+                OnDroppedItemValid(parentItem);
             }
             //else {
             //    Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE, "This slot requires a " + GetTypeString(neededType), true);
             //}
         }
     }
-    private void SuccessfulDropZoneDrop(IDragParentItem parentItem) {
-        if (onItemDroppedValid != null) {
-            onItemDroppedValid.Invoke(parentItem);
-        }
-    }
+    //private void SuccessfulDropZoneDrop(IDragParentItem parentItem) {
+    //    if (onItemDroppedValid != null) {
+    //        onItemDroppedValid.Invoke(parentItem);
+    //    }
+    //}
     #endregion
 
     #region Core Functions
@@ -82,10 +84,11 @@ public class SlotItem : MonoBehaviour {
         }
     }
     public void PlaceObject(object associatedObj) {
-        if(associatedObj == null) {
+        placedObject = associatedObj;
+        if (placedObject == null) {
+            ClearSlot(true);
             return;
         }
-        placedObject = associatedObj;
         if (associatedObj is FactionToken) {
             factionEmblem.gameObject.SetActive(true);
             areaEmblem.gameObject.SetActive(false);
@@ -200,11 +203,18 @@ public class SlotItem : MonoBehaviour {
     }
     private void OnDragObjectCreated(DragObject obj) {
         if (dropZone != null && dropZone.isEnabled && neededType != null && IsObjectValidForSlot(obj.parentItem.associatedObj)) {
-            glowGO.SetActive(true);
+            //glowGO.SetActive(true);
+            validPortraitGO.SetActive(true);
+            invalidPortraitGO.SetActive(false);
+        } else {
+            validPortraitGO.SetActive(false);
+            invalidPortraitGO.SetActive(true);
         }
     }
     private void OnDragObjectDestroyed(DragObject obj) {
-        glowGO.SetActive(false);
+        //glowGO.SetActive(false);
+        validPortraitGO.SetActive(false);
+        invalidPortraitGO.SetActive(false);
     }
     public void SetOtherValidation(OtherValidation validation) {
         isObjectValidForSlot = validation;

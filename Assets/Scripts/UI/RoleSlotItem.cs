@@ -42,7 +42,7 @@ public class RoleSlotItem : MonoBehaviour {
     }
 	
     public void OnClickAssign() {
-        UIManager.Instance.ShowObjectPicker(PlayerManager.Instance.player.allOwnedCharacters, AssignCharacterToJob, new CharacterLevelComparer(), CanAssignCharacterToJob);
+        UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.allOwnedCharacters, AssignCharacterToJob, new CharacterLevelComparer(), CanAssignCharacterToJob);
     }
     private bool CanAssignCharacterToJob(Character character) {
         if (this.character != null && this.character.id == character.id) {

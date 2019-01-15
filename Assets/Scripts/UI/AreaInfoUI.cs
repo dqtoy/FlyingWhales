@@ -632,7 +632,7 @@ public class AreaInfoUI : UIMenu {
     private void RemoveFromCombatGrid(Character character) {
         for (int i = 0; i < combatGrid.slots.Length; i++) {
             if (combatGrid.slots[i].isOccupied && combatGrid.slots[i].character == character) {
-                combatGrid.slots[i].character = null;
+                combatGrid.slots[i].OccupySlot(null);
                 minionAttackPartySlots[i].ClearSlot(true);
             }
         }
@@ -657,19 +657,11 @@ public class AreaInfoUI : UIMenu {
     public void ShowMinionAssignmentParty() {
         if (activeArea.areaInvestigation.isAttacking) {
             for (int i = 0; i < activeArea.areaInvestigation.combatSlots.Length; i++) {
-                if (activeArea.areaInvestigation.combatSlots[i].isOccupied) {
-                    minionAttackPartySlots[i].PlaceObject(activeArea.areaInvestigation.combatSlots[i].character);
-                } else {
-                    minionAttackPartySlots[i].ClearSlot(true);
-                }
+                minionAttackPartySlots[i].PlaceObject(activeArea.areaInvestigation.combatSlots[i].character);
             }
         } else {
             for (int i = 0; i < combatGrid.slots.Length; i++) {
-                if (combatGrid.slots[i].isOccupied) {
-                    minionAttackPartySlots[i].PlaceObject(combatGrid.slots[i].character);
-                } else {
-                    minionAttackPartySlots[i].ClearSlot(true);
-                }
+                minionAttackPartySlots[i].PlaceObject(combatGrid.slots[i].character);
             }
         }
         OnUpdateLandmarkInvestigationState("attack");
@@ -815,20 +807,12 @@ public class AreaInfoUI : UIMenu {
     public void AssignPartyMinionToInvestigate(Minion minion, int index, bool checkDuplicate = true) {
         if (minion != null) {
             if (checkDuplicate && combatGrid.IsCharacterInGrid(minion.character)) {
-                if (combatGrid.slots[index].character != null) {
-                    minionAttackPartySlots[index].PlaceObject(combatGrid.slots[index].character);
-                } else {
-                    minionAttackPartySlots[index].ClearSlot(true);
-                }
+                minionAttackPartySlots[index].PlaceObject(combatGrid.slots[index].character);
                 return;
             }
             if(combatGrid.AssignCharacterToGrid(minion.character, index, true)) {
                 for (int i = 0; i < combatGrid.slots.Length; i++) {
-                    if(combatGrid.slots[i].character != null) {
-                        minionAttackPartySlots[i].PlaceObject(combatGrid.slots[i].character);
-                    } else {
-                        minionAttackPartySlots[i].ClearSlot(true);
-                    }
+                    minionAttackPartySlots[i].PlaceObject(combatGrid.slots[i].character);
                 }
                 minionAssignmentConfirmButton.interactable = !activeArea.areaInvestigation.isAttacking;
                 OnUpdateLandmarkInvestigationState("attack");

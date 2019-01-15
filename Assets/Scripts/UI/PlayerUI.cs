@@ -33,6 +33,12 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private GameObject roleSlotsParent;
     [SerializeField] private RoleSlotItem[] roleSlots;
 
+    [Header("Attack")]
+    public GameObject attackGridGO;
+    [SerializeField] private Sprite attackGridIconSprite;
+    [SerializeField] private AttackSlotItem attackSlot;
+    public SlotItem[] attackGridSlots;
+
     [Header("Bottom Menu")]
     public Toggle goalsToggle;
     public Toggle intelToggle;
@@ -46,10 +52,12 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private Vector3 halfPosition;
     [SerializeField] private EasyTween tweener;
     [SerializeField] private AnimationCurve curve;
+    [SerializeField] private Image combatGridAssignerIcon;
 
     private MINIONS_SORT_TYPE _minionSortType;
     private bool _isScrollingUp;
     private bool _isScrollingDown;
+    public CombatGrid attackGridReference { get; private set; }
 
     #region getters/setters
     public MINIONS_SORT_TYPE minionSortType {
@@ -59,13 +67,13 @@ public class PlayerUI : MonoBehaviour {
 
     void Awake() {
         Instance = this;
-        minionItems = new List<PlayerCharacterItem>();
-        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        //minionItems = new List<PlayerCharacterItem>();
+        //Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
+        //Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
     }
-    void Start() {
-        Messenger.AddListener(Signals.UPDATED_CURRENCIES, UpdateUI);
-    }
+    //void Start() {
+    //    Messenger.AddListener(Signals.UPDATED_CURRENCIES, UpdateUI);
+    //}
     public void UpdateUI() {
         if (PlayerManager.Instance.player == null) {
             return;
@@ -79,7 +87,23 @@ public class PlayerUI : MonoBehaviour {
     }
 
     public void Initialize() {
+        //attack/raid
+        for (int i = 0; i < attackGridSlots.Length; i++) {
+            SlotItem currSlot = attackGridSlots[i];
+            currSlot.SetNeededType(typeof(Character));
+            currSlot.SetOtherValidation(IsObjectValidForAttack);
+            currSlot.SetSlotIndex(i);
+            currSlot.SetItemDroppedCallback(OnDropOnAttackGrid);
+            currSlot.SetItemDroppedOutCallback(OnDroppedOutFromAttackGrid);
+        }
+        minionItems = new List<PlayerCharacterItem>();
+
         LoadRoleSlots();
+        LoadAttackSlot();
+
+        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener(Signals.UPDATED_CURRENCIES, UpdateUI);
     }
 
     #region Role Slots
@@ -94,6 +118,67 @@ public class PlayerUI : MonoBehaviour {
                 Debug.LogWarning("There is no slot item for job " + keyValuePair.Key.ToString());
             }
             currIndex++;
+        }
+    }
+
+    #endregion
+
+    #region Attack UI
+    private void LoadAttackSlot() {
+        attackGridReference = new CombatGrid();
+        attackGridReference.Initialize();
+        attackSlot.UpdateVisuals();
+    }
+    public void ShowAttackGrid() {
+        attackGridGO.SetActive(true);
+        combatGridAssignerIcon.sprite = attackGridIconSprite;
+        SetAttackGridCharactersFromPlayer();
+    }
+    public void HideAttackGrid() {
+        attackGridGO.SetActive(false);
+    }
+    private void OnDropOnAttackGrid(object obj, int index) {
+        if(obj is Character) {
+            Character character = obj as Character;
+            if (attackGridReference.IsCharacterInGrid(character)) {
+                attackGridSlots[index].PlaceObject(attackGridReference.slots[index].character);
+                return;
+            }
+            attackGridReference.AssignCharacterToGrid(character, index, true);
+            UpdateAttackGridSlots();
+        }
+    }
+    private void OnDroppedOutFromAttackGrid(object obj, int index) {
+        if (obj is Character) {
+            Character character = obj as Character;
+            attackGridReference.RemoveCharacterFromGrid(character);
+            UpdateAttackGridSlots();
+        }
+    }
+    private bool IsObjectValidForAttack(object obj, SlotItem slotItem) {
+        if (obj is Character) {
+            Character character = obj as Character;
+            if (character.characterClass.combatPosition == COMBAT_POSITION.FRONTLINE) {
+                if (attackGridSlots[0] == slotItem || attackGridSlots[1] == slotItem) {
+                    return true;
+                }
+            } else {
+                if (attackGridSlots[2] == slotItem || attackGridSlots[3] == slotItem) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    private void SetAttackGridCharactersFromPlayer() {
+        for (int i = 0; i < attackGridReference.slots.Length; i++) {
+            attackGridReference.slots[i].OccupySlot(PlayerManager.Instance.player.attackGrid.slots[i].character);
+            attackGridSlots[i].PlaceObject(attackGridReference.slots[i].character);
+        }
+    }
+    private void UpdateAttackGridSlots() {
+        for (int i = 0; i < attackGridSlots.Length; i++) {
+            attackGridSlots[i].PlaceObject(attackGridReference.slots[i].character);
         }
     }
     #endregion
