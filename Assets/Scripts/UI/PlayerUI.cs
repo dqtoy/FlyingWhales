@@ -11,15 +11,15 @@ public class PlayerUI : MonoBehaviour {
 
     public TokensUI charactersIntelUI;
 
+    [Header("Currency")]
     public TextMeshProUGUI manaText;
     public TextMeshProUGUI suppliesText;
     public TextMeshProUGUI impsText;
 
-    public Image threatFiller;
+    [Header("Minions")]
     public ScrollRect minionsScrollRect;
     public RectTransform minionsScrollRectTransform;
     public LayoutElement minionsScrollRectLE;
-
     public GameObject minionPrefab;
     public GameObject minionsHolderGO;
     public RectTransform minionsContentTransform;
@@ -29,12 +29,18 @@ public class PlayerUI : MonoBehaviour {
     public List<PlayerCharacterItem> minionItems;
     public bool isMinionsMenuShowing;
 
+    [Header("Role Slots")]
+    [SerializeField] private GameObject roleSlotsParent;
+    [SerializeField] private RoleSlotItem[] roleSlots;
+
+    [Header("Bottom Menu")]
     public Toggle goalsToggle;
     public Toggle intelToggle;
     public Toggle inventoryToggle;
     public Toggle factionToggle;
     public ToggleGroup minionSortingToggleGroup;
 
+    [Header("Miscellaneous")]
     [SerializeField] private Vector3 openPosition;
     [SerializeField] private Vector3 closePosition;
     [SerializeField] private Vector3 halfPosition;
@@ -72,41 +78,27 @@ public class PlayerUI : MonoBehaviour {
         //threatFiller.fillAmount = (float) PlayerManager.Instance.player.threatLevel / 100f;
     }
 
-    #region PlayerPicker
-    public void ShowPlayerPickerAndPopulate() {
-        //if (PlayerManager.Instance.player.currentActiveAbility is ShareIntel) {
-        //    UIManager.Instance.PopulatePlayerIntelsInPicker();
-        //} else if (PlayerManager.Instance.player.currentActiveAbility is GiveItem) {
-        //    UIManager.Instance.PopulatePlayerItemsInPicker();
-        //} else if (PlayerManager.Instance.player.currentActiveAbility is TakeItem) {
-        //    UIManager.Instance.PopulateLandmarkItemsInPicker();
-        //}
-        //UIManager.Instance.ShowPlayerPicker();
+    public void Initialize() {
+        LoadRoleSlots();
     }
-    public void ShowPlayerPickerIntel() {
-        //PlayerManager.Instance.player.OnHidePlayerPicker();
-        UIManager.Instance.PopulatePlayerTokensInPicker();
-        UIManager.Instance.ShowPlayerPicker();
-    }
-    public void ShowPlayerPickerInventory() {
-        //PlayerManager.Instance.player.OnHidePlayerPicker();
-        UIManager.Instance.PopulatePlayerItemsInPicker();
-        UIManager.Instance.ShowPlayerPicker();
-    }
-    public void ToggleIntelMenu(bool isOn) {
-        if (isOn) {
-            ShowPlayerPickerIntel();
-        } else {
-            UIManager.Instance.HidePlayerPicker();
+
+    #region Role Slots
+    private void LoadRoleSlots() {
+        roleSlots = Utilities.GetComponentsInDirectChildren<RoleSlotItem>(roleSlotsParent);
+        int currIndex = 0;
+        foreach (KeyValuePair<JOB, Character> keyValuePair in PlayerManager.Instance.player.roleSlots) {
+            RoleSlotItem item = roleSlots.ElementAtOrDefault(currIndex);
+            if (item != null) {
+                item.SetSlotJob(keyValuePair.Key);
+            } else {
+                Debug.LogWarning("There is no slot item for job " + keyValuePair.Key.ToString());
+            }
+            currIndex++;
         }
     }
-    public void ToggleInventoryMenu(bool isOn) {
-        if (isOn) {
-            ShowPlayerPickerInventory();
-        } else {
-            UIManager.Instance.HidePlayerPicker();
-        }
-    }
+    #endregion
+
+    #region Miscellaneous
     public void SetBottomMenuTogglesState(bool isOn) {
         goalsToggle.isOn = isOn;
         intelToggle.isOn = isOn;

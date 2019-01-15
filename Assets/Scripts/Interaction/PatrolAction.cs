@@ -25,7 +25,7 @@ public class PatrolAction : Interaction {
     public PatrolAction(BaseLandmark interactable) 
         : base(interactable, INTERACTION_TYPE.PATROL_ACTION, 0) {
         _name = "Patrol Action";
-        _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DISSUADER };
+        _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DEBILITATOR };
     }
 
     #region Overrides
@@ -113,7 +113,7 @@ public class PatrolAction : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Pursuade to stop " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.POSSESSIVE, false) + " patrol.",
                 effect = () => PursuadeOptionEffect(state),
-                jobNeeded = JOB.DISSUADER,
+                jobNeeded = JOB.DEBILITATOR,
                 doesNotMeetRequirementsStr = "Minion must be a dissuader",
             };
             ActionOption doNothing = new ActionOption {

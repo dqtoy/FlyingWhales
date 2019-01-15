@@ -17,7 +17,7 @@ public class FoundBestalia : Interaction {
 
     public FoundBestalia(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.FOUND_BESTALIA, 0) {
         _name = "Found Bestalia";
-        _jobFilter = new JOB[] { JOB.DISSUADER, JOB.DIPLOMAT, JOB.INSTIGATOR };
+        _jobFilter = new JOB[] { JOB.DEBILITATOR, JOB.DIPLOMAT, JOB.INSTIGATOR };
     }
 
     #region Overrides
@@ -81,7 +81,7 @@ public class FoundBestalia : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Dissuade him from the idea.",
                 disabledTooltipText = "Must be a Dissuader.",
-                jobNeeded = JOB.DISSUADER,
+                jobNeeded = JOB.DEBILITATOR,
                 effect = () => DissuadeOption(),
             };
             ActionOption doNothingOption = new ActionOption {

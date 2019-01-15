@@ -12,7 +12,7 @@ public class UseItemOnLocation : Interaction {
 
     public UseItemOnLocation(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.USE_ITEM_ON_LOCATION, 0) {
         _name = "Use Item On Location";
-        _jobFilter = new JOB[] { JOB.DISSUADER };
+        _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
 
     public void SetItemToken(SpecialToken specialToken) {
@@ -43,7 +43,7 @@ public class UseItemOnLocation : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Stop " + _characterInvolved.name + ".",
                 effect = () => StopOptionEffect(state),
-                jobNeeded = JOB.DISSUADER,
+                jobNeeded = JOB.DEBILITATOR,
                 doesNotMeetRequirementsStr = "Minion must be a dissuader",
             };
             ActionOption doNothing = new ActionOption {

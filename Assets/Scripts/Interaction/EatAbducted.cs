@@ -18,7 +18,7 @@ public class EatAbducted : Interaction {
 
     public EatAbducted(BaseLandmark interactable): base(interactable, INTERACTION_TYPE.EAT_ABDUCTED, 0) {
         _name = "Eat Abducted";
-        _jobFilter = new JOB[] { JOB.DIPLOMAT, JOB.DISSUADER };
+        _jobFilter = new JOB[] { JOB.DIPLOMAT, JOB.DEBILITATOR };
     }
 
     #region Override
@@ -80,7 +80,7 @@ public class EatAbducted : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Persuade to stop " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.POSSESSIVE, false) + " plan to eat " + targetCharacter.name + ".",
                 effect = () => PersuadeOptionEffect(state),
-                jobNeeded = JOB.DISSUADER,
+                jobNeeded = JOB.DEBILITATOR,
                 disabledTooltipText = "Minion must be a Dissuader",
             };
             ActionOption doNothing = new ActionOption {

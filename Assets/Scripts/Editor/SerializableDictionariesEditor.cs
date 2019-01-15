@@ -36,6 +36,8 @@ public class LogReplacerDictionaryPropertyDrawer : SerializableDictionaryPropert
 public class LocationPortraitDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(FactionEmblemDictionary))]
 public class FactionEmblemDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(JobIconsDictionary))]
+public class JobIconsDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 [CustomPropertyDrawer(typeof(CharacterTagListStorage))]
 public class CharacterTagListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }

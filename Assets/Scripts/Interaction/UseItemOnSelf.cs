@@ -41,7 +41,7 @@ public class UseItemOnSelf : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Stop " + _characterInvolved.name + ".",
                 effect = () => StopOptionEffect(state),
-                jobNeeded = JOB.DISSUADER,
+                jobNeeded = JOB.DEBILITATOR,
                 doesNotMeetRequirementsStr = "Minion must be a dissuader",
             };
             ActionOption doNothing = new ActionOption {

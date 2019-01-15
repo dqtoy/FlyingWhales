@@ -14,7 +14,7 @@ public class MoveToImproveRelations : Interaction {
     public MoveToImproveRelations(BaseLandmark interactable) 
         : base(interactable, INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS, 0) {
         _name = "Move To Improve Relations";
-        _jobFilter = new JOB[] { JOB.DISSUADER };
+        _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
 
     #region Overrides
@@ -52,7 +52,7 @@ public class MoveToImproveRelations : Interaction {
                 name = "Prevent " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + " from leaving.",
                 duration = 0,
                 effect = () => DiscourageFromLeavingOptionEffect(state),
-                jobNeeded = JOB.DISSUADER,
+                jobNeeded = JOB.DEBILITATOR,
                 doesNotMeetRequirementsStr = "Minion must be a dissuader",
             };
             ActionOption doNothing = new ActionOption {

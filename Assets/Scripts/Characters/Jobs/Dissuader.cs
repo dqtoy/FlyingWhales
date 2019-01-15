@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Dissuader : Job {
 
-    public Dissuader(Character character) : base(character, JOB.DISSUADER) {
+    public Dissuader(Character character) : base(character, JOB.DEBILITATOR) {
         _actionDuration = -1;
         _hasCaptureEvent = true;
     }

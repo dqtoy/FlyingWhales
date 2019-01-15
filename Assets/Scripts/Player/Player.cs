@@ -10,32 +10,17 @@ public class Player : ILeader {
 
     public Faction playerFaction { get; private set; }
     public Area playerArea { get; private set; }
-    public int snatchCredits { get; private set; }
     public int maxImps { get; private set; }
 
     private int _lifestones;
-    //private int _maxMinions;
     private float _currentLifestoneChance;
-    private IPlayerPicker _currentlySelectedPlayerPicker;
-    private IInteractable _currentTargetInteractable;
-    //private PlayerAbility _currentActiveAbility;
-    private Character _markedCharacter;
     private BaseLandmark _demonicPortal;
-    private List<CharacterAction> _actions;
-    private List<Character> _snatchedCharacters;
     private List<Token> _tokens;
-    private List<Item> _items;
-    //private List<PlayerAbility> _allAbilities;
     private List<Minion> _minions;
     private Dictionary<CURRENCY, int> _currencies;
-
     public List<Character> otherCharacters;
 
-    //#region getters/setters
-    //public Area playerArea {
-    //    get { return _playerArea; }
-    //}
-    //#endregion
+    public Dictionary<JOB, Character> roleSlots { get; private set; }
 
     #region getters/setters
     public int id {
@@ -47,23 +32,11 @@ public class Player : ILeader {
     public int lifestones {
         get { return _lifestones; }
     }
-    //public int maxMinions {
-    //    get { return _maxMinions; }
-    //}
     public float currentLifestoneChance {
         get { return _currentLifestoneChance; }
     }
-    //public bool areMinionsMaxed {
-    //    get { return _minions.Count >= maxMinions; }
-    //}
     public RACE race {
         get { return RACE.HUMANS; }
-    }
-    //public PlayerAbility currentActiveAbility {
-    //    get { return _currentActiveAbility; }
-    //}
-    public Character markedCharacter {
-        get { return _markedCharacter; }
     }
     public BaseLandmark demonicPortal {
         get { return _demonicPortal; }
@@ -71,46 +44,30 @@ public class Player : ILeader {
     public ILocation specificLocation {
         get { return _demonicPortal; }
     }
-    public IInteractable currentTargetInteractable {
-        get { return _currentTargetInteractable; }
-    }
-    public List<CharacterAction> actions {
-        get { return _actions; }
-    }
     public List<Token> tokens {
         get { return _tokens; }
     }
-    public List<Item> items {
-        get { return _items; }
-    }
-    //public List<PlayerAbility> allAbilities {
-    //    get { return _allAbilities; }
-    //}
     public Dictionary<CURRENCY, int> currencies {
         get { return _currencies; }
     }
     public List<Minion> minions {
         get { return _minions; }
     }
+    public List<Character> allOwnedCharacters {
+        get { return minions.Select(x => x.character).Concat(otherCharacters).ToList(); } //TODO: Optimize this!
+    }
     #endregion
 
     public Player() {
         playerArea = null;
-        snatchCredits = 0;
-        _snatchedCharacters = new List<Character>();
         _tokens = new List<Token>();
-        _items = new List<Item>();
         otherCharacters = new List<Character>();
-        //_maxMinions = PlayerUI.Instance.minionItems.Count;
         maxImps = 5;
         SetCurrentLifestoneChance(25f);
-        //ConstructAbilities();
         ConstructCurrencies();
-        //Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_ADDED, OnTileAddedToPlayerArea);
+        ConstructRoleSlots();
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
-        Messenger.AddListener<Character>(Signals.CHARACTER_RELEASED, OnCharacterReleased);
         Messenger.AddListener(Signals.DAY_STARTED, EverydayAction);
-        //ConstructPlayerActions();
         AddWinListener();
     }
 
@@ -178,84 +135,6 @@ public class Player : ILeader {
     }
     #endregion
 
-    #region Snatch
-    public void AdjustSnatchCredits(int adjustment) {
-        snatchCredits += adjustment;
-        snatchCredits = Mathf.Max(0, snatchCredits);
-    }
-    public void SnatchCharacter(Character character) {
-        AdjustSnatchCredits(-1);
-        //check for success
-        if (IsSnatchSuccess(character)) {
-            if (!_snatchedCharacters.Contains(character)) {
-                _snatchedCharacters.Add(character);
-                //character.OnThisCharacterSnatched();
-                //ReleaseCharacterQuest rcq = new ReleaseCharacterQuest(character); //create quest
-                //QuestManager.Instance.CreateQuest(QUEST_TYPE.RELEASE_CHARACTER, character);
-                //Messenger.Broadcast(Signals.SHOW_POPUP_MESSAGE, "Successfully snatched " + character.name, MESSAGE_BOX_MODE.MESSAGE_ONLY, true);
-                //Debug.Log("Snatched " + character.name);
-                //Messenger.Broadcast(Signals.CHARACTER_SNATCHED, character);
-            }
-        } else {
-            //Messenger.Broadcast(Signals.SHOW_POPUP_MESSAGE, "Failed to snatch " + character.name, MESSAGE_BOX_MODE.MESSAGE_ONLY, true);
-            Debug.Log("Failed to snatch " + character.name);
-        }
-        
-    }
-    private bool IsSnatchSuccess(Character character) {
-        return true;
-        if (character.role == null) {
-            return true;
-        }
-        if (character.role is Civilian) {
-            return true; //100%
-        } else if (character.role.roleType == CHARACTER_ROLE.HERO) {
-            int chance = 50; //low happiness
-            if (character.role.happiness >= 100f) {
-                chance = 25; //high happiness
-            }
-            if (Random.Range(0, 100) < chance) {
-                return true;
-            }
-        } else if (character.role.roleType == CHARACTER_ROLE.KING) {
-            int chance = 25; //low happiness
-            if (character.role.happiness >= 100f) {
-                chance = 10; //high happiness
-            }
-            if (Random.Range(0, 100) < chance) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public bool IsCharacterSnatched(Character character) {
-        return _snatchedCharacters.Contains(character);
-    }
-    public BaseLandmark GetAvailableSnatcherLair() {
-        for (int i = 0; i < playerArea.landmarks.Count; i++) {
-            BaseLandmark currLandmark = playerArea.landmarks[i];
-            if (currLandmark.specificLandmarkType == LANDMARK_TYPE.SNATCHER_DEMONS_LAIR) {
-                if (!HasSnatchedCharacter(currLandmark)) {
-                    return currLandmark;
-                }
-            }
-        }
-        return null;
-    }
-    public bool HasSnatchedCharacter(BaseLandmark landmark) {
-        for (int i = 0; i < _snatchedCharacters.Count; i++) {
-            Character currCharacter = _snatchedCharacters[i];
-            if (landmark.charactersAtLocation.Contains(currCharacter.party)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    private void OnCharacterReleased(Character releasedCharacter) {
-        _snatchedCharacters.Remove(releasedCharacter);
-    }
-    #endregion
-
     #region Token
     public void AddToken(Token token) {
         if (!_tokens.Contains(token)) {
@@ -301,51 +180,6 @@ public class Player : ILeader {
     }
     #endregion
 
-    #region Items
-    public void AddItem(Item item) {
-        _items.Add(item);
-    }
-    public bool RemoveItem(Item item) {
-        return _items.Remove(item);
-    }
-    public Item GetItem(string itemName) {
-        for (int i = 0; i < _items.Count; i++) {
-            if(_items[i].itemName == itemName) {
-                return _items[i];
-            }
-        }
-        return null;
-    }
-    //public void PickItemToGiveToCharacter(Character character, GiveItem giveItemAbility) {
-    //    //TODO
-    //    _currentTargetInteractable = character;
-    //    _currentActiveAbility = giveItemAbility;
-    //    PlayerUI.Instance.ShowPlayerPickerAndPopulate();
-    //}
-    //private void GiveItemToCharacter() {
-    //    Item item = _currentlySelectedPlayerPicker as Item;
-    //    GiveItem giveItem = _currentActiveAbility as GiveItem;
-    //    Character character = _currentTargetInteractable as Character;
-    //    character.PickupItem(item);
-    //    RemoveItem(item);
-    //    giveItem.HasGivenItem(character);
-    //}
-    //public void PickItemToTakeFromLandmark(BaseLandmark landmark, TakeItem takeItem) {
-    //    //TODO
-    //    _currentTargetInteractable = landmark;
-    //    _currentActiveAbility = takeItem;
-    //    PlayerUI.Instance.ShowPlayerPickerAndPopulate();
-    //}
-    //private void TakeItemFromLandmark() {
-    //    Item item = _currentlySelectedPlayerPicker as Item;
-    //    TakeItem takeItem = _currentActiveAbility as TakeItem;
-    //    BaseLandmark landmark = _currentTargetinteractable;
-    //    AddItem(item);
-    //    landmark.RemoveItemInLandmark(item);
-    //    takeItem.HasTakenItem(landmark);
-    //}
-    #endregion
-
     #region Lifestone
     public void DecreaseLifestoneChance() {
         if(_currentLifestoneChance > 2f) {
@@ -365,12 +199,6 @@ public class Player : ILeader {
     public void AdjustLifestone(int amount) {
         _lifestones += amount;
         Debug.Log("Adjusted player lifestones by: " + amount + ". New total is " + _lifestones);
-    }
-    #endregion
-
-    #region Character
-    public void SetMarkedCharacter(Character character) {
-        _markedCharacter = character;
     }
     #endregion
 
@@ -604,6 +432,116 @@ public class Player : ILeader {
             default:
                 break;
         }
+    }
+    #endregion
+
+    #region Role Slots
+    public void ConstructRoleSlots() {
+        roleSlots = new Dictionary<JOB, Character>();
+        roleSlots.Add(JOB.SPY, null);
+        roleSlots.Add(JOB.RECRUITER, null);
+        roleSlots.Add(JOB.DIPLOMAT, null);
+        roleSlots.Add(JOB.INSTIGATOR, null);
+        roleSlots.Add(JOB.DEBILITATOR, null);
+    }
+    public List<JOB> GetValidJobForCharacter(Character character) {
+        List<JOB> validJobs = new List<JOB>();
+        if (character.minion != null) {
+            switch (character.characterClass.className) {
+                case "Envy":
+                    validJobs.Add(JOB.SPY);
+                    validJobs.Add(JOB.RECRUITER);
+                    break;
+                case "Lust":
+                    validJobs.Add(JOB.DIPLOMAT);
+                    validJobs.Add(JOB.RECRUITER);
+                    break;
+                case "Pride":
+                    validJobs.Add(JOB.DIPLOMAT);
+                    validJobs.Add(JOB.INSTIGATOR);
+                    break;
+                case "Greed":
+                    validJobs.Add(JOB.SPY);
+                    validJobs.Add(JOB.INSTIGATOR);
+                    break;
+                case "Guttony":
+                    validJobs.Add(JOB.SPY);
+                    validJobs.Add(JOB.RECRUITER);
+                    break;
+                case "Wrath":
+                    validJobs.Add(JOB.INSTIGATOR);
+                    validJobs.Add(JOB.DEBILITATOR);
+                    break;
+                case "Sloth":
+                    validJobs.Add(JOB.DEBILITATOR);
+                    validJobs.Add(JOB.DIPLOMAT);
+                    break;
+            }
+        } else {
+            switch (character.race) {
+                case RACE.HUMANS:
+                    validJobs.Add(JOB.DIPLOMAT);
+                    validJobs.Add(JOB.RECRUITER);
+                    break;
+                case RACE.ELVES:
+                    validJobs.Add(JOB.SPY);
+                    validJobs.Add(JOB.DIPLOMAT);
+                    break;
+                case RACE.GOBLIN:
+                    validJobs.Add(JOB.INSTIGATOR);
+                    validJobs.Add(JOB.RECRUITER);
+                    break;
+                case RACE.FAERY:
+                    validJobs.Add(JOB.SPY);
+                    validJobs.Add(JOB.DEBILITATOR);
+                    break;
+                case RACE.SKELETON:
+                    validJobs.Add(JOB.DEBILITATOR);
+                    validJobs.Add(JOB.INSTIGATOR);
+                    break;
+            }
+        }
+        return validJobs;
+    }
+    public bool CanAssignCharacterToJob(JOB job, Character character) {
+        List<JOB> jobs = GetValidJobForCharacter(character);
+        return jobs.Contains(job);
+    }
+    public void AssignCharacterToJob(JOB job, Character character) {
+        if (!roleSlots.ContainsKey(job)) {
+            Debug.LogWarning("There is something trying to assign a character to " + job.ToString() + " but the player doesn't have a slot for it.");
+            return;
+        }
+        if (roleSlots[job] != null) {
+            UnassignCharacterFromJob(job);
+        }
+        JOB charactersCurrentJob = GetCharactersCurrentJob(character);
+        if (charactersCurrentJob != JOB.NONE) {
+            UnassignCharacterFromJob(charactersCurrentJob);
+        }
+
+        roleSlots[job] = character;
+        Messenger.Broadcast(Signals.CHARACTER_ASSIGNED_TO_JOB, job, character);
+    }
+    public void UnassignCharacterFromJob(JOB job) {
+        if (!roleSlots.ContainsKey(job)) {
+            Debug.LogWarning("There is something trying to unassign a character from " + job.ToString() + " but the player doesn't have a slot for it.");
+            return;
+        }
+        if (roleSlots[job] == null) {
+            return; //ignore command
+        }
+        Character character = roleSlots[job];
+        roleSlots[job] = null;
+        Messenger.Broadcast(Signals.CHARACTER_UNASSIGNED_FROM_JOB, job, character);
+    }
+    public JOB GetCharactersCurrentJob(Character character) {
+        foreach (KeyValuePair<JOB, Character> keyValuePair in roleSlots) {
+            if (keyValuePair.Value != null && keyValuePair.Value.id == character.id) {
+                return keyValuePair.Key;
+            }
+        }
+        return JOB.NONE;
     }
     #endregion
 }

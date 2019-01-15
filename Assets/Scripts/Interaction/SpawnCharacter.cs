@@ -9,7 +9,7 @@ public class SpawnCharacter : Interaction {
 
     public SpawnCharacter(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.SPAWN_CHARACTER, 70) {
         _name = "Spawn Character";
-        _jobFilter = new JOB[] { JOB.DISSUADER };
+        _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
 
     #region Overrides
@@ -46,7 +46,7 @@ public class SpawnCharacter : Interaction {
                 cost = new CurrenyCost { amount = 50, currency = CURRENCY.SUPPLY },
                 name = "Stop it from happening.",
                 duration = 0,
-                jobNeeded = JOB.DISSUADER,
+                jobNeeded = JOB.DEBILITATOR,
                 effect = () => StopOption(),
                 doesNotMeetRequirementsStr = "Minion must be Dissuader."
             };
@@ -55,7 +55,7 @@ public class SpawnCharacter : Interaction {
                 cost = new CurrenyCost { amount = 20, currency = CURRENCY.MANA },
                 name = "Curse the new character.",
                 duration = 0,
-                jobNeeded = JOB.DISSUADER,
+                jobNeeded = JOB.DEBILITATOR,
                 effect = () => CurseOption(),
                 doesNotMeetRequirementsStr = "Minion must be Dissuader."
             };

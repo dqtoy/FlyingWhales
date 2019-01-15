@@ -912,7 +912,7 @@ public class AreaInfoUI : UIMenu {
                     case JOB.SPY:
                         jobStr = "will <b>obtain token</b> about";
                         break;
-                    case JOB.DISSUADER:
+                    case JOB.DEBILITATOR:
                         jobStr = "will <b>discourage activities</b> in";
                         break;
                     default:
@@ -939,7 +939,7 @@ public class AreaInfoUI : UIMenu {
                     case JOB.SPY:
                         jobStr = "is <b>obtaining token</b> about";
                         break;
-                    case JOB.DISSUADER:
+                    case JOB.DEBILITATOR:
                         jobStr = "is <b>discouraging activities</b> in";
                         break;
                     default:

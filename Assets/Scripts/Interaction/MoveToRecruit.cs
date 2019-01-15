@@ -13,7 +13,7 @@ public class MoveToRecruit : Interaction {
 
     public MoveToRecruit(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_RECRUIT, 0) {
         _name = "Move To Recruit";
-        _jobFilter = new JOB[] { JOB.DISSUADER };
+        _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
 
     public void SetCharacterToBeRecruited(Character character) {
@@ -63,7 +63,7 @@ public class MoveToRecruit : Interaction {
                 name = "Prevent " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + " from leaving.",
                 duration = 0,
                 effect = () => PreventOptionEffect(state),
-                jobNeeded = JOB.DISSUADER,
+                jobNeeded = JOB.DEBILITATOR,
                 doesNotMeetRequirementsStr = "Minion must be a dissuader",
             };
             ActionOption doNothing = new ActionOption {

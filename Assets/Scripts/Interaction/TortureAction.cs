@@ -23,7 +23,7 @@ public class TortureAction : Interaction {
 
     public TortureAction(BaseLandmark interactable): base(interactable, INTERACTION_TYPE.TORTURE_ACTION, 0) {
         _name = "Torture Action";
-        _jobFilter = new JOB[] { JOB.DIPLOMAT, JOB.DISSUADER };
+        _jobFilter = new JOB[] { JOB.DIPLOMAT, JOB.DEBILITATOR };
     }
 
     #region Override
@@ -103,7 +103,7 @@ public class TortureAction : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Persuade to stop " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.POSSESSIVE, false) + " plan to torture " + targetCharacter.name + ".",
                 effect = () => PersuadeOptionEffect(state),
-                jobNeeded = JOB.DISSUADER,
+                jobNeeded = JOB.DEBILITATOR,
                 disabledTooltipText = "Minion must be a Dissuader",
             };
             ActionOption doNothing = new ActionOption {

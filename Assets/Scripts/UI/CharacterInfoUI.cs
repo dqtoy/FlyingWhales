@@ -100,7 +100,6 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private Toggle attackBtnToggle;
     [SerializeField] private GameObject joinBattleButtonGO;
     [SerializeField] private Toggle joinBattleBtnToggle;
-    [SerializeField] private Button snatchBtn;
     [SerializeField] private GameObject releaseBtnGO;
 
     [Space(10)]
@@ -822,24 +821,10 @@ public class CharacterInfoUI : UIMenu {
     #endregion
 
     private void OnPlayerLandmarkCreated(BaseLandmark createdLandmark) {
-        if (createdLandmark.specificLandmarkType == LANDMARK_TYPE.SNATCHER_DEMONS_LAIR) {
-            CheckShowSnatchButton();
-        }
+        //if (createdLandmark.specificLandmarkType == LANDMARK_TYPE.SNATCHER_DEMONS_LAIR) {
+        //    CheckShowSnatchButton();
+        //}
     }
-
-    #region Snatch
-    public void CheckShowSnatchButton() {
-        if (!PlayerManager.Instance.CanSnatch() || PlayerManager.Instance.player.IsCharacterSnatched(_activeCharacter)) {
-            snatchBtn.gameObject.SetActive(false);
-        } else {
-            snatchBtn.gameObject.SetActive(true);
-        }
-    }
-    public void Snatch() {
-        PlayerManager.Instance.player.SnatchCharacter(_activeCharacter);
-        CheckShowSnatchButton();
-    }
-    #endregion
 
     #region Level Up
     public void LevelUpCharacter() {

@@ -14,7 +14,7 @@ public class UseItemOnCharacter : Interaction {
 
     public UseItemOnCharacter(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.USE_ITEM_ON_CHARACTER, 0) {
         _name = "Use Item On Character";
-        _jobFilter = new JOB[] { JOB.DISSUADER };
+        _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
 
     public void SetItemToken(SpecialToken specialToken) {
@@ -50,7 +50,7 @@ public class UseItemOnCharacter : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Stop " + _characterInvolved.name + ".",
                 effect = () => StopOptionEffect(state),
-                jobNeeded = JOB.DISSUADER,
+                jobNeeded = JOB.DEBILITATOR,
                 doesNotMeetRequirementsStr = "Minion must be a dissuader",
             };
             ActionOption doNothing = new ActionOption {

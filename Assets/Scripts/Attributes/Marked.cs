@@ -13,13 +13,13 @@ public class Marked : CharacterAttribute {
     public override void OnAddAttribute(Character character) {
         base.OnAddAttribute(character);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, CharacterDeath);
-        PlayerManager.Instance.player.SetMarkedCharacter(_character);
+        //PlayerManager.Instance.player.SetMarkedCharacter(_character);
         Messenger.Broadcast(Signals.CHARACTER_MARKED);
     }
     public override void OnRemoveAttribute() {
         base.OnRemoveAttribute();
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, CharacterDeath);
-        PlayerManager.Instance.player.SetMarkedCharacter(null);
+        //PlayerManager.Instance.player.SetMarkedCharacter(null);
     }
     #endregion
     private void CharacterDeath(Character character) {

@@ -62,6 +62,7 @@ public class PlayerManager : MonoBehaviour {
             return;
         }
         player = new Player();
+        PlayerUI.Instance.Initialize();
         player.CreatePlayerFaction();
         player.CreatePlayerArea(tile);
         //player.SetMaxMinions(9);
@@ -77,6 +78,7 @@ public class PlayerManager : MonoBehaviour {
     }
     private void OnLoadStartingTile(BaseLandmark portal) {
         player = new Player();
+        PlayerUI.Instance.Initialize();
         player.CreatePlayerFaction();
         Area existingPlayerArea = LandmarkManager.Instance.GetAreaByName("Player Area");
         if (existingPlayerArea == null) {
@@ -160,15 +162,6 @@ public class PlayerManager : MonoBehaviour {
         }
         return null;
     }
-
-    #region Snatch
-    public bool CanSnatch() {
-        if (player == null) {
-            return false;
-        }
-        return player.snatchCredits > 0;
-    }
-    #endregion
 
     #region Utilities
     public bool CanCreateLandmarkOnTile(LANDMARK_TYPE type, HexTile tile) {
