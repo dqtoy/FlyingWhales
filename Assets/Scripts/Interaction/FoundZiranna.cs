@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FoundLucareth : Interaction {
+public class FoundZiranna : Interaction {
 
     private const string Start = "Start";
     private const string Turn_Success = "Turn Success";
@@ -13,10 +13,10 @@ public class FoundLucareth : Interaction {
     private const string Alliance_Critical_Fail = "Alliance Critical Fail";
     private const string Dissuade_Success = "Dissuade Success";
     private const string Dissuade_Fail = "Dissuade Fail";
-    private const string Lucareth_Founded = "Lucareth Founded";
+    private const string Ziranna_Founded = "Ziranna Founded";
 
-    public FoundLucareth(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.FOUND_LUCARETH, 0) {
-        _name = "Found Lucareth";
+    public FoundZiranna(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.FOUND_ZIRANNA, 0) {
+        _name = "Found Ziranna";
         _jobFilter = new JOB[] { JOB.DEBILITATOR, JOB.DIPLOMAT, JOB.INSTIGATOR };
     }
 
@@ -31,7 +31,7 @@ public class FoundLucareth : Interaction {
         InteractionState allianceCritFailState = new InteractionState(Alliance_Critical_Fail, this);
         InteractionState dissuadeSuccessState = new InteractionState(Dissuade_Success, this);
         InteractionState dissuadeFailState = new InteractionState(Dissuade_Fail, this);
-        InteractionState lucarethFoundedState = new InteractionState(Lucareth_Founded, this);
+        InteractionState zirannaFoundedState = new InteractionState(Ziranna_Founded, this);
 
         CreateActionOptions(startState);
 
@@ -43,7 +43,7 @@ public class FoundLucareth : Interaction {
         allianceCritFailState.SetEffect(() => AllianceCritFailEffect(allianceCritFailState));
         dissuadeSuccessState.SetEffect(() => DissuadeSuccessEffect(dissuadeSuccessState));
         dissuadeFailState.SetEffect(() => DissuadeFailEffect(dissuadeFailState));
-        lucarethFoundedState.SetEffect(() => LucarethFoundEffect(lucarethFoundedState));
+        zirannaFoundedState.SetEffect(() => ZirannaFoundEffect(zirannaFoundedState));
 
         _states.Add(startState.name, startState);
         _states.Add(turnSuccessState.name, turnSuccessState);
@@ -54,7 +54,7 @@ public class FoundLucareth : Interaction {
         _states.Add(allianceCritFailState.name, allianceCritFailState);
         _states.Add(dissuadeSuccessState.name, dissuadeSuccessState);
         _states.Add(dissuadeFailState.name, dissuadeFailState);
-        _states.Add(lucarethFoundedState.name, lucarethFoundedState);
+        _states.Add(zirannaFoundedState.name, zirannaFoundedState);
 
         SetCurrentState(startState);
     }
@@ -131,7 +131,7 @@ public class FoundLucareth : Interaction {
         SetCurrentState(_states[result]);
     }
     private void DoNothingOption() {
-        SetCurrentState(_states[Lucareth_Founded]);
+        SetCurrentState(_states[Ziranna_Founded]);
     }
     #endregion
 
@@ -139,98 +139,106 @@ public class FoundLucareth : Interaction {
     private void TurnSuccessEffect(InteractionState state) {
         investigatorMinion.LevelUp();
 
-        //Remove character from her current Faction and turn her into the Faction Leader of a new Lucareth faction. Current area becomes owned by Lucareth faction, set its race to the character's race.
+        //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.
         Faction oldFaction = _characterInvolved.faction;
-        _characterInvolved.FoundFaction("Lucareth", interactable);
+        _characterInvolved.FoundFaction("Ziranna", interactable);
+        interactable.tileLocation.areaOfTile.SetRaceType(RACE.SKELETON);
 
-        //Set Lucareth faction to Enemy of character's original faction
+        //Set Magus faction to Enemy of character's original faction
         _characterInvolved.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
 
-        //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(4);
+        //Spawn 6 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
+        interactable.SpawnRandomCharacters(6);
 
-        state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
+        //state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2);
 
-        state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
+        //state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2));
     }
     private void TurnFailEffect(InteractionState state) {
-        //Remove character from her current Faction and turn her into the Faction Leader of a new Lucareth faction. Current area becomes owned by Lucareth faction, set its race to the character's race.
+        //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.
         Faction oldFaction = _characterInvolved.faction;
-        _characterInvolved.FoundFaction("Lucareth", interactable);
+        _characterInvolved.FoundFaction("Ziranna", interactable);
+        interactable.tileLocation.areaOfTile.SetRaceType(RACE.SKELETON);
 
-        //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(4);
+        //Spawn 6 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
+        interactable.SpawnRandomCharacters(6);
 
-        state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
+        //state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2);
 
-        state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
+        //state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2));
     }
     private void TurnCritFailEffect(InteractionState state) {
-        //Remove character from her current Faction and turn her into the Faction Leader of a new Lucareth faction. Current area becomes owned by Lucareth faction, set its race to the character's race.
+        //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.
         Faction oldFaction = _characterInvolved.faction;
-        _characterInvolved.FoundFaction("Lucareth", interactable);
+        _characterInvolved.FoundFaction("Ziranna", interactable);
+        interactable.tileLocation.areaOfTile.SetRaceType(RACE.SKELETON);
 
-        //Set Lucareth faction to Friend of character's original faction
+        //Set Magus faction to Friend of character's original faction
         _characterInvolved.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.FRIEND);
 
-        //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(4);
+        //Spawn 6 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
+        interactable.SpawnRandomCharacters(6);
 
-        state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
+        //state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2);
 
-        state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
+        //state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2));
     }
     private void AllianceSuccessEffect(InteractionState state) {
         investigatorMinion.LevelUp();
 
-        //Remove character from her current Faction and turn her into the Faction Leader of a new Lucareth faction. Current area becomes owned by Lucareth faction, set its race to the character's race.
-        _characterInvolved.FoundFaction("Lucareth", interactable);
+        //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.
+        _characterInvolved.FoundFaction("Ziranna", interactable);
+        interactable.tileLocation.areaOfTile.SetRaceType(RACE.SKELETON);
 
-        //Set Lucareth faction to Ally of player faction.
+        //Set Magus faction to Ally of player faction.
         _characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ALLY);
 
-        //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(4);
+        //Spawn 6 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
+        interactable.SpawnRandomCharacters(6);
     }
     private void AllianceFailEffect(InteractionState state) {
-        //Remove character from her current Faction and turn her into the Faction Leader of a new Lucareth faction. Current area becomes owned by Lucareth faction, set its race to the character's race.
-        _characterInvolved.FoundFaction("Lucareth", interactable);
+        //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.
+        _characterInvolved.FoundFaction("Ziranna", interactable);
+        interactable.tileLocation.areaOfTile.SetRaceType(RACE.SKELETON);
 
-        //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(4);
+        //Spawn 6 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
+        interactable.SpawnRandomCharacters(6);
     }
     private void AllianceCritFailEffect(InteractionState state) {
-        //Remove character from her current Faction and turn her into the Faction Leader of a new Lucareth faction. Current area becomes owned by Lucareth faction, set its race to the character's race.
-        _characterInvolved.FoundFaction("Lucareth", interactable);
+        //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.
+        _characterInvolved.FoundFaction("Ziranna", interactable);
+        interactable.tileLocation.areaOfTile.SetRaceType(RACE.SKELETON);
 
-        //Set Lucareth faction to Disliked of player faction.
+        //Set Magus faction to Disliked of player faction.
         _characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
 
-        //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(4);
+        //Spawn 6 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
+        interactable.SpawnRandomCharacters(6);
     }
     private void DissuadeSuccessEffect(InteractionState state) {
         investigatorMinion.LevelUp();
     }
     private void DissuadeFailEffect(InteractionState state) {
-        //Remove character from her current Faction and turn her into the Faction Leader of a new Lucareth faction. Current area becomes owned by Lucareth faction, set its race to the character's race.
-        _characterInvolved.FoundFaction("Lucareth", interactable);
+        //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.
+        _characterInvolved.FoundFaction("Ziranna", interactable);
+        interactable.tileLocation.areaOfTile.SetRaceType(RACE.SKELETON);
 
-        //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(4);
+        //Spawn 6 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
+        interactable.SpawnRandomCharacters(6);
     }
-    private void LucarethFoundEffect(InteractionState state) {
-        //Remove character from her current Faction and turn her into the Faction Leader of a new Lucareth faction. Current area becomes owned by Lucareth faction, set its race to the character's race.
-        _characterInvolved.FoundFaction("Lucareth", interactable);
+    private void ZirannaFoundEffect(InteractionState state) {
+        //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.
+        _characterInvolved.FoundFaction("Ziranna", interactable);
+        interactable.tileLocation.areaOfTile.SetRaceType(RACE.SKELETON);
 
-        //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(4);
+        //Spawn 6 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
+        interactable.SpawnRandomCharacters(6);
     }
     #endregion
 }

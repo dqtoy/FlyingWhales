@@ -321,6 +321,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.FOUND_MAGUS:
                 createdInteraction = new FoundMagus(interactable);
                 break;
+            case INTERACTION_TYPE.FOUND_ZIRANNA:
+                createdInteraction = new FoundZiranna(interactable);
+                break;
             case INTERACTION_TYPE.MOVE_TO_SAVE:
                 createdInteraction = new MoveToSave(interactable);
                 break;
@@ -656,6 +659,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.FOUND_MAGUS:
                 return character.characterClass.className == "Archmage" && character.specificLocation.tileLocation.areaOfTile.owner == null
                     && character.specificLocation.tileLocation.areaOfTile.possibleOccupants.Contains(character.race) && !FactionManager.Instance.GetFactionBasedOnName("Magus").isActive;
+            case INTERACTION_TYPE.FOUND_ZIRANNA:
+                return character.characterClass.className == "Necromancer" && character.specificLocation.tileLocation.areaOfTile.owner == null
+                    && character.specificLocation.tileLocation.areaOfTile.possibleOccupants.Contains(character.race) && !FactionManager.Instance.GetFactionBasedOnName("Ziranna").isActive;
             case INTERACTION_TYPE.EAT_ABDUCTED:
                 if (character.race == RACE.GOBLIN || character.race == RACE.SPIDER || character.race == RACE.WOLF) {
                     for (int i = 0; i < character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
@@ -734,6 +740,8 @@ public class InteractionManager : MonoBehaviour {
             List<Character> attackers = areaToAttack.FormCombatCharacters();
             if(attackers.Count > 0) {
                 areaToAttack.SetAttackTargetAndCharacters(targetArea, attackers);
+            } else {
+                return null;
             }
 
             ////If at war with other factions
