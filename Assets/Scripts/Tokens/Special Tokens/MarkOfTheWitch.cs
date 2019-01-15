@@ -36,6 +36,7 @@ public class MarkOfTheWitch : SpecialToken {
     private void ItemUsedEffectMinion(TokenInteractionState state) {
         Character targetCharacter = state.target as Character;
         targetCharacter.ChangeClass("Witch");
+        state.tokenUser.ConsumeToken();
 
         Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-minion" + "_description");
         stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.MINION_1);

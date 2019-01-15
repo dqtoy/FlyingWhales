@@ -63,7 +63,7 @@ public class FoundBestalia : Interaction {
             ActionOption turnOption = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Turn him against his former faction: " + _characterInvolved.faction.name + ".",
+                name = "Turn " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + " against " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.POSSESSIVE, false) + " former faction: " + _characterInvolved.faction.name + ".",
                 disabledTooltipText = "Must be an Instigator.",
                 jobNeeded = JOB.INSTIGATOR,
                 effect = () => TurnOption(),
@@ -71,7 +71,7 @@ public class FoundBestalia : Interaction {
             ActionOption allyOption = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Establish an alliance with him.",
+                name = "Establish an alliance with " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + ".",
                 disabledTooltipText = "Must be a Diplomat.",
                 jobNeeded = JOB.DIPLOMAT,
                 effect = () => AllyOption(),
@@ -79,7 +79,7 @@ public class FoundBestalia : Interaction {
             ActionOption dissuadeOption = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Dissuade him from the idea.",
+                name = "Dissuade " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + " from the idea.",
                 disabledTooltipText = "Must be a Dissuader.",
                 jobNeeded = JOB.DEBILITATOR,
                 effect = () => DissuadeOption(),

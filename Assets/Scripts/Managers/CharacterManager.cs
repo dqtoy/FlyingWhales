@@ -651,6 +651,7 @@ public class CharacterManager : MonoBehaviour {
             { INTERACTION_TYPE.FOUND_LUCARETH, 50 },
             { INTERACTION_TYPE.FOUND_BESTALIA, 50 },
             { INTERACTION_TYPE.FOUND_MAGUS, 50 },
+            { INTERACTION_TYPE.FOUND_ZIRANNA, 50 },
             { INTERACTION_TYPE.CHANCE_ENCOUNTER, 2 },
         };
     }
