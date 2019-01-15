@@ -20,7 +20,7 @@ public class Player : ILeader {
     private Dictionary<CURRENCY, int> _currencies;
     public List<Character> otherCharacters;
 
-    public Dictionary<JOB, Character> roleSlots { get; private set; }
+    public Dictionary<JOB, PlayerJobData> roleSlots { get; private set; }
     public CombatGrid attackGrid { get; private set; }
     public CombatGrid defenseGrid { get; private set; }
 
@@ -74,6 +74,7 @@ public class Player : ILeader {
         ConstructRoleSlots();
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
         Messenger.AddListener(Signals.DAY_STARTED, EverydayAction);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         AddWinListener();
     }
 
@@ -443,12 +444,12 @@ public class Player : ILeader {
 
     #region Role Slots
     public void ConstructRoleSlots() {
-        roleSlots = new Dictionary<JOB, Character>();
-        roleSlots.Add(JOB.SPY, null);
-        roleSlots.Add(JOB.RECRUITER, null);
-        roleSlots.Add(JOB.DIPLOMAT, null);
-        roleSlots.Add(JOB.INSTIGATOR, null);
-        roleSlots.Add(JOB.DEBILITATOR, null);
+        roleSlots = new Dictionary<JOB, PlayerJobData>();
+        roleSlots.Add(JOB.SPY, new PlayerJobData(JOB.SPY));
+        roleSlots.Add(JOB.RECRUITER, new PlayerJobData(JOB.RECRUITER));
+        roleSlots.Add(JOB.DIPLOMAT, new PlayerJobData(JOB.DIPLOMAT));
+        roleSlots.Add(JOB.INSTIGATOR, new PlayerJobData(JOB.INSTIGATOR));
+        roleSlots.Add(JOB.DEBILITATOR, new PlayerJobData(JOB.DEBILITATOR));
     }
     public List<JOB> GetValidJobForCharacter(Character character) {
         List<JOB> validJobs = new List<JOB>();
@@ -514,10 +515,10 @@ public class Player : ILeader {
         return jobs.Contains(job);
     }
     public bool CanAssignCharacterToAttack(Character character) {
-        return !roleSlots.ContainsValue(character) && !defenseGrid.IsCharacterInGrid(character);
+        return GetCharactersCurrentJob(character) == JOB.NONE && !defenseGrid.IsCharacterInGrid(character);
     }
     public bool CanAssignCharacterToDefend(Character character) {
-        return !roleSlots.ContainsValue(character) && !attackGrid.IsCharacterInGrid(character);
+        return GetCharactersCurrentJob(character) == JOB.NONE && !attackGrid.IsCharacterInGrid(character);
     }
     public void AssignCharacterToJob(JOB job, Character character) {
         if (!roleSlots.ContainsKey(job)) {
@@ -532,7 +533,7 @@ public class Player : ILeader {
             UnassignCharacterFromJob(charactersCurrentJob);
         }
 
-        roleSlots[job] = character;
+        roleSlots[job].AssignCharacter(character);
         Messenger.Broadcast(Signals.CHARACTER_ASSIGNED_TO_JOB, job, character);
     }
     public void UnassignCharacterFromJob(JOB job) {
@@ -543,8 +544,8 @@ public class Player : ILeader {
         if (roleSlots[job] == null) {
             return; //ignore command
         }
-        Character character = roleSlots[job];
-        roleSlots[job] = null;
+        Character character = roleSlots[job].assignedCharacter;
+        roleSlots[job].AssignCharacter(null);
         Messenger.Broadcast(Signals.CHARACTER_UNASSIGNED_FROM_JOB, job, character);
     }
     public void AssignAttackGrid(CombatGrid grid) {
@@ -554,12 +555,38 @@ public class Player : ILeader {
         defenseGrid = grid;
     }
     public JOB GetCharactersCurrentJob(Character character) {
-        foreach (KeyValuePair<JOB, Character> keyValuePair in roleSlots) {
-            if (keyValuePair.Value != null && keyValuePair.Value.id == character.id) {
+        foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in roleSlots) {
+            if (keyValuePair.Value.assignedCharacter != null && keyValuePair.Value.assignedCharacter.id == character.id) {
                 return keyValuePair.Key;
             }
         }
         return JOB.NONE;
     }
+    public bool HasCharacterAssignedToJob(JOB job) {
+        return roleSlots[job].assignedCharacter != null;
+    }
     #endregion
+
+    #region Role Actions
+    public List<PlayerJobAction> GetJobActionsThatCanTarget(JOB job, JOB_ACTION_TARGET targetType) {
+        List<PlayerJobAction> actions = new List<PlayerJobAction>();
+        if (HasCharacterAssignedToJob(job)) {
+            for (int i = 0; i < roleSlots[job].jobActions.Count; i++) {
+                PlayerJobAction currAction = roleSlots[job].jobActions[i];
+                if (currAction.targettableTypes.Contains(targetType)) {
+                    actions.Add(currAction);
+                }
+            }
+        }
+        return actions;
+    }
+    #endregion
+
+    private void OnCharacterDied(Character character) {
+        JOB job = GetCharactersCurrentJob(character);
+        if (job != JOB.NONE) {
+            UnassignCharacterFromJob(job);
+        }
+    }
 }
+
