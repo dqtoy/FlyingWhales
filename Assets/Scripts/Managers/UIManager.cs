@@ -238,7 +238,7 @@ public class UIManager : MonoBehaviour {
             HideObjectPicker();
         }
         if (PlayerUI.Instance.attackGridGO.activeSelf) {
-            PlayerUI.Instance.HideAttackGrid();
+            PlayerUI.Instance.HideCombatGrid();
         }
     }
 

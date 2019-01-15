@@ -22,6 +22,7 @@ public class Player : ILeader {
 
     public Dictionary<JOB, Character> roleSlots { get; private set; }
     public CombatGrid attackGrid { get; private set; }
+    public CombatGrid defenseGrid { get; private set; }
 
     #region getters/setters
     public int id {
@@ -64,7 +65,9 @@ public class Player : ILeader {
         _tokens = new List<Token>();
         otherCharacters = new List<Character>();
         attackGrid = new CombatGrid();
+        defenseGrid = new CombatGrid();
         attackGrid.Initialize();
+        defenseGrid.Initialize();
         maxImps = 5;
         SetCurrentLifestoneChance(25f);
         ConstructCurrencies();
@@ -511,7 +514,10 @@ public class Player : ILeader {
         return jobs.Contains(job);
     }
     public bool CanAssignCharacterToAttack(Character character) {
-        return !roleSlots.ContainsValue(character);
+        return !roleSlots.ContainsValue(character) && !defenseGrid.IsCharacterInGrid(character);
+    }
+    public bool CanAssignCharacterToDefend(Character character) {
+        return !roleSlots.ContainsValue(character) && !attackGrid.IsCharacterInGrid(character);
     }
     public void AssignCharacterToJob(JOB job, Character character) {
         if (!roleSlots.ContainsKey(job)) {
@@ -543,6 +549,9 @@ public class Player : ILeader {
     }
     public void AssignAttackGrid(CombatGrid grid) {
         attackGrid = grid;
+    }
+    public void AssignDefenseGrid(CombatGrid grid) {
+        defenseGrid = grid;
     }
     public JOB GetCharactersCurrentJob(Character character) {
         foreach (KeyValuePair<JOB, Character> keyValuePair in roleSlots) {

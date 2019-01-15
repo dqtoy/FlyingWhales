@@ -36,7 +36,9 @@ public class PlayerUI : MonoBehaviour {
     [Header("Attack")]
     public GameObject attackGridGO;
     [SerializeField] private Sprite attackGridIconSprite;
+    [SerializeField] private Sprite defenseGridIconSprite;
     [SerializeField] private AttackSlotItem attackSlot;
+    [SerializeField] private DefenseSlotItem defenseSlot;
     public SlotItem[] attackGridSlots;
 
     [Header("Bottom Menu")]
@@ -58,6 +60,7 @@ public class PlayerUI : MonoBehaviour {
     private bool _isScrollingUp;
     private bool _isScrollingDown;
     public CombatGrid attackGridReference { get; private set; }
+    public CombatGrid defenseGridReference { get; private set; }
 
     #region getters/setters
     public MINIONS_SORT_TYPE minionSortType {
@@ -91,10 +94,10 @@ public class PlayerUI : MonoBehaviour {
         for (int i = 0; i < attackGridSlots.Length; i++) {
             SlotItem currSlot = attackGridSlots[i];
             currSlot.SetNeededType(typeof(Character));
-            currSlot.SetOtherValidation(IsObjectValidForAttack);
+            //currSlot.SetOtherValidation(IsObjectValidForAttack);
             currSlot.SetSlotIndex(i);
-            currSlot.SetItemDroppedCallback(OnDropOnAttackGrid);
-            currSlot.SetItemDroppedOutCallback(OnDroppedOutFromAttackGrid);
+            //currSlot.SetItemDroppedCallback(OnDropOnAttackGrid);
+            //currSlot.SetItemDroppedOutCallback(OnDroppedOutFromAttackGrid);
         }
         minionItems = new List<PlayerCharacterItem>();
 
@@ -126,15 +129,42 @@ public class PlayerUI : MonoBehaviour {
     #region Attack UI
     private void LoadAttackSlot() {
         attackGridReference = new CombatGrid();
+        defenseGridReference = new CombatGrid();
         attackGridReference.Initialize();
+        defenseGridReference.Initialize();
         attackSlot.UpdateVisuals();
+        defenseSlot.UpdateVisuals();
     }
     public void ShowAttackGrid() {
+        for (int i = 0; i < attackGridSlots.Length; i++) {
+            SlotItem currSlot = attackGridSlots[i];
+            currSlot.SetOtherValidation(IsObjectValidForAttack);
+            currSlot.SetItemDroppedCallback(OnDropOnAttackGrid);
+            currSlot.SetItemDroppedOutCallback(OnDroppedOutFromAttackGrid);
+        }
         attackGridGO.SetActive(true);
         combatGridAssignerIcon.sprite = attackGridIconSprite;
         SetAttackGridCharactersFromPlayer();
     }
-    public void HideAttackGrid() {
+    public void ShowDefenseGrid() {
+        for (int i = 0; i < attackGridSlots.Length; i++) {
+            SlotItem currSlot = attackGridSlots[i];
+            currSlot.SetOtherValidation(IsObjectValidForAttack);
+            currSlot.SetItemDroppedCallback(OnDropOnDefenseGrid);
+            currSlot.SetItemDroppedOutCallback(OnDroppedOutFromDefenseGrid);
+        }
+        attackGridGO.SetActive(true);
+        combatGridAssignerIcon.sprite = defenseGridIconSprite;
+        SetDefenseGridCharactersFromPlayer();
+    }
+    public void OnClickConfirmCombatGrid() {
+        if(combatGridAssignerIcon.sprite == attackGridIconSprite) {
+            attackSlot.OnClickConfirm();
+        } else {
+            defenseSlot.OnClickConfirm();
+        }
+    }
+    public void HideCombatGrid() {
         attackGridGO.SetActive(false);
     }
     private void OnDropOnAttackGrid(object obj, int index) {
@@ -148,11 +178,29 @@ public class PlayerUI : MonoBehaviour {
             UpdateAttackGridSlots();
         }
     }
+    private void OnDropOnDefenseGrid(object obj, int index) {
+        if (obj is Character) {
+            Character character = obj as Character;
+            if (defenseGridReference.IsCharacterInGrid(character)) {
+                attackGridSlots[index].PlaceObject(defenseGridReference.slots[index].character);
+                return;
+            }
+            defenseGridReference.AssignCharacterToGrid(character, index, true);
+            UpdateDefenseGridSlots();
+        }
+    }
     private void OnDroppedOutFromAttackGrid(object obj, int index) {
         if (obj is Character) {
             Character character = obj as Character;
             attackGridReference.RemoveCharacterFromGrid(character);
             UpdateAttackGridSlots();
+        }
+    }
+    private void OnDroppedOutFromDefenseGrid(object obj, int index) {
+        if (obj is Character) {
+            Character character = obj as Character;
+            defenseGridReference.RemoveCharacterFromGrid(character);
+            UpdateDefenseGridSlots();
         }
     }
     private bool IsObjectValidForAttack(object obj, SlotItem slotItem) {
@@ -176,9 +224,20 @@ public class PlayerUI : MonoBehaviour {
             attackGridSlots[i].PlaceObject(attackGridReference.slots[i].character);
         }
     }
+    private void SetDefenseGridCharactersFromPlayer() {
+        for (int i = 0; i < defenseGridReference.slots.Length; i++) {
+            defenseGridReference.slots[i].OccupySlot(PlayerManager.Instance.player.attackGrid.slots[i].character);
+            attackGridSlots[i].PlaceObject(attackGridReference.slots[i].character);
+        }
+    }
     private void UpdateAttackGridSlots() {
         for (int i = 0; i < attackGridSlots.Length; i++) {
             attackGridSlots[i].PlaceObject(attackGridReference.slots[i].character);
+        }
+    }
+    private void UpdateDefenseGridSlots() {
+        for (int i = 0; i < attackGridSlots.Length; i++) {
+            attackGridSlots[i].PlaceObject(defenseGridReference.slots[i].character);
         }
     }
     #endregion
