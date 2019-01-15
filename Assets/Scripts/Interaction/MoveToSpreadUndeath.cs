@@ -13,7 +13,7 @@ public class MoveToSpreadUndeath : Interaction {
     public MoveToSpreadUndeath(BaseLandmark interactable) 
         : base(interactable, INTERACTION_TYPE.MOVE_TO_SPREAD_UNDEATH, 0) {
         _name = "Move To Spread Undeath";
-        _jobFilter = new JOB[] { JOB.DISSUADER };
+        _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
 
     #region Overrides
@@ -49,7 +49,7 @@ public class MoveToSpreadUndeath : Interaction {
                 name = "Prevent " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + " from leaving.",
                 duration = 0,
                 effect = () => PreventFromLeavingOptionEffect(state),
-                jobNeeded = JOB.DISSUADER,
+                jobNeeded = JOB.DEBILITATOR,
                 doesNotMeetRequirementsStr = "Minion must be a dissuader",
             };
             ActionOption doNothing = new ActionOption {

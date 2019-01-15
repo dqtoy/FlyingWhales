@@ -13,7 +13,7 @@ public class MoveToExpand : Interaction {
 
     public MoveToExpand(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_EXPAND, 0) {
         _name = "Move to Expand";
-        _jobFilter = new JOB[] { JOB.DISSUADER };
+        _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
 
     public void SetTargetLocation(Area area) {
@@ -57,7 +57,7 @@ public class MoveToExpand : Interaction {
                 name = "Prevent " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + " from leaving.",
                 duration = 0,
                 effect = () => DiscourageFromLeavingOptionEffect(state),
-                jobNeeded = JOB.DISSUADER,
+                jobNeeded = JOB.DEBILITATOR,
                 doesNotMeetRequirementsStr = "Minion must be a dissuader",
             };
             ActionOption doNothing = new ActionOption {

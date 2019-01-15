@@ -10,7 +10,7 @@ public class DefenseMobilization : Interaction {
 
     public DefenseMobilization(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.DEFENSE_MOBILIZATION, 0) {
         _name = "Defense Mobilization";
-        _jobFilter = new JOB[] { JOB.DISSUADER };
+        _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
 
     #region Overrides
@@ -40,7 +40,7 @@ public class DefenseMobilization : Interaction {
                 cost = new CurrenyCost { amount = 50, currency = CURRENCY.SUPPLY },
                 name = "Stop them.",
                 duration = 0,
-                jobNeeded = JOB.DISSUADER,
+                jobNeeded = JOB.DEBILITATOR,
                 doesNotMeetRequirementsStr = "Minion must be Dissuader.",
                 effect = () => StopOption(),
             };

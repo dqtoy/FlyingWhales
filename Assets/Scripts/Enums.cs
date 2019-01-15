@@ -1169,7 +1169,7 @@ public enum JOB {
     RECRUITER,
     RAIDER,
     SPY,
-    DISSUADER,
+    DEBILITATOR,
     LEADER,
     WORKER,
 }

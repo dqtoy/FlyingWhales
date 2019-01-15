@@ -13,7 +13,7 @@ public class WorkEvent : Interaction {
     public WorkEvent(BaseLandmark interactable) 
         : base(interactable, INTERACTION_TYPE.WORK_EVENT, 0) {
         _name = "Work Event";
-        _jobFilter = new JOB[] { JOB.DISSUADER, JOB.INSTIGATOR, JOB.DIPLOMAT };
+        _jobFilter = new JOB[] { JOB.DEBILITATOR, JOB.INSTIGATOR, JOB.DIPLOMAT };
     }
 
     #region Overrides
@@ -53,7 +53,7 @@ public class WorkEvent : Interaction {
                 name = "Stop " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + " from delivering the Supplies.",
                 duration = 0,
                 effect = () => StopOptionEffect(state),
-                jobNeeded = JOB.DISSUADER,
+                jobNeeded = JOB.DEBILITATOR,
                 doesNotMeetRequirementsStr = "Minion must be a dissuader",
             };
             ActionOption steal = new ActionOption {

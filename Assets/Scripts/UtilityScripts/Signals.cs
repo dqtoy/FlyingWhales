@@ -149,6 +149,8 @@ public static class Signals {
     public static string TOKEN_ADDED = "OnIntelAdded"; //Parameters (Intel addedIntel)
     public static string CHARACTER_TOKEN_ADDED = "OnCharacterIntelAdded"; //Parameters (CharacterIntel characterIntel)
     public static string UPDATED_CURRENCIES = "OnUpdatesCurrencies";
+    public static string CHARACTER_ASSIGNED_TO_JOB = "OnCharacterAssignedToJob"; //Parameters (JOB job, Character character);
+    public static string CHARACTER_UNASSIGNED_FROM_JOB = "OnCharacterUnassignedFromJob"; //Parameters (JOB job, Character character);
     #endregion
 
     #region Interaction

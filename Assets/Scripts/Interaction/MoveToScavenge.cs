@@ -12,7 +12,7 @@ public class MoveToScavenge : Interaction {
 
     public MoveToScavenge(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_SCAVENGE, 70) {
         _name = "Move To Scavenge";
-        _jobFilter = new JOB[] { JOB.DISSUADER };
+        _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
 
     public void SetTargetArea(Area target) {
@@ -54,7 +54,7 @@ public class MoveToScavenge : Interaction {
                 name = "Prevent " + Utilities.GetPossessivePronounForCharacter(_characterInvolved, false) + " from leaving.",
                 duration = 0,
                 effect = () => PursuadeToCancelEffect(state),
-                jobNeeded = JOB.DISSUADER,
+                jobNeeded = JOB.DEBILITATOR,
                 doesNotMeetRequirementsStr = "Minion must be a dissuader",
             };
             ActionOption doNothing = new ActionOption {

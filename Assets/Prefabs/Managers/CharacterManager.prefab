@@ -54,9 +54,6 @@ MonoBehaviour:
   characterIconPrefab: {fileID: 1000012712350628, guid: 5372250d22a51bc40a200236eee58ac2,
     type: 2}
   characterIconsParent: {fileID: 0}
-  armyIconPrefab: {fileID: 1133497675646328, guid: 4bb373cd3a987c3419a7dd262591d640,
-    type: 2}
-  armyIconsParent: {fileID: 0}
   maxLevel: 30
   heroSprite: {fileID: 21300056, guid: be352ea3d46036640bb6df35b7b4dc2b, type: 3}
   villainSprite: {fileID: 21300034, guid: be352ea3d46036640bb6df35b7b4dc2b, type: 3}
@@ -547,3 +544,11 @@ MonoBehaviour:
   - {fileID: 9100000, guid: 8efddeb1fd5629b459de99851a8d758b, type: 2}
   - {fileID: 9100000, guid: 391c4c9ecbeeb4e44bea4fd871b44df7, type: 2}
   - {fileID: 9100000, guid: a980adc8910cb7847b091bec2c84c0e2, type: 2}
+  jobIcons:
+    m_keys: 0700000003000000010000000400000006000000
+    m_values:
+    - {fileID: 21300000, guid: b26562098a29bbb4695da637ab5ce5ba, type: 3}
+    - {fileID: 21300000, guid: 8aeae44373a78434bac8f9df85ccad8e, type: 3}
+    - {fileID: 21300000, guid: 41b46e5c79a790a4587ee7aef9acb301, type: 3}
+    - {fileID: 21300000, guid: 00217fe9096ed3d45b81d2d815267235, type: 3}
+    - {fileID: 21300000, guid: 1c0d578e62658cb41889305f732afc6e, type: 3}

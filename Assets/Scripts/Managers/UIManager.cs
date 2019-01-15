@@ -86,6 +86,9 @@ public class UIManager : MonoBehaviour {
     [Header("Nameplates")]
     [SerializeField] private RectTransform nameplateParent;
 
+    [Header("Object Picker")]
+    [SerializeField] private ObjectPicker objectPicker;
+
     private List<PlayerPickerButton> currentActivePlayerPickerButtons;
 
     [Space(10)] //FOR TESTING
@@ -230,6 +233,9 @@ public class UIManager : MonoBehaviour {
         }
         if (areaInfoUI.isShowing) {
             areaInfoUI.CloseMenu();
+        }
+        if (objectPicker.gameObject.activeSelf) {
+            HideObjectPicker();
         }
     }
 
@@ -663,6 +669,15 @@ public class UIManager : MonoBehaviour {
     public void CreateAreaNameplate(Area area) {
         GameObject nameplateGO = UIManager.Instance.InstantiateUIObject("AreaNameplate", nameplateParent);
         nameplateGO.GetComponent<AreaNameplate>().SetArea(area);
+    }
+    #endregion
+
+    #region Object Picker
+    public void ShowObjectPicker<T>(List<T> choices, Action<T> onClickAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null) {
+        objectPicker.Show(choices, onClickAction, comparer, validityChecker);
+    }
+    public void HideObjectPicker() {
+        objectPicker.Hide();
     }
     #endregion
 
@@ -1208,23 +1223,6 @@ public class UIManager : MonoBehaviour {
     }
     public void OnClickClosePlayerPicker() {
         HidePlayerPicker();
-    }
-    public void PopulatePlayerItemsInPicker() {
-        List<Item> items = PlayerManager.Instance.player.items;
-        int length = items.Count;
-        if(currentActivePlayerPickerButtons.Count > items.Count) {
-            length = currentActivePlayerPickerButtons.Count;
-        }
-        for (int i = 0; i < length; i++) {
-            if(i >= items.Count) {
-                currentActivePlayerPickerButtons[i].gameObject.SetActive(false);
-            }else if (i >= currentActivePlayerPickerButtons.Count) {
-                CreatePlayerPickerButton(items[i]);
-            } else {
-                currentActivePlayerPickerButtons[i].gameObject.SetActive(true);
-                currentActivePlayerPickerButtons[i].SetPlayerPicker(items[i]);
-            }
-        }
     }
     public void PopulatePlayerTokensInPicker() {
         List<Token> tokens = PlayerManager.Instance.player.tokens;

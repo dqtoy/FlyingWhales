@@ -13,7 +13,7 @@ public class MoveToRaid : Interaction {
 
     public MoveToRaid(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_RAID, 0) {
         _name = "Move To Raid";
-        _jobFilter = new JOB[] { JOB.DISSUADER };
+        _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
 
     public void SetTargetArea(Area target) {
@@ -56,7 +56,7 @@ public class MoveToRaid : Interaction {
                 name = "Pursuade " + _characterInvolved.name + " to cancel " + Utilities.GetPossessivePronounForCharacter(_characterInvolved, false) + " plans.",
                 duration = 0,
                 effect = () => PursuadeToCancelEffect(state),
-                jobNeeded = JOB.DISSUADER,
+                jobNeeded = JOB.DEBILITATOR,
                 doesNotMeetRequirementsStr = "Minion must be a dissuader",
             };
             ActionOption doNothing = new ActionOption {

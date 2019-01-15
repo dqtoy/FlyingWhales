@@ -11,17 +11,11 @@ public class CharacterManager : MonoBehaviour {
     public GameObject characterIconPrefab;
     public Transform characterIconsParent;
 
-    public GameObject armyIconPrefab;
-    public Transform armyIconsParent;
-
     public int maxLevel;
-    //public List<CharacterType> characterTypes;
     private Dictionary<string, CharacterClass> _classesDictionary;
     private Dictionary<ELEMENT, float> _elementsChanceDictionary;
     private List<Character> _allCharacters;
     private List<CharacterAvatar> _allCharacterAvatars;
-
-    public List<Squad> allSquads { get; private set; }
 
 	public Sprite heroSprite;
 	public Sprite villainSprite;
@@ -46,10 +40,14 @@ public class CharacterManager : MonoBehaviour {
     [Header("Character Role Animators")]
     [SerializeField] private RuntimeAnimatorController[] characterAnimators;
 
+    [Header("Job Icons")]
+    [SerializeField] private JobIconsDictionary jobIcons;
+
     public Dictionary<Character, List<string>> allCharacterLogs { get; private set; }
     public Dictionary<INTERACTION_TYPE, int> awayFromHomeInteractionWeights { get; private set; }
     public Dictionary<INTERACTION_TYPE, int> atHomeInteractionWeights { get; private set; }
     private static readonly string[] _sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
+    private List<string> deadlySinsRotation = new List<string>();
 
     #region getters/setters
     public Dictionary<string, CharacterClass> classesDictionary {
@@ -73,7 +71,6 @@ public class CharacterManager : MonoBehaviour {
         Instance = this;
         _allCharacters = new List<Character>();
         _allCharacterAvatars = new List<CharacterAvatar>();
-        allSquads = new List<Squad>();
         allCharacterLogs = new Dictionary<Character, List<string>>();
     }
 
@@ -259,7 +256,6 @@ public class CharacterManager : MonoBehaviour {
             _classesDictionary.Add(currentClass.className, currentClass);
         }
     }
-    private List<string> deadlySinsRotation = new List<string>();
     public string GetRandomDeadlySinsClassName() {
         //return "Envy";
         //return "Sloth";
@@ -481,6 +477,12 @@ public class CharacterManager : MonoBehaviour {
     public List<string> GetCharacterLogs(Character character) {
         if (allCharacterLogs.ContainsKey(character)) {
             return allCharacterLogs[character];
+        }
+        return null;
+    }
+    public Sprite GetJobSprite(JOB job) {
+        if (jobIcons.ContainsKey(job)) {
+            return jobIcons[job];
         }
         return null;
     }

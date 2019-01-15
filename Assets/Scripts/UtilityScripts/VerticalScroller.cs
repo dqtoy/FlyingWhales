@@ -43,13 +43,13 @@ public class VerticalScroller : MonoBehaviour {
                 return;
 
             }
-            if (scrollView.verticalNormalizedPosition == 0f) { //bottom
+            if (Mathf.Approximately(scrollView.verticalNormalizedPosition, 0f)) { //bottom
                 //disable scroll down btn
                 scrollDownBtn.gameObject.SetActive(false);
             } else {
                 scrollDownBtn.gameObject.SetActive(true);
             }
-            if (scrollView.verticalNormalizedPosition == 1f) { //top
+            if (Mathf.Approximately(scrollView.verticalNormalizedPosition, 1f)) { //top
                 //disable scroll up btn
                 scrollUpBtn.gameObject.SetActive(false);
             } else {

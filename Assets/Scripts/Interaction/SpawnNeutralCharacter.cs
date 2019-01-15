@@ -9,7 +9,7 @@ public class SpawnNeutralCharacter : Interaction {
 
     public SpawnNeutralCharacter(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER, 70) {
         _name = "Spawn Neutral Character";
-        _jobFilter = new JOB[] { JOB.DISSUADER, JOB.RECRUITER };
+        _jobFilter = new JOB[] { JOB.DEBILITATOR, JOB.RECRUITER };
     }
 
     #region Overrides
@@ -46,7 +46,7 @@ public class SpawnNeutralCharacter : Interaction {
                 cost = new CurrenyCost { amount = 50, currency = CURRENCY.SUPPLY },
                 name = "Stop it from happening.",
                 duration = 0,
-                jobNeeded = JOB.DISSUADER,
+                jobNeeded = JOB.DEBILITATOR,
                 effect = () => StopOption(),
                 doesNotMeetRequirementsStr = "Minion must be Dissuader."
             };

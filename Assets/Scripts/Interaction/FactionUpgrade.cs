@@ -13,7 +13,7 @@ public class FactionUpgrade : Interaction {
 
     public FactionUpgrade(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.FACTION_UPGRADE, 0) {
         _name = "Faction Upgrade";
-        _jobFilter = new JOB[] { JOB.DISSUADER, JOB.DISSUADER, JOB.DIPLOMAT };
+        _jobFilter = new JOB[] { JOB.DEBILITATOR, JOB.DEBILITATOR, JOB.DIPLOMAT };
     }
 
     #region Overrides
@@ -56,7 +56,7 @@ public class FactionUpgrade : Interaction {
                 cost = new CurrenyCost { amount = 50, currency = CURRENCY.SUPPLY },
                 name = "Stop them.",
                 duration = 0,
-                jobNeeded = JOB.DISSUADER,
+                jobNeeded = JOB.DEBILITATOR,
                 doesNotMeetRequirementsStr = "Minion must be Dissuader.",
                 effect = () => StopOption(),
             };

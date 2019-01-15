@@ -12,7 +12,7 @@ public class MoveToHunt : Interaction {
 
     public MoveToHunt(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_HUNT, 0) {
         _name = "Move To Hunt";
-        _jobFilter = new JOB[] { JOB.DISSUADER };
+        _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
 
 
@@ -49,7 +49,7 @@ public class MoveToHunt : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Prevent " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + ".",
                 duration = 0,
-                jobNeeded = JOB.DISSUADER,
+                jobNeeded = JOB.DEBILITATOR,
                 disabledTooltipText = "Must be a Dissuader.",
                 effect = () => PreventOption(),
             };

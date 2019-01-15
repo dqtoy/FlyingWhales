@@ -12,7 +12,7 @@ public class MoveToExplore : Interaction {
 
     public MoveToExplore(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_EXPLORE, 0) {
         _name = "Move to Explore";
-        _jobFilter = new JOB[] { JOB.DISSUADER };
+        _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
 
     #region Overrides
@@ -50,7 +50,7 @@ public class MoveToExplore : Interaction {
                 name = "Prevent " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.POSSESSIVE, false) +" from leaving.",
                 duration = 0,
                 effect = () => PreventFromLeavingOptionEffect(state),
-                jobNeeded = JOB.DISSUADER,
+                jobNeeded = JOB.DEBILITATOR,
                 doesNotMeetRequirementsStr = "Minion must be a dissuader",
             };
             ActionOption doNothing = new ActionOption {
