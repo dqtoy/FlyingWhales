@@ -598,14 +598,26 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MOVE_TO_ABDUCT:
                 if (character.race == RACE.GOBLIN || character.race == RACE.SPIDER) {
                     if (!character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
-                        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-                            Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                            if (currCharacter.id != character.id && !currCharacter.isDead && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty()) {
-                                if (currCharacter.isFactionless || currCharacter.faction.id != character.faction.id) {
-                                    return true;
+                        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                            Area currArea = LandmarkManager.Instance.allAreas[i];
+                            if (currArea.owner == null || currArea.owner.id != PlayerManager.Instance.player.playerFaction.id && currArea.owner.id != character.faction.id) {
+                                for (int j = 0; j < currArea.charactersAtLocation.Count; j++) {
+                                    Character characterAtLocation = currArea.charactersAtLocation[j];
+                                    if (characterAtLocation.id != character.id && characterAtLocation.IsInOwnParty() && !characterAtLocation.currentParty.icon.isTravelling
+                                        && (characterAtLocation.isFactionless || characterAtLocation.faction.id != character.faction.id)) {
+                                        return true;
+                                    }
                                 }
                             }
                         }
+                        //for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                        //    Character currCharacter = CharacterManager.Instance.allCharacters[i];
+                        //    if (currCharacter.id != character.id && !currCharacter.isDead && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty()) {
+                        //        if (currCharacter.isFactionless || currCharacter.faction.id != character.faction.id) {
+                        //            return true;
+                        //        }
+                        //    }
+                        //}
                     }
                 }
                 return false;

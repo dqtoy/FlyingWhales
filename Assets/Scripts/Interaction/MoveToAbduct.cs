@@ -18,7 +18,9 @@ public class MoveToAbduct : Interaction {
 
     #region Overrides
     public override void CreateStates() {
-        _targetArea = GetTargetLocation(_characterInvolved);
+        if(_targetArea == null) {
+            _targetArea = GetTargetLocation(_characterInvolved);
+        }
 
         InteractionState startState = new InteractionState(Start, this);
         InteractionState abductCancelledState = new InteractionState(Abduct_Cancelled, this);
@@ -65,6 +67,13 @@ public class MoveToAbduct : Interaction {
             state.AddActionOption(doNothingOption);
             state.SetDefaultOption(doNothingOption);
         }
+    }
+    public override bool CanInteractionBeDoneBy(Character character) {
+        _targetArea = GetTargetLocation(character);
+        if (_targetArea == null) {
+            return false;
+        }
+        return base.CanInteractionBeDoneBy(character);
     }
     #endregion
 
@@ -130,11 +139,13 @@ public class MoveToAbduct : Interaction {
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
             areaFitsCriteria = false;
-            for (int j = 0; j < currArea.charactersAtLocation.Count; j++) {
-                Character character = currArea.charactersAtLocation[j];
-                if(character.IsInOwnParty() && !character.currentParty.icon.isTravelling && character.faction.id != characterInvolved.faction.id) {
-                    areaFitsCriteria = true;
-                    break;
+            if (currArea.owner == null || currArea.owner.id != PlayerManager.Instance.player.playerFaction.id && currArea.owner.id != characterInvolved.faction.id) {
+                for (int j = 0; j < currArea.charactersAtLocation.Count; j++) {
+                    Character character = currArea.charactersAtLocation[j];
+                    if (character.id != characterInvolved.id && character.IsInOwnParty() && !character.currentParty.icon.isTravelling && (character.isFactionless || character.faction.id != characterInvolved.faction.id)) {
+                        areaFitsCriteria = true;
+                        break;
+                    }
                 }
             }
             if (areaFitsCriteria) {
