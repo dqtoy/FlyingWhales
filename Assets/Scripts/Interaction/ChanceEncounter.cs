@@ -263,7 +263,7 @@ public class ChanceEncounter : Interaction {
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
             Character currCharacter = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
             if (currCharacter.forcedInteraction == null && currCharacter.id != characterInvolved.id
-                && currCharacter.race != RACE.BEAST && currCharacter.race != RACE.SKELETON) {
+                && currCharacter.characterClass.roleType != CHARACTER_ROLE.BEAST && currCharacter.race != RACE.SKELETON) {
                 characterList.Add(currCharacter);
             }
         }

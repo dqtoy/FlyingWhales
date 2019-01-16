@@ -1463,7 +1463,7 @@ public class Utilities : MonoBehaviour {
     public static List<RACE> beastRaces = new List<RACE>() {
         RACE.DRAGON,
         RACE.WOLF,
-        RACE.BEAST,
+        //RACE.BEAST,
         RACE.SPIDER
     };
     public static List<RACE> nonBeastRaces = new List<RACE>() {

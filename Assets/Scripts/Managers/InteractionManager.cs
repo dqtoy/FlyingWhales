@@ -696,10 +696,10 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.CHANCE_ENCOUNTER:
-                if(character.race != RACE.BEAST && character.race != RACE.SKELETON) {
+                if(character.characterClass.roleType != CHARACTER_ROLE.BEAST && character.race != RACE.SKELETON) {
                     for (int i = 0; i < character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
                         Character currCharacter = character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
-                        if (currCharacter.id != character.id && currCharacter.race != RACE.BEAST && currCharacter.race != RACE.SKELETON) {
+                        if (currCharacter.id != character.id && currCharacter.characterClass.roleType != CHARACTER_ROLE.BEAST && currCharacter.race != RACE.SKELETON) {
                             return true;
                         }
                     }

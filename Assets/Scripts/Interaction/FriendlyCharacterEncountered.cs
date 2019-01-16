@@ -15,7 +15,7 @@ public class FriendlyCharacterEncountered : Interaction {
         InteractionState characterRecruitedState = new InteractionState("Character Recruited", this);
         InteractionState nothingHappenedState = new InteractionState("Nothing Happened", this);
 
-        if(_characterInvolved.race == RACE.BEAST) {
+        if(_characterInvolved.characterClass.roleType == CHARACTER_ROLE.BEAST) {
             Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "-beast" + "_description");
             startStateDescriptionLog.AddToFillers(null, Utilities.NormalizeString(characterInvolved.race.ToString()), LOG_IDENTIFIER.STRING_1);
             startState.OverrideDescriptionLog(startStateDescriptionLog);
