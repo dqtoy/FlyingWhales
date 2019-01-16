@@ -10,6 +10,7 @@ public class CombatUI : MonoBehaviour {
 
     public TextMeshProUGUI resultsText;
     public GameObject combatGO;
+    public GameObject selectTargetIndicatorGO;
 
     // Use this for initialization
     void Start () {
@@ -95,11 +96,62 @@ public class CombatUI : MonoBehaviour {
             }
         }
     }
+    public bool CanSlotBeTarget(CombatSlotItem combatSlotItem) {
+        if (!CombatManager.Instance.newCombat.isSelectingTarget) {
+            return false;
+        }
+        return CombatManager.Instance.newCombat.currentAttacker.side != combatSlotItem.side;
+    }
+    public void ShowTargetCharacters(CombatSlotItem combatSlotItem) {
+        List<int> targetIndexes = CombatManager.Instance.newCombat.GetTargetIndexesForCurrentAttackByIndex(combatSlotItem.gridNumber);
+        if (targetIndexes.Contains(combatSlotItem.gridNumber)) {
+            if(combatSlotItem.side == SIDES.A) {
+                for (int i = 0; i < targetIndexes.Count; i++) {
+                    leftSlots[targetIndexes[i]].SetTargetable(true);
+                }
+            } else {
+                for (int i = 0; i < targetIndexes.Count; i++) {
+                    rightSlots[targetIndexes[i]].SetTargetable(true);
+                }
+            }
+        }
+    }
+    public void SelectTargetCharacters(CombatSlotItem combatSlotItem) {
+        List<Character> targetCharacters = new List<Character>();
+        if (combatSlotItem.side == SIDES.A) {
+            for (int i = 0; i < leftSlots.Length; i++) {
+                if (leftSlots[i].character != null && leftSlots[i].isTargetable) {
+                    targetCharacters.Add(leftSlots[i].character);
+                }
+            }
+        } else {
+            for (int i = 0; i < rightSlots.Length; i++) {
+                if (rightSlots[i].character != null && rightSlots[i].isTargetable) {
+                    targetCharacters.Add(rightSlots[i].character);
+                }
+            }
+        }
+        CombatManager.Instance.newCombat.OnSelectTargets(targetCharacters);
+    }
+    public void HideTargetCharacters(CombatSlotItem combatSlotItem) {
+        if (combatSlotItem.side == SIDES.A) {
+            for (int i = 0; i < leftSlots.Length; i++) {
+                leftSlots[i].SetTargetable(false);
+            }
+        } else {
+            for (int i = 0; i < rightSlots.Length; i++) {
+                rightSlots[i].SetTargetable(false);
+            }
+        }
+    }
     public void UpdateCombatSlotItems() {
         if (!combatGO.activeSelf) {
             return;
         }
         FillLeftSlots();
         FillRightSlots();
+    }
+    public void OnClickPassSelectionOfTargets() {
+        CombatManager.Instance.newCombat.OnSelectTargets(null);
     }
 }

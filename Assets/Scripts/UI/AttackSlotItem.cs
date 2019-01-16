@@ -5,7 +5,16 @@ using UnityEngine.UI;
 
 public class AttackSlotItem : MonoBehaviour {
     public Image attackImg;
+    public Button attackBtn;
 
+    public void ShowAttackButton() {
+        if (!PlayerManager.Instance.player.attackGrid.IsGridEmpty()) {
+            attackBtn.gameObject.SetActive(true);
+        }
+    }
+    public void HideAttackButton() {
+        attackBtn.gameObject.SetActive(false);
+    }
     public void OnClickAssign() {
         UIManager.Instance.ShowDraggableObjectPicker(PlayerManager.Instance.player.allOwnedCharacters, new CharacterLevelComparer(), CanAssignCharacterToAttack);
         PlayerUI.Instance.ShowAttackGrid();
@@ -20,6 +29,9 @@ public class AttackSlotItem : MonoBehaviour {
         UIManager.Instance.HideObjectPicker();
         PlayerUI.Instance.HideCombatGrid();
         UpdateVisuals();
+    }
+    public void OnClickAttack() {
+        PlayerManager.Instance.AttackLandmark(UIManager.Instance.areaInfoUI.activeArea);
     }
     private bool CanAssignCharacterToAttack(Character character) {
         return PlayerManager.Instance.player.CanAssignCharacterToAttack(character);

@@ -37,7 +37,7 @@ public class PlayerUI : MonoBehaviour {
     public GameObject attackGridGO;
     [SerializeField] private Sprite attackGridIconSprite;
     [SerializeField] private Sprite defenseGridIconSprite;
-    [SerializeField] private AttackSlotItem attackSlot;
+    public AttackSlotItem attackSlot;
     [SerializeField] private DefenseSlotItem defenseSlot;
     public SlotItem[] attackGridSlots;
 

@@ -181,4 +181,51 @@ public class CombatGrid {
         }
         return true;
     }
+    public List<int> GetTargetGridIndexesFor(Character character, int index) {
+        List<int> targetIndexes = new List<int>();
+        COMBAT_TARGET combatTargetType = character.characterClass.combatTarget;
+        if (combatTargetType == COMBAT_TARGET.SINGLE) {
+            targetIndexes.Add(index);
+        } else if (combatTargetType == COMBAT_TARGET.ALL) {
+            targetIndexes.Add(0);
+            targetIndexes.Add(1);
+            targetIndexes.Add(2);
+            targetIndexes.Add(3);
+        } else if (combatTargetType == COMBAT_TARGET.COLUMN) {
+            if (index == 0 || index == 2) {
+                targetIndexes.Add(0);
+                targetIndexes.Add(2);
+            } else {
+                targetIndexes.Add(1);
+                targetIndexes.Add(3);
+            }
+        } else if (combatTargetType == COMBAT_TARGET.ROW) {
+            if (index == 0 || index == 1) {
+                targetIndexes.Add(0);
+                targetIndexes.Add(1);
+            } else {
+                targetIndexes.Add(2);
+                targetIndexes.Add(3);
+            }
+        } else if (combatTargetType == COMBAT_TARGET.FRONTROW) {
+            if (index == 0 || index == 1) {
+                targetIndexes.Add(0);
+                targetIndexes.Add(1);
+            }
+        } else if (combatTargetType == COMBAT_TARGET.BACKROW) {
+            if (index == 2 || index == 3) {
+                targetIndexes.Add(2);
+                targetIndexes.Add(3);
+            }
+        } else if (combatTargetType == COMBAT_TARGET.SINGLE_FRONTROW) {
+            if (index == 0 || index == 1) {
+                targetIndexes.Add(index);
+            }
+        } else if (combatTargetType == COMBAT_TARGET.SINGLE_BACKROW) {
+            if (index == 2 || index == 3) {
+                targetIndexes.Add(index);
+            }
+        }
+        return targetIndexes;
+    }
 }

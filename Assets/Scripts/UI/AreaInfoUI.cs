@@ -210,6 +210,9 @@ public class AreaInfoUI : UIMenu {
             activeArea.SetOutlineState(true);
         }
         UIManager.Instance.SetCoverState(true);
+        if(activeArea.owner != PlayerManager.Instance.player.playerFaction) {
+            PlayerUI.Instance.attackSlot.ShowAttackButton();
+        }
         //UIManager.Instance.Pause();
         //UIManager.Instance.SetSpeedTogglesState(false);
     }
@@ -226,6 +229,8 @@ public class AreaInfoUI : UIMenu {
         }
         activeArea = null;
         UIManager.Instance.SetCoverState(false);
+        PlayerUI.Instance.attackSlot.HideAttackButton();
+
         //UIManager.Instance.Unpause();
         //UIManager.Instance.SetSpeedTogglesState(true);
         //PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();

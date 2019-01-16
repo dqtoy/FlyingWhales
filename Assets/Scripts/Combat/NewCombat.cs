@@ -13,6 +13,9 @@ public class NewCombat : MonoBehaviour {
     private List<Action> _endCombatActions;
 
     public SIDES winningSide { get; private set; }
+    public bool isSelectingTarget { get; private set; }
+    public CombatCharacter currentAttacker { get; private set; }
+    public List<Character> selectedTargetCharacters { get; private set; }
 
     private bool _isPaused;
 
@@ -121,15 +124,17 @@ public class NewCombat : MonoBehaviour {
         }
         return false;
     }
+    public void SetPausedState(bool state) {
+        _isPaused = state;
+    }
     public void Fight() {
         StartCoroutine(StartCombatCoroutine());
     }
-
     private IEnumerator StartCombatCoroutine() {
         TransferSlotsToOrder();
+        CombatCharacter previousCombatCharacter = new CombatCharacter();
         while (!isCombatEnd) {
             ReorderCombat();
-            CombatCharacter previousCombatCharacter = new CombatCharacter();
             for (int i = 0; i < _combatOrder.Count; i++) {
                 if (previousCombatCharacter.character != null) {
                     UIManager.Instance.combatUI.UnhighlightAttacker(previousCombatCharacter.character, previousCombatCharacter.side);
@@ -147,9 +152,16 @@ public class NewCombat : MonoBehaviour {
                 //    continue;
                 //}
                 //Get and Hit Targets
-                List<Character> targetCharacters = GetTargetCharacters(sourceCombatCharacter);
+                List<Character> targetCharacters = null;
+                if (sourceCombatCharacter.character.minion != null) {
+                    SelectTarget(sourceCombatCharacter);
+                    yield return new WaitWhile(() => _isPaused == true);
+                    targetCharacters = selectedTargetCharacters;
+                } else {
+                    targetCharacters = GetTargetCharacters(sourceCombatCharacter);
+                }
                 string attackLog = string.Empty;
-                if (targetCharacters.Count > 0) {
+                if (targetCharacters != null && targetCharacters.Count > 0) {
                     attackLog = sourceCombatCharacter.character.name + " attacks ";
                     int sourceAttack = sourceCombatCharacter.character.attackPower;
                     for (int j = 0; j < targetCharacters.Count; j++) {
@@ -191,7 +203,7 @@ public class NewCombat : MonoBehaviour {
                     }
                     //Messenger.Broadcast(Signals.ADD_TO_COMBAT_LOGS, deathLog);
                 } else {
-                    attackLog = "No more targets! Combat will end!";
+                    attackLog = "No target for " + sourceCombatCharacter.character.name + ": " + sourceCombatCharacter.character.characterClass.combatTarget.ToString();
                     UIManager.Instance.combatUI.AddCombatLogs(attackLog);
                     //Messenger.Broadcast(Signals.ADD_TO_COMBAT_LOGS, attackLog);
                 }
@@ -284,14 +296,19 @@ public class NewCombat : MonoBehaviour {
                 i--;
             }
         }
-        int chosenIndex = UnityEngine.Random.Range(0, targetIndexes.Count);
-        for (int j = 0; j < targetIndexes[chosenIndex].Length; j++) {
-            Character targetCharacter = gridToBeChecked.slots[targetIndexes[chosenIndex][j]].character;
-            if (targetCharacter != null && !_deadCharacters.Contains(targetCharacter) && !targets.Contains(targetCharacter)) {
-                targets.Add(targetCharacter);
+        if(targetIndexes.Count > 0) {
+            int chosenIndex = UnityEngine.Random.Range(0, targetIndexes.Count);
+            for (int j = 0; j < targetIndexes[chosenIndex].Length; j++) {
+                Character targetCharacter = gridToBeChecked.slots[targetIndexes[chosenIndex][j]].character;
+                if (targetCharacter != null && !_deadCharacters.Contains(targetCharacter) && !targets.Contains(targetCharacter)) {
+                    targets.Add(targetCharacter);
+                }
             }
         }
         return targets;
+    }
+    public List<int> GetTargetIndexesForCurrentAttackByIndex(int index) {
+        return rightSide.GetTargetGridIndexesFor(currentAttacker.character, index); //rightSide is just a reference to gain access to combat grid's functions
     }
     private List<int[]> GetGridIndexesByCombatTargetType(COMBAT_TARGET combatTargetType) {
         CombatGrid referenceGrid = leftSide; //This is only a reference to get the indexes for the targets, must not change the grid itself
@@ -365,6 +382,22 @@ public class NewCombat : MonoBehaviour {
             //}
         }
         return targets;
+    }
+    private void SelectTarget(CombatCharacter combatCharacter) {
+        SetPausedState(true);
+        currentAttacker = combatCharacter;
+        isSelectingTarget = true;
+        UIManager.Instance.combatUI.selectTargetIndicatorGO.SetActive(true);
+    }
+    public void OnSelectTargets(List<Character> targets) {
+        if(targets != null && targets.Count > 0) {
+            selectedTargetCharacters = targets;
+        } else {
+            selectedTargetCharacters = null;
+        }
+        isSelectingTarget = false;
+        UIManager.Instance.combatUI.selectTargetIndicatorGO.SetActive(false);
+        SetPausedState(false);
     }
 }
 

@@ -186,4 +186,31 @@ public class PlayerManager : MonoBehaviour {
         return minion;
     }
     #endregion
+
+    #region Attack
+    public void AttackLandmark(Area area) {
+        DefenderGroup defender = area.GetDefenseGroup();
+        if (defender != null) {
+            //Combat combat = _assignedMinionAttack.character.currentParty.CreateCombatWith(defender.party);
+            //combat.Fight(() => AttackCombatResult(combat));
+            CombatManager.Instance.newCombat.StartNewCombat();
+            CombatManager.Instance.newCombat.AddCharacters(player.attackGrid, SIDES.A);
+            CombatManager.Instance.newCombat.AddCharacters(defender.party.characters, SIDES.B);
+            CombatManager.Instance.newCombat.AddEndCombatActions(() => AttackCombatResult(area));
+            UIManager.Instance.combatUI.OpenCombatUI(true);
+        } else {
+            Debug.LogWarning("No defense in area, auto win for the player!");
+            area.Death();
+        }
+    }
+    private void AttackCombatResult(Area area) {
+        for (int i = 0; i < player.attackGrid.slots.Length; i++) {
+            player.attackGrid.slots[i].OccupySlot(CombatManager.Instance.newCombat.leftSide.slots[i].character);
+        }
+        PlayerUI.Instance.attackSlot.UpdateVisuals();
+        if (CombatManager.Instance.newCombat.winningSide == SIDES.A) {
+            area.Death();
+        }
+    }
+    #endregion
 }
