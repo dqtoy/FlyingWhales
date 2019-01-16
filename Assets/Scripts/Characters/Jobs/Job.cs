@@ -128,7 +128,7 @@ public class Job {
     protected virtual void PassiveEffect(Area area) {}
     public virtual int GetSuccessRate() { return 0; }
     public virtual int GetFailRate() { return 40; }
-    public virtual int GetCritFailRate() { return 10; }
+    public virtual int GetCritFailRate() { return 5; }
     public virtual WeightedDictionary<RESULT> GetJobRateWeights() {
         rateWeights.Clear();
         rateWeights.AddElement(RESULT.SUCCESS, GetSuccessRate());
