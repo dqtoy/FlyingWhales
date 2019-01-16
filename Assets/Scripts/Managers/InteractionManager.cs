@@ -731,12 +731,23 @@ public class InteractionManager : MonoBehaviour {
     private Area GetAttackTarget(Area areaToAttack) {
         Area targetArea = null;
         List<Area> enemyAreas = new List<Area>();
-        foreach (KeyValuePair<Faction, FactionRelationship> kvp in areaToAttack.owner.relationships) {
-            FactionRelationship factionRelationship = kvp.Value;
-            if(kvp.Key.isActive && factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY) {
-                enemyAreas.AddRange(kvp.Key.ownedAreas);
+        if(areaToAttack.owner != null) {
+            foreach (KeyValuePair<Faction, FactionRelationship> kvp in areaToAttack.owner.relationships) {
+                FactionRelationship factionRelationship = kvp.Value;
+                if (kvp.Key.isActive && factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+                    enemyAreas.AddRange(kvp.Key.ownedAreas);
+                }
+            }
+        } else {
+            //Neutral Area will act as if its at war with all areas, meaning all other areas can be a target
+            for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                Area area = LandmarkManager.Instance.allAreas[i];
+                if(area.id != areaToAttack.id) {
+                    enemyAreas.Add(area);
+                }
             }
         }
+       
         if(enemyAreas.Count > 0) {
             targetArea = enemyAreas[UnityEngine.Random.Range(0, enemyAreas.Count)];
             List<Character> attackers = areaToAttack.FormCombatCharacters();

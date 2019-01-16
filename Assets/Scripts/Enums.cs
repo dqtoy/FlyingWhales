@@ -483,6 +483,7 @@ public enum QUEST_TYPE {
     SURRENDER_ITEMS,
 }
 public enum FACTION_RELATIONSHIP_STATUS {
+    AT_WAR,
     ENEMY,
     DISLIKED,
     NEUTRAL,
