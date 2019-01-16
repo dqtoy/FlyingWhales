@@ -209,12 +209,17 @@ public class Attack : Interaction {
 
         //DefenderGroup newDefenders = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
         //if (newDefenders == null) {
-            interactable.tileLocation.areaOfTile.Death();
 
-            Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
-            log.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-            log.AddToFillers(interactable.tileLocation.areaOfTile.previousOwner, interactable.tileLocation.areaOfTile.previousOwner.name, LOG_IDENTIFIER.FACTION_1);
-            state.AddLogToInvolvedObjects(log);
+        Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
+        log.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+        if(interactable.tileLocation.areaOfTile.owner == null) {
+            log.AddToFillers(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1);
+        } else {
+            log.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+        }
+        state.AddLogToInvolvedObjects(log);
+
+        interactable.tileLocation.areaOfTile.Death();
         //}
     }
     private void HelpedAttackersLostEffect(InteractionState state) {
@@ -236,15 +241,20 @@ public class Attack : Interaction {
         characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
         _supporterMinion.character.currentParty.RemoveCharacter(_supporterMinion.character);
         _supporterMinion.SetEnabledState(true);
-        interactable.tileLocation.areaOfTile.Death();
 
         state.descriptionLog.AddToFillers(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2);
 
         state.AddLogFiller(new LogFiller(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2));
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.previousOwner, interactable.tileLocation.areaOfTile.previousOwner.name, LOG_IDENTIFIER.FACTION_1));
+        if (interactable.tileLocation.areaOfTile.owner == null) {
+            state.AddLogFiller(new LogFiller(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1));
+        } else {
+            state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+        }
         for (int i = 0; i < characterInvolved.currentParty.characters.Count; i++) {
             state.AddLogFiller(new LogFiller(characterInvolved.currentParty.characters[i], characterInvolved.currentParty.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
+
+        interactable.tileLocation.areaOfTile.Death();
     }
     private void HelpedDefendersLostEffect(InteractionState state) {
         interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
@@ -258,12 +268,17 @@ public class Attack : Interaction {
 
         //DefenderGroup newDefenders = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
         //if (newDefenders == null) {
-            interactable.tileLocation.areaOfTile.Death();
 
-            Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
-            log.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-            log.AddToFillers(interactable.tileLocation.areaOfTile.previousOwner, interactable.tileLocation.areaOfTile.previousOwner.name, LOG_IDENTIFIER.FACTION_1);
-            state.AddLogToInvolvedObjects(log);
+        Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
+        log.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+        if (interactable.tileLocation.areaOfTile.owner == null) {
+            log.AddToFillers(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1);
+        } else {
+            log.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+        }
+        state.AddLogToInvolvedObjects(log);
+
+        interactable.tileLocation.areaOfTile.Death();
         //}
     }
     private void HelpedDefendersWonEffect(InteractionState state) {
@@ -280,15 +295,20 @@ public class Attack : Interaction {
     }
     private void SoloDefenseLostEffect(InteractionState state) {
         interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
-        interactable.tileLocation.areaOfTile.Death();
 
         state.descriptionLog.AddToFillers(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2);
         state.AddLogFiller(new LogFiller(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2));
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.previousOwner, interactable.tileLocation.areaOfTile.previousOwner.name, LOG_IDENTIFIER.FACTION_1));
+        if (interactable.tileLocation.areaOfTile.owner == null) {
+            state.AddLogFiller(new LogFiller(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1));
+        } else {
+            state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+        }
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
             state.descriptionLog.AddToFillers(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
             state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
+
+        interactable.tileLocation.areaOfTile.Death();
     }
     private void SoloDefenseWonEffect(InteractionState state) {
         interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
@@ -313,17 +333,17 @@ public class Attack : Interaction {
 
         //DefenderGroup newDefenders = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
         //if (newDefenders == null) {
-            interactable.tileLocation.areaOfTile.Death();
 
-            Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
-            log.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-            if(interactable.tileLocation.areaOfTile.owner != null) {
-                log.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
-            } else {
-                log.AddToFillers(interactable.tileLocation.areaOfTile.previousOwner, interactable.tileLocation.areaOfTile.previousOwner.name, LOG_IDENTIFIER.FACTION_1);
-            }
-            state.AddLogToInvolvedObjects(log);
-            //Log area is cleared - Add faction log filler
+        Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
+        log.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+        if (interactable.tileLocation.areaOfTile.owner == null) {
+            log.AddToFillers(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1);
+        } else {
+            log.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+        }
+        state.AddLogToInvolvedObjects(log);
+
+        interactable.tileLocation.areaOfTile.Death();
         //}
     }
     private void NormalAttackersLostEffect(InteractionState state) {
@@ -336,13 +356,17 @@ public class Attack : Interaction {
         }
     }
     private void NormalAttackersNoDefenseEffect(InteractionState state) {
-        interactable.tileLocation.areaOfTile.Death();
-
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.previousOwner, interactable.tileLocation.areaOfTile.previousOwner.name, LOG_IDENTIFIER.FACTION_1));
+        if (interactable.tileLocation.areaOfTile.owner == null) {
+            state.AddLogFiller(new LogFiller(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1));
+        } else {
+            state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+        }
         for (int i = 0; i < characterInvolved.currentParty.characters.Count; i++) {
             state.descriptionLog.AddToFillers(characterInvolved.currentParty.characters[i], characterInvolved.currentParty.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
             state.AddLogFiller(new LogFiller(characterInvolved.currentParty.characters[i], characterInvolved.currentParty.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
+
+        interactable.tileLocation.areaOfTile.Death();
     }
     #endregion
 }

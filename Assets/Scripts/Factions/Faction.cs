@@ -526,10 +526,56 @@ public class Faction {
         }
     }
     private void GenerateDailyInteraction() {
-        if(this == FactionManager.Instance.neutralFaction) {
-            GenerateNeutralInteraction();
-        } else {
-            GenerateNonNeutralInteraction();
+        //if(this == FactionManager.Instance.neutralFaction) {
+        //    GenerateNeutralInteraction();
+        //} else {
+        //    GenerateNonNeutralInteraction();
+        //}
+        GenerateFactionInteraction();
+    }
+    private void GenerateFactionInteraction() {
+        for (int i = 0; i < _ownedAreas.Count; i++) {
+            GenerateAreaInteraction(_ownedAreas[i]);
+            _ownedAreas[i].AreaTasksAssignments();
+        }
+    }
+    private void GenerateAreaInteraction(Area area) {
+        string interactionLog = GameManager.Instance.TodayLogString() + "Generating faction area interaction for " + this.name;
+        WeightedDictionary<string> generateWeights = new WeightedDictionary<string>();
+        generateWeights.AddElement("Generate", 50);
+        generateWeights.AddElement("Dont Generate", 300);
+
+        string generateResult = generateWeights.PickRandomElementGivenWeights();
+        if (generateResult == "Generate") {
+            if (area.suppliesInBank >= 100) {
+                WeightedDictionary<INTERACTION_TYPE> interactionCandidates = new WeightedDictionary<INTERACTION_TYPE>();
+                foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in _nonNeutralInteractionTypes) {
+                    INTERACTION_TYPE type = kvp.Key;
+                    int weight = kvp.Value;
+                    if(type == INTERACTION_TYPE.SPAWN_CHARACTER && this == FactionManager.Instance.neutralFaction) {
+                        type = INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER;
+                    }
+                    if (InteractionManager.Instance.CanCreateInteraction(type, area.coreTile.landmarkOnTile)) {
+                        interactionCandidates.AddElement(type, weight);
+                    }
+                }
+
+                if (interactionCandidates.Count > 0) {
+                    INTERACTION_TYPE chosenInteraction = interactionCandidates.PickRandomElementGivenWeights();
+                    area.AdjustSuppliesInBank(-100);
+                    Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, area.coreTile.landmarkOnTile);
+                    createdInteraction.SetMinionSuccessAction(() => area.AdjustSuppliesInBank(100));
+                    area.coreTile.landmarkOnTile.AddInteraction(createdInteraction);
+                    interactionLog += "\nCreated " + createdInteraction.type.ToString() + " on " + createdInteraction.interactable.tileLocation.areaOfTile.name;
+                    Debug.Log(interactionLog);
+                } else {
+                    interactionLog += "\nCannot create interaction because all interactions do not meet the requirements";
+                    Debug.Log(interactionLog);
+                }
+            } else {
+                interactionLog += "\nCannot create interaction because supply is leass than 100";
+                Debug.Log(interactionLog);
+            }
         }
     }
     private void GenerateNonNeutralInteraction() {

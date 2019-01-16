@@ -102,23 +102,35 @@ public class MoveToAttack : Interaction {
         investigatorCharacter.LevelUp();
         MinionSuccess();
 
-        state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
-
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+        if (interactable.tileLocation.areaOfTile.owner == null) {
+            state.descriptionLog.AddToFillers(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1);
+            state.AddLogFiller(new LogFiller(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1));
+        } else {
+            state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+        }
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.attackTarget, interactable.tileLocation.areaOfTile.attackTarget.name, LOG_IDENTIFIER.LANDMARK_2));
 
         interactable.tileLocation.areaOfTile.SetAttackTargetAndCharacters(null, null);
     }
     private void StopFailEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
-
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+        if (interactable.tileLocation.areaOfTile.owner == null) {
+            state.descriptionLog.AddToFillers(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1);
+            state.AddLogFiller(new LogFiller(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1));
+        } else {
+            state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+        }
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.attackTarget, interactable.tileLocation.areaOfTile.attackTarget.name, LOG_IDENTIFIER.LANDMARK_2));
 
         interactable.tileLocation.areaOfTile.AttackTarget();
     }
     private void DoNothingEffect(InteractionState state) {
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+        if(interactable.tileLocation.areaOfTile.owner == null) {
+            state.AddLogFiller(new LogFiller(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1));
+        } else {
+            state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+        }
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.attackTarget, interactable.tileLocation.areaOfTile.attackTarget.name, LOG_IDENTIFIER.LANDMARK_2));
         for (int i = 0; i < interactable.tileLocation.areaOfTile.attackCharacters.Count; i++) {
             state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.attackCharacters[i], interactable.tileLocation.areaOfTile.attackCharacters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);

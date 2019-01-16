@@ -28,7 +28,7 @@ public class FactionRelationship {
     public FactionRelationship(Faction faction1, Faction faction2) {
         _faction1 = faction1;
         _faction2 = faction2;
-        relationshipStatInt = 2; //Neutral
+        relationshipStatInt = 3; //Neutral
     }
 
     #region Relationship Status
@@ -44,7 +44,7 @@ public class FactionRelationship {
     }
     public void AdjustRelationshipStatus(int amount) {
         relationshipStatInt += amount;
-        relationshipStatInt = Mathf.Clamp(relationshipStatInt, 0, Utilities.GetEnumValues<FACTION_RELATIONSHIP_STATUS>().Length - 1);
+        relationshipStatInt = Mathf.Clamp(relationshipStatInt, 1, Utilities.GetEnumValues<FACTION_RELATIONSHIP_STATUS>().Length - 1);
     }
     #endregion
 

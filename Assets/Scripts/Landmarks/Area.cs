@@ -734,21 +734,23 @@ public class Area {
     }
     private void StartMonthActions() {
         CollectMonthlySupplies();
-
+        //AreaTasksAssignments();
+    }
+    public void AreaTasksAssignments() {
         //List<Character> defenderCandidates = new List<Character>();
         List<Character> interactionCandidates = new List<Character>();
 
         for (int i = 0; i < areaResidents.Count; i++) {
             Character resident = areaResidents[i];
             if (resident.doNotDisturb <= 0 && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.faction == owner && resident.specificLocation.tileLocation.areaOfTile.id == id) {
-                if(attackCharacters != null && attackCharacters.Contains(resident)) {
+                if (attackCharacters != null && attackCharacters.Contains(resident)) {
                     continue;
                 }
                 //if (resident.forcedInteraction == null || (resident.forcedInteraction != null && resident.forcedInteraction.type != INTERACTION_TYPE.MOVE_TO_ATTACK)) {
                 //    defenderCandidates.Add(resident);
                 //}
                 //if (!resident.isDefender) {
-                    interactionCandidates.Add(resident);
+                interactionCandidates.Add(resident);
                 //}
             }
         }
@@ -1290,9 +1292,10 @@ public class Area {
             Character resident = areaResidents[i];
             if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader
                 && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling
-                && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == id
-                && resident.faction == owner) {
-                residentsAtArea.Add(resident);
+                && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == id) {
+                if((owner != null && resident.faction == owner) || (owner == null && resident.faction == FactionManager.Instance.neutralFaction)) {
+                    residentsAtArea.Add(resident);
+                }
             }
         }
         List<int> frontlineIndexes = new List<int>();
