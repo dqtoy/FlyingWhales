@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using System;
 
 public class UIMenu : MonoBehaviour {
-
+    public Button backButton;
     public bool isShowing;
     private Action openMenuAction;
 
@@ -23,6 +23,8 @@ public class UIMenu : MonoBehaviour {
             openMenuAction = null;
         }
         Messenger.Broadcast(Signals.MENU_OPENED, this);
+        UIManager.Instance.AddToUIMenuHistory(_data);
+        backButton.interactable = UIManager.Instance.GetLastUIMenuHistory() != null;
     }
     public virtual void CloseMenu() {
         isShowing = false;
@@ -30,7 +32,12 @@ public class UIMenu : MonoBehaviour {
         Messenger.Broadcast(Signals.MENU_CLOSED, this);
     }
     public virtual void GoBack() {
-        CloseMenu();
+        object data = UIManager.Instance.GetLastUIMenuHistory();
+        if(data != null) {
+            CloseMenu();
+            UIManager.Instance.RemoveLastUIMenuHistory();
+            GoBackToPreviousUIMenu(data);
+        }
     }
     public virtual void SetData(object data) {
         _data = data;
@@ -45,10 +52,25 @@ public class UIMenu : MonoBehaviour {
             CloseMenu();
         }
     }
+    public void OnClickCloseMenu() {
+        CloseMenu();
+        UIManager.Instance.ClearUIMenuHistory();
+    }
     #endregion
 
     public void SetOpenMenuAction(Action action) {
         openMenuAction = action;
+    }
+    private void GoBackToPreviousUIMenu(object data) {
+        if(data != null) {
+            if(data is Character) {
+                UIManager.Instance.ShowCharacterInfo(data as Character);
+            } else if (data is Area) {
+                UIManager.Instance.ShowAreaInfo(data as Area);
+            } else if(data is Faction) {
+                UIManager.Instance.ShowFactionInfo(data as Faction);
+            }
+        }
     }
 
     //public void ApplyUnifiedSettings(UnifiedUISettings settings) {

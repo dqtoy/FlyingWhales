@@ -1136,6 +1136,7 @@ public enum INTERACTION_TYPE {
     SAVE_ACTION,
     FOUND_ZIRANNA,
     FOUND_RIKITIK,
+    MOVE_TO_VISIT,
 }
 public enum REWARD {
     SUPPLY,

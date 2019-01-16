@@ -504,7 +504,7 @@ public class Faction {
     private void InitializeInteractions() {
         _nonNeutralInteractionTypes = new Dictionary<INTERACTION_TYPE, int> {
             { INTERACTION_TYPE.SPAWN_CHARACTER, 50 },
-            { INTERACTION_TYPE.MOVE_TO_ATTACK, 100 },
+            { INTERACTION_TYPE.MOVE_TO_ATTACK, 50 },
             //INTERACTION_TYPE.DEFENSE_MOBILIZATION,
             //INTERACTION_TYPE.DEFENSE_UPGRADE,
         };
@@ -554,6 +554,7 @@ public class Faction {
                     int weight = kvp.Value;
                     if(type == INTERACTION_TYPE.SPAWN_CHARACTER && this == FactionManager.Instance.neutralFaction) {
                         type = INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER;
+                        weight = 25;
                     }
                     if (InteractionManager.Instance.CanCreateInteraction(type, area.coreTile.landmarkOnTile)) {
                         interactionCandidates.AddElement(type, weight);

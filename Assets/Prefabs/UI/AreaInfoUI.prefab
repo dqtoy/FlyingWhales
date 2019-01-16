@@ -17686,7 +17686,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114679814638103120}
-        m_MethodName: CloseMenu
+        m_MethodName: OnClickCloseMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -20099,6 +20099,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd9372e995dbb5446b79b6fb9e931e79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  backButton: {fileID: 114743781914455660}
   isShowing: 0
   landmarkNameLbl: {fileID: 114036181928794364}
   landmarkTypeLbl: {fileID: 114129861338535948}
@@ -21271,7 +21272,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114189211748079796}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114679814638103120}
+        m_MethodName: GoBack
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114744940678419592

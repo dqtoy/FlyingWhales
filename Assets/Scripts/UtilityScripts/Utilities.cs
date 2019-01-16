@@ -1708,6 +1708,13 @@ public class Utilities : MonoBehaviour {
             }
         },
     };
+    public static List<string> specialClasses = new List<string>() {
+        "Necromancer",
+        "Archmage",
+        "Witch",
+        "Beastmaster",
+        "Tempest",
+    };
     #endregion
 
     #region Character Tags

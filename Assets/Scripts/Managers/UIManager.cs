@@ -112,6 +112,7 @@ public class UIManager : MonoBehaviour {
 
     internal List<object> eventLogsQueue = new List<object>();
     private UIMenu lastOpenedMenu = null;
+    private List<object> _uiMenuHistory;
 
     #region Monobehaviours
     private void Awake() {
@@ -121,6 +122,7 @@ public class UIManager : MonoBehaviour {
     }
     private void Start() {
         currentActivePlayerPickerButtons = new List<PlayerPickerButton>();
+        _uiMenuHistory = new List<object>();
         Messenger.AddListener(Signals.UPDATE_UI, UpdateUI);
         Messenger.AddListener(Signals.INSPECT_ALL, UpdateInteractableInfoUI);
         //NormalizeFontSizes();
@@ -239,6 +241,27 @@ public class UIManager : MonoBehaviour {
         }
         if (PlayerUI.Instance.attackGridGO.activeSelf) {
             PlayerUI.Instance.HideCombatGrid();
+        }
+    }
+    public void AddToUIMenuHistory(object data) {
+        _uiMenuHistory.Add(data);
+    }
+    public void ClearUIMenuHistory() {
+        _uiMenuHistory.Clear();
+    }
+    public object GetLastUIMenuHistory() {
+        int index = _uiMenuHistory.Count - 2;
+        if(index < 0) {
+            return null;
+        } else {
+            return _uiMenuHistory[index];
+        }
+    }
+    public void RemoveLastUIMenuHistory() {
+        for (int i = 0; i < 2; i++) {
+            if (_uiMenuHistory.Count > 0) {
+                _uiMenuHistory.RemoveAt(_uiMenuHistory.Count - 1);
+            }
         }
     }
 
